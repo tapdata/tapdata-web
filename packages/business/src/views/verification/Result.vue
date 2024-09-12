@@ -151,6 +151,11 @@ export default {
             this.inspect = inspect
             if (stats.length) {
               this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
+
+              if (process.env.VUE_APP_KEYWORD && this.errorMsg) {
+                this.errorMsg = this.errorMsg.replace(/tapdata\s?/gi, process.env.VUE_APP_KEYWORD)
+              }
+
               this.taskId = stats[0].taskId
               this.$refs.resultView?.fetch(1)
               if (this.type !== 'row_count' && this.type !== 'hash') {

@@ -1,29 +1,60 @@
 <template>
-  <div class="flex flex-column gap-4">
+  <div class="position-relative flex flex-column gap-4 h-100 min-h-0 rounded-lg overflow-y-auto">
     <SchemaForm :form="form" :schema="schema" :scope="scope" />
+    <div
+      class="step-footer mt-auto flex align-center position-sticky z-index bottom-0 p-4 border backdrop-filter-light z-10 rounded-lg"
+    >
+      <el-button @click="handlePrev">{{ $t('public_button_previous') }}</el-button>
+      <el-button :loading="starting" type="primary" @click="handleStart">{{
+        $t('packages_business_task_start_task')
+      }}</el-button>
+      <el-divider class="mx-4" direction="vertical"></el-divider>
+      <slot name="help"></slot>
+    </div>
   </div>
 </template>
 
 <script>
-import { defineComponent, ref } from '@vue/composition-api'
-import { createForm, onFieldValueChange } from '@formily/core'
 import i18n from '@tap/i18n'
 import { alarmApi, taskApi } from '@tap/api'
+import { debounce, merge } from 'lodash'
+import { createForm, onFormValuesChange, onFieldValueChange, createEffectHook } from '@formily/core'
+import { observable, action, untracked, raw, isObservable, observe, autorun } from '@formily/reactive'
 import SchemaForm from '../SchemaForm.vue'
-import { debounce } from 'lodash'
-import { action } from '@formily/reactive'
+import { DEFAULT_SETTINGS } from '../../constants'
+import { genDatabaseNode, genProcessorNode } from '../../util'
+import { defineComponent, inject, nextTick, ref, onBeforeUnmount } from '@vue/composition-api'
+import { task } from '@vue/cli-plugin-eslint/ui/taskDescriptor'
+
+// 自定义 Dialog 表单内的 value 变化事件
+const onDialogFormValuesChange = createEffectHook('dialog-form-values-change', (payload, form) => listener => {
+  listener(payload, form)
+})
 
 export default defineComponent({
-  name: 'TaskReadPretty',
-  components: { SchemaForm },
-  props: {
-    task: Object
+  name: 'TaskStep',
+  components: {
+    SchemaForm
   },
   setup(props, { emit, root }) {
     const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
-    const nodes = root.$store.getters['dataflow/allNodes']
+    let repeatNameMessage = i18n.t('packages_dag_task_form_error_name_duplicate')
+    const handleCheckName = debounce(function (resolve, value) {
+      taskApi
+        .checkName({
+          name: value
+          // id
+        })
+        .then(data => {
+          resolve(data)
+        })
+    }, 500)
+    const taskRef = inject('task')
+    const pageVersionRef = inject('pageVersion')
     const form = ref(null)
-    const fieldForm = ref(null)
+    const starting = ref(false)
+
+    console.log('taskRef', taskRef)
     let checkCrontabExpressionFlagMessage = i18n.t('packages_dag_task_form_error_can_not_open_crontab_expression_flag')
     const handleCheckCrontabExpressionFlag = debounce(function (resolve, value) {
       taskApi.checkCheckCloudTaskLimit(props.task.id).then(data => {
@@ -53,6 +84,7 @@ export default defineComponent({
                 type: {
                   title: i18n.t('packages_dag_task_setting_sync_type'),
                   type: 'string',
+                  'x-display': 'hidden',
                   'x-decorator': 'FormItem',
                   'x-component': 'Radio.Group',
                   default: 'initial_sync+cdc',
@@ -75,42 +107,6 @@ export default defineComponent({
                 'nodes[3]': {
                   type: 'object',
                   properties: {
-                    existDataProcessMode: {
-                      type: 'string',
-                      title: i18n.t('packages_dag_nodes_database_chongfuchulice'),
-                      default: 'keepData',
-                      enum: [
-                        {
-                          label: i18n.t('packages_dag_nodes_database_baochimubiaoduan'),
-                          value: 'keepData'
-                        },
-                        {
-                          label: i18n.t('packages_dag_nodes_database_qingchumubiaoduan'),
-                          value: 'dropTable',
-                          disabled: true
-                        },
-                        {
-                          label: i18n.t('packages_dag_nodes_targetdatabase_baochimubiaoduan'),
-                          value: 'removeData'
-                        }
-                      ],
-                      'x-decorator': 'FormItem',
-                      'x-component': 'Select',
-                      'x-reactions': {
-                        fulfill: {
-                          run: '{{$self.dataSource[1].disabled = $self.dataSource[2].disabled = $values.type === "cdc"}}',
-                          state: {
-                            description: `{{$values.type === "cdc" ? '${i18n.t(
-                              'packages_dag_nodes_database_setting_cdc_changjing_desc'
-                            )}':''}}`
-                          },
-                          schema: {
-                            // TODO 根据能力改变dataSource
-                            'x-component-props.options': `{{options=[$self.dataSource[0]],$values.dag.nodes[3].attrs.capabilities.find(item => item.id ==='drop_table_function') && options.push($self.dataSource[1]),$values.dag.nodes[3].attrs.capabilities.find(item => item.id ==='clear_table_function') && options.push($self.dataSource[2]),options}}`
-                          }
-                        }
-                      }
-                    },
                     initialConcurrentSpace: {
                       title: i18n.t('packages_dag_nodes_database_quanliangduoxiancheng'),
                       'x-decorator': 'FormItem',
@@ -1338,7 +1334,8 @@ export default defineComponent({
       }
     }
     const scope = {
-      $settings: props.task,
+      $isDaas: isDaas,
+      $settings: taskRef.value,
       useAsyncOptions: (service, ...serviceParams) => {
         return field => {
           field.loading = true
@@ -1384,6 +1381,12 @@ export default defineComponent({
           handleCheckCrontabExpressionFlag(resolve, value)
         })
       },
+      checkName: value => {
+        return new Promise(resolve => {
+          handleCheckName(resolve, value)
+        })
+      },
+
       findNodeById: id => {
         return root.$store.state.dataflow.NodeMap[id]
       },
@@ -1413,31 +1416,187 @@ export default defineComponent({
       }
     }
 
-    const initForm = () => {
-      const task = props.task
-      scope.$taskId = task.id
-
-      form.value = createForm({
-        readPretty: true,
-        values: {
-          ...task,
-          dag: {
-            nodes
-          }
+    const onTaskChange = debounce(async () => {
+      const data = await taskApi.patch(
+        {
+          ...taskRef.value,
+          // id: taskRef.value.id,
+          // editVersion: taskRef.value.editVersion,
+          pageVersion: pageVersionRef.value
+          // dag: taskRef.value.dag
+        },
+        {
+          silenceMessage: true
         }
+      )
+
+      // 防止触发 FormValuesChange
+      // const rawObj = raw(taskRef.value)
+      taskRef.value.editVersion = data.editVersion
+
+      console.log('onTaskChange')
+    }, 100)
+
+    setTimeout(() => {
+      taskRef.value.a = 123
+    }, 3000)
+
+    let dispose
+
+    const initForm = () => {
+      const task = taskRef.value
+      scope.$taskId = task.id
+      form.value = createForm({
+        values: task
       })
+
+      // 防止挂载表单时触发valueChange
+      setTimeout(() => {
+        // dispose = observe(taskRef.value, () => {
+        //   console.log('observe.task')
+        //   onTaskChange()
+        // })
+
+        form.value.addEffects('watchForm', () => {
+          // onFormValuesChange(form => {
+          //   // onTaskChange()
+          //   console.log('onFormValuesChange', form.values)
+          // })
+          onFieldValueChange('*', field => {
+            onTaskChange()
+            console.log('onFieldValueChange', field)
+          })
+
+          onDialogFormValuesChange((payload, form) => {
+            onTaskChange()
+            console.log('onDialogFormValuesChange')
+          })
+        })
+      }, 100)
     }
 
     initForm()
 
+    const handlePrev = () => {
+      emit('prev')
+    }
+
+    const handleNext = () => {
+      emit('next')
+    }
+
+    const save = async () => {
+      // this.isSaving = true
+      // const errorMsg = await this.validate()
+      // if (errorMsg) {
+      //   if (this.destory) return
+      //   this.$message.error(errorMsg)
+      //   this.isSaving = false
+      //   return
+      // }
+
+      // if (!this.dataflow.id) {
+      //   return this.saveAsNewDataflow()
+      // }
+
+      // const data = this.getDataflowDataToSave()
+      starting.value = true
+      let isOk = false
+
+      try {
+        // this.initWS()
+        // const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
+        const result = await taskApi.saveAndStart(taskRef.value, {
+          silenceMessage: true
+        })
+        // this.reformDataflow(result)
+        // this.setEditVersion(result.editVersion)
+        // this.isSaving = false
+        isOk = true
+
+        root.$store.dispatch('setGuideComplete')
+
+        root.$router.push({
+          name: 'MigrationMonitorSimple',
+          params: {
+            id: taskRef.value.id
+          }
+        })
+      } catch (e) {
+        // this.handleError(e)
+      } finally {
+        starting.value = false
+      }
+      // this.isSaving = false
+      // this.toggleConsole(true)
+      // this.$refs.console?.startAuto('checkDag') // 信息输出自动加载
+      return isOk
+    }
+
+    const start = async () => {
+      this.buried('migrationStart')
+
+      this.unWatchStatus?.()
+      this.unWatchStatus = this.$watch('dataflow.status', v => {
+        if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
+          this.$refs.console?.loadData()
+          if (v !== 'running') {
+            this.$refs.console?.stopAuto()
+          } else {
+            this.toggleConsole(false)
+            this.gotoViewer(false)
+          }
+          // this.unWatchStatus()
+        }
+        if (['MigrateViewer'].includes(this.$route.name)) {
+          if (['renewing'].includes(v)) {
+            this.handleConsoleAutoLoad()
+          } else {
+            this.toggleConsole(false)
+          }
+        }
+      })
+
+      const hasError = await this.$refs.skipError.checkError(this.dataflow)
+      if (hasError) return
+
+      const flag = await this.save(true)
+      if (flag) {
+        this.dataflow.disabledData.edit = true
+        this.dataflow.disabledData.start = true
+        this.dataflow.disabledData.stop = true
+        this.dataflow.disabledData.reset = true
+        // this.gotoViewer()
+        this.beforeStartTask()
+        this.buried('taskSubmit', { result: true })
+      } else {
+        this.buried('taskSubmit', { result: false })
+      }
+    }
+
+    const handleStart = () => {
+      save()
+    }
+
+    onBeforeUnmount(() => {
+      console.log('卸载')
+      form.value.onUnmount()
+      dispose?.()
+      dispose = null
+    })
+
     return {
       form,
-      fieldForm,
       schema,
-      scope
+      scope,
+      starting,
+
+      handlePrev,
+      handleNext,
+      handleStart
     }
   }
 })
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

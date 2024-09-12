@@ -425,7 +425,13 @@ export default {
       return this.resultList?.filter(t => !!t.details) || []
     },
     errorMsg() {
-      return this.statsInfo?.errorMsg
+      let stack = this.statsInfo?.errorMsg || ''
+
+      if (process.env.VUE_APP_KEYWORD) {
+        stack = stack.replace(/tapdata\s?/gi, process.env.VUE_APP_KEYWORD)
+      }
+
+      return stack
     },
     errorSummary() {
       if (this.errorMsg) {

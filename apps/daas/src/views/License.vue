@@ -6,8 +6,14 @@
       }}</ElButton>
       <ElButton class="btn" type="primary" size="mini" @click="openDialog">{{ $t('public_event_update') }}</ElButton>
     </template>
-    <section class="license-wrapper h-100 pb-6 pr-6">
-      <TablePage ref="table" row-key="id" :remoteMethod="getData">
+    <section class="license-wrapper h-100 overflow-hidden pb-6 pr-6">
+      <TablePage
+        ref="table"
+        row-key="id"
+        :default-sort="{ prop: 'lastUpdatedFmt', order: 'descending' }"
+        :remoteMethod="getData"
+        @sort-change="handleSortTable"
+      >
         <ElTableColumn type="selection" width="45"></ElTableColumn>
         <ElTableColumn prop="hostname" :label="$t('license_node_name')" min-width="150"></ElTableColumn>
         <ElTableColumn prop="sid" :label="$t('license_node_sid')" min-width="150"></ElTableColumn>
@@ -34,7 +40,12 @@
           </template>
         </ElTableColumn>
         <ElTableColumn prop="expirationDateFmt" :label="$t('license_expire_date')" min-width="160"></ElTableColumn>
-        <ElTableColumn prop="lastUpdatedFmt" :label="$t('license_update_time')" min-width="160"></ElTableColumn>
+        <ElTableColumn
+          prop="lastUpdatedFmt"
+          sortable
+          :label="$t('license_update_time')"
+          min-width="160"
+        ></ElTableColumn>
       </TablePage>
       <ElDialog append-to-body :title="$t('license_renew_dialog')" :visible.sync="dialogVisible">
         <ElInput v-model.trim="license" type="textarea"></ElInput>
@@ -79,22 +90,9 @@
               </div>
             </template>
           </div>
-          <!--<div class="mt-4">
-            <div class="fw-sub font-color-dark mb-3">任务明细</div>
-            <div class="task-list">
-              <div
-                class="task-list-item flex align-center justify-content-between py-2 border-top"
-                v-for="(task, i) in item.tasks"
-                :key="task.id"
-              >
-                <a class="el-link el-link&#45;&#45;primary justify-content-start" :title="task.name">
-                  <span class="ellipsis">{{ task.name }}</span>
-                </a>
-                <TaskStatus :task="task"></TaskStatus>
-              </div>
-            </div>
-          </div>-->
         </div>
+
+        <VEmpty v-if="!detailsDialog.data.length"></VEmpty>
       </div>
     </ElDialog>
   </PageContainer>
@@ -106,9 +104,10 @@ import dayjs from 'dayjs'
 import { licensesApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
+import { VEmpty } from '@tap/component'
 
 export default {
-  components: { DatabaseIcon, PageContainer, TablePage, TaskStatus },
+  components: { VEmpty, DatabaseIcon, PageContainer, TablePage, TaskStatus },
   data() {
     const TYPE_MAP = {
       OP: this.$t('daas_licenseType_op'),
@@ -126,14 +125,16 @@ export default {
         show: false,
         loading: false,
         data: []
-      }
+      },
+
+      order: 'last_updated DESC'
     }
   },
   methods: {
     getData({ page }) {
       let { current, size } = page
       let filter = {
-        order: 'createTime DESC',
+        order: this.order,
         limit: size,
         skip: (current - 1) * size
       }
@@ -244,6 +245,13 @@ export default {
       this.detailsDialog.loading = false
       this.detailsDialog.data = data
       console.log('data', data)
+    },
+    handleSortTable({ order, prop }) {
+      if (prop === 'lastUpdatedFmt') {
+        prop = 'last_updated'
+      }
+      this.order = order ? `${prop} ${order === 'ascending' ? 'ASC' : 'DESC'}` : ''
+      this.table.fetch(1)
     }
   }
 }

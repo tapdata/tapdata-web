@@ -302,6 +302,7 @@ const SourceDatabaseNode = defineComponent({
                   tableNames: {
                     type: 'array',
                     default: [],
+                    'x-decorator': 'FormItem',
                     'x-component': 'TableSelector',
                     'x-component-props': {
                       class: 'mt-4',

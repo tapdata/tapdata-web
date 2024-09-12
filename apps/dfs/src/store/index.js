@@ -192,10 +192,6 @@ const store = new Vuex.Store({
       state.upgradeFeeVisible = flag
     },
 
-    setReplicationView(state, view) {
-      state.replicationTour.view = view
-    },
-
     setReplicationConnectionDialog(state, visible) {
       state.replicationConnectionDialog = visible
     },
@@ -370,6 +366,13 @@ const store = new Vuex.Store({
       })
 
       commit('openCompleteReplicationTour')
+    },
+
+    setReplicationView({ commit, state }, view) {
+      state.guide.tour.view = view
+      axios.post('api/tcm/user_guide', {
+        tour: state.guide.tour
+      })
     }
   }
 })

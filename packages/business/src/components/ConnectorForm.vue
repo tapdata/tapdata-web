@@ -1,7 +1,7 @@
 <template>
   <div class="flex gap-4 h-100">
-    <div class="flex-1 bg-white rounded-lg min-h-0 overflow-y-auto overflow-x-hidden">
-      <div class="p-4">
+    <div class="flex flex-column gap-4 flex-1 rounded-lg min-h-0 overflow-y-auto overflow-x-hidden">
+      <div class="p-4 bg-white rounded-lg">
         <slot name="header"></slot>
         <ElAlert v-if="showIpTips" class="alert-primary text-primary mt-2" type="info" show-icon :closable="false">
           <template #title>
@@ -25,7 +25,7 @@
         />
       </div>
 
-      <div class="position-sticky z-index bottom-0 p-4 border-top backdrop-filter-light z-10">
+      <div class="position-sticky mt-auto z-index bottom-0 p-4 border backdrop-filter-light z-10 rounded-lg">
         <slot name="footer"></slot>
       </div>
     </div>

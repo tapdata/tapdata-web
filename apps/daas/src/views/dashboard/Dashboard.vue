@@ -46,7 +46,7 @@
 
                   <ul class="job-list">
                     <li
-                      class="flex align-center"
+                      class="flex align-center cursor-pointer"
                       v-for="task in migrationTaskList"
                       :key="task.label"
                       @click="handleStatus(task.label)"
@@ -83,7 +83,7 @@
                   <div class="fs-7 font-color-normal">{{ $t('dashboard_sync_overview_title') }}</div>
                   <ul class="job-list">
                     <li
-                      class="flex align-center"
+                      class="flex align-center cursor-pointer"
                       v-for="task in syncTaskList"
                       :key="task.label"
                       @click="handleSyncStatus(task.label)"
@@ -792,7 +792,7 @@ export default {
           box-sizing: border-box;
           li {
             margin-bottom: 5px;
-            cursor: pointer;
+            //cursor: pointer;
             white-space: nowrap;
             .dots {
               display: inline-block;

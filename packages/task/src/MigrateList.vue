@@ -107,10 +107,10 @@ export default {
     },
     viewType: {
       get() {
-        return this.$store.state.replicationTour.view
+        return this.$store.state.guide.tour.view
       },
       set(value) {
-        this.$store.commit('setReplicationView', value)
+        this.$store.dispatch('setReplicationView', value)
       }
     },
     buttonShowMap() {
@@ -128,16 +128,6 @@ export default {
         copy: this.$has('v2_data_replication_copy'),
         import: this.$has('v2_data_replication_import'),
         export: this.$has('v2_data_replication_export')
-      }
-    }
-  },
-
-  watch: {
-    viewType() {
-      if (!this.startingTour) {
-        this.$axios.post('api/tcm/user_guide', {
-          tour: this.$store.state.replicationTour
-        })
       }
     }
   },

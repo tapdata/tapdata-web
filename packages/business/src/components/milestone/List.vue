@@ -62,6 +62,8 @@ import Time from '@tap/shared/src/time'
 import NodeList from '../nodes/List'
 import dayjs from 'dayjs'
 
+import { ErrorMessage } from '../error-message'
+
 export default {
   name: 'List',
 
@@ -459,10 +461,11 @@ export default {
     },
 
     handleError(row = {}) {
-      this.$confirm(row.errorMessage, i18n.t('packages_business_milestone_list_cuowuxinxi'), {
-        type: 'warning',
-        closeOnClickModal: false
-      })
+      ErrorMessage(row.errorMessage)
+      // this.$confirm(row.errorMessage, i18n.t('packages_business_milestone_list_cuowuxinxi'), {
+      //   type: 'warning',
+      //   closeOnClickModal: false
+      // })
     },
 
     getDueTimeAndProgress(data = {}) {

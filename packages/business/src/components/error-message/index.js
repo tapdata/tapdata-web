@@ -68,6 +68,10 @@ function renderMessage(message, stack) {
 }
 
 export function ErrorMessage(stack, message) {
+  if (process.env.VUE_APP_KEYWORD) {
+    stack = stack.replace(/tapdata\s?/gi, process.env.VUE_APP_KEYWORD)
+  }
+
   MessageBox({
     title: '',
     showClose: true,
