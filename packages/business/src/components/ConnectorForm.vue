@@ -3,16 +3,24 @@
     <div class="flex flex-column gap-4 flex-1 rounded-lg min-h-0 overflow-y-auto overflow-x-hidden">
       <div class="p-4 bg-white rounded-lg">
         <slot name="header"></slot>
-        <ElAlert v-if="showIpTips" class="alert-primary text-primary mt-2" type="info" show-icon :closable="false">
-          <template #title>
-            <span class="inline-block lh-sm align-middle">
-              {{ $t('packages_business_agent_ip_tips_prefix')
-              }}<a :href="docUrl" target="_blank" class="text-decoration-underline text-primary">{{
-                $t('packages_business_agent_ip_tips_suffix')
-              }}</a>
-            </span>
-          </template>
-        </ElAlert>
+        <div v-if="showIpTips" class="flex flex-column gap-2 mb-4 rounded-lg p-2 bg-color-primary-light-9">
+          <div class="flex align-items-start gap-1">
+            <div class="p-1">
+              <VIcon class="color-primary" :size="22">info</VIcon>
+            </div>
+            <div class="lh-base p-1 fw-sub">{{ $t('packages_business_agent_ip_tips_prefix') }}:</div>
+          </div>
+
+          <el-collapse value="1" class="rounded-lg overflow-hidden rounded-collapse">
+            <el-collapse-item title="TapData IP addresses" name="1">
+              <ul class="ml-6 font-color-dark">
+                <li>47.93.190.224</li>
+                <li>47.242.251.110</li>
+              </ul>
+            </el-collapse-item>
+          </el-collapse>
+        </div>
+
         <slot name="prepend"></slot>
         <SchemaToForm
           class="pdk-schema-form form-wrap"
@@ -1229,6 +1237,26 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.rounded-collapse {
+  ::v-deep {
+    .el-collapse-item__header {
+      height: 38px;
+      padding: 0 16px;
+      gap: 8px;
+      font-weight: 400;
+      &.is-active {
+        color: map-get($color, primary);
+      }
+    }
+    .el-collapse-item__arrow {
+      order: -1;
+      margin: 0;
+    }
+    .el-collapse-item__content {
+      padding: 0 16px 16px;
+    }
+  }
+}
 .form-wrap {
   ::v-deep {
     .formily-element-form-item-feedback-layout-loose {
