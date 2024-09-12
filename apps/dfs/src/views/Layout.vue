@@ -52,8 +52,15 @@
                 <span slot="title">{{ menu.title }}</span>
               </template>
               <template v-for="cMenu in menu.children">
-                <ElMenuItem :key="cMenu.title" :index="cMenu.path">
+                <ElMenuItem
+                  :key="cMenu.title"
+                  :index="cMenu.path"
+                  class="flex align-center gap-2"
+                  :locked="cMenu.name === 'sharedMining' && !user.isPremium"
+                >
                   <div class="submenu-item">{{ cMenu.title }}</div>
+
+                  <VIcon v-if="cMenu.name === 'sharedMining' && !user.isPremium" size="24">lock-circle</VIcon>
                 </ElMenuItem>
               </template>
             </ElSubmenu>
@@ -215,7 +222,7 @@ export default {
   },
 
   computed: {
-    ...mapState(['upgradeFeeVisible']),
+    ...mapState(['upgradeFeeVisible', 'user']),
     ...mapGetters(['isDomesticStation'])
   },
 
@@ -279,6 +286,7 @@ export default {
             title: this.$t('public_shared_mining'),
             icon: 'cdc-log',
             beta: true
+            // locked: this.user.isPremium
           },
           {
             name: 'externalStorage',
@@ -350,7 +358,11 @@ export default {
     selectConnectionType() {
       this.dialogVisible = true
     },
-    menuTrigger(path) {
+    menuTrigger(path, indexPath, menuVM) {
+      if (menuVM?.$attrs?.locked) {
+        return
+      }
+
       if (['goDemo'].includes(path)) {
         this.goDemo()
         return

@@ -37,7 +37,8 @@ const store = new Vuex.Store({
         lastName: ''
       },
       gcpAccount: null,
-      locale: ''
+      locale: '',
+      isPremium: false
     },
     highlightBoard: false,
     driverIndex: 0,
