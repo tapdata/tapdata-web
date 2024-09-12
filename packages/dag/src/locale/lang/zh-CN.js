@@ -755,5 +755,6 @@ export default {
   packages_dag_tour_task_success_desc: '接下来可以使用我们的产品进行数据库的复制、迁移等工作啦。',
   packages_dag_access_task_list: '进入任务列表',
   packages_dag_current_selected: '当前已选',
-  packages_dag_task_monitor: '任务监控'
+  packages_dag_task_monitor: '任务监控',
+  packages_dag_select_HasKeys_alert: '仅同步具有主键或唯一索引的表。如需同步无主键的表，请手动切换'
 }
