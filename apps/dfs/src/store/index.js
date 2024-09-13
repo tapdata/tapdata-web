@@ -374,6 +374,24 @@ const store = new Vuex.Store({
       axios.post('api/tcm/user_guide', {
         tour: state.guide.tour
       })
+    },
+
+    // 设置用户付费标识
+    async setUserPremium({ state }) {
+      let filter = {
+        limit: 10,
+        where: {
+          status: 'active',
+          totalAmount: {
+            $gt: 0
+          }
+        }
+      }
+      const { items } = await axios.get(`api/tcm/subscribe?filter=${encodeURIComponent(JSON.stringify(filter))}`)
+
+      if (items.length) {
+        state.user.isPremium = true
+      }
     }
   }
 })
