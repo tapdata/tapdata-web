@@ -5,7 +5,7 @@
 <script>
 import i18n from '@tap/i18n'
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import { createForm, onFieldInputValueChange, onFieldValueChange } from '@formily/core'
 import { observer } from '@formily/reactive-vue'
 import FormRender from '../FormRender'
@@ -638,6 +638,7 @@ export default observer({
                                 'x-component': 'Switch'
                               },
                               accessNodeType: {
+                                'x-hidden': !this.user.isPremium,
                                 type: 'string',
                                 title: this.$t('packages_dag_connection_form_access_node'),
                                 default: 'AUTOMATIC_PLATFORM_ALLOCATION',
@@ -1191,6 +1192,7 @@ export default observer({
   },
 
   computed: {
+    ...mapState(['user']),
     ...mapGetters('dataflow', ['stateIsReadonly', 'allNodes']),
 
     dataNodes() {
@@ -1198,6 +1200,7 @@ export default observer({
     },
 
     showDoubleActive() {
+      if (!this.user.isPremium) return false
       const map = this.$store.state.dataflow.pdkDoubleActiveMap
       return this.dataNodes.length ? this.dataNodes.every(node => map[node.attrs.pdkHash]) : false
     },

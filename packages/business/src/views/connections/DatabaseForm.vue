@@ -154,6 +154,7 @@ import mixins from '../../components/create-connection/mixins'
 import UsedTaskDialog from './UsedTaskDialog'
 import { DatabaseIcon } from '../../components'
 import ConnectorDoc from '../../components/ConnectorDoc'
+import { mapState } from 'vuex'
 
 export default {
   name: 'DatabaseForm',
@@ -229,6 +230,8 @@ export default {
     }
   },
   computed: {
+    ...mapState(['user']),
+
     schemaFormInstance() {
       return this.$refs.schemaToForm.getForm?.()
     },
@@ -689,6 +692,7 @@ export default {
           type: 'string',
           title: this.$t('packages_business_connection_form_access_node'),
           default: 'AUTOMATIC_PLATFORM_ALLOCATION',
+          'x-hidden': !this.user.isPremium,
           'x-decorator': 'FormItem',
           'x-decorator-props': {
             tooltip: this.$t('packages_business_connection_form_access_node_tip')

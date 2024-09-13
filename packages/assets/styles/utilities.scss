@@ -2769,6 +2769,14 @@
   user-select: none !important;
 }
 
+.user-drag-none {
+  user-drag: none; /* For Safari */
+  user-select: none; /* Standard */
+  -webkit-user-drag: none; /* For Chrome and other WebKit browsers */
+  -moz-user-select: none; /* For Firefox */
+  -ms-user-select: none; /* For Internet Explorer/Edge */
+}
+
 .pe-none {
   pointer-events: none !important;
 }

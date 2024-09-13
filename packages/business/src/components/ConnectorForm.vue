@@ -58,6 +58,7 @@ import { isEmpty } from 'lodash'
 import { submitForm, uuid } from '@tap/shared'
 import ConnectorDoc from './ConnectorDoc.vue'
 import Test from '../views/connections/Test.vue'
+import { mapState } from 'vuex'
 
 export default {
   name: 'ConnectorForm',
@@ -342,6 +343,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['user']),
     docUrl() {
       return `https://docs.tapdata.${
         !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en' ? 'io' : 'net'
@@ -629,6 +631,7 @@ export default {
 
       Object.assign(endProperties, {
         accessNodeType: {
+          'x-hidden': !this.user.isPremium,
           type: 'string',
           title: this.$t('packages_business_connection_form_access_node'),
           default: 'AUTOMATIC_PLATFORM_ALLOCATION',

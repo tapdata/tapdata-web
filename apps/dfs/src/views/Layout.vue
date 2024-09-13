@@ -360,6 +360,7 @@ export default {
     },
     menuTrigger(path, indexPath, menuVM) {
       if (menuVM?.$attrs?.locked) {
+        this.setUpgradeFeeVisible(true)
         return
       }
 

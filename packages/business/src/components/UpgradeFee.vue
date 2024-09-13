@@ -46,11 +46,11 @@
           alt=""
           width="50"
           height="56"
-          class="copilot-pricing-card-bg-glow width-full height-full left-0 top-0 position-absolute d-block"
+          class="copilot-pricing-card-bg-glow width-full height-full left-0 top-0 position-absolute d-block user-drag-none"
           loading="lazy"
           decoding="async"
           aria-hidden="true"
-          style="z-index：0"
+          style="z-index: 0"
           :src="require('@tap/assets/images/pricing-card-glow.png')"
         />
         <div class="copilot-pricing-card-glow-border1">

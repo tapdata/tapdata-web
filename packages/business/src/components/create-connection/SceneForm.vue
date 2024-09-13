@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import { action } from '@formily/reactive'
 
 import i18n from '@tap/i18n'
@@ -163,6 +163,8 @@ export default {
     }
   },
   computed: {
+    ...mapState(['user']),
+
     startingTour() {
       return this.$store.getters.startingTour
     },
@@ -654,6 +656,7 @@ export default {
 
       Object.assign(endProperties, {
         accessNodeType: {
+          'x-hidden': !this.user.isPremium,
           type: 'string',
           title: this.$t('packages_business_connection_form_access_node'),
           default: 'AUTOMATIC_PLATFORM_ALLOCATION',
