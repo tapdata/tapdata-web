@@ -91,5 +91,9 @@ export default class Users extends Http {
   testAdLogin(data) {
     return this.axios.post(`${this.url}/testAdLogin`, data)
   }
+
+  checkADLoginEnable() {
+    return this.axios.get(`${this.url}/checkADLoginEnable`)
+  }
 }
 export { Users }

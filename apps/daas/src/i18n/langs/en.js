@@ -976,6 +976,7 @@ export default {
   app_signIn_signIn: 'Sign in',
   app_signIn_keepSignIn: 'Keep signed in',
   app_signIn_email_placeholder: 'Enter your email',
+  login_email_and_ad_placeholder: 'Enter your email/AD username',
   app_signIn_inviteCode_placeholder: 'invite code',
   app_signIn_password_placeholder: 'Enter your password',
   app_signIn_email_require: 'E-mail is required.',

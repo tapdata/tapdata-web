@@ -945,6 +945,7 @@ export default {
   app_signIn_signIn: '登錄',
   app_signIn_keepSignIn: '保持登錄狀態',
   app_signIn_email_placeholder: '請輸入郵箱',
+  login_email_and_ad_placeholder: '請輸入郵箱/AD 用戶名',
   app_signIn_inviteCode_placeholder: '邀请码',
   app_signIn_password_placeholder: '請輸入密碼',
   app_signIn_email_require: '郵箱地址必填',
