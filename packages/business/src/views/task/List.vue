@@ -154,7 +154,9 @@
           </div>
           <div class="fs-8 font-color-sslight lh-base">
             <span class="align-middle">{{ row.type ? taskType[row.type] : '' }}</span>
-            <VIcon v-if="row.desc === 'form'" size="18" class="align-middle ml-1">dynamic-form-outline</VIcon>
+            <VIcon v-if="row.attrs && row.attrs.editorType === 'form'" size="18" class="align-middle ml-1"
+              >dynamic-form-outline</VIcon
+            >
           </div>
         </template>
       </el-table-column>
@@ -910,7 +912,7 @@ export default {
 
     handleEditor(row) {
       this.openRoute({
-        name: row.desc === 'form' ? 'MigrateForm' : this.route.editor,
+        name: row.attrs?.editorType === 'form' ? 'MigrateForm' : this.route.editor,
         params: {
           id: row.id
         }
@@ -1056,11 +1058,11 @@ export default {
       })
     },
 
-    toDetail({ id }) {
+    toDetail(row) {
       this.openRoute({
-        name: this.route.monitor,
+        name: row.attrs?.editorType === 'form' ? 'MigrationMonitorSimple' : this.route.monitor,
         params: {
-          id
+          id: row.id
         }
       })
     },

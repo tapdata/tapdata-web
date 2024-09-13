@@ -368,7 +368,9 @@ export default defineComponent({
       const task = {
         ...DEFAULT_SETTINGS,
         name: '',
-        desc: 'form',
+        attrs: {
+          editorType: 'form'
+        },
         status: '',
         dag
       }

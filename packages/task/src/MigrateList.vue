@@ -94,7 +94,7 @@ export default {
       route: {
         new: 'MigrateCreate',
         editor: 'MigrateEditor',
-        monitor: 'MigrationMonitorSimple'
+        monitor: 'MigrationMonitor'
       },
       createBtnLoading: false,
       quickCreateBtnLoading: false
