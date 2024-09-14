@@ -267,7 +267,7 @@ _Message.error = function (options) {
   if (process.env.VUE_APP_KEYWORD) {
     if (typeof options === 'string') {
       options = options.replace(/tapdata\s?/gi, process.env.VUE_APP_KEYWORD)
-    } else if (options?.message) {
+    } else if (options?.message && typeof options.message === 'string') {
       options.message = options.message.replace(/tapdata\s?/gi, process.env.VUE_APP_KEYWORD)
     }
   }
