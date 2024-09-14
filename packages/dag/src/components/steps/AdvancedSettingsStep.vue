@@ -561,15 +561,7 @@ export default defineComponent({
                               properties: {
                                 enableConcurrentRead: {
                                   type: 'boolean',
-                                  'x-component': 'Switch',
-                                  'x-reactions': {
-                                    target: '.concurrentReadThreadNumber',
-                                    fulfill: {
-                                      state: {
-                                        visible: '{{!!$self.value}}'
-                                      }
-                                    }
-                                  }
+                                  'x-component': 'Switch'
                                 },
                                 concurrentReadThreadNumber: {
                                   title: i18n.t('packages_dag_concurrentReadThreadNumber'),
@@ -583,6 +575,14 @@ export default defineComponent({
                                   'x-component': 'InputNumber',
                                   'x-component-props': {
                                     min: 1
+                                  },
+                                  'x-reactions': {
+                                    dependencies: ['.enableConcurrentRead'],
+                                    fulfill: {
+                                      state: {
+                                        visible: '{{!!$deps[0]}}'
+                                      }
+                                    }
                                   }
                                 }
                               }
@@ -757,7 +757,6 @@ export default defineComponent({
                             }
                           }
                         },
-
                         tab4: {
                           type: 'void',
                           'x-component': 'FormCollapse.Item',
@@ -892,7 +891,7 @@ export default defineComponent({
                                 }
                               },
                               'x-reactions': {
-                                dependencies: ['writeStrategy'],
+                                dependencies: ['.writeStrategy'],
                                 fulfill: {
                                   state: {
                                     display: '{{$deps[0] === "appendWrite" ? "hidden":"visible"}}'
