@@ -46,8 +46,6 @@ import { debounce } from 'lodash'
 import { genDatabaseNode, genProcessorNode } from './util'
 import { observable } from '@formily/reactive'
 import { DEFAULT_SETTINGS } from './constants'
-import { computed as reactiveComputed } from '@tap/form'
-import { observer } from '@formily/vue'
 import { VIcon } from '@tap/component'
 
 export default defineComponent({
@@ -368,7 +366,9 @@ export default defineComponent({
       const task = {
         ...DEFAULT_SETTINGS,
         name: '',
-        desc: 'form',
+        attrs: {
+          editorType: 'form'
+        },
         status: '',
         dag
       }

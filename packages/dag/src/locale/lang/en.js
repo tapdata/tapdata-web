@@ -795,8 +795,11 @@ export default {
   packages_dag_merge_table_missing_key_or_index:
     'The current node lacks a primary key or unique index. Please add one to ensure accurate and consistent merging, then try again.',
   packages_dag_add_own_datasource: 'Add My Own Data Source',
+  packages_dag_add_own_target_datasource: 'Add My Own Target Data Source',
+  packages_dag_add_new_connection: 'Create New Connection',
   packages_dag_add_own_datasource_desc: 'Configure a new data source from the list of connectors in TapData',
   packages_dag_no_datasource: 'I Don’t Have a Data Source',
+  packages_dag_no_target_datasource: 'I Don’t Have a Target Data Source',
   packages_dag_no_datasource_desc: 'TapData provides a demo library with 2 sources and 2 targets.',
   packages_dag_have_connection: 'Select Existing Connection',
   packages_dag_have_connection_desc: 'Connections or data sources you have previously created.',

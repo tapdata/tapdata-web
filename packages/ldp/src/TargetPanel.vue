@@ -841,6 +841,9 @@ export default {
 
       return {
         ...TASK_SETTINGS,
+        attrs: {
+          referrer: 'board'
+        },
         syncType: 'migrate',
         name: this.taskDialogConfig.taskName,
         dag: {

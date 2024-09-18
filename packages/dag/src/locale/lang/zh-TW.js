@@ -737,8 +737,11 @@ export default {
   packages_dag_merge_table_missing_key_or_index:
     '當前節點模型缺少主鍵或唯一索引。為確保主從合併的準確性和數據一致性，請為源節點添加主鍵或唯一索引後重試。',
   packages_dag_add_own_datasource: '添加我自己的數據源',
+  packages_dag_add_own_target_datasource: '添加我自己的目標數據源',
+  packages_dag_add_new_connection: '創建新的連接',
   packages_dag_add_own_datasource_desc: '從 TapData 的連接器列表中配置新的數據源',
   packages_dag_no_datasource: '我沒有數據源',
+  packages_dag_no_target_datasource: '我沒有目標數據源',
   packages_dag_no_datasource_desc: 'TapData 提供包含 2 個數據源和 2 個目標源的 Demo 庫',
   packages_dag_have_connection: '選擇已有連接',
   packages_dag_have_connection_desc: '選擇您已創建的連接',

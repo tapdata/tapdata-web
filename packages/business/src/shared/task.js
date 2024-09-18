@@ -1,4 +1,4 @@
-import i18n from '@tap/i18n'
+import i18n, { createI18nObject } from '@tap/i18n'
 import { Cookie } from '@tap/shared'
 import { getIcon } from '@tap/assets/icons'
 // 获取子任务状态统计
@@ -199,23 +199,23 @@ export function makeStatusAndDisabled(item) {
   return item
 }
 
-export const MILESTONE_TYPE = {
+export const MILESTONE_TYPE = createI18nObject({
   TASK: {
-    text: i18n.t('packages_business_milestone_list_renwudiaodu')
+    text: 'packages_business_milestone_list_renwudiaodu'
   },
   DEDUCTION: {
-    text: i18n.t('packages_business_milestone_list_load_table_structure')
+    text: 'packages_business_milestone_list_load_table_structure'
   },
   DATA_NODE_INIT: {
-    text: i18n.t('packages_business_milestone_list_shujujiedianchu')
+    text: 'packages_business_milestone_list_shujujiedianchu'
   },
   TABLE_INIT: {
-    text: i18n.t('packages_business_milestone_list_biaojiegouqianyi')
+    text: 'packages_business_milestone_list_biaojiegouqianyi'
   },
   SNAPSHOT: {
-    text: i18n.t('packages_business_milestone_list_quanliangshujuqian')
+    text: 'packages_business_milestone_list_quanliangshujuqian'
   },
   CDC: {
-    text: i18n.t('packages_business_milestone_list_jinruzengliangshu')
+    text: 'packages_business_milestone_list_jinruzengliangshu'
   }
-}
+})

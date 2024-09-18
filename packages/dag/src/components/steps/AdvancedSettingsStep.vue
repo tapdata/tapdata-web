@@ -1,6 +1,6 @@
 <template>
   <div class="position-relative flex flex-column gap-4 h-100 min-h-0 rounded-lg overflow-y-auto">
-    <SchemaForm :form="form" :schema="schema" :scope="scope" />
+    <SchemaForm v-if="form" :form="form" :schema="schema" :scope="scope" />
     <div
       class="step-footer mt-auto flex align-center position-sticky z-index bottom-0 p-4 border backdrop-filter-light z-10 rounded-lg"
     >
@@ -11,20 +11,31 @@
       <el-divider class="mx-4" direction="vertical"></el-divider>
       <slot name="help"></slot>
     </div>
+
+    <UpgradeFee
+      :visible.sync="upgradeFeeVisible"
+      :tooltip="upgradeFeeVisibleTips || $t('packages_business_task_list_nindekeyunxing')"
+      :go-page="upgradeFeeGoPage"
+    ></UpgradeFee>
+
+    <UpgradeCharges
+      :visible.sync="upgradeChargesVisible"
+      :tooltip="upgradeChargesVisibleTips || $t('packages_business_task_list_nindekeyunxing')"
+      :go-page="upgradeFeeGoPage"
+    ></UpgradeCharges>
   </div>
 </template>
 
 <script>
 import i18n from '@tap/i18n'
-import { alarmApi, taskApi } from '@tap/api'
+import { showErrorMessage, UpgradeCharges, UpgradeFee } from '@tap/business'
+import { Message } from 'element-ui'
+import { alarmApi, clusterApi, taskApi } from '@tap/api'
 import { debounce, merge } from 'lodash'
 import { createForm, onFormValuesChange, onFieldValueChange, createEffectHook } from '@formily/core'
 import { observable, action, untracked, raw, isObservable, observe, autorun } from '@formily/reactive'
 import SchemaForm from '../SchemaForm.vue'
-import { DEFAULT_SETTINGS } from '../../constants'
-import { genDatabaseNode, genProcessorNode } from '../../util'
-import { defineComponent, inject, nextTick, ref, onBeforeUnmount } from '@vue/composition-api'
-import { task } from '@vue/cli-plugin-eslint/ui/taskDescriptor'
+import { defineComponent, inject, nextTick, ref, onBeforeUnmount, computed } from '@vue/composition-api'
 
 // 自定义 Dialog 表单内的 value 变化事件
 const onDialogFormValuesChange = createEffectHook('dialog-form-values-change', (payload, form) => listener => {
@@ -33,11 +44,115 @@ const onDialogFormValuesChange = createEffectHook('dialog-form-values-change', (
 
 export default defineComponent({
   name: 'TaskStep',
-  components: {
-    SchemaForm
-  },
+  components: { UpgradeFee, UpgradeCharges, SchemaForm },
   setup(props, { emit, root }) {
     const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+    const taskRef = inject('task')
+    const pageVersionRef = inject('pageVersion')
+    const lockedFeature = inject('lockedFeature')
+    const openLocked = inject('openLocked')
+    const scope = {
+      lockedFeature,
+      $isDaas: isDaas,
+      $settings: taskRef.value,
+      useAsyncOptions: (service, ...serviceParams) => {
+        return field => {
+          field.loading = true
+          service(...serviceParams).then(
+            action.bound(data => {
+              field.dataSource = data
+              field.loading = false
+            })
+          )
+        }
+      },
+      async loadAlarmChannels() {
+        const channels = await alarmApi.channels()
+        const MAP = {
+          system: { label: i18n.t('packages_dag_migration_alarmpanel_xitongtongzhi'), value: 'SYSTEM' },
+          email: { label: i18n.t('packages_dag_migration_alarmpanel_youjiantongzhi'), value: 'EMAIL' }
+        }
+        const options = []
+        if (!isDaas) {
+          let isOpenid = window.__USER_INFO__?.openid
+          Object.assign(MAP, {
+            wechat: {
+              label: i18n.t('packages_business_notify_webchat_notification'),
+              value: 'WECHAT',
+              disabled: !isOpenid
+            },
+            sms: { label: i18n.t('packages_business_notify_sms_notification'), value: 'SMS' }
+          })
+        }
+
+        for (const channel of channels) {
+          const option = MAP[channel.type]
+
+          if (!option) continue
+
+          options.push(option)
+        }
+
+        return options
+      },
+      checkCrontabExpressionFlag: value => {
+        return new Promise(resolve => {
+          handleCheckCrontabExpressionFlag(resolve, value)
+        })
+      },
+      checkName: value => {
+        return new Promise(resolve => {
+          handleCheckName(resolve, value)
+        })
+      },
+
+      findNodeById: id => {
+        return root.$store.state.dataflow.NodeMap[id]
+      },
+
+      findParentNodes: (id, ifMyself) => {
+        let node = scope.findNodeById(id)
+        const parents = []
+
+        if (!node) return parents
+
+        let parentIds = node.$inputs || []
+        if (ifMyself && !parentIds.length) return [node]
+        parentIds.forEach(pid => {
+          let parent = scope.findNodeById(pid)
+          if (parent) {
+            if (parent.$inputs?.length) {
+              parent.$inputs.forEach(ppid => {
+                parents.push(...scope.findParentNodes(ppid, true))
+              })
+            } else {
+              parents.push(parent)
+            }
+          }
+        })
+
+        return parents
+      },
+
+      getConnectionNameByAgent: field => {
+        console.log('accessNodeProcessIdMap', accessNodeProcessIdMap.value)
+        // 消费收集下 field.dataSource 的依赖，当选项改变时重新执行该方法
+        if (!field.value || !field.dataSource?.length || !accessNodeProcessIdMap.value[field.value]) {
+          field.setDescription('')
+          return
+        }
+
+        const map = {
+          [taskRef.value.dag.nodes[0].connectionId]: taskRef.value.dag.nodes[0].attrs.connectionName,
+          [taskRef.value.dag.nodes[3].connectionId]: taskRef.value.dag.nodes[3].attrs.connectionName
+        }
+
+        const values = Object.values(map)
+
+        field.setDescription(values.length ? `${i18n.t('packages_dag_agent_setting_from')}: ${values.join(', ')}` : '')
+      }
+    }
+
     let repeatNameMessage = i18n.t('packages_dag_task_form_error_name_duplicate')
     const handleCheckName = debounce(function (resolve, value) {
       taskApi
@@ -49,21 +164,116 @@ export default defineComponent({
           resolve(data)
         })
     }, 500)
-    const taskRef = inject('task')
-    const pageVersionRef = inject('pageVersion')
+
     const form = ref(null)
     const starting = ref(false)
+    const upgradeFeeVisible = ref(false)
+    const upgradeFeeVisibleTips = ref(false)
+    const upgradeChargesVisibleTips = ref(false)
+    const upgradeChargesVisible = ref(false)
 
     console.log('taskRef', taskRef)
+
+    const loadAccessNode = async () => {
+      const data = await clusterApi.findAccessNodeInfo()
+      const mapNode = item => ({
+        value: item.processId,
+        label: `${item.agentName || item.hostName}（${
+          item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
+        }）`,
+        disabled: item.status !== 'running',
+        accessNodeType: item.accessNodeType
+      })
+      scope.$agents = data.map(item => {
+        if (item.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP') {
+          return {
+            value: item.processId,
+            label: `${item.accessNodeName}（${i18n.t('public_status_running')}：${
+              item.accessNodes?.filter(ii => ii.status === 'running').length || 0
+            }）`,
+            accessNodeType: item.accessNodeType,
+            children: item.accessNodes?.map(mapNode) || []
+          }
+        }
+        return mapNode(item)
+      })
+      scope.$agentMap = data.reduce((obj, item) => ((obj[item.processId] = item), obj), {})
+    }
+
+    const initTaskAgent = () => {
+      const size = accessNodeProcessIdArr.value.length
+      if (size >= 1) {
+        let currentId = taskRef.value.accessNodeProcessId
+        currentId =
+          currentId && accessNodeProcessIdArr.value.includes(currentId) ? currentId : accessNodeProcessIdArr.value[0]
+        taskRef.value.accessNodeType = scope.$agentMap[currentId]?.accessNodeType || 'MANUALLY_SPECIFIED_BY_THE_USER'
+        taskRef.value.accessNodeProcessId = currentId
+
+        if (taskRef.value.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP') {
+          const nodeIds = accessNodeProcessIdMap.value[currentId]
+          let priorityProcessId = null
+
+          nodeIds.some(id => {
+            const node = taskRef.value.dag.nodes.find(node => node.id === id)
+            if (node && node.attrs.priorityProcessId) {
+              priorityProcessId = node.attrs.priorityProcessId
+              return true
+            }
+          })
+
+          taskRef.value.priorityProcessId = priorityProcessId
+        }
+      }
+
+      form.value.setFieldState('*(accessNodeType,accessNodeProcessId)', {
+        disabled: size === 1
+      })
+
+      form.value.setFieldState('accessNodeProcessId', {
+        dataSource: accessNodeProcessList.value
+      })
+    }
+
     let checkCrontabExpressionFlagMessage = i18n.t('packages_dag_task_form_error_can_not_open_crontab_expression_flag')
     const handleCheckCrontabExpressionFlag = debounce(function (resolve, value) {
       taskApi.checkCheckCloudTaskLimit(props.task.id).then(data => {
         resolve(data)
       })
     }, 500)
+
+    const accessNodeProcessIdMap = computed(() => {
+      return [taskRef.value.dag.nodes[0], taskRef.value.dag.nodes[3]].reduce((map, node) => {
+        const { accessNodeProcessId } = node.attrs
+        if (accessNodeProcessId) {
+          let nodeIdArr = map[accessNodeProcessId]
+
+          if (!nodeIdArr) {
+            nodeIdArr = map[accessNodeProcessId] = []
+          }
+
+          nodeIdArr.push(node.id)
+        }
+        return map
+      }, {})
+    })
+
+    const accessNodeProcessIdArr = computed(() => {
+      return Object.keys(accessNodeProcessIdMap.value)
+    })
+
+    const accessNodeProcessList = computed(() => {
+      const agents = scope.$agents.filter(item => item.accessNodeType === taskRef.value.accessNodeType)
+      if (!accessNodeProcessIdArr.value.length) return agents
+      return agents.filter(item => !!accessNodeProcessIdMap.value[item.value])
+    })
+
     const schema = {
       type: 'object',
       properties: {
+        type: {
+          type: 'string',
+          'x-hidden': true
+        },
         div: {
           type: 'void',
           'x-component': 'div',
@@ -252,14 +462,6 @@ export default defineComponent({
                               'x-component': 'Radio.Group',
                               'x-reactions': [
                                 {
-                                  target: 'disabledEvents',
-                                  fulfill: {
-                                    state: {
-                                      visible: '{{$self.value === "SYNCHRONIZATION"}}'
-                                    }
-                                  }
-                                },
-                                {
                                   when: `{{!$values.dag.nodes[0].attrs.capabilities.filter(item => item.type === 10).length}}`,
                                   fulfill: {
                                     state: {
@@ -283,7 +485,7 @@ export default defineComponent({
                                   dependencies: ['.ddlConfiguration'],
                                   fulfill: {
                                     state: {
-                                      visible: '{{$deps[0].value === "SYNCHRONIZATION"}}'
+                                      visible: '{{$deps[0] === "SYNCHRONIZATION"}}'
                                     }
                                   }
                                 }
@@ -373,15 +575,7 @@ export default defineComponent({
                               properties: {
                                 enableConcurrentRead: {
                                   type: 'boolean',
-                                  'x-component': 'Switch',
-                                  'x-reactions': {
-                                    target: '.concurrentReadThreadNumber',
-                                    fulfill: {
-                                      state: {
-                                        visible: '{{!!$self.value}}'
-                                      }
-                                    }
-                                  }
+                                  'x-component': 'Switch'
                                 },
                                 concurrentReadThreadNumber: {
                                   title: i18n.t('packages_dag_concurrentReadThreadNumber'),
@@ -395,6 +589,14 @@ export default defineComponent({
                                   'x-component': 'InputNumber',
                                   'x-component-props': {
                                     min: 1
+                                  },
+                                  'x-reactions': {
+                                    dependencies: ['.enableConcurrentRead'],
+                                    fulfill: {
+                                      state: {
+                                        visible: '{{!!$deps[0]}}'
+                                      }
+                                    }
                                   }
                                 }
                               }
@@ -569,7 +771,6 @@ export default defineComponent({
                             }
                           }
                         },
-
                         tab4: {
                           type: 'void',
                           'x-component': 'FormCollapse.Item',
@@ -630,9 +831,6 @@ export default defineComponent({
                               title: i18n.t('packages_dag_nodes_database_shujuxieruce'),
                               type: 'object',
                               'x-decorator': 'FormItem',
-                              'x-decorator-props': {
-                                feedbackLayout: 'none'
-                              },
                               'x-component': 'FormLayout',
                               'x-component-props': {
                                 layout: 'horizontal',
@@ -707,7 +905,7 @@ export default defineComponent({
                                 }
                               },
                               'x-reactions': {
-                                dependencies: ['writeStrategy'],
+                                dependencies: ['.writeStrategy'],
                                 fulfill: {
                                   state: {
                                     display: '{{$deps[0] === "appendWrite" ? "hidden":"visible"}}'
@@ -720,6 +918,7 @@ export default defineComponent({
                               type: 'boolean',
                               'x-decorator': 'FormItem',
                               'x-decorator-props': {
+                                className: 'item-control-horizontal',
                                 layout: 'horizontal'
                               },
                               'x-component': 'Switch',
@@ -763,7 +962,7 @@ export default defineComponent({
               'x-content': i18n.t('public_advanced_settings')
             },
             config: {
-              type: 'object',
+              type: 'void',
               properties: {
                 skipErrorEvent: {
                   type: 'object',
@@ -891,13 +1090,7 @@ export default defineComponent({
                   type: 'boolean',
                   'x-decorator': 'FormItem',
                   'x-component': 'Switch',
-                  default: false,
-                  target: '*(syncPoints)',
-                  fulfill: {
-                    state: {
-                      visible: '{{$self.value}}'
-                    }
-                  }
+                  default: false
                 },
                 planStartDate: {
                   type: 'string',
@@ -911,7 +1104,7 @@ export default defineComponent({
                     valueFormat: 'timestamp'
                   },
                   'x-reactions': {
-                    dependencies: ['planStartDateFlag'],
+                    dependencies: ['.planStartDateFlag'],
                     fulfill: {
                       state: {
                         display: '{{$deps[0] ? "visible" : "hidden"}}'
@@ -964,7 +1157,7 @@ export default defineComponent({
                   },
                   description: i18n.t('packages_dag_task_setting_cron_tip'),
                   'x-reactions': {
-                    dependencies: ['type', 'crontabExpressionFlag'],
+                    dependencies: ['type', '.crontabExpressionFlag'],
                     fulfill: {
                       state: {
                         display: '{{$deps[0] !== "cdc" && $deps[1] ? "visible" : "hidden"}}'
@@ -983,7 +1176,7 @@ export default defineComponent({
                   'x-component': 'SyncPoints',
                   'x-decorator': 'FormItem',
                   'x-reactions': {
-                    dependencies: ['type'],
+                    dependencies: ['.type'],
                     fulfill: {
                       state: {
                         display: '{{$deps[0] === "cdc" ? "visible" : "hidden"}}'
@@ -1026,6 +1219,215 @@ export default defineComponent({
                         onClick: '{{handleQuicklySyncPoints}}'
                       },
                       'x-content': i18n.t('packages_dag_task_setting_syncPoint_from_now')
+                    }
+                  }
+                },
+                shareCdcEnable: {
+                  title: i18n.t('packages_dag_connection_form_shared_mining'), //共享挖掘日志过滤
+                  type: 'boolean',
+                  default: false,
+                  'x-decorator': 'FormItem',
+                  'x-decorator-props': {
+                    tooltip: i18n.t('packages_business_connection_form_shared_mining_tip')
+                  },
+                  'x-component': 'Switch',
+                  'x-reactions': {
+                    dependencies: ['type'],
+                    fulfill: {
+                      state: {
+                        visible: '{{$deps[0] !== "initial_sync" && !lockedFeature.sharedMiningList}}' // 只有增量或全量+增量支持
+                      }
+                    }
+                  }
+                },
+                enforceShareCdc: {
+                  title: i18n.t('packages_dag_migration_settingpanel_danggongxiangwajue'),
+                  type: 'string',
+                  'x-decorator': 'FormItem',
+                  'x-decorator-props': {
+                    tooltip: i18n.t('packages_dag_migration_settingpanel_danggongxiangwajuetooltip')
+                  },
+                  'x-component': 'Select',
+                  default: true,
+                  enum: [
+                    {
+                      label: i18n.t('packages_dag_migration_settingpanel_renwuzhijiebao'),
+                      value: true
+                    },
+                    {
+                      label: i18n.t('packages_dag_migration_settingpanel_zhuanweiputongC'),
+                      value: false
+                    }
+                  ],
+                  'x-reactions': {
+                    dependencies: ['shareCdcEnable'],
+                    fulfill: {
+                      state: {
+                        visible: '{{!!$deps[0]}}'
+                      }
+                    }
+                  }
+                },
+                dynamicAdjustMemoryUsage: {
+                  title: i18n.t('packages_dag_dynamicAdjustMemoryUsage_title'),
+                  type: 'boolean',
+                  default: !isDaas,
+                  'x-decorator': 'FormItem',
+                  'x-decorator-props': {
+                    tooltip: i18n.t('packages_dag_dynamicAdjustMemoryUsage_tip')
+                  },
+                  'x-component': 'Switch'
+                },
+                isAutoInspect: {
+                  title: i18n.t('packages_dag_task_list_verify'),
+                  type: 'boolean',
+                  default: true,
+                  'x-decorator': 'FormItem',
+                  'x-decorator-props': {
+                    tooltip: i18n.t('packages_dag_migration_settingpanel_dangrenwufuhe')
+                  },
+                  'x-component': 'Switch',
+                  'x-reactions': {
+                    fulfill: {
+                      state: {
+                        visible: '{{$values.syncType === "migrate"}}'
+                      }
+                    }
+                  }
+                },
+                enableSyncMetricCollector: {
+                  title: i18n.t('packages_dag_enableSyncMetricCollector_title'), // 同步指标收集
+                  type: 'boolean',
+                  default: false,
+                  'x-decorator': 'FormItem',
+                  'x-decorator-props': {
+                    tooltip: i18n.t('packages_dag_enableSyncMetricCollector_tip')
+                  },
+                  'x-component': 'Switch'
+                },
+                doubleActive: {
+                  title: i18n.t('packages_dag_doubleActive'), // 双活
+                  type: 'boolean',
+                  default: false,
+                  'x-decorator': 'FormItem',
+                  'x-decorator-props': {
+                    tooltip: i18n.t('packages_dag_doubleActive_tip')
+                  },
+                  'x-component': 'Switch'
+                },
+                accessNodeType: {
+                  type: 'string',
+                  title: i18n.t('packages_dag_connection_form_access_node'),
+                  default: 'AUTOMATIC_PLATFORM_ALLOCATION',
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Select',
+                  enum: [
+                    {
+                      label: i18n.t('packages_dag_connection_form_automatic'),
+                      value: 'AUTOMATIC_PLATFORM_ALLOCATION'
+                    },
+                    {
+                      label: i18n.t('packages_dag_connection_form_manual'),
+                      value: 'MANUALLY_SPECIFIED_BY_THE_USER'
+                    },
+                    {
+                      label: i18n.t('packages_business_connection_form_group'),
+                      value: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
+                    }
+                  ],
+                  'x-reactions': [
+                    {
+                      fulfill: {
+                        state: {
+                          dataSource: `{{$isDaas ? $self.dataSource : $self.dataSource.slice(0,2)}}`
+                        }
+                      }
+                    },
+                    {
+                      target: 'accessNodeProcessId',
+                      effects: ['onFieldInputValueChange'],
+                      fulfill: {
+                        state: {
+                          value: ''
+                          // '{{$target.value || (item = $target.dataSource.find(item => !item.disabled), item ? item.value:undefined)}}'
+                        }
+                      }
+                    }
+                  ]
+                },
+                agentWrap: {
+                  type: 'void',
+                  'x-component': 'Space',
+                  'x-component-props': {
+                    class: 'w-100 align-items-start'
+                  },
+                  'x-reactions': {
+                    dependencies: ['.accessNodeType'],
+                    fulfill: {
+                      state: {
+                        visible:
+                          "{{['MANUALLY_SPECIFIED_BY_THE_USER', 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'].includes($deps[0])}}"
+                      }
+                    }
+                  },
+                  properties: {
+                    accessNodeProcessId: {
+                      type: 'string',
+                      'x-decorator': 'FormItem',
+                      'x-decorator-props': {
+                        class: 'flex-1'
+                      },
+                      'x-component': 'Select',
+                      'x-reactions': [
+                        '{{getConnectionNameByAgent}}',
+                        // 根据下拉数据判断是否存在已选的agent
+                        {
+                          dependencies: ['.accessNodeType', '.accessNodeOption#dataSource'],
+                          fulfill: {
+                            state: {
+                              title: `{{'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' === $deps[0] ? '${i18n.t(
+                                'packages_business_choose_agent_group'
+                              )}': '${i18n.t('packages_business_choose_agent')}'}}`
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    priorityProcessId: {
+                      title: i18n.t('packages_business_priorityProcessId'),
+                      type: 'string',
+                      default: '',
+                      'x-decorator': 'FormItem',
+                      'x-decorator-props': {
+                        class: 'flex-1'
+                      },
+                      'x-component': 'Select',
+                      'x-reactions': {
+                        dependencies: ['.accessNodeType', '.accessNodeProcessId#dataSource', '.accessNodeProcessId'],
+                        fulfill: {
+                          state: {
+                            visible: "{{'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' === $deps[0]}}"
+                          },
+                          run: `
+                                          let children = []
+
+                                          if ($deps[1] && $deps[2]) {
+                                            children = $deps[1].find(item => item.accessNodeType === $deps[0] && item.value === $deps[2]).children || []
+                                          }
+
+                                          $self.dataSource = [
+                                            {
+                                              label:'${i18n.t('packages_business_connection_form_automatic')}',
+                                              value: ''
+                                            }
+                                          ].concat(children)
+
+                                          if ($self.value && !children.find(item => item.value === $self.value)) {
+                                            $self.value = null
+                                          }
+                                        `
+                        }
+                      }
                     }
                   }
                 }
@@ -1333,88 +1735,6 @@ export default defineComponent({
         }
       }
     }
-    const scope = {
-      $isDaas: isDaas,
-      $settings: taskRef.value,
-      useAsyncOptions: (service, ...serviceParams) => {
-        return field => {
-          field.loading = true
-          service(...serviceParams).then(
-            action.bound(data => {
-              field.dataSource = data
-              field.loading = false
-            })
-          )
-        }
-      },
-      async loadAlarmChannels() {
-        const channels = await alarmApi.channels()
-        const MAP = {
-          system: { label: i18n.t('packages_dag_migration_alarmpanel_xitongtongzhi'), value: 'SYSTEM' },
-          email: { label: i18n.t('packages_dag_migration_alarmpanel_youjiantongzhi'), value: 'EMAIL' }
-        }
-        const options = []
-        if (!isDaas) {
-          let isOpenid = window.__USER_INFO__?.openid
-          Object.assign(MAP, {
-            wechat: {
-              label: i18n.t('packages_business_notify_webchat_notification'),
-              value: 'WECHAT',
-              disabled: !isOpenid
-            },
-            sms: { label: i18n.t('packages_business_notify_sms_notification'), value: 'SMS' }
-          })
-        }
-
-        for (const channel of channels) {
-          const option = MAP[channel.type]
-
-          if (!option) continue
-
-          options.push(option)
-        }
-
-        return options
-      },
-      checkCrontabExpressionFlag: value => {
-        return new Promise(resolve => {
-          handleCheckCrontabExpressionFlag(resolve, value)
-        })
-      },
-      checkName: value => {
-        return new Promise(resolve => {
-          handleCheckName(resolve, value)
-        })
-      },
-
-      findNodeById: id => {
-        return root.$store.state.dataflow.NodeMap[id]
-      },
-
-      findParentNodes: (id, ifMyself) => {
-        let node = scope.findNodeById(id)
-        const parents = []
-
-        if (!node) return parents
-
-        let parentIds = node.$inputs || []
-        if (ifMyself && !parentIds.length) return [node]
-        parentIds.forEach(pid => {
-          let parent = scope.findNodeById(pid)
-          if (parent) {
-            if (parent.$inputs?.length) {
-              parent.$inputs.forEach(ppid => {
-                parents.push(...scope.findParentNodes(ppid, true))
-              })
-            } else {
-              parents.push(parent)
-            }
-          }
-        })
-
-        return parents
-      }
-    }
 
     const onTaskChange = debounce(async () => {
       const data = await taskApi.patch(
@@ -1437,18 +1757,64 @@ export default defineComponent({
       console.log('onTaskChange')
     }, 100)
 
-    setTimeout(() => {
-      taskRef.value.a = 123
-    }, 3000)
-
     let dispose
 
-    const initForm = () => {
+    const systemTimeZone = computed(() => {
+      let timeZone = new Date().getTimezoneOffset() / 60
+      let systemTimeZone = ''
+      if (timeZone > 0) {
+        systemTimeZone = 0 - timeZone
+      } else {
+        systemTimeZone = '+' + -timeZone
+      }
+      return systemTimeZone
+    })
+
+    const initForm = async () => {
+      await loadAccessNode()
       const task = taskRef.value
+
+      const timeZone = systemTimeZone.value
+      const oldPoints = task.syncPoints
+      const oldPointsMap = oldPoints?.length
+        ? oldPoints.reduce((map, point) => {
+            if (point.nodeId) map[point.nodeId] = point
+            return map
+          }, {})
+        : {}
+      const syncPoints = [task.dag.nodes[0]]
+        .map(node => ({
+          nodeId: node.id,
+          nodeName: node.name,
+          hiddenPointType: node?.cdcMode === 'polling', //源节点开启了日志轮询则禁用增量采集时刻配置
+          connectionId: node.connectionId,
+          connectionName: node.attrs.connectionName
+        }))
+        .map(item => {
+          const old = oldPointsMap[item.nodeId]
+          const point = {
+            ...item,
+            timeZone,
+            pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
+            dateTime: ''
+          }
+          if (old && !item.hiddenPointType) {
+            Object.assign(point, {
+              pointType: old.pointType,
+              dateTime: old.dateTime
+            })
+          }
+          return point
+        })
+
+      task.syncPoints = syncPoints
+
       scope.$taskId = task.id
       form.value = createForm({
         values: task
       })
+
+      initTaskAgent()
 
       // 防止挂载表单时触发valueChange
       setTimeout(() => {
@@ -1483,6 +1849,90 @@ export default defineComponent({
 
     const handleNext = () => {
       emit('next')
+    }
+
+    // 升级专业版
+    const handleShowUpgradeFee = msg => {
+      upgradeFeeVisibleTips.value = msg
+      upgradeFeeVisible.value = true
+    }
+
+    // 升级规格
+    const handleShowUpgradeCharges = msg => {
+      upgradeChargesVisibleTips.value = msg
+      upgradeChargesVisible.value = true
+    }
+
+    const upgradeFeeGoPage = () => {
+      const routeUrl = root.$router.resolve({
+        name: 'createAgent'
+      })
+      window.open(routeUrl.href, '_blank')
+    }
+
+    const handleShowUpgradeDialog = err => {
+      !isDaas &&
+        root.$axios
+          .get(
+            'api/tcm/agent?filter=' +
+              encodeURIComponent(
+                JSON.stringify({
+                  size: 100,
+                  page: 1
+                })
+              )
+          )
+          .then(async data => {
+            const { items = [] } = data
+
+            if (items.some(t => t.status === 'Stopped')) {
+              Message.error(i18n.t('public_task_error_schedule_limit'))
+              return
+            }
+
+            items.length <= 1 && items.some(t => t.orderInfo?.chargeProvider === 'FreeTier' || !t.orderInfo?.amount)
+              ? handleShowUpgradeFee(err.message)
+              : handleShowUpgradeCharges(err.message)
+          })
+    }
+
+    const handleError = (error, msg = i18n.t('packages_dag_src_editor_chucuole')) => {
+      const code = error?.data?.code
+      if (code === 'Task.ListWarnMessage') {
+        let names = []
+        if (error.data?.data) {
+          const keys = Object.keys(error.data.data)
+          keys.forEach(key => {
+            const node = taskRef.value.dag.nodes.find(({ id }) => id === key)
+            if (node) {
+              names.push(node.name)
+            }
+          })
+          if (!names.length && keys.length && msg) {
+            // 兼容错误信息id不是节点id的情况
+            const msg = error.data.data[keys[0]][0]?.msg
+            if (msg) {
+              Message.error(msg)
+              return
+            }
+          }
+        }
+      } else if (code === 'Task.OldVersion') {
+        root
+          .$confirm('', i18n.t('packages_dag_task_old_version_confirm'), {
+            onlyTitle: true,
+            type: 'warning',
+            closeOnClickModal: false,
+            confirmButtonText: i18n.t('public_button_refresh')
+          })
+          .then(resFlag => {
+            resFlag && location.reload()
+          })
+      } else if (['Task.ScheduleLimit', 'Task.ManuallyScheduleLimit'].includes(code)) {
+        handleShowUpgradeDialog(error.data)
+      } else {
+        showErrorMessage(error?.data)
+      }
     }
 
     const save = async () => {
@@ -1523,7 +1973,7 @@ export default defineComponent({
           }
         })
       } catch (e) {
-        // this.handleError(e)
+        handleError(e)
       } finally {
         starting.value = false
       }
@@ -1590,10 +2040,15 @@ export default defineComponent({
       schema,
       scope,
       starting,
+      upgradeFeeVisible,
+      upgradeFeeVisibleTips,
+      upgradeChargesVisibleTips,
+      upgradeChargesVisible,
 
       handlePrev,
       handleNext,
-      handleStart
+      handleStart,
+      upgradeFeeGoPage
     }
   }
 })

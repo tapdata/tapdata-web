@@ -428,12 +428,14 @@ export default defineComponent({
         return [
           {
             key: 'has-connector',
-            title: i18n.t('packages_dag_add_own_datasource'),
+            title: i18n.t(
+              props.type === 'source' ? 'packages_dag_add_own_datasource' : 'packages_dag_add_own_target_datasource'
+            ),
             desc: i18n.t('packages_dag_add_own_datasource_desc')
           },
           {
             key: 'no-connector',
-            title: i18n.t('packages_dag_no_datasource'),
+            title: i18n.t(props.type === 'source' ? 'packages_dag_no_datasource' : 'packages_dag_no_target_datasource'),
             desc: i18n.t('packages_dag_no_datasource_desc')
           }
         ]
@@ -447,7 +449,7 @@ export default defineComponent({
         },
         {
           key: 'has-connector',
-          title: i18n.t('packages_dag_add_own_datasource'),
+          title: i18n.t('packages_dag_add_new_connection'),
           desc: i18n.t('packages_dag_add_own_datasource_desc')
         }
       ]

@@ -39,6 +39,8 @@ export default {
   public_phone: '手機號',
   public_email: '郵箱',
   public_view_details: '查看詳情',
+  public_warn: '警告',
+  public_error: '錯誤',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '無效',
