@@ -320,7 +320,7 @@ export const TableRename = connect(
       props: ['findParentNodes', 'value', 'listStyle', 'disabled', 'taskId'],
       setup(props, { emit, root, refs }) {
         const SchemaExpressionScopeContext = inject(SchemaExpressionScopeSymbol)
-        let taskId = SchemaExpressionScopeContext.value.$taskId || root.$store.state.dataflow
+        let taskId = SchemaExpressionScopeContext.value.$taskId || root.$store.state.dataflow.id
         console.log('taskId', taskId)
         const itemSize = 38
         const formRef = useForm()
