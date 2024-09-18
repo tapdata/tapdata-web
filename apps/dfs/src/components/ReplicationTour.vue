@@ -15,6 +15,7 @@
 
     <template #footer>
       <div class="text-center">
+        <el-button key="doneBtn" @click="cancel">{{ $t('public_button_close') }}</el-button>
         <el-button key="doneBtn" @click="handleDone" type="primary">{{
           $t('packages_dag_access_task_list')
         }}</el-button>

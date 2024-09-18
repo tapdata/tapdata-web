@@ -1084,7 +1084,9 @@ export default {
       this.toggleConnectionRun(v1 === 'running')
 
       if (v1 === 'running') {
-        this.$store.dispatch('setGuideViewTaskMonitor')
+        setTimeout(() => {
+          this.$store.dispatch('setGuideViewTaskMonitor')
+        }, 3000)
       }
     },
     'dataflow.id'() {

@@ -115,7 +115,8 @@ export default {
         steps,
         popoverClass: 'menu-tour-popover p-4 rounded-lg',
         onPopoverRender: (popover, { config, state }) => {},
-        onHighlightStarted: (element, step, { state }) => {}
+        onHighlightStarted: (element, step, { state }) => {},
+        onDestroyed: (el, step, options) => {}
       })
 
       if (targetElement) {
