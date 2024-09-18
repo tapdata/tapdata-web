@@ -61,6 +61,7 @@
                         :min="childItem.min"
                         :max="childItem.max"
                       ></ElInputNumber>
+                      <el-switch v-else-if="'open' in childItem" v-model="childItem.open"></el-switch>
                       <el-input
                         v-else-if="!childItem.enums || childItem.enums.length === 0"
                         :type="childItem.key.match(/password/) ? 'password' : 'text'"
@@ -97,6 +98,10 @@
         </div>
 
         <div class="footer">
+          <el-button v-if="activePanel === 'Active_Directory'" @click="testAd" :loading="adTesting">{{
+            $t('public_connection_button_test')
+          }}</el-button>
+
           <el-button v-if="email === 'admin@admin.com'" @click="save" size="mini" type="primary">{{
             $t('public_button_save')
           }}</el-button>
@@ -182,7 +187,7 @@ import i18n from '@/i18n'
 import { uniq, find } from 'lodash'
 import { VIcon, VTable } from '@tap/component'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
-import { licensesApi, settingsApi, alarmRuleApi } from '@tap/api'
+import { licensesApi, settingsApi, alarmRuleApi, usersApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
 import Cookie from '@tap/shared/src/cookie'
 import { showErrorMessage } from '@tap/business'
@@ -242,7 +247,8 @@ export default {
         }
       ],
       email: '',
-      filterCategory: process.env.VUE_APP_HIDE_SETTINGS_CATEGORY
+      filterCategory: process.env.VUE_APP_HIDE_SETTINGS_CATEGORY,
+      adTesting: false
     }
   },
   created() {
@@ -260,6 +266,23 @@ export default {
         if (SMTP && SMTP.items) {
           SMTP.items.forEach(it => {
             result[it.key_label.split(' ').join('_')] = it.value
+          })
+        }
+      }
+      return result
+    },
+
+    adForm() {
+      let result = {}
+      let items = this.formData.items
+      if (items && items.length) {
+        let target = find(items, item => {
+          return item.category === 'Active_Directory'
+        })
+        if (target && target.items) {
+          target.items.forEach(it => {
+            const key = it.key_label.split(' ').join('_')
+            result[key] = 'open' in it ? it.open : it.value
           })
         }
       }
@@ -408,6 +431,23 @@ export default {
           showErrorMessage(data)
         }
       })
+    },
+
+    testAd() {
+      this.adTesting = true
+      console.log('adForm', this.adForm)
+      usersApi
+        .testAdLogin(this.adForm)
+        .then(data => {
+          if (data?.result) {
+            this.$message.success(this.$t('setting_test_email_success'))
+          } else {
+            showErrorMessage(data)
+          }
+        })
+        .finally(() => {
+          this.adTesting = false
+        })
     }
   }
 }
