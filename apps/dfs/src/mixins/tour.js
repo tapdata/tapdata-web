@@ -140,12 +140,6 @@ export default {
       }
     },
 
-    async loadGuide() {
-      const guide = await this.$axios.get('api/tcm/user_guide')
-      this.$store.commit('setGuide', guide)
-      this.$store.commit('setReplicationTour', guide?.tour)
-    },
-
     loopLoadAgentCount(showLoading) {
       clearTimeout(this.loopLoadAgentCountTimer)
       this.agentCountLoading = showLoading

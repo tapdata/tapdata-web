@@ -1082,6 +1082,10 @@ export default {
         this.init()
       }
       this.toggleConnectionRun(v1 === 'running')
+
+      if (v1 === 'running') {
+        this.$store.dispatch('setGuideViewTaskMonitor')
+      }
     },
     'dataflow.id'() {
       this.getTaskPermissions()
@@ -1115,7 +1119,7 @@ export default {
 
     this.timeSelectLabel = this.$refs.timeSelect?.getPeriod()?.label
 
-    this.$store.dispatch('setGuideViewTaskMonitor')
+    // this.$store.dispatch('setGuideViewTaskMonitor')
   },
 
   beforeDestroy() {
