@@ -19,9 +19,8 @@ import { SchemaExpressionScopeSymbol } from '@formily/vue'
 export const TableRenamePreview = defineComponent({
   props: ['findParentNodes', 'value', 'listStyle', 'disabled', 'taskId'],
   setup(props, { emit, root, refs }) {
-    console.log('TableRenamePreview')
     const SchemaExpressionScopeContext = inject(SchemaExpressionScopeSymbol)
-    let taskId = SchemaExpressionScopeContext.value.$taskId || root.$store.state.dataflow.id
+    let taskId = SchemaExpressionScopeContext.value.$taskId || root.$store.state.dataflow.taskId
     const itemSize = 38
     const formRef = useForm()
     const form = formRef.value
@@ -320,8 +319,7 @@ export const TableRename = connect(
       props: ['findParentNodes', 'value', 'listStyle', 'disabled', 'taskId'],
       setup(props, { emit, root, refs }) {
         const SchemaExpressionScopeContext = inject(SchemaExpressionScopeSymbol)
-        let taskId = SchemaExpressionScopeContext.value.$taskId || root.$store.state.dataflow.id
-        console.log('taskId', taskId)
+        let taskId = SchemaExpressionScopeContext.value.$taskId || root.$store.state.dataflow.taskId
         const itemSize = 38
         const formRef = useForm()
         const form = formRef.value
