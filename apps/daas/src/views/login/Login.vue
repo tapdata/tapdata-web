@@ -15,7 +15,7 @@
             class="input"
             type="email"
             autocomplete="username"
-            :placeholder="$t('app_signIn_email_placeholder')"
+            :placeholder="$t(adEnable ? 'login_email_and_ad_placeholder' : 'app_signIn_email_placeholder')"
             v-model="form.email"
           />
           <input
@@ -62,24 +62,31 @@ export default {
         password: ''
       },
       keepSignIn: true,
-      errorMessage: ''
+      errorMessage: '',
+      adEnable: false
     }
   },
   created() {
+    this.loadAdEnable()
     if (this.$route.query) {
       this.form.email = this.$route.query.email
     }
   },
   methods: {
+    async loadAdEnable() {
+      const data = await usersApi.checkADLoginEnable()
+      this.adEnable = data
+    },
     async submit() {
       let form = this.form
       let oldPassword = this.form.password + ''
       let message = ''
       if (!form.email || !form.email.trim()) {
-        message = this.$t('app_signIn_email_require')
+        message = this.$t(this.adEnable ? 'login_email_and_ad_placeholder' : 'app_signIn_email_require')
       } else if (
         // eslint-disable-next-line
-        !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)
+        !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email) &&
+        !this.adEnable
       ) {
         message = this.$t('app_signIn_email_invalid')
       } else if (!form.password || form.password.length < 5) {

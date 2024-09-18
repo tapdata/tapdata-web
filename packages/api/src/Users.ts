@@ -87,5 +87,13 @@ export default class Users extends Http {
   updatePermissionRoleMapping(id, params) {
     return this.axios.put(`${this.url}/updatePermissionRoleMapping?id=${id}`, params)
   }
+
+  testAdLogin(data) {
+    return this.axios.post(`${this.url}/testAdLogin`, data)
+  }
+
+  checkADLoginEnable() {
+    return this.axios.get(`${this.url}/checkADLoginEnable`)
+  }
 }
 export { Users }
