@@ -39,6 +39,8 @@ export default {
   public_phone: 'Phone Number',
   public_email: 'Email',
   public_view_details: 'View Details',
+  public_warn: 'Warn',
+  public_error: 'Error',
   // state
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',

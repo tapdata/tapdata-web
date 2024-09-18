@@ -80,7 +80,8 @@ const FieldEditForm = {
           'x-decorator': 'FormItem',
           'x-component': 'FieldRenameProcessor',
           'x-component-props': {
-            nodeId: '{{$values.id}}'
+            nodeId: '{{$values.id}}',
+            class: 'field-processor-dialog'
           }
         }
       }
@@ -132,7 +133,9 @@ const SourceDatabaseNode = observer(
         FormDialog(
           {
             title: i18n.t('packages_dag_src_migrationeditor_biaobianji'),
-            customClass: 'schema-form-dialog'
+            customClass: 'schema-form-dialog',
+            okText: i18n.t('public_button_confirm'),
+            cancelText: i18n.t('public_button_cancel')
           },
           () => <TableEditForm scope={SchemaExpressionScopeContext.value} layout={layoutRef.value}></TableEditForm>
         )
@@ -161,7 +164,9 @@ const SourceDatabaseNode = observer(
         FormDialog(
           {
             title: i18n.t('packages_dag_src_migrationeditor_biaobianji'),
-            customClass: 'schema-form-dialog'
+            customClass: 'schema-form-dialog',
+            okText: i18n.t('public_button_confirm'),
+            cancelText: i18n.t('public_button_cancel')
           },
           () => <FieldEditForm scope={SchemaExpressionScopeContext.value} layout={layoutRef.value}></FieldEditForm>
         )

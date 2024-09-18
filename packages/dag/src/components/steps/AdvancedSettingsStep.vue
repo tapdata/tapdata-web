@@ -11,12 +11,24 @@
       <el-divider class="mx-4" direction="vertical"></el-divider>
       <slot name="help"></slot>
     </div>
+
+    <UpgradeFee
+      :visible.sync="upgradeFeeVisible"
+      :tooltip="upgradeFeeVisibleTips || $t('packages_business_task_list_nindekeyunxing')"
+      :go-page="upgradeFeeGoPage"
+    ></UpgradeFee>
+
+    <UpgradeCharges
+      :visible.sync="upgradeChargesVisible"
+      :tooltip="upgradeChargesVisibleTips || $t('packages_business_task_list_nindekeyunxing')"
+      :go-page="upgradeFeeGoPage"
+    ></UpgradeCharges>
   </div>
 </template>
 
 <script>
 import i18n from '@tap/i18n'
-import { showErrorMessage } from '@tap/business'
+import { showErrorMessage, UpgradeCharges, UpgradeFee } from '@tap/business'
 import { Message } from 'element-ui'
 import { alarmApi, clusterApi, taskApi } from '@tap/api'
 import { debounce, merge } from 'lodash'
@@ -32,9 +44,7 @@ const onDialogFormValuesChange = createEffectHook('dialog-form-values-change', (
 
 export default defineComponent({
   name: 'TaskStep',
-  components: {
-    SchemaForm
-  },
+  components: { UpgradeFee, UpgradeCharges, SchemaForm },
   setup(props, { emit, root }) {
     const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
     const taskRef = inject('task')
@@ -157,6 +167,10 @@ export default defineComponent({
 
     const form = ref(null)
     const starting = ref(false)
+    const upgradeFeeVisible = ref(false)
+    const upgradeFeeVisibleTips = ref(false)
+    const upgradeChargesVisibleTips = ref(false)
+    const upgradeChargesVisible = ref(false)
 
     console.log('taskRef', taskRef)
 
@@ -1837,6 +1851,51 @@ export default defineComponent({
       emit('next')
     }
 
+    // 升级专业版
+    const handleShowUpgradeFee = msg => {
+      upgradeFeeVisibleTips.value = msg
+      upgradeFeeVisible.value = true
+    }
+
+    // 升级规格
+    const handleShowUpgradeCharges = msg => {
+      upgradeChargesVisibleTips.value = msg
+      upgradeChargesVisible.value = true
+    }
+
+    const upgradeFeeGoPage = () => {
+      const routeUrl = root.$router.resolve({
+        name: 'createAgent'
+      })
+      window.open(routeUrl.href, '_blank')
+    }
+
+    const handleShowUpgradeDialog = err => {
+      !isDaas &&
+        root.$axios
+          .get(
+            'api/tcm/agent?filter=' +
+              encodeURIComponent(
+                JSON.stringify({
+                  size: 100,
+                  page: 1
+                })
+              )
+          )
+          .then(async data => {
+            const { items = [] } = data
+
+            if (items.some(t => t.status === 'Stopped')) {
+              Message.error(i18n.t('public_task_error_schedule_limit'))
+              return
+            }
+
+            items.length <= 1 && items.some(t => t.orderInfo?.chargeProvider === 'FreeTier' || !t.orderInfo?.amount)
+              ? handleShowUpgradeFee(err.message)
+              : handleShowUpgradeCharges(err.message)
+          })
+    }
+
     const handleError = (error, msg = i18n.t('packages_dag_src_editor_chucuole')) => {
       const code = error?.data?.code
       if (code === 'Task.ListWarnMessage') {
@@ -1870,7 +1929,7 @@ export default defineComponent({
             resFlag && location.reload()
           })
       } else if (['Task.ScheduleLimit', 'Task.ManuallyScheduleLimit'].includes(code)) {
-        // this.handleShowUpgradeDialog(error.data)
+        handleShowUpgradeDialog(error.data)
       } else {
         showErrorMessage(error?.data)
       }
@@ -1981,10 +2040,15 @@ export default defineComponent({
       schema,
       scope,
       starting,
+      upgradeFeeVisible,
+      upgradeFeeVisibleTips,
+      upgradeChargesVisibleTips,
+      upgradeChargesVisible,
 
       handlePrev,
       handleNext,
-      handleStart
+      handleStart,
+      upgradeFeeGoPage
     }
   }
 })

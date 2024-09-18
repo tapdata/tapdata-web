@@ -16,7 +16,6 @@
 import ReplicationTour from '@/components/ReplicationTour'
 import { buried } from '@/plugins/buried'
 import { mapMutations, mapState } from 'vuex'
-import { provide } from '@vue/composition-api'
 import { driver } from 'driver.js'
 export default {
   name: 'app',
@@ -69,6 +68,11 @@ export default {
     },
 
     initMenuTour() {
+      const domain =
+        !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en'
+          ? 'https://docs.tapdata.io/'
+          : 'https://docs.tapdata.net/'
+
       const steps = [
         {
           element: '#menu-Instance',
@@ -76,7 +80,7 @@ export default {
             showButtons: ['next', 'previous'],
             description: `${this.$t(
               'menu_tour_instance'
-            )}，<a href="https://docs.tapdata.net/quick-start/install/install-tapdata-agent/agent-on-selfhosted" target="_blank">${this.$t(
+            )}，<a href="${domain}quick-start/install/install-tapdata-agent/" target="_blank">${this.$t(
               'menu_tour_instance_link'
             )}</a>`
           }

@@ -18,3 +18,38 @@ i18n.merge = (langs = {}) => {
 }
 
 export default i18n
+
+export function createI18nObject(obj) {
+  const translatedObj = {}
+
+  function translateValue(value) {
+    if (typeof value === 'string') {
+      return i18n.t(value)
+    }
+    return value
+  }
+
+  for (const [key, value] of Object.entries(obj)) {
+    if (typeof value === 'object' && value !== null) {
+      Object.defineProperty(translatedObj, key, {
+        get() {
+          const result = {}
+          for (const [subKey, subValue] of Object.entries(value)) {
+            result[subKey] = translateValue(subValue)
+          }
+          return result
+        },
+        enumerable: true
+      })
+    } else {
+      Object.defineProperty(translatedObj, key, {
+        get() {
+          return translateValue(value)
+        },
+        enumerable: true
+      })
+    }
+  }
+
+  return translatedObj
+}
