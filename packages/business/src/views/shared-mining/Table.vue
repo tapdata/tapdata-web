@@ -44,6 +44,7 @@
     </div>
     <VTable
       :columns="columns"
+      row-key="id"
       :remoteMethod="remoteMethod"
       :page-options="{
         layout: 'total, prev, pager, next, jumper'
@@ -155,7 +156,8 @@ export default {
       ],
       columns: [
         {
-          type: 'selection'
+          type: 'selection',
+          reserveSelection: true
         },
         {
           label: i18n.t('packages_business_shared_mining_table_biaoming'),
@@ -170,7 +172,8 @@ export default {
         },
         {
           label: i18n.t('packages_business_shared_mining_table_leijiwajue'),
-          prop: 'allCount'
+          prop: 'allCount',
+          minWidth: 150
         },
         {
           label: i18n.t('packages_business_shared_mining_table_jinriwajue'),
@@ -265,7 +268,10 @@ export default {
         }
         return {
           total: total,
-          data: data.items || []
+          data: (data.items || []).map(item => {
+            item.id = `${item.connectionId}_${item.name}`
+            return item
+          })
         }
       })
     },
