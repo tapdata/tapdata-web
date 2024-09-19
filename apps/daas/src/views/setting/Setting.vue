@@ -98,7 +98,7 @@
         </div>
 
         <div class="footer">
-          <el-button v-if="activePanel === 'Active_Directory'" @click="testAd" :loading="adTesting">{{
+          <el-button v-if="activePanel === 'LDAP'" @click="testLdap" :loading="adTesting">{{
             $t('public_connection_button_test')
           }}</el-button>
 
@@ -272,12 +272,12 @@ export default {
       return result
     },
 
-    adForm() {
+    ldapForm() {
       let result = {}
       let items = this.formData.items
       if (items && items.length) {
         let target = find(items, item => {
-          return item.category === 'Active_Directory'
+          return item.category === 'LDAP'
         })
         if (target && target.items) {
           target.items.forEach(it => {
@@ -433,14 +433,13 @@ export default {
       })
     },
 
-    testAd() {
+    testLdap() {
       this.adTesting = true
-      console.log('adForm', this.adForm)
       usersApi
-        .testAdLogin(this.adForm)
+        .testLdapLogin(this.ldapForm)
         .then(data => {
           if (data?.result) {
-            this.$message.success(this.$t('setting_test_email_success'))
+            this.$message.success(this.$t('setting_test_ldap_success'))
           } else {
             showErrorMessage(data)
           }

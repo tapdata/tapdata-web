@@ -88,11 +88,11 @@ export default class Users extends Http {
     return this.axios.put(`${this.url}/updatePermissionRoleMapping?id=${id}`, params)
   }
 
-  testAdLogin(data) {
-    return this.axios.post(`${this.url}/testAdLogin`, data)
+  testLdapLogin(data) {
+    return this.axios.post(`${this.url}/testLdapLogin`, data)
   }
 
-  checkADLoginEnable() {
+  checkLdapLoginEnable() {
     return this.axios.get(`${this.url}/checkLdapLoginEnable`)
   }
 }

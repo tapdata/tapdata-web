@@ -74,7 +74,7 @@ export default {
   },
   methods: {
     async loadAdEnable() {
-      const data = await usersApi.checkADLoginEnable()
+      const data = await usersApi.checkLdapLoginEnable()
       this.adEnable = data
     },
     async submit() {
