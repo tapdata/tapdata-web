@@ -3,7 +3,7 @@
     <RecycleScroller
       key-field="nodeId"
       class="scroller"
-      :items="value"
+      :items="items"
       :item-size="64"
       style="max-height: 300px"
       :buffer="64"
@@ -55,6 +55,11 @@ export default observer({
   components: {
     RecycleScroller,
     VEmpty
+  },
+  computed: {
+    items() {
+      return this.value?.filter(item => !!item.nodeId) || []
+    }
   }
 })
 </script>
