@@ -7,7 +7,7 @@
         <ElOption v-for="item in connectionsList" :label="item.name" :value="item.id" :key="item.id"></ElOption>
       </ElSelect>
     </div>
-    <div class="flex justify-content-between mb-4">
+    <div class="flex justify-content-between mb-4 flex-wrap gap-4">
       <ElRadioGroup v-model="currentTab" size="mini" @change="handleChangeTab">
         <ElRadioButton v-for="item in tabItems" :label="item.value" :key="item.value">{{ item.label }}</ElRadioButton>
       </ElRadioGroup>
