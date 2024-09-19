@@ -2390,7 +2390,6 @@ export default {
           opType: 'subscribe'
         }
       })
-      console.log('wsAgentLive', this.$ws.ws) // eslint-disable-line
     },
 
     deleteSelectedConnections() {
