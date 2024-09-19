@@ -43,8 +43,9 @@
               <el-collapse value="1" class="rounded-lg overflow-hidden rounded-collapse">
                 <el-collapse-item title="TapData IP addresses" name="1">
                   <ul class="ml-6 font-color-dark">
-                    <li>47.93.190.224</li>
-                    <li>47.242.251.110</li>
+                    <li>34.92.78.86</li>
+                    <li>39.106.147.20</li>
+                    <li>47.242.39.227</li>
                   </ul>
                 </el-collapse-item>
               </el-collapse>
