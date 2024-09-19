@@ -861,30 +861,32 @@ export default {
             '23:00'
           ]
         },
-        heartbeatObject: {
-          type: 'void',
-          'x-component': 'Space',
-          title: i18n.t('packages_business_connections_databaseform_kaiqixintiaobiao'),
-          'x-decorator': 'FormItem',
-          'x-decorator-props': {
-            tooltip: i18n.t('packages_business_connections_databaseform_dakaixintiaobiao')
-          },
-          properties: {
-            heartbeatEnable: {
-              type: 'boolean',
-              default: false,
-              'x-component': 'Switch'
-            }
-          },
-          'x-reactions': {
-            dependencies: ['__TAPDATA.connection_type'],
-            fulfill: {
-              state: {
-                display: '{{$deps[0] === "source_and_target" ? "visible":"hidden"}}'
+        heartbeatObject: !this.pdkOptions.tags?.includes('NoHeartbeat')
+          ? {
+              type: 'void',
+              'x-component': 'Space',
+              title: i18n.t('packages_business_connections_databaseform_kaiqixintiaobiao'),
+              'x-decorator': 'FormItem',
+              'x-decorator-props': {
+                tooltip: i18n.t('packages_business_connections_databaseform_dakaixintiaobiao')
+              },
+              properties: {
+                heartbeatEnable: {
+                  type: 'boolean',
+                  default: false,
+                  'x-component': 'Switch'
+                }
+              },
+              'x-reactions': {
+                dependencies: ['__TAPDATA.connection_type'],
+                fulfill: {
+                  state: {
+                    display: '{{$deps[0] === "source_and_target" ? "visible":"hidden"}}'
+                  }
+                }
               }
             }
-          }
-        }
+          : undefined
       })
 
       if (this.isDaas) {
