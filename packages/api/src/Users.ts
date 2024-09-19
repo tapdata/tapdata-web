@@ -93,7 +93,7 @@ export default class Users extends Http {
   }
 
   checkADLoginEnable() {
-    return this.axios.get(`${this.url}/checkADLoginEnable`)
+    return this.axios.get(`${this.url}/checkLdapLoginEnable`)
   }
 }
 export { Users }
