@@ -428,12 +428,11 @@ export default {
       }
 
       if (userVirtualId && !guide.expand?.userVirtualId) {
-        params.expand = {
+        params.expand = Object.assign(guide.expand, {
           userReferrer,
           userVirtualId,
           userVisitedPages
-        }
-        Object.assign(guide.expand, params.expand)
+        })
       }
 
       if (logidUrlCloud) {
