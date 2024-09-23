@@ -21,7 +21,7 @@ export const TextFileReader = defineComponent({
 
     let selectFile = file => {
       if (file) {
-        fileNameRef.value = <file className="name"></file>
+        fileNameRef.value = file.name
         if (props.maxFileSize && file.size / 1024 > props.maxFileSize) {
           root.$message.error(
             i18n.t('packages_form_text_file_reader_index_shangchuanwenjianda', { val1: props.maxFileSize })
