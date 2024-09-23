@@ -484,6 +484,7 @@ export default {
     // background-color: #fff;
     border-radius: 4px;
     .setting-nav {
+      min-width: max-content;
       height: 100%;
       padding: 20px 2px;
       border-right: 1px solid map-get($borderColor, light);
