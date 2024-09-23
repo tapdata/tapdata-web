@@ -7,6 +7,9 @@ import { getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/uti
 import i18n from '../i18n'
 import { axios } from '../plugins/axios'
 import { merge } from 'lodash'
+import { getUrlSearch } from '@tap/shared'
+import Cookie from '@tap/shared/src/cookie'
+import { buried } from '../plugins/buried'
 
 Vue.use(Vuex)
 
@@ -98,7 +101,7 @@ const store = new Vuex.Store({
     showReplicationTour: false,
     replicationTourFinish: false,
     taskLoadedTime: null, // 记录TargetPanel任务列表加载时间
-    setIsMockUser: false,
+    isMockUser: false,
     mockUserPromise: null
   },
 
@@ -226,7 +229,7 @@ const store = new Vuex.Store({
     },
 
     setIsMockUser(state, flag) {
-      state.setIsMockUser = flag
+      state.isMockUser = flag
     },
 
     setMockUserPromise(state, promise) {
@@ -272,27 +275,110 @@ const store = new Vuex.Store({
       axios.post('api/tcm/user_guide', guideData)
     },
 
+    async checkMockUser({ commit, state }) {
+      return axios
+        .get('api/gw/user', {
+          maxRedirects: 0
+        })
+        .then(data => {
+          const mockUserId = data?.mockUserId || false
+          commit('setIsMockUser', mockUserId)
+          return mockUserId
+        })
+        .catch(e => {
+          console.error(e)
+        })
+    },
+
     async initGuide({ commit, dispatch, state }, router) {
-      // if (state.user.loginsCount === 0) {
-      //   router.push({
-      //     name: 'WelcomeTask',
-      //     params: {
-      //       id: guide.tour.taskId
-      //     }
-      //   })
-      // }
+      const isMockUser = await dispatch('checkMockUser')
 
       let guide = await axios.get('api/tcm/user_guide')
+
+      let bd_vid
+      let tp_vid
+      let userExpand = {}
+      let sendConvertData
+
+      if (!isMockUser) {
+        bd_vid = getUrlSearch('bd_vid')
+        tp_vid = getUrlSearch('tp_vid')
+
+        const userVirtualId = Cookie.get('userVirtualId')
+        const logidUrlCloud = Cookie.get('logidUrlCloud')
+        const userReferrer = Cookie.get('userReferrer')
+        const userVisitedPages = Cookie.get('userVisitedPages')
+
+        if (userVirtualId) {
+          Cookie.remove('userVirtualId')
+
+          userExpand = {
+            userReferrer,
+            userVirtualId,
+            userVisitedPages
+          }
+        }
+
+        if (logidUrlCloud) {
+          Cookie.remove('logidUrlCloud')
+
+          const url = new URL(decodeURIComponent(logidUrlCloud))
+          bd_vid = url.searchParams.get('bd_vid')
+        }
+
+        sendConvertData = () => {
+          const conversionTypes = [
+            {
+              logidUrl: logidUrlCloud || location.href,
+              newType: 25
+            }
+          ]
+          axios
+            .post('api/tcm/track/send_convert_data', conversionTypes)
+            .then(data => {
+              if (data) {
+                buried('registerSuccess')
+              }
+            })
+            .catch(e => {
+              console.log('ocpc.baidu.com', e)
+            })
+        }
+      }
 
       if (!guide) {
         guide = await axios.post(
           'api/tcm/user_guide',
           merge({}, state.guide, {
+            tp_vid,
+            bd_vid,
             expand: {
+              ...userExpand,
               version: '3.13.0'
             }
           })
         )
+
+        if (bd_vid) {
+          sendConvertData?.()
+        }
+      } else {
+        let params = {}
+
+        if (tp_vid && !guide.tpVid) {
+          params.tpVid = guide.tpVid = tp_vid
+        }
+        if (userExpand.userVirtualId && !guide.expand?.userVirtualId) {
+          params.expand = Object.assign(guide.expand, userExpand)
+        }
+        if (bd_vid && !guide.bdVid) {
+          params.bdVid = guide.bdVid = bd_vid
+          sendConvertData?.()
+        }
+
+        if (Object.keys(params).length) {
+          axios.post('api/tcm/user_guide', params)
+        }
       }
 
       commit('setGuide', guide)

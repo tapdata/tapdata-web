@@ -48,7 +48,6 @@ export default {
     }
 
     // this.loopLoadAgentCount()
-    await this.setUrlParams() // url携带的自定义参数
   },
 
   destroyed() {
@@ -285,15 +284,6 @@ export default {
       return !!localStorage[`completeAlarm-${this.userId}`]
     },
 
-    async initAlarmTour() {
-      if (this.$route.name !== 'migrateList' || this.hasCompleteAlarm()) return
-      const runningCount = await this.getTaskRunningCount()
-
-      if (runningCount > 0 && this.$route.name === 'migrateList') {
-        this.showAlarmTour = true
-      }
-    },
-
     async initAgentTour() {
       const { items: agentData } = await this.$axios.get(
         'api/tcm/agent?filter=' +
@@ -402,68 +392,6 @@ export default {
 
     changeIsUnDeploy(val) {
       this.isUnDeploy = val
-    },
-
-    async setUrlParams() {
-      const { guide, mockUserPromise } = this.$store.state
-
-      let bd_vid = getUrlSearch('bd_vid')
-      const tp_vid = getUrlSearch('tp_vid')
-      let params = {}
-
-      if (tp_vid && !guide.tpVid) {
-        guide.tpVid = params.tpVid = tp_vid
-      }
-
-      const logidUrlCloud = Cookie.get('logidUrlCloud')
-      const userReferrer = Cookie.get('userReferrer')
-      const userVirtualId = Cookie.get('userVirtualId')
-      const userVisitedPages = Cookie.get('userVisitedPages')
-
-      if (mockUserPromise) {
-        const isMock = await mockUserPromise.catch(e => {
-          console.error(e)
-        })
-        if (isMock) return
-      }
-
-      if (userVirtualId && !guide.expand?.userVirtualId) {
-        params.expand = Object.assign(guide.expand, {
-          userReferrer,
-          userVirtualId,
-          userVisitedPages
-        })
-      }
-
-      if (logidUrlCloud) {
-        const url = new URL(decodeURIComponent(logidUrlCloud))
-        bd_vid = url.searchParams.get('bd_vid')
-      }
-
-      if (bd_vid && !guide.bdVid) {
-        guide.bdVid = params.bdVid = bd_vid
-
-        const conversionTypes = [
-          {
-            logidUrl: logidUrlCloud || location.href,
-            newType: 25
-          }
-        ]
-        this.$axios
-          .post('api/tcm/track/send_convert_data', conversionTypes)
-          .then(data => {
-            if (data) {
-              this.buried('registerSuccess')
-            }
-          })
-          .catch(e => {
-            console.log('ocpc.baidu.com', e)
-          })
-      }
-
-      if (Object.keys(params).length) {
-        this.$axios.post('api/tcm/user_guide', params)
-      }
     },
 
     destroyDriver() {
@@ -678,61 +606,6 @@ export default {
     pauseGuideAndTour() {
       this.pauseGuide()
       this.handleDestroy()
-    },
-
-    async handleOpenGuide() {
-      await this.checkGuide()
-
-      if (!this.subscriptionModelVisible) {
-        // 继续判断任务引导
-        if (this.agentRunningCount) {
-          this.checkReplicationTour()
-          this.startGuide()
-        } else {
-          this.$message.warning(this.$t('agent_tip_no_running'))
-        }
-      } else {
-        this.startGuide()
-      }
-    },
-
-    updateMarketplaceGuide(val) {
-      this.marketplaceGuideVisible = false
-    },
-
-    initMenuTour() {
-      const steps = [
-        {
-          element: '#menu-Instance',
-          popover: {
-            showButtons: ['next', 'previous'],
-            description: '在这里可以订阅半托管引擎部署在您本地，详细了解半托管引擎'
-          }
-        },
-        {
-          element: '#menu-connections',
-          popover: {
-            showButtons: ['next', 'previous'],
-            description: '在这里可以管理和添加您的数据源/目标库'
-          }
-        },
-        {
-          element: '#task-list-create',
-          popover: {
-            showButtons: ['next', 'previous', 'close'],
-            description: '点击这个可以尝试创建更高级的复制同步任务。'
-          }
-        }
-      ]
-      this.menuTour = driver({
-        allowClose: false,
-        allowKeyboardControl: false,
-        showProgress: true,
-        steps,
-        popoverClass: 'replication-driver-popover p-3',
-        onPopoverRender: (popover, { config, state }) => {},
-        onHighlightStarted: (element, step, { state }) => {}
-      })
     }
   }
 }
