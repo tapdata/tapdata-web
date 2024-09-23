@@ -32,7 +32,7 @@
     </ElHeader>
 
     <ElContainer direction="vertical" class="layout-main p-0">
-      <ElMain class="main rounded-lg p-4">
+      <ElMain class="main rounded-lg p-4 pb-0 mb-4">
         <RouterView></RouterView>
       </ElMain>
     </ElContainer>
@@ -40,17 +40,13 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import TheHeader from '@/components/the-header'
+import { mapGetters, mapState } from 'vuex'
 
 import Cookie from '@tap/shared/src/cookie'
-import tour from '@/mixins/tour'
-import guide from '@/mixins/guide'
 import { getIcon } from '@tap/assets/icons'
 
 export default {
   inject: ['checkAgent', 'buried'],
-  mixins: [guide],
   data() {
     const $t = this.$t.bind(this)
     return {
@@ -215,6 +211,15 @@ export default {
             }
           })
           break
+      }
+    },
+
+    clearCookie() {
+      let keys = document.cookie.match(/[^ =;]+(?==)/g)
+      if (keys) {
+        for (let i = keys.length; i--; ) {
+          document.cookie = keys[i] + '=0;path=/;domain=' + document.domain + ';expires=' + new Date(0).toUTCString()
+        }
       }
     }
   }

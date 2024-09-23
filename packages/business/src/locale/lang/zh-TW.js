@@ -1162,7 +1162,7 @@ export default {
   packages_business_setting_alarmsetting_qubangding: '去綁定',
   packages_business_setting_alarmsetting_jiancedaoninhai: '檢測到您還未綁定郵箱，無法開啟郵件通知。',
   packages_business_verification_form_zhengzaijiyuren: '正在基於任務產生校驗條件',
-  packages_business_agent_ip_tips_prefix: '請確保您數據庫的網絡安全策略，允許全托管Agent所在的IP地址訪問。',
+  packages_business_agent_ip_tips_prefix: '請在防火牆中允許這些 TapData IP 訪問數據庫端口，並確保權限設置正確',
   packages_business_agent_ip_tips_suffix: '點擊查看全托管Agent的IP地址信息',
   packages_business_demo_database_desc: 'Demo 數據源，可快速創建數據源信息，無需準備數據庫信息即可體驗。',
   packages_business_use_ssl: '使用 SSL',
@@ -1245,5 +1245,5 @@ export default {
   packages_business_download_details: '下載詳情',
   packages_business_solution: '解決方案',
   packages_business_error_details: '錯誤詳情',
-  packages_business_instance_info: '實例信息'
+  packages_business_instance_info: '連接唯一標識'
 }

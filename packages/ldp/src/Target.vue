@@ -839,6 +839,9 @@ export default {
 
       return {
         ...TASK_SETTINGS,
+        attrs: {
+          referrer: 'ldp'
+        },
         syncType: 'migrate',
         name: this.taskDialogConfig.taskName,
         dag: {

@@ -39,6 +39,8 @@ export default {
   public_phone: '手機號',
   public_email: '郵箱',
   public_view_details: '查看詳情',
+  public_warn: '警告',
+  public_error: '錯誤',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '無效',
@@ -100,6 +102,7 @@ export default {
   public_button_close: '關閉',
   public_button_reset: '重置',
   public_button_create: '創建',
+  public_button_quickly_create_task: '快速創建任務',
   public_button_export: '導出',
   public_button_download: '下載',
   public_button_add: '新增',
@@ -133,6 +136,7 @@ export default {
   public_button_execute: '執行',
   public_button_obtain: '獲取',
   public_button_help: '幫助',
+  public_button_understand: '我知道啦',
   // 消息
   public_message_title_prompt: '提示',
   public_message_delete_confirm: '是否刪除',
@@ -344,5 +348,13 @@ export default {
   public_unique_index: '唯一索引',
   public_normal_index: '索引',
   public_batch_publish: '批量發佈',
-  public_database_time: '數據庫時間'
+  public_database_time: '數據庫時間',
+  public_data_update_time: '數據更新時間',
+
+  public_create_source_connection: '創建源連接',
+  public_create_target_connection: '創建目標連接',
+  public_configuration_task: '配置任務',
+  public_need_help: '需要幫助？',
+  public_test_and_continue: '測試連接，繼續下一步',
+  public_task_count: '{val} 個任務'
 }

@@ -1,4 +1,5 @@
-import i18n from '@tap/i18n'
+import i18n, { createI18nObject } from '@tap/i18n'
+import { computed } from '@vue/composition-api'
 
 export const INSTANCE_STATUS_MAP = {
   Creating: { text: i18n.t('public_agent_status_to_be_deployed'), type: 'warning' },
@@ -9,17 +10,18 @@ export const INSTANCE_STATUS_MAP = {
   Restarting: { text: i18n.t('public_status_restarting'), type: 'disable' },
   Deploying: { text: i18n.t('public_status_deploying'), type: 'disable' }
 }
-export const CONNECTION_STATUS_MAP = {
-  ready: { text: i18n.t('public_status_ready'), type: 'success' },
-  invalid: { text: i18n.t('public_status_invalid'), type: 'danger' },
-  testing: { text: i18n.t('public_status_testing'), type: 'warning' }
-}
 
-export const CONNECTION_TYPE_MAP = {
-  source: { text: i18n.t('public_connection_type_source') },
-  target: { text: i18n.t('public_connection_type_target') },
-  source_and_target: { text: i18n.t('public_connection_type_source_and_target') }
-}
+export const CONNECTION_STATUS_MAP = createI18nObject({
+  ready: { text: 'public_status_ready', type: 'success' },
+  invalid: { text: 'public_status_invalid', type: 'danger' },
+  testing: { text: 'public_status_testing', type: 'warning' }
+})
+
+export const CONNECTION_TYPE_MAP = createI18nObject({
+  source: { text: 'public_connection_type_source' },
+  target: { text: 'public_connection_type_target' },
+  source_and_target: { text: 'public_connection_type_source_and_target' }
+})
 
 export const TASK_STATUS_MAP = {
   running: { text: i18n.t('public_status_running'), icon: 'yunxingzhong', type: 'success' },
@@ -90,13 +92,13 @@ export const ALARM_STATUS_MAP = {
   CLOESE: { text: i18n.t('packages_business_components_alert_yiguanbi'), type: 'success' }
 }
 
-export const ALARM_LEVEL_MAP = {
-  RECOVERY: { text: i18n.t('packages_business_components_alert_huifu'), type: 'finish' },
-  NORMAL: { text: i18n.t('packages_business_shared_const_yiban'), type: 'edit' },
-  WARNING: { text: i18n.t('packages_business_shared_const_jinggao'), type: 'waiting' },
-  CRITICAL: { text: i18n.t('packages_business_shared_const_yanzhong'), type: 'stop' },
-  EMERGENCY: { text: i18n.t('packages_business_shared_const_jinji'), type: 'error' }
-}
+export const ALARM_LEVEL_MAP = createI18nObject({
+  RECOVERY: { text: 'packages_business_components_alert_huifu', type: 'finish' },
+  NORMAL: { text: 'packages_business_shared_const_yiban', type: 'edit' },
+  WARNING: { text: 'packages_business_shared_const_jinggao', type: 'waiting' },
+  CRITICAL: { text: 'packages_business_shared_const_yanzhong', type: 'stop' },
+  EMERGENCY: { text: 'packages_business_shared_const_jinji', type: 'error' }
+})
 
 export const ALARM_LEVEL_SORT = ['EMERGENCY', 'CRITICAL', 'WARNING', 'NORMAL', 'RECOVERY']
 
@@ -148,14 +150,14 @@ export const AGENT_SPEC_MAP = {
   '32C64G': '4Large'
 }
 
-export const AGENT_TYPE_MAP = {
-  local: i18n.t('dfs_instance_utils_bantuoguan'),
-  cloud: i18n.t('dfs_instance_utils_quantuoguan'),
-  selfHost: i18n.t('dfs_instance_utils_bantuoguan'),
-  fullManagement: i18n.t('dfs_instance_utils_quantuoguan'),
-  Local: i18n.t('dfs_instance_utils_bantuoguan'),
-  Cloud: i18n.t('dfs_instance_utils_quantuoguan')
-}
+export const AGENT_TYPE_MAP = createI18nObject({
+  local: 'dfs_instance_utils_bantuoguan',
+  cloud: 'dfs_instance_utils_quantuoguan',
+  selfHost: 'dfs_instance_utils_bantuoguan',
+  fullManagement: 'dfs_instance_utils_quantuoguan',
+  Local: 'dfs_instance_utils_bantuoguan',
+  Cloud: 'dfs_instance_utils_quantuoguan'
+})
 
 export const TIME_MAP = {
   year: i18n.t('public_time_year'),

@@ -2,6 +2,7 @@
   <section class="dataflow-editor layout-wrap vh-100 migrate-monitor-simple">
     <!--头部-->
     <TopHeader
+      hide-operation
       :loading="loading"
       :is-saving="isSaving"
       :dataflow-name="dataflow.name"
@@ -96,11 +97,13 @@
 
           <div class="p-4 pt-0 position-absolute start-0 end-0 bottom-0" style="top: 140px">
             <ElTabs class="nav-no-padding main-tabs tabs-fill">
-              <ElTabPane label="任务监控">
+              <ElTabPane :label="$t('packages_dag_task_monitor')">
                 <div class="flex flex-column gap-4 mt-4">
                   <div class="rounded-lg bg-white p-4">
                     <div class="flex gap-3 align-center mb-3">
-                      <span class="font-color-dark fs-6 fw-sub">性能指标</span>
+                      <span class="font-color-dark fs-6 fw-sub">{{
+                        $t('packages_dag_components_nodedetaildialog_xingnengzhibiao')
+                      }}</span>
                       <div class="inline-flex align-items-center">
                         <TimeSelect
                           :options="timeOptions"
@@ -371,94 +374,9 @@
                           ></LineChart>
                         </div>
                       </div>
-
-                      <!--事件统计·-->
-
-                      <!--调试信息-->
-                      <!--<div class="py-2 px-4">
-                        <div class="flex justify-content-between mb-2">
-                          <span class="fw-sub fs-7 font-color-normal">{{
-                            $t('packages_dag_monitor_leftsider_tiaoshixinxi')
-                          }}</span>
-                        </div>
-                        <div class="mb-2 flex justify-content-between">
-                          <span>{{ $t('public_task_heartbeat_time') }}:</span>
-                          <span>{{ heartbeatTime }}</span>
-                        </div>
-                      </div>-->
                     </div>
                   </div>
                   <div class="flex gap-4">
-                    <!--<div v-if="!hideTotalData" class="info-box flex-1 p-4 bg-white rounded-lg">
-                      <div class="flex justify-content-between mb-2">
-                        <span class="fw-sub fs-7 font-color-normal">{{
-                          $t('packages_dag_monitor_leftsider_renwushijiantong')
-                        }}</span>
-                      </div>
-                      <div v-loading="!eventDataAll" class="flex">
-                        <div v-if="eventDataAll" class="w-50 pr-4">
-                          <div>{{ $t('public_event_total_input') }}</div>
-                          <ElTooltip
-                            transition="tooltip-fade-in"
-                            placement="top"
-                            :content="eventDataAll.inputTotals.toLocaleString()"
-                            class="mt-1 mb-4 font-color-normal fw-sub fs-3 din-font"
-                          >
-                            <div>{{ eventDataAll.inputTotalsLabel }}</div>
-                          </ElTooltip>
-                          <div class="mb-2">
-                            <span>{{ $t('packages_dag_monitor_leftsider_charu') }}</span>
-                            <span>{{ eventDataAll.inputInsertTotal.toLocaleString() }}</span>
-                          </div>
-                          <div class="mb-2">
-                            <span>{{ $t('packages_dag_monitor_leftsider_gengxin') }}</span>
-                            <span>{{ eventDataAll.inputUpdateTotal.toLocaleString() }}</span>
-                          </div>
-                          <div class="mb-2">
-                            <span>{{ $t('packages_dag_monitor_leftsider_shanchu') }}</span>
-                            <span>{{ eventDataAll.inputDeleteTotal.toLocaleString() }}</span>
-                          </div>
-                          <div>
-                            <span>DDL：</span>
-                            <span>{{ eventDataAll.inputDdlTotal.toLocaleString() }}</span>
-                          </div>
-                        </div>
-
-                        <div v-if="eventDataAll" class="output-item flex w-50">
-                          <div class="output-item__divider"></div>
-                          <div class="ml-4">
-                            <div>{{ $t('public_event_total_output') }}</div>
-                            <ElTooltip
-                              transition="tooltip-fade-in"
-                              placement="top"
-                              :content="eventDataAll.outputTotals.toLocaleString()"
-                              class="mt-1 mb-4 font-color-normal fw-sub fs-3 din-font"
-                            >
-                              <div>
-                                {{ eventDataAll.outputTotalsLabel }}
-                              </div>
-                            </ElTooltip>
-                            <div class="mb-2">
-                              <span>{{ $t('packages_dag_monitor_leftsider_charu') }}</span>
-                              <span>{{ eventDataAll.outputInsertTotal.toLocaleString() }}</span>
-                            </div>
-                            <div class="mb-2">
-                              <span>{{ $t('packages_dag_monitor_leftsider_gengxin') }}</span>
-                              <span>{{ eventDataAll.outputUpdateTotal.toLocaleString() }}</span>
-                            </div>
-                            <div class="mb-2">
-                              <span>{{ $t('packages_dag_monitor_leftsider_shanchu') }}</span>
-                              <span>{{ eventDataAll.outputDeleteTotal.toLocaleString() }}</span>
-                            </div>
-                            <div>
-                              <span>DDL：</span>
-                              <span>{{ eventDataAll.outputDdlTotal.toLocaleString() }}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>-->
-
                     <BottomPanel
                       v-if="dataflow && dataflow.status && showBottomPanel"
                       class="rounded-lg bg-white border-top-0 flex-1 h-auto"
@@ -478,7 +396,7 @@
                 </div>
               </ElTabPane>
 
-              <ElTabPane label="任务日志">
+              <ElTabPane :label="$t('public_task_log')">
                 <div class="bg-white rounded-lg mt-4">
                   <NodeLog
                     v-if="dataflow && dataflow.status && showBottomPanel"
@@ -492,14 +410,10 @@
                   ></NodeLog>
                 </div>
               </ElTabPane>
-              <ElTabPane label="基本信息" lazy>
+              <ElTabPane :label="$t('packages_dag_monitor_leftsider_jibenxinxi')" lazy>
                 <TaskReadPretty class="mt-4" :task="dataflow"></TaskReadPretty>
-                <!--<div class="p-4 mt-4 bg-white rounded-lg">-->
-                <!--  <div class="title-prefix-bar mb-4">配置任务</div>-->
-                <!--  &lt;!&ndash;<SchemaForm :form="form" :schema="schema" :scope="scope" />&ndash;&gt;-->
-                <!--</div>-->
               </ElTabPane>
-              <ElTabPane label="任务设置" lazy>
+              <ElTabPane :label="$t('packages_dag_task_stetting_basic_setting')" lazy>
                 <TaskSettingsReadPretty class="mt-4" :task="dataflow"></TaskSettingsReadPretty>
               </ElTabPane>
             </ElTabs>
@@ -1168,6 +1082,12 @@ export default {
         this.init()
       }
       this.toggleConnectionRun(v1 === 'running')
+
+      if (v1 === 'running') {
+        setTimeout(() => {
+          this.$store.dispatch('setGuideViewTaskMonitor')
+        }, 3000)
+      }
     },
     'dataflow.id'() {
       this.getTaskPermissions()
@@ -1200,6 +1120,8 @@ export default {
     })
 
     this.timeSelectLabel = this.$refs.timeSelect?.getPeriod()?.label
+
+    // this.$store.dispatch('setGuideViewTaskMonitor')
   },
 
   beforeDestroy() {
@@ -1482,26 +1404,10 @@ export default {
     },
 
     handleEdit() {
-      switch (this.dataflow.syncType) {
-        case 'migrate':
-          this.$router.push({
-            name: 'MigrateEditor',
-            params: { id: this.dataflow.id }
-          })
-          break
-        case 'sync':
-          this.$router.push({
-            name: 'DataflowEditor',
-            params: { id: this.dataflow.id }
-          })
-          break
-        case 'logCollector':
-          this.$refs.sharedMiningEditor.open(this.dataflow.id)
-          break
-        case 'shareCache':
-          this.$refs.sharedCacheEditor.open(this.dataflow.id)
-          break
-      }
+      this.$router.push({
+        name: 'MigrateForm',
+        params: { id: this.dataflow.id }
+      })
     },
 
     handleShowVerify() {

@@ -32,7 +32,7 @@
           </el-button>
 
           <ElButton
-            v-if="isDaas"
+            v-if="isDaas && !hideDownload"
             :loading="downloadLoading"
             type="warning"
             size="mini"
@@ -314,6 +314,7 @@ export default {
     const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
     return {
       isDaas,
+      hideDownload: process.env.VUE_APP_HIDE_ANALYSE_DOWNLOAD,
       activeNodeId: this.nodeId,
       keyword: '',
       checkList: [],

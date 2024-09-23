@@ -2,8 +2,8 @@
   <section class="migration-form-page flex flex-column h-100 gap-4">
     <div class="px-5 py-4 bg-white rounded-lg">
       <ElBreadcrumb class="breadcrumb" separator-class="el-icon-arrow-right">
-        <ElBreadcrumbItem>数据复制</ElBreadcrumbItem>
-        <ElBreadcrumbItem>创建复制任务</ElBreadcrumbItem>
+        <ElBreadcrumbItem>{{ $t('public_task_type_migrate') }}</ElBreadcrumbItem>
+        <ElBreadcrumbItem>{{ $t('public_task_create') }}</ElBreadcrumbItem>
       </ElBreadcrumb>
 
       <el-divider class="my-4"></el-divider>
@@ -20,7 +20,14 @@
         v-bind="steps[currentStep].props"
         @prev="prevStep"
         @next="nextStep"
-      ></component>
+      >
+        <template #help>
+          <el-button @click="openChat" type="text"
+            ><VIcon class="mr-1 align-middle" size="18">customer</VIcon
+            ><span class="align-middle">{{ $t('public_need_help') }}</span></el-button
+          >
+        </template>
+      </component>
     </div>
   </section>
 </template>
@@ -30,6 +37,7 @@ import { defineComponent, ref, provide } from '@vue/composition-api'
 import SourceStep from './components/steps/SourceStep.vue'
 import TargetStep from './components/steps/TargetStep.vue'
 import TaskStep from './components/steps/TaskStep.vue'
+import AdvancedSettingsStep from './components/steps/AdvancedSettingsStep.vue'
 import { taskApi } from '@tap/api'
 import i18n from '@tap/i18n'
 import { makeStatusAndDisabled } from '@tap/business'
@@ -38,8 +46,7 @@ import { debounce } from 'lodash'
 import { genDatabaseNode, genProcessorNode } from './util'
 import { observable } from '@formily/reactive'
 import { DEFAULT_SETTINGS } from './constants'
-import { computed as reactiveComputed } from '@tap/form'
-import { observer } from '@formily/vue'
+import { VIcon } from '@tap/component'
 
 export default defineComponent({
   name: 'MigrationForm',
@@ -51,7 +58,7 @@ export default defineComponent({
     }
   },
 
-  components: { SourceStep, TargetStep, TaskStep },
+  components: { VIcon, SourceStep, TargetStep, TaskStep },
 
   setup(props, { root }) {
     const handleCheckName = debounce(function (resolve, value) {
@@ -128,9 +135,11 @@ export default defineComponent({
       await patchTask()
     }
 
+    const isGuide = ref(root.$route.name === 'WelcomeTask')
+
     const steps = ref([
       {
-        title: '创建源连接',
+        title: i18n.t('public_create_source_connection'),
         component: SourceStep,
         props: {
           type: 'source'
@@ -138,7 +147,7 @@ export default defineComponent({
         onNext: onSourceNext
       },
       {
-        title: '创建目标连接',
+        title: i18n.t('public_create_target_connection'),
         component: SourceStep,
         props: {
           type: 'target'
@@ -146,14 +155,22 @@ export default defineComponent({
         onNext: onTargetNext
       },
       {
-        title: '配置数据复制任务',
+        title: i18n.t('public_configuration_task'),
         component: TaskStep
       },
       {
-        title: '任务启动运行',
+        title: i18n.t('packages_business_task_start_task'),
         component: SourceStep
       }
     ])
+
+    if (!isGuide.value) {
+      steps.value.splice(steps.value.length - 1, 0, {
+        title: i18n.t('packages_dag_task_stetting_basic_setting'),
+        component: AdvancedSettingsStep
+      })
+    }
+
     let taskRef = ref(null)
     let sourceNodeRef = ref(null)
     let targetNodeRef = ref(null)
@@ -169,6 +186,8 @@ export default defineComponent({
       }
 
       currentStep.value += 1
+
+      root.$store.dispatch('setGuideStep', currentStep.value)
     }
 
     const handlePageReturn = () => {
@@ -347,7 +366,9 @@ export default defineComponent({
       const task = {
         ...DEFAULT_SETTINGS,
         name: '',
-        desc: 'form',
+        attrs: {
+          editorType: 'form'
+        },
         status: '',
         dag
       }
@@ -398,6 +419,10 @@ export default defineComponent({
         task = await getTask(id)
       } else {
         task = await getNewTask()
+
+        if (root.$route.name === 'WelcomeTask') {
+          root.$store.dispatch('setGuideTask', task.id)
+        }
       }
 
       task = richTask(task)
@@ -421,6 +446,10 @@ export default defineComponent({
       }
     }
 
+    const openChat = () => {
+      window.$zoho.salesiq.chat.start?.()
+    }
+
     initTask()
 
     provide('currentStep', currentStep)
@@ -428,6 +457,7 @@ export default defineComponent({
     provide('source', sourceNodeRef)
     provide('target', targetNodeRef)
     provide('pageVersion', pageVersion)
+    provide('isGuide', isGuide)
 
     return {
       task: taskRef,
@@ -439,7 +469,8 @@ export default defineComponent({
 
       // API
       prevStep,
-      nextStep
+      nextStep,
+      openChat
     }
   }
 })
@@ -448,37 +479,48 @@ export default defineComponent({
 <style scoped lang="scss">
 .migration-form-page {
   background-color: #f1f2f4;
-}
 
-.form-steps {
   ::v-deep {
-    .el-step {
-      display: flex !important;
-      align-items: center;
-      .el-step__head {
-        position: static;
-        width: auto;
-        &.is-process {
-          color: #fff;
-          border-color: map-get($color, primary);
+    .form-steps {
+      .el-step {
+        display: flex !important;
+        align-items: center;
+        overflow: hidden;
+        .el-step__head {
+          position: static;
+          width: auto;
+          &.is-process {
+            color: #fff;
+            border-color: map-get($color, primary);
 
-          .el-step__icon {
-            background-color: map-get($color, primary);
+            .el-step__icon {
+              background-color: map-get($color, primary);
+            }
           }
         }
-      }
-      .el-step__main {
-        padding-inline: 8px 16px;
-        background-color: #fff;
-        z-index: 1;
-      }
-      .el-step__title {
-        line-height: 24px;
-        &.is-process {
-          color: map-get($color, primary);
+        .el-step__main {
+          overflow: hidden;
+          padding-inline: 8px 16px;
+          background-color: #fff;
+          z-index: 1;
+        }
+        .el-step__title {
+          line-height: 24px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          &.is-process {
+            color: map-get($color, primary);
+          }
+        }
+        .el-step__description {
+          display: none;
         }
       }
-      .el-step__description {
+    }
+
+    .step-footer {
+      > .el-divider:first-child {
         display: none;
       }
     }

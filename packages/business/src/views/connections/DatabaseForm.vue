@@ -25,25 +25,32 @@
               </template>
             </div>
           </div>
-
-          <ElAlert
-            v-if="!isDaas && showAgentIpAlert"
-            class="alert-primary text-primary mt-2"
-            type="info"
-            show-icon
-            :closable="false"
-          >
-            <span slot="title" class="inline-block lh-sm align-middle">
-              {{ $t('packages_business_agent_ip_tips_prefix')
-              }}<a :href="docUrl" target="_blank" class="text-decoration-underline text-primary">{{
-                $t('packages_business_agent_ip_tips_suffix')
-              }}</a>
-            </span>
-          </ElAlert>
         </div>
 
         <div class="form-wrap">
           <div class="form px-4">
+            <div
+              v-if="!isDaas && showAgentIpAlert"
+              class="flex flex-column gap-2 mb-3 rounded-lg p-2 bg-color-primary-light-9"
+            >
+              <div class="flex align-items-start gap-1">
+                <div class="p-1">
+                  <VIcon class="color-primary" :size="22">info</VIcon>
+                </div>
+                <div class="lh-base p-1 fw-sub fs-7">{{ $t('packages_business_agent_ip_tips_prefix') }}:</div>
+              </div>
+
+              <el-collapse value="1" class="rounded-lg overflow-hidden rounded-collapse">
+                <el-collapse-item title="TapData IP addresses" name="1">
+                  <ul class="ml-6 font-color-dark">
+                    <li>34.92.78.86</li>
+                    <li>39.106.147.20</li>
+                    <li>47.242.39.227</li>
+                  </ul>
+                </el-collapse-item>
+              </el-collapse>
+            </div>
+
             <SchemaToForm
               class="pdk-schema-form"
               ref="schemaToForm"
@@ -911,30 +918,32 @@ export default {
             '23:00'
           ]
         },
-        heartbeatObject: {
-          type: 'void',
-          'x-component': 'Space',
-          title: i18n.t('packages_business_connections_databaseform_kaiqixintiaobiao'),
-          'x-decorator': 'FormItem',
-          'x-decorator-props': {
-            tooltip: i18n.t('packages_business_connections_databaseform_dakaixintiaobiao')
-          },
-          properties: {
-            heartbeatEnable: {
-              type: 'boolean',
-              default: false,
-              'x-component': 'Switch'
-            }
-          },
-          'x-reactions': {
-            dependencies: ['__TAPDATA.connection_type'],
-            fulfill: {
-              state: {
-                display: '{{$deps[0] === "source_and_target" ? "visible":"hidden"}}'
+        heartbeatObject: !this.pdkOptions.tags?.includes('NoHeartbeat')
+          ? {
+              type: 'void',
+              'x-component': 'Space',
+              title: i18n.t('packages_business_connections_databaseform_kaiqixintiaobiao'),
+              'x-decorator': 'FormItem',
+              'x-decorator-props': {
+                tooltip: i18n.t('packages_business_connections_databaseform_dakaixintiaobiao')
+              },
+              properties: {
+                heartbeatEnable: {
+                  type: 'boolean',
+                  default: false,
+                  'x-component': 'Switch'
+                }
+              },
+              'x-reactions': {
+                dependencies: ['__TAPDATA.connection_type'],
+                fulfill: {
+                  state: {
+                    display: '{{$deps[0] === "source_and_target" ? "visible":"hidden"}}'
+                  }
+                }
               }
             }
-          }
-        }
+          : undefined
       })
 
       if (this.isDaas) {
@@ -1775,6 +1784,26 @@ export default {
       .el-collapse-item__content {
         padding-bottom: 0;
       }
+    }
+  }
+}
+.rounded-collapse {
+  ::v-deep {
+    .el-collapse-item__header {
+      height: 38px;
+      padding: 0 16px;
+      gap: 8px;
+      font-weight: 400;
+      &.is-active {
+        color: map-get($color, primary);
+      }
+    }
+    .el-collapse-item__arrow {
+      order: -1;
+      margin: 0;
+    }
+    .el-collapse-item__content {
+      padding: 0 16px 16px;
     }
   }
 }

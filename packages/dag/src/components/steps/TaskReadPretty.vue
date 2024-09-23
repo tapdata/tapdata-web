@@ -1,12 +1,12 @@
 <template>
   <div class="flex flex-column gap-4">
     <div class="p-4 bg-white rounded-lg">
-      <div class="title-prefix-bar mb-4">表编辑</div>
+      <div class="title-prefix-bar mb-4">{{ $t('packages_dag_src_migrationeditor_biaobianji') }}</div>
       <SchemaForm :form="form" :schema="tableEditSchema" :scope="scope" />
     </div>
 
     <div class="p-4 bg-white rounded-lg">
-      <div class="title-prefix-bar mb-4">字段编辑</div>
+      <div class="title-prefix-bar mb-4">{{ $t('packages_dag_src_migrationeditor_ziduanbianji') }}</div>
       <SchemaForm :form="fieldForm" :schema="fieldEditSchema" :scope="scope" />
     </div>
   </div>

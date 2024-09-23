@@ -196,13 +196,34 @@ export class Database extends NodeType {
                     title: i18n.t('packages_dag_nodes_database_biaoxianshi'),
                     'x-decorator': 'FormItem',
                     'x-component': 'Select',
-                    default: 'All',
+                    default: 'HasKeys',
                     enum: [
                       { label: i18n.t('public_select_option_all'), value: 'All' },
                       { label: i18n.t('packages_dag_nodes_database_jinyouzhujianbiao'), value: 'HasKeys' },
                       { label: i18n.t('packages_dag_nodes_database_jinwuzhujianbiao'), value: 'NoKeys' }
                     ]
                   },
+
+                  selectAlert: {
+                    type: 'void',
+                    'x-component': 'Alert',
+                    'x-component-props': {
+                      class: 'mb-2 lh-base',
+                      title: i18n.t('packages_dag_select_HasKeys_alert'),
+                      type: 'warning',
+                      showIcon: true,
+                      closable: false
+                    },
+                    'x-reactions': {
+                      dependencies: ['.noPrimaryKeyTableSelectType'],
+                      fulfill: {
+                        state: {
+                          visible: '{{$deps[0] === "HasKeys"}}'
+                        }
+                      }
+                    }
+                  },
+
                   div2: {
                     type: 'void',
                     'x-component': 'div',

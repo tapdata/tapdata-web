@@ -37,20 +37,7 @@ export default {
     }
   },
 
-  watch: {
-    $route(to, from) {
-      console.log('$route', to) // eslint-disable-line
-    },
-    '$store.state.guide.expand.guideStatus'() {
-      this.$axios.post('api/tcm/user_guide', {
-        expand: this.$store.state.guide.expand
-      })
-    }
-  },
-
   async created() {
-    await this.loadGuide()
-
     if (this.isGCPMarketplaceUser) {
       // GCP Marketplace 用户，直接跳过引导
       let { total = 0 } = await this.$axios.get(`api/tcm/subscribe`)
@@ -58,39 +45,9 @@ export default {
         // 显示正在创建实例的提示
         this.marketplaceGuideVisible = true
       }
-
-      if (!this.replicationTour.enable) {
-        this.$store.commit('setReplicationTour', {
-          enable: true,
-          activeIndex: null,
-          behavior: '',
-          status: '',
-          view: 'board'
-        })
-
-        this.$axios.post('api/tcm/user_guide', {
-          tour: this.replicationTour
-        })
-      }
-    } else if (!this.pausedGuide) {
-      await this.checkGuide()
     }
 
-    this.loopLoadAgentCount()
-    let unwatch
-
-    // 🎉🥚
-    Mousetrap.bind('up up down down left right left right', () => {
-      unwatch?.()
-      if (this.startingTour) {
-        this.setShowReplicationTour(false)
-        this.completeTour()
-        this.destroyDriver()
-      } else {
-        this.subscriptionModelVisible = !this.subscriptionModelVisible
-      }
-    })
-
+    // this.loopLoadAgentCount()
     await this.setUrlParams() // url携带的自定义参数
   },
 
@@ -181,12 +138,6 @@ export default {
       if (!subscribeId || !agentId) {
         this.subscriptionModelVisible = true
       }
-    },
-
-    async loadGuide() {
-      const guide = await this.$axios.get('api/tcm/user_guide')
-      this.$store.commit('setGuide', guide)
-      this.$store.commit('setReplicationTour', guide?.tour)
     },
 
     loopLoadAgentCount(showLoading) {
@@ -477,12 +428,11 @@ export default {
       }
 
       if (userVirtualId && !guide.expand?.userVirtualId) {
-        params.expand = {
+        params.expand = Object.assign(guide.expand, {
           userReferrer,
           userVirtualId,
           userVisitedPages
-        }
-        Object.assign(guide.expand, params.expand)
+        })
       }
 
       if (logidUrlCloud) {
@@ -748,6 +698,41 @@ export default {
 
     updateMarketplaceGuide(val) {
       this.marketplaceGuideVisible = false
+    },
+
+    initMenuTour() {
+      const steps = [
+        {
+          element: '#menu-Instance',
+          popover: {
+            showButtons: ['next', 'previous'],
+            description: '在这里可以订阅半托管引擎部署在您本地，详细了解半托管引擎'
+          }
+        },
+        {
+          element: '#menu-connections',
+          popover: {
+            showButtons: ['next', 'previous'],
+            description: '在这里可以管理和添加您的数据源/目标库'
+          }
+        },
+        {
+          element: '#task-list-create',
+          popover: {
+            showButtons: ['next', 'previous', 'close'],
+            description: '点击这个可以尝试创建更高级的复制同步任务。'
+          }
+        }
+      ]
+      this.menuTour = driver({
+        allowClose: false,
+        allowKeyboardControl: false,
+        showProgress: true,
+        steps,
+        popoverClass: 'replication-driver-popover p-3',
+        onPopoverRender: (popover, { config, state }) => {},
+        onHighlightStarted: (element, step, { state }) => {}
+      })
     }
   }
 }

@@ -6,6 +6,8 @@ import PaidUpgrade from '@/views/agent-download/PaidUpgrade.vue'
 
 import Lang from '../views/Lang.vue'
 
+console.log('i18n', i18n.locale, i18n.t('public_status_ready'))
+
 const UserCenter = () => import(/* webpackChunkName: "task-form" */ '../views/user/Center.vue')
 const UserContactUs = () => import(/* webpackChunkName: "task-form" */ '../views/user/ContactUs.vue')
 const DagEditor = async () => {

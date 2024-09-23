@@ -275,7 +275,7 @@ export default {
 
     return {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
-      showInstanceInfo: process.env.VUE_APP_LICENSE_TYPE === 'PIPELINE' || process.env.NODE_ENV === 'development',
+      showInstanceInfo: process.env.VUE_APP_LICENSE_TYPE === 'PIPELINE',
 
       filterItems: [],
       user_id: Cookie.get('user_id'),

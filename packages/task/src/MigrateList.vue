@@ -33,13 +33,13 @@
               type="primary"
               plain
               size="mini"
-              id="task-list-create"
+              id="task-list-quick-create"
               :disabled="$disabledReadonlyUserBtn()"
               :loading="quickCreateBtnLoading"
               @click="useFormCreate"
             >
               <VIcon size="18" class="align-middle mr-1">dynamic-form-outline</VIcon>
-              <span class="align-middle">快速创建任务</span>
+              <span class="align-middle">{{ $t('public_button_quickly_create_task') }}</span>
             </el-button>
           </el-badge>
           <el-button
@@ -67,35 +67,6 @@
       :sync-type="syncType"
     ></List>
   </PageContainer>
-  <!--<div class="flex flex-column h-100 overflow-hidden">
-    <div class="bg-white rounded-lg mb-4 flex align-center px-4">
-      <span class="fs-5 py-4 font-color-dark">{{ $t($route.meta.title) }}</span>
-      <template v-if="$route.meta.desc">
-        <ElDivider v-if="$route.meta.desc" class="mx-4" direction="vertical"></ElDivider>
-        <span class="fs-7 font-color-sslight">{{ $t($route.meta.desc) }}</span>
-      </template>
-      <div class="flex-grow-1"></div>
-      <el-radio-group v-model="viewType" class="view-radio-group">
-        <el-radio-button label="board">
-          <VIcon class="align-top">swimlane</VIcon>
-          {{ $t('public_board_view') }}
-        </el-radio-button>
-        <el-radio-button label="list">
-          <VIcon class="align-top">list-view</VIcon>
-          {{ $t('public_list_view') }}
-        </el-radio-button>
-      </el-radio-group>
-    </div>
-
-    <ReplicationBoard v-if="viewType === 'board'" class="bg-white rounded-lg overflow-hidden"></ReplicationBoard>
-    <List
-      v-else
-      class="overflow-hidden bg-white rounded-lg pr-4 pb-4"
-      :route="route"
-      :task-buried="taskBuried"
-      :sync-type="syncType"
-    ></List>
-  </div>-->
 </template>
 
 <script>
@@ -123,7 +94,7 @@ export default {
       route: {
         new: 'MigrateCreate',
         editor: 'MigrateEditor',
-        monitor: 'MigrationMonitorSimple'
+        monitor: 'MigrationMonitor'
       },
       createBtnLoading: false,
       quickCreateBtnLoading: false
@@ -136,10 +107,10 @@ export default {
     },
     viewType: {
       get() {
-        return this.$store.state.replicationTour.view
+        return this.$store.state.guide.tour.view
       },
       set(value) {
-        this.$store.commit('setReplicationView', value)
+        this.$store.dispatch('setReplicationView', value)
       }
     },
     buttonShowMap() {
@@ -157,16 +128,6 @@ export default {
         copy: this.$has('v2_data_replication_copy'),
         import: this.$has('v2_data_replication_import'),
         export: this.$has('v2_data_replication_export')
-      }
-    }
-  },
-
-  watch: {
-    viewType() {
-      if (!this.startingTour) {
-        this.$axios.post('api/tcm/user_guide', {
-          tour: this.$store.state.replicationTour
-        })
       }
     }
   },

@@ -1171,7 +1171,7 @@ export default {
   packages_business_setting_alarmsetting_qubangding: '去绑定',
   packages_business_setting_alarmsetting_jiancedaoninhai: '检测到您还未绑定邮箱，无法开启邮件通知。',
   packages_business_verification_form_zhengzaijiyuren: '正在基于任务生成校验条件',
-  packages_business_agent_ip_tips_prefix: '请确保您数据库的网络安全策略，允许全托管Agent所在的IP地址访问。',
+  packages_business_agent_ip_tips_prefix: '请在防火墙中允许这些 TapData IP 访问数据库端口，并确保权限设置正确',
   packages_business_agent_ip_tips_suffix: '点击查看全托管Agent的IP地址信息',
   packages_business_demo_database_desc: 'Demo 数据源，可快速创建数据源信息，无需准备数据库信息即可体验。',
   packages_business_use_ssl: '使用 SSL',
@@ -1254,5 +1254,5 @@ export default {
   packages_business_download_details: '下载详情',
   packages_business_solution: '解决方案',
   packages_business_error_details: '错误详情',
-  packages_business_instance_info: '实例信息'
+  packages_business_instance_info: '连接唯一标识'
 }
