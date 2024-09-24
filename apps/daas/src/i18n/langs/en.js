@@ -602,7 +602,7 @@ export default {
   setting_Ldap_SSL_Enable: 'Enable SSL',
   setting_Ldap_Server_Host_doc: 'The domain controller address of AD, e.g., ldap://ad.example.com or ldaps://ad.example.com',
   setting_Ldap_Server_Port_doc: 'LDAP typically uses port 389, while LDAPS (secure connection) uses port 636',
-  setting_Ldap_Base_DN_doc: 'The starting point for LDAP queries, used to define the search scope in AD, e.g., ou=Users,dc=example,dc=com',
+  setting_Ldap_Base_DN_doc: 'The starting point of an LDAP query, used to define the search scope in AD, with multiple groups separated by semicolons. Example: cn=Users, dc=example,dc=com;cn=Test,dc=example,dc=com',
   setting_Ldap_Bind_DN_doc: 'The full Distinguished Name (DN) of the user for authentication, i.e., the identity used to log in to the AD server, e.g., user@example.com',
   setting_Ldap_Bind_Password_doc: 'The password corresponding to the Bind DN, used for authentication',
   user_list_user_name_email: 'Please enter username/email',

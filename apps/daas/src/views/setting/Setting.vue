@@ -1,7 +1,7 @@
 <template>
   <section class="setting-list-wrap">
     <div class="setting-list-box">
-      <ul class="setting-nav" :style="lang === 'en' ? '280px' : '160px'">
+      <ul class="setting-nav overflow-y-auto" :style="lang === 'en' ? '280px' : '160px'">
         <li
           v-for="(item, index) in formData.items"
           :key="index"
@@ -32,7 +32,7 @@
 
                 <el-row v-if="activePanel === childItem.category">
                   <el-col :span="24">
-                    <el-form-item>
+                    <el-form-item v-if="childItem.key_label !== 'Ldap SSL Cert' || ldapForm.Ldap_SSL_Enable">
                       <span slot="label">
                         <span
                           >{{
@@ -54,8 +54,17 @@
                           <VIcon class="color-primary ml-3" size="14">info</VIcon>
                         </el-tooltip>
                       </span>
+                      <template v-if="childItem.key_label === 'Ldap SSL Cert'">
+                        <TextFileReader
+                          :value="childItem.value"
+                          :file-name="childItem.fileName"
+                          @change="handleChangeCert(childItem, $event)"
+                          @update:fileName="handleChangeName(childItem, $event)"
+                        ></TextFileReader>
+                      </template>
+
                       <ElInputNumber
-                        v-if="'min' in childItem || 'max' in childItem"
+                        v-else-if="'min' in childItem || 'max' in childItem"
                         v-model="childItem.value"
                         controls-position="right"
                         :min="childItem.min"
@@ -191,10 +200,11 @@ import { licensesApi, settingsApi, alarmRuleApi, usersApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
 import Cookie from '@tap/shared/src/cookie'
 import { showErrorMessage } from '@tap/business'
+import { TextFileReader } from '@tap/form'
 
 export default {
   name: 'Setting',
-  components: { VIcon },
+  components: { VIcon, TextFileReader },
   data() {
     return {
       title: process.env.VUE_APP_PAGE_TITLE,
@@ -286,6 +296,7 @@ export default {
           })
         }
       }
+      console.log('result', result)
       return result
     }
   },
@@ -447,6 +458,14 @@ export default {
         .finally(() => {
           this.adTesting = false
         })
+    },
+
+    handleChangeCert(target, value) {
+      this.$set(target, 'value', value)
+    },
+
+    handleChangeName(target, name) {
+      this.$set(target, 'fileName', name)
     }
   }
 }
@@ -465,6 +484,7 @@ export default {
     // background-color: #fff;
     border-radius: 4px;
     .setting-nav {
+      min-width: max-content;
       height: 100%;
       padding: 20px 2px;
       border-right: 1px solid map-get($borderColor, light);
