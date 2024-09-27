@@ -2391,6 +2391,8 @@ export default {
           this.dataflow.shareCdcStopMessage = data.shareCdcStopMessage
           this.dataflow.timeDifference = data.timeDifference
           this.dataflow.currentEventTimestamp = data.currentEventTimestamp
+          this.dataflow.functionRetryStatus = data.functionRetryStatus
+          this.dataflow.taskRetryStartTime = data.taskRetryStartTime
 
           if (data.currentEventTimestamp) {
             this.dataflow.currentEventTimestampLabel = dayjs(data.currentEventTimestamp).format('YYYY-MM-DD HH:mm:ss')
