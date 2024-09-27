@@ -1,6 +1,11 @@
 <template>
   <div class="h-100">
-    <div v-if="!connectorSelected" class="flex flex-column gap-4 h-100 overflow-y-auto">
+    <div
+      v-if="!connectorSelected"
+      class="flex flex-column gap-4 h-100 overflow-y-auto"
+      v-infinite-scroll="loadMoreConnection"
+      :infinite-scroll-disabled="moreDisabled"
+    >
       <div class="p-4 bg-white rounded-lg">
         <div class="flex gap-6 lh-base">
           <div
@@ -122,6 +127,12 @@
                 </div>
               </div>
             </div>
+            <div style="grid-column: 1 / 4">
+              <VEmpty v-if="!connectionList.length" />
+              <div v-if="moreLoading" class="text-center text-black-50 fs-8 p-2">
+                {{ $t('packages_dag_loading') }}<span class="dotting"></span>
+              </div>
+            </div>
           </div>
 
           <div v-else class="connector-list grid gap-4">
@@ -199,9 +210,8 @@
 <script>
 import { defineComponent, ref, computed, nextTick, provide, inject, reactive } from '@vue/composition-api'
 import { ConnectorForm, DatabaseIcon, verify, CONNECTION_STATUS_MAP } from '@tap/business'
+import { VEmpty } from '@tap/component'
 import { connectionsApi, databaseTypesApi } from '@tap/api'
-import ConnectorFormItem from './ConnectorFormItem.vue'
-import { getInitialValuesInBySchema } from '../../../../form'
 import dayjs from 'dayjs'
 import i18n from '@tap/i18n'
 
@@ -213,7 +223,7 @@ export default defineComponent({
       default: 'source'
     }
   },
-  components: { DatabaseIcon, ConnectorForm, ConnectorFormItem },
+  components: { VEmpty, DatabaseIcon, ConnectorForm },
   setup(props, { refs, root, emit }) {
     const pdkHash = ref('')
     const pdkId = ref('')
@@ -288,10 +298,32 @@ export default defineComponent({
 
     const connectionPage = reactive({
       page: 1,
-      size: 20
+      size: 21,
+      total: 0
     })
 
-    const loadConnectionList = async () => {
+    const moreLoading = ref(false)
+
+    const loading = ref(false)
+
+    const noMore = computed(() => {
+      return connectionPage.page >= Math.ceil(connectionPage.total / connectionPage.size)
+    })
+
+    const moreDisabled = computed(() => {
+      return loading.value || noMore.value || moreLoading.value
+    })
+
+    const loadConnectionList = async loadMore => {
+      if (loadMore) {
+        connectionPage.page++
+        moreLoading.value = true
+      } else {
+        loading.value = true
+        connectionPage.page = 1
+        connectionPage.total = 0
+      }
+
       let { page, size } = connectionPage
       let where = {
         createType: {
@@ -349,7 +381,24 @@ export default defineComponent({
         return item
       })
 
-      connectionList.value = list
+      if (loadMore) {
+        // 防止重复push
+        list.forEach(item => {
+          connectionList.value.push(item)
+        })
+        moreLoading.value = false
+      } else {
+        connectionList.value = list
+        loading.value = false
+      }
+
+      connectionPage.total = data.total
+    }
+
+    const loadMoreConnection = () => {
+      if (moreDisabled.value || optionSelected.value !== 'has-connection') return
+
+      loadConnectionList(true)
     }
 
     const loadConnection = async () => {
@@ -385,7 +434,11 @@ export default defineComponent({
       setNodeConnection(data)
     }
 
-    const handleSearchInput = () => {}
+    const handleSearchInput = () => {
+      if (optionSelected.value === 'has-connection') {
+        loadConnectionList()
+      }
+    }
 
     const handleCancelCreate = () => {
       connectorSelected.value = null
@@ -486,6 +539,12 @@ export default defineComponent({
       connectionSelected,
       currentStep: currentStepRef,
       connectionIdSelected,
+
+      moreDisabled,
+      moreLoading,
+      loadMoreConnection,
+      loadConnection,
+      loadConnectorList,
 
       handleConnectorSelect,
       handleSearchInput,
