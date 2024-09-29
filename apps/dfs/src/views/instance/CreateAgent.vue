@@ -227,7 +227,7 @@
         </ElFormItem>
 
         <!--选择币种-->
-        <ElFormItem v-if="currencyOption && currencyOption.length > 0">
+        <!--<ElFormItem v-if="currencyOption && currencyOption.length > 0">
           <div slot="label" class="font-color-dark fw-sub">
             {{ $t('dfs_agent_download_subscriptionmodeldialog_xuanzebizhong') }}
           </div>
@@ -241,7 +241,7 @@
               >{{ CURRENCY_MAP[item.currency] }}
             </ElRadio>
           </ElRadioGroup>
-        </ElFormItem>
+        </ElFormItem>-->
       </ElForm>
     </div>
 
