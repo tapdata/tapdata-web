@@ -97,7 +97,39 @@ const pdkDocMap = {
   dummy: 'prerequisites/others/dummy',
   'http-receiver': 'prerequisites/others/http-receiver',
   'mock-source': 'prerequisites/others/mock-source',
-  'mock-target': 'prerequisites/others/mock-target'
+  'mock-target': 'prerequisites/others/mock-target',
+  dws: 'prerequisites/warehouses-and-lake/gaussdb',
+  kafka_enhanced: 'prerequisites/mq-and-middleware/kafka-enhanced'
+}
+
+// 维护一个DocMap还有一个NameDictionary的原因是，docMap从文档仓库直接复制过来，有些命名和pdkId不一致
+const pdkNameDictionary = {
+  ali1688: 'alibaba-1688',
+  'aliyun-adb-postgres': 'aliyun-adb-postgresql',
+  'aliyun-db-mongodb': 'aliyun-mongodb',
+  'aliyun-rds-mariadb': 'aliyun-rds-for-mariadb',
+  'aliyun-rds-mysql': 'aliyun-rds-for-mysql',
+  'aliyun-rds-postgres': 'aliyun-rds-for-pg',
+  'aliyun-rds-sqlserver': 'aliyun-rds-for-sql-server',
+  'aws-rds-mysql': 'amazon-rds-mysql',
+  bigquery: 'big-query',
+  custom: 'custom-connection',
+  gbase8a: 'gbase-8a',
+  gbase8s: 'gbase-8s',
+  greenplum: 'greenplum',
+  hazelcast: 'hazelcast-cloud',
+  kingbaser3: 'kingbase-es-r3',
+  kingbaser6: 'kingbase-es-r6',
+  'open-gauss': 'opengauss',
+  'polar-db-mysql': 'polardb-mysql',
+  'polar-db-postgres': 'polardb-postgresql',
+  postgres: 'postgresql',
+  quickapi: 'quick-api',
+  'tencent-db-mariadb': 'tencentdb-for-mariadb',
+  'tencent-db-mongodb': 'tencentdb-for-mongodb',
+  'tencent-db-mysql': 'tencentdb-for-mysql',
+  'tencent-db-postgres': 'tencentdb-for-pg',
+  'tencent-db-sqlserver': 'tencentdb-for-sql-server'
 }
 
 export default {
@@ -121,7 +153,8 @@ export default {
 
   computed: {
     docUrl() {
-      return pdkDocMap[this.pdkId]
+      const map = pdkDocMap // config.json 维护目前意义不大，每次还是得重新打包
+      return map[pdkNameDictionary[this.pdkId] || this.pdkId]
     },
     src() {
       let domain
