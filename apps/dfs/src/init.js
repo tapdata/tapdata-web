@@ -87,8 +87,7 @@ export default ({ routes }) => {
     wsUrl = wsUrl + loc.host + path + `tm/ws/agent?${queryString}`
 
     store.commit('setUser', window.__USER_INFO__)
-    store.commit('setLanguage', window.__USER_INFO__.locale)
-
+    store.commit('setLanguage', document.domain.endsWith('io') ? 'en' : 'zh-CN')
     store.dispatch('initGuide', router)
 
     // Bing Ads
