@@ -88,7 +88,7 @@ const pdkDocMap = {
   'http-receiver': 'prerequisites/others/http-receiver',
   greenplum: 'prerequisites/warehouses-and-lake/greenplum',
   dws: 'prerequisites/warehouses-and-lake/gaussdb',
-  'kafka-enhanced': 'prerequisites/mq-and-middleware/kafka-enhanced'
+  kafka_enhanced: 'prerequisites/mq-and-middleware/kafka-enhanced'
 }
 
 // 维护一个DocMap还有一个NameDictionary的原因是，docMap从文档仓库直接复制过来，有些命名和pdkId不一致
