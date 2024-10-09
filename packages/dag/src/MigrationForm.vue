@@ -324,7 +324,7 @@ export default defineComponent({
       } catch (e) {
         if (e?.data?.code === 'Task.RepeatName') {
           const newName = await genTaskName(base.name)
-          newTask = await genTask(newName)
+          newTask = await genTask(base, newName)
         } else if (e?.data?.code === 'InvalidPaidPlan') {
           root.$router.push({
             name: 'migrateList'
