@@ -50,7 +50,7 @@
               <ElCheckbox class="selector-panel__item" :label="item" :key="item">
                 <OverflowTooltip
                   :text="item + (getTableInfo(item).tableComment ? `(${getTableInfo(item).tableComment})` : '')"
-                  placement="right"
+                  placement="left"
                   :enterable="false"
                 >
                   <span>
@@ -157,13 +157,28 @@
           <RecycleScroller class="selector-panel__scroller" :item-size="36" :buffer="50" :items="filterSelectedData">
             <template #default="{ item }">
               <ElCheckbox class="selector-panel__item" :label="item" :key="item">
-                <ElTooltip
-                  class="ellipsis"
-                  placement="right"
+                <OverflowTooltip
+                  v-if="!errorTables[item]"
+                  :text="item + (getTableInfo(item).tableComment ? `(${getTableInfo(item).tableComment})` : '')"
+                  placement="left"
                   :enterable="false"
-                  :disabled="!errorTables[item]"
-                  :content="errorTables[item]"
                 >
+                  <span>
+                    <VIcon v-if="!!getTableInfo(item).primaryKeyCounts" size="12" class="text-warning mr-1 mt-n1"
+                      >key</VIcon
+                    >
+                    <VIcon v-if="!!getTableInfo(item).uniqueIndexCounts" size="12" class="text-text-dark mr-1 mt-n1"
+                      >fingerprint</VIcon
+                    >
+                    <slot name="right-item" :row="item"
+                      ><span>{{ item }}</span></slot
+                    >
+                    <span v-if="getTableInfo(item).tableComment" class="font-color-sslight">{{
+                      `(${getTableInfo(item).tableComment})`
+                    }}</span>
+                  </span>
+                </OverflowTooltip>
+                <ElTooltip v-else class="ellipsis" placement="left" :enterable="false" :content="errorTables[item]">
                   <div :class="{ 'color-danger': errorTables[item] }">
                     <VIcon v-if="!!getTableInfo(item).primaryKeyCounts" size="12" class="text-warning mr-1 mt-n1"
                       >key</VIcon
