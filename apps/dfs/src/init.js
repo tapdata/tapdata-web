@@ -20,6 +20,7 @@ import Time from '@tap/shared/src/time'
 import WSClient from '@tap/business/src/shared/ws-client'
 import { Notification } from 'element-ui'
 import { createVersionPolling } from './plugins/version-polling'
+import { CustomerSurvey } from './plugins/customer-survey'
 
 Vue.config.productionTip = false
 Vue.use(VueClipboard)
@@ -190,6 +191,8 @@ export default ({ routes }) => {
         location.reload()
       }
     })
+
+    // CustomerSurvey(window.App)
 
     return router
   }
