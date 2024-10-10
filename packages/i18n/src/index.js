@@ -11,7 +11,9 @@ const i18n = new VueI18n({
   silentTranslationWarn: true
 })
 
-setCurrentLanguage(document.domain.endsWith('io') ? 'en' : 'zh-CN', i18n)
+if (process.env.VUE_APP_PLATFORM !== 'DAAS') {
+  setCurrentLanguage(document.domain.endsWith('io') ? 'en' : 'zh-CN', i18n)
+}
 
 i18n.merge = (langs = {}) => {
   Object.keys(langKeyMap).forEach(f => {
