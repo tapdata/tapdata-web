@@ -47,10 +47,10 @@
               transition="tooltip-fade-in"
               :content="initialData.finishDuration.toLocaleString() + 'ms'"
             >
-              <span>{{ calcTimeUnit(initialData.finishDuration) }}</span>
+              <span>{{ calcTimeUnit(initialData.finishDuration, 2, { autoHideMs: true }) }}</span>
             </ElTooltip>
           </div>
-          <div class="mb-2 flex align-items-center">
+          <div class="mb-2 flex align-items-center justify-content-between">
             <span class="mr-2 sync-info-item__title">{{ $t('public_task_full_sync_progress') }}</span>
             <span v-if="isFileSource" class="flex-1 text-end">{{
               $t('packages_dag_components_node_zanbuzhichi')
@@ -555,23 +555,22 @@ export default {
     // 全量信息
     initialData() {
       const data = this.quota.samples?.totalData?.[0] || {}
-      const {
-        snapshotRowTotal = 0,
-        snapshotInsertRowTotal = 0,
-        snapshotDoneAt,
-        snapshotStartAt,
-        replicateLag,
-        lastFiveMinutesQps
-      } = data
+      const { snapshotRowTotal = 0, snapshotInsertRowTotal = 0, replicateLag, lastFiveMinutesQps } = data
       let time
       if (!snapshotInsertRowTotal || !snapshotRowTotal || !lastFiveMinutesQps) {
         time = 0
       } else {
         time = ((snapshotRowTotal - snapshotInsertRowTotal) / lastFiveMinutesQps) * 1000
       }
+      const milestone = this.dataflow.attrs?.milestone || {}
+      const snapshotStartAt = milestone.SNAPSHOT?.begin
+        ? dayjs(milestone.SNAPSHOT?.begin).format('YYYY-MM-DD HH:mm:ss')
+        : ''
+      const snapshotDoneAt = milestone.SNAPSHOT?.end ? dayjs(milestone.SNAPSHOT?.end).format('YYYY-MM-DD HH:mm:ss') : ''
+
       return {
-        snapshotDoneAt: snapshotDoneAt ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
-        snapshotStartAt: snapshotStartAt ? dayjs(snapshotStartAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
+        snapshotStartAt,
+        snapshotDoneAt,
         replicateLag: replicateLag,
         finishDuration: time
       }
@@ -942,7 +941,7 @@ export default {
 }
 .sync-info-item__title {
   display: inline-block;
-  width: 110px;
+  //width: 110px;
 
   & + span {
     font-variant-numeric: tabular-nums;
