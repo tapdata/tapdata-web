@@ -1674,6 +1674,7 @@ export default {
   dfs_billing_cycle: '賬單週期',
   dfs_bill_status: '賬單狀態',
   dfs_service_upgrade_notice: 'TapData Cloud 服務升級公告',
+  dfs_customer_survey_notice: '🎁 有獎調研',
   dfs_service_upgrade_notice_content: `尊敬的用戶：\n為了進一步提升您的使用體驗，我們計劃對 TapData Cloud 進行服務升級。具體升...`,
   dfs_payment_progress: '支付中',
   dfs_payment_progress_desc: '如果您已支付，請點擊支付完成',

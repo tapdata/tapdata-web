@@ -9,6 +9,8 @@
       @start="handleStartTour"
       @finish="handleFinishTour"
     ></ReplicationTour>
+
+    <!--<CustomerSurvey :value="true"></CustomerSurvey>-->
   </div>
 </template>
 

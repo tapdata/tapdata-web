@@ -606,6 +606,10 @@ export default {
     pauseGuideAndTour() {
       this.pauseGuide()
       this.handleDestroy()
+    },
+
+    updateMarketplaceGuide(val) {
+      this.marketplaceGuideVisible = false
     }
   }
 }

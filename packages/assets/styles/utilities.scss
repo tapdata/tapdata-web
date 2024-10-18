@@ -2768,6 +2768,9 @@
   -moz-user-select: none !important;
   user-select: none !important;
 }
+.user-drag-none {
+  -webkit-user-drag: none;
+}
 
 .pe-none {
   pointer-events: none !important;
