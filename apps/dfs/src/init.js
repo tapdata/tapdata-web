@@ -192,7 +192,7 @@ export default ({ routes }) => {
       }
     })
 
-    // CustomerSurvey(window.App)
+    CustomerSurvey(window.App, true)
 
     return router
   }

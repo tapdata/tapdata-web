@@ -16,7 +16,6 @@
 
 <script>
 import ReplicationTour from '@/components/ReplicationTour'
-import CustomerSurvey from '@/components/CustomerSurvey'
 import { buried } from '@/plugins/buried'
 import { mapMutations, mapState } from 'vuex'
 import { driver } from 'driver.js'
@@ -36,7 +35,7 @@ export default {
     lockedFeature: {},
     openLocked: () => {}
   },
-  components: { ReplicationTour, CustomerSurvey },
+  components: { ReplicationTour },
   computed: {
     ...mapState(['showReplicationTour', 'replicationTourFinish'])
   },
