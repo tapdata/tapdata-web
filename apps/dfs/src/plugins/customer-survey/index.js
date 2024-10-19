@@ -59,7 +59,7 @@ function renderUpgrade(h) {
         <el-image
           onClick={() => openForm('https://tapdata.mike-x.com/49ZAo')}
           class="my-4 align-top rounded-lg cursor-p user-select-none"
-          src={require('@/assets/image/customer_survey_en.png')}
+          src={require('@/assets/image/customer_survey.png')}
         ></el-image>
         <div class="mt-2 flex align-center justify-content-end">
           <el-button onClick={close}>不再提示</el-button>
