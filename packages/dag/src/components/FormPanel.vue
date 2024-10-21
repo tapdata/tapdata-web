@@ -216,8 +216,6 @@ export default {
       })
 
       this.schema = getSchema(schema, values, this.$store.state.dataflow.pdkPropertiesMap)
-
-      this.$emit('setSchema')
     },
 
     updateNodePropsDebounce(form) {

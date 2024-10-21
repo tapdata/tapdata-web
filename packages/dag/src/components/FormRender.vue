@@ -1,8 +1,8 @@
 <template>
   <div class="attr-panel">
     <div class="attr-panel-body overflow-auto pt-1">
-      <Form class-name="form-wrap" :form="form" v-bind="formProps">
-        <SchemaField v-if="!!schema" :schema="schema" :scope="scope" />
+      <Form v-if="schema" class-name="form-wrap" :form="form" v-bind="formProps">
+        <SchemaField ref="schema" :schema="schema" :scope="scope" />
       </Form>
     </div>
   </div>
@@ -37,7 +37,13 @@ export default {
     }
   },
 
-  components: { Form, SchemaField }
+  components: { Form, SchemaField },
+
+  methods: {
+    handleDestroy() {
+      this.$refs.schema?.$destroy()
+    }
+  }
 }
 </script>
 

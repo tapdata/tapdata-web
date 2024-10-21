@@ -1265,7 +1265,6 @@ export default {
     },
 
     resetWorkspace() {
-      console.log('resetWorkspace', this.dataflow) // eslint-disable-line
       Object.assign(this.dataflow, {
         ...DEFAULT_SETTINGS,
         id: '',
@@ -2344,7 +2343,6 @@ export default {
         })
         this.startLoopTask(id)
         this.titleSet()
-        console.log('任务data', data)
         return data
       } catch (e) {
         console.error(e)
@@ -2549,7 +2547,7 @@ export default {
       this.setPdkSchemaFreeMap(tagsMap)
       this.setPdkDoubleActiveMap(doubleActiveMap)
 
-      console.log(propertiesMap, tagsMap) // eslint-disable-line
+      // console.log(propertiesMap, tagsMap) // eslint-disable-line
     },
 
     getIsDataflow() {
