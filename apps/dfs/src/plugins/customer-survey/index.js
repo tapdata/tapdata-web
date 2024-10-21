@@ -63,7 +63,7 @@ function renderUpgrade(h) {
         ></el-image>
         <div class="mt-2 flex align-center justify-content-end">
           <el-button onClick={close}>不再提示</el-button>
-          <el-button onClick={() => openForm('https://tapdata.mike-x.com/DRomO')} type="primary">
+          <el-button onClick={() => openForm('https://tapdata.mike-x.com/49ZAo')} type="primary">
             确认
           </el-button>
         </div>
