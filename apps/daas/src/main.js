@@ -122,7 +122,7 @@ let init = settings => {
   }
   wsUrl += `//${loc.host}${location.pathname.replace(/\/$/, '')}/ws/agent`
 
-  window.App = new Vue({
+  new Vue({
     el: '#app',
     i18n,
     router,

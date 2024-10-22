@@ -1,8 +1,8 @@
 <template>
   <div class="attr-panel">
     <div class="attr-panel-body overflow-auto pt-1">
-      <Form v-if="schema" class-name="form-wrap" :form="form" v-bind="formProps">
-        <SchemaField ref="schema" :schema="schema" :scope="scope" />
+      <Form class-name="form-wrap" :form="form" v-bind="formProps">
+        <SchemaField v-if="schema" ref="schema" :schema="schema" :scope="scope" />
       </Form>
     </div>
   </div>

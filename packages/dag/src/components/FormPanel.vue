@@ -205,8 +205,8 @@ export default {
 
     // 设置schema
     async setSchema(schema, values = this.node) {
+      this.form.onUnmount()
       this.schema = null
-
       await this.$nextTick()
 
       this.form = createForm({

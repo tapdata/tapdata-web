@@ -2173,10 +2173,10 @@ export default {
     },
 
     handleEditFlush(result) {
-      console.debug(i18n.t('packages_dag_mixins_editor_debug5', { val1: result.data?.status }), result.data) // eslint-disable-line
+      // console.debug(i18n.t('packages_dag_mixins_editor_debug5', { val1: result.data?.status }), result.data) // eslint-disable-line
       if (result.data) {
         if (result.data.id !== this.dataflow.id) {
-          console.debug(i18n.t('packages_dag_mixins_editor_wsshoudaole'), result.data)
+          // console.debug(i18n.t('packages_dag_mixins_editor_wsshoudaole'), result.data)
           return
         }
         this.reformDataflow(result.data, true)
@@ -2354,7 +2354,7 @@ export default {
     },
 
     startLoopTask(id) {
-      console.debug(i18n.t('packages_dag_mixins_editor_debug4')) // eslint-disable-line
+      // console.debug(i18n.t('packages_dag_mixins_editor_debug4')) // eslint-disable-line
       clearTimeout(this.startLoopTaskTimer)
       if (!id) return
       this.startLoopTaskTimer = setTimeout(async () => {
@@ -2373,12 +2373,12 @@ export default {
           this.dataflow.attrs = data.attrs
 
           makeStatusAndDisabled(data)
-          console.debug(
-            i18n.t('packages_dag_mixins_editor_debug3', { val1: this.dataflow.status, val2: data.status }),
-            data
-          ) // eslint-disable-line
+          // console.debug(
+          //   i18n.t('packages_dag_mixins_editor_debug3', { val1: this.dataflow.status, val2: data.status }),
+          //   data
+          // ) // eslint-disable-line
           if (this.dataflow.status !== data.status) {
-            console.debug(i18n.t('packages_dag_mixins_editor_debug2')) // eslint-disable-line
+            // console.debug(i18n.t('packages_dag_mixins_editor_debug2')) // eslint-disable-line
             this.dataflow.status = data.status
           }
           // 需要实时更新的字段
@@ -2410,7 +2410,7 @@ export default {
     },
 
     initWS() {
-      console.debug(i18n.t('packages_dag_mixins_editor_debug'), this.$ws.ws) // eslint-disable-line
+      // console.debug(i18n.t('packages_dag_mixins_editor_debug'), this.$ws.ws) // eslint-disable-line
       this.$ws.off('editFlush', this.handleEditFlush)
       this.$ws.on('editFlush', this.handleEditFlush)
       this.$ws.send({

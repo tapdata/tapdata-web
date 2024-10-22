@@ -105,11 +105,11 @@ export const DdlEventList = defineComponent({
       })
     }
 
-    // onMounted(() => {
-    //   if (!parentEnable.value) {
-    //     props.hideParent ? fieldRef.value.parent.setDisplay('hidden') : fieldRef.value.setDisplay('hidden')
-    //   }
-    // })
+    onMounted(() => {
+      if (!parentEnable.value) {
+        props.hideParent ? fieldRef.value.parent.setDisplay('hidden') : fieldRef.value.setDisplay('hidden')
+      }
+    })
 
     return () => {
       return (

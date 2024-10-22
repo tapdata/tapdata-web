@@ -97,7 +97,7 @@ const FormTabInner = observer(
               <TabPane
                 class="root-tab"
                 props={props}
-                key={`${name}`}
+                key={key}
                 scopedSlots={{
                   label: () => [createElement('div', {}, { default: badgedTab(name, props) })]
                 }}
