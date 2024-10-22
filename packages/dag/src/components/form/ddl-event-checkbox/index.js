@@ -104,12 +104,12 @@ export const DdlEventList = defineComponent({
         }
       })
     }
-
-    onMounted(() => {
-      if (!parentEnable.value) {
-        props.hideParent ? fieldRef.value.parent.setDisplay('hidden') : fieldRef.value.setDisplay('hidden')
-      }
-    })
+    // FIXME 内存溢出
+    // onMounted(() => {
+    //   if (!parentEnable.value) {
+    //     props.hideParent ? fieldRef.value.parent.setDisplay('hidden') : fieldRef.value.setDisplay('hidden')
+    //   }
+    // })
 
     return () => {
       return (
