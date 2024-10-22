@@ -416,7 +416,6 @@ const mutations = {
   setActiveNode(state, nodeId) {
     if (!nodeId || state.activeNodeId !== nodeId) {
       // eslint-disable-next-line no-console
-      console.log(i18n.t('packages_dag_src_store_qingkongjiedianshu'))
       state.nodeInputsWatcher?.()
       state.nodeOutputsWatcher?.()
     }
@@ -456,7 +455,7 @@ const mutations = {
 
   // 更新节点属性
   updateNodeProperties(state, updateInformation) {
-    console.log('updateInformation', updateInformation) // eslint-disable-line
+    // console.log('updateInformation', updateInformation) // eslint-disable-line
     const filterProps = ['id', 'isSource', 'isTarget', 'attrs.position', 'sourceNode', '$inputs', '$outputs'] // 排除属性的更新
     const node = state.dag.nodes.find(node => node.id === updateInformation.id)
 

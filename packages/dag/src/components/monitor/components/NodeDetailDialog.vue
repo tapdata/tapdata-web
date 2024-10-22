@@ -435,7 +435,6 @@ export default {
 
     isSource() {
       const { type, $inputs } = this.node
-      console.log('isSource', this.node)
       return (type === 'database' || type === 'table' || type === 'logCollector') && !$inputs.length
     },
 

@@ -134,7 +134,6 @@ export class Table extends NodeType {
                   }
                 }
               },
-
               tableNameSpace: {
                 type: 'void',
                 'x-component': 'Space',
@@ -252,7 +251,6 @@ export class Table extends NodeType {
                   }
                 }
               },
-
               // 指定agent
               'attrs.accessNodeProcessId': {
                 type: 'string',
@@ -618,7 +616,7 @@ export class Table extends NodeType {
                   }
                 },
                 properties: {
-                  tab1: {
+                  ddl: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
@@ -703,7 +701,7 @@ export class Table extends NodeType {
                       }
                     }
                   },
-                  tab2: {
+                  mode: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
@@ -819,7 +817,7 @@ export class Table extends NodeType {
                       }
                     }
                   },
-                  tab3: {
+                  filter: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
@@ -1209,7 +1207,7 @@ export class Table extends NodeType {
                       }
                     }
                   },
-                  tab4: {
+                  read: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
@@ -1251,7 +1249,7 @@ export class Table extends NodeType {
                       }
                     }
                   },
-                  tab5: {
+                  resume: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
@@ -1427,7 +1425,7 @@ export class Table extends NodeType {
                       }
                     }
                   },
-                  tab6: {
+                  pdk: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
@@ -1470,7 +1468,7 @@ export class Table extends NodeType {
                   }
                 },
                 properties: {
-                  tab1: {
+                  ddlEventWrapper: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
@@ -1488,7 +1486,7 @@ export class Table extends NodeType {
                       }
                     }
                   },
-                  tab2: {
+                  write: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
@@ -1689,7 +1687,7 @@ export class Table extends NodeType {
                       }
                     }
                   },
-                  tab3: {
+                  pdkTarget: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {

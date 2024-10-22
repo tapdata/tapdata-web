@@ -203,7 +203,6 @@ export default {
     ]),
 
     observerHandler() {
-      console.log('observerHandler') // eslint-disable-line
       this.initVisibleArea()
     },
 
@@ -288,7 +287,6 @@ export default {
       }
       // 窗口保持最新的区域数据
       this.windowArea = area
-      console.log('windowArea', this.windowArea) // eslint-disable-line
     },
 
     // 画布居中
@@ -398,8 +396,6 @@ export default {
 
       this.paperForwardSize.w = forwardW
       this.paperForwardSize.h = forwardH
-
-      console.log('autoResizePaper', { minX, minY, maxX, maxY }, this.paperReverseSize) // eslint-disable-line
     },
 
     toggleMiniView() {
