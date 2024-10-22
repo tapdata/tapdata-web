@@ -28,6 +28,7 @@
               <span :style="`--index: '${indicesMap[scope.row.field_name][1]}';`" class="fingerprint-sub"></span>
             </span>
           </ElTooltip>
+          <VIcon v-else-if="scope.row.source === 'virtual_hash'" size="14" class="ml-1">file-hash</VIcon>
         </span>
       </template>
       <template slot="dataTypeHeader">
