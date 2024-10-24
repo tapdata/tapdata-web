@@ -47,7 +47,7 @@ const DefineFieldSelect = defineComponent({
     const fieldOptions = computed(() => {
       return props.options?.map(option => {
         if (option.tapType) option.icon = getIcon(option.tapType)
-        return option
+        if (option.source === 'virtual_hash') option.icon = 'file-hash'
       })
     })
 

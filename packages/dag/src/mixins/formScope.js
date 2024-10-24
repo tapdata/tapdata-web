@@ -449,7 +449,8 @@ export default {
               isPrimaryKey: item.primary_key_position > 0,
               indicesUnique: !!item.indicesUnique,
               type: item.data_type,
-              tapType: item.tapType
+              tapType: item.tapType,
+              source: item.source
             }))
         },
 

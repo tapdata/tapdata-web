@@ -182,6 +182,12 @@ export const SchemaPreview = defineComponent({
             </span>
           </ElTooltip>
         )
+      } else if (data.source === 'virtual_hash') {
+        icon = (
+          <VIcon size="12" class="field-icon position-absolute">
+            file-hash
+          </VIcon>
+        )
       }
 
       return (
