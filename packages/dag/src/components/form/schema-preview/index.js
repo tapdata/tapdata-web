@@ -90,6 +90,7 @@ export const SchemaPreview = defineComponent({
             indicesUnique: field.indicesUnique,
             type: field.data_type,
             tapType: field.tapType,
+            source: field.source,
             dataType: field.data_type.replace(/\(.+\)/, '')
           }
         })
@@ -193,7 +194,11 @@ export const SchemaPreview = defineComponent({
       return (
         <div class="flex flex-1 min-w-0 justify-content-between align-center gap-2 pr-2 position-relative">
           {icon}
-          <span class="ellipsis">{data.label}</span>
+          <span class="ellipsis">
+            <span style={data.source === 'virtual_hash' ? 'border-bottom: 1px dashed;font-style:italic' : null}>
+              {data.label}
+            </span>
+          </span>
           <span class="ml-1 font-color-slight">{data.dataType}</span>
         </div>
       )

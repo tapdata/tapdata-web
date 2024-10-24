@@ -899,7 +899,7 @@ export default {
           const $values = form.values
           let options = field.dataSource
           let nodeData = this.scope.findNodeById($values.id)
-          console.debug('validateUpdateConditionFields.ctx', ctx, $values.attrs.hasCreate) // eslint-disable-line
+
           if (!$values.$inputs[0]) {
             return
           }
@@ -912,12 +912,18 @@ export default {
             }
 
             if (options && options.length) {
-              let isPrimaryKeyList = options.filter(item => item.isPrimaryKey)
-              let indicesUniqueList = options.filter(item => item.indicesUnique)
-              let defaultList = (isPrimaryKeyList.length ? isPrimaryKeyList : indicesUniqueList).map(item => item.value)
+              let defaultList = options.filter(item => item.isPrimaryKey)
+
+              if (!defaultList.length) {
+                defaultList = options.filter(item => item.indicesUnique)
+              }
+
+              if (!defaultList.length) {
+                defaultList = options.filter(item => item.source === 'virtual_hash')
+              }
 
               if (!value || !value.length) {
-                nodeData.updateConditionFields = defaultList
+                nodeData.updateConditionFields = defaultList.map(item => item.value)
                 $values.updateConditionFields = nodeData.updateConditionFields
               } else if (value) {
                 let fieldMap = options.reduce((obj, item) => ((obj[item.value] = true), obj), {})
