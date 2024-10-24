@@ -1,4 +1,4 @@
-import { defineComponent, ref } from '@vue/composition-api'
+import { defineComponent, ref, onBeforeUnmount, getCurrentInstance } from '@vue/composition-api'
 import i18n from '@tap/i18n'
 import { useForm, useField } from '@tap/form'
 import { IconButton } from '@tap/component'
@@ -226,6 +226,64 @@ export const SchemaPreview = defineComponent({
           refreshing.value = false
         })
     }
+
+    function remove(children, vm) {
+      const index = children.indexOf(vm)
+      if (index > -1) {
+        children.splice(index, 1)
+      }
+    }
+
+    onBeforeUnmount(() => {
+      console.log('onBeforeUnmount')
+      return
+      const vm = getCurrentInstance().vnode.componentInstance
+      let $el = vm.$el
+      // remove self from parent
+      let parent = vm.$parent
+      if (parent) {
+        remove(parent.$children, vm)
+
+        const deepRemove = parent => {
+          if (parent.$el === $el) {
+            remove(parent.$parent.$children, parent)
+            deepRemove(parent.$parent)
+            parent.$el = null
+
+            let vchildren = parent?.$parent?.$vnode?.componentOptions?.children
+            if (vchildren?.length) {
+              const index = vchildren.findIndex(v => v.elm === $el)
+              if (index > -1) {
+                vchildren.splice(index, 1)
+              }
+            }
+
+            vchildren = parent?.$parent?._vnode.children
+            if (vchildren?.length) {
+              const index = vchildren.findIndex(v => v.elm === $el)
+              if (index > -1) {
+                vchildren.splice(index, 1)
+              }
+            }
+
+            vchildren = parent?.$parent?.$slots.default
+            if (vchildren?.length) {
+              const index = vchildren.findIndex(v => v.elm === $el)
+              if (index > -1) {
+                vchildren.splice(index, 1)
+              }
+            }
+          }
+        }
+
+        deepRemove(parent, vm)
+      }
+
+      vm.$el = null
+      $el = null
+      vm.$vnode.elm = null
+      vm._vnode.elm = null
+    })
 
     return () => (
       <div class="schema-preview pb-6">

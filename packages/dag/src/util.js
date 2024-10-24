@@ -66,7 +66,6 @@ export function getSchema(schema, values, pdkPropertiesMap) {
     }
   }
 
-  console.log('newSchema', newSchema)
   return newSchema
 }
 

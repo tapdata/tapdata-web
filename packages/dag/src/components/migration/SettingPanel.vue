@@ -1332,7 +1332,6 @@ export default observer({
         }
         return point
       })
-      console.log('syncPoints', syncPoints)
       this.settings.syncPoints = syncPoints
     },
 

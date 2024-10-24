@@ -22,8 +22,6 @@ export const SchemaFormItem = connect(
           return loading.value || root.$store.state?.dataflow?.transformLoading
         })
 
-        console.log('props', props, attrs)
-
         const loadSchema = async () => {
           loading.value = true
           root.$store.commit('dataflow/setSchemaRefreshing', true)
