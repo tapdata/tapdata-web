@@ -547,7 +547,8 @@ export default {
         connectionId: item.id,
         migrateTableSelectType: 'custom',
         nodeConfig,
-        attrs
+        attrs,
+        noPkSyncMode: 'ADD_HASH' // 无主键同步默认创建哈希列
       }
     },
 

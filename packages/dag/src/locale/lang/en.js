@@ -816,5 +816,8 @@ export default {
   packages_dag_select_HasKeys_alert:
     'Only tables with primary keys or unique indexes are synced. To sync tables without primary keys, please switch manually.',
   packages_dag_counting: 'Counting',
-  packages_dag_counting_num_of_rows_table: 'Counting the number of rows in the table'
+  packages_dag_counting_num_of_rows_table: 'Counting the number of rows in the table',
+  packages_dag_noPkSyncMode: 'No Primary Key Table Sync Mode',
+  packages_dag_noPkSyncMode_ADD_HASH: 'Add Hash Column',
+  packages_dag_noPkSyncMode_ALL_COLUMNS: 'Full Column Index'
 }

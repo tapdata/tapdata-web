@@ -810,7 +810,8 @@ export default {
         connectionId: connection.id,
         tableName,
         nodeConfig,
-        attrs
+        attrs,
+        noPkSyncMode: 'ADD_HASH' // 无主键同步默认创建哈希列
       }
     },
 

@@ -1536,9 +1536,6 @@ export class Table extends NodeType {
                         title: i18n.t('packages_dag_nodes_database_shujuxieruce'),
                         type: 'object',
                         'x-decorator': 'FormItem',
-                        'x-decorator-props': {
-                          feedbackLayout: 'none'
-                        },
                         'x-component': 'FormLayout',
                         'x-component-props': {
                           layout: 'horizontal',
@@ -1684,6 +1681,23 @@ export class Table extends NodeType {
                             }
                           }
                         }
+                      },
+                      noPkSyncMode: {
+                        type: 'string',
+                        title: i18n.t('packages_dag_noPkSyncMode'),
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Radio.Group',
+                        default: 'ALL_COLUMNS', // 兼容老任务
+                        enum: [
+                          {
+                            label: i18n.t('packages_dag_noPkSyncMode_ADD_HASH'),
+                            value: 'ADD_HASH'
+                          },
+                          {
+                            label: i18n.t('packages_dag_noPkSyncMode_ALL_COLUMNS'),
+                            value: 'ALL_COLUMNS'
+                          }
+                        ]
                       }
                     }
                   },
