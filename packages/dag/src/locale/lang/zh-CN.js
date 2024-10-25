@@ -759,5 +759,7 @@ export default {
   packages_dag_access_task_list: '进入任务列表',
   packages_dag_current_selected: '当前已选',
   packages_dag_task_monitor: '任务监控',
-  packages_dag_select_HasKeys_alert: '仅同步具有主键或唯一索引的表。如需同步无主键的表，请手动切换'
+  packages_dag_select_HasKeys_alert: '仅同步具有主键或唯一索引的表。如需同步无主键的表，请手动切换',
+  packages_dag_counting: '统计中',
+  packages_dag_counting_num_of_rows_table: '正在统计表行数'
 }

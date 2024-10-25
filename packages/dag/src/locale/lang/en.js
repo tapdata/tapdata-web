@@ -814,5 +814,7 @@ export default {
   packages_dag_current_selected: 'Currently Selected',
   packages_dag_task_monitor: 'Task Monitoring',
   packages_dag_select_HasKeys_alert:
-    'Only tables with primary keys or unique indexes are synced. To sync tables without primary keys, please switch manually.'
+    'Only tables with primary keys or unique indexes are synced. To sync tables without primary keys, please switch manually.',
+  packages_dag_counting: 'Counting',
+  packages_dag_counting_num_of_rows_table: 'Counting the number of rows in the table'
 }
