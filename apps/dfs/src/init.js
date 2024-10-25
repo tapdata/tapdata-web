@@ -21,6 +21,7 @@ import WSClient from '@tap/business/src/shared/ws-client'
 import { Notification } from 'element-ui'
 import { createVersionPolling } from './plugins/version-polling'
 import { CustomerSurvey } from './plugins/customer-survey'
+import dayjs from './plugins/dayjs'
 
 Vue.config.productionTip = false
 Vue.use(VueClipboard)
@@ -65,7 +66,7 @@ Vue.prototype.$confirm = (message, title, options) => {
 export default ({ routes }) => {
   let loading = null
 
-  const init = () => {
+  const init = userInfo => {
     const router = new VueRouter({
       routes
     })
@@ -192,7 +193,7 @@ export default ({ routes }) => {
       }
     })
 
-    CustomerSurvey(window.App, true)
+    if (userInfo?.createdAt && dayjs().diff(dayjs(userInfo.createdAt), 'day') > 7) CustomerSurvey(window.App, true)
 
     return router
   }
@@ -207,7 +208,7 @@ export default ({ routes }) => {
         window.__USER_INFO__ = userInfo
 
         loading.close()
-        init()
+        init(userInfo)
 
         // 设置服务器时间
         timeStampApi.get().then(t => {
