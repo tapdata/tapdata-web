@@ -27,11 +27,9 @@
           </span>
         </ElTooltip>
         <VIcon v-else-if="scope.row.source === 'virtual_hash'" size="14">file-hash</VIcon>
-        <span
-          class="ellipsis ml-1"
-          :style="scope.row.source === 'virtual_hash' ? 'border-bottom: 1px dashed;font-style:italic' : ''"
-          >{{ scope.row.field_name }}</span
-        >
+        <span class="ellipsis ml-1" :style="scope.row.source === 'virtual_hash' ? 'font-style:italic' : ''">{{
+          scope.row.field_name
+        }}</span>
       </template>
       <template slot="dataTypeHeader">
         <span class="pl-4">
