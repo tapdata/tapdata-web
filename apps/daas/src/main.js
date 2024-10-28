@@ -13,7 +13,7 @@ import getRouter from '@/router'
 import VConfirm from '@/components/v-confirm'
 import { settingsApi, usersApi, timeStampApi } from '@tap/api'
 import { getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
-// import FormBuilder from '@tap/component/src/form-builder'
+import FormBuilder from '@tap/component/src/form-builder'
 
 import '@/plugins/element'
 import '@/plugins/icon'
@@ -26,7 +26,7 @@ import { installOEM } from '@/oem'
 Vue.config.productionTip = false
 Vue.use(VueClipboard)
 Vue.use(LoadMore)
-// Vue.use(FormBuilder)
+Vue.use(FormBuilder)
 
 Vue.mixin({
   created() {
