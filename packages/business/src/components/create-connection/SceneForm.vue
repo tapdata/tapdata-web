@@ -928,6 +928,11 @@ export default {
       const { OPTIONAL_FIELDS } = connectionProperties
       delete connectionProperties.OPTIONAL_FIELDS
 
+      let reactions
+      if (process.env.VUE_APP_CONNECTOR_SCHEMA && /^\s*[[{].*[\]}]\s*$/.test(process.env.VUE_APP_CONNECTOR_SCHEMA)) {
+        reactions = JSON.parse(process.env.VUE_APP_CONNECTOR_SCHEMA)
+      }
+
       let result = {
         type: 'object',
         'x-component-props': {
@@ -937,7 +942,9 @@ export default {
           START: {
             type: 'void',
             'x-index': 0,
-            'x-reactions': process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA
+            'x-reactions': reactions
+              ? reactions
+              : process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA
               ? {
                   target: process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA,
                   fulfill: {
@@ -1202,6 +1209,7 @@ export default {
 
       this.schemaScope = {
         $isDaas: this.isDaas,
+        pdkId: this.pdkOptions.pdkId,
         isEdit: !!id,
         useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
           return field => {
