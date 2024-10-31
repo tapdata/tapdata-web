@@ -129,7 +129,8 @@ const pdkNameDictionary = {
   'tencent-db-mongodb': 'tencentdb-for-mongodb',
   'tencent-db-mysql': 'tencentdb-for-mysql',
   'tencent-db-postgres': 'tencentdb-for-pg',
-  'tencent-db-sqlserver': 'tencentdb-for-sql-server'
+  'tencent-db-sqlserver': 'tencentdb-for-sql-server',
+  mongodb3: 'mongodb-below34'
 }
 
 export default {
