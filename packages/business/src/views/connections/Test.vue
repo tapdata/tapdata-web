@@ -122,7 +122,7 @@
     </el-table>
 
     <!--错误详情-->
-    <ElDialog width="80%" custom-class="max-w-1000" :visible.sync="errorDialog.open" append-to-body>
+    <ElDialog width="80%" custom-class="max-w-1000 mt-25" :visible.sync="errorDialog.open" append-to-body>
       <template #title>
         <div class="flex align-center gap-2">
           <VIcon class="color-danger" size="18">circle-close-filled</VIcon>
@@ -130,44 +130,54 @@
         </div>
       </template>
 
-      <div
-        v-if="errorDialog.message"
-        v-html="errorDialog.message"
-        class="text-prewrap mt-n4 mb-6 font-color-light"
-      ></div>
+      <div class="mt-n4">
+        <div v-if="errorDialog.message" v-html="errorDialog.message" class="text-prewrap mb-6 font-color-light"></div>
 
-      <template v-if="errorDialog.reason">
-        <div class="fw-sub mb-3 font-color-dark">{{ $t('public_task_reasons_for_error') }}</div>
-        <div
-          v-if="errorDialog.reason"
-          v-html="errorDialog.reason"
-          class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
-        ></div>
-      </template>
+        <template v-if="errorDialog.reason">
+          <div class="fw-sub mb-3 font-color-dark">{{ $t('public_task_reasons_for_error') }}</div>
+          <div
+            v-html="errorDialog.reason"
+            class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
+          ></div>
+        </template>
 
-      <template v-if="errorDialog.solution">
-        <div class="fw-sub mb-3 font-color-dark">{{ $t('packages_business_solution') }}</div>
-        <div
-          v-if="errorDialog.solution"
-          v-html="errorDialog.solution"
-          class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
-        ></div>
-      </template>
+        <template v-if="errorDialog.solution">
+          <div class="fw-sub mb-3 font-color-dark">{{ $t('packages_business_solution') }}</div>
+          <div
+            v-html="errorDialog.solution"
+            class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
+          ></div>
+        </template>
 
-      <div v-if="errorDialog.stack" class="mb-3 flex justify-content-between align-items-end">
-        <span class="fw-sub font-color-dark">{{ $t('packages_business_logs_nodelog_cuowuduizhan') }}</span>
-      </div>
-      <div v-if="errorDialog.stack" class="error-stack-pre-wrap position-relative mb-6 font-color-light rounded-lg">
-        <div class="position-absolute end-0 top-0 px-2 pt-1 error-stack-actions">
-          <el-button @click="handleCopyStack(wsErrorStack)" type="text" class="px-1 py-0.5 font-color-dark">
-            <VIcon class="mr-1">copy</VIcon>
-            <span class="">{{ $t('public_button_copy') }}</span>
-          </el-button>
-        </div>
+        <!--See Also-->
+        <template v-if="!hideSeeAlso && errorDialog.seeAlso && errorDialog.seeAlso.length">
+          <div class="fw-sub mb-3 font-color-dark">See Also</div>
+          <ol class="pl-6 mb-6">
+            <li v-for="(item, index) in errorDialog.seeAlso" :key="index" class="list-decimal">
+              <ElLink type="primary" class="text-decoration-underline" @click="handleLink(item)">{{ item }}</ElLink>
+            </li>
+          </ol>
+        </template>
 
-        <pre class="m-0 p-4 pt-0 mt-6 font-color-dark" style="max-height: 60vh; font-size: 13px; overflow-x: auto">{{
-          errorDialog.stack
-        }}</pre>
+        <template v-if="errorDialog.stack">
+          <div class="mb-3 flex justify-content-between align-items-end">
+            <span class="fw-sub font-color-dark">{{ $t('packages_business_logs_nodelog_cuowuduizhan') }}</span>
+          </div>
+          <div class="error-stack-pre-wrap position-relative mb-6 font-color-light rounded-lg">
+            <div class="position-absolute end-0 top-0 px-2 pt-1 error-stack-actions">
+              <el-button @click="handleCopyStack(errorDialog.stack)" type="text" class="px-1 py-0.5 font-color-dark">
+                <VIcon class="mr-1">copy</VIcon>
+                <span class="">{{ $t('public_button_copy') }}</span>
+              </el-button>
+            </div>
+
+            <pre
+              class="m-0 p-4 pt-0 mt-6 font-color-dark"
+              style="max-height: 60vh; font-size: 13px; overflow-x: auto"
+              >{{ errorDialog.stack }}</pre
+            >
+          </div>
+        </template>
       </div>
     </ElDialog>
 
@@ -182,7 +192,9 @@
 
 <script>
 import { VIcon } from '@tap/component'
-import { copyToClipboard } from '@tap/shared'
+import { copyToClipboard, openUrl } from '@tap/shared'
+import { proxyApi } from '@tap/api'
+import i18n from '@tap/i18n'
 export default {
   name: 'Test',
   components: { VIcon },
@@ -199,6 +211,7 @@ export default {
   },
   data() {
     return {
+      hideSeeAlso: process.env.VUE_APP_PAGE_TITLE === 'IKAS' || process.env.VUE_APP_HIDE_LOG_SEE_ALSO,
       progress: 0,
       testData: {
         testLogs: [],
@@ -252,7 +265,8 @@ export default {
         stack: '',
         solution: '',
         message: '',
-        reason: ''
+        reason: '',
+        seeAlso: []
       },
       showTooltip: false
     }
@@ -264,6 +278,10 @@ export default {
     this.clearInterval()
   },
   methods: {
+    handleLink(val) {
+      openUrl(val)
+    },
+
     rowStyleHandler({ row }) {
       return row.status === 'waiting' ? { background: '#fff' } : ''
     },
@@ -454,7 +472,7 @@ export default {
       return str ? str.replace(/tapdata\s?/gi, process.env.VUE_APP_KEYWORD) : ''
     },
 
-    showError(row) {
+    async showError(row) {
       if (process.env.VUE_APP_KEYWORD && row.item_exception) {
         row.item_exception.stack = this.replaceKeyword(row.item_exception.stack)
         row.item_exception.solution = this.replaceKeyword(row.item_exception.solution)
@@ -464,6 +482,28 @@ export default {
 
       Object.assign(this.errorDialog, row.item_exception)
       this.errorDialog.title = row.show_msg
+      this.errorDialog.seeAlso = []
+
+      if (row.errorCode) {
+        const data = await proxyApi
+          .call({
+            className: 'ErrorCodeService',
+            method: 'getErrorCodeWithDynamic',
+            args: [row.errorCode, i18n.locale === 'en' ? 'en' : 'cn', row.dynamicDescriptionParameters]
+          })
+          .catch(e => {
+            // this.errorDialog.open = true
+            console.error(e)
+          })
+
+        if (data) {
+          this.errorDialog.message = '' // 错误码咱不需要错误信息
+          this.errorDialog.title = data.fullErrorCode || data.errorCode
+          this.errorDialog.reason = data.dynamicDescribe || data.describe
+          this.errorDialog.solution = data.solution
+          this.errorDialog.seeAlso = data.seeAlso
+        }
+      }
       this.errorDialog.open = true
     },
 
