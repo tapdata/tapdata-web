@@ -1866,7 +1866,7 @@ export default {
   welcome_target_source: 'Target Source',
   welcome_demand_collection: 'What do you want to achieve with this product?',
   welcome_demand_collection_1: 'Assess TapData for a project',
-  welcome_demand_collection_2: 'Explore TapData’s data synchronization capabilities',
-  welcome_demand_collection_3: 'Learn best practices in data synchronization with TapData',
+  welcome_demand_collection_2: "Explore TapData's data replication and integration capability",
+  welcome_demand_collection_3: 'Learn best practices in real time data processing with TapData',
   welcome_create_task: 'Create Your First Replication Task'
 }
