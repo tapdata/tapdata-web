@@ -131,7 +131,13 @@
       </template>
 
       <div class="mt-n4">
-        <div v-if="errorDialog.message" v-html="errorDialog.message" class="text-prewrap mb-6 font-color-light"></div>
+        <template v-if="errorDialog.message">
+          <div class="fw-sub mb-3 font-color-dark">{{ $t('packages_business_error_details') }}</div>
+          <div
+            v-html="errorDialog.message"
+            class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
+          ></div>
+        </template>
 
         <template v-if="errorDialog.reason">
           <div class="fw-sub mb-3 font-color-dark">{{ $t('public_task_reasons_for_error') }}</div>
@@ -497,15 +503,9 @@ export default {
           })
 
         if (data) {
-          this.errorDialog.message = '' // 错误码咱不需要错误信息
           this.errorDialog.title = data.fullErrorCode || data.errorCode
-
-          if (data.describe && data.dynamicDescribe) {
-            this.errorDialog.reason = `${data.describe}\n${data.dynamicDescribe}`
-          } else if (data.describe) {
-            this.errorDialog.reason = data.describe
-          }
-
+          this.errorDialog.message = data.describe
+          this.errorDialog.reason = data.dynamicDescribe
           this.errorDialog.solution = data.solution
           this.errorDialog.seeAlso = data.seeAlso
         }
