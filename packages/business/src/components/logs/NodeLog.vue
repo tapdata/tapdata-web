@@ -196,10 +196,10 @@
 
       <div class="mt-n4 font-color-light">
         <!--错误原因/描述-->
-        <template v-if="codeDialog.data.dynamicDescribe || codeDialog.data.describe">
+        <template v-if="codeDialog.data.describe">
           <div class="fw-sub mb-3 font-color-dark">{{ $t('public_task_reasons_for_error') }}</div>
           <div
-            v-html="codeDialog.data.dynamicDescribe || codeDialog.data.describe"
+            v-html="codeDialog.data.describe"
             class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
           ></div>
         </template>
@@ -935,6 +935,13 @@ export default {
         .call(params)
         .then(data => {
           Object.assign(this.codeDialog.data, data)
+
+          if (this.codeDialog.data.describe && this.codeDialog.data.dynamicDescribe) {
+            this.codeDialog.data.describe += `\n${this.codeDialog.data.dynamicDescribe}`
+          } else if (!this.codeDialog.data.describe) {
+            this.codeDialog.data.describe = item.message
+          }
+
           this.codeDialog.visible = true
         })
         .catch(() => {

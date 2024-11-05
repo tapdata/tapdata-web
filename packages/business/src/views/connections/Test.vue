@@ -484,12 +484,12 @@ export default {
       this.errorDialog.title = row.show_msg
       this.errorDialog.seeAlso = []
 
-      if (row.errorCode) {
+      if (row.error_code) {
         const data = await proxyApi
           .call({
             className: 'ErrorCodeService',
             method: 'getErrorCodeWithDynamic',
-            args: [row.errorCode, i18n.locale === 'en' ? 'en' : 'cn', row.dynamicDescriptionParameters]
+            args: [row.error_code, i18n.locale === 'en' ? 'en' : 'cn', row.dynamicDescriptionParameters]
           })
           .catch(e => {
             // this.errorDialog.open = true
@@ -499,7 +499,13 @@ export default {
         if (data) {
           this.errorDialog.message = '' // 错误码咱不需要错误信息
           this.errorDialog.title = data.fullErrorCode || data.errorCode
-          this.errorDialog.reason = data.dynamicDescribe || data.describe
+
+          if (data.describe && data.dynamicDescribe) {
+            this.errorDialog.reason = `${data.describe}\n${data.dynamicDescribe}`
+          } else if (data.describe) {
+            this.errorDialog.reason = data.describe
+          }
+
           this.errorDialog.solution = data.solution
           this.errorDialog.seeAlso = data.seeAlso
         }
