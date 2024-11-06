@@ -669,7 +669,7 @@ export default {
     'The node is detected that the following running task has been invoked, and restart the task if the configuration needs to take effect',
   packages_business_task_list_sqLyuju: 'SQL statement:',
   packages_business_relation_details_waicunxinxi: 'External storage information used',
-  packages_business_milestone_list_cuowuxinxi: 'Error information',
+  packages_business_milestone_list_cuowuxinxi: 'Error message',
   packages_business_milestone_list_progr: '({val1}%, remaining {val2})',
   packages_business_milestone_list_chucuo: 'Error',
   packages_business_milestone_list_shujuchuli: 'Data Processing',

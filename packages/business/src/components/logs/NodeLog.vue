@@ -181,61 +181,82 @@
     </ElDialog>
 
     <ElDialog
-      width="1200px"
+      width="80%"
+      custom-class="max-w-1000 mt-25"
       :visible.sync="codeDialog.visible"
       :close-on-click-modal="false"
-      :append-to-body="true"
-      custom-class="error-code-dialog"
+      append-to-body
     >
-      <div slot="title">
-        <span class="ml-4 fw-bold fs-5">{{ codeDialog.data.fullErrorCode || codeDialog.data.errorCode }}</span>
-      </div>
-
-      <div
-        v-if="codeDialog.data.describe"
-        v-html="codeDialog.data.describe"
-        class="text-prewrap mt-n4 mb-6 ml-4 font-color-light"
-      ></div>
-
-      <div v-if="codeDialog.data.errorStack" class="mb-2 ml-4 flex justify-content-between">
-        <span class="fw-bold font-color-dark fs-6">{{ $t('packages_business_logs_nodelog_cuowuduizhan') }}</span>
-        <ElTooltip
-          placement="top"
-          manual
-          :content="$t('public_message_copied')"
-          popper-class="copy-tooltip"
-          :value="showTooltip"
-        >
-          <span
-            v-clipboard:copy="codeDialog.data.errorStack"
-            v-clipboard:success="onCopy"
-            @mouseleave="showTooltip = false"
-          >
-            <ElButton type="primary" size="mini">{{ $t('packages_business_logs_nodelog_yijianfuzhi') }}</ElButton>
-          </span>
-        </ElTooltip>
-      </div>
-      <div
-        v-if="codeDialog.data.errorStack"
-        v-html="codeDialog.data.errorStack"
-        class="error-stack-wrap text-prewrap mb-6 ml-4 font-color-light border overflow-y-auto bg-color-normal p-4"
-      ></div>
-      <template v-if="!hideSeeAlso">
-        <div
-          v-if="codeDialog.data.seeAlso && codeDialog.data.seeAlso.length"
-          class="fw-bold fs-6 mb-3 ml-4 font-color-dark"
-        >
-          See Also
+      <template #title>
+        <div class="flex align-center gap-2">
+          <VIcon class="color-danger" size="18">circle-close-filled</VIcon>
+          <span class="fs-6 fw-sub">{{ codeDialog.data.fullErrorCode || codeDialog.data.errorCode }}</span>
         </div>
-        <p
-          v-for="(item, index) in codeDialog.data.seeAlso"
-          :key="index"
-          class="flex align-items-center mb-2 ml-4 font-color-normal"
-        >
-          <span>{{ index + 1 }}.</span>
-          <ElLink type="primary" class="text-decoration-underline" @click="handleLink(item)">{{ item }}</ElLink>
-        </p>
       </template>
+
+      <div class="mt-n4 font-color-light">
+        <!--错误信息-->
+        <template v-if="codeDialog.data.describe">
+          <div class="fw-sub mb-3 font-color-dark">{{ $t('packages_business_milestone_list_cuowuxinxi') }}</div>
+          <div
+            v-html="codeDialog.data.describe"
+            class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
+          ></div>
+        </template>
+
+        <!--错误原因/描述-->
+        <template v-if="codeDialog.data.dynamicDescribe">
+          <div class="fw-sub mb-3 font-color-dark">{{ $t('public_task_reasons_for_error') }}</div>
+          <div
+            v-html="codeDialog.data.dynamicDescribe"
+            class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
+          ></div>
+        </template>
+
+        <!--解决方案-->
+        <template v-if="codeDialog.data.solution">
+          <div class="fw-sub mb-3 font-color-dark">{{ $t('packages_business_solution') }}</div>
+          <div
+            v-html="codeDialog.data.solution"
+            class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
+          ></div>
+        </template>
+
+        <!--See Also-->
+        <template v-if="!hideSeeAlso && codeDialog.data.seeAlso && codeDialog.data.seeAlso.length">
+          <div class="fw-sub mb-3 font-color-dark">See Also</div>
+          <ol class="pl-6 mb-6">
+            <li v-for="(item, index) in codeDialog.data.seeAlso" :key="index" class="list-decimal">
+              <ElLink type="primary" class="text-decoration-underline" @click="handleLink(item)">{{ item }}</ElLink>
+            </li>
+          </ol>
+        </template>
+
+        <!--错误堆栈-->
+        <template v-if="codeDialog.data.errorStack">
+          <div class="mb-3 flex justify-content-between align-items-end">
+            <span class="fw-sub font-color-dark">{{ $t('packages_business_logs_nodelog_cuowuduizhan') }}</span>
+          </div>
+          <div class="error-stack-pre-wrap position-relative mb-6 font-color-light rounded-lg">
+            <div class="position-absolute end-0 top-0 px-2 pt-1 error-stack-actions">
+              <el-button
+                @click="handleCopyStack(codeDialog.data.errorStack)"
+                type="text"
+                class="px-1 py-0.5 font-color-dark"
+              >
+                <VIcon class="mr-1">copy</VIcon>
+                <span class="">{{ $t('public_button_copy') }}</span>
+              </el-button>
+            </div>
+
+            <pre
+              class="m-0 p-4 pt-0 mt-6 font-color-dark"
+              style="max-height: 60vh; font-size: 13px; overflow-x: auto"
+              >{{ codeDialog.data.errorStack }}</pre
+            >
+          </div>
+        </template>
+      </div>
     </ElDialog>
 
     <ElDialog
@@ -269,7 +290,7 @@ import { mapGetters } from 'vuex'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { debounce, cloneDeep, uniqBy, escape } from 'lodash'
 
-import { CountUp, downloadBlob, openUrl } from '@tap/shared'
+import { copyToClipboard, CountUp, downloadBlob, openUrl } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 import { VIcon, TimeSelect } from '@tap/component'
 import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
@@ -404,7 +425,15 @@ export default {
       extraEnterCount: 0,
       codeDialog: {
         visible: false,
-        data: {}
+        data: {
+          errorStack: '',
+          errorCode: '',
+          fullErrorCode: '',
+          describe: '',
+          solution: '',
+          dynamicDescribe: '',
+          seeAlso: []
+        }
       },
       showCols: [],
       switchData: {
@@ -903,19 +932,21 @@ export default {
     handleCode(item = {}) {
       const params = {
         className: 'ErrorCodeService',
-        method: 'getErrorCode',
-        args: [item.errorCode, i18n.locale === 'en' ? 'en' : 'cn']
+        method: 'getErrorCodeWithDynamic',
+        args: [item.errorCode, i18n.locale === 'en' ? 'en' : 'cn', item.dynamicDescriptionParameters]
       }
 
       this.codeDialog.data.errorStack = item.errorStack
       this.codeDialog.data.errorCode = item.errorCode
       this.codeDialog.data.fullErrorCode = item.fullErrorCode
+
       proxyApi
         .call(params)
         .then(data => {
-          this.codeDialog.data.describe = data.describe
-          this.codeDialog.data.hasDescribe = data.hasDescribe
-          this.codeDialog.data.seeAlso = data.seeAlso || []
+          Object.assign(this.codeDialog.data, data)
+
+          this.codeDialog.data.describe = data.describe || item.message
+
           this.codeDialog.visible = true
         })
         .catch(() => {
@@ -1014,6 +1045,11 @@ export default {
       setTimeout(() => {
         this.downloadAnalysis.visible = false
       }, 200)
+    },
+
+    handleCopyStack(stack) {
+      copyToClipboard(stack)
+      this.$message.success(this.$t('public_message_copy_success'))
     }
   }
 }
@@ -1148,9 +1184,9 @@ export default {
 }
 
 .error-stack-wrap {
-  height: 465px;
+  //height: 465px;
   &.has-describe {
-    height: 280px;
+    //height: 280px;
   }
 }
 
