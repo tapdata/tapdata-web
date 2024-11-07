@@ -60,7 +60,7 @@
             v-for="(item, itemIndex) in subscribeList"
             :key="item.id"
           >
-            <template v-for="(row, rIndex) in item.subscribeItems">
+            <template v-for="row in item.subscribeItems.slice(0, 1)">
               <div class="flex w-60">
                 <div class="w-50">
                   <div class="mb-2">
@@ -114,11 +114,14 @@
               </div>
               <div class="flex justify-content-between w-40">
                 <div>
-                  <div class="mb-2">
-                    <span class="li-item__label font-color-sslight">{{ $t('public_status') }}:</span>
-                    <span class="inline-block li-item__value font-color-dark">
-                      <StatusTag type="tag" :status="item.status" default-status="Stopped" target="order"></StatusTag>
-                    </span>
+                  <div
+                    class="mb-2"
+                    v-if="item.subscribeItems[1] && item.subscribeItems[1].productType === 'networkTraffic'"
+                  >
+                    <span class="li-item__label font-color-sslight">{{ $t('dfs_traffic_billing') }}:</span>
+                    <span class="li-item__value font-color-dark"
+                      >{{ formatterPrice(item.currency, item.subscribeItems[1].amount) }}/GB</span
+                    >
                   </div>
                   <div class="mb-2">
                     <span class="li-item__label font-color-sslight"
@@ -131,46 +134,61 @@
                     <span class="li-item__value font-color-dark">{{ item.id }}</span>
                   </div>
                 </div>
-                <div v-if="item.paymentMethod === 'GCPMarketplace'" class="li-operation flex">
-                  <ElButton @click="goMarketplace" type="primary" plain>
-                    <VIcon>open-in-new</VIcon>
-                    Google Cloud Marketplace
-                  </ElButton>
+                <div
+                  v-if="item.paymentMethod === 'GCPMarketplace'"
+                  class="li-operation flex flex-column justify-content-between align-items-end"
+                >
+                  <span class="inline-block li-item__value font-color-dark ml-0">
+                    <StatusTag type="tag" :status="item.status" default-status="Stopped" target="order"></StatusTag>
+                  </span>
+
+                  <div>
+                    <ElButton @click="goMarketplace" type="primary" plain>
+                      <VIcon>open-in-new</VIcon>
+                      Google Cloud Marketplace
+                    </ElButton>
+                  </div>
                 </div>
-                <div v-else class="li-operation flex">
-                  <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)"
-                    >{{ $t('public_button_pay') }}
-                  </ElButton>
-                  <ElButton v-if="['active'].includes(item.status)" type="text" @click="goOpenChange(item)"
-                    >{{ $t('dfs_change_record') }}
-                  </ElButton>
-                  <ElButton
-                    v-if="!(!['active'].includes(item.status) || row.isFree || item.subscribeType === 'recurring')"
-                    type="primary"
-                    plain
-                    @click="openRenew(item)"
-                    >{{ $t('public_button_renew') }}
-                  </ElButton>
-                  <ElButton
-                    v-if="
-                      !disableUnsubscribe(row) &&
-                      ['active'].includes(item.status) &&
-                      row.productType === 'Engine' &&
-                      !(!row.amount && row.agentType === 'Cloud')
-                    "
-                    type="primary"
-                    plain
-                    @click="openChangeSubscribe(item)"
-                    >{{ $t('dfs_order_change') }}
-                  </ElButton>
-                  <ElButton
-                    v-if="!disableUnsubscribe(row) && ['active'].includes(item.status)"
-                    type="danger"
-                    plain
-                    size="mini"
-                    @click="openUnsubscribe(item, row.productType)"
-                    >{{ $t('public_button_unsubscribe') }}
-                  </ElButton>
+                <div v-else class="li-operation flex flex-column justify-content-between align-items-end">
+                  <span class="inline-block li-item__value font-color-dark ml-0">
+                    <StatusTag type="tag" :status="item.status" default-status="Stopped" target="order"></StatusTag>
+                  </span>
+
+                  <div class="flex">
+                    <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)"
+                      >{{ $t('public_button_pay') }}
+                    </ElButton>
+                    <ElButton v-if="['active'].includes(item.status)" type="text" @click="goOpenChange(item)"
+                      >{{ $t('dfs_change_record') }}
+                    </ElButton>
+                    <ElButton
+                      v-if="!(!['active'].includes(item.status) || row.isFree || item.subscribeType === 'recurring')"
+                      type="primary"
+                      plain
+                      @click="openRenew(item)"
+                      >{{ $t('public_button_renew') }}
+                    </ElButton>
+                    <ElButton
+                      v-if="
+                        !disableUnsubscribe(row) &&
+                        ['active'].includes(item.status) &&
+                        row.productType === 'Engine' &&
+                        !(!row.amount && row.agentType === 'Cloud')
+                      "
+                      type="primary"
+                      plain
+                      @click="openChangeSubscribe(item)"
+                      >{{ $t('dfs_order_change') }}
+                    </ElButton>
+                    <ElButton
+                      v-if="!disableUnsubscribe(row) && ['active'].includes(item.status)"
+                      type="danger"
+                      plain
+                      size="mini"
+                      @click="openUnsubscribe(item, row.productType)"
+                      >{{ $t('public_button_unsubscribe') }}
+                    </ElButton>
+                  </div>
                 </div>
               </div>
             </template>

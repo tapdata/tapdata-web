@@ -7,6 +7,7 @@
 .din-font {
   font-family: DIN;
 }
+
 .clearfix::after {
   display: block;
   clear: both;
@@ -21,6 +22,7 @@
 .link-primary:hover {
   color: map-get($color, lprimary);
 }
+
 .link-primary:focus {
   color: map-get($color, dprimary);
 }
@@ -68,6 +70,7 @@
 .link-danger:hover {
   color: #f76560;
 }
+
 .link-danger:focus {
   color: #cb2634;
 }
@@ -505,6 +508,7 @@
 .border-bottom {
   border-bottom: 1px solid #dee2e6 !important;
 }
+
 .border-left {
   border-left: 1px solid #dee2e6 !important;
 }
@@ -588,6 +592,7 @@
 .w-25 {
   width: 25% !important;
 }
+
 .w-40 {
   width: 40% !important;
 }
@@ -595,6 +600,7 @@
 .w-50 {
   width: 50% !important;
 }
+
 .w-60 {
   width: 60% !important;
 }
@@ -629,6 +635,10 @@
 
 .h-0 {
   height: 0 !important;
+}
+
+.h-8 {
+  height: 2rem !important;
 }
 
 .h-25 {
@@ -1245,6 +1255,10 @@
   margin-top: 4rem !important;
 }
 
+.mt-25 {
+  margin-top: 6.25rem !important;
+}
+
 .mt-auto {
   margin-top: auto !important;
 }
@@ -1404,6 +1418,7 @@
 .ml-0 {
   margin-left: 0 !important;
 }
+
 // TODO 使用Tailwind CSS 或者 Windi CSS 替换原子类
 .ml-0\.5 {
   margin-left: 0.125rem !important;
@@ -2527,9 +2542,11 @@
 .fw-normal {
   font-weight: 400 !important;
 }
+
 .fw-sub {
   font-weight: 500 !important;
 }
+
 .fw-bold {
   font-weight: 700 !important;
 }
@@ -2710,6 +2727,10 @@
   background-color: #f8f9fa !important;
 }
 
+.bg-slight {
+  background-color: #f5f6f7 !important;
+}
+
 .bg-dark {
   background-color: #212529 !important;
 }
@@ -2750,6 +2771,9 @@
   -webkit-user-select: none !important;
   -moz-user-select: none !important;
   user-select: none !important;
+}
+.user-drag-none {
+  -webkit-user-drag: none;
 }
 
 .pe-none {
@@ -2815,6 +2839,7 @@
 .rounded-sm {
   border-radius: 0.125rem !important;
 }
+
 .rounded-lg {
   border-radius: 0.5rem !important;
 }
@@ -12170,15 +12195,19 @@
 .font-color-dark {
   color: map-get($fontColor, dark);
 }
+
 .font-color-normal {
   color: map-get($fontColor, normal);
 }
+
 .font-color-light {
   color: map-get($fontColor, light);
 }
+
 .font-color-slight {
   color: map-get($fontColor, slight);
 }
+
 .font-color-sslight {
   color: map-get($fontColor, sslight);
 }
@@ -12189,7 +12218,7 @@
 }
 
 .bg-color-primary-light-9 {
-  background-color: #E8F3FF !important;
+  background-color: #f0f2ff !important;
 }
 
 .bg-color-danger {
@@ -12211,9 +12240,11 @@
 .bg-color-main {
   background-color: map-get($bgColor, main) !important;
 }
+
 .bg-color-white {
   background-color: map-get($bgColor, white) !important;
 }
+
 .bg-color-normal {
   background-color: map-get($bgColor, normal) !important;
 }
@@ -12279,6 +12310,7 @@
     transform: rotate(1turn);
   }
 }
+
 @keyframes showWidthAll {
   0% {
     width: 0;
@@ -12287,6 +12319,7 @@
     width: 100%;
   }
 }
+
 @keyframes hideWidthAll {
   0% {
     width: 100%;
@@ -12308,34 +12341,44 @@
   box-sizing: border-box;
   animation: dot 4s infinite step-start both;
 }
+
 .dotting:before {
   content: '...';
-} /* IE8 */
+}
+
+/* IE8 */
 .dotting::before {
   content: '';
 }
+
 :root .dotting {
   margin-left: 2px;
   padding-left: 2px;
-} /* IE9+ */
+}
+
+/* IE9+ */
 
 @keyframes dot {
   25% {
     border-color: transparent;
     background-color: transparent;
-  } /* 0个点 */
+  }
+  /* 0个点 */
   50% {
     border-right-color: transparent;
     background-color: transparent;
-  } /* 1个点 */
+  }
+  /* 1个点 */
   75% {
     border-right-color: transparent;
-  } /* 2个点 */
+  }
+  /* 2个点 */
 }
 
 .tooltip-fade-in-enter-active {
   transition: opacity 200ms linear;
 }
+
 .tooltip-fade-in-enter,
 .tooltip-fade-in-leave,
 .tooltip-fade-in-leave-active {
@@ -12354,12 +12397,15 @@
   visibility: hidden;
   clear: both;
 }
+
 .fl {
   float: left;
 }
+
 .fr {
   float: right;
 }
+
 .cursor-p {
   cursor: pointer;
 }
@@ -12380,6 +12426,7 @@
 .isCardBox {
   padding: 0 24px 24px 24px;
 }
+
 .isCard-title {
   font-size: 18px;
   line-height: 24px;
@@ -12389,9 +12436,11 @@
 .fs-basic {
   font-size: 14px;
 }
+
 .fs-basic-16 {
   font-size: 16px;
 }
+
 .color-white {
   color: white;
 }
@@ -12432,10 +12481,50 @@
 .leading-5 {
   line-height: 1.25rem;
 }
+
 .leading-primary {
   line-height: 1.375rem;
 }
 
 .max-w-1000 {
   max-width: 1000px;
+}
+
+.title-prefix-bar {
+  position: relative;
+  line-height: 24px;
+  font-weight: 500;
+  font-size: 16px;
+  color: map-get($fontColor, dark);
+  padding-left: 12px;
+  --bar-width: 3px;
+  $bar-width: 3px;
+
+  &::before {
+    content: '';
+    width: var(--bar-width);
+    height: 1.2em;
+    border-radius: calc(var(--bar-width) / 2);
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    position: absolute;
+    background-color: map-get($color, primary);
+    //background-color: #bcbfc3;
+  }
+}
+
+.backdrop-filter-light {
+  background-color: rgba(255, 255, 255, 0.6);
+  //border-block-start: 1px solid rgba(5, 5, 5, 0.06);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.z-10 {
+  z-index: 10;
+}
+
+.list-decimal {
+  list-style: decimal !important;
 }

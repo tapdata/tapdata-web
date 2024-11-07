@@ -150,6 +150,7 @@ import timeFunction from '@/mixins/timeFunction'
 import CheckLicense from '@/views/aliyun-market/CheckLicnese'
 import { mapMutations } from 'vuex'
 import { UpgradeDialog } from '@/plugins/upgrade-notice'
+import { CustomerSurvey } from '@/plugins/customer-survey'
 
 export default {
   name: 'Workbench',
@@ -348,6 +349,7 @@ export default {
   },
   methods: {
     UpgradeDialog,
+    CustomerSurvey,
     ...mapMutations(['setUpgradeFeeVisible']),
     init() {
       this.loadAgent() // agent
@@ -415,6 +417,12 @@ export default {
     loadNotices() {
       this.notices = this.isDomesticStation
         ? [
+            {
+              id: 32,
+              handle: 'CustomerSurvey',
+              name: i18n.t('dfs_customer_survey_notice'),
+              time: '2024-10-19 19:00'
+            },
             {
               id: 31,
               handle: 'UpgradeDialog',
@@ -631,6 +639,12 @@ export default {
             }
           ]
         : [
+            {
+              id: 32,
+              handle: 'CustomerSurvey',
+              name: i18n.t('dfs_customer_survey_notice'),
+              time: '2024-10-19 19:00'
+            },
             {
               id: 31,
               handle: 'UpgradeDialog',

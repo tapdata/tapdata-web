@@ -20,13 +20,14 @@ const EVENT_MAP = {
 
 export const DdlEventCheckbox = observer(
   defineComponent({
-    props: ['value', 'disabled'],
+    props: ['value', 'disabled', 'formValues'],
     setup(props, { emit }) {
       const formRef = useForm()
       const form = formRef.value
       const events = ref([])
       const selected = ref([])
-      const capabilities = form.values.attrs.capabilities || []
+      const values = props.formValues || form.values
+      const capabilities = values.attrs.capabilities || []
       const unselected = ref(props.value || [])
 
       events.value = capabilities.filter(item => item.type === 10).map(item => item.id)
@@ -66,73 +67,72 @@ export const DdlEventCheckbox = observer(
   })
 )
 
-export const DdlEventList = observer(
-  defineComponent({
-    props: ['value', 'findParentNode', 'findParentNodes', 'hideParent'],
-    setup(props) {
-      const formRef = useForm()
-      const fieldRef = useField()
-      const form = formRef.value
-      const list = ref([])
-      // 开启DDL的源节点
-      const parents = props
-        .findParentNodes(form.values.id)
-        .filter(
-          parent =>
-            (parent.type === 'database' || parent.type === 'table') && parent.ddlConfiguration === 'SYNCHRONIZATION'
-        )
+export const DdlEventList = defineComponent({
+  props: ['value', 'findParentNode', 'findParentNodes', 'hideParent', 'formValues'],
+  setup(props) {
+    const formRef = useForm()
+    const fieldRef = useField()
+    const form = formRef.value
+    const list = ref([])
+    const values = props.formValues ?? form.values
+    // 开启DDL的源节点
+    const parents = props
+      .findParentNodes(values.id)
+      .filter(
+        parent =>
+          (parent.type === 'database' || parent.type === 'table') && parent.ddlConfiguration === 'SYNCHRONIZATION'
+      )
 
-      const parentEnable = ref(!!parents.length)
+    const parentEnable = ref(!!parents.length)
 
-      if (parents.length) {
-        const functions = form.values.attrs.capabilities.filter(item => item.type === 11).map(item => item.id)
-        parents.forEach(parent => {
-          const disabledEvents = parent.disabledEvents || []
-          let events = parent.attrs.capabilities
-            .filter(item => {
-              if (item.type !== 10 || disabledEvents.includes(item.id)) return
-              const functionName = item.id.replace(/_event$/, '_function')
-              return functions.includes(functionName)
-            })
-            .map(item => item.id)
-          if (events.length) {
-            list.value.push({
-              source: parent.attrs.connectionName,
-              events
-            })
-          }
-        })
-      }
-
-      onMounted(() => {
-        if (!parentEnable.value) {
-          props.hideParent ? fieldRef.value.parent.setDisplay('hidden') : fieldRef.value.setDisplay('hidden')
+    if (parents.length) {
+      const functions = values.attrs.capabilities.filter(item => item.type === 11).map(item => item.id)
+      parents.forEach(parent => {
+        const disabledEvents = parent.disabledEvents || []
+        let events = parent.attrs.capabilities
+          .filter(item => {
+            if (item.type !== 10 || disabledEvents.includes(item.id)) return
+            const functionName = item.id.replace(/_event$/, '_function')
+            return functions.includes(functionName)
+          })
+          .map(item => item.id)
+        if (events.length) {
+          list.value.push({
+            source: parent.attrs.connectionName,
+            events
+          })
         }
       })
-
-      return () => {
-        return (
-          <div class="lh-1 font-color-light">
-            {list.value.length
-              ? list.value.map((item, i) => {
-                  return [
-                    <div class={['font-color-light mb-2 lh-1', { 'mt-2': i > 0 }]}>
-                      {i18n.t('packages_form_ddl_event_checkbox_index_laiziyuanlianjie')}
-                      {item.source}
-                    </div>,
-                    <div class="flex flex-wrap gap-1">
-                      {item.events.map(name => (
-                        <ElTag type="info" effect="light">
-                          {EVENT_MAP[name]}
-                        </ElTag>
-                      ))}
-                    </div>
-                  ]
-                })
-              : i18n.t('packages_form_ddl_event_checkbox_index_mubiaozanbuzhi')}
-          </div>
-        )
-      }
     }
-  })
-)
+    // FIXME 内存溢出
+    // onMounted(() => {
+    //   if (!parentEnable.value) {
+    //     props.hideParent ? fieldRef.value.parent.setDisplay('hidden') : fieldRef.value.setDisplay('hidden')
+    //   }
+    // })
+
+    return () => {
+      return (
+        <div class="lh-1 font-color-light">
+          {list.value.length
+            ? list.value.map((item, i) => {
+                return [
+                  <div class={['font-color-light mb-2 lh-1', { 'mt-2': i > 0 }]}>
+                    {i18n.t('packages_form_ddl_event_checkbox_index_laiziyuanlianjie')}
+                    {item.source}
+                  </div>,
+                  <div class="flex flex-wrap gap-1">
+                    {item.events.map(name => (
+                      <ElTag type="info" effect="light">
+                        {EVENT_MAP[name]}
+                      </ElTag>
+                    ))}
+                  </div>
+                ]
+              })
+            : i18n.t('packages_form_ddl_event_checkbox_index_mubiaozanbuzhi')}
+        </div>
+      )
+    }
+  }
+})

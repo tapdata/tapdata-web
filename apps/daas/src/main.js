@@ -23,7 +23,6 @@ import LoadMore from '@/utils/loadMore'
 import '@/plugins/axios.ts'
 import { configUser, getUrlSearch } from '@/utils/util'
 import { installOEM } from '@/oem'
-
 Vue.config.productionTip = false
 Vue.use(VueClipboard)
 Vue.use(LoadMore)
@@ -71,8 +70,8 @@ Vue.prototype.$confirm = (message, title, options) => {
       title,
       Object.assign(
         {
-          cancelButtonText: window.App.$t('public_button_cancel'),
-          confirmButtonText: window.App.$t('public_button_confirm')
+          cancelButtonText: i18n.t('public_button_cancel'),
+          confirmButtonText: i18n.t('public_button_confirm')
         },
         options
       )
@@ -123,7 +122,7 @@ let init = settings => {
   }
   wsUrl += `//${loc.host}${location.pathname.replace(/\/$/, '')}/ws/agent`
 
-  window.App = new Vue({
+  new Vue({
     el: '#app',
     i18n,
     router,

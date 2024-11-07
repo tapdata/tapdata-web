@@ -1,6 +1,7 @@
 <script>
 import { defineComponent } from '@vue/composition-api'
 import { VIcon } from '@tap/component'
+import i18n from '@tap/i18n'
 
 export default defineComponent({
   name: 'AlarmStatistics',
@@ -32,7 +33,9 @@ export default defineComponent({
               <VIcon size="18" class="mr-2 color-warning">
                 warning
               </VIcon>
-              <span>告警：{props.alarmNum.alert}</span>
+              <span>
+                {i18n.t('public_warn')}：{props.alarmNum.alert}
+              </span>
             </div>
           </transition>
           <transition name="el-fade-in-linear">
@@ -48,7 +51,9 @@ export default defineComponent({
               <VIcon size="18" class="mr-2 color-danger">
                 error
               </VIcon>
-              <span>错误：{props.alarmNum.error}</span>
+              <span>
+                {i18n.t('public_error')}：{props.alarmNum.error}
+              </span>
             </div>
           </transition>
         </div>

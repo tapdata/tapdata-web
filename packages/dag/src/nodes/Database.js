@@ -208,7 +208,7 @@ export class Database extends NodeType {
                           class: 'flex-1'
                         },
                         'x-component': 'Select',
-                        default: 'All',
+                        default: 'HasKeys',
                         enum: [
                           { label: i18n.t('public_select_option_all'), value: 'All' },
                           { label: i18n.t('packages_dag_nodes_database_jinyouzhujianbiao'), value: 'HasKeys' },
@@ -237,6 +237,26 @@ export class Database extends NodeType {
                     }
                   },
 
+                  selectAlert: {
+                    type: 'void',
+                    'x-component': 'Alert',
+                    'x-component-props': {
+                      class: 'mb-2 lh-base',
+                      title: i18n.t('packages_dag_select_HasKeys_alert'),
+                      type: 'warning',
+                      showIcon: true,
+                      closable: false
+                    },
+                    'x-reactions': {
+                      dependencies: ['.noPrimaryKeyTableSelectType'],
+                      fulfill: {
+                        state: {
+                          visible: '{{$deps[0] === "HasKeys"}}'
+                        }
+                      }
+                    }
+                  },
+
                   div2: {
                     type: 'void',
                     'x-component': 'div',
@@ -246,11 +266,11 @@ export class Database extends NodeType {
                         default: [],
                         'x-component': 'TableSelector',
                         'x-component-props': {
+                          class: 'mt-4',
                           connectionId: '{{$values.connectionId}}',
                           syncPartitionTableEnable: '{{$values.syncSourcePartitionTableEnable}}',
                           hasPartition: `{{$values.attrs.capabilities.some(item => item.id==="source_support_partition")}}`,
                           style: {
-                            marginTop: '8px',
                             height: 'unset',
                             minHeight: 0,
                             maxHeight: 'calc((100vh - 120px) * 0.618)'
@@ -334,8 +354,25 @@ export class Database extends NodeType {
                   },
                   uniqueIndexEnable: {
                     type: 'boolean',
+                    title: i18n.t('packages_dag_migration_uniqueIndexEnable'),
                     default: true,
-                    'x-display': 'hidden'
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      layout: 'horizontal',
+                      tooltip: i18n.t('packages_dag_uniqueIndexEnable_tip')
+                    },
+                    'x-component': 'Switch'
+                  },
+                  updateConditionFieldsAlert: {
+                    type: 'void',
+                    'x-component': 'Alert',
+                    'x-component-props': {
+                      class: 'mb-2 lh-base',
+                      title: i18n.t('packages_dag_updateConditionFields_alert'),
+                      type: 'warning',
+                      showIcon: true,
+                      closable: false
+                    }
                   },
                   existDataProcessMode: {
                     type: 'string',
@@ -619,6 +656,54 @@ export class Database extends NodeType {
                             default: 1
                           }
                         }
+                      },
+
+                      enableConcurrentReadSpace: {
+                        title: i18n.t('packages_dag_enableConcurrentRead'),
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: i18n.t('packages_dag_enableConcurrentRead_tips')
+                        },
+                        type: 'void',
+                        'x-component': 'Space',
+                        'x-component-props': {
+                          size: 'middle'
+                        },
+                        'x-reactions': {
+                          fulfill: {
+                            state: {
+                              display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
+                            }
+                          }
+                        },
+                        properties: {
+                          enableConcurrentRead: {
+                            type: 'boolean',
+                            'x-component': 'Switch',
+                            'x-reactions': {
+                              target: '.concurrentReadThreadNumber',
+                              fulfill: {
+                                state: {
+                                  visible: '{{!!$self.value}}'
+                                }
+                              }
+                            }
+                          },
+                          concurrentReadThreadNumber: {
+                            title: i18n.t('packages_dag_concurrentReadThreadNumber'),
+                            type: 'number',
+                            default: 2,
+                            'x-decorator': 'FormItem',
+                            'x-decorator-props': {
+                              layout: 'horizontal',
+                              feedbackLayout: 'none'
+                            },
+                            'x-component': 'InputNumber',
+                            'x-component-props': {
+                              min: 1
+                            }
+                          }
+                        }
                       }
                     }
                   },
@@ -893,9 +978,6 @@ export class Database extends NodeType {
                         title: i18n.t('packages_dag_nodes_database_shujuxieruce'),
                         type: 'object',
                         'x-decorator': 'FormItem',
-                        'x-decorator-props': {
-                          feedbackLayout: 'none'
-                        },
                         'x-component': 'FormLayout',
                         'x-component-props': {
                           layout: 'horizontal',
@@ -1016,6 +1098,23 @@ export class Database extends NodeType {
                             }
                           }
                         }
+                      },
+                      noPkSyncMode: {
+                        type: 'string',
+                        title: i18n.t('packages_dag_noPkSyncMode'),
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Radio.Group',
+                        default: 'ALL_COLUMNS', // 兼容老任务
+                        enum: [
+                          {
+                            label: i18n.t('packages_dag_noPkSyncMode_ADD_HASH'),
+                            value: 'ADD_HASH'
+                          },
+                          {
+                            label: i18n.t('packages_dag_noPkSyncMode_ALL_COLUMNS'),
+                            value: 'ALL_COLUMNS'
+                          }
+                        ]
                       }
                     }
                   },

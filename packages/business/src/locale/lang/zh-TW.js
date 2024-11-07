@@ -711,7 +711,7 @@ export default {
   packages_business_shared_cdc_setting_select_time_tip: '請選擇日誌保存時長',
   packages_business_shared_cdc_setting_message_edit_save: '保存成功，重啟任務後生效',
   packages_business_shared_list_name: '挖掘名稱',
-  packages_business_shared_list_time_excavation: '挖掘所處時間點(數據庫時間)',
+  packages_business_shared_list_time_excavation: '挖掘所處時間點',
   packages_business_shared_list_time: '挖掘延遲',
   packages_business_shared_list_setting: '挖掘設置',
   packages_business_shared_list_status: '狀態',
@@ -1162,7 +1162,7 @@ export default {
   packages_business_setting_alarmsetting_qubangding: '去綁定',
   packages_business_setting_alarmsetting_jiancedaoninhai: '檢測到您還未綁定郵箱，無法開啟郵件通知。',
   packages_business_verification_form_zhengzaijiyuren: '正在基於任務產生校驗條件',
-  packages_business_agent_ip_tips_prefix: '請確保您數據庫的網絡安全策略，允許全托管Agent所在的IP地址訪問。',
+  packages_business_agent_ip_tips_prefix: '請在防火牆中允許這些 TapData IP 訪問數據庫端口，並確保權限設置正確',
   packages_business_agent_ip_tips_suffix: '點擊查看全托管Agent的IP地址信息',
   packages_business_demo_database_desc: 'Demo 數據源，可快速創建數據源信息，無需準備數據庫信息即可體驗。',
   packages_business_use_ssl: '使用 SSL',
@@ -1202,7 +1202,7 @@ export default {
   packages_business_verification_hashTip: '暫不支持異構數據庫',
   packages_business_heterogeneous_database: '異構數據庫',
   packages_business_selected_rows: '已選 {val} 行',
-  packages_business_download_analysis_report: '下載分析報告',
+  packages_business_download_analysis_report: '分析報告',
   packages_business_download_analysis_report_title: '任務分析報告生成中...',
   packages_business_download_analysis_report_desc: '報告產生大約需要 60s, 在下載後, 請發送給支援團隊進行分析',
   packages_business_exporting_task: '正在導出任務',
@@ -1244,5 +1244,6 @@ export default {
   packages_business_not_support_validation: '{connection} 不支持{method}',
   packages_business_download_details: '下載詳情',
   packages_business_solution: '解決方案',
-  packages_business_error_details: '錯誤詳情'
+  packages_business_error_details: '錯誤詳情',
+  packages_business_instance_info: '連接唯一標識'
 }

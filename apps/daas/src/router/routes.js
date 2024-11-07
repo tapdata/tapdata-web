@@ -710,7 +710,8 @@ export default [
         component: DataServerList,
         meta: {
           title: 'page_title_data_server_list',
-          code: 'v2_data-server-list'
+          code: 'v2_data-server-list',
+          hideTitle: true
         }
       },
       /* ---------- 应用管理  ----------*/
@@ -984,7 +985,8 @@ export default [
         name: 'License',
         component: () => import('@/views/License'),
         meta: {
-          title: 'page_title_license'
+          title: 'page_title_license',
+          hideTitle: true
         }
       },
       {

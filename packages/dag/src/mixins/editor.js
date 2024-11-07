@@ -24,6 +24,7 @@ import resize from '@tap/component/src/directives/resize'
 import { observable } from '@formily/reactive'
 import { setPageTitle } from '@tap/shared'
 import { getSchema, getTableRenameByConfig, ifTableNameConfigEmpty } from '../util'
+import { showErrorMessage } from '@tap/business/src/components/error-message'
 
 export default {
   directives: {
@@ -1264,7 +1265,6 @@ export default {
     },
 
     resetWorkspace() {
-      console.log('resetWorkspace', this.dataflow) // eslint-disable-line
       Object.assign(this.dataflow, {
         ...DEFAULT_SETTINGS,
         id: '',
@@ -1547,7 +1547,9 @@ export default {
         'custom_processor',
         'migrate_js_processor',
         'union_processor',
-        'migrate_union_processor'
+        'migrate_union_processor',
+        'standard_js_processor',
+        'standard_migrate_js_processor'
       ]
       this.allNodes.forEach(node => {
         // 开启了DDL
@@ -1684,6 +1686,44 @@ export default {
       if (nodes.length > 1) return i18n.t('packages_dag_migrate_union_multiple')
     },
 
+    async validateMergeTableProcessor() {
+      if (this.dataflow.syncType === 'migrate') return
+
+      const nodes = this.allNodes.filter(node => node.type === 'merge_table_processor')
+      const allPromise = []
+
+      const handle = async input => {
+        const fields = await this.scope.loadNodeFieldOptions(input)
+
+        if (
+          fields?.length &&
+          !fields.some(item => {
+            return item.isPrimaryKey || item.indicesUnique
+          })
+        ) {
+          // 缺少主键或唯一索引
+          return Promise.reject(input)
+        }
+      }
+
+      for (let node of nodes) {
+        for (let input of node.$inputs) {
+          allPromise.push(handle(input))
+        }
+      }
+
+      try {
+        await Promise.all(allPromise)
+      } catch (id) {
+        this.setNodeErrorMsg({
+          id,
+          msg: i18n.t('packages_dag_missing_primary_key_or_index')
+        })
+        this.handleLocateNode(this.nodeById(id))
+        return i18n.t('packages_dag_merge_table_missing_key_or_index')
+      }
+    },
+
     async eachValidate(...fns) {
       for (let fn of fns) {
         let result = fn()
@@ -1720,6 +1760,7 @@ export default {
         this.validateUnwind,
         this.validateTableRename,
         this.validateMigrateUnion
+        // this.validateMergeTableProcessor
       )
     },
 
@@ -2111,8 +2152,7 @@ export default {
       } else if (['Task.ScheduleLimit', 'Task.ManuallyScheduleLimit'].includes(code)) {
         this.handleShowUpgradeDialog(error.data)
       } else {
-        const msg = error?.data?.message || msg
-        this.$message.error(msg)
+        showErrorMessage(error?.data)
       }
     },
 
@@ -2133,10 +2173,10 @@ export default {
     },
 
     handleEditFlush(result) {
-      console.debug(i18n.t('packages_dag_mixins_editor_debug5', { val1: result.data?.status }), result.data) // eslint-disable-line
+      // console.debug(i18n.t('packages_dag_mixins_editor_debug5', { val1: result.data?.status }), result.data) // eslint-disable-line
       if (result.data) {
         if (result.data.id !== this.dataflow.id) {
-          console.debug(i18n.t('packages_dag_mixins_editor_wsshoudaole'), result.data)
+          // console.debug(i18n.t('packages_dag_mixins_editor_wsshoudaole'), result.data)
           return
         }
         this.reformDataflow(result.data, true)
@@ -2303,7 +2343,6 @@ export default {
         })
         this.startLoopTask(id)
         this.titleSet()
-        console.log('任务data', data)
         return data
       } catch (e) {
         console.error(e)
@@ -2315,7 +2354,7 @@ export default {
     },
 
     startLoopTask(id) {
-      console.debug(i18n.t('packages_dag_mixins_editor_debug4')) // eslint-disable-line
+      // console.debug(i18n.t('packages_dag_mixins_editor_debug4')) // eslint-disable-line
       clearTimeout(this.startLoopTaskTimer)
       if (!id) return
       this.startLoopTaskTimer = setTimeout(async () => {
@@ -2334,12 +2373,12 @@ export default {
           this.dataflow.attrs = data.attrs
 
           makeStatusAndDisabled(data)
-          console.debug(
-            i18n.t('packages_dag_mixins_editor_debug3', { val1: this.dataflow.status, val2: data.status }),
-            data
-          ) // eslint-disable-line
+          // console.debug(
+          //   i18n.t('packages_dag_mixins_editor_debug3', { val1: this.dataflow.status, val2: data.status }),
+          //   data
+          // ) // eslint-disable-line
           if (this.dataflow.status !== data.status) {
-            console.debug(i18n.t('packages_dag_mixins_editor_debug2')) // eslint-disable-line
+            // console.debug(i18n.t('packages_dag_mixins_editor_debug2')) // eslint-disable-line
             this.dataflow.status = data.status
           }
           // 需要实时更新的字段
@@ -2350,6 +2389,8 @@ export default {
           this.dataflow.shareCdcStopMessage = data.shareCdcStopMessage
           this.dataflow.timeDifference = data.timeDifference
           this.dataflow.currentEventTimestamp = data.currentEventTimestamp
+          this.dataflow.functionRetryStatus = data.functionRetryStatus
+          this.dataflow.taskRetryStartTime = data.taskRetryStartTime
 
           if (data.currentEventTimestamp) {
             this.dataflow.currentEventTimestampLabel = dayjs(data.currentEventTimestamp).format('YYYY-MM-DD HH:mm:ss')
@@ -2369,7 +2410,7 @@ export default {
     },
 
     initWS() {
-      console.debug(i18n.t('packages_dag_mixins_editor_debug'), this.$ws.ws) // eslint-disable-line
+      // console.debug(i18n.t('packages_dag_mixins_editor_debug'), this.$ws.ws) // eslint-disable-line
       this.$ws.off('editFlush', this.handleEditFlush)
       this.$ws.on('editFlush', this.handleEditFlush)
       this.$ws.send({
@@ -2505,7 +2546,7 @@ export default {
       this.setPdkSchemaFreeMap(tagsMap)
       this.setPdkDoubleActiveMap(doubleActiveMap)
 
-      console.log(propertiesMap, tagsMap) // eslint-disable-line
+      // console.log(propertiesMap, tagsMap) // eslint-disable-line
     },
 
     getIsDataflow() {
@@ -2525,13 +2566,16 @@ export default {
     startTask() {
       const buriedCode = this.getIsDataflow() ? 'taskStart' : 'migrationStart'
       taskApi
-        .batchStart([this.dataflow.id])
+        .batchStart([this.dataflow.id], {
+          silenceMessage: true
+        })
         .then(() => {
           this.buried(buriedCode, { result: true })
           this.gotoViewer()
         })
-        .catch(() => {
+        .catch(e => {
           this.buried(buriedCode, { result: false })
+          this.handleError(e)
         })
     },
     // 获取任务的按钮权限

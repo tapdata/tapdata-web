@@ -1,6 +1,7 @@
-import { isEmpty } from 'lodash'
+import { isEmpty, merge } from 'lodash'
 import { getConnectionIcon } from '@tap/business'
 import { getIcon } from '@tap/assets/icons'
+import { uuid } from '@tap/shared'
 
 export function getNodeIconSrc(node) {
   if (!node) return
@@ -65,7 +66,6 @@ export function getSchema(schema, values, pdkPropertiesMap) {
     }
   }
 
-  console.log('newSchema', newSchema)
   return newSchema
 }
 
@@ -147,4 +147,28 @@ export const getTableRenameByConfig = (tableName, config) => {
   }
 
   return tableName
+}
+
+export const genDatabaseNode = (def = {}) => {
+  return merge(
+    {
+      id: uuid(),
+      attrs: {
+        capabilities: []
+      },
+      type: 'database'
+    },
+    def
+  )
+}
+
+export const genProcessorNode = (type, def = {}) => {
+  return merge(
+    {
+      id: uuid(),
+      attrs: {},
+      type
+    },
+    def
+  )
 }

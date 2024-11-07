@@ -1,7 +1,7 @@
 <template>
   <section class="setting-list-wrap">
     <div class="setting-list-box">
-      <ul class="setting-nav" :style="lang === 'en' ? '280px' : '160px'">
+      <ul class="setting-nav overflow-y-auto" :style="lang === 'en' ? '280px' : '160px'">
         <li
           v-for="(item, index) in formData.items"
           :key="index"
@@ -32,7 +32,7 @@
 
                 <el-row v-if="activePanel === childItem.category">
                   <el-col :span="24">
-                    <el-form-item>
+                    <el-form-item v-if="childItem.key_label !== 'Ldap SSL Cert' || ldapForm.Ldap_SSL_Enable">
                       <span slot="label">
                         <span
                           >{{
@@ -54,13 +54,23 @@
                           <VIcon class="color-primary ml-3" size="14">info</VIcon>
                         </el-tooltip>
                       </span>
+                      <template v-if="childItem.key_label === 'Ldap SSL Cert'">
+                        <TextFileReader
+                          :value="childItem.value"
+                          :file-name="childItem.fileName"
+                          @change="handleChangeCert(childItem, $event)"
+                          @update:fileName="handleChangeName(childItem, $event)"
+                        ></TextFileReader>
+                      </template>
+
                       <ElInputNumber
-                        v-if="'min' in childItem || 'max' in childItem"
+                        v-else-if="'min' in childItem || 'max' in childItem"
                         v-model="childItem.value"
                         controls-position="right"
                         :min="childItem.min"
                         :max="childItem.max"
                       ></ElInputNumber>
+                      <el-switch v-else-if="'open' in childItem" v-model="childItem.open"></el-switch>
                       <el-input
                         v-else-if="!childItem.enums || childItem.enums.length === 0"
                         :type="childItem.key.match(/password/) ? 'password' : 'text'"
@@ -97,6 +107,10 @@
         </div>
 
         <div class="footer">
+          <el-button v-if="activePanel === 'LDAP'" @click="testLdap" :loading="adTesting">{{
+            $t('public_connection_button_test')
+          }}</el-button>
+
           <el-button v-if="email === 'admin@admin.com'" @click="save" size="mini" type="primary">{{
             $t('public_button_save')
           }}</el-button>
@@ -182,13 +196,15 @@ import i18n from '@/i18n'
 import { uniq, find } from 'lodash'
 import { VIcon, VTable } from '@tap/component'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
-import { licensesApi, settingsApi, alarmRuleApi } from '@tap/api'
+import { licensesApi, settingsApi, alarmRuleApi, usersApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
 import Cookie from '@tap/shared/src/cookie'
+import { showErrorMessage } from '@tap/business'
+import { TextFileReader } from '@tap/form'
 
 export default {
   name: 'Setting',
-  components: { VIcon },
+  components: { VIcon, TextFileReader },
   data() {
     return {
       title: process.env.VUE_APP_PAGE_TITLE,
@@ -241,7 +257,8 @@ export default {
         }
       ],
       email: '',
-      filterCategory: process.env.VUE_APP_HIDE_SETTINGS_CATEGORY
+      filterCategory: process.env.VUE_APP_HIDE_SETTINGS_CATEGORY,
+      adTesting: false
     }
   },
   created() {
@@ -262,6 +279,24 @@ export default {
           })
         }
       }
+      return result
+    },
+
+    ldapForm() {
+      let result = {}
+      let items = this.formData.items
+      if (items && items.length) {
+        let target = find(items, item => {
+          return item.category === 'LDAP'
+        })
+        if (target && target.items) {
+          target.items.forEach(it => {
+            const key = it.key_label.split(' ').join('_')
+            result[key] = 'open' in it ? it.open : it.value
+          })
+        }
+      }
+      console.log('result', result)
       return result
     }
   },
@@ -398,10 +433,39 @@ export default {
         title: `Tapdata Notification:`,
         text: 'This is a test email'
       }
-      settingsApi.testEmail(params).then(() => {
+      settingsApi.testEmail(params).then(data => {
         localStorage.setItem('Tapdata_settings_email_countdown', now)
-        this.$message.success(this.$t('setting_test_email_success'))
+
+        if (data?.result) {
+          this.$message.success(this.$t('setting_test_email_success'))
+        } else {
+          showErrorMessage(data)
+        }
       })
+    },
+
+    testLdap() {
+      this.adTesting = true
+      usersApi
+        .testLdapLogin(this.ldapForm)
+        .then(data => {
+          if (data?.result) {
+            this.$message.success(this.$t('setting_test_ldap_success'))
+          } else {
+            showErrorMessage(data)
+          }
+        })
+        .finally(() => {
+          this.adTesting = false
+        })
+    },
+
+    handleChangeCert(target, value) {
+      this.$set(target, 'value', value)
+    },
+
+    handleChangeName(target, name) {
+      this.$set(target, 'fileName', name)
     }
   }
 }
@@ -420,6 +484,7 @@ export default {
     // background-color: #fff;
     border-radius: 4px;
     .setting-nav {
+      min-width: max-content;
       height: 100%;
       padding: 20px 2px;
       border-right: 1px solid map-get($borderColor, light);

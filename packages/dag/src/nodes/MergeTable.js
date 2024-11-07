@@ -166,6 +166,9 @@ export class MergeTable extends NodeType {
                               title: i18n.t('packages_dag_nodes_mergetable_guanlianhouxieru'),
                               'x-decorator': 'FormItem',
                               'x-component': 'Input',
+                              'x-component-props': {
+                                id: 'merge_table_processor_targetPath'
+                              },
                               'x-reactions': [
                                 {
                                   dependencies: ['.mergeType', '.id'],

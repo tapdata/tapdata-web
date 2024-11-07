@@ -260,6 +260,22 @@ Vue.use(Result)
 
 const showMessage = Symbol('showMessage')
 
+// 保存原始的 Message.error 方法
+const originalMessageError = _Message.error
+
+_Message.error = function (options) {
+  if (process.env.VUE_APP_KEYWORD) {
+    if (typeof options === 'string') {
+      options = options.replace(/tapdata\s?/gi, process.env.VUE_APP_KEYWORD)
+    } else if (options?.message && typeof options.message === 'string') {
+      options.message = options.message.replace(/tapdata\s?/gi, process.env.VUE_APP_KEYWORD)
+    }
+  }
+
+  // 调用原始的 Message.error 方法
+  return originalMessageError(options)
+}
+
 class MessageConstructor {
   constructor() {
     const types = ['success', 'warning', 'info', 'error']
@@ -278,7 +294,6 @@ class MessageConstructor {
       const message = typeof options === 'string' ? options : options.message
       for (const dom of domList) {
         if (message === dom.innerText) {
-          console.log('重复消息', dom) // eslint-disable-line
           canShow = false
           break
         }

@@ -21,6 +21,7 @@ export const Switch = connect(
       return () => {
         return props.confirm && !Boolean(props.value) ? (
           <Popconfirm
+            disabled={attrs.disabled}
             popperClass="pop-confirm"
             props={{ ...props.confirm }}
             onConfirm={onConfirm}

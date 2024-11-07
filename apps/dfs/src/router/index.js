@@ -17,6 +17,11 @@ const MigrationEditor = async () => {
   return MigrationEditor
 }
 
+const MigrationForm = async () => {
+  const { MigrationForm } = await import('@tap/dag')
+  return MigrationForm
+}
+
 const ConnectionForm = async () => {
   const { ConnectionForm } = await import('@tap/business')
   return ConnectionForm
@@ -36,6 +41,12 @@ const MigrationMonitor = async () => {
   const { MigrationMonitor } = await import('@tap/dag')
   return MigrationMonitor
 }
+
+const MigrationMonitorSimple = async () => {
+  const { MigrationMonitorSimple } = await import('@tap/dag')
+  return MigrationMonitorSimple
+}
+
 const MigrationMonitorViewer = async () => {
   const { MigrationMonitorViewer } = await import('@tap/dag')
   return MigrationMonitorViewer
@@ -233,6 +244,16 @@ const routes = [
               title: 'task_manage_migrate',
               desc: 'task_manage_migrate_desc',
               code: 'v2_data_replication',
+              hideTitle: true
+            }
+          },
+
+          {
+            path: 'form/:id?',
+            name: 'MigrateForm',
+            component: MigrationForm,
+            meta: {
+              title: 'task_manage_migrate',
               hideTitle: true
             }
           }
@@ -580,6 +601,33 @@ const routes = [
         }
       }
     ]
+  },
+  {
+    path: '/welcome',
+    component: () => import(/* webpackChunkName: "layout" */ '../views/welcome/WelcomeLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Welcome',
+        component: () => import(/* webpackChunkName: "layout" */ '../views/welcome/Welcome.vue')
+      },
+      {
+        path: 'task/:id?',
+        name: 'WelcomeTask',
+        component: MigrationForm,
+        props: {
+          editRouteName: 'WelcomeTask'
+        }
+      }
+    ]
+  },
+  {
+    path: '/migrate/monitor/simple/:id',
+    name: 'MigrationMonitorSimple',
+    component: MigrationMonitorSimple,
+    meta: {
+      title: 'page_title_run_monitor'
+    }
   },
   {
     path: '/migrate/monitor/:id',

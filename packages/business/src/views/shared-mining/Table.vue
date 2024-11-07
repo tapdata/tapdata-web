@@ -7,7 +7,7 @@
         <ElOption v-for="item in connectionsList" :label="item.name" :value="item.id" :key="item.id"></ElOption>
       </ElSelect>
     </div>
-    <div class="flex justify-content-between mb-4">
+    <div class="flex justify-content-between mb-4 flex-wrap gap-4">
       <ElRadioGroup v-model="currentTab" size="mini" @change="handleChangeTab">
         <ElRadioButton v-for="item in tabItems" :label="item.value" :key="item.value">{{ item.label }}</ElRadioButton>
       </ElRadioGroup>
@@ -44,6 +44,7 @@
     </div>
     <VTable
       :columns="columns"
+      row-key="id"
       :remoteMethod="remoteMethod"
       :page-options="{
         layout: 'total, prev, pager, next, jumper'
@@ -55,6 +56,7 @@
       }"
       hide-on-single-page
       @selection-change="handleSelectionChange"
+      @sort-change="handleSortTable"
     >
       <template #name="{ row }">
         <ElTooltip
@@ -154,7 +156,8 @@ export default {
       ],
       columns: [
         {
-          type: 'selection'
+          type: 'selection',
+          reserveSelection: true
         },
         {
           label: i18n.t('packages_business_shared_mining_table_biaoming'),
@@ -169,11 +172,14 @@ export default {
         },
         {
           label: i18n.t('packages_business_shared_mining_table_leijiwajue'),
-          prop: 'allCount'
+          prop: 'allCount',
+          minWidth: 150
         },
         {
           label: i18n.t('packages_business_shared_mining_table_jinriwajue'),
-          prop: 'todayCount'
+          prop: 'todayCount',
+          sortable: true,
+          minWidth: 160
         },
         {
           label: i18n.t('packages_business_shared_mining_table_jiaruwajueshi'),
@@ -216,7 +222,8 @@ export default {
       recoverLoading: false,
       selectedConnectionId: '',
       connectionsList: [],
-      listTotal: 0
+      listTotal: 0,
+      order: ''
     }
   },
   watch: {
@@ -251,7 +258,8 @@ export default {
         connectionId: this.selectedConnectionId,
         keyword,
         page: current,
-        size: size
+        size: size,
+        order: this.order
       }
       return logcollectorApi[this.currentTab === 'running' ? 'tableInfos' : 'excludeTableInfos'](filter).then(data => {
         const total = data.total || 0
@@ -260,7 +268,10 @@ export default {
         }
         return {
           total: total,
-          data: data.items || []
+          data: (data.items || []).map(item => {
+            item.id = `${item.connectionId}_${item.name}`
+            return item
+          })
         }
       })
     },
@@ -372,6 +383,11 @@ export default {
         }
       })
       openUrl(routeUrl.href)
+    },
+
+    handleSortTable({ order, prop }) {
+      this.order = order ? `${prop} ${order === 'ascending' ? 'ASC' : 'DESC'}` : ''
+      this.fetch(1)
     }
   }
 }

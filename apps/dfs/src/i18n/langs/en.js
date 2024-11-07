@@ -377,7 +377,7 @@ export default {
   task_monitor_end_time: 'End Time',
   task_monitor_cdc_time: 'The time point of the increment',
   task_monitor_run_log: 'Run Log',
-  task_monitor_mission_milestone: 'Mission Milestone',
+  task_monitor_mission_milestone: 'Task Milestone',
   task_monitor_no_milestone_data:
     'This task has either not started or has been reset, and therefore there is no milestone data currently in progress.',
   task_monitor_task_details: 'Task Details',
@@ -1842,7 +1842,8 @@ export default {
   dfs_traffic_billing: 'Traffic Billing',
   dfs_traffic_billing_desc:
     'Apart from the engine specification fees, traffic fees will also be charged based on the amount of data you synchronize. These traffic fees are billed monthly.',
-  dfs_traffic_billing_prefix: '(Free traffic of 100GB, any excess over 100GB will be charged at {trafficPrice}/GB)',
+  dfs_traffic_billing_prefix:
+    '(Receive {gift}GB of free traffic per month. Excess usage will be charged at {trafficPrice} per GB.)',
   dfs_traffic_bill_mode: 'Billing Method',
   dfs_bill_number: 'Bill Number',
   dfs_bill_amount: 'Bill Amount ({currency})',
@@ -1852,8 +1853,20 @@ export default {
   dfs_bill_status: 'Status',
   dfs_service_upgrade_notice: 'TapData Cloud Service Upgrade Announcement',
   dfs_service_upgrade_notice_content: `Dear User,\nTo further enhance your experience, we plan to upgrade the TapData Cloud service.`,
+  dfs_customer_survey_notice: '🎁 Survey with Rewards',
   dfs_payment_progress: 'Payment in Progress',
   dfs_payment_progress_desc: 'If you have already made the payment, please click “Payment Completed”.',
   dfs_retry_payment: 'Repay',
-  dfs_complete_payment: 'Payment Completed'
+  dfs_complete_payment: 'Payment Completed',
+  dfs_tm_address_alert: 'If your server has access restrictions, please allow access for TapData Cloud management to:',
+
+  welcome_page_title: `<span class="text-gradient">Connect</span> your data, <span class="text-gradient">sync</span> to your destination</span>`,
+  welcome_page_subtitle: `Get a <span class="text-gradient">15-day free</span> trial with a fully managed engine and demo data source`,
+  welcome_datasource: 'Data Source',
+  welcome_target_source: 'Target Source',
+  welcome_demand_collection: 'What do you want to achieve with this product?',
+  welcome_demand_collection_1: 'Assess TapData for a project',
+  welcome_demand_collection_2: "Explore TapData's data replication and integration capability",
+  welcome_demand_collection_3: 'Learn best practices in real time data processing with TapData',
+  welcome_create_task: 'Create Your First Replication Task'
 }

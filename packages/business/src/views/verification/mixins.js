@@ -5,7 +5,8 @@ import i18n from '@tap/i18n'
 export default {
   data() {
     return {
-      downloading: false
+      downloading: false,
+      showType: 'diff'
     }
   },
   methods: {
@@ -131,7 +132,7 @@ export default {
     async downloadDetails() {
       this.downloading = true
 
-      const blobData = await inspectDetailsApi.export(this.resultInfo.id).finally(() => {
+      const blobData = await inspectDetailsApi.export(this.resultInfo.id, this.showType !== 'diff').finally(() => {
         this.downloading = false
       })
 

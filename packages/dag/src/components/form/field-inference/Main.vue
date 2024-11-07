@@ -75,13 +75,6 @@
             >
               <VIcon size="16" class="color-primary">info</VIcon>
             </ElTooltip>
-            <div class="inline-flex align-center ml-auto gap-1">
-              <span class="font-color-sslight">{{ $t('packages_dag_uniqueIndexEnable') }}</span>
-              <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_uniqueIndexEnable_tip')" class="mr-1">
-                <VIcon size="16" class="color-primary">info</VIcon>
-              </ElTooltip>
-              <el-switch :value="uniqueIndexEnable" :disabled="readonly" @change="changeUniqueIndexEnable"></el-switch>
-            </div>
           </div>
 
           <ElSelect
@@ -127,6 +120,7 @@
             ignore-error
             class="content__list flex-fill"
             @update-rules="handleUpdateRules"
+            @open-update-rules="handleOpen"
           ></List>
         </div>
       </div>

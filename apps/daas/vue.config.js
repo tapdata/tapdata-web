@@ -21,7 +21,7 @@ if (~argv.indexOf('--origin')) {
 
 const proxy = {
   target: origin || serveUrlMap[SERVE_ENV],
-  changeOrigin: false
+  changeOrigin: true
 }
 
 module.exports = {
@@ -34,6 +34,7 @@ module.exports = {
       '/api/': proxy,
       '/oauth/': proxy,
       '/old/': { target: 'http://localhost:8081' },
+      '/docs/': proxy,
       '/ws/': {
         ws: true,
         secure: false,
@@ -152,7 +153,7 @@ module.exports = {
   },
   configureWebpack: config => {
     // 尽量保证项目中文件后缀的精确
-    config.resolve.extensions = ['.js', 'jsx', '.vue', '.json', '.ts', '.tsx']
+    config.resolve.extensions = ['.js', '.jsx', '.vue', '.json', '.ts', '.tsx']
 
     if (process.env.NODE_ENV === 'production') {
       // gzip

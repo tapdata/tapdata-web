@@ -15,11 +15,20 @@
         </template>
       </el-table-column>
       <el-table-column min-width="160" :label="$t('packages_business_shared_list_time_excavation')">
+        <template #header>
+          <div class="inline-flex align-center">
+            <span>{{ $t('packages_business_shared_list_time_excavation') }}</span>
+            <ElTooltip class="ml-1" placement="top" :content="$t('public_database_time')">
+              <VIcon class="color-primary" size="14">info</VIcon>
+            </ElTooltip>
+          </div>
+        </template>
+
         <template slot-scope="scope">
           {{ scope.row.logTime }}
-        </template>
-      </el-table-column>
-      <el-table-column sortable min-width="120" :label="$t('packages_business_shared_list_time')" prop="delayTime">
+        </template> </el-table-column
+      >l
+      <el-table-column sortable min-width="160" :label="$t('packages_business_shared_list_time')" prop="delayTime">
         <template #header>
           <div class="inline-flex align-center">
             <span>{{ $t('packages_business_shared_list_time') }}</span>
@@ -35,7 +44,7 @@
           <TaskStatus :task="row" />
         </template>
       </el-table-column>
-      <el-table-column width="260" fixed="right" :label="$t('public_operation')">
+      <el-table-column width="280" fixed="right" :label="$t('public_operation')">
         <template #default="{ row }">
           <div class="table-operations">
             <ElLink

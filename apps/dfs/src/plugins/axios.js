@@ -3,6 +3,7 @@ import Vue from 'vue'
 import axios from 'axios'
 import Qs from 'qs'
 import { Message } from '@/plugins/element'
+import { showErrorMessage } from '@tap/business/src/components/error-message'
 
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL ||  '';
@@ -138,55 +139,50 @@ const responseInterceptor = response => {
     if (code === 'ok') {
       // code 为 ok 则表示请求正常返回，进入then逻辑
       return resolve(data?.data)
-    } else if (['SystemError', 'SubscribeFailed.OrderLimit'].includes(code)) {
-      // code 为 SystemError 则表示请求异常，提示信息
-      let msg = data?.message || data?.msg || ''
-      Message.error(`SystemError： ${msg === msg.substring(0, 20) ? msg : msg.substring(0, 20) + '...'}`)
-      // eslint-disable-next-line
-      console.log(i18n.t('dfs_plugins_axios_qingqiushibai') + msg, response)
+    }
+
+    if (['SystemError', 'SubscribeFailed.OrderLimit'].includes(code)) {
+      showErrorMessage(data)
       return reject(msg)
-    } else {
-      if (response.config.silenceMessage) {
-        return reject(response)
-      }
-      // 其他情况交由业务端自行处理
-      if (
-        [
-          'Datasource.TableNotFound',
-          'SubscribeFailed.OrderLimit',
-          'Task.ScheduleLimit',
-          'Task.ManuallyScheduleLimit'
-        ].includes(code)
-      ) {
-        return reject(Object.assign(response))
-      }
-      // 文件处理
-      if (response?.config?.responseType === 'blob') {
-        return resolve(response)
-      }
-      // JSON文件
-      if (response?.config.url?.match(/.json$/i)) {
-        return resolve(response)
-      }
+    }
 
-      // 特殊处理
-      if (!code) {
-        return resolve(data)
-      }
-
-      let msg = data?.message || data?.msg || ''
-      // eslint-disable-next-line
-      console.log(`${code}： ${msg}`)
-      if (!skipErrorHandler) {
-        // 手机号码
-        if (['Authing.User.Update.Failed'].includes(code)) {
-          Message.error(i18n.t('dfs_user_center_phone_error'))
-        } else {
-          Message.error(msg)
-        }
-      }
+    if (response.config.silenceMessage) {
+      return reject(response)
+    }
+    // 其他情况交由业务端自行处理
+    if (
+      [
+        'Datasource.TableNotFound',
+        'SubscribeFailed.OrderLimit',
+        'Task.ScheduleLimit',
+        'Task.ManuallyScheduleLimit'
+      ].includes(code)
+    ) {
       return reject(Object.assign(response))
     }
+    // 文件处理
+    if (response?.config?.responseType === 'blob') {
+      return resolve(response)
+    }
+    // JSON文件
+    if (response?.config.url?.match(/.json$/i)) {
+      return resolve(response)
+    }
+
+    // 特殊处理
+    if (!code) {
+      return resolve(data)
+    }
+
+    if (!skipErrorHandler) {
+      // 手机号码
+      if (['Authing.User.Update.Failed'].includes(code)) {
+        Message.error(i18n.t('dfs_user_center_phone_error'))
+      } else {
+        showErrorMessage(data)
+      }
+    }
+    return reject(Object.assign(response))
   })
 }
 // 请求发起拦截器
@@ -219,3 +215,5 @@ Plugin.install = function (Vue) {
 Vue.use(Plugin)
 
 export default Plugin
+
+export { _axios as axios }

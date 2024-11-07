@@ -38,33 +38,32 @@
     </TopHeader>
     <section class="layout-wrap layout-has-sider position-relative font-color-light">
       <!--左侧边栏-->
-      <VExpandXTransition>
-        <LeftSider
-          v-resize.right="{
-            minWidth: 356,
-            maxWidth: 750
-          }"
-          :dataflow="dataflow"
-          :quota="quota"
-          :verifyTotals="verifyTotals"
-          :timeFormat="timeFormat"
-          :range="timeSelectRange"
-          @load-data="init"
-          @move-node="handleDragMoveNode"
-          @drop-node="handleAddNodeByDrag"
-          @add-node="handleAddNode"
-          @toggle-expand="handleToggleExpand"
-          @changeTimeSelect="handleChangeTimeSelect"
-          @changeFrequency="handleChangeFrequency"
-          @verifyDetails="handleVerifyDetails"
-        >
-          <template #status="{ result }">
-            <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block']">
-              {{ getTaskStatus(result[0].status) }}
-            </span>
-          </template>
-        </LeftSider>
-      </VExpandXTransition>
+      <LeftSider
+        v-resize.right="{
+          minWidth: 356,
+          maxWidth: 750
+        }"
+        :dataflow="dataflow"
+        :quota="quota"
+        :verifyTotals="verifyTotals"
+        :timeFormat="timeFormat"
+        :range="timeSelectRange"
+        :if-enable-concurrent-read="ifEnableConcurrentRead"
+        @load-data="init"
+        @move-node="handleDragMoveNode"
+        @drop-node="handleAddNodeByDrag"
+        @add-node="handleAddNode"
+        @toggle-expand="handleToggleExpand"
+        @changeTimeSelect="handleChangeTimeSelect"
+        @changeFrequency="handleChangeFrequency"
+        @verifyDetails="handleVerifyDetails"
+      >
+        <template #status="{ result }">
+          <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block']">
+            {{ getTaskStatus(result[0].status) }}
+          </span>
+        </template>
+      </LeftSider>
       <div v-if="!stateIsReadonly" class="sider-expand-wrap flex justify-center align-center rotate-180">
         <VIcon size="24" class="font-color-light" @click.stop="handleToggleExpand">expand</VIcon>
       </div>
@@ -154,6 +153,7 @@
         :quotaTime="quotaTime"
         :quotaTimeType="quotaTimeType"
         :getTimeRange="getTimeRange"
+        :if-enable-concurrent-read="ifEnableConcurrentRead"
         ref="nodeDetailDialog"
         @load-data="init"
       ></NodeDetailDialog>
@@ -352,6 +352,14 @@ export default {
         end = firstStartTime + 5 * 60 * 1000
       }
       return [firstStartTime, end || Time.now()]
+    },
+
+    ifEnableConcurrentRead() {
+      if (this.dataflow.syncType !== 'migrate') return false
+
+      const sourceNode = this.allNodes.find(node => !node.$inputs.length && node.type === 'database')
+
+      return sourceNode?.enableConcurrentRead
     }
   },
 
@@ -727,7 +735,9 @@ export default {
       this.isSaving = true
       try {
         this.wsAgentLive()
-        await taskApi.start(this.dataflow.id)
+        await taskApi.start(this.dataflow.id, {
+          silenceMessage: true
+        })
         this.$message.success(this.$t('public_message_operation_success'))
         this.isSaving = false
         this.isReset = false

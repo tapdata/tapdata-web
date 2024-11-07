@@ -10,28 +10,29 @@
       :row-class-name="tableRowClassName"
     >
       <template slot="field_name" slot-scope="scope">
-        <span class="flex align-center"
-          ><span class="ellipsis align-middle">{{ scope.row.field_name }}</span>
-          <VIcon v-if="scope.row.primary_key_position > 0" size="12" class="text-warning ml-1">key</VIcon>
-          <ElTooltip
-            v-else-if="indicesMap[scope.row.field_name]"
-            placement="top"
-            :content="
-              `${$t(indicesMap[scope.row.field_name][2] ? 'public_unique_index' : 'public_normal_index')}: ` +
-              indicesMap[scope.row.field_name][0]
-            "
-            :open-delay="200"
-            transition="none"
-          >
-            <span class="flex align-center">
-              <VIcon size="12" class="ml-1">fingerprint</VIcon>
-              <span :style="`--index: '${indicesMap[scope.row.field_name][1]}';`" class="fingerprint-sub"></span>
-            </span>
-          </ElTooltip>
-          <VIcon v-else-if="partitionMap[scope.row.field_name]" size="14" class="ml-1 align-middle"
-            >circle-dashed-letter-p</VIcon
-          >
-        </span>
+        <VIcon v-if="scope.row.primary_key_position > 0" size="12" class="text-warning">key</VIcon>
+        <ElTooltip
+          v-else-if="indicesMap[scope.row.field_name]"
+          placement="top"
+          :content="
+            `${$t(indicesMap[scope.row.field_name][2] ? 'public_unique_index' : 'public_normal_index')}: ` +
+            indicesMap[scope.row.field_name][0]
+          "
+          :open-delay="200"
+          transition="none"
+        >
+          <span class="flex align-center">
+            <VIcon size="12">fingerprint</VIcon>
+            <span :style="`--index: '${indicesMap[scope.row.field_name][1]}';`" class="fingerprint-sub"></span>
+          </span>
+        </ElTooltip>
+        <VIcon v-else-if="partitionMap[scope.row.field_name]" size="14" class="ml-1 align-middle"
+        >circle-dashed-letter-p</VIcon
+        >
+        <VIcon v-else-if="scope.row.source === 'virtual_hash'" size="14">file-hash</VIcon>
+        <span class="ellipsis ml-1" :style="scope.row.source === 'virtual_hash' ? 'font-style:italic' : ''">{{
+          scope.row.field_name
+        }}</span>
       </template>
       <template slot="dataTypeHeader">
         <span class="pl-4">
@@ -612,6 +613,7 @@ export default {
       const f = this.findInRulesById(row.changeRuleId)
       if (!f) return
       if (f.scope === 'Node') {
+        this.$emit('open-update-rules')
         return
       }
       if (f.scope === 'Field') {

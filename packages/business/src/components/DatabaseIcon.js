@@ -4,10 +4,11 @@ import { getConnectionIcon } from '../views/connections/util'
 export const DatabaseIcon = defineComponent({
   props: {
     item: Object,
-    size: Number
+    size: Number,
+    pdkHash: String
   },
   setup(props, { attrs }) {
-    const _attrs = { ...attrs, src: getConnectionIcon(props.item.pdkHash) }
+    const _attrs = { ...attrs, src: getConnectionIcon(props.pdkHash || props.item.pdkHash) }
     let style
 
     if (props.size) {

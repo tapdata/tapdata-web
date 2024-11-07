@@ -1780,6 +1780,9 @@ export default {
         // 检查数据源的能力
         message = this.validateCapabilities(tasks, 'batch_count_function')
         if (message) return message
+      } else if (this.inspectMethod === 'hash') {
+        message = this.validateCapabilities(tasks, 'query_hash_by_advance_filter_function')
+        if (message) return message
       }
 
       this.updateErrorMsg('')

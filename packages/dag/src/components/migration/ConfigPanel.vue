@@ -39,7 +39,6 @@
         feedbackLayout: 'terse'
       }"
       @update:InputsOrOutputs="handleLoadMeta"
-      @setSchema="handleSetSchema"
     />
     <SettingPanel
       v-if="settings.id"
@@ -162,10 +161,6 @@ export default {
           metaPane[this.syncType === 'sync' ? 'loadFields' : 'loadData']()
         }
       })
-    },
-
-    handleSetSchema() {
-      this.form = cloneDeep(this.$refs.formPanel?.form)
     }
   }
 }

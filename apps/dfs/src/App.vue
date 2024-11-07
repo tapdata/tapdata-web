@@ -9,6 +9,8 @@
       @start="handleStartTour"
       @finish="handleFinishTour"
     ></ReplicationTour>
+
+    <!--<CustomerSurvey :value="true"></CustomerSurvey>-->
   </div>
 </template>
 
@@ -16,7 +18,7 @@
 import ReplicationTour from '@/components/ReplicationTour'
 import { buried } from '@/plugins/buried'
 import { mapMutations, mapState } from 'vuex'
-import { provide } from '@vue/composition-api'
+import { driver } from 'driver.js'
 export default {
   name: 'app',
   provide: {
@@ -37,28 +39,9 @@ export default {
   computed: {
     ...mapState(['showReplicationTour', 'replicationTourFinish'])
   },
-  mounted() {
-    const unwatch = this.$watch('$route', () => {
-      unwatch()
-      this.$nextTick(async () => {
-        if (this.$route.query?.tour) {
-          const guide = await this.$axios.get('api/tcm/user_guide')
-          // 查询是否有查看监控的行为
-          const behavior = guide?.tour?.behavior
-          if (behavior && behavior !== 'view-monitor') {
-            this.openCompleteReplicationTour()
-            this.$axios.post('api/tcm/user_guide', {
-              tour: {
-                ...guide.tour,
-                behavior: 'view-monitor',
-                behaviorAt: Date.now()
-              }
-            })
-          }
-        }
-      })
-    })
-  },
+  // mounted() {
+  //   this.initMenuTour()
+  // },
   methods: {
     ...mapMutations(['setShowReplicationTour', 'startTour', 'openCompleteReplicationTour']),
 
@@ -69,6 +52,91 @@ export default {
     },
     handleFinishTour() {
       this.setShowReplicationTour(false)
+
+      this.$nextTick(() => {
+        this.initMenuTour()
+      })
+    },
+
+    waitForElement(selector, callback) {
+      const observer = new MutationObserver((mutationsList, observer) => {
+        if (document.querySelector(selector)) {
+          observer.disconnect()
+          callback()
+        }
+      })
+
+      observer.observe(document.body, { childList: true, subtree: true })
+    },
+
+    initMenuTour() {
+      const domain =
+        !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en'
+          ? 'https://docs.tapdata.io/'
+          : 'https://docs.tapdata.net/'
+
+      const steps = [
+        {
+          element: '#menu-Instance',
+          popover: {
+            showButtons: ['next', 'previous'],
+            description: `${this.$t(
+              'menu_tour_instance'
+            )}，<a href="${domain}quick-start/install/install-tapdata-agent/" target="_blank">${this.$t(
+              'menu_tour_instance_link'
+            )}</a>`
+          }
+        },
+        {
+          element: '#menu-connections',
+          popover: {
+            showButtons: ['next', 'previous'],
+            description: this.$t('menu_tour_connection')
+          }
+        },
+        {
+          element: '#task-list-create',
+          popover: {
+            showButtons: ['next', 'previous'],
+            description: this.$t('menu_tour_create_task')
+          }
+        }
+      ]
+
+      const targetElement = document.querySelector(steps[0].element)
+
+      this.menuTour = driver({
+        overlayOpacity: 0.5,
+        allowClose: false,
+        allowKeyboardControl: false,
+        disableActiveInteraction: true,
+        showProgress: true,
+        prevBtnText: this.$t('public_button_previous'),
+        nextBtnText: this.$t('public_button_next'),
+        doneBtnText: this.$t('public_button_understand'),
+        steps,
+        popoverClass: 'menu-tour-popover p-4 rounded-lg',
+        onPopoverRender: (popover, { config, state }) => {},
+        onHighlightStarted: (element, step, { state }) => {},
+        onDestroyed: (el, step, options) => {}
+      })
+
+      if (targetElement) {
+        this.startMenuTour()
+      } else {
+        this.waitForElement(steps[0].element, () => {
+          setTimeout(() => {
+            this.startMenuTour()
+          }, 500)
+        })
+      }
+    },
+
+    async startMenuTour() {
+      if (this.$route.name !== 'migrateList') {
+        await this.$router.push({ name: 'migrateList' })
+      }
+      this.menuTour.drive(0)
     }
   }
 }

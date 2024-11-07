@@ -7,12 +7,21 @@ export const TextFileReader = defineComponent({
   setup(props, { emit, root }) {
     const formRef = useForm()
     const fieldRef = useField()
+    console.log('formRef', formRef, fieldRef)
     const form = formRef.value
-    const fileNameField = props.fileNameField ?? `__TAPDATA_UI.${fieldRef.value.props.name}`
-    const fileName = ref(props.fileName || form.getValuesIn(fileNameField) || '')
+
+    let fileNameField
+    let fileName = props.fileName
+    let fileNameRef = ref(props.fileName || '')
+
+    if (form) {
+      fileNameField = props.fileNameField ?? `__TAPDATA_UI.${fieldRef.value.props.name}`
+      fileNameRef.value = fileName || form.getValuesIn(fileNameField) || ''
+    }
+
     let selectFile = file => {
       if (file) {
-        fileName.value = file.name
+        fileNameRef.value = file.name
         if (props.maxFileSize && file.size / 1024 > props.maxFileSize) {
           root.$message.error(
             i18n.t('packages_form_text_file_reader_index_shangchuanwenjianda', { val1: props.maxFileSize })
@@ -34,21 +43,21 @@ export const TextFileReader = defineComponent({
             reader.onload = () => {
               emit('change', reader.result)
               emit('update:fileName', file.name)
-              fileNameField && form.setValuesIn(fileNameField, file.name)
+              fileNameField && form?.setValuesIn(fileNameField, file.name)
             }
           }
         }
       } else {
         emit('change', '')
         emit('update:fileName', '')
-        fileNameField && form.setValuesIn(fileNameField, '')
+        fileNameField && form?.setValuesIn(fileNameField, '')
       }
     }
 
     return () => {
       return (
         <ElInput
-          value={fileName.value}
+          value={fileNameRef.value}
           placeholder={root.$t('packages_form_formBuilder_file_placeholder')}
           vOn:clear={() => {
             emit('change', null)

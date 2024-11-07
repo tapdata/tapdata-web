@@ -1,86 +1,94 @@
 <template>
-  <section class="data-server-wrapper flex flex-column">
-    <div v-if="showFilter" class="flex justify-content-between my-2">
-      <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
-      <div>
-        <ElButton
-          v-show="multipleSelection.length > 0"
-          :disabled="$disabledReadonlyUserBtn()"
-          v-readonlybtn="'SYNC_job_export'"
-          size="mini"
-          class="btn message-button-cancel"
-          @click="handleExport"
-        >
-          <span> {{ $t('public_button_export') }}</span>
-        </ElButton>
-        <ElButton
-          v-readonlybtn="'SYNC_job_import'"
-          size="mini"
-          class="btn"
-          :disabled="$disabledReadonlyUserBtn()"
-          @click="handleImport"
-        >
-          <span> {{ $t('packages_business_button_bulk_import') }}</span>
-        </ElButton>
-        <ElButton
-          v-readonlybtn="'SYNC_job_export'"
-          size="mini"
-          class="btn"
-          :disabled="$disabledReadonlyUserBtn() || !multipleSelectionActive.length"
-          @click="handleExportApiDoc"
-        >
-          <span>{{ $t('packages_business_data_server_list_apIwendang') }}</span>
-        </ElButton>
-        <ElButton class="btn btn-create" type="primary" size="mini" @click.stop="showDrawer()">
-          <span>{{ $t('packages_business_data_server_drawer_chuangjianfuwu') }}</span>
-        </ElButton>
-      </div>
-    </div>
-    <VTable
-      :columns="cols"
-      :remote-method="getData"
-      ref="table"
-      height="100%"
-      class="flex-fill"
-      @selection-change="handleSelectionChange"
-    >
-      <template #name="{ row }">
-        <ElLink class="ellipsis" type="primary" style="display: block; line-height: 20px" @click.stop="showDrawer(row)">
-          {{ row.name }}
-        </ElLink>
-      </template>
-      <template #statusFmt="{ row }">
-        <span class="status-block" :class="'status-' + row.status">{{ row.statusFmt }}</span>
-      </template>
-      <template #operation="{ row }">
-        <ElButton
-          v-if="row.status !== 'active'"
-          key="public"
-          :disabled="row.status !== 'pending'"
-          type="text"
-          @click="changeStatus(row)"
-          >{{ $t('public_button_public') }}</ElButton
-        >
-        <ElButton v-if="row.status === 'active'" type="text" key="revoke" @click="changeStatus(row)">{{
-          $t('public_button_revoke')
-        }}</ElButton>
-        <ElDivider direction="vertical"></ElDivider>
-        <ElButton type="text" @click="output(row)">{{ $t('public_button_export') }}</ElButton>
-        <ElDivider direction="vertical"></ElDivider>
-        <ElButton type="text" @click="removeServer(row)">{{ $t('public_button_delete') }}</ElButton>
-      </template>
+  <PageContainer>
+    <template #actions>
+      <ElButton v-show="pendingSelection.length > 0" size="mini" @click="batchPublish">
+        <span> {{ $t('public_batch_publish') }}</span>
+      </ElButton>
+      <ElButton
+        v-show="multipleSelection.length > 0"
+        :disabled="$disabledReadonlyUserBtn()"
+        v-readonlybtn="'SYNC_job_export'"
+        size="mini"
+        @click="handleExport"
+      >
+        <span> {{ $t('public_button_export') }}</span>
+      </ElButton>
+      <ElButton
+        v-readonlybtn="'SYNC_job_import'"
+        size="mini"
+        :disabled="$disabledReadonlyUserBtn()"
+        @click="handleImport"
+      >
+        <span> {{ $t('packages_business_button_bulk_import') }}</span>
+      </ElButton>
+      <ElButton
+        v-readonlybtn="'SYNC_job_export'"
+        size="mini"
+        :disabled="$disabledReadonlyUserBtn() || !multipleSelectionActive.length"
+        @click="handleExportApiDoc"
+      >
+        <span>{{ $t('packages_business_data_server_list_apIwendang') }}</span>
+      </ElButton>
+      <ElButton type="primary" size="mini" @click.stop="showDrawer()">
+        <span>{{ $t('packages_business_data_server_drawer_chuangjianfuwu') }}</span>
+      </ElButton>
+    </template>
 
-      <VEmpty large slot="empty"></VEmpty>
-    </VTable>
-    <Drawer
-      ref="drawer"
-      :host="apiServerHost"
-      @save="table.fetch(1)"
-      @visible="$emit('drawer-visible', arguments[0])"
-    ></Drawer>
-    <!-- 导入 -->
-    <Upload type="Modules" :show-tag="false" ref="upload" @success="table.fetch()"></Upload>
-  </section>
+    <section class="data-server-wrapper flex flex-column pb-4">
+      <div v-if="showFilter" class="flex justify-content-between my-2 px-2">
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+      </div>
+      <VTable
+        :columns="cols"
+        :remote-method="getData"
+        ref="table"
+        height="100%"
+        class="flex-fill"
+        @selection-change="handleSelectionChange"
+      >
+        <template #name="{ row }">
+          <ElLink
+            class="ellipsis"
+            type="primary"
+            style="display: block; line-height: 20px"
+            @click.stop="showDrawer(row)"
+          >
+            {{ row.name }}
+          </ElLink>
+        </template>
+        <template #statusFmt="{ row }">
+          <span class="status-block" :class="'status-' + row.status">{{ row.statusFmt }}</span>
+        </template>
+        <template #operation="{ row }">
+          <ElButton
+            v-if="row.status !== 'active'"
+            key="public"
+            :disabled="row.status !== 'pending'"
+            type="text"
+            @click="changeStatus(row)"
+            >{{ $t('public_button_public') }}</ElButton
+          >
+          <ElButton v-if="row.status === 'active'" type="text" key="revoke" @click="changeStatus(row)">{{
+            $t('public_button_revoke')
+          }}</ElButton>
+          <ElDivider direction="vertical"></ElDivider>
+          <ElButton type="text" @click="output(row)">{{ $t('public_button_export') }}</ElButton>
+          <ElDivider direction="vertical"></ElDivider>
+          <ElButton type="text" @click="removeServer(row)">{{ $t('public_button_delete') }}</ElButton>
+        </template>
+
+        <VEmpty large slot="empty"></VEmpty>
+      </VTable>
+      <Drawer
+        ref="drawer"
+        :host="apiServerHost"
+        @save="table.fetch(1)"
+        @visible="$emit('drawer-visible', arguments[0])"
+      ></Drawer>
+      <!-- 导入 -->
+      <Upload type="Modules" :show-tag="false" ref="upload" @success="table.fetch()"></Upload>
+    </section>
+  </PageContainer>
 </template>
 <script>
 import { escapeRegExp } from 'lodash'
@@ -91,9 +99,10 @@ import { FilterBar, VTable, VEmpty } from '@tap/component'
 import Upload from '@tap/business/src/components/UploadDialog'
 
 import Drawer from './Drawer'
+import PageContainer from '../../components/PageContainer.vue'
 
 export default {
-  components: { FilterBar, Drawer, VTable, VEmpty, Upload },
+  components: { PageContainer, FilterBar, Drawer, VTable, VEmpty, Upload },
   props: {
     showFilter: {
       type: Boolean,
@@ -162,7 +171,8 @@ export default {
         },
         {
           label: i18n.t('packages_business_application_list_yingyongmingcheng'),
-          prop: 'appName'
+          prop: 'appName',
+          'min-width': 140
         },
         {
           label: this.$t('public_connection_type'),
@@ -176,7 +186,7 @@ export default {
         },
         {
           label: this.$t('packages_business_data_server_list_guanlianduixiang'),
-          'min-width': 120,
+          'min-width': 180,
           prop: 'tableName'
         },
         {
@@ -194,13 +204,18 @@ export default {
           label: this.$t('public_operation'),
           width: 200,
           prop: 'operation',
-          slotName: 'operation'
+          slotName: 'operation',
+          fixed: 'right'
         }
       ]
     },
     // 选中的已发布数据
     multipleSelectionActive() {
       return this.multipleSelection.filter(t => t.status === 'active')
+    },
+
+    pendingSelection() {
+      return this.multipleSelection.filter(t => t.status === 'pending')
     }
   },
   watch: {
@@ -409,6 +424,20 @@ export default {
     handleExportApiDoc() {
       const ids = this.multipleSelectionActive.map(t => t.id)
       modulesApi.apiExport(ids, this.apiServerHost)
+    },
+    async batchPublish() {
+      if (!this.pendingSelection.length) return
+
+      await modulesApi.batchUpdate(
+        this.pendingSelection.map(item => ({
+          id: item.id,
+          status: 'active',
+          tableName: item.tableName
+        }))
+      )
+
+      this.$message.success(this.$t('public_message_publish_successful'))
+      this.fetch()
     }
   }
 }

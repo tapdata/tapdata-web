@@ -1,4 +1,5 @@
 import { Schema, SchemaKey } from '@formily/json-schema'
+import { h as createElementN } from '@vue/composition-api'
 import { model } from '@formily/reactive'
 import { observer } from '@formily/reactive-vue'
 import { Fragment, h as createElement, RecursionField, useField, useFieldSchema } from '@formily/vue'
@@ -6,27 +7,6 @@ import { Badge, TabPane, Tabs } from 'element-ui'
 import { computed, defineComponent, reactive, inject } from 'vue-demi'
 import { stylePrefix, composeExport } from '@formily/element/lib/__builtins__'
 import { VIcon } from '@tap/component'
-
-const useTabs = () => {
-  const tabsField = useField().value
-  const schema = useFieldSchema().value
-  const tabs = reactive([])
-  schema.mapProperties((schema, name) => {
-    const field = tabsField.query(tabsField.address.concat(name)).take()
-    if (field?.display === 'none' || field?.display === 'hidden') return
-    if (schema['x-component']?.indexOf('TabPane') > -1) {
-      tabs.push({
-        name,
-        props: {
-          name: schema?.['x-component-props']?.name || name,
-          ...schema?.['x-component-props']
-        },
-        schema
-      })
-    }
-  })
-  return tabs
-}
 
 const createFormTab = defaultActiveKey => {
   const formTab = model({
@@ -43,6 +23,26 @@ const FormTabInner = observer(
     name: 'FFormTab',
     props: ['formTab'],
     setup(props, { attrs, listeners }) {
+      const useTabs = () => {
+        const tabsField = useField().value
+        const schema = useFieldSchema().value
+        const tabs = reactive([])
+        schema.mapProperties((schema, name) => {
+          const field = tabsField.query(tabsField.address.concat(name)).take()
+          if (field?.display === 'none' || field?.display === 'hidden') return
+          if (schema['x-component']?.indexOf('TabPane') > -1) {
+            tabs.push({
+              name,
+              props: {
+                name: schema?.['x-component-props']?.name || name,
+                ...schema?.['x-component-props']
+              },
+              schema
+            })
+          }
+        })
+        return tabs
+      }
       const field = useField().value
       const formTabRef = computed(() => props.formTab ?? createFormTab())
       const openLocked = inject('openLocked')
@@ -93,27 +93,17 @@ const FormTabInner = observer(
 
         const getTabs = tabs => {
           return tabs.map(({ props, schema, name }, key) => {
-            return createElement(
-              TabPane,
-              {
-                key,
-                props
-              },
-              {
-                default: () => [
-                  createElement(
-                    RecursionField,
-                    {
-                      props: {
-                        schema,
-                        name
-                      }
-                    },
-                    {}
-                  )
-                ],
-                label: () => [createElement('div', {}, { default: badgedTab(name, props) })]
-              }
+            return (
+              <TabPane
+                class="root-tab"
+                props={props}
+                key={key}
+                scopedSlots={{
+                  label: () => [createElement('div', {}, { default: badgedTab(name, props) })]
+                }}
+              >
+                <RecursionField schema={schema.toJSON()}></RecursionField>
+              </TabPane>
             )
           })
         }
@@ -147,7 +137,8 @@ const FormTabInner = observer(
 const FormTabPane = defineComponent({
   name: 'FFormTabPane',
   setup(_props, { slots }) {
-    return () => createElement(Fragment, {}, slots)
+    // return () => createElement(Fragment, {}, slots)
+    return () => <div>{slots.default?.()}</div>
   }
 })
 

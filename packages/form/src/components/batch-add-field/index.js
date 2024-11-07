@@ -5,7 +5,15 @@ export const BatchAddField = defineComponent({
   props: {
     targetField: String
   },
-  setup(props) {
+  setup(props, { refs }) {
+    const formRules = {
+      prefix: [
+        {
+          required: true,
+          message: i18n.t('public_form_not_empty')
+        }
+      ]
+    }
     const fieldRef = useField()
     const options = [
       {
@@ -78,6 +86,7 @@ export const BatchAddField = defineComponent({
     const loading = ref(false)
 
     const handleOpenDialog = () => {
+      refs.form?.resetFields()
       visible.value = true
       Object.assign(form, {
         ...def
@@ -85,37 +94,44 @@ export const BatchAddField = defineComponent({
     }
 
     const handleSubmit = async () => {
-      visible.value = false
+      refs.form.validate(valid => {
+        if (valid) {
+          let { prefix, type, count, start } = form
 
-      let { prefix, type, count, start } = form
+          visible.value = false
 
-      if (!prefix) return
+          count = count || 0
+          start = start || 1
+          type = type || 'string'
 
-      count = count || 0
-      start = start || 1
-      type = type || 'string'
+          const targetField = fieldRef.value.query(`.${props.targetField}`).take()
 
-      const targetField = fieldRef.value.query(`.${props.targetField}`).take()
-      const nameMap = targetField.value.reduce((curr, next) => {
-        curr[next.name] = true
-        return curr
-      }, {})
+          targetField.setComponentProps({
+            pagination: { pageSize: 10 }
+          })
 
-      const newFields = []
+          const nameMap = targetField.value.reduce((curr, next) => {
+            curr[next.name] = true
+            return curr
+          }, {})
 
-      for (let i = 0; i < count; i++) {
-        let name = `${prefix}${start + i}`
-        if (nameMap[name]) continue
-        newFields.push({
-          name,
-          pri: false,
-          type: type
-        })
-      }
+          const newFields = []
 
-      if (newFields.length) {
-        targetField.value.push(...newFields)
-      }
+          for (let i = 0; i < count; i++) {
+            let name = `${prefix}${start + i}`
+            if (nameMap[name]) continue
+            newFields.push({
+              name,
+              pri: false,
+              type: type
+            })
+          }
+
+          if (newFields.length) {
+            targetField.value.push(...newFields)
+          }
+        }
+      })
     }
 
     return () => {
@@ -135,8 +151,8 @@ export const BatchAddField = defineComponent({
               }
             }}
           >
-            <ElForm ref="form" label-position="right" label-width="80px" props={{ mode: form }}>
-              <div class="flex gap-1">
+            <ElForm ref="form" label-position="top" props={{ ...{ model: form } }} rules={formRules}>
+              <div class="flex gap-4">
                 <ElFormItem prop="prefix" label={i18n.t('packages_form_batch_add_field_prefix')} class="flex-1">
                   <ElInput value={form.prefix} onInput={v => (form.prefix = v)}></ElInput>
                 </ElFormItem>
@@ -149,7 +165,7 @@ export const BatchAddField = defineComponent({
                 </ElFormItem>
               </div>
 
-              <div class="flex gap-2">
+              <div class="flex gap-4">
                 <ElFormItem prop="count" label={i18n.t('packages_form_batch_add_field_count')} class="flex-1">
                   <ElInputNumber
                     value={form.count}

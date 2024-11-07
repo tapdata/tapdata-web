@@ -148,6 +148,7 @@
                   'migrateList',
                   'dataflowList',
                   'connectionsList',
+                  'dataServer',
                   'users',
                   'customNodeList',
                   'dataConsole',
@@ -155,7 +156,8 @@
                   'VerifyDiffDetails',
                   'sharedMiningList',
                   'externalStorage',
-                  'about'
+                  'about',
+                  'License'
                 ].includes($route.name)
               },
               {
@@ -166,6 +168,7 @@
                   'migrateList',
                   'dataflowList',
                   'connectionsList',
+                  'dataServer',
                   'users',
                   'customNodeList',
                   'dataConsole',
@@ -173,7 +176,8 @@
                   'VerifyDiffDetails',
                   'sharedMiningList',
                   'externalStorage',
-                  'about'
+                  'about',
+                  'License'
                 ].includes($route.name)
               }
             ]"

@@ -4,11 +4,12 @@ export default class InspectDetailsAPI extends Http {
     super('/api/InspectDetails')
   }
 
-  export(inspectResultId) {
+  export(inspectResultId, fullField) {
     return this.axios.post(
       `${this.url}/export`,
       {
-        inspectResultId
+        inspectResultId,
+        fullField
       },
       {
         responseType: 'blob'

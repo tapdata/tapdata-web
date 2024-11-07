@@ -20,6 +20,8 @@ import Time from '@tap/shared/src/time'
 import WSClient from '@tap/business/src/shared/ws-client'
 import { Notification } from 'element-ui'
 import { createVersionPolling } from './plugins/version-polling'
+import { CustomerSurvey } from './plugins/customer-survey'
+import dayjs from './plugins/dayjs'
 
 Vue.config.productionTip = false
 Vue.use(VueClipboard)
@@ -64,7 +66,7 @@ Vue.prototype.$confirm = (message, title, options) => {
 export default ({ routes }) => {
   let loading = null
 
-  const init = () => {
+  const init = userInfo => {
     const router = new VueRouter({
       routes
     })
@@ -87,7 +89,8 @@ export default ({ routes }) => {
     wsUrl = wsUrl + loc.host + path + `tm/ws/agent?${queryString}`
 
     store.commit('setUser', window.__USER_INFO__)
-    store.commit('setLanguage', window.__USER_INFO__.locale)
+    store.commit('setLanguage', document.domain.endsWith('io') ? 'en' : 'zh-CN')
+    store.dispatch('initGuide', router)
 
     // Bing Ads
     window.uetq = window.uetq || []
@@ -190,6 +193,8 @@ export default ({ routes }) => {
       }
     })
 
+    if (userInfo?.createdAt && dayjs().diff(dayjs(userInfo.createdAt), 'day') > 7) CustomerSurvey(window.App, true)
+
     return router
   }
   loading = window.loading({ fullscreen: true })
@@ -203,7 +208,7 @@ export default ({ routes }) => {
         window.__USER_INFO__ = userInfo
 
         loading.close()
-        init()
+        init(userInfo)
 
         // 设置服务器时间
         timeStampApi.get().then(t => {

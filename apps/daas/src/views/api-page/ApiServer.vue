@@ -48,7 +48,7 @@
         sortable="clientURI"
       >
       </el-table-column>
-      <el-table-column :label="$t('public_operation')" width="170" fixed="right">
+      <el-table-column :label="$t('public_operation')" width="180" fixed="right">
         <template slot-scope="scope">
           <el-button v-readonlybtn="'API_clients_amangement'" size="mini" type="text" @click="edit(scope.row)">
             {{ $t('public_button_edit') }}

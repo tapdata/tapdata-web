@@ -4,31 +4,45 @@
       <div class="flex flex-direction flex-1">
         <div class="flex-1">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_visitTotalCount') }}</div>
-          <div class="api-monitor-detail-wrap__value">{{ detail.totalCount }}/{{ detail.visitTotalCount || 0 }}</div>
+          <el-tooltip
+            :open-delay="400"
+            :disabled="!detail.totalCount || detail.totalCount < 1000"
+            :content="`${detail.totalCount}`"
+            placement="bottom"
+          >
+            <div class="api-monitor-detail-wrap__value">{{ calcUnit(detail.totalCount) }}</div>
+          </el-tooltip>
         </div>
         <div class="flex-1">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_visitQuantity') }}</div>
           <div class="api-monitor-detail-wrap__value">{{ calcUnit(detail.visitQuantity, 'b') || 0 }}</div>
         </div>
-        <div class="flex-1 cursor-pointer" @click="getDetail(false, 'latency')">
-          <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_timeConsuming') }}</div>
-          <div class="api-monitor-detail-wrap__value">{{ formatMs(detail.timeConsuming) || 0 }}</div>
+        <div class="flex-1 cursor-pointer" @click="getDetail(false, 'visitTotalLine')">
+          <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_visitTotalLine') }}</div>
+          <el-tooltip
+            :open-delay="400"
+            :disabled="!detail.visitTotalLine || detail.visitTotalLine < 1000"
+            :content="`${detail.visitTotalLine}`"
+            placement="bottom"
+          >
+            <div class="api-monitor-detail-wrap__value">{{ calcUnit(detail.visitTotalLine || 0) }}</div>
+          </el-tooltip>
         </div>
       </div>
       <div class="flex flex-direction flex-1 pb-5 mt-8">
-        <div class="flex-1 cursor-pointer" @click="getDetail(false, 'visitTotalLine')">
-          <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_visitTotalLine') }}</div>
-          <div class="api-monitor-detail-wrap__value">{{ detail.visitTotalLine || 0 }}</div>
-        </div>
         <div class="flex-1 cursor-pointer" @click="getDetail(false, 'speed')">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_speed') }}</div>
           <div class="api-monitor-detail-wrap__value">
             {{ detail.speed ? calcUnit(detail.speed, 'b') + '/S' : '0 M/S' }}
           </div>
         </div>
-        <div class="flex-1 cursor-pointer" @click="getDetail(false, 'responseTime')">
+        <!--<div class="flex-1 cursor-pointer" @click="getDetail(false, 'responseTime')">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_responseTime') }}</div>
           <div class="api-monitor-detail-wrap__value">{{ formatMs(detail.responseTime) || 0 }}</div>
+        </div>-->
+        <div class="flex-1 cursor-pointer" @click="getDetail(false, 'latency')">
+          <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_timeConsuming') }}</div>
+          <div class="api-monitor-detail-wrap__value">{{ formatMs(detail.timeConsuming) || 0 }}</div>
         </div>
       </div>
     </div>
@@ -74,9 +88,9 @@ export default {
       },
       typesOptions: [
         { label: this.$t('api_monitor_detail_visitTotalLine'), value: 'visitTotalLine' },
-        { label: this.$t('api_monitor_detail_timeConsuming'), value: 'latency' },
         { label: this.$t('api_monitor_detail_speed'), value: 'speed' },
-        { label: this.$t('api_monitor_detail_responseTime'), value: 'responseTime' }
+        { label: this.$t('api_monitor_detail_responseTime'), value: 'responseTime' },
+        { label: this.$t('api_monitor_detail_timeConsuming'), value: 'latency' }
       ],
       timeList: [
         { label: this.$t('public_time_five_min'), value: 5 },

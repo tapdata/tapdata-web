@@ -8,6 +8,7 @@ export default {
   public_description: '描述',
   public_version: '版本',
   public_operation: '操作',
+  public_operation_abb: '操作',
   public_operation_available: '可用操作',
   public_object: '对象',
   public_create_time: '创建时间',
@@ -38,6 +39,8 @@ export default {
   public_phone: '手机号',
   public_email: '邮箱',
   public_view_details: '查看详情',
+  public_warn: '警告',
+  public_error: '错误',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '无效',
@@ -100,6 +103,7 @@ export default {
   public_button_close: '关闭',
   public_button_reset: '重置',
   public_button_create: '创建',
+  public_button_quickly_create_task: '快速创建任务',
   public_button_export: '导出',
   public_button_download: '下载',
   public_button_add: '新增',
@@ -133,6 +137,7 @@ export default {
   public_button_execute: '执行',
   public_button_obtain: '获取',
   public_button_help: '帮助',
+  public_button_understand: '我知道啦',
   // 消息
   public_message_title_prompt: '提示',
   public_message_delete_confirm: '是否删除',
@@ -156,6 +161,7 @@ export default {
   public_message_request_timeout: '请求超时',
   public_message_send_success: '发送成功',
   public_message_download_ok: '下载成功',
+  public_message_publish_successful: '发布成功',
   // 下拉列表
   public_select_placeholder: '请选择',
   public_select_option_all: '全部',
@@ -341,5 +347,15 @@ export default {
   public_resend: '重新发送',
 
   public_unique_index: '唯一索引',
-  public_normal_index: '索引'
+  public_normal_index: '索引',
+  public_batch_publish: '批量发布',
+  public_database_time: '数据库时间',
+  public_data_update_time: '数据更新时间',
+
+  public_create_source_connection: '创建源连接',
+  public_create_target_connection: '创建目标连接',
+  public_configuration_task: '配置任务',
+  public_need_help: '需要帮助？',
+  public_test_and_continue: '测试连接，继续下一步',
+  public_task_count: '{val} 个任务'
 }
