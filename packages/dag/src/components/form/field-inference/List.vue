@@ -26,6 +26,9 @@
             <span :style="`--index: '${indicesMap[scope.row.field_name][1]}';`" class="fingerprint-sub"></span>
           </span>
         </ElTooltip>
+        <VIcon v-else-if="partitionMap[scope.row.field_name]" size="14" class="ml-1 align-middle"
+        >circle-dashed-letter-p</VIcon
+        >
         <VIcon v-else-if="scope.row.source === 'virtual_hash'" size="14">file-hash</VIcon>
         <span class="ellipsis ml-1" :style="scope.row.source === 'virtual_hash' ? 'font-style:italic' : ''">{{
           scope.row.field_name
@@ -357,6 +360,15 @@ export default {
       const { indices = [] } = this.data
       return indices.reduce((map, item, index) => {
         item.columns.forEach(({ columnName }) => (map[columnName] = [item.indexName, index, item.unique]))
+        return map
+      }, {})
+    },
+
+    partitionMap() {
+      let { partitionInfo: { partitionFields = [] } = { partitionFields: [] } } = this.data
+
+      return partitionFields.reduce((map, item) => {
+        map[item.name] = true
         return map
       }, {})
     },

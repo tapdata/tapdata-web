@@ -191,17 +191,50 @@ export class Database extends NodeType {
                       }
                     }
                   },
-                  noPrimaryKeyTableSelectType: {
-                    type: 'string',
-                    title: i18n.t('packages_dag_nodes_database_biaoxianshi'),
-                    'x-decorator': 'FormItem',
-                    'x-component': 'Select',
-                    default: 'HasKeys',
-                    enum: [
-                      { label: i18n.t('public_select_option_all'), value: 'All' },
-                      { label: i18n.t('packages_dag_nodes_database_jinyouzhujianbiao'), value: 'HasKeys' },
-                      { label: i18n.t('packages_dag_nodes_database_jinwuzhujianbiao'), value: 'NoKeys' }
-                    ]
+
+                  warp: {
+                    type: 'void',
+                    'x-component': 'Space',
+                    'x-component-props': {
+                      size: 'middle',
+                      class: 'w-100'
+                    },
+                    properties: {
+                      noPrimaryKeyTableSelectType: {
+                        type: 'string',
+                        title: i18n.t('packages_dag_nodes_database_biaoxianshi'),
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          class: 'flex-1'
+                        },
+                        'x-component': 'Select',
+                        default: 'HasKeys',
+                        enum: [
+                          { label: i18n.t('public_select_option_all'), value: 'All' },
+                          { label: i18n.t('packages_dag_nodes_database_jinyouzhujianbiao'), value: 'HasKeys' },
+                          { label: i18n.t('packages_dag_nodes_database_jinwuzhujianbiao'), value: 'NoKeys' }
+                        ]
+                      },
+                      syncSourcePartitionTableEnable: {
+                        title: i18n.t('packages_dag_syncSourcePartitionTableEnable'),
+                        type: 'boolean',
+                        default: true,
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          class: 'flex-1',
+                          tooltip: i18n.t('packages_dag_syncSourcePartitionTableEnable_tip')
+                        },
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          fulfill: {
+                            state: {
+                              visible:
+                                '{{$values.attrs.capabilities.some(item => item.id==="source_support_partition")}}'
+                            }
+                          }
+                        }
+                      }
+                    }
                   },
 
                   selectAlert: {
@@ -235,6 +268,8 @@ export class Database extends NodeType {
                         'x-component-props': {
                           class: 'mt-4',
                           connectionId: '{{$values.connectionId}}',
+                          syncPartitionTableEnable: '{{$values.syncSourcePartitionTableEnable}}',
+                          hasPartition: `{{$values.attrs.capabilities.some(item => item.id==="source_support_partition")}}`,
                           style: {
                             height: 'unset',
                             minHeight: 0,
@@ -282,8 +317,10 @@ export class Database extends NodeType {
                           rows: 1,
                           title: i18n.t('packages_dag_nodes_database_pipeidaodebiao'),
                           connectionId: '{{$values.connectionId}}',
-                          params: '{{ {regex: $values.tableExpression,limit:0} }}',
-                          filterType: `{{ $values.noPrimaryKeyTableSelectType }}`
+                          params:
+                            '{{ {regex: $values.tableExpression,limit:0, syncPartitionTableEnable: $values.syncSourcePartitionTableEnable} }}',
+                          filterType: `{{ $values.noPrimaryKeyTableSelectType }}`,
+                          hasPartition: `{{$values.attrs.capabilities.some(item => item.id==="source_support_partition")}}`
                         },
                         'x-reactions': {
                           dependencies: ['migrateTableSelectType'],
@@ -1041,6 +1078,23 @@ export class Database extends NodeType {
                             state: {
                               visible: '{{$settings.type !== "cdc"}}',
                               description: `{{$self.value ? '${i18n.t('packages_dag_syncIndex_desc')}' : ''}}`
+                            }
+                          }
+                        }
+                      },
+                      syncTargetPartitionTableEnable: {
+                        title: i18n.t('packages_dag_syncPartitionTableEnable'),
+                        type: 'boolean',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal'
+                        },
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          fulfill: {
+                            state: {
+                              visible:
+                                '{{$values.attrs.capabilities.some(item => item.id==="target_support_partition")}}'
                             }
                           }
                         }

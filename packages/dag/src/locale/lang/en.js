@@ -787,6 +787,10 @@ export default {
   packages_dag_syncIndexTip:
     'Enabling this capability will automatically synchronize the source index to the target. This action may impact the target database, so please enable it with caution.',
   packages_dag_updateConditionFields_alert: 'To ensure performance, the system will auto-index updated fields.',
+  packages_dag_syncPartitionTableEnable: 'Synchronized Partitioned Table',
+  packages_dag_syncSourcePartitionTableEnable: 'Synchronized Partitioned Main Table',
+  packages_dag_syncSourcePartitionTableEnable_tip:
+    'When enabled, the child tables are filtered out; when disabled, the main table is filtered out.',
   packages_dag_enableConcurrentRead: 'Enable Concurrent Table Reading',
   packages_dag_enableConcurrentRead_tips:
     'Enabling this will allow the system to read and sync multiple tables simultaneously, ideal for scenarios with many small tables to improve performance. \nNote: In full-sync mode, newly added tables won’t sync once enabled. Adjust the target node concurrent thread count based on available resources to maintain stability.',
