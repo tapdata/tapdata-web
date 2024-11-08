@@ -919,6 +919,13 @@ export class Database extends NodeType {
                     'x-component-props': {
                       title: i18n.t('packages_dag_nodes_database_ddLshijian')
                     },
+                    'x-reactions': {
+                      fulfill: {
+                        state: {
+                          display: `{{findParentNodes($values.id).filter(parent => (parent.type === 'database' || parent.type === 'table') && parent.ddlConfiguration === 'SYNCHRONIZATION' ).length > 0 ? "visible":"hidden"}}`
+                        }
+                      }
+                    },
                     properties: {
                       ddlEvents: {
                         type: 'void',
