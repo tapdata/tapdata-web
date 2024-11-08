@@ -111,6 +111,8 @@ button, input, select, textarea {
 
 
 .error-stack-wrap {
+  max-height: 200px;
+  overflow: auto;
   pre {
     background: #fff;
     border-radius: 8px;

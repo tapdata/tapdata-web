@@ -1254,5 +1254,6 @@ export default {
   packages_business_download_details: '下载详情',
   packages_business_solution: '解决方案',
   packages_business_error_details: '错误详情',
-  packages_business_instance_info: '连接唯一标识'
+  packages_business_instance_info: '连接唯一标识',
+  packages_business_warning_details: '警告详情'
 }

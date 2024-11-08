@@ -182,7 +182,7 @@
 
     <ElDialog
       width="80%"
-      custom-class="max-w-1000 mt-25"
+      custom-class="max-w-1000 mt-25 --padding"
       :visible.sync="codeDialog.visible"
       :close-on-click-modal="false"
       append-to-body
@@ -194,7 +194,7 @@
         </div>
       </template>
 
-      <div class="mt-n4 font-color-light">
+      <div class="font-color-light">
         <!--错误信息-->
         <template v-if="codeDialog.data.describe">
           <div class="fw-sub mb-3 font-color-dark">{{ $t('packages_business_milestone_list_cuowuxinxi') }}</div>
@@ -237,7 +237,7 @@
           <div class="mb-3 flex justify-content-between align-items-end">
             <span class="fw-sub font-color-dark">{{ $t('packages_business_logs_nodelog_cuowuduizhan') }}</span>
           </div>
-          <div class="error-stack-pre-wrap position-relative mb-6 font-color-light rounded-lg">
+          <div class="error-stack-pre-wrap position-relative font-color-light rounded-lg">
             <div class="position-absolute end-0 top-0 px-2 pt-1 error-stack-actions">
               <el-button
                 @click="handleCopyStack(codeDialog.data.errorStack)"
@@ -251,7 +251,7 @@
 
             <pre
               class="m-0 p-4 pt-0 mt-6 font-color-dark"
-              style="max-height: 60vh; font-size: 13px; overflow-x: auto"
+              style="max-height: 400px; font-size: 13px; overflow-x: auto"
               >{{ codeDialog.data.errorStack }}</pre
             >
           </div>

@@ -112,7 +112,7 @@
         <template #default="{ row }">
           <span v-if="!row.item_exception || row.status === 'passed'">{{ row.fail_message }}</span>
           <div v-else class="flex align-center">
-            <span class="ellipsis">
+            <span>
               {{ row.item_exception.message }}
             </span>
             <el-button type="text" @click="showError(row)">{{ $t('public_view_details') }}</el-button>
@@ -122,17 +122,20 @@
     </el-table>
 
     <!--错误详情-->
-    <ElDialog width="80%" custom-class="max-w-1000 mt-25" :visible.sync="errorDialog.open" append-to-body>
+    <ElDialog width="80%" custom-class="max-w-1000 mt-25 --padding" :visible.sync="errorDialog.open" append-to-body>
       <template #title>
         <div class="flex align-center gap-2">
-          <VIcon class="color-danger" size="18">circle-close-filled</VIcon>
+          <VIcon v-if="!errorDialog.isWarning" class="color-danger" size="18">circle-close-filled</VIcon>
+          <VIcon v-else class="color-warning" size="18">warning</VIcon>
           <span class="fs-6 fw-sub">{{ errorDialog.title }}</span>
         </div>
       </template>
 
       <div class="mt-n4">
         <template v-if="errorDialog.message">
-          <div class="fw-sub mb-3 font-color-dark">{{ $t('packages_business_error_details') }}</div>
+          <div class="fw-sub mb-3 font-color-dark">
+            {{ $t(errorDialog.isWarning ? 'packages_business_warning_details' : 'packages_business_error_details') }}
+          </div>
           <div
             v-html="errorDialog.message"
             class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
@@ -165,7 +168,7 @@
           </ol>
         </template>
 
-        <template v-if="errorDialog.stack">
+        <template v-if="errorDialog.stack && !errorDialog.isWarning">
           <div class="mb-3 flex justify-content-between align-items-end">
             <span class="fw-sub font-color-dark">{{ $t('packages_business_logs_nodelog_cuowuduizhan') }}</span>
           </div>
@@ -179,7 +182,7 @@
 
             <pre
               class="m-0 p-4 pt-0 mt-6 font-color-dark"
-              style="max-height: 60vh; font-size: 13px; overflow-x: auto"
+              style="max-height: 400px; font-size: 13px; overflow-x: auto"
               >{{ errorDialog.stack }}</pre
             >
           </div>
@@ -272,7 +275,8 @@ export default {
         solution: '',
         message: '',
         reason: '',
-        seeAlso: []
+        seeAlso: [],
+        isWarning: false
       },
       showTooltip: false
     }
@@ -479,6 +483,7 @@ export default {
     },
 
     async showError(row) {
+      console.log('scope.row.status', row.status)
       if (process.env.VUE_APP_KEYWORD && row.item_exception) {
         row.item_exception.stack = this.replaceKeyword(row.item_exception.stack)
         row.item_exception.solution = this.replaceKeyword(row.item_exception.solution)
@@ -488,7 +493,9 @@ export default {
 
       Object.assign(this.errorDialog, row.item_exception)
       this.errorDialog.title = row.show_msg
+      this.errorDialog.status = row.status
       this.errorDialog.seeAlso = []
+      this.errorDialog.isWarning = row.status === 'failed' && !row.required
 
       if (row.error_code) {
         const data = await proxyApi
