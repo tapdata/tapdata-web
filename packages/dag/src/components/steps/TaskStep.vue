@@ -219,12 +219,6 @@ export default defineComponent({
       console.log('onTaskChange')
     }, 100)
 
-    setTimeout(() => {
-      taskRef.value.a = 123
-    }, 3000)
-
-    let dispose
-
     const initForm = () => {
       const task = taskRef.value
       scope.$taskId = task.id
@@ -234,16 +228,7 @@ export default defineComponent({
 
       // 防止挂载表单时触发valueChange
       setTimeout(() => {
-        // dispose = observe(taskRef.value, () => {
-        //   console.log('observe.task')
-        //   onTaskChange()
-        // })
-
         form.value.addEffects('watchForm', () => {
-          // onFormValuesChange(form => {
-          //   // onTaskChange()
-          //   console.log('onFormValuesChange', form.values)
-          // })
           onFieldValueChange('*', field => {
             onTaskChange()
             console.log('onFieldValueChange', field)
@@ -338,8 +323,6 @@ export default defineComponent({
 
     onBeforeUnmount(() => {
       form.value.onUnmount()
-      dispose?.()
-      dispose = null
     })
 
     return {
