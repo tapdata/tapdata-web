@@ -383,7 +383,7 @@ const store = new Vuex.Store({
 
       commit('setGuide', guide)
 
-      if (guide.expand.version !== '3.13.0' || guide.tour.status === 'completed') return
+      if (guide.expand.version !== '3.13.0' || guide.tour.status === 'completed') return state.guide
 
       if (guide.installStep === -1) {
         router.replace({
@@ -407,6 +407,8 @@ const store = new Vuex.Store({
           }
         })
       }
+
+      return state.guide
     },
 
     startGuideTask({ commit, state }, { demand, suggestion }) {
