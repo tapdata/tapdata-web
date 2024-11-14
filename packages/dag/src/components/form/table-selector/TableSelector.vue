@@ -34,7 +34,7 @@
           <ElInput
             v-model="table.searchKeyword"
             clearable
-            suffix-icon="el-icon-search"
+            prefix-icon="el-icon-search"
             :placeholder="$t('public_input_placeholder_search')"
           ></ElInput>
         </div>
@@ -72,7 +72,7 @@
         </ElCheckboxGroup>
         <div v-if="!filteredData.length" class="flex-1 flex flex-column justify-center">
           <VEmpty
-            v-if="!table.searchKeyword"
+            v-if="!table.searchKeyword && !alwaysShowReload"
             :image-size="111"
             :image="require('@tap/assets/images/img_empty.png')"
             :description="$t('packages_form_component_table_selector_tables_empty') + '~'"
@@ -143,7 +143,7 @@
           <ElInput
             v-model="selected.searchKeyword"
             clearable
-            suffix-icon="el-icon-search"
+            prefix-icon="el-icon-search"
             :placeholder="$t('public_input_placeholder_search')"
           ></ElInput>
         </div>
@@ -429,10 +429,13 @@ export default {
     value: Array,
     disabled: Boolean,
     hideReload: Boolean,
+    alwaysShowReload: Boolean,
     reloadTime: [String, Number],
     filterType: String,
     syncPartitionTableEnable: Boolean,
-    hasPartition: Boolean
+    hasPartition: Boolean,
+    nodeId: String,
+    taskId: String
   },
   data() {
     return {
@@ -726,11 +729,13 @@ export default {
             setTimeout(() => {
               this.showProgress = false
               this.progress = 0 //加载完成
-              const { taskId, activeNodeId } = this.$store.state?.dataflow || {}
-              if (!check && taskId && activeNodeId) {
+              const nodeId = this.nodeId || this.$store.state?.dataflow.activeNodeId
+              const taskId = this.taskId || this.$store.state?.dataflow.taskId
+
+              if (!check && taskId && nodeId) {
                 metadataInstancesApi
                   .deleteLogicSchema(taskId, {
-                    nodeId: activeNodeId
+                    nodeId
                   })
                   .then(() => {
                     this.getTables() //更新schema
@@ -788,12 +793,14 @@ export default {
       // this.$emit('change', this.selected.tables)
     },
 
-    loadSchema() {
+    async loadSchema() {
       this.schemaLoading = true
-      const { taskId, activeNodeId } = this.$store.state?.dataflow || {}
-      taskApi
+      const nodeId = this.nodeId || this.$store.state?.dataflow.activeNodeId
+      const taskId = this.taskId || this.$store.state?.dataflow.taskId
+
+      await taskApi
         .refreshSchema(taskId, {
-          nodeIds: activeNodeId,
+          nodeIds: nodeId,
           keys: this.table.searchKeyword
         })
         .finally(() => {

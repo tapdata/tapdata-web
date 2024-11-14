@@ -319,6 +319,9 @@ const SourceDatabaseNode = observer(
                           maxHeight: 'calc((100vh - 220px) * 0.618)'
                         },
                         hideReload: true,
+                        alwaysShowReload: true,
+                        nodeId: '{{$values.id}}',
+                        taskId: '{{$taskId}}',
                         filterType: `{{ $values.dag.nodes[0].noPrimaryKeyTableSelectType }}`
                       },
                       'x-content': {
