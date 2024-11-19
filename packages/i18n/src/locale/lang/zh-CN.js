@@ -357,5 +357,7 @@ export default {
   public_configuration_task: '配置任务',
   public_need_help: '需要帮助？',
   public_test_and_continue: '测试连接，继续下一步',
-  public_task_count: '{val} 个任务'
+  public_task_count: '{val} 个任务',
+  public_retrying: '重试中',
+  public_next_retry_time: '下次重试时间'
 }

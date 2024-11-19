@@ -208,9 +208,14 @@ export default {
         icon: 'time',
         color: 'color-primary'
       }
+      const retryOpt = {
+        status: 'RUNNING',
+        desc: i18n.t('public_status_waiting'),
+        icon: iconRunning,
+        color: 'color-warning'
+      }
       const stopOpt = {
         status: 'STOP',
-        desc: i18n.t('public_status_stop'),
         icon: 'warning',
         color: 'color-warning'
       }
@@ -238,6 +243,7 @@ export default {
             : '-'
         const begin = dayjs(item.begin).format('HH:mm:ss')
         const end = item.end ? dayjs(item.end).format('HH:mm:ss') : ''
+
         switch (item?.status) {
           case 'FINISH':
             Object.assign(el, finishOpt)
@@ -298,6 +304,19 @@ export default {
           default:
             Object.assign(el, waitingOpt)
             break
+        }
+
+        if (item.retrying) {
+          // 正在重试
+          Object.assign(el, retryOpt)
+
+          el.dataDesc = `, ${i18n.t('public_retrying')}${
+            !item.retryTimes || !item.totalRetries ? '' : ` ${item.retryTimes}/${item.totalRetries}`
+          }${
+            item.nextRetryTs
+              ? `, ${i18n.t('public_next_retry_time')} ${dayjs(item.nextRetryTs).format('YYYY-MM-DD HH:mm:ss')}`
+              : ''
+          }`
         }
       })
       const len = result.length
