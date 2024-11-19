@@ -186,6 +186,7 @@
       :visible.sync="codeDialog.visible"
       :close-on-click-modal="false"
       append-to-body
+      @open="expandErrorMessage = false"
     >
       <template #title>
         <div class="flex align-center gap-2">
@@ -238,19 +239,28 @@
             <span class="fw-sub font-color-dark">{{ $t('packages_business_logs_nodelog_cuowuduizhan') }}</span>
           </div>
           <div class="error-stack-pre-wrap position-relative font-color-light rounded-lg">
-            <div class="position-absolute end-0 top-0 px-2 pt-1 error-stack-actions">
+            <div class="position-absolute end-0 top-0 px-2 pt-1">
               <el-button
                 @click="handleCopyStack(codeDialog.data.errorStack)"
                 type="text"
                 class="px-1 py-0.5 font-color-dark"
               >
                 <VIcon class="mr-1">copy</VIcon>
-                <span class="">{{ $t('public_button_copy') }}</span>
+                <span class="">{{ $t('public_button_copy') }}</span> </el-button
+              ><el-button
+                @click="expandErrorMessage = !expandErrorMessage"
+                type="text"
+                class="px-1 py-0.5 font-color-dark ml-2"
+              >
+                {{
+                  expandErrorMessage ? $t('packages_business_verification_details_shouqi') : $t('public_button_expand')
+                }}<i class="el-icon-arrow-down is-rotate ml-1" :class="{ 'is-active': expandErrorMessage }"></i>
               </el-button>
             </div>
 
             <pre
               class="m-0 p-4 pt-0 mt-6 font-color-dark"
+              :class="expandErrorMessage ? '' : 'truncate-two-lines'"
               style="max-height: 400px; font-size: 13px; overflow-x: auto"
               >{{ codeDialog.data.errorStack }}</pre
             >
@@ -292,7 +302,7 @@ import { debounce, cloneDeep, uniqBy, escape } from 'lodash'
 
 import { copyToClipboard, CountUp, downloadBlob, openUrl } from '@tap/shared'
 import Time from '@tap/shared/src/time'
-import { VIcon, TimeSelect } from '@tap/component'
+import { VIcon, TimeSelect, IconButton } from '@tap/component'
 import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
 import { monitoringLogsApi, taskApi, proxyApi, CancelToken } from '@tap/api'
 
@@ -301,7 +311,7 @@ import NodeList from '../nodes/List'
 export default {
   name: 'NodeLog',
 
-  components: { VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem, VEmpty, NodeList },
+  components: { IconButton, VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem, VEmpty, NodeList },
 
   props: {
     dataflow: {
@@ -481,7 +491,8 @@ export default {
             label: i18n.t('packages_business_downloading_file')
           }
         ]
-      }
+      },
+      expandErrorMessage: false
     }
   },
 

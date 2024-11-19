@@ -122,7 +122,13 @@
     </el-table>
 
     <!--错误详情-->
-    <ElDialog width="80%" custom-class="max-w-1000 mt-25 --padding" :visible.sync="errorDialog.open" append-to-body>
+    <ElDialog
+      width="80%"
+      custom-class="max-w-1000 mt-25 --padding"
+      :visible.sync="errorDialog.open"
+      append-to-body
+      @open="expandErrorMessage = false"
+    >
       <template #title>
         <div class="flex align-center gap-2">
           <VIcon v-if="!errorDialog.isWarning" class="color-danger" size="18">circle-close-filled</VIcon>
@@ -173,15 +179,24 @@
             <span class="fw-sub font-color-dark">{{ $t('packages_business_logs_nodelog_cuowuduizhan') }}</span>
           </div>
           <div class="error-stack-pre-wrap position-relative mb-6 font-color-light rounded-lg">
-            <div class="position-absolute end-0 top-0 px-2 pt-1 error-stack-actions">
+            <div class="position-absolute end-0 top-0 px-2 pt-1">
               <el-button @click="handleCopyStack(errorDialog.stack)" type="text" class="px-1 py-0.5 font-color-dark">
                 <VIcon class="mr-1">copy</VIcon>
-                <span class="">{{ $t('public_button_copy') }}</span>
+                <span class="">{{ $t('public_button_copy') }}</span> </el-button
+              ><el-button
+                @click="expandErrorMessage = !expandErrorMessage"
+                type="text"
+                class="px-1 py-0.5 font-color-dark ml-2"
+              >
+                {{
+                  expandErrorMessage ? $t('packages_business_verification_details_shouqi') : $t('public_button_expand')
+                }}<i class="el-icon-arrow-down is-rotate ml-1" :class="{ 'is-active': expandErrorMessage }"></i>
               </el-button>
             </div>
 
             <pre
               class="m-0 p-4 pt-0 mt-6 font-color-dark"
+              :class="{ 'truncate-two-lines': !expandErrorMessage }"
               style="max-height: 400px; font-size: 13px; overflow-x: auto"
               >{{ errorDialog.stack }}</pre
             >
@@ -278,7 +293,8 @@ export default {
         seeAlso: [],
         isWarning: false
       },
-      showTooltip: false
+      showTooltip: false,
+      expandErrorMessage: false
     }
   },
   mounted() {
