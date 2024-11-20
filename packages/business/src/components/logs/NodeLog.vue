@@ -781,8 +781,6 @@ export default {
         levels: this.checkList
       }
 
-      params.logTags = { $ne: 'src=user_script' }
-
       if (this.activeNodeId) {
         const node = this.nodeById(this.activeNodeId)
         if (
@@ -790,8 +788,10 @@ export default {
             node.type
           )
         ) {
-          params.logTags = 'src=user_script'
+          params.includeLogTags = ['src=user_script']
         }
+      } else {
+        params.excludeLogTags = ['src=user_script']
       }
 
       return params
@@ -818,8 +818,6 @@ export default {
         levels: this.checkList
       }
 
-      params.logTags = { $ne: 'src=user_script' }
-
       if (this.activeNodeId) {
         const node = this.nodeById(this.activeNodeId)
         if (
@@ -827,8 +825,10 @@ export default {
             node.type
           )
         ) {
-          params.logTags = 'src=user_script'
+          params.includeLogTags = ['src=user_script']
         }
+      } else {
+        params.excludeLogTags = ['src=user_script']
       }
 
       this.newFilter = params
