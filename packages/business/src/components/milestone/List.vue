@@ -16,7 +16,7 @@
             v-if="scope.row.status === 'ERROR'"
             :class="scope.row.statusColor"
             class="inline-flex align-items-center cursor-pointer"
-            @click="handleError(scope.row)"
+            @click="handleCode(scope.row)"
           >
             <span class="color-danger underline">{{ $t('public_task_mission_error') }}</span>
             <VIcon class="color-danger ml-2">error</VIcon>
@@ -607,21 +607,16 @@ export default {
     },
 
     handleCode(item = {}) {
+      const errorCode = item.errorCode || '11001'
       const params = {
         className: 'ErrorCodeService',
         method: 'getErrorCodeWithDynamic',
-        args: [item.errorCode, i18n.locale === 'en' ? 'en' : 'cn', item.dynamicDescriptionParameters]
+        args: [errorCode, i18n.locale === 'en' ? 'en' : 'cn', item.dynamicDescriptionParameters]
       }
 
       this.codeDialog.data.errorStack = item.stackMessage
-      this.codeDialog.data.errorCode = item.errorCode
+      this.codeDialog.data.errorCode = errorCode
       this.codeDialog.data.fullErrorCode = item.fullErrorCode
-
-      if (!item.errorCode) {
-        this.codeDialog.data.describe = item.errorMessage
-        this.codeDialog.visible = true
-        return
-      }
 
       proxyApi
         .call(params)
