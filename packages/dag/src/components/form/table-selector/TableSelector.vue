@@ -643,7 +643,7 @@ export default {
       this.isOpenClipMode = !this.isOpenClipMode
       this.errorTables = {}
       if (this.isOpenClipMode) {
-        this.clipboardValue = ''
+        this.clipboardValue = this.selected.tables?.join(',') || ''
         this.isFocus = true
       } else {
         this.getErrorTables(this.selected.tables)
