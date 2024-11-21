@@ -497,7 +497,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('dataflow', ['allNodes']),
+    ...mapGetters('dataflow', ['allNodes', 'nodeById']),
 
     nodeLogCountMap() {
       return this.logTotals
@@ -780,6 +780,20 @@ export default {
         search: this.keyword,
         levels: this.checkList
       }
+
+      if (this.activeNodeId) {
+        const node = this.nodeById(this.activeNodeId)
+        if (
+          ['js_processor', 'migrate_js_processor', 'standard_js_processor', 'standard_migrate_js_processor'].includes(
+            node.type
+          )
+        ) {
+          params.includeLogTags = ['src=user_script']
+        }
+      } else {
+        params.excludeLogTags = ['src=user_script']
+      }
+
       return params
     },
 
@@ -803,6 +817,20 @@ export default {
         search: this.keyword,
         levels: this.checkList
       }
+
+      if (this.activeNodeId) {
+        const node = this.nodeById(this.activeNodeId)
+        if (
+          ['js_processor', 'migrate_js_processor', 'standard_js_processor', 'standard_migrate_js_processor'].includes(
+            node.type
+          )
+        ) {
+          params.includeLogTags = ['src=user_script']
+        }
+      } else {
+        params.excludeLogTags = ['src=user_script']
+      }
+
       this.newFilter = params
       return params
     },
