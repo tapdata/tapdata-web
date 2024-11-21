@@ -356,5 +356,7 @@ export default {
   public_configuration_task: '配置任務',
   public_need_help: '需要幫助？',
   public_test_and_continue: '測試連接，繼續下一步',
-  public_task_count: '{val} 個任務'
+  public_task_count: '{val} 個任務',
+  public_retrying: '重試中',
+  public_next_retry_time: '下次重試時間'
 }

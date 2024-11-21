@@ -37,6 +37,9 @@
         </div>
         <div class="ml-4 step__line_pt flex-fill">
           <span class="font-color-normal fw-bold">{{ item.label }}: </span>
+          <span v-if="item.status === 'ERROR'" class="mt-2 color-danger underline" @click="handleCode(item)">{{
+            $t('packages_business_error_details')
+          }}</span>
           <span v-if="item.desc" class="mt-2 color-info">{{ item.desc }}</span>
           <span v-if="item.dataDesc" class="mt-2 color-info">{{ item.dataDesc }}</span>
           <ElProgress
@@ -49,20 +52,117 @@
         </div>
       </div>
     </div>
+
+    <ElDialog
+      width="80%"
+      custom-class="max-w-1000 mt-25 --padding"
+      :visible.sync="codeDialog.visible"
+      :close-on-click-modal="false"
+      append-to-body
+      @open="codeDialog.expandErrorMessage = false"
+    >
+      <template #title>
+        <div class="flex align-center gap-2">
+          <VIcon class="color-danger" size="18">circle-close-filled</VIcon>
+          <span class="fs-6 fw-sub">{{
+            codeDialog.data.fullErrorCode || codeDialog.data.errorCode || $t('packages_business_error_details')
+          }}</span>
+        </div>
+      </template>
+
+      <div class="font-color-light">
+        <!--错误信息-->
+        <template v-if="codeDialog.data.describe">
+          <div class="fw-sub mb-3 font-color-dark">{{ $t('packages_business_milestone_list_cuowuxinxi') }}</div>
+          <div
+            v-html="codeDialog.data.describe"
+            class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
+          ></div>
+        </template>
+
+        <!--错误原因/描述-->
+        <template v-if="codeDialog.data.dynamicDescribe">
+          <div class="fw-sub mb-3 font-color-dark">{{ $t('public_task_reasons_for_error') }}</div>
+          <div
+            v-html="codeDialog.data.dynamicDescribe"
+            class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
+          ></div>
+        </template>
+
+        <!--解决方案-->
+        <template v-if="codeDialog.data.solution">
+          <div class="fw-sub mb-3 font-color-dark">{{ $t('packages_business_solution') }}</div>
+          <div
+            v-html="codeDialog.data.solution"
+            class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
+          ></div>
+        </template>
+
+        <!--See Also-->
+        <template v-if="!hideSeeAlso && codeDialog.data.seeAlso && codeDialog.data.seeAlso.length">
+          <div class="fw-sub mb-3 font-color-dark">See Also</div>
+          <ol class="pl-6 mb-6">
+            <li v-for="(item, index) in codeDialog.data.seeAlso" :key="index" class="list-decimal">
+              <ElLink type="primary" class="text-decoration-underline" @click="handleLink(item)">{{ item }}</ElLink>
+            </li>
+          </ol>
+        </template>
+
+        <!--错误堆栈-->
+        <template v-if="codeDialog.data.errorStack">
+          <div class="mb-3 flex justify-content-between align-items-end">
+            <span class="fw-sub font-color-dark">{{ $t('packages_business_logs_nodelog_cuowuduizhan') }}</span>
+          </div>
+          <div class="error-stack-pre-wrap position-relative font-color-light rounded-lg">
+            <div class="position-absolute end-0 top-0 px-2 pt-1">
+              <el-button
+                @click="handleCopyStack(codeDialog.data.errorStack)"
+                type="text"
+                class="px-1 py-0.5 font-color-dark"
+              >
+                <VIcon class="mr-1">copy</VIcon>
+                <span class="">{{ $t('public_button_copy') }}</span> </el-button
+              ><el-button
+                @click="codeDialog.expandErrorMessage = !codeDialog.expandErrorMessage"
+                type="text"
+                class="px-1 py-0.5 font-color-dark ml-2"
+              >
+                {{
+                  codeDialog.expandErrorMessage
+                    ? $t('packages_business_verification_details_shouqi')
+                    : $t('public_button_expand')
+                }}<i
+                  class="el-icon-arrow-down is-rotate ml-1"
+                  :class="{ 'is-active': codeDialog.expandErrorMessage }"
+                ></i>
+              </el-button>
+            </div>
+
+            <pre
+              class="m-0 p-4 pt-0 mt-6 font-color-dark"
+              :class="codeDialog.expandErrorMessage ? '' : 'truncate-two-lines'"
+              style="max-height: 400px; font-size: 13px; overflow-x: auto"
+              >{{ codeDialog.data.errorStack }}</pre
+            >
+          </div>
+        </template>
+      </div>
+    </ElDialog>
   </div>
 </template>
 
 <script>
 import i18n from '@tap/i18n'
 
-import { VTable } from '@tap/component'
-import { calcTimeUnit } from '@tap/shared'
+import { VIcon, VTable } from '@tap/component'
+import { calcTimeUnit, copyToClipboard } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 
 import NodeList from '../nodes/List'
 import dayjs from 'dayjs'
 
 import { ErrorMessage } from '../error-message'
+import { proxyApi } from '@tap/api'
 
 export default {
   name: 'List',
@@ -77,7 +177,7 @@ export default {
     nodeId: String
   },
 
-  components: { NodeList, VTable },
+  components: { VIcon, NodeList, VTable },
 
   data() {
     const activeNodeId = this.nodeId
@@ -109,7 +209,21 @@ export default {
           label: i18n.t('packages_business_milestone_list_haoshi'),
           prop: 'diff'
         }
-      ]
+      ],
+      codeDialog: {
+        visible: false,
+        expandErrorMessage: false,
+        data: {
+          errorStack: '',
+          errorCode: '',
+          fullErrorCode: '',
+          describe: '',
+          solution: '',
+          dynamicDescribe: '',
+          seeAlso: []
+        }
+      },
+      hideSeeAlso: process.env.VUE_APP_PAGE_TITLE === 'IKAS' || process.env.VUE_APP_HIDE_LOG_SEE_ALSO
     }
   },
 
@@ -209,15 +323,20 @@ export default {
         icon: 'time',
         color: 'color-primary'
       }
+      const retryOpt = {
+        status: 'RUNNING',
+        desc: i18n.t('public_status_waiting'),
+        icon: iconRunning,
+        color: 'color-warning'
+      }
       const stopOpt = {
         status: 'STOP',
-        desc: i18n.t('public_status_stop'),
         icon: 'warning',
         color: 'color-warning'
       }
       const errorOpt = {
         status: 'ERROR',
-        desc: i18n.t('public_status_error'),
+        // desc: i18n.t('public_status_error'),
         icon: 'error',
         color: 'color-danger'
       }
@@ -239,6 +358,7 @@ export default {
             : '-'
         const begin = dayjs(item.begin).format('HH:mm:ss')
         const end = item.end ? dayjs(item.end).format('HH:mm:ss') : ''
+
         switch (item?.status) {
           case 'FINISH':
             Object.assign(el, finishOpt)
@@ -299,6 +419,27 @@ export default {
           default:
             Object.assign(el, waitingOpt)
             break
+        }
+
+        if (item.retrying) {
+          // 正在重试
+          Object.assign(el, retryOpt)
+
+          el.dataDesc = `, ${i18n.t('public_retrying')}${
+            !item.retryTimes || !item.totalOfRetries ? '' : ` ${item.retryTimes}/${item.totalOfRetries}`
+          }${
+            item.nextRetryTs
+              ? `, ${i18n.t('public_next_retry_time')} ${dayjs(item.nextRetryTs).format('YYYY-MM-DD HH:mm:ss')}`
+              : ''
+          }`
+        }
+
+        if (item.status === 'ERROR') {
+          el.errorMessage = item.errorMessage
+          el.errorCode = item.errorCode
+          el.stackMessage = item.stackMessage
+          el.dynamicDescriptionParameters = item.dynamicDescriptionParameters
+          el.status = 'ERROR'
         }
       })
       const len = result.length
@@ -463,10 +604,37 @@ export default {
 
     handleError(row = {}) {
       ErrorMessage(row.errorMessage)
-      // this.$confirm(row.errorMessage, i18n.t('packages_business_milestone_list_cuowuxinxi'), {
-      //   type: 'warning',
-      //   closeOnClickModal: false
-      // })
+    },
+
+    handleCode(item = {}) {
+      const params = {
+        className: 'ErrorCodeService',
+        method: 'getErrorCodeWithDynamic',
+        args: [item.errorCode, i18n.locale === 'en' ? 'en' : 'cn', item.dynamicDescriptionParameters]
+      }
+
+      this.codeDialog.data.errorStack = item.stackMessage
+      this.codeDialog.data.errorCode = item.errorCode
+      this.codeDialog.data.fullErrorCode = item.fullErrorCode
+
+      if (!item.errorCode) {
+        this.codeDialog.data.describe = item.errorMessage
+        this.codeDialog.visible = true
+        return
+      }
+
+      proxyApi
+        .call(params)
+        .then(data => {
+          Object.assign(this.codeDialog.data, data)
+
+          this.codeDialog.data.describe = data.describe || item.errorMessage
+
+          this.codeDialog.visible = true
+        })
+        .catch(() => {
+          this.codeDialog.visible = true
+        })
     },
 
     getDueTimeAndProgress(data = {}) {
@@ -488,6 +656,11 @@ export default {
 
     handleCustomClass(node) {
       return this.errorNodeIds.includes(node?.id) ? 'error-node' : ''
+    },
+
+    handleCopyStack(stack) {
+      copyToClipboard(stack)
+      this.$message.success(this.$t('public_message_copy_success'))
     }
   }
 }
