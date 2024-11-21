@@ -275,6 +275,7 @@ export default {
       }
       if (['logCollector'].includes(this.dataflow.syncType)) {
         delete result[2]
+        delete result[3]
       }
 
       // 全量不显示增量信息
