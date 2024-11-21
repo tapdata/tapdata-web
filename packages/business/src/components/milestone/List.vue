@@ -311,7 +311,7 @@ export default {
           Object.assign(el, retryOpt)
 
           el.dataDesc = `, ${i18n.t('public_retrying')}${
-            !item.retryTimes || !item.totalRetries ? '' : ` ${item.retryTimes}/${item.totalRetries}`
+            !item.retryTimes || !item.totalOfRetries ? '' : ` ${item.retryTimes}/${item.totalOfRetries}`
           }${
             item.nextRetryTs
               ? `, ${i18n.t('public_next_retry_time')} ${dayjs(item.nextRetryTs).format('YYYY-MM-DD HH:mm:ss')}`
