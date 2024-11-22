@@ -325,7 +325,6 @@ export default {
       }
       const retryOpt = {
         status: 'RUNNING',
-        desc: '',
         icon: iconRunning,
         color: 'color-warning'
       }
@@ -425,13 +424,14 @@ export default {
           // 正在重试
           Object.assign(el, retryOpt)
 
-          el.dataDesc = `, ${i18n.t('public_retrying')}${
+          el.desc = `${i18n.t('public_retrying')}${
             !item.retryTimes || !item.totalOfRetries ? '' : ` ${item.retryTimes}/${item.totalOfRetries}`
           }${
             item.nextRetryTs
               ? `, ${i18n.t('public_next_retry_time')} ${dayjs(item.nextRetryTs).format('YYYY-MM-DD HH:mm:ss')}`
               : ''
           }`
+          el.dataDesc = ''
         }
 
         if (item.status === 'ERROR') {
