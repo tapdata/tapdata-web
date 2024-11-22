@@ -325,7 +325,7 @@ export default {
       }
       const retryOpt = {
         status: 'RUNNING',
-        desc: i18n.t('public_status_waiting'),
+        desc: '',
         icon: iconRunning,
         color: 'color-warning'
       }
