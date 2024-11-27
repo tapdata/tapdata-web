@@ -258,7 +258,6 @@ export default {
     },
 
     disabledDBMore() {
-      console.log('disabledDBMore', this.dbLoading, this.noDBMore) // eslint-disable-line
       return this.dbLoading || this.noDBMore || this.dbLoadingMore
     },
 
@@ -415,7 +414,6 @@ export default {
     },
 
     loadMoreDB() {
-      console.log('loadMoreDB') // eslint-disable-line
       if (this.disabledDBMore) return
       this.loadDatabase(true)
     },

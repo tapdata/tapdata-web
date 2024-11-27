@@ -481,9 +481,13 @@ export default {
         this.dbPage = 1
       }
 
-      const data = await connectionsApi.get(this.getDbFilter(), {
-        cancelToken: this.connectionCancelSource.token
-      })
+      const data = await connectionsApi
+        .get(this.getDbFilter(), {
+          cancelToken: this.connectionCancelSource.token
+        })
+        .finally(() => {
+          this.connectionCancelSource = null
+        })
 
       this.dbTotal = data.total
 
@@ -530,6 +534,7 @@ export default {
     },
 
     loadMoreDB() {
+      if (this.disabledDBMore) return
       this.loadDatabase(true)
     },
 
@@ -617,6 +622,7 @@ export default {
     },
 
     loadMoreTable() {
+      if (this.disabled) return
       this.loadDatabaseTable(true)
     },
 
