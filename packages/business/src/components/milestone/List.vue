@@ -37,9 +37,12 @@
         </div>
         <div class="ml-4 step__line_pt flex-fill">
           <span class="font-color-normal fw-bold">{{ item.label }}: </span>
-          <span v-if="item.status === 'ERROR'" class="mt-2 color-danger underline" @click="handleCode(item)">{{
-            $t('packages_business_error_details')
-          }}</span>
+          <span
+            v-if="item.status === 'ERROR'"
+            class="mt-2 color-danger underline clickable"
+            @click="handleCode(item)"
+            >{{ $t('packages_business_error_details') }}</span
+          >
           <span v-if="item.desc" class="mt-2 color-info">{{ item.desc }}</span>
           <span v-if="item.dataDesc" class="mt-2 color-info">{{ item.dataDesc }}</span>
           <ElProgress
