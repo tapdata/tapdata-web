@@ -15,9 +15,6 @@
       <ElFormItem :label="$t('packages_dag_components_log_kaiqishichangmiao')">
         <ElInput v-model="form.intervalCeiling" type="number" style="width: 275px"></ElInput>
       </ElFormItem>
-      <ElFormItem :label="$t('packages_dag_components_log_zuidashijianshu')">
-        <ElInput v-model="form.recordCeiling" type="number" style="width: 275px"></ElInput>
-      </ElFormItem>
     </ElForm>
 
     <template #footer>
@@ -42,8 +39,7 @@ export default {
     return {
       form: {
         query: '',
-        intervalCeiling: 500,
-        recordCeiling: 500
+        intervalCeiling: 500
       },
       loading: false
     }
@@ -52,8 +48,7 @@ export default {
     onOpen() {
       Object.assign(this.form, {
         query: '',
-        intervalCeiling: 500,
-        recordCeiling: 500
+        intervalCeiling: 500
       })
       this.loading = false
     },
