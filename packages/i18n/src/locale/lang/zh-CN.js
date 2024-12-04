@@ -361,5 +361,6 @@ export default {
   public_retrying: '重试中',
   public_next_retry_time: '下次重试时间',
   public_data_capture: '数据抓取',
+  public_keywords: '关键字',
   public_data_capture_keywords_ph: '请输入数据关键字进行抓取'
 }

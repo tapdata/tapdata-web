@@ -4,9 +4,8 @@
       <button @click="handlePageReturn" class="icon-btn mr-2">
         <VIcon size="18">left</VIcon>
       </button>
-      <span class="fw-bold">Data Capture</span>
+      <span class="fw-bold">{{ $t('public_data_capture') }}</span>
       <VDivider class="mx-3" vertical inset></VDivider>
-      <!--<el-divider direction="vertical"></el-divider>-->
       <div class="overflow-hidden">
         <div class="flex align-items-center">
           <TextEditable
@@ -57,9 +56,16 @@
                 <el-descriptions-item label="事件类型">{{ item.type }}</el-descriptions-item>
                 <el-descriptions-item label="事件时间">{{ item.time }}</el-descriptions-item>
                 <el-descriptions-item label="事件ID">{{ item.id }}</el-descriptions-item>
-                <el-descriptions-item label="原始数据" contentClassName="ellipsis">{{
-                  item.originalData
-                }}</el-descriptions-item>
+                <el-descriptions-item label="原始数据" contentClassName="ellipsis">
+                  <div class="flex align-center overflow-hidden">
+                    <span class="ellipsis">{{ item.originalData }}</span>
+
+                    <el-button v-if="item.originalData" type="text" class="px-1 py-0.5 font-color-dark" @click="handleCopy(item)">
+                      <VIcon class="mr-1">copy</VIcon>
+                      <span class="">{{ $t('public_button_copy') }}</span>
+                    </el-button>
+                  </div>
+                </el-descriptions-item>
               </el-descriptions>
 
               <i
@@ -92,26 +98,10 @@
 
 <script>
 import { makeStatusAndDisabled } from '@tap/business'
-import { databaseTypesApi, dataPermissionApi, sharedCacheApi, taskApi } from '@tap/api'
-import {
-  defineComponent,
-  ref,
-  computed,
-  watch,
-  provide,
-  onMounted,
-  onBeforeUnmount,
-  reactive,
-  set,
-  del
-} from '@vue/composition-api'
+import { dataPermissionApi, taskApi } from '@tap/api'
+import { defineComponent, ref, computed, watch, onMounted, onBeforeUnmount, reactive, set } from '@vue/composition-api'
 import { TextEditable, VIcon, VEmpty, VDivider } from '@tap/component'
 import { TaskStatus } from '@tap/business'
-import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
-import { titleChange } from '@tap/component/src/mixins/titleChange'
-import { showMessage } from '@tap/component/src/mixins/showMessage'
-import editor from '../mixins/editor'
-import { observable } from '@formily/reactive'
 import syncTaskAgent from '@tap/business/src/mixins/syncTaskAgent'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
@@ -120,11 +110,10 @@ import CaptureItem from './CaptureItem.vue'
 import { allResourceIns } from '../nodes/loader'
 import { setPageTitle } from '@tap/shared'
 import { useRequest } from 'vue-request'
-import { onUnmounted } from '@vue/composition-api'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import axios from 'axios'
 import Cookie from '@tap/shared/src/cookie'
-import VirtualList from 'vue-virtual-scroll-list'
+import { copyToClipboard } from '@tap/shared'
 
 export default defineComponent({
   name: 'DataCapture',
@@ -136,8 +125,7 @@ export default defineComponent({
     TaskStatus,
     TextEditable,
     DynamicScroller,
-    DynamicScrollerItem,
-    VirtualList
+    DynamicScrollerItem
   },
   mixins: [syncTaskAgent],
 
@@ -175,8 +163,6 @@ export default defineComponent({
       const { lastStartDate } = dataflow.value
       return lastStartDate ? dayjs(lastStartDate).format('YYYY-MM-DD HH:mm:ss') : '-'
     })
-
-    const sourceNodes = computed(() => nodes.value.filter(node => node.$outputs.length && !node.$inputs.length))
 
     const NodeMap = computed(() =>
       nodes.value.reduce((map, node) => {
@@ -290,7 +276,6 @@ export default defineComponent({
     }
 
     const initWS = () => {
-      // console.debug(i18n.t('packages_dag_mixins_editor_debug'), this.$ws.ws) // eslint-disable-line
       root.$ws.off('editFlush', handleEditFlush)
       root.$ws.on('editFlush', handleEditFlush)
       root.$ws.send({
@@ -306,16 +291,10 @@ export default defineComponent({
       await proxyApi.call({
         className: 'CatchDataService',
         method: 'openCatchData',
-        // taskId 任务id
-        // maxRecords 最多行数
-        // maxSeconds 最长时间
         args: [dataflow.value.id, null, 60],
         returnClass: 'java.lang.Boolean',
-        // 指定 FE 执行：processId_${process_id}，process_id 使用 Task.agentId
         subscribeIds: [`processId_${dataflow.value.agentId}`]
       })
-
-      // await this.loadData()
     }
 
     const initView = async () => {
@@ -606,6 +585,11 @@ export default defineComponent({
       run()
     }
 
+    const handleCopy = item => {
+      copyToClipboard(JSON.stringify(Object.values(item.data)))
+      root.$message.success(i18n.t('public_message_copy_success'))
+    }
+
     // Lifecycle
     onMounted(async () => {
       window.addEventListener('beforeunload', handleBeforeUnload)
@@ -648,6 +632,7 @@ export default defineComponent({
       handlePageReturn,
       toggleCollapse,
       onInput,
+      handleCopy
     }
   }
 })

@@ -360,5 +360,6 @@ export default {
   public_retrying: '重試中',
   public_next_retry_time: '下次重試時間',
   public_data_capture: '數據抓取',
+  public_keywords: '關鍵字',
   public_data_capture_keywords_ph: '請輸入數據關鍵字進行抓取'
 }

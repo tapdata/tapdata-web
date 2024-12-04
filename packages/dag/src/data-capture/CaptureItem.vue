@@ -42,6 +42,7 @@ import 'vue-json-pretty/lib/styles.css'
 import { VEmpty, IconButton } from '@tap/component'
 import { copyToClipboard } from '@tap/shared'
 import { defineComponent } from '@vue/composition-api'
+import i18n from '@tap/i18n'
 
 export default defineComponent({
   name: 'CaptureItem',
@@ -55,7 +56,7 @@ export default defineComponent({
   setup(props, { root }) {
     const copy = async data => {
       await copyToClipboard(JSON.stringify(data, null, 2))
-      root.$message.success('复制成功')
+      root.$message.success(i18n.t('public_message_copy_success'))
     }
 
     return { copy }
