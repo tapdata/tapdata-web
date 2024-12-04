@@ -23,7 +23,7 @@
 
           <ElInput
             v-if="item.supportStreamOffset && item.isStreamOffset"
-            v-model="item.streamOffset"
+            v-model="item.streamOffsetString"
             :disabled="disabled"
           />
           <ElDatePicker

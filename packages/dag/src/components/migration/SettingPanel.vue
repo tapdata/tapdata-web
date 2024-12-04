@@ -1326,13 +1326,15 @@ export default observer({
           timeZone,
           pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
           dateTime: '',
+          streamOffsetString: '',
           isStreamOffset: false
         }
         if (old && !item.hiddenPointType) {
           Object.assign(point, {
             pointType: old.pointType,
             dateTime: old.dateTime,
-            isStreamOffset: old.isStreamOffset
+            isStreamOffset: old.isStreamOffset,
+            streamOffsetString: old.streamOffsetString
           })
         }
         return point
