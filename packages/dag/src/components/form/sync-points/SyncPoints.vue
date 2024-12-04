@@ -18,11 +18,11 @@
           >
             <ElOption :label="$t('public_time_user_specified_time')" value="localTZ" />
             <ElOption :label="$t('public_time_current')" value="current" />
-            <ElOption v-if="item.supportStreamOffset" :label="$t('packages_dag_stream_offset')" :value="true" />
+            <ElOption v-if="supportStreamOffsetNode[item.nodeId]" :label="$t('packages_dag_stream_offset')" :value="true" />
           </ElSelect>
 
           <ElInput
-            v-if="item.supportStreamOffset && item.isStreamOffset"
+            v-if="supportStreamOffsetNode[item.nodeId] && item.isStreamOffset"
             v-model="item.streamOffsetString"
             :disabled="disabled"
           />
@@ -70,6 +70,14 @@ export default observer({
   computed: {
     items() {
       return this.value?.filter(item => !!item.nodeId) || []
+    },
+    supportStreamOffsetNode() {
+      return this.$store.getters['dataflow/allNodes']
+        .filter(node => node.$outputs.length && !node.$inputs.length)
+        .reduce((map, item) => {
+          map[item.id] = item?.attrs.capabilities.some(item => item.id === 'get_stream_offset_function')
+          return map
+        }, {})
     }
   },
   methods: {
