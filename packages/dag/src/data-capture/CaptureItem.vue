@@ -19,6 +19,7 @@
 
         <div class="node-card bg-white overflow-auto">
           <vue-json-pretty
+            class="fs-8"
             show-icon
             :data="data[node.id].data"
             :showLine="false"

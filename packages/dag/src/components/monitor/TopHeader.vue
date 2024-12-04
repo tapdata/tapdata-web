@@ -156,6 +156,7 @@
 
     <DataCaptureDebug
       :visible="openDebug"
+      :task-id="dataflow.id"
       @update:visible="openDebug = $event"
       @start="$emit('debug-start')"
     ></DataCaptureDebug>

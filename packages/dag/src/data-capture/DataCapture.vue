@@ -28,10 +28,25 @@
     </header>
 
     <section class="layout-wrap position-relative font-color-light p-4 overflow-auto">
-      <el-collapse v-if="list.length" accordion class="flex flex-column gap-4 data-capture-collapse">
-        <el-collapse-item v-for="item in list" :key="item.id" class="rounded-lg overflow-hidden bg-white">
-          <template #title>
-            <div class="p-2">
+      <div class="mb-4 text-center">
+        <el-input v-model="keyword" placeholder="请输入关键字" style="width: 300px">
+          <template #prefix>
+            <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
+          </template>
+        </el-input>
+      </div>
+      <div v-if="list.length" class="flex flex-column gap-4 data-capture-collapse">
+        <div
+          v-for="item in list"
+          :name="item.id"
+          :key="item.id"
+          class="rounded-lg overflow-hidden bg-white collapse-item"
+        >
+          <div class="p-2">
+            <div
+              class="p-2 collapse-item-header flex align-center gap-4 rounded-lg cursor-pointer"
+              @click="toggleCollapse(item.id)"
+            >
               <el-descriptions
                 size="medium"
                 :column="4"
@@ -46,11 +61,23 @@
                   item.originalData
                 }}</el-descriptions-item>
               </el-descriptions>
+
+              <i
+                class="el-collapse-item__arrow el-icon-arrow-right fs-6 m-0"
+                :class="{ 'is-active': activeName === item.id }"
+              ></i>
             </div>
-          </template>
-          <div class="p-2 pt-2"><CaptureItem :data="item.data" :nodes="genNodes(item.data)"></CaptureItem></div>
-        </el-collapse-item>
-      </el-collapse>
+          </div>
+
+          <el-collapse-transition>
+            <div v-if="activeName === item.id">
+              <div class="p-2">
+                <CaptureItem :data="item.data" :nodes="item.nodes"></CaptureItem>
+              </div>
+            </div>
+          </el-collapse-transition>
+        </div>
+      </div>
 
       <v-empty v-else-if="isCancel && !list.length"></v-empty>
 
@@ -66,7 +93,18 @@
 <script>
 import { makeStatusAndDisabled } from '@tap/business'
 import { databaseTypesApi, dataPermissionApi, sharedCacheApi, taskApi } from '@tap/api'
-import { defineComponent, ref, computed, watch, provide, onMounted, reactive, set, del } from '@vue/composition-api'
+import {
+  defineComponent,
+  ref,
+  computed,
+  watch,
+  provide,
+  onMounted,
+  onBeforeUnmount,
+  reactive,
+  set,
+  del
+} from '@vue/composition-api'
 import { TextEditable, VIcon, VEmpty, VDivider } from '@tap/component'
 import { TaskStatus } from '@tap/business'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
@@ -84,16 +122,32 @@ import { setPageTitle } from '@tap/shared'
 import { useRequest } from 'vue-request'
 import { onUnmounted } from '@vue/composition-api'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+import axios from 'axios'
+import Cookie from '@tap/shared/src/cookie'
+import VirtualList from 'vue-virtual-scroll-list'
 
 export default defineComponent({
   name: 'DataCapture',
-  components: { VDivider, VEmpty, CaptureItem, VIcon, TaskStatus, TextEditable, DynamicScroller, DynamicScrollerItem },
+  components: {
+    VDivider,
+    VEmpty,
+    CaptureItem,
+    VIcon,
+    TaskStatus,
+    TextEditable,
+    DynamicScroller,
+    DynamicScrollerItem,
+    VirtualList
+  },
   mixins: [syncTaskAgent],
 
   setup(props, { root }) {
     // Data
     const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
-    const dataflow = ref({})
+    const dataflow = ref({
+      status: ''
+    })
+    const activeName = ref('')
     const name = ref('')
     const list = ref([])
     const nodes = ref([])
@@ -191,6 +245,8 @@ export default defineComponent({
             })
           }
 
+          item.nodes = genNodes(item.data)
+
           return item
         })
         .filter(item => {
@@ -252,7 +308,7 @@ export default defineComponent({
         // taskId 任务id
         // maxRecords 最多行数
         // maxSeconds 最长时间
-        args: [dataflow.value.id, null, 3600],
+        args: [dataflow.value.id, null, 60],
         returnClass: 'java.lang.Boolean',
         // 指定 FE 执行：processId_${process_id}，process_id 使用 Task.agentId
         subscribeIds: [`processId_${dataflow.value.agentId}`]
@@ -498,6 +554,29 @@ export default defineComponent({
       return []
     }
 
+    const closeCapture = () => {
+      // 使用 sendBeacon 发送请求
+      const formData = new FormData()
+      formData.append('className', 'CatchDataService')
+      formData.append('method', 'closeCatchData')
+      formData.append('args', JSON.stringify([dataflow.value.id]))
+      formData.append('subscribeIds', JSON.stringify([`processId_${dataflow.value.agentId}`]))
+
+      const body = {
+        className: 'CatchDataService',
+        method: 'closeCatchData',
+        args: [dataflow.value.id],
+        subscribeIds: [`processId_${dataflow.value.agentId}`]
+      }
+      const headers = {
+        type: 'application/json'
+      }
+      const blob = new Blob([JSON.stringify(body)], headers)
+      const accessToken = Cookie.get('access_token')
+
+      return navigator.sendBeacon(`${axios.defaults.baseURL}api/proxy/call?access_token=${accessToken}`, blob)
+    }
+
     const { run, cancel, loading } = useRequest(loadData, {
       manual: true,
       pollingInterval: 5000,
@@ -509,8 +588,20 @@ export default defineComponent({
       }
     })
 
+    const handleBeforeUnload = event => {
+      closeCapture()
+      event.preventDefault()
+      event.returnValue = ''
+    }
+
+    const toggleCollapse = id => {
+      activeName.value = activeName.value === id ? '' : id
+    }
+
     // Lifecycle
     onMounted(async () => {
+      window.addEventListener('beforeunload', handleBeforeUnload)
+
       await getTaskPermissions()
       await initNodeType()
       await initView(true)
@@ -519,10 +610,13 @@ export default defineComponent({
       run()
     })
 
-    onUnmounted(() => {
+    onBeforeUnmount(() => {
+      // 移除事件监听
+      window.removeEventListener('beforeunload', handleBeforeUnload)
       stopLoopTask()
       root.$ws.off('editFlush', handleEditFlush)
       cancel()
+      closeCapture()
     })
 
     return {
@@ -531,16 +625,21 @@ export default defineComponent({
       loading,
       run,
       name,
+      activeName,
       dataflow,
       list,
       nodes,
       syncType,
+      NodeMap,
       lastStartDate,
       startLoopTask,
       stopLoopTask,
       genNodes,
       onNameInputChange,
-      handlePageReturn
+      handlePageReturn,
+      toggleCollapse,
+
+      CaptureItem
     }
   }
 })
@@ -572,6 +671,20 @@ $sidebarBg: #fff;
   &:not(.disabled):hover {
     color: map-get($color, primary);
     background: $hoverBg;
+  }
+}
+
+.data-capture-collapse {
+  .collapse-item-header {
+    transition: background 0.3s;
+
+    &:hover {
+      background: #f4f4f5;
+    }
+
+    ::v-deep .el-descriptions__body {
+      background: transparent;
+    }
   }
 }
 </style>
