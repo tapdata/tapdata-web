@@ -29,7 +29,7 @@
 
     <section class="layout-wrap position-relative font-color-light p-4 overflow-auto">
       <div class="mb-4 text-center">
-        <el-input v-model="keyword" placeholder="请输入关键字" style="width: 300px">
+        <el-input v-model="keyword" placeholder="请输入关键字" style="width: 300px" clearable @input="onInput">
           <template #prefix>
             <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
           </template>
@@ -147,6 +147,7 @@ export default defineComponent({
     const dataflow = ref({
       status: ''
     })
+    const keyword = ref('')
     const activeName = ref('')
     const name = ref('')
     const list = ref([])
@@ -206,7 +207,7 @@ export default defineComponent({
         className: 'CatchDataService',
         method: 'getCatchData',
         // taskId
-        args: [dataflow.value.id, 10, null],
+        args: [dataflow.value.id, 10, keyword.value || null],
         subscribeIds: [`processId_${dataflow.value.agentId}`]
       })
       // type: '', //事件类型 type=300: insert，type=302 update, type=301 delete
@@ -580,6 +581,7 @@ export default defineComponent({
     const { run, cancel, loading } = useRequest(loadData, {
       manual: true,
       pollingInterval: 5000,
+      debounceInterval: 200,
       onAfter: () => {
         if (list.value.length > 50) {
           isCancel.value = true
@@ -596,6 +598,12 @@ export default defineComponent({
 
     const toggleCollapse = id => {
       activeName.value = activeName.value === id ? '' : id
+    }
+
+    const onInput = () => {
+      activeName.value = ''
+      list.value = []
+      run()
     }
 
     // Lifecycle
@@ -620,6 +628,7 @@ export default defineComponent({
     })
 
     return {
+      keyword,
       isCancel,
       hasMore,
       loading,
@@ -638,8 +647,7 @@ export default defineComponent({
       onNameInputChange,
       handlePageReturn,
       toggleCollapse,
-
-      CaptureItem
+      onInput,
     }
   }
 })
