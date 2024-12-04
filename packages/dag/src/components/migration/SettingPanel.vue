@@ -1317,17 +1317,22 @@ export default observer({
           }, {})
         : {}
       const syncPoints = this.sourceNodes.map(item => {
+        const node = this.scope.findNodeById(item.nodeId)
+        const supportStreamOffset = node?.attrs.capabilities.some(item => item.id === 'get_stream_offset_function')
         const old = oldPointsMap[item.nodeId]
         const point = {
           ...item,
+          supportStreamOffset,
           timeZone,
           pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
-          dateTime: ''
+          dateTime: '',
+          isStreamOffset: false
         }
         if (old && !item.hiddenPointType) {
           Object.assign(point, {
             pointType: old.pointType,
-            dateTime: old.dateTime
+            dateTime: old.dateTime,
+            isStreamOffset: old.isStreamOffset
           })
         }
         return point

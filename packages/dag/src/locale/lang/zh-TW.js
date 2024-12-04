@@ -762,5 +762,6 @@ export default {
   packages_dag_counting_num_of_rows_table: '正在統計表行數',
   packages_dag_noPkSyncMode: '無主鍵表同步方式',
   packages_dag_noPkSyncMode_ADD_HASH: '新增哈希列',
-  packages_dag_noPkSyncMode_ALL_COLUMNS: '全字段索引'
+  packages_dag_noPkSyncMode_ALL_COLUMNS: '全字段索引',
+  packages_dag_stream_offset: '精確位置'
 }
