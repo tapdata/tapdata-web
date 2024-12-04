@@ -87,6 +87,10 @@
           <VIcon size="16">list</VIcon>
         </button>
       </ElTooltip>
+      <VDivider class="mx-3" vertical></VDivider>
+      <button class="icon-btn" @click="openDebug = true">
+        <VIcon size="18">bug-outlined</VIcon>
+      </button>
     </div>
     <div class="flex-grow-1"></div>
     <div class="flex align-center ml-2">
@@ -149,11 +153,18 @@
         </template>
       </template>
     </div>
+
+    <DataCaptureDebug
+      :visible="openDebug"
+      @update:visible="openDebug = $event"
+      @start="$emit('debug-start')"
+    ></DataCaptureDebug>
   </header>
 </template>
 
 <script>
 import i18n from '@tap/i18n'
+import { taskApi } from '@tap/api'
 
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import dayjs from 'dayjs'
@@ -162,6 +173,7 @@ import focusSelect from '@tap/component/src/directives/focusSelect'
 import { TextEditable, VIcon, VDivider, OverflowTooltip } from '@tap/component'
 import { TaskStatus } from '@tap/business'
 import syncTaskAgent from '@tap/business/src/mixins/syncTaskAgent'
+import DataCaptureDebug from '../DataCaptureDebug.vue'
 
 export default {
   name: 'TopHeader',
@@ -190,7 +202,7 @@ export default {
 
   mixins: [syncTaskAgent],
 
-  components: { VIcon, TaskStatus, VDivider, OverflowTooltip, TextEditable },
+  components: { DataCaptureDebug, VIcon, TaskStatus, VDivider, OverflowTooltip, TextEditable },
 
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
@@ -211,7 +223,8 @@ export default {
         initial_sync: i18n.t('public_task_type_initial_sync'),
         cdc: i18n.t('public_task_type_cdc'),
         'initial_sync+cdc': i18n.t('public_task_type_initial_sync_and_cdc')
-      }
+      },
+      openDebug: false
     }
   },
 

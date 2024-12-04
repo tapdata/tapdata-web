@@ -359,5 +359,7 @@ export default {
   public_test_and_continue: '测试连接，继续下一步',
   public_task_count: '{val} 个任务',
   public_retrying: '重试中',
-  public_next_retry_time: '下次重试时间'
+  public_next_retry_time: '下次重试时间',
+  public_data_capture: '数据抓取',
+  public_data_capture_keywords_ph: '请输入数据关键字进行抓取'
 }

@@ -40,6 +40,8 @@
             @click="handleDownloadAnalysis"
             ><VIcon class="mr-1">download</VIcon>{{ $t('packages_business_download_analysis_report') }}</ElButton
           >
+
+          <el-button class="min-w-0 ml-0" type="primary" plain size="mini" @click="openDataCapture">数据抓取</el-button>
         </div>
       </div>
       <div class="level-line mb-2 flex">
@@ -1089,6 +1091,16 @@ export default {
     handleCopyStack(stack) {
       copyToClipboard(stack)
       this.$message.success(this.$t('public_message_copy_success'))
+    },
+
+    openDataCapture() {
+      window.open(
+        this.$router.resolve({
+          name: 'DataCapture',
+          params: { id: this.dataflow.id }
+        }).href,
+        `DataCapture-${this.dataflow.id}`
+      )
     }
   }
 }

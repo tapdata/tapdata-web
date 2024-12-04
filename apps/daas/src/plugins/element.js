@@ -69,7 +69,9 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   Empty,
-  Result
+  Result,
+  Descriptions,
+  DescriptionsItem
 } from 'element-ui'
 import { getCell, getColumnByCell } from 'element-ui/packages/table/src/util'
 import { getStyle, hasClass } from 'element-ui/src/utils/dom'
@@ -257,6 +259,8 @@ Vue.component(Empty.name, Empty)
 Vue.use(Loading.directive)
 Vue.use(InfiniteScroll)
 Vue.use(Result)
+Vue.use(Descriptions)
+Vue.use(DescriptionsItem)
 
 const showMessage = Symbol('showMessage')
 

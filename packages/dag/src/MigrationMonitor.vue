@@ -23,7 +23,8 @@
       @showVerify="handleShowVerify"
       @showBottomPanel="handleShowBottomPanel"
       @locate-node="handleLocateNode"
-      @start="handleStart"
+      @start="handleStart(false, false)"
+      @debug-start="handleStart(false, true)"
       @stop="handleStop"
       @forceStop="handleForceStop"
       @reset="handleReset"
@@ -728,7 +729,7 @@ export default {
       })
     },
 
-    async handleStart(skip) {
+    async handleStart(skip, isDebug) {
       const hasError = !skip && (await this.$refs.skipError.checkError(this.dataflow))
       if (hasError) return
 
@@ -745,6 +746,8 @@ export default {
         await this.openDataflow(this.dataflow?.id)
         this.toggleConsole(false)
         this.handleBottomPanel(true)
+
+        isDebug && this.openDataCapture()
       } catch (e) {
         this.handleError(e)
         this.isSaving = false

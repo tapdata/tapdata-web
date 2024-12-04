@@ -363,5 +363,7 @@ export default {
   menu_tour_create_task: 'Click Here to Try Creating Advanced Replication and Synchronization Tasks',
   public_task_count: '{val} tasks',
   public_retrying: 'Retrying',
-  public_next_retry_time: 'next retry scheduled for'
+  public_next_retry_time: 'next retry scheduled for',
+  public_data_capture: 'Data Capture',
+  public_data_capture_keywords_ph: 'Please enter keywords to capture data'
 }

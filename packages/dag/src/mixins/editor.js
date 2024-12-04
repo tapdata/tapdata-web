@@ -2650,6 +2650,16 @@ export default {
       const source = this.allNodes.find(n => !n.$outputs.length)
       const target = this.quickAddNode(source, item)
       this.$refs.paperScroller.centerNode(target)
+    },
+
+    openDataCapture() {
+      window.open(
+        this.$router.resolve({
+          name: 'DataCapture',
+          params: { id: this.dataflow.id }
+        }).href,
+        `DataCapture-${this.dataflow.id}`
+      )
     }
   }
 }

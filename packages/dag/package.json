@@ -28,6 +28,8 @@
     "jsplumb": "^2.15.6",
     "mousetrap": "^1.6.5",
     "resize-observer-polyfill": "^1.5.1",
+    "vue-json-pretty": "^1.9.5",
+    "vue-request": "^2.0.4",
     "vue-virtual-scroller": "^1.1.2",
     "vuex": "^3.6.2"
   }
