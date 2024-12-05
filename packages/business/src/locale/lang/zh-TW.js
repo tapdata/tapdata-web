@@ -1246,5 +1246,8 @@ export default {
   packages_business_solution: '解決方案',
   packages_business_error_details: '錯誤詳情',
   packages_business_instance_info: '連接唯一標識',
-  packages_business_warning_details: '警告詳情'
+  packages_business_warning_details: '警告詳情',
+  packages_business_custom_collate: '自定義排序',
+  packages_business_please_select_field: '請選擇字段',
+  packages_business_please_input_charset: '請輸入字符集'
 }

@@ -366,5 +366,6 @@ export default {
   public_next_retry_time: 'next retry scheduled for',
   public_data_capture: 'Data Capture',
   public_keywords: 'Keywords',
-  public_data_capture_keywords_ph: 'Please enter keywords to capture data'
+  public_data_capture_keywords_ph: 'Please enter keywords to capture data',
+  public_view_docs: 'View Docs'
 }
