@@ -135,6 +135,7 @@
                     :options="item.source.fields"
                     :key="`item-source-sortColumn` + item.id"
                     class="flex-1"
+                    @focus="handleFocus(item.source)"
                   ></FieldSelectWrap>
                   <!-- <MultiSelection
                   v-model="item.source.sortColumn"
@@ -151,6 +152,7 @@
                     :options="item.source.fields"
                     :key="`item-target-sortColumn` + item.id"
                     class="flex-1"
+                    @focus="handleFocus(item.target)"
                   ></FieldSelectWrap>
                   <!-- <MultiSelection
                   v-model="item.target.sortColumn"
@@ -163,9 +165,16 @@
                 </div>
 
                 <div class="setting-item mt-4">
-                  <label class="item-label">自定义排序: </label>
+                  <label class="item-label">{{ $t('packages_business_custom_collate') }}: </label>
                   <div class="flex-1">
-                    <ElSwitch v-model="item.source.enableCustomCollate" />
+                    <div class="flex gap-3 align-center">
+                      <ElSwitch v-model="item.source.enableCustomCollate" />
+
+                      <ElButton type="text" @click="schemaScope.openApiDrawer('inspect-collate')">
+                        <VIcon>question-circle</VIcon>
+                        {{ $t('public_view_docs') }}
+                      </ElButton>
+                    </div>
 
                     <div v-if="item.source.enableCustomCollate">
                       <CollateMap
@@ -177,7 +186,15 @@
                   </div>
                   <span class="item-icon"></span>
                   <div class="flex-1">
-                    <ElSwitch v-model="item.target.enableCustomCollate" />
+                    <div class="flex gap-3 align-center">
+                      <ElSwitch v-model="item.target.enableCustomCollate" />
+
+                      <ElButton type="text" @click="schemaScope.openApiDrawer('inspect-collate')">
+                        <VIcon>question-circle</VIcon>
+                        {{ $t('public_view_docs') }}
+                      </ElButton>
+                    </div>
+
                     <div v-if="item.target.enableCustomCollate">
                       <CollateMap
                         v-model="item.target.collate"
@@ -285,13 +302,13 @@
     </ElDialog>
     <FieldDialog ref="fieldDialog" @save="handleChangeFields"></FieldDialog>
 
-    <DocsDrawer :visible="showDoc" @update:visible="showDoc = $event"></DocsDrawer>
+    <DocsDrawer :visible="showDoc" :path="docPath" @update:visible="showDoc = $event"></DocsDrawer>
   </div>
 </template>
 
 <script>
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-import { merge, cloneDeep, uniqBy, isEmpty, debounce } from 'lodash'
+import { merge, cloneDeep, uniqBy, isEmpty, debounce, isString } from 'lodash'
 import { action } from '@formily/reactive'
 
 import i18n from '@tap/i18n'
@@ -309,6 +326,7 @@ import FieldDialog from './FieldDialog'
 import DocsDrawer from './DocsDrawer.vue'
 import FieldSelectWrap from './FieldSelectWrap.vue'
 import CollateMap from './CollateMap.vue'
+
 export default {
   name: 'ConditionBox',
 
@@ -352,6 +370,7 @@ export default {
   data() {
     return {
       showDoc: false,
+      docPath: '',
       list: [],
       jointErrorMessage: '',
       fieldsMap: {},
@@ -418,13 +437,14 @@ export default {
             if (result.length) {
               item.fields = result
             }
-            console.log('loadTableFieldList', fields)
+
             return result
           } catch (e) {
             return []
           }
         },
-        openApiDrawer: () => {
+        openApiDrawer: path => {
+          this.docPath = isString(path) ? path : ''
           this.showDoc = true
         }
       },
@@ -1110,7 +1130,9 @@ export default {
                 fieldType,
                 data_type,
                 primaryKey,
-                unique
+                unique,
+                type: t.data_type,
+                tapType: JSON.stringify(t.tapType)
               }
             })
           )
@@ -2010,7 +2032,9 @@ function validate(sourceRow){
               primary_key_position: t.primaryKey,
               data_type: t.dataType,
               primaryKey: t.primaryKey,
-              unique: t.unique
+              unique: t.unique,
+              type: t.data_type,
+              tapType: JSON.stringify(t.tapType)
             }
           })
         })

@@ -1,5 +1,12 @@
 <template>
-  <FieldSelect v-model="selectFields" filterable multiple :options="options" :placeholder="placeholder" />
+  <FieldSelect
+    v-model="selectFields"
+    filterable
+    multiple
+    :options="options"
+    :placeholder="placeholder"
+    @focus="handleFocus"
+  />
 </template>
 
 <script>
@@ -28,8 +35,13 @@ export default defineComponent({
       }
     })
 
+    const handleFocus = () => {
+      emit('focus')
+    }
+
     return {
-      selectFields
+      selectFields,
+      handleFocus
     }
   }
 })
