@@ -1316,5 +1316,8 @@ export default {
   packages_business_solution: 'Solution',
   packages_business_error_details: 'Error Details',
   packages_business_instance_info: 'Unique Identifier',
-  packages_business_warning_details: 'Warning Details'
+  packages_business_warning_details: 'Warning Details',
+  packages_business_custom_collate: 'Custom Collate',
+  packages_business_please_select_field: 'Please select a field',
+  packages_business_please_input_charset: 'Please input charset'
 }

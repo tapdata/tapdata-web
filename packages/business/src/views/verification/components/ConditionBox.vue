@@ -127,9 +127,17 @@
                   label-width="130"
                 />
               </div>
-              <div v-if="!isCountOrHash" class="setting-item mt-4">
-                <label class="item-label">{{ $t('packages_business_verification_indexField') }}: </label>
-                <MultiSelection
+              <template v-if="!isCountOrHash">
+                <div class="setting-item mt-4">
+                  <label class="item-label">{{ $t('packages_business_verification_indexField') }}: </label>
+                  <FieldSelectWrap
+                    v-model="item.source.sortColumn"
+                    :options="item.source.fields"
+                    :key="`item-source-sortColumn` + item.id"
+                    class="flex-1"
+                    @focus="handleFocus(item.source)"
+                  ></FieldSelectWrap>
+                  <!-- <MultiSelection
                   v-model="item.source.sortColumn"
                   class="item-select"
                   :class="{ 'empty-data': !item.source.sortColumn }"
@@ -137,17 +145,75 @@
                   :id="'item-source-' + index"
                   :key="`item-source-sortColumn` + item.id"
                   @focus="handleFocus(item.source)"
-                ></MultiSelection>
-                <span class="item-icon"></span>
-                <MultiSelection
+                ></MultiSelection> -->
+                  <span class="item-icon"></span>
+                  <FieldSelectWrap
+                    v-model="item.target.sortColumn"
+                    :options="item.source.fields"
+                    :key="`item-target-sortColumn` + item.id"
+                    class="flex-1"
+                    @focus="handleFocus(item.target)"
+                  ></FieldSelectWrap>
+                  <!-- <MultiSelection
                   v-model="item.target.sortColumn"
                   class="item-select"
                   :class="{ 'empty-data': !item.target.sortColumn }"
                   :options="item.target.fields"
                   :key="`item-target-sortColumn` + item.id"
                   @focus="handleFocus(item.target)"
-                ></MultiSelection>
-              </div>
+                ></MultiSelection> -->
+                </div>
+
+                <div class="setting-item mt-4">
+                  <label class="item-label">{{ $t('packages_business_custom_collate') }}: </label>
+                  <div class="flex-1">
+                    <div class="flex gap-3 align-center">
+                      <ElSwitch v-model="item.source.enableCustomCollate" />
+
+                      <ElButton type="text" @click="schemaScope.openApiDrawer('inspect-collate')">
+                        <VIcon>question-circle</VIcon>
+                        {{ $t('public_view_docs') }}
+                      </ElButton>
+                    </div>
+
+                    <div v-if="item.source.enableCustomCollate">
+                      <CollateMap
+                        v-model="item.source.collate"
+                        :sort-column="item.source.sortColumn"
+                        :fields="item.source.fields"
+                      />
+                    </div>
+                  </div>
+                  <span class="item-icon"></span>
+                  <div class="flex-1">
+                    <div class="flex gap-3 align-center">
+                      <ElSwitch v-model="item.target.enableCustomCollate" />
+
+                      <ElButton type="text" @click="schemaScope.openApiDrawer('inspect-collate')">
+                        <VIcon>question-circle</VIcon>
+                        {{ $t('public_view_docs') }}
+                      </ElButton>
+                    </div>
+
+                    <div v-if="item.target.enableCustomCollate">
+                      <CollateMap
+                        v-model="item.target.collate"
+                        :sort-column="item.target.sortColumn"
+                        :fields="item.target.fields"
+                      />
+                    </div>
+                  </div>
+                  <!-- <MultiSelection
+                  v-model="item.target.sortColumn"
+                  class="item-select"
+                  :class="{ 'empty-data': !item.target.sortColumn }"
+                  :options="item.target.fields"
+                  :key="`item-target-sortColumn` + item.id"
+                  @focus="handleFocus(item.target)"
+                ></MultiSelection> -->
+                </div>
+              </template>
+
               <div v-if="inspectMethod === 'field'" class="setting-item align-items-center mt-4">
                 <label class="item-label">{{ $t('packages_business_components_fieldbox_daijiaoyanmoxing') }}:</label>
                 <ElRadioGroup
@@ -236,13 +302,13 @@
     </ElDialog>
     <FieldDialog ref="fieldDialog" @save="handleChangeFields"></FieldDialog>
 
-    <DocsDrawer :visible="showDoc" @update:visible="showDoc = $event"></DocsDrawer>
+    <DocsDrawer :visible="showDoc" :path="docPath" @update:visible="showDoc = $event"></DocsDrawer>
   </div>
 </template>
 
 <script>
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-import { merge, cloneDeep, uniqBy, isEmpty, debounce } from 'lodash'
+import { merge, cloneDeep, uniqBy, isEmpty, debounce, isString } from 'lodash'
 import { action } from '@formily/reactive'
 
 import i18n from '@tap/i18n'
@@ -258,6 +324,8 @@ import { inspectMethod as inspectMethodMap } from '../const'
 import MultiSelection from '../MultiSelection'
 import FieldDialog from './FieldDialog'
 import DocsDrawer from './DocsDrawer.vue'
+import FieldSelectWrap from './FieldSelectWrap.vue'
+import CollateMap from './CollateMap.vue'
 
 export default {
   name: 'ConditionBox',
@@ -276,7 +344,9 @@ export default {
     MultiSelection,
     FieldDialog,
     SchemaToForm,
-    HighlightCode
+    HighlightCode,
+    FieldSelectWrap,
+    CollateMap
   },
 
   props: {
@@ -300,6 +370,7 @@ export default {
   data() {
     return {
       showDoc: false,
+      docPath: '',
       list: [],
       jointErrorMessage: '',
       fieldsMap: {},
@@ -347,29 +418,33 @@ export default {
               const data = await metadataInstancesApi.tapTables({
                 filter: JSON.stringify(params)
               })
-              fields = Object.values(data.items[0]?.nameFieldMap || {})
+              fields = Object.values(data.items[0]?.nameFieldMap || {}).map(t => {
+                return {
+                  id: t.id,
+                  label: t.fieldName || t.field_name,
+                  value: t.fieldName || t.field_name,
+                  field_name: t.fieldName || t.field_name,
+                  primary_key_position: t.primaryKey,
+                  data_type: t.dataType || t.data_type,
+                  primaryKey: t.primaryKey,
+                  unique: t.unique,
+                  type: item.data_type,
+                  tapType: JSON.stringify(t.tapType)
+                }
+              })
             }
-            const result = fields.map(t => {
-              return {
-                id: t.id,
-                label: t.fieldName || t.field_name,
-                value: t.fieldName || t.field_name,
-                field_name: t.fieldName || t.field_name,
-                primary_key_position: t.primaryKey,
-                data_type: t.dataType || t.data_type,
-                primaryKey: t.primaryKey,
-                unique: t.unique
-              }
-            })
+            const result = fields
             if (result.length) {
               item.fields = result
             }
+
             return result
           } catch (e) {
             return []
           }
         },
-        openApiDrawer: () => {
+        openApiDrawer: path => {
+          this.docPath = isString(path) ? path : ''
           this.showDoc = true
         }
       },
@@ -1055,7 +1130,9 @@ export default {
                 fieldType,
                 data_type,
                 primaryKey,
-                unique
+                unique,
+                type: t.data_type,
+                tapType: JSON.stringify(t.tapType)
               }
             })
           )
@@ -1955,7 +2032,9 @@ function validate(sourceRow){
               primary_key_position: t.primaryKey,
               data_type: t.dataType,
               primaryKey: t.primaryKey,
-              unique: t.unique
+              unique: t.unique,
+              type: t.data_type,
+              tapType: JSON.stringify(t.tapType)
             }
           })
         })
