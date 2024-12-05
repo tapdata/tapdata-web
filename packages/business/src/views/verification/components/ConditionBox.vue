@@ -168,7 +168,10 @@
                   <label class="item-label">{{ $t('packages_business_custom_collate') }}: </label>
                   <div class="flex-1">
                     <div class="flex gap-3 align-center">
-                      <ElSwitch v-model="item.source.enableCustomCollate" />
+                      <ElSwitch
+                        v-model="item.source.enableCustomCollate"
+                        @change="toggleCollate(item.source, $event)"
+                      />
 
                       <ElButton type="text" @click="schemaScope.openApiDrawer('inspect-collate')">
                         <VIcon>question-circle</VIcon>
@@ -187,7 +190,10 @@
                   <span class="item-icon"></span>
                   <div class="flex-1">
                     <div class="flex gap-3 align-center">
-                      <ElSwitch v-model="item.target.enableCustomCollate" />
+                      <ElSwitch
+                        v-model="item.target.enableCustomCollate"
+                        @change="toggleCollate(item.target, $event)"
+                      />
 
                       <ElButton type="text" @click="schemaScope.openApiDrawer('inspect-collate')">
                         <VIcon>question-circle</VIcon>
@@ -428,7 +434,7 @@ export default {
                   data_type: t.dataType || t.data_type,
                   primaryKey: t.primaryKey,
                   unique: t.unique,
-                  type: item.data_type,
+                  type: t.dataType || t.data_type,
                   tapType: JSON.stringify(t.tapType)
                 }
               })
@@ -2033,7 +2039,7 @@ function validate(sourceRow){
               data_type: t.dataType,
               primaryKey: t.primaryKey,
               unique: t.unique,
-              type: t.data_type,
+              type: t.dataType,
               tapType: JSON.stringify(t.tapType)
             }
           })
@@ -2078,6 +2084,24 @@ function validate(sourceRow){
 
     updateAutoAddTableLoading() {
       this.$emit('update:autoAddTableLoading', this.autoAddTableLoading)
+    },
+
+    toggleCollate(item, value) {
+      if (value) {
+        const fields = Object.keys(item.collate || {})
+        if (fields.length || !item.sortColumn) return
+
+        const sortColumn = item.sortColumn.split(',')
+
+        this.$set(
+          item,
+          'collate',
+          sortColumn.reduce((acc, key) => {
+            acc[key] = ''
+            return acc
+          }, {})
+        )
+      }
     }
   }
 }

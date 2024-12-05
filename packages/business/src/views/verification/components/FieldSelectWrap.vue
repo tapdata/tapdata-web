@@ -3,6 +3,8 @@
     v-model="selectFields"
     filterable
     multiple
+    itemLabel="field_name"
+    itemValue="field_name"
     :options="options"
     :placeholder="placeholder"
     @focus="handleFocus"
@@ -38,6 +40,8 @@ export default defineComponent({
     const handleFocus = () => {
       emit('focus')
     }
+
+    console.log('props.options', props.options)
 
     return {
       selectFields,
