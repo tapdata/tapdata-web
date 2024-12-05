@@ -169,7 +169,7 @@
 
                     <div v-if="item.source.enableCustomCollate">
                       <CollateMap
-                        v-model="item.source.collateMap"
+                        v-model="item.source.collate"
                         :sort-column="item.source.sortColumn"
                         :fields="item.source.fields"
                       />
@@ -180,7 +180,7 @@
                     <ElSwitch v-model="item.target.enableCustomCollate" />
                     <div v-if="item.target.enableCustomCollate">
                       <CollateMap
-                        v-model="item.target.collateMap"
+                        v-model="item.target.collate"
                         :sort-column="item.target.sortColumn"
                         :fields="item.target.fields"
                       />
