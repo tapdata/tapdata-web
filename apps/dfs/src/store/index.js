@@ -366,6 +366,13 @@ const store = new Vuex.Store({
       } else {
         let params = {}
 
+        if (!guide.expand) {
+          params.expand = guide.expand = {
+            suggestion: '',
+            version: ''
+          }
+        }
+
         if (tp_vid && !guide.tpVid) {
           params.tpVid = guide.tpVid = tp_vid
         }
