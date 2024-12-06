@@ -60,7 +60,12 @@
                   <div class="flex align-center overflow-hidden">
                     <span class="ellipsis">{{ item.originalData }}</span>
 
-                    <el-button v-if="item.originalData" type="text" class="px-1 py-0.5 font-color-dark" @click="handleCopy(item)">
+                    <el-button
+                      v-if="item.originalData"
+                      type="text"
+                      class="px-1 py-0.5 font-color-dark"
+                      @click="handleCopy(item)"
+                    >
                       <VIcon class="mr-1">copy</VIcon>
                       <span class="">{{ $t('public_button_copy') }}</span>
                     </el-button>
@@ -90,7 +95,7 @@
       <div class="flex justify-content-center px-4 mt-4">
         <el-button v-if="hasMore && isCancel" type="primary" :loading="loading" @click="run">加载更多</el-button>
         <span v-else-if="!isCancel"> <i class="el-icon-loading"></i> 拼命加载中 </span>
-        <span v-else>到底了</span>
+        <span v-else-if="list.length > 10">到底了</span>
       </div>
     </section>
   </section>
@@ -536,12 +541,6 @@ export default defineComponent({
 
     const closeCapture = () => {
       // 使用 sendBeacon 发送请求
-      const formData = new FormData()
-      formData.append('className', 'CatchDataService')
-      formData.append('method', 'closeCatchData')
-      formData.append('args', JSON.stringify([dataflow.value.id]))
-      formData.append('subscribeIds', JSON.stringify([`processId_${dataflow.value.agentId}`]))
-
       const body = {
         className: 'CatchDataService',
         method: 'closeCatchData',
@@ -597,9 +596,13 @@ export default defineComponent({
       await getTaskPermissions()
       await initNodeType()
       await initView(true)
-      await initData(true)
-
-      run()
+      await initData(true).then(run, error => {
+        console.log('error', error)
+        if (error?.data?.code === '8051') {
+          isCancel.value = true
+          hasMore.value = false
+        }
+      })
     })
 
     onBeforeUnmount(() => {

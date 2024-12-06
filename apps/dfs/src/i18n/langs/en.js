@@ -1868,5 +1868,7 @@ export default {
   welcome_demand_collection_1: 'Assess TapData for a project',
   welcome_demand_collection_2: "Explore TapData's data replication and integration capability",
   welcome_demand_collection_3: 'Learn best practices in real time data processing with TapData',
-  welcome_create_task: 'Create Your First Replication Task'
+  welcome_create_task: 'Create Your First Replication Task',
+  agent_version_not_support:
+    'The current version of the Agent does not support this feature. Please upgrade and try again.'
 }

@@ -1694,5 +1694,6 @@ export default {
   menu_tour_instance: '在這裡可以訂閱半托管引擎部署在您本地',
   menu_tour_instance_link: '詳細瞭解半托管引擎',
   menu_tour_connection: '在這裡可以管理和添加您的數據源/目標源',
-  menu_tour_create_task: '點擊這個可以嘗試創建更高級的複製同步任務'
+  menu_tour_create_task: '點擊這個可以嘗試創建更高級的複製同步任務',
+  agent_version_not_support: '當前版本的 Agent 不支持此功能，請升級後重試'
 }

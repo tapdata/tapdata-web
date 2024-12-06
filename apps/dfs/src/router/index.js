@@ -52,6 +52,11 @@ const MigrationMonitorViewer = async () => {
   return MigrationMonitorViewer
 }
 
+const DataCapture = async () => {
+  const { DataCapture } = await import('@tap/dag')
+  return DataCapture
+}
+
 const VerifyDetails = async () => {
   const { VerifyDetails } = await import('@tap/business')
   return VerifyDetails
@@ -732,6 +737,11 @@ const routes = [
       title: 'page_title_run_monitor',
       code: 'Data_SYNC_menu'
     }
+  },
+  {
+    path: '/data-capture/:id',
+    name: 'DataCapture',
+    component: DataCapture
   },
   {
     path: '/sharedMining/monitor/:id',
