@@ -90,10 +90,9 @@
       <VDivider class="mx-3" vertical></VDivider>
       <button
         v-if="buttonShowMap.Start"
-        :disabled="!dataflow.disabledData || dataflow.disabledData.start"
         class="icon-btn"
-        :class="{ disabled: !dataflow.disabledData || dataflow.disabledData.start }"
-        @click="openDebug = true"
+        :class="{ disabled: dataflow.disabledData && dataflow.disabledData.start && dataflow.status !== 'running' }"
+        @click="handleOpenDebug"
       >
         <VIcon size="18">bug-outlined</VIcon>
       </button>
@@ -332,6 +331,15 @@ export default {
         }
       }
       backToList()
+    },
+
+    handleOpenDebug() {
+      if (this.dataflow.status === 'running') {
+        this.$emit('open-capture')
+        return
+      }
+
+      this.openDebug = true
     }
   }
 }

@@ -25,6 +25,7 @@
       @locate-node="handleLocateNode"
       @start="handleStart(false, false)"
       @debug-start="handleStart(false, true)"
+      @open-capture="openDataCapture"
       @stop="handleStop"
       @forceStop="handleForceStop"
       @reset="handleReset"
