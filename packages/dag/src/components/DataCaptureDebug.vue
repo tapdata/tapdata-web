@@ -19,9 +19,7 @@
 
     <template #footer>
       <ElButton @click="close">{{ $t('public_button_cancel') }}</ElButton>
-      <ElButton :disabled="!form.query.trim()" :loading="loading" @click="start" type="primary">{{
-        $t('public_button_start')
-      }}</ElButton>
+      <ElButton :loading="loading" @click="start" type="primary">{{ $t('public_button_start') }}</ElButton>
     </template>
   </ElDialog>
 </template>

@@ -88,14 +88,21 @@
         </button>
       </ElTooltip>
       <VDivider class="mx-3" vertical></VDivider>
-      <button class="icon-btn" @click="openDebug = true">
+      <button
+        v-if="buttonShowMap.Start"
+        :disabled="!dataflow.disabledData || dataflow.disabledData.start"
+        class="icon-btn"
+        :class="{ disabled: !dataflow.disabledData || dataflow.disabledData.start }"
+        @click="openDebug = true"
+      >
         <VIcon size="18">bug-outlined</VIcon>
       </button>
     </div>
     <div class="flex-grow-1"></div>
     <div class="flex align-center ml-2">
       <ElButton v-if="!hideSetting && !hideOperation" class="ml-3" size="medium" @click="$emit('showSettings')">
-        <VIcon class="mr-1">cog-o</VIcon>{{ $t('public_button_setting') }}
+        <VIcon class="mr-1">cog-o</VIcon>
+        {{ $t('public_button_setting') }}
       </ElButton>
       <template v-if="!hideMenus.includes('operation')">
         <ElButton
@@ -105,7 +112,8 @@
           size="medium"
           @click="$emit('edit')"
         >
-          <VIcon class="mr-1">edit-outline</VIcon>{{ $t('public_button_edit') }}
+          <VIcon class="mr-1">edit-outline</VIcon>
+          {{ $t('public_button_edit') }}
         </ElButton>
         <ElButton
           v-if="!(dataflow.disabledData && dataflow.disabledData.reset) && buttonShowMap.Reset"
@@ -357,6 +365,7 @@ $sidebarBg: #fff;
     background-color: map-get($color, primary);
     cursor: pointer;
     font-size: 24px;
+
     &:hover {
       background-color: var(--primary-hover);
     }
@@ -382,6 +391,12 @@ $sidebarBg: #fff;
       color: map-get($color, primary);
       background: $hoverBg;
     }
+
+    &.disabled {
+      opacity: 0.8;
+      pointer-events: none;
+      cursor: not-allowed !important;
+    }
   }
 
   .icon-btn + .icon-btn {
@@ -391,12 +406,14 @@ $sidebarBg: #fff;
   .btn-setting {
     padding: 0;
     $size: $baseHeight;
+
     &:hover {
       .btn-setting-icon {
         background: #e1e1e1;
         color: #606266;
       }
     }
+
     &-icon {
       width: $size;
       height: $size;
@@ -405,6 +422,7 @@ $sidebarBg: #fff;
       border-top-left-radius: $radius;
       border-bottom-left-radius: $radius;
     }
+
     &-text {
       display: inline-block;
       padding: 0 6px;
@@ -456,6 +474,7 @@ $sidebarBg: #fff;
   max-width: 450px;
   max-height: 274px;
 }
+
 .choose-list {
   .choose-item {
     margin-bottom: 2px;
@@ -469,9 +488,11 @@ $sidebarBg: #fff;
       background-color: #edf1f9;
     }
   }
+
   &.auto-width .choose-item {
     min-width: unset;
   }
+
   .kbd-wrap {
     kbd {
       display: inline-block;

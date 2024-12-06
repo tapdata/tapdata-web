@@ -354,10 +354,10 @@ export default {
       keyword: '',
       checkList: [],
       checkItems: [
-        {
+        /*{
           label: 'DEBUG',
           text: 'DEBUG'
-        },
+        },*/
         {
           label: 'INFO',
           text: 'INFO'
