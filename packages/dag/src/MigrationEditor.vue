@@ -21,7 +21,8 @@
       @auto-layout="handleAutoLayout"
       @change-name="handleUpdateName"
       @locate-node="handleLocateNode"
-      @start="handleStart"
+      @start="handleStart()"
+      @debug-start="handleStart(true)"
       @stop="handleStop"
       @forceStop="handleForceStop"
       @reset="handleReset"
@@ -445,7 +446,7 @@ export default {
       return isOk
     },
 
-    async handleStart() {
+    async handleStart(isDebug = false) {
       this.buried('migrationStart')
 
       this.unWatchStatus?.()
@@ -457,6 +458,7 @@ export default {
           } else {
             this.toggleConsole(false)
             this.gotoViewer(false)
+            isDebug && this.openDataCapture()
           }
           // this.unWatchStatus()
         }
@@ -479,7 +481,7 @@ export default {
         this.dataflow.disabledData.stop = true
         this.dataflow.disabledData.reset = true
         // this.gotoViewer()
-        this.beforeStartTask()
+        this.beforeStartTask(isDebug)
         this.buried('taskSubmit', { result: true })
       } else {
         this.buried('taskSubmit', { result: false })

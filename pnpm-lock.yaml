@@ -633,6 +633,12 @@ importers:
       resize-observer-polyfill:
         specifier: ^1.5.1
         version: 1.5.1
+      vue-json-pretty:
+        specifier: ^1.9.5
+        version: 1.9.5
+      vue-request:
+        specifier: ^2.0.4
+        version: 2.0.4(@vue/composition-api@1.7.2)(vue@2.6.14)
       vue-virtual-scroller:
         specifier: ^1.1.2
         version: 1.1.2(vue@2.6.14)
@@ -3732,6 +3738,7 @@ packages:
 
   /anymatch@2.0.0(supports-color@6.1.0):
     resolution: {integrity: sha512-5teOsQWABXHHBFP9y3skS5P3d/WfWXpv3FUpy+LorMrNYaT9pI4oLMQX7jzQ2KklNpGpWHzdCXTDT2Y3XGlZBw==}
+    requiresBuild: true
     dependencies:
       micromatch: 3.1.10(supports-color@6.1.0)
       normalize-path: 2.1.1
@@ -3888,6 +3895,7 @@ packages:
 
   /async-each@1.0.6:
     resolution: {integrity: sha512-c646jH1avxr+aVpndVMeAfYw7wAa6idufrlN3LPA4PmKS0QEGp6PIC9nwz0WQkkvBGAMEki3pFdtxaF39J9vvg==}
+    requiresBuild: true
     dev: true
 
   /async-limiter@1.0.1:
@@ -4106,6 +4114,7 @@ packages:
   /binary-extensions@1.13.1:
     resolution: {integrity: sha512-Un7MIEDdUC5gNpcGDV97op1Ywk748MpHcFTHoYs6qnj1Z3j7I53VG3nwZhKzoBZmbdRNnb6WRdFlwl7tSDuZGw==}
     engines: {node: '>=0.10.0'}
+    requiresBuild: true
     dev: true
 
   /binary-extensions@2.3.0:
@@ -7903,6 +7912,7 @@ packages:
   /is-binary-path@1.0.1:
     resolution: {integrity: sha512-9fRVlXc0uCxEDj1nQzaWONSpbTfx0FmJfzHF7pwlI8DkWGoHBBea4Pg5Ky0ojwwxQmnSifgbKkI06Qv0Ljgj+Q==}
     engines: {node: '>=0.10.0'}
+    requiresBuild: true
     dependencies:
       binary-extensions: 1.13.1
     dev: true
@@ -9339,6 +9349,7 @@ packages:
   /normalize-path@2.1.1:
     resolution: {integrity: sha512-3pKJwH184Xo/lnH6oyP1q2pMd7HcypqqmRs91/6/i2CGtWwIKGCkOOMTm/zXbgTEWHw1uNpNi/igc3ePOYHb6w==}
     engines: {node: '>=0.10.0'}
+    requiresBuild: true
     dependencies:
       remove-trailing-separator: 1.1.0
     dev: true
@@ -10591,6 +10602,7 @@ packages:
   /readdirp@2.2.1(supports-color@6.1.0):
     resolution: {integrity: sha512-1JU/8q+VgFZyxwrJ+SVIOsh+KywWGpds3NTqikiKpDMZWScmAYyKIgqkO+ARvNWJfXeXR1zxz7aHF4u4CyH6vQ==}
     engines: {node: '>=0.10'}
+    requiresBuild: true
     dependencies:
       graceful-fs: 4.2.11
       micromatch: 3.1.10(supports-color@6.1.0)
@@ -10685,6 +10697,7 @@ packages:
 
   /remove-trailing-separator@1.1.0:
     resolution: {integrity: sha512-/hS+Y0u3aOfIETiaiirUFwDBDzmXPvO+jAfKTitUngIPzdKc6Z0LoFjM/CK5PL4C+eKwHohlHAb6H0VFfmmUsw==}
+    requiresBuild: true
     dev: true
 
   /renderkid@2.0.7:
@@ -12321,6 +12334,7 @@ packages:
   /upath@1.2.0:
     resolution: {integrity: sha512-aZwGpamFO61g3OlfT7OQCHqhGnW43ieH9WZeP7QxN/G/jS4jfqUkZxoryvJgVPEcrl5NL/ggHsSmLMHuH64Lhg==}
     engines: {node: '>=4'}
+    requiresBuild: true
     dev: true
 
   /update-browserslist-db@1.0.16(browserslist@4.23.0):
@@ -12634,6 +12648,11 @@ packages:
       vue: 2.6.14
     dev: false
 
+  /vue-json-pretty@1.9.5:
+    resolution: {integrity: sha512-fwbiH/ky/raX1D4MXRZZLFeKm157e9AkumMD7Y+djdLU1Sb0Tp5q2iOPvCnkWNzRpUfxx/zUjONUG+MIWsqx/w==}
+    engines: {node: '>= 10.0.0', npm: '>= 5.0.0'}
+    dev: false
+
   /vue-json-viewer@2.2.22(vue@2.6.14):
     resolution: {integrity: sha512-3oPH5BxoUWva/qp7wNJj+15FBXyi9Yu5VDW4mCWivjHR1pUpMv34fjqqxML7jh2uOqm1S/3Xks5nQ5JjC5+OWw==}
     peerDependencies:
@@ -12760,6 +12779,21 @@ packages:
     dependencies:
       vue: 2.6.14
       vue-class-component: 7.2.6(vue@2.6.14)
+    dev: false
+
+  /vue-request@2.0.4(@vue/composition-api@1.7.2)(vue@2.6.14):
+    resolution: {integrity: sha512-+Tu5rDy6ItF9UdD21Mmbjiq5Pq6NZSN9juH72hNQTMn1whHh4KZPTKWVLK2YS4nzbuEnPs+82G91AA2Fgd93mg==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ~2.6.14
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+    dependencies:
+      '@vue/composition-api': 1.7.2(vue@2.6.14)
+      vue: 2.6.14
+      vue-demi: 0.12.5(@vue/composition-api@1.7.2)(vue@2.6.14)
     dev: false
 
   /vue-resize@0.4.5(vue@2.6.14):

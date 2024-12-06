@@ -357,5 +357,11 @@ export default {
   public_configuration_task: '配置任务',
   public_need_help: '需要帮助？',
   public_test_and_continue: '测试连接，继续下一步',
-  public_task_count: '{val} 个任务'
+  public_task_count: '{val} 个任务',
+  public_retrying: '重试中',
+  public_next_retry_time: '下次重试时间',
+  public_data_capture: '数据抓取',
+  public_keywords: '关键字',
+  public_data_capture_keywords_ph: '请输入数据关键字进行抓取',
+  public_view_docs: '查看文档'
 }

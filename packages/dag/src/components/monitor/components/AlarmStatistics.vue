@@ -23,7 +23,7 @@ export default defineComponent({
           <transition name="el-fade-in-linear">
             <div
               v-show={props.alarmNum.alert}
-              class="alarm-statistic-item align-center cursor-pointer px-4 mb-4"
+              class="alarm-statistic-item align-center cursor-pointer px-4 mb-4 rounded-lg shadow-sm"
               onClick={() => {
                 {
                   emit('showBottomPanel')
@@ -41,7 +41,7 @@ export default defineComponent({
           <transition name="el-fade-in-linear">
             <div
               v-show={props.alarmNum.error}
-              class="alarm-statistic-item align-center cursor-pointer px-4"
+              class="alarm-statistic-item align-center cursor-pointer px-4 rounded-lg shadow-sm"
               onClick={() => {
                 {
                   emit('showBottomPanel')

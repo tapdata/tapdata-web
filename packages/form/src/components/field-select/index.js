@@ -5,6 +5,7 @@ import { PreviewText } from '@formily/element'
 import { VIcon } from '@tap/component'
 import { computed } from '@vue/composition-api'
 import i18n from '@tap/i18n'
+import { isObj } from '@tap/shared'
 
 const DefineFieldSelect = defineComponent({
   props: {
@@ -48,6 +49,7 @@ const DefineFieldSelect = defineComponent({
       return props.options?.map(option => {
         if (option.tapType) option.icon = getIcon(option.tapType)
         if (option.source === 'virtual_hash') option.icon = 'file-hash'
+        return option
       })
     })
 

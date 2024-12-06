@@ -8,7 +8,9 @@
     @update:visible="$emit('update:visible', $event)"
     @open="handleOpen"
   >
-    <GitBook :value="mdContent" class=""></GitBook>
+    <div v-loading="loading">
+      <GitBook :value="mdContent" class=""></GitBook>
+    </div>
   </ElDrawer>
 </template>
 
@@ -18,29 +20,36 @@ import { GitBook } from '@tap/component'
 
 export default {
   props: {
-    visible: Boolean
+    visible: Boolean,
+    path: {
+      type: String,
+      default: 'data-inspect'
+    }
   },
   components: { GitBook },
   data() {
     return {
+      loading: false,
       mdContent: ''
     }
   },
   methods: {
     handleOpen() {
-      if (!this.mdContent) {
-        axios
-          .get(`static/docs/data-inspect/${this.$i18n.locale || 'en'}.md`, {
-            responseType: 'blob',
-            headers: {
-              Accept: 'application/json',
-              'Cache-Control': 'no-cache'
-            }
-          })
-          .then(res => {
-            this.mdContent = res.data
-          })
-      }
+      this.loading = true
+      axios
+        .get(`static/docs/${this.path || 'data-inspect'}/${this.$i18n.locale || 'en'}.md`.toLowerCase(), {
+          responseType: 'blob',
+          headers: {
+            Accept: 'application/json',
+            'Cache-Control': 'no-cache'
+          }
+        })
+        .then(res => {
+          this.mdContent = res.data
+        })
+        .finally(() => {
+          this.loading = false
+        })
     }
   }
 }

@@ -390,7 +390,7 @@ export default {
           this.dialogVisible = true
           break
         case 'help':
-          window.open(`https://docs.tapdata.${this.domain}/`)
+          window.open(`${location.origin}/docs/`)
           break
         case 'question':
           this.isShowCustomerService = !this.isShowCustomerService

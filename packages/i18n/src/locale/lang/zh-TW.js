@@ -356,5 +356,11 @@ export default {
   public_configuration_task: '配置任務',
   public_need_help: '需要幫助？',
   public_test_and_continue: '測試連接，繼續下一步',
-  public_task_count: '{val} 個任務'
+  public_task_count: '{val} 個任務',
+  public_retrying: '重試中',
+  public_next_retry_time: '下次重試時間',
+  public_data_capture: '數據抓取',
+  public_keywords: '關鍵字',
+  public_data_capture_keywords_ph: '請輸入數據關鍵字進行抓取',
+  public_view_docs: '查看文檔'
 }

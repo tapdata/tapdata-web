@@ -156,6 +156,10 @@
           </ElScrollbar>
         </div>
       </ElPopover>
+      <VDivider class="mx-3" vertical inset></VDivider>
+      <button class="icon-btn" @click="openDebug = true">
+        <VIcon size="18">bug-outlined</VIcon>
+      </button>
     </div>
     <!--复制dag查看不显示-->
     <div class="flex align-center flex-grow-1">
@@ -241,6 +245,13 @@
         {{ $t('public_button_start') }}
       </ElButton>
     </div>
+
+    <DataCaptureDebug
+      :task-id="dataflow.id"
+      :visible="openDebug"
+      @update:visible="openDebug = $event"
+      @start="$emit('debug-start')"
+    ></DataCaptureDebug>
   </header>
 </template>
 
@@ -251,6 +262,7 @@ import { VIcon, TextEditable, VDivider, VEmpty, IconButton } from '@tap/componen
 import { TaskStatus } from '@tap/business'
 import focusSelect from '@tap/component/src/directives/focusSelect'
 import { taskApi } from '@tap/api'
+import DataCaptureDebug from './DataCaptureDebug.vue'
 
 export default {
   name: 'TopHeader',
@@ -272,6 +284,7 @@ export default {
   },
 
   components: {
+    DataCaptureDebug,
     TextEditable,
     TaskStatus,
     VDivider,
@@ -296,7 +309,8 @@ export default {
       chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
       showSearchNodePopover: false,
       nodeSearchInput: '',
-      refreshing: false
+      refreshing: false,
+      openDebug: false
     }
   },
 

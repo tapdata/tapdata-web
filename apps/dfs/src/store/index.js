@@ -10,6 +10,7 @@ import { merge } from 'lodash'
 import { getUrlSearch } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
 import { buried } from '../plugins/buried'
+import { taskApi } from '@tap/api'
 
 Vue.use(Vuex)
 
@@ -395,17 +396,18 @@ const store = new Vuex.Store({
         if (freeTier) {
           await dispatch('subscribe', freeTier)
         }
+      } else if (guide.installStep > -1 && guide.tour.taskId) {
+        const data = await taskApi.get(guide.tour.taskId)
 
-        // router.replace({
-        //   name: 'Welcome'
-        // })
-      } else if (guide.installStep > -1) {
-        router.push({
-          name: 'WelcomeTask',
-          params: {
-            id: guide.tour.taskId
-          }
-        })
+        // 如果没有完成引导任务，并且任务还存在，跳转到引导任务
+        if (data) {
+          router.push({
+            name: 'WelcomeTask',
+            params: {
+              id: guide.tour.taskId
+            }
+          })
+        }
       }
 
       return state.guide

@@ -21,7 +21,8 @@
       @auto-layout="handleAutoLayout"
       @change-name="handleUpdateName"
       @locate-node="handleLocateNode"
-      @start="handleStart"
+      @start="handleStart()"
+      @debug-start="handleStart(true)"
       @stop="handleStop"
       @forceStop="handleForceStop"
       @reset="handleReset"
@@ -102,7 +103,7 @@
         :visible.sync="materializedViewVisible"
         :buttonShowMap="buttonShowMap"
         :dataflow="dataflow"
-        @start="handleStart"
+        @start="handleStart()"
         @add-node="onAddMaterializedViewNode"
         @add-target-node="onAddMaterializedViewTargetNode()"
         @delete-node="handleDeleteById"
@@ -590,7 +591,7 @@ export default {
       })
     },
 
-    async handleStart() {
+    async handleStart(isDebug = false) {
       this.buried('taskStart')
 
       this.unWatchStatus?.()
@@ -601,7 +602,7 @@ export default {
             this.$refs.console?.stopAuto()
           } else {
             this.toggleConsole(false)
-            this.gotoViewer(false)
+            this.gotoViewer()
           }
           // this.unWatchStatus()
         }
@@ -625,6 +626,7 @@ export default {
         this.dataflow.disabledData.stop = true
         this.dataflow.disabledData.reset = true
         this.beforeStartTask()
+        isDebug && this.openDataCapture()
         // this.gotoViewer()
         // this.buried('taskStart', { result: true })
       } else {

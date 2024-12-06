@@ -17,6 +17,10 @@ const MigrationMonitorViewer = async () => {
   const { MigrationMonitorViewer } = await import('@tap/dag')
   return MigrationMonitorViewer
 }
+const DataCapture = async () => {
+  const { DataCapture } = await import('@tap/dag')
+  return DataCapture
+}
 const CustomNodeList = async () => {
   const { CustomNodeList } = await import('@tap/business')
   return CustomNodeList
@@ -256,6 +260,11 @@ export default [
       title: 'page_title_run_monitor',
       code: 'v2_data_replication_record_monitor'
     }
+  },
+  {
+    path: '/data-capture/:id',
+    name: 'DataCapture',
+    component: DataCapture
   },
   {
     path: '/shared-mining/monitor/:id',
