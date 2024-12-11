@@ -95,7 +95,6 @@
 </template>
 
 <script>
-import { mapMutations, mapState, mapGetters } from 'vuex'
 import { IconButton } from '@tap/component'
 import { SceneDialog, EventEmitter, UpgradeFee, UpgradeCharges } from '@tap/business'
 import { connectionsApi, lineageApi, metadataDefinitionsApi, ldpApi } from '@tap/api'
@@ -212,12 +211,20 @@ export default {
 
   watch: {
     async 'settings.mdmStorageConnectionId'(v) {
-      this.mdmConnection = await connectionsApi.get(v)
+      const data = await connectionsApi.getNoSchema(v)
+      this.mdmConnection = {
+        id: data.id,
+        name: data.name
+      }
       this.mdmNotExist = !this.mdmConnection
     },
 
     async 'settings.fdmStorageConnectionId'(v) {
-      this.fdmConnection = await connectionsApi.get(v)
+      const data = await connectionsApi.getNoSchema(v)
+      this.fdmConnection = {
+        id: data.id,
+        name: data.name
+      }
       this.fdmNotExist = !this.fdmConnection
     },
 
