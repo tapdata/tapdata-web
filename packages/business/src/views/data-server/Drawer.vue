@@ -1293,6 +1293,8 @@ export default {
     },
 
     async handleUpdateRole() {
+      if (!this.data.id) return
+
       await modulesApi.updatePermissions({
         moduleId: this.data.id,
         acl: this.form.acl
@@ -1301,6 +1303,8 @@ export default {
     },
 
     async handleUpdateApp() {
+      if (!this.data.id) return
+
       const { appLabel, appValue } = this.form
       await modulesApi.updateTags({
         moduleId: this.data.id,
