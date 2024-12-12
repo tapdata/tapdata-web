@@ -17,10 +17,11 @@ overrides:
   vue-demi: ^0.12.1
   vue: ~2.6.14
   vue-template-compiler: ~2.6.11
+  vue-resize: ^0.5.0
 
 patchedDependencies:
   element-ui@2.15.7:
-    hash: m2ri3yhfvvdlrnxhvab323lvje
+    hash: ubojyujrzste3a5j2vuh6dxin4
     path: patches/element-ui@2.15.7.patch
 
 importers:
@@ -32,7 +33,7 @@ importers:
         version: 1.7.2(vue@2.6.14)
       element-ui:
         specifier: 2.15.7
-        version: 2.15.7(patch_hash=m2ri3yhfvvdlrnxhvab323lvje)(vue@2.6.14)
+        version: 2.15.7(patch_hash=ubojyujrzste3a5j2vuh6dxin4)(vue@2.6.14)
       lodash:
         specifier: ^4.17.15
         version: 4.17.21
@@ -156,7 +157,7 @@ importers:
         version: 2.0.14(element-ui@2.15.7)(vue@2.6.14)
       element-ui:
         specifier: 2.15.7
-        version: 2.15.7(patch_hash=m2ri3yhfvvdlrnxhvab323lvje)(vue@2.6.14)
+        version: 2.15.7(patch_hash=ubojyujrzste3a5j2vuh6dxin4)(vue@2.6.14)
       github-markdown-css:
         specifier: ^4.0.0
         version: 4.0.0
@@ -367,7 +368,7 @@ importers:
         version: 5.5.0
       element-ui:
         specifier: 2.15.7
-        version: 2.15.7(patch_hash=m2ri3yhfvvdlrnxhvab323lvje)(vue@2.6.14)
+        version: 2.15.7(patch_hash=ubojyujrzste3a5j2vuh6dxin4)(vue@2.6.14)
       github-markdown-css:
         specifier: ^4.0.0
         version: 4.0.0
@@ -2192,7 +2193,7 @@ packages:
       '@formily/shared': 2.2.13
       '@formily/vue': 2.2.13(@vue/composition-api@1.7.2)(typescript@4.5.5)(vue@2.6.14)
       '@vue/composition-api': 1.7.2(vue@2.6.14)
-      element-ui: 2.15.7(patch_hash=m2ri3yhfvvdlrnxhvab323lvje)(vue@2.6.14)
+      element-ui: 2.15.7(patch_hash=ubojyujrzste3a5j2vuh6dxin4)(vue@2.6.14)
       portal-vue: 2.1.7(vue@2.6.14)
       vue: 2.6.14
       vue-demi: 0.12.5(@vue/composition-api@1.7.2)(vue@2.6.14)
@@ -3737,6 +3738,7 @@ packages:
 
   /anymatch@2.0.0(supports-color@6.1.0):
     resolution: {integrity: sha512-5teOsQWABXHHBFP9y3skS5P3d/WfWXpv3FUpy+LorMrNYaT9pI4oLMQX7jzQ2KklNpGpWHzdCXTDT2Y3XGlZBw==}
+    requiresBuild: true
     dependencies:
       micromatch: 3.1.10(supports-color@6.1.0)
       normalize-path: 2.1.1
@@ -3893,6 +3895,7 @@ packages:
 
   /async-each@1.0.6:
     resolution: {integrity: sha512-c646jH1avxr+aVpndVMeAfYw7wAa6idufrlN3LPA4PmKS0QEGp6PIC9nwz0WQkkvBGAMEki3pFdtxaF39J9vvg==}
+    requiresBuild: true
     dev: true
 
   /async-limiter@1.0.1:
@@ -4111,6 +4114,7 @@ packages:
   /binary-extensions@1.13.1:
     resolution: {integrity: sha512-Un7MIEDdUC5gNpcGDV97op1Ywk748MpHcFTHoYs6qnj1Z3j7I53VG3nwZhKzoBZmbdRNnb6WRdFlwl7tSDuZGw==}
     engines: {node: '>=0.10.0'}
+    requiresBuild: true
     dev: true
 
   /binary-extensions@2.3.0:
@@ -5910,7 +5914,7 @@ packages:
       vue: ~2.6.14
     dependencies:
       core-js: 3.37.1
-      element-ui: 2.15.7(patch_hash=m2ri3yhfvvdlrnxhvab323lvje)(vue@2.6.14)
+      element-ui: 2.15.7(patch_hash=ubojyujrzste3a5j2vuh6dxin4)(vue@2.6.14)
       style-inject: 0.3.0
       vue: 2.6.14
       vue-class-component: 7.2.6(vue@2.6.14)
@@ -5927,7 +5931,7 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /element-ui@2.15.7(patch_hash=m2ri3yhfvvdlrnxhvab323lvje)(vue@2.6.14):
+  /element-ui@2.15.7(patch_hash=ubojyujrzste3a5j2vuh6dxin4)(vue@2.6.14):
     resolution: {integrity: sha512-+J6rnXajxzLwV6w8Q6bf7Yqzk1FO1ewbIrCy/4B5alnd7tj8WEpfQoAvISirVaUGVGy77d9Ji3o2bF4f0AsJLQ==}
     peerDependencies:
       vue: ~2.6.14
@@ -7909,6 +7913,7 @@ packages:
   /is-binary-path@1.0.1:
     resolution: {integrity: sha512-9fRVlXc0uCxEDj1nQzaWONSpbTfx0FmJfzHF7pwlI8DkWGoHBBea4Pg5Ky0ojwwxQmnSifgbKkI06Qv0Ljgj+Q==}
     engines: {node: '>=0.10.0'}
+    requiresBuild: true
     dependencies:
       binary-extensions: 1.13.1
     dev: true
@@ -9345,6 +9350,7 @@ packages:
   /normalize-path@2.1.1:
     resolution: {integrity: sha512-3pKJwH184Xo/lnH6oyP1q2pMd7HcypqqmRs91/6/i2CGtWwIKGCkOOMTm/zXbgTEWHw1uNpNi/igc3ePOYHb6w==}
     engines: {node: '>=0.10.0'}
+    requiresBuild: true
     dependencies:
       remove-trailing-separator: 1.1.0
     dev: true
@@ -10597,6 +10603,7 @@ packages:
   /readdirp@2.2.1(supports-color@6.1.0):
     resolution: {integrity: sha512-1JU/8q+VgFZyxwrJ+SVIOsh+KywWGpds3NTqikiKpDMZWScmAYyKIgqkO+ARvNWJfXeXR1zxz7aHF4u4CyH6vQ==}
     engines: {node: '>=0.10'}
+    requiresBuild: true
     dependencies:
       graceful-fs: 4.2.11
       micromatch: 3.1.10(supports-color@6.1.0)
@@ -10691,6 +10698,7 @@ packages:
 
   /remove-trailing-separator@1.1.0:
     resolution: {integrity: sha512-/hS+Y0u3aOfIETiaiirUFwDBDzmXPvO+jAfKTitUngIPzdKc6Z0LoFjM/CK5PL4C+eKwHohlHAb6H0VFfmmUsw==}
+    requiresBuild: true
     dev: true
 
   /renderkid@2.0.7:
@@ -12327,6 +12335,7 @@ packages:
   /upath@1.2.0:
     resolution: {integrity: sha512-aZwGpamFO61g3OlfT7OQCHqhGnW43ieH9WZeP7QxN/G/jS4jfqUkZxoryvJgVPEcrl5NL/ggHsSmLMHuH64Lhg==}
     engines: {node: '>=4'}
+    requiresBuild: true
     dev: true
 
   /update-browserslist-db@1.0.16(browserslist@4.23.0):
@@ -12768,8 +12777,8 @@ packages:
       vue-class-component: 7.2.6(vue@2.6.14)
     dev: false
 
-  /vue-resize@0.4.5(vue@2.6.14):
-    resolution: {integrity: sha512-bhP7MlgJQ8TIkZJXAfDf78uJO+mEI3CaLABLjv0WNzr4CcGRGPIAItyWYnP6LsPA4Oq0WE+suidNs6dgpO4RHg==}
+  /vue-resize@0.5.0(vue@2.6.14):
+    resolution: {integrity: sha512-k5gOOwTIGSoWZb133Gx3IfSeiiAmve5GyWI7+pU8CvbNntpSAlrCYwZ26GB63NpxcLPK94+m0BDl5TxuZUI+Hw==}
     peerDependencies:
       vue: ~2.6.14
     dependencies:
@@ -12826,7 +12835,7 @@ packages:
       scrollparent: 2.1.0
       vue: 2.6.14
       vue-observe-visibility: 0.4.6
-      vue-resize: 0.4.5(vue@2.6.14)
+      vue-resize: 0.5.0(vue@2.6.14)
     dev: false
 
   /vue@2.6.14:

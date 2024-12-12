@@ -1,5 +1,5 @@
 diff --git a/lib/element-ui.common.js b/lib/element-ui.common.js
-index 01026cd93f233f08c0f77c1eeffc43b7953ea75e..3f5486798f53c03f57fdfc15b9d8547d97c7fa09 100644
+index 01026cd93f233f08c0f77c1eeffc43b7953ea75e..36f72d1f0159768e1b68a7a3cba355e72578c51d 100644
 --- a/lib/element-ui.common.js
 +++ b/lib/element-ui.common.js
 @@ -21781,18 +21781,7 @@ main.directive = directive;
@@ -22,6 +22,27 @@ index 01026cd93f233f08c0f77c1eeffc43b7953ea75e..3f5486798f53c03f57fdfc15b9d8547d
        Object(dom_["on"])(this.referenceElm, 'blur', this.handleBlur);
        Object(dom_["on"])(this.referenceElm, 'click', this.removeFocusing);
      }
+@@ -21825,8 +21814,18 @@ main.directive = directive;
+       this.debounceClose();
+     },
+     handleFocus: function handleFocus() {
+-      this.focusing = true;
+-      this.show();
++      if (!this.$slots.default || !this.$slots.default.length) {
++        this.focusing = true;
++        this.show();
++        return;
++      }
++      var instance = this.$slots.default[0].componentInstance;
++      if (instance && instance.focus) {
++        instance.focus();
++      } else {
++        this.focusing = true;
++        this.show();
++      }
+     },
+     handleBlur: function handleBlur() {
+       this.focusing = false;
 diff --git a/packages/tooltip/src/main.js b/packages/tooltip/src/main.js
 index 6b700bba8f38691d738927e75423d9a902fe245e..57a3e640c05b19c205817e5d3608bb8623a51a1c 100644
 --- a/packages/tooltip/src/main.js
