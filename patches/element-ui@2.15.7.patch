@@ -1,0 +1,88 @@
+diff --git a/lib/element-ui.common.js b/lib/element-ui.common.js
+index 01026cd93f233f08c0f77c1eeffc43b7953ea75e..36f72d1f0159768e1b68a7a3cba355e72578c51d 100644
+--- a/lib/element-ui.common.js
++++ b/lib/element-ui.common.js
+@@ -21781,18 +21781,7 @@ main.directive = directive;
+       this.$el.setAttribute('tabindex', this.tabindex);
+       Object(dom_["on"])(this.referenceElm, 'mouseenter', this.show);
+       Object(dom_["on"])(this.referenceElm, 'mouseleave', this.hide);
+-      Object(dom_["on"])(this.referenceElm, 'focus', function () {
+-        if (!_this3.$slots.default || !_this3.$slots.default.length) {
+-          _this3.handleFocus();
+-          return;
+-        }
+-        var instance = _this3.$slots.default[0].componentInstance;
+-        if (instance && instance.focus) {
+-          instance.focus();
+-        } else {
+-          _this3.handleFocus();
+-        }
+-      });
++      Object(dom_["on"])(this.referenceElm, 'focus', this.handleFocus);
+       Object(dom_["on"])(this.referenceElm, 'blur', this.handleBlur);
+       Object(dom_["on"])(this.referenceElm, 'click', this.removeFocusing);
+     }
+@@ -21825,8 +21814,18 @@ main.directive = directive;
+       this.debounceClose();
+     },
+     handleFocus: function handleFocus() {
+-      this.focusing = true;
+-      this.show();
++      if (!this.$slots.default || !this.$slots.default.length) {
++        this.focusing = true;
++        this.show();
++        return;
++      }
++      var instance = this.$slots.default[0].componentInstance;
++      if (instance && instance.focus) {
++        instance.focus();
++      } else {
++        this.focusing = true;
++        this.show();
++      }
+     },
+     handleBlur: function handleBlur() {
+       this.focusing = false;
+diff --git a/packages/tooltip/src/main.js b/packages/tooltip/src/main.js
+index 6b700bba8f38691d738927e75423d9a902fe245e..57a3e640c05b19c205817e5d3608bb8623a51a1c 100644
+--- a/packages/tooltip/src/main.js
++++ b/packages/tooltip/src/main.js
+@@ -113,18 +113,7 @@ export default {
+       this.$el.setAttribute('tabindex', this.tabindex);
+       on(this.referenceElm, 'mouseenter', this.show);
+       on(this.referenceElm, 'mouseleave', this.hide);
+-      on(this.referenceElm, 'focus', () => {
+-        if (!this.$slots.default || !this.$slots.default.length) {
+-          this.handleFocus();
+-          return;
+-        }
+-        const instance = this.$slots.default[0].componentInstance;
+-        if (instance && instance.focus) {
+-          instance.focus();
+-        } else {
+-          this.handleFocus();
+-        }
+-      });
++      on(this.referenceElm, 'focus', this.handleFocus);
+       on(this.referenceElm, 'blur', this.handleBlur);
+       on(this.referenceElm, 'click', this.removeFocusing);
+     }
+@@ -157,6 +146,18 @@ export default {
+       this.debounceClose();
+     },
+     handleFocus() {
++      if (!this.$slots.default || !this.$slots.default.length) {
++        this.doFocus();
++        return;
++      }
++      const instance = this.$slots.default[0].componentInstance;
++      if (instance && instance.focus) {
++        instance.focus();
++      } else {
++        this.doFocus();
++      }
++    },
++    doFocus() {
+       this.focusing = true;
+       this.show();
+     },

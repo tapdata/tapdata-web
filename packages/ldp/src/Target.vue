@@ -547,8 +547,10 @@ export default {
 
   methods: {
     async init() {
-      const connectionList = await this.getData()
+      let connectionList = await this.getData()
       let appList = []
+
+      connectionList = connectionList.filter(item => !this.fdmAndMdmId.includes(item.id))
 
       if (this.isDaas) {
         appList = await this.getApiAppList()
