@@ -196,7 +196,7 @@ export default {
         },
         {
           label: this.$t('packages_business_data_server_list_fuwuzhuangtai'),
-          'min-width': 100,
+          'min-width': 106,
           prop: 'statusFmt',
           slotName: 'statusFmt'
         },
@@ -348,6 +348,7 @@ export default {
             item._path = `/${pathJoin.join('/')}`
             return item
           })
+          this.doLayout()
           return {
             total: data?.total,
             data: list
@@ -438,6 +439,11 @@ export default {
 
       this.$message.success(this.$t('public_message_publish_successful'))
       this.fetch()
+    },
+    doLayout() {
+      this.$nextTick(() => {
+        this.$refs.table.doLayout()
+      })
     }
   }
 }
