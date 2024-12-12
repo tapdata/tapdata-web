@@ -17,6 +17,12 @@ overrides:
   vue-demi: ^0.12.1
   vue: ~2.6.14
   vue-template-compiler: ~2.6.11
+  vue-resize: ^0.5.0
+
+patchedDependencies:
+  element-ui@2.15.7:
+    hash: ubojyujrzste3a5j2vuh6dxin4
+    path: patches/element-ui@2.15.7.patch
 
 importers:
 
@@ -27,7 +33,7 @@ importers:
         version: 1.7.2(vue@2.6.14)
       element-ui:
         specifier: 2.15.7
-        version: 2.15.7(vue@2.6.14)
+        version: 2.15.7(patch_hash=ubojyujrzste3a5j2vuh6dxin4)(vue@2.6.14)
       lodash:
         specifier: ^4.17.15
         version: 4.17.21
@@ -151,7 +157,7 @@ importers:
         version: 2.0.14(element-ui@2.15.7)(vue@2.6.14)
       element-ui:
         specifier: 2.15.7
-        version: 2.15.7(vue@2.6.14)
+        version: 2.15.7(patch_hash=ubojyujrzste3a5j2vuh6dxin4)(vue@2.6.14)
       github-markdown-css:
         specifier: ^4.0.0
         version: 4.0.0
@@ -362,7 +368,7 @@ importers:
         version: 5.5.0
       element-ui:
         specifier: 2.15.7
-        version: 2.15.7(vue@2.6.14)
+        version: 2.15.7(patch_hash=ubojyujrzste3a5j2vuh6dxin4)(vue@2.6.14)
       github-markdown-css:
         specifier: ^4.0.0
         version: 4.0.0
@@ -2187,7 +2193,7 @@ packages:
       '@formily/shared': 2.2.13
       '@formily/vue': 2.2.13(@vue/composition-api@1.7.2)(typescript@4.5.5)(vue@2.6.14)
       '@vue/composition-api': 1.7.2(vue@2.6.14)
-      element-ui: 2.15.7(vue@2.6.14)
+      element-ui: 2.15.7(patch_hash=ubojyujrzste3a5j2vuh6dxin4)(vue@2.6.14)
       portal-vue: 2.1.7(vue@2.6.14)
       vue: 2.6.14
       vue-demi: 0.12.5(@vue/composition-api@1.7.2)(vue@2.6.14)
@@ -5905,7 +5911,7 @@ packages:
       vue: ~2.6.14
     dependencies:
       core-js: 3.37.1
-      element-ui: 2.15.7(vue@2.6.14)
+      element-ui: 2.15.7(patch_hash=ubojyujrzste3a5j2vuh6dxin4)(vue@2.6.14)
       style-inject: 0.3.0
       vue: 2.6.14
       vue-class-component: 7.2.6(vue@2.6.14)
@@ -5922,7 +5928,7 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /element-ui@2.15.7(vue@2.6.14):
+  /element-ui@2.15.7(patch_hash=ubojyujrzste3a5j2vuh6dxin4)(vue@2.6.14):
     resolution: {integrity: sha512-+J6rnXajxzLwV6w8Q6bf7Yqzk1FO1ewbIrCy/4B5alnd7tj8WEpfQoAvISirVaUGVGy77d9Ji3o2bF4f0AsJLQ==}
     peerDependencies:
       vue: ~2.6.14
@@ -5935,6 +5941,7 @@ packages:
       throttle-debounce: 1.1.0
       vue: 2.6.14
     dev: false
+    patched: true
 
   /elliptic@6.5.5:
     resolution: {integrity: sha512-7EjbcmUm17NQFu4Pmgmq2olYMj8nwMnpcddByChSUjArp8F5DQWcIcpriwO4ZToLNAJig0yiyjswfyGNje/ixw==}
@@ -12762,8 +12769,8 @@ packages:
       vue-class-component: 7.2.6(vue@2.6.14)
     dev: false
 
-  /vue-resize@0.4.5(vue@2.6.14):
-    resolution: {integrity: sha512-bhP7MlgJQ8TIkZJXAfDf78uJO+mEI3CaLABLjv0WNzr4CcGRGPIAItyWYnP6LsPA4Oq0WE+suidNs6dgpO4RHg==}
+  /vue-resize@0.5.0(vue@2.6.14):
+    resolution: {integrity: sha512-k5gOOwTIGSoWZb133Gx3IfSeiiAmve5GyWI7+pU8CvbNntpSAlrCYwZ26GB63NpxcLPK94+m0BDl5TxuZUI+Hw==}
     peerDependencies:
       vue: ~2.6.14
     dependencies:
@@ -12820,7 +12827,7 @@ packages:
       scrollparent: 2.1.0
       vue: 2.6.14
       vue-observe-visibility: 0.4.6
-      vue-resize: 0.4.5(vue@2.6.14)
+      vue-resize: 0.5.0(vue@2.6.14)
     dev: false
 
   /vue@2.6.14:
