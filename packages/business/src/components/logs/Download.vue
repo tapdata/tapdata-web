@@ -16,12 +16,14 @@
       :max-height="520"
     >
       <el-table-column :label="$t('public_file_name')" prop="filename" />
-      <el-table-column :label="$t('public_file_size')">
+      <el-table-column :label="$t('public_file_size')" width="120">
         <template #default="{ row }">
           <span>{{ calcUnit(row.size, 'b') }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('public_operation')">
+      <el-table-column :label="$t('public_update_time')" prop="lastModified" width="170" />
+      <el-table-column :label="$t('public_create_time')" prop="creationTime" width="170" />
+      <el-table-column :label="$t('public_operation')" width="100">
         <template #default="{ row }">
           <ElButton size="mini" type="text" :disabled="[0, 2, 3].includes(row.status)" @click="handleDownload(row)">{{
             $t('public_button_download')
@@ -37,6 +39,7 @@ import i18n from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
 import { proxyApi } from '@tap/api'
 import Cookie from '@tap/shared/src/cookie'
+import { dayjs } from '@tap/business'
 
 export default {
   name: 'Download',
@@ -103,7 +106,11 @@ export default {
           this.loading = false
         })
 
-      this.downloadList = list
+      this.downloadList = list.map(item => {
+        item.lastModified = dayjs(item.lastModified).format('YYYY-MM-DD HH:mm:ss')
+        item.creationTime = dayjs(item.creationTime).format('YYYY-MM-DD HH:mm:ss')
+        return item
+      })
     }
   }
 }
