@@ -293,6 +293,8 @@
         <el-progress :stroke-width="9" :percentage="downloadAnalysis.progress"></el-progress>
       </div>
     </ElDialog>
+
+    <Download :visible.sync="downloadDialog" :dataflow="dataflow"></Download>
   </div>
 </template>
 
@@ -311,11 +313,12 @@ import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
 import { monitoringLogsApi, taskApi, proxyApi, CancelToken } from '@tap/api'
 
 import NodeList from '../nodes/List'
+import Download from './Download'
 
 export default {
   name: 'NodeLog',
 
-  components: { IconButton, VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem, VEmpty, NodeList },
+  components: { IconButton, VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem, VEmpty, NodeList, Download },
 
   props: {
     dataflow: {
@@ -496,7 +499,8 @@ export default {
           }
         ]
       },
-      expandErrorMessage: false
+      expandErrorMessage: false,
+      downloadDialog: false
     }
   },
 
@@ -857,6 +861,8 @@ export default {
     },
 
     handleDownload() {
+      this.downloadDialog = true
+      return
       const [start, end] = this.quotaTime.length ? this.quotaTime : this.getTimeRange(this.quotaTimeType)
       let { id: taskId, taskRecordId } = this.dataflow || {}
       const { query } = this.$route

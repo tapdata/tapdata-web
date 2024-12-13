@@ -367,5 +367,8 @@ export default {
   public_data_capture: 'Data Capture',
   public_keywords: 'Keywords',
   public_data_capture_keywords_ph: 'Please enter keywords to capture data',
-  public_view_docs: 'View Docs'
+  public_view_docs: 'View Docs',
+  public_file_name: 'File Name',
+  public_file_size: 'File Size',
+  public_log_download: 'Log Download'
 }
