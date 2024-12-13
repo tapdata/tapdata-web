@@ -434,7 +434,7 @@ export default {
   packages_business_verification_verifyDetail: '校驗詳情',
   packages_business_verification_sourceTable: '源表',
   packages_business_verification_targetTable: '目標表',
-  packages_business_verification_sourceRows: '源表行數',
+  packages_business_verification_sourceRows: '源表校驗行數',
   packages_business_verification_rowConsistent: '行數差異',
   packages_business_verification_contConsistent: '內容差異',
   packages_business_verification_verifyHistory: '校驗歷史',

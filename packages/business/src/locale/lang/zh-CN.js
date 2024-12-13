@@ -433,7 +433,7 @@ export default {
   packages_business_verification_verifyDetail: '校验详情',
   packages_business_verification_sourceTable: '源表',
   packages_business_verification_targetTable: '目标表',
-  packages_business_verification_sourceRows: '源表行数',
+  packages_business_verification_sourceRows: '源表校验行数',
   packages_business_verification_rowConsistent: 'Count差',
   packages_business_verification_contConsistent: '表数据差',
   packages_business_verification_verifyHistory: '校验历史',
