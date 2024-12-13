@@ -363,5 +363,8 @@ export default {
   public_data_capture: '数据抓取',
   public_keywords: '关键字',
   public_data_capture_keywords_ph: '请输入数据关键字进行抓取',
-  public_view_docs: '查看文档'
+  public_view_docs: '查看文档',
+  public_file_name: '文件名',
+  public_file_size: '文件大小',
+  public_log_download: '日志下载'
 }
