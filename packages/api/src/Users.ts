@@ -95,5 +95,9 @@ export default class Users extends Http {
   checkLdapLoginEnable() {
     return this.axios.get(`${this.url}/checkLdapLoginEnable`)
   }
+
+  refreshAccessCode() {
+    return this.axios.post(`${this.url}/refreshAccessCode`)
+  }
 }
 export { Users }

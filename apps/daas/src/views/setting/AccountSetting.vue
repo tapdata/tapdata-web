@@ -3,9 +3,12 @@
     <div class="setting-right">
       <div class="title">{{ $t('account_accountSettings') }}</div>
       <ul class="content">
-        <li v-for="item in infoList" :key="item.key">
+        <li v-for="item in infoList" :key="item.key" class="flex align-center">
           <span class="label">{{ item.label }}</span>
-          <span class="text"> {{ item.value }} </span>
+          <span class="text">
+            <span class="align-middle">{{ item.value }}</span>
+            <IconButton primary class="align-middle ml-2" v-if="item.key === 'accessCode'" sm @click="handleCopy(item.value)">copy</IconButton>
+          </span>
           <ElButton type="text" v-if="item.key !== 'email'" @click="handleChange(item.key)">{{ item.icon }}</ElButton>
           <!-- <i
             :class="['iconfont', item.icon, rotateFlag && item.key == 'accessCode' ? 'rotateActive' : 'backActive']"
@@ -123,9 +126,13 @@
 <script>
 import Cookie from '@tap/shared/src/cookie'
 import { usersApi } from '@tap/api'
-
+import { IconButton } from '@tap/component'
+import { copyToClipboard } from '@tap/shared/src/util'
 export default {
   name: 'list',
+  components: {
+    IconButton
+  },
   data() {
     //此处即表单发送之前验证  验证新密码与原密码
 
@@ -257,6 +264,10 @@ export default {
     this.handleGetData()
   },
   methods: {
+    handleCopy(value) {
+      copyToClipboard(value)
+      this.$message.success(this.$t('public_message_copy_success'))
+    },
     // 获取当前信息
     async handleGetData() {
       this.loading = true
@@ -285,9 +296,22 @@ export default {
         case 'password':
           this.passwordDialogFalg = true
           break
-        default:
-          this.rotateFlag = !this.rotateFlag
-          this.handleGetData()
+        case 'accessCode':
+          this.$confirm(this.$t('account_accessCode_tip'), this.$t('account_accessCode_confirm'), {
+            confirmButtonText: this.$t('public_button_confirm'),
+            cancelButtonText: this.$t('public_button_cancel'),
+            type: 'warning'
+          }).then(res => {
+            if (res) {
+              usersApi.refreshAccessCode().then(data => {
+                this.infoList.find(item => item.key === 'accessCode').value = data
+                this.$message({
+                  type: 'success',
+                  message: this.$t('account_accessCode_success')
+                })
+              })
+            }
+          })
           break
       }
     },

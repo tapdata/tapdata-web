@@ -1924,5 +1924,8 @@ export default {
   daas_licenseType_op: '標準',
   daas_datasourcePipeline: '數據源通道',
   daas_datasourcePipelineLimit: '數據源通道數量',
-  daas_datasourcePipeUsageDetails: '通道使用詳情'
+  daas_datasourcePipeUsageDetails: '通道使用詳情',
+  account_accessCode_confirm: '確定刷新訪問碼?',
+  account_accessCode_tip: '刷新訪問碼將導致當前訪問碼失效，系統將生成新的訪問碼。',
+  account_accessCode_success: '刷新訪問碼成功'
 }
