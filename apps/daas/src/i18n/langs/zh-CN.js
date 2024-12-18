@@ -1930,5 +1930,8 @@ export default {
   daas_licenseType_op: '标准',
   daas_datasourcePipeline: '数据源通道',
   daas_datasourcePipelineLimit: '数据源通道数量',
-  daas_datasourcePipeUsageDetails: '通道使用详情'
+  daas_datasourcePipeUsageDetails: '通道使用详情',
+  account_accessCode_confirm: '确定刷新访问码?',
+  account_accessCode_tip: '刷新访问码将导致当前访问码失效，系统将生成新的访问码。',
+  account_accessCode_success: '刷新访问码成功'
 }
