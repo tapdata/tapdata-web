@@ -1633,6 +1633,8 @@ export default {
   notification_modular_inspect: '校验任务',
   notification_modular_ddlDeal: 'DDL处理 ',
   notification_modular_system: '系统',
+  notification_modular_user: '用户',
+  notification_modular_role: '角色',
   queryBuilder_addCond: '字段条件',
   account_accountSettings: '个人设置 ',
   account_systemSetting: '系统设置',

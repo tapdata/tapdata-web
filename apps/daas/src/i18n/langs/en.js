@@ -1683,6 +1683,8 @@ export default {
   notification_modular_inspect: ' verity job ',
   notification_modular_ddlDeal: ' DDL',
   notification_modular_system: ' System ',
+  notification_modular_user: 'user',
+  notification_modular_role: 'role',
   dialog_placeholderTable:
     'Only supports English, numbers, underscores, minus signs, dots, and starts with English letter',
   dialog_downAgent_ok: 'OK',
