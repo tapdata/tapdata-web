@@ -57,6 +57,7 @@ export const fieldInference = connect(
                   ref="fieldMapping"
                   form={form}
                   attrs={attrs}
+                  disabled={props.disabled}
                   on={listeners}
                   uniqueIndexEnable={form.values.uniqueIndexEnable}
                 />

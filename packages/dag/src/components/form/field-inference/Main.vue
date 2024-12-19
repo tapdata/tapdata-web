@@ -79,7 +79,7 @@
 
           <ElSelect
             v-model="updateList"
-            :disabled="navLoading"
+            :disabled="navLoading || disabled"
             allowCreate
             multiple
             filterable
@@ -159,6 +159,7 @@ export default {
   props: {
     form: Object,
     readOnly: Boolean,
+    disabled: Boolean,
     uniqueIndexEnable: Boolean
   },
 
