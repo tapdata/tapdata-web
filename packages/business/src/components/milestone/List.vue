@@ -150,6 +150,11 @@
           </div>
         </template>
       </div>
+
+      <template v-if="!isDaas" #footer>
+        <ElButton @click="codeDialog.visible = false">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" @click="handleCreateTicket">{{ $t('dfs_user_contactus_chuangjiangongdan') }}</ElButton>
+      </template>
     </ElDialog>
   </div>
 </template>
@@ -185,8 +190,10 @@ export default {
   data() {
     const activeNodeId = this.nodeId
     const activeNode = activeNodeId ? this.$store.getters['dataflow/nodeById'](activeNodeId) : {}
+    const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
 
     return {
+      isDaas,
       activeNodeId,
       activeNode,
       columns: [
@@ -223,7 +230,9 @@ export default {
           describe: '',
           solution: '',
           dynamicDescribe: '',
-          seeAlso: []
+          seeAlso: [],
+          module: '',
+          message: ''
         }
       },
       hideSeeAlso: process.env.VUE_APP_PAGE_TITLE === 'IKAS' || process.env.VUE_APP_HIDE_LOG_SEE_ALSO
@@ -620,7 +629,9 @@ export default {
       this.codeDialog.data.errorStack = item.stackMessage
       this.codeDialog.data.errorCode = errorCode
       this.codeDialog.data.fullErrorCode = item.fullErrorCode
-
+      this.codeDialog.data.message = item.message
+      this.codeDialog.data.module = ''
+      
       proxyApi
         .call(params)
         .then(data => {
@@ -659,6 +670,27 @@ export default {
     handleCopyStack(stack) {
       copyToClipboard(stack)
       this.$message.success(this.$t('public_message_copy_success'))
+    },
+    handleCreateTicket() {
+      const errorCode = this.codeDialog.data.fullErrorCode || this.codeDialog.data.errorCode
+
+      window.open(
+        this.$router.resolve({
+          name: 'TicketSystem',
+          query: {
+            form: encodeURIComponent(
+              JSON.stringify({
+                jobId: this.dataflow.id,
+                subject: `${errorCode}${this.codeDialog.data.message ? `-${this.codeDialog.data.message}` : ''}`,
+                description: `Error Code: ${errorCode}
+Module: ${this.codeDialog.data.module}
+Describe: ${this.codeDialog.data.describe ? `\n${this.codeDialog.data.describe}` : ''}
+Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.errorStack}` : ''}`
+              })
+            )
+          }
+        }).href
+      )
     }
   }
 }

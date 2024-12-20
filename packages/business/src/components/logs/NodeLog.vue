@@ -271,6 +271,11 @@
           </div>
         </template>
       </div>
+
+      <template v-if="!isDaas" #footer>
+        <ElButton @click="codeDialog.visible = false">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" @click="handleCreateTicket">{{ $t('dfs_user_contactus_chuangjiangongdan') }}</ElButton>
+      </template>
     </ElDialog>
 
     <ElDialog
@@ -449,7 +454,9 @@ export default {
           describe: '',
           solution: '',
           dynamicDescribe: '',
-          seeAlso: []
+          seeAlso: [],
+          module: '',
+          message: ''
         }
       },
       showCols: [],
@@ -988,6 +995,8 @@ export default {
       this.codeDialog.data.errorStack = item.errorStack
       this.codeDialog.data.errorCode = item.errorCode
       this.codeDialog.data.fullErrorCode = item.fullErrorCode
+      this.codeDialog.data.message = item.message
+      this.codeDialog.data.module = ''
 
       proxyApi
         .call(params)
@@ -1108,6 +1117,27 @@ export default {
           params: { id: this.dataflow.id }
         }).href,
         `DataCapture-${this.dataflow.id}`
+      )
+    },
+    handleCreateTicket() {
+      const errorCode = this.codeDialog.data.fullErrorCode || this.codeDialog.data.errorCode
+
+      window.open(
+        this.$router.resolve({
+          name: 'TicketSystem',
+          query: {
+            form: encodeURIComponent(
+              JSON.stringify({
+                jobId: this.dataflow.id,
+                subject: `${errorCode}-${this.codeDialog.data.message}`,
+                description: `Error Code: ${errorCode}
+Module: ${this.codeDialog.data.module || ''}
+Describe: ${this.codeDialog.data.describe ? `\n${this.codeDialog.data.describe}` : ''}
+Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.errorStack}` : ''}`
+              })
+            )
+          }
+        }).href
       )
     }
   }

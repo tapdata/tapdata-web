@@ -203,6 +203,11 @@
           </div>
         </template>
       </div>
+
+      <template v-if="!isDaas" #footer>
+        <ElButton @click="errorDialog.open = false">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" @click="handleCreateTicket">{{ $t('dfs_user_contactus_chuangjiangongdan') }}</ElButton>
+      </template>
     </ElDialog>
 
     <template #footer>
@@ -234,7 +239,10 @@ export default {
     }
   },
   data() {
+    const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+
     return {
+      isDaas,
       hideSeeAlso: process.env.VUE_APP_PAGE_TITLE === 'IKAS' || process.env.VUE_APP_HIDE_LOG_SEE_ALSO,
       progress: 0,
       testData: {
@@ -291,7 +299,8 @@ export default {
         message: '',
         reason: '',
         seeAlso: [],
-        isWarning: false
+        isWarning: false,
+        module: ''
       },
       showTooltip: false,
       expandErrorMessage: false
@@ -499,7 +508,6 @@ export default {
     },
 
     async showError(row) {
-      console.log('scope.row.status', row.status)
       if (process.env.VUE_APP_KEYWORD && row.item_exception) {
         row.item_exception.stack = this.replaceKeyword(row.item_exception.stack)
         row.item_exception.solution = this.replaceKeyword(row.item_exception.solution)
@@ -511,6 +519,7 @@ export default {
       this.errorDialog.title = row.show_msg
       this.errorDialog.status = row.status
       this.errorDialog.seeAlso = []
+      this.errorDialog.module = ''
       this.errorDialog.isWarning = row.status === 'failed' && !row.required
 
       if (row.error_code) {
@@ -531,6 +540,7 @@ export default {
           this.errorDialog.reason = data.dynamicDescribe
           this.errorDialog.solution = data.solution
           this.errorDialog.seeAlso = data.seeAlso
+          this.errorDialog.module = data.module
         }
       }
       this.errorDialog.open = true
@@ -547,6 +557,28 @@ export default {
     handleCopyStack(stack) {
       copyToClipboard(stack)
       this.$message.success(this.$t('public_message_copy_success'))
+    },
+
+    handleCreateTicket() {
+      const errorCode = this.errorDialog.title
+
+      window.open(
+        this.$router.resolve({
+          name: 'TicketSystem',
+          query: {
+            form: encodeURIComponent(
+              JSON.stringify({
+                connectionId: this.formData?.id,
+                subject: errorCode,
+                description: `Error Code: ${errorCode}
+Module: ${this.errorDialog.module || ''}
+Describe: ${this.errorDialog.message ? `\n${this.errorDialog.message}` : ''}
+Stack Trace: ${this.errorDialog.stack ? `\n${this.errorDialog.stack}` : ''}`
+              })
+            )
+          }
+        }).href
+      )
     }
   }
 }
