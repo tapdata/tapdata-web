@@ -1628,6 +1628,8 @@ export default {
   notification_modular_system: '系統',
   notification_modular_user: '用戶',
   notification_modular_role: '角色',
+  notification_modular_accessCode: '訪問碼',
+  notification_operation_readnotification_modular_message: '',
   dialog_placeholderTable: '僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許 system 開頭',
   dialog_downAgent_ok: '好的',
   queryBuilder_addCond: '字段條件',

@@ -1685,6 +1685,8 @@ export default {
   notification_modular_system: ' System ',
   notification_modular_user: 'user',
   notification_modular_role: 'role',
+  notification_modular_accessCode: 'access code',
+  notification_operation_readnotification_modular_message: '',
   dialog_placeholderTable:
     'Only supports English, numbers, underscores, minus signs, dots, and starts with English letter',
   dialog_downAgent_ok: 'OK',
