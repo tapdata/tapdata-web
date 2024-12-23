@@ -365,5 +365,7 @@ export default {
   public_view_docs: '查看文檔',
   public_file_name: '文件名',
   public_file_size: '文件大小',
-  public_log_download: '日誌下載'
+  public_log_download: '日誌下載',
+  public_alert_401_tip: '您的會話已過期或者已在其他地方登錄，請重新登錄後繼續操作',
+  public_alert_401: '會話過期提醒'
 }

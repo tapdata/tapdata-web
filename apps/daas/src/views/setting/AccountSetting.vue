@@ -300,6 +300,7 @@ export default {
           this.$confirm(this.$t('account_accessCode_tip'), this.$t('account_accessCode_confirm'), {
             confirmButtonText: this.$t('public_button_confirm'),
             cancelButtonText: this.$t('public_button_cancel'),
+            dangerouslyUseHTMLString: true,
             type: 'warning'
           }).then(res => {
             if (res) {

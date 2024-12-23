@@ -2,6 +2,7 @@ import axios, { AxiosRequestConfig, AxiosError, AxiosResponse } from 'axios'
 import Cookie from '@tap/shared/src/cookie'
 import { signOut } from '../utils/util'
 import { Message } from '@/plugins/element'
+import VConfirm from '@/components/v-confirm'
 import i18n from '@/i18n'
 import Qs from 'qs'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
@@ -60,9 +61,20 @@ const errorCallback = (error: AxiosError): Promise<AxiosError | string> => {
     switch (rsp.status) {
       // 用户无权限访问接口
       case 401:
+        const isSingleSession = window.__settings__?.find(item => item.key === 'login.single.session')?.open
+
         signOut()
+
         setTimeout(() => {
-          Message.error({ message: i18n.t('public_message_401').toString() })
+          if (isSingleSession) {
+            VConfirm.confirm(i18n.t('public_alert_401_tip').toString(), i18n.t('public_alert_401').toString(), {
+              type: 'warning',
+              showCancelButton: false,
+              confirmButtonText: i18n.t('public_button_confirm')
+            })
+          } else {
+            Message.error({ message: i18n.t('public_message_401').toString() })
+          }
         }, 500)
         break
       // 请求的资源不存在

@@ -579,8 +579,10 @@ export default {
   setting_Ldap_SSL_Enable: '啟用SSL',
   setting_Ldap_Server_Host_doc: 'AD的域控制器地址，範例：ldap://ad.example.com 或 ldaps://ad.example.com',
   setting_Ldap_Server_Port_doc: 'LDAP預設使用 389 端口，LDAPS（加密連接）使用 636 端口',
-  setting_Ldap_Base_DN_doc: 'LDAP查詢的起點，用于定義在AD中的搜索範圍，多個組用分號間隔，示例：cn=Users,dc=example,dc=com;cn=Test,dc=example,dc=com',
-  setting_Ldap_Bind_DN_doc: '用於進行身份驗證的用戶完整Distinguished Name (DN)，即登入AD伺服器的身份，範例：user@example.com',
+  setting_Ldap_Base_DN_doc:
+    'LDAP查詢的起點，用于定義在AD中的搜索範圍，多個組用分號間隔，示例：cn=Users,dc=example,dc=com;cn=Test,dc=example,dc=com',
+  setting_Ldap_Bind_DN_doc:
+    '用於進行身份驗證的用戶完整Distinguished Name (DN)，即登入AD伺服器的身份，範例：user@example.com',
   setting_Ldap_Bind_Password_doc: '與Bind DN對應的用戶密碼，用於身份驗證',
   user_list_user_name_email: '請輸入用戶名 / 郵箱',
   user_list_change_time: ' 修改時間',
@@ -1930,6 +1932,7 @@ export default {
   daas_datasourcePipelineLimit: '數據源通道數量',
   daas_datasourcePipeUsageDetails: '通道使用詳情',
   account_accessCode_confirm: '確定刷新訪問碼?',
-  account_accessCode_tip: '刷新訪問碼將導致當前訪問碼失效，系統將生成新的訪問碼。',
+  account_accessCode_tip:
+    '刷新訪問碼將導致當前訪問碼失效，系統將生成新的訪問碼。<b class="color-warning">您需要將新的訪問碼更新到引擎的配置文件後，重新啓動引擎，否則引擎可能會無法正常工作。請謹慎操作！</b>',
   account_accessCode_success: '刷新訪問碼成功'
 }

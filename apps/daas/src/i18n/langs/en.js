@@ -1992,6 +1992,6 @@ export default {
   daas_datasourcePipeUsageDetails: 'Pipeline Usage Details',
   account_accessCode_confirm: 'Confirm Refresh Access Code?',
   account_accessCode_tip:
-    'Refreshing the access code will invalidate the current code, and the system will generate a new one.',
+    'Refreshing the access code will invalidate the current code, and the system will generate a new one.<b class="color-warning">Update the access code in the engine’s configuration file and restart it to ensure proper functioning. Handle with care.</b>',
   account_accessCode_success: 'Access code refreshed successfully'
 }
