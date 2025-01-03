@@ -333,7 +333,8 @@ export default {
         } else if (el.type === 'logCollector') {
           const { $inputs, $outputs, ...formVal } = getFormValues
           Object.assign(el, {
-            nodeConfig: formVal.nodeConfig
+            nodeConfig: formVal.nodeConfig,
+            storageTime: this.editForm.storageTime
           })
         }
       })
