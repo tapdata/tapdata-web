@@ -823,5 +823,7 @@ export default {
   packages_dag_counting_num_of_rows_table: 'Counting the number of rows in the table',
   packages_dag_noPkSyncMode: 'No Primary Key Table Sync Mode',
   packages_dag_noPkSyncMode_ADD_HASH: 'Add Hash Column',
-  packages_dag_noPkSyncMode_ALL_COLUMNS: 'Full Column Index'
+  packages_dag_noPkSyncMode_ALL_COLUMNS: 'Full Column Index',
+  packages_dag_join_keys_empty: 'Association conditions for {tableName} cannot be empty',
+  packages_dag_join_keys_field_empty: 'Field in association condition #{index} for {tableName} cannot be empty.'
 }

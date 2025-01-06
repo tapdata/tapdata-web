@@ -120,8 +120,6 @@ export class MergeTable extends NodeType {
                 title: i18n.t('packages_dag_nodes_mergetable_zhucongpeizhi'),
                 type: 'array',
                 required: true,
-                'x-decorator': 'FormItem',
-                'x-decorator-props': {},
                 'x-component': 'MergeTableTree',
                 'x-component-props': {
                   treeWidth: 200,
