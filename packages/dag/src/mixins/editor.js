@@ -1690,38 +1690,76 @@ export default {
       if (this.dataflow.syncType === 'migrate') return
 
       const nodes = this.allNodes.filter(node => node.type === 'merge_table_processor')
-      const allPromise = []
 
-      const handle = async input => {
-        const fields = await this.scope.loadNodeFieldOptions(input)
+      const validateMergeProperties = (items, isFirstLevel = true) => {
+        for (const item of items) {
+          // 跳过第一级，只检查 children 层级的 joinKeys
+          if (!isFirstLevel) {
+            // 检查 joinKeys 是否为空数组
+            if (!item.joinKeys?.length) {
+              return i18n.t('packages_dag_join_keys_empty', { tableName: item.tableName })
+            }
 
-        if (
-          fields?.length &&
-          !fields.some(item => {
-            return item.isPrimaryKey || item.indicesUnique
-          })
-        ) {
-          // 缺少主键或唯一索引
-          return Promise.reject(input)
+            // 检查每个 joinKey 的 source/target
+            for (const [index, joinKey] of item.joinKeys.entries()) {
+              if (!joinKey.source || !joinKey.target) {
+                return i18n.t('packages_dag_join_keys_field_empty', { tableName: item.tableName, index: index + 1 })
+              }
+            }
+          }
+
+          // 递归检查子项
+          if (item.children?.length) {
+            const childrenError = validateMergeProperties(item.children, false)
+            if (childrenError) {
+              return childrenError
+            }
+          }
         }
+        return ''
       }
 
       for (let node of nodes) {
-        for (let input of node.$inputs) {
-          allPromise.push(handle(input))
+        const error = validateMergeProperties(node.mergeProperties)
+        if (error) {
+          this.setNodeErrorMsg({
+            id: node.id,
+            msg: error
+          })
+          return error
         }
       }
 
-      try {
-        await Promise.all(allPromise)
-      } catch (id) {
-        this.setNodeErrorMsg({
-          id,
-          msg: i18n.t('packages_dag_missing_primary_key_or_index')
-        })
-        this.handleLocateNode(this.nodeById(id))
-        return i18n.t('packages_dag_merge_table_missing_key_or_index')
-      }
+      // const handle = async input => {
+      //   const fields = await this.scope.loadNodeFieldOptions(input)
+
+      //   if (
+      //     fields?.length &&
+      //     !fields.some(item => {
+      //       return item.isPrimaryKey || item.indicesUnique
+      //     })
+      //   ) {
+      //     // 缺少主键或唯一索引
+      //     return Promise.reject(input)
+      //   }
+      // }
+
+      // for (let node of nodes) {
+      //   for (let input of node.$inputs) {
+      //     allPromise.push(handle(input))
+      //   }
+      // }
+
+      // try {
+      //   await Promise.all(allPromise)
+      // } catch (id) {
+      //   this.setNodeErrorMsg({
+      //     id,
+      //     msg: i18n.t('packages_dag_missing_primary_key_or_index')
+      //   })
+      //   this.handleLocateNode(this.nodeById(id))
+      //   return i18n.t('packages_dag_merge_table_missing_key_or_index')
+      // }
     },
 
     async eachValidate(...fns) {
@@ -1759,8 +1797,8 @@ export default {
         this.validateCustomSql,
         this.validateUnwind,
         this.validateTableRename,
-        this.validateMigrateUnion
-        // this.validateMergeTableProcessor
+        this.validateMigrateUnion,
+        this.validateMergeTableProcessor
       )
     },
 
