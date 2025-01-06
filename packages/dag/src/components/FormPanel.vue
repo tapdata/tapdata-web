@@ -223,7 +223,7 @@ export default {
       this.updateTimer = setTimeout(() => {
         const node = this.nodeById(form.values.id)
         if (node && !deepEqual(toJS(form.values), node, ['alarmRules.0._ms', 'alarmRules.0._point'])) {
-          console.log('还是更新了')
+          console.debug('updateNodeProps in debounce')
           this.updateNodeProps(form)
         }
       }, 40)
