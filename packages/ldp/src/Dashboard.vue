@@ -211,20 +211,12 @@ export default {
 
   watch: {
     async 'settings.mdmStorageConnectionId'(v) {
-      const data = await connectionsApi.getNoSchema(v)
-      this.mdmConnection = {
-        id: data.id,
-        name: data.name
-      }
+      this.mdmConnection = await connectionsApi.getNoSchema(v)
       this.mdmNotExist = !this.mdmConnection
     },
 
     async 'settings.fdmStorageConnectionId'(v) {
-      const data = await connectionsApi.getNoSchema(v)
-      this.fdmConnection = {
-        id: data.id,
-        name: data.name
-      }
+      this.fdmConnection = await connectionsApi.getNoSchema(v)
       this.fdmNotExist = !this.fdmConnection
     },
 
