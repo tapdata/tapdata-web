@@ -199,7 +199,7 @@ import Cookie from '@tap/shared/src/cookie'
 import Time from '@tap/shared/src/time'
 import { VIcon } from '@tap/component'
 import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
-import { usersApi, timeStampApi, licensesApi, taskApi, logcollectorApi } from '@tap/api'
+import { usersApi, timeStampApi, licensesApi, settingsApi, taskApi, logcollectorApi } from '@tap/api'
 import { PageHeader } from '@tap/business'
 
 import CustomerService from '@/components/CustomerService'
@@ -217,6 +217,7 @@ export default {
     const domain = this.$i18n.locale === 'en' ? 'io' : 'net'
 
     return {
+      appVersion: '',
       domain,
       isCommunity,
       IS_IFRAME: sessionStorage.getItem('IS_IFRAME') === 'true',
@@ -278,6 +279,7 @@ export default {
   },
   async created() {
     this.getMenus()
+    this.getAppVersion()
     this.getActiveMenu()
 
     this.userName = Cookie.get('username') || Cookie.get('email')?.split('@')?.[0] || ''
@@ -303,6 +305,10 @@ export default {
     this.$root.$off('updateMenu')
   },
   methods: {
+    async getAppVersion() {
+      const data = await settingsApi.getAppVersion()
+      this.appVersion = data
+    },
     getActiveMenu() {
       let route = this.$route
       let activeMap = {}
@@ -402,7 +408,7 @@ export default {
               message: 'DK_VERSION_1</br>DK_VERSION_2'
             })
           } else {
-            this.$message.info(window._TAPDATA_OPTIONS_.version)
+            this.$message.info(this.appVersion)
           }
           break
         case 'license':
