@@ -531,17 +531,14 @@ export default {
             }
           })
         })
+
         if (data) {
-          if (this.form.taskMode === 'pipeline' && data.taskDto) {
+          let capabilitiesMap = {}
+
+          if (this.form.taskMode === 'pipeline' && data.flowId) {
             this.taskName = data.taskDto.name
             this.applyTask(data.taskDto)
             await this.$nextTick()
-          }
-
-          const haveTaskId = data.tasks.some(t => !!t.taskId)
-          // 加载数据源的Capabilities
-          let capabilitiesMap = {}
-          if (haveTaskId) {
             capabilitiesMap = this.$refs.conditionBox.getMatchCapabilitiesMap()
           } else {
             capabilitiesMap = await this.$refs.conditionBox.getCapabilities([
@@ -549,6 +546,7 @@ export default {
               ...data.tasks.map(t => t.target.connectionId)
             ])
           }
+
           data.tasks = data.tasks.map(t => {
             t.source = Object.assign({}, TABLE_PARAMS, t.source)
             t.target = Object.assign({}, TABLE_PARAMS, t.target)
