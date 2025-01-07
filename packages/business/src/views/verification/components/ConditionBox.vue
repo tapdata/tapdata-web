@@ -2073,7 +2073,7 @@ function validate(sourceRow){
     },
 
     async getConnectionCapabilities(id) {
-      const data = await connectionsApi.get(id)
+      const data = await connectionsApi.getNoSchema(id)
       return data?.capabilities || []
     },
 
