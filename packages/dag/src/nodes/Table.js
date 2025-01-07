@@ -142,6 +142,14 @@ export class Table extends NodeType {
                   size: 'middle',
                   class: 'w-100'
                 },
+                'x-reactions': {
+                  dependencies: ['databaseType'],
+                  fulfill: {
+                    state: {
+                      display: '{{ !["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}'
+                    }
+                  }
+                },
                 properties: {
                   tableNameWrap: {
                     type: 'void',
