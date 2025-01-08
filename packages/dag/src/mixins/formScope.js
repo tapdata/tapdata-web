@@ -769,7 +769,7 @@ export default {
           pdkType !== connection.pdkType && form.setValuesIn('attrs.pdkType', connection.pdkType)
           pdkHash !== connection.pdkHash && form.setValuesIn('attrs.pdkHash', connection.pdkHash)
           connectionType !== connection.connection_type &&
-            form.setValuesIn('attrs.connectionType', connection.connectionType)
+            form.setValuesIn('attrs.connectionType', connection.connection_type)
           accessNodeProcessId !== connection.accessNodeProcessId &&
             form.setValuesIn('attrs.accessNodeProcessId', connection.accessNodeProcessId)
           accessNodeType !== connection.accessNodeType &&
