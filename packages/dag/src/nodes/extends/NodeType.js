@@ -43,9 +43,18 @@ export class NodeType {
       }
 
       if (this.group === 'processor') {
+        if (formSchema.properties.tabs.properties.tab1) {
+          formSchema.properties.tabs.properties.tab1['x-index'] = 1
+        }
+
+        if (formSchema.properties.tabs.properties.tab2) {
+          formSchema.properties.tabs.properties.tab2['x-index'] = 3
+        }
+
         if (!formSchema.properties.tabs.properties.advancedTab) {
           formSchema.properties.tabs.properties.advancedTab = {
             type: 'void',
+            'x-index': 2,
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
               label: i18n.t('public_advanced_settings')
@@ -99,6 +108,7 @@ export class NodeType {
         if (!formSchema.properties.tabs.properties.alarmTab) {
           formSchema.properties.tabs.properties.alarmTab = {
             type: 'void',
+            'x-index': 4,
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
               label: i18n.t('packages_dag_migration_configpanel_gaojingshezhi'),
