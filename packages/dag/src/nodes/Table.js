@@ -601,7 +601,7 @@ export class Table extends NodeType {
               }
             }
           },
-          tab2: {
+          advancedTab: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
@@ -1761,7 +1761,7 @@ export class Table extends NodeType {
               }
             }
           },
-          tab3: {
+          alarmTab: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {

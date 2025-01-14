@@ -1166,7 +1166,7 @@ export class Database extends NodeType {
               }
             }
           },
-          tab3: {
+          alarmTab: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
