@@ -222,6 +222,7 @@
 </template>
 
 <script>
+import { escapeRegExp } from 'lodash'
 import dayjs from 'dayjs'
 import { logcollectorApi, taskApi, workerApi } from '@tap/api'
 import { FilterBar, VTable } from '@tap/component'
@@ -338,8 +339,14 @@ export default {
       let { current, size } = page
       let { taskName, connectionName } = this.searchParams
       let where = {}
-      taskName && (where.taskName = taskName)
-      connectionName && (where.connectionName = connectionName)
+
+      if (taskName) {
+        where.name = { like: escapeRegExp(taskName), options: 'i' }
+      }
+      if (connectionName) {
+        where.connectionName = { like: escapeRegExp(connectionName), options: 'i' }
+      }
+
       let filter = {
         order: this.order,
         limit: size,
