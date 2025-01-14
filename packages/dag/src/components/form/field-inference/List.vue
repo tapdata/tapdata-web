@@ -758,10 +758,11 @@ export default {
     handleChangeCustomInput() {
       const { customInputData } = this.currentData
       this.currentData.newDataType = this.customInputDataValue
-        .replace('[', '')
-        .replace(']', '')
-        .replace(/\$[^,]*\b/g, function (val) {
-          return '' + customInputData[val.replace(/^\$/, '')]?.value || val
+        .replace(/\[(.*?)\]/g, '$1') // 去掉所有的方括号，保留内容
+        .replace(/\$\w+/g, match => {
+          // 匹配所有 $ 开头的变量
+          const key = match.slice(1) // 去掉 $ 前缀
+          return customInputData[key]?.value || match
         })
     }
   }
