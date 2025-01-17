@@ -40,6 +40,7 @@ import { calcUnit } from '@tap/shared'
 import { proxyApi } from '@tap/api'
 import Cookie from '@tap/shared/src/cookie'
 import { dayjs } from '@tap/business'
+import axios from 'axios'
 
 export default {
   name: 'Download',
@@ -81,7 +82,7 @@ export default {
       this.$emit('update:visible', val)
     },
     handleDownload(row) {
-      let url = `/api/proxy/download?filename=${row.filename}&agentId=${this.dataflow.agentId}`
+      let url = `${axios.defaults.baseURL}api/proxy/download?filename=${row.filename}&agentId=${this.dataflow.agentId}`
 
       if (this.isDaas) {
         const accessToken = Cookie.get('access_token')

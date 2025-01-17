@@ -21,13 +21,13 @@
           :open-delay="200"
           transition="none"
         >
-          <span class="flex align-center">
+          <span class="inline-flex align-center">
             <VIcon size="12">fingerprint</VIcon>
             <span :style="`--index: '${indicesMap[scope.row.field_name][1]}';`" class="fingerprint-sub"></span>
           </span>
         </ElTooltip>
         <VIcon v-else-if="partitionMap[scope.row.field_name]" size="14" class="ml-1 align-middle"
-        >circle-dashed-letter-p</VIcon
+          >circle-dashed-letter-p</VIcon
         >
         <VIcon v-else-if="scope.row.source === 'virtual_hash'" size="14">file-hash</VIcon>
         <span class="ellipsis ml-1" :style="scope.row.source === 'virtual_hash' ? 'font-style:italic' : ''">{{
@@ -758,10 +758,11 @@ export default {
     handleChangeCustomInput() {
       const { customInputData } = this.currentData
       this.currentData.newDataType = this.customInputDataValue
-        .replace('[', '')
-        .replace(']', '')
-        .replace(/\$[^,]*\b/g, function (val) {
-          return '' + customInputData[val.replace(/^\$/, '')]?.value || val
+        .replace(/\[(.*?)\]/g, '$1') // 去掉所有的方括号，保留内容
+        .replace(/\$\w+/g, match => {
+          // 匹配所有 $ 开头的变量
+          const key = match.slice(1) // 去掉 $ 前缀
+          return customInputData[key]?.value || match
         })
     }
   }
