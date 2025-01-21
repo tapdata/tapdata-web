@@ -1258,5 +1258,9 @@ export default {
   packages_business_warning_details: '警告详情',
   packages_business_custom_collate: '自定义排序',
   packages_business_please_select_field: '请选择字段',
-  packages_business_please_input_charset: '请输入字符集'
+  packages_business_please_input_charset: '请输入字符集',
+  packages_business_auto_fill_join_fields: '智能填充关联条件',
+  packages_business_auto_fill_join_tooltip_title: '开启后，系统将按以下优先级自动填充关联条件：',
+  packages_business_auto_fill_join_tooltip_primary: '1. 优先使用主键字段',
+  packages_business_auto_fill_join_tooltip_all: '2. 如无主键，则使用全部字段'
 }
