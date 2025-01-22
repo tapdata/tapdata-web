@@ -700,7 +700,7 @@ export default {
       const { by, connectionId, tableName } = query
       let connection
 
-      if (by !== 'materialized-view') return
+      if (by !== 'materialized-view' && by !== 'transformation-materialized') return
 
       await this.$router.replace({
         params: {
@@ -716,6 +716,19 @@ export default {
 
       if (connectionId) {
         connection = await connectionsApi.get(connectionId)
+      }
+
+      if (by === 'transformation-materialized') {
+        const mergeTableNode = this.handleAddNodeToCenter({
+          name: i18n.t('packages_dag_src_editor_zhuconghebing'),
+          type: 'merge_table_processor'
+        })
+
+        // 添加目标节点
+        if (connection) {
+          this.quickAddNode(mergeTableNode, this.$refs.leftSidebar.getNodeProps(connection, tableName))
+        }
+        return
       }
 
       // 统一添加节点，可以通过节流走一个updateDag请求

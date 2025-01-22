@@ -403,7 +403,7 @@ export const MergeTableTree = observer(
                 vOn:node-drag-over={handleNodeDragOver}
               />
             </FormItem.BaseItem>
-            <div class="border-start flex-1 px-2 overflow-y-auto">
+            <div class="border-start flex-1 px-2 py-4 overflow-y-auto">
               {currentPath.value &&
                 createElement(
                   RecursionField,

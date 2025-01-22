@@ -42,5 +42,8 @@ export default {
   packages_ldp_run_every_day: '每天運行一次',
   packages_ldp_custom_cron_expression: '自定義cron表達式',
   packages_ldp_view_task_monitor: '查看任務監控',
-  packages_ldp_book_demo: '預約演示'
+  packages_ldp_book_demo: '預約演示',
+  packages_ldp_mdm_create_method: '創建方式',
+  packages_ldp_mdm_create_method_transformation: '使用數據轉換任務構建',
+  packages_ldp_mdm_create_method_materialized: '所見即所得圖形化構建'
 }
