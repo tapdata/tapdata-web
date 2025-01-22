@@ -365,7 +365,7 @@ export default {
   packages_dag_nodes_mergetable_dangqianbiaoziduan: '當前表字段',
   packages_dag_nodes_mergetable_guanliantiaojian: '關聯條件',
   packages_dag_nodes_mergetable_gengxinjianguanlian: '關聯條件變更',
-  packages_dag_nodes_mergetable_neiqianshuzupi: '內嵌數組匹配條件',
+  packages_dag_nodes_mergetable_neiqianshuzupi: '表主鍵',
   packages_dag_nodes_mergetable_guanlianhouxieru: '關聯後寫入路徑',
   packages_dag_nodes_mergetable_gengxinjinneiqian: '更新進內嵌數組',
   packages_dag_nodes_mergetable_shujuxierumo: '數據寫入模式',
@@ -764,5 +764,6 @@ export default {
   packages_dag_noPkSyncMode_ADD_HASH: '新增哈希列',
   packages_dag_noPkSyncMode_ALL_COLUMNS: '全字段索引',
   packages_dag_join_keys_empty: '{tableName} 的關聯條件不能為空',
-  packages_dag_join_keys_field_empty: '{tableName} 的關聯條件第 {index} 項的字段不能為空'
+  packages_dag_join_keys_field_empty: '{tableName} 的關聯條件第 {index} 項的字段不能為空',
+  packages_dag_field_path: '字段路徑'
 }

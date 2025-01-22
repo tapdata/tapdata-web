@@ -368,5 +368,7 @@ export default {
   public_file_size: '文件大小',
   public_log_download: '日志下载',
   public_alert_401_tip: '您的会话已过期或者已在其他地方登录，请重新登录后继续操作',
-  public_alert_401: '会话过期提醒'
+  public_alert_401: '会话过期提醒',
+  public_document: '文档',
+  public_array: '数组'
 }

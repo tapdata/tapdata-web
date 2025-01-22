@@ -379,7 +379,7 @@ export default {
   packages_dag_nodes_mergetable_dangqianbiaoziduan: 'Current table field',
   packages_dag_nodes_mergetable_guanliantiaojian: 'Association Conditions',
   packages_dag_nodes_mergetable_gengxinjianguanlian: 'Enable update join key',
-  packages_dag_nodes_mergetable_neiqianshuzupi: 'Embedded array matching conditions',
+  packages_dag_nodes_mergetable_neiqianshuzupi: 'Table primary key',
   packages_dag_nodes_mergetable_guanlianhouxieru: 'Field write path',
   packages_dag_nodes_mergetable_gengxinjinneiqian: 'Update into embedded array',
   packages_dag_nodes_mergetable_shujuxierumo: 'Data write mode',
@@ -825,5 +825,6 @@ export default {
   packages_dag_noPkSyncMode_ADD_HASH: 'Add Hash Column',
   packages_dag_noPkSyncMode_ALL_COLUMNS: 'Full Column Index',
   packages_dag_join_keys_empty: 'Association conditions for {tableName} cannot be empty',
-  packages_dag_join_keys_field_empty: 'Field in association condition #{index} for {tableName} cannot be empty.'
+  packages_dag_join_keys_field_empty: 'Field in association condition #{index} for {tableName} cannot be empty.',
+  packages_dag_field_path: 'Field Path'
 }

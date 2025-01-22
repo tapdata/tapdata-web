@@ -27,12 +27,19 @@ export const MergeTableTree = observer(
         const path = pathArr.join('.children.')
         currentPath.value = path
         if (pathArr.length === 1) {
-          form.setFieldState(`mergeProperties.${path}.mergeType`, {
+          form.setFieldState(`mergeProperties.${path}.targetPath`, {
             display: 'hidden'
+          })
+          form.setFieldState(`mergeProperties.${path}.mergeType`, {
+            display: 'hidden',
+            value: 'updateOrInsert'
           })
           form.setFieldState(`mergeProperties.${path}.joinKeys`, {
             visible: false
           })
+        } else if (pathArr.length > 1 && form.getValuesIn(`mergeProperties.${path}.mergeType`) === 'updateOrInsert') {
+          // 主表是 updateOrInsert, 子表是 updateWrite
+          form.setValuesIn(`mergeProperties.${path}.mergeType`, 'updateWrite')
         }
         return path
       }
@@ -46,6 +53,84 @@ export const MergeTableTree = observer(
           }
           return result
         }, map)
+      }
+
+      const loadTargetField = (selfId, selfPath) => {
+        form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
+          loading: true
+        })
+        metadataInstancesApi.getMergerNodeParentFields(root.$route.params.id, selfId).then(fields => {
+          form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
+            loading: false,
+            dataSource: fields.map(item => ({
+              tapType: item.tapType,
+              label: item.field_name,
+              value: item.field_name,
+              isPrimaryKey: item.primary_key_position > 0
+            }))
+          })
+        })
+      }
+
+      const loadField = (selfId, selfPath, ifWait) => {
+        const pathArr = selfPath.split('.children.')
+
+        form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.source,arrayKeys))`, {
+          loading: true
+        })
+
+        props.loadFieldsMethod(selfId).then(fields => {
+          const primaryKey = []
+          const uniqueKey = []
+
+          fields.forEach(item => {
+            if (item.isPrimaryKey) {
+              primaryKey.push(item.label)
+            }
+            if (item.indicesUnique) {
+              uniqueKey.push(item.label)
+            }
+          })
+
+          const noWarning = primaryKey.length > 0 || uniqueKey.length > 0
+          const keysValue = primaryKey.length > 0 ? primaryKey : uniqueKey
+          const treeNode = refs.tree.getNode(selfId)
+
+          if (!noWarning) {
+            set(treeNode.data, 'hasWarning', true)
+          } else {
+            del(treeNode.data, 'hasWarning')
+          }
+
+          form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.source,arrayKeys))`, {
+            loading: false,
+            dataSource: fields
+          })
+
+          const arrayKeysValue = form.getValuesIn(`mergeProperties.${selfPath}.arrayKeys`)
+
+          if (!arrayKeysValue?.length) {
+            form.setValuesIn(`mergeProperties.${selfPath}.arrayKeys`, keysValue)
+          }
+        })
+
+        if (pathArr.length < 2) return
+
+        if (ifWait) {
+          form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
+            loading: true
+          })
+          // 等待自动保存接口响应后查询
+          let unwatch = root.$watch(
+            () => root.$store.state.dataflow.editVersion,
+            () => {
+              unwatch()
+              loadTargetField(selfId, selfPath)
+            }
+          )
+        } else {
+          loadTargetField(selfId, selfPath)
+        }
       }
 
       const makeTree = () => {
@@ -74,10 +159,9 @@ export const MergeTableTree = observer(
             const node = props.findNodeById(id)
             newTree.push({
               id,
-              mergeType: 'updateOrInsert',
-              targetPath: null,
+              mergeType: 'updateWrite',
+              targetPath: '',
               tableName: node.name,
-              // joinKeys: [],
               children: [],
               enableUpdateJoinKeyValue: false // 关联条件变更
             })
@@ -90,6 +174,7 @@ export const MergeTableTree = observer(
           if (!currentKey.value || !$inputs.includes(currentKey.value)) {
             currentKey.value = newTree[0].id
             setPath([0])
+            loadField(currentKey.value, currentPath.value)
           }
         } else {
           currentKey.value = null
@@ -144,62 +229,6 @@ export const MergeTableTree = observer(
         }, treeRef.value)
 
         return setPath(temp)
-      }
-
-      const loadTargetField = (selfId, selfPath) => {
-        form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
-          loading: true
-        })
-        metadataInstancesApi.getMergerNodeParentFields(root.$route.params.id, selfId).then(fields => {
-          form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
-            loading: false,
-            dataSource: fields.map(item => ({
-              tapType: item.tapType,
-              label: item.field_name,
-              value: item.field_name,
-              isPrimaryKey: item.primary_key_position > 0
-            }))
-          })
-        })
-      }
-
-      const loadField = (selfId, selfPath, ifWait) => {
-        const pathArr = selfPath.split('.children.')
-        if (pathArr.length < 2) return
-        props.loadFieldsMethod(selfId).then(fields => {
-          const noWarning = fields.some(item => {
-            return item.isPrimaryKey || item.indicesUnique
-          })
-
-          const treeNode = refs.tree.getNode(selfId)
-
-          if (!noWarning) {
-            set(treeNode.data, 'hasWarning', true)
-          } else {
-            del(treeNode.data, 'hasWarning')
-          }
-
-          form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.source,arrayKeys))`, {
-            loading: false,
-            dataSource: fields
-          })
-        })
-
-        if (ifWait) {
-          form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
-            loading: true
-          })
-          // 等待自动保存接口响应后查询
-          let unwatch = root.$watch(
-            () => root.$store.state.dataflow.editVersion,
-            () => {
-              unwatch()
-              loadTargetField(selfId, selfPath)
-            }
-          )
-        } else {
-          loadTargetField(selfId, selfPath)
-        }
       }
 
       const handleCurrentChange = (data, node) => {
