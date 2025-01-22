@@ -379,6 +379,8 @@ export default {
   packages_dag_nodes_mergetable_dangqianbiaoziduan: 'Current table field',
   packages_dag_nodes_mergetable_guanliantiaojian: 'Association Conditions',
   packages_dag_nodes_mergetable_gengxinjianguanlian: 'Enable update join key',
+  packages_dag_nodes_mergetable_gengxinjianguanlian_tips:
+    'If the association condition may change, you need to open this switch, which will affect performance',
   packages_dag_nodes_mergetable_neiqianshuzupi: 'Table primary key',
   packages_dag_nodes_mergetable_guanlianhouxieru: 'Field write path',
   packages_dag_nodes_mergetable_gengxinjinneiqian: 'Update into embedded array',

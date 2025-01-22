@@ -1,5 +1,5 @@
 import i18n from '@tap/i18n'
-import { defineComponent, ref, onMounted, nextTick, reactive, set, del } from '@vue/composition-api'
+import { defineComponent, ref, onMounted, nextTick, reactive, set, del, computed } from '@vue/composition-api'
 import { observer } from '@formily/reactive-vue'
 import { observe } from '@formily/reactive'
 import { FormItem, h as createElement, useFieldSchema, useForm, RecursionField } from '@tap/form'
@@ -72,6 +72,29 @@ export const MergeTableTree = observer(
         })
       }
 
+      // 更新警告状态的辅助函数
+      const updateWarningState = (selfId, selfPath) => {
+        console.log('updateWarningState', selfId, selfPath)
+        const arrayKeys = form.getValuesIn(`mergeProperties.${selfPath}.arrayKeys`)
+        const hasArrayKeys = Array.isArray(arrayKeys) && arrayKeys.length > 0
+
+        // 直接更新树节点数据
+        const updateNode = nodes => {
+          for (let node of nodes) {
+            if (node.id === selfId) {
+              set(node, 'hasWarning', !hasArrayKeys)
+              return true
+            }
+            if (node.children?.length) {
+              if (updateNode(node.children)) return true
+            }
+          }
+          return false
+        }
+
+        updateNode(treeRef.value)
+      }
+
       const loadField = (selfId, selfPath, ifWait) => {
         const pathArr = selfPath.split('.children.')
 
@@ -92,26 +115,30 @@ export const MergeTableTree = observer(
             }
           })
 
-          const noWarning = primaryKey.length > 0 || uniqueKey.length > 0
           const keysValue = primaryKey.length > 0 ? primaryKey : uniqueKey
-          const treeNode = refs.tree.getNode(selfId)
-
-          if (!noWarning) {
-            set(treeNode.data, 'hasWarning', true)
-          } else {
-            del(treeNode.data, 'hasWarning')
-          }
 
           form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.source,arrayKeys))`, {
             loading: false,
             dataSource: fields
           })
 
-          const arrayKeysValue = form.getValuesIn(`mergeProperties.${selfPath}.arrayKeys`)
+          // 监听 arrayKeys 的变化
+          form
+            .query(`mergeProperties.${selfPath}.arrayKeys`)
+            .take()
+            .setComponentProps({
+              onChange: () => {
+                updateWarningState(selfId, selfPath)
+              }
+            })
 
+          const arrayKeysValue = form.getValuesIn(`mergeProperties.${selfPath}.arrayKeys`)
           if (!arrayKeysValue?.length) {
             form.setValuesIn(`mergeProperties.${selfPath}.arrayKeys`, keysValue)
           }
+
+          // 初始化警告状态
+          updateWarningState(selfId, selfPath)
         })
 
         if (pathArr.length < 2) return
@@ -163,7 +190,8 @@ export const MergeTableTree = observer(
               targetPath: '',
               tableName: node.name,
               children: [],
-              enableUpdateJoinKeyValue: false // 关联条件变更
+              enableUpdateJoinKeyValue: false, // 关联条件变更
+              hasWarning: false
             })
           }
         })
@@ -192,30 +220,17 @@ export const MergeTableTree = observer(
         makeTree()
       })
 
-      const renderNode = ({ data }) => {
-        const dagNode = props.findNodeById(data.id)
-
-        if (!dagNode) return
-
-        return (
-          <div class="flex flex-1 align-center ml-n1 overflow-hidden merge-table-tree-node cursor-pointer">
-            <NodeIcon size={20} node={dagNode}></NodeIcon>
-            <OverflowTooltip
-              class="text-truncate flex-1 lh-1 ml-1"
-              placement="left"
-              text={dagNode.name}
-              open-delay={300}
-            />
-            <IconButton onClick={() => emit('center-node', data.id)} class="merge-table-tree-node-action">
-              location
-            </IconButton>
-            {data.hasWarning && (
-              <ElTooltip content={i18n.t('packages_dag_missing_primary_key_or_index')} placement="right">
-                <VIcon class="color-warning mx-1">warning</VIcon>
-              </ElTooltip>
-            )}
-          </div>
-        )
+      const getNodePath = (nodeId, tree = treeRef.value, path = []) => {
+        for (let i = 0; i < tree.length; i++) {
+          if (tree[i].id === nodeId) {
+            return [...path, i]
+          }
+          if (tree[i].children?.length) {
+            const foundPath = getNodePath(nodeId, tree[i].children, [...path, i, 'children'])
+            if (foundPath) return foundPath
+          }
+        }
+        return null
       }
 
       const updatePath = node => {
@@ -323,6 +338,31 @@ export const MergeTableTree = observer(
       }
 
       return () => {
+        const renderNode = ({ data, node }) => {
+          const dagNode = props.findNodeById(data.id)
+          if (!dagNode) return
+
+          return (
+            <div class="flex flex-1 align-center ml-n1 overflow-hidden merge-table-tree-node cursor-pointer">
+              <NodeIcon size={20} node={dagNode}></NodeIcon>
+              <OverflowTooltip
+                class="text-truncate flex-1 lh-1 ml-1"
+                placement="left"
+                text={dagNode.name}
+                open-delay={300}
+              />
+              <IconButton onClick={() => emit('center-node', data.id)} class="merge-table-tree-node-action">
+                location
+              </IconButton>
+              {data.hasWarning && (
+                <ElTooltip content={i18n.t('packages_dag_missing_primary_key_or_index')} placement="right">
+                  <VIcon class="color-warning mx-1">warning</VIcon>
+                </ElTooltip>
+              )}
+            </div>
+          )
+        }
+
         return (
           <div class="merge-table-tree-space flex overflow-hidden">
             <FormItem.BaseItem

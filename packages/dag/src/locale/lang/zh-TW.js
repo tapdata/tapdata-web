@@ -364,7 +364,9 @@ export default {
   packages_dag_nodes_mergetable_mubiaobiaoziduan: '目標表字段',
   packages_dag_nodes_mergetable_dangqianbiaoziduan: '當前表字段',
   packages_dag_nodes_mergetable_guanliantiaojian: '關聯條件',
-  packages_dag_nodes_mergetable_gengxinjianguanlian: '關聯條件變更',
+  packages_dag_nodes_mergetable_gengxinjianguanlian: '支持關聯條件更新',
+  packages_dag_nodes_mergetable_gengxinjianguanlian_tips:
+    '如果關聯條件可能會變化, 需要打開此開關, 打開後性能會受到一些影響',
   packages_dag_nodes_mergetable_neiqianshuzupi: '表主鍵',
   packages_dag_nodes_mergetable_guanlianhouxieru: '關聯後寫入路徑',
   packages_dag_nodes_mergetable_gengxinjinneiqian: '更新進內嵌數組',

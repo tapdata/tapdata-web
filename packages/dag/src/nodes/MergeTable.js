@@ -155,6 +155,10 @@ export class MergeTable extends NodeType {
                           type: 'void',
                           'x-component': 'FormContent',
                           properties: {
+                            hasWarning: {
+                              type: 'boolean',
+                              'x-display': 'hidden'
+                            },
                             targetPath: {
                               type: 'string',
                               title: i18n.t('packages_dag_field_path'),
@@ -287,7 +291,8 @@ export class MergeTable extends NodeType {
                               title: i18n.t('packages_dag_nodes_mergetable_gengxinjianguanlian'),
                               'x-decorator': 'FormItem',
                               'x-decorator-props': {
-                                layout: 'horizontal'
+                                layout: 'horizontal',
+                                tooltip: i18n.t('packages_dag_nodes_mergetable_gengxinjianguanlian_tips')
                               },
                               'x-component': 'Switch',
                               'x-component-props': {
