@@ -220,13 +220,19 @@
       </span>
     </ElDialog>
 
-    <ElDialog :visible.sync="showMaterialized" width="480px" :close-on-click-modal="false">
+    <ElDialog :visible.sync="showMaterialized" width="480px" :close-on-click-modal="false" @opened="handleDialogOpened">
       <span slot="title" class="fs-6 fw-sub">{{ $t('packages_dag_build_materialized_view') }}</span>
       <ElForm ref="form" label-width="90px" label-position="top" class="my-n6" @submit.prevent>
         <ElFormItem :label="$t('packages_dag_materialized_view_storage_table')">
-          <ElInput size="small" v-model="materializedTableName">
+          <ElInput ref="tableNameInput" size="small" v-model="materializedTableName">
             <template #prepend>{{ tablePrefix }}</template>
           </ElInput>
+        </ElFormItem>
+        <ElFormItem :label="$t('packages_ldp_mdm_create_method')">
+          <ElRadioGroup v-model="createMethod">
+            <ElRadio label="transformation">{{ $t('packages_ldp_mdm_create_method_transformation') }}</ElRadio>
+            <ElRadio label="materialized">{{ $t('packages_ldp_mdm_create_method_materialized') }}</ElRadio>
+          </ElRadioGroup>
         </ElFormItem>
       </ElForm>
       <span slot="footer" class="dialog-footer">
@@ -305,7 +311,8 @@ export default {
       filterTreeData: [],
       tablePrefix: 'MDM_',
       showMaterialized: false,
-      materializedTableName: ''
+      materializedTableName: '',
+      createMethod: 'transformation'
     }
   },
 
@@ -936,6 +943,7 @@ export default {
     openMaterializedDialog() {
       this.materializedTableName = ''
       this.showMaterialized = true
+      this.createMethod = 'transformation'
     },
 
     createMaterializedView() {
@@ -946,10 +954,16 @@ export default {
       this.$router.push({
         name: 'DataflowNew',
         query: {
-          by: 'materialized-view',
+          by: this.createMethod === 'transformation' ? 'transformation-materialized' : 'materialized-view',
           connectionId: this.mdmConnection.id,
           tableName: this.tablePrefix + tableName
         }
+      })
+    },
+
+    handleDialogOpened() {
+      this.$nextTick(() => {
+        this.$refs.tableNameInput.focus()
       })
     }
   }

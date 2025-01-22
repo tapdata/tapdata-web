@@ -140,17 +140,13 @@ export class MergeTable extends NodeType {
                         },
                         mergeType: {
                           type: 'string',
-                          title: i18n.t('packages_dag_nodes_mergetable_shujuxierumo'),
+                          title: i18n.t('packages_dag_materialized_view_field_type'),
                           'x-decorator': 'FormItem',
-                          'x-component': 'Select',
+                          'x-component': 'Radio.Group',
                           enum: [
-                            { label: i18n.t('packages_dag_editor_cell_link_writeMode_update'), value: 'updateWrite' },
+                            { label: i18n.t('public_document'), value: 'updateWrite' },
                             {
-                              label: i18n.t('packages_dag_editor_cell_link_writeMode_upsert'),
-                              value: 'updateOrInsert'
-                            },
-                            {
-                              label: i18n.t('packages_dag_nodes_mergetable_gengxinjinneiqian'),
+                              label: i18n.t('public_array'),
                               value: 'updateIntoArray'
                             }
                           ]
@@ -159,9 +155,13 @@ export class MergeTable extends NodeType {
                           type: 'void',
                           'x-component': 'FormContent',
                           properties: {
+                            hasWarning: {
+                              type: 'boolean',
+                              'x-display': 'hidden'
+                            },
                             targetPath: {
                               type: 'string',
-                              title: i18n.t('packages_dag_nodes_mergetable_guanlianhouxieru'),
+                              title: i18n.t('packages_dag_field_path'),
                               'x-decorator': 'FormItem',
                               'x-component': 'Input',
                               'x-component-props': {
@@ -195,6 +195,7 @@ export class MergeTable extends NodeType {
                               ]
                             },
                             arrayKeys: {
+                              required: true,
                               type: 'array',
                               title: i18n.t('packages_dag_nodes_mergetable_neiqianshuzupi'),
                               'x-decorator': 'FormItem',
@@ -203,30 +204,11 @@ export class MergeTable extends NodeType {
                                 'allow-create': true,
                                 multiple: true,
                                 filterable: true
-                              },
-                              'x-reactions': [
-                                {
-                                  dependencies: ['.mergeType'],
-                                  fulfill: {
-                                    state: {
-                                      visible: '{{ $deps[0] === "updateIntoArray" }}'
-                                    }
-                                  }
-                                }
-                              ]
+                              }
                             },
                             children: {
                               type: 'array',
                               'x-display': 'hidden'
-                            },
-                            enableUpdateJoinKeyValue: {
-                              type: 'boolean',
-                              title: i18n.t('packages_dag_nodes_mergetable_gengxinjianguanlian'),
-                              'x-decorator': 'FormItem',
-                              'x-component': 'Switch',
-                              'x-component-props': {
-                                onChange: '{{(val) => { changeEnableUpdateJoinKeyValue(val, $self) }}}'
-                              }
                             },
                             joinKeys: {
                               type: 'array',
@@ -302,6 +284,19 @@ export class MergeTable extends NodeType {
                                   title: '+',
                                   'x-component': 'ArrayTable.Addition'
                                 }
+                              }
+                            },
+                            enableUpdateJoinKeyValue: {
+                              type: 'boolean',
+                              title: i18n.t('packages_dag_nodes_mergetable_gengxinjianguanlian'),
+                              'x-decorator': 'FormItem',
+                              'x-decorator-props': {
+                                layout: 'horizontal',
+                                tooltip: i18n.t('packages_dag_nodes_mergetable_gengxinjianguanlian_tips')
+                              },
+                              'x-component': 'Switch',
+                              'x-component-props': {
+                                onChange: '{{(val) => { changeEnableUpdateJoinKeyValue(val, $self) }}}'
                               }
                             }
                           }

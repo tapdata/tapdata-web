@@ -1,5 +1,5 @@
 import i18n from '@tap/i18n'
-import { defineComponent, ref, onMounted, nextTick, reactive, set, del } from '@vue/composition-api'
+import { defineComponent, ref, onMounted, nextTick, reactive, set, del, computed } from '@vue/composition-api'
 import { observer } from '@formily/reactive-vue'
 import { observe } from '@formily/reactive'
 import { FormItem, h as createElement, useFieldSchema, useForm, RecursionField } from '@tap/form'
@@ -26,13 +26,25 @@ export const MergeTableTree = observer(
       const setPath = pathArr => {
         const path = pathArr.join('.children.')
         currentPath.value = path
+
+        form.setFieldState(`mergeProperties.${path}.arrayKeys`, {
+          display: 'hidden'
+        })
+
         if (pathArr.length === 1) {
-          form.setFieldState(`mergeProperties.${path}.mergeType`, {
+          form.setFieldState(`mergeProperties.${path}.targetPath`, {
             display: 'hidden'
+          })
+          form.setFieldState(`mergeProperties.${path}.mergeType`, {
+            display: 'hidden',
+            value: 'updateOrInsert'
           })
           form.setFieldState(`mergeProperties.${path}.joinKeys`, {
             visible: false
           })
+        } else if (pathArr.length > 1 && form.getValuesIn(`mergeProperties.${path}.mergeType`) === 'updateOrInsert') {
+          // 主表是 updateOrInsert, 子表是 updateWrite
+          form.setValuesIn(`mergeProperties.${path}.mergeType`, 'updateWrite')
         }
         return path
       }
@@ -46,6 +58,109 @@ export const MergeTableTree = observer(
           }
           return result
         }, map)
+      }
+
+      const loadTargetField = (selfId, selfPath) => {
+        form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
+          loading: true
+        })
+        metadataInstancesApi.getMergerNodeParentFields(root.$route.params.id, selfId).then(fields => {
+          form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
+            loading: false,
+            dataSource: fields.map(item => ({
+              tapType: item.tapType,
+              label: item.field_name,
+              value: item.field_name,
+              isPrimaryKey: item.primary_key_position > 0
+            }))
+          })
+        })
+      }
+
+      // 更新警告状态的辅助函数
+      const updateWarningState = (selfId, selfPath) => {
+        const arrayKeys = form.getValuesIn(`mergeProperties.${selfPath}.arrayKeys`)
+        const hasArrayKeys = Array.isArray(arrayKeys) && arrayKeys.length > 0
+
+        // 直接更新树节点数据
+        const updateNode = nodes => {
+          for (let node of nodes) {
+            if (node.id === selfId) {
+              set(node, 'hasWarning', !hasArrayKeys)
+              return true
+            }
+            if (node.children?.length) {
+              if (updateNode(node.children)) return true
+            }
+          }
+          return false
+        }
+
+        updateNode(treeRef.value)
+      }
+
+      const loadField = (selfId, selfPath, ifWait) => {
+        const pathArr = selfPath.split('.children.')
+
+        form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.source,arrayKeys))`, {
+          loading: true
+        })
+
+        props.loadFieldsMethod(selfId).then(fields => {
+          const primaryKey = []
+          const uniqueKey = []
+
+          fields.forEach(item => {
+            if (item.isPrimaryKey) {
+              primaryKey.push(item.label)
+            }
+            if (item.indicesUnique) {
+              uniqueKey.push(item.label)
+            }
+          })
+
+          const keysValue = primaryKey.length > 0 ? primaryKey : uniqueKey
+
+          form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.source,arrayKeys))`, {
+            loading: false,
+            dataSource: fields
+          })
+
+          // 监听 arrayKeys 的变化
+          const field = form.query(`mergeProperties.${selfPath}.arrayKeys`).take()
+          field.setDisplay(keysValue.length ? 'hidden' : 'visible')
+          field.setComponentProps({
+            onChange: () => {
+              updateWarningState(selfId, selfPath)
+            }
+          })
+
+          const arrayKeysValue = form.getValuesIn(`mergeProperties.${selfPath}.arrayKeys`)
+          if (!arrayKeysValue?.length) {
+            form.setValuesIn(`mergeProperties.${selfPath}.arrayKeys`, keysValue)
+          }
+
+          // 初始化警告状态
+          updateWarningState(selfId, selfPath)
+        })
+
+        if (pathArr.length < 2) return
+
+        if (ifWait) {
+          form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
+            loading: true
+          })
+          // 等待自动保存接口响应后查询
+          let unwatch = root.$watch(
+            () => root.$store.state.dataflow.editVersion,
+            () => {
+              unwatch()
+              loadTargetField(selfId, selfPath)
+            }
+          )
+        } else {
+          loadTargetField(selfId, selfPath)
+        }
       }
 
       const makeTree = () => {
@@ -74,12 +189,12 @@ export const MergeTableTree = observer(
             const node = props.findNodeById(id)
             newTree.push({
               id,
-              mergeType: 'updateOrInsert',
-              targetPath: null,
+              mergeType: 'updateWrite',
+              targetPath: '',
               tableName: node.name,
-              // joinKeys: [],
               children: [],
-              enableUpdateJoinKeyValue: false // 关联条件变更
+              enableUpdateJoinKeyValue: false, // 关联条件变更
+              hasWarning: false
             })
           }
         })
@@ -90,6 +205,7 @@ export const MergeTableTree = observer(
           if (!currentKey.value || !$inputs.includes(currentKey.value)) {
             currentKey.value = newTree[0].id
             setPath([0])
+            loadField(currentKey.value, currentPath.value)
           }
         } else {
           currentKey.value = null
@@ -107,30 +223,17 @@ export const MergeTableTree = observer(
         makeTree()
       })
 
-      const renderNode = ({ data }) => {
-        const dagNode = props.findNodeById(data.id)
-
-        if (!dagNode) return
-
-        return (
-          <div class="flex flex-1 align-center ml-n1 overflow-hidden merge-table-tree-node cursor-pointer">
-            <NodeIcon size={20} node={dagNode}></NodeIcon>
-            <OverflowTooltip
-              class="text-truncate flex-1 lh-1 ml-1"
-              placement="left"
-              text={dagNode.name}
-              open-delay={300}
-            />
-            <IconButton onClick={() => emit('center-node', data.id)} class="merge-table-tree-node-action">
-              location
-            </IconButton>
-            {data.hasWarning && (
-              <ElTooltip content={i18n.t('packages_dag_missing_primary_key_or_index')} placement="right">
-                <VIcon class="color-warning mx-1">warning</VIcon>
-              </ElTooltip>
-            )}
-          </div>
-        )
+      const getNodePath = (nodeId, tree = treeRef.value, path = []) => {
+        for (let i = 0; i < tree.length; i++) {
+          if (tree[i].id === nodeId) {
+            return [...path, i]
+          }
+          if (tree[i].children?.length) {
+            const foundPath = getNodePath(nodeId, tree[i].children, [...path, i, 'children'])
+            if (foundPath) return foundPath
+          }
+        }
+        return null
       }
 
       const updatePath = node => {
@@ -144,62 +247,6 @@ export const MergeTableTree = observer(
         }, treeRef.value)
 
         return setPath(temp)
-      }
-
-      const loadTargetField = (selfId, selfPath) => {
-        form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
-          loading: true
-        })
-        metadataInstancesApi.getMergerNodeParentFields(root.$route.params.id, selfId).then(fields => {
-          form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
-            loading: false,
-            dataSource: fields.map(item => ({
-              tapType: item.tapType,
-              label: item.field_name,
-              value: item.field_name,
-              isPrimaryKey: item.primary_key_position > 0
-            }))
-          })
-        })
-      }
-
-      const loadField = (selfId, selfPath, ifWait) => {
-        const pathArr = selfPath.split('.children.')
-        if (pathArr.length < 2) return
-        props.loadFieldsMethod(selfId).then(fields => {
-          const noWarning = fields.some(item => {
-            return item.isPrimaryKey || item.indicesUnique
-          })
-
-          const treeNode = refs.tree.getNode(selfId)
-
-          if (!noWarning) {
-            set(treeNode.data, 'hasWarning', true)
-          } else {
-            del(treeNode.data, 'hasWarning')
-          }
-
-          form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.source,arrayKeys))`, {
-            loading: false,
-            dataSource: fields
-          })
-        })
-
-        if (ifWait) {
-          form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
-            loading: true
-          })
-          // 等待自动保存接口响应后查询
-          let unwatch = root.$watch(
-            () => root.$store.state.dataflow.editVersion,
-            () => {
-              unwatch()
-              loadTargetField(selfId, selfPath)
-            }
-          )
-        } else {
-          loadTargetField(selfId, selfPath)
-        }
       }
 
       const handleCurrentChange = (data, node) => {
@@ -294,6 +341,31 @@ export const MergeTableTree = observer(
       }
 
       return () => {
+        const renderNode = ({ data, node }) => {
+          const dagNode = props.findNodeById(data.id)
+          if (!dagNode) return
+
+          return (
+            <div class="flex flex-1 align-center ml-n1 overflow-hidden merge-table-tree-node cursor-pointer">
+              <NodeIcon size={20} node={dagNode}></NodeIcon>
+              <OverflowTooltip
+                class="text-truncate flex-1 lh-1 ml-1"
+                placement="left"
+                text={dagNode.name}
+                open-delay={300}
+              />
+              <IconButton onClick={() => emit('center-node', data.id)} class="merge-table-tree-node-action">
+                location
+              </IconButton>
+              {data.hasWarning && (
+                <ElTooltip content={i18n.t('packages_dag_missing_primary_key_or_index')} placement="right">
+                  <VIcon class="color-warning mx-1">warning</VIcon>
+                </ElTooltip>
+              )}
+            </div>
+          )
+        }
+
         return (
           <div class="merge-table-tree-space flex overflow-hidden">
             <FormItem.BaseItem
@@ -331,7 +403,7 @@ export const MergeTableTree = observer(
                 vOn:node-drag-over={handleNodeDragOver}
               />
             </FormItem.BaseItem>
-            <div class="border-start flex-1 px-2 overflow-y-auto">
+            <div class="border-start flex-1 px-2 py-4 overflow-y-auto">
               {currentPath.value &&
                 createElement(
                   RecursionField,
