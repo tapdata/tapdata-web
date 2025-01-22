@@ -88,10 +88,13 @@ export default {
 
     activeNodeId: {
       async handler(n, o) {
+        const oldNode = this.nodeById(o)
         const formSchema = this.$store.getters['dataflow/formSchema'] || {}
 
         // 重置TAB
-        // this.scope?.formTab?.setActiveKey('tab1')
+        if (this.ins?.group !== oldNode?.__Ctor.group) {
+          this.scope?.formTab?.setActiveKey('tab1')
+        }
 
         if (!this.ins) {
           // 节点不存在，比如删掉了，清除表单
@@ -108,12 +111,11 @@ export default {
         }
 
         // 校验上一个节点配置
-        if (o && !this.stateIsReadonly) {
-          const node = this.nodeById(o)
+        if (oldNode && !this.stateIsReadonly) {
           try {
-            if (node) {
-              const schema = getSchema(node.__Ctor.formSchema, node, this.$store.state.dataflow.pdkPropertiesMap)
-              await validateBySchema(schema, node, this.scope)
+            if (oldNode) {
+              const schema = getSchema(oldNode.__Ctor.formSchema, oldNode, this.$store.state.dataflow.pdkPropertiesMap)
+              await validateBySchema(schema, oldNode, this.scope)
             }
 
             if (this.hasNodeError(o) && typeof this.hasNodeError(o) !== 'string') {
