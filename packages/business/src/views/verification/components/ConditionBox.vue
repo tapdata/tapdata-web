@@ -1461,10 +1461,18 @@ export default {
                 let sourceSortColumn = updateList.length
                   ? updateList.join(',')
                   : this.getPrimaryKeyFieldStr(findTable.fields)
-                if (updateList.length && findTargetTable?.fields) {
-                  sourceSortColumn = findTargetTable.fields
-                    .filter(t => updateList.includes(t.field_name))
-                    .map(t => t.original_field_name)
+
+                if (updateList.length && findTargetTable?.fields?.length) {
+                  const fieldMap = findTargetTable?.fields?.reduce((acc, t) => {
+                    acc[t.field_name] = t.original_field_name
+                    return acc
+                  }, {})
+
+                  sourceSortColumn = updateList
+                    .reduce((acc, t) => {
+                      fieldMap[t] && acc.push(fieldMap[t])
+                      return acc
+                    }, [])
                     .join(',')
                 }
 
@@ -1472,8 +1480,8 @@ export default {
                   t.isPrimaryKey = t.primary_key_position > 0
                   return t
                 })
-
                 item.source.sortColumn = sourceSortColumn
+
                 const key = [source || '', sourceConnectionId, item.source.table].join()
                 this.fieldsMap[key] = item.source.fields
               }
