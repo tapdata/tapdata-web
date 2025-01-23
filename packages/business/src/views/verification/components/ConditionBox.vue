@@ -281,13 +281,14 @@
       </ElButton>
 
       <template v-if="!isCountOrHash">
-        <el-divider direction="vertical"></el-divider>
+        <el-divider class="mx-3" direction="vertical"></el-divider>
         <div class="inline-flex align-items-center">
           <span class="fs-7">{{ $t('packages_business_auto_fill_join_fields') }}</span>
           <el-tooltip class="color-primary" effect="dark" placement="top">
             <template #content>
               <div>{{ $t('packages_business_auto_fill_join_tooltip_title') }}</div>
               <div>{{ $t('packages_business_auto_fill_join_tooltip_primary') }}</div>
+              <div>{{ $t('packages_business_auto_fill_join_tooltip_notnull') }}</div>
               <div>{{ $t('packages_business_auto_fill_join_tooltip_all') }}</div>
             </template>
             <i class="el-icon-question"></i>
@@ -1493,8 +1494,14 @@ export default {
               }
 
               if (this.autoSuggestJoinFields && !item.source.sortColumn && !item.target.sortColumn) {
-                item.source.sortColumn = item.source.fields.map(t => t.field_name).join(',')
-                item.target.sortColumn = item.target.fields.map(t => t.field_name).join(',')
+                let sourceFields = item.source.fields.filter(t => !t.is_nullable)
+                let targetFields = item.target.fields.filter(t => !t.is_nullable)
+
+                sourceFields = sourceFields.length ? sourceFields : item.source.fields
+                targetFields = targetFields.length ? targetFields : item.target.fields
+
+                item.source.sortColumn = sourceFields.map(t => t.field_name).join(',')
+                item.target.sortColumn = targetFields.map(t => t.field_name).join(',')
               }
 
               list.push(item)

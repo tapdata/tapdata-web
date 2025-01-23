@@ -1262,5 +1262,6 @@ export default {
   packages_business_auto_fill_join_fields: '智能填充关联条件',
   packages_business_auto_fill_join_tooltip_title: '开启后，系统将按以下优先级自动填充关联条件：',
   packages_business_auto_fill_join_tooltip_primary: '1. 优先使用主键字段',
-  packages_business_auto_fill_join_tooltip_all: '2. 如无主键，则使用全部字段'
+  packages_business_auto_fill_join_tooltip_notnull: '2. 如无主键，则使用非空字段',
+  packages_business_auto_fill_join_tooltip_all: '3. 如无非空字段，则使用全部字段'
 }
