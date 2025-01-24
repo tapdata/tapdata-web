@@ -36,12 +36,12 @@ export const MergeTableTree = observer(
             display: 'hidden'
           })
           form.setFieldState(`mergeProperties.${path}.mergeType`, {
-            display: 'hidden',
-            value: 'updateOrInsert'
+            display: 'hidden'
           })
           form.setFieldState(`mergeProperties.${path}.joinKeys`, {
             visible: false
           })
+          form.setValuesIn(`mergeProperties.${path}.mergeType`, 'updateOrInsert')
         } else if (pathArr.length > 1 && form.getValuesIn(`mergeProperties.${path}.mergeType`) === 'updateOrInsert') {
           // 主表是 updateOrInsert, 子表是 updateWrite
           form.setValuesIn(`mergeProperties.${path}.mergeType`, 'updateWrite')
@@ -60,21 +60,98 @@ export const MergeTableTree = observer(
         }, map)
       }
 
-      const loadTargetField = (selfId, selfPath) => {
-        form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
-          loading: true
-        })
-        metadataInstancesApi.getMergerNodeParentFields(root.$route.params.id, selfId).then(fields => {
-          form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
-            loading: false,
-            dataSource: fields.map(item => ({
-              tapType: item.tapType,
-              label: item.field_name,
-              value: item.field_name,
-              isPrimaryKey: item.primary_key_position > 0
-            }))
+      const makeTree = () => {
+        const $inputs = formRef.value.values.$inputs
+        const traverse = children => {
+          const filter = []
+          children.forEach(item => {
+            if (!$inputs.includes(item.id) && item.children?.length) {
+              filter.push(...traverse(item.children))
+            } else if ($inputs.includes(item.id) && item.children?.length) {
+              filterIdMap[item.id] = true
+              const newItem = { ...item, children: [] }
+              newItem.children = traverse(item.children)
+              filter.push(newItem)
+            } else if ($inputs.includes(item.id) && !item.children?.length) {
+              filterIdMap[item.id] = true
+              filter.push({ ...item })
+            }
           })
+          return filter
+        }
+        let filterIdMap = {}
+        let newTree = traverse(JSON.parse(JSON.stringify(props.value)))
+        $inputs.forEach(id => {
+          if (!filterIdMap[id]) {
+            const node = props.findNodeById(id)
+            newTree.push({
+              id,
+              mergeType: 'updateWrite',
+              targetPath: null,
+              tableName: node.name,
+              // joinKeys: [],
+              children: [],
+              enableUpdateJoinKeyValue: false, // 关联条件变更
+              hasWarning: false
+            })
+          }
         })
+        treeRef.value = newTree
+        emit('change', JSON.parse(JSON.stringify(newTree)))
+
+        if (newTree.length) {
+          if (!currentKey.value || !$inputs.includes(currentKey.value)) {
+            currentKey.value = newTree[0].id
+            setPath([0])
+            loadField(currentKey.value, currentPath.value)
+          }
+        } else {
+          currentKey.value = null
+          currentPath.value = null
+        }
+
+        nextTick(() => {
+          refs.tree?.setCurrentKey(currentKey.value)
+        })
+      }
+
+      const renderNode = ({ data }) => {
+        const dagNode = props.findNodeById(data.id)
+
+        if (!dagNode) return
+
+        return (
+          <div class="flex flex-1 align-center ml-n1 overflow-hidden merge-table-tree-node cursor-pointer">
+            <NodeIcon size={20} node={dagNode}></NodeIcon>
+            <OverflowTooltip
+              class="text-truncate flex-1 lh-1 ml-1"
+              placement="left"
+              text={dagNode.name}
+              open-delay={300}
+            />
+            <IconButton onClick={() => emit('center-node', data.id)} class="merge-table-tree-node-action">
+              location
+            </IconButton>
+            {data.hasWarning && (
+              <ElTooltip content={i18n.t('packages_dag_missing_primary_key_or_index')} placement="right">
+                <VIcon class="color-warning mx-1">warning</VIcon>
+              </ElTooltip>
+            )}
+          </div>
+        )
+      }
+
+      const updatePath = node => {
+        const temp = []
+        const nodePath = refs.tree.getNodePath(node)
+        nodePath.reduce((parent, item) => {
+          if (parent) {
+            temp.push(parent.findIndex(p => p.id === item.id))
+          }
+          return item.children
+        }, treeRef.value)
+
+        return setPath(temp)
       }
 
       // 更新警告状态的辅助函数
@@ -97,6 +174,23 @@ export const MergeTableTree = observer(
         }
 
         updateNode(treeRef.value)
+      }
+
+      const loadTargetField = (selfId, selfPath) => {
+        form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
+          loading: true
+        })
+        metadataInstancesApi.getMergerNodeParentFields(root.$route.params.id, selfId).then(fields => {
+          form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
+            loading: false,
+            dataSource: fields.map(item => ({
+              tapType: item.tapType,
+              label: item.field_name,
+              value: item.field_name,
+              isPrimaryKey: item.primary_key_position > 0
+            }))
+          })
+        })
       }
 
       const loadField = (selfId, selfPath, ifWait) => {
@@ -163,91 +257,11 @@ export const MergeTableTree = observer(
         }
       }
 
-      const makeTree = () => {
-        const $inputs = formRef.value.values.$inputs
-        const traverse = children => {
-          const filter = []
-          children.forEach(item => {
-            if (!$inputs.includes(item.id) && item.children?.length) {
-              filter.push(...traverse(item.children))
-            } else if ($inputs.includes(item.id) && item.children?.length) {
-              filterIdMap[item.id] = true
-              const newItem = { ...item, children: [] }
-              newItem.children = traverse(item.children)
-              filter.push(newItem)
-            } else if ($inputs.includes(item.id) && !item.children?.length) {
-              filterIdMap[item.id] = true
-              filter.push({ ...item })
-            }
-          })
-          return filter
-        }
-        let filterIdMap = {}
-        let newTree = traverse(JSON.parse(JSON.stringify(props.value)))
-        $inputs.forEach(id => {
-          if (!filterIdMap[id]) {
-            const node = props.findNodeById(id)
-            newTree.push({
-              id,
-              mergeType: 'updateWrite',
-              targetPath: '',
-              tableName: node.name,
-              children: [],
-              enableUpdateJoinKeyValue: false, // 关联条件变更
-              hasWarning: false
-            })
-          }
-        })
-        treeRef.value = newTree
-        emit('change', JSON.parse(JSON.stringify(newTree)))
-
-        if (newTree.length) {
-          if (!currentKey.value || !$inputs.includes(currentKey.value)) {
-            currentKey.value = newTree[0].id
-            setPath([0])
-            loadField(currentKey.value, currentPath.value)
-          }
-        } else {
-          currentKey.value = null
-          currentPath.value = null
-        }
-
-        nextTick(() => {
-          refs.tree?.setCurrentKey(currentKey.value)
-        })
-      }
-
       makeTree()
 
       observe(formRef.value.values.$inputs, () => {
         makeTree()
       })
-
-      const getNodePath = (nodeId, tree = treeRef.value, path = []) => {
-        for (let i = 0; i < tree.length; i++) {
-          if (tree[i].id === nodeId) {
-            return [...path, i]
-          }
-          if (tree[i].children?.length) {
-            const foundPath = getNodePath(nodeId, tree[i].children, [...path, i, 'children'])
-            if (foundPath) return foundPath
-          }
-        }
-        return null
-      }
-
-      const updatePath = node => {
-        const temp = []
-        const nodePath = refs.tree.getNodePath(node)
-        nodePath.reduce((parent, item) => {
-          if (parent) {
-            temp.push(parent.findIndex(p => p.id === item.id))
-          }
-          return item.children
-        }, treeRef.value)
-
-        return setPath(temp)
-      }
 
       const handleCurrentChange = (data, node) => {
         const oldKey = currentKey.value
@@ -266,6 +280,8 @@ export const MergeTableTree = observer(
       }
 
       const handleNodeDrop = (dragNode, dropNode, dropType) => {
+        console.log('props.value', props.value)
+
         const nodeMap = {
           value: flattenTree(props.value || [], {})
         }
@@ -341,31 +357,6 @@ export const MergeTableTree = observer(
       }
 
       return () => {
-        const renderNode = ({ data, node }) => {
-          const dagNode = props.findNodeById(data.id)
-          if (!dagNode) return
-
-          return (
-            <div class="flex flex-1 align-center ml-n1 overflow-hidden merge-table-tree-node cursor-pointer">
-              <NodeIcon size={20} node={dagNode}></NodeIcon>
-              <OverflowTooltip
-                class="text-truncate flex-1 lh-1 ml-1"
-                placement="left"
-                text={dagNode.name}
-                open-delay={300}
-              />
-              <IconButton onClick={() => emit('center-node', data.id)} class="merge-table-tree-node-action">
-                location
-              </IconButton>
-              {data.hasWarning && (
-                <ElTooltip content={i18n.t('packages_dag_missing_primary_key_or_index')} placement="right">
-                  <VIcon class="color-warning mx-1">warning</VIcon>
-                </ElTooltip>
-              )}
-            </div>
-          )
-        }
-
         return (
           <div class="merge-table-tree-space flex overflow-hidden">
             <FormItem.BaseItem
