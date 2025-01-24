@@ -169,14 +169,6 @@ export class MergeTable extends NodeType {
                               },
                               'x-reactions': [
                                 {
-                                  dependencies: ['.mergeType', '.id'],
-                                  fulfill: {
-                                    state: {
-                                      value: `{{ console.log('targetPath', $deps[0], !$self.value && $self.value !== '' && ($deps[0] === "updateWrite" || $deps[0] === "updateIntoArray") ? findNodeById($deps[1]) ? findNodeById($deps[1]).name:undefined : $self.value), !$self.value && $self.value !== '' && ($deps[0] === "updateWrite" || $deps[0] === "updateIntoArray") ? findNodeById($deps[1]) ? findNodeById($deps[1]).name:undefined : $self.value }}`
-                                    }
-                                  }
-                                },
-                                {
                                   effects: ['onFieldInputValueChange'],
                                   fulfill: {
                                     run: `{{

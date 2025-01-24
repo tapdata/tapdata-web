@@ -41,10 +41,22 @@ export const MergeTableTree = observer(
           form.setFieldState(`mergeProperties.${path}.joinKeys`, {
             visible: false
           })
+          form.setValuesIn(`mergeProperties.${path}.targetPath`, undefined)
           form.setValuesIn(`mergeProperties.${path}.mergeType`, 'updateOrInsert')
-        } else if (pathArr.length > 1 && form.getValuesIn(`mergeProperties.${path}.mergeType`) === 'updateOrInsert') {
-          // 主表是 updateOrInsert, 子表是 updateWrite
-          form.setValuesIn(`mergeProperties.${path}.mergeType`, 'updateWrite')
+        } else if (pathArr.length > 1) {
+          const mergeType = form.getValuesIn(`mergeProperties.${path}.mergeType`)
+
+          if (mergeType === 'updateOrInsert') {
+            // 主表是 updateOrInsert, 子表是 updateWrite
+            form.setValuesIn(`mergeProperties.${path}.mergeType`, 'updateWrite')
+          }
+
+          if (form.getValuesIn(`mergeProperties.${path}.targetPath`) == null) {
+            form.setValuesIn(
+              `mergeProperties.${path}.targetPath`,
+              props.findNodeById(form.getValuesIn(`mergeProperties.${path}.id`))?.name
+            )
+          }
         }
         return path
       }
