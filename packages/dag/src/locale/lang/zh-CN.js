@@ -364,8 +364,10 @@ export default {
   packages_dag_nodes_mergetable_mubiaobiaoziduan: '目标表字段',
   packages_dag_nodes_mergetable_dangqianbiaoziduan: '当前表字段',
   packages_dag_nodes_mergetable_guanliantiaojian: '关联条件',
-  packages_dag_nodes_mergetable_gengxinjianguanlian: '关联条件变更',
-  packages_dag_nodes_mergetable_neiqianshuzupi: '内嵌数组匹配条件',
+  packages_dag_nodes_mergetable_gengxinjianguanlian: '支持关联条件更新',
+  packages_dag_nodes_mergetable_gengxinjianguanlian_tips:
+    '如果关联条件可能会变化, 需要打开此开关, 打开后性能会受到一些影响',
+  packages_dag_nodes_mergetable_neiqianshuzupi: '表主键',
   packages_dag_nodes_mergetable_guanlianhouxieru: '字段写入路径',
   packages_dag_nodes_mergetable_gengxinjinneiqian: '更新进内嵌数组',
   packages_dag_nodes_mergetable_shujuxierumo: '数据写入模式',
@@ -769,5 +771,6 @@ export default {
   packages_dag_noPkSyncMode_ADD_HASH: '新增哈希列',
   packages_dag_noPkSyncMode_ALL_COLUMNS: '全字段索引',
   packages_dag_join_keys_empty: '{tableName} 的关联条件不能为空',
-  packages_dag_join_keys_field_empty: '{tableName} 的关联条件第 {index} 项的字段不能为空'
+  packages_dag_join_keys_field_empty: '{tableName} 的关联条件第 {index} 项的字段不能为空',
+  packages_dag_field_path: '字段路径'
 }

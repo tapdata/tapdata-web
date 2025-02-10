@@ -1319,5 +1319,11 @@ export default {
   packages_business_warning_details: 'Warning Details',
   packages_business_custom_collate: 'Custom Collate',
   packages_business_please_select_field: 'Please select a field',
-  packages_business_please_input_charset: 'Please input charset'
+  packages_business_please_input_charset: 'Please input charset',
+  packages_business_auto_fill_join_fields: 'Smart Fill Associated Fields',
+  packages_business_auto_fill_join_tooltip_title:
+    'After enabling, the system will automatically fill in the join conditions according to the following priority:',
+  packages_business_auto_fill_join_tooltip_primary: '1. Use primary key fields first',
+  packages_business_auto_fill_join_tooltip_notnull: '2. If there is no primary key, use non-null fields',
+  packages_business_auto_fill_join_tooltip_all: '3. If there are no non-null fields, use all fields'
 }

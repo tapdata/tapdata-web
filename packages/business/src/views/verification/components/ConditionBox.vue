@@ -279,6 +279,23 @@
         @click="autoAddTable"
         >{{ $t('packages_business_verification_button_auto_add_table') }}
       </ElButton>
+
+      <template v-if="!isCountOrHash">
+        <el-divider class="mx-3" direction="vertical"></el-divider>
+        <div class="inline-flex align-items-center">
+          <span class="fs-7">{{ $t('packages_business_auto_fill_join_fields') }}</span>
+          <el-tooltip class="color-primary" effect="dark" placement="top">
+            <template #content>
+              <div>{{ $t('packages_business_auto_fill_join_tooltip_title') }}</div>
+              <div>{{ $t('packages_business_auto_fill_join_tooltip_primary') }}</div>
+              <div>{{ $t('packages_business_auto_fill_join_tooltip_notnull') }}</div>
+              <div>{{ $t('packages_business_auto_fill_join_tooltip_all') }}</div>
+            </template>
+            <i class="el-icon-question"></i>
+          </el-tooltip>
+          <el-switch class="ml-3" v-model="autoSuggestJoinFields" />
+        </div>
+      </template>
     </div>
     <ElDialog
       width="60%"
@@ -994,7 +1011,8 @@ export default {
             }
           }
         }
-      }
+      },
+      autoSuggestJoinFields: true
     }
   },
 
@@ -1443,14 +1461,27 @@ export default {
                 let sourceSortColumn = updateList.length
                   ? updateList.join(',')
                   : this.getPrimaryKeyFieldStr(findTable.fields)
-                if (updateList.length && findTargetTable?.fields) {
-                  sourceSortColumn = findTargetTable.fields
-                    .filter(t => updateList.includes(t.field_name))
-                    .map(t => t.original_field_name)
+
+                if (updateList.length && findTargetTable?.fields?.length) {
+                  const fieldMap = findTargetTable?.fields?.reduce((acc, t) => {
+                    acc[t.field_name] = t.original_field_name
+                    return acc
+                  }, {})
+
+                  sourceSortColumn = updateList
+                    .reduce((acc, t) => {
+                      fieldMap[t] && acc.push(fieldMap[t])
+                      return acc
+                    }, [])
                     .join(',')
                 }
-                item.source.fields = findTable.fields
+
+                item.source.fields = findTable.fields.map(t => {
+                  t.isPrimaryKey = t.primary_key_position > 0
+                  return t
+                })
                 item.source.sortColumn = sourceSortColumn
+
                 const key = [source || '', sourceConnectionId, item.source.table].join()
                 this.fieldsMap[key] = item.source.fields
               }
@@ -1459,10 +1490,26 @@ export default {
                 const targetSortColumn = updateList.length
                   ? updateList.join(',')
                   : this.getPrimaryKeyFieldStr(findTargetTable.fields)
-                item.target.fields = findTargetTable.fields
+
+                item.target.fields = findTargetTable.fields.map(t => {
+                  t.isPrimaryKey = t.primary_key_position > 0
+                  return t
+                })
+
                 item.target.sortColumn = targetSortColumn
                 const key = [target || '', targetConnectionId, item.target.table].join()
                 this.fieldsMap[key] = item.target.fields
+              }
+
+              if (this.autoSuggestJoinFields && !item.source.sortColumn && !item.target.sortColumn) {
+                let sourceFields = item.source.fields.filter(t => !t.is_nullable)
+                let targetFields = item.target.fields.filter(t => !t.is_nullable)
+
+                sourceFields = sourceFields.length ? sourceFields : item.source.fields
+                targetFields = targetFields.length ? targetFields : item.target.fields
+
+                item.source.sortColumn = sourceFields.map(t => t.field_name).join(',')
+                item.target.sortColumn = targetFields.map(t => t.field_name).join(',')
               }
 
               list.push(item)

@@ -1249,5 +1249,10 @@ export default {
   packages_business_warning_details: '警告詳情',
   packages_business_custom_collate: '自定義排序',
   packages_business_please_select_field: '請選擇字段',
-  packages_business_please_input_charset: '請輸入字符集'
+  packages_business_please_input_charset: '請輸入字符集',
+  packages_business_auto_fill_join_fields: '智能填充关联条件',
+  packages_business_auto_fill_join_tooltip_title: '開啓後，系統將按以下優先級自動填充關聯條件：',
+  packages_business_auto_fill_join_tooltip_primary: '1. 優先使用主鍵字段',
+  packages_business_auto_fill_join_tooltip_notnull: '2. 如無主鍵，則使用非空字段',
+  packages_business_auto_fill_join_tooltip_all: '3. 如無非空字段，則使用全部字段'
 }

@@ -30,7 +30,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const selectFields = computed({
       get() {
-        return props.value.split(',')
+        return props.value ? props.value.split(',') : []
       },
       set(val) {
         emit('input', val?.length ? Array.from(new Set(val.filter(v => !!v.trim()))).join(',') : '')
@@ -40,8 +40,6 @@ export default defineComponent({
     const handleFocus = () => {
       emit('focus')
     }
-
-    console.log('props.options', props.options)
 
     return {
       selectFields,
