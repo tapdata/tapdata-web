@@ -173,6 +173,17 @@ export default observer({
             point.pointType = 'localTZ' // 用户自定义时间点
             point.dateTime = currentEventTimestamp
           })
+        },
+
+        loadEmailReceivers: field => {
+          const receivers = window.getSettingByKey('email.receivers')?.split(',') || []
+          field.setInitialValue([...receivers])
+          field.dataSource = receivers.map(receiver => {
+            return {
+              label: receiver,
+              value: receiver
+            }
+          })
         }
       },
 
@@ -770,6 +781,7 @@ export default observer({
                 type: 'void',
                 'x-component': 'FormTab.TabPane',
                 'x-component-props': {
+                  class: 'test',
                   label: i18n.t('packages_dag_migration_configpanel_gaojingshezhi'),
                   locked: process.env.VUE_APP_MODE === 'community'
                 },
@@ -1051,6 +1063,19 @@ export default observer({
                         }
                       }
                     }
+                  },
+                  emailReceivers: {
+                    title: i18n.t('packages_dag_email_receivers'),
+                    type: 'array',
+                    'x-visible': `{{$isDaas}}`,
+                    'x-editable': true,
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Select',
+                    'x-component-props': {
+                      multiple: true,
+                      filterable: true
+                    },
+                    'x-reactions': [`{{loadEmailReceivers}}`]
                   }
                 }
               },
@@ -1369,7 +1394,7 @@ export default observer({
   methods: {
     // 绑定表单事件
     useEffects() {
-      onFieldInputValueChange('*(alarmSettings.*.*,alarmRules.*.*)', (field, form) => {
+      onFieldInputValueChange('*(alarmSettings.*.*,alarmRules.*.*,emailReceivers)', (field, form) => {
         if (this.stateIsReadonly) this.lazySaveAlarmConfig()
       })
       // 权限设置修改了
@@ -1388,7 +1413,8 @@ export default observer({
       alarmApi.updateTaskAlarm({
         taskId: values.id,
         alarmSettings: values.alarmSettings,
-        alarmRules: values.alarmRules
+        alarmRules: values.alarmRules,
+        emailReceivers: values.emailReceivers
       })
     },
 
