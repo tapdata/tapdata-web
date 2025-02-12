@@ -767,5 +767,6 @@ export default {
   packages_dag_noPkSyncMode_ALL_COLUMNS: '全字段索引',
   packages_dag_join_keys_empty: '{tableName} 的關聯條件不能為空',
   packages_dag_join_keys_field_empty: '{tableName} 的關聯條件第 {index} 項的字段不能為空',
-  packages_dag_field_path: '字段路徑'
+  packages_dag_field_path: '字段路徑',
+  packages_dag_email_receivers: '郵件接收人'
 }
