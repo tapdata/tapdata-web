@@ -252,6 +252,10 @@ export default {
         {
           name: i18n.t('packages_dag_time_field_injection'),
           type: 'migrate_add_date_field_processor'
+        },
+        {
+          name: i18n.t('packages_dag_src_editor_huawei_drs_kafka_convertor'),
+          type: 'huawei_drs_kafka_convertor'
         }
       ])
       this.addResourceIns(allResourceIns)
