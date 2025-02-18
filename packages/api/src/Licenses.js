@@ -36,16 +36,16 @@ export default class Licenses extends Http {
               code: 'Dameng'
             },
             {
+              type: 'CONNECTOR',
+              code: 'Oracle'
+            },
+            {
               type: 'FEATURE',
               code: 'customProcessor'
             },
             {
               type: 'FEATURE',
               code: 'resume'
-            },
-            {
-              type: 'FEATURE',
-              code: 'shareCdc'
             },
             {
               type: 'FEATURE',

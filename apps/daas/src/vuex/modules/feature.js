@@ -5,7 +5,8 @@ const MENU_FEATURE_MAP = {
   sharedCacheList: 'shareCache',
   functionList: 'customFunction',
   customNodeList: 'customNode',
-  sharedMiningList: 'shareCdc'
+  sharedMiningList: 'shareCdc',
+  migrateList: 'dataMigrate'
 }
 
 const getState = function () {
