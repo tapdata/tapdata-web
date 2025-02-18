@@ -85,7 +85,7 @@ export default {
   dashboard_copy_total: 'Replication Task',
   dashboard_sync_total: 'Transformation Task',
   dashboard_valid_total: 'Validation Task',
-  dashboard_current_all_total: 'Total total of all tasks',
+  dashboard_current_all_total: 'Grand total of all tasks',
   dashboard_current_copy_total: 'Total number of replication tasks',
   dashboard_current_sync_total: 'Total number of transformation tasks',
   dashboard_current_valid_total: 'Total number of validation tasks',
