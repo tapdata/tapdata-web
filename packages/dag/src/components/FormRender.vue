@@ -1,16 +1,15 @@
 <template>
-  <div class="attr-panel">
-    <div class="attr-panel-body overflow-auto pt-1">
-      <Form class-name="form-wrap" :form="form" v-bind="formProps">
-        <SchemaField v-if="schema" ref="schema" :schema="schema" :scope="scope" />
-      </Form>
-    </div>
-  </div>
+  <!-- <FeatureFormProvider :form="form"> -->
+  <Form class-name="form-wrap" :form="form" v-bind="formProps">
+    <SchemaField v-if="schema" ref="schema" :schema="schema" :scope="scope" />
+  </Form>
+  <!-- </FeatureFormProvider> -->
 </template>
 
 <script>
 import { Form, createSchemaField, components } from '@tap/form'
 import * as _components from '../components/form'
+import { FeatureFormProvider } from './form/FeatureFormProvider'
 
 const { SchemaField } = createSchemaField({
   components: {
@@ -37,7 +36,18 @@ export default {
     }
   },
 
-  components: { Form, SchemaField },
+  components: {
+    FeatureFormProvider,
+    Form,
+    SchemaField
+  },
+
+  mounted() {
+    console.log('form', this.form)
+    this.form.setFieldState('resume', state => {
+      console.log('state', state)
+    })
+  },
 
   methods: {
     handleDestroy() {

@@ -139,6 +139,10 @@ export default {
           return !!this.$store.state.dataflow.pdkPropertiesMap[pdkHash]
         },
 
+        hasFeature: feature => {
+          return !isDaas || this.$store.getters['feature/hasFeature']?.(feature)
+        },
+
         findNodeById: id => {
           return this.$store.state.dataflow.NodeMap[id]
         },

@@ -50,6 +50,9 @@ export default observer({
       isDaas: isDaas,
       formScope: {
         lockedFeature: this.lockedFeature,
+        hasFeature: feature => {
+          return !isDaas || this.$store.getters['feature/hasFeature']?.(feature)
+        },
         getPickerOptionsBeforeTime,
         $isDaas: isDaas, //区分云版、企业版
         formTab: FormTab.createFormTab(),
@@ -568,7 +571,8 @@ export default observer({
                                   dependencies: ['type'],
                                   fulfill: {
                                     state: {
-                                      visible: '{{$deps[0] !== "initial_sync" && !lockedFeature.sharedMiningList}}' // 只有增量或全量+增量支持
+                                      visible:
+                                        '{{hasFeature("shareCdc") && $deps[0] !== "initial_sync" && !lockedFeature.sharedMiningList}}' // 只有增量或全量+增量支持
                                     }
                                   }
                                 }
@@ -646,7 +650,8 @@ export default observer({
                                 'x-decorator-props': {
                                   tooltip: i18n.t('packages_dag_doubleActive_tip')
                                 },
-                                'x-component': 'Switch'
+                                'x-component': 'Switch',
+                                'x-visible': '{{hasFeature("TwoWaySync")}}'
                               },
                               accessNodeType: {
                                 type: 'string',
@@ -1364,7 +1369,7 @@ export default observer({
     showDoubleActive: {
       handler(val) {
         this.form.setFieldState('doubleActive', {
-          visible: val
+          visible: this.formScope.hasFeature('TwoWaySync') && val
         })
       },
       immediate: true

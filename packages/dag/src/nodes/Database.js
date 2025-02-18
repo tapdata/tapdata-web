@@ -717,7 +717,7 @@ export class Database extends NodeType {
                       fulfill: {
                         state: {
                           display:
-                            '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc") ? "visible":"hidden"}}'
+                            '{{hasFeature("resume") && $values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc") ? "visible":"hidden"}}'
                         }
                       }
                     },
@@ -1083,7 +1083,7 @@ export class Database extends NodeType {
                         'x-reactions': {
                           fulfill: {
                             state: {
-                              visible: '{{$settings.type !== "cdc"}}',
+                              visible: '{{hasFeature("syncIndex") && $settings.type !== "cdc"}}',
                               description: `{{$self.value ? '${i18n.t('packages_dag_syncIndex_desc')}' : ''}}`
                             }
                           }
@@ -1101,7 +1101,7 @@ export class Database extends NodeType {
                           fulfill: {
                             state: {
                               visible:
-                                '{{$values.attrs.capabilities.some(item => item.id==="target_support_partition")}}'
+                                '{{hasFeature("syncPartitionTable") && $values.attrs.capabilities.some(item => item.id==="target_support_partition")}}'
                             }
                           }
                         }
@@ -1121,7 +1121,8 @@ export class Database extends NodeType {
                             label: i18n.t('packages_dag_noPkSyncMode_ALL_COLUMNS'),
                             value: 'ALL_COLUMNS'
                           }
-                        ]
+                        ],
+                        'x-visible': '{{hasFeature("noPrimaryKey")}}'
                       }
                     }
                   },

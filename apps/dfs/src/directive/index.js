@@ -2,6 +2,8 @@ import Vue from 'vue'
 
 Vue.directive('readonlybtn', {})
 
+Vue.directive('feature', {})
+
 Vue.prototype.$has = function () {
   return true
 }

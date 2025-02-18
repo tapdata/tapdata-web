@@ -415,7 +415,7 @@ export default defineComponent({
                             fulfill: {
                               state: {
                                 display:
-                                  '{{$values.dag.nodes[0].attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc") ? "visible":"hidden"}}'
+                                  '{{hasFeature("resume") && $values.dag.nodes[0].attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc") ? "visible":"hidden"}}'
                               }
                             }
                           },

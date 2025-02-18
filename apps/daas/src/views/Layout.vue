@@ -201,7 +201,7 @@ import { VIcon } from '@tap/component'
 import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 import { usersApi, timeStampApi, licensesApi, settingsApi, taskApi, logcollectorApi } from '@tap/api'
 import { PageHeader } from '@tap/business'
-
+import { mapGetters } from 'vuex'
 import CustomerService from '@/components/CustomerService'
 import newDataFlow from '@/components/newDataFlow'
 import NotificationPopover from './notification/NotificationPopover'
@@ -255,6 +255,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('feature', ['isMenuEnabled']),
     DropdownList() {
       return DropdownList.filter(item => !item.hidden && (this.showHome || item.name !== 'home'))
     },
@@ -358,7 +359,10 @@ export default {
           }
 
           menu.hidden =
-            menu.hidden || hideMenuMap[menu.name] || (menu.code && !permissions.some(p => p.code === menu.code))
+            menu.hidden ||
+            hideMenuMap[menu.name] ||
+            (menu.code && !permissions.some(p => p.code === menu.code)) ||
+            !this.isMenuEnabled(menu.name) // 添加基于 license features 的菜单控制
           if (!menu.hidden && menu.children) {
             menu.children = formatMenu(menu.children)
             if (menu.children.every(m => m.hidden)) {

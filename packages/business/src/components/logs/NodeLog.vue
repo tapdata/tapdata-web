@@ -41,9 +41,15 @@
             ><VIcon class="mr-1">download</VIcon>{{ $t('packages_business_download_analysis_report') }}</ElButton
           >
 
-          <el-button class="min-w-0 ml-0" type="primary" plain size="mini" @click="openDataCapture">{{
-            $t('public_data_capture')
-          }}</el-button>
+          <el-button
+            v-feature="'dataScraping'"
+            class="min-w-0 ml-0"
+            type="primary"
+            plain
+            size="mini"
+            @click="openDataCapture"
+            >{{ $t('public_data_capture') }}</el-button
+          >
         </div>
       </div>
       <div class="level-line mb-2 flex">
