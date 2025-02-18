@@ -21,6 +21,7 @@ export const JsProcessor = observer(
       resize
     },
     setup(props, { emit, root, attrs, refs }) {
+      console.log('i18n.locale', i18n.locale)
       const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
       const { id: taskId, syncType } = root.$store.state.dataflow.taskInfo
       const formRef = useForm()
@@ -32,9 +33,11 @@ export const JsProcessor = observer(
       const showDoc = ref(false)
       const isMigrate = syncType === 'migrate'
       const showJsonArea = ref(false)
-      const docSrc = `https://docs.tapdata.${root.$store.getters.isDomesticStation ? 'net' : 'io'}/appendix/${
-        props.isStandard ? 'standard' : 'enhanced'
-      }-js?from=cloud`
+      const docSrc = `${
+        isDaas
+          ? `${location.origin}/docs${i18n.locale === 'en' ? '/en' : ''}`
+          : `https://docs.tapdata.${root.$store.getters.isDomesticStation ? 'net' : 'io'}`
+      }/appendix/${props.isStandard ? 'standard' : 'enhanced'}-js?from=cloud`
 
       let queryStart
       let queryTimes = 0
@@ -488,34 +491,7 @@ export const JsProcessor = observer(
                 }
               }}
             >
-              {isDaas ? (
-                <div class="px-4 js-doc-content">
-                  {Object.keys(functionGroup.value).map(className => {
-                    return [
-                      <h2>{className}</h2>,
-                      classDescMap[className] && <p>{classDescMap[className]}</p>,
-                      <h3>{i18n.t('packages_dag_js_processor_index_fangfa')}</h3>,
-                      functionGroup.value[className].map(item => {
-                        return [
-                          <h4>{item.methodName}</h4>,
-                          <ul>
-                            <li>
-                              {i18n.t('packages_dag_js_processor_index_zuoyong')}
-                              {item.desc}
-                            </li>
-                            <li>{i18n.t('packages_dag_js_processor_index_yongfa')}</li>
-                          </ul>,
-                          <HighlightCode code={item.example}></HighlightCode>
-                        ]
-                      })
-                    ]
-                  })}
-                </div>
-              ) : (
-                <iframe v-else ref="docsIframe" src={docSrc} class="w-100 h-100 block">
-                  {' '}
-                </iframe>
-              )}
+              <iframe ref="docsIframe" src={docSrc} class="w-100 h-100 block" />
             </ElDrawer>
             <div
               class={[
