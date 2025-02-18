@@ -1256,6 +1256,7 @@ export default {
 
       this.schemaScope = {
         $isDaas: this.isDaas,
+        pdkId: this.pdkOptions.pdkId,
         isEdit: !!id,
         useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
           return field => {
