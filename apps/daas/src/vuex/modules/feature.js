@@ -6,7 +6,14 @@ const MENU_FEATURE_MAP = {
   functionList: 'customFunction',
   customNodeList: 'customNode',
   sharedMiningList: 'shareCdc',
-  migrateList: 'dataMigrate'
+  migrateList: 'dataMigrate',
+  dataConsole: 'realTimeDataService'
+}
+
+const TYPE2NAME = {
+  LITE: 'TapData Live Integration',
+  OP: 'TapData Live Data Platform',
+  SERVICE: 'TapData Live Service'
 }
 
 const getState = function () {
@@ -48,7 +55,7 @@ const getters = {
     }
   },
   isMenuEnabled: (state, getters) => menuName => {
-    if (state.licenseType !== 'LITE') {
+    if (!getters.isControlEnabled) {
       return true
     }
 
@@ -60,7 +67,10 @@ const getters = {
     return getters.hasMenu(menuCode)
   },
   isControlEnabled: state => {
-    return state.licenseType === 'LITE'
+    return state.licenseType === 'LITE' || state.licenseType === 'SERVICE'
+  },
+  versionName: state => {
+    return TYPE2NAME[state.licenseType]
   }
 }
 

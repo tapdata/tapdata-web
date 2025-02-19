@@ -1,7 +1,11 @@
 <template>
   <ElContainer class="layout-container" direction="vertical">
     <ElHeader v-if="!IS_IFRAME" class="layout-header" height="60px">
-      <a class="logo" href="/" :style="logoStyle">
+      <a v-if="isOP" class="logo w-auto text-white flex align-center gap-2" href="/">
+        <img :src="require('@/assets/images/logo_mini.svg')" style="width: 32px; height: 32px" />
+        <span class="fw-sub text-lg">{{ versionName }}</span>
+      </a>
+      <a v-else class="logo" href="/" :style="logoStyle">
         <img :src="logoUrl" />
       </a>
       <div class="button-bar">
@@ -215,11 +219,13 @@ export default {
   components: { CustomerService, newDataFlow, NotificationPopover, PageHeader, VIcon },
   data() {
     const domain = this.$i18n.locale === 'en' ? 'io' : 'net'
+    const isOP = process.env.VUE_APP_MODE === 'OP'
 
     return {
       appVersion: '',
       domain,
       isCommunity,
+      isOP,
       IS_IFRAME: sessionStorage.getItem('IS_IFRAME') === 'true',
 
       logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
@@ -255,7 +261,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('feature', ['isMenuEnabled']),
+    ...mapGetters('feature', ['isMenuEnabled', 'versionName']),
     DropdownList() {
       return DropdownList.filter(item => !item.hidden && (this.showHome || item.name !== 'home'))
     },
