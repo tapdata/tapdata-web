@@ -111,7 +111,9 @@ export default {
   data() {
     const TYPE_MAP = {
       OP: this.$t('daas_licenseType_op'),
-      PIPELINE: this.$t('daas_licenseType_pipeline')
+      PIPELINE: this.$t('daas_licenseType_pipeline'),
+      LITE: this.$t('daas_licenseType_lite'),
+      SERVICE: this.$t('daas_licenseType_service')
     }
 
     return {

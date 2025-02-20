@@ -1986,6 +1986,8 @@ export default {
   webhook_event_type_empty: 'Please select an event',
   daas_licenseType: 'Type',
   daas_licenseType_pipeline: 'Pipeline',
+  daas_licenseType_lite: 'Lite',
+  daas_licenseType_service: 'Service',
   daas_licenseType_op: 'Standard',
   daas_datasourcePipeline: 'Pipeline',
   daas_datasourcePipelineLimit: 'Pipeline Number',
