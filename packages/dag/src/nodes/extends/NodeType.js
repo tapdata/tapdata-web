@@ -1,4 +1,10 @@
 import i18n from '@tap/i18n'
+
+const FEATURE_CONTROLS = {
+  fullBreakpointResume: 'resume',
+  shareCache: 'tabs.advancedTab.sourceCollapse.sharedCache'
+}
+
 export class NodeType {
   constructor() {}
   /**

@@ -153,6 +153,9 @@ settingsApi
       //权限存在则存入缓存并继续向下走
       configUser(user)
     }
+
+    await store.dispatch('feature/getFeatures')
+
     init(initData)
     // 设置服务器时间
     timeStampApi.get().then(t => {

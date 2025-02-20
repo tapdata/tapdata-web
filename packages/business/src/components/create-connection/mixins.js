@@ -1,6 +1,11 @@
 import { connectionsApi, externalStorageApi } from '@tap/api'
 
 export default {
+  data() {
+    return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS'
+    }
+  },
   methods: {
     async getPdkData(id) {
       await connectionsApi.getNoSchema(id).then(async data => {
@@ -56,6 +61,10 @@ export default {
         })
         this.renameData.rename = this.model.name
       })
+    },
+
+    hasFeature(feature) {
+      return !this.isDaas || this.$store.getters['feature/hasFeature']?.(feature)
     }
   }
 }

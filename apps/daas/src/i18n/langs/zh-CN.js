@@ -1937,6 +1937,8 @@ export default {
   webhook_event_type_empty: '请选择事件',
   daas_licenseType: '授权类型',
   daas_licenseType_pipeline: '通道授权',
+  daas_licenseType_lite: 'Lite 版本',
+  daas_licenseType_service: '数据服务版',
   daas_licenseType_op: '标准',
   daas_datasourcePipeline: '数据源通道',
   daas_datasourcePipelineLimit: '数据源通道数量',

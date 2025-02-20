@@ -2698,6 +2698,10 @@ export default {
         }).href,
         `DataCapture-${this.dataflow.id}`
       )
+    },
+
+    hasFeature(feature) {
+      return !this.isDaas || this.$store.getters['feature/hasFeature']?.(feature)
     }
   }
 }

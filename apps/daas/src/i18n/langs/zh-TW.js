@@ -1929,6 +1929,8 @@ export default {
   webhook_event_type_empty: '請選擇事件',
   daas_licenseType: '授權類型',
   daas_licenseType_pipeline: '通道授權',
+  daas_licenseType_lite: 'Lite 版本',
+  daas_licenseType_service: '數據服務版',
   daas_licenseType_op: '標準',
   daas_datasourcePipeline: '數據源通道',
   daas_datasourcePipelineLimit: '數據源通道數量',

@@ -254,11 +254,13 @@ export default {
       let nodes = [
         {
           name: i18n.t('packages_dag_src_editor_zhuconghebing'),
-          type: 'merge_table_processor'
+          type: 'merge_table_processor',
+          hidden: !this.hasFeature('masterSlaveMergeProcessor')
         },
         {
           name: i18n.t('packages_dag_src_editor_zhuijiahebing'),
-          type: 'union_processor'
+          type: 'union_processor',
+          hidden: !this.hasFeature('appendMergeProcessor')
         },
         {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli_standard'),
@@ -267,16 +269,19 @@ export default {
         {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli'),
           type: 'js_processor',
-          beta: true
+          beta: true,
+          hidden: !this.hasFeature('enhanceJsProcessor')
         },
         {
           name: 'Python',
           type: 'python_processor',
-          beta: true
+          beta: true,
+          hidden: !this.hasFeature('pythonProcessor')
         },
         {
           name: 'Row Filter',
-          type: 'row_filter_processor'
+          type: 'row_filter_processor',
+          hidden: !this.hasFeature('rowFilterProcessor')
         },
         // {
         //   name: i18n.t('packages_dag_src_editor_juhe'),
@@ -308,11 +313,13 @@ export default {
         },
         {
           name: 'Unwind',
-          type: 'unwind_processor'
+          type: 'unwind_processor',
+          hidden: !this.hasFeature('unwindProcessor')
         },
         {
           name: i18n.t('packages_dag_time_field_injection'),
-          type: 'add_date_field_processor'
+          type: 'add_date_field_processor',
+          hidden: !this.hasFeature('appendDatetimeFieldProcessor')
         }
       ]
       //仅企业版有的节点
@@ -325,9 +332,12 @@ export default {
         ]
         nodes = [...isDaasNode, ...nodes]
       }
-      this.addProcessorNode(nodes)
+      this.addProcessorNode(nodes.filter(item => !item.hidden))
       this.addResourceIns(allResourceIns)
-      await this.loadCustomNode()
+
+      if (this.hasFeature('customProcessor')) {
+        await this.loadCustomNode()
+      }
     },
 
     async openDataflow(id) {
