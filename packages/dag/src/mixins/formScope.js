@@ -1,3 +1,4 @@
+import axios from 'axios'
 import i18n from '@tap/i18n'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
@@ -12,7 +13,7 @@ import {
   taskApi
 } from '@tap/api'
 import { externalStorageApi } from '@tap/api'
-import { isPlainObj } from '@tap/shared'
+import { isPlainObj, Cookie } from '@tap/shared'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { FormTab } from '@tap/form'
 
@@ -1070,7 +1071,6 @@ export default {
         },
 
         getNodeTableOptions: async nodeId => {
-          console.log('getNodeTableOptions', nodeId)
           const { items = [] } = await taskApi.getNodeTableInfo({
             taskId: this.dataflow.id,
             nodeId,
@@ -1079,6 +1079,20 @@ export default {
           })
 
           return items.map(item => item.sinkObjectName)
+        },
+
+        // 数据源专属配置调用
+        downloadForeignKeyConstraint: () => {
+          let url = `${axios.defaults.baseURL}api/foreignKeyConstraint/load?taskId=${this.dataflow.id}`
+
+          if (this.isDaas) {
+            const accessToken = Cookie.get('access_token')
+            url += `&access_token=${accessToken}`
+          } else if (process.env.VUE_APP_ACCESS_TOKEN) {
+            url += `&__token=${process.env.VUE_APP_ACCESS_TOKEN}`
+          }
+
+          window.open(url)
         }
       }
     }
