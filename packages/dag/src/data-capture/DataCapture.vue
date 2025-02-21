@@ -93,9 +93,15 @@
       <v-empty v-else-if="isCancel && !list.length"></v-empty>
 
       <div class="flex justify-content-center px-4 mt-4">
-        <el-button v-if="hasMore && isCancel" type="primary" :loading="loading" @click="run">加载更多</el-button>
-        <span v-else-if="!isCancel"> <i class="el-icon-loading"></i> 拼命加载中 </span>
-        <span v-else-if="list.length > 10">到底了</span>
+        <el-button v-if="hasMore && isCancel" type="primary" :loading="loading" @click="run">
+          {{ $t('public_load_more') }}
+        </el-button>
+        <span v-else-if="!isCancel">
+          {{ $t('public_loading') }}
+
+          <i class="el-icon-loading"></i> {{ $t('public_loading') }}
+        </span>
+        <span v-else-if="list.length > 10"> {{ $t('public_load_end') }} </span>
       </div>
     </section>
   </section>

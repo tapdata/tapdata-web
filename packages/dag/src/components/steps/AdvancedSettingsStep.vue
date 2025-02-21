@@ -613,7 +613,7 @@ export default defineComponent({
                             fulfill: {
                               state: {
                                 display:
-                                  '{{$values.dag.nodes[0].attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc") ? "visible":"hidden"}}'
+                                  '{{hasFeature("resume") && $values.dag.nodes[0].attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc") ? "visible":"hidden"}}'
                               }
                             }
                           },
@@ -930,7 +930,7 @@ export default defineComponent({
                               'x-reactions': {
                                 fulfill: {
                                   state: {
-                                    visible: '{{$settings.type !== "cdc"}}',
+                                    visible: '{{hasFeature("syncIndex") && $settings.type !== "cdc"}}',
                                     description: `{{$self.value ? '${i18n.t('packages_dag_syncIndex_desc')}' : ''}}`
                                   }
                                 }
@@ -1235,7 +1235,8 @@ export default defineComponent({
                     dependencies: ['type'],
                     fulfill: {
                       state: {
-                        visible: '{{$deps[0] !== "initial_sync" && !lockedFeature.sharedMiningList}}' // 只有增量或全量+增量支持
+                        visible:
+                          '{{hasFeature("shareCdc") && $deps[0] !== "initial_sync" && !lockedFeature.sharedMiningList}}' // 只有增量或全量+增量支持
                       }
                     }
                   }
@@ -1313,7 +1314,8 @@ export default defineComponent({
                   'x-decorator-props': {
                     tooltip: i18n.t('packages_dag_doubleActive_tip')
                   },
-                  'x-component': 'Switch'
+                  'x-component': 'Switch',
+                  'x-visible': '{{hasFeature("TwoWaySync")}}'
                 },
                 accessNodeType: {
                   type: 'string',

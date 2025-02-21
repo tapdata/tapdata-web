@@ -157,9 +157,11 @@
         </div>
       </ElPopover>
       <VDivider class="mx-3" vertical inset></VDivider>
-      <button class="icon-btn" @click="openDebug = true">
-        <VIcon size="18">bug-outlined</VIcon>
-      </button>
+      <ElTooltip transition="tooltip-fade-in" :content="$t('public_data_capture')">
+        <button class="icon-btn" @click="openDebug = true">
+          <VIcon size="18">bug-outlined</VIcon>
+        </button>
+      </ElTooltip>
     </div>
     <!--复制dag查看不显示-->
     <div class="flex align-center flex-grow-1">

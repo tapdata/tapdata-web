@@ -108,8 +108,8 @@ export default {
         let data = await usersApi.login(this.form)
         Cookie.set('access_token', data?.id)
         Cookie.set('tem_token', data?.id)
-        // eslint-disable-next-line
-        console.log(i18n.t('daas_login_login_dengluchenggong'), data)
+
+        await this.$store.dispatch('feature/getFeatures')
 
         let user = await usersApi.getInfo()
         configUser(user)
