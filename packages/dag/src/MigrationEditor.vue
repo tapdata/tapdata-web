@@ -255,7 +255,7 @@ export default {
         },
         {
           name: i18n.t('packages_dag_src_editor_huawei_drs_kafka_convertor'),
-          type: 'huawei_drs_kafka_convertor'
+          type: 'migrate_huawei_drs_kafka_convertor'
         }
       ])
       this.addResourceIns(allResourceIns)
