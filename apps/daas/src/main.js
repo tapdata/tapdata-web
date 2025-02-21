@@ -150,11 +150,12 @@ settingsApi
       let user = await usersApi.getInfo().catch(() => {
         init(initData)
       })
+
+      await store.dispatch('feature/getFeatures')
+
       //权限存在则存入缓存并继续向下走
       configUser(user)
     }
-
-    await store.dispatch('feature/getFeatures')
 
     init(initData)
     // 设置服务器时间

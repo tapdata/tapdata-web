@@ -478,7 +478,13 @@ export default {
         stime = data || Time.now()
       })
       licensesApi.expires({}).then(data => {
-        let expires_on = data?.expires_on || ''
+        let expires_on = data?.expires_on
+
+        if (!expires_on) {
+          this.licenseExpireVisible = false
+          return
+        }
+
         if (Cookie.get('isAdmin') == 1) {
           let endTime = expires_on - stime
           endTime = parseInt(endTime / 1000 / 60 / 60 / 24) //相差天数
