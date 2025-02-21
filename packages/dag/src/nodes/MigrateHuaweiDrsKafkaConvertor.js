@@ -76,9 +76,39 @@ export class UnwindProcessor extends NodeType {
                 }
               },
 
-              schemaPreview: {
+              storeType: {
+                title: i18n.t('public_store_type'),
+                type: 'string',
+                default: 'JSON',
+                enum: ['AVRO', 'JSON', 'JSON_C'],
+                'x-decorator': 'FormItem',
+                'x-component': 'Radio.Group'
+              },
+
+              fromDBType: {
+                title: i18n.t('public_from_db_type'),
+                type: 'string',
+                default: 'MYSQL',
+                enum: ['MYSQL', 'GAUSSDB_MYSQL', 'GAUSSDB', 'ORACLE', 'MSSQL', 'POSTGRESQL', 'UNDEFINED'],
+                'x-decorator': 'FormItem',
+                'x-component': 'Select'
+              }
+            }
+          },
+          tab2: {
+            type: 'void',
+            'x-component': 'FormTab.TabPane',
+            'x-component-props': {
+              label: i18n.t('packages_dag_data_schema')
+            },
+            properties: {
+              schemaPanel: {
                 type: 'void',
-                'x-component': 'SchemaPreview'
+                'x-component': 'SchemaPanel',
+                'x-component-props': {
+                  class: 'mx-n4 my-n1',
+                  formTab: '{{formTab}}'
+                }
               }
             }
           }
