@@ -6,11 +6,11 @@
           {{ $t('app_signIn_signIn') }}
           <span v-if="$getSettingByKey('SHOW_REGISTER')" @click="registry">{{ $t('app_signIn_Registration') }}</span>
         </div>
-        <div class="error-tips align-center justify-content-start" v-show="errorMessage">
+        <div class="error-tips align-center justify-content-start rounded-lg" v-show="errorMessage">
           <i class="el-icon-warning-outline mr-2"></i>
           {{ errorMessage }}
         </div>
-        <form>
+        <form class="rounded-lg">
           <input
             class="input"
             type="email"
@@ -108,8 +108,8 @@ export default {
         let data = await usersApi.login(this.form)
         Cookie.set('access_token', data?.id)
         Cookie.set('tem_token', data?.id)
-        // eslint-disable-next-line
-        console.log(i18n.t('daas_login_login_dengluchenggong'), data)
+
+        await this.$store.dispatch('feature/getFeatures')
 
         let user = await usersApi.getInfo()
         configUser(user)
@@ -127,6 +127,7 @@ export default {
       } catch (e) {
         this.loading = false
         this.form.password = oldPassword
+        this.errorMessage = e?.data?.message
       }
     },
     // 注册账号

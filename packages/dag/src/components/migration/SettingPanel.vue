@@ -179,7 +179,19 @@ export default observer({
         },
 
         loadEmailReceivers: field => {
-          const receivers = window.getSettingByKey('email.receivers')?.split(',') || []
+          const str = window.getSettingByKey('email.receivers')
+          const receivers = str ? str.split(',').filter(Boolean) : []
+
+          // 过滤掉不在可选列表中的接收人
+          const size = field.value.length
+          if (size) {
+            const filter = field.value.filter(email => receivers.includes(email))
+
+            if (size !== filter.length) {
+              field.form.setValuesIn(field.path, [...filter])
+            }
+          }
+
           field.setInitialValue([...receivers])
           field.dataSource = receivers.map(receiver => {
             return {

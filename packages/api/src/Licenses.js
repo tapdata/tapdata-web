@@ -29,45 +29,8 @@ export default class Licenses extends Http {
     return this.axios.get(`${this.url}/features`).catch(err => {
       if (err.response.status == 404 && process.env.NODE_ENV === 'development') {
         return Promise.resolve({
-          licenseType: 'LITE',
-          features: [
-            {
-              type: 'CONNECTOR',
-              code: 'Dameng'
-            },
-            {
-              type: 'CONNECTOR',
-              code: 'Oracle'
-            },
-            {
-              type: 'FEATURE',
-              code: 'customProcessor'
-            },
-            {
-              type: 'FEATURE',
-              code: 'resume'
-            },
-            {
-              type: 'FEATURE',
-              code: 'TwoWaySync'
-            },
-            {
-              type: 'FEATURE',
-              code: 'syncIndex'
-            },
-            {
-              type: 'FEATURE',
-              code: 'noPrimaryKey'
-            },
-            {
-              type: 'FEATURE',
-              code: 'syncPartitionTable'
-            },
-            {
-              type: 'FEATURE',
-              code: 'dataScraping'
-            }
-          ]
+          licenseType: 'OP',
+          features: []
         })
       }
     })
