@@ -1402,7 +1402,8 @@ export default {
         },
         original_name: {
           inq: Array.from(new Set(tableNames))
-        }
+        },
+        taskId: this.taskId
       }
       // this.autoAddTableLoading = true
       // this.updateAutoAddTableLoading()
@@ -1460,7 +1461,7 @@ export default {
               if (findTable) {
                 let sourceSortColumn = updateList.length
                   ? updateList.join(',')
-                  : findTable.sortColumns || this.getPrimaryKeyFieldStr(findTable.fields)
+                  : findTable.sortColumns?.join(',') || this.getPrimaryKeyFieldStr(findTable.fields)
 
                 if (updateList.length && findTargetTable?.fields?.length) {
                   const fieldMap = findTargetTable?.fields?.reduce((acc, t) => {
@@ -1489,7 +1490,7 @@ export default {
               if (findTargetTable) {
                 const targetSortColumn = updateList.length
                   ? updateList.join(',')
-                  : findTargetTable.sortColumns || this.getPrimaryKeyFieldStr(findTargetTable.fields)
+                  : findTargetTable.sortColumns?.join(',') || this.getPrimaryKeyFieldStr(findTargetTable.fields)
 
                 item.target.fields = findTargetTable.fields.map(t => {
                   t.isPrimaryKey = t.primary_key_position > 0
