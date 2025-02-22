@@ -1460,7 +1460,7 @@ export default {
               if (findTable) {
                 let sourceSortColumn = updateList.length
                   ? updateList.join(',')
-                  : this.getPrimaryKeyFieldStr(findTable.fields)
+                  : findTable.sortColumns || this.getPrimaryKeyFieldStr(findTable.fields)
 
                 if (updateList.length && findTargetTable?.fields?.length) {
                   const fieldMap = findTargetTable?.fields?.reduce((acc, t) => {
@@ -1489,7 +1489,7 @@ export default {
               if (findTargetTable) {
                 const targetSortColumn = updateList.length
                   ? updateList.join(',')
-                  : this.getPrimaryKeyFieldStr(findTargetTable.fields)
+                  : findTargetTable.sortColumns || this.getPrimaryKeyFieldStr(findTargetTable.fields)
 
                 item.target.fields = findTargetTable.fields.map(t => {
                   t.isPrimaryKey = t.primary_key_position > 0
