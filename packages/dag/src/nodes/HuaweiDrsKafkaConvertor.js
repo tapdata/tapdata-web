@@ -85,13 +85,15 @@ export class UnwindProcessor extends NodeType {
                 'x-component': 'Radio.Group'
               },
 
-              fromDBType: {
-                title: i18n.t('public_from_db_type'),
-                type: 'string',
-                default: 'MYSQL',
-                enum: ['MYSQL', 'GAUSSDB_MYSQL', 'GAUSSDB', 'ORACLE', 'MSSQL', 'POSTGRESQL', 'UNDEFINED'],
+              sampleSize: {
+                title: i18n.t('public_sample_size'),
+                type: 'number',
+                default: 1,
                 'x-decorator': 'FormItem',
-                'x-component': 'Select'
+                'x-component': 'InputNumber',
+                'x-component-props': {
+                  min: 1
+                }
               },
 
               schemaPreview: {
