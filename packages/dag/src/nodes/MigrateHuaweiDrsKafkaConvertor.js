@@ -82,7 +82,8 @@ export class UnwindProcessor extends NodeType {
                 default: 'JSON',
                 enum: ['AVRO', 'JSON', 'JSON_C'],
                 'x-decorator': 'FormItem',
-                'x-component': 'Radio.Group'
+                'x-component': 'Radio.Group',
+                'x-display': 'hidden'
               },
 
               fromDBType: {
