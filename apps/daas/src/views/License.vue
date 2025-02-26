@@ -240,6 +240,10 @@ export default {
             this.$message.success(this.$t('license_renew_success'))
             this.$table.fetch()
             this.dialogVisible = false
+
+            setTimeout(() => {
+              window.location.reload()
+            }, 2000)
           })
           .finally(() => {
             this.dialogLoading = false
