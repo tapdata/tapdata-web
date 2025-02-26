@@ -689,7 +689,7 @@ export default {
   license_try_out: 'trial',
   license_copied_clipboard: 'Copied to clipboard',
   license_select_node: 'Please select the node first',
-  license_renew_success: 'Update succeeded',
+  license_renew_success: 'Update succeeded, page will refresh',
   // 自定义节点
   custom_node_name: 'Node Name',
   custom_node_name_placeholder: 'Please enter the node name to search',
