@@ -108,8 +108,11 @@ const router = getRouter(i18n)
 
 installOEM(router, i18n)
 
-let init = settings => {
+let init = async settings => {
   window.__settings__ = settings
+
+  await store.dispatch('feature/getFeatures')
+
   let lang = getCurrentLanguage()
   setCurrentLanguage(lang, i18n)
 
@@ -147,17 +150,15 @@ settingsApi
     }
     if (token) {
       //无权限，说明是首次进入页面，重新请求后台获取
-      let user = await usersApi.getInfo().catch(() => {
-        init(initData)
+      let user = await usersApi.getInfo().catch(async () => {
+        await init(initData)
       })
-
-      await store.dispatch('feature/getFeatures')
 
       //权限存在则存入缓存并继续向下走
       configUser(user)
     }
 
-    init(initData)
+    await init(initData)
     // 设置服务器时间
     timeStampApi.get().then(t => {
       Time.setTime(t)

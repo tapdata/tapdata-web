@@ -82,6 +82,13 @@ const getters = {
 // actions
 const actions = {
   async getFeatures({ commit }) {
+    if (window.getSettingByKey('checkLicense') === 'false' || process.env.NODE_ENV === 'development') {
+      commit('setFeatures', {
+        licenseType: 'OP',
+        features: []
+      })
+      return
+    }
     const data = await licensesApi.getFeatures()
     commit('setFeatures', data)
   }
