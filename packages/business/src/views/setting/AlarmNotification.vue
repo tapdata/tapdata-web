@@ -40,7 +40,7 @@
         :key="item.id"
         @click="handleRead(item)"
       >
-        <div class="list-item-content">
+        <div class="list-item-content flex align-center pl-6 py-2 lh-base">
           <div class="unread-1zPaAXtSu" v-show="!item.read"></div>
           <div class="list-item-desc">
             <span :class="['level-' + item.levelType]">【{{ item.levelLabel }}】</span>
@@ -328,8 +328,7 @@ $unreadColor: #ee5353;
     margin-right: 30px;
     .list-item-content {
       position: relative;
-      height: 50px;
-      line-height: 50px;
+      min-height: 50px;
       box-sizing: border-box;
       overflow: hidden;
       display: block;
@@ -345,13 +344,6 @@ $unreadColor: #ee5353;
     }
     .list-item-desc {
       color: map-get($fontColor, light);
-      position: absolute;
-      top: 0;
-      left: 30px;
-      right: 120px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
     .list-item-time {
       float: right;
