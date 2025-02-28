@@ -1452,7 +1452,9 @@ export default {
               item.target.table = tableNameRelation[ge] // findTargetTable.original_name
               item.target.capabilities = capabilitiesMap[targetConnectionId]
 
-              const updateList = cloneDeep(updateConditionFieldMap[tableNameRelation[ge]] || [])
+              const updateList = cloneDeep(updateConditionFieldMap[tableNameRelation[ge]] || []).filter(
+                t => t !== '_no_pk_hash'
+              )
               let findTable = data.find(t => t.source.id === sourceConnectionId && t.original_name === ge)
               let findTargetTable = data.find(
                 t => t.source.id === targetConnectionId && t.original_name === tableNameRelation[ge]
