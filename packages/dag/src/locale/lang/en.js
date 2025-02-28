@@ -100,7 +100,7 @@ export default {
   packages_dag_dataFlow_delete_confirm_Message: 'After deleting task XXX, this task cannot be restored',
   packages_dag_dataFlow_bulk_delete_confirm_Message: 'After deleting tasks in batch, tasks cannot be restored',
   packages_dag_dataFlow_stop_confirm_message:
-    'After the task xxx is suspended, when the table in the task that has not been fully synchronized is started again, the full synchronization will be performed again',
+    'After suspending task xxx, when restarting the task, only the tables that were not fully synchronized will undergo full synchronization again. This ensures that already synchronized tables are not reprocessed unnecessarily.',
   packages_dag_dataFlow_bulk_stop_confirm_message:
     'After the task is paused in batch, when the table in the task that has not been fully synchronized is started again, the full synchronization will be performed again',
   packages_dag_dataFlow_force_stop_confirm_message:
