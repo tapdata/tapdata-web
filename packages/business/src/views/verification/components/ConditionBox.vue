@@ -1470,7 +1470,18 @@ export default {
                     acc[t.field_name] = t.original_field_name
                     return acc
                   }, {})
-
+                  if (findTable.source.database_type === 'Sybase') {
+                    const sourceTableMap = findTable.fields.reduce((acc, field) => {
+                      acc[field.field_name] = field.data_type
+                      return acc
+                    }, {})
+                    for (let i = updateList.length - 1; i >= 0; i--) {
+                      const mappedField = fieldMap[updateList[i]]
+                      if (sourceTableMap[mappedField] === "timestamp") {
+                        updateList.splice(i, 1)
+                      }
+                    }
+                  }
                   sourceSortColumn = updateList
                     .reduce((acc, t) => {
                       fieldMap[t] && acc.push(fieldMap[t])
