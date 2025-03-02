@@ -1477,7 +1477,7 @@ export default {
                     }, {})
                     for (let i = updateList.length - 1; i >= 0; i--) {
                       const mappedField = fieldMap[updateList[i]]
-                      if (sourceTableMap[mappedField] === "timestamp") {
+                      if (sourceTableMap[mappedField] === 'timestamp') {
                         updateList.splice(i, 1)
                       }
                     }
