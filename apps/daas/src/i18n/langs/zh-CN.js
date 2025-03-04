@@ -666,7 +666,7 @@ export default {
   license_try_out: '试用',
   license_copied_clipboard: '已复制到剪贴板',
   license_select_node: '请先选择节点',
-  license_renew_success: '更新成功',
+  license_renew_success: '更新成功，页面即将刷新',
   // 自定义节点
   custom_node_name: '节点名称',
   custom_node_name_placeholder: '请输入节点名称搜索',

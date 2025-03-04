@@ -1,4 +1,5 @@
 import { licensesApi } from '@tap/api'
+import { SettingList } from '@/router/menu'
 
 const MENU_FEATURE_MAP = {
   dataService: 'dataService',
@@ -7,7 +8,11 @@ const MENU_FEATURE_MAP = {
   customNodeList: 'customNode',
   sharedMiningList: 'shareCdc',
   migrateList: 'dataMigrate',
-  dataConsole: 'realTimeDataService'
+  dataConsole: 'realTimeDataService',
+  roleList: 'roleManage',
+  users: 'userManage',
+  externalStorage: 'externalStorage',
+  webhookAlerts: 'webhookAlerts'
 }
 
 const TYPE2NAME = {
@@ -77,6 +82,13 @@ const getters = {
 // actions
 const actions = {
   async getFeatures({ commit }) {
+    if (window.getSettingByKey('checkLicense') === 'false' || process.env.NODE_ENV === 'development') {
+      commit('setFeatures', {
+        licenseType: 'OP',
+        features: []
+      })
+      return
+    }
     const data = await licensesApi.getFeatures()
     commit('setFeatures', data)
   }

@@ -28,11 +28,10 @@
 </template>
 
 <script>
-import i18n from '@/i18n'
-
 import { VIcon } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
 import { SettingList } from '@/router/menu'
+import { mapGetters } from 'vuex'
 
 export default {
   inject: ['lockedFeature', 'openLocked'],
@@ -44,6 +43,8 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('feature', ['isMenuEnabled']),
+
     breadcrumbName() {
       return this.$t(this.$route.meta?.title)
     },
@@ -60,7 +61,7 @@ export default {
         })
       }
 
-      return list.concat(SettingList.filter(item => !item.hidden))
+      return list.concat(SettingList.filter(item => !item.hidden && this.isMenuEnabled(item.key)))
     }
   },
   watch: {
