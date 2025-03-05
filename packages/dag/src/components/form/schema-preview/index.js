@@ -61,7 +61,7 @@ export const SchemaPreview = defineComponent({
       fieldRef.value.loading = fieldRef.value.displayName !== 'VoidField'
       const params = {
         nodeId: form.values.id,
-        fields: ['original_name', 'fields', 'qualified_name'],
+        fields: ['original_name', 'fields', 'qualified_name', 'name'],
         page: 1,
         pageSize: 20
       }
@@ -253,52 +253,6 @@ export const SchemaPreview = defineComponent({
     onBeforeUnmount(() => {
       console.log('onBeforeUnmount')
       return
-      const vm = getCurrentInstance().vnode.componentInstance
-      let $el = vm.$el
-      // remove self from parent
-      let parent = vm.$parent
-      if (parent) {
-        remove(parent.$children, vm)
-
-        const deepRemove = parent => {
-          if (parent.$el === $el) {
-            remove(parent.$parent.$children, parent)
-            deepRemove(parent.$parent)
-            parent.$el = null
-
-            let vchildren = parent?.$parent?.$vnode?.componentOptions?.children
-            if (vchildren?.length) {
-              const index = vchildren.findIndex(v => v.elm === $el)
-              if (index > -1) {
-                vchildren.splice(index, 1)
-              }
-            }
-
-            vchildren = parent?.$parent?._vnode.children
-            if (vchildren?.length) {
-              const index = vchildren.findIndex(v => v.elm === $el)
-              if (index > -1) {
-                vchildren.splice(index, 1)
-              }
-            }
-
-            vchildren = parent?.$parent?.$slots.default
-            if (vchildren?.length) {
-              const index = vchildren.findIndex(v => v.elm === $el)
-              if (index > -1) {
-                vchildren.splice(index, 1)
-              }
-            }
-          }
-        }
-
-        deepRemove(parent, vm)
-      }
-
-      vm.$el = null
-      $el = null
-      vm.$vnode.elm = null
-      vm._vnode.elm = null
     })
 
     return () => (

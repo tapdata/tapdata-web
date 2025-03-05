@@ -845,7 +845,7 @@ export default {
           if (isMigrate) {
             let result = await metadataInstancesApi.nodeSchemaPage({
               nodeId,
-              fields: ['original_name', 'fields', 'qualified_name'],
+              fields: ['original_name', 'fields', 'qualified_name', 'name'],
               page: 1,
               pageSize: 1
             })

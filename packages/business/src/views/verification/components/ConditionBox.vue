@@ -1214,7 +1214,7 @@ export default {
 
       let params = {
         nodeId,
-        fields: ['original_name', 'fields', 'qualified_name'],
+        fields: ['original_name', 'fields', 'qualified_name', 'name'],
         page: filter?.page || 1,
         pageSize: filter?.size || 20
       }
