@@ -658,7 +658,7 @@ export default {
     async loadNodeSchema(nodeId) {
       const params = {
         nodeId,
-        fields: ['original_name', 'fields', 'qualified_name', 'name'],
+        fields: ['original_name', 'fields', 'qualified_name', 'name', 'indices'],
         page: 1,
         pageSize: 20
       }

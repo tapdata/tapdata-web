@@ -61,7 +61,7 @@ export const SchemaPreview = defineComponent({
       fieldRef.value.loading = fieldRef.value.displayName !== 'VoidField'
       const params = {
         nodeId: form.values.id,
-        fields: ['original_name', 'fields', 'qualified_name', 'name'],
+        fields: ['original_name', 'fields', 'qualified_name', 'name', 'indices'],
         page: 1,
         pageSize: 20
       }
