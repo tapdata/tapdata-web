@@ -768,5 +768,7 @@ export default {
   packages_dag_join_keys_empty: '{tableName} 的關聯條件不能為空',
   packages_dag_join_keys_field_empty: '{tableName} 的關聯條件第 {index} 項的字段不能為空',
   packages_dag_field_path: '字段路徑',
-  packages_dag_email_receivers: '郵件接收人'
+  packages_dag_email_receivers: '郵件接收人',
+  packages_dag_merge_table_js_node_error: '主從合併節點後不允許存在 JS 節點',
+  packages_dag_merge_table_table_not_allow_target: '主從合併後不支持將 {val} 作為寫入目標'
 }

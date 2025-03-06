@@ -1088,6 +1088,26 @@ export default {
       return nodes
     },
 
+    findAllChildNodes(id) {
+      let node = this.scope.findNodeById(id)
+      const nodes = []
+      let ids = node.$outputs || []
+
+      ids.forEach(id => {
+        let child = this.scope.findNodeById(id)
+
+        if (!child) return
+
+        nodes.push(child)
+
+        if (child.$outputs?.length) {
+          nodes.push(...this.findChildNodes(id))
+        }
+      })
+
+      return nodes
+    },
+
     handleDisableNode(node, value = true) {
       this.$set(node, 'disabled', value)
       this.$set(node.attrs, 'disabled', value)
@@ -1728,38 +1748,26 @@ export default {
           })
           return error
         }
+
+        // 校验主从合并后面是否有js节点
+        const nextNodes = this.findAllChildNodes(node.id)
+
+        if (nextNodes.some(nextNode => nextNode.type === 'js_processor' || nextNode.type === 'standard_js_processor')) {
+          return i18n.t('packages_dag_merge_table_js_node_error')
+        }
+
+        // 目标需要有 master_slave_merge 能力
+        const targetNode = nextNodes.find(
+          nextNode =>
+            nextNode.type === 'table' && !nextNode.attrs?.capabilities?.find(({ id }) => id === 'master_slave_merge')
+        )
+
+        if (targetNode) {
+          return i18n.t('packages_dag_merge_table_table_not_allow_target', {
+            val: targetNode.databaseType
+          })
+        }
       }
-
-      // const handle = async input => {
-      //   const fields = await this.scope.loadNodeFieldOptions(input)
-
-      //   if (
-      //     fields?.length &&
-      //     !fields.some(item => {
-      //       return item.isPrimaryKey || item.indicesUnique
-      //     })
-      //   ) {
-      //     // 缺少主键或唯一索引
-      //     return Promise.reject(input)
-      //   }
-      // }
-
-      // for (let node of nodes) {
-      //   for (let input of node.$inputs) {
-      //     allPromise.push(handle(input))
-      //   }
-      // }
-
-      // try {
-      //   await Promise.all(allPromise)
-      // } catch (id) {
-      //   this.setNodeErrorMsg({
-      //     id,
-      //     msg: i18n.t('packages_dag_missing_primary_key_or_index')
-      //   })
-      //   this.handleLocateNode(this.nodeById(id))
-      //   return i18n.t('packages_dag_merge_table_missing_key_or_index')
-      // }
     },
 
     async eachValidate(...fns) {
