@@ -1752,7 +1752,7 @@ export default {
         // 校验主从合并后面是否有js节点
         const nextNodes = this.findAllChildNodes(node.id)
 
-        if (nextNodes.some(nextNode => nextNode.type === 'js_processor' || nextNode.type === 'standard_js_processor')) {
+        if (nextNodes.some(nextNode => nextNode.type === 'standard_js_processor')) {
           return i18n.t('packages_dag_merge_table_js_node_error')
         }
 
