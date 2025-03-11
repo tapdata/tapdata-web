@@ -769,5 +769,6 @@ export default {
   packages_dag_noPkSyncMode_ADD_HASH: '新增哈希列',
   packages_dag_noPkSyncMode_ALL_COLUMNS: '全字段索引',
   packages_dag_join_keys_empty: '{tableName} 的关联条件不能为空',
-  packages_dag_join_keys_field_empty: '{tableName} 的关联条件第 {index} 项的字段不能为空'
+  packages_dag_join_keys_field_empty: '{tableName} 的关联条件第 {index} 项的字段不能为空',
+  packages_dag_src_editor_huawei_drs_kafka_convertor: '华为 DRS Kafka 消息转换器'
 }
