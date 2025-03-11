@@ -372,5 +372,8 @@ export default {
   public_file_size: 'File Size',
   public_log_download: 'Log Download',
   public_alert_401_tip: 'Your session has expired or logged in on another device. Please log in again to continue.',
-  public_alert_401: 'Session Expired Reminder'
+  public_alert_401: 'Session Expired Reminder',
+  public_store_type: 'Store Type',
+  public_from_db_type: 'From DB Type',
+  public_sample_size: 'Sample Size'
 }

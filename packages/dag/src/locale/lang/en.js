@@ -825,5 +825,6 @@ export default {
   packages_dag_noPkSyncMode_ADD_HASH: 'Add Hash Column',
   packages_dag_noPkSyncMode_ALL_COLUMNS: 'Full Column Index',
   packages_dag_join_keys_empty: 'Association conditions for {tableName} cannot be empty',
-  packages_dag_join_keys_field_empty: 'Field in association condition #{index} for {tableName} cannot be empty.'
+  packages_dag_join_keys_field_empty: 'Field in association condition #{index} for {tableName} cannot be empty.',
+  packages_dag_src_editor_huawei_drs_kafka_convertor: 'Huawei DRS Kafka Message Converter'
 }
