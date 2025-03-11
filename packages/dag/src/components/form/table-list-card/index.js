@@ -32,7 +32,7 @@ export const TableListCard = observer(
           let map = {}
           let items = data?.items || []
           items.forEach(t => {
-            if (t.tableComment || t.primaryKeyCounts) {
+            if (t.uniqueIndexCounts || t.primaryKeyCounts) {
               map[t.tableName] = t
             }
           })
