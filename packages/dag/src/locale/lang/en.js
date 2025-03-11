@@ -828,6 +828,7 @@ export default {
   packages_dag_noPkSyncMode_ALL_COLUMNS: 'Full Column Index',
   packages_dag_join_keys_empty: 'Association conditions for {tableName} cannot be empty',
   packages_dag_join_keys_field_empty: 'Field in association condition #{index} for {tableName} cannot be empty.',
+  packages_dag_src_editor_huawei_drs_kafka_convertor: 'Huawei DRS Kafka Message Converter',
   packages_dag_field_path: 'Field Path',
   packages_dag_email_receivers: 'Email Receivers',
   packages_dag_merge_table_js_node_error: 'Merge table node cannot have JS node after it',

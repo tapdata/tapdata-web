@@ -377,5 +377,8 @@ export default {
   public_array: 'Array',
   public_load_more: 'Load More',
   public_loading: 'Loading...',
-  public_load_end: 'End'
+  public_load_end: 'End',
+  public_store_type: 'Store Type',
+  public_from_db_type: 'From DB Type',
+  public_sample_size: 'Sample Size'
 }
