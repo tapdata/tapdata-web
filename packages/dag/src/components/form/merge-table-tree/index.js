@@ -1,5 +1,5 @@
 import i18n from '@tap/i18n'
-import { defineComponent, ref, onMounted, nextTick, reactive, set, del } from '@vue/composition-api'
+import { defineComponent, ref, onMounted, nextTick, reactive, set, del, computed } from '@vue/composition-api'
 import { observer } from '@formily/reactive-vue'
 import { observe } from '@formily/reactive'
 import { FormItem, h as createElement, useFieldSchema, useForm, RecursionField } from '@tap/form'
@@ -26,13 +26,37 @@ export const MergeTableTree = observer(
       const setPath = pathArr => {
         const path = pathArr.join('.children.')
         currentPath.value = path
+
+        form.setFieldState(`mergeProperties.${path}.arrayKeys`, {
+          display: 'hidden'
+        })
+
         if (pathArr.length === 1) {
+          form.setFieldState(`mergeProperties.${path}.targetPath`, {
+            display: 'hidden'
+          })
           form.setFieldState(`mergeProperties.${path}.mergeType`, {
             display: 'hidden'
           })
           form.setFieldState(`mergeProperties.${path}.joinKeys`, {
             visible: false
           })
+          form.setValuesIn(`mergeProperties.${path}.targetPath`, undefined)
+          form.setValuesIn(`mergeProperties.${path}.mergeType`, 'updateOrInsert')
+        } else if (pathArr.length > 1) {
+          const mergeType = form.getValuesIn(`mergeProperties.${path}.mergeType`)
+
+          if (mergeType === 'updateOrInsert') {
+            // 主表是 updateOrInsert, 子表是 updateWrite
+            form.setValuesIn(`mergeProperties.${path}.mergeType`, 'updateWrite')
+          }
+
+          if (form.getValuesIn(`mergeProperties.${path}.targetPath`) == null) {
+            form.setValuesIn(
+              `mergeProperties.${path}.targetPath`,
+              props.findNodeById(form.getValuesIn(`mergeProperties.${path}.id`))?.name
+            )
+          }
         }
         return path
       }
@@ -74,12 +98,13 @@ export const MergeTableTree = observer(
             const node = props.findNodeById(id)
             newTree.push({
               id,
-              mergeType: 'updateOrInsert',
+              mergeType: 'updateWrite',
               targetPath: null,
               tableName: node.name,
               // joinKeys: [],
               children: [],
-              enableUpdateJoinKeyValue: false // 关联条件变更
+              enableUpdateJoinKeyValue: false, // 关联条件变更
+              hasWarning: false
             })
           }
         })
@@ -90,6 +115,7 @@ export const MergeTableTree = observer(
           if (!currentKey.value || !$inputs.includes(currentKey.value)) {
             currentKey.value = newTree[0].id
             setPath([0])
+            loadField(currentKey.value, currentPath.value)
           }
         } else {
           currentKey.value = null
@@ -100,12 +126,6 @@ export const MergeTableTree = observer(
           refs.tree?.setCurrentKey(currentKey.value)
         })
       }
-
-      makeTree()
-
-      observe(formRef.value.values.$inputs, () => {
-        makeTree()
-      })
 
       const renderNode = ({ data }) => {
         const dagNode = props.findNodeById(data.id)
@@ -146,6 +166,28 @@ export const MergeTableTree = observer(
         return setPath(temp)
       }
 
+      // 更新警告状态的辅助函数
+      const updateWarningState = (selfId, selfPath) => {
+        const arrayKeys = form.getValuesIn(`mergeProperties.${selfPath}.arrayKeys`)
+        const hasArrayKeys = Array.isArray(arrayKeys) && arrayKeys.length > 0
+
+        // 直接更新树节点数据
+        const updateNode = nodes => {
+          for (let node of nodes) {
+            if (node.id === selfId) {
+              set(node, 'hasWarning', !hasArrayKeys)
+              return true
+            }
+            if (node.children?.length) {
+              if (updateNode(node.children)) return true
+            }
+          }
+          return false
+        }
+
+        updateNode(treeRef.value)
+      }
+
       const loadTargetField = (selfId, selfPath) => {
         form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
           loading: true
@@ -165,25 +207,50 @@ export const MergeTableTree = observer(
 
       const loadField = (selfId, selfPath, ifWait) => {
         const pathArr = selfPath.split('.children.')
-        if (pathArr.length < 2) return
+
+        form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.source,arrayKeys))`, {
+          loading: true
+        })
+
         props.loadFieldsMethod(selfId).then(fields => {
-          const noWarning = fields.some(item => {
-            return item.isPrimaryKey || item.indicesUnique
+          const primaryKey = []
+          const uniqueKey = []
+
+          fields.forEach(item => {
+            if (item.isPrimaryKey) {
+              primaryKey.push(item.label)
+            }
+            if (item.indicesUnique) {
+              uniqueKey.push(item.label)
+            }
           })
 
-          const treeNode = refs.tree.getNode(selfId)
-
-          if (!noWarning) {
-            set(treeNode.data, 'hasWarning', true)
-          } else {
-            del(treeNode.data, 'hasWarning')
-          }
+          const keysValue = primaryKey.length > 0 ? primaryKey : uniqueKey
 
           form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.source,arrayKeys))`, {
             loading: false,
             dataSource: fields
           })
+
+          // 监听 arrayKeys 的变化
+          const field = form.query(`mergeProperties.${selfPath}.arrayKeys`).take()
+          field.setDisplay(keysValue.length ? 'hidden' : 'visible')
+          field.setComponentProps({
+            onChange: () => {
+              updateWarningState(selfId, selfPath)
+            }
+          })
+
+          const arrayKeysValue = form.getValuesIn(`mergeProperties.${selfPath}.arrayKeys`)
+          if (!arrayKeysValue?.length) {
+            form.setValuesIn(`mergeProperties.${selfPath}.arrayKeys`, keysValue)
+          }
+
+          // 初始化警告状态
+          updateWarningState(selfId, selfPath)
         })
+
+        if (pathArr.length < 2) return
 
         if (ifWait) {
           form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
@@ -202,6 +269,12 @@ export const MergeTableTree = observer(
         }
       }
 
+      makeTree()
+
+      observe(formRef.value.values.$inputs, () => {
+        makeTree()
+      })
+
       const handleCurrentChange = (data, node) => {
         const oldKey = currentKey.value
         currentKey.value = data.id
@@ -219,6 +292,8 @@ export const MergeTableTree = observer(
       }
 
       const handleNodeDrop = (dragNode, dropNode, dropType) => {
+        console.log('props.value', props.value)
+
         const nodeMap = {
           value: flattenTree(props.value || [], {})
         }
@@ -331,7 +406,7 @@ export const MergeTableTree = observer(
                 vOn:node-drag-over={handleNodeDragOver}
               />
             </FormItem.BaseItem>
-            <div class="border-start flex-1 px-2 overflow-y-auto">
+            <div class="border-start flex-1 px-2 py-4 overflow-y-auto">
               {currentPath.value &&
                 createElement(
                   RecursionField,

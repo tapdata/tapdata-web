@@ -6,7 +6,9 @@ export default class Users extends Http {
   }
 
   login(params) {
-    return this.axios.post(this.url + '/login', params)
+    return this.axios.post(this.url + '/login', params, {
+      silenceMessage: true
+    })
   }
   logout(params) {
     return this.axios.post(this.url + '/logout', params)

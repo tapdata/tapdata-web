@@ -254,11 +254,13 @@ export default {
       let nodes = [
         {
           name: i18n.t('packages_dag_src_editor_zhuconghebing'),
-          type: 'merge_table_processor'
+          type: 'merge_table_processor',
+          hidden: !this.hasFeature('masterSlaveMergeProcessor')
         },
         {
           name: i18n.t('packages_dag_src_editor_zhuijiahebing'),
-          type: 'union_processor'
+          type: 'union_processor',
+          hidden: !this.hasFeature('appendMergeProcessor')
         },
         {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli_standard'),
@@ -267,16 +269,19 @@ export default {
         {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli'),
           type: 'js_processor',
-          beta: true
+          beta: true,
+          hidden: !this.hasFeature('enhanceJsProcessor')
         },
         {
           name: 'Python',
           type: 'python_processor',
-          beta: true
+          beta: true,
+          hidden: !this.hasFeature('pythonProcessor')
         },
         {
           name: 'Row Filter',
-          type: 'row_filter_processor'
+          type: 'row_filter_processor',
+          hidden: !this.hasFeature('rowFilterProcessor')
         },
         // {
         //   name: i18n.t('packages_dag_src_editor_juhe'),
@@ -308,11 +313,13 @@ export default {
         },
         {
           name: 'Unwind',
-          type: 'unwind_processor'
+          type: 'unwind_processor',
+          hidden: !this.hasFeature('unwindProcessor')
         },
         {
           name: i18n.t('packages_dag_time_field_injection'),
-          type: 'add_date_field_processor'
+          type: 'add_date_field_processor',
+          hidden: !this.hasFeature('appendDatetimeFieldProcessor')
         },
         {
           name: i18n.t('packages_dag_src_editor_huawei_drs_kafka_convertor'),
@@ -329,9 +336,12 @@ export default {
         ]
         nodes = [...isDaasNode, ...nodes]
       }
-      this.addProcessorNode(nodes)
+      this.addProcessorNode(nodes.filter(item => !item.hidden))
       this.addResourceIns(allResourceIns)
-      await this.loadCustomNode()
+
+      if (this.hasFeature('customProcessor')) {
+        await this.loadCustomNode()
+      }
     },
 
     async openDataflow(id) {
@@ -704,7 +714,7 @@ export default {
       const { by, connectionId, tableName } = query
       let connection
 
-      if (by !== 'materialized-view') return
+      if (by !== 'materialized-view' && by !== 'transformation-materialized') return
 
       await this.$router.replace({
         params: {
@@ -720,6 +730,19 @@ export default {
 
       if (connectionId) {
         connection = await connectionsApi.get(connectionId)
+      }
+
+      if (by === 'transformation-materialized') {
+        const mergeTableNode = this.handleAddNodeToCenter({
+          name: i18n.t('packages_dag_src_editor_zhuconghebing'),
+          type: 'merge_table_processor'
+        })
+
+        // 添加目标节点
+        if (connection) {
+          this.quickAddNode(mergeTableNode, this.$refs.leftSidebar.getNodeProps(connection, tableName))
+        }
+        return
       }
 
       // 统一添加节点，可以通过节流走一个updateDag请求

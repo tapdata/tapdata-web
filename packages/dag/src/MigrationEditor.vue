@@ -222,7 +222,8 @@ export default {
       this.addProcessorNode([
         {
           name: i18n.t('packages_dag_migrate_union'),
-          type: 'migrate_union_processor'
+          type: 'migrate_union_processor',
+          hidden: !this.hasFeature('multipleTableMergeProcessor')
         },
         {
           name: i18n.t('packages_dag_src_migrationeditor_biaobianji'),
@@ -239,7 +240,8 @@ export default {
         {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli'),
           type: 'migrate_js_processor',
-          beta: true
+          beta: true,
+          hidden: !this.hasFeature('enhanceJsProcessor')
         },
         {
           name: i18n.t('packages_dag_date_processor'),
@@ -251,7 +253,8 @@ export default {
         },
         {
           name: i18n.t('packages_dag_time_field_injection'),
-          type: 'migrate_add_date_field_processor'
+          type: 'migrate_add_date_field_processor',
+          hidden: !this.hasFeature('appendDatetimeFieldProcessor')
         } /* ,
         {
           name: i18n.t('packages_dag_src_editor_huawei_drs_kafka_convertor'),

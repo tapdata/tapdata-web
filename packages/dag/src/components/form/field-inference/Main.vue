@@ -10,15 +10,16 @@
             </ElOption>
           </ElSelect>
         </div>
-        <ElInput
-          v-model="searchTable"
-          size="mini"
-          :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
-          suffix-icon="el-icon-search"
-          clearable
-          class="p-2"
-          @input="handleSearchTable"
-        ></ElInput>
+        <div class="p-2">
+          <ElInput
+            v-model="searchTable"
+            size="mini"
+            :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
+            prefix-icon="el-icon-search"
+            clearable
+            @input="handleSearchTable"
+          ></ElInput>
+        </div>
         <div v-loading="navLoading" class="nav-list flex-fill font-color-normal">
           <ul v-if="navList.length">
             <li

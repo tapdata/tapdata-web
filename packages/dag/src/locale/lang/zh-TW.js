@@ -364,8 +364,10 @@ export default {
   packages_dag_nodes_mergetable_mubiaobiaoziduan: '目標表字段',
   packages_dag_nodes_mergetable_dangqianbiaoziduan: '當前表字段',
   packages_dag_nodes_mergetable_guanliantiaojian: '關聯條件',
-  packages_dag_nodes_mergetable_gengxinjianguanlian: '關聯條件變更',
-  packages_dag_nodes_mergetable_neiqianshuzupi: '內嵌數組匹配條件',
+  packages_dag_nodes_mergetable_gengxinjianguanlian: '支持關聯條件更新',
+  packages_dag_nodes_mergetable_gengxinjianguanlian_tips:
+    '如果關聯條件可能會變化, 需要打開此開關, 打開後性能會受到一些影響',
+  packages_dag_nodes_mergetable_neiqianshuzupi: '表主鍵',
   packages_dag_nodes_mergetable_guanlianhouxieru: '關聯後寫入路徑',
   packages_dag_nodes_mergetable_gengxinjinneiqian: '更新進內嵌數組',
   packages_dag_nodes_mergetable_shujuxierumo: '數據寫入模式',
@@ -765,5 +767,9 @@ export default {
   packages_dag_noPkSyncMode_ALL_COLUMNS: '全字段索引',
   packages_dag_join_keys_empty: '{tableName} 的關聯條件不能為空',
   packages_dag_join_keys_field_empty: '{tableName} 的關聯條件第 {index} 項的字段不能為空',
-  packages_dag_src_editor_huawei_drs_kafka_convertor: '華為 DRS Kafka 消息轉換器'
+  packages_dag_src_editor_huawei_drs_kafka_convertor: '華為 DRS Kafka 消息轉換器',
+  packages_dag_field_path: '字段路徑',
+  packages_dag_email_receivers: '郵件接收人',
+  packages_dag_merge_table_js_node_error: '主從合併節點後不允許存在 JS 節點',
+  packages_dag_merge_table_table_not_allow_target: '主從合併後不支持將 {val} 作為寫入目標'
 }

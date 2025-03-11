@@ -118,6 +118,7 @@ export default class AlarmAPI extends Http {
   updateTaskAlarm(params: {
     alarmRules?: AlarmRuleVO[] | null
     alarmSettings?: AlarmSettingVO[] | null
+    emailReceivers?: string[] | null
     nodeId?: null | string
     taskId?: null | string
   }) {

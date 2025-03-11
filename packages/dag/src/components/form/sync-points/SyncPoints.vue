@@ -9,7 +9,7 @@
       :buffer="64"
     >
       <template #default="{ item, index, active }">
-        <span>{{ item.connectionName }}({{ item.nodeName }})</span>
+        <span class="ellipsis">{{ item.connectionName }}({{ item.nodeName }})</span>
         <div class="flex align-center gap-3">
           <ElSelect v-model="item.pointType" :disabled="disabled || item.hiddenPointType">
             <ElOption :label="$t('public_time_user_specified_time')" value="localTZ" />

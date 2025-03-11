@@ -4,7 +4,7 @@
       <ElButton :loading="copyLoading" class="btn" size="mini" @click="copySid">{{
         $t('public_button_copy')
       }}</ElButton>
-      <ElButton class="btn" type="primary" size="mini" @click="openDialog">{{ $t('public_event_update') }}</ElButton>
+      <ElButton class="btn" type="primary" size="mini" @click="updateNode()">{{ $t('public_event_update') }}</ElButton>
     </template>
     <section class="license-wrapper h-100 overflow-hidden pb-6 pr-6">
       <TablePage
@@ -22,13 +22,12 @@
             <span :class="'color-' + row.status.color">{{ row.status.text }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn v-if="showLicenseType" :label="$t('daas_licenseType')" min-width="150">
+        <ElTableColumn :label="$t('daas_licenseType')" min-width="150">
           <template #default="{ row }">
             <span>{{ TYPE_MAP[row.licenseType] }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn v-if="showLicenseType" :label="$t('daas_datasourcePipelineLimit')" min-width="160"
-          >e
+        <ElTableColumn v-if="showLicenseType" :label="$t('daas_datasourcePipelineLimit')" min-width="160">
           <template #default="{ row }">
             <div v-if="row.licenseType === 'PIPELINE'" class="flex gap-2 align-center">
               <el-progress class="flex-1" :percentage="row.pipelinePercentage" :show-text="false"></el-progress>
@@ -46,6 +45,11 @@
           :label="$t('license_update_time')"
           min-width="160"
         ></ElTableColumn>
+        <ElTableColumn :label="$t('public_operation')" width="88">
+          <template #default="{ row }">
+            <ElLink link type="primary" @click="updateNode(row)">{{ $t('public_event_update') }}</ElLink>
+          </template>
+        </ElTableColumn>
       </TablePage>
       <ElDialog append-to-body :title="$t('license_renew_dialog')" :visible.sync="dialogVisible">
         <ElInput v-model.trim="license" type="textarea"></ElInput>
@@ -105,13 +109,16 @@ import { licensesApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { VEmpty } from '@tap/component'
+import { ElLink } from 'element-ui/types/link'
 
 export default {
   components: { VEmpty, DatabaseIcon, PageContainer, TablePage, TaskStatus },
   data() {
     const TYPE_MAP = {
       OP: this.$t('daas_licenseType_op'),
-      PIPELINE: this.$t('daas_licenseType_pipeline')
+      PIPELINE: this.$t('daas_licenseType_pipeline'),
+      LITE: this.$t('daas_licenseType_lite'),
+      SERVICE: this.$t('daas_licenseType_service')
     }
 
     return {
@@ -120,7 +127,7 @@ export default {
       dialogVisible: false,
       dialogLoading: false,
       license: '',
-      showLicenseType: process.env.VUE_APP_LICENSE_TYPE === 'PIPELINE' || process.env.NODE_ENV === 'development',
+      showLicenseType: process.env.VUE_APP_LICENSE_TYPE === 'PIPELINE',
       detailsDialog: {
         show: false,
         loading: false,
@@ -212,8 +219,9 @@ export default {
         this.$message.warning(this.$t('license_select_node'))
       }
     },
-    openDialog() {
-      if (this.$refs.table?.multipleSelection?.length) {
+    updateNode(row) {
+      this.updateSids = row ? [row.sid] : this.$refs.table?.multipleSelection?.map(item => item.sid)
+      if (this.updateSids?.length) {
         this.license = ''
         this.dialogVisible = true
       } else {
@@ -222,16 +230,20 @@ export default {
     },
     updateLicense() {
       this.dialogLoading = true
-      let ids = this.$refs?.table?.multipleSelection?.map(item => item.sid)
-      if (ids?.length) {
+      if (this.updateSids?.length) {
         licensesApi
           .updateLicense({
-            sid: ids,
+            sid: this.updateSids,
             license: this.license
           })
           .then(() => {
             this.$message.success(this.$t('license_renew_success'))
             this.$table.fetch()
+            this.dialogVisible = false
+
+            setTimeout(() => {
+              window.location.reload()
+            }, 2000)
           })
           .finally(() => {
             this.dialogLoading = false
@@ -244,7 +256,6 @@ export default {
       const data = await licensesApi.getPipelineDetails()
       this.detailsDialog.loading = false
       this.detailsDialog.data = data
-      console.log('data', data)
     },
     handleSortTable({ order, prop }) {
       if (prop === 'lastUpdatedFmt') {

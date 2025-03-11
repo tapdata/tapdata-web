@@ -47,5 +47,8 @@ export default {
   packages_ldp_run_every_day: 'Run every day',
   packages_ldp_custom_cron_expression: 'Custom cron expression',
   packages_ldp_view_task_monitor: 'View Task Monitor',
-  packages_ldp_book_demo: 'Feel free to Book a Demo with us'
+  packages_ldp_book_demo: 'Feel free to Book a Demo with us',
+  packages_ldp_mdm_create_method: 'Create Method',
+  packages_ldp_mdm_create_method_transformation: 'Use Data Transformation Task',
+  packages_ldp_mdm_create_method_materialized: 'Use Materialized View'
 }

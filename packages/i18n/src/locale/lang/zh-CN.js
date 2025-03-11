@@ -371,5 +371,10 @@ export default {
   public_alert_401: '会话过期提醒',
   public_store_type: '存储类型',
   public_from_db_type: '来源数据库类型',
-  public_sample_size: '抽样数据量'
+  public_sample_size: '抽样数据量',
+  public_document: '文档',
+  public_array: '数组',
+  public_load_more: '加载更多',
+  public_loading: '拼命加载中',
+  public_load_end: '到底了'
 }

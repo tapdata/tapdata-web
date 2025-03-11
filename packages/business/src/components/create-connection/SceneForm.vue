@@ -124,7 +124,6 @@ export default {
       }
     }
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       rules: [],
       id: '',
       commandCallbackFunctionId: '',
@@ -929,8 +928,37 @@ export default {
       delete connectionProperties.OPTIONAL_FIELDS
 
       let reactions
+
       if (process.env.VUE_APP_CONNECTOR_SCHEMA && /^\s*[[{].*[\]}]\s*$/.test(process.env.VUE_APP_CONNECTOR_SCHEMA)) {
         reactions = JSON.parse(process.env.VUE_APP_CONNECTOR_SCHEMA)
+      } else if (process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA) {
+        reactions = [
+          {
+            target: process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA,
+            fulfill: {
+              state: { display: 'hidden' }
+            }
+          }
+        ]
+      }
+
+      if (!this.hasFeature('shareCdc')) {
+        reactions ??= []
+        reactions.push({
+          target: '__TAPDATA.shareCdcEnable',
+          fulfill: {
+            state: { display: 'hidden' }
+          }
+        })
+      }
+
+      if (!this.hasFeature('oracleBridge')) {
+        reactions ??= []
+        reactions.push({
+          target: 'logPluginName',
+          when: '{{pdkId !== "postgres"}}',
+          fulfill: { state: { display: 'hidden' } }
+        })
       }
 
       let result = {
@@ -942,18 +970,7 @@ export default {
           START: {
             type: 'void',
             'x-index': 0,
-            'x-reactions': reactions
-              ? reactions
-              : process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA
-              ? {
-                  target: process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA,
-                  fulfill: {
-                    state: {
-                      display: 'hidden'
-                    }
-                  }
-                }
-              : undefined,
+            'x-reactions': reactions,
             properties: {
               __TAPDATA: {
                 type: 'object',

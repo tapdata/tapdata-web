@@ -1214,7 +1214,7 @@ export default {
 
       let params = {
         nodeId,
-        fields: ['original_name', 'fields', 'qualified_name'],
+        fields: ['original_name', 'fields', 'qualified_name', 'name'],
         page: filter?.page || 1,
         pageSize: filter?.size || 20
       }
@@ -1402,7 +1402,8 @@ export default {
         },
         original_name: {
           inq: Array.from(new Set(tableNames))
-        }
+        },
+        taskId: this.taskId
       }
       // this.autoAddTableLoading = true
       // this.updateAutoAddTableLoading()
@@ -1451,7 +1452,9 @@ export default {
               item.target.table = tableNameRelation[ge] // findTargetTable.original_name
               item.target.capabilities = capabilitiesMap[targetConnectionId]
 
-              const updateList = cloneDeep(updateConditionFieldMap[tableNameRelation[ge]] || [])
+              const updateList = cloneDeep(updateConditionFieldMap[tableNameRelation[ge]] || []).filter(
+                t => t !== '_no_pk_hash'
+              )
               let findTable = data.find(t => t.source.id === sourceConnectionId && t.original_name === ge)
               let findTargetTable = data.find(
                 t => t.source.id === targetConnectionId && t.original_name === tableNameRelation[ge]
@@ -1460,14 +1463,13 @@ export default {
               if (findTable) {
                 let sourceSortColumn = updateList.length
                   ? updateList.join(',')
-                  : this.getPrimaryKeyFieldStr(findTable.fields)
+                  : findTable.sortColumns?.join(',') || this.getPrimaryKeyFieldStr(findTable.fields)
 
                 if (updateList.length && findTargetTable?.fields?.length) {
                   const fieldMap = findTargetTable?.fields?.reduce((acc, t) => {
                     acc[t.field_name] = t.original_field_name
                     return acc
                   }, {})
-
                   sourceSortColumn = updateList
                     .reduce((acc, t) => {
                       fieldMap[t] && acc.push(fieldMap[t])
@@ -1489,7 +1491,7 @@ export default {
               if (findTargetTable) {
                 const targetSortColumn = updateList.length
                   ? updateList.join(',')
-                  : this.getPrimaryKeyFieldStr(findTargetTable.fields)
+                  : findTargetTable.sortColumns?.join(',') || this.getPrimaryKeyFieldStr(findTargetTable.fields)
 
                 item.target.fields = findTargetTable.fields.map(t => {
                   t.isPrimaryKey = t.primary_key_position > 0

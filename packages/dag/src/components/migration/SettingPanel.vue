@@ -50,6 +50,9 @@ export default observer({
       isDaas: isDaas,
       formScope: {
         lockedFeature: this.lockedFeature,
+        hasFeature: feature => {
+          return !isDaas || this.$store.getters['feature/hasFeature']?.(feature)
+        },
         getPickerOptionsBeforeTime,
         $isDaas: isDaas, //区分云版、企业版
         formTab: FormTab.createFormTab(),
@@ -172,6 +175,29 @@ export default observer({
           this.settings.syncPoints.forEach(point => {
             point.pointType = 'localTZ' // 用户自定义时间点
             point.dateTime = currentEventTimestamp
+          })
+        },
+
+        loadEmailReceivers: field => {
+          const str = window.getSettingByKey('email.receivers')
+          const receivers = str ? str.split(',').filter(Boolean) : []
+
+          // 过滤掉不在可选列表中的接收人
+          const size = field.value.length
+          if (size) {
+            const filter = field.value.filter(email => receivers.includes(email))
+
+            if (size !== filter.length) {
+              field.form.setValuesIn(field.path, [...filter])
+            }
+          }
+
+          field.setInitialValue([...receivers])
+          field.dataSource = receivers.map(receiver => {
+            return {
+              label: receiver,
+              value: receiver
+            }
           })
         }
       },
@@ -557,7 +583,8 @@ export default observer({
                                   dependencies: ['type'],
                                   fulfill: {
                                     state: {
-                                      visible: '{{$deps[0] !== "initial_sync" && !lockedFeature.sharedMiningList}}' // 只有增量或全量+增量支持
+                                      visible:
+                                        '{{hasFeature("shareCdc") && $deps[0] !== "initial_sync" && !lockedFeature.sharedMiningList}}' // 只有增量或全量+增量支持
                                     }
                                   }
                                 }
@@ -635,7 +662,8 @@ export default observer({
                                 'x-decorator-props': {
                                   tooltip: i18n.t('packages_dag_doubleActive_tip')
                                 },
-                                'x-component': 'Switch'
+                                'x-component': 'Switch',
+                                'x-visible': '{{hasFeature("TwoWaySync")}}'
                               },
                               accessNodeType: {
                                 type: 'string',
@@ -770,6 +798,7 @@ export default observer({
                 type: 'void',
                 'x-component': 'FormTab.TabPane',
                 'x-component-props': {
+                  class: 'test',
                   label: i18n.t('packages_dag_migration_configpanel_gaojingshezhi'),
                   locked: process.env.VUE_APP_MODE === 'community'
                 },
@@ -1051,6 +1080,19 @@ export default observer({
                         }
                       }
                     }
+                  },
+                  emailReceivers: {
+                    title: i18n.t('packages_dag_email_receivers'),
+                    type: 'array',
+                    'x-visible': `{{$isDaas}}`,
+                    'x-editable': true,
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Select',
+                    'x-component-props': {
+                      multiple: true,
+                      filterable: true
+                    },
+                    'x-reactions': [`{{loadEmailReceivers}}`]
                   }
                 }
               },
@@ -1339,7 +1381,7 @@ export default observer({
     showDoubleActive: {
       handler(val) {
         this.form.setFieldState('doubleActive', {
-          visible: val
+          visible: this.formScope.hasFeature('TwoWaySync') && val
         })
       },
       immediate: true
@@ -1369,7 +1411,7 @@ export default observer({
   methods: {
     // 绑定表单事件
     useEffects() {
-      onFieldInputValueChange('*(alarmSettings.*.*,alarmRules.*.*)', (field, form) => {
+      onFieldInputValueChange('*(alarmSettings.*.*,alarmRules.*.*,emailReceivers)', (field, form) => {
         if (this.stateIsReadonly) this.lazySaveAlarmConfig()
       })
       // 权限设置修改了
@@ -1388,7 +1430,8 @@ export default observer({
       alarmApi.updateTaskAlarm({
         taskId: values.id,
         alarmSettings: values.alarmSettings,
-        alarmRules: values.alarmRules
+        alarmRules: values.alarmRules,
+        emailReceivers: values.emailReceivers
       })
     },
 
