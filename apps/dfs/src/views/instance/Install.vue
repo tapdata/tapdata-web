@@ -287,7 +287,7 @@ export default {
       })
       let href = `https://docs.tapdata.${
         !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en' ? 'io' : 'net'
-      }/quick-start/install/install-tapdata-agent/`
+      }/installation/install-tapdata-agent/`
       window.open(href, '_blank')
     },
     handleComplete() {
