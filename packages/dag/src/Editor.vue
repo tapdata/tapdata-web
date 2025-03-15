@@ -25,6 +25,7 @@
       @debug-start="handleStart(true)"
       @stop="handleStop"
       @forceStop="handleForceStop"
+      j
       @reset="handleReset"
       @edit="handleEdit"
       @detail="handleDetail"

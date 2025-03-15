@@ -375,5 +375,7 @@ export default {
   public_array: '数组',
   public_load_more: '加载更多',
   public_loading: '拼命加载中',
-  public_load_end: '到底了'
+  public_load_end: '到底了',
+  public_data_validation: '数据校验',
+  public_validation_record: '校验记录'
 }

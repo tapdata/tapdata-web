@@ -162,6 +162,12 @@
           <VIcon size="18">bug-outlined</VIcon>
         </button>
       </ElTooltip>
+      <VDivider class="mx-3" vertical inset></VDivider>
+      <ElTooltip transition="tooltip-fade-in" :content="$t('public_data_validation')">
+        <button class="icon-btn" @click="openValidation = true">
+          <VIcon size="18">data-scan</VIcon>
+        </button>
+      </ElTooltip>
     </div>
     <!--复制dag查看不显示-->
     <div class="flex align-center flex-grow-1">
@@ -254,6 +260,14 @@
       @update:visible="openDebug = $event"
       @start="$emit('debug-start')"
     ></DataCaptureDebug>
+
+    <DataValidationDialog
+      :task-id="dataflow.id"
+      :visible="openValidation"
+      :validation-settings="validationSettings"
+      @update:visible="openValidation = $event"
+      @save="handleSaveValidation"
+    ></DataValidationDialog>
   </header>
 </template>
 
@@ -265,6 +279,7 @@ import { TaskStatus } from '@tap/business'
 import focusSelect from '@tap/component/src/directives/focusSelect'
 import { taskApi } from '@tap/api'
 import DataCaptureDebug from './DataCaptureDebug.vue'
+import DataValidationDialog from './DataValidationDialog.vue'
 
 export default {
   name: 'TopHeader',
@@ -287,6 +302,7 @@ export default {
 
   components: {
     DataCaptureDebug,
+    DataValidationDialog,
     TextEditable,
     TaskStatus,
     VDivider,
@@ -312,7 +328,16 @@ export default {
       showSearchNodePopover: false,
       nodeSearchInput: '',
       refreshing: false,
-      openDebug: false
+      openDebug: false,
+      openValidation: false,
+      validationSettings: {
+        enabled: false,
+        type: 'incremental',
+        frequency: {
+          time: 1,
+          records: 10
+        }
+      }
     }
   },
 
@@ -389,6 +414,13 @@ export default {
     handleClickNode(node) {
       this.showSearchNodePopover = false
       this.$emit('locate-node', node)
+    },
+
+    handleSaveValidation(settings) {
+      // Save validation settings to the server
+      this.validationSettings = settings
+      // You might want to make an API call here to save the settings
+      console.log('Validation settings saved:', settings)
     },
 
     refreshSchema() {

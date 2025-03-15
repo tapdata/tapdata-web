@@ -380,5 +380,7 @@ export default {
   public_load_end: 'End',
   public_store_type: 'Store Type',
   public_from_db_type: 'From DB Type',
-  public_sample_size: 'Sample Size'
+  public_sample_size: 'Sample Size',
+  public_data_validation: 'Data Validation',
+  public_validation_record: 'Validation Record'
 }

@@ -49,6 +49,10 @@
             @load-data="$emit('load-data')"
           ></RelationList>
         </ElTabPane>
+
+        <ElTabPane :label="$t('public_validation_record')" name="inspect">
+          <TaskInspect v-if="currentTab === 'inspect'" v-bind="$attrs" :currentTab="currentTab"></TaskInspect>
+        </ElTabPane>
       </ElTabs>
 
       <VIcon class="close-icon" size="16" @click="$emit('showBottomPanel')">close</VIcon>
@@ -68,12 +72,13 @@ import MilestoneList from '@tap/business/src/components/milestone/List'
 
 import Record from './components/Record'
 import Alert from './components/Alert'
+import TaskInspect from './components/TaskInspect'
 import { taskApi } from '@tap/api'
 
 export default {
   name: 'ConfigPanel',
 
-  components: { Record, Alert, RelationList, NodeLog, MilestoneList },
+  components: { Record, Alert, RelationList, NodeLog, MilestoneList, TaskInspect },
 
   directives: {
     resize,

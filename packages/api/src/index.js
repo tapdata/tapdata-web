@@ -189,6 +189,9 @@ const agentGroupApi = new AgentGroup()
 import Webhook from './Webhook'
 const webhookApi = new Webhook()
 
+import TaskInspect from './TaskInspect'
+const taskInspectApi = new TaskInspect()
+
 export {
   connectionsApi,
   databaseTypesApi,
@@ -252,7 +255,8 @@ export {
   connectorRecordApi,
   alarmMailApi,
   agentGroupApi,
-  webhookApi
+  webhookApi,
+  taskInspectApi
 }
 export * from './ApiClient'
 
