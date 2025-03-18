@@ -1,5 +1,5 @@
 <template>
-  <div class="joint-table rounded-lg overflow-hidden" :class="{ error: !!jointErrorMessage }">
+  <div class="joint-table rounded-lg" :class="{ error: !!jointErrorMessage }">
     <div class="joint-table-header px-4 py-2 flex align-items-center">
       <span class="fs-6">{{ $t('packages_business_verification_verifyCondition') }}</span>
       <span v-if="!list.length" class="ml-4 color-danger">{{
@@ -2188,8 +2188,8 @@ function validate(sourceRow){
 
 .joint-table-header {
   background: map-get($bgColor, normal);
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
 }
 
 .joint-table-footer {
