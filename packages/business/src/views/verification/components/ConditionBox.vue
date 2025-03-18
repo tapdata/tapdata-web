@@ -1,29 +1,37 @@
 <template>
-  <div class="joint-table" :class="{ error: !!jointErrorMessage }">
-    <div class="joint-table-header">
-      <div>
-        <span>{{ $t('packages_business_verification_verifyCondition') }}</span>
-        <span v-if="!list.length" class="ml-4 color-danger">{{
-          $t('packages_business_verification_message_error_joint_table_not_set')
-        }}</span>
-        <span class="color-danger ml-6">{{ jointErrorMessage }}</span>
-      </div>
-      <div>
-        <ElLink
-          v-if="!isCountOrHash && list.some(t => !t.source.sortColumn || !t.target.sortColumn)"
-          type="primary"
-          :disabled="!list.length"
-          class="mr-4"
-          @click="handleClearIndexEmpty"
-          >{{ $t('packages_business_components_conditionbox_yijianqingchusuo') }}
-        </ElLink>
-        <ElLink type="primary" :disabled="!list.length" @click="handleClear"
-          >{{ $t('packages_business_verification_clear') }}
-        </ElLink>
-      </div>
+  <div class="joint-table rounded-lg overflow-hidden" :class="{ error: !!jointErrorMessage }">
+    <div class="joint-table-header px-4 py-2 flex align-items-center">
+      <span class="fs-6">{{ $t('packages_business_verification_verifyCondition') }}</span>
+      <span v-if="!list.length" class="ml-4 color-danger">{{
+        $t('packages_business_verification_message_error_joint_table_not_set')
+      }}</span>
+      <span class="color-danger ml-6">{{ jointErrorMessage }}</span>
+      <div class="flex-1"></div>
+      <ElInput
+        v-model="searchValue"
+        :placeholder="$t('packages_form_table_rename_index_sousuobiaoming')"
+        class="w-auto mr-4"
+        size="mini"
+        clearable
+      >
+        <template #prefix>
+          <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
+        </template>
+      </ElInput>
+      <ElLink
+        v-if="!isCountOrHash && list.some(t => !t.source.sortColumn || !t.target.sortColumn)"
+        type="primary"
+        :disabled="!list.length"
+        class="mr-4"
+        @click="handleClearIndexEmpty"
+        >{{ $t('packages_business_components_conditionbox_yijianqingchusuo') }}
+      </ElLink>
+      <ElLink type="primary" :disabled="!list.length" @click="handleClear"
+        >{{ $t('packages_business_verification_clear') }}
+      </ElLink>
     </div>
     <DynamicScroller
-      :items="list"
+      :items="filteredList"
       :min-item-size="30"
       id="data-verification-form"
       ref="virtualScroller"
@@ -1012,7 +1020,8 @@ export default {
           }
         }
       },
-      autoSuggestJoinFields: true
+      autoSuggestJoinFields: true,
+      searchValue: ''
     }
   },
 
@@ -1023,6 +1032,17 @@ export default {
     },
     isCountOrHash() {
       return this.inspectMethod === 'row_count' || this.inspectMethod === 'hash'
+    },
+    filteredList() {
+      if (!this.searchValue) return this.list
+
+      const searchTerm = this.searchValue.toLowerCase()
+      return this.list.filter(item => {
+        const sourceTable = (item.source.table || '').toLowerCase()
+        const targetTable = (item.target.table || '').toLowerCase()
+
+        return sourceTable.includes(searchTerm) || targetTable.includes(searchTerm)
+      })
     }
   },
 
@@ -2167,9 +2187,6 @@ function validate(sourceRow){
 }
 
 .joint-table-header {
-  padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
   background: map-get($bgColor, normal);
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
