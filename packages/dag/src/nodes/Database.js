@@ -1083,7 +1083,8 @@ export class Database extends NodeType {
                         'x-reactions': {
                           fulfill: {
                             state: {
-                              visible: '{{hasFeature("syncIndex") && $settings.type !== "cdc"}}',
+                              visible:
+                                '{{hasFeature("syncIndex") && $settings.type !== "cdc" && $values.attrs.capabilities.filter(item => ["get_table_info_function", "create_index_function", "query_indexes_function"].includes(item.id)).length === 3}}',
                               description: `{{$self.value ? '${i18n.t('packages_dag_syncIndex_desc')}' : ''}}`
                             }
                           }
