@@ -1325,5 +1325,6 @@ export default {
     'After enabling, the system will automatically fill in the join conditions according to the following priority:',
   packages_business_auto_fill_join_tooltip_primary: '1. Use primary key fields first',
   packages_business_auto_fill_join_tooltip_notnull: '2. If there is no primary key, use non-null fields',
-  packages_business_auto_fill_join_tooltip_all: '3. If there are no non-null fields, use all fields'
+  packages_business_auto_fill_join_tooltip_all: '3. If there are no non-null fields, use all fields',
+  packages_business_nulls_first: 'NULL Priority Sort'
 }

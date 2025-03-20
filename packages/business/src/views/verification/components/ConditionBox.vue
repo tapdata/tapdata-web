@@ -226,6 +226,21 @@
                   @focus="handleFocus(item.target)"
                 ></MultiSelection> -->
                 </div>
+
+                <div class="setting-item mt-4 align-items-center">
+                  <div style="display: contents" :class="{ invisible: !item.source.tags.includes('NullsLast') }">
+                    <label class="item-label">{{ $t('packages_business_nulls_first') }}:</label>
+                    <div class="flex-1">
+                      <ElSwitch v-model="item.source.customNullSort" :active-value="1" :inactive-value="0" />
+                    </div>
+                  </div>
+                  <div style="display: contents" :class="{ invisible: !item.target.tags.includes('NullsLast') }">
+                    <span class="item-icon">{{ $t('packages_business_nulls_first') }}:</span>
+                    <div class="flex-1">
+                      <ElSwitch v-model="item.target.customNullSort" :active-value="1" :inactive-value="0" />
+                    </div>
+                  </div>
+                </div>
               </template>
 
               <div v-if="inspectMethod === 'field'" class="setting-item align-items-center mt-4">
@@ -1395,17 +1410,22 @@ export default {
       if (!this.taskId || this.list.length) return
       this.autoAddTableLoading = true
       this.updateAutoAddTableLoading()
-      let connectionIds = []
+      const connectionSet = new Set()
       let tableNames = []
       const matchNodeList = this.getMatchNodeList()
+
       matchNodeList.forEach(m => {
-        connectionIds.push(m.sourceConnectionId)
-        connectionIds.push(m.targetConnectionId)
+        connectionSet.add(m.sourceConnectionId)
+        connectionSet.add(m.targetConnectionId)
         tableNames.push(...m.tableNames)
         tableNames.push(...m.objectNames)
       })
+
+      const connectionIds = [...connectionSet]
+
       // 加载数据源的Capabilities
-      const capabilitiesMap = this.getMatchCapabilitiesMap()
+      const capabilitiesMap = (this.capabilitiesMap = await this.getCapabilities(connectionIds))
+
       if (!matchNodeList.length) {
         this.autoAddTableLoading = false
         this.updateAutoAddTableLoading()
@@ -1418,7 +1438,7 @@ export default {
           inq: DATA_NODE_TYPES
         },
         'source.id': {
-          inq: Array.from(new Set(connectionIds))
+          inq: connectionIds
         },
         original_name: {
           inq: Array.from(new Set(tableNames))
@@ -1461,7 +1481,8 @@ export default {
               item.source.connectionName = sourceConnectionName
               item.source.currentLabel = `${sourceName} / ${sourceConnectionName}`
               item.source.table = ge // findTable.original_name
-              item.source.capabilities = capabilitiesMap[sourceConnectionId]
+              item.source.capabilities = capabilitiesMap[sourceConnectionId]?.capabilities || []
+              item.source.tags = capabilitiesMap[sourceConnectionId]?.tags || []
               // 填充target
               item.target.nodeId = target
               item.target.nodeName = targetName
@@ -1470,7 +1491,8 @@ export default {
               item.target.connectionName = targetConnectionName
               item.target.currentLabel = `${targetName} / ${targetConnectionName}`
               item.target.table = tableNameRelation[ge] // findTargetTable.original_name
-              item.target.capabilities = capabilitiesMap[targetConnectionId]
+              item.target.capabilities = capabilitiesMap[targetConnectionId]?.capabilities || []
+              item.target.tags = capabilitiesMap[targetConnectionId]?.tags || []
 
               const updateList = cloneDeep(updateConditionFieldMap[tableNameRelation[ge]] || []).filter(
                 t => t !== '_no_pk_hash'
@@ -1581,7 +1603,9 @@ export default {
       item.table = '' // 重选连接，清空表
       item.sortColumn = '' // 重选连接，清空表
       item.databaseType = opt.databaseType
-      item.capabilities = await this.getConnectionCapabilities(opt.attrs?.connectionId)
+      const { capabilities, tags } = await this.getConnectionCapabilities(opt.attrs?.connectionId)
+      item.capabilities = capabilities
+      item.tags = tags
       if (!this.taskId) {
         item.connectionName = opt.attrs?.connectionName
         item.currentLabel = item.connectionName
@@ -1682,9 +1706,8 @@ export default {
       item.target.currentLabel = `${targetName} / ${targetConnectionName}`
       item.target.table = tableName ? tableName : tableNameRelation[val]
 
-      // 加载数据源的Capabilities
-      const capabilitiesMap = this.getMatchCapabilitiesMap()
-      item.target.capabilities = capabilitiesMap[targetConnectionId]
+      item.target.capabilities = this.capabilitiesMap[targetConnectionId]?.capabilities || []
+      item.target.tags = this.capabilitiesMap[targetConnectionId]?.tags || []
 
       const key = [target || '', targetConnectionId, item.target.table].join()
       if (this.fieldsMap[key]) {
@@ -2115,19 +2138,29 @@ function validate(sourceRow){
         })
     },
 
+    /**
+     * Gets capabilities for the provided connection IDs
+     * @param {string[]} connectionIds - Array of connection IDs to fetch capabilities for
+     * @returns {Promise<Object.<string, {capabilities: Array, tags: Array}>>} Map of connection IDs to their capabilities and tags
+     */
     async getCapabilities(connectionIds = []) {
       if (!connectionIds.length) return
       const data = await Promise.all(
         connectionIds.map(async id => {
+          const { capabilities, tags } = await this.getConnectionCapabilities(id)
           return {
             id,
-            capabilities: await this.getConnectionCapabilities(id)
+            capabilities,
+            tags
           }
         })
       )
 
       return data.reduce((cur, pre) => {
-        cur[pre.id] = pre.capabilities
+        cur[pre.id] = {
+          capabilities: pre.capabilities,
+          tags: pre.tags
+        }
         return cur
       }, {})
     },
@@ -2143,7 +2176,10 @@ function validate(sourceRow){
 
     async getConnectionCapabilities(id) {
       const data = await connectionsApi.getNoSchema(id)
-      return data?.capabilities || []
+      return {
+        capabilities: data?.capabilities || [],
+        tags: data?.definitionTags || []
+      }
     },
 
     updateErrorMsg(msg, level = '') {
