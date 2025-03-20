@@ -229,7 +229,6 @@ import PageContainer from '../../components/PageContainer.vue'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
 import { ErrorMessage } from '../../components/error-message'
 
-let timeout = null
 export default {
   components: {
     PermissionseSettingsCreate,
@@ -277,14 +276,15 @@ export default {
     }
   },
   created() {
-    timeout = setInterval(() => {
+    this.timer = setInterval(() => {
       this.table.fetch(null, 0, true)
     }, 8000)
     this.getFilterItems()
     this.searchParams = Object.assign(this.searchParams, this.$route.query)
   },
-  destroyed() {
-    clearInterval(timeout)
+
+  beforeDestroy() {
+    clearInterval(this.timer)
   },
   methods: {
     inspectMethodChange(val) {

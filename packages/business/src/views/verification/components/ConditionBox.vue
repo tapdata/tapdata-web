@@ -227,18 +227,32 @@
                 ></MultiSelection> -->
                 </div>
 
-                <div class="setting-item mt-4 align-items-center">
-                  <div style="display: contents" :class="{ invisible: !item.source.tags.includes('NullsLast') }">
-                    <label class="item-label">{{ $t('packages_business_nulls_first') }}:</label>
-                    <div class="flex-1">
-                      <ElSwitch v-model="item.source.customNullSort" :active-value="1" :inactive-value="0" />
-                    </div>
+                <div
+                  v-if="nullsLastState[item.source.connectionId] || nullsLastState[item.target.connectionId]"
+                  class="setting-item mt-4 align-items-center"
+                >
+                  <label v-if="nullsLastState[item.source.connectionId]" class="item-label"
+                    >{{ $t('packages_business_nulls_first') }}
+                    <el-tooltip effect="dark" placement="top" :content="$t('packages_business_nulls_first_tip')">
+                      <i class="el-tooltip el-icon-info" style="color: #909399; font-size: 14px"></i> </el-tooltip
+                    >:
+                  </label>
+                  <label v-else class="item-label"></label>
+                  <div class="flex-1">
+                    <SwitchNumber
+                      v-if="nullsLastState[item.source.connectionId]"
+                      v-model="item.source.customNullSort"
+                    />
                   </div>
-                  <div style="display: contents" :class="{ invisible: !item.target.tags.includes('NullsLast') }">
-                    <span class="item-icon">{{ $t('packages_business_nulls_first') }}:</span>
-                    <div class="flex-1">
-                      <ElSwitch v-model="item.target.customNullSort" :active-value="1" :inactive-value="0" />
-                    </div>
+
+                  <span v-if="nullsLastState[item.target.connectionId]" class="item-icon"
+                    >{{ $t('packages_business_nulls_first')
+                    }}<el-tooltip effect="dark" placement="top" :content="$t('packages_business_nulls_first_tip')">
+                      <i class="el-tooltip el-icon-info" style="color: #909399; font-size: 14px"></i> </el-tooltip
+                    >:</span
+                  >
+                  <div v-if="nullsLastState[item.target.connectionId]" class="flex-1">
+                    <SwitchNumber v-model="item.target.customNullSort" />
                   </div>
                 </div>
               </template>
@@ -372,7 +386,7 @@ import FieldDialog from './FieldDialog'
 import DocsDrawer from './DocsDrawer.vue'
 import FieldSelectWrap from './FieldSelectWrap.vue'
 import CollateMap from './CollateMap.vue'
-
+import SwitchNumber from '@tap/component/src/SwitchNumber.vue'
 export default {
   name: 'ConditionBox',
 
@@ -392,7 +406,8 @@ export default {
     SchemaToForm,
     HighlightCode,
     FieldSelectWrap,
-    CollateMap
+    CollateMap,
+    SwitchNumber
   },
 
   props: {
@@ -1058,6 +1073,15 @@ export default {
 
         return sourceTable.includes(searchTerm) || targetTable.includes(searchTerm)
       })
+    },
+    nullsLastState() {
+      return Object.keys(this.capabilitiesMap || {}).reduce((cur, pre) => {
+        const tags = this.capabilitiesMap[pre]?.tags || []
+        if (tags.includes('NullsLast')) {
+          cur[pre] = true
+        }
+        return cur
+      }, {})
     }
   },
 
@@ -1424,7 +1448,7 @@ export default {
       const connectionIds = [...connectionSet]
 
       // 加载数据源的Capabilities
-      const capabilitiesMap = (this.capabilitiesMap = await this.getCapabilities(connectionIds))
+      const capabilitiesMap = await this.getCapabilities(connectionIds)
 
       if (!matchNodeList.length) {
         this.autoAddTableLoading = false
@@ -1482,7 +1506,6 @@ export default {
               item.source.currentLabel = `${sourceName} / ${sourceConnectionName}`
               item.source.table = ge // findTable.original_name
               item.source.capabilities = capabilitiesMap[sourceConnectionId]?.capabilities || []
-              item.source.tags = capabilitiesMap[sourceConnectionId]?.tags || []
               // 填充target
               item.target.nodeId = target
               item.target.nodeName = targetName
@@ -1492,7 +1515,6 @@ export default {
               item.target.currentLabel = `${targetName} / ${targetConnectionName}`
               item.target.table = tableNameRelation[ge] // findTargetTable.original_name
               item.target.capabilities = capabilitiesMap[targetConnectionId]?.capabilities || []
-              item.target.tags = capabilitiesMap[targetConnectionId]?.tags || []
 
               const updateList = cloneDeep(updateConditionFieldMap[tableNameRelation[ge]] || []).filter(
                 t => t !== '_no_pk_hash'
@@ -1603,9 +1625,19 @@ export default {
       item.table = '' // 重选连接，清空表
       item.sortColumn = '' // 重选连接，清空表
       item.databaseType = opt.databaseType
-      const { capabilities, tags } = await this.getConnectionCapabilities(opt.attrs?.connectionId)
-      item.capabilities = capabilities
-      item.tags = tags
+
+      if (this.capabilitiesMap?.[opt.attrs?.connectionId]) {
+        item.capabilities = this.capabilitiesMap[opt.attrs?.connectionId]?.capabilities || []
+      } else {
+        const { capabilities, tags } = await this.getConnectionCapabilities(opt.attrs?.connectionId)
+        item.capabilities = capabilities
+
+        this.$set(this.capabilitiesMap, opt.attrs?.connectionId, {
+          capabilities,
+          tags
+        })
+      }
+
       if (!this.taskId) {
         item.connectionName = opt.attrs?.connectionName
         item.currentLabel = item.connectionName
@@ -1707,7 +1739,6 @@ export default {
       item.target.table = tableName ? tableName : tableNameRelation[val]
 
       item.target.capabilities = this.capabilitiesMap[targetConnectionId]?.capabilities || []
-      item.target.tags = this.capabilitiesMap[targetConnectionId]?.tags || []
 
       const key = [target || '', targetConnectionId, item.target.table].join()
       if (this.fieldsMap[key]) {
@@ -2145,24 +2176,22 @@ function validate(sourceRow){
      */
     async getCapabilities(connectionIds = []) {
       if (!connectionIds.length) return
-      const data = await Promise.all(
+
+      const map = {}
+
+      await Promise.all(
         connectionIds.map(async id => {
           const { capabilities, tags } = await this.getConnectionCapabilities(id)
-          return {
-            id,
+          map[id] = {
             capabilities,
             tags
           }
         })
       )
 
-      return data.reduce((cur, pre) => {
-        cur[pre.id] = {
-          capabilities: pre.capabilities,
-          tags: pre.tags
-        }
-        return cur
-      }, {})
+      this.capabilitiesMap = map
+
+      return map
     },
 
     // 获取匹配节点的Capabilities

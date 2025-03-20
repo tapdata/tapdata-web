@@ -548,8 +548,6 @@ export default {
             t.target = Object.assign({}, TABLE_PARAMS, t.target)
             t.source.capabilities = capabilitiesMap[t.source.connectionId]?.capabilities || []
             t.target.capabilities = capabilitiesMap[t.target.connectionId]?.capabilities || []
-            t.source.tags = capabilitiesMap[t.source.connectionId]?.tags || []
-            t.target.tags = capabilitiesMap[t.target.connectionId]?.tags || []
             if (t.source.nodeId) {
               t.source.currentLabel = `${t.source.nodeName} / ${t.source.connectionName}`
               t.target.currentLabel = `${t.target.nodeName} / ${t.target.connectionName}`

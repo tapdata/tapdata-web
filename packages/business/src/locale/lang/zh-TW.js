@@ -1255,5 +1255,7 @@ export default {
   packages_business_auto_fill_join_tooltip_primary: '1. 優先使用主鍵字段',
   packages_business_auto_fill_join_tooltip_notnull: '2. 如無主鍵，則使用非空字段',
   packages_business_auto_fill_join_tooltip_all: '3. 如無非空字段，則使用全部字段',
-  packages_business_nulls_first: 'NULL優先排序'
+  packages_business_nulls_first: 'NULL優先排序',
+  packages_business_nulls_first_tip:
+    '關聯字段存在NULL值時，數據庫默認將NULL排在最後，可能導致校驗失敗。開啓此選項將NULL值排在前面，但可能無法使用數據庫索引，增加數據庫負載。'
 }

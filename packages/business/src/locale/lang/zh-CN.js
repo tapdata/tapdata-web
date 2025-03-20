@@ -1264,5 +1264,7 @@ export default {
   packages_business_auto_fill_join_tooltip_primary: '1. 优先使用主键字段',
   packages_business_auto_fill_join_tooltip_notnull: '2. 如无主键，则使用非空字段',
   packages_business_auto_fill_join_tooltip_all: '3. 如无非空字段，则使用全部字段',
-  packages_business_nulls_first: 'NULL优先排序'
+  packages_business_nulls_first: 'NULL优先排序',
+  packages_business_nulls_first_tip:
+    '关联字段存在NULL值时，数据库默认将NULL排在最后，可能导致校验失败。开启此选项将NULL值排在前面，但可能无法使用数据库索引，增加数据库负载。'
 }
