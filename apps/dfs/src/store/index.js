@@ -404,10 +404,16 @@ const store = new Vuex.Store({
           await dispatch('subscribe', freeTier)
         }
       } else if (guide.installStep > -1 && guide.tour.taskId) {
-        const data = await taskApi.get(guide.tour.taskId)
+        const data = await taskApi.get({
+          filter: JSON.stringify({
+            where: {
+              id: guide.tour.taskId
+            }
+          })
+        })
 
         // 如果没有完成引导任务，并且任务还存在，跳转到引导任务
-        if (data) {
+        if (data?.items?.length) {
           router.push({
             name: 'WelcomeTask',
             params: {

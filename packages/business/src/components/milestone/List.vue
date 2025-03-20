@@ -462,6 +462,9 @@ export default {
       }
 
       const per = (finishedLen / len) * 100
+
+      result.reverse()
+
       result.unshift({
         label: i18n.t('packages_business_milestone_list_zhengtijindu'),
         icon: 'device',
@@ -631,7 +634,7 @@ export default {
       this.codeDialog.data.fullErrorCode = item.fullErrorCode
       this.codeDialog.data.message = item.message
       this.codeDialog.data.module = ''
-      
+
       proxyApi
         .call(params)
         .then(data => {

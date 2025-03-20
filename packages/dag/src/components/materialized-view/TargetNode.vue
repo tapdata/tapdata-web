@@ -444,7 +444,7 @@ export default {
       this.loading = true
       const params = {
         nodeId: this.node.id,
-        fields: ['original_name', 'fields', 'qualified_name'],
+        fields: ['original_name', 'fields', 'qualified_name', 'name', 'indices'],
         page: 1,
         pageSize: 20
       }
@@ -549,7 +549,7 @@ export default {
         pdkType: connection.pdkType,
         pdkHash: connection.pdkHash,
         capabilities: connection.capabilities || [],
-        db_version: connection.db_version,
+        db_version: connection.db_version
       }
 
       Object.keys(nodeAttrs).forEach(key => {

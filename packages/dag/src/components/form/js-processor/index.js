@@ -334,7 +334,7 @@ export const JsProcessor = observer(
         if (form.values.type.includes('migrate')) {
           let result = await metadataInstancesApi.nodeSchemaPage({
             nodeId,
-            fields: ['original_name', 'fields', 'qualified_name'],
+            fields: ['original_name', 'fields', 'qualified_name', 'name', 'indices'],
             page: 1,
             pageSize: 1
           })

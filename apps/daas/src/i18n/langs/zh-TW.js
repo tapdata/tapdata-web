@@ -662,7 +662,7 @@ export default {
   license_try_out: '試用',
   license_copied_clipboard: '已復製到剪貼板',
   license_select_node: '請先選擇節點',
-  license_renew_success: '更新成功',
+  license_renew_success: '更新成功, 頁面即將刷新',
   // 自定义节点
   custom_node_name: '節點名稱',
   custom_node_name_placeholder: '請輸入節點名稱搜索',

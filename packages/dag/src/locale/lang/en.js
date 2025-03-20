@@ -100,7 +100,7 @@ export default {
   packages_dag_dataFlow_delete_confirm_Message: 'After deleting task XXX, this task cannot be restored',
   packages_dag_dataFlow_bulk_delete_confirm_Message: 'After deleting tasks in batch, tasks cannot be restored',
   packages_dag_dataFlow_stop_confirm_message:
-    'After the task xxx is suspended, when the table in the task that has not been fully synchronized is started again, the full synchronization will be performed again',
+    'After suspending task xxx, when restarting the task, only the tables that were not fully synchronized will undergo full synchronization again. This ensures that already synchronized tables are not reprocessed unnecessarily.',
   packages_dag_dataFlow_bulk_stop_confirm_message:
     'After the task is paused in batch, when the table in the task that has not been fully synchronized is started again, the full synchronization will be performed again',
   packages_dag_dataFlow_force_stop_confirm_message:
@@ -828,6 +828,9 @@ export default {
   packages_dag_noPkSyncMode_ALL_COLUMNS: 'Full Column Index',
   packages_dag_join_keys_empty: 'Association conditions for {tableName} cannot be empty',
   packages_dag_join_keys_field_empty: 'Field in association condition #{index} for {tableName} cannot be empty.',
+  packages_dag_src_editor_huawei_drs_kafka_convertor: 'Huawei DRS Kafka Message Converter',
   packages_dag_field_path: 'Field Path',
-  packages_dag_email_receivers: 'Email Receivers'
+  packages_dag_email_receivers: 'Email Receivers',
+  packages_dag_merge_table_js_node_error: 'Merge table node cannot have JS node after it',
+  packages_dag_merge_table_table_not_allow_target: 'Merge table does not support writing to {val}'
 }

@@ -193,8 +193,6 @@ export default ({ routes }) => {
       }
     })
 
-    if (userInfo?.createdAt && dayjs().diff(dayjs(userInfo.createdAt), 'day') > 7) CustomerSurvey(window.App, true)
-
     return router
   }
   loading = window.loading({ fullscreen: true })

@@ -108,8 +108,7 @@ const router = getRouter(i18n)
 
 installOEM(router, i18n)
 
-let init = settings => {
-  window.__settings__ = settings
+let init = () => {
   let lang = getCurrentLanguage()
   setCurrentLanguage(lang, i18n)
 
@@ -142,13 +141,15 @@ settingsApi
   .get()
   .then(async data => {
     let initData = data || []
+    window.__settings__ = initData
+
     if (initData.length) {
       localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(initData))
     }
     if (token) {
       //无权限，说明是首次进入页面，重新请求后台获取
-      let user = await usersApi.getInfo().catch(() => {
-        init(initData)
+      let user = await usersApi.getInfo().catch(async () => {
+        init()
       })
 
       await store.dispatch('feature/getFeatures')
@@ -157,7 +158,7 @@ settingsApi
       configUser(user)
     }
 
-    init(initData)
+    init()
     // 设置服务器时间
     timeStampApi.get().then(t => {
       Time.setTime(t)

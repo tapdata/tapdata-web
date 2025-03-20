@@ -533,25 +533,21 @@ export default {
         })
 
         if (data) {
-          let capabilitiesMap = {}
-
           if (this.form.taskMode === 'pipeline' && data.flowId) {
             this.taskName = data.taskDto.name
             this.applyTask(data.taskDto)
-            await this.$nextTick()
-            capabilitiesMap = this.$refs.conditionBox.getMatchCapabilitiesMap()
-          } else {
-            capabilitiesMap = await this.$refs.conditionBox.getCapabilities([
-              ...data.tasks.map(t => t.source.connectionId),
-              ...data.tasks.map(t => t.target.connectionId)
-            ])
           }
+
+          // 任务一致性/任意表 都走异步获取 capabilities/tags
+          const capabilitiesMap = await this.$refs.conditionBox.getCapabilities([
+            ...new Set([...data.tasks.map(t => t.source.connectionId), ...data.tasks.map(t => t.target.connectionId)])
+          ])
 
           data.tasks = data.tasks.map(t => {
             t.source = Object.assign({}, TABLE_PARAMS, t.source)
             t.target = Object.assign({}, TABLE_PARAMS, t.target)
-            t.source.capabilities = capabilitiesMap[t.source.connectionId]
-            t.target.capabilities = capabilitiesMap[t.target.connectionId]
+            t.source.capabilities = capabilitiesMap[t.source.connectionId]?.capabilities || []
+            t.target.capabilities = capabilitiesMap[t.target.connectionId]?.capabilities || []
             if (t.source.nodeId) {
               t.source.currentLabel = `${t.source.nodeName} / ${t.source.connectionName}`
               t.target.currentLabel = `${t.target.nodeName} / ${t.target.connectionName}`

@@ -6,11 +6,11 @@
           {{ $t('app_signIn_signIn') }}
           <span v-if="$getSettingByKey('SHOW_REGISTER')" @click="registry">{{ $t('app_signIn_Registration') }}</span>
         </div>
-        <div class="error-tips align-center justify-content-start" v-show="errorMessage">
+        <div class="error-tips align-center justify-content-start rounded-lg" v-show="errorMessage">
           <i class="el-icon-warning-outline mr-2"></i>
           {{ errorMessage }}
         </div>
-        <form>
+        <form class="rounded-lg">
           <input
             class="input"
             type="email"
@@ -30,7 +30,7 @@
         <el-checkbox class="keep-sign-in" v-model="keepSignIn">
           {{ $t('app_signIn_keepSignIn') }}
         </el-checkbox>
-        <ElButton class="btn-sign-in" type="primary" size="medium" :loading="loading" @click="submit">
+        <ElButton class="btn-sign-in" type="primary" size="large" :loading="loading" @click="submit">
           {{ $t('app_signIn_signIn') }}
         </ElButton>
 
@@ -127,6 +127,7 @@ export default {
       } catch (e) {
         this.loading = false
         this.form.password = oldPassword
+        this.errorMessage = e?.data?.message
       }
     },
     // 注册账号
