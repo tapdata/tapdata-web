@@ -1,6 +1,6 @@
 <template>
   <div class="joint-table rounded-lg" :class="{ error: !!jointErrorMessage }">
-    <div class="joint-table-header px-4 py-2 flex align-items-center">
+    <div class="joint-table-header px-4 py-2 flex align-items-center border-bottom">
       <span class="fs-6">{{ $t('packages_business_verification_verifyCondition') }}</span>
       <span
         class="ml-2 rounded-pill font-color-light px-2 text-center"
