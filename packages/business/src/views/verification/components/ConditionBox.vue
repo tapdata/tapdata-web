@@ -2,6 +2,11 @@
   <div class="joint-table rounded-lg" :class="{ error: !!jointErrorMessage }">
     <div class="joint-table-header px-4 py-2 flex align-items-center">
       <span class="fs-6">{{ $t('packages_business_verification_verifyCondition') }}</span>
+      <span
+        class="ml-2 rounded-pill font-color-light px-2 text-center"
+        style="min-width: 32px; background-color: #818b981f"
+        >{{ filteredList.length }}</span
+      >
       <span v-if="!list.length" class="ml-4 color-danger">{{
         $t('packages_business_verification_message_error_joint_table_not_set')
       }}</span>
