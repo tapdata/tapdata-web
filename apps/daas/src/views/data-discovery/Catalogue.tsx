@@ -1,5 +1,5 @@
 import i18n from '@/i18n'
-import { defineComponent, reactive, ref, watch, nextTick, onMounted } from '@vue/composition-api'
+import { defineComponent, reactive, ref, watch, nextTick, onMounted, SetupContext } from '@vue/composition-api'
 import { FilterBar, Drawer, VIcon } from '@tap/component'
 import { TablePage, DiscoveryClassification, makeDragNodeImage } from '@tap/business'
 import { discoveryApi } from '@tap/api'
@@ -8,12 +8,21 @@ import ObjectTable from '@/views/data-discovery/ObjectTable'
 import './index.scss'
 import resize from '@tap/component/src/directives/resize'
 
+interface CustomContext extends SetupContext {
+  refs: {
+    table: InstanceType<typeof TablePage>
+    drawerContent: InstanceType<typeof DrawerContent>
+    objectTable: InstanceType<typeof ObjectTable>
+    classify: InstanceType<typeof DiscoveryClassification>
+  }
+}
+
 export default defineComponent({
   props: [''],
   directives: {
     resize
   },
-  setup(props, { refs, root }) {
+  setup(props, { refs, root }: CustomContext) {
     const list = ref([])
     const { sourceType, queryKey } = root.$route.query || {}
     const data = reactive({
@@ -52,7 +61,6 @@ export default defineComponent({
       })
     }
     const rest = () => {
-      // @ts-ignore
       refs.table.fetch(1)
     }
     const loadFilterList = () => {
@@ -88,7 +96,6 @@ export default defineComponent({
     const handlePreview = row => {
       data.isShowDetails = true
       nextTick(() => {
-        // @ts-ignore
         refs?.drawerContent?.loadData(row)
       })
     }
@@ -99,10 +106,8 @@ export default defineComponent({
     const handleSourceDrawer = () => {
       data.isShowSourceDrawer = true
       nextTick(() => {
-        // @ts-ignore
         //请求筛选条件-下拉列表
         refs?.objectTable?.loadFilterList()
-        // @ts-ignore
         //请求资源绑定目录
         refs?.objectTable?.loadTableData()
       })
@@ -110,9 +115,7 @@ export default defineComponent({
     const closeSourceDrawer = val => {
       data.isShowSourceDrawer = val
       nextTick(() => {
-        // @ts-ignore
         refs.table.fetch(1)
-        // @ts-ignore
         //关闭资源绑定抽屉 刷新数据目录分类树 主要是统计
         refs?.classify?.getData()
       })
@@ -120,7 +123,6 @@ export default defineComponent({
     //切换目录
     const getNodeChecked = node => {
       data.currentNode = node
-      // @ts-ignore
       refs.table.fetch(1)
     }
     const renderNode = ({ row }) => {
@@ -146,13 +148,11 @@ export default defineComponent({
     loadFilterList()
     watch(
       () => root.$route.query,
-      val => {
-        // @ts-ignore
+      () => {
         refs.table.fetch(1)
       }
     )
     onMounted(() => {
-      // @ts-ignore
       refs.table.fetch(1)
     })
 
@@ -185,7 +185,7 @@ export default defineComponent({
       ev.dataTransfer.setDragImage(draggingNodeImage, 0, 0)
     }
 
-    const handleDragEnd = (row, column, event) => {
+    const handleDragEnd = () => {
       dragState.isDragging = false
       dragState.draggingObjects = []
       dragState.dropNode = null
@@ -194,7 +194,7 @@ export default defineComponent({
     }
 
     const multipleSelectionMap = ref({})
-    const handleSelectionChange = val => {
+    const handleSelectionChange = (val: { id: string }[]) => {
       multipleSelectionMap.value = val.reduce((obj, item) => {
         obj[item.id] = item
         return obj

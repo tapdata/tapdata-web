@@ -100,18 +100,6 @@ TableBody.methods.handleCellMouseEnter = function (event, row) {
     return
   }
 
-  const showTooltip = () => {
-    const tooltip = this.$refs.tooltip
-    if (!tooltip) return
-    // TODO 会引起整个 Table 的重新渲染，需要优化
-    this.tooltipContent = cell.innerText || cell.textContent
-    tooltip.referenceElm = cell
-    tooltip.$refs.popper && (tooltip.$refs.popper.style.display = 'none')
-    tooltip.doDestroy()
-    tooltip.setExpectedState(true)
-    this.activateTooltip(tooltip)
-  }
-
   const padding =
     (parseInt(getStyle(cellChild, 'paddingLeft'), 10) || 0) + (parseInt(getStyle(cellChild, 'paddingRight'), 10) || 0)
   const range = document.createRange()

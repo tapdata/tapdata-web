@@ -1,5 +1,4 @@
 import Http from './Http'
-import { AxiosResponse } from 'axios'
 
 export default class ConnectorRecord extends Http {
   constructor() {

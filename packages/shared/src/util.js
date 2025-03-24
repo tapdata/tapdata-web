@@ -17,13 +17,7 @@ export function setPermission(list) {
   sessionStorage.setItem('tapdata_permissions', JSON.stringify(permissions))
   return permissions
 }
-// export const getConnectionTypeDialogImg = function (type) {
-//   try {
-//     return require(`./assets/icons/node/${type}.svg`)
-//   } catch (e) {
-//     return null
-//   }
-// }
+
 export function signOut() {
   sessionStorage.removeItem('tapdata_permissions')
   Cookie.remove('xToken')
@@ -218,21 +212,6 @@ export function downloadJson(data, name = '') {
   const fileName = name
   const blob = new Blob([data], { type: 'application/JSON' })
   openUrl(window.URL.createObjectURL(blob), '_blank', fileName)
-}
-
-export const getConnectionTypeImg = function (type) {
-  try {
-    return require(`./assets/icons/node/${type}.svg`)
-  } catch (e) {
-    return null
-  }
-}
-export const getConnectionTypeDialogImg = function (type) {
-  try {
-    return require(`./assets/icons/node/${type}.svg`)
-  } catch (e) {
-    return null
-  }
 }
 
 export function dec2hex(dec) {

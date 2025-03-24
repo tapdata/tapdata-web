@@ -286,6 +286,9 @@ module.exports = {
   css: {
     loaderOptions: {
       scss: {
+        sassOptions: {
+          quietDeps: true
+        },
         additionalData: `@use "${varUrl}" as *;`
       }
     }

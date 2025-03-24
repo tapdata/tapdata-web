@@ -30,7 +30,6 @@
 </template>
 
 <script>
-import i18n from '@tap/i18n'
 import { modulesApi } from '@tap/api'
 import { generateId } from '@tap/shared'
 import ApiForm from '@tap/business/src/views/data-server/Drawer.vue'

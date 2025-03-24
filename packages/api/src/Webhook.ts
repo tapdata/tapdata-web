@@ -1,5 +1,4 @@
 import Http from './Http'
-import Qs from 'qs'
 
 export default class Webhook extends Http {
   constructor() {
