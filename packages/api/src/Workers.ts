@@ -18,5 +18,13 @@ export default class Worker extends Http {
   unbindByProcessId(id) {
     return this.axios.post(`${this.url}/unbindByProcessId?processId=${id}`)
   }
+
+  getProcessInfo(processIds: string[]) {
+    return this.axios.get(`${this.url}/getProcessInfo`, {
+      params: {
+        process_id: JSON.stringify(processIds)
+      }
+    })
+  }
 }
 export { Worker }
