@@ -380,7 +380,7 @@
 import { escapeRegExp } from 'lodash'
 import dayjs from 'dayjs'
 import i18n from '@tap/i18n'
-import { databaseTypesApi, licensesApi, taskApi, workerApi } from '@tap/api'
+import { databaseTypesApi, licensesApi, taskApi, workerApi, clusterApi } from '@tap/api'
 import { FilterBar, SelectList } from '@tap/component'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
 
@@ -421,7 +421,7 @@ export default {
     return {
       STATUS_MAP,
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
-      showInstanceInfo: process.env.VUE_APP_LICENSE_TYPE === 'PIPELINE' || process.env.NODE_ENV === 'development',
+      showInstanceInfo: process.env.VUE_APP_LICENSE_TYPE === 'PIPELINE',
       dataFlowId: '',
       isShowDetails: false,
       previewLoading: false,
@@ -728,15 +728,7 @@ export default {
           }
         },
         {
-          placeholder: this.$t('public_task_name'),
-          key: 'keyword',
-          type: 'input'
-        }
-      ]
-
-      if (!this.isDaas) {
-        this.filterItems.splice(2, 0, {
-          label: i18n.t('agent_name'),
+          label: i18n.t('public_agent_name'),
           key: 'agentId',
           type: 'select-inner',
           menuMinWidth: '250px',
@@ -747,6 +739,17 @@ export default {
               },
               size: 100
             }
+            if (this.isDaas) {
+              let clusterData = await clusterApi.get()
+              return clusterData.items
+                .filter(item => item.systemInfo.process_id)
+                .map(item => {
+                  return {
+                    label: item.agentName || item.systemInfo.hostname,
+                    value: item.systemInfo.process_id
+                  }
+                })
+            }
             let data = await this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter)))
             return data.items.map(item => {
               return {
@@ -755,8 +758,13 @@ export default {
               }
             })
           }
-        })
-      }
+        },
+        {
+          placeholder: this.$t('public_task_name'),
+          key: 'keyword',
+          type: 'input'
+        }
+      ]
     },
 
     /**
