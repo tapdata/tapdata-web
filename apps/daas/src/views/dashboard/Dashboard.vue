@@ -222,13 +222,13 @@
                           </li>
 
                           <el-tag v-if="agentRunningTask[item.processId] && agentRunningTask[item.processId].migrate" type="success" size="mini" class="rounded-md cursor-pointer" @click="handleGoTask(item.processId, 'migrate')">
-                            {{ $t('public_task_type_migrate') }}: 
+                            {{ $t('dashboard_copy_total') }}: 
                             {{ agentRunningTask[item.processId].migrate || 0 }}
                             <i class="el-icon-arrow-right" />
                           </el-tag>
 
                           <el-tag v-if="agentRunningTask[item.processId] && agentRunningTask[item.processId].sync" type="success" size="mini" class="rounded-md cursor-pointer" @click="handleGoTask(item.processId, 'sync')">
-                            {{ $t('public_task_type_sync') }}: 
+                            {{ $t('dashboard_sync_total') }}: 
                             {{ agentRunningTask[item.processId].sync || 0 }}
                             <i class="el-icon-arrow-right" />
                           </el-tag>
