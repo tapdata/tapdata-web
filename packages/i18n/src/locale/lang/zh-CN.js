@@ -256,7 +256,7 @@ export default {
   public_task_type: '任务类型',
   public_task_sync_type: '同步类型',
   public_task_type_migrate: '数据复制',
-  public_task_type_sync: '数据开发',
+  public_task_type_sync: '数据转换',
   public_task_type_heartbeat: '心跳任务',
   public_task_type_log_collector: '共享挖掘',
   public_task_type_initial_sync: '全量',

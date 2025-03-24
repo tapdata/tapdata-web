@@ -255,7 +255,7 @@ export default {
   public_task_type: 'Task Type',
   public_task_sync_type: 'Sync Type',
   public_task_type_migrate: 'Data Replication',
-  public_task_type_sync: 'Data Development',
+  public_task_type_sync: 'Data Transformation',
   public_task_type_heartbeat: 'Heartbeat Task',
   public_task_type_log_collector: 'Shared Mining',
   public_task_type_initial_sync: 'Full Sync',
