@@ -96,6 +96,12 @@
       >
         <VIcon size="18">bug-outlined</VIcon>
       </button>
+      <VDivider class="mx-3" vertical></VDivider>
+      <ElTooltip transition="tooltip-fade-in" :content="$t('public_data_validation')">
+        <button class="icon-btn" @click="openValidation = true">
+          <VIcon size="18">data-scan</VIcon>
+        </button>
+      </ElTooltip>
     </div>
     <div class="flex-grow-1"></div>
     <div class="flex align-center ml-2">
@@ -167,6 +173,14 @@
       @update:visible="openDebug = $event"
       @start="$emit('debug-start')"
     ></DataCaptureDebug>
+
+    <DataValidationDialog
+      :task-id="dataflow.id"
+      :visible="openValidation"
+      :validation-settings="validationSettings"
+      @update:visible="openValidation = $event"
+      @save="handleSaveValidation"
+    ></DataValidationDialog>
   </header>
 </template>
 
@@ -182,6 +196,7 @@ import { TextEditable, VIcon, VDivider, OverflowTooltip } from '@tap/component'
 import { TaskStatus } from '@tap/business'
 import syncTaskAgent from '@tap/business/src/mixins/syncTaskAgent'
 import DataCaptureDebug from '../DataCaptureDebug.vue'
+import DataValidationDialog from '../DataValidationDialog.vue'
 
 export default {
   name: 'TopHeader',
@@ -210,7 +225,7 @@ export default {
 
   mixins: [syncTaskAgent],
 
-  components: { DataCaptureDebug, VIcon, TaskStatus, VDivider, OverflowTooltip, TextEditable },
+  components: { DataCaptureDebug, VIcon, TaskStatus, VDivider, OverflowTooltip, TextEditable, DataValidationDialog },
 
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
@@ -232,7 +247,8 @@ export default {
         cdc: i18n.t('public_task_type_cdc'),
         'initial_sync+cdc': i18n.t('public_task_type_initial_sync_and_cdc')
       },
-      openDebug: false
+      openDebug: false,
+      openValidation: false
     }
   },
 

@@ -32,24 +32,35 @@ interface TaskInspectConfig {
   mode: 'CLOSE' | 'INTELLIGENT' | 'CUSTOM'
 }
 
+interface TaskInspectHistory {
+  id: string
+  taskId: string
+  createdAt: string
+  status: string
+  type: string
+  [key: string]: any
+}
+
 export default class TaskInspect extends Http {
   constructor() {
     super('/api/task-inspect')
   }
 
-  getConfig(taskId: string, params: any): Promise<TaskInspectConfig> {
-    return this.axios.get(this.url + `/${taskId}`, { params }).catch(err => {
-      console.error(err)
-      return Promise.resolve({
-        mode: 'CUSTOM',
+  async getConfig(taskId: string, params: any): Promise<TaskInspectConfig> {
+    const response = (await this.axios.get(this.url + `/${taskId}`, { params })) as unknown as TaskInspectConfig
+
+    return (
+      response || {
+        mode: 'CLOSE',
         custom: {
           cdc: {
             enable: true,
-            sample: { interval: 60, limit: 20 }
+            sample: { interval: 10, limit: 1 },
+            type: 'SAMPLE'
           }
         }
-      })
-    })
+      }
+    )
   }
 
   putConfig(taskId: string, params: TaskInspectConfig) {

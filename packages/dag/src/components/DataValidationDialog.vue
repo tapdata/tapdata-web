@@ -120,11 +120,13 @@ export default {
 
     async handleSave() {
       const settings = {
-        enabled: this.validationEnabled,
-        type: this.validationType,
-        frequency: {
-          time: this.frequencyTime,
-          records: this.frequencyRecords
+        mode: this.validationEnabled ? 'CUSTOM' : 'CLOSE',
+        custom: {
+          cdc: {
+            enable: true,
+            sample: { interval: this.frequencyTime, limit: this.frequencyRecords }, // 采样间隔和数量
+            type: 'SAMPLE' // 采样类型
+          }
         }
       }
 

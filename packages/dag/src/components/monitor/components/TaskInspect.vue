@@ -10,24 +10,13 @@
       height="100%"
       hide-on-single-page
     >
-      <template slot="status" slot-scope="scope">
-        <ElTag :type="getStatusType(scope.row.status)" size="small">{{ scope.row.status }}</ElTag>
+      <template #status="{ row }">
+        <ElTag :type="row.statusType" size="small">{{ row.status }}</ElTag>
       </template>
-      <template slot="result" slot-scope="scope">
-        <ElTag :type="getResultType(scope.row.result)" size="small">{{ scope.row.result }}</ElTag>
-      </template>
-      <template slot="operation" slot-scope="scope">
+      <template #operation="{ row }">
         <div class="operate-columns">
-          <ElButton size="mini" type="text" @click="handleDetail(scope.row)">
+          <ElButton size="mini" type="text">
             {{ $t('public_button_details') }}
-          </ElButton>
-          <ElButton
-            size="mini"
-            type="text"
-            @click="handleCheck(scope.row)"
-            v-if="scope.row.status === 'error' && scope.row.result === '错误'"
-          >
-            {{ $t('public_button_view') }}
           </ElButton>
         </div>
       </template>
@@ -41,9 +30,10 @@
 <script>
 import i18n from '@tap/i18n'
 import { VTable } from '@tap/component'
-import { taskApi } from '@tap/api'
+import { taskInspectApi } from '@tap/api'
 import { openUrl } from '@tap/shared'
 import InspectDetailDialog from './InspectDetailDialog.vue'
+import dayjs from 'dayjs'
 
 export default {
   name: 'TaskInspect',
@@ -71,14 +61,14 @@ export default {
         },
         {
           label: i18n.t('packages_dag_inspect_start_time'),
-          prop: 'startTime',
-          width: 170,
+          prop: 'beginTime',
+          minWidth: 170,
           dataType: 'time'
         },
         {
           label: i18n.t('packages_dag_inspect_end_time'),
           prop: 'endTime',
-          width: 170,
+          minWidth: 170,
           dataType: 'time'
         },
         {
@@ -87,15 +77,11 @@ export default {
           slotName: 'status',
           minWidth: 100
         },
-        {
-          prop: 'result',
-          slotName: 'result',
-          minWidth: 100
-        },
+
         {
           label: i18n.t('public_operation'),
           slotName: 'operation',
-          minWidth: 100
+          width: 100
         }
       ],
       detailDialogVisible: false,
@@ -123,8 +109,8 @@ export default {
         size: size
       }
 
-      return taskApi
-        .autoInspectResults(taskId, params)
+      return taskInspectApi
+        .getHistories(taskId, params)
         .then(data => {
           return {
             total: data.total || 0,
@@ -133,13 +119,12 @@ export default {
                 return {
                   id: item.id,
                   type: this.getInspectTypeName(item.inspectMethod || item.type),
-                  startTime: item.startTime || item.lastStartTime,
-                  endTime: item.endTime || item.lastEndTime,
-                  status: this.getStatusName(item.status),
-                  result: this.getResultName(item.result),
-                  taskId: item.taskId,
-                  inspectId: item.id,
-                  rawData: item
+                  beginTime: dayjs(item.beginTime).format('YYYY-MM-DD HH:mm:ss'),
+                  endTime: item.endTime ? dayjs(item.endTime).format('YYYY-MM-DD HH:mm:ss') : '',
+                  ...this.makeStatus(item.status)
+                  // taskId: item.taskId,
+                  // inspectId: item.id,
+                  // rawData: item
                 }
               }) || []
           }
@@ -162,32 +147,25 @@ export default {
       return typeMap[type] || type
     },
 
-    getStatusName(status) {
+    makeStatus(status) {
       const statusMap = {
-        scheduling: i18n.t('packages_dag_components_inspect_status_scheduling'),
-        running: i18n.t('packages_dag_components_inspect_status_running'),
-        done: i18n.t('packages_dag_components_inspect_status_done'),
-        error: i18n.t('packages_dag_components_inspect_status_error')
+        RUNNING: i18n.t('public_status_running'),
+        STOPPED: i18n.t('public_status_stop'),
+        DONE: i18n.t('public_status_finished'),
+        ERROR: i18n.t('public_status_error')
       }
-      return statusMap[status] || status
-    },
 
-    getResultName(result) {
-      const resultMap = {
-        passed: i18n.t('packages_dag_components_inspect_result_passed'),
-        failed: i18n.t('packages_dag_components_inspect_result_failed'),
-        error: i18n.t('packages_dag_components_inspect_result_error')
-      }
-      return resultMap[result] || result
-    },
-
-    getStatusType(status) {
       const typeMap = {
-        运行中: 'primary',
-        已完成: 'success',
-        错误: 'danger'
+        RUNNING: 'success',
+        STOPPED: 'info',
+        DONE: 'primary',
+        ERROR: 'danger'
       }
-      return typeMap[status] || 'info'
+
+      return {
+        status: statusMap[status],
+        statusType: typeMap[status]
+      }
     },
 
     getResultType(result) {
