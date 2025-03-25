@@ -1,8 +1,9 @@
 const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
 const webpack = require('webpack')
-const crypto = require('crypto')
-
+const { getUserIdFromEnv, parseCommandLineArgs, getToken } = require('./userIdResolver')
+const chalk = require('chalk')
+const log = console.log
 const serveUrlMap = {
   mock: 'http://localhost:3000',
   dev: 'http://backend:3030',
@@ -10,27 +11,18 @@ const serveUrlMap = {
   local: 'https://v3.test.cloud.tapdata.net',
   localTm: 'http://127.0.0.1:3030'
 }
-// const userId = '60b60af1147bce7705727188' // zed?
-// const userId = '60b064e9a65d8e852c8523bc' // lemon
-// const userId = '610a3d43d7f65cfcd80837b5' // auto
-// const userId = '60cc0c304e190a579cbe306c' // jason
-// const userId = '64ba40c389c61b08683c71b0' // xf
-const userId = '64be2c812c268c9dd5afaf25' // devin
-let origin
-let ENV // 区分打包生产环境和开发测试环境，默认是生产
-const { argv } = process
+const { username = 'martin', origin, env: ENV } = parseCommandLineArgs()
+const resolvedUserId = getUserIdFromEnv(username)
+
+let userId = '6073aedf6013a66729a09280' // martin's ID
+
+if (resolvedUserId) {
+  userId = resolvedUserId
+} else {
+  log(chalk.bgRed.white(`Couldn't find user ID for ${username}, using default`))
+}
+
 const { SERVE_ENV = 'mock' } = process.env
-
-// 通过origin参数注入服务代理，优先级最高
-if (~argv.indexOf('--origin')) {
-  origin = argv[argv.indexOf('--origin') + 1]
-  origin && (origin = origin.replace(/^(?!http)/, 'http://'))
-}
-
-if (~argv.indexOf('--env')) {
-  ENV = argv[argv.indexOf('--env') + 1]
-}
-
 const proxy = {
   target: process.env.SERVER_URI || origin || serveUrlMap[SERVE_ENV],
   changeOrigin: true
@@ -92,7 +84,6 @@ let localTmProxy = {
   },
   onProxyReqWs: function (proxyReq, req, socket, options, head) {
     proxyReq.setHeader('user_id', userId)
-    console.log(req.url)
   }
 }
 
@@ -294,31 +285,24 @@ module.exports = {
     }
   }
 }
-// 设置本地环境的token
-const getToken = userId => {
-  const secret = 'Q3HraAbDkmKoPzaBEYzPXB1zJXmWlQ169'
-  function __encrypt(string) {
-    return crypto
-      .createHmac('sha256', secret)
-      .update(string + secret)
-      .digest('hex')
-  }
-  function encodeBase64(string) {
-    if (typeof string !== 'string') return null
-    return Buffer.from(string || '').toString('base64')
-  }
-  function encodeStaticTokenByUserId(userId) {
-    let token = __encrypt(userId)
-    return encodeBase64(userId) + '.' + encodeBase64(token)
-  }
-  const token = encodeStaticTokenByUserId(userId)
-  return token
-}
-if (process.env.NODE_ENV === 'development') {
-  let _userId = process.env.USER_ID || userId
-  process.env.VUE_APP_ACCESS_TOKEN = getToken(_userId)
 
-  console.log('本地用户调试ID: ' + _userId)
-  console.log('本地用户调试Token: ' + process.env.VUE_APP_ACCESS_TOKEN)
-  console.log('Proxy server: ' + proxy.target)
+if (process.env.NODE_ENV === 'development') {
+  process.env.VUE_APP_ACCESS_TOKEN = getToken(userId)
+
+  const printDivider = (length = 40, char = '─', color = 'gray') => {
+    log(chalk[color](char.repeat(length)))
+  }
+
+  log(`${chalk.bgBlue.hex('#595959')(` User Name `.padEnd(14))} ${chalk.white.bold(`${username}`)}`)
+  printDivider()
+  log(`${chalk.bgBlue.hex('#595959')(` User ID `.padEnd(14))} ${chalk.white.bold(`${userId}`)}`)
+  printDivider()
+  log(
+    `${chalk.bgBlue.hex('#595959')(` User Token `.padEnd(14))} ${chalk.white.bold(
+      `${process.env.VUE_APP_ACCESS_TOKEN}`
+    )}`
+  )
+  printDivider()
+  log(`${chalk.bgBlue.hex('#595959')(` Proxy Server `.padEnd(14))} ${chalk.white.bold(`${proxy.target}`)}`)
+  printDivider()
 }
