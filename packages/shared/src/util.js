@@ -314,7 +314,7 @@ export function onCopy(value) {
   document.body.removeChild(input)
 }
 
-export async function copyToClipboard(textToCopy) {
+export async function copyToClipboard(textToCopy, context) {
   // Navigator clipboard api needs a secure context (https)
   if (navigator.clipboard && window.isSecureContext) {
     await navigator.clipboard.writeText(textToCopy)
@@ -327,16 +327,17 @@ export async function copyToClipboard(textToCopy) {
     textArea.style.position = 'absolute'
     textArea.style.left = '-999999px'
 
-    document.body.prepend(textArea)
+    context = context || document.body
+    context.prepend(textArea)
     textArea.select()
 
     try {
       document.execCommand('copy')
     } catch (error) {
       console.error(error)
-    } finally {
-      textArea.remove()
     }
+
+    context.removeChild(textArea)
   }
 }
 
