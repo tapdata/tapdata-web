@@ -12536,3 +12536,22 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.active-primary {
+  background-color: rgb(59 71 229 / 10%) !important;
+  color: map-get($color, primary) !important;
+}
+
+.bg-fill-hover {
+  background-color: rgb(24 24 27 / 5%);
+}
+
+.last\:border-0:last-child {
+  border: 0 !important;
+}
+
+.text-muted-foreground {
+  color: rgb(113 113 122);
+}
+
+

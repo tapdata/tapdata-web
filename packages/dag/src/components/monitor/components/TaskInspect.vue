@@ -15,7 +15,7 @@
       </template>
       <template #operation="{ row }">
         <div class="operate-columns">
-          <ElButton size="mini" type="text">
+          <ElButton size="mini" type="text" @click="handleDetail(row)">
             {{ $t('public_button_details') }}
           </ElButton>
         </div>
@@ -177,10 +177,7 @@ export default {
     },
 
     handleDetail(row) {
-      if (!row.inspectId) return
-
-      // Open the detail dialog
-      this.currentInspectId = row.inspectId
+      this.currentInspectId = row.id
       this.detailDialogVisible = true
     },
 

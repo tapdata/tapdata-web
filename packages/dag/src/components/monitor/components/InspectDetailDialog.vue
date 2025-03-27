@@ -2,126 +2,177 @@
   <ElDialog
     :visible.sync="visible"
     :title="$t('packages_dag_inspect_detail_title')"
-    width="800px"
+    width="80%"
+    append-to-body
     custom-class="inspect-detail-dialog"
     :close-on-click-modal="false"
     @close="handleClose"
   >
-    <div class="inspect-detail-container">
-      <!-- Last verification time -->
-      <div class="last-verify-time mb-4">
-        <span class="text-muted font-size-small"
+    <template #title>
+      <div class="flex align-items-center gap-2">
+        <span>{{ $t('packages_dag_inspect_detail_title') }}</span>
+        <span class="text-muted fs-8"
           >{{ $t('packages_dag_inspect_last_verify_time') }}: {{ formatTime(inspectData.lastStartTime) }}</span
         >
       </div>
-
-      <!-- Main content -->
-      <div class="inspect-tables mb-4">
-        <ElTable :data="[inspectData]" border size="small" style="width: 100%">
-          <ElTableColumn :label="$t('packages_dag_inspect_source_table')" min-width="180">
-            <template slot-scope="scope">
-              <div>{{ scope.row.sourceName || '-' }}</div>
-              <div class="text-muted font-size-small">{{ scope.row.sourceConnectionName || '-' }}</div>
-            </template>
-          </ElTableColumn>
-          <ElTableColumn :label="$t('packages_dag_inspect_target_table')" min-width="180">
-            <template slot-scope="scope">
-              <div>{{ scope.row.targetName || '-' }}</div>
-              <div class="text-muted font-size-small">{{ scope.row.targetConnectionName || '-' }}</div>
-            </template>
-          </ElTableColumn>
-          <ElTableColumn :label="$t('packages_dag_inspect_count')" width="110" align="center">
-            <template slot-scope="scope">
-              {{ scope.row.verifyCount || '0' }}
-            </template>
-          </ElTableColumn>
-          <ElTableColumn :label="$t('packages_dag_inspect_result')" width="140" align="center">
-            <template slot-scope="scope">
-              <ElTag :type="getResultType(scope.row.result)" size="small">
-                {{ getResultText(scope.row.result) }}
-              </ElTag>
-              <div v-if="scope.row.result === 'failed'" class="text-danger font-size-small mt-1">
-                {{ $t('packages_dag_inspect_diff_count', { count: scope.row.diffCount || 0 }) }}
+    </template>
+    <div class="inspect-detail-container border-top">
+      <div class="flex" style="min-height: 400px">
+        <div class="inspection-result-list bg-light p-3">
+          <div class="flex flex-column gap-3">
+            <div
+              v-for="(row, index) in inspectList"
+              :key="index"
+              class="inspection-result-card p-3 bg-white rounded-lg shadow-sm"
+              :class="{ 'border-primary': currentSelectedRow === row }"
+              @click="handleRowClick(row)"
+            >
+              <div>
+                <div class="flex align-items-center gap-2 fs-6 font-color-dark">
+                  <VIcon :size="20">table</VIcon>
+                  <div class="flex flex-column">
+                    <span class="">{{ row.targetTable || '-' }}</span>
+                    <div class="font-color-light position-relative">
+                      <VIcon style="transform: translateY(-25%)">ArrowToTopRightLinear</VIcon>
+                      <span class="fs-7">{{ row.sourceTable || '-' }}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </template>
-          </ElTableColumn>
-        </ElTable>
+
+              <div class="flex mt-2 gap-3">
+                <ElTag v-if="row.countDiff > 0" class="rounded-4" size="small" type="danger">
+                  差异 {{ row.countDiff }} 条
+                </ElTag>
+
+                <ElTag v-if="row.countMiss > 0" class="rounded-4" size="small" type="warning">
+                  目标少 {{ row.countMiss }} 条
+                </ElTag>
+
+                <ElTag v-if="row.countMore > 0" class="rounded-4" size="small" type="success"> 目标多 1 条 </ElTag>
+              </div>
+
+              <!-- <div class="inspection-card-content">
+                <div class="inspection-card-metrics">
+                  <div class="inspection-card-metric">
+                    <span class="metric-label">{{ $t('packages_dag_inspect_count_verified') }}</span>
+                    <span class="metric-value">{{ row.verifyCount || '0' }}</span>
+                  </div>
+                  <div class="inspection-card-metric">
+                    <span class="metric-label">{{ $t('packages_dag_inspect_count_missing') }}</span>
+                    <span class="metric-value" :class="{ 'text-danger': row.countMiss > 0 }">{{
+                      row.countMiss || '0'
+                    }}</span>
+                  </div>
+                  <div class="inspection-card-metric">
+                    <span class="metric-label">{{ $t('packages_dag_inspect_count_extra') }}</span>
+                    <span class="metric-value" :class="{ 'text-danger': row.countMore > 0 }">{{
+                      row.countMore || '0'
+                    }}</span>
+                  </div>
+                  <div class="inspection-card-metric">
+                    <span class="metric-label">{{ $t('packages_dag_inspect_count_diff') }}</span>
+                    <span class="metric-value" :class="{ 'text-danger': row.countDiff > 0 }">{{
+                      row.countDiff || '0'
+                    }}</span>
+                  </div>
+                </div>
+              </div> -->
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white border-left flex-1 flex flex-column">
+          <div class="flex gap-3 px-4 py-3 border-bottom">
+            <span
+              @click="onlyShowDiffFields = true"
+              class="bg-subtle rounded-lg px-3 py-2 cursor-pointer"
+              :class="{
+                'active-primary': onlyShowDiffFields
+              }"
+              >仅显示差异字段</span
+            >
+
+            <span
+              @click="onlyShowDiffFields = false"
+              class="bg-subtle rounded-lg px-3 py-2 cursor-pointer"
+              :class="{
+                'active-primary': !onlyShowDiffFields
+              }"
+              >显示完整字段</span
+            >
+
+            <!-- <span class="flex align-center gap-1 ml-auto">
+              <VIcon :size="16">table</VIcon>
+              <span>{{ currentSelectedRow.targetTable }}</span>
+            </span> -->
+          </div>
+          <div class="overflow-y-auto p-4 min-height-0">
+            <div class="flex flex-column gap-4">
+              <div v-for="(row, index) in rowDiffList" :key="index" class="border rounded-lg overflow-hidden">
+                <div class="flex align-items-center gap-2 p-3 bg-light">
+                  <span class="bg-fill-hover rounded-lg px-2 py-1">行 ID: {{ row.id }}</span>
+                  <div class="flex-1"></div>
+                  <ElTag v-if="row.diffType === 'DIFF'" class="rounded-4" size="small" type="danger"> 差异 </ElTag>
+
+                  <ElTag v-if="row.diffType === 'MISS'" class="rounded-4" size="small" type="warning"> 目标少 </ElTag>
+
+                  <ElTag v-if="row.diffType === 'MORE'" class="rounded-4" size="small" type="success"> 目标多 </ElTag>
+                </div>
+
+                <table class="w-100 row-diff-table font-color-dark" v-if="row.diffType === 'DIFF'">
+                  <thead class="bg-light border-bottom">
+                    <tr>
+                      <th class="text-start p-3 text-sm fw-sub text-muted-foreground w-1/4">字段</th>
+                      <th class="text-start p-3 text-sm fw-sub w-[37.5%]">源表值</th>
+                      <th class="text-start p-3 text-sm fw-sub text-destructive w-[37.5%]">目标表值</th>
+                    </tr>
+                  </thead>
+                  <tbody v-if="onlyShowDiffFields">
+                    <tr class="border-bottom" v-for="(targetField, i) in row.diffFields" :key="targetField">
+                      <td class="p-3 text-sm text-muted-foreground">{{ targetField }}</td>
+                      <td class="p-3 text-sm font-medium">
+                        <span>{{ row.source[row.diffFieldsMap[targetField]] }}</span>
+                      </td>
+                      <td class="p-3 text-sm font-medium text-danger">
+                        <span>{{ row.target[targetField] }}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tbody v-else>
+                    <tr class="border-bottom" v-for="(targetField, i) in row.targetFields" :key="targetField">
+                      <td class="p-3 text-sm text-muted-foreground">{{ targetField }}</td>
+                      <td class="p-3 text-sm font-medium">
+                        <span>{{ row.source[row.sourceFields[i]] }}</span>
+                      </td>
+                      <td class="p-3 text-sm font-medium" :class="{ 'text-danger': row.diffFieldsMap[targetField] }">
+                        <span>{{ row.target[targetField] }}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div v-else class="font-color-dark border-top">
+                  <div
+                    v-for="(value, key) in row.source || row.target"
+                    :key="key"
+                    class="flex border-bottom last:border-0"
+                  >
+                    <div class="flex-1 p-3 text-sm text-muted-foreground">{{ key }}</div>
+                    <div class="flex-1 p-3 text-sm font-medium">
+                      <span>{{ value }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- <div v-else-if="row.diffType === 'MORE'">
+                  <div class="flex"></div>
+                </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-
-      <!-- Tabs for showing different aspects of the verification -->
-      <ElTabs v-model="activeTab" class="inspect-detail-tabs">
-        <ElTabPane :label="$t('packages_dag_inspect_detail_tab')" name="details">
-          <div v-if="loadingDetails" class="text-center py-4">
-            <ElLoading :text="$t('packages_dag_inspect_loading')" background="rgba(255, 255, 255, 0.7)"></ElLoading>
-          </div>
-          <div v-else>
-            <!-- Field mapping details -->
-            <ElTable :data="fieldDetails" border size="small" style="width: 100%">
-              <ElTableColumn
-                :label="$t('packages_dag_inspect_source_field')"
-                prop="sourceField"
-                min-width="120"
-              ></ElTableColumn>
-              <ElTableColumn
-                :label="$t('packages_dag_inspect_value')"
-                prop="sourceValue"
-                min-width="120"
-              ></ElTableColumn>
-              <ElTableColumn
-                :label="$t('packages_dag_inspect_target_field')"
-                prop="targetField"
-                min-width="120"
-              ></ElTableColumn>
-              <ElTableColumn
-                :label="$t('packages_dag_inspect_value')"
-                prop="targetValue"
-                min-width="120"
-              ></ElTableColumn>
-            </ElTable>
-
-            <div v-if="fieldDetails.length === 0" class="text-center py-4 text-muted">
-              {{ $t('packages_dag_inspect_no_data') }}
-            </div>
-          </div>
-        </ElTabPane>
-        <ElTabPane
-          :label="$t('packages_dag_inspect_summary_tab')"
-          name="summary"
-          v-if="inspectData.result === 'failed'"
-        >
-          <ElAlert
-            type="warning"
-            :title="$t('packages_dag_inspect_summary_title')"
-            :description="$t('packages_dag_inspect_summary_desc', { count: inspectData.diffCount || 0 })"
-            show-icon
-            class="mb-3"
-          />
-
-          <ElCard shadow="never" class="mb-3">
-            <div slot="header" class="d-flex align-items-center">
-              <span>{{ $t('packages_dag_inspect_verification_summary') }}</span>
-            </div>
-            <ElDescriptions :column="2" border>
-              <ElDescriptionsItem :label="$t('packages_dag_inspect_total_records')">{{
-                inspectData.verifyCount || 0
-              }}</ElDescriptionsItem>
-              <ElDescriptionsItem :label="$t('packages_dag_inspect_diff_records')">{{
-                inspectData.diffCount || 0
-              }}</ElDescriptionsItem>
-              <ElDescriptionsItem :label="$t('packages_dag_inspect_source_records')">{{
-                inspectData.sourceTotal || 0
-              }}</ElDescriptionsItem>
-              <ElDescriptionsItem :label="$t('packages_dag_inspect_target_records')">{{
-                inspectData.targetTotal || 0
-              }}</ElDescriptionsItem>
-            </ElDescriptions>
-          </ElCard>
-        </ElTabPane>
-      </ElTabs>
-    </div>
-
-    <div slot="footer" class="dialog-footer">
-      <ElButton @click="handleClose">{{ $t('public_button_close') }}</ElButton>
     </div>
   </ElDialog>
 </template>
@@ -129,6 +180,8 @@
 <script>
 import { inspectApi, inspectResultsApi } from '@tap/api'
 import dayjs from 'dayjs'
+import axios from 'axios'
+import VIcon from '@tap/component/src/base/VIcon.vue'
 
 export default {
   name: 'InspectDetailDialog',
@@ -149,21 +202,26 @@ export default {
       activeTab: 'details',
       inspectData: {},
       fieldDetails: [],
-      loadingDetails: false
+      inspectList: [],
+      rowDiffList: [],
+      loadingDetails: false,
+      currentSelectedRow: null,
+      onlyShowDiffFields: true
     }
   },
 
   watch: {
     visible(val) {
       if (val && this.inspectId) {
-        this.fetchInspectData()
-      }
-    },
-    inspectId(val) {
-      if (val && this.visible) {
-        this.fetchInspectData()
+        this.fetchDiffList()
+        // this.fetchInspectData()
       }
     }
+    // inspectId(val) {
+    //   if (val && this.visible) {
+    //     this.fetchInspectData()
+    //   }
+    // }
   },
 
   methods: {
@@ -184,6 +242,10 @@ export default {
       return result
     },
 
+    getTotalDiffCount(row) {
+      return (row.countMiss || 0) + (row.countMore || 0) + (row.countDiff || 0)
+    },
+
     handleClose() {
       this.$emit('update:visible', false)
       this.resetData()
@@ -193,66 +255,93 @@ export default {
       this.inspectData = {}
       this.fieldDetails = []
       this.activeTab = 'details'
+      this.currentSelectedRow = null
     },
 
-    async fetchInspectData() {
+    async fetchDiffList() {
+      // GET {{url}}/task-inspect-histories/67e4c244e6f5d172f002db2e/results/group-by-table?access_token={{token}}
+      const data = await axios.get(`/api/task-inspect-histories/${this.inspectId}/results/group-by-table`)
+
+      this.inspectList = data?.items || []
+
+      // Select the first item by default if available
+      if (this.inspectList.length > 0) {
+        this.currentSelectedRow = this.inspectList[0]
+        this.fetchTableDiff(this.inspectList[0].sourceTable)
+      }
+    },
+
+    async fetchTableDiff(sourceTable) {
       if (!this.inspectId) return
 
       this.loadingDetails = true
 
       try {
         // Fetch inspect info from the HTTP API using filter
-        const inspectRes = await inspectApi.get({
-          filter: JSON.stringify({
-            where: {
-              id: this.inspectId
-            }
-          })
+        const { items = [] } = await axios.get(`/api/task-inspect-histories/${this.inspectId}/results`, {
+          params: {
+            filter: JSON.stringify({
+              where: { sourceTable }
+            })
+          }
         })
 
-        const inspect = inspectRes?.items?.[0] || {}
-        const inspectResult = inspect.InspectResult || {}
+        this.rowDiffList = items.map(item => {
+          if (item.diffType === 'DIFF') {
+            return {
+              ...item,
+              diffFieldsMap: item.diffFields.reduce((acc, field) => {
+                acc[field] = item.sourceFields[item.targetFields.indexOf(field)]
+                return acc
+              }, {})
+            }
+          }
+          return item
+        })
+        // this.inspectList = inspectRes?.items || []
+        // const inspect = inspectRes?.items?.[0] || {}
+        // const inspectResult = inspect.InspectResult || {}
 
         // Set basic inspect data
-        this.inspectData = {
-          ...inspect,
-          sourceName: inspect.source?.name || '-',
-          sourceConnectionName: inspect.source?.connectionName || '-',
-          targetName: inspect.target?.name || '-',
-          targetConnectionName: inspect.target?.connectionName || '-',
-          verifyCount: 0,
-          diffCount: 0,
-          sourceTotal: 0,
-          targetTotal: 0
-        }
+        // this.inspectData = {
+        //   ...inspect,
+        //   sourceName: inspect.source?.name || '-',
+        //   sourceConnectionName: inspect.source?.connectionName || '-',
+        //   targetName: inspect.target?.name || '-',
+        //   targetConnectionName: inspect.target?.connectionName || '-',
+        //   verifyCount: 0,
+        //   diffCount: 0,
+        //   sourceTotal: 0,
+        //   targetTotal: 0
+        // }
 
-        // If we have a result ID, fetch the detailed result
-        if (inspectResult.id) {
-          const resultRes = await inspectResultsApi.get({
-            filter: JSON.stringify({
-              where: {
-                id: inspectResult.id
-              }
-            })
-          })
+        // // If we have a result ID, fetch the detailed result
+        // if (inspectResult.id) {
+        //   const resultRes = await inspectResultsApi.get({
+        //     filter: JSON.stringify({
+        //       where: {
+        //         id: inspectResult.id
+        //       }
+        //     })
+        //   })
 
-          const result = resultRes?.items?.[0] || {}
+        //   const result = resultRes?.items?.[0] || {}
 
-          // Update inspect data with result information
-          this.inspectData = {
-            ...this.inspectData,
-            ...result,
-            verifyCount: result.verify_count || 0,
-            diffCount: result.diff_count || 0,
-            sourceTotal: result.source_total || 0,
-            targetTotal: result.target_total || 0
-          }
+        //   // Update inspect data with result information
+        //   this.inspectData = {
+        //     ...this.inspectData,
+        //     ...result,
+        //     verifyCount: result.verify_count || 0,
+        //     diffCount: result.diff_count || 0,
+        //     sourceTotal: result.source_total || 0,
+        //     targetTotal: result.target_total || 0
+        //   }
 
-          // Get field details if available
-          if (result.stats && result.stats.length > 0) {
-            this.fieldDetails = this.processFieldDetails(result.stats)
-          }
-        }
+        //   // Get field details if available
+        //   if (result.stats && result.stats.length > 0) {
+        //     this.fieldDetails = this.processFieldDetails(result.stats)
+        //   }
+        // }
       } catch (error) {
         console.error('Failed to fetch inspect details:', error)
         this.$message.error(this.$t('packages_dag_inspect_fetch_error'))
@@ -299,19 +388,57 @@ export default {
       })
 
       return details
+    },
+
+    handleRowClick(row) {
+      this.currentSelectedRow = row
+      this.fetchTableDiff(row.sourceTable)
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .inspect-detail-dialog {
-  &::v-deep .el-dialog__body {
+  max-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  .el-dialog__header {
     padding: 20px;
   }
+  .el-dialog__body {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
 }
+</style>
 
+<style lang="scss" scoped>
 .inspect-detail-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+
+  .row-diff-table {
+    thead > tr > th {
+      width: 37.5%;
+
+      &:first-child {
+        width: 25%;
+      }
+    }
+
+    tbody > tr {
+      &:last-child {
+        border-bottom: none !important;
+      }
+    }
+  }
+
   .last-verify-time {
     text-align: right;
     color: #909399;
@@ -332,6 +459,88 @@ export default {
   .inspect-detail-tabs {
     &::v-deep .el-tabs__header {
       margin-bottom: 15px;
+    }
+  }
+
+  .inspection-result-list {
+    width: 320px;
+  }
+
+  .inspection-result-header {
+  }
+
+  .inspection-result-count {
+    font-size: 12px;
+    color: #909399;
+    margin-top: 4px;
+  }
+
+  .inspection-result-actions {
+    margin-top: 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .inspection-result-card {
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    border: 1px solid transparent;
+
+    &:hover {
+      background-color: rgba(31, 35, 41, 0.08);
+    }
+
+    &.active {
+      background-color: rgb(240, 244, 255) !important;
+    }
+  }
+
+  .inspection-card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+
+    i {
+      margin-right: 8px;
+      color: #909399;
+    }
+
+    .card-title {
+      flex: 1;
+      font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .diff-tag {
+      margin-left: 8px;
+    }
+  }
+
+  .inspection-card-content {
+    padding-left: 24px;
+  }
+
+  .inspection-card-metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .inspection-card-metric {
+    display: flex;
+    flex-direction: column;
+
+    .metric-label {
+      font-size: 12px;
+      color: #909399;
+    }
+
+    .metric-value {
+      font-size: 14px;
+      font-weight: 500;
     }
   }
 }
