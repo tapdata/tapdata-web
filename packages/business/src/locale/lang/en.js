@@ -327,7 +327,7 @@ export default {
   packages_business_verification_details_mubiaobiaoziduan: 'Target table field: value',
   packages_business_verification_details_yuanbiaoziduanzhi: 'Source table field: value',
   packages_business_verification_details_xianshiwanzhengzi: 'Show full fields',
-  packages_business_verification_details_jinxianshichayi: 'Show Diff Fields',
+  packages_business_verification_details_jinxianshichayi: 'Show diff fields',
   packages_business_verification_details_yichangshujuhang: 'Exception data (row):',
   packages_business_verification_details_mubiaobiao: 'Target table:',
   packages_business_verification_details_yuanbiao: 'Source table:',
