@@ -138,7 +138,10 @@
                       <td class="p-3 text-sm font-medium">
                         <span>{{ row.source[row.sourceFields[i]] }}</span>
                       </td>
-                      <td class="p-3 text-sm font-medium" :class="{ 'color-danger': row.diffFieldsMap[targetField] }">
+                      <td
+                        class="p-3 text-sm font-medium"
+                        :class="{ 'color-danger': row.diffFieldsMap[row.sourceFields[i]] }"
+                      >
                         <span>{{ row.target[targetField] }}</span>
                       </td>
                     </tr>
