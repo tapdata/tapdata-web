@@ -90,14 +90,25 @@
       </div>
     </div>
 
-    <!-- Inspect detail dialog -->
+    <VEmpty v-if="inspectList.length === 0" large>
+      <template v-if="showEnabled">
+        <div class="flex flex-column gap-3 align-center">
+          <span class="font-color-light">{{ $t('packages_dag_inspect_start_config_desc') }}</span>
+          <ElButton @click="$emit('open-inspect')">
+            <VIcon>data-scan</VIcon>
+            {{ $t('packages_dag_inspect_start_config') }}
+          </ElButton>
+        </div>
+      </template>
+    </VEmpty>
+
     <InspectDetailDialog :visible.sync="detailDialogVisible" :inspectId="currentInspectId" :pingTime="pingTime" />
   </div>
 </template>
 
 <script>
 import i18n from '@tap/i18n'
-import { VTable } from '@tap/component'
+import { VTable, VEmpty } from '@tap/component'
 import { taskInspectApi } from '@tap/api'
 import { openUrl } from '@tap/shared'
 import InspectDetailDialog from './InspectDetailDialog.vue'
@@ -106,7 +117,7 @@ import dayjs from 'dayjs'
 export default {
   name: 'TaskInspect',
 
-  components: { VTable, InspectDetailDialog },
+  components: { VTable, VEmpty, InspectDetailDialog },
 
   props: {
     dataflow: {
@@ -156,7 +167,8 @@ export default {
       detailDialogVisible: false,
       currentInspectId: '',
       inspectList: [],
-      pingTime: ''
+      pingTime: '',
+      showEnabled: false
     }
   },
 
@@ -172,7 +184,14 @@ export default {
   },
 
   created() {
-    this.fetch()
+    this.fetch().then(async () => {
+      if (!this.inspectList.length) {
+        const enabled = await this.checkEnabled()
+        if (!enabled) {
+          this.showEnabled = true
+        }
+      }
+    })
   },
 
   beforeDestroy() {
@@ -274,6 +293,11 @@ export default {
       const { data } = await this.remoteMethod({ page: { current: 1, size: 10 } })
       this.inspectList = data
       this.loading = false
+    },
+
+    async checkEnabled() {
+      const res = await taskInspectApi.getConfig(this.dataflow.id)
+      return res.mode && res.mode !== 'CLOSE'
     }
   }
 }

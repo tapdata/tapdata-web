@@ -2,6 +2,7 @@
   <section class="dataflow-editor layout-wrap vh-100">
     <!--头部-->
     <TopHeader
+      ref="topHeader"
       :loading="loading"
       :is-saving="isSaving"
       :dataflow-name="dataflow.name"
@@ -131,6 +132,7 @@
           ref="bottomPanel"
           @showBottomPanel="handleShowBottomPanel"
           @action="handleBottomPanelAction"
+          @open-inspect="handleOpenInspect"
         ></BottomPanel>
         <ConsolePanel ref="console" @stopAuto="handleStopAuto"></ConsolePanel>
       </section>
@@ -1292,6 +1294,10 @@ export default {
       if (data.type === 'ScheduleLimit') {
         this.handleShowUpgradeDialog()
       }
+    },
+
+    handleOpenInspect() {
+      this.$refs.topHeader.openValidation = true
     }
   }
 }

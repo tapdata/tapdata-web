@@ -827,5 +827,7 @@ export default {
   packages_dag_inspect_row_id: '行 ID',
   packages_dag_inspect_diff_type_diff: '差異',
   packages_dag_inspect_diff_type_miss: '目標少',
-  packages_dag_inspect_diff_type_more: '目標多'
+  packages_dag_inspect_diff_type_more: '目標多',
+  packages_dag_inspect_start_config: '開始配置',
+  packages_dag_inspect_start_config_desc: '您尚未開啟數據校驗功能'
 }

@@ -51,7 +51,12 @@
         </ElTabPane>
 
         <ElTabPane :label="$t('public_validation_record')" name="inspect">
-          <TaskInspect v-if="currentTab === 'inspect'" v-bind="$attrs" :currentTab="currentTab"></TaskInspect>
+          <TaskInspect
+            v-if="currentTab === 'inspect'"
+            v-bind="$attrs"
+            :currentTab="currentTab"
+            @open-inspect="$emit('open-inspect')"
+          ></TaskInspect>
         </ElTabPane>
       </ElTabs>
 

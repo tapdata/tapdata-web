@@ -888,5 +888,7 @@ export default {
   packages_dag_inspect_row_id: 'Row ID',
   packages_dag_inspect_diff_type_diff: 'Diff',
   packages_dag_inspect_diff_type_miss: 'Miss',
-  packages_dag_inspect_diff_type_more: 'More'
+  packages_dag_inspect_diff_type_more: 'More',
+  packages_dag_inspect_start_config: 'Start Configuration',
+  packages_dag_inspect_start_config_desc: 'You have not enabled data validation'
 }
