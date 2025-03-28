@@ -51,21 +51,21 @@
 
         <div class="flex justify-content-around align-center flex-1 gap-4 p-3 px-4">
           <div class="flex flex-column gap-2">
-            <span class="flex align-center gap-1"><VIcon>EyeOff</VIcon>忽略条数</span>
+            <span class="flex align-center gap-1"><VIcon>EyeOff</VIcon>{{ $t('packages_dag_inspect_ignore_records') }}</span>
             <span class="fw-sub font-color-dark">
               {{ inspect.attrs.ignores }}
             </span>
           </div>
 
           <div class="flex flex-column gap-2">
-            <span class="flex align-center gap-1"><VIcon>Eye</VIcon>抽样条数</span>
+            <span class="flex align-center gap-1"><VIcon>Eye</VIcon>{{ $t('packages_dag_inspect_accept_records') }}</span>
             <span class="fw-sub font-color-dark">
               {{ inspect.attrs.accepts }}
             </span>
           </div>
 
           <div class="flex flex-column gap-2">
-            <span class="flex align-center gap-1"><VIcon>FileChartColumnIncreasing</VIcon>差异条数</span>
+            <span class="flex align-center gap-1"><VIcon>FileChartColumnIncreasing</VIcon>{{ $t('packages_dag_inspect_diff_records') }}</span>
             <span
               class="fw-sub font-color-dark"
               :class="{

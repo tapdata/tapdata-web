@@ -875,7 +875,12 @@ export default {
   packages_dag_inspect_summary_desc: 'There are {count} records with differences between source and target',
   packages_dag_inspect_verification_summary: 'Verification Summary',
   packages_dag_inspect_total_records: 'Total Records',
-  packages_dag_inspect_diff_records: 'Different Records',
   packages_dag_inspect_source_records: 'Source Records',
-  packages_dag_inspect_target_records: 'Target Records'
+  packages_dag_inspect_target_records: 'Target Records',
+  packages_dag_inspect_ignore_records: 'Ignored',
+  packages_dag_inspect_accept_records: 'Accepted',
+  packages_dag_inspect_diff_records: 'Differences',
+  packages_dag_inspect_diff_records_num: 'Diff: {num}',
+  packages_dag_inspect_target_more_num: 'More: {num}',
+  packages_dag_inspect_target_less_num: 'Less: {num}'
 }

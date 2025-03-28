@@ -42,14 +42,24 @@
 
               <div class="flex mt-2 gap-3">
                 <ElTag v-if="row.countDiff > 0" class="rounded-4" size="small" type="danger">
-                  差异 {{ row.countDiff }} 条
+                  {{
+                    $t('packages_dag_inspect_diff_records_num', {
+                      num: row.countDiff
+                    })
+                  }}
                 </ElTag>
 
                 <ElTag v-if="row.countMiss > 0" class="rounded-4" size="small" type="warning">
-                  目标少 {{ row.countMiss }} 条
+                  {{
+                    $t('packages_dag_inspect_target_less_num', {
+                      num: row.countMiss
+                    })
+                  }}
                 </ElTag>
 
-                <ElTag v-if="row.countMore > 0" class="rounded-4" size="small" type="success"> 目标多 1 条 </ElTag>
+                <ElTag v-if="row.countMore > 0" class="rounded-4" size="small" type="success">
+                  {{ $t('packages_dag_inspect_target_more_num', { num: row.countMore }) }}
+                </ElTag>
               </div>
             </div>
           </div>
@@ -63,7 +73,7 @@
               :class="{
                 'active-primary': onlyShowDiffFields
               }"
-              >仅显示差异字段</span
+              >{{ $t('packages_business_verification_details_jinxianshichayi') }}</span
             >
 
             <span
@@ -72,7 +82,7 @@
               :class="{
                 'active-primary': !onlyShowDiffFields
               }"
-              >显示完整字段</span
+              >{{ $t('packages_business_verification_details_xianshiwanzhengzi') }}</span
             >
 
             <!-- <span class="flex align-center gap-1 ml-auto">
@@ -102,22 +112,19 @@
                     </tr>
                   </thead>
                   <tbody v-if="onlyShowDiffFields">
-                    <tr class="border-bottom hover:bg-light" v-for="targetField in row.diffFields" :key="targetField">
+                    <tr class="border-bottom hover:bg-light" v-for="field in row.diffFields" :key="field">
                       <td class="p-3 text-sm text-muted-foreground">
-                        {{ targetField }}
-                        <div
-                          v-if="row.diffFieldsMap[targetField] !== targetField"
-                          class="flex align-center font-color-sslight"
-                        >
+                        {{ row.diffFieldsMap[field] }}
+                        <div v-if="row.diffFieldsMap[field] !== field" class="flex align-center font-color-sslight">
                           <VIcon style="transform: translateY(-25%)">ArrowToTopRightLinear</VIcon>
-                          <span class="fs-7">{{ row.diffFieldsMap[targetField] }}</span>
+                          <span class="fs-7">{{ field }}</span>
                         </div>
                       </td>
                       <td class="p-3 text-sm font-medium">
-                        <span>{{ row.source[row.diffFieldsMap[targetField]] }}</span>
+                        <span>{{ row.source[field] }}</span>
                       </td>
                       <td class="p-3 text-sm font-medium color-danger">
-                        <span>{{ row.target[targetField] }}</span>
+                        <span>{{ row.target[row.diffFieldsMap[field]] }}</span>
                       </td>
                     </tr>
                   </tbody>
@@ -277,7 +284,7 @@ export default {
             return {
               ...item,
               diffFieldsMap: item.diffFields.reduce((acc, field) => {
-                acc[field] = item.sourceFields[item.targetFields.indexOf(field)]
+                acc[field] = item.targetFields[item.sourceFields.indexOf(field)]
                 return acc
               }, {})
             }

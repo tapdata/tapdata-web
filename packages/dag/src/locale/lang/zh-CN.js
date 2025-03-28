@@ -820,7 +820,12 @@ export default {
   packages_dag_inspect_summary_desc: '源表和目标表数据存在差异，共 {count} 条记录不一致',
   packages_dag_inspect_verification_summary: '验证摘要',
   packages_dag_inspect_total_records: '总记录数',
-  packages_dag_inspect_diff_records: '差异记录数',
   packages_dag_inspect_source_records: '源表记录数',
-  packages_dag_inspect_target_records: '目标表记录数'
+  packages_dag_inspect_target_records: '目标表记录数',
+  packages_dag_inspect_ignore_records: '忽略条数',
+  packages_dag_inspect_accept_records: '抽样条数',
+  packages_dag_inspect_diff_records: '差异条数',
+  packages_dag_inspect_diff_records_num: '差异 {num} 条',
+  packages_dag_inspect_target_more_num: '目标多 {num} 条',
+  packages_dag_inspect_target_less_num: '目标少 {num} 条'
 }
