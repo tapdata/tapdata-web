@@ -827,5 +827,11 @@ export default {
   packages_dag_inspect_diff_records: '差异条数',
   packages_dag_inspect_diff_records_num: '差异 {num} 条',
   packages_dag_inspect_target_more_num: '目标多 {num} 条',
-  packages_dag_inspect_target_less_num: '目标少 {num} 条'
+  packages_dag_inspect_target_less_num: '目标少 {num} 条',
+  packages_dag_inspect_source_value: '源表值',
+  packages_dag_inspect_target_value: '目标表值',
+  packages_dag_inspect_row_id: '行 ID',
+  packages_dag_inspect_diff_type_diff: '差异',
+  packages_dag_inspect_diff_type_miss: '目标少',
+  packages_dag_inspect_diff_type_more: '目标多'
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="inspect-wrap p-4 h-100 w-100 overflow-y-auto">
+  <div class="inspect-wrap p-4 h-100 w-100 overflow-y-auto" v-loading="loading">
     <!-- <VTable
       :remoteMethod="remoteMethod"
       :columns="columns"
@@ -51,21 +51,27 @@
 
         <div class="flex justify-content-around align-center flex-1 gap-4 p-3 px-4">
           <div class="flex flex-column gap-2">
-            <span class="flex align-center gap-1"><VIcon>EyeOff</VIcon>{{ $t('packages_dag_inspect_ignore_records') }}</span>
+            <span class="flex align-center gap-1"
+              ><VIcon>EyeOff</VIcon>{{ $t('packages_dag_inspect_ignore_records') }}</span
+            >
             <span class="fw-sub font-color-dark">
               {{ inspect.attrs.ignores }}
             </span>
           </div>
 
           <div class="flex flex-column gap-2">
-            <span class="flex align-center gap-1"><VIcon>Eye</VIcon>{{ $t('packages_dag_inspect_accept_records') }}</span>
+            <span class="flex align-center gap-1"
+              ><VIcon>Eye</VIcon>{{ $t('packages_dag_inspect_accept_records') }}</span
+            >
             <span class="fw-sub font-color-dark">
               {{ inspect.attrs.accepts }}
             </span>
           </div>
 
           <div class="flex flex-column gap-2">
-            <span class="flex align-center gap-1"><VIcon>FileChartColumnIncreasing</VIcon>{{ $t('packages_dag_inspect_diff_records') }}</span>
+            <span class="flex align-center gap-1"
+              ><VIcon>FileChartColumnIncreasing</VIcon>{{ $t('packages_dag_inspect_diff_records') }}</span
+            >
             <span
               class="fw-sub font-color-dark"
               :class="{
@@ -146,6 +152,7 @@ export default {
           width: 100
         }
       ],
+      loading: false,
       detailDialogVisible: false,
       currentInspectId: '',
       inspectList: [],
@@ -237,47 +244,18 @@ export default {
       }
     },
 
-    getResultType(result) {
-      const typeMap = {
-        一致: 'success',
-        错误: 'danger'
-      }
-      return typeMap[result] || 'info'
-    },
-
     handleDetail(row) {
       this.currentInspectId = row.id
       this.pingTime = dayjs(row.pingTime).format('YYYY-MM-DD HH:mm:ss')
       this.detailDialogVisible = true
     },
 
-    handleCheck(row) {
-      if (!row.inspectId) return
-
-      // Navigate to check page to view error details
-      const routeUrl = this.$router.resolve({
-        name: 'dataVerifyResult',
-        params: {
-          id: row.inspectId
-        }
-      })
-      openUrl(routeUrl.href)
-    },
-
     async fetch() {
+      this.loading = true
       const { data } = await this.remoteMethod({ page: { current: 1, size: 10 } })
       this.inspectList = data
-    },
-
-    getPage() {
-      return this.$refs.table?.getPage()
+      this.loading = false
     }
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.inspect-wrap {
-  width: calc(100% - 16px);
-}
-</style>

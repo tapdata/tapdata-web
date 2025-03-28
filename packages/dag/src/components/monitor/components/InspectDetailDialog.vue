@@ -18,7 +18,7 @@
     </template>
     <div class="inspect-detail-container border-top">
       <div class="flex" style="min-height: 400px">
-        <div class="inspection-result-list bg-light p-3 overflow-y-auto">
+        <div class="inspection-result-list bg-light p-3 overflow-y-auto" v-loading="loadingList">
           <div class="flex flex-column gap-3">
             <div
               v-for="(row, index) in inspectList"
@@ -65,7 +65,7 @@
           </div>
         </div>
 
-        <div class="bg-white border-left flex-1 flex flex-column">
+        <div class="bg-white border-left flex-1 flex flex-column" v-loading="loadingList || loadingDetails">
           <div class="flex gap-3 px-4 py-3 border-bottom">
             <span
               @click="onlyShowDiffFields = true"
@@ -94,21 +94,35 @@
             <div class="flex flex-column gap-4">
               <div v-for="(row, index) in rowDiffList" :key="index" class="border rounded-lg overflow-hidden">
                 <div class="flex align-items-center gap-2 p-3 bg-light">
-                  <span class="bg-fill-hover rounded-lg px-2 py-1">行 ID: {{ row.id }}</span>
+                  <span class="bg-fill-hover rounded-lg px-2 py-1">
+                    {{ $t('packages_dag_inspect_row_id') }}: {{ row.id }}
+                  </span>
                   <div class="flex-1"></div>
-                  <ElTag v-if="row.diffType === 'DIFF'" class="rounded-4" size="small" type="danger"> 差异 </ElTag>
+                  <ElTag v-if="row.diffType === 'DIFF'" class="rounded-4" size="small" type="danger">
+                    {{ $t('packages_dag_inspect_diff_type_diff') }}
+                  </ElTag>
 
-                  <ElTag v-if="row.diffType === 'MISS'" class="rounded-4" size="small" type="warning"> 目标少 </ElTag>
+                  <ElTag v-if="row.diffType === 'MISS'" class="rounded-4" size="small" type="warning">
+                    {{ $t('packages_dag_inspect_diff_type_miss') }}
+                  </ElTag>
 
-                  <ElTag v-if="row.diffType === 'MORE'" class="rounded-4" size="small" type="success"> 目标多 </ElTag>
+                  <ElTag v-if="row.diffType === 'MORE'" class="rounded-4" size="small" type="success">
+                    {{ $t('packages_dag_inspect_diff_type_more') }}
+                  </ElTag>
                 </div>
 
                 <table class="w-100 row-diff-table font-color-dark" v-if="row.diffType === 'DIFF'">
                   <thead class="bg-light border-bottom">
                     <tr>
-                      <th class="text-start p-3 text-sm fw-sub text-muted-foreground w-1/4">字段</th>
-                      <th class="text-start p-3 text-sm fw-sub w-[37.5%]">源表值</th>
-                      <th class="text-start p-3 text-sm fw-sub text-destructive w-[37.5%]">目标表值</th>
+                      <th class="text-start p-3 text-sm fw-sub text-muted-foreground w-1/4">
+                        {{ $t('packages_business_verification_result_field_name') }}
+                      </th>
+                      <th class="text-start p-3 text-sm fw-sub w-[37.5%]">
+                        {{ $t('packages_dag_inspect_source_value') }}
+                      </th>
+                      <th class="text-start p-3 text-sm fw-sub text-destructive w-[37.5%]">
+                        {{ $t('packages_dag_inspect_target_value') }}
+                      </th>
                     </tr>
                   </thead>
                   <tbody v-if="onlyShowDiffFields">
@@ -170,10 +184,8 @@
 </template>
 
 <script>
-import { inspectApi, inspectResultsApi } from '@tap/api'
 import dayjs from 'dayjs'
 import axios from 'axios'
-import VIcon from '@tap/component/src/base/VIcon.vue'
 
 export default {
   name: 'InspectDetailDialog',
@@ -196,10 +208,9 @@ export default {
   data() {
     return {
       activeTab: 'details',
-      inspectData: {},
-      fieldDetails: [],
       inspectList: [],
       rowDiffList: [],
+      loadingList: false,
       loadingDetails: false,
       currentSelectedRow: null,
       onlyShowDiffFields: true
@@ -210,14 +221,8 @@ export default {
     visible(val) {
       if (val && this.inspectId) {
         this.fetchDiffList()
-        // this.fetchInspectData()
       }
     }
-    // inspectId(val) {
-    //   if (val && this.visible) {
-    //     this.fetchInspectData()
-    //   }
-    // }
   },
 
   methods: {
@@ -226,41 +231,22 @@ export default {
       return dayjs(time).format('YYYY-MM-DD HH:mm:ss')
     },
 
-    getResultType(result) {
-      if (result === 'passed') return 'success'
-      if (result === 'failed') return 'danger'
-      return 'info'
-    },
-
-    getResultText(result) {
-      if (result === 'passed') return this.$t('packages_dag_components_inspect_result_passed')
-      if (result === 'failed') return this.$t('packages_dag_components_inspect_result_failed')
-      return result
-    },
-
-    getTotalDiffCount(row) {
-      return (row.countMiss || 0) + (row.countMore || 0) + (row.countDiff || 0)
-    },
-
     handleClose() {
       this.$emit('update:visible', false)
       this.resetData()
     },
 
     resetData() {
-      this.inspectData = {}
-      this.fieldDetails = []
       this.activeTab = 'details'
       this.currentSelectedRow = null
     },
 
     async fetchDiffList() {
-      // GET {{url}}/task-inspect-histories/67e4c244e6f5d172f002db2e/results/group-by-table?access_token={{token}}
+      this.loadingList = true
       const data = await axios.get(`/api/task-inspect-histories/${this.inspectId}/results/group-by-table`)
-
+      this.loadingList = false
       this.inspectList = data?.items || []
 
-      // Select the first item by default if available
       if (this.inspectList.length > 0) {
         this.currentSelectedRow = this.inspectList[0]
         this.fetchTableDiff(this.inspectList[0].sourceTable)
@@ -273,7 +259,6 @@ export default {
       this.loadingDetails = true
 
       try {
-        // Fetch inspect info from the HTTP API using filter
         const { items = [] } = await axios.get(`/api/task-inspect-histories/${this.inspectId}/results`, {
           params: {
             filter: JSON.stringify({
@@ -294,96 +279,12 @@ export default {
           }
           return item
         })
-        // this.inspectList = inspectRes?.items || []
-        // const inspect = inspectRes?.items?.[0] || {}
-        // const inspectResult = inspect.InspectResult || {}
-
-        // Set basic inspect data
-        // this.inspectData = {
-        //   ...inspect,
-        //   sourceName: inspect.source?.name || '-',
-        //   sourceConnectionName: inspect.source?.connectionName || '-',
-        //   targetName: inspect.target?.name || '-',
-        //   targetConnectionName: inspect.target?.connectionName || '-',
-        //   verifyCount: 0,
-        //   diffCount: 0,
-        //   sourceTotal: 0,
-        //   targetTotal: 0
-        // }
-
-        // // If we have a result ID, fetch the detailed result
-        // if (inspectResult.id) {
-        //   const resultRes = await inspectResultsApi.get({
-        //     filter: JSON.stringify({
-        //       where: {
-        //         id: inspectResult.id
-        //       }
-        //     })
-        //   })
-
-        //   const result = resultRes?.items?.[0] || {}
-
-        //   // Update inspect data with result information
-        //   this.inspectData = {
-        //     ...this.inspectData,
-        //     ...result,
-        //     verifyCount: result.verify_count || 0,
-        //     diffCount: result.diff_count || 0,
-        //     sourceTotal: result.source_total || 0,
-        //     targetTotal: result.target_total || 0
-        //   }
-
-        //   // Get field details if available
-        //   if (result.stats && result.stats.length > 0) {
-        //     this.fieldDetails = this.processFieldDetails(result.stats)
-        //   }
-        // }
       } catch (error) {
         console.error('Failed to fetch inspect details:', error)
         this.$message.error(this.$t('packages_dag_inspect_fetch_error'))
       } finally {
         this.loadingDetails = false
       }
-    },
-
-    processFieldDetails(stats) {
-      const details = []
-
-      if (!stats || !stats.length) return details
-
-      // Process stats to extract field differences
-      stats.forEach(stat => {
-        if (stat.differences && Array.isArray(stat.differences)) {
-          stat.differences.forEach(diff => {
-            details.push({
-              sourceField: diff.sourceField || diff.source_field || '-',
-              sourceValue: JSON.stringify(diff.sourceValue || diff.source_value || '-'),
-              targetField: diff.targetField || diff.target_field || '-',
-              targetValue: JSON.stringify(diff.targetValue || diff.target_value || '-')
-            })
-          })
-        } else if (stat.source_values && stat.target_values) {
-          // Handle key-value format differences
-          const sourceValues = stat.source_values || {}
-          const targetValues = stat.target_values || {}
-
-          // Combine all keys from both source and target
-          const allKeys = [...new Set([...Object.keys(sourceValues), ...Object.keys(targetValues)])]
-
-          allKeys.forEach(key => {
-            if (sourceValues[key] !== targetValues[key]) {
-              details.push({
-                sourceField: key,
-                sourceValue: JSON.stringify(sourceValues[key] || '-'),
-                targetField: key,
-                targetValue: JSON.stringify(targetValues[key] || '-')
-              })
-            }
-          })
-        }
-      })
-
-      return details
     },
 
     handleRowClick(row) {

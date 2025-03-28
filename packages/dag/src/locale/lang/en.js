@@ -882,5 +882,11 @@ export default {
   packages_dag_inspect_diff_records: 'Differences',
   packages_dag_inspect_diff_records_num: 'Diff: {num}',
   packages_dag_inspect_target_more_num: 'More: {num}',
-  packages_dag_inspect_target_less_num: 'Less: {num}'
+  packages_dag_inspect_target_less_num: 'Less: {num}',
+  packages_dag_inspect_source_value: 'Source Value',
+  packages_dag_inspect_target_value: 'Target Value',
+  packages_dag_inspect_row_id: 'Row ID',
+  packages_dag_inspect_diff_type_diff: 'Diff',
+  packages_dag_inspect_diff_type_miss: 'Miss',
+  packages_dag_inspect_diff_type_more: 'More'
 }
