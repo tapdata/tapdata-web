@@ -108,16 +108,15 @@
 
 <script>
 import i18n from '@tap/i18n'
-import { VTable, VEmpty } from '@tap/component'
+import { VEmpty } from '@tap/component'
 import { taskInspectApi } from '@tap/api'
-import { openUrl } from '@tap/shared'
 import InspectDetailDialog from './InspectDetailDialog.vue'
 import dayjs from 'dayjs'
 
 export default {
   name: 'TaskInspect',
 
-  components: { VTable, VEmpty, InspectDetailDialog },
+  components: { VEmpty, InspectDetailDialog },
 
   props: {
     dataflow: {
@@ -231,14 +230,11 @@ export default {
               data.items?.map(item => {
                 return {
                   id: item.id,
-                  type: this.getInspectTypeName(item.inspectMethod || item.type),
+                  type: item.type,
                   beginTime: dayjs(item.beginTime).format('YYYY-MM-DD HH:mm:ss'),
                   endTime: item.endTime ? dayjs(item.endTime).format('YYYY-MM-DD HH:mm:ss') : '',
                   ...this.makeStatus(item.status),
                   attrs: item.attrs
-                  // taskId: item.taskId,
-                  // inspectId: item.id,
-                  // rawData: item
                 }
               }) || []
           }
@@ -247,18 +243,6 @@ export default {
           console.error('Failed to fetch inspection results:', err)
           return { total: 0, data: [] }
         })
-    },
-
-    getInspectTypeName(type) {
-      const typeMap = {
-        row_count: i18n.t('packages_dag_components_inspect_type_count'),
-        hash: i18n.t('packages_dag_components_inspect_type_hash'),
-        field: i18n.t('packages_dag_components_inspect_type_field'),
-        jointField: i18n.t('packages_dag_components_inspect_type_jointField'),
-        full: i18n.t('packages_dag_components_inspect_type_full'),
-        increment: i18n.t('packages_dag_components_inspect_type_increment')
-      }
-      return typeMap[type] || type
     },
 
     makeStatus(status) {
@@ -291,6 +275,9 @@ export default {
     async fetch() {
       this.loading = true
       const { data } = await this.remoteMethod({ page: { current: 1, size: 10 } })
+
+      data.sort((a, b) => dayjs(b.beginTime).diff(dayjs(a.beginTime)))
+
       this.inspectList = data
       this.loading = false
     },
