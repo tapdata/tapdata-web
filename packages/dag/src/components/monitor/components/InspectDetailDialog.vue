@@ -18,7 +18,7 @@
     </template>
     <div class="inspect-detail-container border-top">
       <div class="flex" style="min-height: 400px">
-        <div class="inspection-result-list bg-light p-3">
+        <div class="inspection-result-list bg-light p-3 overflow-y-auto">
           <div class="flex flex-column gap-3">
             <div
               v-for="(row, index) in inspectList"
@@ -32,7 +32,7 @@
                   <VIcon :size="20">table</VIcon>
                   <div class="flex flex-column">
                     <span class="">{{ row.targetTable || '-' }}</span>
-                    <div class="font-color-light position-relative">
+                    <div v-if="row.sourceTable !== row.targetTable" class="font-color-light position-relative">
                       <VIcon style="transform: translateY(-25%)">ArrowToTopRightLinear</VIcon>
                       <span class="fs-7">{{ row.sourceTable || '-' }}</span>
                     </div>
@@ -51,33 +51,6 @@
 
                 <ElTag v-if="row.countMore > 0" class="rounded-4" size="small" type="success"> 目标多 1 条 </ElTag>
               </div>
-
-              <!-- <div class="inspection-card-content">
-                <div class="inspection-card-metrics">
-                  <div class="inspection-card-metric">
-                    <span class="metric-label">{{ $t('packages_dag_inspect_count_verified') }}</span>
-                    <span class="metric-value">{{ row.verifyCount || '0' }}</span>
-                  </div>
-                  <div class="inspection-card-metric">
-                    <span class="metric-label">{{ $t('packages_dag_inspect_count_missing') }}</span>
-                    <span class="metric-value" :class="{ 'text-danger': row.countMiss > 0 }">{{
-                      row.countMiss || '0'
-                    }}</span>
-                  </div>
-                  <div class="inspection-card-metric">
-                    <span class="metric-label">{{ $t('packages_dag_inspect_count_extra') }}</span>
-                    <span class="metric-value" :class="{ 'text-danger': row.countMore > 0 }">{{
-                      row.countMore || '0'
-                    }}</span>
-                  </div>
-                  <div class="inspection-card-metric">
-                    <span class="metric-label">{{ $t('packages_dag_inspect_count_diff') }}</span>
-                    <span class="metric-value" :class="{ 'text-danger': row.countDiff > 0 }">{{
-                      row.countDiff || '0'
-                    }}</span>
-                  </div>
-                </div>
-              </div> -->
             </div>
           </div>
         </div>
@@ -129,23 +102,31 @@
                     </tr>
                   </thead>
                   <tbody v-if="onlyShowDiffFields">
-                    <tr class="border-bottom" v-for="(targetField, i) in row.diffFields" :key="targetField">
+                    <tr
+                      class="border-bottom hover:bg-light"
+                      v-for="(targetField, i) in row.diffFields"
+                      :key="targetField"
+                    >
                       <td class="p-3 text-sm text-muted-foreground">{{ targetField }}</td>
                       <td class="p-3 text-sm font-medium">
                         <span>{{ row.source[row.diffFieldsMap[targetField]] }}</span>
                       </td>
-                      <td class="p-3 text-sm font-medium text-danger">
+                      <td class="p-3 text-sm font-medium color-danger">
                         <span>{{ row.target[targetField] }}</span>
                       </td>
                     </tr>
                   </tbody>
                   <tbody v-else>
-                    <tr class="border-bottom" v-for="(targetField, i) in row.targetFields" :key="targetField">
+                    <tr
+                      class="border-bottom hover:bg-light"
+                      v-for="(targetField, i) in row.targetFields"
+                      :key="targetField"
+                    >
                       <td class="p-3 text-sm text-muted-foreground">{{ targetField }}</td>
                       <td class="p-3 text-sm font-medium">
                         <span>{{ row.source[row.sourceFields[i]] }}</span>
                       </td>
-                      <td class="p-3 text-sm font-medium" :class="{ 'text-danger': row.diffFieldsMap[targetField] }">
+                      <td class="p-3 text-sm font-medium" :class="{ 'color-danger': row.diffFieldsMap[targetField] }">
                         <span>{{ row.target[targetField] }}</span>
                       </td>
                     </tr>
@@ -156,7 +137,7 @@
                   <div
                     v-for="(value, key) in row.source || row.target"
                     :key="key"
-                    class="flex border-bottom last:border-0"
+                    class="flex border-bottom last:border-0 hover:bg-light"
                   >
                     <div class="flex-1 p-3 text-sm text-muted-foreground">{{ key }}</div>
                     <div class="flex-1 p-3 text-sm font-medium">
