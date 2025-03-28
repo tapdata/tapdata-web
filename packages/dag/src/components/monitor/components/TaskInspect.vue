@@ -164,6 +164,9 @@ export default {
     currentTab(val) {
       if (val === 'inspect') {
         this.fetch()
+        this.startLoop()
+      } else {
+        this.stopLoop()
       }
     }
   },
@@ -172,7 +175,23 @@ export default {
     this.fetch()
   },
 
+  beforeDestroy() {
+    this.stopLoop()
+  },
+
   methods: {
+    startLoop() {
+      this.loop(this.fetch, 5000)
+    },
+
+    stopLoop() {
+      clearInterval(this.timeout)
+    },
+
+    loop(fn, interval) {
+      this.timeout = setInterval(fn, interval)
+    },
+
     remoteMethod({ page }) {
       const { current, size } = page
       const { id: taskId } = this.dataflow || {}
