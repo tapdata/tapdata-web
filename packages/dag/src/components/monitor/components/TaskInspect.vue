@@ -1,6 +1,6 @@
 <template>
-  <div class="inspect-wrap py-4 pl-4 h-100 w-100">
-    <VTable
+  <div class="inspect-wrap p-4 h-100 w-100 overflow-y-auto">
+    <!-- <VTable
       :remoteMethod="remoteMethod"
       :columns="columns"
       :page-options="{
@@ -20,10 +20,72 @@
           </ElButton>
         </div>
       </template>
-    </VTable>
+    </VTable> -->
+
+    <div class="flex flex-column gap-4">
+      <div
+        v-for="inspect in inspectList"
+        :key="inspect.id"
+        class="flex align-items-stretch border rounded-lg overflow-hidden cursor-pointer hover:bg-light"
+        @click="handleDetail(inspect)"
+      >
+        <div class="flex flex-column align-center gap-2 bg-light p-3 border-end" style="min-width: 150px">
+          <div class="rounded-lg px-2 py-1 bg-fill-hover">{{ inspect.type }}</div>
+          <ElTag :type="inspect.statusType" size="small">{{ inspect.status }}</ElTag>
+        </div>
+
+        <div class="flex justify-content-around align-center flex-1 gap-4 p-3 px-4 border-end">
+          <div class="flex flex-column gap-2" style="min-width: 150px">
+            <span class="flex align-center gap-1"><VIcon>time</VIcon>{{ $t('packages_dag_inspect_start_time') }} </span>
+            <span class="fw-sub font-color-dark">
+              {{ inspect.beginTime }}
+            </span>
+          </div>
+          <div class="flex flex-column gap-2" style="min-width: 150px">
+            <span class="flex align-center gap-1"><VIcon>time</VIcon>{{ $t('packages_dag_inspect_end_time') }} </span>
+            <span class="fw-sub font-color-dark">
+              {{ inspect.endTime || '-' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="flex justify-content-around align-center flex-1 gap-4 p-3 px-4">
+          <div class="flex flex-column gap-2">
+            <span class="flex align-center gap-1"><VIcon>EyeOff</VIcon>忽略条数</span>
+            <span class="fw-sub font-color-dark">
+              {{ inspect.attrs.ignores }}
+            </span>
+          </div>
+
+          <div class="flex flex-column gap-2">
+            <span class="flex align-center gap-1"><VIcon>Eye</VIcon>抽样条数</span>
+            <span class="fw-sub font-color-dark">
+              {{ inspect.attrs.accepts }}
+            </span>
+          </div>
+
+          <div class="flex flex-column gap-2">
+            <span class="flex align-center gap-1"><VIcon>FileChartColumnIncreasing</VIcon>差异条数</span>
+            <span
+              class="fw-sub font-color-dark"
+              :class="{
+                'color-danger': inspect.attrs.differences > 0
+              }"
+            >
+              {{ inspect.attrs.differences }}
+            </span>
+          </div>
+
+          <ElButton type="text">
+            {{ $t('public_button_details') }}
+            <VIcon>arrow-right</VIcon>
+          </ElButton>
+        </div>
+      </div>
+    </div>
 
     <!-- Inspect detail dialog -->
-    <InspectDetailDialog :visible.sync="detailDialogVisible" :inspectId="currentInspectId" />
+    <InspectDetailDialog :visible.sync="detailDialogVisible" :inspectId="currentInspectId" :pingTime="pingTime" />
   </div>
 </template>
 
@@ -85,7 +147,9 @@ export default {
         }
       ],
       detailDialogVisible: false,
-      currentInspectId: ''
+      currentInspectId: '',
+      inspectList: [],
+      pingTime: ''
     }
   },
 
@@ -95,6 +159,10 @@ export default {
         this.fetch()
       }
     }
+  },
+
+  created() {
+    this.fetch()
   },
 
   methods: {
@@ -121,7 +189,8 @@ export default {
                   type: this.getInspectTypeName(item.inspectMethod || item.type),
                   beginTime: dayjs(item.beginTime).format('YYYY-MM-DD HH:mm:ss'),
                   endTime: item.endTime ? dayjs(item.endTime).format('YYYY-MM-DD HH:mm:ss') : '',
-                  ...this.makeStatus(item.status)
+                  ...this.makeStatus(item.status),
+                  attrs: item.attrs
                   // taskId: item.taskId,
                   // inspectId: item.id,
                   // rawData: item
@@ -178,6 +247,7 @@ export default {
 
     handleDetail(row) {
       this.currentInspectId = row.id
+      this.pingTime = dayjs(row.pingTime).format('YYYY-MM-DD HH:mm:ss')
       this.detailDialogVisible = true
     },
 
@@ -194,8 +264,9 @@ export default {
       openUrl(routeUrl.href)
     },
 
-    fetch() {
-      this.$refs.table?.fetch(...arguments)
+    async fetch() {
+      const { data } = await this.remoteMethod({ page: { current: 1, size: 10 } })
+      this.inspectList = data
     },
 
     getPage() {

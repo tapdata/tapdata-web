@@ -177,9 +177,7 @@
     <DataValidationDialog
       :task-id="dataflow.id"
       :visible="openValidation"
-      :validation-settings="validationSettings"
       @update:visible="openValidation = $event"
-      @save="handleSaveValidation"
     ></DataValidationDialog>
   </header>
 </template>

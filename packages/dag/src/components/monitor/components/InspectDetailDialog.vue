@@ -1,6 +1,7 @@
 <template>
   <ElDialog
-    :visible.sync="visible"
+    :visible="visible"
+    @update:visible="$emit('update:visible', $event)"
     :title="$t('packages_dag_inspect_detail_title')"
     width="80%"
     append-to-body
@@ -9,11 +10,10 @@
     @close="handleClose"
   >
     <template #title>
-      <div class="flex align-items-center gap-2">
+      <div class="flex align-items-center">
         <span>{{ $t('packages_dag_inspect_detail_title') }}</span>
-        <span class="text-muted fs-8"
-          >{{ $t('packages_dag_inspect_last_verify_time') }}: {{ formatTime(inspectData.lastStartTime) }}</span
-        >
+        <VIcon class="text-muted ml-4 mr-1" :size="14">time</VIcon>
+        <span class="text-muted fs-8">{{ $t('packages_dag_inspect_last_verify_time') }}: {{ pingTime }}</span>
       </div>
     </template>
     <div class="inspect-detail-container border-top">
@@ -102,12 +102,17 @@
                     </tr>
                   </thead>
                   <tbody v-if="onlyShowDiffFields">
-                    <tr
-                      class="border-bottom hover:bg-light"
-                      v-for="(targetField, i) in row.diffFields"
-                      :key="targetField"
-                    >
-                      <td class="p-3 text-sm text-muted-foreground">{{ targetField }}</td>
+                    <tr class="border-bottom hover:bg-light" v-for="targetField in row.diffFields" :key="targetField">
+                      <td class="p-3 text-sm text-muted-foreground">
+                        {{ targetField }}
+                        <div
+                          v-if="row.diffFieldsMap[targetField] !== targetField"
+                          class="flex align-center font-color-sslight"
+                        >
+                          <VIcon style="transform: translateY(-25%)">ArrowToTopRightLinear</VIcon>
+                          <span class="fs-7">{{ row.diffFieldsMap[targetField] }}</span>
+                        </div>
+                      </td>
                       <td class="p-3 text-sm font-medium">
                         <span>{{ row.source[row.diffFieldsMap[targetField]] }}</span>
                       </td>
@@ -145,10 +150,6 @@
                     </div>
                   </div>
                 </div>
-
-                <!-- <div v-else-if="row.diffType === 'MORE'">
-                  <div class="flex"></div>
-                </div> -->
               </div>
             </div>
           </div>
@@ -173,6 +174,10 @@ export default {
       default: false
     },
     inspectId: {
+      type: String,
+      default: ''
+    },
+    pingTime: {
       type: String,
       default: ''
     }
