@@ -935,7 +935,9 @@ export default {
                 let filterValue = value.filter(v => fieldMap[v])
 
                 if (value.length !== filterValue.length) {
-                  nodeData.updateConditionFields = filterValue.length ? filterValue : defaultList
+                  nodeData.updateConditionFields = filterValue.length
+                    ? filterValue
+                    : defaultList.map(item => item.value)
                   $values.updateConditionFields = nodeData.updateConditionFields
                 }
               }

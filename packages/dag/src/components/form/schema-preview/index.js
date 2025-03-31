@@ -18,11 +18,15 @@ export const SchemaPreview = defineComponent({
     const treeData = ref([])
     const loading = ref(false)
     const isTreeView = ref(true)
+    const isMultiIndex = ref(false)
+    const isMultiUniqueIndex = ref(false)
+    const isMultiForeignKey = ref(false)
     const isTarget = form.values.type === 'table' && !!form.values.$inputs.length
     const isSource = form.values.type === 'table' && !form.values.$inputs.length
     const readonly = ref(props.disabled || root.$store.state.dataflow?.stateIsReadonly || !isTarget)
     let fieldChangeRules = form.values.fieldChangeRules || []
     let columnsMap = {}
+    let constraintMap = {}
     let partitionFieldMap = {}
     const createTree = data => {
       const root = { children: [] }
@@ -61,7 +65,7 @@ export const SchemaPreview = defineComponent({
       fieldRef.value.loading = fieldRef.value.displayName !== 'VoidField'
       const params = {
         nodeId: form.values.id,
-        fields: ['original_name', 'fields', 'qualified_name', 'name', 'indices'],
+        fields: ['original_name', 'fields', 'qualified_name', 'name', 'indices', 'constraints'],
         page: 1,
         pageSize: 20
       }
@@ -72,12 +76,54 @@ export const SchemaPreview = defineComponent({
       tableName.value = schema.name || form.values.tableName || form.values.name
       emit('update-table-name', tableName.value)
 
-      let { indices = [], fields = [], partitionInfo: { partitionFields = [] } = { partitionFields: [] } } = schema
+      let {
+        constraints = [],
+        indices = [],
+        fields = [],
+        partitionInfo: { partitionFields = [] } = { partitionFields: [] }
+      } = schema
+
+      indices = indices.filter(item => item.primaryKey !== true && item.primaryKey !== 'true')
+
+      let indexCount = 0
+      let uniqueIndexCount = 0
+      let foreignKeyCount = 0
+
+      const pkMap = fields.reduce((map, field) => {
+        if (field.primary_key_position > 0) {
+          map[field.field_name] = true
+        }
+        return map
+      }, {})
 
       columnsMap = indices.reduce((map, item, index) => {
+        if (item.unique) {
+          uniqueIndexCount++
+        } else {
+          indexCount++
+        }
         item.columns.forEach(({ columnName }) => (map[columnName] = [item.indexName, index, item.unique]))
         return map
       }, {})
+
+      constraintMap = constraints.reduce((map, item, index) => {
+        if (item.type === 'FOREIGN_KEY') {
+          let temp = 0
+          item.mappingFields.forEach(({ foreignKey, referenceKey }) => {
+            map[foreignKey] = [item.name, index, `${item.referencesTableName}.${referenceKey}`]
+            if (!pkMap[foreignKey]) {
+              temp++
+            }
+          })
+          if (temp > 0) foreignKeyCount++
+        }
+
+        return map
+      }, {})
+
+      isMultiIndex.value = indexCount > 1
+      isMultiUniqueIndex.value = uniqueIndexCount > 1
+      isMultiForeignKey.value = foreignKeyCount > 1
 
       partitionFields.reduce((map, item) => {
         map[item.name] = true
@@ -94,10 +140,15 @@ export const SchemaPreview = defineComponent({
             value: field.field_name,
             isPrimaryKey: field.isPrimaryKey,
             indicesUnique: field.indicesUnique,
+            isForeignKey: constraintMap[field.field_name],
+            constraints: constraintMap[field.field_name],
             type: field.data_type,
             tapType: field.tapType,
             source: field.source,
-            dataType: field.data_type.replace(/\(.+\)/, '')
+            dataType: field.data_type.replace(/\(.+\)/, ''),
+            isMultiIndex: isMultiIndex.value,
+            isMultiUniqueIndex: isMultiUniqueIndex.value,
+            isMultiForeignKey: isMultiForeignKey.value
           }
         })
 
@@ -164,10 +215,39 @@ export const SchemaPreview = defineComponent({
       let icon
 
       if (data.isPrimaryKey) {
-        icon = (
+        icon = !data.isForeignKey ? (
           <VIcon size="12" class="field-icon position-absolute">
             key
           </VIcon>
+        ) : (
+          <ElTooltip
+            placement="top"
+            content={i18n.t('public_foreign_key_tip', { name: data.constraints[0], val: data.constraints[2] })}
+            open-delay={200}
+            transition="none"
+          >
+            <VIcon size="12" class="field-icon position-absolute">
+              key
+            </VIcon>
+          </ElTooltip>
+        )
+      } else if (data.isForeignKey) {
+        const indexStr = String(data.constraints[1])
+        icon = (
+          <ElTooltip
+            placement="top"
+            content={i18n.t('public_foreign_key_tip', { name: data.constraints[0], val: data.constraints[2] })}
+            open-delay={200}
+            transition="none"
+          >
+            <span class="flex align-center field-icon position-absolute">
+              <VIcon size="14">share</VIcon>
+              <span
+                style={`--index: '${indexStr}';--zoom: ${1 - indexStr.length * 0.2};`}
+                class="fingerprint-sub foreign-sub"
+              ></span>
+            </span>
+          </ElTooltip>
         )
       } else if (data.indicesUnique) {
         const indexStr = String(data.indicesUnique[1])
@@ -182,10 +262,10 @@ export const SchemaPreview = defineComponent({
             transition="none"
           >
             <span class="flex align-center field-icon position-absolute">
-              <VIcon size="12">fingerprint</VIcon>
+              <VIcon size="14">{data.indicesUnique[2] ? 'fingerprint' : 'sort-descending'}</VIcon>
               <span
                 style={`--index: '${indexStr}';--zoom: ${1 - indexStr.length * 0.2};`}
-                class="fingerprint-sub"
+                class={['fingerprint-sub', data.indicesUnique[2] ? 'unique-sub' : 'index-sub']}
               ></span>
             </span>
           </ElTooltip>
@@ -283,7 +363,16 @@ export const SchemaPreview = defineComponent({
             </el-tooltip>
           </span>
         </ElDivider>
-        <div class="flex justify-content-center">
+        <div
+          class={[
+            'flex justify-content-center',
+            {
+              'hide-index-sub': !isMultiIndex.value,
+              'hide-unique-sub': !isMultiUniqueIndex.value,
+              'hide-foreign-sub': !isMultiForeignKey.value
+            }
+          ]}
+        >
           {isTreeView.value ? (
             <div class="schema-card rounded-lg inline-block overflow-hidden shadow-sm">
               <div class="schema-card-header border-bottom px-3 py-2 fs-7 lh-base text-center">{tableName.value}</div>
