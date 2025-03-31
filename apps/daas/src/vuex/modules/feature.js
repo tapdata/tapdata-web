@@ -1,5 +1,4 @@
 import { licensesApi } from '@tap/api'
-import { SettingList } from '@/router/menu'
 
 const MENU_FEATURE_MAP = {
   dataService: 'dataService',

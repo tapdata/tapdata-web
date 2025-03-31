@@ -48,17 +48,15 @@
                     })
                   }}
                 </ElTag>
-
+                <ElTag v-if="row.countMore > 0" class="rounded-4" size="small" type="warning">
+                  {{ $t('packages_dag_inspect_target_more_num', { num: row.countMore }) }}
+                </ElTag>
                 <ElTag v-if="row.countMiss > 0" class="rounded-4 tag-amber" size="small">
                   {{
                     $t('packages_dag_inspect_target_less_num', {
                       num: row.countMiss
                     })
                   }}
-                </ElTag>
-
-                <ElTag v-if="row.countMore > 0" class="rounded-4" size="small" type="warning">
-                  {{ $t('packages_dag_inspect_target_more_num', { num: row.countMore }) }}
                 </ElTag>
               </div>
             </div>

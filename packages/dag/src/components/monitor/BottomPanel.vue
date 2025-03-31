@@ -50,7 +50,7 @@
           ></RelationList>
         </ElTabPane>
 
-        <ElTabPane :label="$t('public_validation_record')" name="inspect">
+        <ElTabPane v-if="isDaas && !isCommunity" :label="$t('public_validation_record')" name="inspect">
           <TaskInspect
             v-if="currentTab === 'inspect'"
             v-bind="$attrs"
@@ -100,6 +100,8 @@ export default {
 
   data() {
     return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isCommunity: process.env.VUE_APP_MODE === 'community',
       currentTab: 'milestone',
       name: this.activeNode?.name,
       relationCount: 0,

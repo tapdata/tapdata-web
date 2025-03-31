@@ -162,12 +162,14 @@
           <VIcon size="18">bug-outlined</VIcon>
         </button>
       </ElTooltip>
-      <VDivider class="mx-3" vertical inset></VDivider>
-      <ElTooltip transition="tooltip-fade-in" :content="$t('public_data_validation')">
-        <button class="icon-btn" @click="openValidation = true">
-          <VIcon size="18">data-scan</VIcon>
-        </button>
-      </ElTooltip>
+      <template v-if="isDaas && !isCommunity">
+        <VDivider class="mx-3" vertical inset></VDivider>
+        <ElTooltip transition="tooltip-fade-in" :content="$t('public_data_validation')">
+          <button class="icon-btn" @click="openValidation = true">
+            <VIcon size="18">data-scan</VIcon>
+          </button>
+        </ElTooltip>
+      </template>
     </div>
     <!--复制dag查看不显示-->
     <div class="flex align-center flex-grow-1">
@@ -314,6 +316,7 @@ export default {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
     return {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isCommunity: process.env.VUE_APP_MODE === 'community',
       commandCode: isMacOs ? '⌘' : 'Ctrl',
       optionCode: isMacOs ? 'Option' : 'Alt',
       name: '',
