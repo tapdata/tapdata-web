@@ -53,6 +53,75 @@ const DefineFieldSelect = defineComponent({
       })
     })
 
+    const renderIcon = option => {
+      if (option.isPrimaryKey) {
+        return option.isForeignKey ? (
+          <ElTooltip
+            placement="top"
+            content={i18n.t('public_foreign_key_tip', { name: option.constraints[0], val: option.constraints[2] })}
+            open-delay={200}
+            transition="none"
+          >
+            <VIcon size="12" class="text-warning">
+              key
+            </VIcon>
+          </ElTooltip>
+        ) : (
+          <VIcon size="12" class="text-warning">
+            key
+          </VIcon>
+        )
+      }
+
+      if (option.isForeignKey) {
+        return (
+          <ElTooltip
+            placement="top"
+            content={i18n.t('public_foreign_key_tip', { name: option.constraints[0], val: option.constraints[2] })}
+            open-delay={200}
+            transition="none"
+          >
+            <span class="flex align-center">
+              <VIcon size="14">share</VIcon>
+              {option.isMultiForeignKey && (
+                <span style={`--index: '${option.constraints[1]}';`} class="fingerprint-sub foreign-sub"></span>
+              )}
+            </span>
+          </ElTooltip>
+        )
+      }
+
+      if (option.indicesUnique && Array.isArray(option.indicesUnique)) {
+        return (
+          <ElTooltip
+            placement="top"
+            content={
+              `${i18n.t(option.indicesUnique[2] ? 'public_unique_index' : 'public_normal_index')}: ` +
+              option.indicesUnique[0]
+            }
+            open-delay={200}
+            transition="none"
+          >
+            {option.indicesUnique[2] ? (
+              <span class="flex align-center">
+                <VIcon size="14">fingerprint</VIcon>
+                {option.isMultiUniqueIndex && (
+                  <span style={`--index: '${option.indicesUnique[1]}';`} class="fingerprint-sub unique-sub"></span>
+                )}
+              </span>
+            ) : (
+              <span class="flex align-center">
+                <VIcon size="14">sort-descending</VIcon>
+                {option.isMultiIndex && (
+                  <span style={`--index: '${option.indicesUnique[1]}';`} class="fingerprint-sub index-sub"></span>
+                )}
+              </span>
+            )}
+          </ElTooltip>
+        )
+      }
+    }
+
     return () => {
       const newAttrs = { ...attrs }
       if (
@@ -77,26 +146,7 @@ const DefineFieldSelect = defineComponent({
                   </VIcon>
                 )}
                 {option[itemLabel]}
-                {option.isPrimaryKey ? (
-                  <VIcon size="12" class="text-warning">
-                    key
-                  </VIcon>
-                ) : option.indicesUnique && Array.isArray(option.indicesUnique) ? (
-                  <ElTooltip
-                    placement="top"
-                    content={
-                      `${i18n.t(option.indicesUnique[2] ? 'public_unique_index' : 'public_normal_index')}: ` +
-                      option.indicesUnique[0]
-                    }
-                    open-delay={200}
-                    transition="none"
-                  >
-                    <span class="flex align-center">
-                      <VIcon size="12">fingerprint</VIcon>
-                      <span style={`--index: '${option.indicesUnique[1]}';`} class="fingerprint-sub"></span>
-                    </span>
-                  </ElTooltip>
-                ) : undefined}
+                {renderIcon(option)}
               </div>
             )
           }}

@@ -371,9 +371,10 @@ export default {
   public_store_type: '存儲類型',
   public_from_db_type: '來源數據庫類型',
   public_sample_size: '抽樣數據量',
-  public_document: '文档',
-  public_array: '数组',
-  public_load_more: '加载更多',
-  public_loading: '拼命加载中',
-  public_load_end: '到底了'
+  public_document: '文檔',
+  public_array: '數組',
+  public_load_more: '加載更多',
+  public_loading: '拼命加載中',
+  public_load_end: '到底了',
+  public_foreign_key_tip: '外鍵 {name} 指向 {val}'
 }

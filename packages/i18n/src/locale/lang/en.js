@@ -380,5 +380,6 @@ export default {
   public_load_end: 'End',
   public_store_type: 'Store Type',
   public_from_db_type: 'From DB Type',
-  public_sample_size: 'Sample Size'
+  public_sample_size: 'Sample Size',
+  public_foreign_key_tip: 'Foreign key {name} to {val}'
 }

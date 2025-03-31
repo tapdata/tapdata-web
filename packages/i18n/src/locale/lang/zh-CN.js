@@ -376,5 +376,6 @@ export default {
   public_array: '数组',
   public_load_more: '加载更多',
   public_loading: '拼命加载中',
-  public_load_end: '到底了'
+  public_load_end: '到底了',
+  public_foreign_key_tip: '外键 {name} 指向 {val}'
 }
