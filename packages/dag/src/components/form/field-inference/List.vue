@@ -10,20 +10,21 @@
       :row-class-name="tableRowClassName"
     >
       <template slot="field_name" slot-scope="scope">
-        <ElTooltip
-          v-if="scope.row.primary_key_position > 0"
-          :disabled="!constraintMap[scope.row.field_name]"
-          :content="
-            constraintMap[scope.row.field_name]
-              ? `${$t('public_foreign_key_tip', {
-                  name: constraintMap[scope.row.field_name][0],
-                  val: constraintMap[scope.row.field_name][2]
-                })}`
-              : ''
-          "
-        >
-          <VIcon size="12" class="text-warning align-middle">key</VIcon>
-        </ElTooltip>
+        <template v-if="scope.row.primary_key_position > 0">
+          <ElTooltip
+            v-if="constraintMap[scope.row.field_name]"
+            placement="top"
+            :content="
+              $t('public_foreign_key_tip', {
+                name: constraintMap[scope.row.field_name][0],
+                val: constraintMap[scope.row.field_name][2]
+              })
+            "
+          >
+            <VIcon size="12" class="text-warning align-middle">key</VIcon>
+          </ElTooltip>
+          <VIcon v-else size="12" class="text-warning align-middle">key</VIcon>
+        </template>
         <ElTooltip
           v-else-if="constraintMap[scope.row.field_name]"
           placement="top"
