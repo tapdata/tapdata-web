@@ -77,8 +77,8 @@
               <VIcon size="16" class="color-primary">info</VIcon>
             </ElTooltip>
           </div>
-
-          <ElSelect
+          <!-- formily 上下文使用 dataSource 属性 -->
+          <FieldSelect
             v-model="updateList"
             :disabled="navLoading || disabled"
             allowCreate
@@ -86,16 +86,10 @@
             filterable
             :placeholder="$t('public_select_option_default')"
             :class="['update-list-select', { error: isErrorSelect }]"
+            :dataSource="fieldOptions"
             @visible-change="handleVisibleChange"
             @remove-tag="handleRemoveTag"
-          >
-            <ElOption v-for="(fItem, fIndex) in selected.fields" :key="fIndex" :value="fItem.field_name">
-              <div class="flex align-center">
-                {{ fItem.field_name }}
-                <VIcon v-if="fItem.primary_key_position > 0" size="12" class="text-warning ml-1"> key </VIcon>
-              </div>
-            </ElOption>
-          </ElSelect>
+          />
         </div>
         <div class="flex-fill flex flex-column bg-white mt-4 rounded-4">
           <div class="flex align-items-center p-2 font-color-dark">
@@ -145,6 +139,7 @@ import noData from '@tap/assets/images/noData.png'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 import { getCanUseDataTypes, getMatchedDataTypeLevel } from '@tap/dag/src/util'
 import { metadataInstancesApi, databaseTypesApi } from '@tap/api'
+import { FieldSelect, mapFieldsData } from '@tap/form'
 
 import mixins from './mixins'
 import List from './List'
@@ -153,7 +148,7 @@ import Dialog from './Dialog'
 export default {
   name: 'FieldInference',
 
-  components: { OverflowTooltip, List, Dialog },
+  components: { OverflowTooltip, List, Dialog, FieldSelect },
 
   mixins: [mixins],
 
@@ -204,7 +199,8 @@ export default {
       ],
       transformExNum: 0,
       updateExNum: 0,
-      dataTypesJson: {}
+      dataTypesJson: {},
+      fieldOptions: []
     }
   },
 
@@ -328,6 +324,10 @@ export default {
       this.selected = Object.assign({}, item, { fields, findPossibleDataTypes })
       this.updateList = this.updateConditionFieldMap[this.selected.name] || []
       this.fieldsLoading = false
+
+      const { fields: newFields } = mapFieldsData(this.selected)
+      this.fieldOptions = newFields
+      this.selected.fields = newFields
     },
 
     handleSelect(index = 0) {

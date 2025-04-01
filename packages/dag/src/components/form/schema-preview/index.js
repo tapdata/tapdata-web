@@ -1,6 +1,6 @@
 import { defineComponent, ref, onBeforeUnmount, getCurrentInstance } from '@vue/composition-api'
 import i18n from '@tap/i18n'
-import { useForm, useField } from '@tap/form'
+import { useForm, useField, mapFieldsData } from '@tap/form'
 import { IconButton } from '@tap/component'
 import { metadataInstancesApi, databaseTypesApi, taskApi } from '@tap/api'
 import { useSchemaEffect } from '../../../hooks/useAfterTaskSaved'
@@ -25,9 +25,6 @@ export const SchemaPreview = defineComponent({
     const isSource = form.values.type === 'table' && !form.values.$inputs.length
     const readonly = ref(props.disabled || root.$store.state.dataflow?.stateIsReadonly || !isTarget)
     let fieldChangeRules = form.values.fieldChangeRules || []
-    let columnsMap = {}
-    let constraintMap = {}
-    let partitionFieldMap = {}
     const createTree = data => {
       const root = { children: [] }
 
@@ -76,81 +73,19 @@ export const SchemaPreview = defineComponent({
       tableName.value = schema.name || form.values.tableName || form.values.name
       emit('update-table-name', tableName.value)
 
-      let {
-        constraints = [],
-        indices = [],
-        fields = [],
-        partitionInfo: { partitionFields = [] } = { partitionFields: [] }
-      } = schema
+      const {
+        isMultiIndex: _isMultiIndex,
+        isMultiUniqueIndex: _isMultiUniqueIndex,
+        isMultiForeignKey: _isMultiForeignKey,
+        fields
+      } = mapFieldsData(schema)
 
-      indices = indices.filter(item => item.primaryKey !== true && item.primaryKey !== 'true')
+      isMultiIndex.value = _isMultiIndex
+      isMultiUniqueIndex.value = _isMultiUniqueIndex
+      isMultiForeignKey.value = _isMultiForeignKey
 
-      let indexCount = 0
-      let uniqueIndexCount = 0
-      let foreignKeyCount = 0
-
-      const pkMap = fields.reduce((map, field) => {
-        if (field.primary_key_position > 0) {
-          map[field.field_name] = true
-        }
-        return map
-      }, {})
-
-      columnsMap = indices.reduce((map, item, index) => {
-        if (item.unique) {
-          uniqueIndexCount++
-        } else {
-          indexCount++
-        }
-        item.columns.forEach(({ columnName }) => (map[columnName] = [item.indexName, index, item.unique]))
-        return map
-      }, {})
-
-      constraintMap = constraints.reduce((map, item, index) => {
-        if (item.type === 'FOREIGN_KEY') {
-          let temp = 0
-          item.mappingFields.forEach(({ foreignKey, referenceKey }) => {
-            map[foreignKey] = [item.name, index, `${item.referencesTableName}.${referenceKey}`]
-            if (!pkMap[foreignKey]) {
-              temp++
-            }
-          })
-          if (temp > 0) foreignKeyCount++
-        }
-
-        return map
-      }, {})
-
-      isMultiIndex.value = indexCount > 1
-      isMultiUniqueIndex.value = uniqueIndexCount > 1
-      isMultiForeignKey.value = foreignKeyCount > 1
-
-      partitionFields.reduce((map, item) => {
-        map[item.name] = true
-        return map
-      }, partitionFieldMap)
-
+      schema.fields = fields
       schemaData.value = mapSchema(schema)
-
-      fields = fields
-        .filter(item => !item.is_deleted)
-        .map(field => {
-          return {
-            label: field.field_name,
-            value: field.field_name,
-            isPrimaryKey: field.isPrimaryKey,
-            indicesUnique: field.indicesUnique,
-            isForeignKey: constraintMap[field.field_name],
-            constraints: constraintMap[field.field_name],
-            type: field.data_type,
-            tapType: field.tapType,
-            source: field.source,
-            dataType: field.data_type.replace(/\(.+\)/, ''),
-            isMultiIndex: isMultiIndex.value,
-            isMultiUniqueIndex: isMultiUniqueIndex.value,
-            isMultiForeignKey: isMultiForeignKey.value
-          }
-        })
 
       treeData.value = createTree(fields)
       loading.value = false
@@ -175,16 +110,6 @@ export const SchemaPreview = defineComponent({
 
     const mapSchema = schema => {
       const { fields = [], findPossibleDataTypes = {} } = schema
-      const mapField = field => {
-        /*if (columnsMap[field.field_name]) {
-          field.indicesUnique = columnsMap[field.field_name][0]
-          field.indicesUniqueIndex = columnsMap[field.field_name][1]
-          field.indicesIfUnique = columnsMap[field.field_name][2]
-        }*/
-        field.indicesUnique = columnsMap[field.field_name]
-        field.isPrimaryKey = field.primary_key_position > 0
-        field.isPartitionKey = partitionFieldMap[field.field_name]
-      }
       fields.sort((a, b) => a.columnPosition - b.columnPosition)
       //如果findPossibleDataTypes = {}，不做类型校验
       if (isTarget) {
@@ -197,7 +122,7 @@ export const SchemaPreview = defineComponent({
             fieldChangeRules,
             findPossibleDataTypes
           )
-          mapField(field)
+          // mapField(field)
         })
       } else {
         // 源节点 JSON.parse('{\"type\":7}').type==7
@@ -205,7 +130,7 @@ export const SchemaPreview = defineComponent({
           const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[field.field_name] || {}
           field.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
           field.matchedDataTypeLevel = errorFiledType(field)
-          mapField(field)
+          // mapField(field)
         })
       }
       return schema

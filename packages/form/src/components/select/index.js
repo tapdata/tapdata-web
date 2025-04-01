@@ -10,6 +10,7 @@ const SelectOption = defineComponent({
   props: ['options', 'itemLabel', 'itemValue', 'itemDisabled'],
   setup(customProps, { attrs, slots, listeners }) {
     return () => {
+      console.log('customProps', customProps)
       const options = customProps.options || []
       const itemLabel = customProps.itemLabel || 'label'
       const itemValue = customProps.itemValue || 'value'
@@ -72,7 +73,10 @@ export const Select = connect(
 
     if (options) {
       _props.options = options
+    } else if (!field.dataSource && props.dataSource) {
+      _props.options = props.dataSource
     }
+
     return _props
   }),
   mapReadPretty(PreviewText.Select)

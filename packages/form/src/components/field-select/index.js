@@ -5,7 +5,6 @@ import { PreviewText } from '@formily/element'
 import { VIcon } from '@tap/component'
 import { computed } from '@vue/composition-api'
 import i18n from '@tap/i18n'
-import { isObj } from '@tap/shared'
 
 const DefineFieldSelect = defineComponent({
   props: {
@@ -136,6 +135,7 @@ const DefineFieldSelect = defineComponent({
           popper-class="field-select-popper"
           attrs={newAttrs}
           options={fieldOptions.value}
+          dataSource={fieldOptions.value}
           on={listeners}
           scopedSlots={{
             option: ({ option }) => (
@@ -158,6 +158,112 @@ const DefineFieldSelect = defineComponent({
 
 export const FieldSelect = connect(
   DefineFieldSelect,
-  mapProps({ dataSource: 'options', loading: true }),
+  mapProps({ dataSource: 'options', loading: true }, props => {
+    const _props = { ...props }
+
+    if (_props.dataSource) {
+      _props.options = _props.dataSource
+    }
+
+    return _props
+  }),
   mapReadPretty(PreviewText.Select)
 )
+
+export const mapFieldsData = data => {
+  let {
+    constraints = [],
+    indices = [],
+    fields = [],
+    partitionInfo: { partitionFields = [] } = { partitionFields: [] }
+  } = data
+  let isMultiIndex = false
+  let isMultiUniqueIndex = false
+  let isMultiForeignKey = false
+
+  let indexCount = 0
+  let uniqueIndexCount = 0
+  let foreignKeyCount = 0
+
+  const pkMap = fields.reduce((map, field) => {
+    if (field.primary_key_position > 0) {
+      map[field.field_name] = true
+    }
+    return map
+  }, {})
+
+  const constraintMap = constraints.reduce((map, item, index) => {
+    if (item.type === 'FOREIGN_KEY') {
+      let temp = 0
+      item.mappingFields.forEach(({ foreignKey, referenceKey }) => {
+        map[foreignKey] = [item.name, index, `${item.referencesTableName}.${referenceKey}`]
+        if (!pkMap[foreignKey]) {
+          temp++
+        }
+      })
+      if (temp > 0) foreignKeyCount++
+    }
+
+    return map
+  }, {})
+
+  indices = indices.filter(item => item.primaryKey !== true && item.primaryKey !== 'true')
+
+  const columnsMap = indices.reduce((map, item, index) => {
+    let temp = 0
+    if (item.unique) {
+      uniqueIndexCount++
+    }
+
+    item.columns.forEach(({ columnName }) => {
+      map[columnName] = [item.indexName, index, item.unique]
+      if (!constraintMap[columnName]) {
+        temp++
+      }
+    })
+
+    // 外键默认会有普通索引，排除外键
+    if (!item.unique && temp > 0) indexCount++
+
+    return map
+  }, {})
+
+  const partitionFieldMap = partitionFields.reduce((map, item) => {
+    map[item.name] = true
+    return map
+  }, {})
+
+  isMultiIndex = indexCount > 1
+  isMultiUniqueIndex = uniqueIndexCount > 1
+  isMultiForeignKey = foreignKeyCount > 1
+
+  const newFields = fields
+    .filter(item => !item.is_deleted)
+    .map(field => {
+      return {
+        ...field,
+        label: field.field_name,
+        value: field.field_name,
+        isPrimaryKey: field.primary_key_position > 0,
+        indicesUnique: columnsMap[field.field_name],
+        isForeignKey: !!constraintMap[field.field_name],
+        isPartitionKey: partitionFieldMap[field.field_name],
+        constraints: constraintMap[field.field_name],
+        type: field.data_type,
+        dataType: field.data_type.replace(/\(.+\)/, ''),
+        isMultiIndex,
+        isMultiUniqueIndex,
+        isMultiForeignKey
+      }
+    })
+
+  return {
+    columnsMap,
+    constraintMap,
+    partitionFieldMap,
+    isMultiIndex,
+    isMultiUniqueIndex,
+    isMultiForeignKey,
+    fields: newFields
+  }
+}
