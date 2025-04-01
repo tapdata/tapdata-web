@@ -86,12 +86,7 @@
             <div v-else class="flex flex-column gap-2">
               <div class="flex align-center gap-1" v-for="(keys, i) in node.joinKeys" :key="i">
                 <!--<div class="flex flex-column">-->
-                <FieldSelect
-                  v-model="keys.source"
-                  itemLabel="field_name"
-                  itemValue="field_name"
-                  :options="schema"
-                ></FieldSelect>
+                <FieldSelect v-model="keys.source" :options="schema"></FieldSelect>
                 <span>=</span>
                 <FieldSelect
                   v-model="keys.target"
@@ -668,13 +663,45 @@ export default {
     renderContent(h, { node, data, store }) {
       let icon
 
-      if (data.primary_key_position > 0) {
-        icon = (
+      if (data.isPrimaryKey) {
+        icon = !data.isForeignKey ? (
           <VIcon size="12" class="field-icon position-absolute">
             key
           </VIcon>
+        ) : (
+          <ElTooltip
+            placement="top"
+            content={i18n.t('public_foreign_key_tip', { name: data.constraints[0], val: data.constraints[2] })}
+            open-delay={200}
+            transition="none"
+          >
+            <VIcon size="12" class="field-icon position-absolute">
+              key
+            </VIcon>
+          </ElTooltip>
+        )
+      } else if (data.isForeignKey) {
+        const indexStr = String(data.constraints[1])
+        icon = (
+          <ElTooltip
+            placement="top"
+            content={i18n.t('public_foreign_key_tip', { name: data.constraints[0], val: data.constraints[2] })}
+            open-delay={200}
+            transition="none"
+          >
+            <span class="flex align-center field-icon position-absolute">
+              <VIcon size="14">share</VIcon>
+              {data.isMultiForeignKey && (
+                <span
+                  style={`--index: '${indexStr}';--zoom: ${1 - indexStr.length * 0.2};`}
+                  class="fingerprint-sub foreign-sub"
+                ></span>
+              )}
+            </span>
+          </ElTooltip>
         )
       } else if (data.indicesUnique) {
+        const indexStr = String(data.indicesUnique[1])
         icon = (
           <ElTooltip
             placement="top"
@@ -685,11 +712,40 @@ export default {
             open-delay={200}
             transition="none"
           >
-            <span class="flex align-center field-icon position-absolute">
-              <VIcon size="12">fingerprint</VIcon>
-              <span style={`--index: '${data.indicesUnique[1]}';`} class="fingerprint-sub"></span>
-            </span>
+            {data.indicesUnique[2] ? (
+              <span class="flex align-center field-icon position-absolute">
+                <VIcon size="14">fingerprint</VIcon>
+                {data.isMultiUniqueIndex && (
+                  <span
+                    style={`--index: '${indexStr}';--zoom: ${1 - indexStr.length * 0.2};`}
+                    class="fingerprint-sub unique-sub"
+                  ></span>
+                )}
+              </span>
+            ) : (
+              <span class="flex align-center field-icon position-absolute">
+                <VIcon size="14">sort-descending</VIcon>
+                {data.isMultiIndex && (
+                  <span
+                    style={`--index: '${indexStr}';--zoom: ${1 - indexStr.length * 0.2};`}
+                    class="fingerprint-sub index-sub"
+                  ></span>
+                )}
+              </span>
+            )}
           </ElTooltip>
+        )
+      } else if (data.isPartitionKey) {
+        icon = (
+          <VIcon size="14" class="field-icon position-absolute">
+            circle-dashed-letter-p
+          </VIcon>
+        )
+      } else if (data.source === 'virtual_hash') {
+        icon = (
+          <VIcon size="12" class="field-icon position-absolute">
+            file-hash
+          </VIcon>
         )
       }
 
