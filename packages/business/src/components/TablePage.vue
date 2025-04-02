@@ -188,8 +188,6 @@ export default {
   data() {
     const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
 
-    console.log('settings', localStorage.getItem('TAPDATA_TABLE_SETTINGS'), this.settings,)
-
     return {
       isDaas,
       loading: false,

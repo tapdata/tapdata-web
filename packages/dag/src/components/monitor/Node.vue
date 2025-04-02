@@ -7,7 +7,6 @@ import { defineComponent, computed, ref, onMounted, watch } from '@vue/compositi
 import i18n from '@tap/i18n'
 import { VIcon, IconButton } from '@tap/component'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
-import Time from '@tap/shared/src/time'
 import { TaskStatus } from '@tap/business'
 import DFNode from '../DFNode'
 
@@ -105,18 +104,6 @@ export default defineComponent({
     const currentEventTimestamp = computed(() => {
       const val = props.sample.currentEventTimestamp || props.sample.snapshotDoneAt || taskSnapshotDoneAt.value
       return val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss.SSS') : ''
-    })
-
-    /**
-     * 增量延迟
-     */
-    const replicateLag = computed(() => {
-      const { replicateLag } = props.sample
-      if (isNumber(replicateLag))
-        return calcTimeUnit(replicateLag, 2, {
-          autoHideMs: true
-        })
-      return null
     })
 
     /**
@@ -306,34 +293,6 @@ export default defineComponent({
           <div class="statistic-title">{i18n.t('packages_dag_monitor_node_per_deal_need_time')}</div>
           <div class="statistic-content">
             <div class="statistic-value">{getVal(timeCostAvg.value)}</div>
-          </div>
-        </div>
-      )
-
-      // 源全量读取耗时
-      const sourceInitalReadTime = (
-        <div class="statistic">
-          <div class="statistic-title">{i18n.t('packages_dag_components_nodedetaildialog_pingjunduquhao')}</div>
-          <div class="statistic-content">
-            <div class="statistic-value">
-              {props.sample.snapshotSourceReadTimeCostAvg
-                ? calcTimeUnit(props.sample.snapshotSourceReadTimeCostAvg)
-                : i18n.t('public_data_no_data')}
-            </div>
-          </div>
-        </div>
-      )
-
-      // 源增量读取耗时
-      const sourceCDCReadTime = (
-        <div class="statistic">
-          <div class="statistic-title">{i18n.t('packages_dag_components_nodedetaildialog_zengliangduquyan')}</div>
-          <div class="statistic-content">
-            <div class="statistic-value">
-              {props.sample.incrementalSourceReadTimeCostAvg
-                ? calcTimeUnit(props.sample.incrementalSourceReadTimeCostAvg)
-                : i18n.t('public_data_no_data')}
-            </div>
           </div>
         </div>
       )
