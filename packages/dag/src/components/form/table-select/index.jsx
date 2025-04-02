@@ -72,7 +72,7 @@ const useTableExist = (attrs, selectRef, connectionId) => {
   watch(() => attrs.value, handleChange)
 
   onMounted(() => {
-    $input = selectRef.value.$el.querySelector('input')
+    /*$input = selectRef.value.$el.querySelector('input')
     const { fontSize, fontFamily, fontWeight } = getComputedStyle($input)
 
     inputStyle = {
@@ -84,7 +84,7 @@ const useTableExist = (attrs, selectRef, connectionId) => {
 
     // 8: .el-input__prefix-inner > :last-child {margin-right: 8px;}
     // 4: 间距
-    baseLeftPosition = parseInt($input.offsetLeft) + 4
+    baseLeftPosition = parseInt($input.offsetLeft) + 4*/
 
     checkTableExist(attrs.value)
   })

@@ -158,6 +158,7 @@ import focusSelect from '@tap/component/src/directives/focusSelect'
 import { TextEditable, VIcon, VDivider, OverflowTooltip } from '@tap/component'
 import { TaskStatus } from '@tap/business'
 import syncTaskAgent from '@tap/business/src/mixins/syncTaskAgent'
+import editSvg from '@tap/assets/images/edit-fill.svg'
 
 export default {
   name: 'TopHeader',
@@ -196,7 +197,7 @@ export default {
       chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
       showSearchNodePopover: false,
       nodeSearchInput: '',
-      editSvg: require('@tap/assets/images/edit-fill.svg'),
+      editSvg,
       syncType: {
         initial_sync: i18n.t('public_task_type_initial_sync'),
         cdc: i18n.t('public_task_type_cdc'),
