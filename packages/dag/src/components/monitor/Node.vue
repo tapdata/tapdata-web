@@ -208,8 +208,8 @@ export default defineComponent({
 
     const isNumber = value => typeof value === 'number'
 
-    const getVal = val => {
-      return val ?? i18n.t('public_data_no_data')
+    const getVal = (val, placeholder) => {
+      return val ?? placeholder ?? i18n.t('public_data_no_data')
     }
 
     const renderStatistic = () => {
@@ -243,11 +243,9 @@ export default defineComponent({
                     : completeTime.value
                 )
             return (
-              <div class="statistic flex">
-                <div class="statistic-title">{title}：</div>
-                <div class="statistic-content">
-                  <div class="statistic-value">{val}</div>
-                </div>
+              <div class="statistic flex align-center gap-1">
+                <div class="statistic-title">{title}:</div>
+                <div class="statistic-value">{val}</div>
               </div>
             )
           }
@@ -255,11 +253,18 @@ export default defineComponent({
       }
       if (hasCDC) {
         // 增量进行中
-        const cdcTitle = isSource.value
-          ? i18n.t('public_event_incremental_delay')
-          : isTarget.value
-          ? i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')
-          : i18n.t('packages_dag_monitor_node_per_deal_need_time')
+        let cdcTitle = ''
+        let placeholder
+
+        if (isSource.value) {
+          cdcTitle = i18n.t('public_event_incremental_delay')
+          placeholder = i18n.t('public_event_cdc_placeholder')
+        } else if (isTarget.value) {
+          cdcTitle = i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')
+        } else {
+          cdcTitle = i18n.t('packages_dag_monitor_node_per_deal_need_time')
+        }
+
         const replicateLagProps = props.sample.replicateLag
         const replicateLagVal =
           isNumber(replicateLagProps) && replicateLagProps >= 0
@@ -268,14 +273,13 @@ export default defineComponent({
               })
             : null
         const val = getVal(
-          isSource.value ? replicateLagVal : isTarget.value ? targetWriteTimeCostAvg.value : timeCostAvg.value
+          isSource.value ? replicateLagVal : isTarget.value ? targetWriteTimeCostAvg.value : timeCostAvg.value,
+          placeholder
         )
         return (
-          <div class="statistic flex">
-            <div class="statistic-title">{cdcTitle}：</div>
-            <div class="statistic-content">
-              <div class="statistic-value">{val}</div>
-            </div>
+          <div class="statistic flex align-center gap-1">
+            <div class="statistic-title">{cdcTitle}:</div>
+            <div class="statistic-value">{val}</div>
           </div>
         )
       }

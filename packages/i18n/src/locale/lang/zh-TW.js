@@ -290,7 +290,7 @@ export default {
   public_event_insert: '插入',
   public_event_update: '更新',
   public_event_ddl: 'DDL',
-
+  public_event_cdc_placeholder: '暫無增量數據',
   //里程碑
   public_milestone_time_cdc_consuming: '啟動耗時',
   public_milestone_time_consuming: '耗時',

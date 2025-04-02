@@ -291,7 +291,7 @@ export default {
   public_event_insert: 'Insert',
   public_event_update: 'Update',
   public_event_ddl: 'DDL',
-
+  public_event_cdc_placeholder: 'No incremental data',
   //milestone
   public_milestone_time_cdc_consuming: 'start time-consuming',
   public_milestone_time_consuming: 'time-consuming',

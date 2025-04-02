@@ -291,6 +291,7 @@ export default {
   public_event_insert: '插入',
   public_event_update: '更新',
   public_event_ddl: 'DDL',
+  public_event_cdc_placeholder: '暂无增量数据',
 
   //里程碑
   public_milestone_time_cdc_consuming: '启动耗时',
