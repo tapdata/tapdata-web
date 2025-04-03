@@ -472,11 +472,8 @@
 
         <!--  {{$t('packages_business_data_server_drawer_shilidaima2')}} -->
         <template v-if="tab === 'debug'">
-          <div class="flex position-relative mt-4 mb-3">
-            <div
-              class="position-absolute top-0 start-0 fs-7 fw-sub font-color-dark flex align-center"
-              style="line-height: 36px; height: 36px"
-            >
+          <div class="position-relative mt-4 mb-3">
+            <div class="fs-7 fw-sub font-color-dark flex align-center" style="line-height: 36px; height: 36px">
               <span class="data-server-panel__title my-0">
                 {{ $t('packages_business_data_server_drawer_shilidaima') }}
               </span>
@@ -1351,6 +1348,8 @@ export default {
     },
 
     async handleUpdateRole() {
+      if (!this.data.id) return
+
       await modulesApi.updatePermissions({
         moduleId: this.data.id,
         acl: this.form.acl,
@@ -1359,6 +1358,8 @@ export default {
     },
 
     async handleUpdateApp() {
+      if (!this.data.id) return
+
       const { appLabel, appValue } = this.form
       await modulesApi.updateTags({
         moduleId: this.data.id,

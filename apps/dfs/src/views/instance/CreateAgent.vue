@@ -166,7 +166,12 @@
           <div slot="label" class="font-color-dark fw-sub">
             {{ $t('dfs_traffic_billing') }}
             <span class="fw-normal font-color-sslight">{{ $t('dfs_traffic_billing_desc') }}</span>
-            <span class="fw-normal color-warning">{{ $t('dfs_traffic_billing_prefix', { trafficPrice }) }}</span>
+            <span class="fw-normal color-warning">{{
+              $t('dfs_traffic_billing_prefix', {
+                trafficPrice,
+                gift: trafficGiftMap[`${selected.type}_${selected.periodUnit}`]
+              })
+            }}</span>
           </div>
 
           <el-skeleton :loading="loading" animated>
@@ -232,7 +237,7 @@
         </ElFormItem>
 
         <!--选择币种-->
-        <ElFormItem v-if="currencyOption && currencyOption.length > 0">
+        <!--<ElFormItem v-if="currencyOption && currencyOption.length > 0">
           <div slot="label" class="font-color-dark fw-sub">
             {{ $t('dfs_agent_download_subscriptionmodeldialog_xuanzebizhong') }}
           </div>
@@ -246,7 +251,7 @@
               >{{ CURRENCY_MAP[item.currency] }}
             </ElRadio>
           </ElRadioGroup>
-        </ElFormItem>
+        </ElFormItem>-->
       </ElForm>
     </div>
 
@@ -329,7 +334,12 @@ export default {
           'cn-hongkong': 'Hong Kong'
         }
       },
-      trafficPriceList: []
+      trafficPriceList: [],
+      trafficGiftMap: {
+        one_time_month: 10,
+        recurring_month: 15,
+        recurring_year: 20
+      }
     }
   },
 
@@ -396,6 +406,10 @@ export default {
       }
       return this.$axios.get('api/tcm/orders/paid/price', { params }).then((data) => {
         let { paidPrice = [] } = data?.[0] || {}
+
+        // 过滤掉按量计费的价格
+        paidPrice = paidPrice.filter(t => t.usageType !== 'metered')
+
         // 规格
         this.specificationItems = uniqBy(
           paidPrice.map((t) => {

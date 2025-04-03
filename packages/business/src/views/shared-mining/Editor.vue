@@ -339,6 +339,7 @@ export default {
           const { $inputs, $outputs, ...formVal } = getFormValues
           Object.assign(el, {
             nodeConfig: formVal.nodeConfig,
+            storageTime: this.editForm.storageTime
           })
         }
       })

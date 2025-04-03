@@ -20,5 +20,20 @@ export default class Licenses extends Http {
   updateLicense(params) {
     return this.axios.post(`${this.url}/upload`, params)
   }
+
+  getPipelineDetails() {
+    return this.axios.get(`${this.url}/pipelineDetails`)
+  }
+
+  getFeatures() {
+    return this.axios.get(`${this.url}/features`).catch(err => {
+      if (err.response.status == 404 && process.env.NODE_ENV === 'development') {
+        return Promise.resolve({
+          licenseType: 'OP',
+          features: []
+        })
+      }
+    })
+  }
 }
 export { Licenses }

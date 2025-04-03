@@ -5,7 +5,6 @@ import SelectClassify from './SelectClassify'
 import UploadDialog from './UploadDialog'
 import Log from './logs/Index.vue'
 import TablePage from './TablePage.vue'
-import ConnectionTypeSelector from './ConnectionTypeSelector'
 import TaskStatus from './TaskStatus'
 import PageHeader from './PageHeader'
 import DiscoveryClassification from './DiscoveryClassification'
@@ -13,6 +12,7 @@ import StageButton from './StageButton'
 import UpgradeFee from './UpgradeFee'
 import UpgradeCharges from './UpgradeCharges'
 import SyncStatus from './SyncStatus.vue'
+import ConnectorForm from './ConnectorForm.vue'
 
 export {
   StatusItem,
@@ -22,14 +22,14 @@ export {
   UploadDialog,
   Log,
   TablePage,
-  ConnectionTypeSelector,
   TaskStatus,
   PageHeader,
   DiscoveryClassification,
   StageButton,
   UpgradeFee,
   UpgradeCharges,
-  SyncStatus
+  SyncStatus,
+  ConnectorForm
 }
 
 export * from './DatabaseIcon'

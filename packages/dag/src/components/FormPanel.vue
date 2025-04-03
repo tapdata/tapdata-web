@@ -86,10 +86,13 @@ export default {
       deep: true,
 
       async handler(n, o) {
+        const oldNode = this.nodeById(o)
         const formSchema = this.$store.getters['dataflow/formSchema'] || {}
 
         // 重置TAB
-        this.scope?.formTab?.setActiveKey('tab1')
+        if (this.ins?.group !== oldNode?.__Ctor.group) {
+          this.scope?.formTab?.setActiveKey('tab1')
+        }
 
         if (!this.ins) {
           // 节点不存在，比如删掉了，清除表单
@@ -106,12 +109,11 @@ export default {
         }
 
         // 校验上一个节点配置
-        if (o && !this.stateIsReadonly) {
-          const node = this.nodeById(o)
+        if (oldNode && !this.stateIsReadonly) {
           try {
-            if (node) {
-              const schema = getSchema(node.__Ctor.formSchema, node, this.$store.state.dataflow.pdkPropertiesMap)
-              await validateBySchema(schema, node, this.scope)
+            if (oldNode) {
+              const schema = getSchema(oldNode.__Ctor.formSchema, oldNode, this.$store.state.dataflow.pdkPropertiesMap)
+              await validateBySchema(schema, oldNode, this.scope)
             }
 
             if (this.hasNodeError(o) && typeof this.hasNodeError(o) !== 'string') {
@@ -201,8 +203,8 @@ export default {
 
     // 设置schema
     async setSchema(schema, values = this.node) {
+      this.form.onUnmount()
       this.schema = null
-
       await this.$nextTick()
 
       this.form = createForm({
@@ -212,8 +214,6 @@ export default {
       })
 
       this.schema = getSchema(schema, values, this.$store.state.dataflow.pdkPropertiesMap)
-
-      $emit(this, 'setSchema')
     },
 
     updateNodePropsDebounce(form) {
@@ -221,7 +221,7 @@ export default {
       this.updateTimer = setTimeout(() => {
         const node = this.nodeById(form.values.id)
         if (node && !deepEqual(toJS(form.values), node, ['alarmRules.0._ms', 'alarmRules.0._point'])) {
-          console.log('还是更新了')
+          console.debug('updateNodeProps in debounce')
           this.updateNodeProps(form)
         }
       }, 40)

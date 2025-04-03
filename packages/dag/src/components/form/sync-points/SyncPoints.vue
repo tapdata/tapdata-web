@@ -3,13 +3,13 @@
     <RecycleScroller
       key-field="nodeId"
       class="scroller"
-      :items="value"
+      :items="items"
       :item-size="64"
       style="max-height: 300px"
       :buffer="64"
     >
       <template #default="{ item, index, active }">
-        <span>{{ item.connectionName }}({{ item.nodeName }})</span>
+        <span class="ellipsis">{{ item.connectionName }}({{ item.nodeName }})</span>
         <div class="flex align-center gap-3">
           <ElSelect v-model="item.pointType" :disabled="disabled || item.hiddenPointType">
             <ElOption :label="$t('public_time_user_specified_time')" value="localTZ" />
@@ -55,6 +55,11 @@ export default observer({
   components: {
     RecycleScroller,
     VEmpty
+  },
+  computed: {
+    items() {
+      return this.value?.filter(item => !!item.nodeId) || []
+    }
   }
 })
 </script>

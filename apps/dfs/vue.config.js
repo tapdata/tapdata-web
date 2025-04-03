@@ -1,42 +1,31 @@
-const { defineConfig } = require('@vue/cli-service')
-
 const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
 const webpack = require('webpack')
-const crypto = require('crypto')
-const { ElementPlusResolver } = require('unplugin-vue-components/resolvers')
-
+const { getUserIdFromEnv, parseCommandLineArgs, getToken } = require('./userIdResolver')
+const chalk = require('chalk')
+const log = console.log
 const serveUrlMap = {
   mock: 'http://localhost:3000',
   dev: 'http://backend:3030',
   test: 'https://dev.cloud.tapdata.net:8443',
   local: 'https://v3.test.cloud.tapdata.net',
-  localTm: 'http://127.0.0.1:3030',
+  localTm: 'http://127.0.0.1:3030'
 }
-// const userId = '60b60af1147bce7705727188' // zed?
-// const userId = '60b064e9a65d8e852c8523bc' // lemon
-// const userId = '610a3d43d7f65cfcd80837b5' // auto
-// const userId = '60cc0c304e190a579cbe306c' // jason
-// const userId = '64ba40c389c61b08683c71b0' // xf
-const userId = '64be2c812c268c9dd5afaf25' // devin
-let origin
-let ENV // 区分打包生产环境和开发测试环境，默认是生产
-const { argv } = process
+const { username = 'martin', origin, env: ENV } = parseCommandLineArgs()
+const resolvedUserId = getUserIdFromEnv(username)
+
+let userId = '6073aedf6013a66729a09280' // martin's ID
+
+if (resolvedUserId) {
+  userId = resolvedUserId
+} else {
+  log(chalk.bgRed.white(`Couldn't find user ID for ${username}, using default`))
+}
+
 const { SERVE_ENV = 'mock' } = process.env
-
-// 通过origin参数注入服务代理，优先级最高
-if (~argv.indexOf('--origin')) {
-  origin = argv[argv.indexOf('--origin') + 1]
-  origin && (origin = origin.replace(/^(?!http)/, 'http://'))
-}
-
-if (~argv.indexOf('--env')) {
-  ENV = argv[argv.indexOf('--env') + 1]
-}
-
 const proxy = {
   target: process.env.SERVER_URI || origin || serveUrlMap[SERVE_ENV],
-  changeOrigin: true,
+  changeOrigin: true
 }
 
 //sass变量
@@ -44,43 +33,43 @@ let varUrl = '~@tap/assets/styles/var.scss'
 let pages = {
   index: {
     entry: 'src/pages/main.js',
-    title: 'Tapdata Cloud',
+    title: 'Tapdata Cloud'
   },
   license_code_activation: {
     entry: 'src/pages/licenseCodeActivation.js',
-    title: 'Tapdata Cloud',
+    title: 'Tapdata Cloud'
   },
   requestConnector: {
     entry: 'src/pages/requestConnector.js',
-    title: 'Tapdata Cloud',
-  },
+    title: 'Tapdata Cloud'
+  }
 }
 
 let prodProxyConfig = {
   '/api/tcm/': Object.assign(
     {
       pathRewrite: {
-        '^/': '/console/v3/',
-      },
+        '^/': '/console/v3/'
+      }
     },
-    proxy,
+    proxy
   ),
   '/tm/': {
     ws: true,
     target: proxy.target,
     changeOrigin: true,
     pathRewrite: {
-      '^/': '/console/v3/',
-    },
+      '^/': '/console/v3/'
+    }
   },
   '/api/gw/': Object.assign(
     {
       pathRewrite: {
-        '^/': '/console/v3/',
-      },
+        '^/': '/console/v3/'
+      }
     },
-    proxy,
-  ),
+    proxy
+  )
 }
 let localTmProxy = {
   target: serveUrlMap.localTm,
@@ -88,18 +77,17 @@ let localTmProxy = {
   ws: true,
   secure: false,
   pathRewrite: {
-    '^/tm/': '/',
+    '^/tm/': '/'
   },
   onProxyReq: function (proxyReq, req, res, opts) {
     proxyReq.setHeader('user_id', userId)
   },
   onProxyReqWs: function (proxyReq, req, socket, options, head) {
     proxyReq.setHeader('user_id', userId)
-    console.log(req.url)
-  },
+  }
 }
 
-module.exports = defineConfig({
+module.exports = {
   pages,
   lintOnSave: SERVE_ENV !== 'dev' && process.env.NODE_ENV !== 'production', // 打包时关闭lint输出
   publicPath:
@@ -111,13 +99,6 @@ module.exports = defineConfig({
   productionSourceMap: false,
 
   devServer: {
-    client: {
-      overlay: {
-        errors: true,
-        warnings: false,
-        runtimeErrors: false,
-      },
-    },
     proxy:
       SERVE_ENV === 'PROD'
         ? prodProxyConfig
@@ -132,29 +113,21 @@ module.exports = defineConfig({
                 : Object.assign(
                     {
                       ws: true,
-                      secure: false,
+                      secure: false
                     },
-                    proxy,
-                  ),
-          },
+                    proxy
+                  )
+          }
   },
   transpileDependencies: [
     // 按需添加需要babel处理的模块
     /[/\\]node_modules[/\\](.+?)?element-ui(.*)[/\\]packages[/\\]table[/\\]src/,
     /[/\\]node_modules[/\\](.+?)?element-ui(.*)[/\\]packages[/\\]tooltip[/\\]src/,
     /[/\\]node_modules[/\\](.+?)?@figmania[/\\]webcomponent(.*)[/\\]/,
-    /[/\\]node_modules[/\\](.+?)?driver\.js(.*)[/\\]/,
+    /[/\\]node_modules[/\\](.+?)?driver\.js(.*)[/\\]/
   ],
-  configureWebpack: (config) => {
-    config.resolve.extensions = ['.js', '.jsx', '.vue', '.json', '.ts', '.tsx', '.mjs']
-    config.plugins.push(
-      require('unplugin-vue-components/webpack')({
-        resolvers: [ElementPlusResolver()],
-      }),
-      require('unplugin-auto-import/webpack')({
-        resolvers: [ElementPlusResolver()],
-      }),
-    )
+  configureWebpack: config => {
+    config.resolve.extensions = ['.js', '.jsx', '.vue', '.json', '.ts', '.tsx']
 
     if (process.env.NODE_ENV === 'production') {
       // gzip
@@ -163,32 +136,32 @@ module.exports = defineConfig({
           // 正在匹配需要压缩的文件后缀
           test: /\.(js|css|svg|woff|ttf|json|html)$/,
           // 大于10kb的会压缩
-          threshold: 10240,
+          threshold: 10240
           // 其余配置查看compression-webpack-plugin
         }),
         // ace editor js 输出到 js/ace 目录
-        new webpack.NormalModuleReplacementPlugin(/^file-loader\?esModule=false!\.\/src-noconflict(.*)/, (res) => {
+        new webpack.NormalModuleReplacementPlugin(/^file-loader\?esModule=false!\.\/src-noconflict(.*)/, res => {
           res.request = res.request.replace(
             /^file-loader\?esModule=false!/,
-            'file-loader?esModule=false&outputPath=js/ace!',
+            'file-loader?esModule=false&outputPath=js/ace!'
           )
-        }),
+        })
       )
 
       config['performance'] = {
         //打包文件大小配置
         maxEntrypointSize: 10000000,
-        maxAssetSize: 30000000,
+        maxAssetSize: 30000000
       }
 
       const sassLoader = require.resolve('sass-loader')
       config.module.rules
-        .filter((rule) => {
+        .filter(rule => {
           return rule.test.toString().indexOf('scss') !== -1
         })
-        .forEach((rule) => {
-          rule.oneOf.forEach((oneOfRule) => {
-            const sassLoaderIndex = oneOfRule.use.findIndex((item) => item.loader === sassLoader)
+        .forEach(rule => {
+          rule.oneOf.forEach(oneOfRule => {
+            const sassLoaderIndex = oneOfRule.use.findIndex(item => item.loader === sassLoader)
             oneOfRule.use.splice(sassLoaderIndex, 0, { loader: require.resolve('css-unicode-loader') })
           })
         })
@@ -223,7 +196,7 @@ module.exports = defineConfig({
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
       .options({
-        symbolId: 'icon-[name]',
+        symbolId: 'icon-[name]'
       })
       .end()
       .use('svgo-loader')
@@ -236,17 +209,17 @@ module.exports = defineConfig({
             name: 'removeAttributesBySelector',
             params: {
               selector: ":not(path[fill='none'])",
-              attributes: ['fill'],
-            },
+              attributes: ['fill']
+            }
           },
           {
             name: 'removeAttrs',
             active: true,
             params: {
-              attrs: ['class', 'p-id'],
-            },
-          },
-        ],
+              attrs: ['class', 'p-id']
+            }
+          }
+        ]
       })
       .end()
 
@@ -259,7 +232,7 @@ module.exports = defineConfig({
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
       .options({
-        symbolId: 'icon-[name]',
+        symbolId: 'icon-[name]'
       })
       .end()
       .use('svgo-loader')
@@ -272,10 +245,10 @@ module.exports = defineConfig({
             name: 'removeAttrs',
             active: true,
             params: {
-              attrs: ['class', 'p-id'],
-            },
-          },
-        ],
+              attrs: ['class', 'p-id']
+            }
+          }
+        ]
       })
       .end()
 
@@ -293,51 +266,43 @@ module.exports = defineConfig({
     config.resolve.alias.set('@', resolve('src'))
     config.plugins.delete('prefetch-index')
 
-    /*// ============ ts处理 ============
+    // ============ ts处理 ============
     config.module
       .rule('compile')
       .test(/\.(jsx|tsx|ts)$/)
       .use('babel')
       .loader('babel-loader')
-      .end()*/
+      .end()
   },
   css: {
     loaderOptions: {
       scss: {
-        additionalData: `@use "${varUrl}" as *;`,
-      },
-    },
-  },
-})
-// 设置本地环境的token
-const getToken = (userId) => {
-  const secret = 'Q3HraAbDkmKoPzaBEYzPXB1zJXmWlQ169'
-
-  function __encrypt(string) {
-    return crypto
-      .createHmac('sha256', secret)
-      .update(string + secret)
-      .digest('hex')
+        sassOptions: {
+          quietDeps: true
+        },
+        additionalData: `@use "${varUrl}" as *;`
+      }
+    }
   }
-
-  function encodeBase64(string) {
-    if (typeof string !== 'string') return null
-    return Buffer.from(string || '').toString('base64')
-  }
-
-  function encodeStaticTokenByUserId(userId) {
-    let token = __encrypt(userId)
-    return encodeBase64(userId) + '.' + encodeBase64(token)
-  }
-
-  const token = encodeStaticTokenByUserId(userId)
-  return token
 }
-if (process.env.NODE_ENV === 'development') {
-  let _userId = process.env.USER_ID || userId
-  process.env.VUE_APP_ACCESS_TOKEN = getToken(_userId)
 
-  console.log('本地用户调试ID: ' + _userId)
-  console.log('本地用户调试Token: ' + process.env.VUE_APP_ACCESS_TOKEN)
-  console.log('Proxy server: ' + proxy.target)
+if (process.env.NODE_ENV === 'development') {
+  process.env.VUE_APP_ACCESS_TOKEN = getToken(userId)
+
+  const printDivider = (length = 40, char = '─', color = 'gray') => {
+    log(chalk[color](char.repeat(length)))
+  }
+
+  log(`${chalk.bgBlue.hex('#595959')(` User Name `.padEnd(14))} ${chalk.white.bold(`${username}`)}`)
+  printDivider()
+  log(`${chalk.bgBlue.hex('#595959')(` User ID `.padEnd(14))} ${chalk.white.bold(`${userId}`)}`)
+  printDivider()
+  log(
+    `${chalk.bgBlue.hex('#595959')(` User Token `.padEnd(14))} ${chalk.white.bold(
+      `${process.env.VUE_APP_ACCESS_TOKEN}`
+    )}`
+  )
+  printDivider()
+  log(`${chalk.bgBlue.hex('#595959')(` Proxy Server `.padEnd(14))} ${chalk.white.bold(`${proxy.target}`)}`)
+  printDivider()
 }

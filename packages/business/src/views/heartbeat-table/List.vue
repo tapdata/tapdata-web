@@ -16,7 +16,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="createTime" min-width="160" :label="$t('public_create_time')" sortable> </el-table-column>
-      <el-table-column width="260" fixed="right" :label="$t('public_operation')">
+      <el-table-column width="240" fixed="right" :label="$t('public_operation')">
         <template #default="{ row }">
           <div class="table-operations">
             <ElButton

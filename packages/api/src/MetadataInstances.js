@@ -45,7 +45,7 @@ export default class MetadataInstances extends Http {
    * @param fields 筛选字段，如果有值，则请求结果只返回fields包含的字段；类型：字符串数组
    * @returns {Promise<AxiosResponse<any>>}
    */
-  nodeSchema(nodeId, fields = ['fields'], nodeConfig) {
+  nodeSchema(nodeId, fields = ['fields', 'indices'], nodeConfig) {
     return this.axios.get(this.url + '/node/schema', {
       params: {
         nodeId,
@@ -137,6 +137,9 @@ export default class MetadataInstances extends Http {
   }
   pageTables(params) {
     return this.axios.get(this.url + '/page-tables', { params })
+  }
+  pagePartitionTables(params) {
+    return this.axios.get(this.url + '/partition/page-tables', { params })
   }
   //更新表描述
   updateTableDesc(params) {

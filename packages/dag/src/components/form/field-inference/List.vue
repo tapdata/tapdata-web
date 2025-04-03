@@ -9,26 +9,74 @@
       :key="revokeTableDisabled + ''"
       :row-class-name="tableRowClassName"
     >
-      <template v-slot:field_name="scope">
-        <span class="flex align-center"
-          ><span class="ellipsis">{{ scope.row.field_name }}</span>
-          <VIcon v-if="scope.row.primary_key_position > 0" size="12" class="text-warning ml-1">key</VIcon>
+      <template v-slot:field_name="{ row: field }">
+        <template v-if="field.isPrimaryKey">
           <ElTooltip
-            v-else-if="indicesMap[scope.row.field_name]"
+            v-if="field.isForeignKey"
             placement="top"
             :content="
-              `${$t(indicesMap[scope.row.field_name][2] ? 'public_unique_index' : 'public_normal_index')}: ` +
-              indicesMap[scope.row.field_name][0]
+              $t('public_foreign_key_tip', {
+                name: field.constraints[0],
+                val: field.constraints[2]
+              })
             "
-            :open-delay="200"
-            transition="none"
           >
-            <span class="flex align-center">
-              <VIcon size="12" class="ml-1">fingerprint</VIcon>
-              <span :style="`--index: '${indicesMap[scope.row.field_name][1]}';`" class="fingerprint-sub"></span>
-            </span>
+            <VIcon size="12" class="text-warning align-middle">key</VIcon>
           </ElTooltip>
-        </span>
+          <VIcon v-else size="12" class="text-warning align-middle">key</VIcon>
+        </template>
+        <ElTooltip
+          v-else-if="field.isForeignKey"
+          placement="top"
+          :content="
+            $t('public_foreign_key_tip', {
+              name: field.constraints[0],
+              val: field.constraints[2]
+            })
+          "
+          :open-delay="200"
+          transition="none"
+        >
+          <span class="inline-flex align-center align-middle">
+            <VIcon size="14">share</VIcon>
+            <span
+              v-if="field.isMultiForeignKey"
+              :style="`--index: '${field.constraints[1]}';`"
+              class="fingerprint-sub foreign-sub"
+            ></span>
+          </span>
+        </ElTooltip>
+        <ElTooltip
+          v-else-if="field.indicesUnique"
+          placement="top"
+          :content="
+            `${$t(field.indicesUnique[2] ? 'public_unique_index' : 'public_normal_index')}: ` + field.indicesUnique[0]
+          "
+          :open-delay="200"
+          transition="none"
+        >
+          <span v-if="field.indicesUnique[2]" class="inline-flex align-center align-middle">
+            <VIcon size="14">fingerprint</VIcon>
+            <span
+              v-if="field.isMultiUniqueIndex"
+              :style="`--index: '${field.indicesUnique[1]}';`"
+              class="fingerprint-sub unique-sub"
+            ></span>
+          </span>
+          <span v-else class="inline-flex align-center align-middle">
+            <VIcon size="14">sort-descending</VIcon>
+            <span
+              v-if="field.isMultiIndex"
+              :style="`--index: '${field.indicesUnique[1]}';`"
+              class="fingerprint-sub index-sub"
+            ></span>
+          </span>
+        </ElTooltip>
+        <VIcon v-else-if="field.isPartitionKey" size="14" class="ml-1 align-middle">circle-dashed-letter-p</VIcon>
+        <VIcon v-else-if="field.source === 'virtual_hash'" size="14">file-hash</VIcon>
+        <span class="ellipsis ml-1 align-middle" :style="field.source === 'virtual_hash' ? 'font-style:italic' : ''">{{
+          field.field_name
+        }}</span>
       </template>
       <template v-slot:dataTypeHeader>
         <span class="pl-4">
@@ -202,6 +250,7 @@ import { VTable, VIcon } from '@tap/component'
 import i18n from '@tap/i18n'
 import { metadataInstancesApi } from '@tap/api'
 import { uuid } from '@tap/shared'
+import { scope } from 'ace-builds/src-noconflict/snippets-abc'
 
 export default {
   name: 'List',
@@ -344,14 +393,6 @@ export default {
       const { fields } = this.data
       let list = (fields || []).sort((a, b) => a.columnPosition - b.columnPosition)
       return this.showDelete ? list : list.filter((t) => !t.is_deleted)
-    },
-
-    indicesMap() {
-      const { indices = [] } = this.data
-      return indices.reduce((map, item, index) => {
-        item.columns.forEach(({ columnName }) => (map[columnName] = [item.indexName, index, item.unique]))
-        return map
-      }, {})
     },
 
     revokeTableDisabled() {
@@ -601,6 +642,7 @@ export default {
       const f = this.findInRulesById(row.changeRuleId)
       if (!f) return
       if (f.scope === 'Node') {
+        this.$emit('open-update-rules')
         return
       }
       if (f.scope === 'Field') {
@@ -745,10 +787,11 @@ export default {
     handleChangeCustomInput() {
       const { customInputData } = this.currentData
       this.currentData.newDataType = this.customInputDataValue
-        .replace('[', '')
-        .replace(']', '')
-        .replace(/\$[^,]*\b/g, function (val) {
-          return '' + customInputData[val.replace(/^\$/, '')]?.value || val
+        .replace(/\[(.*?)\]/g, '$1') // 去掉所有的方括号，保留内容
+        .replace(/\$\w+/g, match => {
+          // 匹配所有 $ 开头的变量
+          const key = match.slice(1) // 去掉 $ 前缀
+          return customInputData[key]?.value || match
         })
     },
   },

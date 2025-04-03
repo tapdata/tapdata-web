@@ -75,7 +75,10 @@
           <div class="table-footer">
             <slot name="tableFooter"></slot>
           </div>
-          <div class="pagination-wrapper flex align-center gap-3 px-4 pt-4">
+          <div
+            class="pagination-wrapper flex align-center gap-3 px-4 pt-4"
+            :style="ifTableHeightAuto ? `position: sticky; bottom: 0; z-index: 10; background: #fff;` : ''"
+          >
             <transition name="el-fade-in-linear">
               <div v-if="multipleSelection.length" class="flex align-center gap-3">
                 <ElCheckbox :model-value="true" @change="clearSelection"></ElCheckbox>
@@ -94,7 +97,7 @@
               :page-sizes="[10, 20, 50, 100]"
               v-model:page-size="page.size"
               :total="page.total"
-              @size-change="fetch(1)"
+              @size-change="handleSizeChange"
               @current-change="handleCurrent"
             >
             </el-pagination>
@@ -118,6 +121,44 @@ import { VIcon, Classification, ProTable, IconButton } from '@tap/component'
 import { makeDragNodeImage } from '../shared'
 
 import SelectClassify from './SelectClassify'
+
+const tableSettings = {
+  settings: {},
+
+  init() {
+    this.load()
+  },
+
+  getPageSize(routeName, defaultSize = 20) {
+    return this.settings[routeName]?.pageSize || defaultSize
+  },
+
+  setPageSize(routeName, pageSize) {
+    const setting = this.settings[routeName]
+
+    if (setting) {
+      setting.pageSize = pageSize
+    } else {
+      this.settings[routeName] = { pageSize }
+    }
+
+    this.save()
+  },
+
+  save() {
+    localStorage.setItem('TAPDATA_TABLE_SETTINGS', JSON.stringify(this.settings))
+  },
+
+  load() {
+    const settings = localStorage.getItem('TAPDATA_TABLE_SETTINGS')
+    if (settings) {
+      this.settings = JSON.parse(settings)
+    }
+  }
+}
+
+// Initialize settings on creation
+tableSettings.init()
 
 export default {
   components: {
@@ -149,11 +190,14 @@ export default {
     draggable: Boolean,
   },
   data() {
+    const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+
     return {
+      isDaas,
       loading: false,
       page: {
         current: 1,
-        size: this.defaultPageSize,
+        size: tableSettings.getPageSize(this.$route.name, this.defaultPageSize),
         total: 0,
       },
       list: [],
@@ -308,10 +352,13 @@ export default {
         console.error(e)
       }
     },
+    handleSizeChange(val) {
+      tableSettings.setPageSize(this.$route.name, val)
+      this.fetch(1)
+    }
   },
 }
 </script>
-
 <style lang="scss">
 .table-page-container {
   display: flex;

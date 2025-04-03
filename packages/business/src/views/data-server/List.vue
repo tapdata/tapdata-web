@@ -1,6 +1,9 @@
 <template>
   <PageContainer>
     <template #actions>
+      <ElButton v-show="pendingSelection.length > 0" size="mini" @click="batchPublish">
+        <span> {{ $t('public_batch_publish') }}</span>
+      </ElButton>
       <ElButton
         v-show="multipleSelection.length > 0"
         :disabled="$disabledReadonlyUserBtn()"
@@ -79,16 +82,17 @@
           <VEmpty large></VEmpty>
         </template>
       </VTable>
-    </div>
+      </div>
 
     <Drawer
-      ref="drawer"
-      :host="apiServerHost"
-      @save="table.fetch(1)"
-      @visible="$emit('drawer-visible', arguments[0])"
-    ></Drawer>
-    <!-- 导入 -->
-    <Upload type="Modules" :show-tag="false" ref="upload" @success="table.fetch()"></Upload>
+        ref="drawer"
+        :host="apiServerHost"
+        @save="table.fetch(1)"
+        @visible="$emit('drawer-visible', arguments[0])"
+      ></Drawer>
+      <!-- 导入 -->
+      <Upload type="Modules" :show-tag="false" ref="upload" @success="table.fetch()"></Upload>
+    </PageContainer>
   </PageContainer>
 </template>
 
@@ -174,6 +178,7 @@ export default {
         {
           label: i18n.t('packages_business_application_list_yingyongmingcheng'),
           prop: 'appName',
+          'min-width': 140
         },
         {
           label: this.$t('public_connection_type'),
@@ -187,7 +192,7 @@ export default {
         },
         {
           label: this.$t('packages_business_data_server_list_guanlianduixiang'),
-          'min-width': 120,
+          'min-width': 180,
           prop: 'tableName',
         },
         {
@@ -197,7 +202,7 @@ export default {
         },
         {
           label: this.$t('packages_business_data_server_list_fuwuzhuangtai'),
-          'min-width': 100,
+          'min-width': 106,
           prop: 'statusFmt',
           slotName: 'statusFmt',
         },
@@ -206,13 +211,18 @@ export default {
           width: 200,
           prop: 'operation',
           slotName: 'operation',
+          fixed: 'right'
         },
       ]
     },
     // 选中的已发布数据
     multipleSelectionActive() {
-      return this.multipleSelection.filter((t) => t.status === 'active')
+      return this.multipleSelection.filter(t => t.status === 'active')
     },
+
+    pendingSelection() {
+      return this.multipleSelection.filter(t => t.status === 'pending')
+    }
   },
   watch: {
     '$route.query'() {
@@ -344,6 +354,7 @@ export default {
             item._path = `/${pathJoin.join('/')}`
             return item
           })
+          this.doLayout()
           return {
             total: data?.total,
             data: list,
@@ -421,6 +432,25 @@ export default {
       const ids = this.multipleSelectionActive.map((t) => t.id)
       modulesApi.apiExport(ids, this.apiServerHost)
     },
+    async batchPublish() {
+      if (!this.pendingSelection.length) return
+
+      await modulesApi.batchUpdate(
+        this.pendingSelection.map(item => ({
+          id: item.id,
+          status: 'active',
+          tableName: item.tableName
+        }))
+      )
+
+      this.$message.success(this.$t('public_message_publish_successful'))
+      this.fetch()
+    },
+    doLayout() {
+      this.$nextTick(() => {
+        this.$refs.table.doLayout()
+      })
+    }
   },
   emits: ['drawer-visible'],
 }

@@ -33,6 +33,7 @@ import Chart from './chart'
 import JsEditor from './JsEditor.vue'
 import PythonEditor from './PythonEditor'
 import OverflowTooltip from './overflow-tooltip'
+import SwitchNumber from './SwitchNumber.vue'
 export {
   langs,
   VIcon,
@@ -63,6 +64,7 @@ export {
   OverflowTooltip,
   DarkSelect,
   TimeSelect,
+  SwitchNumber
 }
 
 export * from './base'

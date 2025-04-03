@@ -179,6 +179,10 @@ const responseInterceptor = (response) => {
       if (['Authing.User.Update.Failed'].includes(code)) {
         Message.error(i18n.t('dfs_user_center_phone_error'))
       } else {
+        if (code === '8051') {
+          Message.error(i18n.t('agent_version_not_support'))
+          return reject(response)
+        }
         showErrorMessage(data)
       }
     }

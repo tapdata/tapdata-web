@@ -23,19 +23,39 @@
       >
         <span> {{ $t('packages_business_button_bulk_import') }}</span>
       </el-button>
-      <el-button
-        v-if="buttonShowMap.create"
-        v-readonlybtn="'SYNC_job_creation'"
-        class="btn btn-create"
-        type="primary"
-        size="mini"
-        id="task-list-create"
-        :disabled="$disabledReadonlyUserBtn()"
-        :loading="createBtnLoading"
-        @click="refFn('create')"
-      >
-        {{ $t('public_button_create') }}
-      </el-button>
+
+      <template v-if="buttonShowMap.create">
+        <div class="flex align-center gap-3">
+          <el-badge is-dot>
+            <el-button
+              class="flex align-center"
+              style="height: 32px"
+              type="primary"
+              plain
+              size="mini"
+              id="task-list-quick-create"
+              :disabled="$disabledReadonlyUserBtn()"
+              :loading="quickCreateBtnLoading"
+              @click="useFormCreate"
+            >
+              <VIcon size="18" class="align-middle mr-1">dynamic-form-outline</VIcon>
+              <span class="align-middle">{{ $t('public_button_quickly_create_task') }}</span>
+            </el-button>
+          </el-badge>
+          <el-button
+            v-readonlybtn="'SYNC_job_creation'"
+            class="btn btn-create"
+            type="primary"
+            size="mini"
+            id="task-list-create"
+            :disabled="$disabledReadonlyUserBtn()"
+            :loading="createBtnLoading"
+            @click="refFn('create')"
+          >
+            {{ $t('public_button_create') }}
+          </el-button>
+        </div>
+      </template>
     </template>
     <ReplicationBoard v-if="viewType === 'board'" class="bg-white rounded-lg overflow-hidden"></ReplicationBoard>
     <List
@@ -47,35 +67,6 @@
       :sync-type="syncType"
     ></List>
   </PageContainer>
-  <!--<div class="flex flex-column h-100 overflow-hidden">
-    <div class="bg-white rounded-lg mb-4 flex align-center px-4">
-      <span class="fs-5 py-4 font-color-dark">{{ $t($route.meta.title) }}</span>
-      <template v-if="$route.meta.desc">
-        <ElDivider v-if="$route.meta.desc" class="mx-4" direction="vertical"></ElDivider>
-        <span class="fs-7 font-color-sslight">{{ $t($route.meta.desc) }}</span>
-      </template>
-      <div class="flex-grow-1"></div>
-      <el-radio-group v-model="viewType" class="view-radio-group">
-        <el-radio-button label="board">
-          <VIcon class="align-top">swimlane</VIcon>
-          {{ $t('public_board_view') }}
-        </el-radio-button>
-        <el-radio-button label="list">
-          <VIcon class="align-top">list-view</VIcon>
-          {{ $t('public_list_view') }}
-        </el-radio-button>
-      </el-radio-group>
-    </div>
-
-    <ReplicationBoard v-if="viewType === 'board'" class="bg-white rounded-lg overflow-hidden"></ReplicationBoard>
-    <List
-      v-else
-      class="overflow-hidden bg-white rounded-lg px-4"
-      :route="route"
-      :task-buried="taskBuried"
-      :sync-type="syncType"
-    ></List>
-  </div>-->
 </template>
 
 <script>
@@ -85,6 +76,8 @@ import PageContainer from '@tap/business/src/components/PageContainer.vue'
 
 export default {
   name: 'MigrateList',
+
+  inject: ['checkAgent', 'buried'],
 
   components: { PageContainer, List, ReplicationBoard },
 
@@ -103,7 +96,8 @@ export default {
         editor: 'MigrateEditor',
         monitor: 'MigrationMonitor'
       },
-      createBtnLoading: false
+      createBtnLoading: false,
+      quickCreateBtnLoading: false
     }
   },
 
@@ -113,10 +107,10 @@ export default {
     },
     viewType: {
       get() {
-        return this.$store.state.replicationTour.view
+        return this.$store.state.guide.tour.view
       },
       set(value) {
-        this.$store.commit('setReplicationView', value)
+        this.$store.dispatch('setReplicationView', value)
       }
     },
     buttonShowMap() {
@@ -138,19 +132,23 @@ export default {
     }
   },
 
-  watch: {
-    viewType() {
-      if (!this.startingTour) {
-        this.$axios.post('api/tcm/user_guide', {
-          tour: this.$store.state.replicationTour,
-        })
-      }
-    }
-  },
-
   methods: {
     refFn(method) {
       this.$refs.list[method]?.()
+    },
+
+    useFormCreate() {
+      this.buried('migrationFormCreate')
+      this.quickCreateBtnLoading = true
+      this.checkAgent(async () => {
+        await this.$router.push({
+          name: 'MigrateForm'
+        })
+        this.quickCreateBtnLoading = false
+      }).catch(() => {
+        this.quickCreateBtnLoading = false
+        this.buried('migrationFormCreateAgentFail')
+      })
     }
   }
 }

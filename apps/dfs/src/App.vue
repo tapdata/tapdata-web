@@ -9,6 +9,8 @@
       @start="handleStartTour"
       @finish="handleFinishTour"
     ></ReplicationTour>
+
+    <!--<CustomerSurvey :value="true"></CustomerSurvey>-->
   </ElConfigProvider>
 </template>
 
@@ -62,30 +64,115 @@ const handleStartTour = async () => {
 }
 const handleFinishTour = () => {
   setShowReplicationTour(false)
+  nextTick(() => {
+    initMenuTour()
+  })
+}
+const waitForElement = (selector, callback) => {
+  const observer = new MutationObserver((mutationsList, observer) => {
+    if (document.querySelector(selector)) {
+      observer.disconnect()
+      callback()
+    }
+  })
+
+  observer.observe(document.body, { childList: true, subtree: true })
+}
+
+let menuTour
+
+const initMenuTour = () => {
+  const domain =
+    !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en'
+      ? 'https://docs.tapdata.io/'
+      : 'https://docs.tapdata.net/'
+
+  const steps = [
+    {
+      element: '#menu-Instance',
+      popover: {
+        showButtons: ['next', 'previous'],
+        description: `${this.$t(
+          'menu_tour_instance'
+        )}，<a href="${domain}quick-start/install/install-tapdata-agent/" target="_blank">${this.$t(
+          'menu_tour_instance_link'
+        )}</a>`
+      }
+    },
+    {
+      element: '#menu-connections',
+      popover: {
+        showButtons: ['next', 'previous'],
+        description: this.$t('menu_tour_connection')
+      }
+    },
+    {
+      element: '#task-list-create',
+      popover: {
+        showButtons: ['next', 'previous'],
+        description: this.$t('menu_tour_create_task')
+      }
+    }
+  ]
+
+  const targetElement = document.querySelector(steps[0].element)
+
+  menuTour = driver({
+    overlayOpacity: 0.5,
+    allowClose: false,
+    allowKeyboardControl: false,
+    disableActiveInteraction: true,
+    showProgress: true,
+    prevBtnText: this.$t('public_button_previous'),
+    nextBtnText: this.$t('public_button_next'),
+    doneBtnText: this.$t('public_button_understand'),
+    steps,
+    popoverClass: 'menu-tour-popover p-4 rounded-lg',
+    onPopoverRender: (popover, { config, state }) => {},
+    onHighlightStarted: (element, step, { state }) => {},
+    onDestroyed: (el, step, options) => {}
+  })
+
+  if (targetElement) {
+    this.startMenuTour()
+  } else {
+    this.waitForElement(steps[0].element, () => {
+      setTimeout(() => {
+        this.startMenuTour()
+      }, 500)
+    })
+  }
+}
+
+const startMenuTour = async () => {
+  if (route.name !== 'migrateList') {
+    await router.push({ name: 'migrateList' })
+  }
+  menuTour.drive(0)
 }
 
 onMounted(() => {
-  const root = getCurrentInstance().appContext.config.globalProperties
-  const route = useRoute()
-  const unwatch = watch(route, async () => {
-    unwatch()
-    await nextTick()
-    if (route.query?.tour) {
-      const guide = await root.$axios.get('api/tcm/user_guide')
-      // 查询是否有查看监控的行为
-      const behavior = guide?.tour?.behavior
-      if (behavior && behavior !== 'view-monitor') {
-        store.commit('openCompleteReplicationTour')
-        root.$axios.post('api/tcm/user_guide', {
-          tour: {
-            ...guide.tour,
-            behavior: 'view-monitor',
-            behaviorAt: Date.now(),
-          },
-        })
-      }
-    }
-  })
+  // const root = getCurrentInstance().appContext.config.globalProperties
+  // const route = useRoute()
+  // const unwatch = watch(route, async () => {
+  //   unwatch()
+  //   await nextTick()
+  //   if (route.query?.tour) {
+  //     const guide = await root.$axios.get('api/tcm/user_guide')
+  //     // 查询是否有查看监控的行为
+  //     const behavior = guide?.tour?.behavior
+  //     if (behavior && behavior !== 'view-monitor') {
+  //       store.commit('openCompleteReplicationTour')
+  //       root.$axios.post('api/tcm/user_guide', {
+  //         tour: {
+  //           ...guide.tour,
+  //           behavior: 'view-monitor',
+  //           behaviorAt: Date.now(),
+  //         },
+  //       })
+  //     }
+  //   }
+  // })
 })
 </script>
 

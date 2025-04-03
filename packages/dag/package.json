@@ -31,7 +31,8 @@
     "jsplumb": "^2.15.6",
     "mousetrap": "^1.6.5",
     "resize-observer-polyfill": "^1.5.1",
-    "tiny-emitter": "^2.1.0",
+    "vue-json-pretty": "^1.9.5",
+    "vue-request": "^2.0.4",
     "vue-virtual-scroller": "2.0.0-beta.8",
     "vuex": "^4.0.2"
   }

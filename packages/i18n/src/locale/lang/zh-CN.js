@@ -8,6 +8,7 @@ export default {
   public_description: '描述',
   public_version: '版本',
   public_operation: '操作',
+  public_operation_abb: '操作',
   public_operation_available: '可用操作',
   public_object: '对象',
   public_create_time: '创建时间',
@@ -38,6 +39,8 @@ export default {
   public_phone: '手机号',
   public_email: '邮箱',
   public_view_details: '查看详情',
+  public_warn: '警告',
+  public_error: '错误',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '无效',
@@ -100,6 +103,7 @@ export default {
   public_button_close: '关闭',
   public_button_reset: '重置',
   public_button_create: '创建',
+  public_button_quickly_create_task: '快速创建任务',
   public_button_export: '导出',
   public_button_download: '下载',
   public_button_add: '新增',
@@ -133,6 +137,7 @@ export default {
   public_button_execute: '执行',
   public_button_obtain: '获取',
   public_button_help: '帮助',
+  public_button_understand: '我知道啦',
   // 消息
   public_message_title_prompt: '提示',
   public_message_delete_confirm: '是否删除',
@@ -156,6 +161,7 @@ export default {
   public_message_request_timeout: '请求超时',
   public_message_send_success: '发送成功',
   public_message_download_ok: '下载成功',
+  public_message_publish_successful: '发布成功',
   // 下拉列表
   public_select_placeholder: '请选择',
   public_select_option_all: '全部',
@@ -206,7 +212,7 @@ export default {
   // agent
   public_agent: 'Agent',
   public_agent_name: 'Agent名称',
-  public_agent_button_create: '创建计算引擎',
+  public_agent_button_create: '创建 Agent',
   public_agent_button_deploy: '部署',
   public_agent_button_deploy_now: '立即部署',
   public_agent_button_deploy_later: '稍后部署',
@@ -250,7 +256,7 @@ export default {
   public_task_type: '任务类型',
   public_task_sync_type: '同步类型',
   public_task_type_migrate: '数据复制',
-  public_task_type_sync: '数据开发',
+  public_task_type_sync: '数据转换',
   public_task_type_heartbeat: '心跳任务',
   public_task_type_log_collector: '共享挖掘',
   public_task_type_initial_sync: '全量',
@@ -285,6 +291,7 @@ export default {
   public_event_insert: '插入',
   public_event_update: '更新',
   public_event_ddl: 'DDL',
+  public_event_cdc_placeholder: '暂无增量数据',
 
   //里程碑
   public_milestone_time_cdc_consuming: '启动耗时',
@@ -341,5 +348,35 @@ export default {
   public_resend: '重新发送',
 
   public_unique_index: '唯一索引',
-  public_normal_index: '索引'
+  public_normal_index: '索引',
+  public_batch_publish: '批量发布',
+  public_database_time: '数据库时间',
+  public_data_update_time: '数据更新时间',
+
+  public_create_source_connection: '创建源连接',
+  public_create_target_connection: '创建目标连接',
+  public_configuration_task: '配置任务',
+  public_need_help: '需要帮助？',
+  public_test_and_continue: '测试连接，继续下一步',
+  public_task_count: '{val} 个任务',
+  public_retrying: '重试中',
+  public_next_retry_time: '下次重试时间',
+  public_data_capture: '数据抓取',
+  public_keywords: '关键字',
+  public_data_capture_keywords_ph: '请输入数据关键字进行抓取',
+  public_view_docs: '查看文档',
+  public_file_name: '文件名',
+  public_file_size: '文件大小',
+  public_log_download: '日志下载',
+  public_alert_401_tip: '您的会话已过期或者已在其他地方登录，请重新登录后继续操作',
+  public_alert_401: '会话过期提醒',
+  public_store_type: '存储类型',
+  public_from_db_type: '来源数据库类型',
+  public_sample_size: '抽样数据量',
+  public_document: '文档',
+  public_array: '数组',
+  public_load_more: '加载更多',
+  public_loading: '拼命加载中',
+  public_load_end: '到底了',
+  public_foreign_key_tip: '外键 {name} 指向 {val}'
 }

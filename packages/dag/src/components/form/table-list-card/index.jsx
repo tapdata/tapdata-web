@@ -13,7 +13,7 @@ import './style.scss'
 
 export const TableListCard = observer(
   defineComponent({
-    props: ['connectionId', 'value', 'title', 'params', 'reloadTime', 'filterType'],
+    props: ['connectionId', 'value', 'title', 'params', 'reloadTime', 'filterType', 'hasPartition'],
     setup(props, { emit }) {
       const loading = ref(false)
       const list = ref([])
@@ -26,23 +26,25 @@ export const TableListCard = observer(
           ...{ connectionId: props.connectionId },
           ...props.params,
         }
-        metadataInstancesApi
-          .pageTables(params)
-          .then((data) => {
-            let map = {}
-            let items = data?.items || []
-            items.forEach((t) => {
-              if (t.tableComment || t.primaryKeyCounts) {
-                map[t.tableName] = t
-              }
-            })
-            tableMap.value = map
-            list.value = Object.freeze(
-              getPrimaryKeyTablesByType(items.map((t) => t.tableName) || [], props.filterType, tableMap.value),
-            )
-            total.value = data?.total || 0
+
+        const fn = props.hasPartition
+          ? metadataInstancesApi.pagePartitionTables(params)
+          : metadataInstancesApi.pageTables(params)
+
+        fn.then((data) => {
+          let map = {}
+          let items = data?.items || []
+          items.forEach((t) => {
+            if (t.uniqueIndexCounts || t.primaryKeyCounts) {
+              map[t.tableName] = t
+            }
           })
-          .finally(() => (loading.value = false))
+          tableMap.value = map
+          list.value = Object.freeze(
+            getPrimaryKeyTablesByType(items.map((t) => t.tableName) || [], props.filterType, tableMap.value),
+          )
+          total.value = data?.total || 0
+        }).finally(() => (loading.value = false))
       }
       loadData()
 

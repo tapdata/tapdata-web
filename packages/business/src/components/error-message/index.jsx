@@ -5,7 +5,7 @@ import { copyToClipboard } from '@tap/shared'
 
 function renderDialog(stack) {
   return (
-    <div>
+    <div id="error-message-dialog">
       <div class="flex align-center mb-4">
         <ElIcon class="text-lg mr-2 color-danger">
           <ElIconCircleCloseFilled />
@@ -19,7 +19,7 @@ function renderDialog(stack) {
         <div class="position-absolute end-0 top-0 px-2 pt-1 error-stack-actions">
           <ElButton
             onClick={() => {
-              copyToClipboard(stack)
+              copyToClipboard(stack, document.getElementById('error-message-dialog'))
               ElMessage.success(i18n.t('public_message_copy_success'))
             }}
             icon={ElIconCopyDocument}
@@ -57,9 +57,11 @@ function renderMessage(message, stack) {
 }
 
 export function ErrorMessage(stack, message) {
-  const router = useRouter()
+  if (import.meta.env.VITE_APP_KEYWORD) {
+    stack = stack.replace(/tapdata\s?/gi, process.env.VUE_APP_KEYWORD)
+  }
 
-  return ElMessageBox({
+  MessageBox({
     title: '',
     showClose: true,
     customClass: ' w-80 max-w-1000 rounded-lg pro-message-box',
@@ -99,6 +101,10 @@ export function showErrorMessage(error) {
   let showClose = false
 
   if (error?.stack) {
+    if (process.env.VUE_APP_KEYWORD) {
+      error.stack = error.stack.replace(/tapdata\s?/gi, process.env.VUE_APP_KEYWORD)
+    }
+
     message = renderMessage(message, error.stack)
     duration = 0
     showClose = true

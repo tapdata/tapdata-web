@@ -58,13 +58,19 @@ export default {
   },
   methods: {
     showErrorMsg() {
+      let stack = this.data.loadFieldErrMsg
+
+      if (import.meta.env.VUE_APP_KEYWORD) {
+        stack = stack.replace(/tapdata\s?/gi, process.env.VUE_APP_KEYWORD)
+      }
+
       this.$alert(
         h(
           'pre',
           {
             class: 'pb-5 overflow-auto',
           },
-          [this.data.loadFieldErrMsg],
+          [stack],
         ),
         this.$t('packages_business_schema_progress_dialog_error_title'),
         {

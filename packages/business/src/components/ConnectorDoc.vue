@@ -10,10 +10,14 @@ import { GitBook } from '@tap/component'
 import { pdkApi } from '@tap/api'
 
 const pdkDocMap = {
+  'supported-databases': 'prerequisites/supported-databases',
   'big-query': 'prerequisites/warehouses-and-lake/big-query',
   clickhouse: 'prerequisites/warehouses-and-lake/clickhouse',
   databend: 'prerequisites/warehouses-and-lake/databend',
   doris: 'prerequisites/warehouses-and-lake/doris',
+  gaussdb: 'prerequisites/warehouses-and-lake/gaussdb',
+  greenplum: 'prerequisites/warehouses-and-lake/greenplum',
+  hudi: 'prerequisites/warehouses-and-lake/hudi',
   selectdb: 'prerequisites/warehouses-and-lake/selectdb',
   tablestore: 'prerequisites/warehouses-and-lake/tablestore',
   yashandb: 'prerequisites/warehouses-and-lake/yashandb',
@@ -29,18 +33,22 @@ const pdkDocMap = {
   'kingbase-es-r6': 'prerequisites/on-prem-databases/kingbase-es-r6',
   mariadb: 'prerequisites/on-prem-databases/mariadb',
   mongodb: 'prerequisites/on-prem-databases/mongodb',
+  'mongodb-below34': 'prerequisites/on-prem-databases/mongodb-below34',
   'mongodb-atlas': 'prerequisites/on-prem-databases/mongodb-atlas',
   'mrs-hive3': 'prerequisites/on-prem-databases/mrs-hive3',
   mysql: 'prerequisites/on-prem-databases/mysql',
   'mysql-pxc': 'prerequisites/on-prem-databases/mysql-pxc',
   oceanbase: 'prerequisites/on-prem-databases/oceanbase',
+  'oceanbase-oracle': 'prerequisites/on-prem-databases/oceanbase-oracle',
   opengauss: 'prerequisites/on-prem-databases/opengauss',
   oracle: 'prerequisites/on-prem-databases/oracle',
   postgresql: 'prerequisites/on-prem-databases/postgresql',
   redis: 'prerequisites/on-prem-databases/redis',
   sqlserver: 'prerequisites/on-prem-databases/sqlserver',
+  sybase: 'prerequisites/on-prem-databases/sybase',
   tdengine: 'prerequisites/on-prem-databases/tdengine',
   tidb: 'prerequisites/on-prem-databases/tidb',
+  vastbase: 'prerequisites/on-prem-databases/vastbase',
   'aliyun-adb-mysql': 'prerequisites/cloud-databases/aliyun-adb-mysql',
   'aliyun-adb-postgresql': 'prerequisites/cloud-databases/aliyun-adb-postgresql',
   'aliyun-mongodb': 'prerequisites/cloud-databases/aliyun-mongodb',
@@ -50,13 +58,14 @@ const pdkDocMap = {
   'aliyun-rds-for-pg': 'prerequisites/cloud-databases/aliyun-rds-for-pg',
   'aliyun-rds-for-sql-server': 'prerequisites/cloud-databases/aliyun-rds-for-sql-server',
   'amazon-rds-mysql': 'prerequisites/cloud-databases/amazon-rds-mysql',
+  'huawei-cloud-gaussdb': 'prerequisites/cloud-databases/huawei-cloud-gaussdb',
   'polardb-mysql': 'prerequisites/cloud-databases/polardb-mysql',
   'polardb-postgresql': 'prerequisites/cloud-databases/polardb-postgresql',
   'tencentdb-for-mariadb': 'prerequisites/cloud-databases/tencentdb-for-mariadb',
   'tencentdb-for-mongodb': 'prerequisites/cloud-databases/tencentdb-for-mongodb',
-  'tencentdb-for-mysql': 'prerequisites/cloud-databases/tencentdb-for-mysql',
   'tencentdb-for-pg': 'prerequisites/cloud-databases/tencentdb-for-pg',
   'tencentdb-for-sql-server': 'prerequisites/cloud-databases/tencentdb-for-sql-server',
+  'tencentdb-td-mysql': 'prerequisites/cloud-databases/tencentdb-td-mysql',
   activemq: 'prerequisites/mq-and-middleware/activemq',
   'ai-chat': 'prerequisites/mq-and-middleware/ai-chat',
   'bes-channels': 'prerequisites/mq-and-middleware/bes-channels',
@@ -69,6 +78,7 @@ const pdkDocMap = {
   salesforce: 'prerequisites/crm-and-sales-analytics/salesforce',
   'zoho-crm': 'prerequisites/crm-and-sales-analytics/zoho-crm',
   coding: 'prerequisites/saas-and-api/coding',
+  'feishu-bitable': 'prerequisites/saas-and-api/feishu-bitable',
   github: 'prerequisites/saas-and-api/github',
   'lark-approval': 'prerequisites/saas-and-api/lark-approval',
   'lark-doc': 'prerequisites/saas-and-api/lark-doc',
@@ -86,8 +96,10 @@ const pdkDocMap = {
   'custom-connection': 'prerequisites/others/custom-connection',
   dummy: 'prerequisites/others/dummy',
   'http-receiver': 'prerequisites/others/http-receiver',
-  greenplum: 'prerequisites/warehouses-and-lake/greenplum',
+  'mock-source': 'prerequisites/others/mock-source',
+  'mock-target': 'prerequisites/others/mock-target',
   dws: 'prerequisites/warehouses-and-lake/gaussdb',
+  kafka_enhanced: 'prerequisites/mq-and-middleware/kafka-enhanced'
 }
 
 // 维护一个DocMap还有一个NameDictionary的原因是，docMap从文档仓库直接复制过来，有些命名和pdkId不一致
@@ -118,6 +130,7 @@ const pdkNameDictionary = {
   'tencent-db-mysql': 'tencentdb-for-mysql',
   'tencent-db-postgres': 'tencentdb-for-pg',
   'tencent-db-sqlserver': 'tencentdb-for-sql-server',
+  mongodb3: 'mongodb-below34'
 }
 
 export default {
@@ -141,19 +154,25 @@ export default {
 
   computed: {
     docUrl() {
-      // const map = this.$store.state.config?.docLinkDictionary || pdkDocMap
       const map = pdkDocMap // config.json 维护目前意义不大，每次还是得重新打包
       return map[pdkNameDictionary[this.pdkId] || this.pdkId]
     },
     src() {
-      const domain =
-        !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en'
-          ? 'https://docs.tapdata.io/'
-          : 'https://docs.tapdata.net/'
+      let domain
+
+      if (this.isDaas) {
+        domain = this.$i18n.locale === 'en' ? '/docs/en/' : '/docs/'
+      } else {
+        domain =
+          !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en'
+            ? 'https://docs.tapdata.io/'
+            : 'https://docs.tapdata.net/'
+      }
+
       return domain + this.docUrl + '?from=cloud'
     },
     showIframe() {
-      return !this.isDaas && this.docUrl
+      return !!this.docUrl
     },
   },
 

@@ -88,7 +88,7 @@ import { debounce, cloneDeep } from 'lodash'
 import { VEmpty } from '@tap/component'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 import { getCanUseDataTypes, getMatchedDataTypeLevel } from '../../util'
-
+import { mapFieldsData } from '@tap/form'
 import mixins from '../form/field-inference/mixins'
 import { SchemaFieldList as List } from '../form/field-inference'
 
@@ -269,6 +269,8 @@ export default {
       }
       this.selected = Object.assign({}, item, { fields, findPossibleDataTypes })
       this.updateList = this.updateConditionFieldMap[this.selected.name] || []
+
+      this.selected.fields = mapFieldsData(this.selected).fields
     },
 
     handleSelect(index = 0) {

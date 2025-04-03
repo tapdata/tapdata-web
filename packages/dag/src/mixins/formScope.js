@@ -1,3 +1,4 @@
+import axios from 'axios'
 import i18n from '@tap/i18n'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
@@ -12,7 +13,7 @@ import {
   taskApi,
 } from '@tap/api'
 import { externalStorageApi } from '@tap/api'
-import { isPlainObj } from '@tap/shared'
+import { isPlainObj, Cookie } from '@tap/shared'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { FormTab } from '@tap/form'
 
@@ -137,6 +138,10 @@ export default {
 
         $hasPdkConfig: (pdkHash) => {
           return !!this.$store.state.dataflow.pdkPropertiesMap[pdkHash]
+        },
+
+        hasFeature: feature => {
+          return !isDaas || this.$store.getters['feature/hasFeature']?.(feature)
         },
 
         findNodeById: (id) => {
@@ -442,6 +447,7 @@ export default {
         loadNodeFieldOptions: async (nodeId) => {
           const fields = await this.scope.loadNodeFieldsById(nodeId)
           return fields
+            .filter(item => !item.is_deleted)
             .map((item) => ({
               label: item.field_name,
               value: item.field_name,
@@ -449,8 +455,8 @@ export default {
               indicesUnique: !!item.indicesUnique,
               type: item.data_type,
               tapType: item.tapType,
+              source: item.source
             }))
-            .filter((item) => !item.is_deleted)
         },
 
         loadDateFieldOptions: async (nodeId) => {
@@ -772,7 +778,7 @@ export default {
           pdkType !== connection.pdkType && form.setValuesIn('attrs.pdkType', connection.pdkType)
           pdkHash !== connection.pdkHash && form.setValuesIn('attrs.pdkHash', connection.pdkHash)
           connectionType !== connection.connection_type &&
-            form.setValuesIn('attrs.connectionType', connection.connectionType)
+            form.setValuesIn('attrs.connectionType', connection.connection_type)
           accessNodeProcessId !== connection.accessNodeProcessId &&
             form.setValuesIn('attrs.accessNodeProcessId', connection.accessNodeProcessId)
           accessNodeType !== connection.accessNodeType &&
@@ -843,7 +849,7 @@ export default {
           if (isMigrate) {
             let result = await metadataInstancesApi.nodeSchemaPage({
               nodeId,
-              fields: ['original_name', 'fields', 'qualified_name'],
+              fields: ['original_name', 'fields', 'qualified_name', 'name', 'indices'],
               page: 1,
               pageSize: 1,
             })
@@ -902,7 +908,7 @@ export default {
           const $values = form.values
           let options = field.dataSource
           let nodeData = this.scope.findNodeById($values.id)
-          console.debug('validateUpdateConditionFields.ctx', ctx, $values.attrs.hasCreate) // eslint-disable-line
+
           if (!$values.$inputs[0]) {
             return
           }
@@ -915,21 +921,27 @@ export default {
             }
 
             if (options && options.length) {
-              let isPrimaryKeyList = options.filter((item) => item.isPrimaryKey)
-              let indicesUniqueList = options.filter((item) => item.indicesUnique)
-              let defaultList = (isPrimaryKeyList.length ? isPrimaryKeyList : indicesUniqueList).map(
-                (item) => item.value,
-              )
+              let defaultList = options.filter(item => item.isPrimaryKey)
+
+              if (!defaultList.length) {
+                defaultList = options.filter(item => item.indicesUnique)
+              }
+
+              if (!defaultList.length) {
+                defaultList = options.filter(item => item.source === 'virtual_hash')
+              }
 
               if (!value || !value.length) {
-                nodeData.updateConditionFields = defaultList
+                nodeData.updateConditionFields = defaultList.map(item => item.value)
                 $values.updateConditionFields = nodeData.updateConditionFields
               } else if (value) {
                 let fieldMap = options.reduce((obj, item) => ((obj[item.value] = true), obj), {})
                 let filterValue = value.filter((v) => fieldMap[v])
 
                 if (value.length !== filterValue.length) {
-                  nodeData.updateConditionFields = filterValue.length ? filterValue : defaultList
+                  nodeData.updateConditionFields = filterValue.length
+                    ? filterValue
+                    : defaultList.map(item => item.value)
                   $values.updateConditionFields = nodeData.updateConditionFields
                 }
               }
@@ -1078,7 +1090,6 @@ export default {
         },
 
         getNodeTableOptions: async (nodeId) => {
-          console.log('getNodeTableOptions', nodeId)
           const { items = [] } = await taskApi.getNodeTableInfo({
             taskId: this.dataflow.id,
             nodeId,
@@ -1088,6 +1099,20 @@ export default {
 
           return items.map((item) => item.sinkObjectName)
         },
+
+        // 数据源专属配置调用
+        downloadForeignKeyConstraint: () => {
+          let url = `${axios.defaults.baseURL}api/foreignKeyConstraint/load?taskId=${this.dataflow.id}`
+
+          if (this.isDaas) {
+            const accessToken = Cookie.get('access_token')
+            url += `&access_token=${accessToken}`
+          } else if (process.env.VUE_APP_ACCESS_TOKEN) {
+            url += `&__token=${process.env.VUE_APP_ACCESS_TOKEN}`
+          }
+
+          window.open(url)
+        }
       },
     }
   },
@@ -1107,7 +1132,7 @@ export default {
       const data = await clusterApi.findAccessNodeInfo()
       const mapNode = (item) => ({
         value: item.processId,
-        label: `${item.hostName}（${
+        label: `${item.agentName || item.hostName}（${
           item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
         }）`,
         disabled: item.status !== 'running',

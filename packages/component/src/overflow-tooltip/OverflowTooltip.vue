@@ -11,25 +11,11 @@ export default {
     }
   },
 
-  watch: {
-    text: {
-      deep: true,
-      immediate: true,
-
-      handler() {
-        this.$nextTick(() => {
-          const containerWidth = this.$refs.container?.getBoundingClientRect().width
-          const textWidth = this.$refs.text?.getBoundingClientRect().width
-          this.overflow = textWidth > containerWidth
-        })
-      },
-    },
-  },
-
   render() {
     const { text, $slots, $attrs } = this
     const elm = ($slots.default && $slots.default())?.[0]?.elm
     const defaultText = elm?.innerText || text
+
     return this.overflow ? (
       <el-tooltip
         content={defaultText}
@@ -51,6 +37,30 @@ export default {
       </div>
     )
   },
+
+  mounted() {
+    const observer = () => {
+      this.check()
+    }
+
+    this.resizeObserver = new ResizeObserver(observer)
+    this.resizeObserver.observe(this.$el)
+  },
+
+  beforeDestroy() {
+    if (this.resizeObserver) {
+      this.resizeObserver.unobserve(this.$el)
+      this.resizeObserver = null
+    }
+  },
+
+  methods: {
+    check() {
+      const containerWidth = this.$refs.container?.getBoundingClientRect().width
+      const textWidth = this.$refs.text?.getBoundingClientRect().width
+      this.overflow = textWidth > containerWidth
+    }
+  }
 }
 </script>
 

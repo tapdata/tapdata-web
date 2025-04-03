@@ -104,6 +104,7 @@ export class CountUp {
         }
         this.handleScroll(this)
       } else {
+        // eslint-disable-next-line
         console.error(this.error, target)
       }
     }

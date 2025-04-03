@@ -35,6 +35,19 @@ export function permissionBtnDisable(code, id) {
   return falg
 }
 
+Vue.directive('feature', {
+  inserted(el, binding, vnode) {
+    const store = vnode.context.$store
+    const hasFeature = store.getters['feature/hasFeature']
+
+    if (!hasFeature(binding.value)) {
+      el.parentNode.removeChild(el)
+
+      vnode.componentInstance?.$destroy?.()
+    }
+  }
+})
+
 export function installDirectives(app) {
   app.directive('readonlybtn', {
     mounted(el, binding, vnode) {

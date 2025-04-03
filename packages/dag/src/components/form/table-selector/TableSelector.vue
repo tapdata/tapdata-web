@@ -58,7 +58,7 @@
                     item.name +
                     (getTableInfo(item.name).tableComment ? `(${getTableInfo(item.name).tableComment})` : '')
                   "
-                  placement="right"
+                  placement="left"
                   :enterable="false"
                 >
                   <span>
@@ -83,7 +83,7 @@
         </ElCheckboxGroup>
         <div v-if="!filteredData.length" class="flex-1 flex flex-column justify-center">
           <VEmpty
-            v-if="!table.searchKeyword"
+            v-if="!table.searchKeyword && !alwaysShowReload"
             :description="$t('packages_form_component_table_selector_tables_empty') + '~'"
           ></VEmpty>
           <VEmpty v-else>
@@ -136,13 +136,16 @@
             >({{ selected.checked.length }}/{{ selected.tables.length }})</span
           >
         </div>
-        <ElLink v-if="!disabled" type="primary" @click="changeSeletedMode()">
-          <div class="flex align-center">
-            <span v-if="!isOpenClipMode">{{ $t('packages_form_component_table_selector_bulk_name') }}</span>
-            <span v-else>{{ $t('packages_form_component_table_selector_bulk_pick') }}</span>
-            <VIcon class="ml-1" size="9">icon_table_selector_bulk_pick</VIcon>
-          </div>
-        </ElLink>
+
+        <slot name="right-extra">
+          <ElLink v-if="!disabled" type="primary" @click="changeSeletedMode()">
+            <div class="flex align-center">
+              <span v-if="!isOpenClipMode">{{ $t('packages_form_component_table_selector_bulk_name') }}</span>
+              <span v-else>{{ $t('packages_form_component_table_selector_bulk_pick') }}</span>
+              <VIcon class="ml-1" size="9">icon_table_selector_bulk_pick</VIcon>
+            </div>
+          </ElLink>
+        </slot>
       </div>
       <div class="selector-panel__body" :class="{ isOpenClipMode }">
         <div v-show="!isOpenClipMode" class="selector-panel__search">
@@ -168,15 +171,30 @@
           >
             <template #default="{ item }">
               <ElCheckbox class="selector-panel__item" :label="item.name" :key="item.name">
-                <ElTooltip
-                  class="ellipsis"
-                  placement="right"
+                <OverflowTooltip
+                  v-if="!errorTables[item]"
+                  :text="item + (getTableInfo(item).tableComment ? `(${getTableInfo(item).tableComment})` : '')"
+                  placement="left"
                   :enterable="false"
-                  :disabled="!errorTables[item.name]"
-                  :content="errorTables[item.name]"
                 >
-                  <div :class="{ 'color-danger': errorTables[item.name] }">
-                    <VIcon v-if="!!getTableInfo(item.name).primaryKeyCounts" size="12" class="text-warning mr-1 mt-n1"
+                  <span>
+                    <VIcon v-if="!!getTableInfo(item).primaryKeyCounts" size="12" class="text-warning mr-1 mt-n1"
+                      >key</VIcon
+                    >
+                    <VIcon v-if="!!getTableInfo(item).uniqueIndexCounts" size="12" class="text-text-dark mr-1 mt-n1"
+                      >fingerprint</VIcon
+                    >
+                    <slot name="right-item" :row="item"
+                      ><span>{{ item }}</span></slot
+                    >
+                    <span v-if="getTableInfo(item).tableComment" class="font-color-sslight">{{
+                      `(${getTableInfo(item).tableComment})`
+                    }}</span>
+                  </span>
+                </OverflowTooltip>
+                <ElTooltip v-else class="ellipsis" placement="left" :enterable="false" :content="errorTables[item]">
+                  <div :class="{ 'color-danger': errorTables[item] }">
+                    <VIcon v-if="!!getTableInfo(item).primaryKeyCounts" size="12" class="text-warning mr-1 mt-n1"
                       >key</VIcon
                     >
                     <VIcon v-if="!!getTableInfo(item.name).uniqueIndexCounts" size="12" class="text-dark mr-1 mt-n1">
@@ -272,8 +290,13 @@ export default {
     value: Array,
     disabled: Boolean,
     hideReload: Boolean,
+    alwaysShowReload: Boolean,
     reloadTime: [String, Number],
-    filterType: String,
+    filterType: String,,
+    syncPartitionTableEnable: Boolean,
+    hasPartition: Boolean,
+    nodeId: String,
+    taskId: String
   },
   data() {
     return {
@@ -390,6 +413,9 @@ export default {
         this.getTables()
       }
     },
+    syncPartitionTableEnable() {
+      this.getTables()
+    }
   },
   created() {
     let id = this.connectionId
@@ -406,7 +432,7 @@ export default {
         //保留当前选中 以及当前所手动输入
         this.selected.tables = Array.from(new Set([...this.selected.tables, ...this.clipboardTables.concat()]))
         $emit(this, 'update:value', this.selected.tables)
-        $emit(this, 'change', this.selected.tables)
+        // $emit(this, 'change', this.selected.tables)
       }
     },
     add() {
@@ -418,7 +444,7 @@ export default {
         tables = Array.from(new Set(tables))
         this.selected.tables = Object.freeze(tables)
         $emit(this, 'update:value', this.selected.tables)
-        $emit(this, 'change', this.selected.tables)
+        // $emit(this, 'change', this.selected.tables)
       } else {
         this.$message.warning(this.$t('packages_form_component_table_selector_not_checked'))
       }
@@ -433,7 +459,7 @@ export default {
         this.selected.checked = []
         this.selected.isCheckAll = false
         $emit(this, 'update:value', this.selected.tables)
-        $emit(this, 'change', this.selected.tables)
+        // $emit(this, 'change', this.selected.tables)
       } else {
         this.$message.warning(this.$t('packages_form_component_table_selector_not_checked'))
       }
@@ -445,7 +471,7 @@ export default {
       } else {
         this.selected.tables = Object.freeze(this.selected.tables.filter((t) => !this.errorTables[t]))
         $emit(this, 'update:value', this.selected.tables)
-        $emit(this, 'change', this.selected.tables)
+        // $emit(this, 'change', this.selected.tables)
       }
     },
     getErrorTables(tables) {
@@ -482,7 +508,7 @@ export default {
       this.isOpenClipMode = !this.isOpenClipMode
       this.errorTables = {}
       if (this.isOpenClipMode) {
-        this.clipboardValue = ''
+        this.clipboardValue = this.selected.tables?.join(',') || ''
         this.isFocus = true
       } else {
         this.getErrorTables(this.selected.tables)
@@ -492,25 +518,31 @@ export default {
     getTables() {
       this.loading = true
       const { connectionId } = this
-      metadataInstancesApi
-        .pageTables({ connectionId, limit: 0 })
-        .then((res = {}) => {
-          let data = res.items || []
-          let tables = data.map((it) => it.tableName)
-          let map = {}
-          data.forEach((el = {}) => {
-            const { tableName, tableComment, primaryKeyCounts = 0, uniqueIndexCounts = 0 } = el
-            if (tableComment || primaryKeyCounts || uniqueIndexCounts) {
-              map[tableName] = { tableComment, primaryKeyCounts, uniqueIndexCounts }
-            }
+
+      const fn = this.hasPartition
+        ? metadataInstancesApi.pagePartitionTables({
+            connectionId,
+            limit: 0,
+            syncPartitionTableEnable: this.syncPartitionTableEnable
           })
-          this.tableMap = map
-          tables.sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
-          this.table.tables = Object.freeze(tables)
+        : metadataInstancesApi.pageTables({ connectionId, limit: 0 })
+
+      fn.then((res = {}) => {
+        let data = res.items || []
+        let tables = data.map((it) => it.tableName)
+        let map = {}
+        data.forEach((el = {}) => {
+          const { tableName, tableComment, primaryKeyCounts = 0, uniqueIndexCounts = 0 } = el
+          if (tableComment || primaryKeyCounts || uniqueIndexCounts) {
+            map[tableName] = { tableComment, primaryKeyCounts, uniqueIndexCounts }
+          }
         })
-        .finally(() => {
-          this.loading = false
-        })
+        this.tableMap = map
+        tables.sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
+        this.table.tables = Object.freeze(tables)
+      }).finally(() => {
+        this.loading = false
+      })
     },
     //重新加载模型
     async reload() {
@@ -562,11 +594,13 @@ export default {
             setTimeout(() => {
               this.showProgress = false
               this.progress = 0 //加载完成
-              const { taskId, activeNodeId } = this.$store.state?.dataflow || {}
-              if (!check && taskId && activeNodeId) {
+              const nodeId = this.nodeId || this.$store.state?.dataflow.activeNodeId
+              const taskId = this.taskId || this.$store.state?.dataflow.taskId
+
+              if (!check && taskId && nodeId) {
                 metadataInstancesApi
                   .deleteLogicSchema(taskId, {
-                    nodeId: activeNodeId,
+                    nodeId,
                   })
                   .then(() => {
                     this.getTables() //更新schema
@@ -621,15 +655,17 @@ export default {
       )
       this.selected.isCheckAll = false
       this.$emit('input', this.selected.tables)
-      this.$emit('change', this.selected.tables)
+      // this.$emit('change', this.selected.tables)
     },
 
-    loadSchema() {
+    async loadSchema() {
       this.schemaLoading = true
-      const { taskId, activeNodeId } = this.$store.state?.dataflow || {}
-      taskApi
+      const nodeId = this.nodeId || this.$store.state?.dataflow.activeNodeId
+      const taskId = this.taskId || this.$store.state?.dataflow.taskId
+
+      await taskApi
         .refreshSchema(taskId, {
-          nodeIds: activeNodeId,
+          nodeIds: nodeId,
           keys: this.table.searchKeyword,
         })
         .finally(() => {

@@ -14,6 +14,7 @@
       <el-button
         v-if="buttonShowMap.import && $route.name === 'dataflowList'"
         v-readonlybtn="'SYNC_job_import'"
+        v-feature="'mongodbRelmig'"
         size="mini"
         name="importRelmig"
         class="btn"
@@ -24,6 +25,7 @@
       </el-button>
       <ElButton
         v-if="$route.name === 'dataflowList'"
+        v-feature="'buildingMaterializedView'"
         class="--with-icon inline-flex align-center px-2 py-0 gap-1 align-top"
         size="mini"
         name="materializedView"

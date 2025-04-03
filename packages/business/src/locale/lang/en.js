@@ -192,7 +192,7 @@ export default {
   packages_business_task_info_throughputpop:
     'Input and output statistics: average source data collection speed and target write speed per second, the larger the value, the better',
   packages_business_task_monitor_time: 'Time',
-  packages_business_task_monitor_mission_milestone: 'Mission Milestone',
+  packages_business_task_monitor_mission_milestone: 'Task Milestone',
   packages_business_task_monitor_no_milestone_data:
     'Either this task has not yet been initiated or it has been reset, and as a result, there is no milestone data currently in progress.',
   packages_business_task_info_milestone: 'Milestone',
@@ -452,7 +452,7 @@ export default {
   packages_business_verification_verifyDetail: 'Verify Detail',
   packages_business_verification_sourceTable: 'Source Table',
   packages_business_verification_targetTable: 'Target Table',
-  packages_business_verification_sourceRows: 'Source Table Rows',
+  packages_business_verification_sourceRows: 'Source Table Verify Rows',
   packages_business_verification_rowConsistent: 'Count diff',
   packages_business_verification_contConsistent: 'Value diff',
   packages_business_verification_jointVerify: 'Related Fields Validation',
@@ -460,9 +460,9 @@ export default {
   packages_business_verification_tableDetail: 'Table Detail',
   packages_business_verification_configuration: 'Configuration',
   packages_business_verification_verifyName: 'Verify name',
-  packages_business_verification_sourceTotalRows: 'Verfify Rows',
+  packages_business_verification_sourceTotalRows: 'Verify Rows',
   packages_business_verification_targetTotalRows: 'Target Rows',
-  packages_business_verification_verifyStatus: 'Validation Status',
+  packages_business_verification_verifyStatus: 'Status',
   packages_business_verification_completeTime: 'Completion Time',
   packages_business_verification_verifyTime: 'Last Run Time',
   packages_business_verification_rowVerify: 'Count Validation',
@@ -675,7 +675,7 @@ export default {
     'The node is detected that the following running task has been invoked, and restart the task if the configuration needs to take effect',
   packages_business_task_list_sqLyuju: 'SQL statement:',
   packages_business_relation_details_waicunxinxi: 'External storage information used',
-  packages_business_milestone_list_cuowuxinxi: 'Error information',
+  packages_business_milestone_list_cuowuxinxi: 'Error message',
   packages_business_milestone_list_progr: '({val1}%, remaining {val2})',
   packages_business_milestone_list_chucuo: 'Error',
   packages_business_milestone_list_shujuchuli: 'Data Processing',
@@ -752,7 +752,7 @@ export default {
   packages_business_shared_cdc_setting_message_edit_save:
     'Save successfully, it will take effect after restarting the task',
   packages_business_shared_list_name: 'Mining name',
-  packages_business_shared_list_time_excavation: 'Excavation time point(Database Time)',
+  packages_business_shared_list_time_excavation: 'Excavation Time',
   packages_business_shared_list_setting: 'Mining settings',
   packages_business_shared_list_status: 'Status',
   packages_business_shared_list_time: 'Mining Delay',
@@ -834,8 +834,8 @@ export default {
   packages_business_data_server_list_quedingfabugai: 'Are you sure you want to publish the service?',
   packages_business_data_server_list_querenshanchufu: 'Are you sure you want to delete the service?',
   packages_business_data_server_list_huoqufuwuyu: 'Get the service domain name Failed.',
-  packages_business_data_server_list_fuwuzhuangtai: 'Service Status',
-  packages_business_data_server_list_guanlianduixiang: 'Associated Object',
+  packages_business_data_server_list_fuwuzhuangtai: 'Status',
+  packages_business_data_server_list_guanlianduixiang: 'Related Object',
   packages_business_data_server_list_fuwumingcheng: 'Service Name',
   packages_business_data_server_drawer_geshicuowu: 'Format error',
   packages_business_data_server_drawer_validate:
@@ -977,7 +977,7 @@ export default {
   packages_business_shared_cache_placeholder_task_name: 'Please enter the cache task name to search',
   packages_business_shared_cache_placeholder_connection_name: 'Please enter the connection name to search',
   packages_business_shared_cache_button_create: 'New Cache',
-  packages_business_shared_cache_name: 'Cache Name',
+  packages_business_shared_cache_name: 'Name',
   packages_business_shared_cache_status: 'Cache Status',
   packages_business_shared_cache_time: 'Cache Time',
   packages_business_shared_cache_keys: 'Cache Keys',
@@ -1234,7 +1234,7 @@ export default {
     'It has been detected that you have not bound your email address, so email notification cannot be enabled.',
   packages_business_verification_form_zhengzaijiyuren: 'Generating validation conditions based on tasks in progress',
   packages_business_agent_ip_tips_prefix:
-    "Please ensure that your database's network security policy allows access from the IP address where the fully managed agent is located. ",
+    'Please allow these TapData IPs in your firewall for database port access and ensure correct permissions',
   packages_business_agent_ip_tips_suffix: 'Click to view the IP address information for the fully managed agent.',
   packages_business_demo_database_desc:
     'Demo data source, allows for quick creation of data source information, with no need to prepare database details for an immediate experience.',
@@ -1277,7 +1277,7 @@ export default {
   packages_business_verification_hashTip: 'Currently does not support heterogeneous databases.',
   packages_business_heterogeneous_database: 'heterogeneous databases',
   packages_business_selected_rows: '{val} row(s) selected',
-  packages_business_download_analysis_report: 'Download Analysis Report',
+  packages_business_download_analysis_report: 'Analysis Report',
   packages_business_download_analysis_report_title: 'Task analysis report is being generated...',
   packages_business_download_analysis_report_desc:
     'The report generation takes about 60 seconds. After downloading, please send it to the support team for analysis.',
@@ -1320,5 +1320,19 @@ export default {
   packages_business_not_support_validation: '{connection} does not support {method}',
   packages_business_download_details: 'Download',
   packages_business_solution: 'Solution',
-  packages_business_error_details: 'Error Details'
+  packages_business_error_details: 'Error Details',
+  packages_business_instance_info: 'Unique Identifier',
+  packages_business_warning_details: 'Warning Details',
+  packages_business_custom_collate: 'Custom Collate',
+  packages_business_please_select_field: 'Please select a field',
+  packages_business_please_input_charset: 'Please input charset',
+  packages_business_auto_fill_join_fields: 'Smart Fill Associated Fields',
+  packages_business_auto_fill_join_tooltip_title:
+    'After enabling, the system will automatically fill in the join conditions according to the following priority:',
+  packages_business_auto_fill_join_tooltip_primary: '1. Use primary key fields first',
+  packages_business_auto_fill_join_tooltip_notnull: '2. If there is no primary key, use non-null fields',
+  packages_business_auto_fill_join_tooltip_all: '3. If there are no non-null fields, use all fields',
+  packages_business_nulls_first: 'NULL Priority Sort',
+  packages_business_nulls_first_tip:
+    'When the associated fields contain NULL values, the database defaults to sorting NULL values last, which may cause validation failure. Enabling this option will set NULL values first, but may not use the database index, increasing database load.'
 }

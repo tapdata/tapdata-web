@@ -77,7 +77,13 @@
         :element-loading-text="$t('packages_business_verification_checking')"
       >
         <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
-        <ResultView v-if="!isCountOrHash" ref="resultView" :remoteMethod="getResultData"></ResultView>
+        <ResultView
+          v-if="!isCountOrHash"
+          ref="resultView"
+          :remoteMethod="getResultData"
+          :show-type="showType"
+          @update:showType="showType = $event"
+        />
       </div>
     </div>
 
@@ -209,6 +215,11 @@ export default {
                 let stats = result.stats
                 if (stats.length) {
                   this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
+
+                  if (process.env.VUE_APP_KEYWORD && this.errorMsg) {
+                    this.errorMsg = this.errorMsg.replace(/tapdata\s?/gi, process.env.VUE_APP_KEYWORD)
+                  }
+
                   this.checkErrorMsg()
                   if (!this.taskId) {
                     this.taskId = stats[0].taskId

@@ -85,7 +85,7 @@ export const startTimeOnPage = (router) => {
     }
 
     // 隐藏客服控件
-    const blackList = ['DataflowNew', 'DataflowEditor', 'MigrateCreate', 'MigrateEditor']
+    const blackList = ['DataflowNew', 'DataflowEditor', 'MigrateCreate', 'MigrateEditor', 'Welcome', 'WelcomeTask']
     if (!blackList.includes(to.name)) {
       document.body.classList.remove('hide-chart')
     } else {

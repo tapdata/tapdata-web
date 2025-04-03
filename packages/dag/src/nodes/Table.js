@@ -128,10 +128,10 @@ export class Table extends NodeType {
                     'x-content': '{{$self.value}}',
                     'x-component-props': {
                       class: 'ellipsis',
-                      title: '{{$self.value}}',
-                    },
-                  },
-                },
+                      title: '{{$self.value}}'
+                    }
+                  }
+                }
               },
 
               tableNameSpace: {
@@ -141,6 +141,22 @@ export class Table extends NodeType {
                   align: 'start',
                   size: 'middle',
                   class: 'w-100',
+                },
+                'x-reactions': {
+                  dependencies: ['databaseType'],
+                  fulfill: {
+                    state: {
+                      display: '{{ !["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}'
+                    }
+                  }
+                },
+                'x-reactions': {
+                  dependencies: ['databaseType'],
+                  fulfill: {
+                    state: {
+                      display: '{{ !["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}'
+                    }
+                  }
                 },
                 properties: {
                   tableNameWrap: {
@@ -251,7 +267,6 @@ export class Table extends NodeType {
                   },
                 },
               },
-
               // 指定agent
               'attrs.accessNodeProcessId': {
                 type: 'string',
@@ -365,7 +380,7 @@ export class Table extends NodeType {
                     type: 'void',
                     'x-component': 'Alert',
                     'x-component-props': {
-                      class: 'lh-base',
+                      class: 'mb-2 lh-base',
                       title: i18n.t('packages_dag_updateConditionFields_alert'),
                       type: 'warning',
                       showIcon: true,
@@ -590,11 +605,11 @@ export class Table extends NodeType {
                       $form.setValuesIn('tableName', name)
                     }
                   }}}`,
-                },
-              },
-            },
+                }
+              }
+            }
           },
-          tab2: {
+          advancedTab: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
@@ -617,7 +632,7 @@ export class Table extends NodeType {
                   },
                 },
                 properties: {
-                  tab1: {
+                  ddl: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
@@ -702,7 +717,7 @@ export class Table extends NodeType {
                       },
                     },
                   },
-                  tab2: {
+                  mode: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
@@ -818,7 +833,7 @@ export class Table extends NodeType {
                       },
                     },
                   },
-                  tab3: {
+                  filter: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
@@ -1208,7 +1223,7 @@ export class Table extends NodeType {
                       },
                     },
                   },
-                  tab4: {
+                  read: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
@@ -1250,7 +1265,7 @@ export class Table extends NodeType {
                       },
                     },
                   },
-                  tab5: {
+                  resume: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
@@ -1260,7 +1275,7 @@ export class Table extends NodeType {
                       fulfill: {
                         state: {
                           display:
-                            '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc") ? "visible":"hidden"}}',
+                            '{{hasFeature("resume") && $values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc") ? "visible":"hidden"}}',
                         },
                       },
                     },
@@ -1426,7 +1441,7 @@ export class Table extends NodeType {
                       },
                     },
                   },
-                  tab6: {
+                  pdk: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
@@ -1469,12 +1484,26 @@ export class Table extends NodeType {
                   },
                 },
                 properties: {
-                  tab1: {
+                  ddlEventWrapper: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
                       title: i18n.t('packages_dag_nodes_database_ddLshijian'),
                       tooltip: i18n.t('packages_dag_ddl_events_collapse_tip'),
+                    },
+                    'x-reactions': {
+                      fulfill: {
+                        state: {
+                          display: `{{findParentNodes($values.id).filter(parent => (parent.type === 'database' || parent.type === 'table') && parent.ddlConfiguration === 'SYNCHRONIZATION' ).length > 0 ? "visible":"hidden"}}`
+                        }
+                      }
+                    },
+                    'x-reactions': {
+                      fulfill: {
+                        state: {
+                          display: `{{findParentNodes($values.id).filter(parent => (parent.type === 'database' || parent.type === 'table') && parent.ddlConfiguration === 'SYNCHRONIZATION' ).length > 0 ? "visible":"hidden"}}`
+                        }
+                      }
                     },
                     properties: {
                       ddlEvents: {
@@ -1487,7 +1516,7 @@ export class Table extends NodeType {
                       },
                     },
                   },
-                  tab2: {
+                  write: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
@@ -1537,9 +1566,6 @@ export class Table extends NodeType {
                         title: i18n.t('packages_dag_nodes_database_shujuxieruce'),
                         type: 'object',
                         'x-decorator': 'FormItem',
-                        'x-decorator-props': {
-                          feedbackLayout: 'none',
-                        },
                         'x-component': 'FormLayout',
                         'x-component-props': {
                           layout: 'horizontal',
@@ -1680,15 +1706,50 @@ export class Table extends NodeType {
                           fulfill: {
                             state: {
                               visible:
-                                '{{$settings.type !== "cdc" && $values.attrs.capabilities.filter(item => ["get_table_info_function", "create_index_function", "query_indexes_function"].includes(item.id)).length === 3}}',
-                              description: `{{$self.value ? '${i18n.t('packages_dag_syncIndex_desc')}' : ''}}`,
-                            },
-                          },
-                        },
+                                '{{hasFeature("syncIndex") && $settings.type !== "cdc" && $values.attrs.capabilities.filter(item => ["get_table_info_function", "create_index_function", "query_indexes_function"].includes(item.id)).length === 3}}',
+                              description: `{{$self.value ? '${i18n.t('packages_dag_syncIndex_desc')}' : ''}}`
+                            }
+                          }
+                        }
                       },
-                    },
+                      syncTargetPartitionTableEnable: {
+                        title: i18n.t('packages_dag_syncPartitionTableEnable'),
+                        type: 'boolean',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal'
+                        },
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          fulfill: {
+                            state: {
+                              visible:
+                                '{{hasFeature("syncPartitionTable") && $values.attrs.capabilities.some(item => item.id==="target_support_partition")}}'
+                            }
+                          }
+                        }
+                      },
+                      noPkSyncMode: {
+                        type: 'string',
+                        title: i18n.t('packages_dag_noPkSyncMode'),
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Radio.Group',
+                        default: 'ALL_COLUMNS', // 兼容老任务
+                        enum: [
+                          {
+                            label: i18n.t('packages_dag_noPkSyncMode_ADD_HASH'),
+                            value: 'ADD_HASH'
+                          },
+                          {
+                            label: i18n.t('packages_dag_noPkSyncMode_ALL_COLUMNS'),
+                            value: 'ALL_COLUMNS'
+                          }
+                        ],
+                        'x-visible': '{{hasFeature("noPrimaryKey")}}'
+                      }
+                    }
                   },
-                  tab3: {
+                  pdkTarget: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
@@ -1716,7 +1777,7 @@ export class Table extends NodeType {
               },
             },
           },
-          tab3: {
+          alarmTab: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {

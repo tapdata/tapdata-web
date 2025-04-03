@@ -171,6 +171,7 @@ import timeFunction from '@/mixins/timeFunction'
 import CheckLicense from '@/views/aliyun-market/CheckLicnese'
 import { mapMutations } from 'vuex'
 import { UpgradeDialog } from '@/plugins/upgrade-notice'
+import { CustomerSurvey } from '@/plugins/customer-survey'
 
 import scene1 from '@/assets/image/dashboard/scene1.png'
 import scene2 from '@/assets/image/dashboard/scene2.png'
@@ -378,6 +379,7 @@ export default {
   },
   methods: {
     UpgradeDialog,
+    CustomerSurvey,
     ...mapMutations(['setUpgradeFeeVisible']),
     init() {
       this.loadAgent() // agent
@@ -446,11 +448,77 @@ export default {
       this.notices = this.isDomesticStation
         ? [
             {
+              id: 32,
+              handle: 'CustomerSurvey',
+              name: i18n.t('dfs_customer_survey_notice'),
+              time: '2024-10-19 19:00'
+            },
+            {
               id: 31,
               handle: 'UpgradeDialog',
               icon: 'version-rocket',
               name: i18n.t('dfs_service_upgrade_notice'),
               time: '2024-7-22 22:00'
+            },
+            {
+              id: '3.18.0',
+              name: 'Tapdata Cloud 3.18.0 Release Notes',
+              link: 'https://tapdata.net/cloud_release_notes_3-18-0.html',
+              time: '2024-11-29 21:00'
+            },
+            {
+              id: '3.17.0',
+              name: 'Tapdata Cloud 3.17.0 Release Notes',
+              link: 'https://tapdata.net/cloud_release_notes_3-17-0.html',
+              time: '2024-11-15 21:00'
+            },
+            {
+              id: '3.16.0',
+              name: 'Tapdata Cloud 3.16.0 Release Notes',
+              link: 'https://tapdata.net/cloud_release_notes_3-16-0.html',
+              time: '2024-10-30 21:00'
+            },
+            {
+              id: '3.15.0',
+              name: 'Tapdata Cloud 3.15.0 Release Notes',
+              link: 'https://tapdata.net/cloud_release_notes_3-15-0.html',
+              time: '2024-10-17 21:00'
+            },
+            {
+              id: '3.14.0',
+              name: 'Tapdata Cloud 3.14.0 Release Notes',
+              link: 'https://tapdata.net/cloud_release_notes_3-14-0.html',
+              time: '2024-10-10 21:00'
+            },
+            {
+              id: '3.13.0',
+              name: 'Tapdata Cloud 3.13.0 Release Notes',
+              link: 'https://tapdata.net/cloud_release_notes_3-13-0.html',
+              time: '2024-9-20 21:00'
+            },
+            {
+              id: '3.12.0',
+              name: 'Tapdata Cloud 3.12.0 Release Notes',
+              link: 'https://tapdata.net/cloud_release_notes_3-12-0.html',
+              time: '2024-8-21 21:00'
+            },
+            {
+              id: '3.11.0',
+              name: 'Tapdata Cloud 3.11.0 Release Notes',
+              link: 'https://tapdata.net/cloud_release_notes_3-11-0.html',
+              time: '2024-8-6 21:00'
+            },
+            {
+              id: '3.10.0',
+              name: 'Tapdata Cloud 3.10.0 Release Notes',
+              link: 'https://tapdata.net/cloud_release_notes_3-10-0.html',
+              time: '2024-7-20 21:00'
+            },
+            {
+              id: '3.9.0',
+              name: 'Tapdata Cloud 3.9.0 Release Notes',
+              link: 'https://tapdata.net/cloud_release_notes_3-9-0.html',
+              time: '2024-7-5 21:00'
             },
             {
               id: 30,
@@ -662,11 +730,77 @@ export default {
           ]
         : [
             {
+              id: 32,
+              handle: 'CustomerSurvey',
+              name: i18n.t('dfs_customer_survey_notice'),
+              time: '2024-10-19 19:00'
+            },
+            {
               id: 31,
               handle: 'UpgradeDialog',
               icon: 'version-rocket',
               name: i18n.t('dfs_service_upgrade_notice'),
               time: '2024-7-22 22:00'
+            },
+            {
+              id: '3.18.0',
+              name: 'Tapdata Cloud 3.18.0 Release Notes',
+              link: 'https://tapdata.io/blog/tapdata-cloud-3-18-0',
+              time: '2024-11-29 21:00'
+            },
+            {
+              id: '3.17.0',
+              name: 'Tapdata Cloud 3.17.0 Release Notes',
+              link: 'https://tapdata.io/blog/tapdata-cloud-3-17-0',
+              time: '2024-11-15 21:00'
+            },
+            {
+              id: '3.16.0',
+              name: 'Tapdata Cloud 3.16.0 Release Notes',
+              link: 'https://tapdata.io/blog/tapdata-cloud-3-16-0',
+              time: '2024-10-30 21:00'
+            },
+            {
+              id: '3.15.0',
+              name: 'Tapdata Cloud 3.15.0 Release Notes',
+              link: 'https://tapdata.io/blog/tapdata-cloud-3-15-0',
+              time: '2024-10-17 21:00'
+            },
+            {
+              id: '3.14.0',
+              name: 'Tapdata Cloud 3.14.0 Release Notes',
+              link: 'https://tapdata.io/blog/tapdata-cloud-3-14-0',
+              time: '2024-10-10 21:00'
+            },
+            {
+              id: '3.13.0',
+              name: 'Tapdata Cloud 3.13.0 Release Notes',
+              link: 'https://tapdata.io/blog/tapdata-cloud-3-13-0',
+              time: '2024-9-20 21:00'
+            },
+            {
+              id: '3.12.0',
+              name: 'Tapdata Cloud 3.12.0 Release Notes',
+              link: 'https://tapdata.io/blog/tapdata-cloud-3-12-0',
+              time: '2024-8-21 21:00'
+            },
+            {
+              id: '3.11.0',
+              name: 'Tapdata Cloud 3.11.0 Release Notes',
+              link: 'https://tapdata.io/blog/tapdata-cloud-3-11-0',
+              time: '2024-8-6 21:00'
+            },
+            {
+              id: '3.10.0',
+              name: 'Tapdata Cloud 3.10.0 Release Notes',
+              link: 'https://tapdata.io/blog/tapdata-cloud-3-10-0',
+              time: '2024-7-20 21:00'
+            },
+            {
+              id: '3.9.0',
+              name: 'Tapdata Cloud 3.9.0 Release Notes',
+              link: 'https://tapdata.io/blog/tapdata-cloud-3-9-0',
+              time: '2024-7-5 21:00'
             },
             {
               id: 30,
@@ -1024,16 +1158,19 @@ export default {
   height: 100%;
   min-width: 1100px;
   box-sizing: border-box;
+
   .pointer {
     cursor: pointer;
   }
 }
+
 .main-title,
 .aside-title {
   font-size: 18px;
   line-height: 24px;
   font-weight: 500;
 }
+
 // 快速开始
 .create-list__item {
   width: 276px;
@@ -1044,6 +1181,7 @@ export default {
   border: 1px solid #e1e3e9;
   border-radius: 8px;
 }
+
 .create-list__index {
   width: 22px;
   height: 22px;
@@ -1051,10 +1189,12 @@ export default {
   border: 1px solid map-get($color, primary);
   border-radius: 50%;
 }
+
 .create-list__main {
   flex: 1;
   overflow: hidden;
 }
+
 .create-list__name {
   color: #000;
   white-space: nowrap;
@@ -1063,6 +1203,7 @@ export default {
 .agent-list__list {
   background: map-get($color, white);
 }
+
 .agent-list__item {
   width: 33%;
   border-radius: 8px;
@@ -1071,56 +1212,70 @@ export default {
   background-color: #f5f7fa;
   color: map-get($fontColor, dark);
 }
+
 .agent-list__item:last-child {
   margin-right: 0;
 }
+
 .agent-list__name {
   .vicon {
     color: map-get($fontColor, dark);
   }
 }
+
 .agent-list__detail {
   width: 232px;
   background-color: #fafafb;
   color: map-get($fontColor, light);
+
   .agent-list__status {
     white-space: nowrap;
     margin-right: 8px;
+
     &:last-child {
       margin-right: 0;
     }
   }
+
   .success {
     color: #599f3f;
   }
+
   .error {
     color: #f7a237;
   }
 }
+
 // 通知公告
 .notice-list__type {
   background: #f7f8f9;
 }
+
 .notice-list__time {
   white-space: nowrap;
   text-align: right;
 }
+
 .guide-list {
   height: 190px;
 }
+
 .dialog-upgrade__text {
   font-size: 12px;
   color: map-get($fontColor, light);
 }
+
 .dialog-upgrade__text__header {
   font-size: 14px;
   color: map-get($fontColor, normal);
 }
+
 .dialog-upgrade {
   :deep(.el-dialog__body) {
     padding: 0 20px;
   }
 }
+
 .notice-list {
   //height: 190px;
   border-radius: 8px;
@@ -1131,10 +1286,12 @@ export default {
     }
   }
 }
+
 .common-card {
   border: 1px solid #e1e3e9;
   border-radius: 8px;
 }
+
 .quick-start-video {
   background: linear-gradient(
     89.97deg,
@@ -1144,14 +1301,17 @@ export default {
     rgba(93, 153, 248, 0.8) 99.98%
   );
 }
+
 .explore-examples {
   background: #f4f6fc;
   border-radius: 10px;
   padding: 20px;
 }
+
 .explore-examples-wrap {
   margin-top: 24px;
 }
+
 .position-text {
   top: 0;
   left: 0;
@@ -1159,24 +1319,29 @@ export default {
   width: 100%;
   line-height: 14px;
 }
+
 .explore-examples-ellipsis {
   /* white-space: nowrap; */
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .position-sub-text {
   top: 33px;
   left: 52px;
   color: map-get($color, white);
 }
+
 .quick-start-button {
   padding: 4px 15px;
   border-radius: 5px;
 }
+
 .scene-img {
   width: 161px;
   height: 92px;
 }
+
 .welcome-banner {
   height: 76px;
   background: linear-gradient(

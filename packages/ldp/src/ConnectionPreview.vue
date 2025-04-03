@@ -4,7 +4,7 @@
       <header>
         <div class="flex justify-content-between">
           <div class="connection-name mb-2 ellipsis">{{ viewData.name }}</div>
-          <div class="flex justify-content-end mt-4 mb-4">
+          <div class="flex justify-content-end">
             <!--<el-button  type="primary">加载Schema</el-button>-->
             <el-button @click="edit">{{ $t('public_button_edit') }}</el-button>
             <!--<el-button >测试连接</el-button>-->
@@ -18,62 +18,57 @@
         </div>
       </header>
       <section class="basics-info">
-        <el-row>
+        <el-row type="flex" class="flex-wrap" :gutter="16" style="row-gap: 16px">
           <el-col :span="8">
             <span class="table-dec-label">{{ $t('packages_business_table_count') }} : </span>
-            <span class="mt-2 ml-2">{{ viewData.tableCount }}</span>
+            <span>{{ viewData.tableCount }}</span>
           </el-col>
           <el-col :span="8">
             <span class="table-dec-label">{{ $t('packages_business_model_update_time') }} :</span>
-            <span class="mt-2 ml-2">{{ viewData.loadSchemaTime }}</span>
+            <span>{{ viewData.loadSchemaTime }}</span>
           </el-col>
           <el-col :span="8">
             <span class="table-dec-label">{{ $t('public_create_time') }} : </span>
-            <span class="mt-2 ml-2">{{ viewData.createTime }}</span>
+            <span>{{ viewData.createTime }}</span>
           </el-col>
-        </el-row>
-        <el-row class="mt-4">
+
           <el-col :span="8">
             <span class="table-dec-label">{{ $t('public_change_time') }} : </span>
-            <span class="mt-2 ml-2">{{ viewData.last_updated }}</span>
+            <span>{{ viewData.last_updated }}</span>
           </el-col>
           <el-col :span="8" class="flex items-center">
             <span class="table-dec-label">{{ $t('public_connection_schema_status') }} : </span>
-            <span class="ml-2" v-if="isFileSource(viewData.database_type)">-</span>
-            <span class="ml-2" v-else>
+            <span v-if="isFileSource(viewData.database_type)">-</span>
+            <span v-else>
               <SchemaProgress :data="viewData"></SchemaProgress>
             </span>
           </el-col>
         </el-row>
       </section>
       <section class="detailed-info" v-if="viewData.config">
-        <el-row class="mb-2">
-          <el-col :span="12">
+        <el-row type="flex" class="flex-wrap" :gutter="16" style="row-gap: 16px">
+          <el-col :span="8">
             <span class="table-dec-label inline-block">{{ $t('public_connection_form_database_address') }}：</span>
             <span>{{ viewData.config.host || viewData.config.uri }}</span>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="8">
             <span class="table-dec-label inline-block">{{ $t('public_connection_form_host') }}：</span>
             <span>{{ viewData.config.port || '-' }}</span>
           </el-col>
-        </el-row>
-        <el-row class="mb-2">
-          <el-col :span="12"
+          <el-col :span="8"
             ><span class="table-dec-label inline-block">{{ $t('public_connection_form_database_name') }}：</span
             ><span>{{ viewData.config.database || '-' }}</span></el-col
           >
-          <el-col :span="12"
+          <el-col :span="8"
             ><span class="table-dec-label inline-block">{{ $t('public_connection_form_schema') }}：</span
             ><span>{{ viewData.config.schema || '-' }}</span></el-col
           >
-        </el-row>
-        <el-row class="mb-2">
-          <el-col :span="12"
+          <el-col :span="8"
             ><span class="table-dec-label inline-block"
               >{{ $t('public_connection_form_other_connection_string') }}：</span
             ><span>{{ viewData.config.additionalString || '-' }}</span></el-col
           >
-          <el-col :span="12"
+          <el-col :span="8"
             ><span class="table-dec-label inline-block"
               >{{ $t('public_connection_form_time_zone_of_time_type') }}：</span
             ><span>{{ viewData.config.timezone || '-' }}</span></el-col
@@ -336,13 +331,19 @@ export default {
   padding: 24px;
   .connection-name {
     font-weight: 500;
-    font-size: 32px;
+    font-size: 20px;
     color: #1d2129;
   }
   .basics-info {
-    padding: 24px 0;
+    padding: 16px 0;
     border-bottom: 1px solid map-get($borderColor, normal);
     border-top: 1px solid map-get($borderColor, normal);
+
+    .el-col {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
   }
   .table-dec-label {
     font-weight: 400;
@@ -354,15 +355,20 @@ export default {
   }
   .detailed-info {
     border-bottom: 1px solid map-get($borderColor, normal);
-    padding: 24px 0;
+    padding: 16px 0;
     .label {
       width: 150px;
+    }
+    .el-col {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
   }
   .table-info {
     .table-info-name {
-      font-weight: 600;
-      font-size: 18px;
+      font-weight: 500;
+      font-size: 16px;
       color: #1d2129;
     }
   }

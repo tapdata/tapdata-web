@@ -44,100 +44,104 @@
         </ElButton>
       </template>
 
-      <el-table-column reserve-selection type="selection" width="38" align="center"></el-table-column>
-      <el-table-column :label="$t('packages_business_verification_task_name')" min-width="250" show-overflow-tooltip>
-        <template v-slot="scope">
-          <div class="ellipsis">{{ scope.row.name }}</div>
-          <div class="font-color-slight">
-            <span
-              >{{ getInspectName(scope.row) }} (
-              {{
-                scope.row.mode === 'manual'
-                  ? $t('packages_business_verification_singleVerify')
-                  : $t('packages_business_verification_repeatingVerify')
-              }}
-              )
-            </span>
-            <span v-if="!scope.row.enabled" class="font-color-slight">&nbsp;Disabled</span>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="sourceTotal"
-        min-width="140"
-        align="center"
-        :label="$t('packages_business_verification_history_source_total_rows')"
-      >
-        <template v-slot="scope">
-          {{ scope.row.inspectMethod === 'hash' ? '-' : scope.row.sourceTotal || 0 }}
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('packages_business_verification_result_title')" min-width="180">
-        <template v-slot="scope">
-          <div class="flex align-center">
-            <template v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)">
-              <div v-if="scope.row.result !== 'passed'" class="data-verify__status error">
+        <el-table-column reserve-selection type="selection" width="38" align="center"></el-table-column>
+        <el-table-column :label="$t('packages_business_verification_task_name')" min-width="250" show-overflow-tooltip>
+          <template v-slot="scope">
+            <div class="ellipsis">{{ scope.row.name }}</div>
+            <div class="font-color-slight">
+              <span
+                >{{ getInspectName(scope.row) }} (
+                {{
+                  scope.row.mode === 'manual'
+                    ? $t('packages_business_verification_singleVerify')
+                    : $t('packages_business_verification_repeatingVerify')
+                }}
+                )
+              </span>
+              <span v-if="!scope.row.enabled" class="font-color-slight">&nbsp;Disabled</span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="sourceTotal"
+          min-width="140"
+          align="center"
+          :label="$t('packages_business_verification_history_source_total_rows')"
+        >
+          <template v-slot="scope">
+            {{ scope.row.inspectMethod === 'hash' ? '-' : scope.row.sourceTotal || 0 }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('packages_business_verification_result_title')" min-width="180">
+          <template v-slot="scope">
+            <div class="flex align-center">
+              <template v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)">
+                <div v-if="scope.row.result !== 'passed'" class="data-verify__status error">
+                  <i class="data-verify__icon el-icon-error"></i>
+                  <span v-if="scope.row.inspectMethod === 'row_count' || scope.row.inspectMethod === 'hash'">
+                    {{ $t('packages_business_verification_inconsistent') }}
+                  </span>
+                  <span v-if="scope.row.inspectMethod === 'field'">
+                    {{ $t('packages_business_verification_contConsistent') }} {{ scope.row.difference_number }}
+                  </span>
+                  <span v-if="scope.row.inspectMethod === 'jointField'">
+                    {{ $t('packages_business_verification_contConsistent') }} {{ scope.row.difference_number }}
+                  </span>
+                  <span v-if="scope.row.inspectMethod === 'cdcCount'">
+                    {{ $t('packages_business_verification_contConsistent') }} {{ scope.row.difference_number }}
+                  </span>
+                </div>
+                <div v-else class="data-verify__status success">
+                  <i class="data-verify__icon el-icon-success"></i>
+                  <span>{{ $t('packages_business_verification_consistent') }}</span>
+                </div>
+              </template>
+              <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
                 <i class="data-verify__icon el-icon-error"></i>
-                <span v-if="scope.row.inspectMethod === 'row_count' || scope.row.inspectMethod === 'hash'">
-                  {{ $t('packages_business_verification_inconsistent') }}
-                </span>
-                <span v-if="scope.row.inspectMethod === 'field'">
-                  {{ $t('packages_business_verification_contConsistent') }} {{ scope.row.difference_number }}
-                </span>
-                <span v-if="scope.row.inspectMethod === 'jointField'">
-                  {{ $t('packages_business_verification_contConsistent') }} {{ scope.row.difference_number }}
-                </span>
-                <span v-if="scope.row.inspectMethod === 'cdcCount'">
-                  {{ $t('packages_business_verification_contConsistent') }} {{ scope.row.difference_number }}
-                </span>
+                <span>{{ $t('public_status_error') }}</span>
+                <ElLink v-if="scope.row.errorMsg" type="primary" class="ml-2" @click="handleError(scope.row)"
+                  >{{ $t('public_button_check') }}
+                </ElLink>
               </div>
-              <div v-else class="data-verify__status success">
-                <i class="data-verify__icon el-icon-success"></i>
-                <span>{{ $t('packages_business_verification_consistent') }}</span>
+              <div v-else-if="scope.row.status === 'waiting'" class="data-verify__status">-</div>
+              <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
+                <img style="width: 26px; vertical-align: middle" :src="loadingImg" />
+                <span>{{ statusMap[scope.row.status] }}</span>
               </div>
-            </template>
-            <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
-              <i class="data-verify__icon el-icon-error"></i>
-              <span>{{ $t('public_status_error') }}</span>
-              <ElLink v-if="scope.row.errorMsg" type="primary" class="ml-2" @click="handleError(scope.row)"
-                >{{ $t('public_button_check') }}
-              </ElLink>
+              <div v-else>-</div>
+              <!--            <VIcon v-if="scope.row.InspectResult && scope.row.InspectResult.parentId" class="ml-2" size="16"-->
+              <!--              >ercijiaoyan</VIcon-->
+              <!--            >-->
             </div>
-            <div v-else-if="scope.row.status === 'waiting'" class="data-verify__status">-</div>
-            <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
-              <img style="width: 26px; vertical-align: middle" :src="loadingImg" />
-              <span>{{ statusMap[scope.row.status] }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('packages_business_verification_verifyStatus')" min-width="110" prop="status">
+          <template v-slot="scope">
+            <span>{{ statusMap[scope.row.status] }}</span>
+            <span v-if="scope.row.InspectResult && scope.row.status === 'running'">
+              {{ `(${scope.row.InspectResult.progress ? Math.floor(scope.row.InspectResult.progress * 100) : 0}%)` }}
+            </span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          :label="$t('packages_business_verification_verifyTime')"
+          prop="lastStartTime"
+          sortable="lastStartTime"
+          min-width="170"
+        ></el-table-column>
+        <el-table-column :label="$t('public_operation')" width="300" fixed="right">
+          <template v-if="isDaas" #header>
+            <div class="flex align-center">
+              <span>{{ $t('public_operation_available') }}</span>
+              <ElTooltip
+                class="ml-2"
+                placement="top"
+                :content="$t('packages_business_connections_list_wuquanxiandecao')"
+              >
+                <VIcon class="color-primary" size="14">info</VIcon>
+              </ElTooltip>
             </div>
-            <div v-else>-</div>
-            <!--            <VIcon v-if="scope.row.InspectResult && scope.row.InspectResult.parentId" class="ml-2" size="16"-->
-            <!--              >ercijiaoyan</VIcon-->
-            <!--            >-->
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('packages_business_verification_verifyStatus')" min-width="110" prop="status">
-        <template v-slot="scope">
-          <span>{{ statusMap[scope.row.status] }}</span>
-          <span v-if="scope.row.InspectResult && scope.row.status === 'running'">
-            {{ `(${scope.row.InspectResult.progress ? Math.floor(scope.row.InspectResult.progress * 100) : 0}%)` }}
-          </span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        :label="$t('packages_business_verification_verifyTime')"
-        prop="lastStartTime"
-        sortable="lastStartTime"
-        min-width="170"
-      ></el-table-column>
-      <el-table-column :label="$t('public_operation')" width="310">
-        <template v-if="isDaas" #header>
-          <div class="flex align-center">
-            <span>{{ $t('public_operation_available') }}</span>
-            <ElTooltip class="ml-2" placement="top" :content="$t('packages_business_connections_list_wuquanxiandecao')">
-              <VIcon class="color-primary" size="14">info</VIcon>
-            </ElTooltip>
-          </div>
-        </template>
+          </template>
 
         <template #default="{ row }">
           <ElButton text type="primary" :disabled="!row.InspectResult" @click="toTableInfo(row.id)"
@@ -229,7 +233,6 @@ import PermissionseSettingsCreate from '../../components/permissionse-settings/C
 import { ErrorMessage } from '../../components/error-message'
 import loadingImg from '@tap/assets/icons/loading.svg'
 
-let timeout = null
 export default {
   components: {
     PermissionseSettingsCreate,
@@ -288,14 +291,15 @@ export default {
     },
   },
   created() {
-    timeout = setInterval(() => {
+    this.timer = setInterval(() => {
       this.table.fetch(null, 0, true)
     }, 8000)
     this.getFilterItems()
     this.searchParams = Object.assign(this.searchParams, this.$route.query)
   },
-  unmounted() {
-    clearInterval(timeout)
+
+  beforeDestroy() {
+    clearInterval(this.timer)
   },
   methods: {
     inspectMethodChange(val) {

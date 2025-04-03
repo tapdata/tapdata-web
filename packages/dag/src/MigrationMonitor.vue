@@ -23,7 +23,9 @@
       @showVerify="handleShowVerify"
       @showBottomPanel="handleShowBottomPanel"
       @locate-node="handleLocateNode"
-      @start="handleStart"
+      @start="handleStart(false, false)"
+      @debug-start="handleStart(false, true)"
+      @open-capture="openDataCapture"
       @stop="handleStop"
       @forceStop="handleForceStop"
       @reset="handleReset"
@@ -48,6 +50,7 @@
         :verifyTotals="verifyTotals"
         :timeFormat="timeFormat"
         :range="timeSelectRange"
+        :if-enable-concurrent-read="ifEnableConcurrentRead"
         @load-data="init"
         @move-node="handleDragMoveNode"
         @drop-node="handleAddNodeByDrag"
@@ -152,6 +155,7 @@
         :quotaTime="quotaTime"
         :quotaTimeType="quotaTimeType"
         :getTimeRange="getTimeRange"
+        :if-enable-concurrent-read="ifEnableConcurrentRead"
         ref="nodeDetailDialog"
         @load-data="init"
       ></NodeDetailDialog>
@@ -352,6 +356,14 @@ export default {
       }
       return [firstStartTime, end || Time.now()]
     },
+
+    ifEnableConcurrentRead() {
+      if (this.dataflow.syncType !== 'migrate') return false
+
+      const sourceNode = this.allNodes.find(node => !node.$inputs.length && node.type === 'database')
+
+      return sourceNode?.enableConcurrentRead
+    }
   },
 
   watch: {
@@ -719,14 +731,16 @@ export default {
       })
     },
 
-    async handleStart(skip) {
+    async handleStart(skip, isDebug) {
       const hasError = !skip && (await this.$refs.skipError.checkError(this.dataflow))
       if (hasError) return
 
       this.isSaving = true
       try {
         this.wsAgentLive()
-        await taskApi.start(this.dataflow.id)
+        await taskApi.start(this.dataflow.id, {
+          silenceMessage: true
+        })
         this.$message.success(this.$t('public_message_operation_success'))
         this.isSaving = false
         this.isReset = false
@@ -734,6 +748,8 @@ export default {
         await this.openDataflow(this.dataflow?.id)
         this.toggleConsole(false)
         this.handleBottomPanel(true)
+
+        isDebug && this.openDataCapture()
       } catch (e) {
         this.handleError(e)
         this.isSaving = false

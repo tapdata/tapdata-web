@@ -7,6 +7,13 @@ import { useMessage } from '@/hooks'
 import { discoveryApi } from '@tap/api'
 import './index.scss'
 
+interface CustomContext extends SetupContext {
+  refs: {
+    table: InstanceType<typeof TablePage>
+    drawerContent: InstanceType<typeof DrawerContent>
+  }
+}
+
 export default defineComponent({
   props: [''],
   setup() {
@@ -114,7 +121,7 @@ export default defineComponent({
       // @ts-ignore
       drawerContentRef.value.loadData(row)
     }
-    const closeDrawer = (val) => {
+    const closeDrawer = ((val): boolean) => {
       data.isShowDetails = val
     }
     const renderNode = ({ row }) => {
@@ -134,13 +141,11 @@ export default defineComponent({
     }
     watch(
       () => root.$route.query,
-      (val) => {
-        // @ts-ignore
+      (()) => {
         refs.table.fetch(1)
       },
     )
     onMounted(() => {
-      // @ts-ignore
       refs.table.fetch(1)
     })
     loadFilterList()

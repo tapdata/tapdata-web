@@ -4,6 +4,12 @@ import classification from '@tap/component/src/store'
 import overView from '@tap/ldp/src/store'
 import { getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 import i18n from '../i18n'
+import { axios } from '../plugins/axios'
+import { merge } from 'lodash'
+import { getUrlSearch } from '@tap/shared'
+import Cookie from '@tap/shared/src/cookie'
+import { buried } from '../plugins/buried'
+import { taskApi } from '@tap/api'
 
 const store = Vuex.createStore({
   modules: {
@@ -52,23 +58,24 @@ const store = Vuex.createStore({
     },
     // 新人引导
     guide: {
-      activeStep: '',
-      userId: '',
-      bdVid: '',
-      tpVid: '',
-      installStep: 1,
-      demand: [],
-      selectAgentType: '',
-      spec: '',
-      subscribeId: '',
+      installStep: -1,
+      demand: [''],
+      selectAgentType: 'fullManagement',
       agentId: '',
-      steps: [],
-      behavior: '',
-      behaviorAt: null,
-      expand: {
-        enableGuide: null,
-        guideStatus: '', // starting, completed, paused
+      // steps: [],
+      subscribeId: '',
+      // spec: '',
+      // behavior: '',
+      tour: {
+        view: 'list', // board, list
+        taskId: '',
+        status: 'starting' // starting, completed
       },
+      expand: {
+        suggestion: '',
+        version: ''
+        // version: '3.13.0'
+      }
     },
     agentCount: {
       agentTotalCount: 0,
@@ -92,7 +99,7 @@ const store = Vuex.createStore({
     showReplicationTour: false,
     replicationTourFinish: false,
     taskLoadedTime: null, // 记录TargetPanel任务列表加载时间
-    setIsMockUser: false,
+    isMockUser: false,
     mockUserPromise: null
   },
 
@@ -186,10 +193,6 @@ const store = Vuex.createStore({
       state.upgradeFeeVisible = flag
     },
 
-    setReplicationView(state, view) {
-      state.replicationTour.view = view
-    },
-
     setReplicationConnectionDialog(state, visible) {
       state.replicationConnectionDialog = visible
     },
@@ -224,11 +227,252 @@ const store = Vuex.createStore({
     },
 
     setIsMockUser(state, flag) {
-      state.setIsMockUser = flag
+      state.isMockUser = flag
     },
 
     setMockUserPromise(state, promise) {
       state.mockUserPromise = promise
+    }
+  },
+
+  actions: {
+    async getFreeTier() {
+      const [priceList] = await axios.get('api/tcm/orders/paid/price', {
+        params: {
+          productType: 'fullManagement'
+        }
+      })
+
+      return priceList.paidPrice.find(item => item.price === 0)
+    },
+
+    async subscribe({ state, commit }, freeTier) {
+      const data = await axios.post('api/tcm/orders/subscribeV2', {
+        price: 0,
+        subscribeType: 'one_time',
+        platform: 'fullManagement',
+        subscribeItems: [
+          {
+            priceId: freeTier.priceId,
+            quantity: 1,
+            productType: 'Engine',
+            agentType: 'Cloud',
+            provider: '',
+            region: ''
+          }
+        ],
+        email: state.user.email
+      })
+      const guideData = {
+        agentId: data?.subscribeItems?.[0].resourceId,
+        subscribeId: data?.subscribe
+      }
+
+      commit('setGuide', guideData)
+
+      axios.post('api/tcm/user_guide', guideData)
+    },
+
+    async checkMockUser({ commit, state }) {
+      return axios
+        .get('api/gw/user', {
+          maxRedirects: 0
+        })
+        .then(data => {
+          const mockUserId = data?.mockUserId || false
+          commit('setIsMockUser', mockUserId)
+          return mockUserId
+        })
+        .catch(e => {
+          console.error(e)
+        })
+    },
+
+    async initGuide({ commit, dispatch, state }, router) {
+      const isMockUser = await dispatch('checkMockUser')
+
+      let guide = await axios.get('api/tcm/user_guide')
+
+      let bd_vid
+      let tp_vid
+      let userExpand = {}
+      let sendConvertData
+
+      if (!isMockUser) {
+        bd_vid = getUrlSearch('bd_vid')
+        tp_vid = getUrlSearch('tp_vid')
+
+        const userVirtualId = Cookie.get('userVirtualId')
+        const logidUrlCloud = Cookie.get('logidUrlCloud')
+        const userReferrer = Cookie.get('userReferrer')
+        const userVisitedPages = Cookie.get('userVisitedPages')
+
+        if (userVirtualId) {
+          Cookie.remove('userVirtualId')
+
+          userExpand = {
+            userReferrer,
+            userVirtualId,
+            userVisitedPages
+          }
+        }
+
+        if (logidUrlCloud) {
+          Cookie.remove('logidUrlCloud')
+
+          const url = new URL(decodeURIComponent(logidUrlCloud))
+          bd_vid = url.searchParams.get('bd_vid')
+        }
+
+        sendConvertData = () => {
+          const conversionTypes = [
+            {
+              logidUrl: logidUrlCloud || location.href,
+              newType: 25
+            }
+          ]
+          axios
+            .post('api/tcm/track/send_convert_data', conversionTypes)
+            .then(data => {
+              if (data) {
+                buried('registerSuccess')
+              }
+            })
+            .catch(e => {
+              console.log('ocpc.baidu.com', e)
+            })
+        }
+      }
+
+      if (!guide) {
+        guide = await axios.post(
+          'api/tcm/user_guide',
+          merge({}, state.guide, {
+            tp_vid,
+            bd_vid,
+            expand: {
+              ...userExpand,
+              version: '3.13.0'
+            }
+          })
+        )
+
+        if (bd_vid) {
+          sendConvertData?.()
+        }
+      } else {
+        let params = {}
+
+        if (!guide.expand) {
+          params.expand = guide.expand = {
+            suggestion: '',
+            version: ''
+          }
+        }
+
+        if (tp_vid && !guide.tpVid) {
+          params.tpVid = guide.tpVid = tp_vid
+        }
+        if (userExpand.userVirtualId && !guide.expand?.userVirtualId) {
+          params.expand = Object.assign(guide.expand, userExpand)
+        }
+        if (bd_vid && !guide.bdVid) {
+          params.bdVid = guide.bdVid = bd_vid
+          sendConvertData?.()
+        }
+
+        if (Object.keys(params).length) {
+          axios.post('api/tcm/user_guide', params)
+        }
+      }
+
+      commit('setGuide', guide)
+
+      if (guide.expand.version !== '3.13.0' || guide.tour.status === 'completed') return state.guide
+
+      if (guide.installStep === -1) {
+        router.replace({
+          name: 'Welcome'
+        })
+
+        const freeTier = await dispatch('getFreeTier')
+
+        if (freeTier) {
+          await dispatch('subscribe', freeTier)
+        }
+      } else if (guide.installStep > -1 && guide.tour.taskId) {
+        const data = await taskApi.get({
+          filter: JSON.stringify({
+            where: {
+              id: guide.tour.taskId
+            }
+          })
+        })
+
+        // 如果没有完成引导任务，并且任务还存在，跳转到引导任务
+        if (data?.items?.length) {
+          router.push({
+            name: 'WelcomeTask',
+            params: {
+              id: guide.tour.taskId
+            }
+          })
+        }
+      }
+
+      return state.guide
+    },
+
+    startGuideTask({ commit, state }, { demand, suggestion }) {
+      state.guide.demand = [demand, suggestion]
+
+      axios.post('api/tcm/user_guide', {
+        demand: state.guide.demand
+      })
+    },
+
+    setGuideTask({ commit, state }, taskId) {
+      state.guide.installStep = 0
+      state.guide.tour.taskId = taskId
+      axios.post('api/tcm/user_guide', {
+        installStep: state.guide.installStep,
+        tour: state.guide.tour
+      })
+    },
+
+    setGuideStep({ commit, state }, step) {
+      state.guide.installStep = step
+      axios.post('api/tcm/user_guide', {
+        installStep: state.guide.installStep
+      })
+    },
+
+    setGuideComplete({ commit, state }) {
+      state.guide.tour.status = 'completed'
+      axios.post('api/tcm/user_guide', {
+        tour: state.guide.tour
+      })
+    },
+
+    setGuideViewTaskMonitor({ commit, state }) {
+      if (state.guide.tour.behavior === 'view-monitor') return
+
+      if (state.guide.expand.version !== '3.13.0' || state.guide.tour.status !== 'completed') return
+
+      state.guide.tour.behavior = 'view-monitor'
+
+      axios.post('api/tcm/user_guide', {
+        tour: state.guide.tour
+      })
+
+      commit('openCompleteReplicationTour')
+    },
+
+    setReplicationView({ commit, state }, view) {
+      state.guide.tour.view = view
+      axios.post('api/tcm/user_guide', {
+        tour: state.guide.tour
+      })
     }
   }
 })

@@ -1,5 +1,5 @@
 <template>
-  <div class="connection-from rounded-lg" v-loading="loadingFrom" :class="{ 'bg-white': isDaas }">
+  <div class="connection-from rounded-lg" v-loading="loadingFrom">
     <div class="connection-from-body gap-4">
       <main class="connection-from-main bg-white rounded-lg overflow-hidden">
         <div class="connection-from-title p-4">
@@ -25,27 +25,32 @@
               </template>
             </div>
           </div>
-
-          <ElAlert
-            v-if="!isDaas && showAgentIpAlert"
-            class="alert-primary text-primary mt-2"
-            type="info"
-            show-icon
-            :closable="false"
-          >
-            <template v-slot:title>
-              <span class="inline-block lh-sm align-middle">
-                {{ $t('packages_business_agent_ip_tips_prefix')
-                }}<a :href="docUrl" target="_blank" class="text-decoration-underline text-primary">{{
-                  $t('packages_business_agent_ip_tips_suffix')
-                }}</a>
-              </span>
-            </template>
-          </ElAlert>
         </div>
 
         <div class="form-wrap">
           <div class="form px-4">
+            <div
+              v-if="!isDaas && showAgentIpAlert"
+              class="flex flex-column gap-2 mb-3 rounded-lg p-2 bg-color-primary-light-9"
+            >
+              <div class="flex align-items-start gap-1">
+                <div class="p-1">
+                  <VIcon class="color-primary" :size="22">info</VIcon>
+                </div>
+                <div class="lh-base p-1 fw-sub fs-7">{{ $t('packages_business_agent_ip_tips_prefix') }}:</div>
+              </div>
+
+              <el-collapse value="1" class="rounded-lg overflow-hidden rounded-collapse">
+                <el-collapse-item title="TapData IP addresses" name="1">
+                  <ul class="ml-6 font-color-dark">
+                    <li>34.92.78.86</li>
+                    <li>39.106.147.20</li>
+                    <li>47.242.39.227</li>
+                  </ul>
+                </el-collapse-item>
+              </el-collapse>
+            </div>
+
             <SchemaToForm
               class="pdk-schema-form"
               ref="schemaToForm"
@@ -922,30 +927,32 @@ export default {
             '23:00',
           ],
         },
-        heartbeatObject: {
-          type: 'void',
-          'x-component': 'Space',
-          title: i18n.t('packages_business_connections_databaseform_kaiqixintiaobiao'),
-          'x-decorator': 'FormItem',
-          'x-decorator-props': {
-            tooltip: i18n.t('packages_business_connections_databaseform_dakaixintiaobiao'),
-          },
-          properties: {
-            heartbeatEnable: {
-              type: 'boolean',
-              default: false,
-              'x-component': 'Switch',
-            },
-          },
-          'x-reactions': {
-            dependencies: ['__TAPDATA.connection_type'],
-            fulfill: {
-              state: {
-                display: '{{$deps[0] === "source_and_target" ? "visible":"hidden"}}',
+        heartbeatObject: !this.pdkOptions.tags?.includes('NoHeartbeat')
+          ? {
+              type: 'void',
+              'x-component': 'Space',
+              title: i18n.t('packages_business_connections_databaseform_kaiqixintiaobiao'),
+              'x-decorator': 'FormItem',
+              'x-decorator-props': {
+                tooltip: i18n.t('packages_business_connections_databaseform_dakaixintiaobiao')
               },
-            },
-          },
-        },
+              properties: {
+                heartbeatEnable: {
+                  type: 'boolean',
+                  default: false,
+                  'x-component': 'Switch'
+                }
+              },
+              'x-reactions': {
+                dependencies: ['__TAPDATA.connection_type'],
+                fulfill: {
+                  state: {
+                    display: '{{$deps[0] === "source_and_target" ? "visible":"hidden"}}'
+                  }
+                }
+              }
+            }
+          : undefined
       })
 
       if (this.isDaas) {
@@ -964,6 +971,40 @@ export default {
       const { OPTIONAL_FIELDS } = connectionProperties
       delete connectionProperties.OPTIONAL_FIELDS
 
+      let reactions
+
+      if (process.env.VUE_APP_CONNECTOR_SCHEMA && /^\s*[[{].*[\]}]\s*$/.test(process.env.VUE_APP_CONNECTOR_SCHEMA)) {
+        reactions = JSON.parse(process.env.VUE_APP_CONNECTOR_SCHEMA)
+      } else if (process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA) {
+        reactions = [
+          {
+            target: process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA,
+            fulfill: {
+              state: { display: 'hidden' }
+            }
+          }
+        ]
+      }
+
+      if (!this.hasFeature('shareCdc')) {
+        reactions ??= []
+        reactions.push({
+          target: '__TAPDATA.shareCdcEnable',
+          fulfill: {
+            state: { display: 'hidden' }
+          }
+        })
+      }
+
+      if (!this.hasFeature('oracleBridge')) {
+        reactions ??= []
+        reactions.push({
+          target: 'logPluginName',
+          when: '{{pdkId !== "postgres"}}',
+          fulfill: { state: { display: 'hidden' } }
+        })
+      }
+
       let result = {
         type: 'object',
         'x-component-props': {
@@ -973,16 +1014,7 @@ export default {
           START: {
             type: 'void',
             'x-index': 0,
-            'x-reactions': process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA
-              ? {
-                  target: process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA,
-                  fulfill: {
-                    state: {
-                      display: 'hidden',
-                    },
-                  },
-                }
-              : undefined,
+            'x-reactions': reactions,
             properties: {
               __TAPDATA: {
                 type: 'object',
@@ -1238,6 +1270,7 @@ export default {
 
       this.schemaScope = {
         $isDaas: this.isDaas,
+        pdkId: this.pdkOptions.pdkId,
         isEdit: !!id,
         useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
           return (field) => {
@@ -1273,7 +1306,7 @@ export default {
 
           const mapNode = (item) => ({
             value: item.processId,
-            label: `${item.hostName}（${
+            label: `${item.agentName || item.hostName}（${
               item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
             }）`,
             disabled: item.status !== 'running',
@@ -1768,6 +1801,25 @@ export default {
 
     .el-collapse-item__content {
       padding-bottom: 0;
+    }
+  }
+}
+.rounded-collapse {
+  :deep(.el-collapse-item__header){
+      height: 38px;
+      padding: 0 16px;
+      gap: 8px;
+      font-weight: 400;
+      &.is-active {
+        color: map-get($color, primary);
+      }
+    }
+  :deep(.el-collapse-item__arrow){
+      order: -1;
+      margin: 0;
+    }
+  :deep(.el-collapse-item__content){
+      padding: 0 16px 16px;
     }
   }
 }

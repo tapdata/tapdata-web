@@ -42,7 +42,7 @@ export class VersionPolling {
       cache: 'no-cache',
     })
 
-    const etag = response.headers.get('etag')
+    const etag = response.headers.get('etag').replace(/^W\//i, '')
     this.appEtag = etag
     localStorage.setItem(`${this.options.appETagKey}`, etag)
 

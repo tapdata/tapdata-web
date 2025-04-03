@@ -40,5 +40,9 @@ export default class Settings extends Http {
   updateAlarm(params) {
     return this.axios.patch(`${this.url}/alarm_update`, params)
   }
+
+  getAppVersion() {
+    return this.axios.get(`${this.url}/appVersion`)
+  }
 }
 export { Settings }

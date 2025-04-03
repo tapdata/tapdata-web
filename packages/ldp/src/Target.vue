@@ -548,8 +548,10 @@ export default {
 
   methods: {
     async init() {
-      const connectionList = await this.getData()
+      let connectionList = await this.getData()
       let appList = []
+
+      connectionList = connectionList.filter(item => !this.fdmAndMdmId.includes(item.id))
 
       if (this.isDaas) {
         appList = await this.getApiAppList()
@@ -836,6 +838,9 @@ export default {
 
       return {
         ...TASK_SETTINGS,
+        attrs: {
+          referrer: 'ldp'
+        },
         syncType: 'migrate',
         name: this.taskDialogConfig.taskName,
         dag: {

@@ -82,6 +82,9 @@ export default {
         this.taskId = task.id
         this.taskName = task.name
         this.errorEvents = errorEvents.map((item) => {
+          if (process.env.VUE_APP_KEYWORD && item.message) {
+            item.message = item.message.replace(/tapdata\s?/gi, process.env.VUE_APP_KEYWORD)
+          }
           delete item.stacks // stacks is too long
           return item
         })

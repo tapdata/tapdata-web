@@ -6,6 +6,12 @@ import { discoveryApi } from '@tap/api'
 import { useMessage } from '@/hooks'
 import './index.scss'
 
+interface CustomContext extends SetupContext {
+  refs: {
+    multipleTable: InstanceType<typeof TablePage>
+  }
+}
+
 export default defineComponent({
   props: ['parentNode'],
   setup(props, { root, emit, refs }) {
@@ -185,7 +191,6 @@ export default defineComponent({
       },
     )
     onMounted(() => {
-      // @ts-ignore
       multipleTableRef.value.fetch(1)
     })
     return {

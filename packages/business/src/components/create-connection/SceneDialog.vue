@@ -136,7 +136,7 @@
             @click="handleSelect(item)"
           >
             <div class="flex gap-3">
-              <DatabaseIcon v-if="!item.locked" :size="38" :item="item"></DatabaseIcon>
+              <DatabaseIcon v-if="!item.locked || !item.icon.includes('.')" :size="38" :item="item"></DatabaseIcon>
               <ElImage
                 v-else
                 style="width: 38px; height: 38px"
@@ -606,6 +606,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('feature', ['isControlEnabled', 'connectors']),
     startingTour() {
       return this.$store.getters.startingTour
     },
@@ -861,20 +862,34 @@ export default {
         return o1Level - o2Level
       }
 
-      // 过滤掉已注册的
-      this.lockedTypes = this.lockedTypes
-        .filter((item) => {
-          item.locked = true // 标记上锁
-          return (
-            !this.databaseTypeMap[item.type] &&
-            ((this.selectorType !== 'source_and_target' && item.connectionType.includes(this.selectorType)) ||
-              this.selectorType === 'source_and_target')
-          )
-        })
-        .sort(sortFn)
+      if (this.isControlEnabled) {
+        this.lockedTypes = data.filter(item => {
+          const enabled = this.connectors.includes(item.type)
 
-      // 合并到已注册
-      data.push(...this.lockedTypes)
+          if (!enabled) {
+            item.locked = true
+          }
+
+          return !enabled
+        })
+      } else {
+        // 过滤掉已注册的
+        this.lockedTypes = this.lockedTypes
+          .filter((item) => {
+            item.locked = true // 标记上锁
+            return (
+              !this.databaseTypeMap[item.type] &&
+              ((this.selectorType !== 'source_and_target' && item.connectionType.includes(this.selectorType)) ||
+                this.selectorType === 'source_and_target')
+            )
+          })
+          .sort(sortFn)
+
+        // 合并到已注册
+        data.push(...this.lockedTypes)
+      }
+
+      console.log('this.lockedTypes', this.lockedTypes)
 
       this.database = data.sort(sortFn)
 

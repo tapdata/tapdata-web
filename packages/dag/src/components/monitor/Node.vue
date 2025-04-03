@@ -7,7 +7,6 @@ import { defineComponent, computed, ref, onMounted, watch } from 'vue'
 import i18n from '@tap/i18n'
 import { VIcon, IconButton } from '@tap/component'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
-import Time from '@tap/shared/src/time'
 import { TaskStatus } from '@tap/business'
 import DFNode from '../DFNode'
 
@@ -109,18 +108,6 @@ export default defineComponent({
     })
 
     /**
-     * 增量延迟
-     */
-    const replicateLag = computed(() => {
-      const { replicateLag } = props.sample
-      if (isNumber(replicateLag))
-        return calcTimeUnit(replicateLag, 2, {
-          autoHideMs: true,
-        })
-      return null
-    })
-
-    /**
      * 增量时间点
      * @type {ComputedRef<string|string>}
      */
@@ -209,8 +196,8 @@ export default defineComponent({
 
     const isNumber = (value) => typeof value === 'number'
 
-    const getVal = (val) => {
-      return val ?? i18n.t('public_data_no_data')
+    const getVal = (val, placeholder) => {
+      return val ?? placeholder ?? i18n.t('public_data_no_data')
     }
 
     const renderStatistic = () => {
@@ -244,11 +231,9 @@ export default defineComponent({
                     : completeTime.value,
                 )
             return (
-              <div class="statistic flex">
-                <div class="statistic-title">{title}：</div>
-                <div class="statistic-content">
-                  <div class="statistic-value">{val}</div>
-                </div>
+              <div class="statistic flex align-center gap-1">
+                <div class="statistic-title">{title}:</div>
+                <div class="statistic-value">{val}</div>
               </div>
             )
           }
@@ -256,11 +241,18 @@ export default defineComponent({
       }
       if (hasCDC) {
         // 增量进行中
-        const cdcTitle = isSource.value
-          ? i18n.t('public_event_incremental_delay')
-          : isTarget.value
-          ? i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')
-          : i18n.t('packages_dag_monitor_node_per_deal_need_time')
+        let cdcTitle = ''
+        let placeholder
+
+        if (isSource.value) {
+          cdcTitle = i18n.t('public_event_incremental_delay')
+          placeholder = i18n.t('public_event_cdc_placeholder')
+        } else if (isTarget.value) {
+          cdcTitle = i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')
+        } else {
+          cdcTitle = i18n.t('packages_dag_monitor_node_per_deal_need_time')
+        }
+
         const replicateLagProps = props.sample.replicateLag
         const replicateLagVal =
           isNumber(replicateLagProps) && replicateLagProps >= 0
@@ -270,13 +262,12 @@ export default defineComponent({
             : null
         const val = getVal(
           isSource.value ? replicateLagVal : isTarget.value ? targetWriteTimeCostAvg.value : timeCostAvg.value,
+          placeholder,
         )
         return (
-          <div class="statistic flex">
-            <div class="statistic-title">{cdcTitle}：</div>
-            <div class="statistic-content">
-              <div class="statistic-value">{val}</div>
-            </div>
+          <div class="statistic flex align-center gap-1">
+            <div class="statistic-title">{cdcTitle}:</div>
+            <div class="statistic-value">{val}</div>
           </div>
         )
       }
@@ -303,34 +294,6 @@ export default defineComponent({
           <div class="statistic-title">{i18n.t('packages_dag_monitor_node_per_deal_need_time')}</div>
           <div class="statistic-content">
             <div class="statistic-value">{getVal(timeCostAvg.value)}</div>
-          </div>
-        </div>
-      )
-
-      // 源全量读取耗时
-      const sourceInitalReadTime = (
-        <div class="statistic">
-          <div class="statistic-title">{i18n.t('packages_dag_components_nodedetaildialog_pingjunduquhao')}</div>
-          <div class="statistic-content">
-            <div class="statistic-value">
-              {props.sample.snapshotSourceReadTimeCostAvg
-                ? calcTimeUnit(props.sample.snapshotSourceReadTimeCostAvg)
-                : i18n.t('public_data_no_data')}
-            </div>
-          </div>
-        </div>
-      )
-
-      // 源增量读取耗时
-      const sourceCDCReadTime = (
-        <div class="statistic">
-          <div class="statistic-title">{i18n.t('packages_dag_components_nodedetaildialog_zengliangduquyan')}</div>
-          <div class="statistic-content">
-            <div class="statistic-value">
-              {props.sample.incrementalSourceReadTimeCostAvg
-                ? calcTimeUnit(props.sample.incrementalSourceReadTimeCostAvg)
-                : i18n.t('public_data_no_data')}
-            </div>
           </div>
         </div>
       )

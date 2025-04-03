@@ -34,9 +34,11 @@ export const JsProcessor = observer(
       const showDoc = ref(false)
       const isMigrate = syncType === 'migrate'
       const showJsonArea = ref(false)
-      const docSrc = `https://docs.tapdata.${store.getters.isDomesticStation ? 'net' : 'io'}/appendix/${
-        props.isStandard ? 'standard' : 'enhanced'
-      }-js?from=cloud`
+      const docSrc = `${
+        isDaas
+          ? `${location.origin}/docs${i18n.locale === 'en' ? '/en' : ''}`
+          : `https://docs.tapdata.${store.getters.isDomesticStation ? 'net' : 'io'}`
+      }/appendix/${props.isStandard ? 'standard' : 'enhanced'}-js?from=cloud`
       const beforeJsonRef = ref()
       const afterJsonRef = ref()
 
@@ -341,7 +343,7 @@ export const JsProcessor = observer(
         if (form.values.type.includes('migrate')) {
           let result = await metadataInstancesApi.nodeSchemaPage({
             nodeId,
-            fields: ['original_name', 'fields', 'qualified_name'],
+            fields: ['original_name', 'fields', 'qualified_name', 'name', 'indices'],
             page: 1,
             pageSize: 1,
           })
@@ -494,34 +496,7 @@ export const JsProcessor = observer(
               v-model={showDoc.value}
               class="js-api-drawer"
             >
-              {isDaas ? (
-                <div class="px-4 js-doc-content">
-                  {Object.keys(functionGroup.value).map((className) => {
-                    return [
-                      <h2>{className}</h2>,
-                      classDescMap[className] && <p>{classDescMap[className]}</p>,
-                      <h3>{i18n.t('packages_dag_js_processor_index_fangfa')}</h3>,
-                      functionGroup.value[className].map((item) => {
-                        return [
-                          <h4>{item.methodName}</h4>,
-                          <ul>
-                            <li>
-                              {i18n.t('packages_dag_js_processor_index_zuoyong')}
-                              {item.desc}
-                            </li>
-                            <li>{i18n.t('packages_dag_js_processor_index_yongfa')}</li>
-                          </ul>,
-                          <HighlightCode code={item.example}></HighlightCode>,
-                        ]
-                      }),
-                    ]
-                  })}
-                </div>
-              ) : (
-                <iframe v-else ref="docsIframe" src={docSrc} class="w-100 h-100 block">
-                  {' '}
-                </iframe>
-              )}
+              <iframe ref="docsIframe" src={docSrc} class="w-100 h-100 block" />
             </ElDrawer>
             <div
               class={[

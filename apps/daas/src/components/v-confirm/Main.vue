@@ -13,7 +13,7 @@
         <div class="el-message-box__header" v-if="title">
           <div class="el-message-box__title flex align-center">
             <VIcon v-if="icon" class="mr-3" :size="iconSize" :color="iconColor" :class="statusClass">{{ icon }}</VIcon>
-            <span>{{ title }}</span>
+            <span class="font-weight-bold fs-6">{{ title }}</span>
           </div>
           <button
             type="button"

@@ -17,6 +17,15 @@
         >
       </div>
 
+      <el-alert class="alert-primary mb-4 text-primary" type="info" show-icon :closable="false">
+        <template #title>
+          <span class="align-middle">{{ $t('dfs_tm_address_alert') }}</span
+          ><el-link @click="handleCopyTmAddress" class="text-decoration-underline align-middle" type="primary">{{
+            tmAddress
+          }}</el-link>
+        </template>
+      </el-alert>
+
       <div class="mb-4">
         <div class="fw-sub mb-2 text-label font-color-dark">1.{{ $t('dfs_agent_download_type') }}</div>
         <ElRadioGroup v-model="downLoadType" @input="chooseDownLoadType" size="default" class="flex gap-4 mb-4">
@@ -90,8 +99,9 @@
           <div class="fs-5 font-color-dark mt-4 mb-2">
             {{ $t('dfs_agent_deploy_success') }}
           </div>
-          <div class="text-label font-color-light mb-2">
-            {{ $t('dfs_agent_deploy_success_subtitle') }}
+          <div class="text-center">
+            <el-button type="primary" @click="$router.push('/instance')">
+            {{ $t('public_button_back') }}</el-button>
           </div>
         </template>
         <template v-else-if="isCompleted">
@@ -118,14 +128,15 @@
 
 <script>
 import i18n from '@/i18n'
-
 import { IconButton } from '@tap/component'
+import { copyToClipboard } from '@tap/shared'
 export default {
   name: 'Install',
   components: { IconButton },
   inject: ['buried'],
   data() {
     return {
+      tmAddress: '47.238.71.140:443',
       links: {
         linux: '',
         docker: '',
@@ -189,9 +200,9 @@ export default {
     },
     open() {
       this.success = true
-      // setTimeout(() => {
-      //   this.$router.push('/instance')
-      // }, 5000)
+      /*setTimeout(() => {
+        this.$router.push('/instance')
+      }, 5000)*/
     },
     getUrl() {
       this.$axios.get('api/tcm/productRelease/deploy/' + this.agentId).then(async (data) => {
@@ -290,7 +301,7 @@ export default {
       })
       let href = `https://docs.tapdata.${
         !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en' ? 'io' : 'net'
-      }/quick-start/install/install-tapdata-agent/`
+      }/installation/install-tapdata-agent/`
       window.open(href, '_blank')
     },
     handleComplete() {
@@ -300,6 +311,10 @@ export default {
         downLoadType: this.downLoadType,
       })
     },
+    handleCopyTmAddress() {
+      copyToClipboard(this.tmAddress)
+      this.$message.success(this.$t('public_message_copy_success'))
+    }
   },
 }
 </script>

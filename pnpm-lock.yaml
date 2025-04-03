@@ -3457,6 +3457,7 @@ packages:
       throttle-debounce: 1.1.0
       vue: 3.4.34(typescript@5.5.4)
     dev: false
+    patched: true
 
   /emojis-list@3.0.0:
     resolution: {integrity: sha512-/kyM18EfinwXZbno9FyUGeFh87KC8HRQBQGildHZbEuRyWFOmv1U10o9BBp8XVZDVNNuQKyIGIu5ZYAAXJ0V2Q==}

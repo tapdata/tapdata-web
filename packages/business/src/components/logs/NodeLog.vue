@@ -9,7 +9,7 @@
     ></NodeList>
     <div class="main node-log-main flex-fill flex flex-column px-4 py-3">
       <div class="flex mb-2 align-items-center justify-content-between">
-        <div class="flex align-items-center">
+        <div class="flex align-items-center gap-3">
           <TimeSelect
             :options="timeOptions"
             :range="[firstStartTime, lastStopTime || getTime()]"
@@ -17,37 +17,39 @@
             @change="changeTime"
           ></TimeSelect>
           <ElInput
-            class="search-input ml-4"
+            class="search-input"
             v-model="keyword"
             :placeholder="$t('packages_dag_components_log_qingshururizhi')"
             clearable
             style="width: 240px"
             @input="searchFnc"
           ></ElInput>
-          <ElButton :loading="downloadLoading" type="primary" size="mini" class="ml-4" @click="handleDownload">{{
-            $t('public_button_download')
-          }}</ElButton>
+
+          <el-button :loading="downloadLoading" class="min-w-0" type="primary" size="mini" @click="handleDownload">
+            <VIcon>download</VIcon>
+          </el-button>
+
           <ElButton
-            v-if="isDaas"
+            v-if="isDaas && !hideDownload"
             :loading="downloadLoading"
             type="warning"
-            class="ml-4"
+            class="ml-0"
             @click="handleDownloadAnalysis"
-            >{{ $t('packages_business_download_analysis_report') }}</ElButton
+            ><VIcon class="mr-1">download</VIcon>{{ $t('packages_business_download_analysis_report') }}</ElButton
           >
-          <ElSwitch v-model="switchData.timestamp" class="ml-3 mr-1" @change="command('timestamp')"></ElSwitch>
-          <span>{{ $t('packages_business_logs_nodelog_xianshishijianchuo') }}</span>
-        </div>
-        <div class="pt-3">
-          <span class="color-primary cursor-pointer" @click="handleFullScreen">
-            <VIcon class="mr-1">{{ fullscreen ? 'suoxiao' : 'fangda' }}</VIcon>
-            <span>{{
-              fullscreen ? $t('packages_form_js_editor_exit_fullscreen') : $t('packages_form_js_editor_fullscreen')
-            }}</span>
-          </span>
+
+          <el-button
+            v-feature="'dataScraping'"
+            class="min-w-0 ml-0"
+            type="primary"
+            plain
+            size="mini"
+            @click="openDataCapture"
+            >{{ $t('public_data_capture') }}</el-button
+          >
         </div>
       </div>
-      <div class="level-line mb-2">
+      <div class="level-line mb-2 flex">
         <ElCheckboxGroup v-model="checkList" :disabled="loading" :min="1" class="inline-flex" @change="searchFnc">
           <ElCheckbox
             v-for="item in checkItems"
@@ -57,6 +59,19 @@
             >{{ item.text }}
           </ElCheckbox>
         </ElCheckboxGroup>
+
+        <el-divider class="mx-4" direction="vertical"></el-divider>
+
+        <ElCheckbox v-model="switchData.timestamp" @change="command('timestamp')">{{
+          $t('packages_business_logs_nodelog_xianshishijianchuo')
+        }}</ElCheckbox>
+
+        <span class="color-primary cursor-pointer ml-auto" @click="handleFullScreen">
+          <VIcon class="mr-1">{{ fullscreen ? 'suoxiao' : 'fangda' }}</VIcon>
+          <span>{{
+            fullscreen ? $t('packages_form_js_editor_exit_fullscreen') : $t('packages_form_js_editor_fullscreen')
+          }}</span>
+        </span>
       </div>
       <div v-loading="loading" class="log-list flex-1 rounded-2" style="height: 0">
         <DynamicScroller
@@ -172,62 +187,96 @@
     </ElDialog>
 
     <ElDialog
-      width="1200px"
+      width="80%"
+      class="max-w-1000 mt-25 --padding"
       v-model="codeDialog.visible"
       :close-on-click-modal="false"
-      :append-to-body="true"
-      class="error-code-dialog"
+      append-to-body
+      @open="expandErrorMessage = false"
     >
       <template #header>
-        <div>
-          <span class="ml-4 fw-bold fs-5">{{ codeDialog.data.fullErrorCode || codeDialog.data.errorCode }}</span>
+        <div class="flex align-center gap-2">
+          <VIcon class="color-danger" size="18">circle-close-filled</VIcon>
+          <span class="fs-6 fw-sub">{{ codeDialog.data.fullErrorCode || codeDialog.data.errorCode }}</span>
         </div>
       </template>
 
-      <div
-        v-if="codeDialog.data.describe"
-        v-html="codeDialog.data.describe"
-        class="text-prewrap mt-n4 mb-6 ml-4 font-color-light"
-      ></div>
+      <div class="font-color-light">
+        <!--错误信息-->
+        <template v-if="codeDialog.data.describe">
+          <div class="fw-sub mb-3 font-color-dark">{{ $t('packages_business_milestone_list_cuowuxinxi') }}</div>
+          <div
+            v-html="codeDialog.data.describe"
+            class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
+          ></div>
+        </template>
 
-      <div v-if="codeDialog.data.errorStack" class="mb-2 ml-4 flex justify-content-between">
-        <span class="fw-bold font-color-dark fs-6">{{ $t('packages_business_logs_nodelog_cuowuduizhan') }}</span>
-        <ElTooltip
-          placement="top"
-          manual
-          :content="$t('public_message_copied')"
-          popper-class="copy-tooltip"
-          :value="showTooltip"
-        >
-          <span
-            v-clipboard:copy="codeDialog.data.errorStack"
-            v-clipboard:success="onCopy"
-            @mouseleave="showTooltip = false"
-          >
-            <ElButton type="primary">{{ $t('packages_business_logs_nodelog_yijianfuzhi') }}</ElButton>
-          </span>
-        </ElTooltip>
+        <!--错误原因/描述-->
+        <template v-if="codeDialog.data.dynamicDescribe">
+          <div class="fw-sub mb-3 font-color-dark">{{ $t('public_task_reasons_for_error') }}</div>
+          <div
+            v-html="codeDialog.data.dynamicDescribe"
+            class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
+          ></div>
+        </template>
+
+        <!--解决方案-->
+        <template v-if="codeDialog.data.solution">
+          <div class="fw-sub mb-3 font-color-dark">{{ $t('packages_business_solution') }}</div>
+          <div
+            v-html="codeDialog.data.solution"
+            class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
+          ></div>
+        </template>
+
+        <!--See Also-->
+        <template v-if="!hideSeeAlso && codeDialog.data.seeAlso && codeDialog.data.seeAlso.length">
+          <div class="fw-sub mb-3 font-color-dark">See Also</div>
+          <ol class="pl-6 mb-6">
+            <li v-for="(item, index) in codeDialog.data.seeAlso" :key="index" class="list-decimal">
+              <ElLink type="primary" class="text-decoration-underline" @click="handleLink(item)">{{ item }}</ElLink>
+            </li>
+          </ol>
+        </template>
+
+        <!--错误堆栈-->
+        <template v-if="codeDialog.data.errorStack">
+          <div class="mb-3 flex justify-content-between align-items-end">
+            <span class="fw-sub font-color-dark">{{ $t('packages_business_logs_nodelog_cuowuduizhan') }}</span>
+          </div>
+          <div class="error-stack-pre-wrap position-relative font-color-light rounded-lg">
+            <div class="position-absolute end-0 top-0 px-2 pt-1">
+              <el-button
+                @click="handleCopyStack(codeDialog.data.errorStack)"
+                type="text"
+                class="px-1 py-0.5 font-color-dark"
+              >
+                <VIcon class="mr-1">copy</VIcon>
+                <span class="">{{ $t('public_button_copy') }}</span> </el-button
+              ><el-button
+                @click="expandErrorMessage = !expandErrorMessage"
+                type="text"
+                class="px-1 py-0.5 font-color-dark ml-2"
+              >
+                {{
+                  expandErrorMessage ? $t('packages_business_verification_details_shouqi') : $t('public_button_expand')
+                }}<i class="el-icon-arrow-down is-rotate ml-1" :class="{ 'is-active': expandErrorMessage }"></i>
+              </el-button>
+            </div>
+
+            <pre
+              class="m-0 p-4 pt-0 mt-6 font-color-dark"
+              :class="expandErrorMessage ? '' : 'truncate-two-lines'"
+              style="max-height: 400px; font-size: 13px; overflow-x: auto"
+              >{{ codeDialog.data.errorStack }}</pre
+            >
+          </div>
+        </template>
       </div>
-      <div
-        v-if="codeDialog.data.errorStack"
-        v-html="codeDialog.data.errorStack"
-        class="error-stack-wrap text-prewrap mb-6 ml-4 font-color-light border overflow-y-auto bg-color-normal p-4"
-      ></div>
-      <template v-if="!isIKAS">
-        <div
-          v-if="codeDialog.data.seeAlso && codeDialog.data.seeAlso.length"
-          class="fw-bold fs-6 mb-3 ml-4 font-color-dark"
-        >
-          See Also
-        </div>
-        <p
-          v-for="(item, index) in codeDialog.data.seeAlso"
-          :key="index"
-          class="flex align-items-center mb-2 ml-4 font-color-normal"
-        >
-          <span>{{ index + 1 }}.</span>
-          <ElLink type="primary" class="text-decoration-underline" @click="handleLink(item)">{{ item }}</ElLink>
-        </p>
+
+      <template v-if="!isDaas" #footer>
+        <ElButton @click="codeDialog.visible = false">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" @click="handleCreateTicket">{{ $t('dfs_user_contactus_chuangjiangongdan') }}</ElButton>
       </template>
     </ElDialog>
 
@@ -251,6 +300,8 @@
         <el-progress :stroke-width="9" :percentage="downloadAnalysis.progress"></el-progress>
       </div>
     </ElDialog>
+
+    <Download :visible.sync="downloadDialog" :dataflow="dataflow"></Download>
   </div>
 </template>
 
@@ -263,13 +314,14 @@ import { mapGetters } from 'vuex'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { debounce, cloneDeep, uniqBy, escape } from 'lodash'
 
-import { CountUp, downloadBlob, openUrl } from '@tap/shared'
+import { copyToClipboard, CountUp, downloadBlob, openUrl } from '@tap/shared'
 import Time from '@tap/shared/src/time'
-import { VIcon, TimeSelect } from '@tap/component'
+import { VIcon, TimeSelect, IconButton } from '@tap/component'
 import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
 import { monitoringLogsApi, taskApi, proxyApi, CancelToken } from '@tap/api'
 
 import NodeList from '../nodes/List'
+import Download from './Download'
 
 export default {
   components: {
@@ -281,6 +333,9 @@ export default {
     NodeList,
   },
   name: 'NodeLog',
+
+  components: { IconButton, VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem, VEmpty, NodeList, Download },
+
   props: {
     dataflow: {
       type: Object,
@@ -303,20 +358,24 @@ export default {
       type: Array,
       default: () => [],
     },
-    nodeId: String,
+    nodeId: {
+      type: String,
+      default: ''
+    }
   },
   data() {
     const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
     return {
       isDaas,
+      hideDownload: process.env.VUE_APP_HIDE_ANALYSE_DOWNLOAD,
       activeNodeId: this.nodeId,
       keyword: '',
       checkList: [],
       checkItems: [
-        {
+        /*{
           label: 'DEBUG',
           text: 'DEBUG',
-        },
+        },*/
         {
           label: 'INFO',
           text: 'INFO',
@@ -398,7 +457,17 @@ export default {
       extraEnterCount: 0,
       codeDialog: {
         visible: false,
-        data: {},
+        data: {
+          errorStack: '',
+          errorCode: '',
+          fullErrorCode: '',
+          describe: '',
+          solution: '',
+          dynamicDescribe: '',
+          seeAlso: [],
+          module: '',
+          message: ''
+        },
       },
       showCols: [],
       switchData: {
@@ -406,7 +475,7 @@ export default {
       },
       fullscreen: false,
       showTooltip: false,
-      isIKAS: process.env.VUE_APP_PAGE_TITLE === 'IKAS',
+      hideSeeAlso: process.env.VUE_APP_PAGE_TITLE === 'IKAS' || process.env.VUE_APP_HIDE_LOG_SEE_ALSO,
       downloadAnalysis: {
         visible: false,
         progress: 0,
@@ -443,14 +512,16 @@ export default {
             label: i18n.t('packages_business_exporting_tm_thread'),
           },
           {
-            label: i18n.t('packages_business_downloading_file'),
-          },
-        ],
+            label: i18n.t('packages_business_downloading_file')
+          }
+        ]
       },
+      expandErrorMessage: false,
+      downloadDialog: false
     }
   },
   computed: {
-    ...mapGetters('dataflow', ['allNodes']),
+    ...mapGetters('dataflow', ['allNodes', 'nodeById']),
 
     nodeLogCountMap() {
       return this.logTotals
@@ -728,6 +799,20 @@ export default {
         search: this.keyword,
         levels: this.checkList,
       }
+
+      if (this.activeNodeId) {
+        const node = this.nodeById(this.activeNodeId)
+        if (
+          ['js_processor', 'migrate_js_processor', 'standard_js_processor', 'standard_migrate_js_processor'].includes(
+            node.type
+          )
+        ) {
+          params.includeLogTags = ['src=user_script']
+        }
+      } else {
+        params.excludeLogTags = ['src=user_script']
+      }
+
       return params
     },
 
@@ -751,6 +836,20 @@ export default {
         search: this.keyword,
         levels: this.checkList,
       }
+
+      if (this.activeNodeId) {
+        const node = this.nodeById(this.activeNodeId)
+        if (
+          ['js_processor', 'migrate_js_processor', 'standard_js_processor', 'standard_migrate_js_processor'].includes(
+            node.type
+          )
+        ) {
+          params.includeLogTags = ['src=user_script']
+        }
+      } else {
+        params.excludeLogTags = ['src=user_script']
+      }
+
       this.newFilter = params
       return params
     },
@@ -773,6 +872,8 @@ export default {
     },
 
     handleDownload() {
+      this.downloadDialog = true
+      return
       const [start, end] = this.quotaTime.length ? this.quotaTime : this.getTimeRange(this.quotaTimeType)
       let { id: taskId, taskRecordId } = this.dataflow || {}
       const { query } = this.$route
@@ -891,19 +992,22 @@ export default {
     handleCode(item = {}) {
       const params = {
         className: 'ErrorCodeService',
-        method: 'getErrorCode',
-        args: [item.errorCode, i18n.locale === 'en' ? 'en' : 'cn'],
+        method: 'getErrorCodeWithDynamic',
+        args: [item.errorCode, i18n.locale === 'en' ? 'en' : 'cn', item.dynamicDescriptionParameters],
       }
 
       this.codeDialog.data.errorStack = item.errorStack
       this.codeDialog.data.errorCode = item.errorCode
       this.codeDialog.data.fullErrorCode = item.fullErrorCode
+      this.codeDialog.data.message = item.message
+      this.codeDialog.data.module = ''
+
       proxyApi
         .call(params)
         .then((data) => {
-          this.codeDialog.data.describe = data.describe
-          this.codeDialog.data.hasDescribe = data.hasDescribe
-          this.codeDialog.data.seeAlso = data.seeAlso || []
+          Object.assign(this.codeDialog.data, data)
+
+          this.codeDialog.data.describe = data.describe || item.message
           this.codeDialog.visible = true
         })
         .catch(() => {
@@ -1003,6 +1107,42 @@ export default {
         this.downloadAnalysis.visible = false
       }, 200)
     },
+
+    handleCopyStack(stack) {
+      copyToClipboard(stack)
+      this.$message.success(this.$t('public_message_copy_success'))
+    },
+
+    openDataCapture() {
+      window.open(
+        this.$router.resolve({
+          name: 'DataCapture',
+          params: { id: this.dataflow.id }
+        }).href,
+        `DataCapture-${this.dataflow.id}`
+      )
+    },
+    handleCreateTicket() {
+      const errorCode = this.codeDialog.data.fullErrorCode || this.codeDialog.data.errorCode
+
+      window.open(
+        this.$router.resolve({
+          name: 'TicketSystem',
+          query: {
+            form: encodeURIComponent(
+              JSON.stringify({
+                jobId: this.dataflow.id,
+                subject: `${errorCode}-${this.codeDialog.data.message}`,
+                description: `Error Code: ${errorCode}
+Module: ${this.codeDialog.data.module || ''}
+Describe: ${this.codeDialog.data.describe ? `\n${this.codeDialog.data.describe}` : ''}
+Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.errorStack}` : ''}`
+              })
+            )
+          }
+        }).href
+      )
+    }
   },
 }
 </script>
@@ -1154,10 +1294,9 @@ export default {
 }
 
 .error-stack-wrap {
-  height: 465px;
-
+  //height: 465px;
   &.has-describe {
-    height: 280px;
+    //height: 280px;
   }
 }
 

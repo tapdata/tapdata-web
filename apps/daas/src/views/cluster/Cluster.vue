@@ -14,7 +14,7 @@
       <div class="search-bar">
         <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="getDataApi()"></FilterBar>
       </div>
-      <div class="main">
+      <div class="main" v-loading="loading">
         <template v-if="waterfallData.length">
           <section v-if="viewType === 'component'">
             <div class="border rounded-lg mb-4">
@@ -261,7 +261,7 @@
                       <i class="circular mr-2 mt-2" :class="item.status !== 'running' ? 'bgred' : 'bggreen'"></i>
                       <div class="list-box-header-main">
                         <h2 class="name fs-6">
-                          {{ item.agentName ? item.agentName : item.systemInfo.hostname }}
+                          {{ item.agentName || item.systemInfo.hostname }}
                         </h2>
                         <div class="uuid fs-8 my-1">{{ item.systemInfo.uuid }}</div>
                         <span class="ip">{{ item.custIP ? item.custIP : item.systemInfo.ip }}</span>
@@ -278,7 +278,7 @@
                         @click="updateFn(item, item.management.status, 'management', 'update')"
                         >{{ $t('cluster_update') }}
                       </ElButton>
-                      <template v-if="item.engine.status === 'running'">
+                      <template v-if="item.engine.status === 'running' && !hideDownload">
                         <el-tooltip :content="$t('instance_details_xianchengziyuanxia')" placement="top">
                           <IconButton sm class="text-primary" @click="downServeFn(item)">connectors</IconButton>
                         </el-tooltip>
@@ -627,6 +627,7 @@ export default {
   },
   data() {
     return {
+      hideDownload: process.env.VUE_APP_HIDE_CLUSTER_DOWNLOAD,
       waterfallData: [],
       currentData: null,
       dialogForm: false,
@@ -703,6 +704,7 @@ export default {
         allowDrop: true,
       },
       draggingNodeImage: null,
+      loading: false
     }
   },
   computed: {
@@ -831,7 +833,7 @@ export default {
           server: server,
           operation: 'start',
         }
-        this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_restart_server') + '?', {
+        this.$confirm(`${this.$t('cluster_confirm_text')}${this.$t('cluster_start_server')}?`, {
           type: 'warning',
           closeOnClickModal: false,
         }).then((resFlag) => {
@@ -858,7 +860,7 @@ export default {
           server: server,
           operation: 'stop',
         }
-        this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_closeSever') + '?', {
+        this.$confirm(this.$t('cluster_confirm_text') + this.$t('cluster_closeSever') + '?', {
           type: 'warning',
           closeOnClickModal: false,
         }).then((resFlag) => {
@@ -870,21 +872,13 @@ export default {
       }
     },
     restartFn(item, status, server) {
-      let name
-      if (server === 'apiServer') {
-        name = 'API SEVER'
-      } else if (server === 'engine') {
-        name = this.$t('cluster_sync_gover')
-      } else {
-        name = this.$t('cluster_manage_sys')
-      }
       if (status === 'running') {
         let data = {
           uuid: item.uuid,
           server: server,
           operation: 'restart',
         }
-        this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_restart_server') + '?', {
+        this.$confirm(this.$t('cluster_confirm_text') + this.$t('cluster_restart_server') + '?', {
           type: 'warning',
           closeOnClickModal: false,
         }).then((resFlag) => {
@@ -897,16 +891,8 @@ export default {
     },
     // 解绑
     unbind(item, status, server) {
-      let name
-      if (server === 'apiServer') {
-        name = 'API SEVER'
-      } else if (server === 'engine') {
-        name = this.$t('cluster_sync_gover')
-      } else {
-        name = this.$t('cluster_manage_sys')
-      }
       if (status === 'stopped') {
-        this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_unbind_server') + '?', {
+        this.$confirm(this.$t('cluster_confirm_text') + this.$t('cluster_unbind_server') + '?', {
           type: 'warning',
           closeOnClickModal: false,
         }).then((resFlag) => {
@@ -999,10 +985,14 @@ export default {
           },
         }
       }
+      this.loading = true
       let clusterData = await clusterApi.get(params)
       clusterData = clusterData?.items || []
       let processId = clusterData.map((it) => it?.systemInfo?.process_id)
       let workerData = await this.getUsageRate(processId)
+
+      this.loading = false
+
       //处理worker 数据
       workerData = workerData?.items || []
       let metricValuesData = {}
@@ -1121,6 +1111,8 @@ export default {
       this.ips = item.systemInfo.ips || []
       this.agentName = item.agentName || item.systemInfo.hostname
       this.currentNde = item.systemInfo
+
+      this.editAgentItem = item
     },
     //提交编辑
     submitEditAgent() {
@@ -1135,7 +1127,9 @@ export default {
       }
       clusterApi.editAgent(this.custId, data).then(() => {
         this.editAgentDialog = false
-        this.$message.success(this.$t('public_message_delete_ok'))
+        this.$message.success(this.$t('public_message_save_ok'))
+
+        this.$set(this.editAgentItem, 'agentName', this.agentName)
       })
       // .catch(() => {
       // })

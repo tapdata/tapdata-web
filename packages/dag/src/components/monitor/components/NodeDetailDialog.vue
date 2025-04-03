@@ -76,7 +76,9 @@
                 <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
               </div>
               <div
-                v-if="dataflow.syncType === 'migrate' && totalData.currentSnapshotTableRowTotal"
+                v-if="
+                  dataflow.syncType === 'migrate' && totalData.currentSnapshotTableRowTotal && !ifEnableConcurrentRead
+                "
                 class="mb-4 flex align-items-center"
               >
                 <span class="mr-2">{{ $t('packages_dag_components_nodedetaildialog_dangqianbiaotongbu') }}</span>
@@ -246,6 +248,8 @@ export default {
     dataflow: Object,
 
     getTimeRange: Function,
+
+    ifEnableConcurrentRead: Boolean
   },
   data() {
     return {
@@ -454,7 +458,6 @@ export default {
 
     isSource() {
       const { type, $inputs } = this.node
-      console.log('isSource', this.node)
       return (type === 'database' || type === 'table' || type === 'logCollector') && !$inputs.length
     },
 

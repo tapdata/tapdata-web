@@ -1,5 +1,5 @@
 import i18n from '@/i18n'
-import { defineComponent, reactive, ref, watch, nextTick, onMounted } from 'vue'
+import { defineComponent, reactive, ref, watch, nextTick, onMounted, SetupContext } from '@vue/composition-api'
 import { FilterBar, Drawer, VIcon } from '@tap/component'
 import { TablePage, DiscoveryClassification, makeDragNodeImage } from '@tap/business'
 import { discoveryApi } from '@tap/api'
@@ -8,6 +8,7 @@ import ObjectTable from '@/views/data-discovery/ObjectTable'
 import './index.scss'
 import resize from '@tap/component/src/directives/resize'
 import { useRoute } from 'vue-router'
+
 
 export default defineComponent({
   props: [''],
@@ -105,7 +106,6 @@ export default defineComponent({
     const handleSourceDrawer = () => {
       data.isShowSourceDrawer = true
       nextTick(() => {
-        // @ts-ignore
         //请求筛选条件-下拉列表
         objectTableRef.value?.loadFilterList()
         // @ts-ignore
@@ -152,8 +152,7 @@ export default defineComponent({
     loadFilterList()
     watch(
       () => root.$route.query,
-      (val) => {
-        // @ts-ignore
+      (()) => {
         tableRef.value.fetch(1)
       },
     )
@@ -191,7 +190,7 @@ export default defineComponent({
       ev.dataTransfer.setDragImage(draggingNodeImage, 0, 0)
     }
 
-    const handleDragEnd = (row, column, event) => {
+    const handleDragEnd = () => {
       dragState.isDragging = false
       dragState.draggingObjects = []
       dragState.dropNode = null
@@ -200,7 +199,7 @@ export default defineComponent({
     }
 
     const multipleSelectionMap = ref({})
-    const handleSelectionChange = (val) => {
+    const handleSelectionChange = ((val): { id: string }[]) => {
       multipleSelectionMap.value = val.reduce((obj, item) => {
         obj[item.id] = item
         return obj

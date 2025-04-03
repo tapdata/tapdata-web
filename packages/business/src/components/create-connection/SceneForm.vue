@@ -894,30 +894,32 @@ export default {
             '23:00',
           ],
         },
-        heartbeatObject: {
-          type: 'void',
-          'x-component': 'Space',
-          title: i18n.t('packages_business_connections_databaseform_kaiqixintiaobiao'),
-          'x-decorator': 'FormItem',
-          'x-decorator-props': {
-            tooltip: i18n.t('packages_business_connections_databaseform_dakaixintiaobiao'),
-          },
-          properties: {
-            heartbeatEnable: {
-              type: 'boolean',
-              default: false,
-              'x-component': 'Switch',
-            },
-          },
-          'x-reactions': {
-            dependencies: ['__TAPDATA.connection_type'],
-            fulfill: {
-              state: {
-                display: '{{$deps[0] === "source_and_target" ? "visible":"hidden"}}',
+        heartbeatObject: !this.pdkOptions.tags?.includes('NoHeartbeat')
+          ? {
+              type: 'void',
+              'x-component': 'Space',
+              title: i18n.t('packages_business_connections_databaseform_kaiqixintiaobiao'),
+              'x-decorator': 'FormItem',
+              'x-decorator-props': {
+                tooltip: i18n.t('packages_business_connections_databaseform_dakaixintiaobiao')
               },
-            },
-          },
-        },
+              properties: {
+                heartbeatEnable: {
+                  type: 'boolean',
+                  default: false,
+                  'x-component': 'Switch'
+                }
+              },
+              'x-reactions': {
+                dependencies: ['__TAPDATA.connection_type'],
+                fulfill: {
+                  state: {
+                    display: '{{$deps[0] === "source_and_target" ? "visible":"hidden"}}'
+                  }
+                }
+              }
+            }
+          : undefined
       })
 
       if (this.isDaas) {
@@ -936,6 +938,40 @@ export default {
       const { OPTIONAL_FIELDS } = connectionProperties
       delete connectionProperties.OPTIONAL_FIELDS
 
+      let reactions
+
+      if (process.env.VUE_APP_CONNECTOR_SCHEMA && /^\s*[[{].*[\]}]\s*$/.test(process.env.VUE_APP_CONNECTOR_SCHEMA)) {
+        reactions = JSON.parse(process.env.VUE_APP_CONNECTOR_SCHEMA)
+      } else if (process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA) {
+        reactions = [
+          {
+            target: process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA,
+            fulfill: {
+              state: { display: 'hidden' }
+            }
+          }
+        ]
+      }
+
+      if (!this.hasFeature('shareCdc')) {
+        reactions ??= []
+        reactions.push({
+          target: '__TAPDATA.shareCdcEnable',
+          fulfill: {
+            state: { display: 'hidden' }
+          }
+        })
+      }
+
+      if (!this.hasFeature('oracleBridge')) {
+        reactions ??= []
+        reactions.push({
+          target: 'logPluginName',
+          when: '{{pdkId !== "postgres"}}',
+          fulfill: { state: { display: 'hidden' } }
+        })
+      }
+
       let result = {
         type: 'object',
         'x-component-props': {
@@ -945,16 +981,7 @@ export default {
           START: {
             type: 'void',
             'x-index': 0,
-            'x-reactions': process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA
-              ? {
-                  target: process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA,
-                  fulfill: {
-                    state: {
-                      display: 'hidden',
-                    },
-                  },
-                }
-              : undefined,
+            'x-reactions': reactions,
             properties: {
               __TAPDATA: {
                 type: 'object',
@@ -1214,6 +1241,7 @@ export default {
 
       this.schemaScope = {
         $isDaas: this.isDaas,
+        pdkId: this.pdkOptions.pdkId,
         isEdit: !!id,
         useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
           return (field) => {
@@ -1249,7 +1277,7 @@ export default {
 
           const mapNode = (item) => ({
             value: item.processId,
-            label: `${item.hostName}（${
+            label: `${item.agentName || item.hostName}（${
               item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
             }）`,
             disabled: item.status !== 'running',

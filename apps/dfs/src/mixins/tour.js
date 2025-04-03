@@ -37,20 +37,7 @@ export default {
     },
   },
 
-  watch: {
-    $route(to, from) {
-      console.log('$route', to) // eslint-disable-line
-    },
-    '$store.state.guide.expand.guideStatus'() {
-      this.$axios.post('api/tcm/user_guide', {
-        expand: this.$store.state.guide.expand,
-      })
-    },
-  },
-
   async created() {
-    await this.loadGuide()
-
     if (this.isGCPMarketplaceUser) {
       // GCP Marketplace 用户，直接跳过引导
       let { total = 0 } = await this.$axios.get(`api/tcm/subscribe`)
@@ -58,40 +45,9 @@ export default {
         // 显示正在创建实例的提示
         this.marketplaceGuideVisible = true
       }
-
-      if (!this.replicationTour.enable) {
-        this.$store.commit('setReplicationTour', {
-          enable: true,
-          activeIndex: null,
-          behavior: '',
-          status: '',
-          view: 'board',
-        })
-
-        this.$axios.post('api/tcm/user_guide', {
-          tour: this.replicationTour,
-        })
-      }
-    } else if (!this.pausedGuide) {
-      await this.checkGuide()
     }
 
-    this.loopLoadAgentCount()
-    let unwatch
-
-    // 🎉🥚
-    Mousetrap.bind('up up down down left right left right', () => {
-      unwatch?.()
-      if (this.startingTour) {
-        this.setShowReplicationTour(false)
-        this.completeTour()
-        this.destroyDriver()
-      } else {
-        this.subscriptionModelVisible = !this.subscriptionModelVisible
-      }
-    })
-
-    await this.setUrlParams() // url携带的自定义参数
+    // this.loopLoadAgentCount()
   },
 
   unmounted() {
@@ -181,12 +137,6 @@ export default {
       if (!subscribeId || !agentId) {
         this.subscriptionModelVisible = true
       }
-    },
-
-    async loadGuide() {
-      const guide = await this.$axios.get('api/tcm/user_guide')
-      this.$store.commit('setGuide', guide)
-      this.$store.commit('setReplicationTour', guide?.tour)
     },
 
     loopLoadAgentCount(showLoading) {
@@ -334,15 +284,6 @@ export default {
       return !!localStorage[`completeAlarm-${this.userId}`]
     },
 
-    async initAlarmTour() {
-      if (this.$route.name !== 'migrateList' || this.hasCompleteAlarm()) return
-      const runningCount = await this.getTaskRunningCount()
-
-      if (runningCount > 0 && this.$route.name === 'migrateList') {
-        this.showAlarmTour = true
-      }
-    },
-
     async initAgentTour() {
       const { items: agentData } = await this.$axios.get(
         'api/tcm/agent?filter=' +
@@ -451,69 +392,6 @@ export default {
 
     changeIsUnDeploy(val) {
       this.isUnDeploy = val
-    },
-
-    async setUrlParams() {
-      const { guide, mockUserPromise } = this.$store.state
-
-      let bd_vid = getUrlSearch('bd_vid')
-      const tp_vid = getUrlSearch('tp_vid')
-      let params = {}
-
-      if (tp_vid && !guide.tpVid) {
-        guide.tpVid = params.tpVid = tp_vid
-      }
-
-      const logidUrlCloud = Cookie.get('logidUrlCloud')
-      const userReferrer = Cookie.get('userReferrer')
-      const userVirtualId = Cookie.get('userVirtualId')
-      const userVisitedPages = Cookie.get('userVisitedPages')
-
-      if (mockUserPromise) {
-        const isMock = await mockUserPromise.catch(e => {
-          console.error(e)
-        })
-        if (isMock) return
-      }
-
-      if (userVirtualId && !guide.expand?.userVirtualId) {
-        params.expand = {
-          userReferrer,
-          userVirtualId,
-          userVisitedPages
-        }
-        Object.assign(guide.expand, params.expand)
-      }
-
-      if (logidUrlCloud) {
-        const url = new URL(decodeURIComponent(logidUrlCloud))
-        bd_vid = url.searchParams.get('bd_vid')
-      }
-
-      if (bd_vid && !guide.bdVid) {
-        guide.bdVid = params.bdVid = bd_vid
-
-        const conversionTypes = [
-          {
-            logidUrl: logidUrlCloud || location.href,
-            newType: 25,
-          },
-        ]
-        this.$axios
-          .post('api/tcm/track/send_convert_data', conversionTypes)
-          .then((data) => {
-            if (data) {
-              this.buried('registerSuccess')
-            }
-          })
-          .catch((e) => {
-            console.log('ocpc.baidu.com', e)
-          })
-      }
-
-      if (Object.keys(params).length) {
-        this.$axios.post('api/tcm/user_guide', params)
-      }
     },
 
     destroyDriver() {
@@ -727,22 +605,6 @@ export default {
     pauseGuideAndTour() {
       this.pauseGuide()
       this.handleDestroy()
-    },
-
-    async handleOpenGuide() {
-      await this.checkGuide()
-
-      if (!this.subscriptionModelVisible) {
-        // 继续判断任务引导
-        if (this.agentRunningCount) {
-          this.checkReplicationTour()
-          this.startGuide()
-        } else {
-          this.$message.warning(this.$t('agent_tip_no_running'))
-        }
-      } else {
-        this.startGuide()
-      }
     },
 
     updateMarketplaceGuide() {

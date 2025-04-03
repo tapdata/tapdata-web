@@ -185,7 +185,7 @@
       <template #header>
         <span class="fs-6 fw-sub">{{ dialogConfig.title }}</span>
       </template>
-      <ElForm ref="form" :model="dialogConfig" label-width="90px">
+      <ElForm ref="form" :model="dialogConfig" label-width="90px" label-position="top">
         <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
           <ElInput
             v-model="dialogConfig.label"
@@ -226,15 +226,21 @@
       </template>
     </ElDialog>
 
-    <ElDialog v-model="showMaterialized" width="480px" :close-on-click-modal="false">
+    <ElDialog v-model="showMaterialized" width="480px" :close-on-click-modal="false" @opened="handleDialogOpened">
       <template #header>
         <span class="fs-6 fw-sub">{{ $t('packages_dag_build_materialized_view') }}</span>
       </template>
       <ElForm ref="form" label-width="90px" label-position="top" class="my-n6" @submit.prevent>
         <ElFormItem :label="$t('packages_dag_materialized_view_storage_table')">
-          <ElInput v-model="materializedTableName">
+          <ElInput ref="tableNameInput" v-model="materializedTableName">
             <template #prepend>{{ tablePrefix }}</template>
           </ElInput>
+        </ElFormItem>
+        <ElFormItem :label="$t('packages_ldp_mdm_create_method')">
+          <ElRadioGroup v-model="createMethod">
+            <ElRadio label="transformation">{{ $t('packages_ldp_mdm_create_method_transformation') }}</ElRadio>
+            <ElRadio label="materialized">{{ $t('packages_ldp_mdm_create_method_materialized') }}</ElRadio>
+          </ElRadioGroup>
         </ElFormItem>
       </ElForm>
       <template v-slot:footer>
@@ -314,6 +320,7 @@ export default {
       tablePrefix: 'MDM_',
       showMaterialized: false,
       materializedTableName: '',
+      createMethod: 'transformation',
     }
   },
   computed: {
@@ -937,6 +944,7 @@ export default {
     openMaterializedDialog() {
       this.materializedTableName = ''
       this.showMaterialized = true
+      this.createMethod = 'transformation'
     },
 
     createMaterializedView() {
@@ -947,10 +955,16 @@ export default {
       this.$router.push({
         name: 'DataflowNew',
         query: {
-          by: 'materialized-view',
+          by: this.createMethod === 'transformation' ? 'transformation-materialized' : 'materialized-view',
           connectionId: this.mdmConnection.id,
           tableName: this.tablePrefix + tableName,
         },
+      })
+    },
+
+    handleDialogOpened() {
+      this.$nextTick(() => {
+        this.$refs.tableNameInput.focus()
       })
     },
   },

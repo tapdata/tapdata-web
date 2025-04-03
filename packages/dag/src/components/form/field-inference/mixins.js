@@ -27,7 +27,7 @@ export default {
         const params = Object.assign(
           {
             nodeId,
-            fields: ['original_name', 'fields', 'qualified_name'],
+            fields: ['original_name', 'fields', 'qualified_name', 'name', 'indices'],
             page: 1,
             pageSize: 20,
           },

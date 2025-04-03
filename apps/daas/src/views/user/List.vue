@@ -604,6 +604,7 @@ export default {
         emailVerified: true,
         account_status: 1,
       }
+      this.createFormConfig.items.find(item => item.field === 'email').show = true
       this.$nextTick(() => {
         this.$refs.form.clearValidate()
       })
@@ -611,6 +612,8 @@ export default {
     // 编辑用户
     edit(item) {
       this.createDialogVisible = true
+
+      this.createFormConfig.items.find(item => item.field === 'email').show = !!item.email
 
       this.createForm = {
         id: item.id,
@@ -630,6 +633,7 @@ export default {
     },
     // 保存用户表单
     createNewUser() {
+      debugger
       let that = this
 
       this.$refs.form.validate((valid) => {

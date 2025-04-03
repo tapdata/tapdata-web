@@ -26,6 +26,7 @@ import resize from '@tap/component/src/directives/resize'
 import { observable } from '@formily/reactive'
 import { setPageTitle } from '@tap/shared'
 import { getSchema, getTableRenameByConfig, ifTableNameConfigEmpty } from '../util'
+import { showErrorMessage } from '@tap/business/src/components/error-message'
 
 export default {
   directives: {
@@ -1083,6 +1084,26 @@ export default {
       return nodes
     },
 
+    findAllChildNodes(id) {
+      let node = this.scope.findNodeById(id)
+      const nodes = []
+      let ids = node.$outputs || []
+
+      ids.forEach(id => {
+        let child = this.scope.findNodeById(id)
+
+        if (!child) return
+
+        nodes.push(child)
+
+        if (child.$outputs?.length) {
+          nodes.push(...this.findChildNodes(id))
+        }
+      })
+
+      return nodes
+    },
+
     handleDisableNode(node, value = true) {
       node['disabled'] = value
       node.attrs['disabled'] = value
@@ -1269,7 +1290,6 @@ export default {
     },
 
     resetWorkspace() {
-      console.log('resetWorkspace', this.dataflow) // eslint-disable-line
       Object.assign(this.dataflow, {
         ...DEFAULT_SETTINGS,
         id: '',
@@ -1553,6 +1573,8 @@ export default {
         'migrate_js_processor',
         'union_processor',
         'migrate_union_processor',
+        'standard_js_processor',
+        'standard_migrate_js_processor'
       ]
       this.allNodes.forEach((node) => {
         // 开启了DDL
@@ -1689,6 +1711,70 @@ export default {
       if (nodes.length > 1) return i18n.t('packages_dag_migrate_union_multiple')
     },
 
+    async validateMergeTableProcessor() {
+      if (this.dataflow.syncType === 'migrate') return
+
+      const nodes = this.allNodes.filter(node => node.type === 'merge_table_processor')
+
+      const validateMergeProperties = (items, isFirstLevel = true) => {
+        for (const item of items) {
+          // 跳过第一级，只检查 children 层级的 joinKeys
+          if (!isFirstLevel) {
+            // 检查 joinKeys 是否为空数组
+            if (!item.joinKeys?.length) {
+              return i18n.t('packages_dag_join_keys_empty', { tableName: item.tableName })
+            }
+
+            // 检查每个 joinKey 的 source/target
+            for (const [index, joinKey] of item.joinKeys.entries()) {
+              if (!joinKey.source || !joinKey.target) {
+                return i18n.t('packages_dag_join_keys_field_empty', { tableName: item.tableName, index: index + 1 })
+              }
+            }
+          }
+
+          // 递归检查子项
+          if (item.children?.length) {
+            const childrenError = validateMergeProperties(item.children, false)
+            if (childrenError) {
+              return childrenError
+            }
+          }
+        }
+        return ''
+      }
+
+      for (let node of nodes) {
+        const error = validateMergeProperties(node.mergeProperties)
+        if (error) {
+          this.setNodeErrorMsg({
+            id: node.id,
+            msg: error
+          })
+          return error
+        }
+
+        // 校验主从合并后面是否有js节点
+        const nextNodes = this.findAllChildNodes(node.id)
+
+        if (nextNodes.some(nextNode => nextNode.type === 'standard_js_processor')) {
+          return i18n.t('packages_dag_merge_table_js_node_error')
+        }
+
+        // 目标需要有 master_slave_merge 能力
+        const targetNode = nextNodes.find(
+          nextNode =>
+            nextNode.type === 'table' && !nextNode.attrs?.capabilities?.find(({ id }) => id === 'master_slave_merge')
+        )
+
+        if (targetNode) {
+          return i18n.t('packages_dag_merge_table_table_not_allow_target', {
+            val: targetNode.databaseType
+          })
+        }
+      }
+    },
+
     async eachValidate(...fns) {
       for (let fn of fns) {
         let result = fn()
@@ -1725,6 +1811,7 @@ export default {
         this.validateUnwind,
         this.validateTableRename,
         this.validateMigrateUnion,
+        this.validateMergeTableProcessor,
       )
     },
 
@@ -2116,8 +2203,7 @@ export default {
       } else if (['Task.ScheduleLimit', 'Task.ManuallyScheduleLimit'].includes(code)) {
         this.handleShowUpgradeDialog(error.data)
       } else {
-        const msg = error?.data?.message || msg
-        this.$message.error(msg)
+        showErrorMessage(error?.data)
       }
     },
 
@@ -2138,15 +2224,10 @@ export default {
     },
 
     handleEditFlush(result) {
-      console.debug(
-        i18n.t('packages_dag_mixins_editor_debug5', {
-          val1: result.data?.status,
-        }),
-        result.data,
-      ) // eslint-disable-line
+      // console.debug(i18n.t('packages_dag_mixins_editor_debug5', { val1: result.data?.status }), result.data) // eslint-disable-line
       if (result.data) {
         if (result.data.id !== this.dataflow.id) {
-          console.debug(i18n.t('packages_dag_mixins_editor_wsshoudaole'), result.data)
+          // console.debug(i18n.t('packages_dag_mixins_editor_wsshoudaole'), result.data)
           return
         }
         this.reformDataflow(result.data, true)
@@ -2311,7 +2392,6 @@ export default {
         })
         this.startLoopTask(id)
         this.titleSet()
-        console.log('任务data', data)
         return data
       } catch (e) {
         console.error(e)
@@ -2323,7 +2403,7 @@ export default {
     },
 
     startLoopTask(id) {
-      console.debug(i18n.t('packages_dag_mixins_editor_debug4')) // eslint-disable-line
+      // console.debug(i18n.t('packages_dag_mixins_editor_debug4')) // eslint-disable-line
       clearTimeout(this.startLoopTaskTimer)
       if (!id) return
       this.startLoopTaskTimer = setTimeout(async () => {
@@ -2342,15 +2422,12 @@ export default {
           this.dataflow.attrs = data.attrs
 
           makeStatusAndDisabled(data)
-          console.debug(
-            i18n.t('packages_dag_mixins_editor_debug3', {
-              val1: this.dataflow.status,
-              val2: data.status,
-            }),
-            data,
-          ) // eslint-disable-line
+          // console.debug(
+          //   i18n.t('packages_dag_mixins_editor_debug3', { val1: this.dataflow.status, val2: data.status }),
+          //   data
+          // ) // eslint-disable-line
           if (this.dataflow.status !== data.status) {
-            console.debug(i18n.t('packages_dag_mixins_editor_debug2')) // eslint-disable-line
+            // console.debug(i18n.t('packages_dag_mixins_editor_debug2')) // eslint-disable-line
             this.dataflow.status = data.status
           }
           // 需要实时更新的字段
@@ -2361,6 +2438,8 @@ export default {
           this.dataflow.shareCdcStopMessage = data.shareCdcStopMessage
           this.dataflow.timeDifference = data.timeDifference
           this.dataflow.currentEventTimestamp = data.currentEventTimestamp
+          this.dataflow.functionRetryStatus = data.functionRetryStatus
+          this.dataflow.taskRetryStartTime = data.taskRetryStartTime
 
           if (data.currentEventTimestamp) {
             this.dataflow.currentEventTimestampLabel = dayjs(data.currentEventTimestamp).format('YYYY-MM-DD HH:mm:ss')
@@ -2380,7 +2459,7 @@ export default {
     },
 
     initWS() {
-      console.debug(i18n.t('packages_dag_mixins_editor_debug'), this.$ws.ws) // eslint-disable-line
+      // console.debug(i18n.t('packages_dag_mixins_editor_debug'), this.$ws.ws) // eslint-disable-line
       this.$ws.off('editFlush', this.handleEditFlush)
       this.$ws.on('editFlush', this.handleEditFlush)
       this.$ws.send({
@@ -2401,7 +2480,6 @@ export default {
           opType: 'subscribe',
         },
       })
-      console.log('wsAgentLive', this.$ws.ws) // eslint-disable-line
     },
 
     deleteSelectedConnections() {
@@ -2517,7 +2595,7 @@ export default {
       this.setPdkSchemaFreeMap(tagsMap)
       this.setPdkDoubleActiveMap(doubleActiveMap)
 
-      console.log(propertiesMap, tagsMap) // eslint-disable-line
+      // console.log(propertiesMap, tagsMap) // eslint-disable-line
     },
 
     getIsDataflow() {
@@ -2537,13 +2615,16 @@ export default {
     startTask() {
       const buriedCode = this.getIsDataflow() ? 'taskStart' : 'migrationStart'
       taskApi
-        .batchStart([this.dataflow.id])
+        .batchStart([this.dataflow.id], {
+          silenceMessage: true
+        })
         .then(() => {
           this.buried(buriedCode, { result: true })
           this.gotoViewer()
         })
-        .catch(() => {
+        .catch(e => {
           this.buried(buriedCode, { result: false })
+          this.handleError(e)
         })
     },
     // 获取任务的按钮权限
@@ -2619,6 +2700,19 @@ export default {
       const target = this.quickAddNode(source, item)
       this.$refs.paperScroller.centerNode(target)
     },
-  },
-  emits: ['loop-task'],
+
+    openDataCapture() {
+      window.open(
+        this.$router.resolve({
+          name: 'DataCapture',
+          params: { id: this.dataflow.id }
+        }).href,
+        `DataCapture-${this.dataflow.id}`
+      )
+    },
+
+    hasFeature(feature) {
+      return !this.isDaas || this.$store.getters['feature/hasFeature']?.(feature)
+    }
+  }
 }

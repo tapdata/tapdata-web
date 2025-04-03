@@ -70,12 +70,19 @@
             {{ scope.row.levelLabel }}
           </span>
         </template>
-        <template #operation="scope">
-          <div class="operate-columns">
-            <ElButton text :disabled="scope.row.status === 'CLOESE'" @click="handleClose(scope.row)">{{
-              $t('public_button_close')
+        <template slot="operation" slot-scope="scope">
+          <div class="operate-columns flex flex-wrap">
+            <ElButton class="ml-0" size="mini" type="text" @click="handleLog(scope.row)">{{
+              $t('packages_dag_monitor_bottompanel_rizhi')
             }}</ElButton>
-            <ElButton text @click="handleLog(scope.row)">{{ $t('packages_dag_monitor_bottompanel_rizhi') }}</ElButton>
+            <ElButton
+              class="ml-0"
+              size="mini"
+              type="text"
+              :disabled="scope.row.status === 'CLOESE'"
+              @click="handleClose(scope.row)"
+              >{{ $t('public_button_close') }}</ElButton
+            >
           </div>
         </template>
       </VTable>
@@ -145,13 +152,13 @@ export default {
           label: i18n.t('packages_dag_components_alert_gaojingshoucifa'),
           prop: 'firstOccurrenceTime',
           dataType: 'time',
-          minWidth: 180,
+          width: 180
         },
         {
           label: i18n.t('packages_dag_components_alert_gaojingzuijinfa'),
           prop: 'lastOccurrenceTime',
           dataType: 'time',
-          minWidth: 180,
+          width: 180
         },
         // {
         //   label: i18n.t('packages_dag_components_alert_gaojingfashengci'),
@@ -344,5 +351,13 @@ export default {
   :deep(.el-alert__closebtn) {
     top: 7px;
   }
+}
+.operate-columns {
+  column-gap: 8px;
+  row-gap: 0;
+}
+.operate-columns {
+  column-gap: 8px;
+  row-gap: 0;
 }
 </style>

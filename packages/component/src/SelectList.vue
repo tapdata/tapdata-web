@@ -122,11 +122,14 @@
     >
       <input type="hidden" />
       <span class="inner-select__label">{{ innerLabel }}</span>
-      <span
-        :class="['inner-select__selected', { placeholder: !selectedLabel }]"
-        :style="{ 'max-width': selectedWidth }"
-        >{{ selectedLabel || currentPlaceholder || $t('public_select_placeholder') }}</span
-      >
+      <slot name="label">
+        <span
+          :class="['inner-select__selected', { placeholder: !selectedLabel }]"
+          :style="{ 'max-width': selectedWidth }"
+          >{{ selectedLabel || currentPlaceholder || $t('public_select_placeholder') }}</span
+        >
+      </slot>
+
       <VIcon v-if="showClose" size="10" class="icon-btn ml-1" @click="handleClearClick">close</VIcon>
       <VIcon v-else size="10" class="icon-btn ml-1">arrow-down-fill</VIcon>
     </div>

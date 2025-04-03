@@ -42,7 +42,7 @@
       </div>
     </div>
 
-    <div class="flex align-center">
+    <div v-if="!hideOperation" class="flex align-center">
       <!--内容居中-->
       <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_center_content') + '(Shift + 1)'">
         <button @click="$emit('center-content')" class="icon-btn">
@@ -89,11 +89,21 @@
           <VIcon size="16">list</VIcon>
         </button>
       </ElTooltip>
+      <VDivider class="mx-3" vertical></VDivider>
+      <button
+        v-if="buttonShowMap.Start"
+        class="icon-btn"
+        :class="{ disabled: dataflow.disabledData && dataflow.disabledData.start && dataflow.status !== 'running' }"
+        @click="handleOpenDebug"
+      >
+        <VIcon size="18">bug-outlined</VIcon>
+      </button>
     </div>
     <div class="flex-grow-1"></div>
     <div class="flex align-center ml-2">
-      <ElButton v-if="!hideSetting" class="ml-3" @click="$emit('showSettings')">
-        <VIcon class="mr-1">cog-o</VIcon>{{ $t('public_button_setting') }}
+      <ElButton v-if="!hideSetting && !hideOperation" class="ml-3" @click="$emit('showSettings')">
+        <VIcon class="mr-1">cog-o</VIcon>
+        {{ $t('public_button_setting') }}
       </ElButton>
       <template v-if="!hideMenus.includes('operation')">
         <ElButton
@@ -102,7 +112,8 @@
           class="ml-3"
           @click="$emit('edit')"
         >
-          <VIcon class="mr-1">edit-outline</VIcon>{{ $t('public_button_edit') }}
+          <VIcon class="mr-1">edit-outline</VIcon>
+          {{ $t('public_button_edit') }}
         </ElButton>
         <ElButton
           v-if="!(dataflow.disabledData && dataflow.disabledData.reset) && buttonShowMap.Reset"
@@ -144,12 +155,20 @@
         </template>
       </template>
     </div>
+
+    <DataCaptureDebug
+      :visible="openDebug"
+      :task-id="dataflow.id"
+      @update:visible="openDebug = $event"
+      @start="$emit('debug-start')"
+    ></DataCaptureDebug>
   </header>
 </template>
 
 <script>
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
+import { taskApi } from '@tap/api'
 
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import dayjs from 'dayjs'
@@ -158,6 +177,7 @@ import focusSelect from '@tap/component/src/directives/focusSelect'
 import { TextEditable, VIcon, VDivider, OverflowTooltip } from '@tap/component'
 import { TaskStatus } from '@tap/business'
 import syncTaskAgent from '@tap/business/src/mixins/syncTaskAgent'
+import DataCaptureDebug from '../DataCaptureDebug.vue'
 import editSvg from '@tap/assets/images/edit-fill.svg'
 
 export default {
@@ -169,6 +189,7 @@ export default {
     dataflow: Object,
     scale: Number,
     showBottomPanel: Boolean,
+    hideOperation: Boolean,
     hideMenus: {
       type: Array,
       default: () => [],
@@ -182,7 +203,7 @@ export default {
     },
   },
   mixins: [syncTaskAgent],
-  components: { VIcon, TaskStatus, VDivider, OverflowTooltip, TextEditable },
+  components: { DataCaptureDebug, VIcon, TaskStatus, VDivider, OverflowTooltip, TextEditable },
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
     return {
@@ -201,8 +222,9 @@ export default {
       syncType: {
         initial_sync: i18n.t('public_task_type_initial_sync'),
         cdc: i18n.t('public_task_type_cdc'),
-        'initial_sync+cdc': i18n.t('public_task_type_initial_sync_and_cdc'),
+        'initial_sync+cdc': i18n.t('public_task_type_initial_sync_and_cdc')
       },
+      openDebug: false
     }
   },
   computed: {
@@ -307,6 +329,15 @@ export default {
       }
       backToList()
     },
+
+    handleOpenDebug() {
+      if (this.dataflow.status === 'running') {
+        this.$emit('open-capture')
+        return
+      }
+
+      this.openDebug = true
+    }
   },
   emits: [
     'page-return',
@@ -365,6 +396,7 @@ $sidebarBg: #fff;
     background-color: map-get($color, primary);
     cursor: pointer;
     font-size: 24px;
+
     &:hover {
       background-color: var(--primary-hover);
     }
@@ -392,6 +424,12 @@ $sidebarBg: #fff;
       color: map-get($color, primary);
       background: $hoverBg;
     }
+
+    &.disabled {
+      opacity: 0.8;
+      pointer-events: none;
+      cursor: not-allowed !important;
+    }
   }
 
   .icon-btn + .icon-btn {
@@ -401,12 +439,14 @@ $sidebarBg: #fff;
   .btn-setting {
     padding: 0;
     $size: $baseHeight;
+
     &:hover {
       .btn-setting-icon {
         background: #e1e1e1;
         color: #606266;
       }
     }
+
     &-icon {
       width: $size;
       height: $size;
@@ -415,6 +455,7 @@ $sidebarBg: #fff;
       border-top-left-radius: $radius;
       border-bottom-left-radius: $radius;
     }
+
     &-text {
       display: inline-block;
       padding: 0 6px;
@@ -465,6 +506,7 @@ $sidebarBg: #fff;
   max-width: 450px;
   max-height: 274px;
 }
+
 .choose-list {
   .choose-item {
     margin-bottom: 2px;
@@ -478,9 +520,11 @@ $sidebarBg: #fff;
       background-color: #edf1f9;
     }
   }
+
   &.auto-width .choose-item {
     min-width: unset;
   }
+
   .kbd-wrap {
     kbd {
       display: inline-block;

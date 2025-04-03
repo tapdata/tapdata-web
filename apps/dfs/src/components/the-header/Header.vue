@@ -1,11 +1,11 @@
 <template>
   <!-- 头部导航 -->
-  <ElHeader class="dfs-header" :class="{ isMockUser: mockUserId }">
+  <ElHeader class="dfs-header" :class="{ isMockUser: isMockUser }">
     <div class="dfs-header__body">
       <router-link :to="{ name: 'Home' }" class="logo">
         <img src="../../assets/image/logo.svg" alt="" />
       </router-link>
-      <!--<ElLink class="logo" @click="command('workbench')">
+      <!--<ElLink class="logo ml-2" @click="command('workbench')">
         <img src="../../assets/image/logo.svg" alt="" />
       </ElLink>-->
       <div class="dfs-header__button button-bar pr-4 fs-7 flex gap-4 align-center">
@@ -130,7 +130,6 @@ export default {
       lang: '',
       languages: langMenu,
       domain: document.domain,
-      mockUserId: null,
       openUpgradeFee: false,
       isFeeUser: true,
     }
@@ -138,7 +137,7 @@ export default {
 
   computed: {
     ...mapGetters(['isDomesticStation']),
-    ...mapState(['user']),
+    ...mapState(['user', 'isMockUser']),
     onlyEnglishLanguage() {
       return this.$store.state.config.onlyEnglishLanguage
     },
@@ -147,7 +146,6 @@ export default {
   created() {
     this.lang = getCurrentLanguage()
 
-    this.loadUserMock()
     this.getAgentCount()
   },
   methods: {
@@ -236,20 +234,6 @@ export default {
           : 'https://tapdata.mike-x.com/lV5o0?m=QkkvTrNtVq6jvQpX',
         '_blank'
       )
-    },
-
-    loadUserMock() {
-      const mockUserPromise = this.$axios
-        .get('api/gw/user', {
-          maxRedirects: 0
-        })
-        .then(data => {
-          this.mockUserId = data?.mockUserId || false
-          this.$store.commit('setIsMockUser', this.mockUserId)
-          return this.mockUserId
-        })
-
-      this.$store.commit('setMockUserPromise', mockUserPromise)
     }
   }
 }
@@ -292,10 +276,8 @@ export default {
 
   .logo {
     display: block;
-    width: 177px;
+    width: auto;
     height: 30px;
-    margin-left: -12px;
-
     img {
       display: block;
       height: 100%;

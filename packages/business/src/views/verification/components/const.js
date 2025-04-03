@@ -25,6 +25,7 @@ export const META_INSTANCE_FIELDS = {
   'fields.primary_key_position': true,
   databaseId: true,
   meta_type: true,
+  indices: true
 }
 
 export const DATA_NODE_TYPES = [

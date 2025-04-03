@@ -154,7 +154,7 @@ export default {
           metaPane[this.syncType === 'sync' ? 'loadFields' : 'loadData']()
         }
       })
-    },
+    }
   },
 }
 </script>

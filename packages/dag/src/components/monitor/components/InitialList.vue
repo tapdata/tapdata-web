@@ -30,10 +30,15 @@
     </template>
     <VTable :remoteMethod="remoteMethod" :columns="columns" height="100%" ref="table" class="table-list">
       <template v-slot:progress="scope">
-        <ElProgress color="#2C65FF" :percentage="scope.row.progress" style="font-size: 12px !important"></ElProgress>
+        <ElProgress
+          v-if="scope.row.fullSyncStatus !== 'COUNTING'"
+          color="#2C65FF"
+          :percentage="scope.row.progress"
+          style="font-size: 12px !important"
+        ></ElProgress>
       </template>
       <template v-slot:syncStatus="scope">
-        <span :class="['status-' + scope.row.syncStatusType, 'status-block']">
+        <span :class="['status-' + scope.row.syncStatusType, 'status-block']" :title="scope.row.syncStatusTitle">
           {{ scope.row.syncStatusText }}
         </span>
       </template>
@@ -77,8 +82,13 @@ export default {
         },
         ING: {
           text: i18n.t('packages_dag_components_initiallist_tongbuzhong'),
-          type: 'running',
+          type: 'running'
         },
+        COUNTING: {
+          text: i18n.t('packages_dag_counting'),
+          title: i18n.t('packages_dag_counting_num_of_rows_table'),
+          type: 'scheduling'
+        }
       },
       columns: [
         {
@@ -175,6 +185,7 @@ export default {
             t.progress = rate > 100 ? 100 : rate
             t.syncStatusText = this.statusMap[t.fullSyncStatus]?.text
             t.syncStatusType = this.statusMap[t.fullSyncStatus]?.type
+            t.syncStatusTitle = this.statusMap[t.fullSyncStatus]?.title
             return t
           }),
         }

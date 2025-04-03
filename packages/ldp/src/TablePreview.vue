@@ -30,7 +30,7 @@
           {{ $t('packages_business_swimlane_tablepreview_chuangjianrenwu') }}
         </ElButton>
         <ElButton
-          v-if="apiSupportTypes.includes(connectionType)"
+          v-if="apiSupportTypes.includes(connectionType) && isDaas"
           class="flex-shrink-0"
           size="mini"
           type="primary"

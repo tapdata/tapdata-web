@@ -75,37 +75,20 @@
             <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_field_inference_main_xuanzemorengeng')">
               <VIcon size="16" class="color-primary ml-1">info</VIcon>
             </ElTooltip>
-            <div class="inline-flex align-center ml-auto gap-1">
-              <span class="font-color-sslight">{{ $t('packages_dag_uniqueIndexEnable') }}</span>
-              <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_uniqueIndexEnable_tip')">
-                <VIcon size="16" class="color-primary">info</VIcon>
-              </ElTooltip>
-              <el-switch
-                :model-value="uniqueIndexEnable"
-                :disabled="readonly"
-                @change="changeUniqueIndexEnable"
-              ></el-switch>
-            </div>
           </div>
-
-          <ElSelect
+          <!-- formily 上下文使用 dataSource 属性 -->
+          <FieldSelect
             v-model="updateList"
-            :disabled="navLoading"
+            :disabled="navLoading || disabled"
             allowCreate
             multiple
             filterable
             :placeholder="$t('public_select_option_default')"
             :class="['update-list-select', { error: isErrorSelect }]"
+            :dataSource="fieldOptions"
             @visible-change="handleVisibleChange"
             @remove-tag="handleRemoveTag"
-          >
-            <ElOption v-for="(fItem, fIndex) in selected.fields" :key="fIndex" :value="fItem.field_name">
-              <div class="flex align-center">
-                {{ fItem.field_name }}
-                <VIcon v-if="fItem.primary_key_position > 0" size="12" class="text-warning ml-1"> key </VIcon>
-              </div>
-            </ElOption>
-          </ElSelect>
+          />
         </div>
         <div class="flex-fill flex flex-column bg-white mt-4 rounded-4">
           <div class="flex align-items-center p-2 font-color-dark">
@@ -133,6 +116,7 @@
             ignore-error
             class="content__list flex-fill"
             @update-rules="handleUpdateRules"
+            @open-update-rules="handleOpen"
           ></List>
         </div>
       </div>
@@ -154,6 +138,7 @@ import i18n from '@tap/i18n'
 import noData from '@tap/assets/images/noData.png'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 import { metadataInstancesApi, databaseTypesApi } from '@tap/api'
+import { FieldSelect, mapFieldsData } from '@tap/form'
 
 import { getCanUseDataTypes, getMatchedDataTypeLevel } from '../../../util'
 import mixins from './mixins'
@@ -163,13 +148,14 @@ import Dialog from './Dialog'
 export default {
   name: 'FieldInference',
 
-  components: { OverflowTooltip, List, Dialog },
+  components: { OverflowTooltip, List, Dialog, FieldSelect },
 
   mixins: [mixins],
 
   props: {
     form: Object,
     readOnly: Boolean,
+    disabled: Boolean,
     uniqueIndexEnable: Boolean,
   },
 
@@ -214,6 +200,7 @@ export default {
       transformExNum: 0,
       updateExNum: 0,
       dataTypesJson: {},
+      fieldOptions: []
     }
   },
 
@@ -273,10 +260,11 @@ export default {
       this.$refs.list.setRules(this.fieldChangeRules)
       this.updateConditionFieldMap = cloneDeep(this.form.getValuesIn('updateConditionFieldMap') || {})
       const { size, current } = this.page
+      const tableFilterRegex = this.searchTable ? `.*${this.searchTable}.*` : ''
       const res = await this.getData({
         page: current,
         pageSize: size,
-        tableFilter: this.searchTable,
+        tableFilter: tableFilterRegex,
         filterType: this.activeClassification,
       })
       const { items, total } = res
@@ -336,6 +324,10 @@ export default {
       this.selected = Object.assign({}, item, { fields, findPossibleDataTypes })
       this.updateList = this.updateConditionFieldMap[this.selected.name] || []
       this.fieldsLoading = false
+
+      const { fields: newFields } = mapFieldsData(this.selected)
+      this.fieldOptions = newFields
+      this.selected.fields = newFields
     },
 
     handleSelect(index = 0) {

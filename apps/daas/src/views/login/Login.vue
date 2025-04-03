@@ -11,12 +11,12 @@
             <el-icon class="mr-2"><el-icon-warning /></el-icon>
             {{ errorMessage }}
           </div>
-          <form>
+          <form class="rounded-lg">
             <input
               class="input"
               type="email"
               autocomplete="username"
-              :placeholder="$t('app_signIn_email_placeholder')"
+              :placeholder="$t(adEnable ? 'login_email_and_ad_placeholder' : 'app_signIn_email_placeholder')"
               v-model="form.email"
             />
             <input
@@ -67,23 +67,30 @@ export default {
       },
       keepSignIn: true,
       errorMessage: '',
+      adEnable: false,
     }
   },
   created() {
+    this.loadAdEnable()
     if (this.$route.query) {
       this.form.email = this.$route.query.email
     }
   },
   methods: {
+    async loadAdEnable() {
+      const data = await usersApi.checkLdapLoginEnable()
+      this.adEnable = data
+    },
     async submit() {
       let form = this.form
       let oldPassword = this.form.password + ''
       let message = ''
       if (!form.email || !form.email.trim()) {
-        message = this.$t('app_signIn_email_require')
+        message = this.$t(this.adEnable ? 'login_email_and_ad_placeholder' : 'app_signIn_email_require')
       } else if (
         // eslint-disable-next-line
-        !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)
+        !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email) &&
+        !this.adEnable
       ) {
         message = this.$t('app_signIn_email_invalid')
       } else if (!form.password || form.password.length < 5) {
@@ -105,8 +112,8 @@ export default {
         let data = await usersApi.login(this.form)
         Cookie.set('access_token', data?.id)
         Cookie.set('tem_token', data?.id)
-        // eslint-disable-next-line
-        console.log(i18n.t('daas_login_login_dengluchenggong'), data)
+
+        await this.$store.dispatch('feature/getFeatures')
 
         let user = await usersApi.getInfo()
         configUser(user)
@@ -124,6 +131,7 @@ export default {
       } catch (e) {
         this.loading = false
         this.form.password = oldPassword
+        this.errorMessage = e?.data?.message
       }
     },
     // 注册账号

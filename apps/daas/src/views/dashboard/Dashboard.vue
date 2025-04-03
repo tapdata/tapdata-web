@@ -46,7 +46,7 @@
 
                   <ul class="job-list">
                     <li
-                      class="flex align-center"
+                      class="flex align-center cursor-pointer"
                       v-for="task in migrationTaskList"
                       :key="task.label"
                       @click="handleStatus(task.label)"
@@ -83,7 +83,7 @@
                   <div class="fs-7 font-color-normal">{{ $t('dashboard_sync_overview_title') }}</div>
                   <ul class="job-list">
                     <li
-                      class="flex align-center"
+                      class="flex align-center cursor-pointer"
                       v-for="task in syncTaskList"
                       :key="task.label"
                       @click="handleSyncStatus(task.label)"
@@ -189,23 +189,22 @@
                 <div class="fs-7 font-color-normal">{{ $t('dashboard_server_title') }}</div>
                 <el-row :gutter="20" v-if="serverTable.length">
                   <el-col :span="12" class="server-list pt-3" v-for="item in serverTable" :key="item.id">
-                    <div class="server-list-box rounded-4">
-                      <img src="../../assets/images/serve.svg" />
+                    <div class="server-list-box rounded-lg py-2">
+                      <img src="../../assets/images/serve.svg" class="rounded-4" />
                       <!-- <img src="../../assets/icons/svg/serve.svg" alt="" /> -->
                       <div class="server-main ml-5">
-                        <div class="title">{{ item.systemInfo.ip }}</div>
+                        <div class="flex align-center gap-2">
+                          <div class="title">{{ item.agentName || item.systemInfo.hostname }}</div>
+                          <el-tag type="info" size="mini" class="rounded-md">{{ item.custIP ? item.custIP : item.systemInfo.ip }}</el-tag>
 
-                        <ul class="flex pt-1">
-                          <li class="pr-5">
+                          
+                        </div>
+
+                        <ul class="flex flex-wrap pt-1 gap-3 align-center">
+                          <li>
                             <label class="font-color-slight pr-2">{{ $t('dashboard_management') }}</label>
                             <span :style="`color: ${colorServeMap[item.management.status]};`">{{
                               getStatus(item.management.status)
-                            }}</span>
-                          </li>
-                          <li class="pr-5">
-                            <label class="font-color-slight pr-2">{{ $t('dashboard_task_transfer') }}</label>
-                            <span :style="`color: ${colorServeMap[item.engine.status]};`">{{
-                              getStatus(item.engine.status)
                             }}</span>
                           </li>
                           <li>
@@ -214,6 +213,25 @@
                               getStatus(item.apiServer.status)
                             }}</span>
                           </li>
+
+                          <li>
+                            <label class="font-color-slight pr-2">{{ $t('dashboard_task_transfer') }}</label>
+                            <span :style="`color: ${colorServeMap[item.engine.status]};`">{{
+                              getStatus(item.engine.status)
+                            }}</span>
+                          </li>
+
+                          <el-tag v-if="agentRunningTask[item.processId] && agentRunningTask[item.processId].migrate" type="success" size="mini" class="rounded-md cursor-pointer" @click="handleGoTask(item.processId, 'migrate')">
+                            {{ $t('dashboard_copy_total') }}: 
+                            {{ agentRunningTask[item.processId].migrate || 0 }}
+                            <i class="el-icon-arrow-right" />
+                          </el-tag>
+
+                          <el-tag v-if="agentRunningTask[item.processId] && agentRunningTask[item.processId].sync" type="success" size="mini" class="rounded-md cursor-pointer" @click="handleGoTask(item.processId, 'sync')">
+                            {{ $t('dashboard_sync_total') }}: 
+                            {{ agentRunningTask[item.processId].sync || 0 }}
+                            <i class="el-icon-arrow-right" />
+                          </el-tag>
                         </ul>
                       </div>
                     </div>
@@ -248,7 +266,7 @@
 
 <script>
 import { Chart } from '@tap/component'
-import { clusterApi, taskApi } from '@tap/api'
+import { clusterApi, taskApi, workerApi } from '@tap/api'
 import { STATUS_MAP } from '@tap/business'
 import { statusMap as InspectStatusMap } from '@tap/business/src/views/verification/const'
 import { toThousandsUnit } from '@/utils/util'
@@ -487,6 +505,7 @@ export default {
       kbData: [],
       unitType: '',
       noPermission: this.$has('v2_data_pipeline') || this.$has('Data_verify_menu') || this.$has('management_menu'),
+      agentRunningTask: {},
     }
   },
 
@@ -536,7 +555,9 @@ export default {
       let params = {
         type: 'dashboard',
       }
-      clusterApi.get(params).then((data) => {
+      clusterApi.get(params).then(data => {
+        this.agentRunningTask = {}
+        let processIdSet = new Set()
         let items = data?.items || []
         items.map(item => {
           const { management, engine, apiServer } = item
@@ -560,7 +581,19 @@ export default {
             }
           }
 
+          if (item.systemInfo?.process_id) {
+            item.processId = item.systemInfo.process_id
+            processIdSet.add(item.systemInfo.process_id)
+          }
+
           return item
+        })
+
+        workerApi.getProcessInfo(Array.from(processIdSet)).then(data => {
+          console.log(data, 'data')
+          for (let id in data) {
+            this.$set(this.agentRunningTask, id, data[id].runningTaskNum)
+          }
         })
         this.serverProcess.tableData = items
         this.serverTable = items
@@ -777,7 +810,18 @@ export default {
     getStatus(type) {
       return DASHBOARD_STATUS_MAP[type] || '-'
     },
-  },
+
+    handleGoTask(agentId, type) {
+      this.$router.push({
+        name: type === 'migrate' ? 'migrateList' : 'dataflowList',
+        query: {
+          agentId,
+          status: 'running'
+        }
+      })
+    }
+
+  }
 }
 </script>
 
@@ -824,7 +868,7 @@ export default {
           box-sizing: border-box;
           li {
             margin-bottom: 5px;
-            cursor: pointer;
+            //cursor: pointer;
             white-space: nowrap;
             .dots {
               display: inline-block;

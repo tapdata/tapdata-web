@@ -18,6 +18,10 @@ const MigrationMonitorViewer = async () => {
   const { MigrationMonitorViewer } = await import('@tap/dag')
   return MigrationMonitorViewer
 }
+const DataCapture = async () => {
+  const { DataCapture } = await import('@tap/dag')
+  return DataCapture
+}
 const CustomNodeList = async () => {
   const { CustomNodeList } = await import('@tap/business')
   return CustomNodeList
@@ -257,6 +261,16 @@ export default [
       title: 'page_title_run_monitor',
       code: 'v2_data_replication_record_monitor',
     },
+  },
+  {
+    path: '/data-capture/:id',
+    name: 'DataCapture',
+    component: DataCapture
+  },
+  {
+    path: '/data-capture/:id',
+    name: 'DataCapture',
+    component: DataCapture
   },
   {
     path: '/shared-mining/monitor/:id',
@@ -717,7 +731,8 @@ export default [
         meta: {
           title: 'page_title_data_server_list',
           code: 'v2_data-server-list',
-        },
+          hideTitle: true
+        }
       },
       /* ---------- 应用管理  ----------*/
       {
@@ -991,7 +1006,8 @@ export default [
         component: Vue.defineAsyncComponent(() => import('@/views/License')),
         meta: {
           title: 'page_title_license',
-        },
+          hideTitle: true
+        }
       },
       {
         path: 'solutions',

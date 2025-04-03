@@ -21,7 +21,8 @@
       @auto-layout="handleAutoLayout"
       @change-name="handleUpdateName"
       @locate-node="handleLocateNode"
-      @start="handleStart"
+      @start="handleStart()"
+      @debug-start="handleStart(true)"
       @stop="handleStop"
       @forceStop="handleForceStop"
       @reset="handleReset"
@@ -221,7 +222,8 @@ export default {
       this.addProcessorNode([
         {
           name: i18n.t('packages_dag_migrate_union'),
-          type: 'migrate_union_processor'
+          type: 'migrate_union_processor',
+          hidden: !this.hasFeature('multipleTableMergeProcessor')
         },
         {
           name: i18n.t('packages_dag_src_migrationeditor_biaobianji'),
@@ -239,6 +241,7 @@ export default {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli'),
           type: 'migrate_js_processor',
           beta: true,
+          hidden: !this.hasFeature('enhanceJsProcessor')
         },
         {
           name: i18n.t('packages_dag_date_processor'),
@@ -251,7 +254,12 @@ export default {
         {
           name: i18n.t('packages_dag_time_field_injection'),
           type: 'migrate_add_date_field_processor',
-        },
+          hidden: !this.hasFeature('appendDatetimeFieldProcessor')
+        } /* ,
+        {
+          name: i18n.t('packages_dag_src_editor_huawei_drs_kafka_convertor'),
+          type: 'migrate_huawei_drs_kafka_convertor'
+        } */
       ])
       this.addResourceIns(allResourceIns)
     },
@@ -445,7 +453,7 @@ export default {
       return isOk
     },
 
-    async handleStart() {
+    async handleStart(isDebug = false) {
       this.buried('migrationStart')
 
       this.unWatchStatus?.()
@@ -457,6 +465,7 @@ export default {
           } else {
             this.toggleConsole(false)
             this.gotoViewer(false)
+            isDebug && this.openDataCapture()
           }
           // this.unWatchStatus()
         }
@@ -479,7 +488,7 @@ export default {
         this.dataflow.disabledData.stop = true
         this.dataflow.disabledData.reset = true
         // this.gotoViewer()
-        this.beforeStartTask()
+        this.beforeStartTask(isDebug)
         this.buried('taskSubmit', { result: true })
       } else {
         this.buried('taskSubmit', { result: false })

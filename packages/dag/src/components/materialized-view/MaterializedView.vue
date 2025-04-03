@@ -173,6 +173,7 @@ import PaperScroller from '../PaperScroller'
 import Node from './Node'
 import TargetNode from './TargetNode'
 import { config, jsPlumb } from '../../instance'
+import { mapFieldsData } from '@tap/form'
 
 export default {
   name: 'MaterializedView',
@@ -630,42 +631,15 @@ export default {
       this.schemaLoading = false
     },
 
-    setNodeSchema(nodeId, { fields = [], indices = [] }) {
-      let columnsMap = indices.reduce((map, item, index) => {
-        item.columns.forEach(({ columnName }) => (map[columnName] = [item.indexName, index, item.unique]))
-        return map
-      }, {})
-
+    setNodeSchema(nodeId, schema) {
+      const { fields } = mapFieldsData(schema)
       this.nodeSchemaMap[nodeId] = fields
-        .map((item) => {
-          item.dataType = item.data_type.replace(/\(.+\)/, '')
-          item.indicesUnique = columnsMap[item.field_name]
-          item.isPrimaryKey = item.primary_key_position > 0
-          return item
-        })
-        .sort((a, b) => {
-          let aVal, bVal
-
-          if (a.isPrimaryKey) aVal = 1
-          else if (a.indicesUnique) aVal = 2
-          else aVal = 3
-
-          if (b.isPrimaryKey) bVal = 1
-          else if (b.indicesUnique) bVal = 2
-          else bVal = 3
-
-          if (aVal === bVal) {
-            return a.field_name.localeCompare(b.field_name)
-          }
-
-          return aVal - bVal
-        })
     },
 
     async loadNodeSchema(nodeId) {
       const params = {
         nodeId,
-        fields: ['original_name', 'fields', 'qualified_name'],
+        fields: ['original_name', 'fields', 'qualified_name', 'name', 'indices'],
         page: 1,
         pageSize: 20,
       }

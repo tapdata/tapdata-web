@@ -182,7 +182,7 @@ import '@tap/assets/icons/svg/field_mod_type.svg'
 import { mapGetters } from 'vuex'
 import mouseDrag from '@tap/component/src/directives/mousedrag'
 import { VIcon, VEmpty } from '@tap/component'
-import { ConnectionTypeSelector, SceneDialog } from '@tap/business'
+import { SceneDialog } from '@tap/business'
 import { getInitialValuesInBySchema } from '@tap/form'
 import resize from '@tap/component/src/directives/resize'
 import BaseNode from '../BaseNode'
@@ -250,7 +250,6 @@ export default {
     },
 
     disabledDBMore() {
-      console.log('disabledDBMore', this.dbLoading, this.noDBMore) // eslint-disable-line
       return this.dbLoading || this.noDBMore || this.dbLoadingMore
     },
 
@@ -398,7 +397,6 @@ export default {
     },
 
     loadMoreDB() {
-      console.log('loadMoreDB') // eslint-disable-line
       if (this.disabledDBMore) return
       this.loadDatabase(true)
     },
@@ -532,6 +530,7 @@ export default {
         migrateTableSelectType: 'custom',
         nodeConfig,
         attrs,
+        noPkSyncMode: 'ADD_HASH' // 无主键同步默认创建哈希列
       }
     },
 

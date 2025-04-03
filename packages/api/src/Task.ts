@@ -93,12 +93,12 @@ export default class Task extends Http {
     return this.axios.post(this.url + '/metadata', params)
   }
 
-  start(id) {
-    return this.axios.put(this.url + `/start/${id}`)
+  start(id, config) {
+    return this.axios.put(this.url + `/start/${id}`, null, config)
   }
 
-  batchStart(taskIds) {
-    return this.axios.put(this.url + `/batchStart?taskIds=` + taskIds.join('&taskIds='))
+  batchStart(taskIds, config) {
+    return this.axios.put(this.url + `/batchStart?taskIds=` + taskIds.join('&taskIds='), null, config)
     //return this.axios.put(this.url + `/batchStart`, qs.stringify({ taskIds }))
   }
 

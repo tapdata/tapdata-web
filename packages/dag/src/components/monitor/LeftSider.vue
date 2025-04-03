@@ -47,10 +47,10 @@
               transition="tooltip-fade-in"
               :content="initialData.finishDuration.toLocaleString() + 'ms'"
             >
-              <span>{{ calcTimeUnit(initialData.finishDuration) }}</span>
+              <span>{{ calcTimeUnit(initialData.finishDuration, 2, { autoHideMs: true }) }}</span>
             </ElTooltip>
           </div>
-          <div class="mb-2 flex align-items-center">
+          <div class="mb-2 flex align-items-center justify-content-between">
             <span class="mr-2 sync-info-item__title">{{ $t('public_task_full_sync_progress') }}</span>
             <span v-if="isFileSource" class="flex-1 text-end">{{
               $t('packages_dag_components_node_zanbuzhichi')
@@ -84,7 +84,7 @@
             </ElTooltip>
           </div>
           <div
-            v-if="dataflow.syncType === 'migrate' && totalData.currentSnapshotTableRowTotal"
+            v-if="dataflow.syncType === 'migrate' && totalData.currentSnapshotTableRowTotal && !ifEnableConcurrentRead"
             class="mb-4 flex align-items-center"
           >
             <span class="mr-2 sync-info-item__title">{{
@@ -99,7 +99,7 @@
         <template v-if="dataflow.type !== 'initial_sync'">
           <div v-if="initialData.snapshotDoneAt" class="mb-2 flex justify-content-between">
             <span>{{ $t('packages_dag_monitor_leftsider_zuidazengliangyan') }}</span>
-            <span>{{ getReplicateLag(initialData.replicateLag) }}</span>
+            <span>{{ getReplicateLag(initialData.replicateLag, $t('public_event_cdc_placeholder')) }}</span>
           </div>
         </template>
       </div>
@@ -422,6 +422,7 @@ export default {
       },
     },
     timeFormat: String,
+    ifEnableConcurrentRead: Boolean,
   },
   components: {
     LineChart,
@@ -555,23 +556,22 @@ export default {
     // 全量信息
     initialData() {
       const data = this.quota.samples?.totalData?.[0] || {}
-      const {
-        snapshotRowTotal = 0,
-        snapshotInsertRowTotal = 0,
-        snapshotDoneAt,
-        snapshotStartAt,
-        replicateLag,
-        lastFiveMinutesQps,
-      } = data
+      const { snapshotRowTotal = 0, snapshotInsertRowTotal = 0, replicateLag, lastFiveMinutesQps, } = data
       let time
       if (!snapshotInsertRowTotal || !snapshotRowTotal || !lastFiveMinutesQps) {
         time = 0
       } else {
         time = ((snapshotRowTotal - snapshotInsertRowTotal) / lastFiveMinutesQps) * 1000
       }
+      const milestone = this.dataflow.attrs?.milestone || {}
+      const snapshotStartAt = milestone.SNAPSHOT?.begin
+        ? dayjs(milestone.SNAPSHOT?.begin).format('YYYY-MM-DD HH:mm:ss')
+        : ''
+      const snapshotDoneAt = milestone.SNAPSHOT?.end ? dayjs(milestone.SNAPSHOT?.end).format('YYYY-MM-DD HH:mm:ss') : ''
+
       return {
-        snapshotDoneAt: snapshotDoneAt ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
-        snapshotStartAt: snapshotStartAt ? dayjs(snapshotStartAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
+        snapshotStartAt,
+        snapshotDoneAt,
         replicateLag: replicateLag,
         finishDuration: time,
       }
@@ -752,12 +752,12 @@ export default {
       return typeof arguments[0] === 'number' ? calcTimeUnit(...arguments) : '-'
     },
 
-    getReplicateLag(val) {
+    getReplicateLag(val, placeholder) {
       return typeof val === 'number' && val >= 0
         ? calcTimeUnit(val, 2, {
             autoHideMs: true,
           })
-        : i18n.t('public_data_no_data')
+        : placeholder ?? i18n.t('public_data_no_data')
     },
 
     getCollectorData() {
@@ -936,7 +936,7 @@ export default {
 
 .sync-info-item__title {
   display: inline-block;
-  width: 110px;
+  //width: 110px;
 
   & + span {
     font-variant-numeric: tabular-nums;

@@ -2,6 +2,7 @@ import { ClipboardPlugin } from './clipboard'
 
 export function installDirectives(app) {
   app.directive('readonlybtn', {})
+  app.directive('feature', {})
   app.config.globalProperties.$has = function () {
     return true
   }

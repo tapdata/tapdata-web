@@ -5,6 +5,7 @@ import actions from './actions'
 import dataflow from '@tap/dag/src/store'
 import classification from '@tap/component/src/store'
 import overView from '@tap/ldp/src/store'
+import feature from './modules/feature'
 
 const store = Vuex.createStore({
   // 全局变量
@@ -21,6 +22,7 @@ const store = Vuex.createStore({
     dataflow,
     classification,
     overView,
+    feature,
   },
 })
 

@@ -22,7 +22,7 @@ if (~argv.indexOf('--origin')) {
 
 const proxy = {
   target: origin || serveUrlMap[SERVE_ENV],
-  changeOrigin: false,
+  changeOrigin: true
 }
 
 module.exports = {
@@ -35,6 +35,7 @@ module.exports = {
       '/api/': proxy,
       '/oauth/': proxy,
       '/old/': { target: 'http://localhost:8081' },
+      '/docs/': proxy,
       '/ws/': {
         ws: true,
         secure: false,
@@ -153,15 +154,7 @@ module.exports = {
   },
   configureWebpack: (config) => {
     // 尽量保证项目中文件后缀的精确
-    config.resolve.extensions = ['.js', 'jsx', '.vue', '.json', '.ts', '.tsx']
-    config.plugins.push(
-      require('unplugin-vue-components/webpack')({
-        resolvers: [ElementPlusResolver()],
-      }),
-      require('unplugin-auto-import/webpack')({
-        resolvers: [ElementPlusResolver()],
-      }),
-    )
+    config.resolve.extensions = ['.js', '.jsx', '.vue', '.json', '.ts', '.tsx']
 
     if (process.env.NODE_ENV === 'production') {
       // gzip
@@ -207,6 +200,9 @@ module.exports = {
     },
     loaderOptions: {
       scss: {
+        sassOptions: {
+          quietDeps: true
+        },
         additionalData: `@use "${process.env.VUE_APP_THEME_VAR || '~@tap/assets/styles/var.scss'}" as *;`
       }
     }

@@ -50,6 +50,9 @@ export default observer({
       isDaas: isDaas,
       formScope: {
         lockedFeature: this.lockedFeature,
+        hasFeature: feature => {
+          return !isDaas || this.$store.getters['feature/hasFeature']?.(feature)
+        },
         getPickerOptionsBeforeTime,
         $isDaas: isDaas, //区分云版、企业版
         formTab: FormTab.createFormTab(),
@@ -183,6 +186,29 @@ export default observer({
             point.dateTime = currentEventTimestamp
           })
         },
+
+        loadEmailReceivers: field => {
+          const str = window.getSettingByKey('email.receivers')
+          const receivers = str ? str.split(',').filter(Boolean) : []
+
+          // 过滤掉不在可选列表中的接收人
+          const size = field.value.length
+          if (size) {
+            const filter = field.value.filter(email => receivers.includes(email))
+
+            if (size !== filter.length) {
+              field.form.setValuesIn(field.path, [...filter])
+            }
+          }
+
+          field.setInitialValue([...receivers])
+          field.dataSource = receivers.map(receiver => {
+            return {
+              label: receiver,
+              value: receiver
+            }
+          })
+        }
       },
 
       schema: {
@@ -566,7 +592,8 @@ export default observer({
                                   dependencies: ['type'],
                                   fulfill: {
                                     state: {
-                                      visible: '{{$deps[0] !== "initial_sync" && !lockedFeature.sharedMiningList}}', // 只有增量或全量+增量支持
+                                      visible:
+                                        '{{hasFeature("shareCdc") && $deps[0] !== "initial_sync" && !lockedFeature.sharedMiningList}}', // 只有增量或全量+增量支持
                                     },
                                   },
                                 },
@@ -645,6 +672,7 @@ export default observer({
                                   tooltip: i18n.t('packages_dag_doubleActive_tip'),
                                 },
                                 'x-component': 'Switch',
+                                'x-visible': '{{hasFeature("TwoWaySync")}}'
                               },
                               accessNodeType: {
                                 type: 'string',
@@ -779,6 +807,7 @@ export default observer({
                 type: 'void',
                 'x-component': 'FormTab.TabPane',
                 'x-component-props': {
+                  class: 'test',
                   label: i18n.t('packages_dag_migration_configpanel_gaojingshezhi'),
                   locked: import.meta.env.VUE_APP_MODE === 'community',
                 },
@@ -1061,6 +1090,19 @@ export default observer({
                       },
                     },
                   },
+                  emailReceivers: {
+                    title: i18n.t('packages_dag_email_receivers'),
+                    type: 'array',
+                    'x-visible': `{{$isDaas}}`,
+                    'x-editable': true,
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Select',
+                    'x-component-props': {
+                      multiple: true,
+                      filterable: true
+                    },
+                    'x-reactions': [`{{loadEmailReceivers}}`]
+                  }
                 },
               },
               tab4: {
@@ -1155,7 +1197,7 @@ export default observer({
                           type: 'void',
                           'x-component': 'ArrayTable.Column',
                           'x-component-props': {
-                            width: 80,
+                            width: 90,
                             title: i18n.t('public_operation'),
                             align: 'center',
                           },
@@ -1349,7 +1391,6 @@ export default observer({
         }
         return point
       })
-      console.log('syncPoints', syncPoints)
       this.settings.syncPoints = syncPoints
     },
 
@@ -1357,7 +1398,7 @@ export default observer({
     showDoubleActive: {
       handler(val) {
         this.form.setFieldState('doubleActive', {
-          visible: val,
+          visible: this.formScope.hasFeature('TwoWaySync') && val,
         })
       },
       immediate: true,
@@ -1387,7 +1428,7 @@ export default observer({
   methods: {
     // 绑定表单事件
     useEffects() {
-      onFieldInputValueChange('*(alarmSettings.*.*,alarmRules.*.*)', (field, form) => {
+      onFieldInputValueChange('*(alarmSettings.*.*,alarmRules.*.*,emailReceivers)', (field, form) => {
         if (this.stateIsReadonly) this.lazySaveAlarmConfig()
       })
       // 权限设置修改了
@@ -1407,6 +1448,7 @@ export default observer({
         taskId: values.id,
         alarmSettings: values.alarmSettings,
         alarmRules: values.alarmRules,
+        emailReceivers: values.emailReceivers
       })
     },
 

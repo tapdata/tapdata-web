@@ -59,12 +59,24 @@ const errorCallback = (error: AxiosError): Promise<AxiosError | string> => {
     }
     switch (rsp.status) {
       // 用户无权限访问接口
-      case 401:
+      case 401: {
+        const isSingleSession = window.__settings__?.find(item => item.key === 'login.single.session')?.open
+
         signOut()
+
         setTimeout(() => {
-          Message.error({ message: i18n.t('public_message_401').toString() })
+          if (isSingleSession) {
+            VConfirm.confirm(i18n.t('public_alert_401_tip').toString(), i18n.t('public_alert_401').toString(), {
+              type: 'warning',
+              showCancelButton: false,
+              confirmButtonText: i18n.t('public_button_confirm')
+            })
+          } else {
+            Message.error({ message: i18n.t('public_message_401').toString() })
+          }
         }, 500)
         break
+      }
       // 请求的资源不存在
       case 404:
         Message.error({ message: i18n.t('public_message_404').toString() })

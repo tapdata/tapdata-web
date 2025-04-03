@@ -17,6 +17,8 @@ import { ElNotification as Notification } from 'element-plus'
 import { createVersionPolling } from './plugins/version-polling'
 import * as Vue from 'vue'
 import { ElLoadingService } from 'element-plus'
+import { CustomerSurvey } from './plugins/customer-survey'
+import dayjs from './plugins/dayjs'
 
 Vue.use(VueClipboard)
 
@@ -35,7 +37,7 @@ Vue.use(VueClipboard)
 export default ({ routes }) => {
   let loading = null
 
-  const init = () => {
+  const init = userInfo => {
     const router = VueRouter.createRouter({
       history: VueRouter.createWebHashHistory(),
       routes,
@@ -59,7 +61,8 @@ export default ({ routes }) => {
     wsUrl = wsUrl + loc.host + path + `tm/ws/agent?${queryString}`
 
     store.commit('setUser', window.__USER_INFO__)
-    store.commit('setLanguage', window.__USER_INFO__.locale)
+    store.commit('setLanguage', document.domain.endsWith('io') ? 'en' : 'zh-CN')
+    store.dispatch('initGuide', router)
 
     // Bing Ads
     window.uetq = window.uetq || []
@@ -188,7 +191,7 @@ export default ({ routes }) => {
         window.__USER_INFO__ = userInfo
 
         loading.close()
-        init()
+        init(userInfo)
 
         // 设置服务器时间
         timeStampApi.get().then((t) => {

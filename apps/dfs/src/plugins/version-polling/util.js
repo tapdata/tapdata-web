@@ -35,7 +35,7 @@ export function createWorkerFunc() {
         cache: 'no-cache',
       }).then(function (response) {
         if (response.status === 200) {
-          const etag = response.headers.get('etag')
+          const etag = response.headers.get('etag').replace(/^W\//i, '')
 
           if (etag && lastEtag !== etag) {
             self.postMessage({

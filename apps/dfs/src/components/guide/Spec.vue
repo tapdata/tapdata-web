@@ -227,6 +227,10 @@ export default {
       }
       this.$axios.get('api/tcm/orders/paid/price', { params }).then((data) => {
         let { paidPrice = [] } = data?.[0] || {}
+
+        // 过滤掉按量计费的价格
+        paidPrice = paidPrice.filter(t => t.usageType !== 'metered')
+
         // 规格
         this.specificationItems = uniqBy(
           paidPrice.map((t) => {

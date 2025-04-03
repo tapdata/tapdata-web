@@ -197,7 +197,7 @@
       </div>
     </div>
 
-    <div class="flex gap-6 mt-6">
+    <!--<div class="flex gap-6 mt-6">
       <div class="flex-fill rounded-xl overflow-x-hidden bg-white">
         <div class="fs-6 fw-sub p-4">{{ $t('header_setting') }}</div>
         <ElDivider class="m-0"></ElDivider>
@@ -212,7 +212,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div>-->
 
     <ElDialog
       width="435px"

@@ -1,29 +1,42 @@
 <template>
-  <div class="joint-table" :class="{ error: !!jointErrorMessage }">
-    <div class="joint-table-header">
-      <div>
-        <span>{{ $t('packages_business_verification_verifyCondition') }}</span>
-        <span v-if="!list.length" class="ml-4 color-danger">{{
-          $t('packages_business_verification_message_error_joint_table_not_set')
-        }}</span>
-        <span class="color-danger ml-6">{{ jointErrorMessage }}</span>
-      </div>
-      <div>
-        <ElLink
-          v-if="!isCountOrHash && list.some((t) => !t.source.sortColumn || !t.target.sortColumn)"
-          type="primary"
-          :disabled="!list.length"
-          class="mr-4"
-          @click="handleClearIndexEmpty"
-          >{{ $t('packages_business_components_conditionbox_yijianqingchusuo') }}
-        </ElLink>
-        <ElLink type="primary" :disabled="!list.length" @click="handleClear"
-          >{{ $t('packages_business_verification_clear') }}
-        </ElLink>
-      </div>
+  <div class="joint-table rounded-lg" :class="{ error: !!jointErrorMessage }">
+    <div class="joint-table-header px-4 py-2 flex align-items-center border-bottom">
+      <span class="fs-6">{{ $t('packages_business_verification_verifyCondition') }}</span>
+      <span
+        class="ml-2 rounded-pill font-color-light px-2 text-center"
+        style="min-width: 32px; background-color: #818b981f"
+        >{{ filteredList.length }}</span
+      >
+      <span v-if="!list.length" class="ml-4 color-danger">{{
+        $t('packages_business_verification_message_error_joint_table_not_set')
+      }}</span>
+      <span class="color-danger ml-6">{{ jointErrorMessage }}</span>
+      <div class="flex-1"></div>
+      <ElInput
+        v-model="searchValue"
+        :placeholder="$t('packages_form_table_rename_index_sousuobiaoming')"
+        class="w-auto mr-4"
+        size="mini"
+        clearable
+      >
+        <template #prefix>
+          <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
+        </template>
+      </ElInput>
+      <ElLink
+        v-if="!isCountOrHash && list.some((t) => !t.source.sortColumn || !t.target.sortColumn)"
+        type="primary"
+        :disabled="!list.length"
+        class="mr-4"
+        @click="handleClearIndexEmpty"
+        >{{ $t('packages_business_components_conditionbox_yijianqingchusuo') }}
+      </ElLink>
+      <ElLink type="primary" :disabled="!list.length" @click="handleClear"
+        >{{ $t('packages_business_verification_clear') }}
+      </ElLink>
     </div>
     <DynamicScroller
-      :items="list"
+      :items="filteredList"
       :min-item-size="30"
       id="data-verification-form"
       ref="virtualScroller"
@@ -128,9 +141,17 @@
                   @input="(value) => (item = value)"
                 />
               </div>
-              <div v-if="!isCountOrHash" class="setting-item mt-4">
-                <label class="item-label">{{ $t('packages_business_verification_indexField') }}: </label>
-                <MultiSelection
+              <template v-if="!isCountOrHash">
+                <div class="setting-item mt-4">
+                  <label class="item-label">{{ $t('packages_business_verification_indexField') }}: </label>
+                  <FieldSelectWrap
+                    v-model="item.source.sortColumn"
+                    :options="item.source.fields"
+                    :key="`item-source-sortColumn` + item.id"
+                    class="flex-1"
+                    @focus="handleFocus(item.source)"
+                  ></FieldSelectWrap>
+                  <!-- <MultiSelection
                   v-model:value="item.source.sortColumn"
                   class="item-select"
                   :class="{ 'empty-data': !item.source.sortColumn }"
@@ -138,17 +159,110 @@
                   :id="'item-source-' + index"
                   :key="`item-source-sortColumn` + item.id"
                   @focus="handleFocus(item.source)"
-                ></MultiSelection>
-                <span class="item-icon"></span>
-                <MultiSelection
+                ></MultiSelection> -->
+                  <span class="item-icon"></span>
+                  <FieldSelectWrap
+                    v-model="item.target.sortColumn"
+                    :options="item.source.fields"
+                    :key="`item-target-sortColumn` + item.id"
+                    class="flex-1"
+                    @focus="handleFocus(item.target)"
+                  ></FieldSelectWrap>
+                  <!-- <MultiSelection
                   v-model:value="item.target.sortColumn"
                   class="item-select"
                   :class="{ 'empty-data': !item.target.sortColumn }"
                   :options="item.target.fields"
                   :key="`item-target-sortColumn` + item.id"
                   @focus="handleFocus(item.target)"
-                ></MultiSelection>
-              </div>
+                ></MultiSelection> -->
+                </div>
+
+                <div class="setting-item mt-4">
+                  <label class="item-label">{{ $t('packages_business_custom_collate') }}: </label>
+                  <div class="flex-1">
+                    <div class="flex gap-3 align-center">
+                      <ElSwitch
+                        v-model="item.source.enableCustomCollate"
+                        @change="toggleCollate(item.source, $event)"
+                      />
+
+                      <ElButton type="text" @click="schemaScope.openApiDrawer('inspect-collate')">
+                        <VIcon>question-circle</VIcon>
+                        {{ $t('public_view_docs') }}
+                      </ElButton>
+                    </div>
+
+                    <div v-if="item.source.enableCustomCollate">
+                      <CollateMap
+                        v-model="item.source.collate"
+                        :sort-column="item.source.sortColumn"
+                        :fields="item.source.fields"
+                      />
+                    </div>
+                  </div>
+                  <span class="item-icon"></span>
+                  <div class="flex-1">
+                    <div class="flex gap-3 align-center">
+                      <ElSwitch
+                        v-model="item.target.enableCustomCollate"
+                        @change="toggleCollate(item.target, $event)"
+                      />
+
+                      <ElButton type="text" @click="schemaScope.openApiDrawer('inspect-collate')">
+                        <VIcon>question-circle</VIcon>
+                        {{ $t('public_view_docs') }}
+                      </ElButton>
+                    </div>
+
+                    <div v-if="item.target.enableCustomCollate">
+                      <CollateMap
+                        v-model="item.target.collate"
+                        :sort-column="item.target.sortColumn"
+                        :fields="item.target.fields"
+                      />
+                    </div>
+                  </div>
+                  <!-- <MultiSelection
+                  v-model="item.target.sortColumn"
+                  class="item-select"
+                  :class="{ 'empty-data': !item.target.sortColumn }"
+                  :options="item.target.fields"
+                  :key="`item-target-sortColumn` + item.id"
+                  @focus="handleFocus(item.target)"
+                ></MultiSelection> -->
+                </div>
+
+                <div
+                  v-if="nullsLastState[item.source.connectionId] || nullsLastState[item.target.connectionId]"
+                  class="setting-item mt-4 align-items-center"
+                >
+                  <label v-if="nullsLastState[item.source.connectionId]" class="item-label"
+                    >{{ $t('packages_business_nulls_first') }}
+                    <el-tooltip effect="dark" placement="top" :content="$t('packages_business_nulls_first_tip')">
+                      <i class="el-tooltip el-icon-info" style="color: #909399; font-size: 14px"></i> </el-tooltip
+                    >:
+                  </label>
+                  <label v-else class="item-label"></label>
+                  <div class="flex-1">
+                    <SwitchNumber
+                      v-if="nullsLastState[item.source.connectionId]"
+                      v-model="item.source.customNullSort"
+                    />
+                  </div>
+
+                  <span v-if="nullsLastState[item.target.connectionId]" class="item-icon"
+                    >{{ $t('packages_business_nulls_first')
+                    }}<el-tooltip effect="dark" placement="top" :content="$t('packages_business_nulls_first_tip')">
+                      <i class="el-tooltip el-icon-info" style="color: #909399; font-size: 14px"></i> </el-tooltip
+                    >:</span
+                  >
+                  <div v-if="nullsLastState[item.target.connectionId]" class="flex-1">
+                    <SwitchNumber v-model="item.target.customNullSort" />
+                  </div>
+                </div>
+              </template>
+
               <div v-if="inspectMethod === 'field'" class="setting-item align-items-center mt-4">
                 <label class="item-label">{{ $t('packages_business_components_fieldbox_daijiaoyanmoxing') }}:</label>
                 <ElRadioGroup
@@ -207,6 +321,23 @@
         @click="autoAddTable"
         >{{ $t('packages_business_verification_button_auto_add_table') }}
       </ElButton>
+
+      <template v-if="!isCountOrHash">
+        <el-divider class="mx-3" direction="vertical"></el-divider>
+        <div class="inline-flex align-items-center">
+          <span class="fs-7">{{ $t('packages_business_auto_fill_join_fields') }}</span>
+          <el-tooltip class="color-primary" effect="dark" placement="top">
+            <template #content>
+              <div>{{ $t('packages_business_auto_fill_join_tooltip_title') }}</div>
+              <div>{{ $t('packages_business_auto_fill_join_tooltip_primary') }}</div>
+              <div>{{ $t('packages_business_auto_fill_join_tooltip_notnull') }}</div>
+              <div>{{ $t('packages_business_auto_fill_join_tooltip_all') }}</div>
+            </template>
+            <i class="el-icon-question"></i>
+          </el-tooltip>
+          <el-switch class="ml-3" v-model="autoSuggestJoinFields" />
+        </div>
+      </template>
     </div>
     <ElDialog
       width="60%"
@@ -238,14 +369,14 @@
     </ElDialog>
     <FieldDialog ref="fieldDialog" @save="handleChangeFields"></FieldDialog>
 
-    <DocsDrawer :visible="showDoc" @update:visible="showDoc = $event"></DocsDrawer>
+    <DocsDrawer :visible="showDoc" :path="docPath" @update:visible="showDoc = $event"></DocsDrawer>
   </div>
 </template>
 
 <script>
 import { $on, $off, $once, $emit } from '../../../../utils/gogocodeTransfer'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-import { merge, cloneDeep, uniqBy, isEmpty, debounce } from 'lodash'
+import { merge, cloneDeep, uniqBy, isEmpty, debounce, isString } from 'lodash'
 import { action } from '@formily/reactive'
 
 import i18n from '@tap/i18n'
@@ -261,7 +392,9 @@ import { inspectMethod as inspectMethodMap } from '../const'
 import MultiSelection from '../MultiSelection'
 import FieldDialog from './FieldDialog'
 import DocsDrawer from './DocsDrawer.vue'
-
+import FieldSelectWrap from './FieldSelectWrap.vue'
+import CollateMap from './CollateMap.vue'
+import SwitchNumber from '@tap/component/src/SwitchNumber.vue'
 export default {
   components: {
     DocsDrawer,
@@ -275,6 +408,9 @@ export default {
     SchemaToForm,
     ElIconArrowRight,
     HighlightCode,
+    FieldSelectWrap,
+    CollateMap,
+    SwitchNumber
   },
   name: 'ConditionBox',
   directives: {
@@ -300,6 +436,7 @@ export default {
   data() {
     return {
       showDoc: false,
+      docPath: '',
       list: [],
       jointErrorMessage: '',
       fieldsMap: {},
@@ -347,29 +484,33 @@ export default {
               const data = await metadataInstancesApi.tapTables({
                 filter: JSON.stringify(params),
               })
-              fields = Object.values(data.items[0]?.nameFieldMap || {})
+              fields = Object.values(data.items[0]?.nameFieldMap || {}).map((t) => {
+                return {
+                  id: t.id,
+                  label: t.fieldName || t.field_name,
+                  value: t.fieldName || t.field_name,
+                  field_name: t.fieldName || t.field_name,
+                  primary_key_position: t.primaryKey,
+                  data_type: t.dataType || t.data_type,
+                  primaryKey: t.primaryKey,
+                  unique: t.unique,
+                  type: t.dataType || t.data_type,
+                  tapType: JSON.stringify(t.tapType)
+                }
+              })
             }
-            const result = fields.map((t) => {
-              return {
-                id: t.id,
-                label: t.fieldName || t.field_name,
-                value: t.fieldName || t.field_name,
-                field_name: t.fieldName || t.field_name,
-                primary_key_position: t.primaryKey,
-                data_type: t.dataType || t.data_type,
-                primaryKey: t.primaryKey,
-                unique: t.unique,
-              }
-            })
+            const result = fields
             if (result.length) {
               item.fields = result
             }
+
             return result
           } catch (e) {
             return []
           }
         },
-        openApiDrawer: () => {
+        openApiDrawer: path => {
+          this.docPath = isString(path) ? path : ''
           this.showDoc = true
         },
       },
@@ -914,6 +1055,8 @@ export default {
           },
         },
       },
+      autoSuggestJoinFields: true,
+      searchValue: ''
     }
   },
   computed: {
@@ -924,6 +1067,26 @@ export default {
     isCountOrHash() {
       return this.inspectMethod === 'row_count' || this.inspectMethod === 'hash'
     },
+    filteredList() {
+      if (!this.searchValue) return this.list
+
+      const searchTerm = this.searchValue.toLowerCase()
+      return this.list.filter(item => {
+        const sourceTable = (item.source.table || '').toLowerCase()
+        const targetTable = (item.target.table || '').toLowerCase()
+
+        return sourceTable.includes(searchTerm) || targetTable.includes(searchTerm)
+      })
+    },
+    nullsLastState() {
+      return Object.keys(this.capabilitiesMap || {}).reduce((cur, pre) => {
+        const tags = this.capabilitiesMap[pre]?.tags || []
+        if (tags.includes('NullsLast')) {
+          cur[pre] = true
+        }
+        return cur
+      }, {})
+    }
   },
   watch: {
     taskId(v1, v2) {
@@ -1052,6 +1215,8 @@ export default {
                 data_type,
                 primaryKey,
                 unique,
+                type: t.data_type,
+                tapType: JSON.stringify(t.tapType)
               }
             }),
           )
@@ -1115,7 +1280,7 @@ export default {
 
       let params = {
         nodeId,
-        fields: ['original_name', 'fields', 'qualified_name'],
+        fields: ['original_name', 'fields', 'qualified_name', 'name'],
         page: filter?.page || 1,
         pageSize: filter?.size || 20,
       }
@@ -1283,17 +1448,22 @@ export default {
       if (!this.taskId || this.list.length) return
       this.autoAddTableLoading = true
       this.updateAutoAddTableLoading()
-      let connectionIds = []
+      const connectionSet = new Set()
       let tableNames = []
       const matchNodeList = this.getMatchNodeList()
+
       matchNodeList.forEach((m) => {
-        connectionIds.push(m.sourceConnectionId)
-        connectionIds.push(m.targetConnectionId)
+        connectionSet.add(m.sourceConnectionId)
+        connectionSet.add(m.targetConnectionId)
         tableNames.push(...m.tableNames)
         tableNames.push(...m.objectNames)
       })
+
+      const connectionIds = [...connectionSet]
+
       // 加载数据源的Capabilities
-      const capabilitiesMap = this.getMatchCapabilitiesMap()
+      const capabilitiesMap = await this.getCapabilities(connectionIds)
+
       if (!matchNodeList.length) {
         this.autoAddTableLoading = false
         this.updateAutoAddTableLoading()
@@ -1306,11 +1476,12 @@ export default {
           inq: DATA_NODE_TYPES,
         },
         'source.id': {
-          inq: Array.from(new Set(connectionIds)),
+          inq: connectionIds
         },
         original_name: {
-          inq: Array.from(new Set(tableNames)),
+          inq: Array.from(new Set(tableNames))
         },
+        taskId: this.taskId
       }
       // this.autoAddTableLoading = true
       // this.updateAutoAddTableLoading()
@@ -1348,7 +1519,7 @@ export default {
               item.source.connectionName = sourceConnectionName
               item.source.currentLabel = `${sourceName} / ${sourceConnectionName}`
               item.source.table = ge // findTable.original_name
-              item.source.capabilities = capabilitiesMap[sourceConnectionId]
+              item.source.capabilities = capabilitiesMap[sourceConnectionId]?.capabilities || []
               // 填充target
               item.target.nodeId = target
               item.target.nodeName = targetName
@@ -1357,9 +1528,11 @@ export default {
               item.target.connectionName = targetConnectionName
               item.target.currentLabel = `${targetName} / ${targetConnectionName}`
               item.target.table = tableNameRelation[ge] // findTargetTable.original_name
-              item.target.capabilities = capabilitiesMap[targetConnectionId]
+              item.target.capabilities = capabilitiesMap[targetConnectionId]?.capabilities || []
 
-              const updateList = cloneDeep(updateConditionFieldMap[tableNameRelation[ge]] || [])
+              const updateList = cloneDeep(updateConditionFieldMap[tableNameRelation[ge]] || []).filter(
+                t => t !== '_no_pk_hash'
+              )
               let findTable = data.find((t) => t.source.id === sourceConnectionId && t.original_name === ge)
               let findTargetTable = data.find(
                 (t) => t.source.id === targetConnectionId && t.original_name === tableNameRelation[ge],
@@ -1368,15 +1541,27 @@ export default {
               if (findTable) {
                 let sourceSortColumn = updateList.length
                   ? updateList.join(',')
-                  : this.getPrimaryKeyFieldStr(findTable.fields)
-                if (updateList.length && findTargetTable?.fields) {
-                  sourceSortColumn = findTargetTable.fields
-                    .filter((t) => updateList.includes(t.field_name))
-                    .map((t) => t.original_field_name)
+                  : findTable.sortColumns?.join(',') || this.getPrimaryKeyFieldStr(findTable.fields)
+
+                if (updateList.length && findTargetTable?.fields?.length) {
+                  const fieldMap = findTargetTable?.fields?.reduce((acc, t) => {
+                    acc[t.field_name] = t.original_field_name
+                    return acc
+                  }, {})
+                  sourceSortColumn = updateList
+                    .reduce((acc, t) => {
+                      fieldMap[t] && acc.push(fieldMap[t])
+                      return acc
+                    }, [])
                     .join(',')
                 }
-                item.source.fields = findTable.fields
+
+                item.source.fields = findTable.fields.map(t => {
+                  t.isPrimaryKey = t.primary_key_position > 0
+                  return t
+                })
                 item.source.sortColumn = sourceSortColumn
+
                 const key = [source || '', sourceConnectionId, item.source.table].join()
                 this.fieldsMap[key] = item.source.fields
               }
@@ -1384,11 +1569,27 @@ export default {
               if (findTargetTable) {
                 const targetSortColumn = updateList.length
                   ? updateList.join(',')
-                  : this.getPrimaryKeyFieldStr(findTargetTable.fields)
-                item.target.fields = findTargetTable.fields
+                  : findTargetTable.sortColumns?.join(',') || this.getPrimaryKeyFieldStr(findTargetTable.fields)
+
+                item.target.fields = findTargetTable.fields.map(t => {
+                  t.isPrimaryKey = t.primary_key_position > 0
+                  return t
+                })
+
                 item.target.sortColumn = targetSortColumn
                 const key = [target || '', targetConnectionId, item.target.table].join()
                 this.fieldsMap[key] = item.target.fields
+              }
+
+              if (this.autoSuggestJoinFields && !item.source.sortColumn && !item.target.sortColumn) {
+                let sourceFields = item.source.fields.filter(t => !t.is_nullable)
+                let targetFields = item.target.fields.filter(t => !t.is_nullable)
+
+                sourceFields = sourceFields.length ? sourceFields : item.source.fields
+                targetFields = targetFields.length ? targetFields : item.target.fields
+
+                item.source.sortColumn = sourceFields.map(t => t.field_name).join(',')
+                item.target.sortColumn = targetFields.map(t => t.field_name).join(',')
               }
 
               list.push(item)
@@ -1438,7 +1639,19 @@ export default {
       item.table = '' // 重选连接，清空表
       item.sortColumn = '' // 重选连接，清空表
       item.databaseType = opt.databaseType
-      item.capabilities = await this.getConnectionCapabilities(opt.attrs?.connectionId)
+
+      if (this.capabilitiesMap?.[opt.attrs?.connectionId]) {
+        item.capabilities = this.capabilitiesMap[opt.attrs?.connectionId]?.capabilities || []
+      } else {
+        const { capabilities, tags } = await this.getConnectionCapabilities(opt.attrs?.connectionId)
+        item.capabilities = capabilities
+
+        this.$set(this.capabilitiesMap, opt.attrs?.connectionId, {
+          capabilities,
+          tags
+        })
+      }
+
       if (!this.taskId) {
         item.connectionName = opt.attrs?.connectionName
         item.currentLabel = item.connectionName
@@ -1539,9 +1752,7 @@ export default {
       item.target.currentLabel = `${targetName} / ${targetConnectionName}`
       item.target.table = tableName ? tableName : tableNameRelation[val]
 
-      // 加载数据源的Capabilities
-      const capabilitiesMap = this.getMatchCapabilitiesMap()
-      item.target.capabilities = capabilitiesMap[targetConnectionId]
+      item.target.capabilities = this.capabilitiesMap[targetConnectionId]?.capabilities || []
 
       const key = [target || '', targetConnectionId, item.target.table].join()
       if (this.fieldsMap[key]) {
@@ -1789,6 +2000,9 @@ export default {
         // 检查数据源的能力
         message = this.validateCapabilities(tasks, 'batch_count_function')
         if (message) return message
+      } else if (this.inspectMethod === 'hash') {
+        message = this.validateCapabilities(tasks, 'query_hash_by_advance_filter_function')
+        if (message) return message
       }
 
       this.updateErrorMsg('')
@@ -1962,26 +2176,36 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
               data_type: t.dataType,
               primaryKey: t.primaryKey,
               unique: t.unique,
+              type: t.dataType,
+              tapType: JSON.stringify(t.tapType)
             }
           })
         })
     },
 
+    /**
+     * Gets capabilities for the provided connection IDs
+     * @param {string[]} connectionIds - Array of connection IDs to fetch capabilities for
+     * @returns {Promise<Object.<string, {capabilities: Array, tags: Array}>>} Map of connection IDs to their capabilities and tags
+     */
     async getCapabilities(connectionIds = []) {
       if (!connectionIds.length) return
-      const data = await Promise.all(
-        connectionIds.map(async (id) => {
-          return {
-            id,
-            capabilities: await this.getConnectionCapabilities(id),
+
+      const map = {}
+
+      await Promise.all(
+        connectionIds.map(async id => {
+          const { capabilities, tags } = await this.getConnectionCapabilities(id)
+          map[id] = {
+            capabilities,
+            tags
           }
         }),
       )
 
-      return data.reduce((cur, pre) => {
-        cur[pre.id] = pre.capabilities
-        return cur
-      }, {})
+      this.capabilitiesMap = map
+
+      return map
     },
 
     // 获取匹配节点的Capabilities
@@ -1994,8 +2218,11 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
     },
 
     async getConnectionCapabilities(id) {
-      const data = await connectionsApi.get(id)
-      return data?.capabilities || []
+      const data = await connectionsApi.getNoSchema(id)
+      return {
+        capabilities: data?.capabilities || [],
+        tags: data?.definitionTags || []
+      }
     },
 
     updateErrorMsg(msg, level = '') {
@@ -2006,6 +2233,24 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
     updateAutoAddTableLoading() {
       $emit(this, 'update:autoAddTableLoading', this.autoAddTableLoading)
     },
+
+    toggleCollate(item, value) {
+      if (value) {
+        const fields = Object.keys(item.collate || {})
+        if (fields.length || !item.sortColumn) return
+
+        const sortColumn = item.sortColumn.split(',')
+
+        this.$set(
+          item,
+          'collate',
+          sortColumn.reduce((acc, key) => {
+            acc[key] = ''
+            return acc
+          }, {})
+        )
+      }
+    }
   },
   emits: ['update:jointErrorMessage', 'update:errorMessageLevel', 'update:autoAddTableLoading'],
 }
@@ -2022,12 +2267,9 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
 }
 
 .joint-table-header {
-  padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
   background: map-get($bgColor, normal);
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
 }
 
 .joint-table-footer {

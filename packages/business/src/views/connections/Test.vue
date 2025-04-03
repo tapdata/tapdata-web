@@ -112,7 +112,7 @@
         <template #default="{ row }">
           <span v-if="!row.item_exception || row.status === 'passed'">{{ row.fail_message }}</span>
           <div v-else class="flex align-center">
-            <span class="ellipsis">
+            <span>
               {{ row.item_exception.message }}
             </span>
             <el-button type="text" @click="showError(row)">{{ $t('public_view_details') }}</el-button>
@@ -122,58 +122,99 @@
     </el-table>
 
     <!--错误详情-->
-    <ElDialog width="80%" custom-class="max-w-1000" v-model="errorDialog.open" append-to-body>
+    <ElDialog
+      width="80%"
+      class="max-w-1000 mt-25 --padding"
+      v-model="errorDialog.open"
+      append-to-body
+      @open="expandErrorMessage = false"
+    >
       <template #header>
         <div class="flex align-center gap-2">
-          <VIcon class="color-danger" size="18">circle-close-filled</VIcon>
+          <VIcon v-if="!errorDialog.isWarning" class="color-danger" size="18">circle-close-filled</VIcon>
+          <VIcon v-else class="color-warning" size="18">warning</VIcon>
           <span class="fs-6 fw-sub">{{ errorDialog.title }}</span>
         </div>
       </template>
 
-      <div
-        v-if="errorDialog.message"
-        v-html="errorDialog.message"
-        class="text-prewrap mt-n4 mb-6 font-color-light"
-      ></div>
+      <div class="mt-n4">
+        <template v-if="errorDialog.message">
+          <div class="fw-sub mb-3 font-color-dark">
+            {{ $t(errorDialog.isWarning ? 'packages_business_warning_details' : 'packages_business_error_details') }}
+          </div>
+          <div
+            v-html="errorDialog.message"
+            class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
+          ></div>
+        </template>
 
-      <template v-if="errorDialog.reason">
-        <div class="fw-sub mb-3 font-color-dark">{{ $t('public_task_reasons_for_error') }}</div>
-        <div
-          v-if="errorDialog.reason"
-          v-html="errorDialog.reason"
-          class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
-        ></div>
-      </template>
+        <template v-if="errorDialog.reason">
+          <div class="fw-sub mb-3 font-color-dark">{{ $t('public_task_reasons_for_error') }}</div>
+          <div
+            v-html="errorDialog.reason"
+            class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
+          ></div>
+        </template>
 
-      <template v-if="errorDialog.solution">
-        <div class="fw-sub mb-3 font-color-dark">{{ $t('packages_business_solution') }}</div>
-        <div
-          v-if="errorDialog.solution"
-          v-html="errorDialog.solution"
-          class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
-        ></div>
-      </template>
+        <template v-if="errorDialog.solution">
+          <div class="fw-sub mb-3 font-color-dark">{{ $t('packages_business_solution') }}</div>
+          <div
+            v-html="errorDialog.solution"
+            class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
+          ></div>
+        </template>
 
-      <div v-if="errorDialog.stack" class="mb-3 flex justify-content-between align-items-end">
-        <span class="fw-sub font-color-dark">{{ $t('packages_business_logs_nodelog_cuowuduizhan') }}</span>
+        <!--See Also-->
+        <template v-if="!hideSeeAlso && errorDialog.seeAlso && errorDialog.seeAlso.length">
+          <div class="fw-sub mb-3 font-color-dark">See Also</div>
+          <ol class="pl-6 mb-6">
+            <li v-for="(item, index) in errorDialog.seeAlso" :key="index" class="list-decimal">
+              <ElLink type="primary" class="text-decoration-underline" @click="handleLink(item)">{{ item }}</ElLink>
+            </li>
+          </ol>
+        </template>
+
+        <template v-if="errorDialog.stack && !errorDialog.isWarning">
+          <div class="mb-3 flex justify-content-between align-items-end">
+            <span class="fw-sub font-color-dark">{{ $t('packages_business_logs_nodelog_cuowuduizhan') }}</span>
+          </div>
+          <div class="error-stack-pre-wrap position-relative mb-6 font-color-light rounded-lg">
+            <div class="position-absolute end-0 top-0 px-2 pt-1">
+              <el-button @click="handleCopyStack(errorDialog.stack)" type="text" class="px-1 py-0.5 font-color-dark">
+                <VIcon class="mr-1">copy</VIcon>
+                <span class="">{{ $t('public_button_copy') }}</span> </el-button
+              ><el-button
+                @click="expandErrorMessage = !expandErrorMessage"
+                type="text"
+                class="px-1 py-0.5 font-color-dark ml-2"
+              >
+                {{
+                  expandErrorMessage ? $t('packages_business_verification_details_shouqi') : $t('public_button_expand')
+                }}<i class="el-icon-arrow-down is-rotate ml-1" :class="{ 'is-active': expandErrorMessage }"></i>
+              </el-button>
+            </div>
+
+            <pre
+              class="m-0 p-4 pt-0 mt-6 font-color-dark"
+              :class="{ 'truncate-two-lines': !expandErrorMessage }"
+              style="max-height: 400px; font-size: 13px; overflow-x: auto"
+              >{{ errorDialog.stack }}</pre
+            >
+          </div>
+        </template>
       </div>
-      <div v-if="errorDialog.stack" class="error-stack-pre-wrap position-relative mb-6 font-color-light rounded-lg">
-        <div class="position-absolute end-0 top-0 px-2 pt-1 error-stack-actions">
-          <el-button @click="handleCopyStack(wsErrorStack)" type="text" class="px-1 py-0.5 font-color-dark">
-            <VIcon class="mr-1">copy</VIcon>
-            <span class="">{{ $t('public_button_copy') }}</span>
-          </el-button>
-        </div>
 
-        <pre class="m-0 p-4 pt-0 mt-6 font-color-dark" style="max-height: 60vh; font-size: 13px; overflow-x: auto">{{
-          errorDialog.stack
-        }}</pre>
-      </div>
+      <template v-if="!isDaas" #footer>
+        <ElButton @click="errorDialog.open = false">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" @click="handleCreateTicket">{{ $t('dfs_user_contactus_chuangjiangongdan') }}</ElButton>
+      </template>
     </ElDialog>
 
     <template #footer>
       <el-button v-if="isTimeout" size="mini" @click="start()">{{ $t('public_button_retry') }}</el-button>
-      <el-button size="mini" type="primary" @click="handleClose()">{{ $t('public_button_close') }}</el-button>
+      <slot name="cancel" :close="handleClose" :status="status">
+        <el-button size="mini" type="primary" @click="handleClose()">{{ $t('public_button_close') }}</el-button>
+      </slot>
     </template>
   </el-dialog>
 </template>
@@ -181,8 +222,9 @@
 <script>
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { VIcon } from '@tap/component'
-import { copyToClipboard } from '@tap/shared'
-
+import { copyToClipboard, openUrl } from '@tap/shared'
+import { proxyApi } from '@tap/api'
+import i18n from '@tap/i18n'
 export default {
   components: {
     VIcon,
@@ -202,7 +244,11 @@ export default {
     },
   },
   data() {
+    const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+
     return {
+      isDaas,
+      hideSeeAlso: process.env.VUE_APP_PAGE_TITLE === 'IKAS' || process.env.VUE_APP_HIDE_LOG_SEE_ALSO,
       progress: 0,
       testData: {
         testLogs: [],
@@ -256,9 +302,13 @@ export default {
         stack: '',
         solution: '',
         message: '',
-        reason: ''
+        reason: '',
+        seeAlso: [],
+        isWarning: false,
+        module: ''
       },
-      showTooltip: false
+      showTooltip: false,
+      expandErrorMessage: false
     }
   },
   mounted() {
@@ -268,6 +318,10 @@ export default {
     this.clearInterval()
   },
   methods: {
+    handleLink(val) {
+      openUrl(val)
+    },
+
     rowStyleHandler({ row }) {
       return row.status === 'waiting' ? { background: '#fff' } : ''
     },
@@ -454,9 +508,46 @@ export default {
       this.startByConnection(...arguments)
     },
 
-    showError(row) {
+    replaceKeyword(str) {
+      return str ? str.replace(/tapdata\s?/gi, process.env.VUE_APP_KEYWORD) : ''
+    },
+
+    async showError(row) {
+      if (process.env.VUE_APP_KEYWORD && row.item_exception) {
+        row.item_exception.stack = this.replaceKeyword(row.item_exception.stack)
+        row.item_exception.solution = this.replaceKeyword(row.item_exception.solution)
+        row.item_exception.message = this.replaceKeyword(row.item_exception.message)
+        row.item_exception.reason = this.replaceKeyword(row.item_exception.reason)
+      }
+
       Object.assign(this.errorDialog, row.item_exception)
       this.errorDialog.title = row.show_msg
+      this.errorDialog.status = row.status
+      this.errorDialog.seeAlso = []
+      this.errorDialog.module = ''
+      this.errorDialog.isWarning = row.status === 'failed' && !row.required
+
+      if (row.error_code) {
+        const data = await proxyApi
+          .call({
+            className: 'ErrorCodeService',
+            method: 'getErrorCodeWithDynamic',
+            args: [row.error_code, i18n.locale === 'en' ? 'en' : 'cn', row.dynamicDescriptionParameters]
+          })
+          .catch(e => {
+            // this.errorDialog.open = true
+            console.error(e)
+          })
+
+        if (data) {
+          this.errorDialog.title = data.fullErrorCode || data.errorCode
+          this.errorDialog.message = data.describe
+          this.errorDialog.reason = data.dynamicDescribe
+          this.errorDialog.solution = data.solution
+          this.errorDialog.seeAlso = data.seeAlso
+          this.errorDialog.module = data.module
+        }
+      }
       this.errorDialog.open = true
     },
 
@@ -471,6 +562,28 @@ export default {
     handleCopyStack(stack) {
       copyToClipboard(stack)
       this.$message.success(this.$t('public_message_copy_success'))
+    },
+
+    handleCreateTicket() {
+      const errorCode = this.errorDialog.title
+
+      window.open(
+        this.$router.resolve({
+          name: 'TicketSystem',
+          query: {
+            form: encodeURIComponent(
+              JSON.stringify({
+                connectionId: this.formData?.id,
+                subject: errorCode,
+                description: `Error Code: ${errorCode}
+Module: ${this.errorDialog.module || ''}
+Describe: ${this.errorDialog.message ? `\n${this.errorDialog.message}` : ''}
+Stack Trace: ${this.errorDialog.stack ? `\n${this.errorDialog.stack}` : ''}`
+              })
+            )
+          }
+        }).href
+      )
     }
   },
   emits: ['update:visible', 'returnTestData'],

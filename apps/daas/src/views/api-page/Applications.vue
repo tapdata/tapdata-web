@@ -26,7 +26,7 @@
         :label="$t('application_header_client_name')"
         prop="clientName"
         sortable="clientName"
-        width="120"
+        width="130"
       >
       </el-table-column>
       <el-table-column

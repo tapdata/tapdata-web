@@ -18,6 +18,11 @@ const MigrationEditor = async () => {
   return MigrationEditor
 }
 
+const MigrationForm = async () => {
+  const { MigrationForm } = await import('@tap/dag')
+  return MigrationForm
+}
+
 const ConnectionForm = async () => {
   const { ConnectionForm } = await import('@tap/business')
   return ConnectionForm
@@ -37,9 +42,20 @@ const MigrationMonitor = async () => {
   const { MigrationMonitor } = await import('@tap/dag')
   return MigrationMonitor
 }
+
+const MigrationMonitorSimple = async () => {
+  const { MigrationMonitorSimple } = await import('@tap/dag')
+  return MigrationMonitorSimple
+}
+
 const MigrationMonitorViewer = async () => {
   const { MigrationMonitorViewer } = await import('@tap/dag')
   return MigrationMonitorViewer
+}
+
+const DataCapture = async () => {
+  const { DataCapture } = await import('@tap/dag')
+  return DataCapture
 }
 
 const VerifyDetails = async () => {
@@ -237,6 +253,16 @@ const routes = [
               hideTitle: true,
             },
           },
+
+          {
+            path: 'form/:id?',
+            name: 'MigrateForm',
+            component: MigrationForm,
+            meta: {
+              title: 'task_manage_migrate',
+              hideTitle: true
+            }
+          }
         ],
       },
       /* ---------- 数据开发  ----------*/
@@ -583,6 +609,33 @@ const routes = [
     ],
   },
   {
+    path: '/welcome',
+    component: () => import(/* webpackChunkName: "layout" */ '../views/welcome/WelcomeLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Welcome',
+        component: () => import(/* webpackChunkName: "layout" */ '../views/welcome/Welcome.vue')
+      },
+      {
+        path: 'task/:id?',
+        name: 'WelcomeTask',
+        component: MigrationForm,
+        props: {
+          editRouteName: 'WelcomeTask'
+        }
+      }
+    ]
+  },
+  {
+    path: '/migrate/monitor/simple/:id',
+    name: 'MigrationMonitorSimple',
+    component: MigrationMonitorSimple,
+    meta: {
+      title: 'page_title_run_monitor'
+    }
+  },
+  {
     path: '/migrate/monitor/:id',
     name: 'MigrationMonitor',
     component: MigrationMonitor,
@@ -685,6 +738,11 @@ const routes = [
       title: 'page_title_run_monitor',
       code: 'Data_SYNC_menu',
     },
+  },
+  {
+    path: '/data-capture/:id',
+    name: 'DataCapture',
+    component: DataCapture
   },
   {
     path: '/sharedMining/monitor/:id',

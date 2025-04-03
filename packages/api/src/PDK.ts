@@ -10,5 +10,11 @@ export default class PDK extends Http {
       responseType: 'blob',
     })
   }
+
+  getStatics(pdkHash, fileName) {
+    return this.axios.get(`${this.url}/statics/${pdkHash}?filename=${encodeURIComponent(fileName)}`, {
+      responseType: 'blob'
+    })
+  }
 }
 export { PDK }

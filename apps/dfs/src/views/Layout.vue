@@ -92,7 +92,7 @@
       </ElMain>
     </ElContainer>
     <AgentDownloadModal v-model:visible="agentDownload.visible" :source="agentDownload.data"></AgentDownloadModal>
-    <AgentGuide
+    <!--<AgentGuide
       v-model:visible="subscriptionModelVisible"
       :step="step"
       :agent="agent"
@@ -101,10 +101,10 @@
       :guideLoading="guideLoading"
       @changeIsUnDeploy="changeIsUnDeploy"
       @open-guide="handleOpenGuide"
-    ></AgentGuide>
+    ></AgentGuide>-->
     <!--    <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>-->
     <!--    <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>-->
-    <TaskAlarmTour v-model:value="showAlarmTour"></TaskAlarmTour>
+    <!--<TaskAlarmTour v-model:value="showAlarmTour"></TaskAlarmTour>-->
     <!--付费-->
     <UpgradeFee :visible="upgradeFeeVisible" @update:visible="setUpgradeFeeVisible"></UpgradeFee>
     <MarketplaceGuide
@@ -154,7 +154,7 @@ export default {
       sortMenus: [
         {
           name: 'Dashboard',
-          title: 'Dashboard',
+          title: $t('tap_home'),
           icon: 'workbench',
         },
         {
@@ -578,7 +578,7 @@ export default {
 }
 </style>
 
-<style>
+<style lang="scss">
 .zsiqfanim,
 .zsiqfanim *,
 .siqanim,
@@ -593,6 +593,65 @@ export default {
 .replication-driver-popover {
   .driver-popover-footer {
     margin-top: 8px;
+  }
+}
+
+.menu-tour-popover {
+  color: rgba(0, 0, 0, 0.88);
+
+  a {
+    outline: none;
+    color: map-get($color, primary);
+    text-decoration: underline;
+  }
+
+  .driver-popover-title,
+  .driver-popover-description {
+    font-family: inherit;
+  }
+  .driver-popover-navigation-btns {
+    button {
+      display: flex;
+      align-items: center;
+      height: 24px;
+      padding: 0 7px;
+      font-family: inherit;
+      font-size: 14px;
+      border-radius: 6px;
+      text-shadow: none;
+      border: 1px solid transparent;
+      transition: 0.1s;
+    }
+
+    button + button {
+      margin-left: 8px;
+    }
+
+    .driver-popover-prev-btn {
+      border-color: #d9d9d9;
+      &.driver-popover-btn-disabled {
+        display: none !important;
+      }
+
+      &:hover,
+      &:focus {
+        color: map-get($color, primary);
+        border-color: map-get($color, primary);
+        background-color: #fff;
+      }
+    }
+
+    .driver-popover-next-btn {
+      background-color: map-get($color, primary);
+      color: #fff;
+
+      &:hover,
+      &:focus {
+        color: #fff;
+        border-color: #626cea;
+        background-color: #626cea;
+      }
+    }
   }
 }
 </style>

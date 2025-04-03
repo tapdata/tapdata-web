@@ -6,7 +6,9 @@ export default class Users extends Http {
   }
 
   login(params) {
-    return this.axios.post(this.url + '/login', params)
+    return this.axios.post(this.url + '/login', params, {
+      silenceMessage: true
+    })
   }
   logout(params) {
     return this.axios.post(this.url + '/logout', params)
@@ -86,6 +88,18 @@ export default class Users extends Http {
   //新增-权限增删
   updatePermissionRoleMapping(id, params) {
     return this.axios.put(`${this.url}/updatePermissionRoleMapping?id=${id}`, params)
+  }
+
+  testLdapLogin(data) {
+    return this.axios.post(`${this.url}/testLdapLogin`, data)
+  }
+
+  checkLdapLoginEnable() {
+    return this.axios.get(`${this.url}/checkLdapLoginEnable`)
+  }
+
+  refreshAccessCode() {
+    return this.axios.post(`${this.url}/refreshAccessCode`)
   }
 }
 export { Users }

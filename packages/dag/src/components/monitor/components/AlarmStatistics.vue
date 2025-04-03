@@ -1,6 +1,7 @@
 <script lang="jsx">
 import { defineComponent } from 'vue'
 import { VIcon } from '@tap/component'
+import i18n from '@tap/i18n'
 
 export default defineComponent({
   name: 'AlarmStatistics',
@@ -22,7 +23,7 @@ export default defineComponent({
           <Transition name="el-fade-in-linear">
             <div
               v-show={props.alarmNum.alert}
-              class="alarm-statistic-item align-center cursor-pointer px-4 mb-4"
+              class="alarm-statistic-item align-center cursor-pointer px-4 mb-4 rounded-lg shadow-sm"
               onClick={() => {
                 {
                   emit('showBottomPanel')
@@ -32,13 +33,15 @@ export default defineComponent({
               <VIcon size="18" class="mr-2 color-warning">
                 warning
               </VIcon>
-              <span>告警：{props.alarmNum.alert}</span>
+              <span>
+                {i18n.t('public_warn')}：{props.alarmNum.alert}
+              </span>
             </div>
           </Transition>
           <Transition name="el-fade-in-linear">
             <div
               v-show={props.alarmNum.error}
-              class="alarm-statistic-item align-center cursor-pointer px-4"
+              class="alarm-statistic-item align-center cursor-pointer px-4 rounded-lg shadow-sm"
               onClick={() => {
                 {
                   emit('showBottomPanel')
@@ -48,7 +51,9 @@ export default defineComponent({
               <VIcon size="18" class="mr-2 color-danger">
                 error
               </VIcon>
-              <span>错误：{props.alarmNum.error}</span>
+              <span>
+                {i18n.t('public_error')}：{props.alarmNum.error}
+              </span>
             </div>
           </Transition>
         </div>

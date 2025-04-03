@@ -1,7 +1,7 @@
 <template>
   <div
     class="paper-scroller hide-scrollbar"
-    :class="{ grabbable: !shiftKeyPressed }"
+    :class="{ grabbable: !shiftKeyPressed && !scrollDisabled }"
     tabindex="0"
     @mousedown="mouseDown"
     @wheel="wheelScroll"
@@ -50,7 +50,7 @@ export default {
   name: 'PaperScroller',
   components: { MiniView },
   mixins: [deviceSupportHelpers, movePaper],
-  props: { navLines: Array },
+  props: { navLines: Array, scrollDisabled: Boolean },
   data() {
     return {
       showSelectBox: false,
@@ -283,7 +283,6 @@ export default {
       }
       // 窗口保持最新的区域数据
       this.windowArea = area
-      console.log('windowArea', this.windowArea) // eslint-disable-line
     },
 
     // 画布居中
@@ -393,8 +392,6 @@ export default {
 
       this.paperForwardSize.w = forwardW
       this.paperForwardSize.h = forwardH
-
-      console.log('autoResizePaper', { minX, minY, maxX, maxY }, this.paperReverseSize) // eslint-disable-line
     },
 
     toggleMiniView() {
@@ -464,7 +461,7 @@ export default {
     },
 
     mouseDown(e) {
-      if (this.inputFilter(e, this.$el)) return
+      if (this.scrollDisabled || this.inputFilter(e, this.$el)) return
 
       this.initState(e)
       on(window, 'mousemove', this.mouseMove)
@@ -570,6 +567,11 @@ export default {
     },
 
     wheelScroll(e) {
+      if (this.scrollDisabled) {
+        e.preventDefault()
+        return false
+      }
+
       if (this.isCtrlKeyPressed(e) || e.ctrlKey) {
         e.preventDefault()
         if (e.deltaY > 0) {
@@ -580,7 +582,13 @@ export default {
       }
     },
 
-    handleScroll({ target }) {
+    handleScroll(e) {
+      if (this.scrollDisabled) {
+        e.preventDefault()
+        return false
+      }
+
+      let { target } = e
       this.scrollPosition.x = target.scrollLeft
       this.scrollPosition.y = target.scrollTop
     },
