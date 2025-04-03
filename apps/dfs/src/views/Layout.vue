@@ -485,14 +485,14 @@ export default {
   padding-top: 52px;
   word-wrap: break-word;
   word-break: break-word;
-  background: map-get($color, submenu);
+  background: map.get($color, submenu);
 
   .left-aside {
-    // border-right: 1px map-get($borderColor, aside) solid;
-    background: map-get($color, submenu);
+    // border-right: 1px map.get($borderColor, aside) solid;
+    background: map.get($color, submenu);
 
     .el-menu {
-      background-color: map-get($color, submenu);
+      background-color: map.get($color, submenu);
     }
 
     :deep(.el-menu-item),
@@ -501,20 +501,20 @@ export default {
       line-height: 50px;
 
       .v-icon {
-        color: map-get($iconFillColor, normal);
+        color: map.get($iconFillColor, normal);
       }
 
       &.is-active,
       &:hover {
-        background-color: map-get($color, white);
-        color: map-get($color, primary);
+        background-color: map.get($color, white);
+        color: map.get($color, primary);
         border-radius: 8px;
       }
 
       &.is-active,
       &:hover {
         .v-icon {
-          color: map-get($color, primary);
+          color: map.get($color, primary);
         }
       }
 
@@ -528,7 +528,7 @@ export default {
       font-size: 14px;
       font-weight: 700;
       line-height: 60px;
-      color: map-get($fontColor, normal);
+      color: map.get($fontColor, normal);
     }
   }
 
@@ -561,7 +561,7 @@ export default {
     }
 
     :deep(.el-breadcrumb__separator) {
-      color: map-get($fontColor, sub);
+      color: map.get($fontColor, sub);
     }
   }
 
@@ -601,7 +601,7 @@ export default {
 
   a {
     outline: none;
-    color: map-get($color, primary);
+    color: map.get($color, primary);
     text-decoration: underline;
   }
 
@@ -635,14 +635,14 @@ export default {
 
       &:hover,
       &:focus {
-        color: map-get($color, primary);
-        border-color: map-get($color, primary);
+        color: map.get($color, primary);
+        border-color: map.get($color, primary);
         background-color: #fff;
       }
     }
 
     .driver-popover-next-btn {
-      background-color: map-get($color, primary);
+      background-color: map.get($color, primary);
       color: #fff;
 
       &:hover,

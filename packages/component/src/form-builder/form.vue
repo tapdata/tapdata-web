@@ -324,7 +324,7 @@ export default {
   }
   .fb-radio-tip__text {
     line-height: 18px;
-    color: map-get($fontColor, light);
+    color: map.get($fontColor, light);
   }
 }
 .e-popover {

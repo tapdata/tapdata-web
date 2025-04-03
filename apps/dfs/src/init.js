@@ -50,8 +50,8 @@ export default ({ routes }) => {
       wsUrl = 'wss://'
     }
     let queryString = ``
-    if (process.env.NODE_ENV === 'development') {
-      queryString = `__token=${process.env.VUE_APP_ACCESS_TOKEN}`
+    if ( import.meta.env.NODE_ENV === 'development') {
+      queryString = `__token=${ import.meta.env.VUE_APP_ACCESS_TOKEN}`
     }
     let index = loc.pathname.lastIndexOf('.html')
     let path = loc.pathname
@@ -101,7 +101,7 @@ export default ({ routes }) => {
     createVersionPolling({
       appETagKey: '__APP_ETAG__',
       pollingInterval: 5 * 1000, // 单位为毫秒
-      silent: process.env.NODE_ENV === 'development', // 开发环境下不检测
+      silent:  import.meta.env.NODE_ENV === 'development', // 开发环境下不检测
       onUpdate: (self) => {
         const h = window.App.$createElement
         Notification({

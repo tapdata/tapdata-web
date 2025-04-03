@@ -589,7 +589,7 @@ export default {
   .box {
     padding: 10px 20px;
     margin-bottom: 10px;
-    background-color: map-get($bgColor, white);
+    background-color: map.get($bgColor, white);
     border-radius: 4px;
     box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
     h2 {
@@ -649,7 +649,7 @@ export default {
       .e-table {
         th {
           padding: 4px 10px;
-          // color: map-get($fontColor, light);
+          // color: map.get($fontColor, light);
           // background-color: #eff1f4;
         }
         td {
@@ -673,7 +673,7 @@ export default {
     height: calc(100% - 126px);
     overflow: hidden;
     overflow-y: auto;
-    background-color: map-get($bgColor, white);
+    background-color: map.get($bgColor, white);
   }
   li {
     padding: 5px 10px;

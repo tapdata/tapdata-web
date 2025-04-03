@@ -40,7 +40,7 @@ import i18n from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
 import { proxyApi } from '@tap/api'
 import Cookie from '@tap/shared/src/cookie'
-import { dayjs } from '@tap/business'
+import { dayjs } from '../../shared'
 import axios from 'axios'
 
 export default {
@@ -57,7 +57,7 @@ export default {
   },
   data() {
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas:  import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       loading: false,
       downloadList: [],
       downloadListCol: [
@@ -92,8 +92,8 @@ export default {
       if (this.isDaas) {
         const accessToken = Cookie.get('access_token')
         url += `&access_token=${accessToken}`
-      } else if (process.env.VUE_APP_ACCESS_TOKEN) {
-        url += `&__token=${process.env.VUE_APP_ACCESS_TOKEN}`
+      } else if ( import.meta.env.VUE_APP_ACCESS_TOKEN) {
+        url += `&__token=${ import.meta.env.VUE_APP_ACCESS_TOKEN}`
       }
 
       window.open(url)

@@ -172,11 +172,11 @@ export default {
             border: none;
           }
           &:hover {
-            color: map-get($fontColor, dark);
+            color: map.get($fontColor, dark);
           }
         }
         .bold {
-          color: map-get($fontColor, dark);
+          color: map.get($fontColor, dark);
           font-weight: 500;
         }
       }
@@ -200,26 +200,26 @@ export default {
     .image {
       padding: 2px 20px 0 0;
       font-size: 30px;
-      color: map-get($color, primary);
+      color: map.get($color, primary);
     }
     .text {
       font-size: 14px;
-      color: map-get($fontColor, light);
+      color: map.get($fontColor, light);
       p {
         font-size: 18px;
         user-select: none;
         padding-bottom: 6px;
         i {
-          color: map-get($color, primary);
+          color: map.get($color, primary);
         }
       }
       div {
         padding-top: 20px;
         span {
-          color: map-get($color, primary);
+          color: map.get($color, primary);
           cursor: pointer;
           i {
-            color: map-get($fontColor, light);
+            color: map.get($fontColor, light);
           }
         }
         .noClick {

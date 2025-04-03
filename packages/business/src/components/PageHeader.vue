@@ -104,7 +104,7 @@ export default {
   .el-breadcrumb__item:last-child .el-breadcrumb__inner a,
   .el-breadcrumb__item:last-child .el-breadcrumb__inner a:hover,
   .el-breadcrumb__item:last-child .el-breadcrumb__inner:hover {
-    color: map-get($fontColor, normal) !important;
+    color: map.get($fontColor, normal) !important;
   }
 }
 </style>

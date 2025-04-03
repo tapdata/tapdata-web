@@ -88,11 +88,11 @@ export default {
   .el-date-editor {
     max-width: 150px;
     :deep(input::placeholder) {
-      color: map-get($fontColor, main);
+      color: map.get($fontColor, main);
     }
 
     :deep(input) {
-      color: map-get($fontColor, main);
+      color: map.get($fontColor, main);
     }
     &.empty-time {
       width: auto;
@@ -119,7 +119,7 @@ export default {
       cursor: pointer;
     }
     .icon-btn {
-      color: map-get($fontColor, main);
+      color: map.get($fontColor, main);
     }
   }
 }
@@ -127,6 +127,6 @@ export default {
   position: absolute;
   top: 11px;
   right: 4px;
-  color: map-get($fontColor, sub);
+  color: map.get($fontColor, sub);
 }
 </style>

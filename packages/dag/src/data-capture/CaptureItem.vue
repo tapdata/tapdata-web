@@ -41,7 +41,7 @@ import VueJsonPretty from 'vue-json-pretty'
 import 'vue-json-pretty/lib/styles.css'
 import { VEmpty, IconButton } from '@tap/component'
 import { copyToClipboard } from '@tap/shared'
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent } from 'vue'
 import i18n from '@tap/i18n'
 
 export default defineComponent({

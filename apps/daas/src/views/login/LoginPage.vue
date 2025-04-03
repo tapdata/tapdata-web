@@ -67,7 +67,7 @@ export default {
     flex: 1;
     justify-content: center;
     align-items: center;
-    background-color: map-get($bgColor, white);
+    background-color: map.get($bgColor, white);
     .page-main-box {
       display: flex;
       flex-direction: column;
@@ -77,7 +77,7 @@ export default {
     .switch-lang {
       padding-top: 50px;
       text-align: right;
-      color: map-get($fontColor, slight);
+      color: map.get($fontColor, slight);
       font-weight: 500;
       font-size: 14px;
       span {
@@ -87,11 +87,11 @@ export default {
         line-height: 18px;
         cursor: pointer;
         &:hover {
-          color: map-get($fontColor, dark);
+          color: map.get($fontColor, dark);
         }
       }
       .bold {
-        color: map-get($fontColor, dark);
+        color: map.get($fontColor, dark);
         font-weight: 500;
       }
     }
@@ -118,7 +118,7 @@ header {
       span {
         display: inline-block;
         padding: 0 10px;
-        border-left: 1px solid map-get($fontColor, dark);
+        border-left: 1px solid map.get($fontColor, dark);
         box-sizing: border-box;
         height: 18px;
         line-height: 18px;
@@ -127,7 +127,7 @@ header {
           border: none;
         }
         &:hover {
-          color: map-get($fontColor, dark);
+          color: map.get($fontColor, dark);
         }
       }
     }

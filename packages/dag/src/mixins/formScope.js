@@ -1107,8 +1107,8 @@ export default {
           if (this.isDaas) {
             const accessToken = Cookie.get('access_token')
             url += `&access_token=${accessToken}`
-          } else if (process.env.VUE_APP_ACCESS_TOKEN) {
-            url += `&__token=${process.env.VUE_APP_ACCESS_TOKEN}`
+          } else if ( import.meta.env.VUE_APP_ACCESS_TOKEN) {
+            url += `&__token=${ import.meta.env.VUE_APP_ACCESS_TOKEN}`
           }
 
           window.open(url)

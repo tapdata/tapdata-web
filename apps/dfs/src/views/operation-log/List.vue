@@ -635,11 +635,11 @@ export default {
   }
 }
 :deep(.el-dropdown-menu__item.dropdown-item--disabled) {
-  color: map-get($color, disable);
+  color: map.get($color, disable);
   cursor: default;
   &:hover {
     background: unset;
-    color: map-get($color, disable);
+    color: map.get($color, disable);
   }
 }
 </style>

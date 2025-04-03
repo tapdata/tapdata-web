@@ -290,11 +290,11 @@ export default {
 .filter-el-input {
   :deep(.el-input__inner) {
     &:hover {
-      border-color: map-get($borderColor, disable);
+      border-color: map.get($borderColor, disable);
     }
     &:focus,
     &:target {
-      border-color: map-get($color, primary);
+      border-color: map.get($color, primary);
     }
   }
 }

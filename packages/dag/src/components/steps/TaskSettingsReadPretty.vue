@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from '@vue/composition-api'
+import { defineComponent, ref } from 'vue'
 import { createForm, onFieldValueChange } from '@formily/core'
 import i18n from '@tap/i18n'
 import { alarmApi, taskApi } from '@tap/api'
@@ -20,7 +20,7 @@ export default defineComponent({
     task: Object
   },
   setup(props, { emit, root }) {
-    const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+    const isDaas =  import.meta.env.VUE_APP_PLATFORM === 'DAAS'
     const nodes = root.$store.getters['dataflow/allNodes']
     const form = ref(null)
     const fieldForm = ref(null)

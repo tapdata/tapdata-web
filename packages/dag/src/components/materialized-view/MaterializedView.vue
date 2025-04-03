@@ -197,7 +197,7 @@ export default {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
 
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas:  import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       nodes: [],
       nodePositionMap: {},
       nodeSchemaMap: {},
@@ -872,7 +872,7 @@ $sidebarBg: #fff;
   cursor: pointer;
   &.active,
   &:hover {
-    color: map-get($color, primary);
+    color: map.get($color, primary);
     background: $hoverBg;
   }
 }

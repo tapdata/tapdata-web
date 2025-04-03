@@ -31,5 +31,3 @@ export const ArrayAggregate = connect(
     }),
   ),
 )
-
-export default ArrayAggregate

@@ -110,7 +110,7 @@
 <script>
 import { makeStatusAndDisabled } from '@tap/business'
 import { dataPermissionApi, taskApi } from '@tap/api'
-import { defineComponent, ref, computed, watch, onMounted, onBeforeUnmount, reactive, set } from '@vue/composition-api'
+import { defineComponent, ref, computed, watch, onMounted, onBeforeUnmount, reactive } from 'vue'
 import { TextEditable, VIcon, VEmpty, VDivider } from '@tap/component'
 import { TaskStatus } from '@tap/business'
 import syncTaskAgent from '@tap/business/src/mixins/syncTaskAgent'
@@ -142,7 +142,7 @@ export default defineComponent({
 
   setup(props, { root }) {
     // Data
-    const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+    const isDaas =  import.meta.env.VUE_APP_PLATFORM === 'DAAS'
     const dataflow = ref({
       status: ''
     })
@@ -451,8 +451,7 @@ export default defineComponent({
       if (!fromWS) {
         Object.keys(data).forEach(key => {
           if (!['dag'].includes(key)) {
-            // dataflow[key] = data[key]
-            set(dataflow.value, key, data[key])
+            dataflow.value[key] = data[key]
           }
         })
       }
@@ -671,7 +670,7 @@ $sidebarBg: #fff;
 
   &.active,
   &:not(.disabled):hover {
-    color: map-get($color, primary);
+    color: map.get($color, primary);
     background: $hoverBg;
   }
 }
@@ -684,7 +683,7 @@ $sidebarBg: #fff;
       background: #f4f4f5;
     }
 
-    ::v-deep .el-descriptions__body {
+    :deep(.el-descriptions__body) {
       background: transparent;
     }
   }

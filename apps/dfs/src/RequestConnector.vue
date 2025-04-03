@@ -397,43 +397,41 @@ export default {
   height: 100%;
   word-wrap: break-word;
   word-break: break-word;
-  background: map-get($color, submenu);
+  background: map.get($color, submenu);
 
   .left-aside {
-    // border-right: 1px map-get($borderColor, aside) solid;
-    background: map-get($color, submenu);
+    // border-right: 1px map.get($borderColor, aside) solid;
+    background: map.get($color, submenu);
 
     .el-menu {
-      background-color: map-get($color, submenu);
+      background-color: map.get($color, submenu);
     }
 
-    ::v-deep {
-      .el-menu-item,
-      .el-submenu__title {
-        height: 50px;
-        line-height: 50px;
+    :deep(.el-menu-item),
+    :deep(.el-submenu__title) {
+      height: 50px;
+      line-height: 50px;
 
-        .v-icon {
-          color: map-get($iconFillColor, normal);
-        }
+      .v-icon {
+        color: map.get($iconFillColor, normal);
+      }
 
-        &.is-active,
-        &:hover {
-          background-color: map-get($color, white);
-          color: map-get($color, primary);
-          border-radius: 8px;
-        }
+      &.is-active,
+      &:hover {
+        background-color: map.get($color, white);
+        color: map.get($color, primary);
+        border-radius: 8px;
+      }
 
-        &.is-active,
-        &:hover {
-          ::v-deep .v-icon {
-            color: map-get($color, primary);
-          }
+      &.is-active,
+      &:hover {
+        :deep(.v-icon) {
+          color: map.get($color, primary);
         }
+      }
 
-        .submenu-item {
-          padding-left: 12px;
-        }
+      .submenu-item {
+        padding-left: 12px;
       }
     }
 
@@ -442,7 +440,7 @@ export default {
       font-size: 14px;
       font-weight: 700;
       line-height: 60px;
-      color: map-get($fontColor, normal);
+      color: map.get($fontColor, normal);
     }
   }
 
@@ -469,17 +467,13 @@ export default {
     &.one-breadcrumb {
       font-size: 18px;
 
-      ::v-deep {
-        .el-breadcrumb__inner {
-          color: #000;
-        }
+      :deep(.el-breadcrumb__inner) {
+        color: #000;
       }
     }
 
-    ::v-deep {
-      .el-breadcrumb__separator {
-        color: map-get($fontColor, sub);
-      }
+    :deep(.el-breadcrumb__separator) {
+      color: map.get($fontColor, sub);
     }
   }
 
@@ -514,7 +508,7 @@ export default {
   width: 100%;
   height: 52px !important;
   padding: 0 7px;
-  background: map-get($color, submenu);
+  background: map.get($color, submenu);
   box-sizing: border-box;
 
   .current {
@@ -551,15 +545,15 @@ export default {
     .command-item {
       padding: 4px 8px;
       cursor: pointer;
-      color: map-get($fontColor, light);
+      color: map.get($fontColor, light);
 
       &:hover {
-        color: map-get($color, primary);
-        background-color: map-get($color, white);
+        color: map.get($color, primary);
+        background-color: map.get($color, white);
         border-radius: 4px;
 
         &.icon {
-          color: map-get($color, primary);
+          color: map.get($color, primary);
         }
       }
     }

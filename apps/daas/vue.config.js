@@ -27,7 +27,7 @@ const proxy = {
 
 module.exports = {
   assetsDir: 'static',
-  lintOnSave: SERVE_ENV !== 'dev' && process.env.NODE_ENV !== 'production', // 打包时关闭lint输出
+  lintOnSave: SERVE_ENV !== 'dev' &&  import.meta.env.NODE_ENV !== 'production', // 打包时关闭lint输出
   productionSourceMap: false,
   publicPath: './',
   devServer: {
@@ -156,7 +156,7 @@ module.exports = {
     // 尽量保证项目中文件后缀的精确
     config.resolve.extensions = ['.js', '.jsx', '.vue', '.json', '.ts', '.tsx']
 
-    if (process.env.NODE_ENV === 'production') {
+    if ( import.meta.env.NODE_ENV === 'production') {
       // gzip
       config.plugins.push(
         new CompressionWebpackPlugin({
@@ -203,7 +203,7 @@ module.exports = {
         sassOptions: {
           quietDeps: true
         },
-        additionalData: `@use "${process.env.VUE_APP_THEME_VAR || '~@tap/assets/styles/var.scss'}" as *;`
+        additionalData: `@use "${ import.meta.env.VUE_APP_THEME_VAR || '~@tap/assets/styles/var.scss'}" as *;`
       }
     }
   }

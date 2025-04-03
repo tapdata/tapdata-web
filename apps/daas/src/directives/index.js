@@ -1,5 +1,5 @@
 import Cookie from '@tap/shared/src/cookie'
-
+import { useStore } from 'vuex'
 export function hasPermissionByCode(code) {
   let permissions = sessionStorage.getItem('tapdata_permissions')
   permissions = JSON.parse(permissions)
@@ -35,19 +35,6 @@ export function permissionBtnDisable(code, id) {
   return falg
 }
 
-Vue.directive('feature', {
-  inserted(el, binding, vnode) {
-    const store = vnode.context.$store
-    const hasFeature = store.getters['feature/hasFeature']
-
-    if (!hasFeature(binding.value)) {
-      el.parentNode.removeChild(el)
-
-      vnode.componentInstance?.$destroy?.()
-    }
-  }
-})
-
 export function installDirectives(app) {
   app.directive('readonlybtn', {
     mounted(el, binding, vnode) {
@@ -59,6 +46,20 @@ export function installDirectives(app) {
       }
     },
   })
+
+  app.directive('feature', {
+    mounted(el, binding, vnode) {
+      const store = app.config.globalProperties.$store
+      const hasFeature = store.getters['feature/hasFeature']
+  
+      if (!hasFeature(binding.value)) {
+        el.parentNode.removeChild(el)
+  
+        vnode.component?.exposed?.$destroy?.()
+      }
+    }
+  })
+  
 
   app.config.globalProperties.$has = function (code) {
     return hasPermissionByCode(code)

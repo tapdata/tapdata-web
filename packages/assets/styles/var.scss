@@ -1,3 +1,5 @@
+@use "sass:map";
+
 // 变量
 // 会在每个style元素以及scss文件中注入，因此不允许写具体选择器样式
 $borderRadiusBtn: 4px;
@@ -84,13 +86,13 @@ $tag-icon-span-gap: (
 @forward 'element-plus/theme-chalk/src/common/var.scss' with (
   $colors: (
     'primary': (
-      'base': map-get($color, primary),
+      'base': map.get($color, primary),
     ),
     'warning': (
-      'base': map-get($color, warning),
+      'base': map.get($color, warning),
     ),
     'danger': (
-      'base': map-get($color, danger),
+      'base': map.get($color, danger),
     )
   ),
   $text-color: (
@@ -113,7 +115,7 @@ $tag-icon-span-gap: (
   ),
   $table: (
     'header-bg-color': #fafafa,
-    'header-text-color': map-get($fontColor, normal),
+    'header-text-color': map.get($fontColor, normal),
   ),
   $popover: (
     'border-radius': 8px,

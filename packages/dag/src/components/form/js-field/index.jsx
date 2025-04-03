@@ -1,4 +1,4 @@
-import { defineComponent, ref, onUnmounted } from '@vue/composition-api'
+import { defineComponent, ref, onUnmounted } from 'vue'
 import { useForm, useField } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
 
@@ -22,7 +22,7 @@ export const JsField = observer(
       }
     },
     setup(props, { emit, root, attrs, refs }) {
-      const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+      const isDaas =  import.meta.env.VUE_APP_PLATFORM === 'DAAS'
       const { id: taskId, syncType } = root.$store.state.dataflow.taskInfo
       const formRef = useForm()
       const fieldRef = useField()

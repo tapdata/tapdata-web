@@ -90,11 +90,11 @@ export default {
     height: 48px;
 
     &:hover {
-      color: map-get($color, primary);
+      color: map.get($color, primary);
     }
 
     &.active {
-      color: map-get($color, primary);
+      color: map.get($color, primary);
       &:before {
         content: '';
         display: block;
@@ -103,7 +103,7 @@ export default {
         left: 0;
         width: 3px;
         height: 100%;
-        background-color: map-get($color, primary);
+        background-color: map.get($color, primary);
       }
     }
   }}

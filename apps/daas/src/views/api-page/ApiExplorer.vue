@@ -1318,7 +1318,7 @@ export default {
       }
       .deploy_fail,
       .stop {
-        color: map-get($color, danger);
+        color: map.get($color, danger);
         background-color: #ffecec;
       }
       .btn-refresh {
@@ -1330,7 +1330,7 @@ export default {
         font-size: 16px;
         &:hover,
         &.is-plain:focus:hover {
-          border-color: map-get($color, primary);
+          border-color: map.get($color, primary);
           background-color: #f5f6f7;
         }
       }
@@ -1347,7 +1347,7 @@ export default {
       span {
         padding: 0 50px 0 10px;
         font-size: 12px;
-        color: map-get($fontColor, normal);
+        color: map.get($fontColor, normal);
       }
     }
     .timezone {

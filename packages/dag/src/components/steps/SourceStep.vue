@@ -208,7 +208,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed, nextTick, provide, inject, reactive } from '@vue/composition-api'
+import { defineComponent, ref, computed, nextTick, provide, inject, reactive } from 'vue'
 import { ConnectorForm, DatabaseIcon, verify, CONNECTION_STATUS_MAP } from '@tap/business'
 import { VEmpty } from '@tap/component'
 import { connectionsApi, databaseTypesApi } from '@tap/api'
@@ -574,7 +574,7 @@ export default defineComponent({
   }
 
   &.active {
-    $primary: map-get($color, primary);
+    $primary: map.get($color, primary);
     border-color: $primary !important;
     box-shadow: 0 2px 16px rgba(44, 101, 255, 0.2);
 

@@ -162,12 +162,12 @@ export default {
 .fb-radio-tip {
   i {
     font-size: 14px;
-    color: map-get($color, primary);
+    color: map.get($color, primary);
   }
   .fb-radio-tip__text {
     margin-left: 8px;
     font-size: 12px;
-    color: map-get($fontColor, light);
+    color: map.get($fontColor, light);
   }
 }
 </style>

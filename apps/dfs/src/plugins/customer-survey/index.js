@@ -1,4 +1,4 @@
-import { MessageBox } from 'element-ui'
+import { MessageBox } from 'element-plus'
 import i18n from '@tap/i18n'
 import './index.scss'
 import { tipManager } from '../storage'

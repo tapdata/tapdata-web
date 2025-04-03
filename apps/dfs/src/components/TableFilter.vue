@@ -73,11 +73,11 @@ export default {
 
 <style lang="scss">
 .table-filter__icon {
-  color: map-get($fontColor, normal);
+  color: map.get($fontColor, normal);
   font-size: 12px;
   cursor: pointer;
   &.is-active {
-    color: map-get($color, primary);
+    color: map.get($color, primary);
   }
 }
 .table-filter__select {

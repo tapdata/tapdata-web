@@ -185,12 +185,12 @@ $unreadColor: #ee5353;
     align-items: center;
     height: 54px;
     font-size: $fontBaseTitle;
-    color: map-get($color, primary);
+    color: map.get($color, primary);
     padding: 20px 20px 0 24px;
     .title {
       font-size: 14px;
       font-weight: bold;
-      color: map-get($fontColor, dark);
+      color: map.get($fontColor, dark);
       line-height: 34px;
     }
     .search {
@@ -210,9 +210,9 @@ $unreadColor: #ee5353;
         padding: 4px 100px 4px 20px;
         font-size: $fontBaseTitle;
         white-space: nowrap;
-        color: map-get($fontColor, light);
-        border: 1px solid map-get($borderColor, light);
-        border-left: 2px solid map-get($color, primary);
+        color: map.get($fontColor, light);
+        border: 1px solid map.get($borderColor, light);
+        border-left: 2px solid map.get($color, primary);
         box-sizing: border-box;
       }
     }
@@ -221,13 +221,13 @@ $unreadColor: #ee5353;
       .title {
         font-size: $fontBaseTitle;
         font-weight: bold;
-        color: map-get($fontColor, dark);
+        color: map.get($fontColor, dark);
         line-height: 32px;
         margin-bottom: 20px;
       }
       .notice,
       .email {
-        color: map-get($fontColor, light);
+        color: map.get($fontColor, light);
       }
       ul {
         // margin-left: 0;
@@ -238,11 +238,11 @@ $unreadColor: #ee5353;
         .label {
           display: inline-block;
           width: 30%;
-          color: map-get($fontColor, light);
+          color: map.get($fontColor, light);
           font-weight: 500;
         }
         .label {
-          color: map-get($fontColor, normal);
+          color: map.get($fontColor, normal);
         }
         .item-input {
           width: 200px;
@@ -250,7 +250,7 @@ $unreadColor: #ee5353;
 
         :deep(.el-checkbox) {
 	        .el-checkbox__label {
-		        color: map-get($fontColor, light);
+		        color: map.get($fontColor, light);
 	        }
         }
       }
@@ -266,7 +266,7 @@ $unreadColor: #ee5353;
     line-height: 60px;
     height: 60px;
     text-align: right;
-    border-top: 1px solid map-get($borderColor, light);
+    border-top: 1px solid map.get($borderColor, light);
   }}/*// .notification-main*/{/*//   display: flex;*//*//   flex-direction: column;*//*//   justify-content: space-between;*//*//   height: 100%;*//*//   .notification-left-sidebar {*/
 //     background: rgba(250, 250, 250, 1);
 //     border: 1px solid rgba(230, 230, 232, 1);

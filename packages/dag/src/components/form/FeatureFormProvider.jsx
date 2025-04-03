@@ -1,4 +1,4 @@
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent } from 'vue'
 import { FormProvider } from '@formily/vue'
 
 // 定义需要 feature 控制的配置路径及其对应的 feature code

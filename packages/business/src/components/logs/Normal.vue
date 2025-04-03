@@ -404,11 +404,11 @@ export default {
 
   .el-loading-spinner .el-loading-text {
     font-size: 12px;
-    color: map-get($fontColor, dark);
+    color: map.get($fontColor, dark);
   }
 
   :deep(.keyword) {
-    color: map-get($color, danger);
+    color: map.get($color, danger);
   }
 }
 

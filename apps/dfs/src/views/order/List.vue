@@ -927,7 +927,7 @@ export default {
 }
 
 .color-subscribe {
-  color: map-get($color, warning);
+  color: map.get($color, warning);
 }
 
 .sub-li-header {
@@ -943,12 +943,12 @@ export default {
 }
 
 :deep(.el-dropdown-menu__item.dropdown-item--disabled) {
-  color: map-get($color, disable);
+  color: map.get($color, disable);
   cursor: default;
 
   &:hover {
     background: unset;
-    color: map-get($color, disable);
+    color: map.get($color, disable);
   }
 }
 
@@ -991,14 +991,14 @@ export default {
 }
 
 .list-li {
-  border: 1px solid map-get($bgColor, hover);
+  border: 1px solid map.get($bgColor, hover);
 
   &.primary {
-    border-left: 8px solid map-get($color, primary);
+    border-left: 8px solid map.get($color, primary);
   }
 
   &.warning {
-    border-left: 8px solid map-get($color, warning);
+    border-left: 8px solid map.get($color, warning);
   }
 }
 
@@ -1027,7 +1027,7 @@ export default {
   &.active,
   &:hover {
     background-color: #e8f3ff;
-    color: map-get($color, primary);
+    color: map.get($color, primary);
   }
 }
 

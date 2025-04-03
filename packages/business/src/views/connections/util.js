@@ -54,8 +54,8 @@ export const getConnectionIcon = (pdkHash) => {
     const params = {
       pdkHash,
     }
-    if (process.env.VUE_APP_ACCESS_TOKEN) {
-      params.__token = process.env.VUE_APP_ACCESS_TOKEN
+    if ( import.meta.env.VUE_APP_ACCESS_TOKEN) {
+      params.__token =  import.meta.env.VUE_APP_ACCESS_TOKEN
     }
     const access_token = Cookie.get('access_token')
     if (access_token) {

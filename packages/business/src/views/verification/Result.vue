@@ -77,7 +77,7 @@
 .error-tips {
   background: #fdf6ec;
   border: 1px solid #f8e2c0;
-  color: map-get($color, warning);
+  color: map.get($color, warning);
   line-height: 20px;
   max-height: 160px;
   text-overflow: ellipsis;
@@ -153,8 +153,8 @@ export default {
             if (stats.length) {
               this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
 
-              if (process.env.VUE_APP_KEYWORD && this.errorMsg) {
-                this.errorMsg = this.errorMsg.replace(/tapdata\s?/gi, process.env.VUE_APP_KEYWORD)
+              if ( import.meta.env.VUE_APP_KEYWORD && this.errorMsg) {
+                this.errorMsg = this.errorMsg.replace(/tapdata\s?/gi,  import.meta.env.VUE_APP_KEYWORD)
               }
 
               this.taskId = stats[0].taskId
@@ -206,7 +206,7 @@ export default {
 .error-tips {
   background: #fdf6ec;
   border: 1px solid #f8e2c0;
-  color: map-get($color, warning);
+  color: map.get($color, warning);
   line-height: 20px;
   max-height: 160px;
   text-overflow: ellipsis;

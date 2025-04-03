@@ -439,16 +439,16 @@ export default {
 .nav-list {
   overflow: hidden auto;
   li {
-    background-color: map-get($bgColor, white);
+    background-color: map.get($bgColor, white);
     box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
-    border-bottom: 1px solid map-get($borderColor, light);
+    border-bottom: 1px solid map.get($borderColor, light);
     border-left: 2px solid transparent;
     &:hover,
     &.active {
-      background: map-get($bgColor, disactive);
+      background: map.get($bgColor, disactive);
       cursor: pointer;
-      color: map-get($color, primary);
-      border-left-color: map-get($color, primary);
+      color: map.get($color, primary);
+      border-left-color: map.get($color, primary);
     }
     .task-form-text-box {
       //width: 140px;
@@ -478,8 +478,8 @@ export default {
   font-size: 16px;
   &:hover,
   &.is-plain:focus:hover {
-    border-color: map-get($color, primary);
-    background-color: map-get($color, white);
+    border-color: map.get($color, primary);
+    background-color: map.get($color, white);
   }
 }
 .content__list {
@@ -493,9 +493,9 @@ export default {
   height: 22px;
   font-size: 14px;
   font-weight: 400;
-  color: map-get($color, primary);
+  color: map.get($color, primary);
   line-height: 22px;
-  background-color: map-get($bgColor, pageCount);
+  background-color: map.get($bgColor, pageCount);
 }
 .nav-filter__list {
   background-color: #e5e6eb;
@@ -504,28 +504,28 @@ export default {
       .el-input__inner {
         background-color: #e5e6eb;
         border-color: #e5e6eb;
-        color: map-get($fontColor, dark);
+        color: map.get($fontColor, dark);
 
         &:hover {
           background-color: #fff;
-          border-color: map-get($color, primary);
+          border-color: map.get($color, primary);
         }
       }
       .el-select__caret {
-        color: map-get($fontColor, dark);
+        color: map.get($fontColor, dark);
       }
     }
   }*/
 }
 .nav-filter__item {
   &.active {
-    background: map-get($bgColor, disactive);
+    background: map.get($bgColor, disactive);
   }
 }
 .update-list-select {
   &.error {
     :deep(.el-input__inner) {
-      border-color: map-get($color, danger);
+      border-color: map.get($color, danger);
     }
   }
 }

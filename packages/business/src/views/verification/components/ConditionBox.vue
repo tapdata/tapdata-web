@@ -2262,12 +2262,12 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
   border: 1px solid #e8e8e8;
 
   &.error {
-    border-color: map-get($color, danger);
+    border-color: map.get($color, danger);
   }
 }
 
 .joint-table-header {
-  background: map-get($bgColor, normal);
+  background: map.get($bgColor, normal);
   border-top-left-radius: inherit;
   border-top-right-radius: inherit;
 }
@@ -2283,12 +2283,12 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
   .joint-table-item {
     padding: 16px 24px;
     display: flex;
-    border-bottom: 1px solid map-get($borderColor, light);
+    border-bottom: 1px solid map.get($borderColor, light);
   }
 
   .joint-table-setting {
     flex: 1;
-    background-color: map-get($bgColor, white);
+    background-color: map.get($bgColor, white);
   }
 
   .setting-item {
@@ -2305,14 +2305,14 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
       width: 120px;
       line-height: 32px;
       text-align: left;
-      color: map-get($fontColor, light);
+      color: map.get($fontColor, light);
     }
 
     .item-icon {
       margin: 0 10px;
       width: 120px;
       line-height: 32px;
-      color: map-get($fontColor, light);
+      color: map.get($fontColor, light);
       text-align: center;
     }
 
@@ -2328,9 +2328,9 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
 
     .item-filter-body {
       padding: 16px;
-      background: map-get($fontColor, normal);
+      background: map.get($fontColor, normal);
       border-radius: 2px;
-      color: map-get($fontColor, slight);
+      color: map.get($fontColor, slight);
 
       .filter-example-label {
         margin-top: 8px;
@@ -2360,7 +2360,7 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
       max-height: 130px;
       overflow: auto;
       border-radius: 5px;
-      border-left: 5px solid map-get($color, primary);
+      border-left: 5px solid map.get($color, primary);
       background: #eff1f4;
       font-size: 12px;
       font-family:

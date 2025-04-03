@@ -188,7 +188,6 @@ import resize from '@tap/component/src/directives/resize'
 import BaseNode from '../BaseNode'
 import { debounce } from 'lodash'
 import { CancelToken, connectionsApi, databaseTypesApi } from '@tap/api'
-import { ElSelect as Select } from 'element-plus'
 import { OverflowTooltip } from '@tap/component'
 import { getScrollBarWidth } from 'element-plus/es/utils/dom/scroll'
 import NodeIcon from '../NodeIcon'
@@ -205,7 +204,6 @@ export default {
     OverflowTooltip,
     BaseNode,
     VIcon,
-    ConnectionTypeSelector,
     ConnectionType,
   },
   data() {
@@ -608,17 +606,17 @@ $hoverBg: #eef3ff;
       cursor: pointer;
 
       &:hover {
-        color: map-get($color, primary);
+        color: map.get($color, primary);
       }
 
       &.active {
-        color: map-get($color, primary);
+        color: map.get($color, primary);
 
         &:before {
           position: absolute;
           content: '';
           height: 2px;
-          background: map-get($color, primary);
+          background: map.get($color, primary);
           left: 12px;
           right: 12px;
           bottom: 0;
@@ -667,7 +665,7 @@ $hoverBg: #eef3ff;
   }
 
   :deep(.click-btn:hover) {
-    color: map-get($color, primary);
+    color: map.get($color, primary);
     background: $hoverBg;
   }
 

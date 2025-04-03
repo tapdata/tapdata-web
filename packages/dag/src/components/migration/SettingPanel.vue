@@ -225,9 +225,9 @@ export default observer({
               class: 'config-tabs',
               formTab: '{{formTab}}',
             },
-            'x-reactions': process.env.VUE_APP_HIDE_TASK_SCHEMA
+            'x-reactions':  import.meta.env.VUE_APP_HIDE_TASK_SCHEMA
               ? {
-                  target: process.env.VUE_APP_HIDE_TASK_SCHEMA,
+                  target:  import.meta.env.VUE_APP_HIDE_TASK_SCHEMA,
                   fulfill: {
                     state: {
                       display: 'none',
@@ -1110,7 +1110,7 @@ export default observer({
                 'x-component': 'FormTab.TabPane',
                 'x-component-props': {
                   label: i18n.t('packages_business_permissionse_settings_create_quanxianshezhi'),
-                  locked: process.env.VUE_APP_MODE === 'community',
+                  locked:  import.meta.env.VUE_APP_MODE === 'community',
                 },
                 properties: {
                   permissions: {

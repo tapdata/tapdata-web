@@ -783,7 +783,7 @@ export default {
     font-size: 16px;
     font-weight: 600;
     & > span {
-      color: map-get($color, primary);
+      color: map.get($color, primary);
       cursor: pointer;
     }
   }
@@ -795,7 +795,7 @@ export default {
       height: auto !important;
       flex-direction: row;
       padding: 20px;
-      background-color: map-get($bgColor, white);
+      background-color: map.get($bgColor, white);
       box-sizing: content-box;
       border-radius: 4px;
       overflow: hidden;
@@ -832,7 +832,7 @@ export default {
             margin-right: 12px;
             padding: 3px 10px;
             font-size: 12px;
-            color: map-get($fontColor, light);
+            color: map.get($fontColor, light);
             border-radius: 3px;
             background-color: #eff1f4;
           }
@@ -844,7 +844,7 @@ export default {
       flex-direction: row;
       padding: 0;
       overflow: hidden;
-      background-color: map-get($bgColor, white);
+      background-color: map.get($bgColor, white);
       border-radius: 4px;
       box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
       .metadata-aside {
@@ -855,9 +855,9 @@ export default {
         height: 100%;
         // padding: 20px;
         border-radius: 3px;
-        background-color: map-get($bgColor, white);
+        background-color: map.get($bgColor, white);
         box-sizing: border-box;
-        border-right: 1px solid map-get($borderColor, light);
+        border-right: 1px solid map.get($borderColor, light);
         .metadata-aside-box {
           flex: 1;
           padding: 20px;
@@ -874,12 +874,12 @@ export default {
               overflow: hidden;
               span {
                 display: inline-block;
-                color: map-get($fontColor, dark);
+                color: map.get($fontColor, dark);
               }
               .label {
                 display: inline-block;
                 width: 95px;
-                color: map-get($fontColor, light);
+                color: map.get($fontColor, light);
               }
               .label + span {
                 display: inline-block;
@@ -902,7 +902,7 @@ export default {
                 .delete {
                   display: inline-block;
                   cursor: pointer;
-                  // color: map-get($color, primary);
+                  // color: map.get($color, primary);
                 }
               }
             }
@@ -919,8 +919,8 @@ export default {
         padding: 23px 0;
         text-align: right;
         font-size: 12px;
-        background-color: map-get($bgColor, white);
-        border-right: 1px solid map-get($borderColor, light);
+        background-color: map.get($bgColor, white);
+        border-right: 1px solid map.get($borderColor, light);
         box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
         .iconfont {
           cursor: pointer;
@@ -933,7 +933,7 @@ export default {
         width: calc(100% - 311px);
         // margin-left: 10px;
         // box-shadow: 0 7px 15px -10px rgba(0, 0, 0, 0.1);
-        background-color: map-get($bgColor, white);
+        background-color: map.get($bgColor, white);
         .tap-nav {
           height: 60px;
           .mune {
@@ -948,7 +948,7 @@ export default {
               float: left;
               height: 28px;
               padding: 0 15px;
-              color: map-get($fontColor, light);
+              color: map.get($fontColor, light);
               text-align: center;
               border-right: 1px solid #dedee4;
               cursor: pointer;
@@ -959,7 +959,7 @@ export default {
             li.active {
               height: 29px;
               border-radius: 3px 3px 0px 0px;
-              background-color: map-get($bgColor, white);
+              background-color: map.get($bgColor, white);
               border-right: 0;
               border-left: 0;
               // box-shadow: 1px -1px 3px 0px rgba(0, 0, 0, 0.15);
@@ -1001,7 +1001,7 @@ export default {
                 flex-direction: column;
                 height: 100%;
                 padding: 20px;
-                background-color: map-get($bgColor, white);
+                background-color: map.get($bgColor, white);
                 // box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.15);
                 box-sizing: border-box;
                 .table-page-topbar {
@@ -1028,7 +1028,7 @@ export default {
                       }
                       .btn {
                         padding: 7px;
-                        background: map-get($bgColor, main);
+                        background: map.get($bgColor, main);
                         i.iconfont {
                           font-size: 12px;
                         }
@@ -1048,7 +1048,7 @@ export default {
                       display: inline-block;
                       padding: 3px 10px;
                       margin: 3px 5px;
-                      color: map-get($fontColor, light);
+                      color: map.get($fontColor, light);
                       border-radius: 10px;
                       background-color: #f7edee;
                     }
@@ -1083,7 +1083,7 @@ export default {
             th {
               padding: 0;
               line-height: 40px !important;
-              // background-color: map-get($bgColor, normal);
+              // background-color: map.get($bgColor, normal);
             }
           }
         }
@@ -1153,7 +1153,7 @@ export default {
 //         // float: right;
 //         cursor: pointer;
 //         &:hover {
-//           color: map-get($color, primary);
+//           color: map.get($color, primary);
 //         }
 //       }
 //       .el-button {
@@ -1161,7 +1161,7 @@ export default {
 //         font-size: 12px;
 //         color: #333;
 //         &:hover {
-//           color: map-get($color, primary);
+//           color: map.get($color, primary);
 //         }
 //       }
 //     }
@@ -1212,7 +1212,7 @@ export default {
 //       padding-top: 5px;
 //       box-sizing: border-box;
 //       border-top: 1px solid #ddd;
-//       background-color: map-get($bgColor, white);
+//       background-color: map.get($bgColor, white);
 //       td,
 //       .is-scrolling-left ~ .el-table__fixed {
 //         border-right: 0;
@@ -1233,7 +1233,7 @@ export default {
 //       }
 //     }
 //     .el-button.cancel {
-//       color: map-get($fontColor, light);
+//       color: map.get($fontColor, light);
 //       border: 0;
 //       background-color: #eee;
 //     }

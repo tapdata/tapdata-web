@@ -223,9 +223,9 @@ export default {
 <style lang="scss">
 .metadata-search-wrap {
   .el-input-group__append {
-    background-color: map-get($color, primary);
-    border-color: map-get($color, primary);
-    color: map-get($fontColor, white);
+    background-color: map.get($color, primary);
+    border-color: map.get($color, primary);
+    color: map.get($fontColor, white);
     .el-button {
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
@@ -233,14 +233,14 @@ export default {
   }
   .no-search-box {
     .el-input-group__prepend {
-      background-color: map-get($bgColor, white);
-      color: map-get($color, primary);
+      background-color: map.get($bgColor, white);
+      color: map.get($color, primary);
     }
   }
   .search-box {
     .el-input-group__prepend {
-      background-color: map-get($bgColor, white);
-      color: map-get($fontColor, light);
+      background-color: map.get($bgColor, white);
+      color: map.get($fontColor, light);
     }
   }
 }
@@ -248,7 +248,7 @@ export default {
 
 <style lang="scss" scoped>
 .metadata-change-background {
-  // background: map-get($bgColor, normal);
+  // background: map.get($bgColor, normal);
   display: flex;
   height: 100%;
   overflow: hidden;
@@ -264,7 +264,7 @@ export default {
     width: 605px;
     :deep(.el-input-group__prepend) {
       .el-input__inner {
-        color: map-get($color, primary);
+        color: map.get($color, primary);
       }
     }
   }
@@ -288,7 +288,7 @@ export default {
       .desc {
         margin-top: 10px;
         font-size: 12px;
-        color: map-get($fontColor, slight);
+        color: map.get($fontColor, slight);
       }
     }
   }
@@ -311,12 +311,12 @@ export default {
     }
     .search-header {
       padding: 15px 0;
-      background: map-get($bgColor, white);
+      background: map.get($bgColor, white);
       overflow: hidden;
       border-bottom: 1px solid #dedee4;
       .search-title {
         font-size: 14px;
-        color: map-get($fontColor, dark);
+        color: map.get($fontColor, dark);
         font-weight: bold;
         margin-right: 10px;
       }
@@ -325,7 +325,7 @@ export default {
       padding-left: 105px;
       margin-top: 20px;
       font-size: 13px;
-      color: map-get($fontColor, light);
+      color: map.get($fontColor, light);
     }
     .search-result {
       // margin: 10px;
@@ -340,7 +340,7 @@ export default {
       border: 1px solid rgba(255, 255, 255, 100);
     }
     .desc {
-      color: map-get($fontColor, light);
+      color: map.get($fontColor, light);
       margin-top: 5px;
       margin-bottom: 10px;
     }
@@ -352,7 +352,7 @@ export default {
           display: flex;
         }
         &:hover {
-          background: map-get($bgColor, normal);
+          background: map.get($bgColor, normal);
         }
       }
       .table-li {
@@ -379,11 +379,11 @@ export default {
     .info-box {
       margin-left: 10px;
       .title {
-        color: map-get($color, primary);
+        color: map.get($color, primary);
       }
     }
     .more {
-      color: map-get($fontColor, light);
+      color: map.get($fontColor, light);
       font-size: 12px;
       cursor: pointer;
       text-align: center;

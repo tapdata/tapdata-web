@@ -880,7 +880,7 @@ $hoverBg: #eef3ff;
     }
 
     .el-collapse-item__header {
-      color: map-get($fontColor, normal) !important;
+      color: map.get($fontColor, normal) !important;
     }
   }
 
@@ -892,12 +892,12 @@ $hoverBg: #eef3ff;
       border-radius: 4px;
 
       &.refresh {
-        color: map-get($iconFillColor, normal);
+        color: map.get($iconFillColor, normal);
       }
 
       &:hover,
       &.active {
-        color: map-get($color, primary);
+        color: map.get($color, primary);
         background: $hoverBg;
       }
 

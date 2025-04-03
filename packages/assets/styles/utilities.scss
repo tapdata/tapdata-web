@@ -16,15 +16,15 @@
 
 .link-primary {
   // color: #0d6efd;
-  color: map-get($color, primary);
+  color: map.get($color, primary);
 }
 
 .link-primary:hover {
-  color: map-get($color, lprimary);
+  color: map.get($color, lprimary);
 }
 
 .link-primary:focus {
-  color: map-get($color, dprimary);
+  color: map.get($color, dprimary);
 }
 
 .link-secondary {
@@ -562,7 +562,7 @@
 }
 
 .border-form {
-  border-color: map-get($borderColor, form) !important;
+  border-color: map.get($borderColor, form) !important;
 }
 
 .border-1 {
@@ -2636,7 +2636,7 @@
 /* rtl:end:remove */
 .text-primary {
   // color: #0d6efd !important;
-  color: map-get($color, primary) !important;
+  color: map.get($color, primary) !important;
 }
 
 .text-secondary {
@@ -2668,7 +2668,7 @@
 }
 
 .text-white {
-  color: map-get($fontColor, white) !important;
+  color: map.get($fontColor, white) !important;
 }
 
 .text-body {
@@ -2696,7 +2696,7 @@
 }
 
 .bg-primary {
-  background-color: map-get($color, primary) !important;
+  background-color: map.get($color, primary) !important;
 }
 
 .bg-secondary {
@@ -12156,65 +12156,65 @@
 
 //TODO 应该通过语法生成 color-* 的颜色原子类
 .color-primary {
-  color: map-get($color, primary) !important;
+  color: map.get($color, primary) !important;
 }
 
 .color-danger {
-  color: map-get($color, danger) !important;
+  color: map.get($color, danger) !important;
 }
 
 .color-success {
-  color: map-get($color, success) !important;
+  color: map.get($color, success) !important;
 }
 
 .color-warning {
-  color: map-get($color, warning) !important;
+  color: map.get($color, warning) !important;
 }
 
 .color-lprimary {
-  color: map-get($color, lprimary) !important;
+  color: map.get($color, lprimary) !important;
 }
 
 .color-lsuccess {
-  color: map-get($color, lsuccess) !important;
+  color: map.get($color, lsuccess) !important;
 }
 
 .color-info {
-  color: map-get($color, info) !important;
+  color: map.get($color, info) !important;
 }
 
 .color-linfo {
-  color: map-get($color, linfo) !important;
+  color: map.get($color, linfo) !important;
 }
 
 .color-disable {
-  color: map-get($color, disable) !important;
+  color: map.get($color, disable) !important;
 }
 
 // 字体颜色
 .font-color-dark {
-  color: map-get($fontColor, dark);
+  color: map.get($fontColor, dark);
 }
 
 .font-color-normal {
-  color: map-get($fontColor, normal);
+  color: map.get($fontColor, normal);
 }
 
 .font-color-light {
-  color: map-get($fontColor, light);
+  color: map.get($fontColor, light);
 }
 
 .font-color-slight {
-  color: map-get($fontColor, slight);
+  color: map.get($fontColor, slight);
 }
 
 .font-color-sslight {
-  color: map-get($fontColor, sslight);
+  color: map.get($fontColor, sslight);
 }
 
 // 背景颜色
 .bg-color-primary {
-  background-color: map-get($color, primary) !important;
+  background-color: map.get($color, primary) !important;
 }
 
 .bg-color-primary-light-9 {
@@ -12222,31 +12222,31 @@
 }
 
 .bg-color-danger {
-  background-color: map-get($color, danger) !important;
+  background-color: map.get($color, danger) !important;
 }
 
 .bg-color-success {
-  background-color: map-get($color, success) !important;
+  background-color: map.get($color, success) !important;
 }
 
 .bg-color-warning {
-  background-color: map-get($color, warning) !important;
+  background-color: map.get($color, warning) !important;
 }
 
 .bg-color-disable {
-  background-color: map-get($color, disable) !important;
+  background-color: map.get($color, disable) !important;
 }
 
 .bg-color-main {
-  background-color: map-get($bgColor, main) !important;
+  background-color: map.get($bgColor, main) !important;
 }
 
 .bg-color-white {
-  background-color: map-get($bgColor, white) !important;
+  background-color: map.get($bgColor, white) !important;
 }
 
 .bg-color-normal {
-  background-color: map-get($bgColor, normal) !important;
+  background-color: map.get($bgColor, normal) !important;
 }
 
 /*
@@ -12447,7 +12447,7 @@
 
 // icon
 .icon-color-normal {
-  color: map-get($iconFillColor, normal) !important;
+  color: map.get($iconFillColor, normal) !important;
 }
 
 // TODO: 将来使用Tailwind CSS 或者 Windi CSS 替换
@@ -12499,7 +12499,7 @@
   line-height: 24px;
   font-weight: 500;
   font-size: 16px;
-  color: map-get($fontColor, dark);
+  color: map.get($fontColor, dark);
   padding-left: 12px;
   --bar-width: 3px;
   $bar-width: 3px;
@@ -12513,7 +12513,7 @@
     top: 50%;
     transform: translateY(-50%);
     position: absolute;
-    background-color: map-get($color, primary);
+    background-color: map.get($color, primary);
     //background-color: #bcbfc3;
   }
 }

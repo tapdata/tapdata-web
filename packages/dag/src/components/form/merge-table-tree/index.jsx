@@ -1,5 +1,5 @@
 import i18n from '@tap/i18n'
-import { defineComponent, ref, onMounted, nextTick, reactive, set, del, computed } from 'vue'
+import { defineComponent, ref, onMounted, nextTick } from 'vue'
 import { observer } from '@formily/reactive-vue'
 import { observe } from '@formily/reactive'
 import { FormItem, h as createElement, useFieldSchema, useForm, RecursionField } from '@tap/form'
@@ -180,7 +180,7 @@ export const MergeTableTree = observer(
         const updateNode = nodes => {
           for (let node of nodes) {
             if (node.id === selfId) {
-              set(node, 'hasWarning', !hasArrayKeys)
+              node.hasWarning = !hasArrayKeys
               return true
             }
             if (node.children?.length) {

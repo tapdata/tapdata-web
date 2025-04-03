@@ -795,7 +795,7 @@ export default {
       left: 0;
       top: 2px;
       bottom: 2px;
-      background-color: map-get($color, primary);
+      background-color: map.get($color, primary);
       border-radius: 2px;
     }
   }
@@ -806,7 +806,7 @@ export default {
     }
 
     &.active {
-      $primary: map-get($color, primary);
+      $primary: map.get($color, primary);
       border-color: $primary !important;
       box-shadow: 0 2px 16px rgba(44, 101, 255, 0.2);
 

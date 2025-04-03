@@ -452,7 +452,7 @@ export default {
       padding-left: 10px;
       font-size: 12px;
       font-style: normal;
-      color: map-get($color, primary);
+      color: map.get($color, primary);
       font-weight: normal;
       cursor: pointer;
     }
@@ -477,8 +477,8 @@ export default {
         padding: 10px 50px;
         font-size: 12px;
         cursor: pointer;
-        color: map-get($iconFillColor, normal);
-        background: map-get($bgColor, main);
+        color: map.get($iconFillColor, normal);
+        background: map.get($bgColor, main);
         border-radius: 4px;
         &:hover {
           background-color: #e5e8ee;
@@ -486,14 +486,14 @@ export default {
         }
       }
       .active {
-        border: 1px solid map-get($color, primary);
-        background-color: map-get($color, primary);
+        border: 1px solid map.get($color, primary);
+        background-color: map.get($color, primary);
         color: #fff;
       }
     }
     .line {
       margin: 20px 0 0 15px;
-      border-left: 3px solid map-get($color, primary);
+      border-left: 3px solid map.get($color, primary);
       p {
         padding-top: 5px;
       }
@@ -509,8 +509,8 @@ export default {
     padding: 5px 20px;
     font-size: 12px;
     cursor: pointer;
-    color: map-get($iconFillColor, normal);
-    background: map-get($bgColor, main);
+    color: map.get($iconFillColor, normal);
+    background: map.get($bgColor, main);
     border-radius: 4px;
     &:hover {
       background-color: #e5e8ee;
@@ -518,8 +518,8 @@ export default {
     }
   }
   .active {
-    border: 1px solid map-get($color, primary);
-    background-color: map-get($color, primary);
+    border: 1px solid map.get($color, primary);
+    background-color: map.get($color, primary);
     color: #fff;
   }
 }

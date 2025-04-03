@@ -84,8 +84,8 @@ const actions = {
   async getFeatures({ commit }) {
     if (
       window.getSettingByKey('checkLicense') === 'false' ||
-      process.env.NODE_ENV === 'development' ||
-      process.env.VUE_APP_MODE === 'community'
+       import.meta.env.NODE_ENV === 'development' ||
+       import.meta.env.VUE_APP_MODE === 'community'
     ) {
       commit('setFeatures', {
         licenseType: 'OP',

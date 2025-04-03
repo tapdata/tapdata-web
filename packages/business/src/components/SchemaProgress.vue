@@ -61,7 +61,7 @@ export default {
       let stack = this.data.loadFieldErrMsg
 
       if (import.meta.env.VUE_APP_KEYWORD) {
-        stack = stack.replace(/tapdata\s?/gi, process.env.VUE_APP_KEYWORD)
+        stack = stack.replace(/tapdata\s?/gi,  import.meta.env.VUE_APP_KEYWORD)
       }
 
       this.$alert(

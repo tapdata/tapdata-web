@@ -81,13 +81,13 @@ export default {
   padding: 16px;
 }
 .transfer-ul {
-  color: map-get($fontColor, sslight);
+  color: map.get($fontColor, sslight);
   li {
     line-height: 30px;
   }
 }
 .secondary {
-  color: map-get($color, secondary);
+  color: map.get($color, secondary);
 }
 </style>
 

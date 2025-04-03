@@ -100,6 +100,6 @@ export default {
   }
 }
 .copied-icon {
-  color: map-get($color, primary);
+  color: map.get($color, primary);
 }
 </style>

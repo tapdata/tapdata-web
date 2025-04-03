@@ -364,10 +364,10 @@ export default {
     }
   },
   data() {
-    const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+    const isDaas =  import.meta.env.VUE_APP_PLATFORM === 'DAAS'
     return {
       isDaas,
-      hideDownload: process.env.VUE_APP_HIDE_ANALYSE_DOWNLOAD,
+      hideDownload:  import.meta.env.VUE_APP_HIDE_ANALYSE_DOWNLOAD,
       activeNodeId: this.nodeId,
       keyword: '',
       checkList: [],
@@ -475,7 +475,7 @@ export default {
       },
       fullscreen: false,
       showTooltip: false,
-      hideSeeAlso: process.env.VUE_APP_PAGE_TITLE === 'IKAS' || process.env.VUE_APP_HIDE_LOG_SEE_ALSO,
+      hideSeeAlso:  import.meta.env.VUE_APP_PAGE_TITLE === 'IKAS' ||  import.meta.env.VUE_APP_HIDE_LOG_SEE_ALSO,
       downloadAnalysis: {
         visible: false,
         progress: 0,
@@ -1289,7 +1289,7 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
 
 .icon-btn {
   &:hover {
-    background-color: map-get($bgColor, hover);
+    background-color: map.get($bgColor, hover);
   }
 }
 

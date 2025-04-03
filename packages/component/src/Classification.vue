@@ -595,10 +595,10 @@ export default {
   user-select: none;
   box-sizing: border-box;
   border-top: none;
-  background: map-get($bgColor, white);
+  background: map.get($bgColor, white);
   .btn-expand {
     // padding: 2px 3px;
-    // color: map-get($fontColor, light);
+    // color: map.get($fontColor, light);
     transform: rotate(0);
     box-sizing: border-box;
     // background: #eff1f4;
@@ -611,14 +611,14 @@ export default {
   }
   .toggle {
     margin-top: 18px;
-    // color: map-get($color, lprimary);
+    // color: map.get($color, lprimary);
     z-index: 2;
   }
   &.expand {
     height: 100%;
     //width: 100%;
     padding: 20px 0;
-    // border-right: 1px solid map-get($borderColor, light);
+    // border-right: 1px solid map.get($borderColor, light);
     width: 214px;
     .btn-expand {
       position: absolute;
@@ -639,9 +639,9 @@ export default {
         flex-direction: row;
         justify-content: center;
         align-items: center;
-        color: map-get($fontColor, light);
+        color: map.get($fontColor, light);
         font-size: 16px;
-        // background-color: map-get($bgColor, white);
+        // background-color: map.get($bgColor, white);
         // border: 1px solid #dedee4;
         height: 66%;
         // padding: 0 4px;
@@ -652,7 +652,7 @@ export default {
         border-radius: 3px;
         cursor: pointer;
         &:hover {
-          color: map-get($color, primary);
+          color: map.get($color, primary);
         }
       }
     }
@@ -661,9 +661,9 @@ export default {
       right: 54px;
       .icon-fangdajing {
         font-size: 16px;
-        color: map-get($fontColor, light);
+        color: map.get($fontColor, light);
         &:hover {
-          color: map-get($color, primary);
+          color: map.get($color, primary);
         }
       }
     }
@@ -681,7 +681,7 @@ export default {
       align-items: center;
       justify-content: space-between;
       padding: 0 8px 0 46px;
-      color: map-get($fontColor, light);
+      color: map.get($fontColor, light);
       // background-color: #eff1f4;
     }
   }
@@ -704,8 +704,8 @@ export default {
     .icon-folder {
       margin-right: 5px;
       font-size: 12px;
-      color: map-get($color, primary);
-      // color: map-get($color, lprimary);
+      color: map.get($color, primary);
+      // color: map.get($color, lprimary);
     }
     .table-label {
       flex: 1;
@@ -726,7 +726,7 @@ export default {
   .create {
     padding: 5px 10px;
     font-size: $fontBaseTitle;
-    // color: map-get($color, primary);
+    // color: map.get($color, primary);
     cursor: pointer;
   }
 }

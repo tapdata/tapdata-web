@@ -24,7 +24,7 @@ if (resolvedUserId) {
 
 const { SERVE_ENV = 'mock' } = process.env
 const proxy = {
-  target: process.env.SERVER_URI || origin || serveUrlMap[SERVE_ENV],
+  target:  import.meta.env.SERVER_URI || origin || serveUrlMap[SERVE_ENV],
   changeOrigin: true
 }
 
@@ -89,9 +89,9 @@ let localTmProxy = {
 
 module.exports = {
   pages,
-  lintOnSave: SERVE_ENV !== 'dev' && process.env.NODE_ENV !== 'production', // 打包时关闭lint输出
+  lintOnSave: SERVE_ENV !== 'dev' &&  import.meta.env.NODE_ENV !== 'production', // 打包时关闭lint输出
   publicPath:
-    process.env.NODE_ENV === 'production'
+     import.meta.env.NODE_ENV === 'production'
       ? !ENV || ENV === 'prod'
         ? 'https://static.cloud.tapdata.net/'
         : './' // 替换为你的CDN URL
@@ -129,7 +129,7 @@ module.exports = {
   configureWebpack: config => {
     config.resolve.extensions = ['.js', '.jsx', '.vue', '.json', '.ts', '.tsx']
 
-    if (process.env.NODE_ENV === 'production') {
+    if ( import.meta.env.NODE_ENV === 'production') {
       // gzip
       config.plugins.push(
         new CompressionWebpackPlugin({
@@ -286,8 +286,8 @@ module.exports = {
   }
 }
 
-if (process.env.NODE_ENV === 'development') {
-  process.env.VUE_APP_ACCESS_TOKEN = getToken(userId)
+if ( import.meta.env.NODE_ENV === 'development') {
+   import.meta.env.VUE_APP_ACCESS_TOKEN = getToken(userId)
 
   const printDivider = (length = 40, char = '─', color = 'gray') => {
     log(chalk[color](char.repeat(length)))
@@ -299,7 +299,7 @@ if (process.env.NODE_ENV === 'development') {
   printDivider()
   log(
     `${chalk.bgBlue.hex('#595959')(` User Token `.padEnd(14))} ${chalk.white.bold(
-      `${process.env.VUE_APP_ACCESS_TOKEN}`
+      `${ import.meta.env.VUE_APP_ACCESS_TOKEN}`
     )}`
   )
   printDivider()

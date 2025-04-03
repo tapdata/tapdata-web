@@ -292,7 +292,7 @@ export default {
     hideReload: Boolean,
     alwaysShowReload: Boolean,
     reloadTime: [String, Number],
-    filterType: String,,
+    filterType: String,
     syncPartitionTableEnable: Boolean,
     hasPartition: Boolean,
     nodeId: String,
@@ -690,7 +690,7 @@ export default {
   //height: 100%;
   display: flex;
   flex-direction: column;
-  border: 1px solid map-get($borderColor, light);
+  border: 1px solid map.get($borderColor, light);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -700,7 +700,7 @@ export default {
   align-items: center;
   background: #f7f8fa;
   height: 40px;
-  color: map-get($fontColor, normal);
+  color: map.get($fontColor, normal);
   font-size: 13px;
   font-weight: 500;
 }
@@ -738,7 +738,7 @@ export default {
   display: flex;
   align-items: center;
   &:hover {
-    background-color: map-get($bgColor, disable);
+    background-color: map.get($bgColor, disable);
   }
   > :deep(.el-checkbox__label) {
     overflow: hidden;
@@ -765,22 +765,22 @@ export default {
     line-height: 28px;
     border-radius: 2px;
     font-size: 14px;
-    background: map-get($bgColor, main);
-    color: map-get($fontColor, normal);
+    background: map.get($bgColor, main);
+    color: map.get($fontColor, normal);
     text-align: center;
     cursor: pointer;
     &:hover {
-      background: map-get($color, primary);
-      color: map-get($fontColor, white);
+      background: map.get($color, primary);
+      color: map.get($fontColor, white);
     }
     &.btn-transfer--disabled {
-      background: map-get($bgColor, main);
-      color: map-get($fontColor, normal);
+      background: map.get($bgColor, main);
+      color: map.get($fontColor, normal);
       cursor: not-allowed;
     }
     &.btn-transfer--primary {
-      background: map-get($color, primary);
-      color: map-get($fontColor, white);
+      background: map.get($color, primary);
+      color: map.get($fontColor, white);
     }
   }
 }
@@ -801,12 +801,12 @@ export default {
     line-height: 20px;
     //height: 20px;
     font-size: 12px;
-    color: map-get($fontColor, normal);
+    color: map.get($fontColor, normal);
     word-break: break-word;
   }
   .selector-clipboard__view--empty {
     padding: 5px 11px;
-    color: map-get($fontColor, slight);
+    color: map.get($fontColor, slight);
     font-size: 12px;
     font-weight: normal;
     line-height: 20px;

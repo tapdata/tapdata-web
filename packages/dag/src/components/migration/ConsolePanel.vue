@@ -311,13 +311,13 @@ export default {
       }
 
       .log-ERROR {
-        color: map-get($color, danger);
+        color: map.get($color, danger);
       }
       .log-WARN {
-        color: map-get($color, warning);
+        color: map.get($color, warning);
       }
       .log-INFO {
-        color: map-get($fontColor, dark);
+        color: map.get($fontColor, dark);
       }
     }
   }
@@ -332,7 +332,7 @@ export default {
       stroke-dasharray: 90, 150;
       stroke-dashoffset: 0;
       stroke-width: 2;
-      stroke: map-get($color, primary);
+      stroke: map.get($color, primary);
       stroke-linecap: round;
     }
   }

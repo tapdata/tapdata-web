@@ -774,7 +774,7 @@ export default {
 
       this.formatData(formData || {})
 
-      // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
+      // 若为新建时，则默认值为 '默认查询(defaultApi)' 的值
       this.form.pathAccessMethod = this.data?.pathAccessMethod || 'customize'
       this.getDatabaseTypes()
       let { connectionId, tableName } = this.form
@@ -831,7 +831,7 @@ export default {
         pathAccessMethod,
         listtags,
       } = formData
-      // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
+      // 若为新建时，则默认值为 '默认查询(defaultApi)' 的值
 
       const appData = listtags?.[0] || {}
       const appValue = appData.id || '' // 不改变appValue 的原始值，防止首次创建触发所属应用的必填校验
@@ -1071,7 +1071,7 @@ export default {
                 in: this.databaseTypes,
               },
           connection_type:
-            process.env.VUE_APP_MODE !== 'msa'
+             import.meta.env.VUE_APP_MODE !== 'msa'
               ? {
                   in: ['source_and_target', 'target'],
                 }
@@ -1400,7 +1400,7 @@ export default {
 }
 
 .el-icon-remove {
-  color: map-get($iconFillColor, normal);
+  color: map.get($iconFillColor, normal);
 }
 
 .line-height {
@@ -1437,10 +1437,8 @@ export default {
     word-break: break-word;
   }
 
-  ::v-deep {
-    .el-form-item {
-      margin-bottom: 0;
-    }
+  :deep(.el-form-item) {
+    margin-bottom: 0;
   }
 }
 
@@ -1454,7 +1452,7 @@ export default {
   line-height: 22px;
   font-weight: 500;
   font-size: 14px;
-  color: map-get($fontColor, dark);
+  color: map.get($fontColor, dark);
   user-select: none;
 
   position: relative;
@@ -1470,7 +1468,7 @@ export default {
     top: 50%;
     transform: translateY(-50%);
     position: absolute;
-    background-color: map-get($color, primary);
+    background-color: map.get($color, primary);
     //background-color: #bcbfc3;
   }
 }
@@ -1491,7 +1489,7 @@ export default {
   line-height: 28px;
   text-align: center;
   border-radius: 2px;
-  color: map-get($fontColor, white);
+  color: map.get($fontColor, white);
 
   &.method--POST {
     background: #478c6c;
@@ -1507,8 +1505,8 @@ export default {
 }
 
 .data-server-debug__url {
-  border: 1px solid map-get($borderColor, form);
-  background: map-get($bgColor, form);
+  border: 1px solid map.get($borderColor, form);
+  background: map.get($bgColor, form);
   border-radius: 4px;
 }
 

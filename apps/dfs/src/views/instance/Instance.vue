@@ -1924,28 +1924,28 @@ export default {
   }
 
   .instance-table__empty {
-    color: map-get($fontColor, light);
+    color: map.get($fontColor, light);
   }
 
   .upgrade-text {
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
-    color: map-get($color, dark);
+    color: map.get($color, dark);
   }
 
   .upgrade-version {
     font-weight: 500;
     font-size: 14px;
     line-height: 20px;
-    color: map-get($color, dark);
+    color: map.get($color, dark);
   }
 
   .upgrade-desc {
     font-weight: 400;
     font-size: 14px;
     line-height: 17px;
-    color: map-get($color, light);
+    color: map.get($color, light);
   }
 
   .imgBox {
@@ -2008,12 +2008,12 @@ export default {
 }
 
 :deep(.el-dropdown-menu__item.dropdown-item--disabled) {
-  color: map-get($color, disable);
+  color: map.get($color, disable);
   cursor: default;
 
   &:hover {
     background: unset;
-    color: map-get($color, disable);
+    color: map.get($color, disable);
   }
 }
 

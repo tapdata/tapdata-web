@@ -193,13 +193,13 @@ export default {
       position: absolute;
       width: 160px;
       height: 36px;
-      background-color: map-get($color, primary);
+      background-color: map.get($color, primary);
     }
   }
 
   .current-view {
     position: absolute;
-    border: 1px solid map-get($color, primary);
+    border: 1px solid map.get($color, primary);
     cursor: move;
   }
 }

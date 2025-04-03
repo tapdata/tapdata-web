@@ -1,18 +1,22 @@
 import { observer } from '@formily/reactive-vue'
 import { RecursionField, SchemaExpressionScopeSymbol } from '@formily/vue'
-import { defineComponent, ref, inject } from '@vue/composition-api'
+import { defineComponent, ref, inject } from 'vue'
 import i18n from '@tap/i18n'
 import { taskApi } from '@tap/api'
 import { useForm, FormDialog, FormLayout, useFormLayout, createSchemaField, components } from '@tap/form'
 import './style.scss'
 import { createForm, onFieldValueChange, onFormValuesChange } from '@formily/core'
-import * as _components from '../index'
+// import * as _components from '../index'
+import { TableRename, FieldRenameProcessor, TableSelector, TableListCard } from '../index'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 
 const { SchemaField } = createSchemaField({
   components: {
     ...components,
-    ..._components
+    TableRename,
+    FieldRenameProcessor,
+    TableSelector,
+    TableListCard
   }
 })
 

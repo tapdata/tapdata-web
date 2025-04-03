@@ -247,7 +247,7 @@ export default {
     overflow: hidden;
   }
   .data-verify-history__icon {
-    color: map-get($fontColor, white);
+    color: map.get($fontColor, white);
   }
   .panel-slider {
     width: 200px;
@@ -263,13 +263,13 @@ export default {
     .tip {
       height: 30px;
       font-size: 12px;
-      background: map-get($bgColor, main);
-      border: 1px solid map-get($borderColor, light);
+      background: map.get($bgColor, main);
+      border: 1px solid map.get($borderColor, light);
       line-height: 30px;
     }
     .title {
       font-weight: bold;
-      color: map-get($color, primary);
+      color: map.get($color, primary);
       margin: 10px 0;
     }
 
@@ -279,16 +279,16 @@ export default {
         display: inline-block;
       }
       .error {
-        color: map-get($color, danger);
+        color: map.get($color, danger);
       }
       .success {
-        color: map-get($color, success);
+        color: map.get($color, success);
       }
     }
     .pagination {
       white-space: nowrap;
       padding: 2px 5px;
-      color: map-get($fontColor, dark);
+      color: map.get($fontColor, dark);
       font-weight: 700;
     }
     .back-btn-icon-box {
@@ -299,7 +299,7 @@ export default {
       line-height: 1;
       white-space: nowrap;
       cursor: pointer;
-      background: map-get($color, primary);
+      background: map.get($color, primary);
       border: 0;
       -webkit-appearance: none;
       text-align: center;

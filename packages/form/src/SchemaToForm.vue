@@ -117,7 +117,7 @@ export default {
     font-size: $fontBaseTitle;
     .formily-element-plus-form-item-label {
       label {
-        color: map-get($fontColor, light);
+        color: map.get($fontColor, light);
         text-transform: capitalize;
       }
     }

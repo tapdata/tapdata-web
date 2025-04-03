@@ -708,7 +708,7 @@ export default {
 }
 .container-item {
   &.border-item {
-    border-bottom: 1px solid map-get($borderColor, light);
+    border-bottom: 1px solid map.get($borderColor, light);
   }
   &.button-line {
     margin-bottom: -1px;
@@ -719,15 +719,15 @@ export default {
 }
 .box-line {
   padding: 8px 0;
-  border-top: 1px solid map-get($borderColor, light);
+  border-top: 1px solid map.get($borderColor, light);
 }
 .box-line__label {
-  color: map-get($fontColor, light);
+  color: map.get($fontColor, light);
 }
 .box-line__value {
   max-width: 280px;
   margin-top: 8px;
-  color: map-get($fontColor, dark);
+  color: map.get($fontColor, dark);
 }
 .img-box {
   width: 24px;

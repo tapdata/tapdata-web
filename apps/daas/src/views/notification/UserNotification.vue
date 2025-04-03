@@ -237,11 +237,11 @@ export default {
       justify-content: space-between;
       align-items: center;
       line-height: 50px;
-      border-bottom: 1px solid map-get($borderColor, light);
+      border-bottom: 1px solid map.get($borderColor, light);
       font-size: $fontBaseTitle;
       color: #202d40;
       .item-time {
-        color: map-get($fontColor, light);
+        color: map.get($fontColor, light);
         font-weight: 400;
       }
     }

@@ -1460,7 +1460,7 @@ $sidebarBg: #fff;
   box-shadow: 0px 0px 30px rgb(0 0 0 / 6%);
 
   &:hover .v-icon {
-    color: map-get($color, primary);
+    color: map.get($color, primary);
   }
 }
 </style>

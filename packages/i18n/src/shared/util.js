@@ -8,7 +8,7 @@ export const langKeyMap = {
 }
 
 export const langMenu =
-  process.env.VUE_APP_MODE === 'community'
+   import.meta.env.VUE_APP_MODE === 'community'
     ? {
         'zh-CN': '中文 (简)',
         en: 'English'

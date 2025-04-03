@@ -13,7 +13,7 @@
 
 <script>
 import { FieldSelect } from '@tap/form'
-import { defineComponent, computed } from '@vue/composition-api'
+import { defineComponent, computed } from 'vue'
 
 export default defineComponent({
   components: {

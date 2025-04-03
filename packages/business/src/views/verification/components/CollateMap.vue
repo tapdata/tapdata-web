@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { defineComponent, computed, ref, del, set } from '@vue/composition-api'
+import { defineComponent, computed } from 'vue'
 import { FieldSelect } from '@tap/form'
 import { IconButton } from '@tap/component'
 
@@ -45,7 +45,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const setCharset = value => {
       selectedFields.value.forEach(key => {
-        set(props.value, key, value)
+        props.value[key] = value
       })
     }
 
@@ -55,7 +55,7 @@ export default defineComponent({
       },
       set(value) {
         const result = value.reduce((acc, key) => {
-          set(acc, key, charset.value)
+          acc[key] = charset.value
           return acc
         }, {})
 

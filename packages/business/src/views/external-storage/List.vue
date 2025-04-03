@@ -639,7 +639,7 @@ export default {
   }
 
   &.icon-status--danger {
-    color: map-get($color, danger);
+    color: map.get($color, danger);
     background: #ffecec;
   }
 }
@@ -649,7 +649,7 @@ export default {
 }
 
 .shared-cache-details--header {
-  border-bottom: 1px solid map-get($borderColor, light);
+  border-bottom: 1px solid map.get($borderColor, light);
 
   .icon {
     font-size: 18px;
@@ -663,7 +663,7 @@ export default {
     flex: 1;
     padding: 8px 0;
     line-height: 17px;
-    border-bottom: 1px solid map-get($borderColor, light);
+    border-bottom: 1px solid map.get($borderColor, light);
 
     .label {
       font-size: $fontBaseTitle;
@@ -672,7 +672,7 @@ export default {
 
     .value {
       font-size: $fontBaseTitle;
-      color: map-get($fontColor, dark);
+      color: map.get($fontColor, dark);
     }
   }
 }

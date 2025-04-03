@@ -232,12 +232,12 @@ export default {
       margin-bottom: 30px;
       font-size: 32px;
       font-weight: 600;
-      color: map-get($fontColor, dark);
+      color: map.get($fontColor, dark);
     }
     .tip {
       padding-bottom: 10px;
       font-size: 14px;
-      color: map-get($fontColor, slight);
+      color: map.get($fontColor, slight);
     }
     .error-tips {
       margin-bottom: 22px;
@@ -290,10 +290,10 @@ export default {
       padding-top: 20px;
       font-size: 12px;
       text-align: right;
-      color: map-get($fontColor, light);
+      color: map.get($fontColor, light);
       user-select: none;
       span {
-        color: map-get($color, primary);
+        color: map.get($color, primary);
         cursor: pointer;
       }
     }

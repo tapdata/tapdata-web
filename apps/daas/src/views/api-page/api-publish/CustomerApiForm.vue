@@ -232,7 +232,7 @@ export default {
         padding: 3px 0;
         .cell {
           padding-left: 14px;
-          // color: map-get($fontColor, light);
+          // color: map.get($fontColor, light);
           font-weight: 500;
         }
       }
@@ -244,8 +244,8 @@ export default {
     overflow-y: auto;
     .el-form {
       .el-input__inner {
-        border: 1px solid map-get($borderColor, form);
-        background-color: map-get($bgColor, form);
+        border: 1px solid map.get($borderColor, form);
+        background-color: map.get($bgColor, form);
       }
     }
   }

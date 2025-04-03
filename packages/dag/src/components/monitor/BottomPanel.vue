@@ -180,7 +180,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-$color: map-get($color, primary);
+$color: map.get($color, primary);
 $tabsHeaderWidth: 180px;
 $headerHeight: 40px;
 

@@ -209,7 +209,7 @@ export default {
 .filter-icon {
   padding-right: 10px;
   font-size: $fontBaseTitle;
-  color: map-get($color, primary);
+  color: map.get($color, primary);
 }
 .SelectClassify-tree {
   max-height: 500px;

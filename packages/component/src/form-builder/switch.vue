@@ -49,15 +49,15 @@ export default {
 <style lang="scss">
 .fb-switch-tip {
   font-size: 12px;
-  color: map-get($fontColor, slight);
+  color: map.get($fontColor, slight);
   i {
     font-size: 14px;
-    color: map-get($color, primary);
+    color: map.get($color, primary);
   }
   .fb-switch-tip__text {
     margin-left: 8px;
     font-size: 12px;
-    color: map-get($fontColor, slight);
+    color: map.get($fontColor, slight);
   }
 }
 </style>

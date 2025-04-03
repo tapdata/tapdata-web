@@ -24,7 +24,7 @@ export const buried = (code, page, attrs, sid) => {
     queryStr = queryStr + '&where=' + encodeURIComponent(JSON.stringify(where))
   }
   // eslint-disable-next-line
-  process.env.NODE_ENV !== 'production' &&
+   import.meta.env.NODE_ENV !== 'production' &&
     console.log(i18n.global.t('dfs_plugins_buried_chufamaidianc', { val1: code }), attrs)
 
   window.axios.get('api/tcm/user/behavior' + queryStr)

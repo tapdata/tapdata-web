@@ -77,7 +77,7 @@ $headerBg: #fff;
       width: $headerH;
       height: $headerH;
       text-align: center;
-      background-color: map-get($color, primary);
+      background-color: map.get($color, primary);
       cursor: pointer;
       color: #fff;
     }
@@ -118,7 +118,7 @@ $headerBg: #fff;
 
     .#{$formNamespace}-form-item-label {
       label {
-        color: map-get($fontColor, light);
+        color: map.get($fontColor, light);
       }
     }
 

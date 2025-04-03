@@ -59,7 +59,7 @@ export default {
   z-index: 100;
   width: 360px;
   height: 540px;
-  color: map-get($fontColor, dark);
+  color: map.get($fontColor, dark);
   font-size: 14px;
   header {
     position: relative;
@@ -85,7 +85,7 @@ export default {
         font-weight: bold;
       }
       .content .btn {
-        color: map-get($color, primary);
+        color: map.get($color, primary);
         cursor: pointer;
       }
       .code {

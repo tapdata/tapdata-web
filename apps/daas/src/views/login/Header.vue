@@ -57,7 +57,7 @@ header {
       span {
         display: inline-block;
         padding: 0 10px;
-        border-left: 1px solid map-get($fontColor, dark);
+        border-left: 1px solid map.get($fontColor, dark);
         box-sizing: border-box;
         height: 18px;
         line-height: 18px;
@@ -66,11 +66,11 @@ header {
           border: none;
         }
         &:hover {
-          color: map-get($fontColor, dark);
+          color: map.get($fontColor, dark);
         }
       }
       .bold {
-        color: map-get($fontColor, dark);
+        color: map.get($fontColor, dark);
         font-weight: 500;
       }
     }

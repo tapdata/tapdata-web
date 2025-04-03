@@ -154,7 +154,7 @@ export default {
     },
   },
   data() {
-    const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+    const isDaas =  import.meta.env.VUE_APP_PLATFORM === 'DAAS'
     return {
       isDaas,
       // title: '',
@@ -415,10 +415,10 @@ export default {
   .el-upload-list {
     .el-upload-list__item {
       line-height: 28px;
-      background-color: map-get($bgColor, disable);
+      background-color: map.get($bgColor, disable);
 
       &:hover {
-        background-color: map-get($bgColor, disable);
+        background-color: map.get($bgColor, disable);
       }
 
       &.is-success {
@@ -435,11 +435,11 @@ export default {
 
     .el-upload-list__item-name {
       &:hover {
-        color: map-get($color, primary);
+        color: map.get($color, primary);
       }
 
       i {
-        color: map-get($color, primary);
+        color: map.get($color, primary);
       }
     }
 
@@ -451,7 +451,7 @@ export default {
       top: 7px;
 
       &:hover {
-        color: map-get($color, primary);
+        color: map.get($color, primary);
       }
     }
   }

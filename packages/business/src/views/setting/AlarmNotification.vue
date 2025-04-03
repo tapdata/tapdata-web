@@ -323,8 +323,8 @@ $unreadColor: #ee5353;
   }
   .list-item {
     position: relative;
-    background-color: map-get($bgColor, white);
-    border-bottom: 1px solid map-get($bgColor, disable);
+    background-color: map.get($bgColor, white);
+    border-bottom: 1px solid map.get($bgColor, disable);
     margin-right: 30px;
     .list-item-content {
       position: relative;
@@ -343,15 +343,15 @@ $unreadColor: #ee5353;
       border-radius: 50%;
     }
     .list-item-desc {
-      color: map-get($fontColor, light);
+      color: map.get($fontColor, light);
     }
     .list-item-time {
       float: right;
-      color: map-get($fontColor, light);
+      color: map.get($fontColor, light);
       font-size: $fontBaseTitle;
     }
     &:hover {
-      background: map-get($bgColor, normal);
+      background: map.get($bgColor, normal);
     }
   }
 }
@@ -388,11 +388,11 @@ $unreadColor: #ee5353;
     height: 40px;
     line-height: 40px;
     font-size: $fontBaseTitle;
-    // color: map-get($fontColor, light);
+    // color: map.get($fontColor, light);
     font-weight: 400;
     &.is-active {
       font-weight: 500;
-      // color: map-get($color, primary);
+      // color: map.get($color, primary);
     }
   }
 }

@@ -238,7 +238,7 @@ export default {
   },
   data() {
     const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
-    const isCommunity = process.env.VUE_APP_MODE === 'community'
+    const isCommunity =  import.meta.env.VUE_APP_MODE === 'community'
     return {
       isDaas,
       isCommunity,
@@ -347,7 +347,7 @@ export default {
       },
       currentScene: 'recommend',
       lockedTypes:
-        process.env.VUE_APP_MODE === 'community'
+         import.meta.env.VUE_APP_MODE === 'community'
           ? [
               {
                 type: 'Aliyun RDS MySQL',
@@ -1026,7 +1026,7 @@ export default {
     }
 
     &.active {
-      color: map-get($color, primary);
+      color: map.get($color, primary);
       background-color: #f0f4ff;
     }
   }

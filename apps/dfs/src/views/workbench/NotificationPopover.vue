@@ -227,11 +227,11 @@ export default {
     }
     .notification-item {
       padding: 5px 20px 4px 20px;
-      border-bottom: 1px solid map-get($borderColor, light);
+      border-bottom: 1px solid map.get($borderColor, light);
       font-size: $fontBaseTitle;
-      color: map-get($fontColor, light);
+      color: map.get($fontColor, light);
       .primary {
-        color: map-get($color, primary);
+        color: map.get($color, primary);
       }
       .unread-1zPaAXtSu {
         top: 22px;
@@ -249,7 +249,7 @@ export default {
       }
       .item-time {
         margin-top: 5px;
-        color: map-get($fontColor, light);
+        color: map.get($fontColor, light);
         font-size: $fontBaseTitle;
       }
     }

@@ -216,7 +216,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$color: map-get($fontColor, slight);
+$color: map.get($fontColor, slight);
 .simple-scene {
   .create {
     .create-col {
@@ -258,7 +258,7 @@ $color: map-get($fontColor, slight);
 <style lang="scss">
 .simple-scene {
   .el-dialog__title {
-    color: map-get($fontColor, dark);
+    color: map.get($fontColor, dark);
   }
   .el-dialog__body {
     min-height: 240px;

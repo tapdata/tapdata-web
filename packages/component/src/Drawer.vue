@@ -65,7 +65,7 @@ export default {
   bottom: 0px;
   z-index: 2001;
   height: 100%;
-  background-color: map-get($bgColor, white);
+  background-color: map.get($bgColor, white);
   box-shadow:
     0 8px 10px -5px rgb(0 0 0 / 20%),
     0 16px 24px 2px rgb(0 0 0 / 14%),

@@ -367,8 +367,8 @@ export default {
     padding: 10px 16px;
     overflow: hidden;
     .el-tabs__header {
-      color: map-get($fontColor, light);
-      border-bottom: 1px solid map-get($borderColor, light);
+      color: map.get($fontColor, light);
+      border-bottom: 1px solid map.get($borderColor, light);
       .el-tabs__nav-wrap {
         .el-tabs__nav-scroll {
           width: 280px;
@@ -379,9 +379,9 @@ export default {
         font-weight: 400;
 
         &.is-active {
-          // color: map-get($color, primary);
+          // color: map.get($color, primary);
           font-weight: 500;
-          border-color: map-get($color, primary);
+          border-color: map.get($color, primary);
         }
       }
       .el-tabs__active-bar {
@@ -427,7 +427,7 @@ export default {
     .more-text {
       display: inline-block;
       cursor: pointer;
-      color: map-get($fontColor, light);
+      color: map.get($fontColor, light);
     }
   }
   .tab-item {
@@ -446,11 +446,11 @@ export default {
       box-sizing: border-box;
       .notification-item {
         padding: 5px 20px 4px 20px;
-        border-bottom: 1px solid map-get($borderColor, light);
+        border-bottom: 1px solid map.get($borderColor, light);
         font-size: $fontBaseTitle;
-        color: map-get($fontColor, light);
+        color: map.get($fontColor, light);
         .primary {
-          color: map-get($color, primary);
+          color: map.get($color, primary);
         }
         .unread-1zPaAXtSu {
           top: 22px;
@@ -468,7 +468,7 @@ export default {
         }
         .item-time {
           margin-top: 5px;
-          color: map-get($fontColor, light);
+          color: map.get($fontColor, light);
           font-size: $fontBaseTitle;
         }
       }

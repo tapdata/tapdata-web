@@ -17,27 +17,27 @@ $--color-transition-base: color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1) !defau
 $--color-white: #ffffff !default;
 $--color-black: #000000 !default;
 
-$--color-primary: map-get($color, primary) !default; // #2c65ff
-$--color-success: map-get($color, success) !default; // #2c65ff
-$--color-warning: map-get($color, warning) !default; // #FF7D00
-$--color-danger: map-get($color, danger) !default; // #D44D4D
-$--color-info: map-get($color, info) !default; // #75849b
+$--color-primary: map.get($color, primary) !default; // #2c65ff
+$--color-success: map.get($color, success) !default; // #2c65ff
+$--color-warning: map.get($color, warning) !default; // #FF7D00
+$--color-danger: map.get($color, danger) !default; // #D44D4D
+$--color-info: map.get($color, info) !default; // #75849b
 
-$--color-text-primary: map-get($fontColor, normal) !default; //#333c4a
-$--color-text-regular: map-get($fontColor, light) !default; //#535f72
+$--color-text-primary: map.get($fontColor, normal) !default; //#333c4a
+$--color-text-regular: map.get($fontColor, light) !default; //#535f72
 $--color-text-secondary: #909399 !default;
-$--color-text-placeholder: map-get($fontColor, slight) !default; // #c9cdd4
+$--color-text-placeholder: map.get($fontColor, slight) !default; // #c9cdd4
 
 /* Background
 -------------------------- */
-$--background-color-base: map-get($bgColor, main) !default; // #f2f3f5
-$--background-color-regular: map-get($bgColor, normal) !default; // #fafafa
+$--background-color-base: map.get($bgColor, main) !default; // #f2f3f5
+$--background-color-regular: map.get($bgColor, normal) !default; // #fafafa
 /* Border
 -------------------------- */
 $--border-width-base: 1px !default;
 $--border-style-base: solid !default;
-$--border-color-base: map-get($borderColor, form) !default; //rgba(221, 221, 221, 0.4) #ddd
-$--border-color-light: map-get($borderColor, light) !default; //#f2f2f2
+$--border-color-base: map.get($borderColor, form) !default; //rgba(221, 221, 221, 0.4) #ddd
+$--border-color-light: map.get($borderColor, light) !default; //#f2f2f2
 $--border-color-lighter: #ebeef5 !default;
 $--border-color-extra-light: #f2f6fc !default;
 $--border-color-hover: $--color-text-placeholder !default;
@@ -45,7 +45,7 @@ $--border-base: $--border-width-base $--border-style-base $--border-color-base !
 $--border-radius-base: 6px !default;
 $--border-radius-small: 6px !default;
 $--border-radius-circle: 100% !default;
-$--border-color-background: map-get($bgColor, main) !default; // #f2f3f5
+$--border-color-background: map.get($bgColor, main) !default; // #f2f3f5
 
 $--color-primary-light-1: mix($--color-white, $--color-primary, 10%) !default; /* 53a8ff */
 $--color-primary-light-2: mix($--color-white, $--color-primary, 20%) !default; /* 66b1ff */
@@ -285,7 +285,7 @@ $--msgbox-info-color: $--color-info !default;
 $--msgbox-warning-color: $--color-warning !default;
 $--msgbox-danger-color: $--color-danger !default;
 
-$--messagebox-content-color: map-get($fontColor, normal) !default;
+$--messagebox-content-color: map.get($fontColor, normal) !default;
 
 /* Message
 -------------------------- */
@@ -443,7 +443,7 @@ $--button-default-fill: $--color-white !default;
 $--button-disabled-color: $--color-text-placeholder !default;
 $--button-disabled-fill: $--color-white !default;
 $--button-disabled-border: $--border-color-lighter !default;
-$--button-disabled-font-color: map-get($fontColor, disable) !default;
+$--button-disabled-font-color: map.get($fontColor, disable) !default;
 
 $--button-primary-border: $--color-primary !default;
 $--button-primary-color: $--color-white !default;
@@ -742,17 +742,17 @@ $--transfer-filter-height: 32px !default;
   height: 8px;
 }
 .el-radio-button__inner {
-  background: map-get($bgColor, white);
+  background: map.get($bgColor, white);
 }
 
 .el-radio.is-bordered:not(.is-disabled) {
   &:hover {
     .el-radio__input .el-radio__inner {
-      border-color: map-get($color, primary);
+      border-color: map.get($color, primary);
     }
 
     .el-radio__label {
-      color: map-get($color, primary);
+      color: map.get($color, primary);
     }
   }
 }
@@ -761,7 +761,7 @@ $--transfer-filter-height: 32px !default;
 --------------------------*/
 .el-link {
   &.is-disabled {
-    color: map-get($color, disable) !important;
+    color: map.get($color, disable) !important;
     cursor: default !important;
   }
 
@@ -820,13 +820,13 @@ $--transfer-filter-height: 32px !default;
 .el-breadcrumb__item:last-child .el-breadcrumb__inner a,
 .el-breadcrumb__item:last-child .el-breadcrumb__inner a:hover,
 .el-breadcrumb__item:last-child .el-breadcrumb__inner:hover {
-  color: map-get($fontColor, normal) !important;
+  color: map.get($fontColor, normal) !important;
 }
 
 /* Message
 --------------------------*/
 .el-message .el-message__content {
-  color: map-get($fontColor, dark);
+  color: map.get($fontColor, dark);
 }
 .el-message-box__message {
   overflow: hidden;
@@ -836,7 +836,7 @@ $--transfer-filter-height: 32px !default;
 /* Upload
 --------------------------*/
 .el-upload-list__item-name {
-  background-color: map-get($bgColor, disable);
+  background-color: map.get($bgColor, disable);
 }
 
 /* Tabs
@@ -845,7 +845,7 @@ $--transfer-filter-height: 32px !default;
   user-select: none;
   font-weight: 400;
   padding: 0 16px;
-  color: map-get($fontColor, light);
+  color: map.get($fontColor, light);
   line-height: 36px;
   height: 36px;
 }
@@ -899,13 +899,13 @@ $--transfer-filter-height: 32px !default;
   .el-dialog__title {
     font-size: 16px;
     font-weight: 500;
-    color: map-get($fontColor, dark);
+    color: map.get($fontColor, dark);
   }
   .el-dialog__headerbtn {
     font-size: 24px;
   }
   .el-dialog__close {
-    color: map-get($color, primary);
+    color: map.get($color, primary);
   }
   .el-dialog__body {
     word-break: break-word;
@@ -915,10 +915,10 @@ $--transfer-filter-height: 32px !default;
 /* Icon
 --------------------------*/
 .el-icon-success {
-  color: map-get($color, success);
+  color: map.get($color, success);
 }
 .el-icon-error {
-  color: map-get($color, danger);
+  color: map.get($color, danger);
 }
 
 .el-menu {
@@ -927,7 +927,7 @@ $--transfer-filter-height: 32px !default;
   position: relative;
   margin: 0;
   padding-left: 0;
-  background-color: map-get($bgColor, disable);
+  background-color: map.get($bgColor, disable);
 
   .el-menu-item * {
     vertical-align: middle;
@@ -1044,7 +1044,7 @@ $--transfer-filter-height: 32px !default;
     position: absolute;
     right: -12px;
     top: -12px;
-    background-color: map-get($color, danger);
+    background-color: map.get($color, danger);
     color: #fff;
     width: 24px;
     height: 24px;

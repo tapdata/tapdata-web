@@ -81,7 +81,7 @@ export default {
     height: 400px;
     max-height: 600px;
     font-size: 14px;
-    color: map-get($fontColor, dark);
+    color: map.get($fontColor, dark);
   }
 }
 </style>

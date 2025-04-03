@@ -123,10 +123,10 @@ $unreadColor: #ee5353;
     display: flex;
     flex-direction: row;
     height: 100%;
-    background-color: map-get($bgColor, white);
+    background-color: map.get($bgColor, white);
     border-radius: 4px;
     .left-panel {
-      border-right: 1px solid map-get($borderColor, light);
+      border-right: 1px solid map.get($borderColor, light);
       width: 200px;
       ul.menu li {
         display: flex;
@@ -135,18 +135,18 @@ $unreadColor: #ee5353;
         align-items: center;
         font-size: $fontBaseTitle;
         font-weight: 400;
-        color: map-get($fontColor, normal);
+        color: map.get($fontColor, normal);
         cursor: pointer;
         &.active,
         &:hover {
           background: rgba(44, 101, 255, 0.05);
           .iconfont {
-            color: map-get($color, primary);
+            color: map.get($color, primary);
           }
         }
         .iconfont {
           margin-right: 5px;
-          color: map-get($fontColor, normal);
+          color: map.get($fontColor, normal);
         }
         .content {
           flex: 1;
@@ -158,7 +158,7 @@ $unreadColor: #ee5353;
           height: 17px;
           border-radius: 10px;
           line-height: 17px;
-          color: map-get($fontColor, white);
+          color: map.get($fontColor, white);
           font-weight: 500;
           font-size: 12px;
           white-space: nowrap;

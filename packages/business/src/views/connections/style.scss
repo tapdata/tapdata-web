@@ -14,7 +14,7 @@
       stroke-dasharray: 90, 150;
       stroke-dashoffset: 0;
       stroke-width: 2;
-      stroke: map-get($color, primary);
+      stroke: map.get($color, primary);
       stroke-linecap: round;
     }
   }

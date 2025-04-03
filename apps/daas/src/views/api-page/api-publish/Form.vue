@@ -788,7 +788,7 @@ export default {
           height: 54px;
           padding: 0 20px;
           line-height: 54px;
-          background-color: map-get($bgColor, normal);
+          background-color: map.get($bgColor, normal);
           border-bottom: 1px solid #edeeee;
           span {
             display: inline-block;
@@ -807,7 +807,7 @@ export default {
             padding: 10px 15px 10px;
             border-bottom: 1px solid #edeeee;
             border-top: 0;
-            color: map-get($fontColor, dark);
+            color: map.get($fontColor, dark);
             font-size: 10px;
             cursor: pointer;
             &:last-child {
@@ -840,7 +840,7 @@ export default {
               width: 62px;
               text-align: center;
               font-size: 11px;
-              color: map-get($fontColor, white);
+              color: map.get($fontColor, white);
               border-radius: 2px;
             }
             .module-path-item-text {

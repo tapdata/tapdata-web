@@ -548,7 +548,7 @@ $unreadColor: #ee5353;
   .title {
     padding-bottom: 20px;
     font-size: 14px;
-    color: map-get($fontColor, dark);
+    color: map.get($fontColor, dark);
     font-weight: bold;
   }
   .content {
@@ -562,10 +562,8 @@ $unreadColor: #ee5353;
       .text {
         width: 400px;
       }
-      ::v-deep {
-        .el-button.el-button--text {
-          padding: 0;
-        }
+      :deep(.el-button.el-button--text) {
+        padding: 0;
       }
       i {
         cursor: pointer;
@@ -589,41 +587,37 @@ $unreadColor: #ee5353;
 
 .history-collapse {
   $bg: #f5f7fa;
-  ::v-deep {
-    .el-collapse-item {
-      &__wrap {
-        border-bottom-left-radius: 8px;
-        border-bottom-right-radius: 8px;
-      }
-      &__content {
-        padding-bottom: 0;
-      }
-      &__header {
-        border-radius: 8px;
-        &:hover {
-          background-color: $bg;
-        }
-      }
-
-      &.is-active {
+  :deep(.el-collapse-item) {
+    &__wrap {
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+    &__content {
+      padding-bottom: 0;
+    }
+    &__header {
+      border-radius: 8px;
+      &:hover {
         background-color: $bg;
-        .el-collapse-item__header,
-        .el-collapse-item__wrap {
-          background-color: $bg;
-        }
       }
     }
 
-    .hljs {
-      background: #fff !important;
+    &.is-active {
+      background-color: $bg;
+      .el-collapse-item__header,
+      .el-collapse-item__wrap {
+        background-color: $bg;
+      }
     }
+  }
+
+  :deep(.hljs) {
+    background: #fff !important;
   }
 }
 .el-table {
-  ::v-deep {
-    .text-nowrap .cell {
-      white-space: nowrap;
-    }
+  :deep(.text-nowrap .cell) {
+    white-space: nowrap;
   }
 }
 </style>

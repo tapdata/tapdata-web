@@ -935,8 +935,8 @@ $nodeH: 32px;
     .icon-folder {
       margin-right: 5px;
       font-size: 12px;
-      color: map-get($color, primary);
-      // color: map-get($color, lprimary);
+      color: map.get($color, primary);
+      // color: map.get($color, lprimary);
     }
 
     .table-label {
@@ -945,11 +945,11 @@ $nodeH: 32px;
       overflow: hidden;
       text-overflow: ellipsis;
       font-weight: 400;
-      color: map-get($fontColor, normal);
+      color: map.get($fontColor, normal);
     }
 
     .count-label {
-      color: map-get($fontColor, sslight);
+      color: map.get($fontColor, sslight);
     }
 
     .btn-menu {
@@ -1022,7 +1022,7 @@ $nodeH: 32px;
     position: absolute;
     right: -12px;
     top: -12px;
-    background-color: map-get($color, danger);
+    background-color: map.get($color, danger);
     color: #fff;
     width: 24px;
     height: 24px;

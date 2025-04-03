@@ -216,8 +216,8 @@ export default {
                 if (stats.length) {
                   this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
 
-                  if (process.env.VUE_APP_KEYWORD && this.errorMsg) {
-                    this.errorMsg = this.errorMsg.replace(/tapdata\s?/gi, process.env.VUE_APP_KEYWORD)
+                  if ( import.meta.env.VUE_APP_KEYWORD && this.errorMsg) {
+                    this.errorMsg = this.errorMsg.replace(/tapdata\s?/gi,  import.meta.env.VUE_APP_KEYWORD)
                   }
 
                   this.checkErrorMsg()

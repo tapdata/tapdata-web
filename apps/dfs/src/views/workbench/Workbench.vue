@@ -1185,8 +1185,8 @@ export default {
 .create-list__index {
   width: 22px;
   height: 22px;
-  color: map-get($color, primary);
-  border: 1px solid map-get($color, primary);
+  color: map.get($color, primary);
+  border: 1px solid map.get($color, primary);
   border-radius: 50%;
 }
 
@@ -1201,7 +1201,7 @@ export default {
 }
 
 .agent-list__list {
-  background: map-get($color, white);
+  background: map.get($color, white);
 }
 
 .agent-list__item {
@@ -1210,7 +1210,7 @@ export default {
   margin-right: 16px;
   padding: 16px;
   background-color: #f5f7fa;
-  color: map-get($fontColor, dark);
+  color: map.get($fontColor, dark);
 }
 
 .agent-list__item:last-child {
@@ -1219,14 +1219,14 @@ export default {
 
 .agent-list__name {
   .vicon {
-    color: map-get($fontColor, dark);
+    color: map.get($fontColor, dark);
   }
 }
 
 .agent-list__detail {
   width: 232px;
   background-color: #fafafb;
-  color: map-get($fontColor, light);
+  color: map.get($fontColor, light);
 
   .agent-list__status {
     white-space: nowrap;
@@ -1262,12 +1262,12 @@ export default {
 
 .dialog-upgrade__text {
   font-size: 12px;
-  color: map-get($fontColor, light);
+  color: map.get($fontColor, light);
 }
 
 .dialog-upgrade__text__header {
   font-size: 14px;
-  color: map-get($fontColor, normal);
+  color: map.get($fontColor, normal);
 }
 
 .dialog-upgrade {
@@ -1315,7 +1315,7 @@ export default {
 .position-text {
   top: 0;
   left: 0;
-  color: map-get($color, white);
+  color: map.get($color, white);
   width: 100%;
   line-height: 14px;
 }
@@ -1329,7 +1329,7 @@ export default {
 .position-sub-text {
   top: 33px;
   left: 52px;
-  color: map-get($color, white);
+  color: map.get($color, white);
 }
 
 .quick-start-button {

@@ -336,8 +336,8 @@ export default {
   }
   .basics-info {
     padding: 16px 0;
-    border-bottom: 1px solid map-get($borderColor, normal);
-    border-top: 1px solid map-get($borderColor, normal);
+    border-bottom: 1px solid map.get($borderColor, normal);
+    border-top: 1px solid map.get($borderColor, normal);
 
     .el-col {
       display: flex;
@@ -354,7 +354,7 @@ export default {
     color: #1d2129;
   }
   .detailed-info {
-    border-bottom: 1px solid map-get($borderColor, normal);
+    border-bottom: 1px solid map.get($borderColor, normal);
     padding: 16px 0;
     .label {
       width: 150px;

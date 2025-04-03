@@ -244,11 +244,11 @@ export default {
     },
   },
   data() {
-    const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+    const isDaas =  import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 
     return {
       isDaas,
-      hideSeeAlso: process.env.VUE_APP_PAGE_TITLE === 'IKAS' || process.env.VUE_APP_HIDE_LOG_SEE_ALSO,
+      hideSeeAlso:  import.meta.env.VUE_APP_PAGE_TITLE === 'IKAS' ||  import.meta.env.VUE_APP_HIDE_LOG_SEE_ALSO,
       progress: 0,
       testData: {
         testLogs: [],
@@ -509,11 +509,11 @@ export default {
     },
 
     replaceKeyword(str) {
-      return str ? str.replace(/tapdata\s?/gi, process.env.VUE_APP_KEYWORD) : ''
+      return str ? str.replace(/tapdata\s?/gi,  import.meta.env.VUE_APP_KEYWORD) : ''
     },
 
     async showError(row) {
-      if (process.env.VUE_APP_KEYWORD && row.item_exception) {
+      if ( import.meta.env.VUE_APP_KEYWORD && row.item_exception) {
         row.item_exception.stack = this.replaceKeyword(row.item_exception.stack)
         row.item_exception.solution = this.replaceKeyword(row.item_exception.solution)
         row.item_exception.message = this.replaceKeyword(row.item_exception.message)
@@ -645,7 +645,7 @@ Stack Trace: ${this.errorDialog.stack ? `\n${this.errorDialog.stack}` : ''}`
     }
 
     thead {
-      color: map-get($fontColor, dark);
+      color: map.get($fontColor, dark);
     }
 
     .information {

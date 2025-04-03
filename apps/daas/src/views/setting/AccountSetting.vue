@@ -411,7 +411,7 @@ $unreadColor: #ee5353;
   .title {
     padding-bottom: 20px;
     font-size: 14px;
-    color: map-get($fontColor, dark);
+    color: map.get($fontColor, dark);
     font-weight: bold;
   }
   .content {

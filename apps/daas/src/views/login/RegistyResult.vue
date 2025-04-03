@@ -126,7 +126,7 @@ export default {
 
 <style lang="scss" scoped>
 .page-registry_status {
-  background: map-get($bgColor, normal);
+  background: map.get($bgColor, normal);
   height: 100%;
   overflow: auto;
   box-sizing: border-box;
@@ -143,7 +143,7 @@ export default {
       .image {
         padding: 2px 20px 0 0;
         font-size: 30px;
-        color: map-get($color, primary);
+        color: map.get($color, primary);
       }
       .errorIcon {
         color: #f00 !important;
@@ -151,7 +151,7 @@ export default {
       .text {
         padding-top: 8px;
         font-size: 14px;
-        color: map-get($fontColor, light);
+        color: map.get($fontColor, light);
         text-align: center;
         p {
           font-size: 18px;
@@ -159,16 +159,16 @@ export default {
           user-select: none;
           padding-bottom: 6px;
           i {
-            color: map-get($color, primary);
+            color: map.get($color, primary);
           }
         }
         div {
           text-align: left;
           span {
-            color: map-get($color, primary);
+            color: map.get($color, primary);
             cursor: pointer;
             i {
-              color: map-get($fontColor, light);
+              color: map.get($fontColor, light);
             }
           }
         }

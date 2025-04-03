@@ -502,7 +502,7 @@ export default {
     color: #999;
   }
   .el-pagination button:hover {
-    color: map-get($color, primary);
+    color: map.get($color, primary);
   }
 }
 </style>
@@ -516,7 +516,7 @@ export default {
     color: red;
   }
   .icon-color {
-    color: map-get($iconFillColor, normal);
+    color: map.get($iconFillColor, normal);
   }
   .table__empty_img {
     width: 80px;
@@ -528,16 +528,16 @@ export default {
   }
   .noData {
     font-size: 12px;
-    color: map-get($bgColor, special);
+    color: map.get($bgColor, special);
   }
   .page__current {
     width: 22px;
     height: 22px;
     font-size: 14px;
     font-weight: 400;
-    color: map-get($color, primary);
+    color: map.get($color, primary);
     line-height: 22px;
-    background-color: map-get($bgColor, pageCount);
+    background-color: map.get($bgColor, pageCount);
   }
   .task-form__text {
     display: inline-block;
@@ -556,23 +556,23 @@ export default {
     font-size: 16px;
     &:hover,
     &.is-plain:focus:hover {
-      border-color: map-get($color, primary);
-      background-color: map-get($color, white);
+      border-color: map.get($color, primary);
+      background-color: map.get($color, white);
     }
   }
   .task-form-body {
     display: flex;
     height: 60vh;
-    border: 1px solid map-get($borderColor, light);
+    border: 1px solid map.get($borderColor, light);
     border-radius: 4px;
     .task-form-left {
       padding-top: 8px;
-      border-right: 1px solid map-get($borderColor, light);
+      border-right: 1px solid map.get($borderColor, light);
       .table-name {
         height: 40px;
         line-height: 42px;
         font-size: 12px;
-        color: map-get($fontColor, normal);
+        color: map.get($fontColor, normal);
         font-weight: 500;
       }
     }
@@ -582,19 +582,19 @@ export default {
       overflow-x: hidden;
       overflow-y: auto;
       li {
-        background: map-get($bgColor, white);
+        background: map.get($bgColor, white);
         box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
-        border-bottom: 1px solid map-get($borderColor, light);
+        border-bottom: 1px solid map.get($borderColor, light);
         display: flex;
         padding: 10px 0 10px 10px;
         &:hover {
-          background: map-get($bgColor, disactive);
+          background: map.get($bgColor, disactive);
           cursor: pointer;
-          border-left: 2px solid map-get($color, primary);
+          border-left: 2px solid map.get($color, primary);
         }
         &.active {
-          background: map-get($bgColor, disactive);
-          border-left: 2px solid map-get($color, primary);
+          background: map.get($bgColor, disactive);
+          border-left: 2px solid map.get($color, primary);
           cursor: pointer;
         }
         .task-form-text-box {
@@ -603,7 +603,7 @@ export default {
           .target {
             font-size: 12px;
             font-weight: 400;
-            color: map-get($color, normal);
+            color: map.get($color, normal);
             line-height: 20px;
             text-align: left;
             white-space: nowrap;
@@ -624,7 +624,7 @@ export default {
       color: darkorange;
     }
     .field-mapping__icon {
-      color: map-get($color, primary);
+      color: map.get($color, primary);
     }
     .field-mapping-table__default_value {
       overflow: hidden;
@@ -651,20 +651,20 @@ export default {
           border-bottom: 0;
         }
         &:hover {
-          border-right: 1px solid map-get($borderColor, light);
+          border-right: 1px solid map.get($borderColor, light);
         }
       }
       th {
-        color: map-get($fontColor, normal);
+        color: map.get($fontColor, normal);
         font-weight: 500;
         white-space: nowrap;
-        background-color: map-get($bgColor, normal);
+        background-color: map.get($bgColor, normal);
       }
     }
 
     :deep(.el-table__body) {
       td {
-        color: map-get($fontColor, light);
+        color: map.get($fontColor, light);
       }
     }
 

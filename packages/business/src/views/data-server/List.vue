@@ -92,7 +92,6 @@
       ></Drawer>
       <!-- 导入 -->
       <Upload type="Modules" :show-tag="false" ref="upload" @success="table.fetch()"></Upload>
-    </PageContainer>
   </PageContainer>
 </template>
 

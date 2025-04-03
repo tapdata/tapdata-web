@@ -269,9 +269,9 @@ export default {
   data() {
     let connectionDialogProps = {}
 
-    if (process.env.VUE_APP_CONNECTION_DIALOG_PROPS) {
+    if ( import.meta.env.VUE_APP_CONNECTION_DIALOG_PROPS) {
       try {
-        connectionDialogProps = JSON.parse(process.env.VUE_APP_CONNECTION_DIALOG_PROPS)
+        connectionDialogProps = JSON.parse( import.meta.env.VUE_APP_CONNECTION_DIALOG_PROPS)
       } catch (e) {
         console.error(e)
       }
@@ -279,7 +279,7 @@ export default {
 
     return {
       isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
-      showInstanceInfo: process.env.VUE_APP_LICENSE_TYPE === 'PIPELINE',
+      showInstanceInfo:  import.meta.env.VUE_APP_LICENSE_TYPE === 'PIPELINE',
 
       filterItems: [],
       user_id: Cookie.get('user_id'),
@@ -742,7 +742,7 @@ export default {
 
     //检测agent 是否可用
     async checkTestConnectionAvailable() {
-      if (process.env.NODE_ENV === 'development') {
+      if ( import.meta.env.NODE_ENV === 'development') {
         this.dialogDatabaseTypeVisible = true
         return
       }
@@ -904,8 +904,8 @@ export default {
   font-weight: 400;
   font-size: 12px;
   line-height: 20px;
-  color: map-get($color, tag);
-  border: 1px solid map-get($bgColor, tag);
+  color: map.get($color, tag);
+  border: 1px solid map.get($bgColor, tag);
   border-radius: 4px;
 }
 
@@ -915,7 +915,7 @@ export default {
 }
 
 .btn-text {
-  // color: map-get($color, primary);
+  // color: map.get($color, primary);
   font-size: 12px;
   padding-right: 5px;
 }

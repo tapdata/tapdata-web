@@ -616,7 +616,7 @@ export default {
   }
 }
 .pay-wrap {
-  background-color: map-get($color, submenu);
+  background-color: map.get($color, submenu);
 }
 .pay-main {
   width: 80%;

@@ -192,7 +192,7 @@ export default {
   data() {
     const activeNodeId = this.nodeId
     const activeNode = activeNodeId ? this.$store.getters['dataflow/nodeById'](activeNodeId) : {}
-    const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+    const isDaas =  import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 
     return {
       isDaas,
@@ -237,7 +237,7 @@ export default {
           message: ''
         }
       },
-      hideSeeAlso: process.env.VUE_APP_PAGE_TITLE === 'IKAS' || process.env.VUE_APP_HIDE_LOG_SEE_ALSO
+      hideSeeAlso:  import.meta.env.VUE_APP_PAGE_TITLE === 'IKAS' ||  import.meta.env.VUE_APP_HIDE_LOG_SEE_ALSO
     }
   },
   computed: {
@@ -724,7 +724,7 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
   left: 50%;
   top: 24px;
   bottom: 4px;
-  border-left: 1px dashed map-get($color, primary);
+  border-left: 1px dashed map.get($color, primary);
   transform: translateX(-50%);
 }
 .step__line_pt {

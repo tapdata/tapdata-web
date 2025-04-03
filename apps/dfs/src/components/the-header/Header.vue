@@ -258,7 +258,7 @@ export default {
   width: 100%;
   height: 52px !important;
   padding: 0 7px;
-  background: map-get($color, submenu);
+  background: map.get($color, submenu);
   box-sizing: border-box;
 
   .current {
@@ -293,15 +293,15 @@ export default {
     .command-item {
       padding: 4px 8px;
       cursor: pointer;
-      color: map-get($fontColor, light);
+      color: map.get($fontColor, light);
 
       &:hover {
-        color: map-get($color, primary);
-        background-color: map-get($color, white);
+        color: map.get($color, primary);
+        background-color: map.get($color, white);
         border-radius: 4px;
 
         &.icon {
-          color: map-get($color, primary);
+          color: map.get($color, primary);
         }
       }
     }

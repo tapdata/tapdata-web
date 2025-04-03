@@ -190,7 +190,7 @@ export default {
     draggable: Boolean,
   },
   data() {
-    const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+    const isDaas =  import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 
     return {
       isDaas,
@@ -212,7 +212,7 @@ export default {
       },
       draggingNodeImage: null,
       shiftKeyPressed: false,
-      ifTableHeightAuto: !!process.env.VUE_APP_TABLE_HEIGHT_AUTO,
+      ifTableHeightAuto: !! import.meta.env.VUE_APP_TABLE_HEIGHT_AUTO,
     }
   },
   mounted() {
@@ -364,7 +364,7 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: map-get($bgColor, white);
+  background: map.get($bgColor, white);
   min-width: 720px;
   flex: 1;
   width: 100%;
@@ -378,7 +378,7 @@ export default {
 
     .page-header-title {
       font-size: 16px;
-      color: map-get($fontColor, dark);
+      color: map.get($fontColor, dark);
       font-weight: 600;
 
       &.link {
@@ -390,7 +390,7 @@ export default {
     .page-header-desc {
       margin-top: 10px;
       font-size: 12px;
-      color: map-get($fontColor, slight);
+      color: map.get($fontColor, slight);
     }
   }
 
@@ -404,7 +404,7 @@ export default {
       flex: 1;
       width: 100%;
       border-radius: 4px;
-      background-color: map-get($bgColor, white);
+      background-color: map.get($bgColor, white);
     }
   }
 
@@ -418,7 +418,7 @@ export default {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    // background-color: map-get($bgColor, white);
+    // background-color: map.get($bgColor, white);
     border-radius: 4px;
     .el-table--border {
       border: none;
@@ -439,7 +439,7 @@ export default {
       border-bottom: none;
       border-radius: 3px;
       font-size: 14px;
-      background-color: map-get($bgColor, white);
+      background-color: map.get($bgColor, white);
       overflow: hidden;
       // .el-table__fixed-right {
       //   height: 100% !important; //设置高优先，以覆盖内联样式
@@ -448,7 +448,7 @@ export default {
         height: 1px;
       }
       .el-table__fixed-body-wrapper {
-        background-color: map-get($bgColor, white);
+        background-color: map.get($bgColor, white);
       }
       .el-table__fixed {
         height: auto !important; //设置高优先，以覆盖内联样式
@@ -462,7 +462,7 @@ export default {
 
     .el-table--border td {
       .cell {
-        color: map-get($fontColor, light);
+        color: map.get($fontColor, light);
       }
     }
 

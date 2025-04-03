@@ -123,3 +123,37 @@ textarea {
     user-select: all;
   }
 }
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  //background: $--color-white;
+  color: #333;
+  font-family: $fontFamily;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+p {
+  margin: 0;
+}
+ul {
+  margin: 0;
+  padding: 0;
+}
+li {
+  list-style: none;
+}
+th {
+  font-weight: normal;
+}
+
+/*
+* public
+*/
+#app {
+  font-weight: 400;
+  font-style: normal;
+  -webkit-font-smoothing: unset;
+}

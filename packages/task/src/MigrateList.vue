@@ -84,7 +84,7 @@ export default {
   data() {
     return {
       // viewType: 'board',
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas:  import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       syncType: 'migrate',
       taskBuried: {
         new: 'migrationCreate',
@@ -157,7 +157,7 @@ export default {
 <style lang="scss" scoped>
 .view-radio-group {
   :deep(.el-radio-button__orig-radio:checked + .el-radio-button__inner) {
-    background-color: map-get($color, primary);
+    background-color: map.get($color, primary);
     color: #fff;
   }
 }

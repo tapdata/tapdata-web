@@ -7,7 +7,7 @@ export default defineComponent({
   setup() {
     const showLocked = ref(false)
     const lockedFeature =
-      process.env.VUE_APP_MODE === 'community'
+       import.meta.env.VUE_APP_MODE === 'community'
         ? {
             sharedMiningList: true,
             dataVerificationList: true,

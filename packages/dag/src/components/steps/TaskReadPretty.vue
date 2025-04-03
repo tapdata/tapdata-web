@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from '@vue/composition-api'
+import { defineComponent, ref } from 'vue'
 import { createForm, onFieldValueChange } from '@formily/core'
 import i18n from '@tap/i18n'
 import SchemaForm from '../SchemaForm.vue'

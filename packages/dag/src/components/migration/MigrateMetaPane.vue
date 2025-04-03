@@ -346,14 +346,14 @@ export default {
 .nav-list {
   overflow: hidden auto;
   li {
-    background-color: map-get($bgColor, white);
-    border-bottom: 1px solid map-get($borderColor, light);
+    background-color: map.get($bgColor, white);
+    border-bottom: 1px solid map.get($borderColor, light);
     border-left: 2px solid transparent;
     &:hover,
     &.active {
-      background: map-get($bgColor, disactive);
+      background: map.get($bgColor, disactive);
       cursor: pointer;
-      border-left-color: map-get($color, primary);
+      border-left-color: map.get($color, primary);
     }
     .task-form-text-box {
       //width: 140px;
@@ -383,8 +383,8 @@ export default {
   font-size: 16px;
   &:hover,
   &.is-plain:focus:hover {
-    border-color: map-get($color, primary);
-    background-color: map-get($color, white);
+    border-color: map.get($color, primary);
+    background-color: map.get($color, white);
   }
 }
 .content__list {
@@ -395,22 +395,22 @@ export default {
   height: 22px;
   font-size: 14px;
   font-weight: 400;
-  color: map-get($color, primary);
+  color: map.get($color, primary);
   line-height: 22px;
-  background-color: map-get($bgColor, pageCount);
+  background-color: map.get($bgColor, pageCount);
 }
 .nav-filter__list {
   background-color: #fafafa;
 }
 .nav-filter__item {
   &.active {
-    background: map-get($bgColor, disactive);
+    background: map.get($bgColor, disactive);
   }
 }
 .update-list-select {
   &.error {
     :deep(.el-input__inner) {
-      border-color: map-get($color, danger);
+      border-color: map.get($color, danger);
     }
   }
 }

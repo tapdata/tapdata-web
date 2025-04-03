@@ -6,7 +6,7 @@ import { ElMessage as Message } from 'element-plus'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
 
 // Full config:  https://github.com/axios/axios#request-config
-// axios.defaults.baseURL = process.env.baseURL ||  '';
+// axios.defaults.baseURL =  import.meta.env.baseURL ||  '';
 // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 const headers = {
@@ -94,7 +94,7 @@ const requestInterceptor = (config) => {
     })
   }
   // 本地开发使用header中加__token的方式绕过网关登录
-  const ACCESS_TOKEN = process.env.VUE_APP_ACCESS_TOKEN || ''
+  const ACCESS_TOKEN =  import.meta.env.VUE_APP_ACCESS_TOKEN || ''
   if (ACCESS_TOKEN) {
     let params = { __token: ACCESS_TOKEN }
     config.params = Object.assign({}, config.params, params)
@@ -104,7 +104,7 @@ const requestInterceptor = (config) => {
   // headers里面注入用户token，并开启鉴权
   let user = window.__USER_INFO__
   if (user) {
-    if (process.env.NODE_ENV === 'development') {
+    if ( import.meta.env.NODE_ENV === 'development') {
       config.headers['user_id'] = user.id
     }
   }

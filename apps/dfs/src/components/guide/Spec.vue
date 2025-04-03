@@ -532,9 +532,9 @@ export default {
   background: #fff;
 }
 .vip-btn {
-  color: map-get($color, primary);
+  color: map.get($color, primary);
   border-radius: 4px;
-  border: 1px solid map-get($color, primary) !important;
+  border: 1px solid map.get($color, primary) !important;
 }
 .subscription-radio.el-radio {
   padding: 0 12px;
@@ -544,7 +544,7 @@ export default {
   max-height: 220px;
 }
 .spec-li:hover {
-  border: 1px solid map-get($color, primary);
+  border: 1px solid map.get($color, primary);
 }
 .spec-li {
   //width: 580px;
@@ -554,7 +554,7 @@ export default {
     display: none;
   }
   &.active {
-    $primary: map-get($color, primary);
+    $primary: map.get($color, primary);
     border-color: $primary !important;
     .is-active {
       display: block;

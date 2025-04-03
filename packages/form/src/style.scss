@@ -29,7 +29,7 @@
 
 .#{$formNamespace}-form-item.danger-description {
   .#{$formNamespace}-form-item-extra {
-    color: map-get($color, danger);
+    color: map.get($color, danger);
   }
 }
 

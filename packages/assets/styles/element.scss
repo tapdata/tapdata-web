@@ -92,7 +92,7 @@
       margin: 4px 0 !important;
     }
     &__item {
-      border-radius: map-get($border-radius, base);
+      border-radius: map.get($border-radius, base);
     }
   }
   .el-popper__arrow {
@@ -112,7 +112,7 @@
 .el-dropdown-menu {
   padding: 4px !important;
   &__item {
-    border-radius: map-get($border-radius, base);
+    border-radius: map.get($border-radius, base);
   }
 }
 .el-dropdown__popper {
@@ -123,7 +123,7 @@
 
 // Tree
 .el-tree-node__content {
-  border-radius: map-get($border-radius, base);
+  border-radius: map.get($border-radius, base);
 }
 
 // Radio
@@ -167,7 +167,7 @@
     height: 28px !important;
     line-height: 1;
     font-size: 20px !important;
-    border-radius: map-get($border-radius, base);
+    border-radius: map.get($border-radius, base);
     &:hover {
       color: rgba(0, 0, 0, 0.88);
       background-color: rgba(0, 0, 0, 0.06);
@@ -229,13 +229,13 @@
     --el-fill-color: rgba(31, 35, 41, 0.1);
 
     &.el-button--primary {
-      --el-fill-color-light: #{rgba(map-get($color, primary), 0.1)};
-      --el-fill-color: #{rgba(map-get($color, primary), 0.2)};
+      --el-fill-color-light: #{rgba(map.get($color, primary), 0.1)};
+      --el-fill-color: #{rgba(map.get($color, primary), 0.2)};
     }
 
     &.el-button--danger {
-      --el-fill-color-light: #{rgba(map-get($color, danger), 0.1)};
-      --el-fill-color: #{rgba(map-get($color, danger), 0.2)};
+      --el-fill-color-light: #{rgba(map.get($color, danger), 0.1)};
+      --el-fill-color: #{rgba(map.get($color, danger), 0.2)};
     }
 
     &.el-button--small {

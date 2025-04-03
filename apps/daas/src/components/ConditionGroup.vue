@@ -198,7 +198,7 @@ export default {
 <style lang="scss" scoped>
 .condition-group-wrap {
   margin-bottom: 10px;
-  border: 1px solid map-get($borderColor, light);
+  border: 1px solid map.get($borderColor, light);
   border-left-width: 3px;
   overflow: hidden;
   .query-build-header {
@@ -207,16 +207,16 @@ export default {
     height: 38px;
     line-height: 38px;
     padding: 0 10px;
-    background-color: map-get($bgColor, main);
+    background-color: map.get($bgColor, main);
     .query-build-header-left {
       font-size: 12px;
       span {
         display: inline-block;
-        color: map-get($fontColor, light);
+        color: map.get($fontColor, light);
       }
       :deep(.el-radio) {
         .el-radio__label {
-          color: map-get($fontColor, dark);
+          color: map.get($fontColor, dark);
         }
         &.is-checked .el-radio__label {
           color: rgba(0, 0, 0, 0.65);
@@ -230,7 +230,7 @@ export default {
     .query-build-header-right {
       :deep(.el-button--text) {
         font-size: 12px;
-        background-color: map-get($bgColor, main);
+        background-color: map.get($bgColor, main);
       }
     }
   }
@@ -254,7 +254,7 @@ export default {
   border-left-color: #818182;
 }
 .condition-group-wrap.level2 {
-  border-left-color: map-get($color, primary);
+  border-left-color: map.get($color, primary);
 }
 .condition-group-wrap.level3 {
   border-left-color: #a463f2;

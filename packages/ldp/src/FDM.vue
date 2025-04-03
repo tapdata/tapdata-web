@@ -1101,7 +1101,7 @@ export default {
 }
 .pipeline-desc {
   background-color: #f8f8fa;
-  border-left: 4px solid map-get($color, primary);
+  border-left: 4px solid map.get($color, primary);
   line-height: 22px;
   li {
     margin-left: 20px;

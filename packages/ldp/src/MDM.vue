@@ -976,11 +976,11 @@ export default {
 .ldp-tree {
   :deep(.el-tree-node__content) {
     .lineage-icon {
-      color: map-get($color, info);
+      color: map.get($color, info);
     }
     &:hover {
       .lineage-icon {
-        color: map-get($color, primary);
+        color: map.get($color, primary);
       }
     }
   }

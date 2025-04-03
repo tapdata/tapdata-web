@@ -46,10 +46,10 @@
   flex: 1;
   border-bottom: none;
   border-radius: 3px;
-  background-color: map-get($bgColor, white);
+  background-color: map.get($bgColor, white);
   overflow: auto;
   .el-table__fixed-body-wrapper {
-    background-color: map-get($bgColor, white);
+    background-color: map.get($bgColor, white);
   }
   .el-table__fixed {
     height: auto !important; //设置高优先，以覆盖内联样式
@@ -77,7 +77,7 @@
   }
   .max-label {
     width: 60px;
-    color: map-get($fontColor, light);
+    color: map.get($fontColor, light);
   }
   .details_data_info {
     background: #fafafa;
@@ -106,8 +106,8 @@
 .object-drawer-wrap {
   .el-drawer__header {
     height: 62px;
-    color: map-get($fontColor, dark);
-    border-bottom: 1px solid map-get($borderColor, light);
+    color: map.get($fontColor, dark);
+    border-bottom: 1px solid map.get($borderColor, light);
     font-size: 14px;
     font-weight: 500;
     margin-bottom: 0;
@@ -115,15 +115,15 @@
   }
 }
 .discovery-desc {
-  color: map-get($fontColor, slight);
+  color: map.get($fontColor, slight);
 }
 .discovery-title {
-  color: map-get($fontColor, dark);
+  color: map.get($fontColor, dark);
   font-size: 14px;
   font-weight: 500;
 }
 .discovery-secondary-title {
-  color: map-get($fontColor, light);
+  color: map.get($fontColor, light);
   font-size: 12px;
   font-weight: 400;
 }
@@ -132,7 +132,7 @@
     width: 300px;
   }
   .border-right {
-    border-right: 1px solid map-get($borderColor, light);
+    border-right: 1px solid map.get($borderColor, light);
   }
 
   .discovery-page-table {
@@ -175,7 +175,7 @@
   text-align: center;
   border-radius: 2px;
 
-  color: map-get($fontColor, white);
+  color: map.get($fontColor, white);
   &.method--POST {
     background: #478c6c;
   }

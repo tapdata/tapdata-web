@@ -507,7 +507,7 @@ export default defineComponent({
 
   .statistic {
     display: inline-block;
-    color: map-get($fontColor, sslight);
+    color: map.get($fontColor, sslight);
 
     &-title {
       font-size: 12px;
@@ -517,7 +517,7 @@ export default defineComponent({
     &-value {
       display: inline-block;
       vertical-align: middle;
-      color: map-get($fontColor, dark);
+      color: map.get($fontColor, dark);
       line-height: 1;
       //font-weight: 700;
       font-size: 12px;
@@ -545,7 +545,7 @@ export default defineComponent({
 
   &.active,
   &:hover {
-    color: map-get($color, primary);
+    color: map.get($color, primary);
     background: #eef3ff;
   }
 }

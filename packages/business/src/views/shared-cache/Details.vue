@@ -143,7 +143,7 @@ export default {
   padding: 16px;
 }
 .shared-cache-details--header {
-  border-bottom: 1px solid map-get($borderColor, light);
+  border-bottom: 1px solid map.get($borderColor, light);
   .icon {
     font-size: 18px;
   }
@@ -154,14 +154,14 @@ export default {
     flex: 1;
     padding: 8px 0;
     line-height: 17px;
-    border-bottom: 1px solid map-get($borderColor, light);
+    border-bottom: 1px solid map.get($borderColor, light);
     .label {
       font-size: $fontBaseTitle;
       color: rgba(0, 0, 0, 0.6);
     }
     .value {
       font-size: $fontBaseTitle;
-      color: map-get($fontColor, dark);
+      color: map.get($fontColor, dark);
     }
   }
 }
@@ -173,11 +173,11 @@ export default {
     padding: 0 16px;
     height: 38px;
     line-height: 38px;
-    background: map-get($bgColor, normal);
+    background: map.get($bgColor, normal);
   }
   .content {
     padding: 0 16px 8px 16px;
-    background-color: map-get($bgColor, white);
+    background-color: map.get($bgColor, white);
   }
 }
 </style>

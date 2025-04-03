@@ -1,4 +1,4 @@
-import { Notification, MessageBox } from 'element-ui'
+import { Notification, MessageBox } from 'element-plus'
 import i18n from '@tap/i18n'
 import { buried } from '@/plugins/buried'
 import './index.scss'

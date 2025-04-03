@@ -1,5 +1,4 @@
-import i18n, { createI18nObject } from '@tap/i18n'
-import { Cookie } from '@tap/shared'
+import i18n from '@tap/i18n'
 import { getIcon } from '@tap/assets/icons'
 // 获取子任务状态统计
 import { ETL_STATUS_MAP, ETL_SUB_STATUS_MAP } from './const'
@@ -207,23 +206,23 @@ export function makeStatusAndDisabled(item) {
   return item
 }
 
-export const MILESTONE_TYPE = createI18nObject({
+export const MILESTONE_TYPE = {
   TASK: {
-    text: 'packages_business_milestone_list_renwudiaodu'
+    text: i18n.global.t('packages_business_milestone_list_renwudiaodu')
   },
   DEDUCTION: {
-    text: 'packages_business_milestone_list_load_table_structure'
+    text: i18n.global.t('packages_business_milestone_list_load_table_structure')
   },
   DATA_NODE_INIT: {
-    text: 'packages_business_milestone_list_shujujiedianchu'
+    text: i18n.global.t('packages_business_milestone_list_shujujiedianchu')
   },
   TABLE_INIT: {
-    text: 'packages_business_milestone_list_biaojiegouqianyi'
+    text: i18n.global.t('packages_business_milestone_list_biaojiegouqianyi')
   },
   SNAPSHOT: {
-    text: 'packages_business_milestone_list_quanliangshujuqian'
+    text: i18n.global.t('packages_business_milestone_list_quanliangshujuqian')
   },
   CDC: {
-    text: 'packages_business_milestone_list_jinruzengliangshu'
+    text: i18n.global.t('packages_business_milestone_list_jinruzengliangshu')
   }
-})
+}

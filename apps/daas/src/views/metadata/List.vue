@@ -592,7 +592,7 @@ export default {
     }
     .btn {
       padding: 7px;
-      // background: map-get($bgColor, main);
+      // background: map.get($bgColor, main);
       i.iconfont {
         font-size: 12px;
       }
@@ -605,7 +605,7 @@ export default {
     }
     .metadata-name {
       // .name {
-      //   color: map-get($color, primary);
+      //   color: map.get($color, primary);
       //   a {
       //     color: inherit;
       //     cursor: pointer;
@@ -616,12 +616,12 @@ export default {
       // }
       .tag {
         margin-left: 5px;
-        color: map-get($fontColor, light);
-        background: map-get($bgColor, main);
+        color: map.get($fontColor, light);
+        background: map.get($bgColor, main);
         border: 1px solid #dedee4;
       }
       .parent {
-        color: map-get($fontColor, slight);
+        color: map.get($fontColor, slight);
       }
     }
   }
@@ -659,7 +659,7 @@ export default {
   .change-name-label {
     width: 100px;
     line-height: 32px;
-    color: map-get($fontColor, dark);
+    color: map.get($fontColor, dark);
   }
   // .el-message-box__header {
   //   padding: 15px 15px 0;

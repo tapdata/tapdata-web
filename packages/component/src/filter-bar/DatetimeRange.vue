@@ -214,7 +214,7 @@ export default {
     }
   }
   .filter-datetime-range__title {
-    color: map-get($fontColor, slight);
+    color: map.get($fontColor, slight);
   }
 }
 </style>

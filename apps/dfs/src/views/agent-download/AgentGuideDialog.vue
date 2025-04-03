@@ -334,7 +334,7 @@ export default {
   }
   .agent-guide-link {
     .active {
-      border: 2px solid map-get($color, primary);
+      border: 2px solid map.get($color, primary);
       background: #2c65ff1a;
     }
   }

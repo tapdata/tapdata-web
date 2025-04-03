@@ -71,9 +71,9 @@ export default {
   &.el-button--primary:focus,
   &.el-button--primary.is-active,
   &.el-button--primary:active {
-    background-color: map-get($color, primary);
+    background-color: map.get($color, primary);
     &:hover {
-      background-color: map-get($color, dprimary);
+      background-color: map.get($color, dprimary);
     }
   }
   &.is-disabled,

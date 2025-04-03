@@ -39,7 +39,7 @@ const proxy = {
   secure: false,
 }
 
-if (process.env.NODE_ENV === 'development') {
+if ( import.meta.env.NODE_ENV === 'development') {
   // 设置本地环境的token
   const getToken = (userId) => {
     const secret = 'Q3HraAbDkmKoPzaBEYzPXB1zJXmWlQ169'
@@ -65,7 +65,7 @@ if (process.env.NODE_ENV === 'development') {
     return token
   }
 
-  process.env.VUE_APP_ACCESS_TOKEN = getToken(process.env.USER_ID || userId)
+   import.meta.env.VUE_APP_ACCESS_TOKEN = getToken( import.meta.env.USER_ID || userId)
 }
 
 export default defineConfig({

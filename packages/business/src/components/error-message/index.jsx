@@ -58,7 +58,7 @@ function renderMessage(message, stack) {
 
 export function ErrorMessage(stack, message) {
   if (import.meta.env.VITE_APP_KEYWORD) {
-    stack = stack.replace(/tapdata\s?/gi, process.env.VUE_APP_KEYWORD)
+    stack = stack.replace(/tapdata\s?/gi,  import.meta.env.VUE_APP_KEYWORD)
   }
 
   MessageBox({
@@ -101,8 +101,8 @@ export function showErrorMessage(error) {
   let showClose = false
 
   if (error?.stack) {
-    if (process.env.VUE_APP_KEYWORD) {
-      error.stack = error.stack.replace(/tapdata\s?/gi, process.env.VUE_APP_KEYWORD)
+    if ( import.meta.env.VUE_APP_KEYWORD) {
+      error.stack = error.stack.replace(/tapdata\s?/gi,  import.meta.env.VUE_APP_KEYWORD)
     }
 
     message = renderMessage(message, error.stack)

@@ -173,7 +173,7 @@ export default {
 </style>
 
 <style lang="scss" scoped>
-$color: map-get($color, primary);
+$color: map.get($color, primary);
 $tabsHeaderWidth: 180px;
 $headerHeight: 40px;
 $tabHeight: 44px;

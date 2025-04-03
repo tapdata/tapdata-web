@@ -229,7 +229,7 @@ export default {
   }
 
   .log-keyword-block {
-    background: map-get($color, warning);
+    background: map.get($color, warning);
   }
 }
 

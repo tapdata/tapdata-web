@@ -31,6 +31,6 @@ export default {
 <style lang="scss" scoped>
 .user-operation-wrap {
   display: inline-block;
-  color: map-get($fontColor, light);
+  color: map.get($fontColor, light);
 }
 </style>

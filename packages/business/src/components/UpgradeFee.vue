@@ -141,14 +141,14 @@ export default {
   .paid-upgrade-desc {
     font-weight: 400;
     font-size: 14px;
-    color: map-get($fontColor, light);
+    color: map.get($fontColor, light);
   }
   .paid-upgrade-ul li {
     width: 420px;
     border-radius: 8px;
   }
   .paid-upgrade-left {
-    border: 1px solid map-get($borderColor, sslight);
+    border: 1px solid map.get($borderColor, sslight);
     &.disabled {
       cursor: not-allowed;
     }
@@ -166,8 +166,8 @@ export default {
     font-weight: 400;
     font-size: 10px;
     line-height: 14px;
-    color: map-get($color, lprimary);
-    border: 1px solid map-get($color, disprimary);
+    color: map.get($color, lprimary);
+    border: 1px solid map.get($color, disprimary);
     border-radius: 2px;
     padding: 2px;
   }
@@ -176,10 +176,10 @@ export default {
     font-size: 16px;
     //line-height: 21px;
     max-width: 252px;
-    color: map-get($fontColor, dark);
+    color: map.get($fontColor, dark);
   }
   .link {
-    border-bottom: 1px solid map-get($borderColor, light);
+    border-bottom: 1px solid map.get($borderColor, light);
   }
   .free {
     font-weight: 400;
@@ -198,7 +198,7 @@ export default {
     font-size: 14px;
     line-height: 17px;
     max-width: 300px;
-    color: map-get($color, light);
+    color: map.get($color, light);
   }
   .desc_professional {
     font-weight: 400;
@@ -238,7 +238,7 @@ export default {
     font-weight: 500;
     font-size: 14px;
     line-height: 20px;
-    color: map-get($color, normal);
+    color: map.get($color, normal);
   }
   .paid-upgrade-mb16 {
     margin-bottom: 16px;
@@ -260,7 +260,7 @@ export default {
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
-    color: map-get($color, dark);
+    color: map.get($color, dark);
   }
   .footer {
     height: 40px;
@@ -270,8 +270,8 @@ export default {
   }
   .footer-right {
     height: 40px;
-    background: map-get($color, primary);
-    color: map-get($color, white);
+    background: map.get($color, primary);
+    color: map.get($color, white);
     border-bottom-right-radius: 8px;
     border-bottom-left-radius: 8px;
     &:hover {

@@ -488,12 +488,12 @@ export default {
       padding-right: 30px;
       line-height: 60px;
       font-size: 16px;
-      color: map-get($fontColor, dark);
+      color: map.get($fontColor, dark);
       font-weight: bold;
     }
     span {
       font-size: 12px;
-      color: map-get($fontColor, light);
+      color: map.get($fontColor, light);
     }
   }
 
@@ -509,12 +509,12 @@ export default {
         display: inline-block;
         padding-right: 20px;
         font-size: 14px;
-        color: map-get($fontColor, dark);
+        color: map.get($fontColor, dark);
       }
       p {
         display: inline-block;
         font-size: 12px;
-        color: map-get($fontColor, light);
+        color: map.get($fontColor, light);
       }
     }
 
@@ -545,8 +545,8 @@ export default {
         height: 30px !important;
         line-height: 30px;
         font-size: 12px;
-        color: map-get($fontColor, light);
-        background-color: map-get($bgColor, main);
+        color: map.get($fontColor, light);
+        background-color: map.get($bgColor, main);
         .e-col {
           padding-left: 12px;
         }
@@ -629,7 +629,7 @@ export default {
             padding: 5px 0;
             margin: 0;
             font-size: 12px;
-            color: map-get($fontColor, light);
+            color: map.get($fontColor, light);
           }
         }
       }

@@ -46,10 +46,10 @@ export function getSchema(schema, values, pdkPropertiesMap) {
     if (pdkProperties) {
       const pdkSchemaList = takeFieldValue(newSchema, 'nodeConfig')
       if (pdkSchemaList?.length) {
-        let reactions = process.env.VUE_APP_HIDE_NODE_SCHEMA
+        let reactions =  import.meta.env.VUE_APP_HIDE_NODE_SCHEMA
           ? {
               'x-reactions': {
-                target: process.env.VUE_APP_HIDE_NODE_SCHEMA,
+                target:  import.meta.env.VUE_APP_HIDE_NODE_SCHEMA,
                 fulfill: {
                   state: {
                     display: 'hidden'

@@ -29,13 +29,12 @@
 <script>
 import i18n from '@tap/i18n'
 import { showErrorMessage, UpgradeCharges, UpgradeFee } from '@tap/business'
-import { Message } from 'element-ui'
 import { alarmApi, clusterApi, taskApi } from '@tap/api'
 import { debounce, merge } from 'lodash'
 import { createForm, onFormValuesChange, onFieldValueChange, createEffectHook } from '@formily/core'
 import { observable, action, untracked, raw, isObservable, observe, autorun } from '@formily/reactive'
 import SchemaForm from '../SchemaForm.vue'
-import { defineComponent, inject, nextTick, ref, onBeforeUnmount, computed } from '@vue/composition-api'
+import { defineComponent, inject, nextTick, ref, onBeforeUnmount, computed } from 'vue'
 
 // 自定义 Dialog 表单内的 value 变化事件
 const onDialogFormValuesChange = createEffectHook('dialog-form-values-change', (payload, form) => listener => {
@@ -46,7 +45,7 @@ export default defineComponent({
   name: 'TaskStep',
   components: { UpgradeFee, UpgradeCharges, SchemaForm },
   setup(props, { emit, root }) {
-    const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+    const isDaas =  import.meta.env.VUE_APP_PLATFORM === 'DAAS'
     const taskRef = inject('task')
     const pageVersionRef = inject('pageVersion')
     const lockedFeature = inject('lockedFeature')

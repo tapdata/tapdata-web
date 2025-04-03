@@ -234,7 +234,7 @@ export default {
     }
   }
   .status-block {
-    color: map-get($fontColor, white);
+    color: map.get($fontColor, white);
   }
 }
 </style>

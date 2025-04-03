@@ -217,7 +217,7 @@ export default {
 
 <style lang="scss" scoped>
 .details-value {
-  color: map-get($fontColor, dark);
+  color: map.get($fontColor, dark);
   font-size: 12px;
 }
 .custom-form__body {
@@ -225,7 +225,7 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background-color: map-get($bgColor, white);
+  background-color: map.get($bgColor, white);
   box-shadow: 0px 0px 3px 0px #cccccc;
   overflow: hidden;
 
@@ -249,7 +249,7 @@ export default {
   }
 }
 .footer {
-  background-color: map-get($bgColor, white);
+  background-color: map.get($bgColor, white);
   border-top: 1px solid #f0f0f0;
   .btn {
     width: 80px;

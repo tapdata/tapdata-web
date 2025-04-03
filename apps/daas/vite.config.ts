@@ -1,12 +1,12 @@
-import { defineConfig } from 'vite'
+import path from 'node:path'
+import { createSvgIconsPlugin } from '@cn-xufei/vite-plugin-svg-icons'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 // import { viteCommonjs } from '@originjs/vite-plugin-commonjs'
 import AutoImport from 'unplugin-auto-import/vite'
-import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
-import { createSvgIconsPlugin } from '@cn-xufei/vite-plugin-svg-icons'
-import path from 'path'
+import Components from 'unplugin-vue-components/vite'
+import { defineConfig } from 'vite'
 
 const serveUrlMap = {
   mock: 'http://localhost:30300',
@@ -28,6 +28,8 @@ const proxy = {
   target: origin || serveUrlMap[SERVE_ENV],
   changeOrigin: false,
 }
+
+console.log('process.env', process.env)
 
 export default defineConfig({
   define: {
@@ -118,8 +120,24 @@ export default defineConfig({
   // 全局注入var.scss
   css: {
     preprocessorOptions: {
+      sass: {
+        quietDeps: true, // 禁用第三方包的 Sass 过期警告
+        silenceDeprecations: ['import', 'global-builtin'],
+      },
       scss: {
-        additionalData: `@use "@tap/assets/styles/var.scss" as *;`,
+        // additionalData: '@use "@tap/assets/styles/var.scss" as *;',
+        additionalData: (content, filePath) => {
+          if (filePath.includes('node_modules')) {
+            return `@use "@tap/assets/styles/var.scss" as *;\n${content}`
+          }
+
+          return `@use "sass:map";\n@use "@tap/assets/styles/var.scss" as *;\n${
+            content
+          }`
+        },
+        // 禁用依赖包中的@import弃用警告
+        quietDeps: true,
+        silenceDeprecations: ['import', 'global-builtin'],
       },
     },
   },

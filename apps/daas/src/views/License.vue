@@ -109,7 +109,6 @@ import { licensesApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { VEmpty } from '@tap/component'
-import { ElLink } from 'element-ui/types/link'
 
 export default {
   components: { VEmpty, DatabaseIcon, PageContainer, TablePage, TaskStatus },
@@ -127,7 +126,7 @@ export default {
       dialogVisible: false,
       dialogLoading: false,
       license: '',,
-      showLicenseType: process.env.VUE_APP_LICENSE_TYPE === 'PIPELINE',
+      showLicenseType:  import.meta.env.VUE_APP_LICENSE_TYPE === 'PIPELINE',
       detailsDialog: {
         show: false,
         loading: false,
@@ -271,10 +270,8 @@ export default {
 <style lang="scss" scoped>
 .license-wrapper {
   height: 100%;
-  ::v-deep {
-    .table-page-topbar {
-      padding: 0 !important;
-    }
+  :deep(.table-page-topbar) {
+    padding: 0 !important;
   }
 }
 </style>

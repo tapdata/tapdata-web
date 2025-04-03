@@ -259,7 +259,7 @@ export default {
         },
       ],
       email: '',
-      filterCategory: process.env.VUE_APP_HIDE_SETTINGS_CATEGORY,
+      filterCategory:  import.meta.env.VUE_APP_HIDE_SETTINGS_CATEGORY,
       adTesting: false,
     }
   },
@@ -491,7 +491,7 @@ export default {
       min-width: max-content;
       height: 100%;
       padding: 20px 2px;
-      border-right: 1px solid map-get($borderColor, light);
+      border-right: 1px solid map.get($borderColor, light);
       li {
         display: flex;
         flex-direction: row;
@@ -501,7 +501,7 @@ export default {
         height: 40px;
         line-height: 40px;
         cursor: pointer;
-        color: map-get($fontColor, light);
+        color: map.get($fontColor, light);
         white-space: nowrap;
         .title {
           width: 100%;
@@ -534,7 +534,7 @@ export default {
       .title {
         display: inline-block;
         padding: 10px 0 20px;
-        color: map-get($fontColor, dark);
+        color: map.get($fontColor, dark);
         font-size: 14px;
         font-weight: 500;
       }
@@ -567,7 +567,7 @@ export default {
       padding: 0 20px;
       line-height: 48px;
       text-align: right;
-      border-top: 1px solid map-get($borderColor, light);
+      border-top: 1px solid map.get($borderColor, light);
     }
   }
   .dialog-email-template {
@@ -578,12 +578,12 @@ export default {
         padding: 5px 20px 5px 0;
         display: block;
         text-align: right;
-        border-right: 3px solid map-get($borderColor, light);
+        border-right: 3px solid map.get($borderColor, light);
         cursor: pointer;
       }
       .active {
-        color: map-get($color, primary);
-        border-right: 3px solid map-get($color, primary);
+        color: map.get($color, primary);
+        border-right: 3px solid map.get($color, primary);
       }
     }
     .settings-email-template {

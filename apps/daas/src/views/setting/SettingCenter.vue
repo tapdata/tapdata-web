@@ -98,7 +98,7 @@ export default {
   .setting-warp-box {
     flex: 1 1 auto;
     border-radius: 4px;
-    background-color: map-get($bgColor, white);
+    background-color: map.get($bgColor, white);
     overflow: hidden;
     .setting-center {
       height: 100%;
@@ -108,7 +108,7 @@ export default {
       height: 100%;
       .setting-left-sidebar {
         padding-top: 16px;
-        border-right: 1px solid map-get($borderColor, light);
+        border-right: 1px solid map.get($borderColor, light);
         width: 200px;
         // .title {
         //   height: 14px;
@@ -124,17 +124,17 @@ export default {
             line-height: 44px;
             padding-left: 20px;
             cursor: pointer;
-            color: map-get($fontColor, light);
+            color: map.get($fontColor, light);
 
             :deep(.iconfont) {
-              color: map-get($fontColor, light);
+              color: map.get($fontColor, light);
             }
           }
           .active {
             background: rgba(44, 101, 255, 0.05);
 
             :deep(.iconfont) {
-              color: map-get($color, primary);
+              color: map.get($color, primary);
             }
           }
           // &:hover {

@@ -203,7 +203,7 @@ export default {
     }
   }
   .filter-datetime-range__title {
-    color: map-get($fontColor, sub);
+    color: map.get($fontColor, sub);
   }
 }
 </style>

@@ -940,12 +940,12 @@ export default {
 
       let reactions
 
-      if (process.env.VUE_APP_CONNECTOR_SCHEMA && /^\s*[[{].*[\]}]\s*$/.test(process.env.VUE_APP_CONNECTOR_SCHEMA)) {
-        reactions = JSON.parse(process.env.VUE_APP_CONNECTOR_SCHEMA)
-      } else if (process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA) {
+      if ( import.meta.env.VUE_APP_CONNECTOR_SCHEMA && /^\s*[[{].*[\]}]\s*$/.test( import.meta.env.VUE_APP_CONNECTOR_SCHEMA)) {
+        reactions = JSON.parse( import.meta.env.VUE_APP_CONNECTOR_SCHEMA)
+      } else if ( import.meta.env.VUE_APP_HIDE_CONNECTOR_SCHEMA) {
         reactions = [
           {
-            target: process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA,
+            target:  import.meta.env.VUE_APP_HIDE_CONNECTOR_SCHEMA,
             fulfill: {
               state: { display: 'hidden' }
             }
@@ -1492,7 +1492,7 @@ export default {
             others,
           )
           proxyApi.generateRefreshToken(params).then((data = {}) => {
-            const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+            const isDaas =  import.meta.env.VUE_APP_PLATFORM === 'DAAS'
             const p = location.origin + location.pathname
             let str = `${p}${isDaas ? '' : 'tm/'}${data.path}/${data.token}`
             if (/^\/\w+/.test(data.token)) {
@@ -1560,7 +1560,7 @@ export default {
     //padding-left: 24px;
     //border-radius: 4px;
     overflow: hidden;
-    background-color: map-get($bgColor, white);
+    background-color: map.get($bgColor, white);
     .connection-from-main {
       display: flex;
       flex: 1;
@@ -1574,7 +1574,7 @@ export default {
           PingFangSC-Medium,
           PingFang SC;
         font-weight: 500;
-        color: map-get($fontColor, dark);
+        color: map.get($fontColor, dark);
         line-height: 28px;
       }
       .connection-from-label {
@@ -1589,7 +1589,7 @@ export default {
         .label {
           width: 160px;
           font-size: $fontBaseTitle;
-          color: map-get($fontColor, light);
+          color: map.get($fontColor, light);
         }
         .content-box {
           display: flex;
@@ -1600,7 +1600,7 @@ export default {
             PingFangSC-Regular,
             PingFang SC;
           font-weight: 400;
-          color: map-get($fontColor, dark);
+          color: map.get($fontColor, dark);
           align-items: center;
           white-space: nowrap;
           word-break: break-word;
@@ -1613,7 +1613,7 @@ export default {
           height: 25px;
           justify-content: center;
           align-items: center;
-          background: map-get($bgColor, white);
+          background: map.get($bgColor, white);
           border-radius: 3px;
           img {
             width: 100%;
@@ -1655,11 +1655,11 @@ export default {
             :deep(.e-form-builder-item) {
               .url-tip {
                 font-size: 12px;
-                color: map-get($fontColor, light);
+                color: map.get($fontColor, light);
                 b {
                   font-size: 12px;
                   font-weight: 400;
-                  color: map-get($fontColor, light);
+                  color: map.get($fontColor, light);
                 }
               }
               .fb-radio-group {
@@ -1710,7 +1710,7 @@ export default {
   .footer {
     width: 100%;
     //height: 62px;
-    background-color: map-get($bgColor, white);
+    background-color: map.get($bgColor, white);
     border-left: none;
     //line-height: 62px;
     border-top: 1px solid #e1e3e9;

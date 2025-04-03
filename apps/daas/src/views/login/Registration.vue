@@ -170,7 +170,7 @@ export default {
 
 <style lang="scss" scoped>
 .page-registry {
-  background: map-get($bgColor, normal);
+  background: map.get($bgColor, normal);
   height: 100%;
   overflow: auto;
   box-sizing: border-box;
@@ -203,11 +203,11 @@ export default {
             border: none;
           }
           &:hover {
-            color: map-get($fontColor, dark);
+            color: map.get($fontColor, dark);
           }
         }
         .bold {
-          color: map-get($fontColor, dark);
+          color: map.get($fontColor, dark);
           font-weight: 500;
         }
       }
@@ -273,10 +273,10 @@ export default {
         padding-top: 20px;
         font-size: 12px;
         text-align: right;
-        color: map-get($color, primary);
+        color: map.get($color, primary);
         user-select: none;
         span {
-          color: map-get($color, dark);
+          color: map.get($color, dark);
           cursor: pointer;
         }
       }
@@ -292,7 +292,7 @@ export default {
         padding-bottom: 30px;
         font-size: 26px;
         font-weight: 500;
-        color: map-get($fontColor, dark);
+        color: map.get($fontColor, dark);
       }
       p {
         font-size: 12px;

@@ -973,12 +973,12 @@ export default {
 
       let reactions
 
-      if (process.env.VUE_APP_CONNECTOR_SCHEMA && /^\s*[[{].*[\]}]\s*$/.test(process.env.VUE_APP_CONNECTOR_SCHEMA)) {
-        reactions = JSON.parse(process.env.VUE_APP_CONNECTOR_SCHEMA)
-      } else if (process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA) {
+      if ( import.meta.env.VUE_APP_CONNECTOR_SCHEMA && /^\s*[[{].*[\]}]\s*$/.test( import.meta.env.VUE_APP_CONNECTOR_SCHEMA)) {
+        reactions = JSON.parse( import.meta.env.VUE_APP_CONNECTOR_SCHEMA)
+      } else if ( import.meta.env.VUE_APP_HIDE_CONNECTOR_SCHEMA) {
         reactions = [
           {
-            target: process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA,
+            target:  import.meta.env.VUE_APP_HIDE_CONNECTOR_SCHEMA,
             fulfill: {
               state: { display: 'hidden' }
             }
@@ -1606,7 +1606,7 @@ export default {
     //padding-left: 24px;
     //border-radius: 4px;
     overflow: hidden;
-    //background-color: map-get($bgColor, white);
+    //background-color: map.get($bgColor, white);
     .connection-from-main {
       display: flex;
       flex: 1;
@@ -1615,7 +1615,7 @@ export default {
       .connection-from-title {
         font-size: $fontSubtitle;
         font-weight: 500;
-        color: map-get($fontColor, dark);
+        color: map.get($fontColor, dark);
         line-height: 28px;
       }
 
@@ -1633,7 +1633,7 @@ export default {
         .label {
           width: 160px;
           font-size: $fontBaseTitle;
-          color: map-get($fontColor, light);
+          color: map.get($fontColor, light);
           text-transform: capitalize;
         }
 
@@ -1643,7 +1643,7 @@ export default {
           line-height: 22px;
           font-size: $fontBaseTitle;
           font-weight: 400;
-          color: map-get($fontColor, dark);
+          color: map.get($fontColor, dark);
           align-items: center;
           white-space: nowrap;
           word-break: break-word;
@@ -1657,7 +1657,7 @@ export default {
           height: 25px;
           justify-content: center;
           align-items: center;
-          background: map-get($bgColor, white);
+          background: map.get($bgColor, white);
           border-radius: 3px;
 
           img {
@@ -1704,12 +1704,12 @@ export default {
 
               .url-tip {
                 font-size: 12px;
-                color: map-get($fontColor, light);
+                color: map.get($fontColor, light);
 
                 b {
                   font-size: 12px;
                   font-weight: 400;
-                  color: map-get($fontColor, light);
+                  color: map.get($fontColor, light);
                 }
               }
 
@@ -1811,7 +1811,7 @@ export default {
       gap: 8px;
       font-weight: 400;
       &.is-active {
-        color: map-get($color, primary);
+        color: map.get($color, primary);
       }
     }
   :deep(.el-collapse-item__arrow){
@@ -1821,6 +1821,5 @@ export default {
   :deep(.el-collapse-item__content){
       padding: 0 16px 16px;
     }
-  }
 }
 </style>

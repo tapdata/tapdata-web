@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, provide } from '@vue/composition-api'
+import { defineComponent, ref, provide } from 'vue'
 import SourceStep from './components/steps/SourceStep.vue'
 import TargetStep from './components/steps/TargetStep.vue'
 import TaskStep from './components/steps/TaskStep.vue'
@@ -480,49 +480,47 @@ export default defineComponent({
 .migration-form-page {
   background-color: #f1f2f4;
 
-  ::v-deep {
-    .form-steps {
-      .el-step {
-        display: flex !important;
-        align-items: center;
-        overflow: hidden;
-        .el-step__head {
-          position: static;
-          width: auto;
-          &.is-process {
-            color: #fff;
-            border-color: map-get($color, primary);
+  :deep(.form-steps) {
+    .el-step {
+      display: flex !important;
+      align-items: center;
+      overflow: hidden;
+      .el-step__head {
+        position: static;
+        width: auto;
+        &.is-process {
+          color: #fff;
+          border-color: map.get($color, primary);
 
-            .el-step__icon {
-              background-color: map-get($color, primary);
-            }
+          .el-step__icon {
+            background-color: map.get($color, primary);
           }
-        }
-        .el-step__main {
-          overflow: hidden;
-          padding-inline: 8px 16px;
-          background-color: #fff;
-          z-index: 1;
-        }
-        .el-step__title {
-          line-height: 24px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          &.is-process {
-            color: map-get($color, primary);
-          }
-        }
-        .el-step__description {
-          display: none;
         }
       }
-    }
-
-    .step-footer {
-      > .el-divider:first-child {
+      .el-step__main {
+        overflow: hidden;
+        padding-inline: 8px 16px;
+        background-color: #fff;
+        z-index: 1;
+      }
+      .el-step__title {
+        line-height: 24px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        &.is-process {
+          color: map.get($color, primary);
+        }
+      }
+      .el-step__description {
         display: none;
       }
+    }
+  }
+
+  .step-footer {
+    > .el-divider:first-child {
+      display: none;
     }
   }
 }

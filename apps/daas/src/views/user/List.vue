@@ -868,14 +868,14 @@ export default {
     }
     .metadata-name {
       .name {
-        color: map-get($color, primary);
+        color: map.get($color, primary);
         a {
           color: inherit;
           cursor: pointer;
         }
       }
       .parent {
-        color: map-get($color, disable);
+        color: map.get($color, disable);
       }
     }
   }
@@ -888,7 +888,7 @@ export default {
     .table-page-body {
       .table-page-topbar {
         padding-inline: 16px;
-        background-color: map-get($bgColor, white);
+        background-color: map.get($bgColor, white);
       }
       .el-table,
       .el-pagination {
@@ -899,7 +899,7 @@ export default {
       .table-page-pagination {
         margin-top: 0;
         //padding: 5px 20px;
-        background-color: map-get($bgColor, white);
+        background-color: map.get($bgColor, white);
         box-sizing: border-box;
       }
       .status {

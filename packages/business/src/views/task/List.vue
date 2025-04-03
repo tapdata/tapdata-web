@@ -451,7 +451,7 @@ export default {
     return {
       STATUS_MAP,
       isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
-      showInstanceInfo: process.env.VUE_APP_LICENSE_TYPE === 'PIPELINE',
+      showInstanceInfo:  import.meta.env.VUE_APP_LICENSE_TYPE === 'PIPELINE',
       dataFlowId: '',
       isShowDetails: false,
       previewLoading: false,
@@ -1376,8 +1376,8 @@ export default {
         font-weight: 400;
         font-size: 12px;
         line-height: 20px;
-        color: map-get($color, tag);
-        border: 1px solid map-get($bgColor, tag);
+        color: map.get($color, tag);
+        border: 1px solid map.get($bgColor, tag);
         border-radius: 4px;
       }
 

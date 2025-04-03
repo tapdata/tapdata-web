@@ -66,7 +66,7 @@ export default {
 
   data() {
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas:  import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       syncType: 'sync',
       taskBuried: {
         new: 'taskCreate',
@@ -155,8 +155,8 @@ export default {
     .dataflow-name {
       .tag {
         margin-left: 5px;
-        color: map-get($fontColor, light);
-        background: map-get($bgColor, main);
+        color: map.get($fontColor, light);
+        background: map.get($bgColor, main);
         border: 1px solid #dedee4;
       }
       .name {

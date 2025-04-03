@@ -28,7 +28,7 @@ import { debounce, merge } from 'lodash'
 import { createForm, onFormValuesChange, onFieldValueChange, createEffectHook } from '@formily/core'
 import { observable, action, untracked, raw, isObservable, observe, autorun } from '@formily/reactive'
 import SchemaForm from '../SchemaForm.vue'
-import { defineComponent, inject, ref, onBeforeUnmount } from '@vue/composition-api'
+import { defineComponent, inject, ref, onBeforeUnmount } from 'vue'
 
 // 自定义 Dialog 表单内的 value 变化事件
 const onDialogFormValuesChange = createEffectHook('dialog-form-values-change', (payload, form) => listener => {

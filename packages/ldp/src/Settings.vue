@@ -195,7 +195,7 @@ export default {
     mdmConnection: Object,
   },
   data() {
-    const isCommunity = process.env.VUE_APP_MODE === 'community'
+    const isCommunity =  import.meta.env.VUE_APP_MODE === 'community'
     const options = [
       {
         label: this.$t('packages_business_mongodb_self_hosted_cluster'),
@@ -430,7 +430,7 @@ export default {
   }
 
   &.active {
-    border-color: map-get($color, primary) !important;
+    border-color: map.get($color, primary) !important;
     .mode-card-image {
     }
   }
@@ -475,7 +475,7 @@ export default {
     top: 50%;
     transform: translateY(-50%);
     position: absolute;
-    background-color: map-get($color, primary);
+    background-color: map.get($color, primary);
   }
 }
 </style>

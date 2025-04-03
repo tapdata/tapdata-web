@@ -82,8 +82,8 @@ export default {
         this.taskId = task.id
         this.taskName = task.name
         this.errorEvents = errorEvents.map((item) => {
-          if (process.env.VUE_APP_KEYWORD && item.message) {
-            item.message = item.message.replace(/tapdata\s?/gi, process.env.VUE_APP_KEYWORD)
+          if ( import.meta.env.VUE_APP_KEYWORD && item.message) {
+            item.message = item.message.replace(/tapdata\s?/gi,  import.meta.env.VUE_APP_KEYWORD)
           }
           delete item.stacks // stacks is too long
           return item
@@ -137,7 +137,7 @@ export default {
     margin-left: 12px;
     margin-right: 12px;
     .error-content {
-      background-color: map-get($bgColor, white);
+      background-color: map.get($bgColor, white);
       border: 1px solid #dedee4;
       padding: 5px 10px;
     }
@@ -149,10 +149,8 @@ export default {
       white-space: normal;
       user-select: text;
     }
-    ::v-deep {
-      .el-checkbox__label {
-        flex: 1;
-      }
+    :deep(.el-checkbox__label) {
+      flex: 1;
     }
   }
   li:last-child {
@@ -183,7 +181,7 @@ export default {
     bottom: 0;
     width: 4px;
     border-radius: 8px;
-    background-color: map-get($color, primary);
+    background-color: map.get($color, primary);
   }
 }
 </style>
