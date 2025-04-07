@@ -730,6 +730,9 @@ importers:
       '@tap/api':
         specifier: workspace:^1.0.0
         version: link:../api
+      '@tap/assets':
+        specifier: workspace:^
+        version: link:../assets
       '@tap/component':
         specifier: workspace:^1.0.0
         version: link:../component

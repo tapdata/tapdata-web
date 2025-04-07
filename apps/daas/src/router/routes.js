@@ -332,9 +332,11 @@ export default [
       /* ---------- 连接管理  ----------*/
       {
         path: '/connections',
-        // name: 'connections',
+        name: 'connections',
         component: Parent,
-        // redirect: 'connections/',
+        redirect: {
+          name: 'connectionsList',
+        },
         meta: {
           title: 'page_title_connections',
         },
@@ -374,7 +376,9 @@ export default [
         path: '/object',
         name: 'object',
         component: Parent,
-        redirect: 'object/',
+        redirect: {
+          name: 'objectList',
+        },
         meta: {
           title: 'page_title_data_object',
         },
@@ -397,7 +401,9 @@ export default [
         path: '/catalogue',
         name: 'catalogue',
         component: Parent,
-        redirect: 'catalogue',
+        redirect: {
+          name: 'catalogueList',
+        },
         meta: {
           title: 'page_title_data_catalogue',
         },
@@ -420,7 +426,9 @@ export default [
         path: '/migrate',
         name: 'migrate',
         component: Parent,
-        redirect: 'migrate/',
+        redirect: {
+          name: 'migrateList',
+        },
         meta: {
           title: 'page_title_data_copy',
         },
@@ -442,7 +450,9 @@ export default [
         path: '/dataflow',
         name: 'dataflow',
         component: Parent,
-        redirect: 'dataflow/',
+        redirect: {
+          name: 'dataflowList',
+        },
         meta: {
           title: 'page_title_data_develop',
         },
@@ -606,7 +616,9 @@ export default [
         path: '/heartbeat-table',
         name: 'heartbeatTable',
         component: Parent,
-        redirect: 'heartbeat-table/',
+        redirect: {
+          name: 'HeartbeatTableList',
+        },
         meta: {
           title: 'page_title_heartbeat_table',
         },
@@ -628,7 +640,9 @@ export default [
         path: '/function',
         name: 'function',
         component: Parent,
-        redirect: 'function/',
+        redirect: {
+          name: 'functionList',
+        },
         meta: {
           title: 'page_title_function',
         },
@@ -768,6 +782,7 @@ export default [
         meta: {
           title: 'page_title_api_application',
           code: 'v2_api-application',
+          hideTitle: true,
         },
       },
       /* ---------- API客户端  ----------*/
@@ -780,6 +795,7 @@ export default [
         meta: {
           title: 'page_title_api_client',
           code: 'v2_api-client',
+          hideTitle: true,
         },
       },
       /* ---------- API服务端  ----------*/
@@ -792,6 +808,7 @@ export default [
         meta: {
           title: 'page_title_api_servers',
           code: 'v2_api-servers',
+          hideTitle: true,
         },
       },
       /* ---------- 服务审计  ----------*/
@@ -799,10 +816,13 @@ export default [
         path: '/data-server-audit',
         name: 'dataServerAudit',
         component: Parent,
-        redirect: 'data-server-audit/',
+        redirect: {
+          name: 'dataServerAuditList',
+        },
         meta: {
           title: 'page_title_api_audit',
           code: 'v2_data_server_audit',
+          hideTitle: true,
         },
         children: [
           {
@@ -884,6 +904,7 @@ export default [
         meta: {
           title: 'page_title_external_storage',
           code: 'v2_external-storage_menu',
+          hideTitle: true,
         },
       },
       /* ---------- 用户管理  ----------*/
@@ -894,6 +915,7 @@ export default [
         meta: {
           title: 'page_title_user',
           code: 'v2_user_management_menu',
+          hideTitle: true,
         },
       },
       /* ---------- 角色管理  ----------*/
@@ -901,7 +923,9 @@ export default [
         path: '/role',
         name: 'roles',
         component: Parent,
-        redirect: 'role/',
+        redirect: {
+          name: 'roleList',
+        },
         meta: {
           title: 'page_title_role',
         },

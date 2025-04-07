@@ -108,6 +108,7 @@ export default defineConfig({
     proxy: {
       '/api/': proxy,
       '/oauth/': proxy,
+      '/docs/': proxy,
       '/old/': { target: 'http://localhost:8081' },
       '/ws/': {
         ws: true,

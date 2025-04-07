@@ -15,7 +15,6 @@
       label-width="150px"
       :model="editForm"
       :rules="rulesEdit"
-      class="my-n6"
     >
       <ElFormItem :label="$t('packages_business_application_list_yingyongmingcheng')" prop="value">
         <ElInput v-model="editForm.value" text maxlength="50" clearable></ElInput>

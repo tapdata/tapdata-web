@@ -1,39 +1,11 @@
-<template>
-  <div class="p-2 overflow-y-auto">
-    <div
-      class="node-list-item px-2 mb-1 flex align-center font-color-dark item__whole"
-      :class="{ active: activeNodeId === '' }"
-      @click="changeItem()"
-    >
-      <VIcon size="16" class="mr-2">device</VIcon>{{ label }}
-    </div>
-    <RecycleScroller key-field="id" :items="items" :item-size="36" class="scroller" :buffer="72">
-      <template #default="{ item: node, index, active }">
-        <div class="pb-1">
-          <div
-            class="node-list-item px-2 flex align-center font-color-dark"
-            :class="[{ active: activeNodeId === node.id }, customClass(node)]"
-            @click="changeItem(node.id)"
-          >
-            <NodeIcon :node="node" :size="18" class="mr-2 flex-shrink-0" />
-            <OverflowTooltip :text="node.name" placement="left" :enterable="false"></OverflowTooltip>
-            <ElTag v-if="showType" class="ml-2" effect="plain">{{ typeMap[node.nodeType] }}</ElTag>
-            <slot name="right"></slot>
-          </div>
-        </div>
-      </template>
-    </RecycleScroller>
-  </div>
-</template>
-
 <script>
-import { mapGetters } from 'vuex'
-import { RecycleScroller } from 'vue-virtual-scroller'
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import i18n from '@tap/i18n'
 import { OverflowTooltip } from '@tap/component'
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
+import i18n from '@tap/i18n'
+import { RecycleScroller } from 'vue-virtual-scroller'
+import { mapGetters } from 'vuex'
+import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 import { NodeIcon } from '../DatabaseIcon'
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
 export default {
   name: 'List',
@@ -84,8 +56,10 @@ export default {
         })
         .map((t) => {
           const { type, $inputs, $outputs } = t
-          const isSource = (type === 'database' || type === 'table') && !$inputs.length
-          const isTarget = (type === 'database' || type === 'table') && !$outputs.length
+          const isSource =
+            (type === 'database' || type === 'table') && !$inputs.length
+          const isTarget =
+            (type === 'database' || type === 'table') && !$outputs.length
           t.nodeType = isSource ? 'source' : isTarget ? 'target' : 'processor'
           t.index = isSource ? 1 : isTarget ? 3 : 2
           return t
@@ -99,8 +73,8 @@ export default {
         return
       }
       this.activeNodeId = itemId
-      $emit(
-        this.$emit('update:value', this.activeNodeId),
+      this.$emit('update:value', this.activeNodeId)
+      this.$emit(
         'change',
         this.activeNodeId,
         this.items.find((t) => t.id === this.activeNodeId),
@@ -110,6 +84,46 @@ export default {
   emits: ['change', 'update:value'],
 }
 </script>
+
+<template>
+  <div class="p-2 overflow-y-auto">
+    <div
+      class="node-list-item px-2 mb-1 flex align-center font-color-dark item__whole"
+      :class="{ active: activeNodeId === '' }"
+      @click="changeItem()"
+    >
+      <VIcon size="16" class="mr-2">device</VIcon>{{ label }}
+    </div>
+    <RecycleScroller
+      key-field="id"
+      :items="items"
+      :item-size="36"
+      class="scroller"
+      :buffer="72"
+    >
+      <template #default="{ item: node, index, active }">
+        <div class="pb-1">
+          <div
+            class="node-list-item px-2 flex align-center font-color-dark"
+            :class="[{ active: activeNodeId === node.id }, customClass(node)]"
+            @click="changeItem(node.id)"
+          >
+            <NodeIcon :node="node" :size="18" class="mr-2 flex-shrink-0" />
+            <OverflowTooltip
+              :text="node.name"
+              placement="left"
+              :enterable="false"
+            />
+            <ElTag v-if="showType" class="ml-2" effect="plain">{{
+              typeMap[node.nodeType]
+            }}</ElTag>
+            <slot name="right" />
+          </div>
+        </div>
+      </template>
+    </RecycleScroller>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .node-list-item {

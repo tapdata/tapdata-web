@@ -1,43 +1,6 @@
-<template>
-  <ElDialog
-    :title="title"
-    :model-value="visible"
-    :append-to-body="true"
-    width="800px"
-    top="10vh"
-    class="connection-dialog ldp-conection-dialog flex flex-column"
-    :close-on-click-modal="false"
-    @close="handleClose"
-  >
-    <ElForm ref="form" label-position="left" label-width="150px" :model="form" class="my-n6">
-      <ElFormItem :label="$t('packages_business_permissionse_settings_create_xuanzeshouquanjiao')" prop="roleId">
-        <ElSelect v-model="form.roleId" @change="getData">
-          <ElOption v-for="item in roleList" :label="item.label" :value="item.value" :key="item.value"></ElOption>
-        </ElSelect>
-      </ElFormItem>
-      <ElFormItem :label="$t('packages_business_permissionse_settings_create_shezhiquanxian')" prop="checked">
-        <ElCheckboxGroup v-model="form.checked" class="inline-flex ml-4" @change="handleChange">
-          <ElCheckbox v-for="item in items" :label="item.value" :key="item.value" :disabled="checkDisabled(item)">{{
-            item.label
-          }}</ElCheckbox>
-        </ElCheckboxGroup>
-      </ElFormItem>
-    </ElForm>
-
-    <template v-slot:footer>
-      <span class="dialog-footer">
-        <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton :disabled="!form.roleId" type="primary" :loading="saveLoading" @click="handleSave">{{
-          $t('public_button_save')
-        }}</ElButton>
-      </span>
-    </template>
-  </ElDialog>
-</template>
-
 <script>
+import { dataPermissionApi, usersApi } from '@tap/api'
 import i18n from '@tap/i18n'
-import { usersApi, dataPermissionApi } from '@tap/api'
 
 export default {
   name: 'Create',
@@ -46,7 +9,9 @@ export default {
     title: {
       type: String,
       default: () => {
-        return i18n.t('packages_business_permissionse_settings_create_quanxianshezhi')
+        return i18n.t(
+          'packages_business_permissionse_settings_create_quanxianshezhi',
+        )
       },
     },
   },
@@ -118,7 +83,7 @@ export default {
         ],
       }
 
-      let result = MAP[this.type] || [
+      const result = MAP[this.type] || [
         {
           label: i18n.t('public_button_check'),
           value: 'View',
@@ -150,7 +115,7 @@ export default {
     },
 
     getData(val) {
-      let params = {
+      const params = {
         typeId: val,
         dataType: this.type,
         dataIds: this.dataList.map((t) => t.id).join(),
@@ -161,7 +126,7 @@ export default {
     },
 
     getRoleList() {
-      let filter = {
+      const filter = {
         order: 'name',
         limit: 500,
       }
@@ -200,7 +165,7 @@ export default {
     },
 
     handleSave() {
-      let params = {
+      const params = {
         type: 'Role',
         typeIds: [this.form.roleId],
         dataType: this.type,
@@ -217,10 +182,9 @@ export default {
           } else {
             this.$message.warning({
               dangerouslyUseHTMLString: true,
-              message:
-                i18n.t('packages_business_permissionse_settings_create_wufaduiyixiashujujinxingshouquan') +
-                ':<br/>' +
-                this.dataList.map((t) => t.name).join('<br/>'),
+              message: `${i18n.t(
+                'packages_business_permissionse_settings_create_wufaduiyixiashujujinxingshouquan',
+              )}:<br/>${this.dataList.map((t) => t.name).join('<br/>')}`,
             })
             // this.$message.warning('以下数据无权限修改，将跳过保存:' + ' ' + this.dataList.map(t => t.name).join(',\n<br/>'))
           }
@@ -232,7 +196,7 @@ export default {
     },
 
     handleChange(val) {
-      let { checked } = this.form
+      const { checked } = this.form
       if (!checked.includes('View') && checked.length) {
         checked.unshift('View')
       }
@@ -253,7 +217,8 @@ export default {
       if (
         this.type === 'Inspect' &&
         item.value === 'Edit' &&
-        (this.form.checked.includes('Start') || this.form.checked.includes('Stop'))
+        (this.form.checked.includes('Start') ||
+          this.form.checked.includes('Stop'))
       ) {
         return true
       }
@@ -261,3 +226,71 @@ export default {
   },
 }
 </script>
+
+<template>
+  <ElDialog
+    :title="title"
+    :model-value="visible"
+    :append-to-body="true"
+    width="800px"
+    top="10vh"
+    class="connection-dialog ldp-conection-dialog flex flex-column"
+    :close-on-click-modal="false"
+    @close="handleClose"
+  >
+    <ElForm ref="form" label-position="left" label-width="150px" :model="form">
+      <ElFormItem
+        :label="
+          $t(
+            'packages_business_permissionse_settings_create_xuanzeshouquanjiao',
+          )
+        "
+        prop="roleId"
+      >
+        <ElSelect v-model="form.roleId" @change="getData">
+          <ElOption
+            v-for="item in roleList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </ElSelect>
+      </ElFormItem>
+      <ElFormItem
+        :label="
+          $t('packages_business_permissionse_settings_create_shezhiquanxian')
+        "
+        prop="checked"
+      >
+        <ElCheckboxGroup
+          v-model="form.checked"
+          class="inline-flex ml-4"
+          @change="handleChange"
+        >
+          <ElCheckbox
+            v-for="item in items"
+            :key="item.value"
+            :label="item.value"
+            :disabled="checkDisabled(item)"
+            >{{ item.label }}</ElCheckbox
+          >
+        </ElCheckboxGroup>
+      </ElFormItem>
+    </ElForm>
+
+    <template #footer>
+      <span class="dialog-footer">
+        <ElButton @click="handleClose">{{
+          $t('public_button_cancel')
+        }}</ElButton>
+        <ElButton
+          :disabled="!form.roleId"
+          type="primary"
+          :loading="saveLoading"
+          @click="handleSave"
+          >{{ $t('public_button_save') }}</ElButton
+        >
+      </span>
+    </template>
+  </ElDialog>
+</template>

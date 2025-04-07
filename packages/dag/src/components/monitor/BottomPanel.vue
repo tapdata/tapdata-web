@@ -1,74 +1,16 @@
-<template>
-  <section class="bottom-panel border-top flex-column">
-    <NodeLog
-      v-bind="$attrs"
-      v-if="onlyLog"
-      :currentTab="currentTab"
-      ref="log"
-      @action="$emit('action', arguments[0])"
-    ></NodeLog>
-    <div v-else class="panel-header flex h-100">
-      <ElTabs v-model="currentTab" class="setting-tabs h-100 flex-1 flex flex-column w-100" key="bottomPanel">
-        <ElTabPane :label="$t('packages_dag_monitor_bottompanel_renwujindu')" name="milestone">
-          <MilestoneList
-            v-bind="$attrs"
-            v-if="currentTab === 'milestone'"
-            :currentTab="currentTab"
-            v-model:nodeId="nodeId"
-            ref="milestoneList"
-          ></MilestoneList>
-        </ElTabPane>
-        <ElTabPane v-if="!hideLog" :label="$t('public_task_log')" name="log">
-          <NodeLog
-            v-bind="$attrs"
-            v-if="currentTab === 'log'"
-            v-model:nodeId="nodeId"
-            :currentTab="currentTab"
-            ref="log"
-            @action="$emit('action', arguments[0])"
-          ></NodeLog>
-        </ElTabPane>
-        <ElTabPane :label="$t('packages_dag_monitor_bottompanel_yunxingjilu')" name="record">
-          <Record v-bind="$attrs" v-if="currentTab === 'record'" :currentTab="currentTab"></Record>
-        </ElTabPane>
-        <ElTabPane v-if="showAlert" :label="$t('packages_dag_monitor_bottompanel_gaojingliebiao')" name="alert">
-          <Alert
-            v-bind="$attrs"
-            v-if="currentTab === 'alert'"
-            :currentTab="currentTab"
-            @change-tab="changeTab"
-            @load-data="$emit('load-data')"
-          ></Alert>
-        </ElTabPane>
-        <ElTabPane v-if="relationCount" :label="$t('packages_dag_monitor_bottompanel_guanlianrenwu')" name="relation">
-          <RelationList
-            v-bind="$attrs"
-            :currentTab="currentTab"
-            :type="$attrs.dataflow.syncType"
-            @change-tab="changeTab"
-            @load-data="$emit('load-data')"
-          ></RelationList>
-        </ElTabPane>
-      </ElTabs>
-
-      <VIcon class="close-icon" size="16" @click="$emit('showBottomPanel')">close</VIcon>
-    </div>
-  </section>
-</template>
-
 <script>
+import { taskApi } from '@tap/api'
+
+import NodeLog from '@tap/business/src/components/logs/NodeLog'
+import MilestoneList from '@tap/business/src/components/milestone/List'
+import RelationList from '@tap/business/src/views/task/relation/List.vue'
+import focusSelect from '@tap/component/src/directives/focusSelect'
+import resize from '@tap/component/src/directives/resize'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 
-import '@tap/component/src/directives/resize/index.scss'
-import resize from '@tap/component/src/directives/resize'
-import focusSelect from '@tap/component/src/directives/focusSelect'
-import NodeLog from '@tap/business/src/components/logs/NodeLog'
-import RelationList from '@tap/business/src/views/task/relation/List.vue'
-import MilestoneList from '@tap/business/src/components/milestone/List'
-
-import Record from './components/Record'
 import Alert from './components/Alert'
-import { taskApi } from '@tap/api'
+import Record from './components/Record'
+import '@tap/component/src/directives/resize/index.scss'
 
 export default {
   name: 'ConfigPanel',
@@ -93,14 +35,19 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
+    ...mapGetters('dataflow', [
+      'activeType',
+      'activeNode',
+      'nodeById',
+      'stateIsReadonly',
+    ]),
 
     showAlert() {
       return !['SharedCacheMonitor'].includes(this.$route.name)
     },
   },
   watch: {
-    'activeNode.name'(v) {
+    'activeNode.name': function (v) {
       this.name = v
     },
   },
@@ -116,7 +63,12 @@ export default {
     this.getRelationData()
   },
   methods: {
-    ...mapMutations('dataflow', ['updateNodeProperties', 'setNodeError', 'clearNodeError', 'setActiveType']),
+    ...mapMutations('dataflow', [
+      'updateNodeProperties',
+      'setNodeError',
+      'clearNodeError',
+      'setActiveType',
+    ]),
     ...mapActions('dataflow', ['updateDag']),
 
     handleChangeName(name) {
@@ -151,9 +103,10 @@ export default {
           data.nodeId && this.getLogRef()?.changeItem(data.nodeId)
           const t = new Date(data.start).getTime()
           const len = 10 * 1000
-          let start = t - len
+          const start = t - len
           const end = data.end ? data.end + len : t + len
-          data.start && this.getLogRef()?.$refs.timeSelect.changeTime([start, end])
+          data.start &&
+            this.getLogRef()?.$refs.timeSelect.changeTime([start, end])
         }
       })
     },
@@ -161,7 +114,7 @@ export default {
     getRelationData() {
       const { id, syncType } = this.$attrs.dataflow || {}
       const { taskRecordId } = this.$route.query || {}
-      let filter = {
+      const filter = {
         taskId: this.$route.params.id || id,
         taskRecordId,
       }
@@ -175,9 +128,98 @@ export default {
       })
     },
   },
-  emits: ['action', 'load-data', 'showBottomPanel', 'load-data', 'showBottomPanel'],
+  emits: [
+    'action',
+    'load-data',
+    'showBottomPanel',
+    'load-data',
+    'showBottomPanel',
+  ],
 }
 </script>
+
+<template>
+  <section class="bottom-panel border-top flex-column">
+    <NodeLog
+      v-if="onlyLog"
+      v-bind="$attrs"
+      ref="log"
+      :current-tab="currentTab"
+      @action="$emit('action', arguments[0])"
+    />
+    <div v-else class="panel-header flex h-100">
+      <ElTabs
+        key="bottomPanel"
+        v-model="currentTab"
+        style="--el-tabs-padding-left: 1rem"
+        class="setting-tabs h-100 flex-1 flex w-100"
+      >
+        <ElTabPane
+          :label="$t('packages_dag_monitor_bottompanel_renwujindu')"
+          name="milestone"
+        >
+          <MilestoneList
+            v-if="currentTab === 'milestone'"
+            v-bind="$attrs"
+            ref="milestoneList"
+            v-model:node-id="nodeId"
+            :current-tab="currentTab"
+          />
+        </ElTabPane>
+        <ElTabPane v-if="!hideLog" :label="$t('public_task_log')" name="log">
+          <NodeLog
+            v-if="currentTab === 'log'"
+            v-bind="$attrs"
+            ref="log"
+            v-model:node-id="nodeId"
+            :current-tab="currentTab"
+            @action="$emit('action', arguments[0])"
+          />
+        </ElTabPane>
+        <ElTabPane
+          :label="$t('packages_dag_monitor_bottompanel_yunxingjilu')"
+          name="record"
+        >
+          <Record
+            v-if="currentTab === 'record'"
+            v-bind="$attrs"
+            :current-tab="currentTab"
+          />
+        </ElTabPane>
+        <ElTabPane
+          v-if="showAlert"
+          :label="$t('packages_dag_monitor_bottompanel_gaojingliebiao')"
+          name="alert"
+        >
+          <Alert
+            v-if="currentTab === 'alert'"
+            v-bind="$attrs"
+            :current-tab="currentTab"
+            @change-tab="changeTab"
+            @load-data="$emit('load-data')"
+          />
+        </ElTabPane>
+        <ElTabPane
+          v-if="relationCount"
+          :label="$t('packages_dag_monitor_bottompanel_guanlianrenwu')"
+          name="relation"
+        >
+          <RelationList
+            v-bind="$attrs"
+            :current-tab="currentTab"
+            :type="$attrs.dataflow.syncType"
+            @change-tab="changeTab"
+            @load-data="$emit('load-data')"
+          />
+        </ElTabPane>
+      </ElTabs>
+
+      <VIcon class="close-icon" size="16" @click="$emit('showBottomPanel')"
+        >close</VIcon
+      >
+    </div>
+  </section>
+</template>
 
 <style scoped lang="scss">
 $color: map.get($color, primary);

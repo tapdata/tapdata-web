@@ -37,7 +37,8 @@
 // css3 var in packages/theme-chalk/src/tabs.scss
 .el-tabs {
   .el-tabs__nav-wrap.is-top {
-    padding: 0;
+    // padding: 0;
+    padding-left: var(--el-tabs-padding-left, 0);
   }
 
   .el-tabs__item {
@@ -49,8 +50,6 @@
   }
 
   &.tabs-fill {
-    display: flex;
-    flex-direction: column;
     height: 100%;
     > .el-tabs__header {
       margin: 0;
@@ -76,10 +75,14 @@
 // Tooltip
 .el-popper[role='tooltip']:not(.el-popover):not(.el-select__popper) {
   max-width: 400px;
+  --el-popper-border-radius: var(--el-border-radius-base)
 }
 
 // Select
 .el-select {
+  &--small {
+    --el-border-radius-base: var(--el-border-radius-small);
+  }
   .el-select__tags .el-tag {
     --el-tag-text-color: var(--el-text-color-primary);
   }
@@ -110,6 +113,7 @@
 
 // Dropdown
 .el-dropdown-menu {
+  border-radius: var(--el-popper-border-radius);
   padding: 4px !important;
   &__item {
     border-radius: map.get($border-radius, base);
@@ -358,4 +362,9 @@
   &--small  {
     --el-border-radius-base: var(--el-border-radius-small)
   }
+}
+
+// Checkbox
+.el-checkbox {
+  --el-checkbox-border-radius: 4px;
 }

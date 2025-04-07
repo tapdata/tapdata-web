@@ -1,213 +1,33 @@
-<template>
-  <section v-loading="loading">
-    <ElForm
-      ref="form"
-      class="flex-fill overflow-y-auto overflow-x-hidden pb-4"
-      :label-width="isEn ? '180px' : '140px'"
-      label-position="top"
-      :model="form"
-      :rules="rules"
-    >
-      <el-row :gutter="24">
-        <el-col :span="12">
-          <ElFormItem prop="name" :label="$t('packages_business_shared_cache_name') + ':'">
-            <ElInput
-              v-model.trim="form.name"
-              class="form-input"
-              :placeholder="$t('packages_business_shared_cache_placeholder_name')"
-            ></ElInput>
-          </ElFormItem>
-        </el-col>
-        <el-col :span="12">
-          <ElFormItem prop="connectionId" :label="$t('packages_business_shared_cache_column_connection') + ':'">
-            <ConnectionListSelect
-              v-model:value="form.connectionId"
-              v-model:label="form.connectionName"
-              :placeholder="$t('packages_business_shared_cache_placeholder_connection')"
-              filterable
-              :params="{
-                where: {
-                  connection_type: { in: ['source', 'source_and_target'] },
-                },
-              }"
-              class="form-input"
-              @change="connectionInputHandler"
-            ></ConnectionListSelect>
-          </ElFormItem>
-        </el-col>
-      </el-row>
-
-      <el-row :gutter="24">
-        <el-col :span="12">
-          <ElFormItem prop="tableName" :label="$t('packages_business_shared_cache_column_table') + ':'">
-            <VirtualSelect
-              v-model="form.tableName"
-              filterable
-              class="form-input"
-              :item-size="34"
-              :options="tableOptions"
-              :loading="tableOptionsLoading"
-              :placeholder="$t('packages_business_shared_cache_placeholder_table')"
-              @input="tableInputHandler"
-            >
-              <template #option="{ item }">
-                <span>{{ item.label }}</span>
-                <span v-if="item.comment" class="font-color-sslight">{{ `(${item.comment})` }}</span>
-              </template>
-            </VirtualSelect>
-          </ElFormItem>
-        </el-col>
-        <el-col :span="12">
-          <ElFormItem prop="autoCreateIndex">
-            <template #label>
-              <span>{{ $t('packages_business_shared_cache_cache_key_auto_create') }}</span>
-              <el-tooltip placement="top" :content="$t('packages_business_shared_cache_cache_key_auto_create_tip')">
-                <i class="el-icon-info color-primary ml-1"></i>
-              </el-tooltip>
-            </template>
-            <ConfirmSwitch
-              :value="form.autoCreateIndex"
-              :confirm="{ title: $t('packages_business_shared_cache_cache_key_auto_create_tip') }"
-              @change="form.autoCreateIndex = $event"
-            ></ConfirmSwitch>
-          </ElFormItem>
-        </el-col>
-      </el-row>
-
-      <el-row :gutter="24">
-        <el-col :span="12">
-          <ElFormItem prop="cacheKeys" :label="$t('packages_business_shared_cache_keys') + ':'">
-            <template v-slot:label>
-              <span>{{ $t('packages_business_shared_cache_keys') }}</span>
-              <el-tooltip placement="top" :content="$t('packages_business_shared_cache_keys_tooltip')">
-                <el-icon class="color-primary ml-1"><InfoFilled /></el-icon>
-              </el-tooltip>
-              <span>:</span>
-            </template>
-            <FieldSelector
-              v-model:value="form.cacheKeys"
-              class="form-field-selector"
-              :options="fieldOptions"
-              :placeholder="$t('packages_business_shared_cache_placeholder_keys')"
-              @change="handleChangeCacheKeys"
-            ></FieldSelector>
-            <div v-if="showCachekeysCheckMsg" class="color-danger">
-              {{ $t('packages_business_shared_cache_cache_key_message') }}
-            </div>
-          </ElFormItem>
-        </el-col>
-        <el-col :span="12">
-          <ElFormItem prop="fields" :label="$t('packages_business_shared_cache_fields') + ':'">
-            <template v-slot:label>
-              <span>{{ $t('packages_business_shared_cache_fields') }}</span>
-              <el-tooltip placement="top" :content="$t('packages_business_shared_cache_fields_tooltip')">
-                <el-icon class="color-primary ml-1"><InfoFilled /></el-icon>
-              </el-tooltip>
-              <span>:</span>
-            </template>
-            <FieldSelector
-              v-model:value="form.fields"
-              class="form-field-selector"
-              :options="fieldOptions"
-              :placeholder="$t('packages_business_shared_cache_placeholder_fields')"
-            ></FieldSelector>
-          </ElFormItem>
-        </el-col>
-      </el-row>
-
-      <el-row :gutter="24">
-        <el-col :span="12">
-          <ElFormItem prop="externalStorageId" :label="$t('public_external_memory_configuration')">
-            <ElSelect v-model="form.externalStorageId" filterable :loading="!externalStorageOptions">
-              <ElOption
-                v-for="opt in externalStorageOptions"
-                :key="opt.value"
-                :value="opt.value"
-                :label="opt.label"
-              ></ElOption>
-            </ElSelect>
-          </ElFormItem>
-        </el-col>
-        <el-col :span="12">
-          <ElFormItem prop="maxMemory">
-            <template v-slot:label>
-              <span>{{ $t('packages_business_shared_cache_max_memory') }}</span>
-              <el-tooltip placement="top" :content="$t('packages_business_shared_cache_max_memory_tooltip')">
-                <el-icon class="color-primary ml-1"><InfoFilled /></el-icon>
-              </el-tooltip>
-              <span>:</span>
-            </template>
-            <ElInputNumber
-              v-model="form.maxMemory"
-              style="width: 200px"
-              controls-position="right"
-              :min="1"
-              :max="999999999"
-            ></ElInputNumber>
-            <span class="ml-1">M</span>
-          </ElFormItem>
-        </el-col>
-      </el-row>
-
-      <el-row :gutter="24">
-        <el-col :span="12">
-          <ElFormItem prop="shareCdcEnable">
-            <template #label>
-              <span>
-                <span>{{ $t('packages_dag_connection_form_shared_mining') }}</span>
-                <el-tooltip placement="top" :content="$t('packages_business_connection_form_shared_mining_tip')">
-                  <i class="el-icon-info color-primary ml-1"></i>
-                </el-tooltip>
-              </span>
-              <span>:</span>
-            </template>
-            <ElSwitch v-model="form.shareCdcEnable"></ElSwitch>
-          </ElFormItem>
-        </el-col>
-        <el-col :span="12">
-          <ElFormItem v-if="form.shareCdcEnable" prop="enforceShareCdc">
-            <template #label>
-              <span>{{ $t('packages_business_shared_cache_enforceShareCdc') }}</span>
-              <span>:</span>
-            </template>
-            <ElSelect v-model="form.enforceShareCdc">
-              <ElOption :value="true" :label="$t('packages_business_shared_cache_enforceShareCdc_true')"></ElOption>
-              <ElOption :value="false" :label="$t('packages_dag_migration_settingpanel_zhuanweiputongC')"></ElOption>
-            </ElSelect>
-          </ElFormItem>
-        </el-col>
-      </el-row>
-      <ElFormItem>
-        <template v-slot:label>
-          <span>{{ $t('packages_business_shared_cache_code') }}</span>
-          <el-tooltip placement="top" :content="$t('packages_business_shared_cache_code_tooltip')">
-            <el-icon class="color-primary ml-1"><InfoFilled /></el-icon>
-          </el-tooltip>
-          <span>:</span>
-        </template>
-      </ElFormItem>
-      <CodeView :data="form" class="w-100 rounded-lg"></CodeView>
-    </ElForm>
-  </section>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
+import { InfoFilled } from '@element-plus/icons-vue'
+import {
+  externalStorageApi,
+  metadataInstancesApi,
+  sharedCacheApi,
+} from '@tap/api'
 import { VirtualSelect } from '@tap/component'
 import { Switch as ConfirmSwitch } from '@tap/form'
-import FieldSelector from './FieldSelector'
-import CodeView from './CodeView.vue'
-import { sharedCacheApi, metadataInstancesApi, externalStorageApi } from '@tap/api'
 import i18n from '@tap/i18n'
+import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 import ConnectionListSelect from '../connections/ListSelect'
+import CodeView from './CodeView.vue'
+import FieldSelector from './FieldSelector'
 
 export default {
-  components: { VirtualSelect, FieldSelector, CodeView, ConnectionListSelect, ConfirmSwitch },
+  components: {
+    VirtualSelect,
+    FieldSelector,
+    CodeView,
+    ConnectionListSelect,
+    ConfirmSwitch,
+    InfoFilled,
+  },
   props: {
     taskId: {
       type: String,
     },
   },
+  emits: ['update:loading', 'success'],
   data() {
     return {
       loading: false,
@@ -232,14 +52,18 @@ export default {
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('packages_business_shared_cache_placeholder_connection'),
+            message: this.$t(
+              'packages_business_shared_cache_placeholder_connection',
+            ),
           },
         ],
         tableName: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('packages_business_shared_cache_placeholder_table'),
+            message: this.$t(
+              'packages_business_shared_cache_placeholder_table',
+            ),
           },
         ],
         cacheKeys: [
@@ -253,21 +77,27 @@ export default {
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('packages_business_shared_cache_placeholder_fields'),
+            message: this.$t(
+              'packages_business_shared_cache_placeholder_fields',
+            ),
           },
         ],
         maxMemory: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('packages_business_shared_cache_placeholder_max_memory'),
+            message: this.$t(
+              'packages_business_shared_cache_placeholder_max_memory',
+            ),
           },
         ],
         externalStorageId: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('packages_business_shared_cache_placeholder_external_storage'),
+            message: this.$t(
+              'packages_business_shared_cache_placeholder_external_storage',
+            ),
           },
         ],
       },
@@ -307,7 +137,8 @@ export default {
         .then(async (data) => {
           data = data || {}
           let externalStorageId = data.externalStorageId
-          const externalStorage = await externalStorageApi.get(externalStorageId)
+          const externalStorage =
+            await externalStorageApi.get(externalStorageId)
           if (!externalStorage?.id) {
             externalStorageId = ''
           }
@@ -333,7 +164,7 @@ export default {
         })
     },
     async getExternalStorageOptions() {
-      let filter = {
+      const filter = {
         where: {},
       }
 
@@ -366,8 +197,8 @@ export default {
       metadataInstancesApi
         .getTablesValue({ connectionId })
         .then((data) => {
-          let options = []
-          let list = data || []
+          const options = []
+          const list = data || []
           list.forEach((opt) => {
             if (opt) {
               options.push({
@@ -384,7 +215,7 @@ export default {
         })
     },
     getTableSchema(tableName) {
-      let params = {
+      const params = {
         filter: JSON.stringify({
           where: {
             'source.id': this.form.connectionId,
@@ -404,20 +235,22 @@ export default {
       metadataInstancesApi
         .get(params)
         .then((data) => {
-          let table = data?.items?.[0]
+          const table = data?.items?.[0]
           if (table) {
             this.metadataInstancesId = table.id
             if (this.taskId) {
               this.handleChangeCacheKeys()
             }
-            let fields = table.fields || []
+            const fields = table.fields || []
             this.fieldOptions = fields.map((opt) => {
               opt.label = opt.field_name
               opt.value = opt.field_name
               return opt
             })
           } else {
-            this.$message.error(this.$t('packages_business_shared_cache_messge_no_table'))
+            this.$message.error(
+              this.$t('packages_business_shared_cache_messge_no_table'),
+            )
           }
         })
         .finally(() => {
@@ -441,7 +274,7 @@ export default {
     submit() {
       this.$refs.form.validate((flag) => {
         if (flag) {
-          let {
+          const {
             name,
             connectionId,
             connectionName,
@@ -455,11 +288,15 @@ export default {
             shareCdcEnable,
             enforceShareCdc,
           } = this.form
-          let id = this.taskId
+          const id = this.taskId
           const needCreateIndex = cacheKeys
             .split(',')
-            .filter((t) => this.fieldOptions.some((field) => t === field.value && !field.is_index))
-          let params = {
+            .filter((t) =>
+              this.fieldOptions.some(
+                (field) => t === field.value && !field.is_index,
+              ),
+            )
+          const params = {
             id,
             name,
             shareCdcEnable,
@@ -477,8 +314,8 @@ export default {
                   connectionName,
                 },
                 {
-                  cacheKeys: cacheKeys,
-                  maxMemory: maxMemory,
+                  cacheKeys,
+                  maxMemory,
                   externalStorageId,
                   needCreateIndex,
                   autoCreateIndex,
@@ -487,7 +324,7 @@ export default {
               edges: [],
             },
           }
-          let method = id ? 'patch' : 'post'
+          const method = id ? 'patch' : 'post'
           $emit(this, 'update:loading', true)
           sharedCacheApi[method](params)
             .then(() => {
@@ -511,9 +348,291 @@ export default {
       })
     },
   },
-  emits: ['update:loading', 'success'],
 }
 </script>
+
+<template>
+  <section v-loading="loading">
+    <ElForm
+      ref="form"
+      class="flex-fill overflow-y-auto overflow-x-hidden pb-4"
+      :label-width="isEn ? '180px' : '140px'"
+      label-position="top"
+      :model="form"
+      :rules="rules"
+    >
+      <el-row :gutter="24">
+        <el-col :span="12">
+          <ElFormItem
+            prop="name"
+            :label="$t('packages_business_shared_cache_name')"
+          >
+            <ElInput
+              v-model.trim="form.name"
+              class="form-input"
+              :placeholder="
+                $t('packages_business_shared_cache_placeholder_name')
+              "
+            />
+          </ElFormItem>
+        </el-col>
+        <el-col :span="12">
+          <ElFormItem
+            prop="connectionId"
+            :label="`${$t('packages_business_shared_cache_column_connection')}`"
+          >
+            <ConnectionListSelect
+              v-model:value="form.connectionId"
+              v-model:label="form.connectionName"
+              :placeholder="
+                $t('packages_business_shared_cache_placeholder_connection')
+              "
+              filterable
+              :params="{
+                where: {
+                  connection_type: { in: ['source', 'source_and_target'] },
+                },
+              }"
+              class="form-input"
+              @change="connectionInputHandler"
+            />
+          </ElFormItem>
+        </el-col>
+      </el-row>
+
+      <el-row :gutter="24">
+        <el-col :span="12">
+          <ElFormItem
+            prop="tableName"
+            :label="`${$t('packages_business_shared_cache_column_table')}`"
+          >
+            <VirtualSelect
+              v-model="form.tableName"
+              filterable
+              class="form-input"
+              :item-size="34"
+              :options="tableOptions"
+              :loading="tableOptionsLoading"
+              :placeholder="
+                $t('packages_business_shared_cache_placeholder_table')
+              "
+              @input="tableInputHandler"
+            >
+              <template #option="{ item }">
+                <span>{{ item.label }}</span>
+                <span v-if="item.comment" class="font-color-sslight">{{
+                  `(${item.comment})`
+                }}</span>
+              </template>
+            </VirtualSelect>
+          </ElFormItem>
+        </el-col>
+        <el-col :span="12">
+          <ElFormItem prop="autoCreateIndex">
+            <template #label>
+              <span>{{
+                $t('packages_business_shared_cache_cache_key_auto_create')
+              }}</span>
+              <el-tooltip
+                placement="top"
+                :content="
+                  $t('packages_business_shared_cache_cache_key_auto_create_tip')
+                "
+              >
+                <i class="el-icon-info color-primary ml-1" />
+              </el-tooltip>
+            </template>
+            <ConfirmSwitch
+              :value="form.autoCreateIndex"
+              :confirm="{
+                title: $t(
+                  'packages_business_shared_cache_cache_key_auto_create_tip',
+                ),
+              }"
+              @change="form.autoCreateIndex = $event"
+            />
+          </ElFormItem>
+        </el-col>
+      </el-row>
+
+      <el-row :gutter="24">
+        <el-col :span="12">
+          <ElFormItem
+            prop="cacheKeys"
+            :label="`${$t('packages_business_shared_cache_keys')}`"
+          >
+            <template #label>
+              <span class="align-middle">{{
+                $t('packages_business_shared_cache_keys')
+              }}</span>
+              <el-tooltip
+                placement="top"
+                :content="$t('packages_business_shared_cache_keys_tooltip')"
+              >
+                <el-icon class="ml-1 font-color-light align-middle"
+                  ><InfoFilled
+                /></el-icon>
+              </el-tooltip>
+            </template>
+            <FieldSelector
+              v-model:value="form.cacheKeys"
+              class="form-field-selector"
+              :options="fieldOptions"
+              :placeholder="
+                $t('packages_business_shared_cache_placeholder_keys')
+              "
+              @change="handleChangeCacheKeys"
+            />
+            <div v-if="showCachekeysCheckMsg" class="color-danger">
+              {{ $t('packages_business_shared_cache_cache_key_message') }}
+            </div>
+          </ElFormItem>
+        </el-col>
+        <el-col :span="12">
+          <ElFormItem
+            prop="fields"
+            :label="`${$t('packages_business_shared_cache_fields')}`"
+          >
+            <template #label>
+              <span class="align-middle">{{
+                $t('packages_business_shared_cache_fields')
+              }}</span>
+              <el-tooltip
+                placement="top"
+                :content="$t('packages_business_shared_cache_fields_tooltip')"
+              >
+                <el-icon class="ml-1 font-color-light align-middle"
+                  ><InfoFilled
+                /></el-icon>
+              </el-tooltip>
+            </template>
+            <FieldSelector
+              v-model:value="form.fields"
+              class="form-field-selector"
+              :options="fieldOptions"
+              :placeholder="
+                $t('packages_business_shared_cache_placeholder_fields')
+              "
+            />
+          </ElFormItem>
+        </el-col>
+      </el-row>
+
+      <el-row :gutter="24">
+        <el-col :span="12">
+          <ElFormItem
+            prop="externalStorageId"
+            :label="$t('public_external_memory_configuration')"
+          >
+            <ElSelect
+              v-model="form.externalStorageId"
+              filterable
+              :loading="!externalStorageOptions"
+            >
+              <ElOption
+                v-for="opt in externalStorageOptions"
+                :key="opt.value"
+                :value="opt.value"
+                :label="opt.label"
+              />
+            </ElSelect>
+          </ElFormItem>
+        </el-col>
+        <el-col :span="12">
+          <ElFormItem prop="maxMemory">
+            <template #label>
+              <span class="align-middle">{{
+                $t('packages_business_shared_cache_max_memory')
+              }}</span>
+              <el-tooltip
+                placement="top"
+                :content="
+                  $t('packages_business_shared_cache_max_memory_tooltip')
+                "
+              >
+                <el-icon class="ml-1 font-color-light align-middle"
+                  ><InfoFilled
+                /></el-icon>
+              </el-tooltip>
+            </template>
+            <ElInputNumber
+              v-model="form.maxMemory"
+              style="width: 200px"
+              controls-position="right"
+              :min="1"
+              :max="999999999"
+            />
+            <span class="ml-1">M</span>
+          </ElFormItem>
+        </el-col>
+      </el-row>
+
+      <el-row :gutter="24">
+        <el-col :span="12">
+          <ElFormItem prop="shareCdcEnable">
+            <template #label>
+              <span>
+                <span class="align-middle">{{
+                  $t('packages_dag_connection_form_shared_mining')
+                }}</span>
+                <el-tooltip
+                  placement="top"
+                  :content="
+                    $t('packages_business_connection_form_shared_mining_tip')
+                  "
+                >
+                  <el-icon class="ml-1 font-color-light align-middle"
+                    ><InfoFilled
+                  /></el-icon>
+                </el-tooltip>
+              </span>
+            </template>
+            <ElSwitch v-model="form.shareCdcEnable" />
+          </ElFormItem>
+        </el-col>
+        <el-col :span="12">
+          <ElFormItem v-if="form.shareCdcEnable" prop="enforceShareCdc">
+            <template #label>
+              <span>{{
+                $t('packages_business_shared_cache_enforceShareCdc')
+              }}</span>
+            </template>
+            <ElSelect v-model="form.enforceShareCdc">
+              <ElOption
+                :value="true"
+                :label="
+                  $t('packages_business_shared_cache_enforceShareCdc_true')
+                "
+              />
+              <ElOption
+                :value="false"
+                :label="
+                  $t('packages_dag_migration_settingpanel_zhuanweiputongC')
+                "
+              />
+            </ElSelect>
+          </ElFormItem>
+        </el-col>
+      </el-row>
+      <ElFormItem>
+        <template #label>
+          <span class="align-middle">{{
+            $t('packages_business_shared_cache_code')
+          }}</span>
+          <el-tooltip
+            placement="top"
+            :content="$t('packages_business_shared_cache_code_tooltip')"
+          >
+            <el-icon class="ml-1 font-color-light align-middle"
+              ><InfoFilled
+            /></el-icon>
+          </el-tooltip>
+        </template>
+      </ElFormItem>
+      <CodeView :data="form" class="w-100 rounded-lg" />
+    </ElForm>
+  </section>
+</template>
 
 <style lang="scss" scoped>
 .el-input,

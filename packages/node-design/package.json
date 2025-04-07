@@ -17,6 +17,7 @@
     "@formily/reactive-vue": "^2.0.11",
     "@formily/shared": "^2.0.9",
     "@tap/api": "workspace:^1.0.0",
+    "@tap/assets": "workspace:^",
     "@tap/component": "workspace:^1.0.0",
     "@tap/form": "workspace:^1.0.0",
     "@tap/i18n": "workspace:^1.0.0",

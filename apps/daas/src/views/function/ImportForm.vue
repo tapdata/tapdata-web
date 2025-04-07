@@ -1,147 +1,8 @@
-<template>
-  <section class="import-form-wrapper">
-    <div class="section-wrap-box">
-      <!-- <div class="container-header">
-            {{ $t('function_button_import_jar') }}
-          </div> -->
-      <!-- <div class="import-form__body">
-            <div class="main px-6 py-4"> -->
-      <ElForm ref="form" label-position="left" label-width="120px" :model="form" :rules="rules">
-        <ElFormItem prop="fileId" :label="$t('function_file_label') + ':'">
-          <div class="flex align-center">
-            <ElUpload
-              class="form-input flex align-center"
-              action="api/file/upload"
-              accept=".jar"
-              :file-list="fileList"
-              :before-upload="selectFile"
-              :on-change="fileChange"
-              :on-remove="fileRemove"
-            >
-              <ElButton style="margin-right: 10px" type="primary">{{ $t('function_button_file_upload') }}</ElButton>
-            </ElUpload>
-            <span class="color-info ml-4" style="font-size: 12px">*{{ $t('function_tips_max_size') }}10M</span>
-          </div>
-        </ElFormItem>
-        <ElFormItem prop="packageName" :label="$t('function_package_name_label') + ':'">
-          <div class="flex align-center">
-            <ElInput
-              v-model="form.packageName"
-              class="form-input"
-              :placeholder="$t('function_package_name_placeholder')"
-            ></ElInput>
-            <ElButton class="btn ml-4" type="primary" :loading="loading" @click="loadFunction">
-              <span>{{ $t('function_button_load_function') }}</span>
-            </ElButton>
-          </div>
-        </ElFormItem>
-      </ElForm>
-      <div class="flex flex-column flex-1 overflow-hidden">
-        <div class="mb-4" style="font-size: 14px">
-          {{ $t('function_import_list_title') }}
-        </div>
-        <ElTable :data="funcList" height="100%">
-          <ElTableColumn :label="$t('function_name_label')">
-            <template #default="{ row, $index }">
-              <div class="flex align-center">
-                <template v-if="editIndex !== $index">
-                  <ElTooltip
-                    v-if="row.isRepeat"
-                    class="item"
-                    effect="dark"
-                    placement="top"
-                    :content="$t('function_tips_name_repeat')"
-                  >
-                    <el-icon class="mr-2 color-danger"><el-icon-warning /></el-icon>
-                  </ElTooltip>
-                  <span class="ellipsis">{{ row.function_name }}</span>
-                  <ElButton
-                    class="ml-2"
-                    text
-                    icon="el-icon-edit-outline"
-                    @click="
-                      editIndex = $index
-                      editName = row.function_name
-                    "
-                  ></ElButton>
-                </template>
-                <template v-else>
-                  <ElInput v-model="editName" class="mr-2"></ElInput>
-                  <ElButton @click="editIndex = null">{{ $t('public_button_cancel') }}</ElButton>
-                  <ElButton type="primary" :disabled="!editName || !editName.trim()" @click="changeName($index)">{{
-                    $t('public_button_save')
-                  }}</ElButton>
-                </template>
-              </div>
-            </template>
-          </ElTableColumn>
-          <ElTableColumn prop="classNameFmt" :label="$t('function_class_label')"></ElTableColumn>
-          <ElTableColumn prop="methodName" :label="$t('function_method_name_label')"></ElTableColumn>
-          <ElTableColumn prop="format" :label="$t('function_format')"></ElTableColumn>
-          <ElTableColumn width="120px" :label="$t('public_operation')">
-            <template #default="{ row, $index }">
-              <ElButton text @click="openSetting(row, $index)">{{ $t('public_button_setting') }}</ElButton>
-              <ElButton text @click="remove($index)">{{ $t('public_button_delete') }}</ElButton>
-            </template>
-          </ElTableColumn>
-        </ElTable>
-        <!-- </div>
-            </div> -->
-      </div>
-      <div class="footer mt-6">
-        <ElButton class="btn" @click="$router.back()">{{ $t('public_button_back') }}</ElButton>
-        <ElButton class="btn" type="primary" @click="save">{{ $t('public_button_save') }}</ElButton>
-      </div>
-    </div>
-
-    <ElDialog
-      width="694px"
-      class="create-dialog"
-      :title="$t('function_dialog_setting_title')"
-      :close-on-click-modal="false"
-      :visible="!!settingData"
-    >
-      <ElForm v-if="settingData" label-position="left" label-width="120px" :model="settingData">
-        <ElFormItem prop="describe" :label="$t('function_describe_label') + ':'">
-          <ElInput
-            v-model="settingData.describe"
-            type="textarea"
-            :placeholder="$t('function_describe_placeholder')"
-          ></ElInput>
-        </ElFormItem>
-        <ElFormItem prop="format" :label="$t('function_format') + ':'">
-          <ElInput v-model="settingData.format" :placeholder="$t('function_format_placeholder')"></ElInput>
-        </ElFormItem>
-        <ElFormItem prop="parameters_desc" :label="$t('function_parameters_describe_label') + ':'">
-          <ElInput
-            v-model="settingData.parameters_desc"
-            type="textarea"
-            :placeholder="$t('function_parameters_describe_placeholder')"
-          ></ElInput>
-        </ElFormItem>
-        <ElFormItem prop="return_value" :label="$t('function_return_value_label') + ':'">
-          <ElInput
-            v-model="settingData.return_value"
-            type="textarea"
-            :placeholder="$t('function_return_value_placeholder')"
-          ></ElInput>
-        </ElFormItem>
-      </ElForm>
-      <template v-slot:footer>
-        <span class="dialog-footer">
-          <ElButton class="btn" @click="settingData = null">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton class="btn" type="primary" @click="submitSetting">{{ $t('public_button_confirm') }}</ElButton>
-        </span>
-      </template>
-    </ElDialog>
-  </section>
-</template>
-
 <script>
-import i18n from '@/i18n'
-
+import { EditPen } from '@element-plus/icons-vue'
+import { fileApi, javascriptFunctionsApi } from '@tap/api'
 import Cookie from '@tap/shared/src/cookie'
-import { javascriptFunctionsApi, fileApi } from '@tap/api'
+import i18n from '@/i18n'
 
 let timer = null
 export default {
@@ -156,7 +17,9 @@ export default {
         packageName: '',
       },
       rules: {
-        fileId: [{ required: true, message: this.$t('function_file_upload_tips') }],
+        fileId: [
+          { required: true, message: this.$t('function_file_upload_tips') },
+        ],
         packageName: [
           {
             required: true,
@@ -171,10 +34,10 @@ export default {
     }
   },
   watch: {
-    'form.fileId'() {
+    'form.fileId': function () {
       this.clearFunctionList()
     },
-    'form.packageName'() {
+    'form.packageName': function () {
       this.clearFunctionList()
     },
   },
@@ -187,11 +50,11 @@ export default {
   },
   methods: {
     getRepeatNames(list) {
-      let map = {}
+      const map = {}
       let names = []
 
       list.forEach((item) => {
-        let name = item.function_name
+        const name = item.function_name
         if (map[name]) {
           names.push(name)
         }
@@ -210,7 +73,7 @@ export default {
           }),
         })
         .then((data) => {
-          let items = data?.items || []
+          const items = data?.items || []
           names = names.concat(items.map((item) => item.function_name))
           this.repeatNames = Array.from(new Set(names))
           this.funcList.forEach((item) => {
@@ -219,7 +82,7 @@ export default {
         })
     },
     changeName(index) {
-      let item = this.funcList[index]
+      const item = this.funcList[index]
       item.function_name = this.editName
       item.format = this.setFormat(item)
       this.editIndex = null
@@ -230,8 +93,8 @@ export default {
       this.editIndex = null
     },
     setFormat(item) {
-      let params = item?.parameters?.sort((a, b) => a.index < b.index) || []
-      let arr = []
+      const params = item?.parameters?.sort((a, b) => a.index < b.index) || []
+      const arr = []
       params.forEach((p) => {
         arr.push(`${p.name}:${p.type}`)
       })
@@ -241,11 +104,12 @@ export default {
       if (!this.loading) {
         return
       }
-      let result = data?.result
+      const result = data?.result
       if (data?.status === 'SUCCESS' && result?.length) {
         this.funcList = result.map((item) => {
           item.function_name = item.methodName
-          item.classNameFmt = item.className?.split(this.form.packageName + '.')?.[1] || ''
+          item.classNameFmt =
+            item.className?.split(`${this.form.packageName}.`)?.[1] || ''
           item = Object.assign(item, {
             describe: '',
             format: '',
@@ -269,27 +133,25 @@ export default {
     },
     loadFunction() {
       this.$refs.form.validate((valid) => {
-        if (valid) {
-          if (this.$ws) {
-            this.loading = true
-            let { fileId, packageName } = this.form
-            this.$ws.send({
-              type: 'loadJar',
-              data: {
-                fileId,
-                packageName,
-              },
-            })
-            // 设置10秒超时
-            timer = setTimeout(() => {
-              this?.hanlderResult({ status: 'TIME_OUT' })
-            }, 10000)
-          }
+        if (valid && this.$ws) {
+          this.loading = true
+          const { fileId, packageName } = this.form
+          this.$ws.send({
+            type: 'loadJar',
+            data: {
+              fileId,
+              packageName,
+            },
+          })
+          // 设置10秒超时
+          timer = setTimeout(() => {
+            this?.hanlderResult({ status: 'TIME_OUT' })
+          }, 10000)
         }
       })
     },
     selectFile(file) {
-      let maxFileSize = 10
+      const maxFileSize = 10
       if (file.size > maxFileSize * 1024 * 1024) {
         this.$message.error(
           i18n.t('daas_function_importform_shangchuanwenjianda', {
@@ -311,7 +173,7 @@ export default {
         this.form.fileId = ''
       }
       if (file.response) {
-        let code = file.response.code
+        const code = file.response.code
         if (code === 'ok') {
           this.$message.success(this.$t('function_file_upload_success'))
           this.form.fileId = file.response.data.id
@@ -328,7 +190,7 @@ export default {
       this.settingData = Object.assign({}, row, { index })
     },
     submitSetting() {
-      let data = this.settingData
+      const data = this.settingData
       this.funcList[data.index] = Object.assign({}, data)
       this.settingData = null
     },
@@ -339,19 +201,29 @@ export default {
     save() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          let list = this.funcList
+          const list = this.funcList
           if (!list?.length) {
-            return this.$message.error(this.$t('function_message_function_empty'))
+            return this.$message.error(
+              this.$t('function_message_function_empty'),
+            )
           }
           if (list.some((item) => item.isRepeat)) {
             return this.$message.error(this.$t('function_name_repeat'))
           }
-          let loading = this.$loading()
-          let { fileId, fileName, packageName } = this.form
-          let useId = Cookie.get('user_id')
-          let now = new Date()
-          let params = list.map((item) => {
-            let { function_name, describe, format, parameters_desc, return_value, className, methodName } = item
+          const loading = this.$loading()
+          const { fileId, fileName, packageName } = this.form
+          const useId = Cookie.get('user_id')
+          const now = new Date()
+          const params = list.map((item) => {
+            const {
+              function_name,
+              describe,
+              format,
+              parameters_desc,
+              return_value,
+              className,
+              methodName,
+            } = item
             return {
               type: 'jar',
               fileId,
@@ -380,9 +252,211 @@ export default {
         }
       })
     },
+    handleEdit(row, index) {
+      this.editIndex = index
+      this.editName = row.function_name
+    },
   },
 }
 </script>
+
+<template>
+  <section class="import-form-wrapper">
+    <div class="section-wrap-box">
+      <!-- <div class="container-header">
+            {{ $t('function_button_import_jar') }}
+          </div> -->
+      <!-- <div class="import-form__body">
+            <div class="main px-6 py-4"> -->
+      <ElForm
+        ref="form"
+        label-position="left"
+        label-width="120px"
+        :model="form"
+        :rules="rules"
+      >
+        <ElFormItem prop="fileId" :label="`${$t('function_file_label')}:`">
+          <div class="flex align-center">
+            <ElUpload
+              class="form-input flex align-center"
+              action="api/file/upload"
+              accept=".jar"
+              :file-list="fileList"
+              :before-upload="selectFile"
+              :on-change="fileChange"
+              :on-remove="fileRemove"
+            >
+              <ElButton style="margin-right: 10px" type="primary">{{
+                $t('function_button_file_upload')
+              }}</ElButton>
+            </ElUpload>
+            <span class="color-info ml-4" style="font-size: 12px"
+              >*{{ $t('function_tips_max_size') }}10M</span
+            >
+          </div>
+        </ElFormItem>
+        <ElFormItem
+          prop="packageName"
+          :label="`${$t('function_package_name_label')}:`"
+        >
+          <div class="flex align-center">
+            <ElInput
+              v-model="form.packageName"
+              class="form-input"
+              :placeholder="$t('function_package_name_placeholder')"
+            />
+            <ElButton
+              class="btn ml-4"
+              type="primary"
+              :loading="loading"
+              @click="loadFunction"
+            >
+              <span>{{ $t('function_button_load_function') }}</span>
+            </ElButton>
+          </div>
+        </ElFormItem>
+      </ElForm>
+      <div class="flex flex-column flex-1 overflow-hidden">
+        <div class="mb-4" style="font-size: 14px">
+          {{ $t('function_import_list_title') }}
+        </div>
+        <ElTable :data="funcList" height="100%">
+          <ElTableColumn :label="$t('function_name_label')">
+            <template #default="{ row, $index }">
+              <div class="flex align-center">
+                <template v-if="editIndex !== $index">
+                  <ElTooltip
+                    v-if="row.isRepeat"
+                    class="item"
+                    effect="dark"
+                    placement="top"
+                    :content="$t('function_tips_name_repeat')"
+                  >
+                    <el-icon class="mr-2 color-danger"
+                      ><el-icon-warning
+                    /></el-icon>
+                  </ElTooltip>
+                  <span class="ellipsis">{{ row.function_name }}</span>
+                  <ElButton
+                    class="ml-2"
+                    text
+                    icon="el-icon-edit-outline"
+                    @click="handleEdit(row, $index)"
+                  >
+                    <el-icon><EditPen /></el-icon
+                  ></ElButton>
+                </template>
+                <template v-else>
+                  <ElInput v-model="editName" class="mr-2" />
+                  <ElButton @click="editIndex = null">{{
+                    $t('public_button_cancel')
+                  }}</ElButton>
+                  <ElButton
+                    type="primary"
+                    :disabled="!editName || !editName.trim()"
+                    @click="changeName($index)"
+                    >{{ $t('public_button_save') }}</ElButton
+                  >
+                </template>
+              </div>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn
+            prop="classNameFmt"
+            :label="$t('function_class_label')"
+          />
+          <ElTableColumn
+            prop="methodName"
+            :label="$t('function_method_name_label')"
+          />
+          <ElTableColumn prop="format" :label="$t('function_format')" />
+          <ElTableColumn width="120px" :label="$t('public_operation')">
+            <template #default="{ row, $index }">
+              <ElButton text @click="openSetting(row, $index)">{{
+                $t('public_button_setting')
+              }}</ElButton>
+              <ElButton text @click="remove($index)">{{
+                $t('public_button_delete')
+              }}</ElButton>
+            </template>
+          </ElTableColumn>
+        </ElTable>
+        <!-- </div>
+            </div> -->
+      </div>
+      <div class="footer mt-6">
+        <ElButton class="btn" @click="$router.back()">{{
+          $t('public_button_back')
+        }}</ElButton>
+        <ElButton class="btn" type="primary" @click="save">{{
+          $t('public_button_save')
+        }}</ElButton>
+      </div>
+    </div>
+
+    <ElDialog
+      width="694px"
+      class="create-dialog"
+      :title="$t('function_dialog_setting_title')"
+      :close-on-click-modal="false"
+      :visible="!!settingData"
+    >
+      <ElForm
+        v-if="settingData"
+        label-position="left"
+        label-width="120px"
+        :model="settingData"
+      >
+        <ElFormItem
+          prop="describe"
+          :label="`${$t('function_describe_label')}:`"
+        >
+          <ElInput
+            v-model="settingData.describe"
+            type="textarea"
+            :placeholder="$t('function_describe_placeholder')"
+          />
+        </ElFormItem>
+        <ElFormItem prop="format" :label="`${$t('function_format')}:`">
+          <ElInput
+            v-model="settingData.format"
+            :placeholder="$t('function_format_placeholder')"
+          />
+        </ElFormItem>
+        <ElFormItem
+          prop="parameters_desc"
+          :label="`${$t('function_parameters_describe_label')}:`"
+        >
+          <ElInput
+            v-model="settingData.parameters_desc"
+            type="textarea"
+            :placeholder="$t('function_parameters_describe_placeholder')"
+          />
+        </ElFormItem>
+        <ElFormItem
+          prop="return_value"
+          :label="`${$t('function_return_value_label')}:`"
+        >
+          <ElInput
+            v-model="settingData.return_value"
+            type="textarea"
+            :placeholder="$t('function_return_value_placeholder')"
+          />
+        </ElFormItem>
+      </ElForm>
+      <template #footer>
+        <span class="dialog-footer">
+          <ElButton class="btn" @click="settingData = null">{{
+            $t('public_button_cancel')
+          }}</ElButton>
+          <ElButton class="btn" type="primary" @click="submitSetting">{{
+            $t('public_button_confirm')
+          }}</ElButton>
+        </span>
+      </template>
+    </ElDialog>
+  </section>
+</template>
 
 <style lang="scss" scoped>
 .import-form-wrapper {

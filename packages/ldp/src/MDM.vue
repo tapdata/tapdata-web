@@ -230,7 +230,7 @@
       <template #header>
         <span class="fs-6 fw-sub">{{ $t('packages_dag_build_materialized_view') }}</span>
       </template>
-      <ElForm ref="form" label-width="90px" label-position="top" class="my-n6" @submit.prevent>
+      <ElForm ref="form" label-width="90px" label-position="top" @submit.prevent>
         <ElFormItem :label="$t('packages_dag_materialized_view_storage_table')">
           <ElInput ref="tableNameInput" v-model="materializedTableName">
             <template #prepend>{{ tablePrefix }}</template>

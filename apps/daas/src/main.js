@@ -105,7 +105,13 @@ const init = () => {
   // window.$vueApp.use(LoadMore)
   // window.$vueApp.use(FormBuilder)
 
-  window.$vueApp.config.globalProperties.$ws = new WSClient(wsUrl)
+  window.$vueApp.config.globalProperties.$ws = new WSClient(wsUrl, undefined, {
+    getQuery: () => {
+      return {
+        access_token: Cookie.get('access_token'),
+      }
+    },
+  })
 
   // Vue.prototype.$api = factory
 
@@ -165,7 +171,7 @@ document.addEventListener('visibilitychange', () => {
 })
 
 // community add jira issue collector
-if ( import.meta.env.VUE_APP_MODE === 'community') {
+if (import.meta.env.VUE_APP_MODE === 'community') {
   window.ATL_JQ_PAGE_PROPS = {
     triggerFunction(showCollectorDialog) {
       document.addEventListener('click', function (event) {

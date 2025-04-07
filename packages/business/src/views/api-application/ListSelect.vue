@@ -1,19 +1,7 @@
-<template>
-  <AsyncSelect
-    v-bind="$attrs"
-    v-model:value="form.value"
-    :method="getData"
-    :current-label="form.label"
-    filterable
-    @change="handleChange"
-  >
-  </AsyncSelect>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import { AsyncSelect } from '@tap/form'
 import { appApi } from '@tap/api'
+import { AsyncSelect } from '@tap/form'
+import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 
 export default {
   name: 'ListSelect',
@@ -32,6 +20,7 @@ export default {
       type: Function,
     },
   },
+  emits: ['change', 'update:label', 'update:value'],
   data() {
     return {
       form: {
@@ -49,15 +38,23 @@ export default {
     },
   },
   methods: {
-    handleChange(val, opt) {
+    handleChange(opt) {
       const { label } = opt
       this.form.label = label
-      $emit(this.$emit('update:value', this.form.value).$emit('update:label', this.form.label), 'change', val, opt)
+      $emit(
+        this.$emit('update:value', this.form.value).$emit(
+          'update:label',
+          this.form.label,
+        ),
+        'change',
+        val,
+        opt,
+      )
     },
 
     async getData(filter = {}) {
       const { page, size } = filter
-      let params = {
+      const params = {
         where: {
           item_type: 'app',
         },
@@ -73,7 +70,7 @@ export default {
         })
       }
 
-      let res = await appApi.get({
+      const res = await appApi.get({
         filter: JSON.stringify(Object.assign(params, this.params)),
       })
 
@@ -92,6 +89,16 @@ export default {
       return res
     },
   },
-  emits: ['change', 'update:label', 'update:value'],
 }
 </script>
+
+<template>
+  <AsyncSelect
+    v-bind="$attrs"
+    v-model="form.value"
+    :method="getData"
+    :current-label="form.label"
+    filterable
+    @option-select="handleChange"
+  />
+</template>

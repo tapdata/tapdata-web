@@ -1,96 +1,17 @@
-<template>
-  <section v-loading="loading" class="custom-form-wrapper section-wrap overflow-hidden bg-white">
-    <div class="section-wrap-box overflow-auto">
-      <ElForm v-if="!$route.params.id || details.id" ref="form" label-position="left" label-width="160px" :model="form">
-        <template v-if="$route.params.id && details.type === 'jar'">
-          <ElFormItem :label="$t('function_jar_file_label') + ':'">
-            <span class="details-value">{{ details.fileName }}</span>
-          </ElFormItem>
-          <ElFormItem :label="$t('function_package_name_label') + ':'">
-            <span class="details-value">{{ details.packageName }}</span>
-          </ElFormItem>
-          <ElFormItem :label="$t('function_class_name_label') + ':'">
-            <span class="details-value">{{ details.classNameFmt }}</span>
-          </ElFormItem>
-          <ElFormItem :label="$t('function_method_name_label') + ':'">
-            <span class="details-value">{{ details.methodName }}</span>
-          </ElFormItem>
-          <ElFormItem
-            prop="function_name"
-            :label="$t('function_name_label') + ':'"
-            :rules="{
-              required: true,
-              message: $t('function_name_placeholder'),
-            }"
-          >
-            <ElInput
-              v-model="form.function_name"
-              class="form-input"
-              :placeholder="$t('function_name_placeholder')"
-            ></ElInput>
-          </ElFormItem>
-        </template>
-        <ElFormItem
-          v-if="form.type === 'custom'"
-          prop="script"
-          :label="$t('function_script_label') + ':'"
-          :rules="scriptRules"
-        >
-          <div class="script-editor">
-            <JsEditor v-model:value="form.script" ref="editor" height="200"></JsEditor>
-          </div>
-        </ElFormItem>
-        <ElFormItem prop="describe" :label="$t('public_description') + ':'">
-          <ElInput
-            v-model="form.describe"
-            class="form-input"
-            type="textarea"
-            :placeholder="$t('function_describe_placeholder')"
-          ></ElInput>
-        </ElFormItem>
-        <ElFormItem prop="format" :label="$t('function_format') + ':'">
-          <ElInput v-model="form.format" class="form-input" :placeholder="$t('function_format_placeholder')"></ElInput>
-        </ElFormItem>
-        <ElFormItem prop="parameters_desc" :label="$t('function_parameters_describe_label') + ':'">
-          <ElInput
-            v-model="form.parameters_desc"
-            class="form-input"
-            type="textarea"
-            :placeholder="$t('function_parameters_describe_placeholder')"
-          ></ElInput>
-        </ElFormItem>
-        <ElFormItem prop="return_value" :label="$t('function_return_value_label') + ':'">
-          <ElInput
-            v-model="form.return_value"
-            class="form-input"
-            type="textarea"
-            :placeholder="$t('function_return_value_placeholder')"
-          ></ElInput>
-        </ElFormItem>
-      </ElForm>
-    </div>
-    <div class="footer p-6">
-      <ElButton class="btn" @click="$router.back()">{{ $t('public_button_back') }}</ElButton>
-      <ElButton class="btn" type="primary" @click="save">{{ $t('public_button_save') }}</ElButton>
-    </div>
-
-    <!-- </div>
-        </div> -->
-  </section>
-</template>
-
 <script>
+import { javascriptFunctionsApi } from '@tap/api'
 import { JsEditor } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
-import { javascriptFunctionsApi } from '@tap/api'
 
 const getScriptObj = (script) => {
-  let matchArr1 = script.match(/(?<=function\s+)\w+(?=\s*\([^]*\))/g)
-  let name = matchArr1?.[0] || ''
-  let matchArr2 = script.match(/(?<=\s*function\s+\w+\s*\([^]*\)\s*\{)[^]*?(?=}\s*$)/g)
-  let body = matchArr2?.[0] || ''
-  let matchArr3 = script.match(/(?<=function\s+\w+\s*\()[\w\s,]*(?=\))/g)
-  let params = matchArr3?.[0] || ''
+  const matchArr1 = script.match(/(?<=function\s+)\w+(?=\s*\([\s\S]*\))/g)
+  const name = matchArr1?.[0] || ''
+  const matchArr2 = script.match(
+    /(?<=\s*function\s+\w+\s*\([\s\S]*\)\s*\{)[\s\S]*?(?=\}\s*$)/g,
+  )
+  const body = matchArr2?.[0] || ''
+  const matchArr3 = script.match(/(?<=function\s+\w+\s*\()[\w\s,]*(?=\))/g)
+  const params = matchArr3?.[0] || ''
   return {
     name,
     body,
@@ -101,7 +22,7 @@ const getScriptObj = (script) => {
 export default {
   components: { JsEditor },
   data() {
-    let self = this
+    const self = this
     return {
       loading: false,
       details: {},
@@ -115,14 +36,22 @@ export default {
       },
       scriptRules: {
         validator: (rule, value, callback) => {
-          let obj = getScriptObj(value)
+          const obj = getScriptObj(value)
           if (!value.trim()) {
             callback(new Error(this.$t('function_script_empty')))
           } else if (!obj.name.trim()) {
-            callback(new Error(this.$t('function_script_missing_function_name')))
+            callback(
+              new Error(this.$t('function_script_missing_function_name')),
+            )
           } else if (!obj.body.trim()) {
-            callback(new Error(this.$t('function_script_missing_function_body')))
-          } else if (self.$refs.editor.editor.session.$annotations.some((item) => item.type === 'error')) {
+            callback(
+              new Error(this.$t('function_script_missing_function_body')),
+            )
+          } else if (
+            self.$refs.editor.editor.session.$annotations.some(
+              (item) => item.type === 'error',
+            )
+          ) {
             callback(new Error(this.$t('function_script_format_error')))
           } else if (obj.bodyLength.length > 1) {
             callback(new Error(this.$t('function_script_only_one')))
@@ -134,7 +63,7 @@ export default {
     }
   },
   created() {
-    let id = this.$route.params.id
+    const id = this.$route.params.id
     if (id) {
       this.getData(id)
     }
@@ -151,13 +80,14 @@ export default {
           }),
         })
         .then((data) => {
-          let details = data || {}
+          const details = data || {}
           // 处理老数据问题
           if (details.type === 'custom' && !details.script) {
             details.script = `function ${details.function_name}(${details.parameters}) ${details.function_body}`
           }
           if (details.type === 'jar') {
-            details.classNameFmt = details.className?.split(details.packageName + '.')?.[1] || ''
+            details.classNameFmt =
+              details.className?.split(`${details.packageName}.`)?.[1] || ''
           }
           this.details = details
           this.form = Object.assign({}, this.form, details)
@@ -171,14 +101,14 @@ export default {
       this.$nextTick(() => {
         this.$refs.form.validate((valid) => {
           if (valid) {
-            let format = this.form.format
+            const format = this.form.format
             let params = {
               format,
             }
             let method = 'post'
-            let id = this.$route.params.id
+            const id = this.$route.params.id
             if (this.form.type === 'custom') {
-              let obj = getScriptObj(this.form.script)
+              const obj = getScriptObj(this.form.script)
               params = {
                 function_body: `{${obj.body}}`,
                 function_name: obj.name,
@@ -214,6 +144,110 @@ export default {
   },
 }
 </script>
+
+<template>
+  <section
+    v-loading="loading"
+    class="custom-form-wrapper section-wrap bg-white flex-fill overflow-auto"
+  >
+    <div class="section-wrap-box">
+      <ElForm
+        v-if="!$route.params.id || details.id"
+        ref="form"
+        label-position="left"
+        label-width="160px"
+        :model="form"
+      >
+        <template v-if="$route.params.id && details.type === 'jar'">
+          <ElFormItem :label="`${$t('function_jar_file_label')}:`">
+            <span class="details-value">{{ details.fileName }}</span>
+          </ElFormItem>
+          <ElFormItem :label="`${$t('function_package_name_label')}:`">
+            <span class="details-value">{{ details.packageName }}</span>
+          </ElFormItem>
+          <ElFormItem :label="`${$t('function_class_name_label')}:`">
+            <span class="details-value">{{ details.classNameFmt }}</span>
+          </ElFormItem>
+          <ElFormItem :label="`${$t('function_method_name_label')}:`">
+            <span class="details-value">{{ details.methodName }}</span>
+          </ElFormItem>
+          <ElFormItem
+            prop="function_name"
+            :label="`${$t('function_name_label')}:`"
+            :rules="{
+              required: true,
+              message: $t('function_name_placeholder'),
+            }"
+          >
+            <ElInput
+              v-model="form.function_name"
+              class="form-input"
+              :placeholder="$t('function_name_placeholder')"
+            />
+          </ElFormItem>
+        </template>
+        <ElFormItem
+          v-if="form.type === 'custom'"
+          prop="script"
+          :label="`${$t('function_script_label')}:`"
+          :rules="scriptRules"
+        >
+          <div class="script-editor flex-1">
+            <JsEditor ref="editor" v-model:value="form.script" height="200" />
+          </div>
+        </ElFormItem>
+        <ElFormItem prop="describe" :label="`${$t('public_description')}:`">
+          <ElInput
+            v-model="form.describe"
+            class="form-input"
+            type="textarea"
+            :placeholder="$t('function_describe_placeholder')"
+          />
+        </ElFormItem>
+        <ElFormItem prop="format" :label="`${$t('function_format')}:`">
+          <ElInput
+            v-model="form.format"
+            class="form-input"
+            :placeholder="$t('function_format_placeholder')"
+          />
+        </ElFormItem>
+        <ElFormItem
+          prop="parameters_desc"
+          :label="`${$t('function_parameters_describe_label')}:`"
+        >
+          <ElInput
+            v-model="form.parameters_desc"
+            class="form-input"
+            type="textarea"
+            :placeholder="$t('function_parameters_describe_placeholder')"
+          />
+        </ElFormItem>
+        <ElFormItem
+          prop="return_value"
+          :label="`${$t('function_return_value_label')}:`"
+        >
+          <ElInput
+            v-model="form.return_value"
+            class="form-input"
+            type="textarea"
+            :placeholder="$t('function_return_value_placeholder')"
+          />
+        </ElFormItem>
+      </ElForm>
+    </div>
+    <div class="footer p-6">
+      <ElButton class="btn" @click="$router.back()">{{
+        $t('public_button_back')
+      }}</ElButton>
+      <ElButton class="btn" type="primary" @click="save">{{
+        $t('public_button_save')
+      }}</ElButton>
+    </div>
+
+    <!-- </div>
+        </div> -->
+  </section>
+</template>
 
 <style lang="scss" scoped>
 .details-value {

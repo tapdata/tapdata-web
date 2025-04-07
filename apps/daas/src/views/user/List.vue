@@ -1,241 +1,11 @@
-<template>
-  <PageContainer>
-    <template #actions>
-      <el-button
-        v-readonlybtn="'user_category_application'"
-        class="btn"
-        v-show="multipleSelection.length > 0"
-        @click="$refs.table.showClassify(handleSelectTag())"
-      >
-        <span> {{ $t('public_button_bulk_tag') }}</span>
-      </el-button>
-      <el-dropdown
-        @command="handleCommand($event)"
-        v-readonlybtn="'user_edition'"
-        v-show="multipleSelection.length > 0"
-      >
-        <el-button class="btn btn-dropdowm">
-          <i class="iconfont icon-piliang back-btn-icon"></i>
-          <span> {{ $t('public_button_bulk_operation') }}</span>
-        </el-button>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item command="activated" v-readonlybtn="'user_edition'">{{
-              $t('user_list_bulk_activation')
-            }}</el-dropdown-item>
-            <el-dropdown-item command="rejected" v-readonlybtn="'user_edition'">{{
-              $t('user_list_bulk_freeze')
-            }}</el-dropdown-item>
-            <el-dropdown-item command="notActivated" v-readonlybtn="'user_edition'">{{
-              $t('user_list_bulk_check')
-            }}</el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
-      <el-button v-readonlybtn="'new_model_creation'" class="btn btn-create" type="primary" @click="openCreateDialog">
-        <span>{{ $t('public_button_create') }}</span>
-      </el-button>
-    </template>
-
-    <TablePage
-      ref="table"
-      row-key="id"
-      class="user-list"
-      :classify="{ authority: 'user_category_management', types: ['user'] }"
-      :remoteMethod="getData"
-      @selection-change="handleSelectionChange"
-      @classify-submit="handleOperationClassify"
-      @sort-change="handleSortTable"
-    >
-      <template v-slot:nav>
-        <div class="tapNav">
-          <ElTabs v-model="activePanel" @tab-click="handleTapClick">
-            <ElTabPane v-for="item in muneList" :key="item.icon" :name="item.key">
-              <template v-slot:label>
-                <span
-                  >{{ item.name }}
-                  <ElBadge
-                    class="item-badge"
-                    v-if="item.key + 'Count' == 'notActivatedCount'"
-                    :value="notActivatedCount"
-                    :max="99"
-                    :hidden="!notActivatedCount"
-                  >
-                  </ElBadge>
-                  <ElBadge
-                    class="item-badge"
-                    v-if="item.key + 'Count' == 'notVerifiedCount'"
-                    :value="notVerifiedCount"
-                    :max="99"
-                    :hidden="!notVerifiedCount"
-                  >
-                  </ElBadge>
-                  <ElBadge
-                    class="item-badge"
-                    v-if="item.key + 'Count' == 'rejectedCount'"
-                    :value="rejectedCount"
-                    :max="99"
-                    :hidden="!rejectedCount"
-                  >
-                  </ElBadge>
-                </span>
-              </template>
-            </ElTabPane>
-          </ElTabs>
-        </div>
-      </template>
-      <template v-slot:search>
-        <div class="search-bar">
-          <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
-        </div>
-      </template>
-
-      <el-table-column type="selection" width="45" :reserve-selection="true"></el-table-column>
-      <el-table-column :label="$t('user_list_user_name')" prop="username" sortable="username">
-        <template v-slot="scope">
-          <div class="metadata-name">
-            <p>{{ scope.row.username }}</p>
-            <div class="parent ellipsis">
-              {{ scope.row.email }}
-            </div>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('user_list_role')" prop="roleMappings">
-        <template v-slot="scope">
-          {{ permissionsmethod(scope.row.roleMappings, scope.row.roleusers) }}
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('user_list_change_time')" prop="last_updated" sortable="last_updated">
-        <template v-slot="scope">
-          {{ scope.row.lastUpdatedFmt }}
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('user_list_source')" prop="source">
-        <template v-slot="scope">
-          {{ scope.row.source ? $t('user_status_' + scope.row.source) : '' }}
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('user_list_status')" prop="status" sortable="status">
-        <template v-slot="scope">
-          <span :class="['status-' + scope.row.status, 'status']">
-            {{ scope.row.status ? $t('user_status_' + scope.row.status) : '' }}
-          </span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('public_operation')" width="210">
-        <template v-slot="scope">
-          <div>
-            <el-button
-              v-readonlybtn="'user_edition'"
-              text
-              type="primary"
-              v-if="['rejected', 'notActivated'].includes(scope.row.status)"
-              :disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
-              @click="handleActive(scope.row)"
-            >
-              {{ $t('user_list_activation') }}
-            </el-button>
-            <ElDivider
-              class="mx-1"
-              v-if="['rejected', 'notActivated'].includes(scope.row.status)"
-              direction="vertical"
-            ></ElDivider>
-            <el-button
-              v-readonlybtn="'user_edition'"
-              text
-              type="primary"
-              v-if="!['rejected'].includes(scope.row.status)"
-              :disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
-              @click="handleFreeze(scope.row)"
-            >
-              {{ $t('user_list_freeze') }}
-            </el-button>
-            <ElDivider class="mx-1" v-if="!['rejected'].includes(scope.row.status)" direction="vertical"></ElDivider>
-            <el-button
-              v-readonlybtn="'user_edition'"
-              text
-              type="primary"
-              v-if="['notVerified'].includes(scope.row.status)"
-              :disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
-              @click="handleCheck(scope.row)"
-              >{{ $t('user_list_check') }}</el-button
-            >
-            <ElDivider class="mx-1" v-if="['notVerified'].includes(scope.row.status)" direction="vertical"></ElDivider>
-            <el-button
-              v-readonlybtn="'user_edition'"
-              text
-              type="primary"
-              v-if="['activated', 'rejected'].includes(scope.row.status)"
-              :disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
-              @click="edit(scope.row)"
-              >{{ $t('public_button_edit') }}</el-button
-            >
-            <ElDivider
-              class="mx-1"
-              v-if="['activated', 'rejected'].includes(scope.row.status)"
-              direction="vertical"
-            ></ElDivider>
-            <el-button
-              v-readonlybtn="'user_delete'"
-              text
-              type="primary"
-              :disabled="$disabledByPermission('user_delete_all_data', scope.row.user_id)"
-              @click="remove(scope.row)"
-              >{{ $t('public_button_delete') }}</el-button
-            >
-          </div>
-        </template>
-      </el-table-column>
-    </TablePage>
-    <el-dialog
-      width="600px"
-      :title="createForm.id ? $t('user_list_edit_user') : $t('user_list_creat_user')"
-      :close-on-click-modal="false"
-      v-model="createDialogVisible"
-      class="creatDialog"
-    >
-      <FormBuilder ref="form" v-model:value="createForm" :config="createFormConfig"></FormBuilder>
-      <div>
-        <span class="label">{{ $t('user_form_activation_code') }}</span>
-        <span style="padding-right: 30px">{{ createForm.accesscode || '-' }}</span>
-        <el-button @click="resetAccesCode" text>{{ $t('public_button_reset') }}</el-button>
-        <el-tooltip
-          placement="top"
-          manual
-          :content="$t('public_message_copied')"
-          popper-class="copy-tooltip"
-          :model-value="showTooltip"
-          v-if="createForm.accesscode"
-        >
-          <span
-            class="pl-4"
-            v-clipboard:copy="createForm.accesscode"
-            v-clipboard:success="onCopy"
-            @mouseleave="showTooltip = false"
-          >
-            <el-button text>{{ $t('public_button_copy') }}</el-button>
-          </span>
-        </el-tooltip>
-      </div>
-      <template v-slot:footer>
-        <span class="dialog-footer">
-          <el-button @click="createDialogVisible = false">{{ $t('public_button_cancel') }}</el-button>
-          <el-button type="primary" @click="createNewUser()">{{ $t('public_button_confirm') }}</el-button>
-        </span>
-      </template>
-    </el-dialog>
-  </PageContainer>
-</template>
-
 <script>
+import { roleApi, roleMappingsApi, usersApi } from '@tap/api'
+import { TablePage } from '@tap/business'
+
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
+import { FilterBar } from '@tap/component'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash'
-
-import { usersApi, roleApi, roleMappingsApi } from '@tap/api'
-import { FilterBar } from '@tap/component'
-import { TablePage } from '@tap/business'
-import PageContainer from '@tap/business/src/components/PageContainer.vue'
 
 export default {
   components: {
@@ -312,10 +82,17 @@ export default {
                 required: true,
                 validator: (rule, v, callback) => {
                   if (!v || !v.trim()) {
-                    return callback(new Error(this.$t('user_form_password_null')))
-                  } else if (!/^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/.test(v)) {
-                    // eslint-disable-line
-                    return callback(new Error(this.$t('user_form_email_must_valid')))
+                    return callback(
+                      new Error(this.$t('user_form_password_null')),
+                    )
+                  } else if (
+                    !/^[\w.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z0-9]{2,6}$/i.test(
+                      v,
+                    )
+                  ) {
+                    return callback(
+                      new Error(this.$t('user_form_email_must_valid')),
+                    )
                   } else {
                     return callback()
                   }
@@ -351,11 +128,15 @@ export default {
                     return callback()
                   }
                   if (!v || !v.trim()) {
-                    return callback(new Error(this.$t('user_form_password_null')))
+                    return callback(
+                      new Error(this.$t('user_form_password_null')),
+                    )
                   } else if (v.length < 5 || v.length > 32) {
                     return callback(new Error(this.$t('user_form_pass_hint')))
                   } else if (/[\s\u4E00-\u9FA5]/.test(v)) {
-                    return callback(new Error(this.$t('user_form_password_not_cn')))
+                    return callback(
+                      new Error(this.$t('user_form_password_not_cn')),
+                    )
                   } else {
                     return callback()
                   }
@@ -397,21 +178,21 @@ export default {
       roleList: [],
     }
   },
-  created() {
-    this.getDbOptions()
-    // this.getCount();
-    this.getFilterItems()
-  },
   computed: {
     table() {
       return this.$refs.table
     },
   },
   watch: {
-    '$route.query'() {
+    '$route.query': function () {
       this.searchParams = this.$route.query
       this.table.fetch(1)
     },
+  },
+  created() {
+    this.getDbOptions()
+    // this.getCount();
+    this.getFilterItems()
   },
   methods: {
     // 重置
@@ -426,11 +207,13 @@ export default {
     },
     // 获取数据
     getData({ page, tags }) {
-      let { current, size } = page
-      let { isFuzzy, keyword } = this.searchParams
-      let where = {}
+      const { current, size } = page
+      const { isFuzzy, keyword } = this.searchParams
+      const where = {}
       if (keyword && keyword.trim()) {
-        let filterObj = isFuzzy ? { like: escapeRegExp(keyword), options: 'i' } : keyword
+        const filterObj = isFuzzy
+          ? { like: escapeRegExp(keyword), options: 'i' }
+          : keyword
         where.or = [{ username: filterObj }, { email: filterObj }]
       }
       if (this.activePanel !== 'all') {
@@ -453,7 +236,7 @@ export default {
           in: tags,
         }
       }
-      let filter = {
+      const filter = {
         order: this.order,
         limit: size,
         skip: (current - 1) * size,
@@ -466,23 +249,23 @@ export default {
           filter: JSON.stringify(filter),
         })
         .then((data) => {
-          let list = data?.items || []
+          const list = data?.items || []
           return {
             total: data?.total,
             data: list.map((item) => {
               if (!item.emailVerified) {
                 item.status = 'notVerified'
+              } else if (item.account_status === 1) {
+                item.status = 'activated'
               } else {
-                if (item.account_status === 1) {
-                  item.status = 'activated'
-                } else {
-                  item.status = 'notActivated'
-                }
+                item.status = 'notActivated'
               }
               if (item.account_status === 0) {
                 item.status = 'rejected'
               }
-              item.lastUpdatedFmt = item.last_updated ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : ''
+              item.lastUpdatedFmt = item.last_updated
+                ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+                : ''
               return item
             }),
           }
@@ -513,14 +296,14 @@ export default {
     },
     // 获取角色下拉值
     getDbOptions() {
-      let filter = {
+      const filter = {
         limit: 500,
         skip: 0,
       }
       roleApi.get({ filter: JSON.stringify(filter) }).then((data) => {
-        let items = data?.items || []
+        const items = data?.items || []
         this.roleList = items
-        let options = []
+        const options = []
         items.forEach((db) => {
           if (db.name !== 'admin') {
             options.push({
@@ -547,7 +330,7 @@ export default {
 
     // 选择分类
     handleSelectTag() {
-      let tagList = {}
+      const tagList = {}
       this.multipleSelection.forEach((row) => {
         if (row.listtags && row.listtags.length > 0) {
           tagList[row.listtags[0].id] = {
@@ -559,10 +342,10 @@ export default {
     },
     // 分类设置保存
     handleOperationClassify(listtags) {
-      let ids = this.multipleSelection.map((item) => {
+      const ids = this.multipleSelection.map((item) => {
         return item.id
       })
-      let where = {
+      const where = {
         id: {
           inq: ids,
         },
@@ -573,7 +356,7 @@ export default {
     },
     // 获取角色关联的用户的数据
     getMappingModel(id) {
-      let filter = {
+      const filter = {
         where: {
           principalId: id,
         },
@@ -583,7 +366,7 @@ export default {
           filter: JSON.stringify(filter),
         })
         .then((data) => {
-          let items = data?.items || []
+          const items = data?.items || []
           this.roleMappding = items
           this.createForm.roleusers = items.map((item) => item.roleId)
         })
@@ -592,19 +375,20 @@ export default {
     openCreateDialog() {
       this.createDialogVisible = true
       //过滤出默认角色register_user_default
-      let data = this.roleList.filter((it) => it.register_user_default)
-      let roleusers = data.map((it) => it.id) || []
+      const data = this.roleList.filter((it) => it.register_user_default)
+      const roleusers = data.map((it) => it.id) || []
       this.createForm = {
         username: '',
         email: '',
         password: '',
-        roleusers: roleusers,
+        roleusers,
         status: 'activated',
         accesscode: '',
         emailVerified: true,
         account_status: 1,
       }
-      this.createFormConfig.items.find(item => item.field === 'email').show = true
+      this.createFormConfig.items.find((item) => item.field === 'email').show =
+        true
       this.$nextTick(() => {
         this.$refs.form.clearValidate()
       })
@@ -613,7 +397,8 @@ export default {
     edit(item) {
       this.createDialogVisible = true
 
-      this.createFormConfig.items.find(item => item.field === 'email').show = !!item.email
+      this.createFormConfig.items.find((item) => item.field === 'email').show =
+        !!item.email
 
       this.createForm = {
         id: item.id,
@@ -634,14 +419,14 @@ export default {
     // 保存用户表单
     createNewUser() {
       debugger
-      let that = this
+      const that = this
 
       this.$refs.form.validate((valid) => {
         if (that.createForm.id) {
           this.$refs.form.clearValidate('password')
         }
         if (valid) {
-          let params = that.createForm
+          const params = that.createForm
 
           if (!params.id) {
             params.source = 'create'
@@ -709,41 +494,56 @@ export default {
     },
     // 激活
     handleActive(item) {
-      let params = {
+      const params = {
         id: item.id,
         account_status: 1,
       }
-      let successMsg = this.$t('user_list_activetion_success')
-      let errorMsg = this.$t('user_list_activetion_error')
+      const successMsg = this.$t('user_list_activetion_success')
+      const errorMsg = this.$t('user_list_activetion_error')
       this.$confirm(
         this.$t('user_list_activetion_user', [item.username]),
-        this.handleStatus(params, successMsg, errorMsg, this.$t('user_list_activation')),
+        this.handleStatus(
+          params,
+          successMsg,
+          errorMsg,
+          this.$t('user_list_activation'),
+        ),
       )
     },
     // 冻结
     handleFreeze(item) {
-      let params = {
+      const params = {
         id: item.id,
         account_status: 0,
       }
-      let successMsg = this.$t('user_list_freeze_success')
-      let errorMsg = this.$t('user_list_freeze_error')
+      const successMsg = this.$t('user_list_freeze_success')
+      const errorMsg = this.$t('user_list_freeze_error')
       this.$confirm(
         this.$t('user_list_freeze_user', [item.username]),
-        this.handleStatus(params, successMsg, errorMsg, this.$t('user_list_freeze')),
+        this.handleStatus(
+          params,
+          successMsg,
+          errorMsg,
+          this.$t('user_list_freeze'),
+        ),
       )
     },
     // 校验
     handleCheck(item) {
-      let params = {
+      const params = {
         id: item.id,
         emailVerified: true,
       }
-      let successMsg = this.$t('user_list_check_success')
-      let errorMsg = this.$t('user_list_check_error')
+      const successMsg = this.$t('user_list_check_success')
+      const errorMsg = this.$t('user_list_check_error')
       this.$confirm(
         this.$t('user_list_check_user', [item.username]),
-        this.handleStatus(params, successMsg, errorMsg, this.$t('user_list_check')),
+        this.handleStatus(
+          params,
+          successMsg,
+          errorMsg,
+          this.$t('user_list_check'),
+        ),
       )
     },
     // 改变状态提示
@@ -776,15 +576,15 @@ export default {
     },
     // 批量操作处理
     handleCommand(command) {
-      let ids = this.multipleSelection.map((item) => {
+      const ids = this.multipleSelection.map((item) => {
         return item.id
       })
-      let where = {
+      const where = {
         id: {
           inq: ids,
         },
       }
-      let params = {}
+      const params = {}
       switch (command) {
         case 'activated':
           params.account_status = 1
@@ -808,19 +608,19 @@ export default {
         roleusers.forEach((item) => {
           const roleName = data.find((t) => t.roleId === item)?.role?.name
           if (roleName) {
-            html += ' ' + roleName + ','
+            html += ` ${roleName},`
           }
         })
       }
-      return html.substring(0, html.lastIndexOf(','))
+      return html.slice(0, Math.max(0, html.lastIndexOf(',')))
     },
     // 重置激活码
     resetAccesCode() {
       const S4 = function () {
-        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).slice(1)
       }
       const NewGuid = function () {
-        return S4() + S4() + '' + S4() + '' + S4() + '' + S4() + '' + S4() + S4() + S4()
+        return `${S4() + S4()}${S4()}${S4()}${S4()}${S4()}${S4()}${S4()}`
       }
       this.createForm.accesscode = NewGuid()
     },
@@ -840,6 +640,312 @@ export default {
   },
 }
 </script>
+
+<template>
+  <PageContainer>
+    <template #actions>
+      <el-button
+        v-show="multipleSelection.length > 0"
+        v-readonlybtn="'user_category_application'"
+        class="btn"
+        @click="$refs.table.showClassify(handleSelectTag())"
+      >
+        <span> {{ $t('public_button_bulk_tag') }}</span>
+      </el-button>
+      <el-dropdown
+        v-show="multipleSelection.length > 0"
+        v-readonlybtn="'user_edition'"
+        @command="handleCommand($event)"
+      >
+        <el-button class="btn btn-dropdowm">
+          <i class="iconfont icon-piliang back-btn-icon" />
+          <span> {{ $t('public_button_bulk_operation') }}</span>
+        </el-button>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item
+              v-readonlybtn="'user_edition'"
+              command="activated"
+              >{{ $t('user_list_bulk_activation') }}</el-dropdown-item
+            >
+            <el-dropdown-item
+              v-readonlybtn="'user_edition'"
+              command="rejected"
+              >{{ $t('user_list_bulk_freeze') }}</el-dropdown-item
+            >
+            <el-dropdown-item
+              v-readonlybtn="'user_edition'"
+              command="notActivated"
+              >{{ $t('user_list_bulk_check') }}</el-dropdown-item
+            >
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+      <el-button
+        v-readonlybtn="'new_model_creation'"
+        class="btn btn-create"
+        type="primary"
+        @click="openCreateDialog"
+      >
+        <span>{{ $t('public_button_create') }}</span>
+      </el-button>
+    </template>
+
+    <TablePage
+      ref="table"
+      row-key="id"
+      class="user-list"
+      :classify="{ authority: 'user_category_management', types: ['user'] }"
+      :remote-method="getData"
+      @selection-change="handleSelectionChange"
+      @classify-submit="handleOperationClassify"
+      @sort-change="handleSortTable"
+    >
+      <template #nav>
+        <div class="tapNav">
+          <ElTabs
+            v-model="activePanel"
+            style="--el-tabs-padding-left: 1rem"
+            @tab-click="handleTapClick"
+          >
+            <ElTabPane
+              v-for="item in muneList"
+              :key="item.icon"
+              :name="item.key"
+            >
+              <template #label>
+                <span
+                  >{{ item.name }}
+                  <ElBadge
+                    v-if="`${item.key}Count` == 'notActivatedCount'"
+                    class="item-badge"
+                    :value="notActivatedCount"
+                    :max="99"
+                    :hidden="!notActivatedCount"
+                  />
+                  <ElBadge
+                    v-if="`${item.key}Count` == 'notVerifiedCount'"
+                    class="item-badge"
+                    :value="notVerifiedCount"
+                    :max="99"
+                    :hidden="!notVerifiedCount"
+                  />
+                  <ElBadge
+                    v-if="`${item.key}Count` == 'rejectedCount'"
+                    class="item-badge"
+                    :value="rejectedCount"
+                    :max="99"
+                    :hidden="!rejectedCount"
+                  />
+                </span>
+              </template>
+            </ElTabPane>
+          </ElTabs>
+        </div>
+      </template>
+      <template #search>
+        <div class="search-bar">
+          <FilterBar
+            v-model:value="searchParams"
+            :items="filterItems"
+            @fetch="table.fetch(1)"
+          />
+        </div>
+      </template>
+
+      <el-table-column type="selection" width="45" :reserve-selection="true" />
+      <el-table-column
+        :label="$t('user_list_user_name')"
+        prop="username"
+        sortable="username"
+      >
+        <template #default="scope">
+          <div class="metadata-name">
+            <p>{{ scope.row.username }}</p>
+            <div class="parent ellipsis">
+              {{ scope.row.email }}
+            </div>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('user_list_role')" prop="roleMappings">
+        <template #default="scope">
+          {{ permissionsmethod(scope.row.roleMappings, scope.row.roleusers) }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('user_list_change_time')"
+        prop="last_updated"
+        sortable="last_updated"
+      >
+        <template #default="scope">
+          {{ scope.row.lastUpdatedFmt }}
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('user_list_source')" prop="source">
+        <template #default="scope">
+          {{ scope.row.source ? $t(`user_status_${scope.row.source}`) : '' }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('user_list_status')"
+        prop="status"
+        sortable="status"
+      >
+        <template #default="scope">
+          <span :class="[`status-${scope.row.status}`, 'status']">
+            {{ scope.row.status ? $t(`user_status_${scope.row.status}`) : '' }}
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('public_operation')" width="210">
+        <template #default="scope">
+          <div>
+            <el-button
+              v-if="['rejected', 'notActivated'].includes(scope.row.status)"
+              v-readonlybtn="'user_edition'"
+              text
+              type="primary"
+              :disabled="
+                $disabledByPermission(
+                  'user_edition_all_data',
+                  scope.row.user_id,
+                )
+              "
+              @click="handleActive(scope.row)"
+            >
+              {{ $t('user_list_activation') }}
+            </el-button>
+            <ElDivider
+              v-if="['rejected', 'notActivated'].includes(scope.row.status)"
+              class="mx-1"
+              direction="vertical"
+            />
+            <el-button
+              v-if="!['rejected'].includes(scope.row.status)"
+              v-readonlybtn="'user_edition'"
+              text
+              type="primary"
+              :disabled="
+                $disabledByPermission(
+                  'user_edition_all_data',
+                  scope.row.user_id,
+                )
+              "
+              @click="handleFreeze(scope.row)"
+            >
+              {{ $t('user_list_freeze') }}
+            </el-button>
+            <ElDivider
+              v-if="!['rejected'].includes(scope.row.status)"
+              class="mx-1"
+              direction="vertical"
+            />
+            <el-button
+              v-if="['notVerified'].includes(scope.row.status)"
+              v-readonlybtn="'user_edition'"
+              text
+              type="primary"
+              :disabled="
+                $disabledByPermission(
+                  'user_edition_all_data',
+                  scope.row.user_id,
+                )
+              "
+              @click="handleCheck(scope.row)"
+              >{{ $t('user_list_check') }}</el-button
+            >
+            <ElDivider
+              v-if="['notVerified'].includes(scope.row.status)"
+              class="mx-1"
+              direction="vertical"
+            />
+            <el-button
+              v-if="['activated', 'rejected'].includes(scope.row.status)"
+              v-readonlybtn="'user_edition'"
+              text
+              type="primary"
+              :disabled="
+                $disabledByPermission(
+                  'user_edition_all_data',
+                  scope.row.user_id,
+                )
+              "
+              @click="edit(scope.row)"
+              >{{ $t('public_button_edit') }}</el-button
+            >
+            <ElDivider
+              v-if="['activated', 'rejected'].includes(scope.row.status)"
+              class="mx-1"
+              direction="vertical"
+            />
+            <el-button
+              v-readonlybtn="'user_delete'"
+              text
+              type="primary"
+              :disabled="
+                $disabledByPermission('user_delete_all_data', scope.row.user_id)
+              "
+              @click="remove(scope.row)"
+              >{{ $t('public_button_delete') }}</el-button
+            >
+          </div>
+        </template>
+      </el-table-column>
+    </TablePage>
+    <el-dialog
+      v-model="createDialogVisible"
+      width="600px"
+      :title="
+        createForm.id ? $t('user_list_edit_user') : $t('user_list_creat_user')
+      "
+      :close-on-click-modal="false"
+      class="creatDialog"
+    >
+      <FormBuilder
+        ref="form"
+        v-model:value="createForm"
+        :config="createFormConfig"
+      />
+      <div>
+        <span class="label">{{ $t('user_form_activation_code') }}</span>
+        <span style="padding-right: 30px">{{
+          createForm.accesscode || '-'
+        }}</span>
+        <el-button text @click="resetAccesCode">{{
+          $t('public_button_reset')
+        }}</el-button>
+        <el-tooltip
+          v-if="createForm.accesscode"
+          placement="top"
+          manual
+          :content="$t('public_message_copied')"
+          popper-class="copy-tooltip"
+          :model-value="showTooltip"
+        >
+          <span
+            v-clipboard:copy="createForm.accesscode"
+            v-clipboard:success="onCopy"
+            class="pl-4"
+            @mouseleave="showTooltip = false"
+          >
+            <el-button text>{{ $t('public_button_copy') }}</el-button>
+          </span>
+        </el-tooltip>
+      </div>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="createDialogVisible = false">{{
+            $t('public_button_cancel')
+          }}</el-button>
+          <el-button type="primary" @click="createNewUser()">{{
+            $t('public_button_confirm')
+          }}</el-button>
+        </span>
+      </template>
+    </el-dialog>
+  </PageContainer>
+</template>
 
 <style lang="scss" scoped>
 .user-list-wrap {
