@@ -1,9 +1,9 @@
-import { defineComponent, computed } from 'vue'
-import { Select } from '../select'
-import { connect, mapProps, mapReadPretty } from '@formily/vue'
 import { PreviewText } from '@formily/element-plus'
+import { connect, mapProps, mapReadPretty } from '@formily/vue'
 import { VIcon } from '@tap/component'
 import i18n from '@tap/i18n'
+import { computed, defineComponent } from 'vue'
+import { Select } from '../select'
 
 const DefineFieldSelect = defineComponent({
   props: {
@@ -19,7 +19,7 @@ const DefineFieldSelect = defineComponent({
     // public static final byte TYPE_RAW = 7;
     // public static final byte TYPE_NUMBER = 8;
     // public static final byte TYPE_BINARY = 9;
-    // public static final byte TYPE_STRING = 10;
+    // public static final byte TYPE_STRING = 10
     // public static final byte TYPE_DATE = 11;
 
     const TYPE_ICON = {
@@ -37,8 +37,8 @@ const DefineFieldSelect = defineComponent({
     }
 
     const getIcon = (tapType) => {
-      let match = tapType.match(/"type"\s*:\s*(\d+)/)
-      let value = match?.[1]
+      const match = tapType.match(/"type"\s*:\s*(\d+)/)
+      const value = match?.[1]
 
       return TYPE_ICON[value] || 'type-unknown'
     }
@@ -51,12 +51,15 @@ const DefineFieldSelect = defineComponent({
       })
     })
 
-    const renderIcon = option => {
+    const renderIcon = (option) => {
       if (option.isPrimaryKey) {
         return option.isForeignKey ? (
           <ElTooltip
             placement="top"
-            content={i18n.t('public_foreign_key_tip', { name: option.constraints[0], val: option.constraints[2] })}
+            content={i18n.t('public_foreign_key_tip', {
+              name: option.constraints[0],
+              val: option.constraints[2],
+            })}
             open-delay={200}
             transition="none"
           >
@@ -75,14 +78,20 @@ const DefineFieldSelect = defineComponent({
         return (
           <ElTooltip
             placement="top"
-            content={i18n.t('public_foreign_key_tip', { name: option.constraints[0], val: option.constraints[2] })}
+            content={i18n.t('public_foreign_key_tip', {
+              name: option.constraints[0],
+              val: option.constraints[2],
+            })}
             open-delay={200}
             transition="none"
           >
             <span class="flex align-center">
               <VIcon size="14">share</VIcon>
               {option.isMultiForeignKey && (
-                <span style={`--index: '${option.constraints[1]}';`} class="fingerprint-sub foreign-sub"></span>
+                <span
+                  style={`--index: '${option.constraints[1]}';`}
+                  class="fingerprint-sub foreign-sub"
+                ></span>
               )}
             </span>
           </ElTooltip>
@@ -93,10 +102,9 @@ const DefineFieldSelect = defineComponent({
         return (
           <ElTooltip
             placement="top"
-            content={
-              `${i18n.t(option.indicesUnique[2] ? 'public_unique_index' : 'public_normal_index')}: ` +
+            content={`${i18n.t(option.indicesUnique[2] ? 'public_unique_index' : 'public_normal_index')}: ${
               option.indicesUnique[0]
-            }
+            }`}
             open-delay={200}
             transition="none"
           >
@@ -104,14 +112,20 @@ const DefineFieldSelect = defineComponent({
               <span class="flex align-center">
                 <VIcon size="14">fingerprint</VIcon>
                 {option.isMultiUniqueIndex && (
-                  <span style={`--index: '${option.indicesUnique[1]}';`} class="fingerprint-sub unique-sub"></span>
+                  <span
+                    style={`--index: '${option.indicesUnique[1]}';`}
+                    class="fingerprint-sub unique-sub"
+                  ></span>
                 )}
               </span>
             ) : (
               <span class="flex align-center">
                 <VIcon size="14">sort-descending</VIcon>
                 {option.isMultiIndex && (
-                  <span style={`--index: '${option.indicesUnique[1]}';`} class="fingerprint-sub index-sub"></span>
+                  <span
+                    style={`--index: '${option.indicesUnique[1]}';`}
+                    class="fingerprint-sub index-sub"
+                  ></span>
                 )}
               </span>
             )}
@@ -122,19 +136,24 @@ const DefineFieldSelect = defineComponent({
 
     return () => {
       const newAttrs = { ...attrs }
+      console.log('modelValue', newAttrs.modelValue)
       if (
         (attrs['allow-create'] || attrs.allowCreate) &&
-        !('defaultFirstOption' in attrs || 'default-first-option' in attrs)
+        !('defaultFirstOption' in attrs) &&
+        !('default-first-option' in attrs)
       ) {
         newAttrs.defaultFirstOption = true
       }
-      const itemLabel = newAttrs.itemLabel || 'label'
+      const itemLabel = newAttrs['item-label'] || 'label'
       return (
         <Select
+          {...newAttrs}
           popper-class="field-select-popper"
-          attrs={newAttrs}
           options={fieldOptions.value}
           dataSource={fieldOptions.value}
+          onUpdate:modelValue={(val) => {
+            console.log('onUpdate:modelValue', val)
+          }}
         >
           {{
             option: ({ option }) => (
@@ -157,24 +176,27 @@ const DefineFieldSelect = defineComponent({
 
 export const FieldSelect = connect(
   DefineFieldSelect,
-  mapProps({ dataSource: 'options', loading: true, value: 'modelValue' }, props => {
-    const _props = { ...props }
+  mapProps(
+    { dataSource: 'options', loading: true, value: 'modelValue' },
+    (props) => {
+      const _props = { ...props }
 
-    if (_props.dataSource) {
-      _props.options = _props.dataSource
-    }
+      if (_props.dataSource) {
+        _props.options = _props.dataSource
+      }
 
-    return _props
-  }),
+      return _props
+    },
+  ),
   mapReadPretty(PreviewText.Select),
 )
 
-export const mapFieldsData = data => {
+export const mapFieldsData = (data) => {
   let {
     constraints = [],
     indices = [],
     fields = [],
-    partitionInfo: { partitionFields = [] } = { partitionFields: [] }
+    partitionInfo: { partitionFields = [] } = { partitionFields: [] },
   } = data
   let isMultiIndex = false
   let isMultiUniqueIndex = false
@@ -195,7 +217,11 @@ export const mapFieldsData = data => {
     if (item.type === 'FOREIGN_KEY') {
       let temp = 0
       item.mappingFields.forEach(({ foreignKey, referenceKey }) => {
-        map[foreignKey] = [item.name, index, `${item.referencesTableName}.${referenceKey}`]
+        map[foreignKey] = [
+          item.name,
+          index,
+          `${item.referencesTableName}.${referenceKey}`,
+        ]
         if (!pkMap[foreignKey]) {
           temp++
         }
@@ -206,7 +232,9 @@ export const mapFieldsData = data => {
     return map
   }, {})
 
-  indices = indices.filter(item => item.primaryKey !== true && item.primaryKey !== 'true')
+  indices = indices.filter(
+    (item) => item.primaryKey !== true && item.primaryKey !== 'true',
+  )
 
   const columnsMap = indices.reduce((map, item, index) => {
     let temp = 0
@@ -237,8 +265,8 @@ export const mapFieldsData = data => {
   isMultiForeignKey = foreignKeyCount > 1
 
   const newFields = fields
-    .filter(item => !item.is_deleted)
-    .map(field => {
+    .filter((item) => !item.is_deleted)
+    .map((field) => {
       return {
         ...field,
         label: field.field_name,
@@ -252,7 +280,7 @@ export const mapFieldsData = data => {
         dataType: field.data_type.replace(/\(.+\)/, ''),
         isMultiIndex,
         isMultiUniqueIndex,
-        isMultiForeignKey
+        isMultiForeignKey,
       }
     })
 
@@ -263,6 +291,6 @@ export const mapFieldsData = data => {
     isMultiIndex,
     isMultiUniqueIndex,
     isMultiForeignKey,
-    fields: newFields
+    fields: newFields,
   }
 }

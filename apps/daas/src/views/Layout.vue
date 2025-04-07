@@ -356,7 +356,7 @@ export default {
       <a v-else class="logo" href="/" :style="logoStyle">
         <img :src="logoUrl" />
       </a>
-      <div class="button-bar">
+      <div class="button-bar gap-1">
         <span v-if="licenseExpireVisible" class="expire-msg">{{
           $t('app_license_expire_warning', [licenseExpire])
         }}</span>
@@ -386,7 +386,7 @@ export default {
           :show-timeout="0"
           @command="command"
         >
-          <div class="flex align-center icon-btn p-2 ml-2">
+          <div class="flex align-center icon-btn p-2">
             <VIcon size="18">wenda</VIcon>
           </div>
           <template #dropdown>
@@ -404,7 +404,7 @@ export default {
           :show-timeout="0"
           @command="command"
         >
-          <div class="flex align-center icon-btn p-2 ml-2">
+          <div class="flex align-center icon-btn p-2">
             <VIcon size="18">shezhi</VIcon>
           </div>
           <!-- <VIcon class="icon-btn" size="16">shezhi</VIcon> -->
@@ -430,7 +430,7 @@ export default {
           :show-timeout="0"
           @command="changeLanguage"
         >
-          <div class="flex align-center icon-btn p-2 ml-2">
+          <div class="flex align-center icon-btn p-2">
             <VIcon size="18">language_icon</VIcon>
           </div>
           <template #dropdown>
@@ -448,7 +448,7 @@ export default {
             </ElDropdownMenu>
           </template>
         </ElDropdown>
-        <ElDivider direction="vertical" class="divider mx-6" />
+        <ElDivider direction="vertical" class="divider mx-4" />
         <ElDropdown
           class="menu-user btn"
           placement="bottom"
@@ -578,10 +578,15 @@ export default {
       </ElAside>
       <ElMain class="layout-main">
         <div class="layout-main-body">
-          <!--<PageHeader
-            v-if="!['dashboard', 'clusterManagement', 'apiMonitor'].includes($route.name)"
+          <PageHeader
+            v-if="
+              !['dashboard', 'clusterManagement', 'apiMonitor'].includes(
+                $route.name,
+              )
+            "
             class="border-bottom"
-          ></PageHeader>-->
+          />
+
           <!--<div
             class="flex-fill overflow-auto"
             :class="[

@@ -1,146 +1,17 @@
-<template>
-  <div class="account" v-loading="loading">
-    <div class="setting-right">
-      <div class="title">{{ $t('account_accountSettings') }}</div>
-      <ul class="content">
-        <li v-for="item in infoList" :key="item.key" class="flex align-center">
-          <span class="label">{{ item.label }}</span>
-          <span class="text">
-            <span class="align-middle">{{ item.value }}</span>
-            <IconButton primary class="align-middle ml-2" v-if="item.key === 'accessCode'" sm @click="handleCopy(item.value)">copy</IconButton>
-          </span>
-          <ElButton text v-if="item.key !== 'email'" @click="handleChange(item.key)">{{ item.icon }}</ElButton>
-          <!-- <i
-                :class="['iconfont', item.icon, rotateFlag && item.key == 'accessCode' ? 'rotateActive' : 'backActive']"
-                v-if="item.key !== 'email'"
-                @click="handleChange(item.key)"
-              ></i> -->
-        </li>
-      </ul>
-    </div>
-    <!-- 修改密码 -->
-    <el-dialog
-      :title="$t('account_changePassword')"
-      v-model="passwordDialogFalg"
-      :close-on-click-modal="false"
-      width="600px"
-    >
-      <el-form :model="pwd" ref="form" :rules="rules" class="form">
-        <el-form-item prop="oldPassword">
-          <el-input
-            :type="oldPasswordType"
-            v-model="pwd.oldPassword"
-            :placeholder="$t('account_currentPassword')"
-            autocomplete="off"
-          >
-            <template v-slot:suffix>
-              <i
-                :class="['iconfont', oldFlag ? 'icon-openeye' : 'icon-closeeye']"
-                autocomplete="auto"
-                class="eye"
-                @click="changeEye('old')"
-              />
-            </template>
-          </el-input>
-        </el-form-item>
-        <el-form-item prop="newPassword">
-          <el-input
-            v-model="pwd.newPassword"
-            :type="newPasswordType"
-            :placeholder="$t('account_newPassword')"
-            autocomplete="off"
-          >
-            <template v-slot:suffix>
-              <i
-                :class="['iconfont', newFlag ? 'icon-openeye' : 'icon-closeeye']"
-                autocomplete="auto"
-                class="eye"
-                @click="changeEye('new')"
-              />
-            </template>
-          </el-input>
-        </el-form-item>
-        <el-form-item prop="comfirmPassword">
-          <el-input
-            v-model="pwd.comfirmPassword"
-            :type="comfirmPasswordType"
-            :placeholder="$t('account_confirmPassword')"
-            autocomplete="off"
-          >
-            <template v-slot:suffix>
-              <i
-                :class="['iconfont', comfirFlag ? 'icon-openeye' : 'icon-closeeye']"
-                autocomplete="auto"
-                class="eye"
-                @click="changeEye()"
-              />
-            </template>
-          </el-input>
-        </el-form-item>
-      </el-form>
-      <template v-slot:footer>
-        <div class="dialog-footer">
-          <el-button type="primary" @click="save">{{ $t('public_button_save') }}</el-button>
-        </div>
-      </template>
-    </el-dialog>
-    <!-- 修改邮箱 -->
-    <el-dialog :title="$t('account_changeEmail')" v-model="emailDialogFalg" :close-on-click-modal="false" width="600px">
-      <el-form :model="form" class="form">
-        <el-form-item>
-          <el-input v-model="form.newEmail" :placeholder="$t('account_enterMailbox')" autocomplete="off" min></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-input v-model="form.password" :placeholder="$t('account_enterNewMailbox')" autocomplete="off"></el-input>
-        </el-form-item>
-      </el-form>
-      <template v-slot:footer>
-        <div class="dialog-footer">
-          <el-button type="primary" @click="send">{{ $t('account_sendEmail') }}</el-button>
-        </div>
-      </template>
-    </el-dialog>
-    <!-- 用户名称 -->
-    <el-dialog
-      :title="$t('account_changeUsername')"
-      v-model="usernameDialogFalg"
-      :close-on-click-modal="false"
-      width="600px"
-    >
-      <el-form class="form">
-        <el-form-item>
-          <el-input
-            v-model="userName"
-            :placeholder="$t('account_newUsername')"
-            maxlength="100"
-            show-word-limit
-            autocomplete="off"
-          ></el-input>
-        </el-form-item>
-      </el-form>
-      <template v-slot:footer>
-        <div class="dialog-footer">
-          <el-button type="primary" @click="confirm">{{ $t('dialog_downAgent_ok') }}</el-button>
-        </div>
-      </template>
-    </el-dialog>
-  </div>
-</template>
-
 <script>
-import Cookie from '@tap/shared/src/cookie'
 import { usersApi } from '@tap/api'
 import { IconButton } from '@tap/component'
+import Cookie from '@tap/shared/src/cookie'
 import { copyToClipboard } from '@tap/shared/src/util'
 export default {
-  name: 'list',
+  name: 'List',
   components: {
-    IconButton
+    IconButton,
   },
   data() {
     //此处即表单发送之前验证  验证新密码与原密码
 
-    let validateNewPassword = (rule, value, callback) => {
+    const validateNewPassword = (rule, value, callback) => {
       if (value === this.pwd.oldPassword) {
         callback(new Error(this.$t('account_samePawTip')))
       } else {
@@ -148,7 +19,7 @@ export default {
       }
     }
     // 是否是中文
-    let validateisCN = (rule, value, callback) => {
+    const validateisCN = (rule, value, callback) => {
       const passwordReg = /[\s\u4E00-\u9FA5]/
       if (passwordReg.test(value)) {
         callback(new Error(this.$t('account_passwordNotCN')))
@@ -157,7 +28,7 @@ export default {
       }
     }
     //此处即表单发送之前验证  验证新密码与再次确认
-    let validateNewPassword2 = (rule, value, callback) => {
+    const validateNewPassword2 = (rule, value, callback) => {
       if (value !== this.pwd.newPassword) {
         callback(new Error(this.$t('account_newPawInconsistent')))
       } else {
@@ -275,7 +146,7 @@ export default {
     // 获取当前信息
     async handleGetData() {
       this.loading = true
-      let data = await usersApi.get([Cookie.get('user_id')])
+      const data = await usersApi.get([Cookie.get('user_id')])
       if (data) {
         this.infoList.forEach((item) => {
           Object.keys(data).forEach((key) => {
@@ -301,18 +172,23 @@ export default {
           this.passwordDialogFalg = true
           break
         case 'accessCode':
-          this.$confirm(this.$t('account_accessCode_tip'), this.$t('account_accessCode_confirm'), {
-            confirmButtonText: this.$t('public_button_confirm'),
-            cancelButtonText: this.$t('public_button_cancel'),
-            dangerouslyUseHTMLString: true,
-            type: 'warning'
-          }).then(res => {
+          this.$confirm(
+            this.$t('account_accessCode_tip'),
+            this.$t('account_accessCode_confirm'),
+            {
+              confirmButtonText: this.$t('public_button_confirm'),
+              cancelButtonText: this.$t('public_button_cancel'),
+              dangerouslyUseHTMLString: true,
+              type: 'warning',
+            },
+          ).then((res) => {
             if (res) {
-              usersApi.refreshAccessCode().then(data => {
-                this.infoList.find(item => item.key === 'accessCode').value = data
+              usersApi.refreshAccessCode().then((data) => {
+                this.infoList.find((item) => item.key === 'accessCode').value =
+                  data
                 this.$message({
                   type: 'success',
-                  message: this.$t('account_accessCode_success')
+                  message: this.$t('account_accessCode_success'),
                 })
               })
             }
@@ -323,7 +199,7 @@ export default {
 
     // 修改用户名
     confirm() {
-      let parmas = {
+      const parmas = {
         id: Cookie.get('user_id'),
         username: this.userName,
       }
@@ -349,7 +225,7 @@ export default {
 
     // 保存密码
     save() {
-      let parmas = {
+      const parmas = {
         oldPassword: this.pwd.oldPassword,
         newPassword: this.pwd.newPassword,
       }
@@ -397,10 +273,181 @@ export default {
 }
 </script>
 
+<template>
+  <div v-loading="loading" class="account">
+    <div class="setting-right">
+      <div class="title">{{ $t('account_accountSettings') }}</div>
+      <ul class="content">
+        <li v-for="item in infoList" :key="item.key" class="flex align-center">
+          <span class="label">{{ item.label }}</span>
+          <span class="text">
+            <span class="align-middle">{{ item.value }}</span>
+            <IconButton
+              v-if="item.key === 'accessCode'"
+              primary
+              class="align-middle ml-2"
+              sm
+              @click="handleCopy(item.value)"
+              >copy</IconButton
+            >
+          </span>
+          <ElButton
+            v-if="item.key !== 'email'"
+            text
+            @click="handleChange(item.key)"
+            >{{ item.icon }}</ElButton
+          >
+          <!-- <i
+                :class="['iconfont', item.icon, rotateFlag && item.key == 'accessCode' ? 'rotateActive' : 'backActive']"
+                v-if="item.key !== 'email'"
+                @click="handleChange(item.key)"
+              ></i> -->
+        </li>
+      </ul>
+    </div>
+    <!-- 修改密码 -->
+    <el-dialog
+      v-model="passwordDialogFalg"
+      :title="$t('account_changePassword')"
+      :close-on-click-modal="false"
+      width="600px"
+    >
+      <el-form ref="form" :model="pwd" :rules="rules" class="form">
+        <el-form-item prop="oldPassword">
+          <el-input
+            v-model="pwd.oldPassword"
+            :type="oldPasswordType"
+            :placeholder="$t('account_currentPassword')"
+            autocomplete="off"
+          >
+            <template #suffix>
+              <i
+                :class="[
+                  'iconfont',
+                  oldFlag ? 'icon-openeye' : 'icon-closeeye',
+                ]"
+                autocomplete="auto"
+                class="eye"
+                @click="changeEye('old')"
+              />
+            </template>
+          </el-input>
+        </el-form-item>
+        <el-form-item prop="newPassword">
+          <el-input
+            v-model="pwd.newPassword"
+            :type="newPasswordType"
+            :placeholder="$t('account_newPassword')"
+            autocomplete="off"
+          >
+            <template #suffix>
+              <i
+                :class="[
+                  'iconfont',
+                  newFlag ? 'icon-openeye' : 'icon-closeeye',
+                ]"
+                autocomplete="auto"
+                class="eye"
+                @click="changeEye('new')"
+              />
+            </template>
+          </el-input>
+        </el-form-item>
+        <el-form-item prop="comfirmPassword">
+          <el-input
+            v-model="pwd.comfirmPassword"
+            :type="comfirmPasswordType"
+            :placeholder="$t('account_confirmPassword')"
+            autocomplete="off"
+          >
+            <template #suffix>
+              <i
+                :class="[
+                  'iconfont',
+                  comfirFlag ? 'icon-openeye' : 'icon-closeeye',
+                ]"
+                autocomplete="auto"
+                class="eye"
+                @click="changeEye()"
+              />
+            </template>
+          </el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="save">{{
+            $t('public_button_save')
+          }}</el-button>
+        </div>
+      </template>
+    </el-dialog>
+    <!-- 修改邮箱 -->
+    <el-dialog
+      v-model="emailDialogFalg"
+      :title="$t('account_changeEmail')"
+      :close-on-click-modal="false"
+      width="600px"
+    >
+      <el-form :model="form" class="form">
+        <el-form-item>
+          <el-input
+            v-model="form.newEmail"
+            :placeholder="$t('account_enterMailbox')"
+            autocomplete="off"
+            min
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-input
+            v-model="form.password"
+            :placeholder="$t('account_enterNewMailbox')"
+            autocomplete="off"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="send">{{
+            $t('account_sendEmail')
+          }}</el-button>
+        </div>
+      </template>
+    </el-dialog>
+    <!-- 用户名称 -->
+    <el-dialog
+      v-model="usernameDialogFalg"
+      :title="$t('account_changeUsername')"
+      :close-on-click-modal="false"
+      width="600px"
+    >
+      <el-form class="form">
+        <el-form-item>
+          <el-input
+            v-model="userName"
+            :placeholder="$t('account_newUsername')"
+            maxlength="100"
+            show-word-limit
+            autocomplete="off"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="confirm">{{
+            $t('dialog_downAgent_ok')
+          }}</el-button>
+        </div>
+      </template>
+    </el-dialog>
+  </div>
+</template>
+
 <style lang="scss" scoped>
 $unreadColor: #ee5353;
 // .settingCenter{/*// 	height: 100%;*//*// 	font-size: 12px;*//*// 	.setting-main {*/
-// 		display: flex;/*// 		justify-content: space-between;*//*// 		height: 100%;*/.account {
+// 		display: flex;/*// 		justify-content: space-between;*//*// 		height: 100%;*/
+.account {
   width: 100%;
   height: 100%;
   flex: 1 1 auto;
@@ -427,7 +474,7 @@ $unreadColor: #ee5353;
       }
 
       :deep(.el-button.el-button--text) {
-	      padding: 0;
+        padding: 0;
       }
 
       i {
@@ -442,7 +489,7 @@ $unreadColor: #ee5353;
       }
     }
   }
-}}
+}
 </style>
 
 <style lang="scss">

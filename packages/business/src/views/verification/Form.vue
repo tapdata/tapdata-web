@@ -466,12 +466,12 @@ export default {
         this.form.name = `${this.taskName} - ${this.inspectMethodMap[this.form.inspectMethod]}`
       }
     },
-    handleSelectTask(option, byClick) {
+    handleSelectTask(task, byClick) {
       if (byClick) {
         this.form.tasks = []
-        this.taskName = option.label
+        this.taskName = task.name
         this.setVerifyName()
-        this.getFlowStages(option.value, this.$refs.conditionBox.autoAddTable)
+        this.getFlowStages(task.id, this.$refs.conditionBox.autoAddTable)
       }
     },
   },
@@ -535,39 +535,33 @@ export default {
             class="form-item"
             :label="`${$t('packages_business_verification_type')}: `"
           >
-            <ElRadioGroup
-              v-model="form.inspectMethod"
-              @change="handleChangeInspectMethod"
-            >
-              <ElRadioButton label="row_count">{{
-                inspectMethodMap['row_count']
-              }}</ElRadioButton>
-              <ElRadioButton label="field">{{
-                inspectMethodMap['field']
-              }}</ElRadioButton>
-              <ElRadioButton label="jointField">{{
-                inspectMethodMap['jointField']
-              }}</ElRadioButton>
-              <ElRadioButton label="hash">{{
-                inspectMethodMap['hash']
-              }}</ElRadioButton>
-              <!-- <ElRadioButton label="cdcCount"
-              >动态校验
-              <ElTooltip
-                class="item"
-                effect="dark"
-                content="基于时间窗口对动态数据进行校验，目前仅支持对行数进行校验"
-                placement="top"
+            <div>
+              <ElRadioGroup
+                v-model="form.inspectMethod"
+                @change="handleChangeInspectMethod"
               >
-                <i class="el-icon-warning-outline"></i>
-              </ElTooltip>
-            </ElRadioButton> -->
-            </ElRadioGroup>
-            <div v-if="typTipMap[form.inspectMethod]">
-              <i class="el-icon-info color-primary mr-1" />
-              <span style="font-size: 12px">{{
-                typTipMap[form.inspectMethod]
-              }}</span>
+                <ElRadioButton label="row_count">{{
+                  inspectMethodMap['row_count']
+                }}</ElRadioButton>
+                <ElRadioButton label="field">{{
+                  inspectMethodMap['field']
+                }}</ElRadioButton>
+                <ElRadioButton label="jointField">{{
+                  inspectMethodMap['jointField']
+                }}</ElRadioButton>
+                <ElRadioButton label="hash">{{
+                  inspectMethodMap['hash']
+                }}</ElRadioButton>
+              </ElRadioGroup>
+              <div
+                v-if="typTipMap[form.inspectMethod]"
+                class="font-color-light"
+              >
+                <VIcon class="align-middle mr-1">info</VIcon>
+                <span class="align-middle fs-8">{{
+                  typTipMap[form.inspectMethod]
+                }}</span>
+              </div>
             </div>
           </ElFormItem>
 
@@ -854,7 +848,6 @@ export default {
                   <ElInput
                     v-model="form.cdcDuration"
                     class="item-input"
-                    size="mini"
                     onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
                     onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
                   >
@@ -868,7 +861,6 @@ export default {
                   <ElDatePicker
                     v-model="form.cdcBeginDate"
                     class="item-select"
-                    size="mini"
                     type="datetime"
                     :placeholder="
                       $t('packages_business_verification_form_jiaoyankaishishi')
@@ -884,7 +876,6 @@ export default {
                   <ElDatePicker
                     v-model="form.cdcEndDate"
                     class="item-select"
-                    size="mini"
                     type="datetime"
                     :placeholder="
                       $t('packages_business_verification_form_jiaoyanjieshushi')
@@ -932,17 +923,11 @@ export default {
         v-html="jointErrorMessage"
       />
       <div class="mt-4">
-        <ElButton size="mini" @click="goBack()">{{
-          $t('public_button_back')
-        }}</ElButton>
-        <!--        <ElButton type="primary" size="mini" @click="save()">{{-->
+        <ElButton @click="goBack()">{{ $t('public_button_back') }}</ElButton>
+        <!--        <ElButton type="primary"  @click="save()">{{-->
         <!--          $t('public_button_save') + ' & ' + $t('public_button_execute')-->
         <!--        }}</ElButton>-->
-        <ElButton
-          type="primary"
-          size="mini"
-          :disabled="saveDisabled"
-          @click="save(true)"
+        <ElButton type="primary" :disabled="saveDisabled" @click="save(true)"
           >{{ $t('public_button_save') }}
         </ElButton>
       </div>

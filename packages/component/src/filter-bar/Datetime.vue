@@ -1,28 +1,5 @@
-<template>
-  <div
-    class="filter-datetime flex none-boder position-relative"
-    @mouseenter="mouseEnterFnc"
-    @mouseleave="mouseLeaveFnc"
-  >
-    <div v-if="title" class="filter-datetime__title" @click="focusFnc">
-      {{ title }}
-    </div>
-    <ElDatePicker
-      v-bind="$attrs"
-      v-model="time"
-      type="datetime"
-      :clearable="false"
-      :class="['date-picker', { 'empty-time': !this.time }]"
-      ref="datepicker"
-      @change="emitFnc"
-    ></ElDatePicker>
-    <VIcon v-if="showClose" size="12" class="icon-btn ml-1" @click.stop="clear">close</VIcon>
-    <VIcon v-else size="10" class="icon-btn ml-1" @click="focusFnc">arrow-down-fill</VIcon>
-  </div>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
+import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 import VIcon from '../base/VIcon'
 
 export default {
@@ -39,6 +16,7 @@ export default {
       default: true,
     },
   },
+  emits: ['change', 'update:value', , , 'update:value'],
   data() {
     return {
       time: '',
@@ -73,14 +51,40 @@ export default {
       this.$refs.datepicker?.focus()
     },
   },
-  emits: ['change', 'update:value', , , 'update:value'],
 }
 </script>
+
+<template>
+  <div
+    class="filter-datetime flex none-boder position-relative"
+    @mouseenter="mouseEnterFnc"
+    @mouseleave="mouseLeaveFnc"
+  >
+    <div v-if="title" class="filter-datetime__title" @click="focusFnc">
+      {{ title }}
+    </div>
+    <ElDatePicker
+      v-bind="$attrs"
+      ref="datepicker"
+      v-model="time"
+      type="datetime"
+      :clearable="false"
+      :class="['date-picker', { 'empty-time': !time }]"
+      @change="emitFnc"
+    />
+    <VIcon v-if="showClose" size="12" class="icon-btn ml-1" @click.stop="clear"
+      >close</VIcon
+    >
+    <VIcon v-else size="10" class="icon-btn ml-1" @click="focusFnc"
+      >arrow-down-fill</VIcon
+    >
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .filter-datetime {
   position: relative;
-  padding-left: 8px;
+  // padding-left: 8px;
   .filter-datetime__title {
     margin-right: 8px;
     cursor: pointer;
@@ -116,10 +120,10 @@ export default {
     }
   }
   &:hover {
-    background-color: #eff1f4;
+    // background-color: #eff1f4;
     :deep(.el-input__inner) {
-      background-color: #eff1f4;
-      cursor: pointer;
+      // background-color: #eff1f4;
+      // cursor: pointer;
     }
 
     .icon-btn {

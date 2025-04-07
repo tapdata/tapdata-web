@@ -1,59 +1,8 @@
-<template>
-  <el-select
-    ref="selectRef"
-    placeholder="请选择"
-    :model-value="modelValue"
-    remote
-    filterable
-    remote-show-suffix
-    :remote-method="remoteMethod"
-    @update:modelValue="onUpdateModelValue"
-    @visible-change="onVisibleChange"
-    @change="onChange"
-  >
-    <template #prefix>
-      <el-icon v-if="showLoading" class="el-select-loading__icon is-select-loading"><ElIconLoading /></el-icon>
-    </template>
-
-    <template #label="{ label, value }">
-      <span>{{ getLabel(value, label) }}</span>
-    </template>
-
-    <el-option v-if="showLoading" class="el-select-loading">
-      <el-icon class="el-select-loading__icon"><ElIconLoading /></el-icon>
-      <span class="el-select-loading__tips">{{ loadingText || '正在加载' }}</span>
-    </el-option>
-
-    <div v-show="!showLoading">
-      <el-option
-        v-for="item in selectOptions"
-        :key="item[itemValue]"
-        :label="item[itemLabel]"
-        :value="item[itemValue]"
-      />
-    </div>
-
-    <ElSelectLoading
-      v-if="optionTotal !== 0 && !showLoading"
-      :page="page"
-      :loading="loadingMore"
-      :loading-text="loadingText"
-      :no-more-text="noMoreText"
-      :hasMore="hasMore"
-      @loadMore="handleLoadMore"
-    />
-
-    <template #empty>
-      <slot name="empty" :query="query"></slot>
-    </template>
-  </el-select>
-</template>
-
 <script setup lang="ts">
-import { nextTick, onMounted, ref, watch, computed } from 'vue'
 import { isNum } from '@tap/shared'
+import { debounce, escapeRegExp, merge } from 'lodash-es'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import ElSelectLoading from './ElSelectLoading.vue'
-import { escapeRegExp, debounce, merge } from 'lodash-es'
 
 const page = ref(0)
 const loadingData = ref(false)
@@ -66,17 +15,17 @@ const optionTotal = ref(-1)
 const selectOptions = ref<any[]>([])
 
 interface Props {
-  modelValue: [Array<any>, String, Number, Boolean, Object]
+  modelValue?: Array<any> | string | number | boolean | object
   method: Function
-  onSetSelected: Function // 主要是在schema场景下做交互使用
+  onSetSelected?: Function // 主要是在schema场景下做交互使用
   itemType?: string
   itemLabel?: string
   itemValue?: string
   itemQuery?: string
   currentLabel?: string | Array<any>
-  debounceWait: number
-  pageSize: number
-  paramsSerializer: Function
+  debounceWait?: number
+  pageSize?: number
+  paramsSerializer?: Function
   params?: object
   lazy?: boolean
   loading?: boolean
@@ -92,7 +41,11 @@ const props = withDefaults(defineProps<Props>(), {
   itemValue: 'value',
   debounceWait: 200,
   cache: true,
-  paramsSerializer: (params: { query: string; page: number; pageSize: number }) => {
+  paramsSerializer: (params: {
+    query: string
+    page: number
+    pageSize: number
+  }) => {
     return {
       page: params.page,
       size: params.pageSize || 20,
@@ -106,7 +59,12 @@ const props = withDefaults(defineProps<Props>(), {
   },
 })
 
-const emit = defineEmits(['update:modelValue', 'update:loading', 'change-label'])
+const emit = defineEmits([
+  'update:modelValue',
+  'update:loading',
+  'change-label',
+  'optionSelect',
+])
 
 const showLoading = computed(() => props.loading || loadingData.value)
 
@@ -149,7 +107,7 @@ const getLabel = (value, label) => {
 
 const getOption = async (value) => {
   const { itemValue, itemLabel } = props
-  let filter = merge({}, props.params, {
+  const filter = merge({}, props.params, {
     where: { [itemValue]: value },
     size: 1,
   })
@@ -209,8 +167,8 @@ const loadDataList = async (newPage: number) => {
     selectOptions.value.push(...list)
     hasMore.value = selectOptions.value.length < res.total
     page.value = newPage
-  } catch (err) {
-    console.error(err)
+  } catch (error) {
+    console.error(error)
   } finally {
     loadingMore.value = false
   }
@@ -233,10 +191,23 @@ const onChange = (value: any) => {
   nextTick(() => {
     emit('change-label', selectRef.value.states.selected.currentLabel)
 
-    const index = selectRef.value.states.hoveringIndex
+    // Find the selected object by matching itemValue with the selected value
+    const selectedOption = selectOptions.value.find(
+      (option) => option[props.itemValue] === value,
+    )
 
-    if (isNum(index) && index > -1) {
-      props.onSetSelected?.(selectOptions.value[index])
+    if (selectedOption) {
+      // Pass the full object to onSetSelected
+      props.onSetSelected?.(selectedOption)
+      // Also emit the selected option and whether it was clicked
+      emit('optionSelect', selectedOption, true)
+    } else {
+      // Fallback to the hovering index method if needed
+      const index = selectRef.value.states.hoveringIndex
+      if (isNum(index) && index > -1) {
+        props.onSetSelected?.(selectOptions.value[index])
+        emit('optionSelect', selectOptions.value[index], true)
+      }
     }
   })
 }
@@ -263,6 +234,69 @@ onMounted(() => {
   })
 })
 </script>
+
+<template>
+  <el-select
+    ref="selectRef"
+    placeholder="请选择"
+    :model-value="modelValue"
+    remote
+    filterable
+    remote-show-suffix
+    :remote-method="remoteMethod"
+    @update:model-value="onUpdateModelValue"
+    @visible-change="onVisibleChange"
+    @change="onChange"
+  >
+    <template #prefix>
+      <el-icon
+        v-if="showLoading"
+        class="el-select-loading__icon is-select-loading"
+        ><ElIconLoading
+      /></el-icon>
+    </template>
+
+    <template #label="{ label, value }">
+      <span>{{ getLabel(value, label) }}</span>
+    </template>
+
+    <el-option v-if="showLoading" class="el-select-loading">
+      <el-icon class="el-select-loading__icon"><ElIconLoading /></el-icon>
+      <span class="el-select-loading__tips">{{
+        loadingText || '正在加载'
+      }}</span>
+    </el-option>
+
+    <div v-show="!showLoading">
+      <template v-if="itemType === 'object'">
+        <el-option
+          v-for="item in selectOptions"
+          :key="item[itemValue]"
+          :label="item[itemLabel]"
+          :value="item[itemValue]"
+        />
+      </template>
+
+      <template v-else>
+        <el-option v-for="item in selectOptions" :key="item" :value="item" />
+      </template>
+    </div>
+
+    <ElSelectLoading
+      v-if="optionTotal !== 0 && !showLoading"
+      :page="page"
+      :loading="loadingMore"
+      :loading-text="loadingText"
+      :no-more-text="noMoreText"
+      :has-more="hasMore"
+      @load-more="handleLoadMore"
+    />
+
+    <template #empty>
+      <slot name="empty" :query="query" />
+    </template>
+  </el-select>
+</template>
 
 <style lang="scss" scoped>
 .el-select-loading {

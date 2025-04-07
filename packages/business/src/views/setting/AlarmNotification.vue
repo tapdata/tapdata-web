@@ -1,94 +1,13 @@
-<template>
-  <div class="system-notification" v-loading="loading">
-    <div v-if="isDaas" class="notification-head pt-8 pb-4 px-6">
-      <div class="title font-color-dark fs-7">
-        {{ $t('packages_business_setting_notification_alarm_notification_gaojingtongzhi') }}
-      </div>
-    </div>
-
-    <el-tabs v-model="activeName" @tab-click="handleClick">
-      <div class="operation">
-        <ElButton type="primary" @click="handlePageRead()">{{ $t('packages_business_notify_mask_read') }}</ElButton>
-        <ElButton @click="handleAllRead()">{{ $t('packages_business_notify_mask_read_all') }}</ElButton>
-        <ElButton id="alarm-settings" v-readonlybtn="'home_notice_settings'" @click="handleSetting">
-          {{ $t('notify_setting') }}
-        </ElButton>
-      </div>
-      <el-tab-pane :label="$t('packages_business_notify_user_all_notice')" name="first"></el-tab-pane>
-      <el-tab-pane :label="$t('packages_business_notify_unread_notice')" name="second"></el-tab-pane>
-    </el-tabs>
-    <div class="py-2 pl-4">
-      <ElSelectV2
-        v-if="options.length"
-        v-model="searchParams.search"
-        :items="options"
-        :inner-label="$t('packages_business_notify_notice_level')"
-        none-border
-        last-page-text=""
-        clearable
-        menu-min-width="240px"
-        @change="getData()"
-      ></ElSelectV2>
-    </div>
-    <ul class="cuk-list clearfix cuk-list-type-block" v-if="listData && listData.length">
-      <li
-        class="list-item"
-        :style="{ cursor: item.read ? 'default' : 'pointer' }"
-        v-for="item in listData"
-        :key="item.id"
-        @click="handleRead(item)"
-      >
-        <div class="list-item-content flex align-center pl-6 py-2 lh-base">
-          <div class="unread-1zPaAXtSu" v-show="!item.read"></div>
-          <div class="list-item-desc">
-            <span :class="['level-' + item.levelType]">【{{ item.levelLabel }}】</span>
-            <span>{{ item.title }}</span>
-          </div>
-        </div>
-      </li>
-    </ul>
-    <div v-else class="notification-no-data flex h-100 justify-content-center align-items-center">
-      <div>
-        <VIcon size="140">no-notice</VIcon>
-        <div class="pt-4 fs-8 text-center font-color-slight fw-normal">
-          {{ $t('packages_business_notify_no_notice') }}
-        </div>
-      </div>
-    </div>
-    <el-pagination
-      class="pagination"
-      background
-      layout="total,prev, pager, next,sizes"
-      :page-sizes="[20, 30, 50, 100]"
-      :page-size="pagesize"
-      :total="total"
-      v-model:current-page="currentPage"
-      @current-change="handleCurrentChange"
-      @size-change="handleSizeChange"
-    >
-    </el-pagination>
-    <ElDialog
-      class="notice-setting-dialog"
-      :title="$t('notify_setting')"
-      width="1024px"
-      v-model="dialogVisible"
-      :close-on-click-modal="false"
-      destroy-on-close
-    >
-      <AlarmSetting in-dialog @updateVisible="dialogVisible = false"></AlarmSetting>
-    </ElDialog>
-  </div>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import { ElSelectV2 } from 'element-plus'
+import { notificationApi } from '@tap/api'
+import { SelectList } from '@tap/component'
+import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 import { ALARM_LEVEL_MAP } from '../../shared/const'
 import AlarmSetting from './AlarmSetting'
-import { notificationApi } from '@tap/api'
 
 export default {
-  components: { ElSelectV2, AlarmSetting },
+  components: { SelectList, AlarmSetting },
+  emits: ['notificationUpdate'],
   data() {
     return {
       isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
@@ -136,7 +55,7 @@ export default {
   },
   methods: {
     getData() {
-      let where = {
+      const where = {
         msgType: 'ALARM',
         page: this.currentPage,
         size: this.pagesize,
@@ -151,7 +70,7 @@ export default {
       notificationApi
         .list(where)
         .then((data) => {
-          let list = data?.items || []
+          const list = data?.items || []
           this.listData = list.map((item) => {
             item.levelLabel = ALARM_LEVEL_MAP[item.level].text
             item.levelType = ALARM_LEVEL_MAP[item.level].type
@@ -173,11 +92,11 @@ export default {
       this.getData()
     },
     handleRead(item) {
-      let read = this.read
+      const read = this.read
       if (!item.read) {
         notificationApi.patch({ read: true, id: item.id }).then(() => {
           this.read = read
-          let msg = {
+          const msg = {
             type: 'notification',
           }
           this.$ws.ready(() => {
@@ -189,25 +108,25 @@ export default {
     },
     // 标记本页已读
     handlePageRead() {
-      let ids = []
+      const ids = []
       this.listData.map((item) => {
         ids.push(item.id)
       })
-      let id = {
+      const id = {
         inq: ids,
       }
 
-      let data = {
+      const data = {
         read: true,
         id,
       }
-      let read = this.read
+      const read = this.read
       notificationApi.pageRead(data).then(() => {
         // this.getUnreadNum() //未读消息数量
         this.getData()
         this.read = read
         $emit(this.$root, 'notificationUpdate')
-        let msg = {
+        const msg = {
           type: 'notification',
         }
         this.$ws.ready(() => {
@@ -223,13 +142,13 @@ export default {
       //   read: true
       // }
       where = JSON.stringify(where)
-      let read = this.read
+      const read = this.read
       notificationApi.readAll(where).then(() => {
         // this.getUnreadNum() //未读消息数量
         this.getData()
         this.read = read
         $emit(this.$root, 'notificationUpdate')
-        let msg = {
+        const msg = {
           type: 'notification',
         }
         this.$ws.ready(() => {
@@ -265,9 +184,113 @@ export default {
       }
     },
   },
-  emits: ['notificationUpdate'],
 }
 </script>
+
+<template>
+  <div v-loading="loading" class="system-notification">
+    <div v-if="isDaas" class="notification-head pt-8 pb-4 px-6">
+      <div class="title font-color-dark fs-7">
+        {{
+          $t(
+            'packages_business_setting_notification_alarm_notification_gaojingtongzhi',
+          )
+        }}
+      </div>
+    </div>
+
+    <el-tabs v-model="activeName" @tab-click="handleClick">
+      <div class="operation">
+        <ElButton type="primary" @click="handlePageRead()">{{
+          $t('packages_business_notify_mask_read')
+        }}</ElButton>
+        <ElButton @click="handleAllRead()">{{
+          $t('packages_business_notify_mask_read_all')
+        }}</ElButton>
+        <ElButton
+          id="alarm-settings"
+          v-readonlybtn="'home_notice_settings'"
+          @click="handleSetting"
+        >
+          {{ $t('notify_setting') }}
+        </ElButton>
+      </div>
+      <el-tab-pane
+        :label="$t('packages_business_notify_user_all_notice')"
+        name="first"
+      />
+      <el-tab-pane
+        :label="$t('packages_business_notify_unread_notice')"
+        name="second"
+      />
+    </el-tabs>
+    <div class="py-2 pl-4">
+      <SelectList
+        v-if="options.length"
+        v-model="searchParams.search"
+        :items="options"
+        :label="$t('packages_business_notify_notice_level')"
+        clearable
+        menu-min-width="240px"
+        @change="getData()"
+      />
+    </div>
+    <ul
+      v-if="listData && listData.length"
+      class="cuk-list clearfix cuk-list-type-block"
+    >
+      <li
+        v-for="item in listData"
+        :key="item.id"
+        class="list-item"
+        :style="{ cursor: item.read ? 'default' : 'pointer' }"
+        @click="handleRead(item)"
+      >
+        <div class="list-item-content flex align-center pl-6 py-2 lh-base">
+          <div v-show="!item.read" class="unread-1zPaAXtSu" />
+          <div class="list-item-desc">
+            <span :class="[`level-${item.levelType}`]"
+              >【{{ item.levelLabel }}】</span
+            >
+            <span>{{ item.title }}</span>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <div
+      v-else
+      class="notification-no-data flex h-100 justify-content-center align-items-center"
+    >
+      <div>
+        <VIcon size="140">no-notice</VIcon>
+        <div class="pt-4 fs-8 text-center font-color-slight fw-normal">
+          {{ $t('packages_business_notify_no_notice') }}
+        </div>
+      </div>
+    </div>
+    <el-pagination
+      v-model:current-page="currentPage"
+      class="pagination"
+      background
+      layout="total,prev, pager, next,sizes"
+      :page-sizes="[20, 30, 50, 100]"
+      :page-size="pagesize"
+      :total="total"
+      @current-change="handleCurrentChange"
+      @size-change="handleSizeChange"
+    />
+    <ElDialog
+      v-model="dialogVisible"
+      class="notice-setting-dialog"
+      :title="$t('notify_setting')"
+      width="1024px"
+      :close-on-click-modal="false"
+      destroy-on-close
+    >
+      <AlarmSetting in-dialog @update-visible="dialogVisible = false" />
+    </ElDialog>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 $unreadColor: #ee5353;

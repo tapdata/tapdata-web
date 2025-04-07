@@ -1,7 +1,9 @@
 import * as Vue from 'vue'
 import Parent from './Parent'
 
-const FunctionForm = Vue.defineAsyncComponent(() => import('@/views/function/Form'))
+const FunctionForm = Vue.defineAsyncComponent(
+  () => import('@/views/function/Form'),
+)
 const DagEditor = async () => {
   const { Editor } = await import(/* webpackChunkName: "dag" */ '@tap/dag')
   return Editor
@@ -27,7 +29,9 @@ const CustomNodeList = async () => {
   return CustomNodeList
 }
 const NodeEditor = async () => {
-  const { Editor } = await import(/* webpackChunkName: "node-design" */ '@tap/node-design')
+  const { Editor } = await import(
+    /* webpackChunkName: "node-design" */ '@tap/node-design'
+  )
   return Editor
 }
 const ConnectionForm = async () => {
@@ -141,7 +145,9 @@ export default [
   {
     path: '/registry',
     name: 'registry',
-    component: Vue.defineAsyncComponent(() => import('@/views/login/Registration')),
+    component: Vue.defineAsyncComponent(
+      () => import('@/views/login/Registration'),
+    ),
     meta: {
       title: 'tap.registry',
     },
@@ -149,7 +155,9 @@ export default [
   {
     path: '/verificationEmail',
     name: 'verificationEmail',
-    component: Vue.defineAsyncComponent(() => import('@/views/login/VerificationEmail')),
+    component: Vue.defineAsyncComponent(
+      () => import('@/views/login/VerificationEmail'),
+    ),
     meta: {
       title: 'tap.verificationEmail',
     },
@@ -157,7 +165,9 @@ export default [
   {
     path: '/registyResult',
     name: 'registyResult',
-    component: Vue.defineAsyncComponent(() => import('@/views/login/RegistyResult')),
+    component: Vue.defineAsyncComponent(
+      () => import('@/views/login/RegistyResult'),
+    ),
     meta: {
       title: 'tap.registry',
     },
@@ -165,7 +175,9 @@ export default [
   {
     path: '/passwordReset',
     name: 'passwordReset',
-    component: Vue.defineAsyncComponent(() => import('@/views/login/PasswordReset')),
+    component: Vue.defineAsyncComponent(
+      () => import('@/views/login/PasswordReset'),
+    ),
     meta: {
       title: 'tap.passwordReset',
     },
@@ -265,12 +277,12 @@ export default [
   {
     path: '/data-capture/:id',
     name: 'DataCapture',
-    component: DataCapture
+    component: DataCapture,
   },
   {
     path: '/data-capture/:id',
     name: 'DataCapture',
-    component: DataCapture
+    component: DataCapture,
   },
   {
     path: '/shared-mining/monitor/:id',
@@ -302,7 +314,7 @@ export default [
   {
     path: '/',
     name: 'layout',
-    redirect: 'dashboard',
+    redirect: '/dashboard',
     code: 'v2_dashboard',
     component: Vue.defineAsyncComponent(() => import('@/views/Layout')),
     children: [
@@ -310,7 +322,9 @@ export default [
       {
         path: 'dashboard',
         name: 'dashboard',
-        component: Vue.defineAsyncComponent(() => import('@/views/dashboard/Dashboard')),
+        component: Vue.defineAsyncComponent(
+          () => import('@/views/dashboard/Dashboard'),
+        ),
         meta: {
           title: 'page_title_overview',
         },
@@ -368,7 +382,9 @@ export default [
           {
             path: '',
             name: 'objectList',
-            component: Vue.defineAsyncComponent(() => import('@/views/data-discovery/ObjectList.tsx')),
+            component: Vue.defineAsyncComponent(
+              () => import('@/views/data-discovery/ObjectList.tsx'),
+            ),
             meta: {
               title: 'page_title_data_object',
               code: 'v2_data_object',
@@ -389,7 +405,9 @@ export default [
           {
             path: '',
             name: 'catalogueList',
-            component: Vue.defineAsyncComponent(() => import('@/views/data-discovery/Catalogue.tsx')),
+            component: Vue.defineAsyncComponent(
+              () => import('@/views/data-discovery/Catalogue.tsx'),
+            ),
             meta: {
               title: 'page_title_data_catalogue',
               code: 'v2_data_catalogue',
@@ -469,7 +487,9 @@ export default [
         path: '/dataVerification',
         name: 'dataVerification',
         component: Parent,
-        redirect: 'dataVerification/',
+        redirect: {
+          name: 'dataVerificationList',
+        },
         meta: {
           title: 'page_title_data_verify',
         },
@@ -616,7 +636,9 @@ export default [
           {
             path: '',
             name: 'functionList',
-            component: Vue.defineAsyncComponent(() => import('@/views/function/List')),
+            component: Vue.defineAsyncComponent(
+              () => import('@/views/function/List'),
+            ),
             meta: {
               hideTitle: true,
               title: 'page_title_function',
@@ -635,7 +657,9 @@ export default [
           {
             path: 'import',
             name: 'FunctionImport',
-            component: Vue.defineAsyncComponent(() => import('@/views/function/ImportForm')),
+            component: Vue.defineAsyncComponent(
+              () => import('@/views/function/ImportForm'),
+            ),
             meta: {
               title: 'page_title_function_import',
               code: 'v2_function_management_import',
@@ -653,7 +677,9 @@ export default [
           {
             path: 'details/:id',
             name: 'FunctionDetails',
-            component: Vue.defineAsyncComponent(() => import('@/views/function/Details')),
+            component: Vue.defineAsyncComponent(
+              () => import('@/views/function/Details'),
+            ),
             meta: {
               title: 'page_title_function_details',
               code: 'v2_function_management_details',
@@ -731,8 +757,8 @@ export default [
         meta: {
           title: 'page_title_data_server_list',
           code: 'v2_data-server-list',
-          hideTitle: true
-        }
+          hideTitle: true,
+        },
       },
       /* ---------- 应用管理  ----------*/
       {
@@ -748,7 +774,9 @@ export default [
       {
         path: '/api-client',
         name: 'apiClient',
-        component: Vue.defineAsyncComponent(() => import('@/views/api-page/Applications')),
+        component: Vue.defineAsyncComponent(
+          () => import('@/views/api-page/Applications'),
+        ),
         meta: {
           title: 'page_title_api_client',
           code: 'v2_api-client',
@@ -758,7 +786,9 @@ export default [
       {
         path: '/api-servers',
         name: 'apiServer',
-        component: Vue.defineAsyncComponent(() => import('@/views/api-page/ApiServer')),
+        component: Vue.defineAsyncComponent(
+          () => import('@/views/api-page/ApiServer'),
+        ),
         meta: {
           title: 'page_title_api_servers',
           code: 'v2_api-servers',
@@ -778,7 +808,9 @@ export default [
           {
             path: '',
             name: 'dataServerAuditList',
-            component: Vue.defineAsyncComponent(() => import('@/views/data-server-audit/List')),
+            component: Vue.defineAsyncComponent(
+              () => import('@/views/data-server-audit/List'),
+            ),
             meta: {
               hideTitle: true,
               title: 'page_title_api_audit',
@@ -788,7 +820,9 @@ export default [
           {
             path: ':id/details',
             name: 'dataServerAuditDetails',
-            component: Vue.defineAsyncComponent(() => import('@/views/data-server-audit/Info')),
+            component: Vue.defineAsyncComponent(
+              () => import('@/views/data-server-audit/Info'),
+            ),
             meta: {
               title: 'page_title_api_audit_details',
               code: 'v2_data_server_audit-details',
@@ -800,7 +834,9 @@ export default [
       {
         path: '/api-monitor',
         name: 'apiMonitor',
-        component: Vue.defineAsyncComponent(() => import('@/views/api-page/api-monitor/ApiMonitor')),
+        component: Vue.defineAsyncComponent(
+          () => import('@/views/api-page/api-monitor/ApiMonitor'),
+        ),
         meta: {
           title: 'page_title_api_monitor',
           code: 'v2_api_monitor',
@@ -833,7 +869,9 @@ export default [
       {
         path: '/cluster',
         name: 'clusterManagement',
-        component: Vue.defineAsyncComponent(() => import('@/views/cluster/Cluster')),
+        component: Vue.defineAsyncComponent(
+          () => import('@/views/cluster/Cluster'),
+        ),
         meta: {
           title: 'page_title_cluster',
           code: 'v2_cluster-management_menu',
@@ -871,7 +909,9 @@ export default [
           {
             path: '',
             name: 'roleList',
-            component: Vue.defineAsyncComponent(() => import('@/views/role/Roles')),
+            component: Vue.defineAsyncComponent(
+              () => import('@/views/role/Roles'),
+            ),
             meta: {
               hideTitle: true,
               title: 'page_title_role',
@@ -902,8 +942,10 @@ export default [
       {
         path: '/settingCenter',
         name: 'settingCenter',
-        redirect: 'settingCenter/accountSetting',
-        component: Vue.defineAsyncComponent(() => import('@/views/setting/SettingCenter')),
+        redirect: '/settingCenter/accountSetting',
+        component: Vue.defineAsyncComponent(
+          () => import('@/views/setting/SettingCenter'),
+        ),
         meta: {
           title: 'page_title_back_menu',
           isNotAside: true,
@@ -913,21 +955,27 @@ export default [
             path: 'accountSetting',
             name: 'accountSetting',
             code: 'v2_account-setting-setting',
-            component: Vue.defineAsyncComponent(() => import('@/views/setting/AccountSetting')),
+            component: Vue.defineAsyncComponent(
+              () => import('@/views/setting/AccountSetting'),
+            ),
             meta: { title: 'page_title_account', isNotAside: true },
           },
           {
             path: 'notificationSetting',
             name: 'notificationSetting',
             code: 'v2_notification-setting',
-            component: Vue.defineAsyncComponent(() => import('@/views/setting/NotificationSetting')),
+            component: Vue.defineAsyncComponent(
+              () => import('@/views/setting/NotificationSetting'),
+            ),
             meta: { title: 'notify_setting', isNotAside: true },
           },
           /* ---------- 系统设置  ----------*/
           {
             path: 'settings',
             name: 'settings',
-            component: Vue.defineAsyncComponent(() => import('@/views/setting/Setting')),
+            component: Vue.defineAsyncComponent(
+              () => import('@/views/setting/Setting'),
+            ),
             meta: {
               title: 'page_title_setting',
               code: 'v2_system_settings_menu',
@@ -962,13 +1010,17 @@ export default [
       {
         path: '/dailyRecord',
         name: 'dailyRecord',
-        component: Vue.defineAsyncComponent(() => import('@/views/cluster/DailyRecord')),
+        component: Vue.defineAsyncComponent(
+          () => import('@/views/cluster/DailyRecord'),
+        ),
       },
       {
         path: '/notification',
         name: 'notification',
-        redirect: 'notification/systemNotification',
-        component: Vue.defineAsyncComponent(() => import('@/views/notification/Center')),
+        redirect: '/notification/systemNotification',
+        component: Vue.defineAsyncComponent(
+          () => import('@/views/notification/Center'),
+        ),
         meta: {
           title: 'page_title_back_menu',
           isNotAside: true,
@@ -977,25 +1029,33 @@ export default [
           {
             path: 'systemNotification',
             name: 'systemNotification',
-            component: Vue.defineAsyncComponent(() => import('@/views/notification/SystemNotification')),
+            component: Vue.defineAsyncComponent(
+              () => import('@/views/notification/SystemNotification'),
+            ),
             meta: { title: 'notify_system_notice', isNotAside: true },
           },
           {
             path: 'userNotification',
             name: 'userNotification',
-            component: Vue.defineAsyncComponent(() => import('@/views/notification/UserNotification')),
+            component: Vue.defineAsyncComponent(
+              () => import('@/views/notification/UserNotification'),
+            ),
             meta: { title: 'notify_user_notice', isNotAside: true },
           },
           {
             path: 'alarmNotification',
             name: 'alarmNotification',
-            component: Vue.defineAsyncComponent(() => import('@/views/notification/AlarmNotification')),
+            component: Vue.defineAsyncComponent(
+              () => import('@/views/notification/AlarmNotification'),
+            ),
             meta: { title: 'notify_system_notice', isNotAside: true },
           },
           {
             path: 'systemAlarm',
             name: 'systemAlarm',
-            component: Vue.defineAsyncComponent(() => import('@/views/notification/SystemAlarm')),
+            component: Vue.defineAsyncComponent(
+              () => import('@/views/notification/SystemAlarm'),
+            ),
             meta: { title: 'notify_user_notice', isNotAside: true },
           },
         ],
@@ -1006,13 +1066,15 @@ export default [
         component: Vue.defineAsyncComponent(() => import('@/views/License')),
         meta: {
           title: 'page_title_license',
-          hideTitle: true
-        }
+          hideTitle: true,
+        },
       },
       {
         path: 'solutions',
         name: 'Solutions',
-        component: Vue.defineAsyncComponent(() => import('@/views/solutions/Index')),
+        component: Vue.defineAsyncComponent(
+          () => import('@/views/solutions/Index'),
+        ),
         meta: {
           title: 'solution_name',
         },

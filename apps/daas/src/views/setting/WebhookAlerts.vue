@@ -1,253 +1,20 @@
-<template>
-  <div class="flex flex-column w-100 h-100">
-    <div class="flex px-6 py-3 border-bottom align-center">
-      <span class="fs-6">{{ $t('webhook_alerts') }}</span>
-      <ElButton class="ml-auto" size="small" type="primary" @click="addWebhook">{{
-        $t('webhook_alerts_add')
-      }}</ElButton>
-    </div>
-
-    <div class="flex-1">
-      <ElTable ref="table" row-key="id" :data="list" height="100%" v-loading="loading">
-        <el-table-column show-overflow-tooltip class-name="text-nowrap" :label="$t('webhook_server_url')" prop="url">
-        </el-table-column>
-        <el-table-column
-          show-overflow-tooltip
-          class-name="text-nowrap"
-          :label="$t('public_remark')"
-          prop="mark"
-          width="240"
-        ></el-table-column>
-        <el-table-column :label="$t('public_status')" prop="pingResult" width="100">
-          <template #default="{ row }">
-            <VIcon v-if="row.pingResult === 'SUCCEED'" size="20" class="color-success">success-filled</VIcon>
-            <VIcon v-else class="color-danger" size="20">circle-close-filled</VIcon>
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('webhook_switch')" prop="open" width="120">
-          <template #default="{ row }">
-            <ElSwitch :disabled="switchStateMap[row.id]" :value="row.open" @change="handleSwitch(row)"></ElSwitch>
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('public_operation')" width="240">
-          <template #default="{ row }">
-            <div class="flex gap-2 align-center">
-              <ElLink @click="viewDetail(row, $event)" type="primary">{{ $t('public_button_details') }} </ElLink>
-              <ElDivider direction="vertical" class="mx-0"></ElDivider>
-              <ElLink @click="viewHistory(row, $event)" type="primary">{{ $t('webhook_send_log') }} </ElLink>
-              <ElDivider direction="vertical" class="mx-0"></ElDivider>
-              <ElLink @click="delWebhook(row, $event)" type="danger">{{ $t('public_button_delete') }} </ElLink>
-            </div>
-          </template>
-        </el-table-column>
-      </ElTable>
-    </div>
-
-    <ElDrawer
-      :visible="drawerState.visible"
-      :wrapperClosable="false"
-      :size="800"
-      @update:visible="drawerState.visible = $event"
-      @closed="afterClose"
-    >
-      <template #title>
-        <span class="fs-6 font-color-dark fw-sub">{{
-          $t(form.id ? 'webhook_alerts_detail' : 'webhook_alerts_add')
-        }}</span>
-      </template>
-      <div class="flex flex-column h-100">
-        <div class="flex-1 px-4 overflow-y-auto" ref="formWrapper">
-          <ElForm class="flex-1" label-position="top" :model="form" :rules="rules" ref="form">
-            <ElFormItem :label="$t('webhook_event_type')" prop="hookTypes">
-              <ElSelectTree
-                v-model="form.hookTypes"
-                collapse-tags
-                filterable
-                multiple
-                show-checkbox
-                :data="eventData"
-                class="w-100"
-              ></ElSelectTree>
-            </ElFormItem>
-            <ElFormItem :label="$t('webhook_server_url')" prop="url">
-              <ElInput v-model="form.url"></ElInput>
-            </ElFormItem>
-            <ElFormItem :label="$t('http_header')" prop="customHttpHeaders">
-              <ElInput
-                v-model="form.customHttpHeaders"
-                :placeholder="$t('http_header_ph')"
-                type="textarea"
-                :autosize="{ minRows: 2, maxRows: 6 }"
-              ></ElInput>
-            </ElFormItem>
-            <ElFormItem prop="customTemplate">
-              <template #label>
-                <span>
-                  <span class="align-middle">{{ $t('webhook_custom_template') }}</span>
-                  <ElTooltip :content="$t('webhook_custom_template_tip')">
-                    <VIcon class="align-middle ml-1">question-circle</VIcon>
-                    <template #content>
-                      <HighlightCode
-                        theme="atom-one-dark"
-                        :code="$t('webhook_custom_template_tip')"
-                        language="javascript"
-                      ></HighlightCode>
-                    </template>
-                  </ElTooltip>
-                </span>
-              </template>
-              <JsonEditor
-                v-model="form.customTemplate"
-                height="320"
-                :options="{
-                  options: { showPrintMargin: false, useWrapMode: true }
-                }"
-                @init="initJsonEditor"
-              ></JsonEditor>
-            </ElFormItem>
-            <ElFormItem :label="$t('public_remark')" prop="mark">
-              <ElInput v-model="form.mark"></ElInput>
-            </ElFormItem>
-          </ElForm>
-        </div>
-
-        <div class="text-left p-4">
-          <ElButton @click="sendPing" :loading="drawerState.ping" type="primary">{{
-            $t('webhook_send_ping')
-          }}</ElButton>
-          <ElButton @click="save" :loading="drawerState.saving" type="primary">{{ $t('public_button_save') }}</ElButton>
-          <ElButton @click="drawerState.visible = false">{{ $t('public_button_cancel') }}</ElButton>
-        </div>
-      </div>
-    </ElDrawer>
-
-    <ElDrawer
-      :visible="historyState.visible"
-      :wrapperClosable="false"
-      @update:visible="historyState.visible = $event"
-      :size="800"
-      @closed="afterCloseHistory"
-    >
-      <template #title>
-        <span>
-          <span class="fs-6 font-color-dark fw-sub">{{ $t('webhook_send_log') }}</span>
-          <span class="font-color-sslight ml-2">{{ $t('webhook_send_log_desc') }}</span>
-        </span>
-      </template>
-      <div class="flex flex-column h-100" v-loading="historyState.loading">
-        <div class="flex-1 px-4 overflow-y-auto" ref="historyList">
-          <el-collapse
-            v-model="historyState.collapse"
-            class="history-collapse border-0"
-            v-if="historyState.list.length"
-          >
-            <el-collapse-item v-for="item in historyState.list" :key="item.id" class="rounded-lg">
-              <template #title>
-                <div class="flex align-center flex-1 pl-3">
-                  <VIcon v-if="item.historyStatus === 'SUCCEED'" size="16" class="color-success">success-filled</VIcon>
-                  <VIcon v-else class="color-danger" size="16">circle-close-filled</VIcon>
-                  <span class="ml-2">{{ item['x-event'] }}</span>
-                  <span class="ml-auto pr-4">{{ item.createAtLabel }}</span>
-                </div>
-              </template>
-              <div class="position-relative">
-                <ElTabs>
-                  <ElTabPane :label="$t('public_request')">
-                    <div class="px-4">
-                      <div class="lh-base">{{ $t('public_request_headers') }}</div>
-                      <HighlightCode
-                        class="rounded-lg mt-2 mb-4 overflow-hidden"
-                        :code="item.requestHeaders || '--'"
-                        language="http"
-                        copy
-                      ></HighlightCode>
-
-                      <div class="lh-base">{{ $t('public_request_content') }}</div>
-                      <div>
-                        <HighlightCode
-                          class="rounded-lg mt-2 mb-4 overflow-hidden"
-                          :code="item.requestBodyFmt"
-                          language="json"
-                          copy
-                        ></HighlightCode>
-                      </div>
-                    </div>
-                  </ElTabPane>
-                  <ElTabPane>
-                    <template #label>
-                      <span>
-                        {{ $t('public_response') }}
-                        <ElTag size="mini" type="info" class="rounded-pill ml-1">{{ item.responseCode || '--' }}</ElTag>
-                      </span>
-                    </template>
-                    <div class="px-4">
-                      <div class="lh-base">{{ $t('public_response_headers') }}</div>
-                      <HighlightCode
-                        class="rounded-lg mt-2 mb-4 overflow-hidden"
-                        :code="item.responseHeaders || '--'"
-                        language="http"
-                        copy
-                      ></HighlightCode>
-
-                      <div class="lh-base">{{ $t('public_response_content') }}</div>
-                      <HighlightCode
-                        class="rounded-lg mt-2 mb-4 overflow-hidden"
-                        :code="item.responseResultFmt || '--'"
-                        :language="item.responseType"
-                        copy
-                      ></HighlightCode>
-                    </div>
-                  </ElTabPane>
-                </ElTabs>
-                <ElButton
-                  class="position-absolute tabs-extra-btn flex align-center py-0"
-                  size="mini"
-                  @click="reSend(item)"
-                  :loading="resendStateMap[item.id]"
-                  >{{ $t('public_resend') }}</ElButton
-                >
-              </div>
-            </el-collapse-item>
-          </el-collapse>
-
-          <VEmpty v-else></VEmpty>
-        </div>
-        <div class="p-4">
-          <el-pagination
-            background
-            layout="->,total, sizes,  prev, pager, next, jumper"
-            :current-page.sync="page.current"
-            :page-sizes="[10, 20, 50, 100]"
-            :page-size.sync="page.size"
-            :total="page.total"
-            @size-change="loadHistory(1)"
-            @current-change="loadHistory"
-          >
-          </el-pagination>
-        </div>
-      </div>
-    </ElDrawer>
-  </div>
-</template>
-
 <script>
-import i18n from '@tap/i18n'
-import { dayjs } from '@tap/business'
 import { settingsApi, webhookApi } from '@tap/api'
+import { dayjs } from '@tap/business'
 import { VEmpty } from '@tap/component'
 import { HighlightCode, JsonEditor } from '@tap/form'
-import ElSelectTree from 'el-select-tree'
+import i18n from '@tap/i18n'
 
 export default {
   name: 'WebhookAlerts',
-  components: { ElSelectTree, HighlightCode, VEmpty, JsonEditor },
+  components: { HighlightCode, VEmpty, JsonEditor },
   data() {
     const validateUrl = (rule, value, callback) => {
       // 正则校验URL
       if (!value) {
         return callback(new Error(this.$t('webhook_server_url_empty')))
       }
-      const urlRegex = /^(https?):\/\/[^\s/$.?#].[^\s]*$/
+      const urlRegex = /^(https?):\/\/[^\s/$.?#].\S*$/
       if (!urlRegex.test(value)) {
         return callback(new Error(this.$t('webhook_server_url_error')))
       }
@@ -267,7 +34,7 @@ export default {
       drawerState: {
         visible: false,
         ping: false,
-        saving: false
+        saving: false,
       },
       form: {
         id: '',
@@ -304,51 +71,85 @@ export default {
 }`,
         hookTypes: [],
         mark: '',
-        customHttpHeaders: ''
+        customHttpHeaders: '',
       },
       rules: {
         // mark: [{ required: true, message: '请输入备注', trigger: 'blur' }],
         url: [{ required: true, validator: validateUrl, trigger: 'blur' }],
-        hookTypes: [{ required: true, validator: validateHookTypes, trigger: 'change' }]
+        hookTypes: [
+          { required: true, validator: validateHookTypes, trigger: 'change' },
+        ],
       },
       eventData: [
         {
           value: 'task',
           label: i18n.t('public_task_alert'),
-          children: []
-        }
+          children: [],
+        },
       ],
       keyMap: {
-        TASK_STATUS_ERROR: i18n.t('packages_business_setting_alarmnotification_dangrenwuyudao'),
-        TASK_INSPECT_ERROR: i18n.t('packages_business_setting_alarmnotification_dangrenwujiaoyan'),
-        TASK_FULL_COMPLETE: i18n.t('packages_business_setting_alarmnotification_dangrenwuquanliang'),
-        TASK_INCREMENT_START: i18n.t('packages_business_setting_alarmnotification_dangrenwuzengliang'),
-        TASK_STATUS_STOP: i18n.t('packages_business_setting_alarmnotification_dangrenwutingzhi'),
-        TASK_INCREMENT_DELAY: i18n.t('packages_business_setting_alarmnotification_dangrenwudezeng'),
-        DATANODE_CANNOT_CONNECT: i18n.t('packages_business_setting_alarmnotification_dangshujuwufa'),
-        DATANODE_HTTP_CONNECT_CONSUME: i18n.t('packages_business_setting_alarmnotification_dangshujuyuanwang'),
-        DATANODE_TCP_CONNECT_CONSUME: i18n.t('packages_business_setting_alarmnotification_dangshujuyuanxie'),
-        DATANODE_AVERAGE_HANDLE_CONSUME: i18n.t('packages_business_setting_alarmnotification_dangshujuyuanjie'),
-        PROCESSNODE_AVERAGE_HANDLE_CONSUME: i18n.t('packages_business_setting_alarmnotification_dangjiediandeping'),
-        INSPECT_TASK_ERROR: i18n.t('packages_business_setting_alarmnotification_dangjiaoyanrenwucuowu'),
-        INSPECT_COUNT_ERROR: i18n.t('packages_business_setting_alarmnotification_dangjiaoyanrenwushuliangcuowu'),
-        INSPECT_VALUE_ERROR: i18n.t('packages_business_setting_alarmnotification_dangjiaoyanrenwuzhicuowu'),
-        SYSTEM_FLOW_EGINGE_DOWN: i18n.t('packages_business_setting_alarmnotification_dangrenwustop'),
-        SYSTEM_FLOW_EGINGE_UP: i18n.t('packages_business_setting_alarmnotification_dangrenwuuP')
+        TASK_STATUS_ERROR: i18n.t(
+          'packages_business_setting_alarmnotification_dangrenwuyudao',
+        ),
+        TASK_INSPECT_ERROR: i18n.t(
+          'packages_business_setting_alarmnotification_dangrenwujiaoyan',
+        ),
+        TASK_FULL_COMPLETE: i18n.t(
+          'packages_business_setting_alarmnotification_dangrenwuquanliang',
+        ),
+        TASK_INCREMENT_START: i18n.t(
+          'packages_business_setting_alarmnotification_dangrenwuzengliang',
+        ),
+        TASK_STATUS_STOP: i18n.t(
+          'packages_business_setting_alarmnotification_dangrenwutingzhi',
+        ),
+        TASK_INCREMENT_DELAY: i18n.t(
+          'packages_business_setting_alarmnotification_dangrenwudezeng',
+        ),
+        DATANODE_CANNOT_CONNECT: i18n.t(
+          'packages_business_setting_alarmnotification_dangshujuwufa',
+        ),
+        DATANODE_HTTP_CONNECT_CONSUME: i18n.t(
+          'packages_business_setting_alarmnotification_dangshujuyuanwang',
+        ),
+        DATANODE_TCP_CONNECT_CONSUME: i18n.t(
+          'packages_business_setting_alarmnotification_dangshujuyuanxie',
+        ),
+        DATANODE_AVERAGE_HANDLE_CONSUME: i18n.t(
+          'packages_business_setting_alarmnotification_dangshujuyuanjie',
+        ),
+        PROCESSNODE_AVERAGE_HANDLE_CONSUME: i18n.t(
+          'packages_business_setting_alarmnotification_dangjiediandeping',
+        ),
+        INSPECT_TASK_ERROR: i18n.t(
+          'packages_business_setting_alarmnotification_dangjiaoyanrenwucuowu',
+        ),
+        INSPECT_COUNT_ERROR: i18n.t(
+          'packages_business_setting_alarmnotification_dangjiaoyanrenwushuliangcuowu',
+        ),
+        INSPECT_VALUE_ERROR: i18n.t(
+          'packages_business_setting_alarmnotification_dangjiaoyanrenwuzhicuowu',
+        ),
+        SYSTEM_FLOW_EGINGE_DOWN: i18n.t(
+          'packages_business_setting_alarmnotification_dangrenwustop',
+        ),
+        SYSTEM_FLOW_EGINGE_UP: i18n.t(
+          'packages_business_setting_alarmnotification_dangrenwuuP',
+        ),
       },
       historyState: {
         visible: false,
         loading: false,
         list: [],
-        collapse: []
+        collapse: [],
       },
       page: {
         current: 1,
         size: 20,
-        total: 0
+        total: 0,
       },
       switchStateMap: {},
-      resendStateMap: {}
+      resendStateMap: {},
     }
   },
   created() {
@@ -359,11 +160,11 @@ export default {
   methods: {
     async loadData() {
       this.loading = true
-      let filter = {
-        order: 'createTime DESC'
+      const filter = {
+        order: 'createTime DESC',
       }
       const { items = [] } = await webhookApi.list({
-        filter: JSON.stringify(filter)
+        filter: JSON.stringify(filter),
       })
 
       this.loading = false
@@ -371,9 +172,9 @@ export default {
     },
     async loadEventType() {
       const data = await settingsApi.findAlarm()
-      this.eventData[0].children = data.map(item => ({
+      this.eventData[0].children = data.map((item) => ({
         label: this.keyMap[item.key],
-        value: item.key
+        value: item.key,
       }))
     },
     afterClose() {
@@ -393,7 +194,7 @@ export default {
       this.drawerState.original = row
       await this.$nextTick()
 
-      Object.keys(this.form).forEach(key => {
+      Object.keys(this.form).forEach((key) => {
         this.form[key] = row[key]
       })
       this.jsonEditor?.resize()
@@ -416,12 +217,20 @@ export default {
         item.responseType = 'html'
         if (/content-Type: application\/json/i.test(item.responseHeaders)) {
           item.responseType = 'json'
-          item.responseResultFmt = JSON.stringify(JSON.parse(item.responseResult), null, 2)
+          item.responseResultFmt = JSON.stringify(
+            JSON.parse(item.responseResult),
+            null,
+            2,
+          )
         }
       }
 
       if (item.requestBody) {
-        item.requestBodyFmt = JSON.stringify(JSON.parse(item.requestBody), null, 2)
+        item.requestBodyFmt = JSON.stringify(
+          JSON.parse(item.requestBody),
+          null,
+          2,
+        )
       }
 
       if (item.requestHeaders) {
@@ -431,7 +240,9 @@ export default {
         item['x-event'] = this.keyMap[event]
 
         if (item['x-event']) {
-          item['x-event'] = item['x-event'].replace(/^当|When the?|當/, '').replace(/时|時$/, '')
+          item['x-event'] = item['x-event']
+            .replace(/^当|When the?|當/, '')
+            .replace(/时|時$/, '')
         } else {
           item['x-event'] = event || '--'
         }
@@ -443,7 +254,7 @@ export default {
         .history({
           hookId: this.historyState.id,
           pageFrom: (pageNum - 1) * this.page.size,
-          pageSize: this.page.size
+          pageSize: this.page.size,
         })
         .then(({ items, total }) => {
           this.historyState.list = items.map(this.mapHistory)
@@ -453,8 +264,8 @@ export default {
     },
     delWebhook({ id }) {
       this.$confirm(this.$t('packages_ldp_src_tablepreview_querenshanchu'), {
-        type: 'warning'
-      }).then(async resFlag => {
+        type: 'warning',
+      }).then(async (resFlag) => {
         if (!resFlag) {
           return
         }
@@ -463,12 +274,12 @@ export default {
       })
     },
     sendPing() {
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate((valid) => {
         if (valid) {
           this.drawerState.ping = true
           webhookApi
             .ping(this.form)
-            .then(data => {
+            .then((data) => {
               this.$message.success(this.$t('public_message_send_success'))
 
               if (this.form.id) {
@@ -484,7 +295,7 @@ export default {
       })
     },
     save() {
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate((valid) => {
         if (valid) {
           this.drawerState.saving = true
           webhookApi[this.form.id ? 'update' : 'save'](this.form)
@@ -523,10 +334,318 @@ export default {
     },
     initJsonEditor(editor) {
       this.jsonEditor = editor
-    }
-  }
+    },
+  },
 }
 </script>
+
+<template>
+  <div class="flex flex-column w-100 h-100">
+    <div class="flex px-6 py-3 border-bottom align-center">
+      <span class="fs-6">{{ $t('webhook_alerts') }}</span>
+      <ElButton class="ml-auto" type="primary" @click="addWebhook">{{
+        $t('webhook_alerts_add')
+      }}</ElButton>
+    </div>
+
+    <div class="flex-1">
+      <ElTable
+        ref="table"
+        v-loading="loading"
+        row-key="id"
+        :data="list"
+        height="100%"
+      >
+        <el-table-column
+          show-overflow-tooltip
+          class-name="text-nowrap"
+          :label="$t('webhook_server_url')"
+          prop="url"
+        />
+        <el-table-column
+          show-overflow-tooltip
+          class-name="text-nowrap"
+          :label="$t('public_remark')"
+          prop="mark"
+          width="240"
+        />
+        <el-table-column
+          :label="$t('public_status')"
+          prop="pingResult"
+          width="100"
+        >
+          <template #default="{ row }">
+            <VIcon
+              v-if="row.pingResult === 'SUCCEED'"
+              size="20"
+              class="color-success"
+              >success-filled</VIcon
+            >
+            <VIcon v-else class="color-danger" size="20"
+              >circle-close-filled</VIcon
+            >
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('webhook_switch')" prop="open" width="120">
+          <template #default="{ row }">
+            <ElSwitch
+              :disabled="switchStateMap[row.id]"
+              :value="row.open"
+              @change="handleSwitch(row)"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('public_operation')" width="240">
+          <template #default="{ row }">
+            <div class="flex gap-2 align-center">
+              <ElLink type="primary" @click="viewDetail(row, $event)"
+                >{{ $t('public_button_details') }}
+              </ElLink>
+              <ElDivider direction="vertical" class="mx-0" />
+              <ElLink type="primary" @click="viewHistory(row, $event)"
+                >{{ $t('webhook_send_log') }}
+              </ElLink>
+              <ElDivider direction="vertical" class="mx-0" />
+              <ElLink type="danger" @click="delWebhook(row, $event)"
+                >{{ $t('public_button_delete') }}
+              </ElLink>
+            </div>
+          </template>
+        </el-table-column>
+      </ElTable>
+    </div>
+
+    <ElDrawer
+      v-model="drawerState.visible"
+      :wrapper-closable="false"
+      :size="800"
+      @update:visible="drawerState.visible = $event"
+      @closed="afterClose"
+    >
+      <template #title>
+        <span class="fs-6 font-color-dark fw-sub">{{
+          $t(form.id ? 'webhook_alerts_detail' : 'webhook_alerts_add')
+        }}</span>
+      </template>
+      <div class="flex flex-column h-100">
+        <div ref="formWrapper" class="flex-1 px-4 overflow-y-auto">
+          <ElForm
+            ref="form"
+            class="flex-1"
+            label-position="top"
+            :model="form"
+            :rules="rules"
+          >
+            <ElFormItem :label="$t('webhook_event_type')" prop="hookTypes">
+              <ElTreeSelect
+                v-model="form.hookTypes"
+                collapse-tags
+                filterable
+                multiple
+                show-checkbox
+                :data="eventData"
+                class="w-100"
+              />
+            </ElFormItem>
+            <ElFormItem :label="$t('webhook_server_url')" prop="url">
+              <ElInput v-model="form.url" />
+            </ElFormItem>
+            <ElFormItem :label="$t('http_header')" prop="customHttpHeaders">
+              <ElInput
+                v-model="form.customHttpHeaders"
+                :placeholder="$t('http_header_ph')"
+                type="textarea"
+                :autosize="{ minRows: 2, maxRows: 6 }"
+              />
+            </ElFormItem>
+            <ElFormItem prop="customTemplate">
+              <template #label>
+                <span>
+                  <span class="align-middle">{{
+                    $t('webhook_custom_template')
+                  }}</span>
+                  <ElTooltip :content="$t('webhook_custom_template_tip')">
+                    <VIcon class="align-middle ml-1">question-circle</VIcon>
+                    <template #content>
+                      <HighlightCode
+                        theme="atom-one-dark"
+                        :code="$t('webhook_custom_template_tip')"
+                        language="javascript"
+                      />
+                    </template>
+                  </ElTooltip>
+                </span>
+              </template>
+              <JsonEditor
+                v-model="form.customTemplate"
+                height="320"
+                :options="{
+                  options: { showPrintMargin: false, useWrapMode: true },
+                }"
+                @init="initJsonEditor"
+              />
+            </ElFormItem>
+            <ElFormItem :label="$t('public_remark')" prop="mark">
+              <ElInput v-model="form.mark" />
+            </ElFormItem>
+          </ElForm>
+        </div>
+
+        <div class="text-left p-4">
+          <ElButton
+            :loading="drawerState.ping"
+            type="primary"
+            @click="sendPing"
+            >{{ $t('webhook_send_ping') }}</ElButton
+          >
+          <ElButton
+            :loading="drawerState.saving"
+            type="primary"
+            @click="save"
+            >{{ $t('public_button_save') }}</ElButton
+          >
+          <ElButton @click="drawerState.visible = false">{{
+            $t('public_button_cancel')
+          }}</ElButton>
+        </div>
+      </div>
+    </ElDrawer>
+
+    <ElDrawer
+      :visible="historyState.visible"
+      :wrapper-closable="false"
+      :size="800"
+      @update:visible="historyState.visible = $event"
+      @closed="afterCloseHistory"
+    >
+      <template #title>
+        <span>
+          <span class="fs-6 font-color-dark fw-sub">{{
+            $t('webhook_send_log')
+          }}</span>
+          <span class="font-color-sslight ml-2">{{
+            $t('webhook_send_log_desc')
+          }}</span>
+        </span>
+      </template>
+      <div v-loading="historyState.loading" class="flex flex-column h-100">
+        <div ref="historyList" class="flex-1 px-4 overflow-y-auto">
+          <el-collapse
+            v-if="historyState.list.length"
+            v-model="historyState.collapse"
+            class="history-collapse border-0"
+          >
+            <el-collapse-item
+              v-for="item in historyState.list"
+              :key="item.id"
+              class="rounded-lg"
+            >
+              <template #title>
+                <div class="flex align-center flex-1 pl-3">
+                  <VIcon
+                    v-if="item.historyStatus === 'SUCCEED'"
+                    size="16"
+                    class="color-success"
+                    >success-filled</VIcon
+                  >
+                  <VIcon v-else class="color-danger" size="16"
+                    >circle-close-filled</VIcon
+                  >
+                  <span class="ml-2">{{ item['x-event'] }}</span>
+                  <span class="ml-auto pr-4">{{ item.createAtLabel }}</span>
+                </div>
+              </template>
+              <div class="position-relative">
+                <ElTabs>
+                  <ElTabPane :label="$t('public_request')">
+                    <div class="px-4">
+                      <div class="lh-base">
+                        {{ $t('public_request_headers') }}
+                      </div>
+                      <HighlightCode
+                        class="rounded-lg mt-2 mb-4 overflow-hidden"
+                        :code="item.requestHeaders || '--'"
+                        language="http"
+                        copy
+                      />
+
+                      <div class="lh-base">
+                        {{ $t('public_request_content') }}
+                      </div>
+                      <div>
+                        <HighlightCode
+                          class="rounded-lg mt-2 mb-4 overflow-hidden"
+                          :code="item.requestBodyFmt"
+                          language="json"
+                          copy
+                        />
+                      </div>
+                    </div>
+                  </ElTabPane>
+                  <ElTabPane>
+                    <template #label>
+                      <span>
+                        {{ $t('public_response') }}
+                        <ElTag
+                          size="mini"
+                          type="info"
+                          class="rounded-pill ml-1"
+                          >{{ item.responseCode || '--' }}</ElTag
+                        >
+                      </span>
+                    </template>
+                    <div class="px-4">
+                      <div class="lh-base">
+                        {{ $t('public_response_headers') }}
+                      </div>
+                      <HighlightCode
+                        class="rounded-lg mt-2 mb-4 overflow-hidden"
+                        :code="item.responseHeaders || '--'"
+                        language="http"
+                        copy
+                      />
+
+                      <div class="lh-base">
+                        {{ $t('public_response_content') }}
+                      </div>
+                      <HighlightCode
+                        class="rounded-lg mt-2 mb-4 overflow-hidden"
+                        :code="item.responseResultFmt || '--'"
+                        :language="item.responseType"
+                        copy
+                      />
+                    </div>
+                  </ElTabPane>
+                </ElTabs>
+                <ElButton
+                  class="position-absolute tabs-extra-btn flex align-center py-0"
+                  size="mini"
+                  :loading="resendStateMap[item.id]"
+                  @click="reSend(item)"
+                  >{{ $t('public_resend') }}</ElButton
+                >
+              </div>
+            </el-collapse-item>
+          </el-collapse>
+
+          <VEmpty v-else />
+        </div>
+        <div class="p-4">
+          <el-pagination
+            v-model:current-page="page.current"
+            v-model:page-size="page.size"
+            background
+            layout="->,total, sizes,  prev, pager, next, jumper"
+            :page-sizes="[10, 20, 50, 100]"
+            :total="page.total"
+            @size-change="loadHistory(1)"
+            @current-change="loadHistory"
+          />
+        </div>
+      </div>
+    </ElDrawer>
+  </div>
+</template>
 
 <style scoped lang="scss">
 $unreadColor: #ee5353;
@@ -588,21 +707,21 @@ $unreadColor: #ee5353;
 .history-collapse {
   $bg: #f5f7fa;
   :deep(.el-collapse-item) {
-    &__wrap {
+    .el-collapse-item__wrap {
       border-bottom-left-radius: 8px;
       border-bottom-right-radius: 8px;
     }
-    &__content {
+    .el-collapse-item__content {
       padding-bottom: 0;
     }
-    &__header {
+    .el-collapse-item__header {
       border-radius: 8px;
       &:hover {
         background-color: $bg;
       }
     }
 
-    &.is-active {
+    .el-collapse-item.is-active {
       background-color: $bg;
       .el-collapse-item__header,
       .el-collapse-item__wrap {
@@ -621,6 +740,7 @@ $unreadColor: #ee5353;
   }
 }
 </style>
+
 <style lang="scss">
 .account {
   .form {

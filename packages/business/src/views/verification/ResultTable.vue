@@ -1,81 +1,5 @@
-<template>
-  <el-table
-    highlight-current-row
-    ref="table"
-    height="100%"
-    :data="list"
-    :element-loading-text="$t('packages_business_dataFlow_dataLoading')"
-    @row-click="rowClickHandler"
-  >
-    <ElTableColumn :label="$t('packages_business_verification_sourceTable')">
-      <template v-slot="scope">
-        <span>{{ scope.row.source ? scope.row.source.table : '' }}</span>
-        <div class="font-color-slight">
-          {{ scope.row.source ? scope.row.source.connectionName : '' }}
-        </div>
-      </template>
-    </ElTableColumn>
-    <ElTableColumn :label="$t('packages_business_verification_targetTable')">
-      <template v-slot="scope">
-        <span>{{ scope.row.target ? scope.row.target.table : 0 }}</span>
-        <div class="font-color-slight">
-          {{ scope.row.target ? scope.row.target.connectionName : 0 }}
-        </div>
-      </template>
-    </ElTableColumn>
-    <ElTableColumn :label="$t('packages_business_verification_sourceRows')">
-      <template #default="{ row }">
-        <span>{{ type === 'hash' ? '-' : row.source_total || 0 }}</span>
-      </template>
-    </ElTableColumn>
-    <ElTableColumn prop="progress" :label="$t('packages_business_verification_verifyProgress')" width="120px">
-      <template #default="{ row }">
-        <div>
-          <span v-if="!row.recovering">{{ `${row.progress ? Math.floor(row.progress * 100) : 0}%` }}</span>
-          <template v-else>
-            <img style="width: 26px; vertical-align: middle" :src="require('@tap/assets/icons/loading.svg')" />
-            <span>{{ $t('packages_business_recovering') }}</span>
-          </template>
-        </div>
-      </template>
-    </ElTableColumn>
-    <ElTableColumn prop="status" :label="$t('packages_business_verification_result_title')">
-      <template v-if="['waiting', 'done'].includes(scope.row.status)" v-slot="scope">
-        <div class="inspect-result-status">
-          <template v-if="scope.row.result === 'failed'">
-            <div v-if="type === 'hash'">
-              <span class="error">
-                <i class="verify-icon el-icon-error color-danger"></i>
-                <span>{{ $t('packages_business_verification_inconsistent') }}</span>
-              </span>
-            </div>
-            <template v-else>
-              <div v-if="scope.row.countResultText">
-                <span class="error">
-                  <el-icon class="verify-icon color-danger"><CircleCloseFilled /></el-icon>
-                  <span>{{ scope.row.countResultText }}</span>
-                </span>
-              </div>
-              <div v-if="scope.row.contentResultText">
-                <span class="error">
-                  <el-icon class="verify-icon color-danger"><CircleCloseFilled /></el-icon>
-                  <span>{{ scope.row.contentResultText }}</span>
-                </span>
-              </div>
-            </template>
-          </template>
-          <span class="success" v-if="scope.row.result === 'passed'">
-            <el-icon class="verify-icon color-success"><SuccessFilled /></el-icon>
-            <span>{{ $t('packages_business_verification_consistent') }}</span>
-          </span>
-        </div>
-      </template>
-    </ElTableColumn>
-  </el-table>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
+import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 export default {
   props: {
     type: String,
@@ -86,6 +10,7 @@ export default {
       },
     },
   },
+  emits: ['row-click'],
   data() {
     return {
       current: 0,
@@ -93,22 +18,32 @@ export default {
   },
   computed: {
     list() {
-      let list = this.data.map((item) => {
+      const list = this.data.map((item) => {
         if (item.result === 'failed') {
           let countResultText = ''
           let contentResultText = ''
-          let diffCount = item.target_total - item.source_total
-          let diffCountNum = Math.abs(diffCount)
+          const diffCount = item.target_total - item.source_total
+          const diffCountNum = Math.abs(diffCount)
           if (diffCount > 0) {
-            countResultText = this.$t('packages_business_verification_result_count_more', [diffCountNum])
+            countResultText = this.$t(
+              'packages_business_verification_result_count_more',
+              [diffCountNum],
+            )
           }
           if (diffCount < 0) {
-            countResultText = this.$t('packages_business_verification_result_count_less', [diffCountNum])
+            countResultText = this.$t(
+              'packages_business_verification_result_count_less',
+              [diffCountNum],
+            )
           }
           if (this.type !== 'row_count') {
-            let diffContentNum = item.source_only + item.target_only + item.row_failed
+            const diffContentNum =
+              item.source_only + item.target_only + item.row_failed
             if (diffContentNum !== 0) {
-              contentResultText = this.$t('packages_business_verification_result_content_diff', [diffContentNum])
+              contentResultText = this.$t(
+                'packages_business_verification_result_content_diff',
+                [diffContentNum],
+              )
             }
           }
           item.countResultText = countResultText
@@ -137,9 +72,109 @@ export default {
       $emit(this, 'row-click', row)
     },
   },
-  emits: ['row-click'],
 }
 </script>
+
+<template>
+  <el-table
+    ref="table"
+    class="flex-1"
+    highlight-current-row
+    height="100%"
+    :data="list"
+    :element-loading-text="$t('packages_business_dataFlow_dataLoading')"
+    @row-click="rowClickHandler"
+  >
+    <ElTableColumn :label="$t('packages_business_verification_sourceTable')">
+      <template #default="scope">
+        <span>{{ scope.row.source ? scope.row.source.table : '' }}</span>
+        <div class="font-color-slight">
+          {{ scope.row.source ? scope.row.source.connectionName : '' }}
+        </div>
+      </template>
+    </ElTableColumn>
+    <ElTableColumn :label="$t('packages_business_verification_targetTable')">
+      <template #default="scope">
+        <span>{{ scope.row.target ? scope.row.target.table : 0 }}</span>
+        <div class="font-color-slight">
+          {{ scope.row.target ? scope.row.target.connectionName : 0 }}
+        </div>
+      </template>
+    </ElTableColumn>
+    <ElTableColumn :label="$t('packages_business_verification_sourceRows')">
+      <template #default="{ row }">
+        <span>{{ type === 'hash' ? '-' : row.source_total || 0 }}</span>
+      </template>
+    </ElTableColumn>
+    <ElTableColumn
+      prop="progress"
+      :label="$t('packages_business_verification_verifyProgress')"
+      width="120px"
+    >
+      <template #default="{ row }">
+        <div>
+          <span v-if="!row.recovering">{{
+            `${row.progress ? Math.floor(row.progress * 100) : 0}%`
+          }}</span>
+          <template v-else>
+            <img
+              style="width: 26px; vertical-align: middle"
+              :src="require('@tap/assets/icons/loading.svg')"
+            />
+            <span>{{ $t('packages_business_recovering') }}</span>
+          </template>
+        </div>
+      </template>
+    </ElTableColumn>
+    <ElTableColumn
+      prop="status"
+      :label="$t('packages_business_verification_result_title')"
+    >
+      <template #default="{ row }">
+        <div
+          v-if="['waiting', 'done'].includes(row.status)"
+          class="inspect-result-status"
+        >
+          <template v-if="row.result === 'failed'">
+            <div v-if="type === 'hash'">
+              <span class="error">
+                <i class="verify-icon el-icon-error color-danger" />
+                <span>{{
+                  $t('packages_business_verification_inconsistent')
+                }}</span>
+              </span>
+            </div>
+            <template v-else>
+              <div v-if="row.countResultText">
+                <span class="error">
+                  <el-icon class="verify-icon color-danger"
+                    ><CircleCloseFilled
+                  /></el-icon>
+                  <span>{{ row.countResultText }}</span>
+                </span>
+              </div>
+              <div v-if="row.contentResultText">
+                <span class="error">
+                  <el-icon class="verify-icon color-danger"
+                    ><CircleCloseFilled
+                  /></el-icon>
+                  <span>{{ row.contentResultText }}</span>
+                </span>
+              </div>
+            </template>
+          </template>
+          <span v-if="row.result === 'passed'" class="success">
+            <el-icon class="verify-icon color-success"
+              ><SuccessFilled
+            /></el-icon>
+            <span>{{ $t('packages_business_verification_consistent') }}</span>
+          </span>
+        </div>
+        <span v-else />
+      </template>
+    </ElTableColumn>
+  </el-table>
+</template>
 
 <style lang="scss" scoped>
 .verify-icon {

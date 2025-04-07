@@ -1,85 +1,7 @@
-<template>
-  <div :class="['virtual-list-wrap', { 'is-border': border }]">
-    <div class="header-wrapper">
-      <div class="header__list flex">
-        <div
-          v-for="(item, index) in cols"
-          :key="index"
-          :class="['column-item', 'column-' + (item.prop || item.type), item.headerClass]"
-          :style="{ width: getColWidth(item) }"
-        >
-          <div v-if="item.type === 'selection'" class="cell">
-            <ElCheckbox
-              v-model="checkAll"
-              :indeterminate="isIndeterminate"
-              @change="handleCheckAll($event)"
-            ></ElCheckbox>
-          </div>
-          <div v-else class="cell">{{ item.label }}</div>
-        </div>
-      </div>
-    </div>
-    <div class="body-wrapper">
-      <DynamicScroller
-        ref="virtualScroller"
-        :items="list"
-        :key-field="itemKey"
-        :min-item-size="40"
-        :item-size="itemSize"
-        class="vue-recycle-scroller"
-      >
-        <template #default="{ item, index, active }">
-          <DynamicScrollerItem :item="item" :active="active" :data-index="index" :size-dependencies="[item[itemKey]]">
-            <div :class="['flex body__row', ...getRowClass(item, index)]">
-              <div
-                v-for="(colItem, colIndex) in cols"
-                :key="colIndex"
-                :class="[
-                  'column-item',
-                  'column-' + (colItem.prop || colItem.type),
-                  colItem.class,
-                  ...getColClass(colItem),
-                ]"
-                :style="{ width: getColWidth(colItem) }"
-              >
-                <div
-                  :class="['cell', { 'el-tooltip': colItem.showOverflowTooltip }]"
-                  @mouseenter="(event) => handleCellMouseEnter(event, colItem)"
-                  @mouseleave="(event) => handleCellMouseLeave(event)"
-                >
-                  <template v-if="colItem.slot">
-                    <slot v-bind="{ row: item }" :name="colItem.slot" :row="item"></slot>
-                  </template>
-                  <template v-else-if="colItem.type === 'index'">{{ index + 1 }}</template>
-
-                  <template v-else-if="colItem.type === 'selection'">
-                    <ElCheckbox
-                      :model-value="selections.includes(item)"
-                      @change="toggleRowSelection(item, $event)"
-                    ></ElCheckbox>
-                  </template>
-                  <template v-else>{{ item[colItem.prop] }}</template>
-                </div>
-              </div>
-            </div>
-          </DynamicScrollerItem>
-        </template>
-      </DynamicScroller>
-      <el-tooltip
-        :referenceEl="referenceEl"
-        placement="top"
-        ref="tooltip"
-        :effect="tooltipEffect"
-        :content="tooltipContent"
-      ></el-tooltip>
-    </div>
-  </div>
-</template>
-
 <script>
-import { $emit } from '../../../utils/gogocodeTransfer'
-import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { cloneDeep, debounce } from 'lodash'
+import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+import { $emit } from '../../../utils/gogocodeTransfer'
 
 export default {
   name: 'Main',
@@ -111,6 +33,7 @@ export default {
       default: 'dark',
     },
   },
+  emits: ['selection-change', 'clear-selection'],
   data() {
     return {
       list: [],
@@ -129,7 +52,7 @@ export default {
   },
   computed: {
     cols() {
-      let result = cloneDeep(this.columns)
+      const result = cloneDeep(this.columns)
 
       const usedWidth = result
         .map((t) => t.width || 0)
@@ -145,7 +68,9 @@ export default {
         }, 0)
 
       const exWidth = this.layoutWidth - usedWidth - obligateWidth
-      let noWidthArr = result.filter((t) => !['index', 'selection'].includes(t.type)).filter((t) => !t.width)
+      const noWidthArr = result
+        .filter((t) => !['index', 'selection'].includes(t.type))
+        .filter((t) => !t.width)
       noWidthArr.forEach((el) => {
         el.width = Math.floor(exWidth / noWidthArr.length)
       })
@@ -176,9 +101,11 @@ export default {
     },
 
     toggleRowSelection(row = {}, selected) {
-      const index = this.selections.findIndex((t) => t[this.itemKey] === row[this.itemKey])
+      const index = this.selections.findIndex(
+        (t) => t[this.itemKey] === row[this.itemKey],
+      )
 
-      index > -1 && this.selections.splice(index, 1)
+      index !== -1 && this.selections.splice(index, 1)
       if (selected) {
         this.selections.push(row)
       }
@@ -242,7 +169,10 @@ export default {
 
       if (cellChild.scrollWidth > cellChild.offsetWidth && this.$refs.tooltip) {
         const tooltip = this.$refs.tooltip
-        this.tooltipContent = cell.innerText || cell.textContent || cell.querySelector('input')?.value
+        this.tooltipContent =
+          cell.innerText ||
+          cell.textContent ||
+          cell.querySelector('input')?.value
         this.referenceEl = cell
         this.activateTooltip(tooltip)
       }
@@ -262,7 +192,7 @@ export default {
         selection: 40,
       }
 
-      return (item.width || map[item.type] || 100) + 'px'
+      return `${item.width || map[item.type] || 100}px`
     },
 
     getColClass(item) {
@@ -278,9 +208,104 @@ export default {
       return classes
     },
   },
-  emits: ['selection-change', 'clear-selection'],
 }
 </script>
+
+<template>
+  <div :class="['virtual-list-wrap', { 'is-border': border }]">
+    <div class="header-wrapper">
+      <div class="header__list flex">
+        <div
+          v-for="(item, index) in cols"
+          :key="index"
+          :class="[
+            'column-item',
+            `column-${item.prop || item.type}`,
+            item.headerClass,
+          ]"
+          :style="{ width: getColWidth(item) }"
+        >
+          <div v-if="item.type === 'selection'" class="cell">
+            <ElCheckbox
+              v-model="checkAll"
+              :indeterminate="isIndeterminate"
+              @change="handleCheckAll($event)"
+            />
+          </div>
+          <div v-else class="cell">{{ item.label }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="body-wrapper">
+      <DynamicScroller
+        ref="virtualScroller"
+        :items="list"
+        :key-field="itemKey"
+        :min-item-size="40"
+        :item-size="itemSize"
+        class="vue-recycle-scroller"
+      >
+        <template #default="{ item, index, active }">
+          <DynamicScrollerItem
+            :item="item"
+            :active="active"
+            :data-index="index"
+            :size-dependencies="[item[itemKey]]"
+          >
+            <div :class="['flex body__row', ...getRowClass(item, index)]">
+              <div
+                v-for="(colItem, colIndex) in cols"
+                :key="colIndex"
+                :class="[
+                  'column-item',
+                  `column-${colItem.prop || colItem.type}`,
+                  colItem.class,
+                  ...getColClass(colItem),
+                ]"
+                :style="{ width: getColWidth(colItem) }"
+              >
+                <div
+                  :class="[
+                    'cell',
+                    { 'el-tooltip': colItem.showOverflowTooltip },
+                  ]"
+                  @mouseenter="(event) => handleCellMouseEnter(event, colItem)"
+                  @mouseleave="(event) => handleCellMouseLeave(event)"
+                >
+                  <template v-if="colItem.slot">
+                    <slot
+                      v-bind="{ row: item }"
+                      :name="colItem.slot"
+                      :row="item"
+                    />
+                  </template>
+                  <template v-else-if="colItem.type === 'index'">{{
+                    index + 1
+                  }}</template>
+
+                  <template v-else-if="colItem.type === 'selection'">
+                    <ElCheckbox
+                      :model-value="selections.includes(item)"
+                      @change="toggleRowSelection(item, $event)"
+                    />
+                  </template>
+                  <template v-else>{{ item[colItem.prop] }}</template>
+                </div>
+              </div>
+            </div>
+          </DynamicScrollerItem>
+        </template>
+      </DynamicScroller>
+      <el-tooltip
+        ref="tooltip"
+        :reference-el="referenceEl"
+        placement="top"
+        :effect="tooltipEffect"
+        :content="tooltipContent"
+      />
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .virtual-list-wrap {

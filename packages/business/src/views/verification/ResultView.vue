@@ -1,18 +1,156 @@
+<script>
+import { VIcon } from '@tap/component'
+import { checkEllipsisActive } from '@tap/shared'
+import JsonViewer from 'vue-json-viewer'
+export default {
+  components: {
+    JsonViewer,
+    VIcon,
+  },
+  props: {
+    remoteMethod: Function,
+    showType: String,
+  },
+  data() {
+    return {
+      loading: false,
+      page: {
+        current: 1,
+        size: 20,
+        total: 0,
+      },
+      showAdvancedVerification: false,
+      statsInfo: {},
+      resultList: [],
+      sourceSortColumn: [], // 源索引字段
+      targetSortColumn: [], // 目标索引字段
+      inspectMethod: '',
+      expandErrorMessage: false,
+      hasMoreErrorMsg: false,
+    }
+  },
+  computed: {
+    filterResultList() {
+      return this.resultList?.filter((t) => !!t.details) || []
+    },
+    errorMsg() {
+      let stack = this.statsInfo?.errorMsg || ''
+
+      if (import.meta.env.VUE_APP_KEYWORD) {
+        stack = stack.replaceAll(
+          /tapdata\s?/gi,
+          import.meta.env.VUE_APP_KEYWORD,
+        )
+      }
+
+      return stack
+    },
+    errorSummary() {
+      if (this.errorMsg) {
+        return this.errorMsg.split('\n').shift()
+      }
+    },
+  },
+  methods: {
+    fetch(current) {
+      // this.loading = true
+      this.remoteMethod({ current, size: this.page.size })
+        .then(
+          ({
+            statsInfo = {},
+            resultList,
+            total,
+            showAdvancedVerification,
+            sourceSortColumn,
+            targetSortColumn,
+            inspectMethod,
+          }) => {
+            if (statsInfo?.result === 'failed') {
+              let countResultText = ''
+              let contentResultText = ''
+              const diffCount = statsInfo.target_total - statsInfo.source_total
+              const diffCountNum = Math.abs(diffCount)
+              if (diffCount > 0) {
+                countResultText = this.$t(
+                  'packages_business_verification_result_count_more',
+                  [diffCountNum],
+                )
+              }
+              if (diffCount < 0) {
+                countResultText = this.$t(
+                  'packages_business_verification_result_count_less',
+                  [diffCountNum],
+                )
+              }
+              if (this.type !== 'row_count' && this.type !== 'hash') {
+                const diffContentNum =
+                  statsInfo.source_only +
+                  statsInfo.target_only +
+                  statsInfo.row_failed
+                if (diffContentNum !== 0) {
+                  contentResultText = this.$t(
+                    'packages_business_verification_result_content_diff',
+                    [diffContentNum],
+                  )
+                }
+              }
+              statsInfo.countResultText = countResultText
+              statsInfo.contentResultText = contentResultText
+            }
+            this.statsInfo = statsInfo
+            this.resultList = resultList
+            this.page.total = total
+            this.showAdvancedVerification = showAdvancedVerification
+            this.sourceSortColumn = sourceSortColumn
+            this.targetSortColumn = targetSortColumn
+            this.inspectMethod = inspectMethod
+
+            this.checkErrorMsg()
+          },
+        )
+        .finally(() => {
+          this.loading = false
+        })
+    },
+
+    getDetailsList(data = []) {
+      data.forEach((el) => {
+        if (this.sourceSortColumn.includes(el.source.key)) {
+          el.source.isSortColumn = true
+        }
+        if (this.targetSortColumn.includes(el.target.key)) {
+          el.target.isSortColumn = true
+        }
+      })
+      if (this.showType === 'all') return data
+      return data.filter((t) => !!t.red)
+    },
+
+    checkErrorMsg() {
+      this.$nextTick(() => {
+        const dom = this.$refs.errorSummary
+        this.hasMoreErrorMsg = dom
+          ? this.errorMsg.split('\n').length > 1 || checkEllipsisActive(dom)
+          : false
+      })
+    },
+  },
+}
+</script>
+
 <template>
-  <div class="verification-result-view panel-box" v-loading="loading">
+  <div v-loading="loading" class="verification-result-view panel-box">
     <div class="header">
       {{ $t('packages_business_verification_verifyDetail') }}
     </div>
     <div class="main">
-      <ul class="inspect-result" v-if="statsInfo.status">
+      <ul v-if="statsInfo.status" class="inspect-result">
         <li>
           <span>
             {{
-              $t('packages_business_verification_sourceTable') +
-              ' : ' +
-              statsInfo.source.table +
-              ' / ' +
-              statsInfo.source.connectionName
+              `${$t('packages_business_verification_sourceTable')} : ${
+                statsInfo.source.table
+              } / ${statsInfo.source.connectionName}`
             }}
           </span>
           <span class="font-color-slight">
@@ -22,11 +160,9 @@
         <li>
           <span>
             {{
-              $t('packages_business_verification_targetTable') +
-              ' : ' +
-              statsInfo.target.table +
-              ' / ' +
-              statsInfo.target.connectionName
+              `${$t('packages_business_verification_targetTable')} : ${
+                statsInfo.target.table
+              } / ${statsInfo.target.connectionName}`
             }}
           </span>
           <span class="font-color-slight">
@@ -34,7 +170,11 @@
           </span>
         </li>
         <li>
-          <span>{{ $t('packages_business_verification_result_title') + ' : ' + (statsInfo.result || '-') }}</span>
+          <span>{{
+            `${$t('packages_business_verification_result_title')} : ${
+              statsInfo.result || '-'
+            }`
+          }}</span>
         </li>
         <template v-if="statsInfo.result !== 'passed'">
           <li>
@@ -45,10 +185,11 @@
           </li>
         </template>
       </ul>
-      <div class="success-band" v-if="statsInfo.result === 'passed'">
-        <img style="height: 30px; margin-right: 5px" :src="require('@tap/assets/images/passed.png')" />
-        <span>{{ $t('packages_business_verification_success') }}</span>
-      </div>
+      <el-result
+        v-if="statsInfo.result === 'passed'"
+        icon="success"
+        :title="$t('packages_business_verification_success')"
+      />
 
       <div
         v-if="statsInfo.status === 'error'"
@@ -59,40 +200,69 @@
         <span
           ref="errorSummary"
           class="mx-2 flex-1"
-          :class="{ ellipsis: !expandErrorMessage, 'text-pre': expandErrorMessage }"
+          :class="{
+            ellipsis: !expandErrorMessage,
+            'text-pre': expandErrorMessage,
+          }"
           >{{ expandErrorMessage ? errorMsg : errorSummary }}</span
         >
-        <span class="sticky-top-0 end-0 px-2 flex-shrink-0 align-self-start" style="background: inherit">
+        <span
+          class="sticky-top-0 end-0 px-2 flex-shrink-0 align-self-start"
+          style="background: inherit"
+        >
           <ElLink
             v-if="hasMoreErrorMsg"
             class="align-middle"
             type="danger"
             @click="expandErrorMessage = !expandErrorMessage"
             >{{
-              expandErrorMessage ? $t('packages_business_verification_details_shouqi') : $t('public_button_expand')
+              expandErrorMessage
+                ? $t('packages_business_verification_details_shouqi')
+                : $t('public_button_expand')
             }}</ElLink
           >
         </span>
       </div>
 
       <template v-if="statsInfo.result !== 'passed'">
-        <div v-if="inspectMethod !== 'jointField'" class="flex justify-content-between p-4">
-          <ElRadioGroup :value="showType" @input="$emit('update:showType', $event)">
-            <ElRadio label="diff">{{ $t('packages_business_verification_details_jinxianshichayi') }}</ElRadio>
-            <ElRadio label="all">{{ $t('packages_business_verification_details_xianshiwanzhengzi') }}</ElRadio>
+        <div
+          v-if="inspectMethod !== 'jointField'"
+          class="flex justify-content-between p-4"
+        >
+          <ElRadioGroup
+            :model-value="showType"
+            @update:model-value="$emit('update:showType', $event)"
+          >
+            <ElRadio label="diff">{{
+              $t('packages_business_verification_details_jinxianshichayi')
+            }}</ElRadio>
+            <ElRadio label="all">{{
+              $t('packages_business_verification_details_xianshiwanzhengzi')
+            }}</ElRadio>
           </ElRadioGroup>
         </div>
-        <div v-if="!showAdvancedVerification" class="flex-fill flex flex-column">
+        <div
+          v-if="!showAdvancedVerification"
+          class="flex-fill flex flex-column"
+        >
           <div class="table__header">
             <ElRow
               class="table__header flex align-items-center p-4 font-color-normal fw-bold border-bottom"
-              style="height: 54px; background: #fafafa; border-radius: 4px 4px 0 0"
+              style="
+                height: 54px;
+                background: #fafafa;
+                border-radius: 4px 4px 0 0;
+              "
             >
               <ElCol :span="12">
-                <span>{{ $t('packages_business_verification_details_yuanbiaoziduanzhi') }}</span>
+                <span>{{
+                  $t('packages_business_verification_details_yuanbiaoziduanzhi')
+                }}</span>
               </ElCol>
               <ElCol :span="12">
-                <span>{{ $t('packages_business_verification_details_mubiaobiaoziduan') }}</span>
+                <span>{{
+                  $t('packages_business_verification_details_mubiaobiaoziduan')
+                }}</span>
               </ElCol>
             </ElRow>
           </div>
@@ -101,48 +271,75 @@
               v-for="(item, index) in filterResultList"
               :key="index"
               class="table__row"
-              :class="['position-relative border-bottom', { 'py-2 px-4': item.details }]"
+              :class="[
+                'position-relative border-bottom',
+                { 'py-2 px-4': item.details },
+              ]"
             >
-              <div v-for="(sItem, sIndex) in getDetailsList(item.details)" :key="sIndex" class="flex py-1">
+              <div
+                v-for="(sItem, sIndex) in getDetailsList(item.details)"
+                :key="sIndex"
+                class="flex py-1"
+              >
                 <div class="w-50 flex align-center">
                   <span
-                    :class="['row__label', sItem.source.isSortColumn ? 'font-color-light fw-bolder' : 'disable-color']"
+                    :class="[
+                      'row__label',
+                      sItem.source.isSortColumn
+                        ? 'font-color-light fw-bolder'
+                        : 'disable-color',
+                    ]"
                     >{{ sItem.source.key }}:</span
                   >
-                  <span class="row__value ml-4 font-color-dark" :class="{ 'color-danger': sItem.red }">{{
-                    sItem.source.value
-                  }}</span>
+                  <span
+                    class="row__value ml-4 font-color-dark"
+                    :class="{ 'color-danger': sItem.red }"
+                    >{{ sItem.source.value }}</span
+                  >
                 </div>
                 <div class="w-50 flex align-center">
                   <span
-                    :class="['row__label', sItem.target.isSortColumn ? 'font-color-light fw-bolder' : 'disable-color']"
+                    :class="[
+                      'row__label',
+                      sItem.target.isSortColumn
+                        ? 'font-color-light fw-bolder'
+                        : 'disable-color',
+                    ]"
                     >{{ sItem.target.key }}:</span
                   >
-                  <span class="row__value ml-4 font-color-dark" :class="{ 'color-danger': sItem.red }">{{
-                    sItem.target.value
-                  }}</span>
+                  <span
+                    class="row__value ml-4 font-color-dark"
+                    :class="{ 'color-danger': sItem.red }"
+                    >{{ sItem.target.value }}</span
+                  >
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="inspect-ad-box" v-if="showAdvancedVerification">
+        <div v-if="showAdvancedVerification" class="inspect-ad-box">
           <div class="title-box">
             <div>{{ $t('packages_business_verification_result_title') }}</div>
           </div>
-          <div v-for="item in resultList" :key="item.id" class="inspect-details">
+          <div
+            v-for="item in resultList"
+            :key="item.id"
+            class="inspect-details"
+          >
             <div class="message-box">
               <span>{{ $t('packages_business_verification_returnMsg') }}</span>
               <div>{{ item.message }}</div>
             </div>
             <ul class="father-table">
-              <li>{{ $t('packages_business_verification_sourceTableData') }}</li>
+              <li>
+                {{ $t('packages_business_verification_sourceTableData') }}
+              </li>
               <li>{{ $t('packages_business_verification_returnedData') }}</li>
             </ul>
             <ul class="sub-table">
-              <li><JsonViewer :value="item.source"></JsonViewer></li>
+              <li><JsonViewer :value="item.source" /></li>
               <li>
-                <JsonViewer :value="item.target ? item.target.data : ''"></JsonViewer>
+                <JsonViewer :value="item.target ? item.target.data : ''" />
               </li>
             </ul>
           </div>
@@ -150,19 +347,19 @@
       </template>
     </div>
     <ElPagination
+      v-model:page-size="page.size"
+      v-model:current-page="page.current"
       class="result-view-pagination"
       background
       layout="total, ->, prev, pager, next, sizes"
       :page-sizes="!showAdvancedVerification ? [20, 30, 50, 100] : [1]"
-      v-model:page-size="page.size"
       :total="page.total"
-      v-model:current-page="page.current"
       @current-change="fetch"
       @size-change="fetch(1)"
-    >
-    </ElPagination>
+    />
   </div>
 </template>
+
 <style lang="scss" scoped>
 $margin: 10px;
 .verification-result-view {
@@ -390,125 +587,3 @@ $margin: 10px;
   }
 }
 </style>
-<script>
-import JsonViewer from 'vue-json-viewer'
-import { VIcon } from '@tap/component'
-import { checkEllipsisActive } from '@tap/shared'
-export default {
-  components: {
-    JsonViewer,
-    VIcon,
-  },
-  props: {
-    remoteMethod: Function,
-    showType: String
-  },
-  data() {
-    return {
-      loading: false,
-      page: {
-        current: 1,
-        size: 20,
-        total: 0,
-      },
-      showAdvancedVerification: false,
-      statsInfo: {},
-      resultList: [],
-      sourceSortColumn: [], // 源索引字段
-      targetSortColumn: [], // 目标索引字段
-      inspectMethod: '',
-      expandErrorMessage: false,
-      hasMoreErrorMsg: false,
-    }
-  },
-  computed: {
-    filterResultList() {
-      return this.resultList?.filter((t) => !!t.details) || []
-    },
-    errorMsg() {
-      let stack = this.statsInfo?.errorMsg || ''
-
-      if ( import.meta.env.VUE_APP_KEYWORD) {
-        stack = stack.replace(/tapdata\s?/gi,  import.meta.env.VUE_APP_KEYWORD)
-      }
-
-      return stack
-    },
-    errorSummary() {
-      if (this.errorMsg) {
-        return this.errorMsg.split('\n').shift()
-      }
-    },
-  },
-  methods: {
-    fetch(current) {
-      // this.loading = true
-      this.remoteMethod({ current, size: this.page.size })
-        .then(
-          ({
-            statsInfo = {},
-            resultList,
-            total,
-            showAdvancedVerification,
-            sourceSortColumn,
-            targetSortColumn,
-            inspectMethod,
-          }) => {
-            if (statsInfo?.result === 'failed') {
-              let countResultText = ''
-              let contentResultText = ''
-              let diffCount = statsInfo.target_total - statsInfo.source_total
-              let diffCountNum = Math.abs(diffCount)
-              if (diffCount > 0) {
-                countResultText = this.$t('packages_business_verification_result_count_more', [diffCountNum])
-              }
-              if (diffCount < 0) {
-                countResultText = this.$t('packages_business_verification_result_count_less', [diffCountNum])
-              }
-              if (this.type !== 'row_count' && this.type !== 'hash') {
-                let diffContentNum = statsInfo.source_only + statsInfo.target_only + statsInfo.row_failed
-                if (diffContentNum !== 0) {
-                  contentResultText = this.$t('packages_business_verification_result_content_diff', [diffContentNum])
-                }
-              }
-              statsInfo.countResultText = countResultText
-              statsInfo.contentResultText = contentResultText
-            }
-            this.statsInfo = statsInfo
-            this.resultList = resultList
-            this.page.total = total
-            this.showAdvancedVerification = showAdvancedVerification
-            this.sourceSortColumn = sourceSortColumn
-            this.targetSortColumn = targetSortColumn
-            this.inspectMethod = inspectMethod
-
-            this.checkErrorMsg()
-          },
-        )
-        .finally(() => {
-          this.loading = false
-        })
-    },
-
-    getDetailsList(data = []) {
-      data.forEach((el) => {
-        if (this.sourceSortColumn.includes(el.source.key)) {
-          el.source.isSortColumn = true
-        }
-        if (this.targetSortColumn.includes(el.target.key)) {
-          el.target.isSortColumn = true
-        }
-      })
-      if (this.showType === 'all') return data
-      return data.filter((t) => !!t.red)
-    },
-
-    checkErrorMsg() {
-      this.$nextTick(() => {
-        const dom = this.$refs.errorSummary
-        this.hasMoreErrorMsg = dom ? this.errorMsg.split('\n').length > 1 || checkEllipsisActive(dom) : false
-      })
-    },
-  },
-}
-</script>

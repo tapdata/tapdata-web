@@ -7,6 +7,7 @@
   "author": "",
   "main": "src/index",
   "dependencies": {
+    "@element-plus/icons-vue": "^2.1.0",
     "@tap/api": "workspace:^1.0.0",
     "@tap/assets": "workspace:^1.0.0",
     "@tap/component": "workspace:^1.0.0",

@@ -1,17 +1,7 @@
 <!-- 监听 el-select 的滚动，并提供触底加载数据的回调 -->
-<template>
-  <el-option ref="el" class="el-select-loading" v-show="hasMore">
-    <template v-if="hasMore">
-      <el-icon class="el-select-loading__icon"><ElIconLoading /></el-icon>
-      <span class="el-select-loading__tips">{{ loadingText || '正在加载' }}</span>
-    </template>
-    <template v-else>{{ noMoreText || '到底了~' }}</template>
-  </el-option>
-</template>
-
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
 import { ElOption } from 'element-plus'
+import { onMounted, onUnmounted, ref } from 'vue'
 
 interface Props {
   // 当前页码
@@ -64,6 +54,18 @@ onUnmounted(() => {
   observer.value?.unobserve(el.value.$el)
 })
 </script>
+
+<template>
+  <el-option v-show="hasMore" ref="el" class="el-select-loading" value="">
+    <template v-if="hasMore">
+      <el-icon class="el-select-loading__icon"><ElIconLoading /></el-icon>
+      <span class="el-select-loading__tips">{{
+        loadingText || '正在加载'
+      }}</span>
+    </template>
+    <template v-else>{{ noMoreText || '到底了~' }}</template>
+  </el-option>
+</template>
 
 <style lang="scss" scoped>
 .el-select-loading {

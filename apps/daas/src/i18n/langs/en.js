@@ -1951,35 +1951,35 @@ export default {
   webhook_server_url_empty: 'Please enter the server URL',
   webhook_server_url_error: 'Please enter a valid server URL',
   webhook_custom_template: 'Custom Template',
-  webhook_custom_template_tip: `{
+  webhook_custom_template_tip: `{'{'} 
     "action": "TaskAlter",
-    "hookId": "\${hookId}",
-    "actionTime": "\${actionTime}",
-    "title": "\${title}",
-    "content": "\${content}",
-    "actionData": {
-        "status": "\${actionData.status}", // Indicates the current alarm status: ING (ongoing), RECOVER (recovered), CLOSE (closed)
-        "statusTxt": "\${actionData.statusTxt}", // Indicates the current alarm status text: ongoing, recovered, closed
-        "level": "\${actionData.level}", // Alarm level: RECOVERY, NORMAL, WARNING, CRITICAL, EMERGENCY, ERROR, WARN, INFO
-        "component": "\${actionData.component}", // Engine alarm component, fixed as: FE
-        "componentTxt": "\${actionData.componentTxt}", // Engine alarm component text value: Engine
-        "type": "\${actionData.type}", // Alarm type: SYNCHRONIZATIONTASK_ALARM, SHARED_CACHE_ALARM, SHARED_MINING_ALARM, DATA_VERIFICATION_ALARM, ACCURATE_DELAY_ALARM, INSPECT_ALARM
-        "typeTxt": "\${actionData.typeTxt}", // Alarm type text value: synchronization task alarm, shared cache alarm, shared mining alarm, data verification alarm, accurate delay alarm
-        "metric": "\${actionData.metric}", // Event type: TASK_STATUS_STOP, TASK_STATUS_ERROR, TASK_FULL_COMPLETE, TASK_INCREMENT_START, TASK_INSPECT_ERROR, INSPECT_TASK_ERROR, DATANODE_CANNOT_CONNECT, DATANODE_TCP_CONNECT_CONSUME, DATANODE_HTTP_CONNECT_CONSUME, SYSTEM_FLOW_ENGINE_UP, SYSTEM_FLOW_ENGINE_DOWN, DATANODE_AVERAGE_HANDLE_CONSUME, TASK_INCREMENT_DELAY, PROCESSNODE_AVERAGE_HANDLE_CONSUME, INSPECT_COUNT_ERROR, INSPECT_VALUE_ERROR
-        "metricTxt": "\${actionData.metricTxt}", // Event type text value: task stopped, task error, task fully completed, task increment started, task inspection error, inspection task error, data node cannot connect, data node TCP connection completed, data node HTTP connection completed, engine online, engine offline, data node average handling time exceeded threshold, task increment delay exceeded threshold, node average handling time exceeded threshold, count inspection result row difference exceeded threshold, value inspection result data difference exceeded threshold
-        "name": "\${actionData.name}", // Specific task name
-        "node": "\${actionData.node}", // Node name that generated the alarm, empty if no node; for task alarms, the node is the task name
-        "currentValue": "\${actionData.currentValue}", // Value of the metric that triggered the alarm
-        "threshold": "\${actionData.threshold}", // Threshold of the metric that triggered the alarm
-        "lastOccurrenceTime": "\${actionData.lastOccurrenceTime}", // Time when the alarm last occurred
-        "tally": "\${actionData.tally}", // Number of times the alarm has occurred
-        "summary": "\${actionData.summary}", // Alarm content
-        "recoveryTime": "\${actionData.recoveryTime}", // Alarm recovery time
-        "closeTime": "\${actionData.closeTime}", // Alarm close time
-        "closeBy": "\${actionData.closeBy}", // Who closed the alarm
-        "agentId": "\${actionData.agentId}" // Belonging engine
-    }
-}`,
+    "hookId": "\${'{'}hookId{'}'}",
+    "actionTime": "\${'{'}actionTime{'}'}",
+    "title": "\${'{'}title{'}'}",
+    "content": "\${'{'}content{'}'}",
+    "actionData": {'{'} 
+        "status": "\${'{'}actionData.status{'}'}", // Indicates the current alarm status: ING (ongoing), RECOVER (recovered), CLOSE (closed)
+        "statusTxt": "\${'{'}actionData.statusTxt{'}'}", // Indicates the current alarm status text: ongoing, recovered, closed
+        "level": "\${'{'}actionData.level{'}'}", // Alarm level: RECOVERY, NORMAL, WARNING, CRITICAL, EMERGENCY, ERROR, WARN, INFO
+        "component": "\${'{'}actionData.component{'}'}", // Engine alarm component, fixed as: FE
+        "componentTxt": "\${'{'}actionData.componentTxt{'}'}", // Engine alarm component text value: Engine
+        "type": "\${'{'}actionData.type{'}'}", // Alarm type: SYNCHRONIZATIONTASK_ALARM, SHARED_CACHE_ALARM, SHARED_MINING_ALARM, DATA_VERIFICATION_ALARM, ACCURATE_DELAY_ALARM, INSPECT_ALARM
+        "typeTxt": "\${'{'}actionData.typeTxt{'}'}", // Alarm type text value: synchronization task alarm, shared cache alarm, shared mining alarm, data verification alarm, accurate delay alarm
+        "metric": "\${'{'}actionData.metric{'}'}", // Event type: TASK_STATUS_STOP, TASK_STATUS_ERROR, TASK_FULL_COMPLETE, TASK_INCREMENT_START, TASK_INSPECT_ERROR, INSPECT_TASK_ERROR, DATANODE_CANNOT_CONNECT, DATANODE_TCP_CONNECT_CONSUME, DATANODE_HTTP_CONNECT_CONSUME, SYSTEM_FLOW_ENGINE_UP, SYSTEM_FLOW_ENGINE_DOWN, DATANODE_AVERAGE_HANDLE_CONSUME, TASK_INCREMENT_DELAY, PROCESSNODE_AVERAGE_HANDLE_CONSUME, INSPECT_COUNT_ERROR, INSPECT_VALUE_ERROR
+        "metricTxt": "\${'{'}actionData.metricTxt{'}'}", // Event type text value: task stopped, task error, task fully completed, task increment started, task inspection error, inspection task error, data node cannot connect, data node TCP connection completed, data node HTTP connection completed, engine online, engine offline, data node average handling time exceeded threshold, task increment delay exceeded threshold, node average handling time exceeded threshold, count inspection result row difference exceeded threshold, value inspection result data difference exceeded threshold
+        "name": "\${'{'}actionData.name{'}'}", // Specific task name
+        "node": "\${'{'}actionData.node{'}'}", // Node name that generated the alarm, empty if no node; for task alarms, the node is the task name
+        "currentValue": "\${'{'}actionData.currentValue{'}'}", // Value of the metric that triggered the alarm
+        "threshold": "\${'{'}actionData.threshold{'}'}", // Threshold of the metric that triggered the alarm
+        "lastOccurrenceTime": "\${'{'}actionData.lastOccurrenceTime{'}'}", // Time when the alarm last occurred
+        "tally": "\${'{'}actionData.tally{'}'}", // Number of times the alarm has occurred
+        "summary": "\${'{'}actionData.summary{'}'}", // Alarm content
+        "recoveryTime": "\${'{'}actionData.recoveryTime{'}'}", // Alarm recovery time
+        "closeTime": "\${'{'}actionData.closeTime{'}'}", // Alarm close time
+        "closeBy": "\${'{'}actionData.closeBy{'}'}", // Who closed the alarm
+        "agentId": "\${'{'}actionData.agentId{'}'}" // Belonging engine
+    {'}'}
+{'}'} `,
   webhook_custom_template_ph: 'Custom template content, supports parameter-filled templates, e.g., ${alarm.name}',
   http_header: 'HTTP Request Headers',
   http_header_ph: 'HTTP request headers, enter multiple headers on separate lines, e.g., Accept: text/html',

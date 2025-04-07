@@ -1,6 +1,7 @@
 <script>
-import { inspectApi, metadataInstancesApi } from '@tap/api'
+import { CircleCheckFilled, CircleCloseFilled } from '@element-plus/icons-vue'
 
+import { inspectApi, metadataInstancesApi } from '@tap/api'
 import loadingImg from '@tap/assets/icons/loading.svg'
 import { FilterBar, VIcon } from '@tap/component'
 import i18n from '@tap/i18n'
@@ -19,12 +20,14 @@ export default {
     TablePage,
     VIcon,
     FilterBar,
+    CircleCheckFilled,
+    CircleCloseFilled,
     // ElIconError,
     // ElIconSuccess
   },
   data() {
     return {
-      isDaas:  import.meta.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       searchParams: {
         keyword: '',
         inspectMethod: '',
@@ -420,8 +423,8 @@ export default {
       >
         <template #default="scope">
           <div class="ellipsis">{{ scope.row.name }}</div>
-          <div class="font-color-slight">
-            <span
+          <div>
+            <el-tag type="info" size="small" disable-transitions
               >{{ getInspectName(scope.row) }} (
               {{
                 scope.row.mode === 'manual'
@@ -429,7 +432,7 @@ export default {
                   : $t('packages_business_verification_repeatingVerify')
               }}
               )
-            </span>
+            </el-tag>
             <span v-if="!scope.row.enabled" class="font-color-slight"
               >&nbsp;Disabled</span
             >
@@ -464,9 +467,9 @@ export default {
             >
               <div
                 v-if="scope.row.result !== 'passed'"
-                class="data-verify__status error"
+                class="data-verify__status error flex align-center gap-1"
               >
-                <i class="data-verify__icon el-icon-error" />
+                <el-icon class="color-danger"><CircleCloseFilled /></el-icon>
                 <span
                   v-if="
                     scope.row.inspectMethod === 'row_count' ||
@@ -488,8 +491,11 @@ export default {
                   {{ scope.row.difference_number }}
                 </span>
               </div>
-              <div v-else class="data-verify__status success">
-                <i class="data-verify__icon el-icon-success" />
+              <div
+                v-else
+                class="data-verify__status success flex align-center gap-1"
+              >
+                <el-icon class="color-success"><CircleCheckFilled /></el-icon>
                 <span>{{
                   $t('packages_business_verification_consistent')
                 }}</span>
@@ -497,14 +503,13 @@ export default {
             </template>
             <div
               v-else-if="scope.row.status === 'error'"
-              class="data-verify__status"
+              class="data-verify__status flex align-center gap-1"
             >
-              <i class="data-verify__icon el-icon-error" />
+              <el-icon class="color-danger"><CircleCloseFilled /></el-icon>
               <span>{{ $t('public_status_error') }}</span>
               <ElLink
                 v-if="scope.row.errorMsg"
                 type="primary"
-                class="ml-2"
                 @click="handleError(scope.row)"
                 >{{ $t('public_button_check') }}
               </ElLink>

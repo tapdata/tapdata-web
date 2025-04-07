@@ -1,123 +1,23 @@
-<template>
-  <section
-    v-show="isShow"
-    class="verify-panel border-start flex-column"
-    :class="{ flex: isShow, 'show-verify': isShow }"
-  >
-    <div class="flex justify-content-between align-items-center p-4">
-      <span class="font-color-normal fw-bold fs-7">{{ $t('packages_dag_monitor_leftsider_renwujiaoyan') }}</span>
-      <VIcon size="16" class="cursor-pointer" @click="$emit('showVerify')">close</VIcon>
-    </div>
-    <div class="px-4 pb-4 border-bottom">
-      <Chart :extend="pieOptions" class="chart"></Chart>
-    </div>
-    <div class="flex justify-content-between align-items-center px-4 pt-4">
-      <div class="flex align-items-center font-color-normal fw-bold fs-7">
-        <span>{{ $t('packages_dag_monitor_verifypanel_wentibiaoqingdan') }}</span>
-        <ElTooltip
-          :value="hasNew"
-          transition="tooltip-fade-in"
-          :content="
-            hasNew
-              ? $t('packages_dag_monitor_verifypanel_jiancedaoxinshu')
-              : $t('packages_dag_components_initiallist_dianjishuaxin')
-          "
-        >
-          <VIcon class="ml-2 color-primary cursor-pointer" size="9" @click="search">icon_table_selector_load</VIcon>
-        </ElTooltip>
-      </div>
-      <ElTooltip v-if="!!total" transition="tooltip-fade-in" :content="$t('packages_dag_monitor_leftsider_liebiao')">
-        <VIcon size="16" class="cursor-pointer" @click="$emit('verifyDetails')">menu-left</VIcon>
-      </ElTooltip>
-    </div>
-    <div class="px-4 py-2">
-      <ElInput
-        v-model="keyword"
-        :placeholder="$t('packages_dag_monitor_verifypanel_qingshurusousuo')"
-        clearable
-        @keydown.stop
-        @keyup.stop
-        @click.stop
-        @input="search"
-      >
-        <template #prefix>
-          <ElIcon><ElIconSearch /></ElIcon>
-        </template>
-      </ElInput>
-    </div>
-
-    <div v-loading="loading" class="flex-1" style="height: 0">
-      <DynamicScroller
-        ref="virtualScroller"
-        :items="list"
-        key-field="id"
-        :min-item-size="30"
-        class="scroller h-100"
-        v-infinite-scroll="loadMoreDB"
-      >
-        <template #after>
-          <div class="before-scroll-content text-center font-color-light py-1">
-            <VEmpty
-              v-if="!list.length"
-              :description="keyword ? $t('packages_dag_customer_logs_no_search_data') : $t('public_data_no_data')"
-            />
-            <div v-show="moreLoading">
-              <el-icon><el-icon-loading /></el-icon>
-            </div>
-            <div v-show="!moreLoading && noMore">
-              {{ $t('packages_dag_customer_logs_no_more_data') }}
-            </div>
-          </div>
-        </template>
-        <template #default="{ item, index, active }">
-          <DynamicScrollerItem :item="item" :active="active" :data-index="index" :size-dependencies="[item.id]">
-            <div class="px-4 py-2 user-select-none border-bottom">
-              <div class="flex justify-content-between mb-2">
-                <span>{{ $t('packages_dag_monitor_verifypanel_lianjieming') }}</span>
-                <ElLink type="primary" @click="$emit('connectionList', item.sourceConnName)">{{
-                  item.sourceConnName
-                }}</ElLink>
-              </div>
-              <div class="flex justify-content-between mb-2">
-                <span>{{ $t('packages_dag_monitor_verifypanel_biaoming') }}</span>
-                <ElLink type="primary" @click="$emit('verifyDetails', item.originalTableName)">{{
-                  item.originalTableName
-                }}</ElLink>
-              </div>
-              <div class="flex justify-content-between mb-2">
-                <span>{{ $t('packages_dag_monitor_verifypanel_yichangshujuhang') }}</span>
-                <span>{{ item.counts }}</span>
-              </div>
-            </div>
-          </DynamicScrollerItem>
-        </template>
-      </DynamicScroller>
-    </div>
-  </section>
-</template>
-
 <script>
-import { cloneDeep } from 'lodash'
-import i18n from '@tap/i18n'
+import { taskApi } from '@tap/api'
+import { Chart, VEmpty } from '@tap/component'
 
+import i18n from '@tap/i18n'
+import { calcUnit } from '@tap/shared'
+
+import Time from '@tap/shared/src/time'
+import { cloneDeep, debounce } from 'lodash'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { mapGetters } from 'vuex'
-import { debounce } from 'lodash'
-
-import { Chart } from '@tap/component'
-import { calcUnit } from '@tap/shared'
-import Time from '@tap/shared/src/time'
-import { taskApi } from '@tap/api'
-import { VEmpty } from '@tap/component'
 
 export default {
+  name: 'VerifyPanel',
   components: {
     Chart,
     DynamicScroller,
     DynamicScrollerItem,
     VEmpty,
   },
-  name: 'VerifyPanel',
   props: {
     dataflow: Object,
     data: {
@@ -160,7 +60,7 @@ export default {
           ...totals,
         }
       }
-      let arr = [
+      const arr = [
         {
           name: i18n.t('packages_dag_monitor_verifypanel_jiaoyanyizhi'),
           key: 'passed',
@@ -193,7 +93,9 @@ export default {
     },
 
     noMore() {
-      return this.page !== 1 && this.page >= Math.ceil(this.total / this.pageSize)
+      return (
+        this.page !== 1 && this.page >= Math.ceil(this.total / this.pageSize)
+      )
     },
   },
   watch: {
@@ -224,7 +126,7 @@ export default {
     getFilter(page) {
       const { pageSize, keyword } = this
       page = page || this.page
-      let filter = {
+      const filter = {
         id: this.dataflow.id,
         limit: pageSize,
         skip: pageSize * (page - 1),
@@ -256,7 +158,10 @@ export default {
           } else {
             this.scrollTopOfDBList()
             this.list = items
-            this.idMap = items.reduce((map, item) => ((map[item.id] = true), map), {})
+            this.idMap = items.reduce(
+              (map, item) => ((map[item.id] = true), map),
+              {},
+            )
           }
         })
         .finally(() => {
@@ -285,7 +190,7 @@ export default {
     getPieOptions(data) {
       const total = eval(data.map((t) => t.value).join('+'))
       const totalText = i18n.t('packages_dag_monitor_verifypanel_zongji')
-      let options = {
+      const options = {
         tooltip: {
           trigger: 'item',
           backgroundColor: '#364252',
@@ -374,7 +279,8 @@ export default {
           }
         })
         options.legend.formatter = (name) => {
-          const count = options.series[0].data?.find((t) => t.name === name)?.value || 0
+          const count =
+            options.series[0].data?.find((t) => t.name === name)?.value || 0
           const arr = [`{orgname|${name}}`, `{count|${count.toLocaleString()}}`]
           return arr.join('')
         }
@@ -401,7 +307,8 @@ export default {
       const len = items.length
       const flag =
         len === this.list.length &&
-        items.map((t) => t.id + '_' + t.counts).join() === this.list.map((t) => t.id + '_' + t.counts).join() // id、差异都相同
+        items.map((t) => `${t.id}_${t.counts}`).join() ===
+          this.list.map((t) => `${t.id}_${t.counts}`).join() // id、差异都相同
       this.total = total
       // 只有第一页数据时，自动更新列表
       if (this.page === 1 && (!items.length || !flag)) {
@@ -421,9 +328,149 @@ export default {
       if (this.$refs.virtualScroller) this.$refs.virtualScroller.scrollToItem(0)
     },
   },
-  emits: ['showVerify', 'verifyDetails', 'connectionList', 'verifyDetails', 'connectionList'],
+  emits: [
+    'showVerify',
+    'verifyDetails',
+    'connectionList',
+    'verifyDetails',
+    'connectionList',
+  ],
 }
 </script>
+
+<template>
+  <section
+    v-show="isShow"
+    class="verify-panel border-start flex-column"
+    :class="{ flex: isShow, 'show-verify': isShow }"
+  >
+    <div class="flex justify-content-between align-items-center p-4">
+      <span class="font-color-normal fw-bold fs-7">{{
+        $t('packages_dag_monitor_leftsider_renwujiaoyan')
+      }}</span>
+      <VIcon size="16" class="cursor-pointer" @click="$emit('showVerify')"
+        >close</VIcon
+      >
+    </div>
+    <div class="px-4 pb-4 border-bottom">
+      <Chart :extend="pieOptions" class="chart" />
+    </div>
+    <div class="flex justify-content-between align-items-center px-4 pt-4">
+      <div class="flex align-items-center font-color-normal fw-bold fs-7">
+        <span>{{
+          $t('packages_dag_monitor_verifypanel_wentibiaoqingdan')
+        }}</span>
+        <ElTooltip
+          :value="hasNew"
+          transition="tooltip-fade-in"
+          :content="
+            hasNew
+              ? $t('packages_dag_monitor_verifypanel_jiancedaoxinshu')
+              : $t('packages_dag_components_initiallist_dianjishuaxin')
+          "
+        >
+          <VIcon
+            class="ml-2 color-primary cursor-pointer"
+            size="9"
+            @click="search"
+            >icon_table_selector_load</VIcon
+          >
+        </ElTooltip>
+      </div>
+      <ElTooltip
+        v-if="!!total"
+        transition="tooltip-fade-in"
+        :content="$t('packages_dag_monitor_leftsider_liebiao')"
+      >
+        <VIcon size="16" class="cursor-pointer" @click="$emit('verifyDetails')"
+          >menu-left</VIcon
+        >
+      </ElTooltip>
+    </div>
+    <div class="px-4 py-2">
+      <ElInput
+        v-model="keyword"
+        :placeholder="$t('packages_dag_monitor_verifypanel_qingshurusousuo')"
+        clearable
+        @keydown.stop
+        @keyup.stop
+        @click.stop
+        @input="search"
+      >
+        <template #prefix>
+          <ElIcon><ElIconSearch /></ElIcon>
+        </template>
+      </ElInput>
+    </div>
+
+    <div v-loading="loading" class="flex-1" style="height: 0">
+      <DynamicScroller
+        ref="virtualScroller"
+        v-infinite-scroll="loadMoreDB"
+        :items="list"
+        key-field="id"
+        :min-item-size="30"
+        class="scroller h-100"
+      >
+        <template #after>
+          <div class="before-scroll-content text-center font-color-light py-1">
+            <VEmpty
+              v-if="!list.length"
+              :description="
+                keyword
+                  ? $t('packages_dag_customer_logs_no_search_data')
+                  : $t('public_data_no_data')
+              "
+            />
+            <div v-show="moreLoading">
+              <el-icon><el-icon-loading /></el-icon>
+            </div>
+            <div v-show="!moreLoading && noMore">
+              {{ $t('packages_dag_customer_logs_no_more_data') }}
+            </div>
+          </div>
+        </template>
+        <template #default="{ item, index, active }">
+          <DynamicScrollerItem
+            :item="item"
+            :active="active"
+            :data-index="index"
+            :size-dependencies="[item.id]"
+          >
+            <div class="px-4 py-2 user-select-none border-bottom">
+              <div class="flex justify-content-between mb-2">
+                <span>{{
+                  $t('packages_dag_monitor_verifypanel_lianjieming')
+                }}</span>
+                <ElLink
+                  type="primary"
+                  @click="$emit('connectionList', item.sourceConnName)"
+                  >{{ item.sourceConnName }}</ElLink
+                >
+              </div>
+              <div class="flex justify-content-between mb-2">
+                <span>{{
+                  $t('packages_dag_monitor_verifypanel_biaoming')
+                }}</span>
+                <ElLink
+                  type="primary"
+                  @click="$emit('verifyDetails', item.originalTableName)"
+                  >{{ item.originalTableName }}</ElLink
+                >
+              </div>
+              <div class="flex justify-content-between mb-2">
+                <span>{{
+                  $t('packages_dag_monitor_verifypanel_yichangshujuhang')
+                }}</span>
+                <span>{{ item.counts }}</span>
+              </div>
+            </div>
+          </DynamicScrollerItem>
+        </template>
+      </DynamicScroller>
+    </div>
+  </section>
+</template>
 
 <style lang="scss" scoped>
 .verify-panel {

@@ -1,7 +1,7 @@
-import { useRouter } from 'vue-router'
 import i18n from '@tap/i18n'
-import './index.scss'
 import { copyToClipboard } from '@tap/shared'
+import { useRouter } from 'vue-router'
+import './index.scss'
 
 function renderDialog(stack) {
   return (
@@ -10,7 +10,9 @@ function renderDialog(stack) {
         <ElIcon class="text-lg mr-2 color-danger">
           <ElIconCircleCloseFilled />
         </ElIcon>
-        <span class="fs-6 fw-sub">{i18n.t('packages_business_error_details')}</span>
+        <span class="fs-6 fw-sub">
+          {i18n.t('packages_business_error_details')}
+        </span>
       </div>
       <div
         class="mt-3 position-relative rounded-lg overflow-hidden error-stack-pre-wrap"
@@ -19,16 +21,23 @@ function renderDialog(stack) {
         <div class="position-absolute end-0 top-0 px-2 pt-1 error-stack-actions">
           <ElButton
             onClick={() => {
-              copyToClipboard(stack, document.getElementById('error-message-dialog'))
+              copyToClipboard(
+                stack,
+                document.querySelector('#error-message-dialog'),
+              )
               ElMessage.success(i18n.t('public_message_copy_success'))
             }}
             icon={ElIconCopyDocument}
             text
+            type="primary"
           >
             {i18n.t('public_button_copy')}
           </ElButton>
         </div>
-        <pre class="m-0 p-4 pt-0 mt-6 font-color-dark" style="max-height: 60vh; font-size: 13px; overflow-x: auto;">
+        <pre
+          class="m-0 p-4 pt-0 mt-6 font-color-dark"
+          style="max-height: 60vh; font-size: 13px; overflow-x: auto;"
+        >
           {stack}
         </pre>
       </div>
@@ -58,10 +67,10 @@ function renderMessage(message, stack) {
 
 export function ErrorMessage(stack, message) {
   if (import.meta.env.VITE_APP_KEYWORD) {
-    stack = stack.replace(/tapdata\s?/gi,  import.meta.env.VUE_APP_KEYWORD)
+    stack = stack.replaceAll(/tapdata\s?/gi, import.meta.env.VUE_APP_KEYWORD)
   }
 
-  MessageBox({
+  ElMessageBox({
     title: '',
     showClose: true,
     customClass: ' w-80 max-w-1000 rounded-lg pro-message-box',
@@ -96,13 +105,17 @@ export function ErrorMessage(stack, message) {
 }
 
 export function showErrorMessage(error) {
-  let message = error?.message || error?.msg || i18n.t('public_message_request_error')
+  let message =
+    error?.message || error?.msg || i18n.t('public_message_request_error')
   let duration = 3000
   let showClose = false
 
   if (error?.stack) {
-    if ( import.meta.env.VUE_APP_KEYWORD) {
-      error.stack = error.stack.replace(/tapdata\s?/gi,  import.meta.env.VUE_APP_KEYWORD)
+    if (import.meta.env.VUE_APP_KEYWORD) {
+      error.stack = error.stack.replaceAll(
+        /tapdata\s?/gi,
+        import.meta.env.VUE_APP_KEYWORD,
+      )
     }
 
     message = renderMessage(message, error.stack)

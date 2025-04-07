@@ -1,82 +1,10 @@
-<template>
-  <div class="system-notification" v-loading="loading">
-    <div class="notification-head pt-8 pb-4 px-6">
-      <div class="title font-color-dark fs-7">
-        {{ $t('daas_notification_center_xitonggaojing') }}
-      </div>
-    </div>
-    <el-tabs v-model="activeName">
-      <el-tab-pane :label="$t('daas_notification_systemalarm_quanbugaojing')" name="first"></el-tab-pane>
-    </el-tabs>
-    <TablePage
-      ref="table"
-      row-key="id+indexName"
-      class="share-list"
-      :remoteMethod="getData"
-      @selection-change="
-        (val) => {
-          multipleSelection = val
-        }
-      "
-    >
-      <template v-slot:search>
-        <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
-      </template>
-      <template v-slot:operation>
-        <div>
-          <el-button class="btn btn-create" type="primary" :loading="loadingConfig" @click="handleClose">
-            <span>{{ $t('public_button_close') }}</span>
-          </el-button>
-        </div>
-      </template>
-      <el-table-column type="selection"></el-table-column>
-      <el-table-column :label="$t('packages_dag_components_alert_gaojingjibie')" prop="level">
-        <template #default="{ row }">
-          <span :class="['status-' + row.levelType, 'status-block']">
-            {{ row.levelLabel }}
-          </span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('packages_dag_components_alert_gaojingzhuangtai')" prop="status">
-        <template #default="{ row }">
-          <span> {{ row.statusLabel }} </span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('daas_notification_systemalarm_gaojingduixiang')" prop="name"></el-table-column>
-      <el-table-column
-        :label="$t('packages_dag_components_alert_gaojingmiaoshu')"
-        prop="summary"
-        min-width="150"
-      ></el-table-column>
-      <el-table-column
-        :label="$t('packages_dag_components_alert_gaojingshoucifa')"
-        prop="firstOccurrenceTime"
-      ></el-table-column>
-      <el-table-column
-        :label="$t('packages_dag_components_alert_gaojingzuijinfa')"
-        prop="lastOccurrenceTime"
-        :width="160"
-      ></el-table-column>
-      <el-table-column fixed="right" :label="$t('public_operation')">
-        <template #default="{ row }">
-          <el-button text @click="handleClose(row.id)" :disabled="row.status === 'CLOESE'">{{
-            $t('public_button_close')
-          }}</el-button>
-          <el-divider direction="vertical"></el-divider>
-          <el-button text @click="goLog(row)">{{ $t('packages_dag_monitor_bottompanel_rizhi') }}</el-button>
-        </template>
-      </el-table-column>
-    </TablePage>
-  </div>
-</template>
-
 <script>
-import i18n from '@/i18n'
-
-import { FilterBar } from '@tap/component'
-import { TablePage, ALARM_LEVEL_MAP, ALARM_STATUS_MAP } from '@tap/business'
 import { alarmApi } from '@tap/api'
+
+import { ALARM_LEVEL_MAP, ALARM_STATUS_MAP, TablePage } from '@tap/business'
+import { FilterBar } from '@tap/component'
 import dayjs from 'dayjs'
+import i18n from '@/i18n'
 
 export default {
   components: { TablePage, FilterBar },
@@ -98,27 +26,27 @@ export default {
       count: '',
     }
   },
-  created() {
-    this.getFilterItems()
-  },
   computed: {
     table() {
       return this.$refs.table
     },
   },
   watch: {
-    '$route.query'() {
+    '$route.query': function () {
       this.searchParams = this.$route.query
       this.table.fetch(1)
     },
   },
+  created() {
+    this.getFilterItems()
+  },
   methods: {
     getData({ page }) {
-      let { status, time, keyword, start, end } = this.searchParams
-      let { current, size } = page
-      let where = {
+      const { status, time, keyword, start, end } = this.searchParams
+      const { current, size } = page
+      const where = {
         page: current,
-        size: size,
+        size,
       }
       if (status || status !== '') {
         where.status = status
@@ -136,7 +64,7 @@ export default {
         where.end = end
       }
       return alarmApi.list(where).then((data) => {
-        let list = data?.items || []
+        const list = data?.items || []
         return {
           total: data?.total || 0,
           data: list.map((item) => {
@@ -193,7 +121,9 @@ export default {
         ids = this.multipleSelection.map((item) => item.id)
       }
       alarmApi.close(ids).then(() => {
-        this.$message.success(i18n.t('daas_notification_systemalarm_guanbichenggong'))
+        this.$message.success(
+          i18n.t('daas_notification_systemalarm_guanbichenggong'),
+        )
         this.table.fetch(1)
       })
     },
@@ -217,6 +147,104 @@ export default {
   },
 }
 </script>
+
+<template>
+  <div v-loading="loading" class="system-notification">
+    <div class="notification-head pt-8 pb-4 px-6">
+      <div class="title font-color-dark fs-7">
+        {{ $t('daas_notification_center_xitonggaojing') }}
+      </div>
+    </div>
+    <el-tabs v-model="activeName">
+      <el-tab-pane
+        :label="$t('daas_notification_systemalarm_quanbugaojing')"
+        name="first"
+      />
+    </el-tabs>
+    <TablePage
+      ref="table"
+      row-key="id+indexName"
+      class="share-list"
+      :remote-method="getData"
+      @selection-change="
+        (val) => {
+          multipleSelection = val
+        }
+      "
+    >
+      <template #search>
+        <FilterBar
+          v-model:value="searchParams"
+          :items="filterItems"
+          @fetch="table.fetch(1)"
+        />
+      </template>
+      <template #operation>
+        <div>
+          <el-button
+            class="btn btn-create"
+            type="primary"
+            :loading="loadingConfig"
+            @click="handleClose"
+          >
+            <span>{{ $t('public_button_close') }}</span>
+          </el-button>
+        </div>
+      </template>
+      <el-table-column type="selection" />
+      <el-table-column
+        :label="$t('packages_dag_components_alert_gaojingjibie')"
+        prop="level"
+      >
+        <template #default="{ row }">
+          <span :class="[`status-${row.levelType}`, 'status-block']">
+            {{ row.levelLabel }}
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('packages_dag_components_alert_gaojingzhuangtai')"
+        prop="status"
+      >
+        <template #default="{ row }">
+          <span> {{ row.statusLabel }} </span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('daas_notification_systemalarm_gaojingduixiang')"
+        prop="name"
+      />
+      <el-table-column
+        :label="$t('packages_dag_components_alert_gaojingmiaoshu')"
+        prop="summary"
+        min-width="150"
+      />
+      <el-table-column
+        :label="$t('packages_dag_components_alert_gaojingshoucifa')"
+        prop="firstOccurrenceTime"
+      />
+      <el-table-column
+        :label="$t('packages_dag_components_alert_gaojingzuijinfa')"
+        prop="lastOccurrenceTime"
+        :width="160"
+      />
+      <el-table-column fixed="right" :label="$t('public_operation')">
+        <template #default="{ row }">
+          <el-button
+            text
+            :disabled="row.status === 'CLOESE'"
+            @click="handleClose(row.id)"
+            >{{ $t('public_button_close') }}</el-button
+          >
+          <el-divider direction="vertical" />
+          <el-button text @click="goLog(row)">{{
+            $t('packages_dag_monitor_bottompanel_rizhi')
+          }}</el-button>
+        </template>
+      </el-table-column>
+    </TablePage>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .system-notification {

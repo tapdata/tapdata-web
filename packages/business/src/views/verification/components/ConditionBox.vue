@@ -1,401 +1,27 @@
-<template>
-  <div class="joint-table rounded-lg" :class="{ error: !!jointErrorMessage }">
-    <div class="joint-table-header px-4 py-2 flex align-items-center border-bottom">
-      <span class="fs-6">{{ $t('packages_business_verification_verifyCondition') }}</span>
-      <span
-        class="ml-2 rounded-pill font-color-light px-2 text-center"
-        style="min-width: 32px; background-color: #818b981f"
-        >{{ filteredList.length }}</span
-      >
-      <span v-if="!list.length" class="ml-4 color-danger">{{
-        $t('packages_business_verification_message_error_joint_table_not_set')
-      }}</span>
-      <span class="color-danger ml-6">{{ jointErrorMessage }}</span>
-      <div class="flex-1"></div>
-      <ElInput
-        v-model="searchValue"
-        :placeholder="$t('packages_form_table_rename_index_sousuobiaoming')"
-        class="w-auto mr-4"
-        size="mini"
-        clearable
-      >
-        <template #prefix>
-          <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
-        </template>
-      </ElInput>
-      <ElLink
-        v-if="!isCountOrHash && list.some((t) => !t.source.sortColumn || !t.target.sortColumn)"
-        type="primary"
-        :disabled="!list.length"
-        class="mr-4"
-        @click="handleClearIndexEmpty"
-        >{{ $t('packages_business_components_conditionbox_yijianqingchusuo') }}
-      </ElLink>
-      <ElLink type="primary" :disabled="!list.length" @click="handleClear"
-        >{{ $t('packages_business_verification_clear') }}
-      </ElLink>
-    </div>
-    <DynamicScroller
-      :items="filteredList"
-      :min-item-size="30"
-      id="data-verification-form"
-      ref="virtualScroller"
-      key-field="id"
-      class="joint-table-main scroller px-2 py-1 h-100"
-    >
-      <template #default="{ item, index, active }">
-        <DynamicScrollerItem
-          :item="item"
-          :active="active"
-          :data-index="index"
-          :size-dependencies="[item.id, item.source, item.target]"
-        >
-          <div class="joint-table-item" :key="item.id + index">
-            <div class="joint-table-setting overflow-hidden">
-              <div class="flex justify-content-between">
-                <div class="cond-item__title flex align-items-center">
-                  <span class="font-color-main fs-7">{{
-                    $t('packages_business_components_conditionbox_jianyantiaojian')
-                  }}</span>
-                  <span class="ml-1">{{ index + 1 }}</span>
-                </div>
-                <div class="flex align-items-center">
-                  <ElButton text @click.stop="removeItem(index)">{{ $t('public_button_delete') }}</ElButton>
-                </div>
-              </div>
-              <div class="setting-item mt-4" :key="'connection' + item.id">
-                <label class="item-label"
-                  >{{ $t('packages_business_components_conditionbox_daijiaoyanlianjie') }}:</label
-                >
-                <AsyncSelect
-                  v-model:value="item.source.connectionId"
-                  :method="getConnectionsListMethod"
-                  itemQuery="name"
-                  itemValue="id"
-                  filterable
-                  class="item-select"
-                  :key="'sourceConnectionId' + item.id"
-                  @change="handleChangeConnection(arguments[0], item.source, arguments[1])"
-                >
-                </AsyncSelect>
-                <span class="item-icon fs-6">
-                  <el-icon><el-icon-arrow-right /></el-icon>
-                </span>
-                <AsyncSelect
-                  v-model:value="item.target.connectionId"
-                  :method="getConnectionsListMethod"
-                  itemQuery="name"
-                  itemValue="id"
-                  filterable
-                  class="item-select"
-                  :key="'targetConnectionId' + item.id"
-                  @change="handleChangeConnection(arguments[0], item.target, arguments[1])"
-                >
-                </AsyncSelect>
-              </div>
-              <div class="setting-item mt-4" :key="'table' + item.id">
-                <label class="item-label">{{ $t('packages_business_components_conditionbox_laiyuanbiao') }}:</label>
-                <AsyncSelect
-                  v-model:value="item.source.table"
-                  :method="getTableListMethod"
-                  :params="{
-                    connectionId: item.source.connectionId,
-                    nodeId: item.source.nodeId,
-                  }"
-                  itemQuery="name"
-                  itemType="string"
-                  lazy
-                  filterable
-                  class="item-select"
-                  :key="'sourceTable' + item.id"
-                  @change="handleChangeTable(arguments[0], item, index, 'source')"
-                >
-                </AsyncSelect>
-                <span class="item-icon">{{ $t('packages_business_components_conditionbox_mubiaobiao') }}:</span>
-                <AsyncSelect
-                  v-model:value="item.target.table"
-                  :method="getTableListMethod"
-                  :params="{
-                    connectionId: item.target.connectionId,
-                    nodeId: item.target.nodeId,
-                  }"
-                  itemQuery="name"
-                  itemType="string"
-                  lazy
-                  filterable
-                  class="item-select"
-                  :key="'targetTable' + item.id"
-                  @change="handleChangeTable(arguments[0], item, index, 'target')"
-                >
-                </AsyncSelect>
-              </div>
-              <div class="setting-item mt-4" :key="'SchemaToForm' + item.id + index + inspectMethod">
-                <SchemaToForm
-                  :ref="`schemaToForm_${item.id}`"
-                  :value="item"
-                  :schema="formSchema"
-                  :scope="schemaScope"
-                  :colon="true"
-                  class="w-100"
-                  label-width="130"
-                  @input="(value) => (item = value)"
-                />
-              </div>
-              <template v-if="!isCountOrHash">
-                <div class="setting-item mt-4">
-                  <label class="item-label">{{ $t('packages_business_verification_indexField') }}: </label>
-                  <FieldSelectWrap
-                    v-model="item.source.sortColumn"
-                    :options="item.source.fields"
-                    :key="`item-source-sortColumn` + item.id"
-                    class="flex-1"
-                    @focus="handleFocus(item.source)"
-                  ></FieldSelectWrap>
-                  <!-- <MultiSelection
-                  v-model:value="item.source.sortColumn"
-                  class="item-select"
-                  :class="{ 'empty-data': !item.source.sortColumn }"
-                  :options="item.source.fields"
-                  :id="'item-source-' + index"
-                  :key="`item-source-sortColumn` + item.id"
-                  @focus="handleFocus(item.source)"
-                ></MultiSelection> -->
-                  <span class="item-icon"></span>
-                  <FieldSelectWrap
-                    v-model="item.target.sortColumn"
-                    :options="item.source.fields"
-                    :key="`item-target-sortColumn` + item.id"
-                    class="flex-1"
-                    @focus="handleFocus(item.target)"
-                  ></FieldSelectWrap>
-                  <!-- <MultiSelection
-                  v-model:value="item.target.sortColumn"
-                  class="item-select"
-                  :class="{ 'empty-data': !item.target.sortColumn }"
-                  :options="item.target.fields"
-                  :key="`item-target-sortColumn` + item.id"
-                  @focus="handleFocus(item.target)"
-                ></MultiSelection> -->
-                </div>
-
-                <div class="setting-item mt-4">
-                  <label class="item-label">{{ $t('packages_business_custom_collate') }}: </label>
-                  <div class="flex-1">
-                    <div class="flex gap-3 align-center">
-                      <ElSwitch
-                        v-model="item.source.enableCustomCollate"
-                        @change="toggleCollate(item.source, $event)"
-                      />
-
-                      <ElButton type="text" @click="schemaScope.openApiDrawer('inspect-collate')">
-                        <VIcon>question-circle</VIcon>
-                        {{ $t('public_view_docs') }}
-                      </ElButton>
-                    </div>
-
-                    <div v-if="item.source.enableCustomCollate">
-                      <CollateMap
-                        v-model="item.source.collate"
-                        :sort-column="item.source.sortColumn"
-                        :fields="item.source.fields"
-                      />
-                    </div>
-                  </div>
-                  <span class="item-icon"></span>
-                  <div class="flex-1">
-                    <div class="flex gap-3 align-center">
-                      <ElSwitch
-                        v-model="item.target.enableCustomCollate"
-                        @change="toggleCollate(item.target, $event)"
-                      />
-
-                      <ElButton type="text" @click="schemaScope.openApiDrawer('inspect-collate')">
-                        <VIcon>question-circle</VIcon>
-                        {{ $t('public_view_docs') }}
-                      </ElButton>
-                    </div>
-
-                    <div v-if="item.target.enableCustomCollate">
-                      <CollateMap
-                        v-model="item.target.collate"
-                        :sort-column="item.target.sortColumn"
-                        :fields="item.target.fields"
-                      />
-                    </div>
-                  </div>
-                  <!-- <MultiSelection
-                  v-model="item.target.sortColumn"
-                  class="item-select"
-                  :class="{ 'empty-data': !item.target.sortColumn }"
-                  :options="item.target.fields"
-                  :key="`item-target-sortColumn` + item.id"
-                  @focus="handleFocus(item.target)"
-                ></MultiSelection> -->
-                </div>
-
-                <div
-                  v-if="nullsLastState[item.source.connectionId] || nullsLastState[item.target.connectionId]"
-                  class="setting-item mt-4 align-items-center"
-                >
-                  <label v-if="nullsLastState[item.source.connectionId]" class="item-label"
-                    >{{ $t('packages_business_nulls_first') }}
-                    <el-tooltip effect="dark" placement="top" :content="$t('packages_business_nulls_first_tip')">
-                      <i class="el-tooltip el-icon-info" style="color: #909399; font-size: 14px"></i> </el-tooltip
-                    >:
-                  </label>
-                  <label v-else class="item-label"></label>
-                  <div class="flex-1">
-                    <SwitchNumber
-                      v-if="nullsLastState[item.source.connectionId]"
-                      v-model="item.source.customNullSort"
-                    />
-                  </div>
-
-                  <span v-if="nullsLastState[item.target.connectionId]" class="item-icon"
-                    >{{ $t('packages_business_nulls_first')
-                    }}<el-tooltip effect="dark" placement="top" :content="$t('packages_business_nulls_first_tip')">
-                      <i class="el-tooltip el-icon-info" style="color: #909399; font-size: 14px"></i> </el-tooltip
-                    >:</span
-                  >
-                  <div v-if="nullsLastState[item.target.connectionId]" class="flex-1">
-                    <SwitchNumber v-model="item.target.customNullSort" />
-                  </div>
-                </div>
-              </template>
-
-              <div v-if="inspectMethod === 'field'" class="setting-item align-items-center mt-4">
-                <label class="item-label">{{ $t('packages_business_components_fieldbox_daijiaoyanmoxing') }}:</label>
-                <ElRadioGroup
-                  v-model="item.modeType"
-                  :disabled="getModeTypeDisabled(item)"
-                  @change="handleChangeModeType(arguments[0], item, index)"
-                >
-                  <ElRadio label="all">{{ $t('packages_business_components_fieldbox_quanziduan') }}</ElRadio>
-                  <ElRadio label="custom">{{ $t('packages_business_connections_databaseform_zidingyi') }}</ElRadio>
-                </ElRadioGroup>
-                <ElLink
-                  v-if="item.modeType === 'custom'"
-                  type="primary"
-                  class="ml-4"
-                  @click="handleCustomFields(item, index)"
-                >
-                  {{ $t('packages_business_components_conditionbox_chakanzidingyi') }}
-                  ({{ item.source.columns ? item.source.columns.length : 0 }})
-                </ElLink>
-              </div>
-              <div v-show="inspectMethod === 'field'" class="setting-item mt-4">
-                <ElCheckbox v-model="item.showAdvancedVerification" @change="handleChangeAdvanced(item, arguments[0])"
-                  >{{ $t('packages_business_verification_advanceVerify') }}
-                </ElCheckbox>
-              </div>
-              <div class="setting-item mt-4" v-if="item.showAdvancedVerification && inspectMethod === 'field'">
-                <label class="item-label">{{ $t('packages_business_verification_JSVerifyLogic') }}: </label>
-                <ElButton v-if="!item.webScript || item.webScript === ''" @click="addScript(index)"
-                  >{{ $t('packages_business_verification_addJS') }}
-                </ElButton>
-                <template v-else>
-                  <ElLink type="primary" class="ml-4" @click="editScript(index)">{{ $t('public_button_edit') }}</ElLink>
-                  <ElLink type="primary" class="ml-4" @click="removeScript(index)"
-                    >{{ $t('public_button_delete') }}
-                  </ElLink>
-                </template>
-              </div>
-              <div
-                class="setting-item mt-4"
-                v-if="inspectMethod === 'field' && item.showAdvancedVerification && item.webScript"
-              >
-                <pre class="item-script">{{ item.webScript }}</pre>
-              </div>
-            </div>
-          </div>
-        </DynamicScrollerItem>
-      </template>
-    </DynamicScroller>
-    <div class="joint-table-footer">
-      <ElButton @click="addItem">{{ $t('packages_business_verification_addTable') }}</ElButton>
-      <ElButton
-        v-if="taskId"
-        type="primary"
-        :disabled="!!list.length"
-        :loading="autoAddTableLoading"
-        @click="autoAddTable"
-        >{{ $t('packages_business_verification_button_auto_add_table') }}
-      </ElButton>
-
-      <template v-if="!isCountOrHash">
-        <el-divider class="mx-3" direction="vertical"></el-divider>
-        <div class="inline-flex align-items-center">
-          <span class="fs-7">{{ $t('packages_business_auto_fill_join_fields') }}</span>
-          <el-tooltip class="color-primary" effect="dark" placement="top">
-            <template #content>
-              <div>{{ $t('packages_business_auto_fill_join_tooltip_title') }}</div>
-              <div>{{ $t('packages_business_auto_fill_join_tooltip_primary') }}</div>
-              <div>{{ $t('packages_business_auto_fill_join_tooltip_notnull') }}</div>
-              <div>{{ $t('packages_business_auto_fill_join_tooltip_all') }}</div>
-            </template>
-            <i class="el-icon-question"></i>
-          </el-tooltip>
-          <el-switch class="ml-3" v-model="autoSuggestJoinFields" />
-        </div>
-      </template>
-    </div>
-    <ElDialog
-      width="60%"
-      :title="$t('packages_business_verification_JSVerifyLogic')"
-      v-model="dialogAddScriptVisible"
-      :before-close="handleAddScriptClose"
-    >
-      <div class="js-wrap">
-        <div class="jsBox">
-          <div class="js-fixText"><span style="color: #0000ff">function </span><span> validate(sourceRow){</span></div>
-          <VCodeEditor v-model:value="webScript" height="500" class="js-editor"></VCodeEditor>
-          <div class="js-fixText">}</div>
-        </div>
-        <GitBook
-          v-resize.left="{
-            minWidth: 350,
-            maxWidth: 500,
-          }"
-          :value="doc"
-          class="example ml-4 color-primary"
-        ></GitBook>
-      </div>
-      <template v-slot:footer>
-        <span class="dialog-footer">
-          <ElButton @click="handleAddScriptClose">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton type="primary" @click="submitScript">{{ $t('public_button_confirm') }}</ElButton>
-        </span>
-      </template>
-    </ElDialog>
-    <FieldDialog ref="fieldDialog" @save="handleChangeFields"></FieldDialog>
-
-    <DocsDrawer :visible="showDoc" :path="docPath" @update:visible="showDoc = $event"></DocsDrawer>
-  </div>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../../utils/gogocodeTransfer'
-import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-import { merge, cloneDeep, uniqBy, isEmpty, debounce, isString } from 'lodash'
 import { action } from '@formily/reactive'
-
-import i18n from '@tap/i18n'
-import { AsyncSelect, SchemaToForm, HighlightCode } from '@tap/form'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
-import { uuid } from '@tap/shared'
-import { CONNECTION_STATUS_MAP } from '../../../shared'
 import { GitBook, VCodeEditor } from '@tap/component'
 import resize from '@tap/component/src/directives/resize'
 
-import { TABLE_PARAMS, META_INSTANCE_FIELDS, DATA_NODE_TYPES } from './const'
+import SwitchNumber from '@tap/component/src/SwitchNumber.vue'
+import { AsyncSelect, HighlightCode, SchemaToForm } from '@tap/form'
+import i18n from '@tap/i18n'
+import { uuid } from '@tap/shared'
+import { cloneDeep, debounce, isEmpty, isString, merge, uniqBy } from 'lodash'
+import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+import { $emit, $off, $on, $once } from '../../../../utils/gogocodeTransfer'
+
+import { CONNECTION_STATUS_MAP } from '../../../shared'
 import { inspectMethod as inspectMethodMap } from '../const'
 import MultiSelection from '../MultiSelection'
-import FieldDialog from './FieldDialog'
-import DocsDrawer from './DocsDrawer.vue'
-import FieldSelectWrap from './FieldSelectWrap.vue'
 import CollateMap from './CollateMap.vue'
-import SwitchNumber from '@tap/component/src/SwitchNumber.vue'
+import { DATA_NODE_TYPES, META_INSTANCE_FIELDS, TABLE_PARAMS } from './const'
+import DocsDrawer from './DocsDrawer.vue'
+import FieldDialog from './FieldDialog'
+import FieldSelectWrap from './FieldSelectWrap.vue'
 export default {
+  name: 'ConditionBox',
   components: {
     DocsDrawer,
     AsyncSelect,
@@ -410,9 +36,8 @@ export default {
     HighlightCode,
     FieldSelectWrap,
     CollateMap,
-    SwitchNumber
+    SwitchNumber,
   },
-  name: 'ConditionBox',
   directives: {
     resize,
   },
@@ -454,7 +79,11 @@ export default {
           this.inspectMethod === 'row_count'
             ? 'count_by_partition_filter_function'
             : 'query_by_advance_filter_function',
-        useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
+        useAsyncDataSource: (
+          service,
+          fieldName = 'dataSource',
+          ...serviceParams
+        ) => {
           return (field) => {
             field.loading = true
             service({ field }, ...serviceParams).then(
@@ -484,20 +113,22 @@ export default {
               const data = await metadataInstancesApi.tapTables({
                 filter: JSON.stringify(params),
               })
-              fields = Object.values(data.items[0]?.nameFieldMap || {}).map((t) => {
-                return {
-                  id: t.id,
-                  label: t.fieldName || t.field_name,
-                  value: t.fieldName || t.field_name,
-                  field_name: t.fieldName || t.field_name,
-                  primary_key_position: t.primaryKey,
-                  data_type: t.dataType || t.data_type,
-                  primaryKey: t.primaryKey,
-                  unique: t.unique,
-                  type: t.dataType || t.data_type,
-                  tapType: JSON.stringify(t.tapType)
-                }
-              })
+              fields = Object.values(data.items[0]?.nameFieldMap || {}).map(
+                (t) => {
+                  return {
+                    id: t.id,
+                    label: t.fieldName || t.field_name,
+                    value: t.fieldName || t.field_name,
+                    field_name: t.fieldName || t.field_name,
+                    primary_key_position: t.primaryKey,
+                    data_type: t.dataType || t.data_type,
+                    primaryKey: t.primaryKey,
+                    unique: t.unique,
+                    type: t.dataType || t.data_type,
+                    tapType: JSON.stringify(t.tapType),
+                  }
+                },
+              )
             }
             const result = fields
             if (result.length) {
@@ -505,11 +136,11 @@ export default {
             }
 
             return result
-          } catch (e) {
+          } catch {
             return []
           }
         },
-        openApiDrawer: path => {
+        openApiDrawer: (path) => {
           this.docPath = isString(path) ? path : ''
           this.showDoc = true
         },
@@ -551,13 +182,17 @@ export default {
                     ],
                   },
                   enableCustomCommand: {
-                    title: i18n.t('packages_business_components_conditionbox_laiyuanbiaoshuju'),
+                    title: i18n.t(
+                      'packages_business_components_conditionbox_laiyuanbiaoshuju',
+                    ),
                     type: 'boolean',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       className: 'item-control-horizontal',
                       layout: 'horizontal',
-                      tooltip: i18n.t('packages_business_components_conditionbox_enableCustomCommand_tip'),
+                      tooltip: i18n.t(
+                        'packages_business_components_conditionbox_enableCustomCommand_tip',
+                      ),
                     },
                     'x-component': 'Switch',
                     default: false,
@@ -584,14 +219,21 @@ export default {
                         'x-decorator': 'FormItem',
                         'x-component': 'Radio.Group',
                         enum: [
-                          { label: i18n.t('public_query'), value: 'executeQuery' },
-                          { label: i18n.t('public_aggregate'), value: 'aggregate' },
+                          {
+                            label: i18n.t('public_query'),
+                            value: 'executeQuery',
+                          },
+                          {
+                            label: i18n.t('public_aggregate'),
+                            value: 'aggregate',
+                          },
                         ],
                         'x-reactions': {
                           dependencies: ['source.databaseType'],
                           fulfill: {
                             state: {
-                              display: '{{$deps[0].toLowerCase().includes("mongo")?"visible":"hidden"}}',
+                              display:
+                                '{{$deps[0].toLowerCase().includes("mongo")?"visible":"hidden"}}',
                             },
                           },
                         },
@@ -606,10 +248,14 @@ export default {
                             },
                             type: 'void',
                             'x-reactions': {
-                              dependencies: ['source.customCommand.command', 'source.databaseType'],
+                              dependencies: [
+                                'source.customCommand.command',
+                                'source.databaseType',
+                              ],
                               fulfill: {
                                 state: {
-                                  visible: '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="executeQuery"}}',
+                                  visible:
+                                    '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="executeQuery"}}',
                                 },
                               },
                             },
@@ -638,7 +284,10 @@ export default {
                                 'x-decorator': 'FormItem',
                                 'x-component': 'JsonEditor',
                                 'x-component-props': {
-                                  options: { showPrintMargin: false, useWrapMode: true },
+                                  options: {
+                                    showPrintMargin: false,
+                                    useWrapMode: true,
+                                  },
                                 },
                               },
                               descWrap: {
@@ -647,11 +296,11 @@ export default {
                                 'x-decorator': 'FormItem',
                                 'x-decorator-props': {
                                   colon: false,
-                                  feedbackLayout: 'none'
+                                  feedbackLayout: 'none',
                                 },
                                 'x-component': 'div',
                                 'x-component-props': {
-                                  class: 'flex align-center gap-2'
+                                  class: 'flex align-center gap-2',
                                 },
                                 properties: {
                                   desc: {
@@ -659,22 +308,26 @@ export default {
                                     'x-component': 'div',
                                     'x-component-props': {
                                       style: {
-                                        color: '#909399'
-                                      }
+                                        color: '#909399',
+                                      },
                                     },
-                                    'x-content': i18n.t('packages_dag_nodes_table_jinzhichiqu')
+                                    'x-content': i18n.t(
+                                      'packages_dag_nodes_table_jinzhichiqu',
+                                    ),
                                   },
                                   link: {
                                     type: 'void',
                                     'x-component': 'Link',
                                     'x-component-props': {
                                       type: 'primary',
-                                      onClick: '{{openApiDrawer}}'
+                                      onClick: '{{openApiDrawer}}',
                                     },
-                                    'x-content': i18n.t('packages_business_view_more_apis')
-                                  }
-                                }
-                              }
+                                    'x-content': i18n.t(
+                                      'packages_business_view_more_apis',
+                                    ),
+                                  },
+                                },
+                              },
                             },
                           },
                           mongoAgg: {
@@ -684,10 +337,14 @@ export default {
                             },
                             type: 'void',
                             'x-reactions': {
-                              dependencies: ['source.customCommand.command', 'source.databaseType'],
+                              dependencies: [
+                                'source.customCommand.command',
+                                'source.databaseType',
+                              ],
                               fulfill: {
                                 state: {
-                                  visible: '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="aggregate"}}',
+                                  visible:
+                                    '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="aggregate"}}',
                                 },
                               },
                             },
@@ -713,7 +370,10 @@ export default {
                                 'x-decorator': 'FormItem',
                                 'x-component': 'JsonEditor',
                                 'x-component-props': {
-                                  options: { showPrintMargin: false, useWrapMode: true },
+                                  options: {
+                                    showPrintMargin: false,
+                                    useWrapMode: true,
+                                  },
                                 },
                               },
                               descWrap: {
@@ -722,11 +382,11 @@ export default {
                                 'x-decorator': 'FormItem',
                                 'x-decorator-props': {
                                   colon: false,
-                                  feedbackLayout: 'none'
+                                  feedbackLayout: 'none',
                                 },
                                 'x-component': 'div',
                                 'x-component-props': {
-                                  class: 'flex align-center gap-2'
+                                  class: 'flex align-center gap-2',
                                 },
                                 properties: {
                                   desc: {
@@ -734,22 +394,26 @@ export default {
                                     'x-component': 'div',
                                     'x-component-props': {
                                       style: {
-                                        color: '#909399'
-                                      }
+                                        color: '#909399',
+                                      },
                                     },
-                                    'x-content': i18n.t('packages_dag_nodes_table_shiligro')
+                                    'x-content': i18n.t(
+                                      'packages_dag_nodes_table_shiligro',
+                                    ),
                                   },
                                   link: {
                                     type: 'void',
                                     'x-component': 'Link',
                                     'x-component-props': {
                                       type: 'primary',
-                                      onClick: '{{openApiDrawer}}'
+                                      onClick: '{{openApiDrawer}}',
                                     },
-                                    'x-content': i18n.t('packages_business_view_more_apis')
-                                  }
-                                }
-                              }
+                                    'x-content': i18n.t(
+                                      'packages_business_view_more_apis',
+                                    ),
+                                  },
+                                },
+                              },
                             },
                           },
                           sql: {
@@ -761,13 +425,20 @@ export default {
                             'x-decorator': 'FormItem',
                             'x-component': 'SqlEditor',
                             'x-component-props': {
-                              options: { showPrintMargin: false, useWrapMode: true },
+                              options: {
+                                showPrintMargin: false,
+                                useWrapMode: true,
+                              },
                             },
                             'x-reactions': {
-                              dependencies: ['source.enableCustomCommand', 'source.databaseType'],
+                              dependencies: [
+                                'source.enableCustomCommand',
+                                'source.databaseType',
+                              ],
                               fulfill: {
                                 state: {
-                                  visible: '{{!!$deps[0] && !$deps[1].toLowerCase().includes("mongo")}}',
+                                  visible:
+                                    '{{!!$deps[0] && !$deps[1].toLowerCase().includes("mongo")}}',
                                 },
                               },
                             },
@@ -813,14 +484,18 @@ export default {
                     ],
                   },
                   enableCustomCommand: {
-                    title: i18n.t('packages_business_components_conditionbox_mubiaobiaoshuju'),
+                    title: i18n.t(
+                      'packages_business_components_conditionbox_mubiaobiaoshuju',
+                    ),
                     type: 'boolean',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       className: 'item-control-horizontal',
                       layout: 'horizontal',
                       labelWrap: true,
-                      tooltip: i18n.t('packages_business_components_conditionbox_enableCustomCommand_tip'),
+                      tooltip: i18n.t(
+                        'packages_business_components_conditionbox_enableCustomCommand_tip',
+                      ),
                     },
                     'x-component': 'Switch',
                     default: false,
@@ -847,14 +522,21 @@ export default {
                         'x-decorator': 'FormItem',
                         'x-component': 'Radio.Group',
                         enum: [
-                          { label: i18n.t('public_query'), value: 'executeQuery' },
-                          { label: i18n.t('public_aggregate'), value: 'aggregate' },
+                          {
+                            label: i18n.t('public_query'),
+                            value: 'executeQuery',
+                          },
+                          {
+                            label: i18n.t('public_aggregate'),
+                            value: 'aggregate',
+                          },
                         ],
                         'x-reactions': {
                           dependencies: ['target.databaseType'],
                           fulfill: {
                             state: {
-                              display: '{{$deps[0].toLowerCase().includes("mongo")?"visible":"hidden"}}',
+                              display:
+                                '{{$deps[0].toLowerCase().includes("mongo")?"visible":"hidden"}}',
                             },
                           },
                         },
@@ -869,10 +551,14 @@ export default {
                             },
                             type: 'void',
                             'x-reactions': {
-                              dependencies: ['target.customCommand.command', 'target.databaseType'],
+                              dependencies: [
+                                'target.customCommand.command',
+                                'target.databaseType',
+                              ],
                               fulfill: {
                                 state: {
-                                  visible: '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="executeQuery"}}',
+                                  visible:
+                                    '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="executeQuery"}}',
                                 },
                               },
                             },
@@ -901,7 +587,10 @@ export default {
                                 'x-decorator': 'FormItem',
                                 'x-component': 'JsonEditor',
                                 'x-component-props': {
-                                  options: { showPrintMargin: false, useWrapMode: true },
+                                  options: {
+                                    showPrintMargin: false,
+                                    useWrapMode: true,
+                                  },
                                 },
                               },
                               descWrap: {
@@ -910,11 +599,11 @@ export default {
                                 'x-decorator': 'FormItem',
                                 'x-decorator-props': {
                                   colon: false,
-                                  feedbackLayout: 'none'
+                                  feedbackLayout: 'none',
                                 },
                                 'x-component': 'div',
                                 'x-component-props': {
-                                  class: 'flex align-center gap-2'
+                                  class: 'flex align-center gap-2',
                                 },
                                 properties: {
                                   desc: {
@@ -922,22 +611,26 @@ export default {
                                     'x-component': 'div',
                                     'x-component-props': {
                                       style: {
-                                        color: '#909399'
-                                      }
+                                        color: '#909399',
+                                      },
                                     },
-                                    'x-content': i18n.t('packages_dag_nodes_table_jinzhichiqu')
+                                    'x-content': i18n.t(
+                                      'packages_dag_nodes_table_jinzhichiqu',
+                                    ),
                                   },
                                   link: {
                                     type: 'void',
                                     'x-component': 'Link',
                                     'x-component-props': {
                                       type: 'primary',
-                                      onClick: '{{openApiDrawer}}'
+                                      onClick: '{{openApiDrawer}}',
                                     },
-                                    'x-content': i18n.t('packages_business_view_more_apis')
-                                  }
-                                }
-                              }
+                                    'x-content': i18n.t(
+                                      'packages_business_view_more_apis',
+                                    ),
+                                  },
+                                },
+                              },
                             },
                           },
                           mongoAgg: {
@@ -947,10 +640,14 @@ export default {
                             },
                             type: 'void',
                             'x-reactions': {
-                              dependencies: ['target.customCommand.command', 'target.databaseType'],
+                              dependencies: [
+                                'target.customCommand.command',
+                                'target.databaseType',
+                              ],
                               fulfill: {
                                 state: {
-                                  visible: '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="aggregate"}}',
+                                  visible:
+                                    '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="aggregate"}}',
                                 },
                               },
                             },
@@ -976,7 +673,10 @@ export default {
                                 'x-decorator': 'FormItem',
                                 'x-component': 'JsonEditor',
                                 'x-component-props': {
-                                  options: { showPrintMargin: false, useWrapMode: true },
+                                  options: {
+                                    showPrintMargin: false,
+                                    useWrapMode: true,
+                                  },
                                 },
                               },
                               descWrap: {
@@ -985,11 +685,11 @@ export default {
                                 'x-decorator': 'FormItem',
                                 'x-decorator-props': {
                                   colon: false,
-                                  feedbackLayout: 'none'
+                                  feedbackLayout: 'none',
                                 },
                                 'x-component': 'div',
                                 'x-component-props': {
-                                  class: 'flex align-center gap-2'
+                                  class: 'flex align-center gap-2',
                                 },
                                 properties: {
                                   desc: {
@@ -997,22 +697,26 @@ export default {
                                     'x-component': 'div',
                                     'x-component-props': {
                                       style: {
-                                        color: '#909399'
-                                      }
+                                        color: '#909399',
+                                      },
                                     },
-                                    'x-content': i18n.t('packages_dag_nodes_table_shiligro')
+                                    'x-content': i18n.t(
+                                      'packages_dag_nodes_table_shiligro',
+                                    ),
                                   },
                                   link: {
                                     type: 'void',
                                     'x-component': 'Link',
                                     'x-component-props': {
                                       type: 'primary',
-                                      onClick: '{{openApiDrawer}}'
+                                      onClick: '{{openApiDrawer}}',
                                     },
-                                    'x-content': i18n.t('packages_business_view_more_apis')
-                                  }
-                                }
-                              }
+                                    'x-content': i18n.t(
+                                      'packages_business_view_more_apis',
+                                    ),
+                                  },
+                                },
+                              },
                             },
                           },
                           sql: {
@@ -1024,13 +728,20 @@ export default {
                             'x-decorator': 'FormItem',
                             'x-component': 'SqlEditor',
                             'x-component-props': {
-                              options: { showPrintMargin: false, useWrapMode: true },
+                              options: {
+                                showPrintMargin: false,
+                                useWrapMode: true,
+                              },
                             },
                             'x-reactions': {
-                              dependencies: ['target.enableCustomCommand', 'target.databaseType'],
+                              dependencies: [
+                                'target.enableCustomCommand',
+                                'target.databaseType',
+                              ],
                               fulfill: {
                                 state: {
-                                  visible: '{{!!$deps[0] && !$deps[1].toLowerCase().includes("mongo")}}',
+                                  visible:
+                                    '{{!!$deps[0] && !$deps[1].toLowerCase().includes("mongo")}}',
                                 },
                               },
                             },
@@ -1056,12 +767,12 @@ export default {
         },
       },
       autoSuggestJoinFields: true,
-      searchValue: ''
+      searchValue: '',
     }
   },
   computed: {
     flowStages() {
-      let types = this.isDB ? ['database'] : ['table']
+      const types = this.isDB ? ['database'] : ['table']
       return this.allStages.filter((stg) => types.includes(stg.type))
     },
     isCountOrHash() {
@@ -1071,11 +782,13 @@ export default {
       if (!this.searchValue) return this.list
 
       const searchTerm = this.searchValue.toLowerCase()
-      return this.list.filter(item => {
+      return this.list.filter((item) => {
         const sourceTable = (item.source.table || '').toLowerCase()
         const targetTable = (item.target.table || '').toLowerCase()
 
-        return sourceTable.includes(searchTerm) || targetTable.includes(searchTerm)
+        return (
+          sourceTable.includes(searchTerm) || targetTable.includes(searchTerm)
+        )
       })
     },
     nullsLastState() {
@@ -1086,7 +799,7 @@ export default {
         }
         return cur
       }, {})
-    }
+    },
   },
   watch: {
     taskId(v1, v2) {
@@ -1139,12 +852,14 @@ export default {
           },
           order: ['status DESC', 'name ASC'],
         }
-        let result = await connectionsApi.get({
+        const result = await connectionsApi.get({
           filter: JSON.stringify(merge(filter, _filter)),
         })
 
         result.items = result.items.map((item) => {
-          const findDynamicSchema = item.capabilities.find((t) => t.id === 'dynamic_schema')
+          const findDynamicSchema = item.capabilities.find(
+            (t) => t.id === 'dynamic_schema',
+          )
           if (findDynamicSchema) {
             this.dynamicSchemaMap[item.id] = true
           }
@@ -1155,16 +870,18 @@ export default {
             id: connectionId,
             name: connectionName,
             label: `${connectionName} ${
-              item.status ? `(${CONNECTION_STATUS_MAP[item.status]?.text || item.status})` : ''
+              item.status
+                ? `(${CONNECTION_STATUS_MAP[item.status]?.text || item.status})`
+                : ''
             }`,
             value: connectionId,
-            databaseType: databaseType,
+            databaseType,
             attrs: { connectionId, connectionName, databaseType },
           }
         })
 
         return result
-      } catch (e) {
+      } catch {
         return { items: [], total: 0 }
       }
     },
@@ -1180,7 +897,7 @@ export default {
       try {
         const size = filter.size || 20
         const page = filter.page || 1
-        let params = {
+        const params = {
           where: {
             meta_type: 'table',
             sourceType: 'SOURCE',
@@ -1198,7 +915,7 @@ export default {
         const res = await metadataInstancesApi.tapTables({
           filter: JSON.stringify(params),
         })
-        let result = {}
+        const result = {}
         result.items = res.items.map((t) => t.name)
         result.total = res.total
         res.items.forEach((el) => {
@@ -1206,7 +923,15 @@ export default {
           this.setFieldsByItem(
             [nodeId, connectionId, el.name],
             Object.values(el.nameFieldMap || {}).map((t) => {
-              const { id, fieldName, primaryKeyPosition, fieldType, data_type, primaryKey, unique } = t
+              const {
+                id,
+                fieldName,
+                primaryKeyPosition,
+                fieldType,
+                data_type,
+                primaryKey,
+                unique,
+              } = t
               return {
                 id,
                 field_name: fieldName,
@@ -1216,13 +941,13 @@ export default {
                 primaryKey,
                 unique,
                 type: t.data_type,
-                tapType: JSON.stringify(t.tapType)
+                tapType: JSON.stringify(t.tapType),
               }
             }),
           )
         })
         return result
-      } catch (e) {
+      } catch {
         return { items: [], total: 0 }
       }
     },
@@ -1231,7 +956,9 @@ export default {
       const keyword = filter.where?.name?.like
       let arr
       if (keyword) {
-        arr = this.flowStages.filter((t) => t.attrs?.connectionName.includes(filter.where?.name?.like))
+        arr = this.flowStages.filter((t) =>
+          t.attrs?.connectionName.includes(filter.where?.name?.like),
+        )
       } else {
         arr = this.flowStages
       }
@@ -1242,7 +969,9 @@ export default {
           const connectionId = t.connectionId
           const connectionName = t.attrs?.connectionName
           const databaseType = t.databaseType
-          const findDynamicSchema = t.attrs?.capabilities.find((t) => t.id === 'dynamic_schema')
+          const findDynamicSchema = t.attrs?.capabilities.find(
+            (t) => t.id === 'dynamic_schema',
+          )
           if (findDynamicSchema) {
             this.dynamicSchemaMap[t.connectionId] = true
           }
@@ -1258,7 +987,7 @@ export default {
             value: connectionId,
             id: connectionId,
             label: `${nodeName} / ${connectionName}`,
-            databaseType: databaseType,
+            databaseType,
           }
         }),
         'value',
@@ -1278,7 +1007,7 @@ export default {
         return { items: [], total: 0 }
       }
 
-      let params = {
+      const params = {
         nodeId,
         fields: ['original_name', 'fields', 'qualified_name', 'name'],
         page: filter?.page || 1,
@@ -1289,7 +1018,7 @@ export default {
         params.tableFilter = keyword
       }
 
-      let res = await metadataInstancesApi.nodeSchemaPage(params)
+      const res = await metadataInstancesApi.nodeSchemaPage(params)
 
       const tableList = res.items?.map((t) => t.name) || []
       const total = res.total
@@ -1297,7 +1026,14 @@ export default {
         this.setFieldsByItem(
           [nodeId, connectionId, el.name],
           el.fields.map((t) => {
-            const { id, field_name, primary_key_position, data_type, primaryKey, unique } = t
+            const {
+              id,
+              field_name,
+              primary_key_position,
+              data_type,
+              primaryKey,
+              unique,
+            } = t
             return {
               id,
               field_name,
@@ -1314,14 +1050,16 @@ export default {
         if (!findNode.outputLanes.length) {
           const { tablePrefix, tableSuffix, tableNameTransform } = findNode
           tableNames = tableNames.map((t) => {
-            let name = (tablePrefix || '') + t + (tableSuffix || '')
+            const name = (tablePrefix || '') + t + (tableSuffix || '')
             return tableNameTransform ? name[tableNameTransform]() : name
           })
         }
-        return { items: tableNames, total: total }
+        return { items: tableNames, total }
       }
       if (keyword) {
-        tableNames = tableNames.filter((t) => t.toLowerCase().includes(keyword.toLowerCase()))
+        tableNames = tableNames.filter((t) =>
+          t.toLowerCase().includes(keyword.toLowerCase()),
+        )
       }
       return { items: tableNames, total: tableNames.length }
     },
@@ -1331,20 +1069,22 @@ export default {
      * @param1 value 节点id
      * @param2 data 整个连线数据
      * @param3 flag true连线下游、false连线上游
-     * */
+     */
     getLinkData(value, data = [], flag = false) {
       const f = data.find((t) => t[flag ? 'source' : 'target'] === value)
-      return f ? this.getLinkData(f[!flag ? 'source' : 'target'], data, flag) : value
+      return f
+        ? this.getLinkData(f[!flag ? 'source' : 'target'], data, flag)
+        : value
     },
 
     // 获取一条线上的源节点和目标节点
     getMatchNodeList() {
       const edgesList = cloneDeep(this.edges)
-      let result = uniqBy(
+      const result = uniqBy(
         edgesList.map((t) => {
           const source = this.getLinkData(t.source, edgesList)
           const target = this.getLinkData(t.target, edgesList, true)
-          const key = source + '_' + target
+          const key = `${source}_${target}`
           return {
             source,
             target,
@@ -1364,11 +1104,13 @@ export default {
         if (targetNode.type === 'database') {
           tableNames = el.tableNames
           updateConditionFieldMap = targetNode.updateConditionFieldMap || {}
-          tableNameRelation = targetNode.syncObjects?.[0]?.tableNameRelation || []
+          tableNameRelation =
+            targetNode.syncObjects?.[0]?.tableNameRelation || []
           objectNames = targetNode.syncObjects?.[0]?.objectNames || []
         } else if (targetNode.type === 'table') {
           tableNames = [el.tableName, targetNode.tableName] // 加上源表名，否则源和目标表名不一致时，源表关联字段不会自动填充
-          updateConditionFieldMap[targetNode.tableName] = targetNode.updateConditionFields || []
+          updateConditionFieldMap[targetNode.tableName] =
+            targetNode.updateConditionFields || []
           tableNameRelation[el.tableName] = targetNode.tableName
         }
 
@@ -1418,7 +1160,9 @@ export default {
         if (!res) {
           return
         }
-        this.list = this.list.filter((t) => t.source.sortColumn && t.target.sortColumn)
+        this.list = this.list.filter(
+          (t) => t.source.sortColumn && t.target.sortColumn,
+        )
       })
     },
 
@@ -1449,14 +1193,13 @@ export default {
       this.autoAddTableLoading = true
       this.updateAutoAddTableLoading()
       const connectionSet = new Set()
-      let tableNames = []
+      const tableNames = []
       const matchNodeList = this.getMatchNodeList()
 
       matchNodeList.forEach((m) => {
         connectionSet.add(m.sourceConnectionId)
         connectionSet.add(m.targetConnectionId)
-        tableNames.push(...m.tableNames)
-        tableNames.push(...m.objectNames)
+        tableNames.push(...m.tableNames, ...m.objectNames)
       })
 
       const connectionIds = [...connectionSet]
@@ -1468,20 +1211,26 @@ export default {
         this.autoAddTableLoading = false
         this.updateAutoAddTableLoading()
         if (this.allStages.length > this.flowStages.length)
-          return this.$message.error(i18n.t('packages_business_components_conditionbox_cunzaichulijiedian_wufazidong'))
-        return this.$message.error(i18n.t('packages_business_components_conditionbox_suoxuanrenwuque'))
+          return this.$message.error(
+            i18n.t(
+              'packages_business_components_conditionbox_cunzaichulijiedian_wufazidong',
+            ),
+          )
+        return this.$message.error(
+          i18n.t('packages_business_components_conditionbox_suoxuanrenwuque'),
+        )
       }
-      let where = {
+      const where = {
         meta_type: {
           inq: DATA_NODE_TYPES,
         },
         'source.id': {
-          inq: connectionIds
+          inq: connectionIds,
         },
         original_name: {
-          inq: Array.from(new Set(tableNames))
+          inq: Array.from(new Set(tableNames)),
         },
-        taskId: this.taskId
+        taskId: this.taskId,
       }
       // this.autoAddTableLoading = true
       // this.updateAutoAddTableLoading()
@@ -1491,7 +1240,7 @@ export default {
           fields: META_INSTANCE_FIELDS,
         })
         .then((data) => {
-          let list = []
+          const list = []
           matchNodeList.forEach((m) => {
             const {
               source,
@@ -1510,7 +1259,7 @@ export default {
 
             const sourceTableList = Object.keys(tableNameRelation)
             sourceTableList.forEach((ge) => {
-              let item = this.getItemOptions()
+              const item = this.getItemOptions()
               // 填充source
               item.source.nodeId = source
               item.source.nodeName = sourceName
@@ -1519,7 +1268,8 @@ export default {
               item.source.connectionName = sourceConnectionName
               item.source.currentLabel = `${sourceName} / ${sourceConnectionName}`
               item.source.table = ge // findTable.original_name
-              item.source.capabilities = capabilitiesMap[sourceConnectionId]?.capabilities || []
+              item.source.capabilities =
+                capabilitiesMap[sourceConnectionId]?.capabilities || []
               // 填充target
               item.target.nodeId = target
               item.target.nodeName = targetName
@@ -1528,20 +1278,27 @@ export default {
               item.target.connectionName = targetConnectionName
               item.target.currentLabel = `${targetName} / ${targetConnectionName}`
               item.target.table = tableNameRelation[ge] // findTargetTable.original_name
-              item.target.capabilities = capabilitiesMap[targetConnectionId]?.capabilities || []
+              item.target.capabilities =
+                capabilitiesMap[targetConnectionId]?.capabilities || []
 
-              const updateList = cloneDeep(updateConditionFieldMap[tableNameRelation[ge]] || []).filter(
-                t => t !== '_no_pk_hash'
+              const updateList = cloneDeep(
+                updateConditionFieldMap[tableNameRelation[ge]] || [],
+              ).filter((t) => t !== '_no_pk_hash')
+              const findTable = data.find(
+                (t) =>
+                  t.source.id === sourceConnectionId && t.original_name === ge,
               )
-              let findTable = data.find((t) => t.source.id === sourceConnectionId && t.original_name === ge)
-              let findTargetTable = data.find(
-                (t) => t.source.id === targetConnectionId && t.original_name === tableNameRelation[ge],
+              const findTargetTable = data.find(
+                (t) =>
+                  t.source.id === targetConnectionId &&
+                  t.original_name === tableNameRelation[ge],
               )
 
               if (findTable) {
                 let sourceSortColumn = updateList.length
                   ? updateList.join(',')
-                  : findTable.sortColumns?.join(',') || this.getPrimaryKeyFieldStr(findTable.fields)
+                  : findTable.sortColumns?.join(',') ||
+                    this.getPrimaryKeyFieldStr(findTable.fields)
 
                 if (updateList.length && findTargetTable?.fields?.length) {
                   const fieldMap = findTargetTable?.fields?.reduce((acc, t) => {
@@ -1556,47 +1313,76 @@ export default {
                     .join(',')
                 }
 
-                item.source.fields = findTable.fields.map(t => {
+                item.source.fields = findTable.fields.map((t) => {
                   t.isPrimaryKey = t.primary_key_position > 0
                   return t
                 })
                 item.source.sortColumn = sourceSortColumn
 
-                const key = [source || '', sourceConnectionId, item.source.table].join()
+                const key = [
+                  source || '',
+                  sourceConnectionId,
+                  item.source.table,
+                ].join()
                 this.fieldsMap[key] = item.source.fields
               }
 
               if (findTargetTable) {
                 const targetSortColumn = updateList.length
                   ? updateList.join(',')
-                  : findTargetTable.sortColumns?.join(',') || this.getPrimaryKeyFieldStr(findTargetTable.fields)
+                  : findTargetTable.sortColumns?.join(',') ||
+                    this.getPrimaryKeyFieldStr(findTargetTable.fields)
 
-                item.target.fields = findTargetTable.fields.map(t => {
+                item.target.fields = findTargetTable.fields.map((t) => {
                   t.isPrimaryKey = t.primary_key_position > 0
                   return t
                 })
 
                 item.target.sortColumn = targetSortColumn
-                const key = [target || '', targetConnectionId, item.target.table].join()
+                const key = [
+                  target || '',
+                  targetConnectionId,
+                  item.target.table,
+                ].join()
                 this.fieldsMap[key] = item.target.fields
               }
 
-              if (this.autoSuggestJoinFields && !item.source.sortColumn && !item.target.sortColumn) {
-                let sourceFields = item.source.fields.filter(t => !t.is_nullable)
-                let targetFields = item.target.fields.filter(t => !t.is_nullable)
+              if (
+                this.autoSuggestJoinFields &&
+                !item.source.sortColumn &&
+                !item.target.sortColumn
+              ) {
+                let sourceFields = item.source.fields.filter(
+                  (t) => !t.is_nullable,
+                )
+                let targetFields = item.target.fields.filter(
+                  (t) => !t.is_nullable,
+                )
 
-                sourceFields = sourceFields.length ? sourceFields : item.source.fields
-                targetFields = targetFields.length ? targetFields : item.target.fields
+                sourceFields = sourceFields.length
+                  ? sourceFields
+                  : item.source.fields
+                targetFields = targetFields.length
+                  ? targetFields
+                  : item.target.fields
 
-                item.source.sortColumn = sourceFields.map(t => t.field_name).join(',')
-                item.target.sortColumn = targetFields.map(t => t.field_name).join(',')
+                item.source.sortColumn = sourceFields
+                  .map((t) => t.field_name)
+                  .join(',')
+                item.target.sortColumn = targetFields
+                  .map((t) => t.field_name)
+                  .join(',')
               }
 
               list.push(item)
             })
           })
           if (!list.length) {
-            return this.$message.error(i18n.t('packages_business_components_conditionbox_suoxuanrenwuque'))
+            return this.$message.error(
+              i18n.t(
+                'packages_business_components_conditionbox_suoxuanrenwuque',
+              ),
+            )
           }
           this.list = list
 
@@ -1614,7 +1400,7 @@ export default {
     },
 
     loadList() {
-      let data = cloneDeep(this.data)
+      const data = cloneDeep(this.data)
       data.forEach((el) => {
         el.modeType = el.source.columns ? 'custom' : 'all'
       })
@@ -1622,7 +1408,7 @@ export default {
     },
 
     getList() {
-      let list = cloneDeep(this.list)
+      const list = cloneDeep(this.list)
       if (this.taskId) {
         list.forEach((el) => {
           if (el.modeType === 'all') {
@@ -1641,14 +1427,17 @@ export default {
       item.databaseType = opt.databaseType
 
       if (this.capabilitiesMap?.[opt.attrs?.connectionId]) {
-        item.capabilities = this.capabilitiesMap[opt.attrs?.connectionId]?.capabilities || []
+        item.capabilities =
+          this.capabilitiesMap[opt.attrs?.connectionId]?.capabilities || []
       } else {
-        const { capabilities, tags } = await this.getConnectionCapabilities(opt.attrs?.connectionId)
+        const { capabilities, tags } = await this.getConnectionCapabilities(
+          opt.attrs?.connectionId,
+        )
         item.capabilities = capabilities
 
         this.$set(this.capabilitiesMap, opt.attrs?.connectionId, {
           capabilities,
-          tags
+          tags,
         })
       }
 
@@ -1714,7 +1503,9 @@ export default {
 
       // 获取连线信息
       const matchNodeList = this.getMatchNodeList()
-      let matchNode = matchNodeList.find((t) => [t.source, t.target].includes(item[type].nodeId))
+      let matchNode = matchNodeList.find((t) =>
+        [t.source, t.target].includes(item[type].nodeId),
+      )
       if (!matchNode) {
         return
       }
@@ -1735,8 +1526,10 @@ export default {
       } = matchNode
 
       // 自动填充索引字段
-      let updateList = updateConditionFieldMap[val] || {}
-      item[type].sortColumn = updateList.length ? updateList.join(',') : this.getPrimaryKeyFieldStr(fields)
+      const updateList = updateConditionFieldMap[val] || {}
+      item[type].sortColumn = updateList.length
+        ? updateList.join(',')
+        : this.getPrimaryKeyFieldStr(fields)
 
       if (type === 'target') {
         item.target.databaseType = targetDatabaseType
@@ -1752,7 +1545,8 @@ export default {
       item.target.currentLabel = `${targetName} / ${targetConnectionName}`
       item.target.table = tableName ? tableName : tableNameRelation[val]
 
-      item.target.capabilities = this.capabilitiesMap[targetConnectionId]?.capabilities || []
+      item.target.capabilities =
+        this.capabilitiesMap[targetConnectionId]?.capabilities || []
 
       const key = [target || '', targetConnectionId, item.target.table].join()
       if (this.fieldsMap[key]) {
@@ -1774,7 +1568,8 @@ export default {
       metadataInstancesApi.nodeSchemaPage(params).then((data) => {
         item.target.fields =
           data.items?.[0]?.fields.map((t) => {
-            const { id, field_name, primary_key_position, primaryKey, unique } = t
+            const { id, field_name, primary_key_position, primaryKey, unique } =
+              t
             return { id, field_name, primary_key_position, primaryKey, unique }
           }) || []
         // 设置主键
@@ -1809,8 +1604,8 @@ export default {
     },
 
     submitScript() {
-      let task = this.list
-      let formIndex = this.formIndex
+      const task = this.list
+      const formIndex = this.formIndex
       task[formIndex].webScript = this.webScript
       task[formIndex].jsEngineName = this.jsEngineName
       this.jsEngineName = ''
@@ -1821,9 +1616,11 @@ export default {
 
     editScript(index) {
       this.formIndex = index
-      let task = this.list
-      let script = JSON.parse(JSON.stringify(task[this.formIndex].webScript))
-      this.jsEngineName = JSON.parse(JSON.stringify(task[this.formIndex].jsEngineName || 'nashorn'))
+      const task = this.list
+      const script = JSON.parse(JSON.stringify(task[this.formIndex].webScript))
+      this.jsEngineName = JSON.parse(
+        JSON.stringify(task[this.formIndex].jsEngineName || 'nashorn'),
+      )
       this.webScript = script
       this.dialogAddScriptVisible = true
     },
@@ -1850,11 +1647,15 @@ export default {
 
     getFieldsByItem(item, type = 'source') {
       const { nodeId, connectionId, table } = item[type] || {}
-      return this.fieldsMap[[nodeId || '', connectionId, table].filter((t) => t).join()] || []
+      return (
+        this.fieldsMap[
+          [nodeId || '', connectionId, table].filter((t) => t).join()
+        ] || []
+      )
     },
 
     getPrimaryKeyFieldStr(data = []) {
-      let sortField = (list) => {
+      const sortField = (list) => {
         return (
           list?.sort((a, b) => {
             return a.field_name > b.field_name ? -1 : 1
@@ -1872,7 +1673,7 @@ export default {
     }, 200),
 
     async validate() {
-      let tasks = this.getList()
+      const tasks = this.getList()
 
       if (!tasks.length) {
         this.updateErrorMsg('')
@@ -1888,17 +1689,21 @@ export default {
       const noTableArr = tasks.filter((c) => !c.source.table || !c.target.table)
 
       if (!haveTableArr.length) {
-        message = this.$t('packages_business_verification_form_validate_table_is_empty')
+        message = this.$t(
+          'packages_business_verification_form_validate_table_is_empty',
+        )
         this.updateErrorMsg(message, 'error')
         return message
       }
 
       if (noTableArr.length) {
-        message = this.$t('packages_business_verification_form_validate_table_is_empty1')
+        message = this.$t(
+          'packages_business_verification_form_validate_table_is_empty1',
+        )
         noTableArr.forEach((el, elIndex) => {
           if (elIndex <= SHOW_COUNT) {
-            message += (elIndex > 0 ? ', ' : '') + `${el.source.connectionName}`
-            message += (elIndex > 0 ? ', ' : '') + `${el.target.connectionName}`
+            message += `${elIndex > 0 ? ', ' : ''}${el.source.connectionName}`
+            message += `${elIndex > 0 ? ', ' : ''}${el.target.connectionName}`
           }
         })
         if (noTableArr.length > SHOW_COUNT) {
@@ -1912,24 +1717,35 @@ export default {
       const SHOW_COUNT = 20
       if (['field', 'jointField'].includes(this.inspectMethod)) {
         // 检查数据源的能力
-        message = this.validateCapabilities(tasks, 'query_by_advance_filter_function')
+        message = this.validateCapabilities(
+          tasks,
+          'query_by_advance_filter_function',
+        )
         if (message) return message
 
         // 索引字段为空
-        const haveIndexFieldArr = tasks.filter((c) => c.source.sortColumn && c.target.sortColumn)
-        const noIndexFieldArr = tasks.filter((c) => !c.source.sortColumn || !c.target.sortColumn)
+        const haveIndexFieldArr = tasks.filter(
+          (c) => c.source.sortColumn && c.target.sortColumn,
+        )
+        const noIndexFieldArr = tasks.filter(
+          (c) => !c.source.sortColumn || !c.target.sortColumn,
+        )
 
         if (!haveIndexFieldArr.length) {
-          message = this.$t('packages_business_verification_form_condition_is_empty')
+          message = this.$t(
+            'packages_business_verification_form_condition_is_empty',
+          )
           this.updateErrorMsg(message, 'error')
           return message
         }
 
         if (noIndexFieldArr.length) {
-          message = this.$t('packages_business_verification_form_index_field_is_empty')
+          message = this.$t(
+            'packages_business_verification_form_index_field_is_empty',
+          )
           noIndexFieldArr.forEach((el, elIndex) => {
             if (elIndex <= SHOW_COUNT) {
-              message += (elIndex > 0 ? ', ' : '') + `${el.source.table}`
+              message += `${elIndex > 0 ? ', ' : ''}${el.source.table}`
               // message += `${el.target.table} `
             }
           })
@@ -1942,7 +1758,9 @@ export default {
 
         // 判断表字段校验时，索引字段是否个数一致
         const countNotArr = tasks.filter(
-          (c) => c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length,
+          (c) =>
+            c.source.sortColumn.split(',').length !==
+            c.target.sortColumn.split(',').length,
         )
         if (countNotArr.length) {
           //校验条件{val}中源表与目标表的索引字段个数不相等
@@ -1950,7 +1768,9 @@ export default {
           //   let item = document.getElementById('item-source-' + (index - 1))
           //   item.querySelector('input').focus()
           // })
-          message = this.$t('packages_business_verification_form_index_field_count_is_not_equal')
+          message = this.$t(
+            'packages_business_verification_form_index_field_count_is_not_equal',
+          )
           countNotArr.forEach((el, elIndex) => {
             if (elIndex <= SHOW_COUNT) {
               message += `${el.source.table} `
@@ -1967,8 +1787,8 @@ export default {
 
         // 判断过滤设置是否填写完整
         let schemaToFormFlag = false
-        for (let i = 0; i < tasks.length; i++) {
-          await this.$refs[`schemaToForm_${tasks[i].id}`]?.validate().catch(() => {
+        for (const [i, task] of tasks.entries()) {
+          await this.$refs[`schemaToForm_${task.id}`]?.validate().catch(() => {
             index = i + 1
             schemaToFormFlag = true
           })
@@ -1992,7 +1812,9 @@ export default {
             return c.showAdvancedVerification && !c.webScript
           })
         ) {
-          message = this.$t('packages_business_verification_message_error_script_no_enter')
+          message = this.$t(
+            'packages_business_verification_message_error_script_no_enter',
+          )
           this.updateErrorMsg(message, 'error')
           return message
         }
@@ -2001,7 +1823,10 @@ export default {
         message = this.validateCapabilities(tasks, 'batch_count_function')
         if (message) return message
       } else if (this.inspectMethod === 'hash') {
-        message = this.validateCapabilities(tasks, 'query_hash_by_advance_filter_function')
+        message = this.validateCapabilities(
+          tasks,
+          'query_hash_by_advance_filter_function',
+        )
         if (message) return message
       }
 
@@ -2010,12 +1835,12 @@ export default {
 
     validateCapabilities(tasks, capability) {
       const noSupportList = new Set()
-      tasks.forEach(item => {
-        if (!item.source.capabilities?.find(c => c.id === capability)) {
+      tasks.forEach((item) => {
+        if (!item.source.capabilities?.find((c) => c.id === capability)) {
           noSupportList.add(item.source.databaseType)
         }
 
-        if (!item.target.capabilities?.find(c => c.id === capability)) {
+        if (!item.target.capabilities?.find((c) => c.id === capability)) {
           noSupportList.add(item.target.databaseType)
         }
       })
@@ -2025,7 +1850,7 @@ export default {
       if (noSupportList.size) {
         message = this.$t('packages_business_not_support_validation', {
           connection: [...noSupportList].join(', '),
-          method: inspectMethodMap[this.inspectMethod]
+          method: inspectMethodMap[this.inspectMethod],
         })
         this.updateErrorMsg(message, 'error')
         this.$message.error(message)
@@ -2115,7 +1940,12 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
     },
 
     getModeTypeDisabled(item) {
-      return !(item.source.connectionId && item.source.table && item.target.connectionId && item.target.table)
+      return (
+        !item.source.connectionId ||
+        !item.source.table ||
+        !item.target.connectionId ||
+        !item.target.table
+      )
     },
 
     handleCustomFields(item, index) {
@@ -2137,11 +1967,14 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
     },
 
     handleChangeFields(data = [], index) {
-      let item = this.list[index]
+      const item = this.list[index]
       item.source.columns = data.map((t) => t.source)
       item.target.columns = data.map((t) => t.target)
       // 设置modeType
-      this.$refs[`schemaToForm_${item.id}`].form.setValuesIn('modeType', 'custom')
+      this.$refs[`schemaToForm_${item.id}`].form.setValuesIn(
+        'modeType',
+        'custom',
+      )
     },
 
     handleFocus(opt = {}) {
@@ -2166,20 +1999,22 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
           if (isEmpty(data.items[0]?.nameFieldMap)) {
             return
           }
-          opt.fields = Object.values(data.items[0]?.nameFieldMap || {}).map((t) => {
-            return {
-              id: t.id,
-              label: t.fieldName,
-              value: t.fieldName,
-              field_name: t.fieldName,
-              primary_key_position: t.primaryKey,
-              data_type: t.dataType,
-              primaryKey: t.primaryKey,
-              unique: t.unique,
-              type: t.dataType,
-              tapType: JSON.stringify(t.tapType)
-            }
-          })
+          opt.fields = Object.values(data.items[0]?.nameFieldMap || {}).map(
+            (t) => {
+              return {
+                id: t.id,
+                label: t.fieldName,
+                value: t.fieldName,
+                field_name: t.fieldName,
+                primary_key_position: t.primaryKey,
+                data_type: t.dataType,
+                primaryKey: t.primaryKey,
+                unique: t.unique,
+                type: t.dataType,
+                tapType: JSON.stringify(t.tapType),
+              }
+            },
+          )
         })
     },
 
@@ -2194,11 +2029,12 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
       const map = {}
 
       await Promise.all(
-        connectionIds.map(async id => {
-          const { capabilities, tags } = await this.getConnectionCapabilities(id)
+        connectionIds.map(async (id) => {
+          const { capabilities, tags } =
+            await this.getConnectionCapabilities(id)
           map[id] = {
             capabilities,
-            tags
+            tags,
           }
         }),
       )
@@ -2221,7 +2057,7 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
       const data = await connectionsApi.getNoSchema(id)
       return {
         capabilities: data?.capabilities || [],
-        tags: data?.definitionTags || []
+        tags: data?.definitionTags || [],
       }
     },
 
@@ -2247,14 +2083,502 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
           sortColumn.reduce((acc, key) => {
             acc[key] = ''
             return acc
-          }, {})
+          }, {}),
         )
       }
-    }
+    },
   },
-  emits: ['update:jointErrorMessage', 'update:errorMessageLevel', 'update:autoAddTableLoading'],
+  emits: [
+    'update:jointErrorMessage',
+    'update:errorMessageLevel',
+    'update:autoAddTableLoading',
+  ],
 }
 </script>
+
+<template>
+  <div class="joint-table rounded-lg" :class="{ error: !!jointErrorMessage }">
+    <div
+      class="joint-table-header px-4 py-2 flex align-items-center border-bottom"
+    >
+      <span class="fs-6">{{
+        $t('packages_business_verification_verifyCondition')
+      }}</span>
+      <span
+        class="ml-2 rounded-pill font-color-light px-2 text-center"
+        style="min-width: 32px; background-color: #818b981f"
+        >{{ filteredList.length }}</span
+      >
+      <span v-if="!list.length" class="ml-4 color-danger">{{
+        $t('packages_business_verification_message_error_joint_table_not_set')
+      }}</span>
+      <span class="color-danger ml-6">{{ jointErrorMessage }}</span>
+      <div class="flex-1" />
+      <ElInput
+        v-model="searchValue"
+        :placeholder="$t('packages_form_table_rename_index_sousuobiaoming')"
+        class="w-auto mr-4"
+        clearable
+      >
+        <template #prefix>
+          <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
+        </template>
+      </ElInput>
+      <ElLink
+        v-if="
+          !isCountOrHash &&
+          list.some((t) => !t.source.sortColumn || !t.target.sortColumn)
+        "
+        type="primary"
+        :disabled="!list.length"
+        class="mr-4"
+        @click="handleClearIndexEmpty"
+        >{{ $t('packages_business_components_conditionbox_yijianqingchusuo') }}
+      </ElLink>
+      <ElLink type="primary" :disabled="!list.length" @click="handleClear"
+        >{{ $t('packages_business_verification_clear') }}
+      </ElLink>
+    </div>
+    <DynamicScroller
+      id="data-verification-form"
+      ref="virtualScroller"
+      :items="filteredList"
+      :min-item-size="30"
+      key-field="id"
+      class="joint-table-main scroller px-2 py-1 h-100"
+    >
+      <template #default="{ item, index, active }">
+        <DynamicScrollerItem
+          :item="item"
+          :active="active"
+          :data-index="index"
+          :size-dependencies="[item.id, item.source, item.target]"
+        >
+          <div class="joint-table-item">
+            <div class="joint-table-setting overflow-hidden">
+              <div class="flex justify-content-between">
+                <div class="cond-item__title flex align-items-center">
+                  <span class="font-color-main fs-7">{{
+                    $t(
+                      'packages_business_components_conditionbox_jianyantiaojian',
+                    )
+                  }}</span>
+                  <span class="ml-1">{{ index + 1 }}</span>
+                </div>
+                <div class="flex align-items-center">
+                  <ElButton text @click.stop="removeItem(index)">{{
+                    $t('public_button_delete')
+                  }}</ElButton>
+                </div>
+              </div>
+              <div :key="`connection${item.id}`" class="setting-item mt-4">
+                <label class="item-label"
+                  >{{
+                    $t(
+                      'packages_business_components_conditionbox_daijiaoyanlianjie',
+                    )
+                  }}:</label
+                >
+                <AsyncSelect
+                  :key="`sourceConnectionId${item.id}`"
+                  v-model="item.source.connectionId"
+                  :method="getConnectionsListMethod"
+                  item-query="name"
+                  item-value="id"
+                  filterable
+                  class="item-select"
+                  @change="
+                    handleChangeConnection(
+                      arguments[0],
+                      item.source,
+                      arguments[1],
+                    )
+                  "
+                />
+                <span class="item-icon fs-6">
+                  <el-icon><el-icon-arrow-right /></el-icon>
+                </span>
+                <AsyncSelect
+                  :key="`targetConnectionId${item.id}`"
+                  v-model="item.target.connectionId"
+                  :method="getConnectionsListMethod"
+                  item-query="name"
+                  item-value="id"
+                  filterable
+                  class="item-select"
+                  @change="
+                    handleChangeConnection(
+                      arguments[0],
+                      item.target,
+                      arguments[1],
+                    )
+                  "
+                />
+              </div>
+              <div :key="`table${item.id}`" class="setting-item mt-4">
+                <label class="item-label"
+                  >{{
+                    $t('packages_business_components_conditionbox_laiyuanbiao')
+                  }}:</label
+                >
+                <AsyncSelect
+                  :key="`sourceTable${item.id}`"
+                  v-model="item.source.table"
+                  :method="getTableListMethod"
+                  :params="{
+                    connectionId: item.source.connectionId,
+                    nodeId: item.source.nodeId,
+                  }"
+                  item-query="name"
+                  item-type="string"
+                  lazy
+                  filterable
+                  class="item-select"
+                  @change="handleChangeTable($event, item, index, 'source')"
+                />
+                <span class="item-icon"
+                  >{{
+                    $t('packages_business_components_conditionbox_mubiaobiao')
+                  }}:</span
+                >
+                <AsyncSelect
+                  :key="`targetTable${item.id}`"
+                  v-model="item.target.table"
+                  :method="getTableListMethod"
+                  :params="{
+                    connectionId: item.target.connectionId,
+                    nodeId: item.target.nodeId,
+                  }"
+                  item-query="name"
+                  item-type="string"
+                  lazy
+                  filterable
+                  class="item-select"
+                  @change="
+                    handleChangeTable(arguments[0], item, index, 'target')
+                  "
+                />
+              </div>
+              <div
+                :key="`SchemaToForm${item.id}${index}${inspectMethod}`"
+                class="setting-item mt-4"
+              >
+                <SchemaToForm
+                  :ref="`schemaToForm_${item.id}`"
+                  :value="item"
+                  :schema="formSchema"
+                  :scope="schemaScope"
+                  :colon="true"
+                  class="w-100"
+                  label-width="130"
+                  @input="(value) => (item = value)"
+                />
+              </div>
+              <template v-if="!isCountOrHash">
+                <div class="setting-item mt-4">
+                  <label class="item-label"
+                    >{{ $t('packages_business_verification_indexField') }}:
+                  </label>
+                  <FieldSelectWrap
+                    v-model:value="item.source.sortColumn"
+                    :options="item.source.fields"
+                    class="flex-1"
+                    @focus="handleFocus(item.source)"
+                  />
+                  <span class="item-icon" />
+                  <FieldSelectWrap
+                    v-model:value="item.target.sortColumn"
+                    :options="item.source.fields"
+                    class="flex-1"
+                    @focus="handleFocus(item.target)"
+                  />
+                </div>
+
+                <div class="setting-item mt-4">
+                  <label class="item-label"
+                    >{{ $t('packages_business_custom_collate') }}:
+                  </label>
+                  <div class="flex-1">
+                    <div class="flex gap-3 align-center">
+                      <ElSwitch
+                        v-model="item.source.enableCustomCollate"
+                        @change="toggleCollate(item.source, $event)"
+                      />
+
+                      <ElButton
+                        type="text"
+                        @click="schemaScope.openApiDrawer('inspect-collate')"
+                      >
+                        <VIcon>question-circle</VIcon>
+                        {{ $t('public_view_docs') }}
+                      </ElButton>
+                    </div>
+
+                    <div v-if="item.source.enableCustomCollate">
+                      <CollateMap
+                        v-model:value="item.source.collate"
+                        :sort-column="item.source.sortColumn"
+                        :fields="item.source.fields"
+                      />
+                    </div>
+                  </div>
+                  <span class="item-icon" />
+                  <div class="flex-1">
+                    <div class="flex gap-3 align-center">
+                      <ElSwitch
+                        v-model="item.target.enableCustomCollate"
+                        @change="toggleCollate(item.target, $event)"
+                      />
+
+                      <ElButton
+                        type="text"
+                        @click="schemaScope.openApiDrawer('inspect-collate')"
+                      >
+                        <VIcon>question-circle</VIcon>
+                        {{ $t('public_view_docs') }}
+                      </ElButton>
+                    </div>
+
+                    <div v-if="item.target.enableCustomCollate">
+                      <CollateMap
+                        v-model:value="item.target.collate"
+                        :sort-column="item.target.sortColumn"
+                        :fields="item.target.fields"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  v-if="
+                    nullsLastState[item.source.connectionId] ||
+                    nullsLastState[item.target.connectionId]
+                  "
+                  class="setting-item mt-4 align-items-center"
+                >
+                  <label
+                    v-if="nullsLastState[item.source.connectionId]"
+                    class="item-label"
+                    >{{ $t('packages_business_nulls_first') }}
+                    <el-tooltip
+                      effect="dark"
+                      placement="top"
+                      :content="$t('packages_business_nulls_first_tip')"
+                    >
+                      <i
+                        class="el-tooltip el-icon-info"
+                        style="color: #909399; font-size: 14px"
+                      /> </el-tooltip
+                    >:
+                  </label>
+                  <label v-else class="item-label" />
+                  <div class="flex-1">
+                    <SwitchNumber
+                      v-if="nullsLastState[item.source.connectionId]"
+                      v-model:value="item.source.customNullSort"
+                    />
+                  </div>
+
+                  <span
+                    v-if="nullsLastState[item.target.connectionId]"
+                    class="item-icon"
+                    >{{ $t('packages_business_nulls_first')
+                    }}<el-tooltip
+                      effect="dark"
+                      placement="top"
+                      :content="$t('packages_business_nulls_first_tip')"
+                    >
+                      <i
+                        class="el-tooltip el-icon-info"
+                        style="color: #909399; font-size: 14px"
+                      /> </el-tooltip
+                    >:</span
+                  >
+                  <div
+                    v-if="nullsLastState[item.target.connectionId]"
+                    class="flex-1"
+                  >
+                    <SwitchNumber v-model:value="item.target.customNullSort" />
+                  </div>
+                </div>
+              </template>
+
+              <div
+                v-if="inspectMethod === 'field'"
+                class="setting-item align-items-center mt-4"
+              >
+                <label class="item-label"
+                  >{{
+                    $t(
+                      'packages_business_components_fieldbox_daijiaoyanmoxing',
+                    )
+                  }}:</label
+                >
+                <ElRadioGroup
+                  v-model="item.modeType"
+                  :disabled="getModeTypeDisabled(item)"
+                  @change="handleChangeModeType(arguments[0], item, index)"
+                >
+                  <ElRadio label="all">{{
+                    $t('packages_business_components_fieldbox_quanziduan')
+                  }}</ElRadio>
+                  <ElRadio label="custom">{{
+                    $t('packages_business_connections_databaseform_zidingyi')
+                  }}</ElRadio>
+                </ElRadioGroup>
+                <ElLink
+                  v-if="item.modeType === 'custom'"
+                  type="primary"
+                  class="ml-4"
+                  @click="handleCustomFields(item, index)"
+                >
+                  {{
+                    $t(
+                      'packages_business_components_conditionbox_chakanzidingyi',
+                    )
+                  }}
+                  ({{ item.source.columns ? item.source.columns.length : 0 }})
+                </ElLink>
+              </div>
+              <div v-show="inspectMethod === 'field'" class="setting-item mt-4">
+                <ElCheckbox
+                  v-model="item.showAdvancedVerification"
+                  @change="handleChangeAdvanced(item, arguments[0])"
+                  >{{ $t('packages_business_verification_advanceVerify') }}
+                </ElCheckbox>
+              </div>
+              <div
+                v-if="
+                  item.showAdvancedVerification && inspectMethod === 'field'
+                "
+                class="setting-item mt-4"
+              >
+                <label class="item-label"
+                  >{{ $t('packages_business_verification_JSVerifyLogic') }}:
+                </label>
+                <ElButton
+                  v-if="!item.webScript || item.webScript === ''"
+                  @click="addScript(index)"
+                  >{{ $t('packages_business_verification_addJS') }}
+                </ElButton>
+                <template v-else>
+                  <ElLink
+                    type="primary"
+                    class="ml-4"
+                    @click="editScript(index)"
+                    >{{ $t('public_button_edit') }}</ElLink
+                  >
+                  <ElLink
+                    type="primary"
+                    class="ml-4"
+                    @click="removeScript(index)"
+                    >{{ $t('public_button_delete') }}
+                  </ElLink>
+                </template>
+              </div>
+              <div
+                v-if="
+                  inspectMethod === 'field' &&
+                  item.showAdvancedVerification &&
+                  item.webScript
+                "
+                class="setting-item mt-4"
+              >
+                <pre class="item-script">{{ item.webScript }}</pre>
+              </div>
+            </div>
+          </div>
+        </DynamicScrollerItem>
+      </template>
+    </DynamicScroller>
+    <div class="joint-table-footer">
+      <ElButton @click="addItem">{{
+        $t('packages_business_verification_addTable')
+      }}</ElButton>
+      <ElButton
+        v-if="taskId"
+        type="primary"
+        :disabled="!!list.length"
+        :loading="autoAddTableLoading"
+        @click="autoAddTable"
+        >{{ $t('packages_business_verification_button_auto_add_table') }}
+      </ElButton>
+
+      <template v-if="!isCountOrHash">
+        <el-divider class="mx-3" direction="vertical" />
+        <div class="inline-flex align-items-center">
+          <span class="fs-7">{{
+            $t('packages_business_auto_fill_join_fields')
+          }}</span>
+          <el-tooltip class="color-primary" effect="dark" placement="top">
+            <template #content>
+              <div>
+                {{ $t('packages_business_auto_fill_join_tooltip_title') }}
+              </div>
+              <div>
+                {{ $t('packages_business_auto_fill_join_tooltip_primary') }}
+              </div>
+              <div>
+                {{ $t('packages_business_auto_fill_join_tooltip_notnull') }}
+              </div>
+              <div>
+                {{ $t('packages_business_auto_fill_join_tooltip_all') }}
+              </div>
+            </template>
+            <i class="el-icon-question" />
+          </el-tooltip>
+          <el-switch v-model="autoSuggestJoinFields" class="ml-3" />
+        </div>
+      </template>
+    </div>
+    <ElDialog
+      v-model="dialogAddScriptVisible"
+      width="60%"
+      :title="$t('packages_business_verification_JSVerifyLogic')"
+      :before-close="handleAddScriptClose"
+    >
+      <div class="js-wrap">
+        <div class="jsBox">
+          <div class="js-fixText">
+            <span style="color: #0000ff">function </span
+            ><span> validate(sourceRow){</span>
+          </div>
+          <VCodeEditor
+            v-model:value="webScript"
+            height="500"
+            class="js-editor"
+          />
+          <div class="js-fixText">}</div>
+        </div>
+        <GitBook
+          v-resize.left="{
+            minWidth: 350,
+            maxWidth: 500,
+          }"
+          :value="doc"
+          class="example ml-4 color-primary"
+        />
+      </div>
+      <template #footer>
+        <span class="dialog-footer">
+          <ElButton @click="handleAddScriptClose">{{
+            $t('public_button_cancel')
+          }}</ElButton>
+          <ElButton type="primary" @click="submitScript">{{
+            $t('public_button_confirm')
+          }}</ElButton>
+        </span>
+      </template>
+    </ElDialog>
+    <FieldDialog ref="fieldDialog" @save="handleChangeFields" />
+
+    <DocsDrawer
+      :visible="showDoc"
+      :path="docPath"
+      @update:visible="showDoc = $event"
+    />
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .joint-table {
@@ -2387,10 +2711,10 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
 
 .scheme-to-form {
   :deep(
-      .formily-element-plus-form-item-layout-horizontal
-        .formily-element-plus-form-item-control-content-component
-        > .el-switch
-    ) {
+    .formily-element-plus-form-item-layout-horizontal
+      .formily-element-plus-form-item-control-content-component
+      > .el-switch
+  ) {
     height: 32px;
     line-height: 32px;
   }

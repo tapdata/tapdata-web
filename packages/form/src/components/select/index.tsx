@@ -1,9 +1,12 @@
-import { connect, mapProps, mapReadPretty } from '@formily/vue'
-import { defineComponent, h } from 'vue'
 import { PreviewText } from '@formily/element-plus'
+import {
+  resolveComponent,
+  transformComponent,
+} from '@formily/element-plus/esm/__builtins__'
+import { connect, mapProps, mapReadPretty } from '@formily/vue'
 
-import { ElSelect, ElOption } from 'element-plus'
-import { resolveComponent, transformComponent } from '@formily/element-plus/esm/__builtins__'
+import { ElOption, ElSelect } from 'element-plus'
+import { defineComponent, h } from 'vue'
 
 export type SelectProps = typeof ElSelect & {
   options?: Array<typeof ElOption>
@@ -21,10 +24,14 @@ const InnerSelect = connect(
 
 const SelectOption = defineComponent({
   name: 'FSelect',
-  props: ['options'],
+  props: ['options', 'itemLabel', 'itemValue', 'itemDisabled'],
   setup(customProps, { attrs, slots }) {
     return () => {
       const options = customProps.options || []
+      const itemLabel = customProps.itemLabel || 'label'
+      const itemValue = customProps.itemValue || 'value'
+      const itemDisabled = customProps.itemDisabled || 'disabled'
+      console.log('options', options)
       const children =
         options.length !== 0
           ? {
@@ -35,18 +42,23 @@ const SelectOption = defineComponent({
                       ElOption,
                       { key: option, value: option, label: option },
                       {
-                        default: () => [resolveComponent(slots?.option ?? option, { option })],
+                        default: () => [
+                          resolveComponent(slots?.option ?? option, { option }),
+                        ],
                       },
                     )
                   } else {
                     return h(
                       ElOption,
                       {
-                        key: option.value,
-                        ...option,
+                        value: option[itemValue],
+                        label: option[itemLabel],
+                        disabled: option[itemDisabled],
                       },
                       {
-                        default: () => [resolveComponent(slots?.option ?? option, { option })],
+                        default: () => [
+                          resolveComponent(slots?.option ?? option, { option }),
+                        ],
                       },
                     )
                   }

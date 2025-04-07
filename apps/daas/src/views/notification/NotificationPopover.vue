@@ -1,162 +1,16 @@
-<template>
-  <el-popover
-    popper-class="notification-popover"
-    placement="bottom"
-    trigger="hover"
-    @show="handleShow"
-    @hide="handleHide"
-  >
-    <template v-slot:reference>
-      <div class="icon-btn flex align-center p-2" @click="toCenter()">
-        <el-badge class="item-badge" :model-value="unRead" :max="99" :hidden="!unRead">
-          <VIcon size="18">xiaoxi-2</VIcon>
-        </el-badge>
-      </div>
-    </template>
-    <el-tabs stretch class="notification-popover-wrap" v-model="activeTab" @tab-click="tabHandler">
-      <ElButton text v-if="activeTab === 'system'" @click="handleNotify">{{ $t('notify_view_all_notify') }}</ElButton>
-      <ElButton
-        text
-        v-if="activeTab === 'alarm'"
-        @click="
-          $router.push({
-            name: 'alarmNotification',
-            query: { type: 'alarmNotice' },
-          })
-        "
-        >{{ $t('notify_view_more') }}</ElButton
-      >
-      <ElButton
-        text
-        v-if="activeTab === 'user'"
-        @click="$router.push({ name: 'notification', query: { type: 'user' } })"
-        >{{ $t('notify_view_more') }}</ElButton
-      >
-      <el-tab-pane class="tab-item" :label="$t('notify_system_notice')" name="system">
-        <div class="tab-item-container">
-          <ul class="tab-list notification-list" v-if="listData.length">
-            <li class="notification-item" v-for="(item, index) in listData" :key="index" @click="handleRead(item.id)">
-              <div class="flex flex-row">
-                <div class="mr-1">
-                  <span class="unread-1zPaAXtSu inline-block"></span>
-                </div>
-                <div>
-                  <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
-                  <span>{{ systemMap[item.system] }} </span>
-                  <span v-if="item.msg === 'deleted'">
-                    {{ `${item.serverName} ` }}
-                  </span>
-                  <span v-else class="cursor-pointer px-1 primary" @click="handleGo(item)">
-                    {{ item.serverName }}
-                  </span>
-                  <template v-if="item.msg === 'JobDDL'">
-                    <span class="list-item-platform">
-                      {{
-                        `${$t('notify_source_name')} : ${item.sourceName} , ${$t('notify_database_name')} : ${
-                          item.databaseName
-                        } , ${$t('notify_schema_name')} : ${item.schemaName} ,`
-                      }}
-                    </span>
-                    <el-tooltip :content="item.sql" placement="top">
-                      <span>
-                        {{ `DDL SQL : ${item.sql}` }}
-                      </span>
-                    </el-tooltip>
-                  </template>
-                  <template v-else>
-                    <span>{{ typeMap[item.msg] }}</span>
-                  </template>
-                  <div class="item-time">
-                    <span>{{ item.createTime }}</span>
-                  </div>
-                </div>
-              </div>
-            </li>
-          </ul>
-          <div v-else class="notification-no-data flex h-100 justify-content-center align-items-center">
-            <div>
-              <VIcon size="76">no-notice</VIcon>
-              <div class="pt-4 fs-8 text-center font-color-slight fw-normal">
-                {{ $t('notify_no_notice') }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </el-tab-pane>
-      <el-tab-pane class="tab-item" :label="$t('notify_user_notice')" name="user" v-loading="loading">
-        <div class="tab-item-container">
-          <ul class="tab-list notification-list" v-if="userOperations.length">
-            <li class="notification-item" v-for="record in userOperations" :key="record.id">
-              <UserOperation :record="record"></UserOperation>
-              <div class="item-time">
-                {{ record.createTimeFmt }}
-              </div>
-            </li>
-          </ul>
-          <div v-else class="notification-no-data flex h-100 justify-content-center align-items-center">
-            <div>
-              <VIcon size="76">no-notice</VIcon>
-              <div class="pt-4 fs-8 text-center font-color-slight fw-normal">
-                {{ $t('notify_view_more') }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </el-tab-pane>
-      <el-tab-pane
-        class="tab-item"
-        :label="$t('daas_notification_alarmnotification_gaojingtongzhi')"
-        name="alarm"
-        v-loading="loadingAlarm"
-      >
-        <div class="tab-item-container">
-          <ul class="tab-list notification-list" v-if="alarmData.length">
-            <li
-              class="notification-item"
-              v-for="(item, index) in alarmData"
-              :key="index"
-              @click="handleRead(item.id, 'alarm')"
-            >
-              <div class="flex flex-row">
-                <div class="mr-1">
-                  <span class="unread-1zPaAXtSu inline-block"></span>
-                </div>
-                <div>
-                  <span :class="['level-' + item.levelType]">【{{ item.levelLabel }}】</span>
-                  <template>
-                    <span>{{ item.title }}</span>
-                  </template>
-                </div>
-              </div>
-            </li>
-          </ul>
-          <div v-else class="notification-no-data flex h-100 justify-content-center align-items-center">
-            <div>
-              <VIcon size="76">no-notice</VIcon>
-              <div class="pt-4 fs-8 text-center font-color-slight fw-normal">
-                {{ $t('notify_no_notice') }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </el-tab-pane>
-    </el-tabs>
-  </el-popover>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import { debounce } from 'lodash'
-import dayjs from 'dayjs'
-import { mapState } from 'vuex'
-
-import { userLogsApi, notificationApi } from '@tap/api'
+import { notificationApi, userLogsApi } from '@tap/api'
+import { ALARM_LEVEL_MAP } from '@tap/business'
 import { VIcon } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
-import { ALARM_LEVEL_MAP } from '@tap/business'
 
-import UserOperation from './UserOperation'
+import dayjs from 'dayjs'
+import { debounce } from 'lodash'
+import { mapState } from 'vuex'
+import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+
 import { TYPEMAP } from './tyepMap'
+import UserOperation from './UserOperation'
 
 export default {
   components: {
@@ -202,18 +56,18 @@ export default {
       this.$router.push({ name: 'notification' })
     },
     init() {
-      let self = this
-      let msg = {
+      const self = this
+      const msg = {
         type: 'notification',
       }
-      if (!parseInt(Cookie.get('isAdmin'))) {
+      if (!Number.parseInt(Cookie.get('isAdmin'))) {
         msg.userId = Cookie.get('user_id')
       }
       this.getUnreadData()
       this.$ws.on(
         'notification',
         debounce((res) => {
-          let data = res?.data
+          const data = res?.data
           if (data?.msg !== 'alarm') {
             if (this.isHide) {
               this.getUnReadNum()
@@ -231,7 +85,7 @@ export default {
       })
     },
     getUnReadNum() {
-      let where = {
+      const where = {
         read: false,
       }
       notificationApi.count({ where: JSON.stringify(where) }).then((data) => {
@@ -241,7 +95,7 @@ export default {
       })
     },
     getUnreadData() {
-      let filter = {
+      const filter = {
         where: {
           read: false,
         },
@@ -250,7 +104,7 @@ export default {
         skip: 0,
       }
       notificationApi.get({ filter: JSON.stringify(filter) }).then((data) => {
-        let { items, total } = data || {}
+        const { items, total } = data || {}
         this.$store.commit('notification', {
           unRead: total,
         })
@@ -261,7 +115,7 @@ export default {
       })
     },
     handleRead(id, type) {
-      notificationApi.patch({ read: true, id: id }).then(() => {
+      notificationApi.patch({ read: true, id }).then(() => {
         if (type === 'alarm') {
           this.getAlarmData()
           return
@@ -299,7 +153,7 @@ export default {
     },
     getUserOperations() {
       this.loading = true
-      let filter = {
+      const filter = {
         order: 'createTime DESC',
         limit: 50,
         skip: 0,
@@ -314,7 +168,9 @@ export default {
         .then((data) => {
           this.userOperations =
             data?.items?.map((item) => {
-              item.createTimeFmt = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+              item.createTimeFmt = dayjs(item.createTime).format(
+                'YYYY-MM-DD HH:mm:ss',
+              )
               return item
             }) || []
         })
@@ -323,7 +179,7 @@ export default {
         })
     },
     getAlarmData() {
-      let where = {
+      const where = {
         msgType: 'ALARM',
         page: 1,
         size: 20,
@@ -331,7 +187,7 @@ export default {
       }
       this.loadingAlarm = true
       notificationApi.list(where).then((data) => {
-        let list = data?.items || []
+        const list = data?.items || []
         this.alarmData = list.map((item) => {
           item.levelLabel = ALARM_LEVEL_MAP[item.level].text
           item.levelType = ALARM_LEVEL_MAP[item.level].type
@@ -360,11 +216,210 @@ export default {
 }
 </script>
 
+<template>
+  <el-popover
+    popper-class="notification-popover pt-1"
+    placement="bottom"
+    trigger="hover"
+    width="450"
+    @show="handleShow"
+    @hide="handleHide"
+  >
+    <template #reference>
+      <div class="icon-btn flex align-center p-2" @click="toCenter()">
+        <el-badge
+          class="item-badge"
+          :model-value="unRead"
+          :max="99"
+          :hidden="!unRead"
+        >
+          <VIcon size="18">xiaoxi-2</VIcon>
+        </el-badge>
+      </div>
+    </template>
+    <el-tabs
+      v-model="activeTab"
+      stretch
+      class="notification-popover-wrap"
+      @tab-click="tabHandler"
+    >
+      <ElButton
+        v-if="activeTab === 'system'"
+        text
+        type="primary"
+        @click="handleNotify"
+        >{{ $t('notify_view_all_notify') }}</ElButton
+      >
+      <ElButton
+        v-if="activeTab === 'alarm'"
+        text
+        type="primary"
+        @click="
+          $router.push({
+            name: 'alarmNotification',
+            query: { type: 'alarmNotice' },
+          })
+        "
+        >{{ $t('notify_view_more') }}</ElButton
+      >
+      <ElButton
+        v-if="activeTab === 'user'"
+        text
+        type="primary"
+        @click="$router.push({ name: 'notification', query: { type: 'user' } })"
+        >{{ $t('notify_view_more') }}</ElButton
+      >
+      <el-tab-pane
+        class="tab-item"
+        :label="$t('notify_system_notice')"
+        name="system"
+      >
+        <div class="tab-item-container">
+          <ul v-if="listData.length" class="tab-list notification-list">
+            <li
+              v-for="(item, index) in listData"
+              :key="index"
+              class="notification-item"
+              @click="handleRead(item.id)"
+            >
+              <div class="flex flex-row">
+                <div class="mr-1">
+                  <span class="unread-1zPaAXtSu inline-block" />
+                </div>
+                <div>
+                  <span :style="`color: ${colorMap[item.level]};`"
+                    >【{{ item.level }}】</span
+                  >
+                  <span>{{ systemMap[item.system] }} </span>
+                  <span v-if="item.msg === 'deleted'">
+                    {{ `${item.serverName} ` }}
+                  </span>
+                  <span
+                    v-else
+                    class="cursor-pointer px-1 primary"
+                    @click="handleGo(item)"
+                  >
+                    {{ item.serverName }}
+                  </span>
+                  <template v-if="item.msg === 'JobDDL'">
+                    <span class="list-item-platform">
+                      {{
+                        `${$t('notify_source_name')} : ${item.sourceName} , ${$t('notify_database_name')} : ${
+                          item.databaseName
+                        } , ${$t('notify_schema_name')} : ${item.schemaName} ,`
+                      }}
+                    </span>
+                    <el-tooltip :content="item.sql" placement="top">
+                      <span>
+                        {{ `DDL SQL : ${item.sql}` }}
+                      </span>
+                    </el-tooltip>
+                  </template>
+                  <template v-else>
+                    <span>{{ typeMap[item.msg] }}</span>
+                  </template>
+                  <div class="item-time">
+                    <span>{{ item.createTime }}</span>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+          <div
+            v-else
+            class="notification-no-data flex h-100 justify-content-center align-items-center"
+          >
+            <div>
+              <VIcon size="76">no-notice</VIcon>
+              <div class="pt-4 fs-8 text-center font-color-slight fw-normal">
+                {{ $t('notify_no_notice') }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </el-tab-pane>
+      <el-tab-pane
+        v-loading="loading"
+        class="tab-item"
+        :label="$t('notify_user_notice')"
+        name="user"
+      >
+        <div class="tab-item-container">
+          <ul v-if="userOperations.length" class="tab-list notification-list">
+            <li
+              v-for="record in userOperations"
+              :key="record.id"
+              class="notification-item"
+            >
+              <UserOperation :record="record" />
+              <div class="item-time">
+                {{ record.createTimeFmt }}
+              </div>
+            </li>
+          </ul>
+          <div
+            v-else
+            class="notification-no-data flex h-100 justify-content-center align-items-center"
+          >
+            <div>
+              <VIcon size="76">no-notice</VIcon>
+              <div class="pt-4 fs-8 text-center font-color-slight fw-normal">
+                {{ $t('notify_view_more') }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </el-tab-pane>
+      <el-tab-pane
+        v-loading="loadingAlarm"
+        class="tab-item"
+        :label="$t('daas_notification_alarmnotification_gaojingtongzhi')"
+        name="alarm"
+      >
+        <div class="tab-item-container">
+          <ul v-if="alarmData.length" class="tab-list notification-list">
+            <li
+              v-for="(item, index) in alarmData"
+              :key="index"
+              class="notification-item"
+              @click="handleRead(item.id, 'alarm')"
+            >
+              <div class="flex flex-row">
+                <div class="mr-1">
+                  <span class="unread-1zPaAXtSu inline-block" />
+                </div>
+                <div>
+                  <span :class="[`level-${item.levelType}`]"
+                    >【{{ item.levelLabel }}】</span
+                  >
+                  <template>
+                    <span>{{ item.title }}</span>
+                  </template>
+                </div>
+              </div>
+            </li>
+          </ul>
+          <div
+            v-else
+            class="notification-no-data flex h-100 justify-content-center align-items-center"
+          >
+            <div>
+              <VIcon size="76">no-notice</VIcon>
+              <div class="pt-4 fs-8 text-center font-color-slight fw-normal">
+                {{ $t('notify_no_notice') }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </el-tab-pane>
+    </el-tabs>
+  </el-popover>
+</template>
+
 <style lang="scss">
 .notification-popover {
   overflow: hidden;
   .notification-popover-wrap {
-    padding: 10px 16px;
     overflow: hidden;
     .el-tabs__header {
       color: map.get($fontColor, light);
@@ -394,9 +449,9 @@ export default {
       overflow: initial;
       & > .el-button {
         position: absolute;
-        right: 13px;
-        top: -52px;
-        font-weight: 400;
+        right: 12px;
+        top: -49px;
+        z-index: 10;
       }
     }
     .tab-item {
@@ -408,11 +463,8 @@ export default {
 
 <style lang="scss" scoped>
 .notification-popover-wrap {
-  margin: -15px;
-  width: 440px;
   overflow: hidden;
   position: relative;
-  border-radius: 3px;
 
   .notice-footer {
     display: flex;
