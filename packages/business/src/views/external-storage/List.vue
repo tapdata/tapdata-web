@@ -398,6 +398,10 @@ export default {
           }
       this.$nextTick(() => {
         this.$refs?.form?.clearValidate()
+
+        if (this.form.type === 'mongodb') {
+          this.$refs.schemaToForm?.getForm().setValues(this.form)
+        }
       })
     },
     submit() {
