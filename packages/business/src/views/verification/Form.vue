@@ -35,6 +35,11 @@ export default {
       timeUnitOptions: ['second', 'minute', 'hour', 'day', 'week', 'month'],
       isDbClone: false,
       taskName: '',
+      dateRange: [],
+      defaultTime: [
+        new Date(2025, 1, 1, 0, 0, 0),
+        new Date(2025, 2, 1, 23, 59, 59),
+      ],
       form: {
         flowId: '',
         name: '',
@@ -651,16 +656,14 @@ export default {
                   :label="`${$t('packages_business_verification_startAndStopTime')}: `"
                 >
                   <ElDatePicker
+                    :model-value="[form.timing.start, form.timing.end]"
                     class="form-input"
-                    :value="[form.timing.start, form.timing.end]"
                     type="datetimerange"
                     range-separator="-"
-                    :start-placeholder="$t('date_picker_start_time')"
-                    :end-placeholder="$t('date_picker_end_time')"
                     align="right"
-                    :default-time="['00:00:00', '23:59:59']"
-                    value-format="timestamp"
-                    @input="timingChangeHandler"
+                    :default-time="defaultTime"
+                    value-format="x"
+                    @update:model-value="timingChangeHandler"
                   />
                 </ElFormItem>
                 <ElFormItem
@@ -969,11 +972,8 @@ export default {
   width: 276px;
 }
 
-.form-input {
-  width: 500px;
-}
-
-.form-item-width {
+:deep(.form-input, .form-item-width) {
+  flex-grow: 0;
   width: 500px;
 }
 

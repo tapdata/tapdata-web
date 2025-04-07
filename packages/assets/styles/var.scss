@@ -103,14 +103,14 @@ $tag-icon-span-gap: (
     'disabled': rgba(0, 0, 0, 0.25),
   ),
   $border-radius: (
-    'base': 6px,
-    'small': 4px,
+    'base': 8px,
+    'small': 6px,
     'round': 20px,
     'circle': 100%,
   ),
   $dialog: (
     'padding-primary': 24px,
-    'border-radius': 10px,
+    'border-radius': 12px,
     //'title-font-size': var(--el-font-size-medium),
   ),
   $table: (
@@ -118,10 +118,11 @@ $tag-icon-span-gap: (
     'header-text-color': map.get($fontColor, normal),
   ),
   $popover: (
-    'border-radius': 8px,
+    'border-radius': 12px,
+    'popover-border-radius': 12px,
   ),
   $popper: (
-    'border-radius': 8px,
+    'border-radius': 12px,
   ),
   $tree: (
     'node-content-height': 28px,
@@ -131,9 +132,9 @@ $tag-icon-span-gap: (
   ),
   $messagebox: (
     'padding-primary': 24px,
-    'border-radius': 10px,
+    'border-radius': 12px,
   ),
   $card: (
-    'border-radius': 8px,
+    'border-radius': 12px,
   ),
 );

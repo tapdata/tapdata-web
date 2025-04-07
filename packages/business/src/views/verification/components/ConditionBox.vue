@@ -2309,7 +2309,7 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
                         type="text"
                         @click="schemaScope.openApiDrawer('inspect-collate')"
                       >
-                        <VIcon>question-circle</VIcon>
+                        <VIcon class="mr-1">question-circle</VIcon>
                         {{ $t('public_view_docs') }}
                       </ElButton>
                     </div>
@@ -2334,7 +2334,7 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
                         type="text"
                         @click="schemaScope.openApiDrawer('inspect-collate')"
                       >
-                        <VIcon>question-circle</VIcon>
+                        <VIcon class="mr-1">question-circle</VIcon>
                         {{ $t('public_view_docs') }}
                       </ElButton>
                     </div>
@@ -2572,11 +2572,7 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
     </ElDialog>
     <FieldDialog ref="fieldDialog" @save="handleChangeFields" />
 
-    <DocsDrawer
-      :visible="showDoc"
-      :path="docPath"
-      @update:visible="showDoc = $event"
-    />
+    <DocsDrawer v-model:visible="showDoc" :path="docPath" />
   </div>
 </template>
 

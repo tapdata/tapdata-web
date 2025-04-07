@@ -210,6 +210,9 @@
 }
 // Button
 .el-button {
+  &--small {
+    --el-border-radius-base: var(--el-border-radius-small)
+  }
   & + button.el-button {
     margin-left: var(--btn-space);
   }
@@ -341,5 +344,18 @@
     .el-input-number__decrease {
       opacity: 1;
     }
+  }
+}
+
+//.el-picker-panel
+.el-picker-panel {
+  overflow: hidden;
+  border-radius: var(--el-popper-border-radius);
+}
+
+// Input
+.el-input {
+  &--small  {
+    --el-border-radius-base: var(--el-border-radius-small)
   }
 }
