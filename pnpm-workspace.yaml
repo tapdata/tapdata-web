@@ -1,3 +1,13 @@
 packages:
-  - 'packages/*'
-  - 'apps/*'
+  - packages/*
+  - apps/*
+onlyBuiltDependencies:
+  - vue-demi
+ignoredBuiltDependencies:
+  - '@formily/vue'
+  - '@parcel/watcher'
+  - core-js
+  - ejs
+  - fsevents
+  - vue-echarts
+  - yorkie

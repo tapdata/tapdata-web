@@ -60,8 +60,8 @@
           </div>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <template v-for="item in DropdownList">
-              <ElDropdownItem v-if="!item.route" :command="item.name">{{ $t(item.label) }}</ElDropdownItem>
-              <ElDropdownItem v-else @click.native="$router.push(item.route)">{{ $t(item.label) }}</ElDropdownItem>
+              <ElDropdownItem v-if="!item.route" :command="item.name" :key="item.name">{{ $t(item.label) }}</ElDropdownItem>
+              <ElDropdownItem v-else @click.native="$router.push(item.route)" :key="item.name">{{ $t(item.label) }}</ElDropdownItem>
             </template>
           </ElDropdownMenu>
         </ElDropdown>

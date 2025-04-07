@@ -168,6 +168,7 @@ import PaperScroller from '../PaperScroller'
 import Node from './Node'
 import TargetNode from './TargetNode'
 import { config, jsPlumb } from '../../instance'
+import { mapFieldsData } from '@tap/form'
 
 export default {
   name: 'MaterializedView',
@@ -619,22 +620,12 @@ export default {
       this.schemaLoading = false
     },
 
-    setNodeSchema(nodeId, { fields = [], indices = [] }) {
-      let columnsMap = indices.reduce((map, item, index) => {
-        item.columns.forEach(({ columnName }) => (map[columnName] = [item.indexName, index, item.unique]))
-        return map
-      }, {})
-
+    setNodeSchema(nodeId, schema) {
+      const { fields } = mapFieldsData(schema)
       this.$set(
         this.nodeSchemaMap,
         nodeId,
-        fields
-          .map(item => {
-            item.dataType = item.data_type.replace(/\(.+\)/, '')
-            item.indicesUnique = columnsMap[item.field_name]
-            item.isPrimaryKey = item.primary_key_position > 0
-            return item
-          })
+        fields /* 
           .sort((a, b) => {
             let aVal, bVal
 
@@ -651,7 +642,7 @@ export default {
             }
 
             return aVal - bVal
-          })
+          } */
       )
     },
 

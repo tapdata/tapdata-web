@@ -60,7 +60,7 @@ const errorCallback = (error: AxiosError): Promise<AxiosError | string> => {
     }
     switch (rsp.status) {
       // 用户无权限访问接口
-      case 401:
+      case 401: {
         const isSingleSession = window.__settings__?.find(item => item.key === 'login.single.session')?.open
 
         signOut()
@@ -77,6 +77,7 @@ const errorCallback = (error: AxiosError): Promise<AxiosError | string> => {
           }
         }, 500)
         break
+      }
       // 请求的资源不存在
       case 404:
         Message.error({ message: i18n.t('public_message_404').toString() })
@@ -140,7 +141,6 @@ axios.interceptors.response.use((response: AxiosResponse) => {
   return new Promise((resolve, reject) => {
     removePending(response.config)
     const code = response.data.code
-    const data = response.data
     if (response?.config?.responseType === 'blob') {
       return resolve(response)
     }

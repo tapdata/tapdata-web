@@ -208,11 +208,6 @@
         </ElTableColumn>
       </TablePage>
       <Preview ref="preview" @test="testConnection"></Preview>
-      <!--    <DatabaseTypeDialog
-      :dialogVisible="dialogDatabaseTypeVisible"
-      @dialogVisible="handleDialogDatabaseTypeVisible"
-      @databaseType="handleDatabaseType"
-    ></DatabaseTypeDialog>-->
       <SceneDialog
         ref="dialog"
         :visible.sync="dialogDatabaseTypeVisible"

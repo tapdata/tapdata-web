@@ -199,6 +199,9 @@ module.exports = {
     },
     loaderOptions: {
       scss: {
+        sassOptions: {
+          quietDeps: true
+        },
         additionalData: `@use "${process.env.VUE_APP_THEME_VAR || '~@tap/assets/styles/var.scss'}" as *;`
       }
     }

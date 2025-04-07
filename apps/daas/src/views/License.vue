@@ -85,7 +85,7 @@
                   style="width: 6px; height: 6px; right: -2px; top: -2px"
                 ></span>
               </div>
-              <div class="connector-wrap bg-white rounded-lg p-2 shadow-sm flex align-center gap-2 flex-1 min-w-0">
+              <div :key="`y-${i}`" class="connector-wrap bg-white rounded-lg p-2 shadow-sm flex align-center gap-2 flex-1 min-w-0">
                 <DatabaseIcon class="flex-shrink-0" :size="24" :item="info"></DatabaseIcon>
                 <div class="lh-sm min-w-0">
                   <div class="font-color-dark">{{ info.pdkName }}</div>

@@ -9,29 +9,73 @@
       :key="revokeTableDisabled + ''"
       :row-class-name="tableRowClassName"
     >
-      <template slot="field_name" slot-scope="scope">
-        <VIcon v-if="scope.row.primary_key_position > 0" size="12" class="text-warning">key</VIcon>
+      <template slot="field_name" slot-scope="{ row: field }">
+        <template v-if="field.isPrimaryKey">
+          <ElTooltip
+            v-if="field.isForeignKey"
+            placement="top"
+            :content="
+              $t('public_foreign_key_tip', {
+                name: field.constraints[0],
+                val: field.constraints[2]
+              })
+            "
+          >
+            <VIcon size="12" class="text-warning align-middle">key</VIcon>
+          </ElTooltip>
+          <VIcon v-else size="12" class="text-warning align-middle">key</VIcon>
+        </template>
         <ElTooltip
-          v-else-if="indicesMap[scope.row.field_name]"
+          v-else-if="field.isForeignKey"
           placement="top"
           :content="
-            `${$t(indicesMap[scope.row.field_name][2] ? 'public_unique_index' : 'public_normal_index')}: ` +
-            indicesMap[scope.row.field_name][0]
+            $t('public_foreign_key_tip', {
+              name: field.constraints[0],
+              val: field.constraints[2]
+            })
           "
           :open-delay="200"
           transition="none"
         >
-          <span class="inline-flex align-center">
-            <VIcon size="12">fingerprint</VIcon>
-            <span :style="`--index: '${indicesMap[scope.row.field_name][1]}';`" class="fingerprint-sub"></span>
+          <span class="inline-flex align-center align-middle">
+            <VIcon size="14">share</VIcon>
+            <span
+              v-if="field.isMultiForeignKey"
+              :style="`--index: '${field.constraints[1]}';`"
+              class="fingerprint-sub foreign-sub"
+            ></span>
           </span>
         </ElTooltip>
-        <VIcon v-else-if="partitionMap[scope.row.field_name]" size="14" class="ml-1 align-middle"
-          >circle-dashed-letter-p</VIcon
+        <ElTooltip
+          v-else-if="field.indicesUnique"
+          placement="top"
+          :content="
+            `${$t(field.indicesUnique[2] ? 'public_unique_index' : 'public_normal_index')}: ` + field.indicesUnique[0]
+          "
+          :open-delay="200"
+          transition="none"
         >
-        <VIcon v-else-if="scope.row.source === 'virtual_hash'" size="14">file-hash</VIcon>
-        <span class="ellipsis ml-1" :style="scope.row.source === 'virtual_hash' ? 'font-style:italic' : ''">{{
-          scope.row.field_name
+          <span v-if="field.indicesUnique[2]" class="inline-flex align-center align-middle">
+            <VIcon size="14">fingerprint</VIcon>
+            <span
+              v-if="field.isMultiUniqueIndex"
+              :style="`--index: '${field.indicesUnique[1]}';`"
+              class="fingerprint-sub unique-sub"
+            ></span>
+          </span>
+          <span v-else class="inline-flex align-center align-middle">
+            <VIcon size="14">sort-descending</VIcon>
+            <span
+              v-if="field.isMultiIndex"
+              :style="`--index: '${field.indicesUnique[1]}';`"
+              class="fingerprint-sub index-sub"
+            ></span>
+          </span>
+        </ElTooltip>
+        <VIcon v-else-if="field.isPartitionKey" size="14" class="ml-1 align-middle">circle-dashed-letter-p</VIcon>
+        <VIcon v-else-if="field.source === 'virtual_hash'" size="14">file-hash</VIcon>
+        <span class="ellipsis ml-1 align-middle" :style="field.source === 'virtual_hash' ? 'font-style:italic' : ''">{{
+          field.field_name
         }}</span>
       </template>
       <template slot="dataTypeHeader">
@@ -208,6 +252,7 @@ import { VTable, VIcon } from '@tap/component'
 import i18n from '@tap/i18n'
 import { metadataInstancesApi } from '@tap/api'
 import { uuid } from '@tap/shared'
+import { scope } from 'ace-builds/src-noconflict/snippets-abc'
 
 export default {
   name: 'List',
@@ -354,23 +399,6 @@ export default {
       const { fields } = this.data
       let list = (fields || []).sort((a, b) => a.columnPosition - b.columnPosition)
       return this.showDelete ? list : list.filter(t => !t.is_deleted)
-    },
-
-    indicesMap() {
-      const { indices = [] } = this.data
-      return indices.reduce((map, item, index) => {
-        item.columns.forEach(({ columnName }) => (map[columnName] = [item.indexName, index, item.unique]))
-        return map
-      }, {})
-    },
-
-    partitionMap() {
-      let { partitionInfo: { partitionFields = [] } = { partitionFields: [] } } = this.data
-
-      return partitionFields.reduce((map, item) => {
-        map[item.name] = true
-        return map
-      }, {})
     },
 
     revokeTableDisabled() {

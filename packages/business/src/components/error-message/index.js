@@ -7,7 +7,7 @@ import { copyToClipboard } from '@tap/shared'
 
 function renderDialog(h, stack) {
   return (
-    <div>
+    <div id="error-message-dialog">
       <div class="flex align-center mb-4">
         <i class="text-lg mr-2 el-message__icon el-icon-error"></i>
         <span class="el-dialog__title">{i18n.t('packages_business_error_details')}</span>
@@ -19,7 +19,7 @@ function renderDialog(h, stack) {
         <div class="position-absolute end-0 top-0 px-2 pt-1 error-stack-actions">
           <el-button
             onClick={() => {
-              copyToClipboard(stack)
+              copyToClipboard(stack, document.getElementById('error-message-dialog'))
               Message.success(i18n.t('public_message_copy_success'))
             }}
             type="text"

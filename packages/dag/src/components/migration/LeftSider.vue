@@ -186,7 +186,7 @@ import '@tap/assets/icons/svg/field_mod_type.svg'
 import { mapGetters } from 'vuex'
 import mouseDrag from '@tap/component/src/directives/mousedrag'
 import { VIcon, VEmpty } from '@tap/component'
-import { ConnectionTypeSelector, SceneDialog } from '@tap/business'
+import { SceneDialog } from '@tap/business'
 import { getInitialValuesInBySchema } from '@tap/form'
 import resize from '@tap/component/src/directives/resize'
 import BaseNode from '../BaseNode'
@@ -209,7 +209,6 @@ export default {
     OverflowTooltip,
     BaseNode,
     VIcon,
-    ConnectionTypeSelector,
     ElScrollbar: Select.components.ElScrollbar,
     ConnectionType
   },

@@ -1,8 +1,7 @@
 import { connect, mapProps } from '@formily/vue'
 
-import type { Switch as ElSwitchProps } from 'element-ui'
 import { Switch as ElSwitch, Popconfirm } from 'element-ui'
-import { defineComponent, ref } from '@vue/composition-api'
+import { defineComponent } from '@vue/composition-api'
 import './style.scss'
 
 export const Switch = connect(
@@ -15,11 +14,11 @@ export const Switch = connect(
     },
     setup(props, { emit, attrs, listeners }) {
       const onConfirm = () => {
-        emit('change', !Boolean(props.value))
+        emit('change', !props.value)
       }
 
       return () => {
-        return props.confirm && !Boolean(props.value) ? (
+        return props.confirm && !props.value ? (
           <Popconfirm
             disabled={attrs.disabled}
             popperClass="pop-confirm"

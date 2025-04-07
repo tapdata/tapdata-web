@@ -14,6 +14,7 @@
       ref="tableName"
       :has-pagination="false"
       :max-height="520"
+      :default-sort="{ prop: 'lastModified', order: 'descending' }"
     >
       <el-table-column :label="$t('public_file_name')" prop="filename" />
       <el-table-column :label="$t('public_file_size')" width="120">
@@ -21,8 +22,8 @@
           <span>{{ calcUnit(row.size, 'b') }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('public_update_time')" prop="lastModified" width="170" />
-      <el-table-column :label="$t('public_create_time')" prop="creationTime" width="170" />
+      <el-table-column :label="$t('public_update_time')" prop="lastModified" width="170" sortable />
+      <el-table-column :label="$t('public_create_time')" prop="creationTime" width="170" sortable />
       <el-table-column :label="$t('public_operation')" width="100">
         <template #default="{ row }">
           <ElButton size="mini" type="text" :disabled="[0, 2, 3].includes(row.status)" @click="handleDownload(row)">{{
@@ -82,7 +83,11 @@ export default {
       this.$emit('update:visible', val)
     },
     handleDownload(row) {
-      let url = `${axios.defaults.baseURL}api/proxy/download?filename=${row.filename}&agentId=${this.dataflow.agentId}`
+      let url =
+        `${axios.defaults.baseURL}/api/proxy/download?filename=${row.filename}&agentId=${this.dataflow.agentId}`.replace(
+          '//',
+          '/'
+        )
 
       if (this.isDaas) {
         const accessToken = Cookie.get('access_token')

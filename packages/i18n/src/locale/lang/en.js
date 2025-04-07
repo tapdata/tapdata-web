@@ -255,7 +255,7 @@ export default {
   public_task_type: 'Task Type',
   public_task_sync_type: 'Sync Type',
   public_task_type_migrate: 'Data Replication',
-  public_task_type_sync: 'Data Development',
+  public_task_type_sync: 'Data Transformation',
   public_task_type_heartbeat: 'Heartbeat Task',
   public_task_type_log_collector: 'Shared Mining',
   public_task_type_initial_sync: 'Full Sync',
@@ -291,7 +291,7 @@ export default {
   public_event_insert: 'Insert',
   public_event_update: 'Update',
   public_event_ddl: 'DDL',
-
+  public_event_cdc_placeholder: 'No incremental data',
   //milestone
   public_milestone_time_cdc_consuming: 'start time-consuming',
   public_milestone_time_consuming: 'time-consuming',
@@ -380,5 +380,6 @@ export default {
   public_load_end: 'End',
   public_store_type: 'Store Type',
   public_from_db_type: 'From DB Type',
-  public_sample_size: 'Sample Size'
+  public_sample_size: 'Sample Size',
+  public_foreign_key_tip: 'Foreign key {name} to {val}'
 }

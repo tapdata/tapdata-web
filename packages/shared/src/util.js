@@ -17,13 +17,7 @@ export function setPermission(list) {
   sessionStorage.setItem('tapdata_permissions', JSON.stringify(permissions))
   return permissions
 }
-// export const getConnectionTypeDialogImg = function (type) {
-//   try {
-//     return require(`./assets/icons/node/${type}.svg`)
-//   } catch (e) {
-//     return null
-//   }
-// }
+
 export function signOut() {
   sessionStorage.removeItem('tapdata_permissions')
   Cookie.remove('xToken')
@@ -220,21 +214,6 @@ export function downloadJson(data, name = '') {
   openUrl(window.URL.createObjectURL(blob), '_blank', fileName)
 }
 
-export const getConnectionTypeImg = function (type) {
-  try {
-    return require(`./assets/icons/node/${type}.svg`)
-  } catch (e) {
-    return null
-  }
-}
-export const getConnectionTypeDialogImg = function (type) {
-  try {
-    return require(`./assets/icons/node/${type}.svg`)
-  } catch (e) {
-    return null
-  }
-}
-
 export function dec2hex(dec) {
   return ('0' + dec.toString(16)).substr(-2)
 }
@@ -314,7 +293,7 @@ export function onCopy(value) {
   document.body.removeChild(input)
 }
 
-export async function copyToClipboard(textToCopy) {
+export async function copyToClipboard(textToCopy, context) {
   // Navigator clipboard api needs a secure context (https)
   if (navigator.clipboard && window.isSecureContext) {
     await navigator.clipboard.writeText(textToCopy)
@@ -327,16 +306,17 @@ export async function copyToClipboard(textToCopy) {
     textArea.style.position = 'absolute'
     textArea.style.left = '-999999px'
 
-    document.body.prepend(textArea)
+    context = context || document.body
+    context.prepend(textArea)
     textArea.select()
 
     try {
       document.execCommand('copy')
     } catch (error) {
       console.error(error)
-    } finally {
-      textArea.remove()
     }
+
+    context.removeChild(textArea)
   }
 }
 

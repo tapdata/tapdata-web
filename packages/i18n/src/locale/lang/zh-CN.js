@@ -256,7 +256,7 @@ export default {
   public_task_type: '任务类型',
   public_task_sync_type: '同步类型',
   public_task_type_migrate: '数据复制',
-  public_task_type_sync: '数据开发',
+  public_task_type_sync: '数据转换',
   public_task_type_heartbeat: '心跳任务',
   public_task_type_log_collector: '共享挖掘',
   public_task_type_initial_sync: '全量',
@@ -291,6 +291,7 @@ export default {
   public_event_insert: '插入',
   public_event_update: '更新',
   public_event_ddl: 'DDL',
+  public_event_cdc_placeholder: '暂无增量数据',
 
   //里程碑
   public_milestone_time_cdc_consuming: '启动耗时',
@@ -376,5 +377,6 @@ export default {
   public_array: '数组',
   public_load_more: '加载更多',
   public_loading: '拼命加载中',
-  public_load_end: '到底了'
+  public_load_end: '到底了',
+  public_foreign_key_tip: '外键 {name} 指向 {val}'
 }

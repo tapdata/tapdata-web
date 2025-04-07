@@ -82,9 +82,6 @@
   "gitHooks": {
     "pre-commit": "lint-staged"
   },
-  "resolutions": {
-    "vue": "^2.6.14"
-  },
   "lint-staged": {
     "*.{js,jsx,vue}": [
       "vue-cli-service lint",

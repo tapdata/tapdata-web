@@ -5,7 +5,6 @@ import SelectClassify from './SelectClassify'
 import UploadDialog from './UploadDialog'
 import Log from './logs/Index.vue'
 import TablePage from './TablePage.vue'
-import ConnectionTypeSelector from './ConnectionTypeSelector'
 import TaskStatus from './TaskStatus'
 import PageHeader from './PageHeader'
 import DiscoveryClassification from './DiscoveryClassification'
@@ -23,7 +22,6 @@ export {
   UploadDialog,
   Log,
   TablePage,
-  ConnectionTypeSelector,
   TaskStatus,
   PageHeader,
   DiscoveryClassification,

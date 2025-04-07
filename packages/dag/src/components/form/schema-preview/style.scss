@@ -8,9 +8,27 @@
     }
 
     .field-icon {
-      left: -18px;
+      left: -20px;
       top: 50%;
       transform: translateY(-50%);
+    }
+  }
+
+  .hide-index-sub {
+    .index-sub {
+      display: none;
+    }
+  }
+
+  .hide-unique-sub {
+    .unique-sub {
+      display: none;
+    }
+  }
+
+  .hide-foreign-sub {
+    .foreign-sub {
+      display: none;
     }
   }
 }
