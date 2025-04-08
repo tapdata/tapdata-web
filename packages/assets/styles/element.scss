@@ -3,6 +3,10 @@
   --collapse-padding-primary: 16px;
   --collapse-padding-sm: 12px;
   --btn-space: 12px;
+
+  --icon-n1: rgb(43, 47, 54);
+  --icon-n2: rgb(100, 106, 115);
+  --icon-n3: rgb(143, 149, 158);
 }
 
 // Table
@@ -85,6 +89,9 @@
   }
   .el-select__tags .el-tag {
     --el-tag-text-color: var(--el-text-color-primary);
+  }
+  &__caret {
+    color: var(--icon-n3);
   }
 }
 

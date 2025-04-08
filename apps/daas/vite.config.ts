@@ -29,8 +29,6 @@ const proxy = {
   changeOrigin: false,
 }
 
-console.log('process.env', process.env)
-
 export default defineConfig({
   define: {
     'process.env': process.env,

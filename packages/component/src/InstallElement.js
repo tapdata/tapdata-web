@@ -1,7 +1,18 @@
-import { ElLoading, ElMessage, ElMessageBox, ElDialog, ElSelect, ElSelectV2, ElDropdown, ElLink } from 'element-plus'
+import {
+  ElDialog,
+  ElDropdown,
+  ElLink,
+  ElLoading,
+  ElMessage,
+  ElMessageBox,
+  ElSelect,
+  ElSelectV2,
+} from 'element-plus'
+import { CloseBoldOutlined } from './CloseBoldOutlined'
+import { CloseIcon } from './CloseIcon'
+import { DownBoldOutlined } from './DownBoldOutlined'
 import 'element-plus/theme-chalk/src/message.scss'
 import 'element-plus/theme-chalk/src/message-box.scss'
-import { CloseIcon } from './CloseIcon'
 
 // TODO 可能需要重写适配
 /*const showMessage = Symbol('showMessage')
@@ -60,7 +71,10 @@ export const installElement = (app) => {
 
   // 隐藏箭头后的offset
   ElSelect.props.popperOptions.default = getDefault
+  ElSelect.props.suffixIcon.default = DownBoldOutlined
   ElSelectV2.props.popperOptions.default = getDefault
+  ElSelectV2.props.clearIcon.default = CloseBoldOutlined
+  // ElSelectV2.props.suffixIcon.default = DownBoldOutlined
   ElDropdown.props.popperOptions.default = getDefault
   ElLink.props.underline.default = false
 }

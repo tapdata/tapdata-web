@@ -87,8 +87,8 @@ const init = () => {
     /*window.getSettingByKey('PRODUCT_TITLE') ||*/ import.meta.env
       .VUE_APP_PAGE_TITLE || 'Tapdata'
 
-  var loc = window.location,
-    wsUrl = 'ws:'
+  const loc = window.location
+  let wsUrl = 'ws:'
   if (loc.protocol === 'https:') {
     wsUrl = 'wss:'
   }

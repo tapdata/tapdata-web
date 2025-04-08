@@ -1,10 +1,8 @@
 import i18n from '@/i18n'
-import { defineComponent, reactive, ref, watch, nextTick, onMounted, SetupContext } from 'vue'
-import { FilterBar, Drawer, VIcon } from '@tap/component'
-import { TablePage, DiscoveryClassification, makeDragNodeImage } from '@tap/business'
+import { defineComponent, reactive, ref, watch, nextTick, onMounted } from 'vue'
+import { VIcon } from '@tap/component'
+import { makeDragNodeImage } from '@tap/business'
 import { discoveryApi } from '@tap/api'
-import DrawerContent from '@/views/data-discovery/PreviewDrawer'
-import ObjectTable from '@/views/data-discovery/ObjectTable'
 import './index.scss'
 import resize from '@tap/component/src/directives/resize'
 import { useRoute } from 'vue-router'
@@ -152,7 +150,7 @@ export default defineComponent({
     loadFilterList()
     watch(
       () => root.$route.query,
-      (()) => {
+      () => {
         tableRef.value.fetch(1)
       },
     )

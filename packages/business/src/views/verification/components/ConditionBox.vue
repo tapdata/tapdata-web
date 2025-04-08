@@ -2124,20 +2124,24 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
           <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
         </template>
       </ElInput>
-      <ElLink
+      <ElButton
         v-if="
           !isCountOrHash &&
           list.some((t) => !t.source.sortColumn || !t.target.sortColumn)
         "
+        text
         type="primary"
         :disabled="!list.length"
-        class="mr-4"
         @click="handleClearIndexEmpty"
         >{{ $t('packages_business_components_conditionbox_yijianqingchusuo') }}
-      </ElLink>
-      <ElLink type="primary" :disabled="!list.length" @click="handleClear"
+      </ElButton>
+      <ElButton
+        text
+        type="primary"
+        :disabled="!list.length"
+        @click="handleClear"
         >{{ $t('packages_business_verification_clear') }}
-      </ElLink>
+      </ElButton>
     </div>
     <DynamicScroller
       id="data-verification-form"
@@ -2166,9 +2170,12 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
                   <span class="ml-1">{{ index + 1 }}</span>
                 </div>
                 <div class="flex align-items-center">
-                  <ElButton text @click.stop="removeItem(index)">{{
-                    $t('public_button_delete')
-                  }}</ElButton>
+                  <ElButton
+                    type="danger"
+                    text
+                    @click.stop="removeItem(index)"
+                    >{{ $t('public_button_delete') }}</ElButton
+                  >
                 </div>
               </div>
               <div :key="`connection${item.id}`" class="setting-item mt-4">

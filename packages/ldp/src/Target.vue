@@ -699,10 +699,8 @@ export default {
               'span',
               {
                 class: 'color-primary fs-7 clickable',
-                on: {
-                  click: () => {
-                    this.handleClickName(taskInfo)
-                  },
+                onClick: () => {
+                  this.handleClickName(taskInfo)
                 },
               },
               this.$t('packages_business_task_created_success'),

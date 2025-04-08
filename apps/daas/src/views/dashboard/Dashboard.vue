@@ -1,4 +1,5 @@
 <script>
+import { ArrowRight } from '@element-plus/icons-vue'
 import { clusterApi, taskApi, workerApi } from '@tap/api'
 import { STATUS_MAP } from '@tap/business'
 import { statusMap as InspectStatusMap } from '@tap/business/src/views/verification/const'
@@ -7,7 +8,7 @@ import { toThousandsUnit } from '@/utils/util'
 import { STATUS_MAP as DASHBOARD_STATUS_MAP } from './const'
 
 export default {
-  components: { Chart },
+  components: { Chart, ArrowRight },
   inject: ['lockedFeature'],
   data() {
     const colorMap = {
@@ -18,6 +19,7 @@ export default {
       wait_start: '#fdf1c8',
       scheduling: '#fdf1c8',
       edit: '#88DBDA',
+      error: '#F7D762',
       error: '#F7D762',
       stop: '#E6B450',
       stopping: '#E6B450',
@@ -905,13 +907,12 @@ export default {
                               agentRunningTask[item.processId].migrate
                             "
                             type="success"
-                            size="mini"
                             class="rounded-md cursor-pointer"
                             @click="handleGoTask(item.processId, 'migrate')"
                           >
                             {{ $t('dashboard_copy_total') }}:
                             {{ agentRunningTask[item.processId].migrate || 0 }}
-                            <i class="el-icon-arrow-right" />
+                            <el-icon><ArrowRight /></el-icon>
                           </el-tag>
 
                           <el-tag
@@ -920,13 +921,12 @@ export default {
                               agentRunningTask[item.processId].sync
                             "
                             type="success"
-                            size="mini"
                             class="rounded-md cursor-pointer"
                             @click="handleGoTask(item.processId, 'sync')"
                           >
                             {{ $t('dashboard_sync_total') }}:
                             {{ agentRunningTask[item.processId].sync || 0 }}
-                            <i class="el-icon-arrow-right" />
+                            <el-icon><ArrowRight /></el-icon>
                           </el-tag>
                         </ul>
                       </div>

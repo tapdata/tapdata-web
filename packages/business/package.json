@@ -5,7 +5,7 @@
   "keywords": [],
   "license": "ISC",
   "author": "",
-  "main": "src/index",
+  "main": "src/index.js",
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0",
     "@tap/api": "workspace:^1.0.0",

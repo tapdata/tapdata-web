@@ -100,6 +100,7 @@ export default {
         keyword: '',
         status: '',
         type: '',
+        syncStatus: '',
       },
       //删除任务 pg数据源 slot 删除失败 自定义dialog 提示
       dialogDelMsgVisible: false,
