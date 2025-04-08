@@ -8,6 +8,8 @@ defineOptions({
   name: 'FilterItemSelect',
 })
 
+const model = defineModel()
+
 const props = defineProps({
   items: [Array, Function],
   label: String,
@@ -17,26 +19,32 @@ const props = defineProps({
     default: 200,
   },
   dropdownWidth: [String, Number],
+  emptyValues: {
+    type: Array,
+    default: () => ['', null, undefined],
+  },
 })
 
 const { items } = toRefs(props)
 
 const selectStyle = computed(() => {
   return {
-    width: addUnit(props.width),
+    width: isEmpty.value ? 'auto' : addUnit(props.width),
   }
 })
 
+const isEmpty = computed(() => {
+  console.log('props.modelValue', model.value)
+  return props.emptyValues.includes(model.value)
+})
+
 const popperClass = computed(() => {
-  return [
-    'filter-item-select__popper',
-    props.dropdownWidth ? 'is-fixed-width' : '',
-  ]
+  return `filter-item-select__popper ${props.dropdownWidth ? 'is-fixed-width' : ''}`
 })
 
 const options = ref([])
 
-const inputValue = ref('')
+console.log('props', props)
 
 const popperOptions = computed(() => {
   const modifiers = [
@@ -88,12 +96,13 @@ onBeforeMount(async () => {
 
 <template>
   <ElSelectV2
+    v-model="model"
     class="filter-item-select"
+    :class="{ 'is-empty': isEmpty }"
     :style="selectStyle"
     :filterable="filterable"
     :options="options"
-    :popper-class="popperClass"
-    :popper-options="popperOptions"
+    :fit-input-width="props.width"
   >
     <template #prefix>
       {{ label }}
@@ -116,7 +125,7 @@ onBeforeMount(async () => {
 <style lang="scss">
 .filter-item-select {
   .el-select__prefix {
-    color: var(--el-text-color-secondary);
+    color: var(--el-text-color-caption);
   }
   /*.el-select-v2__input-wrapper {
     display: none;
