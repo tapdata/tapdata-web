@@ -629,8 +629,8 @@ export default {
   packages_dag_field_inference_list_anzhaoxishu: '按系数调整字段长度',
   packages_dag_field_inference_list_anzhaoxishu_tip: '按系数调整是指将原推演出的长度乘以设置的系数作为调整后的字段长度',
   packages_dag_field_rename_index_yixiacaozuoyi: '以下操作已匹配不到源字段',
-  packages_dag_nodes_database_jinwuzhujianbiao: '仅无主键表',
-  packages_dag_nodes_database_jinyouzhujianbiao: '仅有主键表（含唯一索引）',
+  packages_dag_nodes_database_jinwuzhujianbiao: '无主键且无唯一索引',
+  packages_dag_nodes_database_jinyouzhujianbiao: '包含主键或唯一索引',
   packages_dag_nodes_database_biaoxianshi: '可选择的表范围',
   packages_dag_nodes_database_xuanzeyaoguolvdiaode: '选择要过滤掉的字段类型',
   packages_dag_data_schema: '数据模型',
@@ -776,5 +776,7 @@ export default {
   packages_dag_field_path: '字段路径',
   packages_dag_email_receivers: '邮件接收人',
   packages_dag_merge_table_js_node_error: '主从合并节点后不允许存在 JS 节点',
-  packages_dag_merge_table_table_not_allow_target: '主从合并后不支持将 {val} 作为写入目标'
+  packages_dag_merge_table_table_not_allow_target: '主从合并后不支持将 {val} 作为写入目标',
+  packages_dag_only_include_pk: '仅包含主键',
+  packages_dag_only_include_uk: '仅包含唯一索引'
 }
