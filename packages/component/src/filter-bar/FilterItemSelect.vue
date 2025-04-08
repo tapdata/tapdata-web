@@ -1,34 +1,7 @@
-<template>
-  <ElSelectV2
-    class="filter-item-select"
-    :style="selectStyle"
-    :filterable="filterable"
-    :options="options"
-    :popper-class="popperClass"
-    :popper-options="popperOptions"
-  >
-    <template #prefix>
-      {{ label }}
-    </template>
-
-    <template #default="{ item }">
-      <slot name="default" :item="item" />
-    </template>
-
-    <!-- <template #label="{ label, value }">
-      <el-tag
-        type="primary"
-      >
-        {{ label }}
-      </el-tag>
-    </template> -->
-  </ElSelectV2>
-</template>
-
 <script setup>
-import { computed, onBeforeMount, ref, toRefs } from 'vue'
-import { addUnit } from 'element-plus/es/utils/index.mjs'
 import { isFn } from '@tap/shared'
+import { addUnit } from 'element-plus/es/utils/index.mjs'
+import { computed, onBeforeMount, ref, toRefs } from 'vue'
 // import { ElSelectV2 as FilterSelect } from 'element-plus'
 
 defineOptions({
@@ -55,7 +28,10 @@ const selectStyle = computed(() => {
 })
 
 const popperClass = computed(() => {
-  return ['filter-item-select__popper', props.dropdownWidth ? 'is-fixed-width' : '']
+  return [
+    'filter-item-select__popper',
+    props.dropdownWidth ? 'is-fixed-width' : '',
+  ]
 })
 
 const options = ref([])
@@ -109,6 +85,33 @@ onBeforeMount(async () => {
   }
 })
 </script>
+
+<template>
+  <ElSelectV2
+    class="filter-item-select"
+    :style="selectStyle"
+    :filterable="filterable"
+    :options="options"
+    :popper-class="popperClass"
+    :popper-options="popperOptions"
+  >
+    <template #prefix>
+      {{ label }}
+    </template>
+
+    <template #default="{ item }">
+      <slot name="default" :item="item" />
+    </template>
+
+    <!-- <template #label="{ label, value }">
+      <el-tag
+        type="primary"
+      >
+        {{ label }}
+      </el-tag>
+    </template> -->
+  </ElSelectV2>
+</template>
 
 <style lang="scss">
 .filter-item-select {

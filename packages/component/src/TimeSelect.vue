@@ -1,42 +1,9 @@
-<template>
-  <div class="time-select__picker flex align-center">
-    <div class="w-100 picker__item inline-flex align-items-center" @click="openSelect">
-      <div class="time-select__title">{{ title }}</div>
-      <ElSelect
-        v-model="period"
-        :class="{ 'is-time': isTime }"
-        popper-class="time-select__popper"
-        class="ml-2 dark flex-1"
-        ref="select"
-        @change="changeFnc"
-      >
-        <ElOption v-for="(item, index) in items" :key="index" :label="item.label" :value="item.value"></ElOption>
-      </ElSelect>
-    </div>
-    <IconButton class="color-primary" @click.stop="openPicker">timer</IconButton>
-    <ElDatePicker
-      v-model="time"
-      :picker-options="pickerOptions"
-      ref="datetime"
-      type="datetimerange"
-      :range-separator="$t('packages_dag_components_timeselect_zhi')"
-      :start-placeholder="$t('packages_dag_components_timeselect_kaishiriqi')"
-      :end-placeholder="$t('packages_dag_components_timeselect_jieshuriqi')"
-      format="yyyy-MM-dd HH:mm"
-      value-format="timestamp"
-      class="el-date-picker position-absolute overflow-hidden p-0 m-0"
-      @change="changeTime"
-      @blur="blur"
-    ></ElDatePicker>
-  </div>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
-import dayjs from 'dayjs'
-
 import i18n from '@tap/i18n'
 import Time from '@tap/shared/src/time'
+
+import dayjs from 'dayjs'
+import { $emit, $off, $on, $once } from '../utils/gogocodeTransfer'
 import { IconButton } from './icon-button'
 
 export default {
@@ -90,6 +57,7 @@ export default {
       default: () => [Time.now() - 5 * 60 * 1000, Time.now()],
     },
   },
+  emits: ['change', 'setMinAndMaxTime', 'update:value', , , 'update:value'],
   data() {
     return {
       period: '',
@@ -155,7 +123,7 @@ export default {
   },
   methods: {
     changeFnc(value) {
-      let findOne = this.items.find((t) => t.value === value)
+      const findOne = this.items.find((t) => t.value === value)
       if (findOne?.type === 'custom') {
         this.openPicker()
         return
@@ -177,7 +145,7 @@ export default {
     changeTime(result) {
       // 不能超出时间范围
       const [start, end] = this.getRangeTime()
-      let val = result || []
+      const val = result || []
       if (val[0] < start) {
         val[0] = start
       }
@@ -196,7 +164,7 @@ export default {
       if (!findOne) {
         this.items = this.items.filter((t) => !t.isTime)
         this.items.push({
-          label: label,
+          label,
           value: valJoin,
           isTime: true,
         })
@@ -234,7 +202,7 @@ export default {
     },
 
     handleTimeRangeDisabled({ minDate, maxDate }) {
-      if (!(minDate && maxDate)) {
+      if (!minDate || !maxDate) {
         return
       }
       const picker = this.$refs.datetime?.picker
@@ -248,13 +216,26 @@ export default {
       const endTime = dayjs(end).format(this.timeFormat.time)
       // 控件日期、开始日期、结束日期，都是同一天
       if (pickStartDate === startDate && startDate === endDate) {
-        minTimePicker.selectableRange = [[new Date(`${startDate} ${startTime}`), new Date(`${endDate} ${endTime}`)]]
-        maxTimePicker.selectableRange = [[new Date(`${startDate} ${startTime}`), new Date(`${endDate} ${endTime}`)]]
+        minTimePicker.selectableRange = [
+          [
+            new Date(`${startDate} ${startTime}`),
+            new Date(`${endDate} ${endTime}`),
+          ],
+        ]
+        maxTimePicker.selectableRange = [
+          [
+            new Date(`${startDate} ${startTime}`),
+            new Date(`${endDate} ${endTime}`),
+          ],
+        ]
       } else {
         // 控件日期 等于 开始日期
         if (pickStartDate === startDate) {
           minTimePicker.selectableRange = [
-            [new Date(`${startDate} ${startTime}`), new Date(`${startDate} ${this.timeFormat.endTime}`)],
+            [
+              new Date(`${startDate} ${startTime}`),
+              new Date(`${startDate} ${this.timeFormat.endTime}`),
+            ],
           ]
         } else {
           minTimePicker.selectableRange = []
@@ -262,7 +243,10 @@ export default {
         // 控件日期 等于 结束日期
         if (pickEndDate === endDate) {
           maxTimePicker.selectableRange = [
-            [new Date(`${endDate} ${this.timeFormat.startTime}`), new Date(`${endDate} ${endTime}`)],
+            [
+              new Date(`${endDate} ${this.timeFormat.startTime}`),
+              new Date(`${endDate} ${endTime}`),
+            ],
           ]
         } else {
           maxTimePicker.selectableRange = []
@@ -279,7 +263,7 @@ export default {
     },
 
     setPeriod(value) {
-      let findOne = this.items.find((t) => t.value === value)
+      const findOne = this.items.find((t) => t.value === value)
       if (!findOne) {
         this.changeTime(value?.split(',').map((t) => Number(t)))
         return
@@ -291,9 +275,52 @@ export default {
       return this.items.find((t) => t.value === (value || this.period))
     },
   },
-  emits: ['change', 'setMinAndMaxTime', 'update:value', , , 'update:value'],
 }
 </script>
+
+<template>
+  <div class="time-select__picker flex align-center">
+    <div
+      class="w-100 picker__item inline-flex align-items-center"
+      @click="openSelect"
+    >
+      <div class="time-select__title">{{ title }}</div>
+      <ElSelect
+        ref="select"
+        v-model="period"
+        :class="{ 'is-time': isTime }"
+        popper-class="time-select__popper"
+        class="ml-2 dark flex-1"
+        style="min-width: 180px"
+        @change="changeFnc"
+      >
+        <ElOption
+          v-for="(item, index) in items"
+          :key="index"
+          :label="item.label"
+          :value="item.value"
+        />
+      </ElSelect>
+    </div>
+    <IconButton class="color-primary" @click.stop="openPicker"
+      >timer</IconButton
+    >
+    <ElDatePicker
+      ref="datetime"
+      v-model="time"
+      :picker-options="pickerOptions"
+      type="datetimerange"
+      :range-separator="$t('packages_dag_components_timeselect_zhi')"
+      :start-placeholder="$t('packages_dag_components_timeselect_kaishiriqi')"
+      :end-placeholder="$t('packages_dag_components_timeselect_jieshuriqi')"
+      format="yyyy-MM-dd HH:mm"
+      value-format="timestamp"
+      class="el-date-picker position-absolute overflow-hidden p-0 m-0"
+      @change="changeTime"
+      @blur="blur"
+    />
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .time-select__picker {

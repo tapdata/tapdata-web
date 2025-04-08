@@ -1,33 +1,9 @@
-<template>
-  <div class="record-wrap py-4 pl-4 h-100 w-100">
-    <VTable
-      :remoteMethod="remoteMethod"
-      :columns="columns"
-      :page-options="{
-        layout: 'total, ->, prev, pager, next, sizes, jumper',
-      }"
-      ref="table"
-      height="100%"
-      hide-on-single-page
-    >
-      <template v-slot:status="scope">
-        <TaskStatus :task="scope.row" />
-      </template>
-      <template v-slot:operation="scope">
-        <div class="operate-columns">
-          <ElButton text @click="handleDetail(scope.row)">{{ $t('public_button_details') }}</ElButton>
-        </div>
-      </template>
-    </VTable>
-  </div>
-</template>
-
 <script>
-import i18n from '@tap/i18n'
-
-import { VTable } from '@tap/component'
 import { taskApi } from '@tap/api'
+
 import { TaskStatus } from '@tap/business'
+import { VTable } from '@tap/component'
+import i18n from '@tap/i18n'
 import { openUrl } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 
@@ -105,7 +81,8 @@ export default {
         const page = this.getPage() || {}
         if (
           page.current === 1 &&
-          (v?.total !== page.total || JSON.stringify(v?.items) !== JSON.stringify(this.getTableData()))
+          (v?.total !== page.total ||
+            JSON.stringify(v?.items) !== JSON.stringify(this.getTableData()))
         ) {
           this.fetch()
         }
@@ -117,9 +94,9 @@ export default {
     remoteMethod({ page }) {
       const { current, size } = page
       const { id: taskId } = this.dataflow || {}
-      let filter = {
+      const filter = {
         page: current,
-        size: size,
+        size,
       }
       return taskApi.records(taskId, filter).then((data) => {
         return {
@@ -131,7 +108,9 @@ export default {
 
     handleDetail(row = {}) {
       const { taskId, taskRecordId, startDate, endDate } = row
-      const start = startDate ? new Date(startDate).getTime() - 1000 : Time.now()
+      const start = startDate
+        ? new Date(startDate).getTime() - 1000
+        : Time.now()
       const end = endDate ? new Date(endDate).getTime() : Time.now()
       const routeUrl = this.$router.resolve({
         name: 'MigrationMonitorViewer',
@@ -161,6 +140,32 @@ export default {
   },
 }
 </script>
+
+<template>
+  <div class="record-wrap py-4 pl-4 h-100 w-100">
+    <VTable
+      ref="table"
+      :remote-method="remoteMethod"
+      :columns="columns"
+      :page-options="{
+        layout: 'total, ->, prev, pager, next, sizes, jumper',
+      }"
+      height="100%"
+      hide-on-single-page
+    >
+      <template #status="scope">
+        <TaskStatus :task="scope.row" />
+      </template>
+      <template #operation="scope">
+        <div class="operate-columns">
+          <ElButton text type="primary" @click="handleDetail(scope.row)">{{
+            $t('public_button_details')
+          }}</ElButton>
+        </div>
+      </template>
+    </VTable>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .record-wrap {

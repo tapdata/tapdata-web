@@ -1,108 +1,16 @@
-<template>
-  <div class="log-container flex justify-content-between">
-    <div class="filter-items border-end flex-shrink-0">
-      <div
-        v-for="(item, index) in items"
-        :key="index"
-        :class="[{ active: activeNodeId === item.value }]"
-        class="filter-items__item flex justify-content-between align-items-center"
-        @click="changeItem(item)"
-      >
-        <div class="flex flex-fill w-0" style="width: 0">
-          <OverflowTooltip class="text-truncate" placement="right" :text="item.label" :open-delay="400" />
-          <span class="ml-1">{{ `(${item.num})` }}</span>
-        </div>
-        <div><VIcon>arrow-right</VIcon></div>
-      </div>
-    </div>
-    <div class="main alert-main flex-fill flex flex-column pt-5">
-      <div class="flex ml-4 mb-4 align-items-center">
-        <div>
-          <span>{{ $t('packages_dag_components_alert_gaojingjibie') }}</span>
-          <ElSelect
-            v-model="form.level"
-            :popper-append-to-body="false"
-            popper-class="time-select__popper"
-            class="ml-2 dark"
-            ref="select"
-            @change="getList"
-          >
-            <ElOption
-              v-for="(item, index) in levelItems"
-              :key="index"
-              :label="item.label"
-              :value="item.value"
-            ></ElOption>
-          </ElSelect>
-        </div>
-        <div class="ml-4">
-          <span>{{ $t('packages_dag_components_alert_gaojingzhuangtai') }}</span>
-          <ElSelect
-            v-model="form.status"
-            :popper-append-to-body="false"
-            popper-class="time-select__popper"
-            class="ml-2 dark"
-            ref="select"
-            @change="getList"
-          >
-            <ElOption
-              v-for="(item, index) in statusItems"
-              :key="index"
-              :label="item.label"
-              :value="item.value"
-            ></ElOption>
-          </ElSelect>
-        </div>
-      </div>
-      <VTable
-        :columns="columns"
-        :data="list"
-        :page-options="{
-          layout: 'total, ->, prev, pager, next, sizes, jumper',
-        }"
-        ref="table"
-        height="100"
-        class="table-list"
-        hide-on-single-page
-      >
-        <template v-slot:levelSlot="scope">
-          <span :class="['status-' + scope.row.levelType, 'status-block']">
-            {{ scope.row.levelLabel }}
-          </span>
-        </template>
-        <template slot="operation" slot-scope="scope">
-          <div class="operate-columns flex flex-wrap">
-            <ElButton class="ml-0" size="mini" type="text" @click="handleLog(scope.row)">{{
-              $t('packages_dag_monitor_bottompanel_rizhi')
-            }}</ElButton>
-            <ElButton
-              class="ml-0"
-              size="mini"
-              type="text"
-              :disabled="scope.row.status === 'CLOESE'"
-              @click="handleClose(scope.row)"
-              >{{ $t('public_button_close') }}</ElButton
-            >
-          </div>
-        </template>
-      </VTable>
-    </div>
-  </div>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../../utils/gogocodeTransfer'
-import i18n from '@tap/i18n'
-
-import { mapGetters } from 'vuex'
-
-import { VIcon, VTable, OverflowTooltip } from '@tap/component'
-import { ALARM_LEVEL_MAP, ALARM_STATUS_MAP } from '@tap/business'
 import { alarmApi } from '@tap/api'
+import { ALARM_LEVEL_MAP, ALARM_STATUS_MAP } from '@tap/business'
+
+import { OverflowTooltip, SelectList, VIcon, VTable } from '@tap/component'
+
+import i18n from '@tap/i18n'
+import { mapGetters } from 'vuex'
+import { $emit, $off, $on, $once } from '../../../../utils/gogocodeTransfer'
 
 export default {
   name: 'Alert',
-  components: { VIcon, VTable, OverflowTooltip },
+  components: { VIcon, VTable, OverflowTooltip, SelectList },
   props: {
     dataflow: {
       type: Object,
@@ -152,13 +60,13 @@ export default {
           label: i18n.t('packages_dag_components_alert_gaojingshoucifa'),
           prop: 'firstOccurrenceTime',
           dataType: 'time',
-          width: 180
+          width: 180,
         },
         {
           label: i18n.t('packages_dag_components_alert_gaojingzuijinfa'),
           prop: 'lastOccurrenceTime',
           dataType: 'time',
-          width: 180
+          width: 180,
         },
         // {
         //   label: i18n.t('packages_dag_components_alert_gaojingfashengci'),
@@ -179,13 +87,13 @@ export default {
     ...mapGetters('dataflow', ['allNodes']),
 
     levelItems() {
-      let result = [
+      const result = [
         {
           label: i18n.t('public_select_option_all'),
           value: '',
         },
       ]
-      for (let key in ALARM_LEVEL_MAP) {
+      for (const key in ALARM_LEVEL_MAP) {
         result.push({
           label: ALARM_LEVEL_MAP[key].text,
           value: key,
@@ -195,13 +103,13 @@ export default {
     },
 
     statusItems() {
-      let result = [
+      const result = [
         {
           label: i18n.t('public_select_option_all'),
           value: '',
         },
       ]
-      for (let key in ALARM_STATUS_MAP) {
+      for (const key in ALARM_STATUS_MAP) {
         result.push({
           label: ALARM_STATUS_MAP[key].text,
           value: key,
@@ -211,7 +119,7 @@ export default {
     },
 
     items() {
-      let nodeMap =
+      const nodeMap =
         this.alarmData?.nodeInfos?.reduce((cur, next) => {
           next.num = 0
           return { ...cur, [next.nodeId]: next }
@@ -287,7 +195,9 @@ export default {
 
     handleClose(row = {}) {
       alarmApi.close([row.id]).then(() => {
-        this.$message.success(i18n.t('packages_dag_components_alert_guanbichenggong'))
+        this.$message.success(
+          i18n.t('packages_dag_components_alert_guanbichenggong'),
+        )
         $emit(this, 'load-data')
       })
     },
@@ -303,6 +213,86 @@ export default {
   emits: ['change-tab', 'load-data'],
 }
 </script>
+
+<template>
+  <div class="log-container flex justify-content-between">
+    <div class="filter-items border-end flex-shrink-0">
+      <div
+        v-for="(item, index) in items"
+        :key="index"
+        :class="[{ active: activeNodeId === item.value }]"
+        class="filter-items__item flex justify-content-between align-items-center"
+        @click="changeItem(item)"
+      >
+        <div class="flex flex-fill w-0" style="width: 0">
+          <OverflowTooltip
+            class="text-truncate"
+            placement="right"
+            :text="item.label"
+            :open-delay="400"
+          />
+          <span class="ml-1">{{ `(${item.num})` }}</span>
+        </div>
+        <div><VIcon>arrow-right</VIcon></div>
+      </div>
+    </div>
+    <div class="main alert-main flex-fill flex flex-column pt-5">
+      <div class="flex ml-4 mb-4 align-items-center gap-4">
+        <SelectList
+          ref="select"
+          v-model="form.level"
+          :empty-values="[undefined]"
+          :label="$t('packages_dag_components_alert_gaojingjibie')"
+          :items="levelItems"
+          @change="getList"
+        />
+        <SelectList
+          v-model="form.status"
+          :empty-values="[undefined]"
+          :label="$t('packages_dag_components_alert_gaojingzhuangtai')"
+          :items="statusItems"
+          @change="getList"
+        />
+      </div>
+      <VTable
+        ref="table"
+        :columns="columns"
+        :data="list"
+        :page-options="{
+          layout: 'total, ->, prev, pager, next, sizes, jumper',
+        }"
+        height="100"
+        class="table-list"
+        hide-on-single-page
+      >
+        <template #levelSlot="scope">
+          <span :class="[`status-${scope.row.levelType}`, 'status-block']">
+            {{ scope.row.levelLabel }}
+          </span>
+        </template>
+        <template #operation="scope">
+          <div class="operate-columns flex flex-wrap">
+            <ElButton
+              class="ml-0"
+              size="mini"
+              type="text"
+              @click="handleLog(scope.row)"
+              >{{ $t('packages_dag_monitor_bottompanel_rizhi') }}</ElButton
+            >
+            <ElButton
+              class="ml-0"
+              size="mini"
+              type="text"
+              :disabled="scope.row.status === 'CLOESE'"
+              @click="handleClose(scope.row)"
+              >{{ $t('public_button_close') }}</ElButton
+            >
+          </div>
+        </template>
+      </VTable>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .log-container {
@@ -331,7 +321,8 @@ export default {
   background-color: rgba(229, 236, 255, 0.22);
 
   :deep(.log-line) {
-    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    font-family:
+      'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
   }
 
   :deep(.highlight-bg-color) {

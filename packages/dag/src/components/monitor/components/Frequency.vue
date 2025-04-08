@@ -1,23 +1,6 @@
-<template>
-  <div class="time-select__picker">
-    <div class="picker__item inline-flex align-items-center w-100" @click="openSelect">
-      <div class="time-select__title">{{ title }}</div>
-      <ElSelect
-        v-model="period"
-        popper-class="time-select__popper"
-        class="ml-2 dark flex-1"
-        ref="select"
-        @change="changeFnc"
-      >
-        <ElOption v-for="(item, index) in items" :key="index" :label="item.label" :value="item.value"></ElOption>
-      </ElSelect>
-    </div>
-  </div>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
+import { $emit, $off, $on, $once } from '../../../../utils/gogocodeTransfer'
 
 export default {
   name: 'Frequency',
@@ -75,6 +58,7 @@ export default {
       ],
     },
   },
+  emits: ['change', 'update:value', , 'update:value'],
   data() {
     return {
       period: '',
@@ -94,9 +78,34 @@ export default {
       this.$refs.select?.$el?.click()
     },
   },
-  emits: ['change', 'update:value', , 'update:value'],
 }
 </script>
+
+<template>
+  <div class="time-select__picker">
+    <div
+      class="picker__item inline-flex align-items-center w-100"
+      @click="openSelect"
+    >
+      <div class="time-select__title">{{ title }}</div>
+      <ElSelect
+        ref="select"
+        v-model="period"
+        popper-class="time-select__popper"
+        class="ml-2 dark flex-1"
+        style="min-width: 100px"
+        @change="changeFnc"
+      >
+        <ElOption
+          v-for="(item, index) in items"
+          :key="index"
+          :label="item.label"
+          :value="item.value"
+        />
+      </ElSelect>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .time-select__picker {
