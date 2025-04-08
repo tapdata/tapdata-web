@@ -1,25 +1,32 @@
+import { useField, useForm } from '@formily/vue'
 import i18n from '@tap/i18n'
 import { defineComponent, ref } from 'vue'
-import { useForm, useField } from '@formily/vue'
 
 export const TextFileReader = defineComponent({
-  props: ['value', 'accept', 'maxFileSize', 'base64', 'fileName', 'fileNameField'],
+  props: [
+    'value',
+    'accept',
+    'maxFileSize',
+    'base64',
+    'fileName',
+    'fileNameField',
+  ],
   setup(props, { emit, root }) {
     const formRef = useForm()
     const fieldRef = useField()
-    console.log('formRef', formRef, fieldRef)
     const form = formRef.value
 
     let fileNameField
-    let fileName = props.fileName
-    let fileNameRef = ref(props.fileName || '')
+    const fileName = props.fileName
+    const fileNameRef = ref(props.fileName || '')
 
     if (form) {
-      fileNameField = props.fileNameField ?? `__TAPDATA_UI.${fieldRef.value.props.name}`
+      fileNameField =
+        props.fileNameField ?? `__TAPDATA_UI.${fieldRef.value.props.name}`
       fileNameRef.value = fileName || form.getValuesIn(fileNameField) || ''
     }
 
-    let selectFile = (file) => {
+    const selectFile = (file) => {
       if (file) {
         fileNameRef.value = file.name
         if (props.maxFileSize && file.size / 1024 > props.maxFileSize) {
@@ -29,24 +36,24 @@ export const TextFileReader = defineComponent({
             }),
           )
         } else {
-          let reader = new FileReader()
+          const reader = new FileReader()
           if (props.base64) {
             let fileResult = ''
             reader.readAsDataURL(file)
-            reader.onload = function () {
+            reader.addEventListener('load', function () {
               fileResult = reader.result
-            }
+            })
             reader.onloadend = function () {
               emit('change', fileResult.split(',')[1])
               emit('update:fileName', file.name)
             }
           } else {
             reader.readAsText(file)
-            reader.onload = () => {
+            reader.addEventListener('load', () => {
               emit('change', reader.result)
               emit('update:fileName', file.name)
               fileNameField && form?.setValuesIn(fileNameField, file.name)
-            }
+            })
           }
         }
       } else {
@@ -59,32 +66,38 @@ export const TextFileReader = defineComponent({
     return () => {
       return (
         <ElInput
-          modelValue={fileName.value}
-          placeholder={i18n.global.t('packages_form_formBuilder_file_placeholder')}
+          modelValue={fileNameRef.value}
+          placeholder={i18n.global.t(
+            'packages_form_formBuilder_file_placeholder',
+          )}
           onClear={() => {
             emit('change', null)
             emit('update:fileName', null)
           }}
         >
-          <template slot="append">
-            <ElUpload
-              props={{
-                action: '',
-                limit: 1,
-                autoUpload: false,
-                accept: props.accept,
-                showFileList: false,
-                onChange: (file) => {
-                  selectFile(file.raw)
-                },
-                onExceed: (fileList) => {
-                  selectFile(fileList[0])
-                },
-              }}
-            >
-              <ElButton>{i18n.global.t('packages_form_formBuilder_file_button')}</ElButton>
-            </ElUpload>
-          </template>
+          {{
+            append: () => (
+              <ElUpload
+                {...{
+                  action: '',
+                  limit: 1,
+                  autoUpload: false,
+                  accept: props.accept,
+                  showFileList: false,
+                  onChange: (file) => {
+                    selectFile(file.raw)
+                  },
+                  onExceed: (fileList) => {
+                    selectFile(fileList[0])
+                  },
+                }}
+              >
+                <ElButton>
+                  {i18n.global.t('packages_form_formBuilder_file_button')}
+                </ElButton>
+              </ElUpload>
+            ),
+          }}
         </ElInput>
       )
     }

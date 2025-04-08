@@ -1,24 +1,23 @@
-import { installAllPlugins } from '@/plugins'
-import { installDirectives } from './directive'
-import App from './App.vue'
+import { timeStampApi } from '@tap/api'
+import WSClient from '@tap/business/src/shared/ws-client'
+import { installElement, VButton, VIcon } from '@tap/component'
+import Time from '@tap/shared/src/time'
+import { ElLoadingService, ElNotification as Notification } from 'element-plus'
+import * as Vue from 'vue'
 import * as VueRouter from 'vue-router'
-import 'github-markdown-css'
-import './assets/styles/app.scss'
+import { installAllPlugins } from '@/plugins'
 import axios from '@/plugins/axios'
-import i18n from './i18n'
+import { startTimeOnPage, startTimeOnSite } from '@/plugins/buried'
 import store from '@/store'
 import { errorConfirmFnc } from '@/util'
-import { startTimeOnSite, startTimeOnPage } from '@/plugins/buried'
-import { VIcon, VButton, installElement } from '@tap/component'
-import { timeStampApi } from '@tap/api'
-import Time from '@tap/shared/src/time'
-import WSClient from '@tap/business/src/shared/ws-client'
-import { ElNotification as Notification } from 'element-plus'
-import { createVersionPolling } from './plugins/version-polling'
-import * as Vue from 'vue'
-import { ElLoadingService } from 'element-plus'
+import App from './App.vue'
+import { installDirectives } from './directive'
+import i18n from './i18n'
 import { CustomerSurvey } from './plugins/customer-survey'
 import dayjs from './plugins/dayjs'
+import { createVersionPolling } from './plugins/version-polling'
+import 'github-markdown-css'
+import './assets/styles/app.scss'
 
 Vue.use(VueClipboard)
 
@@ -37,7 +36,7 @@ Vue.use(VueClipboard)
 export default ({ routes }) => {
   let loading = null
 
-  const init = userInfo => {
+  const init = (userInfo) => {
     const router = VueRouter.createRouter({
       history: VueRouter.createWebHashHistory(),
       routes,
@@ -50,15 +49,18 @@ export default ({ routes }) => {
       wsUrl = 'wss://'
     }
     let queryString = ``
-    if ( import.meta.env.NODE_ENV === 'development') {
-      queryString = `__token=${ import.meta.env.VUE_APP_ACCESS_TOKEN}`
+    if (import.meta.env.NODE_ENV === 'development') {
+      queryString = `__token=${import.meta.env.VUE_APP_ACCESS_TOKEN}`
     }
-    let index = loc.pathname.lastIndexOf('.html')
+    const index = loc.pathname.lastIndexOf('.html')
     let path = loc.pathname
     if (index > 0) {
-      path = loc.pathname.substring(0, loc.pathname.lastIndexOf('/') + 1)
+      path = loc.pathname.slice(
+        0,
+        Math.max(0, loc.pathname.lastIndexOf('/') + 1),
+      )
     }
-    wsUrl = wsUrl + loc.host + path + `tm/ws/agent?${queryString}`
+    wsUrl = `${wsUrl + loc.host + path}tm/ws/agent?${queryString}`
 
     store.commit('setUser', window.__USER_INFO__)
     store.commit('setLanguage', document.domain.endsWith('io') ? 'en' : 'zh-CN')
@@ -79,8 +81,8 @@ export default ({ routes }) => {
     iframe.style.height = '0'
     iframe.style.width = '0'
     iframe.style.border = '0'
-    iframe.src = 'https://wwads.cn/code/tracking/143?user_id=' + window.__USER_INFO__.id
-    document.body.appendChild(iframe)
+    iframe.src = `https://wwads.cn/code/tracking/143?user_id=${window.__USER_INFO__.id}`
+    document.body.append(iframe)
     /*E 万维广告*/
 
     const app = (window.App = window.$vueApp = Vue.createApp(App))
@@ -101,7 +103,7 @@ export default ({ routes }) => {
     createVersionPolling({
       appETagKey: '__APP_ETAG__',
       pollingInterval: 5 * 1000, // 单位为毫秒
-      silent:  import.meta.env.NODE_ENV === 'development', // 开发环境下不检测
+      silent: import.meta.env.NODE_ENV === 'development', // 开发环境下不检测
       onUpdate: (self) => {
         const h = window.App.$createElement
         Notification({
@@ -123,14 +125,19 @@ export default ({ routes }) => {
                   class: 'flex flex-column align-items-start gap-2 text-start',
                 },
                 [
-                  h('span', { class: 'text-primary fs-6 fw-sub' }, i18n.t('dfs_system_update')),
+                  h(
+                    'span',
+                    { class: 'text-primary fs-6 fw-sub' },
+                    i18n.t('dfs_system_update'),
+                  ),
                   h('span', { class: '' }, i18n.t('dfs_system_description')),
                   h(
                     'el-button',
                     {
                       class: 'ml-auto',
-                      props: { type: 'primary', size: 'mini' },
-                      on: { click: () => self.onRefresh() },
+                      type: 'primary',
+                      size: 'small',
+                      onClick: () => self.onRefresh(),
                     },
                     i18n.t('public_button_refresh'),
                   ),
@@ -146,8 +153,8 @@ export default ({ routes }) => {
 
     // 路由守卫
     router.beforeEach((to, from, next) => {
-      let domainName = document.domain
-      let removeReadonly = localStorage.getItem('removeReadonly')
+      const domainName = document.domain
+      const removeReadonly = localStorage.getItem('removeReadonly')
       if (
         [
           'connectionCreate',
@@ -183,11 +190,11 @@ export default ({ routes }) => {
   loading = ElLoadingService({ fullscreen: true })
   let count = 0
 
-  let getData = () => {
+  const getData = () => {
     axios
       .get('api/tcm/user')
       .then((data) => {
-        let userInfo = data
+        const userInfo = data
         window.__USER_INFO__ = userInfo
 
         loading.close()
@@ -198,23 +205,21 @@ export default ({ routes }) => {
           Time.setTime(t)
         })
       })
-      .catch((err) => {
+      .catch((error) => {
         // 获取用户信息失败
         if (count < 4) {
-          // eslint-disable-next-line
           // console.log(i18n.t('dfs_src_init_huoquyonghuxin2'))
           setTimeout(() => {
             count++
-            // eslint-disable-next-line
+
             // console.log(i18n.t('dfs_src_init_chongxinchangshihuo')('dfs_src_init_chongxinchangshihuo', { val1: count }))
             getData()
           }, 3000)
         } else {
-          // eslint-disable-next-line
           // console.log(i18n.t('dfs_src_init_huoquyonghuxin'), err)
           loading.close()
           init()
-          return errorConfirmFnc(err)
+          return errorConfirmFnc(error)
         }
       })
   }

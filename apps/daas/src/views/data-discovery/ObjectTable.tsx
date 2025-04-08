@@ -1,9 +1,9 @@
-import { defineComponent, reactive, ref, nextTick, watch, onMounted } from 'vue'
-import i18n from '@/i18n'
-import { FilterBar } from '@tap/component'
-import { TablePage } from '@tap/business'
 import { discoveryApi } from '@tap/api'
+import { TablePage } from '@tap/business'
+import { FilterBar } from '@tap/component'
+import { defineComponent, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { useMessage } from '@/hooks'
+import i18n from '@/i18n'
 import './index.scss'
 
 interface CustomContext extends SetupContext {
@@ -16,7 +16,8 @@ export default defineComponent({
   props: ['parentNode'],
   setup(props, { root, emit, refs }) {
     const multipleTableRef = ref()
-    const { category, type, sourceCategory, sourceType, queryKey } = root.$route.query || {}
+    const { category, type, sourceCategory, sourceType, queryKey } =
+      root.$route.query || {}
     const list = ref([])
     const { error, success } = useMessage()
     const multipleSelection = ref([])
@@ -40,30 +41,32 @@ export default defineComponent({
     })
     //加载table 数据
     const loadTableData = ({ page }) => {
-      const { category, type, sourceCategory, sourceType, queryKey } = data.searchParams
+      const { category, type, sourceCategory, sourceType, queryKey } =
+        data.searchParams
       const { size, current } = page
       const where = {
         page: current,
         pageSize: size,
         itemTypes: props.parentNode?.item_type || [],
       }
-      category && (where['category'] = category)
-      type && (where['type'] = type)
-      sourceType && (where['sourceType'] = sourceType)
-      sourceCategory && (where['sourceCategory'] = sourceCategory)
-      queryKey && (where['queryKey'] = queryKey)
+      category && (where.category = category)
+      type && (where.type = type)
+      sourceType && (where.sourceType = sourceType)
+      sourceCategory && (where.sourceCategory = sourceCategory)
+      queryKey && (where.queryKey = queryKey)
       return discoveryApi.list(where).then((res) => {
         const { total, items } = res
         list.value = items || []
         //选中被绑定的资源
         if (list.value?.length === 0)
           return {
-            total: total,
+            total,
             data: items,
           }
         list.value.forEach((t) => {
           if (t?.allTags) {
-            const usedRow = t?.allTags.filter((tag) => tag.id === props.parentNode?.id) || []
+            const usedRow =
+              t?.allTags.filter((tag) => tag.id === props.parentNode?.id) || []
             if (usedRow?.length > 0) {
               nextTick(() => {
                 // @ts-ignore
@@ -73,14 +76,19 @@ export default defineComponent({
           }
         })
         return {
-          total: total,
+          total,
           data: items,
         }
       })
     }
     //请求过滤条件每一个下拉列表的数据
     const loadFilterList = () => {
-      const filterType = ['objCategory', 'objType', 'sourceCategory', 'sourceType']
+      const filterType = [
+        'objCategory',
+        'objType',
+        'sourceCategory',
+        'sourceType',
+      ]
       discoveryApi.filterList(filterType).then((res) => {
         const { objCategory, objType, sourceCategory, sourceType } = res
         data.filterItems = [
@@ -179,8 +187,8 @@ export default defineComponent({
         .then(() => {
           success(i18n.t('public_message_operation_success'))
         })
-        .catch((err) => {
-          error(err)
+        .catch((error_) => {
+          error(error_)
         })
     }
     //监听路由变化 筛选条件变化
@@ -219,11 +227,16 @@ export default defineComponent({
             <FilterBar
               items={this.data.filterItems}
               v-model={this.data.searchParams}
-              {...{ on: { fetch: this.loadTableData } }}
+              onFetch={this.loadTableData}
             ></FilterBar>
           </template>
           <el-table-column width="55" type="selection"></el-table-column>
-          <el-table-column label={this.$t('object_list_name')} prop="name" show-overflow-tooltip width="350px">
+          <el-table-column
+            label={this.$t('object_list_name')}
+            prop="name"
+            show-overflow-tooltip
+            width="350px"
+          >
             {this.renderNode}
           </el-table-column>
           <el-table-column
@@ -231,8 +244,16 @@ export default defineComponent({
             label={this.$t('object_list_classification')}
             prop="category"
           ></el-table-column>
-          <el-table-column width="100px" label={this.$t('object_list_type')} prop="type"></el-table-column>
-          <el-table-column width="140px" label={this.$t('object_list_source_type')} prop="sourceType"></el-table-column>
+          <el-table-column
+            width="100px"
+            label={this.$t('object_list_type')}
+            prop="type"
+          ></el-table-column>
+          <el-table-column
+            width="140px"
+            label={this.$t('object_list_source_type')}
+            prop="sourceType"
+          ></el-table-column>
           <el-table-column
             width="145px"
             label={this.$t('datadiscovery_objectlist_laiyuanfenlei')}

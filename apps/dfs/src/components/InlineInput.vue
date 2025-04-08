@@ -145,7 +145,7 @@ export default {
       this.editing = false
     },
   },
-  emits: ['click-text', 'save', 'update:value', , 'update:value'],
+  emits: ['click-text', 'save', 'update:value'],
 }
 </script>
 

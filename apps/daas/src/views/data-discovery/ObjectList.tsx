@@ -168,7 +168,7 @@ export default defineComponent({
             <FilterBar
               items={this.data.filterItems}
               v-model={this.data.searchParams}
-              {...{ on: { fetch: this.rest } }}
+              onFetch={this.rest}
             ></FilterBar>
           </template>
           <el-table-column label={this.$t('object_list_name')} prop="name" show-overflow-tooltip width="350px">

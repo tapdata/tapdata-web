@@ -268,7 +268,7 @@ export default defineComponent({
             <FilterBar
               v-model={this.data.searchParams}
               items={this.data.filterItems}
-              {...{ on: { fetch: this.rest } }}
+              onFetch={this.rest}
             ></FilterBar>
           </template>
           <template slot="operation">
@@ -310,7 +310,7 @@ export default defineComponent({
           <ObjectTable
             ref="objectTableRef"
             parentNode={this.data.currentNode}
-            {...{ on: { fetch: this.closeSourceDrawer } }}
+            onFetch={this.closeSourceDrawer}
           ></ObjectTable>
         </el-drawer>
       </section>
