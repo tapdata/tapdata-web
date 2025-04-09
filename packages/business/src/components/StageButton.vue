@@ -1,24 +1,10 @@
-<template>
-  <ElButton text :loading="loading" :disabled="disabled" @click="loadSchema">
-    <template v-if="loading">
-      <span>{{ progress }}</span>
-    </template>
-    <template v-else>
-      <slot>
-        <span>{{ label }}</span>
-        <VIcon class="ml-1" size="9">icon_table_selector_load</VIcon>
-      </slot>
-    </template>
-  </ElButton>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
+import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import i18n from '@tap/i18n'
 
 import { mapActions } from 'vuex'
 
-import { connectionsApi, metadataInstancesApi } from '@tap/api'
+import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 
 export default {
   name: 'StageButton',
@@ -89,10 +75,12 @@ export default {
       clearTimeout(this.timer)
       connectionsApi.getNoSchema(this.connectionId).then((res) => {
         if (res.loadFieldsStatus === 'loading') {
-          this.progress = (Math.round((res.loadCount / res.tableCount) * 10000) / 100 || 0) + '%'
+          this.progress = `${
+            Math.round((res.loadCount / res.tableCount) * 10000) / 100 || 0
+          }%`
           this.timer = setTimeout(this.getProgress, 1000)
         } else {
-          this.progress = 100 + '%'
+          this.progress = `${100}%`
           const { taskId, nodeId } = this
           if (!check && taskId && nodeId) {
             metadataInstancesApi
@@ -108,17 +96,17 @@ export default {
     },
 
     startByConnection(connection, updateSchema, editTest) {
-      let msg = {
+      const msg = {
         type: 'testConnection',
         data: connection,
       }
-      msg.data['updateSchema'] = false
-      msg.data['editTest'] = false
+      msg.data.updateSchema = false
+      msg.data.editTest = false
       if (updateSchema) {
-        msg.data['updateSchema'] = updateSchema
+        msg.data.updateSchema = updateSchema
       }
       if (editTest) {
-        msg.data['editTest'] = editTest
+        msg.data.editTest = editTest
       }
       this.$ws.ready(() => {
         this.$ws.send(msg)
@@ -131,3 +119,23 @@ export default {
   emits: ['start', 'complete'],
 }
 </script>
+
+<template>
+  <ElButton
+    text
+    type="primary"
+    :loading="loading"
+    :disabled="disabled"
+    @click="loadSchema"
+  >
+    <template v-if="loading">
+      <span>{{ progress }}</span>
+    </template>
+    <template v-else>
+      <slot>
+        <span>{{ label }}</span>
+        <VIcon class="ml-1" size="9">icon_table_selector_load</VIcon>
+      </slot>
+    </template>
+  </ElButton>
+</template>

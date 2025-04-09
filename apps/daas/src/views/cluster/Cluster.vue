@@ -27,7 +27,7 @@ export default {
   },
   data() {
     return {
-      hideDownload:  import.meta.env.VUE_APP_HIDE_CLUSTER_DOWNLOAD,
+      hideDownload: import.meta.env.VUE_APP_HIDE_CLUSTER_DOWNLOAD,
       waterfallData: [],
       currentData: null,
       dialogForm: false,
@@ -1045,7 +1045,6 @@ export default {
                     <template #default="{ row }">
                       <div v-readonlybtn="'Cluster_operation'" class="btn">
                         <ElButton
-                          size="mini"
                           text
                           type="primary"
                           :disabled="row.status == 'stopped' ? false : true"
@@ -1054,7 +1053,6 @@ export default {
                         </ElButton>
                         <ElDivider class="mx-1" direction="vertical" />
                         <ElButton
-                          size="mini"
                           text
                           type="primary"
                           :disabled="row.status == 'running' ? false : true"
@@ -1130,7 +1128,8 @@ export default {
                     <template #default="{ row }">
                       <div v-readonlybtn="'Cluster_operation'" class="btn">
                         <ElButton
-                          type="text"
+                          text
+                          type="primary"
                           :disabled="row.status == 'stopped' ? false : true"
                           @click="
                             startFn(row, row.status, 'management', 'start')
@@ -1139,8 +1138,8 @@ export default {
                         </ElButton>
                         <ElDivider direction="vertical" />
                         <ElButton
-                          size="mini"
-                          type="text"
+                          text
+                          type="primary"
                           :disabled="row.status == 'running' ? false : true"
                           @click="
                             closeFn(row, row.status, 'management', 'stop')
@@ -1149,7 +1148,8 @@ export default {
                         </ElButton>
                         <ElDivider direction="vertical" />
                         <ElButton
-                          type="text"
+                          text
+                          type="primary"
                           :disabled="row.status == 'running' ? false : true"
                           @click="
                             restartFn(row, row.status, 'management', 'restart')
@@ -1202,23 +1202,24 @@ export default {
                     <template #default="{ row }">
                       <div v-readonlybtn="'Cluster_operation'" class="btn">
                         <ElButton
-                          size="mini"
-                          type="text"
+                          text
+                          type="primary"
                           :disabled="row.status == 'stopped' ? false : true"
                           @click="startFn(row, row.status, 'apiServer')"
                           >{{ $t('public_button_start') }}
                         </ElButton>
                         <ElDivider direction="vertical" />
                         <ElButton
-                          size="mini"
-                          type="text"
+                          text
+                          type="primary"
                           :disabled="row.status == 'running' ? false : true"
                           @click="closeFn(row, row.status, 'apiServer')"
                           >{{ $t('public_button_close') }}
                         </ElButton>
                         <ElDivider direction="vertical" />
                         <ElButton
-                          type="text"
+                          text
+                          type="primary"
                           :disabled="row.status == 'running' ? false : true"
                           @click="restartFn(row, row.status, 'apiServer')"
                           >{{ $t('public_button_restart') }}
@@ -1265,7 +1266,6 @@ export default {
                     >
                       <ElButton
                         v-if="item.canUpdate"
-                        size="mini"
                         type="danger"
                         @click="
                           updateFn(
@@ -1318,11 +1318,11 @@ export default {
                       >
                       <template v-if="item.status !== 'running'">
                         <ElDivider direction="vertical" />
-                        <ElLink
-                          size="small"
+                        <ElButton
+                          text
                           type="danger"
                           @click="delConfirm(item)"
-                          >{{ $t('public_button_delete') }}</ElLink
+                          >{{ $t('public_button_delete') }}</ElButton
                         >
                       </template>
                     </div>
@@ -1391,7 +1391,8 @@ export default {
                       <el-col :span="10">
                         <div v-readonlybtn="'Cluster_operation'" class="btn">
                           <ElButton
-                            type="text"
+                            text
+                            type="primary"
                             :disabled="
                               item.management.status == 'stopped' ? false : true
                             "
@@ -1407,8 +1408,8 @@ export default {
                           </ElButton>
                           <ElDivider direction="vertical" />
                           <ElButton
-                            size="mini"
-                            type="text"
+                            text
+                            type="primary"
                             :disabled="
                               item.management.status == 'running' ? false : true
                             "
@@ -1424,7 +1425,8 @@ export default {
                           </ElButton>
                           <ElDivider direction="vertical" />
                           <ElButton
-                            type="text"
+                            text
+                            type="primary"
                             :disabled="
                               item.management.status == 'running' ? false : true
                             "
@@ -1465,8 +1467,8 @@ export default {
                       <el-col :span="10">
                         <div v-readonlybtn="'Cluster_operation'" class="btn">
                           <ElButton
-                            size="mini"
-                            type="text"
+                            text
+                            type="primary"
                             :disabled="
                               item.engine.status == 'stopped' ? false : true
                             "
@@ -1475,8 +1477,8 @@ export default {
                           </ElButton>
                           <ElDivider direction="vertical" />
                           <ElButton
-                            size="mini"
-                            type="text"
+                            text
+                            type="primary"
                             :disabled="
                               item.engine.status == 'running' ? false : true
                             "
@@ -1485,7 +1487,8 @@ export default {
                           </ElButton>
                           <ElDivider direction="vertical" />
                           <ElButton
-                            type="text"
+                            text
+                            type="primary"
                             :disabled="
                               item.engine.status == 'running' ? false : true
                             "
@@ -1500,7 +1503,8 @@ export default {
                           />
                           <ElButton
                             v-if="bindWorkerMap[item.systemInfo.process_id]"
-                            type="text"
+                            text
+                            type="primary"
                             :disabled="
                               item.engine.status == 'stopped' ? false : true
                             "
@@ -1532,8 +1536,8 @@ export default {
                       <el-col :span="10">
                         <div v-readonlybtn="'Cluster_operation'" class="btn">
                           <ElButton
-                            size="mini"
-                            type="text"
+                            text
+                            type="primary"
                             :disabled="
                               item.apiServer.status == 'stopped' ? false : true
                             "
@@ -1544,8 +1548,8 @@ export default {
                           </ElButton>
                           <ElDivider direction="vertical" />
                           <ElButton
-                            size="mini"
-                            type="text"
+                            text
+                            type="primary"
                             :disabled="
                               item.apiServer.status == 'running' ? false : true
                             "
@@ -1556,7 +1560,8 @@ export default {
                           </ElButton>
                           <ElDivider direction="vertical" />
                           <ElButton
-                            type="text"
+                            text
+                            type="primary"
                             :disabled="
                               item.apiServer.status == 'running' ? false : true
                             "
@@ -1590,13 +1595,15 @@ export default {
                       <el-col v-readonlybtn="'Cluster_operation'" :md="10">
                         <div class="btn">
                           <ElButton
-                            type="text"
+                            text
+                            type="primary"
                             @click="delServe(child, item.status)"
                             >{{ $t('public_button_delete') }}
                           </ElButton>
                           <ElDivider direction="vertical" />
                           <ElButton
-                            type="text"
+                            text
+                            type="primary"
                             @click="editServe(child, item.status, item)"
                             >{{ $t('public_button_edit') }}
                           </ElButton>

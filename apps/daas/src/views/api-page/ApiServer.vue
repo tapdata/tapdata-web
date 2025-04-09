@@ -1,100 +1,11 @@
-<template>
-  <PageContainer>
-    <template #actions>
-      <el-button v-readonlybtn="'API_creation'" type="primary" class="btn btn-create" @click="openCreateDialog">
-        <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
-        <span>{{ $t('api_server_create') }}</span>
-      </el-button>
-    </template>
-
-    <!-- api服务器 -->
-    <TablePage ref="table" row-key="id" class="apiserver-list" :remoteMethod="getData" @sort-change="handleSortTable">
-      <template v-slot:search>
-        <div class="search-bar">
-          <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
-        </div>
-      </template>
-
-      <el-table-column
-        :label="$t('api_server_user')"
-        :show-overflow-tooltip="true"
-        prop="user.email"
-        sortable="user.email"
-        width="120"
-      >
-        <template v-slot="scope">
-          {{ scope.row.user ? scope.row.user.email : '' }}
-        </template>
-      </el-table-column>
-      <el-table-column
-        :label="$t('api_server_process_id')"
-        :show-overflow-tooltip="true"
-        prop="processId"
-        sortable="processId"
-      >
-      </el-table-column>
-      <el-table-column
-        :label="$t('api_server_client_name')"
-        :show-overflow-tooltip="true"
-        prop="clientName"
-        sortable="clientName"
-      ></el-table-column>
-      <el-table-column
-        :label="$t('api_server_client_uri')"
-        :show-overflow-tooltip="true"
-        prop="clientURI"
-        sortable="clientURI"
-      >
-      </el-table-column>
-      <el-table-column :label="$t('public_operation')" width="200" fixed="right">
-        <template v-slot="scope">
-          <el-button v-readonlybtn="'API_clients_amangement'" text type="primary" @click="edit(scope.row)">
-            {{ $t('public_button_edit') }}
-          </el-button>
-          <ElDivider class="mx-1" direction="vertical"></ElDivider>
-          <el-button v-readonlybtn="'API_clients_amangement'" text type="primary" @click="remove(scope.row)">{{
-            $t('public_button_delete')
-          }}</el-button>
-          <ElDivider class="mx-1" direction="vertical"></ElDivider>
-          <el-tooltip class="item" effect="dark" :content="$t('api_server_download_API_Server_config')" placement="top">
-            <el-button
-              v-readonlybtn="'API_clients_amangement'"
-              text
-              type="primary"
-              @click="downloadConfig(scope.row)"
-              >{{ $t('public_button_download') }}</el-button
-            >
-          </el-tooltip>
-        </template>
-      </el-table-column>
-    </TablePage>
-    <!-- 创建客户端 -->
-    <el-dialog
-      width="600px"
-      class="create-dialog"
-      :title="createForm.id ? $t('public_button_edit') : $t('api_server_create_server')"
-      :close-on-click-modal="false"
-      v-model="createDialogVisible"
-    >
-      <FormBuilder ref="form" v-model:value="createForm" :config="createFormConfig"></FormBuilder>
-      <template v-slot:footer>
-        <span class="dialog-footer">
-          <el-button @click="createDialogVisible = false">{{ $t('public_button_cancel') }}</el-button>
-          <el-button type="primary" @click="createServer()">{{ $t('public_button_confirm') }}</el-button>
-        </span>
-      </template>
-    </el-dialog>
-  </PageContainer>
-</template>
-
 <script>
-import { h } from 'vue'
-import { escapeRegExp } from 'lodash'
 import { apiServerApi } from '@tap/api'
-import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'
-import Cookie from '@tap/shared/src/cookie'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
+import { FilterBar } from '@tap/component'
+import Cookie from '@tap/shared/src/cookie'
+import { escapeRegExp } from 'lodash'
+import { h } from 'vue'
 
 export default {
   name: 'ApiServer',
@@ -118,7 +29,7 @@ export default {
       },
       createFormConfig: {
         form: {
-          labelPosition: 'left',
+          labelPosition: 'top',
           labelWidth: '180px',
         },
         items: [
@@ -142,23 +53,52 @@ export default {
             type: 'input',
             label: this.$t('api_server_client_uri'),
             field: 'clientURI',
-            placeholder: this.$t('api_server_client_uri') + '(http://127.0.0.1:3080)',
+            placeholder: `${this.$t('api_server_client_uri')}(http://127.0.0.1:3080)`,
             show: true,
             required: true,
             maxlength: 200,
             showWordLimit: true,
           },
         ],
+        rules: {
+          processId: [
+            {
+              required: true,
+              message: `${this.$t('api_server_process_id')} ${this.$t(
+                'public_form_not_empty',
+              )}`,
+              trigger: 'blur',
+            },
+          ],
+          clientName: [
+            {
+              required: true,
+              message: `${this.$t('api_server_client_name')} ${this.$t(
+                'public_form_not_empty',
+              )}`,
+              trigger: 'blur',
+            },
+          ],
+          clientURI: [
+            {
+              required: true,
+              message: `${this.$t('api_server_client_uri')} ${this.$t(
+                'public_form_not_empty',
+              )}`,
+              trigger: 'blur',
+            },
+          ],
+        },
       },
     }
-  },
-  created() {
-    this.getFilterItems()
   },
   computed: {
     table() {
       return this.$refs.table
     },
+  },
+  created() {
+    this.getFilterItems()
   },
   methods: {
     // 重置查询条件
@@ -188,11 +128,13 @@ export default {
       this.$nextTick(() => {
         this.$refs.form.clearValidate()
       })
-      this.createForm = item
+      Object.assign(this.createForm, item)
     },
     // 移除
     remove(item) {
-      let message = h('p', [this.$t('public_message_delete_confirm') + ' ' + item.clientName])
+      const message = h('p', [
+        `${this.$t('public_message_delete_confirm')} ${item.clientName}`,
+      ])
       this.$confirm(message, '', {
         type: 'warning',
       }).then((resFlag) => {
@@ -210,8 +152,11 @@ export default {
 
     // 下载api配置文件
     downloadConfig(item) {
-      let token = Cookie.get('access_token')
-      window.open(apiServerApi.url + '/download/' + item.id + '?access_token=' + token, '_blank')
+      const token = Cookie.get('access_token')
+      window.open(
+        `${apiServerApi.url}/download/${item.id}?access_token=${token}`,
+        '_blank',
+      )
     },
 
     // 保存
@@ -233,25 +178,25 @@ export default {
 
     // 自动生成唯一标识
     generatorSecret() {
-      let S4 = function () {
-        return (((1 + Math.random()) * 0x40000) | 0).toString(16).substring(1)
+      const S4 = function () {
+        return (((1 + Math.random()) * 0x40000) | 0).toString(16).slice(1)
       }
-      let NewGuid = function () {
+      const NewGuid = function () {
         return S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4()
       }
       return NewGuid()
     },
     // 获取数据
     getData({ page }) {
-      let { current, size } = page
-      let { keyword } = this.searchParams
-      let where = {}
+      const { current, size } = page
+      const { keyword } = this.searchParams
+      const where = {}
       if (keyword && keyword.trim()) {
-        let filterObj = { like: escapeRegExp(keyword), options: 'i' }
+        const filterObj = { like: escapeRegExp(keyword), options: 'i' }
         where.or = [{ clientName: filterObj }]
       }
 
-      let filter = {
+      const filter = {
         order: this.order,
         limit: size,
         skip: (current - 1) * size,
@@ -286,6 +231,171 @@ export default {
   },
 }
 </script>
+
+<template>
+  <PageContainer>
+    <template #actions>
+      <el-button
+        v-readonlybtn="'API_creation'"
+        type="primary"
+        class="btn btn-create"
+        @click="openCreateDialog"
+      >
+        <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
+        <span>{{ $t('api_server_create') }}</span>
+      </el-button>
+    </template>
+
+    <!-- api服务器 -->
+    <TablePage
+      ref="table"
+      row-key="id"
+      class="apiserver-list"
+      :remote-method="getData"
+      @sort-change="handleSortTable"
+    >
+      <template #search>
+        <div class="search-bar">
+          <FilterBar
+            v-model:value="searchParams"
+            :items="filterItems"
+            @fetch="table.fetch(1)"
+          />
+        </div>
+      </template>
+
+      <el-table-column
+        :label="$t('api_server_user')"
+        :show-overflow-tooltip="true"
+        prop="user.email"
+        sortable="user.email"
+        width="120"
+      >
+        <template #default="scope">
+          {{ scope.row.user ? scope.row.user.email : '' }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('api_server_process_id')"
+        :show-overflow-tooltip="true"
+        prop="processId"
+        sortable="processId"
+      />
+      <el-table-column
+        :label="$t('api_server_client_name')"
+        :show-overflow-tooltip="true"
+        prop="clientName"
+        sortable="clientName"
+      />
+      <el-table-column
+        :label="$t('api_server_client_uri')"
+        :show-overflow-tooltip="true"
+        prop="clientURI"
+        sortable="clientURI"
+      />
+      <el-table-column
+        :label="$t('public_operation')"
+        width="200"
+        fixed="right"
+      >
+        <template #default="scope">
+          <el-button
+            v-readonlybtn="'API_clients_amangement'"
+            text
+            type="primary"
+            @click="edit(scope.row)"
+          >
+            {{ $t('public_button_edit') }}
+          </el-button>
+          <ElDivider class="mx-1" direction="vertical" />
+          <el-button
+            v-readonlybtn="'API_clients_amangement'"
+            text
+            type="primary"
+            @click="remove(scope.row)"
+            >{{ $t('public_button_delete') }}</el-button
+          >
+          <ElDivider class="mx-1" direction="vertical" />
+          <el-tooltip
+            class="item"
+            effect="dark"
+            :content="$t('api_server_download_API_Server_config')"
+            placement="top"
+          >
+            <el-button
+              v-readonlybtn="'API_clients_amangement'"
+              text
+              type="primary"
+              @click="downloadConfig(scope.row)"
+              >{{ $t('public_button_download') }}</el-button
+            >
+          </el-tooltip>
+        </template>
+      </el-table-column>
+    </TablePage>
+    <!-- 创建客户端 -->
+    <el-dialog
+      v-model="createDialogVisible"
+      width="600px"
+      class="create-dialog"
+      :title="
+        createForm.id
+          ? $t('public_button_edit')
+          : $t('api_server_create_server')
+      "
+      :close-on-click-modal="false"
+    >
+      <el-form
+        ref="form"
+        :model="createForm"
+        :label-position="createFormConfig.form.labelPosition"
+        :label-width="createFormConfig.form.labelWidth"
+        :rules="createFormConfig.rules"
+      >
+        <el-form-item
+          :label="$t('api_server_process_id')"
+          prop="processId"
+          required
+        >
+          <el-input v-model="createForm.processId" />
+        </el-form-item>
+        <el-form-item
+          :label="$t('api_server_client_name')"
+          prop="clientName"
+          required
+        >
+          <el-input
+            v-model="createForm.clientName"
+            maxlength="100"
+            show-word-limit
+          />
+        </el-form-item>
+        <el-form-item
+          :label="$t('api_server_client_uri')"
+          prop="clientURI"
+          required
+        >
+          <el-input
+            v-model="createForm.clientURI"
+            maxlength="200"
+            show-word-limit
+            :placeholder="`${$t('api_server_client_uri')}(http://127.0.0.1:3080)`"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="createDialogVisible = false">{{
+            $t('public_button_cancel')
+          }}</el-button>
+          <el-button type="primary" @click="createServer()">{{
+            $t('public_button_confirm')
+          }}</el-button>
+        </span>
+      </template>
+    </el-dialog>
+  </PageContainer>
+</template>
 
 <style lang="scss" scoped>
 .apiserver-wrap {

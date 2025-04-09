@@ -1,69 +1,8 @@
-<template>
-  <div class="inline-input-wrap">
-    <span class="inline-input-body" v-show="!editing">
-      <span
-        :style="{
-          width: inputStyle && inputStyle.width,
-        }"
-        :class="[wordBreak ? 'word-break' : 'ellipsis']"
-        :title="value"
-        @click="$emit('click-text')"
-        >{{ value }}</span
-      >
-      <ElLink
-        v-if="type === 'text'"
-        type="primary"
-        class="inline-input-link"
-        :disabled="$disabledReadonlyUserBtn()"
-        @click="editing = true"
-      >
-        {{ editText }}
-      </ElLink>
-      <IconButton v-else class="ml-3" :disabled="$disabledReadonlyUserBtn()" @click="editing = true">edit</IconButton>
-      <!--<ElLink
-        class="inline-input-link"
-        style="margin-left: 5px"
-        :disabled="$disabledReadonlyUserBtn()"
-        @click="editing = true"
-      >
-        <VIcon v-bind="iconConfig" color="#999">edit-outline</VIcon>
-      </ElLink>-->
-    </span>
-    <span class="inline-input-body gap-2" v-show="editing">
-      <ElTooltip manual effect="dark" :content="tooltip" placement="top-start" :value="disabled">
-        <ElInput
-          v-bind="inputProps"
-          class="input"
-          :class="[{ 'valid-input': disabled }, 'block']"
-          :style="inputStyle"
-          v-model="inputValue"
-        ></ElInput>
-      </ElTooltip>
-      <template v-if="type === 'icon'">
-        <ElButton class="icon-button min-w-0" :disabled="disabled" @click="save"
-          ><VIcon size="12">check</VIcon></ElButton
-        >
-        <ElButton class="icon-button min-w-0 m-0" @click="cancel"><VIcon size="12">close</VIcon></ElButton>
-      </template>
-      <template v-else-if="type === 'text'">
-        <ElButton text class="min-w-0" :disabled="disabled" @click="save">{{ saveText }}</ElButton>
-        <ElButton text class="m-0 min-w-0" @click="cancel">{{ cancelText }}</ElButton>
-      </template>
-      <template v-else>
-        <ElButton class="inline-input-button" type="primary" :disabled="disabled" @click="save">{{
-          $t('public_button_save')
-        }}</ElButton>
-        <ElButton class="inline-input-button m-0" @click="cancel">{{ $t('public_button_cancel') }}</ElButton>
-      </template>
-    </span>
-  </div>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
+import { IconButton, VIcon } from '@tap/component'
 import i18n from '@/i18n'
 
-import { VIcon, IconButton } from '@tap/component'
+import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 
 export default {
   components: { VIcon, IconButton },
@@ -102,6 +41,7 @@ export default {
       },
     },
   },
+  emits: ['click-text', 'save', 'update:value'],
   data() {
     return {
       editing: false,
@@ -110,16 +50,16 @@ export default {
   },
   computed: {
     disabled() {
-      let value = this.inputValue
+      const value = this.inputValue
       if (!this.editing) {
         return false
       }
-      let { min, max } = this
-      let reg = new RegExp(`^.{${min},${max}}$`)
+      const { min, max } = this
+      const reg = new RegExp(`^.{${min},${max}}$`)
       return !reg.test(value)
     },
     tooltip() {
-      let { min, max } = this
+      const { min, max } = this
       return i18n.t('components_InlineInput_ziFuChangDuXian', {
         val1: min,
         val2: max,
@@ -145,9 +85,93 @@ export default {
       this.editing = false
     },
   },
-  emits: ['click-text', 'save', 'update:value'],
 }
 </script>
+
+<template>
+  <div class="inline-input-wrap">
+    <span v-show="!editing" class="inline-input-body">
+      <span
+        :style="{
+          width: inputStyle && inputStyle.width,
+        }"
+        :class="[wordBreak ? 'word-break' : 'ellipsis']"
+        :title="value"
+        @click="$emit('click-text')"
+        >{{ value }}</span
+      >
+      <ElLink
+        v-if="type === 'text'"
+        type="primary"
+        class="inline-input-link"
+        :disabled="$disabledReadonlyUserBtn()"
+        @click="editing = true"
+      >
+        {{ editText }}
+      </ElLink>
+      <IconButton
+        v-else
+        class="ml-3"
+        :disabled="$disabledReadonlyUserBtn()"
+        @click="editing = true"
+        >edit</IconButton
+      >
+      <!--<ElLink
+        class="inline-input-link"
+        style="margin-left: 5px"
+        :disabled="$disabledReadonlyUserBtn()"
+        @click="editing = true"
+      >
+        <VIcon v-bind="iconConfig" color="#999">edit-outline</VIcon>
+      </ElLink>-->
+    </span>
+    <span v-show="editing" class="inline-input-body gap-2">
+      <ElTooltip
+        manual
+        effect="dark"
+        :content="tooltip"
+        placement="top-start"
+        :value="disabled"
+      >
+        <ElInput
+          v-bind="inputProps"
+          v-model="inputValue"
+          class="input"
+          :class="[{ 'valid-input': disabled }, 'block']"
+          :style="inputStyle"
+        />
+      </ElTooltip>
+      <template v-if="type === 'icon'">
+        <ElButton class="icon-button min-w-0" :disabled="disabled" @click="save"
+          ><VIcon size="12">check</VIcon></ElButton
+        >
+        <ElButton class="icon-button min-w-0 m-0" @click="cancel"
+          ><VIcon size="12">close</VIcon></ElButton
+        >
+      </template>
+      <template v-else-if="type === 'text'">
+        <ElButton text class="min-w-0" :disabled="disabled" @click="save">{{
+          saveText
+        }}</ElButton>
+        <ElButton text class="m-0 min-w-0" @click="cancel">{{
+          cancelText
+        }}</ElButton>
+      </template>
+      <template v-else>
+        <ElButton
+          class="inline-input-button"
+          type="primary"
+          :disabled="disabled"
+          @click="save"
+          >{{ $t('public_button_save') }}</ElButton
+        >
+        <ElButton class="inline-input-button m-0" @click="cancel">{{
+          $t('public_button_cancel')
+        }}</ElButton>
+      </template>
+    </span>
+  </div>
+</template>
 
 <style lang="scss">
 .inline-input-wrap {

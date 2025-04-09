@@ -1,112 +1,10 @@
-<template>
-  <div class="role" v-loading="loading">
-    <div class="section-wrap-box">
-      <head class="head flex justify-content-between mb-4">
-        <div class="flex">
-          <div class="mr-3 fs-5 fw-sub">{{ $t('role_settingTitle') }}</div>
-          <span>{{ $t('role_currentRole') }}: {{ roleName }}</span>
-        </div>
-        <div>
-          <el-button @click="back">{{ $t('public_button_back') }} </el-button>
-          <el-button type="primary" :loading="saveloading" @click="save('ruleForm')"
-            >{{ $t('public_button_save') }}
-          </el-button>
-        </div>
-      </head>
-
-      <div class="role-tableBox">
-        <div class="alert-tip flex align-items-center mb-4 bg-warning-light rounded-2 px-4 py-2">
-          <VIcon class="color-warning mr-3" size="20">warning</VIcon>
-          <span>{{ $t('daas_role_role_gouxuanxiangyingmo') }}</span>
-        </div>
-        <ul class="role-table page-table">
-          <li class="role-head">
-            <el-row class="e-row">
-              <el-col class="e-col borderRight" :span="4">{{ $t('daas_role_role_gongnengmokuai') }}</el-col>
-              <el-col class="e-col borderRight" :span="4">{{ $t('daas_role_role_yemianquanxian') }}</el-col>
-              <el-col class="e-col borderRight" :span="14">{{ $t('daas_role_role_gongnengquanxian') }}</el-col>
-              <el-col class="e-col flex align-items-center" :span="2">
-                <span>{{ $t('daas_role_role_chakanquanbushu') }}</span>
-                <ElTooltip transition="tooltip-fade-in" placement="top" :content="$t('daas_role_role_chakanquanbushu')">
-                  <VIcon size="16" class="color-info ml-2">info</VIcon>
-                </ElTooltip>
-              </el-col>
-            </el-row>
-          </li>
-          <li v-for="item in dataList" :key="item.id">
-            <el-row class="e-row flex">
-              <el-col class="e-col flex justify-content-center align-items-center" :span="4">
-                <span>{{ item.description }}</span>
-              </el-col>
-              <el-col class="e-col border-start" :span="4">
-                <div
-                  v-for="(second, secondIndex) in item.children"
-                  :key="secondIndex"
-                  :class="['pl-3', secondIndex !== 0 ? 'border-top' : '']"
-                >
-                  <el-checkbox
-                    v-model="second.checked"
-                    v-if="second.id"
-                    @change="handleCheckChange(second, item, 'page')"
-                    v-cloak
-                  >
-                    <span>
-                      {{ second.description }}
-                    </span>
-                  </el-checkbox>
-                </div>
-              </el-col>
-              <el-col class="e-col border-start border-end" :span="14">
-                <div
-                  v-for="(second, secondIndex) in item.children"
-                  :key="secondIndex"
-                  :class="['pl-3', secondIndex !== 0 ? 'border-top' : '']"
-                >
-                  <el-checkbox :model-value="true" disabled v-if="!second.buttons || !second.buttons.length" v-cloak>
-                    <span>{{ $t('daas_role_role_quanbugongneng') }}</span>
-                  </el-checkbox>
-                  <el-checkbox
-                    v-else
-                    v-for="(sItem, sIndex) in second.buttons"
-                    v-model="sItem.checked"
-                    @change="handleCheckChange(sItem, second, 'button')"
-                    v-cloak
-                    class="mr-10"
-                  >
-                    <span>{{ sItem.label }} </span>
-                  </el-checkbox>
-                </div>
-              </el-col>
-              <el-col class="e-col" :span="2">
-                <div
-                  v-for="(second, secondIndex) in item.children"
-                  :key="secondIndex"
-                  :class="['pl-3', secondIndex !== 0 && second.filterData ? 'border-top border-bottom' : '']"
-                >
-                  <span v-if="!second.filterData" class="invisible">-</span>
-                  <el-switch
-                    v-else
-                    v-for="(sItem, sIndex) in second.filterData"
-                    v-model="sItem.checked"
-                    @change="handleCheckChange(sItem, second, 'data')"
-                  ></el-switch>
-                </div>
-              </el-col>
-            </el-row>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
+import { permissionsApi, roleMappingsApi, usersApi } from '@tap/api'
 import i18n from '@/i18n'
 
-import { roleMappingsApi, permissionsApi, usersApi } from '@tap/api'
+import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 
-let pageSort = [
+const pageSort = [
   { name: 'v2_data-console', children: [{ name: 'v2_data-console' }] },
   {
     name: 'v2_datasource_menu',
@@ -233,6 +131,7 @@ let pageSort = [
 ]
 
 export default {
+  emits: ['saveBack'],
   data() {
     return {
       loading: false,
@@ -263,7 +162,7 @@ export default {
     // 获取用户权限数据
     getMappingData(pageData) {
       this.loading = true
-      let filter = {
+      const filter = {
         where: {
           roleId: this.$route.query.id,
         },
@@ -279,7 +178,9 @@ export default {
                 this.roleusers.push(item.principalId)
               }
               if (item.principalType === 'PERMISSION') {
-                let selected = this.permissionList.filter((v) => v.name === item.principalId)
+                const selected = this.permissionList.filter(
+                  (v) => v.name === item.principalId,
+                )
                 if (selected && selected.length > 0) {
                   selected[0].self_only = item.self_only
                   this.selectRole.push(selected[0].name)
@@ -291,19 +192,19 @@ export default {
             pageData?.forEach((item) => {
               // 页面权限
               item.children?.forEach((childItem) => {
-                childItem['checked'] = this.selectRole.includes(childItem.name)
-                childItem['checkOrigin'] = this.selectRole.includes(childItem.name)
+                childItem.checked = this.selectRole.includes(childItem.name)
+                childItem.checkOrigin = this.selectRole.includes(childItem.name)
 
                 // 按钮权限
                 childItem.buttons?.forEach((el) => {
-                  el['checked'] = this.selectRole.includes(el.name)
-                  el['checkOrigin'] = this.selectRole.includes(el.name)
+                  el.checked = this.selectRole.includes(el.name)
+                  el.checkOrigin = this.selectRole.includes(el.name)
                 })
 
                 // 显示数据
                 childItem.filterData?.forEach((el) => {
-                  el['checked'] = this.selectRole.includes(el.name)
-                  el['checkOrigin'] = this.selectRole.includes(el.name)
+                  el.checked = this.selectRole.includes(el.name)
+                  el.checkOrigin = this.selectRole.includes(el.name)
                 })
               })
             })
@@ -316,9 +217,9 @@ export default {
 
     // 获取权限信息
     getPermission() {
-      let self = this
+      const self = this
       this.permissLoading = true
-      let filter = { where: { version: 'v2' } }
+      const filter = { where: { version: 'v2' } }
 
       permissionsApi
         .get({
@@ -329,15 +230,15 @@ export default {
             self.permissionList = data
 
             // 页面排序  ---- 开始
-            let pageMap = {}
+            const pageMap = {}
             self.permissionList.forEach((item) => {
               pageMap[item.name] = item
             })
 
-            let pageMenu = (items) => {
+            const pageMenu = (items) => {
               return items.map((item) => {
-                let page = pageMap[item.name]
-                let menu = Object.assign({}, item, page)
+                const page = pageMap[item.name]
+                const menu = Object.assign({}, item, page)
                 if (menu.children) {
                   menu.children = pageMenu(menu.children)
                 }
@@ -391,34 +292,40 @@ export default {
       const roleId = this.$route.query.id
       if (checked) {
         // 和初始值不一样，则进行记录
-        if (checked !== data.checkOrigin) {
-          if (this.checkPrincipalId(this.adds, data.name)?.length === 0) {
-            this.adds.push({
-              principalType: 'PERMISSION',
-              principalId: data.name,
-              roleId: roleId,
-            })
-          }
+        if (
+          checked !== data.checkOrigin &&
+          this.checkPrincipalId(this.adds, data.name)?.length === 0
+        ) {
+          this.adds.push({
+            principalType: 'PERMISSION',
+            principalId: data.name,
+            roleId,
+          })
         }
         //同时清掉 deletes
-        let index = this.deletes?.findIndex((del) => del.principalId === data.name)
+        const index = this.deletes?.findIndex(
+          (del) => del.principalId === data.name,
+        )
         if (index > -1) {
           this.deletes.splice(index, 1)
         }
       } else {
         // 和初始值不一样，则进行记录
-        if (checked !== data.checkOrigin) {
-          if (this.checkPrincipalId(this.deletes, data.name)) {
-            this.deletes.push({
-              principalType: 'PERMISSION',
-              principalId: data.name,
-              roleId: roleId,
-            })
-          }
+        if (
+          checked !== data.checkOrigin &&
+          this.checkPrincipalId(this.deletes, data.name)
+        ) {
+          this.deletes.push({
+            principalType: 'PERMISSION',
+            principalId: data.name,
+            roleId,
+          })
         }
 
         //同时清掉 adds
-        let index = this.adds?.findIndex((add) => add.principalId === data.name)
+        const index = this.adds?.findIndex(
+          (add) => add.principalId === data.name,
+        )
         if (index > -1) {
           this.adds.splice(index, 1)
         }
@@ -433,7 +340,7 @@ export default {
       //数据组装
       const roleId = this.$route.query.id
       this.saveloading = true
-      let data = {
+      const data = {
         adds: this.adds,
         deletes: this.deletes,
       }
@@ -460,17 +367,150 @@ export default {
         return
       }
 
-      this.$confirm(i18n.t('daas_role_role_ninhaiweibaocun'), this.$t('public_message_title_prompt'), {
-        type: 'warning',
-        closeOnClickModal: false,
-      }).then((flag) => {
+      this.$confirm(
+        i18n.t('daas_role_role_ninhaiweibaocun'),
+        this.$t('public_message_title_prompt'),
+        {
+          type: 'warning',
+          closeOnClickModal: false,
+        },
+      ).then((flag) => {
         flag && this.save()
       })
     },
   },
-  emits: ['saveBack'],
 }
 </script>
+
+<template>
+  <div v-loading="loading" class="role flex-fill overflow-auto px-5 pb-5">
+    <div class="section-wrap-box">
+      <head class="head flex justify-content-between mb-4">
+        <div class="flex">
+          <div class="mr-3 fs-5 fw-sub">{{ $t('role_settingTitle') }}</div>
+          <span>{{ $t('role_currentRole') }}: {{ roleName }}</span>
+        </div>
+        <div>
+          <el-button @click="back">{{ $t('public_button_back') }} </el-button>
+          <el-button
+            type="primary"
+            :loading="saveloading"
+            @click="save('ruleForm')"
+            >{{ $t('public_button_save') }}
+          </el-button>
+        </div>
+      </head>
+
+      <div class="role-tableBox">
+        <div
+          class="alert-tip flex align-items-center mb-4 bg-warning-light rounded-2 px-4 py-2"
+        >
+          <VIcon class="color-warning mr-3" size="20">warning</VIcon>
+          <span>{{ $t('daas_role_role_gouxuanxiangyingmo') }}</span>
+        </div>
+        <ul class="role-table page-table">
+          <li class="role-head">
+            <el-row class="e-row">
+              <el-col class="e-col borderRight" :span="4">{{
+                $t('daas_role_role_gongnengmokuai')
+              }}</el-col>
+              <el-col class="e-col borderRight" :span="4">{{
+                $t('daas_role_role_yemianquanxian')
+              }}</el-col>
+              <el-col class="e-col borderRight" :span="14">{{
+                $t('daas_role_role_gongnengquanxian')
+              }}</el-col>
+              <el-col class="e-col flex align-items-center" :span="2">
+                <span>{{ $t('daas_role_role_chakanquanbushu') }}</span>
+                <ElTooltip
+                  transition="tooltip-fade-in"
+                  placement="top"
+                  :content="$t('daas_role_role_chakanquanbushu')"
+                >
+                  <VIcon size="16" class="color-info ml-2">info</VIcon>
+                </ElTooltip>
+              </el-col>
+            </el-row>
+          </li>
+          <li v-for="item in dataList" :key="item.id">
+            <el-row class="e-row flex">
+              <el-col
+                class="e-col flex justify-content-center align-items-center"
+                :span="4"
+              >
+                <span>{{ item.description }}</span>
+              </el-col>
+              <el-col class="e-col border-start" :span="4">
+                <div
+                  v-for="(second, secondIndex) in item.children"
+                  :key="secondIndex"
+                  :class="['pl-3', secondIndex !== 0 ? 'border-top' : '']"
+                >
+                  <el-checkbox
+                    v-if="second.id"
+                    v-cloak
+                    v-model="second.checked"
+                    @change="handleCheckChange(second, item, 'page')"
+                  >
+                    <span>
+                      {{ second.description }}
+                    </span>
+                  </el-checkbox>
+                </div>
+              </el-col>
+              <el-col class="e-col border-start border-end" :span="14">
+                <div
+                  v-for="(second, secondIndex) in item.children"
+                  :key="secondIndex"
+                  :class="['pl-3', secondIndex !== 0 ? 'border-top' : '']"
+                >
+                  <el-checkbox
+                    v-if="!second.buttons || !second.buttons.length"
+                    v-cloak
+                    :model-value="true"
+                    disabled
+                  >
+                    <span>{{ $t('daas_role_role_quanbugongneng') }}</span>
+                  </el-checkbox>
+                  <el-checkbox
+                    v-for="(sItem, sIndex) in second.buttons"
+                    v-else
+                    v-cloak
+                    v-model="sItem.checked"
+                    class="mr-10"
+                    @change="handleCheckChange(sItem, second, 'button')"
+                  >
+                    <span>{{ sItem.label }} </span>
+                  </el-checkbox>
+                </div>
+              </el-col>
+              <el-col class="e-col" :span="2">
+                <div
+                  v-for="(second, secondIndex) in item.children"
+                  :key="secondIndex"
+                  :class="[
+                    'pl-3',
+                    secondIndex !== 0 && second.filterData
+                      ? 'border-top border-bottom'
+                      : '',
+                  ]"
+                >
+                  <span v-if="!second.filterData" class="invisible">-</span>
+                  <el-switch
+                    v-for="(sItem, sIndex) in second.filterData"
+                    v-else
+                    v-model="sItem.checked"
+                    @change="handleCheckChange(sItem, second, 'data')"
+                  />
+                </div>
+              </el-col>
+            </el-row>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .role {
