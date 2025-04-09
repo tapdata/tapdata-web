@@ -45,6 +45,11 @@
 // Tabs
 // css3 var in packages/theme-chalk/src/tabs.scss
 .el-tabs {
+  .el-tabs__active-bar {
+    height: 3px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+  }
   .el-tabs__nav-wrap.is-top {
     // padding: 0;
     padding-left: var(--el-tabs-padding-left, 0);
