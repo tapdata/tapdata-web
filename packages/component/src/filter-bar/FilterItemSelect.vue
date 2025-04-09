@@ -2,7 +2,6 @@
 import { isFn } from '@tap/shared'
 import { addUnit } from 'element-plus/es/utils/index.mjs'
 import { computed, onBeforeMount, ref, toRefs } from 'vue'
-// import { ElSelectV2 as FilterSelect } from 'element-plus'
 
 defineOptions({
   name: 'FilterItemSelect',
@@ -37,50 +36,7 @@ const isEmpty = computed(() => {
   return props.emptyValues.includes(model.value)
 })
 
-const popperClass = computed(() => {
-  return `filter-item-select__popper ${props.dropdownWidth ? 'is-fixed-width' : ''}`
-})
-
 const options = ref([])
-
-const popperOptions = computed(() => {
-  const modifiers = [
-    {
-      name: 'offset',
-      options: {
-        offset: [0, 4],
-      },
-    },
-  ]
-
-  if (props.dropdownWidth) {
-    modifiers.push(
-      {
-        name: 'computeStyles',
-        options: {
-          gpuAcceleration: false,
-        },
-      },
-      {
-        name: 'applyStyles',
-        enabled: false, // 禁用默认样式应用
-      },
-      {
-        name: 'customWidthModifier',
-        enabled: true,
-        phase: 'write',
-        fn({ state }) {
-          // 自定义宽度
-          state.styles.popper.width = addUnit(props.dropdownWidth)
-        },
-      },
-    )
-  }
-
-  return {
-    modifiers,
-  }
-})
 
 onBeforeMount(async () => {
   if (isFn(items.value)) {
@@ -95,7 +51,7 @@ onBeforeMount(async () => {
   <ElSelectV2
     v-model="model"
     class="filter-item-select"
-    :class="{ 'is-empty': isEmpty }"
+    :class="{ 'is-empty': isEmpty, 'is-active': !isEmpty }"
     :style="selectStyle"
     :filterable="filterable"
     :options="options"
@@ -108,14 +64,6 @@ onBeforeMount(async () => {
     <template #default="{ item }">
       <slot name="default" :item="item" />
     </template>
-
-    <!-- <template #label="{ label, value }">
-      <el-tag
-        type="primary"
-      >
-        {{ label }}
-      </el-tag>
-    </template> -->
   </ElSelectV2>
 </template>
 
@@ -124,36 +72,30 @@ onBeforeMount(async () => {
   .el-select__prefix {
     color: var(--el-text-color-caption);
   }
-  /*.el-select-v2__input-wrapper {
-    display: none;
-  }
-  .el-select-v2__placeholder {
-    position: relative;
-    width: auto;
-    max-width: 200px;
-    transform: none;
-  }
-  .el-select-v2__wrapper,
-  .el-select-v2__wrapper .el-select-v2__input-wrapper {
-    line-height: 28px;
-  }
-}
-.filter-item-select__popper {
-  .el-popper__arrow {
-    display: none;
-  }
-  &.is-fixed-width {
-    .el-select-dropdown__list {
-      width: 100% !important;
-    }
-  }*/
-}
 
-.filter-item-select__popper {
-  &.is-fixed-width {
-    .el-select-dropdown,
-    .el-select-dropdown__list {
-      width: 100% !important;
+  &.is-active {
+    --el-text-color-regular: var(--el-color-primary);
+
+    .el-select__wrapper {
+      box-shadow: 0 0 0 1px var(--el-color-primary) inset;
+    }
+  }
+
+  .el-select__suffix {
+    padding: 4px;
+    border-radius: 6px;
+  }
+
+  .el-select__suffix:has(.el-select__clear):hover {
+    background-color: var(--primary-hover-light);
+  }
+
+  .el-select__suffix {
+    .el-icon {
+      font-size: 12px;
+    }
+    .el-select__clear {
+      color: var(--el-color-primary);
     }
   }
 }

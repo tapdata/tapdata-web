@@ -360,7 +360,7 @@ export default {
               value: key,
             })),
           ],
-          selectedWidth: '200px',
+          width: 240,
         },
         {
           label: i18n.t('public_agent_name'),

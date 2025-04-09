@@ -576,7 +576,6 @@ export default {
           false,
         )
       }
-      f
 
       this.buried('connectionTest', '', {
         result: status === 'ready',

@@ -1,5 +1,10 @@
 :root {
+  --el-button-hover-bg-color: #{rgba(map.get($color, primary), 0.1)}; 
   --el-font-weight-primary: 400;
+
+  --primary-raw: 59, 71, 229;
+  --primary-hover-light: rgba(var(--primary-raw), 0.1);
+  --primary-hover: rgba(var(--primary-raw), 0.2);
   --collapse-padding-primary: 16px;
   --collapse-padding-sm: 12px;
   --btn-space: 12px;
