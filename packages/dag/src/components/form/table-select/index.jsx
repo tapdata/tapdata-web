@@ -166,8 +166,8 @@ export const TableSelect = connect(
                     <span class="fs-7">{i18n.t('packages_form_component_table_selector_error_not_exit')},</span>
                     <el-button
                       class="ml-1"
-                      size="mini"
-                      type="text"
+                     
+                      text type="primary"
                       onClick={() => {
                         loadSchema(query)
                       }}

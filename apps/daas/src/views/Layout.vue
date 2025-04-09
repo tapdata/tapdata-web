@@ -364,7 +364,7 @@ export default {
           v-if="isCommunity"
           id="add-jira-issue-btn"
           type="primary"
-          size="mini"
+         
           ><VIcon>bug-outlined</VIcon> New Issue
         </ElButton>
         <ElButton

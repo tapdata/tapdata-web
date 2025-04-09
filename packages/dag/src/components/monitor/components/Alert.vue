@@ -274,15 +274,15 @@ export default {
           <div class="operate-columns flex flex-wrap">
             <ElButton
               class="ml-0"
-              size="mini"
-              type="text"
+             
+              text type="primary"
               @click="handleLog(scope.row)"
               >{{ $t('packages_dag_monitor_bottompanel_rizhi') }}</ElButton
             >
             <ElButton
               class="ml-0"
-              size="mini"
-              type="text"
+             
+              text type="primary"
               :disabled="scope.row.status === 'CLOESE'"
               @click="handleClose(scope.row)"
               >{{ $t('public_button_close') }}</ElButton

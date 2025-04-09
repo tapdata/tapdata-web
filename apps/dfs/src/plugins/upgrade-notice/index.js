@@ -84,7 +84,7 @@ export function UpgradeNotice(Vue) {
         <el-button
           class="ml-auto"
           type="primary"
-          size="mini"
+         
           onClick={() => {
             buried('service_upgrade_notice_view')
             UpgradeDialog(Vue)

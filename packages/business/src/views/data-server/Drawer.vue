@@ -1026,7 +1026,7 @@ export default {
               <ElInput
                 v-if="isEdit"
                 v-model="form.name"
-                type="text"
+                text type="primary"
                 maxlength="50"
                 :placeholder="
                   $t('public_input_placeholder') + $t('public_name')
@@ -1038,10 +1038,10 @@ export default {
             </ElFormItem>
             <template v-if="tab === 'form' && data.status !== 'active'">
               <div v-if="isEdit" class="ml-4">
-                <ElButton v-if="data.id" size="mini" @click="isEdit = false">{{
+                <ElButton v-if="data.id" @click="isEdit = false">{{
                   $t('public_button_cancel')
                 }}</ElButton>
-                <ElButton type="primary" size="mini" @click="save()">{{
+                <ElButton type="primary" @click="save()">{{
                   $t('public_button_save')
                 }}</ElButton>
               </div>
@@ -1049,7 +1049,7 @@ export default {
                 v-else
                 class="ml-4"
                 type="primary"
-                size="mini"
+               
                 @click="edit"
                 >{{ $t('public_button_edit') }}</ElButton
               >
@@ -1610,7 +1610,7 @@ export default {
                 v-model="debugMethod"
                 class="data-server-debug__method mr-4"
                 style="width: 100px"
-                size="mini"
+               
               >
                 <ElOption
                   v-for="(item, i) in urlList"

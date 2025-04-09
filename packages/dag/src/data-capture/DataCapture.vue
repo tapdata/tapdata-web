@@ -62,7 +62,7 @@
 
                     <el-button
                       v-if="item.originalData"
-                      type="text"
+                      text type="primary"
                       class="px-1 py-0.5 font-color-dark"
                       @click="handleCopy(item)"
                     >

@@ -1,4 +1,5 @@
 <script>
+import { EditPen, Refresh } from '@element-plus/icons-vue'
 import { usersApi } from '@tap/api'
 import { IconButton } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
@@ -7,6 +8,7 @@ export default {
   name: 'List',
   components: {
     IconButton,
+    EditPen,
   },
   data() {
     //此处即表单发送之前验证  验证新密码与原密码
@@ -52,25 +54,25 @@ export default {
           label: this.$t('account_email'),
           value: '',
           key: 'email',
-          icon: this.$t('public_button_revise'),
+          icon: EditPen,
         },
         {
           label: this.$t('account_userName'),
           value: '',
           key: 'username',
-          icon: this.$t('public_button_revise'),
+          icon: EditPen,
         },
         {
           label: this.$t('public_connection_form_password'),
           value: '******',
           key: 'password',
-          icon: this.$t('public_button_revise'),
+          icon: EditPen,
         },
         {
           label: this.$t('account_accessCode'),
           value: '',
           key: 'accessCode',
-          icon: this.$t('public_button_refresh'),
+          icon: Refresh,
         },
       ],
       emailDialogFalg: false,
@@ -294,14 +296,10 @@ export default {
           <ElButton
             v-if="item.key !== 'email'"
             text
+            type="primary"
+            :icon="item.icon"
             @click="handleChange(item.key)"
-            >{{ item.icon }}</ElButton
-          >
-          <!-- <i
-                :class="['iconfont', item.icon, rotateFlag && item.key == 'accessCode' ? 'rotateActive' : 'backActive']"
-                v-if="item.key !== 'email'"
-                @click="handleChange(item.key)"
-              ></i> -->
+          />
         </li>
       </ul>
     </div>

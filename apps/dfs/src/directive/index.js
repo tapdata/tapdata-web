@@ -1,4 +1,4 @@
-import { ClipboardPlugin } from './clipboard'
+import { ClipboardPlugin } from '@tap/shared'
 
 export function installDirectives(app) {
   app.directive('readonlybtn', {})

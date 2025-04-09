@@ -920,7 +920,7 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
           class="min-w-0"
           type="primary"
           plain
-          size="mini"
+         
           @click="handleDownload"
         >
           <VIcon>download</VIcon>
@@ -942,7 +942,7 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
           class="min-w-0 ml-0"
           type="primary"
           plain
-          size="mini"
+         
           @click="openDataCapture"
           >{{ $t('public_data_capture') }}</el-button
         >
@@ -1264,14 +1264,14 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
           >
             <div class="position-absolute end-0 top-0 px-2 pt-1">
               <el-button
-                type="text"
+                text type="primary"
                 class="px-1 py-0.5 font-color-dark"
                 @click="handleCopyStack(codeDialog.data.errorStack)"
               >
                 <VIcon class="mr-1">copy</VIcon>
                 <span class="">{{ $t('public_button_copy') }}</span> </el-button
               ><el-button
-                type="text"
+                text type="primary"
                 class="px-1 py-0.5 font-color-dark ml-2"
                 @click="expandErrorMessage = !expandErrorMessage"
               >

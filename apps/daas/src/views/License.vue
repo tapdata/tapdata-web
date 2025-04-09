@@ -111,7 +111,7 @@ export default {
           .then((data) => {
             const sid = data?.sid
             if (sid) {
-              this.$copyText(sid).then(() => {
+              this.$clipboard(sid).then(() => {
                 this.$message.success(this.$t('license_copied_clipboard'))
               })
             }
@@ -179,14 +179,10 @@ export default {
 <template>
   <PageContainer>
     <template #actions>
-      <ElButton
-        :loading="copyLoading"
-        class="btn"
-        size="mini"
-        @click="copySid"
-        >{{ $t('public_button_copy') }}</ElButton
-      >
-      <ElButton class="btn" type="primary" size="mini" @click="updateNode()">{{
+      <ElButton :loading="copyLoading" class="btn" @click="copySid">{{
+        $t('public_button_copy')
+      }}</ElButton>
+      <ElButton class="btn" type="primary" @click="updateNode()">{{
         $t('public_event_update')
       }}</ElButton>
     </template>
@@ -218,7 +214,7 @@ export default {
         </ElTableColumn>
         <ElTableColumn :label="$t('daas_licenseType')" min-width="150">
           <template #default="{ row }">
-            <span>{{ TYPE_MAP[row.licenseType] }}</span>
+            <el-tag>{{ TYPE_MAP[row.licenseType] }}</el-tag>
           </template>
         </ElTableColumn>
         <ElTableColumn
@@ -240,7 +236,7 @@ export default {
                 >{{ row.datasourcePipelineInUse }} /
                 {{ row.datasourcePipelineLimit }}</span
               >
-              <el-button size="mini" type="text" @click="openPipelineDetails">{{
+              <el-button text type="primary" @click="openPipelineDetails">{{
                 $t('public_button_details')
               }}</el-button>
             </div>
@@ -259,14 +255,14 @@ export default {
         />
         <ElTableColumn :label="$t('public_operation')" width="88">
           <template #default="{ row }">
-            <ElLink link type="primary" @click="updateNode(row)">{{
+            <ElButton text type="primary" @click="updateNode(row)">{{
               $t('public_event_update')
-            }}</ElLink>
+            }}</ElButton>
           </template>
         </ElTableColumn>
       </TablePage>
       <ElDialog
-        v-model:visible="dialogVisible"
+        v-model="dialogVisible"
         append-to-body
         :title="$t('license_renew_dialog')"
       >
@@ -275,7 +271,6 @@ export default {
           <div>
             <ElButton
               type="primary"
-              size="mini"
               :disabled="!license"
               :loading="dialogLoading"
               @click="updateLicense"
@@ -287,7 +282,7 @@ export default {
     </section>
 
     <ElDialog
-      v-model:visible="detailsDialog.show"
+      v-model="detailsDialog.show"
       append-to-body
       :title="$t('daas_datasourcePipeUsageDetails')"
       width="600px"
@@ -301,10 +296,9 @@ export default {
           <div
             class="bg-subtle rounded-xl p-2 flex justify-center align-center gap-2"
           >
-            <template v-for="(info, i) in item.instanceInfos">
+            <template v-for="(info, i) in item.instanceInfos" :key="i">
               <div
                 v-if="i > 0"
-                :key="i"
                 class="connector-line bg-primary position-relative px-4"
                 style="height: 2px"
               >
@@ -326,7 +320,6 @@ export default {
                 />
               </div>
               <div
-                :key="`y-${i}`"
                 class="connector-wrap bg-white rounded-lg p-2 shadow-sm flex align-center gap-2 flex-1 min-w-0"
               >
                 <DatabaseIcon class="flex-shrink-0" :size="24" :item="info" />

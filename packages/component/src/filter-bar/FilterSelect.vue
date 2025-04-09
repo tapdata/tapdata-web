@@ -295,7 +295,7 @@
                 role="combobox"
                 :readonly="!filterable"
                 spellcheck="false"
-                type="text"
+                text type="primary"
                 :unselectable="expanded ? 'on' : undefined"
                 @compositionstart="handleCompositionStart"
                 @compositionupdate="handleCompositionUpdate"

@@ -358,7 +358,7 @@ export default {
         v-readonlybtn="'datasource_creation'"
         class="btn btn-create"
         type="primary"
-        size="mini"
+       
         @click="handleCreate('pipeline')"
       >
         <span>{{
@@ -369,7 +369,7 @@ export default {
         v-readonlybtn="'datasource_creation'"
         class="btn btn-create"
         type="primary"
-        size="mini"
+       
         @click="handleCreate('random')"
       >
         <span>{{
@@ -401,7 +401,7 @@ export default {
         }}</ElButton>
         <ElButton
           v-readonlybtn="'SYNC_category_application'"
-          size="mini"
+         
           class="btn"
           @click="handleExport"
         >
@@ -507,12 +507,13 @@ export default {
             >
               <el-icon class="color-danger"><CircleCloseFilled /></el-icon>
               <span>{{ $t('public_status_error') }}</span>
-              <ElLink
+              <ElButton
                 v-if="scope.row.errorMsg"
+                text
                 type="primary"
                 @click="handleError(scope.row)"
                 >{{ $t('public_button_check') }}
-              </ElLink>
+              </ElButton>
             </div>
             <div
               v-else-if="scope.row.status === 'waiting'"

@@ -52,7 +52,7 @@
           :data="uploadData"
         >
           <template v-slot:trigger>
-            <ElButton class="align-top" type="primary" size="mini">
+            <ElButton class="align-top" type="primary">
               <VIcon class="mr-1">upload</VIcon>
               {{ uploadText }}
             </ElButton>

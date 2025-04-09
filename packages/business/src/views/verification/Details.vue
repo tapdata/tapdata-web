@@ -22,7 +22,7 @@
             </div>
 
             <!--下载详情-->
-            <ElButton v-if="showDiffInspect" class="ml-4" type="text" :loading="downloading" @click="downloadDetails">{{
+            <ElButton v-if="showDiffInspect" class="ml-4" text type="primary" :loading="downloading" @click="downloadDetails">{{
               $t('packages_business_download_details')
             }}</ElButton>
 

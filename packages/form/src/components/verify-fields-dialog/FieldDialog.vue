@@ -260,7 +260,7 @@ export default {
     <div v-if="visible">
       <div class="mb-4">
         <ElInput
-          v-model:value="keyword"
+          v-model="keyword"
           class="search-input"
           prefix-icon="el-icon-search"
           :placeholder="

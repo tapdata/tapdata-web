@@ -88,7 +88,7 @@
           ></VEmpty>
           <VEmpty v-else>
             <span>{{ $t('packages_form_component_table_selector_error_not_exit') }},</span>
-            <el-button class="ml-1" size="mini" type="text" :loading="schemaLoading" @click="loadSchema">
+            <el-button class="ml-1" text type="primary" :loading="schemaLoading" @click="loadSchema">
               {{ $t('packages_form_button_reload') }}
             </el-button>
           </VEmpty>

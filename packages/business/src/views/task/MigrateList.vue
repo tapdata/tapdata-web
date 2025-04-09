@@ -4,7 +4,7 @@
       <el-button
         v-if="buttonShowMap.import && isDaas"
         v-readonlybtn="'SYNC_job_import'"
-        size="mini"
+       
         class="btn"
         :disabled="$disabledReadonlyUserBtn()"
         @click="refFn('handleImport')"
@@ -16,7 +16,7 @@
         v-readonlybtn="'SYNC_job_creation'"
         class="btn btn-create"
         type="primary"
-        size="mini"
+       
         id="task-list-create"
         :disabled="$disabledReadonlyUserBtn()"
         :loading="createBtnLoading"

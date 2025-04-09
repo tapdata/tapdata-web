@@ -155,7 +155,7 @@
                   </span>
 
                   <div class="flex">
-                    <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)"
+                    <ElButton v-if="['incomplete'].includes(item.status)" text type="primary" @click="handlePay(item)"
                       >{{ $t('public_button_pay') }}
                     </ElButton>
                     <ElButton v-if="['active'].includes(item.status)" text @click="goOpenChange(item)"
@@ -242,7 +242,7 @@
           <template #operation="{ row }">
             <ElButton
               :disabled="row.subscribe.subscribeType !== 'one_time' || row.status !== 'UNPAID'"
-              type="text"
+              text type="primary"
               @click="handlePayBill(row)"
               >{{ $t('public_button_pay') }}
             </ElButton>

@@ -725,7 +725,7 @@ export default {
       </template>
       <template #operationHeader>
         <ElButton
-          type="text"
+          text type="primary"
           :class="!revokeTableDisabled ? 'color-primary' : 'color-disable'"
           @click="revokeAll()"
           >{{ $t('public_button_revoke') }}</ElButton
@@ -738,7 +738,7 @@ export default {
           placement="top"
         >
           <ElButton
-            type="text"
+            text type="primary"
             :class="getRevokeColorClass(scope.row)"
             @click="revoke(scope.row)"
             >{{ $t('public_button_revoke') }}</ElButton

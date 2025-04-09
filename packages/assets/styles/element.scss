@@ -244,6 +244,7 @@
     line-height: 22px;
 
     //--el-fill-color-light: rgba(0, 0, 0, 0.06);
+    --el-border-radius-base: var(--el-border-radius-small);
     --el-fill-color-light: rgba(31, 35, 41, 0.1);
     --el-fill-color: rgba(31, 35, 41, 0.1);
 
@@ -267,7 +268,7 @@
   }
 
   // 图标按钮
-  &.is-text:has(> i:only-child) {
+  &.is-text:has(> i:only-child), &.is-text:has(> i + span:empty) {
     --el-fill-color-light: rgba(31, 35, 41, 0.1);
     //--el-fill-color-light: rgba(0, 0, 0, 0.06);
     padding: 4px;
@@ -281,6 +282,10 @@
       --el-fill-color-light: var(--el-color-primary-light-9);
       --el-fill-color: var(--el-color-primary-light-8);
     }
+  }
+
+  &.is-text i + span:empty {
+    margin-left: 0;
   }
 
   &.is-text.el-button--small:has(> i:only-child) {
@@ -374,6 +379,23 @@
   &--small  {
     --el-border-radius-base: var(--el-border-radius-small)
   }
+
+  &__count-inner {
+    --el-fill-color-blank: #eff0f1;
+    color: var(--el-text-color-caption);
+    border-radius: var(--el-border-radius-small);
+    line-height: 20px !important;
+    padding-inline: 6px !important;
+  }
+}
+
+// Textarea
+.el-textarea .el-input__count {
+  --el-fill-color-blank: #eff0f1;
+  color: var(--el-text-color-caption);
+  border-radius: var(--el-border-radius-small);
+  line-height: 20px !important;
+  padding-inline: 6px !important;
 }
 
 // Checkbox

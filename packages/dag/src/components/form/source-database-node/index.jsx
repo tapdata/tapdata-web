@@ -198,10 +198,10 @@ const SourceDatabaseNode = observer(
       const RightExtra = () => {
         return (
           <div>
-            <ElButton type="text" onClick={openTableEdit}>
+            <ElButton text type="primary" onClick={openTableEdit}>
               {i18n.t('packages_dag_src_migrationeditor_biaobianji')}
             </ElButton>
-            <ElButton type="text" onClick={openFieldEdit}>
+            <ElButton text type="primary" onClick={openFieldEdit}>
               {i18n.t('packages_dag_src_migrationeditor_ziduanbianji')}
             </ElButton>
           </div>

@@ -587,7 +587,7 @@ export default {
                       <span>
                         {{ $t('public_response') }}
                         <ElTag
-                          size="mini"
+                         
                           type="info"
                           class="rounded-pill ml-1"
                           >{{ item.responseCode || '--' }}</ElTag
@@ -619,7 +619,7 @@ export default {
                 </ElTabs>
                 <ElButton
                   class="position-absolute tabs-extra-btn flex align-center py-0"
-                  size="mini"
+                 
                   :loading="resendStateMap[item.id]"
                   @click="reSend(item)"
                   >{{ $t('public_resend') }}</ElButton

@@ -414,7 +414,7 @@ Stack Trace: ${this.errorDialog.stack ? `\n${this.errorDialog.stack}` : ''}`,
             <span class="fs-6 fw-sub">{{
               wsErrorMsg || $t('packages_business_dataForm_test_error')
             }}</span>
-            <el-button class="px-1 py-0.5" type="text" @click="switchShowStack"
+            <el-button class="px-1 py-0.5" text type="primary" @click="switchShowStack"
               >{{
                 showStack
                   ? $t('public_button_fold')
@@ -467,7 +467,7 @@ Stack Trace: ${this.errorDialog.stack ? `\n${this.errorDialog.stack}` : ''}`,
           class="position-absolute end-0 top-0 px-2 pt-1 error-stack-actions"
         >
           <el-button
-            type="text"
+            text type="primary"
             class="px-1 py-0.5 font-color-dark"
             @click="handleCopyStack(wsErrorStack)"
           >
@@ -568,7 +568,7 @@ Stack Trace: ${this.errorDialog.stack ? `\n${this.errorDialog.stack}` : ''}`,
             <span>
               {{ row.item_exception.message }}
             </span>
-            <el-button type="text" @click="showError(row)">{{
+            <el-button text type="primary" @click="showError(row)">{{
               $t('public_view_details')
             }}</el-button>
           </div>
@@ -665,14 +665,14 @@ Stack Trace: ${this.errorDialog.stack ? `\n${this.errorDialog.stack}` : ''}`,
           >
             <div class="position-absolute end-0 top-0 px-2 pt-1">
               <el-button
-                type="text"
+                text type="primary"
                 class="px-1 py-0.5 font-color-dark"
                 @click="handleCopyStack(errorDialog.stack)"
               >
                 <VIcon class="mr-1">copy</VIcon>
                 <span class="">{{ $t('public_button_copy') }}</span> </el-button
               ><el-button
-                type="text"
+                text type="primary"
                 class="px-1 py-0.5 font-color-dark ml-2"
                 @click="expandErrorMessage = !expandErrorMessage"
               >
@@ -708,11 +708,11 @@ Stack Trace: ${this.errorDialog.stack ? `\n${this.errorDialog.stack}` : ''}`,
     </ElDialog>
 
     <template #footer>
-      <el-button v-if="isTimeout" size="mini" @click="start()">{{
+      <el-button v-if="isTimeout" @click="start()">{{
         $t('public_button_retry')
       }}</el-button>
       <slot name="cancel" :close="handleClose" :status="status">
-        <el-button size="mini" type="primary" @click="handleClose()">{{
+        <el-button type="primary" @click="handleClose()">{{
           $t('public_button_close')
         }}</el-button>
       </slot>

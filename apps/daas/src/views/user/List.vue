@@ -55,7 +55,7 @@ export default {
       },
       createFormConfig: {
         form: {
-          labelPosition: 'right',
+          labelPosition: 'top',
           labelWidth: '100px',
           size: 'small',
           inlineMessage: true,
@@ -418,21 +418,18 @@ export default {
     },
     // 保存用户表单
     createNewUser() {
-      debugger
-      const that = this
-
       this.$refs.form.validate((valid) => {
-        if (that.createForm.id) {
+        if (this.createForm.id) {
           this.$refs.form.clearValidate('password')
         }
         if (valid) {
-          const params = that.createForm
+          const params = this.createForm
 
           if (!params.id) {
             params.source = 'create'
           }
 
-          switch (that.createForm.status) {
+          switch (this.createForm.status) {
             case 'notVerified':
               params.emailVerified = false
               params.account_status = 2
@@ -454,15 +451,15 @@ export default {
               break
           }
           // delete params.status;
-          usersApi[that.createForm.id ? 'patch' : 'post'](params)
+          usersApi[this.createForm.id ? 'patch' : 'post'](params)
             .then((data) => {
               if (data) {
-                that.$message.success(this.$t('public_message_save_ok'))
+                this.$message.success(this.$t('public_message_save_ok'))
                 this.table.fetch()
               }
             })
             .finally(() => {
-              that.createDialogVisible = false
+              this.createDialogVisible = false
             })
         }
       })
@@ -793,7 +790,10 @@ export default {
         sortable="status"
       >
         <template #default="scope">
-          <span :class="[`status-${scope.row.status}`, 'status']">
+          <span
+            class="px-2 py-1 rounded-4 inline-block"
+            :class="[`status-${scope.row.status}`, 'status']"
+          >
             {{ scope.row.status ? $t(`user_status_${scope.row.status}`) : '' }}
           </span>
         </template>
@@ -902,37 +902,111 @@ export default {
       :close-on-click-modal="false"
       class="creatDialog"
     >
-      <FormBuilder
+      <el-form
         ref="form"
-        v-model:value="createForm"
-        :config="createFormConfig"
-      />
-      <div>
-        <span class="label">{{ $t('user_form_activation_code') }}</span>
-        <span style="padding-right: 30px">{{
-          createForm.accesscode || '-'
-        }}</span>
-        <el-button text @click="resetAccesCode">{{
-          $t('public_button_reset')
-        }}</el-button>
-        <el-tooltip
-          v-if="createForm.accesscode"
-          placement="top"
-          manual
-          :content="$t('public_message_copied')"
-          popper-class="copy-tooltip"
-          :model-value="showTooltip"
-        >
-          <span
-            v-clipboard:copy="createForm.accesscode"
-            v-clipboard:success="onCopy"
-            class="pl-4"
-            @mouseleave="showTooltip = false"
+        :model="createForm"
+        :label-position="createFormConfig.form.labelPosition"
+        :label-width="createFormConfig.form.labelWidth"
+        :rules="createFormConfig.rules"
+      >
+        <div class="flex gap-4">
+          <!-- 用户名 -->
+          <el-form-item
+            :label="$t('user_list_user_name')"
+            prop="username"
+            required
+            class="flex-1"
           >
-            <el-button text>{{ $t('public_button_copy') }}</el-button>
-          </span>
-        </el-tooltip>
-      </div>
+            <el-input
+              v-model="createForm.username"
+              maxlength="100"
+              show-word-limit
+            />
+          </el-form-item>
+
+          <!-- 邮箱 -->
+          <el-form-item
+            :label="$t('user_form_email')"
+            prop="email"
+            required
+            class="flex-1"
+          >
+            <el-input
+              v-if="!createForm.id"
+              v-model="createForm.email"
+              maxlength="100"
+              show-word-limit
+            />
+            <span v-else>{{ createForm.email }}</span>
+          </el-form-item>
+        </div>
+
+        <!-- 密码 -->
+        <el-form-item
+          :label="$t('public_connection_form_password')"
+          prop="password"
+        >
+          <el-input
+            v-model="createForm.password"
+            type="password"
+            maxlength="32"
+            show-password
+          />
+        </el-form-item>
+
+        <!-- 角色 -->
+        <el-form-item :label="$t('user_form_role')" prop="roleusers" required>
+          <el-select v-model="createForm.roleusers" multiple>
+            <el-option
+              v-for="option in createFormConfig.items[3].options"
+              :key="option.value"
+              :label="option.label"
+              :value="option.value"
+            />
+          </el-select>
+        </el-form-item>
+
+        <!-- 状态 -->
+        <el-form-item :label="$t('user_form_status')" prop="status" required>
+          <el-select v-model="createForm.status">
+            <el-option
+              v-for="option in createFormConfig.items[4].options"
+              :key="option.value"
+              :label="option.label"
+              :value="option.value"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item :label="$t('user_form_activation_code')">
+          <div class="flex w-100 align-center gap-3">
+            <el-input
+              readonly
+              class="flex-1"
+              :model-value="createForm.accesscode || '-'"
+            />
+            <el-button text type="primary" @click="resetAccesCode">{{
+              $t('public_button_reset')
+            }}</el-button>
+            <el-tooltip
+              v-if="createForm.accesscode"
+              :visible="showTooltip"
+              placement="top"
+              :content="$t('public_message_copied')"
+            >
+              <span
+                v-clipboard:copy="createForm.accesscode"
+                v-clipboard:success="onCopy"
+                @mouseleave="showTooltip = false"
+              >
+                <el-button text type="primary">{{
+                  $t('public_button_copy')
+                }}</el-button>
+              </span>
+            </el-tooltip>
+          </div>
+        </el-form-item>
+      </el-form>
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="createDialogVisible = false">{{
@@ -1016,30 +1090,6 @@ export default {
   }
   .classification {
     margin-left: 16px;
-  }
-}
-.creatDialog {
-  .el-dialog__body {
-    padding: 30px;
-    .el-form {
-      .el-form-item {
-        // margin-bottom: 22px;
-        .el-form-item__label {
-          text-align: left;
-        }
-        // .el-form-item__error {
-        //   line-height: 12px;
-        // }
-      }
-    }
-    .label {
-      display: inline-block;
-      width: 100px;
-      padding-right: 12px;
-      text-align: left;
-      font-size: 12px;
-      box-sizing: border-box;
-    }
   }
 }
 </style>

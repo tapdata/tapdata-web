@@ -1,5 +1,5 @@
-import { Directive, Plugin } from 'vue'
-import { isFn } from '@tap/shared'
+import { isFn } from '../types'
+import type { Directive, Plugin } from 'vue'
 
 type ClipboardDirective = Function | string | object | null | undefined
 type ClipboardHTMLElement = HTMLElement & {
@@ -40,7 +40,8 @@ const createTextarea = (value: string) => {
 
   textarea.value = value
   textarea.setAttribute('readonly', '')
-  textarea.style.cssText = 'position:fixed; pointer-events:none; z-index:-9999; opacity:0;'
+  textarea.style.cssText =
+    'position:fixed; pointer-events:none; z-index:-9999; opacity:0;'
 
   return textarea
 }
@@ -68,7 +69,7 @@ export const Clipboard = {
   /**
    * Requests Navigator API persmission to clipboard.
    */
-  async requestClipboardPermission() {
+  requestClipboardPermission() {
     return navigator.permissions.query({
       name: 'clipboard-write' as PermissionName,
     })
@@ -92,9 +93,9 @@ export const Clipboard = {
   writeClipboardExecCommand(value: string) {
     const textarea = createTextarea(value)
 
-    document.body.appendChild(textarea)
+    document.body.append(textarea)
 
-    if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
+    if (/ipad|ipod|iphone/i.test(navigator.userAgent)) {
       textarea.contentEditable = 'true'
       textarea.readOnly = true
 
@@ -114,7 +115,7 @@ export const Clipboard = {
     }
 
     const result = document.execCommand('copy')
-    document.body.removeChild(textarea)
+    textarea.remove()
 
     return result
   },
@@ -139,7 +140,7 @@ export const ClipboardPlugin: Plugin = {
   install(app) {
     app.config.globalProperties.$clipboard = Clipboard.copy
 
-    app.directive('clipboard', <Directive<HTMLElement, ClipboardDirective>>{
+    app.directive('clipboard', {
       beforeMount: (el: ClipboardHTMLElement, binding) => {
         const { arg, value } = binding
         const isFnValue = isFn(value)
@@ -158,7 +159,9 @@ export const ClipboardPlugin: Plugin = {
 
         const onClick = async (event: MouseEvent) => {
           const success = await Clipboard.copy(el._vClipboardText)
-          const callbackId = success ? el.dataset.clipboardSuccess : el.dataset.clipboardError
+          const callbackId = success
+            ? el.dataset.clipboardSuccess
+            : el.dataset.clipboardError
           const callback = cache.get(callbackId)
           callback?.(value, event)
         }
@@ -169,7 +172,9 @@ export const ClipboardPlugin: Plugin = {
 
       updated(el: ClipboardHTMLElement, binding) {
         if (binding.arg !== 'success' && binding.arg !== 'error') {
-          el._vClipboardText = !isFn(binding.value) ? () => binding.value : (binding.value as Function)
+          el._vClipboardText = !isFn(binding.value)
+            ? () => binding.value
+            : (binding.value as Function)
         }
       },
 
@@ -191,6 +196,6 @@ export const ClipboardPlugin: Plugin = {
           }
         }
       },
-    })
+    } as Directive<HTMLElement, ClipboardDirective>)
   },
 }

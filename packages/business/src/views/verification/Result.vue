@@ -124,7 +124,7 @@ export default {
         <!--下载详情-->
         <ElButton
           class="ml-4"
-          type="text"
+          text type="primary"
           :loading="downloading"
           @click="downloadDetails"
           >{{ $t('packages_business_download_details') }}</ElButton

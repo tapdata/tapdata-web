@@ -88,7 +88,7 @@
         :placeholder="$t('packages_component_classification_nodeName')"
         maxlength="50"
         show-word-limit
-      ></ElInput>
+      />
       <template v-slot:footer>
         <span class="dialog-footer">
           <ElButton @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
@@ -102,7 +102,7 @@
 </template>
 
 <script>
-import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
+import { $emit } from '../utils/gogocodeTransfer'
 import VIcon from './base/VIcon.vue'
 import { metadataDefinitionsApi, userGroupsApi } from '@tap/api'
 import { mapMutations, mapState, mapGetters } from 'vuex'
@@ -252,14 +252,17 @@ export default {
       this.emitCheckedNodes()
     },
     nodeClickHandler(data, node) {
-      let checked = node.checked
-      this.clear()
-      node.checked = !checked
-      this.emitCheckedNodes()
+      this.$nextTick(() => {
+        const checkedKeys = this.$refs.tree.getCheckedKeys()
+        if (checkedKeys.includes(data.id)) {
+          this.$refs.tree?.setCheckedKeys([data.id], true)
+        }
+        this.emitCheckedNodes()
+      })
     },
     emitCheckedNodes() {
       let checkedNodes = this.$refs.tree.getCheckedKeys() || []
-      $emit(this, 'nodeChecked', checkedNodes)
+      this.$emit('nodeChecked', checkedNodes)
       this.setTag({
         value: checkedNodes,
         type: this.viewPage,

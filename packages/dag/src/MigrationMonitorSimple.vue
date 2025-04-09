@@ -320,7 +320,7 @@
                                 <VIcon size="16" class="color-primary">info</VIcon>
                               </span>
                             </ElTooltip>
-                            <ElRadioGroup v-model="qpsChartsType" size="mini" class="chart__radio">
+                            <ElRadioGroup v-model="qpsChartsType" class="chart__radio">
                               <ElRadioButton label="count">count</ElRadioButton>
                               <ElRadioButton label="size">size</ElRadioButton>
                             </ElRadioGroup>

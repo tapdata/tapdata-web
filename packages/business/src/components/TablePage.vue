@@ -1,123 +1,7 @@
-<template>
-  <div class="table-page-container">
-    <div class="table-page-header" v-if="title">
-      <slot name="header">
-        <div class="page-header-title">
-          {{ title }}
-          <span v-if="desc" class="page-header-desc" v-html="desc"></span>
-        </div>
-      </slot>
-    </div>
-
-    <div class="table-page-main">
-      <div class="table-page-main-box">
-        <Classification
-          v-if="classify && !hideClassify"
-          v-model:visible="classificationVisible"
-          ref="classification"
-          :comTitle="classify.comTitle"
-          :authority="classify.authority"
-          :viewPage="classify.viewPage"
-          :types="classify.types"
-          :title="classify.title"
-          :kai-title="classify.title"
-          :dragState="dragState"
-          @nodeChecked="nodeChecked"
-          @update:visible="classificationVisible = $event"
-          @drop-in-tag="fetch()"
-        ></Classification>
-        <div class="table-page-body">
-          <div class="table-page-nav">
-            <slot name="nav"></slot>
-          </div>
-          <div class="table-page-topbar p-3">
-            <div class="table-page-search-bar flex align-center">
-              <IconButton
-                v-if="classify && !hideClassify && !classificationVisible"
-                class="mx-2 rotate-180"
-                @click="handleToggleClassify"
-                >expand-list</IconButton
-              >
-              <slot name="search"></slot>
-            </div>
-            <div class="table-page-operation-bar">
-              <slot name="operation"></slot>
-            </div>
-          </div>
-          <ProTable
-            v-bind="$attrs"
-            ref="table"
-            v-loading="loading"
-            class="table-page-table"
-            :row-class-name="classificationVisible ? 'grabbable' : ''"
-            :height="ifTableHeightAuto ? null : '100%'"
-            :element-loading-text="$t('packages_business_dataFlow_dataLoading')"
-            :row-key="rowKey"
-            :span-method="spanMethod"
-            :data="list"
-            :default-sort="defaultSort"
-            :draggable="draggable || classificationVisible"
-            @selection-change="handleSelectionChange"
-            @sort-change="$emit('sort-change', $event)"
-            @row-dragstart="handleDragStart"
-            @row-dragend="handleDragEnd"
-            @select="onSelectRow"
-            v-on="$listeners"
-          >
-            <slot></slot>
-            <template v-slot:empty>
-              <div class="empty">
-                <VIcon size="140">no-data-color</VIcon>
-                <slot name="noDataText"></slot>
-              </div>
-            </template>
-          </ProTable>
-          <div class="table-footer">
-            <slot name="tableFooter"></slot>
-          </div>
-          <div
-            class="pagination-wrapper flex align-center gap-3 px-4 pt-4"
-            :style="ifTableHeightAuto ? `position: sticky; bottom: 0; z-index: 10; background: #fff;` : ''"
-          >
-            <transition name="el-fade-in-linear">
-              <div v-if="multipleSelection.length" class="flex align-center gap-3">
-                <ElCheckbox :model-value="true" @change="clearSelection"></ElCheckbox>
-                <span class="fw-sub text-nowrap color-primary"
-                  >{{ $t('packages_business_selected_rows', { val: multipleSelection.length }) }}
-                </span>
-                <slot name="multipleSelectionActions"></slot>
-              </div>
-            </transition>
-
-            <el-pagination
-              background
-              class="table-page-pagination ml-auto mt-0"
-              layout="->,total, sizes,  prev, pager, next, jumper"
-              v-model:current-page="page.current"
-              :page-sizes="[10, 20, 50, 100]"
-              v-model:page-size="page.size"
-              :total="page.total"
-              @size-change="handleSizeChange"
-              @current-change="handleCurrent"
-            >
-            </el-pagination>
-          </div>
-        </div>
-      </div>
-    </div>
-    <SelectClassify
-      v-if="classify"
-      ref="classify"
-      :types="classify.types"
-      @operationsClassify="$emit('classify-submit', $event)"
-    ></SelectClassify>
-  </div>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
-import { delayTrigger, on, off } from '@tap/shared'
-import { VIcon, Classification, ProTable, IconButton } from '@tap/component'
+import { Classification, IconButton, ProTable, VIcon } from '@tap/component'
+import { delayTrigger, off, on } from '@tap/shared'
+import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 import { makeDragNodeImage } from '../shared'
 
 import SelectClassify from './SelectClassify'
@@ -146,7 +30,10 @@ const tableSettings = {
   },
 
   save() {
-    localStorage.setItem('TAPDATA_TABLE_SETTINGS', JSON.stringify(this.settings))
+    localStorage.setItem(
+      'TAPDATA_TABLE_SETTINGS',
+      JSON.stringify(this.settings),
+    )
   },
 
   load() {
@@ -154,7 +41,7 @@ const tableSettings = {
     if (settings) {
       this.settings = JSON.parse(settings)
     }
-  }
+  },
 }
 
 // Initialize settings on creation
@@ -190,7 +77,7 @@ export default {
     draggable: Boolean,
   },
   data() {
-    const isDaas =  import.meta.env.VUE_APP_PLATFORM === 'DAAS'
+    const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 
     return {
       isDaas,
@@ -212,7 +99,7 @@ export default {
       },
       draggingNodeImage: null,
       shiftKeyPressed: false,
-      ifTableHeightAuto: !! import.meta.env.VUE_APP_TABLE_HEIGHT_AUTO,
+      ifTableHeightAuto: !!import.meta.env.VUE_APP_TABLE_HEIGHT_AUTO,
     }
   },
   mounted() {
@@ -304,7 +191,7 @@ export default {
       if (!row.id || !row.name) return false
 
       this.dragState.isDragging = true
-      let selection = this.multipleSelection
+      const selection = this.multipleSelection
 
       if (selection.find((it) => it.id === row.id)) {
         this.dragState.draggingObjects = selection
@@ -323,16 +210,22 @@ export default {
       this.dragState.isDragging = false
       this.dragState.draggingObjects = []
       this.dragState.dropNode = null
-      document.body.removeChild(this.draggingNodeImage)
+      this.draggingNodeImage.remove()
       this.draggingNodeImage = null
     },
     onSelectRow(selection, current) {
       try {
         const selected = selection.some((row) => row.id === current.id)
 
-        if (this.shiftKeyPressed && this.multipleSelection.length && this.lastSelectIndex !== undefined) {
+        if (
+          this.shiftKeyPressed &&
+          this.multipleSelection.length &&
+          this.lastSelectIndex !== undefined
+        ) {
           let lastIndex = this.lastSelectIndex
-          let currentIndex = this.list.findIndex((row) => row.id === current.id)
+          const currentIndex = this.list.findIndex(
+            (row) => row.id === current.id,
+          )
 
           if (~lastIndex && ~currentIndex && lastIndex !== currentIndex) {
             const tmp = currentIndex < lastIndex ? -1 : 1
@@ -340,25 +233,157 @@ export default {
             // 先触发selection-change
             setTimeout(() => {
               while (lastIndex !== currentIndex) {
-                this.$refs.table.toggleRowSelection(this.list[lastIndex], selected)
+                this.$refs.table.toggleRowSelection(
+                  this.list[lastIndex],
+                  selected,
+                )
                 lastIndex += tmp
               }
             }, 0)
           }
         }
 
-        this.lastSelectIndex = selected ? this.list.findIndex((row) => row.id === current.id) : undefined
-      } catch (e) {
-        console.error(e)
+        this.lastSelectIndex = selected
+          ? this.list.findIndex((row) => row.id === current.id)
+          : undefined
+      } catch (error) {
+        console.error(error)
       }
     },
     handleSizeChange(val) {
       tableSettings.setPageSize(this.$route.name, val)
       this.fetch(1)
-    }
+    },
   },
 }
 </script>
+
+<template>
+  <div class="table-page-container">
+    <div v-if="title" class="table-page-header">
+      <slot name="header">
+        <div class="page-header-title">
+          {{ title }}
+          <span v-if="desc" class="page-header-desc" v-html="desc" />
+        </div>
+      </slot>
+    </div>
+
+    <div class="table-page-main">
+      <div class="table-page-main-box">
+        <Classification
+          v-if="classify && !hideClassify"
+          ref="classification"
+          v-model:visible="classificationVisible"
+          :com-title="classify.comTitle"
+          :authority="classify.authority"
+          :view-page="classify.viewPage"
+          :types="classify.types"
+          :title="classify.title"
+          :kai-title="classify.title"
+          :drag-state="dragState"
+          @node-checked="nodeChecked"
+          @update:visible="classificationVisible = $event"
+          @drop-in-tag="fetch()"
+        />
+        <div class="table-page-body">
+          <div class="table-page-nav">
+            <slot name="nav" />
+          </div>
+          <div class="table-page-topbar p-3">
+            <div class="table-page-search-bar flex align-center">
+              <IconButton
+                v-if="classify && !hideClassify && !classificationVisible"
+                class="mx-2 rotate-180"
+                @click="handleToggleClassify"
+                >expand-list</IconButton
+              >
+              <slot name="search" />
+            </div>
+            <div class="table-page-operation-bar">
+              <slot name="operation" />
+            </div>
+          </div>
+          <ProTable
+            v-bind="$attrs"
+            ref="table"
+            v-loading="loading"
+            class="table-page-table"
+            :row-class-name="classificationVisible ? 'grabbable' : ''"
+            :height="ifTableHeightAuto ? null : '100%'"
+            :element-loading-text="$t('packages_business_dataFlow_dataLoading')"
+            :row-key="rowKey"
+            :span-method="spanMethod"
+            :data="list"
+            :default-sort="defaultSort"
+            :draggable="draggable || classificationVisible"
+            @selection-change="handleSelectionChange"
+            @sort-change="$emit('sort-change', $event)"
+            @row-dragstart="handleDragStart"
+            @row-dragend="handleDragEnd"
+            @select="onSelectRow"
+            v-on="$listeners"
+          >
+            <slot />
+            <template #empty>
+              <div class="empty">
+                <VIcon size="140">no-data-color</VIcon>
+                <slot name="noDataText" />
+              </div>
+            </template>
+          </ProTable>
+          <div class="table-footer">
+            <slot name="tableFooter" />
+          </div>
+          <div
+            class="pagination-wrapper flex align-center gap-3 px-4 pt-4"
+            :style="
+              ifTableHeightAuto
+                ? `position: sticky; bottom: 0; z-index: 10; background: #fff;`
+                : ''
+            "
+          >
+            <transition name="el-fade-in-linear">
+              <div
+                v-if="multipleSelection.length"
+                class="flex align-center gap-3"
+              >
+                <ElCheckbox :model-value="true" @change="clearSelection" />
+                <span class="fw-sub text-nowrap color-primary"
+                  >{{
+                    $t('packages_business_selected_rows', {
+                      val: multipleSelection.length,
+                    })
+                  }}
+                </span>
+                <slot name="multipleSelectionActions" />
+              </div>
+            </transition>
+
+            <el-pagination
+              v-model:current-page="page.current"
+              v-model:page-size="page.size"
+              background
+              class="table-page-pagination ml-auto mt-0"
+              layout="->,total, sizes,  prev, pager, next, jumper"
+              :page-sizes="[10, 20, 50, 100]"
+              :total="page.total"
+              @size-change="handleSizeChange"
+              @current-change="handleCurrent"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <SelectClassify
+      v-if="classify"
+      ref="classify"
+      :types="classify.types"
+      @operations-classify="$emit('classify-submit', $event)"
+    />
+  </div>
+</template>
+
 <style lang="scss">
 .table-page-container {
   display: flex;
@@ -456,7 +481,9 @@ export default {
     }
 
     .el-table--border td,
-    .el-table__body-wrapper .el-table--border.is-scrolling-left ~ .el-table__fixed {
+    .el-table__body-wrapper
+      .el-table--border.is-scrolling-left
+      ~ .el-table__fixed {
       border-right: 0;
     }
 

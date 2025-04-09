@@ -26,7 +26,7 @@
       <el-table-column :label="$t('public_create_time')" prop="creationTime" width="170" sortable />
       <el-table-column :label="$t('public_operation')" width="100">
         <template #default="{ row }">
-          <ElButton size="mini" type="text" :disabled="[0, 2, 3].includes(row.status)" @click="handleDownload(row)">{{
+          <ElButton text type="primary" :disabled="[0, 2, 3].includes(row.status)" @click="handleDownload(row)">{{
             $t('public_button_download')
           }}</ElButton>
         </template>

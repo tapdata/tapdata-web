@@ -22,7 +22,7 @@
         @next="nextStep"
       >
         <template #help>
-          <el-button @click="openChat" type="text"
+          <el-button @click="openChat" text type="primary"
             ><VIcon class="mr-1 align-middle" size="18">customer</VIcon
             ><span class="align-middle">{{ $t('public_need_help') }}</span></el-button
           >

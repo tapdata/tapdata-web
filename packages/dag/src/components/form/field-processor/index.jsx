@@ -513,7 +513,7 @@ export const FieldRenameProcessorPreview = defineComponent({
               <div class="task-form-left pt-0 border-0 flex flex-column">
                 <div class="flex p-2">
                   <ElInput
-                    size="mini"
+                   
                     placeholder={i18n.t('packages_form_field_mapping_list_qingshurubiaoming')}
                     prefix-icon="el-icon-search"
                     clearable
@@ -592,7 +592,7 @@ export const FieldRenameProcessorPreview = defineComponent({
                 <div class="flex p-2 justify-content-between fields-toolbar">
                   <div class="flex field-search-input-wrap">
                     <ElInput
-                      size="mini"
+                     
                       placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
                       prefix-icon="el-icon-search"
                       clearable

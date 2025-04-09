@@ -679,7 +679,7 @@ export default {
         v-readonlybtn="'datasource_creation'"
         class="btn btn-create"
         type="primary"
-        size="mini"
+       
         :disabled="$disabledReadonlyUserBtn()"
         @click="checkTestConnectionAvailable"
       >
@@ -714,7 +714,7 @@ export default {
           <template #connectionType>
             <ElRadioGroup
               v-model="searchParams.databaseModel"
-              size="mini"
+             
               @change="table.fetch(1)"
             >
               <ElRadioButton label="">{{ $t('public_all') }}</ElRadioButton>

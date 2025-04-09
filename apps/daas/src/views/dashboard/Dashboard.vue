@@ -866,7 +866,7 @@ export default {
                           <div class="title">
                             {{ item.agentName || item.systemInfo.hostname }}
                           </div>
-                          <el-tag type="info" size="mini" class="rounded-md">{{
+                          <el-tag type="info" class="rounded-md">{{
                             item.custIP ? item.custIP : item.systemInfo.ip
                           }}</el-tag>
                         </div>

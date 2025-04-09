@@ -4,7 +4,7 @@
       <el-button
         v-if="buttonShowMap.import && isDaas"
         v-readonlybtn="'SYNC_job_import'"
-        size="mini"
+       
         class="btn"
         :disabled="$disabledReadonlyUserBtn()"
         @click="refFn('handleImport')"
@@ -15,7 +15,7 @@
         v-if="buttonShowMap.import && $route.name === 'dataflowList'"
         v-readonlybtn="'SYNC_job_import'"
         v-feature="'mongodbRelmig'"
-        size="mini"
+       
         name="importRelmig"
         class="btn"
         :disabled="$disabledReadonlyUserBtn()"
@@ -27,7 +27,7 @@
         v-if="$route.name === 'dataflowList'"
         v-feature="'buildingMaterializedView'"
         class="--with-icon inline-flex align-center px-2 py-0 gap-1 align-top"
-        size="mini"
+       
         name="materializedView"
         :loading="createBtnLoading"
         @click="refFn('handleCreateMaterializedView')"
@@ -40,7 +40,7 @@
         v-readonlybtn="'SYNC_job_creation'"
         class="btn btn-create"
         type="primary"
-        size="mini"
+       
         id="task-list-create"
         :disabled="$disabledReadonlyUserBtn()"
         :loading="createBtnLoading"

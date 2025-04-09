@@ -2313,7 +2313,7 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
                       />
 
                       <ElButton
-                        type="text"
+                        text type="primary"
                         @click="schemaScope.openApiDrawer('inspect-collate')"
                       >
                         <VIcon class="mr-1">question-circle</VIcon>
@@ -2338,7 +2338,7 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
                       />
 
                       <ElButton
-                        type="text"
+                        text type="primary"
                         @click="schemaScope.openApiDrawer('inspect-collate')"
                       >
                         <VIcon class="mr-1">question-circle</VIcon>
