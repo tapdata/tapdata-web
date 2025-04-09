@@ -29,12 +29,11 @@ const { items } = toRefs(props)
 
 const selectStyle = computed(() => {
   return {
-    width: isEmpty.value ? 'auto' : addUnit(props.width),
+    width: isEmpty.value && !props.filterable ? 'auto' : addUnit(props.width),
   }
 })
 
 const isEmpty = computed(() => {
-  console.log('props.modelValue', model.value)
   return props.emptyValues.includes(model.value)
 })
 
@@ -43,8 +42,6 @@ const popperClass = computed(() => {
 })
 
 const options = ref([])
-
-console.log('props', props)
 
 const popperOptions = computed(() => {
   const modifiers = [
