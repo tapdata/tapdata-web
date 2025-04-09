@@ -8,13 +8,13 @@
     :width="width"
     top="10vh"
     :modal-class="modalClass"
-    class="ldp-connection-dialog flex flex-column"
+    class="ldp-connection-dialog flex flex-column p-0"
     :beforeClose="beforeClose"
     @close="handleClose"
     @closed="onClosed"
   >
     <template #header>
-      <div class="flex font-color-dark fs-6 fw-sub position-relative align-center">
+      <div class="flex px-6 h-100 font-color-dark fs-6 fw-sub position-relative align-center">
         <template v-if="!showForm">
           <span>{{ title }}</span>
           <ElInput
@@ -966,6 +966,7 @@ export default {
   .el-dialog__header {
     height: 64px;
     min-height: 64px;
+    padding-bottom: 0;
   }
 
   .ldp-connection-search-input {
