@@ -1,5 +1,8 @@
 <template>
   <PageContainer>
+    <template #title>
+      <slot name="title"></slot>
+    </template>
     <template #actions>
       <ElButton v-show="pendingSelection.length > 0" size="mini" @click="batchPublish">
         <span> {{ $t('public_batch_publish') }}</span>

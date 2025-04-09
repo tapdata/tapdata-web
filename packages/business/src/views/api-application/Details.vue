@@ -1,27 +1,3 @@
-<template>
-  <Drawer
-    v-bind="$attrs"
-    v-loading="loading"
-    class="app-details"
-    :class="{ 'flex flex-column': visible }"
-    v-model:visible="visible"
-    width="800px"
-    @visible="handleVisible"
-  >
-    <div class="mb-4">{{ details.value }}</div>
-    <ElInput :value="details.desc" type="textarea" disabled class="mb-6"></ElInput>
-
-    <DataServerList
-      :show-filter="false"
-      :columns="listColumns"
-      :params="listParams"
-      ref="table"
-      class="flex-fill"
-      @drawer-visible="handleDataServerListVisible"
-    ></DataServerList>
-  </Drawer>
-</template>
-
 <script>
 import { Drawer } from '@tap/component'
 import DataServerList from '../data-server/List'
@@ -86,6 +62,41 @@ export default {
   },
 }
 </script>
+
+<template>
+  <Drawer
+    v-bind="$attrs"
+    v-model:visible="visible"
+    v-loading="loading"
+    class="app-details"
+    :class="{ 'flex flex-column': visible }"
+    width="800px"
+    @visible="handleVisible"
+  >
+    <DataServerList
+      ref="table"
+      :show-filter="false"
+      :columns="listColumns"
+      :params="listParams"
+      class="flex-fill"
+      @drawer-visible="handleDataServerListVisible"
+    >
+      <template #title>
+        <div class="min-w-0 overflow-hidden">
+          <div class="fs-5 py-4 font-color-dark">
+            {{ details.value }}
+            <div
+              v-if="details.desc"
+              class="mt-1 fs-7 font-color-sslight ellipsis"
+            >
+              {{ details.desc }}
+            </div>
+          </div>
+        </div>
+      </template>
+    </DataServerList>
+  </Drawer>
+</template>
 
 <style lang="scss" scoped>
 .app-details {

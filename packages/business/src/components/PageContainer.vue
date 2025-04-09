@@ -1,33 +1,6 @@
-<template>
-  <div class="flex flex-column h-100 page-container min-h-0">
-    <div class="page-header" :class="headerClass">
-      <ElBreadcrumb class="breadcrumb" v-if="breadcrumbData.length > 1" separator-class="el-icon-arrow-right">
-        <ElBreadcrumbItem v-for="item in breadcrumbData" :key="item.name" :to="item.to">
-          {{ item.name }}
-        </ElBreadcrumbItem>
-      </ElBreadcrumb>
-      <div class="flex align-items-center px-4 bg-white rounded-lg" v-else>
-        <span class="fs-5 py-4 font-color-dark mr-3">{{ $t($route.meta.title) }}</span>
-        <slot name="left-actions"></slot>
-        <template v-if="$route.meta.desc">
-          <ElDivider class="mx-4" direction="vertical"></ElDivider>
-          <Desciption class="flex align-items-center fs-7 font-color-sslight" :desc="$route.meta.desc"></Desciption>
-        </template>
-
-        <div class="flex-1"></div>
-        <slot name="actions"></slot>
-      </div>
-    </div>
-
-    <div class="page-content" :class="contentClass">
-      <slot></slot>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import i18n from '@tap/i18n'
-import { ref, computed, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -59,7 +32,9 @@ const Desciption = {
   render(h) {
     if (this.desc) {
       if (Object.prototype.toString.call(this.desc) === '[object Function]') {
-        return h('span', { class: 'flex align-items-center' }, [this.desc(h, this.$t.bind(this))])
+        return h('span', { class: 'flex align-items-center' }, [
+          this.desc(h, this.$t.bind(this)),
+        ])
       } else {
         return h('span', this.$t(this.desc))
       }
@@ -69,8 +44,8 @@ const Desciption = {
 }
 
 const getBreadcrumb = () => {
-  let matched = route.matched.slice(1)
-  let data = []
+  const matched = route.matched.slice(1)
+  const data = []
   let _isHidden = false
   if (matched.length) {
     matched.forEach((route) => {
@@ -98,6 +73,49 @@ watch(() => route.name, getBreadcrumb)
 
 getBreadcrumb()
 </script>
+
+<template>
+  <div class="flex flex-column h-100 page-container min-h-0">
+    <div class="page-header" :class="headerClass">
+      <ElBreadcrumb
+        v-if="breadcrumbData.length > 1"
+        class="breadcrumb"
+        separator-class="el-icon-arrow-right"
+      >
+        <ElBreadcrumbItem
+          v-for="item in breadcrumbData"
+          :key="item.name"
+          :to="item.to"
+        >
+          {{ item.name }}
+        </ElBreadcrumbItem>
+      </ElBreadcrumb>
+      <div v-else class="flex align-items-center px-4 bg-white rounded-lg">
+        <slot name="title">
+          <span class="fs-5 py-4 font-color-dark mr-3">{{
+            $t($route.meta.title)
+          }}</span>
+        </slot>
+
+        <slot name="left-actions" />
+        <template v-if="$route.meta.desc">
+          <ElDivider class="mx-4" direction="vertical" />
+          <Desciption
+            class="flex align-items-center fs-7 font-color-sslight"
+            :desc="$route.meta.desc"
+          />
+        </template>
+
+        <div class="flex-1" />
+        <slot name="actions" />
+      </div>
+    </div>
+
+    <div class="page-content" :class="contentClass">
+      <slot />
+    </div>
+  </div>
+</template>
 
 <!--<script>
 export default {

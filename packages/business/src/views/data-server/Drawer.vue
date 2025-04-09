@@ -1012,23 +1012,17 @@ export default {
       <ElForm
         ref="form"
         hide-required-asterisk
-        label-width="80px"
         class="data-server__form overflow-auto flex-1"
         :class="{
           'p-6 pb-16': !inDialog,
         }"
         label-position="top"
-        size="mini"
         :model="form"
         :rules="rules"
       >
         <template v-if="!inDialog">
           <div class="flex justify-content-between align-items-start">
-            <ElFormItem
-              class="flex-1 form-item-name mb-0"
-              size="small"
-              prop="name"
-            >
+            <ElFormItem class="flex-1 form-item-name" prop="name">
               <ElInput
                 v-if="isEdit"
                 v-model="form.name"
@@ -1047,13 +1041,9 @@ export default {
                 <ElButton v-if="data.id" size="mini" @click="isEdit = false">{{
                   $t('public_button_cancel')
                 }}</ElButton>
-                <ElButton
-                  type="primary"
-                  class="ml-4"
-                  size="mini"
-                  @click="save()"
-                  >{{ $t('public_button_save') }}</ElButton
-                >
+                <ElButton type="primary" size="mini" @click="save()">{{
+                  $t('public_button_save')
+                }}</ElButton>
               </div>
               <ElButton
                 v-else
