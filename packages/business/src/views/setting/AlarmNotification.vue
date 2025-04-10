@@ -314,6 +314,7 @@ $unreadColor: #ee5353;
     position: absolute;
     top: -50px;
     right: 0;
+    z-index: 1;
     cursor: pointer;
     span {
       display: inline-block;

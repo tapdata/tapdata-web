@@ -54,8 +54,7 @@ export const installElement = (app) => {
   app.use(ElMessage)
   app.use(ElMessageBox)
 
-  ElDialog.props.closeIcon.default = CloseIcon
-
+  // 隐藏箭头后的offset
   const getDefault = () => {
     return {
       modifiers: [
@@ -69,7 +68,7 @@ export const installElement = (app) => {
     }
   }
 
-  // 隐藏箭头后的offset
+  ElDialog.props.closeIcon.default = CloseIcon
   ElSelect.props.popperOptions.default = getDefault
   ElSelect.props.suffixIcon.default = DownBoldOutlined
   ElSelectV2.props.popperOptions.default = getDefault

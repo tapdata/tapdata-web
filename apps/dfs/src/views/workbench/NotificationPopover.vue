@@ -1,63 +1,17 @@
-<template>
-  <ElPopover placement="bottom" popper-class="notive-popove" width="380" trigger="hover" @show="activeTab = 'system'">
-    <template #reference>
-      <div class="btn" @click="toCenter()">
-        <ElBadge class="item-badge flex align-center gap-1 rounded-4" :value="unRead" :max="99" :hidden="!unRead">
-          <VIcon size="16">lingdang</VIcon>
-          <span>{{ $t('header_notify') }}</span>
-        </ElBadge>
-      </div>
-    </template>
-    <div class="notification-popover-wrap">
-      <div class="tab-item-container">
-        <div class="notice-header">
-          <span> {{ $t('header_notification_content') }} </span>
-        </div>
-        <ul class="tab-list cuk-list">
-          <li
-            class="notification-item cursor-pointer"
-            v-for="(item, index) in listData"
-            :key="index"
-            @click="handleRead(item.id, 'alarm')"
-          >
-            <div class="flex flex-row">
-              <div class="mr-1">
-                <span class="unread-1zPaAXtSu inline-block"></span>
-              </div>
-              <div>
-                <span :class="['level-' + item.levelType]">【{{ item.levelLabel }}】</span>
-                <template>
-                  <span>{{ item.title }}</span>
-                </template>
-              </div>
-            </div>
-          </li>
-        </ul>
-        <div class="connection-table__empty" v-if="listData.length < 1">
-          <VIcon size="76">notice-color</VIcon>
-          <span>{{ $t('header_no_notice') }}</span>
-        </div>
-        <div class="tab-item__footer flex justify-content-end py-3 font-color-sub">
-          <ElLink class="font-color-sub" @click="toCenter()">{{ $t('header_view_notifications') }}</ElLink>
-        </div>
-      </div>
-    </div>
-  </ElPopover>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import { debounce, uniqBy } from 'lodash'
-
-import { TYPEMAP } from './tyepMap'
-import { VIcon } from '@tap/component'
-import timeFunction from '@/mixins/timeFunction'
 import { notificationApi } from '@tap/api'
 import { ALARM_LEVEL_MAP } from '@tap/business'
+
+import { VIcon } from '@tap/component'
+import { debounce, uniqBy } from 'lodash'
+import timeFunction from '@/mixins/timeFunction'
+import { $emit } from '../../../utils/gogocodeTransfer'
+import { TYPEMAP } from './tyepMap'
 
 export default {
   components: { VIcon },
   mixins: [timeFunction],
+  emits: ['notificationUpdate'],
   data() {
     return {
       loading: false,
@@ -88,7 +42,7 @@ export default {
   },
   methods: {
     init() {
-      let msg = {
+      const msg = {
         type: 'notification',
       }
       this.getUnreadData()
@@ -96,7 +50,7 @@ export default {
         this.$ws.on(
           'notification',
           debounce((res) => {
-            let data = res?.data
+            const data = res?.data
             if (data?.msg !== 'alarm') {
               this.getUnreadData(false)
             }
@@ -117,22 +71,28 @@ export default {
     },
     // 获取未读的消息数量
     getUnReadNum() {
-      let where = {
+      const where = {
         read: false,
       }
-      return this.$axios.get('tm/api/Messages/count?where=' + encodeURIComponent(JSON.stringify(where))).then((res) => {
-        this.unRead = res
-      })
+      return this.$axios
+        .get(
+          `tm/api/Messages/count?where=${encodeURIComponent(
+            JSON.stringify(where),
+          )}`,
+        )
+        .then((res) => {
+          this.unRead = res
+        })
     },
     getUnreadData(loadData = true) {
-      let where = {
+      const where = {
         msgType: 'ALARM',
         page: 1,
         size: 20,
         read: false,
       }
       notificationApi.list(where).then((data) => {
-        let list = data?.items || []
+        const list = data?.items || []
         this.unRead = data?.total
         loadData &&
           (this.listData = list.map((item) => {
@@ -144,7 +104,7 @@ export default {
     },
     // 已读消息
     handleRead(id) {
-      notificationApi.patch({ read: true, id: id }).then(() => {
+      notificationApi.patch({ read: true, id }).then(() => {
         this.getUnreadData()
         $emit(this.$root, 'notificationUpdate')
       })
@@ -157,9 +117,72 @@ export default {
       this.$router.push({ name: 'SystemNotice' })
     },
   },
-  emits: ['notificationUpdate'],
 }
 </script>
+
+<template>
+  <ElPopover
+    placement="bottom"
+    popper-class="notive-popove"
+    width="380"
+    trigger="hover"
+    @show="activeTab = 'system'"
+  >
+    <template #reference>
+      <div class="btn" @click="toCenter()">
+        <ElBadge
+          class="item-badge flex align-center gap-1 rounded-4"
+          :value="unRead"
+          :max="99"
+          :hidden="!unRead"
+        >
+          <VIcon size="16">lingdang</VIcon>
+          <span>{{ $t('header_notify') }}</span>
+        </ElBadge>
+      </div>
+    </template>
+    <div class="notification-popover-wrap">
+      <div class="tab-item-container">
+        <div class="notice-header">
+          <span> {{ $t('header_notification_content') }} </span>
+        </div>
+        <ul class="tab-list cuk-list">
+          <li
+            v-for="(item, index) in listData"
+            :key="index"
+            class="notification-item cursor-pointer"
+            @click="handleRead(item.id, 'alarm')"
+          >
+            <div class="flex flex-row">
+              <div class="mr-1">
+                <span class="unread-1zPaAXtSu inline-block" />
+              </div>
+              <div>
+                <span :class="[`level-${item.levelType}`]"
+                  >【{{ item.levelLabel }}】</span
+                >
+                <template>
+                  <span>{{ item.title }}</span>
+                </template>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <div v-if="listData.length < 1" class="connection-table__empty">
+          <VIcon size="76">notice-color</VIcon>
+          <span>{{ $t('header_no_notice') }}</span>
+        </div>
+        <div
+          class="tab-item__footer flex justify-content-end py-3 font-color-sub"
+        >
+          <ElLink class="font-color-sub" @click="toCenter()">{{
+            $t('header_view_notifications')
+          }}</ElLink>
+        </div>
+      </div>
+    </div>
+  </ElPopover>
+</template>
 
 <style lang="scss">
 .el-popover__reference-wrapper {

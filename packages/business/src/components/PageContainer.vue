@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import i18n from '@tap/i18n'
-import { computed, ref, watch } from 'vue'
+import { computed, h, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -17,7 +17,8 @@ const props = defineProps({
 
 const contentClass = computed(() => {
   const map = {
-    table: 'pb-6 flex-1 min-h-0',
+    // table: 'pb-6 flex-1 min-h-0',
+    table: 'flex-1 min-h-0',
   }
   return map[props.contentMode]
   // return props.contentMode === 'full' ? 'overflow-hidden bg-white shadow-card' : ''
@@ -25,31 +26,13 @@ const contentClass = computed(() => {
 
 const headerClass = isDaas ? 'border-bottom' : 'bg-white rounded-lg mb-4'
 
-const Desciption = {
-  props: {
-    desc: [String, Function],
-  },
-  render(h) {
-    if (this.desc) {
-      if (Object.prototype.toString.call(this.desc) === '[object Function]') {
-        return h('span', { class: 'flex align-items-center' }, [
-          this.desc(h, this.$t.bind(this)),
-        ])
-      } else {
-        return h('span', this.$t(this.desc))
-      }
-    }
-    return null
-  },
-}
-
 const getBreadcrumb = () => {
   const matched = route.matched.slice(1)
   const data = []
   let _isHidden = false
   if (matched.length) {
     matched.forEach((route) => {
-      _isHidden = route.meta?.hideTitle
+      _isHidden = Boolean(route.meta?.hideTitle)
       let to = {
         name: null,
       }
@@ -65,8 +48,6 @@ const getBreadcrumb = () => {
   }
   isHidden.value = Boolean(_isHidden)
   breadcrumbData.value = data
-
-  console.log('breadcrumbData', breadcrumbData)
 }
 
 watch(() => route.name, getBreadcrumb)
@@ -100,10 +81,14 @@ getBreadcrumb()
         <slot name="left-actions" />
         <template v-if="$route.meta.desc">
           <ElDivider class="mx-4" direction="vertical" />
-          <Desciption
-            class="flex align-items-center fs-7 font-color-sslight"
-            :desc="$route.meta.desc"
-          />
+          <span class="flex align-items-center fs-7 font-color-sslight">
+            <template v-if="typeof $route.meta.desc === 'function'">
+              <component :is="() => h('span', {}, [$route.meta.desc(h, $t)])" />
+            </template>
+            <template v-else>
+              {{ $t($route.meta.desc) }}
+            </template>
+          </span>
         </template>
 
         <div class="flex-1" />
@@ -117,77 +102,6 @@ getBreadcrumb()
   </div>
 </template>
 
-<!--<script>
-export default {
-  components: {
-    Desciption: {
-      props: {
-        desc: [String, Function],
-      },
-      render(h) {
-        if (this.desc) {
-          if (Object.prototype.toString.call(this.desc) === '[object Function]') {
-            return h('span', { class: 'flex align-items-center' }, [this.desc(h, this.$t.bind(this))])
-          } else {
-            return h('span', this.$t(this.desc))
-          }
-        }
-        return null
-      },
-    },
-  },
-  data() {
-    return {
-      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
-      breadcrumbData: [],
-      isHidden: false,
-    }
-  },
-  computed: {
-    headerClass() {
-      return this.isDaas ? 'border-bottom' : 'bg-white rounded-lg mb-4'
-    },
-  },
-  watch: {
-    '$route.name'() {
-      this.getBreadcrumb(this.$route)
-    },
-  },
-  created() {
-    this.getBreadcrumb(this.$route)
-  },
-  methods: {
-    getBreadcrumb(route) {
-      let matched = route.matched.slice(1)
-      let data = []
-      let isHidden = false
-      if (matched.length) {
-        matched.forEach((route) => {
-          isHidden = route.meta?.hideTitle
-          let to = {
-            name:
-              route.name === this.$route.name
-                ? null
-                : ['settingCenter', 'notification'].includes(route.name)
-                  ? 'layout'
-                  : route.name,
-          }
-          if (route.meta?.doNotJump) {
-            to = null
-          }
-          !isHidden &&
-            data.push({
-              name: this.$t(route.meta?.title),
-              to,
-            })
-        })
-      }
-      this.isHidden = !!isHidden
-      this.breadcrumbData = data
-    },
-  },
-}
-</script>-->
 <style lang="scss" scoped>
 .breadcrumb {
   height: 50px;

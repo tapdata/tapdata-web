@@ -1,200 +1,36 @@
-<template>
-  <div class="workbench-container overflow-hidden flex flex-column">
-    <ElRow type="flex" :gutter="16" class="align-items-stretch mb-4">
-      <ElCol :span="18">
-        <!--探索示例-->
-        <div class="workbench-overview workbench-section bg-white rounded-xl p-4 shadow-sm h-100">
-          <div class="main-title mb-4">
-            {{ $t('_workbench_workbench_tansuoshili') }}
-          </div>
-          <ul class="flex flex-row overflow-x-auto gap-4">
-            <li class="cursor-pointer" v-for="(item, index) in examplesList" :key="index" @click="goScenes(item.url)">
-              <div class="position-relative">
-                <ElImage class="scene-img" :src="item.img" />
-                <div
-                  class="position-absolute position-text flex justify-content-center align-items-center flex-column fs-8 py-2"
-                  style="min-height: 40px"
-                >
-                  <div v-if="item.title" class="text-center explore-examples-ellipsis pl-1 pr-1">
-                    {{ item.title }}
-                  </div>
-                  <div v-if="item.subTitle" class="text-center explore-examples-ellipsis">
-                    {{ item.subTitle }}
-                  </div>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </ElCol>
-      <ElCol :span="6">
-        <div class="bg-white rounded-xl p-4 shadow-sm h-100">
-          <div class="main-title mb-4">Welcome to Tapdata</div>
-          <div class="clickable" @click="setUpgradeFeeVisible(true)">
-            <ElImage :src="bannerImg"></ElImage>
-          </div>
-        </div>
-      </ElCol>
-    </ElRow>
-
-    <ElRow type="flex" :gutter="16" class="min-h-0">
-      <ElCol :span="18">
-        <!--概览	-->
-        <div class="bg-white rounded-xl p-4 shadow-sm">
-          <div class="main-title mb-4">{{ $t('workbench_overview') }}</div>
-          <div class="section-body">
-            <ul class="agent-list__list flex">
-              <li v-for="(item, index) in agentList" :key="index" class="agent-list__item px-4 py-6" :ref="item.key">
-                <div class="agent-list__name flex align-items-center mx-auto mb-3">
-                  <VIcon size="16" class="icon">{{ item.icon }}</VIcon>
-                  <span class="ml-1 fs-6">{{ item.name }}</span>
-                </div>
-                <div class="fs-1">
-                  {{ item.value }}
-                </div>
-                <div class="flex justify-content-between align-items-center mt-3 px-1" v-if="item.list.length > 0">
-                  <div class="flex flex-column gap-2">
-                    <div v-for="(detail, dIndex) in item.list" :key="dIndex">
-                      <span>{{ detail.label }}</span>
-                      <span>:</span>
-                      <span :class="['ml-1']">{{ detail.value }}</span>
-                    </div>
-                  </div>
-                  <div style="height: 80px; width: 80px">
-                    <Chart ref="lineChart" type="pie" :extend="getPieOption(index)"></Chart>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </ElCol>
-      <ElCol :span="6" class="mh-100">
-        <div class="bg-white rounded-xl p-4 shadow-sm mh-100 flex flex-column">
-          <div class="aside-title mb-4">{{ $t('workbench_notice') }}</div>
-          <div class="notice-list flex-grow-1 min-h-0 overflow-y-auto">
-            <ul class="notice-list__list">
-              <li
-                v-for="(item, index) in notices"
-                :key="index"
-                class="notice-list__item flex align-items-center mb-4 px-1 pointer"
-              >
-                <div v-if="item.icon" class="">
-                  <VIcon size="18">{{ item.icon }}</VIcon>
-                </div>
-                <div v-if="item.type" class="notice-list__type mr-4 p-1">
-                  {{ item.type }}
-                </div>
-                <ElLink v-else class="notice-list__name flex-grow-1 ellipsis block pointer" @click="toNotice(item)">
-                  {{ item.name }}
-                </ElLink>
-                <div class="notice-list__time font-color-sslight">
-                  {{ fromNow(item.time) }}
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </ElCol>
-    </ElRow>
-
-    <!-- 版本升级弹窗-->
-    <el-dialog
-      class="dialog-upgrade"
-      v-model="showUpgrade"
-      :title="$t('dfs_workbench_workbench_banbenshengjitong')"
-      width="670px"
-    >
-      <div class="dialog-upgrade__text">
-        <div>
-          <p class="mb-2">
-            {{ $t('dfs_workbench_workbench_zunjingdeyonghu') }}
-          </p>
-          <p class="mb-2">{{ $t('dfs_workbench_workbench_zainianyueriwo') }}</p>
-          <p>{{ $t('dfs_workbench_workbench_youyuzengjiale') }}</p>
-          <p>{{ $t('dfs_workbench_workbench_dangranruguoyou') }}</p>
-        </div>
-        <p class="mb-2 mt-2 dialog-upgrade__text__header">
-          {{ $t('dfs_workbench_workbench_xiamianshixinban') }}
-        </p>
-        <p class="mt-4 mb-2 dialog-upgrade__text__header">
-          {{ $t('dfs_workbench_workbench_jiyuPdk2') }}
-        </p>
-        <ul>
-          <li>{{ $t('dfs_workbench_workbench_jiyuPdk') }}</li>
-          <li>{{ $t('dfs_workbench_workbench_yonghukeanzhao') }}</li>
-          <li>{{ $t('dfs_workbench_workbench_xinkaifadeshu') }}</li>
-        </ul>
-        <p class="mt-4 mb-2 dialog-upgrade__text__header">
-          {{ $t('dfs_workbench_workbench_quanlianghezengliang') }}
-        </p>
-        <ul>
-          <li>{{ $t('dfs_workbench_workbench_jubeiduishuju3') }}</li>
-          <li>{{ $t('dfs_workbench_workbench_jubeiduishuju2') }}</li>
-          <li>{{ $t('dfs_workbench_workbench_jubeiduishuju') }}</li>
-        </ul>
-        <p class="mt-4 mb-2 dialog-upgrade__text__header">
-          {{ $t('dfs_workbench_workbench_renwukeguance') }}
-        </p>
-        <ul>
-          <li>{{ $t('dfs_workbench_workbench_renwuzhibiaoke') }}</li>
-          <li>{{ $t('dfs_workbench_workbench_renwurizhike') }}</li>
-          <li>{{ $t('dfs_workbench_workbench_renwugaojingneng') }}</li>
-        </ul>
-        <p class="mt-4 mb-2 dialog-upgrade__text__header">
-          {{ $t('dfs_workbench_workbench_shujutongbuneng') }}
-        </p>
-        <ul>
-          <li>{{ $t('dfs_workbench_workbench_xinzengdongtaixin') }}</li>
-          <li>{{ $t('dfs_workbench_workbench_xinzengDdl') }}</li>
-          <li>{{ $t('dfs_workbench_workbench_xinzengzidingyi2') }}</li>
-          <li>{{ $t('dfs_workbench_workbench_xinzengzidingyi') }}</li>
-        </ul>
-      </div>
-      <template v-slot:footer>
-        <span class="dialog-footer">
-          <el-button type="primary" @click="showUpgrade = false">{{ $t('public_button_cancel') }}</el-button>
-        </span>
-      </template>
-    </el-dialog>
-    <!--<CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>-->
-  </div>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import i18n from '@/i18n'
-
 import { connectionsApi, taskApi } from '@tap/api'
-import { VIcon, Chart } from '@tap/component'
-import timeFunction from '@/mixins/timeFunction'
-import CheckLicense from '@/views/aliyun-market/CheckLicnese'
-import { mapMutations } from 'vuex'
-import { UpgradeDialog } from '@/plugins/upgrade-notice'
-import { CustomerSurvey } from '@/plugins/customer-survey'
+import { Chart, VIcon } from '@tap/component'
 
-import scene1 from '@/assets/image/dashboard/scene1.png'
-import scene2 from '@/assets/image/dashboard/scene2.png'
-import scene3 from '@/assets/image/dashboard/scene3.png'
-import scene4 from '@/assets/image/dashboard/scene4.png'
-import scene5 from '@/assets/image/dashboard/scene5.png'
+import { mapMutations } from 'vuex'
 import io_scene1 from '@/assets/image/dashboard/io_scene1.png'
 import io_scene2 from '@/assets/image/dashboard/io_scene2.png'
 import io_scene3 from '@/assets/image/dashboard/io_scene3.png'
 import io_scene4 from '@/assets/image/dashboard/io_scene4.png'
-import plan_banner from '@/assets/image/plan_banner.png'
+import scene1 from '@/assets/image/dashboard/scene1.png'
+import scene2 from '@/assets/image/dashboard/scene2.png'
+
+import scene3 from '@/assets/image/dashboard/scene3.png'
+import scene4 from '@/assets/image/dashboard/scene4.png'
+import scene5 from '@/assets/image/dashboard/scene5.png'
 import plan_banner_cn from '@/assets/image/plan_banner_cn.png'
+import plan_banner from '@/assets/image/plan_banner.png'
+import i18n from '@/i18n'
+import timeFunction from '@/mixins/timeFunction'
+import { UpgradeDialog } from '@/plugins/upgrade-notice'
+import CheckLicense from '@/views/aliyun-market/CheckLicnese'
+import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 
 export default {
   name: 'Workbench',
   components: { VIcon, Chart },
-  inject: ['checkAgent'],
   mixins: [timeFunction],
+  inject: ['checkAgent'],
   data() {
     const $t = this.$t.bind(this)
-    let isDomesticStation = this.$store.getters.isDomesticStation
+    const isDomesticStation = this.$store.getters.isDomesticStation
 
-    let examplesList = isDomesticStation
+    const examplesList = isDomesticStation
       ? [
           {
             type: 'all',
@@ -379,7 +215,6 @@ export default {
   },
   methods: {
     UpgradeDialog,
-    CustomerSurvey,
     ...mapMutations(['setUpgradeFeeVisible']),
     init() {
       this.loadAgent() // agent
@@ -388,7 +223,7 @@ export default {
       this.loadNotices() // 通知公告
       this.loadBarData()
       //获取cookie 是否用户有操作过 稍后部署 且缓存是当前用户 不在弹窗
-      let user = window.__USER_INFO__
+      const user = window.__USER_INFO__
       this.userInfo = user
       //检查是云市场用户授权码有效期
       // if (user?.enableLicense) {
@@ -396,7 +231,7 @@ export default {
       // }
     },
     loadAgent() {
-      let agent = this.agentList.find(({ key }) => key === 'agent')
+      const agent = this.agentList.find(({ key }) => key === 'agent')
       const loading = this.$loading({
         target: this.$refs.agent?.[0],
       })
@@ -448,139 +283,133 @@ export default {
       this.notices = this.isDomesticStation
         ? [
             {
-              id: 32,
-              handle: 'CustomerSurvey',
-              name: i18n.t('dfs_customer_survey_notice'),
-              time: '2024-10-19 19:00'
-            },
-            {
               id: 31,
               handle: 'UpgradeDialog',
               icon: 'version-rocket',
               name: i18n.t('dfs_service_upgrade_notice'),
-              time: '2024-7-22 22:00'
+              time: '2024-7-22 22:00',
             },
             {
               id: '3.18.0',
               name: 'Tapdata Cloud 3.18.0 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-18-0.html',
-              time: '2024-11-29 21:00'
+              time: '2024-11-29 21:00',
             },
             {
               id: '3.17.0',
               name: 'Tapdata Cloud 3.17.0 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-17-0.html',
-              time: '2024-11-15 21:00'
+              time: '2024-11-15 21:00',
             },
             {
               id: '3.16.0',
               name: 'Tapdata Cloud 3.16.0 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-16-0.html',
-              time: '2024-10-30 21:00'
+              time: '2024-10-30 21:00',
             },
             {
               id: '3.15.0',
               name: 'Tapdata Cloud 3.15.0 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-15-0.html',
-              time: '2024-10-17 21:00'
+              time: '2024-10-17 21:00',
             },
             {
               id: '3.14.0',
               name: 'Tapdata Cloud 3.14.0 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-14-0.html',
-              time: '2024-10-10 21:00'
+              time: '2024-10-10 21:00',
             },
             {
               id: '3.13.0',
               name: 'Tapdata Cloud 3.13.0 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-13-0.html',
-              time: '2024-9-20 21:00'
+              time: '2024-9-20 21:00',
             },
             {
               id: '3.12.0',
               name: 'Tapdata Cloud 3.12.0 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-12-0.html',
-              time: '2024-8-21 21:00'
+              time: '2024-8-21 21:00',
             },
             {
               id: '3.11.0',
               name: 'Tapdata Cloud 3.11.0 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-11-0.html',
-              time: '2024-8-6 21:00'
+              time: '2024-8-6 21:00',
             },
             {
               id: '3.10.0',
               name: 'Tapdata Cloud 3.10.0 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-10-0.html',
-              time: '2024-7-20 21:00'
+              time: '2024-7-20 21:00',
             },
             {
               id: '3.9.0',
               name: 'Tapdata Cloud 3.9.0 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-9-0.html',
-              time: '2024-7-5 21:00'
+              time: '2024-7-5 21:00',
             },
             {
               id: 30,
               name: 'Tapdata Cloud 3.8.0 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-8-0.html',
-              time: '2024-6-20 21:00'
+              time: '2024-6-20 21:00',
             },
             {
               id: 29,
               type: '',
               name: 'Tapdata Cloud 3.7.0 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-7-0.html',
-              time: '2024-6-4 21:00'
+              time: '2024-6-4 21:00',
             },
             {
               id: 28,
               type: '',
               name: 'Tapdata Cloud 3.6.0 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-6-0.html',
-              time: '2024-5-21 21:00'
+              time: '2024-5-21 21:00',
             },
             {
               id: 27,
               type: '',
               name: 'Tapdata Cloud 3.5.16 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-5-16.html',
-              time: '2024-5-9 21:00'
+              time: '2024-5-9 21:00',
             },
             {
               id: 26,
               type: '',
               name: 'Tapdata Cloud 3.5.15 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-5-15.html',
-              time: '2024-4-24 21:00'
+              time: '2024-4-24 21:00',
             },
             {
               id: 25,
               type: '',
               name: 'Tapdata Cloud 3.5.14 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-5-14.html',
-              time: '2024-4-19 21:00'
+              time: '2024-4-19 21:00',
             },
             {
               id: 24,
               type: '',
               name: 'Tapdata Cloud 3.5.13 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-5-13.html',
-              time: '2024-3-28 21:00'
+              time: '2024-3-28 21:00',
             },
             {
               id: 23,
               type: '',
               name: 'Tapdata Cloud 3.5.12 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-5-12.html',
-              time: '2024-3-18 21:00'
+              time: '2024-3-18 21:00',
             },
             {
               id: 22,
               type: '',
               name: 'Tapdata Cloud 3.5.11 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-5-11.html',
-              time: '2024-2-15 21:00'
+              time: '2024-2-15 21:00',
             },
             {
               id: 21,
@@ -730,139 +559,133 @@ export default {
           ]
         : [
             {
-              id: 32,
-              handle: 'CustomerSurvey',
-              name: i18n.t('dfs_customer_survey_notice'),
-              time: '2024-10-19 19:00'
-            },
-            {
               id: 31,
               handle: 'UpgradeDialog',
               icon: 'version-rocket',
               name: i18n.t('dfs_service_upgrade_notice'),
-              time: '2024-7-22 22:00'
+              time: '2024-7-22 22:00',
             },
             {
               id: '3.18.0',
               name: 'Tapdata Cloud 3.18.0 Release Notes',
               link: 'https://tapdata.io/blog/tapdata-cloud-3-18-0',
-              time: '2024-11-29 21:00'
+              time: '2024-11-29 21:00',
             },
             {
               id: '3.17.0',
               name: 'Tapdata Cloud 3.17.0 Release Notes',
               link: 'https://tapdata.io/blog/tapdata-cloud-3-17-0',
-              time: '2024-11-15 21:00'
+              time: '2024-11-15 21:00',
             },
             {
               id: '3.16.0',
               name: 'Tapdata Cloud 3.16.0 Release Notes',
               link: 'https://tapdata.io/blog/tapdata-cloud-3-16-0',
-              time: '2024-10-30 21:00'
+              time: '2024-10-30 21:00',
             },
             {
               id: '3.15.0',
               name: 'Tapdata Cloud 3.15.0 Release Notes',
               link: 'https://tapdata.io/blog/tapdata-cloud-3-15-0',
-              time: '2024-10-17 21:00'
+              time: '2024-10-17 21:00',
             },
             {
               id: '3.14.0',
               name: 'Tapdata Cloud 3.14.0 Release Notes',
               link: 'https://tapdata.io/blog/tapdata-cloud-3-14-0',
-              time: '2024-10-10 21:00'
+              time: '2024-10-10 21:00',
             },
             {
               id: '3.13.0',
               name: 'Tapdata Cloud 3.13.0 Release Notes',
               link: 'https://tapdata.io/blog/tapdata-cloud-3-13-0',
-              time: '2024-9-20 21:00'
+              time: '2024-9-20 21:00',
             },
             {
               id: '3.12.0',
               name: 'Tapdata Cloud 3.12.0 Release Notes',
               link: 'https://tapdata.io/blog/tapdata-cloud-3-12-0',
-              time: '2024-8-21 21:00'
+              time: '2024-8-21 21:00',
             },
             {
               id: '3.11.0',
               name: 'Tapdata Cloud 3.11.0 Release Notes',
               link: 'https://tapdata.io/blog/tapdata-cloud-3-11-0',
-              time: '2024-8-6 21:00'
+              time: '2024-8-6 21:00',
             },
             {
               id: '3.10.0',
               name: 'Tapdata Cloud 3.10.0 Release Notes',
               link: 'https://tapdata.io/blog/tapdata-cloud-3-10-0',
-              time: '2024-7-20 21:00'
+              time: '2024-7-20 21:00',
             },
             {
               id: '3.9.0',
               name: 'Tapdata Cloud 3.9.0 Release Notes',
               link: 'https://tapdata.io/blog/tapdata-cloud-3-9-0',
-              time: '2024-7-5 21:00'
+              time: '2024-7-5 21:00',
             },
             {
               id: 30,
               name: 'Tapdata Cloud 3.8.0 Release Notes',
               link: 'https://tapdata.io/blog/tapdata-cloud-3-8-0',
-              time: '2024-6-20 21:00'
+              time: '2024-6-20 21:00',
             },
             {
               id: 29,
               type: '',
               name: 'Tapdata Cloud 3.7.0 Release Notes',
               link: 'https://tapdata.io/blog/tapdata-cloud-3-7-0',
-              time: '2024-6-4 21:00'
+              time: '2024-6-4 21:00',
             },
             {
               id: 28,
               type: '',
               name: 'Tapdata Cloud 3.6.0 Release Notes',
               link: 'https://tapdata.io/blog/tapdata-cloud-3-6-0',
-              time: '2024-5-21 21:00'
+              time: '2024-5-21 21:00',
             },
             {
               id: 27,
               type: '',
               name: 'Tapdata Cloud 3.5.16 Release Notes',
               link: 'https://tapdata.io/blog/tapdata-cloud-3-5-16',
-              time: '2024-5-9 21:00'
+              time: '2024-5-9 21:00',
             },
             {
               id: 26,
               type: '',
               name: 'Tapdata Cloud 3.5.15 Release Notes',
               link: 'https://tapdata.io/blog/tapdata-cloud-3-5-15/',
-              time: '2024-4-24 21:00'
+              time: '2024-4-24 21:00',
             },
             {
               id: 25,
               type: '',
               name: 'Tapdata Cloud 3.5.14 Release Notes',
               link: 'https://tapdata.io/blog/tapdata-cloud-3-5-14/',
-              time: '2024-4-19 21:00'
+              time: '2024-4-19 21:00',
             },
             {
               id: 24,
               type: '',
               name: 'Tapdata Cloud 3.5.13 Release Notes',
               link: 'https://tapdata.io/blog/tapdata-cloud-3-5-13/',
-              time: '2024-3-28 21:00'
+              time: '2024-3-28 21:00',
             },
             {
               id: 23,
               type: '',
               name: 'Tapdata Cloud 3.5.12 Release Notes',
               link: 'https://tapdata.io/blog/tapdata-cloud-3-5-12/',
-              time: '2024-3-18 21:00'
+              time: '2024-3-18 21:00',
             },
             {
               id: 22,
               type: '',
               name: 'Tapdata Cloud 3.5.11 Release Notes',
               link: 'https://tapdata.io/blog/tapdata-cloud-3-5-11/',
-              time: '2024-2-15 21:00'
+              time: '2024-2-15 21:00',
             },
             {
               id: 21,
@@ -937,7 +760,7 @@ export default {
           ]
     },
     loadBarData() {
-      let granularity = 'month'
+      const granularity = 'month'
       this.$axios
         .get('tm/api/DataFlowInsights/statistics', {
           params: {
@@ -946,7 +769,9 @@ export default {
         })
         .then((data) => {
           const list = data.inputDataStatistics || []
-          this.taskInputNumber = (data.totalInputDataCount || 0).toLocaleString()
+          this.taskInputNumber = (
+            data.totalInputDataCount || 0
+          ).toLocaleString()
           this.lineDataX = list.map((el) => el.time)
           this.lineDataY = list.map((el) => {
             let value = el.count
@@ -1008,7 +833,7 @@ export default {
     //图表数据组装
     getPieOption(index) {
       const item = this.agentList[index]
-      let data = [
+      const data = [
         {
           itemStyle: {
             color: '#2C65FF',
@@ -1026,7 +851,7 @@ export default {
       ]
 
       if (item.key === 'task') {
-        let node = {
+        const node = {
           itemStyle: {
             color: '#0FC6C2',
           },
@@ -1050,7 +875,7 @@ export default {
               position: 'center',
             },
             avoidLabelOverlap: false,
-            data: data,
+            data,
             radius: ['50%', '70%'],
           },
         ],
@@ -1083,7 +908,7 @@ export default {
             formatter: (val) => {
               let res = val === 1 ? 0 : val
               if (res / 1000 >= 1) {
-                res = res / 1000 + 'K'
+                res = `${res / 1000}K`
               }
               return res
             },
@@ -1092,13 +917,13 @@ export default {
         tooltip: {
           trigger: 'item',
           formatter: (params) => {
-            let item = params
+            const item = params
             let val = item.value
             if (val === 1.1) {
               val = 1
             }
             val = val.toLocaleString()
-            let html = val
+            const html = val
             return html
           },
         },
@@ -1135,9 +960,9 @@ export default {
 
     //检查云市场用户授权码是否过期
     checkLicense(user) {
-      var licenseCodes = user?.licenseCodes || []
+      const licenseCodes = user?.licenseCodes || []
       //是否有临近过期授权码
-      let verify = licenseCodes.filter((it) => it.nearExpiration)
+      const verify = licenseCodes.filter((it) => it.nearExpiration)
       if (user?.licenseValid && verify?.length > 0) {
         //授权码可用 存在有临近授权码
         this.aliyunMaketVisible = true
@@ -1152,6 +977,202 @@ export default {
   emits: ['select-connection-type', 'show-guide'],
 }
 </script>
+
+<template>
+  <div class="workbench-container overflow-hidden flex flex-column">
+    <ElRow type="flex" :gutter="16" class="align-items-stretch mb-4">
+      <ElCol :span="18">
+        <!--探索示例-->
+        <div
+          class="workbench-overview workbench-section bg-white rounded-xl p-4 shadow-sm h-100"
+        >
+          <div class="main-title mb-4">
+            {{ $t('_workbench_workbench_tansuoshili') }}
+          </div>
+          <ul class="flex flex-row overflow-x-auto gap-4">
+            <li
+              v-for="(item, index) in examplesList"
+              :key="index"
+              class="cursor-pointer"
+              @click="goScenes(item.url)"
+            >
+              <div class="position-relative">
+                <ElImage class="scene-img" :src="item.img" />
+                <div
+                  class="position-absolute position-text flex justify-content-center align-items-center flex-column fs-8 py-2"
+                  style="min-height: 40px"
+                >
+                  <div
+                    v-if="item.title"
+                    class="text-center explore-examples-ellipsis pl-1 pr-1"
+                  >
+                    {{ item.title }}
+                  </div>
+                  <div
+                    v-if="item.subTitle"
+                    class="text-center explore-examples-ellipsis"
+                  >
+                    {{ item.subTitle }}
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </ElCol>
+      <ElCol :span="6">
+        <div class="bg-white rounded-xl p-4 shadow-sm h-100">
+          <div class="main-title mb-4">Welcome to Tapdata</div>
+          <div class="clickable" @click="setUpgradeFeeVisible(true)">
+            <ElImage :src="bannerImg" />
+          </div>
+        </div>
+      </ElCol>
+    </ElRow>
+
+    <ElRow type="flex" :gutter="16" class="min-h-0">
+      <ElCol :span="18">
+        <!--概览	-->
+        <div class="bg-white rounded-xl p-4 shadow-sm">
+          <div class="main-title mb-4">{{ $t('workbench_overview') }}</div>
+          <div class="section-body">
+            <ul class="agent-list__list flex">
+              <li
+                v-for="(item, index) in agentList"
+                :key="index"
+                :ref="item.key"
+                class="agent-list__item px-4 py-6"
+              >
+                <div
+                  class="agent-list__name flex align-items-center mx-auto mb-3"
+                >
+                  <VIcon size="16" class="icon">{{ item.icon }}</VIcon>
+                  <span class="ml-1 fs-6">{{ item.name }}</span>
+                </div>
+                <div class="fs-1">
+                  {{ item.value }}
+                </div>
+                <div
+                  v-if="item.list.length > 0"
+                  class="flex justify-content-between align-items-center mt-3 px-1"
+                >
+                  <div class="flex flex-column gap-2">
+                    <div v-for="(detail, dIndex) in item.list" :key="dIndex">
+                      <span>{{ detail.label }}</span>
+                      <span>:</span>
+                      <span :class="['ml-1']">{{ detail.value }}</span>
+                    </div>
+                  </div>
+                  <div style="height: 80px; width: 80px">
+                    <Chart
+                      ref="lineChart"
+                      type="pie"
+                      :extend="getPieOption(index)"
+                    />
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </ElCol>
+      <ElCol :span="6" class="mh-100">
+        <div class="bg-white rounded-xl p-4 shadow-sm mh-100 flex flex-column">
+          <div class="aside-title mb-4">{{ $t('workbench_notice') }}</div>
+          <div class="notice-list flex-grow-1 min-h-0 overflow-y-auto">
+            <ul class="notice-list__list">
+              <li
+                v-for="(item, index) in notices"
+                :key="index"
+                class="notice-list__item flex align-items-center mb-4 px-1 pointer"
+              >
+                <div v-if="item.icon" class="">
+                  <VIcon size="18">{{ item.icon }}</VIcon>
+                </div>
+                <div v-if="item.type" class="notice-list__type mr-4 p-1">
+                  {{ item.type }}
+                </div>
+                <ElLink
+                  v-else
+                  class="notice-list__name flex-grow-1 ellipsis block pointer"
+                  @click="toNotice(item)"
+                >
+                  {{ item.name }}
+                </ElLink>
+                <div class="notice-list__time font-color-sslight">
+                  {{ fromNow(item.time) }}
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </ElCol>
+    </ElRow>
+
+    <!-- 版本升级弹窗-->
+    <el-dialog
+      v-model="showUpgrade"
+      class="dialog-upgrade"
+      :title="$t('dfs_workbench_workbench_banbenshengjitong')"
+      width="670px"
+    >
+      <div class="dialog-upgrade__text">
+        <div>
+          <p class="mb-2">
+            {{ $t('dfs_workbench_workbench_zunjingdeyonghu') }}
+          </p>
+          <p class="mb-2">{{ $t('dfs_workbench_workbench_zainianyueriwo') }}</p>
+          <p>{{ $t('dfs_workbench_workbench_youyuzengjiale') }}</p>
+          <p>{{ $t('dfs_workbench_workbench_dangranruguoyou') }}</p>
+        </div>
+        <p class="mb-2 mt-2 dialog-upgrade__text__header">
+          {{ $t('dfs_workbench_workbench_xiamianshixinban') }}
+        </p>
+        <p class="mt-4 mb-2 dialog-upgrade__text__header">
+          {{ $t('dfs_workbench_workbench_jiyuPdk2') }}
+        </p>
+        <ul>
+          <li>{{ $t('dfs_workbench_workbench_jiyuPdk') }}</li>
+          <li>{{ $t('dfs_workbench_workbench_yonghukeanzhao') }}</li>
+          <li>{{ $t('dfs_workbench_workbench_xinkaifadeshu') }}</li>
+        </ul>
+        <p class="mt-4 mb-2 dialog-upgrade__text__header">
+          {{ $t('dfs_workbench_workbench_quanlianghezengliang') }}
+        </p>
+        <ul>
+          <li>{{ $t('dfs_workbench_workbench_jubeiduishuju3') }}</li>
+          <li>{{ $t('dfs_workbench_workbench_jubeiduishuju2') }}</li>
+          <li>{{ $t('dfs_workbench_workbench_jubeiduishuju') }}</li>
+        </ul>
+        <p class="mt-4 mb-2 dialog-upgrade__text__header">
+          {{ $t('dfs_workbench_workbench_renwukeguance') }}
+        </p>
+        <ul>
+          <li>{{ $t('dfs_workbench_workbench_renwuzhibiaoke') }}</li>
+          <li>{{ $t('dfs_workbench_workbench_renwurizhike') }}</li>
+          <li>{{ $t('dfs_workbench_workbench_renwugaojingneng') }}</li>
+        </ul>
+        <p class="mt-4 mb-2 dialog-upgrade__text__header">
+          {{ $t('dfs_workbench_workbench_shujutongbuneng') }}
+        </p>
+        <ul>
+          <li>{{ $t('dfs_workbench_workbench_xinzengdongtaixin') }}</li>
+          <li>{{ $t('dfs_workbench_workbench_xinzengDdl') }}</li>
+          <li>{{ $t('dfs_workbench_workbench_xinzengzidingyi2') }}</li>
+          <li>{{ $t('dfs_workbench_workbench_xinzengzidingyi') }}</li>
+        </ul>
+      </div>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="showUpgrade = false">{{
+            $t('public_button_cancel')
+          }}</el-button>
+        </span>
+      </template>
+    </el-dialog>
+    <!--<CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>-->
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .workbench-container {

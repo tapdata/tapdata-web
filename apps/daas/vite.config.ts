@@ -31,7 +31,8 @@ const proxy = {
 
 export default defineConfig({
   define: {
-    'process.env': process.env,
+    // 'process.env': process.env,
+    TAP_ACCESS_TOKEN: "''",
   },
 
   envPrefix: ['VUE_APP_', 'VITE_', 'TAP_'],

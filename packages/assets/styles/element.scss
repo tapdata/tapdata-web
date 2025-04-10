@@ -5,13 +5,17 @@
   --primary-raw: 59, 71, 229;
   --primary-hover-light: rgba(var(--primary-raw), 0.1);
   --primary-hover: rgba(var(--primary-raw), 0.2);
+  --info-fill: #f1f3fe;
   --collapse-padding-primary: 16px;
   --collapse-padding-sm: 12px;
   --btn-space: 12px;
 
-  --icon-n1: rgb(43, 47, 54);
+  --icon-n1-raw: 43, 47, 54;
+  --icon-n1: rgba(var(--icon-n1-raw), 1);
   --icon-n2: rgb(100, 106, 115);
   --icon-n3: rgb(143, 149, 158);
+
+  --icon-n1-hover: rgba(var(--icon-n1-raw), 0.1)
 }
 
 // Table
@@ -102,6 +106,7 @@
   }
   &__caret {
     color: var(--icon-n3);
+    font-size: 12px;
   }
 }
 
@@ -184,14 +189,14 @@
     align-items: center;
     top: 16px !important;
     right: 16px !important;
-    width: 28px !important;
-    height: 28px !important;
+    width: 24px !important;
+    height: 24px !important;
     line-height: 1;
-    font-size: 20px !important;
-    border-radius: map.get($border-radius, base);
+    font-size: 16px !important;
+    border-radius: var(--el-border-radius-small);
     &:hover {
-      color: rgba(0, 0, 0, 0.88);
-      background-color: rgba(0, 0, 0, 0.06);
+      color: var(--icon-n1);
+      background-color: var(--icon-n1-hover);
       text-decoration: none;
       > * {
         color: inherit !important;
@@ -227,6 +232,25 @@
 .el-message-box {
   .el-message-box__message {
     width: 100%;
+  }
+
+  .el-message-box__headerbtn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 16px;
+    right: 16px;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--el-border-radius-small);
+
+    &:hover {
+      background-color: var(--icon-n1-hover);
+      text-decoration: none;
+      .el-message-box__close {
+        color: var(--icon-n1) !important;
+      }
+    }
   }
 }
 // Button
@@ -406,4 +430,15 @@
 // Checkbox
 .el-checkbox {
   --el-checkbox-border-radius: 4px;
+}
+
+// Alert
+.el-alert {
+  &--info.is-light {
+    --el-alert-bg-color: var(--info-fill);
+    --el-color-info: var(--el-text-color-title);
+    .el-alert__icon {
+      --color: var(--el-color-primary);
+    }
+}
 }

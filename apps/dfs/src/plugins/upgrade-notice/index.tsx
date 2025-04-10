@@ -1,22 +1,31 @@
-import { Notification, MessageBox } from 'element-plus'
+import { CloseIcon } from '@tap/component'
 import i18n from '@tap/i18n'
+import {
+  ElMessageBox as MessageBox,
+  ElNotification as Notification,
+} from 'element-plus'
 import { buried } from '@/plugins/buried'
-import './index.scss'
 import { tipManager } from '../storage'
+import './index.scss'
 
 function renderUpgrade(h) {
   return (
     <div>
       <div class="flex align-center gap-1 mb-5">
-        <el-image class="flex-shrink-0" src={require('@/assets/image/version-rocket.svg')}></el-image>
-        <span class="el-dialog__title">{i18n.t('dfs_service_upgrade_notice')}</span>
+        <el-image
+          class="flex-shrink-0"
+          src={require('@/assets/image/version-rocket.svg')}
+        ></el-image>
+        <span class="el-dialog__title">
+          {i18n.t('dfs_service_upgrade_notice')}
+        </span>
       </div>
       {i18n.locale === 'en' ? (
         <div class="lh-base">
           <p>Dear User,</p>
           <p>
-            To further enhance your experience, we plan to upgrade the TapData Cloud service. The upgrade schedule is as
-            follows:
+            To further enhance your experience, we plan to upgrade the TapData
+            Cloud service. The upgrade schedule is as follows:
           </p>
 
           <div class="p-3 bg-subtle rounded-lg mt-4">
@@ -25,9 +34,11 @@ function renderUpgrade(h) {
 
             <p class="fw-sub font-color-dark mt-2">Impact Notice:</p>
             <p>
-              Under normal circumstances, this upgrade will not affect the operation of tasks. If a task error occurs,
-              you can try restarting the task. If you encounter service access issues during the upgrade, please try
-              refreshing the page. If the problem persists, please contact our technical support team for assistance.
+              Under normal circumstances, this upgrade will not affect the
+              operation of tasks. If a task error occurs, you can try restarting
+              the task. If you encounter service access issues during the
+              upgrade, please try refreshing the page. If the problem persists,
+              please contact our technical support team for assistance.
             </p>
 
             <p class="fw-sub font-color-dark mt-2">Contact Information:</p>
@@ -37,13 +48,18 @@ function renderUpgrade(h) {
                 team@tapdata.io
               </a>
             </p>
-            <p>Thank you for your understanding and support of TapData Cloud!</p>
+            <p>
+              Thank you for your understanding and support of TapData Cloud!
+            </p>
           </div>
         </div>
       ) : (
         <div class="lh-base">
           <p>尊敬的用户：</p>
-          <p>为了进一步提升您的使用体验，我们计划对 TapData Cloud 进行服务升级。具体升级时间安排如下：</p>
+          <p>
+            为了进一步提升您的使用体验，我们计划对 TapData Cloud
+            进行服务升级。具体升级时间安排如下：
+          </p>
 
           <div class="p-3 bg-subtle rounded-lg mt-4">
             <p class="fw-sub font-color-dark">升级时间：</p>
@@ -77,14 +93,20 @@ export function UpgradeNotice(Vue) {
   const h = Vue.$createElement // 防止 [Vue warn]: `createElement()` has been called outside of render function.
   const message = (
     <div class="flex align-items-start gap-2 ml-n3 mr-n2">
-      <el-image class="flex-shrink-0" src={require('@/assets/image/version-rocket.svg')}></el-image>
+      <el-image
+        class="flex-shrink-0"
+        src={require('@/assets/image/version-rocket.svg')}
+      ></el-image>
       <div class="flex flex-column align-items-start gap-2 text-start">
-        <span class="text-primary fs-6 fw-sub lh-base">{i18n.t('dfs_service_upgrade_notice')}</span>
-        <span class="text-prewrap">{i18n.t('dfs_service_upgrade_notice_content')}</span>
+        <span class="text-primary fs-6 fw-sub lh-base">
+          {i18n.t('dfs_service_upgrade_notice')}
+        </span>
+        <span class="text-prewrap">
+          {i18n.t('dfs_service_upgrade_notice_content')}
+        </span>
         <el-button
           class="ml-auto"
           type="primary"
-         
           onClick={() => {
             buried('service_upgrade_notice_view')
             UpgradeDialog(Vue)
@@ -106,16 +128,17 @@ export function UpgradeNotice(Vue) {
     onClose: () => {
       buried('service_upgrade_notice_close')
       tipManager.showTip('serviceUpgrade')
-    }
+    },
   })
 }
 
 export function UpgradeDialog(Vue) {
   MessageBox({
+    closeIcon: CloseIcon,
     title: '',
     showClose: true,
-    customClass: 'service-upgrade-dialog rounded-lg',
+    customClass: 'service-upgrade-dialog',
     message: renderUpgrade(Vue.$createElement),
-    confirmButtonText: i18n.t('public_button_close')
+    confirmButtonText: i18n.t('public_button_close'),
   })
 }

@@ -1,13 +1,10 @@
-import {
-  ElButton as VButton,
-  ElSelectV2 as VirtualSelect,
-} from 'element-plus'
+import { ElButton as VButton, ElSelectV2 as VirtualSelect } from 'element-plus'
 
 import EmptyItem from './base/EmptyItem.vue'
 import Highlight from './base/Highlight.jsx'
 import VTable from './base/v-table'
 import VCodeEditor from './base/VCodeEditor.vue'
-import VCollapse from './base/VCollapse'
+import VCollapse from './base/VCollapse.vue'
 import VDivider from './base/VDivider.vue'
 import VIcon from './base/VIcon.vue'
 // base
@@ -19,7 +16,7 @@ import VStep from './base/VStep.vue'
 // business
 import Chart from './chart'
 import Classification from './Classification.vue'
-import DarkSelect from './DarkSelect'
+import DarkSelect from './DarkSelect.vue'
 import Drawer from './Drawer.vue'
 import FilterBar from './filter-bar'
 import DatetimeRange from './filter-bar/DatetimeRange.vue'
@@ -32,9 +29,9 @@ import JsEditor from './JsEditor.vue'
 
 import langs from './locale'
 import OverflowTooltip from './overflow-tooltip'
-import PythonEditor from './PythonEditor'
+import PythonEditor from './PythonEditor.vue'
 import SwitchNumber from './SwitchNumber.vue'
-import TimeSelect from './TimeSelect'
+import TimeSelect from './TimeSelect.vue'
 export {
   Chart,
   Classification,

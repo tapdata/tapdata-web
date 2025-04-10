@@ -1,676 +1,31 @@
-<template>
-  <div class="user-center">
-    <div class="flex gap-6">
-      <div class="flex-1 rounded-xl overflow-x-hidden bg-white">
-        <div class="fs-6 fw-sub p-4">{{ $t('user_Center_geRenXinXi') }}</div>
-        <ElDivider class="m-0"></ElDivider>
-        <div class="p-4">
-          <div class="user-info-grid">
-            <div class="flex align-center gap-4">
-              <div class="avtar-wrapper flex align-center justify-center overflow-hidden">
-                <ElImage v-if="userData.avatar" :src="userData.avatar" class="w-100 h-100"></ElImage>
-                <VIcon v-else :size="48">database-user-name</VIcon>
-              </div>
-              <ElButton @click="editAvatar">{{ $t('user_Center_shangChuanTouXiang') }}</ElButton>
-            </div>
-            <div class="item-wrapper">
-              <div class="user-item__label">{{ $t('user_name') }}</div>
-              <div class="user-item__value">{{ userData.username }}</div>
-            </div>
-
-            <template v-if="!isDomesticStation">
-              <div class="item-wrapper">
-                <div class="user-item__label">First Name</div>
-                <span class="user-item__value">
-                  {{ userData.customData.firstName || '-' }}
-                  <IconButton @click="dialogObj.firstName = true">edit</IconButton>
-                </span>
-              </div>
-
-              <div class="item-wrapper">
-                <div class="user-item__label">Last Name</div>
-                <span class="user-item__value">
-                  {{ userData.customData.lastName || '-' }}
-                  <IconButton @click="dialogObj.firstName = true">edit</IconButton>
-                </span>
-              </div>
-            </template>
-
-            <div class="item-wrapper">
-              <div class="user-item__label">
-                {{ $t('user_Center_yongHuNiCheng') }}
-              </div>
-              <InlineInput
-                class="inline-input"
-                :value="userData.nickname"
-                type="icon"
-                @save="updateName($event)"
-              ></InlineInput>
-            </div>
-
-            <div class="item-wrapper">
-              <div class="user-item__label">
-                {{ $t('user_Center_youXiang') }}
-              </div>
-              <div class="user-item__value">
-                {{ userData.email || $t('user_Center_weiBangDing') }}
-                <IconButton v-if="userData.email" @click="editEmail">edit</IconButton>
-                <IconButton v-else @click="dialogObj.bindEmail = true">edit</IconButton>
-              </div>
-            </div>
-
-            <div class="item-wrapper">
-              <div class="user-item__label">
-                {{ $t('user_phone_number') }}
-              </div>
-              <div class="user-item__value">
-                {{ userData.telephone || $t('user_Center_weiBangDing') }}
-                <IconButton v-if="userData.telephone" @click="editPhone">edit</IconButton>
-                <IconButton v-else @click="dialogObj.bindPhone = true">edit</IconButton>
-              </div>
-            </div>
-
-            <div class="item-wrapper">
-              <div class="user-item__label">
-                {{ $t('public_connection_form_password') }}
-              </div>
-              <div class="user-item__value">
-                ******
-                <IconButton @click="editPassword">edit</IconButton>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="flex-1 rounded-xl overflow-x-hidden bg-white">
-        <div class="fs-6 fw-sub p-4 flex align-center gap-3">
-          <span class="flex-1">
-            {{ $t('user_Center_qiYeXinXi') }}
-          </span>
-
-          <ElLink v-if="!isEdit" type="primary" @click="editEnData">
-            {{ $t('public_button_edit') }}
-          </ElLink>
-
-          <template v-else>
-            <ElLink type="primary" @click="cancelEditEnData">{{ $t('public_button_cancel') }}</ElLink>
-            <ElLink type="primary" auto-loading @click="saveEnData(arguments[0])">{{
-              $t('public_button_save')
-            }}</ElLink>
-          </template>
-        </div>
-        <ElDivider class="m-0"></ElDivider>
-        <div class="p-4">
-          <div class="user-info-grid">
-            <div class="item-wrapper">
-              <div class="user-item__label">
-                {{ $t('user_Center_gongSiMingCheng') }}
-              </div>
-              <div v-if="!isEdit" class="user-item__value">
-                {{ enData.companyName || $t('user_Center_weiTianXie') }}
-              </div>
-              <ElInput v-else v-model="enForm.companyName" class="user-item__value"></ElInput>
-            </div>
-            <div class="item-wrapper">
-              <div class="user-item__label">
-                {{ $t('user_Center_gongSiGuanWang') }}
-              </div>
-              <div v-if="!isEdit" class="user-item__value">
-                {{ enData.website || $t('user_Center_weiTianXie') }}
-              </div>
-              <ElInput v-else v-model="enForm.website" class="user-item__value"></ElInput>
-            </div>
-            <div class="item-wrapper">
-              <div class="user-item__label">
-                {{ $t('user_Center_suoShuHangYe') }}
-              </div>
-              <div v-if="!isEdit" class="user-item__value">
-                {{ enData.industry || $t('user_Center_weiTianXie') }}
-              </div>
-              <ElInput v-else v-model="enForm.industry" class="user-item__value"></ElInput>
-            </div>
-            <div class="item-wrapper">
-              <div class="user-item__label">
-                {{ $t('user_Center_suoShuChengShi') }}
-              </div>
-              <div v-if="!isEdit" class="user-item__value">
-                {{ enData.city || $t('user_Center_weiTianXie') }}
-              </div>
-              <ElInput v-else v-model="enForm.city" class="user-item__value"></ElInput>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="flex gap-6 mt-6">
-      <div class="flex-1 rounded-xl overflow-x-hidden bg-white">
-        <div class="fs-6 fw-sub p-4">{{ $t('dfs_user_center_kaifaxinxi') }}</div>
-        <ElDivider class="m-0"></ElDivider>
-        <div class="p-4">
-          <ElAlert class="mb-4" :closable="false" :title="$t('dfs_user_center_acces')" type="info" show-icon />
-
-          <div class="user-info-grid">
-            <div class="item-wrapper">
-              <div class="user-item__label">Access Key</div>
-              <div class="user-item__value">
-                {{ keyForm.accessKey }}
-                <ElTooltip
-                  placement="top"
-                  manual
-                  :content="$t('agent_deploy_start_install_button_copied')"
-                  popper-class="copy-tooltip"
-                  :value="accessKeyTooltip"
-                >
-                  <IconButton
-                    v-clipboard:copy="keyForm.accessKey"
-                    v-clipboard:success="handleCopyAccessKey"
-                    @mouseleave.native="accessKeyTooltip = false"
-                    >copy</IconButton
-                  >
-                </ElTooltip>
-              </div>
-            </div>
-            <div class="item-wrapper">
-              <div class="user-item__label">Secret Key</div>
-              <div class="user-item__value">
-                {{ keyForm.secretKey }}
-
-                <ElTooltip
-                  placement="top"
-                  manual
-                  :content="$t('agent_deploy_start_install_button_copied')"
-                  popper-class="copy-tooltip"
-                  :value="secretKeyTooltip"
-                >
-                  <IconButton
-                    v-clipboard:copy="keyForm.decodeSecretKey"
-                    v-clipboard:success="handleCopySecretKey"
-                    @mouseleave="secretKeyTooltip = false"
-                    >copy</IconButton
-                  >
-                </ElTooltip>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!--<div class="flex gap-6 mt-6">
-      <div class="flex-fill rounded-xl overflow-x-hidden bg-white">
-        <div class="fs-6 fw-sub p-4">{{ $t('header_setting') }}</div>
-        <ElDivider class="m-0"></ElDivider>
-        <div class="p-4">
-          <div class="item-wrapper">
-            <div class="user-item__label">{{ $t('dfs_settings_language') }}</div>
-            <div class="user-item__value">
-              <ElSelect :value="language" @change="handleUpdateLanguage">
-                <ElOption v-for="(v, k) in langMenu" :label="v" :value="k" />
-              </ElSelect>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>-->
-
-    <ElDialog
-      width="435px"
-      append-to-body
-      :title="$t('user_Center_shangChuanTouXiang')"
-      :close-on-click-modal="false"
-      v-model="dialogObj.avatar"
-    >
-      <div class="text-center">
-        <UploadFile :upload="upload" accept="image/*">
-          <img v-if="avatar" :src="avatar" class="avatar" />
-          <el-icon v-else class="avatar-uploader-icon"><el-icon-plus /></el-icon>
-          <div class="my-4 font-color-main">
-            {{ $t('user_Center_zhiChiJPG') }}
-          </div>
-          <ElButton type="primary">{{ $t('user_Center_shangChuanTouXiang') }}</ElButton>
-        </UploadFile>
-      </div>
-      <div class="py-6 text-center">
-        <ElButton @click="dialogObj.avatar = false">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton type="primary" :disabled="avatarDisabled()" auto-loading @click="avatarConfirm(arguments[0])"
-          >{{ $t('public_button_confirm') }}
-        </ElButton>
-      </div>
-    </ElDialog>
-    <!--  修改密码  -->
-    <ElDialog
-      width="435px"
-      append-to-body
-      :title="$t('operation_log_List_xiuGaiMiMa')"
-      label-width="120px"
-      :close-on-click-modal="false"
-      v-model="dialogObj.password"
-    >
-      <ElForm :model="passwordForm" label-width="120px" @submit.native.prevent label-position="top">
-        <!--优先使用手机验证-->
-        <template v-if="showPhone">
-          <ElFormItem prop="telephone" :label="$t('user_Center_dangQianShouJi')">
-            <ElInput
-              v-model="passwordForm.telephone"
-              :placeholder="$t('user_Center_qingShuRuDangQian')"
-              maxlength="50"
-              disabled
-            >
-              <template v-slot:prepend>
-                <el-select v-model="passwordForm.countryCode" disabled style="width: 110px" filterable>
-                  <el-option
-                    v-for="item in countryCode"
-                    :key="item.dial_code"
-                    :label="'+ ' + item.dial_code"
-                    :value="item.dial_code"
-                  >
-                    <span style="float: left">{{ '+ ' + item.dial_code }}</span>
-                    <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
-                  >
-                </el-select>
-              </template>
-            </ElInput>
-          </ElFormItem>
-          <ElFormItem prop="code" :label="$t('user_Center_shouJiYanZhengMa')" class="inline-form-item">
-            <div class="flex align-center gap-4">
-              <ElInput
-                v-model="passwordForm.code"
-                :placeholder="$t('user_Center_qingShuRuShouJi')"
-                maxlength="50"
-              ></ElInput>
-              <VerificationCode
-                :request-options="getCodeOptions(passwordForm.telephone, 'RESET_PASSWORD')"
-                :disabled="!passwordForm.telephone"
-                :style="{ width: '180px', textAlign: 'center' }"
-                text
-              ></VerificationCode>
-            </div>
-          </ElFormItem>
-        </template>
-        <template v-else>
-          <ElFormItem prop="email" :label="$t('user_Center_youXiang')">
-            <ElInput
-              v-model="emailForm.email"
-              disabled
-              :placeholder="$t('user_Center_qingShuRuYouXiang')"
-              maxlength="50"
-            ></ElInput>
-          </ElFormItem>
-          <ElFormItem prop="emailCode" :label="$t('user_Center_dangQianYouXiangYan')" class="inline-form-item">
-            <ElInput
-              v-model="passwordForm.emailCode"
-              :placeholder="$t('user_Center_qingShuRuYanZheng')"
-              maxlength="50"
-            ></ElInput>
-            <VerificationCode
-              :request-options="getCodeOptions(emailForm.email, 'RESET_PASSWORD', 'email')"
-              :disabled="!emailForm.email"
-              :style="{ width: '180px', textAlign: 'center' }"
-              class="ml-6"
-              text
-            ></VerificationCode>
-          </ElFormItem>
-        </template>
-
-        <ElFormItem prop="newPassword" :label="$t('user_Center_xinMiMa')">
-          <ElInput
-            v-model="passwordForm.newPassword"
-            :placeholder="$t('user_Center_qingShuRuXinMi')"
-            maxlength="50"
-            show-password
-            onkeyup="value=value.replace(/[\u4e00-\u9fa5]/ig,'')"
-          ></ElInput>
-        </ElFormItem>
-        <ElFormItem prop="newAgainPassword" :label="$t('user_Center_queRenMiMa')">
-          <ElInput
-            v-model="passwordForm.newAgainPassword"
-            :placeholder="$t('user_Center_qingShuRuXinMi')"
-            maxlength="50"
-            show-password
-            onkeyup="value=value.replace(/[\u4e00-\u9fa5]/ig,'')"
-          ></ElInput>
-        </ElFormItem>
-      </ElForm>
-
-      <template v-slot:footer>
-        <span class="dialog-footer">
-          <ElButton @click="dialogObj.password = false">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton type="primary" auto-loading @click="passwordConfirm(arguments[0])">{{
-            $t('public_button_confirm')
-          }}</ElButton>
-        </span>
-      </template>
-    </ElDialog>
-    <!-- 绑定手机号 -->
-    <ElDialog
-      width="435px"
-      append-to-body
-      :title="$t('operation_log_List_bangDingShouJiHao')"
-      :close-on-click-modal="false"
-      v-model="dialogObj.bindPhone"
-    >
-      <ElForm :model="phoneForm" label-width="120px" @submit.prevent>
-        <ElFormItem prop="current" :label="$t('user_Center_dangQianShouJi')">
-          <ElInput v-model="phoneForm.current" :placeholder="$t('user_Center_qingShuRuDangQian')" maxlength="50">
-            <template v-slot:prepend>
-              <el-select v-model="phoneForm.countryCode" style="width: 110px" filterable>
-                <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
-                  <span style="float: left">{{ '+ ' + item.dial_code }}</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
-                >
-              </el-select>
-            </template>
-          </ElInput>
-        </ElFormItem>
-        <ElFormItem prop="newPassword" :label="$t('user_Center_yanZhengMa')" class="inline-form-item">
-          <ElInput
-            v-model="phoneForm.oldCode"
-            :placeholder="$t('user_Center_qingShuRuShouJi')"
-            maxlength="50"
-          ></ElInput>
-          <VerificationCode
-            :request-options="getCodeOptions(phoneForm.current, 'BIND_PHONE')"
-            :disabled="!phoneForm.current"
-            :style="{ width: '120px', textAlign: 'center' }"
-            class="ml-6"
-            text
-          ></VerificationCode>
-        </ElFormItem>
-      </ElForm>
-
-      <template v-slot:footer>
-        <span class="dialog-footer">
-          <ElButton @click="dialogObj.bindPhone = false">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton
-            type="primary"
-            :disabled="!phoneForm.oldCode"
-            auto-loading
-            @click="bindPhoneConfirm(arguments[0])"
-            >{{ $t('public_button_confirm') }}</ElButton
-          >
-        </span>
-      </template>
-    </ElDialog>
-    <!--  {{$t('operation_log_List_xiuGaiShouJiHao')}}  -->
-    <ElDialog
-      :width="$i18n.locale === 'en' ? '600px' : '500px'"
-      append-to-body
-      :title="$t('operation_log_List_xiuGaiShouJiHao')"
-      :close-on-click-modal="false"
-      v-model="dialogObj.editPhone"
-    >
-      <ElForm :model="phoneForm" label-width="120px" @submit.prevent label-position="top">
-        <ElFormItem prop="current" :label="$t('user_Center_dangQianShouJi')">
-          <ElInput
-            v-model="phoneForm.current"
-            :placeholder="$t('user_Center_qingShuRuDangQian')"
-            maxlength="50"
-            disabled
-          >
-            <template v-slot:prepend>
-              <el-select v-model="phoneForm.countryCode" style="width: 110px" filterable disabled>
-                <el-option
-                v-for="(item, i) in countryCode"
-                :label="'+ ' + item.dial_code"
-                :value="item.dial_code"
-                :key="i"
-              >
-                  <span style="float: left">{{ '+ ' + item.dial_code }}</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
-                >
-              </el-select>
-            </template>
-          </ElInput>
-        </ElFormItem>
-        <ElFormItem prop="newPassword" :label="$t('user_Center_jiuShouJiYanZheng')" class="inline-form-item">
-          <ElInput
-            v-model="phoneForm.oldCode"
-            :placeholder="$t('user_Center_qingShuRuJiuShou')"
-            maxlength="50"
-          ></ElInput>
-          <VerificationCode
-            :request-options="getCodeOptions(phoneForm.current, 'CHANGE_PHONE')"
-            :disabled="!phoneForm.current"
-            :style="{ width: '180px', textAlign: 'center' }"
-            class="ml-6"
-            type="primary"
-          ></VerificationCode>
-        </ElFormItem>
-        <ElFormItem prop="newAgainPassword" :label="$t('user_Center_xinShouJi')">
-          <ElInput v-model="phoneForm.newPhone" :placeholder="$t('user_Center_qingShuRuXinShou2')" maxlength="50">
-            <template v-slot:prepend>
-              <el-select v-model="phoneForm.countryCode" style="width: 110px" filterable>
-                <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
-                  <span style="float: left">{{ '+ ' + item.dial_code }}</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
-                >
-              </el-select>
-            </template>
-          </ElInput>
-        </ElFormItem>
-        <ElFormItem prop="newAgainPassword" :label="$t('user_Center_xinShouJiYanZheng')">
-          <ElInput v-model="phoneForm.newCode" :placeholder="$t('user_Center_qingShuRuXinShou')" maxlength="50">
-          </ElInput>
-          <VerificationCode
-            :request-options="getCodeOptions(phoneForm.newPhone, 'BIND_PHONE')"
-            :disabled="!phoneForm.current"
-            :style="{ width: '180px', textAlign: 'center' }"
-            class="ml-6"
-            type="primary"
-          ></VerificationCode>
-        </ElFormItem>
-      </ElForm>
-
-      <template v-slot:footer>
-        <span class="dialog-footer">
-          <ElButton @click="dialogObj.editPhone = false">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton
-            type="primary"
-            :disabled="editPhoneDisabled()"
-            auto-loading
-            @click="editPhoneConfirm(arguments[0])"
-            >{{ $t('public_button_confirm') }}</ElButton
-          >
-        </span>
-      </template>
-    </ElDialog>
-    <!--  {{$t('user_Center_bangDingWeiXin')}}  -->
-    <ElDialog
-      width="435px"
-      append-to-body
-      :title="$t('user_Center_bangDingWeiXin')"
-      :close-on-click-modal="true"
-      v-model="dialogObj.bindWx"
-    >
-      <div class="text-center">
-        <img src="../../../public/images/user/bindWx.png" alt="" style="width: 200px" />
-        <div class="mt-4 font-color-main">
-          {{ $t('user_Center_qingShiYongWeiXin') }}
-        </div>
-      </div>
-    </ElDialog>
-    <!--  {{$t('operation_log_List_bangDingYouXiang')}}  -->
-    <ElDialog
-      width="435px"
-      append-to-body
-      :title="$t('operation_log_List_bangDingYouXiang')"
-      :close-on-click-modal="false"
-      v-model="dialogObj.bindEmail"
-    >
-      <ElForm class="mt-n4" :model="emailForm" label-width="120px" label-position="top" @submit.prevent>
-        <ElFormItem prop="current" :label="$t('user_Center_youXiang')">
-          <ElInput
-            v-model="emailForm.email"
-            :placeholder="$t('user_Center_qingShuRuYouXiang')"
-            maxlength="50"
-          ></ElInput>
-        </ElFormItem>
-        <ElFormItem prop="newPassword" :label="$t('user_Center_yanZhengMa')" class="inline-form-item">
-          <div class="flex gap-4 w-100">
-            <ElInput
-              v-model="emailForm.code"
-              :placeholder="$t('user_Center_qingShuRuYanZheng')"
-              maxlength="50"
-              class="flex-1"
-            ></ElInput>
-            <VerificationCode
-              :request-options="getCodeOptions(emailForm.email, 'BIND_EMAIL', 'email')"
-              :disabled="!emailForm.email"
-              text
-            ></VerificationCode>
-          </div>
-        </ElFormItem>
-      </ElForm>
-
-      <template v-slot:footer>
-        <span class="dialog-footer">
-          <ElButton @click="dialogObj.bindEmail = false">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton
-            type="primary"
-            :disabled="!emailForm.email || !emailForm.code"
-            auto-loading
-            @click="bindEmailConfirm(arguments[0])"
-            >{{ $t('public_button_confirm') }}</ElButton
-          >
-        </span>
-      </template>
-    </ElDialog>
-    <!--  {{$t('operation_log_List_xiuGaiYouXiang')}}  -->
-    <ElDialog
-      width="435px"
-      append-to-body
-      :title="$t('operation_log_List_xiuGaiYouXiang')"
-      :close-on-click-modal="false"
-      v-model="dialogObj.editEmail"
-    >
-      <ElForm class="mt-n4" :model="emailForm" label-width="120px" label-position="top" @submit.prevent>
-        <ElFormItem prop="email" :label="$t('user_Center_youXiang')">
-          <ElInput
-            v-model="emailForm.email"
-            disabled
-            :placeholder="$t('user_Center_qingShuRuYouXiang')"
-            maxlength="50"
-          ></ElInput>
-        </ElFormItem>
-        <ElFormItem prop="code" :label="$t('user_Center_dangQianYouXiangYan')" class="inline-form-item">
-          <div class="flex gap-4 w-100">
-            <ElInput
-              v-model="emailForm.code"
-              :placeholder="$t('user_Center_qingShuRuYanZheng')"
-              maxlength="50"
-              class="flex-1"
-            ></ElInput>
-            <VerificationCode
-              :request-options="getCodeOptions(emailForm.email, 'CHANGE_EMAIL', 'email')"
-              :disabled="!emailForm.email"
-              text
-            ></VerificationCode>
-          </div>
-        </ElFormItem>
-        <ElFormItem prop="newEmail" :label="$t('user_Center_xinYouXiang')">
-          <ElInput
-            v-model="emailForm.newEmail"
-            :placeholder="$t('user_Center_qingShuRuXinYou')"
-            maxlength="50"
-          ></ElInput>
-        </ElFormItem>
-        <ElFormItem prop="newCode" :label="$t('user_Center_xinYouXiangYanZheng')" class="inline-form-item">
-          <div class="flex gap-4 w-100">
-            <ElInput
-              v-model="emailForm.newCode"
-              :placeholder="$t('user_Center_qingShuRuYanZheng')"
-              maxlength="50"
-            ></ElInput>
-            <VerificationCode
-              :request-options="getCodeOptions(emailForm.newEmail, 'BIND_EMAIL', 'email')"
-              :disabled="!emailForm.newEmail"
-              text
-            ></VerificationCode>
-          </div>
-        </ElFormItem>
-      </ElForm>
-
-      <template v-slot:footer>
-        <span class="dialog-footer">
-          <ElButton @click="dialogObj.editEmail = false">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton
-            type="primary"
-            :disabled="editEmailDisabled()"
-            auto-loading
-            @click="editEmailConfirm(arguments[0])"
-            >{{ $t('public_button_confirm') }}</ElButton
-          >
-        </span>
-      </template>
-    </ElDialog>
-    <!--  订阅记录  -->
-    <ElDialog width="618px" append-to-body :close-on-click-modal="false" v-model="recordData.visible">
-      <div class="mt-n11 mx-n2 mb-4 p-4 bg-color-normal text-center rounded-4">
-        <div class="font-color-dark text-center fs-5">
-          {{ recordData.content }}
-        </div>
-        <p class="mt-4 font-color-dark fs-1 text-center">
-          {{ recordData.price }}
-        </p>
-        <p class="mt-4 font-color-sslight text-center">
-          {{ recordData.statusLabel }}
-        </p>
-      </div>
-      <div v-for="(item, index) in recordData.items" :key="index" class="flex justify-content-between mb-2">
-        <span class="font-color-light">{{ item.label }}</span>
-        <span class="font-color-dark">{{ item.value }}</span>
-      </div>
-    </ElDialog>
-
-    <ElDialog
-      width="435px"
-      append-to-body
-      :title="$t('public_button_revise')"
-      :close-on-click-modal="false"
-      v-model="dialogObj.firstName"
-    >
-      <ElForm class="mt-n4" :model="nameForm" label-width="120px" label-position="top" @submit.native.prevent>
-        <ElFormItem prop="email" label="First Name">
-          <ElInput v-model="nameForm.firstName" maxlength="50"></ElInput>
-        </ElFormItem>
-        <ElFormItem prop="email" label="Last Name">
-          <ElInput v-model="nameForm.lastName" maxlength="50"></ElInput>
-        </ElFormItem>
-      </ElForm>
-
-      <template v-slot:footer>
-        <span class="dialog-footer">
-          <ElButton @click="dialogObj.firstName = false">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton type="primary" auto-loading @click="updateFirstName(arguments[0])">{{
-            $t('public_button_confirm')
-          }}</ElButton>
-        </span>
-      </template>
-    </ElDialog>
-  </div>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import i18n from '@/i18n'
+import { EditPen } from '@element-plus/icons-vue'
+import { NUMBER_MAP } from '@tap/business'
 
-import InlineInput from '@/components/InlineInput'
-import VerificationCode from '@/components/VerificationCode'
-import UploadFile from '@/components/UploadFile'
+import { IconButton, VTable } from '@tap/component'
+import { langMenu } from '@tap/i18n/src/shared/util'
+import { openUrl, urlToBase64 } from '@tap/shared'
 import CryptoJS from 'crypto-js'
 import dayjs from 'dayjs'
-import { VTable, IconButton } from '@tap/component'
-import { AGENT_TYPE_MAP } from '../instance/utils'
-import { NUMBER_MAP } from '@tap/business'
-import { openUrl, urlToBase64 } from '@tap/shared'
 import { mapGetters, mapState } from 'vuex'
-import { langMenu } from '@tap/i18n/src/shared/util'
+import InlineInput from '@/components/InlineInput'
+import UploadFile from '@/components/UploadFile'
+import VerificationCode from '@/components/VerificationCode'
+import i18n from '@/i18n'
+import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+import { AGENT_TYPE_MAP } from '../instance/utils'
 
 export default {
   name: 'Center',
+  components: {
+    InlineInput,
+    VerificationCode,
+    UploadFile,
+    VTable,
+    IconButton,
+    EditPen,
+  },
   inject: ['buried'],
-  components: { InlineInput, VerificationCode, UploadFile, VTable, IconButton },
   data() {
     return {
       langMenu,
@@ -743,7 +98,9 @@ export default {
           width: 320,
         },
         {
-          label: i18n.t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
+          label: i18n.t(
+            'dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi',
+          ),
           prop: 'agentType',
           slotName: 'agentType',
         },
@@ -810,7 +167,7 @@ export default {
   },
   methods: {
     init() {
-      let { userData, nameForm } = this
+      const { userData, nameForm } = this
 
       this.avatar = userData.avatar
       this.getEnterprise()
@@ -825,20 +182,24 @@ export default {
 
       userData.licenseCodes =
         userData.licenseCodes?.map((item) => {
-          item.activateTime = item.activateTime ? dayjs(item.activateTime).format('YYYY-MM-DD HH:mm:ss') : ''
-          item.expiredTime = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD HH:mm:ss') : ''
+          item.activateTime = item.activateTime
+            ? dayjs(item.activateTime).format('YYYY-MM-DD HH:mm:ss')
+            : ''
+          item.expiredTime = item.expiredTime
+            ? dayjs(item.expiredTime).format('YYYY-MM-DD HH:mm:ss')
+            : ''
           return item
         }) || []
     },
     getCountryCode() {
       this.$axios.get('config/countryCode.json').then((res) => {
-        let countryCode = res.data
+        const countryCode = res.data
         this.countryCode = countryCode?.countryCode
       })
     },
     getEnterprise() {
       this.$axios.get('tm/api/Customer').then((data) => {
-        for (let key in this.enData) {
+        for (const key in this.enData) {
           this.enData[key] = data[key] || ''
           this.enForm[key] = data[key] || ''
         }
@@ -858,12 +219,15 @@ export default {
             iv: CryptoJS.enc.Latin1.parse(key),
           },
         ).toString(CryptoJS.enc.Utf8)
-        this.keyForm.secretKey = this.keyForm.decodeSecretKey.replace(/(\w{3})\w*(\w{3})/, '$1****$2')
+        this.keyForm.secretKey = this.keyForm.decodeSecretKey.replace(
+          /(\w{3})\w*(\w{3})/,
+          '$1****$2',
+        )
       })
     },
     resetPasswordForm() {
-      let { userData, passwordForm } = this
-      for (let key in passwordForm) {
+      const { userData, passwordForm } = this
+      for (const key in passwordForm) {
         if (key === 'telephone') {
           this.passwordForm.telephone = userData.telephone
         } else if (key === 'countryCode') {
@@ -874,8 +238,8 @@ export default {
       }
     },
     resetPhoneForm() {
-      let { userData, phoneForm } = this
-      for (let key in phoneForm) {
+      const { userData, phoneForm } = this
+      for (const key in phoneForm) {
         if (key === 'current') {
           this.phoneForm.current = userData.telephone
         } else if (key === 'countryCode') {
@@ -886,8 +250,8 @@ export default {
       }
     },
     resetEmailForm() {
-      let { userData, emailForm } = this
-      for (let key in emailForm) {
+      const { userData, emailForm } = this
+      for (const key in emailForm) {
         if (key === 'email') {
           this.emailForm.email = userData.email
         } else {
@@ -896,7 +260,7 @@ export default {
       }
     },
     updateName(val) {
-      let nickname = val
+      const nickname = val
       this.$axios
         .patch('api/tcm/user', {
           nickname,
@@ -927,7 +291,7 @@ export default {
         })
     },
     upload(evt) {
-      let file = evt.target.files[0]
+      const file = evt.target.files[0]
       const leftThan = file.size / 1024 < 500
       if (!leftThan) {
         this.$message.error(i18n.t('user_Center_shangChuanTouXiangTu'))
@@ -967,7 +331,7 @@ export default {
       })
     },
     getCodeOptions(val, scene, type = 'sms') {
-      let params = {
+      const params = {
         scene,
       }
       if (type === 'sms') {
@@ -984,9 +348,13 @@ export default {
     },
     editPassword() {
       if (this.isDomesticStation && !this.userData.telephone) {
-        this.$confirm(i18n.t('user_Center_qingXianBangDingShou'), i18n.t('user_Center_bangDingShouJi'), {
-          type: 'warning',
-        }).then((resFlag) => {
+        this.$confirm(
+          i18n.t('user_Center_qingXianBangDingShou'),
+          i18n.t('user_Center_bangDingShouJi'),
+          {
+            type: 'warning',
+          },
+        ).then((resFlag) => {
           if (resFlag) {
             this.dialogObj.bindPhone = true
           }
@@ -997,8 +365,8 @@ export default {
       this.dialogObj.password = true
     },
     passwordConfirm(resetLoading) {
-      let { passwordForm } = this
-      let { newPassword, newAgainPassword } = passwordForm
+      const { passwordForm } = this
+      const { newPassword, newAgainPassword } = passwordForm
       if (newPassword !== newAgainPassword) {
         this.$message.error(i18n.t('user_Center_shuRuMiMaBu'))
         resetLoading?.()
@@ -1007,9 +375,14 @@ export default {
       this.$axios
         .patch('api/tcm/user/password', {
           phoneCode: passwordForm.code,
-          countryCode: passwordForm.countryCode ? passwordForm.countryCode.replace('-', '') : '86',
+          countryCode: passwordForm.countryCode
+            ? passwordForm.countryCode.replace('-', '')
+            : '86',
           emailCode: passwordForm.emailCode, // 邮件验证吗
-          password: CryptoJS.RC4.encrypt(passwordForm.newPassword, 'XWFSxfs8wFcs').toString(),
+          password: CryptoJS.RC4.encrypt(
+            passwordForm.newPassword,
+            'XWFSxfs8wFcs',
+          ).toString(),
         })
         .then(() => {
           this.$message.success(i18n.t('user_Center_xiuGaiMiMaCheng'))
@@ -1024,12 +397,14 @@ export default {
     //   return this.sendCode(this.phoneForm.current, 'BIND_PHONE')
     // },
     bindPhoneConfirm(resetLoading) {
-      let { phoneForm } = this
+      const { phoneForm } = this
       this.$axios
         .post('api/tcm/user/phone', {
           phone: phoneForm.current,
           code: phoneForm.oldCode,
-          countryCode: phoneForm.countryCode ? phoneForm.countryCode.replace('-', '') : '86',
+          countryCode: phoneForm.countryCode
+            ? phoneForm.countryCode.replace('-', '')
+            : '86',
         })
         .then(() => {
           this.userData.telephone = phoneForm.current
@@ -1054,7 +429,7 @@ export default {
     editPhoneDisabled() {
       let flag = false
       const { phoneForm } = this
-      for (let key in phoneForm) {
+      for (const key in phoneForm) {
         if (phoneForm[key]) {
           flag = true
         }
@@ -1062,13 +437,15 @@ export default {
       return !flag
     },
     editPhoneConfirm(resetLoading) {
-      let { phoneForm } = this
+      const { phoneForm } = this
       this.$axios
         .patch('api/tcm/user/phone', {
           oldPhoneCode: phoneForm.oldCode,
           phone: phoneForm.newPhone,
           phoneCode: phoneForm.newCode,
-          countryCode: phoneForm.countryCode ? phoneForm.countryCode.replace('-', '') : '86',
+          countryCode: phoneForm.countryCode
+            ? phoneForm.countryCode.replace('-', '')
+            : '86',
         })
         .then(() => {
           this.userData.telephone = phoneForm.newPhone
@@ -1081,9 +458,13 @@ export default {
         })
     },
     unbindWx() {
-      this.$confirm(i18n.t('user_Center_jieChuHouJiangWu'), i18n.t('user_Center_jieChuWeiXin'), {
-        type: 'warning',
-      }).then((resFlag) => {
+      this.$confirm(
+        i18n.t('user_Center_jieChuHouJiangWu'),
+        i18n.t('user_Center_jieChuWeiXin'),
+        {
+          type: 'warning',
+        },
+      ).then((resFlag) => {
         if (resFlag) {
           this.$axios.patch('tm/api/user/unbindWx').then(() => {
             this.userData.wx = ''
@@ -1097,7 +478,7 @@ export default {
       return this.$axios.get('tm/api/user/sendCode')
     },
     bindEmailConfirm(resetLoading) {
-      let { emailForm } = this
+      const { emailForm } = this
       this.$axios
         .post('api/tcm/user/email', {
           email: emailForm.email,
@@ -1121,7 +502,7 @@ export default {
     editEmailDisabled() {
       let flag = false
       const { emailForm } = this
-      for (let key in emailForm) {
+      for (const key in emailForm) {
         if (emailForm[key]) {
           flag = true
         }
@@ -1129,7 +510,7 @@ export default {
       return !flag
     },
     editEmailConfirm(resetLoading) {
-      let { emailForm } = this
+      const { emailForm } = this
       this.$axios
         .patch('api/tcm/user/email', {
           // email: emailForm.email,
@@ -1154,8 +535,8 @@ export default {
     cancelEditEnData() {
       this.isEdit = false
     },
-    saveEnData(resetLoading) {
-      let { enForm } = this
+    saveEnData() {
+      const { enForm } = this
       this.$axios
         .patch('tm/api/Customer', {
           companyName: enForm.companyName,
@@ -1167,9 +548,6 @@ export default {
           this.$message.success(i18n.t('user_Center_xiuGaiQiYeXin'))
           this.enData = Object.assign({}, enForm)
           this.isEdit = false
-        })
-        .finally(() => {
-          resetLoading?.()
         })
     },
     refreshRootUser() {
@@ -1221,7 +599,9 @@ export default {
       const label =
         NUMBER_MAP[period] +
         (i18n?.locale === 'en' ? ' ' : '') +
-        (periodUnit === 'year' ? i18n.t('public_time_year') : i18n.t('dfs_instance_utils_geyue'))
+        (periodUnit === 'year'
+          ? i18n.t('public_time_year')
+          : i18n.t('dfs_instance_utils_geyue'))
       this.$confirm(
         i18n.t('dfs_user_center_ninjiangxudingr', {
           val1: row.content,
@@ -1270,6 +650,864 @@ export default {
 }
 </script>
 
+<template>
+  <div class="user-center">
+    <div class="flex gap-6">
+      <div class="flex-1 rounded-xl overflow-x-hidden bg-white">
+        <div class="fs-6 fw-sub p-4">{{ $t('user_Center_geRenXinXi') }}</div>
+        <ElDivider class="m-0" />
+        <div class="p-4">
+          <div class="user-info-grid">
+            <div class="flex align-center gap-4">
+              <div
+                class="avtar-wrapper flex align-center justify-center overflow-hidden"
+              >
+                <ElImage
+                  v-if="userData.avatar"
+                  :src="userData.avatar"
+                  class="w-100 h-100"
+                />
+                <VIcon v-else :size="48">database-user-name</VIcon>
+              </div>
+              <ElButton @click="editAvatar">{{
+                $t('user_Center_shangChuanTouXiang')
+              }}</ElButton>
+            </div>
+            <div class="item-wrapper">
+              <div class="user-item__label">{{ $t('user_name') }}</div>
+              <div class="user-item__value">{{ userData.username }}</div>
+            </div>
+
+            <template v-if="!isDomesticStation">
+              <div class="item-wrapper">
+                <div class="user-item__label">First Name</div>
+                <span class="user-item__value">
+                  {{ userData.customData.firstName || '-' }}
+                  <IconButton @click="dialogObj.firstName = true"
+                    >edit</IconButton
+                  >
+                </span>
+              </div>
+
+              <div class="item-wrapper">
+                <div class="user-item__label">Last Name</div>
+                <span class="user-item__value">
+                  {{ userData.customData.lastName || '-' }}
+                  <IconButton @click="dialogObj.firstName = true"
+                    >edit</IconButton
+                  >
+                </span>
+              </div>
+            </template>
+
+            <div class="item-wrapper">
+              <div class="user-item__label">
+                {{ $t('user_Center_yongHuNiCheng') }}
+              </div>
+              <InlineInput
+                class="inline-input"
+                :value="userData.nickname"
+                type="icon"
+                @save="updateName($event)"
+              />
+            </div>
+
+            <div class="item-wrapper">
+              <div class="user-item__label">
+                {{ $t('user_Center_youXiang') }}
+              </div>
+              <div class="user-item__value">
+                {{ userData.email || $t('user_Center_weiBangDing') }}
+                <IconButton v-if="userData.email" @click="editEmail"
+                  >edit</IconButton
+                >
+                <IconButton v-else @click="dialogObj.bindEmail = true"
+                  >edit</IconButton
+                >
+              </div>
+            </div>
+
+            <div class="item-wrapper">
+              <div class="user-item__label">
+                {{ $t('user_phone_number') }}
+              </div>
+              <div class="user-item__value">
+                {{ userData.telephone || $t('user_Center_weiBangDing') }}
+                <IconButton v-if="userData.telephone" @click="editPhone"
+                  >edit</IconButton
+                >
+                <IconButton v-else @click="dialogObj.bindPhone = true"
+                  >edit</IconButton
+                >
+              </div>
+            </div>
+
+            <div class="item-wrapper">
+              <div class="user-item__label">
+                {{ $t('public_connection_form_password') }}
+              </div>
+              <div class="user-item__value">
+                ******
+                <IconButton @click="editPassword">edit</IconButton>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex-1 rounded-xl overflow-x-hidden bg-white">
+        <div class="fs-6 fw-sub p-4 flex align-center">
+          <span class="flex-1">
+            {{ $t('user_Center_qiYeXinXi') }}
+          </span>
+
+          <ElButton v-if="!isEdit" text type="primary" @click="editEnData">
+            <el-icon class="mr-1"><EditPen /></el-icon>
+            {{ $t('public_button_edit') }}
+          </ElButton>
+
+          <template v-else>
+            <ElButton text type="primary" @click="cancelEditEnData">{{
+              $t('public_button_cancel')
+            }}</ElButton>
+            <ElButton text type="primary" @click="saveEnData">{{
+              $t('public_button_save')
+            }}</ElButton>
+          </template>
+        </div>
+        <ElDivider class="m-0" />
+        <div class="p-4">
+          <div class="user-info-grid">
+            <div class="item-wrapper">
+              <div class="user-item__label">
+                {{ $t('user_Center_gongSiMingCheng') }}
+              </div>
+              <div v-if="!isEdit" class="user-item__value">
+                {{ enData.companyName || $t('user_Center_weiTianXie') }}
+              </div>
+              <ElInput
+                v-else
+                v-model="enForm.companyName"
+                class="user-item__value"
+              />
+            </div>
+            <div class="item-wrapper">
+              <div class="user-item__label">
+                {{ $t('user_Center_gongSiGuanWang') }}
+              </div>
+              <div v-if="!isEdit" class="user-item__value">
+                {{ enData.website || $t('user_Center_weiTianXie') }}
+              </div>
+              <ElInput
+                v-else
+                v-model="enForm.website"
+                class="user-item__value"
+              />
+            </div>
+            <div class="item-wrapper">
+              <div class="user-item__label">
+                {{ $t('user_Center_suoShuHangYe') }}
+              </div>
+              <div v-if="!isEdit" class="user-item__value">
+                {{ enData.industry || $t('user_Center_weiTianXie') }}
+              </div>
+              <ElInput
+                v-else
+                v-model="enForm.industry"
+                class="user-item__value"
+              />
+            </div>
+            <div class="item-wrapper">
+              <div class="user-item__label">
+                {{ $t('user_Center_suoShuChengShi') }}
+              </div>
+              <div v-if="!isEdit" class="user-item__value">
+                {{ enData.city || $t('user_Center_weiTianXie') }}
+              </div>
+              <ElInput v-else v-model="enForm.city" class="user-item__value" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-6 mt-6">
+      <div class="flex-1 rounded-xl overflow-x-hidden bg-white">
+        <div class="fs-6 fw-sub p-4">
+          {{ $t('dfs_user_center_kaifaxinxi') }}
+        </div>
+        <ElDivider class="m-0" />
+        <div class="p-4">
+          <ElAlert
+            class="mb-4"
+            :closable="false"
+            :title="$t('dfs_user_center_acces')"
+            type="info"
+            show-icon
+          />
+
+          <div class="user-info-grid">
+            <div class="item-wrapper">
+              <div class="user-item__label">Access Key</div>
+              <div class="user-item__value">
+                {{ keyForm.accessKey }}
+                <ElTooltip
+                  placement="top"
+                  manual
+                  :content="$t('agent_deploy_start_install_button_copied')"
+                  popper-class="copy-tooltip"
+                  :visible="accessKeyTooltip"
+                >
+                  <IconButton
+                    v-clipboard:copy="keyForm.accessKey"
+                    v-clipboard:success="handleCopyAccessKey"
+                    @mouseleave.native="accessKeyTooltip = false"
+                    >copy</IconButton
+                  >
+                </ElTooltip>
+              </div>
+            </div>
+            <div class="item-wrapper">
+              <div class="user-item__label">Secret Key</div>
+              <div class="user-item__value">
+                {{ keyForm.secretKey }}
+
+                <ElTooltip
+                  placement="top"
+                  manual
+                  :content="$t('agent_deploy_start_install_button_copied')"
+                  popper-class="copy-tooltip"
+                  :visible="secretKeyTooltip"
+                >
+                  <IconButton
+                    v-clipboard:copy="keyForm.decodeSecretKey"
+                    v-clipboard:success="handleCopySecretKey"
+                    @mouseleave="secretKeyTooltip = false"
+                    >copy</IconButton
+                  >
+                </ElTooltip>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--<div class="flex gap-6 mt-6">
+      <div class="flex-fill rounded-xl overflow-x-hidden bg-white">
+        <div class="fs-6 fw-sub p-4">{{ $t('header_setting') }}</div>
+        <ElDivider class="m-0"></ElDivider>
+        <div class="p-4">
+          <div class="item-wrapper">
+            <div class="user-item__label">{{ $t('dfs_settings_language') }}</div>
+            <div class="user-item__value">
+              <ElSelect :value="language" @change="handleUpdateLanguage">
+                <ElOption v-for="(v, k) in langMenu" :label="v" :value="k" />
+              </ElSelect>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>-->
+
+    <ElDialog
+      v-model="dialogObj.avatar"
+      width="435px"
+      append-to-body
+      :title="$t('user_Center_shangChuanTouXiang')"
+      :close-on-click-modal="false"
+    >
+      <div class="text-center">
+        <UploadFile :upload="upload" accept="image/*">
+          <img v-if="avatar" :src="avatar" class="avatar" />
+          <el-icon v-else class="avatar-uploader-icon cursor-pointer"
+            ><el-icon-plus
+          /></el-icon>
+          <div class="my-4 font-color-light">
+            {{ $t('user_Center_zhiChiJPG') }}
+          </div>
+          <!-- <ElButton type="primary">{{
+            $t('user_Center_shangChuanTouXiang')
+          }}</ElButton> -->
+        </UploadFile>
+      </div>
+      <div class="text-center mt-6">
+        <ElButton @click="dialogObj.avatar = false">{{
+          $t('public_button_cancel')
+        }}</ElButton>
+        <ElButton
+          type="primary"
+          :disabled="avatarDisabled()"
+          auto-loading
+          @click="avatarConfirm(arguments[0])"
+          >{{ $t('public_button_upload') }}
+        </ElButton>
+      </div>
+    </ElDialog>
+    <!--  修改密码  -->
+    <ElDialog
+      v-model="dialogObj.password"
+      width="435px"
+      append-to-body
+      :title="$t('operation_log_List_xiuGaiMiMa')"
+      label-width="120px"
+      :close-on-click-modal="false"
+    >
+      <ElForm
+        :model="passwordForm"
+        label-width="120px"
+        label-position="top"
+        @submit.native.prevent
+      >
+        <!--优先使用手机验证-->
+        <template v-if="showPhone">
+          <ElFormItem
+            prop="telephone"
+            :label="$t('user_Center_dangQianShouJi')"
+          >
+            <ElInput
+              v-model="passwordForm.telephone"
+              :placeholder="$t('user_Center_qingShuRuDangQian')"
+              maxlength="50"
+              disabled
+            >
+              <template #prepend>
+                <el-select
+                  v-model="passwordForm.countryCode"
+                  disabled
+                  style="width: 110px"
+                  filterable
+                >
+                  <el-option
+                    v-for="item in countryCode"
+                    :key="item.dial_code"
+                    :label="`+ ${item.dial_code}`"
+                    :value="item.dial_code"
+                  >
+                    <span style="float: left">{{ `+ ${item.dial_code}` }}</span>
+                    <span
+                      style="float: right; color: #8492a6; font-size: 13px"
+                      >{{ item.name }}</span
+                    ></el-option
+                  >
+                </el-select>
+              </template>
+            </ElInput>
+          </ElFormItem>
+          <ElFormItem
+            prop="code"
+            :label="$t('user_Center_shouJiYanZhengMa')"
+            class="inline-form-item"
+          >
+            <div class="flex align-center gap-4">
+              <ElInput
+                v-model="passwordForm.code"
+                :placeholder="$t('user_Center_qingShuRuShouJi')"
+                maxlength="50"
+              />
+              <VerificationCode
+                :request-options="
+                  getCodeOptions(passwordForm.telephone, 'RESET_PASSWORD')
+                "
+                :disabled="!passwordForm.telephone"
+                :style="{ width: '180px', textAlign: 'center' }"
+                text
+              />
+            </div>
+          </ElFormItem>
+        </template>
+        <template v-else>
+          <ElFormItem prop="email" :label="$t('user_Center_youXiang')">
+            <ElInput
+              v-model="emailForm.email"
+              disabled
+              :placeholder="$t('user_Center_qingShuRuYouXiang')"
+              maxlength="50"
+            />
+          </ElFormItem>
+          <ElFormItem
+            prop="emailCode"
+            :label="$t('user_Center_dangQianYouXiangYan')"
+            class="inline-form-item"
+          >
+            <ElInput
+              v-model="passwordForm.emailCode"
+              :placeholder="$t('user_Center_qingShuRuYanZheng')"
+              maxlength="50"
+            />
+            <VerificationCode
+              :request-options="
+                getCodeOptions(emailForm.email, 'RESET_PASSWORD', 'email')
+              "
+              :disabled="!emailForm.email"
+              :style="{ width: '180px', textAlign: 'center' }"
+              class="ml-6"
+              text
+            />
+          </ElFormItem>
+        </template>
+
+        <ElFormItem prop="newPassword" :label="$t('user_Center_xinMiMa')">
+          <ElInput
+            v-model="passwordForm.newPassword"
+            :placeholder="$t('user_Center_qingShuRuXinMi')"
+            maxlength="50"
+            show-password
+            onkeyup="value=value.replace(/[\u4e00-\u9fa5]/ig,'')"
+          />
+        </ElFormItem>
+        <ElFormItem
+          prop="newAgainPassword"
+          :label="$t('user_Center_queRenMiMa')"
+        >
+          <ElInput
+            v-model="passwordForm.newAgainPassword"
+            :placeholder="$t('user_Center_qingShuRuXinMi')"
+            maxlength="50"
+            show-password
+            onkeyup="value=value.replace(/[\u4e00-\u9fa5]/ig,'')"
+          />
+        </ElFormItem>
+      </ElForm>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <ElButton @click="dialogObj.password = false">{{
+            $t('public_button_cancel')
+          }}</ElButton>
+          <ElButton
+            type="primary"
+            auto-loading
+            @click="passwordConfirm(arguments[0])"
+            >{{ $t('public_button_confirm') }}</ElButton
+          >
+        </span>
+      </template>
+    </ElDialog>
+    <!-- 绑定手机号 -->
+    <ElDialog
+      v-model="dialogObj.bindPhone"
+      width="435px"
+      append-to-body
+      :title="$t('operation_log_List_bangDingShouJiHao')"
+      :close-on-click-modal="false"
+    >
+      <ElForm :model="phoneForm" label-width="120px" @submit.prevent>
+        <ElFormItem prop="current" :label="$t('user_Center_dangQianShouJi')">
+          <ElInput
+            v-model="phoneForm.current"
+            :placeholder="$t('user_Center_qingShuRuDangQian')"
+            maxlength="50"
+          >
+            <template #prepend>
+              <el-select
+                v-model="phoneForm.countryCode"
+                style="width: 110px"
+                filterable
+              >
+                <el-option
+                  v-for="item in countryCode"
+                  :label="`+ ${item.dial_code}`"
+                  :value="item.dial_code"
+                >
+                  <span style="float: left">{{ `+ ${item.dial_code}` }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{
+                    item.name
+                  }}</span></el-option
+                >
+              </el-select>
+            </template>
+          </ElInput>
+        </ElFormItem>
+        <ElFormItem
+          prop="newPassword"
+          :label="$t('user_Center_yanZhengMa')"
+          class="inline-form-item"
+        >
+          <ElInput
+            v-model="phoneForm.oldCode"
+            :placeholder="$t('user_Center_qingShuRuShouJi')"
+            maxlength="50"
+          />
+          <VerificationCode
+            :request-options="getCodeOptions(phoneForm.current, 'BIND_PHONE')"
+            :disabled="!phoneForm.current"
+            :style="{ width: '120px', textAlign: 'center' }"
+            class="ml-6"
+            text
+          />
+        </ElFormItem>
+      </ElForm>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <ElButton @click="dialogObj.bindPhone = false">{{
+            $t('public_button_cancel')
+          }}</ElButton>
+          <ElButton
+            type="primary"
+            :disabled="!phoneForm.oldCode"
+            auto-loading
+            @click="bindPhoneConfirm(arguments[0])"
+            >{{ $t('public_button_confirm') }}</ElButton
+          >
+        </span>
+      </template>
+    </ElDialog>
+    <!--  {{$t('operation_log_List_xiuGaiShouJiHao')}}  -->
+    <ElDialog
+      v-model="dialogObj.editPhone"
+      :width="$i18n.locale === 'en' ? '600px' : '500px'"
+      append-to-body
+      :title="$t('operation_log_List_xiuGaiShouJiHao')"
+      :close-on-click-modal="false"
+    >
+      <ElForm
+        :model="phoneForm"
+        label-width="120px"
+        label-position="top"
+        @submit.prevent
+      >
+        <ElFormItem prop="current" :label="$t('user_Center_dangQianShouJi')">
+          <ElInput
+            v-model="phoneForm.current"
+            :placeholder="$t('user_Center_qingShuRuDangQian')"
+            maxlength="50"
+            disabled
+          >
+            <template #prepend>
+              <el-select
+                v-model="phoneForm.countryCode"
+                style="width: 110px"
+                filterable
+                disabled
+              >
+                <el-option
+                  v-for="(item, i) in countryCode"
+                  :key="i"
+                  :label="`+ ${item.dial_code}`"
+                  :value="item.dial_code"
+                >
+                  <span style="float: left">{{ `+ ${item.dial_code}` }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{
+                    item.name
+                  }}</span></el-option
+                >
+              </el-select>
+            </template>
+          </ElInput>
+        </ElFormItem>
+        <ElFormItem
+          prop="newPassword"
+          :label="$t('user_Center_jiuShouJiYanZheng')"
+          class="inline-form-item"
+        >
+          <ElInput
+            v-model="phoneForm.oldCode"
+            :placeholder="$t('user_Center_qingShuRuJiuShou')"
+            maxlength="50"
+          />
+          <VerificationCode
+            :request-options="getCodeOptions(phoneForm.current, 'CHANGE_PHONE')"
+            :disabled="!phoneForm.current"
+            :style="{ width: '180px', textAlign: 'center' }"
+            class="ml-6"
+            type="primary"
+          />
+        </ElFormItem>
+        <ElFormItem
+          prop="newAgainPassword"
+          :label="$t('user_Center_xinShouJi')"
+        >
+          <ElInput
+            v-model="phoneForm.newPhone"
+            :placeholder="$t('user_Center_qingShuRuXinShou2')"
+            maxlength="50"
+          >
+            <template #prepend>
+              <el-select
+                v-model="phoneForm.countryCode"
+                style="width: 110px"
+                filterable
+              >
+                <el-option
+                  v-for="item in countryCode"
+                  :label="`+ ${item.dial_code}`"
+                  :value="item.dial_code"
+                >
+                  <span style="float: left">{{ `+ ${item.dial_code}` }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{
+                    item.name
+                  }}</span></el-option
+                >
+              </el-select>
+            </template>
+          </ElInput>
+        </ElFormItem>
+        <ElFormItem
+          prop="newAgainPassword"
+          :label="$t('user_Center_xinShouJiYanZheng')"
+        >
+          <ElInput
+            v-model="phoneForm.newCode"
+            :placeholder="$t('user_Center_qingShuRuXinShou')"
+            maxlength="50"
+          />
+          <VerificationCode
+            :request-options="getCodeOptions(phoneForm.newPhone, 'BIND_PHONE')"
+            :disabled="!phoneForm.current"
+            :style="{ width: '180px', textAlign: 'center' }"
+            class="ml-6"
+            type="primary"
+          />
+        </ElFormItem>
+      </ElForm>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <ElButton @click="dialogObj.editPhone = false">{{
+            $t('public_button_cancel')
+          }}</ElButton>
+          <ElButton
+            type="primary"
+            :disabled="editPhoneDisabled()"
+            auto-loading
+            @click="editPhoneConfirm(arguments[0])"
+            >{{ $t('public_button_confirm') }}</ElButton
+          >
+        </span>
+      </template>
+    </ElDialog>
+    <!--  {{$t('user_Center_bangDingWeiXin')}}  -->
+    <ElDialog
+      v-model="dialogObj.bindWx"
+      width="435px"
+      append-to-body
+      :title="$t('user_Center_bangDingWeiXin')"
+      :close-on-click-modal="true"
+    >
+      <div class="text-center">
+        <img
+          src="../../../public/images/user/bindWx.png"
+          alt=""
+          style="width: 200px"
+        />
+        <div class="mt-4 font-color-main">
+          {{ $t('user_Center_qingShiYongWeiXin') }}
+        </div>
+      </div>
+    </ElDialog>
+    <!--  {{$t('operation_log_List_bangDingYouXiang')}}  -->
+    <ElDialog
+      v-model="dialogObj.bindEmail"
+      width="435px"
+      append-to-body
+      :title="$t('operation_log_List_bangDingYouXiang')"
+      :close-on-click-modal="false"
+    >
+      <ElForm
+        :model="emailForm"
+        label-width="120px"
+        label-position="top"
+        @submit.prevent
+      >
+        <ElFormItem prop="current" :label="$t('user_Center_youXiang')">
+          <ElInput
+            v-model="emailForm.email"
+            :placeholder="$t('user_Center_qingShuRuYouXiang')"
+            maxlength="50"
+          />
+        </ElFormItem>
+        <ElFormItem
+          prop="newPassword"
+          :label="$t('user_Center_yanZhengMa')"
+          class="inline-form-item"
+        >
+          <div class="flex gap-4 w-100">
+            <ElInput
+              v-model="emailForm.code"
+              :placeholder="$t('user_Center_qingShuRuYanZheng')"
+              maxlength="50"
+              class="flex-1"
+            />
+            <VerificationCode
+              :request-options="
+                getCodeOptions(emailForm.email, 'BIND_EMAIL', 'email')
+              "
+              :disabled="!emailForm.email"
+              text
+            />
+          </div>
+        </ElFormItem>
+      </ElForm>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <ElButton @click="dialogObj.bindEmail = false">{{
+            $t('public_button_cancel')
+          }}</ElButton>
+          <ElButton
+            type="primary"
+            :disabled="!emailForm.email || !emailForm.code"
+            auto-loading
+            @click="bindEmailConfirm(arguments[0])"
+            >{{ $t('public_button_confirm') }}</ElButton
+          >
+        </span>
+      </template>
+    </ElDialog>
+    <!--  {{$t('operation_log_List_xiuGaiYouXiang')}}  -->
+    <ElDialog
+      v-model="dialogObj.editEmail"
+      width="435px"
+      append-to-body
+      :title="$t('operation_log_List_xiuGaiYouXiang')"
+      :close-on-click-modal="false"
+    >
+      <ElForm
+        :model="emailForm"
+        label-width="120px"
+        label-position="top"
+        @submit.prevent
+      >
+        <ElFormItem prop="email" :label="$t('user_Center_youXiang')">
+          <ElInput
+            v-model="emailForm.email"
+            disabled
+            :placeholder="$t('user_Center_qingShuRuYouXiang')"
+            maxlength="50"
+          />
+        </ElFormItem>
+        <ElFormItem
+          prop="code"
+          :label="$t('user_Center_dangQianYouXiangYan')"
+          class="inline-form-item"
+        >
+          <div class="flex gap-4 w-100">
+            <ElInput
+              v-model="emailForm.code"
+              :placeholder="$t('user_Center_qingShuRuYanZheng')"
+              maxlength="50"
+              class="flex-1"
+            />
+            <VerificationCode
+              :request-options="
+                getCodeOptions(emailForm.email, 'CHANGE_EMAIL', 'email')
+              "
+              :disabled="!emailForm.email"
+              text
+            />
+          </div>
+        </ElFormItem>
+        <ElFormItem prop="newEmail" :label="$t('user_Center_xinYouXiang')">
+          <ElInput
+            v-model="emailForm.newEmail"
+            :placeholder="$t('user_Center_qingShuRuXinYou')"
+            maxlength="50"
+          />
+        </ElFormItem>
+        <ElFormItem
+          prop="newCode"
+          :label="$t('user_Center_xinYouXiangYanZheng')"
+          class="inline-form-item"
+        >
+          <div class="flex gap-4 w-100">
+            <ElInput
+              v-model="emailForm.newCode"
+              :placeholder="$t('user_Center_qingShuRuYanZheng')"
+              maxlength="50"
+            />
+            <VerificationCode
+              :request-options="
+                getCodeOptions(emailForm.newEmail, 'BIND_EMAIL', 'email')
+              "
+              :disabled="!emailForm.newEmail"
+              text
+            />
+          </div>
+        </ElFormItem>
+      </ElForm>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <ElButton @click="dialogObj.editEmail = false">{{
+            $t('public_button_cancel')
+          }}</ElButton>
+          <ElButton
+            type="primary"
+            :disabled="editEmailDisabled()"
+            auto-loading
+            @click="editEmailConfirm(arguments[0])"
+            >{{ $t('public_button_confirm') }}</ElButton
+          >
+        </span>
+      </template>
+    </ElDialog>
+    <!--  订阅记录  -->
+    <ElDialog
+      v-model="recordData.visible"
+      width="618px"
+      append-to-body
+      :close-on-click-modal="false"
+    >
+      <div class="mt-n11 mx-n2 mb-4 p-4 bg-color-normal text-center rounded-4">
+        <div class="font-color-dark text-center fs-5">
+          {{ recordData.content }}
+        </div>
+        <p class="mt-4 font-color-dark fs-1 text-center">
+          {{ recordData.price }}
+        </p>
+        <p class="mt-4 font-color-sslight text-center">
+          {{ recordData.statusLabel }}
+        </p>
+      </div>
+      <div
+        v-for="(item, index) in recordData.items"
+        :key="index"
+        class="flex justify-content-between mb-2"
+      >
+        <span class="font-color-light">{{ item.label }}</span>
+        <span class="font-color-dark">{{ item.value }}</span>
+      </div>
+    </ElDialog>
+
+    <ElDialog
+      v-model="dialogObj.firstName"
+      width="435px"
+      append-to-body
+      :title="$t('public_button_revise')"
+      :close-on-click-modal="false"
+    >
+      <ElForm
+        :model="nameForm"
+        label-width="120px"
+        label-position="top"
+        @submit.native.prevent
+      >
+        <ElFormItem prop="email" label="First Name">
+          <ElInput v-model="nameForm.firstName" maxlength="50" />
+        </ElFormItem>
+        <ElFormItem prop="email" label="Last Name">
+          <ElInput v-model="nameForm.lastName" maxlength="50" />
+        </ElFormItem>
+      </ElForm>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <ElButton @click="dialogObj.firstName = false">{{
+            $t('public_button_cancel')
+          }}</ElButton>
+          <ElButton
+            type="primary"
+            auto-loading
+            @click="updateFirstName(arguments[0])"
+            >{{ $t('public_button_confirm') }}</ElButton
+          >
+        </span>
+      </template>
+    </ElDialog>
+  </div>
+</template>
+
 <style lang="scss" scoped>
 .user-item {
   display: flex;
@@ -1302,6 +1540,11 @@ export default {
   height: 100px;
   line-height: 100px;
   text-align: center;
+
+  &:hover {
+    color: var(--el-color-primary);
+    border-color: currentColor;
+  }
 }
 
 .avatar {
@@ -1311,16 +1554,16 @@ export default {
 }
 
 :deep(.el-divider--horizontal) {
-  margin: 8px 0 16px 0;}
-
+  margin: 8px 0 16px 0;
+}
 
 :deep(.el-form-item__label) {
-  text-align: left;}
-
+  text-align: left;
+}
 
 :deep(.el-form-item__content) {
-  display: flex;}
-
+  display: flex;
+}
 
 :deep(.inline-input) {
   .inline-input-body {

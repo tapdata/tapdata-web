@@ -2,7 +2,7 @@ import { timeStampApi } from '@tap/api'
 import WSClient from '@tap/business/src/shared/ws-client'
 import { installElement, VButton, VIcon } from '@tap/component'
 import Time from '@tap/shared/src/time'
-import { ElLoadingService, ElNotification as Notification } from 'element-plus'
+import { ElLoading, ElNotification as Notification } from 'element-plus'
 import * as Vue from 'vue'
 import * as VueRouter from 'vue-router'
 import { installAllPlugins } from '@/plugins'
@@ -13,25 +13,10 @@ import { errorConfirmFnc } from '@/util'
 import App from './App.vue'
 import { installDirectives } from './directive'
 import i18n from './i18n'
-import { CustomerSurvey } from './plugins/customer-survey'
 import dayjs from './plugins/dayjs'
 import { createVersionPolling } from './plugins/version-polling'
 import 'github-markdown-css'
 import './assets/styles/app.scss'
-
-Vue.use(VueClipboard)
-
-// window.$vueApp.use(VueClipboard)
-
-// const originalPush = VueRouter.prototype.push
-// const originalReplace = VueRouter.prototype.replace
-// VueRouter.prototype.push = function push(location) {
-//   return originalPush.call(this, location).catch(err => err)
-// }
-// VueRouter.prototype.replace = function replace(location) {
-//   return originalReplace.call(this, location).catch(err => err)
-// }
-// window.$vueApp.use(FormBuilder)
 
 export default ({ routes }) => {
   let loading = null
@@ -49,8 +34,8 @@ export default ({ routes }) => {
       wsUrl = 'wss://'
     }
     let queryString = ``
-    if (import.meta.env.NODE_ENV === 'development') {
-      queryString = `__token=${import.meta.env.VUE_APP_ACCESS_TOKEN}`
+    if (TAP_ACCESS_TOKEN) {
+      queryString = `__token=${TAP_ACCESS_TOKEN}`
     }
     const index = loc.pathname.lastIndexOf('.html')
     let path = loc.pathname
@@ -94,6 +79,8 @@ export default ({ routes }) => {
     window.$vueApp.use(i18n)
     window.$vueApp.use(store)
     window.$vueApp.use(router)
+
+    window.$vueApp.mount('#app')
 
     window.$vueApp.component(VIcon.name, VIcon)
     window.$vueApp.component(VButton.name, VButton)
@@ -187,7 +174,7 @@ export default ({ routes }) => {
 
   console.log('app', app)
 
-  loading = ElLoadingService({ fullscreen: true })
+  loading = ElLoading.service({ fullscreen: true })
   let count = 0
 
   const getData = () => {

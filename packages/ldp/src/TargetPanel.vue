@@ -74,38 +74,35 @@ const TaskList = defineComponent({
 
                     <div>
                       {task.btnDisabled.stop && task.btnDisabled.forceStop ? (
-                        <ElLink
+                        <ElButton
+                          text
                           type="primary"
                           disabled={task.btnDisabled.start}
                           onClick={() => props.startTask([task.id])}
                         >
                           {i18n.t('public_button_start')}
-                        </ElLink>
+                        </ElButton>
                       ) : task.status === 'stopping' ? (
-                        <ElLink
-                          key="forceStop"
+                        <ElButton
+                          text
                           type="primary"
                           disabled={task.btnDisabled.forceStop}
                           onClick={() => props.forceStopTask([task.id], task)}
                         >
                           {i18n.t('public_button_force_stop')}
-                        </ElLink>
+                        </ElButton>
                       ) : (
-                        <ElLink
-                          key="stop"
+                        <ElButton
+                          text
                           type="primary"
                           disabled={task.btnDisabled.stop}
                           onClick={() => props.stopTask([task.id], task)}
                         >
                           {i18n.t('public_button_stop')}
-                        </ElLink>
+                        </ElButton>
                       )}
-                      <ElDivider
-                        v-readonlybtn="'SYNC_job_edition'"
-                        direction="vertical"
-                      ></ElDivider>
-                      <ElLink
-                        name="monitor"
+                      <ElButton
+                        text
                         type="primary"
                         onClick={() => emit('edit-in-dag', task)}
                       >
@@ -114,7 +111,7 @@ const TaskList = defineComponent({
                             ? 'public_button_edit'
                             : 'packages_business_task_list_button_monitor',
                         )}
-                      </ElLink>
+                      </ElButton>
                     </div>
 
                     {task.website && (

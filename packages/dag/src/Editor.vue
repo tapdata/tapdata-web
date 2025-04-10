@@ -1,153 +1,35 @@
-<template>
-  <section class="dataflow-editor layout-wrap vh-100">
-    <!--头部-->
-    <TopHeader
-      :loading="loading"
-      :is-saving="isSaving"
-      :dataflow-name="dataflow.name"
-      :dataflow="dataflow"
-      :scale="scale"
-      :buttonShowMap="buttonShowMap"
-      @page-return="handlePageReturn"
-      @save="save"
-      @delete="handleDelete"
-      @undo="handleUndo"
-      @redo="handleRedo"
-      @zoom-out="handleZoomOut"
-      @zoom-in="handleZoomIn"
-      @zoom-to="handleZoomTo"
-      @showSettings="handleShowSettings"
-      @center-content="handleCenterContent"
-      @auto-layout="handleAutoLayout"
-      @change-name="handleUpdateName"
-      @locate-node="handleLocateNode"
-      @start="handleStart()"
-      @debug-start="handleStart(true)"
-      @stop="handleStop"
-      @forceStop="handleForceStop"
-      @reset="handleReset"
-      @edit="handleEdit"
-      @detail="handleDetail"
-    ></TopHeader>
-    <section class="layout-wrap layout-has-sider">
-      <!--左侧边栏-->
-      <LeftSidebar
-        v-if="dataflow.id"
-        v-resize.right="{
-          minWidth: 260,
-          maxWidth: 400,
-        }"
-        ref="leftSidebar"
-        @move-node="handleDragMoveNode"
-        @drop-node="handleAddNodeByDrag"
-        @add-table-as-node="handleAddNodeToCenter"
-        @add-node="handleAddNodeToConnect"
-      />
-      <section class="layout-wrap flex-1">
-        <!--内容体-->
-        <main id="dfEditorContent" ref="layoutContent" class="layout-content flex-1 overflow-hidden">
-          <PaperScroller
-            ref="paperScroller"
-            :nav-lines="navLines"
-            @add-node="handleAddNodeToPos"
-            @mouse-select="handleMouseSelect"
-            @change-scale="handleChangeScale"
-          >
-            <DFNode
-              v-for="n in allNodes"
-              :key="n.id"
-              :node-id="n.id"
-              :id="NODE_PREFIX + n.id"
-              :js-plumb-ins="jsPlumbIns"
-              :class="{
-                'options-active': nodeMenu.typeId === n.id,
-              }"
-              @drag-start="onNodeDragStart"
-              @drag-move="onNodeDragMove"
-              @drag-stop="onNodeDragStop"
-              @deselectAllNodes="deselectAllNodes"
-              @deselectNode="nodeDeselectedById"
-              @nodeSelected="nodeSelectedById"
-              @delete="handleDeleteById"
-              @disable="handleDisableNode($event, true)"
-              @enable="handleDisableNode($event, false)"
-              @show-node-popover="showNodePopover"
-            ></DFNode>
-          </PaperScroller>
-          <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
-            <VEmpty large />
-          </div>
-          <PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>
-          <TransformLoading :show="transformLoading" />
-          <NodePopover
-            :popover="nodeMenu"
-            @click-node="handleClickNodePopover"
-            @hide="nodeMenu.typeId = ''"
-          ></NodePopover>
-        </main>
-        <ConsolePanel ref="console"></ConsolePanel>
-      </section>
-      <!--配置面板-->
-      <ConfigPanel
-        ref="configPanel"
-        :scope="scope"
-        :settings="dataflow"
-        :sync-type="dataflow.syncType"
-        :buttonShowMap="buttonShowMap"
-        show-schema-panel
-      />
-
-      <MaterializedView
-        ref="materializedView"
-        :is-saving="isSaving"
-        v-model:visible="materializedViewVisible"
-        :buttonShowMap="buttonShowMap"
-        :dataflow="dataflow"
-        @start="handleStart()"
-        @add-node="onAddMaterializedViewNode"
-        @add-target-node="onAddMaterializedViewTargetNode()"
-        @delete-node="handleDeleteById"
-      ></MaterializedView>
-
-      <SkipError ref="skipError" @skip="handleSkipAndRun"></SkipError>
-    </section>
-  </section>
-</template>
-
 <script>
-import i18n from '@tap/i18n'
-
-import PaperScroller from './components/PaperScroller'
-import TopHeader from './components/TopHeader'
-import LeftSidebar from './components/LeftSidebar'
-import DFNode from './components/DFNode'
-import { jsPlumb, config } from './instance'
-import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from './constants'
-import { allResourceIns } from './nodes/loader'
-import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
-import { titleChange } from '@tap/component/src/mixins/titleChange'
-import { showMessage } from '@tap/component/src/mixins/showMessage'
-import ConfigPanel from './components/migration/ConfigPanel'
-import { uuid } from '@tap/shared'
 import { connectionsApi, taskApi } from '@tap/api'
+
+import { SkipError } from '@tap/business'
 import { VEmpty } from '@tap/component'
-import { MoveNodeCommand } from './command'
+import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
+import { showMessage } from '@tap/component/src/mixins/showMessage'
+import { titleChange } from '@tap/component/src/mixins/titleChange'
+import i18n from '@tap/i18n'
+import { uuid } from '@tap/shared'
 import dagre from 'dagre'
 import { merge } from 'lodash'
-import formScope from './mixins/formScope'
-import NodePopover from './components/NodePopover'
-import TransformLoading from './components/TransformLoading'
-import editor from './mixins/editor'
-import ConsolePanel from './components/migration/ConsolePanel'
-import PaperEmpty from './components/PaperEmpty'
-import MaterializedView from './components/materialized-view/MaterializedView.vue'
 import { mapMutations } from 'vuex'
-import { SkipError } from '@tap/business'
+import { MoveNodeCommand } from './command'
+import DFNode from './components/DFNode'
+import LeftSidebar from './components/LeftSidebar'
+import MaterializedView from './components/materialized-view/MaterializedView.vue'
+import ConfigPanel from './components/migration/ConfigPanel'
+import ConsolePanel from './components/migration/ConsolePanel'
+import NodePopover from './components/NodePopover'
+import PaperEmpty from './components/PaperEmpty'
+import PaperScroller from './components/PaperScroller'
+import TopHeader from './components/TopHeader'
+import TransformLoading from './components/TransformLoading'
+import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from './constants'
+import { config, jsPlumb } from './instance'
+import editor from './mixins/editor'
+import formScope from './mixins/formScope'
+import { allResourceIns } from './nodes/loader'
 
 export default {
   name: 'Editor',
-
-  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
     MaterializedView,
@@ -163,6 +45,8 @@ export default {
     PaperEmpty,
     SkipError,
   },
+
+  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   inject: ['buried'],
 
@@ -194,7 +78,7 @@ export default {
   },
 
   watch: {
-    'dataflow.status'(v) {
+    'dataflow.status': function (v) {
       if (this.dataflow.disabledData?.edit) {
         this.setStateReadonly(true)
       } else {
@@ -205,11 +89,14 @@ export default {
         this.gotoViewer()
       }
 
-      if (['DataflowViewer'].includes(this.$route.name) && ['renewing'].includes(v)) {
+      if (
+        ['DataflowViewer'].includes(this.$route.name) &&
+        ['renewing'].includes(v)
+      ) {
         this.handleConsoleAutoLoad()
       }
     },
-    'dataflow.id'() {
+    'dataflow.id': function () {
       this.getTaskPermissions()
     },
   },
@@ -237,7 +124,7 @@ export default {
         this.checkMaterializedView(query)
         // this.initWS()
       } catch (error) {
-        console.error(error) // eslint-disable-line
+        console.error(error)
       }
     })
   },
@@ -255,12 +142,12 @@ export default {
         {
           name: i18n.t('packages_dag_src_editor_zhuconghebing'),
           type: 'merge_table_processor',
-          hidden: !this.hasFeature('masterSlaveMergeProcessor')
+          hidden: !this.hasFeature('masterSlaveMergeProcessor'),
         },
         {
           name: i18n.t('packages_dag_src_editor_zhuijiahebing'),
           type: 'union_processor',
-          hidden: !this.hasFeature('appendMergeProcessor')
+          hidden: !this.hasFeature('appendMergeProcessor'),
         },
         {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli_standard'),
@@ -270,18 +157,18 @@ export default {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli'),
           type: 'js_processor',
           beta: true,
-          hidden: !this.hasFeature('enhanceJsProcessor')
+          hidden: !this.hasFeature('enhanceJsProcessor'),
         },
         {
           name: 'Python',
           type: 'python_processor',
           beta: true,
-          hidden: !this.hasFeature('pythonProcessor')
+          hidden: !this.hasFeature('pythonProcessor'),
         },
         {
           name: 'Row Filter',
           type: 'row_filter_processor',
-          hidden: !this.hasFeature('rowFilterProcessor')
+          hidden: !this.hasFeature('rowFilterProcessor'),
         },
         // {
         //   name: i18n.t('packages_dag_src_editor_juhe'),
@@ -314,21 +201,21 @@ export default {
         {
           name: 'Unwind',
           type: 'unwind_processor',
-          hidden: !this.hasFeature('unwindProcessor')
+          hidden: !this.hasFeature('unwindProcessor'),
         },
         {
           name: i18n.t('packages_dag_time_field_injection'),
           type: 'add_date_field_processor',
-          hidden: !this.hasFeature('appendDatetimeFieldProcessor')
+          hidden: !this.hasFeature('appendDatetimeFieldProcessor'),
         },
         {
           name: i18n.t('packages_dag_src_editor_huawei_drs_kafka_convertor'),
-          type: 'huawei_drs_kafka_convertor'
+          type: 'huawei_drs_kafka_convertor',
         },
       ]
       //仅企业版有的节点
       if (this.isDaas) {
-        let isDaasNode = [
+        const isDaasNode = [
           {
             name: i18n.t('packages_dag_src_editor_join'),
             type: 'join_processor', //join 节点
@@ -336,7 +223,7 @@ export default {
         ]
         nodes = [...isDaasNode, ...nodes]
       }
-      this.addProcessorNode(nodes.filter(item => !item.hidden))
+      this.addProcessorNode(nodes.filter((item) => !item.hidden))
       this.addResourceIns(allResourceIns)
 
       if (this.hasFeature('customProcessor')) {
@@ -350,7 +237,11 @@ export default {
       if (data) {
         if (this.destory) return
         const { dag } = data
-        this.setStateReadonly(this.$route.name === 'DataflowViewer' ? true : this.dataflow.disabledData.edit)
+        this.setStateReadonly(
+          this.$route.name === 'DataflowViewer'
+            ? true
+            : this.dataflow.disabledData.edit,
+        )
         this.setTaskId(data.id)
         this.setEdges(dag.edges)
         this.setEditVersion(data.editVersion)
@@ -387,7 +278,7 @@ export default {
         return source.type === 'table'
       }
 
-      for (let edge of sourceMap[source.id]) {
+      for (const edge of sourceMap[source.id]) {
         if (!this.isEndOfTable(nodeMap[edge.target], sourceMap, nodeMap)) {
           return false
         }
@@ -427,9 +318,9 @@ export default {
         this.toggleConsole(true)
         this.$refs.console?.startAuto('checkDag') // 信息输出自动加载
         return true
-      } catch (e) {
+      } catch (error) {
         this.isSaving = false
-        this.handleError(e)
+        this.handleError(error)
         this.toggleConsole(true)
         this.$refs.console?.startAuto('checkDag') // 信息输出自动加载
         return false
@@ -454,19 +345,18 @@ export default {
         this.$nextTick(() => {
           this.$refs.paperScroller.initVisibleArea()
         })
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error(i18n.t('packages_dag_src_editor_renwubaocunchu'), e)
+      } catch (error) {
+        console.error(i18n.t('packages_dag_src_editor_renwubaocunchu'), error)
         this.buried('taskSubmit', { result: true })
-        if (e?.data?.code === 'Task.RepeatName') {
+        if (error?.data?.code === 'Task.RepeatName') {
           const newName = await this.makeTaskName(data.name)
           await this.newDataflow(newName)
-        } else if (e?.data?.code === 'InvalidPaidPlan') {
+        } else if (error?.data?.code === 'InvalidPaidPlan') {
           this.$router.push({
             name: 'dataflowList',
           })
         } else {
-          this.handleError(e)
+          this.handleError(error)
         }
       }
       this.isSaving = false
@@ -534,7 +424,8 @@ export default {
         }
       })
 
-      hasMove && this.command.exec(new MoveNodeCommand(oldProperties, newProperties))
+      hasMove &&
+        this.command.exec(new MoveNodeCommand(oldProperties, newProperties))
       this.$refs.paperScroller.autoResizePaper()
       this.$refs.paperScroller.centerContent()
     },
@@ -571,15 +462,23 @@ export default {
     },*/
 
     handlePageReturn() {
-      if (!this.allNodes.length && !this.nameHasUpdated && this.$store.state.dataflow.taskId) {
+      if (
+        !this.allNodes.length &&
+        !this.nameHasUpdated &&
+        this.$store.state.dataflow.taskId
+      ) {
         this.$confirm(
           this.$t('packages_dag_page_return_confirm_content'),
           this.$t('packages_dag_page_return_confirm_title'),
           {
             type: 'warning',
             closeOnClickModal: false,
-            confirmButtonText: this.$t('packages_dag_page_return_confirm_ok_text'),
-            cancelButtonText: this.$t('packages_dag_page_return_confirm_cancel_text'),
+            confirmButtonText: this.$t(
+              'packages_dag_page_return_confirm_ok_text',
+            ),
+            cancelButtonText: this.$t(
+              'packages_dag_page_return_confirm_cancel_text',
+            ),
           },
         ).then((res) => {
           if (res) {
@@ -619,7 +518,11 @@ export default {
 
       this.unWatchStatus?.()
       this.unWatchStatus = this.$watch('dataflow.status', (v) => {
-        if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
+        if (
+          ['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(
+            v,
+          )
+        ) {
           this.$refs.console?.loadData()
           if (v !== 'running') {
             this.$refs.console?.stopAuto()
@@ -668,9 +571,12 @@ export default {
 
       try {
         const con = await connectionsApi.get(connectionId)
-        this.handleAddNodeToPos([-300, 300], this.$refs.leftSidebar.getNodeProps(con, tableName))
+        this.handleAddNodeToPos(
+          [-300, 300],
+          this.$refs.leftSidebar.getNodeProps(con, tableName),
+        )
       } catch (error) {
-        console.error(error) // eslint-disable-line
+        console.error(error)
       }
     },
 
@@ -724,7 +630,8 @@ export default {
       const { by, connectionId, tableName } = query
       let connection
 
-      if (by !== 'materialized-view' && by !== 'transformation-materialized') return
+      if (by !== 'materialized-view' && by !== 'transformation-materialized')
+        return
 
       await this.$router.replace({
         params: {
@@ -745,12 +652,15 @@ export default {
       if (by === 'transformation-materialized') {
         const mergeTableNode = this.handleAddNodeToCenter({
           name: i18n.t('packages_dag_src_editor_zhuconghebing'),
-          type: 'merge_table_processor'
+          type: 'merge_table_processor',
         })
 
         // 添加目标节点
         if (connection) {
-          this.quickAddNode(mergeTableNode, this.$refs.leftSidebar.getNodeProps(connection, tableName))
+          this.quickAddNode(
+            mergeTableNode,
+            this.$refs.leftSidebar.getNodeProps(connection, tableName),
+          )
         }
         return
       }
@@ -774,7 +684,10 @@ export default {
       })
       // 添加目标节点
       if (connection) {
-        this.quickAddNode(mergeTableNode, this.$refs.leftSidebar.getNodeProps(connection, tableName))
+        this.quickAddNode(
+          mergeTableNode,
+          this.$refs.leftSidebar.getNodeProps(connection, tableName),
+        )
       }
 
       // 因为有节流，等一个$nextTick
@@ -793,6 +706,129 @@ export default {
   },
 }
 </script>
+
+<template>
+  <section class="dataflow-editor layout-wrap vh-100">
+    <!--头部-->
+    <TopHeader
+      :loading="loading"
+      :is-saving="isSaving"
+      :dataflow-name="dataflow.name"
+      :dataflow="dataflow"
+      :scale="scale"
+      :button-show-map="buttonShowMap"
+      @page-return="handlePageReturn"
+      @save="save"
+      @delete="handleDelete"
+      @undo="handleUndo"
+      @redo="handleRedo"
+      @zoom-out="handleZoomOut"
+      @zoom-in="handleZoomIn"
+      @zoom-to="handleZoomTo"
+      @show-settings="handleShowSettings"
+      @center-content="handleCenterContent"
+      @auto-layout="handleAutoLayout"
+      @change-name="handleUpdateName"
+      @locate-node="handleLocateNode"
+      @start="handleStart()"
+      @debug-start="handleStart(true)"
+      @stop="handleStop"
+      @force-stop="handleForceStop"
+      @reset="handleReset"
+      @edit="handleEdit"
+      @detail="handleDetail"
+    />
+    <section class="layout-wrap layout-has-sider">
+      <!--左侧边栏-->
+      <LeftSidebar
+        v-if="dataflow.id"
+        ref="leftSidebar"
+        v-resize.right="{
+          minWidth: 260,
+          maxWidth: 400,
+        }"
+        @move-node="handleDragMoveNode"
+        @drop-node="handleAddNodeByDrag"
+        @add-table-as-node="handleAddNodeToCenter"
+        @add-node="handleAddNodeToConnect"
+      />
+      <section class="layout-wrap flex-1">
+        <!--内容体-->
+        <main
+          id="dfEditorContent"
+          ref="layoutContent"
+          class="layout-content flex-1 overflow-hidden"
+        >
+          <PaperScroller
+            ref="paperScroller"
+            :nav-lines="navLines"
+            @add-node="handleAddNodeToPos"
+            @mouse-select="handleMouseSelect"
+            @change-scale="handleChangeScale"
+          >
+            <DFNode
+              v-for="n in allNodes"
+              :id="NODE_PREFIX + n.id"
+              :key="n.id"
+              :node-id="n.id"
+              :js-plumb-ins="jsPlumbIns"
+              :class="{
+                'options-active': nodeMenu.typeId === n.id,
+              }"
+              @drag-start="onNodeDragStart"
+              @drag-move="onNodeDragMove"
+              @drag-stop="onNodeDragStop"
+              @deselect-all-nodes="deselectAllNodes"
+              @deselect-node="nodeDeselectedById"
+              @node-selected="nodeSelectedById"
+              @delete="handleDeleteById"
+              @disable="handleDisableNode($event, true)"
+              @enable="handleDisableNode($event, false)"
+              @show-node-popover="showNodePopover"
+            />
+          </PaperScroller>
+          <div
+            v-if="!allNodes.length && stateIsReadonly"
+            class="absolute-fill flex justify-center align-center"
+          >
+            <VEmpty large />
+          </div>
+          <PaperEmpty v-else-if="!allNodes.length" />
+          <TransformLoading :show="transformLoading" />
+          <NodePopover
+            :popover="nodeMenu"
+            @click-node="handleClickNodePopover"
+            @hide="nodeMenu.typeId = ''"
+          />
+        </main>
+        <ConsolePanel ref="console" />
+      </section>
+      <!--配置面板-->
+      <ConfigPanel
+        ref="configPanel"
+        :scope="scope"
+        :settings="dataflow"
+        :sync-type="dataflow.syncType"
+        :button-show-map="buttonShowMap"
+        show-schema-panel
+      />
+
+      <MaterializedView
+        ref="materializedView"
+        v-model:visible="materializedViewVisible"
+        :is-saving="isSaving"
+        :button-show-map="buttonShowMap"
+        :dataflow="dataflow"
+        @start="handleStart()"
+        @add-node="onAddMaterializedViewNode"
+        @add-target-node="onAddMaterializedViewTargetNode()"
+        @delete-node="handleDeleteById"
+      />
+
+      <SkipError ref="skipError" @skip="handleSkipAndRun" />
+    </section>
+  </section>
+</template>
 
 <style lang="scss" scoped>
 $sidebarW: 260px;

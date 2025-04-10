@@ -1,15 +1,18 @@
-import * as Vuex from 'vuex'
-import dataflow from '@tap/dag/src/store'
+import { taskApi } from '@tap/api'
 import classification from '@tap/component/src/store'
+import dataflow from '@tap/dag/src/store'
+import {
+  getCurrentLanguage,
+  setCurrentLanguage,
+} from '@tap/i18n/src/shared/util'
 import overView from '@tap/ldp/src/store'
-import { getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
-import i18n from '../i18n'
-import { axios } from '../plugins/axios'
-import { merge } from 'lodash'
 import { getUrlSearch } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
+import { merge } from 'lodash'
+import * as Vuex from 'vuex'
+import i18n from '../i18n'
+import axios from '../plugins/axios'
 import { buried } from '../plugins/buried'
-import { taskApi } from '@tap/api'
 
 const store = Vuex.createStore({
   modules: {
@@ -69,13 +72,13 @@ const store = Vuex.createStore({
       tour: {
         view: 'list', // board, list
         taskId: '',
-        status: 'starting' // starting, completed
+        status: 'starting', // starting, completed
       },
       expand: {
         suggestion: '',
-        version: ''
+        version: '',
         // version: '3.13.0'
-      }
+      },
     },
     agentCount: {
       agentTotalCount: 0,
@@ -100,7 +103,7 @@ const store = Vuex.createStore({
     replicationTourFinish: false,
     taskLoadedTime: null, // 记录TargetPanel任务列表加载时间
     isMockUser: false,
-    mockUserPromise: null
+    mockUserPromise: null,
   },
 
   getters: {
@@ -111,7 +114,8 @@ const store = Vuex.createStore({
     isDomesticStation: (state, getters) => {
       return getters.language !== 'en'
     },
-    currencyType: (state, getters) => (getters.isDomesticStation ? 'cny' : 'usd'),
+    currencyType: (state, getters) =>
+      getters.isDomesticStation ? 'cny' : 'usd',
     startingTour: (state) => state.replicationTour.status === 'starting',
     pausedTour: (state) => state.replicationTour.status === 'paused',
     completedTour: (state) => state.replicationTour.status === 'completed',
@@ -223,7 +227,7 @@ const store = Vuex.createStore({
     },
 
     setTaskLoadedTime(state) {
-      state.taskLoadedTime = new Date().getTime()
+      state.taskLoadedTime = Date.now()
     },
 
     setIsMockUser(state, flag) {
@@ -232,18 +236,18 @@ const store = Vuex.createStore({
 
     setMockUserPromise(state, promise) {
       state.mockUserPromise = promise
-    }
+    },
   },
 
   actions: {
     async getFreeTier() {
       const [priceList] = await axios.get('api/tcm/orders/paid/price', {
         params: {
-          productType: 'fullManagement'
-        }
+          productType: 'fullManagement',
+        },
       })
 
-      return priceList.paidPrice.find(item => item.price === 0)
+      return priceList.paidPrice.find((item) => item.price === 0)
     },
 
     async subscribe({ state, commit }, freeTier) {
@@ -258,14 +262,14 @@ const store = Vuex.createStore({
             productType: 'Engine',
             agentType: 'Cloud',
             provider: '',
-            region: ''
-          }
+            region: '',
+          },
         ],
-        email: state.user.email
+        email: state.user.email,
       })
       const guideData = {
         agentId: data?.subscribeItems?.[0].resourceId,
-        subscribeId: data?.subscribe
+        subscribeId: data?.subscribe,
       }
 
       commit('setGuide', guideData)
@@ -276,15 +280,15 @@ const store = Vuex.createStore({
     async checkMockUser({ commit, state }) {
       return axios
         .get('api/gw/user', {
-          maxRedirects: 0
+          maxRedirects: 0,
         })
-        .then(data => {
+        .then((data) => {
           const mockUserId = data?.mockUserId || false
           commit('setIsMockUser', mockUserId)
           return mockUserId
         })
-        .catch(e => {
-          console.error(e)
+        .catch((error) => {
+          console.error(error)
         })
     },
 
@@ -313,7 +317,7 @@ const store = Vuex.createStore({
           userExpand = {
             userReferrer,
             userVirtualId,
-            userVisitedPages
+            userVisitedPages,
           }
         }
 
@@ -328,18 +332,18 @@ const store = Vuex.createStore({
           const conversionTypes = [
             {
               logidUrl: logidUrlCloud || location.href,
-              newType: 25
-            }
+              newType: 25,
+            },
           ]
           axios
             .post('api/tcm/track/send_convert_data', conversionTypes)
-            .then(data => {
+            .then((data) => {
               if (data) {
                 buried('registerSuccess')
               }
             })
-            .catch(e => {
-              console.log('ocpc.baidu.com', e)
+            .catch((error) => {
+              console.log('ocpc.baidu.com', error)
             })
         }
       }
@@ -352,21 +356,21 @@ const store = Vuex.createStore({
             bd_vid,
             expand: {
               ...userExpand,
-              version: '3.13.0'
-            }
-          })
+              version: '3.13.0',
+            },
+          }),
         )
 
         if (bd_vid) {
           sendConvertData?.()
         }
       } else {
-        let params = {}
+        const params = {}
 
         if (!guide.expand) {
           params.expand = guide.expand = {
             suggestion: '',
-            version: ''
+            version: '',
           }
         }
 
@@ -388,11 +392,15 @@ const store = Vuex.createStore({
 
       commit('setGuide', guide)
 
-      if (guide.expand.version !== '3.13.0' || guide.tour.status === 'completed') return state.guide
+      if (
+        guide.expand.version !== '3.13.0' ||
+        guide.tour.status === 'completed'
+      )
+        return state.guide
 
       if (guide.installStep === -1) {
         router.replace({
-          name: 'Welcome'
+          name: 'Welcome',
         })
 
         const freeTier = await dispatch('getFreeTier')
@@ -404,9 +412,9 @@ const store = Vuex.createStore({
         const data = await taskApi.get({
           filter: JSON.stringify({
             where: {
-              id: guide.tour.taskId
-            }
-          })
+              id: guide.tour.taskId,
+            },
+          }),
         })
 
         // 如果没有完成引导任务，并且任务还存在，跳转到引导任务
@@ -414,8 +422,8 @@ const store = Vuex.createStore({
           router.push({
             name: 'WelcomeTask',
             params: {
-              id: guide.tour.taskId
-            }
+              id: guide.tour.taskId,
+            },
           })
         }
       }
@@ -427,7 +435,7 @@ const store = Vuex.createStore({
       state.guide.demand = [demand, suggestion]
 
       axios.post('api/tcm/user_guide', {
-        demand: state.guide.demand
+        demand: state.guide.demand,
       })
     },
 
@@ -436,33 +444,37 @@ const store = Vuex.createStore({
       state.guide.tour.taskId = taskId
       axios.post('api/tcm/user_guide', {
         installStep: state.guide.installStep,
-        tour: state.guide.tour
+        tour: state.guide.tour,
       })
     },
 
     setGuideStep({ commit, state }, step) {
       state.guide.installStep = step
       axios.post('api/tcm/user_guide', {
-        installStep: state.guide.installStep
+        installStep: state.guide.installStep,
       })
     },
 
     setGuideComplete({ commit, state }) {
       state.guide.tour.status = 'completed'
       axios.post('api/tcm/user_guide', {
-        tour: state.guide.tour
+        tour: state.guide.tour,
       })
     },
 
     setGuideViewTaskMonitor({ commit, state }) {
       if (state.guide.tour.behavior === 'view-monitor') return
 
-      if (state.guide.expand.version !== '3.13.0' || state.guide.tour.status !== 'completed') return
+      if (
+        state.guide.expand.version !== '3.13.0' ||
+        state.guide.tour.status !== 'completed'
+      )
+        return
 
       state.guide.tour.behavior = 'view-monitor'
 
       axios.post('api/tcm/user_guide', {
-        tour: state.guide.tour
+        tour: state.guide.tour,
       })
 
       commit('openCompleteReplicationTour')
@@ -471,10 +483,10 @@ const store = Vuex.createStore({
     setReplicationView({ commit, state }, view) {
       state.guide.tour.view = view
       axios.post('api/tcm/user_guide', {
-        tour: state.guide.tour
+        tour: state.guide.tour,
       })
-    }
-  }
+    },
+  },
 })
 
 export default store

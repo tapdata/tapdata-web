@@ -1,19 +1,19 @@
-<template>
-  <FormRender class="setting-panel" :form="form" :schema="schema" :scope="formScope" />
-</template>
-
 <script>
-import i18n from '@tap/i18n'
+import {
+  createForm,
+  onFieldInputValueChange,
+  onFieldValueChange,
+} from '@formily/core'
 
-import { mapGetters } from 'vuex'
-import { createForm, onFieldInputValueChange, onFieldValueChange } from '@formily/core'
+import { action } from '@formily/reactive'
 import { observer } from '@formily/reactive-vue'
-import FormRender from '../FormRender'
-import { debounce } from 'lodash'
 import { alarmApi, dataPermissionApi, taskApi, usersApi } from '@tap/api'
 import { getPickerOptionsBeforeTime } from '@tap/business/src/shared/util'
+import i18n from '@tap/i18n'
+import { debounce } from 'lodash'
+import { mapGetters } from 'vuex'
 import { FormTab } from '../../../../form'
-import { action } from '@formily/reactive'
+import FormRender from '../FormRender'
 
 export default observer({
   name: 'SettingPanel',
@@ -27,10 +27,14 @@ export default observer({
 
   data() {
     const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
-    let values = this.settings
+    const values = this.settings
     const { id } = values
-    let repeatNameMessage = this.$t('packages_dag_task_form_error_name_duplicate')
-    let checkCrontabExpressionFlagMessage = this.$t('packages_dag_task_form_error_can_not_open_crontab_expression_flag')
+    const repeatNameMessage = this.$t(
+      'packages_dag_task_form_error_name_duplicate',
+    )
+    const checkCrontabExpressionFlagMessage = this.$t(
+      'packages_dag_task_form_error_can_not_open_crontab_expression_flag',
+    )
     const handleCheckName = debounce(function (resolve, value) {
       taskApi
         .checkName({
@@ -41,16 +45,19 @@ export default observer({
           resolve(data)
         })
     }, 500)
-    const handleCheckCrontabExpressionFlag = debounce(function (resolve, value) {
+    const handleCheckCrontabExpressionFlag = debounce(function (
+      resolve,
+      value,
+    ) {
       taskApi.checkCheckCloudTaskLimit(id).then((data) => {
         resolve(data)
       })
     }, 500)
     return {
-      isDaas: isDaas,
+      isDaas,
       formScope: {
         lockedFeature: this.lockedFeature,
-        hasFeature: feature => {
+        hasFeature: (feature) => {
           return !isDaas || this.$store.getters['feature/hasFeature']?.(feature)
         },
         getPickerOptionsBeforeTime,
@@ -78,7 +85,11 @@ export default observer({
           }
         },
 
-        useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
+        useAsyncDataSource: (
+          service,
+          fieldName = 'dataSource',
+          ...serviceParams
+        ) => {
           return (field) => {
             field.loading = true
             service({ field }, ...serviceParams).then(
@@ -106,7 +117,7 @@ export default observer({
           }
           const options = []
           if (!isDaas) {
-            let isOpenid = window.__USER_INFO__?.openid
+            const isOpenid = window.__USER_INFO__?.openid
             Object.assign(MAP, {
               wechat: {
                 label: i18n.t('packages_business_notify_webchat_notification'),
@@ -133,7 +144,7 @@ export default observer({
 
         async loadRoleList(field, val) {
           try {
-            let filter = {
+            const filter = {
               limit: 1000,
             }
 
@@ -149,7 +160,7 @@ export default observer({
                 disabled: usedId.includes(item.id),
               }
             })
-          } catch (e) {
+          } catch {
             return []
           }
         },
@@ -160,7 +171,11 @@ export default observer({
 
         getConnectionNameByAgent: (field) => {
           // 消费收集下 field.dataSource 的依赖，当选项改变时重新执行该方法
-          if (!field.value || !field.dataSource?.length || !this.accessNodeProcessIdMap[field.value]) {
+          if (
+            !field.value ||
+            !field.dataSource?.length ||
+            !this.accessNodeProcessIdMap[field.value]
+          ) {
             field.setDescription('')
             return
           }
@@ -175,7 +190,9 @@ export default observer({
           const values = Object.values(map)
 
           field.setDescription(
-            values.length ? `${this.$t('packages_dag_agent_setting_from')}: ${values.join(', ')}` : '',
+            values.length
+              ? `${this.$t('packages_dag_agent_setting_from')}: ${values.join(', ')}`
+              : '',
           )
         },
 
@@ -187,14 +204,16 @@ export default observer({
           })
         },
 
-        loadEmailReceivers: field => {
+        loadEmailReceivers: (field) => {
           const str = window.getSettingByKey('email.receivers')
           const receivers = str ? str.split(',').filter(Boolean) : []
 
           // 过滤掉不在可选列表中的接收人
           const size = field.value.length
           if (size) {
-            const filter = field.value.filter(email => receivers.includes(email))
+            const filter = field.value.filter((email) =>
+              receivers.includes(email),
+            )
 
             if (size !== filter.length) {
               field.form.setValuesIn(field.path, [...filter])
@@ -202,13 +221,13 @@ export default observer({
           }
 
           field.setInitialValue([...receivers])
-          field.dataSource = receivers.map(receiver => {
+          field.dataSource = receivers.map((receiver) => {
             return {
               label: receiver,
-              value: receiver
+              value: receiver,
             }
           })
-        }
+        },
       },
 
       schema: {
@@ -225,9 +244,9 @@ export default observer({
               class: 'config-tabs',
               formTab: '{{formTab}}',
             },
-            'x-reactions':  import.meta.env.VUE_APP_HIDE_TASK_SCHEMA
+            'x-reactions': import.meta.env.VUE_APP_HIDE_TASK_SCHEMA
               ? {
-                  target:  import.meta.env.VUE_APP_HIDE_TASK_SCHEMA,
+                  target: import.meta.env.VUE_APP_HIDE_TASK_SCHEMA,
                   fulfill: {
                     state: {
                       display: 'none',
@@ -272,7 +291,9 @@ export default observer({
                         default: 'initial_sync+cdc',
                         enum: [
                           {
-                            label: this.$t('packages_dag_task_setting_initial_sync_cdc'), //全量+增量
+                            label: this.$t(
+                              'packages_dag_task_setting_initial_sync_cdc',
+                            ), //全量+增量
                             value: 'initial_sync+cdc',
                           },
                           {
@@ -294,7 +315,9 @@ export default observer({
                             type: 'void',
                             'x-component': 'FormCollapse.Item',
                             'x-component-props': {
-                              title: this.$t('packages_dag_task_stetting_most_setting'),
+                              title: this.$t(
+                                'packages_dag_task_stetting_most_setting',
+                              ),
                             },
                             properties: {
                               skipErrorEvent: {
@@ -303,11 +326,15 @@ export default observer({
                                 properties: {
                                   errorMode: {
                                     type: 'string',
-                                    title: i18n.t('packages_dag_migration_settingpanel_dangdanbiaotongbu'),
+                                    title: i18n.t(
+                                      'packages_dag_migration_settingpanel_dangdanbiaotongbu',
+                                    ),
                                     'x-decorator': 'FormItem',
                                     'x-component': 'Select',
                                     'x-component-props': {
-                                      placeholder: i18n.t('public_select_placeholder'),
+                                      placeholder: i18n.t(
+                                        'public_select_placeholder',
+                                      ),
                                     },
                                     default: 'Disable',
                                     enum: [
@@ -316,22 +343,30 @@ export default observer({
                                       //   value: 'SkipTable'
                                       // },
                                       {
-                                        label: i18n.t('packages_dag_migration_settingpanel_anzhaomorenzhong'),
+                                        label: i18n.t(
+                                          'packages_dag_migration_settingpanel_anzhaomorenzhong',
+                                        ),
                                         value: 'Disable',
                                       },
                                       {
-                                        label: i18n.t('packages_dag_migration_settingpanel_tiaoguoyichangshi'),
+                                        label: i18n.t(
+                                          'packages_dag_migration_settingpanel_tiaoguoyichangshi',
+                                        ),
                                         value: 'SkipData',
                                       },
                                     ],
                                   },
                                   limitMode: {
                                     type: 'string',
-                                    title: i18n.t('packages_dag_migration_settingpanel_renwutiaoguoshi'),
+                                    title: i18n.t(
+                                      'packages_dag_migration_settingpanel_renwutiaoguoshi',
+                                    ),
                                     'x-decorator': 'FormItem',
                                     'x-component': 'Select',
                                     'x-component-props': {
-                                      placeholder: i18n.t('public_select_placeholder'),
+                                      placeholder: i18n.t(
+                                        'public_select_placeholder',
+                                      ),
                                     },
                                     default: 'SkipByLimit',
                                     enum: [
@@ -340,11 +375,15 @@ export default observer({
                                       //   value: 'Disable'
                                       // },
                                       {
-                                        label: i18n.t('packages_dag_migration_settingpanel_dangtiaoguoshijian2'),
+                                        label: i18n.t(
+                                          'packages_dag_migration_settingpanel_dangtiaoguoshijian2',
+                                        ),
                                         value: 'SkipByRate',
                                       },
                                       {
-                                        label: i18n.t('packages_dag_migration_settingpanel_dangtiaoguoshijian'),
+                                        label: i18n.t(
+                                          'packages_dag_migration_settingpanel_dangtiaoguoshijian',
+                                        ),
                                         value: 'SkipByLimit',
                                       },
                                     ],
@@ -352,7 +391,8 @@ export default observer({
                                       dependencies: ['.errorMode'],
                                       fulfill: {
                                         state: {
-                                          display: '{{$deps[0] === "SkipData" ? "visible" : "hidden"}}',
+                                          display:
+                                            '{{$deps[0] === "SkipData" ? "visible" : "hidden"}}',
                                         },
                                       },
                                     },
@@ -367,7 +407,9 @@ export default observer({
                                         'x-decorator': 'FormItem',
                                         'x-decorator-props': {
                                           feedbackLayout: 'none',
-                                          addonAfter: i18n.t('packages_dag_migration_settingpanel_shirenwubaocuo'),
+                                          addonAfter: i18n.t(
+                                            'packages_dag_migration_settingpanel_shirenwubaocuo',
+                                          ),
                                         },
                                         'x-component': 'InputNumber',
                                         default: 1,
@@ -378,7 +420,10 @@ export default observer({
                                       },
                                     },
                                     'x-reactions': {
-                                      dependencies: ['.errorMode', '.limitMode'],
+                                      dependencies: [
+                                        '.errorMode',
+                                        '.limitMode',
+                                      ],
                                       fulfill: {
                                         state: {
                                           display:
@@ -397,8 +442,7 @@ export default observer({
                                         'x-decorator': 'FormItem',
                                         'x-decorator-props': {
                                           feedbackLayout: 'none',
-                                          addonAfter:
-                                            '% ' + i18n.t('packages_dag_migration_settingpanel_shirenwubaocuo'),
+                                          addonAfter: `% ${i18n.t('packages_dag_migration_settingpanel_shirenwubaocuo')}`,
                                         },
                                         'x-component': 'InputNumber',
                                         default: 1,
@@ -410,7 +454,10 @@ export default observer({
                                       },
                                     },
                                     'x-reactions': {
-                                      dependencies: ['.errorMode', '.limitMode'],
+                                      dependencies: [
+                                        '.errorMode',
+                                        '.limitMode',
+                                      ],
                                       fulfill: {
                                         state: {
                                           display:
@@ -422,7 +469,9 @@ export default observer({
                                 },
                               },
                               planStartDateFlag: {
-                                title: this.$t('packages_dag_task_setting_plan_start_date'), //计划时间
+                                title: this.$t(
+                                  'packages_dag_task_setting_plan_start_date',
+                                ), //计划时间
                                 type: 'boolean',
                                 'x-decorator': 'FormItem',
                                 'x-component': 'Switch',
@@ -449,18 +498,23 @@ export default observer({
                                   dependencies: ['planStartDateFlag'],
                                   fulfill: {
                                     state: {
-                                      display: '{{$deps[0] ? "visible" : "hidden"}}',
+                                      display:
+                                        '{{$deps[0] ? "visible" : "hidden"}}',
                                     },
                                   },
                                 },
                               },
                               crontabExpressionFlag: {
                                 //调度表达式
-                                title: this.$t('packages_dag_task_setting_crontabExpressionFlag'), //定期调度任务
+                                title: this.$t(
+                                  'packages_dag_task_setting_crontabExpressionFlag',
+                                ), //定期调度任务
                                 type: 'boolean',
                                 'x-decorator': 'FormItem',
                                 'x-decorator-props': {
-                                  tooltip: this.$t('packages_dag_task_setting_cron_tip'),
+                                  tooltip: this.$t(
+                                    'packages_dag_task_setting_cron_tip',
+                                  ),
                                 },
                                 'x-component': 'Switch',
                                 default: false,
@@ -468,7 +522,8 @@ export default observer({
                                   dependencies: ['type'],
                                   fulfill: {
                                     state: {
-                                      display: '{{$deps[0] !== "cdc" ? "visible" : "hidden"}}',
+                                      display:
+                                        '{{$deps[0] !== "cdc" ? "visible" : "hidden"}}',
                                     },
                                   },
                                 },
@@ -490,29 +545,43 @@ export default observer({
                                 required: true,
                                 'x-validator': {
                                   cron: true,
-                                  message: i18n.t('packages_dag_migration_settingpanel_cronbiao'),
+                                  message: i18n.t(
+                                    'packages_dag_migration_settingpanel_cronbiao',
+                                  ),
                                 },
                                 'x-decorator': 'FormItem',
                                 'x-component': 'Input',
                                 'x-component-props': {
-                                  placeholder: this.$t('packages_dag_task_setting_cron_expression'),
+                                  placeholder: this.$t(
+                                    'packages_dag_task_setting_cron_expression',
+                                  ),
                                 },
-                                description: this.$t('packages_dag_task_setting_cron_tip'),
+                                description: this.$t(
+                                  'packages_dag_task_setting_cron_tip',
+                                ),
                                 'x-reactions': {
-                                  dependencies: ['type', 'crontabExpressionFlag'],
+                                  dependencies: [
+                                    'type',
+                                    'crontabExpressionFlag',
+                                  ],
                                   fulfill: {
                                     state: {
-                                      display: '{{$deps[0] !== "cdc" && $deps[1] ? "visible" : "hidden"}}',
+                                      display:
+                                        '{{$deps[0] !== "cdc" && $deps[1] ? "visible" : "hidden"}}',
                                     },
                                   },
                                 },
                               },
                               syncPoints: {
-                                title: this.$t('packages_dag_task_setting_sync_point'), //增量采集开始时刻
+                                title: this.$t(
+                                  'packages_dag_task_setting_sync_point',
+                                ), //增量采集开始时刻
                                 type: 'array',
                                 default: [{ type: 'current', date: '' }],
                                 'x-decorator-props': {
-                                  tooltip: this.$t('packages_dag_task_setting_syncPoint_tip'),
+                                  tooltip: this.$t(
+                                    'packages_dag_task_setting_syncPoint_tip',
+                                  ),
                                   feedbackLayout: 'none',
                                 },
                                 'x-component': 'SyncPoints',
@@ -521,7 +590,8 @@ export default observer({
                                   dependencies: ['type'],
                                   fulfill: {
                                     state: {
-                                      display: '{{$deps[0] === "cdc" ? "visible" : "hidden"}}',
+                                      display:
+                                        '{{$deps[0] === "cdc" ? "visible" : "hidden"}}',
                                     },
                                   },
                                 },
@@ -536,7 +606,8 @@ export default observer({
                                   dependencies: ['type'],
                                   fulfill: {
                                     state: {
-                                      visible: '{{$deps[0] === "cdc" && !!$values.currentEventTimestampLabel}}',
+                                      visible:
+                                        '{{$deps[0] === "cdc" && !!$values.currentEventTimestampLabel}}',
                                     },
                                   },
                                 },
@@ -560,7 +631,9 @@ export default observer({
                                       type: 'primary',
                                       onClick: '{{handleQuicklySyncPoints}}',
                                     },
-                                    'x-content': i18n.t('packages_dag_task_setting_syncPoint_from_now'),
+                                    'x-content': i18n.t(
+                                      'packages_dag_task_setting_syncPoint_from_now',
+                                    ),
                                   },
                                 },
                               },
@@ -580,12 +653,16 @@ export default observer({
                               //   'x-component': 'Switch'
                               // },
                               shareCdcEnable: {
-                                title: this.$t('packages_dag_connection_form_shared_mining'), //共享挖掘日志过滤
+                                title: this.$t(
+                                  'packages_dag_connection_form_shared_mining',
+                                ), //共享挖掘日志过滤
                                 type: 'boolean',
                                 default: false,
                                 'x-decorator': 'FormItem',
                                 'x-decorator-props': {
-                                  tooltip: i18n.t('packages_business_connection_form_shared_mining_tip'),
+                                  tooltip: i18n.t(
+                                    'packages_business_connection_form_shared_mining_tip',
+                                  ),
                                 },
                                 'x-component': 'Switch',
                                 'x-reactions': {
@@ -599,21 +676,29 @@ export default observer({
                                 },
                               },
                               enforceShareCdc: {
-                                title: i18n.t('packages_dag_migration_settingpanel_danggongxiangwajue'),
+                                title: i18n.t(
+                                  'packages_dag_migration_settingpanel_danggongxiangwajue',
+                                ),
                                 type: 'string',
                                 'x-decorator': 'FormItem',
                                 'x-decorator-props': {
-                                  tooltip: i18n.t('packages_dag_migration_settingpanel_danggongxiangwajuetooltip'),
+                                  tooltip: i18n.t(
+                                    'packages_dag_migration_settingpanel_danggongxiangwajuetooltip',
+                                  ),
                                 },
                                 'x-component': 'Select',
                                 default: true,
                                 enum: [
                                   {
-                                    label: i18n.t('packages_dag_migration_settingpanel_renwuzhijiebao'),
+                                    label: i18n.t(
+                                      'packages_dag_migration_settingpanel_renwuzhijiebao',
+                                    ),
                                     value: true,
                                   },
                                   {
-                                    label: i18n.t('packages_dag_migration_settingpanel_zhuanweiputongC'),
+                                    label: i18n.t(
+                                      'packages_dag_migration_settingpanel_zhuanweiputongC',
+                                    ),
                                     value: false,
                                   },
                                 ],
@@ -627,12 +712,16 @@ export default observer({
                                 },
                               },
                               dynamicAdjustMemoryUsage: {
-                                title: this.$t('packages_dag_dynamicAdjustMemoryUsage_title'),
+                                title: this.$t(
+                                  'packages_dag_dynamicAdjustMemoryUsage_title',
+                                ),
                                 type: 'boolean',
                                 default: !isDaas,
                                 'x-decorator': 'FormItem',
                                 'x-decorator-props': {
-                                  tooltip: i18n.t('packages_dag_dynamicAdjustMemoryUsage_tip'),
+                                  tooltip: i18n.t(
+                                    'packages_dag_dynamicAdjustMemoryUsage_tip',
+                                  ),
                                 },
                                 'x-component': 'Switch',
                               },
@@ -642,24 +731,31 @@ export default observer({
                                 default: true,
                                 'x-decorator': 'FormItem',
                                 'x-decorator-props': {
-                                  tooltip: i18n.t('packages_dag_migration_settingpanel_dangrenwufuhe'),
+                                  tooltip: i18n.t(
+                                    'packages_dag_migration_settingpanel_dangrenwufuhe',
+                                  ),
                                 },
                                 'x-component': 'Switch',
                                 'x-reactions': {
                                   fulfill: {
                                     state: {
-                                      visible: '{{$values.syncType === "migrate"}}',
+                                      visible:
+                                        '{{$values.syncType === "migrate"}}',
                                     },
                                   },
                                 },
                               },
                               enableSyncMetricCollector: {
-                                title: this.$t('packages_dag_enableSyncMetricCollector_title'), // 同步指标收集
+                                title: this.$t(
+                                  'packages_dag_enableSyncMetricCollector_title',
+                                ), // 同步指标收集
                                 type: 'boolean',
                                 default: false,
                                 'x-decorator': 'FormItem',
                                 'x-decorator-props': {
-                                  tooltip: i18n.t('packages_dag_enableSyncMetricCollector_tip'),
+                                  tooltip: i18n.t(
+                                    'packages_dag_enableSyncMetricCollector_tip',
+                                  ),
                                 },
                                 'x-component': 'Switch',
                               },
@@ -669,29 +765,40 @@ export default observer({
                                 default: false,
                                 'x-decorator': 'FormItem',
                                 'x-decorator-props': {
-                                  tooltip: i18n.t('packages_dag_doubleActive_tip'),
+                                  tooltip: i18n.t(
+                                    'packages_dag_doubleActive_tip',
+                                  ),
                                 },
                                 'x-component': 'Switch',
-                                'x-visible': '{{hasFeature("TwoWaySync")}}'
+                                'x-visible': '{{hasFeature("TwoWaySync")}}',
                               },
                               accessNodeType: {
                                 type: 'string',
-                                title: this.$t('packages_dag_connection_form_access_node'),
+                                title: this.$t(
+                                  'packages_dag_connection_form_access_node',
+                                ),
                                 default: 'AUTOMATIC_PLATFORM_ALLOCATION',
                                 'x-decorator': 'FormItem',
                                 'x-component': 'Select',
                                 enum: [
                                   {
-                                    label: this.$t('packages_dag_connection_form_automatic'),
+                                    label: this.$t(
+                                      'packages_dag_connection_form_automatic',
+                                    ),
                                     value: 'AUTOMATIC_PLATFORM_ALLOCATION',
                                   },
                                   {
-                                    label: this.$t('packages_dag_connection_form_manual'),
+                                    label: this.$t(
+                                      'packages_dag_connection_form_manual',
+                                    ),
                                     value: 'MANUALLY_SPECIFIED_BY_THE_USER',
                                   },
                                   {
-                                    label: this.$t('packages_business_connection_form_group'),
-                                    value: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP',
+                                    label: this.$t(
+                                      'packages_business_connection_form_group',
+                                    ),
+                                    value:
+                                      'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP',
                                   },
                                 ],
                                 'x-reactions': [
@@ -742,7 +849,10 @@ export default observer({
                                       '{{getConnectionNameByAgent}}',
                                       // 根据下拉数据判断是否存在已选的agent
                                       {
-                                        dependencies: ['.accessNodeType', '.accessNodeOption#dataSource'],
+                                        dependencies: [
+                                          '.accessNodeType',
+                                          '.accessNodeOption#dataSource',
+                                        ],
                                         fulfill: {
                                           state: {
                                             title: `{{'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' === $deps[0] ? '${i18n.t(
@@ -754,7 +864,9 @@ export default observer({
                                     ],
                                   },
                                   priorityProcessId: {
-                                    title: i18n.t('packages_business_priorityProcessId'),
+                                    title: i18n.t(
+                                      'packages_business_priorityProcessId',
+                                    ),
                                     type: 'string',
                                     default: '',
                                     'x-decorator': 'FormItem',
@@ -770,7 +882,8 @@ export default observer({
                                       ],
                                       fulfill: {
                                         state: {
-                                          visible: "{{'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' === $deps[0]}}",
+                                          visible:
+                                            "{{'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' === $deps[0]}}",
                                         },
                                         run: `
                                           let children = []
@@ -808,7 +921,9 @@ export default observer({
                 'x-component': 'FormTab.TabPane',
                 'x-component-props': {
                   class: 'test',
-                  label: i18n.t('packages_dag_migration_configpanel_gaojingshezhi'),
+                  label: i18n.t(
+                    'packages_dag_migration_configpanel_gaojingshezhi',
+                  ),
                   locked: import.meta.env.VUE_APP_MODE === 'community',
                 },
                 properties: {
@@ -865,7 +980,9 @@ export default observer({
                     ],
                   },
                   'alarmSettings.0.open': {
-                    title: i18n.t('packages_dag_migration_alarmpanel_renwuyunxingchu'),
+                    title: i18n.t(
+                      'packages_dag_migration_alarmpanel_renwuyunxingchu',
+                    ),
                     type: 'boolean',
                     default: true,
                     'x-editable': true,
@@ -887,7 +1004,9 @@ export default observer({
                     'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}'],
                   },
                   'alarmSettings.1.open': {
-                    title: i18n.t('packages_dag_migration_alarmpanel_renwuquanliangwan'),
+                    title: i18n.t(
+                      'packages_dag_migration_alarmpanel_renwuquanliangwan',
+                    ),
                     type: 'boolean',
                     default: true,
                     'x-editable': true,
@@ -909,7 +1028,9 @@ export default observer({
                     'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}'],
                   },
                   'alarmSettings.2.open': {
-                    title: i18n.t('packages_dag_migration_alarmpanel_renwuzengliangkai'),
+                    title: i18n.t(
+                      'packages_dag_migration_alarmpanel_renwuzengliangkai',
+                    ),
                     type: 'boolean',
                     default: true,
                     'x-editable': true,
@@ -931,7 +1052,9 @@ export default observer({
                     'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}'],
                   },
                   'alarmSettings.3.open': {
-                    title: i18n.t('packages_dag_migration_alarmpanel_renwuzengliangyan'),
+                    title: i18n.t(
+                      'packages_dag_migration_alarmpanel_renwuzengliangyan',
+                    ),
                     type: 'boolean',
                     default: true,
                     'x-editable': true,
@@ -978,7 +1101,9 @@ export default observer({
                         ],
                       },
                       'alarmRules.0._point': {
-                        title: i18n.t('packages_dag_migration_alarmpanel_lianxu'),
+                        title: i18n.t(
+                          'packages_dag_migration_alarmpanel_lianxu',
+                        ),
                         type: 'number',
                         'x-editable': true,
                         'x-decorator': 'FormItem',
@@ -1099,18 +1224,20 @@ export default observer({
                     'x-component': 'Select',
                     'x-component-props': {
                       multiple: true,
-                      filterable: true
+                      filterable: true,
                     },
-                    'x-reactions': [`{{loadEmailReceivers}}`]
-                  }
+                    'x-reactions': [`{{loadEmailReceivers}}`],
+                  },
                 },
               },
               tab4: {
                 type: 'void',
                 'x-component': 'FormTab.TabPane',
                 'x-component-props': {
-                  label: i18n.t('packages_business_permissionse_settings_create_quanxianshezhi'),
-                  locked:  import.meta.env.VUE_APP_MODE === 'community',
+                  label: i18n.t(
+                    'packages_business_permissionse_settings_create_quanxianshezhi',
+                  ),
+                  locked: import.meta.env.VUE_APP_MODE === 'community',
                 },
                 properties: {
                   permissions: {
@@ -1124,7 +1251,9 @@ export default observer({
                           type: 'void',
                           'x-component': 'ArrayTable.Column',
                           'x-component-props': {
-                            title: i18n.t('packages_business_connections_permissionsdialog_shouquanjuese'),
+                            title: i18n.t(
+                              'packages_business_connections_permissionsdialog_shouquanjuese',
+                            ),
                             align: 'center',
                             asterisk: false,
                             width: 200,
@@ -1148,7 +1277,9 @@ export default observer({
                           type: 'void',
                           'x-component': 'ArrayTable.Column',
                           'x-component-props': {
-                            title: i18n.t('packages_business_connections_permissionsdialog_gongnengquanxian'),
+                            title: i18n.t(
+                              'packages_business_connections_permissionsdialog_gongnengquanxian',
+                            ),
                             align: 'center',
                             asterisk: false,
                           },
@@ -1216,7 +1347,9 @@ export default observer({
                     properties: {
                       addition: {
                         type: 'void',
-                        title: i18n.t('packages_business_connections_permissionsdialog_tianjiashouquan'),
+                        title: i18n.t(
+                          'packages_business_connections_permissionsdialog_tianjiashouquan',
+                        ),
                         'x-component': 'ArrayTable.Addition',
                       },
                     },
@@ -1247,12 +1380,16 @@ export default observer({
     ...mapGetters('dataflow', ['stateIsReadonly', 'allNodes']),
 
     dataNodes() {
-      return this.allNodes.filter((item) => item.type === 'database' || item.type === 'table')
+      return this.allNodes.filter(
+        (item) => item.type === 'database' || item.type === 'table',
+      )
     },
 
     showDoubleActive() {
       const map = this.$store.state.dataflow.pdkDoubleActiveMap
-      return this.dataNodes.length ? this.dataNodes.every((node) => map[node.attrs.pdkHash]) : false
+      return this.dataNodes.length
+        ? this.dataNodes.every((node) => map[node.attrs.pdkHash])
+        : false
     },
 
     accessNodeProcessIdMap() {
@@ -1276,7 +1413,9 @@ export default observer({
     },
 
     accessNodeProcessList() {
-      const agents = this.scope.$agents.filter((item) => item.accessNodeType === this.settings.accessNodeType)
+      const agents = this.scope.$agents.filter(
+        (item) => item.accessNodeType === this.settings.accessNodeType,
+      )
       if (!this.accessNodeProcessIdArr.length) return agents
       return agents.filter((item) => !!this.accessNodeProcessIdMap[item.value])
     },
@@ -1294,12 +1433,12 @@ export default observer({
     },
 
     systemTimeZone() {
-      let timeZone = new Date().getTimezoneOffset() / 60
+      const timeZone = new Date().getTimezoneOffset() / 60
       let systemTimeZone = ''
       if (timeZone > 0) {
         systemTimeZone = 0 - timeZone
       } else {
-        systemTimeZone = '+' + -timeZone
+        systemTimeZone = `+${-timeZone}`
       }
       return systemTimeZone
     },
@@ -1325,10 +1464,14 @@ export default observer({
           let currentId = this.settings.accessNodeProcessId
           currentId = currentId && arr.includes(currentId) ? currentId : arr[0]
           this.settings.accessNodeType =
-            this.scope.$agentMap[currentId]?.accessNodeType || 'MANUALLY_SPECIFIED_BY_THE_USER'
+            this.scope.$agentMap[currentId]?.accessNodeType ||
+            'MANUALLY_SPECIFIED_BY_THE_USER'
           this.settings.accessNodeProcessId = currentId
 
-          if (this.settings.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP') {
+          if (
+            this.settings.accessNodeType ===
+            'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
+          ) {
             const nodeIds = this.accessNodeProcessIdMap[currentId]
             let priorityProcessId = null
 
@@ -1428,9 +1571,12 @@ export default observer({
   methods: {
     // 绑定表单事件
     useEffects() {
-      onFieldInputValueChange('*(alarmSettings.*.*,alarmRules.*.*,emailReceivers)', (field, form) => {
-        if (this.stateIsReadonly) this.lazySaveAlarmConfig()
-      })
+      onFieldInputValueChange(
+        '*(alarmSettings.*.*,alarmRules.*.*,emailReceivers)',
+        (field, form) => {
+          if (this.stateIsReadonly) this.lazySaveAlarmConfig()
+        },
+      )
       // 权限设置修改了
       onFieldValueChange('*(permissions.*)', (field, form) => {
         this.lazySavePermissionsConfig()
@@ -1448,7 +1594,7 @@ export default observer({
         taskId: values.id,
         alarmSettings: values.alarmSettings,
         alarmRules: values.alarmRules,
-        emailReceivers: values.emailReceivers
+        emailReceivers: values.emailReceivers,
       })
     },
 
@@ -1489,6 +1635,15 @@ export default observer({
   },
 })
 </script>
+
+<template>
+  <FormRender
+    class="setting-panel"
+    :form="form"
+    :schema="schema"
+    :scope="formScope"
+  />
+</template>
 
 <style lang="scss" scoped>
 .setting-panel {

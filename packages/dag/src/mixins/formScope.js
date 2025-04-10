@@ -1,24 +1,24 @@
-import axios from 'axios'
-import i18n from '@tap/i18n'
 import { action } from '@formily/reactive'
-import { mapGetters, mapState } from 'vuex'
-import { merge, isEqual, isEmpty } from 'lodash'
 import {
-  connectionsApi,
-  metadataInstancesApi,
-  clusterApi,
-  proxyApi,
-  databaseTypesApi,
   alarmApi,
+  clusterApi,
+  connectionsApi,
+  databaseTypesApi,
+  externalStorageApi,
+  metadataInstancesApi,
+  proxyApi,
   taskApi,
 } from '@tap/api'
-import { externalStorageApi } from '@tap/api'
-import { isPlainObj, Cookie } from '@tap/shared'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { FormTab } from '@tap/form'
+import i18n from '@tap/i18n'
+import { Cookie, isPlainObj } from '@tap/shared'
+import axios from 'axios'
+import { isEmpty, isEqual, merge } from 'lodash'
+import { mapGetters, mapState } from 'vuex'
 
 const editorKeyboard = {
-  handleKeyboard: function ({ editor }, hash, keyString, keyCode, event) {
+  handleKeyboard({ editor }, hash, keyString, keyCode, event) {
     if (keyString === '.' && keyCode !== undefined) {
       setTimeout(() => {
         editor.execCommand('startAutocomplete')
@@ -30,7 +30,7 @@ const editorKeyboard = {
 const getPrefix = (line, index) => {
   let prefix = ''
   let i = index - 1
-  while (i >= 0 && /^[a-zA-Z0-9_]+$/.test(line.charAt(i))) {
+  while (i >= 0 && /^\w+$/.test(line.charAt(i))) {
     prefix = line.charAt(i) + prefix
     i--
   }
@@ -53,7 +53,12 @@ export default {
         'TapArray',
         'TapMap',
       ]
-      const fieldMethods = ['addField', 'removeField', 'updateField', 'upsertField']
+      const fieldMethods = [
+        'addField',
+        'removeField',
+        'updateField',
+        'upsertField',
+      ]
       const CompleterList = [
         ...tapType.map((type) => ({
           name: type,
@@ -106,7 +111,8 @@ export default {
           meta: 'local',
         },
       ]
-      const idx = editor.completers?.findIndex((item) => item.id === 'jsDeclare') || -1
+      const idx =
+        editor.completers?.findIndex((item) => item.id === 'jsDeclare') || -1
       if (~idx) editor.completers.splice(idx, 1)
       tools.addCompleter({
         id: 'jsDeclare',
@@ -132,7 +138,9 @@ export default {
 
         $isDaas: isDaas, //区分云版、企业版
 
-        $isMonitor: ['MigrationMonitor', 'TaskMonitor'].includes(this.$route.name),
+        $isMonitor: ['MigrationMonitor', 'TaskMonitor'].includes(
+          this.$route.name,
+        ),
 
         formTab: FormTab.createFormTab(),
 
@@ -140,7 +148,7 @@ export default {
           return !!this.$store.state.dataflow.pdkPropertiesMap[pdkHash]
         },
 
-        hasFeature: feature => {
+        hasFeature: (feature) => {
           return !isDaas || this.$store.getters['feature/hasFeature']?.(feature)
         },
 
@@ -153,7 +161,7 @@ export default {
         },
 
         findParentNode: (id) => {
-          let node = this.scope.findNodeById(id)
+          const node = this.scope.findNodeById(id)
           let parentId = node.$inputs?.[0]
           let parent
           while (parentId) {
@@ -167,15 +175,15 @@ export default {
         },
 
         findParentNodes: (id, ifMyself) => {
-          let node = this.scope.findNodeById(id)
+          const node = this.scope.findNodeById(id)
           const parents = []
 
           if (!node) return parents
 
-          let parentIds = node.$inputs || []
+          const parentIds = node.$inputs || []
           if (ifMyself && !parentIds.length) return [node]
           parentIds.forEach((pid) => {
-            let parent = this.scope.findNodeById(pid)
+            const parent = this.scope.findNodeById(pid)
             if (parent) {
               if (parent.$inputs?.length) {
                 parent.$inputs.forEach((ppid) => {
@@ -219,7 +227,11 @@ export default {
          * @param serviceParams 缺省参数，传递给service方法
          * @returns {(function(*=): void)|*}
          */
-        useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
+        useAsyncDataSource: (
+          service,
+          fieldName = 'dataSource',
+          ...serviceParams
+        ) => {
           return (field) => {
             field.loading = true
             service({ field }, ...serviceParams).then(
@@ -253,10 +265,16 @@ export default {
          */
         useAsyncDataSourceByConfig: (config, ...serviceParams) => {
           // withoutField: 不往service方法传field参数
-          const { service, fieldName = 'dataSource', withoutField = false } = config
+          const {
+            service,
+            fieldName = 'dataSource',
+            withoutField = false,
+          } = config
           return (field) => {
             field.loading = true
-            let fetch = withoutField ? service(...serviceParams) : service(field, ...serviceParams)
+            const fetch = withoutField
+              ? service(...serviceParams)
+              : service(field, ...serviceParams)
             fetch.then(
               action.bound((data) => {
                 if (fieldName === 'value') {
@@ -306,7 +324,7 @@ export default {
                 options: 'i',
               }
             }
-            let result = await connectionsApi.get({
+            const result = await connectionsApi.get({
               filter: JSON.stringify(merge(filter, _filter)),
             })
 
@@ -315,7 +333,9 @@ export default {
                 id: item.id,
                 name: item.name,
                 label: `${item.name} ${
-                  item.status ? `(${CONNECTION_STATUS_MAP[item.status]?.text || item.status})` : ''
+                  item.status
+                    ? `(${CONNECTION_STATUS_MAP[item.status]?.text || item.status})`
+                    : ''
                 }`,
                 value: item.id,
                 databaseType: item.database_type,
@@ -325,8 +345,8 @@ export default {
             })
 
             return result
-          } catch (e) {
-            console.log('catch', e) // eslint-disable-line
+          } catch (error) {
+            console.log('catch', error) // eslint-disable-line
             return { items: [], total: 0 }
           }
         },
@@ -355,10 +375,14 @@ export default {
               neq: '',
             }
           }
-          const data = await metadataInstancesApi.get({ filter: JSON.stringify(filter) }, config)
+          const data = await metadataInstancesApi.get(
+            { filter: JSON.stringify(filter) },
+            config,
+          )
           data.items = data.items.map((item) => {
             return {
-              label: item.original_name + (item.comment ? `(${item.comment})` : ''),
+              label:
+                item.original_name + (item.comment ? `(${item.comment})` : ''),
               value: item.original_name,
             }
           })
@@ -383,7 +407,7 @@ export default {
             const { $values = {}, command, where = {}, page, size } = filter
             const { nodeConfig, connectionId, attrs = {} } = $values
             const search = where.label?.like
-            let params = {
+            const params = {
               pdkHash: attrs.pdkHash,
               connectionId,
               nodeConfig,
@@ -396,13 +420,13 @@ export default {
                 size: size || 1000,
               },
             }
-            let result = await proxyApi.command(params)
+            const result = await proxyApi.command(params)
             if (!result.items) {
               return { items: [], total: 0 }
             }
             return result
-          } catch (e) {
-            console.log('catch', e) // eslint-disable-line
+          } catch (error) {
+            console.log('catch', error) // eslint-disable-line
             return { items: [], total: 0 }
           }
         },
@@ -430,13 +454,20 @@ export default {
             content: item.name,
           })
           const connectionType = form.getValuesIn('attrs.connectionType')
-          const accessNodeProcessId = form.getValuesIn('attrs.accessNodeProcessId')
+          const accessNodeProcessId = form.getValuesIn(
+            'attrs.accessNodeProcessId',
+          )
           const connectionName = form.getValuesIn('attrs.connectionName')
 
-          connectionType !== item.connectionType && form.setValuesIn('attrs.connectionType', item.connectionType)
+          connectionType !== item.connectionType &&
+            form.setValuesIn('attrs.connectionType', item.connectionType)
           accessNodeProcessId !== item.accessNodeProcessId &&
-            form.setValuesIn('attrs.accessNodeProcessId', item.accessNodeProcessId)
-          connectionName !== item.name && form.setValuesIn('attrs.connectionName', item.name)
+            form.setValuesIn(
+              'attrs.accessNodeProcessId',
+              item.accessNodeProcessId,
+            )
+          connectionName !== item.name &&
+            form.setValuesIn('attrs.connectionName', item.name)
         },
 
         /**
@@ -447,7 +478,7 @@ export default {
         loadNodeFieldOptions: async (nodeId) => {
           const fields = await this.scope.loadNodeFieldsById(nodeId)
           return fields
-            .filter(item => !item.is_deleted)
+            .filter((item) => !item.is_deleted)
             .map((item) => ({
               label: item.field_name,
               value: item.field_name,
@@ -455,7 +486,7 @@ export default {
               indicesUnique: !!item.indicesUnique,
               type: item.data_type,
               tapType: item.tapType,
-              source: item.source
+              source: item.source,
             }))
         },
 
@@ -513,7 +544,7 @@ export default {
                 if (to === 'TapDateTime' || to === 'TapTime') {
                   dataTypes.push(key)
                   dataTypeOptions.push({
-                    label: key.replace(/\[?\(\$[^\]]+\)]?/, '(n)'),
+                    label: key.replace(/\[?\(\$[^\]]+\)\]?/, '(n)'),
                     value: key,
                   })
                 }
@@ -525,9 +556,9 @@ export default {
                 if (!field.value?.length) field.value = value
               })
               handleBatch(dataTypes, dataTypeOptions)
-            } catch (e) {
+            } catch (error) {
               field.loading = false
-              console.error(e) // eslint-disable-line
+              console.error(error)
             }
           }
         },
@@ -542,7 +573,7 @@ export default {
           try {
             await this.afterTaskSaved()
             const data = await metadataInstancesApi.nodeSchema(nodeId)
-            let fields = data?.[0]?.fields || []
+            const fields = data?.[0]?.fields || []
             const indices = (data?.[0]?.indices || []).filter((t) => t.unique)
             let columns = []
             indices.forEach((el) => {
@@ -554,9 +585,8 @@ export default {
               }
             })
             return fields
-          } catch (e) {
-            // eslint-disable-next-line no-console
-            console.error('nodeSchema', e)
+          } catch (error) {
+            console.error('nodeSchema', error)
             return []
           }
         },
@@ -575,9 +605,8 @@ export default {
               nodeId,
             })
             return data
-          } catch (e) {
-            // eslint-disable-next-line no-console
-            console.error('nodeSchema', e)
+          } catch (error) {
+            console.error('nodeSchema', error)
             return []
           }
         },
@@ -588,10 +617,10 @@ export default {
           const formValues = getState?.values || {}
           console.log('formValues', formValues, others)
           const { nodeId } = others
-          let params = {
+          const params = {
             nodeId,
           }
-          let fields = [
+          const fields = [
             {
               targetFieldName: 'form_id',
               sourceFieldName: 'form_id',
@@ -647,11 +676,15 @@ export default {
          * @param serviceParams
          * @returns {(function(*): void)|*}
          */
-        useAfterPatchAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
+        useAfterPatchAsyncDataSource: (
+          service,
+          fieldName = 'dataSource',
+          ...serviceParams
+        ) => {
           let withoutField
           if (isPlainObj(service)) {
             // 第一个参数是个对象配置
-            let config = service
+            const config = service
             serviceParams.unshift(fieldName)
             service = config.service
             fieldName = config.fieldName || 'dataSource'
@@ -661,8 +694,10 @@ export default {
           return (field) => {
             field.loading = true
             let watcher
-            let callback = () => {
-              const fetch = withoutField ? service(...serviceParams) : service({ field }, ...serviceParams)
+            const callback = () => {
+              const fetch = withoutField
+                ? service(...serviceParams)
+                : service({ field }, ...serviceParams)
               fetch.then(
                 action.bound((data) => {
                   if (fieldName === 'value') {
@@ -689,13 +724,20 @@ export default {
           let insertPolicy
           let updatePolicy
           if (capabilities) {
-            insertPolicy = capabilities.find(({ id }) => id === 'dml_insert_policy')
-            updatePolicy = capabilities.find(({ id }) => id === 'dml_update_policy')
+            insertPolicy = capabilities.find(
+              ({ id }) => id === 'dml_insert_policy',
+            )
+            updatePolicy = capabilities.find(
+              ({ id }) => id === 'dml_update_policy',
+            )
           }
           const insertField = field.query('dmlPolicy.insertPolicy').take()
           const updateField = field.query('dmlPolicy.updatePolicy').take()
           // 查找上游是否包含Unwind节点
-          const unwindNode = this.scope.findParentNodeByType(field.form.values, 'unwind_processor')
+          const unwindNode = this.scope.findParentNodeByType(
+            field.form.values,
+            'unwind_processor',
+          )
           const originNodeData = this.scope.findNodeById(field.form.values.id)
 
           const func = (policy, policyField) => {
@@ -706,7 +748,9 @@ export default {
               policyField.setValue(policyField.initialValue)
             } else {
               const values = policyField.dataSource.map((item) => item.value)
-              const alternatives = policy.alternatives.filter((key) => values.includes(key))
+              const alternatives = policy.alternatives.filter((key) =>
+                values.includes(key),
+              )
               // 设置成特性中的选项
               if (alternatives.length) {
                 policyField.dataSource = policyField.dataSource.filter((item) =>
@@ -718,7 +762,9 @@ export default {
                 setTimeout(() => {
                   policyField.setPattern('readPretty')
                 }, 50)
-                policyField.setValue(alternatives[0] || policyField.initialValue)
+                policyField.setValue(
+                  alternatives[0] || policyField.initialValue,
+                )
               } else if (!field.form.disabled) {
                 policyField.setPattern('editable')
               }
@@ -728,7 +774,9 @@ export default {
                 if (alternatives.includes('just_insert')) {
                   policyField.setValue('just_insert')
                   // 设置源数据，保证未访问过节点配置时，保存任务时校验unwind节点和目标的dmlPolicy.insertPolicy是否等于just_insert的判断通过
-                  originNodeData.dmlPolicy = { ...policyField.form.values.dmlPolicy }
+                  originNodeData.dmlPolicy = {
+                    ...policyField.form.values.dmlPolicy,
+                  }
                 }
               }
             }
@@ -740,12 +788,12 @@ export default {
 
         findParentNodeByType: (node, type) => {
           // let node = this.scope.findNodeById(id)
-          let parentIds = node?.$inputs || []
+          const parentIds = node?.$inputs || []
 
           if (!node || !parentIds.length) return
 
-          for (let pid of parentIds) {
-            let parent = this.scope.findNodeById(pid)
+          for (const pid of parentIds) {
+            const parent = this.scope.findNodeById(pid)
 
             if (parent?.type === type) {
               return parent
@@ -761,32 +809,44 @@ export default {
           const connection = await connectionsApi.getNoSchema(id)
 
           if (!connection) {
-            console.error('ConnectionNotFound', id) // eslint-disable-line
+            console.error('ConnectionNotFound', id)
             return
           }
 
           const connectionType = form.getValuesIn('attrs.connectionType') || ''
-          const accessNodeProcessId = form.getValuesIn('attrs.accessNodeProcessId') || ''
+          const accessNodeProcessId =
+            form.getValuesIn('attrs.accessNodeProcessId') || ''
           const accessNodeType = form.getValuesIn('attrs.accessNodeType') || ''
-          const priorityProcessId = form.getValuesIn('attrs.priorityProcessId') || ''
+          const priorityProcessId =
+            form.getValuesIn('attrs.priorityProcessId') || ''
           const connectionName = form.getValuesIn('attrs.connectionName')
           const capabilities = form.getValuesIn('attrs.capabilities')
           const pdkType = form.getValuesIn('attrs.pdkType')
           const pdkHash = form.getValuesIn('attrs.pdkHash')
           const db_version = form.getValuesIn('attrs.db_version')
 
-          pdkType !== connection.pdkType && form.setValuesIn('attrs.pdkType', connection.pdkType)
-          pdkHash !== connection.pdkHash && form.setValuesIn('attrs.pdkHash', connection.pdkHash)
+          pdkType !== connection.pdkType &&
+            form.setValuesIn('attrs.pdkType', connection.pdkType)
+          pdkHash !== connection.pdkHash &&
+            form.setValuesIn('attrs.pdkHash', connection.pdkHash)
           connectionType !== connection.connection_type &&
             form.setValuesIn('attrs.connectionType', connection.connection_type)
           accessNodeProcessId !== connection.accessNodeProcessId &&
-            form.setValuesIn('attrs.accessNodeProcessId', connection.accessNodeProcessId)
+            form.setValuesIn(
+              'attrs.accessNodeProcessId',
+              connection.accessNodeProcessId,
+            )
           accessNodeType !== connection.accessNodeType &&
             form.setValuesIn('attrs.accessNodeType', connection.accessNodeType)
           priorityProcessId !== connection.priorityProcessId &&
-            form.setValuesIn('attrs.priorityProcessId', connection.priorityProcessId)
-          connectionName !== connection.name && form.setValuesIn('attrs.connectionName', connection.name)
-          db_version !== connection.db_version && form.setValuesIn('attrs.db_version', connection.db_version)
+            form.setValuesIn(
+              'attrs.priorityProcessId',
+              connection.priorityProcessId,
+            )
+          connectionName !== connection.name &&
+            form.setValuesIn('attrs.connectionName', connection.name)
+          db_version !== connection.db_version &&
+            form.setValuesIn('attrs.db_version', connection.db_version)
           !isEqual(capabilities, connection.capabilities) &&
             form.setValuesIn('attrs.capabilities', connection.capabilities)
         },
@@ -806,7 +866,7 @@ export default {
 
         async loadExternalStorage(id) {
           try {
-            let filter = {
+            const filter = {
               where: {},
             }
             if (id) {
@@ -824,7 +884,7 @@ export default {
                 isBefore: item.id === id,
               }
             })
-          } catch (e) {
+          } catch {
             return []
           }
         },
@@ -835,10 +895,23 @@ export default {
          * @param field
          */
         setDefaultPrimaryKey(field) {
-          if (!field.value?.length && field.dataSource && field.dataSource.length) {
-            let isPrimaryKeyList = field.dataSource.filter((item) => item.isPrimaryKey)
-            let indicesUniqueList = field.dataSource.filter((item) => item.indicesUnique)
-            field.setValue((isPrimaryKeyList.length ? isPrimaryKeyList : indicesUniqueList).map((item) => item.value))
+          if (
+            !field.value?.length &&
+            field.dataSource &&
+            field.dataSource.length
+          ) {
+            const isPrimaryKeyList = field.dataSource.filter(
+              (item) => item.isPrimaryKey,
+            )
+            const indicesUniqueList = field.dataSource.filter(
+              (item) => item.indicesUnique,
+            )
+            field.setValue(
+              (isPrimaryKeyList.length
+                ? isPrimaryKeyList
+                : indicesUniqueList
+              ).map((item) => item.value),
+            )
             field.validate()
           }
         },
@@ -847,9 +920,15 @@ export default {
           let nodeFields = []
           if (!$inputs.length) return
           if (isMigrate) {
-            let result = await metadataInstancesApi.nodeSchemaPage({
+            const result = await metadataInstancesApi.nodeSchemaPage({
               nodeId,
-              fields: ['original_name', 'fields', 'qualified_name', 'name', 'indices'],
+              fields: [
+                'original_name',
+                'fields',
+                'qualified_name',
+                'name',
+                'indices',
+              ],
               page: 1,
               pageSize: 1,
             })
@@ -869,14 +948,17 @@ export default {
                 }
               }) || []
 
-          const idx = editor.completers?.findIndex((item) => item.id === 'recordFields') || -1
+          const idx =
+            editor.completers?.findIndex(
+              (item) => item.id === 'recordFields',
+            ) || -1
 
           if (~idx) editor.completers.splice(idx, 1)
 
           editor.completers.push({
             id: 'recordFields',
             // 获取补全提示列表
-            getCompletions: function (editor, session, pos, prefix, callback) {
+            getCompletions(editor, session, pos, prefix, callback) {
               // 判断当前行是否包含 '.'
               const line = session.getLine(pos.row)
               const index = pos.column - 1
@@ -907,7 +989,7 @@ export default {
           const { field, form } = ctx
           const $values = form.values
           let options = field.dataSource
-          let nodeData = this.scope.findNodeById($values.id)
+          const nodeData = this.scope.findNodeById($values.id)
 
           if (!$values.$inputs[0]) {
             return
@@ -921,34 +1003,43 @@ export default {
             }
 
             if (options && options.length) {
-              let defaultList = options.filter(item => item.isPrimaryKey)
+              let defaultList = options.filter((item) => item.isPrimaryKey)
 
               if (!defaultList.length) {
-                defaultList = options.filter(item => item.indicesUnique)
+                defaultList = options.filter((item) => item.indicesUnique)
               }
 
               if (!defaultList.length) {
-                defaultList = options.filter(item => item.source === 'virtual_hash')
+                defaultList = options.filter(
+                  (item) => item.source === 'virtual_hash',
+                )
               }
 
               if (!value || !value.length) {
-                nodeData.updateConditionFields = defaultList.map(item => item.value)
+                nodeData.updateConditionFields = defaultList.map(
+                  (item) => item.value,
+                )
                 $values.updateConditionFields = nodeData.updateConditionFields
               } else if (value) {
-                let fieldMap = options.reduce((obj, item) => ((obj[item.value] = true), obj), {})
-                let filterValue = value.filter((v) => fieldMap[v])
+                const fieldMap = options.reduce(
+                  (obj, item) => ((obj[item.value] = true), obj),
+                  {},
+                )
+                const filterValue = value.filter((v) => fieldMap[v])
 
                 if (value.length !== filterValue.length) {
                   nodeData.updateConditionFields = filterValue.length
                     ? filterValue
-                    : defaultList.map(item => item.value)
+                    : defaultList.map((item) => item.value)
                   $values.updateConditionFields = nodeData.updateConditionFields
                 }
               }
             }
           }
 
-          return !$values.updateConditionFields?.length ? i18n.t('packages_dag_mixins_formscope_gaiziduanshibi') : ''
+          return !$values.updateConditionFields?.length
+            ? i18n.t('packages_dag_mixins_formscope_gaiziduanshibi')
+            : ''
         },
 
         validateConcurrentWritePartitionMap: async (value, rule, ctx) => {
@@ -959,16 +1050,20 @@ export default {
           }
 
           let flag = false
-          const concurrentWritePartitionMap = JSON.parse(JSON.stringify($values.concurrentWritePartitionMap))
+          const concurrentWritePartitionMap = JSON.parse(
+            JSON.stringify($values.concurrentWritePartitionMap),
+          )
           if (isEmpty(concurrentWritePartitionMap)) {
             flag = true
           }
-          for (let key in concurrentWritePartitionMap) {
+          for (const key in concurrentWritePartitionMap) {
             if (!concurrentWritePartitionMap[key]?.length) {
               flag = true
             }
           }
-          return flag ? i18n.t('packages_dag_mixins_formscope_gaiziduanshibi') : ''
+          return flag
+            ? i18n.t('packages_dag_mixins_formscope_gaiziduanshibi')
+            : ''
         },
 
         validateTableNames: (value, rule, ctx) => {
@@ -983,10 +1078,10 @@ export default {
           const parents = this.scope.findParentNodes($values.id)
 
           if (parents && parents.length && parents[0].tableNames.length) {
-            let tableNames = parents[0].tableNames
-            let countByName = {}
-            let duplicateTableNames = new Set()
-            let tableNameMap = value.reduce((obj, item) => {
+            const tableNames = parents[0].tableNames
+            const countByName = {}
+            const duplicateTableNames = new Set()
+            const tableNameMap = value.reduce((obj, item) => {
               obj[item.previousTableName] = item.currentTableName
               if (item.currentTableName in countByName) {
                 countByName[item.currentTableName]++
@@ -996,7 +1091,7 @@ export default {
               }
               return obj
             }, {})
-            let currentTableNames = Object.values(tableNameMap)
+            const currentTableNames = Object.values(tableNameMap)
             // if (currentTableNames.length !== new Set(currentTableNames).size) return rule.message
             tableNames.forEach((name) => {
               if (currentTableNames.includes(name) && !tableNameMap[name]) {
@@ -1026,7 +1121,7 @@ export default {
           const options = []
 
           if (!isDaas) {
-            let isOpenid = window.__USER_INFO__?.openid
+            const isOpenid = window.__USER_INFO__?.openid
             Object.assign(MAP, {
               wechat: {
                 label: i18n.t('packages_business_notify_webchat_notification'),
@@ -1052,7 +1147,9 @@ export default {
         },
 
         centerNode: (nodeId) => {
-          this.$refs.paperScroller.centerNode(this.$store.state.dataflow.NodeMap[nodeId])
+          this.$refs.paperScroller.centerNode(
+            this.$store.state.dataflow.NodeMap[nodeId],
+          )
           setTimeout(() => {
             this.nodeSelectedById(nodeId, false, true)
           }, 300)
@@ -1069,7 +1166,11 @@ export default {
             enableRecord = field.form.values.attrs.enableRecord = {}
           }
           // 如果是一级开关
-          if (/mergeProperties\.\d+\.enableUpdateJoinKeyValue/.test(field.path.entire)) {
+          if (
+            /mergeProperties\.\d+\.enableUpdateJoinKeyValue/.test(
+              field.path.entire,
+            )
+          ) {
             const children = field.query('.children').value()
             const toggleChildrenEnable = (children, val) => {
               for (const child of children) {
@@ -1107,12 +1208,12 @@ export default {
           if (this.isDaas) {
             const accessToken = Cookie.get('access_token')
             url += `&access_token=${accessToken}`
-          } else if ( import.meta.env.VUE_APP_ACCESS_TOKEN) {
-            url += `&__token=${ import.meta.env.VUE_APP_ACCESS_TOKEN}`
+          } else if (TAP_ACCESS_TOKEN) {
+            url += `&__token=${TAP_ACCESS_TOKEN}`
           }
 
           window.open(url)
-        }
+        },
       },
     }
   },
@@ -1133,17 +1234,22 @@ export default {
       const mapNode = (item) => ({
         value: item.processId,
         label: `${item.agentName || item.hostName}（${
-          item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
+          item.status === 'running'
+            ? i18n.t('public_status_running')
+            : i18n.t('public_agent_status_offline')
         }）`,
         disabled: item.status !== 'running',
         accessNodeType: item.accessNodeType,
       })
       this.scope.$agents = data.map((item) => {
-        if (item.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP') {
+        if (
+          item.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
+        ) {
           return {
             value: item.processId,
             label: `${item.accessNodeName}（${i18n.t('public_status_running')}：${
-              item.accessNodes?.filter((ii) => ii.status === 'running').length || 0
+              item.accessNodes?.filter((ii) => ii.status === 'running')
+                .length || 0
             }）`,
             accessNodeType: item.accessNodeType,
             children: item.accessNodes?.map(mapNode) || [],
@@ -1151,7 +1257,10 @@ export default {
         }
         return mapNode(item)
       })
-      this.scope.$agentMap = data.reduce((obj, item) => ((obj[item.processId] = item), obj), {})
+      this.scope.$agentMap = data.reduce(
+        (obj, item) => ((obj[item.processId] = item), obj),
+        {},
+      )
     },
 
     /**
@@ -1161,7 +1270,7 @@ export default {
     afterTaskSaved() {
       return new Promise((resolve) => {
         if (this.taskSaving) {
-          let unwatch = this.$watch('taskSaving', () => {
+          const unwatch = this.$watch('taskSaving', () => {
             unwatch()
             resolve()
           })

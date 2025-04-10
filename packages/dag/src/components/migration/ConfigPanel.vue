@@ -1,61 +1,13 @@
-<template>
-  <section
-    v-show="showPanel"
-    class="config-panel border-start flex-column"
-    :class="{ flex: showPanel, 'show-settings': activeType === 'settings' }"
-  >
-    <div
-      v-if="activeNode"
-      class="position-absolute config-tabs-left-extra align-center"
-      :class="activeType === 'node' ? 'flex' : 'none'"
-    >
-      <NodeIcon :node="activeNode" :size="24" />
-    </div>
-    <div
-      v-if="activeNode && activeNode.type === 'merge_table_processor'"
-      class="position-absolute config-tabs-right-extra flex align-center"
-    >
-      <ElButton @click="setMaterializedViewVisible(true)" class="--with-icon flex align-center px-2 py-0 gap-1">
-        <VIcon size="30">beta</VIcon>
-        {{ $t('packages_dag_materialized_view') }}</ElButton
-      >
-    </div>
-
-    <FormPanel
-      v-bind="$attrs"
-      v-if="!materializedViewVisible"
-      class="config-form-panel"
-      v-show="activeType !== 'settings'"
-      ref="formPanel"
-      :formProps="{
-        colon: false,
-        shallow: false,
-        layout: 'vertical',
-        feedbackLayout: 'terse',
-      }"
-      @update:InputsOrOutputs="handleLoadMeta"
-    />
-    <SettingPanel
-      v-bind="$attrs"
-      v-if="settings.id"
-      class="config-form-panel"
-      :settings="settings"
-      v-show="activeType === 'settings'"
-      ref="setting"
-    ></SettingPanel>
-  </section>
-</template>
-
 <script>
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import { cloneDeep } from 'lodash'
-
-import '@tap/component/src/directives/resize/index.scss'
-import resize from '@tap/component/src/directives/resize'
-import FormPanel from '../FormPanel'
 import focusSelect from '@tap/component/src/directives/focusSelect'
+import resize from '@tap/component/src/directives/resize'
+
+import { cloneDeep } from 'lodash'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import FormPanel from '../FormPanel'
 import NodeIcon from '../NodeIcon'
 import SettingPanel from './SettingPanel'
+import '@tap/component/src/directives/resize/index.scss'
 
 export default {
   name: 'ConfigPanel',
@@ -64,6 +16,8 @@ export default {
     resize,
     focusSelect,
   },
+
+  components: { SettingPanel, NodeIcon, FormPanel },
 
   props: {
     settings: Object,
@@ -85,14 +39,19 @@ export default {
     }
   },
 
-  components: { SettingPanel, NodeIcon, FormPanel },
-
   computed: {
-    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
+    ...mapGetters('dataflow', [
+      'activeType',
+      'activeNode',
+      'nodeById',
+      'stateIsReadonly',
+    ]),
     ...mapState('dataflow', ['editVersion', 'materializedViewVisible']),
 
     showPanel() {
-      return this.onlySetting ? this.activeType === 'settings' : this.includesType.includes(this.activeType)
+      return this.onlySetting
+        ? this.activeType === 'settings'
+        : this.includesType.includes(this.activeType)
     },
 
     isMonitor() {
@@ -101,7 +60,7 @@ export default {
   },
 
   watch: {
-    'activeNode.name'(v) {
+    'activeNode.name': function (v) {
       this.name = v
     },
   },
@@ -147,17 +106,68 @@ export default {
     },
 
     handleLoadMeta() {
-      let watcher = this.$watch('editVersion', () => {
+      const watcher = this.$watch('editVersion', () => {
         watcher()
         const metaPane = this.$refs.metaPane
         if (metaPane && this.currentTab === 'meta') {
           metaPane[this.syncType === 'sync' ? 'loadFields' : 'loadData']()
         }
       })
-    }
+    },
   },
 }
 </script>
+
+<template>
+  <section
+    v-show="showPanel"
+    class="config-panel border-start flex-column"
+    :class="{ flex: showPanel, 'show-settings': activeType === 'settings' }"
+  >
+    <div
+      v-if="activeNode"
+      class="position-absolute config-tabs-left-extra align-center"
+      :class="activeType === 'node' ? 'flex' : 'none'"
+    >
+      <NodeIcon :node="activeNode" :size="24" />
+    </div>
+    <div
+      v-if="activeNode && activeNode.type === 'merge_table_processor'"
+      class="position-absolute config-tabs-right-extra flex align-center"
+    >
+      <ElButton
+        class="--with-icon flex align-center px-2 py-0 gap-1"
+        @click="setMaterializedViewVisible(true)"
+      >
+        <VIcon size="30">beta</VIcon>
+        {{ $t('packages_dag_materialized_view') }}</ElButton
+      >
+    </div>
+
+    <FormPanel
+      v-if="!materializedViewVisible"
+      v-show="activeType !== 'settings'"
+      v-bind="$attrs"
+      ref="formPanel"
+      class="config-form-panel"
+      :form-props="{
+        colon: false,
+        shallow: false,
+        layout: 'vertical',
+        feedbackLayout: 'terse',
+      }"
+      @update:inputs-or-outputs="handleLoadMeta"
+    />
+    <!-- <SettingPanel
+      v-if="settings.id"
+      v-show="activeType === 'settings'"
+      v-bind="$attrs"
+      ref="setting"
+      class="config-form-panel"
+      :settings="settings"
+    /> -->
+  </section>
+</template>
 
 <style lang="scss">
 .databaseLinkDialog {

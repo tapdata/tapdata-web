@@ -1,3 +1,4 @@
+import axios from '@/plugins/axios'
 import i18n from '@/i18n'
 import { setPageTitle } from '@tap/shared'
 import Time from '@tap/shared/src/time'
@@ -27,7 +28,7 @@ export const buried = (code, page, attrs, sid) => {
    import.meta.env.NODE_ENV !== 'production' &&
     console.log(i18n.global.t('dfs_plugins_buried_chufamaidianc', { val1: code }), attrs)
 
-  window.axios.get('api/tcm/user/behavior' + queryStr)
+  axios.get('api/tcm/user/behavior' + queryStr)
 }
 
 export const startTimeOnSite = () => {

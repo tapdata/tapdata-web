@@ -1,11 +1,11 @@
 import * as Vue from 'vue'
 import i18n from '@/i18n'
-import Parent from './Parent'
 import FastDownload from '@/views/agent-download/FastDownload.vue'
-import UpgradeVersion from '@/views/agent-download/UpgradeVersion.vue'
 import PaidUpgrade from '@/views/agent-download/PaidUpgrade.vue'
-
+import UpgradeVersion from '@/views/agent-download/UpgradeVersion.vue'
 import Lang from '../views/Lang.vue'
+
+import Parent from './Parent'
 
 const UserCenter = () => import('../views/user/Center.vue')
 const UserContactUs = () => import('../views/user/ContactUs.vue')
@@ -79,7 +79,9 @@ const CustomNodeList = async () => {
 }
 
 const NodeEditor = async () => {
-  const { Editor } = await import(/* webpackChunkName: "node-design" */ '@tap/node-design')
+  const { Editor } = await import(
+    /* webpackChunkName: "node-design" */ '@tap/node-design'
+  )
   return Editor
 }
 
@@ -172,9 +174,11 @@ const routes = [
           {
             path: 'create',
             name: 'createAgent',
-            component: () => import('../views/instance/CreateAgent'),
+            component: () => import('../views/instance/CreateAgent.vue'),
             meta: {
-              title: i18n.global.t('dfs_agent_download_subscriptionmodeldialog_peizhishishishu'),
+              title: i18n.global.t(
+                'dfs_agent_download_subscriptionmodeldialog_peizhishishishu',
+              ),
               hideTitle: true,
             },
           },
@@ -192,7 +196,7 @@ const routes = [
           {
             path: 'install/:id',
             name: 'installAgent',
-            component: () => import('../views/instance/Install'),
+            component: () => import('../views/instance/Install.vue'),
             meta: {
               title: i18n.t('dfs_guide_index_bushujisuanyin'),
               hideTitle: true,
@@ -260,9 +264,9 @@ const routes = [
             component: MigrationForm,
             meta: {
               title: 'task_manage_migrate',
-              hideTitle: true
-            }
-          }
+              hideTitle: true,
+            },
+          },
         ],
       },
       /* ---------- 数据开发  ----------*/
@@ -442,31 +446,31 @@ const routes = [
         component: () => import('../views/order/List.vue'),
         meta: {
           title: 'dfs_router_index_dingyuezhongxin',
-          hideTitle: true
+          hideTitle: true,
         },
         children: [
           {
             path: 'pay/:id',
             name: 'pay',
-            component: () => import('../views/order/Pay'),
+            component: () => import('../views/order/Pay.vue'),
             meta: {
               hideTitle: true,
-              title: 'dfs_router_index_zhifuqingdan'
-            }
+              title: 'dfs_router_index_zhifuqingdan',
+            },
           },
           {
             path: 'bill/pay/:id',
             name: 'payForBill',
-            component: () => import('../views/order/Pay'),
+            component: () => import('../views/order/Pay.vue'),
             meta: {
               hideTitle: true,
-              title: i18n.t('dfs_router_index_zhifuqingdan')
-            }
+              title: i18n.t('dfs_router_index_zhifuqingdan'),
+            },
           },
           {
             path: 'bill/pay/:id/wait',
             name: 'waitPayForBill',
-            component: () => import('../views/order/WaitPay'),
+            component: () => import('../views/order/WaitPay.vue'),
             meta: {
               hideTitle: true,
               title: i18n.global.t('dfs_router_index_zhifuqingdan'),
@@ -475,7 +479,7 @@ const routes = [
           {
             path: 'change/pay/:id',
             name: 'payForChange',
-            component: () => import('../views/order/Pay'),
+            component: () => import('../views/order/Pay.vue'),
             meta: {
               hideTitle: true,
               title: i18n.global.t('dfs_router_index_zhifuqingdan'),
@@ -484,7 +488,7 @@ const routes = [
           {
             path: 'renew/pay/:id',
             name: 'payForRenew',
-            component: () => import('../views/order/Pay'),
+            component: () => import('../views/order/Pay.vue'),
             meta: {
               hideTitle: true,
               title: i18n.global.t('dfs_router_index_zhifuqingdan'),
@@ -526,7 +530,7 @@ const routes = [
       {
         path: '/data-server',
         name: 'dataServerList',
-        component: () => import('../views/data-server/list'),
+        component: () => import('../views/data-server/list.vue'),
         meta: {
           title: 'dfs_data_server',
           hideTitle: true,
@@ -536,7 +540,7 @@ const routes = [
       {
         path: '/data-hub',
         name: 'dataConsole',
-        component: () => import('../views/data-hub'),
+        component: () => import('../views/data-hub/index.vue'),
         meta: {
           title: 'page_title_data_hub',
           hideTitle: true,
@@ -546,7 +550,7 @@ const routes = [
       {
         path: '/create-storage',
         name: 'CreateStorage',
-        component: () => import('../views/instance/CreateStorage'),
+        component: () => import('../views/instance/CreateStorage.vue'),
         meta: {
           title: 'page_title_subscribe_storage',
           hideTitle: true,
@@ -610,30 +614,36 @@ const routes = [
   },
   {
     path: '/welcome',
-    component: () => import(/* webpackChunkName: "layout" */ '../views/welcome/WelcomeLayout.vue'),
+    component: () =>
+      import(
+        /* webpackChunkName: "layout" */ '../views/welcome/WelcomeLayout.vue'
+      ),
     children: [
       {
         path: '',
         name: 'Welcome',
-        component: () => import(/* webpackChunkName: "layout" */ '../views/welcome/Welcome.vue')
+        component: () =>
+          import(
+            /* webpackChunkName: "layout" */ '../views/welcome/Welcome.vue'
+          ),
       },
       {
         path: 'task/:id?',
         name: 'WelcomeTask',
         component: MigrationForm,
         props: {
-          editRouteName: 'WelcomeTask'
-        }
-      }
-    ]
+          editRouteName: 'WelcomeTask',
+        },
+      },
+    ],
   },
   {
     path: '/migrate/monitor/simple/:id',
     name: 'MigrationMonitorSimple',
     component: MigrationMonitorSimple,
     meta: {
-      title: 'page_title_run_monitor'
-    }
+      title: 'page_title_run_monitor',
+    },
   },
   {
     path: '/migrate/monitor/:id',
@@ -742,7 +752,7 @@ const routes = [
   {
     path: '/data-capture/:id',
     name: 'DataCapture',
-    component: DataCapture
+    component: DataCapture,
   },
   {
     path: '/sharedMining/monitor/:id',
@@ -782,7 +792,7 @@ const routes = [
   {
     path: '/product',
     name: 'productDemo',
-    component: () => import('../views/productDemo'),
+    component: () => import('../views/productDemo.vue'),
   },
 ]
 

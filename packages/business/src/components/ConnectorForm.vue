@@ -27,7 +27,7 @@ export default {
     connectionType: String,
   },
   data() {
-    const isDaas =  import.meta.env.VUE_APP_PLATFORM === 'DAAS'
+    const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
     return {
       isDaas,
       // 当前连接是否有共享缓存任务使用
@@ -172,7 +172,7 @@ export default {
             expireSeconds: 100000000,
           }
           proxyApi.subscribe(filter).then((data) => {
-            const isDaas =  import.meta.env.VUE_APP_PLATFORM === 'DAAS'
+            const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
             const p = location.origin + location.pathname
             let str = `${p}${isDaas ? '' : 'tm/'}api/proxy/callback/${data.token}`
             if (/^\/\w+/.test(data.token)) {
@@ -314,7 +314,7 @@ export default {
             others,
           )
           proxyApi.generateRefreshToken(params).then((data = {}) => {
-            const isDaas =  import.meta.env.VUE_APP_PLATFORM === 'DAAS'
+            const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
             const p = location.origin + location.pathname
             let str = `${p}${isDaas ? '' : 'tm/'}${data.path}/${data.token}`
             if (/^\/\w+/.test(data.token)) {
@@ -977,9 +977,9 @@ export default {
           START: {
             type: 'void',
             'x-index': 0,
-            'x-reactions':  import.meta.env.VUE_APP_HIDE_CONNECTOR_SCHEMA
+            'x-reactions': import.meta.env.VUE_APP_HIDE_CONNECTOR_SCHEMA
               ? {
-                  target:  import.meta.env.VUE_APP_HIDE_CONNECTOR_SCHEMA,
+                  target: import.meta.env.VUE_APP_HIDE_CONNECTOR_SCHEMA,
                   fulfill: {
                     state: {
                       display: 'hidden',
@@ -1416,103 +1416,103 @@ export default {
   }
 }
 .form-wrap {
-  :deep {
-    .formily-element-form-item-feedback-layout-loose {
-      margin-bottom: 20px;
-    }
+  :deep(.formily-element-form-item-feedback-layout-loose) {
+    margin-bottom: 20px;
+  }
 
-    .formily-element-form-item-layout-vertical {
-      > .formily-element-form-item-label {
-        margin-bottom: 8px;
+  :deep(.formily-element-form-item-layout-vertical) {
+    > .formily-element-form-item-label {
+      margin-bottom: 8px;
 
-        .formily-element-form-item-label-content {
-          min-height: unset;
-          height: unset;
-        }
-
-        .formily-element-form-item-label-tooltip {
-          margin-left: 4px;
-          height: unset;
-        }
-
-        * {
-          line-height: 22px;
-        }
-      }
-    }
-
-    .formily-element-form-collapse {
-      &.border-bottom-0 {
-        :deep(.el-collapse-item__header) {
-          border-bottom: none;
-        }
+      .formily-element-form-item-label-content {
+        min-height: unset;
+        height: unset;
       }
 
-      :deep(.el-collapse-item__content) {
-        padding-bottom: 0;
-      }
-    }
-
-    // 覆盖数字输入框的宽度
-    .formily-element-form-item {
-      font-size: $fontBaseTitle;
-      &-label {
-        label {
-          color: map.get($fontColor, light);
-        }
-      }
-      .el-input-number {
-        width: 180px;
-      }
-      .el-input-number--small {
-        width: 130px;
-      }
-
-      &-help,
-      &-extra {
-        white-space: pre-wrap;
-      }
-    }
-
-    .formily-element-form-item-layout-vertical {
       .formily-element-form-item-label-tooltip {
-        height: 40px;
+        margin-left: 4px;
+        height: unset;
+      }
 
-        i {
-          line-height: 1;
-        }
+      * {
+        line-height: 22px;
+      }
+    }
+  }
+
+  :deep(.formily-element-form-collapse) {
+    &.border-bottom-0 {
+      :deep(.el-collapse-item__header) {
+        border-bottom: none;
       }
     }
 
-    .formily-element-form-item-control {
-      .formily-element-space-horizontal {
-        vertical-align: top;
+    :deep(.el-collapse-item__content) {
+      padding-bottom: 0;
+    }
+  }
+
+  // 覆盖数字输入框的宽度
+  :deep(.formily-element-form-item) {
+    font-size: $fontBaseTitle;
+    .formily-element-form-item-label {
+      label {
+        color: map.get($fontColor, light);
       }
     }
-
-    .formily-element-form-item:not(.form-item-text) + .form-item-text {
-      margin-top: 16px;
+    .el-input-number {
+      width: 180px;
+    }
+    .el-input-number--small {
+      width: 130px;
     }
 
+    .formily-element-form-item-help,
+    .formily-element-form-item-extra {
+      white-space: pre-wrap;
+    }
+  }
+
+  :deep(.formily-element-form-item-layout-vertical) {
+    .formily-element-form-item-label-tooltip {
+      height: 40px;
+
+      i {
+        line-height: 1;
+      }
+    }
+  }
+
+  :deep(.formily-element-form-item-control) {
+    .formily-element-space-horizontal {
+      vertical-align: top;
+    }
+  }
+
+  :deep(.formily-element-form-item:not(.form-item-text) + .form-item-text) {
+    margin-top: 16px;
+  }
+
+  :deep(
     .form-item-dense
       .formily-element-form-item-control
       .formily-element-form-item-control-content
-      .formily-element-form-item-control-content-component {
-      min-height: unset;
-      line-height: normal;
-    }
+      .formily-element-form-item-control-content-component
+  ) {
+    min-height: unset;
+    line-height: normal;
+  }
 
-    .form-item-text {
-      & + .form-item-text {
-        margin-top: 8px;
-      }
-      margin-bottom: 0;
-      .formily-element-form-item-label-content {
-        min-height: unset;
+  :deep(.form-item-text) {
+    & + .form-item-text {
+      margin-top: 8px;
+    }
+    margin-bottom: 0;
+    .formily-element-form-item-label-content {
+      min-height: unset;
+      line-height: 1;
+      label {
         line-height: 1;
-        label {
-          line-height: 1;
-        }
       }
     }
   }

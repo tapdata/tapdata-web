@@ -137,7 +137,7 @@ export default {
           v-bind="inputProps"
           v-model="inputValue"
           class="input"
-          :class="[{ 'valid-input': disabled }, 'block']"
+          :class="{ 'valid-input': disabled }"
           :style="inputStyle"
         />
       </ElTooltip>

@@ -776,7 +776,6 @@ export default {
         <div class="flex-grow-1" />
         <ElButton
           class="flex-shrink-0"
-         
           type="primary"
           @click="handleCreateTask"
         >
@@ -785,7 +784,6 @@ export default {
         <ElButton
           v-if="apiSupportTypes.includes(connectionType) && isDaas"
           class="flex-shrink-0"
-         
           type="primary"
           plain
           @click="handleCreateAPI"
@@ -795,7 +793,6 @@ export default {
         <ElButton
           v-if="swimType === 'mdm'"
           class="flex-shrink-0"
-         
           type="danger"
           plain
           @click="handleDelete"

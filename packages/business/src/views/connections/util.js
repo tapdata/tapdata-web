@@ -1,7 +1,7 @@
-import axios from 'axios'
-import qs from 'qs'
-
 import Cookie from '@tap/shared/src/cookie'
+import axios from 'axios'
+
+import qs from 'qs'
 
 export const getImgByType = function (type) {
   if (!type || type === 'jira') {
@@ -11,16 +11,32 @@ export const getImgByType = function (type) {
 }
 
 export const verify = function (value) {
-  var arr = ['\\', '$', '(', ')', '*', '+', '.', '[', ']', '?', '^', '{', '}', '|', '-']
-  for (var i = 0; i < arr.length; i++) {
-    var str = '\\' + arr[i]
-    value = value.replace(new RegExp(str, 'g'), '\\' + arr[i])
+  var arr = [
+    '\\',
+    '$',
+    '(',
+    ')',
+    '*',
+    '+',
+    '.',
+    '[',
+    ']',
+    '?',
+    '^',
+    '{',
+    '}',
+    '|',
+    '-',
+  ]
+  for (const element of arr) {
+    var str = `\\${element}`
+    value = value.replaceAll(new RegExp(str, 'g'), `\\${element}`)
   }
   return value
 }
 //列表脱敏
 export const desensitization = function (url) {
-  let matchResult = url.match(/^mongodb(\+srv)?:\/\/(.+):(.+)@/)
+  const matchResult = url.match(/^mongodb(\+srv)?:\/\/(.+):(.+)@/)
   if (matchResult && matchResult[3]) {
     return url.replace(`:${matchResult[3]}@`, ':*********@')
   }
@@ -34,7 +50,7 @@ export const handleProgress = function (data) {
       count++
     }
   })
-  let len = (100 / data.length) * count
+  const len = (100 / data.length) * count
   return Math.round(len) ? Math.round(len) : 0
 }
 
@@ -54,14 +70,14 @@ export const getConnectionIcon = (pdkHash) => {
     const params = {
       pdkHash,
     }
-    if ( import.meta.env.VUE_APP_ACCESS_TOKEN) {
-      params.__token =  import.meta.env.VUE_APP_ACCESS_TOKEN
+    if (TAP_ACCESS_TOKEN) {
+      params.__token = TAP_ACCESS_TOKEN
     }
     const access_token = Cookie.get('access_token')
     if (access_token) {
       params.access_token = access_token
     }
-    let baseUrl = axios.defaults.baseURL.replace(/\/$/, '')
+    const baseUrl = axios.defaults.baseURL.replace(/\/$/, '')
     return `${baseUrl}/api/pdk/icon?${qs.stringify(params)}`
   } else {
     return ''

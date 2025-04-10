@@ -1,9 +1,9 @@
-import i18n from '@/i18n'
-import * as Vue from 'vue'
-import axios from 'axios'
-import Qs from 'qs'
-import { ElMessage as Message } from 'element-plus'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
+import axios from 'axios'
+import { ElMessage as Message } from 'element-plus'
+import Qs from 'qs'
+import * as Vue from 'vue'
+import i18n from '@/i18n'
 
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL =  import.meta.env.baseURL ||  '';
@@ -19,19 +19,22 @@ const CancelToken = axios.CancelToken
 
 const _axios = axios.create({
   baseURL: './',
-  headers: headers,
+  headers,
 })
 
 const getPendingKey = (config) => {
-  let { url, method, data, params } = config
-  let headers = {}
+  const { url, method, data, params } = config
+  const headers = {}
   for (const key in config.headers) {
-    let value = config.headers[key]
-    if (Object.prototype.toString.call(value) === '[object String]' && !['Content-Type', 'Accept'].includes(key)) {
+    const value = config.headers[key]
+    if (
+      Object.prototype.toString.call(value) === '[object String]' &&
+      !['Content-Type', 'Accept'].includes(key)
+    ) {
       headers[key] = value
     }
   }
-  let key = JSON.stringify({
+  const key = JSON.stringify({
     url,
     method,
     data,
@@ -41,13 +44,13 @@ const getPendingKey = (config) => {
   return key
 }
 const removePending = (config) => {
-  let key = getPendingKey(config)
-  let index = pending.findIndex((it) => it === key)
+  const key = getPendingKey(config)
+  const index = pending.indexOf(key)
   pending.splice(index, 1)
 }
 let skipErrorHandler = false
 const errorCallback = (error) => {
-  let status = error?.response?.status
+  const status = error?.response?.status
   if (axios.isCancel(error)) {
     return Promise.reject(error)
   }
@@ -57,10 +60,10 @@ const errorCallback = (error) => {
   }
   if (status === 401) {
     // 未登录
-    location.replace(location.href.split('#/')[0] + 'login')
+    location.replace(`${location.href.split('#/')[0]}login`)
   } else if (error.code && error.message) {
     // 其他错误
-    Message.error(`${error.message || error}`)
+    Message.error(String(error.message || error))
   }
   //暂时注释 62-2 迭代先authing错误页面提示
   // if (status === 404) {
@@ -83,7 +86,7 @@ const errorCallback = (error) => {
   // else if (error?.message !== 'cancel' && window.navigator.onLine) {
   //   errorConfirmFnc(error)
   // }
-  console.error(i18n.t('dfs_plugins_axios_qingqiubaocuo') + error) // eslint-disable-line
+  console.error(i18n.t('dfs_plugins_axios_qingqiubaocuo') + error)
   return Promise.reject(error)
 }
 const requestInterceptor = (config) => {
@@ -93,21 +96,21 @@ const requestInterceptor = (config) => {
       encoder: (str) => window.encodeURIComponent(str),
     })
   }
-  // 本地开发使用header中加__token的方式绕过网关登录
-  const ACCESS_TOKEN =  import.meta.env.VUE_APP_ACCESS_TOKEN || ''
-  if (ACCESS_TOKEN) {
-    let params = { __token: ACCESS_TOKEN }
-    config.params = Object.assign({}, config.params, params)
+
+  if (!config.params) config.params = {}
+
+  // 配置请求头
+  if (TAP_ACCESS_TOKEN) {
+    config.params.__token = TAP_ACCESS_TOKEN
   }
-  skipErrorHandler = config?.data?.skipErrorHandler || false //是否跳转统一错误提示
 
   // headers里面注入用户token，并开启鉴权
-  let user = window.__USER_INFO__
-  if (user) {
-    if ( import.meta.env.NODE_ENV === 'development') {
-      config.headers['user_id'] = user.id
-    }
+  if (TAP_USER_ID) {
+    config.headers.user_id = TAP_USER_ID
   }
+
+  skipErrorHandler = config?.data?.skipErrorHandler || false //是否跳转统一错误提示
+
   config.withCredentials = true
 
   // 业务内设置了cancel
@@ -118,10 +121,10 @@ const requestInterceptor = (config) => {
   config.cancelToken = new CancelToken((c) => {
     cancelFunc = c
   })
-  let key = getPendingKey(config)
+  const key = getPendingKey(config)
   // 判断请求池是否有相同请求，有则取消当前请求（后一条）,没有则将请求注入请求池
   if (pending.includes(key)) {
-    console.warn('Cancel request:', config) //eslint-disable-line
+    console.warn('Cancel request:', config)
     cancelFunc('cancel')
   } else if (config.method !== 'get') {
     pending.push(key)
@@ -133,8 +136,8 @@ const responseInterceptor = (response) => {
     // 从请求池清除掉错误请求
     removePending(response.config)
 
-    let data = response?.data
-    let code = data?.code
+    const data = response?.data
+    const code = data?.code
 
     if (code === 'ok') {
       // code 为 ok 则表示请求正常返回，进入then逻辑
@@ -155,7 +158,7 @@ const responseInterceptor = (response) => {
         'Datasource.TableNotFound',
         'SubscribeFailed.OrderLimit',
         'Task.ScheduleLimit',
-        'Task.ManuallyScheduleLimit'
+        'Task.ManuallyScheduleLimit',
       ].includes(code)
     ) {
       return reject(Object.assign(response))
@@ -223,8 +226,8 @@ export default Plugin*/
 export default _axios
 
 export const install = (app) => {
-  window.axios = _axios
-  Object.defineProperties(window.$vueApp.config.globalProperties, {
+  // window.axios = _axios
+  Object.defineProperties(app.config.globalProperties, {
     axios: {
       get() {
         return _axios

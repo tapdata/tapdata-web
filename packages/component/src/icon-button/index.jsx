@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue'
-import VIcon from '../base/VIcon'
+import VIcon from '../base/VIcon.vue'
 import './style.scss'
 
 export const IconButton = defineComponent({
@@ -25,7 +25,8 @@ export const IconButton = defineComponent({
             {
               't-button--icon-xs': props.xs,
               't-button--icon-sm': props.sm,
-              't-button--icon-md': props.md || (!props.xs && !props.sm && !props.lg && !props.xl),
+              't-button--icon-md':
+                props.md || (!props.xs && !props.sm && !props.lg && !props.xl),
               't-button--icon-lg': props.lg,
               't-button--icon-xl': props.xl,
               't-button__rotating': props.clickAndRotate,
@@ -34,7 +35,9 @@ export const IconButton = defineComponent({
           type="button"
           {...attrs}
         >
-          <VIcon class={{ 'animation-rotate-fast': props.loading }}>{slots.default()}</VIcon>
+          <VIcon class={{ 'animation-rotate-fast': props.loading }}>
+            {slots.default()}
+          </VIcon>
         </button>
       )
     }

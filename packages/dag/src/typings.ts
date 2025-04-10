@@ -1,0 +1,1 @@
+export type ConnectionType = 'source' | 'target' | 'source_and_target'; 
