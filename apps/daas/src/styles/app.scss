@@ -55,13 +55,6 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.g-panel-container {
-  background-color: map.get($bgColor, white);
-  padding: 24px;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-
 .status-block {
   display: inline-block;
   min-width: 60px;

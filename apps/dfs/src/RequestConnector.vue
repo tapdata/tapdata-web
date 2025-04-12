@@ -120,7 +120,7 @@
       :title="$t('dfs_apply_comment')"
       :model-value="dialog.visible"
       :close-on-click-modal="false"
-      @update:visible="dialog.visible = $event"
+      @update:model-value="dialog.visible = $event"
       @close="handleClose"
       @closed="afterClose"
       :append-to-body="true"

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { isNum } from '@tap/shared'
-import { debounce, escapeRegExp, merge } from 'lodash-es'
+import { debounce, escapeRegExp, merge, isString } from 'lodash-es'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import ElSelectLoading from './ElSelectLoading.vue'
 
@@ -57,6 +57,10 @@ const props = withDefaults(defineProps<Props>(), {
       },
     }
   },
+})
+
+const isStrItem = computed(() => {
+  return isString(selectOptions.value[0])
 })
 
 const emit = defineEmits([
@@ -192,9 +196,9 @@ const onChange = (value: any) => {
     emit('change-label', selectRef.value.states.selected.currentLabel)
 
     // Find the selected object by matching itemValue with the selected value
-    const selectedOption = selectOptions.value.find(
-      (option) => option[props.itemValue] === value,
-    )
+    const selectedOption = isStrItem.value
+      ? value
+      : selectOptions.value.find((option) => option[props.itemValue] === value)
 
     if (selectedOption) {
       // Pass the full object to onSetSelected
@@ -228,7 +232,6 @@ watch(
 )
 
 onMounted(() => {
-  console.log('selectRef', selectRef)
   nextTick(() => {
     setCurrentLabel()
   })
@@ -268,7 +271,7 @@ onMounted(() => {
     </el-option>
 
     <div v-show="!showLoading">
-      <template v-if="itemType === 'object'">
+      <template v-if="!isStrItem">
         <el-option
           v-for="item in selectOptions"
           :key="item[itemValue]"

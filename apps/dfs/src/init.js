@@ -2,7 +2,7 @@ import { timeStampApi } from '@tap/api'
 import WSClient from '@tap/business/src/shared/ws-client'
 import { installElement, VButton, VIcon } from '@tap/component'
 import Time from '@tap/shared/src/time'
-import { ElLoading, ElNotification as Notification } from 'element-plus'
+import { ElLoading } from 'element-plus'
 import * as Vue from 'vue'
 import * as VueRouter from 'vue-router'
 import { installAllPlugins } from '@/plugins'
@@ -14,7 +14,7 @@ import App from './App.vue'
 import { installDirectives } from './directive'
 import i18n from './i18n'
 import dayjs from './plugins/dayjs'
-import { createVersionPolling } from './plugins/version-polling'
+import { startVersionPolling } from './plugins/version-polling'
 import 'github-markdown-css'
 import './assets/styles/app.scss'
 
@@ -86,57 +86,7 @@ export default ({ routes }) => {
     window.$vueApp.component(VButton.name, VButton)
     window.$vueApp.config.globalProperties.$ws = new WSClient(wsUrl)
 
-    // 版本升级检测
-    createVersionPolling({
-      appETagKey: '__APP_ETAG__',
-      pollingInterval: 5 * 1000, // 单位为毫秒
-      silent: import.meta.env.NODE_ENV === 'development', // 开发环境下不检测
-      onUpdate: (self) => {
-        const h = window.App.$createElement
-        Notification({
-          customClass: 'version-upgrade-notification',
-          title: '',
-          message: h(
-            'div',
-            {
-              class: 'flex align-items-start gap-2 ml-n3 mr-n2',
-            },
-            [
-              h('ElImage', {
-                class: 'flex-shrink-0',
-                attrs: { src: require('@/assets/image/version-rocket.svg') },
-              }),
-              h(
-                'div',
-                {
-                  class: 'flex flex-column align-items-start gap-2 text-start',
-                },
-                [
-                  h(
-                    'span',
-                    { class: 'text-primary fs-6 fw-sub' },
-                    i18n.t('dfs_system_update'),
-                  ),
-                  h('span', { class: '' }, i18n.t('dfs_system_description')),
-                  h(
-                    'el-button',
-                    {
-                      class: 'ml-auto',
-                      type: 'primary',
-                      size: 'small',
-                      onClick: () => self.onRefresh(),
-                    },
-                    i18n.t('public_button_refresh'),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          duration: 0,
-          position: 'bottom-right',
-        })
-      },
-    })
+    startVersionPolling()
 
     // 路由守卫
     router.beforeEach((to, from, next) => {
@@ -171,8 +121,6 @@ export default ({ routes }) => {
 
     return router
   }
-
-  console.log('app', app)
 
   loading = ElLoading.service({ fullscreen: true })
   let count = 0

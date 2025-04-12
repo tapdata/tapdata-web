@@ -158,14 +158,14 @@ export default {
       }"
       @update:inputs-or-outputs="handleLoadMeta"
     />
-    <!-- <SettingPanel
+    <SettingPanel
       v-if="settings.id"
       v-show="activeType === 'settings'"
       v-bind="$attrs"
       ref="setting"
       class="config-form-panel"
       :settings="settings"
-    /> -->
+    />
   </section>
 </template>
 

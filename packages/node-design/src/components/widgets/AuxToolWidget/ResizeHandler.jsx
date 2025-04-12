@@ -10,7 +10,7 @@ export const ResizeHandler = defineComponent({
     const prefix = usePrefix('aux-node-resize-handler')
     const createHandler = (value) => {
       return {
-        attrs: { [designer.props.nodeResizeHandlerAttrName]: value },
+        [designer.props.nodeResizeHandlerAttrName]: value,
         class: [prefix, value],
       }
     }

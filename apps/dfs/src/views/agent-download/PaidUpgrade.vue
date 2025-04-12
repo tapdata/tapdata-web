@@ -1,82 +1,12 @@
-<template>
-  <div class="paid-upgrade-wrap">
-    <TheHeader></TheHeader>
-    <ElBreadcrumb class="breadcrumb paid-upgrade-mb16" separator-class="el-icon-arrow-right">
-      <ElBreadcrumbItem :to="{ path: '/' }">{{ $t('dfs_agent_download_paidupgrade_fanhuicaidan') }}</ElBreadcrumbItem>
-      <ElBreadcrumbItem>{{ $t('dfs_agent_download_paidupgrade_fuwushengji') }}</ElBreadcrumbItem>
-    </ElBreadcrumb>
-    <div class="card" v-show="!successStatus">
-      <header class="header">
-        {{ $t('dfs_agent_download_paidupgrade_biaozhunban') }}
-      </header>
-      <div class="main">
-        <el-form :model="form" ref="paidForm" :rules="rules">
-          <el-form-item :label="$t('dfs_agent_download_paidupgrade_xingming')" required prop="contactName">
-            <el-input v-model="form.contactName"></el-input>
-          </el-form-item>
-          <el-form-item :label="$t('dfs_agent_download_paidupgrade_dianhua')" required prop="contactTelephone">
-            <el-input :max="11" v-model="form.contactTelephone"></el-input>
-          </el-form-item>
-        </el-form>
-        <div class="currentList paid-upgrade-mb16">
-          {{ $t('dfs_agent_download_paidupgrade_goumaifangan') }}
-        </div>
-        <div class="desc paid-upgrade-mb16">
-          {{ $t('dfs_agent_download_paidupgrade_shoufeixiangqingmei') }}
-        </div>
-        <div class="content mb-2 flex justify-content-between">
-          <span>{{ $t('dfs_agent_download_paidupgrade_jichuyuefeihan') }}</span>
-          <span class="version">¥12000</span>
-        </div>
-        <div class="content flex justify-content-between paid-upgrade-mb8">
-          <span
-            ><el-checkbox class="mr-2" v-model="checked" @change="handleChecked"></el-checkbox
-            >{{ $t('dfs_agent_download_paidupgrade_meigeewaide') }}</span
-          >
-          <span class="version">¥3600</span>
-        </div>
-        <div class="content flex justify-content-between paid-upgrade-mb16">
-          <el-input-number controls-position="right" v-model="form.extraPipelines" :min="0"></el-input-number
-          ><span class="desc">× {{ form.extraPipelines || 0 }}</span>
-        </div>
-        <div class="link paid-upgrade-mb16"></div>
-        <div class="content flex justify-content-between paid-upgrade-mb16">
-          <span class="currentList">{{ $t('dfs_agent_download_paidupgrade_zongji') }}</span>
-          <span class="version" v-if="!checked">¥12000</span>
-          <span class="version" v-else>¥{{ total }}</span>
-        </div>
-        <div class="tip paid-upgrade-mb16">
-          {{ $t('dfs_agent_download_paidupgrade_dianjiquerengou') }}
-        </div>
-        <el-button class="float-end" type="primary" @click="save">{{
-          $t('dfs_agent_download_paidupgrade_queren')
-        }}</el-button>
-      </div>
-    </div>
-    <div class="success" v-show="successStatus">
-      <div class="paid-upgrade-mb16 imgBox">
-        <img class="mt-2 block" :src="getImg('complete')" alt="" />
-      </div>
-      <div class="version paid-upgrade-mb8">
-        {{ $t('dfs_agent_download_paidupgrade_ganxienindinggou') }}{{ (successData.extraPipelines || 0) + 5 }}
-      </div>
-      <div class="desc paid-upgrade-mb16">
-        {{ $t('dfs_agent_download_paidupgrade_womendetongshi') }}
-      </div>
-      <el-button type="primary" @click="goBack">{{ $t('dfs_agent_download_paidupgrade_fanhuikongzhitai') }}</el-button>
-    </div>
-  </div>
-</template>
-
 <script>
-import i18n from '@/i18n'
+import TheHeader from '@/components/layout/Header.vue'
 
-import TheHeader from '@/components/the-header'
+import i18n from '@/i18n'
 export default {
   name: 'PaidUpgrade',
   components: { TheHeader },
   data() {
-    let user = window.__USER_INFO__ || {}
+    const user = window.__USER_INFO__ || {}
     return {
       form: {
         contactName: user.nickname,
@@ -117,10 +47,12 @@ export default {
     save() {
       this.$refs.paidForm.validate((valid) => {
         if (valid) {
-          this.$axios.post('api/tcm/orders/subscribe/paid/plan', this.form).then((data) => {
-            this.successData = data
-            this.successStatus = true
-          })
+          this.$axios
+            .post('api/tcm/orders/subscribe/paid/plan', this.form)
+            .then((data) => {
+              this.successData = data
+              this.successStatus = true
+            })
         }
       })
     },
@@ -135,6 +67,102 @@ export default {
   },
 }
 </script>
+
+<template>
+  <div class="paid-upgrade-wrap">
+    <TheHeader />
+    <ElBreadcrumb
+      class="breadcrumb paid-upgrade-mb16"
+      separator-class="el-icon-arrow-right"
+    >
+      <ElBreadcrumbItem :to="{ path: '/' }">{{
+        $t('dfs_agent_download_paidupgrade_fanhuicaidan')
+      }}</ElBreadcrumbItem>
+      <ElBreadcrumbItem>{{
+        $t('dfs_agent_download_paidupgrade_fuwushengji')
+      }}</ElBreadcrumbItem>
+    </ElBreadcrumb>
+    <div v-show="!successStatus" class="card">
+      <header class="header">
+        {{ $t('dfs_agent_download_paidupgrade_biaozhunban') }}
+      </header>
+      <div class="main">
+        <el-form ref="paidForm" :model="form" :rules="rules">
+          <el-form-item
+            :label="$t('dfs_agent_download_paidupgrade_xingming')"
+            required
+            prop="contactName"
+          >
+            <el-input v-model="form.contactName" />
+          </el-form-item>
+          <el-form-item
+            :label="$t('dfs_agent_download_paidupgrade_dianhua')"
+            required
+            prop="contactTelephone"
+          >
+            <el-input v-model="form.contactTelephone" :max="11" />
+          </el-form-item>
+        </el-form>
+        <div class="currentList paid-upgrade-mb16">
+          {{ $t('dfs_agent_download_paidupgrade_goumaifangan') }}
+        </div>
+        <div class="desc paid-upgrade-mb16">
+          {{ $t('dfs_agent_download_paidupgrade_shoufeixiangqingmei') }}
+        </div>
+        <div class="content mb-2 flex justify-content-between">
+          <span>{{ $t('dfs_agent_download_paidupgrade_jichuyuefeihan') }}</span>
+          <span class="version">¥12000</span>
+        </div>
+        <div class="content flex justify-content-between paid-upgrade-mb8">
+          <span
+            ><el-checkbox
+              v-model="checked"
+              class="mr-2"
+              @change="handleChecked"
+            />{{ $t('dfs_agent_download_paidupgrade_meigeewaide') }}</span
+          >
+          <span class="version">¥3600</span>
+        </div>
+        <div class="content flex justify-content-between paid-upgrade-mb16">
+          <el-input-number
+            v-model="form.extraPipelines"
+            controls-position="right"
+            :min="0"
+          /><span class="desc">× {{ form.extraPipelines || 0 }}</span>
+        </div>
+        <div class="link paid-upgrade-mb16" />
+        <div class="content flex justify-content-between paid-upgrade-mb16">
+          <span class="currentList">{{
+            $t('dfs_agent_download_paidupgrade_zongji')
+          }}</span>
+          <span v-if="!checked" class="version">¥12000</span>
+          <span v-else class="version">¥{{ total }}</span>
+        </div>
+        <div class="tip paid-upgrade-mb16">
+          {{ $t('dfs_agent_download_paidupgrade_dianjiquerengou') }}
+        </div>
+        <el-button class="float-end" type="primary" @click="save">{{
+          $t('dfs_agent_download_paidupgrade_queren')
+        }}</el-button>
+      </div>
+    </div>
+    <div v-show="successStatus" class="success">
+      <div class="paid-upgrade-mb16 imgBox">
+        <img class="mt-2 block" :src="getImg('complete')" alt="" />
+      </div>
+      <div class="version paid-upgrade-mb8">
+        {{ $t('dfs_agent_download_paidupgrade_ganxienindinggou')
+        }}{{ (successData.extraPipelines || 0) + 5 }}
+      </div>
+      <div class="desc paid-upgrade-mb16">
+        {{ $t('dfs_agent_download_paidupgrade_womendetongshi') }}
+      </div>
+      <el-button type="primary" @click="goBack">{{
+        $t('dfs_agent_download_paidupgrade_fanhuikongzhitai')
+      }}</el-button>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .paid-upgrade-wrap {

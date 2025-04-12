@@ -1,5 +1,7 @@
 <script>
 import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+import loadingImg from '@tap/assets/icons/loading.svg'
+
 export default {
   props: {
     type: String,
@@ -14,6 +16,7 @@ export default {
   data() {
     return {
       current: 0,
+      loadingImg
     }
   },
   computed: {
@@ -119,7 +122,7 @@ export default {
           <template v-else>
             <img
               style="width: 26px; vertical-align: middle"
-              :src="require('@tap/assets/icons/loading.svg')"
+              :src="loadingImg"
             />
             <span>{{ $t('packages_business_recovering') }}</span>
           </template>

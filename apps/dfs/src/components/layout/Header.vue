@@ -6,6 +6,8 @@ import {
   setCurrentLanguage,
 } from '@tap/i18n/src/shared/util'
 import { mapGetters, mapMutations, mapState } from 'vuex'
+import slackImg from '@/assets/image/slack.svg'
+
 import NotificationPopover from '@/views/workbench/NotificationPopover'
 
 import { daysdifference, extractTimeFromObjectId } from '../../util'
@@ -26,6 +28,7 @@ export default {
     }
 
     return {
+      slackImg,
       topBarLinks: [
         {
           text: 'header_manual', //使用手册
@@ -155,145 +158,148 @@ export default {
 
 <template>
   <!-- 头部导航 -->
-  <ElHeader class="dfs-header" :class="{ isMockUser }">
-    <div class="dfs-header__body">
-      <router-link :to="{ name: 'Home' }" class="logo">
-        <img src="../../assets/image/logo.svg" alt="" />
-      </router-link>
-      <!--<ElLink class="logo ml-2" @click="command('workbench')">
-        <img src="../../assets/image/logo.svg" alt="" />
-      </ElLink>-->
+  <el-header :class="{ isMockUser }" class="flex align-center gap-4">
+    <router-link :to="{ name: 'Home' }" class="header-logo">
+      <img src="../../assets/image/logo.svg" alt="" />
+    </router-link>
+
+    <div class="flex gap-4 align-center ml-auto">
+      <!--付费专业版-->
       <div
-        class="dfs-header__button button-bar pr-4 fs-7 flex gap-4 align-center"
+        class="vip-btn rounded-4 cursor-pointer flex align-center gap-1"
+        @click="setUpgradeFeeVisible(true)"
       >
-        <!--付费专业版-->
-        <div
-          class="vip-btn rounded-4 cursor-pointer flex align-center gap-1"
-          @click="setUpgradeFeeVisible(true)"
+        <VIcon size="18">icon-vip</VIcon>&nbsp;{{
+          $t('packages_component_src_upgradefee_dingyuezhuanyeban')
+        }}
+      </div>
+      <!--加入slack-->
+      <div
+        v-if="!isDomesticStation"
+        class="command-item position-relative inline-flex align-items-center rounded-4"
+        @click="goSlack"
+      >
+        <ElImage class="slack-logo" :src="slackImg" />
+        <span class="cursor-pointer ml-1">{{
+          $t('dfs_the_header_header_jiaruSla')
+        }}</span>
+      </div>
+      <!--线下部署-->
+      <div
+        class="command-item cursor-pointer flex align-center gap-1 rounded-4"
+        @click="goOfflineDeploy"
+      >
+        <VIcon size="16">deploy</VIcon>
+        <span> {{ $t('dfs_offline_deployment') }} </span>
+      </div>
+      <!--我的工单-->
+      <div
+        class="command-item flex align-center gap-1 rounded-4"
+        @click="goTicketSystem"
+      >
+        <VIcon size="16">workorder</VIcon>
+        <span class="cursor-pointer">
+          {{ $t('dfs_the_header_header_wodegongdan') }}</span
         >
-          <VIcon size="18">icon-vip</VIcon>&nbsp;{{
-            $t('packages_component_src_upgradefee_dingyuezhuanyeban')
-          }}
+      </div>
+      <!--联系我们-->
+      <div
+        class="command-item flex align-center gap-1 rounded-4"
+        @click="goContactUs"
+      >
+        <VIcon size="16">consultation</VIcon>
+        <span class="cursor-pointer">{{ $t('tap_contact_us') }}</span>
+      </div>
+      <!---demo环境-->
+      <div
+        v-if="domain === 'demo.cloud.tapdata.net' && lang !== 'en'"
+        class="marquee-container cursor-pointer rounded-4"
+      >
+        <div class="marquee-box">
+          <span>{{ $t('dfs_data_dashboard_Marquee') }}</span>
         </div>
-        <!--加入slack-->
-        <div
-          v-if="!isDomesticStation"
-          class="command-item position-relative inline-flex align-items-center rounded-4"
-          @click="goSlack"
-        >
-          <ElImage
-            class="slack-logo"
-            :src="require('@/assets/image/slack.svg')"
+      </div>
+      <div
+        v-if="domain === 'demo.cloud.tapdata.net' && lang === 'en'"
+        class="block"
+      >
+        <p class="words">{{ $t('dfs_data_dashboard_Marquee') }}</p>
+      </div>
+
+      <div
+        v-for="(item, i) in topBarLinks"
+        :key="i"
+        class="command-item flex align-center gap-2 rounded-4"
+        @click="handleGo(item)"
+      >
+        <VIcon v-if="item.icon" size="16">{{ item.icon }}</VIcon>
+        <span class="cursor-pointer">{{ $t(item.text) }}</span>
+      </div>
+
+      <NotificationPopover
+        class="command-item flex align-items-center rounded-4"
+      />
+      <ElDropdown
+        class="command-item menu-user rounded-4"
+        placement="bottom"
+        :show-timeout="0"
+        @command="command"
+      >
+        <div class="username flex align-items-center">
+          <img
+            v-if="user.avatar"
+            :src="user.avatar"
+            alt=""
+            class="mr-2"
+            style="width: 30px; height: 30px; border-radius: 50%"
           />
-          <span class="cursor-pointer ml-1">{{
-            $t('dfs_the_header_header_jiaruSla')
+          <VIcon v-else class="mr-2" size="20">account</VIcon>
+          <span>{{
+            user.username || user.nickname || user.phone || user.email
           }}</span>
         </div>
-        <!--线下部署-->
-        <div
-          class="command-item cursor-pointer flex align-center gap-1 rounded-4"
-          @click="goOfflineDeploy"
-        >
-          <VIcon size="16">deploy</VIcon>
-          <span> {{ $t('dfs_offline_deployment') }} </span>
-        </div>
-        <!--我的工单-->
-        <div
-          class="command-item flex align-center gap-1 rounded-4"
-          @click="goTicketSystem"
-        >
-          <VIcon size="16">workorder</VIcon>
-          <span class="cursor-pointer">
-            {{ $t('dfs_the_header_header_wodegongdan') }}</span
-          >
-        </div>
-        <!--联系我们-->
-        <div
-          class="command-item flex align-center gap-1 rounded-4"
-          @click="goContactUs"
-        >
-          <VIcon size="16">consultation</VIcon>
-          <span class="cursor-pointer">{{ $t('tap_contact_us') }}</span>
-        </div>
-        <!---demo环境-->
-        <div
-          v-if="domain === 'demo.cloud.tapdata.net' && lang !== 'en'"
-          class="marquee-container cursor-pointer rounded-4"
-        >
-          <div class="marquee-box">
-            <span>{{ $t('dfs_data_dashboard_Marquee') }}</span>
-          </div>
-        </div>
-        <div
-          v-if="domain === 'demo.cloud.tapdata.net' && lang === 'en'"
-          class="block"
-        >
-          <p class="words">{{ $t('dfs_data_dashboard_Marquee') }}</p>
-        </div>
 
-        <div
-          v-for="(item, i) in topBarLinks"
-          :key="i"
-          class="command-item flex align-center gap-2 rounded-4"
-          @click="handleGo(item)"
-        >
-          <VIcon v-if="item.icon" size="16">{{ item.icon }}</VIcon>
-          <span class="cursor-pointer">{{ $t(item.text) }}</span>
-        </div>
-
-        <NotificationPopover
-          class="command-item flex align-items-center rounded-4"
-        />
-        <ElDropdown
-          class="command-item menu-user rounded-4"
-          placement="bottom"
-          :show-timeout="0"
-          @command="command"
-        >
-          <div class="username flex align-items-center">
-            <img
-              v-if="user.avatar"
-              :src="user.avatar"
-              alt=""
-              class="mr-2"
-              style="width: 30px; height: 30px; border-radius: 50%"
-            />
-            <VIcon v-else class="mr-2" size="20">account</VIcon>
-            <span>{{
-              user.username || user.nickname || user.phone || user.email
-            }}</span>
-          </div>
-
-          <template #dropdown>
-            <ElDropdownMenu>
-              <ElDropdownItem
-                command="userCenter"
-                :disabled="$disabledReadonlyUserBtn()"
-                >{{ $t('the_header_Header_yongHuZhongXin') }}
-              </ElDropdownItem>
-              <ElDropdownItem command="order">{{
-                $t('dfs_the_header_header_dingyuezhongxin')
-              }}</ElDropdownItem>
-              <ElDropdownItem command="home">
-                {{ $t('header_official_website') }}
-              </ElDropdownItem>
-              <ElDropdownItem
-                command="signOut"
-                :disabled="$disabledReadonlyUserBtn()"
-              >
-                {{ $t('header_sign_out') }}
-              </ElDropdownItem>
-            </ElDropdownMenu>
-          </template>
-        </ElDropdown>
-      </div>
+        <template #dropdown>
+          <ElDropdownMenu>
+            <ElDropdownItem
+              command="userCenter"
+              :disabled="$disabledReadonlyUserBtn()"
+              >{{ $t('the_header_Header_yongHuZhongXin') }}
+            </ElDropdownItem>
+            <ElDropdownItem command="order">{{
+              $t('dfs_the_header_header_dingyuezhongxin')
+            }}</ElDropdownItem>
+            <ElDropdownItem command="home">
+              {{ $t('header_official_website') }}
+            </ElDropdownItem>
+            <ElDropdownItem
+              command="signOut"
+              :disabled="$disabledReadonlyUserBtn()"
+            >
+              {{ $t('header_sign_out') }}
+            </ElDropdownItem>
+          </ElDropdownMenu>
+        </template>
+      </ElDropdown>
     </div>
-  </ElHeader>
+  </el-header>
 </template>
 
 <style lang="scss" scoped>
 .isMockUser {
   background: red !important;
+}
+
+.header-logo {
+  display: block;
+  width: auto;
+  height: 30px;
+  img {
+    display: block;
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+  }
 }
 
 .discount-hot-icon {
@@ -324,18 +330,6 @@ export default {
 
   .pointer {
     cursor: pointer;
-  }
-
-  .logo {
-    display: block;
-    width: auto;
-    height: 30px;
-    img {
-      display: block;
-      height: 100%;
-      width: 100%;
-      object-fit: contain;
-    }
   }
 
   .button-bar {

@@ -1,142 +1,25 @@
-<template>
-  <ElContainer :class="['layout-wrap', $i18n && $i18n.locale]">
-    <TheHeader ref="theHeader" class="layout-header"></TheHeader>
-    <ElAside class="left-aside pl-2" width="220px">
-      <ElMenu class="layout-menu border-end-0" :default-active="activeMenu" @select="menuTrigger">
-        <div class="flex-1">
-          <template v-for="menu in menus">
-            <ElSubMenu v-if="menu.children" :index="menu.name">
-              <template #title>
-                <!--<span class="mr-4" slot v-if="menu.icon"
-                  ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
-                >-->
-                <VIcon v-if="menu.icon" class="mr-4" size="17">{{ menu.icon }}</VIcon>
-                <span>{{ menu.title }}</span>
-              </template>
-              <template #default v-for="cMenu in menu.children" :key="cMenu.title">
-                <ElMenuItem :index="cMenu.path">
-                  <div class="submenu-item">{{ cMenu.title }}</div>
-                </ElMenuItem>
-              </template>
-            </ElSubMenu>
-            <ElMenuItem v-else :index="menu.path" class="flex align-center" :id="`menu-${menu.name}`">
-              <!--<span class="mr-4" v-if="menu.icon"
-                ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
-              >-->
-              <VIcon v-if="menu.icon" class="mr-4" size="17">{{ menu.icon }}</VIcon>
-              <span class="flex-fill flex align-center gap-1">
-                {{ menu.title }}
-                <VIcon v-if="menu.beta" size="30">beta</VIcon>
-              </span>
-              <template v-if="menu.name === 'Instance' && showAgentWarning">
-                <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
-                  <VIcon size="16" class="agent-warning-icon color-warning">warning</VIcon>
-                  <template #content>
-                    <div class="font-color-dark">
-                      <VIcon size="16" class="mr-1 color-warning align-text-top"> warning </VIcon>xxx{{
-                        $t('agent_tip_no_running')
-                      }}
-                    </div>
-                  </template>
-                </ElTooltip>
-              </template>
-            </ElMenuItem>
-          </template>
-        </div>
-        <!--菜单栏分为两部分-->
-        <div class="border-top sub-menu pt-3">
-          <template v-for="menu in subMenu">
-            <ElSubMenu v-if="menu.children" :index="menu.name">
-              <template #title>
-                <VIcon v-if="menu.icon" class="mr-4" size="17">{{ menu.icon }}</VIcon>
-                <span>{{ menu.title }}</span>
-              </template>
-              <template v-for="cMenu in menu.children" :key="cMenu.title">
-                <ElMenuItem :index="cMenu.path">
-                  <div class="submenu-item">{{ cMenu.title }}</div>
-                </ElMenuItem>
-              </template>
-            </ElSubMenu>
-            <ElMenuItem v-else :index="menu.path" class="flex align-center" :id="`menu-${menu.name}`">
-              <VIcon v-if="menu.icon" class="mr-4" size="17">{{ menu.icon }}</VIcon>
-              <span class="flex-fill">
-                {{ menu.title }}
-                <VIcon v-if="menu.beta" size="30" style="margin-bottom: 5px">beta</VIcon>
-              </span>
-              <template v-if="menu.name === 'Instance' && showAgentWarning">
-                <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
-                  <VIcon size="16" class="agent-warning-icon color-warning">warning</VIcon>
-                  <template #content>
-                    <div class="font-color-dark">
-                      <VIcon size="16" class="mr-1 color-warning align-text-top"> warning</VIcon>
-                      {{ $t('agent_tip_no_running') }}
-                    </div>
-                  </template>
-                </ElTooltip>
-              </template>
-            </ElMenuItem>
-          </template>
-          <!--<ElMenuItem v-if="!isDemoEnv && isDomesticStation" index="goDemo" class="flex align-center">
-            <VIcon class="mr-4" size="17">open-in-new</VIcon>
-            <span class="text-decoration-underline">{{
-              $t('dfs_agent_download_agentguidedialog_tiyan') + ' Demo'
-            }}</span>
-          </ElMenuItem>-->
-        </div>
-      </ElMenu>
-    </ElAside>
-    <ElContainer direction="vertical" class="layout-main position-relative">
-      <PageHeader class="bg-white rounded-lg mb-4 overflow-hidden"></PageHeader>
-      <ElMain class="main rounded-lg">
-        <RouterView @agent_no_running="onAgentNoRunning"></RouterView>
-      </ElMain>
-    </ElContainer>
-    <AgentDownloadModal v-model:visible="agentDownload.visible" :source="agentDownload.data"></AgentDownloadModal>
-    <!--<AgentGuide
-      v-model:visible="subscriptionModelVisible"
-      :step="step"
-      :agent="agent"
-      :subscribes="subscribes"
-      :isUnDeploy="isUnDeploy"
-      :guideLoading="guideLoading"
-      @changeIsUnDeploy="changeIsUnDeploy"
-      @open-guide="handleOpenGuide"
-    ></AgentGuide>-->
-    <!--    <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>-->
-    <!--    <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>-->
-    <!--<TaskAlarmTour v-model:value="showAlarmTour"></TaskAlarmTour>-->
-    <!--付费-->
-    <UpgradeFee :visible="upgradeFeeVisible" @update:visible="setUpgradeFeeVisible"></UpgradeFee>
-    <MarketplaceGuide
-      :visible="marketplaceGuideVisible"
-      :loading="agentCountLoading"
-      @update:visible="updateMarketplaceGuide"
-      @refresh="loopLoadAgentCount(true)"
-    ></MarketplaceGuide>
-  </ElContainer>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import TheHeader from '@/components/the-header'
-import { VIcon } from '@tap/component'
 import { PageHeader, SceneDialog, UpgradeFee } from '@tap/business'
+import { VIcon } from '@tap/component'
+import Cookie from '@tap/shared/src/cookie'
+import { defineComponent } from 'vue'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import AgentGuide from '@/components/guide/index'
 
+import Header from '@/components/layout/Header.vue'
+import MarketplaceGuide from '@/components/MarketplaceGuide'
+import TaskAlarmTour from '@/components/TaskAlarmTour'
+import tour from '@/mixins/tour'
 import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
 // import AgentGuideDialog from '@/views/agent-download/AgentGuideDialog'
 import BindPhone from '@/views/user/components/BindPhone'
-import Cookie from '@tap/shared/src/cookie'
-import AgentGuide from '@/components/guide/index'
-import tour from '@/mixins/tour'
-import TaskAlarmTour from '@/components/TaskAlarmTour'
-import MarketplaceGuide from '@/components/MarketplaceGuide'
+import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 
-export default {
-  inject: ['checkAgent', 'buried'],
+export default defineComponent({
+  name: 'Layout',
   components: {
     UpgradeFee,
-    TheHeader,
+    Header,
     VIcon,
     SceneDialog,
     AgentDownloadModal,
@@ -146,6 +29,7 @@ export default {
     MarketplaceGuide,
   },
   mixins: [tour],
+  inject: ['checkAgent', 'buried'],
   data() {
     const $t = this.$t.bind(this)
     return {
@@ -163,7 +47,7 @@ export default {
           icon: 'migrate',
         },
         {
-          name: 'dataflow',
+          name: 'dataflowList',
           title: $t('task_manage_etl'),
           icon: 'task',
         },
@@ -206,6 +90,11 @@ export default {
     ...mapState(['upgradeFeeVisible']),
     ...mapGetters(['isDomesticStation']),
   },
+  watch: {
+    $route() {
+      this.setActiveMenu()
+    },
+  },
 
   created() {
     if (!this.$store.state.config?.disabledOnlineChat) {
@@ -213,29 +102,54 @@ export default {
     }
     if (this.$store.state.config?.disabledDataService) {
       //海外版隐藏数据服务
-      this.sortMenus = this.sortMenus.filter((item) => item.name !== 'dataServerList')
+      this.sortMenus = this.sortMenus.filter(
+        (item) => item.name !== 'dataServerList',
+      )
     }
     if (this.$store.state.config?.disabledDataVerify) {
       //生产环境隐藏数据校验
-      this.sortMenus = this.sortMenus.filter((item) => item.name !== 'dataVerification')
+      this.sortMenus = this.sortMenus.filter(
+        (item) => item.name !== 'dataVerification',
+      )
     }
 
-    let children = this.$router.options.routes.find((r) => r.path === '/')?.children || []
     const findRoute = (name) => {
-      return children.find((item) => item.name === name)
+      // 递归查找路由，包括嵌套的children
+      const searchInRoutes = (routes) => {
+        for (const route of routes) {
+          if (route.name === name) {
+            return route
+          }
+          if (route.children?.length) {
+            const found = searchInRoutes(route.children)
+            if (found) return found
+          }
+        }
+        return null
+      }
+
+      console.log('routes', this.$router.options.routes)
+      return searchInRoutes(this.$router.options.routes)
     }
-    this.menus = this.sortMenus.map((el) => {
+    const menus = this.sortMenus.map((el) => {
       if (el.children?.length) {
         el.children.forEach((cMenu, idx) => {
-          el.children[idx].path = findRoute(cMenu.name).path
+          const findOne = findRoute(cMenu.name)
+          if (!findOne) {
+            console.log('findOne', el.name, el)
+          }
+          el.children[idx].path = findOne?.path
         })
       } else {
-        let findOne = findRoute(el.name)
-        el.path = findOne.path
+        const findOne = findRoute(el.name)
+        if (!findOne) {
+          console.log('findOne', el.name, el)
+        }
+        el.path = findOne?.path
       }
       return el
     })
-    let subMenu = [
+    const subMenu = [
       {
         name: 'connections',
         title: this.$t('connection_manage'),
@@ -263,7 +177,7 @@ export default {
         code: 'v2_advanced_features',
         children: [
           {
-            name: 'sharedMining',
+            name: 'sharedMiningList',
             title: this.$t('public_shared_mining'),
             icon: 'cdc-log',
             beta: true,
@@ -277,17 +191,29 @@ export default {
         ],
       },
     ]
+
+    console.log('route', menus, subMenu)
+
+    this.menus = menus
     this.subMenu = subMenu.map((el) => {
       if (el.children?.length) {
         el.children.forEach((cMenu, idx) => {
-          el.children[idx].path = findRoute(cMenu.name).path
+          const findOne = findRoute(cMenu.name)
+          if (!findOne) {
+            console.log('findOne:children', cMenu.name, cMenu)
+          }
+          el.children[idx].path = findOne?.path
         })
       } else {
-        let findOne = findRoute(el.name)
-        el.path = findOne.path
+        const findOne = findRoute(el.name)
+        if (!findOne) {
+          console.log('findOne', el.name, el)
+        }
+        el.path = findOne?.path
       }
       return el
     })
+
     $on(this.$root, 'select-connection-type', this.selectConnectionType)
     $on(this.$root, 'show-guide', this.showGuide)
     $on(this.$root, 'get-user', this.getUser)
@@ -296,22 +222,17 @@ export default {
   },
   mounted() {
     //获取cookie 是否用户有操作过 稍后部署 且缓存是当前用户 不在弹窗
-    let user = window.__USER_INFO__
+    const user = window.__USER_INFO__
     this.userInfo = user
     //检查是云市场用户授权码有效期
     // if (user?.enableLicense) {
     //   this.checkLicense(user)
     // }
-    let isCurrentUser = Cookie.get('deployLaterUser') === user?.userId
+    const isCurrentUser = Cookie.get('deployLaterUser') === user?.userId
     if (Cookie.get('deployLater') == 1 && isCurrentUser) return
   },
   beforeUnmount() {
     clearTimeout(this.loopLoadAgentCountTimer)
-  },
-  watch: {
-    $route() {
-      this.setActiveMenu()
-    },
   },
   methods: {
     ...mapMutations(['setUpgradeFeeVisible']),
@@ -357,18 +278,20 @@ export default {
     },
     // 检查微信用户，是否绑定手机号
     checkWechatPhone() {
-      let user = window.__USER_INFO__
+      const user = window.__USER_INFO__
       if (this.$store.state.config?.disabledBindingPhone) {
         //海外版不强制绑定手机号
         return
       }
       this.bindPhoneVisible =
-        ['basic:email', 'basic:email-code', 'social:wechatmp-qrcode'].includes(user?.registerSource) && !user?.telephone
+        ['basic:email', 'basic:email-code', 'social:wechatmp-qrcode'].includes(
+          user?.registerSource,
+        ) && !user?.telephone
       return this.bindPhoneVisible
     },
     hideCustomTip() {
       setTimeout(() => {
-        let tDom = document.getElementById('titlediv')
+        const tDom = document.querySelector('#titlediv')
         if (tDom) {
           tDom.style.display = 'none'
         } else {
@@ -378,23 +301,25 @@ export default {
     },
 
     loadChat() {
-      let $zoho = window.$zoho || {}
+      const $zoho = window.$zoho || {}
       const { isDomesticStation } = this
       $zoho.salesiq = $zoho.salesiq || {
         widgetcode: isDomesticStation
           ? '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f'
           : 'siqc6975654b695513072e7c944c1b63ce0561c932c06ea37e561e3a2f7fe5ae1f7',
         values: {},
-        ready: function () {},
+        ready() {},
       }
       window.$zoho = $zoho
-      let d = document
-      let s = d.createElement('script')
+      const d = document
+      const s = d.createElement('script')
       s.type = 'text/javascript'
       s.id = 'zsiqscript'
       s.defer = true
-      s.src = isDomesticStation ? 'https://salesiq.zoho.com.cn/widget' : 'https://salesiq.zohopublic.com/widget'
-      let t = d.getElementsByTagName('script')[0]
+      s.src = isDomesticStation
+        ? 'https://salesiq.zoho.com.cn/widget'
+        : 'https://salesiq.zohopublic.com/widget'
+      const t = d.querySelectorAll('script')[0]
       t.parentNode.insertBefore(s, t)
       this.hideCustomTip()
 
@@ -407,16 +332,19 @@ export default {
           tapdata_email: user.email,
         })
 
-        $zoho.salesiq.onload = function () {
-          let siqiframe = document.getElementById('siqiframe')
+        $zoho.salesiq.addEventListener('load', function () {
+          const siqiframe = document.querySelector('#siqiframe')
 
           if (siqiframe) {
-            let style = document.createElement('style')
+            const style = document.createElement('style')
             style.type = 'text/css'
             style.innerHTML = `.botactions em { white-space: nowrap; }`
-            siqiframe.contentWindow.document.getElementsByTagName('head').item(0).appendChild(style)
+            siqiframe.contentWindow.document
+              .querySelectorAll('head')
+              .item(0)
+              .append(style)
           }
-        }
+        })
       }
     },
 
@@ -427,7 +355,7 @@ export default {
     //检查云市场用户授权码是否过期
     checkLicense(user) {
       //未激活
-      var licenseCodes = user?.licenseCodes || []
+      const licenseCodes = user?.licenseCodes || []
       if (!user?.licenseValid && licenseCodes?.length === 0) {
         //未激活
         this.aliyunMaketVisible = true
@@ -438,7 +366,9 @@ export default {
         }
       }
       //已过期
-      let expired = licenseCodes.filter((it) => it.licenseStatus === 'EXPIRED')
+      const expired = licenseCodes.filter(
+        (it) => it.licenseStatus === 'EXPIRED',
+      )
       if (!user?.licenseValid && expired?.length > 0) {
         //授权码不可用 存在有临近授权码
         this.aliyunMaketVisible = true
@@ -462,22 +392,286 @@ export default {
     },
 
     setActiveMenu() {
-      this.activeMenu = this.$route.meta.activeMenu || this.$route.matched.find((item) => !!item.path).path
+      this.activeMenu =
+        this.$route.meta.activeMenu ||
+        this.$route.matched.find((item) => !!item.path).path
     },
   },
-}
+})
 </script>
 
+<template>
+  <el-container direction="vertical" class="layout">
+    <div class="layout-bg">
+      <div class="layout-bg-main" />
+      <div
+        class="layout-bg-submain"
+        style="
+          background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E&quot;);
+        "
+      />
+      <div class="layout-bg-layer layout-bg-tr" />
+      <div class="layout-bg-layer layout-bg-bl" />
+    </div>
+    <Header height="60px" />
+    <ElContainer class="layout-content position-relative">
+      <el-scrollbar class="layout-side-scrollbar">
+        <ElAside class="layout-side" width="220px">
+          <ElMenu
+            class="flex flex-column flex-1 gap-2 border-end-0"
+            :default-active="activeMenu"
+            @select="menuTrigger"
+          >
+            <template v-for="menu in menus">
+              <ElSubMenu v-if="menu.children" :index="menu.name">
+                <template #title>
+                  <VIcon v-if="menu.icon" class="mr-4" size="17">{{
+                    menu.icon
+                  }}</VIcon>
+                  <span>{{ menu.title }}</span>
+                </template>
+                <template v-for="cMenu in menu.children" :key="cMenu.title">
+                  <ElMenuItem :index="cMenu.path">
+                    <div class="submenu-item">{{ cMenu.title }}</div>
+                  </ElMenuItem>
+                </template>
+              </ElSubMenu>
+              <ElMenuItem
+                v-else
+                :id="`menu-${menu.name}`"
+                :index="menu.path"
+                class="flex align-center"
+              >
+                <VIcon v-if="menu.icon" class="mr-4" size="17">{{
+                  menu.icon
+                }}</VIcon>
+                <span class="flex-fill flex align-center gap-1">
+                  {{ menu.title }}
+                  <VIcon v-if="menu.beta" size="30">beta</VIcon>
+                </span>
+                <template v-if="menu.name === 'Instance' && showAgentWarning">
+                  <ElTooltip
+                    placement="top"
+                    popper-class="agent-tooltip__popper"
+                    :visible-arrow="false"
+                    effect="light"
+                  >
+                    <VIcon size="16" class="agent-warning-icon color-warning"
+                      >warning</VIcon
+                    >
+                    <template #content>
+                      <div class="font-color-dark">
+                        <VIcon
+                          size="16"
+                          class="mr-1 color-warning align-text-top"
+                        >
+                          warning </VIcon
+                        >xxx{{ $t('agent_tip_no_running') }}
+                      </div>
+                    </template>
+                  </ElTooltip>
+                </template>
+              </ElMenuItem>
+            </template>
+            <div class="flex-1" />
+
+            <template v-for="menu in subMenu">
+              <ElSubMenu v-if="menu.children" :index="menu.name">
+                <template #title>
+                  <VIcon v-if="menu.icon" class="mr-4" size="17">{{
+                    menu.icon
+                  }}</VIcon>
+                  <span>{{ menu.title }}</span>
+                </template>
+                <template v-for="cMenu in menu.children" :key="cMenu.title">
+                  <ElMenuItem :index="cMenu.path">
+                    <div class="submenu-item">{{ cMenu.title }}</div>
+                  </ElMenuItem>
+                </template>
+              </ElSubMenu>
+              <ElMenuItem
+                v-else
+                :id="`menu-${menu.name}`"
+                :index="menu.path"
+                class="flex align-center"
+              >
+                <VIcon v-if="menu.icon" class="mr-4" size="17">{{
+                  menu.icon
+                }}</VIcon>
+                <span class="flex-fill">
+                  {{ menu.title }}
+                  <VIcon v-if="menu.beta" size="30" style="margin-bottom: 5px"
+                    >beta</VIcon
+                  >
+                </span>
+                <template v-if="menu.name === 'Instance' && showAgentWarning">
+                  <ElTooltip
+                    placement="top"
+                    popper-class="agent-tooltip__popper"
+                    :visible-arrow="false"
+                    effect="light"
+                  >
+                    <VIcon size="16" class="agent-warning-icon color-warning"
+                      >warning</VIcon
+                    >
+                    <template #content>
+                      <div class="font-color-dark">
+                        <VIcon
+                          size="16"
+                          class="mr-1 color-warning align-text-top"
+                        >
+                          warning</VIcon
+                        >
+                        {{ $t('agent_tip_no_running') }}
+                      </div>
+                    </template>
+                  </ElTooltip>
+                </template>
+              </ElMenuItem>
+            </template>
+          </ElMenu>
+        </ElAside>
+      </el-scrollbar>
+
+      <ElMain class="layout-main">
+        <RouterView @agent_no_running="onAgentNoRunning" />
+      </ElMain>
+    </ElContainer>
+
+    <AgentDownloadModal
+      v-model:visible="agentDownload.visible"
+      :source="agentDownload.data"
+    />
+
+    <!--付费-->
+    <UpgradeFee
+      :visible="upgradeFeeVisible"
+      @update:visible="setUpgradeFeeVisible"
+    />
+
+    <MarketplaceGuide
+      :visible="marketplaceGuideVisible"
+      :loading="agentCountLoading"
+      @update:visible="updateMarketplaceGuide"
+      @refresh="loopLoadAgentCount(true)"
+    />
+  </el-container>
+</template>
+
 <style lang="scss" scoped>
+.layout {
+  height: 100%;
+
+  .layout-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -10;
+
+    &-main {
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(
+        to right bottom,
+        rgb(248, 250, 252),
+        rgb(241, 245, 249),
+        rgb(239, 246, 255)
+      );
+    }
+
+    &-submain {
+      position: absolute;
+      inset: 0;
+      opacity: 0.03;
+    }
+
+    &-layer {
+      position: absolute;
+      width: 24rem;
+      height: 24rem;
+      border-radius: 9999px;
+      filter: blur(64px);
+    }
+
+    &-tr {
+      top: -6rem;
+      right: -6rem;
+      background-image: linear-gradient(
+        to right bottom,
+        rgba(219, 234, 254, 0.3),
+        rgba(199, 210, 254, 0.3)
+      );
+    }
+
+    &-bl {
+      left: -8rem;
+      bottom: -8rem;
+      background-image: linear-gradient(
+        to right top,
+        rgba(219, 234, 254, 0.2),
+        rgba(243, 232, 255, 0.2)
+      );
+    }
+  }
+
+  .layout-content {
+    flex-grow: 1;
+    min-height: 0;
+  }
+
+  .layout-side-scrollbar {
+    flex-shrink: 0;
+    :deep(.el-scrollbar__view) {
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .layout-main {
+    --el-main-padding: 0;
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+    overflow: unset; // 避免box-shadow被截断
+  }
+
+  .layout-side {
+    --el-menu-bg-color: transparent;
+    --el-menu-item-height: 40px;
+    --el-menu-sub-item-height: 40px;
+    --el-menu-hover-bg-color: var(--fill-hover);
+
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 0 16px 82px;
+
+    :deep(.el-menu) {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    :deep(.el-menu-item.is-active) {
+      background-color: var(--primary-hover-light);
+    }
+
+    :deep(.el-menu-item),
+    :deep(.el-sub-menu__title) {
+      border-radius: 8px;
+    }
+
+    :deep(.el-sub-menu__title + .el-menu) {
+      margin-top: 8px;
+      padding-inline-start: 10px;
+    }
+  }
+}
+
 .layout-menu {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: 90%;
-}
-
-.layout-main {
-  padding: 0 16px 16px 16px;
 }
 
 .layout-wrap {

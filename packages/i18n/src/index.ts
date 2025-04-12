@@ -1,9 +1,10 @@
-import { createI18n } from 'vue-i18n'
+import { createI18n, useI18n } from 'vue-i18n'
 
-import { langKeyMap, getCurrentLanguage } from './shared/util'
 import locale from './locale'
+import { getCurrentLanguage, langKeyMap } from './shared/util'
 
 const i18n = createI18n({
+  legacy: false, // 👈 关键在这
   locale: getCurrentLanguage(),
   messages: locale,
   silentTranslationWarn: true,
@@ -21,3 +22,5 @@ i18n.t = i18n.global.t
 export default i18n
 
 export const { t } = i18n.global
+
+export { useI18n }

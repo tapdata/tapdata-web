@@ -91,7 +91,7 @@ declare module 'vue' {
     ElTree: typeof import('element-plus/es')['ElTree']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     Guide: typeof import('./components/guide/index.vue')['default']
-    Header: typeof import('./components/the-header/Header.vue')['default']
+    Header: typeof import('./components/layout/Header.vue')['default']
     InlineInput: typeof import('./components/InlineInput.vue')['default']
     Main: typeof import('./components/filter-bar/Main.vue')['default']
     MarketplaceGuide: typeof import('./components/MarketplaceGuide.vue')['default']

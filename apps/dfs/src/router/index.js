@@ -4,6 +4,7 @@ import FastDownload from '@/views/agent-download/FastDownload.vue'
 import PaidUpgrade from '@/views/agent-download/PaidUpgrade.vue'
 import UpgradeVersion from '@/views/agent-download/UpgradeVersion.vue'
 import Lang from '../views/Lang.vue'
+import Layout from '../views/Layout.vue'
 
 import Parent from './Parent'
 
@@ -125,7 +126,7 @@ const ExternalStorageList = async () => {
 const routes = [
   {
     path: '/',
-    component: () => import('../views/Layout.vue'),
+    component: Layout,
     meta: {},
     children: [
       {
@@ -161,250 +162,27 @@ const routes = [
           title: 'tap_system_notification',
         },
       },
-      {
-        path: '/instance',
-        name: 'Instance',
-        component: () => import('../views/instance/Instance.vue'),
-        meta: {
-          title: 'tap_agent_management',
-          icon: 'agent',
-          hideTitle: true,
-        },
-        children: [
-          {
-            path: 'create',
-            name: 'createAgent',
-            component: () => import('../views/instance/CreateAgent.vue'),
-            meta: {
-              title: i18n.global.t(
-                'dfs_agent_download_subscriptionmodeldialog_peizhishishishu',
-              ),
-              hideTitle: true,
-            },
-          },
-          {
-            path: '/instanceDetails',
-            name: 'InstanceDetails',
-            // route level code-splitting
-            // this generates a separate chunk (about.[hash].js) for this route
-            // which is lazy-loaded when the route is visited.
-            component: () => import('../views/instance/Details.vue'),
-            meta: {
-              title: 'tap_instance_details',
-            },
-          },
-          {
-            path: 'install/:id',
-            name: 'installAgent',
-            component: () => import('../views/instance/Install.vue'),
-            meta: {
-              title: i18n.t('dfs_guide_index_bushujisuanyin'),
-              hideTitle: true,
-            },
-          },
-        ],
-      },
-      {
-        path: '/connections',
-        name: 'connections',
-        // component: Iframe,
-        component: () => import('@/views/connection/List.tsx'),
-        meta: {
-          hideTitle: true,
-          title: 'tap_connection_management',
-          icon: 'connection',
-        },
-        children: [
-          {
-            path: 'create',
-            name: 'connectionCreate',
-            component: ConnectionForm,
-            //component: Iframe,
-            meta: {
-              title: 'tap_create_connection',
-            },
-          },
-          {
-            path: ':id',
-            name: 'connectionsEdit',
-            component: ConnectionForm,
-            //component: Iframe,
-            meta: {
-              title: 'tap_edit_connection',
-            },
-          },
-        ],
-      },
-      /* ---------- 数据复制  ----------*/
-      {
-        path: '/migrate',
-        name: 'migrate',
-        redirect: 'migrate/',
-        component: Parent,
-        meta: {
-          title: 'task_manage_migrate',
-          icon: 'task',
-        },
-        children: [
-          {
-            path: '',
-            name: 'migrateList',
-            component: MigrateList,
-            meta: {
-              title: 'task_manage_migrate',
-              desc: 'task_manage_migrate_desc',
-              code: 'v2_data_replication',
-              hideTitle: true,
-            },
-          },
-
-          {
-            path: 'form/:id?',
-            name: 'MigrateForm',
-            component: MigrationForm,
-            meta: {
-              title: 'task_manage_migrate',
-              hideTitle: true,
-            },
-          },
-        ],
-      },
       /* ---------- 数据开发  ----------*/
       {
         path: '/dataflow',
-        name: 'dataflow',
-        component: Parent,
-        redirect: 'dataflow/',
+        name: 'dataflowList',
+        component: TaskList,
         meta: {
           title: 'task_manage_etl',
           icon: 'task',
+          desc: 'task_manage_desc',
+          code: 'v2_data_flow',
         },
-        children: [
-          {
-            path: '',
-            name: 'dataflowList',
-            component: TaskList,
-            meta: {
-              hideTitle: true,
-              title: 'task_manage_etl',
-              desc: 'task_manage_desc',
-              code: 'v2_data_flow',
-            },
-          },
-        ],
       },
       /* ---------- 共享挖掘  ----------*/
       {
         path: '/shared-mining',
-        name: 'sharedMining',
-        component: Parent,
-        redirect: 'shared-mining/',
-        meta: {},
-        children: [
-          {
-            path: '',
-            name: 'sharedMiningList',
-            component: SharedMiningList,
-            meta: {
-              title: 'public_shared_mining',
-              code: 'v2_log_collector',
-            },
-          },
-        ],
-      },
-      /* ---------- 数据校验  ----------*/
-      {
-        path: '/dataVerification',
-        name: 'dataVerification',
-        component: Parent,
-        redirect: 'dataVerification/',
+        name: 'sharedMiningList',
+        component: SharedMiningList,
         meta: {
-          title: 'page_title_data_verify',
+          title: 'public_shared_mining',
+          code: 'v2_log_collector',
         },
-        children: [
-          {
-            path: '',
-            name: 'dataVerificationList',
-            component: VerificationList,
-            meta: {
-              title: 'page_title_data_verify',
-              code: 'v2_data_check',
-            },
-          },
-          {
-            path: 'create',
-            name: 'dataVerificationCreate',
-            component: VerificationForm,
-            meta: {
-              title: 'page_title_verification_create',
-              code: 'v2_data_check_create',
-            },
-          },
-          {
-            path: ':id/edit',
-            name: 'dataVerificationEdit',
-            component: VerificationForm,
-            meta: {
-              title: 'page_title_task_edit',
-              code: 'v2_data_check_edit',
-            },
-          },
-          {
-            path: ':id/details',
-            name: 'dataVerifyDetails',
-            component: VerificationDetails,
-            meta: {
-              title: 'page_title_task_details',
-              code: 'v2_data_check_details',
-            },
-          },
-          {
-            path: ':id/history',
-            name: 'dataVerifyHistory',
-            component: VerificationHistory,
-            meta: {
-              title: 'page_title_verification_history',
-              code: 'v2_data_check_history',
-            },
-          },
-          {
-            path: '/dataVerifyResult/:id/history',
-            name: 'VerifyDiffHistory',
-            component: VerificationHistory,
-            meta: {
-              title: 'page_title_diff_verification_history',
-              code: 'v2_data_check_result_history',
-            },
-          },
-          {
-            path: '/dataVerifyResult/:id/details',
-            name: 'VerifyDiffDetails',
-            component: VerificationResult,
-            meta: {
-              title: 'page_title_diff_verification_details',
-              code: 'v2_data_check_result_details',
-            },
-          },
-          {
-            path: '/dataVerifyResult/:id',
-            name: 'dataVerifyResult',
-            component: VerificationResult,
-            meta: {
-              title: 'page_title_data_verification_result',
-              code: 'v2_data_check_result',
-            },
-          },
-          // {
-          //   path: ':id/verifyDetails',
-          //   name: 'VerifyDetails',
-          //   component: VerificationDetails,
-          //   meta: {
-          //     title: 'page_title_data_verify_details',
-          //     code: 'Data_verify',
-          //     isNotAside: true
-          //   }
-          // }
-        ],
       },
       {
         path: '/operationLog',
@@ -420,6 +198,7 @@ const routes = [
         name: 'externalStorage',
         component: ExternalStorageList,
         meta: {
+          hideTitle: true,
           title: 'public_external_storage',
           code: 'v2_external-storage_menu',
         },
@@ -440,71 +219,7 @@ const routes = [
           title: 'tap_contact_us',
         },
       },
-      {
-        path: '/user/order',
-        name: 'order',
-        component: () => import('../views/order/List.vue'),
-        meta: {
-          title: 'dfs_router_index_dingyuezhongxin',
-          hideTitle: true,
-        },
-        children: [
-          {
-            path: 'pay/:id',
-            name: 'pay',
-            component: () => import('../views/order/Pay.vue'),
-            meta: {
-              hideTitle: true,
-              title: 'dfs_router_index_zhifuqingdan',
-            },
-          },
-          {
-            path: 'bill/pay/:id',
-            name: 'payForBill',
-            component: () => import('../views/order/Pay.vue'),
-            meta: {
-              hideTitle: true,
-              title: i18n.t('dfs_router_index_zhifuqingdan'),
-            },
-          },
-          {
-            path: 'bill/pay/:id/wait',
-            name: 'waitPayForBill',
-            component: () => import('../views/order/WaitPay.vue'),
-            meta: {
-              hideTitle: true,
-              title: i18n.global.t('dfs_router_index_zhifuqingdan'),
-            },
-          },
-          {
-            path: 'change/pay/:id',
-            name: 'payForChange',
-            component: () => import('../views/order/Pay.vue'),
-            meta: {
-              hideTitle: true,
-              title: i18n.global.t('dfs_router_index_zhifuqingdan'),
-            },
-          },
-          {
-            path: 'renew/pay/:id',
-            name: 'payForRenew',
-            component: () => import('../views/order/Pay.vue'),
-            meta: {
-              hideTitle: true,
-              title: i18n.global.t('dfs_router_index_zhifuqingdan'),
-            },
-          },
-          {
-            path: '/user/order/changeList',
-            name: 'changeList',
-            component: () => import('../views/order/ChangeList.vue'),
-            meta: {
-              title: i18n.global.t('dfs_change_record'),
-              code: '',
-            },
-          },
-        ],
-      },
+
       {
         path: '/verify',
         name: 'verify',
@@ -612,20 +327,288 @@ const routes = [
       },
     ],
   },
+
+  {
+    path: '/instance',
+    name: 'Instance',
+    component: Layout,
+    meta: {
+      title: 'tap_agent_management',
+      icon: 'agent',
+      hideTitle: true,
+    },
+    children: [
+      {
+        path: '',
+        name: 'InstanceList',
+        component: () => import('../views/instance/Instance.vue'),
+        meta: {
+          title: 'tap_agent_management',
+          icon: 'agent',
+          hideTitle: true,
+        },
+      },
+      {
+        path: 'create',
+        name: 'createAgent',
+        component: () => import('../views/instance/CreateAgent.vue'),
+        meta: {
+          title: i18n.global.t(
+            'dfs_agent_download_subscriptionmodeldialog_peizhishishishu',
+          ),
+        },
+      },
+      {
+        path: '/instanceDetails',
+        name: 'InstanceDetails',
+        component: () => import('../views/instance/Details.vue'),
+        meta: {
+          title: 'tap_instance_details',
+        },
+      },
+      {
+        path: 'install/:id',
+        name: 'installAgent',
+        component: () => import('../views/instance/Install.vue'),
+        meta: {
+          title: i18n.t('dfs_guide_index_bushujisuanyin'),
+          hideTitle: true,
+        },
+      },
+    ],
+  },
+
+  {
+    path: '/connections',
+    name: 'connections',
+    component: Layout,
+    redirect: {
+      name: 'connectionsList',
+    },
+    meta: {
+      hideTitle: true,
+      title: 'tap_connection_management',
+      icon: 'connection',
+    },
+    children: [
+      {
+        path: '',
+        name: 'connectionsList',
+        component: () => import('@/views/connection/List.tsx'),
+        meta: {
+          title: 'tap_connection_management',
+        },
+      },
+      {
+        path: 'create',
+        name: 'connectionCreate',
+        component: ConnectionForm,
+        meta: {
+          title: 'tap_create_connection',
+        },
+      },
+      {
+        path: ':id',
+        name: 'connectionsEdit',
+        component: ConnectionForm,
+        meta: {
+          title: 'tap_edit_connection',
+        },
+      },
+    ],
+  },
+
+  /* ---------- 数据复制  ----------*/
+  {
+    path: '/migrate',
+    name: 'migrate',
+    component: Layout,
+    meta: {
+      title: 'task_manage_migrate',
+      icon: 'task',
+    },
+    children: [
+      {
+        path: '',
+        name: 'migrateList',
+        component: MigrateList,
+        meta: {
+          title: 'task_manage_migrate',
+          desc: 'task_manage_migrate_desc',
+          code: 'v2_data_replication',
+        },
+      },
+
+      {
+        path: 'form/:id?',
+        name: 'MigrateForm',
+        component: MigrationForm,
+        meta: {
+          title: 'task_manage_migrate',
+        },
+      },
+    ],
+  },
+
+  /* ---------- 数据校验  ----------*/
+  {
+    path: '/dataVerification',
+    name: 'dataVerification',
+    component: Layout,
+    meta: {
+      title: 'page_title_data_verify',
+    },
+    children: [
+      {
+        path: '',
+        name: 'dataVerificationList',
+        component: VerificationList,
+        meta: {
+          title: 'page_title_data_verify',
+          code: 'v2_data_check',
+        },
+      },
+      {
+        path: 'create',
+        name: 'dataVerificationCreate',
+        component: VerificationForm,
+        meta: {
+          title: 'page_title_verification_create',
+          code: 'v2_data_check_create',
+        },
+      },
+      {
+        path: ':id/edit',
+        name: 'dataVerificationEdit',
+        component: VerificationForm,
+        meta: {
+          title: 'page_title_task_edit',
+          code: 'v2_data_check_edit',
+        },
+      },
+      {
+        path: ':id/details',
+        name: 'dataVerifyDetails',
+        component: VerificationDetails,
+        meta: {
+          title: 'page_title_task_details',
+          code: 'v2_data_check_details',
+        },
+      },
+      {
+        path: ':id/history',
+        name: 'dataVerifyHistory',
+        component: VerificationHistory,
+        meta: {
+          title: 'page_title_verification_history',
+          code: 'v2_data_check_history',
+        },
+      },
+      {
+        path: '/dataVerifyResult/:id/history',
+        name: 'VerifyDiffHistory',
+        component: VerificationHistory,
+        meta: {
+          title: 'page_title_diff_verification_history',
+          code: 'v2_data_check_result_history',
+        },
+      },
+      {
+        path: '/dataVerifyResult/:id/details',
+        name: 'VerifyDiffDetails',
+        component: VerificationResult,
+        meta: {
+          title: 'page_title_diff_verification_details',
+          code: 'v2_data_check_result_details',
+        },
+      },
+      {
+        path: '/dataVerifyResult/:id',
+        name: 'dataVerifyResult',
+        component: VerificationResult,
+        meta: {
+          title: 'page_title_data_verification_result',
+          code: 'v2_data_check_result',
+        },
+      },
+    ],
+  },
+  /* ---------- 订阅中心  ----------*/
+  {
+    path: '/user/order',
+    name: 'order',
+    component: Layout,
+    meta: {
+      title: 'dfs_router_index_dingyuezhongxin',
+    },
+    children: [
+      {
+        path: '',
+        name: 'orderList',
+        component: () => import('../views/order/List.vue'),
+        meta: {
+          title: 'dfs_router_index_dingyuezhongxin',
+        },
+      },
+      {
+        path: 'pay/:id',
+        name: 'pay',
+        component: () => import('../views/order/Pay.vue'),
+        meta: {
+          title: 'dfs_router_index_zhifuqingdan',
+        },
+      },
+      {
+        path: 'bill/pay/:id',
+        name: 'payForBill',
+        component: () => import('../views/order/Pay.vue'),
+        meta: {
+          title: i18n.t('dfs_router_index_zhifuqingdan'),
+        },
+      },
+      {
+        path: 'bill/pay/:id/wait',
+        name: 'waitPayForBill',
+        component: () => import('../views/order/WaitPay.vue'),
+        meta: {
+          title: i18n.global.t('dfs_router_index_zhifuqingdan'),
+        },
+      },
+      {
+        path: 'change/pay/:id',
+        name: 'payForChange',
+        component: () => import('../views/order/Pay.vue'),
+        meta: {
+          title: i18n.global.t('dfs_router_index_zhifuqingdan'),
+        },
+      },
+      {
+        path: 'renew/pay/:id',
+        name: 'payForRenew',
+        component: () => import('../views/order/Pay.vue'),
+        meta: {
+          title: i18n.global.t('dfs_router_index_zhifuqingdan'),
+        },
+      },
+      {
+        path: '/user/order/changeList',
+        name: 'changeList',
+        component: () => import('../views/order/ChangeList.vue'),
+        meta: {
+          title: i18n.global.t('dfs_change_record'),
+          code: '',
+        },
+      },
+    ],
+  },
   {
     path: '/welcome',
-    component: () =>
-      import(
-        /* webpackChunkName: "layout" */ '../views/welcome/WelcomeLayout.vue'
-      ),
+    component: () => import('../views/welcome/WelcomeLayout.vue'),
     children: [
       {
         path: '',
         name: 'Welcome',
-        component: () =>
-          import(
-            /* webpackChunkName: "layout" */ '../views/welcome/Welcome.vue'
-          ),
+        component: () => import('../views/welcome/Welcome.vue'),
       },
       {
         path: 'task/:id?',
@@ -670,14 +653,6 @@ const routes = [
       title: 'tap_agent_download_now',
     },
   },
-  // {
-  //   path: '/pay',
-  //   name: 'pay',
-  //   component: () => import(/* webpackChunkName: "instance" */ '../views/order/Pay'),
-  //   meta: {
-  //     title: i18n.global.t('dfs_router_index_zhifuqingdan')
-  //   }
-  // },
   {
     path: '/upgradeVersion',
     name: 'UpgradeVersion',
@@ -686,7 +661,6 @@ const routes = [
       title: 'tap_upgrade',
     },
   },
-  //付费升级
   {
     path: '/paidUpgrade',
     name: 'PaidUpgrade',

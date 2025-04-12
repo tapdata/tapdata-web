@@ -1,8 +1,8 @@
 import { ElButton as Button } from 'element-plus'
-import { IconWidget } from '../../widgets'
-import { usePrefix } from '../../../hooks'
-import './styles.scss'
 import { defineComponent, ref, toRefs, watch } from 'vue'
+import { usePrefix } from '../../../hooks'
+import { IconWidget } from '../../widgets'
+import './styles.scss'
 
 const isValid = (val) => val !== undefined && val !== null
 
@@ -54,8 +54,11 @@ export function createPolyInput(polyTypes = []) {
       )
 
       const getNextType = () => {
-        const currentIndex = types?.findIndex(({ type }) => type === current.value)
-        const nextIndex = currentIndex + 1 > types?.length - 1 ? 0 : currentIndex + 1
+        const currentIndex = types?.findIndex(
+          ({ type }) => type === current.value,
+        )
+        const nextIndex =
+          currentIndex + 1 > types?.length - 1 ? 0 : currentIndex + 1
         return types[nextIndex]
       }
 
@@ -64,15 +67,19 @@ export function createPolyInput(polyTypes = []) {
       }
 
       return () => {
-        let type = types?.find(({ type }) => type === current.value)
-        let component = type?.component
+        const type = types?.find(({ type }) => type === current.value)
+        const component = type?.component
         return (
           <div class={prefix}>
             {component && (
-              <div class={prefix + '-content'}>
+              <div class={`${prefix}-content`}>
                 <component
-                  {...{ props: { ...comProps } }}
-                  value={type?.toInputValue ? type?.toInputValue(value.value) : value.value}
+                  {...comProps}
+                  value={
+                    type?.toInputValue
+                      ? type?.toInputValue(value.value)
+                      : value.value
+                  }
                   onChange={(event) => {
                     const value = getEventValue(event)
                     typesValue.value[type?.type] = value
@@ -82,7 +89,7 @@ export function createPolyInput(polyTypes = []) {
               </div>
             )}
             <Button
-              class={prefix + '-controller'}
+              class={`${prefix}-controller`}
               style={{
                 width: !component ? '100%' : 'auto',
               }}
@@ -91,10 +98,20 @@ export function createPolyInput(polyTypes = []) {
                 const nextType = getNextType()
                 if (nextType === type) return
                 current.value = nextType?.type
-                emit('change', transformOnChangeValue(typesValue.value[nextType?.type], nextType))
+                emit(
+                  'change',
+                  transformOnChangeValue(
+                    typesValue.value[nextType?.type],
+                    nextType,
+                  ),
+                )
               }}
             >
-              {type?.icon ? <IconWidget infer={type.icon} /> : type?.title || type?.type}
+              {type?.icon ? (
+                <IconWidget infer={type.icon} />
+              ) : (
+                type?.title || type?.type
+              )}
             </Button>
           </div>
         )

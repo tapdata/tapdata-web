@@ -393,7 +393,7 @@
 <script>
 import i18n from '@/i18n'
 
-import TheHeader from '@/components/the-header'
+import TheHeader from '@/components/layout/Header.vue'
 export default {
   name: 'FastDownload',
   components: { TheHeader },

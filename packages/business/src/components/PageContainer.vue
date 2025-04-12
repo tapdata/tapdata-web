@@ -1,30 +1,40 @@
 <script setup lang="ts">
-import i18n from '@tap/i18n'
+import { useI18n } from '@tap/i18n'
 import { computed, h, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
+const { t } = useI18n()
 const route = useRoute()
 const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 const breadcrumbData = ref([])
 const isHidden = ref(false)
 
 const props = defineProps({
+  hideHeader: {
+    type: Boolean,
+    default: false,
+  },
   contentMode: {
     type: String,
     default: 'table', // full/auto/table
   },
 })
 
+const containerClass = computed(() => {
+  return props.contentMode === 'full' ? '' : 'p-6 gap-4'
+})
+
 const contentClass = computed(() => {
   const map = {
     // table: 'pb-6 flex-1 min-h-0',
-    table: 'flex-1 min-h-0',
+    table: isDaas ? 'flex-1 min-h-0' : 'flex-1 min-h-0',
+    full: 'flex-1 min-h-0 overflow-auto',
   }
   return map[props.contentMode]
   // return props.contentMode === 'full' ? 'overflow-hidden bg-white shadow-card' : ''
 })
 
-const headerClass = isDaas ? 'border-bottom' : 'bg-white rounded-lg mb-4'
+const headerClass = isDaas ? 'border-bottom' : ''
 
 const getBreadcrumb = () => {
   const matched = route.matched.slice(1)
@@ -33,15 +43,19 @@ const getBreadcrumb = () => {
   if (matched.length) {
     matched.forEach((route) => {
       _isHidden = Boolean(route.meta?.hideTitle)
+      if (/^\/.*\/$/.test(route.path)) {
+        data.pop()
+      }
       let to = {
         name: null,
       }
       if (route.meta?.doNotJump) {
         to = null
       }
+      const titleKey = route.meta?.title
       !_isHidden &&
         data.push({
-          name: i18n.t(route.meta?.title),
+          name: titleKey ? t(titleKey) : '',
           to,
         })
     })
@@ -56,8 +70,11 @@ getBreadcrumb()
 </script>
 
 <template>
-  <div class="flex flex-column h-100 page-container min-h-0">
-    <div class="page-header" :class="headerClass">
+  <div
+    class="flex flex-column h-100 page-container bg-white rounded-xl overflow-hidden shadow-sm"
+    :class="containerClass"
+  >
+    <div v-if="!hideHeader" class="page-header" :class="headerClass">
       <ElBreadcrumb
         v-if="breadcrumbData.length > 1"
         class="breadcrumb"
@@ -71,11 +88,9 @@ getBreadcrumb()
           {{ item.name }}
         </ElBreadcrumbItem>
       </ElBreadcrumb>
-      <div v-else class="flex align-items-center px-4 bg-white rounded-lg">
+      <div v-else class="flex align-items-center bg-white rounded-lg">
         <slot name="title">
-          <span class="fs-5 py-4 font-color-dark mr-3">{{
-            $t($route.meta.title)
-          }}</span>
+          <span class="fs-5 font-color-dark">{{ $t($route.meta.title) }}</span>
         </slot>
 
         <slot name="left-actions" />

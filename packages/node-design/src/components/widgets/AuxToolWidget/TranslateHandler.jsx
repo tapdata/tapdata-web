@@ -10,7 +10,7 @@ export const TranslateHandler = defineComponent({
     const prefix = usePrefix('aux-node-translate-handler')
     const createHandler = (value) => {
       return {
-        attrs: { [designer.props.nodeTranslateAttrName]: value },
+        [designer.props.nodeTranslateAttrName]: value,
         class: [prefix, value],
       }
     }

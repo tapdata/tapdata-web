@@ -1,5 +1,6 @@
 <script>
 import { connectionsApi, databaseTypesApi } from '@tap/api'
+import { getConnectorImage } from '@tap/assets'
 import {
   CONNECTION_STATUS_MAP,
   ConnectorForm,
@@ -350,6 +351,10 @@ export default defineComponent({
       emit('next')
     }
 
+    const getIconSrc = (icon) => {
+      return getConnectorImage(icon)
+    }
+
     return {
       pdkHash,
       pdkId,
@@ -381,6 +386,7 @@ export default defineComponent({
       handleConnectionSelect,
       handlePrev,
       handleNext,
+      getIconSrc,
     }
   },
 })
@@ -575,7 +581,7 @@ export default defineComponent({
                 <ElImage
                   v-else
                   style="width: 38px; height: 38px"
-                  :src="require(`@tap/assets/images/connector/${item.icon}`)"
+                  :src="getIconSrc(item.icon)"
                 />
                 <div class="connector-item-content flex-1 overflow-hidden">
                   <div

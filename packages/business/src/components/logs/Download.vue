@@ -1,7 +1,7 @@
 <template>
   <ElDialog
-    :visible="visible"
-    @update:visible="updateVisible"
+    :model-value="visible"
+    @update:model-value="updateVisible"
     width="60%"
     append-to-body
     :title="$t('public_log_download')"

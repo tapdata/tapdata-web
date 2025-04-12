@@ -650,7 +650,7 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
     </div>
 
     <ElDialog
-      v-model:visible="codeDialog.visible"
+      v-model="codeDialog.visible"
       width="80%"
       custom-class="max-w-1000 mt-25 --padding"
       :close-on-click-modal="false"

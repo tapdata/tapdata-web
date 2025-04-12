@@ -2845,7 +2845,7 @@
 }
 
 .rounded-xl {
-  border-radius: 0.625rem !important;
+  border-radius: 0.75rem !important;
 }
 
 .rounded-xxl {
@@ -12543,4 +12543,21 @@
 
 .break-all {
   word-break: break-all;
+}
+
+
+.fixed {
+  position: fixed;
+} 
+
+.absolute {
+  position: absolute;
+}
+
+.inset-0 {
+ inset: 0; 
+} 
+
+.-z-10 {
+  z-index: -10;
 }

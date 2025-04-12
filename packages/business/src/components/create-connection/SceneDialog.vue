@@ -1,219 +1,18 @@
-<template>
-  <ElDialog
-    ref="dialogWrapper"
-    :model-value="visible"
-    :append-to-body="true"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-    :width="width"
-    top="10vh"
-    :modal-class="modalClass"
-    class="ldp-connection-dialog flex flex-column p-0"
-    :beforeClose="beforeClose"
-    @close="handleClose"
-    @closed="onClosed"
-  >
-    <template #header>
-      <div class="flex px-6 h-100 font-color-dark fs-6 fw-sub position-relative align-center">
-        <template v-if="!showForm">
-          <span>{{ title }}</span>
-          <ElInput
-            v-model="search"
-            class="position-absolute start-50 top-50 translate-middle ldp-connection-search-input"
-            clearable
-            :placeholder="$t('public_input_placeholder_search')"
-            @input="handleSearchInput"
-          >
-            <template #prefix>
-              <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
-            </template>
-          </ElInput>
-        </template>
-        <template v-else>
-          <IconButton v-if="!onlyForm" @click="showForm = false" class="mr-2">left</IconButton>
-          <DatabaseIcon v-if="formParams.pdkHash" class="mr-2" :size="24" :item="formParams"></DatabaseIcon>
-          <VIcon v-else class="mr-2" :size="24">{{ formParams.icon }}</VIcon>
-          <span>{{ formParams.name }}</span>
-        </template>
-      </div>
-    </template>
-    <div v-if="!showForm" class="flex border-top flex-1 min-h-0">
-      <div
-        class="flex flex-column border-end scene-name-list-wrap overflow-x-hidden pt-4 pb-2"
-        :class="{
-          'is-en': $i18n.locale === 'en',
-        }"
-      >
-        <div class="scene-name-list overflow-y-auto">
-          <div
-            v-if="lockedTypes.length"
-            class="scene-name-item px-4 rounded-4 user-select-none ellipsis cursor-pointer flex align-center"
-            :class="{ active: currentScene === 'locked' && !search }"
-            @click="
-              handleSelectScene({
-                key: 'locked',
-              })
-            "
-          >
-            <VIcon size="18" class="mr-1">lock-circle</VIcon>
-            {{ $t('packages_business_paid_connector') }}
-          </div>
-
-          <template v-if="isCommunity">
-            <div
-              class="scene-name-item px-4 rounded-4 user-select-none ellipsis cursor-pointer flex align-center"
-              @click="openGithub"
-            >
-              <VIcon size="16" class="mr-1">github</VIcon>
-              {{ $t('packages_business_more_free_connector') }}
-              <VIcon size="16" class="ml-1">open-in-new</VIcon>
-            </div>
-
-            <div class="px-2">
-              <ElDivider class="my-2"></ElDivider>
-            </div>
-          </template>
-
-          <div
-            class="scene-name-item px-4 rounded-4 user-select-none ellipsis cursor-pointer"
-            :class="{
-              active: (currentScene === item.key || currentScene === item.name) && !search,
-            }"
-            v-for="(item, i) in options"
-            :key="i"
-            @click="handleSelectScene(item)"
-          >
-            {{ item.name }}
-          </div>
-        </div>
-      </div>
-      <div ref="connectorContainer" v-loading="loading" class="flex-1 bg-light p-4 overflow-y-auto">
-        <div v-if="specialScene[currentScene]" class="connector-list grid gap-4">
-          <div
-            v-for="item in specialScene[currentScene]"
-            :key="item.key"
-            class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
-            @click="handleSelectSpecial(item)"
-          >
-            <div class="flex gap-3">
-              <VIcon size="38">{{ item.icon }}</VIcon>
-              <div class="connector-item-content flex-1 overflow-hidden">
-                <div class="connector-item-title font-color-dark flex align-center">
-                  <span class="ellipsis mr-1">{{ item.name }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div v-else-if="sceneDatabases.length" class="connector-list grid gap-4">
-          <template v-if="showDemoConnection">
-            <div
-              v-for="item in demoDatabase"
-              :key="`demo-${item.pdkId}`"
-              class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
-              :class="{ active: item.pdkId === selected.pdkId }"
-              @click="handleSelect(item, true)"
-            >
-              <div class="flex gap-3">
-                <DatabaseIcon :size="38" :item="item"></DatabaseIcon>
-                <div class="connector-item-content flex-1 overflow-hidden">
-                  <div class="connector-item-title font-color-dark flex align-center">
-                    <span class="ellipsis mr-1">{{ item.name }} <span class="color-warning">Demo</span></span>
-                    <ElTag type="warning" class="text-uppercase ml-auto px-1 connector-item-tag">DEMO</ElTag>
-                  </div>
-                </div>
-              </div>
-              <div class="font-color-light fs-8 mt-2">
-                {{ item.name }} {{ $t('packages_business_demo_database_desc') }}
-              </div>
-            </div>
-          </template>
-          <div
-            v-for="item in sceneDatabases"
-            :key="item.type"
-            class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
-            :class="{ active: item.pdkId === selected.pdkId }"
-            @click="handleSelect(item)"
-          >
-            <div class="flex gap-3">
-              <DatabaseIcon v-if="!item.locked || !item.icon.includes('.')" :size="38" :item="item"></DatabaseIcon>
-              <ElImage
-                v-else
-                style="width: 38px; height: 38px"
-                :src="require(`@tap/assets/images/connector/${item.icon}`)"
-              ></ElImage>
-              <div class="connector-item-content flex-1 overflow-hidden">
-                <div class="connector-item-title font-color-dark flex align-center">
-                  <span class="ellipsis mr-1">{{ item.name }}</span>
-                  <VIcon v-if="item.locked" size="24">lock-circle</VIcon>
-                  <VIcon v-if="item.qcType === 'GA'" size="24" class="ml-auto color-success">verified</VIcon>
-                  <ElTag v-else-if="item.qcType" class="text-uppercase ml-auto px-1 connector-item-tag"
-                    >{{ item.qcType }}
-                  </ElTag>
-                </div>
-              </div>
-            </div>
-            <div v-if="currentScene === 'recommend' && !search" class="font-color-light fs-8 mt-2">
-              {{ connectorDescMap[item.type] }}
-            </div>
-          </div>
-        </div>
-        <VEmpty v-else></VEmpty>
-      </div>
-    </div>
-    <div
-      v-else
-      v-loading="loading"
-      element-loading-background="#fff"
-      class="form__content flex flex-column h-100 overflow-hidden border-top"
-    >
-      <ServeForm
-        v-if="!formParams.pdkHash"
-        :params="formParams"
-        :selector-type="selectorType"
-        class="flex-fill"
-        @success="handleSuccess"
-        @saveAndMore="handleSaveAndMore"
-      ></ServeForm>
-      <ConnectionForm
-        v-else
-        ref="connectionForm"
-        :params="formParams"
-        :selector-type="selectorType"
-        :hide-connection-type="!!fixedPdkId"
-        class="flex-fill"
-        @back="init"
-        @success="handleSuccess"
-        @saveAndMore="handleSaveAndMore"
-      ></ConnectionForm>
-    </div>
-
-    <RequestDialog
-      v-if="!isDaas"
-      ref="requestDialog"
-      :visible="requestVisible"
-      :meta="requestMeta"
-      @update:visible="(val) => (requestVisible = val)"
-    ></RequestDialog>
-  </ElDialog>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import { mapGetters } from 'vuex'
-import i18n from '@tap/i18n'
-
-import ConnectionForm from './SceneForm'
-import ServeForm from './ServeForm'
-import { VEmpty, IconButton } from '@tap/component'
 import { databaseTypesApi } from '@tap/api'
-import { getIcon } from '@tap/assets'
+import { getConnectorImage, getIcon } from '@tap/assets'
+import { IconButton, VEmpty } from '@tap/component'
+
+import i18n from '@tap/i18n'
+import { mapGetters } from 'vuex'
+import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 import { DatabaseIcon } from '../DatabaseIcon'
 import RequestDialog from './RequestDialog.vue'
+import ConnectionForm from './SceneForm'
+import ServeForm from './ServeForm'
 
 export default {
   name: 'SceneDialog',
-  inject: ['openLocked'],
   components: {
     RequestDialog,
     ConnectionForm,
@@ -222,6 +21,7 @@ export default {
     DatabaseIcon,
     IconButton,
   },
+  inject: ['openLocked'],
   props: {
     visible: {
       required: true,
@@ -238,7 +38,7 @@ export default {
   },
   data() {
     const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
-    const isCommunity =  import.meta.env.VUE_APP_MODE === 'community'
+    const isCommunity = import.meta.env.VUE_APP_MODE === 'community'
     return {
       isDaas,
       isCommunity,
@@ -267,7 +67,9 @@ export default {
         },
         {
           key: 'recommend',
-          name: i18n.t('packages_business_create_connection_scenedialog_tuijianchangjing'),
+          name: i18n.t(
+            'packages_business_create_connection_scenedialog_tuijianchangjing',
+          ),
           types: [
             'Mysql',
             'Oracle',
@@ -290,7 +92,9 @@ export default {
         types: ['RESTful API', 'GraphQL']*/,
         },
         {
-          name: i18n.t('packages_business_create_connection_scenedialog_rushucang'),
+          name: i18n.t(
+            'packages_business_create_connection_scenedialog_rushucang',
+          ),
           types: [
             'BigQuery',
             'SelectDB',
@@ -303,20 +107,35 @@ export default {
           ],
         },
         {
-          name: i18n.t('packages_business_create_connection_scenedialog_chaxunjiasu'),
+          name: i18n.t(
+            'packages_business_create_connection_scenedialog_chaxunjiasu',
+          ),
           types: ['MongoDB', 'Redis', 'Elasticsearch'],
         },
         {
           key: 'Database',
-          name: i18n.t('packages_business_create_connection_scenedialog_shujukutongbu'),
+          name: i18n.t(
+            'packages_business_create_connection_scenedialog_shujukutongbu',
+          ),
           types: ['MongoDB'],
         },
         {
-          name: i18n.t('packages_business_create_connection_scenedialog_guochantidai'),
-          types: ['Dameng', 'GBase-8a', 'KingBaseES-R3', 'KingBaseES-R6', 'Tidb', 'Oceanbase'],
+          name: i18n.t(
+            'packages_business_create_connection_scenedialog_guochantidai',
+          ),
+          types: [
+            'Dameng',
+            'GBase-8a',
+            'KingBaseES-R3',
+            'KingBaseES-R6',
+            'Tidb',
+            'Oceanbase',
+          ],
         },
         {
-          name: i18n.t('packages_business_create_connection_scenedialog_duiliegongshu'),
+          name: i18n.t(
+            'packages_business_create_connection_scenedialog_duiliegongshu',
+          ),
           types: ['Kafka', 'ActiveMQ', 'RocketMQ', 'RabbitMQ'],
         },
         {
@@ -324,30 +143,50 @@ export default {
           types: ['vika', 'QingCloud'],
         },
         {
-          name: i18n.t('packages_business_create_connection_scenedialog_gongzuoliu'),
+          name: i18n.t(
+            'packages_business_create_connection_scenedialog_gongzuoliu',
+          ),
           types: ['Lark-IM', 'LarkTask'],
         },
       ],
       connectorDescMap: {
-        BigQuery: i18n.t('packages_business_create_connection_scenedialog_bigQu'),
-        MongoDB: i18n.t('packages_business_create_connection_scenedialog_mongo'),
+        BigQuery: i18n.t(
+          'packages_business_create_connection_scenedialog_bigQu',
+        ),
+        MongoDB: i18n.t(
+          'packages_business_create_connection_scenedialog_mongo',
+        ),
         Redis: i18n.t('packages_business_create_connection_scenedialog_redis'),
-        SelectDB: i18n.t('packages_business_create_connection_scenedialog_selec'),
-        Tablestore: i18n.t('packages_business_create_connection_scenedialog_table'),
+        SelectDB: i18n.t(
+          'packages_business_create_connection_scenedialog_selec',
+        ),
+        Tablestore: i18n.t(
+          'packages_business_create_connection_scenedialog_table',
+        ),
         Mysql: i18n.t('packages_business_create_connection_mysql_desc'),
         Oracle: i18n.t('packages_business_create_connection_oracle_desc'),
-        'SQL Server': i18n.t('packages_business_create_connection_sqlserver_desc'),
-        PostgreSQL: i18n.t('packages_business_create_connection_postgresql_desc'),
-        Clickhouse: i18n.t('packages_business_create_connection_clickhouse_desc'),
-        Elasticsearch: i18n.t('packages_business_create_connection_elasticsearch_desc'),
+        'SQL Server': i18n.t(
+          'packages_business_create_connection_sqlserver_desc',
+        ),
+        PostgreSQL: i18n.t(
+          'packages_business_create_connection_postgresql_desc',
+        ),
+        Clickhouse: i18n.t(
+          'packages_business_create_connection_clickhouse_desc',
+        ),
+        Elasticsearch: i18n.t(
+          'packages_business_create_connection_elasticsearch_desc',
+        ),
         Dummy: i18n.t('packages_business_create_connection_dummy_desc'),
         Kafka: i18n.t('packages_business_create_connection_kafka_desc'),
         Doris: i18n.t('packages_business_create_connection_doris_desc'),
-        'MongoDB Atlas': i18n.t('packages_business_create_connection_mongodbatlas_desc'),
+        'MongoDB Atlas': i18n.t(
+          'packages_business_create_connection_mongodbatlas_desc',
+        ),
       },
       currentScene: 'recommend',
       lockedTypes:
-         import.meta.env.VUE_APP_MODE === 'community'
+        import.meta.env.VUE_APP_MODE === 'community'
           ? [
               {
                 type: 'Aliyun RDS MySQL',
@@ -581,7 +420,9 @@ export default {
           key: 'File',
         },
         {
-          name: i18n.t('packages_business_components_connectiontypeselectorsort_wodeshujuyuan'),
+          name: i18n.t(
+            'packages_business_components_connectiontypeselectorsort_wodeshujuyuan',
+          ),
           key: 'Custom',
         },
       ],
@@ -621,8 +462,10 @@ export default {
     },
     sceneDatabases() {
       if (this.search) {
-        let search = this.search.toLowerCase()
-        return this.database.filter((db) => db.name.toLowerCase().includes(search))
+        const search = this.search.toLowerCase()
+        return this.database.filter((db) =>
+          db.name.toLowerCase().includes(search),
+        )
       }
 
       const { currentScene } = this
@@ -635,7 +478,10 @@ export default {
         return this.lockedTypes
       }
 
-      if (currentScene === 'recommend' || (this.selectorType === 'target' && currentScene !== 'Database')) {
+      if (
+        currentScene === 'recommend' ||
+        (this.selectorType === 'target' && currentScene !== 'Database')
+      ) {
         const types = this.sceneMap[this.currentScene]
         const arr = []
 
@@ -652,25 +498,39 @@ export default {
       return this.database.filter((db) => db.tags?.includes(currentScene))
     },
     options() {
-      let list = this.selectorType === 'target' ? this.sceneList : this.tagList
+      const list =
+        this.selectorType === 'target' ? this.sceneList : this.tagList
       return list.filter((item) => !item.hidden)
     },
     title() {
       if (this.selectorType === 'target') {
-        return this.$t('packages_business_create_connection_scenedialog_qingxuanzeninde')
+        return this.$t(
+          'packages_business_create_connection_scenedialog_qingxuanzeninde',
+        )
       }
       return this.$t('packages_business_create_connection_title_select_type')
     },
 
     showDemoConnection() {
-      return this.startingTour && !this.pausedGuide && this.currentScene === 'recommend' && !this.search
+      return (
+        this.startingTour &&
+        !this.pausedGuide &&
+        this.currentScene === 'recommend' &&
+        !this.search
+      )
     },
   },
   watch: {
     async visible(v) {
       this.showDialog = v
       this.showForm = false
-      Object.assign(this.formParams, { id: '', name: '', pdkHash: null, pdkId: null, pdkOptions: null })
+      Object.assign(this.formParams, {
+        id: '',
+        name: '',
+        pdkHash: null,
+        pdkId: null,
+        pdkOptions: null,
+      })
       if (v) {
         this.modalClass = ''
         this.search = ''
@@ -711,10 +571,17 @@ export default {
     }
   },
   methods: {
+    getConnectorImage,
     getIcon,
     init() {
       this.showForm = false
-      Object.assign(this.formParams, { id: '', name: '', pdkHash: null, pdkId: null, pdkOptions: null })
+      Object.assign(this.formParams, {
+        id: '',
+        name: '',
+        pdkHash: null,
+        pdkId: null,
+        pdkOptions: null,
+      })
     },
 
     editConnection(data) {
@@ -789,9 +656,12 @@ export default {
               },
               ...demoDatabase[item.pdkId],
             })
-            this.$refs.connectionForm.schemaFormInstance.setFieldState('*(!START.__TAPDATA.name)', {
-              disabled: true,
-            })
+            this.$refs.connectionForm.schemaFormInstance.setFieldState(
+              '*(!START.__TAPDATA.name)',
+              {
+                disabled: true,
+              },
+            )
           }, 0)
         })
       }
@@ -842,9 +712,15 @@ export default {
       })
       const data =
         this.selectorType !== 'source_and_target'
-          ? res?.filter((t) => t.connectionType.includes(this.selectorType) && !!t.pdkHash) || []
+          ? res?.filter(
+              (t) =>
+                t.connectionType.includes(this.selectorType) && !!t.pdkHash,
+            ) || []
           : res
-      this.databaseTypeMap = data.reduce((map, db) => ((map[db.type] = db), map), {})
+      this.databaseTypeMap = data.reduce(
+        (map, db) => ((map[db.type] = db), map),
+        {},
+      )
 
       const sortFn = (o1, o2) => {
         const qcTypeLevel = {
@@ -863,7 +739,7 @@ export default {
       }
 
       if (this.isControlEnabled) {
-        this.lockedTypes = data.filter(item => {
+        this.lockedTypes = data.filter((item) => {
           const enabled = this.connectors.includes(item.type)
 
           if (!enabled) {
@@ -879,7 +755,8 @@ export default {
             item.locked = true // 标记上锁
             return (
               !this.databaseTypeMap[item.type] &&
-              ((this.selectorType !== 'source_and_target' && item.connectionType.includes(this.selectorType)) ||
+              ((this.selectorType !== 'source_and_target' &&
+                item.connectionType.includes(this.selectorType)) ||
                 this.selectorType === 'source_and_target')
             )
           })
@@ -922,23 +799,29 @@ export default {
     beforeClose(done) {
       if (this.startingTour) {
         this.modalClass = 'dialog-zoom-transition' // 暂停引导让 dialog 有缩放动画
-        const icon = document.getElementById('user-guide-icon')
+        const icon = document.querySelector('#user-guide-icon')
         if (icon) {
           const windowWidth = document.documentElement.clientWidth
           const windowHeight = document.documentElement.clientHeight
           const iconStyle = window.getComputedStyle(icon)
-          const iconX = parseInt(iconStyle.left) + parseInt(iconStyle.width) / 2
-          const iconY = windowHeight - parseInt(iconStyle.bottom) - parseInt(iconStyle.height) / 2
+          const iconX =
+            Number.parseInt(iconStyle.left) +
+            Number.parseInt(iconStyle.width) / 2
+          const iconY =
+            windowHeight -
+            Number.parseInt(iconStyle.bottom) -
+            Number.parseInt(iconStyle.height) / 2
           const dialog = this.$refs.dialogWrapper.dialogContentRef.$el
           const computedStyle = window.getComputedStyle(dialog)
           let width = computedStyle.width
           if (width.endsWith('px')) {
-            width = parseInt(width)
+            width = Number.parseInt(width)
           } else if (width.endsWith('%')) {
-            width = (parseInt(width) / 100) * windowWidth
+            width = (Number.parseInt(width) / 100) * windowWidth
           }
           const transformOriginX = iconX - (windowWidth - width) / 2
-          const transformOriginY = iconY - parseInt(computedStyle.marginTop)
+          const transformOriginY =
+            iconY - Number.parseInt(computedStyle.marginTop)
           dialog.style.transformOrigin = `${transformOriginX}px ${transformOriginY}px`
         }
         this.$store.commit('pauseTour')
@@ -952,9 +835,264 @@ export default {
       window.open('https://github.com/tapdata/tapdata-connectors', '_blank')
     },
   },
-  emits: ['update:visible', 'update:selectorType', 'visible', 'selected', 'success', 'saveAndMore'],
+  emits: [
+    'update:visible',
+    'update:selectorType',
+    'visible',
+    'selected',
+    'success',
+    'saveAndMore',
+  ],
 }
 </script>
+
+<template>
+  <ElDialog
+    ref="dialogWrapper"
+    :model-value="visible"
+    :append-to-body="true"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    :width="width"
+    top="10vh"
+    :modal-class="modalClass"
+    class="ldp-connection-dialog flex flex-column p-0"
+    :before-close="beforeClose"
+    @close="handleClose"
+    @closed="onClosed"
+  >
+    <template #header>
+      <div
+        class="flex px-6 h-100 font-color-dark fs-6 fw-sub position-relative align-center"
+      >
+        <template v-if="!showForm">
+          <span>{{ title }}</span>
+          <ElInput
+            v-model="search"
+            class="position-absolute start-50 top-50 translate-middle ldp-connection-search-input"
+            clearable
+            :placeholder="$t('public_input_placeholder_search')"
+            @input="handleSearchInput"
+          >
+            <template #prefix>
+              <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
+            </template>
+          </ElInput>
+        </template>
+        <template v-else>
+          <IconButton v-if="!onlyForm" class="mr-2" @click="showForm = false"
+            >left</IconButton
+          >
+          <DatabaseIcon
+            v-if="formParams.pdkHash"
+            class="mr-2"
+            :size="24"
+            :item="formParams"
+          />
+          <VIcon v-else class="mr-2" :size="24">{{ formParams.icon }}</VIcon>
+          <span>{{ formParams.name }}</span>
+        </template>
+      </div>
+    </template>
+    <div v-if="!showForm" class="flex border-top flex-1 min-h-0">
+      <div
+        class="flex flex-column border-end scene-name-list-wrap overflow-x-hidden pt-4 pb-2"
+        :class="{
+          'is-en': $i18n.locale === 'en',
+        }"
+      >
+        <div class="scene-name-list overflow-y-auto">
+          <div
+            v-if="lockedTypes.length"
+            class="scene-name-item px-4 rounded-4 user-select-none ellipsis cursor-pointer flex align-center"
+            :class="{ active: currentScene === 'locked' && !search }"
+            @click="
+              handleSelectScene({
+                key: 'locked',
+              })
+            "
+          >
+            <VIcon size="18" class="mr-1">lock-circle</VIcon>
+            {{ $t('packages_business_paid_connector') }}
+          </div>
+
+          <template v-if="isCommunity">
+            <div
+              class="scene-name-item px-4 rounded-4 user-select-none ellipsis cursor-pointer flex align-center"
+              @click="openGithub"
+            >
+              <VIcon size="16" class="mr-1">github</VIcon>
+              {{ $t('packages_business_more_free_connector') }}
+              <VIcon size="16" class="ml-1">open-in-new</VIcon>
+            </div>
+
+            <div class="px-2">
+              <ElDivider class="my-2" />
+            </div>
+          </template>
+
+          <div
+            v-for="(item, i) in options"
+            :key="i"
+            class="scene-name-item px-4 rounded-4 user-select-none ellipsis cursor-pointer"
+            :class="{
+              active:
+                (currentScene === item.key || currentScene === item.name) &&
+                !search,
+            }"
+            @click="handleSelectScene(item)"
+          >
+            {{ item.name }}
+          </div>
+        </div>
+      </div>
+      <div
+        ref="connectorContainer"
+        v-loading="loading"
+        class="flex-1 bg-light p-4 overflow-y-auto"
+      >
+        <div
+          v-if="specialScene[currentScene]"
+          class="connector-list grid gap-4"
+        >
+          <div
+            v-for="item in specialScene[currentScene]"
+            :key="item.key"
+            class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
+            @click="handleSelectSpecial(item)"
+          >
+            <div class="flex gap-3">
+              <VIcon size="38">{{ item.icon }}</VIcon>
+              <div class="connector-item-content flex-1 overflow-hidden">
+                <div
+                  class="connector-item-title font-color-dark flex align-center"
+                >
+                  <span class="ellipsis mr-1">{{ item.name }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          v-else-if="sceneDatabases.length"
+          class="connector-list grid gap-4"
+        >
+          <template v-if="showDemoConnection">
+            <div
+              v-for="item in demoDatabase"
+              :key="`demo-${item.pdkId}`"
+              class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
+              :class="{ active: item.pdkId === selected.pdkId }"
+              @click="handleSelect(item, true)"
+            >
+              <div class="flex gap-3">
+                <DatabaseIcon :size="38" :item="item" />
+                <div class="connector-item-content flex-1 overflow-hidden">
+                  <div
+                    class="connector-item-title font-color-dark flex align-center"
+                  >
+                    <span class="ellipsis mr-1"
+                      >{{ item.name }}
+                      <span class="color-warning">Demo</span></span
+                    >
+                    <ElTag
+                      type="warning"
+                      class="text-uppercase ml-auto px-1 connector-item-tag"
+                      >DEMO</ElTag
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="font-color-light fs-8 mt-2">
+                {{ item.name }} {{ $t('packages_business_demo_database_desc') }}
+              </div>
+            </div>
+          </template>
+          <div
+            v-for="item in sceneDatabases"
+            :key="item.type"
+            class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
+            :class="{ active: item.pdkId === selected.pdkId }"
+            @click="handleSelect(item)"
+          >
+            <div class="flex gap-3">
+              <DatabaseIcon
+                v-if="!item.locked || !item.icon.includes('.')"
+                :size="38"
+                :item="item"
+              />
+              <ElImage
+                v-else
+                style="width: 38px; height: 38px"
+                :src="getConnectorImage(item.icon)"
+              />
+              <div class="connector-item-content flex-1 overflow-hidden">
+                <div
+                  class="connector-item-title font-color-dark flex align-center"
+                >
+                  <span class="ellipsis mr-1">{{ item.name }}</span>
+                  <VIcon v-if="item.locked" size="24">lock-circle</VIcon>
+                  <VIcon
+                    v-if="item.qcType === 'GA'"
+                    size="24"
+                    class="ml-auto color-success"
+                    >verified</VIcon
+                  >
+                  <ElTag
+                    v-else-if="item.qcType"
+                    class="text-uppercase ml-auto px-1 connector-item-tag"
+                    >{{ item.qcType }}
+                  </ElTag>
+                </div>
+              </div>
+            </div>
+            <div
+              v-if="currentScene === 'recommend' && !search"
+              class="font-color-light fs-8 mt-2"
+            >
+              {{ connectorDescMap[item.type] }}
+            </div>
+          </div>
+        </div>
+        <VEmpty v-else />
+      </div>
+    </div>
+    <div
+      v-else
+      v-loading="loading"
+      element-loading-background="#fff"
+      class="form__content flex flex-column h-100 overflow-hidden border-top"
+    >
+      <ServeForm
+        v-if="!formParams.pdkHash"
+        :params="formParams"
+        :selector-type="selectorType"
+        class="flex-fill"
+        @success="handleSuccess"
+        @save-and-more="handleSaveAndMore"
+      />
+      <ConnectionForm
+        v-else
+        ref="connectionForm"
+        :params="formParams"
+        :selector-type="selectorType"
+        :hide-connection-type="!!fixedPdkId"
+        class="flex-fill"
+        @back="init"
+        @success="handleSuccess"
+        @save-and-more="handleSaveAndMore"
+      />
+    </div>
+
+    <RequestDialog
+      v-if="!isDaas"
+      ref="requestDialog"
+      :visible="requestVisible"
+      :meta="requestMeta"
+      @update:visible="(val) => (requestVisible = val)"
+    />
+  </ElDialog>
+</template>
 
 <style lang="scss">
 .ldp-connection-dialog {

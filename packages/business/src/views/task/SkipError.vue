@@ -1,50 +1,3 @@
-<template>
-  <ElDialog
-    :title="`${$t('packages_business_dataFlow_skipError_title')} - ${taskName}`"
-    :model-value="visible"
-    @update:visible="visible = $event"
-    width="60%"
-  >
-    <div class="lh-base mb-3">
-      <ElAlert
-        :title="$t('packages_business_dataFlow_skipError_attention')"
-        :description="$t('packages_business_dataFlow_skipError_tip')"
-        type="warning"
-        :closable="false"
-      ></ElAlert>
-    </div>
-
-    <ul class="error-list rounded-lg bg-subtle">
-      <span class="check-all"
-        ><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">{{
-          $t('packages_business_dataFlow_selectAll')
-        }}</el-checkbox></span
-      >
-      <el-checkbox-group v-model="checkedData" @change="handleCheckedDataChange" class="list-box">
-        <li v-for="item in errorEvents" :key="item.id">
-          <el-checkbox :label="item.id" class="flex">
-            <div class="error-content rounded-4">
-              <span class="error-msg"><span style="color: red">[ERROR]</span> {{ item.message }}</span>
-            </div>
-          </el-checkbox>
-        </li>
-      </el-checkbox-group>
-    </ul>
-    <div class="pt-2">
-      {{ errorTotal }} {{ checkedData.length }}
-      {{ $t('packages_business_dataFlow_skipError_strip') }}
-    </div>
-    <template v-slot:footer>
-      <span class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('public_button_cancel') }}</el-button>
-        <el-button :loading="skipping" type="primary" @click="skipErrorData">{{
-          $t('packages_business_dataFlow_skipError_startJob')
-        }}</el-button>
-      </span>
-    </template>
-  </ElDialog>
-</template>
-
 <script>
 import { taskApi } from '@tap/api'
 export default {
@@ -52,6 +5,7 @@ export default {
   props: {
     // visible: Boolean
   },
+  emits: ['skip'],
   data() {
     return {
       skipping: false,
@@ -66,7 +20,10 @@ export default {
   },
   computed: {
     isIndeterminate() {
-      return this.checkedData.length > 0 && this.checkedData.length < this.errorEvents.length
+      return (
+        this.checkedData.length > 0 &&
+        this.checkedData.length < this.errorEvents.length
+      )
     },
   },
   methods: {
@@ -82,8 +39,11 @@ export default {
         this.taskId = task.id
         this.taskName = task.name
         this.errorEvents = errorEvents.map((item) => {
-          if ( import.meta.env.VUE_APP_KEYWORD && item.message) {
-            item.message = item.message.replace(/tapdata\s?/gi,  import.meta.env.VUE_APP_KEYWORD)
+          if (import.meta.env.VUE_APP_KEYWORD && item.message) {
+            item.message = item.message.replaceAll(
+              /tapdata\s?/gi,
+              import.meta.env.VUE_APP_KEYWORD,
+            )
           }
           delete item.stacks // stacks is too long
           return item
@@ -100,7 +60,7 @@ export default {
         : []
     },
     handleCheckedDataChange(value) {
-      let checkedCount = value.length
+      const checkedCount = value.length
       this.checkAll = checkedCount === this.errorEvents.length
     },
     async skipErrorData() {
@@ -111,9 +71,66 @@ export default {
       this.$emit('skip', this.taskId)
     },
   },
-  emits: ['skip'],
 }
 </script>
+
+<template>
+  <ElDialog
+    v-model="visible"
+    :title="`${$t('packages_business_dataFlow_skipError_title')} - ${taskName}`"
+    width="60%"
+  >
+    <div class="lh-base mb-3">
+      <ElAlert
+        :title="$t('packages_business_dataFlow_skipError_attention')"
+        :description="$t('packages_business_dataFlow_skipError_tip')"
+        type="warning"
+        :closable="false"
+      />
+    </div>
+
+    <ul class="error-list rounded-lg bg-subtle">
+      <span class="check-all"
+        ><el-checkbox
+          v-model="checkAll"
+          :indeterminate="isIndeterminate"
+          @change="handleCheckAllChange"
+          >{{ $t('packages_business_dataFlow_selectAll') }}</el-checkbox
+        ></span
+      >
+      <el-checkbox-group
+        v-model="checkedData"
+        class="list-box"
+        @change="handleCheckedDataChange"
+      >
+        <li v-for="item in errorEvents" :key="item.id">
+          <el-checkbox :label="item.id" class="flex">
+            <div class="error-content rounded-4">
+              <span class="error-msg"
+                ><span style="color: red">[ERROR]</span>
+                {{ item.message }}</span
+              >
+            </div>
+          </el-checkbox>
+        </li>
+      </el-checkbox-group>
+    </ul>
+    <div class="pt-2">
+      {{ errorTotal }} {{ checkedData.length }}
+      {{ $t('packages_business_dataFlow_skipError_strip') }}
+    </div>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="visible = false">{{
+          $t('public_button_cancel')
+        }}</el-button>
+        <el-button :loading="skipping" type="primary" @click="skipErrorData">{{
+          $t('packages_business_dataFlow_skipError_startJob')
+        }}</el-button>
+      </span>
+    </template>
+  </ElDialog>
+</template>
 
 <style lang="scss">
 .error-list {

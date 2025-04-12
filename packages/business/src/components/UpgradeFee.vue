@@ -1,121 +1,17 @@
-<template>
-  <el-dialog
-    :title="$t('dfs_subscribe_to_professional_plan')"
-    :model-value="visible"
-    @input="$emit('update:visible', $event)"
-    :append-to-body="true"
-    width="880px"
-    class="paid-upgrade-dialog"
-    :before-close="handleClose"
-  >
-    <div v-if="tooltip" class="py-2 px-4 bg-warning-light flex align-items-center">
-      <VIcon size="20" class="color-warning">info</VIcon>
-      <span class="ml-2 color-warning">{{ tooltip }}</span>
-    </div>
-    <ul class="flex paid-upgrade-ul mt-6 mx-4">
-      <li class="paid-upgrade-left flex flex-column disabled">
-        <div class="px-4 py-4 flex-1">
-          <div class="version mb-2">
-            {{ $t('packages_component_src_upgradefee_jichuban') }}
-          </div>
-          <div class="desc mt-6">
-            {{ $t('packages_component_src_upgradefee_tigongmianfeishi') }}
-          </div>
-          <div class="paid-upgrade-l-height flex align-items-center">
-            <span class="free">{{ $t('packages_component_src_upgradefee_mianfei') }}</span>
-          </div>
-          <ElDivider></ElDivider>
-          <div class="currentList paid-upgrade-mb16 flex">
-            <VIcon size="16" class="mr-2 color-primary">check</VIcon
-            ><span>{{ $t('packages_component_src_basic_component') }}</span>
-          </div>
-          <div class="currentList paid-upgrade-mb16 mt-2 flex">
-            <VIcon size="16" class="mr-2 color-primary">check</VIcon
-            >{{ $t('packages_component_src_upgradefee_zuidarenwushu') }}
-            <span class="color-primary">&nbsp{{ $t('packages_component_src_upgradefee_ge') }}</span>
-          </div>
-          <div class="currentList paid-upgrade-mb16 flex">
-            <VIcon size="16" class="mr-2 color-primary">check</VIcon
-            ><span>{{ $t('packages_component_src_upgradefee_biaozhunshouhouzhi') }}</span>
-          </div>
-        </div>
-        <div class="footer flex justify-content-between align-items-center px-4">
-          {{ $t('packages_component_src_upgradefee_dangqianbanben') }}
-        </div>
-      </li>
-      <li
-        class="paid-upgrade-right copilot-pricing-card-container ml-6 flex flex-column bg cursor-pointer position-relative"
-        @click="goPaidUpgrade"
-      >
-        <img
-          alt=""
-          width="50"
-          height="56"
-          class="copilot-pricing-card-bg-glow width-full height-full left-0 top-0 position-absolute d-block"
-          loading="lazy"
-          decoding="async"
-          aria-hidden="true"
-          style="z-index：0"
-          :src="require('@tap/assets/images/pricing-card-glow.png')"
-        />
-        <div class="copilot-pricing-card-glow-border1">
-          <div class="px-4 pb-4 flex-1 bg-white paid-upgrade-right-border">
-            <div class="flex bg mr-n4 rounded-4">
-              <div class="pt-4">
-                <div class="version mb-2">
-                  {{ $t('packages_component_src_upgradefee_zhuanyeban') }}
-                  <span class="discount inline-block fs-8 fw-normal">{{
-                    $t('packages_component_src_upgradefee_xianshiyouhui')
-                  }}</span>
-                </div>
-                <div class="desc_professional mt-6">
-                  {{ $t('packages_component_src_upgradefee_tigongzhuanyehua') }}
-                </div>
-                <div
-                  class="paid-upgrade-height flex align-items-center"
-                  :class="[{ 'paid-upgrade-cn-height': this.$i18n.locale === 'zh-CN' }]"
-                >
-                  <span class="pay">{{ $t('packages_component_src_upgradefee_taocanfufei') }}</span>
-                </div>
-                <ElDivider></ElDivider>
-              </div>
-            </div>
-            <div class="currentList paid-upgrade-mb16 mt-2 flex">
-              <VIcon size="16" class="mr-2 color-primary mt-0 flex left-bold">right</VIcon
-              ><span>{{ $t('packages_component_src_upgradefee_desc_1') }}</span>
-            </div>
-            <div class="currentList paid-upgrade-mb16 mt-2 flex">
-              <VIcon size="16" class="mr-2 color-primary">check</VIcon
-              ><span>{{ $t('packages_component_src_upgradefee_renwushukegen') }}</span>
-            </div>
-            <div class="currentList paid-upgrade-mb16 flex">
-              <VIcon size="16" class="mr-2 color-primary">check</VIcon
-              ><span>{{ $t('packages_component_src_upgradefee_shujuchulixing') }}</span>
-            </div>
-            <div class="currentList paid-upgrade-mb16 flex">
-              <VIcon size="16" class="mr-2 color-primary">check</VIcon
-              ><span>{{ $t('packages_component_src_upgradefee_gaojishouhouzhi') }}</span>
-            </div>
-          </div>
-          <div
-            class="footer-right flex justify-content-between align-items-center px-4 cursor-pointer"
-            @click="goPaidUpgrade"
-          >
-            {{ $t('dfs_subscribe_to_professional_plan') }}<VIcon size="20">right</VIcon>
-          </div>
-        </div>
-      </li>
-    </ul>
-  </el-dialog>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
+import pricingCardImg from '@tap/assets/images/pricing-card-glow.png'
 import { VIcon } from '@tap/component'
+import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 export default {
   name: 'UpgradeFeeDialog',
   components: { VIcon },
   props: ['visible', 'tooltip', 'goPage'],
+  emits: ['update:visible'],
+  data() {
+    return {
+      pricingCardImg,
+    }
+  },
   methods: {
     goPaidUpgrade() {
       if (this.goPage) {
@@ -132,9 +28,142 @@ export default {
       $emit(this, 'update:visible', false)
     },
   },
-  emits: ['update:visible'],
 }
 </script>
+
+<template>
+  <el-dialog
+    :title="$t('dfs_subscribe_to_professional_plan')"
+    :model-value="visible"
+    :append-to-body="true"
+    width="880px"
+    class="paid-upgrade-dialog"
+    :before-close="handleClose"
+    @input="$emit('update:visible', $event)"
+  >
+    <div
+      v-if="tooltip"
+      class="py-2 px-4 bg-warning-light flex align-items-center"
+    >
+      <VIcon size="20" class="color-warning">info</VIcon>
+      <span class="ml-2 color-warning">{{ tooltip }}</span>
+    </div>
+    <ul class="flex paid-upgrade-ul mt-6 mx-4">
+      <li class="paid-upgrade-left flex flex-column disabled">
+        <div class="px-4 py-4 flex-1">
+          <div class="version mb-2">
+            {{ $t('packages_component_src_upgradefee_jichuban') }}
+          </div>
+          <div class="desc mt-6">
+            {{ $t('packages_component_src_upgradefee_tigongmianfeishi') }}
+          </div>
+          <div class="paid-upgrade-l-height flex align-items-center">
+            <span class="free">{{
+              $t('packages_component_src_upgradefee_mianfei')
+            }}</span>
+          </div>
+          <ElDivider />
+          <div class="currentList paid-upgrade-mb16 flex">
+            <VIcon size="16" class="mr-2 color-primary">check</VIcon
+            ><span>{{ $t('packages_component_src_basic_component') }}</span>
+          </div>
+          <div class="currentList paid-upgrade-mb16 mt-2 flex">
+            <VIcon size="16" class="mr-2 color-primary">check</VIcon
+            >{{ $t('packages_component_src_upgradefee_zuidarenwushu') }}
+            <span class="color-primary"
+              >&nbsp{{ $t('packages_component_src_upgradefee_ge') }}</span
+            >
+          </div>
+          <div class="currentList paid-upgrade-mb16 flex">
+            <VIcon size="16" class="mr-2 color-primary">check</VIcon
+            ><span>{{
+              $t('packages_component_src_upgradefee_biaozhunshouhouzhi')
+            }}</span>
+          </div>
+        </div>
+        <div
+          class="footer flex justify-content-between align-items-center px-4"
+        >
+          {{ $t('packages_component_src_upgradefee_dangqianbanben') }}
+        </div>
+      </li>
+      <li
+        class="paid-upgrade-right copilot-pricing-card-container ml-6 flex flex-column bg cursor-pointer position-relative"
+        @click="goPaidUpgrade"
+      >
+        <img
+          alt=""
+          width="50"
+          height="56"
+          class="copilot-pricing-card-bg-glow width-full height-full left-0 top-0 position-absolute d-block"
+          loading="lazy"
+          decoding="async"
+          aria-hidden="true"
+          style="z-index：0"
+          :src="pricingCardImg"
+        />
+        <div class="copilot-pricing-card-glow-border1">
+          <div class="px-4 pb-4 flex-1 bg-white paid-upgrade-right-border">
+            <div class="flex bg mr-n4 rounded-4">
+              <div class="pt-4">
+                <div class="version mb-2">
+                  {{ $t('packages_component_src_upgradefee_zhuanyeban') }}
+                  <span class="discount inline-block fs-8 fw-normal">{{
+                    $t('packages_component_src_upgradefee_xianshiyouhui')
+                  }}</span>
+                </div>
+                <div class="desc_professional mt-6">
+                  {{ $t('packages_component_src_upgradefee_tigongzhuanyehua') }}
+                </div>
+                <div
+                  class="paid-upgrade-height flex align-items-center"
+                  :class="[
+                    { 'paid-upgrade-cn-height': $i18n.locale === 'zh-CN' },
+                  ]"
+                >
+                  <span class="pay">{{
+                    $t('packages_component_src_upgradefee_taocanfufei')
+                  }}</span>
+                </div>
+                <ElDivider />
+              </div>
+            </div>
+            <div class="currentList paid-upgrade-mb16 mt-2 flex">
+              <VIcon size="16" class="mr-2 color-primary mt-0 flex left-bold"
+                >right</VIcon
+              ><span>{{ $t('packages_component_src_upgradefee_desc_1') }}</span>
+            </div>
+            <div class="currentList paid-upgrade-mb16 mt-2 flex">
+              <VIcon size="16" class="mr-2 color-primary">check</VIcon
+              ><span>{{
+                $t('packages_component_src_upgradefee_renwushukegen')
+              }}</span>
+            </div>
+            <div class="currentList paid-upgrade-mb16 flex">
+              <VIcon size="16" class="mr-2 color-primary">check</VIcon
+              ><span>{{
+                $t('packages_component_src_upgradefee_shujuchulixing')
+              }}</span>
+            </div>
+            <div class="currentList paid-upgrade-mb16 flex">
+              <VIcon size="16" class="mr-2 color-primary">check</VIcon
+              ><span>{{
+                $t('packages_component_src_upgradefee_gaojishouhouzhi')
+              }}</span>
+            </div>
+          </div>
+          <div
+            class="footer-right flex justify-content-between align-items-center px-4 cursor-pointer"
+            @click="goPaidUpgrade"
+          >
+            {{ $t('dfs_subscribe_to_professional_plan')
+            }}<VIcon size="20">right</VIcon>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </el-dialog>
+</template>
 
 <style lang="scss" scoped>
 .paid-upgrade-dialog {

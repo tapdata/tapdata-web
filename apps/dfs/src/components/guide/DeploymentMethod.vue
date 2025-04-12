@@ -1,7 +1,29 @@
+<script>
+import { VIcon } from '@tap/component'
+
+import fullyManagedImg from '@/assets/image/fully_managed.png'
+import selfHostManagedImg from '@/assets/image/self_host_managed.png'
+
+export default {
+  name: 'Account',
+  components: { VIcon },
+  props: ['platform'],
+  emits: ['changePlatform'],
+  data() {
+    return {
+      fullyManagedImg,
+      selfHostManagedImg,
+    }
+  },
+}
+</script>
+
 <template>
   <div class="deployMethod">
     <div class="flex justify-content-center align-items-center">
-      <VIcon size="450px" style="width: 450px; height: 235px">guide-top-header</VIcon>
+      <VIcon size="450px" style="width: 450px; height: 235px"
+        >guide-top-header</VIcon
+      >
     </div>
     <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">
       {{ $t('dfs_components_taskalarmtour_deployment_qingwen') }}
@@ -23,10 +45,10 @@
               {{ $t('dfs_components_taskalarmtour_deployment_yunshujuku') }}
             </div>
           </div>
-          <el-image class="deployMethod-image" :src="require('@/assets/image/fully_managed.png')" />
+          <el-image class="deployMethod-image" :src="fullyManagedImg" />
         </div>
         <div class="is-active position-absolute top-0 end-0">
-          <div class="is-active-triangle"></div>
+          <div class="is-active-triangle" />
           <VIcon size="16" class="is-active-icon">check-bold</VIcon>
         </div>
       </li>
@@ -46,27 +68,19 @@
               {{ $t('dfs_components_taskalarmtour_deployment_wodeshujuku') }}
             </div>
           </div>
-          <el-image class="deployMethod-image" :src="require('@/assets/image/self_host_managed.png')" />
+          <el-image
+            class="deployMethod-image"
+            :src="selfHostManagedImg"
+          />
         </div>
         <div class="is-active position-absolute top-0 end-0">
-          <div class="is-active-triangle"></div>
+          <div class="is-active-triangle" />
           <VIcon size="16" class="is-active-icon">check-bold</VIcon>
         </div>
       </li>
     </ul>
   </div>
 </template>
-
-<script>
-import { VIcon } from '@tap/component'
-
-export default {
-  name: 'Account',
-  props: ['platform'],
-  components: { VIcon },
-  emits: ['changePlatform'],
-}
-</script>
 
 <style lang="scss" scoped>
 .deployMethod-ul li {

@@ -14,8 +14,10 @@
   --icon-n1: rgba(var(--icon-n1-raw), 1);
   --icon-n2: rgb(100, 106, 115);
   --icon-n3: rgb(143, 149, 158);
+  --icon-n1-hover: rgba(var(--icon-n1-raw), 0.1);
 
-  --icon-n1-hover: rgba(var(--icon-n1-raw), 0.1)
+  --fill-hover: rgba(31, 35, 41, 0.08);
+  --fill-hover-raw: 31, 35, 41;
 }
 
 // Table

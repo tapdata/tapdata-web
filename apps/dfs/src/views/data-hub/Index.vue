@@ -1,32 +1,19 @@
-<template>
-  <div v-loading="loading" element-loading-background="#fff" class="h-100">
-    <div
-      v-if="hasMDB && !hasActive"
-      class="text-center h-100 bg-white rounded-lg flex justify-center align-center flex-column"
-    >
-      <ElImage style="width: 200px; height: 200px" :src="require('@tap/assets/images/empty_waiting.png')"></ElImage>
-      <div class="my-6">{{ $t('dfs_wait_storage_init') }}</div>
-      <div>
-        <ElButton @click="handleRefresh" type="primary" plain>{{ $t('public_button_refresh') }}</ElButton>
-      </div>
-    </div>
-    <Dashboard v-else-if="hasMDB"></Dashboard>
-    <Intro v-else-if="!loading"></Intro>
-  </div>
-</template>
-
 <script>
-import { Dashboard } from '@tap/ldp'
-import Intro from './Intro'
 import { liveDataPlatformApi } from '@tap/api'
+import waitingImg from '@tap/assets/images/empty_waiting.png'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
+import { Dashboard } from '@tap/ldp'
+
+import Intro from './Intro'
 
 export default {
   name: 'DataHub',
 
-  components: { Intro, Dashboard },
+  components: { Intro, Dashboard, PageContainer },
 
   data() {
     return {
+      waitingImg,
       hasMDB: false,
       hasActive: false,
       loading: true,
@@ -51,7 +38,10 @@ export default {
 
     const setting = await liveDataPlatformApi.findOne()
 
-    if (setting?.fdmStorageCluster === 'self' && setting?.fdmStorageConnectionId) {
+    if (
+      setting?.fdmStorageCluster === 'self' &&
+      setting?.fdmStorageConnectionId
+    ) {
       this.hasMDB = true
       this.hasActive = true
     } else {
@@ -120,6 +110,27 @@ export default {
   },
 }
 </script>
+
+<template>
+  <PageContainer hide-header content-mode="full">
+    <div v-loading="loading" element-loading-background="#fff" class="h-100">
+      <div
+        v-if="hasMDB && !hasActive"
+        class="text-center h-100 bg-white rounded-lg flex justify-center align-center flex-column"
+      >
+        <ElImage style="width: 200px; height: 200px" :src="waitingImg" />
+        <div class="my-6">{{ $t('dfs_wait_storage_init') }}</div>
+        <div>
+          <ElButton type="primary" plain @click="handleRefresh">{{
+            $t('public_button_refresh')
+          }}</ElButton>
+        </div>
+      </div>
+      <Dashboard v-else-if="hasMDB" />
+      <Intro v-else-if="!loading" />
+    </div>
+  </PageContainer>
+</template>
 
 <style lang="scss" scoped>
 .img-sm {

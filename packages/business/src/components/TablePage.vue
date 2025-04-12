@@ -286,15 +286,15 @@ export default {
           @update:visible="classificationVisible = $event"
           @drop-in-tag="fetch()"
         />
-        <div class="table-page-body">
+        <div class="table-page-body gap-4">
           <div class="table-page-nav">
             <slot name="nav" />
           </div>
-          <div class="table-page-topbar p-3">
-            <div class="table-page-search-bar flex align-center">
+          <div class="table-page-topbar">
+            <div class="table-page-search-bar flex align-center gap-2">
               <IconButton
                 v-if="classify && !hideClassify && !classificationVisible"
-                class="mx-2 rotate-180"
+                class="rotate-180"
                 @click="handleToggleClassify"
                 >expand-list</IconButton
               >
@@ -336,7 +336,7 @@ export default {
             <slot name="tableFooter" />
           </div>
           <div
-            class="pagination-wrapper flex align-center gap-3 px-4 pt-4"
+            class="pagination-wrapper flex align-center gap-4"
             :style="
               ifTableHeightAuto
                 ? `position: sticky; bottom: 0; z-index: 10; background: #fff;`
@@ -393,6 +393,10 @@ export default {
   min-width: 720px;
   flex: 1;
   width: 100%;
+
+  .table-page-nav:empty {
+    display: none;
+  }
   .table-page-header {
     padding: 20px;
     background: #eff1f4;
@@ -495,16 +499,14 @@ export default {
 
     .table-footer {
       line-height: 38px;
-    }
-
-    .table-page-pagination {
-      margin-top: 5px;
+      &:empty {
+        display: none;
+      }
     }
   }
 }
 
 .pagination-wrapper {
-  min-height: 46px;
   .el-button + .el-button {
     margin-left: 0;
   }

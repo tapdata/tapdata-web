@@ -143,16 +143,6 @@ export default [
     title: 'tap.login',
   },
   {
-    path: '/registry',
-    name: 'registry',
-    component: Vue.defineAsyncComponent(
-      () => import('@/views/login/Registration'),
-    ),
-    meta: {
-      title: 'tap.registry',
-    },
-  },
-  {
     path: '/verificationEmail',
     name: 'verificationEmail',
     component: Vue.defineAsyncComponent(
@@ -160,16 +150,6 @@ export default [
     ),
     meta: {
       title: 'tap.verificationEmail',
-    },
-  },
-  {
-    path: '/registyResult',
-    name: 'registyResult',
-    component: Vue.defineAsyncComponent(
-      () => import('@/views/login/RegistyResult'),
-    ),
-    meta: {
-      title: 'tap.registry',
     },
   },
   {
@@ -862,29 +842,6 @@ export default [
           code: 'v2_api_monitor',
         },
       },
-      /* ---------- 元数据管理  ----------*/
-      // {
-      //   path: '/metadata',
-      //   name: 'metadataDefinition',
-      //   component: () => import(/* webpackChunkName: "metadata-definition" */ '@/views/metadata/List'),
-      //   meta: {
-      //     title: 'page_title_data_metadata',
-      //     code: 'data_catalog_menu',
-      //     types: [
-      //       'table',
-      //       'view',
-      //       'collection',
-      //       'mongo_view',
-      //       'database',
-      //       'job',
-      //       'dataflow',
-      //       'api',
-      //       'directory',
-      //       'ftp',
-      //       'apiendpoint'
-      //     ]
-      //   }
-      // },
       /* ---------- 集群管理  ----------*/
       {
         path: '/cluster',

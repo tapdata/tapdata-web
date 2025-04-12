@@ -1,14 +1,21 @@
 import { observer } from '@formily/reactive-vue'
-import { defineComponent, computed, ref, onMounted, watch, onBeforeUnmount } from 'vue'
-
-import { VEmpty } from '@tap/component'
-import i18n from '@tap/i18n'
-import { AsyncSelect } from '@tap/form'
-import { metadataInstancesApi, taskApi } from '@tap/api'
-
-import './style.scss'
-import { useStore } from 'vuex'
 import { connect, mapProps } from '@formily/vue'
+
+import { metadataInstancesApi, taskApi } from '@tap/api'
+import { VEmpty } from '@tap/component'
+import { AsyncSelect } from '@tap/form'
+import i18n from '@tap/i18n'
+
+import {
+  computed,
+  defineComponent,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+} from 'vue'
+import { useStore } from 'vuex'
+import './style.scss'
 
 const useTableExist = (attrs, selectRef, connectionId) => {
   if (!attrs.allowCreate) {
@@ -36,8 +43,8 @@ const useTableExist = (attrs, selectRef, connectionId) => {
       }
 
       showNotExistsTip.value = !data.exist
-    } catch (e) {
-      console.log(e) // eslint-disable-line
+    } catch (error) {
+      console.log(error) // eslint-disable-line
     }
   }
 
@@ -58,9 +65,9 @@ const useTableExist = (attrs, selectRef, connectionId) => {
     const span = document.createElement('span')
     Object.assign(span.style, inputStyle)
     span.textContent = tableName
-    document.body.appendChild(span)
+    document.body.append(span)
     const width = span.getBoundingClientRect().width
-    document.body.removeChild(span)
+    span.remove()
     leftPosition.value = `${baseLeftPosition + width}px`
   }
 
@@ -116,7 +123,11 @@ export const TableSelect = connect(
           }
         })
 
-        const { showNotExistsTip, leftPosition, handleCreated } = useTableExist(attrs, select, props.connectionId)
+        const { showNotExistsTip, leftPosition, handleCreated } = useTableExist(
+          attrs,
+          select,
+          props.connectionId,
+        )
 
         const loading = ref(false)
 
@@ -156,28 +167,39 @@ export const TableSelect = connect(
             'created-option': ({ value }) => (
               <span class="flex align-center gap-1">
                 {value}
-                <ElTag class="ml-1">{i18n.t('packages_dag_table_not_exist')}</ElTag>
+                <ElTag class="ml-1">
+                  {i18n.t('packages_dag_table_not_exist')}
+                </ElTag>
               </span>
             ),
             empty: ({ query }) =>
               query ? (
                 <div class="pt-2">
                   <VEmpty small>
-                    <span class="fs-7">{i18n.t('packages_form_component_table_selector_error_not_exit')},</span>
+                    <span class="fs-7">
+                      {i18n.t(
+                        'packages_form_component_table_selector_error_not_exit',
+                      )}
+                      ,
+                    </span>
                     <el-button
                       class="ml-1"
-                     
-                      text type="primary"
+                      text
+                      type="primary"
                       onClick={() => {
                         loadSchema(query)
                       }}
                     >
-                      <span class="lh-1">{i18n.t('packages_form_button_reload')}</span>
+                      <span class="lh-1">
+                        {i18n.t('packages_form_button_reload')}
+                      </span>
                     </el-button>
                   </VEmpty>
                 </div>
               ) : (
-                <p class="el-select-dropdown__empty">{i18n.t('public_data_no_data')}</p>
+                <p class="el-select-dropdown__empty">
+                  {i18n.t('public_data_no_data')}
+                </p>
               ),
           }
 

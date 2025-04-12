@@ -51,7 +51,7 @@ export default {
   },
 
   created() {
-    if (this.$route.params) {
+    if (this.$route.params?.data) {
       this.form = this.$route.params.data
       this.email = this.form.email
       this.inviteCode = this.form.inviteCode

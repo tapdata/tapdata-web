@@ -1226,7 +1226,9 @@ export default observer({
                       multiple: true,
                       filterable: true,
                     },
-                    'x-reactions': [`{{loadEmailReceivers}}`],
+                    'x-reactions': isDaas
+                      ? `{{loadEmailReceivers}}`
+                      : undefined,
                   },
                 },
               },

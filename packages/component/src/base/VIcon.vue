@@ -1,5 +1,5 @@
 <script lang="jsx">
-import { defineComponent, Fragment, Text, ref } from 'vue'
+import { defineComponent, Fragment, ref, Text } from 'vue'
 
 function convertToUnit(str, unit = 'px') {
   if (str == null || str === '') {
@@ -12,15 +12,13 @@ function convertToUnit(str, unit = 'px') {
 }
 
 function flattenFragments(nodes) {
-  return nodes
-    .map((node) => {
-      if (node.type === Fragment) {
-        return flattenFragments(node.children)
-      } else {
-        return node
-      }
-    })
-    .flat()
+  return nodes.flatMap((node) => {
+    if (node.type === Fragment) {
+      return flattenFragments(node.children)
+    } else {
+      return node
+    }
+  })
 }
 
 export default defineComponent({
@@ -50,7 +48,12 @@ export default defineComponent({
 
       if (slotValue) {
         slotIcon.value = flattenFragments(slotValue)
-          .filter((node) => node.type === Text && node.children && typeof node.children === 'string')[0]
+          .find(
+            (node) =>
+              node.type === Text &&
+              node.children &&
+              typeof node.children === 'string',
+          )
           ?.children?.trim()
       }
 
@@ -87,12 +90,10 @@ export default defineComponent({
             {...{
               class: 'v-icon__svg',
               style: { ...sizeData },
-              attrs: {
-                xmlns: 'http://www.w3.org/2000/svg',
-                viewBox: '0 0 24 24',
-                role: 'img',
-                'aria-hidden': true,
-              },
+              xmlns: 'http://www.w3.org/2000/svg',
+              viewBox: '0 0 24 24',
+              role: 'img',
+              'aria-hidden': true,
             }}
           >
             <use xlink:href={`#icon-${slotIcon.value}`}></use>
