@@ -536,11 +536,7 @@ export default {
       const specificationLabel = this.specificationItems.find(t => t.value === this.specification)?.name
       this.currentSpecName = specificationLabel
       this.packageItems = this.allPackages
-        .filter(
-          it =>
-            this.specification === it.specification &&
-            (it.chargeProvider === 'FreeTier' || !(it.type === 'one_time' && it.periodUnit === 'year'))
-        )
+        .filter(it => this.specification === it.specification)
         .map(t => {
           return Object.assign(t, {
             desc: i18n.t('dfs_instance_create_bencidinggouzhi', {
