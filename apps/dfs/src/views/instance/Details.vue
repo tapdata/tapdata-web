@@ -1,127 +1,13 @@
-<template>
-  <ElDrawer
-    v-model="drawer"
-    :show-close="false"
-    :with-header="false"
-    size="304px"
-    :modal="false"
-    close-on-click-modal
-    @opened="openedFnc"
-    @closed="closedFnc"
-  >
-    <div v-loading="loading" class="details-container">
-      <div class="container-item border-item flex pb-5">
-        <div class="pt-2">
-          <VIcon size="24" class="font-color-sub">computer</VIcon>
-        </div>
-        <div class="ml-4">
-          <div class="fs-6 mb-2 ellipsis"><slot name="title"></slot></div>
-          <div>
-            <StatusTag text :status="agent.status" default-status="Stopped"></StatusTag>
-          </div>
-        </div>
-      </div>
-      <div class="button-line container-item border-item pt-4 pb-5">
-        <slot name="operation"></slot>
-      </div>
-      <div v-for="(item, index) in list" :key="index + ''" class="container-item flex">
-        <div class="pt-3">
-          <VIcon class="font-color-sub">{{ item.icon }}</VIcon>
-        </div>
-        <div class="flex-fill ml-4">
-          <div v-for="(temp, k) in item.items" :key="index + '' + k" class="box-line">
-            <div class="box-line__label">
-              {{ temp.label + $t('field_mapping_field_mapping_dialog_') }}
-            </div>
-            <div class="box-line__value">{{ agent[temp.key] || '-' }}</div>
-          </div>
-        </div>
-      </div>
-      <div class="mt-4 flex flex-wrap gap-3">
-        <ElButton
-          type="primary"
-          :disabled="!showUpload || agent.agentType === 'Cloud'"
-          @click="open(agent.id, agent.status)"
-          >{{ $t('dfs_instance_instance_rizhishangchuan') }}</ElButton
-        >
-        <ElButton @click="downServeFn(agent)">{{ $t('dfs_instance_details_xianchengziyuanxia') }}</ElButton>
-        <ElButton @click="downConnectorsFn(agent)">{{ $t('dfs_instance_details_shujuyuanziyuan') }}</ElButton>
-      </div>
-    </div>
-    <!-- 日志上传   -->
-    <ElDialog v-model="downloadDialog" :show-close="false" width="1250px" class="download-dialog" append-to-body>
-      <div class="flex justify-content-between">
-        <div>{{ $t('dfs_instance_instance_bendirizhixia') }}</div>
-        <div>
-          <label class="mr-4">{{ $t('dfs_instance_instance_upload_days_label') }}</label>
-          <el-select class="mr-4" v-model="uploadDays">
-            <el-option v-for="item in days" :label="item.label" :value="item.value" :key="item.value"></el-option>
-          </el-select>
-          <el-button
-            class="mb-4 mr-4"
-            type="primary"
-            :loading="loadingUpload"
-            :disabled="agent.status !== 'Running' || disabledUploadDialog || tapdataAgentStatus === 'stopped'"
-            @click="handleUpload(currentAgentId)"
-            >{{ btnTxt }}</el-button
-          >
-          <VIcon @click="handleClose">close</VIcon>
-        </div>
-      </div>
-
-      <VTable
-        :data="downloadList"
-        :columns="downloadListCol"
-        v-loading="loadingLogTable"
-        ref="tableName"
-        :has-pagination="false"
-      >
-        <template #status="scope">
-          <span class="status-block" :class="['status-' + scope.row.status]"
-            >{{ statusMaps[scope.row.status].text }}
-            <span v-if="scope.row.uploadRatio && scope.row.uploadRatio !== 100">（{{ scope.row.uploadRatio }}%） </span>
-          </span>
-        </template>
-        <template #fileSize="scope">
-          <span>{{ calcUnit(scope.row.fileSize, 'b') }}</span>
-        </template>
-        <template #operation="scope">
-          <ElButton text :disabled="[0, 2, 3].includes(scope.row.status)" @click="handleDownload(scope.row)">{{
-            $t('public_button_download')
-          }}</ElButton>
-          <ElButton text :disabled="scope.row.status === 0" @click="handleDeleteUploadLog(scope.row)" class="ml-3">{{
-            $t('public_button_delete')
-          }}</ElButton>
-        </template>
-      </VTable>
-      <template v-slot:footer>
-        <span class="dialog-footer">
-          <el-pagination
-            @current-change="getDownloadList"
-            v-model:current-page="currentPage"
-            :page-sizes="[20, 50, 100]"
-            :page-size="pageSize"
-            layout="total, prev, pager, next, jumper"
-            :total="downloadTotal"
-          >
-          </el-pagination>
-        </span>
-      </template>
-    </ElDialog>
-  </ElDrawer>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import { VIcon, VTable } from '@tap/component'
-import StatusTag from '@/components/StatusTag'
-import timeFunction from '@/mixins/timeFunction'
-import { AGENT_STATUS_MAP_EN } from '../../const'
-import i18n from '@/i18n'
-import { calcUnit } from '@tap/shared'
 import { measurementApi, proxyApi } from '@tap/api'
+import { VIcon, VTable } from '@tap/component'
+import { calcUnit, downloadJson } from '@tap/shared'
 import Time from '@tap/shared/src/time'
-import { downloadJson } from '@tap/shared'
+import StatusTag from '@/components/StatusTag'
+import i18n from '@/i18n'
+import timeFunction from '@/mixins/timeFunction'
+import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+import { AGENT_STATUS_MAP_EN } from '../../const'
 
 export default {
   name: 'AgentDetails',
@@ -131,6 +17,7 @@ export default {
     value: Boolean,
     detailId: [String, Number],
   },
+  emits: ['load-data', 'update:value', 'opened', 'closed', , 'update:value'],
   data() {
     const $t = this.$t.bind(this)
     return {
@@ -303,10 +190,12 @@ export default {
     loadData() {
       this.loading = true
       this.$axios
-        .get('api/tcm/agent/' + this.detailId)
+        .get(`api/tcm/agent/${this.detailId}`)
         .then(async (data) => {
           if (data) {
-            const measurement = await this.loadMeasurementData(data.tmInfo.agentId)
+            const measurement = await this.loadMeasurementData(
+              data.tmInfo.agentId,
+            )
             // 是否显示版本号：待部署不显示
             if (!this.showVersionFlag(data) && data.spec) {
               data.spec.version = ''
@@ -315,33 +204,39 @@ export default {
             this.showUpload = this.handleVersion(data.spec.version)
             //检查tapdata agent 状态
             this.tapdataAgentStatus = data?.tapdataAgentStatus
-            Object.assign(data, data?.metric || {}, data?.spec || {}, data?.tmInfo || {})
+            data = Object.assign(
+              {},
+              data?.metric || {},
+              data?.spec || {},
+              data?.tmInfo || {},
+              data,
+            )
             data.hostname = data?.tmInfo?.hostname
             data.createAt = this.formatTime(data.createAt)
             if (data?.metric?.systemInfo) {
-              let arr = ['cpus', 'installationDirectory', 'ips', 'logDir']
+              const arr = ['cpus', 'installationDirectory', 'ips', 'logDir']
               arr.forEach((el) => {
                 data[el] = data.metric?.systemInfo?.[el] || ''
               })
-              let num = Number(data.metric.systemInfo.totalmem) || 0
+              const num = Number(data.metric.systemInfo.totalmem) || 0
               let size = ''
               if (num < 0.1 * 1024) {
                 //小于0.1KB，则转化成B
-                size = num.toFixed(2) + 'B'
+                size = `${num.toFixed(2)}B`
               } else if (num < 0.1 * 1024 * 1024) {
                 //小于0.1MB，则转化成KB
-                size = (num / 1024).toFixed(2) + 'KB'
+                size = `${(num / 1024).toFixed(2)}KB`
               } else if (num < 0.1 * 1024 * 1024 * 1024) {
                 //小于0.1GB，则转化成MB
-                size = (num / (1024 * 1024)).toFixed(2) + 'MB'
+                size = `${(num / (1024 * 1024)).toFixed(2)}MB`
               } else {
                 //其他转化成GB
-                size = (num / (1024 * 1024 * 1024)).toFixed(2) + 'GB'
+                size = `${(num / (1024 * 1024 * 1024)).toFixed(2)}GB`
               }
               data.totalmem = size
             }
             this.agent = Object.assign(this.agent, data, measurement)
-            $emit(this, 'load-data', this.agent)
+            this.$emit('load-data', this.agent)
             this.uploadAgentLog = data?.uploadAgentLog || ''
           }
         })
@@ -351,14 +246,14 @@ export default {
     },
     //下载
     downServeFn(agent) {
-      let id = agent?.tmInfo?.agentId
+      const id = agent?.tmInfo?.agentId
       proxyApi.supervisor(id).then((data) => {
         downloadJson(JSON.stringify(data), 'supervisor')
       })
     },
     //下载
     downConnectorsFn(agent) {
-      let id = agent?.tmInfo?.agentId
+      const id = agent?.tmInfo?.agentId
       proxyApi.connectors(id).then((data) => {
         downloadJson(JSON.stringify(data), 'connectors')
       })
@@ -390,30 +285,30 @@ export default {
       return {
         cpuUsage:
           typeof cpuUsage === 'number'
-            ? (cpuUsage * 100).toLocaleString('zh-CN', {
+            ? `${(cpuUsage * 100).toLocaleString('zh-CN', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
-              }) + '%'
+              })}%`
             : defaultVal,
         memoryRate:
           typeof memoryRate === 'number'
-            ? (memoryRate * 100).toLocaleString('zh-CN', {
+            ? `${(memoryRate * 100).toLocaleString('zh-CN', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
-              }) + '%'
+              })}%`
             : defaultVal,
         gcRate:
           typeof gcRate === 'number'
-            ? (gcRate * 100).toLocaleString('zh-CN', {
+            ? `${(gcRate * 100).toLocaleString('zh-CN', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
-              }) + '%'
+              })}%`
             : defaultVal,
       }
     },
 
     showVersionFlag(row) {
-      let { status, tmInfo } = row
+      const { status, tmInfo } = row
       return !(status === 'Creating' && !tmInfo?.pingTime)
     },
     openedFnc() {
@@ -465,7 +360,7 @@ export default {
       if (page) {
         this.loadingLogTable = true
       }
-      let filter = {
+      const filter = {
         where: {
           agentId: this.currentAgentId,
           isDeleted: false,
@@ -475,13 +370,20 @@ export default {
         sort: ['createAt desc'],
       }
       this.$axios
-        .get('api/tcm/queryUploadLog?filter=' + encodeURIComponent(JSON.stringify(filter)))
+        .get(
+          `api/tcm/queryUploadLog?filter=${encodeURIComponent(
+            JSON.stringify(filter),
+          )}`,
+        )
         .then((res) => {
           this.loadingLogTable = false
           this.downloadList = res?.items || []
           this.downloadTotal = res?.total || 0
           //当前列表中是否有上传中的
-          let uploading = this.downloadList?.length > 0 ? this.downloadList.filter((it) => it.status === 0) : []
+          const uploading =
+            this.downloadList?.length > 0
+              ? this.downloadList.filter((it) => it.status === 0)
+              : []
           this.disabledUploadDialog = uploading?.length > 0
           if (!this.disabledUploadDialog) {
             this.loadingUpload = false
@@ -512,15 +414,22 @@ export default {
     },
     //日志下载
     handleDownload(row) {
-      this.$axios.get('api/tcm/downloadLog?id=' + row.id).then((data) => {
-        let { accessKeyId, accessKeySecret, securityToken, region, uploadAddr, bucket } = data
+      this.$axios.get(`api/tcm/downloadLog?id=${row.id}`).then((data) => {
+        const {
+          accessKeyId,
+          accessKeySecret,
+          securityToken,
+          region,
+          uploadAddr,
+          bucket,
+        } = data
         //ssl 凭证
         const OSS = require('ali-oss')
         const client = new OSS({
-          accessKeyId: accessKeyId,
-          accessKeySecret: accessKeySecret,
-          region: region,
-          bucket: bucket,
+          accessKeyId,
+          accessKeySecret,
+          region,
+          bucket,
           stsToken: securityToken,
         })
         window.location.href = client.signatureUrl(uploadAddr)
@@ -528,9 +437,9 @@ export default {
     },
     //比较两个版本号
     handleVersion(version) {
-      let v1 = '3.1.3'.split('.')
+      const v1 = '3.1.3'.split('.')
       //去掉V
-      let v2 = version.substr(1)
+      let v2 = version.slice(1)
       //将- 替换成 .
       v2 = v2.replace('-', '.')
       v2 = v2.split('.')
@@ -545,8 +454,8 @@ export default {
 
       // 循环判断每位数的大小
       for (let i = 0; i < len; i++) {
-        const num1 = parseInt(v1[i])
-        const num2 = parseInt(v2[i])
+        const num1 = Number.parseInt(v1[i])
+        const num2 = Number.parseInt(v2[i])
 
         if (num1 > num2) {
           return false
@@ -557,13 +466,161 @@ export default {
       return true
     },
   },
-  emits: ['load-data', 'update:value', 'opened', 'closed', , 'update:value'],
 }
 </script>
 
+<template>
+  <ElDrawer
+    v-model="drawer"
+    :show-close="false"
+    :with-header="false"
+    modal-class="bg-transparent"
+    size="304px"
+    close-on-click-modal
+    @opened="openedFnc"
+    @closed="closedFnc"
+  >
+    <div v-loading="loading" class="details-container">
+      <div class="container-item border-item flex pb-5">
+        <div class="pt-2">
+          <VIcon size="24" class="font-color-sub">computer</VIcon>
+        </div>
+        <div class="ml-4">
+          <div class="fs-6 mb-2 ellipsis"><slot name="title" /></div>
+          <div>
+            <StatusTag text :status="agent.status" default-status="Stopped" />
+          </div>
+        </div>
+      </div>
+      <div class="button-line container-item border-item pt-4 pb-5">
+        <slot name="operation" />
+      </div>
+      <div
+        v-for="(item, index) in list"
+        :key="`${index}`"
+        class="container-item flex"
+      >
+        <div class="pt-3">
+          <VIcon class="font-color-sub">{{ item.icon }}</VIcon>
+        </div>
+        <div class="flex-fill ml-4">
+          <div
+            v-for="(temp, k) in item.items"
+            :key="`${index}${k}`"
+            class="box-line"
+          >
+            <div class="box-line__label">
+              {{ temp.label + $t('field_mapping_field_mapping_dialog_') }}
+            </div>
+            <div class="box-line__value">{{ agent[temp.key] || '-' }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-4 flex flex-wrap gap-3">
+        <ElButton
+          type="primary"
+          :disabled="!showUpload || agent.agentType === 'Cloud'"
+          @click="open(agent.id, agent.status)"
+          >{{ $t('dfs_instance_instance_rizhishangchuan') }}</ElButton
+        >
+        <ElButton @click="downServeFn(agent)">{{
+          $t('dfs_instance_details_xianchengziyuanxia')
+        }}</ElButton>
+        <ElButton @click="downConnectorsFn(agent)">{{
+          $t('dfs_instance_details_shujuyuanziyuan')
+        }}</ElButton>
+      </div>
+    </div>
+    <!-- 日志上传   -->
+    <ElDialog
+      v-model="downloadDialog"
+      :show-close="false"
+      width="1250px"
+      class="download-dialog"
+      append-to-body
+    >
+      <div class="flex justify-content-between">
+        <div>{{ $t('dfs_instance_instance_bendirizhixia') }}</div>
+        <div>
+          <label class="mr-4">{{
+            $t('dfs_instance_instance_upload_days_label')
+          }}</label>
+          <el-select v-model="uploadDays" class="mr-4">
+            <el-option
+              v-for="item in days"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+          <el-button
+            class="mb-4 mr-4"
+            type="primary"
+            :loading="loadingUpload"
+            :disabled="
+              agent.status !== 'Running' ||
+              disabledUploadDialog ||
+              tapdataAgentStatus === 'stopped'
+            "
+            @click="handleUpload(currentAgentId)"
+            >{{ btnTxt }}</el-button
+          >
+          <VIcon @click="handleClose">close</VIcon>
+        </div>
+      </div>
+
+      <VTable
+        ref="tableName"
+        v-loading="loadingLogTable"
+        :data="downloadList"
+        :columns="downloadListCol"
+        :has-pagination="false"
+      >
+        <template #status="scope">
+          <span class="status-block" :class="[`status-${scope.row.status}`]"
+            >{{ statusMaps[scope.row.status].text }}
+            <span v-if="scope.row.uploadRatio && scope.row.uploadRatio !== 100"
+              >（{{ scope.row.uploadRatio }}%）
+            </span>
+          </span>
+        </template>
+        <template #fileSize="scope">
+          <span>{{ calcUnit(scope.row.fileSize, 'b') }}</span>
+        </template>
+        <template #operation="scope">
+          <ElButton
+            text
+            :disabled="[0, 2, 3].includes(scope.row.status)"
+            @click="handleDownload(scope.row)"
+            >{{ $t('public_button_download') }}</ElButton
+          >
+          <ElButton
+            text
+            :disabled="scope.row.status === 0"
+            class="ml-3"
+            @click="handleDeleteUploadLog(scope.row)"
+            >{{ $t('public_button_delete') }}</ElButton
+          >
+        </template>
+      </VTable>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-pagination
+            v-model:current-page="currentPage"
+            :page-sizes="[20, 50, 100]"
+            :page-size="pageSize"
+            layout="total, prev, pager, next, jumper"
+            :total="downloadTotal"
+            @current-change="getDownloadList"
+          />
+        </span>
+      </template>
+    </ElDialog>
+  </ElDrawer>
+</template>
+
 <style lang="scss" scoped>
 .details-container {
-  padding: 16px 12px 16px 20px;
   overflow-y: auto;
 }
 .container-item {

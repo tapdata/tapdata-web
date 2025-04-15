@@ -960,6 +960,7 @@ export default {
       if (data.agentType === 'Cloud') {
         return
       }
+      console.log('handleDetails', this.selectedRow)
       // this.selectedRow = data
       this.showDetails = true
       this.detailId = data.id
@@ -1930,7 +1931,7 @@ export default {
             </template>
             <template #operation>
               <div class="flex">
-                <VButton
+                <ElButton
                   :loading="selectedRow.btnLoading.deploy"
                   :disabled="
                     deployBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()
@@ -1943,8 +1944,8 @@ export default {
                   <span class="ml-1">{{
                     $t('public_agent_button_deploy')
                   }}</span>
-                </VButton>
-                <VButton
+                </ElButton>
+                <ElButton
                   :loading="selectedRow.btnLoading.stop"
                   :disabled="
                     stopBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()
@@ -1956,7 +1957,7 @@ export default {
                 >
                   <VIcon size="12">stop</VIcon>
                   <span class="ml-1">{{ $t('public_button_stop') }}</span>
-                </VButton>
+                </ElButton>
               </div>
             </template>
           </AgentDetails>
