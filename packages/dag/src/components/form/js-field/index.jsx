@@ -1,13 +1,12 @@
-import { defineComponent, ref, onUnmounted } from 'vue'
-import { useForm, useField } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
+import { metadataInstancesApi, pdkApi } from '@tap/api'
+import { GitBook, VIcon } from '@tap/component'
+import { FormItem, JsEditor, useField, useForm } from '@tap/form'
 
 import i18n from '@tap/i18n'
-import { FormItem, JsEditor } from '@tap/form'
-import { VIcon, GitBook } from '@tap/component'
-import { metadataInstancesApi, pdkApi } from '@tap/api'
-import './style.scss'
+import { defineComponent, ref } from 'vue'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
+import './style.scss'
 
 export const JsField = observer(
   defineComponent({
@@ -18,12 +17,10 @@ export const JsField = observer(
       apiFileName: String,
       apiBtnText: {
         type: String,
-        default: i18n.t('packages_dag_api_docs')
-      }
+        default: i18n.t('packages_dag_api_docs'),
+      },
     },
-    setup(props, { emit, root, attrs, refs }) {
-      const isDaas =  import.meta.env.VUE_APP_PLATFORM === 'DAAS'
-      const { id: taskId, syncType } = root.$store.state.dataflow.taskInfo
+    setup(props, { emit, attrs }) {
       const formRef = useForm()
       const fieldRef = useField()
       const form = formRef.value
@@ -31,9 +28,8 @@ export const JsField = observer(
       const showDoc = ref(false)
       const {
         id: nodeId,
-        attrs: { pdkHash }
+        attrs: { pdkHash },
       } = form.values
-      // const pdkHash = form.values.attrs.pdkHash
 
       const toggleFullscreen = () => {
         fullscreen.value = !fullscreen.value
@@ -42,7 +38,7 @@ export const JsField = observer(
         }, 10)
       }
 
-      const toggleDoc = event => {
+      const toggleDoc = (event) => {
         event.stopPropagation()
         showDoc.value = !showDoc.value
       }
@@ -50,7 +46,7 @@ export const JsField = observer(
       function getPrefix(line, index) {
         let prefix = ''
         let i = index - 1
-        while (i >= 0 && /^[a-zA-Z0-9_]+$/.test(line.charAt(i))) {
+        while (i >= 0 && /^\w+$/.test(line.charAt(i))) {
           prefix = line.charAt(i) + prefix
           i--
         }
@@ -58,16 +54,18 @@ export const JsField = observer(
       }
 
       let jsEditor
-      const onEditorInit = editor => {
+      const onEditorInit = (editor) => {
         jsEditor = editor
-        const idx = editor.completers?.findIndex(item => item.id === 'recordFields') || -1
+        const idx =
+          editor.completers?.findIndex((item) => item.id === 'recordFields') ||
+          -1
 
         if (~idx) editor.completers.splice(idx, 1)
 
         editor.completers.push({
           id: 'recordFields',
           // 获取补全提示列表
-          getCompletions: function (editor, session, pos, prefix, callback) {
+          getCompletions(editor, session, pos, prefix, callback) {
             // 判断当前行是否包含 '.'
             const line = session.getLine(pos.row)
             const index = pos.column - 1
@@ -78,17 +76,17 @@ export const JsField = observer(
                 callback(null, nodeFields)
               }
             }
-          }
+          },
         })
         // 绑定 '.' 按键事件
         editor.keyBinding.addKeyboardHandler({
-          handleKeyboard: function ({ editor }, hash, keyString, keyCode, event) {
+          handleKeyboard({ editor }, hash, keyString, keyCode, event) {
             if (keyString === '.' && keyCode !== undefined) {
               setTimeout(() => {
                 editor.execCommand('startAutocomplete')
               }, 10)
             }
-          }
+          },
         })
       }
 
@@ -97,11 +95,17 @@ export const JsField = observer(
         let fields = []
         if (!formRef.value.values.$inputs.length) return
         if (form.values.type.includes('migrate')) {
-          let result = await metadataInstancesApi.nodeSchemaPage({
+          const result = await metadataInstancesApi.nodeSchemaPage({
             nodeId,
-            fields: ['original_name', 'fields', 'qualified_name', 'name', 'indices'],
+            fields: [
+              'original_name',
+              'fields',
+              'qualified_name',
+              'name',
+              'indices',
+            ],
             page: 1,
-            pageSize: 1
+            pageSize: 1,
           })
           fields = result.items[0]?.fields || []
         } else {
@@ -111,12 +115,12 @@ export const JsField = observer(
 
         nodeFields =
           fields
-            .filter(item => !item.is_deleted)
-            .map(f => {
+            .filter((item) => !item.is_deleted)
+            .map((f) => {
               return {
                 value: f.field_name,
                 score: 1000,
-                meta: f.data_type
+                meta: f.data_type,
               }
             }) || []
       }
@@ -124,7 +128,7 @@ export const JsField = observer(
       // 加载模型字段
       loadFields()
       // 模型自动改变
-      useAfterTaskSaved(root, formRef.value.values.$inputs, loadFields)
+      useAfterTaskSaved(formRef.value.values.$inputs, loadFields)
 
       const loadingApi = ref(false)
       const showApi = ref(Boolean(pdkHash && props.apiFileName))
@@ -133,7 +137,7 @@ export const JsField = observer(
         loadingApi.value = true
         pdkApi
           .getStatics(pdkHash, props.apiFileName)
-          .then(res => {
+          .then((res) => {
             mdContentRef.value = res?.data
           })
           .finally(() => (loadingApi.value = false))
@@ -165,7 +169,11 @@ export const JsField = observer(
             </div>
             <div class="flex align-center">
               {apiLink}
-              <ElLink onClick={toggleFullscreen} class="js-editor-fullscreen" type="primary">
+              <ElLink
+                onClick={toggleFullscreen}
+                class="js-editor-fullscreen"
+                type="primary"
+              >
                 <VIcon class="mr-1">fangda</VIcon>
                 {i18n.t('packages_form_js_editor_fullscreen')}
               </ElLink>
@@ -183,12 +191,15 @@ export const JsField = observer(
                 size={680}
                 visible={showDoc.value}
                 on={{
-                  ['update:visible']: v => {
+                  ['update:visible']: (v) => {
                     showDoc.value = v
-                  }
+                  },
                 }}
               >
-                <GitBook v-loading={loadingApi.value} value={mdContentRef.value}></GitBook>
+                <GitBook
+                  v-loading={loadingApi.value}
+                  value={mdContentRef.value}
+                ></GitBook>
               </ElDrawer>
             )}
 
@@ -196,15 +207,22 @@ export const JsField = observer(
               class={[
                 'js-processor-editor',
                 {
-                  fullscreen: fullscreen.value
-                }
+                  fullscreen: fullscreen.value,
+                },
               ]}
             >
               <div class="js-processor-editor-toolbar border-bottom justify-content-between align-center px-4 py-2">
-                <div class="js-editor-toolbar-title fs-6 fw-sub flex-1">{fieldRef.value.title}</div>
+                <div class="js-editor-toolbar-title fs-6 fw-sub flex-1">
+                  {fieldRef.value.title}
+                </div>
                 {apiLink}
-                <ElLink onClick={toggleFullscreen} class="js-editor-fullscreen" type="primary">
-                  <VIcon class="mr-1">suoxiao</VIcon> {i18n.t('packages_form_js_editor_exit_fullscreen')}
+                <ElLink
+                  onClick={toggleFullscreen}
+                  class="js-editor-fullscreen"
+                  type="primary"
+                >
+                  <VIcon class="mr-1">suoxiao</VIcon>{' '}
+                  {i18n.t('packages_form_js_editor_exit_fullscreen')}
                 </ElLink>
               </div>
 
@@ -213,7 +231,7 @@ export const JsField = observer(
                   <JsEditor
                     ref="jsEditor"
                     value={props.value}
-                    onChange={val => {
+                    onChange={(val) => {
                       emit('change', val)
                     }}
                     onInit={onEditorInit}
@@ -232,6 +250,6 @@ export const JsField = observer(
           </div>
         )
       }
-    }
-  })
+    },
+  }),
 )

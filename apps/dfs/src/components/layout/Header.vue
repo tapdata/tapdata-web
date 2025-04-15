@@ -163,7 +163,7 @@ export default {
       <img src="../../assets/image/logo.svg" alt="" />
     </router-link>
 
-    <div class="flex gap-4 align-center ml-auto">
+    <div class="flex gap-3 align-center ml-auto" style="--btn-space: 0">
       <!--付费专业版-->
       <div
         class="vip-btn rounded-4 cursor-pointer flex align-center gap-1"
@@ -185,56 +185,30 @@ export default {
         }}</span>
       </div>
       <!--线下部署-->
-      <div
-        class="command-item cursor-pointer flex align-center gap-1 rounded-4"
-        @click="goOfflineDeploy"
-      >
+      <el-button text size="large" @click="goOfflineDeploy">
         <VIcon size="16">deploy</VIcon>
-        <span> {{ $t('dfs_offline_deployment') }} </span>
-      </div>
+        <span class="ml-1"> {{ $t('dfs_offline_deployment') }} </span>
+      </el-button>
       <!--我的工单-->
-      <div
-        class="command-item flex align-center gap-1 rounded-4"
-        @click="goTicketSystem"
-      >
+      <el-button text size="large" @click="goTicketSystem">
         <VIcon size="16">workorder</VIcon>
-        <span class="cursor-pointer">
-          {{ $t('dfs_the_header_header_wodegongdan') }}</span
-        >
-      </div>
+        <span class="ml-1"> {{ $t('dfs_the_header_header_wodegongdan') }}</span>
+      </el-button>
       <!--联系我们-->
-      <div
-        class="command-item flex align-center gap-1 rounded-4"
-        @click="goContactUs"
-      >
+      <el-button text size="large" @click="goContactUs">
         <VIcon size="16">consultation</VIcon>
-        <span class="cursor-pointer">{{ $t('tap_contact_us') }}</span>
-      </div>
-      <!---demo环境-->
-      <div
-        v-if="domain === 'demo.cloud.tapdata.net' && lang !== 'en'"
-        class="marquee-container cursor-pointer rounded-4"
-      >
-        <div class="marquee-box">
-          <span>{{ $t('dfs_data_dashboard_Marquee') }}</span>
-        </div>
-      </div>
-      <div
-        v-if="domain === 'demo.cloud.tapdata.net' && lang === 'en'"
-        class="block"
-      >
-        <p class="words">{{ $t('dfs_data_dashboard_Marquee') }}</p>
-      </div>
-
-      <div
+        <span class="ml-1">{{ $t('tap_contact_us') }}</span>
+      </el-button>
+      <el-button
         v-for="(item, i) in topBarLinks"
         :key="i"
-        class="command-item flex align-center gap-2 rounded-4"
+        text
+        size="large"
         @click="handleGo(item)"
       >
         <VIcon v-if="item.icon" size="16">{{ item.icon }}</VIcon>
-        <span class="cursor-pointer">{{ $t(item.text) }}</span>
-      </div>
+        <span class="ml-1">{{ $t(item.text) }}</span>
+      </el-button>
 
       <NotificationPopover
         class="command-item flex align-items-center rounded-4"
@@ -245,19 +219,18 @@ export default {
         :show-timeout="0"
         @command="command"
       >
-        <div class="username flex align-items-center">
+        <el-button text size="large">
           <img
             v-if="user.avatar"
             :src="user.avatar"
-            alt=""
-            class="mr-2"
+            alt="user"
             style="width: 30px; height: 30px; border-radius: 50%"
           />
-          <VIcon v-else class="mr-2" size="20">account</VIcon>
-          <span>{{
+          <VIcon v-else size="20">account</VIcon>
+          <span class="ml-2">{{
             user.username || user.nickname || user.phone || user.email
           }}</span>
-        </div>
+        </el-button>
 
         <template #dropdown>
           <ElDropdownMenu>

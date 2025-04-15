@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { useI18n } from '@tap/i18n'
 import { computed, h, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const { t } = useI18n()
 const route = useRoute()
+const router = useRouter()
 const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 const breadcrumbData = ref([])
 const isHidden = ref(false)
@@ -37,7 +38,7 @@ const contentClass = computed(() => {
 const headerClass = isDaas ? 'border-bottom' : ''
 
 const getBreadcrumb = () => {
-  const matched = route.matched.slice(1)
+  const matched = isDaas ? route.matched.slice(1) : route.matched
   const data = []
   let _isHidden = false
   if (matched.length) {
@@ -47,7 +48,12 @@ const getBreadcrumb = () => {
         data.pop()
       }
       let to = {
-        name: null,
+        name:
+          route.name === router.currentRoute.value.name
+            ? null
+            : ['settingCenter', 'notification'].includes(route.name)
+              ? 'layout'
+              : route.name,
       }
       if (route.meta?.doNotJump) {
         to = null
@@ -75,9 +81,8 @@ getBreadcrumb()
     :class="containerClass"
   >
     <div v-if="!hideHeader" class="page-header" :class="headerClass">
-      <ElBreadcrumb
+      <!-- <ElBreadcrumb
         v-if="breadcrumbData.length > 1"
-        class="breadcrumb"
         separator-class="el-icon-arrow-right"
       >
         <ElBreadcrumbItem
@@ -87,8 +92,8 @@ getBreadcrumb()
         >
           {{ item.name }}
         </ElBreadcrumbItem>
-      </ElBreadcrumb>
-      <div v-else class="flex align-items-center bg-white rounded-lg">
+      </ElBreadcrumb> -->
+      <div class="flex align-items-center bg-white rounded-lg">
         <slot name="title">
           <span class="fs-5 font-color-dark">{{ $t($route.meta.title) }}</span>
         </slot>

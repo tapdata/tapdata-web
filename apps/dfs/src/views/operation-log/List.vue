@@ -1,64 +1,13 @@
-<template>
-  <section class="operation-logs-wrapper g-panel-container" v-if="$route.name === 'OperationLog'">
-    <div class="main">
-      <div class="list-operation">
-        <div class="list-operation-left">
-          <FilterBar v-model:value="searchParams" :items="filterItems" @search="search" @fetch="table.fetch(1)">
-          </FilterBar>
-        </div>
-      </div>
-      <VTable
-        ref="table"
-        row-key="id"
-        :columns="columns"
-        :remoteMethod="getData"
-        height="100%"
-        class="mt-4"
-        @sort-change="sortChange"
-      >
-        <template v-slot:operationType="scope">
-          <div class="text-break">{{ getOperationTypeLabel(scope.row) }}</div>
-        </template>
-        <template v-slot:desc="scope">
-          <span
-            v-for="(item, index) in descFnc(scope.row)"
-            :key="index"
-            :class="[{ 'color-primary cursor-pointer': item.variable }]"
-            @click="clickDescSpan(item, scope.row)"
-          >
-            {{ item.text || '' }}
-          </span>
-        </template>
-        <template v-slot:empty>
-          <div v-if="!isSearching" class="migration-table__empty">
-            <VIcon size="120">no-data-color</VIcon>
-            <div class="flex justify-content-center align-items-center lh-sm fs-7 font-color-sub">
-              <span>{{ $t('public_data_no_data') }}</span>
-            </div>
-          </div>
-          <div v-else class="migration-table__empty">
-            <VIcon size="120">search-no-data-color</VIcon>
-            <div class="flex justify-content-center align-items-center lh-sm fs-7 font-color-sub">
-              <span style="line-height: 20px">{{ $t('public_data_no_find_result') }}</span>
-              <ElLink type="primary" class="fs-7" @click="reset">{{ $t('link_back_to_list') }}</ElLink>
-            </div>
-          </div>
-        </template>
-      </VTable>
-    </div>
-  </section>
-  <RouterView v-else></RouterView>
-</template>
-
 <script>
-import { escapeRegExp, isEmpty } from 'lodash'
-import { VIcon, FilterBar, VTable } from '@tap/component'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
+import { FilterBar, VIcon, VTable } from '@tap/component'
 import { delayTrigger } from '@tap/shared'
+import { escapeRegExp, isEmpty } from 'lodash'
 
 import i18n from '@/i18n'
 
 export default {
-  components: { VIcon, FilterBar, VTable },
+  components: { VIcon, FilterBar, VTable, PageContainer },
   data() {
     return {
       loading: true,
@@ -388,27 +337,27 @@ export default {
   watch: {
     $route(route) {
       if (route.name === 'OperationLog') {
-        let query = route.query
+        const query = route.query
         this.searchParams = Object.assign(this.searchParams, query)
-        let pageNum = isEmpty(query) ? undefined : 1
+        const pageNum = isEmpty(query) ? undefined : 1
         this.table.fetch(pageNum)
       }
     },
   },
   created() {
-    let query = this.$route.query
+    const query = this.$route.query
     this.searchParams = Object.assign(this.searchParams, query)
     this.getSearchItems()
   },
   methods: {
     getModularAndOperation(operationType) {
-      let [modular, operation] = operationType.split('&&')
+      const [modular, operation] = operationType.split('&&')
       return { modular, operation }
     },
     search(debounce) {
-      let { searchParams } = this
-      let query = {}
-      for (let key in searchParams) {
+      const { searchParams } = this
+      const query = {}
+      for (const key in searchParams) {
         if (searchParams[key]) {
           query[key] = searchParams[key]
         }
@@ -416,7 +365,7 @@ export default {
       delayTrigger(() => {
         this.$router.replace({
           name: 'OperationLog',
-          query: query,
+          query,
         })
       }, debounce)
     },
@@ -446,28 +395,30 @@ export default {
       ]
     },
     getData({ page }) {
-      let { current, size } = page
-      let { operationType, parameter1, start, end, username } = this.searchParams
-      let where = {
+      const { current, size } = page
+      const { operationType, parameter1, start, end, username } =
+        this.searchParams
+      const where = {
         type: 'userOperation', // 默认用户操作
       }
       // 操作类型
       if (operationType) {
-        let { modular, operation } = this.getModularAndOperation(operationType)
-        where['modular'] = modular
-        where['operation'] = operation
+        const { modular, operation } =
+          this.getModularAndOperation(operationType)
+        where.modular = modular
+        where.operation = operation
       }
       // 操作对象
       if (parameter1) {
-        where['parameter1'] = {
+        where.parameter1 = {
           $regex: escapeRegExp(parameter1),
           $options: 'i',
         }
       }
       if (username) {
-        where['username'] = { $regex: escapeRegExp(username), $options: 'i' }
+        where.username = { $regex: escapeRegExp(username), $options: 'i' }
       }
-      let dateObj = {}
+      const dateObj = {}
       // 开始时间
       if (start) {
         dateObj.$gt = {
@@ -480,19 +431,23 @@ export default {
         }
       }
       if (!isEmpty(dateObj)) {
-        where['createTime'] = dateObj
+        where.createTime = dateObj
       }
-      let filter = {
+      const filter = {
         where,
         limit: size,
         skip: size * (current - 1),
         order: this.order,
       }
       return this.$axios
-        .get('tm/api/UserLogs?filter=' + encodeURIComponent(JSON.stringify(filter)))
+        .get(
+          `tm/api/UserLogs?filter=${encodeURIComponent(
+            JSON.stringify(filter),
+          )}`,
+        )
         .then(({ total, items }) => {
           return {
-            total: total,
+            total,
             data: items.map((t) => {
               if (t.modular === 'user') {
                 t.parameter1 = this.$t('operation_log_modular_name_user_center')
@@ -507,20 +462,27 @@ export default {
       this.table.fetch(1)
     },
     getOperationTypeLabel(row) {
-      return this.operationTypeOptions.find((item) => item.value === `${row.modular}&&${row.operation}`)?.label
+      return this.operationTypeOptions.find(
+        (item) => item.value === `${row.modular}&&${row.operation}`,
+      )?.label
     },
     descFnc(row) {
-      let { modular, operation, rename } = row
-      let findOne = this.operationTypeOptions.find((item) => item.value === `${modular}&&${operation}`)
+      const { modular, operation, rename } = row
+      const findOne = this.operationTypeOptions.find(
+        (item) => item.value === `${modular}&&${operation}`,
+      )
       let desc = findOne?.desc ?? ''
       if (modular === 'connection' && operation === 'update' && rename) {
         desc = this.$t('operation_log_modify_connection_name')
       }
       // 不添加事件  ${parameter1} ${parameter2}  添加事件@{parameter1} @{parameter2}
-      let replaceStr = desc.replace(/\${(parameter\d+)}/gi, (item, subItem) => {
-        return row[subItem]
-      }) // 替换掉所有${}
-      let vReg = /(@{parameter\d+})/gi
+      const replaceStr = desc.replaceAll(
+        /\$\{(parameter\d+)\}/gi,
+        (item, subItem) => {
+          return row[subItem]
+        },
+      ) // 替换掉所有${}
+      const vReg = /(@\{parameter\d+\})/gi
       // 根据@{}分割，保留分割符
       return replaceStr.split(vReg).map((item) => {
         // @{}添加标记，做事件处理
@@ -542,7 +504,7 @@ export default {
       this.toGoList(row)
     },
     toGoList(row) {
-      let { modular, parameter1 } = row
+      const { modular, parameter1 } = row
       switch (modular) {
         // 任务
         case 'migration':
@@ -603,6 +565,71 @@ export default {
   },
 }
 </script>
+
+<template>
+  <PageContainer>
+    <section class="operation-logs-wrapper">
+      <div class="main">
+        <div class="list-operation">
+          <div class="list-operation-left">
+            <FilterBar
+              v-model:value="searchParams"
+              :items="filterItems"
+              @search="search"
+              @fetch="table.fetch(1)"
+            />
+          </div>
+        </div>
+        <VTable
+          ref="table"
+          row-key="id"
+          :columns="columns"
+          :remote-method="getData"
+          height="100%"
+          class="mt-4"
+          @sort-change="sortChange"
+        >
+          <template #operationType="scope">
+            <div class="text-break">{{ getOperationTypeLabel(scope.row) }}</div>
+          </template>
+          <template #desc="scope">
+            <span
+              v-for="(item, index) in descFnc(scope.row)"
+              :key="index"
+              :class="[{ 'color-primary cursor-pointer': item.variable }]"
+              @click="clickDescSpan(item, scope.row)"
+            >
+              {{ item.text || '' }}
+            </span>
+          </template>
+          <template #empty>
+            <div v-if="!isSearching" class="migration-table__empty">
+              <VIcon size="120">no-data-color</VIcon>
+              <div
+                class="flex justify-content-center align-items-center lh-sm fs-7 font-color-sub"
+              >
+                <span>{{ $t('public_data_no_data') }}</span>
+              </div>
+            </div>
+            <div v-else class="migration-table__empty">
+              <VIcon size="120">search-no-data-color</VIcon>
+              <div
+                class="flex justify-content-center align-items-center lh-sm fs-7 font-color-sub"
+              >
+                <span style="line-height: 20px">{{
+                  $t('public_data_no_find_result')
+                }}</span>
+                <ElLink type="primary" class="fs-7" @click="reset">{{
+                  $t('link_back_to_list')
+                }}</ElLink>
+              </div>
+            </div>
+          </template>
+        </VTable>
+      </div>
+    </section>
+  </PageContainer>
+</template>
 
 <style lang="scss" scoped>
 .operation-logs-wrapper {

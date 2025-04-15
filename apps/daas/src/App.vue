@@ -1,18 +1,11 @@
-<template>
-  <ElConfigProvider :locale="locale">
-    <RouterView />
-    <LockedDialog v-model:visible="showLocked"></LockedDialog>
-  </ElConfigProvider>
-</template>
-
 <script lang="ts" setup>
-import { ref, computed, provide } from 'vue'
+import { workerApi } from '@tap/api'
+import i18n from '@tap/i18n'
+import en from 'element-plus/dist/locale/en.mjs'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import zhTw from 'element-plus/dist/locale/zh-tw.mjs'
-import en from 'element-plus/dist/locale/en.mjs'
-import i18n from '@tap/i18n'
-import { workerApi } from '@tap/api'
-import { provideI18n, useMessage, I18n } from './hooks'
+import { computed, provide, ref } from 'vue'
+import { I18n, provideI18n, useMessage } from './hooks'
 
 const langMap = {
   'zh-CN': zhCn,
@@ -21,7 +14,7 @@ const langMap = {
 }
 
 const locale = computed(() => {
-  return langMap[i18n.global.locale || 'en']
+  return langMap[i18n.locale || 'en']
 })
 
 provideI18n()
@@ -53,3 +46,10 @@ provide('openLocked', () => {
   showLocked.value = true
 })
 </script>
+
+<template>
+  <ElConfigProvider :locale="locale">
+    <RouterView />
+    <LockedDialog v-model:visible="showLocked" />
+  </ElConfigProvider>
+</template>

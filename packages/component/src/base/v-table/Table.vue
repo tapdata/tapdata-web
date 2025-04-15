@@ -1,34 +1,7 @@
-<template>
-  <div ref="vTableContainer" class="v-table-container">
-    <ElTable v-bind="$attrs" v-loading="loading" :data="list" ref="table" class="table-container__table">
-      <ColumnItem v-for="(item, index) in columns" :item="item" :key="index">
-        <template v-for="(key, slot) of $slots" v-slot:[slot]="scope">
-          <slot v-bind="scope" :name="slot"></slot>
-        </template>
-      </ColumnItem>
-      <template v-slot:empty>
-        <div><slot name="empty"></slot></div>
-      </template>
-    </ElTable>
-
-    <div v-if="showPage" class="pt-4 px-4">
-      <ElPagination
-        v-bind="Object.assign({}, options, pageOptions)"
-        v-model:current-page="page.current"
-        v-model:page-size="page.size"
-        :total="page.total"
-        @size-change="fetch(1)"
-        @current-change="fetch"
-      >
-      </ElPagination>
-    </div>
-  </div>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import ColumnItem from './Column'
 import { delayTrigger } from '@tap/shared'
+import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+import ColumnItem from './Column'
 export default {
   name: 'VTable',
   components: { ColumnItem },
@@ -107,6 +80,7 @@ export default {
       default: false,
     },
   },
+  emits: ['selection-change'],
   data() {
     return {
       loading: false,
@@ -167,7 +141,7 @@ export default {
       if (!this.remoteMethod) {
         if (this.$attrs.isPage) {
           this.page.total = this.data.length
-          let { current, size } = this.page
+          const { current, size } = this.page
           this.list = this.data.slice((current - 1) * size, current * size)
           return
         }
@@ -213,9 +187,40 @@ export default {
       return this.page
     },
   },
-  emits: ['selection-change'],
 }
 </script>
+
+<template>
+  <div ref="vTableContainer" class="v-table-container">
+    <ElTable
+      v-bind="$attrs"
+      ref="table"
+      v-loading="loading"
+      :data="list"
+      class="table-container__table"
+    >
+      <ColumnItem v-for="(item, index) in columns" :key="index" :item="item">
+        <template v-for="(key, slot) of $slots" #[slot]="scope">
+          <slot v-bind="scope" :name="slot" />
+        </template>
+      </ColumnItem>
+      <template #empty>
+        <div><slot name="empty" /></div>
+      </template>
+    </ElTable>
+
+    <div v-if="showPage" class="pt-4 px-4">
+      <ElPagination
+        v-bind="Object.assign({}, options, pageOptions)"
+        v-model:current-page="page.current"
+        v-model:page-size="page.size"
+        :total="page.total"
+        @size-change="fetch(1)"
+        @current-change="fetch"
+      />
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .v-table-container {
@@ -230,11 +235,5 @@ export default {
   flex: 1;
   overflow: auto;
   border-bottom: none;
-}
-.el-pagination {
-  line-height: 28px;
-  :deep(*) {
-    line-height: inherit;
-  }
 }
 </style>

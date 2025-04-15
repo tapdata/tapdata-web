@@ -1,14 +1,16 @@
 import { defineComponent } from 'vue'
 import { getNodeIconSrc } from '../shared'
+import { getConnectionIcon } from '../views/connections/util'
 
 export const DatabaseIcon = defineComponent({
   props: {
     item: Object,
     node: Object,
     size: Number,
+    pdkHash: String
   },
   setup(props, { attrs }) {
-    const _attrs = { ...attrs, src: getNodeIconSrc(props.item || props.node) }
+    const _attrs = { ...attrs, src: getConnectionIcon(props.pdkHash || props.item?.pdkHash || props.node?.pdkHash) }
     let style
 
     if (props.size) {

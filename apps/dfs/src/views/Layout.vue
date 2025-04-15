@@ -192,23 +192,15 @@ export default defineComponent({
       },
     ]
 
-    console.log('route', menus, subMenu)
-
     this.menus = menus
     this.subMenu = subMenu.map((el) => {
       if (el.children?.length) {
         el.children.forEach((cMenu, idx) => {
           const findOne = findRoute(cMenu.name)
-          if (!findOne) {
-            console.log('findOne:children', cMenu.name, cMenu)
-          }
           el.children[idx].path = findOne?.path
         })
       } else {
         const findOne = findRoute(el.name)
-        if (!findOne) {
-          console.log('findOne', el.name, el)
-        }
         el.path = findOne?.path
       }
       return el
@@ -392,9 +384,16 @@ export default defineComponent({
     },
 
     setActiveMenu() {
+      console.log(
+        'this.$route.matched',
+        this.$route.matched,
+        this.$route,
+        this.$route.matched.find((item) => !!item.path).path,
+        this.$route.meta.activeMenu,
+      )
+      const route = this.$route.matched.at(-1)
       this.activeMenu =
-        this.$route.meta.activeMenu ||
-        this.$route.matched.find((item) => !!item.path).path
+        this.$route.meta.activeMenu || route.path || this.$route.path
     },
   },
 })

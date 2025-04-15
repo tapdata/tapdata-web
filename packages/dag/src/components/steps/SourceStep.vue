@@ -19,6 +19,7 @@ import {
   reactive,
   ref,
 } from 'vue'
+import { useStore } from 'vuex'
 
 export default defineComponent({
   name: 'SourceStep',
@@ -29,7 +30,8 @@ export default defineComponent({
       default: 'source',
     },
   },
-  setup(props, { refs, root, emit }) {
+  setup(props, { refs, emit }) {
+    const store = useStore()
     const pdkHash = ref('')
     const pdkId = ref('')
     const connectorName = ref('')
@@ -38,6 +40,8 @@ export default defineComponent({
     const connectorList = ref([])
     const connectionList = ref([])
     const connectorSelected = ref()
+
+    const connectorForm = ref()
 
     const taskRef = inject('task')
     const isGuide = inject('isGuide')
@@ -233,14 +237,14 @@ export default defineComponent({
       if (optionSelected.value === 'no-connector') {
         nextTick(() => {
           setTimeout(() => {
-            const { demoDatabase } = root.$store.state.config
-            refs.connectorForm.schemaFormInstance.setValues({
+            const { demoDatabase } = store.state.config
+            connectorForm.value.schemaFormInstance.setValues({
               __TAPDATA: {
                 name: `${item.name} Demo`,
               },
               ...(demoDatabase[item.pdkId] || {}),
             })
-            refs.connectorForm.schemaFormInstance.setFieldState(
+            connectorForm.value.schemaFormInstance.setFieldState(
               '*(!START.__TAPDATA.name)',
               {
                 disabled: true,
@@ -266,7 +270,7 @@ export default defineComponent({
     }
 
     const handleTest = () => {
-      refs.connectorForm.startTest()
+      connectorForm.value.startTest()
     }
 
     const setNodeConnection = (data) => {
@@ -293,7 +297,7 @@ export default defineComponent({
     }
 
     const handleSaveAndNext = async () => {
-      const data = await refs.connectorForm.save()
+      const data = await connectorForm.value.save()
       setNodeConnection(data)
     }
 
@@ -370,6 +374,7 @@ export default defineComponent({
       connectionSelected,
       currentStep: currentStepRef,
       connectionIdSelected,
+      connectorForm,
 
       moreDisabled,
       moreLoading,
@@ -378,7 +383,7 @@ export default defineComponent({
       loadConnectorList,
 
       handleConnectorSelect,
-      handleSearchInput,
+      ElMessage,
       handleCancelCreate,
       handleTest,
       handleSaveAndNext,
@@ -441,7 +446,6 @@ export default defineComponent({
             v-model="search"
             class="position-absolute start-50 top-50 translate-middle"
             style="width: 400px"
-            size="small"
             clearable
             :placeholder="
               $t(
@@ -489,7 +493,7 @@ export default defineComponent({
                     </div>
                   </div>
                 </template>
-                <template>
+                <template #default>
                   <div
                     v-if="connectionSelected"
                     class="connector-item rounded-lg p-3 overflow-hidden bg-white border"

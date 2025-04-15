@@ -24,10 +24,7 @@ const MigrationForm = async () => {
   return MigrationForm
 }
 
-const ConnectionForm = async () => {
-  const { ConnectionForm } = await import('@tap/business')
-  return ConnectionForm
-}
+const ConnectionForm = () => import('@/views/connection/Form.vue')
 
 const TaskList = async () => {
   const { TaskList } = await import('@tap/business')
@@ -331,6 +328,9 @@ const routes = [
   {
     path: '/instance',
     name: 'Instance',
+    redirect: {
+      name: 'InstanceList',
+    },
     component: Layout,
     meta: {
       title: 'tap_agent_management',
@@ -356,6 +356,7 @@ const routes = [
           title: i18n.global.t(
             'dfs_agent_download_subscriptionmodeldialog_peizhishishishu',
           ),
+          activeMenu: '/instance',
         },
       },
       {
@@ -405,6 +406,7 @@ const routes = [
         component: ConnectionForm,
         meta: {
           title: 'tap_create_connection',
+          activeMenu: '/connections',
         },
       },
       {
@@ -413,6 +415,7 @@ const routes = [
         component: ConnectionForm,
         meta: {
           title: 'tap_edit_connection',
+          activeMenu: '/connections',
         },
       },
     ],
@@ -422,6 +425,9 @@ const routes = [
   {
     path: '/migrate',
     name: 'migrate',
+    redirect: {
+      name: 'migrateList',
+    },
     component: Layout,
     meta: {
       title: 'task_manage_migrate',
@@ -445,6 +451,7 @@ const routes = [
         component: MigrationForm,
         meta: {
           title: 'task_manage_migrate',
+          activeMenu: '/migrate',
         },
       },
     ],
@@ -454,6 +461,9 @@ const routes = [
   {
     path: '/dataVerification',
     name: 'dataVerification',
+    redirect: {
+      name: 'dataVerificationList',
+    },
     component: Layout,
     meta: {
       title: 'page_title_data_verify',
@@ -537,6 +547,9 @@ const routes = [
   {
     path: '/user/order',
     name: 'order',
+    redirect: {
+      name: 'orderList',
+    },
     component: Layout,
     meta: {
       title: 'dfs_router_index_dingyuezhongxin',
@@ -597,6 +610,7 @@ const routes = [
         meta: {
           title: i18n.global.t('dfs_change_record'),
           code: '',
+          activeMenu: '/user/order',
         },
       },
     ],

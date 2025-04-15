@@ -129,17 +129,12 @@ export default {
     @show="activeTab = 'system'"
   >
     <template #reference>
-      <div class="btn" @click="toCenter()">
-        <ElBadge
-          class="item-badge flex align-center gap-1 rounded-4"
-          :value="unRead"
-          :max="99"
-          :hidden="!unRead"
-        >
+      <ElBadge :value="unRead" :max="99" :hidden="!unRead">
+        <el-button text size="large" @click="toCenter()">
           <VIcon size="16">lingdang</VIcon>
-          <span>{{ $t('header_notify') }}</span>
-        </ElBadge>
-      </div>
+          <span class="ml-1">{{ $t('header_notify') }}</span>
+        </el-button>
+      </ElBadge>
     </template>
     <div class="notification-popover-wrap">
       <div class="tab-item-container">

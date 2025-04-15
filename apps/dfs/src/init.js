@@ -72,6 +72,8 @@ export default ({ routes }) => {
 
     const app = (window.App = window.$vueApp = Vue.createApp(App))
 
+    console.log('appContext', app)
+
     installAllPlugins(app)
     installDirectives(app)
     installElement(app)

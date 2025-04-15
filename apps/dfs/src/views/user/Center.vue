@@ -308,7 +308,7 @@ export default {
       this.avatar = this.userData.avatar
       this.dialogObj.avatar = true
     },
-    avatarConfirm(resetLoading) {
+    avatarConfirm() {
       const avatar = encodeURI(this.avatar)
       this.$axios
         .patch('api/tcm/user', {
@@ -319,9 +319,6 @@ export default {
           this.userData.avatar = avatar
           this.refreshRootUser()
           this.dialogObj.avatar = false
-        })
-        .finally(() => {
-          resetLoading?.()
         })
     },
     sendCode(phone, scene) {

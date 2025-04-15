@@ -1,43 +1,34 @@
-<template>
-  <ElConfigProvider :locale="locale">
-    <RouterView />
-
-    <ReplicationTour
-      :value="showReplicationTour"
-      @input="setShowReplicationTour"
-      :finish="replicationTourFinish"
-      @start="handleStartTour"
-      @finish="handleFinishTour"
-    ></ReplicationTour>
-
-    <!--<CustomerSurvey :value="true"></CustomerSurvey>-->
-  </ElConfigProvider>
-</template>
-
 <script lang="ts" setup>
-import { watch, computed, onMounted, provide, getCurrentInstance, nextTick } from 'vue'
-import { useStore } from 'vuex'
-import { useRouter, useRoute } from 'vue-router'
+import i18n from '@tap/i18n'
+import en from 'element-plus/dist/locale/en.mjs'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import zhTw from 'element-plus/dist/locale/zh-tw.mjs'
-import en from 'element-plus/dist/locale/en.mjs'
-import { buried } from '@/plugins/buried'
-import i18n from '@tap/i18n'
-import axios from '@/plugins/axios'
+import {
+  computed,
+  getCurrentInstance,
+  nextTick,
+  onMounted,
+  provide,
+  watch,
+} from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import ReplicationTour from '@/components/ReplicationTour.vue'
+import axios from '@/plugins/axios'
+import { buried } from '@/plugins/buried'
 
 const langMap = {
   'zh-CN': zhCn,
   'zh-TW': zhTw,
-  en
+  en,
 }
 
 const locale = computed(() => {
-  return langMap[i18n.global.locale || 'en']
+  return langMap[i18n.locale || 'en']
 })
 
 provide('checkAgent', async (callback) => {
-  let data = await axios.get('api/tcm/agent/agentCount')
+  const data = await axios.get('api/tcm/agent/agentCount')
   if (data.agentRunningCount || data.agentRunningCount > 0) {
     callback?.()
   } else {
@@ -93,26 +84,26 @@ const initMenuTour = () => {
       popover: {
         showButtons: ['next', 'previous'],
         description: `${this.$t(
-          'menu_tour_instance'
+          'menu_tour_instance',
         )}，<a href="${domain}quick-start/install/install-tapdata-agent/" target="_blank">${this.$t(
-          'menu_tour_instance_link'
-        )}</a>`
-      }
+          'menu_tour_instance_link',
+        )}</a>`,
+      },
     },
     {
       element: '#menu-connections',
       popover: {
         showButtons: ['next', 'previous'],
-        description: this.$t('menu_tour_connection')
-      }
+        description: this.$t('menu_tour_connection'),
+      },
     },
     {
       element: '#task-list-create',
       popover: {
         showButtons: ['next', 'previous'],
-        description: this.$t('menu_tour_create_task')
-      }
-    }
+        description: this.$t('menu_tour_create_task'),
+      },
+    },
   ]
 
   const targetElement = document.querySelector(steps[0].element)
@@ -130,7 +121,7 @@ const initMenuTour = () => {
     popoverClass: 'menu-tour-popover p-4 rounded-lg',
     onPopoverRender: (popover, { config, state }) => {},
     onHighlightStarted: (element, step, { state }) => {},
-    onDestroyed: (el, step, options) => {}
+    onDestroyed: (el, step, options) => {},
   })
 
   if (targetElement) {
@@ -175,6 +166,22 @@ onMounted(() => {
   // })
 })
 </script>
+
+<template>
+  <ElConfigProvider :locale="locale">
+    <RouterView />
+
+    <ReplicationTour
+      :value="showReplicationTour"
+      :finish="replicationTourFinish"
+      @input="setShowReplicationTour"
+      @start="handleStartTour"
+      @finish="handleFinishTour"
+    />
+
+    <!--<CustomerSurvey :value="true"></CustomerSurvey>-->
+  </ElConfigProvider>
+</template>
 
 <style lang="scss">
 #app {

@@ -1,177 +1,11 @@
-<template>
-  <section class="pay-container flex flex-column gap-4 overflow-hidden">
-    <div class="bg-white rounded-lg p-4">
-      <div class="flex align-center">
-        <IconButton @click="$router.push({ name: 'order' })">left</IconButton>
-        <span class="fs-5 ml-2">{{ $t('dfs_pending_payment') }}</span>
-      </div>
-    </div>
-
-    <div class="flex-1 overflow-auto rounded-lg flex flex-column gap-4">
-      <div class="bg-white rounded-lg p-4">
-        <template v-if="$route.name !== 'payForBill'">
-          <div class="font-color-dark fw-sub text-label mb-2">
-          {{ $t('dfs_spec_configuration') }}
-        </div>
-          <VTable
-            class="border rounded-lg h-auto mb-5"
-            :columns="columns"
-            :data="subscribeItems"
-            ref="table"
-            :has-pagination="false"
-          >
-            <template #empty>
-              <VEmpty small></VEmpty>
-            </template>
-          </VTable>
-
-          <div class="font-color-dark fw-sub text-label mb-2">{{ $t('dfs_traffic_bill') }}</div>
-          <VTable
-            class="border rounded-lg h-auto mb-5"
-            :columns="trafficColumns"
-            :data="trafficItems"
-            ref="table"
-            :has-pagination="false"
-          >
-            <template #empty>
-              <VEmpty small></VEmpty>
-            </template>
-          </VTable>
-        </template>
-
-        <template v-else>
-          <div class="font-color-dark fw-sub text-label mb-2">{{ $t('dfs_traffic_bill') }}</div>
-          <VTable
-            class="border rounded-lg h-auto mb-5"
-            :columns="trafficBillColumns"
-            :data="trafficBillItems"
-            ref="table"
-            :has-pagination="false"
-          >
-            <template #empty>
-              <VEmpty small></VEmpty>
-            </template>
-          </VTable>
-        </template>
-        <ElForm ref="form" label-position="top" :model="payForm">
-          <ElFormItem prop="email" :rules="emailRules">
-            <template v-slot:label>
-              <span class="font-color-dark fw-sub">
-                {{ $t('dfs_instance_create_jieshouzhangdande') }}
-              </span>
-            </template>
-            <ElInput
-              v-model="payForm.email"
-              :placeholder="$t('dfs_instance_create_yongyujieshoumei')"
-              style="width: 300px"
-            ></ElInput>
-          </ElFormItem>
-        </ElForm>
-      </div>
-
-      <div class="bg-white rounded-lg p-4">
-        <div class="font-color-dark fw-sub text-label mb-2">
-          {{ $t('dfs_instance_choose_payment_method') }}
-        </div>
-        <ElRadioGroup
-          v-model="payForm.paymentMethod"
-          class="flex gap-4 mb-4"
-          size="default"
-          @input="handleChangePayMethod"
-        >
-          <ElRadio
-            v-for="(item, index) in payMethods"
-            :key="index"
-            :label="item.value"
-            border
-            class="rounded-4 payment-radio m-0 px-3 py-0 position-relative inline-flex align-center"
-          >
-            <div class="flex align-center gap-2">
-              <VIcon size="24">{{ item.icon }}</VIcon>
-              <span>{{ item.label }}</span>
-            </div>
-          </ElRadio>
-        </ElRadioGroup>
-
-        <el-collapse-transition>
-          <div v-if="payForm.paymentMethod === 'Balance'">
-            <div class="bg-subtle rounded-lg p-4 mb-4">
-              <!--汇款账号信息-->
-              <div class="font-color-dark fw-sub text-label mb-2">
-                {{ $t('dfs_agent_download_transferdialog_zhuanzhangxinxi') }}
-              </div>
-
-              <el-skeleton style="width: 400px" :loading="accountLoading" animated>
-                <template #template>
-                  <div class="label-grid gap-3">
-                    <el-skeleton-item variant="h1" style="width: 100px" />
-                    <el-skeleton-item variant="h1" />
-
-                    <el-skeleton-item variant="h1" style="width: 100px" />
-                    <el-skeleton-item variant="h1" />
-
-                    <el-skeleton-item variant="h1" style="width: 100px" />
-                    <el-skeleton-item variant="h1" />
-                  </div>
-                </template>
-                <template>
-                  <div class="label-grid text-label font-color-dark">
-                    <!--开户名称-->
-                    <div class="font-color-light text-end">
-                      {{ $t('dfs_agent_download_transferdialog_kaihumingcheng') }}
-                    </div>
-                    <div>{{ accountInfo.accountName }}</div>
-                    <!--开户银行-->
-                    <div class="font-color-light text-end">
-                      {{ $t('dfs_agent_download_transferdialog_kaihuyinhang') }}
-                    </div>
-                    <div><VIcon class="align-top mr-1" size="22">bank-cmbc</VIcon>{{ accountInfo.bankName }}</div>
-                    <!--专属汇款账号-->
-                    <div class="font-color-light text-end">
-                      {{ $t('dfs_agent_download_transferdialog_huikuanzhanghao') }}
-                    </div>
-                    <div>
-                      {{ accountInfo.accountNo }}
-                    </div>
-                  </div></template
-                >
-              </el-skeleton>
-            </div>
-            <div class="font-color-light text-label">
-              {{ $t('dfs_agent_download_transferdialog_reopen_tips') }}
-            </div>
-          </div>
-        </el-collapse-transition>
-      </div>
-
-      <div class="bg-white rounded-lg p-4">
-        <ElButton
-          v-if="payForm.paymentMethod === 'Stripe'"
-          class="mr-4"
-          type="primary"
-          size="large"
-          @click="handlePay"
-          >{{ $t('dfs_pay_now') }}</ElButton
-        >
-
-        <span class="mr-4">
-          <span class="fw-sub font-color-dark mt-2">{{ $t('dfs_order_total') }}:</span
-          ><span class="color-primary fw-sub fs-5 ml-2">{{ price }}</span>
-        </span>
-
-        <span class="font-color-light">{{ subscriptionMethodLabel }}</span>
-      </div>
-    </div>
-  </section>
-</template>
-
 <script>
+import { CURRENCY_SYMBOL_MAP } from '@tap/business'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
+import { IconButton, VEmpty, VIcon, VTable } from '@tap/component'
+import { calcUnit } from '@tap/shared'
 import { mapGetters } from 'vuex'
 import i18n from '@/i18n'
-import { VTable, IconButton, VEmpty, VIcon } from '@tap/component'
 import { AGENT_TYPE_MAP, getPaymentMethod, getSpec } from '../instance/utils'
-import { CURRENCY_SYMBOL_MAP } from '@tap/business'
-import { calcUnit } from '@tap/shared'
 
 export default {
   components: {
@@ -179,10 +13,12 @@ export default {
     VEmpty,
     VIcon,
     IconButton,
+    PageContainer,
   },
 
   data() {
-    const currency = CURRENCY_SYMBOL_MAP[this.$store.getters.isDomesticStation ? 'cny' : 'usd']
+    const currency =
+      CURRENCY_SYMBOL_MAP[this.$store.getters.isDomesticStation ? 'cny' : 'usd']
 
     return {
       subscribeId: '',
@@ -198,27 +34,27 @@ export default {
         {
           label: i18n.t('dfs_order_list_dingyueleixing'),
           prop: 'productLabel',
-          width: 360
+          width: 360,
         },
         {
           label: i18n.t('dfs_traffic_bill_mode'),
           prop: 'specLabel',
-          width: 180
+          width: 180,
         },
         {
           label: i18n.t('dfs_user_center_jine'),
-          prop: 'price'
-        }
+          prop: 'price',
+        },
       ],
       trafficBillColumns: [
         {
           label: i18n.t('dfs_bill_amount', {
-            currency
+            currency,
           }),
-          prop: '_amount'
+          prop: '_amount',
         },
         { label: i18n.t('dfs_egress_traffic'), prop: 'transmit' },
-        { label: i18n.t('dfs_ingress_traffic'), prop: 'received' }
+        { label: i18n.t('dfs_ingress_traffic'), prop: 'received' },
       ],
       trafficBillItems: [],
       orderInfo: {},
@@ -265,7 +101,9 @@ export default {
       const payMethods = [
         {
           icon: 'pay-stripe',
-          label: this.$t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu'),
+          label: this.$t(
+            'dfs_agent_download_subscriptionmodeldialog_zaixianzhifu',
+          ),
           value: 'Stripe',
         },
       ]
@@ -295,7 +133,7 @@ export default {
             {
               label: i18n.t('dfs_instance_instance_guige'),
               prop: 'specLabel',
-              width: 360
+              width: 360,
             },
             {
               label: i18n.t('dfs_instance_createagent_cunchukongjian'),
@@ -303,7 +141,9 @@ export default {
               width: 180,
             },
             {
-              label: i18n.t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang'),
+              label: i18n.t(
+                'dfs_agent_download_subscriptionmodeldialog_yunfuwushang',
+              ),
               prop: 'provider',
               width: 180,
             },
@@ -321,7 +161,7 @@ export default {
             {
               label: i18n.t('dfs_order_list_dingyueleixing'),
               prop: 'productType',
-              width: 360
+              width: 360,
             },
             {
               label: i18n.t('dfs_instance_instance_guige'),
@@ -329,7 +169,9 @@ export default {
               width: 180,
             },
             {
-              label: i18n.t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
+              label: i18n.t(
+                'dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi',
+              ),
               prop: 'agentTypeLabel',
               width: 180,
             },
@@ -350,7 +192,8 @@ export default {
       this.paymentParams.renew = renew
       await this.loadSubscribe()
     } else if (routeName === 'payForChange') {
-      this.paymentParams.subscribeAlterId = this.subscribeAlterId = this.$route.params.id
+      this.paymentParams.subscribeAlterId = this.subscribeAlterId =
+        this.$route.params.id
       await this.loadAlter()
     } else if (routeName === 'payForBill') {
       this.billId = this.$route.params.id
@@ -362,9 +205,9 @@ export default {
           location.origin +
           location.pathname +
           this.$router.resolve({
-            name: 'order'
+            name: 'order',
           }).href,
-        cancelUrl: location.href
+        cancelUrl: location.href,
       })
 
       await this.loadBill()
@@ -396,10 +239,10 @@ export default {
         }) || '-'
       this.isRecurring = subscribe.subscribeType === 'recurring'
 
-      let subscribeItems = []
-      let trafficItems = []
+      const subscribeItems = []
+      const trafficItems = []
 
-      for (let it of subscribe.subscribeItems) {
+      for (const it of subscribe.subscribeItems) {
         if (it.productType === 'networkTraffic') {
           it.productLabel = '免费100G'
           it.specLabel = '超出按量计费'
@@ -435,20 +278,22 @@ export default {
             name: 'dataConsole',
           }).href
         : subscribe.platform === 'fullManagement'
-        ? location.origin + location.pathname + agentUrl.href
-        : location.origin +
-          location.pathname +
-          this.$router.resolve({
-            name: 'installAgent',
-            params: {
-              id: subscribeItems[0].resourceId,
-            },
-          }).href
+          ? location.origin + location.pathname + agentUrl.href
+          : location.origin +
+            location.pathname +
+            this.$router.resolve({
+              name: 'installAgent',
+              params: {
+                id: subscribeItems[0].resourceId,
+              },
+            }).href
       this.payForm.cancelUrl = location.href
     },
 
     async loadAlter() {
-      const alter = await this.$axios.get(`api/tcm/subscribe/alter/${this.subscribeAlterId}`)
+      const alter = await this.$axios.get(
+        `api/tcm/subscribe/alter/${this.subscribeAlterId}`,
+      )
       const { subscribe, subscribeId } = alter
       const currency = subscribe.currency || this.currencyType
 
@@ -482,22 +327,24 @@ export default {
       this.isRecurring = false // 显示对公
 
       const {
-        items: [bill]
+        items: [bill],
       } = await this.$axios.get(
         `api/tcm/billing?filter=${encodeURIComponent(
           JSON.stringify({
             where: {
-              id: this.billId
-            }
-          })
-        )}`
+              id: this.billId,
+            },
+          }),
+        )}`,
       )
 
       let totalAmount = 0
-      this.trafficBillItems = bill.details.map(item => {
+      this.trafficBillItems = bill.details.map((item) => {
         item.transmit = calcUnit(item.transmit, 'byte')
         item.received = calcUnit(item.received, 'byte')
-        let _total = item.amounts.find(it => it.currency === this.currencyType)?.totalAmount
+        const _total = item.amounts.find(
+          (it) => it.currency === this.currencyType,
+        )?.totalAmount
         item._amount = this.formatterPrice(this.currencyType, _total)
         totalAmount += _total
         return item
@@ -549,7 +396,10 @@ export default {
       this.accountLoading = false
       Object.assign(this.accountInfo, info)
 
-      if (this.payForm.paymentMethod === 'Balance' && !this.accountInfo.accountNo) {
+      if (
+        this.payForm.paymentMethod === 'Balance' &&
+        !this.accountInfo.accountNo
+      ) {
         await this.createAccount()
       }
     },
@@ -583,7 +433,7 @@ export default {
       if (this.$route.name === 'payForBill') {
         return await this.$axios.post('api/tcm/billing/pay', {
           ...this.payForm,
-          ...this.paymentParams
+          ...this.paymentParams,
         })
       }
       return await this.$axios.post('api/tcm/subscribe/payment', {
@@ -594,6 +444,198 @@ export default {
   },
 }
 </script>
+
+<template>
+  <PageContainer>
+    <template #title>
+      <div class="flex align-center">
+        <IconButton @click="$router.push({ name: 'order' })">left</IconButton>
+        <span class="fs-5 ml-2">{{ $t('dfs_pending_payment') }}</span>
+      </div>
+    </template>
+
+    <section class="pay-container flex flex-column gap-4 overflow-hidden mt-2">
+      <div class="flex-1 overflow-auto rounded-lg flex flex-column gap-4">
+        <div class="bg-white rounded-lg">
+          <template v-if="$route.name !== 'payForBill'">
+            <div class="font-color-dark fw-sub text-label mb-2">
+              {{ $t('dfs_spec_configuration') }}
+            </div>
+            <div class="rounded-lg h-auto mb-5 border overflow-hidden">
+              <VTable
+                ref="table"
+                :columns="columns"
+                :data="subscribeItems"
+                :has-pagination="false"
+              >
+                <template #empty>
+                  <VEmpty small />
+                </template>
+              </VTable>
+            </div>
+
+            <div class="font-color-dark fw-sub text-label mb-2">
+              {{ $t('dfs_traffic_bill') }}
+            </div>
+
+            <div class="rounded-lg h-auto mb-5 border overflow-hidden">
+              <VTable
+                ref="table"
+                :columns="trafficColumns"
+                :data="trafficItems"
+                :has-pagination="false"
+              >
+                <template #empty>
+                  <VEmpty small />
+                </template>
+              </VTable>
+            </div>
+          </template>
+
+          <template v-else>
+            <div class="font-color-dark fw-sub text-label mb-2">
+              {{ $t('dfs_traffic_bill') }}
+            </div>
+            <VTable
+              ref="table"
+              class="border rounded-lg h-auto mb-5"
+              :columns="trafficBillColumns"
+              :data="trafficBillItems"
+              :has-pagination="false"
+            >
+              <template #empty>
+                <VEmpty small />
+              </template>
+            </VTable>
+          </template>
+          <ElForm ref="form" label-position="top" :model="payForm">
+            <ElFormItem prop="email" :rules="emailRules">
+              <template #label>
+                <span class="font-color-dark fw-sub">
+                  {{ $t('dfs_instance_create_jieshouzhangdande') }}
+                </span>
+              </template>
+              <ElInput
+                v-model="payForm.email"
+                :placeholder="$t('dfs_instance_create_yongyujieshoumei')"
+                style="width: 300px"
+              />
+            </ElFormItem>
+          </ElForm>
+        </div>
+
+        <div class="bg-white rounded-lg">
+          <div class="font-color-dark fw-sub text-label mb-2">
+            {{ $t('dfs_instance_choose_payment_method') }}
+          </div>
+          <ElRadioGroup
+            v-model="payForm.paymentMethod"
+            class="flex gap-4 mb-4"
+            size="default"
+            @input="handleChangePayMethod"
+          >
+            <ElRadio
+              v-for="(item, index) in payMethods"
+              :key="index"
+              :label="item.value"
+              border
+              class="rounded-4 payment-radio m-0 px-3 py-0 position-relative inline-flex align-center"
+            >
+              <div class="flex align-center gap-2">
+                <VIcon size="24">{{ item.icon }}</VIcon>
+                <span>{{ item.label }}</span>
+              </div>
+            </ElRadio>
+          </ElRadioGroup>
+
+          <el-collapse-transition>
+            <div v-if="payForm.paymentMethod === 'Balance'">
+              <div class="bg-subtle rounded-lg p-4 mb-4">
+                <!--汇款账号信息-->
+                <div class="font-color-dark fw-sub text-label mb-2">
+                  {{ $t('dfs_agent_download_transferdialog_zhuanzhangxinxi') }}
+                </div>
+
+                <el-skeleton
+                  style="width: 400px"
+                  :loading="accountLoading"
+                  animated
+                >
+                  <template #template>
+                    <div class="label-grid gap-3">
+                      <el-skeleton-item variant="h1" style="width: 100px" />
+                      <el-skeleton-item variant="h1" />
+
+                      <el-skeleton-item variant="h1" style="width: 100px" />
+                      <el-skeleton-item variant="h1" />
+
+                      <el-skeleton-item variant="h1" style="width: 100px" />
+                      <el-skeleton-item variant="h1" />
+                    </div>
+                  </template>
+                  <template>
+                    <div class="label-grid text-label font-color-dark">
+                      <!--开户名称-->
+                      <div class="font-color-light text-end">
+                        {{
+                          $t('dfs_agent_download_transferdialog_kaihumingcheng')
+                        }}
+                      </div>
+                      <div>{{ accountInfo.accountName }}</div>
+                      <!--开户银行-->
+                      <div class="font-color-light text-end">
+                        {{
+                          $t('dfs_agent_download_transferdialog_kaihuyinhang')
+                        }}
+                      </div>
+                      <div>
+                        <VIcon class="align-top mr-1" size="22">bank-cmbc</VIcon
+                        >{{ accountInfo.bankName }}
+                      </div>
+                      <!--专属汇款账号-->
+                      <div class="font-color-light text-end">
+                        {{
+                          $t(
+                            'dfs_agent_download_transferdialog_huikuanzhanghao',
+                          )
+                        }}
+                      </div>
+                      <div>
+                        {{ accountInfo.accountNo }}
+                      </div>
+                    </div></template
+                  >
+                </el-skeleton>
+              </div>
+              <div class="font-color-light text-label">
+                {{ $t('dfs_agent_download_transferdialog_reopen_tips') }}
+              </div>
+            </div>
+          </el-collapse-transition>
+        </div>
+
+        <div class="bg-white rounded-lg">
+          <ElButton
+            v-if="payForm.paymentMethod === 'Stripe'"
+            class="mr-4"
+            type="primary"
+            size="large"
+            @click="handlePay"
+            >{{ $t('dfs_pay_now') }}</ElButton
+          >
+
+          <span class="mr-4">
+            <span class="fw-sub font-color-dark mt-2"
+              >{{ $t('dfs_order_total') }}:</span
+            ><span class="color-primary fw-sub fs-5 ml-2">{{ price }}</span>
+          </span>
+
+          <span class="font-color-light">{{ subscriptionMethodLabel }}</span>
+        </div>
+      </div>
+    </section>
+  </PageContainer>
+</template>
 
 <style lang="scss" scoped>
 .pay-container {
