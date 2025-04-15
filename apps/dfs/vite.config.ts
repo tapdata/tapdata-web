@@ -71,6 +71,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
+      host: true,
       proxy: {
         '/config/': proxy,
         '/private_ask/': proxy,

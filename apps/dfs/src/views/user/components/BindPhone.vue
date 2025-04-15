@@ -1,61 +1,9 @@
-<template>
-  <!--  绑定手机号  -->
-  <ElDialog
-    width="500px"
-    append-to-body
-    :title="$t('components_BindPhone_qingBangDingShouJi')"
-    :close-on-click-modal="!!$props.closeOnClickModal"
-    :close-on-press-escape="!!$props.closeOnPressEscape"
-    :show-close="!!$props.showClose"
-    v-model="dialogVisible"
-    class="bind-phone-dialog"
-  >
-    <ElForm :model="phoneForm" label-position="top" :label-width="showLabel ? '120px' : null" @submit.prevent>
-      <ElFormItem prop="current" :label="showLabel ? $t('user_Center_dangQianShouJi') : ''">
-        <ElInput v-model="phoneForm.current" :placeholder="$t('components_BindPhone_qingShuRuShouJi')" maxlength="50">
-          <template v-slot:prepend>
-            <el-select v-model="phoneForm.countryCode" style="width: 110px" filterable>
-              <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
-                <span style="float: left">{{ '+ ' + item.dial_code }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
-              >
-            </el-select>
-          </template>
-        </ElInput>
-      </ElFormItem>
-      <ElFormItem prop="newPassword" :label="showLabel ? $t('user_Center_yanZhengMa') : ''" class="inline-form-item">
-        <ElInput v-model="phoneForm.oldCode" :placeholder="$t('user_Center_qingShuRuShouJi')" maxlength="50"></ElInput>
-        <VerificationCode
-          :request-options="getCodeOptions(phoneForm, 'BIND_PHONE')"
-          :disabled="!phoneForm.current"
-          :style="{ width: '180px', textAlign: 'center' }"
-          class="ml-6"
-          text
-        ></VerificationCode>
-      </ElFormItem>
-    </ElForm>
-
-    <template v-slot:footer>
-      <span class="dialog-footer">
-        <VButton v-if="!!$props.showClose" @click="dialogVisible = false">{{ $t('public_button_cancel') }}</VButton>
-        <VButton
-          type="primary"
-          :disabled="!phoneForm.current || !phoneForm.oldCode"
-          auto-loading
-          @click="bindPhoneConfirm(arguments[0])"
-          >{{ $t('public_button_confirm') }}</VButton
-        >
-      </span>
-    </template>
-  </ElDialog>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../../utils/gogocodeTransfer'
 import i18n from '@/i18n'
+import { $emit, $off, $on, $once } from '../../../../utils/gogocodeTransfer'
 
-import VerificationCode from './VerificationCode'
 import { getCodeOptions } from '../util'
+import VerificationCode from './VerificationCode'
 
 export default {
   name: 'BindPhone',
@@ -69,11 +17,7 @@ export default {
       default: false,
     },
   },
-  watch: {
-    visible(v) {
-      this.dialogVisible = !!v
-    },
-  },
+  emits: ['success', 'error'],
   data() {
     return {
       countryCode: [],
@@ -87,6 +31,11 @@ export default {
       },
     }
   },
+  watch: {
+    visible(v) {
+      this.dialogVisible = !!v
+    },
+  },
   mounted() {
     this.phoneForm.countryCode = window.__USER_INFO__?.phoneCountryCode || '86'
     this.getCountryCode()
@@ -94,20 +43,22 @@ export default {
   methods: {
     getCodeOptions,
     bindPhoneConfirm(resetLoading) {
-      let { phoneForm } = this
+      const { phoneForm } = this
       this.$axios
         .post('api/tcm/user/phone', {
           phone: phoneForm.current,
           code: phoneForm.oldCode,
-          countryCode: phoneForm.countryCode ? phoneForm.countryCode.replace('-', '') : '86',
+          countryCode: phoneForm.countryCode
+            ? phoneForm.countryCode.replace('-', '')
+            : '86',
         })
         .then(() => {
           this.$message.success(i18n.t('user_Center_bangDingShouJiCheng'))
           $emit(this, 'success', phoneForm.current)
           this.dialogVisible = false
         })
-        .catch((e) => {
-          $emit(this, 'error', phoneForm.current, e)
+        .catch((error) => {
+          $emit(this, 'error', phoneForm.current, error)
         })
         .finally(() => {
           resetLoading?.()
@@ -115,14 +66,97 @@ export default {
     },
     getCountryCode() {
       this.$axios.get('config/countryCode.json').then((res) => {
-        let countryCode = res.data
+        const countryCode = res.data
         this.countryCode = countryCode?.countryCode
       })
     },
   },
-  emits: ['success', 'error'],
 }
 </script>
+
+<template>
+  <!--  绑定手机号  -->
+  <ElDialog
+    v-model="dialogVisible"
+    width="500px"
+    append-to-body
+    :title="$t('components_BindPhone_qingBangDingShouJi')"
+    :close-on-click-modal="!!$props.closeOnClickModal"
+    :close-on-press-escape="!!$props.closeOnPressEscape"
+    :show-close="!!$props.showClose"
+    class="bind-phone-dialog"
+  >
+    <ElForm
+      :model="phoneForm"
+      label-position="top"
+      :label-width="showLabel ? '120px' : null"
+      @submit.prevent
+    >
+      <ElFormItem
+        prop="current"
+        :label="showLabel ? $t('user_Center_dangQianShouJi') : ''"
+      >
+        <ElInput
+          v-model="phoneForm.current"
+          :placeholder="$t('components_BindPhone_qingShuRuShouJi')"
+          maxlength="50"
+        >
+          <template #prepend>
+            <el-select
+              v-model="phoneForm.countryCode"
+              style="width: 110px"
+              filterable
+            >
+              <el-option
+                v-for="item in countryCode"
+                :label="`+ ${item.dial_code}`"
+                :value="item.dial_code"
+              >
+                <span style="float: left">{{ `+ ${item.dial_code}` }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{
+                  item.name
+                }}</span></el-option
+              >
+            </el-select>
+          </template>
+        </ElInput>
+      </ElFormItem>
+      <ElFormItem
+        prop="newPassword"
+        :label="showLabel ? $t('user_Center_yanZhengMa') : ''"
+        class="inline-form-item"
+      >
+        <ElInput
+          v-model="phoneForm.oldCode"
+          :placeholder="$t('user_Center_qingShuRuShouJi')"
+          maxlength="50"
+        />
+        <VerificationCode
+          :request-options="getCodeOptions(phoneForm, 'BIND_PHONE')"
+          :disabled="!phoneForm.current"
+          :style="{ width: '180px', textAlign: 'center' }"
+          class="ml-6"
+          text
+        />
+      </ElFormItem>
+    </ElForm>
+
+    <template #footer>
+      <span class="dialog-footer">
+        <ElButton v-if="!!$props.showClose" @click="dialogVisible = false">{{
+          $t('public_button_cancel')
+        }}</ElButton>
+        <ElButton
+          type="primary"
+          :disabled="!phoneForm.current || !phoneForm.oldCode"
+          auto-loading
+          @click="bindPhoneConfirm(arguments[0])"
+          >{{ $t('public_button_confirm') }}</ElButton
+        >
+      </span>
+    </template>
+  </ElDialog>
+</template>
 
 <style lang="scss" scoped>
 :deep(.el-form-item__label) {

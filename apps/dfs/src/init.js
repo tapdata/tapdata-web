@@ -85,7 +85,6 @@ export default ({ routes }) => {
     window.$vueApp.mount('#app')
 
     window.$vueApp.component(VIcon.name, VIcon)
-    window.$vueApp.component(VButton.name, VButton)
     window.$vueApp.config.globalProperties.$ws = new WSClient(wsUrl)
 
     startVersionPolling()

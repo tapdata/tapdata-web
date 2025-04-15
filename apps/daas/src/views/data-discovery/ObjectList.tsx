@@ -1,10 +1,11 @@
-import { defineComponent, reactive, ref, computed, watch, onMounted } from 'vue'
-import i18n from '@/i18n'
-import { FilterBar, Drawer } from '@tap/component'
-import { TablePage } from '@tap/business'
-import DrawerContent from './PreviewDrawer'
-import { useMessage } from '@/hooks'
 import { discoveryApi } from '@tap/api'
+import { TablePage } from '@tap/business'
+import { Drawer, FilterBar } from '@tap/component'
+import { computed, defineComponent, onMounted, reactive, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { useMessage } from '@/hooks'
+import i18n from '@/i18n'
+import DrawerContent from './PreviewDrawer'
 import './index.scss'
 
 interface CustomContext extends SetupContext {
@@ -17,11 +18,13 @@ interface CustomContext extends SetupContext {
 export default defineComponent({
   props: [''],
   setup() {
+    const route = useRoute()
     const tableRef = ref()
     const drawerContentRef = ref()
     const { success } = useMessage()
     const list = ref([])
-    const { category, type, sourceCategory, sourceType, queryKey } = root.$route.query || {}
+    const { category, type, sourceCategory, sourceType, queryKey } =
+      route.query || {}
     const data = reactive({
       tableLoading: false,
       searchParams: {
@@ -43,21 +46,22 @@ export default defineComponent({
       filterItems: [],
     })
     const loadData = ({ page }) => {
-      const { category, type, sourceCategory, sourceType, queryKey } = data.searchParams
+      const { category, type, sourceCategory, sourceType, queryKey } =
+        data.searchParams
       const { size, current } = page
       const where = {
         page: current,
         pageSize: size,
       }
-      category && (where['category'] = category)
-      type && (where['type'] = type)
-      sourceType && (where['sourceType'] = sourceType)
-      sourceCategory && (where['sourceCategory'] = sourceCategory)
-      queryKey && (where['queryKey'] = queryKey)
+      category && (where.category = category)
+      type && (where.type = type)
+      sourceType && (where.sourceType = sourceType)
+      sourceCategory && (where.sourceCategory = sourceCategory)
+      queryKey && (where.queryKey = queryKey)
       return discoveryApi.list(where).then((res) => {
         const { total, items } = res
         return {
-          total: total,
+          total,
           data: items,
         }
       })
@@ -68,7 +72,12 @@ export default defineComponent({
     }
     //请求筛选条件-下拉列表
     const loadFilterList = () => {
-      const filterType = ['objCategory', 'objType', 'sourceCategory', 'sourceType']
+      const filterType = [
+        'objCategory',
+        'objType',
+        'sourceCategory',
+        'sourceType',
+      ]
       discoveryApi.filterList(filterType).then((res) => {
         const { objCategory, objType, sourceCategory, sourceType } = res
         data.filterItems = [
@@ -121,7 +130,7 @@ export default defineComponent({
       // @ts-ignore
       drawerContentRef.value.loadData(row)
     }
-    const closeDrawer = ((val): boolean) => {
+    const closeDrawer = (val: boolean) => {
       data.isShowDetails = val
     }
     const renderNode = ({ row }) => {
@@ -140,8 +149,8 @@ export default defineComponent({
       )
     }
     watch(
-      () => root.$route.query,
-      (()) => {
+      () => route.query,
+      () => {
         refs.table.fetch(1)
       },
     )
@@ -171,7 +180,12 @@ export default defineComponent({
               onFetch={this.rest}
             ></FilterBar>
           </template>
-          <el-table-column label={this.$t('object_list_name')} prop="name" show-overflow-tooltip width="350px">
+          <el-table-column
+            label={this.$t('object_list_name')}
+            prop="name"
+            show-overflow-tooltip
+            width="350px"
+          >
             {this.renderNode}
           </el-table-column>
           <el-table-column
@@ -179,14 +193,25 @@ export default defineComponent({
             label={this.$t('object_list_classification')}
             prop="category"
           ></el-table-column>
-          <el-table-column width="100px" label={this.$t('object_list_type')} prop="type"></el-table-column>
-          <el-table-column width="140px" label={this.$t('object_list_source_type')} prop="sourceType"></el-table-column>
+          <el-table-column
+            width="100px"
+            label={this.$t('object_list_type')}
+            prop="type"
+          ></el-table-column>
+          <el-table-column
+            width="140px"
+            label={this.$t('object_list_source_type')}
+            prop="sourceType"
+          ></el-table-column>
           <el-table-column
             width="145px"
             label={this.$t('datadiscovery_objectlist_laiyuanfenlei')}
             prop="sourceCategory"
           ></el-table-column>
-          <el-table-column label={this.$t('object_list_source_information')} prop="sourceInfo"></el-table-column>
+          <el-table-column
+            label={this.$t('object_list_source_information')}
+            prop="sourceInfo"
+          ></el-table-column>
         </TablePage>
         <Drawer
           class="object-drawer-wrap"

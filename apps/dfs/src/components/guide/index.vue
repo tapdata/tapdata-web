@@ -90,14 +90,14 @@
             </ElButton>
 
             <!--绑定手机号单独一个提交按钮 -->
-            <VButton
+            <ElButton
               size="default"
               type="primary"
               auto-loading
               @click="submitConfirm(arguments[0])"
               v-else-if="this.activeStep === 1 && bindPhoneVisible"
               >{{ $t('public_button_next') }}
-            </VButton>
+            </ElButton>
             <ElButton
               size="default"
               type="primary"

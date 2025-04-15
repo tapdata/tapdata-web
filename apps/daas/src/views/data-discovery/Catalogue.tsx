@@ -1,12 +1,11 @@
-import i18n from '@/i18n'
-import { defineComponent, reactive, ref, watch, nextTick, onMounted } from 'vue'
-import { VIcon } from '@tap/component'
-import { makeDragNodeImage } from '@tap/business'
 import { discoveryApi } from '@tap/api'
-import './index.scss'
+import { makeDragNodeImage } from '@tap/business'
+import { VIcon } from '@tap/component'
 import resize from '@tap/component/src/directives/resize'
+import { defineComponent, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-
+import i18n from '@/i18n'
+import './index.scss'
 
 export default defineComponent({
   props: [''],
@@ -45,14 +44,14 @@ export default defineComponent({
       const where = {
         page: current,
         pageSize: size,
-        tagId: data?.currentNode?.['id'] || '',
+        tagId: data?.currentNode?.id || '',
       }
-      sourceType && (where['objType'] = sourceType)
-      queryKey && (where['queryKey'] = queryKey)
+      sourceType && (where.objType = sourceType)
+      queryKey && (where.queryKey = queryKey)
       return discoveryApi.discoveryList(where).then((res) => {
         const { total, items } = res
         return {
-          total: total,
+          total,
           data: items,
         }
       })
@@ -192,12 +191,12 @@ export default defineComponent({
       dragState.isDragging = false
       dragState.draggingObjects = []
       dragState.dropNode = null
-      document.body.removeChild(draggingNodeImage)
+      draggingNodeImage.remove()
       draggingNodeImage = null
     }
 
     const multipleSelectionMap = ref({})
-    const handleSelectionChange = ((val): { id: string }[]) => {
+    const handleSelectionChange = (val: { id: string }[]) => {
       multipleSelectionMap.value = val.reduce((obj, item) => {
         obj[item.id] = item
         return obj
@@ -261,9 +260,16 @@ export default defineComponent({
         >
           <template slot="search">
             <div class="flex flex-row align-items-center mb-2">
-              <span class="discovery-title ml-2 mr-2">{i18n.t('metadata_meta_type_directory')}</span>
-              <span class="discovery-secondary-title mr-2"> {this.data.currentNode.value} </span>
-              <span class="discovery-desc ml-2">{this.data.currentNode.desc} </span>
+              <span class="discovery-title ml-2 mr-2">
+                {i18n.t('metadata_meta_type_directory')}
+              </span>
+              <span class="discovery-secondary-title mr-2">
+                {' '}
+                {this.data.currentNode.value}{' '}
+              </span>
+              <span class="discovery-desc ml-2">
+                {this.data.currentNode.desc}{' '}
+              </span>
             </div>
             <FilterBar
               v-model={this.data.searchParams}
@@ -286,11 +292,22 @@ export default defineComponent({
             )}
           </template>
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column label={i18n.t('public_name')} prop="name" show-overflow-tooltip width="350px">
+          <el-table-column
+            label={i18n.t('public_name')}
+            prop="name"
+            show-overflow-tooltip
+            width="350px"
+          >
             {this.renderNode}
           </el-table-column>
-          <el-table-column label={i18n.t('public_type')} prop="type"></el-table-column>
-          <el-table-column label={i18n.t('public_description')} prop="desc"></el-table-column>
+          <el-table-column
+            label={i18n.t('public_type')}
+            prop="type"
+          ></el-table-column>
+          <el-table-column
+            label={i18n.t('public_description')}
+            prop="desc"
+          ></el-table-column>
         </TablePage>
         <Drawer
           class="object-drawer-wrap overflow-hidden"
