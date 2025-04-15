@@ -28,7 +28,8 @@ const { items } = toRefs(props)
 
 const selectStyle = computed(() => {
   return {
-    width: isEmpty.value && !props.filterable ? 'auto' : addUnit(props.width),
+    // width: isEmpty.value && !props.filterable ? 'auto' : addUnit(props.width),
+    width: !props.filterable ? 'auto' : addUnit(props.width),
   }
 })
 
@@ -77,6 +78,13 @@ onBeforeMount(async () => {
     --el-text-color-regular: var(--el-color-primary);
 
     .el-select__wrapper {
+      &:not(.is-filterable) {
+        .el-select__placeholder {
+          position: static;
+          transform: none;
+          width: auto;
+        }
+      }
       box-shadow: 0 0 0 1px var(--el-color-primary) inset;
     }
   }
