@@ -1,5 +1,5 @@
 <template>
-  <div class="classification py-0 px-3 border-end" v-show="visible">
+  <div class="classification py-0 px-3 bg-slight rounded-xl" v-show="visible">
     <div class="classification-header">
       <div class="h-32 flex align-center mt-3">
         <IconButton class="mr-2" @click="toggle()"> expand-list </IconButton>
@@ -12,7 +12,7 @@
       </div>
       <div class="pt-1 pb-2">
         <ElInput v-model="filterText">
-          <template v-slot:suffix>
+          <template #prefix>
             <span class="el-input__icon h-100 ml-1">
               <VIcon size="14">search</VIcon>
             </span>
@@ -26,7 +26,7 @@
         v-if="treeData && treeData.length > 0"
         check-strictly
         show-checkbox
-        class="classification-tree"
+        class="classification-tree bg-transparent"
         ref="tree"
         node-key="id"
         highlight-current
@@ -732,13 +732,13 @@ export default {
     // color: map.get($color, primary);
     cursor: pointer;
   }
-}
-</style>
-<style lang="scss">
-.classification-tree {
-  .el-tree-node__content {
-    height: 32px;
-    overflow: hidden;
+
+  :deep(.classification-tree) {
+    --el-tree-node-hover-bg-color: var(--fill-hover);
+    .el-tree-node__content {
+      height: 32px;
+      overflow: hidden;
+    }
   }
 }
 </style>

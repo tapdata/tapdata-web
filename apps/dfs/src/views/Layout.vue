@@ -630,6 +630,7 @@ export default defineComponent({
     --el-main-padding: 0;
     margin-right: 1rem;
     margin-bottom: 1rem;
+    min-width: 0;
     overflow: unset; // 避免box-shadow被截断
   }
 

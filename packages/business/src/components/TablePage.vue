@@ -270,7 +270,7 @@ export default {
     </div>
 
     <div class="table-page-main">
-      <div class="table-page-main-box">
+      <div class="table-page-main-box gap-4">
         <Classification
           v-if="classify && !hideClassify"
           ref="classification"
