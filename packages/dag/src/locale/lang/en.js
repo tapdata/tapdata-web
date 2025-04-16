@@ -673,8 +673,8 @@ export default {
   packages_dag_field_inference_list_anzhaoxishu_tip:
     'Adjustment by coefficient refers to multiplying the original deduced length by the set coefficient as the adjusted field length',
   packages_dag_field_rename_index_yixiacaozuoyi: 'The following operations cannot match the source field',
-  packages_dag_nodes_database_jinwuzhujianbiao: 'No primary key table only',
-  packages_dag_nodes_database_jinyouzhujianbiao: 'Only the primary key table (including unique index)',
+  packages_dag_nodes_database_jinwuzhujianbiao: 'No Primary Key and No Unique Index',
+  packages_dag_nodes_database_jinyouzhujianbiao: 'Includes Primary Key or Unique Index',
   packages_dag_nodes_database_biaoxianshi: 'Selectable table range',
   packages_dag_nodes_database_xuanzeyaoguolvdiaode: 'Select the field type to filter out',
   packages_dag_data_schema: 'Data Schema',
@@ -832,5 +832,7 @@ export default {
   packages_dag_field_path: 'Field Path',
   packages_dag_email_receivers: 'Email Receivers',
   packages_dag_merge_table_js_node_error: 'Merge table node cannot have JS node after it',
-  packages_dag_merge_table_table_not_allow_target: 'Merge table does not support writing to {val}'
+  packages_dag_merge_table_table_not_allow_target: 'Merge table does not support writing to {val}',
+  packages_dag_only_include_pk: 'Only Include Primary Key',
+  packages_dag_only_include_uk: 'Only Include Unique Index'
 }
