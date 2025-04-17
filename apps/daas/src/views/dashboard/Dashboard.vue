@@ -576,11 +576,6 @@ export default {
   <PageContainer hide-header mode="blank">
     <section class="dashboard-wrap isCardBox h-100">
       <div class="dashboard-main">
-        <!-- <el-row :gutter="40" class="section-header py-6">
-        <el-col :span="18" class="isCard-title">{{
-          $t($route.meta.title)
-        }}</el-col>
-      </el-row> -->
         <div v-loading="loading">
           <template v-if="noPermission">
             <el-row
@@ -599,11 +594,7 @@ export default {
                     <span class="fs-6 fw-sub font-color-normal">{{
                       item.desc
                     }}</span>
-                    <!--{{ item.title }}-->
                   </div>
-                  <!--<div class="dashboard-label fs-5 pt-4 text-center fw-sub font-color-normal">
-                  {{ item.desc }}
-                </div>-->
                   <div
                     class="mt-1"
                     :class="[
@@ -975,7 +966,38 @@ export default {
 <style lang="scss" scoped>
 .dashboard-wrap {
   overflow-y: auto;
-  // background-color: var(--layout-bg, #eff1f4);
+
+  .job-list {
+    display: inline-flex;
+    flex-direction: column;
+    padding: 16px 0 0 20%;
+    box-sizing: border-box;
+    li {
+      margin-bottom: 5px;
+      //cursor: pointer;
+      white-space: nowrap;
+      .dots {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+      }
+      .num {
+        font-weight: 600;
+        min-width: 80px;
+        margin-left: 16px;
+      }
+      span {
+        display: inline-block;
+        text-align: left;
+        font-size: $fontBaseTitle;
+        &::before {
+          content: '';
+        }
+      }
+    }
+  }
+
   .dashboard-row {
     .dashboard-col {
       flex: 1;

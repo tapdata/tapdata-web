@@ -249,7 +249,7 @@ defineExpose({
     >
       <img :src="logoImg" style="width: auto; height: 32px" />
       <el-divider direction="vertical" />
-      <span class="fw-sub text-lg color-primary">{{ versionName }}</span>
+      <span class="fw-sub text-lg gradient-text">{{ versionName }}</span>
     </a>
     <a v-else class="logo" href="/" :style="logoStyle">
       <img :src="logoUrl" />
@@ -384,5 +384,11 @@ defineExpose({
 
 .expire-msg {
   color: #ff4d4f;
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, #007CF0 0%, #3b47e5 100%);
+  background-clip: text;
+  color: transparent;
 }
 </style>
