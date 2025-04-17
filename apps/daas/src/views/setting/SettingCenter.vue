@@ -1,45 +1,17 @@
-<template>
-  <div class="section-wrap setting-warp rounded-lg">
-    <div class="setting-warp-box h-100">
-      <div class="setting-center">
-        <div class="setting-left-sidebar">
-          <ul>
-            <li
-              v-for="item in settingList"
-              :key="item.icon"
-              class="flex align-center"
-              :class="activePanel === item.key ? 'active' : ''"
-              @click="changeName(item.key)"
-            >
-              <!-- <i :class="['iconfont', item.icon]"></i> -->
-              <VIcon :size="item.size" class="mr-2">{{ item.icon }}</VIcon
-              ><span>{{ $t(item.name) }}</span>
-
-              <VIcon v-if="lockedFeature[item.key]" class="ml-2" size="24">lock-circle</VIcon>
-            </li>
-          </ul>
-        </div>
-        <div class="setting-main">
-          <router-view></router-view>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script>
 import { VIcon } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
-import { SettingList } from '@/router/menu'
 import { mapGetters } from 'vuex'
+import { SettingList } from '@/router/menu'
 
 export default {
-  inject: ['lockedFeature', 'openLocked'],
   components: { VIcon },
+  inject: ['lockedFeature', 'openLocked'],
   data() {
     return {
       activePanel: '',
-      authoritySetting: this.$has('system_settings') && this.$has('system_settings_menu'),
+      authoritySetting:
+        this.$has('system_settings') && this.$has('system_settings_menu'),
     }
   },
   computed: {
@@ -57,12 +29,16 @@ export default {
           icon: 'setting',
           name: 'account_systemSetting',
           key: 'settings',
-          size: 20
+          size: 20,
         })
       }
 
-      return list.concat(SettingList.filter(item => !item.hidden && this.isMenuEnabled(item.key)))
-    }
+      return list.concat(
+        SettingList.filter(
+          (item) => !item.hidden && this.isMenuEnabled(item.key),
+        ),
+      )
+    },
   },
   watch: {
     $route(route) {
@@ -88,6 +64,37 @@ export default {
   },
 }
 </script>
+
+<template>
+  <div class="section-wrap setting-warp rounded-lg">
+    <div class="setting-warp-box h-100">
+      <div class="setting-center">
+        <div class="setting-left-sidebar">
+          <ul>
+            <li
+              v-for="item in settingList"
+              :key="item.icon"
+              class="flex align-center"
+              :class="activePanel === item.key ? 'active' : ''"
+              @click="changeName(item.key)"
+            >
+              <!-- <i :class="['iconfont', item.icon]"></i> -->
+              <VIcon :size="item.size" class="mr-2">{{ item.icon }}</VIcon
+              ><span>{{ $t(item.name) }}</span>
+
+              <VIcon v-if="lockedFeature[item.key]" class="ml-2" size="24"
+                >lock-circle</VIcon
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="setting-main">
+          <router-view />
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .setting-warp {

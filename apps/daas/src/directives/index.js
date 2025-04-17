@@ -34,6 +34,9 @@ export function permissionBtnDisable(code, id) {
 }
 
 export function installDirectives(app) {
+  // Provide hasPermissionByCode for injection in components
+  app.provide('hasPermissionByCode', hasPermissionByCode)
+
   app.directive('readonlybtn', {
     mounted(el, binding, vnode) {
       const code = binding.value

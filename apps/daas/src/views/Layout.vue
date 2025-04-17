@@ -37,7 +37,6 @@ declare global {
       logoHeight?: string | number
       homeUrl?: string
     }
-    $has?: (permission: string) => boolean
     getSettingByKey?: (key: string) => boolean | number
     iframeRouterChange?: (route: string) => void
     stateChange?: (key: string, data: any) => void
@@ -74,6 +73,7 @@ const store = useStore()
 // Injected properties
 const lockedFeature = inject<Record<string, boolean>>('lockedFeature')
 const openLocked = inject<() => void>('openLocked')
+const hasPermissionByCode = inject<(string) => boolean>('hasPermissionByCode')
 
 // Constants
 const isCommunity = import.meta.env.VUE_APP_MODE === 'community'
@@ -86,9 +86,8 @@ const logoUrl = ref(window._TAPDATA_OPTIONS_.logoUrl)
 const languages = ref(langMenu)
 const currentLang = ref(getCurrentLanguage())
 const settingCode = ref(
-  Object.prototype.hasOwnProperty.call(window, '$has') &&
-    window.$has?.('system_settings') &&
-    window.$has?.('system_settings_menu'),
+  hasPermissionByCode?.('system_settings') &&
+    hasPermissionByCode?.('system_settings_menu'),
 )
 const menus = ref<MenuItem[]>([])
 const menusGroup = ref<MenuGroup>({
@@ -121,9 +120,9 @@ const showLanguage = ref(
 const showSetting = ref(
   !import.meta.env.VUE_APP_HIDE_SETTING_BUTTON &&
     window.getSettingByKey?.('SHOW_SETTING_BUTTON') &&
-    (window.$has?.('home_notice_settings') ||
-      (window.$has?.('system_settings') &&
-        window.$has?.('system_settings_menu'))),
+    (hasPermissionByCode?.('home_notice_settings') ||
+      (hasPermissionByCode?.('system_settings') &&
+        hasPermissionByCode?.('system_settings_menu'))),
 )
 
 // Getters
@@ -176,9 +175,9 @@ const showSettingButton = computed(() => {
   return (
     !import.meta.env.VUE_APP_HIDE_SETTING_BUTTON &&
     window.getSettingByKey?.('SHOW_SETTING_BUTTON') &&
-    (window.$has?.('home_notice_settings') ||
-      (window.$has?.('system_settings') &&
-        window.$has?.('system_settings_menu')))
+    (hasPermissionByCode?.('home_notice_settings') ||
+      (hasPermissionByCode?.('system_settings') &&
+        hasPermissionByCode?.('system_settings_menu')))
   )
 })
 
