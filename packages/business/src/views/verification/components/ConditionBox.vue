@@ -150,31 +150,14 @@
                     class="flex-1"
                     @focus="handleFocus(item.source)"
                   ></FieldSelectWrap>
-                  <!-- <MultiSelection
-                  v-model="item.source.sortColumn"
-                  class="item-select"
-                  :class="{ 'empty-data': !item.source.sortColumn }"
-                  :options="item.source.fields"
-                  :id="'item-source-' + index"
-                  :key="`item-source-sortColumn` + item.id"
-                  @focus="handleFocus(item.source)"
-                ></MultiSelection> -->
                   <span class="item-icon"></span>
                   <FieldSelectWrap
                     v-model="item.target.sortColumn"
-                    :options="item.source.fields"
+                    :options="item.target.fields"
                     :key="`item-target-sortColumn` + item.id"
                     class="flex-1"
                     @focus="handleFocus(item.target)"
                   ></FieldSelectWrap>
-                  <!-- <MultiSelection
-                  v-model="item.target.sortColumn"
-                  class="item-select"
-                  :class="{ 'empty-data': !item.target.sortColumn }"
-                  :options="item.target.fields"
-                  :key="`item-target-sortColumn` + item.id"
-                  @focus="handleFocus(item.target)"
-                ></MultiSelection> -->
                 </div>
 
                 <div class="setting-item mt-4">
