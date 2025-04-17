@@ -2,11 +2,12 @@
 import { notificationApi } from '@tap/api'
 import { SelectList } from '@tap/component'
 import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+import PageContainer from '../../components/PageContainer.vue'
 import { ALARM_LEVEL_MAP } from '../../shared/const'
 import AlarmSetting from './AlarmSetting'
 
 export default {
-  components: { SelectList, AlarmSetting },
+  components: { SelectList, AlarmSetting, PageContainer },
   emits: ['notificationUpdate'],
   data() {
     return {
@@ -188,132 +189,113 @@ export default {
 </script>
 
 <template>
-  <div v-loading="loading" class="system-notification">
-    <div v-if="isDaas" class="notification-head pt-8 pb-4 px-6">
-      <div class="title font-color-dark fs-7">
-        {{
-          $t(
-            'packages_business_setting_notification_alarm_notification_gaojingtongzhi',
-          )
-        }}
+  <PageContainer
+    mode="auto"
+    content-class="flex-1 gap-6 min-h-0 overflow-auto px-6 position-relative"
+  >
+    <div v-loading="loading" class="system-notification">
+      <div class="position-sticky top-0 z-10 bg-white">
+        <el-tabs v-model="activeName" @tab-click="handleClick">
+          <el-tab-pane
+            :label="$t('packages_business_notify_user_all_notice')"
+            name="first"
+          />
+          <el-tab-pane
+            :label="$t('packages_business_notify_unread_notice')"
+            name="second"
+          />
+        </el-tabs>
+        <div class="position-absolute top-0 end-0 z-10">
+          <ElButton type="primary" @click="handlePageRead()">{{
+            $t('packages_business_notify_mask_read')
+          }}</ElButton>
+          <ElButton @click="handleAllRead()">{{
+            $t('packages_business_notify_mask_read_all')
+          }}</ElButton>
+          <ElButton
+            id="alarm-settings"
+            v-readonlybtn="'home_notice_settings'"
+            @click="handleSetting"
+          >
+            {{ $t('notify_setting') }}
+          </ElButton>
+        </div>
       </div>
-    </div>
 
-    <el-tabs v-model="activeName" @tab-click="handleClick">
-      <div class="operation">
-        <ElButton type="primary" @click="handlePageRead()">{{
-          $t('packages_business_notify_mask_read')
-        }}</ElButton>
-        <ElButton @click="handleAllRead()">{{
-          $t('packages_business_notify_mask_read_all')
-        }}</ElButton>
-        <ElButton
-          id="alarm-settings"
-          v-readonlybtn="'home_notice_settings'"
-          @click="handleSetting"
-        >
-          {{ $t('notify_setting') }}
-        </ElButton>
+      <div class="py-2">
+        <SelectList
+          v-if="options.length"
+          v-model="searchParams.search"
+          :items="options"
+          :label="$t('packages_business_notify_notice_level')"
+          clearable
+          menu-min-width="240px"
+          @change="getData()"
+        />
       </div>
-      <el-tab-pane
-        :label="$t('packages_business_notify_user_all_notice')"
-        name="first"
-      />
-      <el-tab-pane
-        :label="$t('packages_business_notify_unread_notice')"
-        name="second"
-      />
-    </el-tabs>
-    <div class="py-2 pl-4">
-      <SelectList
-        v-if="options.length"
-        v-model="searchParams.search"
-        :items="options"
-        :label="$t('packages_business_notify_notice_level')"
-        clearable
-        menu-min-width="240px"
-        @change="getData()"
-      />
-    </div>
-    <ul
-      v-if="listData && listData.length"
-      class="cuk-list clearfix cuk-list-type-block"
-    >
-      <li
-        v-for="item in listData"
-        :key="item.id"
-        class="list-item"
-        :style="{ cursor: item.read ? 'default' : 'pointer' }"
-        @click="handleRead(item)"
+      <ul
+        v-if="listData && listData.length"
+        class="cuk-list clearfix cuk-list-type-block"
       >
-        <div class="list-item-content flex align-center pl-6 py-2 lh-base">
-          <div v-show="!item.read" class="unread-1zPaAXtSu" />
-          <div class="list-item-desc">
-            <span :class="[`level-${item.levelType}`]"
-              >【{{ item.levelLabel }}】</span
-            >
-            <span>{{ item.title }}</span>
+        <li
+          v-for="item in listData"
+          :key="item.id"
+          class="list-item"
+          :style="{ cursor: item.read ? 'default' : 'pointer' }"
+          @click="handleRead(item)"
+        >
+          <div class="list-item-content flex align-center pl-6 py-2 lh-base">
+            <div v-show="!item.read" class="unread-1zPaAXtSu" />
+            <div class="list-item-desc">
+              <span :class="[`level-${item.levelType}`]"
+                >【{{ item.levelLabel }}】</span
+              >
+              <span>{{ item.title }}</span>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <div
+        v-else
+        class="notification-no-data flex h-100 justify-content-center align-items-center"
+      >
+        <div>
+          <VIcon size="140">no-notice</VIcon>
+          <div class="pt-4 fs-8 text-center font-color-slight fw-normal">
+            {{ $t('packages_business_notify_no_notice') }}
           </div>
         </div>
-      </li>
-    </ul>
-    <div
-      v-else
-      class="notification-no-data flex h-100 justify-content-center align-items-center"
-    >
-      <div>
-        <VIcon size="140">no-notice</VIcon>
-        <div class="pt-4 fs-8 text-center font-color-slight fw-normal">
-          {{ $t('packages_business_notify_no_notice') }}
-        </div>
       </div>
+
+      <el-pagination
+        v-model:current-page="currentPage"
+        class="position-sticky py-6 bottom-0 bg-white z-10"
+        background
+        layout="->,total,prev, pager, next,sizes"
+        :page-sizes="[20, 30, 50, 100]"
+        :page-size="pagesize"
+        :total="total"
+        @current-change="handleCurrentChange"
+        @size-change="handleSizeChange"
+      />
+      <ElDialog
+        v-model="dialogVisible"
+        class="notice-setting-dialog"
+        :title="$t('notify_setting')"
+        width="1024px"
+        :close-on-click-modal="false"
+        destroy-on-close
+      >
+        <AlarmSetting in-dialog @update-visible="dialogVisible = false" />
+      </ElDialog>
     </div>
-    <el-pagination
-      v-model:current-page="currentPage"
-      class="pagination"
-      background
-      layout="total,prev, pager, next,sizes"
-      :page-sizes="[20, 30, 50, 100]"
-      :page-size="pagesize"
-      :total="total"
-      @current-change="handleCurrentChange"
-      @size-change="handleSizeChange"
-    />
-    <ElDialog
-      v-model="dialogVisible"
-      class="notice-setting-dialog"
-      :title="$t('notify_setting')"
-      width="1024px"
-      :close-on-click-modal="false"
-      destroy-on-close
-    >
-      <AlarmSetting in-dialog @update-visible="dialogVisible = false" />
-    </ElDialog>
-  </div>
+  </PageContainer>
 </template>
 
 <style lang="scss" scoped>
 $unreadColor: #ee5353;
 .system-notification {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
-  font-size: $fontBaseTitle;
-  .notification-head {
-    .title {
-      font-weight: bold;
-    }
-    .search {
-      margin-top: 10px;
-      margin-right: 10px;
-      width: 200px;
-    }
-  }
   .operation {
-    position: absolute;
-    top: -50px;
-    right: 0;
     z-index: 1;
     cursor: pointer;
     span {
@@ -324,7 +306,6 @@ $unreadColor: #ee5353;
   ul.cuk-list {
     list-style: none;
     flex: 1;
-    padding-left: 24px;
     overflow: auto;
     .inner-select {
       &:first-child {
@@ -349,7 +330,6 @@ $unreadColor: #ee5353;
     position: relative;
     background-color: map.get($bgColor, white);
     border-bottom: 1px solid map.get($bgColor, disable);
-    margin-right: 30px;
     .list-item-content {
       position: relative;
       min-height: 50px;
@@ -389,9 +369,7 @@ $unreadColor: #ee5353;
 .system-notification {
   .el-tabs {
     position: relative;
-    .el-tabs__header {
-      padding: 0 24px;
-    }
+
     .el-tabs__content {
       overflow: initial;
       .operation {

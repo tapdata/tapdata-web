@@ -4,31 +4,38 @@ import { computed, onMounted, provide, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import Sidebar from '@/layouts/Sidebar.vue'
-import { SettingList } from '@/router/menu'
 import Wrapper from './Wrapper.vue'
 
 const store = useStore()
 const router = useRouter()
 const route = useRoute()
 
-const isMenuEnabled = computed(() => store.getters['feature/isMenuEnabled'])
-
-const settingList = computed(() => {
-  const list = []
-
-  if (Cookie.get('isAdmin')) {
-    list.push({
-      icon: 'setting',
-      name: 'account_systemSetting',
-      key: 'settings',
-      size: 20,
-    })
-  }
-
-  return list.concat(
-    SettingList.filter((item) => !item.hidden && isMenuEnabled.value(item.key)),
-  )
-})
+const menus = [
+  {
+    icon: 'notice-system-notice',
+    name: 'notify_system_notice',
+    key: 'systemNotification',
+    size: 20,
+  },
+  {
+    icon: 'notice-user',
+    name: 'daas_notification_center_yonghucaozuo',
+    key: 'userNotification',
+    size: 20,
+  },
+  {
+    icon: 'warning',
+    name: 'daas_notification_alarmnotification_gaojingtongzhi',
+    key: 'alarmNotification',
+    size: 20,
+  },
+  {
+    icon: 'notice-system',
+    name: 'daas_notification_center_xitonggaojing',
+    key: 'systemAlarm',
+    size: 20,
+  },
+]
 
 const handleSelectMenu = (name: string) => {
   router.push({
@@ -58,7 +65,7 @@ const handleSelectMenu = (name: string) => {
           </el-menu-item>
           <div class="px-4"><el-divider class="my-0" /></div>
           <el-menu-item
-            v-for="menu in settingList"
+            v-for="menu in menus"
             :key="menu.key"
             :index="menu.key"
           >

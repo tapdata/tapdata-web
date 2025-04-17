@@ -1,12 +1,13 @@
 <script>
 import { notificationApi } from '@tap/api'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { SelectList } from '@tap/component'
 import dayjs from 'dayjs'
 import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 import { TYPEMAP } from './tyepMap'
 
 export default {
-  components: { SelectList },
+  components: { SelectList, PageContainer },
   emits: ['notificationUpdate'],
   data() {
     return {
@@ -306,187 +307,165 @@ export default {
 </script>
 
 <template>
-  <div v-loading="loading" class="system-notification">
-    <div class="notification-head pt-8 pb-4 px-6">
-      <div class="title font-color-dark fs-7">
-        {{ $t('notify_system_notice') }}
+  <PageContainer
+    mode="auto"
+    content-class="flex-1 gap-6 min-h-0 overflow-auto px-6 position-relative"
+  >
+    <div v-loading="loading" class="system-notification">
+      <div class="position-sticky top-0 z-10 bg-white">
+        <el-tabs v-model="activeName" @tab-click="handleClick">
+          <el-tab-pane :label="$t('notify_user_all_notice')" name="first" />
+          <el-tab-pane :label="$t('notify_unread_notice')" name="second" />
+        </el-tabs>
+        <div class="position-absolute top-0 end-0 z-10">
+          <ElButton type="primary" @click="handlePageRead()">{{
+            $t('notify_mask_read')
+          }}</ElButton>
+          <ElButton @click="handleAllRead()">{{
+            $t('notify_mask_read_all')
+          }}</ElButton>
+          <ElButton
+            v-readonlybtn="'home_notice_settings'"
+            @click="handleSetting"
+          >
+            {{ $t('notify_setting') }}
+          </ElButton>
+        </div>
       </div>
-    </div>
 
-    <el-tabs v-model="activeName" @tab-click="handleClick">
-      <div class="operation">
-        <ElButton type="primary" @click="handlePageRead()">{{
-          $t('notify_mask_read')
-        }}</ElButton>
-        <ElButton @click="handleAllRead()">{{
-          $t('notify_mask_read_all')
-        }}</ElButton>
-        <ElButton v-readonlybtn="'home_notice_settings'" @click="handleSetting">
-          {{ $t('notify_setting') }}
-        </ElButton>
+      <div class="py-2 flex gap-4">
+        <SelectList
+          v-if="options.length"
+          v-model="searchParams.search"
+          :items="options"
+          :label="$t('notify_notice_level')"
+          last-page-text=""
+          clearable
+          dropdown-width="240px"
+          @change="getData()"
+        />
+        <SelectList
+          v-if="msgOptions.length"
+          v-model="searchParams.msg"
+          :items="msgOptions"
+          :label="$t('notify_notice_type')"
+          last-page-text=""
+          clearable
+          dropdown-width="240px"
+          @change="getData()"
+        />
       </div>
-      <el-tab-pane :label="$t('notify_user_all_notice')" name="first" />
-      <el-tab-pane :label="$t('notify_unread_notice')" name="second" />
-    </el-tabs>
-    <div class="py-2 pl-4 flex gap-4">
-      <SelectList
-        v-if="options.length"
-        v-model="searchParams.search"
-        :items="options"
-        :label="$t('notify_notice_level')"
-        last-page-text=""
-        clearable
-        dropdown-width="240px"
-        @change="getData()"
-      />
-      <SelectList
-        v-if="msgOptions.length"
-        v-model="searchParams.msg"
-        :items="msgOptions"
-        :label="$t('notify_notice_type')"
-        last-page-text=""
-        clearable
-        dropdown-width="240px"
-        @change="getData()"
-      />
-    </div>
-    <ul
-      v-if="listData && listData.length"
-      class="cuk-list clearfix cuk-list-type-block"
-    >
-      <li
-        v-for="item in listData"
-        :key="item.id"
-        class="list-item"
-        :style="{ cursor: item.read ? 'default' : 'pointer' }"
-        @click="handleRead(item)"
+      <ul
+        v-if="listData && listData.length"
+        class="cuk-list clearfix cuk-list-type-block"
       >
-        <div v-if="item.msg === 'JobDDL'" class="list-item-content">
-          <div v-show="!item.read" class="unread-1zPaAXtSu" />
-          <div class="list-item-desc">
-            <span :style="`color: ${colorMap[item.level]};`"
-              >【{{ item.level }}】</span
-            >
-            <span>{{ systemMap[item.system] }}</span>
-            <!-- <router-link :to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate"> -->
-            <ElLink v-if="item.msg === 'deleted'">
-              {{ `${item.serverName} ` }}
-            </ElLink>
-            <ElLink
-              v-else
-              type="primary"
-              class="link-primary cursor-pointer"
-              @click="handleGo(item)"
-            >
-              {{ `${item.serverName} , ` }}
-            </ElLink>
+        <li
+          v-for="item in listData"
+          :key="item.id"
+          class="list-item"
+          :style="{ cursor: item.read ? 'default' : 'pointer' }"
+          @click="handleRead(item)"
+        >
+          <div v-if="item.msg === 'JobDDL'" class="list-item-content">
+            <div v-show="!item.read" class="unread-1zPaAXtSu" />
+            <div class="list-item-desc">
+              <span :style="`color: ${colorMap[item.level]};`"
+                >【{{ item.level }}】</span
+              >
+              <span>{{ systemMap[item.system] }}</span>
+              <!-- <router-link :to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate"> -->
+              <ElLink v-if="item.msg === 'deleted'">
+                {{ `${item.serverName} ` }}
+              </ElLink>
+              <ElLink
+                v-else
+                type="primary"
+                class="link-primary cursor-pointer"
+                @click="handleGo(item)"
+              >
+                {{ `${item.serverName} , ` }}
+              </ElLink>
 
-            <!-- </router-link> -->
-            <span>
-              {{
-                `${$t('notify_source_name')} : ${item.sourceName} , ${$t('notify_database_name')} : ${
-                  item.databaseName
-                } , ${$t('notify_schema_name')} : ${item.schemaName} ,`
-              }}
-            </span>
-            <el-tooltip :content="item.sql" placement="top">
+              <!-- </router-link> -->
               <span>
-                {{ `DDL SQL : ${item.sql}` }}
+                {{
+                  `${$t('notify_source_name')} : ${item.sourceName} , ${$t('notify_database_name')} : ${
+                    item.databaseName
+                  } , ${$t('notify_schema_name')} : ${item.schemaName} ,`
+                }}
               </span>
-            </el-tooltip>
+              <el-tooltip :content="item.sql" placement="top">
+                <span>
+                  {{ `DDL SQL : ${item.sql}` }}
+                </span>
+              </el-tooltip>
+            </div>
+            <div class="list-item-time">
+              <span>{{ item.createTime }}</span>
+            </div>
           </div>
-          <div class="list-item-time">
-            <span>{{ item.createTime }}</span>
+          <div v-else class="list-item-content">
+            <div v-show="!item.read" class="unread-1zPaAXtSu" />
+            <div class="list-item-desc">
+              <span :style="`color: ${colorMap[item.level]};`"
+                >【{{ item.level }}】</span
+              >
+              <span>{{ systemMap[item.system] }}</span>
+              <span v-if="item.msg === 'deleted'">
+                {{ `${item.serverName} ` }}
+              </span>
+              <ElLink
+                v-else
+                type="primary"
+                class="cursor-pointer px-1"
+                @click="handleGo(item)"
+              >
+                {{ item.serverName }}
+              </ElLink>
+              <span>{{ typeMap[item.msg] }}</span>
+              <!-- <span v-if="item.CDCTime">{{ getLag(item.CDCTime) }}</span> -->
+              <span v-if="item.restDay"
+                >{{ item.restDay }} {{ $t('public_time_d') }}</span
+              >
+            </div>
+            <div class="list-item-time">
+              <span>{{ item.createTime }}</span>
+            </div>
           </div>
-        </div>
-        <div v-else class="list-item-content">
-          <div v-show="!item.read" class="unread-1zPaAXtSu" />
-          <div class="list-item-desc">
-            <span :style="`color: ${colorMap[item.level]};`"
-              >【{{ item.level }}】</span
-            >
-            <span>{{ systemMap[item.system] }}</span>
-            <span v-if="item.msg === 'deleted'">
-              {{ `${item.serverName} ` }}
-            </span>
-            <ElLink
-              v-else
-              type="primary"
-              class="cursor-pointer px-1"
-              @click="handleGo(item)"
-            >
-              {{ item.serverName }}
-            </ElLink>
-            <span>{{ typeMap[item.msg] }}</span>
-            <!-- <span v-if="item.CDCTime">{{ getLag(item.CDCTime) }}</span> -->
-            <span v-if="item.restDay"
-              >{{ item.restDay }} {{ $t('public_time_d') }}</span
-            >
+        </li>
+      </ul>
+      <div
+        v-else
+        class="notification-no-data flex h-100 justify-content-center align-items-center"
+      >
+        <div>
+          <VIcon size="140">no-notice</VIcon>
+          <div class="pt-4 fs-8 text-center font-color-slight fw-normal">
+            {{ $t('notify_no_notice') }}
           </div>
-          <div class="list-item-time">
-            <span>{{ item.createTime }}</span>
-          </div>
-        </div>
-      </li>
-    </ul>
-    <div
-      v-else
-      class="notification-no-data flex h-100 justify-content-center align-items-center"
-    >
-      <div>
-        <VIcon size="140">no-notice</VIcon>
-        <div class="pt-4 fs-8 text-center font-color-slight fw-normal">
-          {{ $t('notify_no_notice') }}
         </div>
       </div>
+      <el-pagination
+        v-model:current-page="currentPage"
+        class="position-sticky py-6 bottom-0 bg-white z-10"
+        background
+        layout="->,total,prev, pager, next,sizes"
+        :page-sizes="[20, 30, 50, 100]"
+        :page-size="pagesize"
+        :total="total"
+        @current-change="handleCurrentChange"
+        @size-change="handleSizeChange"
+      />
     </div>
-    <el-pagination
-      v-model:current-page="currentPage"
-      class="pagination"
-      background
-      layout="total,prev, pager, next,sizes"
-      :page-sizes="[20, 30, 50, 100]"
-      :page-size="pagesize"
-      :total="total"
-      @current-change="handleCurrentChange"
-      @size-change="handleSizeChange"
-    />
-  </div>
+  </PageContainer>
 </template>
 
 <style lang="scss" scoped>
 $unreadColor: #ee5353;
 .system-notification {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
-  font-size: $fontBaseTitle;
-  .notification-head {
-    .title {
-      font-weight: bold;
-    }
-    .search {
-      margin-top: 10px;
-      margin-right: 10px;
-      width: 200px;
-    }
-  }
-  .operation {
-    position: absolute;
-    top: -50px;
-    right: 0;
-    z-index: 10;
-    cursor: pointer;
-    span {
-      display: inline-block;
-      margin-left: 10px;
-    }
-  }
   ul.cuk-list {
     list-style: none;
     flex: 1;
-    padding-left: 24px;
     overflow: auto;
     .inner-select {
       &:first-child {
@@ -511,7 +490,6 @@ $unreadColor: #ee5353;
     position: relative;
     background-color: map.get($bgColor, white);
     border-bottom: 1px solid map.get($bgColor, disable);
-    margin-right: 30px;
     .list-item-content {
       position: relative;
       height: 50px;
@@ -559,16 +537,8 @@ $unreadColor: #ee5353;
 .system-notification {
   .el-tabs {
     position: relative;
-    .el-tabs__header {
-      padding: 0 24px;
-    }
     .el-tabs__content {
       overflow: initial;
-      .operation {
-        position: absolute;
-        top: -55px;
-        right: 24px;
-      }
     }
   }
   ul.cuk-list {

@@ -1,5 +1,6 @@
 import * as Vue from 'vue'
 import Layout from '@/layouts/Layout.vue'
+import NotifyLayout from '@/layouts/NotifyLayout.vue'
 import SettingLayout from '@/layouts/SettingLayout.vue'
 import Parent from './Parent'
 
@@ -135,6 +136,12 @@ const ApiApplicationList = async () => {
 const ExternalStorageList = async () => {
   const { ExternalStorageList } = await import('@tap/business')
   return ExternalStorageList
+}
+
+// 告警通知
+const AlarmNotification = async () => {
+  const { AlarmNotification } = await import('@tap/business')
+  return AlarmNotification
 }
 
 export default [
@@ -856,39 +863,6 @@ export default [
           hideTitle: true,
         },
       },
-
-      {
-        path: '/notification',
-        name: 'notification',
-        redirect: '/notification/systemNotification',
-        component: () => import('@/views/notification/Center'),
-        meta: {
-          title: 'page_title_back_menu',
-          isNotAside: true,
-        },
-        children: [
-          {
-            path: 'systemNotification',
-            name: 'systemNotification',
-            meta: { title: 'notify_system_notice', isNotAside: true },
-          },
-          {
-            path: 'userNotification',
-            name: 'userNotification',
-            meta: { title: 'notify_user_notice', isNotAside: true },
-          },
-          {
-            path: 'alarmNotification',
-            name: 'alarmNotification',
-            meta: { title: 'notify_system_notice', isNotAside: true },
-          },
-          {
-            path: 'systemAlarm',
-            name: 'systemAlarm',
-            meta: { title: 'notify_user_notice', isNotAside: true },
-          },
-        ],
-      },
       {
         path: 'license',
         name: 'License',
@@ -968,6 +942,42 @@ export default [
           title: 'page_title_webhook_alerts',
           isNotAside: true,
         },
+      },
+    ],
+  },
+  /* ---------- 通知模块  ----------*/
+  {
+    path: '/notification',
+    name: 'notification',
+    redirect: '/notification/systemNotification',
+    component: NotifyLayout,
+    meta: {
+      title: 'page_title_back_menu',
+    },
+    children: [
+      {
+        path: 'systemNotification',
+        name: 'systemNotification',
+        component: () => import('@/views/notification/SystemNotification.vue'),
+        meta: { title: 'notify_system_notice' },
+      },
+      {
+        path: 'userNotification',
+        name: 'userNotification',
+        component: () => import('@/views/notification/UserNotification.vue'),
+        meta: { title: 'notify_user_notice' },
+      },
+      {
+        path: 'alarmNotification',
+        name: 'alarmNotification',
+        component: AlarmNotification,
+        meta: { title: 'notify_system_notice' },
+      },
+      {
+        path: 'systemAlarm',
+        name: 'systemAlarm',
+        component: () => import('@/views/notification/SystemAlarm.vue'),
+        meta: { title: 'notify_user_notice' },
       },
     ],
   },

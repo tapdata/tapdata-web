@@ -1,5 +1,5 @@
 <template>
-  <div class="classification py-0 px-3 bg-slight rounded-xl" v-show="visible">
+  <div class="classification py-0 px-3 bg-light rounded-xl" v-show="visible">
     <div class="classification-header">
       <div class="h-32 flex align-center mt-3">
         <IconButton class="mr-2" @click="toggle()"> expand-list </IconButton>

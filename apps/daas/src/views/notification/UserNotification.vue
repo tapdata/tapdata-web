@@ -1,5 +1,6 @@
 <script>
 import { userLogsApi, usersApi } from '@tap/api'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { DatetimeRange, SelectList } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
 import dayjs from 'dayjs'
@@ -11,6 +12,7 @@ export default {
     UserOperation,
     SelectList,
     DatetimeRange,
+    PageContainer,
   },
   data() {
     return {
@@ -108,55 +110,41 @@ export default {
 </script>
 
 <template>
-  <div v-loading="loading" class="user-notification">
-    <div class="header pt-8 pb-4 px-6">
-      <div class="title font-color-dark fs-7">
-        {{ $t('notify_user_notice') }}
-      </div>
-    </div>
-    <div class="search-bar px-6 flex gap-4">
-      <!-- <el-date-picker
-              class="search-item"
-              popper-class="user-notification-data-picker"
-              style="width: 320px"
+  <PageContainer
+    mode="auto"
+    content-class="flex-1 gap-6 min-h-0 overflow-auto px-6 position-relative"
+  >
+    <div v-loading="loading" class="user-notification">
+      <div
+        class="search-bar flex gap-4 position-sticky top-0 bg-white z-10 pb-2"
+      >
+        <el-date-picker
+          v-model="search.range"
+          type="datetimerange"
+          class="flex-grow-0"
+          style="width: 400px"
+          range-separator="-"
+          :start-placeholder="$t('dataFlow_startTime')"
+          :end-placeholder="$t('dataFlow_endTime')"
+        />
 
-              v-model="search.range"
-              type="datetimerange"
-              range-separator="-"
-              :start-placeholder="$t('dataFlow_startTime')"
-              :end-placeholder="$t('dataFlow_endTime')"
-              @change="getData(1)"
-            >
-            </el-date-picker> -->
-      <el-date-picker
-        v-model="search.range"
-        type="datetimerange"
-        class="flex-grow-0"
-        style="width: 400px"
-        range-separator="-"
-        :start-placeholder="$t('dataFlow_startTime')"
-        :end-placeholder="$t('dataFlow_endTime')"
-      />
+        <SelectList
+          v-if="isAdmin"
+          v-model="search.userId"
+          :items="userOptions"
+          :label="$t('notify_operator')"
+          clearable
+          @change="getData(1)"
+        />
 
-      <SelectList
-        v-if="isAdmin"
-        v-model="search.userId"
-        :items="userOptions"
-        :label="$t('notify_operator')"
-        last-page-text=""
-        clearable
-        dropdown-width="240px"
-        @change="getData(1)"
-      />
-
-      <el-input
-        v-model="search.keyword"
-        clearable
-        class="search-item"
-        :placeholder="$t('notification_placeholder_keyword')"
-        @change="getData(1)"
-      />
-      <!-- <el-select
+        <el-input
+          v-model="search.keyword"
+          clearable
+          class="search-item"
+          :placeholder="$t('notification_placeholder_keyword')"
+          @change="getData(1)"
+        />
+        <!-- <el-select
               clearable
               v-if="isAdmin"
               class="search-item"
@@ -167,25 +155,26 @@ export default {
             >
               <el-option v-for="user in userOptions" :key="user.id" :value="user.id" :label="user.username"></el-option>
             </el-select> -->
+      </div>
+      <ul class="list">
+        <li v-for="record in list" :key="record._id" class="item">
+          <UserOperation :record="record" />
+          <span class="item-time">{{ record.createTimeFmt }}</span>
+        </li>
+      </ul>
+      <el-pagination
+        v-model:page-size="page.size"
+        v-model:current-page="page.index"
+        class="position-sticky py-6 bottom-0 bg-white z-10"
+        background
+        layout="->,total,prev, pager, next,sizes"
+        :page-sizes="[20, 30, 50, 100]"
+        :total="page.total"
+        @current-change="getData"
+        @size-change="getData()"
+      />
     </div>
-    <ul class="list pl-6">
-      <li v-for="record in list" :key="record._id" class="item">
-        <UserOperation :record="record" />
-        <span class="item-time">{{ record.createTimeFmt }}</span>
-      </li>
-    </ul>
-    <el-pagination
-      v-model:page-size="page.size"
-      v-model:current-page="page.index"
-      class="pagination"
-      background
-      layout="->,total,prev, pager, next,sizes"
-      :page-sizes="[20, 30, 50, 100]"
-      :total="page.total"
-      @current-change="getData"
-      @size-change="getData()"
-    />
-  </div>
+  </PageContainer>
 </template>
 
 <style lang="scss">
@@ -199,8 +188,6 @@ export default {
 .user-notification {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow: hidden;
   .filter-datetime-range {
     padding-left: 0;
     text-align: left;
@@ -235,7 +222,6 @@ export default {
     flex: 1;
     overflow: auto;
 
-    padding-right: 20px;
     .item {
       display: flex;
       justify-content: space-between;
@@ -249,10 +235,6 @@ export default {
         font-weight: 400;
       }
     }
-  }
-  .pagination {
-    text-align: right;
-    padding: 10px 0 20px 0;
   }
 }
 </style>

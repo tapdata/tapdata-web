@@ -241,7 +241,7 @@ defineExpose({
 </script>
 
 <template>
-  <ElHeader v-if="!IS_IFRAME" class="flex align-center gap-4" height="60px">
+  <ElHeader v-if="!IS_IFRAME" class="flex align-center gap-4" height="64px">
     <a
       v-if="isOP"
       class="logo w-auto text-white flex align-center gap-2"

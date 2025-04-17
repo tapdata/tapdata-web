@@ -1,7 +1,7 @@
 <script setup>
 import { isFn } from '@tap/shared'
 import { addUnit } from 'element-plus/es/utils/index.mjs'
-import { computed, onBeforeMount, ref, toRefs } from 'vue'
+import { computed, onBeforeMount, ref, toRefs, watch } from 'vue'
 
 defineOptions({
   name: 'FilterItemSelect',
@@ -24,7 +24,9 @@ const props = defineProps({
   },
 })
 
-const { items } = toRefs(props)
+// const { items } = toRefs(props)
+
+console.log('items', props)
 
 const selectStyle = computed(() => {
   return {
@@ -39,13 +41,27 @@ const isEmpty = computed(() => {
 
 const options = ref([])
 
-onBeforeMount(async () => {
-  if (isFn(items.value)) {
-    options.value = await items.value()
+const setOptions = async () => {
+  if (isFn(props.items)) {
+    options.value = await props.items()
   } else {
-    options.value = items.value
+    options.value = props.items
   }
-})
+}
+
+watch(
+  () => props.items,
+  () => {
+    setOptions()
+  },
+  {
+    immediate: true,
+  },
+)
+
+// onBeforeMount(async () => {
+//   setOptions()
+// })
 </script>
 
 <template>
