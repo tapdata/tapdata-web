@@ -643,11 +643,9 @@ export const FieldRenameProcessorPreview = defineComponent({
                   small
                   class="flex mt-3 din-font"
                   layout="total, prev, slot, next"
-                  on={{
-                    'current-change': (page) => {
-                      config.page.current = page
-                      loadData()
-                    },
+                  onCurrentChange={(page) => {
+                    config.page.current = page
+                    loadData()
                   }}
                   current-page={config.page.current}
                   total={config.page.total}

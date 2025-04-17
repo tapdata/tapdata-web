@@ -758,7 +758,7 @@ export default {
   notify_approaching: '剩餘 ',
   notify_system_setting: '系統設置',
   notify_tip:
-    '此處通知設置為系統全局通知的設置，任務編排頁的通知設置的其優先級高於此處的全局通知設置',
+    '此處通知設置為系統全局通知的設置，任務的通知設置的其優先級高於此處的全局通知設置',
   notify_job_operation_notice: '任務運行通知',
   notify_email_notice: '郵件通知',
   notify_job_started: '任務被啟動',

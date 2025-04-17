@@ -756,7 +756,7 @@ export default {
   notify_approaching: 'Remaining',
   notify_system_setting: 'System settings',
   notify_tip:
-    'The notification setting here is the system global notification setting, and the notification setting of the task arrangement page has a higher priority than the global notification setting here',
+    'This setting configures system-wide notifications. Notification settings at the task level take precedence over this global notification setting.',
   notify_job_operation_notice: 'Task operation notification',
   notify_email_notice: 'Email notification',
   notify_job_started: 'The job was started',

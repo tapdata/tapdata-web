@@ -1,5 +1,6 @@
 import * as Vue from 'vue'
-import Layout from '@/views/Layout.vue'
+import Layout from '@/layouts/Layout.vue'
+import SettingLayout from '@/layouts/SettingLayout.vue'
 import Parent from './Parent'
 
 const FunctionForm = Vue.defineAsyncComponent(
@@ -856,66 +857,6 @@ export default [
         },
       },
 
-      /* ---------- 设置  ----------*/
-      {
-        path: '/settingCenter',
-        name: 'settingCenter',
-        redirect: '/settingCenter/accountSetting',
-        component: () => import('@/views/setting/SettingCenter'),
-        meta: {
-          title: 'page_title_back_menu',
-          isNotAside: true,
-        },
-        children: [
-          {
-            path: 'accountSetting',
-            name: 'accountSetting',
-            code: 'v2_account-setting-setting',
-            component: () => import('@/views/setting/AccountSetting'),
-            meta: { title: 'page_title_account', isNotAside: true },
-          },
-          {
-            path: 'notificationSetting',
-            name: 'notificationSetting',
-            code: 'v2_notification-setting',
-            component: () => import('@/views/setting/NotificationSetting'),
-            meta: { title: 'notify_setting', isNotAside: true },
-          },
-          /* ---------- 系统设置  ----------*/
-          {
-            path: 'settings',
-            name: 'settings',
-            component: () => import('@/views/setting/Setting'),
-            meta: {
-              title: 'page_title_setting',
-              code: 'v2_system_settings_menu',
-              isNotAside: true,
-            },
-          },
-          /* ---------- 告警设置  ----------*/
-          {
-            path: 'alarmSetting',
-            name: 'alarmSetting',
-            component: AlarmSetting,
-            meta: {
-              title: 'page_title_setting',
-              code: 'v2_alarm_settings_menu',
-              isNotAside: true,
-            },
-          },
-          /* ---------- Webhook 告警设置  ----------*/
-          {
-            path: 'webhook-alerts',
-            name: 'webhookAlerts',
-            component: () => import('@/views/setting/WebhookAlerts'),
-            meta: {
-              title: 'page_title_webhook_alerts',
-              isNotAside: true,
-            },
-          },
-        ],
-      },
-
       {
         path: '/notification',
         name: 'notification',
@@ -966,6 +907,66 @@ export default [
           hideTitle: true,
           icon: 'data-server',
           code: 'v2_data-console',
+        },
+      },
+    ],
+  },
+
+  /* ---------- 设置  ----------*/
+  {
+    path: '/settingCenter',
+    name: 'settingCenter',
+    redirect: '/settingCenter/accountSetting',
+    component: SettingLayout,
+    meta: {
+      title: 'page_title_back_menu',
+      isNotAside: true,
+    },
+    children: [
+      {
+        path: 'accountSetting',
+        name: 'accountSetting',
+        code: 'v2_account-setting-setting',
+        component: () => import('@/views/setting/AccountSetting'),
+        meta: { title: 'page_title_account' },
+      },
+      {
+        path: 'notificationSetting',
+        name: 'notificationSetting',
+        code: 'v2_notification-setting',
+        component: () => import('@/views/setting/NotificationSetting'),
+        meta: { title: 'notify_setting', isNotAside: true },
+      },
+      /* ---------- 系统设置  ----------*/
+      {
+        path: 'settings',
+        name: 'settings',
+        component: () => import('@/views/setting/Setting'),
+        meta: {
+          title: 'page_title_setting',
+          code: 'v2_system_settings_menu',
+          isNotAside: true,
+        },
+      },
+      /* ---------- 告警设置  ----------*/
+      {
+        path: 'alarmSetting',
+        name: 'alarmSetting',
+        component: AlarmSetting,
+        meta: {
+          title: 'packages_business_setting_alarmnotification_renwugaojingshe',
+          code: 'v2_alarm_settings_menu',
+          isNotAside: true,
+        },
+      },
+      /* ---------- Webhook 告警设置  ----------*/
+      {
+        path: 'webhook-alerts',
+        name: 'webhookAlerts',
+        component: () => import('@/views/setting/WebhookAlerts'),
+        meta: {
+          title: 'page_title_webhook_alerts',
+          isNotAside: true,
         },
       },
     ],

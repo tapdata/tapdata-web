@@ -1,9 +1,11 @@
 <script>
 import { settingsApi } from '@tap/api'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { notificationMAP } from '../notification/tyepMap'
 
 export default {
   name: 'List',
+  components: { PageContainer },
   data() {
     return {
       notificationMAP,
@@ -57,143 +59,146 @@ export default {
 </script>
 
 <template>
-  <div v-loading="loading" class="notification">
-    <div class="notification-head">
-      <div class="title">{{ $t('notify_system_notice') }}</div>
-    </div>
-    <div class="notification-main" style="overflow-y: auto">
-      <section class="notification-tip">
-        <span> {{ $t('notify_tip') }}</span>
-      </section>
-      <section
-        v-show="runNotification && runNotification.length > 0"
-        class="run-notification"
-      >
-        <span class="title">{{ $t('notify_job_operation_notice') }}</span>
-        <ul>
-          <li v-for="(item, index) in runNotification" :key="index">
-            <span class="label">{{ notificationMAP[item.label] }}</span>
-            <el-checkbox v-model="item.notice" class="notice">{{
-              $t('notify_system_notice')
-            }}</el-checkbox>
-            <!--<el-checkbox class="email" v-model="item.email">{{ $t('notify_email_notice') }}</el-checkbox>-->
-            <div v-if="item.lagTime" class="mt-4">
-              <span v-if="item.lagTime" class="label">{{
-                notificationMAP[item.lagTime]
-              }}</span>
-              <span v-if="item.label === 'CDCLagTime'">
-                <el-input
-                  v-model="item.lagTimeInterval"
-                  class="item-input"
-                  onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
-                  onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
-                >
-                  <template #append>
-                    <el-select
-                      v-model="item.lagTimeUtil"
-                      :placeholder="$t('public_select_placeholder')"
-                      class="input-with-select"
-                    >
-                      <el-option label="hour" value="hour" />
-                      <el-option label="second" value="second" />
-                    </el-select>
-                  </template>
-                </el-input>
-              </span>
-            </div>
+  <PageContainer
+    mode="auto"
+    content-class="flex-1 gap-6 min-h-0 overflow-auto px-6 position-relative"
+  >
+    <div v-loading="loading" class="notification">
+      <ElAlert
+        class="mb-4"
+        :closable="false"
+        :title="$t('notify_tip')"
+        type="info"
+        show-icon
+      />
+      <div class="notification-main">
+        <section
+          v-show="runNotification && runNotification.length > 0"
+          class="run-notification"
+        >
+          <span class="title">{{ $t('notify_job_operation_notice') }}</span>
+          <ul>
+            <li v-for="(item, index) in runNotification" :key="index">
+              <span class="label">{{ notificationMAP[item.label] }}</span>
+              <el-checkbox v-model="item.notice" class="notice">{{
+                $t('notify_system_notice')
+              }}</el-checkbox>
+              <!--<el-checkbox class="email" v-model="item.email">{{ $t('notify_email_notice') }}</el-checkbox>-->
+              <div v-if="item.lagTime" class="mt-4">
+                <span v-if="item.lagTime" class="label">{{
+                  notificationMAP[item.lagTime]
+                }}</span>
+                <span v-if="item.label === 'CDCLagTime'">
+                  <el-input
+                    v-model="item.lagTimeInterval"
+                    class="item-input"
+                    onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+                    onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+                  >
+                    <template #append>
+                      <el-select
+                        v-model="item.lagTimeUtil"
+                        :placeholder="$t('public_select_placeholder')"
+                        class="input-with-select"
+                      >
+                        <el-option label="hour" value="hour" />
+                        <el-option label="second" value="second" />
+                      </el-select>
+                    </template>
+                  </el-input>
+                </span>
+              </div>
 
-            <div v-if="item.noticeInterval && item.email" class="mt-4">
-              <span v-if="item.noticeInterval && item.email" class="label">
-                {{ notificationMAP[item.noticeInterval] }}
-              </span>
-              <span v-if="item.label === 'CDCLagTime' && item.email">
-                <el-input
-                  v-model="item.noticeIntervalInterval"
-                  class="item-input"
-                  onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
-                  onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
-                >
-                  <template #append>
-                    <el-select
-                      v-model="item.noticeIntervalUtil"
-                      :placeholder="$t('public_select_placeholder')"
-                      class="input-with-select"
-                    >
-                      <el-option label="hour" value="hour" />
-                      <el-option label="second" value="second" />
-                    </el-select>
-                  </template>
-                </el-input>
-              </span>
-              <span v-if="item.label === 'jobEncounterError' && item.email">
-                <el-input
-                  v-model="item.Interval"
-                  class="item-input"
-                  onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
-                  onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
-                >
-                  <template #append>
-                    <el-select
-                      v-model="item.util"
-                      :placeholder="$t('public_select_placeholder')"
-                      class="input-with-select"
-                    >
-                      <el-option label="hour" value="hour" />
-                      <el-option label="second" value="second" />
-                    </el-select>
-                  </template>
-                </el-input>
-              </span>
-            </div>
-          </li>
-        </ul>
-      </section>
-      <section
-        v-show="systemNotification && systemNotification.length > 0"
-        class="run-notification"
-      >
-        <span class="title">{{ $t('notify_system_setting') }}</span>
-        <ul>
-          <li v-for="(item, index) in systemNotification" :key="index">
-            <span class="label">{{ notificationMAP[item.label] }}</span>
-            <el-checkbox v-model="item.notice" class="notice">{{
-              $t('notify_system_notice')
-            }}</el-checkbox>
-            <!--<el-checkbox class="email" v-model="item.email">{{ $t('notify_email_notice') }}</el-checkbox>-->
-          </li>
-        </ul>
-      </section>
-      <section
-        v-show="agentNotification && agentNotification.length > 0"
-        class="run-notification"
-      >
-        <span class="title">{{ $t('notification_agentNotice') }}</span>
-        <ul>
-          <li v-for="(item, index) in agentNotification" :key="index">
-            <span class="label">{{ notificationMAP[item.label] }}</span>
-            <el-checkbox v-model="item.notice" class="notice">{{
-              $t('notify_system_notice')
-            }}</el-checkbox>
-            <!--<el-checkbox class="email" v-model="item.email">{{ $t('notify_email_notice') }}</el-checkbox>-->
-          </li>
-        </ul>
-      </section>
+              <div v-if="item.noticeInterval && item.email" class="mt-4">
+                <span v-if="item.noticeInterval && item.email" class="label">
+                  {{ notificationMAP[item.noticeInterval] }}
+                </span>
+                <span v-if="item.label === 'CDCLagTime' && item.email">
+                  <el-input
+                    v-model="item.noticeIntervalInterval"
+                    class="item-input"
+                    onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+                    onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+                  >
+                    <template #append>
+                      <el-select
+                        v-model="item.noticeIntervalUtil"
+                        :placeholder="$t('public_select_placeholder')"
+                        class="input-with-select"
+                      >
+                        <el-option label="hour" value="hour" />
+                        <el-option label="second" value="second" />
+                      </el-select>
+                    </template>
+                  </el-input>
+                </span>
+                <span v-if="item.label === 'jobEncounterError' && item.email">
+                  <el-input
+                    v-model="item.Interval"
+                    class="item-input"
+                    onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+                    onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+                  >
+                    <template #append>
+                      <el-select
+                        v-model="item.util"
+                        :placeholder="$t('public_select_placeholder')"
+                        class="input-with-select"
+                      >
+                        <el-option label="hour" value="hour" />
+                        <el-option label="second" value="second" />
+                      </el-select>
+                    </template>
+                  </el-input>
+                </span>
+              </div>
+            </li>
+          </ul>
+        </section>
+        <section
+          v-show="systemNotification && systemNotification.length > 0"
+          class="run-notification"
+        >
+          <span class="title">{{ $t('notify_system_setting') }}</span>
+          <ul>
+            <li v-for="(item, index) in systemNotification" :key="index">
+              <span class="label">{{ notificationMAP[item.label] }}</span>
+              <el-checkbox v-model="item.notice" class="notice">{{
+                $t('notify_system_notice')
+              }}</el-checkbox>
+              <!--<el-checkbox class="email" v-model="item.email">{{ $t('notify_email_notice') }}</el-checkbox>-->
+            </li>
+          </ul>
+        </section>
+        <section
+          v-show="agentNotification && agentNotification.length > 0"
+          class="run-notification"
+        >
+          <span class="title">{{ $t('notification_agentNotice') }}</span>
+          <ul>
+            <li v-for="(item, index) in agentNotification" :key="index">
+              <span class="label">{{ notificationMAP[item.label] }}</span>
+              <el-checkbox v-model="item.notice" class="notice">{{
+                $t('notify_system_notice')
+              }}</el-checkbox>
+              <!--<el-checkbox class="email" v-model="item.email">{{ $t('notify_email_notice') }}</el-checkbox>-->
+            </li>
+          </ul>
+        </section>
+      </div>
+      <div class="position-sticky py-6 bottom-0 border-top bg-white z-10">
+        <ElButton
+          class="btn"
+          type="primary"
+          :disabled="
+            !runNotification || !systemNotification || !agentNotification
+          "
+          @click="submit"
+          >{{ $t('public_button_save') }}</ElButton
+        >
+      </div>
     </div>
-    <div class="notification-footer">
-      <ElButton
-        class="btn"
-        type="primary"
-        :disabled="
-          !runNotification || !systemNotification || !agentNotification
-        "
-        @click="submit"
-        >{{ $t('public_button_save') }}</ElButton
-      >
-    </div>
-    <!-- <div class="notification-main">
-          <div class="notification-right-list"></div>
-        </div> -->
-  </div>
+  </PageContainer>
 </template>
 
 <style lang="scss" scoped>
@@ -202,7 +207,6 @@ $unreadColor: #ee5353;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 100%;
   font-size: $fontBaseTitle;
   .notification-head {
     display: flex;
@@ -228,7 +232,6 @@ $unreadColor: #ee5353;
     flex-direction: column;
     justify-content: space-between;
     flex-grow: 1;
-    padding-left: 24px;
     .notification-tip {
       padding-top: 5px;
       span {
@@ -242,7 +245,6 @@ $unreadColor: #ee5353;
       }
     }
     .run-notification {
-      margin-top: 15px;
       .title {
         font-size: $fontBaseTitle;
         font-weight: bold;
@@ -283,15 +285,6 @@ $unreadColor: #ee5353;
         width: 90px;
       }
     }
-  }
-  .notification-footer {
-    flex: 0 0 auto;
-    width: 100%;
-    padding: 0 20px;
-    line-height: 60px;
-    height: 60px;
-    text-align: right;
-    border-top: 1px solid map.get($borderColor, light);
   }
 }
 </style>

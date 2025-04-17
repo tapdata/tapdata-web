@@ -762,7 +762,7 @@ export default {
   notify_approaching: '剩余 ',
   notify_system_setting: '系统设置',
   notify_tip:
-    '此处通知设置为系统全局通知的设置，任务编排页的通知设置的其优先级高于此处的全局通知设置',
+    '此处通知设置为系统全局通知的设置，任务的通知设置的其优先级高于此处的全局通知设置',
   notify_job_operation_notice: '任务运行通知',
   notify_email_notice: '邮件通知',
   notify_job_started: '任务被启动',

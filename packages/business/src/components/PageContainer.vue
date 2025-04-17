@@ -7,7 +7,7 @@ const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
-const activeMenu = inject('activeMenu')
+const activeMenu = inject('activeMenu') || {}
 
 const props = defineProps({
   hideHeader: {

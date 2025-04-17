@@ -1,7 +1,7 @@
-import { defineComponent, ref } from 'vue'
-import i18n from '@tap/i18n'
-import { JsEditor } from '../../index'
 import { GitBook } from '@tap/component'
+import i18n from '@tap/i18n'
+import { defineComponent, ref } from 'vue'
+import { JsEditor } from '../../index'
 import './style.scss'
 export const JsEditorDialog = defineComponent({
   props: {
@@ -168,7 +168,9 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
       return (
         <div class="js-editor-dialog">
           {!webScript.value ? (
-            <ElButton onClick={handleOpenDialog}>{i18n.t('packages_business_verification_addJS')}</ElButton>
+            <ElButton onClick={handleOpenDialog}>
+              {i18n.t('packages_business_verification_addJS')}
+            </ElButton>
           ) : (
             <div>
               <div>
@@ -188,12 +190,6 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
             title={i18n.t('packages_business_verification_JSVerifyLogic')}
             modelValue={visible.value}
             width="60%"
-            // append-to-body
-            // on={{
-            //   'update:visible': (v) => {
-            //     visible.value = v
-            //   },
-            // }}
           >
             <div class="js-wrap">
               <div class="jsBox">
@@ -211,10 +207,15 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
                 ></JsEditor>
                 <div class="js-fixText">{'}'}</div>
               </div>
-              <GitBook value={doc.value} class="example ml-4 color-primary"></GitBook>
+              <GitBook
+                value={doc.value}
+                class="example ml-4 color-primary"
+              ></GitBook>
             </div>
             <div class="dialog-footer py-4 text-end">
-              <ElButton onClick={handleCloseDialog}>{i18n.t('public_button_cancel')}</ElButton>
+              <ElButton onClick={handleCloseDialog}>
+                {i18n.t('public_button_cancel')}
+              </ElButton>
               <ElButton type="primary" onClick={submitScript}>
                 {i18n.t('public_button_confirm')}
               </ElButton>

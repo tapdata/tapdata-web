@@ -1,11 +1,13 @@
 <script>
 import { EditPen } from '@element-plus/icons-vue'
 import { fileApi, javascriptFunctionsApi } from '@tap/api'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import Cookie from '@tap/shared/src/cookie'
 import i18n from '@/i18n'
 
 let timer = null
 export default {
+  components: { PageContainer },
   data() {
     return {
       loading: false,
@@ -261,137 +263,132 @@ export default {
 </script>
 
 <template>
-  <section class="import-form-wrapper">
-    <div class="section-wrap-box">
-      <!-- <div class="container-header">
-            {{ $t('function_button_import_jar') }}
-          </div> -->
-      <!-- <div class="import-form__body">
-            <div class="main px-6 py-4"> -->
-      <ElForm
-        ref="form"
-        label-position="left"
-        label-width="120px"
-        :model="form"
-        :rules="rules"
-      >
-        <ElFormItem prop="fileId" :label="`${$t('function_file_label')}:`">
-          <div class="flex align-center">
-            <ElUpload
-              class="form-input flex align-center"
-              action="api/file/upload"
-              accept=".jar"
-              :file-list="fileList"
-              :before-upload="selectFile"
-              :on-change="fileChange"
-              :on-remove="fileRemove"
-            >
-              <ElButton style="margin-right: 10px" type="primary">{{
-                $t('function_button_file_upload')
-              }}</ElButton>
-            </ElUpload>
-            <span class="color-info ml-4" style="font-size: 12px"
-              >*{{ $t('function_tips_max_size') }}10M</span
-            >
-          </div>
-        </ElFormItem>
-        <ElFormItem
-          prop="packageName"
-          :label="`${$t('function_package_name_label')}:`"
-        >
-          <div class="flex align-center">
-            <ElInput
-              v-model="form.packageName"
-              class="form-input"
-              :placeholder="$t('function_package_name_placeholder')"
-            />
-            <ElButton
-              class="btn ml-4"
-              type="primary"
-              :loading="loading"
-              @click="loadFunction"
-            >
-              <span>{{ $t('function_button_load_function') }}</span>
-            </ElButton>
-          </div>
-        </ElFormItem>
-      </ElForm>
-      <div class="flex flex-column flex-1 overflow-hidden">
-        <div class="mb-4" style="font-size: 14px">
-          {{ $t('function_import_list_title') }}
+  <PageContainer
+    mode="auto"
+    content-class="flex-1 gap-6 min-h-0 overflow-auto px-6 position-relative"
+  >
+    <ElForm
+      ref="form"
+      label-position="left"
+      label-width="auto"
+      :model="form"
+      :rules="rules"
+    >
+      <ElFormItem prop="fileId" :label="`${$t('function_file_label')}:`">
+        <div class="flex align-center">
+          <ElUpload
+            class="form-input flex align-center"
+            action="api/file/upload"
+            accept=".jar"
+            :file-list="fileList"
+            :before-upload="selectFile"
+            :on-change="fileChange"
+            :on-remove="fileRemove"
+          >
+            <ElButton style="margin-right: 10px" type="primary">{{
+              $t('function_button_file_upload')
+            }}</ElButton>
+          </ElUpload>
+          <span class="color-info ml-4" style="font-size: 12px"
+            >*{{ $t('function_tips_max_size') }}10M</span
+          >
         </div>
-        <ElTable :data="funcList" height="100%">
-          <ElTableColumn :label="$t('function_name_label')">
-            <template #default="{ row, $index }">
-              <div class="flex align-center">
-                <template v-if="editIndex !== $index">
-                  <ElTooltip
-                    v-if="row.isRepeat"
-                    class="item"
-                    effect="dark"
-                    placement="top"
-                    :content="$t('function_tips_name_repeat')"
-                  >
-                    <el-icon class="mr-2 color-danger"
-                      ><el-icon-warning
-                    /></el-icon>
-                  </ElTooltip>
-                  <span class="ellipsis">{{ row.function_name }}</span>
-                  <ElButton
-                    class="ml-2"
-                    text
-                    icon="el-icon-edit-outline"
-                    @click="handleEdit(row, $index)"
-                  >
-                    <el-icon><EditPen /></el-icon
-                  ></ElButton>
-                </template>
-                <template v-else>
-                  <ElInput v-model="editName" class="mr-2" />
-                  <ElButton @click="editIndex = null">{{
-                    $t('public_button_cancel')
-                  }}</ElButton>
-                  <ElButton
-                    type="primary"
-                    :disabled="!editName || !editName.trim()"
-                    @click="changeName($index)"
-                    >{{ $t('public_button_save') }}</ElButton
-                  >
-                </template>
-              </div>
-            </template>
-          </ElTableColumn>
-          <ElTableColumn
-            prop="classNameFmt"
-            :label="$t('function_class_label')"
+      </ElFormItem>
+      <ElFormItem
+        prop="packageName"
+        :label="`${$t('function_package_name_label')}:`"
+      >
+        <div class="flex align-center">
+          <ElInput
+            v-model="form.packageName"
+            class="form-input"
+            :placeholder="$t('function_package_name_placeholder')"
           />
-          <ElTableColumn
-            prop="methodName"
-            :label="$t('function_method_name_label')"
-          />
-          <ElTableColumn prop="format" :label="$t('function_format')" />
-          <ElTableColumn width="120px" :label="$t('public_operation')">
-            <template #default="{ row, $index }">
-              <ElButton text @click="openSetting(row, $index)">{{
-                $t('public_button_setting')
-              }}</ElButton>
-              <ElButton text @click="remove($index)">{{
-                $t('public_button_delete')
-              }}</ElButton>
-            </template>
-          </ElTableColumn>
-        </ElTable>
-        <!-- </div>
-            </div> -->
+          <ElButton
+            class="btn ml-4"
+            type="primary"
+            :loading="loading"
+            @click="loadFunction"
+          >
+            <span>{{ $t('function_button_load_function') }}</span>
+          </ElButton>
+        </div>
+      </ElFormItem>
+    </ElForm>
+    <div class="flex flex-column flex-1 overflow-hidden">
+      <div class="mb-4 fw-sub">
+        {{ $t('function_import_list_title') }}
       </div>
-      <div class="footer mt-6">
-        <ElButton class="btn" @click="$router.back()">{{
-          $t('public_button_back')
-        }}</ElButton>
-        <ElButton class="btn" type="primary" @click="save">{{
-          $t('public_button_save')
-        }}</ElButton>
-      </div>
+      <ElTable :data="funcList" height="100%">
+        <ElTableColumn :label="$t('function_name_label')">
+          <template #default="{ row, $index }">
+            <div class="flex align-center">
+              <template v-if="editIndex !== $index">
+                <ElTooltip
+                  v-if="row.isRepeat"
+                  class="item"
+                  effect="dark"
+                  placement="top"
+                  :content="$t('function_tips_name_repeat')"
+                >
+                  <el-icon class="mr-2 color-danger"
+                    ><el-icon-warning
+                  /></el-icon>
+                </ElTooltip>
+                <span class="ellipsis">{{ row.function_name }}</span>
+                <ElButton
+                  class="ml-2"
+                  text
+                  icon="el-icon-edit-outline"
+                  @click="handleEdit(row, $index)"
+                >
+                  <el-icon><EditPen /></el-icon
+                ></ElButton>
+              </template>
+              <template v-else>
+                <ElInput v-model="editName" class="mr-2" />
+                <ElButton @click="editIndex = null">{{
+                  $t('public_button_cancel')
+                }}</ElButton>
+                <ElButton
+                  type="primary"
+                  :disabled="!editName || !editName.trim()"
+                  @click="changeName($index)"
+                  >{{ $t('public_button_save') }}</ElButton
+                >
+              </template>
+            </div>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn
+          prop="classNameFmt"
+          :label="$t('function_class_label')"
+        />
+        <ElTableColumn
+          prop="methodName"
+          :label="$t('function_method_name_label')"
+        />
+        <ElTableColumn prop="format" :label="$t('function_format')" />
+        <ElTableColumn width="120px" :label="$t('public_operation')">
+          <template #default="{ row, $index }">
+            <ElButton text @click="openSetting(row, $index)">{{
+              $t('public_button_setting')
+            }}</ElButton>
+            <ElButton text @click="remove($index)">{{
+              $t('public_button_delete')
+            }}</ElButton>
+          </template>
+        </ElTableColumn>
+      </ElTable>
+    </div>
+    <div class="footer position-sticky py-6 bottom-0 bg-white z-10">
+      <ElButton type="primary" @click="save">{{
+        $t('public_button_save')
+      }}</ElButton>
+
+      <ElButton @click="$router.back()">{{
+        $t('public_button_back')
+      }}</ElButton>
     </div>
 
     <ElDialog
@@ -399,7 +396,7 @@ export default {
       class="create-dialog"
       :title="$t('function_dialog_setting_title')"
       :close-on-click-modal="false"
-      :visible="!!settingData"
+      :model-value="!!settingData"
     >
       <ElForm
         v-if="settingData"
@@ -455,19 +452,10 @@ export default {
         </span>
       </template>
     </ElDialog>
-  </section>
+  </PageContainer>
 </template>
 
 <style lang="scss" scoped>
-.import-form-wrapper {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
-  .btn {
-    min-width: 80px;
-  }
-}
 .import-form__body {
   margin: 30px 24px 0 24px;
   flex: 1;

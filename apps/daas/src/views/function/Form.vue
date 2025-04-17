@@ -1,5 +1,6 @@
 <script>
 import { javascriptFunctionsApi } from '@tap/api'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { JsEditor } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
 
@@ -20,7 +21,7 @@ const getScriptObj = (script) => {
   }
 }
 export default {
-  components: { JsEditor },
+  components: { JsEditor, PageContainer },
   data() {
     const self = this
     return {
@@ -146,107 +147,112 @@ export default {
 </script>
 
 <template>
-  <section
-    v-loading="loading"
-    class="custom-form-wrapper section-wrap bg-white flex-fill overflow-auto"
+  <PageContainer
+    mode="auto"
+    content-class="flex flex-1 gap-6 min-h-0 overflow-auto px-6 position-relative"
   >
-    <div class="section-wrap-box">
-      <ElForm
-        v-if="!$route.params.id || details.id"
-        ref="form"
-        label-position="left"
-        label-width="160px"
-        :model="form"
-      >
-        <template v-if="$route.params.id && details.type === 'jar'">
-          <ElFormItem :label="`${$t('function_jar_file_label')}:`">
-            <span class="details-value">{{ details.fileName }}</span>
-          </ElFormItem>
-          <ElFormItem :label="`${$t('function_package_name_label')}:`">
-            <span class="details-value">{{ details.packageName }}</span>
-          </ElFormItem>
-          <ElFormItem :label="`${$t('function_class_name_label')}:`">
-            <span class="details-value">{{ details.classNameFmt }}</span>
-          </ElFormItem>
-          <ElFormItem :label="`${$t('function_method_name_label')}:`">
-            <span class="details-value">{{ details.methodName }}</span>
-          </ElFormItem>
+    <section
+      v-loading="loading"
+      class="custom-form-wrapper section-wrap bg-white flex-fill"
+    >
+      <div class="section-wrap-box">
+        <ElForm
+          v-if="!$route.params.id || details.id"
+          ref="form"
+          label-position="left"
+          label-width="auto"
+          :model="form"
+        >
+          <template v-if="$route.params.id && details.type === 'jar'">
+            <ElFormItem :label="`${$t('function_jar_file_label')}:`">
+              <span class="details-value">{{ details.fileName }}</span>
+            </ElFormItem>
+            <ElFormItem :label="`${$t('function_package_name_label')}:`">
+              <span class="details-value">{{ details.packageName }}</span>
+            </ElFormItem>
+            <ElFormItem :label="`${$t('function_class_name_label')}:`">
+              <span class="details-value">{{ details.classNameFmt }}</span>
+            </ElFormItem>
+            <ElFormItem :label="`${$t('function_method_name_label')}:`">
+              <span class="details-value">{{ details.methodName }}</span>
+            </ElFormItem>
+            <ElFormItem
+              prop="function_name"
+              :label="`${$t('function_name_label')}:`"
+              :rules="{
+                required: true,
+                message: $t('function_name_placeholder'),
+              }"
+            >
+              <ElInput
+                v-model="form.function_name"
+                class="form-input"
+                :placeholder="$t('function_name_placeholder')"
+              />
+            </ElFormItem>
+          </template>
           <ElFormItem
-            prop="function_name"
-            :label="`${$t('function_name_label')}:`"
-            :rules="{
-              required: true,
-              message: $t('function_name_placeholder'),
-            }"
+            v-if="form.type === 'custom'"
+            prop="script"
+            :label="`${$t('function_script_label')}:`"
+            :rules="scriptRules"
           >
+            <div class="script-editor flex-1">
+              <JsEditor ref="editor" v-model:value="form.script" height="200" />
+            </div>
+          </ElFormItem>
+          <ElFormItem prop="describe" :label="`${$t('public_description')}:`">
             <ElInput
-              v-model="form.function_name"
+              v-model="form.describe"
               class="form-input"
-              :placeholder="$t('function_name_placeholder')"
+              type="textarea"
+              :placeholder="$t('function_describe_placeholder')"
             />
           </ElFormItem>
-        </template>
-        <ElFormItem
-          v-if="form.type === 'custom'"
-          prop="script"
-          :label="`${$t('function_script_label')}:`"
-          :rules="scriptRules"
-        >
-          <div class="script-editor flex-1">
-            <JsEditor ref="editor" v-model:value="form.script" height="200" />
-          </div>
-        </ElFormItem>
-        <ElFormItem prop="describe" :label="`${$t('public_description')}:`">
-          <ElInput
-            v-model="form.describe"
-            class="form-input"
-            type="textarea"
-            :placeholder="$t('function_describe_placeholder')"
-          />
-        </ElFormItem>
-        <ElFormItem prop="format" :label="`${$t('function_format')}:`">
-          <ElInput
-            v-model="form.format"
-            class="form-input"
-            :placeholder="$t('function_format_placeholder')"
-          />
-        </ElFormItem>
-        <ElFormItem
-          prop="parameters_desc"
-          :label="`${$t('function_parameters_describe_label')}:`"
-        >
-          <ElInput
-            v-model="form.parameters_desc"
-            class="form-input"
-            type="textarea"
-            :placeholder="$t('function_parameters_describe_placeholder')"
-          />
-        </ElFormItem>
-        <ElFormItem
-          prop="return_value"
-          :label="`${$t('function_return_value_label')}:`"
-        >
-          <ElInput
-            v-model="form.return_value"
-            class="form-input"
-            type="textarea"
-            :placeholder="$t('function_return_value_placeholder')"
-          />
-        </ElFormItem>
-      </ElForm>
-    </div>
-    <div class="footer p-6">
-      <ElButton class="btn" @click="$router.back()">{{
-        $t('public_button_back')
-      }}</ElButton>
-      <ElButton class="btn" type="primary" @click="save">{{
-        $t('public_button_save')
-      }}</ElButton>
-    </div>
+          <ElFormItem prop="format" :label="`${$t('function_format')}:`">
+            <ElInput
+              v-model="form.format"
+              class="form-input"
+              :placeholder="$t('function_format_placeholder')"
+            />
+          </ElFormItem>
+          <ElFormItem
+            prop="parameters_desc"
+            :label="`${$t('function_parameters_describe_label')}:`"
+          >
+            <ElInput
+              v-model="form.parameters_desc"
+              class="form-input"
+              type="textarea"
+              :placeholder="$t('function_parameters_describe_placeholder')"
+            />
+          </ElFormItem>
+          <ElFormItem
+            prop="return_value"
+            :label="`${$t('function_return_value_label')}:`"
+          >
+            <ElInput
+              v-model="form.return_value"
+              class="form-input"
+              type="textarea"
+              :placeholder="$t('function_return_value_placeholder')"
+            />
+          </ElFormItem>
+        </ElForm>
+      </div>
+      <div class="footer position-sticky py-6 bottom-0 bg-white">
+        <ElButton class="btn" type="primary" @click="save">{{
+          $t('public_button_save')
+        }}</ElButton>
+        <ElButton class="btn" @click="$router.back()">{{
+          $t('public_button_back')
+        }}</ElButton>
+      </div>
 
-    <!-- </div>
+      <!-- </div>
         </div> -->
-  </section>
+    </section>
+  </PageContainer>
 </template>
 
 <style lang="scss" scoped>
@@ -285,8 +291,5 @@ export default {
 .footer {
   background-color: map.get($bgColor, white);
   border-top: 1px solid #f0f0f0;
-  .btn {
-    width: 80px;
-  }
 }
 </style>

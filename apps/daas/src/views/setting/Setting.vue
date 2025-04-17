@@ -1,7 +1,8 @@
 <script>
 import { alarmRuleApi, licensesApi, settingsApi, usersApi } from '@tap/api'
-
 import { showErrorMessage } from '@tap/business'
+
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { VIcon, VTable } from '@tap/component'
 import { TextFileReader } from '@tap/form'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
@@ -12,7 +13,7 @@ import i18n from '@/i18n'
 
 export default {
   name: 'Setting',
-  components: { VIcon, TextFileReader },
+  components: { VIcon, TextFileReader, PageContainer },
   data() {
     return {
       title: import.meta.env.VUE_APP_PAGE_TITLE,
@@ -296,177 +297,177 @@ export default {
 </script>
 
 <template>
-  <section class="setting-list-wrap">
-    <div class="setting-list-box">
-      <ul
-        class="setting-nav overflow-y-auto"
-        :style="lang === 'en' ? '280px' : '160px'"
-      >
-        <li
-          v-for="(item, index) in formData.items"
-          :key="index"
-          :class="activePanel === item.category ? 'active' : ''"
-          @click="changeName(item.category)"
+  <PageContainer
+    mode="auto"
+    content-class="flex flex-1 gap-6 min-h-0 overflow-auto px-6 position-relative"
+  >
+    <div class="pb-6 h-100 position-sticky flex-shrink-0 top-0">
+      <el-scrollbar class="rounded-xl">
+        <ul
+          class="setting-nav flex flex-column gap-1 bg-light p-3 pl-4 rounded-xl"
         >
-          <!-- <ElTooltip :content="$t('setting_' + item.category)"> -->
-          <span class="title">{{ $t(`setting_${item.category}`) }}</span>
-          <!-- </ElTooltip> -->
-
-          <VIcon class="ml-3" size="14">arrow-right</VIcon>
-        </li>
-      </ul>
-
-      <el-form :model="formData" class="e-form" label-position="top">
-        <div class="e-form-box">
-          <div
+          <li
             v-for="(item, index) in formData.items"
-            v-show="activePanel === item.category"
             :key="index"
-            class="item"
+            class="rounded-lg"
+            :class="activePanel === item.category ? 'active' : ''"
+            @click="changeName(item.category)"
           >
-            <template v-if="activePanel === item.category">
-              <span class="title">{{ $t(`setting_${item.category}`) }}</span>
-              <div
-                v-for="(childItem, childIndex) in item.items"
-                :key="childIndex"
-                class="box"
-              >
-                <div v-if="item.category === 'license'">
-                  <div
-                    v-for="(licenseItem, licenseIndex) in item.liceseItems"
-                    :key="licenseIndex"
-                    class="license"
-                  >
-                    <div>
-                      {{ $t('setting_nameserver') }}: {{ licenseItem.hostname }}
-                    </div>
+            <span class="title">{{ $t(`setting_${item.category}`) }}</span>
+          </li>
+        </ul>
+      </el-scrollbar>
+    </div>
+
+    <el-form :model="formData" class="e-form flex-1" label-position="top">
+      <!-- <div class="e-form-box flex-1"> -->
+      <div class="e-form-box">
+        <div
+          v-for="(item, index) in formData.items"
+          v-show="activePanel === item.category"
+          :key="index"
+          class="item"
+        >
+          <template v-if="activePanel === item.category">
+            <span class="title">{{ $t(`setting_${item.category}`) }}</span>
+            <div
+              v-for="(childItem, childIndex) in item.items"
+              :key="childIndex"
+              class="box"
+            >
+              <div v-if="item.category === 'license'">
+                <div
+                  v-for="(licenseItem, licenseIndex) in item.liceseItems"
+                  :key="licenseIndex"
+                  class="license"
+                >
+                  <div>
+                    {{ $t('setting_nameserver') }}:
+                    {{ licenseItem.hostname }}
                   </div>
-                  <el-button @click="importlicense(licenseItem)">{{
-                    $t('setting_import')
-                  }}</el-button>
-                  <el-button @click="hrefApply(licenseItem)">{{
-                    $t('setting_apply')
-                  }}</el-button>
                 </div>
+                <el-button @click="importlicense(licenseItem)">{{
+                  $t('setting_import')
+                }}</el-button>
+                <el-button @click="hrefApply(licenseItem)">{{
+                  $t('setting_apply')
+                }}</el-button>
+              </div>
 
-                <el-row v-if="activePanel === childItem.category">
-                  <el-col :span="24">
-                    <el-form-item
-                      v-if="
-                        childItem.key_label !== 'Ldap SSL Cert' ||
-                        ldapForm.Ldap_SSL_Enable
-                      "
-                    >
-                      <template #label>
-                        <span
-                          >{{
-                            $t(
-                              `setting_${(childItem.key_label || '')
-                                .split(' ')
-                                .join('_')}`,
-                            ) || childItem.key_label
-                          }}:</span
-                        >
-                        <el-tooltip
-                          v-if="
-                            childItem.documentation &&
-                            $te(`setting_${childItem.documentationKey}`)
-                          "
-                          effect="dark"
-                          placement="top"
-                        >
-                          <template #content>
-                            <div style="max-width: 300px">
-                              {{ $t(`setting_${childItem.documentationKey}`) }}
-                            </div>
-                          </template>
-
-                          <VIcon class="color-primary ml-3" size="14"
-                            >info</VIcon
-                          >
-                        </el-tooltip>
-                      </template>
-
-                      <TextFileReader
-                        v-if="childItem.key_label === 'Ldap SSL Cert'"
-                        :value="childItem.value"
-                        :file-name="childItem.fileName"
-                        @change="handleChangeCert(childItem, $event)"
-                        @update:file-name="handleChangeName(childItem, $event)"
-                      />
-                      <ElInputNumber
-                        v-else-if="'min' in childItem || 'max' in childItem"
-                        v-model="childItem.value"
-                        controls-position="right"
-                        :min="childItem.min"
-                        :max="childItem.max"
-                      />
-                      <el-switch
-                        v-else-if="'open' in childItem"
-                        v-model="childItem.open"
-                      />
-                      <el-input
-                        v-else-if="
-                          !childItem.enums || childItem.enums.length === 0
-                        "
-                        v-model="childItem.value"
-                        :type="
-                          /password/.test(childItem.key) ? 'password' : 'text'
-                        "
-                        :disabled="item.category === 'license'"
-                        :mask="childItem.mask"
-                        :label="
+              <el-row v-if="activePanel === childItem.category">
+                <el-col :span="24">
+                  <el-form-item
+                    v-if="
+                      childItem.key_label !== 'Ldap SSL Cert' ||
+                      ldapForm.Ldap_SSL_Enable
+                    "
+                  >
+                    <template #label>
+                      <span
+                        >{{
                           $t(
                             `setting_${(childItem.key_label || '')
                               .split(' ')
                               .join('_')}`,
                           ) || childItem.key_label
+                        }}:</span
+                      >
+                      <el-tooltip
+                        v-if="
+                          childItem.documentation &&
+                          $te(`setting_${childItem.documentationKey}`)
                         "
+                        effect="dark"
+                        placement="top"
+                      >
+                        <template #content>
+                          <div style="max-width: 300px">
+                            {{ $t(`setting_${childItem.documentationKey}`) }}
+                          </div>
+                        </template>
+
+                        <VIcon class="color-primary ml-3" size="14">info</VIcon>
+                      </el-tooltip>
+                    </template>
+
+                    <TextFileReader
+                      v-if="childItem.key_label === 'Ldap SSL Cert'"
+                      :value="childItem.value"
+                      :file-name="childItem.fileName"
+                      @change="handleChangeCert(childItem, $event)"
+                      @update:file-name="handleChangeName(childItem, $event)"
+                    />
+                    <ElInputNumber
+                      v-else-if="'min' in childItem || 'max' in childItem"
+                      v-model="childItem.value"
+                      controls-position="right"
+                      :min="childItem.min"
+                      :max="childItem.max"
+                    />
+                    <el-switch
+                      v-else-if="'open' in childItem"
+                      v-model="childItem.open"
+                    />
+                    <el-input
+                      v-else-if="
+                        !childItem.enums || childItem.enums.length === 0
+                      "
+                      v-model="childItem.value"
+                      :type="
+                        /password/.test(childItem.key) ? 'password' : 'text'
+                      "
+                      :disabled="item.category === 'license'"
+                      :mask="childItem.mask"
+                      :label="
+                        $t(
+                          `setting_${(childItem.key_label || '')
+                            .split(' ')
+                            .join('_')}`,
+                        ) || childItem.key_label
+                      "
+                    />
+
+                    <el-select v-else v-model="childItem.value">
+                      <el-option
+                        v-for="options in childItem.enums"
+                        :key="options"
+                        :value="options"
+                        :label="options"
                       />
-
-                      <el-select v-else v-model="childItem.value">
-                        <el-option
-                          v-for="options in childItem.enums"
-                          :key="options"
-                          :value="options"
-                          :label="options"
-                        />
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-              </div>
-            </template>
-            <template v-if="item.category !== 'license'">
-              <span v-if="item.category === 'SMTP'" class="btns py-3">
-                <a class="link-primary" @click="checkTemplate()">{{
-                  $t('setting_email_template')
-                }}</a>
-                <a class="link-primary" @click="connectAndTest()">{{
-                  $t('public_connection_button_test')
-                }}</a>
-              </span>
-            </template>
-          </div>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </div>
+          </template>
         </div>
+      </div>
 
-        <div class="footer">
-          <el-button
-            v-if="activePanel === 'LDAP'"
-            :loading="adTesting"
-            @click="testLdap"
-            >{{ $t('public_connection_button_test') }}</el-button
-          >
+      <div class="footer position-sticky py-6 bottom-0 bg-white z-10">
+        <el-button
+          v-if="email === 'admin@admin.com'"
+          type="primary"
+          @click="save"
+          >{{ $t('public_button_save') }}</el-button
+        >
 
-          <el-button
-            v-if="email === 'admin@admin.com'"
-            type="primary"
-            @click="save"
-            >{{ $t('public_button_save') }}</el-button
-          >
-        </div>
-      </el-form>
-    </div>
+        <el-button
+          v-if="activePanel === 'LDAP'"
+          :loading="adTesting"
+          @click="testLdap"
+          >{{ $t('public_connection_button_test') }}</el-button
+        >
+
+        <template v-else-if="activePanel === 'SMTP'">
+          <el-button @click="checkTemplate">{{
+            $t('setting_email_template')
+          }}</el-button>
+          <el-button @click="connectAndTest">{{
+            $t('public_connection_button_test')
+          }}</el-button>
+        </template>
+      </div>
+    </el-form>
 
     <el-dialog
       v-model="emailTemplateDialog"
@@ -550,130 +551,127 @@ export default {
         </div>
       </template>
     </el-dialog>
-  </section>
+  </PageContainer>
 </template>
 
 <style lang="scss" scoped>
-.setting-list-wrap {
-  height: 100%; /*// position: relative;*/
-  overflow: hidden;
-  box-sizing: border-box;
-  .setting-list-box {
+.setting-list-box {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  // background-color: #fff;
+  border-radius: 4px;
+}
+
+.setting-nav {
+  li {
+    position: relative;
     display: flex;
     flex-direction: row;
-    width: 100%;
-    height: 100%;
-    // background-color: #fff;
-    border-radius: 4px;
-    .setting-nav {
-      min-width: max-content;
-      height: 100%;
-      padding: 20px 2px;
-      border-right: 1px solid map.get($borderColor, light);
-      li {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 10px 0 20px;
-        height: 40px;
-        line-height: 40px;
-        cursor: pointer;
-        color: map.get($fontColor, light);
-        white-space: nowrap;
-        .title {
-          width: 100%;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-      }
-      .active {
-        background: rgba(44, 101, 255, 0.05);
-      }
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 8px;
+    height: 32px;
+    cursor: pointer;
+    color: map.get($fontColor, light);
+    white-space: nowrap;
+    user-select: none;
+    .title {
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &:hover {
+      background: var(--fill-hover);
     }
   }
 
-  .e-form {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    background-color: #fff;
-    box-sizing: border-box;
-    overflow: hidden;
-    .e-form-box {
-      padding: 20px 20px 0;
-      flex: 1 1 auto;
-      overflow-y: auto;
-    }
-    .item {
-      // width: 800px;
-      margin-bottom: 20px;
-      .title {
-        display: inline-block;
-        padding: 10px 0 20px;
-        color: map.get($fontColor, dark);
-        font-size: 14px;
-        font-weight: 500;
-      }
-      .btns {
-        float: right;
-        padding-top: 10px;
-        font-size: 12px;
-        a {
-          padding: 0 10px;
-          cursor: pointer;
-        }
-      }
-      .box {
-        width: 800px;
-        .el-form-item {
-          margin-bottom: 22px;
-          .el-form-item__label {
-            padding-bottom: 0;
-            line-height: 28px;
-          }
-          .el-select {
-            width: 100%;
-          }
-        }
-      }
-    }
-    .footer {
-      flex: 0 0 auto;
-      width: 100%;
-      padding: 0 20px;
-      line-height: 48px;
-      text-align: right;
-      border-top: 1px solid map.get($borderColor, light);
+  li.active {
+    background: var(--primary-hover-light);
+    color: var(--el-color-primary);
+    &::after {
+      background: var(--el-color-primary);
+      border-radius: 0.375rem;
+      content: '';
+      height: 20px;
+      left: -0.5rem;
+      position: absolute;
+      top: calc(50% - 10px);
+      width: 0.25rem;
     }
   }
-  .dialog-email-template {
-    .email-template-tabs {
-      list-style: none;
-      padding: 20px 0;
-      li {
-        padding: 5px 20px 5px 0;
-        display: block;
-        text-align: right;
-        border-right: 3px solid map.get($borderColor, light);
+}
+
+.e-form {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  box-sizing: border-box;
+
+  .item {
+    .title {
+      display: inline-block;
+      padding: 0 0 20px;
+      color: map.get($fontColor, dark);
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .btns {
+      float: right;
+      padding-top: 10px;
+      font-size: 12px;
+      a {
+        padding: 0 10px;
         cursor: pointer;
       }
-      .active {
-        color: map.get($color, primary);
-        border-right: 3px solid map.get($color, primary);
+    }
+    .box {
+      width: 800px;
+      .el-form-item {
+        margin-bottom: 22px;
+        .el-form-item__label {
+          padding-bottom: 0;
+          line-height: 28px;
+        }
+        .el-select {
+          width: 100%;
+        }
       }
     }
-    .settings-email-template {
-      padding: 20px 0 20px 20px;
-      p {
-        margin: 0;
-        line-height: 20px;
-      }
-      .paragraph {
-        margin-top: 30px;
-        padding-left: 40px;
-      }
+  }
+  .footer {
+    flex: 0 0 auto;
+    width: 100%;
+    border-top: 1px solid map.get($borderColor, light);
+  }
+}
+.dialog-email-template {
+  .email-template-tabs {
+    list-style: none;
+    padding: 20px 0;
+    li {
+      padding: 5px 20px 5px 0;
+      display: block;
+      text-align: right;
+      border-right: 3px solid map.get($borderColor, light);
+      cursor: pointer;
+    }
+    .active {
+      color: map.get($color, primary);
+      border-right: 3px solid map.get($color, primary);
+    }
+  }
+  .settings-email-template {
+    padding: 20px 0 20px 20px;
+    p {
+      margin: 0;
+      line-height: 20px;
+    }
+    .paragraph {
+      margin-top: 30px;
+      padding-left: 40px;
     }
   }
 }

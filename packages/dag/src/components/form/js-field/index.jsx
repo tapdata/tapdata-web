@@ -185,16 +185,11 @@ export const JsField = observer(
           <div class="js-processor font-color-light">
             {showApi.value && (
               <ElDrawer
+                v-model={showDoc.value}
                 append-to-body
                 modal={false}
                 title={props.apiBtnText}
                 size={680}
-                visible={showDoc.value}
-                on={{
-                  ['update:visible']: (v) => {
-                    showDoc.value = v
-                  },
-                }}
               >
                 <GitBook
                   v-loading={loadingApi.value}

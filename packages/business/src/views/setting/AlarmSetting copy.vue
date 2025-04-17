@@ -303,28 +303,32 @@ export default {
 
 <template>
   <!--这个页面在云版作为Dialog 使用，调整的时候慎重处理，记得两个版本同时验证-->
-  <PageContainer
-    mode="auto"
-    content-class="flex flex-1 gap-6 min-h-0 overflow-auto px-6 position-relative"
-  >
-    <template #actions>
-      <ElButton v-if="!isDaas" text type="primary" @click="showAlarmRecipient"
-        >{{
-          $t('packages_business_setting_alarmnotification_recipient_default')
-        }}
-      </ElButton>
-      <ElButton text type="primary" @click="showAlarmRlues"
-        >{{ $t('packages_business_setting_alarmnotification_morengaojinggui') }}
-      </ElButton>
-    </template>
-
-    <section class="flex flex-1 flex-column">
+  <PageContainer>
+    <section class="flex flex-1 flex-column ml-4 mr-4 overflow-hidden">
+      <header class="flex mb-4 mt-4 gap-3">
+        <div class="flex-1">
+          {{
+            $t('packages_business_setting_alarmnotification_renwugaojingshe')
+          }}
+        </div>
+        <ElButton v-if="!isDaas" text type="primary" @click="showAlarmRecipient"
+          >{{
+            $t('packages_business_setting_alarmnotification_recipient_default')
+          }}
+        </ElButton>
+        <ElButton text type="primary" @click="showAlarmRlues"
+          >{{
+            $t('packages_business_setting_alarmnotification_morengaojinggui')
+          }}
+        </ElButton>
+      </header>
       <VTable
         ref="table"
         class="table-list"
         :data="tableData"
         :columns="columns"
         :has-pagination="false"
+        :height="inDialog ? undefined : '100%'"
       >
         <template #key="scope">
           <span>{{ keyMapping[scope.row.key] }}</span>
@@ -480,30 +484,28 @@ export default {
           </ElFormItem>
         </ElForm>
       </section>
-      <div class="position-sticky py-6 bottom-0 bg-white z-10">
-        <el-button type="primary" @click="save()">{{
-          $t('public_button_save')
-        }}</el-button>
+      <footer
+        class="flex justify-content-end"
+        :class="inDialog ? 'pt-4' : 'py-4'"
+      >
         <el-button @click="remoteMethod('close')">{{
           $t('public_button_cancel')
         }}</el-button>
-      </div>
+        <el-button type="primary" @click="save()">{{
+          $t('public_button_save')
+        }}</el-button>
+      </footer>
       <el-dialog
         v-model="alarmRulesVisible"
         :title="$t('packages_business_setting_alarmnotification_renwumorengao')"
         width="70%"
         append-to-body
       >
-        <ElAlert
-          class="mb-4"
-          :closable="false"
-          :title="
+        <div class="mb-4">
+          {{
             $t('packages_business_setting_alarmnotification_cichugaojinggui')
-          "
-          type="info"
-          show-icon
-        />
-
+          }}
+        </div>
         <VTable
           ref="table"
           class="table-list"

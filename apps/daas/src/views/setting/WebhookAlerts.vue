@@ -1,13 +1,14 @@
 <script>
 import { settingsApi, webhookApi } from '@tap/api'
 import { dayjs } from '@tap/business'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { VEmpty } from '@tap/component'
 import { HighlightCode, JsonEditor } from '@tap/form'
 import i18n from '@tap/i18n'
 
 export default {
   name: 'WebhookAlerts',
-  components: { HighlightCode, VEmpty, JsonEditor },
+  components: { HighlightCode, VEmpty, JsonEditor, PageContainer },
   data() {
     const validateUrl = (rule, value, callback) => {
       // 正则校验URL
@@ -340,80 +341,76 @@ export default {
 </script>
 
 <template>
-  <div class="flex flex-column w-100 h-100">
-    <div class="flex px-6 py-3 border-bottom align-center">
-      <span class="fs-6">{{ $t('webhook_alerts') }}</span>
+  <PageContainer>
+    <template #actions>
       <ElButton class="ml-auto" type="primary" @click="addWebhook">{{
         $t('webhook_alerts_add')
       }}</ElButton>
-    </div>
-
-    <div class="flex-1">
-      <ElTable
-        ref="table"
-        v-loading="loading"
-        row-key="id"
-        :data="list"
-        height="100%"
+    </template>
+    <ElTable
+      ref="table"
+      v-loading="loading"
+      row-key="id"
+      :data="list"
+      height="100%"
+    >
+      <el-table-column
+        show-overflow-tooltip
+        class-name="text-nowrap"
+        :label="$t('webhook_server_url')"
+        prop="url"
+      />
+      <el-table-column
+        show-overflow-tooltip
+        class-name="text-nowrap"
+        :label="$t('public_remark')"
+        prop="mark"
+        width="240"
+      />
+      <el-table-column
+        :label="$t('public_status')"
+        prop="pingResult"
+        width="100"
       >
-        <el-table-column
-          show-overflow-tooltip
-          class-name="text-nowrap"
-          :label="$t('webhook_server_url')"
-          prop="url"
-        />
-        <el-table-column
-          show-overflow-tooltip
-          class-name="text-nowrap"
-          :label="$t('public_remark')"
-          prop="mark"
-          width="240"
-        />
-        <el-table-column
-          :label="$t('public_status')"
-          prop="pingResult"
-          width="100"
-        >
-          <template #default="{ row }">
-            <VIcon
-              v-if="row.pingResult === 'SUCCEED'"
-              size="20"
-              class="color-success"
-              >success-filled</VIcon
-            >
-            <VIcon v-else class="color-danger" size="20"
-              >circle-close-filled</VIcon
-            >
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('webhook_switch')" prop="open" width="120">
-          <template #default="{ row }">
-            <ElSwitch
-              :disabled="switchStateMap[row.id]"
-              :value="row.open"
-              @change="handleSwitch(row)"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('public_operation')" width="240">
-          <template #default="{ row }">
-            <div class="flex gap-2 align-center">
-              <ElLink type="primary" @click="viewDetail(row, $event)"
-                >{{ $t('public_button_details') }}
-              </ElLink>
-              <ElDivider direction="vertical" class="mx-0" />
-              <ElLink type="primary" @click="viewHistory(row, $event)"
-                >{{ $t('webhook_send_log') }}
-              </ElLink>
-              <ElDivider direction="vertical" class="mx-0" />
-              <ElLink type="danger" @click="delWebhook(row, $event)"
-                >{{ $t('public_button_delete') }}
-              </ElLink>
-            </div>
-          </template>
-        </el-table-column>
-      </ElTable>
-    </div>
+        <template #default="{ row }">
+          <VIcon
+            v-if="row.pingResult === 'SUCCEED'"
+            size="20"
+            class="color-success"
+            >success-filled</VIcon
+          >
+          <VIcon v-else class="color-danger" size="20"
+            >circle-close-filled</VIcon
+          >
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('webhook_switch')" prop="open" width="120">
+        <template #default="{ row }">
+          <ElSwitch
+            :disabled="switchStateMap[row.id]"
+            :value="row.open"
+            @change="handleSwitch(row)"
+          />
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('public_operation')" width="240">
+        <template #default="{ row }">
+          <div class="flex gap-2 align-center">
+            <ElButton text type="primary" @click="viewDetail(row, $event)"
+              >{{ $t('public_button_details') }}
+            </ElButton>
+            <ElDivider direction="vertical" class="mx-0" />
+            <ElButton text type="primary" @click="viewHistory(row, $event)"
+              >{{ $t('webhook_send_log') }}
+            </ElButton>
+            <ElDivider direction="vertical" class="mx-0" />
+            <ElButton text type="danger" @click="delWebhook(row, $event)"
+              >{{ $t('public_button_delete') }}
+            </ElButton>
+          </div>
+        </template>
+      </el-table-column>
+    </ElTable>
 
     <ElDrawer
       v-model="drawerState.visible"
@@ -428,7 +425,7 @@ export default {
         }}</span>
       </template>
       <div class="flex flex-column h-100">
-        <div ref="formWrapper" class="flex-1 px-4 overflow-y-auto">
+        <div ref="formWrapper" class="flex-1 overflow-y-auto">
           <ElForm
             ref="form"
             class="flex-1"
@@ -491,7 +488,7 @@ export default {
           </ElForm>
         </div>
 
-        <div class="text-left p-4">
+        <div class="text-left">
           <ElButton
             :loading="drawerState.ping"
             type="primary"
@@ -512,10 +509,9 @@ export default {
     </ElDrawer>
 
     <ElDrawer
-      :visible="historyState.visible"
+      v-model="historyState.visible"
       :wrapper-closable="false"
       :size="800"
-      @update:visible="historyState.visible = $event"
       @closed="afterCloseHistory"
     >
       <template #title>
@@ -586,12 +582,9 @@ export default {
                     <template #label>
                       <span>
                         {{ $t('public_response') }}
-                        <ElTag
-                         
-                          type="info"
-                          class="rounded-pill ml-1"
-                          >{{ item.responseCode || '--' }}</ElTag
-                        >
+                        <ElTag type="info" class="rounded-pill ml-1">{{
+                          item.responseCode || '--'
+                        }}</ElTag>
                       </span>
                     </template>
                     <div class="px-4">
@@ -619,7 +612,6 @@ export default {
                 </ElTabs>
                 <ElButton
                   class="position-absolute tabs-extra-btn flex align-center py-0"
-                 
                   :loading="resendStateMap[item.id]"
                   @click="reSend(item)"
                   >{{ $t('public_resend') }}</ElButton
@@ -644,7 +636,7 @@ export default {
         </div>
       </div>
     </ElDrawer>
-  </div>
+  </PageContainer>
 </template>
 
 <style scoped lang="scss">

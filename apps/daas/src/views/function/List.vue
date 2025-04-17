@@ -1,108 +1,9 @@
-<template>
-  <PageContainer>
-    <template #actions>
-      <ElButton
-        v-if="searchParams.type !== 'custom'"
-        class="ml-4 btn-create"
-        @click="
-          $router.push({
-            name: 'FunctionImport',
-          })
-        "
-      >
-        <span>{{ $t('function_button_import_jar') }}</span>
-      </ElButton>
-      <template v-else>
-        <el-button
-          v-show="multipleSelection.length > 0"
-          :disabled="$disabledReadonlyUserBtn()"
-          v-readonlybtn="'SYNC_job_export'"
-          class="btn message-button-cancel"
-          @click="handleExport"
-        >
-          <span> {{ $t('public_button_export') }}</span>
-        </el-button>
-        <el-button
-          v-readonlybtn="'SYNC_job_import'"
-          class="btn"
-          :disabled="$disabledReadonlyUserBtn()"
-          @click="handleImport"
-        >
-          <span> {{ $t('packages_business_button_bulk_import') }}</span>
-        </el-button>
-      </template>
-      <ElButton
-        class="btn-create"
-        type="primary"
-        @click="
-          $router.push({
-            name: 'FunctionCreate',
-          })
-        "
-      >
-        <span>{{ $t('public_button_create') }}</span>
-      </ElButton>
-    </template>
-
-    <TablePage
-      ref="table"
-      class="h-100"
-      row-key="id"
-      :remoteMethod="getData"
-      @sort-change="handleSortTable"
-      @selection-change="handleSelectionChange"
-    >
-      <template #search>
-        <ElRadioGroup v-model="searchParams.type" @input="table.fetch(1)" class="button-style-outline">
-          <ElRadioButton label="">{{ $t('public_select_option_all') }}</ElRadioButton>
-          <ElRadioButton v-for="(label, value) in typeMapping" :key="value" :label="value">{{ label }} </ElRadioButton>
-        </ElRadioGroup>
-        <ElButton plain class="btn-refresh ml-3" @click="table.fetch()">
-          <el-icon><el-icon-refresh /></el-icon>
-        </ElButton>
-      </template>
-      <el-table-column
-        reserve-selection
-        type="selection"
-        width="45"
-        align="center"
-        :selectable="(row) => !row.hasChildren"
-      >
-      </el-table-column>
-      <ElTableColumn :label="$t('function_name_label')" prop="function_name" min-width="300"> </ElTableColumn>
-      <ElTableColumn :label="$t('function_type_label')" prop="typeFmt" width="160"> </ElTableColumn>
-      <ElTableColumn :label="$t('public_description')" prop="describe" min-width="300"> </ElTableColumn>
-      <ElTableColumn :label="$t('public_update_time')" prop="last_updated" sortable="last_updated" min-width="180">
-        <template v-slot="scope">
-          {{ scope.row.lastUpdatedFmt }}
-        </template>
-      </ElTableColumn>
-
-      <ElTableColumn width="180" :label="$t('public_operation')">
-        <template #default="{ row }">
-          <ElButton text type="primary" @click="$router.push({ name: 'FunctionDetails', params: { id: row.id } })">{{
-            $t('public_button_check')
-          }}</ElButton>
-          <template v-if="row.type !== 'system'">
-            <ElDivider class="mx-1" direction="vertical"></ElDivider>
-            <ElButton text type="primary" @click="toEdit(row)">{{ $t('public_button_edit') }}</ElButton>
-            <ElDivider class="mx-1" direction="vertical"></ElDivider>
-            <ElButton text type="primary" @click="remove(row)">{{ $t('public_button_delete') }}</ElButton>
-          </template>
-        </template>
-      </ElTableColumn>
-    </TablePage>
-    <!-- 导入 -->
-    <Upload type="Javascript_functions" :show-tag="false" ref="upload" @success="table.fetch(1)"></Upload>
-  </PageContainer>
-</template>
-
 <script>
-import dayjs from 'dayjs'
 import { javascriptFunctionsApi } from '@tap/api'
 import { TablePage } from '@tap/business'
-import Upload from '@tap/business/src/components/UploadDialog'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
+import Upload from '@tap/business/src/components/UploadDialog'
+import dayjs from 'dayjs'
 
 export default {
   components: {
@@ -133,13 +34,13 @@ export default {
   methods: {
     // 获取列表数据
     getData({ page }) {
-      let { type } = this.searchParams
-      let { current, size } = page
-      let where = {
+      const { type } = this.searchParams
+      const { current, size } = page
+      const where = {
         category: null,
       }
       type && (where.type = type)
-      let filter = {
+      const filter = {
         where,
         order: this.order,
         limit: size,
@@ -150,21 +51,27 @@ export default {
           filter: JSON.stringify(filter),
         })
         .then((data) => {
-          let list = data?.items || []
+          const list = data?.items || []
           return {
             total: data?.total,
             data: list.map((item) => {
               item.typeFmt = this.typeMapping[item.type]
-              item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+              item.lastUpdatedFmt = dayjs(item.last_updated).format(
+                'YYYY-MM-DD HH:mm:ss',
+              )
               return item
             }),
           }
         })
     },
     remove(item) {
-      this.$confirm(this.$t('function_message_delete_content'), this.$t('function_message_delete_title'), {
-        type: 'warning',
-      }).then((resFlag) => {
+      this.$confirm(
+        this.$t('function_message_delete_content'),
+        this.$t('function_message_delete_title'),
+        {
+          type: 'warning',
+        },
+      ).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -203,6 +110,146 @@ export default {
   },
 }
 </script>
+
+<template>
+  <PageContainer>
+    <template #actions>
+      <ElButton
+        v-if="searchParams.type !== 'custom'"
+        class="ml-4 btn-create"
+        @click="
+          $router.push({
+            name: 'FunctionImport',
+          })
+        "
+      >
+        <span>{{ $t('function_button_import_jar') }}</span>
+      </ElButton>
+      <template v-else>
+        <el-button
+          v-show="multipleSelection.length > 0"
+          v-readonlybtn="'SYNC_job_export'"
+          :disabled="$disabledReadonlyUserBtn()"
+          class="btn message-button-cancel"
+          @click="handleExport"
+        >
+          <span> {{ $t('public_button_export') }}</span>
+        </el-button>
+        <el-button
+          v-readonlybtn="'SYNC_job_import'"
+          class="btn"
+          :disabled="$disabledReadonlyUserBtn()"
+          @click="handleImport"
+        >
+          <span> {{ $t('packages_business_button_bulk_import') }}</span>
+        </el-button>
+      </template>
+      <ElButton
+        class="btn-create"
+        type="primary"
+        @click="
+          $router.push({
+            name: 'FunctionCreate',
+          })
+        "
+      >
+        <span>{{ $t('public_button_create') }}</span>
+      </ElButton>
+    </template>
+
+    <TablePage
+      ref="table"
+      class="h-100"
+      row-key="id"
+      :remote-method="getData"
+      @sort-change="handleSortTable"
+      @selection-change="handleSelectionChange"
+    >
+      <template #search>
+        <ElRadioGroup
+          v-model="searchParams.type"
+          class="button-style-outline"
+          @input="table.fetch(1)"
+        >
+          <ElRadioButton label="">{{
+            $t('public_select_option_all')
+          }}</ElRadioButton>
+          <ElRadioButton
+            v-for="(label, value) in typeMapping"
+            :key="value"
+            :label="value"
+            >{{ label }}
+          </ElRadioButton>
+        </ElRadioGroup>
+        <ElButton plain class="btn-refresh" @click="table.fetch()">
+          <el-icon><el-icon-refresh /></el-icon>
+        </ElButton>
+      </template>
+      <el-table-column
+        reserve-selection
+        type="selection"
+        width="45"
+        align="center"
+        :selectable="(row) => !row.hasChildren"
+      />
+      <ElTableColumn
+        :label="$t('function_name_label')"
+        prop="function_name"
+        min-width="300"
+      />
+      <ElTableColumn
+        :label="$t('function_type_label')"
+        prop="typeFmt"
+        width="160"
+      />
+      <ElTableColumn
+        :label="$t('public_description')"
+        prop="describe"
+        min-width="300"
+      />
+      <ElTableColumn
+        :label="$t('public_update_time')"
+        prop="last_updated"
+        sortable="last_updated"
+        min-width="180"
+      >
+        <template #default="scope">
+          {{ scope.row.lastUpdatedFmt }}
+        </template>
+      </ElTableColumn>
+
+      <ElTableColumn width="180" :label="$t('public_operation')">
+        <template #default="{ row }">
+          <ElButton
+            text
+            type="primary"
+            @click="
+              $router.push({ name: 'FunctionDetails', params: { id: row.id } })
+            "
+            >{{ $t('public_button_check') }}</ElButton
+          >
+          <template v-if="row.type !== 'system'">
+            <ElDivider class="mx-1" direction="vertical" />
+            <ElButton text type="primary" @click="toEdit(row)">{{
+              $t('public_button_edit')
+            }}</ElButton>
+            <ElDivider class="mx-1" direction="vertical" />
+            <ElButton text type="primary" @click="remove(row)">{{
+              $t('public_button_delete')
+            }}</ElButton>
+          </template>
+        </template>
+      </ElTableColumn>
+    </TablePage>
+    <!-- 导入 -->
+    <Upload
+      ref="upload"
+      type="Javascript_functions"
+      :show-tag="false"
+      @success="table.fetch(1)"
+    />
+  </PageContainer>
+</template>
 
 <style lang="scss" scoped>
 .function-list-wrapper {
