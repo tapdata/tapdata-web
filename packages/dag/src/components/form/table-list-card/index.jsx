@@ -77,13 +77,18 @@ export const TableListCard = observer(
                     open-delay={400}
                   >
                     <span>
-                      <span>{name}</span>
+                      <span class="align-middle">{name}</span>
                       {tableMap.value[name]?.tableComment && (
-                        <span class="font-color-sslight">{`(${tableMap.value[name].tableComment})`}</span>
+                        <span class="font-color-sslight align-middle">{`(${tableMap.value[name].tableComment})`}</span>
                       )}
-                      {tableMap.value[name]?.primaryKeyCounts && (
-                        <VIcon size="12" class="text-warning ml-1">
+                      {!!tableMap.value[name]?.primaryKeyCounts && (
+                        <VIcon size="12" class="text-warning align-middle ml-1">
                           key
+                        </VIcon>
+                      )}
+                      {!!tableMap.value[name]?.uniqueIndexCounts && (
+                        <VIcon size="14" class="align-middle ml-1">
+                          fingerprint
                         </VIcon>
                       )}
                     </span>

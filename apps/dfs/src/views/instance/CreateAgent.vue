@@ -314,14 +314,8 @@ export default {
       )?.name
       this.currentSpecName = specificationLabel
       this.packageItems = this.allPackages
-        .filter(
-          (it) =>
-            this.specification === it.specification &&
-            (it.chargeProvider === 'FreeTier' ||
-              it.type !== 'one_time' ||
-              it.periodUnit !== 'year'),
-        )
-        .map((t) => {
+        .filter(it => this.specification === it.specification)
+        .map(t => {
           return Object.assign(t, {
             desc: i18n.t('dfs_instance_create_bencidinggouzhi', {
               val1: specificationLabel,

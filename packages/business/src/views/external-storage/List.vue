@@ -281,19 +281,23 @@ export default {
         sslCA: {
           'x-decorator': 'FormItem',
           'x-component': 'TextFileReader',
+          'x-component-props': {
+            fileNameField: 'attrs.sslCAFile'
+          },
           type: 'string',
           title: i18n.t('packages_business_external_storage_list_zhengshubanfaji'),
           'x-index': 120,
-          fileNameField: 'sslCAFile',
           required: true,
         },
         sslKey: {
           'x-decorator': 'FormItem',
           'x-component': 'TextFileReader',
+          'x-component-props': {
+            fileNameField: 'attrs.sslKeyFile'
+          },
           type: 'string',
           title: i18n.t('packages_business_external_storage_list_kehuduansiyao'),
           'x-index': 90,
-          fileNameField: 'sslKeyFile',
           required: true,
         },
         sslPass: {
@@ -402,6 +406,10 @@ export default {
           }
       this.$nextTick(() => {
         this.$refs?.form?.clearValidate()
+
+        if (this.form.type === 'mongodb') {
+          this.$refs.schemaToForm?.getForm().setValues(this.form)
+        }
       })
     },
     submit() {

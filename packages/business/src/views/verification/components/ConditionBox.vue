@@ -1392,8 +1392,10 @@ export default {
         })
     },
 
-    removeItem(index) {
-      this.list.splice(index, 1)
+    removeItem(id) {
+      const index = this.list.findIndex(item => item.id === id)
+
+      if (~index) this.list.splice(index, 1)
     },
 
     loadList() {
@@ -2169,7 +2171,7 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
                   <ElButton
                     type="danger"
                     text
-                    @click.stop="removeItem(index)"
+                    @click.stop="removeItem(item.id)"
                     >{{ $t('public_button_delete') }}</ElButton
                   >
                 </div>
@@ -2279,7 +2281,7 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
                   <span class="item-icon" />
                   <FieldSelectWrap
                     v-model:value="item.target.sortColumn"
-                    :options="item.source.fields"
+                    :options="item.target.fields"
                     class="flex-1"
                     @focus="handleFocus(item.target)"
                   />

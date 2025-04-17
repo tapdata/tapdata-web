@@ -212,6 +212,8 @@ export class Database extends NodeType {
                         enum: [
                           { label: i18n.t('public_select_option_all'), value: 'All' },
                           { label: i18n.t('packages_dag_nodes_database_jinyouzhujianbiao'), value: 'HasKeys' },
+                          { label: i18n.t('packages_dag_only_include_pk'), value: 'OnlyPrimaryKey' },
+                          { label: i18n.t('packages_dag_only_include_uk'), value: 'OnlyUniqueIndex' },
                           { label: i18n.t('packages_dag_nodes_database_jinwuzhujianbiao'), value: 'NoKeys' }
                         ]
                       },
