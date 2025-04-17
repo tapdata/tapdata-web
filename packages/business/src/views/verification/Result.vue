@@ -1,13 +1,14 @@
 <script>
 import { inspectResultsApi } from '@tap/api'
 import dayjs from 'dayjs'
+import PageContainer from '../../components/PageContainer.vue'
 import { inspectMethod as typeMap } from './const'
 import mixins from './mixins'
 import ResultTable from './ResultTable'
 import ResultView from './ResultView'
 
 export default {
-  components: { ResultTable, ResultView },
+  components: { ResultTable, ResultView, PageContainer },
   mixins: [mixins],
   data() {
     return {
@@ -92,47 +93,49 @@ export default {
 </script>
 
 <template>
-  <section v-loading="loading" class="verify-result-wrap section-wrap h-100">
-    <div class="section-wrap-box">
-      <div v-if="inspect" class="verify-result-header align-center">
-        <div>
-          <span style="font-size: 14px">{{ inspect.name }}</span>
-          <span class="font-color-linfo ml-3">{{ typeMap[type] }}</span>
-        </div>
-        <div class="flex-grow-1" />
-        <div
-          v-if="
-            inspect.inspectMethod !== 'row_count' &&
-            inspect.inspectMethod !== 'hash'
-          "
-        >
-          <div class="flex align-items-center">
-            <div
-              v-if="resultInfo.parentId && $route.name === 'VerifyResult'"
-              class="color-info flex align-items-center"
-              style="font-size: 12px"
-            >
-              {{ $t('packages_business_verification_last_start_time') }}:
-              {{ inspect.lastStartTimeFmt }}
-              <ElLink class="ml-5" type="primary" @click="toDiffHistory">{{
-                $t('packages_business_verification_button_diff_task_history')
-              }}</ElLink>
-            </div>
+  <PageContainer>
+    <template #title>
+      <span class="fs-5 font-color-dark">{{ inspect.name }}</span>
+      <ElTag type="info" class="ml-3">{{ typeMap[type] }}</ElTag>
+    </template>
+
+    <template #actions>
+      <div
+        v-if="
+          inspect.inspectMethod !== 'row_count' &&
+          inspect.inspectMethod !== 'hash'
+        "
+      >
+        <div class="flex align-items-center">
+          <div
+            v-if="resultInfo.parentId && $route.name === 'VerifyResult'"
+            class="color-info flex align-items-center"
+            style="font-size: 12px"
+          >
+            {{ $t('packages_business_verification_last_start_time') }}:
+            {{ inspect.lastStartTimeFmt }}
+            <ElLink class="ml-5" type="primary" @click="toDiffHistory">{{
+              $t('packages_business_verification_button_diff_task_history')
+            }}</ElLink>
           </div>
         </div>
-
-        <!--下载详情-->
-        <ElButton
-          class="ml-4"
-          text type="primary"
-          :loading="downloading"
-          @click="downloadDetails"
-          >{{ $t('packages_business_download_details') }}</ElButton
-        >
       </div>
+
+      <!--下载详情-->
+      <ElButton
+        class="ml-4"
+        text
+        type="primary"
+        :loading="downloading"
+        @click="downloadDetails"
+        >{{ $t('packages_business_download_details') }}</ElButton
+      >
+    </template>
+
+    <section v-loading="loading" class="flex flex-column h-100 gap-4">
       <div
         v-if="errorMsg && (type === 'row_count' || type === 'hash')"
-        class="error-tips mt-4 px-4"
+        class="error-tips px-4"
       >
         <VIcon class="color-danger">error</VIcon>
         <span>
@@ -144,7 +147,7 @@ export default {
       </div>
       <div
         v-if="inspect && !['running', 'scheduling'].includes(inspect.status)"
-        class="result-table mt-4"
+        class="result-table"
       >
         <ResultTable
           ref="singleTable"
@@ -160,8 +163,8 @@ export default {
           @update:show-type="showType = $event"
         />
       </div>
-    </div>
-  </section>
+    </section>
+  </PageContainer>
 </template>
 
 <style lang="scss">

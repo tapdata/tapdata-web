@@ -12,6 +12,7 @@ import {
   useForm,
 } from '@tap/form'
 import i18n from '@tap/i18n'
+import { configProviderContextKey } from 'element-plus'
 import { debounce } from 'lodash-es'
 import {
   computed,
@@ -22,7 +23,6 @@ import {
   ref,
 } from 'vue'
 import { useStore } from 'vuex'
-import { configProviderContextKey } from 'element-plus'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 import { getTableRenameByConfig, ifTableNameConfigEmpty } from '../../../util'
 import List from './List.vue'
@@ -181,7 +181,9 @@ export const TableRenamePreview = defineComponent({
       doReset()
       const keys = Object.keys(nameMap)
       if (keys.length) {
-        keys.forEach((key) => del(nameMap, key))
+        keys.forEach((key) => {
+          delete nameMap[key]
+        })
         emitChange()
       }
     }
@@ -214,20 +216,16 @@ export const TableRenamePreview = defineComponent({
       })
     }
 
-    const scrollToItem = (index) => {
-      refs.nameList.scrollTop = index * itemSize
-    }
-
     const deleteInvalid = (name, index) => {
-      del(nameMap, name)
+      delete nameMap[name]
       invalidOperations.value.splice(index, 1)
       emitChange()
     }
 
     const deleteAllInvalid = () => {
-      invalidOperations.value.forEach((item) =>
-        del(nameMap, item.previousTableName),
-      )
+      invalidOperations.value.forEach((item) => {
+        delete nameMap[item.previousTableName]
+      })
       invalidOperations.value = []
       emitChange()
     }
@@ -552,12 +550,6 @@ export const TableRename = connect(
             transferCase: config.transferCase, // toUpperCase ｜ toLowerCase
           })
         }
-
-        const scrollToItem = (index) => {
-          nameListRef.value.scrollTop = index * itemSize
-        }
-
-        const nameListRef = ref()
 
         const deleteInvalid = (name, index) => {
           delete nameMap[name]

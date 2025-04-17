@@ -2,6 +2,6 @@ import InfiniteSelect from './InfiniteSelect.vue'
 
 const AsyncSelect = InfiniteSelect
 
-export { InfiniteSelect, AsyncSelect }
+export { AsyncSelect, InfiniteSelect }
 
 export default InfiniteSelect

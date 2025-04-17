@@ -44,7 +44,7 @@ export default {
   page_title_api_client: '客户端',
   page_title_api_servers: '服务器',
   page_title_api_audit: '服务审计',
-  page_title_api_audit_details: '详情',
+  page_title_api_audit_details: '审计详情',
   page_title_api_monitor: '服务监控',
   page_title_system: '系统管理',
   page_title_data_metadata: '元数据管理',

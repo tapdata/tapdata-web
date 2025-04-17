@@ -193,7 +193,7 @@ export default {
 
       <div
         v-if="statsInfo.status === 'error'"
-        class="error-tips mt-0 ml-4 pl-4 pr-0 rounded-lg"
+        class="error-tips mt-0 ml-4 pl-4 pr-0 rounded-lg flex-shrink-0"
         :style="!filterResultList.length ? 'max-height: unset' : ''"
       >
         <VIcon size="16" class="color-danger mt-0.5">error</VIcon>

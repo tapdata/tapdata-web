@@ -1,72 +1,11 @@
-<template>
-  <PageContainer>
-    <!-- 服务审计 -->
-    <TablePage ref="table" row-key="id" class="apiaudit-list" :remoteMethod="getData" @sort-change="handleSortTable">
-      <template #search>
-        <div class="search-bar">
-          <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"></FilterBar>
-        </div>
-      </template>
-      <el-table-column prop="id" label="API ID" :show-overflow-tooltip="true"></el-table-column>
-      <el-table-column prop="name" :label="$t('apiaudit_name')"></el-table-column>
-      <el-table-column prop="method" width="100" :label="$t('apiaudit_access_type')" :show-overflow-tooltip="true">
-        <template #default="{ row }">
-          <span class="status-block" :style="{ 'background-color': colorMap[row.method] }">{{ row.method }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="clientName" :label="$t('apiaudit_visitor')"></el-table-column>
-      <el-table-column prop="userIp" :label="$t('apiaudit_ip')"></el-table-column>
-      <el-table-column
-        :label="$t('apiaudit_interview_time')"
-        :show-overflow-tooltip="true"
-        prop="createTime"
-        width="160"
-        sortable="createTime"
-      >
-        <template #default="{ row }">
-          {{ row.createTimeFmt }}
-        </template>
-      </el-table-column>
-      <el-table-column prop="code" width="80" :label="$t('apiaudit_visit_result')" :show-overflow-tooltip="true">
-        <template #default="{ row }">
-          <span v-if="row.code == 200" class="success">
-            <el-icon class="connections-status__icon"><SuccessFilled /></el-icon>
-            <span>
-              {{ $t('apiaudit_success') }}
-            </span>
-          </span>
-          <span v-else class="error">
-            <el-icon class="connections-status__icon"><CircleCloseFilled /></el-icon>
-            <span>
-              {{ $t('public_status_failed') }}
-            </span>
-          </span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="codeMsg" :label="$t('apiaudit_reason_fail')" :show-overflow-tooltip="true">
-        <template #default="{ row }">
-          {{ row.code == 200 ? '-' : row.codeMsg }}
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('public_operation')" width="100" fixed="right">
-        <template v-slot="scope">
-          <el-button v-readonlybtn="'API_clients_amangement'" text type="primary" @click="toDetails(scope.row)">
-            {{ $t('public_button_details') }}
-          </el-button>
-        </template>
-      </el-table-column>
-    </TablePage>
-  </PageContainer>
-</template>
-
 <script>
+import { apiCallsApi } from '@tap/api'
+import { TablePage } from '@tap/business'
+
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
+import { FilterBar } from '@tap/component'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash'
-
-import { apiCallsApi } from '@tap/api'
-import { FilterBar } from '@tap/component'
-import { TablePage } from '@tap/business'
-import PageContainer from '@tap/business/src/components/PageContainer.vue'
 
 export default {
   components: {
@@ -99,19 +38,19 @@ export default {
       },
     }
   },
-  created() {
-    this.getFilterItems()
-  },
   computed: {
     table() {
       return this.$refs.table
     },
   },
   watch: {
-    '$route.query'() {
+    '$route.query': function () {
       this.table.fetch(1)
     },
-    'searchParams.createTime'() {},
+    'searchParams.createTime': function () {},
+  },
+  created() {
+    this.getFilterItems()
   },
   methods: {
     toDetails(item) {
@@ -123,9 +62,9 @@ export default {
 
     // 获取数据
     getData({ page }) {
-      let { current, size } = page
-      let { method, code, start, end, keyword } = this.searchParams
-      let where = {}
+      const { current, size } = page
+      const { method, code, start, end, keyword } = this.searchParams
+      const where = {}
       if (method) {
         where.method = method
       }
@@ -139,11 +78,11 @@ export default {
         where.end = end
       }
       if (keyword && keyword.trim()) {
-        let filterObj = { like: escapeRegExp(keyword), options: 'i' }
+        const filterObj = { like: escapeRegExp(keyword), options: 'i' }
         where.or = [{ name: filterObj }, { id: filterObj }]
       }
 
-      let filter = {
+      const filter = {
         order: this.order,
         limit: size,
         skip: (current - 1) * size,
@@ -158,7 +97,9 @@ export default {
             total: data?.total || 0,
             data:
               data?.items.map((item) => {
-                item.createTimeFmt = item.createTime ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+                item.createTimeFmt = item.createTime
+                  ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+                  : '-'
                 return item
               }) || [],
           }
@@ -197,7 +138,10 @@ export default {
             data = data || []
             return data.map((item) => {
               return {
-                label: item == 200 ? this.$t('apiaudit_success') : this.$t('public_status_failed'),
+                label:
+                  item == 200
+                    ? this.$t('apiaudit_success')
+                    : this.$t('public_status_failed'),
                 value: item,
               }
             })
@@ -221,6 +165,108 @@ export default {
   },
 }
 </script>
+
+<template>
+  <PageContainer>
+    <!-- 服务审计 -->
+    <TablePage
+      ref="table"
+      row-key="id"
+      class="apiaudit-list"
+      :remote-method="getData"
+      @sort-change="handleSortTable"
+    >
+      <template #search>
+        <div class="search-bar">
+          <FilterBar
+            v-model:value="searchParams"
+            :items="filterItems"
+            @fetch="table.fetch(1)"
+          />
+        </div>
+      </template>
+      <el-table-column prop="id" label="API ID" :show-overflow-tooltip="true" />
+      <el-table-column prop="name" :label="$t('apiaudit_name')" />
+      <el-table-column
+        prop="method"
+        width="100"
+        :label="$t('apiaudit_access_type')"
+        :show-overflow-tooltip="true"
+      >
+        <template #default="{ row }">
+          <span
+            class="status-block"
+            :style="{ 'background-color': colorMap[row.method] }"
+            >{{ row.method }}</span
+          >
+        </template>
+      </el-table-column>
+      <el-table-column prop="clientName" :label="$t('apiaudit_visitor')" />
+      <el-table-column prop="userIp" :label="$t('apiaudit_ip')" />
+      <el-table-column
+        :label="$t('apiaudit_interview_time')"
+        :show-overflow-tooltip="true"
+        prop="createTime"
+        width="160"
+        sortable="createTime"
+      >
+        <template #default="{ row }">
+          {{ row.createTimeFmt }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="code"
+        width="80"
+        :label="$t('apiaudit_visit_result')"
+        :show-overflow-tooltip="true"
+      >
+        <template #default="{ row }">
+          <span v-if="row.code == 200" class="success">
+            <el-icon class="connections-status__icon"
+              ><SuccessFilled
+            /></el-icon>
+            <span>
+              {{ $t('apiaudit_success') }}
+            </span>
+          </span>
+          <span v-else class="error">
+            <el-icon class="connections-status__icon"
+              ><CircleCloseFilled
+            /></el-icon>
+            <span>
+              {{ $t('public_status_failed') }}
+            </span>
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="codeMsg"
+        :label="$t('apiaudit_reason_fail')"
+        :show-overflow-tooltip="true"
+      >
+        <template #default="{ row }">
+          {{ row.code == 200 ? '-' : row.codeMsg }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('public_operation')"
+        width="100"
+        fixed="right"
+      >
+        <template #default="scope">
+          <el-button
+            v-readonlybtn="'API_clients_amangement'"
+            text
+            type="primary"
+            @click="toDetails(scope.row)"
+          >
+            {{ $t('public_button_details') }}
+          </el-button>
+        </template>
+      </el-table-column>
+    </TablePage>
+  </PageContainer>
+</template>
 
 <style lang="scss" scoped>
 .apiaudit-wrap {

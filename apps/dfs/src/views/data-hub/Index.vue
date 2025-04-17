@@ -112,7 +112,7 @@ export default {
 </script>
 
 <template>
-  <PageContainer hide-header content-mode="full">
+  <PageContainer hide-header mode="full">
     <div v-loading="loading" element-loading-background="#fff" class="h-100">
       <div
         v-if="hasMDB && !hasActive"

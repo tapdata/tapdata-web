@@ -369,7 +369,7 @@ export const MergeTableTree = observer(
       }
       const handleFilter = val => {
         filterText.value = val
-        refs.tree.filter(val)
+        tree.value.filter(val)
       }
 
       return () => {

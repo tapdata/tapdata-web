@@ -138,7 +138,7 @@ export default {
             :loading="createBtnLoading"
             @click="refFn('create')"
           >
-            {{ $t('public_button_create') }}
+            {{ $t('public_task_create') }}
           </el-button>
         </div>
       </template>

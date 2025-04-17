@@ -16,9 +16,9 @@ const MENU_FEATURE_MAP = {
 }
 
 const TYPE2NAME = {
-  LITE: 'TapData Live Integration',
-  OP: 'TapData Live Data Platform',
-  SERVICE: 'TapData Live Service'
+  LITE: 'Live Integration',
+  OP: 'Live Data Platform',
+  SERVICE: 'Live Service'
 }
 
 const getState = function () {

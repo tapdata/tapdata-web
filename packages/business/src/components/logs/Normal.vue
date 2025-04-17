@@ -85,13 +85,6 @@ export default {
       this.isScrollBottom =
         target.scrollHeight - target.scrollTop <= target.clientHeight
     },
-    toSolutions(code) {
-      const routeUrl = this.$router.resolve({
-        name: 'Solutions',
-        query: { code },
-      })
-      window.open(routeUrl.href)
-    },
     logScroll(logContainer) {
       if (
         logContainer.scrollHeight -
@@ -375,13 +368,6 @@ export default {
                   @click="toLink(item.link)"
                   >{{ $t('packages_business_customer_logs_to_link') }}</span
                 >
-                <!--产品决定临时屏蔽-->
-                <!--<span
-                      v-if="item.params.errorCode"
-                      class="color-primary cursor-pointer ml-2"
-                      @click="toSolutions(item.params.errorCode)"
-                      >{{ $t('packages_business_customer_logs_to_solutions') }}</span
-                    >-->
               </div>
             </div>
           </DynamicScrollerItem>

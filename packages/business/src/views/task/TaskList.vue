@@ -1,10 +1,67 @@
+<script>
+import PageContainer from '../../components/PageContainer.vue'
+import List from './List'
+
+export default {
+  name: 'TaskList',
+
+  components: { PageContainer, List },
+
+  inject: ['checkAgent', 'buried'],
+
+  data() {
+    return {
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
+      syncType: 'sync',
+      taskBuried: {
+        new: 'taskCreate',
+        newFail: 'taskCreateAgentFail',
+        start: 'taskStart',
+      },
+      route: {
+        new: 'DataflowNew',
+        editor: 'DataflowEditor',
+        monitor: 'TaskMonitor',
+      },
+
+      createBtnLoading: false,
+    }
+  },
+
+  computed: {
+    buttonShowMap() {
+      if (this.$route.name === 'dataflowList') {
+        return {
+          create: this.$has('v2_data_flow_creation'),
+          copy: this.$has('v2_data_flow_copy'),
+          import: this.$has('v2_data_flow_import'),
+          export: this.$has('v2_data_flow_export'),
+        }
+      }
+
+      return {
+        create: this.$has('v2_data_replication_creation'),
+        copy: this.$has('v2_data_replication_copy'),
+        import: this.$has('v2_data_replication_import'),
+        export: this.$has('v2_data_replication_export'),
+      }
+    },
+  },
+
+  methods: {
+    refFn(method) {
+      this.$refs.list[method]?.()
+    },
+  },
+}
+</script>
+
 <template>
   <PageContainer>
     <template #actions>
       <el-button
         v-if="buttonShowMap.import && isDaas"
         v-readonlybtn="'SYNC_job_import'"
-       
         class="btn"
         :disabled="$disabledReadonlyUserBtn()"
         @click="refFn('handleImport')"
@@ -15,7 +72,6 @@
         v-if="buttonShowMap.import && $route.name === 'dataflowList'"
         v-readonlybtn="'SYNC_job_import'"
         v-feature="'mongodbRelmig'"
-       
         name="importRelmig"
         class="btn"
         :disabled="$disabledReadonlyUserBtn()"
@@ -27,7 +83,6 @@
         v-if="$route.name === 'dataflowList'"
         v-feature="'buildingMaterializedView'"
         class="--with-icon inline-flex align-center px-2 py-0 gap-1 align-top"
-       
         name="materializedView"
         :loading="createBtnLoading"
         @click="refFn('handleCreateMaterializedView')"
@@ -37,79 +92,25 @@
       >
       <el-button
         v-if="buttonShowMap.create"
+        id="task-list-create"
         v-readonlybtn="'SYNC_job_creation'"
         class="btn btn-create"
         type="primary"
-       
-        id="task-list-create"
         :disabled="$disabledReadonlyUserBtn()"
         :loading="createBtnLoading"
         @click="refFn('create')"
       >
-        {{ $t('public_button_create') }}
+        {{ $t('public_task_create') }}
       </el-button>
     </template>
-    <List ref="list" :route="route" :task-buried="taskBuried" :sync-type="syncType"></List>
+    <List
+      ref="list"
+      :route="route"
+      :task-buried="taskBuried"
+      :sync-type="syncType"
+    />
   </PageContainer>
 </template>
-
-<script>
-import List from './List'
-import PageContainer from '../../components/PageContainer.vue'
-
-export default {
-  name: 'TaskList',
-
-  inject: ['checkAgent', 'buried'],
-
-  components: { PageContainer, List },
-
-  data() {
-    return {
-      isDaas:  import.meta.env.VUE_APP_PLATFORM === 'DAAS',
-      syncType: 'sync',
-      taskBuried: {
-        new: 'taskCreate',
-        newFail: 'taskCreateAgentFail',
-        start: 'taskStart',
-      },
-      route: {
-        new: 'DataflowNew',
-        editor: 'DataflowEditor',
-        monitor: 'TaskMonitor'
-      },
-
-      createBtnLoading: false
-    }
-  },
-
-  computed: {
-    buttonShowMap() {
-      if (this.$route.name === 'dataflowList') {
-        return {
-          create: this.$has('v2_data_flow_creation'),
-          copy: this.$has('v2_data_flow_copy'),
-          import: this.$has('v2_data_flow_import'),
-          export: this.$has('v2_data_flow_export')
-        }
-      }
-
-      return {
-        create: this.$has('v2_data_replication_creation'),
-        copy: this.$has('v2_data_replication_copy'),
-        import: this.$has('v2_data_replication_import'),
-        export: this.$has('v2_data_replication_export')
-      }
-    }
-  },
-
-  methods: {
-    refFn(method) {
-      this.$refs.list[method]?.()
-    }
-  },
-}
-</script>
 
 <style lang="scss" scoped>
 .data-flow-wrap {

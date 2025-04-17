@@ -128,7 +128,6 @@ export default defineComponent({
         return null
       }
 
-      console.log('routes', this.$router.options.routes)
       return searchInRoutes(this.$router.options.routes)
     }
     const menus = this.sortMenus.map((el) => {
@@ -221,7 +220,7 @@ export default defineComponent({
     //   this.checkLicense(user)
     // }
     const isCurrentUser = Cookie.get('deployLaterUser') === user?.userId
-    if (Cookie.get('deployLater') == 1 && isCurrentUser) return
+    if (Cookie.get('deployLater') === 1 && isCurrentUser) return
   },
   beforeUnmount() {
     clearTimeout(this.loopLoadAgentCountTimer)
@@ -664,110 +663,6 @@ export default defineComponent({
       margin-top: 8px;
       padding-inline-start: 10px;
     }
-  }
-}
-
-.layout-menu {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 90%;
-}
-
-.layout-wrap {
-  height: 100%;
-  padding-top: 52px;
-  word-wrap: break-word;
-  word-break: break-word;
-  background: map.get($color, submenu);
-
-  .left-aside {
-    // border-right: 1px map.get($borderColor, aside) solid;
-    background: map.get($color, submenu);
-
-    .el-menu {
-      background-color: map.get($color, submenu);
-    }
-
-    :deep(.el-menu-item),
-    :deep(.el-sub-menu__title) {
-      height: 50px;
-      line-height: 50px;
-
-      .v-icon {
-        color: map.get($iconFillColor, normal);
-      }
-
-      &.is-active,
-      &:hover {
-        background-color: map.get($color, white);
-        color: map.get($color, primary);
-        border-radius: 8px;
-      }
-
-      &.is-active,
-      &:hover {
-        .v-icon {
-          color: map.get($color, primary);
-        }
-      }
-
-      .submenu-item {
-        padding-left: 12px;
-      }
-    }
-
-    .product-name {
-      padding-left: 20px;
-      font-size: 14px;
-      font-weight: 700;
-      line-height: 60px;
-      color: map.get($fontColor, normal);
-    }
-  }
-
-  .header {
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-  }
-
-  .main {
-    display: flex;
-    flex-direction: column;
-    flex-basis: 0%;
-    margin: 0;
-    padding: 0;
-    //background: rgba(239, 241, 244, 1);
-  }
-
-  .breadcrumb {
-    padding: 24px 0 24px 24px;
-    //height: 40px;
-    box-sizing: border-box;
-
-    &.one-breadcrumb {
-      font-size: 18px;
-
-      :deep(.el-breadcrumb__inner) {
-        color: #000;
-      }
-    }
-
-    :deep(.el-breadcrumb__separator) {
-      color: map.get($fontColor, sub);
-    }
-  }
-
-  .btn-back {
-    padding: 0;
-    width: 24px;
-    height: 24px;
-    font-size: 12px;
-  }
-
-  .el-menu-item.is-active .agent-warning-icon {
-    display: none;
   }
 }
 </style>

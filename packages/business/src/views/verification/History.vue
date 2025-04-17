@@ -2,11 +2,12 @@
 import { inspectResultsApi } from '@tap/api'
 import { VIcon } from '@tap/component'
 import dayjs from 'dayjs'
+import PageContainer from '../../components/PageContainer.vue'
 import { inspectMethod, statusMap } from './const'
 
 let timeout = null
 export default {
-  components: { VIcon },
+  components: { VIcon, PageContainer },
   data() {
     return {
       loading: true,
@@ -120,8 +121,8 @@ export default {
 </script>
 
 <template>
-  <section v-loading="loading" class="data-verify-history-wrap section-wrap">
-    <div class="panel-main section-wrap-box">
+  <PageContainer>
+    <section v-loading="loading" class="flex flex-column h-100">
       <el-table :data="page.data" height="100%">
         <el-table-column
           :label="$t('packages_business_verification_verifyTime')"
@@ -279,9 +280,9 @@ export default {
         </el-table-column>
         <el-table-column :label="$t('public_operation')" width="60px">
           <template #default="scope">
-            <ElLink type="primary" @click="rowClick(scope.row)">{{
+            <ElButton text type="primary" @click="rowClick(scope.row)">{{
               $t('public_button_details')
-            }}</ElLink>
+            }}</ElButton>
           </template>
         </el-table-column>
       </el-table>
@@ -296,8 +297,8 @@ export default {
         @size-change="search(1)"
         @current-change="search"
       />
-    </div>
-  </section>
+    </section>
+  </PageContainer>
 </template>
 
 <style lang="scss" scoped>
@@ -311,10 +312,6 @@ export default {
     flex-direction: column;
     -ms-flex: 1;
     flex: 1;
-    padding: 20px;
-    border-radius: 4px;
-    background-color: #fff;
-    box-sizing: border-box;
     overflow: hidden;
   }
   .data-verify-history__icon {

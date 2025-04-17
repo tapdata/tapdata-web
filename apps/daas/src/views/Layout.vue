@@ -1,14 +1,6 @@
-<script>
-import {
-  licensesApi,
-  logcollectorApi,
-  settingsApi,
-  taskApi,
-  timeStampApi,
-  usersApi,
-} from '@tap/api'
-import { PageHeader } from '@tap/business'
-
+<script setup lang="ts">
+import { User } from '@element-plus/icons-vue'
+import { licensesApi, settingsApi, timeStampApi, usersApi } from '@tap/api'
 import { VIcon } from '@tap/component'
 import {
   getCurrentLanguage,
@@ -18,377 +10,496 @@ import {
 import Cookie from '@tap/shared/src/cookie'
 import Time from '@tap/shared/src/time'
 import dayjs from 'dayjs'
-import { mapGetters } from 'vuex'
-import logo_mini from '@/assets/images/logo_mini.svg'
-import CustomerService from '@/components/CustomerService'
-import newDataFlow from '@/components/newDataFlow'
-import { DropdownList, MENU as menuSetting } from '@/router/menu'
-import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
-import { signOut } from '../utils/util'
 
-import NotificationPopover from './notification/NotificationPopover'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { computed, inject, onMounted, provide, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import logoImg from '@/assets/images/logo.svg'
+import CustomerService from '@/components/CustomerService.vue'
+import NewDataFlow from '@/components/newDataFlow.vue'
+import {
+  MENU as menuSetting,
+  DropdownList as OriginalDropdownList,
+} from '@/router/menu'
 
+import { signOut as utilSignOut } from '../utils/util'
+
+import NotificationPopover from './notification/NotificationPopover.vue'
+
+// Extend the Window interface to add custom properties
+declare global {
+  interface Window {
+    _TAPDATA_OPTIONS_: {
+      logoUrl: string
+      logoWidth?: string | number
+      logoHeight?: string | number
+      homeUrl?: string
+    }
+    $has?: (permission: string) => boolean
+    getSettingByKey?: (key: string) => boolean | number
+    iframeRouterChange?: (route: string) => void
+    stateChange?: (key: string, data: any) => void
+    getFormLocal?: (data: string) => any
+    $getSettingByKey?: (key: string) => boolean
+  }
+}
+
+// Types
+interface MenuItem {
+  name: string
+  label: string
+  icon?: string
+  children?: MenuItem[]
+  hidden?: boolean
+  group?: boolean
+  alias?: string
+  code?: string
+  parent?: string
+  to?: { name: string }
+}
+
+interface MenuGroup {
+  top: MenuItem[]
+  bottom: MenuItem[]
+}
+
+// Composition API setup
+const i18n = useI18n()
+const router = useRouter()
+const route = useRoute()
+const store = useStore()
+
+// Injected properties
+const lockedFeature = inject<Record<string, boolean>>('lockedFeature')
+const openLocked = inject<() => void>('openLocked')
+
+// Constants
 const isCommunity = import.meta.env.VUE_APP_MODE === 'community'
+const isOP = import.meta.env.VUE_APP_MODE === 'OP'
+const domain = i18n.locale.value === 'en' ? 'io' : 'net'
 
-export default {
-  components: {
-    CustomerService,
-    newDataFlow,
-    NotificationPopover,
-    PageHeader,
-    VIcon,
-  },
-  inject: ['lockedFeature', 'openLocked'],
-  data() {
-    const domain = this.$i18n.locale === 'en' ? 'io' : 'net'
-    const isOP = import.meta.env.VUE_APP_MODE === 'OP'
+// Reactive state
+const appVersion = ref('')
+const logoUrl = ref(window._TAPDATA_OPTIONS_.logoUrl)
+const languages = ref(langMenu)
+const currentLang = ref(getCurrentLanguage())
+const settingCode = ref(
+  Object.prototype.hasOwnProperty.call(window, '$has') &&
+    window.$has?.('system_settings') &&
+    window.$has?.('system_settings_menu'),
+)
+const menus = ref<MenuItem[]>([])
+const menusGroup = ref<MenuGroup>({
+  top: [],
+  bottom: [],
+})
+const userName = ref('')
+const email = ref('')
+const dialogVisible = ref(false)
+const isShowCustomerService = ref(false)
+const licenseExpire = ref<string | number>('')
+const licenseExpireVisible = ref(false)
+const licenseExpireDate = ref('')
+const isCollapse = ref(false)
+const isNotAside = ref(route?.meta?.isNotAside || false)
+const activeMenu = ref('')
+const IS_IFRAME = ref(sessionStorage.getItem('IS_IFRAME') === 'true')
+const showHelp = ref(
+  !import.meta.env.VUE_APP_HIDE_QA_AND_HELP &&
+    window.getSettingByKey?.('SHOW_QA_AND_HELP'),
+)
+const showHome = ref(
+  !import.meta.env.VUE_APP_HIDE_HOME_MENU &&
+    window.getSettingByKey?.('SHOW_HOME_BUTTON'),
+)
+const showLanguage = ref(
+  !import.meta.env.VUE_APP_HIDE_LANGUAGE &&
+    window.getSettingByKey?.('SHOW_LANGUAGE'),
+)
+const showSetting = ref(
+  !import.meta.env.VUE_APP_HIDE_SETTING_BUTTON &&
+    window.getSettingByKey?.('SHOW_SETTING_BUTTON') &&
+    (window.$has?.('home_notice_settings') ||
+      (window.$has?.('system_settings') &&
+        window.$has?.('system_settings_menu'))),
+)
 
-    return {
-      logo_mini,
-      appVersion: '',
-      domain,
-      isCommunity,
-      isOP,
-      IS_IFRAME: sessionStorage.getItem('IS_IFRAME') === 'true',
+// Getters
+const isMenuEnabled = computed(() => store.getters['feature/isMenuEnabled'])
+const versionName = computed(() => store.getters['feature/versionName'])
 
-      logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
-      languages: langMenu,
-      lang: getCurrentLanguage(),
-      settingCode:
-        this.$has('system_settings') && this.$has('system_settings_menu'),
-      creatAuthority:
-        (this.$has('SYNC_job_creation') && this.$has('Data_SYNC_menu')) ||
-        (this.$has('datasource_creation') && this.$has('datasource_menu')),
-      menus: [],
-      menusGroup: {
-        top: [],
-        bottom: [],
-      },
-      userName: '',
-      email: '',
-      dialogVisible: false,
-      isShowCustomerService: false,
-      licenseExpire: '',
-      licenseExpireVisible: false,
-      licenseExpireDate: '',
-      breadcrumbData: [],
-      isCollapse: false,
-      isNotAside: this.$route?.meta?.isNotAside || false,
-      activeMenu: '',
-      showHelp:
-        !import.meta.env.VUE_APP_HIDE_QA_AND_HELP &&
-        this.$getSettingByKey('SHOW_QA_AND_HELP'),
-      showHome:
-        !import.meta.env.VUE_APP_HIDE_HOME_MENU &&
-        this.$getSettingByKey('SHOW_HOME_BUTTON'),
-      showLanguage:
-        !import.meta.env.VUE_APP_HIDE_LANGUAGE &&
-        this.$getSettingByKey('SHOW_LANGUAGE'),
-      showSetting:
-        !import.meta.env.VUE_APP_HIDE_SETTING_BUTTON &&
-        this.$getSettingByKey('SHOW_SETTING_BUTTON') &&
-        (this.$has('home_notice_settings') ||
-          (this.$has('system_settings') && this.$has('system_settings_menu'))),
-    }
-  },
-  computed: {
-    ...mapGetters('feature', ['isMenuEnabled', 'versionName']),
-    DropdownList() {
-      return DropdownList.filter(
-        (item) => !item.hidden && (this.showHome || item.name !== 'home'),
-      )
-    },
-    initials() {
-      return this.userName.slice(0, 1)
-    },
+// Computed properties
+const dropdownListComputed = computed(() => {
+  return OriginalDropdownList.filter(
+    (item) => !item.hidden && (showHome.value || item.name !== 'home'),
+  )
+})
 
-    logoStyle() {
-      const width = window._TAPDATA_OPTIONS_.logoWidth
-      const height = window._TAPDATA_OPTIONS_.logoHeight
-      return {
-        width: width && (!isNaN(width) ? `${width}px` : width),
-        height: height && (!isNaN(height) ? `${height}px` : height),
+const logoStyle = computed(() => {
+  const width = window._TAPDATA_OPTIONS_.logoWidth
+  const height = window._TAPDATA_OPTIONS_.logoHeight
+  return {
+    width: width && (!Number.isNaN(Number(width)) ? `${width}px` : width),
+    height: height && (!Number.isNaN(Number(height)) ? `${height}px` : height),
+  }
+})
+
+// Add computed properties for window methods used in template
+const showNotification = computed(() => {
+  return window.getSettingByKey && window.getSettingByKey('SHOW_NOTIFICATION')
+})
+
+const showQaAndHelp = computed(() => {
+  return (
+    !import.meta.env.VUE_APP_HIDE_QA_AND_HELP &&
+    window.getSettingByKey?.('SHOW_QA_AND_HELP')
+  )
+})
+
+const showHomeButton = computed(() => {
+  return (
+    !import.meta.env.VUE_APP_HIDE_HOME_MENU &&
+    window.getSettingByKey?.('SHOW_HOME_BUTTON')
+  )
+})
+
+const showLanguageButton = computed(() => {
+  return (
+    !import.meta.env.VUE_APP_HIDE_LANGUAGE &&
+    window.getSettingByKey?.('SHOW_LANGUAGE')
+  )
+})
+
+const showSettingButton = computed(() => {
+  return (
+    !import.meta.env.VUE_APP_HIDE_SETTING_BUTTON &&
+    window.getSettingByKey?.('SHOW_SETTING_BUTTON') &&
+    (window.$has?.('home_notice_settings') ||
+      (window.$has?.('system_settings') &&
+        window.$has?.('system_settings_menu')))
+  )
+})
+
+const showDkVersion = computed(() => {
+  return window.getSettingByKey?.('SHOW_DK_VERSION')
+})
+
+const showLicense = computed(() => {
+  return (
+    import.meta.env.VUE_APP_MODE !== 'community' &&
+    window.getSettingByKey?.('SHOW_LICENSE')
+  )
+})
+
+// Methods
+const getAppVersion = async () => {
+  try {
+    const data = await settingsApi.getAppVersion()
+    appVersion.value = data.toString()
+  } catch (error) {
+    console.error('Error fetching app version:', error)
+  }
+}
+
+const getActiveMenu = () => {
+  const activeMap: Record<string, string> = {}
+  const getMap = (menus: any[]) => {
+    menus.forEach((item) => {
+      if (item?.children?.length) {
+        getMap(item.children)
+      } else {
+        // parent 是用来匹配菜单是否激活的，比如函数管理的详情页，也属于函数管理，菜单也应该处于激活状态
+        // 之所以使用parent是因为管理的列表页面使用的也是子路由的，比如连接管理使用的是connectionList，而不是connection
+        activeMap[item.parent || item.name] = item.name
       }
-    },
-  },
-  watch: {
-    $route(data) {
-      this.isNotAside = data?.meta?.isNotAside || false
-      this.getActiveMenu()
-    },
-  },
-  async created() {
-    this.getMenus()
-    this.getAppVersion()
-    this.getActiveMenu()
+    })
+  }
+  getMap(menuSetting as any[])
+  const matched = route.matched || []
+  const activeRoute = matched.find((r) => activeMap[r.name as string])
+  activeMenu.value = activeMap[activeRoute?.name as string] || ''
+}
 
-    this.userName =
-      Cookie.get('username') || Cookie.get('email')?.split('@')?.[0] || ''
-    this.email = Cookie.get('email')
+const getMenus = (hideMenuMap: Record<string, boolean> = {}) => {
+  let permissions: any[] = []
+  const permissionsStr = sessionStorage.getItem('tapdata_permissions')
+  if (permissionsStr) {
+    try {
+      permissions = JSON.parse(permissionsStr)
+    } catch (error) {
+      console.error('Failed to parse permissions', error)
+    }
+  }
 
-    window.iframeRouterChange = (route) => {
-      this.$router.push(route)
-    }
-    const self = this
-    window.stateChange = (key, data) => {
-      self.$store.commit(key, data)
-    }
+  const routerMap: Record<string, any> = {}
+  const routes = router.options.routes
 
-    window.getFormLocal = (data) => {
-      return self.$store.state[data]
-    }
-
-    if (
-      import.meta.env.VUE_APP_MODE !== 'community' &&
-      window.getSettingByKey('SHOW_LICENSE')
-    ) {
-      this.getLicense()
-    }
-  },
-  unmounted() {
-    $off(this.$root, 'updateMenu')
-  },
-  methods: {
-    async getAppVersion() {
-      const data = await settingsApi.getAppVersion()
-      this.appVersion = data
-    },
-    getActiveMenu() {
-      const route = this.$route
-      const activeMap = {}
-      const getMap = (menus) => {
-        menus.forEach((item) => {
-          if (item?.children?.length) {
-            getMap(item?.children)
-          } else {
-            // parent 是用来匹配菜单是否激活的，比如函数管理的详情页，也属于函数管理，菜单也应该处于激活状态
-            // 之所以使用parent是因为管理的列表页面使用的也是子路由的，比如连接管理使用的是connectionList，而不是connection
-            activeMap[item.parent || item.name] = item.name
-          }
-        })
+  const getRoutesMap = (routeList: any[]) => {
+    routeList.forEach((r) => {
+      routerMap[r.name] = r
+      if (r.children) {
+        getRoutesMap(r.children)
       }
-      getMap(menuSetting)
-      const matched = route.matched || []
-      const activeRoute = matched.find((r) => activeMap[r.name])
-      this.activeMenu = activeMap[activeRoute?.name] || ''
-    },
-    getMenus(hideMenuMap = {}) {
-      let permissions = sessionStorage.getItem('tapdata_permissions')
+    })
+  }
+  getRoutesMap(routes as any[])
 
-      permissions = permissions ? JSON.parse(permissions) : []
-      const routerMap = {}
-      const routes = this.$router.options.routes.find(
-        (r) => r.name === 'layout',
-      ).children
-      const getRoutesMap = (routes) => {
-        routes.forEach((r) => {
-          routerMap[r.name] = r
-          if (r.children) {
-            getRoutesMap(r.children)
-          }
-        })
+  const formatMenu = (items: any[]): MenuItem[] => {
+    return items.map((item) => {
+      const route = routerMap[item.name]
+      const menu = item as MenuItem
+      const label = menu.alias ? menu.alias : menu.label
+
+      if (route) {
+        menu.to = { name: route.name }
+        menu.label = i18n.t(label || route.meta.title)
+        menu.code = route.meta.code
+      } else {
+        menu.label = i18n.t(label)
       }
-      getRoutesMap(routes)
 
-      const formatMenu = (items) => {
-        return items.map((item) => {
-          const route = routerMap[item.name]
-          const menu = item
-          const label = menu.alias ? menu.alias : menu.label
-          if (route) {
-            menu.to = { name: route.name }
-            menu.label = this.$t(label || route.meta.title)
-            menu.code = route.meta.code
-          } else {
-            menu.label = this.$t(label)
-          }
+      menu.hidden =
+        menu.hidden ||
+        hideMenuMap[menu.name] ||
+        (menu.code && !permissions.some((p: any) => p.code === menu.code)) ||
+        !isMenuEnabled.value(menu.name) // 添加基于 license features 的菜单控制
 
-          menu.hidden =
-            menu.hidden ||
-            hideMenuMap[menu.name] ||
-            (menu.code && !permissions.some((p) => p.code === menu.code)) ||
-            !this.isMenuEnabled(menu.name) // 添加基于 license features 的菜单控制
-          if (!menu.hidden && menu.children) {
-            menu.children = formatMenu(menu.children)
-            if (menu.children.every((m) => m.hidden)) {
-              menu.hidden = true
-            }
-          }
-
-          return menu
-        })
-      }
-      const menus = JSON.parse(JSON.stringify(menuSetting))
-      this.menus = formatMenu(menus)
-
-      this.menus.forEach((m) => {
-        if (m.group) {
-          this.menusGroup.bottom.push(m)
-        } else {
-          this.menusGroup.top.push(m)
+      if (!menu.hidden && menu.children) {
+        menu.children = formatMenu(menu.children)
+        if (menu.children.every((m) => m.hidden)) {
+          menu.hidden = true
         }
-      })
-    },
-    command(command) {
-      switch (command) {
-        case 'account':
-          this.$router.push({
-            name: 'settingCenter',
-          })
-          break
-        case 'setting':
-          this.$router.push({
-            name: 'notificationSetting',
-          })
-          break
-        case 'newDataFlow':
-          this.dialogVisible = true
-          break
-        case 'help':
-          window.open(`${location.origin}/docs/`)
-          break
-        case 'question':
-          this.isShowCustomerService = !this.isShowCustomerService
-          break
-        case 'version':
-          if (window.getSettingByKey('SHOW_DK_VERSION')) {
-            this.$message.info({
-              dangerouslyUseHTMLString: true,
-              message: 'DK_VERSION_1</br>DK_VERSION_2',
-            })
-          } else {
-            this.$message.info(this.appVersion)
-          }
-          break
-        case 'license':
-          this.$router.push({
-            name: 'License',
-          })
-          break
-        case 'home':
-          window.open(
-            window._TAPDATA_OPTIONS_.homeUrl ||
-              `https://tapdata.${this.domain}/`,
-            '_blank',
-          )
-          break
-        case 'signOut':
-          this.$confirm(this.$t('app_signOutMsg'), this.$t('app_signOut'), {
-            type: 'warning',
-          }).then((resFlag) => {
-            if (!resFlag) {
-              return
-            }
-            this.signOut()
-          })
-          break
-        case 'settings':
-          this.$router.push({
-            name: 'settings',
-          })
-          break
-        default:
-          break
-      }
-    },
-    signOut() {
-      usersApi.logout().then(() => {
-        signOut()
-      })
-    },
-    menuHandler(name) {
-      if (this.lockedFeature[name]) {
-        this.openLocked()
-        return
       }
 
-      if (this.$route.name === name) {
-        return
+      return menu
+    })
+  }
+
+  const menusCopy = JSON.parse(JSON.stringify(menuSetting))
+  menus.value = formatMenu(menusCopy)
+
+  menusGroup.value.top = []
+  menusGroup.value.bottom = []
+  menus.value.forEach((m) => {
+    if (m.group) {
+      menusGroup.value.bottom.push(m)
+    } else {
+      menusGroup.value.top.push(m)
+    }
+  })
+}
+
+const command = (command: string) => {
+  switch (command) {
+    case 'account':
+      router.push({
+        name: 'settingCenter',
+      })
+      break
+    case 'setting':
+      router.push({
+        name: 'notificationSetting',
+      })
+      break
+    case 'newDataFlow':
+      dialogVisible.value = true
+      break
+    case 'help':
+      window.open(`${location.origin}/docs/`)
+      break
+    case 'question':
+      isShowCustomerService.value = !isShowCustomerService.value
+      break
+    case 'version':
+      if (window.getSettingByKey?.('SHOW_DK_VERSION')) {
+        ElMessage.info({
+          dangerouslyUseHTMLString: true,
+          message: 'DK_VERSION_1</br>DK_VERSION_2',
+        })
+      } else {
+        ElMessage.info(appVersion.value)
       }
-      this.$router.push({
-        name,
+      break
+    case 'license':
+      router.push({
+        name: 'License',
       })
-    },
-    changeLanguage(lang) {
-      setCurrentLanguage(lang, this.$i18n)
-      this.lang = lang
-      location.reload()
-    },
-
-    async getLicense() {
-      let stime = ''
-      await timeStampApi.get().then((data) => {
-        stime = data || Time.now()
-      })
-      licensesApi.expires({}).then((data) => {
-        const expires_on = data?.expires_on
-
-        if (!expires_on) {
-          this.licenseExpireVisible = false
+      break
+    case 'home':
+      window.open(
+        window._TAPDATA_OPTIONS_.homeUrl || `https://tapdata.${domain}/`,
+        '_blank',
+      )
+      break
+    case 'signOut':
+      ElMessageBox.confirm(i18n.t('app_signOutMsg'), i18n.t('app_signOut'), {
+        type: 'warning',
+      }).then((resFlag) => {
+        if (!resFlag) {
           return
         }
-
-        if (Cookie.get('isAdmin') == 1) {
-          let endTime = expires_on - stime
-          endTime = Number.parseInt(endTime / 1000 / 60 / 60 / 24) //相差天数
-          const showDay = window.getSettingByKey('licenseNoticeDays') || 0
-          this.licenseExpireVisible = Number(showDay) > endTime
-          this.licenseExpire = endTime
-        }
-        this.licenseExpireDate = dayjs(expires_on).format('YYYY-MM-DD HH:mm:ss')
+        signOut()
       })
-    },
-  },
+      break
+    case 'settings':
+      router.push({
+        name: 'settings',
+      })
+      break
+    default:
+      break
+  }
 }
+
+const signOut = () => {
+  usersApi.logout().then(() => {
+    utilSignOut()
+  })
+}
+
+const menuHandler = (name: string) => {
+  if (lockedFeature?.[name]) {
+    openLocked?.()
+    return
+  }
+
+  if (route.name === name) {
+    return
+  }
+  router.push({
+    name,
+  })
+}
+
+const changeLanguage = (lang: string) => {
+  setCurrentLanguage(lang, i18n)
+  currentLang.value = lang
+  location.reload()
+}
+
+const getLicense = async () => {
+  let stime: any = ''
+  try {
+    const data = await timeStampApi.get()
+    stime = data || Time.now()
+  } catch (error) {
+    console.error('Error fetching timestamp:', error)
+    stime = Time.now()
+  }
+
+  licensesApi.expires({}).then((data: any) => {
+    const expires_on = data?.data?.expires_on
+
+    if (!expires_on) {
+      licenseExpireVisible.value = false
+      return
+    }
+
+    if (Cookie.get('isAdmin') === '1') {
+      let endTime = Number(expires_on) - Number(stime)
+      endTime = Math.floor(endTime / 1000 / 60 / 60 / 24) //相差天数
+      const showDay = window.getSettingByKey?.('licenseNoticeDays') || 0
+      licenseExpireVisible.value = Number(showDay) > endTime
+      licenseExpire.value = endTime.toString()
+    }
+    licenseExpireDate.value = dayjs(expires_on).format('YYYY-MM-DD HH:mm:ss')
+  })
+}
+
+// Watch for route changes
+watch(
+  () => route,
+  (newRoute) => {
+    isNotAside.value = newRoute?.meta?.isNotAside || false
+    getActiveMenu()
+  },
+  { deep: true },
+)
+
+// Setup the component
+onMounted(() => {
+  getMenus()
+  getAppVersion()
+  getActiveMenu()
+
+  userName.value =
+    Cookie.get('username') || Cookie.get('email')?.split('@')?.[0] || ''
+  email.value = Cookie.get('email')
+
+  window.iframeRouterChange = (route) => {
+    router.push(route)
+  }
+
+  window.stateChange = (key, data) => {
+    store.commit(key, data)
+  }
+
+  window.getFormLocal = (data) => {
+    return store.state[data]
+  }
+
+  if (
+    import.meta.env.VUE_APP_MODE !== 'community' &&
+    window.getSettingByKey?.('SHOW_LICENSE')
+  ) {
+    getLicense()
+  }
+})
+
+// Provide
+provide('activeMenu', activeMenu)
 </script>
 
 <template>
-  <ElContainer class="layout-container" direction="vertical">
-    <ElHeader v-if="!IS_IFRAME" class="layout-header" height="60px">
+  <el-container direction="vertical" class="layout">
+    <div class="layout-bg">
+      <div class="layout-bg-main" />
+      <div
+        class="layout-bg-submain"
+        style="
+          background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E&quot;);
+        "
+      />
+      <div class="layout-bg-layer layout-bg-tr" />
+      <div class="layout-bg-layer layout-bg-bl" />
+    </div>
+    <ElHeader v-if="!IS_IFRAME" class="flex align-center gap-4" height="60px">
       <a
         v-if="isOP"
         class="logo w-auto text-white flex align-center gap-2"
         href="/"
       >
-        <img :src="logo_mini" style="width: 32px; height: 32px" />
-        <span class="fw-sub text-lg">{{ versionName }}</span>
+        <img :src="logoImg" style="width: auto; height: 32px" />
+        <el-divider direction="vertical" />
+        <span class="fw-sub text-lg color-primary">{{ versionName }}</span>
       </a>
       <a v-else class="logo" href="/" :style="logoStyle">
         <img :src="logoUrl" />
       </a>
-      <div class="button-bar gap-1">
+      <div class="flex gap-3 align-center ml-auto">
         <span v-if="licenseExpireVisible" class="expire-msg">{{
           $t('app_license_expire_warning', [licenseExpire])
         }}</span>
-        <ElButton
-          v-if="isCommunity"
-          id="add-jira-issue-btn"
-          type="primary"
-         
+        <ElButton v-if="isCommunity" id="add-jira-issue-btn" type="primary"
           ><VIcon>bug-outlined</VIcon> New Issue
         </ElButton>
-        <ElButton
-          v-else-if="creatAuthority"
-          type="primary"
-          @click="command('newDataFlow')"
-        >
-          {{ $t('dataFlow_createNew') }}
-        </ElButton>
-        <NotificationPopover
-          v-if="$getSettingByKey('SHOW_NOTIFICATION')"
-          class="ml-4"
-        />
+        <NotificationPopover v-if="showNotification" class="ml-4" />
         <ElDropdown
-          v-if="showHelp"
+          v-if="showQaAndHelp"
           class="btn"
           placement="bottom"
           command="help"
           :show-timeout="0"
           @command="command"
         >
-          <div class="flex align-center icon-btn p-2">
-            <VIcon size="18">wenda</VIcon>
-          </div>
+          <el-button text size="large">
+            <template #icon>
+              <VIcon size="20">wenda</VIcon>
+            </template>
+          </el-button>
+
           <template #dropdown>
             <ElDropdownMenu class="no-triangle">
               <ElDropdownItem command="help">{{
@@ -398,16 +509,17 @@ export default {
           </template>
         </ElDropdown>
         <ElDropdown
-          v-if="showSetting"
+          v-if="showSettingButton"
           class="btn"
           placement="bottom"
           :show-timeout="0"
           @command="command"
         >
-          <div class="flex align-center icon-btn p-2">
-            <VIcon size="18">shezhi</VIcon>
-          </div>
-          <!-- <VIcon class="icon-btn" size="16">shezhi</VIcon> -->
+          <el-button text size="large">
+            <template #icon>
+              <VIcon size="18">shezhi</VIcon>
+            </template>
+          </el-button>
           <template #dropdown>
             <ElDropdownMenu class="no-triangle">
               <ElDropdownItem
@@ -424,15 +536,17 @@ export default {
           </template>
         </ElDropdown>
         <ElDropdown
-          v-if="showLanguage"
+          v-if="showLanguageButton"
           class="btn"
           placement="bottom"
           :show-timeout="0"
           @command="changeLanguage"
         >
-          <div class="flex align-center icon-btn p-2">
-            <VIcon size="18">language_icon</VIcon>
-          </div>
+          <el-button text size="large">
+            <template #icon>
+              <VIcon size="18">language_icon</VIcon>
+            </template>
+          </el-button>
           <template #dropdown>
             <ElDropdownMenu class="no-triangle">
               <ElDropdownItem
@@ -440,7 +554,7 @@ export default {
                 :key="key"
                 :command="key"
               >
-                <span v-if="lang === key" class="color-primary">{{
+                <span v-if="currentLang === key" class="color-primary">{{
                   value
                 }}</span>
                 <span v-else>{{ value }}</span>
@@ -448,422 +562,237 @@ export default {
             </ElDropdownMenu>
           </template>
         </ElDropdown>
-        <ElDivider direction="vertical" class="divider mx-4" />
+        <ElDivider direction="vertical" class="divider mx-0" />
         <ElDropdown
           class="menu-user btn"
           placement="bottom"
           :show-timeout="0"
           @command="command"
         >
-          <div class="flex align-center icon-btn p-2">
-            <span class="user-initials mr-2">{{ initials }}</span>
-            <span
-              >{{ userName
-              }}<el-icon class="ml-2"><el-icon-arrow-down /></el-icon
-            ></span>
-          </div>
+          <el-button text size="large" style="line-height: 28px">
+            <el-icon size="20"><User /></el-icon>
+            <span>{{ userName }}</span>
+          </el-button>
           <template #dropdown>
             <ElDropdownMenu class="no-triangle">
-              <template v-for="item in DropdownList">
-                <ElDropdownItem
-                  v-if="!item.route"
-                  :key="item.name"
-                  :command="item.name"
-                  >{{ $t(item.label) }}</ElDropdownItem
-                >
-                <ElDropdownItem
-                  v-else
-                  :key="item.name"
-                  @click.native="$router.push(item.route)"
-                  >{{ $t(item.label) }}</ElDropdownItem
-                >
+              <template v-for="item in dropdownListComputed" :key="item.name">
+                <ElDropdownItem v-if="!item.route" :command="item.name">{{
+                  $t(item.label)
+                }}</ElDropdownItem>
+                <ElDropdownItem v-else @click="router.push(item.route)">{{
+                  $t(item.label)
+                }}</ElDropdownItem>
               </template>
             </ElDropdownMenu>
           </template>
         </ElDropdown>
       </div>
     </ElHeader>
-    <ElContainer style="width: 100%; flex: 1; overflow: hidden">
-      <ElAside
-        v-if="!isNotAside && !IS_IFRAME"
-        class="layout-aside"
-        width="auto"
-      >
-        <ElMenu
-          unique-opened
-          class="menu flex flex-column"
-          :default-active="activeMenu"
-          :collapse="isCollapse"
-          :collapse-transition="false"
-          @select="menuHandler"
+    <ElContainer class="layout-content position-relative">
+      <el-scrollbar class="layout-side-scrollbar">
+        <ElAside
+          v-if="!isNotAside && !IS_IFRAME"
+          class="layout-side"
+          width="220px"
         >
-          <template v-for="menu in menusGroup.top">
-            <ElSubMenu
-              v-if="menu.children && !menu.hidden"
-              :key="menu.label"
-              :index="menu.name"
-            >
-              <template #title>
-                <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
-                <span slot="title" class="ml-4 title">{{ menu.label }}</span>
-              </template>
-              <template v-for="cMenu in menu.children">
-                <ElMenuItem
-                  v-if="!cMenu.hidden"
-                  :key="cMenu.label"
-                  :index="cMenu.name"
-                  :class="{
-                    'is-locked': lockedFeature[cMenu.name],
-                  }"
-                >
-                  <div class="submenu-item">{{ cMenu.label }}</div>
-
-                  <VIcon v-if="lockedFeature[cMenu.name]" class="ml-2" size="24"
-                    >lock-circle</VIcon
-                  >
-                </ElMenuItem>
-              </template>
-            </ElSubMenu>
-            <ElMenuItem
-              v-else-if="!menu.hidden"
-              :key="menu.label"
-              :index="menu.name"
-            >
-              <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
-              <template #title>
-                <span class="ml-4 title">{{ menu.label }}</span>
-              </template>
-            </ElMenuItem>
-          </template>
-          <div class="flex-grow-1 border-bottom" />
-          <template v-for="menu in menusGroup.bottom">
-            <ElSubMenu
-              v-if="menu.children && !menu.hidden"
-              :key="menu.label"
-              :index="menu.name"
-            >
-              <template #title>
-                <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
-                <span class="ml-4 title">{{ menu.label }}</span>
-              </template>
-              <template v-for="cMenu in menu.children">
-                <ElMenuItem
-                  v-if="!cMenu.hidden"
-                  :index="cMenu.name"
-                  :class="{
-                    'is-locked': lockedFeature[cMenu.name],
-                  }"
-                >
-                  <div class="submenu-item">{{ cMenu.label }}</div>
-
-                  <VIcon v-if="lockedFeature[cMenu.name]" class="ml-2" size="24"
-                    >lock-circle</VIcon
-                  >
-                </ElMenuItem>
-              </template>
-            </ElSubMenu>
-            <ElMenuItem v-else-if="!menu.hidden" :index="menu.name">
-              <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
-              <template #title>
-                <span class="ml-4 title">{{ menu.label }}</span>
-              </template>
-            </ElMenuItem>
-          </template>
-        </ElMenu>
-        <div class="menu-footer" @click="isCollapse = !isCollapse">
-          <el-icon class="btn-collapse">
-            <el-icon-d-arrow-left />
-          </el-icon>
-        </div>
-      </ElAside>
-      <ElMain class="layout-main">
-        <div class="layout-main-body">
-          <PageHeader
-            v-if="
-              !['dashboard', 'clusterManagement', 'apiMonitor'].includes(
-                $route.name,
-              )
-            "
-            class="border-bottom"
-          />
-
-          <!--<div
-            class="flex-fill overflow-auto"
-            :class="[
-              {
-                'px-4': ![
-                  'dashboard',
-                  'clusterManagement',
-                  'apiMonitor',
-                  'migrateList',
-                  'dataflowList',
-                  'connectionsList',
-                  'dataServer',
-                  'users',
-                  'customNodeList',
-                  'dataConsole',
-                  'dataVerificationList',
-                  'VerifyDiffDetails',
-                  'sharedMiningList',
-                  'externalStorage',
-                  'about',
-                  'License'
-                ].includes($route.name)
-              },
-              {
-                'pb-4': ['dataServer'].includes($route.name),
-              },
-            ]"
+          <ElMenu
+            unique-opened
+            class="flex flex-column flex-1 gap-2 border-end-0"
+            :default-active="activeMenu"
+            :collapse="isCollapse"
+            :collapse-transition="false"
+            @select="menuHandler"
           >
-            <RouterView />
-          </div>-->
+            <template v-for="menu in menusGroup.top" :key="menu.name">
+              <ElSubMenu
+                v-if="menu.children && !menu.hidden"
+                :index="menu.name"
+              >
+                <template #title>
+                  <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
+                  <span class="ml-4 title">{{ menu.label }}</span>
+                </template>
+                <template v-for="cMenu in menu.children" :key="cMenu.name">
+                  <ElMenuItem
+                    v-if="!cMenu.hidden"
+                    :index="cMenu.name"
+                    :class="{
+                      'is-locked': lockedFeature[cMenu.name],
+                    }"
+                  >
+                    <div class="submenu-item">{{ cMenu.label }}</div>
 
-          <RouterView />
-        </div>
+                    <VIcon
+                      v-if="lockedFeature[cMenu.name]"
+                      class="ml-2"
+                      size="24"
+                      >lock-circle</VIcon
+                    >
+                  </ElMenuItem>
+                </template>
+              </ElSubMenu>
+              <ElMenuItem v-else-if="!menu.hidden" :index="menu.name">
+                <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
+                <template #title>
+                  <span class="ml-4 title">{{ menu.label }}</span>
+                </template>
+              </ElMenuItem>
+            </template>
+            <div class="flex-grow-1 border-bottom" />
+            <template v-for="menu in menusGroup.bottom" :key="menu.name">
+              <ElSubMenu
+                v-if="menu.children && !menu.hidden"
+                :index="menu.name"
+              >
+                <template #title>
+                  <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
+                  <span class="ml-4 title">{{ menu.label }}</span>
+                </template>
+                <template v-for="cMenu in menu.children" :key="cMenu.name">
+                  <ElMenuItem
+                    v-if="!cMenu.hidden"
+                    :index="cMenu.name"
+                    :class="{
+                      'is-locked': lockedFeature[cMenu.name],
+                    }"
+                  >
+                    <div class="submenu-item">{{ cMenu.label }}</div>
+
+                    <VIcon
+                      v-if="lockedFeature[cMenu.name]"
+                      class="ml-2"
+                      size="24"
+                      >lock-circle</VIcon
+                    >
+                  </ElMenuItem>
+                </template>
+              </ElSubMenu>
+              <ElMenuItem v-else-if="!menu.hidden" :index="menu.name">
+                <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
+                <template #title>
+                  <span class="ml-4 title">{{ menu.label }}</span>
+                </template>
+              </ElMenuItem>
+            </template>
+          </ElMenu>
+        </ElAside>
+      </el-scrollbar>
+      <ElMain class="layout-main">
+        <RouterView />
       </ElMain>
     </ElContainer>
     <CustomerService v-model:value="isShowCustomerService" />
-    <newDataFlow v-model:dialog-visible="dialogVisible" />
-  </ElContainer>
+    <NewDataFlow v-model:dialog-visible="dialogVisible" />
+  </el-container>
 </template>
 
-<style lang="scss">
-.btn-del-fav-menu {
-  display: none;
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translate(0, -50%);
-  width: 30px;
-  height: 30px;
-  line-height: 30px;
-  text-align: center;
-  cursor: pointer;
-  [class^='el-icon-'] {
-    margin: 0;
-    color: map.get($color, danger) !important;
-  }
-}
-.el-menu--inline .el-menu-item:hover .btn-del-fav-menu {
-  display: block;
-}
-.layout-container {
+<style lang="scss" scoped>
+.layout {
   height: 100%;
-  background: rgba(250, 250, 250, 1);
-  .layout-header {
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    background: var(--layout-header-bg, #212a3b);
-    min-width: 1000px;
-    .logo {
-      margin-left: 23px;
-      display: block;
-      width: 140px;
-      img {
-        display: block;
-        height: 100%;
-        width: 100%;
-        object-fit: contain;
-      }
-    }
-    .button-bar {
-      margin-right: 23px;
-      display: flex;
-      align-items: center;
-      .icon-btn {
-        color: rgba(255, 255, 255, 0.85);
-        cursor: pointer;
-        i {
-          display: inline-block;
-          line-height: 28px;
-          text-align: center;
-          height: 28px;
-          width: 28px;
-        }
-        &:hover {
-          background-color: rgba(239, 241, 244, 0.23);
-          border-radius: 6px;
-          // color: map.get($color, primary);
-        }
-      }
-      .divider {
-        height: 2em;
-      }
-      .user-initials {
-        display: inline-block;
-        width: 30px;
-        height: 30px;
-        background: #ffa158;
-        border-radius: 50%;
-        line-height: 28px;
-        text-align: center;
-        font-size: 14px;
-        color: map.get($fontColor, white);
-      }
-      .menu-user {
-        color: rgba(255, 255, 255, 0.85);
-        // &:hover {
-        //   color: map.get($color, primary);
-        // }
-      }
-    }
-  }
-  .layout-aside {
-    position: relative;
-    display: flex;
-    height: 100%;
-    overflow: hidden;
-    border: 1px solid #e1e3e9;
-    .el-menu--popup .submenu-item .btn-del {
-      display: none;
-    }
-    .menu {
-      width: 220px;
-      //flex: 1;
-      padding-bottom: 48px;
-      background: map.get($bgColor, disable);
 
-      overflow-y: auto;
-      user-select: none;
-      border-right: none;
-      .menu-icon {
-        font-size: 12px;
-      }
-      .el-menu-item .el-tooltip {
-        outline: none;
-      }
+  .layout-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -10;
 
-      &.el-menu--collapse {
-        width: 64px;
-        & > .el-menu-item span,
-        & > .el-submenu > .el-submenu__title span {
-          visibility: visible;
-          overflow: initial;
-        }
-        .el-submenu__title {
-          span.title {
-            display: none;
-          }
-        }
-      }
-      .el-menu-item,
-      .el-submenu__title {
-        display: flex;
-        align-items: center;
-        height: 50px;
-        line-height: 50px;
-        // color: map.get($fontColor, normal);
-        background: #f7f8fa;
-        .submenu-item {
-          // color: map.get($fontColor, light);
-          padding-left: 12px;
-        }
-        &.is-active,
-        &:hover {
-          // color: map.get($color, primary) !important;
-          background: rgba(44, 101, 255, 0.05);
-        }
-      }
-      .submenu-item {
-        font-weight: 400;
-      }
-      .is-active .el-submenu__title {
-        font-weight: 500;
-        background: map.get($bgColor, disable);
-      }
-      .el-menu {
-        background-color: initial;
-        .el-menu-item {
-          &.is-active {
-            background-color: rgba(44, 101, 255, 0.05);
-            .submenu-item {
-              font-weight: 500;
-              // color: map.get($color, primary) !important;
-            }
-          }
-        }
-      }
-    }
-    .menu-footer {
+    &-main {
       position: absolute;
-      bottom: 0;
-      right: 0;
-      width: 100%;
-      height: 48px;
-      line-height: 48px;
-      border: 1px solid map.get($borderColor, light);
-      box-sizing: border-box;
-      text-align: right;
-      overflow: hidden;
-      background: map.get($bgColor, white);
-      cursor: pointer;
-      &:hover {
-        background: map.get($bgColor, main);
-      }
-      .btn-collapse {
-        padding: 10px;
-        color: map.get($fontColor, light);
-        transition: all 0.4s;
-        &.is-collapse {
-          padding: 10px 24px;
-          transform: rotate(-180deg);
-        }
-      }
+      inset: 0;
+      background-image: linear-gradient(
+        to right bottom,
+        rgb(248, 250, 252),
+        rgb(241, 245, 249),
+        rgb(239, 246, 255)
+      );
+    }
+
+    &-submain {
+      position: absolute;
+      inset: 0;
+      opacity: 0.03;
+    }
+
+    &-layer {
+      position: absolute;
+      width: 24rem;
+      height: 24rem;
+      border-radius: 9999px;
+      filter: blur(64px);
+    }
+
+    &-tr {
+      top: -6rem;
+      right: -6rem;
+      background-image: linear-gradient(
+        to right bottom,
+        rgba(219, 234, 254, 0.3),
+        rgba(199, 210, 254, 0.3)
+      );
+    }
+
+    &-bl {
+      left: -8rem;
+      bottom: -8rem;
+      background-image: linear-gradient(
+        to right top,
+        rgba(219, 234, 254, 0.2),
+        rgba(243, 232, 255, 0.2)
+      );
     }
   }
-  .item-badge {
-    .el-badge__content {
-      height: 16px;
-      line-height: 16px;
-      border: 0;
+
+  .layout-content {
+    flex-grow: 1;
+    min-height: 0;
+  }
+
+  .layout-side-scrollbar {
+    flex-shrink: 0;
+    :deep(.el-scrollbar__view) {
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
     }
   }
+
   .layout-main {
-    position: relative;
-    height: 100%;
-    padding: 0;
-    background: map.get($color, white);
-    box-sizing: border-box;
-    overflow-y: hidden;
-    overflow-x: auto;
+    --el-main-padding: 0;
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+    min-width: 0;
+    overflow: unset; // 避免box-shadow被截断
   }
-  .layout-main-body {
+
+  .layout-side {
+    --el-menu-bg-color: transparent;
+    --el-menu-item-height: 40px;
+    --el-menu-sub-item-height: 40px;
+    --el-menu-hover-bg-color: var(--fill-hover);
+
     display: flex;
     flex-direction: column;
-    height: 100%;
-    background: var(--layout-bg, #eff1f4);
+    flex: 1;
+    padding: 0 16px 82px;
 
-    > div {
-      background: #fff;
+    :deep(.el-menu) {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
-    .page-header:has(.breadcrumb) {
-      border-bottom: 0 !important;
-
-      & + div {
-        background: transparent;
-        > .section-wrap {
-          border-radius: 0.5rem;
-        }
-      }
+    :deep(.el-menu-item.is-active) {
+      background-color: var(--primary-hover-light);
     }
 
-    .breadcrumb {
-      background: var(--layout-bg, #eff1f4);
+    :deep(.el-menu-item),
+    :deep(.el-sub-menu__title) {
+      border-radius: 8px;
     }
-  }
-  .expire-msg {
-    margin-right: 25px;
-    font-size: $fontBaseTitle;
-    font-family:
-      PingFangSC-Medium,
-      PingFang SC;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.85);
-    line-height: 17px;
+
+    :deep(.el-sub-menu__title + .el-menu) {
+      margin-top: 8px;
+      padding-inline-start: 10px;
+    }
   }
 }
 </style>

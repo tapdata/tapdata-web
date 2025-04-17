@@ -162,17 +162,6 @@
   color: #d44d4d;
 }
 
-.section-wrap-box {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding: 20px;
-  border-radius: 8px;
-  background-color: map.get($bgColor, white);
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
 .message-button-cancel {
   color: map.get($fontColor, normal);
   border-color: #f2f3f5;

@@ -1603,7 +1603,14 @@ export default {
         <div class="connection-from-title p-4">
           <div class="flex align-center gap-2">
             <slot name="title-prefix">
-              <el-button v-if="hasBackListener" text @click="$emit('back')">
+              <el-button
+                text
+                @click="
+                  $router.push({
+                    name: 'connectionsList',
+                  })
+                "
+              >
                 <template #icon>
                   <VIcon>left</VIcon>
                 </template>

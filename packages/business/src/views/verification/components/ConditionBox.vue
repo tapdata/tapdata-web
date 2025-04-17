@@ -5,16 +5,15 @@ import { GitBook, VCodeEditor } from '@tap/component'
 import resize from '@tap/component/src/directives/resize'
 
 import SwitchNumber from '@tap/component/src/SwitchNumber.vue'
-import { AsyncSelect, HighlightCode, SchemaToForm } from '@tap/form'
+import { AsyncSelect, SchemaToForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import { uuid } from '@tap/shared'
 import { cloneDeep, debounce, isEmpty, isString, merge, uniqBy } from 'lodash'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-import { $emit, $off, $on, $once } from '../../../../utils/gogocodeTransfer'
+import { $emit } from '../../../../utils/gogocodeTransfer'
 
 import { CONNECTION_STATUS_MAP } from '../../../shared'
 import { inspectMethod as inspectMethodMap } from '../const'
-import MultiSelection from '../MultiSelection'
 import CollateMap from './CollateMap.vue'
 import { DATA_NODE_TYPES, META_INSTANCE_FIELDS, TABLE_PARAMS } from './const'
 import DocsDrawer from './DocsDrawer.vue'
@@ -29,11 +28,9 @@ export default {
     DynamicScrollerItem,
     VCodeEditor,
     GitBook,
-    MultiSelection,
     FieldDialog,
     SchemaToForm,
     ElIconArrowRight,
-    HighlightCode,
     FieldSelectWrap,
     CollateMap,
     SwitchNumber,
@@ -1420,7 +1417,7 @@ export default {
       return list
     },
 
-    async handleChangeConnection(val, item, opt = {}) {
+    async handleChangeConnection(opt, item) {
       item.currentLabel = ''
       item.table = '' // 重选连接，清空表
       item.sortColumn = '' // 重选连接，清空表
@@ -1434,11 +1431,10 @@ export default {
           opt.attrs?.connectionId,
         )
         item.capabilities = capabilities
-
-        this.$set(this.capabilitiesMap, opt.attrs?.connectionId, {
+        this.capabilitiesMap[opt.attrs?.connectionId] = {
           capabilities,
           tags,
-        })
+        }
       }
 
       if (!this.taskId) {
@@ -2194,13 +2190,7 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
                   item-value="id"
                   filterable
                   class="item-select"
-                  @change="
-                    handleChangeConnection(
-                      arguments[0],
-                      item.source,
-                      arguments[1],
-                    )
-                  "
+                  @option-select="handleChangeConnection($event, item.source)"
                 />
                 <span class="item-icon fs-6">
                   <el-icon><el-icon-arrow-right /></el-icon>
@@ -2213,13 +2203,7 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
                   item-value="id"
                   filterable
                   class="item-select"
-                  @change="
-                    handleChangeConnection(
-                      arguments[0],
-                      item.target,
-                      arguments[1],
-                    )
-                  "
+                  @option-select="handleChangeConnection($event, item.target)"
                 />
               </div>
               <div :key="`table${item.id}`" class="setting-item mt-4">
@@ -2262,7 +2246,7 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
                   filterable
                   class="item-select"
                   @change="
-                    handleChangeTable(arguments[0], item, index, 'target')
+                    handleChangeTable($event, item, index, 'target')
                   "
                 />
               </div>
@@ -2313,7 +2297,8 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
                       />
 
                       <ElButton
-                        text type="primary"
+                        text
+                        type="primary"
                         @click="schemaScope.openApiDrawer('inspect-collate')"
                       >
                         <VIcon class="mr-1">question-circle</VIcon>
@@ -2338,7 +2323,8 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
                       />
 
                       <ElButton
-                        text type="primary"
+                        text
+                        type="primary"
                         @click="schemaScope.openApiDrawer('inspect-collate')"
                       >
                         <VIcon class="mr-1">question-circle</VIcon>

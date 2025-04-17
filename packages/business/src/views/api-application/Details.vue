@@ -79,6 +79,7 @@ export default {
       :columns="listColumns"
       :params="listParams"
       class="flex-fill"
+      mode="blank"
       @drawer-visible="handleDataServerListVisible"
     >
       <template #title>

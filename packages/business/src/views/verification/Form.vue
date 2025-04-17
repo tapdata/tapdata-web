@@ -1,19 +1,17 @@
 <script>
 import { inspectApi, taskApi } from '@tap/api'
-
 import { AsyncSelect } from '@tap/form'
 import i18n from '@tap/i18n'
 import Time from '@tap/shared/src/time'
-
 import { cloneDeep } from 'lodash'
+
+import PageContainer from '../../components/PageContainer.vue'
 import ConditionBox from './components/ConditionBox'
 import { TABLE_PARAMS } from './components/const'
 import { inspectMethod as inspectMethodMap } from './const'
 
-const FILTER_DATABASE_TYPES = ['Doris']
-
 export default {
-  components: { AsyncSelect, ConditionBox },
+  components: { AsyncSelect, ConditionBox, PageContainer },
   data() {
     const self = this
     const requiredValidator = (msg, check) => {
@@ -484,24 +482,14 @@ export default {
 </script>
 
 <template>
-  <section
-    v-loading="loading"
-    class="verify-form-wrap section-wrap flex-fill bg-white"
-  >
-    <div class="section-wrap-box position-relative p-6">
-      <div class="verify-form-title">
-        {{
-          $route.params.id
-            ? $t('packages_business_verification_edit')
-            : $t('packages_business_verification_newVerify')
-        }}
-      </div>
+  <PageContainer mode="auto">
+    <section v-loading="loading">
       <div>
         <ElForm
           ref="baseForm"
           class="grey"
           label-position="left"
-          label-width="160px"
+          label-width="auto"
           :model="form"
           :rules="rules"
           :validate-on-rule-change="false"
@@ -570,7 +558,11 @@ export default {
             </div>
           </ElFormItem>
 
-          <ElCollapse class="collapse-fill db-list-container" accordion>
+          <ElCollapse
+            class="collapse-fill db-list-container"
+            accordion
+            style="--collapse-padding-primary: 0"
+          >
             <ElCollapseItem name="1">
               <template #title>
                 <span>{{
@@ -934,8 +926,8 @@ export default {
           >{{ $t('public_button_save') }}
         </ElButton>
       </div>
-    </div>
-  </section>
+    </section>
+  </PageContainer>
 </template>
 
 <style lang="scss" scoped>

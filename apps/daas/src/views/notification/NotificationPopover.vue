@@ -226,16 +226,18 @@ export default {
     @hide="handleHide"
   >
     <template #reference>
-      <div class="icon-btn flex align-center p-2" @click="toCenter()">
-        <el-badge
-          class="item-badge"
-          :model-value="unRead"
-          :max="99"
-          :hidden="!unRead"
-        >
-          <VIcon size="18">xiaoxi-2</VIcon>
-        </el-badge>
-      </div>
+      <el-badge
+        class="item-badge"
+        :model-value="unRead"
+        :max="99"
+        :hidden="!unRead"
+      >
+        <el-button text size="large" @click="toCenter()">
+          <template #icon>
+            <VIcon :size="20">xiaoxi-2</VIcon>
+          </template>
+        </el-button>
+      </el-badge>
     </template>
     <el-tabs
       v-model="activeTab"

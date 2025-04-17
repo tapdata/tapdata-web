@@ -853,7 +853,7 @@ export default {
       map[this.$route.name]?.(this.dataflow.id)
     },
   },
-  emits: ['load-data', 'verifyDetails', 'changeTimeSelect', 'changeFrequency', 'verifyDetails'],
+  emits: ['load-data', 'verifyDetails', 'changeTimeSelect', 'changeFrequency'],
 }
 </script>
 

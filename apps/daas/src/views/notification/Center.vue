@@ -1,52 +1,12 @@
-<template>
-  <section class="notification-wrap">
-    <div class="notification-wrap-box">
-      <div class="left-panel pt-5">
-        <ul class="menu">
-          <li :class="{ active: activePanel === 'system' }" @click="selectPanel('system')">
-            <VIcon size="14">notice-system-notice</VIcon>
-            <span class="content ml-2">{{ $t('notify_system_notice') }}</span>
-            <span class="unread" v-show="unRead > 0">{{ unRead }}</span>
-          </li>
-          <li :class="{ active: activePanel === 'user' }" @click="selectPanel('user')">
-            <VIcon size="14">notice-user</VIcon>
-            <span class="content ml-2">{{ $t('daas_notification_center_yonghucaozuo') }}</span>
-          </li>
-          <li :class="{ active: activePanel === 'alarmNotice' }" @click="selectPanel('alarmNotice')">
-            <VIcon size="14">warning</VIcon>
-            <span class="content ml-2">{{ $t('daas_notification_alarmnotification_gaojingtongzhi') }}</span>
-          </li>
-          <li
-            :class="{ active: activePanel === 'alarm' }"
-            @click="lockedFeature.alarmSetting ? openLocked() : selectPanel('alarm')"
-            class="flex align-center pr-4"
-          >
-            <VIcon size="14">notice-system</VIcon>
-            <span class="content ml-2">{{ $t('daas_notification_center_xitonggaojing') }}</span>
-            <VIcon v-if="lockedFeature.alarmSetting" size="24">lock-circle</VIcon>
-          </li>
-        </ul>
-      </div>
-      <div class="main-panel">
-        <SystemNotification v-if="activePanel === 'system'"></SystemNotification>
-        <UserNotification v-if="activePanel === 'user'"></UserNotification>
-        <SystemAlarm v-if="activePanel === 'alarm'"></SystemAlarm>
-        <AlarmNotification v-if="activePanel === 'alarmNotice'"></AlarmNotification>
-      </div>
-    </div>
-  </section>
-</template>
-
 <script>
+import { AlarmNotification } from '@tap/business'
+import { VIcon } from '@tap/component'
+import { mapState } from 'vuex'
+import SystemAlarm from './SystemAlarm'
 import SystemNotification from './SystemNotification'
 import UserNotification from './UserNotification'
-import SystemAlarm from './SystemAlarm'
-import { VIcon } from '@tap/component'
-import { AlarmNotification } from '@tap/business'
-import { mapState } from 'vuex'
 
 export default {
-  inject: ['lockedFeature', 'openLocked'],
   components: {
     SystemNotification,
     UserNotification,
@@ -54,6 +14,7 @@ export default {
     AlarmNotification,
     VIcon,
   },
+  inject: ['lockedFeature', 'openLocked'],
   data() {
     return {
       activePanel: 'system',
@@ -113,6 +74,64 @@ export default {
   },
 }
 </script>
+
+<template>
+  <section class="notification-wrap">
+    <div class="notification-wrap-box">
+      <div class="left-panel pt-5">
+        <ul class="menu">
+          <li
+            :class="{ active: activePanel === 'system' }"
+            @click="selectPanel('system')"
+          >
+            <VIcon size="14">notice-system-notice</VIcon>
+            <span class="content ml-2">{{ $t('notify_system_notice') }}</span>
+            <span v-show="unRead > 0" class="unread">{{ unRead }}</span>
+          </li>
+          <li
+            :class="{ active: activePanel === 'user' }"
+            @click="selectPanel('user')"
+          >
+            <VIcon size="14">notice-user</VIcon>
+            <span class="content ml-2">{{
+              $t('daas_notification_center_yonghucaozuo')
+            }}</span>
+          </li>
+          <li
+            :class="{ active: activePanel === 'alarmNotice' }"
+            @click="selectPanel('alarmNotice')"
+          >
+            <VIcon size="14">warning</VIcon>
+            <span class="content ml-2">{{
+              $t('daas_notification_alarmnotification_gaojingtongzhi')
+            }}</span>
+          </li>
+          <li
+            :class="{ active: activePanel === 'alarm' }"
+            class="flex align-center pr-4"
+            @click="
+              lockedFeature.alarmSetting ? openLocked() : selectPanel('alarm')
+            "
+          >
+            <VIcon size="14">notice-system</VIcon>
+            <span class="content ml-2">{{
+              $t('daas_notification_center_xitonggaojing')
+            }}</span>
+            <VIcon v-if="lockedFeature.alarmSetting" size="24"
+              >lock-circle</VIcon
+            >
+          </li>
+        </ul>
+      </div>
+      <div class="main-panel">
+        <SystemNotification v-if="activePanel === 'system'" />
+        <UserNotification v-if="activePanel === 'user'" />
+        <SystemAlarm v-if="activePanel === 'alarm'" />
+        <AlarmNotification v-if="activePanel === 'alarmNotice'" />
+      </div>
+    </div>
+  </section>
+</template>
 
 <style lang="scss" scoped>
 $unreadColor: #ee5353;

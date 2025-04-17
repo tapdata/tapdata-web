@@ -2,13 +2,14 @@
 import { ArrowRight } from '@element-plus/icons-vue'
 import { clusterApi, taskApi, workerApi } from '@tap/api'
 import { STATUS_MAP } from '@tap/business'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { statusMap as InspectStatusMap } from '@tap/business/src/views/verification/const'
 import { Chart } from '@tap/component'
 import { toThousandsUnit } from '@/utils/util'
 import { STATUS_MAP as DASHBOARD_STATUS_MAP } from './const'
 
 export default {
-  components: { Chart, ArrowRight },
+  components: { Chart, ArrowRight, PageContainer },
   inject: ['lockedFeature'],
   data() {
     const colorMap = {
@@ -572,401 +573,409 @@ export default {
 </script>
 
 <template>
-  <section class="dashboard-wrap isCardBox h-100">
-    <div class="dashboard-main">
-      <el-row :gutter="40" class="section-header py-6">
+  <PageContainer hide-header mode="blank">
+    <section class="dashboard-wrap isCardBox h-100">
+      <div class="dashboard-main">
+        <!-- <el-row :gutter="40" class="section-header py-6">
         <el-col :span="18" class="isCard-title">{{
           $t($route.meta.title)
         }}</el-col>
-      </el-row>
-      <div v-loading="loading">
-        <template v-if="noPermission">
-          <el-row
-            v-readonlybtn="'v2_data_pipeline'"
-            :gutter="20"
-            class="dashboard-row mb-5"
-          >
-            <el-col
-              v-for="item in taskList"
-              :key="item.name"
-              :span="24 / taskList.length"
-              class="dashboard-col"
+      </el-row> -->
+        <div v-loading="loading">
+          <template v-if="noPermission">
+            <el-row
+              v-readonlybtn="'v2_data_pipeline'"
+              class="dashboard-row mb-5 gap-6"
             >
-              <div class="dashboard-col-box">
-                <div class="fs-7 font-color-normal flex align-center gap-2">
-                  <VIcon size="20">{{ item.icon }}</VIcon>
-                  <span class="fs-6 fw-sub font-color-normal">{{
-                    item.desc
-                  }}</span>
-                  <!--{{ item.title }}-->
-                </div>
-                <!--<div class="dashboard-label fs-5 pt-4 text-center fw-sub font-color-normal">
+              <el-col
+                v-for="item in taskList"
+                :key="item.name"
+                :span="24 / taskList.length"
+                class="dashboard-col"
+              >
+                <div class="dashboard-col-box">
+                  <div class="fs-7 font-color-normal flex align-center gap-2">
+                    <VIcon size="20">{{ item.icon }}</VIcon>
+                    <span class="fs-6 fw-sub font-color-normal">{{
+                      item.desc
+                    }}</span>
+                    <!--{{ item.title }}-->
+                  </div>
+                  <!--<div class="dashboard-label fs-5 pt-4 text-center fw-sub font-color-normal">
                   {{ item.desc }}
                 </div>-->
-                <div
-                  class="mt-1"
-                  :class="[
-                    'dashboard-num',
-                    'text-center',
-                    'din-font',
-                    {
-                      'cursor-pointer':
-                        item.key === 'copy_total' || item.key === 'sync_total',
-                    },
-                  ]"
-                  @click="handleTask(item)"
-                >
-                  {{ item.value }}
-                </div>
-              </div>
-            </el-col>
-          </el-row>
-          <!-- 复制任务概览 -->
-          <el-row
-            v-readonlybtn="'v2_data_pipeline'"
-            :gutter="20"
-            class="dashboard-row mb-5 align-items-stretch"
-            type="flex"
-          >
-            <el-col :span="12" class="dashboard-col col">
-              <div class="charts-list flex flex-row">
-                <div class="charts-list-text">
-                  <div class="fs-7 font-color-normal">
-                    {{ $t('dashboard_copy_overview_title') }}
-                  </div>
-
-                  <ul class="job-list">
-                    <li
-                      v-for="task in migrationTaskList"
-                      :key="task.label"
-                      class="flex align-center cursor-pointer"
-                      @click="handleStatus(task.label)"
-                    >
-                      <i
-                        class="dots mr-3"
-                        :style="`background-color: ${colorMap[task.label]};`"
-                      />
-                      <span
-                        :title="task.name"
-                        class="fw-normal font-color-light flex-1 ellipsis"
-                        >{{ task.name }}</span
-                      ><span class="num font-color-dark">{{ task.value }}</span>
-                    </li>
-                  </ul>
-                </div>
-                <div
-                  v-if="copyPieData.every((item) => item.value === 0)"
-                  class="flex justify-content-center align-items-center w-100"
-                >
                   <div
-                    class="flex justify-content-center align-items-center font-color-slight"
-                    v-html="
-                      $t('dashboard_no_statistics', [
-                        `<span class='color-primary' style='padding: 0 5px;'>${$t(
-                          'dashboard_copy_total',
-                        )}</span>`,
-                      ])
-                    "
-                  />
-                </div>
-                <div v-else class="chart">
-                  <Chart
-                    type="pie"
-                    :extend="getPieOption(copyPieData)"
-                    class="type-chart"
-                  />
-                </div>
-              </div>
-            </el-col>
-            <el-col :span="12" class="dashboard-col col">
-              <div class="charts-list flex flex-row">
-                <div class="charts-list-text">
-                  <div class="fs-7 font-color-normal">
-                    {{ $t('dashboard_sync_overview_title') }}
-                  </div>
-                  <ul class="job-list">
-                    <li
-                      v-for="task in syncTaskList"
-                      :key="task.label"
-                      class="flex align-center cursor-pointer"
-                      @click="handleSyncStatus(task.label)"
-                    >
-                      <i
-                        class="dots mr-3"
-                        :style="`background-color: ${colorMap[task.label]};`"
-                      />
-                      <span
-                        :title="task.name"
-                        class="fw-normal font-color-light flex-1 ellipsis"
-                        >{{ task.name }}</span
-                      ><span class="num font-color-dark">{{ task.value }}</span>
-                    </li>
-                  </ul>
-                </div>
-                <div
-                  v-if="syncPieData.every((item) => item.value === 0)"
-                  class="flex justify-content-center align-items-center w-100"
-                >
-                  <div
-                    class="flex justify-content-center align-items-center font-color-slight"
-                    v-html="
-                      $t('dashboard_no_statistics', [
-                        `<span class='color-primary' style='padding: 0 5px;'>${$t(
-                          'dashboard_sync_total',
-                        )}</span>`,
-                      ])
-                    "
-                  />
-                </div>
-                <div v-else class="chart">
-                  <Chart
-                    type="pie"
-                    :extend="getPieOption(syncPieData)"
-                    class="type-chart"
-                  />
-                </div>
-              </div>
-            </el-col>
-          </el-row>
-          <!-- 数据校验 -->
-          <el-row
-            v-if="syncValidFalg"
-            :gutter="20"
-            class="dashboard-row mb-5 align-items-stretch"
-            type="flex"
-          >
-            <el-col :span="12" class="dashboard-col col">
-              <div class="charts-list flex flex-row">
-                <div class="charts-list-text">
-                  <div class="fs-7 font-color-normal">
-                    {{ $t('dashboard_valid_title') }}
-                  </div>
-                  <ul class="job-list">
-                    <li
-                      v-for="task in inspectTaskList"
-                      :key="task.key"
-                      class="flex align-center"
-                    >
-                      <i
-                        class="dots mr-3"
-                        :style="`background-color: ${task.itemStyle.color};`"
-                      />
-                      <span
-                        :title="task.name"
-                        class="fw-normal font-color-light flex-1 ellipsis"
-                        >{{ task.name }}</span
-                      ><span class="num font-color-dark">{{ task.value }}</span>
-                    </li>
-                  </ul>
-                </div>
-                <div
-                  v-if="inspectTaskList.every((item) => item.value === 0)"
-                  class="flex justify-content-center align-items-center w-100"
-                >
-                  <div
-                    class="flex justify-content-center align-items-center font-color-slight"
-                    v-html="
-                      $t('dashboard_no_statistics', [
-                        `<span class='color-primary' style='padding: 0 5px;'>${$t(
-                          'dashboard_copy_total',
-                        )}</span>`,
-                      ])
-                    "
-                  />
-                </div>
-                <div v-else class="chart">
-                  <Chart
-                    type="pie"
-                    :extend="getPieOption(inspectTaskList)"
-                    class="type-chart"
-                  />
-                </div>
-              </div>
-            </el-col>
-            <el-col
-              v-readonlybtn="'Data_SYNC_menu'"
-              :span="12"
-              class="dashboard-col col --dense"
-            >
-              <div class="charts-list flex flex-row">
-                <div class="charts-list-text">
-                  <div class="fs-7 font-color-normal">
-                    {{ $t('dashboard_transfer_overview') }}
-                  </div>
-                  <ul class="job-list">
-                    <li
-                      v-for="item in transBarData"
-                      :key="item.key"
-                      class="flex align-center"
-                    >
-                      <i
-                        class="dots mr-3"
-                        :style="`background-color: ${item.color};`"
-                      />
-                      <span
-                        :title="item.name"
-                        class="fw-normal font-color-light flex-1 ellipsis"
-                        >{{ item.name }}</span
-                      ><span class="num font-color-dark">{{
-                        toThousandsUnit(item.value)
-                      }}</span>
-                    </li>
-                  </ul>
-                </div>
-                <div
-                  v-if="transBarData.every((item) => item.value === 0)"
-                  class="flex justify-content-center align-items-center w-100"
-                >
-                  <div
-                    class="flex justify-content-center align-items-center font-color-slight"
-                    v-html="
-                      $t('dashboard_no_statistics', [
-                        `<span class='color-primary' style='padding: 0 5px;'>${$t(
-                          'dashboard_transfer_overview',
-                        )}</span>`,
-                      ])
-                    "
-                  />
-                </div>
-                <div v-else class="chart">
-                  <Chart
-                    type="pie"
-                    :extend="getPieOption(transBarData)"
-                    class="type-chart"
-                  />
-                </div>
-              </div>
-            </el-col>
-          </el-row>
-          <!-- 服务器进程 -->
-          <div
-            v-readonlybtn="'v2_cluster-management_menu'"
-            class="dashboard-row dashboard-col col"
-          >
-            <div class="dashboard-col">
-              <div class="dashboard-col-box">
-                <div class="fs-7 font-color-normal">
-                  {{ $t('dashboard_server_title') }}
-                </div>
-                <el-row v-if="serverTable.length" :gutter="20">
-                  <el-col
-                    v-for="item in serverTable"
-                    :key="item.id"
-                    :span="12"
-                    class="server-list pt-3"
+                    class="mt-1"
+                    :class="[
+                      'dashboard-num',
+                      'text-center',
+                      'din-font',
+                      {
+                        'cursor-pointer':
+                          item.key === 'copy_total' ||
+                          item.key === 'sync_total',
+                      },
+                    ]"
+                    @click="handleTask(item)"
                   >
-                    <div class="server-list-box rounded-lg py-2">
-                      <img
-                        src="../../assets/images/serve.svg"
-                        class="rounded-4"
-                      />
-                      <!-- <img src="../../assets/icons/svg/serve.svg" alt="" /> -->
-                      <div class="server-main ml-5">
-                        <div class="flex align-center gap-2">
-                          <div class="title">
-                            {{ item.agentName || item.systemInfo.hostname }}
-                          </div>
-                          <el-tag type="info" class="rounded-md">{{
-                            item.custIP ? item.custIP : item.systemInfo.ip
-                          }}</el-tag>
-                        </div>
-
-                        <ul class="flex flex-wrap pt-1 gap-3 align-center">
-                          <li>
-                            <label class="font-color-slight pr-2">{{
-                              $t('dashboard_management')
-                            }}</label>
-                            <span
-                              :style="`color: ${colorServeMap[item.management.status]};`"
-                              >{{ getStatus(item.management.status) }}</span
-                            >
-                          </li>
-                          <li>
-                            <label class="font-color-slight pr-2">{{
-                              $t('dashboard_api_service')
-                            }}</label>
-                            <span
-                              :style="`color: ${colorServeMap[item.apiServer.status]};`"
-                              >{{ getStatus(item.apiServer.status) }}</span
-                            >
-                          </li>
-
-                          <li>
-                            <label class="font-color-slight pr-2">{{
-                              $t('dashboard_task_transfer')
-                            }}</label>
-                            <span
-                              :style="`color: ${colorServeMap[item.engine.status]};`"
-                              >{{ getStatus(item.engine.status) }}</span
-                            >
-                          </li>
-
-                          <el-tag
-                            v-if="
-                              agentRunningTask[item.processId] &&
-                              agentRunningTask[item.processId].migrate
-                            "
-                            type="success"
-                            class="rounded-md cursor-pointer"
-                            @click="handleGoTask(item.processId, 'migrate')"
-                          >
-                            {{ $t('dashboard_copy_total') }}:
-                            {{ agentRunningTask[item.processId].migrate || 0 }}
-                            <el-icon><ArrowRight /></el-icon>
-                          </el-tag>
-
-                          <el-tag
-                            v-if="
-                              agentRunningTask[item.processId] &&
-                              agentRunningTask[item.processId].sync
-                            "
-                            type="success"
-                            class="rounded-md cursor-pointer"
-                            @click="handleGoTask(item.processId, 'sync')"
-                          >
-                            {{ $t('dashboard_sync_total') }}:
-                            {{ agentRunningTask[item.processId].sync || 0 }}
-                            <el-icon><ArrowRight /></el-icon>
-                          </el-tag>
-                        </ul>
-                      </div>
+                    {{ item.value }}
+                  </div>
+                </div>
+              </el-col>
+            </el-row>
+            <!-- 复制任务概览 -->
+            <el-row
+              v-readonlybtn="'v2_data_pipeline'"
+              class="dashboard-row mb-5 align-items-stretch gap-6"
+              type="flex"
+            >
+              <el-col :span="12" class="dashboard-col col">
+                <div class="charts-list flex flex-row">
+                  <div class="charts-list-text">
+                    <div class="fs-7 font-color-normal">
+                      {{ $t('dashboard_copy_overview_title') }}
                     </div>
-                  </el-col>
-                </el-row>
-                <div
-                  v-else
-                  class="flex justify-content-center align-items-center h-100 py-4"
-                >
+
+                    <ul class="job-list">
+                      <li
+                        v-for="task in migrationTaskList"
+                        :key="task.label"
+                        class="flex align-center cursor-pointer"
+                        @click="handleStatus(task.label)"
+                      >
+                        <i
+                          class="dots mr-3"
+                          :style="`background-color: ${colorMap[task.label]};`"
+                        />
+                        <span
+                          :title="task.name"
+                          class="fw-normal font-color-light flex-1 ellipsis"
+                          >{{ task.name }}</span
+                        ><span class="num font-color-dark">{{
+                          task.value
+                        }}</span>
+                      </li>
+                    </ul>
+                  </div>
                   <div
-                    class="flex justify-content-center align-items-center font-color-slight"
-                    v-html="
-                      $t('dashboard_no_statistics', [
-                        `<span class='color-primary' style='padding: 0 5px;'>${$t(
-                          'dashboard_server_title',
-                        )}</span>`,
-                      ])
-                    "
-                  />
+                    v-if="copyPieData.every((item) => item.value === 0)"
+                    class="flex justify-content-center align-items-center w-100"
+                  >
+                    <div
+                      class="flex justify-content-center align-items-center font-color-slight"
+                      v-html="
+                        $t('dashboard_no_statistics', [
+                          `<span class='color-primary' style='padding: 0 5px;'>${$t(
+                            'dashboard_copy_total',
+                          )}</span>`,
+                        ])
+                      "
+                    />
+                  </div>
+                  <div v-else class="chart">
+                    <Chart
+                      type="pie"
+                      :extend="getPieOption(copyPieData)"
+                      class="type-chart"
+                    />
+                  </div>
+                </div>
+              </el-col>
+              <el-col :span="12" class="dashboard-col col">
+                <div class="charts-list flex flex-row">
+                  <div class="charts-list-text">
+                    <div class="fs-7 font-color-normal">
+                      {{ $t('dashboard_sync_overview_title') }}
+                    </div>
+                    <ul class="job-list">
+                      <li
+                        v-for="task in syncTaskList"
+                        :key="task.label"
+                        class="flex align-center cursor-pointer"
+                        @click="handleSyncStatus(task.label)"
+                      >
+                        <i
+                          class="dots mr-3"
+                          :style="`background-color: ${colorMap[task.label]};`"
+                        />
+                        <span
+                          :title="task.name"
+                          class="fw-normal font-color-light flex-1 ellipsis"
+                          >{{ task.name }}</span
+                        ><span class="num font-color-dark">{{
+                          task.value
+                        }}</span>
+                      </li>
+                    </ul>
+                  </div>
+                  <div
+                    v-if="syncPieData.every((item) => item.value === 0)"
+                    class="flex justify-content-center align-items-center w-100"
+                  >
+                    <div
+                      class="flex justify-content-center align-items-center font-color-slight"
+                      v-html="
+                        $t('dashboard_no_statistics', [
+                          `<span class='color-primary' style='padding: 0 5px;'>${$t(
+                            'dashboard_sync_total',
+                          )}</span>`,
+                        ])
+                      "
+                    />
+                  </div>
+                  <div v-else class="chart">
+                    <Chart
+                      type="pie"
+                      :extend="getPieOption(syncPieData)"
+                      class="type-chart"
+                    />
+                  </div>
+                </div>
+              </el-col>
+            </el-row>
+            <!-- 数据校验 -->
+            <el-row
+              v-if="syncValidFalg"
+              class="dashboard-row mb-5 align-items-stretch gap-4"
+              type="flex"
+            >
+              <el-col :span="12" class="dashboard-col col">
+                <div class="charts-list flex flex-row">
+                  <div class="charts-list-text">
+                    <div class="fs-7 font-color-normal">
+                      {{ $t('dashboard_valid_title') }}
+                    </div>
+                    <ul class="job-list">
+                      <li
+                        v-for="task in inspectTaskList"
+                        :key="task.key"
+                        class="flex align-center"
+                      >
+                        <i
+                          class="dots mr-3"
+                          :style="`background-color: ${task.itemStyle.color};`"
+                        />
+                        <span
+                          :title="task.name"
+                          class="fw-normal font-color-light flex-1 ellipsis"
+                          >{{ task.name }}</span
+                        ><span class="num font-color-dark">{{
+                          task.value
+                        }}</span>
+                      </li>
+                    </ul>
+                  </div>
+                  <div
+                    v-if="inspectTaskList.every((item) => item.value === 0)"
+                    class="flex justify-content-center align-items-center w-100"
+                  >
+                    <div
+                      class="flex justify-content-center align-items-center font-color-slight"
+                      v-html="
+                        $t('dashboard_no_statistics', [
+                          `<span class='color-primary' style='padding: 0 5px;'>${$t(
+                            'dashboard_copy_total',
+                          )}</span>`,
+                        ])
+                      "
+                    />
+                  </div>
+                  <div v-else class="chart">
+                    <Chart
+                      type="pie"
+                      :extend="getPieOption(inspectTaskList)"
+                      class="type-chart"
+                    />
+                  </div>
+                </div>
+              </el-col>
+              <el-col
+                v-readonlybtn="'Data_SYNC_menu'"
+                :span="12"
+                class="dashboard-col col --dense"
+              >
+                <div class="charts-list flex flex-row">
+                  <div class="charts-list-text">
+                    <div class="fs-7 font-color-normal">
+                      {{ $t('dashboard_transfer_overview') }}
+                    </div>
+                    <ul class="job-list">
+                      <li
+                        v-for="item in transBarData"
+                        :key="item.key"
+                        class="flex align-center"
+                      >
+                        <i
+                          class="dots mr-3"
+                          :style="`background-color: ${item.color};`"
+                        />
+                        <span
+                          :title="item.name"
+                          class="fw-normal font-color-light flex-1 ellipsis"
+                          >{{ item.name }}</span
+                        ><span class="num font-color-dark">{{
+                          toThousandsUnit(item.value)
+                        }}</span>
+                      </li>
+                    </ul>
+                  </div>
+                  <div
+                    v-if="transBarData.every((item) => item.value === 0)"
+                    class="flex justify-content-center align-items-center w-100"
+                  >
+                    <div
+                      class="flex justify-content-center align-items-center font-color-slight"
+                      v-html="
+                        $t('dashboard_no_statistics', [
+                          `<span class='color-primary' style='padding: 0 5px;'>${$t(
+                            'dashboard_transfer_overview',
+                          )}</span>`,
+                        ])
+                      "
+                    />
+                  </div>
+                  <div v-else class="chart">
+                    <Chart
+                      type="pie"
+                      :extend="getPieOption(transBarData)"
+                      class="type-chart"
+                    />
+                  </div>
+                </div>
+              </el-col>
+            </el-row>
+            <!-- 服务器进程 -->
+            <div
+              v-readonlybtn="'v2_cluster-management_menu'"
+              class="dashboard-row dashboard-col col shadow-sm"
+            >
+              <div class="dashboard-col">
+                <div class="dashboard-col-box">
+                  <div class="fs-7 font-color-normal">
+                    {{ $t('dashboard_server_title') }}
+                  </div>
+                  <el-row v-if="serverTable.length" :gutter="24">
+                    <el-col
+                      v-for="item in serverTable"
+                      :key="item.id"
+                      :span="12"
+                      class="server-list pt-3"
+                    >
+                      <div class="server-list-box rounded-lg py-2">
+                        <img
+                          src="../../assets/images/serve.svg"
+                          class="rounded-4"
+                        />
+                        <!-- <img src="../../assets/icons/svg/serve.svg" alt="" /> -->
+                        <div class="server-main ml-5">
+                          <div class="flex align-center gap-2">
+                            <div class="title">
+                              {{ item.agentName || item.systemInfo.hostname }}
+                            </div>
+                            <el-tag type="info" class="rounded-md">{{
+                              item.custIP ? item.custIP : item.systemInfo.ip
+                            }}</el-tag>
+                          </div>
+
+                          <ul class="flex flex-wrap pt-1 gap-3 align-center">
+                            <li>
+                              <label class="font-color-slight pr-2">{{
+                                $t('dashboard_management')
+                              }}</label>
+                              <span
+                                :style="`color: ${colorServeMap[item.management.status]};`"
+                                >{{ getStatus(item.management.status) }}</span
+                              >
+                            </li>
+                            <li>
+                              <label class="font-color-slight pr-2">{{
+                                $t('dashboard_api_service')
+                              }}</label>
+                              <span
+                                :style="`color: ${colorServeMap[item.apiServer.status]};`"
+                                >{{ getStatus(item.apiServer.status) }}</span
+                              >
+                            </li>
+
+                            <li>
+                              <label class="font-color-slight pr-2">{{
+                                $t('dashboard_task_transfer')
+                              }}</label>
+                              <span
+                                :style="`color: ${colorServeMap[item.engine.status]};`"
+                                >{{ getStatus(item.engine.status) }}</span
+                              >
+                            </li>
+
+                            <el-tag
+                              v-if="
+                                agentRunningTask[item.processId] &&
+                                agentRunningTask[item.processId].migrate
+                              "
+                              type="success"
+                              class="rounded-md cursor-pointer"
+                              @click="handleGoTask(item.processId, 'migrate')"
+                            >
+                              {{ $t('dashboard_copy_total') }}:
+                              {{
+                                agentRunningTask[item.processId].migrate || 0
+                              }}
+                              <el-icon><ArrowRight /></el-icon>
+                            </el-tag>
+
+                            <el-tag
+                              v-if="
+                                agentRunningTask[item.processId] &&
+                                agentRunningTask[item.processId].sync
+                              "
+                              type="success"
+                              class="rounded-md cursor-pointer"
+                              @click="handleGoTask(item.processId, 'sync')"
+                            >
+                              {{ $t('dashboard_sync_total') }}:
+                              {{ agentRunningTask[item.processId].sync || 0 }}
+                              <el-icon><ArrowRight /></el-icon>
+                            </el-tag>
+                          </ul>
+                        </div>
+                      </div>
+                    </el-col>
+                  </el-row>
+                  <div
+                    v-else
+                    class="flex justify-content-center align-items-center h-100 py-4"
+                  >
+                    <div
+                      class="flex justify-content-center align-items-center font-color-slight"
+                      v-html="
+                        $t('dashboard_no_statistics', [
+                          `<span class='color-primary' style='padding: 0 5px;'>${$t(
+                            'dashboard_server_title',
+                          )}</span>`,
+                        ])
+                      "
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </template>
-        <template v-else>
-          <div class="dashboard-wrap-box">
-            <img src="../../assets/images/undraw_secure_files_re_6vdh.svg" />
-            <div class="txt pt-4">{{ $t('dashboard_no_data_here') }}</div>
-          </div>
-        </template>
+          </template>
+          <template v-else>
+            <div class="dashboard-wrap-box">
+              <img src="../../assets/images/undraw_secure_files_re_6vdh.svg" />
+              <div class="txt pt-4">{{ $t('dashboard_no_data_here') }}</div>
+            </div>
+          </template>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </PageContainer>
 </template>
 
 <style lang="scss" scoped>
 .dashboard-wrap {
   overflow-y: auto;
-  background-color: var(--layout-bg, #eff1f4);
+  // background-color: var(--layout-bg, #eff1f4);
   .dashboard-row {
     .dashboard-col {
       flex: 1;

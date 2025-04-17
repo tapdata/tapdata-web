@@ -44,7 +44,7 @@ export default {
   page_title_api_client: '客戶端',
   page_title_api_servers: '服務器',
   page_title_api_audit: '服務審計',
-  page_title_api_audit_details: '詳情',
+  page_title_api_audit_details: '審計詳情',
   page_title_api_monitor: '服務監控',
   page_title_system: '系統管理',
   page_title_data_metadata: '元數據管理',

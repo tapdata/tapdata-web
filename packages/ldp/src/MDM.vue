@@ -479,7 +479,7 @@ export default {
         item.parent_id = data.id
         item.isObject = true
         item.connectionId = item.sourceConId
-        this.$refs.tree.append(item, node)
+        this.$refs.tree?.append(item, node)
       })
 
       // 删除不存在的模型节点

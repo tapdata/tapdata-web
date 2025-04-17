@@ -394,7 +394,6 @@ Stack Trace: ${this.errorDialog.stack ? `\n${this.errorDialog.stack}` : ''}`,
     class="connection-test-dialog"
     :model-value="visible"
     width="780px"
-    :show-close="false"
     append-to-body
     :before-close="handleClose"
     :close-on-click-modal="false"
@@ -414,7 +413,11 @@ Stack Trace: ${this.errorDialog.stack ? `\n${this.errorDialog.stack}` : ''}`,
             <span class="fs-6 fw-sub">{{
               wsErrorMsg || $t('packages_business_dataForm_test_error')
             }}</span>
-            <el-button class="px-1 py-0.5" text type="primary" @click="switchShowStack"
+            <el-button
+              class="px-1 py-0.5"
+              text
+              type="primary"
+              @click="switchShowStack"
               >{{
                 showStack
                   ? $t('public_button_fold')
@@ -467,7 +470,8 @@ Stack Trace: ${this.errorDialog.stack ? `\n${this.errorDialog.stack}` : ''}`,
           class="position-absolute end-0 top-0 px-2 pt-1 error-stack-actions"
         >
           <el-button
-            text type="primary"
+            text
+            type="primary"
             class="px-1 py-0.5 font-color-dark"
             @click="handleCopyStack(wsErrorStack)"
           >
@@ -594,7 +598,7 @@ Stack Trace: ${this.errorDialog.stack ? `\n${this.errorDialog.stack}` : ''}`,
         </div>
       </template>
 
-      <div class="mt-n4">
+      <div>
         <template v-if="errorDialog.message">
           <div class="fw-sub mb-3 font-color-dark">
             {{
@@ -665,14 +669,16 @@ Stack Trace: ${this.errorDialog.stack ? `\n${this.errorDialog.stack}` : ''}`,
           >
             <div class="position-absolute end-0 top-0 px-2 pt-1">
               <el-button
-                text type="primary"
+                text
+                type="primary"
                 class="px-1 py-0.5 font-color-dark"
                 @click="handleCopyStack(errorDialog.stack)"
               >
                 <VIcon class="mr-1">copy</VIcon>
                 <span class="">{{ $t('public_button_copy') }}</span> </el-button
               ><el-button
-                text type="primary"
+                text
+                type="primary"
                 class="px-1 py-0.5 font-color-dark ml-2"
                 @click="expandErrorMessage = !expandErrorMessage"
               >

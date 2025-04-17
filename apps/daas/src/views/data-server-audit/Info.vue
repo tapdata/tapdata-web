@@ -1,11 +1,13 @@
 <script>
 import { apiCallsApi } from '@tap/api'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
 
 import { calcUnit } from '@tap/shared'
 import dayjs from 'dayjs'
 import { formatMs } from '@/utils/util'
 
 export default {
+  components: { PageContainer },
   data() {
     return {
       auditData: null,
@@ -84,78 +86,83 @@ export default {
 </script>
 
 <template>
-  <section v-loading="loading" class="apiaudit-info-wrap">
-    <div class="details-box bg-white p-6 rounded-2">
-      <div class="title fs-7 fw-sub font-color-dark">
-        {{ $t('apiaudit_log_info') }}
+  <PageContainer mode="auto">
+    <section v-loading="loading" class="apiaudit-info-wrap">
+      <div class="details-box bg-white rounded-2">
+        <div class="title fs-7 fw-sub font-color-dark">
+          {{ $t('apiaudit_log_info') }}
+        </div>
+        <ElRow v-if="auditData" class="pt-4">
+          <ElCol class="font-color-normal pb-4" :span="12">
+            <span class="font-text"> API ID:</span>
+            <span class="fw-sub">{{
+              auditData.id ? auditData.id : '-'
+            }}</span></ElCol
+          >
+          <ElCol class="font-color-normal pb-4" :span="12"
+            ><span class="font-text">{{ $t('apiaudit_name') }}:</span>
+            <span class="fw-sub">{{ auditData.name || '-' }}</span></ElCol
+          >
+          <ElCol class="font-color-normal pb-4" :span="12"
+            ><span class="font-text">{{ $t('apiaudit_link') }}:</span>
+            <span class="fw-sub">{{ auditData.apiPath || '-' }}</span></ElCol
+          >
+          <ElCol class="font-color-normal pb-4" :span="12"
+            ><span class="font-text">{{ $t('apiaudit_interview_time') }}:</span>
+            <span class="fw-sub"> {{ auditData.createAt }}</span></ElCol
+          >
+          <ElCol class="font-color-normal pb-4" :span="12"
+            ><span class="font-text">{{ $t('apiaudit_ip') }}:</span>
+            <span class="fw-sub break-all"> {{ auditData.userIp }}</span></ElCol
+          >
+        </ElRow>
       </div>
-      <ElRow v-if="auditData" class="pt-4">
-        <ElCol class="font-color-normal pb-4" :span="12">
-          <span class="font-text"> API ID:</span>
-          <span class="fw-sub">{{
-            auditData.id ? auditData.id : '-'
-          }}</span></ElCol
-        >
-        <ElCol class="font-color-normal pb-4" :span="12"
-          ><span class="font-text">{{ $t('apiaudit_name') }}:</span>
-          <span class="fw-sub">{{ auditData.name || '-' }}</span></ElCol
-        >
-        <ElCol class="font-color-normal pb-4" :span="12"
-          ><span class="font-text">{{ $t('apiaudit_link') }}:</span>
-          <span class="fw-sub">{{ auditData.apiPath || '-' }}</span></ElCol
-        >
-        <ElCol class="font-color-normal pb-4" :span="12"
-          ><span class="font-text">{{ $t('apiaudit_interview_time') }}:</span>
-          <span class="fw-sub"> {{ auditData.createAt }}</span></ElCol
-        >
-        <ElCol class="font-color-normal pb-4" :span="12"
-          ><span class="font-text">{{ $t('apiaudit_ip') }}:</span>
-          <span class="fw-sub break-all"> {{ auditData.userIp }}</span></ElCol
-        >
-      </ElRow>
-    </div>
-    <div class="details-box bg-white py-6 mt-6 rounded-2">
-      <ul class="flex flex-row justify-content-center">
-        <li
-          v-for="item in list"
-          :key="item.key"
-          class="details-box-item flex flex-sm-row justify-content-between text-center align-items-center"
-        >
-          <div class="w-100 text-center">
-            <div class="fs-8 font-color-normal">{{ item.label }}</div>
-            <div
-              v-if="
-                item.value > 0 &&
-                ['latency', 'averResponseTime'].includes(item.key)
-              "
-              class="link-primary pt-4 din-font details-box-item-num"
-            >
-              {{ formatDuring(item.value) }}
+      <div class="details-box bg-white py-6 mt-6 rounded-2">
+        <ul class="flex flex-row justify-content-center">
+          <li
+            v-for="item in list"
+            :key="item.key"
+            class="details-box-item flex flex-sm-row justify-content-between text-center align-items-center"
+          >
+            <div class="w-100 text-center">
+              <div class="fs-8 font-color-normal">{{ item.label }}</div>
+              <div
+                v-if="
+                  item.value > 0 &&
+                  ['latency', 'averResponseTime'].includes(item.key)
+                "
+                class="link-primary pt-4 din-font details-box-item-num"
+              >
+                {{ formatDuring(item.value) }}
+              </div>
+              <div
+                v-else-if="item.value > 0 && ['speed'].includes(item.key)"
+                class="link-primary pt-4 din-font details-box-item-num"
+              >
+                {{ item.value ? `${calcUnit(item.value, 'b')}/S` : '0 M/S' }}
+              </div>
+              <div
+                v-else
+                class="link-primary pt-4 din-font details-box-item-num"
+              >
+                {{ item.value }}
+              </div>
             </div>
-            <div
-              v-else-if="item.value > 0 && ['speed'].includes(item.key)"
-              class="link-primary pt-4 din-font details-box-item-num"
-            >
-              {{ item.value ? `${calcUnit(item.value, 'b')}/S` : '0 M/S' }}
-            </div>
-            <div v-else class="link-primary pt-4 din-font details-box-item-num">
-              {{ item.value }}
-            </div>
-          </div>
-          <div v-if="item.key !== 'averResponseTime'" class="line" />
-        </li>
-      </ul>
-    </div>
+            <div v-if="item.key !== 'averResponseTime'" class="line" />
+          </li>
+        </ul>
+      </div>
 
-    <div class="details-box flex-1 bg-white p-6 mt-6 rounded-2">
-      <div class="title fs-7 fw-sub font-color-dark">
-        {{ $t('apiaudit_parameter') }}
+      <div class="details-box flex-1 bg-white mt-6 rounded-2">
+        <div class="title fs-7 fw-sub font-color-dark">
+          {{ $t('apiaudit_parameter') }}
+        </div>
+        <div v-if="auditData" class="pt-4 editor-box">
+          <pre class="editor-pre">{{ auditData.reqParams }}</pre>
+        </div>
       </div>
-      <div v-if="auditData" class="pt-4 editor-box">
-        <pre class="editor-pre">{{ auditData.reqParams }}</pre>
-      </div>
-    </div>
-  </section>
+    </section>
+  </PageContainer>
 </template>
 
 <style lang="scss" scoped>

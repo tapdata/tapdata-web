@@ -1,15 +1,15 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
-import i18n from '@/i18n'
+import { setPageTitle } from '@tap/shared'
+import Cookie from '@tap/shared/src/cookie'
 import { ElMessage as Message } from 'element-plus'
 
-import routes from './routes'
+import { createRouter, createWebHashHistory } from 'vue-router'
 
-import Cookie from '@tap/shared/src/cookie'
-import { setPageTitle } from '@tap/shared'
+import i18n from '@/i18n'
+import routes from './routes'
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes: routes,
+  routes,
 })
 
 router.beforeEach((to, from, next) => {
@@ -21,7 +21,7 @@ router.beforeEach((to, from, next) => {
     return
   }
   if (to.meta.title && window.getSettingByKey('SHOW_PAGE_TITLE')) {
-    setPageTitle(i18n.t(to.meta.title))
+    setPageTitle(i18n.global.t(to.meta.title))
   }
   const token = Cookie.get('access_token')
   if (token) {
@@ -46,17 +46,23 @@ router.beforeEach((to, from, next) => {
       next('/')
     } else {
       Message.error({
-        message: i18n.t('app_signIn_permission_denied'),
+        message: i18n.global.t('app_signIn_permission_denied'),
       })
       next(false)
     }
+  } else if (
+    [
+      'login',
+      'registry',
+      'passwordReset',
+      'verificationEmail',
+      'registyResult',
+    ].includes(to.name as string)
+  ) {
+    next()
   } else {
-    if (['login', 'registry', 'passwordReset', 'verificationEmail', 'registyResult'].includes(to.name as string)) {
-      next()
-    } else {
-      sessionStorage.setItem('lastLocationHref', location.href)
-      next('/login')
-    }
+    sessionStorage.setItem('lastLocationHref', location.href)
+    next('/login')
   }
 })
 

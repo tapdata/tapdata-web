@@ -216,29 +216,6 @@ const routes = [
           title: 'tap_contact_us',
         },
       },
-
-      {
-        path: '/verify',
-        name: 'verify',
-        redirect: 'verify/',
-        meta: {
-          title: 'page_title_data_verify',
-          doNotJump: true,
-        },
-        component: Parent,
-        children: [
-          {
-            path: ':id/details',
-            name: 'VerifyDetails',
-            component: VerifyDetails,
-            meta: {
-              title: 'page_title_data_difference_details',
-              code: 'Data_verify',
-              isNotAside: true,
-            },
-          },
-        ],
-      },
       {
         path: '/data-server',
         name: 'dataServerList',
@@ -611,6 +588,28 @@ const routes = [
           title: i18n.global.t('dfs_change_record'),
           code: '',
           activeMenu: '/user/order',
+        },
+      },
+    ],
+  },
+  // 复制任务校验详情
+  {
+    path: '/verify',
+    name: 'verify',
+    meta: {
+      title: 'page_title_data_verify',
+      doNotJump: true,
+    },
+    component: Layout,
+    children: [
+      {
+        path: ':id/details',
+        name: 'VerifyDetails',
+        component: VerifyDetails,
+        meta: {
+          title: 'page_title_data_difference_details',
+          code: 'Data_verify',
+          isNotAside: true,
         },
       },
     ],

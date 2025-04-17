@@ -22,7 +22,7 @@ export default {
       this.loading = true
       axios
         .get(
-          `static/docs/${this.path || 'data-inspect'}/${this.$i18n.locale || 'en'}.md`.toLowerCase(),
+          `static/docs/${this.path || 'data-inspect'}/${this.$i18n.locale?.toLowerCase() || 'en'}.md`.toLowerCase(),
           {
             responseType: 'blob',
             headers: {

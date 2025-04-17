@@ -1,7 +1,7 @@
-import { ref, defineComponent, onBeforeUnmount, watch, nextTick } from 'vue'
-import { useForm } from '@tap/form'
-import MigrateMetaPane from '../../migration/MigrateMetaPane'
 import { observe } from '@formily/reactive'
+import { useForm } from '@tap/form'
+import { defineComponent, nextTick, onBeforeUnmount, ref, watch } from 'vue'
+import MigrateMetaPane from '../../migration/MigrateMetaPane'
 
 export const SchemaPanel = defineComponent({
   props: ['formTab'],
@@ -14,7 +14,7 @@ export const SchemaPanel = defineComponent({
     const loadData = () => {
       if (props.formTab?.activeKey === 'tab2') {
         nextTick(() => {
-          refs.pane?.loadData()
+          paneRef.value?.loadData()
         })
       }
     }
@@ -24,8 +24,8 @@ export const SchemaPanel = defineComponent({
         loadData()
       },
       {
-        immediate: true
-      }
+        immediate: true,
+      },
     )
 
     onBeforeUnmount(() => {
@@ -34,7 +34,9 @@ export const SchemaPanel = defineComponent({
     })
 
     return () => {
-      return <MigrateMetaPane ref={paneRef} form={formRef.value}></MigrateMetaPane>
+      return (
+        <MigrateMetaPane ref={paneRef} form={formRef.value}></MigrateMetaPane>
+      )
     }
   },
 })

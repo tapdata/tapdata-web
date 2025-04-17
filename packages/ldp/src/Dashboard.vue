@@ -1,113 +1,28 @@
-<template>
-  <div class="swim-lane flex flex-column h-100 position-relative overflow-hidden">
-    <div class="page-header-title bg-white box-card flex align-center position-relative">
-      <span>{{ $t('page_title_data_hub') }}</span>
-      <ElTooltip
-        placement="top"
-        v-if="currentView === 'swimlane'"
-        :content="$t('packages_business_switch_directory_view')"
-      >
-        <IconButton class="ml-3" @click="toggleView('catalog')" md>list-view</IconButton>
-      </ElTooltip>
-      <ElTooltip placement="top" v-else :content="$t('packages_business_switch_data_console_view')">
-        <IconButton class="ml-3" @click="toggleView('swimlane')" md>swimlane</IconButton>
-      </ElTooltip>
-      <span
-        v-if="showParentLineage"
-        class="parent-lineage-quit color-linfo cursor-pointer rounded-2 px-4 py-2 position-absolute top-50 start-50 translate-middle"
-        @click="handleQuit"
-        >{{ $t('packages_ldp_src_dashboard_anEsctui') }}</span
-      >
-      <IconButton v-if="isDaas || $route.path === '/data-console'" class="ml-auto" @click="handleSettings" lg
-        >cog-o</IconButton
-      >
-      <!--升级存储-->
-      <!--<ElButton v-else type="primary" plain class="ml-auto">{{ $t('packages_ldp_upgrade_storage') }}</ElButton>-->
-    </div>
-    <div class="list flex flex-fill overflow-hidden bg-white">
-      <div v-if="currentView === 'catalog'" class="px-5 pb-5 w-100 border-top">
-        <Catalogue @create-single-task="hanldeCreateSingleTask"></Catalogue>
-      </div>
-      <template v-else>
-        <component
-          v-for="item in laneOptions"
-          :key="item.type"
-          :is="item.component"
-          :ref="item.type"
-          :dragState="dragState"
-          :settings="settings"
-          :directory="directoryMap[item.type]"
-          :fdmConnection="fdmConnection"
-          :fdmNotExist="fdmNotExist"
-          :mdmNotExist="mdmNotExist"
-          :mdmConnection="mdmConnection"
-          :event-driver="eventDriver"
-          :loadingDirectory="loadingDirectory"
-          :fdmAndMdmId="fdmAndMdmId"
-          :mapCatalog="mapCatalog"
-          :showParentLineage="showParentLineage"
-          @create-connection="handleAdd"
-          @node-drag-end="handleDragEnd"
-          @show-settings="handleSettings"
-          @load-directory="loadDirectory"
-          @preview="handlePreview"
-          @find-parent="handleFindParent"
-          @on-scroll="onScroll"
-          @handle-show-upgrade="handleShowUpgradeDialog"
-        ></component>
-      </template>
-    </div>
-    <SceneDialog
-      v-model:visible="showSceneDialog"
-      v-model:selector-type="selectorType"
-      @success="handleSuccess"
-      @saveAndMore="handleSuccess"
-    ></SceneDialog>
-    <Settings
-      v-model:mode="mode"
-      v-model:visible="settingsVisible"
-      :fdmConnection="fdmConnection"
-      :mdmConnection="mdmConnection"
-      @success="handleSettingsSuccess"
-      @init="handleSettingsInit"
-    ></Settings>
-    <TablePreview
-      ref="tablePreview"
-      @create-single-task="hanldeCreateSingleTask"
-      @handle-show-upgrade="handleShowUpgradeDialog"
-      @create-api="handleCreateAPI"
-    />
-    <ConnectionPreview ref="connectionView" />
-
-    <UpgradeFee
-      v-model:visible="upgradeFeeVisible"
-      :tooltip="upgradeFeeVisibleTips || $t('packages_business_task_list_nindekeyunxing')"
-      :go-page="upgradeFeeGoPage"
-    ></UpgradeFee>
-
-    <UpgradeCharges
-      v-model:visible="upgradeChargesVisible"
-      :tooltip="upgradeChargesVisibleTips || $t('packages_business_task_list_nindekeyunxing')"
-      :go-page="upgradeFeeGoPage"
-    ></UpgradeCharges>
-  </div>
-</template>
-
 <script>
+import {
+  connectionsApi,
+  ldpApi,
+  lineageApi,
+  metadataDefinitionsApi,
+} from '@tap/api'
+import {
+  EventEmitter,
+  SceneDialog,
+  UpgradeCharges,
+  UpgradeFee,
+} from '@tap/business'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { IconButton } from '@tap/component'
-import { SceneDialog, EventEmitter, UpgradeFee, UpgradeCharges } from '@tap/business'
-import { connectionsApi, lineageApi, metadataDefinitionsApi, ldpApi } from '@tap/api'
-
-import SourceItem from './Source'
-import TargetItem from './Target'
+import { jsPlumb } from '@tap/dag'
+import Catalogue from './components/Catalogue'
+import ConnectionPreview from './ConnectionPreview'
 import FDMItem from './FDM'
 import MDMItem from './MDM'
 import Settings from './Settings'
+import SourceItem from './Source'
 import TablePreview from './TablePreview'
-import ConnectionPreview from './ConnectionPreview'
-import Catalogue from './components/Catalogue'
 
-import { jsPlumb } from '@tap/dag'
+import TargetItem from './Target'
 
 const TYPE2NAME = {
   target: 'TARGET&SERVICE',
@@ -129,6 +44,7 @@ export default {
     SceneDialog,
     UpgradeFee,
     UpgradeCharges,
+    PageContainer,
   },
 
   data() {
@@ -200,21 +116,26 @@ export default {
           level: 'base',
         },
       ]
-      return this.mode === 'service' ? result : result.filter((t) => t.level === 'base')
+      return this.mode === 'service'
+        ? result
+        : result.filter((t) => t.level === 'base')
     },
 
     fdmAndMdmId() {
-      return [this.settings?.fdmStorageConnectionId, this.settings?.mdmStorageConnectionId]
+      return [
+        this.settings?.fdmStorageConnectionId,
+        this.settings?.mdmStorageConnectionId,
+      ]
     },
   },
 
   watch: {
-    async 'settings.mdmStorageConnectionId'(v) {
+    'settings.mdmStorageConnectionId': async function (v) {
       this.mdmConnection = await connectionsApi.getNoSchema(v)
       this.mdmNotExist = !this.mdmConnection
     },
 
-    async 'settings.fdmStorageConnectionId'(v) {
+    'settings.fdmStorageConnectionId': async function (v) {
       this.fdmConnection = await connectionsApi.getNoSchema(v)
       this.fdmNotExist = !this.fdmConnection
     },
@@ -286,7 +207,7 @@ export default {
     },
 
     loadDirectory() {
-      let filter = {
+      const filter = {
         where: {
           item_type: { $nin: ['database', 'dataflow', 'api'] },
         },
@@ -308,8 +229,8 @@ export default {
           filter: JSON.stringify(filter),
         })
         .then((data) => {
-          let items = data?.items || []
-          let treeData = this.formatCatalog(items)
+          const items = data?.items || []
+          const treeData = this.formatCatalog(items)
           treeData?.forEach((item) => {
             this.directoryMap[item.item_type[0]] = item
           })
@@ -340,7 +261,7 @@ export default {
         const nodes = []
         const setChildren = (nodes) => {
           return nodes.map((it) => {
-            let children = map[it.id]
+            const children = map[it.id]
             if (children) {
               it.children = setChildren(children)
             }
@@ -351,7 +272,7 @@ export default {
         items.forEach((it) => {
           this.mapCatalog(it)
           if (it.parent_id) {
-            let children = map[it.parent_id] || []
+            const children = map[it.parent_id] || []
             children.push(it)
             map[it.parent_id] = children
           } else {
@@ -411,61 +332,65 @@ export default {
     },
 
     handleFindParent(parentNode, tableInfo = {}, ldpType = 'mdm') {
-      lineageApi.findByTable(tableInfo.connectionId, tableInfo.name).then((data) => {
-        const { edges, nodes } = data.dag || {}
-        this.nodes = nodes
-        const otherLdpType = ldpType === 'mdm' ? 'fdm' : 'mdm'
-        let edgsLinks = edges.map((t) => {
-          let sourceNode = this.nodes.find((el) => el.id === t.source)
-          let targetNode = this.nodes.find((el) => el.id === t.target)
-          sourceNode.dom = null
-          targetNode.dom = null
-          sourceNode.ldpType =
-            sourceNode.type === 'apiserverLineage'
-              ? 'target'
-              : this.settings.fdmStorageConnectionId === sourceNode.connectionId
-                ? otherLdpType
-                : 'source'
-          targetNode.ldpType =
-            targetNode.type === 'apiserverLineage'
-              ? 'target'
-              : this.settings.fdmStorageConnectionId === targetNode.connectionId
-                ? otherLdpType
-                : 'source'
-          // 记录事件触发的dom和ldpType
-          if (sourceNode.table === tableInfo.name) {
-            sourceNode.ldpType = ldpType
-            sourceNode.dom = parentNode
-          } else if (targetNode.table === tableInfo.name) {
-            targetNode.ldpType = ldpType
-            targetNode.dom = parentNode
-          }
-          return Object.assign(t, {
-            sourceNode,
-            targetNode,
+      lineageApi
+        .findByTable(tableInfo.connectionId, tableInfo.name)
+        .then((data) => {
+          const { edges, nodes } = data.dag || {}
+          this.nodes = nodes
+          const otherLdpType = ldpType === 'mdm' ? 'fdm' : 'mdm'
+          const edgsLinks = edges.map((t) => {
+            const sourceNode = this.nodes.find((el) => el.id === t.source)
+            const targetNode = this.nodes.find((el) => el.id === t.target)
+            sourceNode.dom = null
+            targetNode.dom = null
+            sourceNode.ldpType =
+              sourceNode.type === 'apiserverLineage'
+                ? 'target'
+                : this.settings.fdmStorageConnectionId ===
+                    sourceNode.connectionId
+                  ? otherLdpType
+                  : 'source'
+            targetNode.ldpType =
+              targetNode.type === 'apiserverLineage'
+                ? 'target'
+                : this.settings.fdmStorageConnectionId ===
+                    targetNode.connectionId
+                  ? otherLdpType
+                  : 'source'
+            // 记录事件触发的dom和ldpType
+            if (sourceNode.table === tableInfo.name) {
+              sourceNode.ldpType = ldpType
+              sourceNode.dom = parentNode
+            } else if (targetNode.table === tableInfo.name) {
+              targetNode.ldpType = ldpType
+              targetNode.dom = parentNode
+            }
+            return Object.assign(t, {
+              sourceNode,
+              targetNode,
+            })
           })
-        })
-        this.edgsLinks = edgsLinks
+          this.edgsLinks = edgsLinks
 
-        this.showParentLineage = true
-        this.handleConnection()
-      })
+          this.showParentLineage = true
+          this.handleConnection()
+        })
     },
 
     async handleConnection() {
       if (!this.showParentLineage) return
-      let connectionLines = []
+      const connectionLines = []
 
       // 获取dom的方法
       const map = {
         source: this.$refs.source[0].handleFindTreeDom,
         target: this.$refs.target[0].handleFindTaskDom,
-        mdm: function () {},
+        mdm() {},
         fdm: this.$refs.fdm[0].handleFindTreeDom,
       }
 
       // 需要过滤的数据
-      let keywordOptions = {
+      const keywordOptions = {
         source: [],
         target: [],
         fdm: [],
@@ -484,11 +409,21 @@ export default {
             })
           }
         } else {
-          const { connectionId, connectionName, pdkHash, table, metadata = {} } = el || {}
+          const {
+            connectionId,
+            connectionName,
+            pdkHash,
+            table,
+            metadata = {},
+          } = el || {}
           // ldpType为source，且是连线目标节点的ldpType也为source，则过滤不展示
           const flag =
             el.ldpType === 'source' &&
-            this.edgsLinks.some((t) => t.sourceNode?.id === el.id && t.targetNode?.ldpType === 'source')
+            this.edgsLinks.some(
+              (t) =>
+                t.sourceNode?.id === el.id &&
+                t.targetNode?.ldpType === 'source',
+            )
           if (!flag) {
             keywordOptions[el.ldpType]?.push({
               connectionId,
@@ -604,13 +539,12 @@ export default {
       !this.isDaas &&
         this.$axios
           .get(
-            'api/tcm/agent?filter=' +
-              encodeURIComponent(
-                JSON.stringify({
-                  size: 100,
-                  page: 1,
-                }),
-              ),
+            `api/tcm/agent?filter=${encodeURIComponent(
+              JSON.stringify({
+                size: 100,
+                page: 1,
+              }),
+            )}`,
           )
           .then(async (data) => {
             const { items = [] } = data
@@ -620,7 +554,12 @@ export default {
               return
             }
 
-            items.length <= 1 && items.some((t) => t.orderInfo?.chargeProvider === 'FreeTier' || !t.orderInfo?.amount)
+            items.length <= 1 &&
+            items.some(
+              (t) =>
+                t.orderInfo?.chargeProvider === 'FreeTier' ||
+                !t.orderInfo?.amount,
+            )
               ? this.handleShowUpgradeFee(err.message)
               : this.handleShowUpgradeCharges(err.message)
           })
@@ -632,12 +571,12 @@ export default {
 
     onScroll() {
       if (this.showParentLineage) {
-        for (let el of this.otherDomSet) {
+        for (const el of this.otherDomSet) {
           this.jsPlumbIns.revalidate(el)
         }
 
         // 后面可对api节点特殊处理
-        for (let el of this.targetDomSet) {
+        for (const el of this.targetDomSet) {
           this.jsPlumbIns.revalidate(el)
         }
       }
@@ -645,6 +584,125 @@ export default {
   },
 }
 </script>
+
+<template>
+  <PageContainer header-class="position-relative">
+    <template #left-actions>
+      <ElTooltip
+        v-if="currentView === 'swimlane'"
+        placement="top"
+        :content="$t('packages_business_switch_directory_view')"
+      >
+        <IconButton class="ml-2" md @click="toggleView('catalog')"
+          >list-view</IconButton
+        >
+      </ElTooltip>
+      <ElTooltip
+        v-else
+        placement="top"
+        :content="$t('packages_business_switch_data_console_view')"
+      >
+        <IconButton class="ml-2" md @click="toggleView('swimlane')"
+          >swimlane</IconButton
+        >
+      </ElTooltip>
+    </template>
+
+    <template #actions>
+      <span
+        v-if="showParentLineage"
+        class="parent-lineage-quit color-linfo cursor-pointer rounded-2 px-4 py-2 position-absolute top-50 start-50 translate-middle"
+        @click="handleQuit"
+        >{{ $t('packages_ldp_src_dashboard_anEsctui') }}</span
+      >
+      <IconButton
+        v-if="isDaas || $route.path === '/data-console'"
+        class="ml-auto"
+        lg
+        @click="handleSettings"
+        >cog-o</IconButton
+      >
+    </template>
+    <div
+      class="swim-lane flex flex-column h-100 position-relative overflow-hidden"
+    >
+      <div
+        class="list flex flex-fill overflow-hidden bg-white border rounded-xl"
+      >
+        <div v-if="currentView === 'catalog'" class="px-5 pb-5 w-100">
+          <Catalogue @create-single-task="hanldeCreateSingleTask" />
+        </div>
+        <template v-else>
+          <component
+            :is="item.component"
+            v-for="item in laneOptions"
+            :key="item.type"
+            :ref="item.type"
+            :drag-state="dragState"
+            :settings="settings"
+            :directory="directoryMap[item.type]"
+            :fdm-connection="fdmConnection"
+            :fdm-not-exist="fdmNotExist"
+            :mdm-not-exist="mdmNotExist"
+            :mdm-connection="mdmConnection"
+            :event-driver="eventDriver"
+            :loading-directory="loadingDirectory"
+            :fdm-and-mdm-id="fdmAndMdmId"
+            :map-catalog="mapCatalog"
+            :show-parent-lineage="showParentLineage"
+            @create-connection="handleAdd"
+            @node-drag-end="handleDragEnd"
+            @show-settings="handleSettings"
+            @load-directory="loadDirectory"
+            @preview="handlePreview"
+            @find-parent="handleFindParent"
+            @on-scroll="onScroll"
+            @handle-show-upgrade="handleShowUpgradeDialog"
+          />
+        </template>
+      </div>
+      <SceneDialog
+        v-model:visible="showSceneDialog"
+        v-model:selector-type="selectorType"
+        @success="handleSuccess"
+        @save-and-more="handleSuccess"
+      />
+      <Settings
+        v-model:mode="mode"
+        v-model:visible="settingsVisible"
+        :fdm-connection="fdmConnection"
+        :mdm-connection="mdmConnection"
+        @success="handleSettingsSuccess"
+        @init="handleSettingsInit"
+      />
+      <TablePreview
+        ref="tablePreview"
+        @create-single-task="hanldeCreateSingleTask"
+        @handle-show-upgrade="handleShowUpgradeDialog"
+        @create-api="handleCreateAPI"
+      />
+      <ConnectionPreview ref="connectionView" />
+
+      <UpgradeFee
+        v-model:visible="upgradeFeeVisible"
+        :tooltip="
+          upgradeFeeVisibleTips ||
+          $t('packages_business_task_list_nindekeyunxing')
+        "
+        :go-page="upgradeFeeGoPage"
+      />
+
+      <UpgradeCharges
+        v-model:visible="upgradeChargesVisible"
+        :tooltip="
+          upgradeChargesVisibleTips ||
+          $t('packages_business_task_list_nindekeyunxing')
+        "
+        :go-page="upgradeFeeGoPage"
+      />
+    </div>
+  </PageContainer>
+</template>
 
 <style lang="scss" scoped>
 .box-card {
