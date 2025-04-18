@@ -700,11 +700,7 @@ export default {
     >
       <template #nav>
         <div class="tapNav">
-          <ElTabs
-            v-model="activePanel"
-            style="--el-tabs-padding-left: 1rem"
-            @tab-click="handleTapClick"
-          >
+          <ElTabs v-model="activePanel" @tab-click="handleTapClick">
             <ElTabPane
               v-for="item in muneList"
               :key="item.icon"

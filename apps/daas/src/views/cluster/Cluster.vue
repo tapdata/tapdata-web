@@ -1223,7 +1223,7 @@ export default {
               </div>
             </section>
             <div v-else class="content">
-              <el-row class="waterfall gap-6">
+              <el-row class="waterfall" :gutter="24" style="row-gap: 24px">
                 <el-col
                   v-for="item in waterfallData"
                   :key="item.id"

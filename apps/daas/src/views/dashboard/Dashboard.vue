@@ -13,18 +13,17 @@ export default {
   inject: ['lockedFeature'],
   data() {
     const colorMap = {
-      running: '#82C647',
+      running: 'rgba(59, 71, 229, 0.5)',
       paused: '#AE86C9',
       wait_run: '#AE86C9',
       waiting: '#AE86C9',
-      wait_start: '#fdf1c8',
+      wait_start: 'rgba(250, 140, 22, 0.7)',
       scheduling: '#fdf1c8',
-      edit: '#88DBDA',
-      error: '#F7D762',
-      error: '#F7D762',
-      stop: '#E6B450',
+      edit: 'rgba(126, 42, 243, 0.5)',
+      error: 'rgba(245, 34, 45, 0.7)',
+      stop: 'rgba(250, 219, 20, 1)',
       stopping: '#E6B450',
-      complete: '#2EA0EA',
+      complete: 'rgba(82, 196, 26, 0.7)',
       done: '#2EA0EA',
     }
     return {
@@ -727,7 +726,7 @@ export default {
             <!-- 数据校验 -->
             <el-row
               v-if="syncValidFalg"
-              class="dashboard-row mb-5 align-items-stretch gap-4"
+              class="dashboard-row mb-5 align-items-stretch gap-6"
               type="flex"
             >
               <el-col :span="12" class="dashboard-col col">
@@ -1008,7 +1007,7 @@ export default {
       .dashboard-col-box {
         height: 100%;
         padding: 16px;
-        border-radius: 8px;
+        border-radius: 12px;
         background-color: map.get($bgColor, white);
         box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
       }
@@ -1024,7 +1023,7 @@ export default {
         overflow: hidden;
         box-sizing: border-box;
         background-color: map.get($bgColor, white);
-        border-radius: 8px;
+        border-radius: 12px;
         box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.1);
         .charts-list-text {
           width: 50%;

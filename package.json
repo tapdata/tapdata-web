@@ -2,7 +2,7 @@
   "name": "daas-monorepo",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "pnpm@10.5.2",
+  "packageManager": "pnpm@10.7.0",
   "type": "module",
   "scripts": {
     "start:daas": "pnpm --filter daas start:test",
@@ -20,7 +20,8 @@
     "dev:oss": "pnpm --filter daas start:dev --mode oss",
     "type-check": "vue-tsc --noEmit",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "nb": "node scripts/worktree-checkout.js"
   },
   "dependencies": {
     "element-plus": "^2.4.1",
@@ -37,9 +38,12 @@
     "@types/node": "^20.14.5",
     "@types/qs": "^6.9.15",
     "@vue/tsconfig": "^0.5.1",
+    "chalk": "5",
     "cross-env": "^7.0.3",
     "eslint": "^9.23.0",
     "file-loader": "^6.2.0",
+    "inquirer": "9",
+    "inquirer-autocomplete-prompt": "^3.0.1",
     "jsdom": "^24.1.0",
     "npm-run-all2": "^6.2.0",
     "prettier": "^3.5.3",
