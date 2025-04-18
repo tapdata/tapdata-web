@@ -22,13 +22,11 @@ done
 
 sed -i.bak "s|DAAS_BUILD_NUMBER|$DAAS_BUILD_NUMBER|g" $base/apps/$app/.env
 
-npm i pnpm@^8.0.1  -g
-
 echo "pnpm build:$app --dest $dist --mode $mode"
+
+pnpm i
 
 echo "pnpm version: "
 pnpm --version
 
-pnpm i
-
-pnpm build:$app --dest $dist --mode $mode --env $env
+pnpm build:$app --mode $mode -- --env $env

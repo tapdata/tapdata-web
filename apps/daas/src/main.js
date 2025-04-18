@@ -5,7 +5,6 @@ import {
   getCurrentLanguage,
   setCurrentLanguage,
 } from '@tap/i18n/src/shared/util'
-// import factory from '@/api/factory'
 import Cookie from '@tap/shared/src/cookie'
 import Time from '@tap/shared/src/time'
 import { ElLoading } from 'element-plus'
@@ -15,7 +14,7 @@ import { installOEM } from '@/oem'
 import { installAllPlugins } from '@/plugins'
 import { configUser, getUrlSearch } from '@/utils/util'
 import store from '@/vuex' // 引入全局数据控制
-// import '@/plugins/element'
+
 import { installDirectives } from './directives'
 
 import i18n from './i18n'

@@ -3,6 +3,7 @@ import process from 'node:process'
 import { createSvgIconsPlugin } from '@cn-xufei/vite-plugin-svg-icons'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
+import { visualizer } from 'rollup-plugin-visualizer'
 import AutoImport from 'unplugin-auto-import/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
@@ -90,6 +91,15 @@ export default defineConfig({
         ],
       },
     }),
+
+    // Add visualizer plugin conditionally
+    process.env.NODE_ENV === 'analyze' &&
+      visualizer({
+        open: true,
+        gzipSize: true,
+        brotliSize: true,
+        filename: 'dist/stats.html',
+      }),
   ],
 
   resolve: {
@@ -143,5 +153,46 @@ export default defineConfig({
 
   build: {
     outDir: '../../dist',
+    emptyOutDir: true,
+    // rollupOptions: {
+    //   output: {
+    //     manualChunks: (id) => {
+    //       // Create separate chunks for node_modules
+    //       if (id.includes('node_modules')) {
+    //         // Group element-plus related packages
+    //         if (id.includes('element-plus') || id.includes('@element-plus')) {
+    //           return 'element-plus-vendor'
+    //         }
+    //         // Group vue related packages
+    //         if (id.includes('vue') || id.includes('@vue')) {
+    //           return 'vue-vendor'
+    //         }
+    //         // Group chart related packages
+    //         if (id.includes('echarts') || id.includes('vue-echarts')) {
+    //           return 'chart-vendor'
+    //         }
+    //         // Group tap packages
+    //         if (id.includes('@tap/')) {
+    //           const packageName = id.split('@tap/')[1].split('/')[0]
+    //           return `tap-${packageName}`
+    //         }
+    //         // Other npm dependencies
+    //         return 'vendor'
+    //       }
+    //     },
+    //     chunkFileNames: 'assets/js/[name]-[hash].js',
+    //     entryFileNames: 'assets/js/[name]-[hash].js',
+    //     assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
+    //   },
+    // },
+    cssCodeSplit: true,
+    sourcemap: false,
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
   },
 })
