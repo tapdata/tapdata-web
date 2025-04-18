@@ -350,6 +350,10 @@ export class Database extends NodeType {
                   },
                 },
                 properties: {
+                  fieldMapping: {
+                    type: 'void',
+                    'x-component': 'fieldInference'
+                  },
                   uniqueIndexEnable: {
                     type: 'boolean',
                     title: i18n.t('packages_dag_migration_uniqueIndexEnable'),
