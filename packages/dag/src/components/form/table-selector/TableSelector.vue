@@ -1,16 +1,20 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-import { useStore } from 'vuex'
-import { RecycleScroller } from 'vue-virtual-scroller'
-import { metadataInstancesApi, connectionsApi, workerApi, taskApi } from '@tap/api'
+import {
+  connectionsApi,
+  metadataInstancesApi,
+  taskApi,
+  workerApi,
+} from '@tap/api'
 import { VEmpty } from '@tap/component'
-import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 import VIcon from '@tap/component/src/base/VIcon'
-import ConnectionTest from '@tap/business/src/views/connections/Test'
-
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+import OverflowTooltip from '@tap/component/src/overflow-tooltip'
+import { computed, ref, watch } from 'vue'
+import { RecycleScroller } from 'vue-virtual-scroller'
+import { useStore } from 'vuex'
 
 import { getPrimaryKeyTablesByType } from '../../../util'
+
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
 const store = useStore()
 
@@ -75,24 +79,32 @@ const selectedIsIndeterminate = computed(() => {
   )
 })
 
+const leftTableData = computed(() => {
+  return getPrimaryKeyTablesByType(
+    table.value.tables,
+    props.filterType,
+    tableMap.value,
+  )
+})
+
 const filteredData = computed(() => {
-  const { searchKeyword, tables } = table.value
-  try {
-    const reg = new RegExp(searchKeyword, 'i')
-    return getPrimaryKeyTablesByType(
-      tables.filter((item) => reg.test(item)),
-      props.filterType,
-      tableMap.value,
-    )
-  } catch {
-    return []
-  }
+  const searchKeyword = table.value.searchKeyword?.toLowerCase()
+
+  if (!searchKeyword) return leftTableData.value.map((name) => ({ name }))
+
+  return leftTableData.value
+    .filter((name: string) => name.toLowerCase().includes(searchKeyword))
+    .map((name) => ({ name }))
 })
 
 const filterSelectedData = computed(() => {
-  return selected.value.tables.filter((item) =>
-    item.toLowerCase().includes(selected.value.searchKeyword.toLowerCase()),
-  )
+  const searchKeyword = selected.value.searchKeyword?.toLowerCase()
+
+  if (!searchKeyword) return selected.value.tables.map((name) => ({ name }))
+
+  return selected.value.tables
+    .filter((item: string) => item.toLowerCase().includes(searchKeyword))
+    .map((name) => ({ name }))
 })
 
 const clipboardTables = computed(() => {
@@ -101,6 +113,15 @@ const clipboardTables = computed(() => {
     .map((t) => t.trim())
     .filter(Boolean)
 })
+
+watch(
+  () => props.filterType,
+  () => {
+    table.value.checked = table.value.checked.filter((name: string) => {
+      return leftTableData.value.includes(name)
+    })
+  },
+)
 
 // Methods
 const getTables = async () => {
@@ -146,12 +167,14 @@ const loadSchema = async () => {
   const nodeId = props.nodeId || store.state?.dataflow.activeNodeId
   const taskId = props.taskId || store.state?.dataflow.taskId
 
-  await taskApi.refreshSchema(taskId, {
-    nodeIds: nodeId,
-    keys: table.value.searchKeyword,
-  }).finally(() => {
-    schemaLoading.value = false
-  })
+  await taskApi
+    .refreshSchema(taskId, {
+      nodeIds: nodeId,
+      keys: table.value.searchKeyword,
+    })
+    .finally(() => {
+      schemaLoading.value = false
+    })
 
   getTables()
 }
@@ -640,8 +663,10 @@ getTables()
             :disabled="disabled"
             :indeterminate="isIndeterminate"
             @change="checkAll($event, 'table')"
-          ></ElCheckbox>
-          <span class="ml-3">{{ $t('packages_form_component_table_selector_candidate_label') }}</span>
+          />
+          <span class="ml-3">{{
+            $t('packages_form_component_table_selector_candidate_label')
+          }}</span>
           <span v-if="table.tables.length" class="font-color-light ml-2"
             >({{ table.checked.length }}/{{ filteredData.length }})</span
           >
@@ -654,15 +679,19 @@ getTables()
 
       <div class="selector-panel__body">
         <div class="selector-panel__search">
-          <ElInput v-model="table.searchKeyword" clearable :placeholder="$t('public_input_placeholder_search')">
+          <ElInput
+            v-model="table.searchKeyword"
+            clearable
+            :placeholder="$t('public_input_placeholder_search')"
+          >
             <template #suffix>
               <ElIcon><ElIconSearch /></ElIcon>
             </template>
           </ElInput>
         </div>
         <ElCheckboxGroup
-          v-model="table.checked"
           v-show="filteredData.length"
+          v-model="table.checked"
           :disabled="disabled"
           class="selector-panel__list"
           @change="checkedChange('table')"
@@ -674,18 +703,23 @@ getTables()
             :items="filteredData"
             key-field="name"
           >
-            <template #default="{ item }">
+            <template #default="{ item: { name: item } }">
               <ElCheckbox class="selector-panel__item" :label="item">
                 <OverflowTooltip
                   :text="
                     item +
-                    (getTableInfo(item).tableComment ? `(${getTableInfo(item).tableComment})` : '')
+                    (getTableInfo(item).tableComment
+                      ? `(${getTableInfo(item).tableComment})`
+                      : '')
                   "
                   placement="left"
                   :enterable="false"
                 >
                   <span>
-                    <VIcon v-if="!!getTableInfo(item).primaryKeyCounts" size="12" class="text-warning mr-1 mt-n1"
+                    <VIcon
+                      v-if="!!getTableInfo(item).primaryKeyCounts"
+                      size="12"
+                      class="text-warning mr-1 mt-n1"
                       >key</VIcon
                     >
                     <VIcon
@@ -695,23 +729,38 @@ getTables()
                       >fingerprint</VIcon
                     >
                     <span>{{ item }}</span>
-                    <span v-if="getTableInfo(item).tableComment" class="font-color-sslight">{{
-                      `(${getTableInfo(item).tableComment})`
-                    }}</span>
+                    <span
+                      v-if="getTableInfo(item).tableComment"
+                      class="font-color-sslight"
+                      >{{ `(${getTableInfo(item).tableComment})` }}</span
+                    >
                   </span>
                 </OverflowTooltip>
               </ElCheckbox>
             </template>
           </RecycleScroller>
         </ElCheckboxGroup>
-        <div v-if="!filteredData.length" class="flex-1 flex flex-column justify-center">
+        <div
+          v-if="!filteredData.length"
+          class="flex-1 flex flex-column justify-center"
+        >
           <VEmpty
             v-if="!table.searchKeyword && !alwaysShowReload"
-            :description="$t('packages_form_component_table_selector_tables_empty') + '~'"
-          ></VEmpty>
+            :description="`${$t('packages_form_component_table_selector_tables_empty')}~`"
+          />
           <VEmpty v-else>
-            <span>{{ $t('packages_form_component_table_selector_error_not_exit') }},</span>
-            <el-button class="ml-1" text type="primary" :loading="schemaLoading" @click="loadSchema">
+            <span
+              >{{
+                $t('packages_form_component_table_selector_error_not_exit')
+              }},</span
+            >
+            <el-button
+              class="ml-1"
+              text
+              type="primary"
+              :loading="schemaLoading"
+              @click="loadSchema"
+            >
               {{ $t('packages_form_button_reload') }}
             </el-button>
           </VEmpty>
@@ -725,7 +774,8 @@ getTables()
           class="btn-transfer rounded-4"
           :class="{
             'btn-transfer--disabled': isOpenClipMode || disabled,
-            'btn-transfer--primary': table.checked.length > 0 && !isOpenClipMode && !disabled,
+            'btn-transfer--primary':
+              table.checked.length > 0 && !isOpenClipMode && !disabled,
           }"
           @click="add"
         >
@@ -735,7 +785,8 @@ getTables()
           class="btn-transfer rounded-4 mt-4 rounded-4"
           :class="{
             'btn-transfer--disabled': isOpenClipMode || disabled,
-            'btn-transfer--primary': selected.checked.length > 0 && !isOpenClipMode && !disabled,
+            'btn-transfer--primary':
+              selected.checked.length > 0 && !isOpenClipMode && !disabled,
           }"
           @click="remove"
         >
@@ -753,18 +804,31 @@ getTables()
             :disabled="disabled"
             :indeterminate="selectedIsIndeterminate"
             @change="checkAll($event, 'selected')"
-          ></ElCheckbox>
-          <span class="ml-3">{{ $t('packages_form_component_table_selector_checked_label') }}</span>
-          <span v-if="selected.tables.length && !isOpenClipMode" class="font-color-light ml-2"
+          />
+          <span class="ml-3">{{
+            $t('packages_form_component_table_selector_checked_label')
+          }}</span>
+          <span
+            v-if="selected.tables.length && !isOpenClipMode"
+            class="font-color-light ml-2"
             >({{ selected.checked.length }}/{{ selected.tables.length }})</span
           >
         </div>
 
         <slot name="right-extra">
-          <ElButton v-if="!disabled" text type="primary" @click="changeSeletedMode()">
+          <ElButton
+            v-if="!disabled"
+            text
+            type="primary"
+            @click="changeSeletedMode()"
+          >
             <div class="flex align-center">
-              <span v-if="!isOpenClipMode">{{ $t('packages_form_component_table_selector_bulk_name') }}</span>
-              <span v-else>{{ $t('packages_form_component_table_selector_bulk_pick') }}</span>
+              <span v-if="!isOpenClipMode">{{
+                $t('packages_form_component_table_selector_bulk_name')
+              }}</span>
+              <span v-else>{{
+                $t('packages_form_component_table_selector_bulk_pick')
+              }}</span>
               <VIcon class="ml-1" size="9">icon_table_selector_bulk_pick</VIcon>
             </div>
           </ElButton>
@@ -772,15 +836,19 @@ getTables()
       </div>
       <div class="selector-panel__body" :class="{ isOpenClipMode }">
         <div v-show="!isOpenClipMode" class="selector-panel__search">
-          <ElInput v-model="selected.searchKeyword" clearable :placeholder="$t('public_input_placeholder_search')">
+          <ElInput
+            v-model="selected.searchKeyword"
+            clearable
+            :placeholder="$t('public_input_placeholder_search')"
+          >
             <template #suffix>
               <ElIcon><ElIconSearch /></ElIcon>
             </template>
           </ElInput>
         </div>
         <ElCheckboxGroup
-          v-model="selected.checked"
           v-show="filterSelectedData.length && !isOpenClipMode"
+          v-model="selected.checked"
           class="selector-panel__list"
           :disabled="disabled"
           @change="checkedChange('selected')"
@@ -792,55 +860,95 @@ getTables()
             :items="filterSelectedData"
             key-field="name"
           >
-            <template #default="{ item }">
-              <ElCheckbox class="selector-panel__item" :label="item" :key="item">
+            <template #default="{ item: { name: item } }">
+              <ElCheckbox
+                :key="item"
+                class="selector-panel__item"
+                :label="item"
+              >
                 <OverflowTooltip
                   v-if="!errorTables[item]"
-                  :text="item + (getTableInfo(item).tableComment ? `(${getTableInfo(item).tableComment})` : '')"
+                  :text="
+                    item +
+                    (getTableInfo(item).tableComment
+                      ? `(${getTableInfo(item).tableComment})`
+                      : '')
+                  "
                   placement="left"
                   :enterable="false"
                 >
                   <span>
-                    <VIcon v-if="!!getTableInfo(item).primaryKeyCounts" size="12" class="text-warning mr-1 mt-n1"
+                    <VIcon
+                      v-if="!!getTableInfo(item).primaryKeyCounts"
+                      size="12"
+                      class="text-warning mr-1 mt-n1"
                       >key</VIcon
                     >
-                    <VIcon v-if="!!getTableInfo(item).uniqueIndexCounts" size="12" class="text-text-dark mr-1 mt-n1"
+                    <VIcon
+                      v-if="!!getTableInfo(item).uniqueIndexCounts"
+                      size="12"
+                      class="text-text-dark mr-1 mt-n1"
                       >fingerprint</VIcon
                     >
                     <slot name="right-item" :row="item"
                       ><span>{{ item }}</span></slot
                     >
-                    <span v-if="getTableInfo(item).tableComment" class="font-color-sslight">{{
-                      `(${getTableInfo(item).tableComment})`
-                    }}</span>
+                    <span
+                      v-if="getTableInfo(item).tableComment"
+                      class="font-color-sslight"
+                      >{{ `(${getTableInfo(item).tableComment})` }}</span
+                    >
                   </span>
                 </OverflowTooltip>
-                <ElTooltip v-else class="ellipsis" placement="left" :enterable="false" :content="errorTables[item]">
+                <ElTooltip
+                  v-else
+                  class="ellipsis"
+                  placement="left"
+                  :enterable="false"
+                  :content="errorTables[item]"
+                >
                   <div :class="{ 'color-danger': errorTables[item] }">
-                    <VIcon v-if="!!getTableInfo(item).primaryKeyCounts" size="12" class="text-warning mr-1 mt-n1"
+                    <VIcon
+                      v-if="!!getTableInfo(item).primaryKeyCounts"
+                      size="12"
+                      class="text-warning mr-1 mt-n1"
                       >key</VIcon
                     >
-                    <VIcon v-if="!!getTableInfo(item).uniqueIndexCounts" size="12" class="text-dark mr-1 mt-n1">
+                    <VIcon
+                      v-if="!!getTableInfo(item).uniqueIndexCounts"
+                      size="12"
+                      class="text-dark mr-1 mt-n1"
+                    >
                       fingerprint
                     </VIcon>
                     <slot name="right-item" :row="item">{{ item }}</slot>
-                    <span v-if="getTableInfo(item).tableComment" class="font-color-sslight">{{
-                      `(${getTableInfo(item).tableComment})`
-                    }}</span>
+                    <span
+                      v-if="getTableInfo(item).tableComment"
+                      class="font-color-sslight"
+                      >{{ `(${getTableInfo(item).tableComment})` }}</span
+                    >
                   </div>
                 </ElTooltip>
               </ElCheckbox>
             </template>
           </RecycleScroller>
         </ElCheckboxGroup>
-        <div v-if="!isOpenClipMode && !filterSelectedData.length" class="flex-1 flex flex-column justify-center">
-          <VEmpty :description="$t('packages_form_component_table_selector_not_checked') + '~'"></VEmpty>
+        <div
+          v-if="!isOpenClipMode && !filterSelectedData.length"
+          class="flex-1 flex flex-column justify-center"
+        >
+          <VEmpty
+            :description="`${$t('packages_form_component_table_selector_not_checked')}~`"
+          />
         </div>
         <div v-if="isOpenClipMode" class="selector-clipboard flex flex-column">
           <div
             v-show="!isFocus"
             class="selector-clipboard__view"
-            @click=";(isFocus = true), (clipboardValue = clipboardTables.concat().join(', '))"
+            @click="
+              ;(isFocus = true),
+                (clipboardValue = clipboardTables.concat().join(', '))
+            "
           >
             <template v-if="clipboardTables.length">
               <ElTooltip
@@ -852,7 +960,10 @@ getTables()
                 :content="errorTables[t]"
               >
                 <span :class="{ 'color-danger': errorTables[t] }"
-                  >{{ t }}<template v-if="i < clipboardTables.length - 1">,&nbsp;</template></span
+                  >{{ t
+                  }}<template v-if="i < clipboardTables.length - 1"
+                    >,&nbsp;</template
+                  ></span
                 >
               </ElTooltip>
             </template>
@@ -862,27 +973,36 @@ getTables()
           </div>
           <ElInput
             v-show="isFocus"
+            ref="textarea"
             v-model="clipboardValue"
             autosize
-            ref="textarea"
             class="selector-clipboard__textarea"
             type="textarea"
             resize="none"
-            :placeholder="$t('packages_form_component_table_selector_clipboard_placeholder')"
+            :placeholder="
+              $t('packages_form_component_table_selector_clipboard_placeholder')
+            "
             @blur="isFocus = false"
-          ></ElInput>
+          />
         </div>
       </div>
       <div class="selector-panel__footer">
-        <div v-if="Object.keys(errorTables).length" class="selector-error flex align-center">
-          <span class="color-danger">*{{ $t('packages_form_component_table_selector_error') }}</span>
+        <div
+          v-if="Object.keys(errorTables).length"
+          class="selector-error flex align-center"
+        >
+          <span class="color-danger"
+            >*{{ $t('packages_form_component_table_selector_error') }}</span
+          >
           <ElLink class="ml-2" type="primary" @click="autofix">{{
             $t('packages_form_component_table_selector_autofix')
           }}</ElLink>
         </div>
         <div v-if="isOpenClipMode" class="px-4 pb-4 text-end">
           <!--          <ElButton @click="changeSeletedMode()">{{ $t('public_button_cancel') }}</ElButton>-->
-          <ElButton type="primary" @click="submitClipboard">{{ $t('public_button_confirm') }}</ElButton>
+          <ElButton type="primary" @click="submitClipboard">{{
+            $t('public_button_confirm')
+          }}</ElButton>
         </div>
       </div>
     </div>
