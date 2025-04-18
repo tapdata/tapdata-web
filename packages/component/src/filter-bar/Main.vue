@@ -1,45 +1,8 @@
-<template>
-  <ElForm :model="form" :rules="rules" ref="filterForm" inline class="filter-form" @submit.prevent>
-    <ElFormItem
-      v-for="(item, index) in items"
-      :key="index"
-      :prop="item.key + ''"
-      :label="showItemLabel(item)"
-      :class="[item.class, item.type]"
-    >
-      <template v-if="item.slotName" #default="scope">
-        <slot :name="item.slotName" :row="scope.row"></slot>
-      </template>
-      <template v-else #default>
-        <component
-          v-bind="getOptions(item)"
-          v-model="item.value"
-          :is="getComponent(item.type)"
-          :style="getStyle(item)"
-          @input="search(item, 'input')"
-          @change="search(item, 'change')"
-          @clear="fetch()"
-        >
-          <template v-slot:suffix>
-            <VIcon size="14" class="inline-block">{{ item.icon }}</VIcon>
-          </template>
-        </component>
-      </template>
-    </ElFormItem>
-    <ElFormItem v-if="!hideRefresh">
-      <ElButton plain class="btn-refresh" @click="fetch">
-        <VIcon>refresh</VIcon>
-      </ElButton>
-    </ElFormItem>
-  </ElForm>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
+import { $emit } from '../../utils/gogocodeTransfer'
 import { delayTrigger } from '@tap/shared'
 
 import VIcon from '../base/VIcon.vue'
-// import { ElSelect as SelectList } from 'element-plus'
 import SelectList from './FilterItemSelect.vue'
 import PopInput from './PopInput'
 import DatetimeRange from './DatetimeRange'
@@ -234,9 +197,9 @@ export default {
           this.setDefaultValue(item, 'none-border', !item.border)
           break
         case 'input':
-          this.setDefaultValue(item, 'debounce', 800)
-          this.setDefaultValue(item, 'suffix-icon', 'search')
-          this.setDefaultValue(item, 'class', 'filter-el-input')
+          // this.setDefaultValue(item, 'debounce', 800)
+          // this.setDefaultValue(item, 'suffix-icon', 'search')
+          // this.setDefaultValue(item, 'class', 'filter-el-input')
           break
         case 'input-pop':
           this.setDefaultValue(item, 'placement', 'bottom-start')
@@ -253,6 +216,7 @@ export default {
           break
       }
       this.setDefaultValue(item, 'clearable', true)
+      console.log(item.type, item)
       return item
     },
     setDefaultValue(item, key, val) {
@@ -264,6 +228,39 @@ export default {
   emits: ['update:value', 'search', 'fetch'],
 }
 </script>
+
+<template>
+  <ElForm :model="form" :rules="rules" ref="filterForm" inline class="filter-form" @submit.prevent>
+    <ElFormItem
+      v-for="(item, index) in items"
+      :key="index"
+      :prop="item.key + ''"
+      :label="showItemLabel(item)"
+      :class="[item.class, item.type]"
+    >
+      <template v-if="item.slotName" #default="scope">
+        <slot :name="item.slotName" :row="scope.row"></slot>
+      </template>
+      <template v-else #default>
+        <component
+          v-bind="getOptions(item)"
+          v-model="item.value"
+          :is="getComponent(item.type)"
+          :style="getStyle(item)"
+          @input="search(item, 'input')"
+          @change="search(item, 'change')"
+          @clear="fetch()"
+        ></component>
+      </template>
+    </ElFormItem>
+    <ElFormItem v-if="!hideRefresh">
+      <ElButton plain class="btn-refresh" @click="fetch">
+        <VIcon>refresh</VIcon>
+      </ElButton>
+    </ElFormItem>
+  </ElForm>
+</template>
+
 
 <style lang="scss" scoped>
 .btn-refresh {
