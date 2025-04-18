@@ -10,7 +10,15 @@ export const DatabaseIcon = defineComponent({
     pdkHash: String
   },
   setup(props, { attrs }) {
-    const _attrs = { ...attrs, src: getConnectionIcon(props.pdkHash || props.item?.pdkHash || props.node?.pdkHash) }
+    const _attrs = { ...attrs }
+    const pdkHash = props.pdkHash || props.item?.pdkHash || props.node?.pdkHash || props.node?.attrs?.pdkHash
+
+    if (pdkHash) {
+      _attrs.src = getConnectionIcon(pdkHash)
+    } else {
+      _attrs.src = getNodeIconSrc(props.item || props.node)
+    }
+
     let style
 
     if (props.size) {
