@@ -162,7 +162,7 @@
 
 <script>
 import dayjs from 'dayjs'
-import { escapeRegExp } from 'lodash'
+import { escapeRegExp } from 'lodash-es'
 
 import i18n from '@tap/i18n'
 import { externalStorageApi, sharedCacheApi, taskApi } from '@tap/api'

@@ -4,12 +4,12 @@ import { clusterApi, taskApi, workerApi } from '@tap/api'
 import { STATUS_MAP } from '@tap/business'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { statusMap as InspectStatusMap } from '@tap/business/src/views/verification/const'
-import { Chart } from '@tap/component'
+import { Chart, CountUp } from '@tap/component'
 import { toThousandsUnit } from '@/utils/util'
 import { STATUS_MAP as DASHBOARD_STATUS_MAP } from './const'
 
 export default {
-  components: { Chart, ArrowRight, PageContainer },
+  components: { Chart, ArrowRight, PageContainer, CountUp },
   inject: ['lockedFeature'],
   data() {
     const colorMap = {
@@ -575,7 +575,7 @@ export default {
   <PageContainer hide-header mode="blank">
     <section class="dashboard-wrap isCardBox h-100">
       <div class="dashboard-main">
-        <div v-loading="loading">
+        <div>
           <template v-if="noPermission">
             <el-row
               v-readonlybtn="'v2_data_pipeline'"
@@ -608,7 +608,7 @@ export default {
                     ]"
                     @click="handleTask(item)"
                   >
-                    {{ item.value }}
+                    <CountUp :end-val="item.value" :duration="2" />
                   </div>
                 </div>
               </el-col>

@@ -4,7 +4,7 @@ import { appApi, logcollectorApi, taskApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
-import { escapeRegExp } from 'lodash'
+import { escapeRegExp } from 'lodash-es'
 import { TablePage } from '../../components'
 
 import PageContainer from '../../components/PageContainer.vue'

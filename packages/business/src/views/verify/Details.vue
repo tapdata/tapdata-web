@@ -4,7 +4,7 @@ import { VTable } from '@tap/component'
 import i18n from '@tap/i18n'
 import { delayTrigger } from '@tap/shared'
 import Time from '@tap/shared/src/time'
-import { uniq } from 'lodash'
+import { uniq } from 'lodash-es'
 
 export default {
   name: 'VerifyDetails',

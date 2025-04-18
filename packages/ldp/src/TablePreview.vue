@@ -20,7 +20,7 @@ import i18n from '@tap/i18n'
 
 import { calcTimeUnit, calcUnit, isNum } from '@tap/shared'
 import dayjs from 'dayjs'
-import { cloneDeep, debounce } from 'lodash'
+import { cloneDeep, debounce } from 'lodash-es'
 import { h } from 'vue'
 import { $emit, $off, $on, $once } from '../utils/gogocodeTransfer'
 import TableLineage from './components/TableLineage'

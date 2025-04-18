@@ -4,7 +4,7 @@ import { VIcon, VTable } from '@tap/component'
 import i18n from '@tap/i18n'
 
 import { uuid } from '@tap/shared'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 import { mapGetters } from 'vuex'
 import { $emit, $off, $on, $once } from '../../../../utils/gogocodeTransfer'
 

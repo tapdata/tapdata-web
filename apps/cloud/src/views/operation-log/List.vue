@@ -2,7 +2,7 @@
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { FilterBar, VIcon, VTable } from '@tap/component'
 import { delayTrigger } from '@tap/shared'
-import { escapeRegExp, isEmpty } from 'lodash'
+import { escapeRegExp, isEmpty } from 'lodash-es'
 
 import i18n from '@/i18n'
 

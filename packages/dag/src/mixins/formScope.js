@@ -14,7 +14,7 @@ import { FormTab } from '@tap/form'
 import i18n from '@tap/i18n'
 import { Cookie, isPlainObj } from '@tap/shared'
 import axios from 'axios'
-import { isEmpty, isEqual, merge } from 'lodash'
+import { isEmpty, isEqual, merge } from 'lodash-es'
 import { mapGetters, mapState } from 'vuex'
 
 const editorKeyboard = {

@@ -1,106 +1,3 @@
-<template>
-  <div class="classification py-0 px-3 bg-light rounded-xl" v-show="visible">
-    <div class="classification-header">
-      <div class="h-32 flex align-center mt-3">
-        <IconButton class="mr-2" @click="toggle()"> expand-list </IconButton>
-        <div class="fs-7 fw-sub flex-1">
-          <span>{{ comTitle }}</span>
-        </div>
-        <IconButton :disabled="$disabledReadonlyUserBtn()" v-readonlybtn="authority" @click="showDialog()">
-          add
-        </IconButton>
-      </div>
-      <div class="pt-1 pb-2">
-        <ElInput v-model="filterText">
-          <template #prefix>
-            <span class="el-input__icon h-100 ml-1">
-              <VIcon size="14">search</VIcon>
-            </span>
-          </template>
-        </ElInput>
-      </div>
-    </div>
-
-    <div v-if="visible" class="overflow-auto">
-      <ElTree
-        v-if="treeData && treeData.length > 0"
-        check-strictly
-        show-checkbox
-        class="classification-tree bg-transparent"
-        ref="tree"
-        node-key="id"
-        highlight-current
-        :props="props"
-        :expand-on-click-node="false"
-        :data="treeData"
-        :filter-node-method="filterNode"
-        :render-after-expand="false"
-        :indent="8"
-        @node-click="nodeClickHandler"
-        @check="checkHandler"
-      >
-        <template v-slot="{ node, data }">
-          <span
-            class="custom-tree-node"
-            @dragenter.stop="handleTreeDragEnter($event, data, node)"
-            @dragover.stop="handleTreeDragOver($event, data, node)"
-            @dragleave.stop="handleTreeDragLeave($event, data, node)"
-            @drop.stop="handleTreeDrop($event, data, node)"
-          >
-            <VIcon size="16" class="color-primary mr-1">folder-fill</VIcon>
-            <span class="table-label">{{ data.value }}</span>
-            <ElDropdown
-              class="btn-menu flex align-center"
-              @command="handleRowCommand($event, node)"
-              v-readonlybtn="authority"
-            >
-              <IconButton @click.stop sm :disabled="$disabledReadonlyUserBtn()">more</IconButton>
-              <template #dropdown>
-                <ElDropdownMenu>
-                  <ElDropdownItem command="add">
-                    {{ $t('packages_component_classification_addChildernNode') }}
-                  </ElDropdownItem>
-                  <ElDropdownItem command="edit">{{ $t('public_button_edit') }}</ElDropdownItem>
-                  <ElDropdownItem command="delete">{{ $t('public_button_delete') }}</ElDropdownItem>
-                </ElDropdownMenu>
-              </template>
-            </ElDropdown>
-          </span>
-        </template>
-      </ElTree>
-      <div class="text-center">
-        <ElButton
-          v-if="treeData && treeData.length === 0 && visible"
-          text
-          v-readonlybtn="authority"
-          @click="showDialog()"
-          class="create"
-          >{{ $t('packages_component_src_classification_chuangjianfenlei') }}</ElButton
-        >
-      </div>
-    </div>
-    <ElDialog v-model="dialogConfig.visible" width="30%" :close-on-click-modal="false">
-      <template #header="{ titleClass }">
-        <span :class="titleClass">{{ dialogConfig.title }}</span>
-      </template>
-      <ElInput
-        v-model="dialogConfig.label"
-        :placeholder="$t('packages_component_classification_nodeName')"
-        maxlength="50"
-        show-word-limit
-      />
-      <template v-slot:footer>
-        <span class="dialog-footer">
-          <ElButton @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton type="primary" @click="dialogSubmit()">
-            {{ $t('public_button_confirm') }}
-          </ElButton>
-        </span>
-      </template>
-    </ElDialog>
-  </div>
-</template>
-
 <script>
 import { $emit } from '../utils/gogocodeTransfer'
 import VIcon from './base/VIcon.vue'
@@ -588,6 +485,109 @@ export default {
   },
 }
 </script>
+
+<template>
+  <div class="classification py-0 px-3 bg-light rounded-xl" v-show="visible">
+    <div class="classification-header">
+      <div class="h-32 flex align-center mt-3">
+        <IconButton class="mr-2" @click="toggle()"> expand-list </IconButton>
+        <div class="fs-7 fw-sub flex-1">
+          <span>{{ comTitle }}</span>
+        </div>
+        <IconButton :disabled="$disabledReadonlyUserBtn()" v-readonlybtn="authority" @click="showDialog()">
+          add
+        </IconButton>
+      </div>
+      <div class="pt-1 pb-2">
+        <ElInput v-model="filterText">
+          <template #prefix>
+            <span class="el-input__icon h-100 ml-1">
+              <VIcon size="14">search</VIcon>
+            </span>
+          </template>
+        </ElInput>
+      </div>
+    </div>
+
+    <div v-if="visible" class="overflow-auto">
+      <ElTree
+        v-if="treeData && treeData.length > 0"
+        check-strictly
+        show-checkbox
+        class="classification-tree bg-transparent"
+        ref="tree"
+        node-key="id"
+        highlight-current
+        :props="props"
+        :expand-on-click-node="false"
+        :data="treeData"
+        :filter-node-method="filterNode"
+        :render-after-expand="false"
+        :indent="8"
+        @node-click="nodeClickHandler"
+        @check="checkHandler"
+      >
+        <template v-slot="{ node, data }">
+          <span
+            class="custom-tree-node"
+            @dragenter.stop="handleTreeDragEnter($event, data, node)"
+            @dragover.stop="handleTreeDragOver($event, data, node)"
+            @dragleave.stop="handleTreeDragLeave($event, data, node)"
+            @drop.stop="handleTreeDrop($event, data, node)"
+          >
+            <VIcon size="16" class="color-primary mr-1">folder-fill</VIcon>
+            <span class="table-label">{{ data.value }}</span>
+            <ElDropdown
+              class="btn-menu flex align-center"
+              @command="handleRowCommand($event, node)"
+              v-readonlybtn="authority"
+            >
+              <IconButton @click.stop sm :disabled="$disabledReadonlyUserBtn()">more</IconButton>
+              <template #dropdown>
+                <ElDropdownMenu>
+                  <ElDropdownItem command="add">
+                    {{ $t('packages_component_classification_addChildernNode') }}
+                  </ElDropdownItem>
+                  <ElDropdownItem command="edit">{{ $t('public_button_edit') }}</ElDropdownItem>
+                  <ElDropdownItem command="delete">{{ $t('public_button_delete') }}</ElDropdownItem>
+                </ElDropdownMenu>
+              </template>
+            </ElDropdown>
+          </span>
+        </template>
+      </ElTree>
+      <div class="text-center">
+        <ElButton
+          v-if="treeData && treeData.length === 0 && visible"
+          text
+          v-readonlybtn="authority"
+          @click="showDialog()"
+          class="create"
+          >{{ $t('packages_component_src_classification_chuangjianfenlei') }}</ElButton
+        >
+      </div>
+    </div>
+    <ElDialog v-model="dialogConfig.visible" width="30%" :close-on-click-modal="false">
+      <template #header="{ titleClass }">
+        <span :class="titleClass">{{ dialogConfig.title }}</span>
+      </template>
+      <ElInput
+        v-model="dialogConfig.label"
+        :placeholder="$t('packages_component_classification_nodeName')"
+        maxlength="50"
+        show-word-limit
+      />
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <ElButton @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton type="primary" @click="dialogSubmit()">
+            {{ $t('public_button_confirm') }}
+          </ElButton>
+        </span>
+      </template>
+    </ElDialog>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .classification {

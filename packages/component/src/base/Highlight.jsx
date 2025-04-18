@@ -7,7 +7,7 @@ import json from 'highlight.js/lib/languages/json'
 import python from 'highlight.js/lib/languages/python'
 import http from 'highlight.js/lib/languages/http'
 import xml from 'highlight.js/lib/languages/xml'
-import { escape } from 'lodash'
+import { escape } from 'lodash-es'
 hljs.registerLanguage('javascript', javascript)
 hljs.registerLanguage('json', json)
 hljs.registerLanguage('python', python)

@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { cloneDeep, isEmpty } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash-es'
 import { metadataInstancesApi } from '@tap/api'
 
 export default {

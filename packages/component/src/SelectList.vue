@@ -216,7 +216,7 @@
 </template>
 
 <script>
-import { cloneDeep, uniqBy, debounce } from 'lodash'
+import { cloneDeep, uniqBy, debounce } from 'lodash-es'
 import { ElSelect as Select } from 'element-plus'
 import i18n from '@tap/i18n'
 import { RecycleScroller } from 'vue-virtual-scroller'

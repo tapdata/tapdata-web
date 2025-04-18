@@ -140,7 +140,7 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 import dayjs from 'dayjs'
 import { Drawer } from '@tap/component'
 import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP, SchemaProgress, TaskStatus } from '@tap/business'

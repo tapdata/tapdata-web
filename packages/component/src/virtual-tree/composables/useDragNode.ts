@@ -1,10 +1,10 @@
-// @ts-nocheck
-import { provide, ref } from 'vue'
 import { useNamespace } from 'element-plus'
 import { addClass, removeClass } from 'element-plus/es/utils/index.mjs'
-import type { InjectionKey } from 'vue'
-import type Node from './node'
+// @ts-nocheck
+import { provide, ref } from 'vue'
 import type { NodeDropType } from '../types'
+import type Node from './node'
+import type { InjectionKey } from 'vue'
 
 interface TreeNode {
   node: Node
@@ -35,7 +35,10 @@ export function useDragNodeHandler({ props, ctx, el$, dropIndicator$ }) {
   })
 
   const treeNodeDragStart = ({ event, treeNode }: DragOptions) => {
-    if (typeof props.allowDrag === 'function' && !props.allowDrag(treeNode.node)) {
+    if (
+      typeof props.allowDrag === 'function' &&
+      !props.allowDrag(treeNode.node)
+    ) {
       event.preventDefault()
       return false
     }
@@ -67,11 +70,19 @@ export function useDragNodeHandler({ props, ctx, el$, dropIndicator$ }) {
     let userAllowDropInner = true
     if (typeof props.allowDrop === 'function') {
       dropPrev = props.allowDrop(draggingNode.node, dropNode.node, 'prev')
-      userAllowDropInner = dropInner = props.allowDrop(draggingNode.node, dropNode.node, 'inner')
+      userAllowDropInner = dropInner = props.allowDrop(
+        draggingNode.node,
+        dropNode.node,
+        'inner',
+      )
       dropNext = props.allowDrop(draggingNode.node, dropNode.node, 'next')
     }
-    event.dataTransfer.dropEffect = dropInner || dropPrev || dropNext ? 'move' : 'none'
-    if ((dropPrev || dropInner || dropNext) && oldDropNode?.node.id !== dropNode.node.id) {
+    event.dataTransfer.dropEffect =
+      dropInner || dropPrev || dropNext ? 'move' : 'none'
+    if (
+      (dropPrev || dropInner || dropNext) &&
+      oldDropNode?.node.id !== dropNode.node.id
+    ) {
       if (oldDropNode) {
         ctx.emit('node-drag-leave', draggingNode.node, oldDropNode.node, event)
       }
@@ -91,14 +102,19 @@ export function useDragNodeHandler({ props, ctx, el$, dropIndicator$ }) {
     if (dropNode.node.contains?.(draggingNode.node, false)) {
       dropInner = false
     }
-    if (draggingNode.node === dropNode.node || draggingNode.node.contains?.(dropNode.node)) {
+    if (
+      draggingNode.node === dropNode.node ||
+      draggingNode.node.contains?.(dropNode.node)
+    ) {
       dropPrev = false
       dropInner = false
       dropNext = false
     }
 
     // find target node without children, just calc content node height
-    const targetPosition = dropNode.$el.querySelector(`.${ns.be('node', 'content')}`).getBoundingClientRect()
+    const targetPosition = dropNode.$el
+      .querySelector(`.${ns.be('node', 'content')}`)
+      .getBoundingClientRect()
     const treePosition = el$.value.getBoundingClientRect()
 
     let dropType: NodeDropType
@@ -117,7 +133,9 @@ export function useDragNodeHandler({ props, ctx, el$, dropIndicator$ }) {
       dropType = 'none'
     }
 
-    const iconPosition = dropNode.$el.querySelector(`.${ns.be('node', 'expand-icon')}`).getBoundingClientRect()
+    const iconPosition = dropNode.$el
+      .querySelector(`.${ns.be('node', 'expand-icon')}`)
+      .getBoundingClientRect()
     const dropIndicator = dropIndicator$.value
     if (dropType === 'before') {
       indicatorTop = iconPosition.top - treePosition.top
@@ -133,8 +151,10 @@ export function useDragNodeHandler({ props, ctx, el$, dropIndicator$ }) {
       removeClass(dropNode.$el, ns.is('drop-inner'))
     }
 
-    dragState.value.showDropIndicator = dropType === 'before' || dropType === 'after'
-    dragState.value.allowDrop = dragState.value.showDropIndicator || userAllowDropInner
+    dragState.value.showDropIndicator =
+      dropType === 'before' || dropType === 'after'
+    dragState.value.allowDrop =
+      dragState.value.showDropIndicator || userAllowDropInner
     dragState.value.dropType = dropType
     ctx.emit('node-drag-over', draggingNode.node, dropNode.node, event)
   }
@@ -162,7 +182,13 @@ export function useDragNodeHandler({ props, ctx, el$, dropIndicator$ }) {
 
       removeClass(dropNode.$el, ns.is('drop-inner'))
 
-      ctx.emit('node-drag-end', draggingNode.node, dropNode.node, dropType, event)
+      ctx.emit(
+        'node-drag-end',
+        draggingNode.node,
+        dropNode.node,
+        dropType,
+        event,
+      )
       if (dropType !== 'none') {
         ctx.emit('node-drop', draggingNode.node, dropNode.node, dropType, event)
       }

@@ -17,7 +17,7 @@ import {
   toLowerCase,
   toUpperCase,
 } from '@tap/shared'
-import { cloneDeep, debounce } from 'lodash'
+import { cloneDeep, debounce } from 'lodash-es'
 import { computed, defineComponent, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'

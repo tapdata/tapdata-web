@@ -1,4 +1,4 @@
-import { isEmpty, merge } from 'lodash'
+import { isEmpty, merge } from 'lodash-es'
 import { getConnectionIcon } from '@tap/business'
 import { getIcon } from '@tap/assets/icons'
 import { uuid } from '@tap/shared'

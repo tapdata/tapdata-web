@@ -77,7 +77,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 
 import noData from '@tap/assets/images/noData.png'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'

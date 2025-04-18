@@ -1,5 +1,4 @@
 <script lang="jsx">
-import { plantRenderPara } from '../../../utils/gogocodeTransfer'
 import { defineComponent } from 'vue'
 
 function upperFirst(str) {
@@ -80,7 +79,10 @@ function ExpandTransitionGenerator(expandedParentClass = '', x = false) {
 
 export default defineComponent((props, { slots }) => {
   return () => (
-    <Transition name="expand-x-transition" {...ExpandTransitionGenerator('', true)}>
+    <Transition
+      name="expand-x-transition"
+      {...ExpandTransitionGenerator('', true)}
+    >
       {slots.default()}
     </Transition>
   )

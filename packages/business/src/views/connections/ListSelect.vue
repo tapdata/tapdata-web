@@ -11,7 +11,7 @@
 
 <script>
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import { merge } from 'lodash'
+import { merge } from 'lodash-es'
 import { AsyncSelect } from '@tap/form'
 import { connectionsApi } from '@tap/api'
 

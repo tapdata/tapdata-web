@@ -1,19 +1,3 @@
-<template>
-  <ElCollapse :value="active" accordion class="collapse-fill">
-    <ElCollapseItem name="1">
-      <template #title>
-        <div class="slot__header flex justify-content-between align-items-center flex-1">
-          <slot name="header"></slot>
-          <div class="slot__header-right">
-            <slot name="header-right"></slot>
-          </div>
-        </div>
-      </template>
-      <slot name="content"></slot>
-    </ElCollapseItem>
-  </ElCollapse>
-</template>
-
 <script>
 export default {
   name: 'VCollapse',
@@ -26,6 +10,24 @@ export default {
   },
 }
 </script>
+
+<template>
+  <ElCollapse :value="active" accordion class="collapse-fill">
+    <ElCollapseItem name="1">
+      <template #title>
+        <div
+          class="slot__header flex justify-content-between align-items-center flex-1"
+        >
+          <slot name="header" />
+          <div class="slot__header-right">
+            <slot name="header-right" />
+          </div>
+        </div>
+      </template>
+      <slot name="content" />
+    </ElCollapseItem>
+  </ElCollapse>
+</template>
 
 <style lang="scss" scoped>
 $headerH: 34px;

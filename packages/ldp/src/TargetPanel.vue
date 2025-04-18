@@ -21,7 +21,7 @@ import i18n from '@tap/i18n'
 
 import { calcTimeUnit, generateId, Time, uuid } from '@tap/shared'
 // import draggable from 'vuedraggable'
-import { cloneDeep, debounce } from 'lodash'
+import { cloneDeep, debounce } from 'lodash-es'
 import { defineComponent, h, ref } from 'vue'
 import { mapGetters } from 'vuex'
 import { $emit, $off, $on, $once } from '../utils/gogocodeTransfer'

@@ -130,7 +130,7 @@ import Cookie from '@tap/shared/src/cookie'
 import { VIcon } from '@tap/component'
 import { connectionsApi, metadataDefinitionsApi } from '@tap/api'
 import { AsyncSelect } from '@tap/form'
-import { merge } from 'lodash'
+import { merge } from 'lodash-es'
 import { CONNECTION_STATUS_MAP } from '../shared'
 
 export default {

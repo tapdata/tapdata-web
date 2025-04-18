@@ -1,5 +1,5 @@
 import { computed, defineComponent, inject, ref, toRaw, unref, watch } from 'vue'
-import { get } from 'lodash'
+import { get } from 'lodash-es'
 import { isObject, isUndefined } from 'element-plus/es/utils/index.mjs'
 import { DynamicSizeList, FixedSizeList } from 'element-plus/es/components/virtual-list/index.mjs'
 import { useNamespace, EVENT_CODE } from 'element-plus'

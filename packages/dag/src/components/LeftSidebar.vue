@@ -270,7 +270,7 @@
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { markRaw } from 'vue'
 import { mapGetters } from 'vuex'
-import { debounce, escapeRegExp } from 'lodash'
+import { debounce, escapeRegExp } from 'lodash-es'
 import { useResizeObserver } from '@vueuse/core'
 import { getScrollBarWidth } from 'element-plus/es/utils/dom/scroll'
 import { metadataInstancesApi, databaseTypesApi, CancelToken, connectionsApi } from '@tap/api'

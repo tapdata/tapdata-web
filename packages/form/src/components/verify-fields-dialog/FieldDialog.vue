@@ -3,7 +3,7 @@ import { metadataInstancesApi } from '@tap/api'
 
 import { VirtualSelect } from '@tap/component'
 import i18n from '@tap/i18n'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 
 export default {

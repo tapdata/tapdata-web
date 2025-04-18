@@ -182,7 +182,7 @@
 import i18n from '@/i18n'
 
 import dayjs from 'dayjs'
-import { cloneDeep, escapeRegExp } from 'lodash'
+import { cloneDeep, escapeRegExp } from 'lodash-es'
 
 import { databaseTypesApi, externalStorageApi } from '@tap/api'
 import { TablePage } from '../../components'

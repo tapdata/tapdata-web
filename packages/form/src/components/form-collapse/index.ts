@@ -1,14 +1,23 @@
+import {
+  composeExport,
+  resolveComponent,
+  stylePrefix,
+} from '@formily/element-plus/esm/__builtins__'
 import { model } from '@formily/reactive'
-import { computed, defineComponent, PropType } from 'vue'
-import { useField, useFieldSchema, RecursionField, h, Fragment } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
-import { Schema, SchemaKey } from '@formily/json-schema'
-import { ElCollapse, ElCollapseItem, ElBadge, ElTooltip } from 'element-plus'
 import { toArr } from '@formily/shared'
-import { GeneralField } from '@formily/core'
+import {
+  Fragment,
+  h,
+  RecursionField,
+  useField,
+  useFieldSchema,
+} from '@formily/vue'
+import { ElBadge, ElCollapse, ElCollapseItem, ElTooltip } from 'element-plus'
+import { computed, defineComponent, type PropType } from 'vue'
+import type { GeneralField } from '@formily/core'
 
-import { composeExport, stylePrefix, resolveComponent } from '@formily/element-plus/esm/__builtins__'
-import { Log } from '@tap/business'
+import type { Schema, SchemaKey } from '@formily/json-schema'
 
 type ActiveKeys = string | number | Array<string | number>
 
@@ -19,15 +28,15 @@ type Panels = { name: SchemaKey; props: any; schema: Schema }[]
 export interface IFormCollapse {
   activeKeys: ActiveKeys
 
-  hasActiveKey(key: ActiveKey): boolean
+  hasActiveKey: (key: ActiveKey) => boolean
 
-  setActiveKeys(key: ActiveKeys): void
+  setActiveKeys: (key: ActiveKeys) => void
 
-  addActiveKey(key: ActiveKey): void
+  addActiveKey: (key: ActiveKey) => void
 
-  removeActiveKey(key: ActiveKey): void
+  removeActiveKey: (key: ActiveKey) => void
 
-  toggleActiveKey(key: ActiveKey): void
+  toggleActiveKey: (key: ActiveKey) => void
 }
 
 export interface IFormCollapseProps {
@@ -78,7 +87,9 @@ const createFormCollapse = (defaultActiveKeys?: ActiveKeys) => {
     },
     removeActiveKey(key: ActiveKey) {
       if (Array.isArray(formCollapse.activeKeys)) {
-        formCollapse.activeKeys = formCollapse.activeKeys.filter((item) => item != key)
+        formCollapse.activeKeys = formCollapse.activeKeys.filter(
+          (item) => item != key,
+        )
       } else {
         formCollapse.activeKeys = ''
       }
@@ -108,11 +119,14 @@ const FormCollapse = observer(
       const field = useField()
       const schema = useFieldSchema()
       const prefixCls = `${stylePrefix}-form-collapse`
-      const formCollapseRef = computed(() => props.formCollapse ?? createFormCollapse())
+      const formCollapseRef = computed(
+        () => props.formCollapse ?? createFormCollapse(),
+      )
 
       const takeActiveKeys = (panels: Panels) => {
         if (props.activeKey) return props.activeKey
-        if (formCollapseRef.value?.activeKeys) return formCollapseRef.value?.activeKeys
+        if (formCollapseRef.value?.activeKeys)
+          return formCollapseRef.value?.activeKeys
         if (attrs.accordion) return panels[0]?.name
         return panels.map((item) => item.name)
       }
@@ -199,7 +213,10 @@ const FormCollapse = observer(
                         'span',
                         {},
                         {
-                          default: () => [badgedHeader(name, props), props.tooltip && renderTooltipIcon(props.tooltip)],
+                          default: () => [
+                            badgedHeader(name, props),
+                            props.tooltip && renderTooltipIcon(props.tooltip),
+                          ],
                         },
                       ),
                   },

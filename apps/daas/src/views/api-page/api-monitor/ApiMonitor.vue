@@ -4,7 +4,7 @@ import { dayjs } from '@tap/business'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { Chart, FilterBar, VTable } from '@tap/component'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
-import { escapeRegExp } from 'lodash'
+import { escapeRegExp } from 'lodash-es'
 
 import Detail from './Detail'
 

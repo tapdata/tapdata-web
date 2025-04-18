@@ -13,7 +13,7 @@ import resize from '@tap/component/src/directives/resize'
 import { SchemaToForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import { checkConnectionName, submitForm, uuid } from '@tap/shared'
-import { cloneDeep, isEmpty } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash-es'
 
 import { DatabaseIcon } from '../../components'
 import ConnectorDoc from '../../components/ConnectorDoc'

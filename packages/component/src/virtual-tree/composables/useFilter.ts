@@ -1,7 +1,7 @@
-import { computed, ref } from 'vue'
 import { isFunction } from '@vue/shared'
-import type { Ref } from 'vue'
+import { computed, ref } from 'vue'
 import type { Tree, TreeKey, TreeNode, TreeProps } from '../types'
+import type { Ref } from 'vue'
 
 // When the data volume is very large using filter will cause lag
 // I haven't found a better way to optimize it for now

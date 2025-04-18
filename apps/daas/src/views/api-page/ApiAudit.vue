@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import { escapeRegExp } from 'lodash'
+import { escapeRegExp } from 'lodash-es'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'
 import dayjs from 'dayjs'

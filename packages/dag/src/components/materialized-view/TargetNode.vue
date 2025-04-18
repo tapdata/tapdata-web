@@ -62,7 +62,7 @@
 
 <script lang="jsx">
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import { merge } from 'lodash'
+import { merge } from 'lodash-es'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'

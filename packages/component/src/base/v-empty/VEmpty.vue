@@ -1,22 +1,3 @@
-<template>
-  <div
-    class="v-empty-wrap"
-    :class="{
-      'empty-small': small,
-      'empty-large': large,
-    }"
-  >
-    <div class="empty-image">
-      <slot name="image">
-        <ElImage :src="imgSrc"></ElImage>
-      </slot>
-    </div>
-    <slot name="default">
-      <p class="empty-desc">{{ description }}</p>
-    </slot>
-  </div>
-</template>
-
 <script>
 import i18n from '@tap/i18n'
 
@@ -39,6 +20,25 @@ export default {
   },
 }
 </script>
+
+<template>
+  <div
+    class="v-empty-wrap"
+    :class="{
+      'empty-small': small,
+      'empty-large': large,
+    }"
+  >
+    <div class="empty-image">
+      <slot name="image">
+        <ElImage :src="imgSrc" />
+      </slot>
+    </div>
+    <slot name="default">
+      <p class="empty-desc">{{ description }}</p>
+    </slot>
+  </div>
+</template>
 
 <style lang="scss">
 .v-empty-wrap {

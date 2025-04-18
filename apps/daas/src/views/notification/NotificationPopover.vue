@@ -5,7 +5,7 @@ import { VIcon } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
 
 import dayjs from 'dayjs'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 import { mapState } from 'vuex'
 import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 

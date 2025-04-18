@@ -3,7 +3,7 @@ import { inspectApi, taskApi } from '@tap/api'
 import { AsyncSelect } from '@tap/form'
 import i18n from '@tap/i18n'
 import Time from '@tap/shared/src/time'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 
 import PageContainer from '../../components/PageContainer.vue'
 import ConditionBox from './components/ConditionBox'

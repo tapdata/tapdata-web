@@ -1,16 +1,23 @@
-import { computed, nextTick, ref, shallowRef, watch, ComponentInternalInstance } from 'vue'
-import { isObject } from 'element-plus/es/utils/index.mjs'
+import { useCheck } from 'element-plus/es/components/tree-v2/src/composables/useCheck'
+import { useFilter } from 'element-plus/es/components/tree-v2/src/composables/useFilter'
 import {
   CURRENT_CHANGE,
   NODE_CLICK,
   NODE_COLLAPSE,
   NODE_EXPAND,
   TreeOptionsEnum,
-  treeEmits,
+  type treeEmits,
 } from 'element-plus/es/components/tree-v2/src/virtual-tree'
-import { useCheck } from 'element-plus/es/components/tree-v2/src/composables/useCheck'
-import { useFilter } from 'element-plus/es/components/tree-v2/src/composables/useFilter'
-import type { SetupContext } from 'vue'
+import { isObject } from 'element-plus/es/utils/index.mjs'
+import {
+  computed,
+  nextTick,
+  ref,
+  shallowRef,
+  watch,
+  type ComponentInternalInstance,
+  type SetupContext,
+} from 'vue'
 // import type { treeEmits } from 'element-plus/es/components/tree-v2/src/virtual-tree'
 import type { CheckboxValueType } from 'element-plus'
 import type {
@@ -22,7 +29,10 @@ import type {
   TreeProps,
 } from 'element-plus/es/components/tree-v2/src/types'
 
-export function useTree(props: TreeProps, emit: SetupContext<typeof treeEmits>['emit']) {
+export function useTree(
+  props: TreeProps,
+  emit: SetupContext<typeof treeEmits>['emit'],
+) {
   const expandedKeySet = ref<Set<TreeKey>>(new Set(props.defaultExpandedKeys))
   const currentKey = ref<TreeKey | undefined>()
   const tree = shallowRef<Tree | undefined>()
@@ -59,7 +69,10 @@ export function useTree(props: TreeProps, emit: SetupContext<typeof treeEmits>['
     setCheckedKeys,
   } = useCheck(props, tree)
 
-  const { doFilter, hiddenNodeKeySet, isForceHiddenExpandIcon } = useFilter(props, tree)
+  const { doFilter, hiddenNodeKeySet, isForceHiddenExpandIcon } = useFilter(
+    props,
+    tree,
+  )
 
   const valueKey = computed(() => {
     return props.props?.value || TreeOptionsEnum.KEY
@@ -117,7 +130,11 @@ export function useTree(props: TreeProps, emit: SetupContext<typeof treeEmits>['
     const treeNodeMap: Map<TreeKey, TreeNode> = new Map()
     const levelTreeNodeMap: Map<number, TreeNode[]> = new Map()
     let maxLevel = 1
-    function traverse(nodes: TreeData, level = 1, parent: TreeNode | undefined = undefined) {
+    function traverse(
+      nodes: TreeData,
+      level = 1,
+      parent: TreeNode | undefined = undefined,
+    ) {
       const siblings: TreeNode[] = []
       for (const rawNode of nodes) {
         const value = getKey(rawNode)
@@ -182,10 +199,15 @@ export function useTree(props: TreeProps, emit: SetupContext<typeof treeEmits>['
   }
 
   function getIsLeaf(node: TreeNodeData, children: TreeNodeData[]): boolean {
-    return isLeafKey.value ? node[isLeafKey.value] : !children || children.length === 0
+    return isLeafKey.value
+      ? node[isLeafKey.value]
+      : !children || children.length === 0
   }
 
-  function toggleExpand(node: TreeNode, nodeInstance: ComponentInternalInstance) {
+  function toggleExpand(
+    node: TreeNode,
+    nodeInstance: ComponentInternalInstance,
+  ) {
     const expandedKeys = expandedKeySet.value
     if (expandedKeys.has(node.key)) {
       collapseNode(node, nodeInstance)
@@ -236,7 +258,10 @@ export function useTree(props: TreeProps, emit: SetupContext<typeof treeEmits>['
     emit(NODE_EXPAND, node.data, node, nodeInstance)
   }
 
-  function collapseNode(node: TreeNode, nodeInstance: ComponentInternalInstance) {
+  function collapseNode(
+    node: TreeNode,
+    nodeInstance: ComponentInternalInstance,
+  ) {
     expandedKeySet.value.delete(node.key)
     emit(NODE_COLLAPSE, node.data, node, nodeInstance)
   }

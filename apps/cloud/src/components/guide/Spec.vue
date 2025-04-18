@@ -135,7 +135,7 @@ import i18n from '@/i18n'
 import { CURRENCY_SYMBOL_MAP, TIME_MAP } from '@tap/business'
 import { isObj } from '@tap/shared'
 import dayjs from 'dayjs'
-import { uniqBy } from 'lodash'
+import { uniqBy } from 'lodash-es'
 import { getPaymentMethod, getSpec } from '../../views/instance/utils'
 import { mapGetters } from 'vuex'
 

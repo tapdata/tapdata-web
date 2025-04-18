@@ -10,8 +10,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@tap/i18n": "workspace:^",
     "core-js": "^3.8.3",
+    "dayjs": "^1.11.2",
     "fecha": "^4.2.3",
     "requestidlecallback": "^0.3.0",
     "tiny-emitter": "^2.1.0"

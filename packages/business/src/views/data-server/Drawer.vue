@@ -13,7 +13,7 @@ import i18n from '@tap/i18n'
 
 import { uid } from '@tap/shared'
 import axios from 'axios'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 
 import ListSelect from '../api-application/ListSelect'

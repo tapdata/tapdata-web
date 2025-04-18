@@ -180,7 +180,7 @@
 import { defineComponent, h } from 'vue'
 import { useResizeObserver } from '@vueuse/core'
 import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 import { connectionsApi, metadataInstancesApi, ldpApi, CancelToken } from '@tap/api'
 import { VEmpty, VirtualTree, IconButton } from '@tap/component'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'

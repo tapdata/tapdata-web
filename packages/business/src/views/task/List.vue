@@ -11,7 +11,7 @@ import InfiniteSelect from '@tap/form/src/components/infinite-select/InfiniteSel
 import i18n from '@tap/i18n'
 import { generateId } from '@tap/shared'
 import dayjs from 'dayjs'
-import { escapeRegExp } from 'lodash'
+import { escapeRegExp } from 'lodash-es'
 
 import { h } from 'vue'
 import {

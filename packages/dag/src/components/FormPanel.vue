@@ -21,7 +21,7 @@ import { validateBySchema } from '@tap/form/src/shared/validate'
 
 import FormRender from './FormRender'
 import { getSchema } from '../util'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 
 const mapEnum = (dataSource) => (item, index) => {
   const label = dataSource[index] || dataSource[item.value] || item.label

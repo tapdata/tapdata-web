@@ -1,23 +1,3 @@
-<template>
-  <ElTableColumn v-bind="item" :key="item.prop" :sortable="item.sortable ? 'custom' : false">
-    <!--  列表头  -->
-    <template v-if="item.headerSlot" v-slot:header>
-      <slot :name="item.headerSlot"></slot>
-    </template>
-    <!--  表体  -->
-    <template v-if="!children && item.slotName" v-slot="scope">
-      <slot :name="item.slotName" :row="scope.row" :prop="item.prop"></slot>
-    </template>
-    <template v-else-if="!children && !item.type" v-slot="scope">
-      {{ getValue(scope.row, item) }}
-    </template>
-    <!--  多表头  -->
-    <template v-if="!item.type">
-      <Column v-for="temp in children" :key="temp.prop" v-bind="temp" :item="temp"></Column>
-    </template>
-  </ElTableColumn>
-</template>
-
 <script>
 import dayjs from 'dayjs'
 import { defineAsyncComponent } from 'vue'
@@ -61,3 +41,32 @@ export default {
   },
 }
 </script>
+
+<template>
+  <ElTableColumn
+    v-bind="item"
+    :key="item.prop"
+    :sortable="item.sortable ? 'custom' : false"
+  >
+    <!--  列表头  -->
+    <template v-if="item.headerSlot" #header>
+      <slot :name="item.headerSlot" />
+    </template>
+    <!--  表体  -->
+    <template v-if="!children && item.slotName" #default="scope">
+      <slot :name="item.slotName" :row="scope.row" :prop="item.prop" />
+    </template>
+    <template v-else-if="!children && !item.type" #default="scope">
+      {{ getValue(scope.row, item) }}
+    </template>
+    <!--  多表头  -->
+    <template v-if="!item.type">
+      <Column
+        v-for="temp in children"
+        :key="temp.prop"
+        v-bind="temp"
+        :item="temp"
+      />
+    </template>
+  </ElTableColumn>
+</template>

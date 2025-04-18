@@ -4,7 +4,7 @@ import { TablePage } from '@tap/business'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { FilterBar } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
-import { escapeRegExp } from 'lodash'
+import { escapeRegExp } from 'lodash-es'
 import { h } from 'vue'
 
 export default {

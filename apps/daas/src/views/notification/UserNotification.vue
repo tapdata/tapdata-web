@@ -4,7 +4,7 @@ import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { DatetimeRange, SelectList } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
 import dayjs from 'dayjs'
-import { escapeRegExp } from 'lodash'
+import { escapeRegExp } from 'lodash-es'
 import UserOperation from './UserOperation'
 
 export default {

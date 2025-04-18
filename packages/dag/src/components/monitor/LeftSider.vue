@@ -392,7 +392,7 @@
 <script>
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { mapGetters } from 'vuex'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 
 import i18n from '@tap/i18n'
 import LineChart from './components/LineChart'

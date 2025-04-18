@@ -4,7 +4,7 @@ import { FilterBar, VTable } from '@tap/component'
 import i18n from '@tap/i18n'
 import { calcTimeUnit, openUrl } from '@tap/shared'
 import dayjs from 'dayjs'
-import { escapeRegExp } from 'lodash'
+import { escapeRegExp } from 'lodash-es'
 
 import { TablePage, TaskStatus } from '../../components'
 import PageContainer from '../../components/PageContainer.vue'

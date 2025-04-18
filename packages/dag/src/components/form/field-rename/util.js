@@ -1,4 +1,4 @@
-import { get, set, merge } from 'lodash'
+import { get, set, merge } from 'lodash-es'
 export const convertSchemaToTreeData = function (Schema) {
   if (Schema) {
     let root = {}

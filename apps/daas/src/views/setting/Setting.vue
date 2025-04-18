@@ -8,7 +8,7 @@ import { TextFileReader } from '@tap/form'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 import Cookie from '@tap/shared/src/cookie'
 import Time from '@tap/shared/src/time'
-import { find, uniq } from 'lodash'
+import { find, uniq } from 'lodash-es'
 import i18n from '@/i18n'
 
 export default {

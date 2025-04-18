@@ -11,7 +11,7 @@ import { IconButton, VirtualTree } from '@tap/component'
 
 import i18n from '@tap/i18n'
 import { generateId, uuid } from '@tap/shared'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 import { h } from 'vue'
 import { $emit, $off, $on, $once } from '../utils/gogocodeTransfer'
 import commonMix from './mixins/common'

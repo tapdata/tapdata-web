@@ -1,6 +1,13 @@
-import type { Component, ComponentInternalInstance, Ref, SetupContext, VNode, h } from 'vue'
 import type Node from './model/node'
 import type TreeStore from './model/tree-store'
+import type {
+  Component,
+  ComponentInternalInstance,
+  h,
+  Ref,
+  SetupContext,
+  VNode,
+} from 'vue'
 
 export interface RootTreeType {
   ctx: SetupContext<any>
@@ -49,7 +56,10 @@ export declare interface TreeOptionProps {
   label?: string | ((data: TreeNodeData, node: Node) => string)
   disabled?: string | ((data: TreeNodeData, node: Node) => boolean)
   isLeaf?: string | ((data: TreeNodeData, node: Node) => boolean)
-  class?: (data: TreeNodeData, node: Node) => string | { [key: string]: boolean } | string
+  class?: (
+    data: TreeNodeData,
+    node: Node,
+  ) => string | { [key: string]: boolean } | string
 }
 
 export declare interface TreeStoreOptions {
@@ -73,10 +83,16 @@ export declare interface TreeOptionProps {
   label?: string | ((data: TreeNodeData, node: Node) => string)
   disabled?: string | ((data: TreeNodeData, node: Node) => boolean)
   isLeaf?: string | ((data: TreeNodeData, node: Node) => boolean)
-  class?: (data: TreeNodeData, node: Node) => string | { [key: string]: boolean } | string
+  class?: (
+    data: TreeNodeData,
+    node: Node,
+  ) => string | { [key: string]: boolean } | string
 }
 
-export declare type RenderContentFunction = (h: hType, context: RenderContentContext) => VNode | VNode[]
+export declare type RenderContentFunction = (
+  h: hType,
+  context: RenderContentContext,
+) => VNode | VNode[]
 
 export declare interface RenderContentContext {
   _self: ComponentInternalInstance
@@ -87,10 +103,21 @@ export declare interface RenderContentContext {
 
 export declare type AllowDragFunction = (node: Node) => boolean
 export declare type AllowDropType = 'inner' | 'prev' | 'next'
-export declare type AllowDropFunction = (draggingNode: Node, dropNode: Node, type: AllowDropType) => boolean
-export declare type LoadFunction = (rootNode: Node, loadedCallback: (data: TreeData) => void) => void
+export declare type AllowDropFunction = (
+  draggingNode: Node,
+  dropNode: Node,
+  type: AllowDropType,
+) => boolean
+export declare type LoadFunction = (
+  rootNode: Node,
+  loadedCallback: (data: TreeData) => void,
+) => void
 export declare type FilterValue = any
-export declare type FilterNodeMethodFunction = (value: FilterValue, data: TreeNodeData, child: Node) => boolean
+export declare type FilterNodeMethodFunction = (
+  value: FilterValue,
+  data: TreeNodeData,
+  child: Node,
+) => boolean
 
 export declare interface TreeComponentProps {
   data: TreeData

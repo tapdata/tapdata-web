@@ -51,7 +51,7 @@ import i18n from '@tap/i18n'
 
 import { VTable } from '@tap/component'
 import { measurementApi } from '@tap/api'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 
 export default {
   name: 'InitialList',

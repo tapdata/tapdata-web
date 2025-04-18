@@ -72,7 +72,7 @@
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import dayjs from 'dayjs'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 import i18n from '@tap/i18n'
 
 import '@tap/component/src/directives/resize/index.scss'

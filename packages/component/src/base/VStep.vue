@@ -1,28 +1,3 @@
-<template>
-  <ElSteps v-bind="$attrs" :active="activeStep">
-    <template v-if="!hasNumber">
-      <ElStep v-for="(item, index) in stepList" :key="index" :class="[{ 'is-active': showActive === index + 1 }]">
-        <template v-slot:icon>
-          <span class="circle-icon cursor-pointer" @click="$emit('activeStep', index)"></span>
-        </template>
-        <template v-slot:title>
-          <div class="cursor-pointer" @click="$emit('activeStep', index)">
-            {{ item.label }}
-          </div>
-        </template>
-        <template v-slot:description>
-          <div v-if="item.desc" class="cursor-pointer" @click="$emit('activeStep', index)">
-            {{ item.desc }}
-          </div>
-        </template>
-      </ElStep>
-    </template>
-    <template v-else>
-      <ElStep v-for="(item, index) in stepList" :key="index" :title="item.label" :description="item.desc"></ElStep>
-    </template>
-  </ElSteps>
-</template>
-
 <script>
 export default {
   name: 'VStep',
@@ -53,14 +28,55 @@ export default {
       default: 0,
     },
   },
+  emits: ['activeStep'],
   data() {
     return {
       active: 0,
     }
   },
-  emits: ['activeStep'],
 }
 </script>
+
+<template>
+  <ElSteps v-bind="$attrs" :active="activeStep">
+    <template v-if="!hasNumber">
+      <ElStep
+        v-for="(item, index) in stepList"
+        :key="index"
+        :class="[{ 'is-active': showActive === index + 1 }]"
+      >
+        <template #icon>
+          <span
+            class="circle-icon cursor-pointer"
+            @click="$emit('activeStep', index)"
+          />
+        </template>
+        <template #title>
+          <div class="cursor-pointer" @click="$emit('activeStep', index)">
+            {{ item.label }}
+          </div>
+        </template>
+        <template #description>
+          <div
+            v-if="item.desc"
+            class="cursor-pointer"
+            @click="$emit('activeStep', index)"
+          >
+            {{ item.desc }}
+          </div>
+        </template>
+      </ElStep>
+    </template>
+    <template v-else>
+      <ElStep
+        v-for="(item, index) in stepList"
+        :key="index"
+        :title="item.label"
+        :description="item.desc"
+      />
+    </template>
+  </ElSteps>
+</template>
 
 <style lang="scss">
 .el-steps {

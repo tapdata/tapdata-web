@@ -16,6 +16,7 @@ import VStep from './base/VStep.vue'
 // business
 import Chart from './chart'
 import Classification from './Classification.vue'
+import CountUp from './CountUp.vue'
 import DarkSelect from './DarkSelect.vue'
 import Drawer from './Drawer.vue'
 import FilterBar from './filter-bar'
@@ -35,6 +36,7 @@ import TimeSelect from './TimeSelect.vue'
 export {
   Chart,
   Classification,
+  CountUp,
   DarkSelect,
   DatetimeRange,
   Drawer,

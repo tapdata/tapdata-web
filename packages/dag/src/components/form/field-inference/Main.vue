@@ -132,7 +132,7 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex'
-import { debounce, cloneDeep } from 'lodash'
+import { debounce, cloneDeep } from 'lodash-es'
 
 import i18n from '@tap/i18n'
 import noData from '@tap/assets/images/noData.png'

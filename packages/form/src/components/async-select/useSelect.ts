@@ -31,7 +31,7 @@ import { useInput } from 'element-plus/es/components/select-v2/src/useInput'
 
 import { isPlainObj as isObject, isValid, isFn } from '@tap/shared'
 // @ts-ignore
-// import { findLastIndex, isEqual, uniqBy, escapeRegExp, get, merge, debounce as lodashDebounce } from 'lodash'
+// import { findLastIndex, isEqual, uniqBy, escapeRegExp, get, merge, debounce as lodashDebounce } from 'lodash-es'
 import i18n from '@tap/i18n'
 import { CancelToken } from '@tap/api'
 

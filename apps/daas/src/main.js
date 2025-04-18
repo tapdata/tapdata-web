@@ -8,12 +8,12 @@ import {
 // import factory from '@/api/factory'
 import Cookie from '@tap/shared/src/cookie'
 import Time from '@tap/shared/src/time'
+import { ElLoading } from 'element-plus'
 import * as Vue from 'vue'
 import App from '@/App.vue'
 import { installOEM } from '@/oem'
 import { installAllPlugins } from '@/plugins'
 import { configUser, getUrlSearch } from '@/utils/util'
-
 import store from '@/vuex' // 引入全局数据控制
 // import '@/plugins/element'
 import { installDirectives } from './directives'
@@ -69,13 +69,9 @@ const URL_LANG = getUrlSearch('lang')
 
 if (TOKEN) {
   Cookie.set('access_token', TOKEN)
-  // eslint-disable-next-line
-  console.log(i18n.t('daas_src_main_baocuntok'), TOKEN)
 }
 
 const token = Cookie.get('access_token')
-
-// const router = getRouter(i18n)
 
 installOEM(router, i18n)
 
@@ -129,6 +125,9 @@ const init = () => {
   window.$vueApp.use(router)
   window.$vueApp.mount('#app')
 }
+
+const loading = ElLoading.service({ fullscreen: true })
+
 settingsApi
   .get()
   .then(async (data) => {
@@ -159,6 +158,9 @@ settingsApi
   .catch((error) => {
     // eslint-disable-next-line
     console.log(i18n.t('daas_src_main_qingqiuquanjupei') + error)
+  })
+  .finally(() => {
+    loading.close()
   })
 //获取全局项目设置（OEM信息）
 

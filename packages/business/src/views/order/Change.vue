@@ -122,7 +122,7 @@
 
 <script>
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import { uniqBy } from 'lodash'
+import { uniqBy } from 'lodash-es'
 import dayjs from 'dayjs'
 import { VTable } from '@tap/component'
 import i18n from '@tap/i18n'

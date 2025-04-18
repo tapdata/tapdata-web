@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { escapeRegExp, isEmpty } from 'lodash'
+import { escapeRegExp, isEmpty } from 'lodash-es'
 import { VIcon, FilterBar, VTable } from '@tap/component'
 import { delayTrigger } from '@tap/shared'
 

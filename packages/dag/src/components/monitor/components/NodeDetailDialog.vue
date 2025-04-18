@@ -8,7 +8,7 @@ import i18n from '@tap/i18n'
 import { calcTimeUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 import dayjs from 'dayjs'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 
 import { mapGetters } from 'vuex'
 import NodeIcon from '../../NodeIcon'

@@ -10,7 +10,7 @@ import {
 import { SchemaToForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import { submitForm, uuid } from '@tap/shared'
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 import Test from '../views/connections/Test.vue'
 import ConnectorDoc from './ConnectorDoc.vue'
 

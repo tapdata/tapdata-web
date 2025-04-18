@@ -2,7 +2,6 @@ import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath, URL } from 'node:url'
 import { createSvgIconsPlugin } from '@cn-xufei/vite-plugin-svg-icons'
-import { viteCommonjs } from '@originjs/vite-plugin-commonjs'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import AutoImport from 'unplugin-auto-import/vite'
@@ -89,7 +88,6 @@ export default defineConfig(({ mode }) => {
     plugins: [
       vue(),
       vueJsx(),
-      // viteCommonjs({ exclude: ['ali-oss'] }),
       AutoImport({
         resolvers: [ElementPlusResolver({ importStyle: 'sass' })],
         dts: 'src/auto-imports.d.ts',

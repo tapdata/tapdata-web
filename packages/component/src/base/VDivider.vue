@@ -1,8 +1,7 @@
 <script>
-import { plantRenderPara } from '../../utils/gogocodeTransfer'
 import * as Vue from 'vue'
 export default {
-  name: 'v-divider',
+  name: 'VDivider',
 
   props: {
     inset: Boolean,

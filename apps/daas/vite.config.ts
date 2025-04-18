@@ -1,8 +1,8 @@
 import path from 'node:path'
+import process from 'node:process'
 import { createSvgIconsPlugin } from '@cn-xufei/vite-plugin-svg-icons'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
-// import { viteCommonjs } from '@originjs/vite-plugin-commonjs'
 import AutoImport from 'unplugin-auto-import/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
@@ -11,8 +11,7 @@ import { defineConfig } from 'vite'
 const serveUrlMap = {
   mock: 'http://localhost:30300',
   dev: 'http://localhost:3000', // TM端本地默认地址
-  jet: 'http://jet.devops.tapdata.net:31613',
-  test: 'http://139.198.127.204:30736', // v3.1
+  test: 'http://58.251.34.123:3030', // v3.1
 }
 let origin
 const { argv } = process
@@ -40,7 +39,6 @@ export default defineConfig({
   plugins: [
     vue(),
     vueJsx(),
-    // viteCommonjs(),
     AutoImport({
       resolvers: [ElementPlusResolver({ importStyle: 'sass' })],
       dts: 'src/auto-imports.d.ts',
@@ -141,5 +139,9 @@ export default defineConfig({
         silenceDeprecations: ['import', 'global-builtin'],
       },
     },
+  },
+
+  build: {
+    outDir: '../../dist',
   },
 })

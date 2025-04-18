@@ -99,7 +99,7 @@
 </template>
 
 <script>
-import { escapeRegExp } from 'lodash'
+import { escapeRegExp } from 'lodash-es'
 import i18n from '@tap/i18n'
 
 import { databaseTypesApi, modulesApi, metadataInstancesApi, apiServerApi, appApi } from '@tap/api'

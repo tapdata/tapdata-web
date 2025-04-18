@@ -8,7 +8,7 @@ import SwitchNumber from '@tap/component/src/SwitchNumber.vue'
 import { AsyncSelect, SchemaToForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import { uuid } from '@tap/shared'
-import { cloneDeep, debounce, isEmpty, isString, merge, uniqBy } from 'lodash'
+import { cloneDeep, debounce, isEmpty, isString, merge, uniqBy } from 'lodash-es'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { $emit } from '../../../../utils/gogocodeTransfer'
 

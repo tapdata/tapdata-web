@@ -1,7 +1,7 @@
 <script>
 import { alarmApi, alarmMailApi, alarmRuleApi, settingsApi } from '@tap/api'
 import { VTable } from '@tap/component'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 
 import i18n from '@/i18n'
 import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'

@@ -156,7 +156,7 @@ import { FilterBar, IconButton } from '@tap/component'
 import { mapGetters, mapState } from 'vuex'
 import dayjs from 'dayjs'
 import i18n from '@/i18n'
-import { escapeRegExp, debounce } from 'lodash'
+import { escapeRegExp, debounce } from 'lodash-es'
 
 export default {
   name: 'RequestConnector',

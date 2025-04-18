@@ -134,7 +134,7 @@
 
 <script>
 import { h } from 'vue'
-import { cloneDeep, escapeRegExp } from 'lodash'
+import { cloneDeep, escapeRegExp } from 'lodash-es'
 
 import { roleApi, applicationApi } from '@tap/api'
 import { FilterBar } from '@tap/component'

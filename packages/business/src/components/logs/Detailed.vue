@@ -49,7 +49,7 @@
 
 <script>
 import dayjs from 'dayjs'
-import { escapeRegExp } from 'lodash'
+import { escapeRegExp } from 'lodash-es'
 import { logsApi } from '@tap/api'
 import { delayTrigger } from '@tap/shared'
 

@@ -1,34 +1,6 @@
-<template>
-  <div class="text-editable-wrap inline-flex position-relative align-center" :style="style">
-    <div class="text-editable min-w-0">
-      <input
-        ref="input"
-        :value="value"
-        :readonly="readonly"
-        :placeholder="placeholder"
-        :style="inputStyle"
-        :maxlength="maxlength"
-        @input="handleInput"
-        @change="handleChange"
-      />
-      <div ref="shadow" class="text-editable-shadow">
-        {{ value || placeholder }}
-      </div>
-    </div>
-    <VIcon
-      v-if="!readonly"
-      v-show="!hiddenIcon"
-      @click="handleFocusInput"
-      class="text-editable-icon ml-2 flex-shrink-0"
-      size="14"
-      >edit-outline</VIcon
-    >
-  </div>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
+import { $emit } from '../../../utils/gogocodeTransfer'
 
 import VIcon from '../../base/VIcon.vue'
 
@@ -54,6 +26,7 @@ export default {
       default: 30,
     },
   },
+  emits: ['update:value', 'change'],
   computed: {
     style() {
       const maxWidth = this.maxWidth
@@ -95,13 +68,43 @@ export default {
 
     updateStyle() {
       this.$nextTick(() => {
-        this.$refs.input.style.width = this.$refs.shadow.clientWidth + 'px'
+        this.$refs.input.style.width = `${this.$refs.shadow.clientWidth}px`
       })
     },
   },
-  emits: ['update:value', 'change'],
 }
 </script>
+
+<template>
+  <div
+    class="text-editable-wrap inline-flex position-relative align-center"
+    :style="style"
+  >
+    <div class="text-editable min-w-0">
+      <input
+        ref="input"
+        :value="value"
+        :readonly="readonly"
+        :placeholder="placeholder"
+        :style="inputStyle"
+        :maxlength="maxlength"
+        @input="handleInput"
+        @change="handleChange"
+      />
+      <div ref="shadow" class="text-editable-shadow">
+        {{ value || placeholder }}
+      </div>
+    </div>
+    <VIcon
+      v-if="!readonly"
+      v-show="!hiddenIcon"
+      class="text-editable-icon ml-2 flex-shrink-0"
+      size="14"
+      @click="handleFocusInput"
+      >edit-outline</VIcon
+    >
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .text-editable-wrap {

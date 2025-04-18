@@ -459,7 +459,7 @@
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import dagre from 'dagre'
 import { observable } from '@formily/reactive'
-import { cloneDeep, debounce } from 'lodash'
+import { cloneDeep, debounce } from 'lodash-es'
 import Frequency from './components/monitor/components/Frequency'
 
 import i18n from '@tap/i18n'

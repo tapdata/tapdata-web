@@ -8,7 +8,7 @@
 <script>
 import i18n from '@tap/i18n'
 
-import { debounce, isNumber } from 'lodash'
+import { debounce, isNumber } from 'lodash-es'
 import dayjs from 'dayjs'
 import { Chart } from '@tap/component'
 import { calcUnit, calcTimeUnit } from '@tap/shared'

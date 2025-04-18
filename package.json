@@ -1,25 +1,25 @@
 {
-  "name": "daas-monorepo",
-  "version": "1.0.0",
+  "name": "tapdata-web",
+  "version": "4.0.0",
   "private": true,
   "packageManager": "pnpm@10.7.0",
   "type": "module",
   "scripts": {
     "start:daas": "pnpm --filter daas start:test",
-    "start:dfs": "pnpm --filter dfs start:test",
-    "start:local": "pnpm --filter dfs start:local",
+    "start:cloud": "pnpm --filter cloud start:test",
+    "start:local": "pnpm --filter cloud start:local",
     "dev:daas": "pnpm --filter daas start:dev",
-    "dev:dfs": "pnpm --filter dfs start:dev",
+    "dev:cloud": "pnpm --filter cloud start:dev",
     "taptest:daas": "pnpm --filter daas taptest",
     "build:daas": "pnpm --filter daas build",
-    "build:dfs": "pnpm --filter dfs build",
+    "build:cloud": "pnpm --filter cloud build",
     "daas": "pnpm --filter daas start:test",
-    "dfs": "cross-env NODE_OPTIONS=--openssl-legacy-provider pnpm --filter dfs start",
+    "cloud": "cross-env NODE_OPTIONS=--openssl-legacy-provider pnpm --filter cloud start",
     "clean": "rm -rf node_modules && pnpm -r exec -- rm -rf node_modules",
     "oss": "cross-env NODE_OPTIONS=--openssl-legacy-provider pnpm --filter daas start:dev --mode oss",
     "dev:oss": "pnpm --filter daas start:dev --mode oss",
     "type-check": "vue-tsc --noEmit",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
     "format": "prettier --write src/",
     "nb": "node scripts/worktree-checkout.js"
   },
@@ -62,7 +62,8 @@
       "@formily/shared": "^2.3.0",
       "@formily/vue": "^2.3.0",
       "element-plus": "^2.4.3",
-      "vue": "^3.4.29"
+      "vue": "^3.4.29",
+      "vue-virtual-scroller": "2.0.0-beta.8"
     },
     "patchedDependencies": {
       "@formily/element-plus@1.1.0": "patches/@formily__element-plus@1.1.0.patch"

@@ -3,7 +3,7 @@ import { notificationApi } from '@tap/api'
 import { ALARM_LEVEL_MAP } from '@tap/business'
 
 import { VIcon } from '@tap/component'
-import { debounce, uniqBy } from 'lodash'
+import { debounce, uniqBy } from 'lodash-es'
 import timeFunction from '@/mixins/timeFunction'
 import { $emit } from '../../../utils/gogocodeTransfer'
 import { TYPEMAP } from './tyepMap'

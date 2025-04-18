@@ -5,7 +5,7 @@ import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { IconButton, VTable } from '@tap/component'
 import i18n from '@tap/i18n'
 import { isObj, isStr } from '@tap/shared'
-import { uniqBy } from 'lodash'
+import { uniqBy } from 'lodash-es'
 
 import { AGENT_TYPE_MAP, getPaymentMethod, getSpec } from '../instance/utils'
 

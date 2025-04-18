@@ -1,6 +1,6 @@
 <script>
 import { delayTrigger } from '@tap/shared'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+import { $emit } from '../../../utils/gogocodeTransfer'
 import ColumnItem from './Column'
 export default {
   name: 'VTable',

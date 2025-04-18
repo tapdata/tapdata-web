@@ -8,7 +8,7 @@ import { copyToClipboard, CountUp, downloadBlob, openUrl } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 
 import dayjs from 'dayjs'
-import { cloneDeep, debounce, escape, uniqBy } from 'lodash'
+import { cloneDeep, debounce, escape, uniqBy } from 'lodash-es'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { mapGetters } from 'vuex'
 import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'

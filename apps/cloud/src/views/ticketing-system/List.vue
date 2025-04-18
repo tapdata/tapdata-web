@@ -116,7 +116,7 @@ import { FilterBar, VTable } from '@tap/component'
 import TicketDetails from './Details.vue'
 
 import i18n from '@/i18n'
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 import { CURRENCY_SYMBOL_MAP, ORDER_STATUS_MAP, TIME_MAP } from '@tap/business'
 import { getPaymentMethod, getSpec, AGENT_TYPE_MAP } from '../instance/utils'
 import dayjs from 'dayjs'

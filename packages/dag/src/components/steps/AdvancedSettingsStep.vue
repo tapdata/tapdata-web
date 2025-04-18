@@ -30,7 +30,7 @@
 import i18n from '@tap/i18n'
 import { showErrorMessage, UpgradeCharges, UpgradeFee } from '@tap/business'
 import { alarmApi, clusterApi, taskApi } from '@tap/api'
-import { debounce, merge } from 'lodash'
+import { debounce, merge } from 'lodash-es'
 import { createForm, onFormValuesChange, onFieldValueChange, createEffectHook } from '@formily/core'
 import { observable, action, untracked, raw, isObservable, observe, autorun } from '@formily/reactive'
 import SchemaForm from '../SchemaForm.vue'

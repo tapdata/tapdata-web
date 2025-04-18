@@ -20,7 +20,7 @@ import { titleChange } from '@tap/component/src/mixins/titleChange'
 import i18n from '@tap/i18n'
 import Time from '@tap/shared/src/time'
 import dagre from 'dagre'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 import { mapMutations, mapState } from 'vuex'
 import { $emit, $off, $on, $once } from '../utils/gogocodeTransfer'
 

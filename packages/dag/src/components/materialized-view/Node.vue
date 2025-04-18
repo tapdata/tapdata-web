@@ -182,7 +182,7 @@
 
 <script lang="jsx">
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import { unionBy, orderBy, merge } from 'lodash'
+import { unionBy, orderBy, merge } from 'lodash-es'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { Path } from '@formily/path'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'

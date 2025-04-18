@@ -1,71 +1,9 @@
-<template>
-  <div class="el-transfer-panel">
-    <p class="el-transfer-panel__header">
-      <el-checkbox v-model="allChecked" @change="handleAllCheckedChange" :indeterminate="isIndeterminate">
-        {{ title }}
-        <span>{{ checkedSummary }}</span>
-      </el-checkbox>
-    </p>
-
-    <div :class="['el-transfer-panel__body', hasFooter ? 'is-with-footer' : '']">
-      <el-input
-        class="el-transfer-panel__filter"
-        v-model="query"
-        :placeholder="placeholder"
-        @input="handleQueryInput"
-        @mouseenter="inputHover = true"
-        @mouseleave="inputHover = false"
-        v-if="filterable"
-      >
-        <template v-slot:prefix>
-          <i :class="['el-input__icon', 'el-icon-' + inputIcon]" @click="clearQuery"></i>
-        </template>
-      </el-input>
-      <el-checkbox-group
-        v-model="checked"
-        v-show="!hasNoMatch && data.length > 0"
-        :class="{ 'is-filterable': filterable }"
-        class="el-transfer-panel__list"
-      >
-        <RecycleScroller
-          ref="scroller"
-          class="el-transfer-panel__scroller"
-          :key-field="keyProp"
-          :item-size="36"
-          :buffer="50"
-          :items="filteredData"
-        >
-          <template #default="{ item }">
-            <el-checkbox
-              class="el-transfer-panel__item"
-              :label="item[keyProp]"
-              :disabled="item[disabledProp]"
-              :key="item[keyProp]"
-            >
-              <option-content :option="item"></option-content>
-            </el-checkbox>
-          </template>
-        </RecycleScroller>
-      </el-checkbox-group>
-      <p class="el-transfer-panel__empty" v-show="hasNoMatch">
-        {{ $t('packages_component_no_match') }}
-      </p>
-      <p class="el-transfer-panel__empty" v-show="data.length === 0 && !hasNoMatch">
-        {{ $t('public_data_no_data1') }}
-      </p>
-    </div>
-    <p class="el-transfer-panel__footer" v-if="hasFooter">
-      <slot></slot>
-    </p>
-  </div>
-</template>
-
 <script lang="jsx">
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import * as Vue from 'vue'
-import { cloneDeep } from 'lodash'
 import { ElTransfer as Transfer } from 'element-plus'
+import { cloneDeep } from 'lodash-es'
+import * as Vue from 'vue'
 import { RecycleScroller } from 'vue-virtual-scroller'
+import { $emit } from '../../../utils/gogocodeTransfer'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 const TransferPanel = cloneDeep(Transfer.components.TransferPanel)
 
@@ -101,9 +39,15 @@ export default {
         ) : transferSlots.left || transferSlots.right ? (
           (panel.$slots.default && panel.$slots.default())({
             option: this.option,
-          }) || <span>{this.option[panel.labelProp] || this.option[panel.keyProp]}</span>
+          }) || (
+            <span>
+              {this.option[panel.labelProp] || this.option[panel.keyProp]}
+            </span>
+          )
         ) : (
-          <span>{this.option[panel.labelProp] || this.option[panel.keyProp]}</span>
+          <span>
+            {this.option[panel.labelProp] || this.option[panel.keyProp]}
+          </span>
         )
       },
     },
@@ -123,6 +67,7 @@ export default {
       default: true,
     },
   },
+  emits: ['checked-change'],
   watch: {
     checked(val, oldVal) {
       // console.time('checked')
@@ -137,7 +82,9 @@ export default {
         oldObj[item] = true
       })
       if (this.checkChangeByUser) {
-        const movedKeys = val.concat(oldVal).filter((v) => newObj[v] || oldVal[v])
+        const movedKeys = val
+          .concat(oldVal)
+          .filter((v) => newObj[v] || oldVal[v])
         $emit(this, 'checked-change', val, movedKeys)
       } else {
         $emit(this, 'checked-change', val)
@@ -174,9 +121,82 @@ export default {
       }
     },
   },
-  emits: ['checked-change'],
 }
 </script>
+
+<template>
+  <div class="el-transfer-panel">
+    <p class="el-transfer-panel__header">
+      <el-checkbox
+        v-model="allChecked"
+        :indeterminate="isIndeterminate"
+        @change="handleAllCheckedChange"
+      >
+        {{ title }}
+        <span>{{ checkedSummary }}</span>
+      </el-checkbox>
+    </p>
+
+    <div
+      :class="['el-transfer-panel__body', hasFooter ? 'is-with-footer' : '']"
+    >
+      <el-input
+        v-if="filterable"
+        v-model="query"
+        class="el-transfer-panel__filter"
+        :placeholder="placeholder"
+        @input="handleQueryInput"
+        @mouseenter="inputHover = true"
+        @mouseleave="inputHover = false"
+      >
+        <template #prefix>
+          <i
+            :class="['el-input__icon', `el-icon-${inputIcon}`]"
+            @click="clearQuery"
+          />
+        </template>
+      </el-input>
+      <el-checkbox-group
+        v-show="!hasNoMatch && data.length > 0"
+        v-model="checked"
+        :class="{ 'is-filterable': filterable }"
+        class="el-transfer-panel__list"
+      >
+        <RecycleScroller
+          ref="scroller"
+          class="el-transfer-panel__scroller"
+          :key-field="keyProp"
+          :item-size="36"
+          :buffer="50"
+          :items="filteredData"
+        >
+          <template #default="{ item }">
+            <el-checkbox
+              :key="item[keyProp]"
+              class="el-transfer-panel__item"
+              :label="item[keyProp]"
+              :disabled="item[disabledProp]"
+            >
+              <option-content :option="item" />
+            </el-checkbox>
+          </template>
+        </RecycleScroller>
+      </el-checkbox-group>
+      <p v-show="hasNoMatch" class="el-transfer-panel__empty">
+        {{ $t('packages_component_no_match') }}
+      </p>
+      <p
+        v-show="data.length === 0 && !hasNoMatch"
+        class="el-transfer-panel__empty"
+      >
+        {{ $t('public_data_no_data1') }}
+      </p>
+    </div>
+    <p v-if="hasFooter" class="el-transfer-panel__footer">
+      <slot />
+    </p>
+  </div>
+</template>
 
 <style>
 .el-transfer-panel__scroller {

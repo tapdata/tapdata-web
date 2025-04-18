@@ -34,7 +34,7 @@
 
 <script>
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 import axios from 'axios'
 
 import i18n from '@tap/i18n'

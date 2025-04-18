@@ -1,6 +1,6 @@
 {
   "name": "daas",
-  "version": "1.0.0",
+  "version": "4.0.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -45,7 +45,6 @@
   },
   "devDependencies": {
     "@cn-xufei/vite-plugin-svg-icons": "^2.1.0",
-    "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@vitejs/plugin-vue": "^4.4.0",
     "@vitejs/plugin-vue-jsx": "^3.0.2",
     "cross-env": "^7.0.3",
