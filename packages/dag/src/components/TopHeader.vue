@@ -291,7 +291,7 @@ export default {
           <VIcon size="20">kuangxuan</VIcon>
         </button>
       </ElTooltip>
-      <VDivider class="mx-3" vertical inset />
+      <el-divider direction="vertical" />
       <!--缩小-->
       <ElTooltip
         :hide-after="0"
@@ -353,7 +353,7 @@ export default {
           <VIcon size="20">add-outline</VIcon>
         </button>
       </ElTooltip>
-      <VDivider class="mx-3" vertical inset />
+      <el-divider direction="vertical" />
       <!--信息输出-->
       <ElTooltip :hide-after="0" :content="$t('public_task_log')">
         <button
@@ -363,7 +363,7 @@ export default {
         >
           <VIcon size="16">list</VIcon>
         </button> </ElTooltip
-      ><VDivider class="mx-3" vertical inset />
+      ><el-divider direction="vertical" />
       <!--信息输出-->
       <ElTooltip
         transition="tooltip-fade-in"
@@ -380,7 +380,7 @@ export default {
         <!--<button @click="loadSchema" class="icon-btn">
           <VIcon size="16">refresh</VIcon>
         </button>--> </ElTooltip
-      ><VDivider class="mx-3" vertical inset />
+      ><el-divider direction="vertical" />
       <!--搜索节点-->
       <ElPopover
         v-model:visible="showSearchNodePopover"
@@ -432,7 +432,7 @@ export default {
           </ElScrollbar>
         </div>
       </ElPopover>
-      <VDivider class="mx-3" vertical inset />
+      <el-divider direction="vertical" />
       <ElTooltip
         transition="tooltip-fade-in"
         :content="$t('public_data_capture')"

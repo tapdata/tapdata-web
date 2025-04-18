@@ -49,7 +49,7 @@
           <VIcon size="20">compress</VIcon>
         </button>
       </ElTooltip>
-      <VDivider class="mx-3" vertical></VDivider>
+      <el-divider direction="vertical" />
       <!--缩小-->
       <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_zoom_out') + `(${commandCode} -)`">
         <button @click="$emit('zoom-out')" class="icon-btn">
@@ -83,13 +83,13 @@
           <VIcon size="20">add-outline</VIcon>
         </button>
       </ElTooltip>
-      <VDivider class="mx-3" vertical></VDivider>
+      <el-divider direction="vertical" />
       <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_monitor_bottompanel_rizhi')">
         <button :class="{ active: showBottomPanel }" class="icon-btn" @click="$emit('showBottomPanel')">
           <VIcon size="16">list</VIcon>
         </button>
       </ElTooltip>
-      <VDivider class="mx-3" vertical></VDivider>
+      <el-divider direction="vertical" />
       <button
         v-if="buttonShowMap.Start"
         class="icon-btn"
