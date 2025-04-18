@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { User } from '@element-plus/icons-vue'
+import { User, WarningFilled } from '@element-plus/icons-vue'
 import { licensesApi, settingsApi, timeStampApi, usersApi } from '@tap/api'
 import { VIcon } from '@tap/component'
 import { useI18n } from '@tap/i18n'
@@ -255,9 +255,18 @@ defineExpose({
       <img :src="logoUrl" />
     </a>
     <div class="flex gap-3 align-center ml-auto">
-      <span v-if="licenseExpireVisible" class="expire-msg">{{
-        $t('app_license_expire_warning', [licenseExpire])
-      }}</span>
+      <el-alert
+        v-if="licenseExpireVisible"
+        type="error"
+        show-icon
+        class="shadow-sm"
+        :closable="false"
+        :title="$t('app_license_expire_warning', [licenseExpire])"
+      >
+        <template #icon>
+          <WarningFilled />
+        </template>
+      </el-alert>
       <ElButton v-if="isCommunity" id="add-jira-issue-btn" type="primary"
         ><VIcon>bug-outlined</VIcon> New Issue
       </ElButton>
@@ -387,7 +396,7 @@ defineExpose({
 }
 
 .gradient-text {
-  background: linear-gradient(90deg, #007CF0 0%, #3b47e5 100%);
+  background: linear-gradient(90deg, #007cf0 0%, #3b47e5 100%);
   background-clip: text;
   color: transparent;
 }

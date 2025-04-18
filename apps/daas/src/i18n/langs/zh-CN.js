@@ -74,7 +74,7 @@ export default {
   component_table_selector_clipboard_placeholder:
     '请输入表名称并以逗号分隔,例如：table_a,table_b',
   // app
-  app_license_expire_warning: '提醒：License剩余 {0} 天到期',
+  app_license_expire_warning: 'License剩余 {0} 天到期',
   // Agent
   agent_check_error: 'Agent当前状态异常无法创建连接，请检查',
   // 控制台

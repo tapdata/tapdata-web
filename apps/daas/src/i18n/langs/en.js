@@ -75,7 +75,7 @@ export default {
   component_table_selector_clipboard_placeholder:
     'Please enter table names separated by commas, for example: table_a, table_b',
   // app
-  app_license_expire_warning: 'Reminder: License expires in {0} days remaining',
+  app_license_expire_warning: 'License expires in {0} days remaining',
   // Agent
   agent_check_error: "Agent's current state is abnormal and cannot create a connection, please check",
   // console
