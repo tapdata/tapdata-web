@@ -43,9 +43,11 @@ export default {
       usersApi.get().then((data) => {
         const items = data?.items || []
         this.userOptions = items.map((item) => {
+          const { email, ldapAccount } = item
+          const label = email || ldapAccount
           return {
-            label: item.email,
-            value: item.email,
+            label,
+            value: label,
           }
         })
       })
