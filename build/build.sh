@@ -24,9 +24,14 @@ sed -i.bak "s|DAAS_BUILD_NUMBER|$DAAS_BUILD_NUMBER|g" $base/apps/$app/.env
 
 echo "pnpm build:$app --dest $dist --mode $mode"
 
+npm i -g corepack@latest
+
+corepack enable
+
 pnpm i
 
-echo "pnpm version: "
-pnpm --version
+echo "node version: $(node --version)
+corepack version: $(corepack --version)
+pnpm version: $(pnpm --version)"
 
 pnpm build:$app --mode $mode -- --env $env
