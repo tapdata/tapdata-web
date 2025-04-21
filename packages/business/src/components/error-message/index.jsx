@@ -1,5 +1,6 @@
 import i18n from '@tap/i18n'
 import { copyToClipboard } from '@tap/shared'
+import { CloseIcon } from '@tap/component'
 import { useRouter } from 'vue-router'
 import './index.scss'
 
@@ -73,6 +74,7 @@ export function ErrorMessage(stack, message) {
   ElMessageBox({
     title: '',
     showClose: true,
+    closeIcon: CloseIcon,
     customClass: ' w-80 max-w-1000 rounded-lg pro-message-box',
     message: renderDialog(stack),
     confirmButtonText: i18n.t('public_button_close'),
