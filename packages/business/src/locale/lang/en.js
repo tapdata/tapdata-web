@@ -1328,5 +1328,8 @@ export default {
   packages_business_auto_fill_join_tooltip_all: '3. If there are no non-null fields, use all fields',
   packages_business_nulls_first: 'NULL Priority Sort',
   packages_business_nulls_first_tip:
-    'When the associated fields contain NULL values, the database defaults to sorting NULL values last, which may cause validation failure. Enabling this option will set NULL values first, but may not use the database index, increasing database load.'
+    'When the associated fields contain NULL values, the database defaults to sorting NULL values last, which may cause validation failure. Enabling this option will set NULL values first, but may not use the database index, increasing database load.',
+  packages_business_ignoreTimePrecision: 'Ignore time precision',
+  packages_business_ignoreTimePrecision_tip:
+    'When enabled, time will be compared up to seconds only, ignoring milliseconds. Useful for syncing high-precision and low-precision time fields.'
 }
