@@ -61,6 +61,7 @@ export default {
         taskMode: 'pipeline',
         errorNotifys: ['SYSTEM', 'EMAIL'],
         inconsistentNotifys: ['SYSTEM', 'EMAIL'],
+        checkTableThreadNum: 10,
         alarmSettings: [
           {
             type: 'INSPECT',
@@ -850,11 +851,30 @@ export default {
                     placement="top"
                     :content="$t('packages_business_ignoreTimePrecision_tip')"
                   >
-                    <VIcon class="align-self-center" color="#909399" size="14">info</VIcon>
+                    <VIcon class="align-self-center" color="#909399" size="14"
+                      >info</VIcon
+                    >
                   </el-tooltip>
                   <span>:</span>
                 </template>
                 <ElSwitch v-model="form.ignoreTimePrecision" />
+              </ElFormItem>
+
+              <ElFormItem v-if="!isCountOrHash" class="form-item">
+                <template #label>
+                  <span>{{ $t('packages_business_checkTableThreadNum') }}</span>
+                  <el-tooltip
+                    effect="dark"
+                    placement="top"
+                    :content="$t('packages_business_checkTableThreadNum_tip')"
+                  >
+                    <VIcon class="align-self-center" color="#909399" size="14"
+                      >info</VIcon
+                    >
+                  </el-tooltip>
+                  <span>:</span>
+                </template>
+                <ElInputNumber v-model="form.checkTableThreadNum" :min="1" />
               </ElFormItem>
 
               <template v-if="form.inspectMethod === 'cdcCount'">

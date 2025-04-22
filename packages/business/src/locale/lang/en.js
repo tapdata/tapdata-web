@@ -1588,5 +1588,8 @@ export default {
     'When the associated fields contain NULL values, the database defaults to sorting NULL values last, which may cause validation failure. Enabling this option will set NULL values first, but may not use the database index, increasing database load.',
   packages_business_ignoreTimePrecision: 'Ignore time precision',
   packages_business_ignoreTimePrecision_tip:
-    'When enabled, time will be compared up to seconds only, ignoring milliseconds. Useful for syncing high-precision and low-precision time fields.'
+    'When enabled, time will be compared up to seconds only, ignoring milliseconds. Useful for syncing high-precision and low-precision time fields.',
+  packages_business_checkTableThreadNum: 'Thread Validation',
+  packages_business_checkTableThreadNum_tip:
+    'Number of threads to use. Default is 10. Can be increased if system resources permit.',
 }
