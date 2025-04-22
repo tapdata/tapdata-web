@@ -76,6 +76,7 @@ export const Switch = connect(
             modelValue={props.value}
             {...attrs}
             onChange={(val) => {
+              emit('change', val)
               emit('update:value', val)
             }}
           />
