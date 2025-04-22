@@ -225,6 +225,12 @@
   --el-border-radius-base: 8px;
   --el-message-border-color: var(--el-message-text-color);
   box-shadow: 0 8px 24px 8px rgba(31, 35, 41, 0.04), 0 6px 12px 0 rgba(31, 35, 41, 0.04), 0 4px 8px -8px rgba(31, 35, 41, 0.06);
+
+  &--info {
+    --el-message-text-color: var(--el-color-primary) !important;
+    --el-message-bg-color: var(--el-color-primary-light-9) !important;
+  }
+
   &__content {
     --el-message-text-color: var(--el-text-color-primary) !important;
   }

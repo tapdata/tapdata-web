@@ -1,72 +1,92 @@
-<template>
-  <span class="fields-selector">
-    <ElSelect
-      multiple
-      filterable
-      allow-create
-      default-first-option
-      class="fields-selector--input"
-      :value="values"
-      :placeholder="placeholder"
-      @input="inputHandler"
-    >
-      <ElOption v-for="opt in options" :key="opt.value" :label="opt.label" :value="opt.value">
-        <span>{{ opt.label }}</span>
-        <VIcon v-if="opt.is_index" size="12" class="field-icon ml-1"> fingerprint </VIcon>
-      </ElOption>
-    </ElSelect>
-    <template v-if="values.length">
-      <div class="fields-selector--display flex p-2 mt-2">
-        <div class="fields-selector--item mr-2" v-for="(field, index) in values" :key="field">
-          <span>{{ field }}</span>
-          <ElLink @click="remove(index)"
-            ><el-icon><el-icon-close /></el-icon
-          ></ElLink>
-        </div>
-      </div>
-      <ClipboardButton class="fields-selector--clip" :content="value" icon></ClipboardButton>
-    </template>
-  </span>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { ClipboardButton } from '@tap/form'
+import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 
 export default {
   components: {
     ClipboardButton,
   },
   props: {
-    value: {
+    modelValue: {
       type: [String],
       required: true,
     },
     placeholder: String,
     options: Array,
   },
+  emits: ['update:modelValue', 'change'],
   computed: {
-    values() {
-      let value = this.value
-      return value && value.length ? value.split(',') : []
+    values: {
+      get() {
+        const value = this.modelValue
+        return value && value.length ? value.split(',') : []
+      },
+      set(values) {
+        //过滤空字符串并去重，之后使用逗号分隔
+        const result = Array.from(
+          new Set(values.filter((v) => !!v.trim())),
+        ).join(',')
+
+        this.$emit('update:modelValue', result)
+        this.$emit('change', result)
+      },
     },
   },
   methods: {
-    inputHandler(values) {
-      //过滤空字符串并去重，之后使用逗号分隔
-      const result = Array.from(new Set(values.filter((v) => !!v.trim()))).join(',')
-
-      $emit(this, 'update:value', result)
-      $emit(this, 'change', result)
-    },
     remove(index) {
-      this.values.splice(index, 1)
-      this.inputHandler(this.values)
+      const newValues = [...this.values]
+      newValues.splice(index, 1)
+      this.values = newValues
     },
   },
-  emits: ['update:value'],
 }
 </script>
+
+<template>
+  <span class="fields-selector">
+    <ElSelect
+      v-model="values"
+      multiple
+      filterable
+      allow-create
+      default-first-option
+      class="fields-selector--input"
+      :placeholder="placeholder"
+    >
+      <ElOption
+        v-for="opt in options"
+        :key="opt.value"
+        :label="opt.label"
+        :value="opt.value"
+      >
+        <span>{{ opt.label }}</span>
+        <VIcon v-if="opt.is_index" size="12" class="field-icon ml-1">
+          fingerprint
+        </VIcon>
+      </ElOption>
+    </ElSelect>
+    <template v-if="values.length">
+      <div class="flex fields-selector--display mt-2 rounded-lg">
+        <div class="flex flex-warp flex-1 gap-2 p-2">
+          <el-tag
+            v-for="(field, index) in values"
+            :key="field"
+            closable
+            disable-transitions
+            @close="remove(index)"
+          >
+            {{ field }}
+          </el-tag>
+        </div>
+        <ClipboardButton
+          class="fields-selector--clip"
+          :content="modelValue"
+          icon
+        />
+      </div>
+    </template>
+  </span>
+</template>
 
 <style lang="scss">
 .fields-selector {

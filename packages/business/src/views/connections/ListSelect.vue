@@ -1,19 +1,8 @@
-<template>
-  <AsyncSelect
-    v-bind="$attrs"
-    v-model:value="form.value"
-    :method="getData"
-    :current-label="form.label"
-    @change="handleChange"
-  >
-  </AsyncSelect>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import { merge } from 'lodash-es'
-import { AsyncSelect } from '@tap/form'
 import { connectionsApi } from '@tap/api'
+import { AsyncSelect } from '@tap/form'
+import { merge } from 'lodash-es'
+import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 
 export default {
   name: 'ListSelect',
@@ -35,6 +24,7 @@ export default {
       type: Function,
     },
   },
+  emits: ['change', 'update:label', 'update:value'],
   data() {
     return {
       form: {
@@ -59,12 +49,20 @@ export default {
     handleChange(val, opt) {
       const { label } = opt
       this.form.label = label
-      $emit(this.$emit('update:value', this.form.value).$emit('update:label', this.form.label), 'change', val, opt)
+      $emit(
+        this.$emit('update:value', this.form.value).$emit(
+          'update:label',
+          this.form.label,
+        ),
+        'change',
+        val,
+        opt,
+      )
     },
 
     async getData(filter = {}) {
       const { page = 1, size = 20 } = filter
-      let params = {
+      const params = {
         order: 'createTime DESC',
         limit: size,
         noSchema: 1,
@@ -79,7 +77,7 @@ export default {
         })
       }
 
-      let res = await connectionsApi.get({
+      const res = await connectionsApi.get({
         filter: JSON.stringify(merge(params, this.params)),
       })
 
@@ -98,6 +96,9 @@ export default {
       return res
     },
   },
-  emits: ['change', 'update:label', 'update:value'],
 }
 </script>
+
+<template>
+  <AsyncSelect v-model="form.value" :method="getData" :current-label="label" />
+</template>

@@ -5,7 +5,6 @@ import {
   metadataInstancesApi,
   sharedCacheApi,
 } from '@tap/api'
-import { VirtualSelect } from '@tap/component'
 import { Switch as ConfirmSwitch } from '@tap/form'
 import i18n from '@tap/i18n'
 import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
@@ -15,7 +14,6 @@ import FieldSelector from './FieldSelector'
 
 export default {
   components: {
-    VirtualSelect,
     FieldSelector,
     CodeView,
     ConnectionListSelect,
@@ -257,13 +255,14 @@ export default {
           this.fieldOptionsLoading = false
         })
     },
-    connectionInputHandler(connectionId, opt) {
+    connectionInputHandler(opt) {
       this.form.tableName = ''
+      this.form.connectionName = opt.label
       this.form.cacheKeys = ''
       this.form.fields = ''
       this.form.databaseType = opt.data?.definitionPdkId
       this.fieldOptions = []
-      this.getTableOptions(connectionId)
+      this.getTableOptions(opt.value)
     },
     tableInputHandler(tableName) {
       this.form.cacheKeys = ''
@@ -382,8 +381,8 @@ export default {
             :label="`${$t('packages_business_shared_cache_column_connection')}`"
           >
             <ConnectionListSelect
-              v-model:value="form.connectionId"
-              v-model:label="form.connectionName"
+              v-model="form.connectionId"
+              :label="form.connectionName"
               :placeholder="
                 $t('packages_business_shared_cache_placeholder_connection')
               "
@@ -394,7 +393,7 @@ export default {
                 },
               }"
               class="form-input"
-              @change="connectionInputHandler"
+              @option-select="connectionInputHandler"
             />
           </ElFormItem>
         </el-col>
@@ -406,17 +405,16 @@ export default {
             prop="tableName"
             :label="`${$t('packages_business_shared_cache_column_table')}`"
           >
-            <VirtualSelect
+            <ElSelectV2
               v-model="form.tableName"
               filterable
               class="form-input"
-              :item-size="34"
               :options="tableOptions"
               :loading="tableOptionsLoading"
               :placeholder="
                 $t('packages_business_shared_cache_placeholder_table')
               "
-              @input="tableInputHandler"
+              @change="tableInputHandler"
             >
               <template #option="{ item }">
                 <span>{{ item.label }}</span>
@@ -424,7 +422,7 @@ export default {
                   `(${item.comment})`
                 }}</span>
               </template>
-            </VirtualSelect>
+            </ElSelectV2>
           </ElFormItem>
         </el-col>
         <el-col :span="12">
@@ -443,13 +441,12 @@ export default {
               </el-tooltip>
             </template>
             <ConfirmSwitch
-              :value="form.autoCreateIndex"
+              v-model:value="form.autoCreateIndex"
               :confirm="{
                 title: $t(
                   'packages_business_shared_cache_cache_key_auto_create_tip',
                 ),
               }"
-              @change="form.autoCreateIndex = $event"
             />
           </ElFormItem>
         </el-col>
@@ -475,7 +472,7 @@ export default {
               </el-tooltip>
             </template>
             <FieldSelector
-              v-model:value="form.cacheKeys"
+              v-model="form.cacheKeys"
               class="form-field-selector"
               :options="fieldOptions"
               :placeholder="
@@ -507,7 +504,7 @@ export default {
               </el-tooltip>
             </template>
             <FieldSelector
-              v-model:value="form.fields"
+              v-model="form.fields"
               class="form-field-selector"
               :options="fieldOptions"
               :placeholder="
