@@ -1,24 +1,13 @@
-<template>
-  <div class="schema-progress-wrapper flex align-items-center">
-    <template v-if="data.status !== 'invalid'">
-      <i
-        class="connections-schema-status__icon mr-1"
-        :class="'el-icon-' + schemaInfo.icon + ' color-' + schemaInfo.color"
-      ></i>
-      <ElLink v-if="schemaInfo.icon === 'error'" type="danger" @click="showErrorMsg">{{ schemaInfo.text }}</ElLink>
-      <ElTooltip v-else-if="schemaInfo.tips" :content="schemaInfo.tips" placement="top">
-        <span :class="'color-' + schemaInfo.color">{{ schemaInfo.text }}</span>
-      </ElTooltip>
-      <span v-else-if="schemaInfo.color" :class="'color-' + schemaInfo.color">{{ schemaInfo.text }}</span>
-      <span v-else>-</span>
-    </template>
-    <span v-else>-</span>
-  </div>
-</template>
-
 <script>
-import { h } from 'vue'
+import {
+  CircleCheckFilled,
+  CircleCloseFilled,
+  Loading,
+  WarningFilled,
+} from '@element-plus/icons-vue'
 import dayjs from 'dayjs'
+import { h } from 'vue'
+import { ErrorMessage } from './error-message'
 
 export default {
   props: {
@@ -26,30 +15,33 @@ export default {
   },
   computed: {
     schemaInfo() {
-      let data = this.data
+      const data = this.data
       let schemaInfo = {}
       // 加载数量大于等于实际的视为已完成
       if (data.loadFieldsStatus === 'finished') {
-        let loadTime = data.loadSchemaTime
+        const loadTime = data.loadSchemaTime
         schemaInfo = {
           text: this.$t('public_status_finished'),
-          icon: 'success',
+          icon: CircleCheckFilled,
           color: 'success',
           tips: loadTime
-            ? this.$t('packages_business_schema_progress_load_time', [dayjs(loadTime).format('YYYY-MM-DD HH:mm:ss')])
+            ? this.$t('packages_business_schema_progress_load_time', [
+                dayjs(loadTime).format('YYYY-MM-DD HH:mm:ss'),
+              ])
             : '',
         }
       } else if (data.loadFieldsStatus === 'loading') {
-        let process = (data.loadCount * 100) / data.tableCount || 0
+        const process = (data.loadCount * 100) / data.tableCount || 0
         schemaInfo = {
-          text: Math.floor(process) + '%',
-          icon: 'warning',
-          color: 'warning',
+          text: `${this.$t('public_message_loading')} ${Math.floor(process)}%`,
+          icon: Loading,
+          color: 'primary',
+          class: 'is-loading',
         }
       } else if (data.loadFieldsStatus) {
         schemaInfo = {
           text: this.$t('packages_business_schema_progress_status_error'),
-          icon: 'error',
+          icon: CircleCloseFilled,
           color: 'danger',
         }
       }
@@ -57,32 +49,55 @@ export default {
     },
   },
   methods: {
-    showErrorMsg() {
-      let stack = this.data.loadFieldErrMsg
-
-      if (import.meta.env.VUE_APP_KEYWORD) {
-        stack = stack.replace(/tapdata\s?/gi,  import.meta.env.VUE_APP_KEYWORD)
-      }
-
-      this.$alert(
-        h(
-          'pre',
-          {
-            class: 'pb-5 overflow-auto',
-          },
-          [stack],
-        ),
-        this.$t('packages_business_schema_progress_dialog_error_title'),
-        {
-          type: 'error',
-          customClass: 'schema-error-dialog',
-          confirmButtonText: this.$t('public_button_close'),
-        },
-      )
+    showErrorMsg(msg) {
+      ErrorMessage(msg)
     },
   },
 }
 </script>
+
+<template>
+  <div class="schema-progress-wrapper flex align-items-center">
+    <template v-if="data.status !== 'invalid'">
+      <el-icon
+        class="mr-1"
+        :class="[
+          { [`color-${schemaInfo.color}`]: schemaInfo.color },
+          schemaInfo.class,
+        ]"
+      >
+        <component :is="schemaInfo.icon" />
+      </el-icon>
+
+      <ElLink
+        v-if="schemaInfo.icon === 'error'"
+        type="danger"
+        @click="showErrorMsg"
+        >{{ schemaInfo.text }}</ElLink
+      >
+      <ElTooltip
+        v-else-if="schemaInfo.tips"
+        :content="schemaInfo.tips"
+        placement="top"
+      >
+        <span>{{ schemaInfo.text }}</span>
+      </ElTooltip>
+      <span v-else-if="schemaInfo.text">{{ schemaInfo.text }}</span>
+      <span v-else>-</span>
+      <ElButton
+        v-if="
+          data.loadFieldsStatus !== 'finished' &&
+          data.loadFieldsStatus !== 'loading'
+        "
+        text
+        type="primary"
+        @click="showErrorMsg(data.loadFieldErrMsg)"
+        >{{ $t('public_button_check') }}
+      </ElButton>
+    </template>
+    <span v-else>-</span>
+  </div>
+</template>
 
 <style lang="scss">
 .schema-error-dialog {
