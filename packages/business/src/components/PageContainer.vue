@@ -111,7 +111,7 @@ const handleBack = () => {
         </el-button>
 
         <slot name="title">
-          <span class="fs-5 font-color-dark">{{ $t($route.meta.title) }}</span>
+          <span class="fs-5 font-color-dark lh-8">{{ $t($route.meta.title) }}</span>
         </slot>
 
         <slot name="left-actions" />

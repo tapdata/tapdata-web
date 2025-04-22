@@ -37,8 +37,8 @@
       </ElButton>
     </template>
 
-    <div class="flex flex-column h-100">
-      <div v-if="showFilter" class="flex justify-content-between p-3">
+    <div class="flex flex-column h-100 gap-4">
+      <div v-if="showFilter" class="flex justify-content-between">
         <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </div>
 
