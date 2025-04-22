@@ -152,6 +152,12 @@ export default {
         this.loading
       )
     },
+    isCountOrHash() {
+      return (
+        this.form.inspectMethod === 'row_count' ||
+        this.form.inspectMethod === 'hash'
+      )
+    },
   },
   created() {
     // 设置form.taskMode
@@ -835,6 +841,22 @@ export default {
                   <ElOption :value="10000" label="10000(rows)" />
                 </ElSelect>
               </ElFormItem>
+
+              <ElFormItem v-if="!isCountOrHash" class="form-item">
+                <template #label>
+                  <span>{{ $t('packages_business_ignoreTimePrecision') }}</span>
+                  <el-tooltip
+                    effect="dark"
+                    placement="top"
+                    :content="$t('packages_business_ignoreTimePrecision_tip')"
+                  >
+                    <VIcon class="align-self-center" color="#909399" size="14">info</VIcon>
+                  </el-tooltip>
+                  <span>:</span>
+                </template>
+                <ElSwitch v-model="form.ignoreTimePrecision" />
+              </ElFormItem>
+
               <template v-if="form.inspectMethod === 'cdcCount'">
                 <ElFormItem class="setting-item">
                   <label class="item-label">{{

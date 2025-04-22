@@ -1412,4 +1412,7 @@ export default {
   packages_business_nulls_first: 'NULL优先排序',
   packages_business_nulls_first_tip:
     '关联字段存在NULL值时，数据库默认将NULL排在最后，可能导致校验失败。开启此选项将NULL值排在前面，但可能无法使用数据库索引，增加数据库负载。',
+  packages_business_ignoreTimePrecision: '忽略时间精度',
+  packages_business_ignoreTimePrecision_tip:
+    '开启此开关后会忽略时间毫秒级的比较，只精确到秒级，适用于高精度时间字段同步低精度时间字段场景。'
 }
