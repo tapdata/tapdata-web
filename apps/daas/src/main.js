@@ -1,5 +1,5 @@
 import { settingsApi, timeStampApi, usersApi } from '@tap/api'
-import WSClient from '@tap/business/src/shared/ws-client'
+import { WSClient } from '@tap/business/src/shared/ws-client'
 import { installElement, VIcon } from '@tap/component'
 import {
   getCurrentLanguage,
@@ -95,11 +95,6 @@ const init = () => {
   installDirectives(app)
   installElement(app)
 
-  // TODO 废弃，后续替换
-  // window.$vueApp.use(VueClipboard)
-  // window.$vueApp.use(LoadMore)
-  // window.$vueApp.use(FormBuilder)
-
   window.$vueApp.config.globalProperties.$ws = new WSClient(wsUrl, undefined, {
     getQuery: () => {
       return {
@@ -107,8 +102,6 @@ const init = () => {
       }
     },
   })
-
-  // Vue.prototype.$api = factory
 
   window.$vueApp.component(VIcon.name, VIcon)
   window.$vueApp.config.globalProperties.routerAppend = (
