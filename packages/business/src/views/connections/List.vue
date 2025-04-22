@@ -521,7 +521,7 @@ export default {
 
     //检测agent 是否可用
     async checkTestConnectionAvailable() {
-      if (import.meta.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         this.dialogDatabaseTypeVisible = true
         return
       }

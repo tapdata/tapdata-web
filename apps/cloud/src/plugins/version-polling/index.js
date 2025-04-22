@@ -117,7 +117,7 @@ export function startVersionPolling() {
   createVersionPolling({
     appETagKey: '__APP_ETAG__',
     pollingInterval: 5 * 1000, // 单位为毫秒
-    silent: import.meta.env.NODE_ENV === 'development', // 开发环境下不检测
+    silent: import.meta.env.DEV, // 开发环境下不检测
     onUpdate: (self) => {
       Notification({
         closeIcon: CloseIcon,
