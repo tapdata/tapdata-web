@@ -237,7 +237,7 @@ export default {
   packages_business_dataFlow_selectAll: '全选',
   packages_business_dataFlow_skipError_title: '跳过错误设置',
   packages_business_dataFlow_skipError_tip:
-    '任务上次停止时发生了以下数据相关的错误，请确认这些错误已经被处理。如果希望跳过这些错误，请勾选相应的错误项并点击“跳过错误，启动任务” 。',
+    '任务上次停止时发生了以下数据相关的错误，请确认这些错误已经被处理。如果希望跳过这些错误，请勾选相应的错误项并点击"跳过错误，启动任务" 。',
   packages_business_dataFlow_skipError_attention:
     '注意：若导致错误的数据未被处理，跳过错误可能导致这条数据被丢弃。',
   packages_business_dataFlow_skipError_startJob: '跳过错误，启动任务',
@@ -1414,5 +1414,8 @@ export default {
     '关联字段存在NULL值时，数据库默认将NULL排在最后，可能导致校验失败。开启此选项将NULL值排在前面，但可能无法使用数据库索引，增加数据库负载。',
   packages_business_ignoreTimePrecision: '忽略时间精度',
   packages_business_ignoreTimePrecision_tip:
-    '开启此开关后会忽略时间毫秒级的比较，只精确到秒级，适用于高精度时间字段同步低精度时间字段场景。'
+    '开启此开关后会忽略时间毫秒级的比较，只精确到秒级，适用于高精度时间字段同步低精度时间字段场景。',
+  packages_business_checkTableThreadNum: '校验线程数量',
+  packages_business_checkTableThreadNum_tip:
+    '校验线程数量，在资源充足的情况下可进行调整，默认线程数为 10',
 }
