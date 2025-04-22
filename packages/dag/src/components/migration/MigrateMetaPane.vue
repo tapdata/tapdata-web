@@ -206,10 +206,11 @@ export default {
       this.$refs.list.setRules(this.fieldChangeRules)
       this.updateConditionFieldMap = cloneDeep(this.form.getValuesIn('updateConditionFieldMap') || {})
       const { size, current } = this.page
+      const tableFilter = this.searchTable ? `.*${this.searchTable}.*` : ''
       const res = await this.getData({
         page: current,
         pageSize: size,
-        tableFilter: this.searchTable,
+        tableFilter,
         filterType: this.activeClassification
       })
       const { items, total } = res
