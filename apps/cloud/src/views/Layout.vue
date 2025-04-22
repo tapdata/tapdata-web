@@ -100,12 +100,7 @@ export default defineComponent({
     if (!this.$store.state.config?.disabledOnlineChat) {
       this.loadChat()
     }
-    if (this.$store.state.config?.disabledDataService) {
-      //海外版隐藏数据服务
-      this.sortMenus = this.sortMenus.filter(
-        (item) => item.name !== 'dataServerList',
-      )
-    }
+
     if (this.$store.state.config?.disabledDataVerify) {
       //生产环境隐藏数据校验
       this.sortMenus = this.sortMenus.filter(

@@ -217,16 +217,6 @@ const routes = [
         },
       },
       {
-        path: '/data-server',
-        name: 'dataServerList',
-        component: () => import('../views/data-server/list.vue'),
-        meta: {
-          title: 'dfs_data_server',
-          hideTitle: true,
-          icon: 'data-server',
-        },
-      },
-      {
         path: '/data-hub',
         name: 'dataConsole',
         component: () => import('../views/data-hub/index.vue'),

@@ -1,113 +1,19 @@
-<template>
-  <PageContainer>
-    <template #title>
-      <slot name="title"></slot>
-    </template>
-    <template #actions>
-      <ElButton v-show="pendingSelection.length > 0" size="mini" @click="batchPublish">
-        <span> {{ $t('public_batch_publish') }}</span>
-      </ElButton>
-      <ElButton
-        v-show="multipleSelection.length > 0"
-        :disabled="$disabledReadonlyUserBtn()"
-        v-readonlybtn="'SYNC_job_export'"
-        class="btn message-button-cancel"
-        @click="handleExport"
-      >
-        <span> {{ $t('public_button_export') }}</span>
-      </ElButton>
-      <ElButton
-        v-readonlybtn="'SYNC_job_import'"
-        class="btn"
-        :disabled="$disabledReadonlyUserBtn()"
-        @click="handleImport"
-      >
-        <span> {{ $t('packages_business_button_bulk_import') }}</span>
-      </ElButton>
-      <ElButton
-        v-readonlybtn="'SYNC_job_export'"
-        class="btn"
-        :disabled="$disabledReadonlyUserBtn() || !multipleSelectionActive.length"
-        @click="handleExportApiDoc"
-      >
-        <span>{{ $t('packages_business_data_server_list_apIwendang') }}</span>
-      </ElButton>
-      <ElButton class="btn btn-create" type="primary" @click.stop="showDrawer()">
-        <span>{{ $t('packages_business_data_server_drawer_chuangjianfuwu') }}</span>
-      </ElButton>
-    </template>
-
-    <div class="flex flex-column h-100 gap-4">
-      <div v-if="showFilter" class="flex justify-content-between">
-        <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
-      </div>
-
-      <VTable
-        :columns="cols"
-        :remote-method="getData"
-        ref="table"
-        height="100%"
-        class="flex-fill"
-        @selection-change="handleSelectionChange"
-      >
-        <template #name="{ row }">
-          <ElLink
-            class="ellipsis"
-            type="primary"
-            style="display: block; line-height: 20px"
-            @click.stop="showDrawer(row)"
-          >
-            {{ row.name }}
-          </ElLink>
-        </template>
-        <template #statusFmt="{ row }">
-          <span class="status-block" :class="'status-' + row.status">{{ row.statusFmt }}</span>
-        </template>
-        <template #operation="{ row }">
-          <ElButton
-            v-if="row.status !== 'active'"
-            :disabled="row.status !== 'pending'"
-            text
-            type="primary"
-            @click="changeStatus(row)"
-            >{{ $t('public_button_public') }}</ElButton
-          >
-          <ElButton v-if="row.status === 'active'" text type="primary" @click="changeStatus(row)">{{
-            $t('public_button_revoke')
-          }}</ElButton>
-          <ElDivider class="mx-1" direction="vertical"></ElDivider>
-          <ElButton text type="primary" @click="output(row)">{{ $t('public_button_export') }}</ElButton>
-          <ElDivider class="mx-1" direction="vertical"></ElDivider>
-          <ElButton text type="primary" @click="removeServer(row)">{{ $t('public_button_delete') }}</ElButton>
-        </template>
-
-        <template v-slot:empty>
-          <VEmpty large></VEmpty>
-        </template>
-      </VTable>
-      </div>
-
-    <Drawer
-        ref="drawer"
-        :host="apiServerHost"
-        @save="table.fetch(1)"
-        @visible="$emit('drawer-visible', arguments[0])"
-      ></Drawer>
-      <!-- 导入 -->
-      <Upload type="Modules" :show-tag="false" ref="upload" @success="table.fetch()"></Upload>
-  </PageContainer>
-</template>
-
 <script>
-import { escapeRegExp } from 'lodash-es'
+import {
+  apiServerApi,
+  appApi,
+  databaseTypesApi,
+  metadataInstancesApi,
+  modulesApi,
+} from '@tap/api'
+import { FilterBar, VEmpty, VTable } from '@tap/component'
+
 import i18n from '@tap/i18n'
-
-import { databaseTypesApi, modulesApi, metadataInstancesApi, apiServerApi, appApi } from '@tap/api'
-import { FilterBar, VTable, VEmpty } from '@tap/component'
-import Upload from '../../components/UploadDialog'
-
-import Drawer from './Drawer'
+import { escapeRegExp } from 'lodash-es'
 import PageContainer from '../../components/PageContainer.vue'
+
+import Upload from '../../components/UploadDialog'
+import Drawer from './Drawer'
 
 export default {
   components: { PageContainer, FilterBar, Drawer, VTable, VEmpty, Upload },
@@ -127,6 +33,7 @@ export default {
       },
     },
   },
+  emits: ['drawer-visible'],
   data() {
     return {
       filterItems: [],
@@ -180,7 +87,7 @@ export default {
         {
           label: i18n.t('packages_business_application_list_yingyongmingcheng'),
           prop: 'appName',
-          'min-width': 140
+          'min-width': 140,
         },
         {
           label: this.$t('public_connection_type'),
@@ -213,21 +120,21 @@ export default {
           width: 200,
           prop: 'operation',
           slotName: 'operation',
-          fixed: 'right'
+          fixed: 'right',
         },
       ]
     },
     // 选中的已发布数据
     multipleSelectionActive() {
-      return this.multipleSelection.filter(t => t.status === 'active')
+      return this.multipleSelection.filter((t) => t.status === 'active')
     },
 
     pendingSelection() {
-      return this.multipleSelection.filter(t => t.status === 'pending')
-    }
+      return this.multipleSelection.filter((t) => t.status === 'pending')
+    },
   },
   watch: {
-    '$route.query'() {
+    '$route.query': function () {
       this.table.fetch(1)
     },
   },
@@ -247,15 +154,15 @@ export default {
           key: 'appId',
           type: 'select-inner',
           items: async () => {
-            let params = {
+            const params = {
               where: {
                 item_type: 'app',
               },
               order: 'createTime DESC',
               limit: 1000,
             }
-            let res = await appApi.get({ filter: JSON.stringify(params) })
-            let data =
+            const res = await appApi.get({ filter: JSON.stringify(params) })
+            const data =
               res.items.map((t) => {
                 return {
                   label: t.value,
@@ -263,7 +170,7 @@ export default {
                 }
               }) || []
             //默认全部
-            let all = {
+            const all = {
               label: this.$t('public_select_option_all'),
               value: '',
             }
@@ -280,13 +187,20 @@ export default {
             data = data || []
             let databaseTypes = []
             databaseTypes = data?.filter((it) =>
-              ['mysql', 'sqlserver', 'oracle', 'mongodb', 'pg', 'tidb'].includes(it.pdkId),
+              [
+                'mysql',
+                'sqlserver',
+                'oracle',
+                'mongodb',
+                'pg',
+                'tidb',
+              ].includes(it.pdkId),
             )
-            let databaseTypeOptions = databaseTypes.sort((t1, t2) =>
+            const databaseTypeOptions = databaseTypes.sort((t1, t2) =>
               t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1,
             )
             //默认全部
-            let all = {
+            const all = {
               name: this.$t('public_select_option_all'),
               type: '',
             }
@@ -313,15 +227,21 @@ export default {
       ]
     },
     getData({ page = {} }) {
-      let { current, size } = page
-      let { type, status, keyword, appId } = this.searchParams
-      let where = {}
+      const { current, size } = page
+      const { type, status, keyword, appId } = this.searchParams
+      const where = {}
       if (keyword?.trim()) {
         const obj = { like: escapeRegExp(keyword), options: 'i' }
-        where.or = [{ name: obj }, { tableName: obj }, { basePath: obj }, { prefix: obj }, { apiVersion: obj }]
+        where.or = [
+          { name: obj },
+          { tableName: obj },
+          { basePath: obj },
+          { prefix: obj },
+          { apiVersion: obj },
+        ]
       }
       if (type) {
-        where['connectionType'] = type
+        where.connectionType = type
       }
       if (appId) {
         where['listtags.id'] = appId
@@ -329,7 +249,7 @@ export default {
 
       status && (where.status = status)
 
-      let filter = {
+      const filter = {
         order: this.order,
         limit: size,
         skip: (current - 1) * size,
@@ -345,8 +265,10 @@ export default {
           filter: JSON.stringify(filter),
         })
         .then((data) => {
-          let list = (data?.items || []).map((item) => {
-            item.statusFmt = this.statusOptions.find((it) => it.value === item.status)?.label || '-'
+          const list = (data?.items || []).map((item) => {
+            item.statusFmt =
+              this.statusOptions.find((it) => it.value === item.status)
+                ?.label || '-'
             item.appName = item.listtags?.[0]?.value || '-'
 
             const pathJoin = []
@@ -365,7 +287,9 @@ export default {
     },
     async getApiServerHost() {
       const showError = () => {
-        this.$message.error(i18n.t('packages_business_data_server_list_huoqufuwuyu'))
+        this.$message.error(
+          i18n.t('packages_business_data_server_list_huoqufuwuyu'),
+        )
       }
       const data = await apiServerApi.get().catch(() => {
         showError()
@@ -380,10 +304,14 @@ export default {
       this.multipleSelection = val
     },
     async removeServer(row) {
-      const flag = await this.$confirm(i18n.t('packages_business_data_server_list_querenshanchufu'), '', {
-        type: 'warning',
-        showClose: false,
-      })
+      const flag = await this.$confirm(
+        i18n.t('packages_business_data_server_list_querenshanchufu'),
+        '',
+        {
+          type: 'warning',
+          showClose: false,
+        },
+      )
       if (flag) {
         await modulesApi.delete(row.id)
         this.table.fetch()
@@ -438,11 +366,11 @@ export default {
       if (!this.pendingSelection.length) return
 
       await modulesApi.batchUpdate(
-        this.pendingSelection.map(item => ({
+        this.pendingSelection.map((item) => ({
           id: item.id,
           status: 'active',
-          tableName: item.tableName
-        }))
+          tableName: item.tableName,
+        })),
       )
 
       this.$message.success(this.$t('public_message_publish_successful'))
@@ -452,11 +380,141 @@ export default {
       this.$nextTick(() => {
         this.$refs.table.doLayout()
       })
-    }
+    },
   },
-  emits: ['drawer-visible'],
 }
 </script>
+
+<template>
+  <PageContainer>
+    <template #title>
+      <slot name="title" />
+    </template>
+    <template #actions>
+      <ElButton
+        v-show="pendingSelection.length > 0"
+        size="mini"
+        @click="batchPublish"
+      >
+        <span> {{ $t('public_batch_publish') }}</span>
+      </ElButton>
+      <ElButton
+        v-show="multipleSelection.length > 0"
+        v-readonlybtn="'SYNC_job_export'"
+        :disabled="$disabledReadonlyUserBtn()"
+        class="btn message-button-cancel"
+        @click="handleExport"
+      >
+        <span> {{ $t('public_button_export') }}</span>
+      </ElButton>
+      <ElButton
+        v-readonlybtn="'SYNC_job_import'"
+        class="btn"
+        :disabled="$disabledReadonlyUserBtn()"
+        @click="handleImport"
+      >
+        <span> {{ $t('packages_business_button_bulk_import') }}</span>
+      </ElButton>
+      <ElButton
+        v-readonlybtn="'SYNC_job_export'"
+        class="btn"
+        :disabled="
+          $disabledReadonlyUserBtn() || !multipleSelectionActive.length
+        "
+        @click="handleExportApiDoc"
+      >
+        <span>{{ $t('packages_business_data_server_list_apIwendang') }}</span>
+      </ElButton>
+      <ElButton
+        class="btn btn-create"
+        type="primary"
+        @click.stop="showDrawer()"
+      >
+        <span>{{
+          $t('packages_business_data_server_drawer_chuangjianfuwu')
+        }}</span>
+      </ElButton>
+    </template>
+
+    <div class="flex flex-column h-100 gap-4">
+      <div v-if="showFilter" class="flex justify-content-between">
+        <FilterBar
+          v-model:value="searchParams"
+          :items="filterItems"
+          @fetch="table.fetch(1)"
+        />
+      </div>
+
+      <VTable
+        ref="table"
+        :columns="cols"
+        :remote-method="getData"
+        height="100%"
+        class="flex-fill"
+        @selection-change="handleSelectionChange"
+      >
+        <template #name="{ row }">
+          <ElLink
+            class="ellipsis"
+            type="primary"
+            style="display: block; line-height: 20px"
+            @click.stop="showDrawer(row)"
+          >
+            {{ row.name }}
+          </ElLink>
+        </template>
+        <template #statusFmt="{ row }">
+          <span class="status-block" :class="`status-${row.status}`">{{
+            row.statusFmt
+          }}</span>
+        </template>
+        <template #operation="{ row }">
+          <ElButton
+            v-if="row.status !== 'active'"
+            :disabled="row.status !== 'pending'"
+            text
+            type="primary"
+            @click="changeStatus(row)"
+            >{{ $t('public_button_public') }}</ElButton
+          >
+          <ElButton
+            v-if="row.status === 'active'"
+            text
+            type="primary"
+            @click="changeStatus(row)"
+            >{{ $t('public_button_revoke') }}</ElButton
+          >
+          <ElDivider class="mx-1" direction="vertical" />
+          <ElButton text type="primary" @click="output(row)">{{
+            $t('public_button_export')
+          }}</ElButton>
+          <ElDivider class="mx-1" direction="vertical" />
+          <ElButton text type="primary" @click="removeServer(row)">{{
+            $t('public_button_delete')
+          }}</ElButton>
+        </template>
+
+        <template #empty>
+          <VEmpty large />
+        </template>
+      </VTable>
+    </div>
+
+    <Drawer
+      ref="drawer"
+      :host="apiServerHost"
+      @save="table.fetch(1)"
+      @visible="$emit('drawer-visible', arguments[0])"
+    />
+    <!-- 导入 -->
+    <Upload
+      ref="upload"
+      type="Modules"
+      :show-tag="false"
+      @success="table.fetch()"
+    />
+  </PageContainer>
+</template>
 
 <style lang="scss" scoped>
 .data-server-wrapper {
