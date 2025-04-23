@@ -1,84 +1,18 @@
-<template>
-  <ElDialog
-    :title="$t('packages_business_shared_list_edit_title')"
-    :model-value="visible"
-    :append-to-body="true"
-    width="800px"
-    top="10vh"
-    class="connection-dialog ldp-conection-dialog flex flex-column"
-    @close="handleClose"
-  >
-    <ElForm
-      v-loading="loading"
-      ref="form"
-      label-position="left"
-      label-width="160px"
-      :model="editForm"
-      :rules="rulesEdit"
-    >
-      <ElFormItem :label="$t('packages_business_shared_form_edit_name')" prop="name">
-        <ElInput clearable v-model="editForm.name"></ElInput>
-      </ElFormItem>
-      <ElFormItem :label="$t('packages_business_shared_form_setting_log_time')">
-        <ElInputNumber v-model="editForm.storageTime" :precision="0" :step="1" :min="1"></ElInputNumber>
-        <span class="ml-2">{{ $t('public_time_d') }}</span>
-      </ElFormItem>
-      <ElFormItem :label="$t('packages_business_shared_list_edit_title_start_time')">
-        <div v-for="(item, index) in editForm.syncPoints" :key="index">
-          <ElSelect v-model="item.pointType" :placeholder="$t('public_select_placeholder')">
-            <ElOption v-for="op in pointTypeOptions" :key="op.value" :label="op.label" :value="op.value"></ElOption>
-          </ElSelect>
-          <ElDatePicker
-            v-if="item.pointType !== 'current'"
-            v-model="item.dateTime"
-            :picker-options="getPickerOptions(item.dateTime, item)"
-            popperClass="hide-current__dateTime"
-            type="datetime"
-            format="yyyy-MM-dd HH:mm:ss"
-            valueFormat="timestamp"
-            class="ml-4"
-          ></ElDatePicker>
-        </div>
-      </ElFormItem>
-      <ElFormItem :label="$t('packages_dag_nodes_database_zengliangduoxiancheng')">
-        <ElSwitch v-model="dagForm.cdcConcurrent"></ElSwitch>
-        <ElInputNumber
-          v-if="dagForm.cdcConcurrent"
-          v-model="dagForm.cdcConcurrentWriteNum"
-          class="ml-4"
-          :min="0"
-        ></ElInputNumber>
-      </ElFormItem>
-      <div v-if="schemaData" class="border-bottom mb-3 fs-6 fw-bold font-color-normal">
-        {{ $t('packages_dag_config_datasource') }}
-      </div>
-      <SchemaToForm
-        ref="schemaToForm"
-        :schema="schemaData"
-        :scope="schemaScope"
-        :colon="true"
-        label-width="160"
-        class="scheme-to-form"
-      ></SchemaToForm>
-    </ElForm>
-    <template v-slot:footer>
-      <span class="dialog-footer">
-        <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton type="primary" @click="handleSave">{{ $t('public_button_save') }}</ElButton>
-      </span>
-    </template>
-  </ElDialog>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import dayjs from 'dayjs'
-import { logcollectorApi, taskApi, databaseTypesApi, connectionsApi } from '@tap/api'
+import {
+  connectionsApi,
+  databaseTypesApi,
+  logcollectorApi,
+  taskApi,
+} from '@tap/api'
 import { SchemaToForm } from '@tap/form'
+import dayjs from 'dayjs'
+import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 
 export default {
   name: 'Editor',
   components: { SchemaToForm },
+  emits: ['success'],
   data() {
     return {
       visible: false,
@@ -138,19 +72,21 @@ export default {
         .then((task) => {
           this.editForm.name = task.name
           this.editForm.storageTime = task.storageTime
-          let syncPoints = task.syncPoints
+          const syncPoints = task.syncPoints
           if (syncPoints) {
             this.editForm.syncPoints = syncPoints
           } else {
-            const [connectionId, connectionName] = Object.entries(task.connections[0])[0]
+            const [connectionId, connectionName] = Object.entries(
+              task.connections[0],
+            )[0]
             const sourceNodeIds = (task.dag?.edges || []).map((t) => t.source)
             const sourceNodes = (task.dag?.nodes || [])
               .filter((node) => sourceNodeIds.includes(node.id))
               .map((node) => ({
                 nodeId: node.id,
                 nodeName: node.name,
-                connectionId: connectionId,
-                connectionName: connectionName,
+                connectionId,
+                connectionName,
               }))
             const result = sourceNodes.map((item) => {
               const point = {
@@ -180,8 +116,8 @@ export default {
 
         dag = task.dag
         dag.edges.forEach(({ source, target }) => {
-          let _source = outputsMap[source]
-          let _target = inputsMap[target]
+          const _source = outputsMap[source]
+          const _target = inputsMap[target]
 
           if (!_source) {
             outputsMap[source] = [target]
@@ -227,7 +163,8 @@ export default {
 
           if (nodeConfig) {
             if (connectionId) {
-              const connectionInfo = await connectionsApi.getNoSchema(connectionId)
+              const connectionInfo =
+                await connectionsApi.getNoSchema(connectionId)
               attrs.db_version = connectionInfo.db_version
             }
 
@@ -280,7 +217,9 @@ export default {
         if (valid) {
           logcollectorApi.patchId(this.taskId, this.editForm).then(() => {
             $emit(this, 'success', ...arguments)
-            this.$message.success(this.$t('packages_business_shared_cdc_setting_message_edit_save'))
+            this.$message.success(
+              this.$t('packages_business_shared_cdc_setting_message_edit_save'),
+            )
             this.init()
             this.handleClose()
           })
@@ -311,7 +250,7 @@ export default {
       if (val > now) {
         item.dateTime = now
       }
-      let op = {
+      const op = {
         disabledDate: (time) => {
           return new Date(time).getTime() > now
         },
@@ -325,7 +264,7 @@ export default {
     },
 
     saveTaskDag() {
-      let { dag } = this
+      const { dag } = this
       const { cdcConcurrent, cdcConcurrentWriteNum } = this.dagForm
 
       const getFormValues = this.$refs.schemaToForm?.getFormValues() || {}
@@ -339,7 +278,7 @@ export default {
           const { $inputs, $outputs, ...formVal } = getFormValues
           Object.assign(el, {
             nodeConfig: formVal.nodeConfig,
-            storageTime: this.editForm.storageTime
+            storageTime: this.editForm.storageTime,
           })
         }
       })
@@ -349,9 +288,108 @@ export default {
       })
     },
   },
-  emits: ['success'],
 }
 </script>
+
+<template>
+  <ElDialog
+    :title="$t('packages_business_shared_list_edit_title')"
+    :model-value="visible"
+    :append-to-body="true"
+    width="800px"
+    top="10vh"
+    class="connection-dialog ldp-conection-dialog flex flex-column"
+    @close="handleClose"
+  >
+    <ElForm
+      ref="form"
+      v-loading="loading"
+      label-position="left"
+      label-width="auto"
+      :model="editForm"
+      :rules="rulesEdit"
+    >
+      <ElFormItem
+        :label="$t('packages_business_shared_form_edit_name')"
+        prop="name"
+      >
+        <ElInput v-model="editForm.name" clearable />
+      </ElFormItem>
+      <ElFormItem :label="$t('packages_business_shared_form_setting_log_time')">
+        <ElInputNumber
+          v-model="editForm.storageTime"
+          :precision="0"
+          :step="1"
+          :min="1"
+        />
+        <span class="ml-2">{{ $t('public_time_d') }}</span>
+      </ElFormItem>
+      <ElFormItem
+        :label="$t('packages_business_shared_list_edit_title_start_time')"
+      >
+        <div v-for="(item, index) in editForm.syncPoints" :key="index">
+          <ElSelect
+            v-model="item.pointType"
+            :placeholder="$t('public_select_placeholder')"
+            style="width: 200px"
+          >
+            <ElOption
+              v-for="op in pointTypeOptions"
+              :key="op.value"
+              :label="op.label"
+              :value="op.value"
+            />
+          </ElSelect>
+          <ElDatePicker
+            v-if="item.pointType !== 'current'"
+            v-model="item.dateTime"
+            :picker-options="getPickerOptions(item.dateTime, item)"
+            popper-class="hide-current__dateTime"
+            type="datetime"
+            format="YYYY-MM-DD HH:mm:ss"
+            value-format="timestamp"
+            class="ml-4"
+          />
+        </div>
+      </ElFormItem>
+      <ElFormItem
+        :label="$t('packages_dag_nodes_database_zengliangduoxiancheng')"
+      >
+        <ElSwitch v-model="dagForm.cdcConcurrent" />
+        <ElInputNumber
+          v-if="dagForm.cdcConcurrent"
+          v-model="dagForm.cdcConcurrentWriteNum"
+          class="ml-4"
+          :min="0"
+        />
+      </ElFormItem>
+      <div
+        v-if="schemaData"
+        class="border-bottom mb-3 pb-3 fs-6 fw-sub font-color-normal"
+      >
+        {{ $t('packages_dag_config_datasource') }}
+      </div>
+      <SchemaToForm
+        ref="schemaToForm"
+        :schema="schemaData"
+        :scope="schemaScope"
+        :colon="true"
+        label-width="160"
+        class="scheme-to-form"
+      />
+    </ElForm>
+    <template #footer>
+      <span class="dialog-footer">
+        <ElButton @click="handleClose">{{
+          $t('public_button_cancel')
+        }}</ElButton>
+        <ElButton type="primary" @click="handleSave">{{
+          $t('public_button_save')
+        }}</ElButton>
+      </span>
+    </template>
+  </ElDialog>
+</template>
 
 <style lang="scss" scoped>
 .scheme-to-form {

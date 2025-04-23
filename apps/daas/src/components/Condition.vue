@@ -1,77 +1,5 @@
-<template>
-  <!-- api过滤条件 -->
-  <div class="condition-warp">
-    <!-- 选择字段 -->
-    <div class="condition-warp-group">
-      <div class="condition-warp-group-item">
-        <el-select v-model="model.queryField" @change="queryFieldChange" style="width: 170px">
-          <el-option
-            v-for="field in fieldList"
-            :label="field[fieldLabel]"
-            :value="field[fieldValue]"
-            :key="field[fieldValue]"
-          ></el-option>
-        </el-select>
-
-        <template v-if="model.queryField">
-          <el-select v-model="model.queryCommand" @change="commandChange" style="width: 100px; padding: 0 10px">
-            <el-option
-              v-for="command in commands"
-              :label="command.label"
-              :value="command.value"
-              :key="command.value"
-            ></el-option>
-          </el-select>
-          <el-input
-            v-model="model.queryValue"
-            v-if="model.queryCommand !== 'between' && !isDatetime"
-            :placeholder="$t('query_build_queryValue')"
-            style="width: 250px; padding-right: 10px"
-          ></el-input>
-          <el-date-picker
-            v-model="model.queryValue"
-            v-if="model.queryCommand !== 'between' && isDatetime"
-            type="datetime"
-            format="yyyy-MM-dd HH:mm:ss"
-            style="width: 120px; padding-right: 10px"
-          >
-          </el-date-picker>
-          <el-input
-            v-model="model.smallerValue"
-            :placeholder="$t('query_build_queryValue')"
-            v-if="model.queryCommand === 'between' && !isDatetime"
-            style="width: 125px; padding-right: 10px"
-          ></el-input>
-          <el-input
-            v-model="model.largerValue"
-            v-if="model.queryCommand === 'between' && !isDatetime"
-            :placeholder="$t('query_build_queryValue')"
-            style="width: 125px; padding-right: 10px"
-          ></el-input>
-          <el-date-picker
-            v-model="model.smallerValue"
-            v-if="model.queryCommand === 'between' && isDatetime"
-            type="datetime"
-            format="yyyy-MM-dd HH:mm:ss"
-            style="width: 120px"
-          >
-          </el-date-picker>
-          <el-date-picker
-            v-model="model.largerValue"
-            v-if="model.queryCommand === 'between' && isDatetime"
-            type="datetime"
-            format="yyyy-MM-dd HH:mm:ss"
-            style="width: 160px"
-          >
-          </el-date-picker>
-        </template>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
+import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 export default {
   name: 'Condition',
   props: {
@@ -116,6 +44,7 @@ export default {
     //   }
     // }
   },
+  emits: ['update:value'],
   data() {
     return {
       color: '',
@@ -143,8 +72,30 @@ export default {
       ],
     }
   },
-  created() {
-    this.fieldList = this.fields
+  computed: {
+    childLevel() {
+      return this.level + 1
+    },
+    operator() {
+      return this.value.operator
+    },
+    conditions() {
+      return this.value.conditions
+    },
+    conditionCount() {
+      return this.value.conditions.length
+    },
+    isDatetime() {
+      const field = this.fields.find((v) => v.value === this.model.queryField)
+      if (field) {
+        const type = field.type
+
+        if (type === 'string' && field.format === 'date-time') {
+          return true
+        }
+      }
+      return false
+    },
   },
   watch: {
     // showFilterDialog: {
@@ -197,30 +148,8 @@ export default {
       },
     },
   },
-  computed: {
-    childLevel() {
-      return this.level + 1
-    },
-    operator() {
-      return this.value.operator
-    },
-    conditions() {
-      return this.value.conditions
-    },
-    conditionCount() {
-      return this.value.conditions.length
-    },
-    isDatetime() {
-      let field = this.fields.filter((v) => v.value === this.model.queryField)[0]
-      if (field) {
-        let type = field.type
-
-        if (type === 'string' && field.format === 'date-time') {
-          return true
-        }
-      }
-      return false
-    },
+  created() {
+    this.fieldList = this.fields
   },
   mounted() {
     this.setValue(this.value)
@@ -229,7 +158,7 @@ export default {
     // 改变字段名称
     queryFieldChange(value) {
       if (value) {
-        let item = this.fields.find((v) => v.field_name === value)
+        const item = this.fields.find((v) => v.field_name === value)
         if (item) {
           this.model.queryField = item.field_name
         } else {
@@ -266,23 +195,23 @@ export default {
       $emit(this, 'update:value', this.value)
     },
     setValue() {
-      this.model['queryField'] = this.value.field
-      this.model['queryCommand'] = this.value.command
-      this.model['queryValue'] = this.value.value
+      this.model.queryField = this.value.field
+      this.model.queryCommand = this.value.command
+      this.model.queryValue = this.value.value
     },
     // 过滤条件初始值
     filterChange() {
-      let data = {
+      const data = {
         type: 'condition',
         field: this.model.queryField,
         command: this.model.queryCommand,
         value: this.model.queryValue,
       }
       if (this.model.queryCommand === 'between') {
-        let small = /^-?\d+\.?\d+$/.test(this.model.smallerValue)
+        const small = /^-?(?:\d+\.\d+|\d{2,})$/.test(this.model.smallerValue)
           ? Number(this.model.smallerValue)
           : this.model.smallerValue
-        let larger = /^-?\d+\.?\d+$/.test(this.model.largerValue)
+        const larger = /^-?(?:\d+\.\d+|\d{2,})$/.test(this.model.largerValue)
           ? Number(this.model.largerValue)
           : this.model.largerValue
         data.value = [small, larger]
@@ -299,9 +228,85 @@ export default {
       this.model.largerValue = ''
     },
   },
-  emits: ['update:value'],
 }
 </script>
+
+<template>
+  <!-- api过滤条件 -->
+  <div class="condition-warp">
+    <!-- 选择字段 -->
+    <div class="condition-warp-group">
+      <div class="condition-warp-group-item">
+        <el-select
+          v-model="model.queryField"
+          style="width: 170px"
+          @change="queryFieldChange"
+        >
+          <el-option
+            v-for="field in fieldList"
+            :key="field[fieldValue]"
+            :label="field[fieldLabel]"
+            :value="field[fieldValue]"
+          />
+        </el-select>
+
+        <template v-if="model.queryField">
+          <el-select
+            v-model="model.queryCommand"
+            style="width: 100px; padding: 0 10px"
+            @change="commandChange"
+          >
+            <el-option
+              v-for="command in commands"
+              :key="command.value"
+              :label="command.label"
+              :value="command.value"
+            />
+          </el-select>
+          <el-input
+            v-if="model.queryCommand !== 'between' && !isDatetime"
+            v-model="model.queryValue"
+            :placeholder="$t('query_build_queryValue')"
+            style="width: 250px; padding-right: 10px"
+          />
+          <el-date-picker
+            v-if="model.queryCommand !== 'between' && isDatetime"
+            v-model="model.queryValue"
+            type="datetime"
+            format="YYYY-MM-DD HH:mm:ss"
+            style="width: 120px; padding-right: 10px"
+          />
+          <el-input
+            v-if="model.queryCommand === 'between' && !isDatetime"
+            v-model="model.smallerValue"
+            :placeholder="$t('query_build_queryValue')"
+            style="width: 125px; padding-right: 10px"
+          />
+          <el-input
+            v-if="model.queryCommand === 'between' && !isDatetime"
+            v-model="model.largerValue"
+            :placeholder="$t('query_build_queryValue')"
+            style="width: 125px; padding-right: 10px"
+          />
+          <el-date-picker
+            v-if="model.queryCommand === 'between' && isDatetime"
+            v-model="model.smallerValue"
+            type="datetime"
+            format="YYYY-MM-DD HH:mm:ss"
+            style="width: 120px"
+          />
+          <el-date-picker
+            v-if="model.queryCommand === 'between' && isDatetime"
+            v-model="model.largerValue"
+            type="datetime"
+            format="YYYY-MM-DD HH:mm:ss"
+            style="width: 160px"
+          />
+        </template>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .condition-warp {
