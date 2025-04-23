@@ -133,7 +133,6 @@ export default {
     },
     // 获取设置数据
     getData() {
-      const _this = this
       let auth_data = []
       licensesApi.get({}).then((data) => {
         auth_data = data?.items || []
@@ -214,14 +213,16 @@ export default {
               ? -1
               : 0
         })
-        _this.formData.items = vals
+        this.formData.items = vals
+
+        this.changeName(this.formData.items[0].category)
+
+        // this.formData.items.push({
+        //   liceseItems: auth_data,
+        //   items: auth_data,
+        //   category: 'license',
+        // })
       })
-      const lincenseData = {
-        liceseItems: auth_data,
-        items: auth_data,
-        category: 'license',
-      }
-      _this.formData.items.push(lincenseData)
     },
     // 保存
     save() {

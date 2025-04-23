@@ -419,14 +419,14 @@ export default {
   share_detail_statistics_time: 'Statistics time',
   share_detail_incremental_time: 'The time point',
   // 设置
-  setting_email_template: 'Email template',
+  setting_email_template: 'Email Template',
   setting_saveSuccess: 'Save successfully, take effect in one minute',
-  setting_nameserver: 'Server name',
-  setting_Log: 'Log',
-  setting_SMTP: 'SMTP',
-  setting_Job: 'Task',
-  setting_License: 'License Control',
-  setting_expiredate: 'Expiration time',
+  setting_nameserver: 'Server Name',
+  setting_Log: 'Log Management',
+  setting_SMTP: 'SMTP Settings',
+  setting_Job: 'Task Management',
+  setting_License: 'License Management',
+  setting_expiredate: 'Expiration Date',
   setting_import: 'Import',
   setting_apply: 'Apply for license',
   setting_license_expire_date: 'License expiration time',
@@ -458,7 +458,7 @@ export default {
   setting_Sample_Rate: 'Sampling rate',
   setting_task_load_threshold: 'Task load threshold (percentage)',
   setting_task_load_statistics_time: 'Task load statistics time (minute)',
-  setting_ApiServer: 'API distribution settings',
+  setting_ApiServer: 'API Distribution Settings',
   setting_Default_Limit: 'The number of rows returned by the default query',
   setting_Max_Limit: 'Maximum number of rows returned by the query',
   setting_Send_batch_size: 'Number of packed data',
@@ -503,7 +503,7 @@ export default {
   setting_hint_Show_Page: 'Show download page',
   setting_hint_User_Registery:
     'User registration type settings. The value is set to "disabled": registration is prohibited; the value is set to "self-signup" to enable user self-registration; the value is set to "manual-approval" to allow user registration, but requires administrator approval. ',
-  setting_DR_Rehearsal: 'Disaster preparedness drill',
+  setting_DR_Rehearsal: 'Disaster Recovery Drill',
   setting_Mongod_path: 'Mongod path',
   setting_SSH_User: 'SSH username',
   setting_SSH_Port: 'SSH Port',
@@ -514,7 +514,7 @@ export default {
   setting_hint_Enable_DR_Rehearsal:
     'Disaster recovery rehearsal switch, true means on, false means off',
   setting_Download_Agent_Page: 'Agent Download Page',
-  setting_Background_Analytics: 'Background analysis',
+  setting_Background_Analytics: 'Background Analysis',
   setting_Data_quality_analysis_frequency:
     'Data quality analysis interval (seconds)',
   setting_Dashboard_data_analysis_frequency:
@@ -548,9 +548,9 @@ export default {
   setting_save: 'Save successfully, take effect in one minute',
   setting_Logout_forward_to_this_url: 'Logout forwarding address',
   setting_Check_devices: 'Important device detection',
-  setting_ops: 'Operation and maintenance display',
-  setting_server_oversee_url: 'O&M operation control URL',
-  setting_system: 'System global',
+  setting_ops: 'Operations & Maintenance',
+  setting_server_oversee_url: 'O&M Control URL',
+  setting_system: 'System Global Settings',
   setting_licenseNoticeDays: 'license expiration reminder',
   setting_license_alarm: 'License expiry advance reminder (days)',
   setting_License_expiry_email_reminder_:
@@ -639,7 +639,7 @@ export default {
   setting_Login_Brief_Tips: 'Login brief tips',
   setting_Login_Brief_Tips_doc:
     'Once enabled, the login prompt will be simplified',
-  setting_LDAP: 'LDAP Login Settings',
+  setting_LDAP: 'LDAP Authentication',
   setting_Ldap_Login_Enable: 'Use LDAP Login',
   setting_Ldap_Server_Host: 'LDAP Server Address',
   setting_Ldap_Server_Port: 'LDAP Server Port',
@@ -2130,6 +2130,6 @@ export default {
   daas_datasourcePipeUsageDetails: 'Pipeline Usage Details',
   account_accessCode_confirm: 'Confirm Refresh Access Code?',
   account_accessCode_tip:
-    'Refreshing the access code will invalidate the current code, and the system will generate a new one.<b class="color-warning">Update the access code in the engine’s configuration file and restart it to ensure proper functioning. Handle with care.</b>',
+    'Refreshing the access code will invalidate the current code, and the system will generate a new one.<b class="color-warning">Update the access code in the engine\'s configuration file and restart it to ensure proper functioning. Handle with care.</b>',
   account_accessCode_success: 'Access code refreshed successfully',
 }

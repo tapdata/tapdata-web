@@ -82,9 +82,9 @@ export const StudioHeader = observer(
           <div class="panel-header-title">
             <TextEditable
               maxWidth="254"
-              placeholder="请输入节点名称"
+              placeholder={i18n.t('packages_nodeDesign_custom_node_name_required')}
               value={customNodeRef.value.name}
-              onInput={(val) => {
+              onChange={(val) => {
                 customNodeRef.value.name = val
               }}
             />
