@@ -9,7 +9,7 @@
       </ElLink>
     </span>
     <span class="inline-input-body" v-show="editing">
-      <ElTooltip manual effect="dark" :content="tooltip" placement="top-start" :value="disabled">
+      <ElTooltip manual effect="dark" :content="tooltip" placement="top-start" :visible="disabled">
         <ElInput
           v-bind="inputProps"
           class="input"

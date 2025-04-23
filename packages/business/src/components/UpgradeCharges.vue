@@ -2,7 +2,7 @@
   <section>
     <el-dialog
       :title="$t('packages_business_components_upgradecharges_dingyueshengji')"
-      :value="visible"
+      :model-value="visible"
       @input="$emit('update:visible', $event)"
       :append-to-body="true"
       width="880px"

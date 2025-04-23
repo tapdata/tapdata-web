@@ -1437,7 +1437,7 @@ export default {
             manual
             :content="$t('agent_deploy_start_install_button_copied')"
             popper-class="copy-tooltip"
-            :value="showTooltip"
+            :visible="showTooltip"
           >
             <span
               v-clipboard:copy="copySelectSql"
@@ -1459,7 +1459,7 @@ export default {
             manual
             :content="$t('agent_deploy_start_install_button_copied')"
             popper-class="copy-tooltip"
-            :value="showDelTooltip"
+            :visible="showDelTooltip"
           >
             <span
               v-clipboard:copy="copyDelSql"

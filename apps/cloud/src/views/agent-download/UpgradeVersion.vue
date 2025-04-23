@@ -38,7 +38,7 @@
               manual
               :content="$t('agent_deploy_upgrade_button_copied')"
               popper-class="copy-tooltip"
-              :value="showTooltip"
+              :visible="showTooltip"
             >
               <span
                 class="operaKey"
@@ -66,7 +66,7 @@
               manual
               :content="$t('agent_deploy_upgrade_button_copied')"
               popper-class="copy-tooltip"
-              :value="showTooltip"
+              :visible="showTooltip"
             >
               <span
                 class="operaKey"
@@ -113,7 +113,7 @@
               manual
               :content="$t('agent_deploy_upgrade_button_copied')"
               popper-class="copy-tooltip"
-              :value="showTooltip"
+              :visible="showTooltip"
             >
               <span
                 class="operaKey"
@@ -164,7 +164,7 @@
               manual
               :content="$t('agent_deploy_upgrade_button_copied')"
               popper-class="copy-tooltip"
-              :value="showTooltip"
+              :visible="showTooltip"
             >
               <span
                 class="operaKey"

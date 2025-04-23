@@ -131,7 +131,7 @@ export default {
         effect="dark"
         :content="tooltip"
         placement="top-start"
-        :value="disabled"
+        :visible="disabled"
       >
         <ElInput
           v-bind="inputProps"

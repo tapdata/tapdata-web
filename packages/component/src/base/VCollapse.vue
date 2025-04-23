@@ -12,7 +12,7 @@ export default {
 </script>
 
 <template>
-  <ElCollapse :value="active" accordion class="collapse-fill">
+  <ElCollapse :model-value="active" accordion class="collapse-fill">
     <ElCollapseItem name="1">
       <template #title>
         <div

@@ -361,7 +361,7 @@ export default {
           $t('packages_dag_monitor_verifypanel_wentibiaoqingdan')
         }}</span>
         <ElTooltip
-          :value="hasNew"
+          :visible="hasNew"
           transition="tooltip-fade-in"
           :content="
             hasNew

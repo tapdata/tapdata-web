@@ -146,7 +146,7 @@ export default {
           manual
           :content="$t('agent_deploy_start_install_button_copied')"
           popper-class="copy-tooltip"
-          :value="showTooltip"
+          :visible="showTooltip"
         >
           <el-button
             type="primary"

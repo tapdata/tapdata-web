@@ -1,17 +1,14 @@
 <script setup lang="tsx">
-import { Path } from '@formily/path'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { IconButton } from '@tap/component'
 import { AsyncSelect, FieldSelect } from '@tap/form'
 import i18n from '@tap/i18n'
 import { ClickOutside, Time } from '@tap/shared'
-import { merge, orderBy, unionBy } from 'lodash-es'
+import { merge, unionBy } from 'lodash-es'
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
-import { $emit } from '../../../utils/gogocodeTransfer'
-import { useAfterTaskSaved } from '../../hooks/useAfterTaskSaved'
 import { sourceEndpoint, targetEndpoint } from '../../style'
 import { TableSelect } from '../form'
 import NodeIcon from '../NodeIcon.vue'
@@ -57,15 +54,6 @@ const emit = defineEmits([
   'nodeSelected',
   'addNode',
   'loadSchema',
-  'updateJoinKeys',
-  'updateDatabaseType',
-  'updateTableName',
-  'updateTable',
-  'updateTableComment',
-  'updateMergeType',
-  'removeJoinKey',
-  'updateArrayKeys',
-  'updatePosition',
 ])
 
 // Store and route
@@ -198,6 +186,7 @@ const treeData = computed(() => {
 })
 
 const transformLoading = computed(() => store.state.dataflow.transformLoading)
+const taskSaving = computed(() => store.state.dataflow.taskSaving)
 
 const sourceNodes = computed(() => {
   return findParentNodes(props.node.id, true)
@@ -247,6 +236,21 @@ function waitTaskTransform() {
   })
 }
 
+function waitTaskSaved() {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      if (taskSaving.value) {
+        const unwatch = watch(taskSaving, () => {
+          unwatch()
+          resolve()
+        })
+      } else {
+        resolve()
+      }
+    }, 100)
+  })
+}
+
 function findParentNodes(id, ifMyself) {
   const node = nodeById(id)
   const parents = []
@@ -291,31 +295,28 @@ function __init() {
 
       store.commit('dataflow/addActiveAction', 'dragActive')
 
-      $emit(this, 'dragStart', params)
+      emit('dragStart', params)
       return true
     },
     drag: (params) => {
       params.id = nodeId
       isDrag.value = true
-      $emit(this, 'dragMove', params)
+      emit('dragMove', params)
     },
     stop: () => {
       isNotMove.value = false
 
       if (isActionActive('dragActive')) {
-        // Clone to avoid direct prop mutation
-        const newPosition = [...props.position]
-        newPosition[0] = Number.parseFloat(
-          document.querySelector(`n_#${nodeId}`).style.left,
+        props.position[0] = Number.parseFloat(
+          document.getElementById(`n_${nodeId}`).style.left,
         )
-        newPosition[1] = Number.parseFloat(
-          document.querySelector(`n_#${nodeId}`).style.top,
+        props.position[1] = Number.parseFloat(
+          document.getElementById(`n_${nodeId}`).style.top,
         )
-        emit('updatePosition', newPosition)
       }
 
       onMouseDownAt.value = undefined
-      $emit(this, 'dragStop', isNotMove.value, [], [])
+      emit('dragStop', isNotMove.value, [], [])
     },
   })
 
@@ -343,20 +344,6 @@ function __init() {
       uuid: `${id}_source`,
     },
   )
-}
-
-function mouseClick() {
-  if (isActionActive('dragActive')) {
-    store.commit('dataflow/removeActiveAction', 'dragActive')
-  } else {
-    if (!ins.value) return
-
-    if (isNodeSelected(props.nodeId)) {
-      $emit(this, 'deselectNode', props.nodeId)
-    } else {
-      $emit(this, 'nodeSelected', props.nodeId, true)
-    }
-  }
 }
 
 async function loadDatabases(filter) {
@@ -605,26 +592,19 @@ function renderContent(h, { data }) {
 }
 
 function handleAddJoinKey() {
-  // Use emit to notify parent instead of mutating the prop directly
-  const joinKeys = props.node.joinKeys ? [...props.node.joinKeys] : []
-
-  if (!joinKeys.length) {
-    emit('updateJoinKeys', [
+  if (!props.node.joinKeys) {
+    props.node.joinKeys = [
       {
         source: '',
         target: '',
       },
-    ])
+    ]
     return
   }
-
-  emit('updateJoinKeys', [
-    ...joinKeys,
-    {
-      source: '',
-      target: '',
-    },
-  ])
+  props.node.joinKeys.push({
+    source: '',
+    target: '',
+  })
 }
 
 function handleFieldSelectVisible(visible) {
@@ -707,38 +687,39 @@ function onConnectionSelect(connection) {
     capabilities: connection.capabilities || [],
     db_version: connection.db_version,
   }
-
-  // Emit to parent component to update these properties
-  emit('updateDatabaseType', {
-    databaseType: connection.databaseType,
-    attrs: nodeAttrs,
+  dagNode.value.databaseType = connection.databaseType
+  Object.keys(nodeAttrs).forEach((key) => {
+    dagNode.value.attrs[key] = nodeAttrs[key]
   })
 }
 
 async function onChangeConnection() {
-  emit('updateTableName', '')
+  dagNode.value.tableName = ''
   await store.dispatch('dataflow/updateDag', { vm: this, isNow: true })
 }
 
 async function onChangeTable(table) {
-  emit('updateTable', { tableName: table, name: table })
+  props.node.tableName = table
+  dagNode.value.name = table
   await nextTick()
   // await store.dispatch('dataflow/updateDag', { isNow: true })
   setTimeout(async () => {
+    await waitTaskSaved()
     await waitTaskTransform()
     emit('loadSchema')
   }, 100)
 }
 
 function onTableSelect(table) {
-  emit('updateTableComment', table.comment)
+  dagNode.value.attrs.tableComment = table.comment
 }
 
 function onChangeType(type) {
   if (type === 'Array') {
-    emit('updateMergeType', 'updateIntoArray')
+    props.node.mergeType = 'updateIntoArray'
   } else {
-    emit('updateMergeType', 'updateWrite')
+    props.node.mergeType = 'updateWrite'
+
     if (type === 'Flatten') {
       state.targetPath = ''
       emit('changePath', props.node, '')
@@ -844,10 +825,11 @@ onMounted(() => {
             dagNode.connectionId &&
             dagNode.tableName
           "
+          size="small"
           class="ml-auto"
           @click="emit('addTargetNode')"
         >
-          <VIcon>add</VIcon>
+          <VIcon class="mr-1">add</VIcon>
           {{ $t('packages_dag_write_target') }}</ElButton
         >
       </div>
@@ -895,7 +877,7 @@ onMounted(() => {
         <template v-if="!props.isMainTable">
           <ElFormItem :label="$t('packages_dag_join_table')">
             <ElSelect
-              :value="props.node.parentId"
+              :model-value="props.node.parentId"
               class="w-100"
               @change="emit('changeParent', props.node, $event)"
             >
@@ -912,14 +894,15 @@ onMounted(() => {
                 <span>{{
                   $t('packages_dag_nodes_mergetable_guanliantiaojian')
                 }}</span>
-                <ElLink
+                <ElButton
+                  text
                   :disabled="props.disabled"
-                  class="fs-8"
                   type="primary"
+                  size="small"
                   @click="handleAddJoinKey"
                 >
-                  <VIcon>add</VIcon>
-                  {{ $t('public_button_add') }}</ElLink
+                  <VIcon class="mr-1">add</VIcon>
+                  {{ $t('public_button_add') }}</ElButton
                 >
               </div>
             </template>
@@ -930,25 +913,30 @@ onMounted(() => {
               :disabled="props.disabled"
               @click="handleAddJoinKey"
             >
-              <VIcon>add</VIcon>
+              <VIcon class="mr-1">add</VIcon>
               {{ $t('public_button_add') }}
             </ElButton>
-            <div v-else class="flex flex-column gap-2">
+            <div v-else class="flex flex-column gap-2 w-100">
               <div
                 v-for="(keys, i) in props.node.joinKeys"
                 :key="i"
-                class="flex align-center gap-1"
+                class="flex w-100 align-center gap-1"
               >
-                <FieldSelect v-model="keys.source" :options="props.schema" />
+                <FieldSelect
+                  v-model="keys.source"
+                  class="flex-1"
+                  :options="props.schema"
+                />
                 <span>=</span>
                 <FieldSelect
                   v-model="keys.target"
+                  class="flex-1"
                   :options="state.targetFields"
                   @visible-change="handleFieldSelectVisible"
                 />
                 <IconButton
                   :disabled="props.disabled"
-                  @click="emit('removeJoinKey', i)"
+                  @click="node.joinKeys.splice(i, 1)"
                   >delete</IconButton
                 >
               </div>
@@ -993,7 +981,6 @@ onMounted(() => {
             item-value="field_name"
             :options="props.schema"
             multiple
-            @update:model-value="emit('updateArrayKeys', $event)"
           />
         </ElFormItem>
       </ElForm>
@@ -1033,8 +1020,10 @@ onMounted(() => {
                   handler: onClickOutside,
                   include,
                 }"
+                text
+                type="primary"
               >
-                <VIcon>add</VIcon>
+                <VIcon class="mr-1">add</VIcon>
                 {{ $t('packages_dag_add_field') }}
               </ElButton>
               <template #dropdown>

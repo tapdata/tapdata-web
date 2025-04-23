@@ -262,6 +262,7 @@ onMounted(() => {
     @change="onChange"
   >
     <template #prefix>
+      <slot name="prefix" />
       <el-icon
         v-if="showLoading"
         class="el-select-loading__icon is-select-loading"

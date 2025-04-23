@@ -1,4 +1,4 @@
-fix<script>
+<script>
 import {
   applicationApi,
   connectionsApi,
@@ -1026,7 +1026,8 @@ export default {
               <ElInput
                 v-if="isEdit"
                 v-model="form.name"
-                text type="primary"
+                text
+                type="primary"
                 maxlength="50"
                 :placeholder="
                   $t('public_input_placeholder') + $t('public_name')
@@ -1045,17 +1046,12 @@ export default {
                   $t('public_button_save')
                 }}</ElButton>
               </div>
-              <ElButton
-                v-else
-                class="ml-4"
-                type="primary"
-               
-                @click="edit"
-                >{{ $t('public_button_edit') }}</ElButton
-              >
+              <ElButton v-else class="ml-4" type="primary" @click="edit">{{
+                $t('public_button_edit')
+              }}</ElButton>
             </template>
           </div>
-          <div class="flex-1 mt-3 mb-3" size="small">
+          <div class="flex-1 mt-3 mb-3">
             <ElInput
               v-model="form.description"
               type="textarea"
@@ -1154,7 +1150,6 @@ export default {
           <ElFormItem
             :label="$t('public_description')"
             class="flex-1 form-item-name"
-            size="small"
             prop="description"
           >
             <ElInput
@@ -1295,7 +1290,6 @@ export default {
             <div class="flex gap-4">
               <ElFormItem
                 class="flex-1"
-                size="small"
                 :label="$t('public_version')"
                 prop="apiVersion"
                 :rules="rules.apiVersion"
@@ -1304,7 +1298,6 @@ export default {
               </ElFormItem>
               <ElFormItem
                 class="flex-1"
-                size="small"
                 :label="$t('packages_business_data_server_drawer_prefix')"
                 prop="prefix"
               >
@@ -1313,7 +1306,6 @@ export default {
             </div>
             <ElFormItem
               class="flex-1"
-              size="small"
               :label="$t('packages_business_data_server_drawer_base_path')"
               prop="basePath"
             >
@@ -1610,7 +1602,6 @@ export default {
                 v-model="debugMethod"
                 class="data-server-debug__method mr-4"
                 style="width: 100px"
-               
               >
                 <ElOption
                   v-for="(item, i) in urlList"

@@ -1,38 +1,3 @@
-<template>
-  <div>
-    <div class="error-item">{{ errorTitle }}</div>
-    <div v-show="code" class="error-item">
-      <span class="error-item__label">{{ codeLabel }}</span>
-      <span class="error-item__value">{{ code }}</span>
-    </div>
-    <div v-show="reqId" class="error-item">
-      <span class="error-item__label">{{ reqIdLabel }}</span>
-      <span class="error-item__value cursor-pointer" @click="onCopy">{{ reqId }}</span>
-      <ElTooltip
-        placement="top"
-        manual
-        :content="copiedTip"
-        popper-class="copy-tooltip"
-        :tabindex="10086"
-        :value="showTooltip"
-      >
-        <span class="operaKey" v-clipboard:copy="reqId" v-clipboard:success="onCopy" @mouseleave="showTooltip = false">
-          <VIcon size="14" :class="[{ 'copied-icon': copied }, 'cursor-pointer', 'ml-2']">copy</VIcon>
-        </span>
-      </ElTooltip>
-    </div>
-    <div v-show="message">
-      <div class="inline-flex align-items-center expand-operation cursor-pointer" @click="expand = !expand">
-        <span class="error-item__label">{{ errorDetailLabel }}</span>
-        <VIcon size="14" :class="[{ expand: expand }, 'v-icon', 'ml-1']" @click.prevent.stop="expand = !expand"
-          >arrow-down</VIcon
-        >
-      </div>
-      <div v-show="expand" class="font-color-disable">{{ message }}</div>
-    </div>
-  </div>
-</template>
-
 <script>
 import { VIcon } from '@tap/component'
 import i18n from '@/i18n'
@@ -83,6 +48,58 @@ export default {
   },
 }
 </script>
+
+<template>
+  <div>
+    <div class="error-item">{{ errorTitle }}</div>
+    <div v-show="code" class="error-item">
+      <span class="error-item__label">{{ codeLabel }}</span>
+      <span class="error-item__value">{{ code }}</span>
+    </div>
+    <div v-show="reqId" class="error-item">
+      <span class="error-item__label">{{ reqIdLabel }}</span>
+      <span class="error-item__value cursor-pointer" @click="onCopy">{{
+        reqId
+      }}</span>
+      <ElTooltip
+        placement="top"
+        manual
+        :content="copiedTip"
+        popper-class="copy-tooltip"
+        :tabindex="10086"
+        :visible="showTooltip"
+      >
+        <span
+          v-clipboard:copy="reqId"
+          v-clipboard:success="onCopy"
+          class="operaKey"
+          @mouseleave="showTooltip = false"
+        >
+          <VIcon
+            size="14"
+            :class="[{ 'copied-icon': copied }, 'cursor-pointer', 'ml-2']"
+            >copy</VIcon
+          >
+        </span>
+      </ElTooltip>
+    </div>
+    <div v-show="message">
+      <div
+        class="inline-flex align-items-center expand-operation cursor-pointer"
+        @click="expand = !expand"
+      >
+        <span class="error-item__label">{{ errorDetailLabel }}</span>
+        <VIcon
+          size="14"
+          :class="[{ expand }, 'v-icon', 'ml-1']"
+          @click.prevent.stop="expand = !expand"
+          >arrow-down</VIcon
+        >
+      </div>
+      <div v-show="expand" class="font-color-disable">{{ message }}</div>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .error-item {

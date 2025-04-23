@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :value="visible"
+    :model-value="visible"
     @input="$emit('update:visible', $event)"
     :close-on-click-modal="false"
     :show-close="false"

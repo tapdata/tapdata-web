@@ -1,262 +1,9 @@
-<template>
-  <ElDialog
-    class="agent-download-dialog"
-    width="1000px"
-    v-model="dialogVisible"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-    :show-close="false"
-  >
-    <section class="fast-download down-page">
-      <main class="page-main block">
-        <div class="title">{{ $t('agent_deploy_title') }}</div>
-        <p class="title-text pt-6">
-          {{ $t('agent_deploy_select_tip') }}
-        </p>
-        <div class="content">
-          <div class="text-style mt-6">
-            {{ $t('dfs_agent_download_agentdownloadmodal_yaoanzhuangAg') }}
-          </div>
-          <div class="down-type">
-            <div
-              v-for="down in downType"
-              :key="down.value"
-              :class="{ active: downLoadType === down.value }"
-              @click="chooseDownLoadType(down.value)"
-            >
-              <span>{{ down.name }}</span>
-            </div>
-          </div>
-          <template v-if="downLoadType === 'windows'">
-            <ul class="ul-style">
-              <li>
-                {{ $t('agent_deploy_start_install_windows_first') }}
-                <ElLink type="primary" @click="handleDownLoad">{{
-                  $t('agent_deploy_start_install_windows_first_download')
-                }}</ElLink>
-              </li>
-              <li class="mt-3">
-                {{ $t('agent_deploy_start_install_windows_second') }}
-              </li>
-              <li class="mt-3">
-                {{ $t('agent_deploy_start_install_windows_third') }}
-              </li>
-              <li class="mt-3">
-                {{ $t('agent_deploy_start_install_windows_fourth') }}
-              </li>
-              <li class="box title-text mt-2">
-                <span class="link-line">{{ windowsLink }}</span>
-                <ElTooltip
-                  placement="top"
-                  manual
-                  :content="$t('agent_deploy_start_install_button_copied')"
-                  popper-class="copy-tooltip"
-                  :value="showTooltip"
-                >
-                  <span
-                    class="operaKey"
-                    v-clipboard:copy="windowsLink"
-                    v-clipboard:success="onCopy"
-                    @mouseleave="showTooltip = false"
-                  >
-                    <i class="click-style">{{ $t('public_button_copy') }}</i>
-                  </span>
-                </ElTooltip>
-              </li>
-              <li class="mt-3">
-                <span>{{ $t('agent_deploy_start_install_windows_fifth') }}</span>
-              </li>
-            </ul>
-          </template>
-          <template v-if="downLoadType === 'Linux'">
-            <ul class="ul-style">
-              <li>
-                <span>{{ $t('agent_deploy_before_prepare_linux_first') }}</span>
-                <ElLink type="primary" @click="linuxToJava">{{
-                  $t('agent_deploy_before_prepare_linux_first_link')
-                }}</ElLink>
-              </li>
-              <li>{{ $t('agent_download_AgentDownloadModal_zaiNinDeLI') }}</li>
-              <li class="box title-text my-2">mkdir tapdata</li>
-              <li>
-                {{ $t('agent_download_AgentDownloadModal_fuZhiXiaFangMing2') }}
-              </li>
-              <li class="box title-text my-2">
-                <span class="link-line">{{ linuxLink }}</span>
-                <ElTooltip
-                  placement="top"
-                  manual
-                  :content="$t('agent_deploy_start_install_button_copied')"
-                  popper-class="copy-tooltip"
-                  :value="showTooltip"
-                >
-                  <span
-                    class="operaKey"
-                    v-clipboard:copy="linuxLink"
-                    v-clipboard:success="onCopy"
-                    @mouseleave="showTooltip = false"
-                  >
-                    <i class="click-style">{{ $t('public_button_copy') }}</i>
-                  </span>
-                </ElTooltip>
-              </li>
-              <li>
-                {{ $t('agent_download_AgentDownloadModal_dengDaiMingLingZhi2') }}
-              </li>
-            </ul>
-          </template>
-          <template v-if="downLoadType === 'Docker'">
-            <ul class="ul-style">
-              <li>
-                <span>{{ $t('agent_download_AgentDownloadModal_ninDeBuShuHuan') }}</span>
-                <ElLink type="primary" @click="dockerToInstall">{{
-                  $t('agent_deploy_before_prepare_docker_install_link')
-                }}</ElLink>
-                <span>{{ $t('agent_deploy_before_prepare_docker_second_install') }}</span>
-              </li>
-              <li>
-                <div class="my-5 text-style">
-                  {{ $t('agent_deploy_start_install') }}
-                </div>
-              </li>
-              <li>
-                {{ $t('agent_download_AgentDownloadModal_fuZhiXiaFangMing') }}
-              </li>
-              <li class="box title-text my-2">
-                <span class="link-line">{{ dockerLink }}</span>
-                <ElTooltip
-                  placement="top"
-                  manual
-                  :content="$t('agent_deploy_start_install_button_copied')"
-                  popper-class="copy-tooltip"
-                  :value="showTooltip"
-                >
-                  <span
-                    class="operaKey"
-                    v-clipboard:copy="dockerLink"
-                    v-clipboard:success="onCopy"
-                    @mouseleave="showTooltip = false"
-                  >
-                    <i class="click-style">{{ $t('public_button_copy') }}</i>
-                  </span>
-                </ElTooltip>
-              </li>
-              <li>
-                {{ $t('agent_download_AgentDownloadModal_dengDaiMingLingZhi') }}
-              </li>
-            </ul>
-          </template>
-          <template v-if="downLoadType === 'AliComputenest'">
-            <ul class="ul-style">
-              <li>
-                <span>{{ $t('dfs_agent_download_agentdownloadmodal_jisuanchaoCo') }}</span>
-              </li>
-              <li>
-                <div class="my-5 text-style">
-                  {{ $t('agent_deploy_before_prepare_title') }}
-                </div>
-              </li>
-              <li>
-                {{ $t('dfs_agent_download_agentdownloadmodal_zhunbeiguanliyun') }}
-              </li>
-              <li>
-                <div class="my-5 text-style">
-                  {{ $t('agent_deploy_start_install') }}
-                </div>
-              </li>
-              <li>
-                {{ $t('dfs_agent_download_agentdownloadmodal_ninkeyixuanze') }}
-                <div class="my-4">
-                  <el-link :href="trialUrl" target="_blank" class="mr-4 url-btn"
-                    ><div>
-                      {{ $t('dfs_agent_download_agentdownloadmodal_santianshiyong') }}
-                    </div></el-link
-                  >
-                  <el-link :href="url" target="_blank" class="url-btn"
-                    ><div>
-                      {{ $t('dfs_agent_download_agentdownloadmodal_fufeibushu') }}
-                    </div></el-link
-                  >
-                </div>
-              </li>
-              <li>
-                {{ $t('dfs_agent_download_agentdownloadmodal_womenyijingwei') }}
-              </li>
-              <li>
-                <div class="my-2 text-style">
-                  {{ $t('dfs_agent_download_agentdownloadmodal_shilibanben') }}
-                </div>
-              </li>
-              <li class="box title-text my-2">{{ version }}</li>
-              <li>
-                <div class="my-2 text-style">
-                  {{ $t('dfs_agent_download_agentdownloadmodal_shilitok') }}
-                </div>
-              </li>
-              <li class="box title-text link-line my-2">
-                {{ token }}
-              </li>
-              <li>
-                {{ $t('dfs_agent_download_agentdownloadmodal_querenjisuanchao') }}
-              </li>
-              <li>
-                <el-image :src="getImg('alicomputenest_instance')" alt="" />
-              </li>
-              <li class="my-2">
-                {{ $t('dfs_agent_download_agentdownloadmodal_bushuwanchenghou') }}
-              </li>
-              <li>
-                <el-image :src="getImg('alicomputenest_agent')" alt="" />
-              </li>
-            </ul>
-          </template>
-        </div>
-      </main>
-    </section>
-    <template v-slot:footer>
-      <span>
-        <div class="result-item text-center flex justify-content-end align-items-center">
-          <div v-if="!isFinished" class="loading-item flex align-items-center">
-            <div class="flex align-items-center agent_download_status_icon">
-              <VIcon class="v-icon animation-rotate color-success" size="18" color="rgb(61, 156, 64)"
-                >loading-circle-blue</VIcon
-              >
-              <div class="ml-4">
-                {{ $t('agent_download_AgentDownloadModal_buShuZhuangTaiJian') }}
-              </div>
-            </div>
-            <div class="agent_download_status_btn">
-              <div @click="recordUserBehavior">
-                {{ $t('public_agent_button_deploy_later') }}
-              </div>
-            </div>
-          </div>
-          <div v-else class="finish-item">
-            <VIcon class="v-icon color-success" size="24" color="rgb(61, 156, 64)">check</VIcon>
-            <div class="mt-4">
-              {{ $t('agent_download_AgentDownloadModal_gongXiNinWanCheng') }}
-            </div>
-            <div class="flex justify-content-between mt-4">
-              <ElLink type="primary" @click="toConnection">{{
-                $t('agent_download_AgentDownloadModal_kaiShiChuangJianLian')
-              }}</ElLink>
-              <ElLink type="primary" @click="toWorkbench">{{
-                $t('agent_download_AgentDownloadModal_jinRuGongZuoTai')
-              }}</ElLink>
-            </div>
-          </div>
-        </div>
-      </span>
-    </template>
-  </ElDialog>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import i18n from '@/i18n'
-
 import { VIcon } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
+
+import i18n from '@/i18n'
+import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 
 export default {
   name: 'FastDownload',
@@ -318,18 +65,22 @@ export default {
       this.timer && clearInterval(this.timer)
     },
     getAgentStatus() {
-      let filter = {
+      const filter = {
         where: {
           id: this.agentId,
         },
         limit: 10,
       }
-      this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then((data) => {
-        this.isFinished = data?.items[0]?.status === 'Running'
-      })
+      this.$axios
+        .get(
+          `api/tcm/agent?filter=${encodeURIComponent(JSON.stringify(filter))}`,
+        )
+        .then((data) => {
+          this.isFinished = data?.items[0]?.status === 'Running'
+        })
     },
     loadData() {
-      let data = Object.assign({}, this.source)
+      const data = Object.assign({}, this.source)
       this.agentId = data.agentId
       // this.dialogVisible = true
       data.deployInfo.links.forEach((el) => {
@@ -337,7 +88,7 @@ export default {
           this.trialUrl = el?.trialUrl
           this.url = el?.url
         }
-        this[el.os + 'Link'] = el.command
+        this[`${el.os}Link`] = el.command
       })
       this.downloadUrl = data.deployInfo?.downloadUrl
       this.token = data.deployInfo?.token || ''
@@ -390,13 +141,298 @@ export default {
     },
     recordUserBehavior() {
       Cookie.set('deployLater', 1)
-      let user = window.__USER_INFO__
+      const user = window.__USER_INFO__
       Cookie.set('deployLaterUser', user.userId)
       this.closeModal()
     },
   },
 }
 </script>
+
+<template>
+  <ElDialog
+    v-model="dialogVisible"
+    class="agent-download-dialog"
+    width="1000px"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    :show-close="false"
+  >
+    <section class="fast-download down-page">
+      <main class="page-main block">
+        <div class="title">{{ $t('agent_deploy_title') }}</div>
+        <p class="title-text pt-6">
+          {{ $t('agent_deploy_select_tip') }}
+        </p>
+        <div class="content">
+          <div class="text-style mt-6">
+            {{ $t('dfs_agent_download_agentdownloadmodal_yaoanzhuangAg') }}
+          </div>
+          <div class="down-type">
+            <div
+              v-for="down in downType"
+              :key="down.value"
+              :class="{ active: downLoadType === down.value }"
+              @click="chooseDownLoadType(down.value)"
+            >
+              <span>{{ down.name }}</span>
+            </div>
+          </div>
+          <template v-if="downLoadType === 'windows'">
+            <ul class="ul-style">
+              <li>
+                {{ $t('agent_deploy_start_install_windows_first') }}
+                <ElLink type="primary" @click="handleDownLoad">{{
+                  $t('agent_deploy_start_install_windows_first_download')
+                }}</ElLink>
+              </li>
+              <li class="mt-3">
+                {{ $t('agent_deploy_start_install_windows_second') }}
+              </li>
+              <li class="mt-3">
+                {{ $t('agent_deploy_start_install_windows_third') }}
+              </li>
+              <li class="mt-3">
+                {{ $t('agent_deploy_start_install_windows_fourth') }}
+              </li>
+              <li class="box title-text mt-2">
+                <span class="link-line">{{ windowsLink }}</span>
+                <ElTooltip
+                  placement="top"
+                  manual
+                  :content="$t('agent_deploy_start_install_button_copied')"
+                  popper-class="copy-tooltip"
+                  :visible="showTooltip"
+                >
+                  <span
+                    v-clipboard:copy="windowsLink"
+                    v-clipboard:success="onCopy"
+                    class="operaKey"
+                    @mouseleave="showTooltip = false"
+                  >
+                    <i class="click-style">{{ $t('public_button_copy') }}</i>
+                  </span>
+                </ElTooltip>
+              </li>
+              <li class="mt-3">
+                <span>{{
+                  $t('agent_deploy_start_install_windows_fifth')
+                }}</span>
+              </li>
+            </ul>
+          </template>
+          <template v-if="downLoadType === 'Linux'">
+            <ul class="ul-style">
+              <li>
+                <span>{{ $t('agent_deploy_before_prepare_linux_first') }}</span>
+                <ElLink type="primary" @click="linuxToJava">{{
+                  $t('agent_deploy_before_prepare_linux_first_link')
+                }}</ElLink>
+              </li>
+              <li>{{ $t('agent_download_AgentDownloadModal_zaiNinDeLI') }}</li>
+              <li class="box title-text my-2">mkdir tapdata</li>
+              <li>
+                {{ $t('agent_download_AgentDownloadModal_fuZhiXiaFangMing2') }}
+              </li>
+              <li class="box title-text my-2">
+                <span class="link-line">{{ linuxLink }}</span>
+                <ElTooltip
+                  placement="top"
+                  manual
+                  :content="$t('agent_deploy_start_install_button_copied')"
+                  popper-class="copy-tooltip"
+                  :visible="showTooltip"
+                >
+                  <span
+                    v-clipboard:copy="linuxLink"
+                    v-clipboard:success="onCopy"
+                    class="operaKey"
+                    @mouseleave="showTooltip = false"
+                  >
+                    <i class="click-style">{{ $t('public_button_copy') }}</i>
+                  </span>
+                </ElTooltip>
+              </li>
+              <li>
+                {{
+                  $t('agent_download_AgentDownloadModal_dengDaiMingLingZhi2')
+                }}
+              </li>
+            </ul>
+          </template>
+          <template v-if="downLoadType === 'Docker'">
+            <ul class="ul-style">
+              <li>
+                <span>{{
+                  $t('agent_download_AgentDownloadModal_ninDeBuShuHuan')
+                }}</span>
+                <ElLink type="primary" @click="dockerToInstall">{{
+                  $t('agent_deploy_before_prepare_docker_install_link')
+                }}</ElLink>
+                <span>{{
+                  $t('agent_deploy_before_prepare_docker_second_install')
+                }}</span>
+              </li>
+              <li>
+                <div class="my-5 text-style">
+                  {{ $t('agent_deploy_start_install') }}
+                </div>
+              </li>
+              <li>
+                {{ $t('agent_download_AgentDownloadModal_fuZhiXiaFangMing') }}
+              </li>
+              <li class="box title-text my-2">
+                <span class="link-line">{{ dockerLink }}</span>
+                <ElTooltip
+                  placement="top"
+                  manual
+                  :content="$t('agent_deploy_start_install_button_copied')"
+                  popper-class="copy-tooltip"
+                  :visible="showTooltip"
+                >
+                  <span
+                    v-clipboard:copy="dockerLink"
+                    v-clipboard:success="onCopy"
+                    class="operaKey"
+                    @mouseleave="showTooltip = false"
+                  >
+                    <i class="click-style">{{ $t('public_button_copy') }}</i>
+                  </span>
+                </ElTooltip>
+              </li>
+              <li>
+                {{ $t('agent_download_AgentDownloadModal_dengDaiMingLingZhi') }}
+              </li>
+            </ul>
+          </template>
+          <template v-if="downLoadType === 'AliComputenest'">
+            <ul class="ul-style">
+              <li>
+                <span>{{
+                  $t('dfs_agent_download_agentdownloadmodal_jisuanchaoCo')
+                }}</span>
+              </li>
+              <li>
+                <div class="my-5 text-style">
+                  {{ $t('agent_deploy_before_prepare_title') }}
+                </div>
+              </li>
+              <li>
+                {{
+                  $t('dfs_agent_download_agentdownloadmodal_zhunbeiguanliyun')
+                }}
+              </li>
+              <li>
+                <div class="my-5 text-style">
+                  {{ $t('agent_deploy_start_install') }}
+                </div>
+              </li>
+              <li>
+                {{ $t('dfs_agent_download_agentdownloadmodal_ninkeyixuanze') }}
+                <div class="my-4">
+                  <el-link :href="trialUrl" target="_blank" class="mr-4 url-btn"
+                    ><div>
+                      {{
+                        $t(
+                          'dfs_agent_download_agentdownloadmodal_santianshiyong',
+                        )
+                      }}
+                    </div></el-link
+                  >
+                  <el-link :href="url" target="_blank" class="url-btn"
+                    ><div>
+                      {{
+                        $t('dfs_agent_download_agentdownloadmodal_fufeibushu')
+                      }}
+                    </div></el-link
+                  >
+                </div>
+              </li>
+              <li>
+                {{ $t('dfs_agent_download_agentdownloadmodal_womenyijingwei') }}
+              </li>
+              <li>
+                <div class="my-2 text-style">
+                  {{ $t('dfs_agent_download_agentdownloadmodal_shilibanben') }}
+                </div>
+              </li>
+              <li class="box title-text my-2">{{ version }}</li>
+              <li>
+                <div class="my-2 text-style">
+                  {{ $t('dfs_agent_download_agentdownloadmodal_shilitok') }}
+                </div>
+              </li>
+              <li class="box title-text link-line my-2">
+                {{ token }}
+              </li>
+              <li>
+                {{
+                  $t('dfs_agent_download_agentdownloadmodal_querenjisuanchao')
+                }}
+              </li>
+              <li>
+                <el-image :src="getImg('alicomputenest_instance')" alt="" />
+              </li>
+              <li class="my-2">
+                {{
+                  $t('dfs_agent_download_agentdownloadmodal_bushuwanchenghou')
+                }}
+              </li>
+              <li>
+                <el-image :src="getImg('alicomputenest_agent')" alt="" />
+              </li>
+            </ul>
+          </template>
+        </div>
+      </main>
+    </section>
+    <template #footer>
+      <span>
+        <div
+          class="result-item text-center flex justify-content-end align-items-center"
+        >
+          <div v-if="!isFinished" class="loading-item flex align-items-center">
+            <div class="flex align-items-center agent_download_status_icon">
+              <VIcon
+                class="v-icon animation-rotate color-success"
+                size="18"
+                color="rgb(61, 156, 64)"
+                >loading-circle-blue</VIcon
+              >
+              <div class="ml-4">
+                {{ $t('agent_download_AgentDownloadModal_buShuZhuangTaiJian') }}
+              </div>
+            </div>
+            <div class="agent_download_status_btn">
+              <div @click="recordUserBehavior">
+                {{ $t('public_agent_button_deploy_later') }}
+              </div>
+            </div>
+          </div>
+          <div v-else class="finish-item">
+            <VIcon
+              class="v-icon color-success"
+              size="24"
+              color="rgb(61, 156, 64)"
+              >check</VIcon
+            >
+            <div class="mt-4">
+              {{ $t('agent_download_AgentDownloadModal_gongXiNinWanCheng') }}
+            </div>
+            <div class="flex justify-content-between mt-4">
+              <ElLink type="primary" @click="toConnection">{{
+                $t('agent_download_AgentDownloadModal_kaiShiChuangJianLian')
+              }}</ElLink>
+              <ElLink type="primary" @click="toWorkbench">{{
+                $t('agent_download_AgentDownloadModal_jinRuGongZuoTai')
+              }}</ElLink>
+            </div>
+          </div>
+        </div>
+      </span>
+    </template>
+  </ElDialog>
+</template>
 
 <style lang="scss" scoped>
 .fast-download {

@@ -134,6 +134,7 @@ export default {
         console.log('load error', error)
       })
       this.loading = false
+      await this.$nextTick()
       this.handleAutoLayout()
       this.watchMergeProperties()
     },
@@ -451,7 +452,7 @@ export default {
 
       this.$nextTick(() => {
         this.jsPlumbIns.setSuspendDrawing(false, true)
-        // this.$refs.paperScroller.initVisibleArea()
+        this.$refs.paperScroller.initVisibleArea()
         const allNodes = this.viewNodes.map((node) => {
           return {
             id: node.id,
@@ -591,8 +592,8 @@ export default {
       const outputIndex = outputs.indexOf(target)
       let newTargetInputs = this.inputsMap[newTarget]
       const connectionIns = this.jsPlumbIns.getConnections({
-        source,
-        target,
+        source: `n_${source}`,
+        target: `n_${target}`,
       })[0]
 
       if (!newTargetInputs) {
@@ -715,6 +716,13 @@ export default {
     },
 
     onClosedDialog() {},
+
+    onOpened() {
+      console.log('onOpened')
+      // setTimeout(() => {
+      //   this.$refs.paperScroller?.initVisibleArea()
+      // }, 1000)
+    },
   },
   emits: [
     'add-node',
@@ -733,6 +741,7 @@ export default {
     class="materialized-view-drawer"
     :with-header="false"
     :close-on-press-escape="false"
+    @opened="onOpened"
     @update:model-value="handleUpdateVisible"
   >
     <div
