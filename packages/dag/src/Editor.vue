@@ -645,6 +645,8 @@ export default {
         },
       })
 
+      this.setTaskId(this.$route.params.id)
+
       if (connectionId) {
         connection = await connectionsApi.get(connectionId)
       }
@@ -690,9 +692,8 @@ export default {
         )
       }
 
-      // 因为有节流，等一个$nextTick
       await this.$nextTick()
-      await this.afterTaskSaved()
+      await this.updateDag({ vm: this, isNow: true })
       // 打开主从合并节点
       this.setActiveNode(mergeTableNode.id)
 

@@ -398,7 +398,7 @@ export default [
     path: '/verify',
     name: 'verify',
     component: Layout,
-    redirect: 'verify/',
+    redirect: '/verify',
     meta: {
       title: 'page_title_data_verify',
       doNotJump: true,
@@ -508,7 +508,7 @@ export default [
     path: '/shared-mining',
     name: 'sharedMining',
     component: Layout,
-    redirect: 'shared-mining/',
+    redirect: '/shared-mining',
     meta: {
       title: 'page_title_shared_mining',
     },
@@ -620,7 +620,7 @@ export default [
     path: '/custom-node',
     name: 'customNode',
     component: Layout,
-    redirect: 'custom-node/',
+    redirect: '/custom-node',
     meta: {
       title: 'page_title_custom_node',
     },

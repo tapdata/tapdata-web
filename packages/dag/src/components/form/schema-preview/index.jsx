@@ -1,14 +1,18 @@
-import { defineComponent, ref, onBeforeUnmount, getCurrentInstance } from 'vue'
-import i18n from '@tap/i18n'
-import { useForm, useField, mapFieldsData } from '@tap/form'
+import { action } from '@formily/reactive'
+import { databaseTypesApi, metadataInstancesApi, taskApi } from '@tap/api'
 import { IconButton } from '@tap/component'
-import { metadataInstancesApi, databaseTypesApi, taskApi } from '@tap/api'
+import { mapFieldsData, useField, useForm } from '@tap/form'
+import i18n from '@tap/i18n'
+import { defineComponent, getCurrentInstance, onBeforeUnmount, ref } from 'vue'
+import { useStore } from 'vuex'
 import { useSchemaEffect } from '../../../hooks/useAfterTaskSaved'
-import { getCanUseDataTypes, getMatchedDataTypeLevel, errorFiledType } from '../../../util'
+import {
+  errorFiledType,
+  getCanUseDataTypes,
+  getMatchedDataTypeLevel,
+} from '../../../util'
 import FieldList from '../field-inference/List'
 import './style.scss'
-import { action } from '@formily/reactive'
-import { useStore } from 'vuex'
 
 export const SchemaPreview = defineComponent({
   props: ['ignoreError', 'disabled'],
@@ -23,9 +27,12 @@ export const SchemaPreview = defineComponent({
     const isMultiIndex = ref(false)
     const isMultiUniqueIndex = ref(false)
     const isMultiForeignKey = ref(false)
-    const isTarget = form.values.type === 'table' && !!form.values.$inputs.length
+    const isTarget =
+      form.values.type === 'table' && !!form.values.$inputs.length
     const isSource = form.values.type === 'table' && !form.values.$inputs.length
-    const readonly = ref(props.disabled || store.state.dataflow?.stateIsReadonly || !isTarget)
+    const readonly = ref(
+      props.disabled || store.state.dataflow?.stateIsReadonly || !isTarget,
+    )
     let fieldChangeRules = form.values.fieldChangeRules || []
     const createTree = (data) => {
       const root = { children: [] }
@@ -64,39 +71,51 @@ export const SchemaPreview = defineComponent({
       fieldRef.value.loading = fieldRef.value.displayName !== 'VoidField'
       const params = {
         nodeId: form.values.id,
-        fields: ['original_name', 'fields', 'qualified_name', 'name', 'indices', 'constraints'],
+        fields: [
+          'original_name',
+          'fields',
+          'qualified_name',
+          'name',
+          'indices',
+          'constraints',
+        ],
         page: 1,
         pageSize: 20,
       }
-      const {
-        items: [schema = {}],
-      } = await metadataInstancesApi.nodeSchemaPage(params)
+      try {
+        const {
+          items: [schema = {}],
+        } = await metadataInstancesApi.nodeSchemaPage(params)
 
-      tableName.value = schema.name || form.values.tableName || form.values.name
-      emit('update-table-name', tableName.value)
+        tableName.value =
+          schema.name || form.values.tableName || form.values.name
+        emit('update-table-name', tableName.value)
 
-      const {
-        isMultiIndex: _isMultiIndex,
-        isMultiUniqueIndex: _isMultiUniqueIndex,
-        isMultiForeignKey: _isMultiForeignKey,
-        fields
-      } = mapFieldsData(schema)
+        const {
+          isMultiIndex: _isMultiIndex,
+          isMultiUniqueIndex: _isMultiUniqueIndex,
+          isMultiForeignKey: _isMultiForeignKey,
+          fields,
+        } = mapFieldsData(schema)
 
-      isMultiIndex.value = _isMultiIndex
-      isMultiUniqueIndex.value = _isMultiUniqueIndex
-      isMultiForeignKey.value = _isMultiForeignKey
+        isMultiIndex.value = _isMultiIndex
+        isMultiUniqueIndex.value = _isMultiUniqueIndex
+        isMultiForeignKey.value = _isMultiForeignKey
 
-      schema.fields = fields
-      schemaData.value = mapSchema(schema)
+        schema.fields = fields
+        schemaData.value = mapSchema(schema)
 
-      treeData.value = createTree(fields)
-      loading.value = false
-
-      if (fieldRef.value.displayName !== 'VoidField') {
-        action.bound(() => {
-          fieldRef.value.dataSource = fields
-          fieldRef.value.loading = false
-        })()
+        treeData.value = createTree(fields)
+      } catch (error) {
+        console.error('Failed to load schema:', error)
+      } finally {
+        loading.value = false
+        if (fieldRef.value.displayName !== 'VoidField') {
+          action.bound(() => {
+            fieldRef.value.dataSource = schemaData.value.fields || []
+            fieldRef.value.loading = false
+          })()
+        }
       }
     }
 
@@ -105,8 +124,12 @@ export const SchemaPreview = defineComponent({
     const loadDatatypesjson = async () => {
       const pdkHash = form.values.attrs?.pdkHash
       if (pdkHash) {
-        const pdkHashData = await databaseTypesApi.pdkHash(form.values.attrs?.pdkHash)
-        dataTypesJson.value = pdkHashData ? JSON.parse(pdkHashData?.expression || '{}') : {}
+        const pdkHashData = await databaseTypesApi.pdkHash(
+          form.values.attrs?.pdkHash,
+        )
+        dataTypesJson.value = pdkHashData
+          ? JSON.parse(pdkHashData?.expression || '{}')
+          : {}
       }
     }
 
@@ -116,8 +139,10 @@ export const SchemaPreview = defineComponent({
       //如果findPossibleDataTypes = {}，不做类型校验
       if (isTarget) {
         fields.forEach((field) => {
-          const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[field.field_name] || {}
-          field.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
+          const { dataTypes = [], lastMatchedDataType = '' } =
+            findPossibleDataTypes[field.field_name] || {}
+          field.canUseDataTypes =
+            getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
           field.matchedDataTypeLevel = getMatchedDataTypeLevel(
             field,
             field.canUseDataTypes,
@@ -129,8 +154,10 @@ export const SchemaPreview = defineComponent({
       } else {
         // 源节点 JSON.parse('{\"type\":7}').type==7
         fields.forEach((field) => {
-          const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[field.field_name] || {}
-          field.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
+          const { dataTypes = [], lastMatchedDataType = '' } =
+            findPossibleDataTypes[field.field_name] || {}
+          field.canUseDataTypes =
+            getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
           field.matchedDataTypeLevel = errorFiledType(field)
           // mapField(field)
         })
@@ -149,7 +176,10 @@ export const SchemaPreview = defineComponent({
         ) : (
           <ElTooltip
             placement="top"
-            content={i18n.t('public_foreign_key_tip', { name: data.constraints[0], val: data.constraints[2] })}
+            content={i18n.t('public_foreign_key_tip', {
+              name: data.constraints[0],
+              val: data.constraints[2],
+            })}
             open-delay={200}
             transition="none"
           >
@@ -163,7 +193,10 @@ export const SchemaPreview = defineComponent({
         icon = (
           <ElTooltip
             placement="top"
-            content={i18n.t('public_foreign_key_tip', { name: data.constraints[0], val: data.constraints[2] })}
+            content={i18n.t('public_foreign_key_tip', {
+              name: data.constraints[0],
+              val: data.constraints[2],
+            })}
             open-delay={200}
             transition="none"
           >
@@ -181,18 +214,22 @@ export const SchemaPreview = defineComponent({
         icon = (
           <ElTooltip
             placement="top"
-            content={
-              `${i18n.t(data.indicesUnique[2] ? 'public_unique_index' : 'public_normal_index')}: ` +
+            content={`${i18n.t(data.indicesUnique[2] ? 'public_unique_index' : 'public_normal_index')}: ${
               data.indicesUnique[0]
-            }
+            }`}
             open-delay={200}
             transition="none"
           >
             <span class="flex align-center field-icon position-absolute">
-              <VIcon size="14">{data.indicesUnique[2] ? 'fingerprint' : 'sort-descending'}</VIcon>
+              <VIcon size="14">
+                {data.indicesUnique[2] ? 'fingerprint' : 'sort-descending'}
+              </VIcon>
               <span
                 style={`--index: '${indexStr}';--zoom: ${1 - indexStr.length * 0.2};`}
-                class={['fingerprint-sub', data.indicesUnique[2] ? 'unique-sub' : 'index-sub']}
+                class={[
+                  'fingerprint-sub',
+                  data.indicesUnique[2] ? 'unique-sub' : 'index-sub',
+                ]}
               ></span>
             </span>
           </ElTooltip>
@@ -215,7 +252,13 @@ export const SchemaPreview = defineComponent({
         <div class="flex flex-1 min-w-0 justify-content-between align-center gap-2 pr-2 position-relative">
           {icon}
           <span class="ellipsis">
-            <span style={data.source === 'virtual_hash' ? 'font-style:italic' : null}>{data.label}</span>
+            <span
+              style={
+                data.source === 'virtual_hash' ? 'font-style:italic' : null
+              }
+            >
+              {data.label}
+            </span>
           </span>
           <span class="ml-1 font-color-slight">{data.dataType}</span>
         </div>
@@ -252,7 +295,7 @@ export const SchemaPreview = defineComponent({
 
     function remove(children, vm) {
       const index = children.indexOf(vm)
-      if (index > -1) {
+      if (index !== -1) {
         children.splice(index, 1)
       }
     }
@@ -268,15 +311,25 @@ export const SchemaPreview = defineComponent({
           <span class="inline-flex align-center gap-1">
             {i18n.t('public_schema')}
             <el-divider direction="vertical" class="mx-0" staticClass="mx-1" />
-            <el-tooltip transition="tooltip-fade-in" content={i18n.t('packages_dag_refresh_schema')} placement="top">
-              <IconButton disabled={props.disabled} onClick={refreshSchema} loading={refreshing.value}>
+            <el-tooltip
+              transition="tooltip-fade-in"
+              content={i18n.t('packages_dag_refresh_schema')}
+              placement="top"
+            >
+              <IconButton
+                disabled={props.disabled}
+                onClick={refreshSchema}
+                loading={refreshing.value}
+              >
                 refresh
               </IconButton>
             </el-tooltip>
             <el-tooltip
               transition="tooltip-fade-in"
               content={i18n.t(
-                isTreeView.value ? 'packages_dag_switch_to_table_view' : 'packages_dag_switch_to_tree_view',
+                isTreeView.value
+                  ? 'packages_dag_switch_to_table_view'
+                  : 'packages_dag_switch_to_tree_view',
               )}
               placement="top"
             >
@@ -296,13 +349,15 @@ export const SchemaPreview = defineComponent({
             {
               'hide-index-sub': !isMultiIndex.value,
               'hide-unique-sub': !isMultiUniqueIndex.value,
-              'hide-foreign-sub': !isMultiForeignKey.value
-            }
+              'hide-foreign-sub': !isMultiForeignKey.value,
+            },
           ]}
         >
           {isTreeView.value ? (
             <div class="schema-card rounded-lg inline-block overflow-hidden shadow-sm">
-              <div class="schema-card-header border-bottom px-3 py-2 fs-7 lh-base text-center">{tableName.value}</div>
+              <div class="schema-card-header border-bottom px-3 py-2 fs-7 lh-base text-center">
+                {tableName.value}
+              </div>
               <div
                 class="schema-card-body"
                 {...{
@@ -320,7 +375,11 @@ export const SchemaPreview = defineComponent({
                   },
                 ]}
               >
-                <ElTree indent={8} data={treeData.value} render-content={renderContent}></ElTree>
+                <ElTree
+                  indent={8}
+                  data={treeData.value}
+                  render-content={renderContent}
+                ></ElTree>
               </div>
             </div>
           ) : (

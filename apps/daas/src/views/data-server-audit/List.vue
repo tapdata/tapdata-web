@@ -195,7 +195,7 @@ export default {
       >
         <template #default="{ row }">
           <span
-            class="status-block"
+            class="status-block color-white"
             :style="{ 'background-color': colorMap[row.method] }"
             >{{ row.method }}</span
           >

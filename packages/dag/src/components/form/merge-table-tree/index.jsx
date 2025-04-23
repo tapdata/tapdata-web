@@ -1,14 +1,20 @@
-import i18n from '@tap/i18n'
-import { defineComponent, ref, onMounted, nextTick } from 'vue'
-import { observer } from '@formily/reactive-vue'
 import { observe } from '@formily/reactive'
-import { FormItem, h as createElement, useFieldSchema, useForm, RecursionField } from '@tap/form'
-import { OverflowTooltip, IconButton, VIcon } from '@tap/component'
+import { observer } from '@formily/reactive-vue'
 import { metadataInstancesApi } from '@tap/api'
-import './style.scss'
-import NodeIcon from '../../NodeIcon'
-import { useStore } from 'vuex'
+import { IconButton, OverflowTooltip, VIcon } from '@tap/component'
+import {
+  h as createElement,
+  FormItem,
+  RecursionField,
+  useFieldSchema,
+  useForm,
+} from '@tap/form'
+import i18n from '@tap/i18n'
+import { defineComponent, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useStore } from 'vuex'
+import NodeIcon from '../../NodeIcon'
+import './style.scss'
 
 export const MergeTableTree = observer(
   defineComponent({
@@ -33,12 +39,12 @@ export const MergeTableTree = observer(
         currentPath.value = path
 
         form.setFieldState(`mergeProperties.${path}.arrayKeys`, {
-          display: 'hidden'
+          display: 'hidden',
         })
 
         if (pathArr.length === 1) {
           form.setFieldState(`mergeProperties.${path}.targetPath`, {
-            display: 'hidden'
+            display: 'hidden',
           })
           form.setFieldState(`mergeProperties.${path}.mergeType`, {
             display: 'hidden',
@@ -47,9 +53,14 @@ export const MergeTableTree = observer(
             visible: false,
           })
           form.setValuesIn(`mergeProperties.${path}.targetPath`, undefined)
-          form.setValuesIn(`mergeProperties.${path}.mergeType`, 'updateOrInsert')
+          form.setValuesIn(
+            `mergeProperties.${path}.mergeType`,
+            'updateOrInsert',
+          )
         } else if (pathArr.length > 1) {
-          const mergeType = form.getValuesIn(`mergeProperties.${path}.mergeType`)
+          const mergeType = form.getValuesIn(
+            `mergeProperties.${path}.mergeType`,
+          )
 
           if (mergeType === 'updateOrInsert') {
             // 主表是 updateOrInsert, 子表是 updateWrite
@@ -59,7 +70,8 @@ export const MergeTableTree = observer(
           if (form.getValuesIn(`mergeProperties.${path}.targetPath`) == null) {
             form.setValuesIn(
               `mergeProperties.${path}.targetPath`,
-              props.findNodeById(form.getValuesIn(`mergeProperties.${path}.id`))?.name
+              props.findNodeById(form.getValuesIn(`mergeProperties.${path}.id`))
+                ?.name,
             )
           }
         }
@@ -97,7 +109,7 @@ export const MergeTableTree = observer(
           return filter
         }
         let filterIdMap = {}
-        let newTree = traverse(JSON.parse(JSON.stringify(props.value)))
+        const newTree = traverse(JSON.parse(JSON.stringify(props.value)))
         $inputs.forEach((id) => {
           if (!filterIdMap[id]) {
             const node = props.findNodeById(id)
@@ -109,7 +121,7 @@ export const MergeTableTree = observer(
               // joinKeys: [],
               children: [],
               enableUpdateJoinKeyValue: false, // 关联条件变更
-              hasWarning: false
+              hasWarning: false,
             })
           }
         })
@@ -146,11 +158,17 @@ export const MergeTableTree = observer(
               text={dagNode.name}
               open-delay={300}
             />
-            <IconButton onClick={() => emit('center-node', data.id)} class="merge-table-tree-node-action">
+            <IconButton
+              onClick={() => emit('center-node', data.id)}
+              class="merge-table-tree-node-action"
+            >
               location
             </IconButton>
             {data.hasWarning && (
-              <ElTooltip content={i18n.t('packages_dag_missing_primary_key_or_index')} placement="right">
+              <ElTooltip
+                content={i18n.t('packages_dag_missing_primary_key_or_index')}
+                placement="right"
+              >
                 <VIcon class="color-warning mx-1">warning</VIcon>
               </ElTooltip>
             )}
@@ -173,19 +191,19 @@ export const MergeTableTree = observer(
 
       // 更新警告状态的辅助函数
       const updateWarningState = (selfId, selfPath) => {
-        const arrayKeys = form.getValuesIn(`mergeProperties.${selfPath}.arrayKeys`)
+        const arrayKeys = form.getValuesIn(
+          `mergeProperties.${selfPath}.arrayKeys`,
+        )
         const hasArrayKeys = Array.isArray(arrayKeys) && arrayKeys.length > 0
 
         // 直接更新树节点数据
-        const updateNode = nodes => {
-          for (let node of nodes) {
+        const updateNode = (nodes) => {
+          for (const node of nodes) {
             if (node.id === selfId) {
               node.hasWarning = !hasArrayKeys
               return true
             }
-            if (node.children?.length) {
-              if (updateNode(node.children)) return true
-            }
+            if (node.children?.length && updateNode(node.children)) return true
           }
           return false
         }
@@ -194,34 +212,45 @@ export const MergeTableTree = observer(
       }
 
       const loadTargetField = (selfId, selfPath) => {
-        form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
-          loading: true,
-        })
-        metadataInstancesApi.getMergerNodeParentFields(route.params.id, selfId).then((fields) => {
-          form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
-            loading: false,
-            dataSource: fields.map((item) => ({
-              tapType: item.tapType,
-              label: item.field_name,
-              value: item.field_name,
-              isPrimaryKey: item.primary_key_position > 0,
-            })),
+        form.setFieldState(
+          `*(mergeProperties.${selfPath}.*(joinKeys.*.target))`,
+          {
+            loading: true,
+          },
+        )
+        metadataInstancesApi
+          .getMergerNodeParentFields(route.params.id, selfId)
+          .then((fields) => {
+            form.setFieldState(
+              `*(mergeProperties.${selfPath}.*(joinKeys.*.target))`,
+              {
+                loading: false,
+                dataSource: fields.map((item) => ({
+                  tapType: item.tapType,
+                  label: item.field_name,
+                  value: item.field_name,
+                  isPrimaryKey: item.primary_key_position > 0,
+                })),
+              },
+            )
           })
-        })
       }
 
       const loadField = (selfId, selfPath, ifWait) => {
         const pathArr = selfPath.split('.children.')
 
-        form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.source,arrayKeys))`, {
-          loading: true
-        })
+        form.setFieldState(
+          `*(mergeProperties.${selfPath}.*(joinKeys.*.source,arrayKeys))`,
+          {
+            loading: true,
+          },
+        )
 
         props.loadFieldsMethod(selfId).then((fields) => {
           const primaryKey = []
           const uniqueKey = []
 
-          fields.forEach(item => {
+          fields.forEach((item) => {
             if (item.isPrimaryKey) {
               primaryKey.push(item.label)
             }
@@ -231,37 +260,55 @@ export const MergeTableTree = observer(
           })
 
           const keysValue = primaryKey.length > 0 ? primaryKey : uniqueKey
-          form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.source,arrayKeys))`, {
-            loading: false,
-            dataSource: fields,
-          })
+          form.setFieldState(
+            `*(mergeProperties.${selfPath}.*(joinKeys.*.source,arrayKeys))`,
+            {
+              loading: false,
+              dataSource: fields,
+            },
+          )
 
           // 监听 arrayKeys 的变化
-          const field = form.query(`mergeProperties.${selfPath}.arrayKeys`).take()
-          field.setDisplay(keysValue.length ? 'hidden' : 'visible')
-          field.setComponentProps({
-            onChange: () => {
-              updateWarningState(selfId, selfPath)
+          const field = form
+            .query(`mergeProperties.${selfPath}.arrayKeys`)
+            .take()
+
+          if (field) {
+            field.setDisplay(keysValue.length ? 'hidden' : 'visible')
+            field.setComponentProps({
+              onChange: () => {
+                updateWarningState(selfId, selfPath)
+              },
+            })
+
+            const arrayKeysValue = form.getValuesIn(
+              `mergeProperties.${selfPath}.arrayKeys`,
+            )
+            if (!arrayKeysValue?.length) {
+              form.setValuesIn(
+                `mergeProperties.${selfPath}.arrayKeys`,
+                keysValue,
+              )
             }
-          })
 
-          const arrayKeysValue = form.getValuesIn(`mergeProperties.${selfPath}.arrayKeys`)
-          if (!arrayKeysValue?.length) {
-            form.setValuesIn(`mergeProperties.${selfPath}.arrayKeys`, keysValue)
+            // 初始化警告状态
+            updateWarningState(selfId, selfPath)
+          } else {
+            console.log('没有arrayKeys')
           }
-
-          // 初始化警告状态
-          updateWarningState(selfId, selfPath)
         })
 
         if (pathArr.length < 2) return
 
         if (ifWait) {
-          form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
-            loading: true,
-          })
+          form.setFieldState(
+            `*(mergeProperties.${selfPath}.*(joinKeys.*.target))`,
+            {
+              loading: true,
+            },
+          )
           // 等待自动保存接口响应后查询
-          let unwatch = watch(
+          const unwatch = watch(
             () => store.state.dataflow.editVersion,
             () => {
               unwatch()
@@ -319,17 +366,21 @@ export const MergeTableTree = observer(
           }
 
           const index = parent.indexOf(node)
-          if (index > -1) {
+          if (index !== -1) {
             parent.splice(index, 1)
           }
         }
 
         if (dropType === 'before') {
-          const parent = dropNode.parent?.key ? nodeMap.value[dropNode.parent.key].children : props.value
+          const parent = dropNode.parent?.key
+            ? nodeMap.value[dropNode.parent.key].children
+            : props.value
           targetIndex = parent.indexOf(targetNode)
           parent.splice(targetIndex, 0, node)
         } else if (dropType === 'after') {
-          const parent = dropNode.parent?.key ? nodeMap.value[dropNode.parent.key].children : props.value
+          const parent = dropNode.parent?.key
+            ? nodeMap.value[dropNode.parent.key].children
+            : props.value
           targetIndex = parent.indexOf(targetNode)
           parent.splice(targetIndex + 1, 0, node)
         } else if (dropType === 'inner') {
@@ -338,7 +389,8 @@ export const MergeTableTree = observer(
 
         if (topParentNode.id !== dragNodeId) {
           // 跟随顶级父节点联动
-          let parentFlag = nodeMap.value[topParentNode.id].enableUpdateJoinKeyValue
+          let parentFlag =
+            nodeMap.value[topParentNode.id].enableUpdateJoinKeyValue
           const { enableRecord = {} } = formRef.value.values.attrs
 
           if (!parentFlag && dragNodeId in enableRecord) {
@@ -365,9 +417,9 @@ export const MergeTableTree = observer(
       const filterText = ref('')
       const filterNode = (value, data) => {
         if (!value) return true
-        return data.tableName.indexOf(value) !== -1
+        return data.tableName.includes(value)
       }
-      const handleFilter = val => {
+      const handleFilter = (val) => {
         filterText.value = val
         tree.value.filter(val)
       }
@@ -379,13 +431,19 @@ export const MergeTableTree = observer(
               wrapperWidth={240}
               feedbackLayout="none"
               class="overflow-y-auto px-2 pb-2"
-              label={i18n.t('packages_dag_merge_table_tree_index_biaomingchengzhichi')}
-              tooltip={i18n.t('packages_dag_merge_table_tree_index_biaozhijianketong')}
+              label={i18n.t(
+                'packages_dag_merge_table_tree_index_biaomingchengzhichi',
+              )}
+              tooltip={i18n.t(
+                'packages_dag_merge_table_tree_index_biaozhijianketong',
+              )}
             >
               {formRef.value.values.$inputs.length > 5 && (
                 <el-input
                   class="mb-2"
-                  placeholder={i18n.t('packages_form_table_rename_index_sousuobiaoming')}
+                  placeholder={i18n.t(
+                    'packages_form_table_rename_index_sousuobiaoming',
+                  )}
                   value={filterText.value}
                   onInput={handleFilter}
                   clearable

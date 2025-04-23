@@ -13,7 +13,8 @@ export function attachedRoot(node) {
   const root = node.getRootNode()
 
   // The composed root node is the document if the node is attached to the DOM
-  if (root !== document && root.getRootNode({ composed: true }) !== document) return null
+  if (root !== document && root.getRootNode({ composed: true }) !== document)
+    return null
 
   return root
 }
@@ -33,11 +34,19 @@ function checkEvent(e, el, binding) {
   // level of introspection as to _what_ we're clicking. We want to check to see if
   // our target is the shadowroot parent container, and if it is, ignore.
   const root = attachedRoot(el)
-  if (typeof ShadowRoot !== 'undefined' && root instanceof ShadowRoot && root.host === e.target) return false
+  if (
+    typeof ShadowRoot !== 'undefined' &&
+    root instanceof ShadowRoot &&
+    root.host === e.target
+  )
+    return false
 
   // Check if additional elements were passed to be included in check
   // (click must be outside all included elements, if any)
-  const elements = ((typeof binding.value === 'object' && binding.value.include) || (() => []))()
+  const elements = (
+    (typeof binding.value === 'object' && binding.value.include) ||
+    (() => [])
+  )()
   // Add the root element for the component this directive was defined on
   elements.push(el)
 
@@ -46,17 +55,20 @@ function checkEvent(e, el, binding) {
   // Toggleable can return true if it wants to deactivate.
   // Note that, because we're in the capture phase, this callback will occur before
   // the bubbling click event on any outside elements.
-  return !elements.some((el) => el.contains(e.target))
+  return !elements.some((el) => el?.contains?.(e.target))
 }
 
 function checkIsActive(e, binding) {
-  const isActive = (typeof binding.value === 'object' && binding.value.closeConditional) || defaultConditional
+  const isActive =
+    (typeof binding.value === 'object' && binding.value.closeConditional) ||
+    defaultConditional
 
   return isActive(e)
 }
 
 function directive(e, el, binding) {
-  const handler = typeof binding.value === 'function' ? binding.value : binding.value?.handler
+  const handler =
+    typeof binding.value === 'function' ? binding.value : binding.value?.handler
 
   el._clickOutside?.lastMousedownWasOutside &&
     checkEvent(e, el, binding) &&

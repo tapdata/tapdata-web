@@ -1,13 +1,13 @@
-import i18n from '@tap/i18n'
-import { markRaw } from 'vue'
-import { debounce } from 'lodash-es'
+import { setValidateLanguage } from '@formily/core'
 import { Path } from '@formily/path'
 import { observable } from '@formily/reactive'
-import { setValidateLanguage } from '@formily/core'
-
-import { isObject, uuid, mergeLocales, lowerSnake } from '@tap/shared'
-import { taskApi, customNodeApi, isCancel } from '@tap/api'
+import { customNodeApi, isCancel, taskApi } from '@tap/api'
+import i18n from '@tap/i18n'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
+
+import { isObject, lowerSnake, mergeLocales, uuid } from '@tap/shared'
+import { debounce } from 'lodash-es'
+import { markRaw } from 'vue'
 
 import { AddDagCommand } from './command'
 import { CustomProcessor } from './nodes/extends/CustomProcessor'
@@ -16,7 +16,7 @@ const find = (obj, nameParts, conditions) => {
   if (!nameParts.length) return obj
 
   let value = obj[nameParts.shift()]
-  let condition = conditions.shift()
+  const condition = conditions.shift()
 
   if (Array.isArray(value) && condition) {
     value = findByCod(value, condition)
@@ -28,7 +28,7 @@ const findByCod = (arr, cond) => {
   return arr.find((item) => {
     if (isObject(item)) {
       let flag = true
-      for (let k of Object.keys(cond)) {
+      for (const k of Object.keys(cond)) {
         if (!(k in item) || item[k] !== cond[k]) {
           flag = false
           break
@@ -129,7 +129,9 @@ const getters = {
       const dbType = node.databaseType
       foundType = allNodeTypes.find(typeData => typeData.type === nodeType && typeData.attr.databaseType === dbType)
     } else*/ if (nodeType === 'custom_processor') {
-      foundType = state.processorNodeTypes.find((typeData) => typeData.attr?.customNodeId === node.customNodeId)
+      foundType = state.processorNodeTypes.find(
+        (typeData) => typeData.attr?.customNodeId === node.customNodeId,
+      )
     } else {
       foundType = allNodeTypes.find((typeData) => typeData.type === nodeType)
     }
@@ -218,8 +220,11 @@ const getters = {
     const lang = getters.language
     const locale = locales ? locales[lang] : state.LOCALES_STORE.value[lang]
     if (!locale) {
-      for (let key in state.LOCALES_STORE.value) {
-        const message = Path.getIn(state.LOCALES_STORE.value[key], lowerSnake(token))
+      for (const key in state.LOCALES_STORE.value) {
+        const message = Path.getIn(
+          state.LOCALES_STORE.value[key],
+          lowerSnake(token),
+        )
         if (message) return message
       }
       return
@@ -247,14 +252,14 @@ const actions = {
       )
       data?.editVersion && commit('setEditVersion', data.editVersion)
       commit('toggleTaskSaving', false)
-    } catch (e) {
-      console.error(e) // eslint-disable-line
+    } catch (error) {
+      console.error(error)
 
-      if (isCancel(e)) return
+      if (isCancel(error)) return
 
       commit('toggleTaskSaving', false) // 任务保存请求被cancel不希望设置为false
 
-      if (e?.data?.code === 'Task.OldVersion') {
+      if (error?.data?.code === 'Task.OldVersion') {
         vm.$confirm('', i18n.t('packages_dag_task_old_version_confirm'), {
           onlyTitle: true,
           type: 'warning',
@@ -263,8 +268,8 @@ const actions = {
         }).then((resFlag) => {
           resFlag && location.reload()
         })
-      } else if (e?.data?.message) {
-        vm.$message.error(e.data.message)
+      } else if (error?.data?.message) {
+        vm.$message.error(error.data.message)
       }
     }
   }, 50),
@@ -285,14 +290,14 @@ const actions = {
       )
       data?.editVersion && commit('setEditVersion', data.editVersion)
       commit('toggleTaskSaving', false)
-    } catch (e) {
-      console.error(e) // eslint-disable-line
+    } catch (error) {
+      console.error(error)
 
-      if (isCancel(e)) return
+      if (isCancel(error)) return
 
       commit('toggleTaskSaving', false) // 任务保存请求被cancel不希望设置为false
 
-      if (e?.data?.code === 'Task.OldVersion') {
+      if (error?.data?.code === 'Task.OldVersion') {
         vm.$confirm('', i18n.t('packages_dag_task_old_version_confirm'), {
           onlyTitle: true,
           type: 'warning',
@@ -301,8 +306,8 @@ const actions = {
         }).then((resFlag) => {
           resFlag && location.reload()
         })
-      } else if (e?.data?.message) {
-        vm.$message.error(e.data.message)
+      } else if (error?.data?.message) {
+        vm.$message.error(error.data.message)
       }
     }
   },
@@ -415,7 +420,6 @@ const mutations = {
   // 设置激活节点
   setActiveNode(state, nodeId) {
     if (!nodeId || state.activeNodeId !== nodeId) {
-      // eslint-disable-next-line no-console
       state.nodeInputsWatcher?.()
       state.nodeOutputsWatcher?.()
     }
@@ -426,7 +430,7 @@ const mutations = {
 
   // 设置激活连接
   setActiveConnection(state, connection) {
-    state['activeConnection'] = connection
+    state.activeConnection = connection
     state.activeType = connection ? 'connection' : null
   },
 
@@ -456,15 +460,28 @@ const mutations = {
   // 更新节点属性
   updateNodeProperties(state, updateInformation) {
     // console.log('updateInformation', updateInformation) // eslint-disable-line
-    const filterProps = ['id', 'isSource', 'isTarget', 'attrs.position', 'sourceNode', '$inputs', '$outputs'] // 排除属性的更新
-    const node = state.dag.nodes.find((node) => node.id === updateInformation.id)
+    const filterProps = [
+      'id',
+      'isSource',
+      'isTarget',
+      'attrs.position',
+      'sourceNode',
+      '$inputs',
+      '$outputs',
+    ] // 排除属性的更新
+    const node = state.dag.nodes.find(
+      (node) => node.id === updateInformation.id,
+    )
 
     const syncRecursive = (target, source, path = '') => {
       const pathPrefix = path ? `${path}.` : ''
 
       if (updateInformation.overwrite) {
         for (const key in target) {
-          if (!source.hasOwnProperty(key) && !filterProps.includes(`${pathPrefix}${key}`)) {
+          if (
+            !source.hasOwnProperty(key) &&
+            !filterProps.includes(`${pathPrefix}${key}`)
+          ) {
             delete target[key]
           }
         }
@@ -477,10 +494,8 @@ const mutations = {
 
         if (isObject(sourceValue) && targetValue) {
           syncRecursive(targetValue, sourceValue, `${pathPrefix}${key}`)
-        } else {
-          if (targetValue !== sourceValue) {
-            target[key] = sourceValue
-          }
+        } else if (targetValue !== sourceValue) {
+          target[key] = sourceValue
         }
       }
     }
@@ -525,16 +540,18 @@ const mutations = {
 
   // 针对数组，修改某个项的值
   setNodeValueByConditions(state, updateInformation) {
-    const node = state.dag.nodes.find((node) => node.id === updateInformation.id)
+    const node = state.dag.nodes.find(
+      (node) => node.id === updateInformation.id,
+    )
     const nameParts = updateInformation.key.split('.')
-    const key = nameParts[nameParts.length - 1]
+    const key = nameParts.at(-1)
     const { conditions } = updateInformation
 
     if (node === undefined || node === null) {
       throw new Error(i18n.t('packages_dag_src_store_weizhaodaojiedian'))
     }
 
-    let target = find(node, nameParts, conditions)
+    const target = find(node, nameParts, conditions)
 
     state.stateIsDirty = true
     if (target) target[key] = updateInformation.value
@@ -542,7 +559,9 @@ const mutations = {
 
   // 通过Path[k1.k2]更新节点
   setNodeValueByPath(state, updateInformation) {
-    const node = state.dag.nodes.find((node) => node.id === updateInformation.id)
+    const node = state.dag.nodes.find(
+      (node) => node.id === updateInformation.id,
+    )
     const nameParts = updateInformation.path.split('.')
     const key = nameParts.pop()
     const { conditions = [] } = updateInformation
@@ -551,7 +570,7 @@ const mutations = {
       throw new Error(i18n.t('packages_dag_src_store_weizhaodaojiedian'))
     }
 
-    let target = find(node, nameParts, conditions)
+    const target = find(node, nameParts, conditions)
 
     state.stateIsDirty = true
     if (target) target[key] = updateInformation.value
@@ -559,7 +578,9 @@ const mutations = {
 
   // 更新节点value
   setNodeValue(state, updateInformation) {
-    const node = state.dag.nodes.find((node) => node.id === updateInformation.id)
+    const node = state.dag.nodes.find(
+      (node) => node.id === updateInformation.id,
+    )
 
     if (node === undefined || node === null) {
       throw new Error(i18n.t('packages_dag_src_store_weizhaodaojiedian'))
@@ -572,7 +593,9 @@ const mutations = {
   // 添加连接，设置input、output
   addConnection(state, connection) {
     const { source, target } = connection
-    const index = state.dag.edges.findIndex((item) => item.source === source && item.target === target)
+    const index = state.dag.edges.findIndex(
+      (item) => item.source === source && item.target === target,
+    )
     const sourceNode = state.NodeMap[source]
     const targetNode = state.NodeMap[target]
     const { $outputs = [] } = sourceNode
@@ -582,19 +605,21 @@ const mutations = {
 
     if (!$outputs.includes(target)) {
       $outputs.push(target)
-      sourceNode['$outputs'] = $outputs
+      sourceNode.$outputs = $outputs
     }
 
     if (!$inputs.includes(source)) {
       $inputs.push(source)
-      targetNode['$inputs'] = $inputs
+      targetNode.$inputs = $inputs
     }
   },
 
   // 删除连接，清空input中的sourceId、output中的targetId
   removeConnection(state, connection) {
     const { source, target } = connection
-    const index = state.dag.edges.findIndex((item) => item.source === source && item.target === target)
+    const index = state.dag.edges.findIndex(
+      (item) => item.source === source && item.target === target,
+    )
 
     if (~index) state.dag.edges.splice(index, 1)
 
@@ -630,7 +655,9 @@ const mutations = {
     nodes.splice(index, 1)
     delete state.NodeMap
 
-    state.dag.edges = edges.filter(({ source, target }) => nodeId !== source && nodeId !== target)
+    state.dag.edges = edges.filter(
+      ({ source, target }) => nodeId !== source && nodeId !== target,
+    )
 
     if (node.$outputs?.length) {
       node.$outputs.forEach((id) => {
@@ -686,15 +713,21 @@ const mutations = {
     })
 
     // 如果是删除当前激活的节点
-    if (nodeIds.includes(state.activeNodeId) && state.activeType !== 'settings') {
+    if (
+      nodeIds.includes(state.activeNodeId) &&
+      state.activeType !== 'settings'
+    ) {
       state.activeType = null
       state.activeNodeId = null
     }
 
-    state.dag.nodes = state.dag.nodes.filter((node) => !nodeIds.includes(node.id))
+    state.dag.nodes = state.dag.nodes.filter(
+      (node) => !nodeIds.includes(node.id),
+    )
 
     state.dag.edges = state.dag.edges.filter(
-      ({ source, target }) => !nodeIds.includes(source) && !nodeIds.includes(target),
+      ({ source, target }) =>
+        !nodeIds.includes(source) && !nodeIds.includes(target),
     )
 
     state.stateIsDirty = true
@@ -710,7 +743,7 @@ const mutations = {
   },
 
   setFormSchema(state, schema) {
-    state['formSchema'] = schema
+    state.formSchema = schema
     console.log('state', state) // eslint-disable-line
   },
 
@@ -802,11 +835,16 @@ const mutations = {
     let copyEdges = []
 
     if (nodes.length) {
-      const nodeMap = nodes.reduce((map, node) => ((map[node.id] = true), map), {})
-      copyEdges = edges.filter((item) => nodeMap[item.source] && nodeMap[item.target])
+      const nodeMap = nodes.reduce(
+        (map, node) => ((map[node.id] = true), map),
+        {},
+      )
+      copyEdges = edges.filter(
+        (item) => nodeMap[item.source] && nodeMap[item.target],
+      )
     }
 
-    localStorage['DAG_CLIPBOARD'] = JSON.stringify({
+    localStorage.DAG_CLIPBOARD = JSON.stringify({
       nodes,
       edges: copyEdges,
     })
@@ -818,7 +856,7 @@ const mutations = {
    * @param command
    */
   pasteNodes: async (state, command) => {
-    const DAG_CLIPBOARD = localStorage['DAG_CLIPBOARD']
+    const DAG_CLIPBOARD = localStorage.DAG_CLIPBOARD
     if (DAG_CLIPBOARD) {
       const dag = JSON.parse(DAG_CLIPBOARD)
       const { nodes, edges } = dag
@@ -831,8 +869,8 @@ const mutations = {
         targetMap = {}
 
       edges.forEach((item) => {
-        let _source = sourceMap[item.source]
-        let _target = targetMap[item.target]
+        const _source = sourceMap[item.source]
+        const _target = targetMap[item.target]
 
         if (!_source) {
           sourceMap[item.source] = [item]
@@ -877,8 +915,8 @@ const mutations = {
         const inputsMap = {}
 
         edges.forEach(({ source, target }) => {
-          let _source = outputsMap[source]
-          let _target = inputsMap[target]
+          const _source = outputsMap[source]
+          const _target = inputsMap[target]
 
           if (!_source) {
             outputsMap[source] = [target]
@@ -909,7 +947,7 @@ const mutations = {
       state.selectedNodes = nodes
 
       // 存储
-      localStorage['DAG_CLIPBOARD'] = JSON.stringify(dag)
+      localStorage.DAG_CLIPBOARD = JSON.stringify(dag)
     }
   },
 
@@ -948,11 +986,11 @@ const mutations = {
   },
 
   setPdkPropertiesMap(state, map) {
-    state['pdkPropertiesMap'] = map
+    state.pdkPropertiesMap = map
   },
 
   setPdkSchemaFreeMap(state, map) {
-    state['pdkSchemaFreeMap'] = map
+    state.pdkSchemaFreeMap = map
   },
 
   setPdkDoubleActiveMap(state, map) {

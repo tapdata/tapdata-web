@@ -1,6 +1,6 @@
+import { CloseIcon } from '@tap/component'
 import i18n from '@tap/i18n'
 import { copyToClipboard } from '@tap/shared'
-import { CloseIcon } from '@tap/component'
 import { useRouter } from 'vue-router'
 import './index.scss'
 
@@ -121,7 +121,7 @@ export function showErrorMessage(error) {
     }
 
     message = renderMessage(message, error.stack)
-    duration = 0
+    duration = 4000
     showClose = true
   }
 

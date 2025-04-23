@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { isNum } from '@tap/shared'
-import { debounce, escapeRegExp, merge, isString } from 'lodash-es'
+import { debounce, escapeRegExp, isString, merge } from 'lodash-es'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import ElSelectLoading from './ElSelectLoading.vue'
 
@@ -160,7 +160,6 @@ const loadDataList = async (newPage: number) => {
   try {
     loadingMore.value = true
     emit('update:loading', true)
-    console.log('newPage', newPage)
     const res = await props.method(getParams(newPage))
     const list = res.items || []
 
@@ -228,6 +227,17 @@ watch(
   () => props.modelValue,
   () => {
     handleChange()
+  },
+)
+
+watch(
+  () => props.params,
+  () => {
+    console.log('remoteMethodDebounce')
+    remoteMethodDebounce()
+  },
+  {
+    deep: true,
   },
 )
 

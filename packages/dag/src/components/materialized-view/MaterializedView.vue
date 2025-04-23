@@ -1,182 +1,28 @@
-<template>
-  <el-drawer
-    :model-value="visible"
-    size="100%"
-    class="materialized-view-drawer"
-    :with-header="false"
-    :close-on-press-escape="false"
-    @update:modelValue="handleUpdateVisible"
-  >
-    <div ref="container" class="h-100 flex flex-column" v-loading="loading" element-loading-background="#fff">
-      <header class="px-4 h-48 flex align-center position-relative">
-        <IconButton @click="handleUpdateVisible(false)">close</IconButton>
-        <div class="fs-6 font-color-dark ml-1">
-          {{ $t('packages_dag_materialized_view') }}
-        </div>
-        <ElButton v-if="!isDaas" text type="primary" class="ml-4 color-warning" @click="handleOpenHelp"
-          ><VIcon class="mr-1">question-circle</VIcon>{{ $t('public_button_help') }}</ElButton
-        >
-        <div class="operation-center flex align-center position-absolute translate-middle-x start-50">
-          <!--删除-->
-          <ElTooltip v-if="!disabled" transition="tooltip-fade-in" :content="$t('public_button_delete') + '(Del)'">
-            <button @click="handleDelete" class="icon-btn">
-              <VIcon size="20">delete</VIcon>
-            </button>
-          </ElTooltip>
-          <!--内容居中-->
-          <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_center_content') + '(Shift + 1)'">
-            <button @click="handleCenterContent" class="icon-btn">
-              <VIcon size="20">compress</VIcon>
-            </button>
-          </ElTooltip>
-          <!--自动布局-->
-          <ElTooltip
-            transition="tooltip-fade-in"
-            :content="$t('packages_dag_button_auto_layout') + `(${commandCode} + ${optionCode} + L)`"
-          >
-            <button @click="handleAutoLayout" class="icon-btn">
-              <VIcon size="20">auto-layout</VIcon>
-            </button>
-          </ElTooltip>
-          <VDivider class="mx-3" vertical inset></VDivider>
-          <!--缩小-->
-          <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_zoom_out') + `(${commandCode} -)`">
-            <button @click="handleZoomOut" class="icon-btn">
-              <VIcon size="20">remove-outline</VIcon>
-            </button>
-          </ElTooltip>
-          <div class="choose-size mx-2">
-            <ElPopover placement="bottom" trigger="hover" popper-class="rounded-xl p-0">
-              <template v-slot:reference>
-                <div class="size-wrap">{{ scaleTxt }}</div>
-              </template>
-              <div class="choose-list p-2">
-                <div @click="handleZoomOut" class="choose-item pl-4 flex justify-content-between align-center">
-                  <span class="title">{{ $t('packages_dag_button_zoom_out') }}</span>
-                  <div class="kbd-wrap flex align-center mr-2">
-                    <kbd>{{ commandCode }}</kbd
-                    ><span class="mx-1">+</span><kbd>+</kbd>
-                  </div>
-                </div>
-                <div @click="handleZoomIn" class="choose-item pl-4 flex justify-content-between align-center">
-                  <span class="title">{{ $t('packages_dag_button_zoom_in') }}</span>
-                  <div class="kbd-wrap flex align-center mr-2">
-                    <kbd>{{ commandCode }}</kbd
-                    ><span class="mx-1">+</span><kbd>–</kbd>
-                  </div>
-                </div>
-                <VDivider class="my-2"></VDivider>
-                <div v-for="val in chooseItems" :key="val" class="choose-item pl-4" @click="handleZoomTo(val)">
-                  {{ val * 100 }}%
-                </div>
-              </div>
-            </ElPopover>
-          </div>
-          <!--放大-->
-          <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_zoom_in') + `(${commandCode} +)`">
-            <button @click="handleZoomIn" class="icon-btn">
-              <VIcon size="20">add-outline</VIcon>
-            </button>
-          </ElTooltip>
-        </div>
-        <ElButton
-          v-if="buttonShowMap.Start"
-          :disabled="isSaving || (dataflow.disabledData && dataflow.disabledData.start) || transformLoading"
-          :loading="isSaving"
-          class="ml-auto"
-          type="primary"
-          @click="$emit('start')"
-        >
-          {{ $t('public_button_start') }}
-        </ElButton>
-      </header>
-      <PaperScroller v-if="showPaper" class="flex-1" ref="paperScroller" @change-scale="handleChangeScale">
-        <Node
-          :disabled="disabled"
-          v-for="node in nodes"
-          :key="node.id"
-          :class="{
-            active: selectedNodeId === node.id,
-          }"
-          :node="node"
-          :id="node.id"
-          :node-id="node.id"
-          :js-plumb-ins="jsPlumbIns"
-          :position="nodePositionMap[node.id]"
-          :schema="nodeSchemaMap[node.id]"
-          :parentSchema="nodeSchemaMap[node.parentId]"
-          :getInputs="getInputs"
-          :getOutputs="getOutputs"
-          :inputs="inputsMap[node.id]"
-          :tableOptions="tableOptions"
-          :isMainTable="checkMainTable(node)"
-          :inputsMap="inputsMap"
-          :nodeMap="nodeMap"
-          :targetPathMap="targetPathMap"
-          :nodeSchemaMap="nodeSchemaMap"
-          :has-target-node="!!targetNode"
-          :schemaLoading="loadingSchemaNodeId === node.id"
-          :getNodeById="getNodeById"
-          @click="onClickNode(node)"
-          @change-parent="handleChangeParent"
-          @change-path="handleChangePath"
-          @add-node="$emit('add-node', node, $event)"
-          @add-target-node="$emit('add-target-node')"
-          @load-schema="onLoadSchema(node.id)"
-        ></Node>
-        <TargetNode
-          :disabled="disabled"
-          v-if="targetNode"
-          :id="targetNode.id"
-          :node="targetNode"
-          :js-plumb-ins="jsPlumbIns"
-          :schema="nodeSchemaMap[targetNode.id]"
-          :position="nodePositionMap[targetNode.id]"
-          :schemaLoading="targetNodeSchemaLoading"
-          @add-node="$emit('add-node', arguments[0], arguments[1])"
-          @load-schema="onLoadTargetSchema"
-        ></TargetNode>
-      </PaperScroller>
-    </div>
-
-    <ElDialog append-to-body v-model="helpVisible" width="52%" @closed="onClosedDialog">
-      <template #header="{ titleClass }">
-        <span :class="titleClass">
-          {{ $t('packages_dag_materialized_view_help_title') }}
-        </span>
-      </template>
-
-      <div>
-        <p class="mb-2">
-          {{ $t('packages_dag_materialized_view_help_desc') }}
-        </p>
-        <p class="mb-2">
-          <ElLink type="primary" class="text-decoration-underline" @click="handleOpenHelpDoc"
-            >{{ $t('packages_dag_materialized_view_help_tutorial_btn') }} &gt;&gt;</ElLink
-          >
-        </p>
-        <p class="mb-2 font-color-dark fw-sub">{{ $t('packages_dag_materialized_view_help_video_desc') }}</p>
-        <div class="pb-5" v-html="iframeHtml"></div>
-      </div>
-    </ElDialog>
-  </el-drawer>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import dagre from 'dagre'
-import { mapActions, mapGetters, mapState } from 'vuex'
-import Mousetrap from 'mousetrap'
-import { IconButton, VDivider, VIcon } from '@tap/component'
 import { metadataInstancesApi } from '@tap/api'
+import { IconButton, VDivider, VIcon } from '@tap/component'
+import { mapFieldsData } from '@tap/form'
+import dagre from 'dagre'
+import Mousetrap from 'mousetrap'
+import { mapActions, mapGetters, mapState } from 'vuex'
+import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+import { config, jsPlumb } from '../../instance'
 import PaperScroller from '../PaperScroller'
+import TransformLoading from '../TransformLoading.vue'
 import Node from './Node'
 import TargetNode from './TargetNode'
-import { config, jsPlumb } from '../../instance'
-import { mapFieldsData } from '@tap/form'
 
 export default {
   name: 'MaterializedView',
+  components: {
+    VIcon,
+    VDivider,
+    PaperScroller,
+    TargetNode,
+    Node,
+    IconButton,
+    TransformLoading,
+  },
 
   inject: ['buried'],
 
@@ -192,12 +38,11 @@ export default {
       },
     },
   },
-  components: { VIcon, VDivider, PaperScroller, TargetNode, Node, IconButton },
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
 
     return {
-      isDaas:  import.meta.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       nodes: [],
       nodePositionMap: {},
       nodeSchemaMap: {},
@@ -222,11 +67,16 @@ export default {
     isDomesticStation() {
       return this.$store.getters.isDomesticStation
     },
-    ...mapGetters('dataflow', ['allNodes', 'activeNode', 'nodeById', 'transformLoading']),
+    ...mapGetters('dataflow', [
+      'allNodes',
+      'activeNode',
+      'nodeById',
+      'transformLoading',
+    ]),
     ...mapState('dataflow', ['taskSaving']),
 
     scaleTxt() {
-      return Math.round(this.scale * 100) + '%'
+      return `${Math.round(this.scale * 100)}%`
     },
 
     showPaper() {
@@ -280,7 +130,9 @@ export default {
       this.initView()
       this.loading = true
       await this.transformToDag()
-      await this.loadSchema()
+      await this.loadSchema().catch((error) => {
+        console.log('load error', error)
+      })
       this.loading = false
       this.handleAutoLayout()
       this.watchMergeProperties()
@@ -290,13 +142,17 @@ export default {
     Mousetrap(this.$refs.container).bind(['backspace', 'del'], () => {
       this.visible && !this.disabled && this.handleDelete()
     })
-    Mousetrap(this.$refs.container).bind(['option+command+l', 'ctrl+alt+l'], (e) => {
-      e.preventDefault()
-      this.visible && this.handleAutoLayout()
-    })
+    Mousetrap(this.$refs.container).bind(
+      ['option+command+l', 'ctrl+alt+l'],
+      (e) => {
+        e.preventDefault()
+        this.visible && this.handleAutoLayout()
+      },
+    )
 
     if (!this.isDomesticStation) {
-      this.docUrl = 'https://docs.tapdata.io/user-guide/data-pipeline/data-development/create-materialized-view/'
+      this.docUrl =
+        'https://docs.tapdata.io/user-guide/data-pipeline/data-development/create-materialized-view/'
       this.iframeHtml = `<iframe
             class="block"
             width="100%"
@@ -308,7 +164,8 @@ export default {
             allowfullscreen
           ></iframe>`
     } else {
-      this.docUrl = 'https://docs.tapdata.net/user-guide/data-pipeline/data-development/create-materialized-view/'
+      this.docUrl =
+        'https://docs.tapdata.net/user-guide/data-pipeline/data-development/create-materialized-view/'
       this.iframeHtml = `<iframe class="block" width="100%" height="360" src="//player.bilibili.com/player.html?bvid=BV1eN411T7wG&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>`
     }
   },
@@ -341,13 +198,14 @@ export default {
           },
         }
       })
-      this.$refs.paperScroller.centerContent(false, 24, allNodes, '')
+      this.$refs.paperScroller.centerContent(false, 24, allNodes, 'n_')
     },
 
     async handleDelete() {
       if (!this.selectedNodeId || this.nodes.length === 1) return
 
-      const { selectedNodeId: id } = this
+      const { selectedNodeId } = this
+      const id = `n_${selectedNodeId}`
       const managedElements = this.jsPlumbIns.getManagedElements()
       const el = document.getElementById(id)
 
@@ -391,7 +249,7 @@ export default {
         if (parentId) {
           this.inputsMap[parentId].push(childId)
           this.jsPlumbIns.connect({
-            uuids: [childId + '_source', parentId + '_target'],
+            uuids: [`${childId}_source`, `${parentId}_target`],
           })
         }
 
@@ -417,14 +275,14 @@ export default {
     },
 
     findParentNodes(id, ifMyself) {
-      let node = this.nodeById(id)
+      const node = this.nodeById(id)
       const parents = []
-      let parentIds = node.$inputs || []
+      const parentIds = node.$inputs || []
 
       if (ifMyself && !parentIds.length) return [node]
 
       parentIds.forEach((pid) => {
-        let parent = this.nodeById(pid)
+        const parent = this.nodeById(pid)
         if (parent) {
           if (parent.$inputs?.length) {
             parent.$inputs.forEach((ppid) => {
@@ -456,9 +314,9 @@ export default {
         const targetPathMap = {} // path: Node
         const traverse = (children, _target) => {
           for (const item of children) {
-            let source = item.id
+            const source = item.id
             let target = _target
-            let tableNode = this.findParentNodes(item.id, true)[0]
+            const tableNode = this.findParentNodes(item.id, true)[0]
 
             item.parentId = target
             item.tableNode = tableNode
@@ -469,7 +327,7 @@ export default {
               const arr = item.targetPath.split('.')
 
               if (arr.length > 1) {
-                const parentPath = arr.slice(0, arr.length - 1).join('.')
+                const parentPath = arr.slice(0, -1).join('.')
                 target = targetPathMap[parentPath] || target
               }
 
@@ -519,7 +377,7 @@ export default {
     },
 
     initMainNode() {
-      let mergeProperties = this.activeNode.mergeProperties
+      const mergeProperties = this.activeNode.mergeProperties
 
       $emit(
         this,
@@ -567,10 +425,11 @@ export default {
       })
 
       nodes.forEach((n) => {
-        let { width, height } = document.getElementById(n.id)?.getBoundingClientRect() || {}
+        let { width, height } =
+          document.getElementById(`n_${n.id}`)?.getBoundingClientRect() || {}
         width /= scale
         height /= scale
-        dg.setNode(n.id, { width, height })
+        dg.setNode(`n_${n.id}`, { width, height })
       })
 
       this.jsPlumbIns.getAllConnections().forEach((edge) => {
@@ -585,7 +444,7 @@ export default {
         const node = dg.node(n)
         const top = Math.round(node.y - node.height / 2)
         const left = Math.round(node.x - node.width / 2)
-        nodePositionMap[n] = [left, top]
+        nodePositionMap[n.replace(/^n_/, '')] = [left, top]
       })
 
       this.nodePositionMap = nodePositionMap
@@ -601,14 +460,16 @@ export default {
             },
           }
         })
-        this.$refs.paperScroller.autoResizePaper(allNodes, '')
-        this.$refs.paperScroller.centerContent(false, 24, allNodes, '')
+        this.$refs.paperScroller.autoResizePaper(allNodes, 'n_')
+        this.$refs.paperScroller.centerContent(false, 24, allNodes, 'n_')
       })
     },
 
     initView() {
       const { jsPlumbIns } = this
-      jsPlumbIns.setContainer(this.$refs.paperScroller.$el.querySelector('.paper-content-wrap'))
+      jsPlumbIns.setContainer(
+        this.$refs.paperScroller.$el.querySelector('.paper-content-wrap'),
+      )
     },
 
     resetView() {
@@ -623,7 +484,7 @@ export default {
       }
       const data = await metadataInstancesApi.getNodeSchemaMapByIds(params)
 
-      for (let nodeId in data) {
+      for (const nodeId in data) {
         const [schema = {}] = data[nodeId]
         this.setNodeSchema(nodeId, schema)
       }
@@ -639,7 +500,13 @@ export default {
     async loadNodeSchema(nodeId) {
       const params = {
         nodeId,
-        fields: ['original_name', 'fields', 'qualified_name', 'name', 'indices'],
+        fields: [
+          'original_name',
+          'fields',
+          'qualified_name',
+          'name',
+          'indices',
+        ],
         page: 1,
         pageSize: 20,
       }
@@ -663,8 +530,12 @@ export default {
     },
 
     checkMainTable(node) {
-      let nodeId = node.id
-      return !node.parentId || (this.targetNode && this.outputsMap?.[nodeId]?.[0] === this.targetNode.id)
+      const nodeId = node.id
+      return (
+        !node.parentId ||
+        (this.targetNode &&
+          this.outputsMap?.[nodeId]?.[0] === this.targetNode.id)
+      )
     },
 
     handleChangeParent(node, parentId) {
@@ -687,15 +558,17 @@ export default {
     },
 
     async handleChangePath(node, path) {
-      node['targetPath'] = path
+      node.targetPath = path
       const arr = path.split('.')
       const outputs = this.outputsMap[node.id]
       let { parentId } = node
 
       if (!this.checkMainTable(node)) {
         if (arr.length > 1) {
-          const parentPath = arr.slice(0, arr.length - 1).join('.')
-          const parentNode = this.nodes.find((node) => node.targetPath === parentPath)
+          const parentPath = arr.slice(0, -1).join('.')
+          const parentNode = this.nodes.find(
+            (node) => node.targetPath === parentPath,
+          )
           parentId = parentNode?.id || parentId
         }
 
@@ -733,7 +606,7 @@ export default {
       newTargetInputs.push(source)
       this.jsPlumbIns.deleteConnection(connectionIns)
       this.jsPlumbIns.connect({
-        uuids: [source + '_source', newTarget + '_target'],
+        uuids: [`${source}_source`, `${newTarget}_target`],
       })
       this.handleAutoLayout()
     },
@@ -760,7 +633,7 @@ export default {
 
         this.$nextTick(() => {
           this.jsPlumbIns.connect({
-            uuids: [node.id + '_source', node.parentId + '_target'],
+            uuids: [`${node.id}_source`, `${node.parentId}_target`],
           })
           this.handleAutoLayout()
         })
@@ -769,9 +642,9 @@ export default {
 
     async addTargetNode(node) {
       console.log('addTargetNode', node)
-      let mergeProperties = this.activeNode.mergeProperties
+      const mergeProperties = this.activeNode.mergeProperties
       this.inputsMap[node.id] = []
-      let inputs = this.inputsMap[node.id]
+      const inputs = this.inputsMap[node.id]
       this.nodePositionMap[node.id] = [0, 0] // 初始化坐标
       await this.$nextTick()
       mergeProperties.forEach((item) => {
@@ -779,7 +652,7 @@ export default {
         inputs.push(item.id)
         this.outputsMap[item.id] = [node.id]
         this.jsPlumbIns.connect({
-          uuids: [item.id + '_source', node.id + '_target'],
+          uuids: [`${item.id}_source`, `${node.id}_target`],
         })
       })
       this.handleAutoLayout()
@@ -818,7 +691,7 @@ export default {
       return new Promise((resolve) => {
         setTimeout(() => {
           if (this.taskSaving) {
-            let unwatch = this.$watch('taskSaving', () => {
+            const unwatch = this.$watch('taskSaving', () => {
               unwatch()
               resolve()
             })
@@ -843,9 +716,251 @@ export default {
 
     onClosedDialog() {},
   },
-  emits: ['add-node', 'add-target-node', 'update:visible', 'delete-node', 'add-target-node'],
+  emits: [
+    'add-node',
+    'add-target-node',
+    'update:visible',
+    'delete-node',
+    'add-target-node',
+  ],
 }
 </script>
+
+<template>
+  <el-drawer
+    :model-value="visible"
+    size="100%"
+    class="materialized-view-drawer"
+    :with-header="false"
+    :close-on-press-escape="false"
+    @update:model-value="handleUpdateVisible"
+  >
+    <div
+      ref="container"
+      v-loading="loading"
+      class="h-100 flex flex-column"
+      element-loading-background="#fff"
+    >
+      <header class="px-4 h-48 flex align-center position-relative">
+        <IconButton @click="handleUpdateVisible(false)">close</IconButton>
+        <div class="fs-6 font-color-dark ml-1">
+          {{ $t('packages_dag_materialized_view') }}
+        </div>
+        <ElButton
+          v-if="!isDaas"
+          text
+          type="primary"
+          class="ml-4 color-warning"
+          @click="handleOpenHelp"
+          ><VIcon class="mr-1">question-circle</VIcon
+          >{{ $t('public_button_help') }}</ElButton
+        >
+        <div
+          class="operation-center flex align-center position-absolute translate-middle-x start-50"
+        >
+          <!--删除-->
+          <ElTooltip
+            v-if="!disabled"
+            transition="tooltip-fade-in"
+            :content="`${$t('public_button_delete')}(Del)`"
+          >
+            <button class="icon-btn" @click="handleDelete">
+              <VIcon size="20">delete</VIcon>
+            </button>
+          </ElTooltip>
+          <!--内容居中-->
+          <ElTooltip
+            transition="tooltip-fade-in"
+            :content="`${$t('packages_dag_button_center_content')}(Shift + 1)`"
+          >
+            <button class="icon-btn" @click="handleCenterContent">
+              <VIcon size="20">compress</VIcon>
+            </button>
+          </ElTooltip>
+          <!--自动布局-->
+          <ElTooltip
+            transition="tooltip-fade-in"
+            :content="`${$t(
+              'packages_dag_button_auto_layout',
+            )}(${commandCode} + ${optionCode} + L)`"
+          >
+            <button class="icon-btn" @click="handleAutoLayout">
+              <VIcon size="20">auto-layout</VIcon>
+            </button>
+          </ElTooltip>
+          <VDivider class="mx-3" vertical inset />
+          <!--缩小-->
+          <ElTooltip
+            transition="tooltip-fade-in"
+            :content="`${$t('packages_dag_button_zoom_out')}(${commandCode} -)`"
+          >
+            <button class="icon-btn" @click="handleZoomOut">
+              <VIcon size="20">remove-outline</VIcon>
+            </button>
+          </ElTooltip>
+          <div class="choose-size mx-2">
+            <ElPopover
+              placement="bottom"
+              trigger="hover"
+              popper-class="rounded-xl p-0"
+            >
+              <template #reference>
+                <div class="size-wrap">{{ scaleTxt }}</div>
+              </template>
+              <div class="choose-list p-2">
+                <div
+                  class="choose-item pl-4 flex justify-content-between align-center"
+                  @click="handleZoomOut"
+                >
+                  <span class="title">{{
+                    $t('packages_dag_button_zoom_out')
+                  }}</span>
+                  <div class="kbd-wrap flex align-center mr-2">
+                    <kbd>{{ commandCode }}</kbd
+                    ><span class="mx-1">+</span><kbd>+</kbd>
+                  </div>
+                </div>
+                <div
+                  class="choose-item pl-4 flex justify-content-between align-center"
+                  @click="handleZoomIn"
+                >
+                  <span class="title">{{
+                    $t('packages_dag_button_zoom_in')
+                  }}</span>
+                  <div class="kbd-wrap flex align-center mr-2">
+                    <kbd>{{ commandCode }}</kbd
+                    ><span class="mx-1">+</span><kbd>–</kbd>
+                  </div>
+                </div>
+                <VDivider class="my-2" />
+                <div
+                  v-for="val in chooseItems"
+                  :key="val"
+                  class="choose-item pl-4"
+                  @click="handleZoomTo(val)"
+                >
+                  {{ val * 100 }}%
+                </div>
+              </div>
+            </ElPopover>
+          </div>
+          <!--放大-->
+          <ElTooltip
+            transition="tooltip-fade-in"
+            :content="`${$t('packages_dag_button_zoom_in')}(${commandCode} +)`"
+          >
+            <button class="icon-btn" @click="handleZoomIn">
+              <VIcon size="20">add-outline</VIcon>
+            </button>
+          </ElTooltip>
+        </div>
+        <ElButton
+          v-if="buttonShowMap.Start"
+          :disabled="
+            isSaving ||
+            (dataflow.disabledData && dataflow.disabledData.start) ||
+            transformLoading
+          "
+          :loading="isSaving"
+          class="ml-auto"
+          type="primary"
+          @click="$emit('start')"
+        >
+          {{ $t('public_button_start') }}
+        </ElButton>
+      </header>
+      <div class="flex-1 min-h-0 position-relative">
+        <PaperScroller
+          v-if="showPaper"
+          ref="paperScroller"
+          class="flex-1"
+          @change-scale="handleChangeScale"
+        >
+          <Node
+            v-for="node in nodes"
+            :id="`n_${node.id}`"
+            :key="node.id"
+            :disabled="disabled"
+            :class="{
+              active: selectedNodeId === node.id,
+            }"
+            :node="node"
+            :node-id="node.id"
+            :js-plumb-ins="jsPlumbIns"
+            :position="nodePositionMap[node.id]"
+            :schema="nodeSchemaMap[node.id]"
+            :parent-schema="nodeSchemaMap[node.parentId]"
+            :get-inputs="getInputs"
+            :get-outputs="getOutputs"
+            :inputs="inputsMap[node.id]"
+            :table-options="tableOptions"
+            :is-main-table="checkMainTable(node)"
+            :inputs-map="inputsMap"
+            :node-map="nodeMap"
+            :target-path-map="targetPathMap"
+            :node-schema-map="nodeSchemaMap"
+            :has-target-node="!!targetNode"
+            :schema-loading="loadingSchemaNodeId === node.id"
+            :get-node-by-id="getNodeById"
+            @click="onClickNode(node)"
+            @change-parent="handleChangeParent"
+            @change-path="handleChangePath"
+            @add-node="$emit('add-node', node, $event)"
+            @add-target-node="$emit('add-target-node')"
+            @load-schema="onLoadSchema(node.id)"
+          />
+          <TargetNode
+            v-if="targetNode"
+            :id="targetNode.id"
+            :disabled="disabled"
+            :node="targetNode"
+            :js-plumb-ins="jsPlumbIns"
+            :schema="nodeSchemaMap[targetNode.id]"
+            :position="nodePositionMap[targetNode.id]"
+            :schema-loading="targetNodeSchemaLoading"
+            @add-node="$emit('add-node', arguments[0], arguments[1])"
+            @load-schema="onLoadTargetSchema"
+          />
+        </PaperScroller>
+        <TransformLoading :show="transformLoading" />
+      </div>
+    </div>
+
+    <ElDialog
+      v-model="helpVisible"
+      append-to-body
+      width="52%"
+      @closed="onClosedDialog"
+    >
+      <template #header="{ titleClass }">
+        <span :class="titleClass">
+          {{ $t('packages_dag_materialized_view_help_title') }}
+        </span>
+      </template>
+
+      <div>
+        <p class="mb-2">
+          {{ $t('packages_dag_materialized_view_help_desc') }}
+        </p>
+        <p class="mb-2">
+          <ElLink
+            type="primary"
+            class="text-decoration-underline"
+            @click="handleOpenHelpDoc"
+            >{{
+              $t('packages_dag_materialized_view_help_tutorial_btn')
+            }}
+            &gt;&gt;</ElLink
+          >
+        </p>
+        <p class="mb-2 font-color-dark fw-sub">
+          {{ $t('packages_dag_materialized_view_help_video_desc') }}
+        </p>
+        <div class="pb-5" v-html="iframeHtml" />
+      </div>
+    </ElDialog>
+  </el-drawer>
+</template>
 
 <style lang="scss" scoped>
 $sidebarW: 236px;
@@ -887,6 +1002,7 @@ $sidebarBg: #fff;
   padding: 0 !important;
 }
 </style>
+
 <style>
 .materialized-view-help-dialog {
   z-index: 10000;
