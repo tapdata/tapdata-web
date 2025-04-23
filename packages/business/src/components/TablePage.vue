@@ -482,6 +482,18 @@ export default {
       .el-table__fixed {
         height: auto !important; //设置高优先，以覆盖内联样式
       }
+
+      .el-table__inner-wrapper::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 1px;
+        z-index: calc(var(--el-table-index) + 2);
+        background-color: var(--el-table-border-color);
+        z-index: calc(var(--el-table-index) + 2);
+      }
     }
 
     .el-table--border td,
@@ -512,3 +524,17 @@ export default {
   }
 }
 </style>
+<!-- .el-table--border .el-table__inner-wrapper::after {
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 1px;
+  z-index: calc(var(--el-table-index) + 2);
+}
+<style>
+.el-table--border::after, .el-table--border::before, .el-table--border .el-table__inner-wrapper::after, .el-table__inner-wrapper::before {
+  content: "";
+  position: absolute;
+  background-color: var(--el-table-border-color);
+  z-index: calc(var(--el-table-index) + 2);
+} -->

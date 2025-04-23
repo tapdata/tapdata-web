@@ -120,7 +120,7 @@ $tag-icon-span-gap: (
   ),
   $table: (
     // 'header-bg-color': #fafafa,
-    'header-text-color': map.get($fontColor, normal),
+    'header-text-color': var(--el-text-color-caption),
   ),
   $popover: (
     'border-radius': 12px,
