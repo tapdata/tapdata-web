@@ -1548,6 +1548,16 @@ export default observer({
       },
       immediate: true,
     },
+
+    settings: {
+      handler(newSettings) {
+        // Only update if different to avoid loops
+        if (JSON.stringify(this.form.values) !== JSON.stringify(newSettings)) {
+          this.syncFormWithSettings()
+        }
+      },
+      deep: true,
+    },
   },
 
   created() {
@@ -1556,6 +1566,41 @@ export default observer({
     this.lazySavePermissionsConfig = debounce(this.savePermissionsConfig, 300)
 
     this.getRolePermissions()
+
+    // FIXME
+    this.form.addEffects('settingsSync', () => {
+      onFieldValueChange('*', (field) => {
+        if (field.path && field.path.length > 0) {
+          // Get the path as string (e.g., "name" or "syncPoints.0.dateTime")
+          const path = field.path.toString()
+          const pathArr = path.split('.')
+
+          // Skip if the value is the same to avoid infinite loops
+          if (path in this.settings) {
+            const currentValue = this.settings[path]
+            if (JSON.stringify(currentValue) !== JSON.stringify(field.value)) {
+              this.settings[path] = field.value
+            }
+          } else {
+            // For nested paths, use property access to update deeply nested values
+            let obj = this.settings
+            const parts = pathArr.slice()
+            const lastPart = parts.pop()
+
+            for (const part of parts) {
+              if (!(part in obj)) {
+                obj[part] = {}
+              }
+              obj = obj[part]
+            }
+
+            if (JSON.stringify(obj[lastPart]) !== JSON.stringify(field.value)) {
+              obj[lastPart] = field.value
+            }
+          }
+        }
+      })
+    })
   },
 
   mounted() {
@@ -1633,6 +1678,10 @@ export default observer({
             }
           }) || []
       })
+    },
+
+    syncFormWithSettings() {
+      this.form.setValues(this.settings)
     },
   },
 })
