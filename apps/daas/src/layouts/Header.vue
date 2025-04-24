@@ -35,7 +35,6 @@ const isOP = import.meta.env.VUE_APP_MODE === 'OP'
 const domain = i18n.locale.value === 'en' ? 'io' : 'net'
 
 // Reactive state
-const appVersion = ref('')
 const logoUrl = ref(window._TAPDATA_OPTIONS_?.logoUrl || '')
 const languages = ref(langMenu)
 const currentLang = ref(getCurrentLanguage())
@@ -83,6 +82,7 @@ const showLanguageButton = computed(() => {
 
 // Getters
 const versionName = computed(() => store.getters['feature/versionName'])
+const appVersion = computed(() => store.state.appVersion)
 
 // Computed properties
 const dropdownListComputed = computed(() => {
@@ -111,7 +111,7 @@ const showHomeButton = computed(() => {
 const getAppVersion = async () => {
   try {
     const data = await settingsApi.getAppVersion()
-    appVersion.value = data.toString()
+    store.commit('SET_APP_VERSION', data.toString())
   } catch (error) {
     console.error('Error fetching app version:', error)
   }
