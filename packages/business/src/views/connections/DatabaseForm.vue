@@ -348,14 +348,17 @@ export default {
     handleDatabaseType(item) {
       this.dialogDatabaseTypeVisible = false
       const { pdkHash, pdkId } = item
-      this.$router.push({
-        name: 'connectionCreate',
-        query: {
-          pdkHash,
-          pdkId,
-        },
-      })
-      location.reload()
+      this.$router
+        .push({
+          name: 'connectionCreate',
+          query: {
+            pdkHash,
+            pdkId,
+          },
+        })
+        .then(() => {
+          location.reload()
+        })
     },
     async getPdkForm() {
       const pdkHash = this.$route.query?.pdkHash
@@ -1599,7 +1602,7 @@ export default {
 <template>
   <div v-loading="loadingFrom" class="connection-from rounded-lg">
     <div class="connection-from-body gap-4">
-      <main class="connection-from-main bg-white rounded-lg overflow-hidden">
+      <main class="connection-from-main bg-white rounded-xl overflow-hidden">
         <div class="connection-from-title p-4">
           <div class="flex align-center gap-2">
             <slot name="title-prefix">

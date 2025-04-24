@@ -631,7 +631,7 @@ export default {
       }
 
       if (this.selectorType === 'source_and_target' && !this.dialogMode) {
-        $emit(this, 'selected', item)
+        this.$emit('selected', item)
         return
       }
 
