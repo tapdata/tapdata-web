@@ -23,7 +23,7 @@ pnpm start:daas
 ```
 
 4. **Command Line Arguments**
-Common parameters include `--port` and `--dest`，For more details [vue-cli](https://cli.vuejs.org/zh/guide/cli-service.html#%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4)
+   Common parameters include `--port` and `--dest`，For more details[vue-cli ](https://cli.vuejs.org/zh/guide/cli-service.html#%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4)
 ```bash
 # In the root directory, start with a specified port (an additional `--` may be needed on Windows)
 pnpm start:daas --port=8100
@@ -38,7 +38,7 @@ pnpm start:test --port=8100
 npm i -g nrm
 nrm use taobao
 # Or set manually
-pnpm set registry https://registry.npmmirror.com/ 
+pnpm set registry https://registry.npmmirror.com/
 # Check the set source
 pnpm get registry
 ```
@@ -54,7 +54,7 @@ git worktree add ../main main
 cd ../main
 pnpm i
 pnpm dev:oss
-``` 
+```
 
 - Prune an abandoned checked-out branch
 
@@ -64,7 +64,7 @@ git worktree prune
 
 # 或者
 git worktree remove ../dfs
-``` 
+```
 
 ### Advantages of worktree
 
@@ -77,7 +77,7 @@ git worktree remove ../dfs
 ### [Command Line](https://pnpm.io/pnpm-cli)
 
 | npm                   | pnpm                   |
-|-----------------------|------------------------|
+| --------------------- | ---------------------- |
 | `npm install`         | `pnpm install`         |
 | `npm i <pkg>`         | `pnpm add <pkg>`       |
 | `npm run <cmd>`       | `pnpm <cmd>`           |

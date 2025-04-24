@@ -1,36 +1,40 @@
 <template>
   <ElDialog
     :title="title"
-    :visible="visible"
+    :model-value="visible"
     :append-to-body="true"
     width="800px"
     top="10vh"
     @open="handleOpen"
     @close="handleClose"
   >
-    <div slot="title" class="font-color-dark fs-6 fw-sub">
-      {{ $t('packages_business_data_console_mode') }}
-    </div>
-    <div class="my-n3">
+    <template #header>
+      <div class="font-color-dark fs-6 fw-sub">
+        {{ $t('packages_business_data_console_mode') }}
+      </div>
+    </template>
+    <div>
       <div class="flex gap-6 justify-content-center p-4 rounded-lg mode-card-container">
         <div
           class="flex-1 rounded-xl bg-white border mode-card overflow-hidden clickable"
           :class="{ active: mode === 'integration' }"
           @click="handleSelectMode('integration')"
         >
-          <ElImage
-            class="px-5 py-2 mode-card-image align-top"
-            :src="require('@tap/assets/images/swimlane/data-integration-mode.png')"
-          ></ElImage>
+          <ElImage class="px-5 py-2 mode-card-image align-top" :src="dataIntegrationModeImg"></ElImage>
           <div class="px-4 flex align-center mode-card-title border-bottom">
             <ElRadio v-model="mode" class="mr-0" label="integration">
               <span class="fs-7 fw-sub">{{ $t('packages_business_data_console_mode_integration') }}</span>
             </ElRadio>
           </div>
           <div class="px-4 py-2 mode-desc">
-            1. {{ $t('packages_business_data_console_mode_integration_tooltip_1') }} <br />
-            2. {{ $t('packages_business_data_console_mode_integration_tooltip_2') }} <br />
-            3. {{ $t('packages_business_data_console_mode_integration_tooltip_3') }}
+            1.
+            {{ $t('packages_business_data_console_mode_integration_tooltip_1') }}
+            <br />
+            2.
+            {{ $t('packages_business_data_console_mode_integration_tooltip_2') }}
+            <br />
+            3.
+            {{ $t('packages_business_data_console_mode_integration_tooltip_3') }}
           </div>
         </div>
         <div
@@ -38,10 +42,7 @@
           :class="{ active: mode === 'service' }"
           @click="handleSelectMode('service')"
         >
-          <ElImage
-            class="px-5 py-2 mode-card-image align-top"
-            :src="require('@tap/assets/images/swimlane/data-service-platform-mode.png')"
-          ></ElImage>
+          <ElImage class="px-5 py-2 mode-card-image align-top" :src="dataServicePlatformModeImg"></ElImage>
           <div class="px-4 flex align-center mode-card-title border-bottom">
             <ElRadio v-model="mode" class="mr-0" label="service">
               <span class="fs-7 fw-sub"
@@ -50,8 +51,12 @@
             </ElRadio>
           </div>
           <div class="px-4 py-2 mode-desc">
-            1. {{ $t('packages_business_data_console_mode_service_tooltip_1') }} <br />
-            2. {{ $t('packages_business_data_console_mode_service_tooltip_2') }} <br />
+            1.
+            {{ $t('packages_business_data_console_mode_service_tooltip_1') }}
+            <br />
+            2.
+            {{ $t('packages_business_data_console_mode_service_tooltip_2') }}
+            <br />
             3. {{ $t('packages_business_data_console_mode_service_tooltip_3') }}
           </div>
         </div>
@@ -110,9 +115,11 @@
             </ElFormItem>
 
             <ElFormItem prop="mdmStorageConnectionId">
-              <span slot="label" class="inline-flex align-center">
-                <span>{{ $t('packages_business_data_console_mdm_storage') }}</span>
-              </span>
+              <template v-slot:label>
+                <span class="inline-flex align-center">
+                  <span>{{ $t('packages_business_data_console_mdm_storage') }}</span>
+                </span>
+              </template>
               <ElRadioGroup
                 v-if="!isDaas"
                 class="mb-2"
@@ -153,49 +160,52 @@
         </template>
       </ElForm>
     </div>
-    <div slot="footer">
-      <ElButton class="ml-4" @click="cancel">{{ $t('public_button_cancel') }}</ElButton>
-      <ElButton v-loading="loading" type="primary" :disabled="disabledBtn" @click="submit">{{
-        $t('public_button_save')
-      }}</ElButton>
-    </div>
+    <template v-slot:footer>
+      <div>
+        <ElButton class="ml-4" @click="cancel">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton v-loading="loading" type="primary" :disabled="disabledBtn" @click="submit">{{
+          $t('public_button_save')
+        }}</ElButton>
+      </div>
+    </template>
   </ElDialog>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 import { connectionsApi, liveDataPlatformApi } from '@tap/api'
+import dataIntegrationModeImg from '@tap/assets/images/swimlane/data-integration-mode.png'
+import dataServicePlatformModeImg from '@tap/assets/images/swimlane/data-service-platform-mode.png'
 
 export default {
   name: 'Settings',
-
   props: {
     title: {
       type: String,
       default: () => {
         return 'Product Capability Mode'
-      }
+      },
     },
     visible: {
       required: true,
-      value: Boolean
+      value: Boolean,
     },
     fdmConnection: Object,
-    mdmConnection: Object
+    mdmConnection: Object,
   },
-
   data() {
-    const isCommunity = process.env.VUE_APP_MODE === 'community'
+    const isCommunity =  import.meta.env.VUE_APP_MODE === 'community'
     const options = [
       {
         label: this.$t('packages_business_mongodb_self_hosted_cluster'),
         value: 'self',
-        tag: 'Add a New Connection'
+        tag: 'Add a New Connection',
       },
       {
         label: this.$t('packages_business_mongodb_full_management_cluster'),
-        value: 'full-management'
-      }
+        value: 'full-management',
+      },
     ]
 
     if (isCommunity) {
@@ -203,38 +213,51 @@ export default {
     }
 
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      dataIntegrationModeImg,
+      dataServicePlatformModeImg,
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       mode: '',
       connectionsList: [],
       modeItems: [
         {
           label: 'Data Integration Mode',
-          value: 'integration'
+          value: 'integration',
         },
         {
           label: 'Data Service Platform Mode',
           value: 'service',
-          beta: true
-        }
+          beta: true,
+        },
       ],
       options,
       form: {
         fdmStorageCluster: '',
         fdmStorageConnectionId: '',
         mdmStorageCluster: '',
-        mdmStorageConnectionId: ''
+        mdmStorageConnectionId: '',
       },
       loading: false,
       rules: {
-        fdmStorageConnectionId: [{ required: true, message: i18n.t('public_select_placeholder'), trigger: 'change' }],
-        mdmStorageConnectionId: [{ required: true, message: i18n.t('public_select_placeholder'), trigger: 'change' }]
+        fdmStorageConnectionId: [
+          {
+            required: true,
+            message: i18n.t('public_select_placeholder'),
+            trigger: 'change',
+          },
+        ],
+        mdmStorageConnectionId: [
+          {
+            required: true,
+            message: i18n.t('public_select_placeholder'),
+            trigger: 'change',
+          },
+        ],
       },
       liveDataPlatformId: '',
 
-      setting: null
+      setting: null,
     }
   },
-
   computed: {
     disabled() {
       return (
@@ -251,20 +274,18 @@ export default {
         ((this.disabled && this.mode === 'service' && this.mode === this.setting?.mode) ||
           (this.mode === 'service' && this.form.fdmStorageCluster === 'full-management'))
       )
-    }
+    },
   },
-
   created() {
     this.init()
   },
-
   methods: {
     async init() {
       this.loadConnections()
       const data = await this.getData()
       this.setting = data
       this.setData(data, true)
-      this.$emit('init', data)
+      $emit(this, 'init', data)
     },
 
     async getData() {
@@ -278,23 +299,23 @@ export default {
         limit: 999,
         where: {
           connection_type: {
-            in: ['source_and_target']
+            in: ['source_and_target'],
           },
           database_type: {
-            in: ['MongoDB', 'MongoDB Atlas']
-          }
-        }
+            in: ['MongoDB', 'MongoDB Atlas'],
+          },
+        },
       }
       connectionsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           this.connectionsList =
-            data?.items.map(t => {
+            data?.items.map((t) => {
               return {
                 label: t.name,
-                value: t.id
+                value: t.id,
               }
             }) || []
         })
@@ -322,14 +343,13 @@ export default {
     },
 
     handleClose() {
-      this.$emit('visible', false)
       this.$emit('update:visible', false)
     },
 
     handleSelectMode(type) {
       this.setData({
         mode: type,
-        id: this.liveDataPlatformId
+        id: this.liveDataPlatformId,
       })
     },
 
@@ -342,7 +362,7 @@ export default {
     },
 
     submit() {
-      this.$refs.form.validate(v => {
+      this.$refs.form.validate((v) => {
         if (!v) return
         const { mode, form, liveDataPlatformId } = this
         this.loading = true
@@ -352,7 +372,7 @@ export default {
           .then(() => {
             const result = { mode, ...form }
             this.$message.success(this.$t('public_message_save_ok'))
-            this.$emit('success', result)
+            $emit(this, 'success', result)
             this.handleClose()
 
             Object.assign(this.setting, result)
@@ -370,14 +390,15 @@ export default {
 
     handleOrderStorage() {
       this.$router.push({
-        name: 'CreateStorage'
+        name: 'CreateStorage',
       })
-    }
-  }
+    },
+  },
+  emits: ['init', 'update:mode', 'update:fdmStorageConnectionId', 'update:visible', ' success'],
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .dialog__content {
   padding: 20px 94px;
 }
@@ -393,14 +414,11 @@ export default {
   border: 1px solid #f2f2f2;
   border-top: none;
 }
-
 .mode-card-container {
   background-color: #f5f7fa;
 }
-
 .mode-card {
   transition: box-shadow 0.15s linear 0s;
-
   &-image {
     width: 100%;
     height: auto;
@@ -412,25 +430,23 @@ export default {
   }
 
   &.active {
-    border-color: map-get($color, primary) !important;
+    border-color: map.get($color, primary) !important;
     .mode-card-image {
     }
   }
 
   &:hover {
-    box-shadow: 0 10px 36px 10px rgba(31, 35, 41, 0.04), 0 8px 24px rgba(31, 35, 41, 0.04),
+    box-shadow:
+      0 10px 36px 10px rgba(31, 35, 41, 0.04),
+      0 8px 24px rgba(31, 35, 41, 0.04),
       0 6px 12px -10px rgba(31, 35, 41, 0.06);
   }
 }
-
 .mode-setting-form.el-form--label-top {
-  ::v-deep {
-    .el-form-item__label {
-      padding-bottom: 0;
-    }
+  :deep(.el-form-item__label) {
+    padding-bottom: 0;
   }
 }
-
 .mode-desc {
   line-height: 2;
   padding-bottom: 10px;
@@ -438,7 +454,6 @@ export default {
 .el-divider--horizontal {
   margin: 5px 5px !important;
 }
-
 .preview-text {
   padding: 0 15px;
   line-height: 32px;
@@ -460,7 +475,7 @@ export default {
     top: 50%;
     transform: translateY(-50%);
     position: absolute;
-    background-color: map-get($color, primary);
+    background-color: map.get($color, primary);
   }
 }
 </style>

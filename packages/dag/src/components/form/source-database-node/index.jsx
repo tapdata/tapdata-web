@@ -1,28 +1,52 @@
+import {
+  createForm,
+  onFieldValueChange,
+  onFormValuesChange,
+} from '@formily/core'
 import { observer } from '@formily/reactive-vue'
 import { RecursionField, SchemaExpressionScopeSymbol } from '@formily/vue'
-import { defineComponent, ref, inject } from '@vue/composition-api'
-import i18n from '@tap/i18n'
 import { taskApi } from '@tap/api'
-import { useForm, FormDialog, FormLayout, useFormLayout, createSchemaField, components } from '@tap/form'
-import './style.scss'
-import { createForm, onFieldValueChange, onFormValuesChange } from '@formily/core'
-import * as _components from '../index'
+import {
+  components,
+  createSchemaField,
+  FormDialog,
+  FormLayout,
+  useForm,
+  useFormLayout,
+} from '@tap/form'
+import i18n from '@tap/i18n'
+import { configProviderContextKey, ElConfigProvider } from 'element-plus'
+import { defineComponent, inject, provide, ref } from 'vue'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
+// import * as _components from '../index'
+import {
+  FieldRenameProcessor,
+  TableListCard,
+  TableRename,
+  TableSelector,
+} from '../index'
+import './style.scss'
 
 const { SchemaField } = createSchemaField({
   components: {
     ...components,
-    ..._components
-  }
+    TableRename,
+    FieldRenameProcessor,
+    TableSelector,
+    TableListCard,
+  },
 })
 
-const TableEditForm = {
+const TableEditForm = defineComponent({
   props: {
     form: Object,
     scope: Object,
-    layout: Object
+    layout: Object,
+    configProvider: Object,
   },
-  data() {
+  setup(props) {
+    provide(configProviderContextKey, props.configProvider)
+
     const schema = {
       type: 'object',
       properties: {
@@ -37,32 +61,31 @@ const TableEditForm = {
           'x-component-props': {
             findParentNodes: '{{findParentNodes}}',
             listStyle: {
-              maxHeight: 'calc((100vh - 120px) * 0.618)'
-            }
-          }
-        }
-      }
+              maxHeight: 'calc((100vh - 120px) * 0.618)',
+            },
+          },
+        },
+      },
     }
-    return {
-      schema
-    }
-  },
-  render(h) {
-    return (
-      <FormLayout {...{ props: this.layout }}>
-        <SchemaField schema={this.schema} scope={this.scope} />
+
+    return () => (
+      <FormLayout {...props.layout}>
+        <SchemaField schema={schema} scope={props.scope} />
       </FormLayout>
     )
-  }
-}
+  },
+})
 
-const FieldEditForm = {
+const FieldEditForm = defineComponent({
   props: {
     form: Object,
     scope: Object,
-    layout: Object
+    layout: Object,
+    configProvider: Object,
   },
-  data() {
+  setup(props) {
+    provide(configProviderContextKey, props.configProvider)
+
     const schema = {
       type: 'object',
       properties: {
@@ -71,8 +94,8 @@ const FieldEditForm = {
           default: {
             prefix: '',
             suffix: '',
-            capitalized: ''
-          }
+            capitalized: '',
+          },
         },
         fieldsMapping: {
           type: 'array',
@@ -81,53 +104,48 @@ const FieldEditForm = {
           'x-component': 'FieldRenameProcessor',
           'x-component-props': {
             nodeId: '{{$values.id}}',
-            class: 'field-processor-dialog'
-          }
-        }
-      }
+            class: 'field-processor-dialog',
+          },
+        },
+      },
     }
-    return {
-      schema
-    }
-  },
-  render(h) {
-    return (
-      <FormLayout {...{ props: this.layout }}>
-        <SchemaField schema={this.schema} scope={this.scope} />
-      </FormLayout>
+
+    return () => (
+      <ElConfigProvider>
+        <FormLayout {...props.layout}>
+          <SchemaField schema={schema} scope={props.scope} />
+        </FormLayout>
+      </ElConfigProvider>
     )
-  }
-}
+  },
+})
 
 const SourceDatabaseNode = observer(
   defineComponent({
     props: {
-      value: Object
+      value: Object,
     },
-    setup(props, { attrs, listeners, root }) {
+    setup() {
+      const configProvider = inject(configProviderContextKey)
       const formRef = useForm()
       const SchemaExpressionScopeContext = inject(SchemaExpressionScopeSymbol)
       const form = formRef.value
       const typeEnum = ['custom', 'expression']
 
-      console.log('SchemaExpressionScopeContext', SchemaExpressionScopeContext)
-
       const items = [
         {
-          title: i18n.t('packages_dag_nodes_database_anbiaomingxuanze')
+          title: i18n.t('packages_dag_nodes_database_anbiaomingxuanze'),
         },
         {
-          title: i18n.t('packages_dag_nodes_database_anzhengzebiaoda')
-        }
+          title: i18n.t('packages_dag_nodes_database_anzhengzebiaoda'),
+        },
       ]
 
-      const setActive = index => {
+      const setActive = (index) => {
         form.values.dag.nodes[0].migrateTableSelectType = typeEnum[index]
       }
 
       const layoutRef = useFormLayout()
-
-      console.log('formRef', formRef)
 
       const openTableEdit = () => {
         FormDialog(
@@ -135,18 +153,24 @@ const SourceDatabaseNode = observer(
             title: i18n.t('packages_dag_src_migrationeditor_biaobianji'),
             customClass: 'schema-form-dialog',
             okText: i18n.t('public_button_confirm'),
-            cancelText: i18n.t('public_button_cancel')
+            cancelText: i18n.t('public_button_cancel'),
           },
-          () => <TableEditForm scope={SchemaExpressionScopeContext.value} layout={layoutRef.value}></TableEditForm>
+          () => (
+            <TableEditForm
+              scope={SchemaExpressionScopeContext.value}
+              layout={layoutRef.value}
+              configProvider={configProvider}
+            ></TableEditForm>
+          ),
         )
           .forOpen((payload, next) => {
             next({
               values: form.values.dag.nodes[1],
               effects() {
-                onFieldValueChange('*', field => {
+                onFieldValueChange('*', () => {
                   form.notify('dialog-form-values-change')
                 })
-              }
+              },
             })
           })
           .forConfirm((payload, next) => {
@@ -156,8 +180,6 @@ const SourceDatabaseNode = observer(
             next(payload)
           })
           .open()
-          .then(console.log)
-          .catch(console.error)
       }
 
       const openFieldEdit = () => {
@@ -166,18 +188,24 @@ const SourceDatabaseNode = observer(
             title: i18n.t('packages_dag_src_migrationeditor_biaobianji'),
             customClass: 'schema-form-dialog',
             okText: i18n.t('public_button_confirm'),
-            cancelText: i18n.t('public_button_cancel')
+            cancelText: i18n.t('public_button_cancel'),
           },
-          () => <FieldEditForm scope={SchemaExpressionScopeContext.value} layout={layoutRef.value}></FieldEditForm>
+          () => (
+            <FieldEditForm
+              configProvider={configProvider}
+              scope={SchemaExpressionScopeContext.value}
+              layout={layoutRef.value}
+            ></FieldEditForm>
+          ),
         )
           .forOpen((payload, next) => {
             next({
               values: form.values.dag.nodes[2],
               effects() {
-                onFieldValueChange('*', field => {
+                onFieldValueChange('*', (field) => {
                   form.notify('dialog-form-values-change')
                 })
-              }
+              },
             })
           })
           .forConfirm((payload, next) => {
@@ -187,24 +215,22 @@ const SourceDatabaseNode = observer(
             next(payload)
           })
           .open()
-          .then(console.log)
-          .catch(console.error)
       }
 
       const RightExtra = () => {
         return (
           <div>
-            <ElButton type="text" onClick={openTableEdit}>
+            <ElButton text type="primary" onClick={openTableEdit}>
               {i18n.t('packages_dag_src_migrationeditor_biaobianji')}
             </ElButton>
-            <ElButton type="text" onClick={openFieldEdit}>
+            <ElButton text type="primary" onClick={openFieldEdit}>
               {i18n.t('packages_dag_src_migrationeditor_ziduanbianji')}
             </ElButton>
           </div>
         )
       }
 
-      const RightItem = ({ props }) => {
+      const RightItem = (props, {}) => {
         return <span>{tableMap.value[props.row] || props.row}</span>
       }
 
@@ -219,7 +245,7 @@ const SourceDatabaseNode = observer(
               taskId,
               nodeId: form.values.dag.nodes[1].id,
               page: 1,
-              pageSize: 10000
+              pageSize: 10000,
             })
             .then(({ items = [] }) => {
               const map = items.reduce((acc, item) => {
@@ -236,10 +262,12 @@ const SourceDatabaseNode = observer(
 
       loadTable()
 
-      useAfterTaskSaved(root, [], loadTable)
+      useAfterTaskSaved([], loadTable)
 
       return () => {
-        const active = typeEnum.indexOf(form.values.dag.nodes[0].migrateTableSelectType)
+        const active = typeEnum.indexOf(
+          form.values.dag.nodes[0].migrateTableSelectType,
+        )
 
         return (
           <div class="source-database-node p-4 rounded-lg">
@@ -256,8 +284,8 @@ const SourceDatabaseNode = observer(
                         'tab-bar-list-item': true,
                         'tab-bar-list-item--active': index === active,
                         'hover-radius-left': !hasRadiusLeft,
-                        'hover-radius-right': !hasRadiusRight
-                      }
+                        'hover-radius-right': !hasRadiusRight,
+                      },
                     ]}
                     onClick={() => {
                       setActive(index)
@@ -270,7 +298,11 @@ const SourceDatabaseNode = observer(
                         xmlns="http://www.w3.org/2000/svg"
                         class="tab-bar-list-item__arc-angle--left tab-bar-list-item__arc-angle"
                       >
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M0 0v9h9a9 9 0 01-9-9z"></path>
+                        <path
+                          fill-rule="evenodd"
+                          clip-rule="evenodd"
+                          d="M0 0v9h9a9 9 0 01-9-9z"
+                        ></path>
                       </svg>
                     )}
                     <span>{item.title}</span>
@@ -281,14 +313,21 @@ const SourceDatabaseNode = observer(
                         xmlns="http://www.w3.org/2000/svg"
                         class="tab-bar-list-item__arc-angle--right tab-bar-list-item__arc-angle"
                       >
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M0 0v9h9a9 9 0 01-9-9z"></path>
+                        <path
+                          fill-rule="evenodd"
+                          clip-rule="evenodd"
+                          d="M0 0v9h9a9 9 0 01-9-9z"
+                        ></path>
                       </svg>
                     )}
                   </li>
                 )
               })}
             </ul>
-            <div class="tab-content p-4 bg-white" style={active > 0 ? 'border-top-left-radius: 8px' : ''}>
+            <div
+              class="tab-content p-4 bg-white"
+              style={active > 0 ? 'border-top-left-radius: 8px' : ''}
+            >
               <RecursionField
                 schema={{
                   type: 'object',
@@ -300,10 +339,23 @@ const SourceDatabaseNode = observer(
                       'x-component': 'Select',
                       default: 'All',
                       enum: [
-                        { label: i18n.t('public_select_option_all'), value: 'All' },
-                        { label: i18n.t('packages_dag_nodes_database_jinyouzhujianbiao'), value: 'HasKeys' },
-                        { label: i18n.t('packages_dag_nodes_database_jinwuzhujianbiao'), value: 'NoKeys' }
-                      ]
+                        {
+                          label: i18n.t('public_select_option_all'),
+                          value: 'All',
+                        },
+                        {
+                          label: i18n.t(
+                            'packages_dag_nodes_database_jinyouzhujianbiao',
+                          ),
+                          value: 'HasKeys',
+                        },
+                        {
+                          label: i18n.t(
+                            'packages_dag_nodes_database_jinwuzhujianbiao',
+                          ),
+                          value: 'NoKeys',
+                        },
+                      ],
                     },
                     tableNames: {
                       type: 'array',
@@ -316,48 +368,52 @@ const SourceDatabaseNode = observer(
                         style: {
                           height: 'unset',
                           minHeight: 0,
-                          maxHeight: 'calc((100vh - 220px) * 0.618)'
+                          maxHeight: 'calc((100vh - 220px) * 0.618)',
                         },
                         hideReload: true,
                         alwaysShowReload: true,
                         nodeId: '{{$values.id}}',
                         taskId: '{{$taskId}}',
-                        filterType: `{{ $values.dag.nodes[0].noPrimaryKeyTableSelectType }}`
+                        filterType: `{{ $values.dag.nodes[0].noPrimaryKeyTableSelectType }}`,
                       },
                       'x-content': {
                         'right-extra': RightExtra,
-                        'right-item': RightItem
+                        'right-item': RightItem,
                       },
                       'x-reactions': {
                         dependencies: ['.migrateTableSelectType'],
                         fulfill: {
                           state: {
-                            display: '{{$deps[0] === "custom" ? "visible":"hidden"}}'
+                            display:
+                              '{{$deps[0] === "custom" ? "visible":"hidden"}}',
                           },
                           schema: {
-                            required: '{{$deps[0] === "custom"}}'
-                          }
-                        }
-                      }
+                            required: '{{$deps[0] === "custom"}}',
+                          },
+                        },
+                      },
                     },
                     tableExpression: {
                       type: 'string',
                       default: '.*',
                       required: true,
-                      description: i18n.t('packages_dag_nodes_database_zhengzebiaodashi'),
+                      description: i18n.t(
+                        'packages_dag_nodes_database_zhengzebiaodashi',
+                      ),
                       'x-decorator': 'FormItem',
                       'x-component': 'Input',
                       'x-component-props': {
-                        rows: 1
+                        rows: 1,
                       },
                       'x-reactions': {
                         dependencies: ['.migrateTableSelectType'],
                         fulfill: {
                           state: {
-                            display: '{{$deps[0] === "expression" ? "visible":"hidden"}}'
-                          }
-                        }
-                      }
+                            display:
+                              '{{$deps[0] === "expression" ? "visible":"hidden"}}',
+                          },
+                        },
+                      },
                     },
                     tableListCard: {
                       type: 'void',
@@ -365,21 +421,25 @@ const SourceDatabaseNode = observer(
                       'x-component-props': {
                         class: 'mt-4',
                         rows: 1,
-                        title: i18n.t('packages_dag_nodes_database_pipeidaodebiao'),
+                        title: i18n.t(
+                          'packages_dag_nodes_database_pipeidaodebiao',
+                        ),
                         connectionId: '{{$values.dag.nodes[0].connectionId}}',
-                        params: '{{ {regex: $values.dag.nodes[0].tableExpression,limit:0} }}',
-                        filterType: `{{ $values.dag.nodes[0].noPrimaryKeyTableSelectType }}`
+                        params:
+                          '{{ {regex: $values.dag.nodes[0].tableExpression,limit:0} }}',
+                        filterType: `{{ $values.dag.nodes[0].noPrimaryKeyTableSelectType }}`,
                       },
                       'x-reactions': {
                         dependencies: ['.migrateTableSelectType'],
                         fulfill: {
                           state: {
-                            display: '{{$deps[0] === "expression" ? "visible":"hidden"}}'
-                          }
-                        }
-                      }
-                    }
-                  }
+                            display:
+                              '{{$deps[0] === "expression" ? "visible":"hidden"}}',
+                          },
+                        },
+                      },
+                    },
+                  },
                 }}
               ></RecursionField>
             </div>
@@ -387,8 +447,8 @@ const SourceDatabaseNode = observer(
           </div>
         )
       }
-    }
-  })
+    },
+  }),
 )
 
 export { SourceDatabaseNode }

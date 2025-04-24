@@ -1,232 +1,49 @@
-<template>
-  <ElDialog
-    :title="$t('packages_dag_components_nodedetaildialog_jiedianxiangqing')"
-    width="1100px"
-    :visible.sync="visible"
-    :close-on-click-modal="false"
-    :modal-append-to-body="false"
-    @close="$emit('input', false).$emit('load-data')"
-  >
-    <div class="flex mb-4 align-items-center">
-      <div class="select__row flex align-items-center" @click.stop="handleSelect">
-        <span>{{ $t('packages_dag_components_nodedetaildialog_jiedian') }}</span>
-        <ElSelect v-model="selected" class="ml-2 dark" ref="nodeSelect" filterable @change="init()">
-          <ElOption v-for="(item, index) in nodeItems" :key="index" :label="item.label" :value="item.value">
-            <div class="flex align-center mx-n1">
-              <NodeIcon class="mr-2" :node="item.node" :size="18" />
-              <span>{{ item.label }}</span>
-            </div>
-          </ElOption>
-        </ElSelect>
-      </div>
-      <TimeSelect :value="period" :range="$attrs.range" class="ml-4" @change="changeTimeSelect"></TimeSelect>
-      <Frequency :range="$attrs.range" @change="changeFrequency"></Frequency>
-      <ElTooltip transition="tooltip-fade-in" :content="$t('public_button_refresh')">
-        <VIcon class="color-primary" @click="init">refresh</VIcon>
-      </ElTooltip>
-    </div>
-    <div v-if="isLogCollector">
-      <div v-loading="loading" class="chart-box rounded-2 w-100">
-        <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
-          {{ $t('packages_dag_components_nodedetaildialog_shijiantongji') }}
-        </div>
-        <div class="chart-box__content px-4 pb-2">
-          <EventChart :samples="[eventDataAll, eventDataPeriod]"></EventChart>
-        </div>
-      </div>
-    </div>
-    <template v-else>
-      <div class="flex justify-content-between">
-        <div v-loading="loading" class="chart-box rounded-2" :class="{ 'w-100': chartBoxWidth100 }">
-          <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
-            {{ $t('packages_dag_components_nodedetaildialog_shijiantongji') }}
-          </div>
-          <div class="chart-box__content px-4 pb-2">
-            <EventChart :samples="[eventDataAll, eventDataPeriod]"></EventChart>
-          </div>
-        </div>
-        <div v-if="isSource" v-loading="loading" class="chart-box rounded-2 flex flex-column">
-          <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
-            {{ $t('packages_dag_components_nodedetaildialog_tongbuzhuangtai') }}
-          </div>
-          <div class="chart-box__content p-6 fs-8">
-            <template v-if="dataflow.type !== 'cdc'">
-              <div class="mb-4 flex justify-content-between">
-                <span>{{ $t('packages_dag_components_nodedetaildialog_quanliangkaishishi') }}</span>
-                <span>{{ initialData.snapshotStartAt || '-' }}</span>
-              </div>
-              <div v-if="initialData.snapshotDoneAt" class="mb-4 flex justify-content-between">
-                <span>{{ $t('packages_dag_monitor_leftsider_quanliangwanchengshi') }}</span>
-                <span>{{ initialData.snapshotDoneAt }}</span>
-              </div>
-              <div v-else class="mb-4 flex justify-content-between">
-                <span>{{ $t('packages_dag_monitor_leftsider_yujiquanliangwan') }}</span>
-                <ElTooltip transition="tooltip-fade-in" :content="initialData.finishDuration.toLocaleString() + 'ms'">
-                  <span>{{ calcTimeUnit(initialData.finishDuration) }}</span>
-                </ElTooltip>
-              </div>
-              <div class="mb-4 flex align-items-center">
-                <span class="mr-2">{{ $t('public_task_full_sync_progress') }}</span>
-                <ElProgress
-                  class="flex-1 my-2"
-                  :show-text="false"
-                  style="width: 150px"
-                  :percentage="totalDataPercentage"
-                />
-                <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
-              </div>
-              <div
-                v-if="
-                  dataflow.syncType === 'migrate' && totalData.currentSnapshotTableRowTotal && !ifEnableConcurrentRead
-                "
-                class="mb-4 flex align-items-center"
-              >
-                <span class="mr-2">{{ $t('packages_dag_components_nodedetaildialog_dangqianbiaotongbu') }}</span>
-                <ElProgress class="flex-1 my-2" :show-text="false" :percentage="currentTotalDataPercentage" />
-                <span class="ml-2">{{
-                  (totalData.currentSnapshotTableInsertRowTotal || 0) +
-                  '/' +
-                  (totalData.currentSnapshotTableRowTotal || 0)
-                }}</span>
-              </div>
-            </template>
-            <template v-if="dataflow.type !== 'initial_sync'">
-              <div v-if="targetData.currentEventTimestamp" class="mb-4 flex justify-content-between">
-                <span>{{ $t('packages_dag_components_nodedetaildialog_zengliangshijiandian2') }}</span>
-                <span>{{ formatTime(targetData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS') }}</span>
-              </div>
-            </template>
-          </div>
-        </div>
-        <div
-          v-else-if="isTarget"
-          v-loading="loading"
-          :class="{ 'w-100': !isSource && !isTarget }"
-          class="chart-box rounded-2 flex flex-column"
-        >
-          <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
-            {{ $t('packages_dag_components_nodedetaildialog_tongbuzhuangtai') }}
-          </div>
-          <div class="chart-box__content p-6 fs-8 flex flex-column align-items-center flex-fill justify-content-center">
-            <template v-if="dataflow.type !== 'initial_sync'">
-              <div v-if="targetData.currentEventTimestamp" class="mb-4 flex justify-content-between">
-                <span>{{ $t('packages_dag_components_nodedetaildialog_zengliangshijiandian2') }}</span>
-                <span>{{ formatTime(targetData.currentEventTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS') }}</span>
-              </div>
-            </template>
-          </div>
-        </div>
-      </div>
-      <div class="my-4">{{ $t('packages_dag_components_nodedetaildialog_xingnengzhibiao') }}</div>
-      <div class="flex justify-content-between">
-        <div v-loading="loading" class="chart-box rounded-2">
-          <div class="flex justify-content-between align-items-center chart-box__title px-4">
-            <div class="fw-bold font-color-normal flex align-items-center">
-              <span class="mr-2">QPS</span>
-              <ElTooltip
-                transition="tooltip-fade-in"
-                placement="top"
-                :content="
-                  qpsChartsType === 'count'
-                    ? $t('packages_dag_components_nodedetaildialog_dangqianjiedianping')
-                    : $t('packages_dag_monitor_leftsider_qpSshizhi2')
-                "
-              >
-                <VIcon class="color-primary">info</VIcon>
-              </ElTooltip>
-            </div>
-            <ElRadioGroup v-model="qpsChartsType" size="mini" class="chart__radio">
-              <ElRadioButton label="count">count</ElRadioButton>
-              <ElRadioButton label="size">size</ElRadioButton>
-            </ElRadioGroup>
-          </div>
-          <div class="chart-box__content p-4">
-            <LineChart
-              :data="qpsMap[qpsChartsType]"
-              :color="['#26CF6C', '#2C65FF']"
-              :time-format="timeFormat"
-              :labelUnitType="qpsChartsType === 'size' ? 'byte' : ''"
-              auto-scale
-              ref="qpsLineChart"
-            ></LineChart>
-          </div>
-        </div>
-        <div v-loading="loading" class="chart-box rounded-2">
-          <div class="chart-box__title py-2 px-4 fw-bold font-color-normal flex align-items-center">
-            <span class="mr-2">{{ delayLineTitle }}</span>
-            <ElTooltip transition="tooltip-fade-in" placement="top" class="inline-flex align-items-center">
-              <VIcon class="color-primary">info</VIcon>
-              <div v-if="isSource" slot="content">
-                <div>{{ $t('packages_dag_components_nodedetaildialog_chulihaoshiyuan') }}</div>
-                <div>{{ $t('packages_dag_components_nodedetaildialog_pingjunduquhao2') }}</div>
-                <div>{{ $t('packages_dag_components_nodedetaildialog_zengliangduquyan2') }}</div>
-              </div>
-              <div v-else-if="isTarget" slot="content">
-                <div>{{ $t('packages_dag_components_nodedetaildialog_chulihaoshidang') }}</div>
-                <div>{{ $t('packages_dag_components_nodedetaildialog_xieruhaoshidang') }}</div>
-              </div>
-              <div v-else slot="content">
-                <div>{{ $t('packages_dag_components_nodedetaildialog_dangqianjiedianchu') }}</div>
-              </div>
-            </ElTooltip>
-          </div>
-          <div class="chart-box__content p-4">
-            <LineChart
-              :data="delayData"
-              :time-format="timeFormat"
-              :color="['#2C65FF']"
-              time-value
-              ref="delayLineChart"
-            ></LineChart>
-          </div>
-        </div>
-      </div>
-    </template>
-  </ElDialog>
-</template>
-
 <script>
-import i18n from '@tap/i18n'
-
-import dayjs from 'dayjs'
-import { mapGetters } from 'vuex'
-
 import { measurementApi } from '@tap/api'
+
+import SharedMiningTable from '@tap/business/src/views/shared-mining/Table'
+import { TimeSelect } from '@tap/component'
+
+import i18n from '@tap/i18n'
 import { calcTimeUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
-import { TimeSelect } from '@tap/component'
-import SharedMiningTable from '@tap/business/src/views/shared-mining/Table'
+import dayjs from 'dayjs'
+import { cloneDeep } from 'lodash-es'
 
-import EventChart from './EventChart'
-import LineChart from './LineChart'
-import Frequency from './Frequency'
-import { TIME_FORMAT_MAP, getTimeGranularity } from '../util'
+import { mapGetters } from 'vuex'
 import NodeIcon from '../../NodeIcon'
-import { cloneDeep } from 'lodash'
+import { getTimeGranularity, TIME_FORMAT_MAP } from '../util'
+import EventChart from './EventChart'
+import Frequency from './Frequency'
+import LineChart from './LineChart'
 
 export default {
   name: 'NodeDetailDialog',
-
-  components: { NodeIcon, EventChart, LineChart, TimeSelect, Frequency, SharedMiningTable },
-
+  components: {
+    NodeIcon,
+    EventChart,
+    LineChart,
+    TimeSelect,
+    Frequency,
+    SharedMiningTable,
+  },
   props: {
     value: {
       type: Boolean,
-      default: false
+      default: false,
     },
 
     nodeId: {
       type: String,
-      required: true
+      required: true,
     },
 
     dataflow: Object,
 
     getTimeRange: Function,
 
-    ifEnableConcurrentRead: Boolean
+    ifEnableConcurrentRead: Boolean,
   },
-
   data() {
     return {
       period: '',
@@ -239,22 +56,21 @@ export default {
       loading: false,
       refreshRate: 5000,
       currentNodeId: '',
-      qpsChartsType: 'count'
+      qpsChartsType: 'count',
     }
   },
-
   computed: {
     ...mapGetters('dataflow', ['allNodes']),
 
     nodeItems() {
       return (
         this.allNodes
-          .filter(t => !['mem_cache'].includes(t.type))
-          .map(t => {
+          .filter((t) => !['mem_cache'].includes(t.type))
+          .map((t) => {
             return {
               node: t,
               label: t.name,
-              value: t.id
+              value: t.id,
             }
           }) || []
       )
@@ -285,32 +101,35 @@ export default {
           value: [[], []],
           markLine: [
             {
-              data: []
-            }
-          ]
+              data: [],
+            },
+          ],
         }
       }
       const { time = [] } = this.quota
-      const inputQps = data.inputQps?.map(t => Math.abs(t))
-      const outputQps = data.outputQps?.map(t => Math.abs(t))
-      const inputSizeQps = data.inputSizeQps?.map(t => Math.abs(t))
-      const outputSizeQps = data.outputSizeQps?.map(t => Math.abs(t))
+      const inputQps = data.inputQps?.map((t) => Math.abs(t))
+      const outputQps = data.outputQps?.map((t) => Math.abs(t))
+      const inputSizeQps = data.inputSizeQps?.map((t) => Math.abs(t))
+      const outputSizeQps = data.outputSizeQps?.map((t) => Math.abs(t))
       // 计算距离增量时间点，最近的时间点
       const milestone = this.dataflow.attrs?.milestone || {}
       const snapshotDoneAt = milestone.SNAPSHOT?.end
       let markLineTime = 0
-      time.forEach(el => {
-        if (Math.abs(el - snapshotDoneAt) < 2000 && Math.abs(el - snapshotDoneAt) < Math.abs(el - markLineTime)) {
+      time.forEach((el) => {
+        if (
+          Math.abs(el - snapshotDoneAt) < 2000 &&
+          Math.abs(el - snapshotDoneAt) < Math.abs(el - markLineTime)
+        ) {
           markLineTime = el
         }
       })
 
-      let opt = {
+      const opt = {
         x: time,
         name: [i18n.t('public_time_input'), i18n.t('public_time_output')],
         // value: [inputQps, outputQps],
         value: [],
-        zoomValue: 10
+        zoomValue: 10,
       }
 
       if (this.dataflow.type === 'initial_sync+cdc') {
@@ -319,47 +138,55 @@ export default {
             symbol: 'none',
             data: [
               {
-                xAxis: markLineTime + '',
+                xAxis: String(markLineTime),
                 lineStyle: {
-                  color: '#000'
+                  color: '#000',
                 },
                 label: {
-                  show: false
-                }
-              }
-            ]
-          }
+                  show: false,
+                },
+              },
+            ],
+          },
         ]
       }
 
       return {
         count: Object.assign(cloneDeep(opt), {
-          value: [inputQps, outputQps]
+          value: [inputQps, outputQps],
         }),
         size: Object.assign(cloneDeep(opt), {
-          value: [inputSizeQps, outputSizeQps]
-        })
+          value: [inputSizeQps, outputSizeQps],
+        }),
       }
     },
 
     delayLineTitle() {
       const { isSource, isTarget } = this
-      let result = i18n.t('packages_dag_components_nodedetaildialog_chulihaoshi')
+      let result = i18n.t(
+        'packages_dag_components_nodedetaildialog_chulihaoshi',
+      )
       if (isSource) {
         result = i18n.t('packages_dag_components_nodedetaildialog_duquchulihao')
       } else if (isTarget) {
-        result = i18n.t('packages_dag_components_nodedetaildialog_chulixieruhao')
+        result = i18n.t(
+          'packages_dag_components_nodedetaildialog_chulixieruhao',
+        )
       }
       return result
     },
 
     delayLineInfo() {
       const { isSource, isTarget } = this
-      let result = i18n.t('packages_dag_components_nodedetaildialog_chulihaoshi')
+      let result = i18n.t(
+        'packages_dag_components_nodedetaildialog_chulihaoshi',
+      )
       if (isSource) {
         result = i18n.t('packages_dag_components_nodedetaildialog_duquchulihao')
       } else if (isTarget) {
-        result = i18n.t('packages_dag_components_nodedetaildialog_chulixieruhao')
+        result = i18n.t(
+          'packages_dag_components_nodedetaildialog_chulixieruhao',
+        )
       }
       return result
     },
@@ -370,27 +197,31 @@ export default {
       if (!data) {
         return {
           x: [],
-          value: []
+          value: [],
         }
       }
       const { time = [] } = this.quota
       const { isSource, isTarget } = this
-      let result = {
+      const result = {
         x: time,
         name: [i18n.t('packages_dag_components_nodedetaildialog_chulihaoshi')],
-        value: data.timeCostAvg
+        value: data.timeCostAvg,
       }
       if (isSource) {
         result.name = [
           i18n.t('packages_dag_components_nodedetaildialog_chulihaoshi'),
           i18n.t('packages_dag_components_nodedetaildialog_pingjunduquhao'),
-          i18n.t('packages_dag_components_nodedetaildialog_zengliangduquyan')
+          i18n.t('packages_dag_components_nodedetaildialog_zengliangduquyan'),
         ]
-        result.value = [data.timeCostAvg, data.snapshotSourceReadTimeCostAvg, data.incrementalSourceReadTimeCostAvg]
+        result.value = [
+          data.timeCostAvg,
+          data.snapshotSourceReadTimeCostAvg,
+          data.incrementalSourceReadTimeCostAvg,
+        ]
       } else if (isTarget) {
         result.name = [
           i18n.t('packages_dag_components_nodedetaildialog_chulihaoshi'),
-          i18n.t('packages_dag_components_nodedetaildialog_xieruhaoshi')
+          i18n.t('packages_dag_components_nodedetaildialog_xieruhaoshi'),
         ]
         result.value = [data.timeCostAvg, data.targetWriteTimeCostAvg]
       }
@@ -407,7 +238,7 @@ export default {
       return {
         tcpPing,
         connectPing,
-        currentEventTimestamp
+        currentEventTimestamp,
       }
     },
 
@@ -421,12 +252,12 @@ export default {
       return {
         tcpPing,
         connectPing,
-        currentEventTimestamp
+        currentEventTimestamp,
       }
     },
 
     node() {
-      return this.allNodes.find(t => this.selected === t.id) || {}
+      return this.allNodes.find((t) => this.selected === t.id) || {}
     },
 
     nodeConnectionId() {
@@ -435,7 +266,10 @@ export default {
 
     isSource() {
       const { type, $inputs } = this.node
-      return (type === 'database' || type === 'table' || type === 'logCollector') && !$inputs.length
+      return (
+        (type === 'database' || type === 'table' || type === 'logCollector') &&
+        !$inputs.length
+      )
     },
 
     isTarget() {
@@ -451,19 +285,25 @@ export default {
         snapshotDoneAt,
         snapshotStartAt,
         replicateLag,
-        lastFiveMinutesQps
+        lastFiveMinutesQps,
       } = data
       let time
       if (!snapshotInsertRowTotal || !snapshotRowTotal || !lastFiveMinutesQps) {
         time = 0
       } else {
-        time = ((snapshotRowTotal - snapshotInsertRowTotal) / lastFiveMinutesQps) * 1000
+        time =
+          ((snapshotRowTotal - snapshotInsertRowTotal) / lastFiveMinutesQps) *
+          1000
       }
       return {
-        snapshotDoneAt: snapshotDoneAt ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
-        snapshotStartAt: snapshotStartAt ? dayjs(snapshotStartAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
-        replicateLag: replicateLag,
-        finishDuration: time
+        snapshotDoneAt: snapshotDoneAt
+          ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss.SSS')
+          : '',
+        snapshotStartAt: snapshotStartAt
+          ? dayjs(snapshotStartAt).format('YYYY-MM-DD HH:mm:ss.SSS')
+          : '',
+        replicateLag,
+        finishDuration: time,
       }
     },
 
@@ -474,7 +314,7 @@ export default {
         snapshotInsertRowTotal = 0,
         snapshotRowTotal = 0,
         currentSnapshotTableInsertRowTotal = 0,
-        currentSnapshotTableRowTotal = 0
+        currentSnapshotTableRowTotal = 0,
       } = this.quota.samples?.totalData?.[0] || {}
       // 如果分子大于分母，将分母的值调整成跟分子一样
       if (currentSnapshotTableInsertRowTotal > currentSnapshotTableRowTotal) {
@@ -486,28 +326,33 @@ export default {
         snapshotInsertRowTotal,
         snapshotRowTotal,
         currentSnapshotTableInsertRowTotal,
-        currentSnapshotTableRowTotal
+        currentSnapshotTableRowTotal,
       }
     },
 
     totalDataPercentage() {
       const { snapshotTableTotal, tableTotal } = this.totalData
-      return snapshotTableTotal && tableTotal ? (snapshotTableTotal / tableTotal) * 100 : 0
+      return snapshotTableTotal && tableTotal
+        ? (snapshotTableTotal / tableTotal) * 100
+        : 0
     },
 
     currentTotalDataPercentage() {
-      const { currentSnapshotTableInsertRowTotal, currentSnapshotTableRowTotal } = this.totalData
+      const {
+        currentSnapshotTableInsertRowTotal,
+        currentSnapshotTableRowTotal,
+      } = this.totalData
       return currentSnapshotTableRowTotal
-        ? (currentSnapshotTableInsertRowTotal / currentSnapshotTableRowTotal) * 100
+        ? (currentSnapshotTableInsertRowTotal / currentSnapshotTableRowTotal) *
+            100
         : 0
     },
 
     chartBoxWidth100() {
       const { isSource, isTarget } = this
       return !isSource && !isTarget
-    }
+    },
   },
-
   watch: {
     value(v) {
       this.visible = !!v
@@ -517,9 +362,8 @@ export default {
         this.timer && clearInterval(this.timer)
         this.selected = ''
       }
-    }
+    },
   },
-
   methods: {
     init() {
       if (!this.selected) {
@@ -529,7 +373,9 @@ export default {
       this.setPeriod()
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {
-        this.quotaTimeType !== 'custom' && this.dataflow?.status === 'running' && this.loadQuotaData()
+        this.quotaTimeType !== 'custom' &&
+          this.dataflow?.status === 'running' &&
+          this.loadQuotaData()
       }, this.refreshRate)
       this.loadQuotaData(true)
       this.$nextTick(() => {
@@ -551,11 +397,14 @@ export default {
     getFilter(type) {
       const { id: taskId, taskRecordId } = this.dataflow || {}
       const nodeId = this.selected
-      const [startAt, endAt] = this.quotaTimeType === 'custome' ? this.quotaTime : this.getTimeRange(this.quotaTimeType)
-      let params = {
+      const [startAt, endAt] =
+        this.quotaTimeType === 'custome'
+          ? this.quotaTime
+          : this.getTimeRange(this.quotaTimeType)
+      const params = {
         startAt,
         endAt,
-        samples: {}
+        samples: {},
       }
       const samples = {
         // 任务事件统计（条）- 任务累计 + 全量信息 + 增量信息
@@ -564,7 +413,7 @@ export default {
             type: 'node',
             taskId,
             taskRecordId,
-            nodeId
+            nodeId,
           },
           endAt: Time.now(), // 停止时间 || 当前时间
           fields: [
@@ -595,10 +444,10 @@ export default {
             'replicateLag',
             'snapshotStartAt',
             'snapshotDoneAt',
-            'outputQps'
+            'outputQps',
           ],
           //
-          type: 'instant' // 瞬时值
+          type: 'instant', // 瞬时值
         },
         // 任务事件统计（条）-所选周期累计
         barChartData: {
@@ -606,7 +455,7 @@ export default {
             type: 'node',
             taskId,
             taskRecordId,
-            nodeId
+            nodeId,
           },
           fields: [
             'insertTotal',
@@ -623,9 +472,9 @@ export default {
             'outputUpdateTotal',
             'outputDeleteTotal',
             'outputDdlTotal',
-            'outputOthersTotal'
+            'outputOthersTotal',
           ],
-          type: 'difference'
+          type: 'difference',
         },
         // qps + 增量延迟
         lineChartData: {
@@ -633,7 +482,7 @@ export default {
             type: 'node',
             taskId,
             taskRecordId,
-            nodeId
+            nodeId,
           },
           fields: [
             'qps',
@@ -645,10 +494,10 @@ export default {
             'targetWriteTimeCostAvg',
             'inputSizeQps',
             'outputSizeQps',
-            'qpsType'
+            'qpsType',
           ],
-          type: 'continuous' // 连续数据
-        }
+          type: 'continuous', // 连续数据
+        },
       }
       params.samples.data = samples[type]
       return params
@@ -662,27 +511,27 @@ export default {
       const params = {
         totalData: {
           uri: '/api/measurement/query/v2',
-          param: this.getFilter('totalData')
+          param: this.getFilter('totalData'),
         },
         barChartData: {
           uri: '/api/measurement/query/v2',
-          param: this.getFilter('barChartData')
+          param: this.getFilter('barChartData'),
         },
         lineChartData: {
           uri: '/api/measurement/query/v2',
-          param: this.getFilter('lineChartData')
-        }
+          param: this.getFilter('lineChartData'),
+        },
       }
       measurementApi
         .batch(params)
-        .then(data => {
-          let quota = {
+        .then((data) => {
+          const quota = {
             samples: {},
             time: [],
-            interval: 5000
+            interval: 5000,
           }
-          let arr = ['totalData', 'barChartData', 'lineChartData']
-          arr.forEach(el => {
+          const arr = ['totalData', 'barChartData', 'lineChartData']
+          arr.forEach((el) => {
             const item = data[el]
             if (item.code === 'ok') {
               quota.samples[el] = item.data?.samples?.data
@@ -704,7 +553,7 @@ export default {
               () => {
                 this.loading = false
               },
-              Time.now() - startStamp < 1000 ? 1000 : 0
+              Time.now() - startStamp < 1000 ? 1000 : 0,
             )
         })
     },
@@ -714,18 +563,25 @@ export default {
     },
 
     getInputOutput(data = {}) {
-      let keyArr = ['insertTotal', 'updateTotal', 'deleteTotal', 'ddlTotal', 'othersTotal']
-      let result = {
+      const keyArr = [
+        'insertTotal',
+        'updateTotal',
+        'deleteTotal',
+        'ddlTotal',
+        'othersTotal',
+      ]
+      const result = {
         input: {},
-        output: {}
+        output: {},
       }
-      let newData = {}
-      for (let key in data) {
+      const newData = {}
+      for (const key in data) {
         newData[key.toLowerCase()] = data[key] || 0
       }
-      keyArr.forEach(el => {
-        for (let key in result) {
-          result[key][el] = newData[key + el.toLowerCase()] || newData[el.toLowerCase()] || 0
+      keyArr.forEach((el) => {
+        for (const key in result) {
+          result[key][el] =
+            newData[key + el.toLowerCase()] || newData[el.toLowerCase()] || 0
         }
       })
       return result
@@ -733,7 +589,9 @@ export default {
 
     changeTimeSelect(val, isTime, source) {
       this.quotaTimeType = source?.type ?? val
-      this.quotaTime = isTime ? val?.split(',')?.map(t => Number(t)) : this.getTimeRange(val)
+      this.quotaTime = isTime
+        ? val?.split(',')?.map((t) => Number(t))
+        : this.getTimeRange(val)
       this.init()
     },
 
@@ -748,19 +606,351 @@ export default {
 
     calcTimeUnit() {
       return typeof val === 'number' ? calcTimeUnit(...arguments) : '-'
-    }
-  }
+    },
+
+    onClose() {
+      this.$emit('update:value', false)
+      this.$emit('load-data')
+    },
+  },
+  emits: ['update:value', 'load-data', 'load-data'],
 }
 </script>
 
+<template>
+  <ElDialog
+    v-model="visible"
+    :title="$t('packages_dag_components_nodedetaildialog_jiedianxiangqing')"
+    width="1100px"
+    :close-on-click-modal="false"
+    :modal-append-to-body="false"
+    @close="onClose"
+  >
+    <div class="flex mb-4 align-items-center">
+      <div
+        class="select__row flex align-items-center"
+        @click.stop="handleSelect"
+      >
+        <span>{{
+          $t('packages_dag_components_nodedetaildialog_jiedian')
+        }}</span>
+        <ElSelect
+          ref="nodeSelect"
+          v-model="selected"
+          class="ml-2 dark"
+          filterable
+          @change="init()"
+        >
+          <ElOption
+            v-for="(item, index) in nodeItems"
+            :key="index"
+            :label="item.label"
+            :value="item.value"
+          >
+            <div class="flex align-center mx-n1">
+              <NodeIcon class="mr-2" :node="item.node" :size="18" />
+              <span>{{ item.label }}</span>
+            </div>
+          </ElOption>
+        </ElSelect>
+      </div>
+      <TimeSelect
+        :value="period"
+        :range="$attrs.range"
+        class="ml-4"
+        @change="changeTimeSelect"
+      />
+      <Frequency :range="$attrs.range" @change="changeFrequency" />
+      <ElTooltip
+        transition="tooltip-fade-in"
+        :content="$t('public_button_refresh')"
+      >
+        <VIcon class="color-primary" @click="init">refresh</VIcon>
+      </ElTooltip>
+    </div>
+    <div v-if="isLogCollector">
+      <div v-loading="loading" class="chart-box rounded-2 w-100">
+        <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
+          {{ $t('packages_dag_components_nodedetaildialog_shijiantongji') }}
+        </div>
+        <div class="chart-box__content px-4 pb-2">
+          <EventChart :samples="[eventDataAll, eventDataPeriod]" />
+        </div>
+      </div>
+    </div>
+    <template v-else>
+      <div class="flex justify-content-between">
+        <div
+          v-loading="loading"
+          class="chart-box rounded-2"
+          :class="{ 'w-100': chartBoxWidth100 }"
+        >
+          <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
+            {{ $t('packages_dag_components_nodedetaildialog_shijiantongji') }}
+          </div>
+          <div class="chart-box__content px-4 pb-2">
+            <EventChart :samples="[eventDataAll, eventDataPeriod]" />
+          </div>
+        </div>
+        <div
+          v-if="isSource"
+          v-loading="loading"
+          class="chart-box rounded-2 flex flex-column"
+        >
+          <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
+            {{ $t('packages_dag_components_nodedetaildialog_tongbuzhuangtai') }}
+          </div>
+          <div class="chart-box__content p-6 fs-8">
+            <template v-if="dataflow.type !== 'cdc'">
+              <div class="mb-4 flex justify-content-between">
+                <span>{{
+                  $t(
+                    'packages_dag_components_nodedetaildialog_quanliangkaishishi',
+                  )
+                }}</span>
+                <span>{{ initialData.snapshotStartAt || '-' }}</span>
+              </div>
+              <div
+                v-if="initialData.snapshotDoneAt"
+                class="mb-4 flex justify-content-between"
+              >
+                <span>{{
+                  $t('packages_dag_monitor_leftsider_quanliangwanchengshi')
+                }}</span>
+                <span>{{ initialData.snapshotDoneAt }}</span>
+              </div>
+              <div v-else class="mb-4 flex justify-content-between">
+                <span>{{
+                  $t('packages_dag_monitor_leftsider_yujiquanliangwan')
+                }}</span>
+                <ElTooltip
+                  transition="tooltip-fade-in"
+                  :content="`${initialData.finishDuration.toLocaleString()}ms`"
+                >
+                  <span>{{ calcTimeUnit(initialData.finishDuration) }}</span>
+                </ElTooltip>
+              </div>
+              <div class="mb-4 flex align-items-center">
+                <span class="mr-2">{{
+                  $t('public_task_full_sync_progress')
+                }}</span>
+                <ElProgress
+                  class="flex-1 my-2"
+                  :show-text="false"
+                  style="width: 150px"
+                  :percentage="totalDataPercentage"
+                />
+                <span class="ml-2">{{
+                  `${totalData.snapshotTableTotal}/${totalData.tableTotal}`
+                }}</span>
+              </div>
+              <div
+                v-if="
+                  dataflow.syncType === 'migrate' &&
+                  totalData.currentSnapshotTableRowTotal &&
+                  !ifEnableConcurrentRead
+                "
+                class="mb-4 flex align-items-center"
+              >
+                <span class="mr-2">{{
+                  $t(
+                    'packages_dag_components_nodedetaildialog_dangqianbiaotongbu',
+                  )
+                }}</span>
+                <ElProgress
+                  class="flex-1 my-2"
+                  :show-text="false"
+                  :percentage="currentTotalDataPercentage"
+                />
+                <span class="ml-2">{{
+                  `${totalData.currentSnapshotTableInsertRowTotal || 0}/${
+                    totalData.currentSnapshotTableRowTotal || 0
+                  }`
+                }}</span>
+              </div>
+            </template>
+            <template v-if="dataflow.type !== 'initial_sync'">
+              <div
+                v-if="targetData.currentEventTimestamp"
+                class="mb-4 flex justify-content-between"
+              >
+                <span>{{
+                  $t(
+                    'packages_dag_components_nodedetaildialog_zengliangshijiandian2',
+                  )
+                }}</span>
+                <span>{{
+                  formatTime(
+                    targetData.currentEventTimestamp,
+                    'YYYY-MM-DD HH:mm:ss.SSS',
+                  )
+                }}</span>
+              </div>
+            </template>
+          </div>
+        </div>
+        <div
+          v-else-if="isTarget"
+          v-loading="loading"
+          :class="{ 'w-100': !isSource && !isTarget }"
+          class="chart-box rounded-2 flex flex-column"
+        >
+          <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
+            {{ $t('packages_dag_components_nodedetaildialog_tongbuzhuangtai') }}
+          </div>
+          <div
+            class="chart-box__content p-6 fs-8 flex flex-column align-items-center flex-fill justify-content-center"
+          >
+            <template v-if="dataflow.type !== 'initial_sync'">
+              <div
+                v-if="targetData.currentEventTimestamp"
+                class="mb-4 flex justify-content-between"
+              >
+                <span>{{
+                  $t(
+                    'packages_dag_components_nodedetaildialog_zengliangshijiandian2',
+                  )
+                }}</span>
+                <span>{{
+                  formatTime(
+                    targetData.currentEventTimestamp,
+                    'YYYY-MM-DD HH:mm:ss.SSS',
+                  )
+                }}</span>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+      <div class="my-4">
+        {{ $t('packages_dag_components_nodedetaildialog_xingnengzhibiao') }}
+      </div>
+      <div class="flex justify-content-between">
+        <div v-loading="loading" class="chart-box rounded-2">
+          <div
+            class="flex justify-content-between align-items-center chart-box__title px-4"
+          >
+            <div class="fw-bold font-color-normal flex align-items-center">
+              <span class="mr-2">QPS</span>
+              <ElTooltip
+                transition="tooltip-fade-in"
+                placement="top"
+                :content="
+                  qpsChartsType === 'count'
+                    ? $t(
+                        'packages_dag_components_nodedetaildialog_dangqianjiedianping',
+                      )
+                    : $t('packages_dag_monitor_leftsider_qpSshizhi2')
+                "
+              >
+                <VIcon class="color-primary">info</VIcon>
+              </ElTooltip>
+            </div>
+            <ElRadioGroup v-model="qpsChartsType" class="chart__radio">
+              <ElRadioButton label="count">count</ElRadioButton>
+              <ElRadioButton label="size">size</ElRadioButton>
+            </ElRadioGroup>
+          </div>
+          <div class="chart-box__content p-4">
+            <LineChart
+              ref="qpsLineChart"
+              :data="qpsMap[qpsChartsType]"
+              :color="['#26CF6C', '#2C65FF']"
+              :time-format="timeFormat"
+              :label-unit-type="qpsChartsType === 'size' ? 'byte' : ''"
+              auto-scale
+            />
+          </div>
+        </div>
+        <div v-loading="loading" class="chart-box rounded-2">
+          <div
+            class="chart-box__title py-2 px-4 fw-bold font-color-normal flex align-items-center"
+          >
+            <span class="mr-2">{{ delayLineTitle }}</span>
+            <ElTooltip
+              transition="tooltip-fade-in"
+              placement="top"
+              class="inline-flex align-items-center"
+            >
+              <VIcon class="color-primary">info</VIcon>
+              <template v-if="isSource" #content>
+                <div>
+                  <div>
+                    {{
+                      $t(
+                        'packages_dag_components_nodedetaildialog_chulihaoshiyuan',
+                      )
+                    }}
+                  </div>
+                  <div>
+                    {{
+                      $t(
+                        'packages_dag_components_nodedetaildialog_pingjunduquhao2',
+                      )
+                    }}
+                  </div>
+                  <div>
+                    {{
+                      $t(
+                        'packages_dag_components_nodedetaildialog_zengliangduquyan2',
+                      )
+                    }}
+                  </div>
+                </div>
+              </template>
+              <template v-else-if="isTarget" #content>
+                <div>
+                  <div>
+                    {{
+                      $t(
+                        'packages_dag_components_nodedetaildialog_chulihaoshidang',
+                      )
+                    }}
+                  </div>
+                  <div>
+                    {{
+                      $t(
+                        'packages_dag_components_nodedetaildialog_xieruhaoshidang',
+                      )
+                    }}
+                  </div>
+                </div>
+              </template>
+              <template v-else #content>
+                <div>
+                  <div>
+                    {{
+                      $t(
+                        'packages_dag_components_nodedetaildialog_dangqianjiedianchu',
+                      )
+                    }}
+                  </div>
+                </div>
+              </template>
+            </ElTooltip>
+          </div>
+          <div class="chart-box__content p-4">
+            <LineChart
+              ref="delayLineChart"
+              :data="delayData"
+              :time-format="timeFormat"
+              :color="['#2C65FF']"
+              time-value
+            />
+          </div>
+        </div>
+      </div>
+    </template>
+  </ElDialog>
+</template>
+
 <style lang="scss" scoped>
-::v-deep {
-  .el-dialog {
-    .el-dialog__body {
-      padding-top: 6px;
-    }
+:deep(.el-dialog) {
+  .el-dialog__body {
+    padding-top: 6px;
   }
 }
+
 .chart-box {
   width: 48%;
   height: 286px;
@@ -780,15 +970,14 @@ export default {
   height: 200px;
 }
 .event-chart {
-  ::v-deep {
-    .chart__radio {
-      .el-radio-button--mini .el-radio-button__inner {
-        padding: 4px 8px;
-      }
+  :deep(.chart__radio) {
+    .el-radio-button--mini .el-radio-button__inner {
+      padding: 4px 8px;
     }
-    .total-line {
-      margin-bottom: 20px !important;
-    }
+  }
+
+  :deep(.total-line) {
+    margin-bottom: 20px !important;
   }
 }
 .pie-chart {
@@ -804,16 +993,15 @@ export default {
   &:hover {
     background: #eef3ff;
   }
-  ::v-deep {
-    .el-select {
-      &.dark {
-        .el-input__inner {
-          border: none;
-          background-color: inherit;
-        }
-        .el-icon-arrow-up:before {
-          content: '\e78f';
-        }
+
+  :deep(.el-select) {
+    &.dark {
+      .el-input__inner {
+        border: none;
+        background-color: inherit;
+      }
+      .el-icon-arrow-up:before {
+        content: '\e78f';
       }
     }
   }

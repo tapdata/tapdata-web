@@ -138,17 +138,17 @@ export default {
 
   props: {
     pdkId: String,
-    pdkHash: String
+    pdkHash: String,
   },
 
   components: {
-    GitBook
+    GitBook,
   },
 
   data() {
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
-      doc: ''
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
+      doc: '',
     }
   },
 
@@ -173,7 +173,7 @@ export default {
     },
     showIframe() {
       return !!this.docUrl
-    }
+    },
   },
 
   created() {
@@ -184,12 +184,10 @@ export default {
 
   methods: {
     getPdkDoc() {
-      pdkApi.doc(this.pdkHash).then(res => {
+      pdkApi.doc(this.pdkHash).then((res) => {
         this.doc = res?.data
       })
-    }
-  }
+    },
+  },
 }
 </script>
-
-<style scoped lang="scss"></style>

@@ -1,29 +1,29 @@
-<script>
-import { getNodeIconSrc } from '../util'
+<script lang="jsx">
+import { getNodeIconSrc } from '@tap/business'
 
-export default {
-  functional: true,
-  name: 'NodeIcon',
-  props: {
-    node: Object,
-    size: Number
-  },
-  render(h, { props, data }) {
-    const _data = { ...data, props: { src: getNodeIconSrc(props.node) } }
-
-    if (props.size) {
-      _data.style = {
-        width: props.size + 'px',
-        height: props.size + 'px'
-      }
-    }
-    // _data.props = { src: getNodeIconSrc(props.node) }
-    return _data.props.src
-      ? h('ElImage', _data)
-      : h('div', {
-          class: 'inline-block',
-          ..._data
-        })
+export default function render(_props, { attrs }) {
+  const props = {
+    ..._props,
+    ...attrs,
+    src: getNodeIconSrc(_props.node),
   }
+
+  if (props.size) {
+    props.style = {
+      width: props.size + 'px',
+      height: props.size + 'px',
+    }
+  }
+
+  return props.src ? (
+    <ElImage {...props}></ElImage>
+  ) : (
+    <div
+      {...{
+        class: 'inline-block',
+        ...props,
+      }}
+    ></div>
+  )
 }
 </script>

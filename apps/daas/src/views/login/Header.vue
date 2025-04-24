@@ -13,6 +13,7 @@
     </header>
   </div>
 </template>
+
 <script>
 import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 
@@ -22,18 +23,19 @@ export default {
     return {
       logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
       languages: langMenu,
-      lang: getCurrentLanguage()
+      lang: getCurrentLanguage(),
     }
   },
   methods: {
     langChange(lang) {
       setCurrentLanguage(lang, this.$i18n)
       this.lang = lang
-    }
-  }
+    },
+  },
 }
 </script>
-<style scoped lang="scss">
+
+<style lang="scss" scoped>
 header {
   padding: 70px 80px 0 80px;
   margin: 0 auto;
@@ -55,7 +57,7 @@ header {
       span {
         display: inline-block;
         padding: 0 10px;
-        border-left: 1px solid map-get($fontColor, dark);
+        border-left: 1px solid map.get($fontColor, dark);
         box-sizing: border-box;
         height: 18px;
         line-height: 18px;
@@ -64,11 +66,11 @@ header {
           border: none;
         }
         &:hover {
-          color: map-get($fontColor, dark);
+          color: map.get($fontColor, dark);
         }
       }
       .bold {
-        color: map-get($fontColor, dark);
+        color: map.get($fontColor, dark);
         font-weight: 500;
       }
     }

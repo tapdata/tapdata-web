@@ -1,174 +1,19 @@
-<template>
-  <aside class="layout-sidebar --left border-end flex-column flex-shrink-0">
-    <div class="flex flex-column flex-1 min-h-0">
-      <ElCollapse v-model="collapseMode" ref="dbCollapse" class="collapse-fill h-100" accordion>
-        <ElCollapseItem name="db">
-          <template #title>
-            <div class="flex align-center flex-1 overflow-hidden">
-              <template>
-                <span class="flex-1 user-select-none text-truncate flex align-center">
-                  <!--连接-->
-                  {{ $t('packages_dag_dag_connection') }}
-                  <span v-show="dbTotal > 0" class="badge">{{ dbTotal }}</span>
-                </span>
-                <VIcon size="18" class="click-btn mr-1" :class="{ active: showDBInput }" @click.stop="handleShowDBInput"
-                  >search-outline</VIcon
-                >
-                <VIcon
-                  size="20"
-                  class="click-btn"
-                  :class="{ 'click-btn-disabled': stateIsReadonly }"
-                  @mousedown.stop
-                  @click.stop="creat"
-                  >add-outline</VIcon
-                >
-              </template>
-            </div>
-          </template>
-          <div class="flex flex-column h-100">
-            <div v-show="showDBInput" class="p-2">
-              <ElInput
-                v-model="dbSearchTxt"
-                ref="dbInput"
-                :placeholder="$t('packages_dag_connection_name_search_placeholder')"
-                size="mini"
-                clearable
-                @keydown.native.stop
-                @keyup.native.stop
-                @click.native.stop
-                @input="handleDBInput"
-              >
-                <template #prefix>
-                  <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
-                </template>
-              </ElInput>
-            </div>
-
-            <ElScrollbar ref="dbList" class="flex-1" tag="div" wrap-class="db-list" :wrap-style="scrollbarWrapStyle">
-              <ElSkeleton :loading="dbLoading" animated :throttle="skeletonThrottle">
-                <template #template>
-                  <div v-for="i in 5" :key="i" class="flex p-4 align-center">
-                    <ElSkeletonItem
-                      class="mr-3 flex-shrink-0"
-                      style="width: 20px; height: 20px"
-                      variant="rect"
-                    ></ElSkeletonItem>
-                    <ElSkeletonItem variant="text"></ElSkeletonItem>
-                  </div>
-                </template>
-                <div v-infinite-scroll="loadMoreDB" :infinite-scroll-disabled="disabledDBMore" class="px-2 pb-2">
-                  <div
-                    v-for="db in dbList"
-                    v-mouse-drag="{
-                      item: db,
-                      container: '#dfEditorContent',
-                      getDragDom,
-                      onStart,
-                      onMove,
-                      onDrop,
-                      onStop
-                    }"
-                    :key="db.id"
-                    class="db-item flex align-center px-1 user-select-none rounded-2"
-                    :class="{ grabbable: !stateIsReadonly }"
-                    @dblclick="onDoubleClickDB(db)"
-                  >
-                    <div class="flex-shrink-0 mr-2 db-item-icon">
-                      <NodeIcon :node="db" />
-                    </div>
-                    <div class="flex flex-column justify-center db-item-content">
-                      <div class="flex align-center">
-                        <OverflowTooltip
-                          class="text-truncate mr-1"
-                          placement="right"
-                          :disabled="dragStarting"
-                          :text="db.name"
-                          :open-delay="400"
-                        />
-                        <ConnectionType :type="db.connection_type" />
-                      </div>
-                      <OverflowTooltip
-                        class="w-100 text-truncate"
-                        placement="right"
-                        :disabled="dragStarting"
-                        :text="db.connectionUrl"
-                        :open-delay="400"
-                      />
-                    </div>
-                  </div>
-                  <VEmpty v-if="!dbList.length" />
-                  <div v-if="dbLoadingMore" class="text-center text-black-50 fs-8 p-2">
-                    {{ $t('packages_dag_loading') }}<span class="dotting"></span>
-                  </div>
-                </div>
-              </ElSkeleton>
-            </ElScrollbar>
-          </div>
-        </ElCollapseItem>
-      </ElCollapse>
-    </div>
-
-    <ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse border-top" value="process">
-      <ElCollapseItem name="process">
-        <template #title>
-          <div class="flex align-center flex-1">
-            <span class="flex-1 user-select-none">
-              <!--处理节点-->
-              {{ $t('public_node_processor') }}
-            </span>
-          </div>
-        </template>
-        <ElScrollbar ref="processorList" tag="div" wrap-class="px-3 pb-3" :wrap-style="scrollbarWrapStyle">
-          <div
-            v-for="(n, ni) in processorNodeTypes"
-            :key="ni"
-            v-mouse-drag="{
-              item: n,
-              container: '#dfEditorContent',
-              getDragDom,
-              onStart: onProcessorStart,
-              onMove,
-              onDrop,
-              onStop
-            }"
-            class="node-item flex align-center px-2 user-select-none rounded-2"
-            :class="{ grabbable: !stateIsReadonly }"
-            @dblclick="onDoubleClickProcessor(n)"
-          >
-            <NodeIcon class="flex-shrink-0 mr-2" :node="n" />
-            <OverflowTooltip
-              :text="n.name"
-              :disabled="dragStarting"
-              popper-class="df-node-text-tooltip"
-              placement="top"
-              :open-delay="400"
-            />
-            <VIcon class="ml-1" v-if="n.beta" size="32">beta</VIcon>
-          </div>
-        </ElScrollbar>
-      </ElCollapseItem>
-    </ElCollapse>
-
-    <!-- S 节点拖拽元素 -->
-    <BaseNode
-      v-if="dragStarting"
-      id="dragNode"
-      class="drag-node"
-      :node="dragNode"
-      :class="`node--${dragNode.__Ctor.group}`"
-    ></BaseNode>
-    <!-- E 节点拖拽元素 -->
-
-    <!--创建连接-->
-    <SceneDialog
-      :visible.sync="connectionDialog"
-      selector-type="source_and_target"
-      @selected="handleDatabaseType"
-    ></SceneDialog>
-  </aside>
-</template>
-
 <script>
+import { CancelToken, connectionsApi, databaseTypesApi } from '@tap/api'
+import { getIcon } from '@tap/assets/icons'
+import { SceneDialog } from '@tap/business'
+import { OverflowTooltip, VEmpty, VIcon } from '@tap/component'
+import mouseDrag from '@tap/component/src/directives/mousedrag'
+import resize from '@tap/component/src/directives/resize'
+import { getInitialValuesInBySchema } from '@tap/form'
+import { getScrollBarWidth } from 'element-plus/es/utils/dom/scroll'
+import { debounce, escapeRegExp } from 'lodash-es'
+import { markRaw } from 'vue'
+import { mapGetters } from 'vuex'
+import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+import BaseNode from '../BaseNode'
+import ConnectionType from '../ConnectionType'
+import NodeIcon from '../NodeIcon'
 import '@tap/assets/icons/svg/magnify.svg'
 import '@tap/assets/icons/svg/table.svg'
 import '@tap/assets/icons/svg/javascript.svg'
@@ -183,22 +28,6 @@ import '@tap/assets/icons/svg/field_calc.svg'
 import '@tap/assets/icons/svg/field_add_del.svg'
 import '@tap/assets/icons/svg/field_rename.svg'
 import '@tap/assets/icons/svg/field_mod_type.svg'
-import { mapGetters } from 'vuex'
-import mouseDrag from '@tap/component/src/directives/mousedrag'
-import { VIcon, VEmpty } from '@tap/component'
-import { SceneDialog } from '@tap/business'
-import { getInitialValuesInBySchema } from '@tap/form'
-import resize from '@tap/component/src/directives/resize'
-import BaseNode from '../BaseNode'
-import { debounce } from 'lodash'
-import { CancelToken, connectionsApi, databaseTypesApi } from '@tap/api'
-import { Select } from 'element-ui'
-import { OverflowTooltip } from '@tap/component'
-import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
-import NodeIcon from '../NodeIcon'
-import { escapeRegExp } from 'lodash'
-import ConnectionType from '../ConnectionType'
-import { getIcon } from '@tap/assets/icons'
 
 export default {
   name: 'LeftSider',
@@ -209,10 +38,12 @@ export default {
     OverflowTooltip,
     BaseNode,
     VIcon,
-    ElScrollbar: Select.components.ElScrollbar,
-    ConnectionType
+    ConnectionType,
   },
-
+  directives: {
+    mouseDrag,
+    resize,
+  },
   data() {
     return {
       collapseMode: 'db',
@@ -240,17 +71,15 @@ export default {
       comingAllowDatabase: [], // 即将上线
       otherType: [],
       automationType: '', //插件化数据源
-      connectionType: 'source'
+      connectionType: 'source',
     }
   },
-
-  directives: {
-    mouseDrag,
-    resize
-  },
-
   computed: {
-    ...mapGetters('dataflow', ['processorNodeTypes', 'getCtor', 'stateIsReadonly']),
+    ...mapGetters('dataflow', [
+      'processorNodeTypes',
+      'getCtor',
+      'stateIsReadonly',
+    ]),
 
     noDBMore() {
       return this.dbPage >= Math.ceil(this.dbTotal / 20)
@@ -261,23 +90,14 @@ export default {
     },
 
     scrollbarWrapStyle() {
-      let gutter = scrollbarWidth()
+      const gutter = getScrollBarWidth()
       return `height: calc(100% + ${gutter}px);`
-    }
+    },
   },
-
   async created() {
     await this.getDatabaseType()
 
     this.init()
-  },
-
-  mounted() {
-    // addResizeListener(this.$refs.processorCollapse.$el, this.updateProcessorScrollbar)
-  },
-
-  beforeDestroy() {
-    // removeResizeListener(this.$refs.processorCollapse.$el, this.updateProcessorScrollbar)
   },
 
   methods: {
@@ -286,7 +106,7 @@ export default {
       this.connectionDialog = !this.stateIsReadonly
     },
     async getDatabaseType() {
-      await databaseTypesApi.get().then(res => {
+      await databaseTypesApi.get().then((res) => {
         if (res) {
           this.getPdkData(res)
         }
@@ -301,7 +121,9 @@ export default {
 
     getDbFilter() {
       const databaseTypeList =
-        this.database?.map(t => t.type).filter(t => !['CSV', 'EXCEL', 'JSON', 'XML'].includes(t)) || []
+        this.database
+          ?.map((t) => t.type)
+          .filter((t) => !['CSV', 'EXCEL', 'JSON', 'XML'].includes(t)) || []
       const filter = {
         page: this.dbPage,
         size: 20,
@@ -330,17 +152,17 @@ export default {
           capabilities: 1,
           config: 1,
           connectionString: 1,
-          encryptConfig: 1
+          encryptConfig: 1,
         },
         order: ['status DESC', 'name ASC'],
         where: {
           database_type: {
-            in: databaseTypeList
+            in: databaseTypeList,
           },
           createType: {
-            $ne: 'System'
-          }
-        }
+            $ne: 'System',
+          },
+        },
       }
       const txt = escapeRegExp(this.dbSearchTxt.trim())
 
@@ -365,12 +187,12 @@ export default {
       }
 
       const data = await connectionsApi.get(this.getDbFilter(), {
-        cancelToken: this.connectionCancelSource.token
+        cancelToken: this.connectionCancelSource.token,
       })
 
       this.dbTotal = data.total
 
-      const dbList = data.items.map(item => {
+      const dbList = data.items.map((item) => {
         item.databaseType = item.database_type
         if (item.connectionString) {
           item.connectionUrl = item.connectionString
@@ -395,7 +217,7 @@ export default {
 
       if (loadMore) {
         // 防止重复push
-        dbList.forEach(item => {
+        dbList.forEach((item) => {
           if (!this.dbIdMap[item.id]) {
             this.dbList.push(item)
             this.dbIdMap[item.id] = true
@@ -407,7 +229,10 @@ export default {
         this.dbList = dbList
         this.dbLoading = false
         // 缓存所有dbId
-        this.dbIdMap = dbList.reduce((map, item) => ((map[item.id] = true), map), {})
+        this.dbIdMap = dbList.reduce(
+          (map, item) => ((map[item.id] = true), map),
+          {},
+        )
       }
       return this.dbList
     },
@@ -429,7 +254,7 @@ export default {
 
     async getDragDom() {
       await this.$nextTick()
-      return document.getElementById('dragNode')
+      return document.querySelector('#dragNode')
     },
 
     onStart(item) {
@@ -439,7 +264,7 @@ export default {
       const ins = getResourceIns(node)
       Object.defineProperty(node, '__Ctor', {
         value: ins,
-        enumerable: false
+        enumerable: false,
       })
       this.dragNode = node
       this.dragStarting = true
@@ -452,10 +277,11 @@ export default {
       const getResourceIns = this.$store.getters['dataflow/getResourceIns']
       if (!item.__Ctor) {
         const ins = getResourceIns(node)
-        // 设置属性__Ctor不可枚举
+
         Object.defineProperty(node, '__Ctor', {
-          value: ins,
-          enumerable: false
+          value: markRaw(ins),
+          enumerable: false,
+          configurable: true,
         })
       }
       this.dragNode = node
@@ -465,11 +291,11 @@ export default {
 
     onMove() {
       this.dragMoving = true
-      this.$emit('move-node', ...arguments)
+      $emit(this, 'move-node', ...arguments)
     },
 
     onDrop(item, position, rect) {
-      this.$emit('drop-node', this.dragNode, position, rect)
+      $emit(this, 'drop-node', this.dragNode, position, rect)
     },
 
     onStop() {
@@ -478,7 +304,7 @@ export default {
     },
 
     scrollTopOfDBList() {
-      if (this.$refs.dbList) this.$refs.dbList.wrap.scrollTop = 0
+      if (this.$refs.dbList) this.$refs.dbList.setScrollTop(0)
     },
 
     handleDBInput: debounce(function () {
@@ -495,7 +321,8 @@ export default {
 
     getNodeProps(item) {
       // 设置pdk节点配置默认值
-      const pdkProperties = this.$store.state.dataflow.pdkPropertiesMap[item.pdkHash]
+      const pdkProperties =
+        this.$store.state.dataflow.pdkPropertiesMap[item.pdkHash]
       let nodeConfig = {}
       const attrs = {
         connectionName: item.name,
@@ -505,7 +332,7 @@ export default {
         pdkType: item.pdkType,
         pdkHash: item.pdkHash,
         capabilities: item.capabilities || [],
-        db_version: item.db_version
+        db_version: item.db_version,
       }
 
       if (pdkProperties) {
@@ -514,23 +341,23 @@ export default {
             properties: {
               attrs: {
                 type: 'object',
-                default: attrs
+                default: attrs,
               },
               $inputs: {
                 default: [],
-                type: 'array'
+                type: 'array',
               },
               $outputs: {
                 default: [],
-                type: 'array'
+                type: 'array',
               },
               wrap: {
                 ...pdkProperties,
-                type: 'void'
-              }
-            }
+                type: 'void',
+              },
+            },
           },
-          {}
+          {},
         )
         delete nodeConfig.attrs
         delete nodeConfig.$inputs
@@ -545,7 +372,7 @@ export default {
         migrateTableSelectType: 'custom',
         nodeConfig,
         attrs,
-        noPkSyncMode: 'ADD_HASH' // 无主键同步默认创建哈希列
+        noPkSyncMode: 'ADD_HASH', // 无主键同步默认创建哈希列
       }
     },
 
@@ -569,7 +396,7 @@ export default {
       const { pdkHash, pdkId } = item
       this.$router.push({
         name: 'connectionCreate',
-        query: { pdkHash, pdkId }
+        query: { pdkHash, pdkId },
       })
     },
 
@@ -580,7 +407,7 @@ export default {
     onDoubleClickDB(item) {
       if (this.stateIsReadonly) return
 
-      this.$emit('add-node', this.getNodeProps(item))
+      $emit(this, 'add-node', this.getNodeProps(item))
     },
 
     /**
@@ -590,13 +417,220 @@ export default {
     onDoubleClickProcessor(item) {
       if (this.stateIsReadonly) return
 
-      this.$emit('add-node', item)
-    }
-  }
+      $emit(this, 'add-node', item)
+    },
+  },
+  emits: ['move-node', 'drop-node', 'add-node'],
 }
 </script>
 
-<style scoped lang="scss">
+<template>
+  <aside class="layout-sidebar --left border-end flex-column flex-shrink-0">
+    <div class="flex flex-column flex-1 min-h-0">
+      <ElCollapse
+        ref="dbCollapse"
+        v-model="collapseMode"
+        class="collapse-fill h-100"
+        accordion
+      >
+        <ElCollapseItem name="db">
+          <template #title>
+            <div class="flex align-center flex-1 overflow-hidden">
+              <span
+                class="flex-1 user-select-none text-truncate flex align-center"
+              >
+                <!--连接-->
+                {{ $t('packages_dag_dag_connection') }}
+                <span v-show="dbTotal > 0" class="badge">{{ dbTotal }}</span>
+              </span>
+              <VIcon
+                size="18"
+                class="click-btn mr-1"
+                :class="{ active: showDBInput }"
+                @click.stop="handleShowDBInput"
+                >search-outline
+              </VIcon>
+              <VIcon
+                size="20"
+                class="click-btn"
+                :class="{ 'click-btn-disabled': stateIsReadonly }"
+                @mousedown.stop
+                @click.stop="creat"
+                >add-outline
+              </VIcon>
+            </div>
+          </template>
+          <div class="flex flex-column h-100">
+            <div v-show="showDBInput" class="p-2">
+              <ElInput
+                ref="dbInput"
+                v-model="dbSearchTxt"
+                :placeholder="
+                  $t('packages_dag_connection_name_search_placeholder')
+                "
+                clearable
+                @keydown.stop
+                @keyup.stop
+                @click.stop
+                @input="handleDBInput"
+              >
+                <template #prefix>
+                  <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
+                </template>
+              </ElInput>
+            </div>
+
+            <ElScrollbar
+              ref="dbList"
+              class="flex-1"
+              tag="div"
+              wrap-class="db-list"
+              :wrap-style="scrollbarWrapStyle"
+            >
+              <ElSkeleton
+                :loading="dbLoading"
+                animated
+                :throttle="skeletonThrottle"
+              >
+                <template #template>
+                  <div v-for="i in 5" :key="i" class="flex p-4 align-center">
+                    <ElSkeletonItem
+                      class="mr-3 flex-shrink-0"
+                      style="width: 20px; height: 20px"
+                      variant="rect"
+                    />
+                    <ElSkeletonItem variant="text" />
+                  </div>
+                </template>
+                <div
+                  v-infinite-scroll="loadMoreDB"
+                  :infinite-scroll-disabled="disabledDBMore"
+                  class="px-2 pb-2"
+                >
+                  <div
+                    v-for="db in dbList"
+                    :key="db.id"
+                    v-mouse-drag="{
+                      item: db,
+                      container: '#dfEditorContent',
+                      getDragDom,
+                      onStart,
+                      onMove,
+                      onDrop,
+                      onStop,
+                    }"
+                    class="db-item flex align-center px-1 user-select-none rounded-2"
+                    :class="{ grabbable: !stateIsReadonly }"
+                    @dblclick="onDoubleClickDB(db)"
+                  >
+                    <div class="flex-shrink-0 mr-2 db-item-icon">
+                      <NodeIcon :node="db" />
+                    </div>
+                    <div
+                      class="flex flex-column justify-center db-item-content"
+                    >
+                      <div class="flex align-center">
+                        <OverflowTooltip
+                          class="text-truncate mr-1"
+                          placement="right"
+                          :disabled="dragStarting"
+                          :text="db.name"
+                          :open-delay="400"
+                        />
+                        <ConnectionType :type="db.connection_type" />
+                      </div>
+                      <OverflowTooltip
+                        class="w-100 text-truncate"
+                        placement="right"
+                        :disabled="dragStarting"
+                        :text="db.connectionUrl"
+                        :open-delay="400"
+                      />
+                    </div>
+                  </div>
+                  <VEmpty v-if="!dbList.length" />
+                  <div
+                    v-if="dbLoadingMore"
+                    class="text-center text-black-50 fs-8 p-2"
+                  >
+                    {{ $t('packages_dag_loading') }}<span class="dotting" />
+                  </div>
+                </div>
+              </ElSkeleton>
+            </ElScrollbar>
+          </div>
+        </ElCollapseItem>
+      </ElCollapse>
+    </div>
+
+    <ElCollapse
+      ref="processorCollapse"
+      class="collapse-fill processor-collapse border-top"
+      model-value="process"
+    >
+      <ElCollapseItem name="process">
+        <template #title>
+          <div class="flex align-center flex-1 user-select-none">
+            <!--处理节点-->
+            {{ $t('public_node_processor') }}
+          </div>
+        </template>
+        <ElScrollbar
+          ref="processorList"
+          tag="div"
+          wrap-class="px-3 pb-3"
+          :wrap-style="scrollbarWrapStyle"
+        >
+          <div
+            v-for="(n, ni) in processorNodeTypes"
+            :key="ni"
+            v-mouse-drag="{
+              item: n,
+              container: '#dfEditorContent',
+              getDragDom,
+              onStart: onProcessorStart,
+              onMove,
+              onDrop,
+              onStop,
+            }"
+            class="node-item flex align-center px-2 user-select-none rounded-2"
+            :class="{ grabbable: !stateIsReadonly }"
+            @dblclick="onDoubleClickProcessor(n)"
+          >
+            <NodeIcon class="flex-shrink-0 mr-2" :node="n" />
+            <OverflowTooltip
+              :text="n.name"
+              :disabled="dragStarting"
+              popper-class="df-node-text-tooltip"
+              placement="top"
+              :open-delay="400"
+            />
+            <VIcon v-if="n.beta" class="ml-1" size="32">beta</VIcon>
+          </div>
+        </ElScrollbar>
+      </ElCollapseItem>
+    </ElCollapse>
+
+    <!-- S 节点拖拽元素 -->
+    <BaseNode
+      v-if="dragStarting"
+      id="dragNode"
+      class="drag-node"
+      :node="dragNode"
+      :class="`node--${dragNode.__Ctor.group}`"
+    />
+    <!-- E 节点拖拽元素 -->
+
+    <!--创建连接-->
+    <SceneDialog
+      v-model:visible="connectionDialog"
+      selector-type="source_and_target"
+      @selected="handleDatabaseType"
+    />
+  </aside>
+</template>
+
+<style lang="scss" scoped>
 $hoverBg: #eef3ff;
 
 .drag-node {
@@ -620,16 +654,19 @@ $hoverBg: #eef3ff;
       position: relative;
       height: 40px;
       cursor: pointer;
+
       &:hover {
-        color: map-get($color, primary);
+        color: map.get($color, primary);
       }
+
       &.active {
-        color: map-get($color, primary);
+        color: map.get($color, primary);
+
         &:before {
           position: absolute;
           content: '';
           height: 2px;
-          background: map-get($color, primary);
+          background: map.get($color, primary);
           left: 12px;
           right: 12px;
           bottom: 0;
@@ -638,79 +675,85 @@ $hoverBg: #eef3ff;
     }
   }
 
-  ::v-deep {
-    .type-tabs {
-      .el-tabs__header {
-        margin-bottom: 0;
-      }
-      .el-tabs__nav-wrap {
-        padding: 0 4px;
-      }
-      .el-tabs__item {
-        padding: 0 12px;
-      }
+  :deep(.type-tabs) {
+    .el-tabs__header {
+      margin-bottom: 0;
     }
 
-    .db-list-container {
-      max-height: 50%;
-      .el-collapse-item:last-child {
-        margin-bottom: -2px;
-      }
+    .el-tabs__nav-wrap {
+      padding: 0 4px;
     }
 
-    .click-btn {
-      width: 24px !important;
-      height: 24px !important;
-      z-index: 2;
-      border-radius: 4px;
+    .el-tabs__item {
+      padding: 0 12px;
+    }
+  }
+
+  :deep(.db-list-container) {
+    max-height: 50%;
+
+    .el-collapse-item:last-child {
+      margin-bottom: -2px;
+    }
+  }
+
+  :deep(.click-btn) {
+    width: 24px !important;
+    height: 24px !important;
+    z-index: 2;
+    border-radius: 4px;
+
+    .click-btn-disabled {
+      color: currentColor;
+      cursor: not-allowed;
 
       &:hover {
-        color: map-get($color, primary);
-        background: $hoverBg;
-      }
-
-      &-disabled {
         color: currentColor;
-        cursor: not-allowed;
-        &:hover {
-          color: currentColor;
-          background: rgba(242, 243, 245);
-        }
+        background: rgba(242, 243, 245);
       }
     }
+  }
 
-    .badge {
-      display: inline-block;
-      margin-left: 4px;
-      padding: 2px 6px;
-      border-radius: 18px;
-      background: #f2f4f6;
-      color: rgba(0, 0, 0, 0.4);
-      font-size: 12px;
-      font-weight: 500;
-      line-height: 1;
-      vertical-align: baseline;
+  :deep(.click-btn:hover) {
+    color: map.get($color, primary);
+    background: $hoverBg;
+  }
+
+  :deep(.badge) {
+    display: inline-block;
+    margin-left: 4px;
+    padding: 2px 6px;
+    border-radius: 18px;
+    background: #f2f4f6;
+    color: rgba(0, 0, 0, 0.4);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
+    vertical-align: baseline;
+  }
+
+  :deep(.tb-header) {
+    position: relative;
+    height: $headerH;
+    font-size: 14px;
+    font-weight: 500;
+    border-bottom: 1px solid transparent;
+
+    .tb-header-icon {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
     }
+  }
 
-    .tb-header {
-      position: relative;
-      height: $headerH;
-      font-size: 14px;
-      font-weight: 500;
-      border-bottom: 1px solid transparent;
-      &-icon {
-        flex-shrink: 0;
-        width: 20px;
-        height: 20px;
-      }
-    }
-
+  :deep(*) {
     .db-item,
     .node-item {
       height: 42px;
       margin-bottom: 4px;
       font-size: $fontBaseTitle;
       line-height: normal;
+
       &.active {
         background-color: #eef3ff;
       }
@@ -733,6 +776,7 @@ $hoverBg: #eef3ff;
 
       &-content {
         overflow: hidden;
+
         > :not(:last-child) {
           margin-bottom: 4px;
           font-size: $fontBaseTitle;
@@ -747,35 +791,41 @@ $hoverBg: #eef3ff;
         margin-bottom: 0;
       }
     }
+  }
 
-    .node-item {
-      height: 30px;
+  :deep(.node-item) {
+    height: 30px;
 
-      .el-image {
-        width: 20px;
-        height: 20px;
-      }
-    }
-
-    .tb-item-icon {
+    .el-image {
       width: 20px;
       height: 20px;
-      background-color: #6236ff;
-      text-align: center;
-      border-radius: 100%;
     }
+  }
 
+  :deep(.tb-item-icon) {
+    width: 20px;
+    height: 20px;
+    background-color: #6236ff;
+    text-align: center;
+    border-radius: 100%;
+  }
+
+  :deep(*) {
     .el-collapse {
       border-top: 0;
+
       &.processor-collapse {
         max-height: 30%;
       }
+
       &.collapse-fill {
         .el-collapse-item:first-child:last-child {
           height: 100%;
+
           .el-collapse-item__wrap {
             height: calc(100% - #{$headerH - 1});
           }
+
           .el-collapse-item__content {
             height: 100%;
           }
@@ -803,47 +853,44 @@ $hoverBg: #eef3ff;
 
         &__arrow {
           order: -1;
-          &:before {
-            content: '\e791';
-          }
         }
 
         &__content {
-          padding-bottom: 0;
+          padding: 0;
         }
       }
     }
+  }
 
-    .el-scrollbar {
+  :deep(.el-scrollbar) {
+    height: 100%;
+  }
+
+  :deep(.header__input) {
+    position: absolute;
+    z-index: 3;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    margin-bottom: -1px;
+
+    input {
+      width: 100%;
       height: 100%;
+      border-width: 0 0 1px;
+      border-radius: 0;
     }
 
-    .header__input {
-      position: absolute;
-      z-index: 3;
-      left: 0;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      margin-bottom: -1px;
+    input,
+    .v-icon,
+    .el-input__icon {
+      vertical-align: top;
+    }
 
-      input {
-        width: 100%;
-        height: 100%;
-        border-width: 0 0 1px;
-        border-radius: 0;
-      }
-
-      input,
-      .v-icon,
-      .el-input__icon {
-        vertical-align: top;
-      }
-
-      input,
-      .el-input__icon {
-        line-height: $headerH;
-      }
+    input,
+    .el-input__icon {
+      line-height: $headerH;
     }
   }
 }

@@ -9,14 +9,14 @@ function recursiveField(form, schema, scope, basePath, name) {
     if (isString(reactions) && reactions.includes('useAsyncDataSource')) {
       delete schema['x-reactions']
     } else if (Array.isArray(reactions)) {
-      schema['x-reactions'] = reactions.filter(item => !isString(item) || !item.includes('useAsyncDataSource'))
+      schema['x-reactions'] = reactions.filter((item) => !isString(item) || !item.includes('useAsyncDataSource'))
     }
   }
   delete schema.default
 
   const fieldSchema = new Schema(schema)
   const fieldProps = fieldSchema.toFieldProps({
-    scope
+    scope,
   })
 
   function recursiveProperties(propBasePath) {
@@ -34,7 +34,7 @@ function recursiveField(form, schema, scope, basePath, name) {
     const field = form.createObjectField({
       ...fieldProps,
       name,
-      basePath
+      basePath,
     })
 
     recursiveProperties(field.address.toString())
@@ -42,7 +42,7 @@ function recursiveField(form, schema, scope, basePath, name) {
     const field = form.createArrayField({
       ...fieldProps,
       name,
-      basePath
+      basePath,
     })
 
     const fieldAddress = field.address.toString()
@@ -59,7 +59,7 @@ function recursiveField(form, schema, scope, basePath, name) {
     const field = form.createVoidField({
       ...fieldProps,
       name,
-      basePath
+      basePath,
     })
 
     recursiveProperties(field.address.toString())
@@ -67,7 +67,7 @@ function recursiveField(form, schema, scope, basePath, name) {
     form.createField({
       ...fieldProps,
       name,
-      basePath
+      basePath,
     })
   }
 }
@@ -97,7 +97,7 @@ function recursiveField(form, schema, scope, basePath, name) {
  */
 export const validateBySchema = (schema, values, scope, basePath) => {
   const form = createForm({
-    values
+    values,
   })
 
   recursiveField(form, JSON.parse(JSON.stringify(schema)), scope, basePath)

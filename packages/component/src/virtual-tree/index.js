@@ -1,4 +1,4 @@
-import tree from './tree'
+import VirtualTree from './VirtualTree.vue'
 
-export default tree
-export const VirtualTree = tree
+export default VirtualTree
+export { VirtualTree }

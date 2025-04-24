@@ -4,7 +4,7 @@
       <DatabaseIcon :pdk-hash="pdkHash" :size="20"></DatabaseIcon>
       <span>{{ connectorName }}</span>
       <div class="flex-grow-1"></div>
-      <el-button type="text" @click="openDialog"> 更换 </el-button>
+      <el-button text type="primary" @click="openDialog"> 更换 </el-button>
 
       <SceneDialog :visible.sync="visible" selector-type="source_and_target" @selected="onSelected"></SceneDialog>
     </div>

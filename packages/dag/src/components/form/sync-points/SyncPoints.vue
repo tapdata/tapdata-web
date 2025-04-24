@@ -22,7 +22,7 @@
             :disabled="disabled"
             type="datetime"
             align="right"
-            format="yyyy-MM-dd HH:mm:ss"
+            format="YYYY-MM-DD HH:mm:ss"
             valueFormat="timestamp"
             popperClass="setting-panel__dateTimePicker"
             :pickerOptions="getPickerOptionsBeforeTime(item.dateTime, Date.now())"

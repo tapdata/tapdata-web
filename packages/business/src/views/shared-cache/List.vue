@@ -1,5 +1,29 @@
 <template>
-  <section class="shared-cache-list-wrap h-100">
+  <PageContainer>
+    <template #actions>
+      <el-button
+        v-show="multipleSelection.length > 0 && isDaas"
+        :disabled="$disabledReadonlyUserBtn()"
+        v-readonlybtn="'SYNC_job_export'"
+        class="btn message-button-cancel"
+        @click="handleExport"
+      >
+        <span> {{ $t('public_button_export') }}</span>
+      </el-button>
+      <el-button
+        v-if="isDaas"
+        v-readonlybtn="'SYNC_job_import'"
+        class="btn"
+        :disabled="$disabledReadonlyUserBtn()"
+        @click="handleImport"
+      >
+        <span> {{ $t('packages_business_button_bulk_import') }}</span>
+      </el-button>
+      <ElButton class="btn btn-create" type="primary" @click="create">
+        <span> {{ $t('packages_business_shared_cache_button_create') }}</span>
+      </ElButton>
+    </template>
+
     <TablePage
       ref="table"
       row-key="id"
@@ -7,42 +31,15 @@
       @sort-change="handleSortTable"
       @selection-change="handleSelectionChange"
     >
-      <template slot="search">
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+      <template v-slot:search>
+        <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
-      <div slot="operation">
-        <template>
-          <el-button
-            v-show="multipleSelection.length > 0 && isDaas"
-            :disabled="$disabledReadonlyUserBtn()"
-            v-readonlybtn="'SYNC_job_export'"
-            size="mini"
-            class="btn message-button-cancel"
-            @click="handleExport"
-          >
-            <span> {{ $t('public_button_export') }}</span>
-          </el-button>
-          <el-button
-            v-if="isDaas"
-            v-readonlybtn="'SYNC_job_import'"
-            size="mini"
-            class="btn"
-            :disabled="$disabledReadonlyUserBtn()"
-            @click="handleImport"
-          >
-            <span> {{ $t('packages_business_button_bulk_import') }}</span>
-          </el-button>
-        </template>
-        <ElButton class="btn btn-create" type="primary" size="mini" @click="create">
-          <span> {{ $t('packages_business_shared_cache_button_create') }}</span>
-        </ElButton>
-      </div>
       <el-table-column
         reserve-selection
         type="selection"
         width="45"
         align="center"
-        :selectable="row => !row.hasChildren"
+        :selectable="(row) => !row.hasChildren"
       >
       </el-table-column>
       <ElTableColumn show-overflow-tooltip prop="name" :label="$t('packages_business_shared_cache_name')">
@@ -68,19 +65,20 @@
         </template>
       </ElTableColumn>
       <ElTableColumn prop="createTime" :label="$t('public_create_time')" width="160" sortable="createTime">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.createTimeFmt }}
         </template>
       </ElTableColumn>
       <ElTableColumn prop="cacheTimeAt" width="160" :label="$t('packages_business_shared_cache_time')">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.cacheTimeAtFmt }}
         </template>
       </ElTableColumn>
-      <ElTableColumn width="280" :label="$t('public_operation')" fixed="right">
+      <ElTableColumn width="290" :label="$t('public_operation')" fixed="right">
         <template #default="{ row }">
           <div class="table-operations">
-            <ElLink
+            <ElButton
+              text
               v-if="row.btnDisabled.stop && row.btnDisabled.forceStop"
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
@@ -88,9 +86,10 @@
               @click="start([row.id], row)"
             >
               {{ $t('public_button_start') }}
-            </ElLink>
+            </ElButton>
             <template v-else>
-              <ElLink
+              <ElButton
+                text
                 v-if="row.status === 'stopping'"
                 v-readonlybtn="'SYNC_job_operation'"
                 type="primary"
@@ -98,8 +97,9 @@
                 @click="forceStop([row.id], row)"
               >
                 {{ $t('public_button_force_stop') }}
-              </ElLink>
-              <ElLink
+              </ElButton>
+              <ElButton
+                text
                 v-else
                 v-readonlybtn="'SYNC_job_operation'"
                 type="primary"
@@ -107,44 +107,48 @@
                 @click="stop([row.id])"
               >
                 {{ $t('public_button_stop') }}
-              </ElLink>
+              </ElButton>
             </template>
-            <ElDivider v-readonlybtn="'SYNC_job_operation'" direction="vertical"></ElDivider>
-            <ElLink
+            <ElDivider class="mx-1" v-readonlybtn="'SYNC_job_operation'" direction="vertical"></ElDivider>
+            <ElButton
+              text
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
               :disabled="row.btnDisabled.edit || $disabledReadonlyUserBtn()"
               @click="handleEditor(row)"
             >
               {{ $t('public_button_edit') }}
-            </ElLink>
-            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
-            <ElLink
+            </ElButton>
+            <ElDivider class="mx-1" v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElButton
+              text
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
               :disabled="row.btnDisabled.monitor && !row.lastStartDate"
               @click="handleDetails(row)"
             >
               {{ $t('packages_business_task_list_button_monitor') }}
-            </ElLink>
-            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
-            <ElLink
+            </ElButton>
+            <ElDivider class="mx-1" v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElButton
+              text
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
               :disabled="row.btnDisabled.reset || $disabledReadonlyUserBtn()"
               @click="handleReset(row)"
             >
               {{ $t('public_button_reset') }}
-            </ElLink>
-            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
-            <ElLink
+            </ElButton>
+            <ElDivider class="mx-1" v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElButton
+              text
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
               :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
               @click="del(row)"
             >
               {{ $t('public_button_delete') }}
-            </ElLink>
+            </ElButton>
           </div>
         </template>
       </ElTableColumn>
@@ -153,70 +157,74 @@
     <Details ref="details" width="380px"></Details>
     <!-- 导入 -->
     <Upload v-if="isDaas" type="dataflow" :show-tag="false" ref="upload" @success="table.fetch()"></Upload>
-  </section>
+  </PageContainer>
 </template>
 
 <script>
 import dayjs from 'dayjs'
-import { escapeRegExp } from 'lodash'
+import { escapeRegExp } from 'lodash-es'
 
 import i18n from '@tap/i18n'
 import { externalStorageApi, sharedCacheApi, taskApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
-import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
+import { TablePage, TaskStatus } from '../../components'
+import { makeStatusAndDisabled } from '../../shared'
 
 import Editor from './Editor'
 import Details from './Details'
 import Upload from '../../components/UploadDialog'
+import PageContainer from '../../components/PageContainer.vue'
 
 let timeout = null
 export default {
   inject: ['buried'],
-  components: { TablePage, FilterBar, TaskStatus, Editor, Details, Upload },
+  components: { PageContainer, TablePage, FilterBar, TaskStatus, Editor, Details, Upload },
   data() {
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       searchParams: {
         name: '',
-        connectionName: ''
+        connectionName: '',
       },
       filterItems: [
         {
           placeholder: this.$t('packages_business_shared_cache_placeholder_task_name'),
           key: 'name',
-          type: 'input'
+          type: 'input',
         },
         {
           placeholder: this.$t('packages_business_shared_cache_placeholder_connection_name'),
           key: 'connectionName',
-          type: 'input'
-        }
+          type: 'input',
+        },
       ],
       order: 'cacheTimeAt DESC',
       taskBuried: {
-        start: 'sharedMiningStart'
+        start: 'sharedMiningStart',
       },
-      multipleSelection: []
+      multipleSelection: [],
     }
   },
   computed: {
     table() {
       return this.$refs.table
-    }
+    },
   },
   watch: {
     '$route.query'() {
       this.table.fetch(1)
-    }
+    },
   },
   mounted() {
     //定时轮询
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
     }, 8000)
-    this.searchParams = Object.assign(this.searchParams, { name: this.$route.query?.keyword || '' })
+    this.searchParams = Object.assign(this.searchParams, {
+      name: this.$route.query?.keyword || '',
+    })
   },
-  destroyed() {
+  unmounted() {
     clearInterval(timeout)
   },
   methods: {
@@ -225,34 +233,38 @@ export default {
       let { name, connectionName } = this.searchParams
       let where = {}
       name && (where.name = { like: escapeRegExp(name), options: 'i' })
-      connectionName && (where.connectionName = { like: escapeRegExp(connectionName), options: 'i' })
+      connectionName &&
+        (where.connectionName = {
+          like: escapeRegExp(connectionName),
+          options: 'i',
+        })
 
       let filter = {
         order: this.order,
         limit: size,
         skip: (current - 1) * size,
-        where
+        where,
       }
       return sharedCacheApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           let list = data?.items || []
           return {
             total: data?.total,
-            data: list.map(item => {
+            data: list.map((item) => {
               item.createTimeFmt = item.createTime ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'
 
               makeStatusAndDisabled(item)
               return item
-            })
+            }),
           }
         })
     },
     create() {
       this.handleEditor({
-        id: ''
+        id: '',
       })
     },
     checkDetails(row) {
@@ -260,8 +272,8 @@ export default {
     },
     del(row = {}) {
       this.$confirm(this.$t('public_message_delete_confirm'), this.$t('public_message_title_prompt'), {
-        type: 'warning'
-      }).then(flag => {
+        type: 'warning',
+      }).then((flag) => {
         if (flag) {
           sharedCacheApi.delete(row.id).then(() => {
             this.$message.success(this.$t('public_message_delete_ok'))
@@ -289,13 +301,13 @@ export default {
       this.buried(this.taskBuried.start)
       let filter = {
         where: {
-          id: ids[0]
-        }
+          id: ids[0],
+        },
       }
       taskApi.get({ filter: JSON.stringify(filter) }).then(() => {
         taskApi
           .batchStart(ids)
-          .then(data => {
+          .then((data) => {
             this.buried(this.taskBuried.start, '', { result: true })
             this.$message.success(data?.message || this.$t('public_message_operation_success'))
             this.table.fetch()
@@ -311,12 +323,12 @@ export default {
       this.$confirm(msgObj.msg, '', {
         type: 'warning',
         showClose: false,
-        dangerouslyUseHTMLString: true
-      }).then(resFlag => {
+        dangerouslyUseHTMLString: true,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        taskApi.forceStop(ids).then(data => {
+        taskApi.forceStop(ids).then((data) => {
           this.$message.success(data?.message || this.$t('public_message_operation_success'))
           this.table.fetch()
         })
@@ -328,13 +340,13 @@ export default {
         this.$t('packages_business_stop_confirm_message'),
         this.$t('packages_business_important_reminder'),
         {
-          type: 'warning'
-        }
-      ).then(resFlag => {
+          type: 'warning',
+        },
+      ).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        taskApi.batchStop(ids).then(data => {
+        taskApi.batchStop(ids).then((data) => {
           this.$message.success(data?.message || this.$t('public_message_operation_success'))
           this.table.fetch()
         })
@@ -357,8 +369,8 @@ export default {
       this.openRoute({
         name: 'SharedCacheMonitor',
         params: {
-          id: task.id
-        }
+          id: task.id,
+        },
       })
     },
 
@@ -374,7 +386,7 @@ export default {
         </p>`
       return {
         msg,
-        title: this.$t('dataFlow_' + title)
+        title: this.$t('dataFlow_' + title),
       }
     },
 
@@ -383,12 +395,12 @@ export default {
       let msgObj = this.getConfirmMessage('initialize', row)
       this.$confirm(msgObj.msg, msgObj.title, {
         type: 'warning',
-        dangerouslyUseHTMLString: true
-      }).then(resFlag => {
+        dangerouslyUseHTMLString: true,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        taskApi.batchRenew([id]).then(data => {
+        taskApi.batchRenew([id]).then((data) => {
           this.$message.success(data?.message || this.$t('public_message_operation_success'))
           this.table.fetch()
         })
@@ -396,14 +408,14 @@ export default {
     },
 
     handleExport() {
-      const ids = this.multipleSelection.map(t => t.id)
+      const ids = this.multipleSelection.map((t) => t.id)
       taskApi.export(ids)
     },
 
     handleImport() {
       this.$refs.upload.show()
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -431,7 +443,7 @@ export default {
     background: #ffe9cf;
   }
   &.icon-status--danger {
-    color: map-get($color, danger);
+    color: map.get($color, danger);
     background: #ffecec;
   }
 }
@@ -439,7 +451,7 @@ export default {
   padding: 16px;
 }
 .shared-cache-details--header {
-  border-bottom: 1px solid map-get($borderColor, light);
+  border-bottom: 1px solid map.get($borderColor, light);
   .icon {
     font-size: 18px;
   }
@@ -450,14 +462,14 @@ export default {
     flex: 1;
     padding: 8px 0;
     line-height: 17px;
-    border-bottom: 1px solid map-get($borderColor, light);
+    border-bottom: 1px solid map.get($borderColor, light);
     .label {
       font-size: $fontBaseTitle;
       color: rgba(0, 0, 0, 0.6);
     }
     .value {
       font-size: $fontBaseTitle;
-      color: map-get($fontColor, dark);
+      color: map.get($fontColor, dark);
     }
   }
 }
@@ -469,11 +481,11 @@ export default {
     padding: 0 16px;
     height: 38px;
     line-height: 38px;
-    background: map-get($bgColor, normal);
+    background: map.get($bgColor, normal);
   }
   .content {
     padding: 0 16px 8px 16px;
-    background-color: map-get($bgColor, white);
+    background-color: map.get($bgColor, white);
   }
 }
 </style>

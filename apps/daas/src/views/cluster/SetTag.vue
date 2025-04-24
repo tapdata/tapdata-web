@@ -1,12 +1,12 @@
 <template>
   <el-dialog
     :title="$t('dataExplorer_tag_title')"
-    :visible="visible"
+    :model-value="visible"
     width="600px"
     :close-on-click-modal="false"
     @open="onOpen"
     @closed="onClosed"
-    @update:visible="$emit('update:visible', $event)"
+    @update:model-value="$emit('update:visible', $event)"
   >
     <div class="flex flex-wrap gap-2 mb-2 rounded-lg p-3" style="background-color: #f5f6f7">
       <template v-if="tagList.length">
@@ -35,14 +35,16 @@
         </span>
       </template>
     </ElTree>
-    <span slot="footer" class="dialog-footer">
-      <el-button class="message-button-cancel" @click="handleClose" size="mini">{{
-        $t('public_button_cancel')
-      }}</el-button>
-      <el-button :disabled="saving" type="primary" @click="handleSave" size="mini">{{
-        $t('public_button_save')
-      }}</el-button>
-    </span>
+
+    <template #footer>
+      <el-button class="message-button-cancel" @click="handleClose">{{
+          $t('public_button_cancel')
+        }}</el-button>
+        <el-button :disabled="saving" type="primary" @click="handleSave">{{
+          $t('public_button_save')
+        }}</el-button>
+    </template>
+    
   </el-dialog>
 </template>
 

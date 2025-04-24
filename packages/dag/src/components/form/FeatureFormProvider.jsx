@@ -1,5 +1,6 @@
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent } from 'vue'
 import { FormProvider } from '@formily/vue'
+import { useStore } from 'vuex'
 
 // 定义需要 feature 控制的配置路径及其对应的 feature code
 const FEATURE_CONTROLS = {
@@ -11,10 +12,11 @@ export const FeatureFormProvider = defineComponent({
   name: 'FeatureFormProvider',
   props: ['form'],
 
-  setup(props, { slots, root }) {
+  setup(props, { slots }) {
+    const store = useStore()
     const setupFeatureControls = () => {
-      const isControlEnabled = root.$store.getters['feature/isControlEnabled']
-      const hasFeature = root.$store.getters['feature/hasFeature']
+      const isControlEnabled = store.getters['feature/isControlEnabled']
+      const hasFeature = store.getters['feature/hasFeature']
 
       // 只在 LITE 版本下进行控制
       if (!isControlEnabled) return

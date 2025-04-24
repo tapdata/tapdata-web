@@ -1,11 +1,11 @@
 /* 请注意样式排序导致的优先级问题
 -----------------------------*/
-@import '~@tap/assets/styles/var';
-@import '~@tap/assets/styles/reboot';
-@import '~@tap/assets/styles/utilities';
-@import '~@tap/assets/fonts/DIN/index.css';
+//@import '~@tap/assets/styles/var';
+@import '@tap/assets/styles/reboot';
+@import '@tap/assets/styles/utilities';
+@import '@tap/assets/fonts/DIN/index.css';
 
-@import '~@/styles/font/iconfont.css';
+@import '@/styles/font/iconfont.css';
 
 @import 'github-markdown-css';
 
@@ -53,13 +53,6 @@
   display: inline-block;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-.g-panel-container {
-  background-color: map-get($bgColor, white);
-  padding: 24px;
-  border-radius: 4px;
-  box-sizing: border-box;
 }
 
 .status-block {
@@ -169,24 +162,13 @@
   color: #d44d4d;
 }
 
-.section-wrap-box {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding: 20px;
-  border-radius: 8px;
-  background-color: map-get($bgColor, white);
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
 .message-button-cancel {
-  color: map-get($fontColor, normal);
+  color: map.get($fontColor, normal);
   border-color: #f2f3f5;
   background-color: #f2f3f5;
 }
 .message-button-cancel:hover {
-  background-color: map-get($bgColor, white);
+  background-color: map.get($bgColor, white);
   border: 1px solid #2c65ff;
 }
 

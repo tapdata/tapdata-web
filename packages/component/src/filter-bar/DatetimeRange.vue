@@ -1,30 +1,6 @@
-<template>
-  <div class="filter-datetime-range flex">
-    <div v-if="!!label" class="filter-datetime-range__title">{{ label }}</div>
-    <Datetime
-      v-model="start"
-      v-bind="$attrs"
-      :picker-options="startOptions"
-      :placeholder="startPlaceholder"
-      ref="startTime"
-      class="none-border"
-      @change="changeStart"
-    ></Datetime>
-    <Datetime
-      v-model="end"
-      v-bind="$attrs"
-      :picker-options="endOptions"
-      :placeholder="endPlaceholder"
-      ref="endTime"
-      :title="$t('packages_component_filter_bar_datetimerange_zhi')"
-      class="none-border"
-      @change="changeEnd"
-    ></Datetime>
-  </div>
-</template>
-
 <script>
 import i18n from '@tap/i18n'
+import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 
 import Datetime from './Datetime'
 
@@ -35,60 +11,79 @@ export default {
     value: [String, Array, Number, Object],
     label: {
       type: String,
-      default: ''
+      default: '',
     },
     startPlaceholder: {
       type: String,
       default: () => {
-        return i18n.t('packages_component_filter_bar_datetimerange_kaishishijian')
-      }
+        return i18n.t(
+          'packages_component_filter_bar_datetimerange_kaishishijian',
+        )
+      },
     },
     endPlaceholder: {
       type: String,
       default: () => {
-        return i18n.t('packages_component_filter_bar_datetimerange_jieshushijian')
-      }
+        return i18n.t(
+          'packages_component_filter_bar_datetimerange_jieshushijian',
+        )
+      },
     },
     range: {
-      type: Number
-    }
+      type: Number,
+    },
   },
+  emits: ['change', 'update:value', , , 'update:value'],
   data() {
     return {
       start: '',
       end: '',
       startOptions: {
-        disabledDate: time => {
+        disabledDate: (time) => {
           const { end } = this
           if (this.range) {
-            return Math.abs((end ? this.getTimestamp(end) : Date.now()) - this.getTimestamp(time)) > this.range
+            return (
+              Math.abs(
+                (end ? this.getTimestamp(end) : Date.now()) -
+                  this.getTimestamp(time),
+              ) > this.range
+            )
           }
           if (end) {
             if (this.getTimestamp(end) === this.getDayStartTimestamp(end)) {
-              return this.getTimestamp(time) > this.getDayStartTimestamp(end) - 1
+              return (
+                this.getTimestamp(time) > this.getDayStartTimestamp(end) - 1
+              )
             }
             return this.getTimestamp(time) > this.getDayStartTimestamp(end)
           }
         },
-        selectableRange: null
+        selectableRange: null,
       },
       endOptions: {
-        disabledDate: time => {
+        disabledDate: (time) => {
           const { start } = this
           if (this.range) {
-            return Math.abs(this.getTimestamp(time) - (start ? this.getTimestamp(start) : Date.now())) > this.range
+            return (
+              Math.abs(
+                this.getTimestamp(time) -
+                  (start ? this.getTimestamp(start) : Date.now()),
+              ) > this.range
+            )
           }
           if (start) {
             if (this.getTimestamp(start) === this.getDayEndTimestamp(start)) {
-              return this.getTimestamp(time) < this.getDayStartTimestamp(start) + 1
+              return (
+                this.getTimestamp(time) < this.getDayStartTimestamp(start) + 1
+              )
             }
             return this.getTimestamp(time) < this.getDayStartTimestamp(start)
           }
         },
-        selectableRange: null
+        selectableRange: null,
       },
       startRange: '00:00:00',
-      endRange: '23:59:59'
+      endRange: '23:59:59',
     }
   },
   watch: {
@@ -99,7 +94,7 @@ export default {
     end() {
       this.setEndValue()
       this.setEndRange()
-    }
+    },
   },
   mounted() {
     this.init()
@@ -123,11 +118,11 @@ export default {
     emitFnc() {
       const { start, end } = this
       const arr = [start, end]
-      this.$emit('input', arr).$emit('change', arr)
+      $emit($emit(this, 'update:value', arr), 'change', arr)
     },
     resetRange(type) {
       const { startRange, endRange } = this
-      const all = startRange + '-' + endRange
+      const all = `${startRange}-${endRange}`
       switch (type) {
         case 'start':
           this.startOptions.selectableRange = all
@@ -145,14 +140,14 @@ export default {
       if (!this.end || !this.isSameDay()) {
         this.resetRange()
       } else {
-        this.startOptions.selectableRange = this.startRange + '-' + this.getHMs(this.end - 1000)
+        this.startOptions.selectableRange = `${this.startRange}-${this.getHMs(this.end - 1000)}`
       }
     },
     setEndRange() {
       if (!this.start || !this.isSameDay()) {
         this.resetRange()
       } else {
-        this.endOptions.selectableRange = this.getHMs(this.start + 1000) + '-' + this.endRange
+        this.endOptions.selectableRange = `${this.getHMs(this.start + 1000)}-${this.endRange}`
       }
     },
     setStartValue() {
@@ -180,7 +175,7 @@ export default {
       const hours = date.getHours().toString().padStart(2, '0')
       const minutes = date.getMinutes().toString().padStart(2, '0')
       const seconds = date.getSeconds().toString().padStart(2, '0')
-      return hours + ':' + minutes + ':' + seconds
+      return `${hours}:${minutes}:${seconds}`
     },
     getTimestamp(timestamp) {
       return new Date(timestamp).getTime()
@@ -191,29 +186,45 @@ export default {
     },
     // 获取当天23:59:59时间戳，精确到s
     getDayEndTimestamp(timestamp) {
-      return new Date(new Date(timestamp).setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000 - 1000).getTime()
-    }
-  }
+      return new Date(
+        new Date(timestamp).setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000 - 1000,
+      ).getTime()
+    },
+  },
 }
 </script>
 
+<template>
+  <div class="filter-datetime-range flex gap-2">
+    <div v-if="!!label" class="filter-datetime-range__title">{{ label }}</div>
+    <Datetime
+      v-bind="$attrs"
+      ref="startTime"
+      v-model:value="start"
+      :picker-options="startOptions"
+      :placeholder="startPlaceholder"
+      class="none-border"
+      @change="changeStart"
+    />
+    <Datetime
+      v-bind="$attrs"
+      ref="endTime"
+      v-model:value="end"
+      :picker-options="endOptions"
+      :placeholder="endPlaceholder"
+      :title="$t('packages_component_filter_bar_datetimerange_zhi')"
+      class="none-border"
+      @change="changeEnd"
+    />
+  </div>
+</template>
+
 <style lang="scss" scoped>
 .filter-datetime-range {
-  padding: 0 8px;
   cursor: pointer;
   font-size: $fontBaseTitle;
-  &:hover {
-    background-color: #eff1f4;
-    border-radius: 2px;
-    ::v-deep {
-      input {
-        background-color: #eff1f4;
-        cursor: pointer;
-      }
-    }
-  }
   .filter-datetime-range__title {
-    color: map-get($fontColor, slight);
+    color: map.get($fontColor, slight);
   }
 }
 </style>

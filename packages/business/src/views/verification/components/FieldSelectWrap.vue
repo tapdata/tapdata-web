@@ -1,40 +1,33 @@
-<template>
-  <FieldSelect
-    v-model="selectFields"
-    filterable
-    multiple
-    itemLabel="field_name"
-    itemValue="field_name"
-    :options="options"
-    :placeholder="placeholder"
-    @focus="handleFocus"
-  />
-</template>
-
 <script>
 import { FieldSelect } from '@tap/form'
-import { defineComponent, computed } from '@vue/composition-api'
+import { computed, defineComponent } from 'vue'
 
 export default defineComponent({
   components: {
-    FieldSelect
+    FieldSelect,
   },
   props: {
     value: {
       type: [String],
-      required: true
+      required: true,
     },
     options: Array,
-    placeholder: String
+    placeholder: String,
   },
+  emits: ['update:value'],
   setup(props, { emit }) {
     const selectFields = computed({
       get() {
         return props.value ? props.value.split(',') : []
       },
       set(val) {
-        emit('input', val?.length ? Array.from(new Set(val.filter(v => !!v.trim()))).join(',') : '')
-      }
+        emit(
+          'update:value',
+          val?.length
+            ? Array.from(new Set(val.filter((v) => !!v.trim()))).join(',')
+            : '',
+        )
+      },
     })
 
     const handleFocus = () => {
@@ -43,11 +36,24 @@ export default defineComponent({
 
     return {
       selectFields,
-      handleFocus
+      handleFocus,
     }
-  }
+  },
 })
 </script>
+
+<template>
+  <FieldSelect
+    v-model="selectFields"
+    filterable
+    multiple
+    item-label="field_name"
+    item-value="field_name"
+    :options="options"
+    :placeholder="placeholder"
+    @focus="handleFocus"
+  />
+</template>
 
 <style lang="scss" scoped>
 .multi-selection-data-verify {
@@ -55,6 +61,7 @@ export default defineComponent({
   align-items: center;
 }
 </style>
+
 <style lang="scss">
 .multi-selection-data-verify .el-select__input.is-mini {
   height: 16px;

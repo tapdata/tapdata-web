@@ -17,7 +17,7 @@ export const DEFAULT_SETTINGS = {
   accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
   isAutoInspect: false,
   timeDifference: 0,
-  currentEventTimestamp: null
+  currentEventTimestamp: null,
 
   // readBatchSize: 100,
   // notificationWindow: 0,
@@ -81,5 +81,5 @@ export const NONSUPPORT_CDC = [
   'adb_postgres',
   'kundb',
   'clickhouse',
-  'hazelcast_cloud_cluster'
+  'hazelcast_cloud_cluster',
 ]

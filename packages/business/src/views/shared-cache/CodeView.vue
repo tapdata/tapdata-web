@@ -39,15 +39,15 @@ import { ClipboardButton } from '@tap/form'
 import { getCode } from '@tap/shared'
 export default {
   components: {
-    ClipboardButton
+    ClipboardButton,
   },
   props: {
     data: {
       type: Object,
       default: () => {
         return {}
-      }
-    }
+      },
+    },
   },
   computed: {
     cacheKeysArr() {
@@ -55,8 +55,8 @@ export default {
     },
     script() {
       return getCode(this.data)
-    }
-  }
+    },
+  },
 }
 </script>
 

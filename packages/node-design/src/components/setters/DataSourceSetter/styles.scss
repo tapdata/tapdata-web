@@ -25,7 +25,7 @@
       opacity: 0;
 
       &:hover {
-        color: map-get($color, primary);
+        color: map.get($color, primary);
       }
     }
   }

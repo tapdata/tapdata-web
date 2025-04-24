@@ -1,107 +1,157 @@
+<script setup lang="ts">
+import { useI18n } from '@tap/i18n'
+import { computed, h, inject, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
+const { t } = useI18n()
+const route = useRoute()
+const router = useRouter()
+const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
+const activeMenu = inject('activeMenu') || {}
+
+const props = defineProps({
+  hideHeader: {
+    type: Boolean,
+    default: false,
+  },
+  mode: {
+    type: String,
+    default: 'table', // full/auto/table/blank
+  },
+  headerClass: String,
+  containerClass: String,
+  contentClass: String,
+  ui: {
+    type: Object,
+    default: () => ({
+      container: {},
+      header: {},
+      content: {},
+    }),
+  },
+})
+
+const containerClass = computed(() => {
+  if (props.mode === 'blank') return props.containerClass || ''
+
+  const baseClasses = {
+    default: 'bg-white rounded-xl shadow-sm',
+    plain: 'bg-transparent',
+  }
+  const base = baseClasses[props.mode] || baseClasses.default
+  const paddingClasses = {
+    default: 'p-6 gap-4',
+    full: '',
+    auto: 'gap-4',
+  }
+  const paddingClass = paddingClasses[props.mode] ?? paddingClasses.default
+
+  return props.containerClass || `${base} ${paddingClass}`
+})
+
+const headerClass = computed(() => {
+  const baseClasses = {
+    default: '',
+    plain: '',
+    auto: 'px-6 pt-6',
+  }
+
+  return props.headerClass ?? baseClasses[props.mode] ?? baseClasses.default
+})
+
+const contentClass = computed(() => {
+  const modeClasses = {
+    table: 'flex-1 min-h-0',
+    full: 'flex-1 min-h-0 overflow-auto',
+    blank: 'flex-1 min-h-0 overflow-auto',
+    auto: 'flex-1 min-h-0 overflow-auto px-6 pb-6',
+  }
+
+  return props.contentClass || modeClasses[props.mode] || modeClasses.table
+})
+
+const showBackBtn = computed(() => {
+  if (!activeMenu.value) return false
+
+  if (activeMenu.value.startsWith('/')) {
+    return route.path !== activeMenu.value
+  }
+
+  return route.name !== activeMenu.value
+})
+
+const handleBack = () => {
+  if (activeMenu.value.startsWith('/')) {
+    return router.push(activeMenu.value)
+  }
+
+  router.push({
+    name: activeMenu.value,
+  })
+}
+</script>
+
 <template>
-  <div class="flex flex-column h-100 overflow-hidden">
-    <div :class="headerClass">
-      <ElBreadcrumb class="breadcrumb" v-if="breadcrumbData.length > 1" separator-class="el-icon-arrow-right">
-        <ElBreadcrumbItem v-for="item in breadcrumbData" :key="item.name" :to="item.to">
-          {{ item.name }}
-        </ElBreadcrumbItem>
-      </ElBreadcrumb>
-      <div class="flex align-items-center px-4 bg-white rounded-lg" v-else>
-        <span class="fs-5 py-4 font-color-dark mr-3">{{ $t($route.meta.title) }}</span>
-        <slot name="left-actions"></slot>
-        <ElDivider v-if="$route.meta.desc" class="mx-4" direction="vertical"></ElDivider>
-        <Desciption class="flex align-items-center fs-7 font-color-sslight" :desc="$t($route.meta.desc)"></Desciption>
-        <div class="flex-1"></div>
-        <slot name="actions"></slot>
+  <div
+    class="flex flex-column h-100 page-container overflow-hidden"
+    :class="containerClass"
+    :style="ui.container"
+  >
+    <div
+      v-if="!hideHeader"
+      class="page-header"
+      :class="headerClass"
+      :style="ui.header"
+    >
+      <div class="flex align-items-center bg-white rounded-lg">
+        <el-button v-if="showBackBtn" text class="mr-1" @click="handleBack">
+          <template #icon>
+            <VIcon>left</VIcon>
+          </template>
+        </el-button>
+
+        <slot name="title">
+          <span class="fs-5 font-color-dark lh-8">{{ $t($route.meta.title) }}</span>
+        </slot>
+
+        <slot name="left-actions" />
+        <template v-if="$route.meta.desc">
+          <ElDivider class="mx-4" direction="vertical" />
+          <span class="flex align-items-center fs-7 font-color-sslight">
+            <template v-if="typeof $route.meta.desc === 'function'">
+              <component :is="() => h('span', {}, [$route.meta.desc(h, $t)])" />
+            </template>
+            <template v-else>
+              {{ $t($route.meta.desc) }}
+            </template>
+          </span>
+        </template>
+
+        <div class="flex-1" />
+        <slot name="actions" />
       </div>
     </div>
-    <slot></slot>
+
+    <div class="page-content" :class="contentClass" :style="ui.content">
+      <slot />
+    </div>
   </div>
 </template>
 
-<script>
-export default {
-  components: {
-    Desciption: {
-      props: {
-        desc: [String, Function]
-      },
-      render(h) {
-        if (this.desc) {
-          if (Object.prototype.toString.call(this.desc) === '[object Function]') {
-            return h('span', { class: 'flex align-items-center' }, [this.desc(h, this.$t.bind(this))])
-          } else {
-            return h('span', this.desc)
-          }
-        }
-        return null
-      }
-    }
-  },
-  data() {
-    return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
-      breadcrumbData: [],
-      isHidden: false
-    }
-  },
-  computed: {
-    headerClass() {
-      return this.isDaas ? 'border-bottom' : 'bg-white rounded-lg mb-4'
-    }
-  },
-  watch: {
-    '$route.name'() {
-      this.getBreadcrumb(this.$route)
-    }
-  },
-  created() {
-    this.getBreadcrumb(this.$route)
-  },
-  methods: {
-    getBreadcrumb(route) {
-      let matched = route.matched.slice(1)
-      let data = []
-      let isHidden = false
-      if (matched.length) {
-        matched.forEach(route => {
-          isHidden = route.meta?.hideTitle
-          if (/^\/.*\/$/.test(route.path)) {
-            data.pop()
-          }
-          let to = {
-            name:
-              route.name === this.$route.name
-                ? null
-                : ['settingCenter', 'notification'].includes(route.name)
-                ? 'layout'
-                : route.name
-          }
-          if (route.meta?.doNotJump) {
-            to = null
-          }
-          data.push({
-            name: this.$t(route.meta?.title),
-            to
-          })
-        })
-      }
-      this.isHidden = !!isHidden
-      this.breadcrumbData = data
-    }
+<style lang="scss" scoped>
+.page-container {
+  &.bg-transparent {
+    box-shadow: none;
+  }
+
+  &.minimal {
+    border-radius: 0;
   }
 }
-</script>
-<style lang="scss" scoped>
-.breadcrumb {
-  height: 50px;
-  line-height: 50px;
-  margin-left: 24px;
-  .el-breadcrumb__item:last-child .el-breadcrumb__inner,
-  .el-breadcrumb__item:last-child .el-breadcrumb__inner a,
-  .el-breadcrumb__item:last-child .el-breadcrumb__inner a:hover,
-  .el-breadcrumb__item:last-child .el-breadcrumb__inner:hover {
-    color: map-get($fontColor, normal) !important;
+
+.page-header {
+  &.border-bottom {
+    border-bottom: 1px solid var(--el-border-color-light);
   }
 }
 </style>

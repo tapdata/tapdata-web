@@ -1,0 +1,17 @@
+.js-editor-dialog {
+  .item-script {
+    margin: 0;
+    padding: 16px 24px;
+    width: 100%;
+    max-height: 130px;
+    overflow: auto;
+    border-radius: 5px;
+    border-left: 5px solid #3b47e5;
+    background: #eff1f4;
+    font-size: 12px;
+    font-family: PingFangSC-Medium, PingFang SC;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.6);
+    line-height: 17px;
+  }
+}

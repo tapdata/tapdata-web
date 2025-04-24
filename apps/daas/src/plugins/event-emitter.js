@@ -56,7 +56,7 @@ export default class EventEmitter {
     this._getCallbacks(eventName).push({
       callback,
       context,
-      weight
+      weight,
     })
 
     // @todo instead of sorting insert to right place in Array.
@@ -90,7 +90,9 @@ export default class EventEmitter {
    * @return {number|null}
    */
   _getCallbackIndex(eventName, callback) {
-    return this._has(eventName) ? this._getCallbacks(eventName).findIndex(element => element.callback === callback) : -1
+    return this._has(eventName)
+      ? this._getCallbacks(eventName).findIndex((element) => element.callback === callback)
+      : -1
   }
 
   /**

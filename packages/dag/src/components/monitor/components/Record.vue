@@ -1,35 +1,9 @@
-<template>
-  <div class="record-wrap py-4 pl-4 h-100 w-100">
-    <VTable
-      :remoteMethod="remoteMethod"
-      :columns="columns"
-      :page-options="{
-        layout: 'total, ->, prev, pager, next, sizes, jumper'
-      }"
-      ref="table"
-      height="100%"
-      hide-on-single-page
-    >
-      <template slot="status" slot-scope="scope">
-        <TaskStatus :task="scope.row" />
-      </template>
-      <template slot="operation" slot-scope="scope">
-        <div class="operate-columns">
-          <ElButton size="mini" type="text" @click="handleDetail(scope.row)">{{
-            $t('public_button_details')
-          }}</ElButton>
-        </div>
-      </template>
-    </VTable>
-  </div>
-</template>
-
 <script>
-import i18n from '@tap/i18n'
-
-import { VTable } from '@tap/component'
 import { taskApi } from '@tap/api'
+
 import { TaskStatus } from '@tap/business'
+import { VTable } from '@tap/component'
+import i18n from '@tap/i18n'
 import { openUrl } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 
@@ -41,17 +15,17 @@ export default {
   props: {
     dataflow: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
     taskRecord: {
       type: Object,
       default: () => {
         return {
           total: 0,
-          items: []
+          items: [],
         }
-      }
-    }
+      },
+    },
   },
 
   data() {
@@ -61,42 +35,42 @@ export default {
           label: i18n.t('packages_dag_components_record_yunxingkaishishi'),
           prop: 'startDate',
           width: 170,
-          dataType: 'time'
+          dataType: 'time',
         },
         {
           label: i18n.t('packages_dag_components_record_yunxingjieshushi'),
           prop: 'endDate',
           width: 170,
-          dataType: 'time'
+          dataType: 'time',
         },
         {
           label: i18n.t('packages_dag_components_record_caozuoren'),
           prop: 'operator',
-          minWidth: 120
+          minWidth: 120,
         },
         {
           label: i18n.t('packages_dag_components_record_yunxingjieguo'),
           prop: 'status',
           slotName: 'status',
-          minWidth: 140
+          minWidth: 140,
         },
         {
           label: i18n.t('packages_dag_components_record_shurushijianzong'),
           prop: 'inputTotal',
           dataType: 'number',
-          minWidth: 120
+          minWidth: 120,
         },
         {
           label: i18n.t('packages_dag_components_record_shuchushijianzong'),
           prop: 'outputTotal',
           dataType: 'number',
-          minWidth: 120
+          minWidth: 120,
         },
         {
           label: i18n.t('public_operation'),
-          slotName: 'operation'
-        }
-      ]
+          slotName: 'operation',
+        },
+      ],
     }
   },
 
@@ -107,44 +81,47 @@ export default {
         const page = this.getPage() || {}
         if (
           page.current === 1 &&
-          (v?.total !== page.total || JSON.stringify(v?.items) !== JSON.stringify(this.getTableData()))
+          (v?.total !== page.total ||
+            JSON.stringify(v?.items) !== JSON.stringify(this.getTableData()))
         ) {
           this.fetch()
         }
-      }
-    }
+      },
+    },
   },
 
   methods: {
     remoteMethod({ page }) {
       const { current, size } = page
       const { id: taskId } = this.dataflow || {}
-      let filter = {
+      const filter = {
         page: current,
-        size: size
+        size,
       }
-      return taskApi.records(taskId, filter).then(data => {
+      return taskApi.records(taskId, filter).then((data) => {
         return {
           total: data.total,
-          data: data.items || []
+          data: data.items || [],
         }
       })
     },
 
     handleDetail(row = {}) {
       const { taskId, taskRecordId, startDate, endDate } = row
-      const start = startDate ? new Date(startDate).getTime() - 1000 : Time.now()
+      const start = startDate
+        ? new Date(startDate).getTime() - 1000
+        : Time.now()
       const end = endDate ? new Date(endDate).getTime() : Time.now()
       const routeUrl = this.$router.resolve({
         name: 'MigrationMonitorViewer',
         params: {
-          id: taskId
+          id: taskId,
         },
         query: {
           taskRecordId,
           start,
-          end
-        }
+          end,
+        },
       })
       openUrl(routeUrl.href)
     },
@@ -159,10 +136,36 @@ export default {
 
     getTableData() {
       return this.$refs.table?.getData()
-    }
-  }
+    },
+  },
 }
 </script>
+
+<template>
+  <div class="record-wrap py-4 pl-4 h-100 w-100">
+    <VTable
+      ref="table"
+      :remote-method="remoteMethod"
+      :columns="columns"
+      :page-options="{
+        layout: 'total, ->, prev, pager, next, sizes, jumper',
+      }"
+      height="100%"
+      hide-on-single-page
+    >
+      <template #status="scope">
+        <TaskStatus :task="scope.row" />
+      </template>
+      <template #operation="scope">
+        <div class="operate-columns">
+          <ElButton text type="primary" @click="handleDetail(scope.row)">{{
+            $t('public_button_details')
+          }}</ElButton>
+        </div>
+      </template>
+    </VTable>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .record-wrap {

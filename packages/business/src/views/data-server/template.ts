@@ -1,5 +1,5 @@
-module.exports = function (url, token) {
-  let javaTemplate = `public static void main(String[] args) {
+export default function (url, token) {
+  const javaTemplate = `public static void main(String[] args) {
   String url = "{{url}}";
   String access_token = "{{access_token}}";
   String param = "";
@@ -63,7 +63,7 @@ public static String doPost(String url, String access_token, String reqBody) {
 }`
     .replace('{{url}}', url)
     .replace('{{access_token}}', token)
-  let jsTemplate = `import fetch from 'node-fetch';
+  const jsTemplate = `import fetch from 'node-fetch';
 async function get(url){
   const response = await fetch(url);
   const data = await response.json();
@@ -92,7 +92,7 @@ post(url + '/find?access_token='+access_token,{}).then(data=>{
 })`
     .replace('{{url}}', url)
     .replace('{{access_token}}', token)
-  let pythonTemplate = `import requests
+  const pythonTemplate = `import requests
 
 url = "{{url}}"
 access_token = "{{access_token}}";
@@ -108,6 +108,6 @@ print(result2.text)`
   return {
     java: javaTemplate,
     javascript: jsTemplate,
-    python: pythonTemplate
+    python: pythonTemplate,
   }
 }

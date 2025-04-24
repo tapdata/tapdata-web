@@ -23,7 +23,7 @@
                   >add-outline</VIcon
                 >
               </template>
-              <span v-else class="flex-1 user-select-none text-truncate">{{ activeConnection.name }}</span>
+              <span v-else class="flex-1 user-select-none text-truncate text-start">{{ activeConnection.name }}</span>
             </div>
           </template>
           <div class="flex flex-column h-100">
@@ -33,11 +33,10 @@
                 ref="dbInput"
                 class="header__input"
                 :placeholder="$t('packages_dag_connection_name_search_placeholder')"
-                size="mini"
                 clearable
-                @keydown.native.stop
-                @keyup.native.stop
-                @click.native.stop
+                @keydown.stop
+                @keyup.stop
+                @click.stop
                 @input="handleDBInput"
               >
                 <template #prefix>
@@ -68,11 +67,14 @@
                       onStart,
                       onMove,
                       onDrop,
-                      onStop
+                      onStop,
                     }"
                     :key="db.id"
                     class="db-item flex align-center px-1 user-select-none rounded-2"
-                    :class="{ grabbable: !stateIsReadonly, active: activeConnection.id === db.id }"
+                    :class="{
+                      grabbable: !stateIsReadonly,
+                      active: activeConnection.id === db.id,
+                    }"
                     @click="handleSelectDB(db)"
                     @dblclick="onDBClick('')"
                   >
@@ -143,11 +145,10 @@
               v-model="tbSearchTxt"
               ref="tbInput"
               :placeholder="$t('packages_dag_table_name_search_placeholder')"
-              size="mini"
               clearable
-              @keydown.native.stop
-              @keyup.native.stop
-              @click.native.stop
+              @keydown.stop
+              @keyup.stop
+              @click.stop
               @input="handleTBInput"
             >
               <template #prefix>
@@ -185,7 +186,7 @@
                   onStart: onTBStart,
                   onMove,
                   onDrop,
-                  onStop
+                  onStop,
                 }"
                 :key="tb.id"
                 class="tb-item flex align-center px-2 user-select-none rounded-2"
@@ -209,11 +210,11 @@
       </div>
     </div>
 
-    <ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse" value="process">
+    <ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse" model-value="process">
       <ElCollapseItem name="process">
         <template #title>
           <div class="flex align-center flex-1">
-            <span class="flex-1 user-select-none">
+            <span class="flex-1 user-select-none text-start">
               <!--处理节点-->
               {{ $t('public_node_processor') }}
             </span>
@@ -230,7 +231,7 @@
               onStart: onProcessorStart,
               onMove,
               onDrop,
-              onStop
+              onStop,
             }"
             class="node-item flex align-center px-2 user-select-none rounded-2"
             :class="{ grabbable: !stateIsReadonly }"
@@ -256,7 +257,7 @@
 
     <!--创建连接-->
     <SceneDialog
-      :visible.sync="connectionDialog"
+      v-model:visible="connectionDialog"
       selector-type="source_and_target"
       @selected="handleDatabaseType"
     ></SceneDialog>
@@ -266,11 +267,12 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
+import { markRaw } from 'vue'
 import { mapGetters } from 'vuex'
-import { debounce, escapeRegExp } from 'lodash'
-import { Select } from 'element-ui'
-import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event'
-import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
+import { debounce, escapeRegExp } from 'lodash-es'
+import { useResizeObserver } from '@vueuse/core'
+import { getScrollBarWidth } from 'element-plus/es/utils/dom/scroll'
 import { metadataInstancesApi, databaseTypesApi, CancelToken, connectionsApi } from '@tap/api'
 import { VIcon, VEmpty, OverflowTooltip } from '@tap/component'
 import { SceneDialog } from '@tap/business'
@@ -285,7 +287,6 @@ import StageButton from '@tap/business/src/components/StageButton'
 
 export default {
   name: 'LeftSidebar',
-
   components: {
     SceneDialog,
     NodeIcon,
@@ -295,10 +296,8 @@ export default {
     BaseNode,
     VIcon,
     ConnectionType,
-    ElScrollbar: Select.components.ElScrollbar,
-    StageButton
+    StageButton,
   },
-
   data() {
     return {
       collapseMode: 'db',
@@ -321,7 +320,7 @@ export default {
       activeConnection: {
         id: '',
         name: '',
-        databaseType: ''
+        databaseType: '',
       },
       dragStarting: false,
       dragMoving: false,
@@ -344,16 +343,14 @@ export default {
         type: 'table',
         title: this.$t('packages_dag_dialog_createTable'),
         placeholder: this.$t('packages_dag_dialog_placeholderTable'),
-        visible: false
-      }
+        visible: false,
+      },
     }
   },
-
   directives: {
     mouseDrag,
-    resize
+    resize,
   },
-
   computed: {
     ...mapGetters('dataflow', ['processorNodeTypes', 'getCtor', 'stateIsReadonly']),
 
@@ -374,36 +371,39 @@ export default {
     },
 
     scrollbarWrapStyle() {
-      let gutter = scrollbarWidth()
+      let gutter = getScrollBarWidth()
       return `position:relative;height: calc(100% + ${gutter}px);`
-    }
+    },
   },
-
   created() {
     this.getDatabaseType()
 
     this.init()
   },
-
   mounted() {
-    addResizeListener(this.$refs.dbCollapse.$el, this.updateDBScrollbar)
-    addResizeListener(this.$refs.tbList.$el, this.updateTBScrollbar)
-    addResizeListener(this.$refs.processorCollapse.$el, this.updateProcessorScrollbar)
-  },
+    const { stop: stopDbResizeObserver } = useResizeObserver(this.$refs.dbCollapse.$el, this.updateDBScrollbar)
+    const { stop: stopTbResizeObserver } = useResizeObserver(this.$refs.tbList.$el, this.updateTBScrollbar)
+    const { stop: stopProcessorResizeObserver } = useResizeObserver(
+      this.$refs.processorCollapse.$el,
+      this.updateProcessorScrollbar,
+    )
 
-  beforeDestroy() {
-    removeResizeListener(this.$refs.dbCollapse.$el, this.updateDBScrollbar)
-    removeResizeListener(this.$refs.tbList.$el, this.updateTBScrollbar)
-    removeResizeListener(this.$refs.processorCollapse.$el, this.updateProcessorScrollbar)
+    this.stopDbResizeObserver = stopDbResizeObserver
+    this.stopTbResizeObserver = stopTbResizeObserver
+    this.stopProcessorResizeObserver = stopProcessorResizeObserver
   },
-
+  beforeUnmount() {
+    this.stopDbResizeObserver?.()
+    this.stopTbResizeObserver?.()
+    this.stopProcessorResizeObserver?.()
+  },
   methods: {
     // 创建连接
     creat() {
       this.connectionDialog = !this.stateIsReadonly
     },
     getDatabaseType() {
-      databaseTypesApi.get().then(res => {
+      databaseTypesApi.get().then((res) => {
         if (res) {
           this.getPdkData(res)
         }
@@ -451,10 +451,10 @@ export default {
           capabilities: 1,
           config: 1,
           connectionString: 1,
-          encryptConfig: 1
+          encryptConfig: 1,
         },
         order: ['status DESC', 'name ASC'],
-        where: {}
+        where: {},
       }
 
       const txt = escapeRegExp(this.dbSearchTxt.trim())
@@ -463,7 +463,7 @@ export default {
       }
 
       filter.where.createType = {
-        $ne: 'System'
+        $ne: 'System',
       }
 
       return { filter: JSON.stringify(filter) }
@@ -483,7 +483,7 @@ export default {
 
       const data = await connectionsApi
         .get(this.getDbFilter(), {
-          cancelToken: this.connectionCancelSource.token
+          cancelToken: this.connectionCancelSource.token,
         })
         .finally(() => {
           this.connectionCancelSource = null
@@ -491,7 +491,7 @@ export default {
 
       this.dbTotal = data.total
 
-      const dbList = data.items.map(item => {
+      const dbList = data.items.map((item) => {
         item.databaseType = item.database_type
         if (item.connectionString) {
           item.connectionUrl = item.connectionString
@@ -516,7 +516,7 @@ export default {
 
       if (loadMore) {
         // 防止重复push
-        dbList.forEach(item => {
+        dbList.forEach((item) => {
           if (!this.dbIdMap[item.id]) {
             this.dbList.push(item)
             this.dbIdMap[item.id] = true
@@ -546,16 +546,16 @@ export default {
           'source.id': this.activeConnection.id,
           taskId: this.$store.state.dataflow.taskId,
           meta_type: {
-            in: ['collection', 'table', 'view']
+            in: ['collection', 'table', 'view'],
           },
           is_deleted: false,
-          sourceType: 'SOURCE'
+          sourceType: 'SOURCE',
         },
         fields: {
           id: true,
-          original_name: true
+          original_name: true,
         },
-        order: ['original_name ASC']
+        order: ['original_name ASC'],
       }
 
       const txt = escapeRegExp(this.tbSearchTxt.trim())
@@ -588,7 +588,7 @@ export default {
       let data
       try {
         data = await metadataInstancesApi.get(this.getTableFilter(), {
-          cancelToken: this.cancelSource.token
+          cancelToken: this.cancelSource.token,
         })
       } catch (e) {
         // eslint-disable-next-line no-console
@@ -596,16 +596,16 @@ export default {
         return
       }
 
-      const tables = data.items.map(tb => ({
+      const tables = data.items.map((tb) => ({
         id: tb.id,
         name: tb.original_name,
-        comment: tb.comment
+        comment: tb.comment,
       }))
 
       this.tbTotal = data.total
 
       if (loadMore) {
-        tables.forEach(item => {
+        tables.forEach((item) => {
           if (!this.tbIdMap[item.id]) {
             this.tbList.push(item)
             this.tbIdMap[item.id] = true
@@ -643,7 +643,7 @@ export default {
       const ins = getResourceIns(node)
       Object.defineProperty(node, '__Ctor', {
         value: ins,
-        enumerable: false
+        enumerable: false,
       })
       this.dragNode = node
       this.dragStarting = true
@@ -666,12 +666,16 @@ export default {
       const getResourceIns = this.$store.getters['dataflow/getResourceIns']
       if (!item.__Ctor) {
         const ins = getResourceIns(node)
-        // 设置属性__Ctor不可枚举
+
         Object.defineProperty(node, '__Ctor', {
-          value: ins,
-          enumerable: false
+          value: markRaw(ins),
+          enumerable: false,
+          configurable: true,
         })
       }
+
+      console.log('onProcessorStart', node)
+
       this.dragNode = node
       this.dragStarting = true
       this.dragMoving = false
@@ -679,11 +683,11 @@ export default {
 
     onMove() {
       this.dragMoving = true
-      this.$emit('move-node', ...arguments)
+      $emit(this, 'move-node', ...arguments)
     },
 
     onDrop(item, position, rect) {
-      this.$emit('drop-node', this.dragNode, position, rect)
+      $emit(this, 'drop-node', this.dragNode, position, rect)
     },
 
     onStop() {
@@ -703,11 +707,11 @@ export default {
     }, 100),
 
     scrollTopOfDBList() {
-      if (this.$refs.dbList) this.$refs.dbList.wrap.scrollTop = 0
+      if (this.$refs.dbList) this.$refs.dbList.setScrollTop(0)
     },
 
     scrollTopOfTableList() {
-      if (this.$refs.tbList && this.$refs.tbList.wrap.scrollTop > 0) this.$refs.tbList.wrap.scrollTop = 0
+      if (this.$refs.tbList && this.$refs.tbList.wrapRef.scrollTop > 0) this.$refs.tbList.setScrollTop(0)
     },
 
     handleShowTBInput() {
@@ -749,7 +753,7 @@ export default {
     },
 
     handleSaveTable(name) {
-      this.$emit('add-table-as-node', this.getNodeProps(this.activeConnection, name))
+      $emit(this, 'add-table-as-node', this.getNodeProps(this.activeConnection, name))
     },
 
     updateDBScrollbar() {
@@ -777,7 +781,7 @@ export default {
         pdkHash: connection.pdkHash,
         capabilities: connection.capabilities || [],
         db_version: connection.db_version,
-        hasCreated: false
+        hasCreated: false,
       }
 
       if (pdkProperties) {
@@ -786,23 +790,23 @@ export default {
             properties: {
               attrs: {
                 type: 'object',
-                default: attrs
+                default: attrs,
               },
               $inputs: {
                 default: [],
-                type: 'array'
+                type: 'array',
               },
               $outputs: {
                 default: [],
-                type: 'array'
+                type: 'array',
               },
               wrap: {
                 ...pdkProperties,
-                type: 'void'
-              }
-            }
+                type: 'void',
+              },
+            },
           },
-          {}
+          {},
         )
         delete nodeConfig.attrs
         delete nodeConfig.$inputs
@@ -826,7 +830,7 @@ export default {
       const { pdkHash, pdkId } = item
       this.$router.push({
         name: 'connectionCreate',
-        query: { pdkHash, pdkId }
+        query: { pdkHash, pdkId },
       })
     },
 
@@ -837,7 +841,7 @@ export default {
     onDBClick(tableName) {
       if (this.stateIsReadonly) return
 
-      this.$emit('add-node', this.getNodeProps(this.activeConnection, tableName))
+      $emit(this, 'add-node', this.getNodeProps(this.activeConnection, tableName))
     },
 
     /**
@@ -847,13 +851,14 @@ export default {
     onDoubleClickProcessor(item) {
       if (this.stateIsReadonly) return
 
-      this.$emit('add-node', item)
-    }
-  }
+      $emit(this, 'add-node', item)
+    },
+  },
+  emits: ['move-node', 'drop-node', 'add-table-as-node', 'add-node'],
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 $itemH: 30px;
 $hoverBg: #eef3ff;
 
@@ -864,73 +869,77 @@ $hoverBg: #eef3ff;
   opacity: 0;
   transform-origin: center center;
 }
-
 .layout-sidebar.--left {
   overflow: visible;
   $headerH: 34px;
 
-  ::v-deep {
-    .db-list-container {
-      max-height: 50%;
-      .el-collapse-item:last-child {
-        margin-bottom: -1px;
-      }
-
-      .el-collapse-item__header {
-        color: map-get($fontColor, normal) !important;
-      }
+  :deep(.db-list-container) {
+    max-height: 50%;
+    .el-collapse-item:last-child {
+      margin-bottom: -1px;
     }
 
+    .el-collapse-item__header {
+      color: map.get($fontColor, normal) !important;
+    }
+  }
+
+  :deep(*) {
     .click-btn {
       width: 24px !important;
       height: 24px !important;
       z-index: 2;
       border-radius: 4px;
+
       &.refresh {
-        color: map-get($iconFillColor, normal);
+        color: map.get($iconFillColor, normal);
       }
+
       &:hover,
       &.active {
-        color: map-get($color, primary);
+        color: map.get($color, primary);
         background: $hoverBg;
       }
 
       &-disabled {
         color: currentColor;
         cursor: not-allowed;
+
         &:hover {
           color: currentColor;
           background: rgba(242, 243, 245);
         }
       }
     }
+  }
 
-    .badge {
-      display: inline-block;
-      margin-left: 4px;
-      padding: 2px 6px;
-      border-radius: 18px;
-      background: #f2f4f6;
-      color: rgba(0, 0, 0, 0.4);
-      font-size: 12px;
-      font-weight: 500;
-      line-height: 1;
-      vertical-align: baseline;
+  :deep(.badge) {
+    display: inline-block;
+    margin-left: 4px;
+    padding: 2px 6px;
+    border-radius: 18px;
+    background: #f2f4f6;
+    color: rgba(0, 0, 0, 0.4);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
+    vertical-align: baseline;
+  }
+
+  :deep(.tb-header) {
+    position: relative;
+    height: $headerH;
+    font-size: 14px;
+    font-weight: 500;
+    border-bottom: 1px solid transparent;
+    .tb-header-icon {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
     }
+  }
 
-    .tb-header {
-      position: relative;
-      height: $headerH;
-      font-size: 14px;
-      font-weight: 500;
-      border-bottom: 1px solid transparent;
-      &-icon {
-        flex-shrink: 0;
-        width: 20px;
-        height: 20px;
-      }
-    }
-
+  :deep(*) {
     .db-item,
     .tb-item,
     .node-item {
@@ -978,74 +987,75 @@ $hoverBg: #eef3ff;
         margin-bottom: 0;
       }
     }
+  }
 
-    .tb-item-icon {
-      width: 20px;
-      height: 20px;
-      background-color: #6236ff;
-      text-align: center;
-      border-radius: 100%;
-    }
+  :deep(.tb-item-icon) {
+    width: 20px;
+    height: 20px;
+    background-color: #6236ff;
+    text-align: center;
+    border-radius: 100%;
+  }
 
-    .el-collapse {
-      border-top: 0;
-      &.processor-collapse {
-        max-height: 30%;
-      }
-      &.collapse-fill {
-        .el-collapse-item:first-child:last-child {
-          height: 100%;
-          .el-collapse-item__wrap {
-            height: calc(100% - $headerH);
-          }
-          .el-collapse-item__content {
-            height: 100%;
-          }
-        }
-      }
+  :deep(.el-collapse.processor-collapse) {
+    max-height: 30%;
+  }
 
-      &-item {
-        &.is-active [role='tab'] {
-          position: sticky;
-          top: 0;
-          z-index: 1;
-        }
+  :deep(.el-collapse.processor-collapse) {
+    max-height: 30%;
+  }
 
-        &__header {
-          position: relative;
-          padding-left: 16px;
-          padding-right: 16px;
-          height: $headerH;
-          font-size: 14px;
-
-          &:hover {
-            background-color: rgba(47, 46, 63, 0.05);
-          }
-        }
-
-        &__arrow {
-          order: -1;
-          &:before {
-            content: '\e791';
-          }
-        }
-
-        &__content {
-          padding-bottom: 0;
-        }
-      }
-    }
-
-    .el-scrollbar {
+  :deep(.el-collapse.collapse-fill) {
+    .el-collapse-item:first-child:last-child {
       height: 100%;
-    }
-
-    .skeleton-wrap {
-      z-index: 1;
+      .el-collapse-item__wrap {
+        height: calc(100% - $headerH);
+      }
+      .el-collapse-item__content {
+        height: 100%;
+      }
     }
   }
-}
 
+  :deep(.el-collapse) {
+    border-top: 0;
+    .el-collapse-item {
+      &.is-active [role='tab'] {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+      }
+
+      &__header {
+        position: relative;
+        padding-left: 16px;
+        padding-right: 16px;
+        height: $headerH;
+        font-size: 14px;
+
+        &:hover {
+          background-color: rgba(47, 46, 63, 0.05);
+        }
+      }
+
+      &__arrow {
+        order: -1;
+      }
+
+      &__content {
+        padding: 0;
+      }
+    }
+  }
+
+  :deep(.el-scrollbar) {
+    height: 100%;
+  }
+
+  :deep(.skeleton-wrap) {
+    z-index: 1;
+  }
+}
 .node-list {
   .node-item {
     border-radius: 4px;

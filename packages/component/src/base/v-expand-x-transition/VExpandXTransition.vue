@@ -1,4 +1,6 @@
-<script>
+<script lang="jsx">
+import { defineComponent } from 'vue'
+
 function upperFirst(str) {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
@@ -8,17 +10,17 @@ function ExpandTransitionGenerator(expandedParentClass = '', x = false) {
   const offsetProperty = `offset${upperFirst(sizeProperty)}`
 
   return {
-    beforeEnter(el) {
+    onBeforeEnter(el) {
       el._parent = el.parentNode
       el._initialStyle = {
         transition: el.style.transition,
         overflow: el.style.overflow,
-        [sizeProperty]: el.style[sizeProperty]
+        [sizeProperty]: el.style[sizeProperty],
       }
       console.log('beforeEnter', el._initialStyle) // eslint-disable-line
     },
 
-    enter(el) {
+    onEnter(el) {
       const initialStyle = el._initialStyle
 
       el.style.setProperty('transition', 'none', 'important')
@@ -40,14 +42,14 @@ function ExpandTransitionGenerator(expandedParentClass = '', x = false) {
       })
     },
 
-    afterEnter: resetStyles,
-    enterCancelled: resetStyles,
+    onAfterEnter: resetStyles,
+    onEnterCancelled: resetStyles,
 
-    leave(el) {
+    onLeave(el) {
       el._initialStyle = {
         transition: '',
         overflow: el.style.overflow,
-        [sizeProperty]: el.style[sizeProperty]
+        [sizeProperty]: el.style[sizeProperty],
       }
 
       el.style.overflow = 'hidden'
@@ -56,11 +58,11 @@ function ExpandTransitionGenerator(expandedParentClass = '', x = false) {
       requestAnimationFrame(() => (el.style[sizeProperty] = '0'))
     },
 
-    afterLeave,
-    leaveCancelled: afterLeave
+    onAfterLeave,
+    onLeaveCancelled: onAfterLeave,
   }
 
-  function afterLeave(el) {
+  function onAfterLeave(el) {
     if (expandedParentClass && el._parent) {
       el._parent.classList.remove(expandedParentClass)
     }
@@ -75,27 +77,16 @@ function ExpandTransitionGenerator(expandedParentClass = '', x = false) {
   }
 }
 
-export default {
-  name: 'VExpandXTransition',
-  functional: true,
-  render(h, { attrs, children }) {
-    const data = {
-      on: new ExpandTransitionGenerator('', true)
-    }
-
-    return h(
-      'transition',
-      {
-        ...data,
-        props: {
-          ...attrs,
-          name: 'expand-x-transition'
-        }
-      },
-      children
-    )
-  }
-}
+export default defineComponent((props, { slots }) => {
+  return () => (
+    <Transition
+      name="expand-x-transition"
+      {...ExpandTransitionGenerator('', true)}
+    >
+      {slots.default()}
+    </Transition>
+  )
+})
 </script>
 
 <style lang="scss">

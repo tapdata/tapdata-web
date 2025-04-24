@@ -8,7 +8,7 @@
         <div class="flex align-items-center">
           <TextEditable
             class="overflow-hidden"
-            v-model="name"
+            v-model:value="name"
             :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
             :input-min-width="32"
             :maxlength="200"
@@ -49,7 +49,7 @@
           <VIcon size="20">compress</VIcon>
         </button>
       </ElTooltip>
-      <VDivider class="mx-3" vertical></VDivider>
+      <el-divider direction="vertical" />
       <!--缩小-->
       <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_zoom_out') + `(${commandCode} -)`">
         <button @click="$emit('zoom-out')" class="icon-btn">
@@ -57,8 +57,10 @@
         </button>
       </ElTooltip>
       <div class="choose-size mx-2">
-        <ElPopover placement="bottom" trigger="hover" popper-class="rounded-xl p-0">
-          <div slot="reference" class="size-wrap">{{ scaleTxt }}</div>
+        <ElPopover placement="bottom" trigger="hover" popper-class="rounded-xl p-0" width="auto">
+          <template v-slot:reference>
+            <div class="size-wrap">{{ scaleTxt }}</div>
+          </template>
           <div class="choose-list p-2">
             <div @click="$emit('zoom-in')" class="choose-item pl-4 flex justify-content-between align-center">
               <span class="title">{{ $t('packages_dag_button_zoom_out') }}</span>
@@ -81,13 +83,13 @@
           <VIcon size="20">add-outline</VIcon>
         </button>
       </ElTooltip>
-      <VDivider class="mx-3" vertical></VDivider>
+      <el-divider direction="vertical" />
       <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_monitor_bottompanel_rizhi')">
         <button :class="{ active: showBottomPanel }" class="icon-btn" @click="$emit('showBottomPanel')">
           <VIcon size="16">list</VIcon>
         </button>
       </ElTooltip>
-      <VDivider class="mx-3" vertical></VDivider>
+      <el-divider direction="vertical" />
       <button
         v-if="buttonShowMap.Start"
         class="icon-btn"
@@ -99,7 +101,7 @@
     </div>
     <div class="flex-grow-1"></div>
     <div class="flex align-center ml-2">
-      <ElButton v-if="!hideSetting && !hideOperation" class="ml-3" size="medium" @click="$emit('showSettings')">
+      <ElButton v-if="!hideSetting && !hideOperation" class="ml-3" @click="$emit('showSettings')">
         <VIcon class="mr-1">cog-o</VIcon>
         {{ $t('public_button_setting') }}
       </ElButton>
@@ -108,7 +110,6 @@
           v-if="dataflow.disabledData && !dataflow.disabledData.edit && !hideEdit && buttonShowMap.Edit"
           :disabled="$disabledReadonlyUserBtn()"
           class="ml-3"
-          size="medium"
           @click="$emit('edit')"
         >
           <VIcon class="mr-1">edit-outline</VIcon>
@@ -118,7 +119,6 @@
           v-if="!(dataflow.disabledData && dataflow.disabledData.reset) && buttonShowMap.Reset"
           :disabled="$disabledReadonlyUserBtn()"
           class="ml-3"
-          size="medium"
           type="warning"
           @click="$emit('reset')"
         >
@@ -128,7 +128,6 @@
           v-if="!(dataflow.disabledData && dataflow.disabledData.start) && buttonShowMap.Start"
           :disabled="$disabledReadonlyUserBtn()"
           class="ml-3"
-          size="medium"
           type="primary"
           @click="$emit('start')"
         >
@@ -138,9 +137,7 @@
           <ElButton
             v-if="isShowForceStop(dataflow) && buttonShowMap.Stop"
             :disabled="(dataflow.disabledData && dataflow.disabledData.forceStop) || $disabledReadonlyUserBtn()"
-            key="forceStop"
             class="ml-3"
-            size="medium"
             type="danger"
             @click="$emit('forceStop')"
           >
@@ -149,8 +146,6 @@
           <ElButton
             v-else-if="buttonShowMap.Stop"
             :disabled="(dataflow.disabledData && dataflow.disabledData.stop) || $disabledReadonlyUserBtn()"
-            key="stop"
-            size="medium"
             type="danger"
             class="ml-3"
             @click="$emit('stop')"
@@ -171,6 +166,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 import { taskApi } from '@tap/api'
 
@@ -182,12 +178,11 @@ import { TextEditable, VIcon, VDivider, OverflowTooltip } from '@tap/component'
 import { TaskStatus } from '@tap/business'
 import syncTaskAgent from '@tap/business/src/mixins/syncTaskAgent'
 import DataCaptureDebug from '../DataCaptureDebug.vue'
+import editSvg from '@tap/assets/images/edit-fill.svg'
 
 export default {
   name: 'TopHeader',
-
   directives: { focusSelect },
-
   props: {
     loading: Boolean,
     dataflowName: String,
@@ -197,21 +192,18 @@ export default {
     hideOperation: Boolean,
     hideMenus: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     quota: Object,
     buttonShowMap: {
       type: Object,
       default: () => {
         return {}
-      }
-    }
+      },
+    },
   },
-
   mixins: [syncTaskAgent],
-
   components: { DataCaptureDebug, VIcon, TaskStatus, VDivider, OverflowTooltip, TextEditable },
-
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
     return {
@@ -221,12 +213,12 @@ export default {
       syncMap: {
         'initial_sync+cdc': this.$t('public_task_type_initial_sync_and_cdc'),
         initial_sync: this.$t('public_task_type_initial_sync'),
-        cdc: this.$t('public_task_type_cdc')
+        cdc: this.$t('public_task_type_cdc'),
       },
       chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
       showSearchNodePopover: false,
       nodeSearchInput: '',
-      editSvg: require('@tap/assets/images/edit-fill.svg'),
+      editSvg,
       syncType: {
         initial_sync: i18n.t('public_task_type_initial_sync'),
         cdc: i18n.t('public_task_type_cdc'),
@@ -235,7 +227,6 @@ export default {
       openDebug: false
     }
   },
-
   computed: {
     ...mapGetters('dataflow', ['dataflowId', 'allNodes', 'activeType']),
     ...mapState('dataflow', ['spaceKeyPressed']),
@@ -260,16 +251,25 @@ export default {
       return {
         cpuUsage:
           typeof cpuUsage === 'number'
-            ? (cpuUsage * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
+            ? (cpuUsage * 100).toLocaleString('zh-CN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }) + '%'
             : '',
         memoryRate:
           typeof memoryRate === 'number'
-            ? (memoryRate * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
+            ? (memoryRate * 100).toLocaleString('zh-CN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }) + '%'
             : '',
         gcRate:
           typeof gcRate === 'number'
-            ? (gcRate * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
-            : ''
+            ? (gcRate * 100).toLocaleString('zh-CN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }) + '%'
+            : '',
       }
     },
 
@@ -281,19 +281,16 @@ export default {
     hideEdit() {
       // 心跳任务，不显示编辑
       return ['connHeartbeat'].includes(this.dataflow.syncType)
-    }
+    },
   },
-
   watch: {
     dataflowName(v) {
       this.name = v
-    }
+    },
   },
-
   mounted() {
     this.name = this.dataflowName
   },
-
   methods: {
     ...mapMutations('dataflow', ['setActiveType', 'setPaperSpaceKeyPressed']),
 
@@ -305,7 +302,7 @@ export default {
       if (!this.name) {
         this.name = this.dataflowName
       } else {
-        this.$emit('change-name', this.name)
+        $emit(this, 'change-name', this.name)
       }
     },
 
@@ -319,14 +316,14 @@ export default {
       const backToList = () => {
         if ($PLATFORM === 'dfs') {
           top.window.App.$router.push({
-            name: 'Task'
+            name: 'Task',
           })
         } else {
           this.$router.push({
             name: 'dataFlows',
             query: {
-              mapping: mapping
-            }
+              mapping: mapping,
+            },
           })
         }
       }
@@ -341,11 +338,38 @@ export default {
 
       this.openDebug = true
     }
-  }
+  },
+  emits: [
+    'page-return',
+    'center-content',
+    'zoom-out',
+    'zoom-in',
+    'zoom-to',
+    'showBottomPanel',
+    'showSettings',
+    'edit',
+    'reset',
+    'start',
+    'forceStop',
+    'stop',
+    'change-name',
+    'page-return',
+    'center-content',
+    'zoom-out',
+    'zoom-in',
+    'zoom-to',
+    'showBottomPanel',
+    'showSettings',
+    'edit',
+    'reset',
+    'start',
+    'forceStop',
+    'stop',
+  ],
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 $sidebarW: 236px;
 $hoverBg: #eef3ff;
 $radius: 6px;
@@ -362,7 +386,6 @@ $sidebarBg: #fff;
   background-color: #fff;
   color: rgba(0, 0, 0, 0.87);
   box-sizing: border-box;
-
   .left-content {
     min-width: calc(50% - 140px);
   }
@@ -370,7 +393,7 @@ $sidebarBg: #fff;
   .nav-icon {
     width: 40px;
     height: 100%;
-    background-color: map-get($color, primary);
+    background-color: map.get($color, primary);
     cursor: pointer;
     font-size: 24px;
 
@@ -391,12 +414,14 @@ $sidebarBg: #fff;
     outline: none;
     border: 1px solid transparent;
     border-radius: $radius;
-    transition: background, color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+    transition:
+      background,
+      color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
     cursor: pointer;
 
     &.active,
     &:not(.disabled):hover {
-      color: map-get($color, primary);
+      color: map.get($color, primary);
       background: $hoverBg;
     }
 
@@ -453,7 +478,7 @@ $sidebarBg: #fff;
       cursor: pointer;
 
       &:hover {
-        color: map-get($color, primary);
+        color: map.get($color, primary);
         background: $hoverBg;
       }
     }
@@ -471,7 +496,6 @@ $sidebarBg: #fff;
     min-width: 260px;
   }
 }
-
 .agent-data__item {
   border-left: 1px solid #f2f2f2;
 }

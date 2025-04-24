@@ -13,13 +13,13 @@
     </div>
 
     <UpgradeFee
-      :visible.sync="upgradeFeeVisible"
+      v-model:visible="upgradeFeeVisible"
       :tooltip="upgradeFeeVisibleTips || $t('packages_business_task_list_nindekeyunxing')"
       :go-page="upgradeFeeGoPage"
     ></UpgradeFee>
 
     <UpgradeCharges
-      :visible.sync="upgradeChargesVisible"
+    v-model:visible="upgradeChargesVisible"
       :tooltip="upgradeChargesVisibleTips || $t('packages_business_task_list_nindekeyunxing')"
       :go-page="upgradeFeeGoPage"
     ></UpgradeCharges>
@@ -29,13 +29,16 @@
 <script>
 import i18n from '@tap/i18n'
 import { showErrorMessage, UpgradeCharges, UpgradeFee } from '@tap/business'
-import { Message } from 'element-ui'
 import { alarmApi, clusterApi, taskApi } from '@tap/api'
-import { debounce, merge } from 'lodash'
+import { debounce, merge } from 'lodash-es'
 import { createForm, onFormValuesChange, onFieldValueChange, createEffectHook } from '@formily/core'
 import { observable, action, untracked, raw, isObservable, observe, autorun } from '@formily/reactive'
 import SchemaForm from '../SchemaForm.vue'
-import { defineComponent, inject, nextTick, ref, onBeforeUnmount, computed } from '@vue/composition-api'
+import { useStore } from 'vuex'
+import { defineComponent, inject, nextTick, ref, onBeforeUnmount, computed } from 'vue'
+import axios from 'axios'
+import { useRouter } from 'vue-router'
+import { ElMessage as Message, ElMessageBox } from 'element-plus'
 
 // 自定义 Dialog 表单内的 value 变化事件
 const onDialogFormValuesChange = createEffectHook('dialog-form-values-change', (payload, form) => listener => {
@@ -45,8 +48,10 @@ const onDialogFormValuesChange = createEffectHook('dialog-form-values-change', (
 export default defineComponent({
   name: 'TaskStep',
   components: { UpgradeFee, UpgradeCharges, SchemaForm },
-  setup(props, { emit, root }) {
-    const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+  setup(props, { emit }) {
+    const store = useStore()
+    const router = useRouter()
+    const isDaas =  import.meta.env.VUE_APP_PLATFORM === 'DAAS'
     const taskRef = inject('task')
     const pageVersionRef = inject('pageVersion')
     const lockedFeature = inject('lockedFeature')
@@ -55,6 +60,9 @@ export default defineComponent({
       lockedFeature,
       $isDaas: isDaas,
       $settings: taskRef.value,
+      hasFeature: (feature) => {
+          return !isDaas || store.getters['feature/hasFeature']?.(feature)
+        },
       useAsyncOptions: (service, ...serviceParams) => {
         return field => {
           field.loading = true
@@ -107,7 +115,7 @@ export default defineComponent({
       },
 
       findNodeById: id => {
-        return root.$store.state.dataflow.NodeMap[id]
+        return store.state.dataflow.NodeMap[id]
       },
 
       findParentNodes: (id, ifMyself) => {
@@ -1866,7 +1874,7 @@ export default defineComponent({
     }
 
     const upgradeFeeGoPage = () => {
-      const routeUrl = root.$router.resolve({
+      const routeUrl = router.resolve({
         name: 'createAgent'
       })
       window.open(routeUrl.href, '_blank')
@@ -1874,7 +1882,7 @@ export default defineComponent({
 
     const handleShowUpgradeDialog = err => {
       !isDaas &&
-        root.$axios
+        axios
           .get(
             'api/tcm/agent?filter=' +
               encodeURIComponent(
@@ -1920,8 +1928,8 @@ export default defineComponent({
           }
         }
       } else if (code === 'Task.OldVersion') {
-        root
-          .$confirm('', i18n.t('packages_dag_task_old_version_confirm'), {
+        ElMessageBox
+          .confirm('', i18n.t('packages_dag_task_old_version_confirm'), {
             onlyTitle: true,
             type: 'warning',
             closeOnClickModal: false,
@@ -1966,9 +1974,9 @@ export default defineComponent({
         // this.isSaving = false
         isOk = true
 
-        root.$store.dispatch('setGuideComplete')
+        store.dispatch('setGuideComplete')
 
-        root.$router.push({
+        router.push({
           name: 'MigrationMonitorSimple',
           params: {
             id: taskRef.value.id

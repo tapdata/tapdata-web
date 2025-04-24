@@ -23,7 +23,7 @@
             @click="handleAction(distinguishCancelAndClose ? 'close' : 'cancel')"
             @keydown.enter="handleAction(distinguishCancelAndClose ? 'close' : 'cancel')"
           >
-            <i class="el-message-box__close el-icon-close"></i>
+            <el-icon class="el-message-box__close"><el-icon-close /></el-icon>
           </button>
         </div>
         <div class="el-message-box__content" :class="{ 'mt-3': !title }">
@@ -47,11 +47,16 @@
             <el-input
               v-model="inputValue"
               :type="inputType"
-              @keydown.enter.native="handleInputEnter"
+              @keydown.enter="handleInputEnter"
               :placeholder="inputPlaceholder"
               ref="input"
             ></el-input>
-            <div class="el-message-box__errormsg" :style="{ visibility: !!editorErrorMessage ? 'visible' : 'hidden' }">
+            <div
+              class="el-message-box__errormsg"
+              :style="{
+                visibility: !!editorErrorMessage ? 'visible' : 'hidden',
+              }"
+            >
               {{ editorErrorMessage }}
             </div>
           </div>
@@ -62,8 +67,7 @@
             :class="[cancelButtonClasses]"
             v-if="showCancelButton"
             :round="roundButton"
-            size="small"
-            @click.native="handleAction('cancel')"
+            @click="handleAction('cancel')"
             @keydown.enter="handleAction('cancel')"
           >
             {{ cancelButtonText || cancelButtonTextDefault }}
@@ -74,8 +78,7 @@
             :class="[confirmButtonClasses]"
             v-show="showConfirmButton"
             :round="roundButton"
-            size="small"
-            @click.native="handleAction('confirm')"
+            @click="handleAction('confirm')"
             @keydown.enter="handleAction('confirm')"
           >
             {{ confirmButtonText || confirmButtonTextDefault }}
@@ -88,22 +91,21 @@
 
 <script>
 import { VIcon } from '@tap/component'
-import MsgBox from 'element-ui/packages/message-box/src/main.vue'
+import MsgBox from 'element-plus/lib/components/message-box/index'
 import i18n from '@/i18n'
 
 export default {
+  components: {
+    VIcon,
+  },
   extends: MsgBox,
-
-  components: { VIcon },
-
   data() {
     return {
       width: null,
       cancelButtonTextDefault: i18n.t('public_button_cancel'),
-      confirmButtonTextDefault: i18n.t('public_button_confirm')
+      confirmButtonTextDefault: i18n.t('public_button_confirm'),
     }
   },
-
   computed: {
     icon() {
       const { type } = this
@@ -119,8 +121,8 @@ export default {
     showContentIcon() {
       let { title, message } = this
       return !title && message
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -134,7 +136,7 @@ export default {
     }
     &__title {
       font-size: 14px;
-      color: map-get($fontColor, normal);
+      color: map.get($fontColor, normal);
     }
     &__content {
       padding: 10px 24px;

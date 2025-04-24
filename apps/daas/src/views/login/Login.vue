@@ -1,69 +1,27 @@
-<template>
-  <LoginPage>
-    <section class="page-sign-in" slot="main">
-      <div class="sign-in-panel">
-        <div class="title">
-          {{ $t('app_signIn_signIn') }}
-          <span v-if="$getSettingByKey('SHOW_REGISTER')" @click="registry">{{ $t('app_signIn_Registration') }}</span>
-        </div>
-        <div class="error-tips align-center justify-content-start rounded-lg" v-show="errorMessage">
-          <i class="el-icon-warning-outline mr-2"></i>
-          {{ errorMessage }}
-        </div>
-        <form class="rounded-lg">
-          <input
-            class="input"
-            type="email"
-            autocomplete="username"
-            :placeholder="$t(adEnable ? 'login_email_and_ad_placeholder' : 'app_signIn_email_placeholder')"
-            v-model="form.email"
-          />
-          <input
-            class="input"
-            type="password"
-            autocomplete="current-password"
-            :placeholder="$t('app_signIn_password_placeholder')"
-            v-model="form.password"
-            @keyup.13="submit"
-          />
-        </form>
-        <el-checkbox class="keep-sign-in" v-model="keepSignIn">
-          {{ $t('app_signIn_keepSignIn') }}
-        </el-checkbox>
-        <ElButton class="btn-sign-in" type="primary" size="large" :loading="loading" @click="submit">
-          {{ $t('app_signIn_signIn') }}
-        </ElButton>
-
-        <div class="remember">
-          <ElButton type="text" @click="forgetPassword">{{ $t('app_signIn_forgetPassword') }}</ElButton>
-        </div>
-      </div>
-    </section>
-  </LoginPage>
-</template>
-
 <script>
-import i18n from '@/i18n'
+import { timeStampApi, usersApi } from '@tap/api'
 
-import cryptoJS from 'crypto-js'
-import LoginPage from './LoginPage'
 import Cookie from '@tap/shared/src/cookie'
-import { usersApi, timeStampApi } from '@tap/api'
+import cryptoJS from 'crypto-js'
+import i18n from '@/i18n'
 import { configUser } from '@/utils/util'
+import LoginPage from './LoginPage'
 
 export default {
   name: 'SignIn',
-  components: { LoginPage },
+  components: {
+    LoginPage,
+  },
   data() {
     return {
       loading: false,
       form: {
         email: '',
-        password: ''
+        password: '',
       },
       keepSignIn: true,
       errorMessage: '',
-      adEnable: false
+      adEnable: false,
     }
   },
   created() {
@@ -78,11 +36,15 @@ export default {
       this.adEnable = data
     },
     async submit() {
-      let form = this.form
-      let oldPassword = this.form.password + ''
+      const form = this.form
+      const oldPassword = String(this.form.password)
       let message = ''
       if (!form.email || !form.email.trim()) {
-        message = this.$t(this.adEnable ? 'login_email_and_ad_placeholder' : 'app_signIn_email_require')
+        message = this.$t(
+          this.adEnable
+            ? 'login_email_and_ad_placeholder'
+            : 'app_signIn_email_require',
+        )
       } else if (
         // eslint-disable-next-line
         !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email) &&
@@ -99,58 +61,127 @@ export default {
       this.loading = true
       try {
         //登陆密码加密
-        let timeStampData = await timeStampApi.get()
-        this.form['stime'] = timeStampData.data
-        this.form.password = cryptoJS.RC4.encrypt(this.form.password, 'Gotapd8').toString()
-        let Str = this.form.email + this.form.password + this.form.stime + 'Gotapd8'
-        this.form['sign'] = cryptoJS.SHA1(Str).toString().toUpperCase()
+        const timeStampData = await timeStampApi.get()
+        this.form.stime = timeStampData.data
+        this.form.password = cryptoJS.RC4.encrypt(
+          this.form.password,
+          'Gotapd8',
+        ).toString()
+        const Str = `${this.form.email + this.form.password + this.form.stime}Gotapd8`
+        this.form.sign = cryptoJS.SHA1(Str).toString().toUpperCase()
 
-        let data = await usersApi.login(this.form)
+        const data = await usersApi.login(this.form)
         Cookie.set('access_token', data?.id)
         Cookie.set('tem_token', data?.id)
 
         await this.$store.dispatch('feature/getFeatures')
 
-        let user = await usersApi.getInfo()
+        const user = await usersApi.getInfo()
         configUser(user)
-        let lastLocationHref = sessionStorage.getItem('lastLocationHref')
+        const lastLocationHref = sessionStorage.getItem('lastLocationHref')
         if (lastLocationHref) {
-          location.href = lastLocationHref.includes('login') ? location.href.split('#')[0] : lastLocationHref
+          location.href = lastLocationHref.includes('login')
+            ? location.href.split('#')[0]
+            : lastLocationHref
           setTimeout(() => {
             sessionStorage.removeItem('lastLocationHref')
           }, 50)
         } else {
           this.$router.push({
-            name: 'dashboard'
+            name: 'dashboard',
           })
         }
-      } catch (e) {
+      } catch (error) {
         this.loading = false
         this.form.password = oldPassword
-        this.errorMessage = e?.data?.message
+        this.errorMessage = error?.data?.message
       }
     },
     // 注册账号
     registry() {
       this.$router.push({
-        name: 'registry'
+        name: 'registry',
       })
     },
 
     // 忘记密码
     forgetPassword() {
       this.$router.push({ name: 'passwordReset' })
-    }
-  }
+    },
+  },
 }
 </script>
+
+<template>
+  <LoginPage>
+    <template #main>
+      <section class="page-sign-in">
+        <div class="sign-in-panel">
+          <div class="title">
+            {{ $t('app_signIn_signIn') }}
+            <span v-if="$getSettingByKey('SHOW_REGISTER')" @click="registry">{{
+              $t('app_signIn_Registration')
+            }}</span>
+          </div>
+          <div
+            v-show="errorMessage"
+            class="error-tips align-center justify-content-start"
+          >
+            <el-icon class="mr-2"><el-icon-warning /></el-icon>
+            {{ errorMessage }}
+          </div>
+          <form class="rounded-lg">
+            <input
+              v-model="form.email"
+              class="input"
+              type="email"
+              autocomplete="username"
+              :placeholder="
+                $t(
+                  adEnable
+                    ? 'login_email_and_ad_placeholder'
+                    : 'app_signIn_email_placeholder',
+                )
+              "
+            />
+            <input
+              v-model="form.password"
+              class="input"
+              type="password"
+              autocomplete="current-password"
+              :placeholder="$t('app_signIn_password_placeholder')"
+              @keyup.enter="submit"
+            />
+          </form>
+          <el-checkbox v-model="keepSignIn" class="keep-sign-in">
+            {{ $t('app_signIn_keepSignIn') }}
+          </el-checkbox>
+          <ElButton
+            class="btn-sign-in"
+            size="large"
+            type="primary"
+            :loading="loading"
+            @click="submit"
+          >
+            {{ $t('app_signIn_signIn') }}
+          </ElButton>
+
+          <div class="remember">
+            <ElButton text @click="forgetPassword">{{
+              $t('app_signIn_forgetPassword')
+            }}</ElButton>
+          </div>
+        </div>
+      </section>
+    </template>
+  </LoginPage>
+</template>
 
 <style lang="scss" scoped>
 .page-sign-in {
   display: flex;
   align-items: center;
-  justify-content: center;
-  // background: map-get($bgColor, normal);
+  justify-content: center; /*// background: map.get($bgColor, normal);*/
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -164,13 +195,13 @@ export default {
       margin-bottom: 30px;
       font-size: 32px;
       font-weight: 600;
-      color: map-get($fontColor, dark);
+      color: map.get($fontColor, dark);
       span {
         float: right;
         padding-top: 16px;
         font-size: 12px;
         text-align: right;
-        color: map-get($color, primary);
+        color: map.get($color, primary);
         cursor: pointer;
       }
     }
@@ -193,7 +224,7 @@ export default {
         padding-left: 15px;
         width: 100%;
         height: 44px;
-        color: map-get($fontColor, light);
+        color: map.get($fontColor, light);
         line-height: 44px;
         border-radius: 0;
         box-sizing: border-box;
@@ -207,7 +238,7 @@ export default {
         &::placeholder {
           font-weight: 400;
           font-size: 14px;
-          color: map-get($fontColor, slight);
+          color: map.get($fontColor, slight);
         }
       }
     }
@@ -221,15 +252,15 @@ export default {
       width: 100%;
       margin-top: 50px;
     }
-    ::v-deep {
-      .el-checkbox__label {
-        color: map-get($fontColor, light);
-      }
+
+    :deep(.el-checkbox__label) {
+      color: map.get($fontColor, light);
     }
+
     .remember {
       padding-top: 16px;
       font-size: 12px;
-      color: map-get($color, primary);
+      color: map.get($color, primary);
       span {
         cursor: pointer;
         user-select: none;

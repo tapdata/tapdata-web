@@ -1,233 +1,17 @@
-<template>
-  <PageContainer>
-    <template #actions>
-      <ElButton
-        v-readonlybtn="'datasource_creation'"
-        class="btn btn-create"
-        type="primary"
-        size="mini"
-        @click="handleCreate('pipeline')"
-      >
-        <span>{{ $t('packages_business_verification_list_renwuyizhixing') }}</span>
-      </ElButton>
-      <ElButton
-        v-readonlybtn="'datasource_creation'"
-        class="btn btn-create"
-        type="primary"
-        size="mini"
-        @click="handleCreate('random')"
-      >
-        <span>{{ $t('packages_business_verification_list_renyibiaoshuju') }}</span>
-      </ElButton>
-    </template>
-
-    <section class="data-verify-wrap bg-white section-wrap">
-      <TablePage
-        ref="table"
-        row-key="id"
-        :remoteMethod="getData"
-        @selection-change="handleSelectionChange"
-        @sort-change="handleSortTable"
-      >
-        <template #search>
-          <div class="search-bar">
-            <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"></FilterBar>
-          </div>
-        </template>
-
-        <template #multipleSelectionActions>
-          <ElButton @click="handlePermissionsSettings">{{
-            $t('packages_business_permissionse_settings_create_quanxianshezhi')
-          }}</ElButton>
-          <ElButton v-readonlybtn="'SYNC_category_application'" size="mini" class="btn" @click="handleExport">
-            <i class="iconfont icon-daoru back-btn-icon"></i>
-            <span> {{ $t('public_button_export') }}</span>
-          </ElButton>
-        </template>
-
-        <el-table-column reserve-selection type="selection" width="38" align="center"></el-table-column>
-        <el-table-column :label="$t('packages_business_verification_task_name')" min-width="250" show-overflow-tooltip>
-          <template slot-scope="scope">
-            <div class="ellipsis">{{ scope.row.name }}</div>
-            <div class="font-color-slight">
-              <span
-                >{{ getInspectName(scope.row) }} (
-                {{
-                  scope.row.mode === 'manual'
-                    ? $t('packages_business_verification_singleVerify')
-                    : $t('packages_business_verification_repeatingVerify')
-                }}
-                )
-              </span>
-              <span v-if="!scope.row.enabled" class="font-color-slight">&nbsp;Disabled</span>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="sourceTotal"
-          min-width="140"
-          align="center"
-          :label="$t('packages_business_verification_history_source_total_rows')"
-        >
-          <template slot-scope="scope">
-            {{ scope.row.inspectMethod === 'hash' ? '-' : scope.row.sourceTotal || 0 }}
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('packages_business_verification_result_title')" min-width="180">
-          <template slot-scope="scope">
-            <div class="flex align-center">
-              <template v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)">
-                <div v-if="scope.row.result !== 'passed'" class="data-verify__status error">
-                  <i class="data-verify__icon el-icon-error"></i>
-                  <span v-if="scope.row.inspectMethod === 'row_count' || scope.row.inspectMethod === 'hash'">
-                    {{ $t('packages_business_verification_inconsistent') }}
-                  </span>
-                  <span v-if="scope.row.inspectMethod === 'field'">
-                    {{ $t('packages_business_verification_contConsistent') }} {{ scope.row.difference_number }}
-                  </span>
-                  <span v-if="scope.row.inspectMethod === 'jointField'">
-                    {{ $t('packages_business_verification_contConsistent') }} {{ scope.row.difference_number }}
-                  </span>
-                  <span v-if="scope.row.inspectMethod === 'cdcCount'">
-                    {{ $t('packages_business_verification_contConsistent') }} {{ scope.row.difference_number }}
-                  </span>
-                </div>
-                <div v-else class="data-verify__status success">
-                  <i class="data-verify__icon el-icon-success"></i>
-                  <span>{{ $t('packages_business_verification_consistent') }}</span>
-                </div>
-              </template>
-              <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
-                <i class="data-verify__icon el-icon-error"></i>
-                <span>{{ $t('public_status_error') }}</span>
-                <ElLink v-if="scope.row.errorMsg" type="primary" class="ml-2" @click="handleError(scope.row)"
-                  >{{ $t('public_button_check') }}
-                </ElLink>
-              </div>
-              <div v-else-if="scope.row.status === 'waiting'" class="data-verify__status">-</div>
-              <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
-                <img style="width: 26px; vertical-align: middle" :src="loadingImg" />
-                <span>{{ statusMap[scope.row.status] }}</span>
-              </div>
-              <div v-else>-</div>
-              <!--            <VIcon v-if="scope.row.InspectResult && scope.row.InspectResult.parentId" class="ml-2" size="16"-->
-              <!--              >ercijiaoyan</VIcon-->
-              <!--            >-->
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('packages_business_verification_verifyStatus')" min-width="110" prop="status">
-          <template slot-scope="scope">
-            <span>{{ statusMap[scope.row.status] }}</span>
-            <span v-if="scope.row.InspectResult && scope.row.status === 'running'">
-              {{ `(${scope.row.InspectResult.progress ? Math.floor(scope.row.InspectResult.progress * 100) : 0}%)` }}
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          :label="$t('packages_business_verification_verifyTime')"
-          prop="lastStartTime"
-          sortable="lastStartTime"
-          min-width="170"
-        ></el-table-column>
-        <el-table-column :label="$t('public_operation')" width="300" fixed="right">
-          <template v-if="isDaas" #header>
-            <div class="flex align-center">
-              <span>{{ $t('public_operation_available') }}</span>
-              <ElTooltip
-                class="ml-2"
-                placement="top"
-                :content="$t('packages_business_connections_list_wuquanxiandecao')"
-              >
-                <VIcon class="color-primary" size="14">info</VIcon>
-              </ElTooltip>
-            </div>
-          </template>
-
-          <template #default="{ row }">
-            <ElLink type="primary" :disabled="!row.InspectResult" @click="toTableInfo(row.id)"
-              >{{ $t('packages_business_verification_result_title') }}
-            </ElLink>
-
-            <template v-if="havePermission(row.permissionActions, 'Stop') && row.status === 'running'">
-              <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
-              <ElLink
-                v-readonlybtn="'verify_job_edition'"
-                type="primary"
-                :disabled="$disabledByPermission('verify_job_edition_all_data', row.user_id)"
-                @click="stop(row.id)"
-                >{{ $t('public_button_stop') }}
-              </ElLink>
-            </template>
-
-            <template v-if="havePermission(row.permissionActions, 'Start') && row.status !== 'running'">
-              <ElDivider direction="vertical"></ElDivider>
-              <ElLink
-                v-readonlybtn="'verify_job_edition'"
-                type="primary"
-                :disabled="
-                  $disabledByPermission('verify_job_edition_all_data', row.user_id) ||
-                  ['running', 'scheduling', 'stopping'].includes(row.status)
-                "
-                @click="startTask(row.id)"
-                >{{ $t('packages_business_verification_executeVerifyTip') }}
-              </ElLink>
-            </template>
-
-            <ElDivider direction="vertical"></ElDivider>
-            <ElLink
-              v-readonlybtn="'verify_job_edition'"
-              type="primary"
-              :disabled="!row.InspectResult"
-              @click="history(row.id)"
-              >{{ $t('packages_business_verification_historyTip') }}
-            </ElLink>
-
-            <template v-if="havePermission(row.permissionActions, 'Edit')">
-              <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
-              <ElLink
-                v-readonlybtn="'verify_job_edition'"
-                type="primary"
-                :disabled="
-                  $disabledByPermission('verify_job_edition_all_data', row.user_id) ||
-                  ['running', 'scheduling'].includes(row.status)
-                "
-                @click="goEdit(row.id, row.flowId)"
-                >{{ $t('packages_business_verification_configurationTip') }}
-              </ElLink>
-            </template>
-
-            <template v-if="havePermission(row.permissionActions, 'Delete')">
-              <ElDivider direction="vertical"></ElDivider>
-              <ElLink
-                v-readonlybtn="'verify_job_edition'"
-                type="primary"
-                :disabled="$disabledByPermission('verify_job_delete_all_data', row.user_id)"
-                @click="remove(row.id, row)"
-                >{{ $t('public_button_delete') }}
-              </ElLink>
-            </template>
-          </template>
-        </el-table-column>
-      </TablePage>
-      <PermissionseSettingsCreate ref="permissionseSettingsCreate"></PermissionseSettingsCreate>
-    </section>
-  </PageContainer>
-</template>
-
 <script>
-import i18n from '@tap/i18n'
+import { CircleCheckFilled, CircleCloseFilled } from '@element-plus/icons-vue'
 
-import dayjs from 'dayjs'
-import { escapeRegExp } from 'lodash'
-import { FilterBar } from '@tap/component'
-import { VIcon } from '@tap/component'
-import { TablePage } from '@tap/business'
 import { inspectApi, metadataInstancesApi } from '@tap/api'
-import { statusMap, inspectMethod, typeList as verifyTypeList } from './const'
+import loadingImg from '@tap/assets/icons/loading.svg'
+import { FilterBar, VIcon } from '@tap/component'
+import i18n from '@tap/i18n'
+import dayjs from 'dayjs'
+import { escapeRegExp } from 'lodash-es'
+import { TablePage } from '../../components'
+import { ErrorMessage } from '../../components/error-message'
 import PageContainer from '../../components/PageContainer.vue'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
-import { ErrorMessage } from '../../components/error-message'
+import { inspectMethod, statusMap, typeList as verifyTypeList } from './const'
 
 export default {
   components: {
@@ -235,45 +19,58 @@ export default {
     PageContainer,
     TablePage,
     VIcon,
-    FilterBar
+    FilterBar,
+    CircleCheckFilled,
+    CircleCloseFilled,
+    // ElIconError,
+    // ElIconSuccess
   },
   data() {
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       searchParams: {
         keyword: '',
         inspectMethod: '',
         mode: '',
         enabled: '',
-        result: ''
+        result: '',
       },
       filterItems: [],
-      loadingImg: require('@tap/assets/icons/loading.svg'),
+      loadingImg,
       order: 'last_updated DESC',
       inspectMethod,
       statusMap,
       validList: [
         { label: this.$t('public_select_option_all'), value: '' },
-        { label: this.$t('packages_business_verification_check_same'), value: 'passed' },
-        { label: this.$t('packages_business_verification_count_difference'), value: 'row_count' },
-        { label: this.$t('packages_business_verification_content_difference'), value: 'valueDiff' },
-        { label: 'Error', value: 'error' }
+        {
+          label: this.$t('packages_business_verification_check_same'),
+          value: 'passed',
+        },
+        {
+          label: this.$t('packages_business_verification_count_difference'),
+          value: 'row_count',
+        },
+        {
+          label: this.$t('packages_business_verification_content_difference'),
+          value: 'valueDiff',
+        },
+        { label: 'Error', value: 'error' },
       ],
       verifyTypeList,
       multipleSelection: [],
-      moreAuthority: this.$has('verify_job_delete_all_data')
+      moreAuthority: this.$has('verify_job_delete_all_data'),
     }
   },
   computed: {
     table() {
       return this.$refs.table
-    }
+    },
   },
   watch: {
-    '$route.query'() {
+    '$route.query': function () {
       this.searchParams = this.$route.query
       this.table.fetch(1)
-    }
+    },
   },
   created() {
     this.timer = setInterval(() => {
@@ -283,7 +80,7 @@ export default {
     this.searchParams = Object.assign(this.searchParams, this.$route.query)
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     clearInterval(this.timer)
   },
   methods: {
@@ -295,11 +92,11 @@ export default {
     },
     // 批量导出
     handleExport() {
-      let ids = this.multipleSelection.map(item => item.id)
-      let where = {
+      const ids = this.multipleSelection.map((item) => item.id)
+      const where = {
         _id: {
-          in: ids
-        }
+          in: ids,
+        },
       }
       metadataInstancesApi.download(where, 'Inspect')
     },
@@ -312,13 +109,13 @@ export default {
       this.table.fetch(1)
     },
     getData({ page }) {
-      let { current, size } = page
+      const { current, size } = page
       let { keyword, inspectMethod, mode, enabled, result } = this.searchParams
-      let where = {}
+      const where = {}
       //精准搜索 iModel
       if (keyword && keyword.trim()) {
-        let filterObj = { like: escapeRegExp(keyword), options: 'i' }
-        where['$or'] = [{ name: filterObj }, { dataFlowName: filterObj }]
+        const filterObj = { like: escapeRegExp(keyword), options: 'i' }
+        where.$or = [{ name: filterObj }, { dataFlowName: filterObj }]
       }
       if (enabled) {
         where.enabled = enabled == 1
@@ -344,29 +141,31 @@ export default {
       }
       inspectMethod && (where.inspectMethod = inspectMethod)
       mode && (where.mode = mode)
-      let filter = {
+      const filter = {
         order: this.order,
         limit: size,
         skip: (current - 1) * size,
-        where
+        where,
       }
       return inspectApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
-          let list = data?.items || []
+        .then((data) => {
+          const list = data?.items || []
           return {
             total: data?.total,
-            data: list.map(item => {
-              let result = item.InspectResult
+            data: list.map((item) => {
+              const result = item.InspectResult
               let sourceTotal = '-'
               let targetTotal = '-'
               if (result) {
                 sourceTotal = result.source_total
                 targetTotal = result.target_total
               }
-              item.lastStartTime = item.lastStartTime ? dayjs(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+              item.lastStartTime = item.lastStartTime
+                ? dayjs(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
+                : '-'
               item.sourceTotal = sourceTotal
               item.targetTotal = targetTotal
               if (item.inspectMethod === 'hash') {
@@ -374,7 +173,7 @@ export default {
                 item.targetTotal = '-'
               }
               return item
-            })
+            }),
           }
         })
     },
@@ -389,42 +188,49 @@ export default {
       this.$router.push({
         name: 'dataVerifyDetails',
         params: {
-          id
-        }
+          id,
+        },
       })
     },
     history(id) {
       this.$router.push({
         name: 'dataVerifyHistory',
         params: {
-          id
-        }
+          id,
+        },
       })
     },
     startTask(id) {
       inspectApi
         .update(
           {
-            id: id
+            id,
           },
-          { status: 'scheduling', ping_time: 0, scheduleTimes: 0, byFirstCheckId: '' }
+          {
+            status: 'scheduling',
+            ping_time: 0,
+            scheduleTimes: 0,
+            byFirstCheckId: '',
+          },
         )
         .then(() => {
-          this.$message.success(this.$t('packages_business_verification_startVerify'))
+          this.$message.success(
+            this.$t('packages_business_verification_startVerify'),
+          )
           this.table.fetch()
         })
     },
     remove(id, row) {
-      let name = row.name
+      const name = row.name
       this.$confirm(
         `${this.$t('packages_business_verification_deleteMessage')} ${name}?`,
         this.$t('packages_business_dataFlow_importantReminder'),
         {
           confirmButtonText: this.$t('public_button_delete'),
           cancelButtonText: this.$t('public_button_cancel'),
-          type: 'warning'
-        }
-      ).then(resFlag => {
+          type: 'warning',
+        },
+      ).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -436,17 +242,17 @@ export default {
     },
     goEdit(id, flowId) {
       const query = {
-        taskMode: flowId ? 'pipeline' : 'random'
+        taskMode: flowId ? 'pipeline' : 'random',
       }
       if (flowId) {
-        query['flowId'] = flowId
+        query.flowId = flowId
       }
       this.$router.push({
         name: 'dataVerificationEdit',
         params: {
-          id: id
+          id,
         },
-        query
+        query,
       })
     },
     getFilterItems() {
@@ -456,7 +262,7 @@ export default {
           key: 'inspectMethod',
           type: 'select-inner',
           items: this.verifyTypeList,
-          selectedWidth: '200px'
+          selectedWidth: '200px',
         },
         {
           label: this.$t('packages_business_verification_check_frequency'),
@@ -464,9 +270,15 @@ export default {
           type: 'select-inner',
           items: [
             { label: this.$t('public_select_option_all'), value: '' },
-            { label: this.$t('packages_business_verification_single'), value: 'MANUALLY_SPECIFIED_BY_THE_USER' },
-            { label: this.$t('packages_business_verification_repeating'), value: 'cron' }
-          ]
+            {
+              label: this.$t('packages_business_verification_single'),
+              value: 'MANUALLY_SPECIFIED_BY_THE_USER',
+            },
+            {
+              label: this.$t('packages_business_verification_repeating'),
+              value: 'cron',
+            },
+          ],
         },
         {
           label: this.$t('packages_business_verification_is_enabled'),
@@ -474,28 +286,34 @@ export default {
           type: 'select-inner',
           items: [
             { label: this.$t('public_select_option_all'), value: '' },
-            { label: this.$t('packages_business_verification_job_enable'), value: 1 },
-            { label: this.$t('packages_business_verification_job_disable'), value: 2 }
-          ]
+            {
+              label: this.$t('packages_business_verification_job_enable'),
+              value: 1,
+            },
+            {
+              label: this.$t('packages_business_verification_job_disable'),
+              value: 2,
+            },
+          ],
         },
         {
           label: this.$t('packages_business_verification_result_title'),
           key: 'result',
           type: 'select-inner',
-          items: this.validList
+          items: this.validList,
         },
         {
           placeholder: this.$t('packages_business_verification_task_name'),
           key: 'keyword',
-          type: 'input'
-        }
+          type: 'input',
+        },
       ]
     },
     handleError(row = {}) {
       ErrorMessage(row.errorMsg)
     },
     getInspectName(row = {}) {
-      if (row.tasks?.some(t => !!t.source.columns || !!t.target.columns)) {
+      if (row.tasks?.some((t) => !!t.source.columns || !!t.target.columns)) {
         return i18n.t('packages_business_verification_list_biaobufenziduan')
       }
       return this.inspectMethod[row.inspectMethod]
@@ -504,9 +322,9 @@ export default {
       inspectApi
         .update(
           {
-            id: id
+            id,
           },
-          { status: 'stopping' }
+          { status: 'stopping' },
         )
         .then(() => {
           this.$message.success(this.$t('public_message_operation_success'))
@@ -514,24 +332,365 @@ export default {
         })
     },
     handleCreate(type) {
-      this.$router.push({ name: 'dataVerificationCreate', query: { taskMode: type } })
+      this.$router.push({
+        name: 'dataVerificationCreate',
+        query: { taskMode: type },
+      })
     },
     havePermission(data = [], type = '') {
       if (!this.isDaas) return true
       return data.includes(type)
     },
     handlePermissionsSettings() {
-      this.$refs.permissionseSettingsCreate.open(this.multipleSelection, 'Inspect')
-    }
-  }
+      this.$refs.permissionseSettingsCreate.open(
+        this.multipleSelection,
+        'Inspect',
+      )
+    },
+  },
 }
 </script>
+
+<template>
+  <PageContainer>
+    <template #actions>
+      <ElButton
+        v-readonlybtn="'datasource_creation'"
+        class="btn btn-create"
+        type="primary"
+       
+        @click="handleCreate('pipeline')"
+      >
+        <span>{{
+          $t('packages_business_verification_list_renwuyizhixing')
+        }}</span>
+      </ElButton>
+      <ElButton
+        v-readonlybtn="'datasource_creation'"
+        class="btn btn-create"
+        type="primary"
+       
+        @click="handleCreate('random')"
+      >
+        <span>{{
+          $t('packages_business_verification_list_renyibiaoshuju')
+        }}</span>
+      </ElButton>
+    </template>
+
+    <TablePage
+      ref="table"
+      row-key="id"
+      :remote-method="getData"
+      @selection-change="handleSelectionChange"
+      @sort-change="handleSortTable"
+    >
+      <template #search>
+        <div class="search-bar">
+          <FilterBar
+            v-model:value="searchParams"
+            :items="filterItems"
+            @fetch="table.fetch(1)"
+          />
+        </div>
+      </template>
+
+      <template #multipleSelectionActions>
+        <ElButton @click="handlePermissionsSettings">{{
+          $t('packages_business_permissionse_settings_create_quanxianshezhi')
+        }}</ElButton>
+        <ElButton
+          v-readonlybtn="'SYNC_category_application'"
+         
+          class="btn"
+          @click="handleExport"
+        >
+          <i class="iconfont icon-daoru back-btn-icon" />
+          <span> {{ $t('public_button_export') }}</span>
+        </ElButton>
+      </template>
+
+      <el-table-column
+        reserve-selection
+        type="selection"
+        width="38"
+        align="center"
+      />
+      <el-table-column
+        :label="$t('packages_business_verification_task_name')"
+        min-width="250"
+        show-overflow-tooltip
+      >
+        <template #default="scope">
+          <div class="ellipsis">{{ scope.row.name }}</div>
+          <div>
+            <el-tag type="info" size="small" disable-transitions
+              >{{ getInspectName(scope.row) }} (
+              {{
+                scope.row.mode === 'manual'
+                  ? $t('packages_business_verification_singleVerify')
+                  : $t('packages_business_verification_repeatingVerify')
+              }}
+              )
+            </el-tag>
+            <span v-if="!scope.row.enabled" class="font-color-slight"
+              >&nbsp;Disabled</span
+            >
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="sourceTotal"
+        min-width="140"
+        align="center"
+        :label="$t('packages_business_verification_history_source_total_rows')"
+      >
+        <template #default="scope">
+          {{
+            scope.row.inspectMethod === 'hash'
+              ? '-'
+              : scope.row.sourceTotal || 0
+          }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('packages_business_verification_result_title')"
+        min-width="180"
+      >
+        <template #default="scope">
+          <div class="flex align-center">
+            <template
+              v-if="
+                scope.row.InspectResult &&
+                ['waiting', 'done'].includes(scope.row.status)
+              "
+            >
+              <div
+                v-if="scope.row.result !== 'passed'"
+                class="data-verify__status error flex align-center gap-1"
+              >
+                <el-icon class="color-danger"><CircleCloseFilled /></el-icon>
+                <span
+                  v-if="
+                    scope.row.inspectMethod === 'row_count' ||
+                    scope.row.inspectMethod === 'hash'
+                  "
+                >
+                  {{ $t('packages_business_verification_inconsistent') }}
+                </span>
+                <span v-if="scope.row.inspectMethod === 'field'">
+                  {{ $t('packages_business_verification_contConsistent') }}
+                  {{ scope.row.difference_number }}
+                </span>
+                <span v-if="scope.row.inspectMethod === 'jointField'">
+                  {{ $t('packages_business_verification_contConsistent') }}
+                  {{ scope.row.difference_number }}
+                </span>
+                <span v-if="scope.row.inspectMethod === 'cdcCount'">
+                  {{ $t('packages_business_verification_contConsistent') }}
+                  {{ scope.row.difference_number }}
+                </span>
+              </div>
+              <div
+                v-else
+                class="data-verify__status success flex align-center gap-1"
+              >
+                <el-icon class="color-success"><CircleCheckFilled /></el-icon>
+                <span>{{
+                  $t('packages_business_verification_consistent')
+                }}</span>
+              </div>
+            </template>
+            <div
+              v-else-if="scope.row.status === 'error'"
+              class="data-verify__status flex align-center gap-1"
+            >
+              <el-icon class="color-danger"><CircleCloseFilled /></el-icon>
+              <span>{{ $t('public_status_error') }}</span>
+              <ElButton
+                v-if="scope.row.errorMsg"
+                text
+                type="primary"
+                @click="handleError(scope.row)"
+                >{{ $t('public_button_check') }}
+              </ElButton>
+            </div>
+            <div
+              v-else-if="scope.row.status === 'waiting'"
+              class="data-verify__status"
+            >
+              -
+            </div>
+            <div
+              v-else-if="scope.row.status !== 'done'"
+              class="data-verify__status"
+            >
+              <img
+                style="width: 26px; vertical-align: middle"
+                :src="loadingImg"
+              />
+              <span>{{ statusMap[scope.row.status] }}</span>
+            </div>
+            <div v-else>-</div>
+            <!--            <VIcon v-if="scope.row.InspectResult && scope.row.InspectResult.parentId" class="ml-2" size="16"-->
+            <!--              >ercijiaoyan</VIcon-->
+            <!--            >-->
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('packages_business_verification_verifyStatus')"
+        min-width="110"
+        prop="status"
+      >
+        <template #default="scope">
+          <span>{{ statusMap[scope.row.status] }}</span>
+          <span
+            v-if="scope.row.InspectResult && scope.row.status === 'running'"
+          >
+            {{
+              `(${scope.row.InspectResult.progress ? Math.floor(scope.row.InspectResult.progress * 100) : 0}%)`
+            }}
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('packages_business_verification_verifyTime')"
+        prop="lastStartTime"
+        sortable="lastStartTime"
+        min-width="170"
+      />
+      <el-table-column
+        :label="$t('public_operation')"
+        width="300"
+        fixed="right"
+      >
+        <template v-if="isDaas" #header>
+          <div class="flex align-center">
+            <span>{{ $t('public_operation_available') }}</span>
+            <ElTooltip
+              class="ml-2"
+              placement="top"
+              :content="
+                $t('packages_business_connections_list_wuquanxiandecao')
+              "
+            >
+              <VIcon class="color-primary" size="14">info</VIcon>
+            </ElTooltip>
+          </div>
+        </template>
+
+        <template #default="{ row }">
+          <ElButton
+            text
+            type="primary"
+            :disabled="!row.InspectResult"
+            @click="toTableInfo(row.id)"
+            >{{ $t('packages_business_verification_result_title') }}
+          </ElButton>
+
+          <template
+            v-if="
+              havePermission(row.permissionActions, 'Stop') &&
+              row.status === 'running'
+            "
+          >
+            <ElDivider
+              v-readonlybtn="'verify_job_edition'"
+              class="mx-1"
+              direction="vertical"
+            />
+            <ElButton
+              v-readonlybtn="'verify_job_edition'"
+              text
+              type="primary"
+              :disabled="
+                $disabledByPermission(
+                  'verify_job_edition_all_data',
+                  row.user_id,
+                )
+              "
+              @click="stop(row.id)"
+              >{{ $t('public_button_stop') }}
+            </ElButton>
+          </template>
+
+          <template
+            v-if="
+              havePermission(row.permissionActions, 'Start') &&
+              row.status !== 'running'
+            "
+          >
+            <ElDivider class="mx-1" direction="vertical" />
+            <ElButton
+              v-readonlybtn="'verify_job_edition'"
+              text
+              type="primary"
+              :disabled="
+                $disabledByPermission(
+                  'verify_job_edition_all_data',
+                  row.user_id,
+                ) || ['running', 'scheduling', 'stopping'].includes(row.status)
+              "
+              @click="startTask(row.id)"
+              >{{ $t('packages_business_verification_executeVerifyTip') }}
+            </ElButton>
+          </template>
+
+          <ElDivider class="mx-1" direction="vertical" />
+          <ElButton
+            v-readonlybtn="'verify_job_edition'"
+            text
+            type="primary"
+            :disabled="!row.InspectResult"
+            @click="history(row.id)"
+            >{{ $t('packages_business_verification_historyTip') }}
+          </ElButton>
+
+          <template v-if="havePermission(row.permissionActions, 'Edit')">
+            <ElDivider
+              v-readonlybtn="'verify_job_edition'"
+              class="mx-1"
+              direction="vertical"
+            />
+            <ElButton
+              v-readonlybtn="'verify_job_edition'"
+              text
+              type="primary"
+              :disabled="
+                $disabledByPermission(
+                  'verify_job_edition_all_data',
+                  row.user_id,
+                ) || ['running', 'scheduling'].includes(row.status)
+              "
+              @click="goEdit(row.id, row.flowId)"
+              >{{ $t('packages_business_verification_configurationTip') }}
+            </ElButton>
+          </template>
+
+          <template v-if="havePermission(row.permissionActions, 'Delete')">
+            <ElDivider class="mx-1" direction="vertical" />
+            <ElButton
+              v-readonlybtn="'verify_job_edition'"
+              text
+              type="primary"
+              :disabled="
+                $disabledByPermission('verify_job_delete_all_data', row.user_id)
+              "
+              @click="remove(row.id, row)"
+              >{{ $t('public_button_delete') }}
+            </ElButton>
+          </template>
+        </template>
+      </el-table-column>
+    </TablePage>
+    <PermissionseSettingsCreate ref="permissionseSettingsCreate" />
+  </PageContainer>
+</template>
 
 <style lang="scss" scoped>
 .data-verify-wrap {
   height: 100%;
-  padding: 0 24px 24px 24px;
-
   .btn-refresh {
     padding: 0;
     height: 32px;
@@ -574,17 +733,15 @@ export default {
     font-size: 14px;
   }
 }
-
-::v-deep {
-  .verify-list-error-msg {
-    .el-message-box__message {
-      max-height: 450px;
-      overflow-y: auto;
-      word-break: break-word;
-    }
+:deep(.verify-list-error-msg) {
+  .el-message-box__message {
+    max-height: 450px;
+    overflow-y: auto;
+    word-break: break-word;
   }
 }
 </style>
+
 <style lang="scss">
 .data-verify-wrap {
   .el-table--border td {

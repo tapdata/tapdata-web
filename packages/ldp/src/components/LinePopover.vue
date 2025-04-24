@@ -1,12 +1,12 @@
 <template>
   <ElPopover
+    v-bind="$attrs"
     v-if="popover.reference"
     ref="nodeMenu"
     v-model="popover.show"
     placement="bottom"
     popper-class="rounded-lg p-0 line-popover"
     :reference="popover.reference"
-    v-on="$listeners"
   >
     <div class="popover-list p-1">
       <div
@@ -23,38 +23,36 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { mapGetters } from 'vuex'
 import { TaskStatus } from '@tap/business'
 
 export default {
   name: 'NodePopover',
-
   props: {
-    popover: {}
+    popover: {},
   },
-
   computed: {
-    ...mapGetters('dataflow', ['processorNodeTypes'])
+    ...mapGetters('dataflow', ['processorNodeTypes']),
   },
-
   components: {
-    TaskStatus
+    TaskStatus,
   },
-
   methods: {
     handleClick(node) {
-      this.$emit('click-node', node)
+      $emit(this, 'click-node', node)
     },
 
     handleClickTask(task) {
-      this.$emit('click-task', task)
+      $emit(this, 'click-task', task)
       this.popover.show = false
-    }
-  }
+    },
+  },
+  emits: ['click-node', 'click-task'],
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .line-popover {
   .popover-list {
     &-item {

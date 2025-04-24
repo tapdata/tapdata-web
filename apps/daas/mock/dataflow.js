@@ -15,12 +15,12 @@ module.exports = {
           targetTableNum: Random.integer(0, 100),
           targatRowNum: Random.integer(0, 100),
           spendTime: Random.integer(0, 100),
-          waitingForSyecTableNums: Random.integer(0, 100)
-        }
-      }
+          waitingForSyecTableNums: Random.integer(0, 100),
+        },
+      },
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/DataFlows/insight': {
     data: {
@@ -39,11 +39,11 @@ module.exports = {
         targetRowNum: Random.integer(0, 100),
         status: '', //done running waiting,
         cdcRowNum: Random.integer(0, 100),
-        lag: Random.integer(0, 100)
-      }
+        lag: Random.integer(0, 100),
+      },
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/DataFlows/chart': {
     data: {
@@ -52,9 +52,9 @@ module.exports = {
         'statusCount|4': [
           {
             '_id|+1': ['draft', 'error', 'paused', 'running'],
-            count: Random.integer(0, 100)
-          }
-        ]
+            count: Random.integer(0, 100),
+          },
+        ],
       },
       chart2: [
         {
@@ -68,47 +68,47 @@ module.exports = {
           totalUpdate: Random.integer(0, 100),
           totalUpdateSize: Random.integer(0, 100),
           totalDelete: Random.integer(0, 100),
-          totalDeleteSize: Random.integer(0, 100)
-        }
+          totalDeleteSize: Random.integer(0, 100),
+        },
       ],
       chart3: [],
       chart4: {
         initializing: Random.integer(0, 100),
         initialized: Random.integer(0, 100),
         cdc: Random.integer(0, 100),
-        Lag: Random.integer(0, 100)
+        Lag: Random.integer(0, 100),
       },
       chart5: {
         totalDataFlows: Random.integer(0, 100),
         'statusCount|4': [
           {
             '_id|+1': ['draft', 'error', 'paused', 'running'],
-            count: Random.integer(0, 100)
-          }
-        ]
+            count: Random.integer(0, 100),
+          },
+        ],
       },
       chart6: {
         initializing: Random.integer(0, 100),
         initialized: Random.integer(0, 100),
         cdc: Random.integer(0, 100),
-        Lag: Random.integer(0, 100)
+        Lag: Random.integer(0, 100),
       },
       chart7: {
         total: Random.integer(0, 100),
         passed: Random.integer(0, 100),
         countDiff: Random.integer(0, 100),
         valueDiff: Random.integer(0, 100),
-        error: Random.integer(0, 100)
-      }
+        error: Random.integer(0, 100),
+      },
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/DataFlows/count': { data: { count: 41 }, code: 'ok', msg: 'ok' },
   '/api/DataFlows/:id/reset': {
     code: 'ok',
     msg: 'ok',
-    data: {}
+    data: {},
   },
   '/api/DataFlows': {
     data: {
@@ -139,7 +139,7 @@ module.exports = {
               dropType: 'no_drop',
               readBatchSize: 1000,
               readCdcInterval: 500,
-              statsStatus: 'cdc'
+              statsStatus: 'cdc',
             },
             {
               connectionId: '6087c2ee0786e30010d4c882',
@@ -159,8 +159,8 @@ module.exports = {
               readCdcInterval: 500,
               dropType: 'no_drop',
               database_type: 'mysql',
-              statsStatus: null
-            }
+              statsStatus: null,
+            },
           ],
           setting: {
             name: 'sudu 8',
@@ -176,8 +176,8 @@ module.exports = {
                 time: '',
                 date: '',
                 name: '',
-                timezone: '+8'
-              }
+                timezone: '+8',
+              },
             ],
             readBatchSize: 25000,
             notificationWindow: 0,
@@ -192,8 +192,8 @@ module.exports = {
               edited: false,
               started: false,
               error: true,
-              paused: true
-            }
+              paused: true,
+            },
           },
           platformInfo: { region: '', zone: '' },
           user_id: '@id',
@@ -219,35 +219,35 @@ module.exports = {
                 transmissionTime: Random.integer(0, 100000),
                 transTimeAvg: Random.integer(0, 100000),
                 replicationLag: Random.integer(0, 10000),
-                status: 'cdc'
-              }
+                status: 'cdc',
+              },
             ],
-            totalCount: null
+            totalCount: null,
           },
           user: {
             email: '60718c178fbae2c47bc294b3@custom.com',
             username: '小瓶套',
-            emailVerified: true
+            emailVerified: true,
           },
           errorEvents: [],
           tcm: {
             agentId: '@id',
-            agentName: '@name'
-          }
-        }
-      ]
+            agentName: '@name',
+          },
+        },
+      ],
     },
 
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/DataFlows/update': {
     data: {
       success: [{ id: '@id', code: 1, msg: 'ok' }],
-      fail: []
+      fail: [],
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/DataFlows/:id': {
     data: {
@@ -290,7 +290,7 @@ module.exports = {
         transformerConcurrency: 8,
         lagTimeFalg: false,
         userSetLagTime: 0,
-        noPrimaryKey: false
+        noPrimaryKey: false,
       },
       stages: [
         {
@@ -309,7 +309,7 @@ module.exports = {
           hiddenChangeValue: true,
           name: 'CAR_CLAIM_07192055',
           dataQualityTag: false,
-          joinTables: []
+          joinTables: [],
         },
         {
           id: '2fef2923-ccd6-4d13-b217-3f17e7423f7e',
@@ -334,7 +334,7 @@ module.exports = {
             limitLines: '',
             cSql: '',
             editSql: '',
-            conditions: []
+            conditions: [],
           },
           initialOffset: '',
           type: 'table',
@@ -354,21 +354,21 @@ module.exports = {
               isArray: false,
               arrayUniqueKey: '',
               connectionId: '61a87d201308ba00533c0d5e',
-              databaseType: 'kudu'
-            }
+              databaseType: 'kudu',
+            },
           ],
-          dropTable: false
-        }
+          dropTable: false,
+        },
       ],
       status: 'draft',
       stopOnError: false,
       user_id: '61a4498c58db41e0d671691d',
       errorEvents: [],
       stats: { throughput: { t: '2021-12-03 11:02:00', inputSize: 0, outputSize: 0, inputCount: 0, outputCount: 0 } },
-      user: { email: 'admin@admin.com' }
+      user: { email: 'admin@admin.com' },
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/DataFlows/:id/copy': {
     data: {
@@ -397,7 +397,7 @@ module.exports = {
           dropType: 'no_drop',
           readBatchSize: 1000,
           readCdcInterval: 500,
-          statsStatus: 'cdc'
+          statsStatus: 'cdc',
         },
         {
           connectionId: '6087c2ee0786e30010d4c882',
@@ -417,8 +417,8 @@ module.exports = {
           readCdcInterval: 500,
           dropType: 'no_drop',
           database_type: 'mysql',
-          statsStatus: null
-        }
+          statsStatus: null,
+        },
       ],
       setting: {
         name: 'sudu 8',
@@ -434,8 +434,8 @@ module.exports = {
             time: '',
             date: '',
             name: '',
-            timezone: '+8'
-          }
+            timezone: '+8',
+          },
         ],
         readBatchSize: 25000,
         notificationWindow: 0,
@@ -450,8 +450,8 @@ module.exports = {
           edited: false,
           started: false,
           error: true,
-          paused: true
-        }
+          paused: true,
+        },
       },
       dataFlowType: 'normal',
       dataSourceModel: {
@@ -460,7 +460,7 @@ module.exports = {
         source_connectionId: '60803202ddc0f40343b87e35',
         target_connectionId: '6087c2ee0786e30010d4c882',
         source_connectionName: 'local_179',
-        target_connectionName: 'DRS-ALI-DEST'
+        target_connectionName: 'DRS-ALI-DEST',
       },
       platformInfo: { region: '', zone: '' },
       agentTags: ['', ''],
@@ -471,26 +471,26 @@ module.exports = {
       scheduleTime: 1620633332823,
       scheduleTimes: 1,
       pingTime: 1620633379338,
-      stats: {}
+      stats: {},
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/DataFlows/resetAll': {
     data: {
       success: [{ id: '6098e7a2c66ab70010981c53', code: 1, msg: 'ok' }],
-      fail: []
+      fail: [],
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/DataFlows/removeAll': {
     data: {
       success: [{ id: '6098e7a2c66ab70010981c53', code: 1, msg: 'ok' }],
-      fail: []
+      fail: [],
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/CustomerJobLogs': {
     reqId: 'f45ba408-0249-432c-94d5-f587e0115d21',
@@ -511,11 +511,11 @@ module.exports = {
             dataFlowType: '@name',
             errorCode: 'TM_NO_AVAILABLE_AGENT',
             errorMessage: 'TM_NO_AVAILABLE_AGENT',
-            level: '致命错误'
+            level: '致命错误',
           },
-          template: '{dataFlowType}{dataFlowName}没有可用的Agent'
-        }
-      ]
-    }
-  }
+          template: '{dataFlowType}{dataFlowName}没有可用的Agent',
+        },
+      ],
+    },
+  },
 }

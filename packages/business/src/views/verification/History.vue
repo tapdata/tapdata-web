@@ -1,128 +1,13 @@
-<template>
-  <section class="data-verify-history-wrap section-wrap" v-loading="loading">
-    <div class="panel-main section-wrap-box">
-      <el-table :data="page.data" height="100%">
-        <el-table-column :label="$t('packages_business_verification_verifyTime')" prop="start">
-          <template slot-scope="scope">
-            {{ scope.row.startTimeFmt }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          :label="$t('packages_business_verification_completeTime')"
-          prop="last_updated"
-          align="center"
-          width="180"
-        >
-          <template slot-scope="scope">
-            <span>
-              {{ formatTime(scope.row.last_updated) }}
-            </span>
-          </template>
-        </el-table-column>
-        <template v-if="$route.name === 'VerifyDiffHistory'">
-          <el-table-column
-            :label="$t('packages_business_verification_sourceTotalRows')"
-            prop="source_total"
-            align="center"
-          ></el-table-column>
-          <el-table-column
-            :label="$t('packages_business_verification_targetTotalRows')"
-            prop="target_total"
-            align="center"
-          ></el-table-column>
-        </template>
-        <template v-else>
-          <el-table-column
-            :label="$t('packages_business_verification_history_source_total_rows')"
-            prop="firstSourceTotal"
-            align="center"
-          >
-            <template #default="{ row }">
-              {{ row.inspect.inspectMethod === 'hash' ? '-' : row.firstSourceTotal }}
-            </template>
-          </el-table-column>
-        </template>
-        <el-table-column prop="progress" :label="$t('packages_business_verification_verifyProgress')" width="120px">
-          <template slot-scope="scope">
-            <div>
-              <span>{{
-                `${Math.round(scope.row.progress * 10000) / 100 ? Math.round(scope.row.progress * 10000) / 100 : 0}%`
-              }}</span>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('packages_business_verification_verifytype')" prop="inspect.inspectMethod">
-          <template slot-scope="scope">
-            <span>{{ inspectMethod[scope.row.inspect ? scope.row.inspect.inspectMethod : ''] }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('packages_business_verification_result_title')" width="180">
-          <template slot-scope="scope" v-if="['waiting', 'done'].includes(scope.row.status)">
-            <div class="inspect-result">
-              <span v-if="scope.row.result !== 'passed'" class="error">
-                <VIcon class="verify-status-icon color-danger mr-1" size="14">error</VIcon>
-                <span
-                  v-if="
-                    (scope.row.inspect && scope.row.inspect.inspectMethod === 'row_count') ||
-                    scope.row.inspect.inspectMethod === 'hash'
-                  "
-                >
-                  {{ $t('packages_business_verification_result_count_inconsistent') }}
-                </span>
-                <span v-if="scope.row.inspect && scope.row.inspect.inspectMethod === 'field'">
-                  {{ $t('packages_business_verification_contConsistent') }}{{ scope.row.difference_number }}
-                </span>
-                <span v-if="scope.row.inspect && scope.row.inspect.inspectMethod === 'jointField'">
-                  {{ $t('packages_business_verification_contConsistent') }}{{ scope.row.difference_number }}
-                </span>
-                <span v-if="scope.row.inspect && scope.row.inspect.inspectMethod === 'cdcCount'">
-                  {{ $t('packages_business_verification_result_content_diff', [scope.row.difference_number]) }}
-                </span>
-              </span>
-              <span class="success" v-if="scope.row.result === 'passed'">
-                <VIcon class="verify-status-icon mr-1" size="14">success-fill-color</VIcon>
-                <span>{{ $t('packages_business_verification_result_count_consistent') }}</span>
-              </span>
-              <VIcon v-if="scope.row.parentId" class="ml-2" size="14">ercijiaoyan</VIcon>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('packages_business_verification_verifyStatus')" prop="status">
-          <template slot-scope="scope">
-            <span>{{ statusMap[scope.row.status] }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('public_operation')" width="60px">
-          <template slot-scope="scope">
-            <ElLink type="primary" @click="rowClick(scope.row)">{{ $t('public_button_details') }}</ElLink>
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-pagination
-        background
-        class="pagination mt-3"
-        :current-page.sync="page.current"
-        :page-sizes="[10, 20, 50, 100]"
-        :page-size.sync="page.size"
-        layout="total, sizes, ->, prev, pager, next, jumper"
-        :total="page.total"
-        @size-change="search(1)"
-        @current-change="search"
-      >
-      </el-pagination>
-    </div>
-  </section>
-</template>
-
 <script>
+import { inspectResultsApi } from '@tap/api'
 import { VIcon } from '@tap/component'
 import dayjs from 'dayjs'
-import { inspectResultsApi } from '@tap/api'
-import { statusMap, inspectMethod } from './const'
+import PageContainer from '../../components/PageContainer.vue'
+import { inspectMethod, statusMap } from './const'
 
 let timeout = null
 export default {
-  components: { VIcon },
+  components: { VIcon, PageContainer },
   data() {
     return {
       loading: true,
@@ -134,11 +19,11 @@ export default {
         size: 10,
         total: 0,
         sortBy: '',
-        order: ''
+        order: '',
       },
       selections: [],
       statusMap,
-      inspectMethod
+      inspectMethod,
     }
   },
   created() {
@@ -147,7 +32,7 @@ export default {
       this.search(this.page.current, true)
     }, 8000)
   },
-  destroyed() {
+  unmounted() {
     clearInterval(timeout)
   },
   methods: {
@@ -156,19 +41,25 @@ export default {
     },
     searchRequest(filter) {
       if (filter?.where?.inspect_id?.regexp) {
-        filter.where.inspect_id = filter.where.inspect_id.regexp.replace(/^\^(.*)\$$/, '$1')
+        filter.where.inspect_id = filter.where.inspect_id.regexp.replace(
+          /^\^(.*)\$$/,
+          '$1',
+        )
       }
       if (filter?.where?.firstCheckId?.regexp) {
-        filter.where.firstCheckId = filter.where.firstCheckId.regexp.replace(/^\^(.*)\$$/, '$1')
+        filter.where.firstCheckId = filter.where.firstCheckId.regexp.replace(
+          /^\^(.*)\$$/,
+          '$1',
+        )
       }
       if (filter?.where?.parentId?.eq === null) {
         delete filter.where.parentId
       }
       return inspectResultsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           return [{ count: data.total }, data.items]
         })
     },
@@ -176,23 +67,23 @@ export default {
       if (!hideLoading) {
         this.loading = true
       }
-      let { current, size } = this.page
-      let currentPage = pageNum || current + 1
-      let id = this.$route.params.id
+      const { current, size } = this.page
+      const currentPage = pageNum || current + 1
+      const id = this.$route.params.id
       let where = {
         inspect_id: { regexp: `^${id}$` },
-        parentId: { eq: null }
+        parentId: { eq: null },
       }
-      let filter = {
+      const filter = {
         order: 'start DESC',
         limit: size,
         skip: (currentPage - 1) * size,
-        inspectGroupByFirstCheckId: true
+        inspectGroupByFirstCheckId: true,
       }
       if (this.$route.name === 'VerifyDiffHistory') {
         where = {
           inspect_id: { regexp: `^${this.$route.params.inspectId}$` },
-          firstCheckId: { regexp: `^${id}$` }
+          firstCheckId: { regexp: `^${id}$` },
         }
         delete filter.inspectGroupByFirstCheckId
       }
@@ -200,7 +91,7 @@ export default {
       this.searchRequest(filter, where)
         .then(([countData, data]) => {
           if (data) {
-            this.page.data = data?.map(item => {
+            this.page.data = data?.map((item) => {
               item.startTimeFmt = this.formatTime(item.start || item.createTime)
               return item
             })
@@ -213,7 +104,7 @@ export default {
         })
     },
     rowClick(item) {
-      let id = item.id
+      const id = item.id
       let routeName = 'dataVerifyResult'
       if (this.$route.name === 'VerifyDiffHistory') {
         routeName = 'VerifyDiffDetails'
@@ -221,13 +112,194 @@ export default {
       this.$router.push({
         name: routeName,
         params: {
-          id
-        }
+          id,
+        },
       })
-    }
-  }
+    },
+  },
 }
 </script>
+
+<template>
+  <PageContainer>
+    <section v-loading="loading" class="flex flex-column h-100">
+      <el-table :data="page.data" height="100%">
+        <el-table-column
+          :label="$t('packages_business_verification_verifyTime')"
+          prop="start"
+        >
+          <template #default="scope">
+            {{ scope.row.startTimeFmt }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          :label="$t('packages_business_verification_completeTime')"
+          prop="last_updated"
+          align="center"
+          width="180"
+        >
+          <template #default="scope">
+            <span>
+              {{ formatTime(scope.row.last_updated) }}
+            </span>
+          </template>
+        </el-table-column>
+        <template v-if="$route.name === 'VerifyDiffHistory'">
+          <el-table-column
+            :label="$t('packages_business_verification_sourceTotalRows')"
+            prop="source_total"
+            align="center"
+          />
+          <el-table-column
+            :label="$t('packages_business_verification_targetTotalRows')"
+            prop="target_total"
+            align="center"
+          />
+        </template>
+        <template v-else>
+          <el-table-column
+            :label="
+              $t('packages_business_verification_history_source_total_rows')
+            "
+            prop="firstSourceTotal"
+            align="center"
+          >
+            <template #default="{ row }">
+              {{
+                row.inspect.inspectMethod === 'hash'
+                  ? '-'
+                  : row.firstSourceTotal
+              }}
+            </template>
+          </el-table-column>
+        </template>
+        <el-table-column
+          prop="progress"
+          :label="$t('packages_business_verification_verifyProgress')"
+          width="120px"
+        >
+          <template #default="scope">
+            <div>
+              <span>{{
+                `${Math.round(scope.row.progress * 10000) / 100 ? Math.round(scope.row.progress * 10000) / 100 : 0}%`
+              }}</span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          :label="$t('packages_business_verification_verifytype')"
+          prop="inspect.inspectMethod"
+        >
+          <template #default="scope">
+            <span>{{
+              inspectMethod[
+                scope.row.inspect ? scope.row.inspect.inspectMethod : ''
+              ]
+            }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          :label="$t('packages_business_verification_result_title')"
+          width="180"
+        >
+          <template #default="scope">
+            <div
+              v-if="['waiting', 'done'].includes(scope.row.status)"
+              class="inspect-result"
+            >
+              <span v-if="scope.row.result !== 'passed'" class="error">
+                <VIcon class="verify-status-icon color-danger mr-1" size="14"
+                  >error</VIcon
+                >
+                <span
+                  v-if="
+                    (scope.row.inspect &&
+                      scope.row.inspect.inspectMethod === 'row_count') ||
+                    scope.row.inspect.inspectMethod === 'hash'
+                  "
+                >
+                  {{
+                    $t(
+                      'packages_business_verification_result_count_inconsistent',
+                    )
+                  }}
+                </span>
+                <span
+                  v-if="
+                    scope.row.inspect &&
+                    scope.row.inspect.inspectMethod === 'field'
+                  "
+                >
+                  {{ $t('packages_business_verification_contConsistent')
+                  }}{{ scope.row.difference_number }}
+                </span>
+                <span
+                  v-if="
+                    scope.row.inspect &&
+                    scope.row.inspect.inspectMethod === 'jointField'
+                  "
+                >
+                  {{ $t('packages_business_verification_contConsistent')
+                  }}{{ scope.row.difference_number }}
+                </span>
+                <span
+                  v-if="
+                    scope.row.inspect &&
+                    scope.row.inspect.inspectMethod === 'cdcCount'
+                  "
+                >
+                  {{
+                    $t('packages_business_verification_result_content_diff', [
+                      scope.row.difference_number,
+                    ])
+                  }}
+                </span>
+              </span>
+              <span v-if="scope.row.result === 'passed'" class="success">
+                <VIcon class="verify-status-icon mr-1" size="14"
+                  >success-fill-color</VIcon
+                >
+                <span>{{
+                  $t('packages_business_verification_result_count_consistent')
+                }}</span>
+              </span>
+              <VIcon v-if="scope.row.parentId" class="ml-2" size="14"
+                >ercijiaoyan</VIcon
+              >
+            </div>
+            <span v-else />
+          </template>
+        </el-table-column>
+        <el-table-column
+          :label="$t('packages_business_verification_verifyStatus')"
+          prop="status"
+        >
+          <template #default="scope">
+            <span>{{ statusMap[scope.row.status] }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('public_operation')" width="60px">
+          <template #default="scope">
+            <ElButton text type="primary" @click="rowClick(scope.row)">{{
+              $t('public_button_details')
+            }}</ElButton>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination
+        v-model:current-page="page.current"
+        v-model:page-size="page.size"
+        background
+        class="pagination mt-3"
+        :page-sizes="[10, 20, 50, 100]"
+        layout="total, sizes, ->, prev, pager, next, jumper"
+        :total="page.total"
+        @size-change="search(1)"
+        @current-change="search"
+      />
+    </section>
+  </PageContainer>
+</template>
 
 <style lang="scss" scoped>
 .data-verify-history-wrap {
@@ -240,14 +312,10 @@ export default {
     flex-direction: column;
     -ms-flex: 1;
     flex: 1;
-    padding: 20px;
-    border-radius: 4px;
-    background-color: #fff;
-    box-sizing: border-box;
     overflow: hidden;
   }
   .data-verify-history__icon {
-    color: map-get($fontColor, white);
+    color: map.get($fontColor, white);
   }
   .panel-slider {
     width: 200px;
@@ -263,13 +331,13 @@ export default {
     .tip {
       height: 30px;
       font-size: 12px;
-      background: map-get($bgColor, main);
-      border: 1px solid map-get($borderColor, light);
+      background: map.get($bgColor, main);
+      border: 1px solid map.get($borderColor, light);
       line-height: 30px;
     }
     .title {
       font-weight: bold;
-      color: map-get($color, primary);
+      color: map.get($color, primary);
       margin: 10px 0;
     }
 
@@ -279,16 +347,16 @@ export default {
         display: inline-block;
       }
       .error {
-        color: map-get($color, danger);
+        color: map.get($color, danger);
       }
       .success {
-        color: map-get($color, success);
+        color: map.get($color, success);
       }
     }
     .pagination {
       white-space: nowrap;
       padding: 2px 5px;
-      color: map-get($fontColor, dark);
+      color: map.get($fontColor, dark);
       font-weight: 700;
     }
     .back-btn-icon-box {
@@ -299,7 +367,7 @@ export default {
       line-height: 1;
       white-space: nowrap;
       cursor: pointer;
-      background: map-get($color, primary);
+      background: map.get($color, primary);
       border: 0;
       -webkit-appearance: none;
       text-align: center;

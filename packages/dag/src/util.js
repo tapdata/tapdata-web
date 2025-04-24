@@ -1,4 +1,4 @@
-import { isEmpty, merge } from 'lodash'
+import { isEmpty, merge } from 'lodash-es'
 import { getConnectionIcon } from '@tap/business'
 import { getIcon } from '@tap/assets/icons'
 import { uuid } from '@tap/shared'
@@ -14,7 +14,7 @@ export function getNodeIconSrc(node) {
     const map = {
       memory: 'memory',
       mongodb: 'mongodb',
-      rocksdb: 'rocksdb'
+      rocksdb: 'rocksdb',
     }
     icon = map[node.externaltype]
   }
@@ -46,10 +46,10 @@ export function getSchema(schema, values, pdkPropertiesMap) {
     if (pdkProperties) {
       const pdkSchemaList = takeFieldValue(newSchema, 'nodeConfig')
       if (pdkSchemaList?.length) {
-        let reactions = process.env.VUE_APP_HIDE_NODE_SCHEMA
+        let reactions =  import.meta.env.VUE_APP_HIDE_NODE_SCHEMA
           ? {
               'x-reactions': {
-                target: process.env.VUE_APP_HIDE_NODE_SCHEMA,
+                target:  import.meta.env.VUE_APP_HIDE_NODE_SCHEMA,
                 fulfill: {
                   state: {
                     display: 'hidden'
@@ -77,7 +77,7 @@ export function getMatchedDataTypeLevel(
   field = {},
   canUseDataTypes = [],
   fieldChangeRules = [],
-  findPossibleDataTypes = {}
+  findPossibleDataTypes = {},
 ) {
   if (isEmpty(findPossibleDataTypes) || !findPossibleDataTypes[field.field_name]) return ''
   const tapType = JSON.parse(field.tapType || '{}')
@@ -103,14 +103,27 @@ export function getPrimaryKeyTablesByType(data = [], filterType = 'All', map = {
   if (filterType === 'All') {
     return data
   }
-  const result = data.map(t => {
+  const result = data.map((t) => {
     return Object.assign({}, { tableName: t, tableComment: '', primaryKeyCounts: 0, uniqueIndexCounts: 0 }, map[t])
   })
-  const list =
-    filterType === 'HasKeys'
-      ? result.filter(t => !!t.primaryKeyCounts || !!t.uniqueIndexCounts)
-      : result.filter(t => !t.primaryKeyCounts && !t.uniqueIndexCounts)
-  return list.map(t => t.tableName)
+  let list
+  switch (filterType) {
+    case 'HasKeys':
+      list = result.filter((t) => !!t.primaryKeyCounts || !!t.uniqueIndexCounts)
+      break
+    case 'OnlyPrimaryKey':
+      list = result.filter((t) => !!t.primaryKeyCounts && !t.uniqueIndexCounts)
+      break
+    case 'OnlyUniqueIndex':
+      list = result.filter(t => !t.primaryKeyCounts && !!t.uniqueIndexCounts)
+      break
+    case 'NoKeys':
+      list = result.filter(t => !t.primaryKeyCounts && !t.uniqueIndexCounts)
+      break
+    default:
+      list = result
+  }
+  return list.map((t) => t.tableName)
 }
 
 /**

@@ -1,4 +1,4 @@
-import { h, toRaw } from '@vue/composition-api'
+import { h, toRaw } from 'vue'
 import { isVnode } from './util'
 
 export const resolveComponent = (child, props) => {

@@ -1,5 +1,5 @@
-<script>
-import { defineComponent } from '@vue/composition-api'
+<script lang="jsx">
+import { defineComponent } from 'vue'
 import i18n from '@tap/i18n'
 export default defineComponent({
   name: 'TransformLoading',
@@ -19,11 +19,11 @@ export default defineComponent({
         </transition>
       )
     }
-  }
+  },
 })
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .transform-status {
   display: flex;
   position: absolute;
@@ -44,7 +44,7 @@ export default defineComponent({
       stroke-dasharray: 90, 150;
       stroke-dashoffset: 0;
       stroke-width: 4;
-      stroke: map-get($color, primary);
+      stroke: map.get($color, primary);
       stroke-linecap: round;
     }
   }

@@ -1,8 +1,9 @@
 <template>
-  <FormRender :form="form" :schema="schema" :scope="scope" v-bind="$attrs" />
+  <FormRender v-bind="$attrs" :form="form" :schema="schema" :scope="scope" />
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import {
   createForm,
@@ -20,26 +21,23 @@ import { validateBySchema } from '@tap/form/src/shared/validate'
 
 import FormRender from './FormRender'
 import { getSchema } from '../util'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 
-const mapEnum = dataSource => (item, index) => {
+const mapEnum = (dataSource) => (item, index) => {
   const label = dataSource[index] || dataSource[item.value] || item.label
   return {
     ...item,
     value: item?.value ?? null,
-    label: label?.label ?? label
+    label: label?.label ?? label,
   }
 }
 
 export default {
   name: 'FormPanel',
-
   props: {
-    scope: {}
+    scope: {},
   },
-
   components: { FormRender },
-
   data() {
     return {
       form: createForm(),
@@ -51,13 +49,12 @@ export default {
         // labelWidth: '120',
         layout: 'vertical',
         // layout: 'horizontal',
-        feedbackLayout: 'terse'
+        feedbackLayout: 'terse',
       },
 
-      schema: null
+      schema: null,
     }
   },
-
   computed: {
     ...mapState('dataflow', ['activeNodeId', 'transformStatus']),
 
@@ -69,7 +66,7 @@ export default {
       'hasNodeError',
       'allEdges',
       'stateIsReadonly',
-      'getMessage'
+      'getMessage',
     ]),
 
     node() {
@@ -78,15 +75,16 @@ export default {
 
     ins() {
       return this.node?.__Ctor
-    }
+    },
   },
-
   watch: {
     stateIsReadonly(v) {
       this.form.setState({ disabled: v })
     },
 
     activeNodeId: {
+      deep: true,
+
       async handler(n, o) {
         const oldNode = this.nodeById(o)
         const formSchema = this.$store.getters['dataflow/formSchema'] || {}
@@ -128,7 +126,7 @@ export default {
               // 节点的特殊处理，直接拿表单校验结果设置错误信息
               this.setNodeErrorMsg({
                 id: node.id,
-                msg: e[0].messages[0]
+                msg: e[0].messages[0],
               })
             } else {
               this.setNodeError(node.id)
@@ -137,38 +135,36 @@ export default {
         }
 
         this.setNodeInputsWatcher(
-          this.$watch('node.$inputs', v => {
+          this.$watch('node.$inputs', (v) => {
             if (!this.node || !v) return
             const $inputs = this.form.getFieldState('$inputs')
             if ($inputs && $inputs.value.join(',') !== v.join(',')) {
               this.form.setValuesIn('$inputs', [...v])
-              this.$emit('update:InputsOrOutputs')
+              $emit(this, 'update:InputsOrOutputs')
             }
-          })
+          }),
         )
         this.setNodeOutputsWatcher(
-          this.$watch('node.$outputs', v => {
+          this.$watch('node.$outputs', (v) => {
             if (!this.node || !v) return
             const $outputs = this.form.getFieldState('$outputs')
             if ($outputs && $outputs.value.join(',') !== v.join(',')) {
               this.form.setValuesIn('$outputs', [...v])
-              this.$emit('update:InputsOrOutputs')
+              $emit(this, 'update:InputsOrOutputs')
             }
-          })
+          }),
         )
       },
-      immediate: true
-    }
-  },
 
+      immediate: true,
+    },
+  },
   created() {
     this.lazySaveNodeAlarmConfig = debounce(this.saveNodeAlarmConfig, 100)
   },
-
-  beforeDestroy() {
+  beforeUnmount() {
     this.form.onUnmount()
   },
-
   methods: {
     ...mapMutations('dataflow', [
       'setNodeValue',
@@ -177,7 +173,7 @@ export default {
       'setNodeErrorMsg',
       'clearNodeError',
       'setNodeInputsWatcher',
-      'setNodeOutputsWatcher'
+      'setNodeOutputsWatcher',
     ]),
 
     ...mapActions('dataflow', ['updateDag']),
@@ -197,7 +193,7 @@ export default {
           // 节点的特殊处理，直接拿表单校验结果设置错误信息
           this.setNodeErrorMsg({
             id: this.node.id,
-            msg: e[0].messages[0]
+            msg: e[0].messages[0],
           })
         } else {
           this.setNodeError(id)
@@ -214,7 +210,7 @@ export default {
       this.form = createForm({
         disabled: this.stateIsReadonly,
         values,
-        effects: this.useEffects
+        effects: this.useEffects,
       })
 
       this.schema = getSchema(schema, values, this.$store.state.dataflow.pdkPropertiesMap)
@@ -260,7 +256,7 @@ export default {
         this.updateNodePropsDebounce(form)
       })
 
-      onFormInputChange(form => {
+      onFormInputChange((form) => {
         if (this.stateIsReadonly) return
         console.log('onFormInputChange')
         this.updateNodeProps(form)
@@ -301,7 +297,8 @@ export default {
         alarmRules: formValues.alarmRules,
         alarmSettings: formValues.alarmSettings
       })
-    }
-  }
+    },
+  },
+  emits: ['update:InputsOrOutputs', 'setSchema'],
 }
 </script>

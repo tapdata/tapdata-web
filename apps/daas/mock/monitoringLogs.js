@@ -18,9 +18,9 @@ module.exports = {
           nodeName: '@name',
           taskId: '@cuid',
           taskName: '@name',
-          user_id: '@cuid'
-        }
-      ]
-    }
-  }
+          user_id: '@cuid',
+        },
+      ],
+    },
+  },
 }

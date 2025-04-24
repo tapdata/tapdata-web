@@ -176,5 +176,5 @@ export default {
   packages_form_batch_add_field_prefix: '字段前綴',
   packages_form_batch_add_field_type: '字段類型',
   packages_form_batch_add_field_count: '字段數量',
-  packages_form_batch_add_field_start: '開始數字'
+  packages_form_batch_add_field_start: '開始數字',
 }

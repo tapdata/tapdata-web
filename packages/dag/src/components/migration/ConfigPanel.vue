@@ -1,75 +1,23 @@
-<template>
-  <section
-    v-show="showPanel"
-    class="config-panel border-start flex-column"
-    :class="{ flex: showPanel, 'show-settings': activeType === 'settings' }"
-  >
-    <div
-      v-if="activeNode"
-      class="position-absolute config-tabs-left-extra align-center"
-      :class="activeType === 'node' ? 'flex' : 'none'"
-    >
-      <NodeIcon :node="activeNode" :size="24" />
-    </div>
-    <div
-      v-if="activeNode && activeNode.type === 'merge_table_processor'"
-      class="position-absolute config-tabs-right-extra flex align-center"
-    >
-      <ElButton
-        @click="setMaterializedViewVisible(true)"
-        class="--with-icon flex align-center px-2 py-0 gap-1"
-        size="mini"
-      >
-        <VIcon size="30">beta</VIcon>
-        {{ $t('packages_dag_materialized_view') }}</ElButton
-      >
-    </div>
-
-    <FormPanel
-      v-if="!materializedViewVisible"
-      class="config-form-panel"
-      v-show="activeType !== 'settings'"
-      v-on="$listeners"
-      v-bind="$attrs"
-      ref="formPanel"
-      :formProps="{
-        colon: false,
-        shallow: false,
-        layout: 'vertical',
-        feedbackLayout: 'terse'
-      }"
-      @update:InputsOrOutputs="handleLoadMeta"
-    />
-    <SettingPanel
-      v-if="settings.id"
-      class="config-form-panel"
-      :settings="settings"
-      v-show="activeType === 'settings'"
-      v-on="$listeners"
-      v-bind="$attrs"
-      ref="setting"
-    ></SettingPanel>
-  </section>
-</template>
-
 <script>
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import { cloneDeep } from 'lodash'
-
-import '@tap/component/src/directives/resize/index.scss'
-import resize from '@tap/component/src/directives/resize'
-import FormPanel from '../FormPanel'
 import focusSelect from '@tap/component/src/directives/focusSelect'
+import resize from '@tap/component/src/directives/resize'
+
+import { cloneDeep } from 'lodash-es'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import FormPanel from '../FormPanel'
 import NodeIcon from '../NodeIcon'
 import SettingPanel from './SettingPanel'
+import '@tap/component/src/directives/resize/index.scss'
 
 export default {
   name: 'ConfigPanel',
 
   directives: {
     resize,
-    focusSelect
+    focusSelect,
   },
+
+  components: { SettingPanel, NodeIcon, FormPanel },
 
   props: {
     settings: Object,
@@ -77,40 +25,44 @@ export default {
     showSchemaPanel: Boolean,
     includesType: {
       type: Array,
-      default: () => ['node', 'settings']
+      default: () => ['node', 'settings'],
     },
-    syncType: String
+    syncType: String,
   },
 
   data() {
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       currentTab: 'settings',
       titleCurrentTab: 'settings',
       name: this.activeNode?.name,
-      form: null
     }
   },
 
-  components: { SettingPanel, NodeIcon, FormPanel },
-
   computed: {
-    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
+    ...mapGetters('dataflow', [
+      'activeType',
+      'activeNode',
+      'nodeById',
+      'stateIsReadonly',
+    ]),
     ...mapState('dataflow', ['editVersion', 'materializedViewVisible']),
 
     showPanel() {
-      return this.onlySetting ? this.activeType === 'settings' : this.includesType.includes(this.activeType)
+      return this.onlySetting
+        ? this.activeType === 'settings'
+        : this.includesType.includes(this.activeType)
     },
 
     isMonitor() {
       return ['TaskMonitor', 'MigrationMonitor'].includes(this.$route.name)
-    }
+    },
   },
 
   watch: {
-    'activeNode.name'(v) {
+    'activeNode.name': function (v) {
       this.name = v
-    }
+    },
   },
 
   mounted() {
@@ -123,7 +75,7 @@ export default {
       'setNodeError',
       'clearNodeError',
       'setActiveType',
-      'setMaterializedViewVisible'
+      'setMaterializedViewVisible',
     ]),
     ...mapActions('dataflow', ['updateDag']),
 
@@ -154,17 +106,68 @@ export default {
     },
 
     handleLoadMeta() {
-      let watcher = this.$watch('editVersion', () => {
+      const watcher = this.$watch('editVersion', () => {
         watcher()
         const metaPane = this.$refs.metaPane
         if (metaPane && this.currentTab === 'meta') {
           metaPane[this.syncType === 'sync' ? 'loadFields' : 'loadData']()
         }
       })
-    }
-  }
+    },
+  },
 }
 </script>
+
+<template>
+  <section
+    v-show="showPanel"
+    class="config-panel border-start flex-column"
+    :class="{ flex: showPanel, 'show-settings': activeType === 'settings' }"
+  >
+    <div
+      v-if="activeNode"
+      class="position-absolute config-tabs-left-extra align-center"
+      :class="activeType === 'node' ? 'flex' : 'none'"
+    >
+      <NodeIcon :node="activeNode" :size="24" />
+    </div>
+    <div
+      v-if="activeNode && activeNode.type === 'merge_table_processor'"
+      class="position-absolute config-tabs-right-extra flex align-center"
+    >
+      <ElButton
+        class="--with-icon flex align-center px-2 py-0 gap-1"
+        @click="setMaterializedViewVisible(true)"
+      >
+        <VIcon size="30">beta</VIcon>
+        {{ $t('packages_dag_materialized_view') }}</ElButton
+      >
+    </div>
+
+    <FormPanel
+      v-if="!materializedViewVisible"
+      v-show="activeType !== 'settings'"
+      v-bind="$attrs"
+      ref="formPanel"
+      class="config-form-panel"
+      :form-props="{
+        colon: false,
+        shallow: false,
+        layout: 'vertical',
+        feedbackLayout: 'terse',
+      }"
+      @update:inputs-or-outputs="handleLoadMeta"
+    />
+    <SettingPanel
+      v-if="settings.id"
+      v-show="activeType === 'settings'"
+      v-bind="$attrs"
+      ref="setting"
+      class="config-form-panel"
+      :settings="settings"
+    />
+  </section>
+</template>
 
 <style lang="scss">
 .databaseLinkDialog {
@@ -178,17 +181,16 @@ export default {
   }
 }
 </style>
-<style scoped lang="scss">
-$color: map-get($color, primary);
+
+<style lang="scss" scoped>
+$color: map.get($color, primary);
 $tabsHeaderWidth: 180px;
 $headerHeight: 40px;
 $tabHeight: 44px;
 
 .el-button.--with-icon {
-  ::v-deep {
-    > span {
-      display: contents;
-    }
+  > :deep(span) {
+    display: contents;
   }
 }
 
@@ -230,20 +232,18 @@ $tabHeight: 44px;
   }
 
   .config-form-panel {
-    ::v-deep {
-      .attr-panel-body {
-        padding: 0 !important;
+    :deep(.attr-panel-body) {
+      padding: 0 !important;
 
-        .form-wrap {
-          min-height: 0;
+      .form-wrap {
+        min-height: 0;
 
-          .config-tabs-decorator {
+        .config-tabs-decorator {
+          height: 100%;
+          > .formily-element-plus-form-item-control {
             height: 100%;
-            > .formily-element-form-item-control {
+            > .formily-element-plus-form-item-control-content {
               height: 100%;
-              > .formily-element-form-item-control-content {
-                height: 100%;
-              }
             }
           }
         }
@@ -251,55 +251,53 @@ $tabHeight: 44px;
     }
   }
 
-  ::v-deep {
-    .config-tabs.el-tabs {
-      height: 100%;
+  :deep(.el-tabs.config-tabs) {
+    height: 100%;
 
-      > .el-tabs__header {
-        margin: 0;
-        .el-tabs__nav-wrap {
-          padding-left: 52px;
-          padding-right: 16px;
+    > .el-tabs__header {
+      margin: 0;
+      .el-tabs__nav-wrap {
+        padding-left: 52px;
+        padding-right: 16px;
 
-          &::after {
-            height: 1px;
-          }
-        }
-        .el-tabs__active-bar {
-          background-color: $color;
-        }
-
-        .el-tabs__item {
-          //padding: 0 12px;
-          line-height: $tabHeight;
-          height: $tabHeight;
-          font-weight: 400;
-
-          &.is-active,
-          &:hover {
-            color: $color;
-          }
+        &::after {
+          height: 1px;
         }
       }
+      .el-tabs__active-bar {
+        background-color: $color;
+      }
 
-      > .el-tabs__content {
-        height: calc(100% - $tabHeight);
-        padding: 4px 16px;
-        overflow: auto;
-        .el-tab-pane {
-          height: 100%;
+      .el-tabs__item {
+        //padding: 0 12px;
+        line-height: $tabHeight;
+        height: $tabHeight;
+        font-weight: 400;
+
+        &.is-active,
+        &:hover {
+          color: $color;
         }
       }
     }
 
-    .setting-tabs.el-tabs {
-      height: 100%;
-      > .el-tabs__header {
-        .el-tabs__nav-wrap {
-          padding-left: 0;
-          &::after {
-            height: 0;
-          }
+    > .el-tabs__content {
+      height: calc(100% - $tabHeight);
+      padding: 4px 16px;
+      overflow: auto;
+      .el-tab-pane {
+        height: 100%;
+      }
+    }
+  }
+
+  :deep(.setting-tabs.el-tabs) {
+    height: 100%;
+    > .el-tabs__header {
+      .el-tabs__nav-wrap {
+        padding-left: 0;
+        &::after {
+          height: 0;
         }
       }
     }

@@ -1,8 +1,8 @@
-import i18n, { createI18nObject } from '@tap/i18n'
-import { Cookie } from '@tap/shared'
+import i18n from '@tap/i18n'
 import { getIcon } from '@tap/assets/icons'
 // 获取子任务状态统计
 import { ETL_STATUS_MAP, ETL_SUB_STATUS_MAP } from './const'
+import { getConnectionIcon } from '../views'
 
 export const TASK_SETTINGS = {
   name: '', // 任务名称
@@ -17,14 +17,14 @@ export const TASK_SETTINGS = {
   isSchedule: false,
   cronExpression: ' ',
   accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
-  isAutoInspect: false
+  isAutoInspect: false,
 }
 
 export function getSubTaskStatus(rows = []) {
   const statusMap = {
     running: ['wait_run', 'scheduling', 'running', 'stopping'],
     not_running: ['edit', 'stop', 'complete'],
-    error: ['error', 'schedule_failed']
+    error: ['error', 'schedule_failed'],
   }
   const len = rows.length
   let result = [],
@@ -32,12 +32,12 @@ export function getSubTaskStatus(rows = []) {
   if (len === 0) {
     result = [
       Object.assign({ count: 1 }, ETL_SUB_STATUS_MAP['edit'], {
-        status: 'edit'
-      })
+        status: 'edit',
+      }),
     ]
   } else {
     let tempMap = {}
-    rows.forEach(r => {
+    rows.forEach((r) => {
       tempMap[r.status] = true
     })
     if (Object.keys(tempMap).length === 1) {
@@ -46,15 +46,15 @@ export function getSubTaskStatus(rows = []) {
       status = status === 'schedule_failed' ? 'error' : status
       result = [
         Object.assign({ count: 1 }, ETL_SUB_STATUS_MAP[status], {
-          status: status
-        })
+          status: status,
+        }),
       ]
     } else {
       for (let key in ETL_STATUS_MAP) {
         item = Object.assign({}, ETL_STATUS_MAP[key])
         item.status = key
         item.count = 0
-        rows.forEach(el => {
+        rows.forEach((el) => {
           if (statusMap[key].includes(el.status)) {
             item.count++
           }
@@ -73,7 +73,7 @@ export function getTaskBtnDisabled(row, or) {
     stop: false,
     edit: false,
     reset: false,
-    delete: false
+    delete: false,
   }
   // 启动可用：待启动、已完成、错误、调度失败、已停止
   // 停止可用：运行中、停止中
@@ -93,61 +93,68 @@ export function getTaskBtnDisabled(row, or) {
   return result
 }
 
-const BASE_URL = process.env.BASE_URL || '/'
+const BASE_URL = import.meta.env.BASE_URL || '/'
 
 export function getNodeIconSrc(node) {
   if (!node) return
   const pdkHash = node.pdkHash || node.attrs?.pdkHash
   if (pdkHash) {
-    const accessToken = Cookie.get('access_token')
-    return `${BASE_URL}api/pdk/icon?access_token=${accessToken}&pdkHash=${pdkHash}`
+    return getConnectionIcon(pdkHash)
   }
   let icon = node.type === 'table' || node.type === 'database' || node.databaseType ? node.databaseType : node.type
+  if (node.type === 'hazelcastIMDG') {
+    const map = {
+      memory: 'memory',
+      mongodb: 'mongodb',
+      rocksdb: 'rocksdb',
+    }
+    icon = map[node.externaltype]
+  }
   return icon ? getIcon(icon) : null
 }
 
 export const STATUS_MAP = {
   edit: {
-    i18n: 'public_status_edit'
+    i18n: 'public_status_edit',
   },
   wait_start: {
-    i18n: 'public_status_wait_run'
+    i18n: 'public_status_wait_run',
   },
   starting: {
     i18n: 'public_status_starting',
-    in: ['preparing', 'scheduling', 'wait_run']
+    in: ['preparing', 'scheduling', 'wait_run'],
   },
   running: {
-    i18n: 'public_status_running'
+    i18n: 'public_status_running',
   },
   complete: {
-    i18n: 'public_status_finished'
+    i18n: 'public_status_finished',
   },
   stopping: {
-    i18n: 'public_status_stopping'
+    i18n: 'public_status_stopping',
   },
   stop: {
-    i18n: 'public_status_stop'
+    i18n: 'public_status_stop',
   },
   error: {
     i18n: 'public_status_error',
-    in: ['schedule_failed', 'error']
+    in: ['schedule_failed', 'error'],
   },
   renewing: {
-    i18n: 'public_status_renewing'
+    i18n: 'public_status_renewing',
   },
   renew_failed: {
-    i18n: 'public_status_renew_failed'
+    i18n: 'public_status_renew_failed',
   },
   deleting: {
-    i18n: 'public_status_deleting'
+    i18n: 'public_status_deleting',
   },
   delete_failed: {
-    i18n: 'public_status_delete_failed'
+    i18n: 'public_status_delete_failed',
   },
   deleted: {
-    i18n: 'public_status_deleted'
-  }
+    i18n: 'public_status_deleted',
+  },
 }
 
 export const STATUS_MERGE = Object.entries(STATUS_MAP).reduce((merge, [key, value]) => {
@@ -165,7 +172,7 @@ const BUTTON_WITH_STATUS = {
   stop: ['running'],
   forceStop: ['stopping'],
   reset: ['wait_start', 'complete', 'error', 'stop', 'renew_failed'],
-  monitor: ['running', 'complete', 'error', 'stop', 'stopping', 'renewing', 'renew_failed']
+  monitor: ['running', 'complete', 'error', 'stop', 'stopping', 'renewing', 'renew_failed'],
 }
 
 export function makeStatusAndDisabled(item) {
@@ -179,9 +186,9 @@ export function makeStatusAndDisabled(item) {
   } else if (!(status in STATUS_MAP)) {
     console.error(
       i18n.t('packages_business_shared_task_weishibiederen', {
-        val1: status
+        val1: status,
       }),
-      i18n.t('packages_business_shared_task_yijingzhiweie')
+      i18n.t('packages_business_shared_task_yijingzhiweie'),
     ) // eslint-disable-line
     item.status = status = 'error'
   }
@@ -199,23 +206,23 @@ export function makeStatusAndDisabled(item) {
   return item
 }
 
-export const MILESTONE_TYPE = createI18nObject({
+export const MILESTONE_TYPE = {
   TASK: {
-    text: 'packages_business_milestone_list_renwudiaodu'
+    text: i18n.global.t('packages_business_milestone_list_renwudiaodu')
   },
   DEDUCTION: {
-    text: 'packages_business_milestone_list_load_table_structure'
+    text: i18n.global.t('packages_business_milestone_list_load_table_structure')
   },
   DATA_NODE_INIT: {
-    text: 'packages_business_milestone_list_shujujiedianchu'
+    text: i18n.global.t('packages_business_milestone_list_shujujiedianchu')
   },
   TABLE_INIT: {
-    text: 'packages_business_milestone_list_biaojiegouqianyi'
+    text: i18n.global.t('packages_business_milestone_list_biaojiegouqianyi')
   },
   SNAPSHOT: {
-    text: 'packages_business_milestone_list_quanliangshujuqian'
+    text: i18n.global.t('packages_business_milestone_list_quanliangshujuqian')
   },
   CDC: {
-    text: 'packages_business_milestone_list_jinruzengliangshu'
+    text: i18n.global.t('packages_business_milestone_list_jinruzengliangshu')
   }
-})
+}

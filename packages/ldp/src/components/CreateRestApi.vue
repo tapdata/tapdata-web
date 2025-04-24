@@ -1,15 +1,16 @@
 <template>
   <ElDialog
-    append-to-body
     custom-class="t-dialog"
-    :visible.sync="visible"
-    @update:visible="handleVisible"
+    v-model="visible"
+    @update:model-value="handleVisible"
     width="600"
     :close-on-click-modal="false"
   >
-    <span slot="title" class="fs-6 fw-sub font-color-dark">
-      {{ $t('packages_business_chuangjianfuwu') }}
-    </span>
+    <template v-slot:title>
+      <span class="fs-6 fw-sub font-color-dark">
+        {{ $t('packages_business_chuangjianfuwu') }}
+      </span>
+    </template>
 
     <ApiForm
       tag="div"
@@ -22,14 +23,21 @@
       @save="onSaved"
     ></ApiForm>
 
-    <div slot="footer">
-      <el-button @click="handleVisible(false)">{{ $t('public_button_cancel') }}</el-button>
-      <el-button type="primary" @click="handleSave()" :loading="loading">{{ $t('public_button_save') }}</el-button>
-    </div>
+    <template v-slot:footer>
+      <div>
+        <el-button @click="handleVisible(false)">{{ $t('public_button_cancel') }}</el-button>
+        <el-button type="primary" @click="handleSave()">{{ $t('public_button_save') }}</el-button>
+      </div>
+    </template>
   </ElDialog>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
+import { cloneDeep } from 'lodash-es'
+import axios from 'axios'
+
+import i18n from '@tap/i18n'
 import { modulesApi } from '@tap/api'
 import { generateId } from '@tap/shared'
 import ApiForm from '@tap/business/src/views/data-server/Drawer.vue'
@@ -39,13 +47,13 @@ export default {
   props: {
     host: String,
     value: Boolean,
-    params: Object
+    params: Object,
   },
   components: { ApiForm },
   data() {
     return {
       loading: false,
-      visible: this.value
+      visible: this.value,
     }
   },
   watch: {
@@ -54,7 +62,7 @@ export default {
       if (v) {
         this.open()
       }
-    }
+    },
   },
   methods: {
     open() {
@@ -69,7 +77,7 @@ export default {
         tableName: this.params.tableName,
         pathAccessMethod: this.data?.pathAccessMethod || 'default',
         appValue: this.params.to?.id || '',
-        appLabel: this.params.to?.value || ''
+        appLabel: this.params.to?.value || '',
       }
       this.$nextTick(() => {
         this.$refs.apiForm.open(formData)
@@ -91,8 +99,8 @@ export default {
       this.loading = false
       this.handleVisible(false)
       this.$emit('save', data, this.params.to)
-    }
-  }
+    },
+  },
 }
 </script>
 

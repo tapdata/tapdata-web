@@ -604,8 +604,9 @@ export default {
   packages_dag_date_processor_method: '請選擇運算方式',
   packages_dag_date_processor_increase: '增加',
   packages_dag_date_processor_decrease: '減少',
-  packages_dag_nodes_table_shiligro: '示例: {"$group": { "_id": "$name", totalQuantity: { $sum: "$quantity" } }}',
-  packages_dag_nodes_table_jinzhichiqu: '僅支持query, 例如: { "_id": "apples", "qty": 5 }',
+  packages_dag_nodes_table_shiligro:
+    '示例: {\'{\'}"$group": {\'{\'} "_id": "$name", totalQuantity: {\'{\'} $sum: "$quantity" {\'} }}\'}',
+  packages_dag_nodes_table_jinzhichiqu: '僅支持query, 例如: {\'{\'} "_id": "apples", "qty": 5 {\'}\'}',
   packages_dag_migration_settingpanel_shirenwubaocuo: '時，任務報錯停止',
   packages_dag_migration_settingpanel_dangtiaoguoshijian: '當跳過事件數超過',
   packages_dag_migration_settingpanel_dangtiaoguoshijian2: '當跳過事件佔已同步事件的百分比超過',
@@ -624,8 +625,8 @@ export default {
   packages_dag_field_inference_list_anzhaoxishu: '按係數調整字段長度',
   packages_dag_field_inference_list_anzhaoxishu_tip: '按係數調整是指將原推演出的長度乘以設置的係數作為調整後的字段長度',
   packages_dag_field_rename_index_yixiacaozuoyi: '以下操作已匹配不到源字段',
-  packages_dag_nodes_database_jinwuzhujianbiao: '僅無主鍵表',
-  packages_dag_nodes_database_jinyouzhujianbiao: '僅有主鍵表（含唯一索引）',
+  packages_dag_nodes_database_jinwuzhujianbiao: '無主鍵且無唯一索引',
+  packages_dag_nodes_database_jinyouzhujianbiao: '包含主鍵或唯一索引',
   packages_dag_nodes_database_biaoxianshi: '可選擇的表範圍',
   packages_dag_nodes_database_xuanzeyaoguolvdiaode: '選擇要過濾掉的字段類型',
   packages_dag_data_schema: '數據模型',
@@ -771,5 +772,7 @@ export default {
   packages_dag_field_path: '字段路徑',
   packages_dag_email_receivers: '郵件接收人',
   packages_dag_merge_table_js_node_error: '主從合併節點後不允許存在 JS 節點',
-  packages_dag_merge_table_table_not_allow_target: '主從合併後不支持將 {val} 作為寫入目標'
+  packages_dag_merge_table_table_not_allow_target: '主從合併後不支持將 {val} 作為寫入目標',
+  packages_dag_only_include_pk: '僅包含主鍵',
+  packages_dag_only_include_uk: '僅包含唯一索引'
 }

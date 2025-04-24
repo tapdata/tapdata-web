@@ -1,0 +1,295 @@
+//@import '~@tap/assets/styles/var';
+@import '@tap/assets/styles/reboot';
+@import '@tap/assets/styles/utilities';
+@import '@tap/assets/fonts/DIN/index.css';
+@import 'overrides';
+
+.g-panel-container {
+  background: #fff;
+  padding: 16px 16px 16px 16px;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+//统一滚动条样式
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background: transparent;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+:hover::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+// zoho 客服插件样式
+// 浮动客服图标
+.zsiq_custommain, #zsiq_float > img {
+  width: 60px !important;
+  height: 60px !important;
+}
+.botactions em {
+  white-space: nowrap;
+}
+
+.zsiq_floatmain {
+  display: none !important;
+}
+.zsiq_floatmain {
+  display: block !important;
+}
+.siq_bR {
+  bottom: 75px !important;
+  right: 10px;
+}
+.error-confirm-fold {
+  & > input:checked ~ label {
+    display: none;
+  }
+  & > input:checked + .error-confirm-fold-content {
+    white-space: inherit;
+  }
+}
+.el-dialog__body {
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+.status-block {
+  display: inline-block;
+  min-width: 60px;
+  padding: 3px 10px;
+  text-align: center;
+  font-weight: 500;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+.status-running {
+  color: #178061;
+  background-color: #c4f3cb;
+}
+.status-complete,
+.status-finish,
+.status-finished {
+  color: #008b58;
+  background-color: #b4edd8;
+}
+.status-renew_failed,
+.status-error,
+.status-rejected,
+.status-stopped {
+  color: #d44d4d;
+  background-color: #ffecec;
+}
+.status-paused {
+  color: #2c65ff;
+  background-color: #ddebff;
+}
+.status-edit {
+  color: #0083c7;
+  background-color: #d1eefd;
+}
+.status-pending,
+.status-notActivated {
+  color: #2c65ff;
+  background-color: #ddebff;
+}
+.status-active,
+.status-activated {
+  color: #178061;
+  background-color: #c4f3cb;
+}
+.status-edit {
+  color: #0083c7;
+  background-color: #d1eefd;
+}
+.status-scheduled,
+.status-scheduling,
+.status-wait_run,
+.status-pause {
+  color: #2c65ff;
+  background-color: #ddebff;
+}
+
+.status-renewing,
+.status-waiting {
+  color: #c39700;
+  background-color: #fdf1c8;
+}
+.status-pausing {
+  color: #6350d2;
+  background-color: #dcd6ff;
+}
+.status-stop {
+  color: #c88500;
+  background-color: #ffe4ae;
+}
+.status-stopping,
+.status-notVerified,
+.status-generating {
+  color: #c39700;
+  background-color: #fdf1c8;
+}
+.status-ready {
+  color: #c39700;
+  background-color: #fdf1c8;
+}
+.status-connection-ready {
+  color: #2b8a6a;
+  background-color: #ccf4d2;
+}
+.status-connection-testing {
+  color: #d78120;
+  background-color: #feecd6;
+}
+.status-connection-invalid {
+  color: #d5575a;
+  background-color: #feeeef;
+}
+.level-finished {
+  color: #008b58;
+}
+.level-edit {
+  color: #0083c7;
+}
+.level-waiting {
+  color: #c39700;
+}
+.level-stop {
+  color: #c88500;
+}
+.level-error {
+  color: #d44d4d;
+}
+
+body.hide-chart > [data-id='zsalesiq'] {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+$primary: map.get($color, primary);
+$dotSize: 16px;
+$dotSpace: $dotSize + 8px;
+$dotLeft: 9999px;
+$x1: $dotLeft - $dotSpace;
+$x2: $dotLeft;
+$x3: $dotLeft + $dotSpace;
+.dot-pulse {
+  position: relative;
+  left: $dotLeft * -1;
+  width: $dotSize;
+  height: $dotSize;
+  border-radius: $dotSize * 0.5;
+  background-color: $primary;
+  color: $primary;
+  box-shadow: $x1 0 0 0 $primary, $x2 0 0 0 $primary, $x3 0 0 0 $primary;
+  animation: dotPulse 1.5s infinite linear;
+}
+
+@keyframes dotPulse {
+  0% {
+    box-shadow: $x1 0 0 -5px $primary, $x2 0 0 0 $primary, $x3 0 0 2px $primary;
+  }
+
+  25% {
+    box-shadow: $x1 0 0 0 $primary, $x2 0 0 2px $primary, $x3 0 0 0 $primary;
+  }
+
+  50% {
+    box-shadow: $x1 0 0 2px $primary, $x2 0 0 0 $primary, $x3 0 0 -5px $primary;
+  }
+
+  75% {
+    box-shadow: $x1 0 0 0 $primary, $x2 0 0 -5px $primary, $x3 0 0 0 $primary;
+  }
+
+  100% {
+    box-shadow: $x1 0 0 -5px $primary, $x2 0 0 0 $primary, $x3 0 0 2px $primary;
+  }
+}
+
+.version-upgrade-notification {
+  width: auto;
+  max-width: 357px;
+}
+
+@keyframes dialog-zoom-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes dialog-zoom-out {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes empty-keyframes {}
+
+.dialog-zoom-transition {
+  &.dialog-fade-enter-active {
+    animation: fade-in 0.3s;
+    .el-dialog {
+      animation: dialog-zoom-in 0.3s cubic-bezier(0.32, 0.14, 0.15, 0.86);
+    }
+  }
+
+  &.dialog-fade-leave-active {
+    animation: fade-out 0.2s both;
+    .el-dialog {
+      animation: dialog-zoom-out 0.2s cubic-bezier(0.78, 0.14, 0.15, 0.86) both;
+    }
+  }
+}
+
+.error-stack-pre-wrap {
+  background: #fff2f0;
+  border: 1px solid #ffccc7;
+
+  .error-stack-actions {
+    display: none;
+  }
+
+  &:hover {
+    .error-stack-actions {
+      display: block;
+    }
+  }
+}

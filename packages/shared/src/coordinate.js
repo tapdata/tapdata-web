@@ -15,11 +15,11 @@ export const RectQuadrant = {
   Outer1: 'O1', //内部第五象限
   Outer2: 'O2', //内部第六象限
   Outer3: 'O3', //内部第七象限
-  Outer4: 'O4' //内部第八象限
+  Outer4: 'O4', //内部第八象限
 }
 
 export function isPointInRect(point, rect, sensitive = true) {
-  const boundSensor = value => {
+  const boundSensor = (value) => {
     if (!sensitive) return 0
     const sensor = value * 0.1
     if (sensor > 20) return 20
@@ -141,7 +141,7 @@ export function calcRelativeOfPointToRect(point, rect) {
   const quadrant = calcQuadrantOfPonitToRect(point, rect)
   return {
     quadrant,
-    distance
+    distance,
   }
 }
 
@@ -152,7 +152,7 @@ export function calcBoundingRect(rects) {
   let maxBottom = -Infinity
   let minLeft = Infinity
   let maxRight = -Infinity
-  rects.forEach(item => {
+  rects.forEach((item) => {
     const rect = typeof DOMRect !== 'undefined' && new DOMRect(item.x, item.y, item.width, item.height)
     if (rect.top <= minTop) {
       minTop = rect.top
@@ -183,7 +183,7 @@ export function calcRectByStartEndPoint(startPoint, endPoint, scrollX = 0, scrol
         drawStartX - scrollX,
         drawStartY - scrollY,
         Math.abs(endPoint.x - startPoint.x + scrollX),
-        Math.abs(endPoint.y - startPoint.y + scrollY)
+        Math.abs(endPoint.y - startPoint.y + scrollY),
       )
     )
   } else if (endPoint.x + scrollX < startPoint.x && endPoint.y + scrollY < startPoint.y) {
@@ -196,7 +196,7 @@ export function calcRectByStartEndPoint(startPoint, endPoint, scrollX = 0, scrol
         drawStartX,
         drawStartY,
         Math.abs(endPoint.x - startPoint.x) - scrollX,
-        Math.abs(endPoint.y - startPoint.y) - scrollY
+        Math.abs(endPoint.y - startPoint.y) - scrollY,
       )
     )
   } else if (endPoint.x + scrollX < startPoint.x && endPoint.y + scrollY >= startPoint.y) {
@@ -209,7 +209,7 @@ export function calcRectByStartEndPoint(startPoint, endPoint, scrollX = 0, scrol
         drawStartX - scrollX,
         drawStartY - scrollY,
         Math.abs(endPoint.x - startPoint.x + scrollX),
-        Math.abs(endPoint.y - startPoint.y + scrollY)
+        Math.abs(endPoint.y - startPoint.y + scrollY),
       )
     )
   } else {
@@ -222,7 +222,7 @@ export function calcRectByStartEndPoint(startPoint, endPoint, scrollX = 0, scrol
         drawStartX,
         drawStartY,
         Math.abs(endPoint.x - startPoint.x) - scrollX,
-        Math.abs(endPoint.y - startPoint.y) - scrollY
+        Math.abs(endPoint.y - startPoint.y) - scrollY,
       )
     )
   }

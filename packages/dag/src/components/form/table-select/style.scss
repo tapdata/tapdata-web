@@ -1,7 +1,15 @@
 .async-select {
-  .el-input--prefix .el-input__inner {
-    // prefix 用来做Tag显示, 不需要padding
-    padding-left: 15px;
+  //.el-input--prefix .el-input__inner {
+  //  // prefix 用来做Tag显示, 不需要padding
+  //  padding-left: 15px;
+  //}
+  .el-input__prefix-inner > :last-child {
+    margin-right: 0;
+  }
+  &.is-drop-menu-visible {
+    .el-input__prefix {
+      display: none;
+    }
   }
   .prefix-tag.el-tag {
     max-width: unset;

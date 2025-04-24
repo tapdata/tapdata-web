@@ -3,7 +3,7 @@ import { on, off } from '@tap/shared'
 export default {
   data() {
     return {
-      moveLastPosition: [0, 0]
+      moveLastPosition: [0, 0],
     }
   },
 
@@ -16,7 +16,7 @@ export default {
 
       return {
         x,
-        y
+        y,
       }
     },
 
@@ -46,7 +46,7 @@ export default {
 
       on(document, 'mousemove', this.mouseMovePaper, {
         capture: false,
-        passive: false
+        passive: false,
       })
     },
 
@@ -69,6 +69,6 @@ export default {
       }
 
       this.movePaper(e)
-    }
-  }
+    },
+  },
 }

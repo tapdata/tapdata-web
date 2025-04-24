@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from 'axios'
+import axios, { type AxiosInstance } from 'axios'
 
 const CancelToken = axios.CancelToken
 const isCancel = axios.isCancel
@@ -13,7 +13,7 @@ export default class Http {
   }
 
   count(params: unknown) {
-    return this.axios.get(this.url + '/count', { params })
+    return this.axios.get(`${this.url}/count`, { params })
   }
 
   patch(params: unknown, config) {
@@ -21,7 +21,7 @@ export default class Http {
   }
 
   updateById(id: string, attributes: unknown) {
-    return this.axios.patch(this.url + '/' + id, attributes)
+    return this.axios.patch(`${this.url}/${id}`, attributes)
   }
 
   /**
@@ -38,12 +38,13 @@ export default class Http {
     if (typeof where === 'string') {
       queryStr = where
     }
-    return this.axios.post(this.url + '/execute?where=' + encodeURIComponent(queryStr), attributes)
+    return this.axios.post(
+      `${this.url}/execute?where=${encodeURIComponent(queryStr)}`,
+      attributes,
+    )
   }
 
-  get(params: unknown, filter: unknown, headers: unknown)
-
-  get(params: unknown, filter: unknown) {
+  get(params?: unknown, filter?: unknown) {
     if (Array.isArray(params)) {
       let queryStr = ''
       if (typeof filter === 'object') {
@@ -51,10 +52,10 @@ export default class Http {
       } else if (typeof filter === 'string') {
         queryStr = filter
       }
-      const qs = queryStr ? '?filter=' + encodeURIComponent(queryStr) : ''
-      return this.axios.get(this.url + '/' + params.join('/') + qs)
+      const qs = queryStr ? `?filter=${encodeURIComponent(queryStr)}` : ''
+      return this.axios.get(`${this.url}/${params.join('/')}${qs}`)
     } else if (typeof params === 'string') {
-      return this.axios.get(this.url + '/' + params, { params: filter })
+      return this.axios.get(`${this.url}/${params}`, { params: filter })
     }
     params = params || {}
     return this.axios.get(this.url, { params })
@@ -70,7 +71,7 @@ export default class Http {
 
   findOne(params: unknown) {
     params = params || {}
-    return this.axios.get(this.url + '/findOne', { params })
+    return this.axios.get(`${this.url}/findOne`, { params })
   }
 }
 export { CancelToken, isCancel }

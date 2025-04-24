@@ -534,9 +534,9 @@ export default {
   packages_dag_js_declare_index_shiyongbangzhu: 'Use Help',
   packages_dag_js_declare_index_xianshishengminglai: 'Explicit declarations to define and modify models',
   packages_dag_js_declare_index_zengjiayigezi:
-    "// Add a field, do not operate if the field already exists\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n// Remove an existing field\nTapModelDeclare.removeField({val2}, 'fieldName')\n//Update an existing field\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n//Update the field, if it does not exist, add it\nTapModelDeclare.upsertField({ val4}, 'fieldName', 'TapString')\n// Set the field as the primary key\nTapModelDeclare.setPk({val5}, 'fieldName')\n// Cancel the primary key\nTapModelDeclare.unSetPk({val6}, 'fieldName' )\n// Add index\nTapModelDeclare.addIndex({val7}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])\n// Remove index\nTapModelDeclare. removeIndex({val8}, 'indexName')\n",
+    "// Add a field, do not operate if the field already exists\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n// Remove an existing field\nTapModelDeclare.removeField({val2}, 'fieldName')\n//Update an existing field\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n//Update the field, if it does not exist, add it\nTapModelDeclare.upsertField({ val4}, 'fieldName', 'TapString')\n// Set the field as the primary key\nTapModelDeclare.setPk({val5}, 'fieldName')\n// Cancel the primary key\nTapModelDeclare.unSetPk({val6}, 'fieldName' )\n// Add index\nTapModelDeclare.addIndex({val7}, 'indexName', [{'{'}'fieldName':'fieldName1', 'order': 'asc'{'}'}])\n// Remove index\nTapModelDeclare. removeIndex({val8}, 'indexName')\n",
   packages_dag_python_declare_index_zengjiayigezi:
-    "# Add a field, do not operate if the field already exists\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n# Remove an existing field\nTapModelDeclare.removeField({val2}, 'fieldName')\n//Update an existing field\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n//Update the field, if it does not exist, add it\nTapModelDeclare.upsertField({ val4}, 'fieldName', 'TapString')\n# Set the field as the primary key\nTapModelDeclare.setPk({val5}, 'fieldName')\n# Cancel the primary key\nTapModelDeclare.unSetPk({val6}, 'fieldName' )\n# Add index\nTapModelDeclare.addIndex({val7}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])\n# Remove index\nTapModelDeclare. removeIndex({val8}, 'indexName')\n",
+    "# Add a field, do not operate if the field already exists\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n# Remove an existing field\nTapModelDeclare.removeField({val2}, 'fieldName')\n//Update an existing field\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n//Update the field, if it does not exist, add it\nTapModelDeclare.upsertField({ val4}, 'fieldName', 'TapString')\n# Set the field as the primary key\nTapModelDeclare.setPk({val5}, 'fieldName')\n# Cancel the primary key\nTapModelDeclare.unSetPk({val6}, 'fieldName' )\n# Add index\nTapModelDeclare.addIndex({val7}, 'indexName', [{'{'}'fieldName':'fieldName1', 'order': 'asc'{'}'}])\n# Remove index\nTapModelDeclare. removeIndex({val8}, 'indexName')\n",
   packages_dag_python_not_support_windows: 'Python nodes are currently only supported on Linux Agents, not Windows.',
   packages_dag_js_processor_index_duibi: 'Comparison',
   packages_dag_js_processor_index_yongfa: 'Usage:',
@@ -650,8 +650,9 @@ export default {
   packages_dag_date_processor_method: 'Please select the calculation method',
   packages_dag_date_processor_increase: 'Increase',
   packages_dag_date_processor_decrease: 'Decrease',
-  packages_dag_nodes_table_shiligro: 'Example: {"$group": { "_id": "$name", totalQuantity: { $sum: "$quantity" } }}',
-  packages_dag_nodes_table_jinzhichiqu: 'Only support query, for example: { "_id": "apples", "qty": 5 }',
+  packages_dag_nodes_table_shiligro:
+    'Example: {\'{\'}"$group": {\'{\'} "_id": "$name", totalQuantity: {\'{\'} $sum: "$quantity" {\'} }}\'}',
+  packages_dag_nodes_table_jinzhichiqu: 'Only support query, for example: {\'{\'} "_id": "apples", "qty": 5 {\'}\'}',
   packages_dag_migration_settingpanel_shirenwubaocuo: 'When the task reports an error, stop',
   packages_dag_migration_settingpanel_dangtiaoguoshijian: 'When the number of skip events exceeds',
   packages_dag_migration_settingpanel_dangtiaoguoshijian2:
@@ -673,8 +674,8 @@ export default {
   packages_dag_field_inference_list_anzhaoxishu_tip:
     'Adjustment by coefficient refers to multiplying the original deduced length by the set coefficient as the adjusted field length',
   packages_dag_field_rename_index_yixiacaozuoyi: 'The following operations cannot match the source field',
-  packages_dag_nodes_database_jinwuzhujianbiao: 'No primary key table only',
-  packages_dag_nodes_database_jinyouzhujianbiao: 'Only the primary key table (including unique index)',
+  packages_dag_nodes_database_jinwuzhujianbiao: 'No Primary Key and No Unique Index',
+  packages_dag_nodes_database_jinyouzhujianbiao: 'Includes Primary Key or Unique Index',
   packages_dag_nodes_database_biaoxianshi: 'Selectable table range',
   packages_dag_nodes_database_xuanzeyaoguolvdiaode: 'Select the field type to filter out',
   packages_dag_data_schema: 'Data Schema',
@@ -832,5 +833,7 @@ export default {
   packages_dag_field_path: 'Field Path',
   packages_dag_email_receivers: 'Email Receivers',
   packages_dag_merge_table_js_node_error: 'Merge table node cannot have JS node after it',
-  packages_dag_merge_table_table_not_allow_target: 'Merge table does not support writing to {val}'
+  packages_dag_merge_table_table_not_allow_target: 'Merge table does not support writing to {val}',
+  packages_dag_only_include_pk: 'Only Include Primary Key',
+  packages_dag_only_include_uk: 'Only Include Unique Index'
 }

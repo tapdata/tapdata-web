@@ -1,118 +1,15 @@
-<template>
-  <ElDialog
-    :visible="visible"
-    @open="onOpen"
-    @update:visible="$emit('update:visible', $event)"
-    :title="$t('packages_business_confirmExecuteDataRepair')"
-    width="520px"
-    custom-class="pro-dialog"
-  >
-    <div>
-      <div>
-        <div class="grid-list align-center" v-loading="loading">
-          <div class="grid-list-item-title font-color-dark">{{ $t('packages_business_checkTaskInfo') }}</div>
-
-          <span class="grid-list-item-label font-color-sslight">{{ $t('packages_business_taskName') }}</span>
-          <span class="grid-list-item-content font-color-dark">{{ inspectRecoveryVerifyData.flowName }}</span>
-
-          <span class="grid-list-item-label font-color-sslight">{{ $t('packages_business_taskStatus') }}</span>
-          <span class="grid-list-item-content font-color-dark">
-            <TaskStatus :task="inspectRecoveryVerifyData"></TaskStatus>
-          </span>
-
-          <span class="grid-list-item-label font-color-sslight">{{
-            $t('packages_business_task_monitor_mission_milestone')
-          }}</span>
-          <span class="grid-list-item-content font-color-dark">
-            <SyncStatus :status="inspectRecoveryVerifyData.flowMilestoneStage" />
-          </span>
-
-          <span
-            class="grid-list-item-label font-color-sslight"
-            :class="{
-              'color-warning': delayWarning
-            }"
-            >{{ $t('packages_business_taskIncrementDelay') }}</span
-          >
-          <span
-            class="grid-list-item-content font-color-dark"
-            :class="{
-              'color-warning': delayWarning
-            }"
-            >{{ replicateLag }}</span
-          >
-
-          <div class="grid-list-item-title font-color-dark">
-            <span>{{ $t('packages_business_checkDetails') }}</span>
-          </div>
-
-          <span class="grid-list-item-label font-color-sslight">{{ $t('packages_business_diffThreshold') }}</span>
-          <span class="grid-list-item-content font-color-dark">{{ inspectRecoveryVerifyData.diffLimit }}</span>
-
-          <span
-            class="grid-list-item-label font-color-sslight"
-            :class="{
-              'color-warning': diffWarning
-            }"
-            >{{ $t('packages_business_diffTotal') }}</span
-          >
-          <span
-            class="grid-list-item-content font-color-dark"
-            :class="{
-              'color-warning': diffWarning
-            }"
-            >{{ inspectRecoveryVerifyData.diffTotals }}
-          </span>
-
-          <span class="grid-list-item-label font-color-sslight">{{ $t('packages_business_sourceOnly') }}</span>
-          <span class="grid-list-item-content font-color-dark">{{ inspectRecoveryVerifyData.sourceOnly }}</span>
-          <span class="grid-list-item-label font-color-sslight">{{ $t('packages_business_targetOnly') }}</span>
-          <span class="grid-list-item-content font-color-dark">{{ inspectRecoveryVerifyData.targetOnly }}</span>
-
-          <div v-if="diffWarning" class="grid-list-item-block">
-            <el-alert :title="$t('packages_business_diffExceededAlert')" type="warning" show-icon :closable="false" />
-          </div>
-
-          <div class="grid-list-item-title font-color-dark">{{ $t('packages_business_correctionDetails') }}</div>
-
-          <span class="grid-list-item-label font-color-sslight">{{
-            $t('packages_business_correctionDataVolume')
-          }}</span>
-          <span class="grid-list-item-content font-color-dark">{{ inspectRecoveryVerifyData.recoveryDataTotals }}</span>
-
-          <span class="grid-list-item-label font-color-sslight">{{
-            $t('packages_business_correctionTableCount')
-          }}</span>
-          <span class="grid-list-item-content font-color-dark">{{
-            inspectRecoveryVerifyData.recoveryTableTotals
-          }}</span>
-        </div>
-      </div>
-    </div>
-
-    <template #footer>
-      <ElButton @click="$emit('update:visible', false)">{{ $t('public_button_cancel') }}</ElButton>
-      <ElTooltip :disabled="!tipContent" :content="tipContent" placement="top">
-        <ElButton :disabled="correctionDisabled" :loading="starting" type="primary" @click="handleStart">{{
-          $t('packages_business_correction')
-        }}</ElButton>
-      </ElTooltip>
-    </template>
-  </ElDialog>
-</template>
-
 <script>
-import { calcTimeUnit } from '@tap/shared'
 import { inspectApi } from '@tap/api'
-import TaskStatus from '../../../components/TaskStatus.vue'
+import { calcTimeUnit } from '@tap/shared'
 import SyncStatus from '../../../components/SyncStatus'
+import TaskStatus from '../../../components/TaskStatus.vue'
 
 export default {
   name: 'DataCorrectionDialog',
   components: { SyncStatus, TaskStatus },
   props: {
     visible: Boolean,
-    inspectId: String
+    inspectId: String,
   },
   data() {
     return {
@@ -136,8 +33,8 @@ export default {
         canRecovery: true,
         errorCodes: [],
         sourceOnly: null,
-        targetOnly: null
-      }
+        targetOnly: null,
+      },
     }
   },
 
@@ -146,14 +43,17 @@ export default {
       return this.inspectRecoveryVerifyData.flowDelay >= 60000
     },
     diffWarning() {
-      return this.inspectRecoveryVerifyData.diffTotals > this.inspectRecoveryVerifyData.diffLimit
+      return (
+        this.inspectRecoveryVerifyData.diffTotals >
+        this.inspectRecoveryVerifyData.diffLimit
+      )
     },
     replicateLag() {
       const replicateLag = this.inspectRecoveryVerifyData.flowDelay
 
       return replicateLag != null
         ? calcTimeUnit(replicateLag, 2, {
-            autoHideMs: true
+            autoHideMs: true,
           })
         : '-'
     },
@@ -171,7 +71,7 @@ export default {
         return this.$t('packages_business_no_data_correction')
       }
       return null
-    }
+    },
   },
 
   methods: {
@@ -190,15 +90,157 @@ export default {
         await inspectApi.startRecovery(this.inspectId)
 
         this.starting = false
-        this.$message.success(this.$t('packages_business_correctionTaskStarted'))
+        this.$message.success(
+          this.$t('packages_business_correctionTaskStarted'),
+        )
         this.$emit('started')
-      } catch (e) {
-        console.error(e)
+      } catch (error) {
+        console.error(error)
       }
-    }
-  }
+    },
+  },
 }
 </script>
+
+<template>
+  <ElDialog
+    :model-value="visible"
+    :title="$t('packages_business_confirmExecuteDataRepair')"
+    width="520px"
+    custom-class="pro-dialog"
+    @open="onOpen"
+    @update:model-value="$emit('update:visible', $event)"
+  >
+    <div>
+      <div>
+        <div v-loading="loading" class="grid-list align-center">
+          <div class="grid-list-item-title font-color-dark">
+            {{ $t('packages_business_checkTaskInfo') }}
+          </div>
+
+          <span class="grid-list-item-label font-color-sslight">{{
+            $t('packages_business_taskName')
+          }}</span>
+          <span class="grid-list-item-content font-color-dark">{{
+            inspectRecoveryVerifyData.flowName
+          }}</span>
+
+          <span class="grid-list-item-label font-color-sslight">{{
+            $t('packages_business_taskStatus')
+          }}</span>
+          <span class="grid-list-item-content font-color-dark">
+            <TaskStatus :task="inspectRecoveryVerifyData" />
+          </span>
+
+          <span class="grid-list-item-label font-color-sslight">{{
+            $t('packages_business_task_monitor_mission_milestone')
+          }}</span>
+          <span class="grid-list-item-content font-color-dark">
+            <SyncStatus
+              :status="inspectRecoveryVerifyData.flowMilestoneStage"
+            />
+          </span>
+
+          <span
+            class="grid-list-item-label font-color-sslight"
+            :class="{
+              'color-warning': delayWarning,
+            }"
+            >{{ $t('packages_business_taskIncrementDelay') }}</span
+          >
+          <span
+            class="grid-list-item-content font-color-dark"
+            :class="{
+              'color-warning': delayWarning,
+            }"
+            >{{ replicateLag }}</span
+          >
+
+          <div class="grid-list-item-title font-color-dark">
+            <span>{{ $t('packages_business_checkDetails') }}</span>
+          </div>
+
+          <span class="grid-list-item-label font-color-sslight">{{
+            $t('packages_business_diffThreshold')
+          }}</span>
+          <span class="grid-list-item-content font-color-dark">{{
+            inspectRecoveryVerifyData.diffLimit
+          }}</span>
+
+          <span
+            class="grid-list-item-label font-color-sslight"
+            :class="{
+              'color-warning': diffWarning,
+            }"
+            >{{ $t('packages_business_diffTotal') }}</span
+          >
+          <span
+            class="grid-list-item-content font-color-dark"
+            :class="{
+              'color-warning': diffWarning,
+            }"
+            >{{ inspectRecoveryVerifyData.diffTotals }}
+          </span>
+
+          <span class="grid-list-item-label font-color-sslight">{{
+            $t('packages_business_sourceOnly')
+          }}</span>
+          <span class="grid-list-item-content font-color-dark">{{
+            inspectRecoveryVerifyData.sourceOnly
+          }}</span>
+          <span class="grid-list-item-label font-color-sslight">{{
+            $t('packages_business_targetOnly')
+          }}</span>
+          <span class="grid-list-item-content font-color-dark">{{
+            inspectRecoveryVerifyData.targetOnly
+          }}</span>
+
+          <div v-if="diffWarning" class="grid-list-item-block">
+            <el-alert
+              :title="$t('packages_business_diffExceededAlert')"
+              type="warning"
+              show-icon
+              :closable="false"
+            />
+          </div>
+
+          <div class="grid-list-item-title font-color-dark">
+            {{ $t('packages_business_correctionDetails') }}
+          </div>
+
+          <span class="grid-list-item-label font-color-sslight">{{
+            $t('packages_business_correctionDataVolume')
+          }}</span>
+          <span class="grid-list-item-content font-color-dark">{{
+            inspectRecoveryVerifyData.recoveryDataTotals
+          }}</span>
+
+          <span class="grid-list-item-label font-color-sslight">{{
+            $t('packages_business_correctionTableCount')
+          }}</span>
+          <span class="grid-list-item-content font-color-dark">{{
+            inspectRecoveryVerifyData.recoveryTableTotals
+          }}</span>
+        </div>
+      </div>
+    </div>
+
+    <template #footer>
+      <ElButton @click="$emit('update:visible', false)">{{
+        $t('public_button_cancel')
+      }}</ElButton>
+      <ElTooltip :disabled="!tipContent" :content="tipContent" placement="top">
+        <ElButton
+          :disabled="correctionDisabled"
+          :loading="starting"
+          type="primary"
+          @click="handleStart"
+          >{{ $t('packages_business_correction') }}</ElButton
+        >
+      </ElTooltip>
+    </template>
+  </ElDialog>
+</template>
 
 <style scoped lang="scss">
 .grid-list {
@@ -234,7 +276,7 @@ export default {
       top: 0;
       bottom: 0;
       position: absolute;
-      background-color: map-get($color, primary);
+      background-color: map.get($color, primary);
       //background-color: #bcbfc3;
     }
   }

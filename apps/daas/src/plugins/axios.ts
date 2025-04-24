@@ -1,8 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosError, AxiosResponse } from 'axios'
+import { ElMessage as Message } from 'element-plus'
 import Cookie from '@tap/shared/src/cookie'
 import { signOut } from '../utils/util'
-import { Message } from '@/plugins/element'
-import VConfirm from '@/components/v-confirm'
 import i18n from '@/i18n'
 import Qs from 'qs'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
@@ -15,7 +14,7 @@ const pending = [] //声明一个数组用于存储每个ajax请求的取消函�
 
 const CancelToken = axios.CancelToken
 
-axios.defaults.baseURL = process.env.BASE_URL || './'
+axios.defaults.baseURL = import.meta.env.BASE_URL || './'
 
 const getPendingKey = (config: AxiosRequestConfig): string => {
   const { url, method, data, params } = config
@@ -33,13 +32,13 @@ const getPendingKey = (config: AxiosRequestConfig): string => {
     method,
     data: config.data,
     params,
-    headers
+    headers,
   })
   return key
 }
 const removePending = (config: AxiosRequestConfig): void => {
   const key = getPendingKey(config)
-  const index = pending.findIndex(it => it === key)
+  const index = pending.findIndex((it) => it === key)
   if (index >= 0) {
     pending.splice(index, 1)
   }
@@ -92,20 +91,20 @@ const errorCallback = (error: AxiosError): Promise<AxiosError | string> => {
   } else if (error.code === 'ECONNABORTED' /* || error.message === 'Network Error' || !window.navigator.onLine*/) {
     // 这两种情况已在ws-client.js里监听 👉 error.message === 'Network Error' || !window.navigator.onLine
     Message.error({
-      message: i18n.t('public_message_network_unconnected').toString()
+      message: i18n.t('public_message_network_unconnected').toString(),
     })
   } else if (error.message && error.message.includes('timeout')) {
     Message.error({
-      message: i18n.t('public_message_request_timeout').toString()
+      message: i18n.t('public_message_request_timeout').toString(),
     })
   }
   return Promise.reject(error)
 }
 axios.interceptors.request.use(function (config: AxiosRequestConfig): AxiosRequestConfig {
-  config.paramsSerializer = params => {
+  config.paramsSerializer = (params) => {
     return Qs.stringify(params, {
       arrayFormat: 'brackets',
-      encoder: str => window.encodeURIComponent(str)
+      encoder: (str) => window.encodeURIComponent(str),
     })
   }
   const accessToken = Cookie.get('access_token')
@@ -125,7 +124,7 @@ axios.interceptors.request.use(function (config: AxiosRequestConfig): AxiosReque
 
   const key = getPendingKey(config)
   let cancelFunc = null
-  config.cancelToken = new CancelToken(c => {
+  config.cancelToken = new CancelToken((c) => {
     cancelFunc = c
   })
   if (pending.includes(key)) {
@@ -141,6 +140,7 @@ axios.interceptors.response.use((response: AxiosResponse) => {
   return new Promise((resolve, reject) => {
     removePending(response.config)
     const code = response.data.code
+
     if (response?.config?.responseType === 'blob') {
       return resolve(response)
     }
@@ -155,35 +155,6 @@ axios.interceptors.response.use((response: AxiosResponse) => {
 
     showErrorMessage(response.data)
     return reject(response)
-
-    // if (code === 'SystemError') {
-    //   Message.error(response.data.message || i18n.t('public_message_request_error').toString())
-    //   reject(response)
-    // } else {
-    //   if ((response.config as AxiosRequestConfigPro).silenceMessage) {
-    //     return reject(response)
-    //   }
-    //
-    //   switch (code) {
-    //     case 'SystemError':
-    //       if (data.message === 'System error: null') {
-    //         Message.error({
-    //           message: i18n.t('public_message_request_error').toString()
-    //         })
-    //       } else {
-    //         Message.error({
-    //           message: data.message
-    //         })
-    //       }
-    //       throw response
-    //     default:
-    //       Message.error({
-    //         message: data.message
-    //       })
-    //       throw response
-    //   }
-    // }
-    // reject(response)
   })
 }, errorCallback)
 

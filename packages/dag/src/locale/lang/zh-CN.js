@@ -505,9 +505,9 @@ export default {
   packages_dag_js_declare_index_shiyongbangzhu: '使用帮助',
   packages_dag_js_declare_index_xianshishengminglai: '显式声明来定义和修改模型',
   packages_dag_js_declare_index_zengjiayigezi:
-    "// 增加一个字段，如果字段已存在则不操作\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n// 移除一个已存在字段\nTapModelDeclare.removeField({val2}, 'fieldName')\n// 更新一个已存在的字段\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n// 更新字段，如果不存在则新增\nTapModelDeclare.upsertField({val4}, 'fieldName', 'TapString')\n// 设置字段为主键\nTapModelDeclare.setPk({val5}, 'fieldName')\n// 取消主键\nTapModelDeclare.unSetPk({val6}, 'fieldName')\n// 增加索引\nTapModelDeclare.addIndex({val7}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])\n// 移除索引\nTapModelDeclare.removeIndex({val8}, 'indexName')\n",
+    "// 增加一个字段，如果字段已存在则不操作\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n// 移除一个已存在字段\nTapModelDeclare.removeField({val2}, 'fieldName')\n// 更新一个已存在的字段\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n// 更新字段，如果不存在则新增\nTapModelDeclare.upsertField({val4}, 'fieldName', 'TapString')\n// 设置字段为主键\nTapModelDeclare.setPk({val5}, 'fieldName')\n// 取消主键\nTapModelDeclare.unSetPk({val6}, 'fieldName')\n// 增加索引\nTapModelDeclare.addIndex({val7}, 'indexName', [{'{'}'fieldName':'fieldName1', 'order': 'asc'{'}'}])\n// 移除索引\nTapModelDeclare.removeIndex({val8}, 'indexName')\n",
   packages_dag_python_declare_index_zengjiayigezi:
-    "# 增加一个字段，如果字段已存在则不操作\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n# 移除一个已存在字段\nTapModelDeclare.removeField({val2}, 'fieldName')\n# 更新一个已存在的字段\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n# 更新字段，如果不存在则新增\nTapModelDeclare.upsertField({val4}, 'fieldName', 'TapString')\n# 设置字段为主键\nTapModelDeclare.setPk({val5}, 'fieldName')\n# 取消主键\nTapModelDeclare.unSetPk({val6}, 'fieldName')\n# 增加索引\nTapModelDeclare.addIndex({val7}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])\n# 移除索引\nTapModelDeclare.removeIndex({val8}, 'indexName')\n",
+    "# 增加一个字段，如果字段已存在则不操作\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n# 移除一个已存在字段\nTapModelDeclare.removeField({val2}, 'fieldName')\n# 更新一个已存在的字段\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n# 更新字段，如果不存在则新增\nTapModelDeclare.upsertField({val4}, 'fieldName', 'TapString')\n# 设置字段为主键\nTapModelDeclare.setPk({val5}, 'fieldName')\n# 取消主键\nTapModelDeclare.unSetPk({val6}, 'fieldName')\n# 增加索引\nTapModelDeclare.addIndex({val7}, 'indexName', [{'{'}'fieldName':'fieldName1', 'order': 'asc'{'}'}])\n# 移除索引\nTapModelDeclare.removeIndex({val8}, 'indexName')\n",
   packages_dag_python_not_support_windows: '目前Python节点仅支持在Linux下部署的Agent上使用，不支持Windows。',
   packages_dag_js_processor_index_duibi: '对比',
   packages_dag_js_processor_index_yongfa: '用法：',
@@ -609,8 +609,9 @@ export default {
   packages_dag_date_processor_method: '请选择运算方式',
   packages_dag_date_processor_increase: '增加',
   packages_dag_date_processor_decrease: '减少',
-  packages_dag_nodes_table_shiligro: '示例: {"$group": { "_id": "$name", totalQuantity: { $sum: "$quantity" } }}',
-  packages_dag_nodes_table_jinzhichiqu: '仅支持query, 例如: { "_id": "apples", "qty": 5 }',
+  packages_dag_nodes_table_shiligro:
+    '示例: {\'{\'}"$group": {\'{\'} "_id": "$name", totalQuantity: {\'{\'} $sum: "$quantity" {\'} }}\'}',
+  packages_dag_nodes_table_jinzhichiqu: '仅支持query, 例如: {\'{\'} "_id": "apples", "qty": 5 {\'}\'}',
   packages_dag_migration_settingpanel_shirenwubaocuo: '时，任务报错停止',
   packages_dag_migration_settingpanel_dangtiaoguoshijian: '当跳过事件数超过',
   packages_dag_migration_settingpanel_dangtiaoguoshijian2: '当跳过事件占已同步事件的百分比超过',
@@ -629,8 +630,8 @@ export default {
   packages_dag_field_inference_list_anzhaoxishu: '按系数调整字段长度',
   packages_dag_field_inference_list_anzhaoxishu_tip: '按系数调整是指将原推演出的长度乘以设置的系数作为调整后的字段长度',
   packages_dag_field_rename_index_yixiacaozuoyi: '以下操作已匹配不到源字段',
-  packages_dag_nodes_database_jinwuzhujianbiao: '仅无主键表',
-  packages_dag_nodes_database_jinyouzhujianbiao: '仅有主键表（含唯一索引）',
+  packages_dag_nodes_database_jinwuzhujianbiao: '无主键且无唯一索引',
+  packages_dag_nodes_database_jinyouzhujianbiao: '包含主键或唯一索引',
   packages_dag_nodes_database_biaoxianshi: '可选择的表范围',
   packages_dag_nodes_database_xuanzeyaoguolvdiaode: '选择要过滤掉的字段类型',
   packages_dag_data_schema: '数据模型',
@@ -776,5 +777,7 @@ export default {
   packages_dag_field_path: '字段路径',
   packages_dag_email_receivers: '邮件接收人',
   packages_dag_merge_table_js_node_error: '主从合并节点后不允许存在 JS 节点',
-  packages_dag_merge_table_table_not_allow_target: '主从合并后不支持将 {val} 作为写入目标'
+  packages_dag_merge_table_table_not_allow_target: '主从合并后不支持将 {val} 作为写入目标',
+  packages_dag_only_include_pk: '仅包含主键',
+  packages_dag_only_include_uk: '仅包含唯一索引'
 }

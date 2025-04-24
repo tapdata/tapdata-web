@@ -15,9 +15,9 @@ module.exports = {
           createTime: '2022-02-25T13:07:49.812+00:00',
           maxMemory: 500,
           cacheKeys: 'a,b,c,d,e,f,g',
-          'fields|1-10': ['@name']
-        }
-      ]
-    }
-  }
+          'fields|1-10': ['@name'],
+        },
+      ],
+    },
+  },
 }

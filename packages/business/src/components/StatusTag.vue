@@ -24,7 +24,7 @@ import {
   MILESTONE_STATUS_MAP,
   ETL_STATUS_MAP,
   ETL_SUB_STATUS_MAP,
-  SHARECDC_MAP
+  SHARECDC_MAP,
 } from '../shared/const'
 export default {
   name: 'StatusTag',
@@ -32,28 +32,28 @@ export default {
   props: {
     type: {
       type: String,
-      default: 'tag'
+      default: 'tag',
     },
     status: {
-      type: String
+      type: String,
     },
     target: {
       type: String,
-      default: 'instance'
+      default: 'instance',
     },
     onlyImg: {
       type: Boolean,
-      default: false
+      default: false,
     },
     statusMap: {
       type: Object,
       default: () => {
         return null
-      }
+      },
     },
     defaultStatus: {
-      type: String
-    }
+      type: String,
+    },
   },
   computed: {
     map() {
@@ -65,7 +65,7 @@ export default {
           connection: CONNECTION_STATUS_MAP,
           milestone: MILESTONE_STATUS_MAP,
           etl: ETL_STATUS_MAP,
-          etlSub: ETL_SUB_STATUS_MAP
+          etlSub: ETL_SUB_STATUS_MAP,
         }[this.target]
       )
     },
@@ -74,8 +74,8 @@ export default {
     },
     imgSrc() {
       return require(`@/assets/icons/colorSvg/${this.statusObj.icon}.png`)
-    }
-  }
+    },
+  },
 }
 </script>
 

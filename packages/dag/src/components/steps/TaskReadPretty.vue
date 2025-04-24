@@ -1,32 +1,18 @@
-<template>
-  <div class="flex flex-column gap-4">
-    <div class="p-4 bg-white rounded-lg">
-      <div class="title-prefix-bar mb-4">{{ $t('packages_dag_src_migrationeditor_biaobianji') }}</div>
-      <SchemaForm :form="form" :schema="tableEditSchema" :scope="scope" />
-    </div>
-
-    <div class="p-4 bg-white rounded-lg">
-      <div class="title-prefix-bar mb-4">{{ $t('packages_dag_src_migrationeditor_ziduanbianji') }}</div>
-      <SchemaForm :form="fieldForm" :schema="fieldEditSchema" :scope="scope" />
-    </div>
-  </div>
-</template>
-
 <script>
-import { defineComponent, ref } from '@vue/composition-api'
-import { createForm, onFieldValueChange } from '@formily/core'
-import i18n from '@tap/i18n'
+import { createForm } from '@formily/core'
+import { defineComponent, ref } from 'vue'
+import { useStore } from 'vuex'
 import SchemaForm from '../SchemaForm.vue'
 
 export default defineComponent({
   name: 'TaskReadPretty',
   components: { SchemaForm },
   props: {
-    task: Object
+    task: Object,
   },
-  setup(props, { emit, root }) {
-    console.log('root.$store.getters', root.$store)
-    const nodes = root.$store.getters['dataflow/allNodes']
+  setup(props) {
+    const store = useStore()
+    const nodes = store.getters['dataflow/allNodes']
     const form = ref(null)
     const fieldForm = ref(null)
     const tableEditSchema = {
@@ -38,11 +24,11 @@ export default defineComponent({
           'x-component-props': {
             findParentNodes: '{{findParentNodes}}',
             listStyle: {
-              maxHeight: 'calc((100vh - 120px) * 0.618)'
-            }
-          }
-        }
-      }
+              maxHeight: 'calc((100vh - 120px) * 0.618)',
+            },
+          },
+        },
+      },
     }
     const fieldEditSchema = {
       type: 'object',
@@ -52,8 +38,8 @@ export default defineComponent({
           default: {
             prefix: '',
             suffix: '',
-            capitalized: ''
-          }
+            capitalized: '',
+          },
         },
         fieldsMapping: {
           type: 'array',
@@ -61,29 +47,29 @@ export default defineComponent({
           'x-decorator': 'FormItem',
           'x-component': 'FieldRenameProcessor',
           'x-component-props': {
-            nodeId: '{{$values.id}}'
-          }
-        }
-      }
+            nodeId: '{{$values.id}}',
+          },
+        },
+      },
     }
     const scope = {
-      findNodeById: id => {
-        return root.$store.state.dataflow.NodeMap[id]
+      findNodeById: (id) => {
+        return store.state.dataflow.NodeMap[id]
       },
 
       findParentNodes: (id, ifMyself) => {
-        let node = scope.findNodeById(id)
+        const node = scope.findNodeById(id)
         const parents = []
 
         if (!node) return parents
 
-        let parentIds = node.$inputs || []
+        const parentIds = node.$inputs || []
         if (ifMyself && !parentIds.length) return [node]
-        parentIds.forEach(pid => {
-          let parent = scope.findNodeById(pid)
+        parentIds.forEach((pid) => {
+          const parent = scope.findNodeById(pid)
           if (parent) {
             if (parent.$inputs?.length) {
-              parent.$inputs.forEach(ppid => {
+              parent.$inputs.forEach((ppid) => {
                 parents.push(...scope.findParentNodes(ppid, true))
               })
             } else {
@@ -93,7 +79,7 @@ export default defineComponent({
         })
 
         return parents
-      }
+      },
     }
 
     const initForm = () => {
@@ -102,20 +88,24 @@ export default defineComponent({
 
       console.log('task', task)
 
-      const tableEditNode = nodes.find(item => item.type === 'table_rename_processor')
-      const fieldEditNode = nodes.find(item => item.type === 'migrate_field_rename_processor')
+      const tableEditNode = nodes.find(
+        (item) => item.type === 'table_rename_processor',
+      )
+      const fieldEditNode = nodes.find(
+        (item) => item.type === 'migrate_field_rename_processor',
+      )
 
       if (tableEditNode) {
         form.value = createForm({
           readPretty: true,
-          values: tableEditNode
+          values: tableEditNode,
         })
       }
 
       if (fieldEditNode) {
         fieldForm.value = createForm({
           readPretty: true,
-          values: fieldEditNode
+          values: fieldEditNode,
         })
       }
     }
@@ -127,10 +117,28 @@ export default defineComponent({
       fieldForm,
       tableEditSchema,
       fieldEditSchema,
-      scope
+      scope,
     }
-  }
+  },
 })
 </script>
+
+<template>
+  <div class="flex flex-column gap-4">
+    <div class="p-4 bg-white rounded-lg">
+      <div class="title-prefix-bar mb-4">
+        {{ $t('packages_dag_src_migrationeditor_biaobianji') }}
+      </div>
+      <SchemaForm :form="form" :schema="tableEditSchema" :scope="scope" />
+    </div>
+
+    <div class="p-4 bg-white rounded-lg">
+      <div class="title-prefix-bar mb-4">
+        {{ $t('packages_dag_src_migrationeditor_ziduanbianji') }}
+      </div>
+      <SchemaForm :form="fieldForm" :schema="fieldEditSchema" :scope="scope" />
+    </div>
+  </div>
+</template>
 
 <style scoped lang="scss"></style>

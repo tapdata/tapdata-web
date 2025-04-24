@@ -4,12 +4,13 @@ export const TABLE_PARAMS = {
   connectionName: '',
   table: '',
   databaseType: '',
+  enableCustomCommand: false,
   sortColumn: '',
   fields: [],
   columns: null,
   isFilter: false,
   conditions: [],
-  capabilities: []
+  capabilities: [],
 }
 
 export const META_INSTANCE_FIELDS = {
@@ -61,5 +62,5 @@ export const DATA_NODE_TYPES = [
   'mem_cache',
   'logminer',
   'protobuf_convert_processor',
-  'hazelcast_cloud_cluster'
+  'hazelcast_cloud_cluster',
 ]

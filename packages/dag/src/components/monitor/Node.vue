@@ -1,26 +1,26 @@
-<script>
-import dayjs from 'dayjs'
-import 'dayjs/locale/zh-cn'
-import relativeTime from 'dayjs/plugin/relativeTime'
-import { defineComponent, computed, ref, onMounted, watch } from '@vue/composition-api'
-
-import i18n from '@tap/i18n'
-import { VIcon, IconButton } from '@tap/component'
-import { calcTimeUnit, calcUnit } from '@tap/shared'
+<script lang="jsx">
 import { TaskStatus } from '@tap/business'
+import { IconButton, VIcon } from '@tap/component'
+import i18n from '@tap/i18n'
+import { calcTimeUnit, calcUnit } from '@tap/shared'
+
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import { computed, defineComponent, onMounted, ref, watch } from 'vue'
 import DFNode from '../DFNode'
+import 'dayjs/locale/zh-cn'
 
 dayjs.extend(relativeTime)
 dayjs.locale(i18n.locale || 'zh-cn')
 
 const setConnectionAlarm = (endpoint, type) => {
-  endpoint.connections?.forEach(conn => {
+  endpoint.connections?.forEach((conn) => {
     conn.setType(type)
   })
 }
 
-const clearConnectionAlarm = endpoint => {
-  endpoint.connections?.forEach(conn => {
+const clearConnectionAlarm = (endpoint) => {
+  endpoint.connections?.forEach((conn) => {
     conn.clearTypes()
   })
 }
@@ -30,7 +30,7 @@ export default defineComponent({
   components: {
     DFNode,
     VIcon,
-    TaskStatus
+    TaskStatus,
   },
 
   props: {
@@ -43,14 +43,14 @@ export default defineComponent({
         snapshotRowTotal: 0,
         outputQps: 0,
         snapshotTableTotal: 0,
-        tableTotal: 0
-      })
+        tableTotal: 0,
+      }),
     },
     alarmData: {
       type: Object,
       default: () => {
         return {}
-      }
+      },
     },
     taskType: String,
     syncType: String,
@@ -59,11 +59,12 @@ export default defineComponent({
       type: Object,
       default: () => {
         return {}
-      }
-    }
+      },
+    },
   },
 
   setup(props, { attrs, listeners, emit, refs }) {
+    const dfNode = ref(null)
     const completeTime = computed(() => {
       const totalData = props.quota.samples?.totalData?.[0] || {}
       const { snapshotInsertRowTotal, snapshotRowTotal } = props.sample
@@ -71,7 +72,9 @@ export default defineComponent({
       if (!snapshotInsertRowTotal || !snapshotRowTotal || !lastFiveMinutesQps) {
         return null
       }
-      const time = ((snapshotRowTotal - snapshotInsertRowTotal) / lastFiveMinutesQps) * 1000
+      const time =
+        ((snapshotRowTotal - snapshotInsertRowTotal) / lastFiveMinutesQps) *
+        1000
       return calcTimeUnit(Math.ceil(Math.abs(time)))
     })
 
@@ -102,7 +105,10 @@ export default defineComponent({
       return val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss.SSS') : ''
     })
     const currentEventTimestamp = computed(() => {
-      const val = props.sample.currentEventTimestamp || props.sample.snapshotDoneAt || taskSnapshotDoneAt.value
+      const val =
+        props.sample.currentEventTimestamp ||
+        props.sample.snapshotDoneAt ||
+        taskSnapshotDoneAt.value
       return val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss.SSS') : ''
     })
 
@@ -120,7 +126,7 @@ export default defineComponent({
       const { outputQps = 0 } = props.sample
       return outputQps.toLocaleString('zh', {
         maximumFractionDigits: 3,
-        useGrouping: false
+        useGrouping: false,
       })
     })
 
@@ -149,7 +155,8 @@ export default defineComponent({
      */
     const targetWriteTimeCostAvg = computed(() => {
       const { targetWriteTimeCostAvg } = props.sample
-      if (isNumber(targetWriteTimeCostAvg)) return calcTimeUnit(targetWriteTimeCostAvg)
+      if (isNumber(targetWriteTimeCostAvg))
+        return calcTimeUnit(targetWriteTimeCostAvg)
       return null
     })
 
@@ -158,10 +165,20 @@ export default defineComponent({
      * @type {ComputedRef<number|number>}
      */
     const initialSyncProcess = computed(() => {
-      const { snapshotInsertRowTotal = 0, snapshotRowTotal = 0, snapshotTableTotal = 0, tableTotal = 0 } = props.sample
+      const {
+        snapshotInsertRowTotal = 0,
+        snapshotRowTotal = 0,
+        snapshotTableTotal = 0,
+        tableTotal = 0,
+      } = props.sample
       // 复制任务用表数量计算
-      if (props.syncType === 'migrate') return tableTotal ? Math.round((snapshotTableTotal / tableTotal) * 100) : 0
-      return snapshotRowTotal ? Math.round((snapshotInsertRowTotal / snapshotRowTotal) * 100) : 0
+      if (props.syncType === 'migrate')
+        return tableTotal
+          ? Math.round((snapshotTableTotal / tableTotal) * 100)
+          : 0
+      return snapshotRowTotal
+        ? Math.round((snapshotInsertRowTotal / snapshotRowTotal) * 100)
+        : 0
     })
 
     /**
@@ -169,12 +186,15 @@ export default defineComponent({
      * @type {ComputedRef<number>}
      */
     const inputTotal = computed(() => {
-      return ['inputDdlTotal', 'inputDeleteTotal', 'inputInsertTotal', 'inputOthersTotal', 'inputUpdateTotal'].reduce(
-        (total, key) => {
-          return total + (props.sample[key] || 0)
-        },
-        0
-      )
+      return [
+        'inputDdlTotal',
+        'inputDeleteTotal',
+        'inputInsertTotal',
+        'inputOthersTotal',
+        'inputUpdateTotal',
+      ].reduce((total, key) => {
+        return total + (props.sample[key] || 0)
+      }, 0)
     })
 
     /**
@@ -187,13 +207,13 @@ export default defineComponent({
         'outputDeleteTotal',
         'outputInsertTotal',
         'outputOthersTotal',
-        'outputUpdateTotal'
+        'outputUpdateTotal',
       ].reduce((total, key) => {
         return total + (props.sample[key] || 0)
       }, 0)
     })
 
-    const isNumber = value => typeof value === 'number'
+    const isNumber = (value) => typeof value === 'number'
 
     const getVal = (val, placeholder) => {
       return val ?? placeholder ?? i18n.t('public_data_no_data')
@@ -207,7 +227,9 @@ export default defineComponent({
             return (
               <div class="statistic flex">
                 <div class="statistic-title">
-                  {i18n.t('packages_dag_components_nodedetaildialog_quanliangyiwancheng')}
+                  {i18n.t(
+                    'packages_dag_components_nodedetaildialog_quanliangyiwancheng',
+                  )}
                 </div>
               </div>
             )
@@ -218,16 +240,18 @@ export default defineComponent({
             const title = isSource.value
               ? i18n.t('packages_dag_components_node_quanliangwanchenghaixu')
               : isTarget.value
-              ? i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')
-              : i18n.t('packages_dag_monitor_node_per_deal_need_time')
+                ? i18n.t(
+                    'packages_dag_monitor_node_popover_targetWriteTime_title',
+                  )
+                : i18n.t('packages_dag_monitor_node_per_deal_need_time')
             const val = isFileSource.value
               ? i18n.t('packages_dag_components_node_zanbuzhichi')
               : getVal(
                   isTarget.value
                     ? targetWriteTimeCostAvg.value
                     : isProcessor.value
-                    ? timeCostAvg.value
-                    : completeTime.value
+                      ? timeCostAvg.value
+                      : completeTime.value,
                 )
             return (
               <div class="statistic flex align-center gap-1">
@@ -247,7 +271,9 @@ export default defineComponent({
           cdcTitle = i18n.t('public_event_incremental_delay')
           placeholder = i18n.t('public_event_cdc_placeholder')
         } else if (isTarget.value) {
-          cdcTitle = i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')
+          cdcTitle = i18n.t(
+            'packages_dag_monitor_node_popover_targetWriteTime_title',
+          )
         } else {
           cdcTitle = i18n.t('packages_dag_monitor_node_per_deal_need_time')
         }
@@ -256,12 +282,16 @@ export default defineComponent({
         const replicateLagVal =
           isNumber(replicateLagProps) && replicateLagProps >= 0
             ? calcTimeUnit(replicateLagProps, 2, {
-                autoHideMs: true
+                autoHideMs: true,
               })
             : null
         const val = getVal(
-          isSource.value ? replicateLagVal : isTarget.value ? targetWriteTimeCostAvg.value : timeCostAvg.value,
-          placeholder
+          isSource.value
+            ? replicateLagVal
+            : isTarget.value
+              ? targetWriteTimeCostAvg.value
+              : timeCostAvg.value,
+          placeholder,
         )
         return (
           <div class="statistic flex align-center gap-1">
@@ -277,8 +307,8 @@ export default defineComponent({
       const cdcTimeTitle = isSource.value
         ? i18n.t('packages_dag_monitor_node_popover_cdcTimeTitle_source')
         : isTarget.value
-        ? i18n.t('packages_dag_monitor_node_popover_cdcTimeTitle_target')
-        : i18n.t('packages_dag_monitor_node_popover_cdcTimeTitle_processor')
+          ? i18n.t('packages_dag_monitor_node_popover_cdcTimeTitle_target')
+          : i18n.t('packages_dag_monitor_node_popover_cdcTimeTitle_processor')
       const cdcTime = (
         <div class="statistic span-2">
           <div class="statistic-title">{cdcTimeTitle}</div>
@@ -290,7 +320,9 @@ export default defineComponent({
 
       const processingTime = (
         <div class="statistic">
-          <div class="statistic-title">{i18n.t('packages_dag_monitor_node_per_deal_need_time')}</div>
+          <div class="statistic-title">
+            {i18n.t('packages_dag_monitor_node_per_deal_need_time')}
+          </div>
           <div class="statistic-content">
             <div class="statistic-value">{getVal(timeCostAvg.value)}</div>
           </div>
@@ -300,18 +332,27 @@ export default defineComponent({
       // 目标写入耗时
       const targetWriteTime = (
         <div class="statistic">
-          <div class="statistic-title">{i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')}</div>
+          <div class="statistic-title">
+            {i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')}
+          </div>
           <div class="statistic-content">
-            <div class="statistic-value">{getVal(targetWriteTimeCostAvg.value)}</div>
+            <div class="statistic-value">
+              {getVal(targetWriteTimeCostAvg.value)}
+            </div>
           </div>
         </div>
       )
 
       const outputEvent = (
         <div class="statistic">
-          <div class="statistic-title">{i18n.t('packages_dag_monitor_node_leijishuchushi')}</div>
+          <div class="statistic-title">
+            {i18n.t('packages_dag_monitor_node_leijishuchushi')}
+          </div>
           <div class="statistic-content">
-            <ElTooltip transition="tooltip-fade-in" content={outputTotal.value.toLocaleString()}>
+            <ElTooltip
+              transition="tooltip-fade-in"
+              content={outputTotal.value.toLocaleString()}
+            >
               <div class="statistic-value">{calcUnit(outputTotal.value)}</div>
             </ElTooltip>
           </div>
@@ -320,9 +361,14 @@ export default defineComponent({
 
       const inputEvent = (
         <div class="statistic">
-          <div class="statistic-title">{i18n.t('packages_dag_monitor_node_leijishurushi')}</div>
+          <div class="statistic-title">
+            {i18n.t('packages_dag_monitor_node_leijishurushi')}
+          </div>
           <div class="statistic-content">
-            <ElTooltip transition="tooltip-fade-in" content={inputTotal.value.toLocaleString()}>
+            <ElTooltip
+              transition="tooltip-fade-in"
+              content={inputTotal.value.toLocaleString()}
+            >
               <div class="statistic-value">{calcUnit(inputTotal.value)}</div>
             </ElTooltip>
           </div>
@@ -331,7 +377,9 @@ export default defineComponent({
 
       const syncProcess = (
         <div class="statistic">
-          <div class="statistic-title">{i18n.t('public_task_full_sync_progress')}</div>
+          <div class="statistic-title">
+            {i18n.t('public_task_full_sync_progress')}
+          </div>
           <div class="statistic-content">
             <div class="statistic-value">{initialSyncProcess.value}%</div>
           </div>
@@ -390,91 +438,116 @@ export default defineComponent({
     onMounted(() => {
       watch(
         alarmLevel,
-        level => {
-          const endpoint = refs.dfNode?.targetPoint
+        (level) => {
+          const endpoint = dfNode.value?.targetPoint
           if (!endpoint) return
 
           clearConnectionAlarm(endpoint)
 
           level && setConnectionAlarm(endpoint, level)
         },
-        { immediate: true }
+        { immediate: true },
       )
     })
 
     return () => {
-      let nodeProps = { props: { ...attrs }, attrs }
-      let alarmCls = alarmLevel.value ? `alarm-${alarmLevel.value}` : null
-      let sharedCache = props.node.attrs?.sharedCache || []
+      const nodeProps = { ...attrs }
+      const alarmCls = alarmLevel.value ? `alarm-${alarmLevel.value}` : null
+      const sharedCache = props.node.attrs?.sharedCache || []
 
       return (
         <DFNode
-          ref="dfNode"
-          {...nodeProps}
+          ref={dfNode}
+          {...attrs}
           class={alarmCls}
-          on={{
-            ...listeners,
-            'drag-start': (...args) => {
-              ifDragStart.value = true
-              emit('drag-start', ...args)
-            },
-            'drag-stop': (...args) => {
-              ifDragStart.value = false
-              refs.popover?.updatePopper?.() // 更新popover位置
-              emit('drag-stop', ...args)
-            }
+          onDragStart={(...args) => {
+            ifDragStart.value = true
+            emit('drag-start', ...args)
+          }}
+          onDragStop={(...args) => {
+            ifDragStart.value = false
+            refs.popover?.updatePopper?.() // 更新popover位置
+            emit('drag-stop', ...args)
           }}
         >
-          <el-popover
-            ref="popover"
-            disabled={ifDragStart.value}
-            placement="bottom"
-            width="240"
-            trigger="hover"
-            close-delay={0}
-            popper-class="node-statistic-popover rounded-lg"
-          >
-            <div slot="reference" class="node-card rounded-lg px-2 pb-2 pt-4 mt-n2">
-              <div class="flex align-center">
-                <div class="node-card-content p-2 flex-1 rounded-sm">{renderStatistic()}</div>
-                <button onClick={() => emit('open-detail')} class="ml-2 icon-btn">
-                  <VIcon size="16">menu-left</VIcon>
-                </button>
-              </div>
-              {isSource.value && hasInitalSync && (
-                <ElProgress class="mt-2" show-text={false} percentage={initialSyncProcess.value} />
-              )}
+          <div>
+            <el-popover
+              ref="popover"
+              disabled={ifDragStart.value}
+              placement="bottom"
+              width="auto"
+              trigger="hover"
+              close-delay={0}
+              popper-class="node-statistic-popover rounded-lg"
+            >
+              {{
+                reference: () => (
+                  <div class="node-card rounded-lg px-2 pb-2 pt-4 mt-n2">
+                    <div class="flex align-center">
+                      <div class="node-card-content p-2 flex-1 rounded-sm">
+                        {renderStatistic()}
+                      </div>
+                      <button
+                        onClick={() => emit('open-detail')}
+                        class="ml-2 icon-btn"
+                      >
+                        <VIcon size="16">menu-left</VIcon>
+                      </button>
+                    </div>
+                    {isSource.value && hasInitalSync && (
+                      <ElProgress
+                        class="mt-2"
+                        show-text={false}
+                        percentage={initialSyncProcess.value}
+                      />
+                    )}
 
-              {!!sharedCache.length && (
-                <div class="fw-bold my-2 flex align-center">
-                  {i18n.t('packages_dag_monitor_node_zhengzaishiyongdehuancun')}{' '}
-                  <IconButton onClick={() => emit('refresh-shared-cache')} class="ml-0.5" sm clickAndRotate>
-                    refresh
-                  </IconButton>
-                </div>
-              )}
-              {!!sharedCache.length && (
-                <ul class="shared-cache-list rounded-4 p-2">
-                  {sharedCache.map(item => (
-                    <li class="flex justify-content-between align-items-center pb-1">
-                      <ElLink type="primary" onClick={() => emit('open-shared-cache', item)}>
-                        {item.name}
-                      </ElLink>
-                      <TaskStatus task={item} />
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            <div class="statistic-card">
-              <div class="grid statistic-list">{renderPopoverContent()}</div>
-            </div>
-          </el-popover>
+                    {!!sharedCache.length && (
+                      <div class="fw-bold my-2 flex align-center">
+                        {i18n.t(
+                          'packages_dag_monitor_node_zhengzaishiyongdehuancun',
+                        )}{' '}
+                        <IconButton
+                          onClick={() => emit('refresh-shared-cache')}
+                          class="ml-0.5"
+                          sm
+                          clickAndRotate
+                        >
+                          refresh
+                        </IconButton>
+                      </div>
+                    )}
+                    {!!sharedCache.length && (
+                      <ul class="shared-cache-list rounded-4 p-2">
+                        {sharedCache.map((item) => (
+                          <li class="flex justify-content-between align-items-center pb-1">
+                            <ElLink
+                              type="primary"
+                              onClick={() => emit('open-shared-cache', item)}
+                            >
+                              {item.name}
+                            </ElLink>
+                            <TaskStatus task={item} />
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                ),
+                default: () => (
+                  <div class="statistic-card">
+                    <div class="grid statistic-list">
+                      {renderPopoverContent()}
+                    </div>
+                  </div>
+                ),
+              }}
+            </el-popover>
+          </div>
         </DFNode>
       )
     }
-  }
+  },
 })
 </script>
 
@@ -487,9 +560,11 @@ export default defineComponent({
   left: 50%;
   background-color: #fff;
   transform: translateX(-50%);
+
   &-content {
     background-color: #f5f8fe;
   }
+
   &-footer {
     height: 28px;
   }
@@ -501,7 +576,8 @@ export default defineComponent({
 
   .statistic {
     display: inline-block;
-    color: map-get($fontColor, sslight);
+    color: map.get($fontColor, sslight);
+
     &-title {
       font-size: 12px;
       line-height: 1.5;
@@ -510,7 +586,7 @@ export default defineComponent({
     &-value {
       display: inline-block;
       vertical-align: middle;
-      color: map-get($fontColor, dark);
+      color: map.get($fontColor, dark);
       line-height: 1;
       //font-weight: 700;
       font-size: 12px;
@@ -531,40 +607,48 @@ export default defineComponent({
   outline: none;
   border: 1px solid transparent;
   border-radius: 4px;
-  transition: background, color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+  transition:
+    background,
+    color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
   cursor: pointer;
 
   &.active,
   &:hover {
-    color: map-get($color, primary);
+    color: map.get($color, primary);
     background: #eef3ff;
   }
 }
+
 .span-2 {
   grid-column: span 2 / auto;
 }
-.alarm-warn::v-deep {
-  .df-node {
+
+.alarm-warn {
+  :deep(.df-node) {
     border-color: #ff932c;
+
     &.active,
     &.selected {
       box-shadow: 0 0 0 2px rgba(255, 147, 44, 0.3);
     }
   }
-  .statistic-value {
+
+  :deep(.statistic-value) {
     color: #ff932c;
   }
 }
 
-.alarm-error::v-deep {
-  .df-node {
+.alarm-error {
+  :deep(.df-node) {
     border-color: #d44d4d;
+
     &.active,
     &.selected {
       box-shadow: 0 0 0 2px rgba(212, 77, 77, 0.3);
     }
   }
-  .statistic-value {
+
+  :deep(.statistic-value) {
     color: #d44d4d;
   }
 }
@@ -575,17 +659,39 @@ export default defineComponent({
 </style>
 
 <style lang="scss">
-.node-statistic-popover {
+.el-popover.el-popper.node-statistic-popover {
   $bg: rgba(54, 66, 82, 0.9);
   background: $bg;
   border: 1px solid #f2f2f2;
 
-  &.el-popper[x-placement^='top'] .popper__arrow::after {
-    border-top-color: $bg;
+  .el-popper__arrow {
+    width: 0;
+    height: 0;
+    &:before {
+      width: 0;
+      height: 0;
+      background: transparent;
+      border-width: 6px;
+      border-style: solid;
+      border-color: transparent;
+      transform: none;
+    }
   }
 
-  &.el-popper[x-placement^='bottom'] .popper__arrow::after {
-    border-bottom-color: $bg;
+  &.el-popper[data-popper-placement^='top'] .el-popper__arrow {
+    bottom: -6px;
+    &:before {
+      border-top-color: $bg !important;
+      border-bottom-width: 0;
+    }
+  }
+
+  &.el-popper[data-popper-placement^='bottom'] .el-popper__arrow {
+    top: -6px;
+    &:before {
+      border-bottom-color: $bg !important;
+      border-top-width: 0;
+    }
   }
 
   .statistic-list {

@@ -26,7 +26,7 @@
           <span class="el-select__tags-text">+ {{ selected.length - 1 }}</span>
         </el-tag>
       </span>
-      <transition-group @after-leave="resetInputHeight" v-if="!collapseTags">
+      <transition-group tag="span" @after-leave="resetInputHeight" v-if="!collapseTags">
         <el-tag
           v-for="item in selected"
           :key="getValueKey(item)"
@@ -42,7 +42,7 @@
       </transition-group>
 
       <input
-        type="text"
+        text
         class="el-select__input"
         :class="[selectSize ? `is-${selectSize}` : '']"
         :disabled="selectDisabled"
@@ -63,14 +63,18 @@
         v-model="query"
         @input="debouncedQueryChange"
         v-if="filterable"
-        :style="{ 'flex-grow': '1', width: inputLength / (inputWidth - 32) + '%', 'max-width': inputWidth - 42 + 'px' }"
+        :style="{
+          'flex-grow': '1',
+          width: inputLength / (inputWidth - 32) + '%',
+          'max-width': inputWidth - 42 + 'px',
+        }"
         ref="input"
       />
     </div>
     <el-input
       ref="reference"
       v-model="selectedLabel"
-      type="text"
+      text
       :placeholder="currentPlaceholder"
       :name="name"
       :id="id"
@@ -84,18 +88,18 @@
       @focus="handleFocus"
       @blur="handleBlur"
       @input="debouncedOnInputChange"
-      @keydown.native.down.stop.prevent="navigateOptions('next')"
-      @keydown.native.up.stop.prevent="navigateOptions('prev')"
-      @keydown.native.enter.prevent="selectOption"
-      @keydown.native.esc.stop.prevent="visible = false"
-      @keydown.native.tab="visible = false"
-      @mouseenter.native="inputHovering = true"
-      @mouseleave.native="inputHovering = false"
+      @keydown.down.stop.prevent="navigateOptions('next')"
+      @keydown.up.stop.prevent="navigateOptions('prev')"
+      @keydown.enter.prevent="selectOption"
+      @keydown.esc.stop.prevent="visible = false"
+      @keydown.tab="visible = false"
+      @mouseenter="inputHovering = true"
+      @mouseleave="inputHovering = false"
     >
-      <template slot="prefix" v-if="$slots.prefix">
+      <template v-if="$slots.prefix" v-slot:prefix>
         <slot name="prefix"></slot>
       </template>
-      <template slot="suffix">
+      <template v-slot:suffix>
         <slot name="prefix">
           <span v-if="loading" class="el-select__loading">
             <svg
@@ -114,11 +118,7 @@
           </span>
           <template v-else>
             <i v-show="!showClose" :class="['el-select__caret', 'el-input__icon', 'el-icon-' + iconClass]"></i>
-            <i
-              v-if="showClose"
-              class="el-select__caret el-input__icon el-icon-circle-close"
-              @click="handleClearClick"
-            ></i>
+            <el-icon class="el-select__caret el-input__icon"><el-icon-circle-close /></el-icon>
           </template>
         </slot>
       </template>
@@ -130,7 +130,9 @@
           wrap-class="el-select-dropdown__wrap"
           view-class="el-select-dropdown__list"
           ref="scrollbar"
-          :class="{ 'is-empty': !allowCreate && query && filteredOptionsCount === 0 }"
+          :class="{
+            'is-empty': !allowCreate && query && filteredOptionsCount === 0,
+          }"
           v-show="options.length > 0 && !loading"
         >
           <el-option :value="query" created v-if="showNewOption"> </el-option>
@@ -148,13 +150,11 @@
 </template>
 
 <script>
-import { Select } from 'element-ui'
-
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
+import { ElSelect as Select } from 'element-plus'
 export default {
   name: 'Select',
-
   extends: Select,
-
   methods: {
     handleOptionSelect(option, byClick) {
       if (this.multiple) {
@@ -169,13 +169,13 @@ export default {
           this.query = ''
           this.handleQueryChange('')
           this.inputLength = 20
-          this.$emit('create', option.value)
+          $emit(this, 'create', option.value)
         }
-        this.$emit('input', value)
+        $emit(this, 'update:value', value)
         this.emitChange(value)
         if (this.filterable) this.$refs.input.focus()
       } else {
-        this.$emit('input', option.value)
+        $emit(this, 'update:value', option.value)
         this.emitChange(option.value)
         this.visible = false
       }
@@ -185,8 +185,9 @@ export default {
       this.$nextTick(() => {
         this.scrollToOption(option)
       })
-    }
-  }
+    },
+  },
+  emits: ['create', 'update:value'],
 }
 </script>
 
@@ -201,7 +202,6 @@ export default {
   line-height: 1;
   text-align: center;
   animation: rotating 1s infinite linear;
-
   svg {
     vertical-align: top;
   }

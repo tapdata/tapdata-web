@@ -6,7 +6,7 @@ import {
   watchEffect as VueWatchEffect,
   shallowRef,
   onBeforeUnmount
-} from '@vue/composition-api'
+} from 'vue'
 import { autorun, reaction } from '@formily/reactive'
 
 export const computed = <T>(calc: ComputedGetter<T>): ComputedRef<T> => {

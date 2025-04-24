@@ -1,119 +1,7 @@
-<template>
-  <div class="table-page-container">
-    <div class="table-page-header" v-if="title">
-      <slot name="header">
-        <div class="page-header-title">
-          {{ title }}
-          <span v-if="desc" class="page-header-desc" v-html="desc"></span>
-        </div>
-      </slot>
-    </div>
-
-    <div class="table-page-main">
-      <div class="table-page-main-box">
-        <Classification
-          v-if="classify && !hideClassify"
-          :visible="classificationVisible"
-          ref="classification"
-          :comTitle="classify.comTitle"
-          :authority="classify.authority"
-          :viewPage="classify.viewPage"
-          :types="classify.types"
-          :title="classify.title"
-          :kai-title="classify.title"
-          :dragState="dragState"
-          @nodeChecked="nodeChecked"
-          @update:visible="classificationVisible = $event"
-          @drop-in-tag="fetch()"
-        ></Classification>
-        <div class="table-page-body">
-          <div class="table-page-nav">
-            <slot name="nav"></slot>
-          </div>
-          <div class="table-page-topbar py-3" :class="{ 'pl-3': classificationVisible }">
-            <div class="table-page-search-bar flex align-center">
-              <IconButton
-                v-if="classify && !hideClassify && !classificationVisible"
-                class="mx-2 rotate-180"
-                @click="handleToggleClassify"
-                >expand-list</IconButton
-              >
-              <slot name="search"></slot>
-            </div>
-            <div class="table-page-operation-bar">
-              <slot name="operation"></slot>
-            </div>
-          </div>
-          <ProTable
-            ref="table"
-            v-loading="loading"
-            class="table-page-table"
-            :row-class-name="classificationVisible ? 'grabbable' : ''"
-            :height="ifTableHeightAuto ? null : '100%'"
-            :element-loading-text="$t('packages_business_dataFlow_dataLoading')"
-            :row-key="rowKey"
-            :span-method="spanMethod"
-            :data="list"
-            :default-sort="defaultSort"
-            :draggable="draggable || classificationVisible"
-            @selection-change="handleSelectionChange"
-            @sort-change="$emit('sort-change', $event)"
-            @row-dragstart="handleDragStart"
-            @row-dragend="handleDragEnd"
-            @select="onSelectRow"
-            v-on="$listeners"
-          >
-            <slot></slot>
-            <div slot="empty" class="empty">
-              <VIcon size="140">no-data-color</VIcon>
-              <slot name="noDataText"></slot>
-            </div>
-          </ProTable>
-          <div class="table-footer">
-            <slot name="tableFooter"></slot>
-          </div>
-          <div
-            class="pagination-wrapper flex align-center gap-3 pl-3 pt-3"
-            :style="ifTableHeightAuto ? `position: sticky; bottom: 0; z-index: 10; background: #fff;` : ''"
-          >
-            <transition name="el-fade-in-linear">
-              <div v-if="multipleSelection.length" class="flex align-center gap-3">
-                <ElCheckbox :value="true" @change="clearSelection"></ElCheckbox>
-                <span class="fw-sub text-nowrap"
-                  >{{ $t('packages_business_selected_rows', { val: multipleSelection.length }) }}
-                </span>
-                <slot name="multipleSelectionActions"></slot>
-              </div>
-            </transition>
-
-            <el-pagination
-              background
-              class="table-page-pagination ml-auto mt-0"
-              layout="->,total, sizes,  prev, pager, next, jumper"
-              :current-page.sync="page.current"
-              :page-sizes="[10, 20, 50, 100]"
-              :page-size.sync="page.size"
-              :total="page.total"
-              @size-change="handleSizeChange"
-              @current-change="handleCurrent"
-            >
-            </el-pagination>
-          </div>
-        </div>
-      </div>
-    </div>
-    <SelectClassify
-      v-if="classify"
-      ref="classify"
-      :types="classify.types"
-      @operationsClassify="$emit('classify-submit', $event)"
-    ></SelectClassify>
-  </div>
-</template>
-
 <script>
-import { delayTrigger, on, off } from '@tap/shared'
-import { VIcon, Classification, ProTable, IconButton } from '@tap/component'
+import { Classification, IconButton, ProTable, VIcon } from '@tap/component'
+import { delayTrigger, off, on } from '@tap/shared'
+import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 import { makeDragNodeImage } from '../shared'
 
 import SelectClassify from './SelectClassify'
@@ -142,7 +30,10 @@ const tableSettings = {
   },
 
   save() {
-    localStorage.setItem('TAPDATA_TABLE_SETTINGS', JSON.stringify(this.settings))
+    localStorage.setItem(
+      'TAPDATA_TABLE_SETTINGS',
+      JSON.stringify(this.settings),
+    )
   },
 
   load() {
@@ -150,7 +41,7 @@ const tableSettings = {
     if (settings) {
       this.settings = JSON.parse(settings)
     }
-  }
+  },
 }
 
 // Initialize settings on creation
@@ -162,31 +53,31 @@ export default {
     SelectClassify,
     VIcon,
     ProTable,
-    IconButton
+    IconButton,
   },
   props: {
     title: String,
     desc: String,
     defaultPageSize: {
       type: Number,
-      default: 20
+      default: 20,
     },
     hideClassify: {
       // 是否隐藏左侧栏
       type: Boolean,
-      default: false
+      default: false,
     },
     classify: {
-      type: Object
+      type: Object,
     },
     remoteMethod: Function,
     rowKey: [String, Function],
     spanMethod: [Function],
     defaultSort: Object,
-    draggable: Boolean
+    draggable: Boolean,
   },
   data() {
-    const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+    const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 
     return {
       isDaas,
@@ -194,7 +85,7 @@ export default {
       page: {
         current: 1,
         size: tableSettings.getPageSize(this.$route.name, this.defaultPageSize),
-        total: 0
+        total: 0,
       },
       list: [],
       multipleSelection: [],
@@ -204,19 +95,19 @@ export default {
         isDragging: false,
         draggingObjects: [],
         dropNode: null,
-        allowDrop: true
+        allowDrop: true,
       },
       draggingNodeImage: null,
       shiftKeyPressed: false,
-      ifTableHeightAuto: !!process.env.VUE_APP_TABLE_HEIGHT_AUTO
+      ifTableHeightAuto: !!import.meta.env.VUE_APP_TABLE_HEIGHT_AUTO,
     }
   },
   mounted() {
     this.fetch(1)
-    this.handleKeyDown = ev => {
+    this.handleKeyDown = (ev) => {
       this.shiftKeyPressed = ev.shiftKey
     }
-    this.handleKeyUp = ev => {
+    this.handleKeyUp = (ev) => {
       setTimeout(() => {
         this.shiftKeyPressed = false
       }, 0)
@@ -224,7 +115,7 @@ export default {
     on(document, 'keydown', this.handleKeyDown)
     on(document, 'keyup', this.handleKeyUp)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     off(document, 'keydown', this.handleKeyDown)
     off(document, 'keyup', this.handleKeyUp)
   },
@@ -233,7 +124,7 @@ export default {
       let timer = null
       if (pageNum === 1) {
         this.multipleSelection = []
-        this.$emit('selection-change', [])
+        $emit(this, 'selection-change', [])
         this.$refs?.table?.clearSelection()
         this.lastSelectIndex = undefined
       }
@@ -247,7 +138,7 @@ export default {
             this.remoteMethod({
               page: this.page,
               tags: this.tags,
-              data: this.list
+              data: this.list,
             })
               .then(({ data, total }) => {
                 this.page.total = total
@@ -272,7 +163,7 @@ export default {
     },
     handleCurrent(val) {
       this.multipleSelection = []
-      this.$emit('selection-change', [])
+      $emit(this, 'selection-change', [])
       this.$refs?.table?.clearSelection()
       this.fetch(val) //主要为了换页 清空选中数据
     },
@@ -282,7 +173,7 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
-      this.$emit('selection-change', val)
+      $emit(this, 'selection-change', val)
     },
     showClassify(tagList) {
       this.$refs.classify.show(tagList)
@@ -300,9 +191,9 @@ export default {
       if (!row.id || !row.name) return false
 
       this.dragState.isDragging = true
-      let selection = this.multipleSelection
+      const selection = this.multipleSelection
 
-      if (selection.find(it => it.id === row.id)) {
+      if (selection.find((it) => it.id === row.id)) {
         this.dragState.draggingObjects = selection
       } else {
         this.dragState.draggingObjects = [row]
@@ -311,7 +202,7 @@ export default {
       this.draggingNodeImage = makeDragNodeImage(
         ev.currentTarget.querySelector('.tree-item-icon'),
         row.name,
-        this.dragState.draggingObjects.length
+        this.dragState.draggingObjects.length,
       )
       ev.dataTransfer.setDragImage(this.draggingNodeImage, 0, 0)
     },
@@ -319,16 +210,22 @@ export default {
       this.dragState.isDragging = false
       this.dragState.draggingObjects = []
       this.dragState.dropNode = null
-      document.body.removeChild(this.draggingNodeImage)
+      this.draggingNodeImage.remove()
       this.draggingNodeImage = null
     },
     onSelectRow(selection, current) {
       try {
-        const selected = selection.some(row => row.id === current.id)
+        const selected = selection.some((row) => row.id === current.id)
 
-        if (this.shiftKeyPressed && this.multipleSelection.length && this.lastSelectIndex !== undefined) {
+        if (
+          this.shiftKeyPressed &&
+          this.multipleSelection.length &&
+          this.lastSelectIndex !== undefined
+        ) {
           let lastIndex = this.lastSelectIndex
-          let currentIndex = this.list.findIndex(row => row.id === current.id)
+          const currentIndex = this.list.findIndex(
+            (row) => row.id === current.id,
+          )
 
           if (~lastIndex && ~currentIndex && lastIndex !== currentIndex) {
             const tmp = currentIndex < lastIndex ? -1 : 1
@@ -336,35 +233,170 @@ export default {
             // 先触发selection-change
             setTimeout(() => {
               while (lastIndex !== currentIndex) {
-                this.$refs.table.toggleRowSelection(this.list[lastIndex], selected)
+                this.$refs.table.toggleRowSelection(
+                  this.list[lastIndex],
+                  selected,
+                )
                 lastIndex += tmp
               }
             }, 0)
           }
         }
 
-        this.lastSelectIndex = selected ? this.list.findIndex(row => row.id === current.id) : undefined
-      } catch (e) {
-        console.error(e)
+        this.lastSelectIndex = selected
+          ? this.list.findIndex((row) => row.id === current.id)
+          : undefined
+      } catch (error) {
+        console.error(error)
       }
     },
     handleSizeChange(val) {
       tableSettings.setPageSize(this.$route.name, val)
       this.fetch(1)
-    }
-  }
+    },
+  },
 }
 </script>
+
+<template>
+  <div class="table-page-container">
+    <div v-if="title" class="table-page-header">
+      <slot name="header">
+        <div class="page-header-title">
+          {{ title }}
+          <span v-if="desc" class="page-header-desc" v-html="desc" />
+        </div>
+      </slot>
+    </div>
+
+    <div class="table-page-main">
+      <div class="table-page-main-box gap-4">
+        <Classification
+          v-if="classify && !hideClassify"
+          ref="classification"
+          v-model:visible="classificationVisible"
+          :com-title="classify.comTitle"
+          :authority="classify.authority"
+          :view-page="classify.viewPage"
+          :types="classify.types"
+          :title="classify.title"
+          :kai-title="classify.title"
+          :drag-state="dragState"
+          @node-checked="nodeChecked"
+          @update:visible="classificationVisible = $event"
+          @drop-in-tag="fetch()"
+        />
+        <div class="table-page-body gap-4">
+          <div class="table-page-nav">
+            <slot name="nav" />
+          </div>
+          <div class="table-page-topbar">
+            <div class="table-page-search-bar flex align-center gap-2">
+              <IconButton
+                v-if="classify && !hideClassify && !classificationVisible"
+                class="rotate-180"
+                @click="handleToggleClassify"
+                >expand-list</IconButton
+              >
+              <slot name="search" />
+            </div>
+            <div class="table-page-operation-bar">
+              <slot name="operation" />
+            </div>
+          </div>
+          <ProTable
+            v-bind="$attrs"
+            ref="table"
+            v-loading="loading"
+            class="table-page-table"
+            :row-class-name="classificationVisible ? 'grabbable' : ''"
+            :height="ifTableHeightAuto ? null : '100%'"
+            :element-loading-text="$t('packages_business_dataFlow_dataLoading')"
+            :row-key="rowKey"
+            :span-method="spanMethod"
+            :data="list"
+            :default-sort="defaultSort"
+            :draggable="draggable || classificationVisible"
+            @selection-change="handleSelectionChange"
+            @sort-change="$emit('sort-change', $event)"
+            @row-dragstart="handleDragStart"
+            @row-dragend="handleDragEnd"
+            @select="onSelectRow"
+            v-on="$listeners"
+          >
+            <slot />
+            <template #empty>
+              <div class="empty">
+                <VIcon size="140">no-data-color</VIcon>
+                <slot name="noDataText" />
+              </div>
+            </template>
+          </ProTable>
+          <div class="table-footer">
+            <slot name="tableFooter" />
+          </div>
+          <div
+            class="pagination-wrapper flex align-center gap-4"
+            :style="
+              ifTableHeightAuto
+                ? `position: sticky; bottom: 0; z-index: 10; background: #fff;`
+                : ''
+            "
+          >
+            <transition name="el-fade-in-linear">
+              <div
+                v-if="multipleSelection.length"
+                class="flex align-center gap-3"
+              >
+                <ElCheckbox :model-value="true" @change="clearSelection" />
+                <span class="fw-sub text-nowrap color-primary"
+                  >{{
+                    $t('packages_business_selected_rows', {
+                      val: multipleSelection.length,
+                    })
+                  }}
+                </span>
+                <slot name="multipleSelectionActions" />
+              </div>
+            </transition>
+
+            <el-pagination
+              v-model:current-page="page.current"
+              v-model:page-size="page.size"
+              background
+              class="table-page-pagination ml-auto mt-0"
+              layout="->,total, sizes,  prev, pager, next, jumper"
+              :page-sizes="[10, 20, 50, 100]"
+              :total="page.total"
+              @size-change="handleSizeChange"
+              @current-change="handleCurrent"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <SelectClassify
+      v-if="classify"
+      ref="classify"
+      :types="classify.types"
+      @operations-classify="$emit('classify-submit', $event)"
+    />
+  </div>
+</template>
+
 <style lang="scss">
 .table-page-container {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: map-get($bgColor, white);
+  background: map.get($bgColor, white);
   min-width: 720px;
   flex: 1;
   width: 100%;
 
+  .table-page-nav:empty {
+    display: none;
+  }
   .table-page-header {
     padding: 20px;
     background: #eff1f4;
@@ -375,7 +407,7 @@ export default {
 
     .page-header-title {
       font-size: 16px;
-      color: map-get($fontColor, dark);
+      color: map.get($fontColor, dark);
       font-weight: 600;
 
       &.link {
@@ -387,7 +419,7 @@ export default {
     .page-header-desc {
       margin-top: 10px;
       font-size: 12px;
-      color: map-get($fontColor, slight);
+      color: map.get($fontColor, slight);
     }
   }
 
@@ -401,12 +433,12 @@ export default {
       flex: 1;
       width: 100%;
       border-radius: 4px;
-      background-color: map-get($bgColor, white);
+      background-color: map.get($bgColor, white);
     }
   }
 
   .table-page-left {
-    border-right: 1px solid #ebeef5;
+    //border-right: 1px solid #ebeef5;
     // margin-right: 10px;
   }
 
@@ -415,7 +447,7 @@ export default {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    // background-color: map-get($bgColor, white);
+    // background-color: map.get($bgColor, white);
     border-radius: 4px;
     .el-table--border {
       border: none;
@@ -436,7 +468,7 @@ export default {
       border-bottom: none;
       border-radius: 3px;
       font-size: 14px;
-      background-color: map-get($bgColor, white);
+      background-color: map.get($bgColor, white);
       overflow: hidden;
       // .el-table__fixed-right {
       //   height: 100% !important; //设置高优先，以覆盖内联样式
@@ -445,38 +477,64 @@ export default {
         height: 1px;
       }
       .el-table__fixed-body-wrapper {
-        background-color: map-get($bgColor, white);
+        background-color: map.get($bgColor, white);
       }
       .el-table__fixed {
         height: auto !important; //设置高优先，以覆盖内联样式
       }
+
+      .el-table__inner-wrapper::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 1px;
+        z-index: calc(var(--el-table-index) + 2);
+        background-color: var(--el-table-border-color);
+        z-index: calc(var(--el-table-index) + 2);
+      }
     }
 
     .el-table--border td,
-    .el-table__body-wrapper .el-table--border.is-scrolling-left ~ .el-table__fixed {
+    .el-table__body-wrapper
+      .el-table--border.is-scrolling-left
+      ~ .el-table__fixed {
       border-right: 0;
     }
 
     .el-table--border td {
       .cell {
-        color: map-get($fontColor, light);
+        color: map.get($fontColor, light);
       }
     }
 
     .table-footer {
       line-height: 38px;
-    }
-
-    .table-page-pagination {
-      margin-top: 5px;
+      &:empty {
+        display: none;
+      }
     }
   }
 }
 
 .pagination-wrapper {
-  min-height: 46px;
   .el-button + .el-button {
     margin-left: 0;
   }
 }
 </style>
+<!-- .el-table--border .el-table__inner-wrapper::after {
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 1px;
+  z-index: calc(var(--el-table-index) + 2);
+}
+<style>
+.el-table--border::after, .el-table--border::before, .el-table--border .el-table__inner-wrapper::after, .el-table__inner-wrapper::before {
+  content: "";
+  position: absolute;
+  background-color: var(--el-table-border-color);
+  z-index: calc(var(--el-table-index) + 2);
+} -->

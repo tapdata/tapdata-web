@@ -2,13 +2,13 @@
   "name": "@tap/node-design",
   "version": "1.0.0",
   "description": "",
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@formily/core": "^2.0.11",
     "@formily/json-schema": "^2.0.9",
@@ -17,11 +17,13 @@
     "@formily/reactive-vue": "^2.0.11",
     "@formily/shared": "^2.0.9",
     "@tap/api": "workspace:^1.0.0",
+    "@tap/assets": "workspace:^",
     "@tap/component": "workspace:^1.0.0",
     "@tap/form": "workspace:^1.0.0",
-    "@tap/shared": "workspace:^1.0.0",
     "@tap/i18n": "workspace:^1.0.0",
+    "@tap/shared": "workspace:^1.0.0",
+    "core-js": "^3.8.3",
     "resize-observer-polyfill": "^1.5.1",
-    "vue-demi": "^0.12.1"
+    "tiny-emitter": "^2.1.0"
   }
 }

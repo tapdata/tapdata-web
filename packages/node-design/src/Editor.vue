@@ -39,10 +39,6 @@
 </template>
 
 <script>
-import '@tap/assets/icons/svg/component.svg'
-import '@tap/assets/icons/svg/outline.svg'
-import '@tap/assets/icons/svg/history.svg'
-
 import {
   Designer,
   StudioPanel,
@@ -56,7 +52,7 @@ import {
   WorkspacePanel,
   ViewportPanel,
   ViewPanel,
-  CompositePanel
+  CompositePanel,
 } from './components'
 import { GlobalRegistry } from './core'
 import * as icons from './icons'
@@ -83,8 +79,9 @@ import {
   DisplayStyleSetter,
   FlexStyleSetter,
   // DrawerSetter,
-  CollapseItem
+  CollapseItem,
 } from './components'
+import { markRaw } from 'vue'
 
 GlobalRegistry.registerDesignerIcons(icons)
 GlobalRegistry.registerDesignerLocales({
@@ -94,8 +91,8 @@ GlobalRegistry.registerDesignerLocales({
       Layouts: '布局组件',
       Arrays: '自增组件',
       Displays: '展示组件',
-      Business: '业务组件'
-    }
+      Business: '业务组件',
+    },
   },
   'en-US': {
     sources: {
@@ -103,9 +100,9 @@ GlobalRegistry.registerDesignerLocales({
       Layouts: 'Layouts',
       Arrays: 'Arrays',
       Displays: 'Displays',
-      Business: 'Business'
-    }
-  }
+      Business: 'Business',
+    },
+  },
 })
 
 export default {
@@ -124,21 +121,38 @@ export default {
     ResourceWidget,
     SchemaEditorWidget,
     CodeEditorWidget,
-    PreviewWidget
+    PreviewWidget,
   },
 
   data() {
     return {
       sources: [Input, Select, InputNumber, Checkbox, Radio],
       businessSources: [FieldSelect],
-      components: { Field, Input, Select, Form, FormLayout, InputNumber, Checkbox, Radio, FieldSelect },
-      settingsFormComponents: { SizeInput, DisplayStyleSetter, FlexStyleSetter, Slider, CollapseItem, ValueInput }
+      components: markRaw({
+        Field,
+        Input,
+        Select,
+        Form,
+        FormLayout,
+        InputNumber,
+        Checkbox,
+        Radio,
+        FieldSelect,
+      }),
+      settingsFormComponents: markRaw({
+        SizeInput,
+        DisplayStyleSetter,
+        FlexStyleSetter,
+        Slider,
+        CollapseItem,
+        ValueInput,
+      }),
     }
-  }
+  },
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .main-panel-container {
 }
 </style>

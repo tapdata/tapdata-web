@@ -15,7 +15,7 @@ export default class Notification extends Http {
     return this.axios.request({
       url: this.url,
       method: 'post',
-      data: filter
+      data: filter,
     })
   }
 
@@ -23,7 +23,7 @@ export default class Notification extends Http {
     return this.axios.request({
       url: this.url + '/update?where=' + filter,
       method: 'post',
-      data: update
+      data: update,
     })
   }
   readAll(params) {

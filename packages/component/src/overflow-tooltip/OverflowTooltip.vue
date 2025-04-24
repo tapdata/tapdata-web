@@ -1,38 +1,38 @@
-<script>
+<script lang="jsx">
 export default {
   name: 'OverflowTooltip',
   props: {
-    text: String
+    text: String,
   },
 
   data() {
     return {
-      overflow: false
+      overflow: false,
     }
   },
 
   render() {
-    const { text, $slots } = this
-    const elm = $slots.default?.[0]?.elm
+    const { text, $slots, $attrs } = this
+    const elm = ($slots.default && $slots.default())?.[0]?.elm
     const defaultText = elm?.innerText || text
 
     return this.overflow ? (
       <el-tooltip
         content={defaultText}
         {...{
-          props: this.$attrs
+          props: this.$attrs,
         }}
       >
-        <div ref="container" class="overflow-tip">
+        <div ref="container" class={['overflow-tip', $attrs.class]}>
           <span ref="text" class="overflow-tip-text">
-            {$slots.default ? $slots.default : text}
+            {$slots.default && $slots.default() ? $slots.default && $slots.default() : text}
           </span>
         </div>
       </el-tooltip>
     ) : (
       <div ref="container" class="overflow-tip">
         <span ref="text" class="overflow-tip-text">
-          {$slots.default ? $slots.default : text}
+          {$slots.default && $slots.default() ? $slots.default && $slots.default() : text}
         </span>
       </div>
     )

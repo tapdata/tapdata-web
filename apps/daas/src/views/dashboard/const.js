@@ -5,5 +5,5 @@ export const STATUS_MAP = {
   running: i18n.t('dashboard_running'),
   stopping: i18n.t('dashboard_stopping'),
   stopped: i18n.t('cluster_stopped'),
-  restarting: i18n.t('dashboard_restarting')
+  restarting: i18n.t('dashboard_restarting'),
 }

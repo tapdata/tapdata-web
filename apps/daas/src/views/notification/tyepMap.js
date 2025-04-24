@@ -45,7 +45,7 @@ export const TYPEMAP = {
   inspectValue: i18n.t('notify_inspect_verify_job_value'),
   inspectDelete: i18n.t('notify_inspect_verify_job_delete'),
   inspectError: i18n.t('notify_inspect_verify_job_error'),
-  approaching: i18n.t('notify_approaching')
+  approaching: i18n.t('notify_approaching'),
 }
 
 export const notificationMAP = {
@@ -66,5 +66,5 @@ export const notificationMAP = {
   inspectCount: i18n.t('notification_inspectCount'),
   inspectValue: i18n.t('notification_inspectValue'),
   inspectDelete: i18n.t('notification_inspectDelete'),
-  inspectError: i18n.t('notification_inspectError')
+  inspectError: i18n.t('notification_inspectError'),
 }

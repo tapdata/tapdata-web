@@ -1,3 +1,4 @@
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { CancelToken, discoveryApi, taskApi } from '@tap/api'
 import { validateCron } from '@tap/form'
@@ -12,7 +13,7 @@ export default {
       } else {
         try {
           const isExist = await taskApi.checkName({
-            name: value
+            name: value,
           })
           if (isExist) {
             callback(new Error(this.$t('packages_dag_task_form_error_name_duplicate')))
@@ -48,24 +49,24 @@ export default {
     const cronOptions = [
       {
         label: i18n.t('packages_ldp_run_only_once'),
-        value: 'once'
+        value: 'once',
       },
       {
         label: i18n.t('packages_ldp_run_every_10_minutes'),
-        value: '0 */10 * * * ?'
+        value: '0 */10 * * * ?',
       },
       {
         label: i18n.t('packages_ldp_run_every_hour'),
-        value: '0 0 * * * ?'
+        value: '0 0 * * * ?',
       },
       {
         label: i18n.t('packages_ldp_run_every_day'),
-        value: '0 0 0 * * ?'
+        value: '0 0 0 * * ?',
       },
       {
         label: i18n.t('packages_ldp_custom_cron_expression'),
-        value: 'custom'
-      }
+        value: 'custom',
+      },
     ]
     return {
       cronOptions,
@@ -74,10 +75,14 @@ export default {
         newTableName: [{ required: true }],
         prefix: [{ validator: validatePrefix, trigger: 'blur' }],
         'task.crontabExpression': [
-          { required: true, message: this.$t('public_form_not_empty'), trigger: ['blur', 'change'] },
-          { validator: validateCrontabExpression, trigger: ['blur', 'change'] }
-        ]
-      }
+          {
+            required: true,
+            message: this.$t('public_form_not_empty'),
+            trigger: ['blur', 'change'],
+          },
+          { validator: validateCrontabExpression, trigger: ['blur', 'change'] },
+        ],
+      },
     }
   },
 
@@ -87,12 +92,10 @@ export default {
     },
     ...mapState(['highlightBoard'])
   },
-
   unmounted() {
     this.debouncedSearch?.cancel()
     this.cancelSource?.cancel()
   },
-
   methods: {
     toggleEnableSearch() {
       if (this.enableSearch) {
@@ -138,11 +141,11 @@ export default {
       this.openRoute({
         name: routeName,
         query: {
-          tour: this.startingTour ? true : undefined
+          tour: this.startingTour ? true : undefined,
         },
         params: {
-          id: task.id
-        }
+          id: task.id,
+        },
       })
     },
 
@@ -156,23 +159,23 @@ export default {
         queryKey,
         regUnion: false,
         fields: {
-          allTags: 1
-        }
+          allTags: 1,
+        },
       }
       return discoveryApi
         .discoveryList(where, {
-          cancelToken
+          cancelToken,
         })
-        .then(res => {
-          return res.items.map(item =>
+        .then((res) => {
+          return res.items.map((item) =>
             Object.assign(item, {
               isLeaf: true,
               isObject: true,
               connectionId: item.sourceConId,
               LDP_TYPE: 'table',
               parent_id: node.id,
-              isVirtual: item.status === 'noRunning'
-            })
+              isVirtual: item.status === 'noRunning',
+            }),
           )
         })
     },
@@ -190,7 +193,7 @@ export default {
         return obj
       }, {})
 
-      const filterTree = node => {
+      const filterTree = (node) => {
         const newNode = { ...node }
 
         if (node.children?.length) {
@@ -215,7 +218,7 @@ export default {
 
     handleFindParent(event) {
       const parentNode = event.target?.parentElement
-      this.$emit('find-parent', parentNode)
+      $emit(this, 'find-parent', parentNode)
     },
 
     handleChangeCronType(val) {
@@ -247,13 +250,13 @@ export default {
         filter: JSON.stringify({
           limit: 9999,
           fields: { name: 1 },
-          where: { name: { like: `^${source}\\d+$` } }
-        })
+          where: { name: { like: `^${source}\\d+$` } },
+        }),
       })
       let def = 1
       if (taskNames?.items.length) {
         let arr = [0]
-        taskNames.items.forEach(item => {
+        taskNames.items.forEach((item) => {
           const res = item.name.match(new RegExp(`^${source}(\\d+)$`))
           if (res && res[1]) arr.push(+res[1])
         })

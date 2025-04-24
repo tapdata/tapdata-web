@@ -19,6 +19,6 @@ export const titleChange = {
 
     $titleReset() {
       document.title = this.$route.meta.title
-    }
-  }
+    },
+  },
 }
