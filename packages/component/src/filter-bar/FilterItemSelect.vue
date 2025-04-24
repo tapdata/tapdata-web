@@ -78,6 +78,10 @@ watch(
       {{ label }}
     </template>
 
+    <template #label="scoped">
+      <slot name="label" v-bind="scoped" />
+    </template>
+
     <template #default="{ item }">
       <slot name="default" :item="item" />
     </template>

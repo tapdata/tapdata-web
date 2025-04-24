@@ -1037,19 +1037,18 @@ export default {
           <template v-if="showInstanceInfo" #pipeline>
             <SelectList
               v-model="pipelineSelected"
-              menu-min-width="400px"
-              selected-width="200px"
+              :width="400"
               :items="pipelineOptions"
-              :inner-label="$t('daas_datasourcePipeline')"
-              none-border
-              last-page-text=""
-              :item-size="54"
+              :label="$t('daas_datasourcePipeline')"
               clearable
+              :item-height="54"
               @change="handleSelectPipeline"
               @visible-change="handlePipelineSelectVisible"
             >
               <template v-if="pipeline" #label>
-                <span class="inline-flex align-center position-relative ml-2">
+                <span
+                  class="inline-flex align-center position-relative ml-2 lh-1"
+                >
                   <span class="inline-flex gap-1 align-center">
                     <DatabaseIcon
                       :key="pipeline.instanceInfos[0].pdkHash"
@@ -1072,35 +1071,29 @@ export default {
                 </span>
               </template>
               <template #default="{ item }">
-                <ElOption
-                  style="height: 54px"
-                  :value="item.id"
-                  :label="item.id"
-                >
-                  <div class="flex align-center gap-2 h-100 fw-normal">
-                    <div
-                      v-for="(info, i) in item.instanceInfos"
-                      :key="i"
-                      class="flex align-center gap-2 flex-1 min-w-0"
-                    >
-                      <DatabaseIcon
-                        :key="info.pdkHash"
-                        class="flex-shrink-0"
-                        :size="24"
-                        :item="info"
-                      />
-                      <div class="lh-sm min-w-0">
-                        <div class="font-color-dark">{{ info.pdkName }}</div>
-                        <div
-                          class="font-color-light ellipsis fs-7"
-                          :title="info.tag"
-                        >
-                          {{ info.tag || '--' }}
-                        </div>
+                <div class="flex align-center gap-2 h-100 fw-normal">
+                  <div
+                    v-for="(info, i) in item.instanceInfos"
+                    :key="i"
+                    class="flex align-center gap-2 flex-1 min-w-0"
+                  >
+                    <DatabaseIcon
+                      :key="info.pdkHash"
+                      class="flex-shrink-0"
+                      :size="24"
+                      :item="info"
+                    />
+                    <div class="lh-sm min-w-0">
+                      <div class="font-color-dark">{{ info.pdkName }}</div>
+                      <div
+                        class="font-color-light ellipsis fs-7"
+                        :title="info.tag"
+                      >
+                        {{ info.tag || '--' }}
                       </div>
                     </div>
                   </div>
-                </ElOption>
+                </div>
               </template>
             </SelectList>
           </template>

@@ -333,7 +333,7 @@ export default {
         </div>
       </div>
 
-      <div class="py-2 flex gap-4">
+      <div class="flex gap-4 mb-2">
         <SelectList
           v-if="options.length"
           v-model="searchParams.search"
