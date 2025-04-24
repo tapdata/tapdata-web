@@ -780,10 +780,6 @@ Stack Trace: ${this.errorDialog.stack ? `\n${this.errorDialog.stack}` : ''}`,
       border-bottom: 1px solid #ebeef5;
     }
 
-    thead {
-      color: map.get($fontColor, dark);
-    }
-
     .information {
       width: 358px;
       white-space: normal;
