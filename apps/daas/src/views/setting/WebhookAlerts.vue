@@ -474,7 +474,7 @@ export default {
                 </span>
               </template>
               <JsonEditor
-                v-model="form.customTemplate"
+                v-model:value="form.customTemplate"
                 height="320"
                 :options="{
                   options: { showPrintMargin: false, useWrapMode: true },

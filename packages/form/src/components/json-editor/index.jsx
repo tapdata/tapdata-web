@@ -1,6 +1,6 @@
-import { computed, defineComponent, ref, watch } from 'vue'
-import { VCodeEditor } from '@tap/component'
 import { useField } from '@formily/vue'
+import { VCodeEditor } from '@tap/component'
+import { computed, defineComponent, ref, watch } from 'vue'
 
 export const JsonEditor = defineComponent({
   props: {
@@ -21,17 +21,19 @@ export const JsonEditor = defineComponent({
     needFormat: Boolean,
   },
 
-  setup(props, { emit, listeners }) {
+  setup(props, { emit, attrs }) {
     const fieldRef = useField()
     const editorVal = computed(() => {
-      return props.type === 'object' ? JSON.stringify(props.value, null, props.needFormat ? 2 : 0) : props.value
+      return props.type === 'object'
+        ? JSON.stringify(props.value, null, props.needFormat ? 2 : 0)
+        : props.value
     })
     const onBlur = (val) => {
       if (val !== editorVal.value) {
         try {
           if (val && props.type === 'object') val = JSON.parse(val)
-        } catch (e) {
-          console.error(e) // eslint-disable-line
+        } catch (error) {
+          console.error(error)
         }
         emit('change', val)
       }
@@ -53,7 +55,7 @@ export const JsonEditor = defineComponent({
           height={props.height}
           onBlur={onBlur}
           options={options}
-          on={{ ...listeners }}
+          {...attrs}
         />
       )
     }

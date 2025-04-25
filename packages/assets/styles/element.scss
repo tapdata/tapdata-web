@@ -319,6 +319,10 @@
       --el-fill-color-light: var(--el-color-primary-light-9);
       --el-fill-color: var(--el-color-primary-light-8);
     }
+
+    &:not(.is-disabled).is-active {
+      background-color: var(--el-fill-color-light);
+    }
   }
 
   &.is-text i + span:empty {
@@ -363,7 +367,8 @@
   .el-collapse-item__header {
     padding: 0 var(--collapse-padding-primary);
     .el-collapse-item__arrow {
-      margin-right: 0;
+      // margin-right: 0;
+      font-size: 12px;
     }
   }
 
