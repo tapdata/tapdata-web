@@ -397,6 +397,13 @@ export default {
   .table-page-nav:empty {
     display: none;
   }
+
+  .table-page-topbar:has(.table-page-search-bar:empty):has(
+      .table-page-operation-bar:empty
+    ) {
+    display: none;
+  }
+
   .table-page-header {
     padding: 20px;
     background: #eff1f4;

@@ -186,100 +186,98 @@ export default {
         $t('public_event_update')
       }}</ElButton>
     </template>
-    <section class="license-wrapper h-100 overflow-hidden pb-6 pr-6">
-      <TablePage
-        ref="table"
-        row-key="id"
-        :default-sort="{ prop: 'lastUpdatedFmt', order: 'descending' }"
-        :remote-method="getData"
-        @sort-change="handleSortTable"
+    <TablePage
+      ref="table"
+      row-key="id"
+      :default-sort="{ prop: 'lastUpdatedFmt', order: 'descending' }"
+      :remote-method="getData"
+      @sort-change="handleSortTable"
+    >
+      <ElTableColumn type="selection" width="45" />
+      <ElTableColumn
+        prop="hostname"
+        :label="$t('license_node_name')"
+        min-width="150"
+      />
+      <ElTableColumn
+        prop="sid"
+        :label="$t('license_node_sid')"
+        min-width="150"
+      />
+      <ElTableColumn :label="$t('license_status')" min-width="150">
+        <template #default="{ row }">
+          <span :class="`color-${row.status.color}`">{{
+            row.status.text
+          }}</span>
+        </template>
+      </ElTableColumn>
+      <ElTableColumn :label="$t('daas_licenseType')" min-width="150">
+        <template #default="{ row }">
+          <el-tag>{{ TYPE_MAP[row.licenseType] }}</el-tag>
+        </template>
+      </ElTableColumn>
+      <ElTableColumn
+        v-if="showLicenseType"
+        :label="$t('daas_datasourcePipelineLimit')"
+        min-width="160"
       >
-        <ElTableColumn type="selection" width="45" />
-        <ElTableColumn
-          prop="hostname"
-          :label="$t('license_node_name')"
-          min-width="150"
-        />
-        <ElTableColumn
-          prop="sid"
-          :label="$t('license_node_sid')"
-          min-width="150"
-        />
-        <ElTableColumn :label="$t('license_status')" min-width="150">
-          <template #default="{ row }">
-            <span :class="`color-${row.status.color}`">{{
-              row.status.text
-            }}</span>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn :label="$t('daas_licenseType')" min-width="150">
-          <template #default="{ row }">
-            <el-tag>{{ TYPE_MAP[row.licenseType] }}</el-tag>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn
-          v-if="showLicenseType"
-          :label="$t('daas_datasourcePipelineLimit')"
-          min-width="160"
-        >
-          <template #default="{ row }">
-            <div
-              v-if="row.licenseType === 'PIPELINE'"
-              class="flex gap-2 align-center"
+        <template #default="{ row }">
+          <div
+            v-if="row.licenseType === 'PIPELINE'"
+            class="flex gap-2 align-center"
+          >
+            <el-progress
+              class="flex-1"
+              :percentage="row.pipelinePercentage"
+              :show-text="false"
+            />
+            <span
+              >{{ row.datasourcePipelineInUse }} /
+              {{ row.datasourcePipelineLimit }}</span
             >
-              <el-progress
-                class="flex-1"
-                :percentage="row.pipelinePercentage"
-                :show-text="false"
-              />
-              <span
-                >{{ row.datasourcePipelineInUse }} /
-                {{ row.datasourcePipelineLimit }}</span
-              >
-              <el-button text type="primary" @click="openPipelineDetails">{{
-                $t('public_button_details')
-              }}</el-button>
-            </div>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn
-          prop="expirationDateFmt"
-          :label="$t('license_expire_date')"
-          min-width="160"
-        />
-        <ElTableColumn
-          prop="lastUpdatedFmt"
-          sortable
-          :label="$t('license_update_time')"
-          min-width="160"
-        />
-        <ElTableColumn :label="$t('public_operation')" width="88">
-          <template #default="{ row }">
-            <ElButton text type="primary" @click="updateNode(row)">{{
-              $t('public_event_update')
-            }}</ElButton>
-          </template>
-        </ElTableColumn>
-      </TablePage>
-      <ElDialog
-        v-model="dialogVisible"
-        append-to-body
-        :title="$t('license_renew_dialog')"
-      >
-        <ElInput v-model.trim="license" type="textarea" />
-        <template #footer>
-          <div>
-            <ElButton
-              type="primary"
-              :disabled="!license"
-              :loading="dialogLoading"
-              @click="updateLicense"
-              >{{ $t('public_event_update') }}</ElButton
-            >
+            <el-button text type="primary" @click="openPipelineDetails">{{
+              $t('public_button_details')
+            }}</el-button>
           </div>
         </template>
-      </ElDialog>
-    </section>
+      </ElTableColumn>
+      <ElTableColumn
+        prop="expirationDateFmt"
+        :label="$t('license_expire_date')"
+        min-width="160"
+      />
+      <ElTableColumn
+        prop="lastUpdatedFmt"
+        sortable
+        :label="$t('license_update_time')"
+        min-width="160"
+      />
+      <ElTableColumn :label="$t('public_operation')" width="88">
+        <template #default="{ row }">
+          <ElButton text type="primary" @click="updateNode(row)">{{
+            $t('public_event_update')
+          }}</ElButton>
+        </template>
+      </ElTableColumn>
+    </TablePage>
+    <ElDialog
+      v-model="dialogVisible"
+      append-to-body
+      :title="$t('license_renew_dialog')"
+    >
+      <ElInput v-model.trim="license" type="textarea" />
+      <template #footer>
+        <div>
+          <ElButton
+            type="primary"
+            :disabled="!license"
+            :loading="dialogLoading"
+            @click="updateLicense"
+            >{{ $t('public_event_update') }}</ElButton
+          >
+        </div>
+      </template>
+    </ElDialog>
 
     <ElDialog
       v-model="detailsDialog.show"
