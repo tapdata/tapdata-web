@@ -443,26 +443,38 @@ export default {
                 {{ $t('packages_dag_dag_connection') }}
                 <span v-show="dbTotal > 0" class="badge">{{ dbTotal }}</span>
               </span>
-              <VIcon
-                size="18"
-                class="click-btn mr-1"
-                :class="{ active: showDBInput }"
+
+              <el-button
+                id="connection-search-btn"
+                text
+                size="small"
+                :class="{ 'is-active': showDBInput }"
                 @click.stop="handleShowDBInput"
-                >search-outline
-              </VIcon>
-              <VIcon
-                size="20"
-                class="click-btn"
-                :class="{ 'click-btn-disabled': stateIsReadonly }"
+              >
+                <template #icon>
+                  <VIcon size="18" @click.stop="handleShowDBInput"
+                    >search-outline</VIcon
+                  >
+                </template>
+              </el-button>
+              <el-button
+                text
+                size="small"
+                class="ml-1"
+                :disabled="stateIsReadonly"
                 @mousedown.stop
                 @click.stop="creat"
-                >add-outline
-              </VIcon>
+              >
+                <template #icon>
+                  <VIcon size="20">add-outline</VIcon>
+                </template>
+              </el-button>
             </div>
           </template>
           <div class="flex flex-column h-100">
             <div v-show="showDBInput" class="p-2">
               <ElInput
+                id="connection-search-input"
                 ref="dbInput"
                 v-model="dbSearchTxt"
                 :placeholder="
@@ -475,7 +487,7 @@ export default {
                 @input="handleDBInput"
               >
                 <template #prefix>
-                  <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
+                  <VIcon size="14" class="h-100">search-outline</VIcon>
                 </template>
               </ElInput>
             </div>
@@ -824,6 +836,7 @@ $hoverBg: #eef3ff;
 
           .el-collapse-item__wrap {
             height: calc(100% - #{$headerH - 1});
+            border-bottom: none;
           }
 
           .el-collapse-item__content {

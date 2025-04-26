@@ -632,6 +632,7 @@ export default {
           placeholder: this.$t('packages_business_connection_list_name'),
           key: 'keyword',
           type: 'input',
+          id: 'name-filter-input',
         },
       ]
     },

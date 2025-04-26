@@ -5,7 +5,7 @@ import {
   taskApi,
   workerApi,
 } from '@tap/api'
-import { VEmpty } from '@tap/component'
+import { RightBoldOutlined, VEmpty } from '@tap/component'
 import VIcon from '@tap/component/src/base/VIcon'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 import { computed, ref, watch } from 'vue'
@@ -680,11 +680,12 @@ getTables()
       <div class="selector-panel__body">
         <div class="selector-panel__search">
           <ElInput
+            id="table-selector-left-filter-input"
             v-model="table.searchKeyword"
             clearable
             :placeholder="$t('public_input_placeholder_search')"
           >
-            <template #suffix>
+            <template #prefix>
               <ElIcon><ElIconSearch /></ElIcon>
             </template>
           </ElInput>
@@ -770,7 +771,41 @@ getTables()
     <!-- 左右箭头 按钮 -->
     <div class="selector-center">
       <div class="selector-btns">
-        <span
+        <el-button
+          id="table-selector-add-btn"
+          :disabled="isOpenClipMode || disabled || !table.checked.length"
+          class="p-1"
+          :type="
+            table.checked.length > 0 && !isOpenClipMode && !disabled
+              ? 'primary'
+              : 'default'
+          "
+          style="width: 28px; height: 28px"
+          @click="add"
+        >
+          <template #icon>
+            <RightBoldOutlined />
+          </template>
+        </el-button>
+
+        <el-button
+          id="table-selector-remove-btn"
+          :disabled="isOpenClipMode || disabled || !selected.checked.length"
+          :type="
+            selected.checked.length > 0 && !isOpenClipMode && !disabled
+              ? 'primary'
+              : 'default'
+          "
+          class="p-1 ml-0"
+          style="width: 28px; height: 28px"
+          @click="remove"
+        >
+          <template #icon>
+            <RightBoldOutlined class="rotate-180" />
+          </template>
+        </el-button>
+
+        <!-- <span
           class="btn-transfer rounded-4"
           :class="{
             'btn-transfer--disabled': isOpenClipMode || disabled,
@@ -791,7 +826,7 @@ getTables()
           @click="remove"
         >
           <el-icon><el-icon-arrow-left /></el-icon>
-        </span>
+        </span> -->
       </div>
     </div>
     <!-- 已选择区 -->
@@ -837,11 +872,12 @@ getTables()
       <div class="selector-panel__body" :class="{ isOpenClipMode }">
         <div v-show="!isOpenClipMode" class="selector-panel__search">
           <ElInput
+            id="table-selector-right-filter-input"
             v-model="selected.searchKeyword"
             clearable
             :placeholder="$t('public_input_placeholder_search')"
           >
-            <template #suffix>
+            <template #prefix>
               <ElIcon><ElIconSearch /></ElIcon>
             </template>
           </ElInput>

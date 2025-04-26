@@ -76,4 +76,6 @@ export * from './icon-button'
 
 export * from './CloseIcon'
 
+export * from './RightBoldOutlined'
+
 export * from './InstallElement'

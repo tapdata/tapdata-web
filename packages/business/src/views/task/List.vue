@@ -342,12 +342,14 @@ export default {
           key: 'status',
           type: 'select-inner',
           items: this.statusOptions,
+          id: 'status-filter-select',
         },
         {
           label: this.$t('packages_business_task_list_sync_type'),
           key: 'type',
           type: 'select-inner',
           items: this.typeOptions,
+          id: 'type-filter-select',
         },
         {
           label: this.$t('packages_business_task_monitor_mission_milestone'),
@@ -361,6 +363,7 @@ export default {
             })),
           ],
           width: 240,
+          id: 'sync-status-filter-select',
         },
         {
           label: i18n.t('public_agent_name'),
@@ -402,6 +405,7 @@ export default {
           placeholder: this.$t('public_task_name'),
           key: 'keyword',
           type: 'input',
+          id: 'name-filter-input',
         },
       ]
 
@@ -1286,6 +1290,7 @@ export default {
                 havePermission(row, 'Start')
               "
               v-readonlybtn="'SYNC_job_operation'"
+              name="start-task-btn"
               text
               type="primary"
               data-testid="start-task"
@@ -1313,6 +1318,7 @@ export default {
                 v-readonlybtn="'SYNC_job_operation'"
                 text
                 type="primary"
+                name="stop-task-btn"
                 data-testid="stop-task"
                 :disabled="row.btnDisabled.stop || $disabledReadonlyUserBtn()"
                 @click="stop([row.id], row)"
@@ -1397,6 +1403,7 @@ export default {
               v-readonlybtn="'SYNC_job_edition'"
               text
               type="primary"
+              name="delete-task-btn"
               data-testid="delete-task"
               :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
               @click="del([row.id], row)"
