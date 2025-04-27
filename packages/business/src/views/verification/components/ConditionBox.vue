@@ -8,7 +8,14 @@ import SwitchNumber from '@tap/component/src/SwitchNumber.vue'
 import { AsyncSelect, SchemaToForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import { uuid } from '@tap/shared'
-import { cloneDeep, debounce, isEmpty, isString, merge, uniqBy } from 'lodash-es'
+import {
+  cloneDeep,
+  debounce,
+  isEmpty,
+  isString,
+  merge,
+  uniqBy,
+} from 'lodash-es'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { $emit } from '../../../../utils/gogocodeTransfer'
 
@@ -951,8 +958,12 @@ export default {
 
     async getConnectionsInTask(filter = {}) {
       const keyword = filter.where?.name?.like
-      let arr
-      if (keyword) {
+      const id = filter.where?.id
+      let arr = []
+      if (id) {
+        const item = this.flowStages.find((item) => item.connectionId === id)
+        item && arr.push(item)
+      } else if (keyword) {
         arr = this.flowStages.filter((t) =>
           t.attrs?.connectionName.includes(filter.where?.name?.like),
         )
@@ -1393,7 +1404,7 @@ export default {
     },
 
     removeItem(id) {
-      const index = this.list.findIndex(item => item.id === id)
+      const index = this.list.findIndex((item) => item.id === id)
 
       if (~index) this.list.splice(index, 1)
     },
@@ -2247,9 +2258,7 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
                   lazy
                   filterable
                   class="item-select"
-                  @change="
-                    handleChangeTable($event, item, index, 'target')
-                  "
+                  @change="handleChangeTable($event, item, index, 'target')"
                 />
               </div>
               <div

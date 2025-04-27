@@ -87,7 +87,9 @@ const labelContent = ref('')
 
 // 回显数据
 const setCurrentLabel = async () => {
-  const current = selectRef.value.states.selected
+  const [current] = selectRef.value.states.selected
+
+  if (!current) return
 
   if (current.currentLabel === current.value && props.itemType === 'object') {
     if (props.currentLabel) {
@@ -110,7 +112,7 @@ const getLabel = (value, label) => {
 }
 
 const getOption = async (value) => {
-  const { itemValue, itemLabel } = props
+  const { itemValue, itemLabel, itemQuery } = props
   const filter = merge({}, props.params, {
     where: { [itemValue]: value },
     size: 1,
