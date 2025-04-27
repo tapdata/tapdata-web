@@ -101,7 +101,9 @@ export class Database extends NodeType {
                         'x-component': 'ClipboardButton',
                         'x-component-props': {
                           tooltip: i18n.t('packages_dag_copy_node_id'),
-                          finishTooltip: i18n.t('packages_dag_nodes_table_yifuzhi'),
+                          finishTooltip: i18n.t(
+                            'packages_dag_nodes_table_yifuzhi',
+                          ),
                           content: '{{$values.id}}',
                         },
                       },
@@ -167,7 +169,9 @@ export class Database extends NodeType {
                           asterisk: true,
                           feedbackLayout: 'none',
                           connectionId: '{{$values.connectionId}}',
-                          title: i18n.t('packages_dag_nodes_database_xuanzebiao'),
+                          title: i18n.t(
+                            'packages_dag_nodes_database_xuanzebiao',
+                          ),
                           target: '',
                         },
                         'x-component': 'Radio.Group',
@@ -180,11 +184,15 @@ export class Database extends NodeType {
                         },
                         enum: [
                           {
-                            label: i18n.t('packages_dag_nodes_database_anbiaomingxuanze'),
+                            label: i18n.t(
+                              'packages_dag_nodes_database_anbiaomingxuanze',
+                            ),
                             value: 'custom',
                           },
                           {
-                            label: i18n.t('packages_dag_nodes_database_anzhengzebiaoda'),
+                            label: i18n.t(
+                              'packages_dag_nodes_database_anzhengzebiaoda',
+                            ),
                             value: 'expression',
                           },
                         ],
@@ -197,46 +205,71 @@ export class Database extends NodeType {
                     'x-component': 'Space',
                     'x-component-props': {
                       size: 'middle',
-                      class: 'w-100'
+                      class: 'w-100',
                     },
                     properties: {
                       noPrimaryKeyTableSelectType: {
                         type: 'string',
-                        title: i18n.t('packages_dag_nodes_database_biaoxianshi'),
+                        title: i18n.t(
+                          'packages_dag_nodes_database_biaoxianshi',
+                        ),
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          class: 'flex-1'
+                          class: 'flex-1',
                         },
                         'x-component': 'Select',
                         default: 'HasKeys',
                         enum: [
-                          { label: i18n.t('public_select_option_all'), value: 'All' },
-                          { label: i18n.t('packages_dag_nodes_database_jinyouzhujianbiao'), value: 'HasKeys' },
-                          { label: i18n.t('packages_dag_only_include_pk'), value: 'OnlyPrimaryKey' },
-                          { label: i18n.t('packages_dag_only_include_uk'), value: 'OnlyUniqueIndex' },
-                          { label: i18n.t('packages_dag_nodes_database_jinwuzhujianbiao'), value: 'NoKeys' }
-                        ]
+                          {
+                            label: i18n.t('public_select_option_all'),
+                            value: 'All',
+                          },
+                          {
+                            label: i18n.t(
+                              'packages_dag_nodes_database_jinyouzhujianbiao',
+                            ),
+                            value: 'HasKeys',
+                          },
+                          {
+                            label: i18n.t('packages_dag_only_include_pk'),
+                            value: 'OnlyPrimaryKey',
+                          },
+                          {
+                            label: i18n.t('packages_dag_only_include_uk'),
+                            value: 'OnlyUniqueIndex',
+                          },
+                          {
+                            label: i18n.t(
+                              'packages_dag_nodes_database_jinwuzhujianbiao',
+                            ),
+                            value: 'NoKeys',
+                          },
+                        ],
                       },
                       syncSourcePartitionTableEnable: {
-                        title: i18n.t('packages_dag_syncSourcePartitionTableEnable'),
+                        title: i18n.t(
+                          'packages_dag_syncSourcePartitionTableEnable',
+                        ),
                         type: 'boolean',
                         default: true,
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
                           class: 'flex-1',
-                          tooltip: i18n.t('packages_dag_syncSourcePartitionTableEnable_tip')
+                          tooltip: i18n.t(
+                            'packages_dag_syncSourcePartitionTableEnable_tip',
+                          ),
                         },
                         'x-component': 'Switch',
                         'x-reactions': {
                           fulfill: {
                             state: {
                               visible:
-                                '{{$values.attrs.capabilities.some(item => item.id==="source_support_partition")}}'
-                            }
-                          }
-                        }
-                      }
-                    }
+                                '{{$values.attrs.capabilities.some(item => item.id==="source_support_partition")}}',
+                            },
+                          },
+                        },
+                      },
+                    },
                   },
 
                   selectAlert: {
@@ -247,16 +280,16 @@ export class Database extends NodeType {
                       title: i18n.t('packages_dag_select_HasKeys_alert'),
                       type: 'warning',
                       showIcon: true,
-                      closable: false
+                      closable: false,
                     },
                     'x-reactions': {
                       dependencies: ['.noPrimaryKeyTableSelectType'],
                       fulfill: {
                         state: {
-                          visible: '{{$deps[0] === "HasKeys"}}'
-                        }
-                      }
-                    }
+                          visible: '{{$deps[0] === "HasKeys"}}',
+                        },
+                      },
+                    },
                   },
 
                   div2: {
@@ -270,7 +303,8 @@ export class Database extends NodeType {
                         'x-component-props': {
                           class: 'mt-4',
                           connectionId: '{{$values.connectionId}}',
-                          syncPartitionTableEnable: '{{$values.syncSourcePartitionTableEnable}}',
+                          syncPartitionTableEnable:
+                            '{{$values.syncSourcePartitionTableEnable}}',
                           hasPartition: `{{$values.attrs.capabilities.some(item => item.id==="source_support_partition")}}`,
                           style: {
                             height: 'unset',
@@ -284,7 +318,8 @@ export class Database extends NodeType {
                           dependencies: ['migrateTableSelectType'],
                           fulfill: {
                             state: {
-                              display: '{{$deps[0] === "custom" ? "visible":"hidden"}}',
+                              display:
+                                '{{$deps[0] === "custom" ? "visible":"hidden"}}',
                             },
                             schema: {
                               required: '{{$deps[0] === "custom"}}',
@@ -296,7 +331,9 @@ export class Database extends NodeType {
                         type: 'string',
                         default: '.*',
                         required: true,
-                        description: i18n.t('packages_dag_nodes_database_zhengzebiaodashi'),
+                        description: i18n.t(
+                          'packages_dag_nodes_database_zhengzebiaodashi',
+                        ),
                         'x-decorator': 'FormItem',
                         'x-component': 'Input',
                         'x-component-props': {
@@ -306,7 +343,8 @@ export class Database extends NodeType {
                           dependencies: ['migrateTableSelectType'],
                           fulfill: {
                             state: {
-                              display: '{{$deps[0] === "expression" ? "visible":"hidden"}}',
+                              display:
+                                '{{$deps[0] === "expression" ? "visible":"hidden"}}',
                             },
                           },
                         },
@@ -317,18 +355,21 @@ export class Database extends NodeType {
                         'x-component': 'TableListCard',
                         'x-component-props': {
                           rows: 1,
-                          title: i18n.t('packages_dag_nodes_database_pipeidaodebiao'),
+                          title: i18n.t(
+                            'packages_dag_nodes_database_pipeidaodebiao',
+                          ),
                           connectionId: '{{$values.connectionId}}',
                           params:
                             '{{ {regex: $values.tableExpression,limit:0, syncPartitionTableEnable: $values.syncSourcePartitionTableEnable} }}',
                           filterType: `{{ $values.noPrimaryKeyTableSelectType }}`,
-                          hasPartition: `{{$values.attrs.capabilities.some(item => item.id==="source_support_partition")}}`
+                          hasPartition: `{{$values.attrs.capabilities.some(item => item.id==="source_support_partition")}}`,
                         },
                         'x-reactions': {
                           dependencies: ['migrateTableSelectType'],
                           fulfill: {
                             state: {
-                              display: '{{$deps[0] === "expression" ? "visible":"hidden"}}',
+                              display:
+                                '{{$deps[0] === "expression" ? "visible":"hidden"}}',
                             },
                           },
                         },
@@ -352,7 +393,7 @@ export class Database extends NodeType {
                 properties: {
                   fieldMapping: {
                     type: 'void',
-                    'x-component': 'fieldInference'
+                    'x-component': 'fieldInference',
                   },
                   uniqueIndexEnable: {
                     type: 'boolean',
@@ -361,9 +402,9 @@ export class Database extends NodeType {
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       layout: 'horizontal',
-                      tooltip: i18n.t('packages_dag_uniqueIndexEnable_tip')
+                      tooltip: i18n.t('packages_dag_uniqueIndexEnable_tip'),
                     },
-                    'x-component': 'Switch'
+                    'x-component': 'Switch',
                   },
                   updateConditionFieldsAlert: {
                     type: 'void',
@@ -373,8 +414,8 @@ export class Database extends NodeType {
                       title: i18n.t('packages_dag_updateConditionFields_alert'),
                       type: 'warning',
                       showIcon: true,
-                      closable: false
-                    }
+                      closable: false,
+                    },
                   },
                   existDataProcessMode: {
                     type: 'string',
@@ -382,16 +423,22 @@ export class Database extends NodeType {
                     default: 'keepData',
                     enum: [
                       {
-                        label: i18n.t('packages_dag_nodes_database_baochimubiaoduan'),
+                        label: i18n.t(
+                          'packages_dag_nodes_database_baochimubiaoduan',
+                        ),
                         value: 'keepData',
                       },
                       {
-                        label: i18n.t('packages_dag_nodes_database_qingchumubiaoduan'),
+                        label: i18n.t(
+                          'packages_dag_nodes_database_qingchumubiaoduan',
+                        ),
                         value: 'dropTable',
                         disabled: true,
                       },
                       {
-                        label: i18n.t('packages_dag_nodes_targetdatabase_baochimubiaoduan'),
+                        label: i18n.t(
+                          'packages_dag_nodes_targetdatabase_baochimubiaoduan',
+                        ),
                         value: 'removeData',
                       },
                     ],
@@ -413,7 +460,9 @@ export class Database extends NodeType {
                     },
                   },
                   initialConcurrentSpace: {
-                    title: i18n.t('packages_dag_nodes_database_quanliangduoxiancheng'),
+                    title: i18n.t(
+                      'packages_dag_nodes_database_quanliangduoxiancheng',
+                    ),
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       layout: 'horizontal',
@@ -448,7 +497,9 @@ export class Database extends NodeType {
                   },
                   cdcConcurrentSpace: {
                     type: 'void',
-                    title: i18n.t('packages_dag_nodes_database_zengliangduoxiancheng'),
+                    title: i18n.t(
+                      'packages_dag_nodes_database_zengliangduoxiancheng',
+                    ),
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       layout: 'horizontal',
@@ -488,12 +539,16 @@ export class Database extends NodeType {
                     },
                     properties: {
                       writeBatchSize: {
-                        title: i18n.t('packages_dag_nodes_database_piliangxierutiao'), //增量批次读取条数
+                        title: i18n.t(
+                          'packages_dag_nodes_database_piliangxierutiao',
+                        ), //增量批次读取条数
                         type: 'string',
                         'x-decorator': 'FormItem',
                         'x-component': 'InputNumber',
                         'x-decorator-props': {
-                          tooltip: i18n.t('packages_dag_nodes_database_quanliangmeipici2'),
+                          tooltip: i18n.t(
+                            'packages_dag_nodes_database_quanliangmeipici2',
+                          ),
                         },
                         'x-component-props': {
                           min: 1,
@@ -502,7 +557,9 @@ export class Database extends NodeType {
                         default: 100,
                       },
                       writeBatchWaitMs: {
-                        title: i18n.t('packages_dag_nodes_database_xierumeipizui'), //增量批次读取条数
+                        title: i18n.t(
+                          'packages_dag_nodes_database_xierumeipizui',
+                        ), //增量批次读取条数
                         type: 'string',
                         'x-decorator': 'FormItem',
                         'x-component': 'InputNumber',
@@ -576,7 +633,8 @@ export class Database extends NodeType {
                             target: 'disabledEvents',
                             fulfill: {
                               state: {
-                                visible: '{{$self.value === "SYNCHRONIZATION"}}',
+                                visible:
+                                  '{{$self.value === "SYNCHRONIZATION"}}',
                               },
                             },
                           },
@@ -606,7 +664,9 @@ export class Database extends NodeType {
                         },
                         'x-component': 'Input',
                         'x-component-props': {
-                          placeholder: i18n.t('packages_dag_ddl_ignore_rules_placeholder'),
+                          placeholder: i18n.t(
+                            'packages_dag_ddl_ignore_rules_placeholder',
+                          ),
                         },
                         'x-reactions': {
                           dependencies: ['ddlConfiguration'],
@@ -634,12 +694,16 @@ export class Database extends NodeType {
                         },
                         properties: {
                           readBatchSize: {
-                            title: i18n.t('packages_dag_nodes_database_piliangduqutiao'), //全量批次读取条数
+                            title: i18n.t(
+                              'packages_dag_nodes_database_piliangduqutiao',
+                            ), //全量批次读取条数
                             type: 'string',
                             'x-decorator': 'FormItem',
                             'x-component': 'InputNumber',
                             'x-decorator-props': {
-                              tooltip: i18n.t('packages_dag_nodes_database_quanliangmeipici'),
+                              tooltip: i18n.t(
+                                'packages_dag_nodes_database_quanliangmeipici',
+                              ),
                             },
                             'x-component-props': {
                               min: 1,
@@ -648,7 +712,9 @@ export class Database extends NodeType {
                             default: 100,
                           },
                           increaseReadSize: {
-                            title: i18n.t('packages_dag_nodes_database_zengliangmeipici'), //增量批次读取条数
+                            title: i18n.t(
+                              'packages_dag_nodes_database_zengliangmeipici',
+                            ), //增量批次读取条数
                             type: 'string',
                             'x-decorator': 'FormItem',
                             'x-component': 'InputNumber',
@@ -664,19 +730,22 @@ export class Database extends NodeType {
                         title: i18n.t('packages_dag_enableConcurrentRead'),
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          tooltip: i18n.t('packages_dag_enableConcurrentRead_tips')
+                          tooltip: i18n.t(
+                            'packages_dag_enableConcurrentRead_tips',
+                          ),
                         },
                         type: 'void',
                         'x-component': 'Space',
                         'x-component-props': {
-                          size: 'middle'
+                          size: 'middle',
                         },
                         'x-reactions': {
                           fulfill: {
                             state: {
-                              display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
-                            }
-                          }
+                              display:
+                                '{{$settings.type === "cdc" ? "hidden":"visible"}}',
+                            },
+                          },
                         },
                         properties: {
                           enableConcurrentRead: {
@@ -686,27 +755,29 @@ export class Database extends NodeType {
                               target: '.concurrentReadThreadNumber',
                               fulfill: {
                                 state: {
-                                  visible: '{{!!$self.value}}'
-                                }
-                              }
-                            }
+                                  visible: '{{!!$self.value}}',
+                                },
+                              },
+                            },
                           },
                           concurrentReadThreadNumber: {
-                            title: i18n.t('packages_dag_concurrentReadThreadNumber'),
+                            title: i18n.t(
+                              'packages_dag_concurrentReadThreadNumber',
+                            ),
                             type: 'number',
                             default: 2,
                             'x-decorator': 'FormItem',
                             'x-decorator-props': {
                               layout: 'horizontal',
-                              feedbackLayout: 'none'
+                              feedbackLayout: 'none',
                             },
                             'x-component': 'InputNumber',
                             'x-component-props': {
-                              min: 1
-                            }
-                          }
-                        }
-                      }
+                              min: 1,
+                            },
+                          },
+                        },
+                      },
                     },
                   },
                   tab3: {
@@ -733,9 +804,13 @@ export class Database extends NodeType {
                             default: false,
                             'x-decorator': 'IconLabel',
                             'x-decorator-props': {
-                              title: i18n.t('packages_dag_nodes_database_quanliangduandianxu'),
+                              title: i18n.t(
+                                'packages_dag_nodes_database_quanliangduandianxu',
+                              ),
                               iconSize: 30,
-                              tooltip: i18n.t('packages_dag_nodes_database_quanliangduandianshi'),
+                              tooltip: i18n.t(
+                                'packages_dag_nodes_database_quanliangduandianshi',
+                              ),
                             },
                             'x-component': 'Switch',
                             'x-reactions': {
@@ -748,16 +823,22 @@ export class Database extends NodeType {
                             },
                           },
                           splitType: {
-                            title: i18n.t('packages_dag_nodes_database_fenpianfangshi'),
+                            title: i18n.t(
+                              'packages_dag_nodes_database_fenpianfangshi',
+                            ),
                             type: 'number',
                             default: 10,
                             enum: [
                               {
-                                label: i18n.t('packages_dag_nodes_database_jiyumin'),
+                                label: i18n.t(
+                                  'packages_dag_nodes_database_jiyumin',
+                                ),
                                 value: 10,
                               },
                               {
-                                label: i18n.t('packages_dag_nodes_database_jiyucou'),
+                                label: i18n.t(
+                                  'packages_dag_nodes_database_jiyucou',
+                                ),
                                 value: 1,
                               },
                             ],
@@ -777,7 +858,9 @@ export class Database extends NodeType {
                             },
                           },
                           maxRecordInPartition: {
-                            title: i18n.t('packages_dag_nodes_database_fenpiandaxiao'),
+                            title: i18n.t(
+                              'packages_dag_nodes_database_fenpiandaxiao',
+                            ),
                             type: 'number',
                             default: 200000,
                             'x-decorator': 'FormItem',
@@ -789,13 +872,16 @@ export class Database extends NodeType {
                               dependencies: ['.enable', '.splitType'],
                               fulfill: {
                                 state: {
-                                  display: '{{$deps[0] && $deps[1] === 1 ? "visible" :"hidden"}}',
+                                  display:
+                                    '{{$deps[0] && $deps[1] === 1 ? "visible" :"hidden"}}',
                                 },
                               },
                             },
                           },
                           minMaxSplitPieces: {
-                            title: i18n.t('packages_dag_nodes_database_fenpianshuliang'),
+                            title: i18n.t(
+                              'packages_dag_nodes_database_fenpianshuliang',
+                            ),
                             type: 'number',
                             default: 100,
                             'x-decorator': 'FormItem',
@@ -807,13 +893,16 @@ export class Database extends NodeType {
                               dependencies: ['.enable', '.splitType'],
                               fulfill: {
                                 state: {
-                                  display: '{{$deps[0] && $deps[1] === 10 ? "visible" :"hidden"}}',
+                                  display:
+                                    '{{$deps[0] && $deps[1] === 10 ? "visible" :"hidden"}}',
                                 },
                               },
                             },
                           },
                           partitionThreadCount: {
-                            title: i18n.t('packages_dag_nodes_database_fenpianbingfaxian'),
+                            title: i18n.t(
+                              'packages_dag_nodes_database_fenpianbingfaxian',
+                            ),
                             type: 'number',
                             default: 8,
                             'x-decorator': 'FormItem',
@@ -831,7 +920,9 @@ export class Database extends NodeType {
                             },
                           },
                           partitionBatchCount: {
-                            title: i18n.t('packages_dag_nodes_database_fenpianyipidu'),
+                            title: i18n.t(
+                              'packages_dag_nodes_database_fenpianyipidu',
+                            ),
                             type: 'number',
                             default: 3000,
                             'x-decorator': 'FormItem',
@@ -850,12 +941,16 @@ export class Database extends NodeType {
                           },
                           hasKVStorage: {
                             type: 'boolean',
-                            title: i18n.t('packages_dag_nodes_database_fenpianpilianghezengliang'),
+                            title: i18n.t(
+                              'packages_dag_nodes_database_fenpianpilianghezengliang',
+                            ),
                             default: true,
                             'x-component': 'Switch',
                             'x-decorator': 'FormItem',
                             'x-decorator-props': {
-                              tooltip: i18n.t('packages_dag_nodes_database_guanbicigongnenghoufenpian'),
+                              tooltip: i18n.t(
+                                'packages_dag_nodes_database_guanbicigongnenghoufenpian',
+                              ),
                             },
                             'x-reactions': {
                               dependencies: ['.enable'],
@@ -870,7 +965,8 @@ export class Database extends NodeType {
                         'x-reactions': {
                           fulfill: {
                             state: {
-                              display: '{{$settings.type === "cdc" ? "hidden":"visible"}}',
+                              display:
+                                '{{$settings.type === "cdc" ? "hidden":"visible"}}',
                             },
                           },
                         },
@@ -924,9 +1020,9 @@ export class Database extends NodeType {
                     'x-reactions': {
                       fulfill: {
                         state: {
-                          display: `{{findParentNodes($values.id).filter(parent => (parent.type === 'database' || parent.type === 'table') && parent.ddlConfiguration === 'SYNCHRONIZATION' ).length > 0 ? "visible":"hidden"}}`
-                        }
-                      }
+                          display: `{{findParentNodes($values.id).filter(parent => (parent.type === 'database' || parent.type === 'table') && parent.ddlConfiguration === 'SYNCHRONIZATION' ).length > 0 ? "visible":"hidden"}}`,
+                        },
+                      },
                     },
                     properties: {
                       ddlEvents: {
@@ -962,21 +1058,29 @@ export class Database extends NodeType {
                         },
                         properties: {
                           writeStrategy: {
-                            title: i18n.t('packages_dag_nodes_mergetable_shujuxierumo'),
+                            title: i18n.t(
+                              'packages_dag_nodes_mergetable_shujuxierumo',
+                            ),
                             type: 'string',
                             default: 'updateOrInsert',
                             'x-component': 'Radio.Group',
                             'x-decorator': 'FormItem',
                             'x-decorator-props': {
-                              tooltip: i18n.t('packages_dag_nodes_database_tongjizhuijiaxie2'),
+                              tooltip: i18n.t(
+                                'packages_dag_nodes_database_tongjizhuijiaxie2',
+                              ),
                             },
                             enum: [
                               {
-                                label: i18n.t('packages_dag_nodes_database_anshijianleixing'),
+                                label: i18n.t(
+                                  'packages_dag_nodes_database_anshijianleixing',
+                                ),
                                 value: 'updateOrInsert',
                               },
                               {
-                                label: i18n.t('packages_dag_nodes_database_tongjizhuijiaxie'),
+                                label: i18n.t(
+                                  'packages_dag_nodes_database_tongjizhuijiaxie',
+                                ),
                                 value: 'appendWrite',
                               },
                             ],
@@ -984,7 +1088,9 @@ export class Database extends NodeType {
                         },
                       },
                       dmlPolicy: {
-                        title: i18n.t('packages_dag_nodes_database_shujuxieruce'),
+                        title: i18n.t(
+                          'packages_dag_nodes_database_shujuxieruce',
+                        ),
                         type: 'object',
                         'x-decorator': 'FormItem',
                         'x-component': 'FormLayout',
@@ -1001,16 +1107,22 @@ export class Database extends NodeType {
                             'x-decorator-props': {
                               className: 'font-color-dark mb-2',
                               wrapperWidth: 300,
-                              addonBefore: i18n.t('packages_dag_nodes_database_charushijian'),
+                              addonBefore: i18n.t(
+                                'packages_dag_nodes_database_charushijian',
+                              ),
                             },
                             default: 'update_on_exists',
                             enum: [
                               {
-                                label: i18n.t('packages_dag_nodes_targetdatabase_mubiaocunzaishi'),
+                                label: i18n.t(
+                                  'packages_dag_nodes_targetdatabase_mubiaocunzaishi',
+                                ),
                                 value: 'update_on_exists',
                               },
                               {
-                                label: i18n.t('packages_dag_nodes_database_mubiaocunzaishi'),
+                                label: i18n.t(
+                                  'packages_dag_nodes_database_mubiaocunzaishi',
+                                ),
                                 value: 'ignore_on_exists',
                               },
                               {
@@ -1026,45 +1138,73 @@ export class Database extends NodeType {
                             'x-decorator-props': {
                               className: 'font-color-dark mb-2',
                               wrapperWidth: 300,
-                              addonBefore: i18n.t('packages_dag_nodes_database_gengxinshijian'),
+                              addonBefore: i18n.t(
+                                'packages_dag_nodes_database_gengxinshijian',
+                              ),
                             },
                             default: 'ignore_on_nonexists',
                             enum: [
                               {
-                                label: i18n.t('packages_dag_nodes_database_bucunzaishidiu'),
+                                label: i18n.t(
+                                  'packages_dag_nodes_database_bucunzaishidiu',
+                                ),
                                 value: 'ignore_on_nonexists',
                               },
                               {
-                                label: i18n.t('packages_dag_nodes_database_bucunzaishicha'),
+                                label: i18n.t(
+                                  'packages_dag_nodes_database_bucunzaishicha',
+                                ),
                                 value: 'insert_on_nonexists',
                               },
                               {
-                                label: i18n.t('packages_dag_nodes_database_bucunzaishidayinrizhi'),
+                                label: i18n.t(
+                                  'packages_dag_nodes_database_bucunzaishidayinrizhi',
+                                ),
                                 value: 'log_on_nonexists',
                               },
                             ],
                           },
                           deletePolicy: {
-                            type: 'void',
+                            type: 'string',
                             'x-decorator': 'FormItem',
                             'x-decorator-props': {
                               className: 'font-color-dark',
                               wrapperWidth: 300,
-                              addonBefore: i18n.t('packages_dag_nodes_database_shanchushijian'),
+                              addonBefore: i18n.t(
+                                'packages_dag_nodes_database_shanchushijian',
+                              ),
                             },
                             'x-component': 'Tag',
-                            'x-content': i18n.t('packages_dag_nodes_database_bucunzaishidiu'),
+                            'x-content': i18n.t(
+                              'packages_dag_nodes_database_bucunzaishidiu',
+                            ),
                             'x-component-props': {
                               type: 'info',
                               effect: 'light',
                             },
+                            default: 'ignore_on_nonexists',
+                            enum: [
+                              {
+                                label: i18n.t(
+                                  'packages_dag_nodes_database_bucunzaishidiu',
+                                ),
+                                value: 'ignore_on_nonexists',
+                              },
+                              {
+                                label: i18n.t(
+                                  'packages_dag_nodes_database_bucunzaishidayinrizhi',
+                                ),
+                                value: 'log_on_nonexists',
+                              },
+                            ],
                           },
                         },
                         'x-reactions': {
                           dependencies: ['writeStrategy'],
                           fulfill: {
                             state: {
-                              display: '{{$deps[0] === "appendWrite" ? "hidden":"visible"}}',
+                              display:
+                                '{{$deps[0] === "appendWrite" ? "hidden":"visible"}}',
                             },
                           },
                         },
@@ -1079,8 +1219,8 @@ export class Database extends NodeType {
                         'x-component': 'Switch',
                         'x-component-props': {
                           confirm: {
-                            title: i18n.t('packages_dag_syncIndexTip')
-                          }
+                            title: i18n.t('packages_dag_syncIndexTip'),
+                          },
                         },
                         'x-reactions': {
                           fulfill: {
@@ -1097,17 +1237,17 @@ export class Database extends NodeType {
                         type: 'boolean',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          layout: 'horizontal'
+                          layout: 'horizontal',
                         },
                         'x-component': 'Switch',
                         'x-reactions': {
                           fulfill: {
                             state: {
                               visible:
-                                '{{hasFeature("syncPartitionTable") && $values.attrs.capabilities.some(item => item.id==="target_support_partition")}}'
-                            }
-                          }
-                        }
+                                '{{hasFeature("syncPartitionTable") && $values.attrs.capabilities.some(item => item.id==="target_support_partition")}}',
+                            },
+                          },
+                        },
                       },
                       noPkSyncMode: {
                         type: 'string',
@@ -1118,15 +1258,17 @@ export class Database extends NodeType {
                         enum: [
                           {
                             label: i18n.t('packages_dag_noPkSyncMode_ADD_HASH'),
-                            value: 'ADD_HASH'
+                            value: 'ADD_HASH',
                           },
                           {
-                            label: i18n.t('packages_dag_noPkSyncMode_ALL_COLUMNS'),
-                            value: 'ALL_COLUMNS'
-                          }
+                            label: i18n.t(
+                              'packages_dag_noPkSyncMode_ALL_COLUMNS',
+                            ),
+                            value: 'ALL_COLUMNS',
+                          },
                         ],
-                        'x-visible': '{{hasFeature("noPrimaryKey")}}'
-                      }
+                        'x-visible': '{{hasFeature("noPrimaryKey")}}',
+                      },
                     },
                   },
                   tab3: {
@@ -1175,7 +1317,7 @@ export class Database extends NodeType {
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
               label: i18n.t('packages_dag_migration_configpanel_gaojingshezhi'),
-              locked:  import.meta.env.VUE_APP_MODE === 'community',
+              locked: import.meta.env.VUE_APP_MODE === 'community',
             },
             // 'x-hidden': '{{!$isMonitor}}',
             properties: {
@@ -1205,7 +1347,9 @@ export class Database extends NodeType {
                 ],
               },
               'alarmSettings.0.open': {
-                title: i18n.t('packages_business_setting_alarmnotification_dangshujuyuanjie'),
+                title: i18n.t(
+                  'packages_business_setting_alarmnotification_dangshujuyuanjie',
+                ),
                 type: 'boolean',
                 default: true,
                 'x-editable': true,
@@ -1375,7 +1519,10 @@ export class Database extends NodeType {
 
   allowTarget(target, source) {
     // 不再支持既是源又是目标的节点
-    return !source.$inputs?.length && (target.type !== 'database' || !target.$outputs?.length)
+    return (
+      !source.$inputs?.length &&
+      (target.type !== 'database' || !target.$outputs?.length)
+    )
   }
 
   allowSource(source, target) {
