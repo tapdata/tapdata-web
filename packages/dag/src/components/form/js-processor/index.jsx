@@ -415,12 +415,13 @@ export const JsProcessor = observer(
                 </VIcon>
               </ElTooltip>
             </div>
-            <div class="flex align-center">
-              <ElButton text class="mr-3" onClick={toggleDoc} type="primary">
+            <div class="flex align-center" style="--btn-space: 4px;">
+              <ElButton text tag="a" onClick={toggleDoc} type="primary">
                 {i18n.t('packages_dag_api_docs')}
               </ElButton>
               <ElButton
                 text
+                tag="a"
                 onClick={toggleFullscreen}
                 class="js-editor-fullscreen"
                 type="primary"

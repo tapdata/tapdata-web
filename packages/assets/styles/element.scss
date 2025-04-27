@@ -266,7 +266,7 @@
   &--small {
     --el-border-radius-base: var(--el-border-radius-small)
   }
-  & + button.el-button {
+  & + .el-button.el-button {
     margin-left: var(--btn-space);
   }
 
