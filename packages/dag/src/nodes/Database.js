@@ -1174,7 +1174,7 @@ export class Database extends NodeType {
                                 'packages_dag_nodes_database_shanchushijian',
                               ),
                             },
-                            'x-component': 'Tag',
+                            'x-component': 'Select',
                             'x-content': i18n.t(
                               'packages_dag_nodes_database_bucunzaishidiu',
                             ),
