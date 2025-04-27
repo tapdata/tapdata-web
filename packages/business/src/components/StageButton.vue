@@ -131,11 +131,14 @@ export default {
     <template v-if="loading">
       <span>{{ progress }}</span>
     </template>
-    <template v-else>
-      <slot>
-        <span>{{ label }}</span>
-        <VIcon class="ml-1" size="9">icon_table_selector_load</VIcon>
-      </slot>
+
+    <slot v-if="!$slots.icon && !loading">
+      <span>{{ label }}</span>
+      <VIcon class="ml-1" size="9">icon_table_selector_load</VIcon>
+    </slot>
+
+    <template v-if="$slots.icon && !loading" #icon>
+      <slot name="icon" />
     </template>
   </ElButton>
 </template>

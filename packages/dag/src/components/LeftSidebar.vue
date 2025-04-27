@@ -785,7 +785,7 @@ export default {
       </ElCollapse>
 
       <div class="flex-1 min-h-0 flex flex-column border-bottom">
-        <div class="tb-header flex align-center px-4">
+        <div class="tb-header flex align-center px-4" style="--btn-space: 4px">
           <span class="flex-1 user-select-none text-truncate flex align-center">
             <!--表-->
             {{ $t('packages_dag_dag_table') }}
@@ -795,7 +795,10 @@ export default {
             <StageButton
               :connection-id="activeConnection.id"
               @complete="loadDatabaseTable()"
-              ><VIcon class="click-btn refresh" size="16">refresh</VIcon>
+            >
+              <template #icon>
+                <VIcon size="16">refresh</VIcon>
+              </template>
             </StageButton>
           </ElTooltip>
           <el-button
@@ -817,7 +820,6 @@ export default {
             <el-button
               text
               size="small"
-              class="ml-1"
               :disabled="stateIsReadonly"
               @mousedown.stop
               @click.stop="handleAddTable"
