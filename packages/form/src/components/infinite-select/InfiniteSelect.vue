@@ -234,8 +234,10 @@ watch(
 
 watch(
   () => props.params,
-  () => {
-    remoteMethodDebounce()
+  (newVal, oldVal) => {
+    if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+      remoteMethodDebounce()
+    }
   },
   {
     deep: true,
