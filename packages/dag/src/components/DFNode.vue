@@ -1,87 +1,14 @@
-<template>
-  <div class="df-node-wrap position-absolute" :class="wrapClass" :style="nodeStyle" tabindex="1">
-    <BaseNode :node="data" :class="nodeClass" @click="mouseClick">
-      <template #text="{ text }">
-        <OverflowTooltip
-          class="df-node-text"
-          :text="text"
-          popper-class="df-node-text-tooltip"
-          placement="top"
-          :open-delay="400"
-        />
-        <VIcon v-if="ins.beta" class="mr-1" size="32">beta</VIcon>
-      </template>
-      <div v-if="!stateIsReadonly" class="df-node-options gap-4" @click.stop>
-        <div
-          :disabled="data.disabled"
-          class="cursor-pointer"
-          :class="{
-            'opacity-50 cursor-not-allowed': data.disabled,
-          }"
-          :title="$t('packages_dag_components_dfnode_tianjiajiedian')"
-          @click.stop="
-            !data.disabled && $emit('show-node-popover', 'node', data, $event.currentTarget || $event.target)
-          "
-        >
-          <VIcon size="20">action-add</VIcon>
-        </div>
-
-        <template v-if="!hideDisableAction">
-          <div
-            name="action-enable"
-            class="cursor-pointer"
-            v-if="data.disabled"
-            @click.stop="$emit('enable', data)"
-            :title="$t('packages_dag_btn_disable_node')"
-          >
-            <VIcon size="20">action-enable</VIcon>
-          </div>
-          <div
-            name="action-disable"
-            class="cursor-pointer"
-            v-else
-            @click.stop="$emit('disable', data)"
-            :title="$t('packages_dag_btn_disable_node')"
-          >
-            <VIcon size="20">action-disable</VIcon>
-          </div>
-        </template>
-
-        <div
-          :disabled="data.disabled"
-          name="action-delete"
-          class="cursor-pointer"
-          :class="{
-            'opacity-50 cursor-not-allowed': data.disabled,
-          }"
-          @click.stop="!data.disabled && $emit('delete', data.id)"
-          :title="$t('packages_dag_components_dfnode_shanchujiedian')"
-        >
-          <VIcon size="20">action-delete</VIcon>
-        </div>
-      </div>
-      <ElTooltip v-if="hasNodeError(data.id)" :content="nodeErrorMsg" placement="top">
-        <VIcon class="mr-2" size="14" color="#FF7474">warning</VIcon>
-      </ElTooltip>
-      <VIcon v-if="data.disabled" class="mr-2 color-warning" size="16">disable</VIcon>
-      <div class="node-anchor input"></div>
-      <div v-show="allowTarget" class="node-anchor output"></div>
-    </BaseNode>
-    <slot></slot>
-  </div>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
-import i18n from '@tap/i18n'
-import Time from '@tap/shared/src/time'
-
-import { mapGetters, mapMutations, mapState } from 'vuex'
+import { OverflowTooltip, VIcon } from '@tap/component'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
-import { sourceEndpoint, targetEndpoint } from '../style'
+import i18n from '@tap/i18n'
+
+import Time from '@tap/shared/src/time'
+import { mapGetters, mapMutations, mapState } from 'vuex'
+import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 import { NODE_PREFIX } from '../constants'
+import { sourceEndpoint, targetEndpoint } from '../style'
 import BaseNode from './BaseNode'
-import { VIcon, OverflowTooltip } from '@tap/component'
 
 export default {
   name: 'DFNode',
@@ -90,6 +17,7 @@ export default {
     VIcon,
     BaseNode,
   },
+  mixins: [deviceSupportHelpers],
   props: {
     nodeId: {
       type: String,
@@ -98,7 +26,6 @@ export default {
     jsPlumbIns: Object,
     hideDisableAction: Boolean,
   },
-  mixins: [deviceSupportHelpers],
   data() {
     return {
       id: this.$attrs.id,
@@ -134,14 +61,16 @@ export default {
     },
 
     wrapClass() {
-      if (this.canBeConnectedNodeIds.includes(this.nodeId)) return 'can-be-connected'
+      if (this.canBeConnectedNodeIds.includes(this.nodeId))
+        return 'can-be-connected'
       return ''
     },
 
     nodeClass() {
       const list = []
 
-      if (this.isNodeActive(this.nodeId) && this.activeType === 'node') list.push('active')
+      if (this.isNodeActive(this.nodeId) && this.activeType === 'node')
+        list.push('active')
       if (this.isNodeSelected(this.nodeId)) list.push('selected')
       if (this.data.attrs.disabled) list.push('node--disabled')
       if (this.data.disabled) list.push('node--disabled__main')
@@ -153,15 +82,17 @@ export default {
     nodeStyle() {
       const [left = 0, top = 0] = this.data.attrs?.position || []
       return {
-        left: left + 'px',
-        top: top + 'px',
+        left: `${left}px`,
+        top: `${top}px`,
       }
     },
 
     nodeErrorMsg() {
       const res = this.hasNodeError(this.data.id)
       if (res) {
-        return typeof res === 'string' ? res : i18n.t('packages_dag_components_dfnode_qingjianchajiedian')
+        return typeof res === 'string'
+          ? res
+          : i18n.t('packages_dag_components_dfnode_qingjianchajiedian')
       }
       return null
     },
@@ -224,7 +155,9 @@ export default {
           const oldProperties = []
 
           if (this.isActionActive('dragActive')) {
-            const moveNodes = [...this.$store.getters['dataflow/getSelectedNodes']]
+            const moveNodes = [
+              ...this.$store.getters['dataflow/getSelectedNodes'],
+            ]
 
             if (!this.isNodeSelected(this.nodeId)) {
               moveNodes.push(this.data)
@@ -235,10 +168,10 @@ export default {
             moveNodes.push(this.data)
           }*/
 
-            let x = parseFloat(this.$el.style.left)
-            let y = parseFloat(this.$el.style.top)
+            const x = Number.parseFloat(this.$el.style.left)
+            const y = Number.parseFloat(this.$el.style.top)
 
-            const distance = Math.sqrt(Math.pow(x - position[0], 2) + Math.pow(y - position[1], 2))
+            const distance = Math.hypot(x - position[0], y - position[1])
 
             if (x === position[0] && y === position[1]) {
               // 拖拽结束后位置没有改变
@@ -252,7 +185,7 @@ export default {
                 i18n.t('packages_dag_components_dfnode_tuodongshijianduan'),
                 Time.now() - this.onMouseDownAt,
                 distance,
-              ) // eslint-disable-line
+              )
               this.removeActiveAction('dragActive')
             }
 
@@ -263,7 +196,10 @@ export default {
                 return
               }
 
-              let newNodePosition = [parseFloat(element.style.left), parseFloat(element.style.top)]
+              const newNodePosition = [
+                Number.parseFloat(element.style.left),
+                Number.parseFloat(element.style.top),
+              ]
 
               const updateInformation = {
                 id: node.id,
@@ -288,13 +224,13 @@ export default {
       })
 
       this.jsPlumbIns.addEndpoint(this.$el, targetParams, {
-        uuid: id + '_target',
+        uuid: `${id}_target`,
       })
 
       const maxOutputs = this.ins.maxOutputs ?? -1
 
-      this.allowTarget &&
-        this.jsPlumbIns.addEndpoint(
+      if (this.allowTarget) {
+        const point = this.jsPlumbIns.addEndpoint(
           this.$el,
           {
             ...sourceEndpoint,
@@ -304,7 +240,10 @@ export default {
               beforeStart: ({ el }) => {
                 if (this.stateIsReadonly) return false
                 // 源point没有onMaxConnections事件回调，故用次事件内提示
-                if (maxOutputs !== -1 && el._jsPlumb.connections.length >= maxOutputs) {
+                if (
+                  maxOutputs !== -1 &&
+                  el._jsPlumb.connections.length >= maxOutputs
+                ) {
                   this.$message.error(
                     i18n.t('packages_dag_components_dfnode_gaijiedianth', {
                       val1: this.data.name,
@@ -315,9 +254,12 @@ export default {
             },
           },
           {
-            uuid: id + '_source',
+            uuid: `${id}_source`,
           },
         )
+
+        point.canvas.setAttribute('id', `point_${this.nodeId}_right`)
+      }
     },
 
     mouseClick(e) {
@@ -357,6 +299,96 @@ export default {
   ],
 }
 </script>
+
+<template>
+  <div
+    class="df-node-wrap position-absolute"
+    :class="wrapClass"
+    :style="nodeStyle"
+    tabindex="1"
+  >
+    <BaseNode :node="data" :class="nodeClass" @click="mouseClick">
+      <template #text="{ text }">
+        <OverflowTooltip
+          class="df-node-text"
+          :text="text"
+          popper-class="df-node-text-tooltip"
+          placement="top"
+          :open-delay="400"
+        />
+        <VIcon v-if="ins.beta" class="mr-1" size="32">beta</VIcon>
+      </template>
+      <div v-if="!stateIsReadonly" class="df-node-options gap-4" @click.stop>
+        <div
+          :disabled="data.disabled"
+          class="cursor-pointer"
+          :class="{
+            'opacity-50 cursor-not-allowed': data.disabled,
+          }"
+          :title="$t('packages_dag_components_dfnode_tianjiajiedian')"
+          @click.stop="
+            !data.disabled &&
+            $emit(
+              'show-node-popover',
+              'node',
+              data,
+              $event.currentTarget || $event.target,
+            )
+          "
+        >
+          <VIcon size="20">action-add</VIcon>
+        </div>
+
+        <template v-if="!hideDisableAction">
+          <div
+            v-if="data.disabled"
+            name="action-enable"
+            class="cursor-pointer"
+            :title="$t('packages_dag_btn_disable_node')"
+            @click.stop="$emit('enable', data)"
+          >
+            <VIcon size="20">action-enable</VIcon>
+          </div>
+          <div
+            v-else
+            name="action-disable"
+            class="cursor-pointer"
+            :title="$t('packages_dag_btn_disable_node')"
+            @click.stop="$emit('disable', data)"
+          >
+            <VIcon size="20">action-disable</VIcon>
+          </div>
+        </template>
+
+        <div
+          :disabled="data.disabled"
+          name="action-delete"
+          class="cursor-pointer"
+          :class="{
+            'opacity-50 cursor-not-allowed': data.disabled,
+          }"
+          :title="$t('packages_dag_components_dfnode_shanchujiedian')"
+          @click.stop="!data.disabled && $emit('delete', data.id)"
+        >
+          <VIcon size="20">action-delete</VIcon>
+        </div>
+      </div>
+      <ElTooltip
+        v-if="hasNodeError(data.id)"
+        :content="nodeErrorMsg"
+        placement="top"
+      >
+        <VIcon class="mr-2" size="14" color="#FF7474">warning</VIcon>
+      </ElTooltip>
+      <VIcon v-if="data.disabled" class="mr-2 color-warning" size="16"
+        >disable</VIcon
+      >
+      <div class="node-anchor input" />
+      <div v-show="allowTarget" class="node-anchor output" />
+    </BaseNode>
+    <slot />
+  </div>
+</template>
 
 <style lang="scss">
 .layout-content .df-node {
