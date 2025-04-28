@@ -398,6 +398,58 @@ export const JsProcessor = observer(
       // 模型自动改变
       useAfterTaskSaved(formRef.value.values.$inputs, loadFields)
 
+      const renderTool = () => (
+        <div class="flex align-center">
+          {isMigrate && (
+            <FormItem.BaseItem
+              asterisk
+              class="flex-1 mr-4"
+              label={i18n.t('packages_form_js_processor_index_xuanzebiao')}
+              layout="horizontal"
+              feedbackLayout="none"
+            >
+              <VirtualSelect
+                disabled={props.disabled}
+                v-model={params.tableName}
+                filterable
+                class="form-input"
+                item-size={34}
+                options={tableList.value}
+                loading={tableLoading.value}
+              />
+            </FormItem.BaseItem>
+          )}
+          <div class="flex-1 flex justify-content-between">
+            <FormItem.BaseItem
+              label={i18n.t('packages_form_js_processor_index_shujuhangshu')}
+              layout="horizontal"
+              feedbackLayout="none"
+            >
+              <ElInputNumber
+                disabled={props.disabled}
+                style="width: 100px;"
+                modelValue={params.rows}
+                min={1}
+                max={10}
+                onInput={(val) => {
+                  params.rows = val
+                }}
+                controls-position="right"
+              ></ElInputNumber>
+            </FormItem.BaseItem>
+            <ElButton
+              class="ml-4"
+              disabled={props.disabled || (isMigrate && !params.tableName)}
+              loading={running.value || tableLoading.value}
+              onClick={handleRun}
+              type="primary"
+            >
+              {i18n.t('packages_form_js_processor_index_shiyunxing')}
+            </ElButton>
+          </div>
+        </div>
+      )
+
       return () => {
         const editorProps = { ...attrs }
         editorProps.options.readOnly = props.disabled
@@ -428,58 +480,6 @@ export const JsProcessor = observer(
               >
                 <VIcon class="mr-1">fangda</VIcon>
                 {i18n.t('packages_form_js_editor_fullscreen')}
-              </ElButton>
-            </div>
-          </div>
-        )
-
-        const runTool = (
-          <div class="flex align-center">
-            {isMigrate && (
-              <FormItem.BaseItem
-                asterisk
-                class="flex-1 mr-4"
-                label={i18n.t('packages_form_js_processor_index_xuanzebiao')}
-                layout="horizontal"
-                feedbackLayout="none"
-              >
-                <VirtualSelect
-                  disabled={props.disabled}
-                  v-model={params.tableName}
-                  filterable
-                  class="form-input"
-                  item-size={34}
-                  options={tableList.value}
-                  loading={tableLoading.value}
-                />
-              </FormItem.BaseItem>
-            )}
-            <div class="flex-1 flex justify-content-between">
-              <FormItem.BaseItem
-                label={i18n.t('packages_form_js_processor_index_shujuhangshu')}
-                layout="horizontal"
-                feedbackLayout="none"
-              >
-                <ElInputNumber
-                  disabled={props.disabled}
-                  style="width: 100px;"
-                  modelValue={params.rows}
-                  min={1}
-                  max={10}
-                  onInput={(val) => {
-                    params.rows = val
-                  }}
-                  controls-position="right"
-                ></ElInputNumber>
-              </FormItem.BaseItem>
-              <ElButton
-                class="ml-4"
-                disabled={props.disabled || (isMigrate && !params.tableName)}
-                loading={running.value || tableLoading.value}
-                onClick={handleRun}
-                type="primary"
-              >
-                {i18n.t('packages_form_js_processor_index_shiyunxing')}
               </ElButton>
             </div>
           </div>
@@ -549,16 +549,13 @@ export const JsProcessor = observer(
               ]}
             >
               <div class="js-processor-editor-toolbar border-bottom justify-content-between align-center px-4 py-2">
-                <div style={{ display: fullscreen.value ? 'block' : 'none' }}>
-                  {runTool}
+                <div
+                  style={{ display: fullscreen.value ? 'contents' : 'none' }}
+                >
+                  {renderTool()}
                 </div>
-                <div>
-                  <ElButton
-                    text
-                    type="primary"
-                    class="mr-3"
-                    onClick={toggleDoc}
-                  >
+                <div style="--btn-space: 4px;">
+                  <ElButton text type="primary" onClick={toggleDoc}>
                     {i18n.t('packages_dag_api_docs')}
                   </ElButton>
                   <ElButton
@@ -609,7 +606,11 @@ export const JsProcessor = observer(
                   }}
                   class="js-processor-editor-console border-start"
                 >
-                  <ElTabs onInput={onTabChange} class="w-100 flex flex-column">
+                  <ElTabs
+                    onInput={onTabChange}
+                    class="w-100 flex"
+                    style="--el-tabs-padding-left: 1rem;"
+                  >
                     <ElTabPane label={i18n.t('public_time_output')}>
                       <div class="js-processor-editor-console-panel h-100 overflow-auto">
                         <div class="js-log-list">
@@ -680,7 +681,9 @@ export const JsProcessor = observer(
                       label={i18n.t('packages_dag_js_processor_index_duibi')}
                     >
                       <div
-                        style={{ display: fullscreen.value ? 'block' : 'none' }}
+                        style={{
+                          display: fullscreen.value ? 'contents' : 'none',
+                        }}
                       >
                         {jsonView}
                       </div>
@@ -700,12 +703,14 @@ export const JsProcessor = observer(
               param={editorProps.param}
               handleAddCompleter={editorProps.handleAddCompleter}
             />
-            <div style={{ display: !fullscreen.value ? 'block' : 'none' }}>
-              {runTool}
+            <div class="pb-4">
+              <div style={{ display: !fullscreen.value ? 'contents' : 'none' }}>
+                {renderTool()}
+              </div>
+              {showJsonArea.value && (
+                <div class="mt-4 json-view-area">{jsonView}</div>
+              )}
             </div>
-            {showJsonArea.value && (
-              <div class="mt-4 json-view-area">{jsonView}</div>
-            )}
           </div>
         )
       }
