@@ -1,8 +1,8 @@
 <script>
-import { plantRenderPara } from '../../utils/gogocodeTransfer'
 import * as Vue from 'vue'
+import { plantRenderPara } from '../../utils/gogocodeTransfer'
 export default {
-  name: 'v-divider',
+  name: 'VDivider',
 
   props: {
     inset: Boolean,
@@ -14,22 +14,16 @@ export default {
     if (!this.$attrs.role || this.$attrs.role === 'separator') {
       orientation = this.vertical ? 'vertical' : 'horizontal'
     }
-    return Vue.h(
-      'hr',
-      plantRenderPara({
-        class: {
-          'v-divider': true,
-          'v-divider--inset': this.inset,
-          'v-divider--vertical': this.vertical,
-        },
-        attrs: {
-          role: 'separator',
-          'aria-orientation': orientation,
-          ...this.$attrs,
-        },
-        on: this.$listeners,
-      }),
-    )
+    return Vue.h('hr', {
+      class: {
+        'v-divider': true,
+        'v-divider--inset': this.inset,
+        'v-divider--vertical': this.vertical,
+      },
+      role: 'separator',
+      'aria-orientation': orientation,
+      ...this.$attrs,
+    })
   },
 }
 </script>

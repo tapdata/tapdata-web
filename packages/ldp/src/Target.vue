@@ -820,7 +820,7 @@ export default {
     },
 
     handleExpandAll(id) {
-      this.$set(this.expandState, id, !this.expandState[id])
+      this.expandState[id] = !this.expandState[id]
     },
 
     createAPI(connection, tableObj) {

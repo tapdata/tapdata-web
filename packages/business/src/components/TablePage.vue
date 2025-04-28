@@ -107,7 +107,7 @@ export default {
     this.handleKeyDown = (ev) => {
       this.shiftKeyPressed = ev.shiftKey
     }
-    this.handleKeyUp = (ev) => {
+    this.handleKeyUp = () => {
       setTimeout(() => {
         this.shiftKeyPressed = false
       }, 0)
@@ -193,7 +193,7 @@ export default {
       this.dragState.isDragging = true
       const selection = this.multipleSelection
 
-      if (selection.find((it) => it.id === row.id)) {
+      if (selection.some((it) => it.id === row.id)) {
         this.dragState.draggingObjects = selection
       } else {
         this.dragState.draggingObjects = [row]
@@ -318,11 +318,10 @@ export default {
             :default-sort="defaultSort"
             :draggable="draggable || classificationVisible"
             @selection-change="handleSelectionChange"
-            @sort-change="$emit('sort-change', $event)"
+            @sort-change="$emit('sortChange', $event)"
             @row-dragstart="handleDragStart"
             @row-dragend="handleDragEnd"
             @select="onSelectRow"
-            v-on="$listeners"
           >
             <slot />
             <template #empty>
@@ -379,7 +378,7 @@ export default {
       v-if="classify"
       ref="classify"
       :types="classify.types"
-      @operations-classify="$emit('classify-submit', $event)"
+      @operations-classify="$emit('classifySubmit', $event)"
     />
   </div>
 </template>

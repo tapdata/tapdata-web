@@ -2082,18 +2082,15 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
     toggleCollate(item, value) {
       if (value) {
         const fields = Object.keys(item.collate || {})
+
         if (fields.length || !item.sortColumn) return
 
         const sortColumn = item.sortColumn.split(',')
 
-        this.$set(
-          item,
-          'collate',
-          sortColumn.reduce((acc, key) => {
-            acc[key] = ''
-            return acc
-          }, {}),
-        )
+        item.collate = sortColumn.reduce((acc, key) => {
+          acc[key] = ''
+          return acc
+        }, {})
       }
     },
   },

@@ -756,8 +756,6 @@ export default {
         ).format('YYYY-MM-DD HH:mm:ss')
       }
 
-      // this.$set(this.dataflow, 'shareCdcStop', data.shareCdcStop)
-      // this.$set(this.dataflow, 'shareCdcStopMessage', data.shareCdcStopMessage)
       // 前端不关心的属性
       this.dataflow.attrs = data.attrs
 
@@ -1541,13 +1539,10 @@ export default {
       } else if (accessNodeProcessIdArr.length === 1) {
         // 如果画布上仅有一个所属agent，自动设置为任务的agent
         const agentId = accessNodeProcessIdArr[0]
-        this.$set(
-          this.dataflow,
-          'accessNodeType',
+        this.dataflow.accessNodeType =
           this.scope.$agentMap[agentId]?.accessNodeType ||
-            'MANUALLY_SPECIFIED_BY_THE_USER',
-        )
-        this.$set(this.dataflow, 'accessNodeProcessId', agentId)
+          'MANUALLY_SPECIFIED_BY_THE_USER'
+        this.dataflow.accessNodeProcessId = agentId
       }
       return someErrorMsg
     },

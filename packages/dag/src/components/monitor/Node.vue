@@ -63,7 +63,7 @@ export default defineComponent({
     },
   },
 
-  setup(props, { attrs, listeners, emit, refs }) {
+  setup(props, { attrs, emit, refs }) {
     const dfNode = ref(null)
     const completeTime = computed(() => {
       const totalData = props.quota.samples?.totalData?.[0] || {}
