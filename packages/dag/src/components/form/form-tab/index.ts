@@ -1,14 +1,23 @@
-import { defineComponent, reactive, computed, PropType } from 'vue'
-import { observer } from '@formily/reactive-vue'
+import {
+  composeExport,
+  stylePrefix,
+} from '@formily/element-plus/lib/__builtins__'
 import { model } from '@formily/reactive'
-import { h, useField, useFieldSchema, RecursionField, Fragment } from '@formily/vue'
-import { Schema, SchemaKey } from '@formily/json-schema'
-import { ElTabs, ElTabPane, ElBadge } from 'element-plus'
-import { stylePrefix, composeExport } from '@formily/element-plus/lib/__builtins__'
+import { observer } from '@formily/reactive-vue'
+import {
+  Fragment,
+  h,
+  RecursionField,
+  useField,
+  useFieldSchema,
+} from '@formily/vue'
+import { ElBadge, ElTabPane, ElTabs } from 'element-plus'
+import { computed, defineComponent, reactive, type PropType } from 'vue'
+import type { Schema, SchemaKey } from '@formily/json-schema'
 
 export interface IFormTab {
   activeKey: string
-  setActiveKey(key: string): void
+  setActiveKey: (key: string) => void
 }
 
 export interface IFormTabProps {
@@ -26,7 +35,9 @@ const useTabs = () => {
   const schema = useFieldSchema()
   const tabs: Tabs = reactive([])
   schema.value.mapProperties((schema, name) => {
-    const field = tabsField.value.query(tabsField.value.address.concat(name)).take()
+    const field = tabsField.value
+      .query(tabsField.value.address.concat(name))
+      .take()
     if (field?.display === 'none' || field?.display === 'hidden') return
 
     if (schema['x-component']?.indexOf('TabPane') > -1) {
@@ -103,7 +114,7 @@ const FormTab = observer(
             onTabChange: (key: string) => {
               if (typeof key !== 'string') return
 
-              emit('input', key)
+              emit('update:value', key)
               formTabRef.value.setActiveKey?.(key)
             },
           },
@@ -118,7 +129,12 @@ const FormTab = observer(
                   },
                   {
                     default: () => h(RecursionField, { schema, name }, {}),
-                    label: () => h('div', {}, { default: () => [badgedHeader(name, props)] }),
+                    label: () =>
+                      h(
+                        'div',
+                        {},
+                        { default: () => [badgedHeader(name, props)] },
+                      ),
                   },
                 )
               }),
