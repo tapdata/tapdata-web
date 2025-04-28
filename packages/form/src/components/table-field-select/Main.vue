@@ -1,23 +1,6 @@
-<template>
-  <div>
-    <ElSelect
-      multiple
-      filterable
-      allow-create
-      default-first-option
-      v-bind="$attrs"
-      class="fields-selector--input"
-      v-model="selected.fields"
-      @change="handleChange"
-    >
-      <ElOption v-for="opt in options" :key="opt.value" :label="opt.label" :value="opt.value"></ElOption>
-    </ElSelect>
-  </div>
-</template>
-
 <script>
-import { cloneDeep, isEmpty } from 'lodash-es'
 import { metadataInstancesApi } from '@tap/api'
+import { cloneDeep, isEmpty } from 'lodash-es'
 
 export default {
   name: 'AsyncSelect',
@@ -84,12 +67,12 @@ export default {
     handleChange() {
       if (this.$attrs.disabled) return
       this.result[this.selected.table] = cloneDeep(this.selected.fields)
-      let result = cloneDeep(this.result)
+      const result = cloneDeep(this.result)
       if (isEmpty(result)) {
         result[this.tableName] = cloneDeep(this.defaultFields)
       }
 
-      this.$emit('input', result)
+      this.$emit('update:value', result)
       this.$emit('change', result)
     },
 
@@ -101,3 +84,25 @@ export default {
   },
 }
 </script>
+
+<template>
+  <div>
+    <ElSelect
+      v-bind="$attrs"
+      v-model="selected.fields"
+      multiple
+      filterable
+      allow-create
+      default-first-option
+      class="fields-selector--input"
+      @change="handleChange"
+    >
+      <ElOption
+        v-for="opt in options"
+        :key="opt.value"
+        :label="opt.label"
+        :value="opt.value"
+      />
+    </ElSelect>
+  </div>
+</template>

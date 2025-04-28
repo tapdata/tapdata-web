@@ -132,7 +132,7 @@ const FormTab = observer(
             onTabChange: (key: string) => {
               if (typeof key !== 'string') return
 
-              emit('input', key)
+              emit('update:value', key)
               formTabRef.value.setActiveKey?.(key)
             },
           },

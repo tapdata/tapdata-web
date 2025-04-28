@@ -136,7 +136,6 @@ const DefineFieldSelect = defineComponent({
 
     return () => {
       const newAttrs = { ...attrs }
-      console.log('modelValue', newAttrs.modelValue)
       if (
         (attrs['allow-create'] || attrs.allowCreate) &&
         !('defaultFirstOption' in attrs) &&

@@ -114,7 +114,7 @@ const FormCollapse = observer(
         type: [String, Number],
       },
     },
-    emits: ['input'],
+    emits: ['update:value'],
     setup(props, { attrs, emit }) {
       const field = useField()
       const schema = useFieldSchema()
@@ -191,7 +191,7 @@ const FormCollapse = observer(
             class: [prefixCls, attrs.class],
             modelValue: activeKey,
             onChange: (key) => {
-              emit('input', key)
+              emit('update:value', key)
               formCollapseRef.value.setActiveKeys(key)
             },
           },
