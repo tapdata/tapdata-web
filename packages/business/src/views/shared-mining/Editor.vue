@@ -347,7 +347,7 @@ export default {
             popper-class="hide-current__dateTime"
             type="datetime"
             format="YYYY-MM-DD HH:mm:ss"
-            value-format="timestamp"
+            value-format="x"
             class="ml-4"
           />
         </div>

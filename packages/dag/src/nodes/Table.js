@@ -1291,7 +1291,7 @@ export class Table extends NodeType {
                                       'x-component-props': {
                                         type: 'datetime',
                                         align: 'right',
-                                        format: 'yyyy-MM-dd HH:mm:ss',
+                                        format: 'YYYY-MM-DD HH:mm:ss',
                                       },
                                       'x-reactions': {
                                         dependencies: [

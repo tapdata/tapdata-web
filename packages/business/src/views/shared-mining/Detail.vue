@@ -34,7 +34,7 @@
           <DatetimeRange
             v-model:value="timeRange"
             :range="2 * 365 * 24 * 60 * 60 * 1000"
-            value-format="timestamp"
+            value-format="x"
             class="filter-datetime-range ml-2"
             @change="changeTimeRangeFnc"
           ></DatetimeRange>

@@ -1,3 +1,33 @@
+<script>
+import { observer } from '@formily/reactive-vue'
+import { getPickerOptionsBeforeTime } from '@tap/business/src/shared/util'
+import { VEmpty } from '@tap/component'
+import { RecycleScroller } from 'vue-virtual-scroller'
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+
+export default observer({
+  name: 'SyncPoints',
+  props: {
+    value: Array,
+    disabled: Boolean,
+  },
+  data() {
+    return {
+      getPickerOptionsBeforeTime,
+    }
+  },
+  components: {
+    RecycleScroller,
+    VEmpty,
+  },
+  computed: {
+    items() {
+      return this.value?.filter((item) => !!item.nodeId) || []
+    },
+  },
+})
+</script>
+
 <template>
   <div>
     <RecycleScroller
@@ -9,10 +39,18 @@
       :buffer="64"
     >
       <template #default="{ item, index, active }">
-        <span class="ellipsis">{{ item.connectionName }}({{ item.nodeName }})</span>
+        <span class="ellipsis"
+          >{{ item.connectionName }}({{ item.nodeName }})</span
+        >
         <div class="flex align-center gap-3">
-          <ElSelect v-model="item.pointType" :disabled="disabled || item.hiddenPointType">
-            <ElOption :label="$t('public_time_user_specified_time')" value="localTZ" />
+          <ElSelect
+            v-model="item.pointType"
+            :disabled="disabled || item.hiddenPointType"
+          >
+            <ElOption
+              :label="$t('public_time_user_specified_time')"
+              value="localTZ"
+            />
             <ElOption :label="$t('public_time_current')" value="current" />
           </ElSelect>
 
@@ -23,45 +61,17 @@
             type="datetime"
             align="right"
             format="YYYY-MM-DD HH:mm:ss"
-            valueFormat="timestamp"
-            popperClass="setting-panel__dateTimePicker"
-            :pickerOptions="getPickerOptionsBeforeTime(item.dateTime, Date.now())"
-          ></ElDatePicker>
+            value-format="x"
+            popper-class="setting-panel__dateTimePicker"
+            :picker-options="
+              getPickerOptionsBeforeTime(item.dateTime, Date.now())
+            "
+          />
         </div>
       </template>
     </RecycleScroller>
-    <VEmpty v-if="!value.length" small></VEmpty>
+    <VEmpty v-if="!value.length" small />
   </div>
 </template>
-
-<script>
-import { RecycleScroller } from 'vue-virtual-scroller'
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import { observer } from '@formily/reactive-vue'
-import { VEmpty } from '@tap/component'
-import { getPickerOptionsBeforeTime } from '@tap/business/src/shared/util'
-
-export default observer({
-  name: 'SyncPoints',
-  props: {
-    value: Array,
-    disabled: Boolean
-  },
-  data() {
-    return {
-      getPickerOptionsBeforeTime
-    }
-  },
-  components: {
-    RecycleScroller,
-    VEmpty
-  },
-  computed: {
-    items() {
-      return this.value?.filter(item => !!item.nodeId) || []
-    }
-  }
-})
-</script>
 
 <style scoped lang="scss"></style>

@@ -491,7 +491,7 @@ export default observer({
                                 'x-component-props': {
                                   type: 'datetime',
                                   align: 'right',
-                                  format: 'yyyy-MM-dd HH:mm:ss',
+                                  format: 'YYYY-MM-DD HH:mm:ss',
                                   valueFormat: 'timestamp',
                                 },
                                 'x-reactions': {
@@ -600,7 +600,7 @@ export default observer({
                                 type: 'void',
                                 'x-component': 'div',
                                 'x-component-props': {
-                                  class: 'flex align-center gap-2',
+                                  class: 'flex align-center gap-2 mt-1',
                                 },
                                 'x-reactions': {
                                   dependencies: ['type'],
@@ -626,8 +626,10 @@ export default observer({
                                   },
                                   syncPointsDescBtn: {
                                     type: 'void',
-                                    'x-component': 'Link',
+                                    'x-component': 'Button',
                                     'x-component-props': {
+                                      disabled: `{{$self.disabled}}`,
+                                      text: true,
                                       type: 'primary',
                                       onClick: '{{handleQuicklySyncPoints}}',
                                     },
