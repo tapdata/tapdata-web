@@ -258,7 +258,7 @@ export default {
           },
         )
 
-        point.canvas.setAttribute('id', `point_${this.nodeId}_right`)
+        point.canvas.setAttribute('id', `point_${this.$attrs.id}`)
       }
     },
 
