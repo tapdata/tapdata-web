@@ -98,20 +98,25 @@ export const JsProcessor = observer(
       const nodeId = form.values.id
 
       const queryLog = async () => {
-        const logData = await monitoringLogsApi.query({
-          taskId: store.state.dataflow.taskInfo.testTaskId,
-          type: 'testRun',
-          order: 'asc',
-          page: 1,
-          pageSize: 50,
-          start: queryStart,
-          nodeId,
-          end: Time.now(),
-        })
-        logList.value =
-          logData?.items.filter(
-            (item) => !new RegExp(`^.*\\[${nodeId}]`).test(item.message),
-          ) || []
+        try {
+          const logData = await monitoringLogsApi.query({
+            taskId: store.state.dataflow.taskInfo.testTaskId,
+            type: 'testRun',
+            order: 'asc',
+            page: 1,
+            pageSize: 50,
+            start: queryStart,
+            nodeId,
+            end: Time.now(),
+          })
+          logList.value =
+            logData?.items.filter(
+              (item) => !new RegExp(`^.*\\[${nodeId}]`).test(item.message),
+            ) || []
+        } catch (error) {
+          console.error('Failed to query logs:', error)
+          logList.value = []
+        }
       }
 
       const handleQuery = async () => {
