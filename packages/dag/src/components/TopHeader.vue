@@ -13,6 +13,7 @@ import { ElSelect as Select } from 'element-plus'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 import DataCaptureDebug from './DataCaptureDebug.vue'
+import DataValidationDialog from './DataValidationDialog.vue'
 
 export default {
   name: 'TopHeader',
@@ -20,6 +21,7 @@ export default {
 
   components: {
     DataCaptureDebug,
+    DataValidationDialog,
     TextEditable,
     TaskStatus,
     VDivider,
@@ -200,197 +202,6 @@ export default {
     'stop',
     'start',
   ],
-}
-</script>
-
-<script>
-import { mapGetters, mapMutations, mapState } from 'vuex'
-import { Select } from 'element-ui'
-import {
-  VIcon,
-  TextEditable,
-  VDivider,
-  VEmpty,
-  IconButton,
-} from '@tap/component'
-import { TaskStatus } from '@tap/business'
-import focusSelect from '@tap/component/src/directives/focusSelect'
-import { taskApi } from '@tap/api'
-import DataCaptureDebug from './DataCaptureDebug.vue'
-import DataValidationDialog from './DataValidationDialog.vue'
-
-export default {
-  name: 'TopHeader',
-
-  directives: { focusSelect },
-
-  props: {
-    loading: Boolean,
-    isSaving: Boolean,
-    dataflowName: String,
-    dataflow: Object,
-    scale: Number,
-    buttonShowMap: {
-      type: Object,
-      default: () => {
-        return {}
-      },
-    },
-  },
-
-  components: {
-    DataCaptureDebug,
-    DataValidationDialog,
-    TextEditable,
-    TaskStatus,
-    VDivider,
-    VIcon,
-    ElScrollbar: Select.components.ElScrollbar,
-    VEmpty,
-    IconButton,
-  },
-
-  data() {
-    const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
-    return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
-      isCommunity: process.env.VUE_APP_MODE === 'community',
-      commandCode: isMacOs ? '⌘' : 'Ctrl',
-      optionCode: isMacOs ? 'Option' : 'Alt',
-      name: '',
-      syncMap: {
-        'initial_sync+cdc': this.$t('public_task_type_initial_sync_and_cdc'),
-        initial_sync: this.$t('public_task_type_initial_sync'),
-        cdc: this.$t('public_task_type_cdc'),
-      },
-      chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
-      showSearchNodePopover: false,
-      nodeSearchInput: '',
-      refreshing: false,
-      openDebug: false,
-      openValidation: false,
-      validationSettings: {
-        enabled: false,
-        type: 'incremental',
-        frequency: {
-          time: 1,
-          records: 10,
-        },
-      },
-    }
-  },
-
-  computed: {
-    ...mapGetters('dataflow', [
-      'dataflowId',
-      'stateIsReadonly',
-      'allNodes',
-      'activeType',
-    ]),
-    ...mapState('dataflow', [
-      'spaceKeyPressed',
-      'shiftKeyPressed',
-      'showConsole',
-      'transformLoading',
-    ]),
-
-    scaleTxt() {
-      return Math.round(this.scale * 100) + '%'
-    },
-
-    isViewer() {
-      return ['DataflowViewer', 'MigrateViewer'].includes(this.$route.name)
-    },
-
-    nodeList() {
-      if (this.nodeSearchInput) {
-        const txt = this.nodeSearchInput.toLocaleLowerCase()
-        return this.allNodes.filter((node) =>
-          node.name.toLocaleLowerCase().includes(txt),
-        )
-      }
-      return this.allNodes
-    },
-  },
-
-  watch: {
-    dataflowName(v) {
-      this.name = v
-    },
-  },
-
-  mounted() {
-    this.name = this.dataflowName
-  },
-
-  methods: {
-    ...mapMutations('dataflow', [
-      'setActiveType',
-      'toggleShiftKeyPressed',
-      'toggleConsole',
-      'setSchemaRefreshing',
-    ]),
-
-    isShowForceStop(data) {
-      return data?.length && data.every((t) => ['stopping'].includes(t.status))
-    },
-
-    onNameInputChange() {
-      if (!this.name) {
-        this.name = this.dataflowName
-      } else {
-        this.$emit('change-name', this.name)
-      }
-    },
-
-    focusNameInput() {
-      this.$refs.nameInput.focus()
-    },
-
-    back() {
-      let mapping = this.$route.query.mapping
-      const $PLATFORM = window.getSettingByKey('DFS_TCM_PLATFORM')
-      const backToList = () => {
-        if ($PLATFORM === 'dfs') {
-          top.window.App.$router.push({
-            name: 'Task',
-          })
-        } else {
-          this.$router.push({
-            name: 'dataFlows',
-            query: {
-              mapping: mapping,
-            },
-          })
-        }
-      }
-      backToList()
-    },
-
-    handleClickNode(node) {
-      this.showSearchNodePopover = false
-      this.$emit('locate-node', node)
-    },
-
-    handleSaveValidation(settings) {
-      // Save validation settings to the server
-      this.validationSettings = settings
-      // You might want to make an API call here to save the settings
-      console.log('Validation settings saved:', settings)
-    },
-
-    refreshSchema() {
-      if (this.refreshing) return
-
-      this.refreshing = true
-      this.setSchemaRefreshing(true)
-
-      taskApi.refreshSchema(this.dataflow.id).finally(() => {
-        this.refreshing = false
-        this.setSchemaRefreshing(false)
-      })
-    },
-  },
 }
 </script>
 
@@ -633,7 +444,7 @@ export default {
         </button>
       </ElTooltip>
       <template v-if="isDaas && !isCommunity">
-        <VDivider class="mx-3" vertical inset />
+        <el-divider direction="vertical" />
         <ElTooltip
           transition="tooltip-fade-in"
           :content="$t('public_data_validation')"

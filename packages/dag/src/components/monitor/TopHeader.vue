@@ -49,8 +49,8 @@ export default {
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
-      isCommunity: process.env.VUE_APP_MODE === 'community',
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
+      isCommunity: import.meta.env.VUE_APP_MODE === 'community',
       commandCode: isMacOs ? '⌘' : 'Ctrl',
       optionCode: isMacOs ? 'Option' : 'Alt',
       name: '',
@@ -363,7 +363,7 @@ export default {
         <VIcon size="18">bug-outlined</VIcon>
       </button>
       <template v-if="isDaas && !isCommunity">
-        <VDivider class="mx-3" vertical />
+        <el-divider direction="vertical" />
         <ElTooltip
           transition="tooltip-fade-in"
           :content="$t('public_data_validation')"

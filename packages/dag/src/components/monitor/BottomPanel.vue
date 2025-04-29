@@ -10,14 +10,19 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
 
 import Alert from './components/Alert'
 import Record from './components/Record'
-import Alert from './components/Alert'
 import TaskInspect from './components/TaskInspect'
-import { taskApi } from '@tap/api'
 import '@tap/component/src/directives/resize/index.scss'
 
 export default {
   name: 'ConfigPanel',
-  components: { Record, Alert, RelationList, NodeLog, MilestoneList, TaskInspect },
+  components: {
+    Record,
+    Alert,
+    RelationList,
+    NodeLog,
+    MilestoneList,
+    TaskInspect,
+  },
   directives: {
     resize,
     focusSelect,
@@ -31,8 +36,8 @@ export default {
   },
   data() {
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
-      isCommunity: process.env.VUE_APP_MODE === 'community',
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
+      isCommunity: import.meta.env.VUE_APP_MODE === 'community',
       currentTab: 'milestone',
       name: this.activeNode?.name,
       relationCount: 0,
@@ -217,13 +222,17 @@ export default {
             @load-data="$emit('load-data')"
           />
         </ElTabPane>
-        <ElTabPane v-if="isDaas && !isCommunity" :label="$t('public_validation_record')" name="inspect">
+        <ElTabPane
+          v-if="isDaas && !isCommunity"
+          :label="$t('public_validation_record')"
+          name="inspect"
+        >
           <TaskInspect
             v-if="currentTab === 'inspect'"
             v-bind="$attrs"
-            :currentTab="currentTab"
+            :current-tab="currentTab"
             @open-inspect="$emit('open-inspect')"
-          ></TaskInspect>
+          />
         </ElTabPane>
       </ElTabs>
 

@@ -1,51 +1,3 @@
-<template>
-  <ElDialog
-    :visible.sync="dialogVisible"
-    :title="$t('public_data_validation')"
-    append-to-body
-    width="500px"
-    custom-class="data-validation-dialog"
-    @close="handleClose"
-  >
-    <div v-loading="loading">
-      <div class="validation-header gap-3">
-        <div class="header-label">{{ $t('packages_dag_enable_validation') }}</div>
-        <div class="switch-container">
-          <ElSwitch v-model="validationEnabled" />
-        </div>
-      </div>
-
-      <div class="validation-content" v-if="validationEnabled">
-        <div class="validation-option">
-          <ElRadio v-model="validationType" label="cdc">
-            <span class="radio-label">{{ $t('packages_dag_incremental_validation') }}</span>
-          </ElRadio>
-        </div>
-
-        <div class="validation-frequency">
-          <div class="font-color-dark mb-4">{{ $t('packages_dag_validation_frequency') }}</div>
-          <div class="frequency-inputs">
-            <span class="frequency-text">{{ $t('packages_dag_every') }}</span>
-            <div class="input-number-container">
-              <ElInputNumber v-model="frequencyTime" :min="1" controls-position="right" />
-            </div>
-            <span class="frequency-text">{{ $t('packages_dag_seconds') }}</span>
-            <div class="input-number-container">
-              <ElInputNumber v-model="frequencyRecords" :min="1" controls-position="right" />
-            </div>
-            <span class="frequency-text">{{ $t('packages_dag_records') }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <template #footer>
-      <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
-      <ElButton type="primary" @click="handleSave">{{ $t('public_button_save') }}</ElButton>
-    </template>
-  </ElDialog>
-</template>
-
 <script>
 import { taskInspectApi } from '@tap/api'
 
@@ -55,11 +7,11 @@ export default {
   props: {
     visible: {
       type: Boolean,
-      default: false
+      default: false,
     },
     taskId: {
       type: String,
-      default: ''
+      default: '',
     },
     validationSettings: {
       type: Object,
@@ -68,10 +20,10 @@ export default {
         type: 'incremental',
         frequency: {
           time: 1,
-          records: 10
-        }
-      })
-    }
+          records: 10,
+        },
+      }),
+    },
   },
 
   data() {
@@ -81,7 +33,7 @@ export default {
       validationEnabled: false,
       validationType: 'cdc',
       frequencyTime: 1,
-      frequencyRecords: 10
+      frequencyRecords: 10,
     }
   },
 
@@ -92,8 +44,8 @@ export default {
       },
       set(val) {
         this.$emit('update:visible', val)
-      }
-    }
+      },
+    },
   },
 
   watch: {
@@ -101,7 +53,7 @@ export default {
       if (val) {
         this.initFormData()
       }
-    }
+    },
   },
 
   methods: {
@@ -124,10 +76,13 @@ export default {
         custom: {
           cdc: {
             enable: true,
-            sample: { interval: this.frequencyTime, limit: this.frequencyRecords }, // 采样间隔和数量
-            type: 'SAMPLE' // 采样类型
-          }
-        }
+            sample: {
+              interval: this.frequencyTime,
+              limit: this.frequencyRecords,
+            }, // 采样间隔和数量
+            type: 'SAMPLE', // 采样类型
+          },
+        },
       }
 
       this.saving = true
@@ -137,10 +92,74 @@ export default {
       this.dialogVisible = false
       this.saving = false
       this.$message.success(this.$t('public_message_save_ok'))
-    }
-  }
+    },
+  },
 }
 </script>
+
+<template>
+  <ElDialog
+    v-model="dialogVisible"
+    :title="$t('public_data_validation')"
+    append-to-body
+    width="500px"
+    custom-class="data-validation-dialog"
+    @close="handleClose"
+  >
+    <div v-loading="loading">
+      <div class="validation-header gap-3">
+        <div class="header-label">
+          {{ $t('packages_dag_enable_validation') }}
+        </div>
+        <div class="switch-container">
+          <ElSwitch v-model="validationEnabled" />
+        </div>
+      </div>
+
+      <div v-if="validationEnabled" class="validation-content">
+        <div class="validation-option">
+          <ElRadio v-model="validationType" label="cdc">
+            <span class="radio-label">{{
+              $t('packages_dag_incremental_validation')
+            }}</span>
+          </ElRadio>
+        </div>
+
+        <div class="validation-frequency">
+          <div class="font-color-dark mb-4">
+            {{ $t('packages_dag_validation_frequency') }}
+          </div>
+          <div class="frequency-inputs">
+            <span class="frequency-text">{{ $t('packages_dag_every') }}</span>
+            <div class="input-number-container">
+              <ElInputNumber
+                v-model="frequencyTime"
+                :min="1"
+                controls-position="right"
+              />
+            </div>
+            <span class="frequency-text">{{ $t('packages_dag_seconds') }}</span>
+            <div class="input-number-container">
+              <ElInputNumber
+                v-model="frequencyRecords"
+                :min="1"
+                controls-position="right"
+              />
+            </div>
+            <span class="frequency-text">{{ $t('packages_dag_records') }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <template #footer>
+      <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
+      <ElButton type="primary" @click="handleSave">{{
+        $t('public_button_save')
+      }}</ElButton>
+    </template>
+  </ElDialog>
+</template>
 
 <style lang="scss" scoped>
 .data-validation-dialog {
