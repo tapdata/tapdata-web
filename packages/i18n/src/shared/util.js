@@ -4,11 +4,11 @@ import { getBrowserLanguage, Cookie } from '@tap/shared'
 export const langKeyMap = {
   'zh-CN': 'zh_CN',
   'zh-TW': 'zh_TW',
-  en: 'en_US'
+  en: 'en_US',
 }
 
 export const langMenu =
-  process.env.VUE_APP_MODE === 'community'
+   import.meta.env.VUE_APP_MODE === 'community'
     ? {
         'zh-CN': '中文 (简)',
         en: 'English'
@@ -16,10 +16,10 @@ export const langMenu =
     : {
         'zh-CN': '中文 (简)',
         'zh-TW': '中文 (繁)',
-        en: 'English'
+        en: 'English',
       }
 
-export const getLang = lang => {
+export const getLang = (lang) => {
   return Object.keys(langKeyMap).includes(lang) ? lang : 'en'
 }
 

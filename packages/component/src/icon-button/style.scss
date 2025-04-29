@@ -72,7 +72,7 @@
   }
 
   &__primary {
-    color: map-get($color, primary);
+    color: map.get($color, primary);
     &:hover {
       background: rgb(59 71 229 / 10%);
     }

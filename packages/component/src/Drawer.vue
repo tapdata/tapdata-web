@@ -1,10 +1,5 @@
-<template>
-  <div ref="drawer" class="drawer-wrapper" :style="{ width: width }" v-show="visible">
-    <slot></slot>
-  </div>
-</template>
-
 <script>
+import { $emit, $off, $on, $once } from '../utils/gogocodeTransfer'
 export default {
   name: 'Drawer',
   props: {
@@ -13,48 +8,54 @@ export default {
       type: String,
       default: () => {
         return '304px'
-      }
-    }
+      },
+    },
   },
+  emits: ['update:visible', 'visible'],
   watch: {
     visible() {
       this.resize()
-    }
+    },
   },
   mounted() {
-    let mainContainer = document.body.getElementsByClassName('layout-main')[0]
+    const mainContainer = document.body.querySelectorAll('.layout-main')[0]
     if (mainContainer) {
-      mainContainer.appendChild(this.$el)
+      mainContainer.append(this.$el)
     } else {
-      document.body.appendChild(this.$el)
+      document.body.append(this.$el)
     }
     this.resize()
-    document.getElementById('app').addEventListener('mouseup', this.blur)
+    document.querySelector('#app').addEventListener('mouseup', this.blur)
   },
-  destroyed() {
+  unmounted() {
     this?.$el?.parentNode?.removeChild(this.$el)
-    document.getElementById('app').removeEventListener('mouseup', this.blur)
+    document.querySelector('#app').removeEventListener('mouseup', this.blur)
   },
   methods: {
     resize() {
-      let top = document.body.getElementsByClassName('layout-header')?.[0]?.clientHeight || 0
-      let height = document.body.clientHeight - top
-      this.height = height + 'px'
+      const top =
+        document.body.querySelectorAll('.layout-header')?.[0]?.clientHeight || 0
+      const height = document.body.clientHeight - top
+      this.height = `${height}px`
     },
     blur(e) {
       if (this.visible) {
-        let drawer = this.$refs.drawer
-        if (drawer) {
-          if (!drawer.contains(e.target)) {
-            this.$emit('update:visible', false)
-            this.$emit('visible', false)
-          }
+        const drawer = this.$refs.drawer
+        if (drawer && !drawer.contains(e.target)) {
+          $emit(this, 'update:visible', false)
+          $emit(this, 'visible', false)
         }
       }
-    }
-  }
+    },
+  },
 }
 </script>
+
+<template>
+  <div v-show="visible" ref="drawer" class="drawer-wrapper" :style="{ width }">
+    <slot />
+  </div>
+</template>
 
 <style lang="scss">
 .drawer-wrapper {
@@ -63,8 +64,11 @@ export default {
   bottom: 0px;
   z-index: 2001;
   height: 100%;
-  background-color: map-get($bgColor, white);
-  box-shadow: 0 8px 10px -5px rgb(0 0 0 / 20%), 0 16px 24px 2px rgb(0 0 0 / 14%), 0 6px 30px 5px rgb(0 0 0 / 12%);
+  background-color: map.get($bgColor, white);
+  box-shadow:
+    0 8px 10px -5px rgb(0 0 0 / 20%),
+    0 16px 24px 2px rgb(0 0 0 / 14%),
+    0 6px 30px 5px rgb(0 0 0 / 12%);
   overflow: auto;
   box-sizing: border-box;
 }

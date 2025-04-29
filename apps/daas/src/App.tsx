@@ -1,4 +1,4 @@
-import { defineComponent, provide, ref } from '@vue/composition-api'
+import { defineComponent, provide, ref } from 'vue'
 import { workerApi } from '@tap/api'
 import { provideI18n, useMessage, I18n } from './hooks'
 import LockedDialog from './components/LockedDialog.vue'
@@ -7,19 +7,19 @@ export default defineComponent({
   setup() {
     const showLocked = ref(false)
     const lockedFeature =
-      process.env.VUE_APP_MODE === 'community'
+       import.meta.env.VUE_APP_MODE === 'community'
         ? {
             sharedMiningList: true,
             dataVerificationList: true,
             alarmSetting: true,
             roleList: true,
             valid_total: true,
-            webhookAlerts: true
+            webhookAlerts: true,
           }
         : {}
 
     provideI18n()
-    provide('checkAgent', async cb => {
+    provide('checkAgent', async (cb) => {
       const Message = useMessage()
       const data = await workerApi.getAvailableAgent()
       if (!data?.result?.length) {
@@ -41,11 +41,11 @@ export default defineComponent({
           <LockedDialog
             visible={showLocked.value}
             on={{
-              'update:visible': val => (showLocked.value = val)
+              'update:visible': (val) => (showLocked.value = val),
             }}
           ></LockedDialog>
         </div>
       )
     }
-  }
+  },
 })

@@ -7,6 +7,6 @@ export function getCode(data) {
     })\n  record.category_name = cachedRow.category_name`,
     `record.category_name = CacheService.getCacheItem( '${data.name || 'cachename'}', 'category_name', defaultValue, ${
       cacheKeys.length ? 'record.' + cacheKeysArr.join(', record.') : 'record.category_code'
-    })`
+    })`,
   ]
 }

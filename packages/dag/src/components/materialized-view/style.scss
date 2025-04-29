@@ -21,7 +21,7 @@
   .node-header {
     border-top-left-radius: inherit;
     border-top-right-radius: inherit;
-    //border-top: 6px solid map-get($color, primary);
+    //border-top: 6px solid map.get($color, primary);
   }
 
   &:not(.--target) {
@@ -31,18 +31,14 @@
     .node-title {
       background-color: #86909c;
     }
-    ::v-deep {
-      .field-icon {
-        color: #86909c;
-      }
+    .field-icon {
+      color: #86909c;
     }
   }
 
   &.--target {
-    ::v-deep {
-      .field-icon {
-        color: map-get($color, primary);
-      }
+    .field-icon {
+      color: map.get($color, primary);
     }
   }
 
@@ -53,35 +49,31 @@
     .node-title {
       background-color: #f3961a;
     }
-    ::v-deep {
-      .field-icon {
-        color: #f3961a;
-      }
+    .field-icon {
+      color: #f3961a;
     }
   }
 
   .node-body {
-    ::v-deep {
-      .el-tree-node__content {
-        border-radius: 6px;
+    .el-tree-node__content {
+      border-radius: 6px;
+      .field-icon {
+        left: -20px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+      .field-add-btn {
+        display: none;
+        left: -24px;
+      }
+      /*&:hover {
         .field-icon {
-          left: -18px;
-          top: 50%;
-          transform: translateY(-50%);
+          display: none;
         }
         .field-add-btn {
-          display: none;
-          left: -24px;
+          display: inline-flex;
         }
-        /*&:hover {
-          .field-icon {
-            display: none;
-          }
-          .field-add-btn {
-            display: inline-flex;
-          }
-        }*/
-      }
+      }*/
     }
   }
 
@@ -91,17 +83,15 @@
 
   &.--target {
     .node-header {
-      ::v-deep {
-        .el-input .el-input__inner {
-          border-color: transparent;
-        }
+      .el-input .el-input__inner {
+        border-color: transparent;
       }
     }
 
     .node-body {
       border-bottom-left-radius: inherit;
       border-bottom-right-radius: inherit;
-      border: 2px solid map-get($color, primary);
+      border: 2px solid map.get($color, primary);
       border-top: none;
     }
 
@@ -109,11 +99,10 @@
       max-height: 400px;
     }
   }
-}
-.color-success-light-5 {
-  color: #009a29;
-}
-::v-deep {
+
+  .color-success-light-5 {
+    color: #009a29;
+  }
   .el-form-item {
     margin-bottom: 8px;
 
@@ -132,7 +121,7 @@
 
   .el-input {
     .el-input__inner {
-      padding-right: 24px;
+      //padding-right: 24px;
       font-size: 12px;
     }
     .el-input__suffix {

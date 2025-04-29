@@ -20,14 +20,14 @@ export class RowFilter extends NodeType {
         'x-component': 'FormTab',
         'x-component-props': {
           class: 'config-tabs',
-          formTab: '{{formTab}}'
+          formTab: '{{formTab}}',
         },
         properties: {
           tab1: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: i18n.t('public_basic_settings')
+              label: i18n.t('public_basic_settings'),
             },
             properties: {
               nameWrap: {
@@ -36,12 +36,12 @@ export class RowFilter extends NodeType {
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
                   asterisk: true,
-                  feedbackLayout: 'none'
+                  feedbackLayout: 'none',
                 },
                 'x-component': 'FormFlex',
                 'x-component-props': {
                   gap: 8,
-                  align: 'start'
+                  align: 'start',
                 },
                 properties: {
                   name: {
@@ -50,13 +50,13 @@ export class RowFilter extends NodeType {
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       style: {
-                        flex: 1
-                      }
+                        flex: 1,
+                      },
                     },
                     'x-component': 'Input',
                     'x-component-props': {
-                      onChange: `{{() => { $values.attrs.hasNameEdited = true }}}`
-                    }
+                      onChange: `{{() => { $values.attrs.hasNameEdited = true }}}`,
+                    },
                   },
 
                   clipboardButton: {
@@ -65,10 +65,10 @@ export class RowFilter extends NodeType {
                     'x-component-props': {
                       tooltip: i18n.t('packages_dag_copy_node_id'),
                       finishTooltip: i18n.t('packages_dag_nodes_table_yifuzhi'),
-                      content: '{{$values.id}}'
-                    }
-                  }
-                }
+                      content: '{{$values.id}}',
+                    },
+                  },
+                },
               },
               action: {
                 title: i18n.t('packages_dag_nodes_rowfilter_zhixingdongzuo'),
@@ -78,18 +78,18 @@ export class RowFilter extends NodeType {
                 enum: [
                   {
                     label: i18n.t('packages_dag_nodes_jointcache_baoliupipeishu'),
-                    value: 'retain'
+                    value: 'retain',
                   },
                   {
                     label: i18n.t('packages_dag_nodes_rowfilter_diuqipipeishu'),
-                    value: 'discard'
-                  }
+                    value: 'discard',
+                  },
                 ],
                 'x-decorator': 'FormItem',
                 'x-component': 'Select',
                 'x-decorator-props': {
-                  wrapperWidth: 240
-                }
+                  wrapperWidth: 240,
+                },
               },
               expression: {
                 title: i18n.t('packages_dag_nodes_rowfilter_tiaojianbiaodashi'),
@@ -99,21 +99,21 @@ export class RowFilter extends NodeType {
                 'x-component': 'JsEditor',
                 'x-component-props': {
                   options: { showPrintMargin: false, useWrapMode: true },
-                  onInit: '{{editor => addEditorFieldCompletion(editor, $values.id, $values.$inputs)}}'
-                }
+                  onInit: '{{editor => addEditorFieldCompletion(editor, $values.id, $values.$inputs)}}',
+                },
               },
               example: {
                 type: 'void',
-                'x-component': 'ExpressionExample'
+                'x-component': 'ExpressionExample',
               },
               schemaPreview: {
                 type: 'void',
-                'x-component': 'SchemaPreview'
-              }
-            }
-          }
-        }
-      }
-    }
+                'x-component': 'SchemaPreview',
+              },
+            },
+          },
+        },
+      },
+    },
   }
 }

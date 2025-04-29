@@ -40,7 +40,7 @@
         .js-editor-form-item {
           flex: 1;
           margin-bottom: 0;
-          .formily-element-form-item-label {
+          .formily-element-plus-form-item-label {
             display: none;
           }
         }
@@ -127,7 +127,7 @@
         stroke-dasharray: 90, 150;
         stroke-dashoffset: 0;
         stroke-width: 2;
-        stroke: map-get($color, primary);
+        stroke: map.get($color, primary);
         stroke-linecap: round;
       }
     }
@@ -213,5 +213,14 @@
   ul li {
     line-height: 1.8;
     list-style-type: unset;
+  }
+}
+
+.python-api-drawer {
+  .el-drawer__header {
+    margin-bottom: 16px;
+  }
+  .el-drawer__body {
+    padding: 0;
   }
 }

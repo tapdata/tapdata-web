@@ -1,389 +1,95 @@
-<template>
-  <div class="log-container flex justify-content-between" :class="{ fullscreen: fullscreen }">
-    <NodeList
-      v-show="!hideFilter"
-      v-model="activeNodeId"
-      :label="$t('packages_dag_migration_consolepanel_quanburizhi')"
-      class="node-list border-end flex-shrink-0"
-      @change="changeItem"
-    ></NodeList>
-    <div class="main node-log-main flex-fill flex flex-column px-4 py-3">
-      <div class="flex mb-2 align-items-center justify-content-between">
-        <div class="flex align-items-center gap-3">
-          <TimeSelect
-            :options="timeOptions"
-            :range="[firstStartTime, lastStopTime || getTime()]"
-            ref="timeSelect"
-            @change="changeTime"
-          ></TimeSelect>
-          <ElInput
-            class="search-input"
-            v-model="keyword"
-            prefix-icon="el-icon-search"
-            :placeholder="$t('packages_dag_components_log_qingshururizhi')"
-            size="mini"
-            clearable
-            style="width: 240px"
-            @input="searchFnc"
-          ></ElInput>
-
-          <el-button :loading="downloadLoading" class="min-w-0" type="primary" size="mini" @click="handleDownload">
-            <VIcon>download</VIcon>
-          </el-button>
-
-          <ElButton
-            v-if="isDaas && !hideDownload"
-            :loading="downloadLoading"
-            type="warning"
-            size="mini"
-            class="ml-0"
-            @click="handleDownloadAnalysis"
-            ><VIcon class="mr-1">download</VIcon>{{ $t('packages_business_download_analysis_report') }}</ElButton
-          >
-
-          <el-button
-            v-feature="'dataScraping'"
-            class="min-w-0 ml-0"
-            type="primary"
-            plain
-            size="mini"
-            @click="openDataCapture"
-            >{{ $t('public_data_capture') }}</el-button
-          >
-        </div>
-      </div>
-      <div class="level-line mb-2 flex">
-        <ElCheckboxGroup
-          v-model="checkList"
-          :disabled="loading"
-          :min="1"
-          size="mini"
-          class="inline-flex"
-          @change="searchFnc"
-        >
-          <ElCheckbox
-            v-for="item in checkItems"
-            :label="item.label"
-            :key="item.label"
-            @change="handleCheckbox(arguments[0], item.label)"
-            >{{ item.text }}</ElCheckbox
-          >
-        </ElCheckboxGroup>
-
-        <el-divider class="mx-4" direction="vertical"></el-divider>
-
-        <ElCheckbox v-model="switchData.timestamp" @change="command('timestamp')">{{
-          $t('packages_business_logs_nodelog_xianshishijianchuo')
-        }}</ElCheckbox>
-
-        <span class="color-primary cursor-pointer ml-auto" @click="handleFullScreen">
-          <VIcon class="mr-1">{{ fullscreen ? 'suoxiao' : 'fangda' }}</VIcon>
-          <span>{{
-            fullscreen ? $t('packages_form_js_editor_exit_fullscreen') : $t('packages_form_js_editor_fullscreen')
-          }}</span>
-        </span>
-      </div>
-      <div v-loading="loading" class="log-list flex-1 rounded-2" style="height: 0">
-        <DynamicScroller
-          ref="virtualScroller"
-          :items="list"
-          key-field="id"
-          :min-item-size="30"
-          class="scroller px-2 py-1 h-100"
-          @scroll.native="scrollFnc"
-        >
-          <template #before>
-            <div
-              v-show="preLoading || showNoMore || !list.length"
-              class="before-scroll-content text-center font-color-light pb-2"
-            >
-              <div v-show="preLoading">
-                <i class="el-icon-loading"></i>
-              </div>
-              <ElAlert
-                v-show="showNoMore"
-                :title="$t('packages_dag_customer_logs_no_more_data')"
-                type="info"
-                class="no-more__alert position-absolute py-1 px-2"
-              ></ElAlert>
-              <VEmpty
-                v-if="!list.length"
-                :description="keyword ? $t('packages_dag_customer_logs_no_search_data') : $t('public_data_no_data')"
-              />
-            </div>
-          </template>
-          <template #default="{ item, index, active }">
-            <DynamicScrollerItem
-              :item="item"
-              :active="active"
-              :data-index="index"
-              :size-dependencies="[item.id, item.message, item.errorStack, item.dataText]"
-            >
-              <div class="log-line pr-6 font-color-light">
-                <div
-                  class="log-item"
-                  :class="{ 'hide-content cursor-pointer': handleHideContent(arguments[0], item) }"
-                  :ref="'icon' + item.id"
-                  @click="handleLog(item)"
-                >
-                  <VIcon class="expand-icon mr-1" :class="{ 'rotate-90': item.expand }">arrow-right</VIcon>
-                  <span v-if="showCols.includes('timestamp')" class="font-color-slight"
-                    >[{{ item.timestampLabel }}]</span
-                  >
-                  <span
-                    v-if="item.errorCode"
-                    class="color-primary cursor-pointer mr-2 text-decoration-underline"
-                    @click.stop.prevent="handleCode(item)"
-                    >{{ item.fullErrorCode || item.errorCode }}</span
-                  >
-                  <span :class="colorMap[item.level.toUpperCase()]" v-html="item.message"></span>
-                  <ElLink
-                    v-if="item.level === 'ERROR' && item.fullErrorCode === 'Task.ScheduleLimit'"
-                    type="primary"
-                    class="text-decoration-underline"
-                    @click="$emit('action', { ...item, ...{ type: 'ScheduleLimit' } })"
-                  >
-                    {{ $t('packages_business_logs_nodelog_qingshengjidingyue') }}
-                  </ElLink>
-                </div>
-                <div v-if="item.expand" class="log-detail bg-color-normal p-3">
-                  <p v-if="item.message" class="mb-2 fw-bold font-color-dark">message:</p>
-                  <div v-if="item.message" v-html="item.message" class="mb-4 text-break"></div>
-                  <p v-if="item.errorStack" class="mb-2 fw-bold font-color-dark">errorStack:</p>
-                  <div v-if="item.errorStack" v-html="item.errorStack" class="text-break"></div>
-                </div>
-              </div>
-            </DynamicScrollerItem>
-          </template>
-        </DynamicScroller>
-      </div>
-    </div>
-
-    <ElDialog
-      :title="$t('packages_dag_components_log_rizhidengjishe')"
-      width="437px"
-      :visible.sync="dialog"
-      :close-on-click-modal="false"
-      :append-to-body="true"
-    >
-      <ElForm label-width="120px">
-        <ElFormItem :label="$t('packages_dag_components_log_rizhijibie')" prop="level">
-          <ElSelect v-model="form.level" style="width: 275px">
-            <ElOption v-for="item in checkItems" :label="item.text" :value="item.label" :key="item.label"></ElOption>
-          </ElSelect>
-        </ElFormItem>
-        <template v-if="form.level === 'DEBUG'">
-          <ElFormItem :label="$t('packages_dag_components_log_debug')" prop="param"> </ElFormItem>
-          <ElFormItem :label="$t('packages_dag_components_log_kaiqishichangmiao')" prop="start">
-            <ElInput v-model="form.intervalCeiling" type="number" style="width: 275px"></ElInput>
-          </ElFormItem>
-          <ElFormItem :label="$t('packages_dag_components_log_zuidashijianshu')" prop="max">
-            <ElInput v-model="form.recordCeiling" type="number" style="width: 275px"></ElInput>
-          </ElFormItem>
-        </template>
-      </ElForm>
-      <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton :disabled="saveLoading" size="mini" type="primary" @click="handleSave">{{
-          $t('public_button_confirm')
-        }}</ElButton>
-      </span>
-    </ElDialog>
-
-    <ElDialog
-      width="80%"
-      custom-class="max-w-1000 mt-25 --padding"
-      :visible.sync="codeDialog.visible"
-      :close-on-click-modal="false"
-      append-to-body
-      @open="expandErrorMessage = false"
-    >
-      <template #title>
-        <div class="flex align-center gap-2">
-          <VIcon class="color-danger" size="18">circle-close-filled</VIcon>
-          <span class="fs-6 fw-sub">{{ codeDialog.data.fullErrorCode || codeDialog.data.errorCode }}</span>
-        </div>
-      </template>
-
-      <div class="font-color-light">
-        <!--错误信息-->
-        <template v-if="codeDialog.data.describe">
-          <div class="fw-sub mb-3 font-color-dark">{{ $t('packages_business_milestone_list_cuowuxinxi') }}</div>
-          <div
-            v-html="codeDialog.data.describe"
-            class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
-          ></div>
-        </template>
-
-        <!--错误原因/描述-->
-        <template v-if="codeDialog.data.dynamicDescribe">
-          <div class="fw-sub mb-3 font-color-dark">{{ $t('public_task_reasons_for_error') }}</div>
-          <div
-            v-html="codeDialog.data.dynamicDescribe"
-            class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
-          ></div>
-        </template>
-
-        <!--解决方案-->
-        <template v-if="codeDialog.data.solution">
-          <div class="fw-sub mb-3 font-color-dark">{{ $t('packages_business_solution') }}</div>
-          <div
-            v-html="codeDialog.data.solution"
-            class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
-          ></div>
-        </template>
-
-        <!--See Also-->
-        <template v-if="!hideSeeAlso && codeDialog.data.seeAlso && codeDialog.data.seeAlso.length">
-          <div class="fw-sub mb-3 font-color-dark">See Also</div>
-          <ol class="pl-6 mb-6">
-            <li v-for="(item, index) in codeDialog.data.seeAlso" :key="index" class="list-decimal">
-              <ElLink type="primary" class="text-decoration-underline" @click="handleLink(item)">{{ item }}</ElLink>
-            </li>
-          </ol>
-        </template>
-
-        <!--错误堆栈-->
-        <template v-if="codeDialog.data.errorStack">
-          <div class="mb-3 flex justify-content-between align-items-end">
-            <span class="fw-sub font-color-dark">{{ $t('packages_business_logs_nodelog_cuowuduizhan') }}</span>
-          </div>
-          <div class="error-stack-pre-wrap position-relative font-color-light rounded-lg">
-            <div class="position-absolute end-0 top-0 px-2 pt-1">
-              <el-button
-                @click="handleCopyStack(codeDialog.data.errorStack)"
-                type="text"
-                class="px-1 py-0.5 font-color-dark"
-              >
-                <VIcon class="mr-1">copy</VIcon>
-                <span class="">{{ $t('public_button_copy') }}</span> </el-button
-              ><el-button
-                @click="expandErrorMessage = !expandErrorMessage"
-                type="text"
-                class="px-1 py-0.5 font-color-dark ml-2"
-              >
-                {{
-                  expandErrorMessage ? $t('packages_business_verification_details_shouqi') : $t('public_button_expand')
-                }}<i class="el-icon-arrow-down is-rotate ml-1" :class="{ 'is-active': expandErrorMessage }"></i>
-              </el-button>
-            </div>
-
-            <pre
-              class="m-0 p-4 pt-0 mt-6 font-color-dark"
-              :class="expandErrorMessage ? '' : 'truncate-two-lines'"
-              style="max-height: 400px; font-size: 13px; overflow-x: auto"
-              >{{ codeDialog.data.errorStack }}</pre
-            >
-          </div>
-        </template>
-      </div>
-
-      <template v-if="!isDaas" #footer>
-        <ElButton @click="codeDialog.visible = false">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton type="primary" @click="handleCreateTicket">{{ $t('dfs_user_contactus_chuangjiangongdan') }}</ElButton>
-      </template>
-    </ElDialog>
-
-    <ElDialog
-      width="437px"
-      custom-class="pro-dialog"
-      :visible.sync="downloadAnalysis.visible"
-      :close-on-click-modal="false"
-      :append-to-body="true"
-      @close="onClose"
-    >
-      <template #title>
-        <div class="el-dialog__title">{{ $t('packages_business_download_analysis_report_title') }}</div>
-      </template>
-      <div class="pb-6 flex flex-column gap-4">
-        <div class="fs-7 font-color-sslight">{{ $t('packages_business_download_analysis_report_desc') }}</div>
-        <div>
-          {{ downloadAnalysis.steps[downloadAnalysis.currentStep].label }}, {{ $t('packages_business_long_wait')
-          }}<span class="dotting"></span>
-        </div>
-        <el-progress :stroke-width="9" :percentage="downloadAnalysis.progress"></el-progress>
-      </div>
-    </ElDialog>
-
-    <Download :visible.sync="downloadDialog" :dataflow="dataflow"></Download>
-  </div>
-</template>
-
 <script>
+import { CancelToken, monitoringLogsApi, proxyApi, taskApi } from '@tap/api'
+import { IconButton, TimeSelect, VIcon } from '@tap/component'
+
+import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
 import i18n from '@tap/i18n'
-
-import dayjs from 'dayjs'
-import { mapGetters } from 'vuex'
-import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-import { debounce, cloneDeep, uniqBy, escape } from 'lodash'
-
 import { copyToClipboard, CountUp, downloadBlob, openUrl } from '@tap/shared'
 import Time from '@tap/shared/src/time'
-import { VIcon, TimeSelect, IconButton } from '@tap/component'
-import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
-import { monitoringLogsApi, taskApi, proxyApi, CancelToken } from '@tap/api'
+
+import dayjs from 'dayjs'
+import { cloneDeep, debounce, escape, uniqBy } from 'lodash-es'
+import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+import { mapGetters } from 'vuex'
+import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 
 import NodeList from '../nodes/List'
 import Download from './Download'
 
 export default {
   name: 'NodeLog',
+  components: {
+    VIcon,
+    TimeSelect,
+    DynamicScroller,
+    DynamicScrollerItem,
+    VEmpty,
+    NodeList,
+  },
 
-  components: { IconButton, VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem, VEmpty, NodeList, Download },
+  components: {
+    IconButton,
+    VIcon,
+    TimeSelect,
+    DynamicScroller,
+    DynamicScrollerItem,
+    VEmpty,
+    NodeList,
+    Download,
+  },
 
   props: {
     dataflow: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
     logsData: {
       type: Object,
       default: () => {
         return {
           total: 0,
-          items: []
+          items: [],
         }
-      }
+      },
     },
     hideFilter: {
       type: Boolean,
-      default: false
+      default: false,
     },
     logTotals: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     nodeId: {
       type: String,
-      default: ''
-    }
+      default: '',
+    },
   },
-
   data() {
-    const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+    const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
     return {
       isDaas,
-      hideDownload: process.env.VUE_APP_HIDE_ANALYSE_DOWNLOAD,
+      hideDownload: import.meta.env.VUE_APP_HIDE_ANALYSE_DOWNLOAD,
       activeNodeId: this.nodeId,
       keyword: '',
       checkList: [],
       checkItems: [
         /*{
           label: 'DEBUG',
-          text: 'DEBUG'
+          text: 'DEBUG',
         },*/
         {
           label: 'INFO',
-          text: 'INFO'
+          text: 'INFO',
         },
         {
           label: 'WARN',
-          text: 'WARN'
+          text: 'WARN',
         },
         {
           label: 'ERROR',
-          text: 'ERROR'
-        }
+          text: 'ERROR',
+        },
       ],
       timer: null,
       downloadLoading: false,
@@ -397,54 +103,54 @@ export default {
         WARN: 'warning',
         ERROR: 'error',
         FATAL: 'error',
-        DEBUG: 'debug'
+        DEBUG: 'debug',
       },
       colorMap: {
         INFO: 'color-info',
         WARN: 'color-warning',
         ERROR: 'color-danger',
         FATAL: 'color-danger',
-        DEBUG: 'color-disable'
+        DEBUG: 'color-disable',
       },
       newPageObj: {
         page: 0,
         pageSize: 50,
-        total: 0
+        total: 0,
       },
       oldPageObj: {
         page: 0,
         pageSize: 50,
-        total: 0
+        total: 0,
       },
       isScrollBottom: false,
       form: {
         level: 'INFO',
         intervalCeiling: 500,
-        recordCeiling: 500
+        recordCeiling: 500,
       },
       dialog: false,
       timeOptions: [
         {
           label: i18n.t('public_select_option_all'),
-          value: 'full'
+          value: 'full',
         },
         {
           label: i18n.t('public_time_Last_six_hours'),
-          value: '6h'
+          value: '6h',
         },
         {
           label: i18n.t('public_time_last_day'),
-          value: '1d'
+          value: '1d',
         },
         {
           label: i18n.t('public_time_last_three_days'),
-          value: '3d'
+          value: '3d',
         },
         {
           label: i18n.t('public_time_custom_time'),
           type: 'custom',
-          value: 'custom'
-        }
+          value: 'custom',
+        },
       ],
       quotaTimeType: 'full',
       quotaTime: [],
@@ -462,67 +168,68 @@ export default {
           dynamicDescribe: '',
           seeAlso: [],
           module: '',
-          message: ''
-        }
+          message: '',
+        },
       },
       showCols: [],
       switchData: {
-        timestamp: false
+        timestamp: false,
       },
       fullscreen: false,
       showTooltip: false,
-      hideSeeAlso: process.env.VUE_APP_PAGE_TITLE === 'IKAS' || process.env.VUE_APP_HIDE_LOG_SEE_ALSO,
+      hideSeeAlso:
+        import.meta.env.VUE_APP_PAGE_TITLE === 'IKAS' ||
+        import.meta.env.VUE_APP_HIDE_LOG_SEE_ALSO,
       downloadAnalysis: {
         visible: false,
         progress: 0,
         currentStep: 0,
         steps: [
           {
-            label: i18n.t('packages_business_exporting_task')
+            label: i18n.t('packages_business_exporting_task'),
           },
           {
-            label: i18n.t('packages_business_exporting_run_history')
+            label: i18n.t('packages_business_exporting_run_history'),
           },
           {
-            label: i18n.t('packages_business_exporting_task_log')
+            label: i18n.t('packages_business_exporting_task_log'),
           },
           {
-            label: i18n.t('packages_business_exporting_metrics')
+            label: i18n.t('packages_business_exporting_metrics'),
           },
           {
-            label: i18n.t('packages_business_gen_engine_cpu_chart')
+            label: i18n.t('packages_business_gen_engine_cpu_chart'),
           },
           {
-            label: i18n.t('packages_business_gen_tm_cpu_chart')
+            label: i18n.t('packages_business_gen_tm_cpu_chart'),
           },
           {
-            label: i18n.t('packages_business_gen_engine_mem_chart')
+            label: i18n.t('packages_business_gen_engine_mem_chart'),
           },
           {
-            label: i18n.t('packages_business_gen_tm_mem_chart')
+            label: i18n.t('packages_business_gen_tm_mem_chart'),
           },
           {
-            label: i18n.t('packages_business_exporting_engine_thread')
+            label: i18n.t('packages_business_exporting_engine_thread'),
           },
           {
-            label: i18n.t('packages_business_exporting_tm_thread')
+            label: i18n.t('packages_business_exporting_tm_thread'),
           },
           {
-            label: i18n.t('packages_business_downloading_file')
-          }
-        ]
+            label: i18n.t('packages_business_downloading_file'),
+          },
+        ],
       },
       expandErrorMessage: false,
-      downloadDialog: false
+      downloadDialog: false,
     }
   },
-
   computed: {
     ...mapGetters('dataflow', ['allNodes', 'nodeById']),
 
     nodeLogCountMap() {
       return this.logTotals
-        .filter(t => t.nodeId)
+        .filter((t) => t.nodeId)
         .reduce((cur, next) => {
           const count = cur[next.nodeId] || 0
           return { ...cur, [next.nodeId]: count + next.count }
@@ -530,7 +237,7 @@ export default {
     },
 
     items() {
-      return this.allNodes.filter(t => !!this.nodeLogCountMap[t.id])
+      return this.allNodes.filter((t) => !!this.nodeLogCountMap[t.id])
     },
 
     firstStartTime() {
@@ -558,14 +265,15 @@ export default {
     },
 
     isEnterTimer() {
-      return this.quotaTimeType !== 'custom' && this.dataflow?.status === 'running'
+      return (
+        this.quotaTimeType !== 'custom' && this.dataflow?.status === 'running'
+      )
     },
 
     logSetting() {
       return this.dataflow?.logSetting || {}
-    }
+    },
   },
-
   watch: {
     dataflow: {
       deep: true,
@@ -574,38 +282,36 @@ export default {
         if (v1.taskRecordId + v1.startTime !== v2.taskRecordId + v2.startTime) {
           this.init()
         }
-      }
+      },
     },
     nodeId(v) {
       this.activeNodeId = v
-    }
+    },
   },
-
   created() {
-    this.checkList = ['error'].includes(this.dataflow.status) ? ['WARN', 'ERROR'] : ['INFO', 'WARN', 'ERROR']
+    this.checkList = ['error'].includes(this.dataflow.status)
+      ? ['WARN', 'ERROR']
+      : ['INFO', 'WARN', 'ERROR']
   },
-
   mounted() {
     this.init()
   },
-
-  destroyed() {
+  unmounted() {
     this.clearTimer()
   },
-
   methods: {
     init: debounce(function () {
       if (this.$route.name === 'MigrationMonitorViewer') {
         this.timeOptions = [
           {
             label: i18n.t('public_select_option_all'),
-            value: 'full'
+            value: 'full',
           },
           {
             label: i18n.t('public_time_custom_time'),
             type: 'custom',
-            value: 'custom'
-          }
+            value: 'custom',
+          },
         ]
       }
       this.extraEnterCount = 0
@@ -626,7 +332,7 @@ export default {
       this.oldPageObj = {
         page: 0,
         pageSize: 20,
-        total: 0
+        total: 0,
       }
     },
 
@@ -634,7 +340,7 @@ export default {
       this.newPageObj = {
         page: 0,
         pageSize: 20,
-        total: 0
+        total: 0,
       }
     },
 
@@ -649,7 +355,8 @@ export default {
         // 不满足轮询条件，则多请求几次结束
         if (
           this.isEnterTimer ||
-          (['error', 'schedule_failed'].includes(this.dataflow.status) && ++this.extraEnterCount < 5)
+          (['error', 'schedule_failed'].includes(this.dataflow.status) &&
+            ++this.extraEnterCount < 5)
         ) {
           this.loadNew()
         }
@@ -658,13 +365,15 @@ export default {
     },
 
     changeItem(val) {
-      this.$emit('update:nodeId', val)
+      $emit(this, 'update:nodeId', val)
       this.init()
     },
 
     changeTime(val, isTime, source) {
       this.quotaTimeType = source?.type ?? val
-      this.quotaTime = isTime ? val?.split(',')?.map(t => Number(t)) : this.getTimeRange(val)
+      this.quotaTime = isTime
+        ? val?.split(',')?.map((t) => Number(t))
+        : this.getTimeRange(val)
       this.init()
     },
 
@@ -678,14 +387,15 @@ export default {
       if (this.list.length && target.scrollTop <= 0) {
         this.loadOld()
       }
-      this.isScrollBottom = target.scrollHeight - target.scrollTop <= target.clientHeight
+      this.isScrollBottom =
+        target.scrollHeight - target.scrollTop <= target.clientHeight
     },
 
     loadOld(callback) {
       if (this.isNoMore || this.loading) {
         return
       }
-      let filter = this.getOldFilter()
+      const filter = this.getOldFilter()
       if (!filter.start || !filter.end) {
         return
       }
@@ -732,7 +442,7 @@ export default {
       } else {
         this.newFilter.page++
         filter = Object.assign({}, this.newFilter, {
-          page: this.newFilter.page
+          page: this.newFilter.page,
         })
       }
       if (!filter.start || !filter.end) {
@@ -759,8 +469,8 @@ export default {
     },
 
     getFormatRow(rowData = []) {
-      let result = cloneDeep(rowData)
-      result.forEach(row => {
+      const result = cloneDeep(rowData)
+      result.forEach((row) => {
         row.timestampLabel = this.formatTime(row.date)
         row.expand = false
         row.hideContent = false
@@ -777,19 +487,21 @@ export default {
       if (!keyword) {
         return str
       }
-      const reg = new RegExp(keyword.toLowerCase(), 'ig')
+      const reg = new RegExp(keyword.toLowerCase(), 'gi')
       return str.replace(reg, `<span class="highlight-bg-color">$&</span>`)
     },
 
     getOldFilter() {
-      const [start, end] = this.quotaTime.length ? this.quotaTime : this.getTimeRange(this.quotaTimeType)
+      const [start, end] = this.quotaTime.length
+        ? this.quotaTime
+        : this.getTimeRange(this.quotaTimeType)
       let { id: taskId, taskRecordId } = this.dataflow || {}
       const { query } = this.$route
       if (query?.taskRecordId) {
         taskRecordId = query?.taskRecordId
         taskId = this.$route.params?.id
       }
-      let params = {
+      const params = {
         start,
         end,
         page: this.oldPageObj.page,
@@ -799,15 +511,18 @@ export default {
         taskRecordId,
         nodeId: this.activeNodeId === '' ? null : this.activeNodeId,
         search: this.keyword,
-        levels: this.checkList
+        levels: this.checkList,
       }
 
       if (this.activeNodeId) {
         const node = this.nodeById(this.activeNodeId)
         if (
-          ['js_processor', 'migrate_js_processor', 'standard_js_processor', 'standard_migrate_js_processor'].includes(
-            node.type
-          )
+          [
+            'js_processor',
+            'migrate_js_processor',
+            'standard_js_processor',
+            'standard_migrate_js_processor',
+          ].includes(node.type)
         ) {
           params.includeLogTags = ['src=user_script']
         }
@@ -819,14 +534,17 @@ export default {
     },
 
     getNewFilter() {
-      const [start, end] = [this.list.at(-1)?.timestamp || this.resetDataTime, Time.now()]
+      const [start, end] = [
+        this.list.at(-1)?.timestamp || this.resetDataTime,
+        Time.now(),
+      ]
       let { id: taskId, taskRecordId } = this.dataflow || {}
       const { query } = this.$route
       if (query?.taskRecordId) {
         taskRecordId = query?.taskRecordId
         taskId = this.$route.params?.id
       }
-      let params = {
+      const params = {
         start,
         end,
         page: this.newPageObj.page,
@@ -836,15 +554,18 @@ export default {
         taskRecordId,
         nodeId: this.activeNodeId === '' ? null : this.activeNodeId,
         search: this.keyword,
-        levels: this.checkList
+        levels: this.checkList,
       }
 
       if (this.activeNodeId) {
         const node = this.nodeById(this.activeNodeId)
         if (
-          ['js_processor', 'migrate_js_processor', 'standard_js_processor', 'standard_migrate_js_processor'].includes(
-            node.type
-          )
+          [
+            'js_processor',
+            'migrate_js_processor',
+            'standard_js_processor',
+            'standard_migrate_js_processor',
+          ].includes(node.type)
         ) {
           params.includeLogTags = ['src=user_script']
         }
@@ -876,27 +597,31 @@ export default {
     handleDownload() {
       this.downloadDialog = true
       return
-      const [start, end] = this.quotaTime.length ? this.quotaTime : this.getTimeRange(this.quotaTimeType)
+      const [start, end] = this.quotaTime.length
+        ? this.quotaTime
+        : this.getTimeRange(this.quotaTimeType)
       let { id: taskId, taskRecordId } = this.dataflow || {}
       const { query } = this.$route
       if (query?.taskRecordId) {
         taskRecordId = query?.taskRecordId
         taskId = this.$route.params?.id
       }
-      let filter = {
+      const filter = {
         start,
         end,
         taskId,
-        taskRecordId
+        taskRecordId,
       }
       this.downloadLoading = true
       monitoringLogsApi
         .export(filter)
-        .then(data => {
+        .then((data) => {
           downloadBlob(data)
         })
         .catch(() => {
-          this.$message.error(i18n.t('packages_dag_components_log_xiazaishibai'))
+          this.$message.error(
+            i18n.t('packages_dag_components_log_xiazaishibai'),
+          )
         })
         .finally(() => {
           this.downloadLoading = false
@@ -910,14 +635,14 @@ export default {
         this.form = {
           level,
           intervalCeiling,
-          recordCeiling
+          recordCeiling,
         }
       }
       this.dialog = true
     },
 
     handleClose() {
-      const index = this.checkList.findIndex(t => t === 'DEBUG')
+      const index = this.checkList.indexOf('DEBUG')
       this.checkList.splice(index, 1)
       this.searchFnc()
       this.dialog = false
@@ -925,8 +650,8 @@ export default {
 
     handleSave() {
       const { form } = this
-      let params = {
-        level: form.level
+      const params = {
+        level: form.level,
       }
       if (form.level === 'DEBUG') {
         params.intervalCeiling = form.intervalCeiling
@@ -995,7 +720,11 @@ export default {
       const params = {
         className: 'ErrorCodeService',
         method: 'getErrorCodeWithDynamic',
-        args: [item.errorCode, i18n.locale === 'en' ? 'en' : 'cn', item.dynamicDescriptionParameters]
+        args: [
+          item.errorCode,
+          i18n.locale === 'en' ? 'en' : 'cn',
+          item.dynamicDescriptionParameters,
+        ],
       }
 
       this.codeDialog.data.errorStack = item.errorStack
@@ -1006,11 +735,10 @@ export default {
 
       proxyApi
         .call(params)
-        .then(data => {
+        .then((data) => {
           Object.assign(this.codeDialog.data, data)
 
           this.codeDialog.data.describe = data.describe || item.message
-
           this.codeDialog.visible = true
         })
         .catch(() => {
@@ -1023,8 +751,10 @@ export default {
     },
 
     command(command) {
-      const index = this.showCols.findIndex(t => t === command)
-      index > -1 ? this.showCols.splice(index, 1) : this.showCols.push(command)
+      const index = this.showCols.indexOf(command)
+      index !== -1
+        ? this.showCols.splice(index, 1)
+        : this.showCols.push(command)
     },
 
     handleCheckbox(flag, val) {
@@ -1039,7 +769,7 @@ export default {
 
     handleHideContent(data) {
       const { item = {} } = data || {}
-      const dom = this.$refs['icon' + item.id] || {}
+      const dom = this.$refs[`icon${item.id}`] || {}
       item.hideContent = dom.scrollHeight > dom.offsetHeight
       return item.hideContent
     },
@@ -1060,11 +790,13 @@ export default {
       this.initSteps()
 
       const blogData = await taskApi.downloadAnalyze(this.dataflow.id, {
-        cancelToken: this.analysisCancelSource.token
+        cancelToken: this.analysisCancelSource.token,
       })
 
       if (blogData.data.type === 'application/json') {
-        this.$message.error(this.$t('packages_business_connections_test_xiazaishibai'))
+        this.$message.error(
+          this.$t('packages_business_connections_test_xiazaishibai'),
+        )
         this.countUp.reset()
         this.downloadAnalysis.visible = false
         return
@@ -1083,7 +815,10 @@ export default {
     updateProgress(temp, val) {
       val = Number(val)
 
-      this.downloadAnalysis.currentStep = Math.min(Math.floor(val / 9), this.downloadAnalysis.steps.length - 1)
+      this.downloadAnalysis.currentStep = Math.min(
+        Math.floor(val / 9),
+        this.downloadAnalysis.steps.length - 1,
+      )
       this.downloadAnalysis.progress = val
     },
 
@@ -1093,10 +828,10 @@ export default {
       this.countUp = new CountUp({}, 99, {
         duration: 62,
         plugin: {
-          render: this.updateProgress
+          render: this.updateProgress,
         },
         useEasing: false,
-        onCompleteCallback: () => {}
+        onCompleteCallback: () => {},
       })
       this.countUp.start()
     },
@@ -1120,13 +855,14 @@ export default {
       window.open(
         this.$router.resolve({
           name: 'DataCapture',
-          params: { id: this.dataflow.id }
+          params: { id: this.dataflow.id },
         }).href,
-        `DataCapture-${this.dataflow.id}`
+        `DataCapture-${this.dataflow.id}`,
       )
     },
     handleCreateTicket() {
-      const errorCode = this.codeDialog.data.fullErrorCode || this.codeDialog.data.errorCode
+      const errorCode =
+        this.codeDialog.data.fullErrorCode || this.codeDialog.data.errorCode
 
       window.open(
         this.$router.resolve({
@@ -1139,20 +875,473 @@ export default {
                 description: `Error Code: ${errorCode}
 Module: ${this.codeDialog.data.module || ''}
 Describe: ${this.codeDialog.data.describe ? `\n${this.codeDialog.data.describe}` : ''}
-Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.errorStack}` : ''}`
-              })
-            )
-          }
-        }).href
+Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.errorStack}` : ''}`,
+              }),
+            ),
+          },
+        }).href,
       )
-    }
-  }
+    },
+  },
 }
 </script>
+
+<template>
+  <div
+    class="log-container flex justify-content-between"
+    :class="{ fullscreen }"
+  >
+    <NodeList
+      v-show="!hideFilter"
+      v-model:value="activeNodeId"
+      :label="$t('packages_dag_migration_consolepanel_quanburizhi')"
+      class="node-list border-end flex-shrink-0"
+      @change="changeItem"
+    />
+    <div class="main node-log-main flex-fill flex flex-column px-4 py-3">
+      <div class="flex align-items-center gap-3">
+        <TimeSelect
+          ref="timeSelect"
+          :options="timeOptions"
+          :range="[firstStartTime, lastStopTime || getTime()]"
+          @change="changeTime"
+        />
+        <ElInput
+          v-model="keyword"
+          class="search-input"
+          :placeholder="$t('packages_dag_components_log_qingshururizhi')"
+          clearable
+          style="width: 240px"
+          @input="searchFnc"
+        />
+
+        <el-button
+          :loading="downloadLoading"
+          class="min-w-0"
+          type="primary"
+          plain
+         
+          @click="handleDownload"
+        >
+          <VIcon>download</VIcon>
+        </el-button>
+
+        <ElButton
+          v-if="isDaas && !hideDownload"
+          :loading="downloadLoading"
+          type="warning"
+          plain
+          class="ml-0"
+          @click="handleDownloadAnalysis"
+          ><VIcon class="mr-1">download</VIcon
+          >{{ $t('packages_business_download_analysis_report') }}</ElButton
+        >
+
+        <el-button
+          v-feature="'dataScraping'"
+          class="min-w-0 ml-0"
+          type="primary"
+          plain
+         
+          @click="openDataCapture"
+          >{{ $t('public_data_capture') }}</el-button
+        >
+      </div>
+      <div class="level-line my-2 flex align-items-center">
+        <ElCheckboxGroup
+          v-model="checkList"
+          :disabled="loading"
+          :min="1"
+          class="inline-flex"
+          @change="searchFnc"
+        >
+          <ElCheckbox
+            v-for="item in checkItems"
+            :key="item.label"
+            :label="item.label"
+            @change="handleCheckbox(arguments[0], item.label)"
+            >{{ item.text }}
+          </ElCheckbox>
+        </ElCheckboxGroup>
+
+        <el-divider class="mx-4" direction="vertical" />
+
+        <ElCheckbox
+          v-model="switchData.timestamp"
+          @change="command('timestamp')"
+          >{{
+            $t('packages_business_logs_nodelog_xianshishijianchuo')
+          }}</ElCheckbox
+        >
+
+        <span
+          class="color-primary cursor-pointer ml-auto"
+          @click="handleFullScreen"
+        >
+          <VIcon class="mr-1">{{ fullscreen ? 'suoxiao' : 'fangda' }}</VIcon>
+          <span>{{
+            fullscreen
+              ? $t('packages_form_js_editor_exit_fullscreen')
+              : $t('packages_form_js_editor_fullscreen')
+          }}</span>
+        </span>
+      </div>
+      <div
+        v-loading="loading"
+        class="log-list flex-1 rounded-2"
+        style="height: 0"
+      >
+        <DynamicScroller
+          ref="virtualScroller"
+          :items="list"
+          key-field="id"
+          :min-item-size="30"
+          class="scroller px-2 py-1 h-100"
+          @scroll="scrollFnc"
+        >
+          <template #before>
+            <div
+              v-show="preLoading || showNoMore || !list.length"
+              class="before-scroll-content text-center font-color-light pb-2"
+            >
+              <div v-show="preLoading">
+                <el-icon>
+                  <el-icon-loading />
+                </el-icon>
+              </div>
+              <ElAlert
+                v-show="showNoMore"
+                :title="$t('packages_dag_customer_logs_no_more_data')"
+                type="info"
+                class="no-more__alert position-absolute py-1 px-2"
+              />
+              <VEmpty
+                v-if="!list.length"
+                :description="
+                  keyword
+                    ? $t('packages_dag_customer_logs_no_search_data')
+                    : $t('public_data_no_data')
+                "
+              />
+            </div>
+          </template>
+          <template #default="{ item, index, active }">
+            <DynamicScrollerItem
+              :item="item"
+              :active="active"
+              :data-index="index"
+              :size-dependencies="[
+                item.id,
+                item.message,
+                item.errorStack,
+                item.dataText,
+              ]"
+            >
+              <div class="log-line pr-6 font-color-light">
+                <div
+                  :ref="`icon${item.id}`"
+                  class="log-item"
+                  :class="{
+                    'hide-content cursor-pointer': handleHideContent(
+                      arguments[0],
+                      item,
+                    ),
+                  }"
+                  @click="handleLog(item)"
+                >
+                  <VIcon
+                    class="expand-icon mr-1"
+                    :class="{ 'rotate-90': item.expand }"
+                    >arrow-right</VIcon
+                  >
+                  <span
+                    v-if="showCols.includes('timestamp')"
+                    class="font-color-slight"
+                    >[{{ item.timestampLabel }}]</span
+                  >
+                  <span
+                    v-if="item.errorCode"
+                    class="color-primary cursor-pointer mr-2 text-decoration-underline"
+                    @click.stop.prevent="handleCode(item)"
+                    >{{ item.fullErrorCode || item.errorCode }}</span
+                  >
+                  <span
+                    :class="colorMap[item.level.toUpperCase()]"
+                    v-html="item.message"
+                  />
+                  <ElLink
+                    v-if="
+                      item.level === 'ERROR' &&
+                      item.fullErrorCode === 'Task.ScheduleLimit'
+                    "
+                    type="primary"
+                    class="text-decoration-underline"
+                    @click="
+                      $emit('action', { ...item, ...{ type: 'ScheduleLimit' } })
+                    "
+                  >
+                    {{
+                      $t('packages_business_logs_nodelog_qingshengjidingyue')
+                    }}
+                  </ElLink>
+                </div>
+                <div v-if="item.expand" class="log-detail bg-color-normal p-3">
+                  <p v-if="item.message" class="mb-2 fw-bold font-color-dark">
+                    message:
+                  </p>
+                  <div
+                    v-if="item.message"
+                    class="mb-4 text-break"
+                    v-html="item.message"
+                  />
+                  <p
+                    v-if="item.errorStack"
+                    class="mb-2 fw-bold font-color-dark"
+                  >
+                    errorStack:
+                  </p>
+                  <div
+                    v-if="item.errorStack"
+                    class="text-break"
+                    v-html="item.errorStack"
+                  />
+                </div>
+              </div>
+            </DynamicScrollerItem>
+          </template>
+        </DynamicScroller>
+      </div>
+    </div>
+
+    <ElDialog
+      v-model="dialog"
+      :title="$t('packages_dag_components_log_rizhidengjishe')"
+      width="437px"
+      :close-on-click-modal="false"
+      :append-to-body="true"
+    >
+      <ElForm label-width="120px">
+        <ElFormItem
+          :label="$t('packages_dag_components_log_rizhijibie')"
+          prop="level"
+        >
+          <ElSelect v-model="form.level" style="width: 275px">
+            <ElOption
+              v-for="item in checkItems"
+              :key="item.label"
+              :label="item.text"
+              :value="item.label"
+            />
+          </ElSelect>
+        </ElFormItem>
+        <template v-if="form.level === 'DEBUG'">
+          <ElFormItem
+            :label="$t('packages_dag_components_log_debug')"
+            prop="param"
+          />
+          <ElFormItem
+            :label="$t('packages_dag_components_log_kaiqishichangmiao')"
+            prop="start"
+          >
+            <ElInput
+              v-model="form.intervalCeiling"
+              type="number"
+              style="width: 275px"
+            />
+          </ElFormItem>
+          <ElFormItem
+            :label="$t('packages_dag_components_log_zuidashijianshu')"
+            prop="max"
+          >
+            <ElInput
+              v-model="form.recordCeiling"
+              type="number"
+              style="width: 275px"
+            />
+          </ElFormItem>
+        </template>
+      </ElForm>
+      <template #footer>
+        <span class="dialog-footer">
+          <ElButton @click="handleClose">{{
+            $t('public_button_cancel')
+          }}</ElButton>
+          <ElButton
+            :disabled="saveLoading"
+            type="primary"
+            @click="handleSave"
+            >{{ $t('public_button_confirm') }}</ElButton
+          >
+        </span>
+      </template>
+    </ElDialog>
+
+    <ElDialog
+      v-model="codeDialog.visible"
+      width="80%"
+      class="max-w-1000 mt-25 --padding"
+      :close-on-click-modal="false"
+      append-to-body
+      @open="expandErrorMessage = false"
+    >
+      <template #header>
+        <div class="flex align-center gap-2">
+          <VIcon class="color-danger" size="18">circle-close-filled</VIcon>
+          <span class="fs-6 fw-sub">{{
+            codeDialog.data.fullErrorCode || codeDialog.data.errorCode
+          }}</span>
+        </div>
+      </template>
+
+      <div class="font-color-light">
+        <!--错误信息-->
+        <template v-if="codeDialog.data.describe">
+          <div class="fw-sub mb-3 font-color-dark">
+            {{ $t('packages_business_milestone_list_cuowuxinxi') }}
+          </div>
+          <div
+            class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
+            v-html="codeDialog.data.describe"
+          />
+        </template>
+
+        <!--错误原因/描述-->
+        <template v-if="codeDialog.data.dynamicDescribe">
+          <div class="fw-sub mb-3 font-color-dark">
+            {{ $t('public_task_reasons_for_error') }}
+          </div>
+          <div
+            class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
+            v-html="codeDialog.data.dynamicDescribe"
+          />
+        </template>
+
+        <!--解决方案-->
+        <template v-if="codeDialog.data.solution">
+          <div class="fw-sub mb-3 font-color-dark">
+            {{ $t('packages_business_solution') }}
+          </div>
+          <div
+            class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
+            v-html="codeDialog.data.solution"
+          />
+        </template>
+
+        <!--See Also-->
+        <template
+          v-if="
+            !hideSeeAlso &&
+            codeDialog.data.seeAlso &&
+            codeDialog.data.seeAlso.length
+          "
+        >
+          <div class="fw-sub mb-3 font-color-dark">See Also</div>
+          <ol class="pl-6 mb-6">
+            <li
+              v-for="(item, index) in codeDialog.data.seeAlso"
+              :key="index"
+              class="list-decimal"
+            >
+              <ElLink
+                type="primary"
+                class="text-decoration-underline"
+                @click="handleLink(item)"
+                >{{ item }}</ElLink
+              >
+            </li>
+          </ol>
+        </template>
+
+        <!--错误堆栈-->
+        <template v-if="codeDialog.data.errorStack">
+          <div class="mb-3 flex justify-content-between align-items-end">
+            <span class="fw-sub font-color-dark">{{
+              $t('packages_business_logs_nodelog_cuowuduizhan')
+            }}</span>
+          </div>
+          <div
+            class="error-stack-pre-wrap position-relative font-color-light rounded-lg"
+          >
+            <div class="position-absolute end-0 top-0 px-2 pt-1">
+              <el-button
+                text type="primary"
+                class="px-1 py-0.5 font-color-dark"
+                @click="handleCopyStack(codeDialog.data.errorStack)"
+              >
+                <VIcon class="mr-1">copy</VIcon>
+                <span class="">{{ $t('public_button_copy') }}</span> </el-button
+              ><el-button
+                text type="primary"
+                class="px-1 py-0.5 font-color-dark ml-2"
+                @click="expandErrorMessage = !expandErrorMessage"
+              >
+                {{
+                  expandErrorMessage
+                    ? $t('packages_business_verification_details_shouqi')
+                    : $t('public_button_expand')
+                }}<i
+                  class="el-icon-arrow-down is-rotate ml-1"
+                  :class="{ 'is-active': expandErrorMessage }"
+                />
+              </el-button>
+            </div>
+
+            <pre
+              class="m-0 p-4 pt-0 mt-6 font-color-dark"
+              :class="expandErrorMessage ? '' : 'truncate-two-lines'"
+              style="max-height: 400px; font-size: 13px; overflow-x: auto"
+              >{{ codeDialog.data.errorStack }}</pre
+            >
+          </div>
+        </template>
+      </div>
+
+      <template v-if="!isDaas" #footer>
+        <ElButton @click="codeDialog.visible = false">{{
+          $t('public_button_cancel')
+        }}</ElButton>
+        <ElButton type="primary" @click="handleCreateTicket">{{
+          $t('dfs_user_contactus_chuangjiangongdan')
+        }}</ElButton>
+      </template>
+    </ElDialog>
+
+    <ElDialog
+      v-model="downloadAnalysis.visible"
+      width="437px"
+      custom-class="pro-dialog"
+      :close-on-click-modal="false"
+      :append-to-body="true"
+      @close="onClose"
+    >
+      <template #title>
+        <div class="el-dialog__title">
+          {{ $t('packages_business_download_analysis_report_title') }}
+        </div>
+      </template>
+      <div class="pb-6 flex flex-column gap-4">
+        <div class="fs-7 font-color-sslight">
+          {{ $t('packages_business_download_analysis_report_desc') }}
+        </div>
+        <div>
+          {{ downloadAnalysis.steps[downloadAnalysis.currentStep].label }},
+          {{ $t('packages_business_long_wait') }}<span class="dotting" />
+        </div>
+        <el-progress
+          :stroke-width="9"
+          :percentage="downloadAnalysis.progress"
+        />
+      </div>
+    </ElDialog>
+
+    <Download v-model:visible="downloadDialog" :dataflow="dataflow" />
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .log-container {
   height: inherit;
+
   &.fullscreen {
     position: fixed;
     top: 0;
@@ -1163,104 +1352,124 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
     background: #fff;
   }
 }
+
 .filter-items {
   width: 200px;
   user-select: none;
   overflow-y: auto;
 }
+
 .filter-items__item {
   padding: 0 16px;
   height: 40px;
   cursor: pointer;
+
   &.active {
     background: rgba(44, 101, 255, 0.05);
   }
 }
+
 .main {
   width: 0;
 }
+
 .white-space-pre {
   white-space: pre-wrap;
   word-break: break-all;
 }
+
 .node-list {
   width: 224px;
-  ::v-deep {
+
+  :deep(.error-icon) {
+    display: none;
+  }
+
+  :deep(.error-node) {
     .error-icon {
-      display: none;
-    }
-    .error-node {
-      .error-icon {
-        display: inline-flex;
-      }
+      display: inline-flex;
     }
   }
 }
 
 .log-list {
   background-color: rgba(229, 236, 255, 0.22);
-  ::v-deep {
-    .log-line {
-      padding: 8px 16px;
-      background-color: #fff;
-      border-bottom: 1px solid #ebeef5;
-      width: 100%;
-      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-      .log-item {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
+
+  :deep(.log-line) {
+    padding: 8px 16px;
+    background-color: #fff;
+    border-bottom: 1px solid #ebeef5;
+    width: 100%;
+    font-family:
+      'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+
+    .log-item {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+
+      .expand-icon {
+        display: none;
+      }
+
+      &.hide-content {
         .expand-icon {
-          display: none;
-        }
-        &.hide-content {
-          .expand-icon {
-            display: inline-flex;
-          }
+          display: inline-flex;
         }
       }
-      .info-level {
-        color: #c9cdd4;
-      }
-      .warn-level {
-        color: #d5760e;
-      }
-      .error-level,
-      .fatal-level {
-        color: #d44d4d;
-      }
-      .debug-level {
-        color: #178061;
-      }
     }
-    .highlight-bg-color {
-      background-color: #ff0;
+
+    .info-level {
+      color: #c9cdd4;
     }
-    .empty-wrap {
-      margin: 24px 0;
+
+    .warn-level {
+      color: #d5760e;
     }
-    .vue-recycle-scroller.direction-vertical .vue-recycle-scroller__item-wrapper {
-      overflow: visible;
+
+    .error-level,
+    .fatal-level {
+      color: #d44d4d;
     }
-    .log__label {
-      white-space: nowrap;
+
+    .debug-level {
+      color: #178061;
     }
   }
+
+  :deep(.highlight-bg-color) {
+    background-color: #ff0;
+  }
+
+  :deep(.empty-wrap) {
+    margin: 24px 0;
+  }
+
+  :deep(
+    .vue-recycle-scroller.direction-vertical .vue-recycle-scroller__item-wrapper
+  ) {
+    overflow: visible;
+  }
+
+  :deep(.log__label) {
+    white-space: nowrap;
+  }
 }
+
 .no-more__alert {
   margin-left: -70px;
   top: 4px;
   left: 50%;
   width: 140px;
   z-index: 2;
-  ::v-deep {
-    .el-alert__closebtn {
-      top: 7px;
-    }
+
+  :deep(.el-alert__closebtn) {
+    top: 7px;
   }
 }
+
 .node-list-item {
   line-height: 32px;
   border-radius: 6px;
@@ -1274,7 +1483,7 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
 
 .icon-btn {
   &:hover {
-    background-color: map-get($bgColor, hover);
+    background-color: map.get($bgColor, hover);
   }
 }
 

@@ -10,16 +10,17 @@
             </ElOption>
           </ElSelect>
         </div>
-        <div class="p-2">
-          <ElInput
-            v-model="searchTable"
-            size="mini"
-            :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
-            prefix-icon="el-icon-search"
-            clearable
-            @input="handleSearchTable"
-          ></ElInput>
-        </div>
+        <ElInput
+          v-model="searchTable"
+          :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
+          clearable
+          class="p-2"
+          @input="handleSearchTable"
+        >
+          <template #suffix>
+            <ElIcon><ElIconSearch /></ElIcon>
+          </template>
+        </ElInput>
         <div v-loading="navLoading" class="nav-list flex-fill font-color-normal">
           <ul v-if="navList.length">
             <li
@@ -33,18 +34,20 @@
                 <OverflowTooltip class="w-100 text-truncate target" :text="item.name" placement="right" />
               </div>
               <!--<ElTooltip
-                v-if="item.matchedDataTypeLevel === 'error'"
-                placement="top"
-                transition="tooltip-fade-in"
-                :content="$t('packages_dag_field_inference_main_gaibiaocunzaibu')"
-                class="mr-1"
-              >
-                <VIcon size="16" class="color-warning">warning</VIcon>
-              </ElTooltip>-->
+                      v-if="item.matchedDataTypeLevel === 'error'"
+                      placement="top"
+                      transition="tooltip-fade-in"
+                      :content="$t('packages_dag_field_inference_main_gaibiaocunzaibu')"
+                      class="mr-1"
+                    >
+                      <VIcon size="16" class="color-warning">warning</VIcon>
+                    </ElTooltip>-->
             </li>
           </ul>
           <div v-else class="task-form-left__ul flex flex-column align-items-center">
-            <div class="table__empty_img" style="margin-top: 22%"><img style="" :src="noData" /></div>
+            <div class="table__empty_img" style="margin-top: 22%">
+              <img style="" :src="noData" />
+            </div>
             <div class="noData">{{ $t('public_data_no_data') }}</div>
           </div>
         </div>
@@ -52,8 +55,8 @@
           small
           class="flex mt-3 p-0 din-font mx-auto"
           layout="total, prev, slot, next"
-          :current-page.sync="page.current"
-          :page-size.sync="page.size"
+          v-model:current-page="page.current"
+          v-model:page-size="page.size"
           :total="page.total"
           :pager-count="5"
           @current-change="loadData"
@@ -69,16 +72,12 @@
         <div>
           <div class="flex align-center">
             <span class="font-color-dark">{{ $t('packages_dag_nodes_table_gengxintiaojianzi') }}</span>
-            <ElTooltip
-              transition="tooltip-fade-in"
-              :content="$t('packages_dag_field_inference_main_xuanzemorengeng')"
-              class="ml-2"
-            >
-              <VIcon size="16" class="color-primary">info</VIcon>
+            <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_field_inference_main_xuanzemorengeng')">
+              <VIcon size="16" class="color-primary ml-1">info</VIcon>
             </ElTooltip>
           </div>
-
-          <ElSelect
+          <!-- formily 上下文使用 dataSource 属性 -->
+          <FieldSelect
             v-model="updateList"
             :disabled="navLoading || disabled"
             allowCreate
@@ -86,28 +85,24 @@
             filterable
             :placeholder="$t('public_select_option_default')"
             :class="['update-list-select', { error: isErrorSelect }]"
+            :dataSource="fieldOptions"
             @visible-change="handleVisibleChange"
             @remove-tag="handleRemoveTag"
-          >
-            <ElOption v-for="(fItem, fIndex) in selected.fields" :key="fIndex" :value="fItem.field_name">
-              <div class="flex align-center">
-                {{ fItem.field_name }}
-                <VIcon v-if="fItem.primary_key_position > 0" size="12" class="text-warning ml-1"> key </VIcon>
-              </div>
-            </ElOption>
-          </ElSelect>
+          />
         </div>
         <div class="flex-fill flex flex-column bg-white mt-4 rounded-4">
           <div class="flex align-items-center p-2 font-color-dark">
             <ElInput
               v-model="searchField"
               :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
-              size="mini"
-              suffix-icon="el-icon-search"
               clearable
               @input="handleSearchField"
-            ></ElInput>
-            <ElButton size="mini" plain class="btn-refresh ml-2" @click="refresh">
+            >
+              <template #suffix>
+                <ElIcon><ElIconSearch /></ElIcon>
+              </template>
+            </ElInput>
+            <ElButton plain class="btn-refresh ml-2" @click="refresh">
               <VIcon>refresh</VIcon>
             </ElButton>
           </div>
@@ -115,7 +110,7 @@
             ref="list"
             :data="selected"
             :show-columns="['index', 'field_name', 'data_type', 'operation']"
-            :fieldChangeRules.sync="fieldChangeRules"
+            v-model:fieldChangeRules="fieldChangeRules"
             :dataTypesJson="dataTypesJson"
             :readonly="readonly"
             ignore-error
@@ -127,25 +122,25 @@
       </div>
     </div>
     <Dialog
-      :visible.sync="visible"
+      v-model:visible="visible"
       :form="form"
-      :fieldChangeRules.sync="fieldChangeRules"
+      v-model:fieldChangeRules="fieldChangeRules"
       :readonly="readonly"
     ></Dialog>
   </div>
 </template>
 
 <script>
-import i18n from '@tap/i18n'
-
 import { mapGetters, mapState } from 'vuex'
-import { debounce, cloneDeep } from 'lodash'
+import { debounce, cloneDeep } from 'lodash-es'
 
+import i18n from '@tap/i18n'
 import noData from '@tap/assets/images/noData.png'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
-import { getCanUseDataTypes, getMatchedDataTypeLevel } from '@tap/dag/src/util'
 import { metadataInstancesApi, databaseTypesApi } from '@tap/api'
+import { FieldSelect, mapFieldsData } from '@tap/form'
 
+import { getCanUseDataTypes, getMatchedDataTypeLevel } from '../../../util'
 import mixins from './mixins'
 import List from './List'
 import Dialog from './Dialog'
@@ -153,7 +148,7 @@ import Dialog from './Dialog'
 export default {
   name: 'FieldInference',
 
-  components: { OverflowTooltip, List, Dialog },
+  components: { OverflowTooltip, List, Dialog, FieldSelect },
 
   mixins: [mixins],
 
@@ -161,7 +156,7 @@ export default {
     form: Object,
     readOnly: Boolean,
     disabled: Boolean,
-    uniqueIndexEnable: Boolean
+    uniqueIndexEnable: Boolean,
   },
 
   data() {
@@ -175,7 +170,7 @@ export default {
         size: 10,
         current: 1,
         total: 0,
-        count: 1
+        count: 1,
       },
       searchTable: '',
       searchField: '',
@@ -189,22 +184,23 @@ export default {
         {
           type: '',
           title: i18n.t('packages_dag_field_inference_main_quanbubiao'),
-          total: 0
+          total: 0,
         },
         {
           type: 'updateEx',
           title: i18n.t('packages_dag_field_inference_main_gengxintiaojianyi'),
-          total: 0
+          total: 0,
         },
         {
           type: 'transformEx',
           title: i18n.t('packages_dag_field_inference_main_tuiyanyichang'),
-          total: 0
-        }
+          total: 0,
+        },
       ],
       transformExNum: 0,
       updateExNum: 0,
-      dataTypesJson: {}
+      dataTypesJson: {},
+      fieldOptions: []
     }
   },
 
@@ -212,7 +208,7 @@ export default {
     ...mapGetters('dataflow', ['stateIsReadonly']),
 
     batchRuleCounts() {
-      return this.fieldChangeRules.filter(t => t.scope === 'Node').length
+      return this.fieldChangeRules.filter((t) => t.scope === 'Node').length
     },
 
     readonly() {
@@ -222,7 +218,7 @@ export default {
     isErrorSelect() {
       const { hasPrimaryKey, hasUnionIndex, hasUpdateField } = this.selected || {}
       return !(hasPrimaryKey || hasUnionIndex || hasUpdateField)
-    }
+    },
   },
 
   mounted() {
@@ -236,7 +232,7 @@ export default {
         this.activeClassification = ''
         this.loadData()
       }
-    }
+    },
   },
 
   methods: {
@@ -250,11 +246,11 @@ export default {
       this.dataTypesJson = pdkHashData ? JSON.parse(pdkHashData?.expression || '{}') : {}
       if (rules.length) {
         let allTableFields = []
-        this.navList.forEach(el => {
-          allTableFields.push(...el.fields.filter(t => !!t.changeRuleId))
+        this.navList.forEach((el) => {
+          allTableFields.push(...el.fields.filter((t) => !!t.changeRuleId))
         })
-        rules.forEach(el => {
-          const f = allTableFields.find(t => t.changeRuleId === el.id)
+        rules.forEach((el) => {
+          const f = allTableFields.find((t) => t.changeRuleId === el.id)
           if (f && el.accept !== f.dataTypeTemp) {
             el.accept = f.dataTypeTemp
           }
@@ -269,33 +265,33 @@ export default {
         page: current,
         pageSize: size,
         tableFilter: tableFilterRegex,
-        filterType: this.activeClassification
+        filterType: this.activeClassification,
       })
       const { items, total } = res
       this.updateExNum = res.updateExNum
       this.transformExNum = res.transformExNum
-      this.navList = items.map(t => {
+      this.navList = items.map((t) => {
         const { fields = [], findPossibleDataTypes = {} } = t
-        fields.forEach(el => {
+        fields.forEach((el) => {
           const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
           el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
           el.matchedDataTypeLevel = getMatchedDataTypeLevel(
             el,
             el.canUseDataTypes,
             this.fieldChangeRules,
-            findPossibleDataTypes
+            findPossibleDataTypes,
           )
         })
-        t.matchedDataTypeLevel = fields.some(f => f.matchedDataTypeLevel === 'error')
+        t.matchedDataTypeLevel = fields.some((f) => f.matchedDataTypeLevel === 'error')
           ? 'error'
-          : fields.some(f => f.matchedDataTypeLevel === 'warning')
-          ? 'warning'
-          : ''
+          : fields.some((f) => f.matchedDataTypeLevel === 'warning')
+            ? 'warning'
+            : ''
         return t
       })
 
       this.page.total = total
-      this.tableClassification.forEach(el => {
+      this.tableClassification.forEach((el) => {
         if (!el.type) {
           el.total = res.wholeNum
         } else {
@@ -322,12 +318,16 @@ export default {
       let fields = item?.fields
       const findPossibleDataTypes = item?.findPossibleDataTypes || {}
       if (this.searchField) {
-        fields = item.fields.filter(t => t.field_name.toLowerCase().includes(this.searchField?.toLowerCase()))
+        fields = item.fields.filter((t) => t.field_name.toLowerCase().includes(this.searchField?.toLowerCase()))
       }
       fields = await this.getCurrentTableFields(item, this.fieldChangeRules)
       this.selected = Object.assign({}, item, { fields, findPossibleDataTypes })
       this.updateList = this.updateConditionFieldMap[this.selected.name] || []
       this.fieldsLoading = false
+
+      const { fields: newFields } = mapFieldsData(this.selected)
+      this.fieldOptions = newFields
+      this.selected.fields = newFields
     },
 
     handleSelect(index = 0) {
@@ -342,8 +342,8 @@ export default {
     rollbackAll() {
       this.$confirm(i18n.t('packages_form_field_inference_main_ninquerenyaoquan'), '', {
         type: 'warning',
-        closeOnClickModal: false
-      }).then(resFlag => {
+        closeOnClickModal: false,
+      }).then((resFlag) => {
         if (resFlag) {
           this.fieldChangeRules = []
           this.handleUpdate()
@@ -384,8 +384,8 @@ export default {
     },
 
     updateSelectedAllFields(fields = []) {
-      this.selected.fields.forEach(t => {
-        const f = fields.find(el => el.field_name === t.field_name)
+      this.selected.fields.forEach((t) => {
+        const f = fields.find((el) => el.field_name === t.field_name)
         if (f) {
           t.data_type = f.data_type
           t.changeRuleId = f.changeRuleId
@@ -397,20 +397,22 @@ export default {
       const { qualified_name, nodeId, source = {}, fields = [] } = item
       const { database_type } = source
       const params = {
-        rules: rules.filter(t => t.namespace.length === 1 || t.namespace.includes(qualified_name)),
+        rules: rules.filter((t) => t.namespace.length === 1 || t.namespace.includes(qualified_name)),
         qualifiedName: qualified_name,
         nodeId,
         databaseType: database_type,
-        fields
+        fields,
       }
-      const data = (await metadataInstancesApi.multiTransform(params)) || { fields: [] }
+      const data = (await metadataInstancesApi.multiTransform(params)) || {
+        fields: [],
+      }
       return data.fields.length ? data.fields : fields
     },
 
     changeUniqueIndexEnable(val) {
       this.form.setValuesIn('uniqueIndexEnable', val)
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -437,16 +439,16 @@ export default {
 .nav-list {
   overflow: hidden auto;
   li {
-    background-color: map-get($bgColor, white);
+    background-color: map.get($bgColor, white);
     box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
-    border-bottom: 1px solid map-get($borderColor, light);
+    border-bottom: 1px solid map.get($borderColor, light);
     border-left: 2px solid transparent;
     &:hover,
     &.active {
-      background: map-get($bgColor, disactive);
+      background: map.get($bgColor, disactive);
       cursor: pointer;
-      color: map-get($color, primary);
-      border-left-color: map-get($color, primary);
+      color: map.get($color, primary);
+      border-left-color: map.get($color, primary);
     }
     .task-form-text-box {
       //width: 140px;
@@ -476,16 +478,14 @@ export default {
   font-size: 16px;
   &:hover,
   &.is-plain:focus:hover {
-    border-color: map-get($color, primary);
-    background-color: map-get($color, white);
+    border-color: map.get($color, primary);
+    background-color: map.get($color, white);
   }
 }
 .content__list {
   height: 0;
-  ::v-deep {
-    .el-table th.el-table__cell {
-      background-color: #ebeef5;
-    }
+  :deep(.el-table th.el-table__cell) {
+    background-color: #ebeef5;
   }
 }
 .page__current {
@@ -493,44 +493,39 @@ export default {
   height: 22px;
   font-size: 14px;
   font-weight: 400;
-  color: map-get($color, primary);
+  color: map.get($color, primary);
   line-height: 22px;
-  background-color: map-get($bgColor, pageCount);
+  background-color: map.get($bgColor, pageCount);
 }
 .nav-filter__list {
   background-color: #e5e6eb;
-  .el-select {
-    ::v-deep {
-      .el-input {
-        .el-input__inner {
-          background-color: #e5e6eb;
-          border-color: #e5e6eb;
-          color: map-get($fontColor, dark);
+  /*.el-select {
+    :deep(.el-input) {
+      .el-input__inner {
+        background-color: #e5e6eb;
+        border-color: #e5e6eb;
+        color: map.get($fontColor, dark);
 
-          &:hover {
-            background-color: #fff;
-            border-color: map-get($color, primary);
-          }
-        }
-        .el-select__caret {
-          color: map-get($fontColor, dark);
+        &:hover {
+          background-color: #fff;
+          border-color: map.get($color, primary);
         }
       }
+      .el-select__caret {
+        color: map.get($fontColor, dark);
+      }
     }
-  }
+  }*/
 }
 .nav-filter__item {
   &.active {
-    background: map-get($bgColor, disactive);
+    background: map.get($bgColor, disactive);
   }
 }
-
 .update-list-select {
   &.error {
-    ::v-deep {
-      .el-input__inner {
-        border-color: map-get($color, danger);
-      }
+    :deep(.el-input__inner) {
+      border-color: map.get($color, danger);
     }
   }
 }

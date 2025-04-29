@@ -5,9 +5,9 @@ import dayjs from 'dayjs'
 export function setPermission(list) {
   let permissions = []
   if (list) {
-    list.forEach(permission => {
+    list.forEach((permission) => {
       if (permission.resources && permission.resources.length > 0) {
-        permission.resources.forEach(res => {
+        permission.resources.forEach((res) => {
           // if (res.type === 'page')
           permissions.push(res)
         })
@@ -17,13 +17,7 @@ export function setPermission(list) {
   sessionStorage.setItem('tapdata_permissions', JSON.stringify(permissions))
   return permissions
 }
-// export const getConnectionTypeDialogImg = function (type) {
-//   try {
-//     return require(`./assets/icons/node/${type}.svg`)
-//   } catch (e) {
-//     return null
-//   }
-// }
+
 export function signOut() {
   sessionStorage.removeItem('tapdata_permissions')
   Cookie.remove('xToken')
@@ -38,7 +32,7 @@ export function signOut() {
     top.window.location.href = '/login'
   } else {
     window.App.$router.push({
-      name: 'login'
+      name: 'login',
     })
   }
 }
@@ -86,7 +80,7 @@ const CLASSTYPES = [
   'Date',
   'RegExp',
   'Object',
-  'Error'
+  'Error',
 ]
 
 const CLASS2TYPE = CLASSTYPES.reduce((obj, t) => ((obj[`[object ${t}]`] = t.toLowerCase()), obj), {})
@@ -162,7 +156,7 @@ export const os = (function () {
     isIPhone,
     isAndroid,
     isWeixin,
-    isPc
+    isPc,
   }
 })()
 
@@ -220,21 +214,6 @@ export function downloadJson(data, name = '') {
   openUrl(window.URL.createObjectURL(blob), '_blank', fileName)
 }
 
-export const getConnectionTypeImg = function (type) {
-  try {
-    return require(`./assets/icons/node/${type}.svg`)
-  } catch (e) {
-    return null
-  }
-}
-export const getConnectionTypeDialogImg = function (type) {
-  try {
-    return require(`./assets/icons/node/${type}.svg`)
-  } catch (e) {
-    return null
-  }
-}
-
 export function dec2hex(dec) {
   return ('0' + dec.toString(16)).substr(-2)
 }
@@ -247,7 +226,7 @@ export function generateId(len = 8) {
 }
 
 // 转base64
-export const urlToBase64 = url => {
+export const urlToBase64 = (url) => {
   return new Promise((resolve, reject) => {
     let image = new Image()
     image.onload = function () {
@@ -287,13 +266,13 @@ export function toLowerCase(str = '') {
 // 驼峰命名转蛇形命名
 // 处理逻辑：将源字段名中非首字母的大写字母前增加下划线_进行连接，并将所有字母转换为小写
 export function camelToSnake(camelStr) {
-  return camelStr.replace(/[A-Z]/g, match => '_' + match.toLowerCase()).toLowerCase()
+  return camelStr.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase()).toLowerCase()
 }
 
 // 驼峰命名转蛇形命名
 // 处理逻辑：将源字段名中非首字母的大写字母前增加下划线_进行连接，并将所有字母转换为小写
 export function snakeToCamel(snakeStr) {
-  return snakeStr.replace(/_[a-z]/g, match => match.charAt(1).toUpperCase())
+  return snakeStr.replace(/_[a-z]/g, (match) => match.charAt(1).toUpperCase())
 }
 
 export function onCopy(value) {
@@ -314,7 +293,7 @@ export function onCopy(value) {
   document.body.removeChild(input)
 }
 
-export async function copyToClipboard(textToCopy) {
+export async function copyToClipboard(textToCopy, context) {
   // Navigator clipboard api needs a secure context (https)
   if (navigator.clipboard && window.isSecureContext) {
     await navigator.clipboard.writeText(textToCopy)
@@ -327,16 +306,17 @@ export async function copyToClipboard(textToCopy) {
     textArea.style.position = 'absolute'
     textArea.style.left = '-999999px'
 
-    document.body.prepend(textArea)
+    context = context || document.body
+    context.prepend(textArea)
     textArea.select()
 
     try {
       document.execCommand('copy')
     } catch (error) {
       console.error(error)
-    } finally {
-      textArea.remove()
     }
+
+    context.removeChild(textArea)
   }
 }
 

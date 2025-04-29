@@ -10,7 +10,7 @@ import VerificationDetails from './verification/Details'
 import VerificationHistory from './verification/History'
 import VerificationResult from './verification/Result'
 import AlarmSetting from './setting/AlarmSetting'
-import AlarmNotification from './setting/AlarmNotification'
+import AlarmNotification from './setting/AlarmNotification.vue'
 import CustomNodeList from './custom-node/List'
 import SharedMiningList from './shared-mining/List'
 import DataServerList from './data-server/List'
@@ -45,7 +45,7 @@ export {
   SharedCacheForm,
   ApiApplicationList,
   ExternalStorageList,
-  NoticeList
+  NoticeList,
 }
 
 export * from './connections/util'

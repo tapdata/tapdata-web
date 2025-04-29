@@ -5,46 +5,43 @@
         value
       }}</span>
       <ElLink class="inline-input-link" style="margin-left: 5px" @click="editing = true">
-        <VIcon color="#999" v-bind="iconConfig">edit-outline</VIcon>
+        <VIcon v-bind="iconConfig" color="#999">edit-outline</VIcon>
       </ElLink>
     </span>
     <span class="inline-input-body" v-show="editing">
-      <ElTooltip manual effect="dark" :content="tooltip" placement="top-start" :value="disabled">
+      <ElTooltip manual effect="dark" :content="tooltip" placement="top-start" :visible="disabled">
         <ElInput
+          v-bind="inputProps"
           class="input"
           :class="[{ 'valid-input': disabled }, 'block']"
-          size="mini"
           :style="inputStyle"
           v-model="inputValue"
-          v-bind="inputProps"
         ></ElInput>
       </ElTooltip>
       <template v-if="type === 'icon'">
-        <ElButton class="icon-button ml-4" size="medium" :disabled="disabled" @click="save"
-          ><VIcon size="12">check</VIcon></ElButton
-        >
-        <ElButton class="icon-button ml-2" size="medium" @click="cancel"><VIcon size="12">close</VIcon></ElButton>
+        <ElButton class="icon-button ml-4" :disabled="disabled" @click="save"><VIcon size="12">check</VIcon></ElButton>
+        <ElButton class="icon-button ml-2" @click="cancel"><VIcon size="12">close</VIcon></ElButton>
       </template>
       <template v-else>
         <ElButton
           class="inline-input-button"
           style="margin-left: 10px"
           type="primary"
-          size="mini"
           :disabled="disabled"
           @click="save"
           >{{ $t('public_button_save') }}</ElButton
         >
-        <ElButton class="inline-input-button" size="mini" @click="cancel">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton class="inline-input-button" @click="cancel">{{ $t('public_button_cancel') }}</ElButton>
       </template>
     </span>
   </div>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 
-import { VIcon } from '@tap/component'
+import VIcon from './base/VIcon.vue'
 export default {
   components: { VIcon },
   props: {
@@ -56,17 +53,17 @@ export default {
     inputProps: Object,
     min: {
       type: Number,
-      default: 1
+      default: 1,
     },
     max: {
       type: Number,
-      default: 32
-    }
+      default: 32,
+    },
   },
   data() {
     return {
       editing: false,
-      inputValue: ''
+      inputValue: '',
     }
   },
   computed: {
@@ -81,15 +78,18 @@ export default {
     },
     tooltip() {
       let { min, max } = this
-      return i18n.t('packages_component_src_inlineinput_zifuchangduxian', { val1: min, val2: max })
-    }
+      return i18n.t('packages_component_src_inlineinput_zifuchangduxian', {
+        val1: min,
+        val2: max,
+      })
+    },
   },
   watch: {
     editing(val) {
       if (val) {
         this.inputValue = this.value
       }
-    }
+    },
   },
   methods: {
     save() {
@@ -97,12 +97,13 @@ export default {
       if (this.inputValue === this.value) {
         return
       }
-      this.$emit('save', this.inputValue)
+      $emit(this, 'save', this.inputValue)
     },
     cancel() {
       this.editing = false
-    }
-  }
+    },
+  },
+  emits: ['click-text', 'save', 'update:value', , , 'update:value'],
 }
 </script>
 

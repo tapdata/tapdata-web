@@ -1,61 +1,93 @@
+import { transformComponent } from '@formily/element-plus/lib/__builtins__/shared'
 import { connect, mapProps } from '@formily/vue'
-
-import type { Switch as ElSwitchProps } from 'element-ui'
-import { Switch as ElSwitch, Popconfirm } from 'element-ui'
-import { defineComponent, ref } from '@vue/composition-api'
+import { set } from 'ace-builds-internal/config'
+import { ElPopconfirm, ElSwitch } from 'element-plus'
+import { defineComponent, reactive } from 'vue'
 import './style.scss'
+export type SwitchProps = typeof ElSwitch
+
+const TransformElSwitch = transformComponent<SwitchProps>(ElSwitch, {
+  change: 'update:modelValue',
+})
 
 export const Switch = connect(
   defineComponent({
     props: {
       value: [Boolean, String, Number],
       confirm: {
-        type: Object
-      }
+        type: Object,
+      },
     },
-    setup(props, { emit, attrs, listeners }) {
+    emits: ['change', 'update:value'],
+    setup(props, { emit, attrs }) {
       const onConfirm = () => {
-        emit('change', !Boolean(props.value))
+        state.resolve?.(true)
+      }
+
+      const onCancel = () => {
+        state.reject?.()
+      }
+
+      const state = reactive({
+        resolve: null,
+        reject: null,
+      })
+
+      const beforeChange = () => {
+        return new Promise((resolve, reject) => {
+          if (props.value) {
+            setTimeout(() => {
+              resolve(true)
+            }, 10)
+          } else {
+            state.resolve = resolve
+            state.reject = reject
+          }
+        })
       }
 
       return () => {
-        return props.confirm && !Boolean(props.value) ? (
-          <Popconfirm
-            disabled={attrs.disabled}
-            popperClass="pop-confirm"
-            props={{ ...props.confirm }}
+        return props.confirm ? (
+          <ElPopconfirm
+            disabled={props.value}
+            popper-style={{ maxWidth: '300px' }}
+            popper-class="pop-confirm"
+            {...props.confirm}
             onConfirm={onConfirm}
-            scopedSlots={{
+            onCancel={onCancel}
+          >
+            {{
               reference: () => (
-                <ElSwitch
-                  value={props.value}
-                  attrs={{ ...attrs }}
-                  on={{
-                    ...listeners,
-                    input: () => {},
-                    change: val => {
-                      if (!val) {
-                        emit('change', val)
-                      }
-                    }
+                <TransformElSwitch
+                  modelValue={props.value}
+                  {...attrs}
+                  before-change={beforeChange}
+                  onInput={() => {}}
+                  onChange={(val) => {
+                    emit('change', val)
+                    emit('update:value', val)
                   }}
                 />
-              )
+              ),
             }}
-          ></Popconfirm>
+          </ElPopconfirm>
         ) : (
-          <ElSwitch
-            value={props.value}
-            attrs={{ ...attrs }}
-            on={{
-              ...listeners
+          <TransformElSwitch
+            modelValue={props.value}
+            {...attrs}
+            onChange={(val) => {
+              emit('change', val)
+              emit('update:value', val)
             }}
           />
         )
       }
-    }
+    },
   }),
-  mapProps({ readOnly: 'readonly' })
+  mapProps({
+    value: 'modelValue',
+    readOnly: 'readonly',
+  }),
 )
 
 export default Switch

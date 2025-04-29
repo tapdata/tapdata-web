@@ -1,41 +1,9 @@
-<template>
-  <ElForm :model="form" :rules="rules" ref="filterForm" inline class="filter-form" @submit.native.prevent>
-    <ElFormItem
-      v-for="(item, index) in items"
-      :key="index"
-      :prop="item.key + ''"
-      :label="showItemLabel(item)"
-      :class="[item.class, item.type]"
-    >
-      <template v-if="item.slotName" v-slot="scope">
-        <slot :name="item.slotName" :row="scope.row"></slot>
-      </template>
-      <component
-        v-else
-        v-bind="getOptions(item)"
-        v-model="item.value"
-        :is="getComponent(item.type)"
-        :style="getStyle(item)"
-        @input="search(item, 'input')"
-        @change="search(item, 'change')"
-        @clear="fetch()"
-      >
-        <VIcon slot="suffix" size="14" class="inline-block">{{ item.icon }}</VIcon>
-      </component>
-    </ElFormItem>
-    <ElFormItem v-if="!hideRefresh">
-      <ElButton plain class="btn-refresh" @click="fetch">
-        <VIcon>refresh</VIcon>
-      </ElButton>
-    </ElFormItem>
-  </ElForm>
-</template>
-
 <script>
+import { $emit } from '../../utils/gogocodeTransfer'
 import { delayTrigger } from '@tap/shared'
 
 import VIcon from '../base/VIcon.vue'
-import SelectList from '../SelectList'
+import SelectList from './FilterItemSelect.vue'
 import PopInput from './PopInput'
 import DatetimeRange from './DatetimeRange'
 import Datetime from './Datetime'
@@ -43,15 +11,22 @@ import DarkSelect from '../DarkSelect'
 
 export default {
   name: 'FilterBar',
-  components: { VIcon, SelectList, PopInput, DatetimeRange, Datetime, DarkSelect },
+  components: {
+    VIcon,
+    SelectList,
+    PopInput,
+    DatetimeRange,
+    Datetime,
+    DarkSelect,
+  },
   props: {
     value: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
     items: {
       type: Array,
-      default: () => []
+      default: () => [],
       /**参考src/views/operation-log/List.vue:184
        * 1.支持表单的rules
        * 格式 rules: () => { let flag = false;//false表示没有错误 if (可取this.searchParams的值做条件) { flag = '报错信息' } return flag }
@@ -59,17 +34,17 @@ export default {
     },
     hideRefresh: {
       type: Boolean,
-      default: false
+      default: false,
     },
     changeRoute: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   data() {
     return {
       form: {},
-      rules: {}
+      rules: {},
     }
   },
   watch: {
@@ -77,11 +52,11 @@ export default {
       deep: true,
       handler(v) {
         v && this.init()
-      }
+      },
     },
     items() {
       this.init()
-    }
+    },
   },
   created() {
     this.init()
@@ -91,19 +66,19 @@ export default {
       let { value } = this
       this.getRules()
       let form = {}
-      this.items.forEach(el => {
-        if (hasOwnProperty.call(value, el.key)) {
-          this.$set(el, 'value', value[el.key])
+      this.items.forEach((el) => {
+        if (Object.hasOwnProperty.call(value, el.key)) {
+          el['value'] = value[el.key]
         }
         if (el.type === 'datetimerange') {
           if (el.key.indexOf(',') > -1) {
             let result = []
-            el.key.split(',').forEach(k => {
+            el.key.split(',').forEach((k) => {
               form[k] = value?.[k]
               result.push(form[k])
             })
             form[el.key] = result
-            this.$set(el, 'value', form[el.key])
+            el['value'] = form[el.key]
           } else {
             form[el.key] = el.value
           }
@@ -115,7 +90,7 @@ export default {
     },
     getValue() {
       let result = {}
-      this.items.forEach(el => {
+      this.items.forEach((el) => {
         if (el.value) {
           if (el.type === 'datetimerange') {
             if (el.key.indexOf(',') > -1) {
@@ -135,7 +110,7 @@ export default {
     },
     getRules() {
       let result = {}
-      this.items.forEach(el => {
+      this.items.forEach((el) => {
         if (el.rules) {
           if (typeof el.rules === 'function') {
             result[el.key] = [
@@ -147,8 +122,8 @@ export default {
                   } else {
                     callback()
                   }
-                }
-              }
+                },
+              },
             ]
           } else {
             result[el.key] = el.rules
@@ -161,26 +136,26 @@ export default {
       if (item.type === 'input' && target === 'change') {
         return
       }
-      this.$refs.filterForm.validate(valid => {
+      this.$refs.filterForm.validate((valid) => {
         if (valid) {
           delayTrigger(() => {
-            this.$emit('input', this.getValue())
-            this.$emit('search', this.getValue())
+            $emit(this, 'update:value', this.getValue())
+            $emit(this, 'search', this.getValue())
             this.changeRoute &&
               this.$router.replace({
                 name: this.$route.name,
                 params: this.$route.params,
-                query: this.getValue()
+                query: this.getValue(),
               })
           }, item.debounce)
         }
       })
     },
     fetch() {
-      this.$emit('input', this.getValue())
-      this.$refs.filterForm.validate(valid => {
+      $emit(this, 'update:value', this.getValue())
+      this.$refs.filterForm.validate((valid) => {
         if (valid) {
-          this.$emit('fetch')
+          $emit(this, 'fetch')
         }
       })
     },
@@ -198,7 +173,7 @@ export default {
         datetime: 'Datetime',
         datetimerange: 'DatetimeRange',
         'input-pop': 'PopInput',
-        input: 'ElInput'
+        input: ElInput,
       }
       return obj[type] || obj['input']
     },
@@ -216,14 +191,15 @@ export default {
     getOptions(item) {
       switch (item.type) {
         case 'select-inner':
+          // this.setDefaultValue(item, 'label', item.label)
           this.setDefaultValue(item, 'inner-label', item.label)
           this.setDefaultValue(item, 'last-page-text', '')
           this.setDefaultValue(item, 'none-border', !item.border)
           break
         case 'input':
-          this.setDefaultValue(item, 'debounce', 800)
-          this.setDefaultValue(item, 'suffix-icon', 'search')
-          this.setDefaultValue(item, 'class', 'filter-el-input')
+          // this.setDefaultValue(item, 'debounce', 800)
+          // this.setDefaultValue(item, 'suffix-icon', 'search')
+          // this.setDefaultValue(item, 'class', 'filter-el-input')
           break
         case 'input-pop':
           this.setDefaultValue(item, 'placement', 'bottom-start')
@@ -240,16 +216,51 @@ export default {
           break
       }
       this.setDefaultValue(item, 'clearable', true)
+      console.log(item.type, item)
       return item
     },
     setDefaultValue(item, key, val) {
       if (!hasOwnProperty.call(item, key)) {
         item[key] = val
       }
-    }
-  }
+    },
+  },
+  emits: ['update:value', 'search', 'fetch'],
 }
 </script>
+
+<template>
+  <ElForm :model="form" :rules="rules" ref="filterForm" inline class="filter-form" @submit.prevent>
+    <ElFormItem
+      v-for="(item, index) in items"
+      :key="index"
+      :prop="item.key + ''"
+      :label="showItemLabel(item)"
+      :class="[item.class, item.type]"
+    >
+      <template v-if="item.slotName" #default="scope">
+        <slot :name="item.slotName" :row="scope.row"></slot>
+      </template>
+      <template v-else #default>
+        <component
+          v-bind="getOptions(item)"
+          v-model="item.value"
+          :is="getComponent(item.type)"
+          :style="getStyle(item)"
+          @input="search(item, 'input')"
+          @change="search(item, 'change')"
+          @clear="fetch()"
+        ></component>
+      </template>
+    </ElFormItem>
+    <ElFormItem v-if="!hideRefresh">
+      <ElButton plain class="btn-refresh" @click="fetch">
+        <VIcon>refresh</VIcon>
+      </ElButton>
+    </ElFormItem>
+  </ElForm>
+</template>
+
 
 <style lang="scss" scoped>
 .btn-refresh {
@@ -260,30 +271,27 @@ export default {
   font-size: 16px;
 }
 .filter-form {
-  font-size: 12px;
-  ::v-deep {
-    .el-form-item__content {
-      font-size: 12px;
-      .el-input {
-        font-size: 12px;
-      }
-    }
-  }
+  //font-size: 12px;
+  //:deep(.el-form-item__content) {
+  //  font-size: 12px;
+  //  .el-input {
+  //    font-size: 12px;
+  //  }
+  //}
+
   .el-form-item {
     margin-bottom: 0;
     margin-right: 8px;
   }
 }
 .filter-el-input {
-  ::v-deep {
-    .el-input__inner {
-      &:hover {
-        border-color: map-get($borderColor, disable);
-      }
-      &:focus,
-      &:target {
-        border-color: map-get($color, primary);
-      }
+  :deep(.el-input__inner) {
+    &:hover {
+      border-color: map.get($borderColor, disable);
+    }
+    &:focus,
+    &:target {
+      border-color: map.get($color, primary);
     }
   }
 }

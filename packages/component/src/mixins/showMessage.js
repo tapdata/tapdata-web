@@ -19,7 +19,7 @@ export const showMessage = {
 					<i>${error.message}</i>
 					${this.collapsableDetails(error)}`,
         type: 'error',
-        duration: 0
+        duration: 0,
       })
     },
 
@@ -46,6 +46,6 @@ export const showMessage = {
 					<p>${node.name}: ${errorDescription}</p>
 				</details>
 			`
-    }
-  }
+    },
+  },
 }

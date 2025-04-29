@@ -48,7 +48,7 @@
               :id="NODE_PREFIX + n.id"
               :js-plumb-ins="jsPlumbIns"
               :class="{
-                'options-active': nodeMenu.typeId === n.id
+                'options-active': nodeMenu.typeId === n.id,
               }"
               @drag-start="onNodeDragStart"
               @drag-move="onNodeDragMove"
@@ -67,7 +67,7 @@
         <BottomPanel
           v-if="showBottomPanel"
           v-resize.top="{
-            minHeight: 328
+            minHeight: 328,
           }"
           :dataflow="dataflow"
           class="tabs-header__hidden"
@@ -85,7 +85,7 @@
 
       <!--   节点详情   -->
       <NodeDetailDialog
-        v-model="nodeDetailDialog"
+        v-model:value="nodeDetailDialog"
         :dataflow="dataflow"
         :node-id="nodeDetailDialogId"
         :timeFormat="timeFormat"
@@ -131,7 +131,7 @@ export default {
   name: 'MigrationMonitorViewer',
 
   directives: {
-    resize
+    resize,
   },
 
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
@@ -143,13 +143,13 @@ export default {
     PaperScroller,
     TopHeader,
     DFNode,
-    NodeDetailDialog
+    NodeDetailDialog,
   },
 
   data() {
     const dataflow = observable({
       id: '',
-      name: ''
+      name: '',
     })
 
     return {
@@ -170,7 +170,7 @@ export default {
         typeId: '',
         reference: null,
         data: null,
-        connectionData: {}
+        connectionData: {},
       },
 
       dataflow,
@@ -185,7 +185,7 @@ export default {
       nodeDetailDialog: false,
       nodeDetailDialogId: '',
       timeFormat: 'HH:mm:ss',
-      dagData: null
+      dagData: null,
     }
   },
 
@@ -193,7 +193,7 @@ export default {
     formScope() {
       return {
         ...this.scope,
-        $settings: this.dataflow
+        $settings: this.dataflow,
       }
     },
 
@@ -209,13 +209,13 @@ export default {
 
     isEnterTimer() {
       return this.quotaTimeType !== 'custom' && !this.nodeDetailDialog && this.dataflow?.status === 'running'
-    }
+    },
   },
 
   watch: {
     'dataflow.type'(v) {
       v && this.init()
-    }
+    },
   },
 
   created() {
@@ -242,7 +242,7 @@ export default {
     })
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     this.command = null
     this.jsPlumbIns?.destroy()
     this.resetWorkspace()
@@ -277,7 +277,7 @@ export default {
 
     async openDataflow(id) {
       const data = await this.loadDataflow(id, {
-        taskRecordId: this.$route.query?.taskRecordId
+        taskRecordId: this.$route.query?.taskRecordId,
       })
       if (data) {
         const { dag } = data
@@ -299,7 +299,7 @@ export default {
       if (!this.dataflow.name) return this.$t('packages_dag_editor_cell_validate_empty_name')
 
       // 至少两个数据节点
-      const tableNode = this.allNodes.filter(node => node.type === 'database')
+      const tableNode = this.allNodes.filter((node) => node.type === 'database')
       if (tableNode.length < 2) {
         return this.$t('packages_dag_editor_cell_validate_none_data_node')
       }
@@ -309,7 +309,7 @@ export default {
       const sourceMap = {},
         targetMap = {},
         edges = this.allEdges
-      edges.forEach(item => {
+      edges.forEach((item) => {
         let _source = sourceMap[item.source]
         let _target = targetMap[item.target]
 
@@ -328,7 +328,7 @@ export default {
 
       let someErrorMsg = ''
       // 检查每个节点的源节点个数、连线个数、节点的错误状态
-      this.allNodes.some(node => {
+      this.allNodes.some((node) => {
         const { id } = node
         const minInputs = node.__Ctor.minInputs ?? 1
         const inputNum = targetMap[id]?.length ?? 0
@@ -356,7 +356,7 @@ export default {
       // 脏代码。这里的校验是有节点错误信息提示的，和节点表单校验揉在了一起，但是校验没有一起做
       if (this.dataflow.type === 'initial_sync+cdc') {
         typeName = i18n.t('public_task_type_initial_sync_and_cdc')
-        tableNode.forEach(node => {
+        tableNode.forEach((node) => {
           if (
             sourceMap[node.id] &&
             (NONSUPPORT_SYNC.includes(node.databaseType) || NONSUPPORT_CDC.includes(node.databaseType))
@@ -364,29 +364,29 @@ export default {
             nodeNames.push(node.name)
             this.setNodeErrorMsg({
               id: node.id,
-              msg: i18n.t('packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi') + typeName
+              msg: i18n.t('packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi') + typeName,
             })
           }
         })
       } else if (this.dataflow.type === 'initial_sync') {
         typeName = i18n.t('public_task_type_initial_sync')
-        tableNode.forEach(node => {
+        tableNode.forEach((node) => {
           if (sourceMap[node.id] && NONSUPPORT_SYNC.includes(node.databaseType)) {
             nodeNames.push(node.name)
             this.setNodeErrorMsg({
               id: node.id,
-              msg: i18n.t('packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi') + typeName
+              msg: i18n.t('packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi') + typeName,
             })
           }
         })
       } else if (this.dataflow.type === 'cdc') {
         typeName = i18n.t('public_task_type_cdc')
-        tableNode.forEach(node => {
+        tableNode.forEach((node) => {
           if (sourceMap[node.id] && NONSUPPORT_CDC.includes(node.databaseType)) {
             nodeNames.push(node.name)
             this.setNodeErrorMsg({
               id: node.id,
-              msg: i18n.t('packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi') + typeName
+              msg: i18n.t('packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi') + typeName,
             })
           }
         })
@@ -400,7 +400,7 @@ export default {
         ...tableNode.reduce((set, item) => {
           item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
           return set
-        }, new Set())
+        }, new Set()),
       ]
 
       if (accessNodeProcessIdArr.length > 1) {
@@ -413,14 +413,14 @@ export default {
         } else {
           let isError = false
           const agent = this.scope.$agentMap[chooseId]
-          tableNode.forEach(node => {
+          tableNode.forEach((node) => {
             if (node.attrs.accessNodeProcessId && chooseId !== node.attrs.accessNodeProcessId) {
               this.setNodeErrorMsg({
                 id: node.id,
                 msg: i18n.t('packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi', {
                   val1: agent.hostName,
-                  val2: agent.ip
-                })
+                  val2: agent.ip,
+                }),
               })
               isError = true
             }
@@ -429,16 +429,16 @@ export default {
         }
       } else if (accessNodeProcessIdArr.length === 1) {
         // 如果画布上仅有一个所属agent，自动设置为任务的agent
-        this.$set(this.dataflow, 'accessNodeType', 'MANUALLY_SPECIFIED_BY_THE_USER')
-        this.$set(this.dataflow, 'accessNodeProcessId', accessNodeProcessIdArr[0])
+        this.dataflow['accessNodeType'] = 'MANUALLY_SPECIFIED_BY_THE_USER'
+        this.dataflow['accessNodeProcessId'] = accessNodeProcessIdArr[0]
       }
 
       if (someErrorMsg) return someErrorMsg
 
       // 检查链路的末尾节点类型是否是表节点
-      const firstNodes = this.allNodes.filter(node => !targetMap[node.id]) // 链路的首节点
+      const firstNodes = this.allNodes.filter((node) => !targetMap[node.id]) // 链路的首节点
       const nodeMap = this.allNodes.reduce((map, node) => ((map[node.id] = node), map), {})
-      if (firstNodes.some(node => !this.isEndOfTable(node, sourceMap, nodeMap))) return `链路的末位需要是一个数据节点`
+      if (firstNodes.some((node) => !this.isEndOfTable(node, sourceMap, nodeMap))) return `链路的末位需要是一个数据节点`
 
       return null
     },
@@ -446,11 +446,11 @@ export default {
     handlePageReturn() {
       if (this.dataflow.syncType === 'migrate') {
         this.$router.push({
-          name: 'migrateList'
+          name: 'migrateList',
         })
       } else {
         this.$router.push({
-          name: 'dataflowList'
+          name: 'dataflowList',
         })
       }
       window.name = null
@@ -459,7 +459,7 @@ export default {
     handleEdit() {
       this.$router.push({
         name: 'MigrateEditor',
-        params: { id: this.dataflow.id }
+        params: { id: this.dataflow.id },
       })
     },
 
@@ -474,8 +474,8 @@ export default {
         name: 'MigrateStatistics',
         query: {
           id: this.dataflow.id,
-          subId: subId
-        }
+          subId: subId,
+        },
       })
     },
 
@@ -515,7 +515,7 @@ export default {
           totalData: {
             tags: {
               type: 'task',
-              taskId
+              taskId,
             },
             endAt: Time.now(), // 停止时间 || 当前时间
             fields: [
@@ -538,15 +538,15 @@ export default {
               'snapshotDoneAt',
               'snapshotRowTotal',
               'snapshotInsertRowTotal',
-              'outputQps'
+              'outputQps',
             ],
-            type: 'instant' // 瞬时值
+            type: 'instant', // 瞬时值
           },
           // 任务事件统计（条）-所选周期累计
           barChartData: {
             tags: {
               type: 'task',
-              taskId
+              taskId,
             },
             fields: [
               'inputInsertTotal',
@@ -558,24 +558,24 @@ export default {
               'outputUpdateTotal',
               'outputDeleteTotal',
               'outputDdlTotal',
-              'outputOthersTotal'
+              'outputOthersTotal',
             ],
-            type: 'difference'
+            type: 'difference',
           },
           // qps + 增量延迟
           lineChartData: {
             tags: {
               type: 'task',
-              taskId
+              taskId,
             },
             fields: ['inputQps', 'outputQps', 'timeCostAvg'],
-            type: 'continuous' // 连续数据
+            type: 'continuous', // 连续数据
           },
           // dag数据
           dagData: {
             tags: {
               type: 'node',
-              taskId
+              taskId,
             },
             fields: [
               'inputInsertTotal',
@@ -601,11 +601,11 @@ export default {
               'snapshotInsertRowTotal',
               'snapshotTableTotal',
               'tableTotal',
-              'replicateLag'
+              'replicateLag',
             ],
-            type: 'instant' // 瞬时值
-          }
-        }
+            type: 'instant', // 瞬时值
+          },
+        },
       }
       return params
     },
@@ -614,8 +614,8 @@ export default {
       let params = {
         quota: {
           uri: '/api/measurement/query/v2',
-          param: this.getQuotaFilter()
-        }
+          param: this.getQuotaFilter(),
+        },
       }
       return params
     },
@@ -624,9 +624,9 @@ export default {
       if (!this.dataflow?.id) {
         return
       }
-      measurementApi.batch(this.getParams()).then(data => {
+      measurementApi.batch(this.getParams()).then((data) => {
         const map = {
-          quota: this.loadQuotaData
+          quota: this.loadQuotaData,
         }
         for (let key in data) {
           const item = data[key]
@@ -663,21 +663,30 @@ export default {
       const newProperties = []
       const oldProperties = []
 
-      dg.setGraph({ nodesep: 300, ranksep: 200, marginx: 50, marginy: 50, rankdir: 'LR' })
+      dg.setGraph({
+        nodesep: 300,
+        ranksep: 200,
+        marginx: 50,
+        marginy: 50,
+        rankdir: 'LR',
+      })
       dg.setDefaultEdgeLabel(function () {
         return {}
       })
 
-      nodes.forEach(n => {
-        dg.setNode(NODE_PREFIX + n.id, { width: NODE_WIDTH, height: NODE_HEIGHT })
+      nodes.forEach((n) => {
+        dg.setNode(NODE_PREFIX + n.id, {
+          width: NODE_WIDTH,
+          height: NODE_HEIGHT,
+        })
         nodePositionMap[NODE_PREFIX + n.id] = n.attrs?.position || [0, 0]
       })
-      this.jsPlumbIns.getAllConnections().forEach(edge => {
+      this.jsPlumbIns.getAllConnections().forEach((edge) => {
         dg.setEdge(edge.source.id, edge.target.id)
       })
 
       dagre.layout(dg)
-      dg.nodes().forEach(n => {
+      dg.nodes().forEach((n) => {
         const node = dg.node(n)
         const top = Math.round(node.y - node.height / 2)
         const left = Math.round(node.x - node.width / 2)
@@ -688,17 +697,17 @@ export default {
             id: this.getRealId(n),
             properties: {
               attrs: {
-                position: nodePositionMap[n]
-              }
-            }
+                position: nodePositionMap[n],
+              },
+            },
           })
           newProperties.push({
             id: this.getRealId(n),
             properties: {
               attrs: {
-                position: [left, top]
-              }
-            }
+                position: [left, top],
+              },
+            },
           })
         }
       })
@@ -710,7 +719,7 @@ export default {
 
     handleChangeTimeSelect(val, isTime, source) {
       this.quotaTimeType = source?.type ?? val
-      this.quotaTime = isTime ? val?.split(',')?.map(t => Number(t)) : this.getTimeRange(val)
+      this.quotaTime = isTime ? val?.split(',')?.map((t) => Number(t)) : this.getTimeRange(val)
       this.init()
     },
 
@@ -756,11 +765,11 @@ export default {
       let routeUrl = this.$router.resolve({
         name: 'VerifyDetails',
         params: {
-          id: this.dataflow?.id
+          id: this.dataflow?.id,
         },
         query: {
-          table
-        }
+          table,
+        },
       })
       window.open(routeUrl.href)
     },
@@ -769,8 +778,8 @@ export default {
       let routeUrl = this.$router.resolve({
         name: 'connectionsList',
         query: {
-          keyword
-        }
+          keyword,
+        },
       })
       window.open(routeUrl.href)
     },
@@ -802,9 +811,9 @@ export default {
           fields: {
             messages: true,
             pdkHash: true,
-            properties: true
-          }
-        })
+            properties: true,
+          },
+        }),
       })
       this.setPdkPropertiesMap(
         databaseItems.reduce((map, item) => {
@@ -813,7 +822,7 @@ export default {
             map[item.pdkHash] = properties
           }
           return map
-        }, {})
+        }, {}),
       )
     },
 
@@ -823,8 +832,8 @@ export default {
 
     getTaskStatus(type) {
       return TASK_STATUS_MAP[type] || ''
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -843,12 +852,10 @@ $sidebarBg: #fff;
   height: 100%;
   background-color: $sidebarBg;
   overflow: auto;
-
   &.--right {
     width: 726px;
   }
 }
-
 .layout-wrap {
   display: flex;
   flex: auto;
@@ -859,83 +866,77 @@ $sidebarBg: #fff;
     flex-direction: row;
   }
 }
-
 .layout-content {
   position: relative;
   background-color: #f9f9f9;
-  /*background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIGlkPSJ2LTc2IiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIj48ZGVmcyBpZD0idi03NSI+PHBhdHRlcm4gaWQ9InBhdHRlcm5fMCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeD0iMCIgeT0iMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIj48cmVjdCBpZD0idi03NyIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0iI0FBQUFBQSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgaWQ9InYtNzkiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjcGF0dGVybl8wKSIvPjwvc3ZnPg==);
-  background-color: #f5f8fe;*/
+  :deep(.connection-highlight),
+  :deep(.connection-selected) {
+    path:nth-child(2) {
+      stroke: #2c65ff;
+    }
+    path:nth-child(3) {
+      fill: #2c65ff;
+      stroke: #2c65ff;
+    }
+  }
 
-  ::v-deep {
-    .connection-highlight,
-    .connection-selected {
-      path:nth-child(2) {
-        stroke: #2c65ff;
-      }
-      path:nth-child(3) {
-        fill: #2c65ff;
-        stroke: #2c65ff;
-      }
+  :deep(.remove-connection-label) {
+    z-index: 1001;
+    position: relative;
+    padding: 4px;
+    border-radius: 100%;
+    background-color: #fa6303;
+    box-sizing: border-box;
+
+    .remove-connection-btn {
+      width: 1em;
+      height: 1em;
+      font-size: 6px;
+      background: transparent
+        url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e")
+        center/1em auto no-repeat;
+      transition: font-size 0.15s ease-in-out;
     }
 
-    .remove-connection-label {
-      z-index: 1001;
-      position: relative;
-      padding: 4px;
-      border-radius: 100%;
-      background-color: #fa6303;
-      box-sizing: border-box;
-
+    &:hover {
       .remove-connection-btn {
+        font-size: 10px;
+      }
+    }
+  }
+
+  :deep(.conn-btn__wrap) {
+    z-index: 1002;
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+    &:hover {
+      transform: translate(-50%, -50%) scale(1.2) !important;
+    }
+  }
+
+  :deep(.conn-btn) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20px;
+    height: 20px;
+    background-color: #9bb6ff;
+    border-radius: 100%;
+    pointer-events: none;
+    .v-icon {
+      width: 16px;
+      height: 16px;
+      font-size: 12px;
+      background-color: #2c65ff;
+      color: #fff;
+      border-radius: 100%;
+      &__svg {
         width: 1em;
         height: 1em;
-        font-size: 6px;
-        background: transparent
-          url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e")
-          center/1em auto no-repeat;
-        transition: font-size 0.15s ease-in-out;
-      }
-
-      &:hover {
-        .remove-connection-btn {
-          font-size: 10px;
-        }
-      }
-    }
-
-    .conn-btn__wrap {
-      z-index: 1002;
-      cursor: pointer;
-      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-      &:hover {
-        transform: translate(-50%, -50%) scale(1.2) !important;
-      }
-    }
-    .conn-btn {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 20px;
-      height: 20px;
-      background-color: #9bb6ff;
-      border-radius: 100%;
-      pointer-events: none;
-      .v-icon {
-        width: 16px;
-        height: 16px;
-        font-size: 12px;
-        background-color: #2c65ff;
-        color: #fff;
-        border-radius: 100%;
-        &__svg {
-          width: 1em;
-          height: 1em;
-        }
       }
     }
   }
 }
-
 .nav-line {
   position: absolute;
   width: 0;
@@ -945,20 +946,17 @@ $sidebarBg: #fff;
   border-top: 1px dashed #ff5b37;
   border-left: 1px dashed #ff5b37;
 }
-
 .select-box {
   position: absolute;
   background: rgba(23, 159, 251, 0.1);
   border: 1px solid #179ffb;
 }
-
 .node-view {
   position: relative;
   width: 100%;
   height: 100%;
   transform-origin: 0 0;
 }
-
 .node-view-background {
   position: absolute;
   width: 10000px;
@@ -966,7 +964,6 @@ $sidebarBg: #fff;
   top: -5000px;
   left: -5000px;
 }
-
 .sider-expand-wrap {
   position: absolute;
   z-index: 2;
@@ -977,9 +974,8 @@ $sidebarBg: #fff;
   border-radius: 50%;
   background: #fff;
   box-shadow: 0px 0px 30px rgb(0 0 0 / 6%);
-
   &:hover .v-icon {
-    color: map-get($color, primary);
+    color: map.get($color, primary);
   }
 }
 </style>

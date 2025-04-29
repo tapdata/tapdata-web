@@ -4,13 +4,31 @@
     &-header {
       background-color: rgb(248, 250, 252);
       //border-top: 8px solid rgb(132, 204, 22);
-      border-top: 6px solid map-get($color, primary);
+      border-top: 6px solid map.get($color, primary);
     }
 
     .field-icon {
-      left: -18px;
+      left: -20px;
       top: 50%;
       transform: translateY(-50%);
+    }
+  }
+
+  .hide-index-sub {
+    .index-sub {
+      display: none;
+    }
+  }
+
+  .hide-unique-sub {
+    .unique-sub {
+      display: none;
+    }
+  }
+
+  .hide-foreign-sub {
+    .foreign-sub {
+      display: none;
     }
   }
 }

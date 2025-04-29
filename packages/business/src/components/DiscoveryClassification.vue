@@ -1,18 +1,20 @@
 <template>
   <div class="classification pt-3 h-100">
     <div class="classification-header pl-0">
-      <!--<ElButton class="btn-addIcon" size="mini" type="text" @click="showDialog()">
-        <VIcon size="12">add</VIcon>
-      </ElButton>
-      <div class="title">
-        <span>{{ $t('packages_component_src_discoveryclassification_suoyoumulu') }}</span>
-      </div>-->
+      <!--<ElButton class="btn-addIcon"  text @click="showDialog()">
+            <VIcon size="12">add</VIcon>
+          </ElButton>
+          <div class="title">
+            <span>{{ $t('packages_component_src_discoveryclassification_suoyoumulu') }}</span>
+          </div>-->
       <!-- v-if="searchFalg" -->
       <div class="search-box">
-        <ElInput size="mini" v-model="filterText">
-          <span slot="suffix" class="el-input__icon h-100 ml-1">
-            <VIcon size="14">search</VIcon>
-          </span>
+        <ElInput v-model="filterText">
+          <template v-slot:suffix>
+            <span class="el-input__icon h-100 ml-1">
+              <VIcon size="14">search</VIcon>
+            </span>
+          </template>
         </ElInput>
       </div>
     </div>
@@ -35,16 +37,17 @@
         @node-drag-start="handleDragStart"
         @node-drop="handleDrop"
       />
-      <!--<ElButton v-if="treeData && treeData.length === 0 && isExpand" type="text" @click="showDialog()" class="create">
-        {{ $t('packages_component_classification_creatDataClassification') }}
-      </ElButton>-->
+      <!--<ElButton v-if="treeData && treeData.length === 0 && isExpand" text @click="showDialog()" class="create">
+            {{ $t('packages_component_classification_creatDataClassification') }}
+          </ElButton>-->
     </div>
-    <ElDialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
-      <span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
+    <ElDialog v-model="dialogConfig.visible" width="30%" :close-on-click-modal="false">
+      <template #header>
+        <span style="font-size: 14px">{{ dialogConfig.title }}</span>
+      </template>
       <ElForm ref="form" :model="dialogConfig" label-width="80px">
         <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
           <ElInput
-            size="mini"
             v-model="dialogConfig.label"
             :placeholder="$t('packages_component_classification_nodeName')"
             maxlength="50"
@@ -73,17 +76,20 @@
           ></ElInput>
         </ElFormItem>
       </ElForm>
-      <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="hideDialog()">{{ $t('packages_component_button_cancel') }}</ElButton>
-        <ElButton size="mini" type="primary" @click="dialogSubmit()">
-          {{ $t('packages_component_button_confirm') }}
-        </ElButton>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <ElButton @click="hideDialog()">{{ $t('packages_component_button_cancel') }}</ElButton>
+          <ElButton type="primary" @click="dialogSubmit()">
+            {{ $t('packages_component_button_confirm') }}
+          </ElButton>
+        </span>
+      </template>
     </ElDialog>
   </div>
 </template>
 
-<script>
+<script lang="jsx">
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 
 import { VIcon } from '@tap/component'
@@ -99,12 +105,12 @@ export default {
       type: Array,
       default: () => {
         return []
-      }
+      },
     },
     dragState: {
       type: Object,
-      default: () => ({})
-    }
+      default: () => ({}),
+    },
   },
   data() {
     return {
@@ -117,7 +123,7 @@ export default {
       loadingTree: false,
       props: {
         key: 'id',
-        label: 'name'
+        label: 'name',
       },
       isActive: true,
 
@@ -129,7 +135,7 @@ export default {
         title: '',
         itemType: 'resource',
         desc: '',
-        visible: false
+        visible: false,
       },
 
       nodeName: '',
@@ -137,8 +143,8 @@ export default {
       title: '',
       iconMap: {
         table: 'table',
-        defaultApi: 'apiServer_navbar'
-      }
+        defaultApi: 'apiServer_navbar',
+      },
     }
   },
   mounted() {
@@ -152,7 +158,7 @@ export default {
     },
     filterText(val) {
       this.$refs.tree.filter(val)
-    }
+    },
   },
   methods: {
     renderContent(h, { node, data, store }) {
@@ -169,23 +175,21 @@ export default {
       return (
         <div
           class="custom-tree-node"
-          on={{
-            dragenter: ev => {
-              ev.stopPropagation()
-              this.handleTreeDragEnter(ev, data, node)
-            },
-            dragover: ev => {
-              ev.stopPropagation()
-              this.handleTreeDragOver(ev, data, node)
-            },
-            dragleave: ev => {
-              ev.stopPropagation()
-              this.handleTreeDragLeave(ev, data, node)
-            },
-            drop: ev => {
-              ev.stopPropagation()
-              this.handleTreeDrop(ev, data, node)
-            }
+          onDragenter={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDragEnter(ev, data, node)
+          }}
+          onDragover={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDragOver(ev, data, node)
+          }}
+          onDragleave={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDragLeave(ev, data, node)
+          }}
+          onDrop={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDrop(ev, data, node)
           }}
         >
           <div class="tree-item-icon flex align-center mr-2">{icon && <VIcon size="16">{icon}</VIcon>}</div>
@@ -198,7 +202,7 @@ export default {
               <VIcon
                 size="14"
                 class="color-primary mr-2"
-                onClick={ev => {
+                onClick={(ev) => {
                   ev.stopPropagation()
                   data.isRoot ? this.showDialog() : this.showDialog(node, 'add')
                 }}
@@ -210,21 +214,27 @@ export default {
                   class="inline-flex"
                   placement="bottom"
                   trigger="click"
-                  onCommand={ev => this.handleRowCommand(ev, node)}
+                  onCommand={(ev) => this.handleRowCommand(ev, node)}
                 >
-                  <VIcon
-                    onClick={ev => {
-                      ev.stopPropagation()
-                    }}
-                    size="16"
-                    class="color-primary"
-                  >
-                    more-circle
-                  </VIcon>
-                  <ElDropdownMenu slot="dropdown">
-                    <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
-                    <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
-                  </ElDropdownMenu>
+                  {{
+                    default: () => (
+                      <VIcon
+                        onClick={(ev) => {
+                          ev.stopPropagation()
+                        }}
+                        size="16"
+                        class="color-primary"
+                      >
+                        more-circle
+                      </VIcon>
+                    ),
+                    dropdown: () => (
+                      <ElDropdownMenu>
+                        <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
+                        <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
+                      </ElDropdownMenu>
+                    ),
+                  }}
                 </ElDropdown>
               )}
             </span>
@@ -242,13 +252,13 @@ export default {
 
     emitCheckedNodes(node) {
       if (!node) return
-      this.$emit('nodeChecked', node)
+      $emit(this, 'nodeChecked', node)
     },
 
     getData(cb) {
       let where = {}
       where.item_type = {
-        $nin: ['database', 'dataflow', 'api', 'source', 'fdm', 'mdm', 'target']
+        $nin: ['database', 'dataflow', 'api', 'source', 'fdm', 'mdm', 'target'],
       }
       let filter = {
         where,
@@ -261,15 +271,15 @@ export default {
           parent_id: 1,
           desc: 1,
           readOnly: 1,
-          user_id: 1
-        }
+          user_id: 1,
+        },
       }
       this.loadingTree = true
       metadataDefinitionsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           let items = data?.items || []
           let treeData = this.formatData(items)
           this.treeData = [
@@ -277,8 +287,8 @@ export default {
               name: i18n.t('packages_business_components_classificationtree_suoyoumulu'),
               isRoot: true,
               readOnly: true,
-              children: treeData
-            }
+              children: treeData,
+            },
           ]
           cb && cb(items)
           //默认选中第一个
@@ -294,7 +304,7 @@ export default {
         })
     },
     getDataAll(cb) {
-      metadataDefinitionsApi.get().then(data => {
+      metadataDefinitionsApi.get().then((data) => {
         cb && cb(data?.items || [])
       })
     },
@@ -306,7 +316,7 @@ export default {
         let nodes = []
 
         //遍历第一次， 先把所有子类按照id分成若干数组
-        items.forEach(it => {
+        items.forEach((it) => {
           it.name = it.value
           it.isLeaf = it.objCount === 0
           if (it.parent_id) {
@@ -315,7 +325,7 @@ export default {
             map[it.parent_id] = children
           } else {
             //默认目录国际化
-            if (it?.item_type && it?.item_type.findIndex(t => t === 'default') > -1) {
+            if (it?.item_type && it?.item_type.findIndex((t) => t === 'default') > -1) {
               it.name = i18n.t('packages_component_src_discoveryclassification_morenmuluji')
               if (it?.userName && it?.user_id !== userId) {
                 it.name += `| ${it.userName}`
@@ -325,8 +335,8 @@ export default {
           }
         })
         //接着从没有子类的数据开始递归，将之前分好的数组分配给每一个类目
-        let checkChildren = nodes => {
-          return nodes.map(it => {
+        let checkChildren = (nodes) => {
+          return nodes.map((it) => {
             let children = map[it.id]
             if (children) {
               it.children = checkChildren(children)
@@ -371,12 +381,12 @@ export default {
             ? node
               ? this.$t('packages_component_classification_addChildernNode')
               : this.$t('packages_component_classification_addNode')
-            : this.$t('public_button_edit')
+            : this.$t('public_button_edit'),
       }
     },
     hideDialog() {
       this.dialogConfig = {
-        visible: false
+        visible: false,
       }
     },
     async dialogSubmit() {
@@ -398,7 +408,7 @@ export default {
           return this.$message.error(this.$t('packages_component_classification_nameExist'))
         }
         let params = {
-          name: value
+          name: value,
         }
         if (config.type === 'edit') {
           method = 'patch'
@@ -420,7 +430,7 @@ export default {
         let params = {
           item_type: itemType,
           desc: config.desc,
-          value
+          value,
         }
         if (config.type === 'edit') {
           method = 'changeById'
@@ -439,7 +449,7 @@ export default {
             })
             self.hideDialog()
           })
-          .catch(err => {
+          .catch((err) => {
             this.$message.error(err.message)
           })
       }
@@ -450,8 +460,8 @@ export default {
         confirmButtonText: this.$t('public_button_delete'),
         cancelButtonText: this.$t('public_button_cancel'),
         type: 'warning',
-        closeOnClickModal: false
-      }).then(resFlag => {
+        closeOnClickModal: false,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -459,8 +469,8 @@ export default {
           let params = {
             id: id,
             headers: {
-              gid: id
-            }
+              gid: id,
+            },
           }
           userGroupsApi.delete(params).then(() => {
             let self = this
@@ -477,14 +487,14 @@ export default {
       })
     },
     checkName(value) {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         if (this.types[0] === 'user') {
-          this.getDataAll(items => {
-            resolve(items.find(it => it.name === value))
+          this.getDataAll((items) => {
+            resolve(items.find((it) => it.name === value))
           })
         } else {
-          this.getDataAll(items => {
-            resolve(items.find(it => it.name === value))
+          this.getDataAll((items) => {
+            resolve(items.find((it) => it.name === value))
           })
         }
       })
@@ -503,7 +513,7 @@ export default {
       this.draggingNodeImage = makeDragNodeImage(
         ev.currentTarget.querySelector('.tree-item-icon'),
         [draggingNode],
-        this.$el
+        this.$el,
       )
       let { dataTransfer } = ev
       dataTransfer.setDragImage(this.draggingNodeImage, 0, 0)
@@ -521,14 +531,14 @@ export default {
         metadataDefinitionsApi
           .changeById({
             id: draggingNode.data.id,
-            parent_id: dropNode.data.id || ''
+            parent_id: dropNode.data.id || '',
           })
           .then(() => {
             this.$message.success(i18n.t('public_message_operation_success'))
             draggingNode.data.parent_id = dropNode.data.id
             // this.getData()
           })
-          .catch(err => {
+          .catch((err) => {
             this.$message.error(err.message)
           })
       } else {
@@ -588,13 +598,13 @@ export default {
     bindTag(tag, objects) {
       discoveryApi
         .postTags({
-          tagBindingParams: objects.map(t => {
+          tagBindingParams: objects.map((t) => {
             return {
               id: t.id,
-              objCategory: t.category
+              objCategory: t.category,
             }
           }),
-          tagIds: [tag.id]
+          tagIds: [tag.id],
         })
         .then(() => {
           this.getData()
@@ -605,28 +615,32 @@ export default {
     async moveTag(from, to, objects) {
       if (from === to) return
 
-      const tagBindingParams = objects.map(t => {
+      const tagBindingParams = objects.map((t) => {
         return {
           id: t.id,
-          objCategory: t.category
+          objCategory: t.category,
         }
       })
       await discoveryApi.patchTags({
         tagBindingParams,
-        tagIds: [from]
+        tagIds: [from],
       })
       await discoveryApi.postTags({
         tagBindingParams,
-        tagIds: [to]
+        tagIds: [to],
       })
-      objects.forEach(item => (item.parent_id = to))
+      objects.forEach((item) => (item.parent_id = to))
       this.$message.success(this.$t('public_message_operation_success'))
     },
 
     loadNode(node, resolve) {
       console.log('loadNode', node, node.level) // eslint-disable-line
       if (node.level === 0) {
-        return resolve([{ name: i18n.t('packages_business_components_classificationtree_suoyoumulu') }])
+        return resolve([
+          {
+            name: i18n.t('packages_business_components_classificationtree_suoyoumulu'),
+          },
+        ])
       }
       setTimeout(() => {
         resolve()
@@ -641,7 +655,7 @@ export default {
       const objects = await this.loadObjects(data)
       console.log('handleNodeExpand', objects, data, node) // eslint-disable-line
       const childrenMap = data.children ? data.children.reduce((map, item) => ((map[item.id] = true), map), {}) : {}
-      objects.forEach(item => {
+      objects.forEach((item) => {
         if (childrenMap[item.id]) return
         item.parent_id = data.id
         item.isObject = true
@@ -657,34 +671,32 @@ export default {
       let where = {
         page: 1,
         pageSize: 10000,
-        tagId: node.id
+        tagId: node.id,
       }
-      return discoveryApi.discoveryList(where).then(res => {
+      return discoveryApi.discoveryList(where).then((res) => {
         let { total, items } = res
         return res.items
       })
-    }
-  }
+    },
+  },
+  emits: ['nodeChecked'],
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 $nodeH: 28px;
 .classification {
   position: relative;
   display: flex;
-  flex-direction: column;
-  // height: 22px;
+  flex-direction: column; /*// height: 22px;*/
   user-select: none;
   box-sizing: border-box;
   border-top: none;
-  background: map-get($bgColor, white);
-  border-radius: 3px;
-  // overflow: hidden;
-  // box-shadow: 0px -2px 10px 0px rgba(0, 0, 0, 0.1);
+  background: map.get($bgColor, white);
+  border-radius: 3px; /*// overflow: hidden;*/ /*// box-shadow: 0px -2px 10px 0px rgba(0, 0, 0, 0.1);*/
   .btn-expand {
     // padding: 2px 3px;
-    // color: map-get($fontColor, light);
+    // color: map.get($fontColor, light);
     transform: rotate(0);
     box-sizing: border-box;
     // background: #eff1f4;
@@ -697,14 +709,14 @@ $nodeH: 28px;
   }
   .toggle {
     margin-top: 16px;
-    // color: map-get($color, lprimary);
+    // color: map.get($color, lprimary);
     z-index: 2;
   }
   &.expand {
     height: 100%;
     //width: 100%;
     padding: 12px 0 20px 0;
-    // border-right: 1px solid map-get($borderColor, light);
+    // border-right: 1px solid map.get($borderColor, light);
     width: 214px;
     .btn-expand {
       position: absolute;
@@ -721,13 +733,13 @@ $nodeH: 28px;
       top: 2px;
       right: 12px;
       font-size: 12px;
-      color: map-get($fontColor, light);
+      color: map.get($fontColor, light);
       .iconfont.icon-jia {
         display: flex;
         flex-direction: row;
         justify-content: center;
         align-items: center;
-        color: map-get($fontColor, light);
+        color: map.get($fontColor, light);
         font-size: 16px;
         height: 66%;
         margin-top: 0px;
@@ -735,7 +747,7 @@ $nodeH: 28px;
         border-radius: 3px;
         cursor: pointer;
         &:hover {
-          color: map-get($color, primary);
+          color: map.get($color, primary);
         }
       }
     }
@@ -744,9 +756,9 @@ $nodeH: 28px;
       right: 54px;
       .icon-fangdajing {
         font-size: 16px;
-        color: map-get($fontColor, light);
+        color: map.get($fontColor, light);
         &:hover {
-          color: map-get($color, primary);
+          color: map.get($color, primary);
         }
       }
     }
@@ -756,7 +768,7 @@ $nodeH: 28px;
   .classification-header {
     position: relative;
     padding: 0 12px;
-    // background: map-get($bgColor, normal);
+    // background: map.get($bgColor, normal);
     // border-bottom: 1px solid #dedee4;
     font-size: 12px;
     line-height: 31px;
@@ -769,7 +781,7 @@ $nodeH: 28px;
       font-weight: 500;
       font-size: 14px;
       justify-content: space-between;
-      color: map-get($fontColor, dark);
+      color: map.get($fontColor, dark);
       // background-color: #eff1f4;
     }
 
@@ -791,62 +803,60 @@ $nodeH: 28px;
   .create {
     padding: 5px 10px;
     font-size: 12px;
-    // color: map-get($color, primary);
+    // color: map.get($color, primary);
     cursor: pointer;
   }
 
-  ::v-deep {
-    .classification-tree {
-      padding-bottom: 50px;
-      .el-tree-node {
-        &__content {
-          height: $nodeH;
-          margin-bottom: 1px;
-          overflow: hidden;
-          border-radius: 4px;
-        }
-
-        &.is-current > .el-tree-node__content {
-          background-color: #eef3ff;
-        }
-
-        &.is-drop-inner > .el-tree-node__content {
-          background-color: #d0deff;
-        }
+  :deep(.classification-tree) {
+    padding-bottom: 50px;
+    .el-tree-node {
+      &__content {
+        height: $nodeH;
+        margin-bottom: 1px;
+        overflow: hidden;
+        border-radius: 4px;
       }
 
-      .custom-tree-node {
+      &.is-current > .el-tree-node__content {
+        background-color: #eef3ff;
+      }
+
+      &.is-drop-inner > .el-tree-node__content {
+        background-color: #d0deff;
+      }
+    }
+
+    .custom-tree-node {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      padding-right: 8px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: $nodeH;
+      .icon-folder {
+        margin-right: 5px;
+        font-size: 12px;
+        color: map.get($color, primary);
+        // color: map.get($color, lprimary);
+      }
+      .table-label {
         flex: 1;
-        display: flex;
-        align-items: center;
-        font-size: 14px;
-        padding-right: 8px;
+        vertical-align: middle;
         overflow: hidden;
         text-overflow: ellipsis;
-        line-height: $nodeH;
-        .icon-folder {
-          margin-right: 5px;
-          font-size: 12px;
-          color: map-get($color, primary);
-          // color: map-get($color, lprimary);
-        }
-        .table-label {
-          flex: 1;
-          vertical-align: middle;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          font-weight: 400;
-          color: map-get($fontColor, normal);
-        }
-        .count-label {
-          color: map-get($fontColor, sslight);
-        }
-        .btn-menu {
-          display: none;
-        }
-        &:hover .btn-menu {
-          display: flex;
-        }
+        font-weight: 400;
+        color: map.get($fontColor, normal);
+      }
+      .count-label {
+        color: map.get($fontColor, sslight);
+      }
+      .btn-menu {
+        display: none;
+      }
+      &:hover .btn-menu {
+        display: flex;
       }
     }
   }

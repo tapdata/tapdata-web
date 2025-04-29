@@ -1,14 +1,16 @@
 <template>
-  <section class="px-6 pb-6 h-100">
+  <PageContainer>
+    <template #actions>
+      <ElButton type="primary" class="btn-create" @click="toCreate">
+        <span>{{ $t('public_button_add') }}</span>
+      </ElButton>
+    </template>
+
     <TablePage ref="table" class="h-100" :remoteMethod="getData" @sort-change="handleSortTable">
-      <template slot="search">
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+      <template v-slot:search>
+        <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
-      <div slot="operation">
-        <ElButton type="primary" class="btn-create" size="mini" @click="toCreate">
-          <span>{{ $t('public_button_add') }}</span>
-        </ElButton>
-      </div>
+
       <ElTableColumn :label="$t('public_node_name')" prop="name"> </ElTableColumn>
       <ElTableColumn :label="$t('public_description')" prop="desc"> </ElTableColumn>
 
@@ -17,49 +19,50 @@
 
       <ElTableColumn width="150" :label="$t('public_operation')">
         <template #default="{ row }">
-          <ElLink type="primary" @click="toEdit(row)">{{ $t('public_button_edit') }}</ElLink>
-          <ElDivider direction="vertical"></ElDivider>
-          <ElLink type="primary" @click="remove(row)">{{ $t('public_button_delete') }}</ElLink>
+          <ElButton text type="primary" @click="toEdit(row)">{{ $t('public_button_edit') }}</ElButton>
+          <ElDivider class="mx-1" direction="vertical"></ElDivider>
+          <ElButton text type="primary" @click="remove(row)">{{ $t('public_button_delete') }}</ElButton>
         </template>
       </ElTableColumn>
     </TablePage>
-  </section>
+  </PageContainer>
 </template>
 
-<script>
+<script lang="jsx">
 import dayjs from 'dayjs'
 import { customNodeApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '../../components'
 import { makeStatusAndDisabled } from '../../shared'
+import PageContainer from '../../components/PageContainer.vue'
 
 export default {
-  components: { FilterBar, TablePage },
+  components: { PageContainer, FilterBar, TablePage },
   data() {
     return {
       filterItems: [
         {
           placeholder: this.$t('packages_business_custom_node_placeholder'),
           key: 'name',
-          type: 'input'
-        }
+          type: 'input',
+        },
       ],
       searchParams: {
-        name: ''
+        name: '',
       },
-      order: 'last_updated DESC'
+      order: 'last_updated DESC',
     }
   },
   computed: {
     table() {
       return this.$refs.table
-    }
+    },
   },
 
   watch: {
     '$route.query'() {
       this.table.fetch(1)
-    }
+    },
   },
 
   methods: {
@@ -73,27 +76,27 @@ export default {
         where: where,
         order: this.order,
         limit: size,
-        skip: (current - 1) * size
+        skip: (current - 1) * size,
       }
       return customNodeApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
         .then(({ total, items }) => {
           return {
             total,
-            data: items.map(item => {
+            data: items.map((item) => {
               item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
               item.last_updated = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
               return item
-            })
+            }),
           }
         })
     },
     remove(item) {
       this.$confirm(this.$t('public_message_delete_confirm'), this.$t('public_message_title_prompt'), {
-        type: 'warning'
-      }).then(resFlag => {
+        type: 'warning',
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -108,14 +111,14 @@ export default {
           this.$router.resolve({
             name: 'NodeEditor',
             params: {
-              id: row.id
-            }
-          }).href
+              id: row.id,
+            },
+          }).href,
         )
       let usedTaskData = await customNodeApi.checkUsed(row.id)
       if (usedTaskData?.length) {
         const arr = ['starting', 'running']
-        const filterData = usedTaskData.map(makeStatusAndDisabled).filter(item => {
+        const filterData = usedTaskData.map(makeStatusAndDisabled).filter((item) => {
           return arr.includes(item.status)
         })
         if (!filterData.length) {
@@ -126,7 +129,7 @@ export default {
           <div class="w-100">
             <div>{this.$t('packages_business_custom_node_edit_confirm')}</div>
             <div class="p-3 mt-3" style="background: #FAFAFA; font-size: 12px;">
-              {filterData.map(item => {
+              {filterData.map((item) => {
                 return (
                   <a
                     class="block link-primary"
@@ -136,8 +139,8 @@ export default {
                       this.$router.resolve({
                         name: item.syncType === 'migrate' ? 'MigrationMonitor' : 'TaskMonitor',
                         params: {
-                          id: item.id
-                        }
+                          id: item.id,
+                        },
                       }).href
                     }
                   >
@@ -151,9 +154,9 @@ export default {
           {
             customClass: 'custom-node-edit-confirm',
             confirmButtonText: this.$t('dataFlow_continueEditing'),
-            type: 'warning'
-          }
-        ).then(resFlag => {
+            type: 'warning',
+          },
+        ).then((resFlag) => {
           if (!resFlag) return
           open()
         })
@@ -164,16 +167,16 @@ export default {
     toCreate() {
       window.open(
         this.$router.resolve({
-          name: 'NodeNew'
-        }).href
+          name: 'NodeNew',
+        }).href,
       )
     },
     //筛选条件
     handleSortTable({ order, prop }) {
       this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
-    }
-  }
+    },
+  },
 }
 </script>
 

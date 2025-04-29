@@ -2,11 +2,13 @@
   "name": "@tap/business",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index",
   "keywords": [],
-  "author": "",
   "license": "ISC",
+  "author": "",
+  "main": "src/index.js",
   "dependencies": {
+    "@element-plus/icons-vue": "^2.1.0",
+    "@formily/reactive": "^2.3.0",
     "@tap/api": "workspace:^1.0.0",
     "@tap/assets": "workspace:^1.0.0",
     "@tap/component": "workspace:^1.0.0",
@@ -16,9 +18,11 @@
     "axios": "^0.21.1",
     "cron-parser": "^4.6.0",
     "dayjs": "^1.11.2",
+    "lodash": "^4.17.15",
     "qs": "^6.11.0",
-    "vue-virtual-scroller": "^1.1.2",
-    "vuedraggable": "^2.24.3",
-    "vuex": "^3.4.0"
+    "tiny-emitter": "^2.1.0",
+    "vue-json-viewer": "^2.2.15",
+    "vue-virtual-scroller": "2.0.0-beta.8",
+    "vuex": "^4.0.2"
   }
 }

@@ -1,136 +1,82 @@
-<template>
-  <div class="connection-from" v-loading="loadingFrom">
-    <div class="connection-from-body">
-      <main class="connection-from-main min-w-0">
-        <div v-if="!isDaas && showAgentIpAlert" class="px-4 py-2">
-          <ElAlert class="alert-primary text-primary" type="info" show-icon :closable="false">
-            <span slot="title" class="inline-block lh-sm align-middle">
-              {{ $t('packages_business_agent_ip_tips_prefix')
-              }}<a :href="docUrl" target="_blank" class="text-decoration-underline text-primary">{{
-                $t('packages_business_agent_ip_tips_suffix')
-              }}</a>
-            </span>
-          </ElAlert>
-        </div>
-        <div class="form-wrap">
-          <div class="form px-4 pt-4">
-            <SchemaToForm
-              ref="schemaToForm"
-              class="pdk-schema-form"
-              :schema="schemaData"
-              :scope="schemaScope"
-              layout="vertical"
-              labelWidth="100%"
-            ></SchemaToForm>
-          </div>
-        </div>
-        <footer slot="footer" class="footer">
-          <div class="footer-btn text-center p-4">
-            <el-button class="test mr-4" @click="startTest()">{{ $t('public_connection_button_test') }}</el-button>
-            <ElTooltip :disabled="!disableSave" :content="saveBtnTip">
-              <div class="inline-block">
-                <el-button :disabled="disableSave" type="primary" :loading="submitBtnLoading" @click="submit()">
-                  {{ $t('public_button_save') }}
-                </el-button>
-              </div>
-            </ElTooltip>
-
-            <!--            <el-button type="primary" :loading="saveAndMoreLoading" @click="saveAndMore">{{
-              $t('packages_business_save_and_more')
-            }}</el-button>-->
-          </div>
-        </footer>
-      </main>
-      <div class="flex-1 overflow-x-hidden bg-white border-start">
-        <ConnectorDoc v-if="params.pdkHash" :pdk-hash="params.pdkHash" :pdk-id="params.pdkId"></ConnectorDoc>
-      </div>
-    </div>
-    <Test ref="test" :visible.sync="dialogTestVisible" :formData="model" @returnTestData="returnTestData"></Test>
-    <el-dialog
-      :title="$t('packages_business_connection_rename')"
-      :close-on-click-modal="false"
-      :visible.sync="dialogEditNameVisible"
-      width="30%"
-    >
-      <el-form :model="renameData" :rules="renameRules" ref="renameForm" @submit.native.prevent>
-        <el-form-item prop="rename">
-          <el-input v-model="renameData.rename" maxlength="100" show-word-limit></el-input>
-        </el-form-item>
-        <span style="color: #ccc; margin-top: 5px; font-size: 12px; display: inline-block">{{
-          $t('packages_business_connections_databaseform_zhongyingkaitouge')
-        }}</span>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="handleCancelRename" size="mini">{{ $t('public_button_cancel') }}</el-button>
-        <el-button @click="submitEdit()" size="mini" type="primary" :loading="editBtnLoading">{{
-          $t('public_button_confirm')
-        }}</el-button>
-      </span>
-    </el-dialog>
-  </div>
-</template>
-
 <script>
-import { mapGetters } from 'vuex'
 import { action } from '@formily/reactive'
-
-import i18n from '@tap/i18n'
 import {
   clusterApi,
   connectionsApi,
   databaseTypesApi,
+  externalStorageApi,
   logcollectorApi,
   pdkApi,
-  externalStorageApi,
-  proxyApi
+  proxyApi,
 } from '@tap/api'
-import { VIcon } from '@tap/component'
-import { SchemaToForm } from '@tap/form'
-import { checkConnectionName, openUrl, submitForm } from '@tap/shared'
-import Test from '@tap/business/src/views/connections/Test'
-import { getConnectionIcon } from '@tap/business/src/views/connections/util'
 import resize from '@tap/component/src/directives/resize'
-import { cloneDeep, isEmpty } from 'lodash'
+
+import { SchemaToForm } from '@tap/form'
+import i18n from '@tap/i18n'
+import { checkConnectionName, openUrl, submitForm } from '@tap/shared'
+import { cloneDeep, isEmpty } from 'lodash-es'
+import { mapGetters } from 'vuex'
+import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+import Test from '../../views/connections/Test'
+import { getConnectionIcon } from '../../views/connections/util'
 import ConnectorDoc from '../ConnectorDoc'
 import mixins from './mixins'
 
 export default {
   name: 'SceneForm',
   components: { ConnectorDoc, Test, SchemaToForm },
-  inject: ['checkAgent', 'buried', 'lockedFeature'],
   directives: {
-    resize
+    resize,
   },
   mixins: [mixins],
+  inject: ['checkAgent', 'buried', 'lockedFeature'],
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      vm.pathUrl = from?.fullPath
+    })
+  },
   props: {
     hideConnectionType: Boolean,
     params: {
       type: Object,
       default: () => {
         return {}
-      }
+      },
     },
 
-    selectorType: String
+    selectorType: String,
   },
+  emits: [, 'back'],
   data() {
-    let validateRename = (rule, value, callback) => {
+    const validateRename = (rule, value, callback) => {
       if (!this.renameData.rename || !this.renameData.rename.trim()) {
-        callback(new Error(this.$t('public_connection_name') + this.$t('public_form_not_empty')))
+        callback(
+          new Error(
+            this.$t('public_connection_name') +
+              this.$t('public_form_not_empty'),
+          ),
+        )
       } else if (!checkConnectionName(this.renameData.rename)) {
-        callback(new Error(i18n.t('packages_business_connections_databaseform_mingchengguizezhong')))
+        callback(
+          new Error(
+            i18n.t(
+              'packages_business_connections_databaseform_mingchengguizezhong',
+            ),
+          ),
+        )
       } else {
         callback()
       }
     }
     return {
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       rules: [],
       id: '',
       commandCallbackFunctionId: '',
       visible: false,
       showSystemConfig: false,
       model: {
-        config: null
+        config: null,
       },
       status: '',
       loadingFrom: true,
@@ -140,12 +86,12 @@ export default {
       saveAndMoreLoading: false,
       editBtnLoading: false,
       renameData: {
-        rename: ''
+        rename: '',
       },
       width: 440,
       height: 300,
       renameRules: {
-        rename: [{ validator: validateRename, trigger: 'blur' }]
+        rename: [{ validator: validateRename, trigger: 'blur' }],
       },
       pdkOptions: {},
       schemaData: null,
@@ -156,9 +102,9 @@ export default {
       // 当前连接是否有共享缓存任务使用
       connectionLogCollectorTaskData: {
         items: [],
-        total: 0
+        total: 0,
       },
-      showAgentIpAlert: false
+      showAgentIpAlert: false,
     }
   },
   computed: {
@@ -172,17 +118,24 @@ export default {
       return this.startingTour && this.status !== 'ready'
     },
     saveBtnTip() {
-      if (!this.status) return i18n.t('packages_business_create_connection_sceneform_qingxianjinxinglian')
-      if (this.status === 'invalid') return i18n.t('packages_business_create_connection_sceneform_lianjieceshiwu')
+      if (!this.status)
+        return i18n.t(
+          'packages_business_create_connection_sceneform_qingxianjinxinglian',
+        )
+      if (this.status === 'invalid')
+        return i18n.t(
+          'packages_business_create_connection_sceneform_lianjieceshiwu',
+        )
       return ''
     },
     docUrl() {
       return `https://docs.tapdata.${
-        !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en' ? 'io' : 'net'
+        !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en'
+          ? 'io'
+          : 'net'
       }/prerequisites/allow-access-network`
-    }
+    },
   },
-
   async created() {
     this.id = this.params.id || ''
     await this.getPdkForm()
@@ -195,22 +148,21 @@ export default {
           type: undefined,
           pdkHash: undefined,
           pdkId: undefined,
-          connectionConfig: undefined
-        }
+          connectionConfig: undefined,
+        },
       })
     }
 
     if (!this.isDaas) {
       const { items: agentData } = await this.$axios.get(
-        'api/tcm/agent?filter=' +
-          encodeURIComponent(
-            JSON.stringify({
-              where: {
-                agentType: 'Cloud',
-                status: 'Running'
-              }
-            })
-          )
+        `api/tcm/agent?filter=${encodeURIComponent(
+          JSON.stringify({
+            where: {
+              agentType: 'Cloud',
+              status: 'Running',
+            },
+          }),
+        )}`,
       )
 
       if (agentData.length) {
@@ -218,19 +170,13 @@ export default {
       }
     }
   },
-
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      vm.pathUrl = from?.fullPath
-    })
-  },
   methods: {
     //保存全局挖掘设置
     saveSetting(digSettingForm) {
       logcollectorApi.patchSystemConfig(digSettingForm)
     },
     goBack() {
-      let msg = this.params.id
+      const msg = this.params.id
         ? i18n.t('packages_business_connections_databaseform_cicaozuohuidiu')
         : i18n.t('packages_business_connections_databaseform_cicaozuohuidiu')
       // let title = this.params.id ? '是否放弃修改内容？' : '是否放弃创建该连接？'
@@ -239,12 +185,12 @@ export default {
         confirmButtonText: this.$t('packages_business_connection_form_give_up'),
         cancelButtonText: this.$t('public_button_cancel'),
         type: 'warning',
-        showClose: false
-      }).then(resFlag => {
+        showClose: false,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        this.$emit('back')
+        $emit(this, 'back')
       })
     },
     submit(addNext = false) {
@@ -255,19 +201,19 @@ export default {
 
         // 正在引导
         /*if (this.startingTour) {
-          if (!this.status) {
-            this.startTest()
-          }
-        }*/
+        if (!this.status) {
+          this.startTest()
+        }
+      }*/
 
         // 保存数据源
-        let id = this.params?.id
-        let { pdkOptions } = this
-        let formValues = this.$refs.schemaToForm?.getFormValues?.()
-        let { __TAPDATA } = formValues
+        const id = this.params?.id
+        const { pdkOptions } = this
+        const formValues = this.$refs.schemaToForm?.getFormValues?.()
+        const { __TAPDATA } = formValues
         formValues.__connectionType = __TAPDATA.connection_type
-        delete formValues['__TAPDATA']
-        let params = {
+        delete formValues.__TAPDATA
+        const params = {
           ...__TAPDATA,
           database_type: pdkOptions.type,
           pdkHash: pdkOptions.pdkHash,
@@ -279,15 +225,15 @@ export default {
           project: '',
           submit: true,
           pdkType: 'pdk',
-          config: formValues
+          config: formValues,
         }
         if (this.showSystemConfig) {
           //打开挖掘配置
-          let digSettingForm = {
+          const digSettingForm = {
             persistenceMode: 'MongoDB',
             persistenceMongodb_uri_db: params.persistenceMongodb_uri_db,
             persistenceMongodb_collection: params.persistenceMongodb_collection,
-            share_cdc_ttl_day: params.share_cdc_ttl_day
+            share_cdc_ttl_day: params.share_cdc_ttl_day,
           }
           this.saveSetting(digSettingForm)
         }
@@ -297,21 +243,23 @@ export default {
           promise = connectionsApi.updateById(id, params)
         } else {
           const { commandCallbackFunctionId } = this
-          params['status'] = this.status ? this.status : 'testing' //默认值 0 代表没有点击过测试
-          promise = connectionsApi.create(params, { id: commandCallbackFunctionId })
+          params.status = this.status ? this.status : 'testing' //默认值 0 代表没有点击过测试
+          promise = connectionsApi.create(params, {
+            id: commandCallbackFunctionId,
+          })
         }
         promise
-          .then(data => {
+          .then((data) => {
             data.isDemo = this.params.isDemo // 标记是否是demo数据源
             this.buried('connectionSubmit', '', {
-              result: true
+              result: true,
             })
             this.$message.success(this.$t('public_message_save_ok'))
-            this.$emit(addNext ? 'saveAndMore' : 'success', data)
+            $emit(this, addNext ? 'saveAndMore' : 'success', data)
           })
           .catch(() => {
             this.buried('connectionSubmit', '', {
-              result: false
+              result: false,
             })
           })
           .finally(() => {
@@ -333,18 +281,20 @@ export default {
             this.startTestPdk()
           },
           () => {
-            this.$el.querySelector('.formily-element-form-item-error').scrollIntoView()
-          }
+            this.$el
+              .querySelector('.formily-element-plus-form-item-error')
+              .scrollIntoView()
+          },
         )
       }).catch(() => {
         this.buried('connectionTestAgentFail')
       })
     },
     startTestPdk() {
-      let formValues = this.$refs.schemaToForm?.getFormValues?.()
-      let { __TAPDATA } = formValues
+      const formValues = this.$refs.schemaToForm?.getFormValues?.()
+      const { __TAPDATA } = formValues
       formValues.__connectionType = __TAPDATA.connection_type
-      delete formValues['__TAPDATA']
+      delete formValues.__TAPDATA
       Object.assign(this.model, {
         ...__TAPDATA,
         database_type: this.pdkOptions.type,
@@ -358,7 +308,7 @@ export default {
         project: '',
         submit: true,
         pdkType: 'pdk',
-        config: formValues
+        config: formValues,
       })
       this.dialogTestVisible = true
 
@@ -374,48 +324,48 @@ export default {
       if (!data.status || data.status === null) return
       this.status = data.status
       this.buried('connectionTest', '', {
-        result: data.status === 'ready'
+        result: data.status === 'ready',
       })
     },
     //取消
     handleCancelRename() {
       this.renameData.rename = this.model.name
-      this.$refs['renameForm'].clearValidate()
+      this.$refs.renameForm.clearValidate()
       this.dialogEditNameVisible = false
     },
     //保存名字
     submitEdit() {
-      this.$refs['renameForm'].validate(valid => {
+      this.$refs.renameForm.validate((valid) => {
         if (valid) {
           this.editBtnLoading = true
           if (this.renameData.rename === '') {
             this.editBtnLoading = false
             this.renameData.rename = this.model.name
-            this.$refs['renameForm'].clearValidate()
+            this.$refs.renameForm.clearValidate()
             return
           }
-          let params = {
+          const params = {
             name: this.renameData.rename,
             id: this.model.id,
-            submit: true
+            submit: true,
           }
           connectionsApi
             .patchId(params)
             .then(() => {
               this.editBtnLoading = false
               this.model.name = this.renameData.rename
-              let { name } = this.model
+              const { name } = this.model
               this.schemaFormInstance.setValues({
                 __TAPDATA: {
-                  name
-                }
+                  name,
+                },
               })
-              this.$refs['renameForm'].clearValidate()
+              this.$refs.renameForm.clearValidate()
               this.$message.success(this.$t('public_message_save_ok'))
               this.dialogEditNameVisible = false
             })
             .catch(() => {
-              this.$refs['renameForm'].clearValidate()
+              this.$refs.renameForm.clearValidate()
               this.editBtnLoading = false
             })
         }
@@ -424,7 +374,7 @@ export default {
     async getPdkForm() {
       const pdkHash = this.params?.pdkHash
       // const data = await databaseTypesApi.pdkHash(pdkHash)
-      let id = this.id || this.params.id
+      const id = this.id || this.params.id
       // this.pdkOptions = data || {}
 
       if (this.params.pdkOptions) {
@@ -434,40 +384,51 @@ export default {
         this.params.name = this.pdkOptions.name
       }
 
-      if (this.pdkOptions.capabilities?.some(t => t.id === 'command_callback_function')) {
+      if (
+        this.pdkOptions.capabilities?.some(
+          (t) => t.id === 'command_callback_function',
+        )
+      ) {
         this.commandCallbackFunctionId = await proxyApi.getId()
       }
 
       let { connectionType } = this.pdkOptions
-      let typeEnum = ['source', 'target'].includes(connectionType)
+      const typeEnum = ['source', 'target'].includes(connectionType)
         ? [
             {
               label: this.$t(`public_connection_type_${connectionType}`),
               value: connectionType,
-              tip: this.$t(`packages_business_connection_form_${connectionType}_tip`)
-            }
+              tip: this.$t(
+                `packages_business_connection_form_${connectionType}_tip`,
+              ),
+            },
           ]
         : [
             {
               label: this.$t('public_connection_type_source_and_target'),
               value: 'source_and_target',
-              tip: this.$t('packages_business_connection_form_source_and_target_tip')
+              tip: this.$t(
+                'packages_business_connection_form_source_and_target_tip',
+              ),
             },
             {
               label: this.$t('public_connection_type_source'),
               value: 'source',
-              tip: this.$t('packages_business_connection_form_source_tip')
+              tip: this.$t('packages_business_connection_form_source_tip'),
             },
             {
               label: this.$t('public_connection_type_target'),
               value: 'target',
-              tip: this.$t('packages_business_connection_form_target_tip')
-            }
+              tip: this.$t('packages_business_connection_form_target_tip'),
+            },
           ]
 
       let hideConnectionType = false
 
-      if (this.hideConnectionType || ['source', 'target'].includes(this.selectorType)) {
+      if (
+        this.hideConnectionType ||
+        ['source', 'target'].includes(this.selectorType)
+      ) {
         hideConnectionType = true
         connectionType = this.selectorType || connectionType
       }
@@ -477,7 +438,9 @@ export default {
       // 是否支持共享挖掘
       if (
         !this.lockedFeature.sharedMiningList &&
-        this.pdkOptions.capabilities?.some(t => t.id === 'stream_read_function')
+        this.pdkOptions.capabilities?.some(
+          (t) => t.id === 'stream_read_function',
+        )
       ) {
         Object.assign(endProperties, {
           shareCdcEnable: {
@@ -486,12 +449,16 @@ export default {
             title: this.$t('packages_business_connection_form_shared_mining'),
             'x-decorator': 'FormItem',
             'x-decorator-props': {
-              tooltip: this.$t('packages_business_connection_form_shared_mining_tip')
+              tooltip: this.$t(
+                'packages_business_connection_form_shared_mining_tip',
+              ),
             },
             'x-component': 'Switch',
             'x-component-props': {
-              placeholder: this.$t('packages_business_connection_form_shared_mining_tip')
-            }
+              placeholder: this.$t(
+                'packages_business_connection_form_shared_mining_tip',
+              ),
+            },
           },
           shareCDCExternalStorageId: {
             title: this.$t('packages_business_external_storage'), //外存配置
@@ -500,44 +467,44 @@ export default {
             'x-component': 'Select',
             'x-component-props': {
               onChange: `{{ val => shareCDCExternalStorageIdOnChange(val, $form) }}`,
-              disabled: `{{ getShareCDCExternalStorageIdDisabled() }}`
+              disabled: `{{ getShareCDCExternalStorageIdDisabled() }}`,
             },
             'x-reactions': [
               {
                 dependencies: ['__TAPDATA.shareCdcEnable'],
                 fulfill: {
                   state: {
-                    display: '{{$deps[0] ? "visible" : "hidden"}}'
-                  }
-                }
+                    display: '{{$deps[0] ? "visible" : "hidden"}}',
+                  },
+                },
               },
               '{{useAsyncDataSourceByConfig({service: loadExternalStorage, withoutField: true}, $values.id ? $self.value : null)}}',
               {
                 dependencies: ['__TAPDATA.shareCdcEnable'],
                 fulfill: {
                   state: {
-                    value: `{{ $deps[0] ? $self.value || $self.dataSource?.find(item => item.isDefault)?.value : '' }}`
-                  }
-                }
-              }
-            ]
+                    value: `{{ $deps[0] ? $self.value || $self.dataSource?.find(item => item.isDefault)?.value : '' }}`,
+                  },
+                },
+              },
+            ],
           },
           shareCDCExternalStorageIdTips: {
             type: 'void',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               colon: false,
-              className: 'mt-n6'
+              className: 'mt-n6',
             },
             'x-component': 'Space',
             'x-reactions': [
               {
                 fulfill: {
                   state: {
-                    display: `{{ getShareCDCExternalStorageIdDisabled() ? "visible" : "hidden" }}`
-                  }
-                }
-              }
+                    display: `{{ getShareCDCExternalStorageIdDisabled() ? "visible" : "hidden" }}`,
+                  },
+                },
+              },
             ],
             properties: {
               tips: {
@@ -545,9 +512,11 @@ export default {
                 'x-decorator': 'FormItem',
                 'x-component': 'Text',
                 'x-component-props': {
-                  content: i18n.t('packages_business_connections_databaseform_dangqianlianjiede'),
-                  class: 'color-danger'
-                }
+                  content: i18n.t(
+                    'packages_business_connections_databaseform_dangqianlianjiede',
+                  ),
+                  class: 'color-danger',
+                },
               },
               Link: {
                 type: 'void',
@@ -556,98 +525,116 @@ export default {
                 'x-component-props': {
                   type: 'text',
                   class: 'text-decoration-underline',
-                  onClick: '{{handleLogCollectorTaskDialog}}'
+                  onClick: '{{handleLogCollectorTaskDialog}}',
                 },
-                'x-content': i18n.t('packages_business_connections_databaseform_chakanwajueren')
-              }
-            }
-          }
+                'x-content': i18n.t(
+                  'packages_business_connections_databaseform_chakanwajueren',
+                ),
+              },
+            },
+          },
         })
       }
 
       // 是否支持包含表
-      if (this.pdkOptions.capabilities?.some(t => t.id === 'get_table_names_function')) {
+      if (
+        this.pdkOptions.capabilities?.some(
+          (t) => t.id === 'get_table_names_function',
+        )
+      ) {
         Object.assign(endProperties, {
           loadAllTables: {
             type: 'boolean',
             default: true,
-            title: i18n.t('packages_business_connections_databaseform_baohanbiao'),
+            title: i18n.t(
+              'packages_business_connections_databaseform_baohanbiao',
+            ),
             'x-decorator': 'FormItem',
             'x-component': 'Radio.Group',
             enum: [
               {
                 label: i18n.t('public_select_option_all'),
-                value: true
+                value: true,
               },
               {
-                label: i18n.t('packages_business_connections_databaseform_zidingyi'),
-                value: false
-              }
-            ]
+                label: i18n.t(
+                  'packages_business_connections_databaseform_zidingyi',
+                ),
+                value: false,
+              },
+            ],
           },
           table_filter: {
             type: 'string',
             'x-decorator': 'FormItem',
             'x-component': 'Input.TextArea',
             'x-component-props': {
-              placeholder: this.$t('packages_business_connection_form_database_owner_tip')
+              placeholder: this.$t(
+                'packages_business_connection_form_database_owner_tip',
+              ),
             },
             'x-decorator-props': {
-              colon: false
+              colon: false,
             },
             'x-reactions': {
               dependencies: ['__TAPDATA.loadAllTables'],
               fulfill: {
                 state: {
-                  display: '{{$deps[0] ? "hidden" : "visible"}}'
-                }
-              }
-            }
+                  display: '{{$deps[0] ? "hidden" : "visible"}}',
+                },
+              },
+            },
           },
           openTableExcludeFilter: {
-            title: i18n.t('packages_business_connections_databaseform_paichubiao'),
+            title: i18n.t(
+              'packages_business_connections_databaseform_paichubiao',
+            ),
             type: 'boolean',
             default: false,
             'x-decorator-props': {
-              feedbackLayout: 'none'
+              feedbackLayout: 'none',
             },
             'x-decorator': 'FormItem',
-            'x-component': 'Switch'
+            'x-component': 'Switch',
           },
           openTableExcludeFilterTips: {
             type: 'void',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
-              colon: false
+              colon: false,
             },
             'x-component': 'Text',
             'x-component-props': {
               icon: 'info',
-              content: i18n.t('packages_business_connections_databaseform_keyicongbaohan')
-            }
+              content: i18n.t(
+                'packages_business_connections_databaseform_keyicongbaohan',
+              ),
+            },
           },
           tableExcludeFilter: {
             type: 'string',
             'x-decorator': 'FormItem',
             'x-component': 'Input.TextArea',
             'x-component-props': {
-              placeholder: this.$t('packages_business_connection_form_database_owner_tip')
+              placeholder: this.$t(
+                'packages_business_connection_form_database_owner_tip',
+              ),
             },
             'x-decorator-props': {
               colon: false,
               style: {
-                'margin-top': '-22px'
-              }
+                'margin-top': '-22px',
+              },
             },
             'x-reactions': {
               dependencies: ['__TAPDATA.openTableExcludeFilter'],
               fulfill: {
                 state: {
-                  display: '{{ $deps[0] ? "visible" : "hidden"}}'
-                }
-              }
-            }
-          }
+                  display: '{{ $deps[0] ? "visible" : "hidden"}}',
+                },
+              },
+            },
+          },
         })
       }
 
@@ -658,12 +645,20 @@ export default {
           default: 'AUTOMATIC_PLATFORM_ALLOCATION',
           'x-decorator': 'FormItem',
           'x-decorator-props': {
-            tooltip: this.$t('packages_business_connection_form_access_node_tip')
+            tooltip: this.$t(
+              'packages_business_connection_form_access_node_tip',
+            ),
           },
           'x-component': 'Select',
           enum: [
-            { label: this.$t('packages_business_connection_form_automatic'), value: 'AUTOMATIC_PLATFORM_ALLOCATION' },
-            { label: this.$t('packages_business_connection_form_manual'), value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
+            {
+              label: this.$t('packages_business_connection_form_automatic'),
+              value: 'AUTOMATIC_PLATFORM_ALLOCATION',
+            },
+            {
+              label: this.$t('packages_business_connection_form_manual'),
+              value: 'MANUALLY_SPECIFIED_BY_THE_USER',
+            },
           ],
           'x-reactions': [
             {
@@ -673,32 +668,32 @@ export default {
                   value: `{{!$isDaas && $deps[0] ? 'MANUALLY_SPECIFIED_BY_THE_USER' : $self.value}}`,
                   dataSource: `{{!$isDaas && $deps[0] ? [
                     { label: '${this.$t(
-                      'packages_business_connection_form_automatic'
+                      'packages_business_connection_form_automatic',
                     )}', value: 'AUTOMATIC_PLATFORM_ALLOCATION', disabled: true },
                     { label: '${this.$t(
-                      'packages_business_connection_form_manual'
+                      'packages_business_connection_form_manual',
                     )}', value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
                   ] : !$isDaas ? [
                     { label: '${this.$t(
-                      'packages_business_connection_form_automatic'
+                      'packages_business_connection_form_automatic',
                     )}', value: 'AUTOMATIC_PLATFORM_ALLOCATION' },
                     { label: '${this.$t(
-                      'packages_business_connection_form_manual'
+                      'packages_business_connection_form_manual',
                     )}', value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
                   ] : [
                     { label: '${this.$t(
-                      'packages_business_connection_form_automatic'
+                      'packages_business_connection_form_automatic',
                     )}', value: 'AUTOMATIC_PLATFORM_ALLOCATION' },
                     { label: '${this.$t(
-                      'packages_business_connection_form_manual'
+                      'packages_business_connection_form_manual',
                     )}', value: 'MANUALLY_SPECIFIED_BY_THE_USER' },
                     {
                       label: '${this.$t('packages_business_connection_form_group')}',
                       value: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
                     }
-                  ]}}`
-                }
-              }
+                  ]}}`,
+                },
+              },
             },
             {
               target: '__TAPDATA.accessNodeProcessId',
@@ -706,11 +701,11 @@ export default {
               fulfill: {
                 state: {
                   value:
-                    '{{$target.value || ($target.dataSource && $target.dataSource[0] ? $target.dataSource[0].value : null)}}'
-                }
-              }
-            }
-          ]
+                    '{{$target.value || ($target.dataSource && $target.dataSource[0] ? $target.dataSource[0].value : null)}}',
+                },
+              },
+            },
+          ],
         },
         accessNodeOption: {
           type: 'string',
@@ -721,53 +716,56 @@ export default {
               fulfill: {
                 state: {
                   visible:
-                    "{{['MANUALLY_SPECIFIED_BY_THE_USER', 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'].includes($deps[0])}}"
-                }
-              }
+                    "{{['MANUALLY_SPECIFIED_BY_THE_USER', 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'].includes($deps[0])}}",
+                },
+              },
             },
-            '{{useAsyncDataSource(loadAccessNode, "dataSource", {value: $self.value})}}'
-          ]
+            '{{useAsyncDataSource(loadAccessNode, "dataSource", {value: $self.value})}}',
+          ],
         },
         agentWrap: {
           type: 'void',
           'x-component': 'Space',
           'x-component-props': {
-            class: 'w-100 align-items-start'
+            class: 'w-100 align-items-start',
           },
           'x-reactions': {
             dependencies: ['.accessNodeType'],
             fulfill: {
               state: {
                 visible:
-                  "{{['MANUALLY_SPECIFIED_BY_THE_USER', 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'].includes($deps[0])}}"
-              }
-            }
+                  "{{['MANUALLY_SPECIFIED_BY_THE_USER', 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'].includes($deps[0])}}",
+              },
+            },
           },
           properties: {
             accessNodeProcessId: {
               type: 'string',
               description: `{{$values.__TAPDATA.shareCdcEnable ? '${this.$t(
-                'packages_business_agent_select_not_found_for_rocksdb'
+                'packages_business_agent_select_not_found_for_rocksdb',
               )}' : ''}}`,
               'x-decorator': 'FormItem',
               'x-decorator-props': {
                 colon: false,
-                class: 'flex-1'
+                class: 'flex-1',
               },
               'x-component': 'Select',
               'x-component-props': {
-                onChange: `{{ () => $self.setSelfErrors('') }}`
+                onChange: `{{ () => $self.setSelfErrors('') }}`,
               },
               'x-reactions': [
                 // '{{useAsyncDataSource(loadAccessNode, "dataSource", {value: $self.value})}}',
                 // 根据下拉数据判断是否存在已选的agent
                 {
-                  dependencies: ['.accessNodeType', '.accessNodeOption#dataSource'],
+                  dependencies: [
+                    '.accessNodeType',
+                    '.accessNodeOption#dataSource',
+                  ],
                   fulfill: {
                     state: {
                       title: `{{'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' === $deps[0] ? '${i18n.t(
-                        'packages_business_choose_agent_group'
-                      )}': '${i18n.t('packages_business_choose_agent')}'}}`
+                        'packages_business_choose_agent_group',
+                      )}': '${i18n.t('packages_business_choose_agent')}'}}`,
                     },
                     run: `
                 console.log('$deps[1]', $deps)
@@ -781,9 +779,9 @@ export default {
                     $self.setSelfErrors('${this.$t('packages_business_agent_select_not_found')}')
                   }
                 }
-              }`
-                  }
-                }
+              }`,
+                  },
+                },
               ],
               // 校验下拉数据判断是否存在已选的agent
               'x-validator': `{{(value, rule, ctx)=> {
@@ -803,7 +801,7 @@ export default {
                 return '${this.$t('packages_business_agent_select_not_found')}'
               }
             }
-          }}}`
+          }}}`,
             },
             priorityProcessId: {
               title: i18n.t('packages_business_priorityProcessId'),
@@ -811,14 +809,19 @@ export default {
               default: '',
               'x-decorator': 'FormItem',
               'x-decorator-props': {
-                class: 'flex-1'
+                class: 'flex-1',
               },
               'x-component': 'Select',
               'x-reactions': {
-                dependencies: ['.accessNodeType', '.accessNodeOption#dataSource', '.accessNodeProcessId'],
+                dependencies: [
+                  '.accessNodeType',
+                  '.accessNodeOption#dataSource',
+                  '.accessNodeProcessId',
+                ],
                 fulfill: {
                   state: {
-                    visible: "{{'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' === $deps[0]}}"
+                    visible:
+                      "{{'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' === $deps[0]}}",
                   },
                   run: `
                     let children = []
@@ -837,25 +840,31 @@ export default {
                     if ($self.value && !children.find(item => item.value === $self.value)) {
                       $self.value = ''
                     }
-                  `
-                }
-              }
-            }
-          }
+                  `,
+                },
+              },
+            },
+          },
         },
         schemaUpdateHour: {
           type: 'string',
-          title: i18n.t('packages_business_connections_databaseform_moxingjiazaipin'),
+          title: i18n.t(
+            'packages_business_connections_databaseform_moxingjiazaipin',
+          ),
           'x-decorator': 'FormItem',
           'x-component': 'Select',
           'x-decorator-props': {
-            tooltip: i18n.t('packages_business_connections_databaseform_shujuyuanzhongmo')
+            tooltip: i18n.t(
+              'packages_business_connections_databaseform_shujuyuanzhongmo',
+            ),
           },
           default: '02:00',
           enum: [
             {
-              label: i18n.t('packages_business_connections_databaseform_bujiazai'),
-              value: 'false'
+              label: i18n.t(
+                'packages_business_connections_databaseform_bujiazai',
+              ),
+              value: 'false',
             },
             '00:00',
             '01:00',
@@ -880,65 +889,74 @@ export default {
             '20:00',
             '21:00',
             '22:00',
-            '23:00'
-          ]
+            '23:00',
+          ],
         },
         heartbeatObject: !this.pdkOptions.tags?.includes('NoHeartbeat')
           ? {
               type: 'void',
               'x-component': 'Space',
-              title: i18n.t('packages_business_connections_databaseform_kaiqixintiaobiao'),
+              title: i18n.t(
+                'packages_business_connections_databaseform_kaiqixintiaobiao',
+              ),
               'x-decorator': 'FormItem',
               'x-decorator-props': {
-                tooltip: i18n.t('packages_business_connections_databaseform_dakaixintiaobiao')
+                tooltip: i18n.t(
+                  'packages_business_connections_databaseform_dakaixintiaobiao',
+                ),
               },
               properties: {
                 heartbeatEnable: {
                   type: 'boolean',
                   default: false,
-                  'x-component': 'Switch'
-                }
+                  'x-component': 'Switch',
+                },
               },
               'x-reactions': {
                 dependencies: ['__TAPDATA.connection_type'],
                 fulfill: {
                   state: {
-                    display: '{{$deps[0] === "source_and_target" ? "visible":"hidden"}}'
-                  }
-                }
-              }
+                    display:
+                      '{{$deps[0] === "source_and_target" ? "visible":"hidden"}}',
+                  },
+                },
+              },
             }
-          : undefined
+          : undefined,
       })
 
       if (this.isDaas) {
         endProperties.schemaUpdateHour.default = 'default'
         endProperties.schemaUpdateHour.enum.unshift({
           label: i18n.t('packages_business_connections_databaseform_system'),
-          value: 'default'
+          value: 'default',
         })
         endProperties.accessNodeType.enum.push({
           label: this.$t('packages_business_connection_form_group'),
-          value: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
+          value: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP',
         })
       }
 
-      const connectionProperties = this.pdkOptions.properties?.connection?.properties || {}
+      const connectionProperties =
+        this.pdkOptions.properties?.connection?.properties || {}
       const { OPTIONAL_FIELDS } = connectionProperties
       delete connectionProperties.OPTIONAL_FIELDS
 
       let reactions
 
-      if (process.env.VUE_APP_CONNECTOR_SCHEMA && /^\s*[[{].*[\]}]\s*$/.test(process.env.VUE_APP_CONNECTOR_SCHEMA)) {
-        reactions = JSON.parse(process.env.VUE_APP_CONNECTOR_SCHEMA)
-      } else if (process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA) {
+      if (
+        import.meta.env.VUE_APP_CONNECTOR_SCHEMA &&
+        /^\s*[[{].*[\]}]\s*$/.test(import.meta.env.VUE_APP_CONNECTOR_SCHEMA)
+      ) {
+        reactions = JSON.parse(import.meta.env.VUE_APP_CONNECTOR_SCHEMA)
+      } else if (import.meta.env.VUE_APP_HIDE_CONNECTOR_SCHEMA) {
         reactions = [
           {
-            target: process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA,
+            target: import.meta.env.VUE_APP_HIDE_CONNECTOR_SCHEMA,
             fulfill: {
-              state: { display: 'hidden' }
-            }
-          }
+              state: { display: 'hidden' },
+            },
+          },
         ]
       }
 
@@ -947,8 +965,8 @@ export default {
         reactions.push({
           target: '__TAPDATA.shareCdcEnable',
           fulfill: {
-            state: { display: 'hidden' }
-          }
+            state: { display: 'hidden' },
+          },
         })
       }
 
@@ -957,14 +975,14 @@ export default {
         reactions.push({
           target: 'logPluginName',
           when: '{{pdkId !== "postgres"}}',
-          fulfill: { state: { display: 'hidden' } }
+          fulfill: { state: { display: 'hidden' } },
         })
       }
 
-      let result = {
+      const result = {
         type: 'object',
         'x-component-props': {
-          width: 500
+          width: 500,
         },
         properties: {
           START: {
@@ -982,9 +1000,12 @@ export default {
                     'x-decorator': 'FormItem',
                     'x-component': 'Input',
                     'x-validator': {
-                      pattern: /^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-.]|[\u4e00-\u9fa5])*$/,
-                      message: i18n.t('packages_business_connections_databaseform_mingchengguizezhong')
-                    }
+                      pattern:
+                        /^([\u4E00-\u9FA5A-Z])([\w\s\-.\u4E00-\u9FA5])*$/i,
+                      message: i18n.t(
+                        'packages_business_connections_databaseform_mingchengguizezhong',
+                      ),
+                    },
                   },
                   connection_type: {
                     type: 'string',
@@ -995,75 +1016,88 @@ export default {
                     'x-hidden': hideConnectionType,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      feedbackLayout: 'none'
+                      feedbackLayout: 'none',
                     },
                     'x-component': 'Radio.Group',
                     'x-component-props': {
-                      optionType: 'button'
-                    }
+                      optionType: 'button',
+                    },
                   },
                   connection_form_source_and_target_tip: {
                     type: 'void',
                     'x-hidden': hideConnectionType,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      colon: false
+                      colon: false,
                     },
                     'x-component': 'Text',
                     'x-component-props': {
                       icon: 'info',
-                      content: this.$t('packages_business_connection_form_source_and_target_tip')
+                      content: this.$t(
+                        'packages_business_connection_form_source_and_target_tip',
+                      ),
                     },
                     'x-reactions': {
                       dependencies: ['__TAPDATA.connection_type'],
                       fulfill: {
                         schema: {
-                          'x-decorator-props.style.display': '{{$deps[0]==="source_and_target" ? null:"none"}}'
-                        }
-                      }
-                    }
+                          'x-decorator-props.style.display':
+                            '{{$deps[0]==="source_and_target" ? null:"none"}}',
+                        },
+                      },
+                    },
                   },
                   connection_form_source_tip: {
                     type: 'void',
                     'x-hidden': hideConnectionType,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      colon: false
+                      colon: false,
                     },
                     'x-component': 'Text',
                     'x-component-props': {
                       icon: 'info',
-                      content: this.$t('packages_business_connection_form_source_tip')
+                      content: this.$t(
+                        'packages_business_connection_form_source_tip',
+                      ),
                     },
                     'x-reactions': {
                       dependencies: ['__TAPDATA.connection_type'],
                       fulfill: {
-                        schema: { 'x-decorator-props.style.display': '{{$deps[0]==="source" ? null:"none"}}' }
-                      }
-                    }
+                        schema: {
+                          'x-decorator-props.style.display':
+                            '{{$deps[0]==="source" ? null:"none"}}',
+                        },
+                      },
+                    },
                   },
                   connection_form_target_tip: {
                     type: 'void',
                     'x-hidden': hideConnectionType,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      colon: false
+                      colon: false,
                     },
                     'x-component': 'Text',
                     'x-component-props': {
                       icon: 'info',
-                      content: this.$t('packages_business_connection_form_target_tip')
+                      content: this.$t(
+                        'packages_business_connection_form_target_tip',
+                      ),
                     },
                     'x-reactions': {
                       dependencies: ['__TAPDATA.connection_type'],
                       fulfill: {
-                        schema: { 'x-decorator-props.style.display': '{{$deps[0]==="target" ? null:"none"}}' }
-                      }
-                    }
-                  }
-                }
-              }
-            }
+                        schema: {
+                          'x-decorator-props.style.display':
+                            '{{$deps[0]==="target" ? null:"none"}}',
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
           ...connectionProperties,
           END: {
@@ -1072,30 +1106,30 @@ export default {
             'x-component': 'FormCollapse',
             'x-component-props': {
               class: 'border-bottom-0',
-              activeKey: []
+              activeKey: [],
             },
             properties: {
               advance: {
                 type: 'void',
                 'x-component': 'FormCollapse.Item',
                 'x-component-props': {
-                  title: i18n.t('public_advanced_settings')
+                  title: i18n.t('public_advanced_settings'),
                 },
                 properties: {
                   OPTIONAL_FIELDS,
                   __TAPDATA: {
                     type: 'object',
                     // 'x-index': 1000000,
-                    properties: endProperties
-                  }
-                }
+                    properties: endProperties,
+                  },
+                },
               },
               ssl: this.pdkOptions.tags?.includes('ssl')
                 ? {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: i18n.t('public_ssl_settings')
+                      title: i18n.t('public_ssl_settings'),
                     },
                     properties: {
                       useSSL: {
@@ -1105,20 +1139,22 @@ export default {
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
                           className: 'item-control-horizontal',
-                          layout: 'horizontal'
+                          layout: 'horizontal',
                         },
-                        'x-component': 'Switch'
+                        'x-component': 'Switch',
                       },
                       sslCa: {
                         // CA 文件
-                        title: i18n.t('packages_business_certificate_authority'),
+                        title: i18n.t(
+                          'packages_business_certificate_authority',
+                        ),
                         type: 'string',
                         'x-decorator': 'FormItem',
                         'x-component': 'TextFileReader',
                         'x-component-props': {
-                          base64: true
+                          base64: true,
                         },
-                        fileNameField: 'sslCAFile'
+                        fileNameField: 'sslCAFile',
                       },
                       sslCert: {
                         // 客户端证书文件
@@ -1127,9 +1163,9 @@ export default {
                         'x-decorator': 'FormItem',
                         'x-component': 'TextFileReader',
                         'x-component-props': {
-                          base64: true
+                          base64: true,
                         },
-                        fileNameField: 'sslCertFile'
+                        fileNameField: 'sslCertFile',
                       },
                       sslKey: {
                         // 客户端密钥文件
@@ -1138,18 +1174,18 @@ export default {
                         'x-decorator': 'FormItem',
                         'x-component': 'TextFileReader',
                         'x-component-props': {
-                          base64: true
+                          base64: true,
                         },
-                        fileNameField: 'sslKeyFile'
+                        fileNameField: 'sslKeyFile',
                       },
                       sslKeyPassword: {
                         // 客户端密钥密码
                         title: i18n.t('packages_business_client_key_password'),
                         type: 'string',
                         'x-decorator': 'FormItem',
-                        'x-component': 'Password'
-                      }
-                    }
+                        'x-component': 'Password',
+                      },
+                    },
                   }
                 : undefined,
               ssh: this.pdkOptions.tags?.includes('ssh')
@@ -1157,7 +1193,7 @@ export default {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: i18n.t('public_ssh_settings')
+                      title: i18n.t('public_ssh_settings'),
                     },
                     properties: {
                       __TAPDATA: {
@@ -1170,46 +1206,46 @@ export default {
                             'x-decorator': 'FormItem',
                             'x-decorator-props': {
                               className: 'item-control-horizontal',
-                              layout: 'horizontal'
+                              layout: 'horizontal',
                             },
-                            'x-component': 'Switch'
+                            'x-component': 'Switch',
                           },
                           sshHost: {
                             // 主机名
                             title: i18n.t('packages_business_ssh_host'),
                             type: 'string',
                             'x-decorator': 'FormItem',
-                            'x-component': 'Input'
+                            'x-component': 'Input',
                           },
                           sshPort: {
                             // 端口
                             title: i18n.t('packages_business_ssh_port'),
                             type: 'string',
                             'x-decorator': 'FormItem',
-                            'x-component': 'InputNumber'
+                            'x-component': 'InputNumber',
                           },
                           sshUsername: {
                             // 用户名
                             title: i18n.t('packages_business_ssh_username'),
                             type: 'string',
                             'x-decorator': 'FormItem',
-                            'x-component': 'Input'
+                            'x-component': 'Input',
                           },
                           sshPassword: {
                             // 密码
                             title: i18n.t('packages_business_ssh_password'),
                             type: 'string',
                             'x-decorator': 'FormItem',
-                            'x-component': 'Password'
-                          }
-                        }
-                      }
-                    }
+                            'x-component': 'Password',
+                          },
+                        },
+                      },
+                    },
                   }
-                : undefined
-            }
-          }
-        }
+                : undefined,
+            },
+          },
+        },
       }
 
       if (id) {
@@ -1217,7 +1253,8 @@ export default {
         // 开启了共享挖掘
         const { shareCdcEnable, shareCDCExternalStorageId } = this.model
         if (shareCdcEnable && shareCDCExternalStorageId) {
-          this.connectionLogCollectorTaskData = await connectionsApi.usingDigginTaskByConnectionId(id)
+          this.connectionLogCollectorTaskData =
+            await connectionsApi.usingDigginTaskByConnectionId(id)
         }
         // delete result.properties.START.properties.__TAPDATA.properties.name
       }
@@ -1228,64 +1265,81 @@ export default {
         $isDaas: this.isDaas,
         pdkId: this.pdkOptions.pdkId,
         isEdit: !!id,
-        useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
-          return field => {
+        useAsyncDataSource: (
+          service,
+          fieldName = 'dataSource',
+          ...serviceParams
+        ) => {
+          return (field) => {
             field.loading = true
             service({ field }, ...serviceParams).then(
-              action.bound(data => {
+              action.bound((data) => {
                 if (fieldName === 'value') {
                   field.setValue(data)
                 } else field[fieldName] = data
                 field.loading = false
-              })
+              }),
             )
           }
         },
         useAsyncDataSourceByConfig: (config, ...serviceParams) => {
           // withoutField: 不往service方法传field参数
-          const { service, fieldName = 'dataSource', withoutField = false } = config
-          return field => {
+          const {
+            service,
+            fieldName = 'dataSource',
+            withoutField = false,
+          } = config
+          return (field) => {
             field.loading = true
-            let fetch = withoutField ? service(...serviceParams) : service(field, ...serviceParams)
+            const fetch = withoutField
+              ? service(...serviceParams)
+              : service(field, ...serviceParams)
             fetch.then(
-              action.bound(data => {
+              action.bound((data) => {
                 if (fieldName === 'value') {
                   field.setValue(data)
                 } else field[fieldName] = data
                 field.loading = false
-              })
+              }),
             )
           }
         },
         loadAccessNode: async (fieldName, others = {}) => {
           const data = await clusterApi.findAccessNodeInfo()
 
-          const mapNode = item => ({
+          const mapNode = (item) => ({
             value: item.processId,
             label: `${item.agentName || item.hostName}（${
-              item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
+              item.status === 'running'
+                ? i18n.t('public_status_running')
+                : i18n.t('public_agent_status_offline')
             }）`,
             disabled: item.status !== 'running',
-            accessNodeType: item.accessNodeType
+            accessNodeType: item.accessNodeType,
           })
 
           return (
             data
               ?.filter(
-                t =>
+                (t) =>
                   t.status === 'running' ||
-                  t.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' ||
-                  t.processId === others.value
+                  t.accessNodeType ===
+                    'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' ||
+                  t.processId === others.value,
               )
-              ?.map(item => {
-                if (item.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP') {
+              ?.map((item) => {
+                if (
+                  item.accessNodeType ===
+                  'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
+                ) {
                   return {
                     value: item.processId,
                     label: `${item.accessNodeName}（${i18n.t('public_status_running')}：${
-                      item.accessNodes?.filter(ii => ii.status === 'running').length || 0
+                      item.accessNodes?.filter((ii) => ii.status === 'running')
+                        .length || 0
                     }）`,
                     accessNodeType: item.accessNodeType,
-                    children: item.accessNodes?.map(mapNode) || []
+                    children: item.accessNodes?.map(mapNode) || [],
                   }
                 }
                 return mapNode(item)
@@ -1298,15 +1352,21 @@ export default {
             const { pdkHash, id } = this.pdkOptions
             const { __TAPDATA, ...formValues } = $values
             const search = where.label?.like
-            const getValues = Object.assign({}, this.model?.config || {}, formValues)
+            const getValues = Object.assign(
+              {},
+              this.model?.config || {},
+              formValues,
+            )
             let subscribeIds = []
             if (__TAPDATA.accessNodeProcessId) {
               subscribeIds = [`processId_${__TAPDATA.accessNodeProcessId}`]
             }
-            let params = {
+            const params = {
               pdkHash,
               connectionId: id || this.commandCallbackFunctionId,
-              connectionConfig: isEmpty(formValues) ? this.model?.config || {} : getValues,
+              connectionConfig: isEmpty(formValues)
+                ? this.model?.config || {}
+                : getValues,
               subscribeIds,
               command,
               type: 'connection',
@@ -1314,19 +1374,19 @@ export default {
               argMap: {
                 key: search,
                 page,
-                size: size || 1000
-              }
+                size: size || 1000,
+              },
             }
             if (!params.pdkHash || !params.connectionId) {
               return { items: [], total: 0 }
             }
-            let result = await proxyApi.command(params)
+            const result = await proxyApi.command(params)
             if (!result.items) {
               return { items: [], total: 0 }
             }
             return result
-          } catch (e) {
-            console.log('catch', e) // eslint-disable-line
+          } catch (error) {
+            console.log('catch', error) // eslint-disable-line
             return { items: [], total: 0 }
           }
         },
@@ -1334,10 +1394,10 @@ export default {
           const filter = {
             subscribeId: `source#${this.model?.id || this.commandCallbackFunctionId}`,
             service: 'engine',
-            expireSeconds: 100000000
+            expireSeconds: 100000000,
           }
-          proxyApi.subscribe(filter).then(data => {
-            const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+          proxyApi.subscribe(filter).then((data) => {
+            const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
             const p = location.origin + location.pathname
             let str = `${p}${isDaas ? '' : 'tm/'}api/proxy/callback/${data.token}`
             if (/^\/\w+/.test(data.token)) {
@@ -1350,23 +1410,29 @@ export default {
           const getState = $form.getState()
           const { pdkHash } = this.pdkOptions
           const { __TAPDATA, ...formValues } = getState?.values || {}
-          const getValues = Object.assign({}, this.model?.config || {}, formValues)
+          const getValues = Object.assign(
+            {},
+            this.model?.config || {},
+            formValues,
+          )
           let subscribeIds = []
           if (__TAPDATA.accessNodeProcessId) {
             subscribeIds = [`processId_${__TAPDATA.accessNodeProcessId}`]
           }
-          let params = {
+          const params = {
             pdkHash,
             connectionId: this.model?.id || this.commandCallbackFunctionId,
-            connectionConfig: isEmpty(formValues) ? this.model?.config || {} : getValues,
+            connectionConfig: isEmpty(formValues)
+              ? this.model?.config || {}
+              : getValues,
             ...others,
             subscribeIds,
-            type: 'connection'
+            type: 'connection',
           }
-          proxyApi.command(params).then(data => {
+          proxyApi.command(params).then((data) => {
             const setValue = data.setValue
             if (setValue) {
-              for (let key in setValue) {
+              for (const key in setValue) {
                 $form.setValuesIn(key, setValue[key]?.data)
               }
             }
@@ -1374,27 +1440,27 @@ export default {
         },
         async loadExternalStorage(id) {
           try {
-            let filter = {
+            const filter = {
               where: {},
               limit: 1000,
-              skip: 0
+              skip: 0,
             }
             if (id) {
               const ext = await externalStorageApi.get(id)
               filter.where.type = ext?.type
             }
             const { items = [] } = await externalStorageApi.list({
-              filter: JSON.stringify(filter)
+              filter: JSON.stringify(filter),
             })
-            return items.map(item => {
+            return items.map((item) => {
               return {
                 type: item.type,
                 label: item.name,
                 value: item.id,
-                isDefault: item.defaultStorage
+                isDefault: item.defaultStorage,
               }
             })
-          } catch (e) {
+          } catch {
             return []
           }
         },
@@ -1402,8 +1468,8 @@ export default {
           const routeUrl = this.$router.resolve({
             name: 'HeartbeatMonitor',
             params: {
-              id: this.heartbeatTaskId
-            }
+              id: this.heartbeatTaskId,
+            },
           })
           openUrl(routeUrl.href)
         },
@@ -1411,41 +1477,49 @@ export default {
           if (!value) return
           this.getHeartbeatTaskId($form)
         },
-        goToAuthorized: async params => {
+        goToAuthorized: async (params) => {
           const routeQuery = cloneDeep(this.$route.query)
           const routeParams = this.$route.params
-          delete routeQuery['connectionConfig']
-          let routeUrl = this.$router.resolve({
+          delete routeQuery.connectionConfig
+          const routeUrl = this.$router.resolve({
             name: this.$route.name,
             query: {
               ...routeQuery,
               type: `add-${this.selectorType}`,
               pdkHash: this.params.pdkHash,
-              pdkId: this.params.pdkId
+              pdkId: this.params.pdkId,
             },
-            params: routeParams
+            params: routeParams,
           })
 
-          const { __TAPDATA, ...__TAPDATA_CONFIG } = this.$refs.schemaToForm?.getFormValues?.() || {}
-          params.oauthUrl = params?.oauthUrl.replace(/@\{(\w+)\}@/gi, function (val, sub) {
-            return __TAPDATA_CONFIG[sub]
-          })
+          const { __TAPDATA, ...__TAPDATA_CONFIG } =
+            this.$refs.schemaToForm?.getFormValues?.() || {}
+          params.oauthUrl = params?.oauthUrl.replaceAll(
+            /@\{(\w+)\}@/g,
+            function (val, sub) {
+              return __TAPDATA_CONFIG[sub]
+            },
+          )
           const data = Object.assign({}, params, {
             url: location.origin + location.pathname + routeUrl.href,
             connectionConfig: {
               __TAPDATA,
-              __TAPDATA_CONFIG
-            }
+              __TAPDATA_CONFIG,
+            },
           })
           submitForm(params?.target, data)
         },
         shareCDCExternalStorageIdOnChange: (val, $form) => {
-          $form.setFieldState('__TAPDATA.shareCDCExternalStorageIdTips', state => {
-            state.display =
-              this.connectionLogCollectorTaskData.total && val !== this.model.shareCDCExternalStorageId
-                ? 'visible'
-                : 'hidden'
-          })
+          $form.setFieldState(
+            '__TAPDATA.shareCDCExternalStorageIdTips',
+            (state) => {
+              state.display =
+                this.connectionLogCollectorTaskData.total &&
+                val !== this.model.shareCDCExternalStorageId
+                  ? 'visible'
+                  : 'hidden'
+            },
+          )
         },
         getShareCDCExternalStorageIdDisabled: () => {
           return !!this.connectionLogCollectorTaskData.total
@@ -1455,8 +1529,8 @@ export default {
         },
         handleJsDebug: (path = []) => {
           const properties = this.schemaData?.properties || {}
-          let fieldObj = {}
-          path.forEach(p => {
+          const fieldObj = {}
+          path.forEach((p) => {
             const { key, data } = this.getOptionByPath(properties, p)
             fieldObj[key] = data
           })
@@ -1464,20 +1538,26 @@ export default {
           this.showJsDebug = true
         },
         handleGetGenerateRefreshToken: ($index, $record, items, others) => {
-          if (items.filter((t, i) => i !== $index).some(t => t.supplierKey === $record.supplierKey)) {
-            return this.$message.error(this.$t('packages_form_message_exists_name'))
+          if (
+            items
+              .filter((t, i) => i !== $index)
+              .some((t) => t.supplierKey === $record.supplierKey)
+          ) {
+            return this.$message.error(
+              this.$t('packages_form_message_exists_name'),
+            )
           }
           const params = Object.assign(
             {
               supplierKey: $record.supplierKey,
               randomId: $record.randomId,
               subscribeId: `source#${this.model?.id || this.commandCallbackFunctionId}`,
-              service: 'engine'
+              service: 'engine',
             },
-            others
+            others,
           )
           proxyApi.generateRefreshToken(params).then((data = {}) => {
-            const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+            const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
             const p = location.origin + location.pathname
             let str = `${p}${isDaas ? '' : 'tm/'}${data.path}/${data.token}`
             if (/^\/\w+/.test(data.token)) {
@@ -1492,7 +1572,7 @@ export default {
         getHost: async () => {
           const data = await proxyApi.host()
           return data?.host
-        }
+        },
       }
       this.schemaData = result
       this.loadingFrom = false
@@ -1508,43 +1588,169 @@ export default {
           pdkHash: this.params.pdkHash,
           connectionConfig: JSON.parse(connectionConfig),
           command: 'OAuth',
-          type: 'connection'
+          type: 'connection',
         }
         const res = await proxyApi.command(params)
-        const { __TAPDATA, __TAPDATA_CONFIG = {}, ...trace } = res || JSON.parse(connectionConfig) || {}
+        const {
+          __TAPDATA,
+          __TAPDATA_CONFIG = {},
+          ...trace
+        } = res || JSON.parse(connectionConfig) || {}
         Object.assign(
           this.model,
           __TAPDATA,
           {
-            config: __TAPDATA_CONFIG
+            config: __TAPDATA_CONFIG,
           },
-          trace
+          trace,
         )
         this.schemaFormInstance.setValues({
           __TAPDATA,
           ...__TAPDATA_CONFIG,
-          ...trace
+          ...trace,
         })
       }
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style scoped lang="scss">
+<template>
+  <div v-loading="loadingFrom" class="connection-from">
+    <div class="connection-from-body">
+      <main class="connection-from-main min-w-0">
+        <div v-if="!isDaas && showAgentIpAlert" class="px-4 py-2">
+          <ElAlert
+            class="alert-primary text-primary"
+            type="info"
+            show-icon
+            :closable="false"
+          >
+            <template #title>
+              <span class="inline-block lh-sm align-middle">
+                {{ $t('packages_business_agent_ip_tips_prefix')
+                }}<a
+                  :href="docUrl"
+                  target="_blank"
+                  class="text-decoration-underline text-primary"
+                  >{{ $t('packages_business_agent_ip_tips_suffix') }}</a
+                >
+              </span>
+            </template>
+          </ElAlert>
+        </div>
+        <div class="form-wrap">
+          <div class="form px-6 pt-4">
+            <SchemaToForm
+              ref="schemaToForm"
+              class="pdk-schema-form"
+              :schema="schemaData"
+              :scope="schemaScope"
+              layout="vertical"
+              label-width="100%"
+            />
+          </div>
+        </div>
+        <footer class="footer">
+          <div class="footer-btn text-center p-4">
+            <el-button class="test mr-4" @click="startTest()">{{
+              $t('public_connection_button_test')
+            }}</el-button>
+            <ElTooltip :disabled="!disableSave" :content="saveBtnTip">
+              <div class="inline-block">
+                <el-button
+                  :disabled="disableSave"
+                  type="primary"
+                  :loading="submitBtnLoading"
+                  @click="submit()"
+                >
+                  {{ $t('public_button_save') }}
+                </el-button>
+              </div>
+            </ElTooltip>
+
+            <!--            <el-button type="primary" :loading="saveAndMoreLoading" @click="saveAndMore">{{
+								$t('packages_business_save_and_more')
+							}}</el-button>-->
+          </div>
+        </footer>
+      </main>
+      <div class="flex-1 overflow-x-hidden bg-white border-start">
+        <ConnectorDoc
+          v-if="params.pdkHash"
+          :pdk-hash="params.pdkHash"
+          :pdk-id="params.pdkId"
+        />
+      </div>
+    </div>
+    <Test
+      ref="test"
+      v-model:visible="dialogTestVisible"
+      :form-data="model"
+      @return-test-data="returnTestData"
+    />
+    <el-dialog
+      v-model="dialogEditNameVisible"
+      :title="$t('packages_business_connection_rename')"
+      :close-on-click-modal="false"
+      width="30%"
+    >
+      <el-form
+        ref="renameForm"
+        :model="renameData"
+        :rules="renameRules"
+        @submit.prevent
+      >
+        <el-form-item prop="rename">
+          <el-input
+            v-model="renameData.rename"
+            maxlength="100"
+            show-word-limit
+          />
+        </el-form-item>
+        <span
+          style="
+            color: #ccc;
+            margin-top: 5px;
+            font-size: 12px;
+            display: inline-block;
+          "
+          >{{
+            $t('packages_business_connections_databaseform_zhongyingkaitouge')
+          }}</span
+        >
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="handleCancelRename">{{
+            $t('public_button_cancel')
+          }}</el-button>
+          <el-button
+            type="primary"
+            :loading="editBtnLoading"
+            @click="submitEdit()"
+            >{{ $t('public_button_confirm') }}</el-button
+          >
+        </span>
+      </template>
+    </el-dialog>
+  </div>
+</template>
+
+<style lang="scss" scoped>
 .connection-from {
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  background-color: #eff1f4;
+  // background-color: #eff1f4;
   .connection-from-body {
     display: flex;
     flex: 1;
     //padding-left: 24px;
     //border-radius: 4px;
     overflow: hidden;
-    background-color: map-get($bgColor, white);
+    background-color: map.get($bgColor, white);
     .connection-from-main {
       display: flex;
       flex: 1;
@@ -1554,9 +1760,11 @@ export default {
         padding-top: 20px;
         margin-bottom: 24px;
         font-size: $fontSubtitle;
-        font-family: PingFangSC-Medium, PingFang SC;
+        font-family:
+          PingFangSC-Medium,
+          PingFang SC;
         font-weight: 500;
-        color: map-get($fontColor, dark);
+        color: map.get($fontColor, dark);
         line-height: 28px;
       }
       .connection-from-label {
@@ -1571,16 +1779,18 @@ export default {
         .label {
           width: 160px;
           font-size: $fontBaseTitle;
-          color: map-get($fontColor, light);
+          color: map.get($fontColor, light);
         }
         .content-box {
           display: flex;
           max-width: 680px;
           line-height: 22px;
           font-size: $fontBaseTitle;
-          font-family: PingFangSC-Regular, PingFang SC;
+          font-family:
+            PingFangSC-Regular,
+            PingFang SC;
           font-weight: 400;
-          color: map-get($fontColor, dark);
+          color: map.get($fontColor, dark);
           align-items: center;
           white-space: nowrap;
           word-break: break-word;
@@ -1593,7 +1803,7 @@ export default {
           height: 25px;
           justify-content: center;
           align-items: center;
-          background: map-get($bgColor, white);
+          background: map.get($bgColor, white);
           border-radius: 3px;
           img {
             width: 100%;
@@ -1613,61 +1823,64 @@ export default {
           //}
           .form-builder {
             width: 396px;
-            ::v-deep {
-              .e-form-builder-item {
-                &.large-item {
-                  width: 610px;
-                  .el-form-item__content {
-                    padding-right: 20px;
-                  }
-                }
-                &.small-item {
-                  width: 320px;
-                }
-                &.mongodb-item {
-                  width: 680px;
-                }
-                &.mongodb-tip-item .el-form-item__content {
-                  width: 680px;
-                }
-                .url-tip {
+            :deep(.e-form-builder-item.large-item) {
+              width: 610px;
+              .el-form-item__content {
+                padding-right: 20px;
+              }
+            }
+
+            :deep(.e-form-builder-item.small-item) {
+              width: 320px;
+            }
+
+            :deep(.e-form-builder-item.mongodb-item) {
+              width: 680px;
+            }
+
+            :deep(
+              .e-form-builder-item.mongodb-tip-item .el-form-item__content
+            ) {
+              width: 680px;
+            }
+
+            :deep(.e-form-builder-item) {
+              .url-tip {
+                font-size: 12px;
+                color: map.get($fontColor, light);
+                b {
                   font-size: 12px;
-                  color: map-get($fontColor, light);
-                  b {
-                    font-size: 12px;
-                    font-weight: 400;
-                    color: map-get($fontColor, light);
-                  }
-                }
-                .fb-radio-group {
-                  .el-radio--mini.is-bordered {
-                    padding-top: 0;
-                  }
-                }
-                .el-input .el-input__inner,
-                .el-textarea__inner {
-                  background-color: rgba(239, 241, 244, 0.2);
-                }
-                .el-textarea__inner {
-                  min-height: 70px !important;
+                  font-weight: 400;
+                  color: map.get($fontColor, light);
                 }
               }
-              .el-input-group__append button.el-button {
-                background-color: inherit;
-                border-color: azure;
+              .fb-radio-group {
+                .el-radio--mini.is-bordered {
+                  padding-top: 0;
+                }
               }
+              .el-input .el-input__inner,
+              .el-textarea__inner {
+                background-color: rgba(239, 241, 244, 0.2);
+              }
+              .el-textarea__inner {
+                min-height: 70px !important;
+              }
+            }
+
+            :deep(.el-input-group__append button.el-button) {
+              background-color: inherit;
+              border-color: azure;
             }
           }
         }
 
-        ::v-deep {
-          .formily-element-form-item {
-            .el-input-number {
-              width: 180px;
-            }
-            .el-input-number--small {
-              width: 130px;
-            }
+        :deep(.formily-element-plus-form-item) {
+          .el-input-number {
+            width: 180px;
+          }
+          .el-input-number--small {
+            width: 130px;
           }
         }
       }
@@ -1689,7 +1902,7 @@ export default {
   .footer {
     width: 100%;
     //height: 62px;
-    background-color: map-get($bgColor, white);
+    background-color: map.get($bgColor, white);
     border-left: none;
     //line-height: 62px;
     border-top: 1px solid #e1e3e9;
@@ -1705,45 +1918,40 @@ export default {
     background: #e8f3ff;
   }
 }
-
 .git-book {
   width: 500px;
 }
-
 .pdk-schema-form {
-  ::v-deep {
-    .formily-element-form-item-feedback-layout-loose {
-      margin-bottom: 20px;
-    }
-    .formily-element-form-item-layout-vertical {
-      > .formily-element-form-item-label {
-        margin-bottom: 8px;
+  :deep(.formily-element-plus-form-item-feedback-layout-loose) {
+    margin-bottom: 20px;
+  }
 
-        .formily-element-form-item-label-content {
-          min-height: unset;
-          height: unset;
-        }
-        .formily-element-form-item-label-tooltip {
-          margin-left: 4px;
-          height: unset;
-        }
-        * {
-          line-height: 22px;
-        }
+  :deep(.formily-element-plus-form-item-layout-vertical) {
+    > .formily-element-plus-form-item-label {
+      margin-bottom: 8px;
+
+      .formily-element-plus-form-item-label-content {
+        min-height: unset;
+        height: unset;
+      }
+      .formily-element-plus-form-item-label-tooltip {
+        margin-left: 4px;
+        height: unset;
+      }
+      * {
+        line-height: 22px;
       }
     }
+  }
 
-    .formily-element-form-collapse {
-      &.border-bottom-0 {
-        .el-collapse-item__header {
-          border-bottom: none;
-        }
-      }
-
-      .el-collapse-item__content {
-        padding-bottom: 0;
-      }
+  :deep(.formily-element-plus-form-collapse.border-bottom-0) {
+    .el-collapse-item__header {
+      border-bottom: none;
     }
+  }
+
+  :deep(.el-collapse-item__content) {
+    padding-bottom: 0;
   }
 }
 </style>

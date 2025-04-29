@@ -68,6 +68,6 @@ const mutations = {
   },
   catalogueKey(state, key) {
     state.catalogueKey = key
-  }
+  },
 }
 export default mutations

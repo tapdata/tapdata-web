@@ -1,130 +1,29 @@
-<template>
-  <section class="layout-wrap vh-100 flex flex-column min-h-0 bg-secondary-100">
-    <header class="layout-header flex align-center border-bottom px-4 text-nowrap bg-white" style="flex: 0 0 64px">
-      <button @click="handlePageReturn" class="icon-btn mr-2">
-        <VIcon size="18">left</VIcon>
-      </button>
-      <span class="fw-bold">{{ $t('public_data_capture') }}</span>
-      <VDivider class="mx-3" vertical inset></VDivider>
-      <div class="overflow-hidden">
-        <div class="flex align-items-center">
-          <TextEditable
-            class="overflow-hidden"
-            v-model="name"
-            :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
-            :input-min-width="32"
-            :maxlength="200"
-            @change="onNameInputChange"
-          />
-          <TaskStatus :task="dataflow" :agent-map="agentMap" class="ml-4" />
-        </div>
-        <div class="flex align-items-center font-color-light mt-1">
-          <span class="mr-2">{{ syncType[dataflow.type] }}</span>
-          <span>{{ $t('packages_dag_monitor_topheader_zuijinyiciqi') }}</span>
-          <span>{{ lastStartDate }}</span>
-        </div>
-      </div>
-    </header>
-
-    <section class="layout-wrap position-relative font-color-light p-4 overflow-auto">
-      <div class="mb-4 text-center">
-        <el-input v-model="keyword" placeholder="请输入关键字" style="width: 300px" clearable @input="onInput">
-          <template #prefix>
-            <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
-          </template>
-        </el-input>
-      </div>
-      <div v-if="list.length" class="flex flex-column gap-4 data-capture-collapse">
-        <div
-          v-for="item in list"
-          :name="item.id"
-          :key="item.id"
-          class="rounded-lg overflow-hidden bg-white collapse-item"
-        >
-          <div class="p-2">
-            <div
-              class="p-2 collapse-item-header flex align-center gap-4 rounded-lg cursor-pointer"
-              @click="toggleCollapse(item.id)"
-            >
-              <el-descriptions
-                size="medium"
-                :column="4"
-                style="margin-bottom: -10px"
-                contentClassName="fw-bold font-color-dark"
-              >
-                <el-descriptions-item label="原表名">{{ item.partitionTableId || item.tableId }}</el-descriptions-item>
-                <el-descriptions-item label="事件类型">{{ item.type }}</el-descriptions-item>
-                <el-descriptions-item label="事件时间">{{ item.time }}</el-descriptions-item>
-                <el-descriptions-item label="事件ID">{{ item.id }}</el-descriptions-item>
-                <el-descriptions-item label="原始数据" contentClassName="ellipsis">
-                  <div class="flex align-center overflow-hidden">
-                    <span class="ellipsis">{{ item.originalData }}</span>
-
-                    <el-button
-                      v-if="item.originalData"
-                      type="text"
-                      class="px-1 py-0.5 font-color-dark"
-                      @click="handleCopy(item)"
-                    >
-                      <VIcon class="mr-1">copy</VIcon>
-                      <span class="">{{ $t('public_button_copy') }}</span>
-                    </el-button>
-                  </div>
-                </el-descriptions-item>
-              </el-descriptions>
-
-              <i
-                class="el-collapse-item__arrow el-icon-arrow-right fs-6 m-0"
-                :class="{ 'is-active': activeName === item.id }"
-              ></i>
-            </div>
-          </div>
-
-          <el-collapse-transition>
-            <div v-if="activeName === item.id">
-              <div class="p-2">
-                <CaptureItem :data="item.data" :nodes="item.nodes"></CaptureItem>
-              </div>
-            </div>
-          </el-collapse-transition>
-        </div>
-      </div>
-
-      <v-empty v-else-if="isCancel && !list.length"></v-empty>
-
-      <div class="flex justify-content-center px-4 mt-4">
-        <el-button v-if="hasMore && isCancel" type="primary" :loading="loading" @click="run">
-          {{ $t('public_load_more') }}
-        </el-button>
-        <span v-else-if="!isCancel">
-          {{ $t('public_loading') }}
-
-          <i class="el-icon-loading"></i> {{ $t('public_loading') }}
-        </span>
-        <span v-else-if="list.length > 10"> {{ $t('public_load_end') }} </span>
-      </div>
-    </section>
-  </section>
-</template>
-
 <script>
-import { makeStatusAndDisabled } from '@tap/business'
-import { dataPermissionApi, taskApi } from '@tap/api'
-import { defineComponent, ref, computed, watch, onMounted, onBeforeUnmount, reactive, set } from '@vue/composition-api'
-import { TextEditable, VIcon, VEmpty, VDivider } from '@tap/component'
-import { TaskStatus } from '@tap/business'
+import { dataPermissionApi, proxyApi, taskApi } from '@tap/api'
+import { makeStatusAndDisabled, TaskStatus } from '@tap/business'
 import syncTaskAgent from '@tap/business/src/mixins/syncTaskAgent'
-import i18n from '@tap/i18n'
-import dayjs from 'dayjs'
-import { proxyApi } from '@tap/api'
-import CaptureItem from './CaptureItem.vue'
-import { allResourceIns } from '../nodes/loader'
-import { setPageTitle } from '@tap/shared'
-import { useRequest } from 'vue-request'
-import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-import axios from 'axios'
+import { TextEditable, VDivider, VEmpty, VIcon } from '@tap/component'
+import i18n, { useI18n } from '@tap/i18n'
+import { copyToClipboard, setPageTitle } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
-import { copyToClipboard } from '@tap/shared'
+import axios from 'axios'
+import dayjs from 'dayjs'
+import { ElMessage } from 'element-plus'
+import {
+  computed,
+  defineComponent,
+  onBeforeUnmount,
+  onMounted,
+  reactive,
+  ref,
+  watch,
+} from 'vue'
+import { useRequest } from 'vue-request'
+import { useRoute, useRouter } from 'vue-router'
+import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+import { useStore } from 'vuex'
+import { allResourceIns } from '../nodes/loader'
+import CaptureItem from './CaptureItem.vue'
 
 export default defineComponent({
   name: 'DataCapture',
@@ -136,15 +35,19 @@ export default defineComponent({
     TaskStatus,
     TextEditable,
     DynamicScroller,
-    DynamicScrollerItem
+    DynamicScrollerItem,
   },
   mixins: [syncTaskAgent],
 
-  setup(props, { root }) {
+  setup(props, { emit }) {
+    const { t } = useI18n()
+    const store = useStore()
+    const router = useRouter()
+    const route = useRoute()
     // Data
-    const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+    const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
     const dataflow = ref({
-      status: ''
+      status: '',
     })
     const keyword = ref('')
     const activeName = ref('')
@@ -158,7 +61,7 @@ export default defineComponent({
     const syncType = {
       initial_sync: i18n.t('public_task_type_initial_sync'),
       cdc: i18n.t('public_task_type_cdc'),
-      'initial_sync+cdc': i18n.t('public_task_type_initial_sync_and_cdc')
+      'initial_sync+cdc': i18n.t('public_task_type_initial_sync_and_cdc'),
     }
     const buttonShowMap = reactive({
       View: true,
@@ -166,35 +69,37 @@ export default defineComponent({
       Delete: true,
       Reset: true,
       Start: true,
-      Stop: true
+      Stop: true,
     })
 
     // Computed
     const lastStartDate = computed(() => {
       const { lastStartDate } = dataflow.value
-      return lastStartDate ? dayjs(lastStartDate).format('YYYY-MM-DD HH:mm:ss') : '-'
+      return lastStartDate
+        ? dayjs(lastStartDate).format('YYYY-MM-DD HH:mm:ss')
+        : '-'
     })
 
     const NodeMap = computed(() =>
       nodes.value.reduce((map, node) => {
         map[node.id] = node
         return map
-      }, {})
+      }, {}),
     )
 
     const DataMap = computed(() =>
       list.value.reduce((map, item) => {
         map[item.id] = item
         return map
-      }, {})
+      }, {}),
     )
 
     // Watch
     watch(
       () => dataflow.value.name,
-      v => {
+      (v) => {
         name.value = v
-      }
+      },
     )
 
     // Methods
@@ -205,19 +110,19 @@ export default defineComponent({
         method: 'getCatchData',
         // taskId
         args: [dataflow.value.id, 10, keyword.value || null],
-        subscribeIds: [`processId_${dataflow.value.agentId}`]
+        subscribeIds: [`processId_${dataflow.value.agentId}`],
       })
       // type: '', //事件类型 type=300: insert，type=302 update, type=301 delete
       const TYPE = {
         300: 'insert',
         301: 'delete',
-        302: 'update'
+        302: 'update',
       }
 
       hasMore.value = res.hasMore
 
       const resData = res.data
-        .map(item => {
+        .map((item) => {
           item.time = dayjs(item.ts).format('YYYY-MM-DD HH:mm:ss')
           item.type = TYPE[item.type.split('=').pop()]
           item.id = item.id.split('=').pop()
@@ -226,7 +131,7 @@ export default defineComponent({
           let target = item.data[includeNodeIds[0]]
 
           if (includeNodeIds.length > 1) {
-            const id = includeNodeIds.find(id => {
+            const id = includeNodeIds.find((id) => {
               const node = NodeMap.value[id]
               return node.$outputs.length && !node.$inputs.length
             })
@@ -235,9 +140,12 @@ export default defineComponent({
 
           if (target) {
             item.originalData = JSON.stringify(target.data)
-            target.logTags.forEach(tag => {
+            target.logTags.forEach((tag) => {
               const arr = tag.split('=')
-              if (arr.length === 2 && (arr[0] === 'tableId' || arr[0] === 'partitionTableId')) {
+              if (
+                arr.length === 2 &&
+                (arr[0] === 'tableId' || arr[0] === 'partitionTableId')
+              ) {
                 item[arr[0]] = arr[1]
               }
             })
@@ -247,7 +155,7 @@ export default defineComponent({
 
           return item
         })
-        .filter(item => {
+        .filter((item) => {
           if (DataMap.value[item.id]) {
             Object.assign(DataMap.value[item.id], item)
             return false
@@ -259,25 +167,25 @@ export default defineComponent({
     }
 
     const initNodeType = async () => {
-      root.$store.commit('dataflow/addResourceIns', allResourceIns)
-      await root.$store.dispatch('dataflow/loadCustomNode')
+      store.commit('dataflow/addResourceIns', allResourceIns)
+      await store.dispatch('dataflow/loadCustomNode')
     }
 
     // 获取任务的按钮权限
     const getTaskPermissions = async () => {
       if (!isDaas) return
-      const id = dataflow.value.id || root.$route.params?.id
+      const id = dataflow.value.id || route.params?.id
       if (!id) return
       const data = await dataPermissionApi.dataActions({
         dataType: 'Task',
-        dataId: id
+        dataId: id,
       })
-      for (let key in buttonShowMap) {
+      for (const key in buttonShowMap) {
         buttonShowMap[key] = data.includes(key)
       }
     }
 
-    const handleEditFlush = result => {
+    const handleEditFlush = (result) => {
       if (result.data) {
         if (result.data.id !== dataflow.value.id) {
           return
@@ -286,15 +194,17 @@ export default defineComponent({
       }
     }
 
+    const instance = getCurrentInstance()
+
     const initWS = () => {
-      root.$ws.off('editFlush', handleEditFlush)
-      root.$ws.on('editFlush', handleEditFlush)
-      root.$ws.send({
+      instance.proxy.$ws.off('editFlush', handleEditFlush)
+      instance.proxy.$ws.on('editFlush', handleEditFlush)
+      instance.proxy.$ws.send({
         type: 'editFlush',
         taskId: dataflow.value.id,
         data: {
-          opType: 'subscribe'
-        }
+          opType: 'subscribe',
+        },
       })
     }
 
@@ -304,12 +214,12 @@ export default defineComponent({
         method: 'openCatchData',
         args: [dataflow.value.id, null, 60],
         returnClass: 'java.lang.Boolean',
-        subscribeIds: [`processId_${dataflow.value.agentId}`]
+        subscribeIds: [`processId_${dataflow.value.agentId}`],
       })
     }
 
     const initView = async () => {
-      const { id } = root.$route.params
+      const { id } = route.params
 
       await openDataflow(id)
 
@@ -320,7 +230,7 @@ export default defineComponent({
       if (!name.value) {
         name.value = dataflow.value.name
       } else {
-        root.$emit('change-name', name.value)
+        emit('change-name', name.value)
       }
     }
 
@@ -329,30 +239,30 @@ export default defineComponent({
         migrate: 'migrateList',
         logCollector: 'sharedMining',
         shareCache: 'sharedCache',
-        connHeartbeat: 'heartbeatTable'
+        connHeartbeat: 'heartbeatTable',
       }
-      root.$router.push({
-        name: map[dataflow.syncType] || 'dataflowList'
+      router.push({
+        name: map[dataflow.value.syncType] || 'dataflowList',
       })
       window.name = null
     }
 
     const titleSet = () => {
-      setPageTitle(`${dataflow.value.name} - ${root.$t(root.$route.meta.title)}`)
+      setPageTitle(`${dataflow.value.name} - ${t(route.meta.title)}`)
     }
 
-    const startLoopTask = id => {
+    const startLoopTask = (id) => {
       // console.debug(i18n.t('packages_dag_mixins_editor_debug4')) // eslint-disable-line
       clearTimeout(startLoopTaskTimer)
       if (!id) return
       startLoopTaskTimer = setTimeout(async () => {
-        const { parent_task_sign } = root.$route.query || {}
+        const { parent_task_sign } = route.query || {}
         const data = await taskApi.get(id, {}, { parent_task_sign })
 
         if (data) {
           if (data.errorEvents?.length) {
             // 清除 stacks
-            data.errorEvents.forEach(event => {
+            data.errorEvents.forEach((event) => {
               delete event.stacks
             })
           }
@@ -377,14 +287,16 @@ export default defineComponent({
           dataflow.value.taskRetryStartTime = data.taskRetryStartTime
 
           if (data.currentEventTimestamp) {
-            dataflow.value.currentEventTimestampLabel = dayjs(data.currentEventTimestamp).format('YYYY-MM-DD HH:mm:ss')
+            dataflow.value.currentEventTimestampLabel = dayjs(
+              data.currentEventTimestamp,
+            ).format('YYYY-MM-DD HH:mm:ss')
           }
 
           if (data.status === 'edit') data.btnDisabled.start = false // 任务编辑中，在编辑页面可以启动
 
           Object.assign(dataflow.value.disabledData, data.btnDisabled)
 
-          root.$emit('loop-task')
+          emit('loop-task')
           startLoopTask(id)
         }
       }, 5000)
@@ -396,17 +308,17 @@ export default defineComponent({
 
     const loadDataflow = async (id, params) => {
       try {
-        const { parent_task_sign } = root.$route.query || {}
+        const { parent_task_sign } = route.query || {}
         const data = await taskApi.get(id, params, { parent_task_sign })
         if (!data) {
-          root.$message.error(i18n.t('packages_dag_mixins_editor_renwubucunzai'))
+          ElMessage.error(i18n.t('packages_dag_mixins_editor_renwubucunzai'))
           handlePageReturn()
           return
         }
 
         if (data.errorEvents?.length) {
           // 清除 stacks
-          data.errorEvents.forEach(event => {
+          data.errorEvents.forEach((event) => {
             delete event.stacks
           })
         }
@@ -421,9 +333,9 @@ export default defineComponent({
         startLoopTask(id)
         titleSet()
         return data
-      } catch (e) {
-        console.error(e)
-        root.$message.error(i18n.t('packages_dag_mixins_editor_renwujiazaichu'))
+      } catch (error) {
+        console.error(error)
+        ElMessage.error(i18n.t('packages_dag_mixins_editor_renwujiazaichu'))
         handlePageReturn()
       }
     }
@@ -440,26 +352,25 @@ export default defineComponent({
       dataflow.value.pingTime = data.pingTime
 
       if (data.currentEventTimestamp) {
-        dataflow.value.currentEventTimestampLabel = dayjs(data.currentEventTimestamp).format('YYYY-MM-DD HH:mm:ss')
+        dataflow.value.currentEventTimestampLabel = dayjs(
+          data.currentEventTimestamp,
+        ).format('YYYY-MM-DD HH:mm:ss')
       }
 
-      // this.$set(this.dataflow, 'shareCdcStop', data.shareCdcStop)
-      // this.$set(this.dataflow, 'shareCdcStopMessage', data.shareCdcStopMessage)
       // 前端不关心的属性
       dataflow.value.attrs = data.attrs
 
       if (!fromWS) {
-        Object.keys(data).forEach(key => {
+        Object.keys(data).forEach((key) => {
           if (!['dag'].includes(key)) {
-            // dataflow[key] = data[key]
-            set(dataflow.value, key, data[key])
+            dataflow.value[key] = data[key]
           }
         })
       }
     }
 
-    const openDataflow = async id => {
-      const getResourceIns = root.$store.getters['dataflow/getResourceIns']
+    const openDataflow = async (id) => {
+      const getResourceIns = store.getters['dataflow/getResourceIns']
 
       const data = await loadDataflow(id)
 
@@ -485,14 +396,14 @@ export default defineComponent({
           }
         })
 
-        dag.nodes.forEach(node => {
+        dag.nodes.forEach((node) => {
           node.$inputs = inputsMap[node.id] || []
           node.$outputs = outputsMap[node.id] || []
 
           const ins = getResourceIns(node)
           Object.defineProperty(node, '__Ctor', {
             value: ins,
-            enumerable: false
+            enumerable: false,
           })
         })
 
@@ -500,14 +411,14 @@ export default defineComponent({
       }
     }
 
-    const genNodes = nodeDataMap => {
+    const genNodes = (nodeDataMap) => {
       const includeNodeIds = Object.keys(nodeDataMap)
 
       if (includeNodeIds.length === 1) {
-        return [nodes.value.find(node => node.id === includeNodeIds[0])]
+        return [nodes.value.find((node) => node.id === includeNodeIds[0])]
       }
 
-      const index = includeNodeIds.findIndex(id => {
+      const index = includeNodeIds.findIndex((id) => {
         const node = NodeMap.value[id]
         return node.$outputs.length && !node.$inputs.length
       })
@@ -520,15 +431,15 @@ export default defineComponent({
           return [NodeMap.value[sourceId], NodeMap.value[includeNodeIds[0]]]
         }
 
-        const recursiveOutput = id => {
+        const recursiveOutput = (id) => {
           const node = NodeMap.value[id]
           const arr = [node]
 
           if (includeNodeIds.length && node.$outputs.length) {
-            for (let nodeId of node.$outputs) {
+            for (const nodeId of node.$outputs) {
               const index = includeNodeIds.indexOf(nodeId)
 
-              if (index > -1) {
+              if (index !== -1) {
                 const target = includeNodeIds[index]
                 includeNodeIds.splice(index, 1)
                 arr.push(...recursiveOutput(target))
@@ -551,15 +462,18 @@ export default defineComponent({
         className: 'CatchDataService',
         method: 'closeCatchData',
         args: [dataflow.value.id],
-        subscribeIds: [`processId_${dataflow.value.agentId}`]
+        subscribeIds: [`processId_${dataflow.value.agentId}`],
       }
       const headers = {
-        type: 'application/json'
+        type: 'application/json',
       }
       const blob = new Blob([JSON.stringify(body)], headers)
       const accessToken = Cookie.get('access_token')
 
-      return navigator.sendBeacon(`${axios.defaults.baseURL}api/proxy/call?access_token=${accessToken}`, blob)
+      return navigator.sendBeacon(
+        `${axios.defaults.baseURL}api/proxy/call?access_token=${accessToken}`,
+        blob,
+      )
     }
 
     const { run, cancel, loading } = useRequest(loadData, {
@@ -571,16 +485,16 @@ export default defineComponent({
           isCancel.value = true
           cancel()
         }
-      }
+      },
     })
 
-    const handleBeforeUnload = event => {
+    const handleBeforeUnload = (event) => {
       closeCapture()
       event.preventDefault()
       event.returnValue = ''
     }
 
-    const toggleCollapse = id => {
+    const toggleCollapse = (id) => {
       activeName.value = activeName.value === id ? '' : id
     }
 
@@ -590,9 +504,9 @@ export default defineComponent({
       run()
     }
 
-    const handleCopy = item => {
+    const handleCopy = (item) => {
       copyToClipboard(JSON.stringify(Object.values(item.data)))
-      root.$message.success(i18n.t('public_message_copy_success'))
+      ElMessage.success(i18n.t('public_message_copy_success'))
     }
 
     // Lifecycle
@@ -602,7 +516,7 @@ export default defineComponent({
       await getTaskPermissions()
       await initNodeType()
       await initView(true)
-      await initData(true).then(run, error => {
+      await initData(true).then(run, (error) => {
         console.log('error', error)
         if (error?.data?.code === '8051') {
           isCancel.value = true
@@ -615,7 +529,7 @@ export default defineComponent({
       // 移除事件监听
       window.removeEventListener('beforeunload', handleBeforeUnload)
       stopLoopTask()
-      root.$ws.off('editFlush', handleEditFlush)
+      instance.proxy.$ws.off('editFlush', handleEditFlush)
       cancel()
       closeCapture()
     })
@@ -641,11 +555,151 @@ export default defineComponent({
       handlePageReturn,
       toggleCollapse,
       onInput,
-      handleCopy
+      handleCopy,
     }
-  }
+  },
 })
 </script>
+
+<template>
+  <section class="layout-wrap vh-100 flex flex-column min-h-0 bg-secondary-100">
+    <header
+      class="layout-header flex align-center border-bottom px-4 text-nowrap bg-white"
+      style="flex: 0 0 64px"
+    >
+      <button class="icon-btn mr-2" @click="handlePageReturn">
+        <VIcon size="18">left</VIcon>
+      </button>
+      <span class="fw-bold">{{ $t('public_data_capture') }}</span>
+      <VDivider class="mx-3" vertical inset />
+      <div class="overflow-hidden">
+        <div class="flex align-items-center">
+          <TextEditable
+            v-model="name"
+            class="overflow-hidden"
+            :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
+            :input-min-width="32"
+            :maxlength="200"
+            @change="onNameInputChange"
+          />
+          <TaskStatus :task="dataflow" :agent-map="agentMap" class="ml-4" />
+        </div>
+        <div class="flex align-items-center font-color-light mt-1">
+          <span class="mr-2">{{ syncType[dataflow.type] }}</span>
+          <span>{{ $t('packages_dag_monitor_topheader_zuijinyiciqi') }}</span>
+          <span>{{ lastStartDate }}</span>
+        </div>
+      </div>
+    </header>
+
+    <section
+      class="layout-wrap position-relative font-color-light p-4 overflow-auto"
+    >
+      <div class="mb-4 text-center">
+        <el-input
+          v-model="keyword"
+          placeholder="请输入关键字"
+          style="width: 300px"
+          clearable
+          @input="onInput"
+        >
+          <template #prefix>
+            <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
+          </template>
+        </el-input>
+      </div>
+      <div
+        v-if="list.length"
+        class="flex flex-column gap-4 data-capture-collapse"
+      >
+        <div
+          v-for="item in list"
+          :key="item.id"
+          :name="item.id"
+          class="rounded-lg overflow-hidden bg-white collapse-item"
+        >
+          <div class="p-2">
+            <div
+              class="p-2 collapse-item-header flex align-center gap-4 rounded-lg cursor-pointer"
+              @click="toggleCollapse(item.id)"
+            >
+              <el-descriptions
+                size="medium"
+                :column="4"
+                style="margin-bottom: -10px"
+                content-class-name="fw-bold font-color-dark"
+              >
+                <el-descriptions-item label="原表名">{{
+                  item.partitionTableId || item.tableId
+                }}</el-descriptions-item>
+                <el-descriptions-item label="事件类型">{{
+                  item.type
+                }}</el-descriptions-item>
+                <el-descriptions-item label="事件时间">{{
+                  item.time
+                }}</el-descriptions-item>
+                <el-descriptions-item label="事件ID">{{
+                  item.id
+                }}</el-descriptions-item>
+                <el-descriptions-item
+                  label="原始数据"
+                  content-class-name="ellipsis"
+                >
+                  <div class="flex align-center overflow-hidden">
+                    <span class="ellipsis">{{ item.originalData }}</span>
+
+                    <el-button
+                      v-if="item.originalData"
+                      text
+                      type="primary"
+                      class="px-1 py-0.5 font-color-dark"
+                      @click="handleCopy(item)"
+                    >
+                      <VIcon class="mr-1">copy</VIcon>
+                      <span class="">{{ $t('public_button_copy') }}</span>
+                    </el-button>
+                  </div>
+                </el-descriptions-item>
+              </el-descriptions>
+
+              <i
+                class="el-collapse-item__arrow el-icon-arrow-right fs-6 m-0"
+                :class="{ 'is-active': activeName === item.id }"
+              />
+            </div>
+          </div>
+
+          <el-collapse-transition>
+            <div v-if="activeName === item.id">
+              <div class="p-2">
+                <CaptureItem :data="item.data" :nodes="item.nodes" />
+              </div>
+            </div>
+          </el-collapse-transition>
+        </div>
+      </div>
+
+      <v-empty v-else-if="isCancel && !list.length" />
+
+      <div class="flex justify-content-center px-4 mt-4">
+        <el-button
+          v-if="hasMore && isCancel"
+          type="primary"
+          :loading="loading"
+          @click="run"
+        >
+          {{ $t('public_load_more') }}
+        </el-button>
+        <span v-else-if="!isCancel">
+          {{ $t('public_loading') }}
+
+          <i class="el-icon-loading" /> {{ $t('public_loading') }}
+        </span>
+        <span v-else-if="list.length > 10"> {{ $t('public_load_end') }} </span>
+      </div>
+    </section>
+  </section>
+</template>
 
 <style scoped lang="scss">
 $sidebarW: 236px;
@@ -666,12 +720,14 @@ $sidebarBg: #fff;
   outline: none;
   border: 1px solid transparent;
   border-radius: $radius;
-  transition: background, color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+  transition:
+    background,
+    color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
   cursor: pointer;
 
   &.active,
   &:not(.disabled):hover {
-    color: map-get($color, primary);
+    color: map.get($color, primary);
     background: $hoverBg;
   }
 }
@@ -684,7 +740,7 @@ $sidebarBg: #fff;
       background: #f4f4f5;
     }
 
-    ::v-deep .el-descriptions__body {
+    :deep(.el-descriptions__body) {
       background: transparent;
     }
   }

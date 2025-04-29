@@ -1,117 +1,31 @@
-<template>
-  <div class="swim-lane flex flex-column h-100 position-relative overflow-hidden">
-    <div class="page-header-title bg-white box-card flex align-center position-relative">
-      <span>{{ $t('page_title_data_hub') }}</span>
-      <ElTooltip
-        placement="top"
-        v-if="currentView === 'swimlane'"
-        :content="$t('packages_business_switch_directory_view')"
-        key="swimlane"
-      >
-        <IconButton class="ml-3" @click="toggleView('catalog')" md>list-view</IconButton>
-      </ElTooltip>
-      <ElTooltip placement="top" v-else :content="$t('packages_business_switch_data_console_view')" key="console">
-        <IconButton class="ml-3" @click="toggleView('swimlane')" md>swimlane</IconButton>
-      </ElTooltip>
-      <span
-        v-if="showParentLineage"
-        class="parent-lineage-quit color-linfo cursor-pointer rounded-2 px-4 py-2 position-absolute top-50 start-50 translate-middle"
-        @click="handleQuit"
-        >{{ $t('packages_ldp_src_dashboard_anEsctui') }}</span
-      >
-      <IconButton v-if="isDaas || $route.path === '/data-console'" class="ml-auto" @click="handleSettings" lg
-        >cog-o</IconButton
-      >
-      <!--升级存储-->
-      <!--<ElButton v-else type="primary" plain class="ml-auto">{{ $t('packages_ldp_upgrade_storage') }}</ElButton>-->
-    </div>
-    <div class="list flex flex-fill overflow-hidden bg-white">
-      <div v-if="currentView === 'catalog'" class="px-5 pb-5 w-100 border-top">
-        <Catalogue @create-single-task="hanldeCreateSingleTask"></Catalogue>
-      </div>
-      <template v-else>
-        <component
-          v-for="item in laneOptions"
-          :key="item.type"
-          :is="item.component"
-          :ref="item.type"
-          :dragState="dragState"
-          :settings="settings"
-          :directory="directoryMap[item.type]"
-          :fdmConnection="fdmConnection"
-          :fdmNotExist="fdmNotExist"
-          :mdmNotExist="mdmNotExist"
-          :mdmConnection="mdmConnection"
-          :event-driver="eventDriver"
-          :loadingDirectory="loadingDirectory"
-          :fdmAndMdmId="fdmAndMdmId"
-          :mapCatalog="mapCatalog"
-          :showParentLineage="showParentLineage"
-          @create-connection="handleAdd"
-          @node-drag-end="handleDragEnd"
-          @show-settings="handleSettings"
-          @load-directory="loadDirectory"
-          @preview="handlePreview"
-          @find-parent="handleFindParent"
-          @on-scroll="onScroll"
-          @handle-show-upgrade="handleShowUpgradeDialog"
-        ></component>
-      </template>
-    </div>
-    <SceneDialog
-      :visible.sync="showSceneDialog"
-      :selector-type.sync="selectorType"
-      @success="handleSuccess"
-      @saveAndMore="handleSuccess"
-    ></SceneDialog>
-    <Settings
-      :mode.sync="mode"
-      :visible.sync="settingsVisible"
-      :fdmConnection="fdmConnection"
-      :mdmConnection="mdmConnection"
-      @success="handleSettingsSuccess"
-      @init="handleSettingsInit"
-    ></Settings>
-    <TablePreview
-      ref="tablePreview"
-      @create-single-task="hanldeCreateSingleTask"
-      @handle-show-upgrade="handleShowUpgradeDialog"
-      @create-api="handleCreateAPI"
-    />
-    <ConnectionPreview ref="connectionView" />
-
-    <UpgradeFee
-      :visible.sync="upgradeFeeVisible"
-      :tooltip="upgradeFeeVisibleTips || $t('packages_business_task_list_nindekeyunxing')"
-      :go-page="upgradeFeeGoPage"
-    ></UpgradeFee>
-
-    <UpgradeCharges
-      :visible.sync="upgradeChargesVisible"
-      :tooltip="upgradeChargesVisibleTips || $t('packages_business_task_list_nindekeyunxing')"
-      :go-page="upgradeFeeGoPage"
-    ></UpgradeCharges>
-  </div>
-</template>
-
 <script>
+import {
+  connectionsApi,
+  ldpApi,
+  lineageApi,
+  metadataDefinitionsApi,
+} from '@tap/api'
+import {
+  EventEmitter,
+  SceneDialog,
+  UpgradeCharges,
+  UpgradeFee,
+} from '@tap/business'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { IconButton } from '@tap/component'
-import { SceneDialog, EventEmitter, UpgradeFee, UpgradeCharges } from '@tap/business'
-import { connectionsApi, lineageApi, metadataDefinitionsApi, ldpApi } from '@tap/api'
-
-import SourceItem from './Source'
-import TargetItem from './Target'
+import { jsPlumb } from '@tap/dag'
+import Catalogue from './components/Catalogue'
+import ConnectionPreview from './ConnectionPreview'
 import FDMItem from './FDM'
 import MDMItem from './MDM'
 import Settings from './Settings'
+import SourceItem from './Source'
 import TablePreview from './TablePreview'
-import ConnectionPreview from './ConnectionPreview'
-import Catalogue from './components/Catalogue'
 
-import { jsPlumb } from '@tap/dag'
+import TargetItem from './Target'
 
 const TYPE2NAME = {
-  target: 'TARGET&SERVICE'
+  target: 'TARGET&SERVICE',
 }
 
 export default {
@@ -129,21 +43,22 @@ export default {
     Catalogue,
     SceneDialog,
     UpgradeFee,
-    UpgradeCharges
+    UpgradeCharges,
+    PageContainer,
   },
 
   data() {
     return {
       keyword: '',
       visible: false,
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       showSceneDialog: false,
       settingsVisible: false,
       dragState: {
         isDragging: false,
         draggingObjects: [],
         dropNode: null,
-        form: ''
+        form: '',
       },
       mode: '',
       selectorType: '',
@@ -152,7 +67,7 @@ export default {
         fdmStorageCluster: 'self',
         fdmStorageConnectionId: '',
         mdmStorageCluster: 'self',
-        mdmStorageConnectionId: ''
+        mdmStorageConnectionId: '',
       },
       directoryMap: {},
       fdmConnection: null,
@@ -173,7 +88,7 @@ export default {
       upgradeFeeVisible: false,
       upgradeFeeVisibleTips: '',
       upgradeChargesVisible: false,
-      upgradeChargesVisibleTips: ''
+      upgradeChargesVisibleTips: '',
     }
   },
 
@@ -184,38 +99,43 @@ export default {
           type: 'source',
           add: true,
           component: 'SourceItem',
-          level: 'base'
+          level: 'base',
         },
         {
           component: 'FDMItem',
-          type: 'fdm'
+          type: 'fdm',
         },
         {
           component: 'MDMItem',
-          type: 'mdm'
+          type: 'mdm',
         },
         {
           type: 'target',
           add: true,
           component: 'TargetItem',
-          level: 'base'
-        }
+          level: 'base',
+        },
       ]
-      return this.mode === 'service' ? result : result.filter(t => t.level === 'base')
+      return this.mode === 'service'
+        ? result
+        : result.filter((t) => t.level === 'base')
     },
 
     fdmAndMdmId() {
-      return [this.settings?.fdmStorageConnectionId, this.settings?.mdmStorageConnectionId]
-    }
+      return [
+        this.settings?.fdmStorageConnectionId,
+        this.settings?.mdmStorageConnectionId,
+      ]
+    },
   },
 
   watch: {
-    async 'settings.mdmStorageConnectionId'(v) {
+    'settings.mdmStorageConnectionId': async function (v) {
       this.mdmConnection = await connectionsApi.getNoSchema(v)
       this.mdmNotExist = !this.mdmConnection
     },
 
-    async 'settings.fdmStorageConnectionId'(v) {
+    'settings.fdmStorageConnectionId': async function (v) {
       this.fdmConnection = await connectionsApi.getNoSchema(v)
       this.fdmNotExist = !this.fdmConnection
     },
@@ -225,7 +145,7 @@ export default {
         this.directoryMap = {}
         this.loadDirectory()
       }
-    }
+    },
   },
 
   created() {
@@ -239,7 +159,7 @@ export default {
     })
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener('keyword', this.handleListenerEsc)
     // 销毁画布实例
     this.jsPlumbIns?.destroy()
@@ -287,10 +207,10 @@ export default {
     },
 
     loadDirectory() {
-      let filter = {
+      const filter = {
         where: {
-          item_type: { $nin: ['database', 'dataflow', 'api'] }
-        }
+          item_type: { $nin: ['database', 'dataflow', 'api'] },
+        },
         /*fields: {
           id: 1,
           item_type: 1,
@@ -306,13 +226,13 @@ export default {
       this.loadingDirectory = true
       metadataDefinitionsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
-          let items = data?.items || []
-          let treeData = this.formatCatalog(items)
-          treeData?.forEach(item => {
-            this.$set(this.directoryMap, item.item_type[0], item)
+        .then((data) => {
+          const items = data?.items || []
+          const treeData = this.formatCatalog(items)
+          treeData?.forEach((item) => {
+            this.directoryMap[item.item_type[0]] = item
           })
         })
         .finally(() => {
@@ -339,9 +259,9 @@ export default {
       if (items && items.length) {
         const map = {}
         const nodes = []
-        const setChildren = nodes => {
-          return nodes.map(it => {
-            let children = map[it.id]
+        const setChildren = (nodes) => {
+          return nodes.map((it) => {
+            const children = map[it.id]
             if (children) {
               it.children = setChildren(children)
             }
@@ -349,10 +269,10 @@ export default {
           })
         }
 
-        items.forEach(it => {
+        items.forEach((it) => {
           this.mapCatalog(it)
           if (it.parent_id) {
-            let children = map[it.parent_id] || []
+            const children = map[it.parent_id] || []
             children.push(it)
             map[it.parent_id] = children
           } else {
@@ -384,8 +304,8 @@ export default {
             query: {
               addNode: true,
               connectionId: data.connectionId,
-              tableName: data.name
-            }
+              tableName: data.name,
+            },
           })
           break
         case 'fdm':
@@ -394,8 +314,8 @@ export default {
             query: {
               addNode: true,
               connectionId: data.connectionId,
-              tableName: data.name
-            }
+              tableName: data.name,
+            },
           })
           break
         default:
@@ -412,67 +332,71 @@ export default {
     },
 
     handleFindParent(parentNode, tableInfo = {}, ldpType = 'mdm') {
-      lineageApi.findByTable(tableInfo.connectionId, tableInfo.name).then(data => {
-        const { edges, nodes } = data.dag || {}
-        this.nodes = nodes
-        const otherLdpType = ldpType === 'mdm' ? 'fdm' : 'mdm'
-        let edgsLinks = edges.map(t => {
-          let sourceNode = this.nodes.find(el => el.id === t.source)
-          let targetNode = this.nodes.find(el => el.id === t.target)
-          sourceNode.dom = null
-          targetNode.dom = null
-          sourceNode.ldpType =
-            sourceNode.type === 'apiserverLineage'
-              ? 'target'
-              : this.settings.fdmStorageConnectionId === sourceNode.connectionId
-              ? otherLdpType
-              : 'source'
-          targetNode.ldpType =
-            targetNode.type === 'apiserverLineage'
-              ? 'target'
-              : this.settings.fdmStorageConnectionId === targetNode.connectionId
-              ? otherLdpType
-              : 'source'
-          // 记录事件触发的dom和ldpType
-          if (sourceNode.table === tableInfo.name) {
-            sourceNode.ldpType = ldpType
-            sourceNode.dom = parentNode
-          } else if (targetNode.table === tableInfo.name) {
-            targetNode.ldpType = ldpType
-            targetNode.dom = parentNode
-          }
-          return Object.assign(t, {
-            sourceNode,
-            targetNode
+      lineageApi
+        .findByTable(tableInfo.connectionId, tableInfo.name)
+        .then((data) => {
+          const { edges, nodes } = data.dag || {}
+          this.nodes = nodes
+          const otherLdpType = ldpType === 'mdm' ? 'fdm' : 'mdm'
+          const edgsLinks = edges.map((t) => {
+            const sourceNode = this.nodes.find((el) => el.id === t.source)
+            const targetNode = this.nodes.find((el) => el.id === t.target)
+            sourceNode.dom = null
+            targetNode.dom = null
+            sourceNode.ldpType =
+              sourceNode.type === 'apiserverLineage'
+                ? 'target'
+                : this.settings.fdmStorageConnectionId ===
+                    sourceNode.connectionId
+                  ? otherLdpType
+                  : 'source'
+            targetNode.ldpType =
+              targetNode.type === 'apiserverLineage'
+                ? 'target'
+                : this.settings.fdmStorageConnectionId ===
+                    targetNode.connectionId
+                  ? otherLdpType
+                  : 'source'
+            // 记录事件触发的dom和ldpType
+            if (sourceNode.table === tableInfo.name) {
+              sourceNode.ldpType = ldpType
+              sourceNode.dom = parentNode
+            } else if (targetNode.table === tableInfo.name) {
+              targetNode.ldpType = ldpType
+              targetNode.dom = parentNode
+            }
+            return Object.assign(t, {
+              sourceNode,
+              targetNode,
+            })
           })
-        })
-        this.edgsLinks = edgsLinks
+          this.edgsLinks = edgsLinks
 
-        this.showParentLineage = true
-        this.handleConnection()
-      })
+          this.showParentLineage = true
+          this.handleConnection()
+        })
     },
 
     async handleConnection() {
       if (!this.showParentLineage) return
-      let connectionLines = []
+      const connectionLines = []
 
       // 获取dom的方法
       const map = {
         source: this.$refs.source[0].handleFindTreeDom,
         target: this.$refs.target[0].handleFindTaskDom,
-        mdm: function () {},
-        fdm: this.$refs.fdm[0].handleFindTreeDom
+        mdm() {},
+        fdm: this.$refs.fdm[0].handleFindTreeDom,
       }
 
       // 需要过滤的数据
-      let keywordOptions = {
+      const keywordOptions = {
         source: [],
         target: [],
         fdm: [],
-        mdm: []
+        mdm: [],
       }
-      this.nodes.forEach(el => {
+      this.nodes.forEach((el) => {
         if (el.ldpType === 'target') {
           if (el.type === 'apiserverLineage') {
             const { table, modules = {} } = el || {}
@@ -481,22 +405,32 @@ export default {
               table,
               appName,
               serverName: name,
-              type: el.type
+              type: el.type,
             })
           }
         } else {
-          const { connectionId, connectionName, pdkHash, table, metadata = {} } = el || {}
+          const {
+            connectionId,
+            connectionName,
+            pdkHash,
+            table,
+            metadata = {},
+          } = el || {}
           // ldpType为source，且是连线目标节点的ldpType也为source，则过滤不展示
           const flag =
             el.ldpType === 'source' &&
-            this.edgsLinks.some(t => t.sourceNode?.id === el.id && t.targetNode?.ldpType === 'source')
+            this.edgsLinks.some(
+              (t) =>
+                t.sourceNode?.id === el.id &&
+                t.targetNode?.ldpType === 'source',
+            )
           if (!flag) {
             keywordOptions[el.ldpType]?.push({
               connectionId,
               connectionName,
               pdkHash,
               table,
-              tableId: metadata.id
+              tableId: metadata.id,
             })
           }
         }
@@ -513,7 +447,7 @@ export default {
       const otherDom = new Set()
 
       this.$nextTick(() => {
-        this.edgsLinks.forEach(el => {
+        this.edgsLinks.forEach((el) => {
           const { sourceNode, targetNode } = el || {}
           const sDom = sourceNode.dom || map[sourceNode.ldpType](sourceNode)
           const tDom = targetNode.dom || map[targetNode.ldpType](targetNode)
@@ -547,9 +481,21 @@ export default {
               strokeWidth: 2,
               stroke: '#2C65FF',
               dashstyle: '2 4',
-              gap: 20
+              gap: 20,
             },
-            overlays: [['Arrow', { width: 10, length: 10, location: 1, id: 'arrow', foldback: 1, fill: '#2C65FF' }]]
+            overlays: [
+              [
+                'Arrow',
+                {
+                  width: 10,
+                  length: 10,
+                  location: 1,
+                  id: 'arrow',
+                  foldback: 1,
+                  fill: '#2C65FF',
+                },
+              ],
+            ],
           })
         })
 
@@ -572,7 +518,7 @@ export default {
 
     upgradeFeeGoPage() {
       const routeUrl = this.$router.resolve({
-        name: 'createAgent'
+        name: 'createAgent',
       })
       window.open(routeUrl.href, '_blank')
     },
@@ -593,23 +539,27 @@ export default {
       !this.isDaas &&
         this.$axios
           .get(
-            'api/tcm/agent?filter=' +
-              encodeURIComponent(
-                JSON.stringify({
-                  size: 100,
-                  page: 1
-                })
-              )
+            `api/tcm/agent?filter=${encodeURIComponent(
+              JSON.stringify({
+                size: 100,
+                page: 1,
+              }),
+            )}`,
           )
-          .then(async data => {
+          .then(async (data) => {
             const { items = [] } = data
 
-            if (items.some(t => t.status === 'Stopped')) {
+            if (items.some((t) => t.status === 'Stopped')) {
               this.$message.error(this.$t('public_task_error_schedule_limit'))
               return
             }
 
-            items.length <= 1 && items.some(t => t.orderInfo?.chargeProvider === 'FreeTier' || !t.orderInfo?.amount)
+            items.length <= 1 &&
+            items.some(
+              (t) =>
+                t.orderInfo?.chargeProvider === 'FreeTier' ||
+                !t.orderInfo?.amount,
+            )
               ? this.handleShowUpgradeFee(err.message)
               : this.handleShowUpgradeCharges(err.message)
           })
@@ -621,19 +571,138 @@ export default {
 
     onScroll() {
       if (this.showParentLineage) {
-        for (let el of this.otherDomSet) {
+        for (const el of this.otherDomSet) {
           this.jsPlumbIns.revalidate(el)
         }
 
         // 后面可对api节点特殊处理
-        for (let el of this.targetDomSet) {
+        for (const el of this.targetDomSet) {
           this.jsPlumbIns.revalidate(el)
         }
       }
-    }
-  }
+    },
+  },
 }
 </script>
+
+<template>
+  <PageContainer header-class="position-relative">
+    <template #left-actions>
+      <ElTooltip
+        v-if="currentView === 'swimlane'"
+        placement="top"
+        :content="$t('packages_business_switch_directory_view')"
+      >
+        <IconButton class="ml-2" md @click="toggleView('catalog')"
+          >list-view</IconButton
+        >
+      </ElTooltip>
+      <ElTooltip
+        v-else
+        placement="top"
+        :content="$t('packages_business_switch_data_console_view')"
+      >
+        <IconButton class="ml-2" md @click="toggleView('swimlane')"
+          >swimlane</IconButton
+        >
+      </ElTooltip>
+    </template>
+
+    <template #actions>
+      <span
+        v-if="showParentLineage"
+        class="parent-lineage-quit color-linfo cursor-pointer rounded-2 px-4 py-2 position-absolute top-50 start-50 translate-middle"
+        @click="handleQuit"
+        >{{ $t('packages_ldp_src_dashboard_anEsctui') }}</span
+      >
+      <IconButton
+        v-if="isDaas || $route.path === '/data-console'"
+        class="ml-auto"
+        lg
+        @click="handleSettings"
+        >cog-o</IconButton
+      >
+    </template>
+    <div
+      class="swim-lane flex flex-column h-100 position-relative overflow-hidden"
+    >
+      <div
+        class="list flex flex-fill overflow-hidden bg-white border rounded-xl"
+      >
+        <div v-if="currentView === 'catalog'" class="px-5 pb-5 w-100">
+          <Catalogue @create-single-task="hanldeCreateSingleTask" />
+        </div>
+        <template v-else>
+          <component
+            :is="item.component"
+            v-for="item in laneOptions"
+            :key="item.type"
+            :ref="item.type"
+            :drag-state="dragState"
+            :settings="settings"
+            :directory="directoryMap[item.type]"
+            :fdm-connection="fdmConnection"
+            :fdm-not-exist="fdmNotExist"
+            :mdm-not-exist="mdmNotExist"
+            :mdm-connection="mdmConnection"
+            :event-driver="eventDriver"
+            :loading-directory="loadingDirectory"
+            :fdm-and-mdm-id="fdmAndMdmId"
+            :map-catalog="mapCatalog"
+            :show-parent-lineage="showParentLineage"
+            @create-connection="handleAdd"
+            @node-drag-end="handleDragEnd"
+            @show-settings="handleSettings"
+            @load-directory="loadDirectory"
+            @preview="handlePreview"
+            @find-parent="handleFindParent"
+            @on-scroll="onScroll"
+            @handle-show-upgrade="handleShowUpgradeDialog"
+          />
+        </template>
+      </div>
+      <SceneDialog
+        v-model:visible="showSceneDialog"
+        v-model:selector-type="selectorType"
+        @success="handleSuccess"
+        @save-and-more="handleSuccess"
+      />
+      <Settings
+        v-model:mode="mode"
+        v-model:visible="settingsVisible"
+        :fdm-connection="fdmConnection"
+        :mdm-connection="mdmConnection"
+        @success="handleSettingsSuccess"
+        @init="handleSettingsInit"
+      />
+      <TablePreview
+        ref="tablePreview"
+        @create-single-task="hanldeCreateSingleTask"
+        @handle-show-upgrade="handleShowUpgradeDialog"
+        @create-api="handleCreateAPI"
+      />
+      <ConnectionPreview ref="connectionView" />
+
+      <UpgradeFee
+        v-model:visible="upgradeFeeVisible"
+        :tooltip="
+          upgradeFeeVisibleTips ||
+          $t('packages_business_task_list_nindekeyunxing')
+        "
+        :go-page="upgradeFeeGoPage"
+      />
+
+      <UpgradeCharges
+        v-model:visible="upgradeChargesVisible"
+        :tooltip="
+          upgradeChargesVisibleTips ||
+          $t('packages_business_task_list_nindekeyunxing')
+        "
+        :go-page="upgradeFeeGoPage"
+      />
+    </div>
+  </PageContainer>
+</template>
 
 <style lang="scss" scoped>
 .box-card {
@@ -641,88 +710,87 @@ export default {
   border-top-left-radius: 8px;
 }
 .list {
-  ::v-deep {
-    .list__title {
-      height: 48px;
-      min-height: 48px;
-      background: #f3f7fa;
+  :deep(.list__title) {
+    height: 48px;
+    min-height: 48px;
+    background: #f3f7fa;
+  }
+
+  :deep(.list__title__source) {
+    color: map.get($color, primary);
+    background: #e8f3ff;
+  }
+
+  :deep(.list__title__target) {
+    color: #009a29;
+    background: #e8ffea;
+  }
+
+  :deep(.list__item) {
+    border-left: 1px solid #e1e3e9;
+    &:first-child {
+      border-left: none;
     }
-    .list__title__source {
-      color: map-get($color, primary);
-      background: #e8f3ff;
-    }
-    .list__title__target {
-      color: #009a29;
-      background: #e8ffea;
-    }
-    .list__item {
-      border-left: 1px solid #e1e3e9;
-      &:first-child {
-        border-left: none;
-      }
-    }
-    .icon-color {
-      &:hover {
-        background-color: map-get($bgColor, hover);
-      }
+  }
+
+  :deep(.icon-color) {
+    &:hover {
+      background-color: map.get($bgColor, hover);
     }
   }
 }
-
 .swim-lane {
-  ::v-deep {
-    .drop-mask {
-      display: none;
-      pointer-events: none;
-      backdrop-filter: blur(4px);
-      background-color: rgba(255, 255, 255, 0.4);
-    }
+  :deep(.drop-mask) {
+    display: none;
+    pointer-events: none;
+    backdrop-filter: blur(4px);
+    background-color: rgba(255, 255, 255, 0.4);
+  }
 
-    .ldp-tree.is-drop,
-    .is-drop .ldp-tree {
-      box-shadow: 0px 0px 0px 2px map-get($color, primary) inset;
-      & + .drop-mask {
-        display: none !important;
-      }
-    }
-
-    .is-drop .drop-mask {
+  :deep(.ldp-tree.is-drop),
+  :deep(.is-drop .ldp-tree) {
+    box-shadow: 0px 0px 0px 2px map.get($color, primary) inset;
+    & + .drop-mask {
       display: none !important;
     }
+  }
 
-    .pipeline-desc {
-      background-color: #f8f8fa;
-      border-left: 4px solid map-get($color, primary);
-      line-height: 22px;
-      li {
-        margin-left: 20px;
-        padding-left: 4px;
-        list-style-type: circle;
-      }
+  :deep(.is-drop .drop-mask) {
+    display: none !important;
+  }
+
+  :deep(.pipeline-desc) {
+    background-color: #f8f8fa;
+    border-left: 4px solid map.get($color, primary);
+    line-height: 22px;
+    li {
+      margin-left: 20px;
+      padding-left: 4px;
+      list-style-type: circle;
+    }
+  }
+
+  :deep(.table-status-dot) {
+    left: -16px;
+    width: 8px;
+    height: 8px;
+    background-color: #d9d9d9;
+  }
+
+  :deep(.inline-flex-input) {
+    .el-input-group__prepend {
+      flex-shrink: 0;
+    }
+    .el-input-group__append,
+    .el-input-group__prepend {
+      width: auto;
+      line-height: 30px;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .table-status-dot {
-      left: -16px;
-      width: 8px;
-      height: 8px;
-      background-color: #d9d9d9;
-    }
-
-    .inline-flex-input {
-      .el-input-group__prepend {
-        flex-shrink: 0;
-      }
-      .el-input-group__append,
-      .el-input-group__prepend {
-        width: auto;
-        line-height: 30px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      input {
-        width: auto;
-      }
+    input {
+      width: auto;
     }
 
     .list__title {
@@ -737,7 +805,6 @@ export default {
   -moz-transform: rotate(-180deg);
   -webkit-transform: rotate(-180deg);
 }
-
 .parent-lineage-quit {
   background-color: #333c4a;
 }

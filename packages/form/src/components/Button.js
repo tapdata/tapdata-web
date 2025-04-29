@@ -1,3 +1,3 @@
-import { Button } from 'element-ui'
+import { ElButton as Button } from 'element-plus'
 
 export { Button }

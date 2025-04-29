@@ -1,30 +1,30 @@
 .field-processors-tree-warp {
   .clickable {
-    color: map-get($color, primary);
+    color: map.get($color, primary);
   }
   .disable__btn {
-    background-color: map-get($bgColor, disable);
+    background-color: map.get($bgColor, disable);
     border-color: #e4e7ed;
     color: #c0c4cc;
     cursor: not-allowed;
   }
   .active__delete {
-    color: map-get($color, disable);
+    color: map.get($color, disable);
   }
   .field-type {
     width: 100px;
   }
   .active__name {
-    color: map-get($color, primary);
+    color: map.get($color, primary);
   }
   .active__name__inner {
     .el-input__inner {
-      color: map-get($color, primary);
+      color: map.get($color, primary);
     }
   }
   .active__type {
     .el-input__inner {
-      color: map-get($color, primary);
+      color: map.get($color, primary);
     }
   }
   .check-all {
@@ -41,7 +41,7 @@
     margin-right: 24px;
   }
   .tree-node {
-    line-height: 43px;
+    //line-height: 43px;
   }
   .field-processor-operation {
     height: 40px;
@@ -55,31 +55,32 @@
     }
     .tree-field-input-primary {
       input {
-        color: map-get($color, primary);
+        color: map.get($color, primary);
       }
     }
     //.tree-field-input .el-input__inner:hover{
     //  border: 1px solid;
     //  border-color: #eceef1
     //}
-    .tree-field-input .el-input__inner:focus {
-      border: 1px solid;
-      border-color: map-get($color, primary);
-    }
-    .el-input__inner {
-      border: none;
-      background-color: transparent;
-      padding: 0 5px;
+    .tree-field-input .el-input__wrapper {
+      box-shadow: none;
+      &:focus-within {
+        box-shadow: 0 0 0 1px var(--el-input-focus-border-color) inset;
+      }
     }
     .el-tree-node__content {
       height: 50px;
       cursor: pointer;
       border-top: 1px solid;
       border-color: #eceef1;
+      border-radius: 0;
+    }
+    .el-tree-node__expand-icon {
+      height: 38px;
     }
     .el-input__prefix,
     .el-input__suffix .el-select__caret {
-      color: map-get($color, primary);
+      color: map.get($color, primary);
     }
     .e-select {
       width: 100px;

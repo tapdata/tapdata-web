@@ -9,7 +9,7 @@ import { mapGetters, mapState } from 'vuex'
 import { createForm, onFormValuesChange } from '@formily/core'
 import { observer } from '@formily/reactive-vue'
 import FormRender from '../FormRender'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 import { alarmApi, taskApi } from '@tap/api'
 
 export default {
@@ -20,8 +20,8 @@ export default {
     scope: Object,
     isNode: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
   data() {
@@ -34,19 +34,19 @@ export default {
 
       allNodesResult: [],
 
-      channels: ['wechat', 'system', 'sms', 'email']
+      channels: ['wechat', 'system', 'sms', 'email'],
     }
   },
 
   computed: {
     ...mapGetters('dataflow', ['allNodes', 'allEdges']),
-    ...mapState('dataflow', ['activeNodeId'])
+    ...mapState('dataflow', ['activeNodeId']),
   },
 
   watch: {
     activeNodeId() {
       this.init()
-    }
+    },
   },
 
   mounted() {
@@ -61,16 +61,16 @@ export default {
         }
       }
       //获取支持通知方式
-      alarmApi.channels().then(data => {
+      alarmApi.channels().then((data) => {
         this.channels = []
-        this.channels = data.map(item => item.type)
+        this.channels = data.map((item) => item.type)
         this.loadSchema()
       })
     }, 300),
 
     // 绑定表单事件
     useEffects() {
-      onFormValuesChange(form => {
+      onFormValuesChange((form) => {
         const values = JSON.parse(JSON.stringify(form.values))
         this.isNode ? this.saveNodeSettings(values, this) : this.saveTaskSettings(values, this)
       })
@@ -79,12 +79,12 @@ export default {
     saveTaskSettings: debounce((values, _self) => {
       const { settings } = _self
       let { id, alarmSettings, alarmRules } = settings
-      alarmSettings.forEach(el => {
+      alarmSettings.forEach((el) => {
         for (let key in el) {
           el[key] = values[el.key][key]
         }
       })
-      alarmRules.forEach(el => {
+      alarmRules.forEach((el) => {
         for (let key in el) {
           el[key] = values[el.key][key]
         }
@@ -95,22 +95,22 @@ export default {
       taskApi.patch({
         id,
         alarmSettings,
-        alarmRules
+        alarmRules,
       })
     }, 300),
 
     saveNodeSettings: debounce((values, _self) => {
       const { allEdges, activeNodeId, settings, allNodesResult } = _self
       const { id } = settings
-      let findOne = allNodesResult.find(t => t.id === activeNodeId) || {}
+      let findOne = allNodesResult.find((t) => t.id === activeNodeId) || {}
       let alarmSettings = findOne.alarmSettings || []
       let alarmRules = findOne.alarmRules || []
-      alarmSettings.forEach(el => {
+      alarmSettings.forEach((el) => {
         for (let key in el) {
           el[key] = values[el.key][key]
         }
       })
-      alarmRules.forEach(el => {
+      alarmRules.forEach((el) => {
         for (let key in el) {
           el[key] = values[el.key][key]
         }
@@ -120,13 +120,13 @@ export default {
       })
       const dag = {
         edges: allEdges,
-        nodes: allNodesResult
+        nodes: allNodesResult,
       }
       taskApi.patch({
         id,
         dag,
         alarmSettings: settings.alarmSettings,
-        alarmRules: settings.alarmRules
+        alarmRules: settings.alarmRules,
       })
     }, 300),
 
@@ -172,20 +172,20 @@ export default {
                   // ),
                   'DATANODE_AVERAGE_HANDLE_CONSUME.open': this.getSwitch(
                     i18n.t('packages_business_setting_alarmnotification_dangshujuyuanjie'),
-                    'DATANODE_AVERAGE_HANDLE_CONSUME.notify'
+                    'DATANODE_AVERAGE_HANDLE_CONSUME.notify',
                   ),
                   'DATANODE_AVERAGE_HANDLE_CONSUME.notify': this.getCheckboxGroup(
-                    'DATANODE_AVERAGE_HANDLE_CONSUME.open'
+                    'DATANODE_AVERAGE_HANDLE_CONSUME.open',
                   ),
                   space3: this.getSpace(
                     'DATANODE_AVERAGE_HANDLE_CONSUME.point',
                     'DATANODE_AVERAGE_HANDLE_CONSUME.equalsFlag',
                     'DATANODE_AVERAGE_HANDLE_CONSUME.ms',
-                    'DATANODE_AVERAGE_HANDLE_CONSUME.open'
-                  )
-                }
-              }
-            }
+                    'DATANODE_AVERAGE_HANDLE_CONSUME.open',
+                  ),
+                },
+              },
+            },
           }
           break
         case 'process':
@@ -197,20 +197,20 @@ export default {
                 properties: {
                   'PROCESSNODE_AVERAGE_HANDLE_CONSUME.open': this.getSwitch(
                     i18n.t('packages_business_setting_alarmnotification_dangjiediandeping'),
-                    'PROCESSNODE_AVERAGE_HANDLE_CONSUME.notify'
+                    'PROCESSNODE_AVERAGE_HANDLE_CONSUME.notify',
                   ),
                   'PROCESSNODE_AVERAGE_HANDLE_CONSUME.notify': this.getCheckboxGroup(
-                    'PROCESSNODE_AVERAGE_HANDLE_CONSUME.open'
+                    'PROCESSNODE_AVERAGE_HANDLE_CONSUME.open',
                   ),
                   space1: this.getSpace(
                     'PROCESSNODE_AVERAGE_HANDLE_CONSUME.point',
                     'PROCESSNODE_AVERAGE_HANDLE_CONSUME.equalsFlag',
                     'PROCESSNODE_AVERAGE_HANDLE_CONSUME.ms',
-                    'PROCESSNODE_AVERAGE_HANDLE_CONSUME.open'
-                  )
-                }
-              }
-            }
+                    'PROCESSNODE_AVERAGE_HANDLE_CONSUME.open',
+                  ),
+                },
+              },
+            },
           }
           break
         default:
@@ -222,7 +222,7 @@ export default {
                 properties: {
                   'TASK_STATUS_ERROR.open': this.getSwitch(
                     i18n.t('packages_dag_migration_alarmpanel_renwuyunxingchu'),
-                    'TASK_STATUS_ERROR.notify'
+                    'TASK_STATUS_ERROR.notify',
                   ),
                   'TASK_STATUS_ERROR.notify': this.getCheckboxGroup('TASK_STATUS_ERROR.open'),
                   // 'TASK_INSPECT_ERROR.open': this.getSwitch(
@@ -232,33 +232,33 @@ export default {
                   // 'TASK_INSPECT_ERROR.notify': this.getCheckboxGroup('TASK_INSPECT_ERROR.open'),
                   'TASK_FULL_COMPLETE.open': this.getSwitch(
                     i18n.t('packages_dag_migration_alarmpanel_renwuquanliangwan'),
-                    'TASK_FULL_COMPLETE.notify'
+                    'TASK_FULL_COMPLETE.notify',
                   ),
                   'TASK_FULL_COMPLETE.notify': this.getCheckboxGroup('TASK_FULL_COMPLETE.open'),
                   'TASK_INCREMENT_START.open': this.getSwitch(
                     i18n.t('packages_dag_migration_alarmpanel_renwuzengliangkai'),
-                    'TASK_INCREMENT_START.notify'
+                    'TASK_INCREMENT_START.notify',
                   ),
                   'TASK_INCREMENT_START.notify': this.getCheckboxGroup('TASK_INCREMENT_START.open'),
                   'TASK_STATUS_STOP.open': this.getSwitch(
                     i18n.t('packages_dag_migration_alarmpanel_renwutingzhigao'),
-                    'TASK_STATUS_STOP.notify'
+                    'TASK_STATUS_STOP.notify',
                   ),
                   'TASK_STATUS_STOP.notify': this.getCheckboxGroup('TASK_STATUS_STOP.open'),
                   'TASK_INCREMENT_DELAY.open': this.getSwitch(
                     i18n.t('packages_dag_migration_alarmpanel_renwuzengliangyan'),
-                    'TASK_INCREMENT_DELAY.notify'
+                    'TASK_INCREMENT_DELAY.notify',
                   ),
                   'TASK_INCREMENT_DELAY.notify': this.getCheckboxGroup('TASK_INCREMENT_DELAY.open'),
                   space1: this.getSpace(
                     'TASK_INCREMENT_DELAY.point',
                     'TASK_INCREMENT_DELAY.equalsFlag',
                     'TASK_INCREMENT_DELAY.ms',
-                    'TASK_INCREMENT_DELAY.open'
-                  )
-                }
-              }
-            }
+                    'TASK_INCREMENT_DELAY.open',
+                  ),
+                },
+              },
+            },
           }
           break
       }
@@ -271,7 +271,7 @@ export default {
       // 节点类型
       if (this.isNode) {
         const { activeNodeId, allNodesResult } = this
-        const activeNode = allNodesResult.find(t => t.id === activeNodeId) || {}
+        const activeNode = allNodesResult.find((t) => t.id === activeNodeId) || {}
         alarmSettings = activeNode.alarmSettings || []
         alarmRules = activeNode.alarmRules || []
       }
@@ -289,7 +289,7 @@ export default {
 
       this.form = createForm({
         values,
-        effects: this.useEffects
+        effects: this.useEffects,
       })
     },
 
@@ -300,12 +300,12 @@ export default {
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Switch',
-        default: true
+        default: true,
       }
       if (key) {
         const a = key.split('.')
         options['x-component-props'] = {
-          onChange: `{{val=>{console.log($values['${key}'], $values['${a[0]}']?.['${a[1]}']);(val && !$values['${a[0]}']?.['${a[1]}'].length) && $form.setValuesIn('${key}', ["SYSTEM"])}}}`
+          onChange: `{{val=>{console.log($values['${key}'], $values['${a[0]}']?.['${a[1]}']);(val && !$values['${a[0]}']?.['${a[1]}'].length) && $form.setValuesIn('${key}', ["SYSTEM"])}}}`,
         }
       }
       return options
@@ -318,28 +318,37 @@ export default {
         'x-component': 'Checkbox.Group',
         enum: [],
         'x-component-props': {
-          onChange: `{{val=>{$form.setValuesIn('${key}', !!val.length)}}}`
+          onChange: `{{val=>{$form.setValuesIn('${key}', !!val.length)}}}`,
         },
-        default: ['SYSTEM']
+        default: ['SYSTEM'],
       }
       let enums = []
       if (this.channels.includes('system')) {
-        enums.push({ label: i18n.t('packages_dag_migration_alarmpanel_xitongtongzhi'), value: 'SYSTEM' })
+        enums.push({
+          label: i18n.t('packages_dag_migration_alarmpanel_xitongtongzhi'),
+          value: 'SYSTEM',
+        })
       }
       if (this.channels.includes('email')) {
-        enums.push({ label: i18n.t('packages_dag_migration_alarmpanel_youjiantongzhi'), value: 'EMAIL' })
+        enums.push({
+          label: i18n.t('packages_dag_migration_alarmpanel_youjiantongzhi'),
+          value: 'EMAIL',
+        })
       }
-      if (process.env.VUE_APP_PLATFORM !== 'DAAS') {
+      if (import.meta.env.VUE_APP_PLATFORM !== 'DAAS') {
         let isOpenid = window.__USER_INFO__?.openid
         if (this.channels.includes('wechat')) {
           enums.push({
             label: i18n.t('packages_business_notify_webchat_notification'),
             value: 'WECHAT',
-            disabled: !isOpenid
+            disabled: !isOpenid,
           })
         }
         if (this.channels.includes('sms')) {
-          enums.push({ label: i18n.t('packages_business_notify_sms_notification'), value: 'SMS' })
+          enums.push({
+            label: i18n.t('packages_business_notify_sms_notification'),
+            value: 'SMS',
+          })
         }
       }
 
@@ -349,9 +358,9 @@ export default {
           dependencies: [key],
           fulfill: {
             state: {
-              disabled: `{{!$deps[0]}}`
-            }
-          }
+              disabled: `{{!$deps[0]}}`,
+            },
+          },
         }
       }
       return options
@@ -364,24 +373,24 @@ export default {
         default: defaultNum,
         'x-decorator': 'FormItem',
         'x-decorator-props': {
-          layout: 'horizontal'
+          layout: 'horizontal',
         },
         'x-component': 'InputNumber',
         'x-component-props': {
           min: 1,
           precision: 0,
           style: {
-            width: '100px'
-          }
+            width: '100px',
+          },
         },
         'x-reactions': {
           dependencies: [key],
           fulfill: {
             state: {
-              disabled: `{{!$deps[0]}}`
-            }
-          }
-        }
+              disabled: `{{!$deps[0]}}`,
+            },
+          },
+        },
       }
     },
 
@@ -392,24 +401,24 @@ export default {
         default: 1,
         'x-decorator': 'FormItem',
         'x-decorator-props': {
-          layout: 'horizontal'
+          layout: 'horizontal',
         },
         'x-component': 'Select',
         'x-component-props': {
           style: {
-            width: '70px'
-          }
+            width: '70px',
+          },
         },
         enum: [
           {
             label: '<=',
-            value: -1
+            value: -1,
           },
           {
             label: '>=',
-            value: 1
-          }
-        ]
+            value: 1,
+          },
+        ],
       }
     },
 
@@ -417,7 +426,7 @@ export default {
       let result = {
         type: 'void',
         'x-component': 'Space',
-        properties: {}
+        properties: {},
       }
       result.properties[key1] = this.getInputNumber(i18n.t('packages_dag_migration_alarmpanel_lianxu'), 10, key4)
       result.properties[key2] = this.getSelect(i18n.t('public_time_m'))
@@ -428,38 +437,39 @@ export default {
         default: 0,
         'x-decorator': 'FormItem',
         'x-decorator-props': {
-          layout: 'horizontal'
-        }
+          layout: 'horizontal',
+        },
       }
       return result
     },
 
     getNodeType() {
       const { activeNodeId, allNodes } = this
-      const { type, $inputs, $outputs } = allNodes.find(t => t.id === activeNodeId) || {}
+      const { type, $inputs, $outputs } = allNodes.find((t) => t.id === activeNodeId) || {}
       if (!type) return ''
       if (type === 'database' || type === 'table') {
         if (!$inputs.length) return 'source'
         if (!$outputs.length) return 'target'
       }
       return 'process'
-    }
-  }
+    },
+  },
 }
 </script>
+
 <style lang="scss" scoped>
 .attr-panel {
-  ::v-deep {
-    .attr-panel-body {
-      padding-top: 0;
-    }
-    .formily-element-form-item-label label {
-      font-size: 12px;
-    }
-    .el-collapse-item__header {
-      font-size: 14px;
-      font-weight: 500;
-    }
+  :deep(.attr-panel-body) {
+    padding-top: 0;
+  }
+
+  :deep(.formily-element-plus-form-item-label label) {
+    font-size: 12px;
+  }
+
+  :deep(.el-collapse-item__header) {
+    font-size: 14px;
+    font-weight: 500;
   }
 }
 </style>

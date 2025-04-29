@@ -1,13 +1,13 @@
 <template>
-  <Drawer class="sw-connection-drawer" :visible.sync="visible" width="850px">
+  <Drawer class="sw-connection-drawer" v-model:visible="visible" width="850px">
     <section v-if="viewData">
       <header>
         <div class="flex justify-content-between">
           <div class="connection-name mb-2 ellipsis">{{ viewData.name }}</div>
           <div class="flex justify-content-end">
-            <!--<el-button size="mini" type="primary">加载Schema</el-button>-->
-            <el-button size="mini" @click="edit">{{ $t('public_button_edit') }}</el-button>
-            <!--<el-button size="mini">测试连接</el-button>-->
+            <!--<el-button  type="primary">加载Schema</el-button>-->
+            <el-button @click="edit">{{ $t('public_button_edit') }}</el-button>
+            <!--<el-button >测试连接</el-button>-->
           </div>
         </div>
         <div class="color-info mb-4">
@@ -79,12 +79,12 @@
         <header class="header flex align-center mb-4">
           <div class="table-info-name">{{ $t('packages_business_tasks') }}</div>
           <ElDivider class="mx-3" direction="vertical"></ElDivider>
-          <ElRadioGroup v-model="asTaskType" size="mini">
+          <ElRadioGroup v-model="asTaskType">
             <ElRadioButton label="all">{{ $t('public_select_option_all') }}</ElRadioButton>
             <ElRadioButton label="source">{{ $t('packages_business_as_source') }}</ElRadioButton>
             <ElRadioButton label="target">{{ $t('packages_business_as_target') }}</ElRadioButton>
           </ElRadioGroup>
-          <!--<el-button type="primary" size="mini">新建</el-button>-->
+          <!--<el-button type="primary" >新建</el-button>-->
         </header>
         <el-table class="discovery-page-table" :data="filterTask" :has-pagination="false">
           <el-table-column :label="$t('public_task_name')" prop="name" width="200px" show-overflow-tooltip>
@@ -140,7 +140,7 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 import dayjs from 'dayjs'
 import { Drawer } from '@tap/component'
 import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP, SchemaProgress, TaskStatus } from '@tap/business'
@@ -148,18 +148,19 @@ import { taskApi } from '@tap/api'
 
 export default {
   name: 'ConnectionPreview',
-  props: ['connectionId', 'viewData'],
+  props: ['connectionId'],
   components: { Drawer, SchemaProgress, TaskStatus },
   data() {
     return {
       visible: false,
+      viewData: null,
       taskData: [],
       taskType: {
         initial_sync: this.$t('public_task_type_initial_sync'),
         cdc: this.$t('public_task_type_cdc'),
-        'initial_sync+cdc': this.$t('public_task_type_initial_sync_and_cdc')
+        'initial_sync+cdc': this.$t('public_task_type_initial_sync_and_cdc'),
       },
-      asTaskType: 'all'
+      asTaskType: 'all',
     }
   },
   computed: {
@@ -170,10 +171,10 @@ export default {
       return this.taskData
     },
     sourceTask() {
-      return this.taskData.filter(task => task.sourceConnectionIds.includes(this.viewData.id))
+      return this.taskData.filter((task) => task.sourceConnectionIds.includes(this.viewData.id))
     },
     targetTask() {
-      return this.taskData.filter(task => task.targetConnectionIds.includes(this.viewData.id))
+      return this.taskData.filter((task) => task.targetConnectionIds.includes(this.viewData.id))
     },
     databaseName() {
       if (!this.viewData) return
@@ -183,7 +184,7 @@ export default {
       if (config.uri && config.isUri !== false) {
         const regResult =
           /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
-            config.uri
+            config.uri,
           )
         if (regResult && regResult.groups) {
           config.database = regResult.groups.database
@@ -191,7 +192,7 @@ export default {
       }
 
       return config.database || config.sid
-    }
+    },
   },
   methods: {
     open(connection) {
@@ -207,7 +208,7 @@ export default {
       if (config.uri && config.isUri !== false) {
         const regResult =
           /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
-            config.uri
+            config.uri,
           )
         if (regResult && regResult.groups) {
           const hostArr = regResult.groups.host.split(':')
@@ -229,12 +230,12 @@ export default {
       this.$router.push({
         name: 'connectionsEdit',
         params: {
-          id
+          id,
         },
         query: {
           pdkHash,
-          pdkId
-        }
+          pdkId,
+        },
       })
     },
     isFileSource(database_type) {
@@ -249,10 +250,10 @@ export default {
     getTasks() {
       let params = {
         connectionId: this.viewData.id,
-        tableName: null
+        tableName: null,
       }
-      taskApi.getTaskByTableName(params).then(taskList => {
-        taskList.forEach(task => {
+      taskApi.getTaskByTableName(params).then((taskList) => {
+        taskList.forEach((task) => {
           const { dag } = task
           const sourceConnectionIds = []
           const targetConnectionIds = []
@@ -277,7 +278,7 @@ export default {
               }
             })
 
-            dag.nodes.forEach(node => {
+            dag.nodes.forEach((node) => {
               if (!inputsMap[node.id] && outputsMap[node.id] && node.connectionId) {
                 sourceConnectionIds.push(node.connectionId)
               } else if (inputsMap[node.id] && !outputsMap[node.id] && node.connectionId) {
@@ -314,18 +315,18 @@ export default {
       this.openRoute({
         name: routeName,
         params: {
-          id: row.id
-        }
+          id: row.id,
+        },
       })
     },
     reset() {
       this.asTaskType = 'all'
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .sw-connection-drawer {
   padding: 24px;
   .connection-name {
@@ -335,8 +336,8 @@ export default {
   }
   .basics-info {
     padding: 16px 0;
-    border-bottom: 1px solid map-get($borderColor, normal);
-    border-top: 1px solid map-get($borderColor, normal);
+    border-bottom: 1px solid map.get($borderColor, normal);
+    border-top: 1px solid map.get($borderColor, normal);
 
     .el-col {
       display: flex;
@@ -353,7 +354,7 @@ export default {
     color: #1d2129;
   }
   .detailed-info {
-    border-bottom: 1px solid map-get($borderColor, normal);
+    border-bottom: 1px solid map.get($borderColor, normal);
     padding: 16px 0;
     .label {
       width: 150px;

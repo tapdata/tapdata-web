@@ -1,7 +1,7 @@
 <template>
   <div class="multi-selection-data-verify">
     <el-select
-      :value="values"
+      :model-value="values"
       multiple
       filterable
       allow-create
@@ -14,7 +14,7 @@
       @focus="handleFocus"
     >
       <el-option
-        v-for="opt in options.filter(i => !!i)"
+        v-for="opt in options.filter((i) => !!i)"
         :key="opt.id + opt.field_name"
         :label="opt.field_name"
         :value="opt.field_name"
@@ -24,7 +24,7 @@
           style="
             margin-left: 5px;
             background: rgb(245, 108, 108);
-            color: map-get($fontColor, white);
+            color: map.get($fontColor, white);
             border-radius: 3px;
             display: inline-block;
             height: 22px;
@@ -42,31 +42,33 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 export default {
   props: {
     value: {
       type: [String],
-      required: true
+      required: true,
     },
     options: Array,
-    placeholder: String
+    placeholder: String,
   },
   computed: {
     values() {
       let value = this.value
       return value && value.length ? value.split(',') : []
-    }
+    },
   },
   methods: {
     inputHandler(values) {
       //过滤空字符串并去重，之后使用逗号分隔
-      this.$emit('input', Array.from(new Set(values.filter(v => !!v.trim()))).join(','))
+      $emit(this, 'update:value', Array.from(new Set(values.filter((v) => !!v.trim()))).join(','))
     },
 
     handleFocus() {
-      this.$emit('focus')
-    }
-  }
+      $emit(this, 'focus')
+    },
+  },
+  emits: ['remove-tag', 'change', 'update:value', 'focus'],
 }
 </script>
 
@@ -76,6 +78,7 @@ export default {
   align-items: center;
 }
 </style>
+
 <style lang="scss">
 .multi-selection-data-verify .el-select__input.is-mini {
   height: 16px;

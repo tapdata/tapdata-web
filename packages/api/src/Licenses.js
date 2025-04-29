@@ -12,8 +12,8 @@ export default class Licenses extends Http {
   getSid(ids) {
     return this.axios.get(`${this.url}/sid`, {
       params: {
-        id: JSON.stringify(ids)
-      }
+        id: JSON.stringify(ids),
+      },
     })
   }
 
@@ -27,7 +27,7 @@ export default class Licenses extends Http {
 
   getFeatures() {
     return this.axios.get(`${this.url}/features`).catch(err => {
-      if (err.response.status == 404 && process.env.NODE_ENV === 'development') {
+      if (err.response.status == 404 &&  import.meta.env.DEV) {
         return Promise.resolve({
           licenseType: 'OP',
           features: []

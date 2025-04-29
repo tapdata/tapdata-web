@@ -1,9 +1,3 @@
-<template>
-  <div class="markdown-body-wrap p-4">
-    <div class="markdown-body" v-html="html"></div>
-  </div>
-</template>
-
 <script>
 import MarkdownIt from 'markdown-it'
 import '@tap/assets/styles/github-markdown.css'
@@ -13,12 +7,13 @@ export default {
   props: {
     value: {
       type: [String, Blob],
-      require: true
-    }
+      require: true,
+    },
   },
+  emits: ['update:value'],
   data() {
     return {
-      html: ''
+      html: '',
     }
   },
   watch: {
@@ -26,7 +21,7 @@ export default {
       if (v1 !== v2) {
         this.init()
       }
-    }
+    },
   },
   mounted() {
     this.value && this.init()
@@ -37,13 +32,21 @@ export default {
       const reader = new FileReader()
       const blob = new Blob([v])
       reader.readAsText(blob, 'utf8')
-      reader.onload = () => {
+      reader.addEventListener('load', () => {
         // TODO: 代码高亮，复制按钮
         const md = new MarkdownIt({ html: true })
         // a标签，新窗口打开
-        this.html = md.render(reader.result).replace(/<a href=/g, `<a target="_blank" href=`)
-      }
-    }
-  }
+        this.html = md
+          .render(reader.result)
+          .replaceAll('<a href=', `<a target="_blank" href=`)
+      })
+    },
+  },
 }
 </script>
+
+<template>
+  <div class="markdown-body-wrap">
+    <div class="markdown-body" v-html="html" />
+  </div>
+</template>

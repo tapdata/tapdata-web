@@ -1,6 +1,6 @@
 $formily-prefix: 'formily-element';
 $namespace: 'el';
-@import '~element-ui/packages/theme-chalk/src/common/var.scss';
+@import '~element-plus/theme-chalk/src/common/var.scss';
 
 @mixin active {
   border-color: $--color-primary;
@@ -16,7 +16,7 @@ $namespace: 'el';
 .el-select {
   width: 100%;
 }
-.formily-element-form-item {
+.formily-element-plus-form-item {
   .ace_editor,
   .ace_gutter {
     background-color: #f5f6f8;

@@ -25,7 +25,7 @@ export interface CountUpOptions {
 }
 
 export declare interface CountUpPlugin {
-  render(elem: HTMLElement, formatted: string): void
+  render: (elem: HTMLElement, formatted: string) => void
 }
 
 // playground: stackblitz.com/edit/countup-typescript
@@ -46,7 +46,7 @@ export class CountUp {
     suffix: '',
     enableScrollSpy: false,
     scrollSpyDelay: 200,
-    scrollSpyOnce: false
+    scrollSpyOnce: false,
   }
   private rAF: any
   private startTime: number
@@ -67,14 +67,18 @@ export class CountUp {
   constructor(
     target: string | HTMLElement | HTMLInputElement,
     private endVal: number,
-    public options?: CountUpOptions
+    public options?: CountUpOptions,
   ) {
     this.options = {
       ...this.defaults,
-      ...options
+      ...options,
     }
-    this.formattingFn = this.options.formattingFn ? this.options.formattingFn : this.formatNumber
-    this.easingFn = this.options.easingFn ? this.options.easingFn : this.easeOutExpo
+    this.formattingFn = this.options.formattingFn
+      ? this.options.formattingFn
+      : this.formatNumber
+    this.easingFn = this.options.easingFn
+      ? this.options.easingFn
+      : this.easeOutExpo
 
     this.startVal = this.validateValue(this.options.startVal)
     this.frameVal = this.startVal
@@ -86,7 +90,8 @@ export class CountUp {
     if (this.options.separator === '') {
       this.options.useGrouping = false
     }
-    this.el = typeof target === 'string' ? document.getElementById(target) : target
+    this.el =
+      typeof target === 'string' ? document.getElementById(target) : target
     if (this.el) {
       this.printValue(this.startVal)
     } else {
@@ -97,11 +102,11 @@ export class CountUp {
     if (typeof window !== 'undefined' && this.options.enableScrollSpy) {
       if (!this.error) {
         // set up global array of onscroll functions to handle multiple instances
-        window['onScrollFns'] = window['onScrollFns'] || []
-        window['onScrollFns'].push(() => this.handleScroll(this))
-        window.onscroll = () => {
-          window['onScrollFns'].forEach(fn => fn())
-        }
+        window.onScrollFns = window.onScrollFns || []
+        window.onScrollFns.push(() => this.handleScroll(this))
+        window.addEventListener('scroll', () => {
+          window.onScrollFns.forEach((fn) => fn())
+        })
         this.handleScroll(this)
       } else {
         console.error(this.error, target)
@@ -115,12 +120,19 @@ export class CountUp {
     const rect = self.el.getBoundingClientRect()
     const topOfEl = rect.top + window.pageYOffset
     const bottomOfEl = rect.top + rect.height + window.pageYOffset
-    if (bottomOfEl < bottomOfScroll && bottomOfEl > window.scrollY && self.paused) {
+    if (
+      bottomOfEl < bottomOfScroll &&
+      bottomOfEl > window.scrollY &&
+      self.paused
+    ) {
       // in view
       self.paused = false
       setTimeout(() => self.start(), self.options.scrollSpyDelay)
       if (self.options.scrollSpyOnce) self.once = true
-    } else if ((window.scrollY > bottomOfEl || topOfEl > bottomOfScroll) && !self.paused) {
+    } else if (
+      (window.scrollY > bottomOfEl || topOfEl > bottomOfScroll) &&
+      !self.paused
+    ) {
       // out of view
       self.reset()
     }
@@ -136,7 +148,10 @@ export class CountUp {
     const end = this.finalEndVal ? this.finalEndVal : this.endVal
     this.countDown = this.startVal > end
     const animateAmount = end - this.startVal
-    if (Math.abs(animateAmount) > this.options.smartEasingThreshold && this.options.useEasing) {
+    if (
+      Math.abs(animateAmount) > this.options.smartEasingThreshold &&
+      this.options.useEasing
+    ) {
       this.finalEndVal = end
       const up = this.countDown ? 1 : -1
       this.endVal = end + up * this.options.smartEasingAmount
@@ -225,16 +240,27 @@ export class CountUp {
     // to ease or not to ease
     if (this.useEasing) {
       if (this.countDown) {
-        this.frameVal = this.startVal - this.easingFn(progress, 0, this.startVal - this.endVal, this.duration)
+        this.frameVal =
+          this.startVal -
+          this.easingFn(progress, 0, this.startVal - this.endVal, this.duration)
       } else {
-        this.frameVal = this.easingFn(progress, this.startVal, this.endVal - this.startVal, this.duration)
+        this.frameVal = this.easingFn(
+          progress,
+          this.startVal,
+          this.endVal - this.startVal,
+          this.duration,
+        )
       }
     } else {
-      this.frameVal = this.startVal + (this.endVal - this.startVal) * (progress / this.duration)
+      this.frameVal =
+        this.startVal +
+        (this.endVal - this.startVal) * (progress / this.duration)
     }
 
     // don't go past endVal since progress can exceed duration in the last frame
-    const wentPast = this.countDown ? this.frameVal < this.endVal : this.frameVal > this.endVal
+    const wentPast = this.countDown
+      ? this.frameVal < this.endVal
+      : this.frameVal > this.endVal
     this.frameVal = wentPast ? this.endVal : this.frameVal
 
     // decimal
@@ -249,10 +275,8 @@ export class CountUp {
     } else if (this.finalEndVal !== null) {
       // smart easing
       this.update(this.finalEndVal)
-    } else {
-      if (this.options.onCompleteCallback) {
-        this.options.onCompleteCallback()
-      }
+    } else if (this.options.onCompleteCallback) {
+      this.options.onCompleteCallback()
     }
   }
 
@@ -322,15 +346,15 @@ export class CountUp {
     }
     // optional numeral substitution
     if (this.options.numerals && this.options.numerals.length) {
-      x1 = x1.replace(/[0-9]/g, w => this.options.numerals[+w])
-      x2 = x2.replace(/[0-9]/g, w => this.options.numerals[+w])
+      x1 = x1.replaceAll(/\d/g, (w) => this.options.numerals[+w])
+      x2 = x2.replaceAll(/\d/g, (w) => this.options.numerals[+w])
     }
     return neg + this.options.prefix + x1 + x2 + this.options.suffix
   }
 
   // t: current time, b: beginning value, c: change in value, d: duration
   easeOutExpo = (t: number, b: number, c: number, d: number): number =>
-    (c * (-Math.pow(2, (-10 * t) / d) + 1) * 1024) / 1023 + b
+    (c * (-(2 ** ((-10 * t) / d)) + 1) * 1024) / 1023 + b
 }
 
 export default CountUp

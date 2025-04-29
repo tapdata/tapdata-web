@@ -37,10 +37,12 @@
       .js-editor-form-item-wrap {
         display: flex;
         flex: 1;
+
         .js-editor-form-item {
           flex: 1;
           margin-bottom: 0;
-          .formily-element-form-item-label {
+
+          .formily-element-plus-form-item-label {
             display: none;
           }
         }
@@ -84,6 +86,7 @@
       &__header {
         margin-bottom: 0;
       }
+
       &__content {
         flex: 1;
       }
@@ -98,9 +101,11 @@
       font-size: 12px;
       border-radius: 4px 4px 0 0;
     }
+
     &-editor {
       height: 33vh !important;
     }
+
     .ace_cursor {
       display: none !important;
     }
@@ -127,7 +132,7 @@
         stroke-dasharray: 90, 150;
         stroke-dashoffset: 0;
         stroke-width: 2;
-        stroke: map-get($color, primary);
+        stroke: map.get($color, primary);
         stroke-linecap: round;
       }
     }
@@ -200,18 +205,30 @@
   ul {
     list-style-type: disc;
   }
+
   ul,
   ol {
     padding-inline-start: 32px;
   }
+
   ul,
   ol,
   dl {
     margin-block-start: 12px;
     margin-block-end: 24px;
   }
+
   ul li {
     line-height: 1.8;
     list-style-type: unset;
+  }
+}
+
+.js-api-drawer {
+  .el-drawer__header {
+    margin-bottom: 16px;
+  }
+  .el-drawer__body {
+    padding: 0;
   }
 }

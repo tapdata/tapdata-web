@@ -1,20 +1,23 @@
-import { on, off, appendHtml } from '@tap/shared'
+import { appendHtml, off, on } from '@tap/shared'
 
 const EVENT = {
   mouse: {
     start: 'mousedown',
     move: 'mousemove',
-    stop: 'mouseup'
+    stop: 'mouseup',
   },
   touch: {
     start: 'touchstart',
     move: 'touchmove',
-    stop: 'touchend'
-  }
+    stop: 'touchend',
+  },
 }
 
 function initEvent($el, position, options) {
-  let $trigger = appendHtml($el, `<div class="resize-trigger --${position}"></div>`)
+  const $trigger = appendHtml(
+    $el,
+    `<div class="resize-trigger --${position}"></div>`,
+  )
   const isHorizontal = position === 'left' || position === 'right'
   const num = position === 'left' || position === 'top' ? 1 : -1
   let initOffset, oldVal, xOry, attr, cls
@@ -35,7 +38,7 @@ function initEvent($el, position, options) {
   const min = options[`min${attr}`] || -Infinity
   const { onResize } = options
 
-  const handleStart = event => {
+  const handleStart = (event) => {
     if (event.button !== 0) return
     if (event.type === 'touchstart') {
       eventsFor = EVENT.touch
@@ -43,7 +46,7 @@ function initEvent($el, position, options) {
       eventsFor = EVENT.mouse
     }
 
-    let page = event.touches ? event.touches[0] : event
+    const page = event.touches ? event.touches[0] : event
 
     initOffset = page[xOry]
     oldVal = $el[`offset${attr}`]
@@ -51,27 +54,27 @@ function initEvent($el, position, options) {
 
     on(window, eventsFor.move, handleMove, {
       capture: false,
-      passive: false
+      passive: false,
     })
     on(window, eventsFor.stop, handleStop)
   }
 
-  const handleMove = event => {
+  const handleMove = (event) => {
     event.preventDefault()
     $trigger.classList.add('active')
 
-    let page = event.touches ? event.touches[0] : event
-    let offset = initOffset - page[xOry]
+    const page = event.touches ? event.touches[0] : event
+    const offset = initOffset - page[xOry]
     let newVal = oldVal + offset * num // 正向或者负向移动
     newVal = Math.min(max, Math.max(min, newVal))
 
     onResize?.({
       isHorizontal,
       _attr,
-      newVal
+      newVal,
     })
 
-    $el.style[_attr] = newVal + 'px'
+    $el.style[_attr] = `${newVal}px`
   }
 
   const handleStop = () => {
@@ -86,8 +89,9 @@ function initEvent($el, position, options) {
   on($trigger, 'touchstart', handleStart)
 }
 
+// Vue 3 directive format
 export default {
-  inserted: function (el, binding) {
+  mounted(el, binding) {
     // 事件名
     const options = binding.value
     const { left, right, top, bottom } = binding.modifiers
@@ -98,5 +102,5 @@ export default {
     right && initEvent(el, 'right', options)
     top && initEvent(el, 'top', options)
     bottom && initEvent(el, 'bottom', options)
-  }
+  },
 }

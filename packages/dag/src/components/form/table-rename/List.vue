@@ -15,16 +15,16 @@
               'color-danger border-danger':
                 ((tableData.includes(nameMap[name]) || tableData.includes(globalNameMap[name])) &&
                   !nameMap[nameMap[name]]) ||
-                countByName[nameMap[name] || name] > 1
+                countByName[nameMap[name] || name] > 1,
             }"
             @change="handleChange(name, $event)"
           ></InnerInput>
           <!--<input
-            class="name-list-item-input px-2"
-            :readOnly="disabled"
-            :value="nameMap[name] || name"
-            @change="handleChange"
-          />-->
+                  class="name-list-item-input px-2"
+                  :readOnly="disabled"
+                  :value="nameMap[name] || name"
+                  @change="handleChange"
+                />-->
         </div>
         <VIcon size="12" class="name-list-item-center font-color-light"> left </VIcon>
       </div>
@@ -32,7 +32,9 @@
   </RecycleScroller>
 </template>
 
-<script>
+<script lang="jsx">
+import { $on, $off, $once, $emit } from '../../../../utils/gogocodeTransfer'
+import * as Vue from 'vue'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
@@ -41,27 +43,28 @@ const InnerInput = {
   props: ['value', 'readOnly'],
   data() {
     return {
-      val: null
+      val: null,
     }
   },
   watch: {
     value(val) {
       this.val = val
-    }
+    },
   },
   created() {
     this.val = this.value
   },
+  emits: ['change'],
   render() {
     return (
       <input
-        class="name-list-item-input px-2"
+        class="name-list-item-input px-2 rounded-4"
         readOnly={this.readOnly}
         value={this.val}
-        onChange={ev => this.$emit('change', ev)}
+        onChange={(ev) => $emit(this, 'change', ev)}
       />
     )
-  }
+  },
 }
 
 export default {
@@ -84,11 +87,12 @@ export default {
       } else {
         event.target.value = name
         if (this.nameMap[name]) {
-          this.$delete(this.nameMap, name)
+          delete this.nameMap
           this.emitChange()
         }
       }
-    }
-  }
+    },
+  },
+  emits: ['change', 'update:value', , 'update:value'],
 }
 </script>

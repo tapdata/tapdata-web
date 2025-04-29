@@ -256,7 +256,7 @@ export default {
   public_task_type: '任务类型',
   public_task_sync_type: '同步类型',
   public_task_type_migrate: '数据复制',
-  public_task_type_sync: '数据开发',
+  public_task_type_sync: '数据转换',
   public_task_type_heartbeat: '心跳任务',
   public_task_type_log_collector: '共享挖掘',
   public_task_type_initial_sync: '全量',
@@ -277,7 +277,8 @@ export default {
   public_task_copy: '复制任务',
   public_task_import: '导入任务',
   public_task_export: '导出任务',
-  public_task_error_schedule_limit: '您的在线Agent已达最大任务限制，请启动离线的Agent。',
+  public_task_error_schedule_limit:
+    '您的在线Agent已达最大任务限制，请启动离线的Agent。',
   // 节点
   public_node_name: '节点名称',
   public_node_type: '节点类型',
@@ -291,6 +292,7 @@ export default {
   public_event_insert: '插入',
   public_event_update: '更新',
   public_event_ddl: 'DDL',
+  public_event_cdc_placeholder: '暂无增量数据',
 
   //里程碑
   public_milestone_time_cdc_consuming: '启动耗时',
@@ -367,7 +369,8 @@ export default {
   public_file_name: '文件名',
   public_file_size: '文件大小',
   public_log_download: '日志下载',
-  public_alert_401_tip: '您的会话已过期或者已在其他地方登录，请重新登录后继续操作',
+  public_alert_401_tip:
+    '您的会话已过期或者已在其他地方登录，请重新登录后继续操作',
   public_alert_401: '会话过期提醒',
   public_store_type: '存储类型',
   public_from_db_type: '来源数据库类型',
@@ -378,5 +381,6 @@ export default {
   public_loading: '拼命加载中',
   public_load_end: '到底了',
   public_data_validation: '数据校验',
-  public_validation_record: '校验记录'
+  public_validation_record: '校验记录',
+  public_foreign_key_tip: '外键 {name} 指向 {val}',
 }

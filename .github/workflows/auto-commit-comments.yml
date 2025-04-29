@@ -2,12 +2,11 @@ name: Auto Post Commit Message to Coding Work Order
 
 on:
   push:
-    branches: [ "release-v*.*", "develop-v*.*" ]
+    branches: ['release-v*.*', 'develop-v*.*']
   pull_request:
-    branches: [ "release-v*.*", "develop-v*.*" ]
+    branches: ['release-v*.*', 'develop-v*.*']
 
 jobs:
-
   Check-Commit-Style:
     runs-on: ubuntu-latest
     outputs:
@@ -49,7 +48,6 @@ jobs:
           echo "error=$isPost" >>$GITHUB_OUTPUT
           echo "issue-project=$project" >>$GITHUB_OUTPUT
 
-
   Post-Commit-Message:
     runs-on: ubuntu-latest
     needs: Check-Commit-Style
@@ -69,4 +67,3 @@ jobs:
             "IssueCode": ${{ needs.Check-Commit-Style.outputs.issue-code }},
             "Content": "'"$GITHUB_ACTOR Commit: [${{ needs.Check-Commit-Style.outputs.commit-message }}]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/commit/$GITHUB_SHA)"'"
           }'
-

@@ -1,98 +1,91 @@
-<template>
-  <AsyncSelect
-    v-model="form.value"
-    v-bind="$attrs"
-    :method="getData"
-    :current-label="form.label"
-    @change="handleChange"
-  >
-  </AsyncSelect>
-</template>
-
 <script>
-import { merge } from 'lodash'
-import { AsyncSelect } from '@tap/form'
 import { connectionsApi } from '@tap/api'
+import { AsyncSelect } from '@tap/form'
+import { merge } from 'lodash-es'
+import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 
 export default {
   name: 'ListSelect',
-
   components: { AsyncSelect },
-
   props: {
     value: {
-      type: [String, Number]
+      type: [String, Number],
     },
     label: {
-      type: [String, Number]
+      type: [String, Number],
     },
     params: {
       type: Object,
       default: () => {
         return {}
-      }
+      },
     },
     format: {
-      type: Function
-    }
+      type: Function,
+    },
   },
-
+  emits: ['change', 'update:label', 'update:value'],
   data() {
     return {
       form: {
         label: '',
-        value: ''
-      }
+        value: '',
+      },
     }
   },
-
   watch: {
     value(v) {
       if (this.form.value !== v) {
         this.form.value = v
         this.form.label = this.label
       }
-    }
+    },
   },
-
   mounted() {
     this.form.value = this.value
     this.form.label = this.label
   },
-
   methods: {
     handleChange(val, opt) {
       const { label } = opt
       this.form.label = label
-      this.$emit('update:value', this.form.value).$emit('update:label', this.form.label).$emit('change', val, opt)
+      $emit(
+        this.$emit('update:value', this.form.value).$emit(
+          'update:label',
+          this.form.label,
+        ),
+        'change',
+        val,
+        opt,
+      )
     },
 
     async getData(filter = {}) {
       const { page = 1, size = 20 } = filter
-      let params = {
+      const params = {
         order: 'createTime DESC',
         limit: size,
         noSchema: 1,
         skip: (page - 1) * size,
-        where: {}
+        where: {},
       }
 
       const { label } = filter.where || {}
       if (label) {
         Object.assign(params.where, {
-          name: label
+          name: label,
         })
       }
 
-      let res = await connectionsApi.get({
-        filter: JSON.stringify(merge(params, this.params))
+      const res = await connectionsApi.get({
+        filter: JSON.stringify(merge(params, this.params)),
       })
 
-      res.items = res.items.map(t => {
+      res.items = res.items.map((t) => {
         return {
           label: t.name,
           value: t.id,
-          data: t
+          data: t,
         }
       })
 
@@ -101,7 +94,11 @@ export default {
       }
 
       return res
-    }
-  }
+    },
+  },
 }
 </script>
+
+<template>
+  <AsyncSelect v-model="form.value" :method="getData" :current-label="label" />
+</template>

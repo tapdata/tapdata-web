@@ -50,8 +50,8 @@ export default class MetadataInstances extends Http {
       params: {
         nodeId,
         fields,
-        nodeConfig
-      }
+        nodeConfig,
+      },
     })
   }
 

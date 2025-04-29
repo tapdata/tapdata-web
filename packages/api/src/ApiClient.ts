@@ -2,9 +2,9 @@ import axios from 'axios'
 
 const pretreatment = function (doc) {
   if (Array.isArray(doc)) {
-    doc.forEach(v => pretreatment(v))
+    doc.forEach((v) => pretreatment(v))
   } else if (doc && typeof doc === 'object') {
-    Object.keys(doc).forEach(key => {
+    Object.keys(doc).forEach((key) => {
       if (doc[key] && doc[key]['$numberDecimal']) {
         doc[key] = Number(doc[key]['$numberDecimal']) || 0
       }
@@ -50,10 +50,10 @@ export default class ApiClient {
         // 'filter[where][clientName]': 'Data Explorer'
         filter: JSON.stringify({
           where: {
-            clientName: 'Data Explorer'
-          }
-        })
-      }
+            clientName: 'Data Explorer',
+          },
+        }),
+      },
     })
     const clientInfoItem = clientInfo?.items[0] || {}
     const data =
@@ -80,12 +80,12 @@ export default class ApiClient {
         this.collections = await this.parseOpenAPI(response.data)
         return {
           success: true,
-          data: this.collections
+          data: this.collections,
         }
       } else {
         return {
           success: false,
-          status: response.status
+          status: response.status,
         }
       }
     } catch (e) {
@@ -94,7 +94,7 @@ export default class ApiClient {
       // }
       return {
         success: false,
-        status: 'default'
+        status: 'default',
       }
     }
   }
@@ -107,9 +107,9 @@ export default class ApiClient {
       const server = this.getAPIServerUrl('')
       const paths = Object.keys(openAPI.paths || {})
       const collections = {}
-      paths.forEach(path => {
+      paths.forEach((path) => {
         const methods = Object.keys(openAPI.paths[path] || {})
-        methods.forEach(method => {
+        methods.forEach((method) => {
           const methodDesc = openAPI.paths[path][method]
           const collection = methodDesc.tags ? methodDesc.tags[0] : ''
           const operationName = methodDesc['x-operation-name']
@@ -124,12 +124,12 @@ export default class ApiClient {
               properties: {},
               tableName: tableName,
               apiId: apiId,
-              apiName: apiName
+              apiName: apiName,
             }
             collections[collection]['api'][operationName] = {
               url: server + path,
               method: method,
-              fields: fields
+              fields: fields,
             }
 
             if (
@@ -159,20 +159,20 @@ export default class ApiClient {
     let headers = []
     const fields = Object.keys(properties || {})
     if (fields?.length)
-      fields.forEach(field => {
+      fields.forEach((field) => {
         headers.push({
           text: field,
           value: field,
           show: true,
           type: properties[field]['type'],
-          format: properties[field]['format']
+          format: properties[field]['format'],
         })
       })
     let showFields = {}
     if (operationName) {
       showFields = (collection.api[operationName] && collection.api[operationName]['fields']) || {}
       if (showFields && Object.keys(showFields || {}).length > 0) {
-        headers = headers.filter(v => !!showFields[v.value])
+        headers = headers.filter((v) => !!showFields[v.value])
       }
     }
     return headers
@@ -184,7 +184,7 @@ export default class ApiClient {
     let url = this.collections[this.collection.collection]['api']['findPage']['url']
     const fileExp = params.type === 'excel' ? 'xlsx' : params.type || 'json'
     const queryString = []
-    Object.keys(params || {}).forEach(v => {
+    Object.keys(params || {}).forEach((v) => {
       queryString.push(v + '=' + params[v])
     })
     queryString.push('access_token=' + token)
@@ -211,13 +211,13 @@ export default class ApiClient {
           data: {
             data: [],
             total: {
-              count: 0
-            }
-          }
+              count: 0,
+            },
+          },
         }
       }
       const request = axios.create({
-        headers: { access_token: await this.getAPIServerToken() }
+        headers: { access_token: await this.getAPIServerToken() },
       })
       params = params || {}
       let url = ''
@@ -233,30 +233,30 @@ export default class ApiClient {
         return {
           success: false,
           response: 'Not found API',
-          msg: 'Not found API'
+          msg: 'Not found API',
         }
       }
       const response = await request.post(url, params)
       if (response.statusText === 'OK') {
         if (response.data && response.data.data && response.data.data.length > 0) {
-          response.data.data.forEach(doc => pretreatment(doc))
+          response.data.data.forEach((doc) => pretreatment(doc))
         }
         return {
           status: 200,
           success: true,
-          data: response.data
+          data: response.data,
         }
       } else {
         return {
           success: false,
-          response: response
+          response: response,
         }
       }
     } catch (e) {
       return {
         success: false,
         response: e.response,
-        msg: e.message
+        msg: e.message,
       }
     }
   }
@@ -264,26 +264,26 @@ export default class ApiClient {
   async create(doc) {
     try {
       const request = axios.create({
-        headers: { access_token: await this.getAPIServerToken() }
+        headers: { access_token: await this.getAPIServerToken() },
       })
       const url = this.collections[this.collection.collection]['api']['create']['url']
       const response = await request.post(url, doc)
       if (response.statusText === 'OK') {
         return {
           success: true,
-          data: response.data
+          data: response.data,
         }
       } else {
         return {
           success: false,
-          response: response
+          response: response,
         }
       }
     } catch (e) {
       return {
         success: false,
         response: e.response,
-        msg: e.message
+        msg: e.message,
       }
     }
   }
@@ -293,7 +293,7 @@ export default class ApiClient {
     try {
       pretreatment(doc)
       const request = axios.create({
-        headers: { access_token: await this.getAPIServerToken() }
+        headers: { access_token: await this.getAPIServerToken() },
       })
       let url = this.collections[this.collection.collection]['api']['updateById']['url']
       url = url.replace('{id}', id)
@@ -301,19 +301,19 @@ export default class ApiClient {
       if (response.statusText === 'OK') {
         return {
           success: true,
-          data: response.data
+          data: response.data,
         }
       } else {
         return {
           success: false,
-          response: response
+          response: response,
         }
       }
     } catch (e) {
       return {
         success: false,
         response: e.response,
-        msg: e.message
+        msg: e.message,
       }
     }
   }
@@ -322,7 +322,7 @@ export default class ApiClient {
     try {
       pretreatment(doc)
       const request = axios.create({
-        headers: { access_token: await this.getAPIServerToken() }
+        headers: { access_token: await this.getAPIServerToken() },
       })
       let url = this.collections[this.collection.collection]['api']['updateById']['url']
       url = url.replace('{id}', id)
@@ -330,19 +330,19 @@ export default class ApiClient {
       if (response.statusText === 'OK') {
         return {
           success: true,
-          data: response.data
+          data: response.data,
         }
       } else {
         return {
           success: false,
-          response: response
+          response: response,
         }
       }
     } catch (e) {
       return {
         success: false,
         response: e.response,
-        msg: e.message
+        msg: e.message,
       }
     }
   }
@@ -351,7 +351,7 @@ export default class ApiClient {
   async deleteById(id) {
     try {
       const request = axios.create({
-        headers: { access_token: await this.getAPIServerToken() }
+        headers: { access_token: await this.getAPIServerToken() },
       })
       let url = this.collections[this.collection.collection]['api']['deleteById']['url']
       url = url.replace('{id}', id)
@@ -360,19 +360,19 @@ export default class ApiClient {
       if (response.statusText === 'OK') {
         return {
           success: true,
-          data: response.data
+          data: response.data,
         }
       } else {
         return {
           success: false,
-          response: response
+          response: response,
         }
       }
     } catch (e) {
       return {
         success: false,
         response: e.response,
-        msg: e.message
+        msg: e.message,
       }
     }
   }
@@ -383,11 +383,11 @@ export default class ApiClient {
       where = where || {}
 
       const request = axios.create({
-        headers: { access_token: await this.getAPIServerToken() }
+        headers: { access_token: await this.getAPIServerToken() },
       })
       let url = this.collections[this.collection.collection]['api']['updateAll']['url']
       const querys = []
-      Object.keys(where).forEach(key => {
+      Object.keys(where).forEach((key) => {
         querys.push(`${key}=${where[key]}`)
       })
       url = url + '?' + querys.join('&')
@@ -396,19 +396,19 @@ export default class ApiClient {
       if (response.statusText === 'OK') {
         return {
           success: true,
-          data: response.data
+          data: response.data,
         }
       } else {
         return {
           success: false,
-          response: response
+          response: response,
         }
       }
     } catch (e) {
       return {
         success: false,
         response: e.response,
-        msg: e.message
+        msg: e.message,
       }
     }
   }

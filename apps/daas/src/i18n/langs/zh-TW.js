@@ -44,7 +44,7 @@ export default {
   page_title_api_client: '客戶端',
   page_title_api_servers: '服務器',
   page_title_api_audit: '服務審計',
-  page_title_api_audit_details: '詳情',
+  page_title_api_audit_details: '審計詳情',
   page_title_api_monitor: '服務監控',
   page_title_system: '系統管理',
   page_title_data_metadata: '元數據管理',
@@ -71,9 +71,10 @@ export default {
   component_table_selector_bulk_pick: '批量選表',
   component_table_selector_not_checked: '您暫時沒有選擇表',
   component_table_selector_tables_empty: '您暫時沒有表，請點擊右上角重新加載表',
-  component_table_selector_clipboard_placeholder: '請輸入表名稱並以逗號分隔,例如：table_a,table_b',
+  component_table_selector_clipboard_placeholder:
+    '請輸入表名稱並以逗號分隔,例如：table_a,table_b',
   // app
-  app_license_expire_warning: '提醒：License剩餘 {0} 天到期',
+  app_license_expire_warning: 'License剩餘 {0} 天到期',
   // Agent
   agent_check_error: 'Agent當前狀態異常無法創建連接，請檢查',
   // 控制台
@@ -83,10 +84,10 @@ export default {
   dashboard_copy_total: '複製任務',
   dashboard_sync_total: '開發任務',
   dashboard_valid_total: '校驗任務',
-  dashboard_current_all_total: '全部任務總數',
-  dashboard_current_copy_total: '複製任務總數',
-  dashboard_current_sync_total: '數據轉換任務總數',
-  dashboard_current_valid_total: '校驗任務總數',
+  dashboard_current_all_total: '全部任務',
+  dashboard_current_copy_total: '複製任務',
+  dashboard_current_sync_total: '數據轉換任務',
+  dashboard_current_valid_total: '校驗任務',
   dashboard_copy_overview_title: '複製任務概覽',
   dashboard_copy_status_title: '複製任務狀態',
   dashboard_sync_overview_title: '開發任務概覽',
@@ -190,7 +191,8 @@ export default {
   module_form_public_api: '公共的',
   module_form_available_query_field: '可用查詢字段',
   module_form_required_query_field: '必須的查詢條件',
-  module_form_validator_name: '只能包含中文、字母、數字、下劃線和美元符號,並且數字不能開頭',
+  module_form_validator_name:
+    '只能包含中文、字母、數字、下劃線和美元符號,並且數字不能開頭',
   module_form_create_a_new_record: '創建新記錄',
   module_form_get_record_by_id: '根據id獲取記錄',
   module_form_update_record_by_id: '根據id更新記錄',
@@ -272,7 +274,8 @@ export default {
   dataExplorer_new_document: '新增記錄',
   dataExplorer_timeout: '超時時間',
   dataExplorer_unauthenticated: '您無權訪問API。 ',
-  dataExplorer_message_timeout: '連接API服務器超時,請檢查API服務器是否已啟動。 ',
+  dataExplorer_message_timeout:
+    '連接API服務器超時,請檢查API服務器是否已啟動。 ',
   dataExplorer_publish: '在API服務器上沒有找到 {id} 的API，請檢查是否已發布。 ',
   dataExplorer_no_permissions: '您的令牌已過期，請刷新頁面重試。 ',
   dataExplorer_datetype_without_timezone: '時間類型的時區（可選）',
@@ -304,13 +307,15 @@ export default {
   connection_list_form_database_type: '數據庫類型',
   connection_list_name: '連接名',
   connection_reload_schema_confirm_title: '重新加載 schema',
-  connection_reload_schema_confirm_msg: '如果此庫的schema過多，可能耗時較長，確定要刷新數據源的schema',
+  connection_reload_schema_confirm_msg:
+    '如果此庫的schema過多，可能耗時較長，確定要刷新數據源的schema',
   connection_reload_schema_fail: 'Schema 加載失敗',
   // Dag
   // 緩存節點提示
   task_list_status_all: '全部狀態',
   task_list_important_reminder: '重要提醒',
-  task_list_stop_confirm_message: '初始化類型的任務暫停後如果再次啟動，任務會從頭開始同步，確定暫停？',
+  task_list_stop_confirm_message:
+    '初始化類型的任務暫停後如果再次啟動，任務會從頭開始同步，確定暫停？',
   task_status_running: '已運行',
   task_status_not_running: '未運行',
   task_info_progress: '進行中',
@@ -332,7 +337,8 @@ export default {
   function_file_upload_success: '上傳成功',
   function_file_upload_fail: '上傳失敗',
   function_parameters_describe_label: '參數說明',
-  function_parameters_describe_placeholder: '支持輸入的參數類型以及返回參數類型的具體說明',
+  function_parameters_describe_placeholder:
+    '支持輸入的參數類型以及返回參數類型的具體說明',
   function_return_value_label: '返回值',
   function_return_value_placeholder: '請輸入返回值',
   function_describe_placeholder: '請輸入描述',
@@ -355,7 +361,8 @@ export default {
   function_dialog_setting_title: '函數设置',
   function_message_function_empty: '請上傳jar包文件並加載函數',
   function_message_delete_title: '刪除函數',
-  function_message_delete_content: '刪除可能會導致已調用該函數的任務報錯，確定刪除該函數嗎？',
+  function_message_delete_content:
+    '刪除可能會導致已調用該函數的任務報錯，確定刪除該函數嗎？',
   function_tips_max_size: '最大',
   // 解決方案
   solution_customer_job_logs: '客戶任務日誌',
@@ -412,7 +419,8 @@ export default {
   setting_Log_level: '日誌等級',
   setting_maxCpuUsage: '最大CPU使用率(取值範圍 0.1 ~ 1)',
   setting_maxHeapMemoryUsage: '最大堆內存使用率(取值範圍 0.1 ~ 1)',
-  setting_switch_insert_mode_interval: ' 增量模式下切換到批量插入模式間隔時間（單位：秒）',
+  setting_switch_insert_mode_interval:
+    ' 增量模式下切換到批量插入模式間隔時間（單位：秒）',
   setting_Email_Communication_Protocol: ' 加密方式',
   setting_SMTP_Server_Port: 'SMTP 服務端口',
   setting_SMTP_Server_User: 'SMTP 服務賬號',
@@ -443,21 +451,26 @@ export default {
   setting_Mongodb_target_create_date_docs: '是否在目標端數據集添加創建時間',
   setting_System: '系統資源監控',
   setting_Collect_system_info_interval: '系統資源監控採集頻率(秒)',
-  setting_Interval_to_collect_system_info: '系統資源信息（CPU，內存，硬盤使用率）監控採集頻率',
+  setting_Interval_to_collect_system_info:
+    '系統資源信息（CPU，內存，硬盤使用率）監控採集頻率',
   setting_Job_Sync_Mode: '任務同步模式',
   setting_Worker_Threshold: '進程閾值',
   setting_Worker_Heartbeat_Expire: '進程心跳過期時間(秒)',
   setting_License_Key: '證書秘鑰',
-  setting_Enter_jobs_log_level__error_warn_info_debug_trace: '輸入任務日誌等級: error/warn/info/debug/trace',
-  setting_Email_Receivers_Multiple_separated_by_semicolons: '郵件接收者,可輸入多個，通過逗號分隔',
-  setting_Keep_recent_n_hours_message_before_the_last_processed_message_s_time_: '保持最近n小時消息',
+  setting_Enter_jobs_log_level__error_warn_info_debug_trace:
+    '輸入任務日誌等級: error/warn/info/debug/trace',
+  setting_Email_Receivers_Multiple_separated_by_semicolons:
+    '郵件接收者,可輸入多個，通過逗號分隔',
+  setting_Keep_recent_n_hours_message_before_the_last_processed_message_s_time_:
+    '保持最近n小時消息',
   setting_Store_full_record_as_embedded_document_in_target_collection_for_update_operations:
     '緩存一份當前整體數據，合併到目標數據集中',
   setting_Store_before_field_as_embedded_document_in_target_collection_before_update_operation:
     '緩存一份修改前的整體數據，合併到目標數據集中',
   setting_Store_job_script_processor_log_to_cloud: '是否傳輸任務日誌到雲端',
   setting_Validator_to_validate_data__s_sample_rate: '校驗數據採樣率',
-  setting_Process_message_mode__consistency_fast: '消息處理模式 consistency/fast',
+  setting_Process_message_mode__consistency_fast:
+    '消息處理模式 consistency/fast',
   setting_Worker_can_execute_the_nums_of_Jobs: '進程可以執行多個任務',
   setting_Worker_heartbeat_expire_time: '進程心跳過期時間',
   setting_Users: ' 用戶',
@@ -482,21 +495,26 @@ export default {
   setting_dashboard_Analysis_Interval: '面板數據分析間隔(秒)',
   setting_quality_Analysis_Interval: '數據質量分析間隔(秒)',
   setting_Log_filter_interval: '日誌過濾間隔(秒)',
-  setting_Filter_the_interval_between_duplicate_logs__seconds__: '相同日誌在指定時間內只出現一次（1分鐘後生效）',
+  setting_Filter_the_interval_between_duplicate_logs__seconds__:
+    '相同日誌在指定時間內只出現一次（1分鐘後生效）',
   setting__DK36: '文件下載',
   setting_File_Down_Base_Url: '地址',
-  setting_Set_the_average_number_of_events_per_second_to_allow: '日誌設置每秒允許的事件平均數量',
+  setting_Set_the_average_number_of_events_per_second_to_allow:
+    '日誌設置每秒允許的事件平均數量',
   setting_Log_Filter_Rate: '日誌輸出頻率(行/秒)',
   setting_Connections: '連接設置',
   setting_Mongodb_Load_Schema_Sample_Size: 'Mongodb加載模型採樣記錄數(行)',
-  setting_hint_Mongodb_Load_Schema_Sample_Size: '當MongoDB連接加載模型時，會使用該配置進行採樣加載',
+  setting_hint_Mongodb_Load_Schema_Sample_Size:
+    '當MongoDB連接加載模型時，會使用該配置進行採樣加載',
   setting_Enable_API_Stats_Batch_Report: ' 啟用 API 統計',
   setting_Header: ' UDP 頭信息',
   setting_hint_Header: ' UDP 頭信息',
   setting_Size_Of_Trigger_API_Stats_Report: ' API 請求緩存最大個數',
-  setting_hint_Size_Of_Trigger_API_Stats_Report: ' API 請求記錄數到達指定個數時批量發送到管理端',
+  setting_hint_Size_Of_Trigger_API_Stats_Report:
+    ' API 請求記錄數到達指定個數時批量發送到管理端',
   setting_Time_Span_Of_Trigger_API_Stats_Report: ' API 請求匯報頻率(秒)',
-  setting_hint_Time_Span_Of_Trigger_API_Stats_Report: ' API 請求緩存到指定時間發送到管理端',
+  setting_hint_Time_Span_Of_Trigger_API_Stats_Report:
+    ' API 請求緩存到指定時間發送到管理端',
   setting_save: ' 保存成功，一分鐘後生效',
   setting_Logout_forward_to_this_url: ' 登出跳轉地址',
   setting_Check_devices: ' 重要設備檢測',
@@ -507,11 +525,12 @@ export default {
   setting_license_alarm: ' license 到期提前提醒（天）',
   setting_License_expiry_email_reminder_: 'license 到期提前幾天提醒設置',
   setting_flow_engine_version: ' 流程引擎版本',
-  setting_tapdata_agent_version: `${process.env.VUE_APP_PAGE_TITLE}  agent版本`,
+  setting_tapdata_agent_version: `${import.meta.env.VUE_APP_PAGE_TITLE}  agent版本`,
   setting_doc_base_url: ' 幫助文檔URL',
   setting_help: ' 幫助文檔',
   setting_Ip_addresses: ' Ipv4地址(多個逗號分隔)',
-  setting_hint_Ip_addresses: ' 需要檢測的設備ipv4地址, 例如: 127.0.0.1, 192.168.0.1',
+  setting_hint_Ip_addresses:
+    ' 需要檢測的設備ipv4地址, 例如: 127.0.0.1, 192.168.0.1',
   setting_PingTimeout: ' 檢測超時(毫秒)',
   setting_hint_PingTimeout: ' 當超過該設置，認為設備無法連通',
   setting_Job_field_replacement: ' 非法字符替換為',
@@ -527,9 +546,11 @@ export default {
   setting_retry_interval_second: '重試間隔(秒)',
   setting_max_retry_time_minute: '最大重試時間(分鐘)',
   setting_job_cdc_share_mode: '增量同步任務共享模式',
-  setting_job_cdc_share_mode_doc: '在增量同步階段，會根據日誌採集任務是否可用，自動採用共享模式。影響的數據庫：Oracle',
+  setting_job_cdc_share_mode_doc:
+    '在增量同步階段，會根據日誌採集任務是否可用，自動採用共享模式。影響的數據庫：Oracle',
   setting_job_cdc_share_only: '增量任務強制使用共享模式',
-  setting_job_cdc_share_only_doc: '當增量同步任務共享模式開啟，並且無法找到一個可共享的日誌，將會停止任務',
+  setting_job_cdc_share_only_doc:
+    '當增量同步任務共享模式開啟，並且無法找到一個可共享的日誌，將會停止任務',
   setting_test_email_success: '測試郵件已發送，請登錄接收郵箱查收',
   setting_test_ldap_success: '成功連接Ldap服務',
   setting_test_email_countdown: '操作太頻繁了，請稍後重試',
@@ -547,18 +568,24 @@ export default {
   setting_requestFailed: '請求處理失敗',
   setting_Mongodb_will_use_this_sample_size_when_load_schema:
     'Mongodb will use this sample size when load schema 當MongoDB連接加載模型時，會使用該配置進行採樣加載',
-  setting_Switch_to_batch_insert_mode_interval__s__in_cdc_: '切換到cdc中的批量插入模式間隔。 ',
+  setting_Switch_to_batch_insert_mode_interval__s__in_cdc_:
+    '切換到cdc中的批量插入模式間隔。 ',
   setting_share_cdc: '共享增量',
   setting_share_cdc_persistence_mode: '共享增量存儲模式',
   setting_share_cdc_persistence_memory_size: '共享增量內存緩存行數',
-  setting_share_cdc_persistence_memory_size_doc: '該配置控製共享增量事件，在內存緩存的行數',
-  setting_share_cdc_persistence_mode_doc: '共享增量存儲模式。選項: InMemory, MongoDB, RocksDB',
+  setting_share_cdc_persistence_memory_size_doc:
+    '該配置控製共享增量事件，在內存緩存的行數',
+  setting_share_cdc_persistence_mode_doc:
+    '共享增量存儲模式。選項: InMemory, MongoDB, RocksDB',
   setting_share_cdc_persistence_mongodb_uri_db: '存儲MongoDB的連接名稱',
-  setting_share_cdc_persistence_mongodb_uri_db_doc: '該項配置只有模式選擇MongoDB時生效，輸入創建的MongoDB連接名稱即可',
+  setting_share_cdc_persistence_mongodb_uri_db_doc:
+    '該項配置只有模式選擇MongoDB時生效，輸入創建的MongoDB連接名稱即可',
   setting_share_cdc_persistence_mongodb_collection: '存儲MongoDB的表名',
-  setting_share_cdc_persistence_mongodb_collection_doc: '該項配置只有模式選擇MongoDB時生效，輸入存儲的表名',
+  setting_share_cdc_persistence_mongodb_collection_doc:
+    '該項配置只有模式選擇MongoDB時生效，輸入存儲的表名',
   setting_share_cdc_persistence_rocksdb_path: 'RocksDB存儲的本地路徑',
-  setting_share_cdc_persistence_rocksdb_path_doc: '該項配置只有模式選擇RocksDB時生效，RocksDB存儲的本地路徑',
+  setting_share_cdc_persistence_rocksdb_path_doc:
+    '該項配置只有模式選擇RocksDB時生效，RocksDB存儲的本地路徑',
   setting_task_log_file_save_time: '任務日誌留存時長(天)',
   setting_task_log_file_save_size: '任務日誌留存大小(MB)',
   setting_task_log_file_save_count: '任務日誌留存份數',
@@ -579,8 +606,10 @@ export default {
   setting_Ldap_Bind_DN: 'LDAP帳號',
   setting_Ldap_Bind_Password: 'LDAP密碼',
   setting_Ldap_SSL_Enable: '啟用SSL',
-  setting_Ldap_Server_Host_doc: 'AD的域控制器地址，範例：ldap://ad.example.com 或 ldaps://ad.example.com',
-  setting_Ldap_Server_Port_doc: 'LDAP預設使用 389 端口，LDAPS（加密連接）使用 636 端口',
+  setting_Ldap_Server_Host_doc:
+    'AD的域控制器地址，範例：ldap://ad.example.com 或 ldaps://ad.example.com',
+  setting_Ldap_Server_Port_doc:
+    'LDAP預設使用 389 端口，LDAPS（加密連接）使用 636 端口',
   setting_Ldap_Base_DN_doc:
     'LDAP查詢的起點，用于定義在AD中的搜索範圍，多個組用分號間隔，示例：cn=Users,dc=example,dc=com;cn=Test,dc=example,dc=com',
   setting_Ldap_Bind_DN_doc:
@@ -601,8 +630,8 @@ export default {
   user_list_bulk_freeze: '批量凍結',
   user_list_bulk_check: '批量校驗',
   user_list_del_user: '刪除用戶 {0} 後，此用戶將無法恢復',
-  user_list_activetion_user: `激活用戶 {0} 後，此用戶將可以使用 ${process.env.VUE_APP_PAGE_TITLE} 系統`,
-  user_list_freeze_user: `凍結用戶 {0} 後，此用戶將不可以使用 ${process.env.VUE_APP_PAGE_TITLE} 系統`,
+  user_list_activetion_user: `激活用戶 {0} 後，此用戶將可以使用 ${import.meta.env.VUE_APP_PAGE_TITLE} 系統`,
+  user_list_freeze_user: `凍結用戶 {0} 後，此用戶將不可以使用 ${import.meta.env.VUE_APP_PAGE_TITLE} 系統`,
   user_list_check_user: '通過校驗用戶 {0} 的郵箱後，此用戶可以被激活',
   user_list_activetion_success: '激活成功',
   user_list_activetion_error: '激活失敗',
@@ -728,7 +757,8 @@ export default {
   notify_inspect_verify_job_error: '運行error',
   notify_approaching: '剩餘 ',
   notify_system_setting: '系統設置',
-  notify_tip: '此處通知設置為系統全局通知的設置，任務編排頁的通知設置的其優先級高於此處的全局通知設置',
+  notify_tip:
+    '此處通知設置為系統全局通知的設置，任務的通知設置的其優先級高於此處的全局通知設置',
   notify_job_operation_notice: '任務運行通知',
   notify_email_notice: '郵件通知',
   notify_job_started: '任務被啟動',
@@ -919,12 +949,16 @@ export default {
   new_more_features: '更多功能',
   new_data_copy: '數據複製',
   new_data_development: '數據開發',
-  new_data_copy_desc: '對數據庫進行跨庫複製，適用於數據遷移，容災備份，系統多活等場景',
-  new_data_development_desc: '抽取源端數據並加工計算轉換、例如行過濾、字段處理、多表合併等',
+  new_data_copy_desc:
+    '對數據庫進行跨庫複製，適用於數據遷移，容災備份，系統多活等場景',
+  new_data_development_desc:
+    '抽取源端數據並加工計算轉換、例如行過濾、字段處理、多表合併等',
   new_create_connection: '創建數據源',
   new_create_api: '創建API',
-  new_create_connection_desc: '數據源是創建傳輸任務的前提，任務重所有的數據庫和表數據節點都來自數據源',
-  new_create_api_desc: 'API即數據發布，可以根據現有collection或者通過同步任務創建新的collection對外發布的API',
+  new_create_connection_desc:
+    '數據源是創建傳輸任務的前提，任務重所有的數據庫和表數據節點都來自數據源',
+  new_create_api_desc:
+    'API即數據發布，可以根據現有collection或者通過同步任務創建新的collection對外發布的API',
   object_list_name: '對象名稱',
   object_list_classification: '對象分類',
   object_list_type: '對像類型',
@@ -984,7 +1018,8 @@ export default {
   app_signIn_email_existed: 'Email 地址已被註冊',
   app_signIn_userPplicy_message: '請選擇用戶政策',
   app_signIn_modifyPassword: '修改密碼',
-  app_signIn_newPasswordTip: '輸入您註冊的郵箱和新密碼，我們將向您發送用於重置密碼的鏈接',
+  app_signIn_newPasswordTip:
+    '輸入您註冊的郵箱和新密碼，我們將向您發送用於重置密碼的鏈接',
   app_signIn_newpassword_placeholder: '請設置新密碼',
   app_signIn_rememberPasswords: '想起密碼?',
   app_signIn_Registration: '註冊賬號',
@@ -1007,7 +1042,8 @@ export default {
   app_signIn_hasMailbox: 'oops~此郵箱已經被註冊了',
   app_signIn_disableSignup: 'oops〜禁止註冊',
   app_signIn_getCode: '邀請碼獲取',
-  app_signIn_qrCodeText: '如果想試用產品, 請掃描下方企業微信二維碼, 聯繫我們獲取',
+  app_signIn_qrCodeText:
+    '如果想試用產品, 請掃描下方企業微信二維碼, 聯繫我們獲取',
   app_Home_initialization: '初始化中',
   app_Home_loadingFinished: '初始化完成',
   app_Home_incremental: '增量中',
@@ -1064,7 +1100,8 @@ export default {
   button_all: '全部',
   dataFlow_leave: '離開',
   dataFlow_backlistText: '返回列表頁',
-  dataFlow_saveReminder: '此任務尚未保存，離開本頁面會導致任務配置丟失，確定要離開嗎?',
+  dataFlow_saveReminder:
+    '此任務尚未保存，離開本頁面會導致任務配置丟失，確定要離開嗎?',
   dataFlow_saveFail: '任務保存失敗，請檢查配置信息並確保數據源狀態有效',
   dataFlow_aggregateNotDataNode: '連接聚合節點的第一個目標數據節點只能是數據集',
   dataFlow_batchSortOperation: '批量分類操作',
@@ -1109,7 +1146,8 @@ export default {
   dataFlow_dataValidation: '數據校驗',
   dataFlow_sourceDescription:
     '數據源是創建傳輸任務的前提，任務中所有的數據庫和表等數據節點都來自數據源。數據源包含數據庫, File, GridFS, Rest API, View, Udp, Custom connection等',
-  dataFlow_apiDescription: 'API即數據發布，可以根據現有collection或者通過同步任務創建新的collection對外發布的API',
+  dataFlow_apiDescription:
+    'API即數據發布，可以根據現有collection或者通過同步任務創建新的collection對外發布的API',
   dataFlow_datavaliDescription:
     '數據校驗可對遷移同步任務的數據源與目標之間的數據進行比對校驗，校驗功能包含快速count校驗，全表字段值校驗，關聯字段值校驗，定時自動校驗等。 ',
   dataFlow_multiError_allSelectionError: '選中的任務狀態不允許這種操作',
@@ -1136,9 +1174,11 @@ export default {
   dataFlow_cdcLabel: '數據源:',
   dataFlow_syncType: '任務類型',
   dataFlow_belongAgent: '所屬Agent',
-  dataFlow_SyncInfo_localTZ: '當前時區傳輸時間：系統所在時區下，開始傳輸任務的時刻',
+  dataFlow_SyncInfo_localTZ:
+    '當前時區傳輸時間：系統所在時區下，開始傳輸任務的時刻',
   dataFlow_SyncInfo_current: '當前時區時間：默認當前時間',
-  dataFlow_SyncInfo_connTZ: '數據庫時區傳輸時間： 數據庫所在時區下，開始傳輸任務的時刻',
+  dataFlow_SyncInfo_connTZ:
+    '數據庫時區傳輸時間： 數據庫所在時區下，開始傳輸任務的時刻',
   dataFlow_SyncInfo_localTZType: '用戶瀏覽器時區',
   dataFlow_SyncInfo_currentType: '此刻',
   dataFlow_SyncInfo_connTZType: '數據庫時區',
@@ -1207,10 +1247,12 @@ export default {
   dataFlow_totalDelete: '總刪除',
   dataFlow_category: '類別',
   dataFlow_replicate: '數據同步差距',
-  dataFlow_throughputpop: '輸入輸出統計: 平均每秒源端數據採集的速度以及目標端寫入的速度，數值越大越好',
+  dataFlow_throughputpop:
+    '輸入輸出統計: 平均每秒源端數據採集的速度以及目標端寫入的速度，數值越大越好',
   dataFlow_transtime_pop:
     '傳輸耗時：除源節點外，事件處理完的時間減去事件的發生時間。節點間統計：事件從進入節點到輸出到所消耗的時間。任務流統計：所有節點耗時相加，數值越小越好',
-  dataFlow_replicate_pop: '數據同步差距: 源庫和目標庫數據最後更新時間的差距，數值越小越好',
+  dataFlow_replicate_pop:
+    '數據同步差距: 源庫和目標庫數據最後更新時間的差距，數值越小越好',
   dataFlow_status_paused: '已暫停',
   dataFlow_status_prepare: '准备中',
   dataFlow_status_cdc: '增量中',
@@ -1314,9 +1356,12 @@ export default {
   dataFlow_aggrFullSyncSecond: '全量同步時間',
   dataFlow_enterFilterTable: '請輸入過濾表內容',
   dataFlow_lagTime: '增量滯後判斷時間設定',
-  dataFlow_lagTimeTip: '當增量任務延遲大於該值時，則認為任務增量滯後，預設值為0',
-  dataFlow_aggregatePrompt: '提示：使用聚合處理節點後，此任務停止後再次啟動，任務將會重置',
-  dataFlow_nameTip: '後續節點的腳本編輯需要引用此子處理的名稱進行指定的數據處理，故不同的子處理名稱不可重複。 ',
+  dataFlow_lagTimeTip:
+    '當增量任務延遲大於該值時，則認為任務增量滯後，預設值為0',
+  dataFlow_aggregatePrompt:
+    '提示：使用聚合處理節點後，此任務停止後再次啟動，任務將會重置',
+  dataFlow_nameTip:
+    '後續節點的腳本編輯需要引用此子處理的名稱進行指定的數據處理，故不同的子處理名稱不可重複。 ',
   dataFlow_button_submit: '提交執行',
   dataFlow_button_viewConfig: '查看節點配置',
   dataFlow_button_viewMonitoring: '查看監控數據',
@@ -1353,17 +1398,23 @@ export default {
   dataFlow_bulk_delete_confirm_title: '是否批量刪除任務？',
   dataFlow_bulk_delete_confirm_message: '批量刪除任務後，任務將無法恢復',
   dataFlow_stop_confirm_title: '是否暫停該任務？',
-  dataFlow_stop_confirm_message: '暫停任務 xxx 後，任務中未完成全量同步的表再次啟動時，會重新執行全量同步',
+  dataFlow_stop_confirm_message:
+    '暫停任務 xxx 後，任務中未完成全量同步的表再次啟動時，會重新執行全量同步',
   dataFlow_bulk_stop_confirm_title: '是否批量暫停任務？',
-  dataFlow_bulk_stop_confirm_message: '批量暫停任務後，任務中未完成全量同步的表再次啟動時，會重新執行全量同步',
+  dataFlow_bulk_stop_confirm_message:
+    '批量暫停任務後，任務中未完成全量同步的表再次啟動時，會重新執行全量同步',
   dataFlow_force_stop_confirm_title: '是否強制停止該任務？',
-  dataFlow_force_stop_confirm_message: '強制停止任務 xxx 將立即中斷數據傳輸強制任務快速停止，並重置該任務',
+  dataFlow_force_stop_confirm_message:
+    '強制停止任務 xxx 將立即中斷數據傳輸強制任務快速停止，並重置該任務',
   dataFlow_bulk_force_stop_confirm_title: '是否批量強制停止任務？',
-  dataFlow_bulk_force_stop_confirm_message: '批量強制停止任務將立即中斷數據傳輸強制任務快速停止，並重置該任務',
+  dataFlow_bulk_force_stop_confirm_message:
+    '批量強制停止任務將立即中斷數據傳輸強制任務快速停止，並重置該任務',
   dataFlow_initialize_confirm_title: '是否重置該任務？',
-  dataFlow_initialize_confirm_message: '重置任務 xxx 將清除任務同步進度，任務將重新執行',
+  dataFlow_initialize_confirm_message:
+    '重置任務 xxx 將清除任務同步進度，任務將重新執行',
   dataFlow_bulk_initialize_confirm_title: '是否批量重置任務？',
-  dataFlow_bulk_initialize_confirm_message: '批量重置任務將清除任務同步進度，任務將重新執行',
+  dataFlow_bulk_initialize_confirm_message:
+    '批量重置任務將清除任務同步進度，任務將重新執行',
   dataFlow_importantReminder: '重要提醒',
   dataFlow_modifyEditText: '編輯任務如果修改了',
   dataFlow_nodeLayoutProcess: '節點排版流程',
@@ -1377,16 +1428,22 @@ export default {
   dataFlow_setting_distinctWriteType: '去重寫入機制',
   dataFlow_setting_intellect: '智能去重寫入',
   dataFlow_setting_compel: '強制去重寫入',
-  dataFlow_setting_intellectTip: '智能去重寫入：對目標已有數據進行智能檢測，去重的同時能極大提升傳輸性能',
-  dataFlow_setting_compelTip: '強制去重寫入：對目標已有數據進行強制去重檢測，嚴格保證精準度但傳輸性能較低',
-  dataFlow_setting_batchTip: '批量：對監測到的增量數據進行批量傳輸處理，性能較高',
-  dataFlow_setting_onebyoneTip: '逐行：對監測到的增量數據進行逐條處理，性能較差',
-  dataFlow_setting_sync_type_tip: '關閉數據集節點的聚合設置才能修改傳輸類型，已開啟節點:',
+  dataFlow_setting_intellectTip:
+    '智能去重寫入：對目標已有數據進行智能檢測，去重的同時能極大提升傳輸性能',
+  dataFlow_setting_compelTip:
+    '強制去重寫入：對目標已有數據進行強制去重檢測，嚴格保證精準度但傳輸性能較低',
+  dataFlow_setting_batchTip:
+    '批量：對監測到的增量數據進行批量傳輸處理，性能較高',
+  dataFlow_setting_onebyoneTip:
+    '逐行：對監測到的增量數據進行逐條處理，性能較差',
+  dataFlow_setting_sync_type_tip:
+    '關閉數據集節點的聚合設置才能修改傳輸類型，已開啟節點:',
   dataFlow_skipError_title: '跳過錯誤設置',
   dataFlow_skipError_skipErrorSettings: '任務錯誤處理',
   dataFlow_skipError_tip:
     '任務上次停止時發生了以下數據相關的錯誤，請確認這些錯誤已經被處理。如果希望跳過這些錯誤，請勾選相應的錯誤項並點擊“跳過錯誤，啟動任務” 。 ',
-  dataFlow_skipError_attention: '注意：若導致錯誤的數​​據未被處理，跳過錯誤可能導致這條數據被丟棄。 ',
+  dataFlow_skipError_attention:
+    '注意：若導致錯誤的數​​據未被處理，跳過錯誤可能導致這條數據被丟棄。 ',
   dataFlow_skipError_startJob: '跳過錯誤，啟動任務',
   dataFlow_skipError_cancel: '取消',
   dataFlow_skipError_taskName: '任務名',
@@ -1396,10 +1453,13 @@ export default {
   dataFlow_flowEngineV1: 'Flow Engine V1',
   dataFlow_jetFlowEngineV2: 'Jet Flow Engine V2',
   editor_cell_data_node_collection_form_collection_placeholder: '請選擇數據集',
-  editor_cell_data_node_collection_form_fieldFilterType_retainedField: '保留字段',
+  editor_cell_data_node_collection_form_fieldFilterType_retainedField:
+    '保留字段',
   editor_cell_data_node_collection_form_fieldFilterType_deleteField: '刪除字段',
-  editor_cell_data_node_collection_form_fieldFilter_placeholderKeep: ' 請選擇要保留的字段',
-  editor_cell_data_node_collection_form_fieldFilter_placeholderDelete: ' 請選擇要刪除的字段',
+  editor_cell_data_node_collection_form_fieldFilter_placeholderKeep:
+    ' 請選擇要保留的字段',
+  editor_cell_data_node_collection_form_fieldFilter_placeholderDelete:
+    ' 請選擇要刪除的字段',
   editor_cell_data_node_collection_form_filter_fieldFilter: '智慧模式',
   editor_cell_data_node_collection_form_filter_sqlFilter: 'SQL模式',
   editor_cell_data_node_collection_form_filter_mqlFilter: 'MQL模式',
@@ -1411,7 +1471,8 @@ export default {
   editor_cell_data_node_table_form_custom_sql_placeholder: '請輸入自定義SQL',
   editor_cell_data_node_table_form_custom_sql_mplaceholder: '請輸入自定義MQL',
   editor_cell_data_node_table_form_initial_offset_label: '自定義SQL增量條件',
-  editor_cell_data_node_table_form_initial_offset_placeholder: '請輸入自定義SQL增量條件',
+  editor_cell_data_node_table_form_initial_offset_placeholder:
+    '請輸入自定義SQL增量條件',
   editor_ui_sidebar_setting: '任務設置',
   metadata_createModel: '創建模型',
   metadata_header_name: '表名/所屬庫',
@@ -1521,7 +1582,8 @@ export default {
   metadata_details_query: '查詢',
   metadata_details_version_version_control: '版本管理',
   metadata_details_version_version_control_required: '版本管理不能為空',
-  metadata_details_version_lastVersion: '此元數據已是最新版本，過往保存的歷史版本記錄將保存在下面列表中',
+  metadata_details_version_lastVersion:
+    '此元數據已是最新版本，過往保存的歷史版本記錄將保存在下面列表中',
   metadata_details_version_versionNum: '版本號',
   metadata_details_version_versionComparison: '版本比對',
   metadata_details_version_compared: '對比',
@@ -1572,7 +1634,8 @@ export default {
   metadata_details_pipeline_pipeline: 'MongoDB Pipeline',
   metadata_details_pipeline_viewStatus: '視圖狀態',
   metadata_details_pipeline_FailedMessage: '失敗詳情',
-  metadata_details_pipeline_penpinSave: '點擊下方保存按鈕僅保存到系統，點擊更新按鈕將應用到此數據所在的數據庫',
+  metadata_details_pipeline_penpinSave:
+    '點擊下方保存按鈕僅保存到系統，點擊更新按鈕將應用到此數據所在的數據庫',
   metadata_details_pipeline_apply: '應用',
   metadata_details_pipeline_view_tip: '操作將覆蓋同名的視圖，是否創建視圖',
   metadata_details_pipeline_success: '應用成功',
@@ -1634,7 +1697,8 @@ export default {
   notification_modular_role: '角色',
   notification_modular_accessCode: '訪問碼',
   notification_operation_readnotification_modular_message: '',
-  dialog_placeholderTable: '僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許 system 開頭',
+  dialog_placeholderTable:
+    '僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許 system 開頭',
   dialog_downAgent_ok: '好的',
   queryBuilder_addCond: '字段條件',
   account_accountSettings: '個人設置 ',
@@ -1770,7 +1834,8 @@ export default {
   guide_task_type_custom_tips:
     '數據同步側重於表級數據處理和傳輸，以滿足用戶需要實現多表（數據集）、多級數據之間的多表集成、數據拆分、關聯映射、字段增減合併、內容過濾、實時數據同步聚合處理案例JS處理等功能，在不影響用戶業務的情況下，滿足用戶對遠程或本地數據容災、跨實例數據同步、查詢報表分發、實時性等多種業務場景的需求數據倉庫管理員元素。 ',
   guide_btn_to_dashboard: '暫不編輯任務，先去購物',
-  app_signIn_registry_sucess_wait_approval: '登錄前等待管理員批准，5秒後跳轉到登錄頁面',
+  app_signIn_registry_sucess_wait_approval:
+    '登錄前等待管理員批准，5秒後跳轉到登錄頁面',
   daas_deletefile_emptyitem_zanwushuju: '暫無數據',
   daas_components_querycond_xuanzeriqishi: '選擇日期時間',
   daas_src_main_qingqiuquanjupei: '請求全局配置(settings)失敗: ',
@@ -1833,14 +1898,16 @@ export default {
   daas_data_discovery_previewdrawer_shuchujiedian: '输出节点',
   daas_router_routes_guanlianrenwuxiang: '關聯任務詳情',
   daas_data_server_drawer_geshicuowu: '格式錯誤',
-  daas_data_server_drawer_validate: '只能包含中文、字母、數字、下劃線和美元符號,並且數字不能開頭',
+  daas_data_server_drawer_validate:
+    '只能包含中文、字母、數字、下劃線和美元符號,並且數字不能開頭',
   daas_data_server_drawer_aPI_path_Settings: '訪問路徑設置',
   daas_data_server_drawer_default_path: '默認訪問路徑',
   daas_data_server_drawer_custom_path: '自定義訪問路徑',
   daas_data_server_drawer_prefix: '前綴',
   daas_data_server_drawer_base_path: '基礎路徑',
   daas_data_server_drawer_path: '訪問路徑',
-  daas_data_server_drawer_confirm_tip: '重新生成會導致原API訪問路徑發生改變，是否確認重新生成？ ',
+  daas_data_server_drawer_confirm_tip:
+    '重新生成會導致原API訪問路徑發生改變，是否確認重新生成？ ',
   daas_notification_center_yonghucaozuo: '用戶操作',
   daas_cluster_cluster_lianjieshuliang: '連接數量',
   daas_cluster_cluster_mubiaoIPhe: '目標IP和端口',
@@ -1863,9 +1930,9 @@ export default {
   daas_feature_unavailable_upgrade_dec_li3: '告警設置',
   daas_feature_unavailable_upgrade_dec_li4: '權限管理（僅企業版）',
   daas_feature_unavailable_upgrade_dec_li5: '更多數據源',
-  daas_feature_unavailable_upgrade_dec_li1_desc: `基於自研技術，${process.env.VUE_APP_PAGE_TITLE} 能最大程度保障數據一致性，還支持數據表數據校驗，以驗證和確保數據流轉正確，滿足生產環境要求。`,
-  daas_feature_unavailable_upgrade_dec_li2_desc: `為減輕源端數據庫壓力，${process.env.VUE_APP_PAGE_TITLE} 支持共享挖掘增量日誌緩存，開啓此功能的任務可直接從緩存中獲取增量事件，無需重復讀取源庫增量日誌。`,
-  daas_feature_unavailable_upgrade_dec_li3_desc: `${process.env.VUE_APP_PAGE_TITLE} 支持通過 SMTP 協議發告警郵件，讓用戶在常用郵箱及時接收異常通知，助其感知異常，保障任務運行穩定可靠。`,
+  daas_feature_unavailable_upgrade_dec_li1_desc: `基於自研技術，${import.meta.env.VUE_APP_PAGE_TITLE} 能最大程度保障數據一致性，還支持數據表數據校驗，以驗證和確保數據流轉正確，滿足生產環境要求。`,
+  daas_feature_unavailable_upgrade_dec_li2_desc: `為減輕源端數據庫壓力，${import.meta.env.VUE_APP_PAGE_TITLE} 支持共享挖掘增量日誌緩存，開啓此功能的任務可直接從緩存中獲取增量事件，無需重復讀取源庫增量日誌。`,
+  daas_feature_unavailable_upgrade_dec_li3_desc: `${import.meta.env.VUE_APP_PAGE_TITLE} 支持通過 SMTP 協議發告警郵件，讓用戶在常用郵箱及時接收異常通知，助其感知異常，保障任務運行穩定可靠。`,
   daas_feature_unavailable_upgrade_dec_li4_desc:
     '角色是權限合集，可為其授予多權限並授予用戶，用戶繼承所有權限，依此設計可先創角色再賦予用戶，無需為每個用戶配置權限，以簡化運維管理和提升安全性。',
   daas_feature_unavailable_upgrade_dec_li5_desc: '',
@@ -1892,36 +1959,37 @@ export default {
   webhook_server_url_empty: '請輸入服務 URL',
   webhook_server_url_error: '請輸入正確的服務 URL',
   webhook_custom_template: '自定義模版',
-  webhook_custom_template_tip: `{
+  webhook_custom_template_tip: `{'{'}
     "action": "TaskAlter",
-    "hookId": "\${hookId}",
-    "actionTime": "\${actionTime}",
-    "title": "\${title}",
-    "content": "\${content}",
-    "actionData": {
-        "status": "\${actionData.status}", //標記當前告警的狀態,ING,RECOVER,CLOESE
-        "statusTxt":"\${actionData.statusTxt}", //標記當前告警的狀態文本:正在進行,已恢復,已關閉
-        "level": "\${actionData.level}", //告警級別RECOVERY,NORMAL,WARNING,CRITICAL,EMERGENCY,ERROR,WARN,INFO
-        "component":"\${actionData.component}",//引擎告警組件固定為: FE
-        "componentTxt": "\${actionData.componentTxt}", //引擎告警組件文本值: 引擎
-        "type":"\${actionData.type}",//告警類型  SYNCHRONIZATIONTASK_ALARM,SHARED_CACHE_ALARM,SHARED_MINING_ALARM,DATA_VERIFICATION_ALARM,ACCURATE_DELAY_ALARM,INSPECT_ALARM
-        "typeTxt": "\${actionData.typeTxt}", //告警類型文本值,同步任務告警、共享緩存告警、共享挖掘告警、數據校驗告警、精准延遲告警
-        "metric": "\${actionData.metric}",//事件類型: TASK_STATUS_STOP, TASK_STATUS_ERROR, TASK_FULL_COMPLETE, TASK_INCREMENT_START, TASK_INSPECT_ERROR, INSPECT_TASK_ERROR, DATANODE_CANNOT_CONNECT, DATANODE_TCP_CONNECT_CONSUME, DATANODE_HTTP_CONNECT_CONSUME, SYSTEM_FLOW_EGINGE_UP, SYSTEM_FLOW_EGINGE_DOWN, DATANODE_AVERAGE_HANDLE_CONSUME, TASK_INCREMENT_DELAY, PROCESSNODE_AVERAGE_HANDLE_CONSUME, INSPECT_COUNT_ERROR, INSPECT_VALUE_ERROR
-        "metricTxt": "\${actionData.metricTxt}", //事件類型文本值：任務運行停止，任務運行錯誤，任務全量完成，任務增量開始，任務校驗出錯，校驗任務遇到錯誤，數據源無法連接網絡，數據源TCP連接完成，數據源連接網絡完成，引擎上線，引擎離線，數據源節點的平均處理耗時超過閥值，任務的增量延遲超過閥值，節點的平均處理耗時超過閥值，Count校驗結果的差異行數大於閾值，值校驗結果的表數據差大於閾值
-        "name":"\${actionData.name}",//具體的任務名
-        "node":"\${actionData.node}",//產生告警的節點名，無節點時為空;當為任務告警時，節點直接放任務名
-        "currentValue": "\${actionData.currentValue}",//觸發告警的指標值
-        "threshold": "\${actionData.threshold}",//觸發告警的指標閾值
-        "lastOccurrenceTime": "\${actionData.lastOccurrenceTime}",//告警最近發生時間
-        "tally": "\${actionData.tally}",//告警發生次數
-        "summary": "\${actionData.summary}",//告警內容
-        "recoveryTime": "\${actionData.recoveryTime}",//告警恢復時間
-        "closeTime": "\${actionData.closeTime}",//告警關閉時間
-        "closeBy": "\${actionData.closeBy}",//告警被誰關閉
-        "agentId": "\${actionData.agentId}", //所屬引擎
-    }
-}`,
-  webhook_custom_template_ph: '自定義模板內容，支持參數填充模板，如：${alarm.name}',
+    "hookId": "\${'{'}hookId{'}'}",
+    "actionTime": "\${'{'}actionTime{'}'}",
+    "title": "\${'{'}title{'}'}",
+    "content": "\${'{'}content{'}'}",
+    "actionData": {'{'}
+        "status": "\${'{'}actionData.status{'}'}", //標記當前告警的狀態,ING,RECOVER,CLOESE
+        "statusTxt":"\${'{'}actionData.statusTxt{'}'}", //標記當前告警的狀態文本:正在進行,已恢復,已關閉
+        "level": "\${'{'}actionData.level{'}'}", //告警級別RECOVERY,NORMAL,WARNING,CRITICAL,EMERGENCY,ERROR,WARN,INFO
+        "component":"\${'{'}actionData.component{'}'}",//引擎告警組件固定為: FE
+        "componentTxt": "\${'{'}actionData.componentTxt{'}'}", //引擎告警組件文本值: 引擎
+        "type":"\${'{'}actionData.type{'}'}",//告警類型  SYNCHRONIZATIONTASK_ALARM,SHARED_CACHE_ALARM,SHARED_MINING_ALARM,DATA_VERIFICATION_ALARM,ACCURATE_DELAY_ALARM,INSPECT_ALARM
+        "typeTxt": "\${'{'}actionData.typeTxt{'}'}", //告警類型文本值,同步任務告警、共享緩存告警、共享挖掘告警、數據校驗告警、精准延遲告警
+        "metric": "\${'{'}actionData.metric{'}'}",//事件類型: TASK_STATUS_STOP, TASK_STATUS_ERROR, TASK_FULL_COMPLETE, TASK_INCREMENT_START, TASK_INSPECT_ERROR, INSPECT_TASK_ERROR, DATANODE_CANNOT_CONNECT, DATANODE_TCP_CONNECT_CONSUME, DATANODE_HTTP_CONNECT_CONSUME, SYSTEM_FLOW_EGINGE_UP, SYSTEM_FLOW_EGINGE_DOWN, DATANODE_AVERAGE_HANDLE_CONSUME, TASK_INCREMENT_DELAY, PROCESSNODE_AVERAGE_HANDLE_CONSUME, INSPECT_COUNT_ERROR, INSPECT_VALUE_ERROR
+        "metricTxt": "\${'{'}actionData.metricTxt{'}'}", //事件類型文本值：任務運行停止，任務運行錯誤，任務全量完成，任務增量開始，任務校驗出錯，校驗任務遇到錯誤，數據源無法連接網絡，數據源TCP連接完成，數據源連接網絡完成，引擎上線，引擎離線，數據源節點的平均處理耗時超過閥值，任務的增量延遲超過閥值，節點的平均處理耗時超過閥值，Count校驗結果的差異行數大於閾值，值校驗結果的表數據差大於閾值
+        "name":"\${'{'}actionData.name{'}'}",//具體的任務名
+        "node":"\${'{'}actionData.node{'}'}",//產生告警的節點名，無節點時為空;當為任務告警時，節點直接放任務名
+        "currentValue": "\${'{'}actionData.currentValue{'}'}",//觸發告警的指標值
+        "threshold": "\${'{'}actionData.threshold{'}'}",//觸發告警的指標閾值
+        "lastOccurrenceTime": "\${'{'}actionData.lastOccurrenceTime{'}'}",//告警最近發生時間
+        "tally": "\${'{'}actionData.tally{'}'}",//告警發生次數
+        "summary": "\${'{'}actionData.summary{'}'}",//告警內容
+        "recoveryTime": "\${'{'}actionData.recoveryTime{'}'}",//告警恢復時間
+        "closeTime": "\${'{'}actionData.closeTime{'}'}",//告警關閉時間
+        "closeBy": "\${'{'}actionData.closeBy{'}'}",//告警被誰關閉
+        "agentId": "\${'{'}actionData.agentId{'}'}", //所屬引擎
+    {'}'}
+{'}'}`,
+  webhook_custom_template_ph:
+    '自定義模板內容，支持參數填充模板，如：${alarm.name}',
   http_header: 'HTTP 請求頭',
   http_header_ph: 'HTTP 請求頭,多個請求頭請換行輸入,示例:Accept: text/html',
   webhook_send_ping: '發送測試 PING 事件',
@@ -1938,5 +2006,5 @@ export default {
   account_accessCode_confirm: '確定刷新訪問碼?',
   account_accessCode_tip:
     '刷新訪問碼將導致當前訪問碼失效，系統將生成新的訪問碼。<b class="color-warning">您需要將新的訪問碼更新到引擎的配置文件後，重新啓動引擎，否則引擎可能會無法正常工作。請謹慎操作！</b>',
-  account_accessCode_success: '刷新訪問碼成功'
+  account_accessCode_success: '刷新訪問碼成功',
 }

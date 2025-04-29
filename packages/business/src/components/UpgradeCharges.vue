@@ -2,10 +2,11 @@
   <section>
     <el-dialog
       :title="$t('packages_business_components_upgradecharges_dingyueshengji')"
-      :visible.sync="visible"
+      :model-value="visible"
+      @input="$emit('update:visible', $event)"
       :append-to-body="true"
       width="880px"
-      custom-class="paid-upgrade-dialog"
+      class="paid-upgrade-dialog"
       :before-close="handleClose"
     >
       <div v-if="tooltip" class="py-2 px-4 bg-warning-light flex align-items-center">
@@ -37,11 +38,13 @@
         </li>
       </ul>
 
-      <div slot="footer" class="dialog-footer">
-        <ElButton type="primary" @click="submit" size="mini">{{
-          $t('packages_business_components_upgradecharges_dingyuexinyinqing')
-        }}</ElButton>
-      </div>
+      <template v-slot:footer>
+        <div class="dialog-footer">
+          <ElButton type="primary" @click="submit">{{
+            $t('packages_business_components_upgradecharges_dingyuexinyinqing')
+          }}</ElButton>
+        </div>
+      </template>
     </el-dialog>
     <!--变更-->
     <OrderChange ref="ChangeSubscribeDetailDialog"></OrderChange>
@@ -49,30 +52,27 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { VIcon } from '@tap/component'
-import { getSpec, getPaymentMethod } from '@tap/business/src/shared/util'
-import OrderChange from '@tap/business/src/views/order/Change'
+import { getSpec, getPaymentMethod } from '../shared'
+import OrderChange from '../views/order/Change'
 
 export default {
   name: 'UpgradeCharges',
   components: { VIcon, OrderChange },
-
   props: ['visible', 'tooltip', 'goPage'],
-
   data() {
     return {
-      list: []
+      list: [],
     }
   },
-
   watch: {
     visible(v) {
       if (v) {
         this.loadData()
       }
-    }
+    },
   },
-
   methods: {
     loadData() {
       let filter = {
@@ -81,19 +81,19 @@ export default {
         sort: ['createAt desc'],
         where: {
           status: {
-            $ne: 'invalid' //过滤 invild
-          }
-        }
+            $ne: 'invalid', //过滤 invild
+          },
+        },
       }
-      this.$axios.get(`api/tcm/subscribe?filter=${encodeURIComponent(JSON.stringify(filter))}`).then(data => {
+      this.$axios.get(`api/tcm/subscribe?filter=${encodeURIComponent(JSON.stringify(filter))}`).then((data) => {
         this.list =
           data.items
-            ?.filter(t => t.status === 'active' && t.totalAmount !== 0)
-            ?.map(item => {
+            ?.filter((t) => t.status === 'active' && t.totalAmount !== 0)
+            ?.map((item) => {
               item.subscriptionMethodLabel =
                 getPaymentMethod(
                   { periodUnit: item.periodUnit, type: item.subscribeType },
-                  item.paymentMethod || 'Stripe'
+                  item.paymentMethod || 'Stripe',
                 ) || '-'
 
               if (item.subscribeItems?.length > 0) {
@@ -112,7 +112,7 @@ export default {
     },
 
     handleClose() {
-      this.$emit('update:visible', false)
+      $emit(this, 'update:visible', false)
     },
 
     //变更
@@ -128,25 +128,23 @@ export default {
         return
       }
       this.$router.push({
-        name: 'createAgent'
+        name: 'createAgent',
       })
-    }
-  }
+    },
+  },
+  emits: ['update:visible'],
 }
 </script>
 
-<style scoped lang="scss">
-::v-deep {
-  .el-dialog__body {
-    padding: 0 20px 30px 20px;
-  }
+<style lang="scss" scoped>
+:deep(.el-dialog__body) {
+  padding: 0 20px 30px 20px;
 }
 
 .dialog__ul {
   max-height: 400px;
   overflow-y: auto;
 }
-
 .content__row {
   margin-top: -1px;
 }

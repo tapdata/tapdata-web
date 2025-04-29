@@ -8,27 +8,33 @@
         <div class="flex justify-content-start mb-4 text-left fs-8">
           <div class="fw-normal head-label font-color-light">{{ $t('packages_business_shared_detail_name') }}:</div>
           <ElTooltip effect="dark" :content="detailData.name" placement="top-start">
-            <div class="name font-color-dark fw-normal">{{ detailData.name }}</div>
+            <div class="name font-color-dark fw-normal">
+              {{ detailData.name }}
+            </div>
           </ElTooltip>
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
           <div class="fw-normal head-label font-color-light">
             {{ $t('packages_business_shared_detail_log_mining_time') }}:
           </div>
-          <div class="font-color-dark fw-normal">{{ formatTime(detailData.logTime) }}</div>
+          <div class="font-color-dark fw-normal">
+            {{ formatTime(detailData.logTime) }}
+          </div>
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
           <div class="fw-normal head-label font-color-light">{{ $t('packages_business_shared_detail_log_time') }}:</div>
-          <div class="font-color-dark fw-normal">{{ detailData.storageTime }}</div>
+          <div class="font-color-dark fw-normal">
+            {{ detailData.storageTime }}
+          </div>
         </div>
       </div>
       <div class="share-detail-head-center py-5 px-6" style="min-height: 250px">
         <div class="flex">
           <span class="label font-color-dark fs-8">{{ $t('packages_business_shared_detail_statistics_time') }}</span>
           <DatetimeRange
-            v-model="timeRange"
+            v-model:value="timeRange"
             :range="2 * 365 * 24 * 60 * 60 * 1000"
-            value-format="timestamp"
+            value-format="x"
             class="filter-datetime-range ml-2"
             @change="changeTimeRangeFnc"
           ></DatetimeRange>
@@ -41,8 +47,12 @@
       <div class="flex share-detail-head-right text-center p-6 pl-0">
         <div class="flex text-center bg-color-main w-100 h-100">
           <div class="box py-3">
-            <div class="title fs-7 font-color-dark">{{ $t('public_event_incremental_delay') }}</div>
-            <div class="time py-4 fs-2 text-primary">{{ getReplicateLagTime(replicateLag) }}</div>
+            <div class="title fs-7 font-color-dark">
+              {{ $t('public_event_incremental_delay') }}
+            </div>
+            <div class="time py-4 fs-2 text-primary">
+              {{ getReplicateLagTime(replicateLag) }}
+            </div>
             <div class="text-muted font-color-slight fs-8" v-if="detailData.cdcTime">
               {{ $t('packages_business_shared_detail_incremental_time') }}：{{ formatTime(detailData.cdcTime) }}
             </div>
@@ -60,19 +70,19 @@
         :has-pagination="false"
         ref="VTable"
       >
-        <template slot="sourceTimestamp" slot-scope="scope">
+        <template v-slot:sourceTimestamp="scope">
           <span>{{ formatTime(scope.row.sourceTimestamp) }}</span>
         </template>
-        <template slot="syncTimestamp" slot-scope="scope">
+        <template v-slot:syncTimestamp="scope">
           <span> {{ formatTime(scope.row.syncTimestamp) }}</span>
         </template>
-        <template slot="status" slot-scope="scope">
+        <template v-slot:status="scope">
           <TaskStatus :task="scope.row" />
         </template>
-        <template slot="operation" slot-scope="scope">
+        <template v-slot:operation="scope">
           <div class="operate-columns">
-            <ElButton size="mini" type="text" @click="goDetail(scope.row)">{{ $t('public_button_check') }}</ElButton>
-            <ElButton size="mini" type="text" @click="getTables(scope.row.id)">{{
+            <ElButton text @click="goDetail(scope.row)">{{ $t('public_button_check') }}</ElButton>
+            <ElButton text @click="getTables(scope.row.id)">{{
               $t('packages_business_shared_detail_button_table_info')
             }}</ElButton>
           </div>
@@ -81,10 +91,10 @@
     </div>
     <el-dialog
       width="400px"
-      custom-class="edit-dialog"
+      class="edit-dialog"
       :title="$t('packages_business_shared_detail_title')"
       :close-on-click-modal="false"
-      :visible.sync="tableDialogVisible"
+      v-model="tableDialogVisible"
     >
       <VTable
         :data="tableNameList"
@@ -95,17 +105,19 @@
         ref="tableName"
       >
       </VTable>
-      <span slot="footer" class="dialog-footer">
-        <el-pagination
-          @current-change="getTableNames"
-          :current-page="currentPage"
-          :page-sizes="[20, 50, 100]"
-          :page-size="pageSize"
-          layout="total, prev, pager, next, jumper"
-          :total="tableNameTotal"
-        >
-        </el-pagination>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <el-pagination
+            @current-change="getTableNames"
+            :current-page="currentPage"
+            :page-sizes="[20, 50, 100]"
+            :page-size="pageSize"
+            layout="total, prev, pager, next, jumper"
+            :total="tableNameTotal"
+          >
+          </el-pagination>
+        </span>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -130,25 +142,25 @@ export default {
       statisticsTime: [],
       lineData: {
         x: [],
-        y: [[], []]
+        y: [[], []],
       },
       lineDataDeep: {
         x: [],
-        y: [[], []]
+        y: [[], []],
       },
       loading: true,
       task: {},
       lineOptions: {
         tooltip: {
-          trigger: 'axis'
+          trigger: 'axis',
         },
         legend: {
           top: 4,
           right: 0,
-          show: false
+          show: false,
         },
         xAxis: {
-          type: 'time'
+          type: 'time',
         },
         yAxis: [
           {
@@ -160,8 +172,8 @@ export default {
                   value = value / 1000 + 'K'
                 }
                 return value
-              }
-            }
+              },
+            },
           },
           {
             // max: 'dataMax',
@@ -171,50 +183,50 @@ export default {
                   value = value / 1000 + 'K'
                 }
                 return value
-              }
-            }
-          }
+              },
+            },
+          },
         ],
         grid: {
           left: 0,
           right: 0,
           top: '24px',
-          bottom: 0
+          bottom: 0,
         },
         series: [
           {
             name: this.$t('public_time_input'),
             lineStyle: {
               color: 'rgba(24, 144, 255, 1)',
-              width: 1
+              width: 1,
             },
             areaStyle: {
-              color: 'rgba(24, 144, 255, 0.2)'
+              color: 'rgba(24, 144, 255, 0.2)',
             },
             symbol: 'none',
             itemStyle: {
-              color: 'rgba(24, 144, 255, 1)'
+              color: 'rgba(24, 144, 255, 1)',
             },
             // type: 'line',
-            data: []
+            data: [],
           },
           {
             name: this.$t('public_time_output'),
             lineStyle: {
               color: 'rgba(118, 205, 238, 1)',
-              width: 1
+              width: 1,
             },
             symbol: 'none',
             areaStyle: {
-              color: 'rgba(118, 205, 238, 0.2)'
+              color: 'rgba(118, 205, 238, 0.2)',
             },
             itemStyle: {
-              color: 'rgba(118, 205, 238, 1)'
+              color: 'rgba(118, 205, 238, 1)',
             },
             // type: 'line',
-            data: []
-          }
-        ]
+            data: [],
+          },
+        ],
       },
       activeTab: 'schedule',
       showContent: false,
@@ -223,31 +235,31 @@ export default {
       columnsTableName: [
         {
           label: i18n.t('packages_business_tablename'),
-          prop: 'tablename'
-        }
+          prop: 'tablename',
+        },
       ],
       columns: [
         {
           label: this.$t('packages_business_shared_detail_call_task'),
-          prop: 'name'
+          prop: 'name',
         },
         {
           label: this.$t('packages_business_shared_detail_source_time'),
-          slotName: 'sourceTimestamp'
+          slotName: 'sourceTimestamp',
         },
         {
           label: this.$t('packages_business_shared_detail_sycn_time_point'),
-          slotName: 'syncTimestamp'
+          slotName: 'syncTimestamp',
         },
         {
           label: this.$t('packages_business_shared_detail_mining_status'),
-          slotName: 'status'
+          slotName: 'status',
         },
         {
           label: this.$t('public_operation'),
           prop: 'operation',
-          slotName: 'operation'
-        }
+          slotName: 'operation',
+        },
       ],
       tableDialogVisible: false,
       timeRange: [], //时间范围
@@ -256,23 +268,23 @@ export default {
       pageSize: 20,
       tableNameTotal: 0,
       replicateLag: 0,
-      timer: null //定时器
+      timer: null, //定时器
     }
   },
   computed: {
     connectionIds() {
       return (
-        this.task?.stages?.map(item => {
+        this.task?.stages?.map((item) => {
           return item.connectionId
         }) || []
       )
-    }
+    },
   },
   created() {
     this.id = this.$route.params.id
     this.getData(this.id)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.timer && clearInterval(this.timer)
   },
   methods: {
@@ -284,7 +296,7 @@ export default {
     },
 
     getData(id) {
-      logcollectorApi.getDetail(id).then(data => {
+      logcollectorApi.getDetail(id).then((data) => {
         let detailData = data || {}
         detailData.taskList = detailData.taskList?.map(makeStatusAndDisabled)
         this.detailData = detailData
@@ -301,22 +313,22 @@ export default {
           {
             tags: {
               subTaskId: this.detailData.subTaskId,
-              type: 'subTask'
+              type: 'subTask',
             },
             fields: ['inputQPS', 'outputQPS'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
             limit: 10, //optional， 没有就返回全部， 服务器保护返回最多1000个
-            guanluary: 'minute'
-          }
+            guanluary: 'minute',
+          },
         ],
         statistics: [
           {
             tags: {
               subTaskId: this.detailData.subTaskId,
-              type: 'subTask'
+              type: 'subTask',
             },
-            fields: ['replicateLag']
-          }
-        ]
+            fields: ['replicateLag'],
+          },
+        ],
       }
       let start = this.timeRange?.[0]
       let end = this.timeRange?.[1]
@@ -337,9 +349,9 @@ export default {
       let diff = (end || Date.now()) - start
       params.samples[0].guanluary = this.getGuanluary(diff)
       let guanluaryFormat = this.getGuanluary(diff, true)
-      measurementApi.query(params).then(data => {
+      measurementApi.query(params).then((data) => {
         let { samples } = data || {}
-        samples.forEach(el => {
+        samples.forEach((el) => {
           for (let key in el) {
             el[key] = el[key].reverse()
           }
@@ -351,7 +363,7 @@ export default {
         let { inputQPS = [], outputQPS = [] } = qpsData
         let qpsDataTime = qpsData?.time || []
 
-        let xArr = qpsDataTime.map(t => this.formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
+        let xArr = qpsDataTime.map((t) => this.formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
         const xArrLen = xArr.length
         if (this.lineDataDeep.x.length > 20) {
           this.lineDataDeep.x.splice(0, xArrLen)
@@ -364,11 +376,11 @@ export default {
           let time = el
           inArr.push({
             name: time,
-            value: [time, inputQPS[i]]
+            value: [time, inputQPS[i]],
           })
           outArr.push({
             name: time,
-            value: [time, outputQPS[i]]
+            value: [time, outputQPS[i]],
           })
         })
         // eslint-disable-next-line
@@ -388,19 +400,19 @@ export default {
             //   },
             xAxis: {
               axisLabel: {
-                formatter: val => {
+                formatter: (val) => {
                   return this.formatTime(val, guanluaryFormat)
-                }
-              }
+                },
+              },
             },
             series: [
               {
-                data: Object.assign([], this.lineDataDeep.y[0])
+                data: Object.assign([], this.lineDataDeep.y[0]),
               },
               {
-                data: Object.assign([], this.lineDataDeep.y[1])
-              }
-            ]
+                data: Object.assign([], this.lineDataDeep.y[1]),
+              },
+            ],
           })
         })
       })
@@ -417,15 +429,15 @@ export default {
         this.$router.push({
           name: 'MigrationMonitor',
           params: {
-            id: row.id
-          }
+            id: row.id,
+          },
         })
       } else {
         this.$router.push({
           name: 'TaskMonitor',
           params: {
-            id: row.id
-          }
+            id: row.id,
+          },
         })
       }
     },
@@ -469,14 +481,14 @@ export default {
     getTableNames(callSubId) {
       let filter = {
         limit: this.pageSize,
-        skip: (this.currentPage - 1) * this.pageSize
+        skip: (this.currentPage - 1) * this.pageSize,
       }
-      logcollectorApi.newTableNames(this.detailData.id, callSubId, filter).then(data => {
+      logcollectorApi.newTableNames(this.detailData.id, callSubId, filter).then((data) => {
         this.tableNameList = data?.items || []
         this.tableNameTotal = data?.total || 0
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -487,11 +499,11 @@ export default {
     //   height: 300px;
     // }
     width: 100%;
-    background-color: map-get($bgColor, white);
+    background-color: map.get($bgColor, white);
     border-radius: 4px;
     .share-detail-head-left {
       width: 260px;
-      border-right: 1px solid map-get($borderColor, light);
+      border-right: 1px solid map.get($borderColor, light);
       .head-label {
         min-width: 100px;
       }
@@ -507,13 +519,13 @@ export default {
         width: 70px;
         line-height: 32px;
       }
-      ::v-deep {
-        .el-date-editor {
-          width: 300px;
-        }
-        .el-range-input {
-          width: 120px;
-        }
+
+      :deep(.el-date-editor) {
+        width: 300px;
+      }
+
+      :deep(.el-range-input) {
+        width: 120px;
       }
     }
     .share-detail-head-right {
@@ -531,11 +543,9 @@ export default {
     .filter-datetime-range {
       font-size: 12px;
       line-height: 32px;
-      ::v-deep {
+
+      :deep(.el-input) {
         font-size: 12px;
-        .el-input {
-          font-size: 12px;
-        }
       }
     }
   }
@@ -545,15 +555,14 @@ export default {
   }
   .card-box {
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.02);
-    ::v-deep {
-      .el-tab-pane {
-        min-height: 400px;
-      }
-      .field-mapping {
-        min-height: 400px;
-        .task-form-body {
-          max-height: 350px;
-        }
+    :deep(.el-tab-pane) {
+      min-height: 400px;
+    }
+
+    :deep(.field-mapping) {
+      min-height: 400px;
+      .task-form-body {
+        max-height: 350px;
       }
     }
   }
@@ -563,20 +572,15 @@ export default {
   .card-box__content {
     padding-left: 24px;
     //height: 0;
-    ::v-deep {
-      .el-tabs__content {
-        overflow-y: auto;
-      }
+    :deep(.el-tabs__content) {
+      overflow-y: auto;
     }
   }
   .filter-datetime-range {
     font-size: 12px;
     line-height: 32px;
-    ::v-deep {
+    :deep(.el-input) {
       font-size: 12px;
-      .el-input {
-        font-size: 12px;
-      }
     }
   }
 }

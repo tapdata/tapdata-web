@@ -1,127 +1,130 @@
-import i18n from '@/i18n'
-import { defineComponent, reactive, ref, watch, nextTick, onMounted } from '@vue/composition-api'
-import { FilterBar, Drawer, VIcon } from '@tap/component'
-import { TablePage, DiscoveryClassification, makeDragNodeImage } from '@tap/business'
 import { discoveryApi } from '@tap/api'
-import DrawerContent from '@/views/data-discovery/PreviewDrawer'
-import ObjectTable from '@/views/data-discovery/ObjectTable'
-import './index.scss'
+import { makeDragNodeImage } from '@tap/business'
+import { VIcon } from '@tap/component'
 import resize from '@tap/component/src/directives/resize'
+import { defineComponent, nextTick, onMounted, reactive, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import i18n from '@/i18n'
+import './index.scss'
 
 export default defineComponent({
   props: [''],
   directives: {
-    resize
+    resize,
   },
   setup(props, { refs, root }) {
+    const route = useRoute()
+    const classifyRef = ref()
+    const tableRef = ref()
+    const drawerContentRef = ref()
+    const objectTableRef = ref()
+
     const list = ref([])
-    const { sourceType, queryKey } = root.$route.query || {}
+    const { sourceType, queryKey } = route.query || {}
     const data = reactive({
       isShowDetails: false,
       isShowSourceDrawer: false, //资源绑定
       tableLoading: false,
       searchParams: {
         sourceType: sourceType || '',
-        queryKey: queryKey || ''
+        queryKey: queryKey || '',
       },
       page: {
         size: 20,
         current: 1,
         total: 0,
-        count: 1
+        count: 1,
       },
       currentNode: '',
-      filterItems: []
+      filterItems: [],
     })
     const loadData = ({ page }) => {
-      let { sourceType, queryKey } = data.searchParams
-      let { size, current } = page
-      let where = {
+      const { sourceType, queryKey } = data.searchParams
+      const { size, current } = page
+      const where = {
         page: current,
         pageSize: size,
-        tagId: data?.currentNode?.['id'] || ''
+        tagId: data?.currentNode?.id || '',
       }
-      sourceType && (where['objType'] = sourceType)
-      queryKey && (where['queryKey'] = queryKey)
-      return discoveryApi.discoveryList(where).then(res => {
-        let { total, items } = res
+      sourceType && (where.objType = sourceType)
+      queryKey && (where.queryKey = queryKey)
+      return discoveryApi.discoveryList(where).then((res) => {
+        const { total, items } = res
         return {
-          total: total,
-          data: items
+          total,
+          data: items,
         }
       })
     }
     const rest = () => {
-      // @ts-ignore
-      refs.table.fetch(1)
+      tableRef.value.fetch(1)
     }
     const loadFilterList = () => {
-      let filterType = ['objType']
-      discoveryApi.filterList(filterType).then(res => {
-        let { objType } = res
+      const filterType = ['objType']
+      discoveryApi.filterList(filterType).then((res) => {
+        const { objType } = res
         data.filterItems = [
           {
             label: i18n.t('datadiscovery_catalogue_ziyuanleixing'),
             key: 'sourceType',
             type: 'select-inner',
             items: dataAssembly(objType),
-            selectedWidth: '200px'
+            selectedWidth: '200px',
           },
           {
             placeholder: i18n.t('datadiscovery_catalogue_lianjieduixiangming'),
             key: 'queryKey',
-            type: 'input'
-          }
+            type: 'input',
+          },
         ]
       })
     }
-    const dataAssembly = data => {
+    const dataAssembly = (data) => {
       if (data?.length === 0) return
-      return data.map(item => {
+      return data.map((item) => {
         return {
           label: item,
-          value: item
+          value: item,
         }
       })
     }
     //打开资源概览
-    const handlePreview = row => {
+    const handlePreview = (row) => {
       data.isShowDetails = true
       nextTick(() => {
         // @ts-ignore
-        refs?.drawerContent?.loadData(row)
+        drawerContentRef.value?.loadData(row)
       })
     }
-    const closeDrawer = val => {
+    const closeDrawer = (val) => {
       data.isShowDetails = val
     }
     //打开资源绑定抽屉
     const handleSourceDrawer = () => {
       data.isShowSourceDrawer = true
       nextTick(() => {
-        // @ts-ignore
         //请求筛选条件-下拉列表
-        refs?.objectTable?.loadFilterList()
+        objectTableRef.value?.loadFilterList()
         // @ts-ignore
         //请求资源绑定目录
-        refs?.objectTable?.loadTableData()
+        objectTableRef.value?.loadTableData()
       })
     }
-    const closeSourceDrawer = val => {
+    const closeSourceDrawer = (val) => {
       data.isShowSourceDrawer = val
       nextTick(() => {
         // @ts-ignore
-        refs.table.fetch(1)
+        tableRef.value.fetch(1)
         // @ts-ignore
         //关闭资源绑定抽屉 刷新数据目录分类树 主要是统计
-        refs?.classify?.getData()
+        classifyRef.value?.getData()
       })
     }
     //切换目录
-    const getNodeChecked = node => {
+    const getNodeChecked = (node) => {
       data.currentNode = node
       // @ts-ignore
-      refs.table.fetch(1)
+      tableRef.value.fetch(1)
     }
     const renderNode = ({ row }) => {
       return (
@@ -133,7 +136,7 @@ export default defineComponent({
           </span>
           <span
             class="col-new-field-name inline-block ellipsis align-middle color-primary  mr-4 "
-            onClick={event => {
+            onClick={(event) => {
               event.stopPropagation()
               handlePreview(row)
             }}
@@ -146,31 +149,30 @@ export default defineComponent({
     loadFilterList()
     watch(
       () => root.$route.query,
-      val => {
-        // @ts-ignore
-        refs.table.fetch(1)
-      }
+      () => {
+        tableRef.value.fetch(1)
+      },
     )
     onMounted(() => {
       // @ts-ignore
-      refs.table.fetch(1)
+      tableRef.value.fetch(1)
     })
 
     const dragState = reactive({
       isDragging: false,
       draggingObjects: [],
       dropNode: null,
-      allowDrop: true
+      allowDrop: true,
     })
 
     let draggingNodeImage
     const handleDragStart = (row, column, ev) => {
       dragState.isDragging = true
       console.log('nodeDragStart', row, column, event) // eslint-disable-line
-      let draggingRow = [row]
+      const draggingRow = [row]
 
       if (row.id in multipleSelectionMap.value) {
-        let selectionRows = Object.values(multipleSelectionMap.value)
+        const selectionRows = Object.values(multipleSelectionMap.value)
         draggingRow.length = selectionRows.length
         dragState.draggingObjects = selectionRows
       } else {
@@ -180,21 +182,21 @@ export default defineComponent({
       draggingNodeImage = makeDragNodeImage(
         ev.currentTarget.querySelector('.tree-item-icon'),
         row.name,
-        dragState.draggingObjects.length
+        dragState.draggingObjects.length,
       )
       ev.dataTransfer.setDragImage(draggingNodeImage, 0, 0)
     }
 
-    const handleDragEnd = (row, column, event) => {
+    const handleDragEnd = () => {
       dragState.isDragging = false
       dragState.draggingObjects = []
       dragState.dropNode = null
-      document.body.removeChild(draggingNodeImage)
+      draggingNodeImage.remove()
       draggingNodeImage = null
     }
 
     const multipleSelectionMap = ref({})
-    const handleSelectionChange = val => {
+    const handleSelectionChange = (val: { id: string }[]) => {
       multipleSelectionMap.value = val.reduce((obj, item) => {
         obj[item.id] = item
         return obj
@@ -214,12 +216,15 @@ export default defineComponent({
       handleDragStart,
       handleDragEnd,
       handleSelectionChange,
-      dragState
+      dragState,
+      classifyRef,
+      tableRef,
+      drawerContentRef,
     }
   },
   render() {
     return (
-      <section ref="root" class="discovery-page-wrap flex">
+      <section class="discovery-page-wrap flex">
         <div
           {...{
             directives: [
@@ -227,44 +232,49 @@ export default defineComponent({
                 name: 'resize',
                 value: {
                   minWidth: 300,
-                  maxWidth: 600
+                  maxWidth: 600,
                 },
                 modifiers: {
-                  right: true
-                }
-              }
-            ]
+                  right: true,
+                },
+              },
+            ],
           }}
           class="page-left border-right"
         >
           <DiscoveryClassification
             v-model={this.data.searchParams}
-            ref="classify"
+            ref="classifyRef"
             dragState={this.dragState}
             onNodeChecked={this.getNodeChecked}
           ></DiscoveryClassification>
         </div>
         <TablePage
-          ref="table"
+          ref="tableRef"
           row-key="id"
           remoteMethod={this.loadData}
           draggable
-          on={{
-            'row-dragstart': this.handleDragStart,
-            'row-dragend': this.handleDragEnd,
-            'selection-change': this.handleSelectionChange
-          }}
+          onRowDragstart={this.handleDragStart}
+          onRowDragend={this.handleDragEnd}
+          onSelectionChange={this.handleSelectionChange}
         >
           <template slot="search">
             <div class="flex flex-row align-items-center mb-2">
-              <span class="discovery-title ml-2 mr-2">{i18n.t('metadata_meta_type_directory')}</span>
-              <span class="discovery-secondary-title mr-2"> {this.data.currentNode.value} </span>
-              <span class="discovery-desc ml-2">{this.data.currentNode.desc} </span>
+              <span class="discovery-title ml-2 mr-2">
+                {i18n.t('metadata_meta_type_directory')}
+              </span>
+              <span class="discovery-secondary-title mr-2">
+                {' '}
+                {this.data.currentNode.value}{' '}
+              </span>
+              <span class="discovery-desc ml-2">
+                {this.data.currentNode.desc}{' '}
+              </span>
             </div>
             <FilterBar
               v-model={this.data.searchParams}
               items={this.data.filterItems}
-              {...{ on: { fetch: this.rest } }}
+              onFetch={this.rest}
             ></FilterBar>
           </template>
           <template slot="operation">
@@ -273,7 +283,6 @@ export default defineComponent({
             ) : (
               <el-button
                 type="primary"
-                size="mini"
                 onClick={() => {
                   this.handleSourceDrawer()
                 }}
@@ -288,35 +297,40 @@ export default defineComponent({
             prop="name"
             show-overflow-tooltip
             width="350px"
-            scopedSlots={{
-              default: this.renderNode
-            }}
+          >
+            {this.renderNode}
+          </el-table-column>
+          <el-table-column
+            label={i18n.t('public_type')}
+            prop="type"
           ></el-table-column>
-          <el-table-column label={i18n.t('public_type')} prop="type"></el-table-column>
-          <el-table-column label={i18n.t('public_description')} prop="desc"></el-table-column>
+          <el-table-column
+            label={i18n.t('public_description')}
+            prop="desc"
+          ></el-table-column>
         </TablePage>
         <Drawer
           class="object-drawer-wrap overflow-hidden"
           width="850px"
           visible={this.data.isShowDetails}
-          on={{ ['update:visible']: this.closeDrawer }}
+          onUpdate:visible={this.closeDrawer}
         >
-          <DrawerContent ref={'drawerContent'}></DrawerContent>
+          <DrawerContent ref="drawerContentRef"></DrawerContent>
         </Drawer>
         <el-drawer
           class="object-drawer-wrap"
           size="58%"
           title={i18n.t('datadiscovery_catalogue_ziyuanbangding')}
-          visible={this.data.isShowSourceDrawer}
-          on={{ ['update:visible']: this.closeSourceDrawer }}
+          modelValue={this.data.isShowSourceDrawer}
+          onUpdate:modelValue={this.closeSourceDrawer}
         >
           <ObjectTable
-            ref={'objectTable'}
+            ref="objectTableRef"
             parentNode={this.data.currentNode}
-            {...{ on: { fetch: this.closeSourceDrawer } }}
+            onFetch={this.closeSourceDrawer}
           ></ObjectTable>
         </el-drawer>
       </section>
     )
-  }
+  },
 })

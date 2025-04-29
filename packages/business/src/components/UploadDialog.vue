@@ -1,39 +1,41 @@
 <template>
   <ElDialog
     width="680px"
-    custom-class="import-upload-dialog"
+    class="import-upload-dialog"
     :title="title"
     :close-on-click-modal="false"
-    :visible.sync="dialogVisible"
+    v-model="dialogVisible"
     :before-close="handleClose"
   >
     <ElForm
       ref="form"
       :rules="rules"
       :model="importForm"
-      class="applications-form mt-n4"
+      class="applications-form"
       label-position="top"
       label-width="100px"
     >
       <ElAlert
         v-if="isRelmig"
-        class="bg-color-primary-light-9 my-2 text-primary"
+        class="bg-color-primary-light-9 mb-2 text-primary"
         type="info"
         show-icon
         :closable="false"
       >
-        <span slot="title" class="inline-block lh-sm align-middle">
-          {{ $t('packages_business_relmig_import_desc') }}
-        </span>
+        <template v-slot:title>
+          <span class="inline-block lh-sm align-middle">
+            {{ $t('packages_business_relmig_import_desc') }}
+          </span>
+        </template>
       </ElAlert>
 
       <ElFormItem v-if="!isRelmig" prop="upsert" :label="$t('packages_business_modules_dialog_condition')">
-        <el-radio v-model="importForm.upsert" :label="1">{{
-          $t('packages_business_modules_dialog_overwrite_data')
-        }}</el-radio>
-        <el-radio v-model="importForm.upsert" :label="0">{{
-          $t('packages_business_modules_dialog_skip_data')
-        }}</el-radio>
+        <el-radio v-model="importForm.upsert" :label="1"
+          >{{ $t('packages_business_modules_dialog_overwrite_data') }}
+        </el-radio>
+        <el-radio v-model="importForm.upsert" :label="0"
+          >{{ $t('packages_business_modules_dialog_skip_data') }}
+        </el-radio>
       </ElFormItem>
       <ElFormItem prop="fileList" :label="$t('packages_business_modules_dialog_file')">
         <ElUpload
@@ -49,10 +51,12 @@
           :on-remove="handleRemove"
           :data="uploadData"
         >
-          <ElButton class="align-top" type="primary" slot="trigger" size="mini">
-            <VIcon class="mr-1">upload</VIcon>
-            {{ uploadText }}</ElButton
-          >
+          <template v-slot:trigger>
+            <ElButton class="align-top" type="primary">
+              <VIcon class="mr-1">upload</VIcon>
+              {{ uploadText }}
+            </ElButton>
+          </template>
         </ElUpload>
       </ElFormItem>
       <template v-if="isRelmig && importForm.fileList.length">
@@ -71,9 +75,9 @@
             lazy
           />
           <div>
-            <ElLink @click="goCreateConnection" type="primary">{{
-              $t('packages_business__relmig_import_connection_tip')
-            }}</ElLink>
+            <ElLink @click="goCreateConnection" type="primary"
+              >{{ $t('packages_business__relmig_import_connection_tip') }}
+            </ElLink>
           </div>
         </ElFormItem>
         <ElFormItem
@@ -91,9 +95,9 @@
             lazy
           />
           <div>
-            <ElLink @click="goCreateConnection" type="primary">{{
-              $t('packages_business__relmig_import_connection_tip')
-            }}</ElLink>
+            <ElLink @click="goCreateConnection" type="primary"
+              >{{ $t('packages_business__relmig_import_connection_tip') }}
+            </ElLink>
           </div>
         </ElFormItem>
       </template>
@@ -108,45 +112,49 @@
         </ElSelect>
       </ElFormItem>
     </ElForm>
-    <span slot="footer" class="dialog-footer">
-      <ElButton @click="handleClose" size="mini">{{ $t('public_button_cancel') }}</ElButton>
-      <ElButton :loading="uploading" type="primary" @click="submitUpload()" size="mini">{{
-        $t('public_button_confirm')
-      }}</ElButton>
-    </span>
+    <template v-slot:footer>
+      <span class="dialog-footer">
+        <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton :loading="uploading" type="primary" @click="submitUpload()">{{
+          $t('public_button_confirm')
+        }}</ElButton>
+      </span>
+    </template>
   </ElDialog>
 </template>
+
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import axios from 'axios'
 import Cookie from '@tap/shared/src/cookie'
 import { VIcon } from '@tap/component'
 import { connectionsApi, metadataDefinitionsApi } from '@tap/api'
 import { AsyncSelect } from '@tap/form'
-import { merge } from 'lodash'
+import { merge } from 'lodash-es'
 import { CONNECTION_STATUS_MAP } from '../shared'
 
 export default {
   name: 'Upload',
   components: {
     AsyncSelect,
-    VIcon
+    VIcon,
   },
   props: {
     showCondition: {
       type: Boolean,
-      default: true
+      default: true,
     },
     type: {
       required: true,
-      value: String
+      value: String,
     },
     showTag: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   data() {
-    const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+    const isDaas =  import.meta.env.VUE_APP_PLATFORM === 'DAAS'
     return {
       isDaas,
       // title: '',
@@ -160,24 +168,24 @@ export default {
         action: '',
         upsert: 1,
         source: '',
-        sink: ''
+        sink: '',
       },
       rules: {
         source: [{ required: true, message: this.$t('public_select_placeholder'), trigger: 'blur' }],
-        sink: [{ required: true, message: this.$t('public_select_placeholder'), trigger: 'blur' }]
+        sink: [{ required: true, message: this.$t('public_select_placeholder'), trigger: 'blur' }],
       },
-      uploading: false
+      uploading: false,
     }
   },
   computed: {
     title() {
       return this.$t(
-        this.isRelmig ? 'packages_business_relmig_import' : 'packages_business_modules_dialog_import_title'
+        this.isRelmig ? 'packages_business_relmig_import' : 'packages_business_modules_dialog_import_title',
       )
     },
     uploadText() {
       return this.$t(
-        this.isRelmig ? 'packages_business_relmig_upload' : 'packages_business_modules_dialog_upload_files'
+        this.isRelmig ? 'packages_business_relmig_upload' : 'packages_business_modules_dialog_upload_files',
       )
     },
     isRelmig() {
@@ -191,18 +199,18 @@ export default {
         upsert: this.importForm.upsert,
         type: this.downType,
         listtags: JSON.stringify(this.importForm.tag),
-        cover: !!this.importForm.upsert
+        cover: !!this.importForm.upsert,
       }
 
       if (this.isRelmig) {
         Object.assign(data, {
           source: this.importForm.source,
-          sink: this.importForm.sink
+          sink: this.importForm.sink,
         })
       }
 
       return data
-    }
+    },
   },
   created() {
     if (this.type === 'api') {
@@ -239,7 +247,7 @@ export default {
       const map = {
         api: `api/MetadataInstances/upload${accessToken}`,
         Javascript_functions: `api/Javascript_functions/batch/import${accessToken}`,
-        Modules: `api/Modules/batch/import${accessToken}`
+        Modules: `api/Modules/batch/import${accessToken}`,
       }
 
       let apiBaseURL = axios.defaults.baseURL.replace(/^\.?\//, '')
@@ -251,13 +259,13 @@ export default {
     // 获取分类
     getClassify() {
       let filter = {
-        where: { or: [{ item_type: this.type }] }
+        where: { or: [{ item_type: this.type }] },
       }
       metadataDefinitionsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           this.classifyList = data?.items || []
         })
     },
@@ -266,10 +274,10 @@ export default {
       this.uploading = false
       if (response.code !== 'ok') {
         this.$message.error(response.message || this.$t('packages_business_message_upload_fail'))
-        this.importForm.fileList.forEach(file => (file.status = 'ready'))
+        this.importForm.fileList.forEach((file) => (file.status = 'ready'))
       } else {
         this.$message.success(this.$t('packages_business_message_upload_success'))
-        this.$emit('success')
+        $emit(this, 'success')
         this.importForm.fileList = []
         this.$refs.upload.clearFiles()
         this.dialogVisible = false
@@ -287,7 +295,7 @@ export default {
         return
       }
 
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate((valid) => {
         if (!valid) return
         this.$refs.upload.submit()
         this.uploading = true
@@ -317,8 +325,8 @@ export default {
         const _filter = {
           where: {
             createType: {
-              $ne: 'System'
-            }
+              $ne: 'System',
+            },
           },
           fields: {
             name: 1,
@@ -331,9 +339,9 @@ export default {
             accessNodeProcessIdList: 1,
             pdkType: 1,
             pdkHash: 1,
-            capabilities: 1
+            capabilities: 1,
           },
-          order: ['status DESC', 'name ASC']
+          order: ['status DESC', 'name ASC'],
         }
         // 过滤连接类型
         if (isSource && isTarget) {
@@ -341,19 +349,19 @@ export default {
         } else if (isSource) {
           _filter.where.connection_type = {
             like: 'source',
-            options: 'i'
+            options: 'i',
           }
         } else if (isTarget) {
           _filter.where.connection_type = {
             like: 'target',
-            options: 'i'
+            options: 'i',
           }
         }
         let result = await connectionsApi.get({
-          filter: JSON.stringify(merge(filter, _filter))
+          filter: JSON.stringify(merge(filter, _filter)),
         })
 
-        result.items = result.items.map(item => {
+        result.items = result.items.map((item) => {
           return {
             id: item.id,
             name: item.name,
@@ -361,7 +369,7 @@ export default {
             value: item.id,
             databaseType: item.database_type,
             connectionType: item.connection_type,
-            accessNodeProcessId: item.accessNodeProcessId
+            accessNodeProcessId: item.accessNodeProcessId,
           }
         })
 
@@ -382,9 +390,9 @@ export default {
         isTarget: true,
         where: {
           database_type: {
-            in: ['MongoDB', 'MongoDB Atlas']
-          }
-        }
+            in: ['MongoDB', 'MongoDB Atlas'],
+          },
+        },
       })
       return this.loadDatabases(filter)
     },
@@ -393,47 +401,57 @@ export default {
       this.$router.push({
         name: 'connections',
         query: {
-          create: true
-        }
+          create: true,
+        },
       })
-    }
-  }
+    },
+  },
+  emits: ['success'],
 }
 </script>
+
 <style lang="scss">
 .import-upload-dialog {
   .el-upload-list {
     .el-upload-list__item {
       line-height: 28px;
-      background-color: map-get($bgColor, disable);
+      background-color: map.get($bgColor, disable);
+
       &:hover {
-        background-color: map-get($bgColor, disable);
+        background-color: map.get($bgColor, disable);
       }
+
       &.is-success {
         .el-icon-close {
           display: none;
         }
       }
     }
+
     .el-upload-list__item-name {
       margin-right: 28px;
       background-color: unset;
     }
+
     .el-upload-list__item-name {
       &:hover {
-        color: map-get($color, primary);
+        color: map.get($color, primary);
       }
+
       i {
-        color: map-get($color, primary);
+        color: map.get($color, primary);
       }
     }
+
     .el-icon-upload-success {
       vertical-align: middle;
     }
+
     .el-icon-close {
       top: 7px;
+
       &:hover {
-        color: map-get($color, primary);
+        color: map.get($color, primary);
       }
     }
   }

@@ -8,9 +8,9 @@ export default class LineageAPI extends Http {
     return this.axios.get(`${this.url}/table/findByTable`, {
       params: {
         connectionId,
-        table
+        table,
       },
-      ...config
+      ...config,
     })
   }
 }

@@ -5,12 +5,16 @@
         <ElInput
           class="search-input mt-2"
           v-model="keyword"
-          prefix-icon="el-icon-search"
           :placeholder="$t('packages_business_task_info_log_placeholder')"
-          size="mini"
           @input="searchFnc(800)"
-        ></ElInput>
-        <ElCheckboxGroup v-model="checkList" :min="1" size="mini" class="inline-flex ml-4" @change="searchFnc">
+        >
+          <template #prefix>
+            <ElIcon>
+              <ElIconSearch />
+            </ElIcon>
+          </template>
+        </ElInput>
+        <ElCheckboxGroup v-model="checkList" :min="1" class="inline-flex ml-4" @change="searchFnc">
           <ElCheckbox label="INFO">INFO</ElCheckbox>
           <ElCheckbox label="WARN">WARN</ElCheckbox>
           <ElCheckbox label="ERROR">ERROR</ElCheckbox>
@@ -21,7 +25,9 @@
     </div>
     <div ref="logs" class="log-container flex-fit py-6 overflow-auto" @scroll="loadOld">
       <div v-show="!noMore && loading" class="pb-4 text-center fs-5">
-        <i class="el-icon-loading"></i>
+        <el-icon>
+          <el-icon-loading />
+        </el-icon>
       </div>
       <div v-show="noMore" class="font-color-light text-center pb-4">
         {{ $t('packages_business_task_info_no_more') }}
@@ -33,7 +39,9 @@
           <div class="log-message pl-10" v-html="log.message"></div>
         </li>
       </ul>
-      <div v-else-if="keyword" class="text-center">{{ $t('packages_business_logs_detailed_sousuowushuju') }}</div>
+      <div v-else-if="keyword" class="text-center">
+        {{ $t('packages_business_logs_detailed_sousuowushuju') }}
+      </div>
       <div v-else class="text-center">{{ $t('public_data_no_data') }}</div>
     </div>
   </div>
@@ -41,13 +49,14 @@
 
 <script>
 import dayjs from 'dayjs'
-import { escapeRegExp } from 'lodash'
+import { escapeRegExp } from 'lodash-es'
 import { logsApi } from '@tap/api'
 import { delayTrigger } from '@tap/shared'
 
 export default {
+  components: {},
   props: {
-    id: String
+    id: String,
   },
   data() {
     return {
@@ -56,7 +65,7 @@ export default {
       keyword: '',
       logs: [],
       isScrollBottom: true,
-      checkList: ['INFO', 'WARN', 'ERROR', 'FATAL']
+      checkList: ['INFO', 'WARN', 'ERROR', 'FATAL'],
     }
   },
   created() {
@@ -65,13 +74,13 @@ export default {
       filter: {
         where: { 'contextMap.dataFlowId': { eq: this.id } },
         order: 'id DESC',
-        limit: 20
-      }
+        limit: 20,
+      },
     }
     this.$ws.on('logs', this.updateLogs)
     this.$ws.send(msg)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.$ws.off('logs', this.updateLogs)
   },
   methods: {
@@ -89,7 +98,7 @@ export default {
       let list = data || []
       list = data
         .reverse()
-        .filter(it => this.checkList.includes(it.level))
+        .filter((it) => this.checkList.includes(it.level))
         .map(this.formatLog)
       this.logs.push(...list)
       this.scrollToBottom()
@@ -110,17 +119,17 @@ export default {
       let filter = {
         where: {
           'contextMap.dataFlowId': {
-            eq: this.id
-          }
+            eq: this.id,
+          },
         },
         order: `id DESC`,
-        limit: 35
+        limit: 35,
       }
       const { keyword, checkList } = this
       const len = checkList.length
       if (len > 0) {
         filter.where.level = {
-          $in: checkList
+          $in: checkList,
         }
       }
       if (keyword) {
@@ -129,14 +138,14 @@ export default {
       }
       if (!isSearch && this.logs.length) {
         filter.where.id = {
-          lt: this.logs[0].id
+          lt: this.logs[0].id,
         }
       }
       logsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           let list = data?.items || []
           if (isSearch) {
             this.noMore = false
@@ -167,9 +176,9 @@ export default {
       let colorMap = {
         ERROR: 'color-danger',
         WARN: 'color-warning',
-        INFO: 'font-color-dark'
+        INFO: 'font-color-dark',
       }
-      let markKeyword = text => {
+      let markKeyword = (text) => {
         let keyword = this.keyword
         if (keyword) {
           let re = new RegExp(keyword, 'ig')
@@ -184,15 +193,15 @@ export default {
         threadName: markKeyword(log.threadName),
         loggerName: markKeyword(log.loggerName),
         message: markKeyword(log.message),
-        id: log.id
+        id: log.id,
       }
     },
     searchFnc(debounce) {
       delayTrigger(() => {
         this.getLogs(true)
       }, debounce)
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -201,23 +210,29 @@ export default {
   display: flex;
   //max-height: 450px;
   font-size: 14px;
+
   .search-input {
     width: 343px;
   }
+
   .log-container {
     background: rgba(229, 236, 255, 0.22);
     box-sizing: border-box;
   }
+
   .log-item {
     word-break: break-word;
   }
+
   .log-message {
     box-sizing: border-box;
   }
+
   .log-keyword-block {
-    background: map-get($color, warning);
+    background: map.get($color, warning);
   }
 }
+
 .filter-row {
   .el-checkbox {
     margin-right: 16px;

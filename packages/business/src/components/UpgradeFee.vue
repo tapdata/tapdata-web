@@ -1,25 +1,68 @@
+<script>
+import pricingCardImg from '@tap/assets/images/pricing-card-glow.png'
+import { VIcon } from '@tap/component'
+import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
+export default {
+  name: 'UpgradeFeeDialog',
+  components: { VIcon },
+  props: ['visible', 'tooltip', 'goPage'],
+  emits: ['update:visible'],
+  data() {
+    return {
+      pricingCardImg,
+    }
+  },
+  methods: {
+    goPaidUpgrade() {
+      if (this.goPage) {
+        this.handleClose()
+        this.goPage()
+        return
+      }
+      this.$router.push({
+        name: 'createAgent',
+      })
+      this.handleClose()
+    },
+    handleClose() {
+      $emit(this, 'update:visible', false)
+    },
+  },
+}
+</script>
+
 <template>
   <el-dialog
     :title="$t('dfs_subscribe_to_professional_plan')"
-    :visible.sync="visible"
+    :model-value="visible"
     :append-to-body="true"
     width="880px"
-    custom-class="paid-upgrade-dialog"
+    class="paid-upgrade-dialog"
     :before-close="handleClose"
+    @input="$emit('update:visible', $event)"
   >
-    <div v-if="tooltip" class="py-2 px-4 bg-warning-light flex align-items-center">
+    <div
+      v-if="tooltip"
+      class="py-2 px-4 bg-warning-light flex align-items-center"
+    >
       <VIcon size="20" class="color-warning">info</VIcon>
       <span class="ml-2 color-warning">{{ tooltip }}</span>
     </div>
     <ul class="flex paid-upgrade-ul mt-6 mx-4">
       <li class="paid-upgrade-left flex flex-column disabled">
         <div class="px-4 py-4 flex-1">
-          <div class="version mb-2">{{ $t('packages_component_src_upgradefee_jichuban') }}</div>
-          <div class="desc mt-6">{{ $t('packages_component_src_upgradefee_tigongmianfeishi') }}</div>
-          <div class="paid-upgrade-l-height flex align-items-center">
-            <span class="free">{{ $t('packages_component_src_upgradefee_mianfei') }}</span>
+          <div class="version mb-2">
+            {{ $t('packages_component_src_upgradefee_jichuban') }}
           </div>
-          <ElDivider></ElDivider>
+          <div class="desc mt-6">
+            {{ $t('packages_component_src_upgradefee_tigongmianfeishi') }}
+          </div>
+          <div class="paid-upgrade-l-height flex align-items-center">
+            <span class="free">{{
+              $t('packages_component_src_upgradefee_mianfei')
+            }}</span>
+          </div>
+          <ElDivider />
           <div class="currentList paid-upgrade-mb16 flex">
             <VIcon size="16" class="mr-2 color-primary">check</VIcon
             ><span>{{ $t('packages_component_src_basic_component') }}</span>
@@ -27,14 +70,20 @@
           <div class="currentList paid-upgrade-mb16 mt-2 flex">
             <VIcon size="16" class="mr-2 color-primary">check</VIcon
             >{{ $t('packages_component_src_upgradefee_zuidarenwushu') }}
-            <span class="color-primary">&nbsp{{ $t('packages_component_src_upgradefee_ge') }}</span>
+            <span class="color-primary"
+              >&nbsp{{ $t('packages_component_src_upgradefee_ge') }}</span
+            >
           </div>
           <div class="currentList paid-upgrade-mb16 flex">
             <VIcon size="16" class="mr-2 color-primary">check</VIcon
-            ><span>{{ $t('packages_component_src_upgradefee_biaozhunshouhouzhi') }}</span>
+            ><span>{{
+              $t('packages_component_src_upgradefee_biaozhunshouhouzhi')
+            }}</span>
           </div>
         </div>
-        <div class="footer flex justify-content-between align-items-center px-4">
+        <div
+          class="footer flex justify-content-between align-items-center px-4"
+        >
           {{ $t('packages_component_src_upgradefee_dangqianbanben') }}
         </div>
       </li>
@@ -51,7 +100,7 @@
           decoding="async"
           aria-hidden="true"
           style="z-index：0"
-          :src="require('@tap/assets/images/pricing-card-glow.png')"
+          :src="pricingCardImg"
         />
         <div class="copilot-pricing-card-glow-border1">
           <div class="px-4 pb-4 flex-1 bg-white paid-upgrade-right-border">
@@ -63,38 +112,52 @@
                     $t('packages_component_src_upgradefee_xianshiyouhui')
                   }}</span>
                 </div>
-                <div class="desc_professional mt-6">{{ $t('packages_component_src_upgradefee_tigongzhuanyehua') }}</div>
+                <div class="desc_professional mt-6">
+                  {{ $t('packages_component_src_upgradefee_tigongzhuanyehua') }}
+                </div>
                 <div
                   class="paid-upgrade-height flex align-items-center"
-                  :class="[{ 'paid-upgrade-cn-height': this.$i18n.locale === 'zh-CN' }]"
+                  :class="[
+                    { 'paid-upgrade-cn-height': $i18n.locale === 'zh-CN' },
+                  ]"
                 >
-                  <span class="pay">{{ $t('packages_component_src_upgradefee_taocanfufei') }}</span>
+                  <span class="pay">{{
+                    $t('packages_component_src_upgradefee_taocanfufei')
+                  }}</span>
                 </div>
-                <ElDivider></ElDivider>
+                <ElDivider />
               </div>
             </div>
             <div class="currentList paid-upgrade-mb16 mt-2 flex">
-              <VIcon size="16" class="mr-2 color-primary mt-0 flex left-bold">right</VIcon
+              <VIcon size="16" class="mr-2 color-primary mt-0 flex left-bold"
+                >right</VIcon
               ><span>{{ $t('packages_component_src_upgradefee_desc_1') }}</span>
             </div>
             <div class="currentList paid-upgrade-mb16 mt-2 flex">
               <VIcon size="16" class="mr-2 color-primary">check</VIcon
-              ><span>{{ $t('packages_component_src_upgradefee_renwushukegen') }}</span>
+              ><span>{{
+                $t('packages_component_src_upgradefee_renwushukegen')
+              }}</span>
             </div>
             <div class="currentList paid-upgrade-mb16 flex">
               <VIcon size="16" class="mr-2 color-primary">check</VIcon
-              ><span>{{ $t('packages_component_src_upgradefee_shujuchulixing') }}</span>
+              ><span>{{
+                $t('packages_component_src_upgradefee_shujuchulixing')
+              }}</span>
             </div>
             <div class="currentList paid-upgrade-mb16 flex">
               <VIcon size="16" class="mr-2 color-primary">check</VIcon
-              ><span>{{ $t('packages_component_src_upgradefee_gaojishouhouzhi') }}</span>
+              ><span>{{
+                $t('packages_component_src_upgradefee_gaojishouhouzhi')
+              }}</span>
             </div>
           </div>
           <div
             class="footer-right flex justify-content-between align-items-center px-4 cursor-pointer"
             @click="goPaidUpgrade"
           >
-            {{ $t('dfs_subscribe_to_professional_plan') }}<VIcon size="20">right</VIcon>
+            {{ $t('dfs_subscribe_to_professional_plan')
+            }}<VIcon size="20">right</VIcon>
           </div>
         </div>
       </li>
@@ -102,45 +165,19 @@
   </el-dialog>
 </template>
 
-<script>
-import { VIcon } from '@tap/component'
-export default {
-  name: 'UpgradeFeeDialog',
-  components: { VIcon },
-
-  props: ['visible', 'tooltip', 'goPage'],
-  methods: {
-    goPaidUpgrade() {
-      if (this.goPage) {
-        this.handleClose()
-        this.goPage()
-        return
-      }
-      this.$router.push({
-        name: 'createAgent'
-      })
-      this.handleClose()
-    },
-    handleClose() {
-      this.$emit('update:visible', false)
-    }
-  }
-}
-</script>
-
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .paid-upgrade-dialog {
   .paid-upgrade-desc {
     font-weight: 400;
     font-size: 14px;
-    color: map-get($fontColor, light);
+    color: map.get($fontColor, light);
   }
   .paid-upgrade-ul li {
     width: 420px;
     border-radius: 8px;
   }
   .paid-upgrade-left {
-    border: 1px solid map-get($borderColor, sslight);
+    border: 1px solid map.get($borderColor, sslight);
     &.disabled {
       cursor: not-allowed;
     }
@@ -158,8 +195,8 @@ export default {
     font-weight: 400;
     font-size: 10px;
     line-height: 14px;
-    color: map-get($color, lprimary);
-    border: 1px solid map-get($color, disprimary);
+    color: map.get($color, lprimary);
+    border: 1px solid map.get($color, disprimary);
     border-radius: 2px;
     padding: 2px;
   }
@@ -168,10 +205,10 @@ export default {
     font-size: 16px;
     //line-height: 21px;
     max-width: 252px;
-    color: map-get($fontColor, dark);
+    color: map.get($fontColor, dark);
   }
   .link {
-    border-bottom: 1px solid map-get($borderColor, light);
+    border-bottom: 1px solid map.get($borderColor, light);
   }
   .free {
     font-weight: 400;
@@ -190,7 +227,7 @@ export default {
     font-size: 14px;
     line-height: 17px;
     max-width: 300px;
-    color: map-get($color, light);
+    color: map.get($color, light);
   }
   .desc_professional {
     font-weight: 400;
@@ -230,7 +267,7 @@ export default {
     font-weight: 500;
     font-size: 14px;
     line-height: 20px;
-    color: map-get($color, normal);
+    color: map.get($color, normal);
   }
   .paid-upgrade-mb16 {
     margin-bottom: 16px;
@@ -252,7 +289,7 @@ export default {
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
-    color: map-get($color, dark);
+    color: map.get($color, dark);
   }
   .footer {
     height: 40px;
@@ -262,8 +299,8 @@ export default {
   }
   .footer-right {
     height: 40px;
-    background: map-get($color, primary);
-    color: map-get($color, white);
+    background: map.get($color, primary);
+    color: map.get($color, white);
     border-bottom-right-radius: 8px;
     border-bottom-left-radius: 8px;
     &:hover {
@@ -278,13 +315,11 @@ export default {
   transform: scale(1.28);
   transition-duration: 0.3s;
 }
-
 .copilot-pricing-card-container .copilot-pricing-card-bg-glow {
   opacity: 1;
   transform: scale(1);
   transition-duration: 0.5s;
 }
-
 .copilot-pricing-card-bg-glow {
   opacity: 0.4;
   transform: scale(1.2);
@@ -314,9 +349,8 @@ export default {
   background: -webkit-linear-gradient(135deg, #a3e4d7, #a77bf3);
   background: linear-gradient(135deg, #a3e4d7, #a77bf3);
 }
-::v-deep {
-  .el-dialog__body {
-    padding: 0 20px 30px 20px;
-  }
+
+:deep(.el-dialog__body) {
+  padding: 0 20px 30px 20px;
 }
 </style>

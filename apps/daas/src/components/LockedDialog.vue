@@ -1,5 +1,5 @@
 <template>
-  <ElDialog :visible="visible" width="640px" @close="handleClose" custom-class="pro-dialog">
+  <ElDialog :model-value="visible" width="640px" @close="handleClose" custom-class="pro-dialog">
     <template #title>
       <div class="fs-6 fw-sub font-color-dark flex align-center">
         <VIcon class="mr-2" size="24">lock-circle</VIcon>
@@ -77,7 +77,7 @@
 export default {
   name: 'LockedDialog',
   props: {
-    visible: Boolean
+    visible: Boolean,
   },
   methods: {
     handleClose() {
@@ -90,8 +90,8 @@ export default {
     goCloud() {
       this.handleClose()
       window.open('https://cloud.tapdata.io')
-    }
-  }
+    },
+  },
 }
 </script>
 

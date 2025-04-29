@@ -255,7 +255,7 @@ export default {
   public_task_type: '任務類型',
   public_task_sync_type: '同步類型',
   public_task_type_migrate: '數據複製',
-  public_task_type_sync: '數據開發',
+  public_task_type_sync: '數據轉換',
   public_task_type_heartbeat: '心跳任務',
   public_task_type_log_collector: '共享挖掘',
   public_task_type_initial_sync: '全量',
@@ -290,7 +290,7 @@ export default {
   public_event_insert: '插入',
   public_event_update: '更新',
   public_event_ddl: 'DDL',
-
+  public_event_cdc_placeholder: '暫無增量數據',
   //里程碑
   public_milestone_time_cdc_consuming: '啟動耗時',
   public_milestone_time_consuming: '耗時',
@@ -371,11 +371,12 @@ export default {
   public_store_type: '存儲類型',
   public_from_db_type: '來源數據庫類型',
   public_sample_size: '抽樣數據量',
-  public_document: '文档',
-  public_array: '数组',
-  public_load_more: '加载更多',
-  public_loading: '拼命加载中',
+  public_document: '文檔',
+  public_array: '數組',
+  public_load_more: '加載更多',
+  public_loading: '拼命加載中',
   public_load_end: '到底了',
   public_data_validation: '数据校验',
-  public_validation_record: '校验记录'
+  public_validation_record: '校验记录',
+  public_foreign_key_tip: '外鍵 {name} 指向 {val}'
 }

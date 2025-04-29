@@ -1,52 +1,25 @@
-<template>
-  <ElDialog
-    append-to-body
-    custom-class="t-dialog"
-    :visible.sync="visible"
-    @update:visible="handleVisible"
-    width="600"
-    :close-on-click-modal="false"
-  >
-    <span slot="title" class="fs-6 fw-sub font-color-dark">
-      {{ $t('packages_business_chuangjianfuwu') }}
-    </span>
-
-    <ApiForm
-      tag="div"
-      ref="apiForm"
-      class="pb-0"
-      @update:loading="loading = $event"
-      :params="params"
-      :host="host"
-      in-dialog
-      @save="onSaved"
-    ></ApiForm>
-
-    <div slot="footer">
-      <el-button @click="handleVisible(false)">{{ $t('public_button_cancel') }}</el-button>
-      <el-button type="primary" @click="handleSave()" :loading="loading">{{ $t('public_button_save') }}</el-button>
-    </div>
-  </ElDialog>
-</template>
-
 <script>
-import i18n from '@tap/i18n'
 import { modulesApi } from '@tap/api'
-import { generateId } from '@tap/shared'
 import ApiForm from '@tap/business/src/views/data-server/Drawer.vue'
+import i18n from '@tap/i18n'
+
+import { generateId } from '@tap/shared'
+import axios from 'axios'
+import { cloneDeep } from 'lodash-es'
+import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 
 export default {
   name: 'CreateRestApi',
+  components: { ApiForm },
   props: {
     host: String,
     value: Boolean,
-    params: Object
+    params: Object,
   },
-  components: { ApiForm },
   data() {
     return {
       loading: false,
-      visible: this.value
+      visible: this.value,
     }
   },
   watch: {
@@ -55,11 +28,12 @@ export default {
       if (v) {
         this.open()
       }
-    }
+    },
   },
   methods: {
     open() {
-      const basePath = Math.floor(Math.random() * 26 + 10).toString(36) + generateId(10) // 首位要求小写字母
+      const basePath =
+        Math.floor(Math.random() * 26 + 10).toString(36) + generateId(10) // 首位要求小写字母
       const formData = {
         status: 'pending',
         basePath,
@@ -70,7 +44,7 @@ export default {
         tableName: this.params.tableName,
         pathAccessMethod: this.data?.pathAccessMethod || 'default',
         appValue: this.params.to?.id || '',
-        appLabel: this.params.to?.value || ''
+        appLabel: this.params.to?.value || '',
       }
       this.$nextTick(() => {
         this.$refs.apiForm.open(formData)
@@ -81,7 +55,7 @@ export default {
       this.$refs.apiForm.save()
     },
     handleVisible(v) {
-      this.$emit('input', v)
+      this.$emit('update:value', v)
     },
     async onSaved(data) {
       data.status = 'pending'
@@ -92,10 +66,48 @@ export default {
       this.loading = false
       this.handleVisible(false)
       this.$emit('save', data, this.params.to)
-    }
-  }
+    },
+  },
 }
 </script>
+
+<template>
+  <ElDialog
+    v-model="visible"
+    custom-class="t-dialog"
+    width="600"
+    :close-on-click-modal="false"
+    @update:model-value="handleVisible"
+  >
+    <template #title>
+      <span class="fs-6 fw-sub font-color-dark">
+        {{ $t('packages_business_chuangjianfuwu') }}
+      </span>
+    </template>
+
+    <ApiForm
+      ref="apiForm"
+      tag="div"
+      class="pb-0"
+      :params="params"
+      :host="host"
+      in-dialog
+      @update:loading="loading = $event"
+      @save="onSaved"
+    />
+
+    <template #footer>
+      <div>
+        <el-button @click="handleVisible(false)">{{
+          $t('public_button_cancel')
+        }}</el-button>
+        <el-button type="primary" @click="handleSave()">{{
+          $t('public_button_save')
+        }}</el-button>
+      </div>
+    </template>
+  </ElDialog>
+</template>
 
 <style lang="scss">
 .t-dialog.el-dialog {

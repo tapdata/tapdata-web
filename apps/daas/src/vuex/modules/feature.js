@@ -11,19 +11,19 @@ const MENU_FEATURE_MAP = {
   roleList: 'roleManage',
   users: 'userManage',
   externalStorage: 'externalStorage',
-  webhookAlerts: 'webhookAlerts'
+  webhookAlerts: 'webhookAlerts',
 }
 
 const TYPE2NAME = {
-  LITE: 'TapData Live Integration',
-  OP: 'TapData Live Data Platform',
-  SERVICE: 'TapData Live Service'
+  LITE: 'Live Integration',
+  OP: 'Live Data Platform',
+  SERVICE: 'Live Service',
 }
 
 const getState = function () {
   return {
     licenseType: '',
-    features: []
+    features: [],
   }
 }
 
@@ -32,13 +32,13 @@ const state = getState()
 
 // getters
 const getters = {
-  licenseType: state => {
+  licenseType: (state) => {
     return state.licenseType
   },
-  features: state => {
+  features: (state) => {
     return state.features
   },
-  featureMap: state => {
+  featureMap: (state) => {
     return state.features.reduce((acc, feature) => {
       acc[feature.type] = acc[feature.type] || []
       acc[feature.type].push(feature.code)
@@ -49,16 +49,18 @@ const getters = {
     return getters.featureMap.CONNECTOR || []
   },
   hasMenu: (state, getters) => {
-    return code => {
+    return (code) => {
       return getters.featureMap.MENU?.includes(code)
     }
   },
   hasFeature: (state, getters) => {
-    return code => {
-      return !getters.isControlEnabled || getters.featureMap.FEATURE?.includes(code)
+    return (code) => {
+      return (
+        !getters.isControlEnabled || getters.featureMap.FEATURE?.includes(code)
+      )
     }
   },
-  isMenuEnabled: (state, getters) => menuName => {
+  isMenuEnabled: (state, getters) => (menuName) => {
     if (!getters.isControlEnabled) {
       return true
     }
@@ -70,12 +72,12 @@ const getters = {
 
     return getters.hasMenu(menuCode)
   },
-  isControlEnabled: state => {
+  isControlEnabled: (state) => {
     return state.licenseType === 'LITE' || state.licenseType === 'SERVICE'
   },
-  versionName: state => {
+  versionName: (state) => {
     return TYPE2NAME[state.licenseType]
-  }
+  },
 }
 
 // actions
@@ -83,18 +85,18 @@ const actions = {
   async getFeatures({ commit }) {
     if (
       window.getSettingByKey('checkLicense') === 'false' ||
-      process.env.NODE_ENV === 'development' ||
-      process.env.VUE_APP_MODE === 'community'
+      import.meta.env.DEV ||
+      import.meta.env.VUE_APP_MODE === 'community'
     ) {
       commit('setFeatures', {
         licenseType: 'OP',
-        features: []
+        features: [],
       })
       return
     }
     const data = await licensesApi.getFeatures()
     commit('setFeatures', data)
-  }
+  },
 }
 
 // mutations
@@ -102,7 +104,7 @@ const mutations = {
   setFeatures(state, data) {
     state.licenseType = data.licenseType
     state.features = data.features
-  }
+  },
 }
 
 export default {
@@ -111,5 +113,5 @@ export default {
   state,
   getters,
   actions,
-  mutations
+  mutations,
 }

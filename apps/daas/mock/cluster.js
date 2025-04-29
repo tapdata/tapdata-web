@@ -7,8 +7,8 @@ module.exports = {
       {
         processId: '@id',
         hostName: '@name',
-        ip: '10.233.68.13'
-      }
-    ]
-  }
+        ip: '10.233.68.13',
+      },
+    ],
+  },
 }

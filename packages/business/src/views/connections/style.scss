@@ -14,7 +14,7 @@
       stroke-dasharray: 90, 150;
       stroke-dashoffset: 0;
       stroke-width: 2;
-      stroke: map-get($color, primary);
+      stroke: map.get($color, primary);
       stroke-linecap: round;
     }
   }
@@ -39,10 +39,10 @@
     form {
       height: 100%;
     }
-    .formily-element-form-item,
-    .formily-element-form-item-control,
-    .formily-element-form-item-control-content,
-    .formily-element-form-item-control-content-component {
+    .formily-element-plus-form-item,
+    .formily-element-plus-form-item-control,
+    .formily-element-plus-form-item-control-content,
+    .formily-element-plus-form-item-control-content-component {
       height: 100%;
     }
     .form-js-editor-wrap {

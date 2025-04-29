@@ -1,23 +1,6 @@
-<template>
-  <div>
-    <ElSelect
-      multiple
-      filterable
-      allow-create
-      default-first-option
-      v-bind="$attrs"
-      class="fields-selector--input"
-      v-model="selected.fields"
-      @change="handleChange"
-    >
-      <ElOption v-for="opt in options" :key="opt.value" :label="opt.label" :value="opt.value"></ElOption>
-    </ElSelect>
-  </div>
-</template>
-
 <script>
-import { cloneDeep, isEmpty } from 'lodash'
 import { metadataInstancesApi } from '@tap/api'
+import { cloneDeep, isEmpty } from 'lodash-es'
 
 export default {
   name: 'AsyncSelect',
@@ -27,7 +10,7 @@ export default {
     nodeId: String,
     tableName: String,
     defaultFields: Array,
-    refresh: String
+    refresh: String,
   },
 
   data() {
@@ -35,9 +18,9 @@ export default {
       result: {},
       selected: {
         table: '',
-        fields: []
+        fields: [],
       },
-      options: []
+      options: [],
     }
   },
 
@@ -48,7 +31,7 @@ export default {
     },
     refresh() {
       this.init()
-    }
+    },
   },
 
   mounted() {
@@ -71,32 +54,55 @@ export default {
     async loadOptions() {
       const data = await metadataInstancesApi.nodeSchema(this.nodeId)
       this.options = data[0].fields
-        .map(item => ({
+        .map((item) => ({
           label: item.field_name,
           value: item.field_name,
           isPrimaryKey: item.primary_key_position > 0,
           indicesUnique: !!item.indicesUnique,
-          type: item.data_type
+          type: item.data_type,
         }))
-        .filter(item => !item.is_deleted)
+        .filter((item) => !item.is_deleted)
     },
 
     handleChange() {
       if (this.$attrs.disabled) return
       this.result[this.selected.table] = cloneDeep(this.selected.fields)
-      let result = cloneDeep(this.result)
+      const result = cloneDeep(this.result)
       if (isEmpty(result)) {
         result[this.tableName] = cloneDeep(this.defaultFields)
       }
 
-      this.$emit('input', result).$emit('change', result)
+      this.$emit('update:value', result)
+      this.$emit('change', result)
     },
 
     clear() {
       this.selected.table = ''
       this.selected.fields = []
       this.result = {}
-    }
-  }
+    },
+  },
 }
 </script>
+
+<template>
+  <div>
+    <ElSelect
+      v-bind="$attrs"
+      v-model="selected.fields"
+      multiple
+      filterable
+      allow-create
+      default-first-option
+      class="fields-selector--input"
+      @change="handleChange"
+    >
+      <ElOption
+        v-for="opt in options"
+        :key="opt.value"
+        :label="opt.label"
+        :value="opt.value"
+      />
+    </ElSelect>
+  </div>
+</template>

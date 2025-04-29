@@ -1,29 +1,27 @@
-<template>
-  <div
-    :style="{
-      height: height ? px(height) : '100%',
-      width: width ? px(width) : '100%',
-      padding: '12px 0',
-      overflow: 'hidden',
-      background: '#282c34'
-    }"
-  >
-    <div
-      :style="{
-        height: '100%',
-        width: '100%'
-      }"
-    ></div>
-  </div>
-</template>
-
 <script>
 import ace from 'ace-builds'
-import 'ace-builds/webpack-resolver'
-import 'ace-builds/src-noconflict/ext-language_tools'
+import workerJavascriptUrl from 'ace-builds/src-noconflict/worker-javascript?url'
+import workerJsonUrl from 'ace-builds/src-noconflict/worker-json?url'
+
 import 'ace-builds/src-noconflict/ext-searchbox'
+import 'ace-builds/src-noconflict/mode-javascript'
+import 'ace-builds/src-noconflict/mode-json'
+import 'ace-builds/src-noconflict/mode-python'
+import 'ace-builds/src-noconflict/mode-sql'
+import 'ace-builds/src-noconflict/snippets/javascript'
+import 'ace-builds/src-noconflict/snippets/json'
+import 'ace-builds/src-noconflict/snippets/python'
+import 'ace-builds/src-noconflict/snippets/sql'
+import 'ace-builds/src-noconflict/ext-language_tools'
 import 'ace-builds/src-noconflict/theme-one_dark'
+import 'ace-builds/src-noconflict/theme-chrome'
+import 'ace-builds/src-noconflict/theme-sqlserver'
 import 'ace-builds/src-noconflict/ext-beautify'
+
+const WORKER = {
+  javascript: workerJavascriptUrl,
+  json: workerJsonUrl,
+}
 
 const ACTION_EVENTS = ['change', 'blur', 'focus', 'copy', 'paste', 'input']
 
@@ -31,29 +29,22 @@ export default {
   name: 'VCodeEditor',
   props: {
     value: {
-      required: true
+      required: true,
     },
     lang: String,
     theme: {
       type: String,
-      default: 'one_dark'
+      default: 'one_dark',
     },
     height: [String, Number],
     width: [String, Number],
-    options: Object
+    options: Object,
   },
+  emits: ['init', 'initOptions', 'update:value', ...ACTION_EVENTS],
   data() {
     return {
       editor: null,
-      contentBackup: ''
-    }
-  },
-  methods: {
-    px(n) {
-      if (/^\d*$/.test(n)) {
-        return n + 'px'
-      }
-      return n
+      contentBackup: '',
     }
   },
   watch: {
@@ -62,24 +53,35 @@ export default {
         val = JSON.stringify(val)
       }
       if (this.contentBackup !== val) this.editor.setValue(val, 1)
-    }
+    },
   },
   mounted() {
-    let lang = this.lang || 'text'
-    let theme = this.theme
-    let editor = (this.editor = ace.edit(this.$el.firstElementChild))
-    let tools = ace.require('ace/ext/language_tools')
-    var beautify = ace.require('ace/ext/beautify') // get reference to extension
-    ace.require('ace/ext/searchbox')
+    const lang = this.lang || 'text'
+    const theme = this.theme
+    const editor = (this.editor = ace.edit(this.$el.firstElementChild))
+
+    // ace.config.setModuleUrl('ace/ext/searchbox', extSearchboxUrl)
+    // ace.config.setModuleUrl(`ace/mode/${lang}`, MAP[lang]?.[0])
+    // ace.config.setModuleUrl(`ace/snippets/${lang}`, MAP[lang]?.[1])
+    WORKER[lang] &&
+      ace.config.setModuleUrl(`ace/mode/${lang}_worker`, WORKER[lang])
+
+    const reqHandler = ace.require
+    const tools = reqHandler('ace/ext/language_tools')
+    const beautify = reqHandler('ace/ext/beautify') // get reference to extension
+
     this.$emit('init', editor, tools, beautify)
 
     editor.$blockScrolling = Infinity
-    let session = editor.getSession()
+    const session = editor.getSession()
     theme && editor.setTheme(`ace/theme/${theme}`)
     session.setMode(`ace/mode/${lang}`)
     session.setTabSize(2)
 
-    let val = typeof this.value === 'object' ? JSON.stringify(this.value, null, 2) : this.value
+    const val =
+      typeof this.value === 'object'
+        ? JSON.stringify(this.value, null, 2)
+        : this.value
     editor.setValue(val || '', 1)
 
     if (this.options) {
@@ -89,16 +91,43 @@ export default {
     }
 
     editor.on('change', () => {
-      let content = editor.getValue()
-      this.$emit('input', content)
+      const content = editor.getValue()
+      this.$emit('update:value', content)
       this.contentBackup = content
     })
 
-    ACTION_EVENTS.forEach(ev => {
+    ACTION_EVENTS.forEach((ev) => {
       editor.on(ev, (event, editor) => {
         this.$emit(ev, editor.getValue(), event, editor)
       })
     })
-  }
+  },
+  methods: {
+    px(n) {
+      if (/^\d*$/.test(n)) {
+        return `${n}px`
+      }
+      return n
+    },
+  },
 }
 </script>
+
+<template>
+  <div
+    :style="{
+      height: height ? px(height) : '100%',
+      width: width ? px(width) : '100%',
+      padding: '12px 0',
+      overflow: 'hidden',
+      background: '#282c34',
+    }"
+  >
+    <div
+      :style="{
+        height: '100%',
+        width: '100%',
+      }"
+    />
+  </div>
+</template>

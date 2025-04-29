@@ -1,3 +1,90 @@
+<script>
+import { OverflowTooltip } from '@tap/component'
+import i18n from '@tap/i18n'
+import { RecycleScroller } from 'vue-virtual-scroller'
+import { mapGetters } from 'vuex'
+import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+import { NodeIcon } from '../DatabaseIcon'
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+
+export default {
+  name: 'List',
+
+  components: { NodeIcon, OverflowTooltip, RecycleScroller },
+
+  props: {
+    value: {
+      type: String,
+    },
+    label: {
+      type: String,
+      default: () => {
+        return i18n.t('public_select_option_all')
+      },
+    },
+    showType: {
+      type: Boolean,
+      default: false,
+    },
+    customClass: {
+      type: Function,
+      default: () => {},
+    },
+  },
+  data() {
+    return {
+      activeNodeId: this.value,
+      typeMap: {
+        source: i18n.t('packages_business_nodes_list_laiyuan'),
+        target: i18n.t('public_connection_type_target'),
+        processor: i18n.t('public_node_processor'),
+      },
+    }
+  },
+  watch: {
+    value(v) {
+      this.activeNodeId = v
+    },
+  },
+  computed: {
+    ...mapGetters('dataflow', ['allNodes']),
+
+    items() {
+      return this.allNodes
+        .filter((node) => {
+          return !node.disabled && !node.attrs.disabled
+        })
+        .map((t) => {
+          const { type, $inputs, $outputs } = t
+          const isSource =
+            (type === 'database' || type === 'table') && !$inputs.length
+          const isTarget =
+            (type === 'database' || type === 'table') && !$outputs.length
+          t.nodeType = isSource ? 'source' : isTarget ? 'target' : 'processor'
+          t.index = isSource ? 1 : isTarget ? 3 : 2
+          return t
+        })
+        .sort((a, b) => a.index - b.index)
+    },
+  },
+  methods: {
+    changeItem(itemId = '') {
+      if (this.activeNodeId === itemId) {
+        return
+      }
+      this.activeNodeId = itemId
+      this.$emit('update:value', this.activeNodeId)
+      this.$emit(
+        'change',
+        this.activeNodeId,
+        this.items.find((t) => t.id === this.activeNodeId),
+      )
+    },
+  },
+  emits: ['change', 'update:value'],
+}
+</script>
+
 <template>
   <div class="p-2 overflow-y-auto">
     <div
@@ -7,7 +94,13 @@
     >
       <VIcon size="16" class="mr-2">device</VIcon>{{ label }}
     </div>
-    <RecycleScroller key-field="id" :items="items" :item-size="36" class="scroller" :buffer="72">
+    <RecycleScroller
+      key-field="id"
+      :items="items"
+      :item-size="36"
+      class="scroller"
+      :buffer="72"
+    >
       <template #default="{ item: node, index, active }">
         <div class="pb-1">
           <div
@@ -16,9 +109,15 @@
             @click="changeItem(node.id)"
           >
             <NodeIcon :node="node" :size="18" class="mr-2 flex-shrink-0" />
-            <OverflowTooltip :text="node.name" placement="left" :enterable="false"></OverflowTooltip>
-            <ElTag v-if="showType" class="ml-2" effect="plain" size="mini">{{ typeMap[node.nodeType] }}</ElTag>
-            <slot name="right"></slot>
+            <OverflowTooltip
+              :text="node.name"
+              placement="left"
+              :enterable="false"
+            />
+            <ElTag v-if="showType" class="ml-2" effect="plain">{{
+              typeMap[node.nodeType]
+            }}</ElTag>
+            <slot name="right" />
           </div>
         </div>
       </template>
@@ -26,98 +125,11 @@
   </div>
 </template>
 
-<script>
-import { mapGetters } from 'vuex'
-import { RecycleScroller } from 'vue-virtual-scroller'
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import i18n from '@tap/i18n'
-import NodeIcon from '@tap/dag/src/components/NodeIcon'
-import { OverflowTooltip } from '@tap/component'
-
-export default {
-  name: 'List',
-
-  components: { NodeIcon, OverflowTooltip, RecycleScroller },
-
-  props: {
-    value: {
-      type: String
-    },
-    label: {
-      type: String,
-      default: () => {
-        return i18n.t('public_select_option_all')
-      }
-    },
-    showType: {
-      type: Boolean,
-      default: false
-    },
-    customClass: {
-      type: Function,
-      default: () => {}
-    }
-  },
-
-  data() {
-    return {
-      activeNodeId: this.value,
-      typeMap: {
-        source: i18n.t('packages_business_nodes_list_laiyuan'),
-        target: i18n.t('public_connection_type_target'),
-        processor: i18n.t('public_node_processor')
-      }
-    }
-  },
-
-  watch: {
-    value(v) {
-      this.activeNodeId = v
-    }
-  },
-
-  computed: {
-    ...mapGetters('dataflow', ['allNodes']),
-
-    items() {
-      return this.allNodes
-        .filter(node => {
-          return !node.disabled && !node.attrs.disabled
-        })
-        .map(t => {
-          const { type, $inputs, $outputs } = t
-          const isSource = (type === 'database' || type === 'table') && !$inputs.length
-          const isTarget = (type === 'database' || type === 'table') && !$outputs.length
-          t.nodeType = isSource ? 'source' : isTarget ? 'target' : 'processor'
-          t.index = isSource ? 1 : isTarget ? 3 : 2
-          return t
-        })
-        .sort((a, b) => a.index - b.index)
-    }
-  },
-
-  methods: {
-    changeItem(itemId = '') {
-      if (this.activeNodeId === itemId) {
-        return
-      }
-      this.activeNodeId = itemId
-      this.$emit('input', this.activeNodeId).$emit(
-        'change',
-        this.activeNodeId,
-        this.items.find(t => t.id === this.activeNodeId)
-      )
-    }
-  }
-}
-</script>
-
 <style lang="scss" scoped>
 .node-list-item {
   line-height: 32px;
   border-radius: 6px;
   cursor: pointer;
-
   &:hover {
     background-color: #f2f3f5;
   }

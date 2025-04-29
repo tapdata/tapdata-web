@@ -155,8 +155,10 @@ export default {
   public_message_401: 'Login expired, Please login again',
   public_message_404: 'The requested resource does not exist',
   public_message_5xx: 'Server Exception',
-  public_message_network_unconnected: 'An abnormal network connection has been detected',
-  public_message_network_connected: 'The network has been successfully restored to its normal operating state',
+  public_message_network_unconnected:
+    'An abnormal network connection has been detected',
+  public_message_network_connected:
+    'The network has been successfully restored to its normal operating state',
   public_message_request_timeout: 'Request Timeout',
   public_message_send_success: 'Send Successfully',
   public_message_download_ok: 'Download Successfully',
@@ -228,7 +230,8 @@ export default {
   public_connection_type_source_and_target: 'Source&Target',
   public_connection_information: 'Address',
   public_connection_schema_status: 'Schema',
-  public_connection_schema_status_tip: 'The connection can only be created normally once the Schema has been loaded.',
+  public_connection_schema_status_tip:
+    'The connection can only be created normally once the Schema has been loaded.',
   public_connection_table_structure_update_time: 'Schema Load Time',
   public_connection_button_create: 'Create Connection',
   public_connection_button_copy: 'Copy Connection',
@@ -242,7 +245,8 @@ export default {
   public_connection_form_account: 'Account',
   public_connection_form_password: 'Password',
   public_connection_form_schema: 'Schema',
-  public_connection_form_other_connection_string: 'Other connection string parameters',
+  public_connection_form_other_connection_string:
+    'Other connection string parameters',
   public_connection_form_time_zone_of_time_type: 'Time zone of time type',
   public_connection_form_link_plugin_source: 'Link Plugin Source',
   public_source_database: 'Source Database',
@@ -255,7 +259,7 @@ export default {
   public_task_type: 'Task Type',
   public_task_sync_type: 'Sync Type',
   public_task_type_migrate: 'Data Replication',
-  public_task_type_sync: 'Data Development',
+  public_task_type_sync: 'Data Transformation',
   public_task_type_heartbeat: 'Heartbeat Task',
   public_task_type_log_collector: 'Shared Mining',
   public_task_type_initial_sync: 'Full Sync',
@@ -291,11 +295,12 @@ export default {
   public_event_insert: 'Insert',
   public_event_update: 'Update',
   public_event_ddl: 'DDL',
-
+  public_event_cdc_placeholder: 'No incremental data',
   //milestone
   public_milestone_time_cdc_consuming: 'start time-consuming',
   public_milestone_time_consuming: 'time-consuming',
-  public_milestone_time_table_structure: 'A total of migration {val} table structure',
+  public_milestone_time_table_structure:
+    'A total of migration {val} table structure',
   public_milestone_time_scheduling: 'Task is scheduled to {val}',
   public_milestone_connection_succeeded: 'Connection succeeded',
   // 外存
@@ -357,10 +362,12 @@ export default {
   public_configuration_task: 'Configuration Task',
   public_need_help: 'Need Help?',
   public_test_and_continue: 'Test Connection and Continue',
-  menu_tour_instance: 'Here you can subscribe to the semi-managed engine deployed locally',
+  menu_tour_instance:
+    'Here you can subscribe to the semi-managed engine deployed locally',
   menu_tour_instance_link: 'Learn More About Semi-Managed Engines',
   menu_tour_connection: 'Manage and Add Your Data Sources/Targets Here',
-  menu_tour_create_task: 'Click Here to Try Creating Advanced Replication and Synchronization Tasks',
+  menu_tour_create_task:
+    'Click Here to Try Creating Advanced Replication and Synchronization Tasks',
   public_task_count: '{val} tasks',
   public_retrying: 'Retrying',
   public_next_retry_time: 'next retry scheduled for',
@@ -371,7 +378,8 @@ export default {
   public_file_name: 'File Name',
   public_file_size: 'File Size',
   public_log_download: 'Log Download',
-  public_alert_401_tip: 'Your session has expired or logged in on another device. Please log in again to continue.',
+  public_alert_401_tip:
+    'Your session has expired or logged in on another device. Please log in again to continue.',
   public_alert_401: 'Session Expired Reminder',
   public_document: 'Document',
   public_array: 'Array',
@@ -382,5 +390,6 @@ export default {
   public_from_db_type: 'From DB Type',
   public_sample_size: 'Sample Size',
   public_data_validation: 'Data Validation',
-  public_validation_record: 'Validation Record'
+  public_validation_record: 'Validation Record',
+  public_foreign_key_tip: 'Foreign key {name} to {val}',
 }

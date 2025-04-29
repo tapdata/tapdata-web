@@ -1,6 +1,6 @@
 import { isArr, isObj, isStr } from './types'
 
-export const toArr = val => (isArr(val) ? val : val ? [val] : [])
+export const toArr = (val) => (isArr(val) ? val : val ? [val] : [])
 
 export function each(val, iterator, revert) {
   if (isArr(val) || isStr(val)) {
@@ -41,7 +41,7 @@ export function map(val, iterator, revert) {
         res[key] = value
       }
     },
-    revert
+    revert,
   )
   return res
 }
@@ -53,7 +53,7 @@ export function reduce(val, iterator, accumulator, revert) {
     (item, key) => {
       result = iterator(result, item, key)
     },
-    revert
+    revert,
   )
   return result
 }
@@ -68,7 +68,7 @@ export function every(val, iterator, revert) {
         return false
       }
     },
-    revert
+    revert,
   )
   return res
 }
@@ -83,7 +83,7 @@ export function some(val, iterator, revert) {
         return false
       }
     },
-    revert
+    revert,
   )
   return res
 }
@@ -98,7 +98,7 @@ export function findIndex(val, iterator, revert) {
         return false
       }
     },
-    revert
+    revert,
   )
   return res
 }
@@ -113,25 +113,25 @@ export function find(val, iterator, revert) {
         return false
       }
     },
-    revert
+    revert,
   )
   return res
 }
 
 export function includes(val, searchElement, revert) {
   if (isStr(val)) return val.includes(searchElement)
-  return some(val, item => item === searchElement, revert)
+  return some(val, (item) => item === searchElement, revert)
 }
 
 export function includesWith(val, search) {
   if (isArr(val)) {
-    return val.some(item => search(item))
+    return val.some((item) => search(item))
   } else {
     return false
   }
 }
 
-export const flat = array => {
+export const flat = (array) => {
   return toArr(array).reduce((buf, item) => {
     if (isArr(item)) return buf.concat(flat(item))
     return buf.concat(item)

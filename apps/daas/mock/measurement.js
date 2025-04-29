@@ -5,10 +5,10 @@ module.exports = {
       outputTotal: '@integer(0, 1000)',
       insertedTotal: '@integer(0, 1000)',
       updatedTotal: '@integer(0, 1000)',
-      deletedTotal: '@integer(0, 1000)'
+      deletedTotal: '@integer(0, 1000)',
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/measurement/query/v2': {
     code: 'ok',
@@ -38,8 +38,8 @@ module.exports = {
             snapshotDoneAt: 1657707577896,
             snapshotRowTotal: '@integer(0, 10000)',
             snapshotInsertRowTotal: '@integer(0, 10000)',
-            outputQps: '@integer(0, 10000)'
-          }
+            outputQps: '@integer(0, 10000)',
+          },
         ],
         barChartData: [
           {
@@ -52,15 +52,15 @@ module.exports = {
             outputUpdateTotal: '@integer(0, 10000)',
             outputDeleteTotal: '@integer(0, 10000)',
             outputDdlTotal: '@integer(0, 10000)',
-            outputOthersTotal: '@integer(0, 10000)'
-          }
+            outputOthersTotal: '@integer(0, 10000)',
+          },
         ],
         lineChartData: [
           {
             'inputQps|120': ['@integer(0, 10000)'],
             'outputQps|120': ['@integer(0, 10000)'],
-            'timeCostAvg|120': ['@integer(0, 10000)']
-          }
+            'timeCostAvg|120': ['@integer(0, 10000)'],
+          },
         ],
         dagData: [
           {
@@ -90,8 +90,8 @@ module.exports = {
               type: 'node',
               nodeId: '3a619752-50c5-4128-ac10-75a6fa14c672',
               subTaskId: '62e38b65290b4b01b05cec8b',
-              taskId: '62e38b26290b4b01b05ce5cf'
-            }
+              taskId: '62e38b26290b4b01b05ce5cf',
+            },
           },
           {
             insertTotal: '@integer(0, 10000)',
@@ -113,8 +113,8 @@ module.exports = {
               type: 'node',
               nodeId: '96f22ecc-6eb4-4f08-bc2a-2eab35ee9989',
               subTaskId: '62e38b65290b4b01b05cec8b',
-              taskId: '62e38b26290b4b01b05ce5cf'
-            }
+              taskId: '62e38b26290b4b01b05ce5cf',
+            },
           },
           {
             insertTotal: '@integer(0, 10000)',
@@ -136,12 +136,12 @@ module.exports = {
               type: 'node',
               nodeId: '439e6178-9f39-498b-8a4d-5c5d4f5b014c',
               subTaskId: '62e38b65290b4b01b05cec8b',
-              taskId: '62e38b26290b4b01b05ce5cf'
-            }
-          }
-        ]
-      }
-    }
+              taskId: '62e38b26290b4b01b05ce5cf',
+            },
+          },
+        ],
+      },
+    },
   },
   '/api/measurement/batch': {
     reqId: 'b98b57c4-a37c-4a2a-b9f3-ed1de4b328d6',
@@ -175,8 +175,8 @@ module.exports = {
                 snapshotDoneAt: 1657707577896,
                 snapshotRowTotal: '@integer(0, 10000)',
                 snapshotInsertRowTotal: '@integer(0, 10000)',
-                outputQps: '@integer(0, 10000)'
-              }
+                outputQps: '@integer(0, 10000)',
+              },
             ],
             barChartData: [
               {
@@ -189,15 +189,15 @@ module.exports = {
                 outputUpdateTotal: '@integer(0, 10000)',
                 outputDeleteTotal: '@integer(0, 10000)',
                 outputDdlTotal: '@integer(0, 10000)',
-                outputOthersTotal: '@integer(0, 10000)'
-              }
+                outputOthersTotal: '@integer(0, 10000)',
+              },
             ],
             lineChartData: [
               {
                 'inputQps|120': ['@integer(0, 10000)'],
                 'outputQps|120': ['@integer(0, 10000)'],
-                'timeCostAvg|120': ['@integer(0, 10000)']
-              }
+                'timeCostAvg|120': ['@integer(0, 10000)'],
+              },
             ],
             dagData: [
               {
@@ -227,8 +227,8 @@ module.exports = {
                   type: 'node',
                   nodeId: '3a619752-50c5-4128-ac10-75a6fa14c672',
                   subTaskId: '62e38b65290b4b01b05cec8b',
-                  taskId: '62e38b26290b4b01b05ce5cf'
-                }
+                  taskId: '62e38b26290b4b01b05ce5cf',
+                },
               },
               {
                 insertTotal: '@integer(0, 10000)',
@@ -250,8 +250,8 @@ module.exports = {
                   type: 'node',
                   nodeId: '96f22ecc-6eb4-4f08-bc2a-2eab35ee9989',
                   subTaskId: '62e38b65290b4b01b05cec8b',
-                  taskId: '62e38b26290b4b01b05ce5cf'
-                }
+                  taskId: '62e38b26290b4b01b05ce5cf',
+                },
               },
               {
                 insertTotal: '@integer(0, 10000)',
@@ -273,12 +273,12 @@ module.exports = {
                   type: 'node',
                   nodeId: '439e6178-9f39-498b-8a4d-5c5d4f5b014c',
                   subTaskId: '62e38b65290b4b01b05cec8b',
-                  taskId: '62e38b26290b4b01b05ce5cf'
-                }
-              }
-            ]
-          }
-        }
+                  taskId: '62e38b26290b4b01b05ce5cf',
+                },
+              },
+            ],
+          },
+        },
       },
       verify: {
         reqId: '@id',
@@ -293,12 +293,12 @@ module.exports = {
               diff: '@integer(1000, 5500)',
               id: '@id',
               progress: '@integer(0, 100)',
-              connectionName: '@name'
-            }
-          ]
-        }
-      }
-    }
+              connectionName: '@name',
+            },
+          ],
+        },
+      },
+    },
   },
   '/api/measurement/query': {
     data: {
@@ -307,19 +307,19 @@ module.exports = {
           'inputQps|20': ['@integer(0, 100)'],
           'outputQps|20': ['@integer(0, 100)'],
           'transmitionTime|20': ['@integer(100, 1000)'],
-          'time|20': ['@time(yyyy-MM-dd HH:mm:ss)']
+          'time|20': ['@time(yyyy-MM-dd HH:mm:ss)'],
         },
         {
           replicateLag: ['@integer(0, 10)'],
-          time: ['@time(yyyy-MM-dd HH:mm:ss)']
+          time: ['@time(yyyy-MM-dd HH:mm:ss)'],
         },
         {
           'outputEvents|2': ['@integer(0, 1000)'], // 总输出
           'inputEvents|2': ['@integer(0, 1000)'], // 总输入
           'insertCount|2': ['@integer(0, 1000)'], // 总插入
           'updateCount|2': ['@integer(0, 1000)'], // 总更新
-          'deleteCount|2': ['@integer(0, 1000)'] // 总删除
-        }
+          'deleteCount|2': ['@integer(0, 1000)'], // 总删除
+        },
       ],
       statistics: [
         {
@@ -331,11 +331,11 @@ module.exports = {
           inputEvents: '@integer(0, 1000)', // 总输入
           insertCount: '@integer(0, 1000)', // 总插入
           updateCount: '@integer(0, 1000)', // 总更新
-          deleteCount: '@integer(0, 1000)' // 总删除
-        }
-      ]
+          deleteCount: '@integer(0, 1000)', // 总删除
+        },
+      ],
     },
     code: 'ok',
-    msg: 'ok'
-  }
+    msg: 'ok',
+  },
 }

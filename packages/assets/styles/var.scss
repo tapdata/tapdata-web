@@ -1,3 +1,5 @@
+@use "sass:map";
+
 // 变量
 // 会在每个style元素以及scss文件中注入，因此不允许写具体选择器样式
 $borderRadiusBtn: 4px;
@@ -12,14 +14,13 @@ $fontSubtitle: 16px;
 $fontBaseTitle: 14px;
 
 $color: (
-  // primary: #337dff,
   primary: #3b47e5,
   dprimary: #0e42d2,
   lprimary: #4080ff,
   disprimary: #94bfff,
-  success: #00B42A,
-  lsuccess: #E8FFEA,
-  danger: #f53f3f,
+  success: #00b42a,
+  lsuccess: #e8ffea,
+  danger: #f54a45,
   warning: #ff7d00,
   info: #75849b,
   linfo: #e9edf2,
@@ -27,7 +28,7 @@ $color: (
   white: #fff,
   tag: #008eff,
   secondary: #ff7d00,
-  submenu: #f1f2f4
+  submenu: #f1f2f4,
 ) !default;
 
 $fontColor: (
@@ -36,7 +37,7 @@ $fontColor: (
   light: #535f72,
   slight: #c9cdd4,
   sslight: #86909c,
-  white: #fff
+  white: #fff,
 );
 
 $bgColor: (
@@ -52,7 +53,7 @@ $bgColor: (
   white: #fff,
   pageCount: rgba(44, 101, 255, 0.08),
   disactive: rgba(106, 161, 255, 0.1),
-  tag: #009bff33
+  tag: #009bff33,
 );
 
 $borderColor: (
@@ -62,9 +63,93 @@ $borderColor: (
   light: #e4e7ed,
   form: #dcdfe6,
   aside: #e1e3e9,
-  sslight: #cdd0d6
+  sslight: #cdd0d6,
 );
 
 $iconFillColor: (
-  normal: #4e5969
+  normal: #4e5969,
+);
+
+$formNamespace: formily-element-plus;
+
+$tag-icon-span-gap: (
+  'large': 8px,
+  'default': 4px,
+  'small': 4px,
+);
+
+// 项目内用到 $namespace
+@forward 'element-plus/theme-chalk/src/mixins/config.scss' with (
+  $namespace: 'el'
+);
+
+@forward 'element-plus/theme-chalk/src/common/var.scss' with (
+  $colors: (
+    'primary': (
+      'base': map.get($color, primary),
+    ),
+    'warning': (
+      'base': map.get($color, warning),
+    ),
+    'danger': (
+      'base': map.get($color, danger),
+    )
+  ),
+  $text-color: (
+    'primary': rgba(0, 0, 0, 0.88),
+    'regular': rgba(0, 0, 0, 0.88),
+    'secondary': rgba(0, 0, 0, 0.65),
+    // 'placeholder': rgba(0, 0, 0, 0.25),
+    // 'disabled': rgba(0, 0, 0, 0.25),
+    'title': #1F2329,
+    'caption': #646A73,
+    'placeholder': #8F959E,
+    'disabled': #BBBFC4,
+  ),
+  $border-radius: (
+    'small': 6px,
+    'base': 8px,
+    'large': 12px,
+    'round': 20px,
+    'circle': 100%,
+  ),
+  $dialog: (
+    'padding-primary': 24px,
+    'border-radius': 12px,
+    //'title-font-size': var(--el-font-size-medium),
+  ),
+  $table: (
+    // 'header-bg-color': #fafafa,
+    'header-text-color': var(--el-text-color-caption),
+  ),
+  $popover: (
+    'border-radius': 12px,
+    'popover-border-radius': 12px,
+  ),
+  $popper: (
+    'border-radius': 12px,
+  ),
+  $tree: (
+    'node-content-height': 28px,
+  ),
+  $pagination: (
+    'border-radius': 6px,
+  ),
+  $messagebox: (
+    'padding-primary': 24px,
+    'border-radius': 12px,
+  ),
+  $card: (
+    'border-radius': 12px,
+  ),
+  $notification: (
+    radius: 12px,
+  ),
+  $tag: (
+    'border-radius': 6px,
+  ),
+  $collapse: (
+    'header-font-size': 14px,
+    'content-font-size': 14px,
+  ),
 );

@@ -1,5 +1,10 @@
 <template>
-  <section class="applications-wrap h-100">
+  <PageContainer>
+    <template #actions>
+      <ElButton v-readonlybtn="'API_creation'" class="btn btn-create" type="primary" @click="openCreateDialog">
+        <span>{{ $t('application_create') }}</span>
+      </ElButton>
+    </template>
     <!-- api客户端 -->
     <TablePage
       ref="table"
@@ -8,20 +13,12 @@
       :remoteMethod="getData"
       @sort-change="handleSortTable"
     >
-      <div slot="search" class="search-bar">
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
-      </div>
-      <div slot="operation">
-        <ElButton
-          v-readonlybtn="'API_creation'"
-          class="btn btn-create"
-          size="mini"
-          type="primary"
-          @click="openCreateDialog"
-        >
-          <span>{{ $t('application_create') }}</span>
-        </ElButton>
-      </div>
+      <template v-slot:search>
+        <div class="search-bar">
+          <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+        </div>
+      </template>
+
       <el-table-column :label="$t('application_header_id')" :show-overflow-tooltip="true" prop="id" width="220">
         <!-- <template slot-scope="scope"> -->
       </el-table-column>
@@ -38,7 +35,7 @@
         sortable="grantTypes"
         min-width="160"
       >
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <div class="classfy">
             <span v-for="item in scope.row.grantTypes" :key="item" class="table-span text-break">{{ item }}</span>
           </div>
@@ -60,40 +57,38 @@
       >
       </el-table-column>
       <el-table-column :label="$t('application_header_scopes')" prop="scopeNames" min-width="160" max-width="300">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <span v-for="item in scope.row.scopeNames" :key="item" class="table-span">{{ item }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('public_operation')" min-width="120" fixed="right">
-        <template slot-scope="scope">
-          <ElButton v-readonlybtn="'API_clients_amangement'" size="mini" type="text" @click="edit(scope.row)">
+        <template v-slot="scope">
+          <ElButton v-readonlybtn="'API_clients_amangement'" text type="primary" @click="edit(scope.row)">
             {{ $t('public_button_edit') }}
           </ElButton>
-          <ElButton
-            v-readonlybtn="'API_clients_amangement'"
-            v-if="scope.row.clientName !== 'Data Explorer'"
-            size="mini"
-            type="text"
-            @click="remove(scope.row)"
-            >{{ $t('public_button_delete') }}</ElButton
-          >
+          <template v-if="scope.row.clientName !== 'Data Explorer'">
+            <ElDivider class="mx-1" direction="vertical"></ElDivider>
+            <ElButton v-readonlybtn="'API_clients_amangement'" text type="primary" @click="remove(scope.row)">{{
+              $t('public_button_delete')
+            }}</ElButton>
+          </template>
         </template>
       </el-table-column>
     </TablePage>
     <!-- 创建客户端 -->
     <ElDialog
       width="600px"
-      custom-class="create-dialog"
+      class="create-dialog"
       :title="$t('application_create')"
       :close-on-click-modal="false"
-      :visible.sync="createDialogVisible"
+      v-model="createDialogVisible"
     >
       <ElForm ref="form" :model="createForm" class="applications-form" label-width="100px">
         <ElFormItem :label="$t('application_header_client_name')" required prop="clientName">
-          <ElInput v-model="createForm.clientName" size="mini"></ElInput>
+          <ElInput v-model="createForm.clientName"></ElInput>
         </ElFormItem>
         <ElFormItem :label="$t('application_header_grant_type')" required prop="grantTypes">
-          <ElSelect v-model="createForm.grantTypes" multiple size="mini">
+          <ElSelect v-model="createForm.grantTypes" multiple>
             <ElOption label="Implicit" value="implicit"></ElOption>
             <ElOption label="Client Credentials" value="client_credentials"></ElOption>
             <ElOption label="Refresh Token" value="refresh_token"></ElOption>
@@ -101,14 +96,14 @@
         </ElFormItem>
         <ElFormItem :label="$t('application_header_client_secret')" required prop="clientSecret">
           <ElCol :span="22">
-            <ElInput v-model="createForm.clientSecret" size="mini"></ElInput>
+            <ElInput v-model="createForm.clientSecret"></ElInput>
           </ElCol>
           <ElCol :span="2" style="text-align: right">
-            <ElButton type="text" size="mini" @click="generatorSecret">{{ $t('application_generator') }}</ElButton>
+            <ElButton text @click="generatorSecret">{{ $t('application_generator') }}</ElButton>
           </ElCol>
         </ElFormItem>
         <ElFormItem :label="$t('application_header_scopes')" required prop="scopes">
-          <ElSelect v-model="createForm.scopes" multiple size="mini">
+          <ElSelect v-model="createForm.scopes" multiple>
             <ElOption v-for="item in roles" :label="item.name" :value="item.id" :key="item.id"></ElOption>
           </ElSelect>
         </ElFormItem>
@@ -121,37 +116,42 @@
           ></ElInput>
         </ElFormItem>
         <ElFormItem :label="$t('application_show_menu')" required prop="showMenu">
-          <ElSelect v-model="createForm.showMenu" size="mini">
+          <ElSelect v-model="createForm.showMenu">
             <ElOption :label="$t('application_true')" :value="true"></ElOption>
             <ElOption :label="$t('application_false')" :value="false"></ElOption>
           </ElSelect>
         </ElFormItem>
       </ElForm>
-      <span slot="footer" class="dialog-footer">
-        <ElButton @click="createDialogVisible = false" size="small">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton type="primary" @click="createApplication()" size="small">{{ $t('public_button_confirm') }}</ElButton>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <ElButton @click="createDialogVisible = false">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton type="primary" @click="createApplication()">{{ $t('public_button_confirm') }}</ElButton>
+        </span>
+      </template>
     </ElDialog>
-  </section>
+  </PageContainer>
 </template>
 
 <script>
-import { cloneDeep, escapeRegExp } from 'lodash'
+import { h } from 'vue'
+import { cloneDeep, escapeRegExp } from 'lodash-es'
 
 import { roleApi, applicationApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
 
 export default {
   name: 'Applications',
   components: {
+    PageContainer,
     TablePage,
-    FilterBar
+    FilterBar,
   },
   data() {
     return {
       searchParams: {
-        keyword: ''
+        keyword: '',
       },
       filterItems: [],
       order: 'clientName DESC',
@@ -164,8 +164,8 @@ export default {
         scopes: [],
         redirectUris: [],
         redirectUrisStr: '',
-        showMenu: true
-      }
+        showMenu: true,
+      },
     }
   },
   created() {
@@ -175,14 +175,14 @@ export default {
   computed: {
     table() {
       return this.$refs.table
-    }
+    },
   },
   methods: {
     // 重置查询条件
     reset(name) {
       if (name === 'reset') {
         this.searchParams = {
-          keyword: ''
+          keyword: '',
         }
       }
       this.table.fetch(1)
@@ -200,7 +200,7 @@ export default {
         scopes: [],
         redirectUris: [],
         redirectUrisStr: '',
-        showMenu: true
+        showMenu: true,
       }
     },
     // 编辑
@@ -213,11 +213,10 @@ export default {
     },
     // 移除
     remove(item) {
-      const h = this.$createElement
       let message = h('p', [this.$t('public_message_delete_confirm') + ' ' + item.name])
       this.$confirm(message, this.$t('public_message_title_prompt'), {
-        type: 'warning'
-      }).then(resFlag => {
+        type: 'warning',
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -240,7 +239,7 @@ export default {
       params.redirectUris = params.redirectUrisStr?.split(',') || []
       delete params['redirectUrisStr']
 
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate((valid) => {
         if (valid) {
           applicationApi[method](params).then(() => {
             this.table.fetch()
@@ -275,20 +274,20 @@ export default {
         order: this.order,
         limit: size,
         skip: (current - 1) * size,
-        where
+        where,
       }
       return applicationApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           return {
             total: data?.total || 0,
             data:
-              data?.items.map(item => {
+              data?.items.map((item) => {
                 item.redirectUrisStr = item.redirectUris ? item.redirectUris.join(',') : ''
                 return item
-              }) || []
+              }) || [],
           }
         })
     },
@@ -296,9 +295,9 @@ export default {
     getRoles() {
       let filter = {
         limit: 500,
-        skip: 0
+        skip: 0,
       }
-      roleApi.get({ filter: JSON.stringify(filter) }).then(data => {
+      roleApi.get({ filter: JSON.stringify(filter) }).then((data) => {
         this.roles = data?.items || []
       })
     },
@@ -313,13 +312,14 @@ export default {
         {
           placeholder: this.$t('modules_name_placeholder'),
           key: 'keyword',
-          type: 'input'
-        }
+          type: 'input',
+        },
       ]
-    }
-  }
+    },
+  },
 }
 </script>
+
 <style lang="scss" scoped>
 .applications-wrap {
   height: 100%;
@@ -336,6 +336,7 @@ export default {
   }
 }
 </style>
+
 <style lang="scss">
 .applications-wrap {
   .table-span {

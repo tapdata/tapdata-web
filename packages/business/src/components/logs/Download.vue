@@ -1,7 +1,7 @@
 <template>
   <ElDialog
-    :visible="visible"
-    @update:visible="updateVisible"
+    :model-value="visible"
+    @update:model-value="updateVisible"
     width="60%"
     append-to-body
     :title="$t('public_log_download')"
@@ -14,6 +14,7 @@
       ref="tableName"
       :has-pagination="false"
       :max-height="520"
+      :default-sort="{ prop: 'lastModified', order: 'descending' }"
     >
       <el-table-column :label="$t('public_file_name')" prop="filename" />
       <el-table-column :label="$t('public_file_size')" width="120">
@@ -21,11 +22,11 @@
           <span>{{ calcUnit(row.size, 'b') }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('public_update_time')" prop="lastModified" width="170" />
-      <el-table-column :label="$t('public_create_time')" prop="creationTime" width="170" />
+      <el-table-column :label="$t('public_update_time')" prop="lastModified" width="170" sortable />
+      <el-table-column :label="$t('public_create_time')" prop="creationTime" width="170" sortable />
       <el-table-column :label="$t('public_operation')" width="100">
         <template #default="{ row }">
-          <ElButton size="mini" type="text" :disabled="[0, 2, 3].includes(row.status)" @click="handleDownload(row)">{{
+          <ElButton text type="primary" :disabled="[0, 2, 3].includes(row.status)" @click="handleDownload(row)">{{
             $t('public_button_download')
           }}</ElButton>
         </template>
@@ -39,7 +40,7 @@ import i18n from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
 import { proxyApi } from '@tap/api'
 import Cookie from '@tap/shared/src/cookie'
-import { dayjs } from '@tap/business'
+import { dayjs } from '../../shared'
 import axios from 'axios'
 
 export default {
@@ -56,7 +57,7 @@ export default {
   },
   data() {
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas:  import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       loading: false,
       downloadList: [],
       downloadListCol: [
@@ -82,13 +83,17 @@ export default {
       this.$emit('update:visible', val)
     },
     handleDownload(row) {
-      let url = `${axios.defaults.baseURL}api/proxy/download?filename=${row.filename}&agentId=${this.dataflow.agentId}`
+      let url =
+        `${axios.defaults.baseURL}/api/proxy/download?filename=${row.filename}&agentId=${this.dataflow.agentId}`.replace(
+          '//',
+          '/'
+        )
 
       if (this.isDaas) {
         const accessToken = Cookie.get('access_token')
         url += `&access_token=${accessToken}`
-      } else if (process.env.VUE_APP_ACCESS_TOKEN) {
-        url += `&__token=${process.env.VUE_APP_ACCESS_TOKEN}`
+      } else if ( TAP_ACCESS_TOKEN) {
+        url += `&__token=${ TAP_ACCESS_TOKEN}`
       }
 
       window.open(url)

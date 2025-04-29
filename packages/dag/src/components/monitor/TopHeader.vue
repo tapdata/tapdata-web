@@ -1,14 +1,232 @@
+<script>
+import { taskApi } from '@tap/api'
+import editSvg from '@tap/assets/images/edit-fill.svg'
+import { TaskStatus } from '@tap/business'
+
+import syncTaskAgent from '@tap/business/src/mixins/syncTaskAgent'
+import { OverflowTooltip, TextEditable, VDivider, VIcon } from '@tap/component'
+
+import focusSelect from '@tap/component/src/directives/focusSelect'
+import i18n from '@tap/i18n'
+import dayjs from 'dayjs'
+import { mapGetters, mapMutations, mapState } from 'vuex'
+import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+import DataCaptureDebug from '../DataCaptureDebug.vue'
+import DataValidationDialog from '../DataValidationDialog.vue'
+
+export default {
+  name: 'TopHeader',
+  directives: { focusSelect },
+  components: {
+    DataCaptureDebug,
+    VIcon,
+    TaskStatus,
+    VDivider,
+    OverflowTooltip,
+    TextEditable,
+    DataValidationDialog,
+  },
+  mixins: [syncTaskAgent],
+  props: {
+    loading: Boolean,
+    dataflowName: String,
+    dataflow: Object,
+    scale: Number,
+    showBottomPanel: Boolean,
+    hideOperation: Boolean,
+    hideMenus: {
+      type: Array,
+      default: () => [],
+    },
+    quota: Object,
+    buttonShowMap: {
+      type: Object,
+      default: () => {
+        return {}
+      },
+    },
+  },
+  data() {
+    const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
+    return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isCommunity: process.env.VUE_APP_MODE === 'community',
+      commandCode: isMacOs ? '⌘' : 'Ctrl',
+      optionCode: isMacOs ? 'Option' : 'Alt',
+      name: '',
+      syncMap: {
+        'initial_sync+cdc': this.$t('public_task_type_initial_sync_and_cdc'),
+        initial_sync: this.$t('public_task_type_initial_sync'),
+        cdc: this.$t('public_task_type_cdc'),
+      },
+      chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
+      showSearchNodePopover: false,
+      nodeSearchInput: '',
+      editSvg,
+      syncType: {
+        initial_sync: i18n.t('public_task_type_initial_sync'),
+        cdc: i18n.t('public_task_type_cdc'),
+        'initial_sync+cdc': i18n.t('public_task_type_initial_sync_and_cdc'),
+      },
+      openDebug: false,
+      openValidation: false,
+    }
+  },
+  computed: {
+    ...mapGetters('dataflow', ['dataflowId', 'allNodes', 'activeType']),
+    ...mapState('dataflow', ['spaceKeyPressed']),
+
+    scaleTxt() {
+      return `${Math.round(this.scale * 100)}%`
+    },
+
+    startTime() {
+      const { startTime } = this.dataflow
+      return startTime ? dayjs(startTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+    },
+
+    lastStartDate() {
+      const { lastStartDate } = this.dataflow
+      return lastStartDate
+        ? dayjs(lastStartDate).format('YYYY-MM-DD HH:mm:ss')
+        : '-'
+    },
+
+    agentData() {
+      const data = this.quota?.samples?.agentData?.[0] || {}
+      const { cpuUsage, gcRate, memoryRate } = data
+      return {
+        cpuUsage:
+          typeof cpuUsage === 'number'
+            ? `${(cpuUsage * 100).toLocaleString('zh-CN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}%`
+            : '',
+        memoryRate:
+          typeof memoryRate === 'number'
+            ? `${(memoryRate * 100).toLocaleString('zh-CN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}%`
+            : '',
+        gcRate:
+          typeof gcRate === 'number'
+            ? `${(gcRate * 100).toLocaleString('zh-CN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}%`
+            : '',
+      }
+    },
+
+    hideSetting() {
+      // 心跳任务、共享缓存，不显示设置
+      return ['connHeartbeat', 'shareCache'].includes(this.dataflow.syncType)
+    },
+
+    hideEdit() {
+      // 心跳任务，不显示编辑
+      return ['connHeartbeat'].includes(this.dataflow.syncType)
+    },
+  },
+  watch: {
+    dataflowName(v) {
+      this.name = v
+    },
+  },
+  mounted() {
+    this.name = this.dataflowName
+  },
+  methods: {
+    ...mapMutations('dataflow', ['setActiveType', 'setPaperSpaceKeyPressed']),
+
+    isShowForceStop(dataflow) {
+      return ['stopping'].includes(dataflow.status)
+    },
+
+    onNameInputChange() {
+      if (!this.name) {
+        this.name = this.dataflowName
+      } else {
+        $emit(this, 'change-name', this.name)
+      }
+    },
+
+    focusNameInput() {
+      this.$refs.nameInput.focus()
+    },
+
+    back() {
+      const mapping = this.$route.query.mapping
+      const $PLATFORM = window.getSettingByKey('DFS_TCM_PLATFORM')
+      const backToList = () => {
+        if ($PLATFORM === 'dfs') {
+          top.window.App.$router.push({
+            name: 'Task',
+          })
+        } else {
+          this.$router.push({
+            name: 'dataFlows',
+            query: {
+              mapping,
+            },
+          })
+        }
+      }
+      backToList()
+    },
+
+    handleOpenDebug() {
+      if (this.dataflow.status === 'running') {
+        this.$emit('open-capture')
+        return
+      }
+
+      this.openDebug = true
+    },
+  },
+  emits: [
+    'page-return',
+    'center-content',
+    'zoom-out',
+    'zoom-in',
+    'zoom-to',
+    'showBottomPanel',
+    'showSettings',
+    'edit',
+    'reset',
+    'start',
+    'forceStop',
+    'stop',
+    'change-name',
+    'page-return',
+    'center-content',
+    'zoom-out',
+    'zoom-in',
+    'zoom-to',
+    'showBottomPanel',
+    'showSettings',
+    'edit',
+    'reset',
+    'start',
+    'forceStop',
+    'stop',
+  ],
+}
+</script>
+
 <template>
   <header class="layout-header border-bottom px-4 text-nowrap">
     <div class="left-content flex align-center overflow-hidden">
-      <button @click="$emit('page-return')" class="icon-btn mr-2">
+      <button class="icon-btn mr-2" @click="$emit('page-return')">
         <VIcon size="18">left</VIcon>
       </button>
       <div class="overflow-hidden">
         <div class="flex align-items-center">
           <TextEditable
+            v-model:value="name"
             class="overflow-hidden"
-            v-model="name"
             :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
             :input-min-width="32"
             :maxlength="200"
@@ -24,7 +242,10 @@
           </template>
         </div>
       </div>
-      <div v-if="dataflow.agentId && !hideMenus.includes('agent')" class="agent-data__item ml-4 px-4">
+      <div
+        v-if="dataflow.agentId && !hideMenus.includes('agent')"
+        class="agent-data__item ml-4 px-4"
+      >
         <OverflowTooltip
           class="agent-name__item text-truncate mb-2 font-color-dark"
           placement="bottom"
@@ -44,99 +265,159 @@
 
     <div v-if="!hideOperation" class="flex align-center">
       <!--内容居中-->
-      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_center_content') + '(Shift + 1)'">
-        <button @click="$emit('center-content')" class="icon-btn">
+      <ElTooltip
+        transition="tooltip-fade-in"
+        :content="`${$t('packages_dag_button_center_content')}(Shift + 1)`"
+      >
+        <button class="icon-btn" @click="$emit('center-content')">
           <VIcon size="20">compress</VIcon>
         </button>
       </ElTooltip>
-      <VDivider class="mx-3" vertical></VDivider>
+      <el-divider direction="vertical" />
       <!--缩小-->
-      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_zoom_out') + `(${commandCode} -)`">
-        <button @click="$emit('zoom-out')" class="icon-btn">
+      <ElTooltip
+        transition="tooltip-fade-in"
+        :content="`${$t('packages_dag_button_zoom_out')}(${commandCode} -)`"
+      >
+        <button class="icon-btn" @click="$emit('zoom-out')">
           <VIcon size="20">remove-outline</VIcon>
         </button>
       </ElTooltip>
       <div class="choose-size mx-2">
-        <ElPopover placement="bottom" trigger="hover" popper-class="rounded-xl p-0">
-          <div slot="reference" class="size-wrap">{{ scaleTxt }}</div>
+        <ElPopover
+          placement="bottom"
+          trigger="hover"
+          popper-class="rounded-xl p-0"
+          width="auto"
+        >
+          <template #reference>
+            <div class="size-wrap">{{ scaleTxt }}</div>
+          </template>
           <div class="choose-list p-2">
-            <div @click="$emit('zoom-in')" class="choose-item pl-4 flex justify-content-between align-center">
-              <span class="title">{{ $t('packages_dag_button_zoom_out') }}</span>
-              <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>+</kbd></div>
+            <div
+              class="choose-item pl-4 flex justify-content-between align-center"
+              @click="$emit('zoom-in')"
+            >
+              <span class="title">{{
+                $t('packages_dag_button_zoom_out')
+              }}</span>
+              <div class="kbd-wrap flex align-center mr-2">
+                <kbd>⌘</kbd><span class="mx-1">+</span><kbd>+</kbd>
+              </div>
             </div>
-            <div @click="$emit('zoom-out')" class="choose-item pl-4 flex justify-content-between align-center">
+            <div
+              class="choose-item pl-4 flex justify-content-between align-center"
+              @click="$emit('zoom-out')"
+            >
               <span class="title">{{ $t('packages_dag_button_zoom_in') }}</span>
-              <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>–</kbd></div>
+              <div class="kbd-wrap flex align-center mr-2">
+                <kbd>⌘</kbd><span class="mx-1">+</span><kbd>–</kbd>
+              </div>
             </div>
-            <VDivider class="my-2"></VDivider>
-            <div v-for="val in chooseItems" :key="val" class="choose-item pl-4" @click="$emit('zoom-to', val)">
+            <VDivider class="my-2" />
+            <div
+              v-for="val in chooseItems"
+              :key="val"
+              class="choose-item pl-4"
+              @click="$emit('zoom-to', val)"
+            >
               {{ val * 100 }}%
             </div>
           </div>
         </ElPopover>
       </div>
       <!--放大-->
-      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_zoom_in') + `(${commandCode} +)`">
-        <button @click="$emit('zoom-in')" class="icon-btn">
+      <ElTooltip
+        transition="tooltip-fade-in"
+        :content="`${$t('packages_dag_button_zoom_in')}(${commandCode} +)`"
+      >
+        <button class="icon-btn" @click="$emit('zoom-in')">
           <VIcon size="20">add-outline</VIcon>
         </button>
       </ElTooltip>
-      <VDivider class="mx-3" vertical></VDivider>
-      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_monitor_bottompanel_rizhi')">
-        <button :class="{ active: showBottomPanel }" class="icon-btn" @click="$emit('showBottomPanel')">
+      <el-divider direction="vertical" />
+      <ElTooltip
+        transition="tooltip-fade-in"
+        :content="$t('packages_dag_monitor_bottompanel_rizhi')"
+      >
+        <button
+          :class="{ active: showBottomPanel }"
+          class="icon-btn"
+          @click="$emit('showBottomPanel')"
+        >
           <VIcon size="16">list</VIcon>
         </button>
       </ElTooltip>
-      <VDivider class="mx-3" vertical></VDivider>
+      <el-divider direction="vertical" />
       <button
         v-if="buttonShowMap.Start"
         class="icon-btn"
-        :class="{ disabled: dataflow.disabledData && dataflow.disabledData.start && dataflow.status !== 'running' }"
+        :class="{
+          disabled:
+            dataflow.disabledData &&
+            dataflow.disabledData.start &&
+            dataflow.status !== 'running',
+        }"
         @click="handleOpenDebug"
       >
         <VIcon size="18">bug-outlined</VIcon>
       </button>
       <template v-if="isDaas && !isCommunity">
-        <VDivider class="mx-3" vertical></VDivider>
-        <ElTooltip transition="tooltip-fade-in" :content="$t('public_data_validation')">
+        <VDivider class="mx-3" vertical />
+        <ElTooltip
+          transition="tooltip-fade-in"
+          :content="$t('public_data_validation')"
+        >
           <button class="icon-btn" @click="openValidation = true">
             <VIcon size="18">data-scan</VIcon>
           </button>
         </ElTooltip>
       </template>
     </div>
-    <div class="flex-grow-1"></div>
+    <div class="flex-grow-1" />
     <div class="flex align-center ml-2">
-      <ElButton v-if="!hideSetting && !hideOperation" class="ml-3" size="medium" @click="$emit('showSettings')">
+      <ElButton
+        v-if="!hideSetting && !hideOperation"
+        class="ml-3"
+        @click="$emit('showSettings')"
+      >
         <VIcon class="mr-1">cog-o</VIcon>
         {{ $t('public_button_setting') }}
       </ElButton>
       <template v-if="!hideMenus.includes('operation')">
         <ElButton
-          v-if="dataflow.disabledData && !dataflow.disabledData.edit && !hideEdit && buttonShowMap.Edit"
+          v-if="
+            dataflow.disabledData &&
+            !dataflow.disabledData.edit &&
+            !hideEdit &&
+            buttonShowMap.Edit
+          "
           :disabled="$disabledReadonlyUserBtn()"
           class="ml-3"
-          size="medium"
           @click="$emit('edit')"
         >
           <VIcon class="mr-1">edit-outline</VIcon>
           {{ $t('public_button_edit') }}
         </ElButton>
         <ElButton
-          v-if="!(dataflow.disabledData && dataflow.disabledData.reset) && buttonShowMap.Reset"
+          v-if="
+            !(dataflow.disabledData && dataflow.disabledData.reset) &&
+            buttonShowMap.Reset
+          "
           :disabled="$disabledReadonlyUserBtn()"
           class="ml-3"
-          size="medium"
           type="warning"
           @click="$emit('reset')"
         >
           {{ $t('public_button_reset') }}
         </ElButton>
         <ElButton
-          v-if="!(dataflow.disabledData && dataflow.disabledData.start) && buttonShowMap.Start"
+          v-if="
+            !(dataflow.disabledData && dataflow.disabledData.start) &&
+            buttonShowMap.Start
+          "
           :disabled="$disabledReadonlyUserBtn()"
           class="ml-3"
-          size="medium"
           type="primary"
           @click="$emit('start')"
         >
@@ -145,10 +426,11 @@
         <template v-else>
           <ElButton
             v-if="isShowForceStop(dataflow) && buttonShowMap.Stop"
-            :disabled="(dataflow.disabledData && dataflow.disabledData.forceStop) || $disabledReadonlyUserBtn()"
-            key="forceStop"
+            :disabled="
+              (dataflow.disabledData && dataflow.disabledData.forceStop) ||
+              $disabledReadonlyUserBtn()
+            "
             class="ml-3"
-            size="medium"
             type="danger"
             @click="$emit('forceStop')"
           >
@@ -156,9 +438,10 @@
           </ElButton>
           <ElButton
             v-else-if="buttonShowMap.Stop"
-            :disabled="(dataflow.disabledData && dataflow.disabledData.stop) || $disabledReadonlyUserBtn()"
-            key="stop"
-            size="medium"
+            :disabled="
+              (dataflow.disabledData && dataflow.disabledData.stop) ||
+              $disabledReadonlyUserBtn()
+            "
             type="danger"
             class="ml-3"
             @click="$emit('stop')"
@@ -174,196 +457,17 @@
       :task-id="dataflow.id"
       @update:visible="openDebug = $event"
       @start="$emit('debug-start')"
-    ></DataCaptureDebug>
+    />
 
     <DataValidationDialog
       :task-id="dataflow.id"
       :visible="openValidation"
       @update:visible="openValidation = $event"
-    ></DataValidationDialog>
+    />
   </header>
 </template>
 
-<script>
-import i18n from '@tap/i18n'
-import { taskApi } from '@tap/api'
-
-import { mapGetters, mapMutations, mapState } from 'vuex'
-import dayjs from 'dayjs'
-
-import focusSelect from '@tap/component/src/directives/focusSelect'
-import { TextEditable, VIcon, VDivider, OverflowTooltip } from '@tap/component'
-import { TaskStatus } from '@tap/business'
-import syncTaskAgent from '@tap/business/src/mixins/syncTaskAgent'
-import DataCaptureDebug from '../DataCaptureDebug.vue'
-import DataValidationDialog from '../DataValidationDialog.vue'
-
-export default {
-  name: 'TopHeader',
-
-  directives: { focusSelect },
-
-  props: {
-    loading: Boolean,
-    dataflowName: String,
-    dataflow: Object,
-    scale: Number,
-    showBottomPanel: Boolean,
-    hideOperation: Boolean,
-    hideMenus: {
-      type: Array,
-      default: () => []
-    },
-    quota: Object,
-    buttonShowMap: {
-      type: Object,
-      default: () => {
-        return {}
-      }
-    }
-  },
-
-  mixins: [syncTaskAgent],
-
-  components: { DataCaptureDebug, VIcon, TaskStatus, VDivider, OverflowTooltip, TextEditable, DataValidationDialog },
-
-  data() {
-    const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
-    return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
-      isCommunity: process.env.VUE_APP_MODE === 'community',
-      commandCode: isMacOs ? '⌘' : 'Ctrl',
-      optionCode: isMacOs ? 'Option' : 'Alt',
-      name: '',
-      syncMap: {
-        'initial_sync+cdc': this.$t('public_task_type_initial_sync_and_cdc'),
-        initial_sync: this.$t('public_task_type_initial_sync'),
-        cdc: this.$t('public_task_type_cdc')
-      },
-      chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
-      showSearchNodePopover: false,
-      nodeSearchInput: '',
-      editSvg: require('@tap/assets/images/edit-fill.svg'),
-      syncType: {
-        initial_sync: i18n.t('public_task_type_initial_sync'),
-        cdc: i18n.t('public_task_type_cdc'),
-        'initial_sync+cdc': i18n.t('public_task_type_initial_sync_and_cdc')
-      },
-      openDebug: false,
-      openValidation: false
-    }
-  },
-
-  computed: {
-    ...mapGetters('dataflow', ['dataflowId', 'allNodes', 'activeType']),
-    ...mapState('dataflow', ['spaceKeyPressed']),
-
-    scaleTxt() {
-      return Math.round(this.scale * 100) + '%'
-    },
-
-    startTime() {
-      const { startTime } = this.dataflow
-      return startTime ? dayjs(startTime).format('YYYY-MM-DD HH:mm:ss') : '-'
-    },
-
-    lastStartDate() {
-      const { lastStartDate } = this.dataflow
-      return lastStartDate ? dayjs(lastStartDate).format('YYYY-MM-DD HH:mm:ss') : '-'
-    },
-
-    agentData() {
-      const data = this.quota?.samples?.agentData?.[0] || {}
-      const { cpuUsage, gcRate, memoryRate } = data
-      return {
-        cpuUsage:
-          typeof cpuUsage === 'number'
-            ? (cpuUsage * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
-            : '',
-        memoryRate:
-          typeof memoryRate === 'number'
-            ? (memoryRate * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
-            : '',
-        gcRate:
-          typeof gcRate === 'number'
-            ? (gcRate * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%'
-            : ''
-      }
-    },
-
-    hideSetting() {
-      // 心跳任务、共享缓存，不显示设置
-      return ['connHeartbeat', 'shareCache'].includes(this.dataflow.syncType)
-    },
-
-    hideEdit() {
-      // 心跳任务，不显示编辑
-      return ['connHeartbeat'].includes(this.dataflow.syncType)
-    }
-  },
-
-  watch: {
-    dataflowName(v) {
-      this.name = v
-    }
-  },
-
-  mounted() {
-    this.name = this.dataflowName
-  },
-
-  methods: {
-    ...mapMutations('dataflow', ['setActiveType', 'setPaperSpaceKeyPressed']),
-
-    isShowForceStop(dataflow) {
-      return ['stopping'].includes(dataflow.status)
-    },
-
-    onNameInputChange() {
-      if (!this.name) {
-        this.name = this.dataflowName
-      } else {
-        this.$emit('change-name', this.name)
-      }
-    },
-
-    focusNameInput() {
-      this.$refs.nameInput.focus()
-    },
-
-    back() {
-      let mapping = this.$route.query.mapping
-      const $PLATFORM = window.getSettingByKey('DFS_TCM_PLATFORM')
-      const backToList = () => {
-        if ($PLATFORM === 'dfs') {
-          top.window.App.$router.push({
-            name: 'Task'
-          })
-        } else {
-          this.$router.push({
-            name: 'dataFlows',
-            query: {
-              mapping: mapping
-            }
-          })
-        }
-      }
-      backToList()
-    },
-
-    handleOpenDebug() {
-      if (this.dataflow.status === 'running') {
-        this.$emit('open-capture')
-        return
-      }
-
-      this.openDebug = true
-    }
-  }
-}
-</script>
-
-<style scoped lang="scss">
+<style lang="scss" scoped>
 $sidebarW: 236px;
 $hoverBg: #eef3ff;
 $radius: 6px;
@@ -380,7 +484,6 @@ $sidebarBg: #fff;
   background-color: #fff;
   color: rgba(0, 0, 0, 0.87);
   box-sizing: border-box;
-
   .left-content {
     min-width: calc(50% - 140px);
   }
@@ -388,7 +491,7 @@ $sidebarBg: #fff;
   .nav-icon {
     width: 40px;
     height: 100%;
-    background-color: map-get($color, primary);
+    background-color: map.get($color, primary);
     cursor: pointer;
     font-size: 24px;
 
@@ -409,12 +512,14 @@ $sidebarBg: #fff;
     outline: none;
     border: 1px solid transparent;
     border-radius: $radius;
-    transition: background, color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+    transition:
+      background,
+      color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
     cursor: pointer;
 
     &.active,
     &:not(.disabled):hover {
-      color: map-get($color, primary);
+      color: map.get($color, primary);
       background: $hoverBg;
     }
 
@@ -471,7 +576,7 @@ $sidebarBg: #fff;
       cursor: pointer;
 
       &:hover {
-        color: map-get($color, primary);
+        color: map.get($color, primary);
         background: $hoverBg;
       }
     }
@@ -489,7 +594,6 @@ $sidebarBg: #fff;
     min-width: 260px;
   }
 }
-
 .agent-data__item {
   border-left: 1px solid #f2f2f2;
 }

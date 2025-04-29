@@ -1,22 +1,3 @@
-<template functional>
-  <div
-    class="v-empty-wrap"
-    :class="{
-      'empty-small': props.small,
-      'empty-large': props.large
-    }"
-  >
-    <div class="empty-image">
-      <slot name="image">
-        <ElImage :src="require('./empty.svg')"></ElImage>
-      </slot>
-    </div>
-    <slot name="default">
-      <p class="empty-desc">{{ props.description }}</p>
-    </slot>
-  </div>
-</template>
-
 <script>
 import i18n from '@tap/i18n'
 
@@ -29,11 +10,35 @@ export default {
       type: String,
       default: () => {
         return i18n.t('public_data_no_data')
-      }
-    }
-  }
+      },
+    },
+  },
+  computed: {
+    imgSrc() {
+      return new URL('./empty.svg', import.meta.url).href
+    },
+  },
 }
 </script>
+
+<template>
+  <div
+    class="v-empty-wrap"
+    :class="{
+      'empty-small': small,
+      'empty-large': large,
+    }"
+  >
+    <div class="empty-image">
+      <slot name="image">
+        <ElImage :src="imgSrc" />
+      </slot>
+    </div>
+    <slot name="default">
+      <p class="empty-desc">{{ description }}</p>
+    </slot>
+  </div>
+</template>
 
 <style lang="scss">
 .v-empty-wrap {
@@ -42,7 +47,6 @@ export default {
   line-height: 1.5715;
   text-align: center;
   color: rgba(0, 0, 0, 0.25);
-
   &.empty-small {
     margin: 8px 0;
     font-size: 12px;

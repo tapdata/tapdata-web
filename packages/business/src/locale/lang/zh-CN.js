@@ -42,10 +42,13 @@ export default {
   packages_business_connection_form_data_source_type: '数据源类型',
   packages_business_connection_form_change: '更换',
   packages_business_connection_form_rename: '改名',
-  packages_business_connection_form_database_owner_tip: '逗号分割的表达式列表，使用 * 代表任意长度任意字符',
-  packages_business_connection_form_source_and_target_tip: `此数据连接在 ${process.env.VUE_APP_PAGE_TITLE} 中能同时作为源和目标使用`,
-  packages_business_connection_form_source_tip: `此数据连接在 ${process.env.VUE_APP_PAGE_TITLE} 中只能作为源使用，不能作用为目标`,
-  packages_business_connection_form_target_tip: `此数据连接在 ${process.env.VUE_APP_PAGE_TITLE} 中只能作为目标使用，不能作用为源`,
+  packages_business_connection_form_database_owner_tip:
+    '逗号分割的表达式列表，使用 * 代表任意长度任意字符',
+  packages_business_connection_form_source_and_target_tip: `此数据连接在 ${
+    import.meta.env.VUE_APP_PAGE_TITLE
+  } 中能同时作为源和目标使用`,
+  packages_business_connection_form_source_tip: `此数据连接在 ${import.meta.env.VUE_APP_PAGE_TITLE} 中只能作为源使用，不能作用为目标`,
+  packages_business_connection_form_target_tip: `此数据连接在 ${import.meta.env.VUE_APP_PAGE_TITLE} 中只能作为目标使用，不能作用为源`,
   packages_business_connection_form_shared_mining: '使用共享挖掘',
   packages_business_connection_form_shared_mining_tip:
     '共享挖掘会挖掘增量日志，当有多个增量任务时不需要重复开启日志采集进程，能极大缓解源库资源的占用和浪费',
@@ -72,8 +75,10 @@ export default {
     '数据源包括数据库、结构化文件、应用程序RESTful API、自定义接口等类型，必须先创建数据源才能创建迁移或同步任务。更多配置说明，请点击',
   packages_business_connection_list_help_doc: '帮助文档',
   packages_business_connection_dataBaseStatus: '状态',
-  packages_business_connection_deteleDatabaseMsg: '删除连接 xxx 后，此连接将无法恢复',
-  packages_business_connection_checkMsg: '此数据源被传输任务或API所占用，无法删除',
+  packages_business_connection_deteleDatabaseMsg:
+    '删除连接 xxx 后，此连接将无法恢复',
+  packages_business_connection_checkMsg:
+    '此数据源被传输任务或API所占用，无法删除',
   packages_business_connection_copyFailedMsg:
     '复制失败，原因：系统设置中 "连接设置 - 允许创建重复数据源" 被设置为 "false"',
   packages_business_text_open: '开启',
@@ -84,7 +89,8 @@ export default {
   packages_business_message_cancel: '取 消',
   packages_business_message_confirm: '确 定',
   packages_business_connection_reloadTittle: '重新加载 schema',
-  packages_business_connection_reloadMsg: '如果此库的schema过多，可能耗时较长，确定要刷新数据源的schema ',
+  packages_business_connection_reloadMsg:
+    '如果此库的schema过多，可能耗时较长，确定要刷新数据源的schema ',
   packages_business_dataForm_primaryTest: '正在启动连接检测服务，请稍等...',
   packages_business_dataForm_testing: '正在测试中，请稍等...',
   packages_business_dataForm_test_testResultFail: '连接测试失败',
@@ -112,7 +118,8 @@ export default {
   packages_business_dataFlow_matchingRelationship: '匹配关系',
   packages_business_dataFlow_afterSubmission: '提交后必须',
   packages_business_dataFlow_runNomally: '才能正常运行',
-  packages_business_dataFlow_editLayerTip: ' 否则可能导致异常错误，请问您要继续编辑吗?',
+  packages_business_dataFlow_editLayerTip:
+    ' 否则可能导致异常错误，请问您要继续编辑吗?',
   packages_business_dataFlow_continueEditing: '继续编辑',
   packages_business_task_monitor_progress: '任务进度',
   packages_business_task_monitor_run_log: '运行日志',
@@ -183,7 +190,8 @@ export default {
     '输入输出统计: 平均每秒源端数据采集的速度以及目标端写入的速度，数值越大越好',
   packages_business_task_monitor_time: '时间',
   packages_business_task_monitor_mission_milestone: '任务里程碑',
-  packages_business_task_monitor_no_milestone_data: '此任务尚未启动或已被重置，暂无运行里程碑数据',
+  packages_business_task_monitor_no_milestone_data:
+    '此任务尚未启动或已被重置，暂无运行里程碑数据',
   packages_business_task_info_milestone: '里程碑',
   packages_business_milestone_btn_check_error: '查看错误原因',
   packages_business_task_monitor_mining_task_name: '挖掘任务名称',
@@ -229,8 +237,9 @@ export default {
   packages_business_dataFlow_selectAll: '全选',
   packages_business_dataFlow_skipError_title: '跳过错误设置',
   packages_business_dataFlow_skipError_tip:
-    '任务上次停止时发生了以下数据相关的错误，请确认这些错误已经被处理。如果希望跳过这些错误，请勾选相应的错误项并点击“跳过错误，启动任务” 。',
-  packages_business_dataFlow_skipError_attention: '注意：若导致错误的数据未被处理，跳过错误可能导致这条数据被丢弃。',
+    '任务上次停止时发生了以下数据相关的错误，请确认这些错误已经被处理。如果希望跳过这些错误，请勾选相应的错误项并点击"跳过错误，启动任务" 。',
+  packages_business_dataFlow_skipError_attention:
+    '注意：若导致错误的数据未被处理，跳过错误可能导致这条数据被丢弃。',
   packages_business_dataFlow_skipError_startJob: '跳过错误，启动任务',
   packages_business_dataFlow_skipError_taskName: '任务名',
   packages_business_dataFlow_skipError_errorTotal: '共 XX 条,已选择',
@@ -264,28 +273,35 @@ export default {
   packages_business_logs_index_putong: '普通',
   packages_business_shared_task_yijingzhiweie: '已经置为[error]',
   packages_business_shared_task_weishibiederen: '未识别的任务状态：{val1}',
-  packages_business_connections_databaseform_cicaozuohuidiu: '此操作会丢失当前正在创建的连接',
+  packages_business_connections_databaseform_cicaozuohuidiu:
+    '此操作会丢失当前正在创建的连接',
   packages_business_connections_databaseform_mingchengguizezhong:
     '名称规则：中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格',
   packages_business_connections_databaseform_zhongyingkaitouge:
     '中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格',
   packages_business_connections_list_renwuzongshu: '任务总数: ',
-  packages_business_connections_list_gailianjieyibei: '该连接已被 {val1} 个任务调用，请删除任务或修改配置后重试',
+  packages_business_connections_list_gailianjieyibei:
+    '该连接已被 {val1} 个任务调用，请删除任务或修改配置后重试',
   packages_business_connections_preview_schem: 'schema加载完成',
   packages_business_etl_details_caozuoshibaiqing: '操作失败，请重试',
   packages_business_etl_details_shifouzhongzhigai: '是否重置该任务？',
-  packages_business_etl_details_zhongzhirenwux: '重置任务 xxx 将清除任务同步进度，任务将重新执行',
-  packages_business_etl_details_qiangzhitingzhiren: '强制停止任务 xxx 将立即中断数据传输强制任务快速停止，并重置该任务',
+  packages_business_etl_details_zhongzhirenwux:
+    '重置任务 xxx 将清除任务同步进度，任务将重新执行',
+  packages_business_etl_details_qiangzhitingzhiren:
+    '强制停止任务 xxx 将立即中断数据传输强制任务快速停止，并重置该任务',
   packages_business_etl_details_shifouqiangzhiting: '是否强制停止该任务？',
   packages_business_etl_details_zantingrenwux:
     '暂停任务 xxx 后，任务中未完成全量同步的表再次启动时，会重新执行全量同步',
   packages_business_dataFlow_agent_force_stop_confirm_message:
     '强制停止任务 xxx ，由于Agent已离线，我们只会重置该任务的状态，但是无法停止此任务的运行，请您确保已在本地手动停止或删除了该Agent，或等待该Agent连接上后再停止该任务。',
   packages_business_etl_details_shifouzantinggai: '是否暂停该任务？',
-  packages_business_etl_details_shanchurenwux: '删除任务 xxx 后，此任务将无法恢复',
+  packages_business_etl_details_shanchurenwux:
+    '删除任务 xxx 后，此任务将无法恢复',
   packages_business_etl_details_shifoushanchugai: '是否删除该任务？',
-  packages_business_etl_details_renwuXxx: '任务XXX中含有聚合处理节点，任务停止后再次启动，任务会先进行重置，确定停止？',
-  packages_business_etl_details_chushihualeixing: '初始化类型的任务暂停后如果再次启动，任务会从头开始同步，确定暂停?',
+  packages_business_etl_details_renwuXxx:
+    '任务XXX中含有聚合处理节点，任务停止后再次启动，任务会先进行重置，确定停止？',
+  packages_business_etl_details_chushihualeixing:
+    '初始化类型的任务暂停后如果再次启动，任务会从头开始同步，确定暂停?',
   packages_business_etl_details_miaoshuneirong: '描述内容',
   packages_business_statistics_index_tongburenwu: '同步任务',
   packages_business_statistics_index_qianyirenwu: '迁移任务',
@@ -294,9 +310,11 @@ export default {
   packages_business_statistics_schedule_yonghuliulanqi: '用户浏览器时区',
   packages_business_statistics_schedule_shijian: '时间：',
   packages_business_statistics_schedule_leixing: '类型：',
-  packages_business_dataFlow_delete_confirm_message: '删除任务 xxx 后，此任务将无法恢复',
+  packages_business_dataFlow_delete_confirm_message:
+    '删除任务 xxx 后，此任务将无法恢复',
   packages_business_dataFlow_bulk_delete_confirm_title: '是否批量删除任务？',
-  packages_business_dataFlow_bulk_delete_confirm_message: '批量删除任务后，任务将无法恢复',
+  packages_business_dataFlow_bulk_delete_confirm_message:
+    '批量删除任务后，任务将无法恢复',
   packages_business_dataFlow_stop_confirm_title: '是否暂停该任务？',
   packages_business_dataFlow_stop_confirm_message:
     '暂停任务 xxx 后，任务中未完成全量同步的表再次启动时，会重新执行全量同步',
@@ -306,19 +324,24 @@ export default {
   packages_business_dataFlow_force_stop_confirm_title: '是否强制停止该任务？',
   packages_business_dataFlow_force_stop_confirm_message:
     '强制停止任务 xxx 将立即中断数据传输强制任务快速停止，并重置该任务',
-  packages_business_dataFlow_bulk_force_stop_confirm_title: '是否批量强制停止任务？',
+  packages_business_dataFlow_bulk_force_stop_confirm_title:
+    '是否批量强制停止任务？',
   packages_business_dataFlow_bulk_force_stop_confirm_message:
     '批量强制停止任务将立即中断数据传输强制任务快速停止，并重置该任务',
   packages_business_dataFlow_initialize_confirm_title: '是否重置该任务？',
-  packages_business_dataFlow_initialize_confirm_message: '重置任务 xxx 将清除任务同步进度，任务将重新执行',
-  packages_business_dataFlow_bulk_initialize_confirm_title: '是否批量重置任务？',
-  packages_business_dataFlow_bulk_initialize_confirm_message: '批量重置任务将清除任务同步进度，任务将重新执行',
+  packages_business_dataFlow_initialize_confirm_message:
+    '重置任务 xxx 将清除任务同步进度，任务将重新执行',
+  packages_business_dataFlow_bulk_initialize_confirm_title:
+    '是否批量重置任务？',
+  packages_business_dataFlow_bulk_initialize_confirm_message:
+    '批量重置任务将清除任务同步进度，任务将重新执行',
   packages_business_connections_databaseform_zidingyi: '自定义',
   packages_business_connections_databaseform_duixiangshouji: '对象收集',
   packages_business_verification_details_yichangshuju: '异常数据',
   packages_business_verification_details_mubiaobiaoming: '目标表名',
   packages_business_verification_details_yuanbiaoming: '源表名',
-  packages_business_verification_details_gongxijiaoyanjie: '恭喜~校验结果源表与目标表内容完全一致，没有错误记录',
+  packages_business_verification_details_gongxijiaoyanjie:
+    '恭喜~校验结果源表与目标表内容完全一致，没有错误记录',
   packages_business_verification_details_mubiaobiaoziduan: '目标表字段：值',
   packages_business_verification_details_yuanbiaoziduanzhi: '源表字段：值',
   packages_business_verification_details_xianshiwanzhengzi: '显示完整字段',
@@ -340,7 +363,8 @@ export default {
   packages_business_shared_const_jinji: '紧急',
   packages_business_external_storage: '外存配置',
   packages_business_relation_details_chakanrenwu: '查看任务',
-  packages_business_relation_details_shiyonggaiguanlian: '使用该{val}的任务清单',
+  packages_business_relation_details_shiyonggaiguanlian:
+    '使用该{val}的任务清单',
   packages_business_relation_list_jiaoyanrenwu: '校验任务',
   packages_business_relation_list_huancunrenwu: '缓存任务',
   packages_business_relation_list_qingshururenwu: '请输入任务名称',
@@ -349,23 +373,30 @@ export default {
   packages_business_relation_details_renwu: '任务',
   packages_business_agent_select_placeholder: '请选择agent',
   packages_business_agent_select_not_found: '该agent已不存在，请选择其他agent',
-  packages_business_agent_select_not_found_for_rocksdb: '选用RocksDB作为共享挖掘外存时，需要手动指定一个Agent',
-  packages_business_components_connectiontypeselectorsort_wodeshujuyuan: '我的数据源',
-  packages_business_components_connectiontypeselectorsort_jiaoyouTap: `交由 ${process.env.VUE_APP_PAGE_TITLE} 进行全面的质量测试，以保证插件的稳定性和质量`,
+  packages_business_agent_select_not_found_for_rocksdb:
+    '选用RocksDB作为共享挖掘外存时，需要手动指定一个Agent',
+  packages_business_components_connectiontypeselectorsort_wodeshujuyuan:
+    '我的数据源',
+  packages_business_components_connectiontypeselectorsort_jiaoyouTap: `交由 ${import.meta.env.VUE_APP_PAGE_TITLE} 进行全面的质量测试，以保证插件的稳定性和质量`,
   packages_business_components_connectiontypeselectorsort_zhuyizhelishi:
     '注意：这里是您自己上传的数据源插件，如果要用于生产任务，请在GitHub上提交源代码',
-  packages_business_components_connectiontypeselectorsort_zhuyiBet: `注意：Beta 数据源尚未通过 ${process.env.VUE_APP_PAGE_TITLE} 的认证测试流程，${process.env.VUE_APP_PAGE_TITLE} 暂不保证这些数据源的稳定运行`,
-  packages_business_components_connectiontypeselectorsort_shiyongbanzanbu: '敬请期待以下数据源开放',
+  packages_business_components_connectiontypeselectorsort_zhuyiBet: `注意：Beta 数据源尚未通过 ${import.meta.env.VUE_APP_PAGE_TITLE} 的认证测试流程，${import.meta.env.VUE_APP_PAGE_TITLE} 暂不保证这些数据源的稳定运行`,
+  packages_business_components_connectiontypeselectorsort_shiyongbanzanbu:
+    '敬请期待以下数据源开放',
   packages_business_components_connectiontypeselectorsort_betashu: 'Beta数据源',
-  packages_business_components_connectiontypeselectorsort_renzhengshujuyuan: 'GA数据源',
-  packages_business_components_connectiontypeselectorsort_jijiangshangxian: 'Alpha数据源',
+  packages_business_components_connectiontypeselectorsort_renzhengshujuyuan:
+    'GA数据源',
+  packages_business_components_connectiontypeselectorsort_jijiangshangxian:
+    'Alpha数据源',
   packages_business_connections_list_lianjiefenlei: '连接分类',
   packages_business_task_migratelist_renwufenlei: '任务分类',
   packages_business_task_list_renwubuzhichi: '任务不支持该操作',
-  packages_business_connections_databaseform_keyicongbaohan: '可以从包含表规则匹配到的表中将指定的表排除',
+  packages_business_connections_databaseform_keyicongbaohan:
+    '可以从包含表规则匹配到的表中将指定的表排除',
   packages_business_connections_databaseform_paichubiao: '排除表',
   packages_business_connections_databaseform_baohanbiao: '包含表',
-  packages_business_connections_list_wenjianleixingde: '文件类型的连接暂不支持加载Schema',
+  packages_business_connections_list_wenjianleixingde:
+    '文件类型的连接暂不支持加载Schema',
   // 数据校验
   packages_business_verification_task_name: '校验任务名',
   packages_business_verification_type: '校验类型',
@@ -398,7 +429,8 @@ export default {
     '对本次全量校验的差异数据结果进行再次校验，行数差异暂不支持差异校验',
   packages_business_verification_last_start_time: '最后校验时间',
   packages_business_verification_button_diff_task_history: '校验历史',
-  packages_business_verification_message_old_data_not_support: '旧数据暂不支持二次校验',
+  packages_business_verification_message_old_data_not_support:
+    '旧数据暂不支持二次校验',
   packages_business_verification_message_out_of_limit:
     '您的差异数据量已超出任务支持的最大错误数据保存条数，暂时无法进行二次校验',
   packages_business_verification_result_count_more: '目标count多: {0}',
@@ -413,17 +445,22 @@ export default {
   packages_business_verification_form_source_filter: '源表数据过滤',
   packages_business_verification_form_target_filter: '目标表数据过滤',
   packages_business_verification_checking: '校验中...',
-  packages_business_verification_message_error_joint_table_not_set: '请添加校验条件',
+  packages_business_verification_message_error_joint_table_not_set:
+    '请添加校验条件',
   packages_business_verification_message_error_joint_table_target_or_source_not_set:
     '校验条件{val}中源表或目标表未选择',
   packages_business_verification_message_error_joint_table_target_or_source_filter_not_set:
     '校验条件{val}中源表或目标表数据过滤未选择',
   packages_business_verification_message_error_joint_table_field_not_match:
     '校验条件{val}中源表与目标表的索引字段个数不相等',
-  packages_business_verification_message_error_script_no_enter: '开启高级校验后，JS校验逻辑不能为空',
-  packages_business_verification_message_confirm_delete_script: '确定要删除自定义JS校验逻辑吗',
-  packages_business_verification_message_confirm_back: '此操作会丢失当前正在创建（编辑）的校验任务',
-  packages_business_verification_message_title_confirm_back: '是否放弃创建（编辑）校验任务？',
+  packages_business_verification_message_error_script_no_enter:
+    '开启高级校验后，JS校验逻辑不能为空',
+  packages_business_verification_message_confirm_delete_script:
+    '确定要删除自定义JS校验逻辑吗',
+  packages_business_verification_message_confirm_back:
+    '此操作会丢失当前正在创建（编辑）的校验任务',
+  packages_business_verification_message_title_confirm_back:
+    '是否放弃创建（编辑）校验任务？',
   packages_business_taskprogress_plan_sync_table_num: '计划同步表数量',
   packages_business_taskprogress_completed_sync_table_num: '已完成同步表数量',
   packages_business_taskprogress_plan_sync_data: '计划同步数据量（行）',
@@ -490,7 +527,8 @@ export default {
   packages_business_verification_returnMsg: '返回的message',
   packages_business_verification_returnedData: '返回的data',
   packages_business_verification_sourceTableData: '源表数据',
-  packages_business_verification_success: '恭喜，校验结果显示源表与目标表内容完全一致。',
+  packages_business_verification_success:
+    '校验结果显示源表与目标表内容完全一致。',
   packages_business_verification_clickVerified: '点下方按钮添加校验表',
   packages_business_verification_ChoosePKField: '请选索引或主键字段',
   packages_business_verification_indexField: '关联字段',
@@ -515,23 +553,31 @@ export default {
   packages_business_verification_tasksVerifyCondition: '请添加校验条件',
   packages_business_verification_tasksVerifyInterval: '请输入校验间隔',
   packages_business_verification_lackSource: '校验条件中源表或目标表未选择',
-  packages_business_verification_lackIndex: '校验条件{val}中源表或目标表的索引字段未选择',
-  packages_business_verification_tasksAmount: '校验条件中源表与目标表的索引字段个数不相等',
+  packages_business_verification_lackIndex:
+    '校验条件{val}中源表或目标表的索引字段未选择',
+  packages_business_verification_tasksAmount:
+    '校验条件中源表与目标表的索引字段个数不相等',
   packages_business_verification_uniqueField: '唯一字段差异',
   packages_business_verification_otherField: '其他字段差异',
   packages_business_verification_back: '返回',
   packages_business_verification_startVerify: '正在执行校验',
-  packages_business_verification_deleteMessage: '删除校验任务将无法恢复, 确定删除',
+  packages_business_verification_deleteMessage:
+    '删除校验任务将无法恢复, 确定删除',
   packages_business_verification_checkStatusPre: '此任务处于 ',
   packages_business_verification_checkStatusSuffix: '状态，无法配置校验设置',
-  packages_business_verification_backConfirmMessage: '此操作会丢失当前正在创建（编辑）的校验任务',
-  packages_business_verification_backConfirmTitle: '是否放弃创建（编辑）校验任务？',
+  packages_business_verification_backConfirmMessage:
+    '此操作会丢失当前正在创建（编辑）的校验任务',
+  packages_business_verification_backConfirmTitle:
+    '是否放弃创建（编辑）校验任务？',
   packages_business_verification_history_source_total_rows: '源总行数',
   packages_business_verification_form_label_error_save_count: '错误保存条数',
   packages_business_verification_button_auto_add_table: '自动添加表',
-  packages_business_components_conditionbox_suoxuanrenwuque: '所选任务缺少节点连线信息',
-  packages_business_components_conditionbox_cunzaichulijiedian_wufazidong: '存在处理节点，无法自动添加表',
-  packages_business_components_conditionbox_shifouqingkongsuo: '是否清空所有条件',
+  packages_business_components_conditionbox_suoxuanrenwuque:
+    '所选任务缺少节点连线信息',
+  packages_business_components_conditionbox_cunzaichulijiedian_wufazidong:
+    '存在处理节点，无法自动添加表',
+  packages_business_components_conditionbox_shifouqingkongsuo:
+    '是否清空所有条件',
   packages_business_components_conditionbox_mubiaobiao: ' 目标表',
   packages_business_components_conditionbox_laiyuanbiao: '来源表',
   packages_business_components_conditionbox_daijiaoyanlianjie: '待校验连接',
@@ -545,20 +591,26 @@ export default {
   packages_business_verification_details_dongtaijiaoyan: '动态校验',
   packages_business_verification_details_zhankai: '展开',
   packages_business_verification_details_shouqi: '收起',
-  packages_business_verification_form_diinde: '校验条件{val1}，待校验模型不能为空',
-  packages_business_verification_form_zhaobudaojiedian: '找不到节点对应的表信息',
+  packages_business_verification_form_diinde:
+    '校验条件{val1}，待校验模型不能为空',
+  packages_business_verification_form_zhaobudaojiedian:
+    '找不到节点对应的表信息',
   packages_business_verification_form_qingshurukaishi: '请输入开始时间',
   packages_business_verification_form_jiaoyanjieshushi: '校验结束时间',
   packages_business_verification_form_jiaoyankaishishi: '校验开始时间',
-  packages_business_verification_form_zhishuchulaiyuan: '只输出来源表不一致的数据',
+  packages_business_verification_form_zhishuchulaiyuan:
+    '只输出来源表不一致的数据',
   packages_business_verification_form_shuchusuoyoubu: '输出所有不一致的数据',
   packages_business_verification_form_jieguoshuchu: '结果输出',
-  packages_business_verification_form_zhidingrenyibiao: '指定任意表进行数据校验',
+  packages_business_verification_form_zhidingrenyibiao:
+    '指定任意表进行数据校验',
   packages_business_verification_form_weitedingdeP: '按照任务进行数据校验',
   packages_business_verification_form_jiaoyanrenwumo: '校验任务模式',
-  packages_business_task_status_agent_tooltip_time: '距上次状态上报时间已经{time}',
+  packages_business_task_status_agent_tooltip_time:
+    '距上次状态上报时间已经{time}',
   packages_business_task_status_agent_tooltip_agent: '任务所在的引擎为',
-  packages_business_task_status_retrying_tooltip: '当前任务正在重试中，重试开始时间：{val}',
+  packages_business_task_status_retrying_tooltip:
+    '当前任务正在重试中，重试开始时间：{val}',
   packages_business_select_placeholder: '请添加或选择',
   packages_business_verification_form_youjiantongzhi: '邮件通知',
   packages_business_verification_form_xitongtongzhi: '系统通知',
@@ -567,10 +619,14 @@ export default {
   packages_business_verification_form_jiaoyangaojing: '校验告警',
   packages_business_verification_form_zanbuzhichi_doris: '暂不支持Doris。',
   packages_business_verification_form_task_alarm: '校验任务告警',
-  packages_business_verification_form_task_alarm_when_error: '当校验任务出错时进行告警',
-  packages_business_verification_form_task_alarm_when_diff_result_over_count1: '当count校验结果的差异行数大于',
-  packages_business_verification_form_task_alarm_when_diff_result_over_count2: '时进行告警',
-  packages_business_verification_form_task_alarm_when_result_table_over_count1: '当值校验结果的表数据差大于',
+  packages_business_verification_form_task_alarm_when_error:
+    '当校验任务出错时进行告警',
+  packages_business_verification_form_task_alarm_when_diff_result_over_count1:
+    '当count校验结果的差异行数大于',
+  packages_business_verification_form_task_alarm_when_diff_result_over_count2:
+    '时进行告警',
+  packages_business_verification_form_task_alarm_when_result_table_over_count1:
+    '当值校验结果的表数据差大于',
   packages_business_task_status_error_tip:
     '任务删除成功，以下几个 PostgreSQL 连接的信息清除失败，需要您使用以下方式手动清除',
   packages_business_task_status_next_run_time: '下次运行时间：{val}',
@@ -589,39 +645,58 @@ export default {
   packages_business_notify_webchat_notification: '微信通知',
   packages_business_notify_alarm_title: 'Agent告警设置',
   packages_business_notify_system_notice: '系统通知',
-  packages_business_setting_alarm_notification_notify_noticeInterval: '发送间隔',
-  packages_business_setting_notification_alarm_notification_gaojingtongzhi: '告警通知',
+  packages_business_setting_alarm_notification_notify_noticeInterval:
+    '发送间隔',
+  packages_business_setting_notification_alarm_notification_gaojingtongzhi:
+    '告警通知',
   packages_business_setting_alarmnotification_gaojingzhibiao: '告警指标',
-  packages_business_setting_alarmnotification_dangjiediandeping: '当节点的平均处理耗时超过阀值时',
-  packages_business_setting_alarmnotification_dangshujuyuanjie: '当数据源节点的平均处理耗时超过阀值时',
-  packages_business_setting_alarmnotification_dangshujuyuanxie: '当数据源协议连接耗时超过阀值时',
-  packages_business_setting_alarmnotification_dangshujuyuanwang: '当数据源网络连接耗时',
-  packages_business_setting_alarmnotification_dangshujuwufa: '当数据源无法连接网络时',
-  packages_business_setting_alarmnotification_dangrenwudezeng: '当任务的增量延迟超过阀值时',
+  packages_business_setting_alarmnotification_dangjiediandeping:
+    '当节点的平均处理耗时超过阀值时',
+  packages_business_setting_alarmnotification_dangshujuyuanjie:
+    '当数据源节点的平均处理耗时超过阀值时',
+  packages_business_setting_alarmnotification_dangshujuyuanxie:
+    '当数据源协议连接耗时超过阀值时',
+  packages_business_setting_alarmnotification_dangshujuyuanwang:
+    '当数据源网络连接耗时',
+  packages_business_setting_alarmnotification_dangshujuwufa:
+    '当数据源无法连接网络时',
+  packages_business_setting_alarmnotification_dangrenwudezeng:
+    '当任务的增量延迟超过阀值时',
   packages_business_setting_alarmnotification_dangrenwutingzhi: '当任务停止时',
-  packages_business_setting_alarmnotification_dangrenwuzengliang: '当任务增量开始时',
-  packages_business_setting_alarmnotification_dangrenwuquanliang: '当任务全量完成时',
-  packages_business_setting_alarmnotification_dangrenwujiaoyan: '当任务校验出错时',
-  packages_business_setting_alarmnotification_dangrenwuyudao: '当任务遇到错误时',
+  packages_business_setting_alarmnotification_dangrenwuzengliang:
+    '当任务增量开始时',
+  packages_business_setting_alarmnotification_dangrenwuquanliang:
+    '当任务全量完成时',
+  packages_business_setting_alarmnotification_dangrenwujiaoyan:
+    '当任务校验出错时',
+  packages_business_setting_alarmnotification_dangrenwuyudao:
+    '当任务遇到错误时',
   packages_business_setting_alarmnotification_dangrenwustop: 'Agent服务停止时',
   packages_business_setting_alarmnotification_dangrenwuuP: 'Agent服务启动时',
   packages_business_setting_alarmnotification_msshigaojing: 's 时告警',
   packages_business_setting_alarmnotification_lianxu: '连续',
   packages_business_setting_alarmnotification_cichugaojinggui:
     '此处告警规则设置为系统全局告警规则设置，任务运行监控页面的告警规则设置优先级高于系统全局设置',
-  packages_business_setting_alarmnotification_renwumorengao: '任务默认告警规则设置',
+  packages_business_setting_alarmnotification_renwumorengao:
+    '任务默认告警规则设置',
   packages_business_setting_alarmnotification_morengaojinggui: '默认告警规则',
   packages_business_setting_alarmnotification_renwugaojingshe: '任务告警设置',
-  packages_business_setting_alarmnotification_recipient_setting: '任务默认告警接收人设置',
+  packages_business_setting_alarmnotification_recipient_setting:
+    '任务默认告警接收人设置',
   packages_business_setting_alarmnotification_recipient_desc:
     '此处设置为系统全局告警接收人设置，设置的所有的接收人都可以收到当前系统已开启的告警',
-  packages_business_setting_alarmnotification_recipient_default: '默认告警接收人',
+  packages_business_setting_alarmnotification_recipient_default:
+    '默认告警接收人',
   packages_business_setting_alarmnotification_recipient: '告警接收人',
-  packages_business_setting_alarmnotification_recipient_tip: '支持设置多个告警接收人邮箱，多个邮箱以逗号分隔',
+  packages_business_setting_alarmnotification_recipient_tip:
+    '支持设置多个告警接收人邮箱，多个邮箱以逗号分隔',
   packages_business_setting_alarmnotification_channel: '告警通知渠道',
-  packages_business_setting_alarmnotification_dangjiaoyanrenwucuowu: '当校验任务遇到错误时',
-  packages_business_setting_alarmnotification_dangjiaoyanrenwushuliangcuowu: '当count校验结果的差异行数大于阈值时',
-  packages_business_setting_alarmnotification_dangjiaoyanrenwuzhicuowu: '当值校验结果的表数据差大于阈值时',
+  packages_business_setting_alarmnotification_dangjiaoyanrenwucuowu:
+    '当校验任务遇到错误时',
+  packages_business_setting_alarmnotification_dangjiaoyanrenwushuliangcuowu:
+    '当count校验结果的差异行数大于阈值时',
+  packages_business_setting_alarmnotification_dangjiaoyanrenwuzhicuowu:
+    '当值校验结果的表数据差大于阈值时',
   //消息通知
   packages_business_notify_user_all_notice: '全部通知',
   packages_business_notify_unread_notice: '未读消息',
@@ -635,7 +710,8 @@ export default {
   packages_business_connections_databaseform_bujiazai: '不加载',
   packages_business_connections_databaseform_system: '跟随系统设置',
   packages_business_custom_node_placeholder: '请输入节点名称搜索',
-  packages_business_custom_node_edit_confirm: '检测到以下运行中的任务调用了该节点，如需配置生效请重新启动任务',
+  packages_business_custom_node_edit_confirm:
+    '检测到以下运行中的任务调用了该节点，如需配置生效请重新启动任务',
   packages_business_task_list_sqLyuju: 'SQL语句:',
   packages_business_relation_details_waicunxinxi: '使用的外存信息',
   packages_business_milestone_list_cuowuxinxi: '错误信息',
@@ -650,7 +726,8 @@ export default {
   packages_business_milestone_list_duququanliangshu: '读取全量数据',
   packages_business_milestone_list_finish: '{val1}/{val2} 已经完成，{val3} ...',
   packages_business_milestone_list_zhengtijindu: '整体进度',
-  packages_business_milestone_list_jinhangzhongpr: '进行中，{val1}%已完成，预计剩余时间{val2}',
+  packages_business_milestone_list_jinhangzhongpr:
+    '进行中，{val1}%已完成，预计剩余时间{val2}',
   packages_business_milestone_list_zengliangshujuqian: '增量数据迁移',
   packages_business_milestone_list_quanliangshujuqian: '全量数据复制',
   packages_business_milestone_list_biaojiegouqianyi: '表结构复制',
@@ -701,18 +778,23 @@ export default {
   page_title_overview: '概览',
   metadata_meta_type_table: '数据表',
   packages_business_create_connection_dialog_xuanzeshujuyuan: '选择数据源类型',
-  packages_business_create_connection_dialog_neirongSho: '显示处于 ALPHA 状态的连接器',
-  packages_business_create_connection_dialog_neirongSho2: '显示处于 BETA 状态的连接器',
-  packages_business_create_connection_dialog_neirongCho: '从下面选择一个数据源连接器并配置连接和凭据。',
+  packages_business_create_connection_dialog_neirongSho:
+    '显示处于 ALPHA 状态的连接器',
+  packages_business_create_connection_dialog_neirongSho2:
+    '显示处于 BETA 状态的连接器',
+  packages_business_create_connection_dialog_neirongCho:
+    '从下面选择一个数据源连接器并配置连接和凭据。',
   // 共享挖掘
   packages_business_shared_cdc_placeholder_task_name: '请输入挖掘任务名搜索',
-  packages_business_shared_cdc_placeholder_connection_name: '请输入连接名称搜索',
+  packages_business_shared_cdc_placeholder_connection_name:
+    '请输入连接名称搜索',
   packages_business_shared_cdc_name: '请输入挖掘名称',
   packages_business_shared_cdc_setting_select_mode: '存储模式',
   packages_business_shared_cdc_setting_select_mongodb_tip: '请输入mongodb连接',
   packages_business_shared_cdc_setting_select_table_tip: '请输入表名',
   packages_business_shared_cdc_setting_select_time_tip: '请选择日志保存时长',
-  packages_business_shared_cdc_setting_message_edit_save: '保存成功，重启任务后生效',
+  packages_business_shared_cdc_setting_message_edit_save:
+    '保存成功，重启任务后生效',
   packages_business_shared_list_name: '挖掘名称',
   packages_business_shared_list_time_excavation: '挖掘所处时间点',
   packages_business_shared_list_setting: '挖掘设置',
@@ -738,10 +820,12 @@ export default {
   packages_business_shared_detail_statistics_time: '统计时间',
   packages_business_shared_detail_incremental_time: '所处的时间点',
   packages_business_shared_mining_detail_wajuexiangqingx: '挖掘详情x轴：',
-  packages_business_stop_confirm_message: '初始化类型的任务暂停后如果再次启动，任务会从头开始同步，确定暂停?',
+  packages_business_stop_confirm_message:
+    '初始化类型的任务暂停后如果再次启动，任务会从头开始同步，确定暂停?',
   packages_business_important_reminder: '重要提醒',
   packages_business_tablename: '表名称',
-  packages_business_shared_cdc_persistence_rocksdb_path: 'RocksDB存储的本地路径',
+  packages_business_shared_cdc_persistence_rocksdb_path:
+    'RocksDB存储的本地路径',
   packages_business_shared_mining_table_jinriwajue: '今日挖掘',
   packages_business_shared_mining_table_leijiwajue: '累计挖掘',
   packages_business_shared_mining_table_zuixinrizhishi: '最新日志时间',
@@ -801,14 +885,16 @@ export default {
   packages_business_data_server_list_guanlianduixiang: '关联对象',
   packages_business_data_server_list_fuwumingcheng: '服务名称',
   packages_business_data_server_drawer_geshicuowu: '格式错误',
-  packages_business_data_server_drawer_validate: '只能包含中文、字母、数字、下划线和美元符号,并且数字不能开头',
+  packages_business_data_server_drawer_validate:
+    '只能包含中文、字母、数字、下划线和美元符号,并且数字不能开头',
   packages_business_data_server_drawer_aPI_path_Settings: '访问路径设置',
   packages_business_data_server_drawer_default_path: '默认访问路径',
   packages_business_data_server_drawer_custom_path: '自定义访问路径',
   packages_business_data_server_drawer_prefix: '前缀',
   packages_business_data_server_drawer_base_path: '基础路径',
   packages_business_data_server_drawer_path: '访问路径',
-  packages_business_data_server_drawer_confirm_tip: '重新生成会导致原API访问路径发生改变，是否确认重新生成？',
+  packages_business_data_server_drawer_confirm_tip:
+    '重新生成会导致原API访问路径发生改变，是否确认重新生成？',
   packages_business_connection_debug_input_arg: '模拟参数',
   packages_business_connection_debug_input_arg_error: '模拟参数格式错误',
   packages_business_more_than: '超过',
@@ -885,51 +971,67 @@ export default {
   packages_business_task_created_success: '任务创建成功，点击查看',
   packages_business_task_created_fail_no_primary_key:
     '任务已经创建，但由于您的表没有主键，需要进入任务编辑手动设置更新条件字段，点击查看任务',
-  packages_business_fdm_create_task_dialog_desc_prefix: `${process.env.VUE_APP_PAGE_TITLE} 将自动创建一个数据复制管道任务，将您选择的`,
+  packages_business_fdm_create_task_dialog_desc_prefix: `${import.meta.env.VUE_APP_PAGE_TITLE} 将自动创建一个数据复制管道任务，将您选择的`,
   packages_business_fdm_create_task_dialog_desc_suffix:
     '的结构和数据自动复制到数据平台的 Cache 层并保持源库和Cache 层数据的准实时同步及自动校验。在大部分时候源库的结构改动(DDL)也会被复制到Cache 层。您可以在通过点击Cache 层里面的库名右侧的ICON来监控该管道任务的运行状态。您也可以选择现在修改在 Cache 层的物理表名前缀。',
   packages_business_mdm_create_task_dialog_desc_prefix:
     '这将在数据平台的 Curated 层创建一个加工模型。创建加工模型的常见场景有以下几种：',
-  packages_business_fdm_create_task_dialog_desc_li1: '需要对 Cache 层的数据做一些转型，增强，加计算字段等处理',
-  packages_business_fdm_create_task_dialog_desc_li2: '需要对数个 Cache 层的表的结构进行合并，构建一个宽表',
-  packages_business_fdm_create_task_dialog_desc_li3: '需要对数个 Cache 层的表的数据进行合并，构建一个合并表',
+  packages_business_fdm_create_task_dialog_desc_li1:
+    '需要对 Cache 层的数据做一些转型，增强，加计算字段等处理',
+  packages_business_fdm_create_task_dialog_desc_li2:
+    '需要对数个 Cache 层的表的结构进行合并，构建一个宽表',
+  packages_business_fdm_create_task_dialog_desc_li3:
+    '需要对数个 Cache 层的表的数据进行合并，构建一个合并表',
   packages_business_mdm_create_task_dialog_desc_suffix:
     '注意: 你可以直接在Cache 层直接发布API或者做数据复制任务到目标端。如果是因为这两个原因，你无需创建加工层模型。',
   packages_business_mdm_create_task_dialog_desc_table_name:
     '请输入打算新构建在Curated 层里面的表名。如果该表名已经存在，默认将覆盖已有的数据',
   packages_business_save_and_run_now: '保存并运行',
   packages_business_save_only: '仅保存',
-  packages_business_target_create_task_dialog_desc_prefix_clone: `${process.env.VUE_APP_PAGE_TITLE} 将创建一个数据复制任务，将`,
-  packages_business_target_create_task_dialog_desc_prefix_sync: `${process.env.VUE_APP_PAGE_TITLE} 将创建一个数据开发任务，将`,
+  packages_business_target_create_task_dialog_desc_prefix_clone: `${import.meta.env.VUE_APP_PAGE_TITLE} 将创建一个数据复制任务，将`,
+  packages_business_target_create_task_dialog_desc_prefix_sync: `${import.meta.env.VUE_APP_PAGE_TITLE} 将创建一个数据开发任务，将`,
   packages_business_target_create_task_dialog_desc_to: '同步到',
-  packages_business_target_create_task_dialog_desc_suffix: '请点击下面的按钮继续,您也可以更改任务名称。',
-  packages_business_fdm_empty_text: '请将<strong>源数据层</strong>中的表拖拽至此<br/>即可开始复制数据',
-  packages_business_mdm_empty_text: '请将<strong>源数据层/平台缓存层</strong>中的表拖拽至此<br/>即可开始同步数据',
+  packages_business_target_create_task_dialog_desc_suffix:
+    '请点击下面的按钮继续,您也可以更改任务名称。',
+  packages_business_fdm_empty_text:
+    '请将<strong>源数据层</strong>中的表拖拽至此<br/>即可开始复制数据',
+  packages_business_mdm_empty_text:
+    '请将<strong>源数据层/平台缓存层</strong>中的表拖拽至此<br/>即可开始同步数据',
   packages_business_catalog_delete_confirm_message:
     '此操作仅会将该分类及其子分类删除，如需删除分类下的物理表,请您自行操作。',
-  packages_business_mdm_table_duplication_confirm: '目标表已经存在，请确定是否继续？',
+  packages_business_mdm_table_duplication_confirm:
+    '目标表已经存在，请确定是否继续？',
   packages_business_data_console_mode: '请选择产品能力模式',
   packages_business_data_console_mode_integration: '作为数据集成平台使用',
-  packages_business_data_console_mode_integration_tooltip_1: '支持异构数据与结构自动实时同步',
-  packages_business_data_console_mode_integration_tooltip_2: '支持数据的实时加工与转换',
-  packages_business_data_console_mode_integration_tooltip_3: '100+连接器, 包括数据库,消息队列,文件,API 等',
-  packages_business_data_console_mode_service_tooltip_1: '支持数据集成模式全部能力',
-  packages_business_data_console_mode_service_tooltip_2: '支持平台缓存并标准化企业关键数据模型',
-  packages_business_data_console_mode_service_tooltip_3: '支持多种下游服务集成与发布管理',
+  packages_business_data_console_mode_integration_tooltip_1:
+    '支持异构数据与结构自动实时同步',
+  packages_business_data_console_mode_integration_tooltip_2:
+    '支持数据的实时加工与转换',
+  packages_business_data_console_mode_integration_tooltip_3:
+    '100+连接器, 包括数据库,消息队列,文件,API 等',
+  packages_business_data_console_mode_service_tooltip_1:
+    '支持数据集成模式全部能力',
+  packages_business_data_console_mode_service_tooltip_2:
+    '支持平台缓存并标准化企业关键数据模型',
+  packages_business_data_console_mode_service_tooltip_3:
+    '支持多种下游服务集成与发布管理',
   packages_business_data_console_mode_service: '作为数据服务平台使用',
   packages_business_data_console_fdm_mdm_storage: '数据层存储',
   packages_business_data_console_fdm_storage: '平台缓存层存储',
   packages_business_data_console_mdm_storage: '平台加工层存储',
-  packages_business_data_console_fdm_mdm_storage_tooltip: '请指定用于额外数据层存储的数据库连接',
+  packages_business_data_console_fdm_mdm_storage_tooltip:
+    '请指定用于额外数据层存储的数据库连接',
   packages_business_mongodb_atlas_cluster: 'MongoDB Atlas 集群',
   packages_business_mongodb_self_hosted_cluster: '自托管 MongoDB 集群',
   packages_business_mongodb_full_management_cluster: '全托管 MongoDB 集群',
-  packages_business_data_console_setting_saved_tooltip: '存储中心保存后, 暂不支持修改, 请谨慎设置',
+  packages_business_data_console_setting_saved_tooltip:
+    '存储中心保存后, 暂不支持修改, 请谨慎设置',
   // 共享缓存
   packages_business_shared_cache_create: '创建缓存',
   packages_business_shared_cache_edit: '编辑缓存',
   packages_business_shared_cache_placeholder_task_name: '请输入缓存任务名搜索',
-  packages_business_shared_cache_placeholder_connection_name: '请输入连接名称搜索',
+  packages_business_shared_cache_placeholder_connection_name:
+    '请输入连接名称搜索',
   packages_business_shared_cache_button_create: '新建缓存',
   packages_business_shared_cache_name: '缓存名称',
   packages_business_shared_cache_status: '缓存状态',
@@ -946,10 +1048,13 @@ export default {
   packages_business_shared_cache_max_memory: '缓存最大内存',
   packages_business_shared_cache_placeholder_max_memory: '请输入缓存最大内存',
   packages_business_shared_cache_placeholder_external_storage: '请选择外存配置',
-  packages_business_shared_cache_keys_tooltip: '以该字段作为主键识别数据进行缓存',
+  packages_business_shared_cache_keys_tooltip:
+    '以该字段作为主键识别数据进行缓存',
   packages_business_shared_cache_fields_tooltip: '需要进行缓存的常用字段',
-  packages_business_shared_cache_max_memory_tooltip: '系统会保存的最大内存量，超过则按调用时间，将最不常用的数据删掉',
-  packages_business_shared_cache_code_tooltip: '可在JS节点中输入这段代码使用该缓存',
+  packages_business_shared_cache_max_memory_tooltip:
+    '系统会保存的最大内存量，超过则按调用时间，将最不常用的数据删掉',
+  packages_business_shared_cache_code_tooltip:
+    '可在JS节点中输入这段代码使用该缓存',
   packages_business_shared_cache_column_connection: '所属连接',
   packages_business_shared_cache_column_table: '所属表',
   packages_business_shared_cache_cache_key_message: '所选缓存键无索引',
@@ -980,9 +1085,11 @@ export default {
   packages_business_create_connection_scenedialog_chaxunjiasu: '查询加速',
   packages_business_create_connection_scenedialog_rushucang: '入数仓',
   packages_business_create_connection_scenedialog_tuijianchangjing: '推荐场景',
-  packages_business_create_connection_scenedialog_qingxuanzeninde: '请选择您的使用场景',
+  packages_business_create_connection_scenedialog_qingxuanzeninde:
+    '请选择您的使用场景',
   packages_business_create_connection_serveform_fenleimingcheng: '分类名称',
-  packages_business_components_tableview_yizhegemoxing: '以这个模型源/目标的任务',
+  packages_business_components_tableview_yizhegemoxing:
+    '以这个模型源/目标的任务',
   packages_business_components_tableview_xinzenglebiaoqian: '新增了标签603',
   packages_business_components_tableview_zengliangshujuyan: '增量数据延迟：',
   packages_business_components_tableview_shujuzuihougeng: '数据最后更新时间：',
@@ -993,8 +1100,10 @@ export default {
   packages_business_swimlane_tablepreview_fangwencishu: '访问次数',
   packages_business_swimlane_tablepreview_apifuwu: 'api服务名称',
   packages_business_swimlane_target_yejibao: '业绩宝',
-  packages_business_task_list_meiyoufaxiannin: '没有发现您最近有任务报错, 如果有其他问题, 欢迎咨询我们的人工客服',
-  packages_business_api_application_list_xitongmorenchuang: '系统默认创建的应用，不可编辑和删除',
+  packages_business_task_list_meiyoufaxiannin:
+    '没有发现您最近有任务报错, 如果有其他问题, 欢迎咨询我们的人工客服',
+  packages_business_api_application_list_xitongmorenchuang:
+    '系统默认创建的应用，不可编辑和删除',
   packages_business_create_connection_title_select_type: '请选择数据源类型',
   // 外存管理
   packages_business_external_storage_list_querenshanchuwai: '确认删除外存？',
@@ -1005,7 +1114,8 @@ export default {
   packages_business_external_storage_list_cunchulujing: '存储路径',
   packages_business_external_storage_list_chuangjianwaicun: '创建外存',
   packages_business_external_storage_list_bianjiwaicun: '编辑外存',
-  packages_business_external_storage_list_tishi: '该外存已被 {val1} 个任务调用，请删除或者修改配置后重试',
+  packages_business_external_storage_list_tishi:
+    '该外存已被 {val1} 个任务调用，请删除或者修改配置后重试',
   // API
   packages_business_api_publish: 'API 发布',
   packages_business_api_application: 'API 应用',
@@ -1044,14 +1154,16 @@ export default {
   packages_business_chuangjianfuwu: '创建服务',
   packages_business_fuwuxiangqing: '服务详情',
   packages_business_geshicuowu: '格式错误',
-  packages_business_validate: '只能包含中文、字母、数字、下划线和美元符号,并且数字不能开头',
+  packages_business_validate:
+    '只能包含中文、字母、数字、下划线和美元符号,并且数字不能开头',
   packages_business_aPI_path_Settings: '访问路径设置',
   packages_business_default_path: '默认访问路径',
   packages_business_custom_path: '自定义访问路径',
   packages_business_prefix: '前缀',
   packages_business_base_path: '基础路径',
   packages_business_path: '访问路径',
-  packages_business_confirm_tip: '重新生成会导致原API访问路径发生改变，是否确认重新生成？',
+  packages_business_confirm_tip:
+    '重新生成会导致原API访问路径发生改变，是否确认重新生成？',
   packages_business_create_connection_scenedialog_table:
     'Tablestore 是一种高可靠性、高性能、灵活性和可扩展性的分布式NoSQL数据存储服务，适用于实时数据查询和分析等应用场景。',
   packages_business_create_connection_scenedialog_selec:
@@ -1097,17 +1209,23 @@ export default {
     '您要停止挖掘的表正在被以下任务使用，停止挖掘后将会影响以下任务的正常同步，请确认是否要继续停止。',
   packages_business_shared_mining_table_tingzhiwajueti: '停止挖掘提醒',
   packages_business_shared_mining_table_yihebingdelian: '已合并的连接',
-  packages_business_shared_mining_table_shengyuyigelian: '挖掘任务中至少要有一张表在挖掘，不能全部停止。',
+  packages_business_shared_mining_table_shengyuyigelian:
+    '挖掘任务中至少要有一张表在挖掘，不能全部停止。',
   packages_business_logs_nodelog_yijianfuzhi: '一键复制',
-  packages_business_connections_jsdebug_shiyongHtt: '使用HttpReceiver最新接收到的数据用于调试',
+  packages_business_connections_jsdebug_shiyongHtt:
+    '使用HttpReceiver最新接收到的数据用于调试',
   packages_business_connections_jsdebug_huoqutiaoshishu: '获取调试数据',
   packages_business_shared_mining_list_shanchurenwus:
     '删除任务<span class="color-primary">{val1}</span>后，此任务将无法恢复',
-  packages_business_shared_mining_list_gaiwajuerenwu: '该挖掘任务已被 {val} 个任务调用，请删除任务后重试',
-  packages_business_shared_cache_list_qingxianxiugaiwai: '外存不存在，请先修改外存配置后，再启动。',
-  packages_business_components_conditionbox_shifouquerenqing: '是否确认清除索引字段为空的校验条件？',
+  packages_business_shared_mining_list_gaiwajuerenwu:
+    '该挖掘任务已被 {val} 个任务调用，请删除任务后重试',
+  packages_business_shared_cache_list_qingxianxiugaiwai:
+    '外存不存在，请先修改外存配置后，再启动。',
+  packages_business_components_conditionbox_shifouquerenqing:
+    '是否确认清除索引字段为空的校验条件？',
   packages_business_components_conditionbox_suoyinziduanwei: '索引字段为空',
-  packages_business_components_conditionbox_yijianqingchusuo: '一键清除索引字段为空的条件',
+  packages_business_components_conditionbox_yijianqingchusuo:
+    '一键清除索引字段为空的条件',
   packages_business_external_storage_list_yanzhengfuwuduan: '验证服务端证书',
   packages_business_external_storage_list_siyaomima: '私钥密码',
   packages_business_external_storage_list_kehuduansiyao: '客户端私钥',
@@ -1136,23 +1254,29 @@ export default {
     '需要保证查询条件有索引，如果没索引会产生全表扫描导致数据库压力变大',
   packages_business_data_server_list_apIwendang: 'API文档导出',
   packages_business_verification_form_gaojipeizhi: '高级配置',
-  packages_business_verification_form_validate_table_is_empty: '源表和目标表不能为空，请修改校验表配置',
+  packages_business_verification_form_validate_table_is_empty:
+    '源表和目标表不能为空，请修改校验表配置',
   packages_business_verification_form_validate_table_is_empty1:
     '因为找不到源表或目标表，以下来源连接将会自动跳过校验：',
-  packages_business_verification_form_condition_is_empty: '关联校验条件不能为空，请修改校验表配置',
-  packages_business_verification_form_index_field_is_empty: '因为找不到索引字段，以下来源表将会自动跳过校验：',
+  packages_business_verification_form_condition_is_empty:
+    '关联校验条件不能为空，请修改校验表配置',
+  packages_business_verification_form_index_field_is_empty:
+    '因为找不到索引字段，以下来源表将会自动跳过校验：',
   packages_business_verification_form_index_field_count_is_not_equal:
     '因为源表与目标表的索引字段个数不相等，以下来源表将会自动跳过校验：',
   packages_business_verification_list_renyibiaoshuju: '任意表数据校验',
   packages_business_verification_list_renwuyizhixing: '任务一致性校验',
   packages_business_permissionse_settings_create_quanxianshezhi: '权限设置',
   packages_business_permissionse_settings_create_shezhiquanxian: '设置权限',
-  packages_business_permissionse_settings_create_xuanzeshouquanjiao: '选择授权角色',
-  packages_business_permissionse_settings_create_wufaduiyixiashujujinxingshouquan: '无法对以下数据进行授权，将跳过保存',
+  packages_business_permissionse_settings_create_xuanzeshouquanjiao:
+    '选择授权角色',
+  packages_business_permissionse_settings_create_wufaduiyixiashujujinxingshouquan:
+    '无法对以下数据进行授权，将跳过保存',
   packages_business_connections_permissionsdialog_tianjiashouquan: '添加授权',
   packages_business_connections_permissionsdialog_gongnengquanxian: '功能权限',
   packages_business_connections_permissionsdialog_shouquanjuese: '授权角色',
-  packages_business_connections_permissionsdialog_lianjiequanxianshe: '连接权限设置',
+  packages_business_connections_permissionsdialog_lianjiequanxianshe:
+    '连接权限设置',
   packages_business_connections_preview_quanxianguanli: '权限管理',
   packages_business_connections_preview_shujulianjiequan: '数据连接权限',
   packages_business_notice_list_gonggaobiaoti: '公告标题',
@@ -1163,17 +1287,26 @@ export default {
   packages_business_components_upgradecharges_keyongrenwushu: '剩余可用任务数',
   packages_business_components_upgradecharges_dangqianguige: '当前规格',
   packages_business_components_upgradecharges_dingyueshengji: '订阅升级',
-  packages_business_create_connection_sceneform_lianjieceshiwu: '连接测试无效，请检查您的连接配置',
-  packages_business_create_connection_sceneform_qingxianjinxinglian: '请先进行连接测试',
-  packages_business_logs_nodelog_qingshengjidingyue: '请升级订阅以获取更多任务数量，点击弹窗显示升级引导',
-  packages_business_logs_nodelog_yinqingkeyibei: '引擎可以被调用的任务超过了限制数，',
-  packages_business_task_list_nindekeyunxing: '您的可运行任务数已达上限，请订阅升级规格，以便您运行更多的任务！',
+  packages_business_create_connection_sceneform_lianjieceshiwu:
+    '连接测试无效，请检查您的连接配置',
+  packages_business_create_connection_sceneform_qingxianjinxinglian:
+    '请先进行连接测试',
+  packages_business_logs_nodelog_qingshengjidingyue:
+    '请升级订阅以获取更多任务数量，点击弹窗显示升级引导',
+  packages_business_logs_nodelog_yinqingkeyibei:
+    '引擎可以被调用的任务超过了限制数，',
+  packages_business_task_list_nindekeyunxing:
+    '您的可运行任务数已达上限，请订阅升级规格，以便您运行更多的任务！',
   packages_business_setting_alarmsetting_qubangding: '去绑定',
-  packages_business_setting_alarmsetting_jiancedaoninhai: '检测到您还未绑定邮箱，无法开启邮件通知。',
-  packages_business_verification_form_zhengzaijiyuren: '正在基于任务生成校验条件',
-  packages_business_agent_ip_tips_prefix: '请在防火墙中允许这些 TapData IP 访问数据库端口，并确保权限设置正确',
+  packages_business_setting_alarmsetting_jiancedaoninhai:
+    '检测到您还未绑定邮箱，无法开启邮件通知。',
+  packages_business_verification_form_zhengzaijiyuren:
+    '正在基于任务生成校验条件',
+  packages_business_agent_ip_tips_prefix:
+    '请在防火墙中允许这些 TapData IP 访问数据库端口，并确保权限设置正确',
   packages_business_agent_ip_tips_suffix: '点击查看全托管Agent的IP地址信息',
-  packages_business_demo_database_desc: 'Demo 数据源，可快速创建数据源信息，无需准备数据库信息即可体验。',
+  packages_business_demo_database_desc:
+    'Demo 数据源，可快速创建数据源信息，无需准备数据库信息即可体验。',
   packages_business_use_ssl: '使用 SSL',
   packages_business_certificate_authority: 'CA 文件',
   packages_business_client_certificate: '客户端证书文件',
@@ -1187,12 +1320,16 @@ export default {
   packages_business_connections_test_xiazaijindu: '下载进度',
   packages_business_connections_test_xiazaishibai: '下载失败',
   packages_business_relmig_import: 'MongoDB Relmig 导入',
-  packages_business_relmig_import_desc: `这个功能旨在无缝导入 MongoDB 关系迁移器导出的 relmig 项目文件到 ${process.env.VUE_APP_PAGE_TITLE}。在 relmig 文件被导入后， ${process.env.VUE_APP_PAGE_TITLE} 将自动创建一个任务来执行源数据库的实时数据同步，并将其转换为 MongoDB 数据库中的 JSON 数据格式。`,
+  packages_business_relmig_import_desc: `这个功能旨在无缝导入 MongoDB 关系迁移器导出的 relmig 项目文件到 ${import.meta.env.VUE_APP_PAGE_TITLE}。在 relmig 文件被导入后， ${import.meta.env.VUE_APP_PAGE_TITLE} 将自动创建一个任务来执行源数据库的实时数据同步，并将其转换为 MongoDB 数据库中的 JSON 数据格式。`,
   packages_business_relmig_upload: '上传 relmig 文件',
-  packages_business__relmig_import_connection_tip: '如果您还没有创建，请点击这里',
-  packages_business__relmig_import_source_connection_placeholder: '请选择包含您在 relmig 项目中使用的源表的源连接',
-  packages_business__relmig_import_target_connection_placeholder: '请选择您希望数据同步到的目标连接',
-  packages_business_task_tag_placeholder: '为这个任务分配一个标签，以便您能够轻松找到它',
+  packages_business__relmig_import_connection_tip:
+    '如果您还没有创建，请点击这里',
+  packages_business__relmig_import_source_connection_placeholder:
+    '请选择包含您在 relmig 项目中使用的源表的源连接',
+  packages_business__relmig_import_target_connection_placeholder:
+    '请选择您希望数据同步到的目标连接',
+  packages_business_task_tag_placeholder:
+    '为这个任务分配一个标签，以便您能够轻松找到它',
   packages_business_paid_connector: '付费数据源',
   packages_business_more_free_connector: '更多免费数据源',
   packages_business_request_connector_title: '试用 Alpha/Beta 数据源',
@@ -1201,19 +1338,22 @@ export default {
   packages_business_request_connector_alert:
     '👋 欢迎试用 {qcType} 版本的 {type} 数据源，填写表单后即可开始试用。\n💁 为了获得最佳体验，请提供准确的联系方式。我们将主动联系您，提供支持和帮助。',
   packages_business_request_connector_use_plan: '您计划使用此数据源的场景',
-  packages_business_request_connector_use_plan_placeholder: '请填写您的使用场景',
+  packages_business_request_connector_use_plan_placeholder:
+    '请填写您的使用场景',
   packages_business_request_connector_use_time: '预计使用时间',
   packages_business_request_connector_use_time_option1: '5天',
   packages_business_request_connector_use_time_option2: '半年',
   packages_business_request_connector_use_time_option3: '1年',
-  packages_business_request_connector_success: '我们收到了您的请求，很快就会有人与您联系。',
+  packages_business_request_connector_success:
+    '我们收到了您的请求，很快就会有人与您联系。',
   packages_business_view_more_apis: '查看更多API',
   packages_business_verification_hashTip: '暂不支持异构数据库',
   packages_business_heterogeneous_database: '异构数据库',
   packages_business_selected_rows: '已选 {val} 行',
   packages_business_download_analysis_report: '分析报告',
   packages_business_download_analysis_report_title: '任务分析报告生成中...',
-  packages_business_download_analysis_report_desc: '报告生成大约需要 60s, 在下载后, 请发送给支持团队进行分析',
+  packages_business_download_analysis_report_desc:
+    '报告生成大约需要 60s, 在下载后, 请发送给支持团队进行分析',
   packages_business_exporting_task: '正在导出任务',
   packages_business_exporting_run_history: '正在导出任务运行历史记录',
   packages_business_exporting_task_log: '正在导出任务日志',
@@ -1236,7 +1376,8 @@ export default {
   packages_business_checkDetails: '校验详情',
   packages_business_diffThreshold: '差异阈值',
   packages_business_diffTotal: '差异总数',
-  packages_business_diffExceededAlert: '差异总数已超过阈值，超过的部分将不予修复',
+  packages_business_diffExceededAlert:
+    '差异总数已超过阈值，超过的部分将不予修复',
   packages_business_correctionDetails: '修复详情',
   packages_business_correctionDataVolume: '修复数据行数',
   packages_business_correctionTableCount: '修复表数量',
@@ -1248,7 +1389,8 @@ export default {
   packages_business_business_information: '业务信息',
   packages_business_publish_api: '发布API',
   packages_business_field_description: '字段描述',
-  packages_business_shared_cache_enforceShareCdc: '当共享挖掘不可用(缓存启动时)',
+  packages_business_shared_cache_enforceShareCdc:
+    '当共享挖掘不可用(缓存启动时)',
   packages_business_shared_cache_enforceShareCdc_true: '缓存直接报错停止',
   packages_business_not_support_validation: '{connection} 不支持{method}',
   packages_business_download_details: '下载详情',
@@ -1260,8 +1402,20 @@ export default {
   packages_business_please_select_field: '请选择字段',
   packages_business_please_input_charset: '请输入字符集',
   packages_business_auto_fill_join_fields: '智能填充关联条件',
-  packages_business_auto_fill_join_tooltip_title: '开启后，系统将按以下优先级自动填充关联条件：',
+  packages_business_auto_fill_join_tooltip_title:
+    '开启后，系统将按以下优先级自动填充关联条件：',
   packages_business_auto_fill_join_tooltip_primary: '1. 优先使用主键字段',
-  packages_business_auto_fill_join_tooltip_notnull: '2. 如无主键，则使用非空字段',
-  packages_business_auto_fill_join_tooltip_all: '3. 如无非空字段，则使用全部字段'
+  packages_business_auto_fill_join_tooltip_notnull:
+    '2. 如无主键，则使用非空字段',
+  packages_business_auto_fill_join_tooltip_all:
+    '3. 如无非空字段，则使用全部字段',
+  packages_business_nulls_first: 'NULL优先排序',
+  packages_business_nulls_first_tip:
+    '关联字段存在NULL值时，数据库默认将NULL排在最后，可能导致校验失败。开启此选项将NULL值排在前面，但可能无法使用数据库索引，增加数据库负载。',
+  packages_business_ignoreTimePrecision: '忽略时间精度',
+  packages_business_ignoreTimePrecision_tip:
+    '开启此开关后会忽略时间毫秒级的比较，只精确到秒级，适用于高精度时间字段同步低精度时间字段场景。',
+  packages_business_checkTableThreadNum: '校验线程数量',
+  packages_business_checkTableThreadNum_tip:
+    '校验线程数量，在资源充足的情况下可进行调整，默认线程数为 10',
 }
