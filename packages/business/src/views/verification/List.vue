@@ -263,6 +263,7 @@ export default {
           type: 'select-inner',
           items: this.verifyTypeList,
           selectedWidth: '200px',
+          id: 'type-filter-select',
         },
         {
           label: this.$t('packages_business_verification_check_frequency'),
@@ -279,6 +280,7 @@ export default {
               value: 'cron',
             },
           ],
+          id: 'mode-filter-select',
         },
         {
           label: this.$t('packages_business_verification_is_enabled'),
@@ -295,17 +297,20 @@ export default {
               value: 2,
             },
           ],
+          id: 'enabled-filter-select',
         },
         {
           label: this.$t('packages_business_verification_result_title'),
           key: 'result',
           type: 'select-inner',
           items: this.validList,
+          id: 'result-filter-select',
         },
         {
           placeholder: this.$t('packages_business_verification_task_name'),
           key: 'keyword',
           type: 'input',
+          id: 'name-filter-input',
         },
       ]
     },
@@ -358,7 +363,6 @@ export default {
         v-readonlybtn="'datasource_creation'"
         class="btn btn-create"
         type="primary"
-       
         @click="handleCreate('pipeline')"
       >
         <span>{{
@@ -369,7 +373,6 @@ export default {
         v-readonlybtn="'datasource_creation'"
         class="btn btn-create"
         type="primary"
-       
         @click="handleCreate('random')"
       >
         <span>{{
@@ -401,7 +404,6 @@ export default {
         }}</ElButton>
         <ElButton
           v-readonlybtn="'SYNC_category_application'"
-         
           class="btn"
           @click="handleExport"
         >

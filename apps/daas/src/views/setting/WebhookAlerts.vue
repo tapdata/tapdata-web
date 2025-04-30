@@ -310,7 +310,7 @@ export default {
       })
     },
     handleSwitch(row) {
-      this.$set(this.switchStateMap, row.id, true)
+      this.switchStateMap[row.id] = true
       webhookApi[row.open ? 'close' : 'open'](row.id)
         .then(() => {
           row.open = !row.open
@@ -320,15 +320,16 @@ export default {
           row.open = !row.open
         })
         .finally(() => {
-          this.$delete(this.switchStateMap, row.id)
+          delete this.switchStateMap[row.id]
         })
     },
     async reSend(request) {
-      this.$set(this.resendStateMap, request.id, true)
+      this.resendStateMap[request.id] = true
       const result = await webhookApi.resend(request)
       Object.assign(request, this.mapHistory(result))
       this.$message.success(this.$t('public_message_send_success'))
-      this.$delete(this.resendStateMap, request.id)
+
+      delete this.resendStateMap[request.id]
     },
     afterCloseHistory() {
       this.historyState.collapse = []
@@ -474,7 +475,7 @@ export default {
                 </span>
               </template>
               <JsonEditor
-                v-model="form.customTemplate"
+                v-model:value="form.customTemplate"
                 height="320"
                 :options="{
                   options: { showPrintMargin: false, useWrapMode: true },

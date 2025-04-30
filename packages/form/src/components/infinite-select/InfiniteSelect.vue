@@ -87,7 +87,9 @@ const labelContent = ref('')
 
 // 回显数据
 const setCurrentLabel = async () => {
-  const current = selectRef.value.states.selected
+  const [current] = selectRef.value.states.selected
+
+  if (!current) return
 
   if (current.currentLabel === current.value && props.itemType === 'object') {
     if (props.currentLabel) {
@@ -110,20 +112,20 @@ const getLabel = (value, label) => {
 }
 
 const getOption = async (value) => {
-  const { itemValue, itemLabel } = props
+  const { itemValue } = props
   const filter = merge({}, props.params, {
     where: { [itemValue]: value },
     size: 1,
   })
   const { items } = await props.method(filter)
   const [item] = items
+
   if (item) {
-    console.log('item', item)
     return item
   }
 }
 
-const doRemoteMethod = async (_query) => {
+const doRemoteMethod = async (_query?: any) => {
   query.value = _query
   page.value = 1
 
@@ -232,9 +234,10 @@ watch(
 
 watch(
   () => props.params,
-  () => {
-    console.log('remoteMethodDebounce')
-    remoteMethodDebounce()
+  (newVal, oldVal) => {
+    if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+      remoteMethodDebounce()
+    }
   },
   {
     deep: true,

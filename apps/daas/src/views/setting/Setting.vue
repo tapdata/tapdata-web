@@ -287,11 +287,11 @@ export default {
     },
 
     handleChangeCert(target, value) {
-      this.$set(target, 'value', value)
+      target.value = value
     },
 
     handleChangeName(target, name) {
-      this.$set(target, 'fileName', name)
+      target.fileName = name
     },
   },
 }

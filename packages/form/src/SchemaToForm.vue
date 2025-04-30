@@ -1,25 +1,13 @@
-<template>
-  <div class="scheme-to-form">
-    <Form
-      v-bind="$attrs"
-      class-name="form-wrap"
-      :form="form"
-      :colon="colon"
-      :layout="layout"
-      :label-align="labelAlign"
-      :label-width="labelWidth"
-    >
-      <SchemaField v-if="!!objData" :schema="objData" :scope="scope" />
-    </Form>
-  </div>
-</template>
-
 <script>
-import { createForm, onFormValuesChange, setValidateLanguage } from '@formily/core'
+import {
+  createForm,
+  onFormValuesChange,
+  setValidateLanguage,
+} from '@formily/core'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 
-import { SchemaField } from './shared'
 import { Form } from './components'
+import { SchemaField } from './shared'
 
 export default {
   name: 'SchemaToForm',
@@ -103,9 +91,24 @@ export default {
       })
     },
   },
-  emits: ['update:value'],
 }
 </script>
+
+<template>
+  <div class="scheme-to-form">
+    <Form
+      v-bind="$attrs"
+      class-name="form-wrap"
+      :form="form"
+      :colon="colon"
+      :layout="layout"
+      :label-align="labelAlign"
+      :label-width="labelWidth"
+    >
+      <SchemaField v-if="!!objData" :schema="objData" :scope="scope" />
+    </Form>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .scheme-to-form {

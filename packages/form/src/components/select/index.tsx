@@ -31,7 +31,6 @@ const SelectOption = defineComponent({
       const itemLabel = customProps.itemLabel || 'label'
       const itemValue = customProps.itemValue || 'value'
       const itemDisabled = customProps.itemDisabled || 'disabled'
-      console.log('options', options)
       const children =
         options.length !== 0
           ? {

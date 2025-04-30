@@ -11,13 +11,12 @@ export const Input = defineComponent({
   },
   setup(props, { attrs }) {
     return () => {
-      console.log('Input', attrs)
       return (
         <_Input
           {...{
             ...attrs,
             onBlur: (ev) => {
-              let val = ev.target.value
+              const val = ev.target.value
               let newVal = val
 
               if (props.trim) {

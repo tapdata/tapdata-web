@@ -24,7 +24,7 @@ export default defineComponent({
       required: true,
     },
   },
-
+  emits: ['update:value'],
   setup(props, { emit }) {
     const setCharset = (value) => {
       selectedFields.value.forEach((key) => {
@@ -42,7 +42,7 @@ export default defineComponent({
           return acc
         }, {})
 
-        emit('input', result)
+        emit('update:value', result)
       },
     })
 

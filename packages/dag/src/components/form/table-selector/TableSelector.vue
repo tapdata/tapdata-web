@@ -5,7 +5,7 @@ import {
   taskApi,
   workerApi,
 } from '@tap/api'
-import { VEmpty } from '@tap/component'
+import { RightBoldOutlined, VEmpty } from '@tap/component'
 import VIcon from '@tap/component/src/base/VIcon'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 import { computed, ref, watch } from 'vue'
@@ -250,405 +250,6 @@ watch(
 
 // Initialize
 getTables()
-
-/* export default {
-  components: { RecycleScroller, OverflowTooltip, ConnectionTest, VIcon, VEmpty },
-  props: {
-    connectionId: {
-      type: String,
-      required: true,
-    },
-    value: Array,
-    disabled: Boolean,
-    hideReload: Boolean,
-    alwaysShowReload: Boolean,
-    reloadTime: [String, Number],
-    filterType: String,
-    syncPartitionTableEnable: Boolean,
-    hasPartition: Boolean,
-    nodeId: String,
-    taskId: String
-  },
-  data() {
-    return {
-      stateIsReadonly: this.$store.state.dataflow.stateIsReadonly,
-      loading: false,
-      table: {
-        isCheckAll: false,
-        searchKeyword: '',
-        checked: [],
-        tables: [],
-      },
-      selected: {
-        isCheckAll: false,
-        searchKeyword: '',
-        checked: [],
-        tables: this.value,
-      },
-      showProgress: false,
-      progress: '',
-      loadFieldsStatus: 'finished',
-      errorTables: {},
-      isOpenClipMode: false,
-      clipboardValue: '',
-      isFocus: false,
-      tableMap: {},
-      schemaLoading: false,
-    }
-  },
-  computed: {
-    ...mapGetters('dataflow', ['schemaRefreshing']),
-
-    filteredData() {
-      let { searchKeyword, tables } = this.table
-      try {
-        let reg = new RegExp(searchKeyword, 'i')
-        return getPrimaryKeyTablesByType(
-          tables.filter((item) => reg.test(item)),
-          this.filterType,
-          this.tableMap,
-        )
-      } catch (error) {
-        return []
-      }
-    },
-    filterSelectedData() {
-      let { searchKeyword, tables } = this.selected
-      let errorTables = this.getErrorTables(tables)
-      let reg = new RegExp(searchKeyword, 'i')
-      let filterTables = tables.filter((item) => reg.test(item))
-      filterTables = filterTables.sort((t1, t2) => {
-        if (errorTables[t1]) {
-          return -1
-        }
-        if (errorTables[t2]) {
-          return 1
-        }
-        return 0
-      })
-      return getPrimaryKeyTablesByType(filterTables, this.filterType, this.tableMap)
-    },
-
-
-    rightData() {
-      return this.filterSelectedData.map(name => ({name}))
-    },
-
-    clipboardTables() {
-      //支持换行符 /n
-      let value = this.clipboardValue?.replace(/(\n)/g, ',')
-      value = value?.replace(/\s+/g, '')
-      let tables = value ? value.split(',') : []
-      return Array.from(new Set(tables.filter((it) => !!it && it.trim())))
-    },
-    isIndeterminate() {
-      const checkedLength = this.table.checked.length
-      const tablesLength = this.filteredData.length
-      return checkedLength > 0 && checkedLength < tablesLength
-    },
-    selectedIsIndeterminate() {
-      const checkedLength = this.selected.checked.length
-      const tablesLength = this.filterSelectedData.length
-      return checkedLength > 0 && checkedLength < tablesLength
-    },
-  },
-  watch: {
-    isFocus(v) {
-      if (v) {
-        this.$nextTick(() => {
-          this.$refs?.textarea?.focus()
-        })
-      }
-    },
-    value(v = []) {
-      this.selected.tables = v.concat()
-    },
-    'table.checked'() {
-      this.updateAllChecked()
-    },
-    'filteredData.length'() {
-      this.updateAllChecked()
-    },
-    'selected.checked'() {
-      this.updateSelectedAllChecked()
-    },
-    'filterSelectedData.length'() {
-      this.updateSelectedAllChecked()
-    },
-    reloadTime() {
-      this.getProgress(true)
-    },
-    filterType() {
-      this.handleFilterType()
-    },
-    schemaRefreshing(v) {
-      if (!v) {
-        this.getTables()
-      }
-    },
-    syncPartitionTableEnable() {
-      this.getTables()
-    }
-  },
-  created() {
-    let id = this.connectionId
-    if (id) {
-      this.getTables()
-    }
-  },
-  methods: {
-    submitClipboard() {
-      let tables = this.clipboardTables
-      let errorTables = this.getErrorTables(tables)
-      if (!Object.keys(errorTables).length) {
-        this.changeSeletedMode()
-        //保留当前选中 以及当前所手动输入
-        this.selected.tables = Array.from(new Set([...this.selected.tables, ...this.clipboardTables.concat()]))
-        $emit(this, 'update:value', this.selected.tables)
-        // $emit(this, 'change', this.selected.tables)
-      }
-    },
-    add() {
-      if (this.isOpenClipMode || this.disabled) {
-        return
-      }
-      let tables = this.selected.tables.concat(this.table.checked)
-      if (tables.length) {
-        tables = Array.from(new Set(tables))
-        this.selected.tables = Object.freeze(tables)
-        $emit(this, 'update:value', this.selected.tables)
-        // $emit(this, 'change', this.selected.tables)
-      } else {
-        this.$message.warning(this.$t('packages_form_component_table_selector_not_checked'))
-      }
-    },
-    remove() {
-      if (this.isOpenClipMode || this.disabled) {
-        return
-      }
-      let tables = this.selected.checked
-      if (tables.length) {
-        this.selected.tables = Object.freeze(this.selected.tables.filter((it) => !tables.includes(it)))
-        this.selected.checked = []
-        this.selected.isCheckAll = false
-        $emit(this, 'update:value', this.selected.tables)
-        // $emit(this, 'change', this.selected.tables)
-      } else {
-        this.$message.warning(this.$t('packages_form_component_table_selector_not_checked'))
-      }
-    },
-    autofix() {
-      if (this.isOpenClipMode) {
-        this.clipboardValue = this.clipboardTables.filter((t) => !this.errorTables[t]).join(', ')
-        this.errorTables = {}
-      } else {
-        this.selected.tables = Object.freeze(this.selected.tables.filter((t) => !this.errorTables[t]))
-        $emit(this, 'update:value', this.selected.tables)
-        // $emit(this, 'change', this.selected.tables)
-      }
-    },
-    getErrorTables(tables) {
-      let allTables = this.table.tables
-      let errorTables = {}
-
-      if (!this.loading) {
-        tables.forEach((t) => {
-          if (!allTables.includes(t)) {
-            errorTables[t] = this.$t('packages_form_component_table_selector_error_not_exit')
-          }
-        })
-      }
-
-      this.errorTables = errorTables
-      return errorTables
-    },
-    checkAll(flag, name) {
-      if (flag) {
-        this[name].checked = name === 'table' ? this.filteredData : this.filterSelectedData
-      } else {
-        this[name].checked = []
-      }
-    },
-    checkedChange(name) {
-      let { checked, tables } = this[name]
-      if (checked.length === tables.length) {
-        this[name].isCheckAll = true
-      } else {
-        this[name].isCheckAll = false
-      }
-    },
-    changeSeletedMode() {
-      this.isOpenClipMode = !this.isOpenClipMode
-      this.errorTables = {}
-      if (this.isOpenClipMode) {
-        this.clipboardValue = this.selected.tables?.join(',') || ''
-        this.isFocus = true
-      } else {
-        this.getErrorTables(this.selected.tables)
-      }
-    },
-    // 获取所有表
-    getTables() {
-      this.loading = true
-      const { connectionId } = this
-
-      const fn = this.hasPartition
-        ? metadataInstancesApi.pagePartitionTables({
-            connectionId,
-            limit: 0,
-            syncPartitionTableEnable: this.syncPartitionTableEnable
-          })
-        : metadataInstancesApi.pageTables({ connectionId, limit: 0 })
-
-      fn.then((res = {}) => {
-        let data = res.items || []
-        let tables = data.map((it) => it.tableName)
-        let map = {}
-        data.forEach((el = {}) => {
-          const { tableName, tableComment, primaryKeyCounts = 0, uniqueIndexCounts = 0 } = el
-          if (tableComment || primaryKeyCounts || uniqueIndexCounts) {
-            map[tableName] = { tableComment, primaryKeyCounts, uniqueIndexCounts }
-          }
-        })
-        this.tableMap = map
-        tables.sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
-        this.table.tables = Object.freeze(tables)
-      }).finally(() => {
-        this.loading = false
-      })
-    },
-    //重新加载模型
-    async reload() {
-      const data = await workerApi.getAvailableAgent()
-      if (!data?.result?.length) {
-        this.$message.error(this.$t('packages_form_agent_check_error'))
-      } else {
-        let config = {
-          title: this.$t('packages_form_connection_reload_schema_confirm_title'),
-          Message: this.$t('packages_form_connection_reload_schema_confirm_msg'),
-        }
-        this.$confirm(config.Message + '?', config.title, {
-          type: 'warning',
-          closeOnClickModal: false,
-        }).then((resFlag) => {
-          if (resFlag) {
-            this.showProgress = true
-            this.progress = 0
-            this.testSchema()
-          }
-        })
-      }
-    },
-    //请求测试连接并获取进度
-    testSchema() {
-      let parms = {
-        loadCount: 0,
-        loadFieldsStatus: 'loading',
-      }
-      this.loadFieldsStatus = 'loading'
-      connectionsApi.updateById(this.connectionId, parms).then((res) => {
-        if (this?.$refs?.test) {
-          let data = res
-          this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
-          this.$refs.test.startByConnection(data, true)
-          this.getProgress()
-        }
-      })
-    },
-    // 获取加载进度
-    getProgress(check = false) {
-      connectionsApi
-        .getNoSchema(this.connectionId)
-        .then((res) => {
-          let data = res
-          this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
-          if (data.loadFieldsStatus === 'finished') {
-            this.progress = 100
-            setTimeout(() => {
-              this.showProgress = false
-              this.progress = 0 //加载完成
-              const nodeId = this.nodeId || this.$store.state?.dataflow.activeNodeId
-              const taskId = this.taskId || this.$store.state?.dataflow.taskId
-
-              if (!check && taskId && nodeId) {
-                metadataInstancesApi
-                  .deleteLogicSchema(taskId, {
-                    nodeId,
-                  })
-                  .then(() => {
-                    this.getTables() //更新schema
-                  })
-              } else {
-                this.getTables() //更新schema
-              }
-            }, 1000)
-          } else {
-            let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
-            this.progress = progress ? progress : 0
-            setTimeout(() => {
-              if (this?.$refs?.test) {
-                this.getProgress(true)
-              }
-            }, 1000)
-          }
-        })
-        .catch(() => {
-          // this.$message.error(this.$t('packages_form_connection_reload_schema_fail'))
-          this.showProgress = false
-          this.progress = 0 //加载完成
-        })
-    },
-
-    updateAllChecked() {
-      this.table.isCheckAll =
-        this.filteredData.length > 0 && this.filteredData.every((item) => this.table.checked.indexOf(item) > -1)
-    },
-
-    updateSelectedAllChecked() {
-      this.selected.isCheckAll =
-        this.filterSelectedData.length > 0 &&
-        this.filterSelectedData.every((item) => this.selected.checked.indexOf(item) > -1)
-    },
-
-    getTableInfo(table) {
-      return this.tableMap[table] || {}
-    },
-
-    handleFilterType() {
-      this.table.checked = []
-      this.selected.checked = []
-      if (this.filterType === 'All') return
-
-      // 待复制表
-      this.table.isCheckAll = false
-
-      // 已选择表
-      this.selected.tables = Object.freeze(
-        getPrimaryKeyTablesByType(this.selected.tables, this.filterType, this.tableMap),
-      )
-      this.selected.isCheckAll = false
-      this.$emit('input', this.selected.tables)
-      // this.$emit('change', this.selected.tables)
-    },
-
-    async loadSchema() {
-      this.schemaLoading = true
-      const nodeId = this.nodeId || this.$store.state?.dataflow.activeNodeId
-      const taskId = this.taskId || this.$store.state?.dataflow.taskId
-
-      await taskApi
-        .refreshSchema(taskId, {
-          nodeIds: nodeId,
-          keys: this.table.searchKeyword,
-        })
-        .finally(() => {
-          this.schemaLoading = false
-        })
-
-      this.getTables()
-    },
-  },
-} */
 </script>
 
 <template>
@@ -680,11 +281,12 @@ getTables()
       <div class="selector-panel__body">
         <div class="selector-panel__search">
           <ElInput
+            id="table-selector-left-filter-input"
             v-model="table.searchKeyword"
             clearable
             :placeholder="$t('public_input_placeholder_search')"
           >
-            <template #suffix>
+            <template #prefix>
               <ElIcon><ElIconSearch /></ElIcon>
             </template>
           </ElInput>
@@ -770,7 +372,41 @@ getTables()
     <!-- 左右箭头 按钮 -->
     <div class="selector-center">
       <div class="selector-btns">
-        <span
+        <el-button
+          id="table-selector-add-btn"
+          :disabled="isOpenClipMode || disabled || !table.checked.length"
+          class="p-1"
+          :type="
+            table.checked.length > 0 && !isOpenClipMode && !disabled
+              ? 'primary'
+              : 'default'
+          "
+          style="width: 28px; height: 28px"
+          @click="add"
+        >
+          <template #icon>
+            <RightBoldOutlined />
+          </template>
+        </el-button>
+
+        <el-button
+          id="table-selector-remove-btn"
+          :disabled="isOpenClipMode || disabled || !selected.checked.length"
+          :type="
+            selected.checked.length > 0 && !isOpenClipMode && !disabled
+              ? 'primary'
+              : 'default'
+          "
+          class="p-1 ml-0"
+          style="width: 28px; height: 28px"
+          @click="remove"
+        >
+          <template #icon>
+            <RightBoldOutlined class="rotate-180" />
+          </template>
+        </el-button>
+
+        <!-- <span
           class="btn-transfer rounded-4"
           :class="{
             'btn-transfer--disabled': isOpenClipMode || disabled,
@@ -791,7 +427,7 @@ getTables()
           @click="remove"
         >
           <el-icon><el-icon-arrow-left /></el-icon>
-        </span>
+        </span> -->
       </div>
     </div>
     <!-- 已选择区 -->
@@ -837,11 +473,12 @@ getTables()
       <div class="selector-panel__body" :class="{ isOpenClipMode }">
         <div v-show="!isOpenClipMode" class="selector-panel__search">
           <ElInput
+            id="table-selector-right-filter-input"
             v-model="selected.searchKeyword"
             clearable
             :placeholder="$t('public_input_placeholder_search')"
           >
-            <template #suffix>
+            <template #prefix>
               <ElIcon><ElIconSearch /></ElIcon>
             </template>
           </ElInput>

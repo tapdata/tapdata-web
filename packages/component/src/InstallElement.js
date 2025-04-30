@@ -1,4 +1,5 @@
 import {
+  ElCollapseItem,
   ElDialog,
   ElDropdown,
   ElLink,
@@ -12,6 +13,7 @@ import {
 import { CloseBoldOutlined } from './CloseBoldOutlined'
 import { CloseIcon } from './CloseIcon'
 import { DownBoldOutlined } from './DownBoldOutlined'
+import { RightBoldOutlined } from './RightBoldOutlined'
 import 'element-plus/theme-chalk/src/message.scss'
 import 'element-plus/theme-chalk/src/message-box.scss'
 import 'element-plus/theme-chalk/src/notification.scss'
@@ -44,4 +46,5 @@ export const installElement = (app) => {
   ElSelectV2.props.suffixIcon.default = DownBoldOutlined
   ElDropdown.props.popperOptions.default = getDefault
   ElLink.props.underline.default = false
+  ElCollapseItem.props.icon.default = RightBoldOutlined
 }

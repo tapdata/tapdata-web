@@ -1108,7 +1108,7 @@ export default defineComponent({
                   'x-component-props': {
                     type: 'datetime',
                     align: 'right',
-                    format: 'yyyy-MM-dd HH:mm:ss',
+                    format: 'YYYY-MM-DD HH:mm:ss',
                     valueFormat: 'timestamp'
                   },
                   'x-reactions': {

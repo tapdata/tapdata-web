@@ -902,8 +902,8 @@ export default {
                     :placeholder="
                       $t('packages_business_verification_form_jiaoyankaishishi')
                     "
-                    format="yyyy-MM-dd HH:mm"
-                    value-format="yyyy-MM-dd HH:mm"
+                    format="YYYY-MM-DD HH:mm:ss"
+                    value-format="YYYY-MM-DD HH:mm:ss"
                   />
                 </ElFormItem>
                 <ElFormItem v-if="form.mode === 'manual'" class="setting-item">
@@ -917,8 +917,8 @@ export default {
                     :placeholder="
                       $t('packages_business_verification_form_jiaoyanjieshushi')
                     "
-                    format="yyyy-MM-dd HH:mm"
-                    value-format="yyyy-MM-dd HH:mm"
+                    format="YYYY-MM-DD HH:mm:ss"
+                    value-format="YYYY-MM-DD HH:mm:ss"
                   />
                 </ElFormItem>
               </template>

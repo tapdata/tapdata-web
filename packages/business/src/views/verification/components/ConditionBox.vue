@@ -8,8 +8,14 @@ import SwitchNumber from '@tap/component/src/SwitchNumber.vue'
 import { AsyncSelect, SchemaToForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import { uuid } from '@tap/shared'
-import { cloneDeep, debounce, isEmpty, isString, merge, uniqBy } from 'lodash-es'
-import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+import {
+  cloneDeep,
+  debounce,
+  isEmpty,
+  isString,
+  merge,
+  uniqBy,
+} from 'lodash-es'
 import { $emit } from '../../../../utils/gogocodeTransfer'
 
 import { CONNECTION_STATUS_MAP } from '../../../shared'
@@ -24,8 +30,6 @@ export default {
   components: {
     DocsDrawer,
     AsyncSelect,
-    DynamicScroller,
-    DynamicScrollerItem,
     VCodeEditor,
     GitBook,
     FieldDialog,
@@ -71,6 +75,9 @@ export default {
       jsEngineName: 'graal.js',
       doc: '',
       schemaData: null,
+      // Add pagination properties
+      currentPage: 1,
+      pageSize: 10,
       schemaScope: {
         $supportFilterFunction:
           this.inspectMethod === 'row_count'
@@ -788,6 +795,16 @@ export default {
         )
       })
     },
+    // Add paginated list computed property
+    paginatedList() {
+      const startIndex = (this.currentPage - 1) * this.pageSize
+      const endIndex = startIndex + this.pageSize
+      return this.filteredList.slice(startIndex, endIndex)
+    },
+    // Add total pages computed property
+    totalPages() {
+      return Math.ceil(this.filteredList.length / this.pageSize)
+    },
     nullsLastState() {
       return Object.keys(this.capabilitiesMap || {}).reduce((cur, pre) => {
         const tags = this.capabilitiesMap[pre]?.tags || []
@@ -816,7 +833,16 @@ export default {
       deep: true,
       handler() {
         this.debounceValidate()
+        // Reset to page 1 if list is empty
+        if (this.list.length === 0) {
+          this.currentPage = 1
+        }
       },
+    },
+
+    searchValue() {
+      // Reset to page 1 when search filter changes
+      this.currentPage = 1
     },
   },
   created() {
@@ -951,8 +977,12 @@ export default {
 
     async getConnectionsInTask(filter = {}) {
       const keyword = filter.where?.name?.like
-      let arr
-      if (keyword) {
+      const id = filter.where?.id
+      let arr = []
+      if (id) {
+        const item = this.flowStages.find((item) => item.connectionId === id)
+        item && arr.push(item)
+      } else if (keyword) {
         arr = this.flowStages.filter((t) =>
           t.attrs?.connectionName.includes(filter.where?.name?.like),
         )
@@ -990,6 +1020,8 @@ export default {
         'value',
       )
 
+      // Add await to ensure this is truly async
+      await Promise.resolve()
       return { items: result, total: result.length }
     },
 
@@ -1165,6 +1197,7 @@ export default {
 
     clearList() {
       this.list = []
+      this.currentPage = 1
       this.validate()
     },
 
@@ -1183,6 +1216,16 @@ export default {
 
     addItem() {
       this.list.push(this.getItemOptions())
+      // Navigate to the last page when adding a new item
+      this.currentPage = this.totalPages
+    },
+
+    removeItem(id) {
+      this.list = this.list.filter((t) => t.id !== id)
+      // If current page is now empty and it's not the first page, go to previous page
+      if (this.paginatedList.length === 0 && this.currentPage > 1) {
+        this.currentPage--
+      }
     },
 
     async autoAddTable() {
@@ -1392,12 +1435,6 @@ export default {
         })
     },
 
-    removeItem(id) {
-      const index = this.list.findIndex(item => item.id === id)
-
-      if (~index) this.list.splice(index, 1)
-    },
-
     loadList() {
       const data = cloneDeep(this.data)
       data.forEach((el) => {
@@ -1579,12 +1616,12 @@ export default {
       })
     },
 
-    handleChangeAdvanced(item, val) {
+    handleChangeAdvanced(item) {
       Object.assign(item.target, {
         targeFilterFalg: false,
         where: '',
       })
-      item.showAdvancedVerification = val
+      // item.showAdvancedVerification = val
     },
 
     addScript(index) {
@@ -1614,7 +1651,7 @@ export default {
 
     editScript(index) {
       this.formIndex = index
-      const task = this.list
+      const task = this.paginatedList
       const script = JSON.parse(JSON.stringify(task[this.formIndex].webScript))
       this.jsEngineName = JSON.parse(
         JSON.stringify(task[this.formIndex].jsEngineName || 'nashorn'),
@@ -1623,7 +1660,7 @@ export default {
       this.dialogAddScriptVisible = true
     },
 
-    removeScript(index) {
+    removeScript(item, index) {
       this.$confirm(
         this.$t('packages_business_verification_message_confirm_delete_script'),
         this.$t('public_button_delete'),
@@ -1634,7 +1671,7 @@ export default {
         if (!resFlag) {
           return
         }
-        this.list[index].webScript = ''
+        item.webScript = ''
       })
     },
 
@@ -1681,7 +1718,7 @@ export default {
       let index = 0
       let message = ''
       // const formDom = document.getElementById('data-verification-form')
-
+      const SHOW_COUNT = 20
       // 检查是否选择表
       const haveTableArr = tasks.filter((c) => c.source.table && c.target.table)
       const noTableArr = tasks.filter((c) => !c.source.table || !c.target.table)
@@ -1711,8 +1748,6 @@ export default {
         return
       }
 
-      // 检查
-      const SHOW_COUNT = 20
       if (['field', 'jointField'].includes(this.inspectMethod)) {
         // 检查数据源的能力
         message = this.validateCapabilities(
@@ -1786,10 +1821,12 @@ export default {
         // 判断过滤设置是否填写完整
         let schemaToFormFlag = false
         for (const [i, task] of tasks.entries()) {
-          await this.$refs[`schemaToForm_${task.id}`]?.validate().catch(() => {
-            index = i + 1
-            schemaToFormFlag = true
-          })
+          await this.$refs[`schemaToForm_${task.id}`]?.[0]
+            ?.validate?.()
+            .catch(() => {
+              index = i + 1
+              schemaToFormFlag = true
+            })
         }
         if (schemaToFormFlag) {
           message = this.$t(
@@ -1946,6 +1983,18 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
       )
     },
 
+    handlePageChange(page) {
+      this.currentPage = page
+    },
+
+    handleSizeChange(size) {
+      this.pageSize = size
+      // If changing page size would put us on a non-existent page, reset to page 1
+      if (this.currentPage > this.totalPages) {
+        this.currentPage = 1
+      }
+    },
+
     handleCustomFields(item, index) {
       this.$refs.fieldDialog.open(item, index, {
         source: this.dynamicSchemaMap[item.source.connectionId],
@@ -2071,18 +2120,15 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
     toggleCollate(item, value) {
       if (value) {
         const fields = Object.keys(item.collate || {})
+
         if (fields.length || !item.sortColumn) return
 
         const sortColumn = item.sortColumn.split(',')
 
-        this.$set(
-          item,
-          'collate',
-          sortColumn.reduce((acc, key) => {
-            acc[key] = ''
-            return acc
-          }, {}),
-        )
+        item.collate = sortColumn.reduce((acc, key) => {
+          acc[key] = ''
+          return acc
+        }, {})
       }
     },
   },
@@ -2141,352 +2187,337 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
         >{{ $t('packages_business_verification_clear') }}
       </ElButton>
     </div>
-    <DynamicScroller
+    <!-- Replace virtual scroller with standard list -->
+    <div
       id="data-verification-form"
-      ref="virtualScroller"
-      :items="filteredList"
-      :min-item-size="30"
-      key-field="id"
       class="joint-table-main scroller px-2 py-1 h-100"
     >
-      <template #default="{ item, index, active }">
-        <DynamicScrollerItem
-          :item="item"
-          :active="active"
-          :data-index="index"
-          :size-dependencies="[item.id, item.source, item.target]"
-        >
-          <div class="joint-table-item">
-            <div class="joint-table-setting overflow-hidden">
-              <div class="flex justify-content-between">
-                <div class="cond-item__title flex align-items-center">
-                  <span class="font-color-main fs-7">{{
-                    $t(
-                      'packages_business_components_conditionbox_jianyantiaojian',
-                    )
-                  }}</span>
-                  <span class="ml-1">{{ index + 1 }}</span>
-                </div>
-                <div class="flex align-items-center">
-                  <ElButton
-                    type="danger"
-                    text
-                    @click.stop="removeItem(item.id)"
-                    >{{ $t('public_button_delete') }}</ElButton
-                  >
-                </div>
-              </div>
-              <div :key="`connection${item.id}`" class="setting-item mt-4">
-                <label class="item-label"
-                  >{{
-                    $t(
-                      'packages_business_components_conditionbox_daijiaoyanlianjie',
-                    )
-                  }}:</label
-                >
-                <AsyncSelect
-                  :key="`sourceConnectionId${item.id}`"
-                  v-model="item.source.connectionId"
-                  :method="getConnectionsListMethod"
-                  item-query="name"
-                  item-value="id"
-                  filterable
-                  class="item-select"
-                  @option-select="handleChangeConnection($event, item.source)"
-                />
-                <span class="item-icon fs-6">
-                  <el-icon><el-icon-arrow-right /></el-icon>
-                </span>
-                <AsyncSelect
-                  :key="`targetConnectionId${item.id}`"
-                  v-model="item.target.connectionId"
-                  :method="getConnectionsListMethod"
-                  item-query="name"
-                  item-value="id"
-                  filterable
-                  class="item-select"
-                  @option-select="handleChangeConnection($event, item.target)"
-                />
-              </div>
-              <div :key="`table${item.id}`" class="setting-item mt-4">
-                <label class="item-label"
-                  >{{
-                    $t('packages_business_components_conditionbox_laiyuanbiao')
-                  }}:</label
-                >
-                <AsyncSelect
-                  :key="`sourceTable${item.id}`"
-                  v-model="item.source.table"
-                  :method="getTableListMethod"
-                  :params="{
-                    connectionId: item.source.connectionId,
-                    nodeId: item.source.nodeId,
-                  }"
-                  item-query="name"
-                  item-type="string"
-                  lazy
-                  filterable
-                  class="item-select"
-                  @change="handleChangeTable($event, item, index, 'source')"
-                />
-                <span class="item-icon"
-                  >{{
-                    $t('packages_business_components_conditionbox_mubiaobiao')
-                  }}:</span
-                >
-                <AsyncSelect
-                  :key="`targetTable${item.id}`"
-                  v-model="item.target.table"
-                  :method="getTableListMethod"
-                  :params="{
-                    connectionId: item.target.connectionId,
-                    nodeId: item.target.nodeId,
-                  }"
-                  item-query="name"
-                  item-type="string"
-                  lazy
-                  filterable
-                  class="item-select"
-                  @change="
-                    handleChangeTable($event, item, index, 'target')
-                  "
-                />
-              </div>
-              <div
-                :key="`SchemaToForm${item.id}${index}${inspectMethod}`"
-                class="setting-item mt-4"
-              >
-                <SchemaToForm
-                  :ref="`schemaToForm_${item.id}`"
-                  :value="item"
-                  :schema="formSchema"
-                  :scope="schemaScope"
-                  :colon="true"
-                  class="w-100"
-                  label-width="130"
-                  @input="(value) => (item = value)"
-                />
-              </div>
-              <template v-if="!isCountOrHash">
-                <div class="setting-item mt-4">
-                  <label class="item-label"
-                    >{{ $t('packages_business_verification_indexField') }}:
-                  </label>
-                  <FieldSelectWrap
-                    v-model:value="item.source.sortColumn"
-                    :options="item.source.fields"
-                    class="flex-1"
-                    @focus="handleFocus(item.source)"
-                  />
-                  <span class="item-icon" />
-                  <FieldSelectWrap
-                    v-model:value="item.target.sortColumn"
-                    :options="item.target.fields"
-                    class="flex-1"
-                    @focus="handleFocus(item.target)"
-                  />
-                </div>
-
-                <div class="setting-item mt-4">
-                  <label class="item-label"
-                    >{{ $t('packages_business_custom_collate') }}:
-                  </label>
-                  <div class="flex-1">
-                    <div class="flex gap-3 align-center">
-                      <ElSwitch
-                        v-model="item.source.enableCustomCollate"
-                        @change="toggleCollate(item.source, $event)"
-                      />
-
-                      <ElButton
-                        text
-                        type="primary"
-                        @click="schemaScope.openApiDrawer('inspect-collate')"
-                      >
-                        <VIcon class="mr-1">question-circle</VIcon>
-                        {{ $t('public_view_docs') }}
-                      </ElButton>
-                    </div>
-
-                    <div v-if="item.source.enableCustomCollate">
-                      <CollateMap
-                        v-model:value="item.source.collate"
-                        :sort-column="item.source.sortColumn"
-                        :fields="item.source.fields"
-                      />
-                    </div>
-                  </div>
-                  <span class="item-icon" />
-                  <div class="flex-1">
-                    <div class="flex gap-3 align-center">
-                      <ElSwitch
-                        v-model="item.target.enableCustomCollate"
-                        @change="toggleCollate(item.target, $event)"
-                      />
-
-                      <ElButton
-                        text
-                        type="primary"
-                        @click="schemaScope.openApiDrawer('inspect-collate')"
-                      >
-                        <VIcon class="mr-1">question-circle</VIcon>
-                        {{ $t('public_view_docs') }}
-                      </ElButton>
-                    </div>
-
-                    <div v-if="item.target.enableCustomCollate">
-                      <CollateMap
-                        v-model:value="item.target.collate"
-                        :sort-column="item.target.sortColumn"
-                        :fields="item.target.fields"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  v-if="
-                    nullsLastState[item.source.connectionId] ||
-                    nullsLastState[item.target.connectionId]
-                  "
-                  class="setting-item mt-4 align-items-center"
-                >
-                  <label
-                    v-if="nullsLastState[item.source.connectionId]"
-                    class="item-label"
-                    >{{ $t('packages_business_nulls_first') }}
-                    <el-tooltip
-                      effect="dark"
-                      placement="top"
-                      :content="$t('packages_business_nulls_first_tip')"
-                    >
-                      <i
-                        class="el-tooltip el-icon-info"
-                        style="color: #909399; font-size: 14px"
-                      /> </el-tooltip
-                    >:
-                  </label>
-                  <label v-else class="item-label" />
-                  <div class="flex-1">
-                    <SwitchNumber
-                      v-if="nullsLastState[item.source.connectionId]"
-                      v-model:value="item.source.customNullSort"
-                    />
-                  </div>
-
-                  <span
-                    v-if="nullsLastState[item.target.connectionId]"
-                    class="item-icon"
-                    >{{ $t('packages_business_nulls_first')
-                    }}<el-tooltip
-                      effect="dark"
-                      placement="top"
-                      :content="$t('packages_business_nulls_first_tip')"
-                    >
-                      <i
-                        class="el-tooltip el-icon-info"
-                        style="color: #909399; font-size: 14px"
-                      /> </el-tooltip
-                    >:</span
-                  >
-                  <div
-                    v-if="nullsLastState[item.target.connectionId]"
-                    class="flex-1"
-                  >
-                    <SwitchNumber v-model:value="item.target.customNullSort" />
-                  </div>
-                </div>
-              </template>
-
-              <div
-                v-if="inspectMethod === 'field'"
-                class="setting-item align-items-center mt-4"
-              >
-                <label class="item-label"
-                  >{{
-                    $t(
-                      'packages_business_components_fieldbox_daijiaoyanmoxing',
-                    )
-                  }}:</label
-                >
-                <ElRadioGroup
-                  v-model="item.modeType"
-                  :disabled="getModeTypeDisabled(item)"
-                  @change="handleChangeModeType(arguments[0], item, index)"
-                >
-                  <ElRadio label="all">{{
-                    $t('packages_business_components_fieldbox_quanziduan')
-                  }}</ElRadio>
-                  <ElRadio label="custom">{{
-                    $t('packages_business_connections_databaseform_zidingyi')
-                  }}</ElRadio>
-                </ElRadioGroup>
-                <ElLink
-                  v-if="item.modeType === 'custom'"
-                  type="primary"
-                  class="ml-4"
-                  @click="handleCustomFields(item, index)"
-                >
-                  {{
-                    $t(
-                      'packages_business_components_conditionbox_chakanzidingyi',
-                    )
-                  }}
-                  ({{ item.source.columns ? item.source.columns.length : 0 }})
-                </ElLink>
-              </div>
-              <div v-show="inspectMethod === 'field'" class="setting-item mt-4">
-                <ElCheckbox
-                  v-model="item.showAdvancedVerification"
-                  @change="handleChangeAdvanced(item, arguments[0])"
-                  >{{ $t('packages_business_verification_advanceVerify') }}
-                </ElCheckbox>
-              </div>
-              <div
-                v-if="
-                  item.showAdvancedVerification && inspectMethod === 'field'
-                "
-                class="setting-item mt-4"
-              >
-                <label class="item-label"
-                  >{{ $t('packages_business_verification_JSVerifyLogic') }}:
-                </label>
-                <ElButton
-                  v-if="!item.webScript || item.webScript === ''"
-                  @click="addScript(index)"
-                  >{{ $t('packages_business_verification_addJS') }}
-                </ElButton>
-                <template v-else>
-                  <ElLink
-                    type="primary"
-                    class="ml-4"
-                    @click="editScript(index)"
-                    >{{ $t('public_button_edit') }}</ElLink
-                  >
-                  <ElLink
-                    type="primary"
-                    class="ml-4"
-                    @click="removeScript(index)"
-                    >{{ $t('public_button_delete') }}
-                  </ElLink>
-                </template>
-              </div>
-              <div
-                v-if="
-                  inspectMethod === 'field' &&
-                  item.showAdvancedVerification &&
-                  item.webScript
-                "
-                class="setting-item mt-4"
-              >
-                <pre class="item-script">{{ item.webScript }}</pre>
-              </div>
+      <div
+        v-for="(item, index) in paginatedList"
+        :key="item.id"
+        class="joint-table-item"
+      >
+        <div class="joint-table-setting overflow-hidden">
+          <div class="flex justify-content-between">
+            <div class="cond-item__title flex align-items-center">
+              <span class="font-color-main fs-7">{{
+                $t('packages_business_components_conditionbox_jianyantiaojian')
+              }}</span>
+              <span class="ml-1">{{
+                (currentPage - 1) * pageSize + index + 1
+              }}</span>
+            </div>
+            <div class="flex align-items-center">
+              <ElButton type="danger" text @click.stop="removeItem(item.id)">{{
+                $t('public_button_delete')
+              }}</ElButton>
             </div>
           </div>
-        </DynamicScrollerItem>
-      </template>
-    </DynamicScroller>
-    <div class="joint-table-footer">
+          <div :key="`connection${item.id}`" class="setting-item mt-4">
+            <label class="item-label"
+              >{{
+                $t(
+                  'packages_business_components_conditionbox_daijiaoyanlianjie',
+                )
+              }}:</label
+            >
+            <AsyncSelect
+              :key="`sourceConnectionId${item.id}`"
+              v-model="item.source.connectionId"
+              :method="getConnectionsListMethod"
+              item-query="name"
+              item-value="id"
+              filterable
+              class="item-select"
+              @option-select="handleChangeConnection($event, item.source)"
+            />
+            <span class="item-icon fs-6">
+              <el-icon><el-icon-arrow-right /></el-icon>
+            </span>
+            <AsyncSelect
+              :key="`targetConnectionId${item.id}`"
+              v-model="item.target.connectionId"
+              :method="getConnectionsListMethod"
+              item-query="name"
+              item-value="id"
+              filterable
+              class="item-select"
+              @option-select="handleChangeConnection($event, item.target)"
+            />
+          </div>
+          <div :key="`table${item.id}`" class="setting-item mt-4">
+            <label class="item-label"
+              >{{
+                $t('packages_business_components_conditionbox_laiyuanbiao')
+              }}:</label
+            >
+            <AsyncSelect
+              :key="`sourceTable${item.id}`"
+              v-model="item.source.table"
+              :method="getTableListMethod"
+              :params="{
+                connectionId: item.source.connectionId,
+                nodeId: item.source.nodeId,
+              }"
+              item-query="name"
+              item-type="string"
+              lazy
+              filterable
+              class="item-select"
+              @change="handleChangeTable($event, item, index, 'source')"
+            />
+            <span class="item-icon"
+              >{{
+                $t('packages_business_components_conditionbox_mubiaobiao')
+              }}:</span
+            >
+            <AsyncSelect
+              :key="`targetTable${item.id}`"
+              v-model="item.target.table"
+              :method="getTableListMethod"
+              :params="{
+                connectionId: item.target.connectionId,
+                nodeId: item.target.nodeId,
+              }"
+              item-query="name"
+              item-type="string"
+              lazy
+              filterable
+              class="item-select"
+              @change="handleChangeTable($event, item, index, 'target')"
+            />
+          </div>
+          <div
+            :key="`SchemaToForm${item.id}${index}${inspectMethod}`"
+            class="setting-item mt-4"
+          >
+            <SchemaToForm
+              :ref="`schemaToForm_${item.id}`"
+              :value="item"
+              :schema="formSchema"
+              :scope="schemaScope"
+              :colon="true"
+              class="w-100"
+              label-width="130"
+            />
+          </div>
+          <template v-if="!isCountOrHash">
+            <div class="setting-item mt-4">
+              <label class="item-label"
+                >{{ $t('packages_business_verification_indexField') }}:
+              </label>
+              <FieldSelectWrap
+                v-model:value="item.source.sortColumn"
+                :options="item.source.fields"
+                class="flex-1"
+                @focus="handleFocus(item.source)"
+              />
+              <span class="item-icon" />
+              <FieldSelectWrap
+                v-model:value="item.target.sortColumn"
+                :options="item.target.fields"
+                class="flex-1"
+                @focus="handleFocus(item.target)"
+              />
+            </div>
+
+            <div class="setting-item mt-4">
+              <label class="item-label"
+                >{{ $t('packages_business_custom_collate') }}:
+              </label>
+              <div class="flex-1">
+                <div class="flex gap-3 align-center">
+                  <ElSwitch
+                    v-model="item.source.enableCustomCollate"
+                    @change="toggleCollate(item.source, $event)"
+                  />
+
+                  <ElButton
+                    text
+                    type="primary"
+                    @click="schemaScope.openApiDrawer('inspect-collate')"
+                  >
+                    <VIcon class="mr-1">question-circle</VIcon>
+                    {{ $t('public_view_docs') }}
+                  </ElButton>
+                </div>
+
+                <div v-if="item.source.enableCustomCollate">
+                  <CollateMap
+                    v-model:value="item.source.collate"
+                    :sort-column="item.source.sortColumn"
+                    :fields="item.source.fields"
+                  />
+                </div>
+              </div>
+              <span class="item-icon" />
+              <div class="flex-1">
+                <div class="flex gap-3 align-center">
+                  <ElSwitch
+                    v-model="item.target.enableCustomCollate"
+                    @change="toggleCollate(item.target, $event)"
+                  />
+
+                  <ElButton
+                    text
+                    type="primary"
+                    @click="schemaScope.openApiDrawer('inspect-collate')"
+                  >
+                    <VIcon class="mr-1">question-circle</VIcon>
+                    {{ $t('public_view_docs') }}
+                  </ElButton>
+                </div>
+
+                <div v-if="item.target.enableCustomCollate">
+                  <CollateMap
+                    v-model:value="item.target.collate"
+                    :sort-column="item.target.sortColumn"
+                    :fields="item.target.fields"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div
+              v-if="
+                nullsLastState[item.source.connectionId] ||
+                nullsLastState[item.target.connectionId]
+              "
+              class="setting-item mt-4 align-items-center"
+            >
+              <label
+                v-if="nullsLastState[item.source.connectionId]"
+                class="item-label"
+                >{{ $t('packages_business_nulls_first') }}
+                <el-tooltip
+                  effect="dark"
+                  placement="top"
+                  :content="$t('packages_business_nulls_first_tip')"
+                >
+                  <i
+                    class="el-tooltip el-icon-info"
+                    style="color: #909399; font-size: 14px"
+                  /> </el-tooltip
+                >:
+              </label>
+              <label v-else class="item-label" />
+              <div class="flex-1">
+                <SwitchNumber
+                  v-if="nullsLastState[item.source.connectionId]"
+                  v-model:value="item.source.customNullSort"
+                />
+              </div>
+
+              <span
+                v-if="nullsLastState[item.target.connectionId]"
+                class="item-icon"
+                >{{ $t('packages_business_nulls_first')
+                }}<el-tooltip
+                  effect="dark"
+                  placement="top"
+                  :content="$t('packages_business_nulls_first_tip')"
+                >
+                  <i
+                    class="el-tooltip el-icon-info"
+                    style="color: #909399; font-size: 14px"
+                  /> </el-tooltip
+                >:</span
+              >
+              <div
+                v-if="nullsLastState[item.target.connectionId]"
+                class="flex-1"
+              >
+                <SwitchNumber v-model:value="item.target.customNullSort" />
+              </div>
+            </div>
+          </template>
+
+          <div
+            v-if="inspectMethod === 'field'"
+            class="setting-item align-items-center mt-4"
+          >
+            <label class="item-label"
+              >{{
+                $t('packages_business_components_fieldbox_daijiaoyanmoxing')
+              }}:</label
+            >
+            <ElRadioGroup
+              v-model="item.modeType"
+              :disabled="getModeTypeDisabled(item)"
+              @change="handleChangeModeType(arguments[0], item, index)"
+            >
+              <ElRadio label="all">{{
+                $t('packages_business_components_fieldbox_quanziduan')
+              }}</ElRadio>
+              <ElRadio label="custom">{{
+                $t('packages_business_connections_databaseform_zidingyi')
+              }}</ElRadio>
+            </ElRadioGroup>
+            <ElLink
+              v-if="item.modeType === 'custom'"
+              type="primary"
+              class="ml-4"
+              @click="handleCustomFields(item, index)"
+            >
+              {{
+                $t('packages_business_components_conditionbox_chakanzidingyi')
+              }}
+              ({{ item.source.columns ? item.source.columns.length : 0 }})
+            </ElLink>
+          </div>
+          <div v-show="inspectMethod === 'field'" class="setting-item mt-4">
+            <ElCheckbox
+              v-model="item.showAdvancedVerification"
+              @change="handleChangeAdvanced(item, $event)"
+              >{{ $t('packages_business_verification_advanceVerify') }}
+            </ElCheckbox>
+          </div>
+          <div
+            v-if="item.showAdvancedVerification && inspectMethod === 'field'"
+            class="setting-item mt-4"
+          >
+            <label class="item-label"
+              >{{ $t('packages_business_verification_JSVerifyLogic') }}:
+            </label>
+            <ElButton
+              v-if="!item.webScript || item.webScript === ''"
+              @click="addScript(index)"
+              >{{ $t('packages_business_verification_addJS') }}
+            </ElButton>
+            <template v-else>
+              <ElButton
+                text
+                type="primary"
+                class="ml-4"
+                @click="editScript(index)"
+                >{{ $t('public_button_edit') }}</ElButton
+              >
+              <ElButton
+                text
+                type="primary"
+                class="ml-4"
+                @click="removeScript(item, index)"
+                >{{ $t('public_button_delete') }}
+              </ElButton>
+            </template>
+          </div>
+          <div
+            v-if="
+              inspectMethod === 'field' &&
+              item.showAdvancedVerification &&
+              item.webScript
+            "
+            class="setting-item mt-4"
+          >
+            <pre class="item-script">{{ item.webScript }}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add pagination controls -->
+
+    <div class="joint-table-footer flex align-center">
       <ElButton @click="addItem">{{
         $t('packages_business_verification_addTable')
       }}</ElButton>
@@ -2525,6 +2556,22 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
           <el-switch v-model="autoSuggestJoinFields" class="ml-3" />
         </div>
       </template>
+
+      <div
+        v-if="filteredList.length > 0"
+        class="pagination-container text-center ml-auto"
+      >
+        <el-pagination
+          v-model:current-page="currentPage"
+          v-model:page-size="pageSize"
+          hide-on-single-page
+          :page-sizes="[10, 20, 50, 100]"
+          layout="total, sizes, prev, pager, next"
+          :total="filteredList.length"
+          @size-change="handleSizeChange"
+          @current-change="handlePageChange"
+        />
+      </div>
     </div>
     <ElDialog
       v-model="dialogAddScriptVisible"

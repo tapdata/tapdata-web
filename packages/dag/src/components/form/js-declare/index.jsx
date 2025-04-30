@@ -1,6 +1,6 @@
-import { defineComponent, ref } from 'vue'
-import i18n from '@tap/i18n'
 import { FormItem, HighlightCode, JsEditor } from '@tap/form'
+import i18n from '@tap/i18n'
+import { defineComponent, ref } from 'vue'
 import './style.scss'
 
 export const JsDeclare = defineComponent({
@@ -40,20 +40,30 @@ export const JsDeclare = defineComponent({
                   <span class="font-color-light fw-normal">
                     {i18n.t('packages_form_js_processor_index_moxingshengming')}
                   </span>
-                  <el-tooltip content={i18n.t('packages_dag_js_declare_index_xianshishengminglai')} placement="top">
+                  <el-tooltip
+                    content={i18n.t(
+                      'packages_dag_js_declare_index_xianshishengminglai',
+                    )}
+                    placement="top"
+                  >
                     <i class="ml-1 font-color-sslight header-icon el-icon-info"></i>
                   </el-tooltip>
                   <div class="flex-grow-1"></div>
-                  <el-link
-                    onClick={(event) => (event.stopPropagation(), (dialogVisible.value = true))}
+                  <el-button
+                    text
+                    onClick={(event) => (
+                      event.stopPropagation(), (dialogVisible.value = true)
+                    )}
                     type="primary"
                     class="mx-4"
                   >
                     {i18n.t('packages_dag_js_declare_index_shiyongbangzhu')}
-                  </el-link>
+                  </el-button>
 
                   <el-dialog
-                    title={i18n.t('packages_dag_nodes_javascript_moxingshengming')}
+                    title={i18n.t(
+                      'packages_dag_nodes_javascript_moxingshengming',
+                    )}
                     v-model={dialogVisible.value}
                     append-to-body
                     width="800"
@@ -66,12 +76,20 @@ export const JsDeclare = defineComponent({
                             class="m-0"
                             code="type TapType = 'TapNumber' | 'TapString' | 'TapBoolean' | 'TapBinary' | 'TapDate' | 'TapDateTime' | 'TapTime' | 'TapYear' | 'TapRaw' | 'TapArray' | 'TapMap'"
                           ></HighlightCode>
-                          <div class="my-4">{i18n.t('packages_dag_js_declare_index_shilidaima')}</div>
-                          <HighlightCode class="m-0" code={codeExample}></HighlightCode>
+                          <div class="my-4">
+                            {i18n.t('packages_dag_js_declare_index_shilidaima')}
+                          </div>
+                          <HighlightCode
+                            class="m-0"
+                            code={codeExample}
+                          ></HighlightCode>
                         </>
                       ),
                       footer: () => (
-                        <el-button type="primary" onClick={() => (dialogVisible.value = false)}>
+                        <el-button
+                          type="primary"
+                          onClick={() => (dialogVisible.value = false)}
+                        >
                           {i18n.t('packages_dag_js_declare_index_queding')}
                         </el-button>
                       ),
@@ -80,7 +98,7 @@ export const JsDeclare = defineComponent({
                 </>
               ),
               default: () => (
-                <FormItem.BaseItem feedbackLayout="none">
+                <FormItem.BaseItem feedbackLayout="none" class="pb-4">
                   <JsEditor
                     height={editorProps.height}
                     before={before}

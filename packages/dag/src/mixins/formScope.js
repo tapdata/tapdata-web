@@ -723,6 +723,8 @@ export default {
           const capabilities = field.query('attrs.capabilities').get('value')
           let insertPolicy
           let updatePolicy
+          let deletePolicy
+
           if (capabilities) {
             insertPolicy = capabilities.find(
               ({ id }) => id === 'dml_insert_policy',
@@ -730,9 +732,14 @@ export default {
             updatePolicy = capabilities.find(
               ({ id }) => id === 'dml_update_policy',
             )
+            deletePolicy = capabilities.find(
+              ({ id }) => id === 'dml_delete_policy',
+            )
           }
+
           const insertField = field.query('dmlPolicy.insertPolicy').take()
           const updateField = field.query('dmlPolicy.updatePolicy').take()
+          const deleteField = field.query('dmlPolicy.deletePolicy').take()
           // 查找上游是否包含Unwind节点
           const unwindNode = this.scope.findParentNodeByType(
             field.form.values,
@@ -784,6 +791,15 @@ export default {
 
           insertField && func(insertPolicy, insertField)
           updateField && func(updatePolicy, updateField)
+          deleteField && func(deletePolicy, deleteField)
+
+          if (
+            !insertField?.visible &&
+            !updateField?.visible &&
+            !deleteField?.visible
+          ) {
+            deleteField?.parent.setDisplay('hidden')
+          }
         },
 
         findParentNodeByType: (node, type) => {
