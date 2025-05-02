@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { observable } from '@formily/reactive'
 import { inspectApi, taskApi } from '@tap/api'
-import { AsyncSelect, computed as reactiveComputed } from '@tap/form'
+import { AsyncSelect } from '@tap/form'
 import i18n from '@tap/i18n'
 import Time from '@tap/shared/src/time'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { cloneDeep } from 'lodash-es'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, provide, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import PageContainer from '../../components/PageContainer.vue'
@@ -80,7 +79,7 @@ const defaultTime = ref([
   new Date(2025, 2, 1, 23, 59, 59),
 ])
 
-const formObs = observable<FormData>({
+const form = reactive({
   flowId: '',
   name: '',
   mode: 'manual',
@@ -132,62 +131,6 @@ const formObs = observable<FormData>({
   ],
 })
 
-const form = reactiveComputed(() => {
-  return formObs
-})
-
-// const form = ref<FormData>({
-//   flowId: '',
-//   name: '',
-//   mode: 'manual',
-//   inspectDifferenceMode: 'All',
-//   inspectMethod: 'row_count',
-//   cdcBeginDate: '',
-//   cdcEndDate: '',
-//   cdcDuration: '',
-//   timing: {
-//     intervals: 24 * 60,
-//     intervalsUnit: 'minute',
-//     start: Time.now(),
-//     end: Time.now() + 24 * 60 * 60 * 1000,
-//   },
-//   limit: {
-//     keep: 100,
-//   },
-//   enabled: true,
-//   tasks: [],
-//   taskMode: 'pipeline',
-//   errorNotifys: ['SYSTEM', 'EMAIL'],
-//   inconsistentNotifys: ['SYSTEM', 'EMAIL'],
-//   checkTableThreadNum: 10,
-//   alarmSettings: [
-//     {
-//       type: 'INSPECT',
-//       key: 'INSPECT_TASK_ERROR',
-//       notify: ['SYSTEM', 'EMAIL'],
-//       open: true,
-//     },
-//     {
-//       type: 'INSPECT',
-//       key: 'INSPECT_COUNT_ERROR',
-//       notify: ['SYSTEM', 'EMAIL'],
-//       open: true,
-//       params: {
-//         maxDifferentialRows: 0,
-//       },
-//     },
-//     {
-//       type: 'INSPECT',
-//       key: 'INSPECT_VALUE_ERROR',
-//       notify: ['SYSTEM', 'EMAIL'],
-//       open: true,
-//       params: {
-//         maxDifferentialValues: 0,
-//       },
-//     },
-//   ],
-// })
-
 const requiredValidator = (msg: string, check?: () => boolean) => {
   return (rule: any, value: any, callback: any) => {
     const valid = check ? check() : true
@@ -200,7 +143,7 @@ const requiredValidator = (msg: string, check?: () => boolean) => {
 }
 
 const checkMode = () => {
-  return form.value.mode === 'cron'
+  return form.mode === 'cron'
 }
 
 const rules = ref({
@@ -239,7 +182,7 @@ const rules = ref({
       validator: requiredValidator(
         i18n.t('packages_business_verification_form_qingshurukaishi'),
         () => {
-          return form.value.inspectMethod === 'cdcCount'
+          return form.inspectMethod === 'cdcCount'
         },
       ),
     },
@@ -269,17 +212,14 @@ const saveDisabled = computed(() => {
 })
 
 const isCountOrHash = computed(() => {
-  return (
-    form.value.inspectMethod === 'row_count' ||
-    form.value.inspectMethod === 'hash'
-  )
+  return form.inspectMethod === 'row_count' || form.inspectMethod === 'hash'
 })
 
 onMounted(() => {
   // 设置form.taskMode
   const taskMode = route.query.taskMode
   if (taskMode) {
-    form.value.taskMode = taskMode
+    form.taskMode = taskMode
   }
 
   const id = route.params.id
@@ -334,7 +274,7 @@ const getData = async (id: string) => {
     })
 
     if (data) {
-      if (form.value.taskMode === 'pipeline' && data.flowId) {
+      if (form.taskMode === 'pipeline' && data.flowId) {
         taskName.value = data.taskDto.name
         applyTask(data.taskDto)
       }
@@ -363,13 +303,14 @@ const getData = async (id: string) => {
       })
 
       if (!data.timing) {
-        data.timing = form.value.timing
+        data.timing = form.timing
       }
       data.taskMode = data.flowId ? 'pipeline' : 'random'
+
       // 历史数据，默认不打开；新数据默认打开
       const { alarmSettings = [] } = data
       data.alarmSettings =
-        form.value.alarmSettings?.map((t) => {
+        form.alarmSettings?.map((t) => {
           const f = alarmSettings.find((item) => item.key === t.key)
           if (f) return Object.assign(t, f)
           t.notify = []
@@ -377,7 +318,7 @@ const getData = async (id: string) => {
           return t
         }) || []
 
-      form.value = Object.assign({}, form.value, data)
+      Object.assign(form, data)
     }
   } catch (error) {
     console.error(error)
@@ -387,7 +328,7 @@ const getData = async (id: string) => {
 const getFlowStages = async (id: string, cb?: () => void) => {
   loading.value = true
   try {
-    id = id || form.value.flowId
+    id = id || form.flowId
     const data = await taskApi.getId(id)
     loading.value = false
     applyTask(data, cb)
@@ -444,8 +385,8 @@ const applyTask = (task: any, cb?: () => void) => {
 }
 
 const timingChangeHandler = (times: any) => {
-  form.value.timing.start = times?.[0] || ''
-  form.value.timing.end = times?.[1] || ''
+  form.timing.start = times?.[0] || ''
+  form.timing.end = times?.[1] || ''
 }
 
 const goBack = () => {
@@ -470,8 +411,8 @@ const save = async (saveOnly = false) => {
       // 自动过滤出完整数据，以及索引字段数量不相等的情况
       tasks = tasks.filter((t) => {
         if (
-          form.value.inspectMethod === 'row_count' ||
-          form.value.inspectMethod === 'hash'
+          form.inspectMethod === 'row_count' ||
+          form.inspectMethod === 'hash'
         ) {
           return t.source.table && t.target.table
         }
@@ -492,7 +433,7 @@ const save = async (saveOnly = false) => {
         return ElMessage.error(validateMsg)
       }
 
-      if (form.value.inspectMethod === 'jointField') {
+      if (form.inspectMethod === 'jointField') {
         tasks.forEach((item) => {
           item.fullMatch = false
         })
@@ -501,22 +442,22 @@ const save = async (saveOnly = false) => {
           item.fullMatch = true
         })
       }
-      if (form.value && form.value.createTime && form.value.last_updated) {
-        delete form.value.createTime
-        delete form.value.last_updated
+      if (form && form.createTime && form.last_updated) {
+        delete form.createTime
+        delete form.last_updated
       }
 
       const alarmSettingsKeys =
-        form.value.inspectMethod === 'row_count'
+        form.inspectMethod === 'row_count'
           ? ['INSPECT_TASK_ERROR', 'INSPECT_COUNT_ERROR']
           : ['INSPECT_TASK_ERROR', 'INSPECT_VALUE_ERROR']
-      const alarmSettings = form.value.alarmSettings.filter((t) =>
+      const alarmSettings = form.alarmSettings.filter((t) =>
         alarmSettingsKeys.includes(t.key),
       )
 
-      await inspectApi[form.value.id ? 'patch' : 'post'](
-        Object.assign({}, form.value, {
-          fullMatchKeep: form.value.keep,
+      await inspectApi[form.id ? 'patch' : 'post'](
+        Object.assign({}, form, {
+          fullMatchKeep: form.keep,
           status: saveOnly ? 'waiting' : 'scheduling',
           ping_time: 0,
           tasks: tasks.map(
@@ -566,13 +507,13 @@ const save = async (saveOnly = false) => {
 }
 
 const handleChangeAlarmItem = () => {
-  form.value.alarmSettings[0].open = !!form.value.alarmSettings[0].notify.length
-  form.value.alarmSettings[1].open = !!form.value.alarmSettings[1].notify.length
-  form.value.alarmSettings[2].open = !!form.value.alarmSettings[2].notify.length
+  form.alarmSettings[0].open = !!form.alarmSettings[0].notify.length
+  form.alarmSettings[1].open = !!form.alarmSettings[1].notify.length
+  form.alarmSettings[2].open = !!form.alarmSettings[2].notify.length
 }
 
 const handleChangeAlarm = (val: boolean, index = 0) => {
-  form.value.alarmSettings[index].notify = val ? ['SYSTEM', 'EMAIL'] : []
+  form.alarmSettings[index].notify = val ? ['SYSTEM', 'EMAIL'] : []
 }
 
 const handleChangeInspectMethod = () => {
@@ -586,32 +527,27 @@ const handleChangeInspectMethod = () => {
 
 const setVerifyName = () => {
   // 任务模式
-  if (form.value.taskMode === 'pipeline') {
-    form.value.name = `${taskName.value} - ${inspectMethodMap[form.value.inspectMethod]}`
+  if (form.taskMode === 'pipeline') {
+    form.name = `${taskName.value} - ${inspectMethodMap[form.inspectMethod]}`
   }
 }
 
 const handleSelectTask = (task: any, byClick: boolean) => {
   if (byClick) {
-    form.value.tasks = []
+    form.tasks = []
     taskName.value = task.name
     setVerifyName()
     getFlowStages(task.id, conditionBox.value.autoAddTable)
   }
 }
 
-console.log('form', form, formObs)
+provide('formData', form)
 </script>
 
 <template>
   <PageContainer mode="auto">
     <section v-loading="loading">
       <div>
-        <ElInput
-          v-model="form.name"
-          class="form-input"
-          @change="handleChangeName"
-        />
         <ElForm
           ref="baseForm"
           class="grey"
@@ -628,10 +564,9 @@ console.log('form', form, formObs)
             prop="flowId"
             :label="`${$t('packages_business_verification_chooseJob')}: `"
           >
-            {{ form.flowId }}
             <AsyncSelect
               v-model="form.flowId"
-              class="form-item-width"
+              class="form-input"
               :method="getTaskOptions"
               :current-label="taskName"
               item-label="name"

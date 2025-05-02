@@ -2,9 +2,8 @@
 import { action } from '@formily/reactive'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import { GitBook, VCodeEditor } from '@tap/component'
-import resize from '@tap/component/src/directives/resize'
 import SwitchNumber from '@tap/component/src/SwitchNumber.vue'
-import { AsyncSelect, SchemaToForm } from '@tap/form'
+import { AsyncSelect, SchemaForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import { uuid } from '@tap/shared'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -16,8 +15,15 @@ import {
   merge,
   uniqBy,
 } from 'lodash-es'
-import { computed, defineExpose, onMounted, reactive, ref, watch } from 'vue'
-import { $emit } from '../../../../utils/gogocodeTransfer'
+import {
+  computed,
+  defineExpose,
+  inject,
+  onMounted,
+  reactive,
+  ref,
+  watch,
+} from 'vue'
 import { CONNECTION_STATUS_MAP } from '../../../shared'
 import { inspectMethod as inspectMethodMap } from '../const'
 import CollateMap from './CollateMap.vue'
@@ -161,6 +167,10 @@ interface StageItem {
   databaseType: string
 }
 
+const formData = inject('formData')
+
+const list = computed(() => formData.tasks)
+
 // Props and Emits
 const props = withDefaults(defineProps<Props>(), {
   data: () => [],
@@ -173,7 +183,7 @@ const emit = defineEmits<Emits>()
 // Refs and Reactive State
 const showDoc = ref(false)
 const docPath = ref('')
-const list = ref<ConditionItem[]>([])
+// const list = ref<ConditionItem[]>([])
 const jointErrorMessage = ref('')
 const fieldsMap = reactive<Record<string, any[]>>({})
 const capabilitiesMap = reactive<Record<string, any>>({})
@@ -184,12 +194,698 @@ const formIndex = ref('')
 const webScript = ref('')
 const jsEngineName = ref('graal.js')
 const doc = ref('')
-const schemaData = ref(null)
 const currentPage = ref(1)
 const pageSize = ref(10)
 const autoSuggestJoinFields = ref(true)
 const searchValue = ref('')
 const fieldDialog = ref()
+
+// const list = computed(() => {
+//   return formData.tasks
+// })
+
+const formSchema = {
+  type: 'object',
+  properties: {
+    nameWrap: {
+      type: 'void',
+      'x-component': 'FormGrid',
+      'x-component-props': {
+        minColumns: 2,
+        maxColumns: 2,
+        columnGap: 16,
+      },
+      properties: {
+        source: {
+          type: 'object',
+          'x-component': 'FormGrid.GridColumn',
+          properties: {
+            databaseType: {
+              type: 'string',
+              'x-display': 'hidden',
+            },
+            fields: {
+              type: 'array',
+              'x-display': 'hidden',
+            },
+            nodeSchema: {
+              type: 'array',
+              'x-display': 'hidden',
+              'x-reactions': [
+                `{{useAsyncDataSource(loadTableFieldList, 'value', $values.source)}}`,
+                {
+                  target: 'source.conditions.*.key',
+                  fulfill: {
+                    state: {
+                      loading: '{{$self.loading}}',
+                      dataSource: '{{$self.value}}',
+                    },
+                  },
+                },
+              ],
+            },
+            enableCustomCommand: {
+              title: i18n.t(
+                'packages_business_components_conditionbox_laiyuanbiaoshuju',
+              ),
+              type: 'boolean',
+              'x-decorator': 'FormItem',
+              'x-decorator-props': {
+                className: 'item-control-horizontal',
+                layout: 'horizontal',
+                tooltip: i18n.t(
+                  'packages_business_components_conditionbox_enableCustomCommand_tip',
+                ),
+              },
+              'x-component': 'Switch',
+              default: false,
+              'x-reactions': [
+                {
+                  fulfill: {
+                    state: {
+                      visible: `{{$values.source.capabilities && $values.source.capabilities.some(item => item.id === 'execute_command_function')}}`,
+                    },
+                  },
+                },
+              ],
+            },
+            customCommand: {
+              type: 'object',
+              properties: {
+                command: {
+                  title: ' ',
+                  'x-decorator-props': {
+                    colon: false,
+                  },
+                  type: 'string',
+                  default: 'executeQuery',
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Radio.Group',
+                  enum: [
+                    { label: i18n.t('public_query'), value: 'executeQuery' },
+                    { label: i18n.t('public_aggregate'), value: 'aggregate' },
+                  ],
+                  'x-reactions': {
+                    dependencies: ['source.databaseType'],
+                    fulfill: {
+                      state: {
+                        display:
+                          '{{$deps[0].toLowerCase().includes("mongo")?"visible":"hidden"}}',
+                      },
+                    },
+                  },
+                },
+                params: {
+                  type: 'object',
+                  properties: {
+                    mongoQuery: {
+                      title: ' ',
+                      'x-decorator-props': {
+                        colon: false,
+                      },
+                      type: 'void',
+                      'x-reactions': {
+                        dependencies: [
+                          'source.customCommand.command',
+                          'source.databaseType',
+                        ],
+                        fulfill: {
+                          state: {
+                            visible:
+                              '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="executeQuery"}}',
+                          },
+                        },
+                      },
+                      properties: {
+                        op: {
+                          type: 'string',
+                          default: 'find',
+                        },
+                        collection: {
+                          type: 'string',
+                          'x-reactions': {
+                            fulfill: {
+                              state: {
+                                value: '{{$values.tableName}}',
+                              },
+                            },
+                          },
+                        },
+                        filter: {
+                          title: ' ',
+                          'x-decorator-props': {
+                            colon: false,
+                            feedbackLayout: 'none',
+                          },
+                          type: 'string',
+                          'x-decorator': 'FormItem',
+                          'x-component': 'JsonEditor',
+                          'x-component-props': {
+                            options: {
+                              showPrintMargin: false,
+                              useWrapMode: true,
+                            },
+                          },
+                        },
+                        descWrap: {
+                          type: 'void',
+                          title: ' ',
+                          'x-decorator': 'FormItem',
+                          'x-decorator-props': {
+                            colon: false,
+                            feedbackLayout: 'none',
+                          },
+                          'x-component': 'div',
+                          'x-component-props': {
+                            class: 'flex align-center flex-wrap',
+                          },
+                          properties: {
+                            desc: {
+                              type: 'void',
+                              'x-component': 'div',
+                              'x-component-props': {
+                                style: {
+                                  color: '#909399',
+                                },
+                              },
+                              'x-content': i18n.t(
+                                'packages_dag_nodes_table_jinzhichiqu',
+                              ),
+                            },
+                            link: {
+                              type: 'void',
+                              'x-component': 'Button',
+                              'x-component-props': {
+                                text: true,
+                                type: 'primary',
+                                onClick: '{{openApiDrawer}}',
+                              },
+                              'x-content': i18n.t(
+                                'packages_business_view_more_apis',
+                              ),
+                            },
+                          },
+                        },
+                      },
+                    },
+                    mongoAgg: {
+                      title: ' ',
+                      'x-decorator-props': {
+                        colon: false,
+                      },
+                      type: 'void',
+                      'x-reactions': {
+                        dependencies: [
+                          'source.customCommand.command',
+                          'source.databaseType',
+                        ],
+                        fulfill: {
+                          state: {
+                            visible:
+                              '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="aggregate"}}',
+                          },
+                        },
+                      },
+                      properties: {
+                        collection: {
+                          type: 'string',
+                          'x-reactions': {
+                            dependencies: ['source.tableName'],
+                            fulfill: {
+                              state: {
+                                value: '{{$deps[0]}}',
+                              },
+                            },
+                          },
+                        },
+                        pipeline: {
+                          title: ' ',
+                          'x-decorator-props': {
+                            colon: false,
+                            feedbackLayout: 'none',
+                          },
+                          type: 'string',
+                          'x-decorator': 'FormItem',
+                          'x-component': 'JsonEditor',
+                          'x-component-props': {
+                            options: {
+                              showPrintMargin: false,
+                              useWrapMode: true,
+                            },
+                          },
+                        },
+                        descWrap: {
+                          type: 'void',
+                          title: ' ',
+                          'x-decorator': 'FormItem',
+                          'x-decorator-props': {
+                            colon: false,
+                            feedbackLayout: 'none',
+                          },
+                          'x-component': 'div',
+                          'x-component-props': {
+                            class: 'flex align-center flex-wrap',
+                          },
+                          properties: {
+                            desc: {
+                              type: 'void',
+                              'x-component': 'div',
+                              'x-component-props': {
+                                style: {
+                                  color: '#909399',
+                                },
+                              },
+                              'x-content': i18n.t(
+                                'packages_dag_nodes_table_shiligro',
+                              ),
+                            },
+                            link: {
+                              type: 'void',
+                              'x-component': 'Button',
+                              'x-component-props': {
+                                text: true,
+                                type: 'primary',
+                                onClick: '{{openApiDrawer}}',
+                              },
+                              'x-content': i18n.t(
+                                'packages_business_view_more_apis',
+                              ),
+                            },
+                          },
+                        },
+                      },
+                    },
+                    sql: {
+                      title: ' ',
+                      'x-decorator-props': {
+                        colon: false,
+                      },
+                      type: 'string',
+                      'x-decorator': 'FormItem',
+                      'x-component': 'SqlEditor',
+                      'x-component-props': {
+                        options: { showPrintMargin: false, useWrapMode: true },
+                      },
+                      'x-reactions': {
+                        dependencies: [
+                          'source.enableCustomCommand',
+                          'source.databaseType',
+                        ],
+                        fulfill: {
+                          state: {
+                            visible:
+                              '{{!!$deps[0] && !$deps[1].toLowerCase().includes("mongo")}}',
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              'x-reactions': [
+                {
+                  dependencies: ['source.enableCustomCommand'],
+                  fulfill: {
+                    state: {
+                      visible: `{{$deps[0]}}`,
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        },
+        target: {
+          type: 'object',
+          'x-component': 'FormGrid.GridColumn',
+          properties: {
+            databaseType: {
+              type: 'string',
+              'x-display': 'hidden',
+            },
+            fields: {
+              type: 'array',
+              'x-display': 'hidden',
+            },
+            nodeSchema: {
+              type: 'array',
+              'x-display': 'hidden',
+              'x-reactions': [
+                `{{useAsyncDataSource(loadTableFieldList, 'value', $values.target)}}`,
+                {
+                  target: 'target.conditions.*.key',
+                  fulfill: {
+                    state: {
+                      loading: '{{$self.loading}}',
+                      dataSource: '{{$self.value}}',
+                    },
+                  },
+                },
+              ],
+            },
+            enableCustomCommand: {
+              title: i18n.t(
+                'packages_business_components_conditionbox_mubiaobiaoshuju',
+              ),
+              type: 'boolean',
+              'x-decorator': 'FormItem',
+              'x-decorator-props': {
+                className: 'item-control-horizontal',
+                layout: 'horizontal',
+                labelWrap: true,
+                tooltip: i18n.t(
+                  'packages_business_components_conditionbox_enableCustomCommand_tip',
+                ),
+              },
+              'x-component': 'Switch',
+              default: false,
+              'x-reactions': [
+                {
+                  fulfill: {
+                    state: {
+                      visible: `{{$values.target.capabilities && $values.target.capabilities.some(item => item.id === 'execute_command_function')}}`,
+                    },
+                  },
+                },
+              ],
+            },
+            customCommand: {
+              type: 'object',
+              properties: {
+                command: {
+                  title: ' ',
+                  'x-decorator-props': {
+                    colon: false,
+                  },
+                  type: 'string',
+                  default: 'executeQuery',
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Radio.Group',
+                  enum: [
+                    { label: i18n.t('public_query'), value: 'executeQuery' },
+                    { label: i18n.t('public_aggregate'), value: 'aggregate' },
+                  ],
+                  'x-reactions': {
+                    dependencies: ['target.databaseType'],
+                    fulfill: {
+                      state: {
+                        display:
+                          '{{$deps[0].toLowerCase().includes("mongo")?"visible":"hidden"}}',
+                      },
+                    },
+                  },
+                },
+                params: {
+                  type: 'object',
+                  properties: {
+                    mongoQuery: {
+                      title: ' ',
+                      'x-decorator-props': {
+                        colon: false,
+                      },
+                      type: 'void',
+                      'x-reactions': {
+                        dependencies: [
+                          'target.customCommand.command',
+                          'target.databaseType',
+                        ],
+                        fulfill: {
+                          state: {
+                            visible:
+                              '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="executeQuery"}}',
+                          },
+                        },
+                      },
+                      properties: {
+                        op: {
+                          type: 'string',
+                          default: 'find',
+                        },
+                        collection: {
+                          type: 'string',
+                          'x-reactions': {
+                            fulfill: {
+                              state: {
+                                value: '{{$values.tableName}}',
+                              },
+                            },
+                          },
+                        },
+                        filter: {
+                          title: ' ',
+                          'x-decorator-props': {
+                            colon: false,
+                            feedbackLayout: 'none',
+                          },
+                          type: 'string',
+                          'x-decorator': 'FormItem',
+                          'x-component': 'JsonEditor',
+                          'x-component-props': {
+                            options: {
+                              showPrintMargin: false,
+                              useWrapMode: true,
+                            },
+                          },
+                        },
+                        descWrap: {
+                          type: 'void',
+                          title: ' ',
+                          'x-decorator': 'FormItem',
+                          'x-decorator-props': {
+                            colon: false,
+                            feedbackLayout: 'none',
+                          },
+                          'x-component': 'div',
+                          'x-component-props': {
+                            class: 'flex align-center flex-wrap',
+                          },
+                          properties: {
+                            desc: {
+                              type: 'void',
+                              'x-component': 'div',
+                              'x-component-props': {
+                                style: {
+                                  color: '#909399',
+                                },
+                              },
+                              'x-content': i18n.t(
+                                'packages_dag_nodes_table_jinzhichiqu',
+                              ),
+                            },
+                            link: {
+                              type: 'void',
+                              'x-component': 'Button',
+                              'x-component-props': {
+                                text: true,
+                                type: 'primary',
+                                onClick: '{{openApiDrawer}}',
+                              },
+                              'x-content': i18n.t(
+                                'packages_business_view_more_apis',
+                              ),
+                            },
+                          },
+                        },
+                      },
+                    },
+                    mongoAgg: {
+                      title: ' ',
+                      'x-decorator-props': {
+                        colon: false,
+                      },
+                      type: 'void',
+                      'x-reactions': {
+                        dependencies: [
+                          'target.customCommand.command',
+                          'target.databaseType',
+                        ],
+                        fulfill: {
+                          state: {
+                            visible:
+                              '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="aggregate"}}',
+                          },
+                        },
+                      },
+                      properties: {
+                        collection: {
+                          type: 'string',
+                          'x-reactions': {
+                            dependencies: ['target.tableName'],
+                            fulfill: {
+                              state: {
+                                value: '{{$deps[0]}}',
+                              },
+                            },
+                          },
+                        },
+                        pipeline: {
+                          title: ' ',
+                          'x-decorator-props': {
+                            colon: false,
+                            feedbackLayout: 'none',
+                          },
+                          type: 'string',
+                          'x-decorator': 'FormItem',
+                          'x-component': 'JsonEditor',
+                          'x-component-props': {
+                            options: {
+                              showPrintMargin: false,
+                              useWrapMode: true,
+                            },
+                          },
+                        },
+                        descWrap: {
+                          type: 'void',
+                          title: ' ',
+                          'x-decorator': 'FormItem',
+                          'x-decorator-props': {
+                            colon: false,
+                            feedbackLayout: 'none',
+                          },
+                          'x-component': 'div',
+                          'x-component-props': {
+                            class: 'flex align-center flex-wrap',
+                          },
+                          properties: {
+                            desc: {
+                              type: 'void',
+                              'x-component': 'div',
+                              'x-component-props': {
+                                style: {
+                                  color: '#909399',
+                                },
+                              },
+                              'x-content': i18n.t(
+                                'packages_dag_nodes_table_shiligro',
+                              ),
+                            },
+                            link: {
+                              type: 'void',
+                              'x-component': 'Button',
+                              'x-component-props': {
+                                text: true,
+                                type: 'primary',
+                                onClick: '{{openApiDrawer}}',
+                              },
+                              'x-content': i18n.t(
+                                'packages_business_view_more_apis',
+                              ),
+                            },
+                          },
+                        },
+                      },
+                    },
+                    sql: {
+                      title: ' ',
+                      'x-decorator-props': {
+                        colon: false,
+                      },
+                      type: 'string',
+                      'x-decorator': 'FormItem',
+                      'x-component': 'SqlEditor',
+                      'x-component-props': {
+                        options: { showPrintMargin: false, useWrapMode: true },
+                      },
+                      'x-reactions': {
+                        dependencies: [
+                          'target.enableCustomCommand',
+                          'target.databaseType',
+                        ],
+                        fulfill: {
+                          state: {
+                            visible:
+                              '{{!!$deps[0] && !$deps[1].toLowerCase().includes("mongo")}}',
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              'x-reactions': [
+                {
+                  dependencies: ['target.enableCustomCommand'],
+                  fulfill: {
+                    state: {
+                      visible: `{{$deps[0]}}`,
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
+  },
+}
+
+const schemaScope = {
+  $supportFilterFunction:
+    props.inspectMethod === 'row_count'
+      ? 'count_by_partition_filter_function'
+      : 'query_by_advance_filter_function',
+  useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
+    return (field) => {
+      field.loading = true
+      service({ field }, ...serviceParams).then(
+        action.bound((data) => {
+          if (fieldName === 'value') {
+            field.setValue(data)
+          } else field[fieldName] = data
+          field.loading = false
+        }),
+      )
+    }
+  },
+  async loadTableFieldList(obj, item) {
+    try {
+      if (!item.connectionId || !item.table) return []
+      let fields = item.fields
+      if (!fields?.length) {
+        const params = {
+          where: {
+            meta_type: 'table',
+            sourceType: 'SOURCE',
+            original_name: item.table,
+            'source._id': item.connectionId,
+          },
+          limit: 1,
+        }
+        const data = await metadataInstancesApi.tapTables({
+          filter: JSON.stringify(params),
+        })
+        fields = Object.values(data.items[0]?.nameFieldMap || {}).map((t) => {
+          return {
+            id: t.id,
+            label: t.fieldName || t.field_name,
+            value: t.fieldName || t.field_name,
+            field_name: t.fieldName || t.field_name,
+            primary_key_position: t.primaryKey,
+            data_type: t.dataType || t.data_type,
+            primaryKey: t.primaryKey,
+            unique: t.unique,
+            type: t.dataType || t.data_type,
+            tapType: JSON.stringify(t.tapType),
+          }
+        })
+      }
+      const result = fields
+
+      if (result.length) {
+        item.fields = result
+      }
+
+      return result
+    } catch {
+      return []
+    }
+  },
+  openApiDrawer: (path) => {
+    docPath.value = isString(path) ? path : ''
+    showDoc.value = true
+  },
+}
 
 // Computed Properties
 const flowStages = computed(() => {
@@ -237,22 +933,22 @@ const nullsLastState = computed(() => {
 })
 
 // Watchers
-watch(
-  () => props.taskId,
-  (v1, v2) => {
-    if (v1 !== v2) {
-      clearList()
-    }
-  },
-)
+// watch(
+//   () => props.taskId,
+//   (v1, v2) => {
+//     if (v1 !== v2) {
+//       clearList()
+//     }
+//   },
+// )
 
-watch(
-  () => props.data,
-  () => {
-    loadList()
-  },
-  { deep: true },
-)
+// watch(
+//   () => props.data,
+//   () => {
+//     loadList()
+//   },
+//   { deep: true },
+// )
 
 watch(
   list,
@@ -620,14 +1316,15 @@ const handleClearIndexEmpty = () => {
     if (!res) {
       return
     }
-    list.value = list.value.filter(
+
+    formData.tasks = formData.tasks.filter(
       (t) => t.source.sortColumn && t.target.sortColumn,
     )
   })
 }
 
 const clearList = () => {
-  list.value = []
+  formData.tasks = []
   currentPage.value = 1
   validate()
 }
@@ -652,7 +1349,11 @@ const addItem = () => {
 }
 
 const removeItem = (id: string) => {
-  list.value = list.value.filter((t) => t.id !== id)
+  const index = formData.tasks.findIndex((t) => t.id === id)
+  if (index !== -1) {
+    formData.tasks.splice(index, 1)
+  }
+
   // If current page is now empty and it's not the first page, go to previous page
   if (paginatedList.value.length === 0 && currentPage.value > 1) {
     currentPage.value--
@@ -660,7 +1361,7 @@ const removeItem = (id: string) => {
 }
 
 const autoAddTable = async () => {
-  if (!props.taskId || list.value.length) return
+  if (!props.taskId || formData.tasks.length) return
   autoAddTableLoading.value = true
   updateAutoAddTableLoading()
   const connectionSet = new Set()
@@ -854,7 +1555,7 @@ const autoAddTable = async () => {
           i18n.t('packages_business_components_conditionbox_suoxuanrenwuque'),
         )
       }
-      list.value = newItems
+      formData.tasks = newItems
 
       // 显示提示
       validate()
@@ -870,11 +1571,11 @@ const loadList = () => {
   data.forEach((el: any) => {
     el.modeType = el.source.columns ? 'custom' : 'all'
   })
-  list.value = data
+  formData.tasks = data
 }
 
 const getList = () => {
-  const listData = cloneDeep(list.value)
+  const listData = formData.tasks
   if (props.taskId) {
     listData.forEach((el: any) => {
       if (el.modeType === 'all') {
@@ -1072,7 +1773,7 @@ const handleAddScriptClose = () => {
 }
 
 const submitScript = () => {
-  const task = list.value
+  const task = formData.tasks
   const currentFormIndex = formIndex.value
   task[currentFormIndex].webScript = webScript.value
   task[currentFormIndex].jsEngineName = jsEngineName.value
@@ -1121,9 +1822,9 @@ const getFieldsByItem = (item: any, type = 'source') => {
 }
 
 const getPrimaryKeyFieldStr = (data: any[] = []) => {
-  const sortField = (list: any[]) => {
+  const sortField = (fields: any[]) => {
     return (
-      list?.sort((a, b) => {
+      fields?.sort((a, b) => {
         return a.field_name > b.field_name ? -1 : 1
       }) || []
     )
@@ -1428,24 +2129,25 @@ const handleChangeModeType = (val: string, item: any, index: number) => {
     handleCustomFields(item, index)
   }
 
-  item.modeType = val // 防止 SchemaToForm 回流
+  // item.modeType = val // 防止 SchemaToForm 回流
 }
 
 const handleChangeFields = (data: any[] = [], index: number) => {
-  const item = list.value[index]
+  const item = formData.tasks[index]
   item.source.columns = data.map((t) => t.source)
   item.target.columns = data.map((t) => t.target)
-  // 设置modeType
-  fieldDialog.value[`schemaToForm_${item.id}`].form.setValuesIn(
-    'modeType',
-    'custom',
-  )
+  // // 设置modeType
+  // fieldDialog.value[`schemaToForm_${item.id}`].form.setValuesIn(
+  //   'modeType',
+  //   'custom',
+  // )
 }
 
-const handleFocus = (opt: any = {}) => {
-  if (opt.fields?.length) {
+const handleFocus = (opt: any = {}, visible) => {
+  if (!visible || opt.fields?.length) {
     return
   }
+
   const connectionId = opt.connectionId
   const params = {
     where: {
@@ -1461,10 +2163,10 @@ const handleFocus = (opt: any = {}) => {
       filter: JSON.stringify(params),
     })
     .then((data: any = {}) => {
-      if (isEmpty(data.data.items[0]?.nameFieldMap)) {
+      if (isEmpty(data.items[0]?.nameFieldMap)) {
         return
       }
-      opt.fields = Object.values(data.data.items[0]?.nameFieldMap || {}).map(
+      opt.fields = Object.values(data.items[0]?.nameFieldMap || {}).map(
         (t: any) => {
           return {
             id: t.id,
@@ -1613,6 +2315,22 @@ defineExpose({
       id="data-verification-form"
       class="joint-table-main scroller px-2 py-1 h-100"
     >
+      <!-- <SchemaForm
+        :model-value="formData"
+        :schema="{
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              'x-decorator': 'FormItem',
+              'x-component': 'Input',
+            },
+          },
+        }"
+        :colon="true"
+        class="w-100"
+        label-width="130"
+      /> -->
       <div
         v-for="(item, index) in paginatedList"
         :key="item.id"
@@ -1712,9 +2430,9 @@ defineExpose({
             :key="`SchemaToForm${item.id}${index}${inspectMethod}`"
             class="setting-item mt-4"
           >
-            <SchemaToForm
+            <SchemaForm
               :ref="`schemaToForm_${item.id}`"
-              :value="item"
+              :model-value="item"
               :schema="formSchema"
               :scope="schemaScope"
               :colon="true"
@@ -1731,14 +2449,14 @@ defineExpose({
                 v-model:value="item.source.sortColumn"
                 :options="item.source.fields"
                 class="flex-1"
-                @focus="handleFocus(item.source)"
+                @visible-change="handleFocus(item.source, $event)"
               />
               <span class="item-icon" />
               <FieldSelectWrap
                 v-model:value="item.target.sortColumn"
                 :options="item.target.fields"
                 class="flex-1"
-                @focus="handleFocus(item.target)"
+                @visible-change="handleFocus(item.target, $event)"
               />
             </div>
 
@@ -1766,7 +2484,7 @@ defineExpose({
                 <div v-if="item.source.enableCustomCollate">
                   <CollateMap
                     v-model:value="item.source.collate"
-                    :sort-column="item.source.sortColumn"
+                    :sort-coldumn="item.source.sortColumn"
                     :fields="item.source.fields"
                   />
                 </div>
@@ -2035,7 +2753,7 @@ defineExpose({
     </ElDialog>
     <FieldDialog ref="fieldDialog" @save="handleChangeFields" />
 
-    <DocsDrawer v-model:visible="showDoc" :path="docPath" />
+    <DocsDrawer v-model="showDoc" :path="docPath" />
   </div>
 </template>
 

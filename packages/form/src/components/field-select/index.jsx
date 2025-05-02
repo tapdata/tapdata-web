@@ -150,9 +150,6 @@ const DefineFieldSelect = defineComponent({
           popper-class="field-select-popper"
           options={fieldOptions.value}
           dataSource={fieldOptions.value}
-          onUpdate:modelValue={(val) => {
-            console.log('onUpdate:modelValue', val)
-          }}
         >
           {{
             option: ({ option }) => (
