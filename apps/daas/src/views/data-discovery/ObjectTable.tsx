@@ -2,7 +2,6 @@ import { discoveryApi } from '@tap/api'
 import { TablePage } from '@tap/business'
 import { FilterBar } from '@tap/component'
 import { defineComponent, nextTick, onMounted, reactive, ref, watch } from 'vue'
-import { useMessage } from '@/hooks'
 import i18n from '@/i18n'
 import './index.scss'
 
@@ -19,7 +18,6 @@ export default defineComponent({
     const { category, type, sourceCategory, sourceType, queryKey } =
       root.$route.query || {}
     const list = ref([])
-    const { error, success } = useMessage()
     const multipleSelection = ref([])
     const data = reactive({
       searchParams: {
@@ -185,10 +183,10 @@ export default defineComponent({
       }
       discoveryApi[http](where)
         .then(() => {
-          success(i18n.t('public_message_operation_success'))
+          ElMessage.success(i18n.t('public_message_operation_success'))
         })
         .catch((error_) => {
-          error(error_)
+          ElMessage.error(error_)
         })
     }
     //监听路由变化 筛选条件变化

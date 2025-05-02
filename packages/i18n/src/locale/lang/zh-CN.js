@@ -277,7 +277,8 @@ export default {
   public_task_copy: '复制任务',
   public_task_import: '导入任务',
   public_task_export: '导出任务',
-  public_task_error_schedule_limit: '您的在线Agent已达最大任务限制，请启动离线的Agent。',
+  public_task_error_schedule_limit:
+    '您的在线Agent已达最大任务限制，请启动离线的Agent。',
   // 节点
   public_node_name: '节点名称',
   public_node_type: '节点类型',
@@ -368,7 +369,8 @@ export default {
   public_file_name: '文件名',
   public_file_size: '文件大小',
   public_log_download: '日志下载',
-  public_alert_401_tip: '您的会话已过期或者已在其他地方登录，请重新登录后继续操作',
+  public_alert_401_tip:
+    '您的会话已过期或者已在其他地方登录，请重新登录后继续操作',
   public_alert_401: '会话过期提醒',
   public_store_type: '存储类型',
   public_from_db_type: '来源数据库类型',
@@ -378,5 +380,8 @@ export default {
   public_load_more: '加载更多',
   public_loading: '拼命加载中',
   public_load_end: '到底了',
-  public_foreign_key_tip: '外键 {name} 指向 {val}'
+  public_foreign_key_tip: '外键 {name} 指向 {val}',
+  public_form_design: '表单设计',
+  public_code_edit: '代码编辑',
+  public_preview_form: '预览表单',
 }

@@ -3,7 +3,6 @@ import { TablePage } from '@tap/business'
 import { Drawer, FilterBar } from '@tap/component'
 import { computed, defineComponent, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useMessage } from '@/hooks'
 import i18n from '@/i18n'
 import DrawerContent from './PreviewDrawer'
 import './index.scss'
@@ -21,7 +20,6 @@ export default defineComponent({
     const route = useRoute()
     const tableRef = ref()
     const drawerContentRef = ref()
-    const { success } = useMessage()
     const list = ref([])
     const { category, type, sourceCategory, sourceType, queryKey } =
       route.query || {}
@@ -161,7 +159,6 @@ export default defineComponent({
     return {
       data,
       list,
-      success,
       loadData,
       renderNode,
       closeDrawer,
