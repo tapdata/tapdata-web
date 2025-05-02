@@ -382,4 +382,5 @@ export default {
   public_form_design: '表單設計',
   public_code_edit: '代碼編輯',
   public_preview_form: '預覽表單',
+  public_template_example: '模板示例',
 }

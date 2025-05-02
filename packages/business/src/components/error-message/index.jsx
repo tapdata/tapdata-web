@@ -75,7 +75,7 @@ export function ErrorMessage(stack, message) {
     title: '',
     showClose: true,
     closeIcon: CloseIcon,
-    customClass: ' w-80 max-w-1000 rounded-lg pro-message-box',
+    customClass: ' w-80 max-w-1000',
     message: renderDialog(stack),
     confirmButtonText: i18n.t('public_button_close'),
     ...(import.meta.env.VUE_APP_PLATFORM === 'DAAS'

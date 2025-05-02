@@ -238,10 +238,17 @@
 
 // MessageBox
 .el-message-box {
+  padding-block: 20px;
+  .el-message-box__header,
+  .el-message-box__btns {
+    --el-messagebox-padding-primary: 16px;
+  }
+  .el-message-box__header:has(.el-message-box__title:empty), .el-message-box__header:has(.el-message-box__title > span:empty) {
+    padding: 0;
+  }
   .el-message-box__message {
     width: 100%;
   }
-
   .el-message-box__headerbtn {
     display: flex;
     justify-content: center;

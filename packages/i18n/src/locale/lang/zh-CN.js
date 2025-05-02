@@ -384,4 +384,5 @@ export default {
   public_form_design: '表单设计',
   public_code_edit: '代码编辑',
   public_preview_form: '预览表单',
+  public_template_example: '模板示例',
 }

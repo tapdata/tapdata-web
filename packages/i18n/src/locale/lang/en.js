@@ -393,4 +393,5 @@ export default {
   public_form_design: 'Form Design',
   public_code_edit: 'Code Edit',
   public_preview_form: 'Preview Form',
+  public_template_example: 'Template Example',
 }
