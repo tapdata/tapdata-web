@@ -1,491 +1,547 @@
-<script>
+<script setup lang="ts">
 import { inspectApi, taskApi } from '@tap/api'
 import { AsyncSelect } from '@tap/form'
 import i18n from '@tap/i18n'
 import Time from '@tap/shared/src/time'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { cloneDeep } from 'lodash-es'
+import { computed, onMounted, provide, reactive, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 import PageContainer from '../../components/PageContainer.vue'
-import ConditionBox from './components/ConditionBox'
+import ConditionBox from './components/ConditionBox.vue'
 import { TABLE_PARAMS } from './components/const'
 import { inspectMethod as inspectMethodMap } from './const'
 
-export default {
-  components: { AsyncSelect, ConditionBox, PageContainer },
-  data() {
-    const self = this
-    const requiredValidator = (msg, check) => {
-      return (rule, value, callback) => {
-        const valid = check ? check() : true
-        if (valid && !value) {
-          callback(new Error(msg))
-        } else {
-          callback()
-        }
-      }
-    }
-    const checkMode = () => {
-      return self.form.mode === 'cron'
-    }
+interface Timing {
+  intervals: number
+  intervalsUnit: string
+  start: number
+  end: number
+}
 
+interface Limit {
+  keep: number
+}
+
+interface AlarmSetting {
+  type: string
+  key: string
+  notify: string[]
+  open: boolean
+  params?: {
+    maxDifferentialRows?: number
+    maxDifferentialValues?: number
+  }
+}
+
+interface FormData {
+  flowId: string
+  name: string
+  mode: 'manual' | 'cron'
+  inspectDifferenceMode: string
+  inspectMethod: string
+  cdcBeginDate: string
+  cdcEndDate: string
+  cdcDuration: string
+  timing: Timing
+  limit: Limit
+  enabled: boolean
+  tasks: any[]
+  taskMode: 'pipeline' | 'random'
+  errorNotifys: string[]
+  inconsistentNotifys: string[]
+  checkTableThreadNum: number
+  alarmSettings: AlarmSetting[]
+  ignoreTimePrecision?: boolean
+}
+
+interface Task {
+  taskId: string
+  source: any
+  target: any
+  fullMatch: boolean
+  showAdvancedVerification?: boolean
+  script?: string
+  webScript?: string
+  jsEngineName?: string
+}
+
+const router = useRouter()
+const route = useRoute()
+
+const loading = ref(false)
+const timeUnitOptions = ['second', 'minute', 'hour', 'day', 'week', 'month']
+const isDbClone = ref(false)
+const taskName = ref('')
+const defaultTime = ref([
+  new Date(2025, 1, 1, 0, 0, 0),
+  new Date(2025, 2, 1, 23, 59, 59),
+])
+
+const form = reactive({
+  flowId: '',
+  name: '',
+  mode: 'manual',
+  inspectDifferenceMode: 'All',
+  inspectMethod: 'row_count',
+  cdcBeginDate: '',
+  cdcEndDate: '',
+  cdcDuration: '',
+  timing: {
+    intervals: 24 * 60,
+    intervalsUnit: 'minute',
+    start: Time.now(),
+    end: Time.now() + 24 * 60 * 60 * 1000,
+  },
+  limit: {
+    keep: 100,
+  },
+  enabled: true,
+  tasks: [],
+  taskMode: 'pipeline',
+  errorNotifys: ['SYSTEM', 'EMAIL'],
+  inconsistentNotifys: ['SYSTEM', 'EMAIL'],
+  checkTableThreadNum: 10,
+  alarmSettings: [
+    {
+      type: 'INSPECT',
+      key: 'INSPECT_TASK_ERROR',
+      notify: ['SYSTEM', 'EMAIL'],
+      open: true,
+    },
+    {
+      type: 'INSPECT',
+      key: 'INSPECT_COUNT_ERROR',
+      notify: ['SYSTEM', 'EMAIL'],
+      open: true,
+      params: {
+        maxDifferentialRows: 0,
+      },
+    },
+    {
+      type: 'INSPECT',
+      key: 'INSPECT_VALUE_ERROR',
+      notify: ['SYSTEM', 'EMAIL'],
+      open: true,
+      params: {
+        maxDifferentialValues: 0,
+      },
+    },
+  ],
+})
+
+const requiredValidator = (msg: string, check?: () => boolean) => {
+  return (rule: any, value: any, callback: any) => {
+    const valid = check ? check() : true
+    if (valid && !value) {
+      callback(new Error(msg))
+    } else {
+      callback()
+    }
+  }
+}
+
+const checkMode = () => {
+  return form.mode === 'cron'
+}
+
+const rules = ref({
+  flowId: [
+    {
+      validator: requiredValidator(
+        i18n.t('packages_business_verification_tasksDataFlow'),
+      ),
+    },
+  ],
+  name: [
+    {
+      validator: requiredValidator(
+        i18n.t('packages_business_verification_tasksJobName'),
+      ),
+    },
+  ],
+  'timing.start': [
+    {
+      validator: requiredValidator(
+        i18n.t('packages_business_verification_tasksTime'),
+        checkMode,
+      ),
+    },
+  ],
+  'timing.intervals': [
+    {
+      validator: requiredValidator(
+        i18n.t('packages_business_verification_tasksVerifyInterval'),
+        checkMode,
+      ),
+    },
+  ],
+  cdcBeginDate: [
+    {
+      validator: requiredValidator(
+        i18n.t('packages_business_verification_form_qingshurukaishi'),
+        () => {
+          return form.inspectMethod === 'cdcCount'
+        },
+      ),
+    },
+  ],
+})
+
+const edges = ref([])
+const allStages = ref([])
+const typTipMap = ref({
+  row_count: i18n.t('packages_business_verification_fastCountTip'),
+  field: i18n.t('packages_business_verification_contentVerifyTip'),
+  jointField: i18n.t('packages_business_verification_jointFieldTip'),
+})
+const jointErrorMessage = ref('')
+const errorMessageLevel = ref('')
+const autoAddTableLoading = ref(false)
+const taskOptionCache = ref(null)
+const baseForm = ref(null)
+const conditionBox = ref(null)
+
+const saveDisabled = computed(() => {
+  return (
+    errorMessageLevel.value === 'error' ||
+    autoAddTableLoading.value ||
+    loading.value
+  )
+})
+
+const isCountOrHash = computed(() => {
+  return form.inspectMethod === 'row_count' || form.inspectMethod === 'hash'
+})
+
+onMounted(() => {
+  // 设置form.taskMode
+  const taskMode = route.query.taskMode
+  if (taskMode) {
+    form.taskMode = taskMode
+  }
+
+  const id = route.params.id
+  if (id) {
+    getData(id)
+  }
+})
+
+const getTaskOptions = async (filter: any) => {
+  let data
+
+  if (filter.where?.id) {
     return {
-      loading: false,
-      timeUnitOptions: ['second', 'minute', 'hour', 'day', 'week', 'month'],
-      isDbClone: false,
-      taskName: '',
-      dateRange: [],
-      defaultTime: [
-        new Date(2025, 1, 1, 0, 0, 0),
-        new Date(2025, 2, 1, 23, 59, 59),
+      items: [
+        {
+          id: filter.where.id,
+          name: taskName.value,
+        },
       ],
-      form: {
-        flowId: '',
-        name: '',
-        mode: 'manual',
-        inspectDifferenceMode: 'All',
-        inspectMethod: 'row_count',
-        cdcBeginDate: '',
-        cdcEndDate: '',
-        cdcDuration: '',
-        timing: {
-          intervals: 24 * 60,
-          intervalsUnit: 'minute',
-          start: Time.now(),
-          end: Time.now() + 24 * 60 * 60 * 1000,
+      total: 1,
+    }
+  }
+
+  if (!taskOptionCache.value) {
+    taskOptionCache.value = await inspectApi.getTaskList()
+  }
+
+  data = taskOptionCache.value || []
+
+  let query = filter?.where?.name
+  query = typeof query === 'object' ? query.like : query
+  if (query) {
+    query = query.toLowerCase()
+    const reg = new RegExp(query, 'i')
+    data = data.filter((item) => reg.test(item.name))
+  }
+
+  return {
+    items: data,
+    total: data.length,
+  }
+}
+
+const getData = async (id: string) => {
+  try {
+    const data = await inspectApi.findOne({
+      filter: JSON.stringify({
+        where: {
+          id,
         },
-        limit: {
-          keep: 100,
-        },
-        enabled: true,
-        tasks: [],
-        taskMode: 'pipeline',
-        errorNotifys: ['SYSTEM', 'EMAIL'],
-        inconsistentNotifys: ['SYSTEM', 'EMAIL'],
-        checkTableThreadNum: 10,
-        alarmSettings: [
-          {
-            type: 'INSPECT',
-            key: 'INSPECT_TASK_ERROR',
-            notify: ['SYSTEM', 'EMAIL'],
-            open: true,
-          },
-          {
-            type: 'INSPECT',
-            key: 'INSPECT_COUNT_ERROR',
-            notify: ['SYSTEM', 'EMAIL'],
-            open: true,
-            params: {
-              maxDifferentialRows: 0,
-            },
-          },
-          {
-            type: 'INSPECT',
-            key: 'INSPECT_VALUE_ERROR',
-            notify: ['SYSTEM', 'EMAIL'],
-            open: true,
-            params: {
-              maxDifferentialValues: 0,
-            },
-          },
-        ],
-      },
-      rules: {
-        flowId: [
-          {
-            validator: requiredValidator(
-              this.$t('packages_business_verification_tasksDataFlow'),
-            ),
-          },
-        ],
-        name: [
-          {
-            validator: requiredValidator(
-              this.$t('packages_business_verification_tasksJobName'),
-            ),
-          },
-        ],
-        'timing.start': [
-          {
-            validator: requiredValidator(
-              this.$t('packages_business_verification_tasksTime'),
-              checkMode,
-            ),
-          },
-        ],
-        'timing.intervals': [
-          {
-            validator: requiredValidator(
-              this.$t('packages_business_verification_tasksVerifyInterval'),
-              checkMode,
-            ),
-          },
-        ],
-        cdcBeginDate: [
-          {
-            validator: requiredValidator(
-              i18n.t('packages_business_verification_form_qingshurukaishi'),
-              () => {
-                return self.form.inspectMethod === 'cdcCount'
-              },
-            ),
-          },
-        ],
-      },
-      edges: [],
-      allStages: [],
-      flowOptions: [],
-      inspectMethodMap,
-      typTipMap: {
-        row_count: this.$t('packages_business_verification_fastCountTip'),
-        field: this.$t('packages_business_verification_contentVerifyTip'),
-        jointField: this.$t('packages_business_verification_jointFieldTip'),
-      },
-      jointErrorMessage: '',
-      errorMessageLevel: '',
-      autoAddTableLoading: false,
-    }
-  },
-  computed: {
-    saveDisabled() {
-      return (
-        this.errorMessageLevel === 'error' ||
-        this.autoAddTableLoading ||
-        this.loading
-      )
-    },
-    isCountOrHash() {
-      return (
-        this.form.inspectMethod === 'row_count' ||
-        this.form.inspectMethod === 'hash'
-      )
-    },
-  },
-  created() {
-    // 设置form.taskMode
-    const taskMode = this.$route.query.taskMode
-    if (taskMode) {
-      this.form.taskMode = taskMode
-    }
+      }),
+    })
 
-    const id = this.$route.params.id
-    if (id) {
-      this.getData(id)
-    }
-  },
-  methods: {
-    async getTaskOptions(filter) {
-      let data
+    if (data) {
+      if (form.taskMode === 'pipeline' && data.flowId) {
+        taskName.value = data.taskDto.name
+        applyTask(data.taskDto)
+      }
 
-      if (filter.where?.id) {
-        return {
-          items: [
-            {
-              id: filter.where.id,
-              name: this.taskName,
-            },
-          ],
-          total: 1,
+      // 任务一致性/任意表 都走异步获取 capabilities/tags
+      const capabilitiesMap = await conditionBox.value.getCapabilities([
+        ...new Set([
+          ...data.tasks.map((t) => t.source.connectionId),
+          ...data.tasks.map((t) => t.target.connectionId),
+        ]),
+      ])
+
+      data.tasks = data.tasks.map((t) => {
+        t.source = Object.assign({}, TABLE_PARAMS, t.source)
+        t.target = Object.assign({}, TABLE_PARAMS, t.target)
+        t.source.capabilities =
+          capabilitiesMap[t.source.connectionId]?.capabilities || []
+        t.target.capabilities =
+          capabilitiesMap[t.target.connectionId]?.capabilities || []
+        if (t.source.nodeId) {
+          t.source.currentLabel = `${t.source.nodeName} / ${t.source.connectionName}`
+          t.target.currentLabel = `${t.target.nodeName} / ${t.target.connectionName}`
         }
-      }
+        t.id = t.taskId
+        return t
+      })
 
-      if (!this.taskOptionCache) {
-        this.taskOptionCache = await inspectApi.getTaskList()
+      if (!data.timing) {
+        data.timing = form.timing
       }
+      data.taskMode = data.flowId ? 'pipeline' : 'random'
 
-      data = this.taskOptionCache || []
+      // 历史数据，默认不打开；新数据默认打开
+      const { alarmSettings = [] } = data
+      data.alarmSettings =
+        form.alarmSettings?.map((t) => {
+          const f = alarmSettings.find((item) => item.key === t.key)
+          if (f) return Object.assign(t, f)
+          t.notify = []
+          t.open = false
+          return t
+        }) || []
 
-      let query = filter?.where?.name
-      query = typeof query === 'object' ? query.like : query
-      if (query) {
-        query = query.toLowerCase()
-        const reg = new RegExp(query, 'i')
-        data = data.filter((item) => reg.test(item.name))
+      Object.assign(form, data)
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const getFlowStages = async (id: string, cb?: () => void) => {
+  loading.value = true
+  try {
+    id = id || form.flowId
+    const data = await taskApi.getId(id)
+    loading.value = false
+    applyTask(data, cb)
+  } catch {
+    loading.value = false
+  }
+}
+
+const applyTask = (task: any, cb?: () => void) => {
+  isDbClone.value = task.syncType === 'migrate'
+  const dagEdges = task.dag?.edges || []
+  const nodes = task.dag?.nodes || []
+
+  if (!dagEdges.length) {
+    if (cb) {
+      setTimeout(() => {
+        cb()
+        loading.value = false
+      }, 800)
+    } else {
+      loading.value = false
+    }
+    return { items: [], total: 0 }
+  }
+  const stages = []
+  nodes.forEach((n) => {
+    const outputLanes = []
+    const inputLanes = []
+    dagEdges.forEach((e) => {
+      if (e.source === n.id) {
+        outputLanes.push(e.target)
       }
-
-      return {
-        items: data,
-        total: data.length,
+      if (e.target === n.id) {
+        inputLanes.push(e.source)
       }
+    })
+    stages.push(
+      Object.assign({}, n, {
+        outputLanes,
+        inputLanes,
+      }),
+    )
+  })
+
+  edges.value = dagEdges
+  allStages.value = stages
+
+  if (cb) {
+    setTimeout(() => {
+      cb()
+      loading.value = false
+    }, 800)
+  }
+}
+
+const timingChangeHandler = (times: any) => {
+  form.timing.start = times?.[0] || ''
+  form.timing.end = times?.[1] || ''
+}
+
+const goBack = () => {
+  ElMessageBox.confirm(
+    i18n.t('packages_business_verification_backConfirmMessage'),
+    i18n.t('packages_business_verification_backConfirmTitle'),
+    {
+      type: 'warning',
     },
-    //获取表单数据
-    async getData(id) {
-      try {
-        const data = await inspectApi.findOne({
-          filter: JSON.stringify({
-            where: {
-              id,
-            },
-          }),
-        })
+  ).then((resFlag) => {
+    if (!resFlag) {
+      return
+    }
+    router.back()
+  })
+}
 
-        if (data) {
-          if (this.form.taskMode === 'pipeline' && data.flowId) {
-            this.taskName = data.taskDto.name
-            this.applyTask(data.taskDto)
-          }
-
-          // 任务一致性/任意表 都走异步获取 capabilities/tags
-          const capabilitiesMap = await this.$refs.conditionBox.getCapabilities(
-            [
-              ...new Set([
-                ...data.tasks.map((t) => t.source.connectionId),
-                ...data.tasks.map((t) => t.target.connectionId),
-              ]),
-            ],
-          )
-
-          data.tasks = data.tasks.map((t) => {
-            t.source = Object.assign({}, TABLE_PARAMS, t.source)
-            t.target = Object.assign({}, TABLE_PARAMS, t.target)
-            t.source.capabilities =
-              capabilitiesMap[t.source.connectionId]?.capabilities || []
-            t.target.capabilities =
-              capabilitiesMap[t.target.connectionId]?.capabilities || []
-            if (t.source.nodeId) {
-              t.source.currentLabel = `${t.source.nodeName} / ${t.source.connectionName}`
-              t.target.currentLabel = `${t.target.nodeName} / ${t.target.connectionName}`
-            }
-            t.id = t.taskId
-            return t
-          })
-
-          if (!data.timing) {
-            data.timing = this.form.timing
-          }
-          data.taskMode = data.flowId ? 'pipeline' : 'random'
-          // 历史数据，默认不打开；新数据默认打开
-          const { alarmSettings = [] } = data
-          data.alarmSettings =
-            this.form.alarmSettings?.map((t) => {
-              const f = alarmSettings.find((item) => item.key === t.key)
-              if (f) return Object.assign(t, f)
-              t.notify = []
-              t.open = false
-              return t
-            }) || []
-
-          this.form = Object.assign({}, this.form, data)
+const save = async (saveOnly = false) => {
+  await baseForm.value.validate(async (valid: boolean) => {
+    if (valid) {
+      let tasks = conditionBox.value.getList()
+      // 自动过滤出完整数据，以及索引字段数量不相等的情况
+      tasks = tasks.filter((t) => {
+        if (
+          form.inspectMethod === 'row_count' ||
+          form.inspectMethod === 'hash'
+        ) {
+          return t.source.table && t.target.table
         }
-      } catch (error) {
-        console.error(error)
-      }
-    },
-    async getFlowStages(id, cb) {
-      this.loading = true
-      try {
-        id = id || this.form.flowId
-        const data = await taskApi.getId(id)
-        this.loading = false
-        this.applyTask(data, cb)
-      } catch {
-        this.loading = false
-      }
-    },
-    applyTask(task, cb) {
-      this.isDbClone = task.syncType === 'migrate'
-      const edges = task.dag?.edges || []
-      const nodes = task.dag?.nodes || []
-
-      if (!edges.length) {
-        if (cb) {
-          setTimeout(() => {
-            cb()
-            this.loading = false
-          }, 800)
-        } else {
-          this.loading = false
-        }
-        return { items: [], total: 0 }
-      }
-      const stages = []
-      nodes.forEach((n) => {
-        const outputLanes = []
-        const inputLanes = []
-        edges.forEach((e) => {
-          if (e.source === n.id) {
-            outputLanes.push(e.target)
-          }
-          if (e.target === n.id) {
-            inputLanes.push(e.source)
-          }
-        })
-        stages.push(
-          Object.assign({}, n, {
-            outputLanes,
-            inputLanes,
-          }),
+        return (
+          t.source.sortColumn &&
+          t.source.sortColumn.split(',').length ===
+            t.target.sortColumn.split(',').length
         )
       })
 
-      this.edges = edges
-      this.allStages = stages
-
-      if (cb) {
-        setTimeout(() => {
-          cb()
-          this.loading = false
-        }, 800)
+      if (!tasks.length) {
+        return ElMessage.error(
+          i18n.t('packages_business_verification_tasksVerifyCondition'),
+        )
       }
-    },
-
-    timingChangeHandler(times) {
-      this.form.timing.start = times?.[0] || ''
-      this.form.timing.end = times?.[1] || ''
-    },
-    goBack() {
-      this.$confirm(
-        this.$t('packages_business_verification_backConfirmMessage'),
-        this.$t('packages_business_verification_backConfirmTitle'),
-        {
-          type: 'warning',
-        },
-      ).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        this.$router.back()
-      })
-    },
-    save(saveOnly = false) {
-      this.$refs.baseForm.validate(async (valid) => {
-        if (valid) {
-          let tasks = this.$refs.conditionBox.getList()
-          // 自动过滤出完整数据，以及索引字段数量不相等的情况
-          tasks = tasks.filter((t) => {
-            if (
-              this.form.inspectMethod === 'row_count' ||
-              this.form.inspectMethod === 'hash'
-            ) {
-              return t.source.table && t.target.table
-            }
-            return (
-              t.source.sortColumn &&
-              t.source.sortColumn.split(',').length ===
-                t.target.sortColumn.split(',').length
-            )
-          })
-
-          if (!tasks.length) {
-            return this.$message.error(
-              this.$t('packages_business_verification_tasksVerifyCondition'),
-            )
-          }
-          const validateMsg = await this.$refs.conditionBox.validate()
-          if (validateMsg) {
-            return this.$message.error(validateMsg)
-          }
-
-          if (this.form.inspectMethod === 'jointField') {
-            tasks.forEach((item) => {
-              item.fullMatch = false
-            })
-          } else {
-            tasks.forEach((item) => {
-              item.fullMatch = true
-            })
-          }
-          if (this.form && this.form.createTime && this.form.last_updated) {
-            delete this.form.createTime
-            delete this.form.last_updated
-          }
-
-          const alarmSettingsKeys =
-            this.form.inspectMethod === 'row_count'
-              ? ['INSPECT_TASK_ERROR', 'INSPECT_COUNT_ERROR']
-              : ['INSPECT_TASK_ERROR', 'INSPECT_VALUE_ERROR']
-          const alarmSettings = this.form.alarmSettings.filter((t) =>
-            alarmSettingsKeys.includes(t.key),
-          )
-
-          inspectApi[this.form.id ? 'patch' : 'post'](
-            Object.assign({}, this.form, {
-              fullMatchKeep: this.form.keep,
-              status: saveOnly ? 'waiting' : 'scheduling',
-              ping_time: 0,
-              tasks: tasks.map(
-                ({
-                  taskId,
-                  source,
-                  target,
-                  fullMatch,
-                  showAdvancedVerification,
-                  script,
-                  webScript,
-                  jsEngineName,
-                }) => {
-                  if (webScript && webScript !== '') {
-                    script = `function validate(sourceRow){${webScript}}`
-                  }
-                  const newSource = cloneDeep(source)
-                  const newTarget = cloneDeep(target)
-                  newSource.fields = []
-                  newTarget.fields = []
-                  newSource.capabilities = []
-                  newTarget.capabilities = []
-                  return {
-                    taskId,
-                    source: newSource,
-                    target: newTarget,
-                    fullMatch,
-                    showAdvancedVerification,
-                    script,
-                    webScript,
-                    jsEngineName,
-                  }
-                },
-              ),
-              platformInfo: {
-                agentType: 'private',
-              },
-              byFirstCheckId: '',
-              browserTimezoneOffset: new Date().getTimezoneOffset(),
-              alarmSettings,
-            }),
-          ).then(() => {
-            this.$message.success(this.$t('public_message_save_ok'))
-            this.$router.back() // back 保留上个路由的参数
-          })
-        }
-      })
-    },
-
-    handleChangeAlarmItem() {
-      this.form.alarmSettings[0].open =
-        !!this.form.alarmSettings[0].notify.length
-      this.form.alarmSettings[1].open =
-        !!this.form.alarmSettings[1].notify.length
-      this.form.alarmSettings[2].open =
-        !!this.form.alarmSettings[2].notify.length
-    },
-
-    handleChangeAlarm(val, index = 0) {
-      this.form.alarmSettings[index].notify = val ? ['SYSTEM', 'EMAIL'] : []
-    },
-
-    handleChangeInspectMethod() {
-      this.setVerifyName()
-      this.handleChangeAlarm(true, 0)
-      this.handleChangeAlarm(true, 1)
-      this.handleChangeAlarm(true, 2)
-      this.handleChangeAlarmItem()
-      this.$refs.conditionBox.validate()
-    },
-    setVerifyName() {
-      // 任务模式
-      if (this.form.taskMode === 'pipeline') {
-        this.form.name = `${this.taskName} - ${this.inspectMethodMap[this.form.inspectMethod]}`
+      const validateMsg = await conditionBox.value.validate()
+      if (validateMsg) {
+        return ElMessage.error(validateMsg)
       }
-    },
-    handleSelectTask(task, byClick) {
-      if (byClick) {
-        this.form.tasks = []
-        this.taskName = task.name
-        this.setVerifyName()
-        this.getFlowStages(task.id, this.$refs.conditionBox.autoAddTable)
+
+      if (form.inspectMethod === 'jointField') {
+        tasks.forEach((item) => {
+          item.fullMatch = false
+        })
+      } else {
+        tasks.forEach((item) => {
+          item.fullMatch = true
+        })
       }
-    },
-  },
+      if (form && form.createTime && form.last_updated) {
+        delete form.createTime
+        delete form.last_updated
+      }
+
+      const alarmSettingsKeys =
+        form.inspectMethod === 'row_count'
+          ? ['INSPECT_TASK_ERROR', 'INSPECT_COUNT_ERROR']
+          : ['INSPECT_TASK_ERROR', 'INSPECT_VALUE_ERROR']
+      const alarmSettings = form.alarmSettings.filter((t) =>
+        alarmSettingsKeys.includes(t.key),
+      )
+
+      await inspectApi[form.id ? 'patch' : 'post'](
+        Object.assign({}, form, {
+          fullMatchKeep: form.keep,
+          status: saveOnly ? 'waiting' : 'scheduling',
+          ping_time: 0,
+          tasks: tasks.map(
+            ({
+              taskId,
+              source,
+              target,
+              fullMatch,
+              showAdvancedVerification,
+              script,
+              webScript,
+              jsEngineName,
+            }) => {
+              if (webScript && webScript !== '') {
+                script = `function validate(sourceRow){${webScript}}`
+              }
+              const newSource = cloneDeep(source)
+              const newTarget = cloneDeep(target)
+              newSource.fields = []
+              newTarget.fields = []
+              newSource.capabilities = []
+              newTarget.capabilities = []
+              return {
+                taskId,
+                source: newSource,
+                target: newTarget,
+                fullMatch,
+                showAdvancedVerification,
+                script,
+                webScript,
+                jsEngineName,
+              }
+            },
+          ),
+          platformInfo: {
+            agentType: 'private',
+          },
+          byFirstCheckId: '',
+          browserTimezoneOffset: new Date().getTimezoneOffset(),
+          alarmSettings,
+        }),
+      )
+      ElMessage.success(i18n.t('public_message_save_ok'))
+      router.back() // back 保留上个路由的参数
+    }
+  })
 }
+
+const handleChangeAlarmItem = () => {
+  form.alarmSettings[0].open = !!form.alarmSettings[0].notify.length
+  form.alarmSettings[1].open = !!form.alarmSettings[1].notify.length
+  form.alarmSettings[2].open = !!form.alarmSettings[2].notify.length
+}
+
+const handleChangeAlarm = (val: boolean, index = 0) => {
+  form.alarmSettings[index].notify = val ? ['SYSTEM', 'EMAIL'] : []
+}
+
+const handleChangeInspectMethod = () => {
+  setVerifyName()
+  handleChangeAlarm(true, 0)
+  handleChangeAlarm(true, 1)
+  handleChangeAlarm(true, 2)
+  handleChangeAlarmItem()
+  conditionBox.value.validate()
+}
+
+const setVerifyName = () => {
+  // 任务模式
+  if (form.taskMode === 'pipeline') {
+    form.name = `${taskName.value} - ${inspectMethodMap[form.inspectMethod]}`
+  }
+}
+
+const handleSelectTask = (task: any, byClick: boolean) => {
+  if (byClick) {
+    form.tasks = []
+    taskName.value = task.name
+    setVerifyName()
+    getFlowStages(task.id, conditionBox.value.autoAddTable)
+  }
+}
+
+provide('formData', form)
 </script>
 
 <template>
@@ -510,7 +566,7 @@ export default {
           >
             <AsyncSelect
               v-model="form.flowId"
-              class="form-item-width"
+              class="form-input"
               :method="getTaskOptions"
               :current-label="taskName"
               item-label="name"
@@ -566,7 +622,7 @@ export default {
           </ElFormItem>
 
           <ElCollapse
-            class="collapse-fill db-list-container"
+            class="collapse-fill db-list-container only-one"
             accordion
             style="--collapse-padding-primary: 0"
           >
@@ -961,9 +1017,6 @@ export default {
       />
       <div class="mt-4">
         <ElButton @click="goBack()">{{ $t('public_button_back') }}</ElButton>
-        <!--        <ElButton type="primary"  @click="save()">{{-->
-        <!--          $t('public_button_save') + ' & ' + $t('public_button_execute')-->
-        <!--        }}</ElButton>-->
         <ElButton type="primary" :disabled="saveDisabled" @click="save(true)"
           >{{ $t('public_button_save') }}
         </ElButton>
@@ -973,9 +1026,15 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+.only-one.el-collapse {
+  :deep(.el-collapse-item.is-active) {
+    .el-collapse-item__wrap {
+      border-bottom: none;
+    }
+  }
+}
 .verify-form-wrap {
   height: 100%;
-  //padding: 0 24px 24px 24px;
   overflow: hidden;
 
   .section-wrap-box {

@@ -1,5 +1,5 @@
 import { timeStampApi } from '@tap/api'
-import WSClient from '@tap/business/src/shared/ws-client'
+import { WSClient } from '@tap/business/src/shared/ws-client'
 import { installElement, VButton, VIcon } from '@tap/component'
 import Time from '@tap/shared/src/time'
 import { ElLoading } from 'element-plus'
