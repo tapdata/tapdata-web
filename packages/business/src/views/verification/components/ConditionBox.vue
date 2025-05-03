@@ -1001,7 +1001,7 @@ const getConnectionsListMethod = async (
     })
 
     const response: ApiResponse<ConnectionResponse> = {
-      items: result.data.items.map((item: ConnectionItem) => {
+      items: result.items.map((item: ConnectionItem) => {
         const findDynamicSchema = item.capabilities.find(
           (t: any) => t.id === 'dynamic_schema',
         )
@@ -1030,7 +1030,7 @@ const getConnectionsListMethod = async (
           databaseType,
         }
       }),
-      total: result.data.total,
+      total: result.total,
     }
 
     return response
@@ -1068,10 +1068,10 @@ const getTableListMethod = async (
       filter: JSON.stringify(params),
     })
     const result: ApiResponse<string> = {
-      items: res.data.items.map((t: TableItem) => t.name),
-      total: res.data.total,
+      items: res.items.map((t: TableItem) => t.name),
+      total: res.total,
     }
-    res.data.items.forEach((el: TableItem) => {
+    res.items.forEach((el: TableItem) => {
       // 缓存起来
       setFieldsByItem(
         [nodeId, connectionId, el.name],
@@ -1132,9 +1132,9 @@ const getTablesInTask = async (
 
   const res = await metadataInstancesApi.nodeSchemaPage(params)
 
-  const tableList = res.data.items?.map((t: TableItem) => t.name) || []
-  const total = res.data.total
-  res.data.items.forEach((el: TableItem) => {
+  const tableList = res.items?.map((t: TableItem) => t.name) || []
+  const total = res.total
+  res.items.forEach((el: TableItem) => {
     setFieldsByItem(
       [nodeId, connectionId, el.name],
       el.fields.map((t: any) => {
@@ -1738,7 +1738,7 @@ const handleChangeTable = (
   }
   metadataInstancesApi.nodeSchemaPage(params).then((data: any) => {
     item.target.fields =
-      data.data.items?.[0]?.fields.map((t: any) => {
+      data.items?.[0]?.fields.map((t: any) => {
         const { id, field_name, primary_key_position, primaryKey, unique } = t
         return { id, field_name, primary_key_position, primaryKey, unique }
       }) || []

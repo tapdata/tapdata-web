@@ -16,7 +16,7 @@ function renderDialog(stack) {
         </span>
       </div>
       <div
-        class="mt-3 position-relative rounded-lg overflow-hidden error-stack-pre-wrap"
+        class="mt-3 position-relative rounded-xl overflow-hidden error-stack-pre-wrap"
         style="background: #fff2f0; border: 1px solid #ffccc7"
       >
         <div class="position-absolute end-0 top-0 px-2 pt-1 error-stack-actions">
