@@ -121,8 +121,6 @@ export default {
         this.initNodeView()
         await this.initView(true)
         this.autoAddNode(query)
-        this.checkMaterializedView(query)
-        // this.initWS()
       } catch (error) {
         console.error(error)
       }
@@ -338,10 +336,13 @@ export default {
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
         this.setTaskInfo(this.dataflow)
+
         await this.$router.replace({
           name: 'DataflowEditor',
           params: { id: dataflow.id, action: 'dataflowEdit' },
+          query: { ...this.$route.query },
         })
+
         this.$nextTick(() => {
           this.$refs.paperScroller.initVisibleArea()
         })
@@ -626,7 +627,8 @@ export default {
       })
     },
 
-    async checkMaterializedView(query = {}) {
+    async checkMaterializedView() {
+      const { query } = this.$route
       const { by, connectionId, tableName } = query
       let connection
 
@@ -635,7 +637,7 @@ export default {
 
       await this.$router.replace({
         params: {
-          action: 'dataflowEdit',
+          id: this.$route.params.id,
         },
         query: {
           ...query,

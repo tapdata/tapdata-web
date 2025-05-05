@@ -110,7 +110,8 @@ export default {
     },
   },
   watch: {
-    $route() {
+    '$route.params.id': function (n, o) {
+      if (!o) return
       this.initView()
     },
   },
@@ -792,36 +793,15 @@ export default {
 
     async initView(first) {
       const { id } = this.$route.params
+      const routeName = this.$route.name
+
       this.stopDagWatch?.()
-
-      if (this.$route.params.action === 'dataflowEdit') {
-        // 保存后路由跳转
-        this.setStateDirty(false)
-        this.setStateReadonly(false)
-        this.stopDagWatch = this.$watch(
-          () => this.allNodes.length + this.allEdges.length,
-          () => {
-            this.updateDag({ vm: this })
-          },
-        )
-        this.startLoopTask(id)
-        this.initWS()
-        // 从查看进入编辑，清掉轮询
-        return Promise.resolve()
-      }
-
-      if (this.$route.params.action === 'dataflowViewer') {
-        this.setStateReadonly(true)
-        return Promise.resolve()
-      }
-
-      // this.dataflow.id = id
 
       if (!first) {
         this.resetWorkspace()
         this.initNodeView()
       }
-      const routeName = this.$route.name
+
       if (
         [
           'DataflowViewer',
@@ -831,7 +811,6 @@ export default {
         ].includes(routeName)
       ) {
         await this.openDataflow(id)
-        // await this.startLoop()
         this.setStateReadonly(true)
         if (
           routeName === 'MigrateViewer' ||
@@ -846,8 +825,15 @@ export default {
           // 检查任务是否可编辑
           if (this.checkGotoViewer()) return // 跳转到viewer不需要继续往下走
         } else {
-          return await this.newDataflow()
+          await this.newDataflow()
+
+          this.setStateDirty(false)
+          this.setStateReadonly(false)
+          this.startLoopTask(id)
+          this.initWS()
+          this.checkMaterializedView()
         }
+
         this.stopDagWatch = this.$watch(
           () => this.allNodes.length + this.allEdges.length,
           () => {
@@ -1111,7 +1097,6 @@ export default {
      */
     handleDelete() {
       const selectNodes = this.$store.getters['dataflow/getSelectedNodes']
-      console.log('delete.selectNodes', selectNodes) // eslint-disable-line
       this.command.exec(new RemoveNodeCommand(selectNodes))
       this.resetSelectedNodes()
       this.deleteSelectedConnections()
