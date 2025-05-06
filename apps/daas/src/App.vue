@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import { workerApi } from '@tap/api'
-import i18n from '@tap/i18n'
+import { useI18n } from '@tap/i18n'
 import en from 'element-plus/dist/locale/en.mjs'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import zhTw from 'element-plus/dist/locale/zh-tw.mjs'
 import { computed, provide, ref } from 'vue'
-import { I18n, provideI18n, useMessage } from './hooks'
+
+const { t, locale: i18nLocale } = useI18n()
 
 const langMap = {
   'zh-CN': zhCn,
@@ -14,15 +15,13 @@ const langMap = {
 }
 
 const locale = computed(() => {
-  return langMap[i18n.locale || 'en']
+  return langMap[i18nLocale.value || 'en']
 })
 
-provideI18n()
 provide('checkAgent', async (cb) => {
-  const Message = useMessage()
   const data = await workerApi.getAvailableAgent()
   if (!data?.result?.length) {
-    Message.error(I18n.$t('agent_check_error'))
+    ElMessage.error(t('agent_check_error'))
   } else {
     cb && cb()
   }
