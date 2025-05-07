@@ -1,6 +1,33 @@
+<script>
+export default {
+  name: 'LockedDialog',
+  props: {
+    visible: Boolean,
+  },
+  methods: {
+    handleClose() {
+      this.$emit('update:visible', false)
+    },
+    goOP() {
+      this.handleClose()
+      window.open('https://tapdata.mike-x.com/lV5o0?m=3VXe4lCHe9LjBsda')
+    },
+    goCloud() {
+      this.handleClose()
+      window.open('https://cloud.tapdata.io')
+    },
+  },
+}
+</script>
+
 <template>
-  <ElDialog :model-value="visible" width="640px" @close="handleClose" custom-class="pro-dialog">
-    <template #title>
+  <ElDialog
+    :model-value="visible"
+    width="640px"
+    custom-class="pro-dialog"
+    @close="handleClose"
+  >
+    <template #header>
       <div class="fs-6 fw-sub font-color-dark flex align-center">
         <VIcon class="mr-2" size="24">lock-circle</VIcon>
         <span>{{ $t('daas_feature_unavailable') }}</span>
@@ -61,39 +88,27 @@
     </div>
     <template #footer>
       <div class="flex align-center">
-        <ElLink type="primary" href="https://tapdata.io/pricing" target="_blank">
-          <span class="align-middle">{{ $t('daas_feature_unavailable_go_to_compare') }}</span>
+        <ElLink
+          type="primary"
+          href="https://tapdata.io/pricing"
+          target="_blank"
+        >
+          <span class="align-middle">{{
+            $t('daas_feature_unavailable_go_to_compare')
+          }}</span>
           <VIcon class="ml-1 align-middle" size="16">open-in-new</VIcon></ElLink
         >
-        <div class="flex-grow-1"></div>
-        <ElButton type="primary" @click="goOP">{{ $t('daas_feature_unavailable_get_enterprise') }}</ElButton>
-        <ElButton type="warning" @click="goCloud">{{ $t('daas_feature_unavailable_get_cloud') }}</ElButton>
+        <div class="flex-grow-1" />
+        <ElButton type="primary" @click="goOP">{{
+          $t('daas_feature_unavailable_get_enterprise')
+        }}</ElButton>
+        <ElButton type="warning" @click="goCloud">{{
+          $t('daas_feature_unavailable_get_cloud')
+        }}</ElButton>
       </div>
     </template>
   </ElDialog>
 </template>
-
-<script>
-export default {
-  name: 'LockedDialog',
-  props: {
-    visible: Boolean,
-  },
-  methods: {
-    handleClose() {
-      this.$emit('update:visible', false)
-    },
-    goOP() {
-      this.handleClose()
-      window.open('https://tapdata.mike-x.com/lV5o0?m=3VXe4lCHe9LjBsda')
-    },
-    goCloud() {
-      this.handleClose()
-      window.open('https://cloud.tapdata.io')
-    },
-  },
-}
-</script>
 
 <style lang="scss">
 .locked-dialog-content {
