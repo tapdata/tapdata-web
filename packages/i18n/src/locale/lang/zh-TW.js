@@ -276,7 +276,8 @@ export default {
   public_task_copy: '複製任務',
   public_task_import: '導入任務',
   public_task_export: '導出任務',
-  public_task_error_schedule_limit: '您的線上Agent已達最大任務限制，請啟動離線的Agent。',
+  public_task_error_schedule_limit:
+    '您的線上Agent已達最大任務限制，請啟動離線的Agent。',
   // 任節點
   public_node_name: '節點名稱',
   public_node_type: '節點類型',
@@ -366,7 +367,8 @@ export default {
   public_file_name: '文件名',
   public_file_size: '文件大小',
   public_log_download: '日誌下載',
-  public_alert_401_tip: '您的會話已過期或者已在其他地方登錄，請重新登錄後繼續操作',
+  public_alert_401_tip:
+    '您的會話已過期或者已在其他地方登錄，請重新登錄後繼續操作',
   public_alert_401: '會話過期提醒',
   public_store_type: '存儲類型',
   public_from_db_type: '來源數據庫類型',
@@ -378,5 +380,9 @@ export default {
   public_load_end: '到底了',
   public_data_validation: '数据校验',
   public_validation_record: '校验记录',
-  public_foreign_key_tip: '外鍵 {name} 指向 {val}'
+  public_foreign_key_tip: '外鍵 {name} 指向 {val}',
+  public_form_design: '表單設計',
+  public_code_edit: '代碼編輯',
+  public_preview_form: '預覽表單',
+  public_template_example: '模板示例',
 }

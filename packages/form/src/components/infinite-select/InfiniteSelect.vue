@@ -87,7 +87,7 @@ const labelContent = ref('')
 
 // 回显数据
 const setCurrentLabel = async () => {
-  const [current] = selectRef.value.states.selected
+  const [current] = selectRef.value?.states.selected || []
 
   if (!current) return
 

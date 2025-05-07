@@ -383,4 +383,8 @@ export default {
   public_data_validation: '数据校验',
   public_validation_record: '校验记录',
   public_foreign_key_tip: '外键 {name} 指向 {val}',
+  public_form_design: '表单设计',
+  public_code_edit: '代码编辑',
+  public_preview_form: '预览表单',
+  public_template_example: '模板示例',
 }

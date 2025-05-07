@@ -1,13 +1,14 @@
-import i18n from '@tap/i18n'
 import { registerValidateRules } from '@formily/core'
+import { composeExport } from '@formily/element-plus/lib/__builtins__'
+import i18n from '@tap/i18n'
 import cronParse from 'cron-parser'
 import * as components from './components'
-import { composeExport } from '@formily/element-plus/lib/__builtins__'
 import langs from './locale'
+import SchemaForm from './SchemaForm.vue'
+import SchemaToForm from './SchemaToForm.vue'
 import './style.scss'
-import SchemaToForm from './SchemaToForm'
 
-export { SchemaToForm }
+export { SchemaForm, SchemaToForm }
 
 export const validateCron = (value) => {
   value = value?.trim()
@@ -24,8 +25,8 @@ export const validateCron = (value) => {
     if (cronParse.parseExpression(value).hasNext()) {
       return true
     }
-  } catch (e) {
-    console.log('cron-rule', e) // eslint-disable-line
+  } catch (error) {
+    console.log('cron-rule', error) // eslint-disable-line
   }
   return false
 }
@@ -33,11 +34,13 @@ export const validateCron = (value) => {
 // cron表达式校验
 registerValidateRules({
   cron(value, rule) {
-    return validateCron(value) ? '' : rule.message || i18n.t('packages_form_src_index_cronbiao')
+    return validateCron(value)
+      ? ''
+      : rule.message || i18n.t('packages_form_src_index_cronbiao')
   },
 })
 
-export { composeExport, langs, components }
+export { components, composeExport, langs }
 
 export * from './components'
 export * from './shared'

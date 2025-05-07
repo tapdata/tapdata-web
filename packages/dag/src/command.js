@@ -1,5 +1,5 @@
 import i18n from '@tap/i18n'
-import * as Vue from 'vue'
+import { nextTick } from 'vue'
 import { NODE_PREFIX } from './constants'
 
 function getRealId(str) {
@@ -72,7 +72,7 @@ class NodeCommand extends Command {
     state.instance.setSuspendDrawing(true)
 
     this.elIds.forEach((id) => {
-      const el = document.querySelector('#' + id)
+      const el = document.querySelector(`#${id}`)
       state.instance.removeAllEndpoints(id)
       state.instance.destroyDraggable(el)
       state.instance.destroyDroppable(el)
@@ -84,7 +84,7 @@ class NodeCommand extends Command {
 
     state.store.commit('dataflow/batchRemoveNode', this.nodeIds)
 
-    Vue.nextTick(() => {
+    nextTick(() => {
       state.instance.setSuspendDrawing(false, true)
     })
   }
@@ -118,7 +118,10 @@ class RemoveNodeCommand extends NodeCommand {
   async exec(state) {
     this.connections = state.instance
       .getConnections('*')
-      .filter((c) => this.elIds.includes(c.targetId) || this.elIds.includes(c.sourceId))
+      .filter(
+        (c) =>
+          this.elIds.includes(c.targetId) || this.elIds.includes(c.sourceId),
+      )
       .map((c) => ({
         sourceId: c.sourceId,
         targetId: c.targetId,
@@ -131,10 +134,10 @@ class RemoveNodeCommand extends NodeCommand {
     state.instance.setSuspendDrawing(true)
     state.store.commit('dataflow/addNodes', this.nodes)
 
-    Vue.nextTick(() => {
+    nextTick(() => {
       this.connections?.forEach((c) => {
         state.instance.connect({
-          uuids: [c.sourceId + '_source', c.targetId + '_target'],
+          uuids: [`${c.sourceId}_source`, `${c.targetId}_target`],
         })
         state.store.commit('dataflow/addConnection', {
           source: getRealId(c.sourceId),
@@ -157,7 +160,10 @@ class ConnectionCommand extends Command {
       source: NODE_PREFIX + connection.source,
       target: NODE_PREFIX + connection.target,
     }
-    this.uuids = [this.connectionData.source + '_source', this.connectionData.target + '_target']
+    this.uuids = [
+      `${this.connectionData.source}_source`,
+      `${this.connectionData.target}_target`,
+    ]
   }
 
   add(state, uuids = this.uuids, connection = this.connection) {
@@ -227,7 +233,7 @@ class MoveNodeCommand extends Command {
       state.store.commit('dataflow/updateNodeProperties', info)
     })
 
-    Vue.nextTick(() => {
+    nextTick(() => {
       state.instance.setSuspendDrawing(false, true)
       // state.store.dispatch('dataflow/updateDag') // 自动保存
     })
@@ -254,16 +260,24 @@ class AddNodeOnConnectionCommand extends ConnectionCommand {
   exec(state) {
     this.remove(state)
     state.store.commit('dataflow/addNode', this.node)
-    Vue.nextTick(() => {
+    nextTick(() => {
       const nodeId = NODE_PREFIX + this.node.id
-      this.add(state, [this.connectionData.source + '_source', nodeId + '_target'], {
-        source: this.connection.source,
-        target: this.node.id,
-      })
-      this.add(state, [nodeId + '_source', this.connectionData.target + '_target'], {
-        source: this.node.id,
-        target: this.connection.target,
-      })
+      this.add(
+        state,
+        [`${this.connectionData.source}_source`, `${nodeId}_target`],
+        {
+          source: this.connection.source,
+          target: this.node.id,
+        },
+      )
+      this.add(
+        state,
+        [`${nodeId}_source`, `${this.connectionData.target}_target`],
+        {
+          source: this.node.id,
+          target: this.connection.target,
+        },
+      )
     })
   }
 
@@ -288,7 +302,7 @@ class QuickAddTargetCommand extends ConnectionCommand {
 
   exec(state) {
     state.store.commit('dataflow/addNode', this.node)
-    Vue.nextTick(() => {
+    nextTick(() => {
       this.add(state)
     })
   }
@@ -311,7 +325,7 @@ class QuickAddSourceCommand extends ConnectionCommand {
 
   exec(state) {
     state.store.commit('dataflow/addNode', this.node)
-    Vue.nextTick(() => {
+    nextTick(() => {
       this.add(state)
     })
   }
@@ -335,10 +349,13 @@ class AddDagCommand extends NodeCommand {
   async exec(state) {
     state.store.commit('dataflow/addNodes', this.nodes)
     state.store.commit('dataflow/addEdges', this.edges)
-    await Vue.nextTick()
+    await nextTick()
     this.edges.forEach(({ source, target }) => {
       state.instance.connect({
-        uuids: [`${NODE_PREFIX}${source}_source`, `${NODE_PREFIX}${target}_target`],
+        uuids: [
+          `${NODE_PREFIX}${source}_source`,
+          `${NODE_PREFIX}${target}_target`,
+        ],
       })
     })
   }
@@ -349,14 +366,14 @@ class AddDagCommand extends NodeCommand {
 }
 
 export {
-  CommandManager,
-  AddNodeCommand,
-  RemoveNodeCommand,
   AddConnectionCommand,
-  RemoveConnectionCommand,
-  MoveNodeCommand,
-  AddNodeOnConnectionCommand,
-  QuickAddTargetCommand,
-  QuickAddSourceCommand,
   AddDagCommand,
+  AddNodeCommand,
+  AddNodeOnConnectionCommand,
+  CommandManager,
+  MoveNodeCommand,
+  QuickAddSourceCommand,
+  QuickAddTargetCommand,
+  RemoveConnectionCommand,
+  RemoveNodeCommand,
 }

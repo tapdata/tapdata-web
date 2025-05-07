@@ -16,7 +16,7 @@ function renderDialog(stack) {
         </span>
       </div>
       <div
-        class="mt-3 position-relative rounded-lg overflow-hidden error-stack-pre-wrap"
+        class="mt-3 position-relative rounded-xl overflow-hidden error-stack-pre-wrap"
         style="background: #fff2f0; border: 1px solid #ffccc7"
       >
         <div class="position-absolute end-0 top-0 px-2 pt-1 error-stack-actions">
@@ -75,7 +75,7 @@ export function ErrorMessage(stack, message) {
     title: '',
     showClose: true,
     closeIcon: CloseIcon,
-    customClass: ' w-80 max-w-1000 rounded-lg pro-message-box',
+    customClass: ' w-80 max-w-1000',
     message: renderDialog(stack),
     confirmButtonText: i18n.t('public_button_close'),
     ...(import.meta.env.VUE_APP_PLATFORM === 'DAAS'

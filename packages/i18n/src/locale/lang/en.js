@@ -392,4 +392,8 @@ export default {
   public_data_validation: 'Data Validation',
   public_validation_record: 'Validation Record',
   public_foreign_key_tip: 'Foreign key {name} to {val}',
+  public_form_design: 'Form Design',
+  public_code_edit: 'Code Edit',
+  public_preview_form: 'Preview Form',
+  public_template_example: 'Template Example',
 }

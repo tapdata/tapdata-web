@@ -568,6 +568,7 @@ export default {
     '此操作會丟失當前正在創建（編輯）的校驗任務',
   packages_business_verification_backConfirmTitle:
     '是否放棄創建（編輯）校驗任務？',
+  packages_business_verification_history_source_total_rows: '源總行數',
   packages_business_verification_source_total_rows: '源總行數',
   packages_business_verification_form_label_error_save_count: '錯誤保存條數',
   packages_business_verification_button_auto_add_table: '自動添加表',

@@ -356,7 +356,7 @@ const getNewTask = async () => {
 
   if (newTask) {
     await router.replace({
-      name: 'MigrationEditor',
+      name: 'MigrateForm',
       params: { id: newTask.id },
       query: {
         ...route.query,
