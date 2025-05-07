@@ -124,7 +124,7 @@ export default {
               })
             }
           } else if (el.type === 'input') {
-            let value = el.value?.trim() || ''
+            let value = el.value || ''
             result[el.key] = value
           } else {
             result[el.key] = el.value
