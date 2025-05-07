@@ -1362,6 +1362,7 @@ export default {
           :log-totals="logTotals"
           :task-record="taskRecord"
           :quota="quota"
+          @open-inspect="handleOpenInspect"
           @load-data="init"
           @show-bottom-panel="handleShowBottomPanel"
           @action="handleBottomPanelAction"

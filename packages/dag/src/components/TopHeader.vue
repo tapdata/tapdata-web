@@ -556,9 +556,8 @@ export default {
     />
 
     <DataValidationDialog
+      v-model:visible="openValidation"
       :task-id="dataflow.id"
-      :visible="openValidation"
-      @update:visible="openValidation = $event"
     />
   </header>
 </template>

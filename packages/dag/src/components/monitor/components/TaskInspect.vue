@@ -1,117 +1,9 @@
-<template>
-  <div class="inspect-wrap p-4 h-100 w-100 overflow-y-auto" v-loading="loading">
-    <!-- <VTable
-      :remoteMethod="remoteMethod"
-      :columns="columns"
-      :page-options="{
-        layout: 'total, ->, prev, pager, next, sizes, jumper'
-      }"
-      ref="table"
-      height="100%"
-      hide-on-single-page
-    >
-      <template #status="{ row }">
-        <ElTag :type="row.statusType" size="small">{{ row.status }}</ElTag>
-      </template>
-      <template #operation="{ row }">
-        <div class="operate-columns">
-          <ElButton size="mini" type="text" @click="handleDetail(row)">
-            {{ $t('public_button_details') }}
-          </ElButton>
-        </div>
-      </template>
-    </VTable> -->
-
-    <div class="flex flex-column gap-4">
-      <div
-        v-for="inspect in inspectList"
-        :key="inspect.id"
-        class="flex align-items-stretch border rounded-lg overflow-hidden cursor-pointer hover:bg-light"
-        @click="handleDetail(inspect)"
-      >
-        <div class="flex flex-column align-center gap-2 bg-light p-3 border-end" style="min-width: 150px">
-          <div class="rounded-lg px-2 py-1 bg-fill-hover">{{ inspect.type }}</div>
-          <ElTag :type="inspect.statusType" size="small">{{ inspect.status }}</ElTag>
-        </div>
-
-        <div class="flex justify-content-around align-center flex-1 gap-4 p-3 px-4 border-end">
-          <div class="flex flex-column gap-2" style="min-width: 150px">
-            <span class="flex align-center gap-1"><VIcon>time</VIcon>{{ $t('packages_dag_inspect_start_time') }} </span>
-            <span class="fw-sub font-color-dark">
-              {{ inspect.beginTime }}
-            </span>
-          </div>
-          <div class="flex flex-column gap-2" style="min-width: 150px">
-            <span class="flex align-center gap-1"><VIcon>time</VIcon>{{ $t('packages_dag_inspect_end_time') }} </span>
-            <span class="fw-sub font-color-dark">
-              {{ inspect.endTime || '-' }}
-            </span>
-          </div>
-        </div>
-
-        <div class="flex justify-content-around align-center flex-1 gap-4 p-3 px-4">
-          <div class="flex flex-column gap-2">
-            <span class="flex align-center gap-1"
-              ><VIcon>EyeOff</VIcon>{{ $t('packages_dag_inspect_ignore_records') }}</span
-            >
-            <span class="fw-sub font-color-dark">
-              {{ inspect.attrs.ignores }}
-            </span>
-          </div>
-
-          <div class="flex flex-column gap-2">
-            <span class="flex align-center gap-1"
-              ><VIcon>Eye</VIcon>{{ $t('packages_dag_inspect_accept_records') }}</span
-            >
-            <span class="fw-sub font-color-dark">
-              {{ inspect.attrs.accepts }}
-            </span>
-          </div>
-
-          <div class="flex flex-column gap-2">
-            <span class="flex align-center gap-1"
-              ><VIcon>FileChartColumnIncreasing</VIcon>{{ $t('packages_dag_inspect_diff_records') }}</span
-            >
-            <span
-              class="fw-sub font-color-dark"
-              :class="{
-                'color-danger': inspect.attrs.differences > 0
-              }"
-            >
-              {{ inspect.attrs.differences }}
-            </span>
-          </div>
-
-          <ElButton type="text">
-            {{ $t('public_button_details') }}
-            <VIcon>arrow-right</VIcon>
-          </ElButton>
-        </div>
-      </div>
-    </div>
-
-    <VEmpty v-if="inspectList.length === 0" large>
-      <template v-if="showEnabled">
-        <div class="flex flex-column gap-3 align-center">
-          <span class="font-color-light">{{ $t('packages_dag_inspect_start_config_desc') }}</span>
-          <ElButton @click="$emit('open-inspect')">
-            <VIcon>data-scan</VIcon>
-            {{ $t('packages_dag_inspect_start_config') }}
-          </ElButton>
-        </div>
-      </template>
-    </VEmpty>
-
-    <InspectDetailDialog :visible.sync="detailDialogVisible" :inspectId="currentInspectId" :pingTime="pingTime" />
-  </div>
-</template>
-
 <script>
-import i18n from '@tap/i18n'
-import { VEmpty } from '@tap/component'
 import { taskInspectApi } from '@tap/api'
-import InspectDetailDialog from './InspectDetailDialog.vue'
+import { VEmpty } from '@tap/component'
+import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
+import InspectDetailDialog from './InspectDetailDialog.vue'
 
 export default {
   name: 'TaskInspect',
@@ -121,12 +13,12 @@ export default {
   props: {
     dataflow: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     currentTab: {
       type: String,
-      default: ''
-    }
+      default: '',
+    },
   },
 
   data() {
@@ -135,39 +27,39 @@ export default {
         {
           label: i18n.t('packages_dag_inspect_type'),
           prop: 'type',
-          minWidth: 100
+          minWidth: 100,
         },
         {
           label: i18n.t('packages_dag_inspect_start_time'),
           prop: 'beginTime',
           minWidth: 170,
-          dataType: 'time'
+          dataType: 'time',
         },
         {
           label: i18n.t('packages_dag_inspect_end_time'),
           prop: 'endTime',
           minWidth: 170,
-          dataType: 'time'
+          dataType: 'time',
         },
         {
           label: i18n.t('packages_dag_inspect_status'),
           prop: 'status',
           slotName: 'status',
-          minWidth: 100
+          minWidth: 100,
         },
 
         {
           label: i18n.t('public_operation'),
           slotName: 'operation',
-          width: 100
-        }
+          width: 100,
+        },
       ],
       loading: false,
       detailDialogVisible: false,
       currentInspectId: '',
       inspectList: [],
       pingTime: '',
-      showEnabled: false
+      showEnabled: false,
     }
   },
 
@@ -179,7 +71,7 @@ export default {
       } else {
         this.stopLoop()
       }
-    }
+    },
   },
 
   created() {
@@ -193,7 +85,7 @@ export default {
     })
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     this.stopLoop()
   },
 
@@ -218,29 +110,33 @@ export default {
 
       const params = {
         page: current,
-        size: size
+        size,
       }
 
       return taskInspectApi
         .getHistories(taskId, params)
-        .then(data => {
+        .then((data) => {
           return {
             total: data.total || 0,
             data:
-              data.items?.map(item => {
+              data.items?.map((item) => {
                 return {
                   id: item.id,
                   type: item.type,
-                  beginTime: dayjs(item.beginTime).format('YYYY-MM-DD HH:mm:ss'),
-                  endTime: item.endTime ? dayjs(item.endTime).format('YYYY-MM-DD HH:mm:ss') : '',
+                  beginTime: dayjs(item.beginTime).format(
+                    'YYYY-MM-DD HH:mm:ss',
+                  ),
+                  endTime: item.endTime
+                    ? dayjs(item.endTime).format('YYYY-MM-DD HH:mm:ss')
+                    : '',
                   ...this.makeStatus(item.status),
-                  attrs: item.attrs
+                  attrs: item.attrs,
                 }
-              }) || []
+              }) || [],
           }
         })
-        .catch(err => {
-          console.error('Failed to fetch inspection results:', err)
+        .catch((error) => {
+          console.error('Failed to fetch inspection results:', error)
           return { total: 0, data: [] }
         })
     },
@@ -250,19 +146,19 @@ export default {
         RUNNING: i18n.t('public_status_running'),
         STOPPED: i18n.t('public_status_stop'),
         DONE: i18n.t('public_status_finished'),
-        ERROR: i18n.t('public_status_error')
+        ERROR: i18n.t('public_status_error'),
       }
 
       const typeMap = {
         RUNNING: 'success',
         STOPPED: 'info',
         DONE: 'primary',
-        ERROR: 'danger'
+        ERROR: 'danger',
       }
 
       return {
         status: statusMap[status],
-        statusType: typeMap[status]
+        statusType: typeMap[status],
       }
     },
 
@@ -274,7 +170,9 @@ export default {
 
     async fetch() {
       this.loading = true
-      const { data } = await this.remoteMethod({ page: { current: 1, size: 10 } })
+      const { data } = await this.remoteMethod({
+        page: { current: 1, size: 10 },
+      })
 
       data.sort((a, b) => dayjs(b.beginTime).diff(dayjs(a.beginTime)))
 
@@ -285,7 +183,117 @@ export default {
     async checkEnabled() {
       const res = await taskInspectApi.getConfig(this.dataflow.id)
       return res.mode && res.mode !== 'CLOSE'
-    }
-  }
+    },
+  },
 }
 </script>
+
+<template>
+  <div v-loading="loading" class="inspect-wrap p-4 h-100 w-100 overflow-y-auto">
+    <div class="flex flex-column gap-4">
+      <div
+        v-for="inspect in inspectList"
+        :key="inspect.id"
+        class="flex align-items-stretch border rounded-lg overflow-hidden cursor-pointer hover:bg-light"
+        @click="handleDetail(inspect)"
+      >
+        <div
+          class="flex flex-column align-center gap-2 bg-light p-3 border-end"
+          style="min-width: 150px"
+        >
+          <div class="rounded-lg px-2 py-1 bg-fill-hover">
+            {{ inspect.type }}
+          </div>
+          <ElTag :type="inspect.statusType" size="small">{{
+            inspect.status
+          }}</ElTag>
+        </div>
+
+        <div
+          class="flex justify-content-around align-center flex-1 gap-4 p-3 px-4 border-end"
+        >
+          <div class="flex flex-column gap-2" style="min-width: 150px">
+            <span class="flex align-center gap-1"
+              ><VIcon>time</VIcon>{{ $t('packages_dag_inspect_start_time') }}
+            </span>
+            <span class="fw-sub font-color-dark">
+              {{ inspect.beginTime }}
+            </span>
+          </div>
+          <div class="flex flex-column gap-2" style="min-width: 150px">
+            <span class="flex align-center gap-1"
+              ><VIcon>time</VIcon>{{ $t('packages_dag_inspect_end_time') }}
+            </span>
+            <span class="fw-sub font-color-dark">
+              {{ inspect.endTime || '-' }}
+            </span>
+          </div>
+        </div>
+
+        <div
+          class="flex justify-content-around align-center flex-1 gap-4 p-3 px-4"
+        >
+          <div class="flex flex-column gap-2">
+            <span class="flex align-center gap-1"
+              ><VIcon>EyeOff</VIcon
+              >{{ $t('packages_dag_inspect_ignore_records') }}</span
+            >
+            <span class="fw-sub font-color-dark">
+              {{ inspect.attrs.ignores }}
+            </span>
+          </div>
+
+          <div class="flex flex-column gap-2">
+            <span class="flex align-center gap-1"
+              ><VIcon>Eye</VIcon
+              >{{ $t('packages_dag_inspect_accept_records') }}</span
+            >
+            <span class="fw-sub font-color-dark">
+              {{ inspect.attrs.accepts }}
+            </span>
+          </div>
+
+          <div class="flex flex-column gap-2">
+            <span class="flex align-center gap-1"
+              ><VIcon>FileChartColumnIncreasing</VIcon
+              >{{ $t('packages_dag_inspect_diff_records') }}</span
+            >
+            <span
+              class="fw-sub font-color-dark"
+              :class="{
+                'color-danger': inspect.attrs.differences > 0,
+              }"
+            >
+              {{ inspect.attrs.differences }}
+            </span>
+          </div>
+
+          <ElButton type="text">
+            {{ $t('public_button_details') }}
+            <VIcon>arrow-right</VIcon>
+          </ElButton>
+        </div>
+      </div>
+    </div>
+
+    <VEmpty v-if="inspectList.length === 0" large>
+      <template v-if="showEnabled">
+        <div class="flex flex-column gap-3 align-center">
+          <span class="font-color-light">{{
+            $t('packages_dag_inspect_start_config_desc')
+          }}</span>
+          <ElButton @click="$emit('open-inspect')">
+            <VIcon>data-scan</VIcon>
+            {{ $t('packages_dag_inspect_start_config') }}
+          </ElButton>
+        </div>
+      </template>
+    </VEmpty>
+
+    <InspectDetailDialog
+      v-model="detailDialogVisible"
+      :inspect-id="currentInspectId"
+      :ping-time="pingTime"
+    />
+  </div>
+</template>

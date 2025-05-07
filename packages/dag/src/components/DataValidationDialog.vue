@@ -1,106 +1,139 @@
-<script>
+<script setup lang="ts">
 import { taskInspectApi } from '@tap/api'
+import { useI18n } from '@tap/i18n'
+import {
+  ElButton,
+  ElDialog,
+  ElInputNumber,
+  ElMessage,
+  ElRadio,
+  ElSwitch,
+} from 'element-plus'
+import { computed, ref, watch } from 'vue'
 
-export default {
-  name: 'DataValidationDialog',
+// Define type locally based on API structure
+interface TaskInspectConfig {
+  custom: {
+    cdc: {
+      enable: boolean
+      sample: {
+        interval: number
+        limit: number
+      }
+      type: 'CLOSE' | 'SAMPLE'
+    }
+  }
+  mode: 'CLOSE' | 'INTELLIGENT' | 'CUSTOM'
+}
 
-  props: {
-    visible: {
-      type: Boolean,
-      default: false,
-    },
-    taskId: {
-      type: String,
-      default: '',
-    },
-    validationSettings: {
-      type: Object,
-      default: () => ({
-        enabled: false,
-        type: 'incremental',
-        frequency: {
-          time: 1,
-          records: 10,
-        },
-      }),
-    },
-  },
+// Get i18n instance
+const { t } = useI18n()
 
-  data() {
-    return {
-      loading: false,
-      saving: false,
-      validationEnabled: false,
-      validationType: 'cdc',
-      frequencyTime: 1,
-      frequencyRecords: 10,
+interface ValidationSettings {
+  enabled: boolean
+  type: string
+  frequency: {
+    time: number
+    records: number
+  }
+}
+
+interface Props {
+  visible: boolean
+  taskId: string
+  validationSettings: ValidationSettings
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  visible: false,
+  taskId: '',
+  validationSettings: () => ({
+    enabled: false,
+    type: 'incremental',
+    frequency: {
+      time: 1,
+      records: 10,
+    },
+  }),
+})
+
+const emit = defineEmits<{
+  'update:visible': [value: boolean]
+}>()
+
+const loading = ref(false)
+const saving = ref(false)
+const validationEnabled = ref(false)
+const validationType = ref('cdc')
+const frequencyTime = ref(1)
+const frequencyRecords = ref(10)
+
+const dialogVisible = computed({
+  get: () => props.visible,
+  set: (val) => emit('update:visible', val),
+})
+
+watch(
+  () => props.visible,
+  (val) => {
+    if (val) {
+      initFormData()
     }
   },
+  { immediate: false },
+)
 
-  computed: {
-    dialogVisible: {
-      get() {
-        return this.visible
-      },
-      set(val) {
-        this.$emit('update:visible', val)
-      },
-    },
-  },
+async function initFormData() {
+  loading.value = true
+  try {
+    const res = await taskInspectApi.getConfig(props.taskId, {})
+    validationEnabled.value = res.mode && res.mode !== 'CLOSE'
+    frequencyTime.value = res.custom.cdc.sample.interval
+    frequencyRecords.value = res.custom.cdc.sample.limit
+  } catch (error) {
+    console.error('Failed to load validation settings:', error)
+  } finally {
+    loading.value = false
+  }
+}
 
-  watch: {
-    visible(val) {
-      if (val) {
-        this.initFormData()
-      }
-    },
-  },
+function handleClose() {
+  dialogVisible.value = false
+}
 
-  methods: {
-    async initFormData() {
-      this.loading = true
-      const res = await taskInspectApi.getConfig(this.taskId)
-      this.validationEnabled = res.mode && res.mode !== 'CLOSE'
-      this.frequencyTime = res.custom.cdc.sample.interval
-      this.frequencyRecords = res.custom.cdc.sample.limit
-      this.loading = false
-    },
-
-    handleClose() {
-      this.dialogVisible = false
-    },
-
-    async handleSave() {
-      const settings = {
-        mode: this.validationEnabled ? 'CUSTOM' : 'CLOSE',
-        custom: {
-          cdc: {
-            enable: true,
-            sample: {
-              interval: this.frequencyTime,
-              limit: this.frequencyRecords,
-            }, // 采样间隔和数量
-            type: 'SAMPLE', // 采样类型
-          },
+async function handleSave() {
+  const settings: TaskInspectConfig = {
+    mode: validationEnabled.value ? 'CUSTOM' : 'CLOSE',
+    custom: {
+      cdc: {
+        enable: true,
+        sample: {
+          interval: frequencyTime.value,
+          limit: frequencyRecords.value,
         },
-      }
-
-      this.saving = true
-
-      await taskInspectApi.putConfig(this.taskId, settings)
-
-      this.dialogVisible = false
-      this.saving = false
-      this.$message.success(this.$t('public_message_save_ok'))
+        type: 'SAMPLE',
+      },
     },
-  },
+  }
+
+  saving.value = true
+  try {
+    await taskInspectApi.putConfig(props.taskId, settings)
+    dialogVisible.value = false
+    ElMessage.success(t('public_message_save_ok'))
+  } catch (error) {
+    console.error('Failed to save validation settings:', error)
+    ElMessage.error(t('public_message_save_error'))
+  } finally {
+    saving.value = false
+  }
 }
 </script>
 
 <template>
   <ElDialog
     v-model="dialogVisible"
-    :title="$t('public_data_validation')"
+    :title="t('public_data_validation')"
     append-to-body
     width="500px"
     custom-class="data-validation-dialog"
@@ -109,7 +142,7 @@ export default {
     <div v-loading="loading">
       <div class="validation-header gap-3">
         <div class="header-label">
-          {{ $t('packages_dag_enable_validation') }}
+          {{ t('packages_dag_enable_validation') }}
         </div>
         <div class="switch-container">
           <ElSwitch v-model="validationEnabled" />
@@ -120,17 +153,17 @@ export default {
         <div class="validation-option">
           <ElRadio v-model="validationType" label="cdc">
             <span class="radio-label">{{
-              $t('packages_dag_incremental_validation')
+              t('packages_dag_incremental_validation')
             }}</span>
           </ElRadio>
         </div>
 
         <div class="validation-frequency">
           <div class="font-color-dark mb-4">
-            {{ $t('packages_dag_validation_frequency') }}
+            {{ t('packages_dag_validation_frequency') }}
           </div>
           <div class="frequency-inputs">
-            <span class="frequency-text">{{ $t('packages_dag_every') }}</span>
+            <span class="frequency-text">{{ t('packages_dag_every') }}</span>
             <div class="input-number-container">
               <ElInputNumber
                 v-model="frequencyTime"
@@ -138,7 +171,7 @@ export default {
                 controls-position="right"
               />
             </div>
-            <span class="frequency-text">{{ $t('packages_dag_seconds') }}</span>
+            <span class="frequency-text">{{ t('packages_dag_seconds') }}</span>
             <div class="input-number-container">
               <ElInputNumber
                 v-model="frequencyRecords"
@@ -146,16 +179,16 @@ export default {
                 controls-position="right"
               />
             </div>
-            <span class="frequency-text">{{ $t('packages_dag_records') }}</span>
+            <span class="frequency-text">{{ t('packages_dag_records') }}</span>
           </div>
         </div>
       </div>
     </div>
 
     <template #footer>
-      <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
+      <ElButton @click="handleClose">{{ t('public_button_cancel') }}</ElButton>
       <ElButton type="primary" @click="handleSave">{{
-        $t('public_button_save')
+        t('public_button_save')
       }}</ElButton>
     </template>
   </ElDialog>
@@ -166,15 +199,15 @@ export default {
   border-radius: 12px;
   overflow: hidden;
 
-  ::v-deep .el-dialog__header {
+  :deep(.el-dialog__header) {
     display: none;
   }
 
-  ::v-deep .el-dialog__body {
+  :deep(.el-dialog__body) {
     padding: 0;
   }
 
-  ::v-deep .el-dialog__footer {
+  :deep(.el-dialog__footer) {
     display: none;
   }
 }
@@ -217,7 +250,7 @@ export default {
   margin-bottom: 4px;
 
   .switch-container {
-    ::v-deep .el-switch__core {
+    :deep(.el-switch__core) {
       height: 24px;
       border-radius: 12px;
       width: 50px !important;
@@ -229,7 +262,7 @@ export default {
       }
     }
 
-    ::v-deep .el-switch.is-checked .el-switch__core::after {
+    :deep(.el-switch.is-checked .el-switch__core::after) {
       margin-left: -21px;
     }
   }
@@ -246,7 +279,7 @@ export default {
     display: flex;
     align-items: center;
 
-    ::v-deep .el-radio__input {
+    :deep(.el-radio__input) {
       .el-radio__inner {
         width: 20px;
         height: 20px;
@@ -292,26 +325,8 @@ export default {
     }
 
     .input-number-container {
-      .custom-input-number {
+      .el-input-number {
         width: 100px;
-
-        ::v-deep .el-input__inner {
-          height: 36px;
-          border-color: #e4e7ed;
-          border-radius: 6px;
-          text-align: center;
-        }
-
-        ::v-deep .el-input-number__decrease,
-        ::v-deep .el-input-number__increase {
-          background-color: #f5f7fa;
-          border-color: #e4e7ed;
-          color: #606266;
-
-          &:hover {
-            color: #5764f6;
-          }
-        }
       }
     }
   }
