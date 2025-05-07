@@ -198,7 +198,7 @@ const getLicense = async () => {
     stime = Time.now()
   }
 
-  licensesApi.expires({}).then((data: any) => {
+  licensesApi.expires().then((data: any) => {
     const expires_on = data?.data?.expires_on
 
     if (!expires_on) {

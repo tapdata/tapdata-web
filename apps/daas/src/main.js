@@ -8,7 +8,7 @@ import {
 import Cookie from '@tap/shared/src/cookie'
 import Time from '@tap/shared/src/time'
 import { ElLoading } from 'element-plus'
-import * as Vue from 'vue'
+import { createApp } from 'vue'
 import App from '@/App.vue'
 import { installOEM } from '@/oem'
 import { installAllPlugins } from '@/plugins'
@@ -89,13 +89,13 @@ const init = () => {
   }
   wsUrl += `//${loc.host}${location.pathname.replace(/\/$/, '')}/ws/agent`
 
-  const app = (window.App = window.$vueApp = Vue.createApp(App))
+  const app = (window.App = window.$vueApp = createApp(App))
 
   installAllPlugins(app)
   installDirectives(app)
   installElement(app)
 
-  window.$vueApp.config.globalProperties.$ws = new WSClient(wsUrl, undefined, {
+  app.config.globalProperties.$ws = new WSClient(wsUrl, undefined, {
     getQuery: () => {
       return {
         access_token: Cookie.get('access_token'),
@@ -103,19 +103,15 @@ const init = () => {
     },
   })
 
-  window.$vueApp.component(VIcon.name, VIcon)
-  window.$vueApp.config.globalProperties.routerAppend = (
-    path,
-    pathToAppend,
-  ) => {
+  app.component(VIcon.name, VIcon)
+  app.config.globalProperties.routerAppend = (path, pathToAppend) => {
     return path + (path.endsWith('/') ? '' : '/') + pathToAppend
   }
-  window.$vueApp.config.globalProperties.$getSettingByKey =
-    window.getSettingByKey
-  window.$vueApp.use(i18n)
-  window.$vueApp.use(store)
-  window.$vueApp.use(router)
-  window.$vueApp.mount('#app')
+  app.config.globalProperties.$getSettingByKey = window.getSettingByKey
+  app.use(i18n)
+  app.use(store)
+  app.use(router)
+  app.mount('#app')
 }
 
 const loading = ElLoading.service({ fullscreen: true })

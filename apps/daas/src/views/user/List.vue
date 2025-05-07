@@ -660,21 +660,18 @@ export default {
         </el-button>
         <template #dropdown>
           <el-dropdown-menu>
+            <el-dropdown-item v-if="$has('user_edition')" command="activated">
+              {{ $t('user_list_bulk_activation') }}
+            </el-dropdown-item>
+            <el-dropdown-item v-if="$has('user_edition')" command="rejected">{{
+              $t('user_list_bulk_freeze')
+            }}</el-dropdown-item>
             <el-dropdown-item
-              v-readonlybtn="'user_edition'"
-              command="activated"
-              >{{ $t('user_list_bulk_activation') }}</el-dropdown-item
-            >
-            <el-dropdown-item
-              v-readonlybtn="'user_edition'"
-              command="rejected"
-              >{{ $t('user_list_bulk_freeze') }}</el-dropdown-item
-            >
-            <el-dropdown-item
-              v-readonlybtn="'user_edition'"
+              v-if="$has('user_edition')"
               command="notActivated"
-              >{{ $t('user_list_bulk_check') }}</el-dropdown-item
             >
+              {{ $t('user_list_bulk_check') }}
+            </el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
