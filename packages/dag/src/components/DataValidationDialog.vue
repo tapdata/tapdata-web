@@ -35,27 +35,12 @@ interface ValidationSettings {
 }
 
 interface Props {
-  visible: boolean
   taskId: string
-  validationSettings: ValidationSettings
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  visible: false,
   taskId: '',
-  validationSettings: () => ({
-    enabled: false,
-    type: 'incremental',
-    frequency: {
-      time: 1,
-      records: 10,
-    },
-  }),
 })
-
-const emit = defineEmits<{
-  'update:visible': [value: boolean]
-}>()
 
 const loading = ref(false)
 const saving = ref(false)
@@ -66,20 +51,7 @@ const frequencyTime = ref(1)
 const frequencyRecords = ref(10)
 const recoverEnabled = ref(false)
 
-const dialogVisible = computed({
-  get: () => props.visible,
-  set: (val) => emit('update:visible', val),
-})
-
-watch(
-  () => props.visible,
-  (val) => {
-    if (val) {
-      initFormData()
-    }
-  },
-  { immediate: false },
-)
+const dialogRef = ref<InstanceType<typeof ElDialog> | null>(null)
 
 async function initFormData() {
   loading.value = true
@@ -99,7 +71,7 @@ async function initFormData() {
 }
 
 function handleClose() {
-  dialogVisible.value = false
+  dialogRef.value.handleClose()
 }
 
 async function handleSave() {
@@ -124,8 +96,8 @@ async function handleSave() {
   saving.value = true
   try {
     await taskInspectApi.putConfig(props.taskId, settings)
-    dialogVisible.value = false
     ElMessage.success(t('public_message_save_ok'))
+    handleClose()
   } catch (error) {
     console.error('Failed to save validation settings:', error)
     ElMessage.error(t('public_message_save_fail'))
@@ -143,12 +115,12 @@ function handleCheckChange() {
 
 <template>
   <ElDialog
-    v-model="dialogVisible"
+    ref="dialogRef"
     :title="t('public_data_validation')"
     append-to-body
     width="500px"
     custom-class="data-validation-dialog"
-    @close="handleClose"
+    @open="initFormData"
   >
     <div v-loading="loading">
       <div class="validation-header gap-3 justify-content-between">

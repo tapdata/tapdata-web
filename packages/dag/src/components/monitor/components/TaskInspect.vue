@@ -268,7 +268,7 @@ export default {
             </span>
           </div>
 
-          <ElButton type="text">
+          <ElButton text type="primary">
             {{ $t('public_button_details') }}
             <VIcon>arrow-right</VIcon>
           </ElButton>

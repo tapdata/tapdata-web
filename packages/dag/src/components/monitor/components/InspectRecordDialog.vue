@@ -53,7 +53,11 @@ function formatTime(timestamp: number): string {
     :close-on-click-modal="false"
     @open="onOpen"
   >
-    <el-table v-loading="loadingList" :data="list">
+    <el-table
+      v-loading="loadingList"
+      :data="list"
+      :default-sort="{ prop: 'ts', order: 'descending' }"
+    >
       <el-table-column
         prop="user"
         :label="$t('packages_dag_inspect_operation_user')"
@@ -70,6 +74,7 @@ function formatTime(timestamp: number): string {
         show-overflow-tooltip
       />
       <el-table-column
+        prop="ts"
         :label="$t('packages_dag_inspect_operation_time')"
         width="180"
         sortable
