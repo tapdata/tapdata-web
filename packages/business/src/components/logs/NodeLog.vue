@@ -222,6 +222,7 @@ export default {
       },
       expandErrorMessage: false,
       downloadDialog: false,
+      overflowObserver: null,
     }
   },
   computed: {
@@ -295,9 +296,17 @@ export default {
   },
   mounted() {
     this.init()
+
+    // 添加MutationObserver检测日志内容溢出
+    this.setupOverflowDetection()
   },
   unmounted() {
     this.clearTimer()
+
+    // 清理观察器
+    if (this.overflowObserver) {
+      this.overflowObserver.disconnect()
+    }
   },
   methods: {
     init: debounce(function () {
@@ -411,11 +420,19 @@ export default {
           const items = this.getFormatRow(data.items?.reverse())
           this.oldPageObj.total = data.total || 0
           this.oldPageObj.page = filter.page
+
+          // 避免重复添加相同的项
           if (this.list.length && this.oldPageObj.page !== 1) {
-            this.list = Object.freeze(uniqBy([...items, ...this.list], 'id'))
-            this.scrollToItem(items.length - 1)
+            // 使用优化的方式合并数组，减少不必要的循环
+            const mergedList = uniqBy([...items, ...this.list], 'id')
+
+            // 只有当合并后的数组与原数组不同时才更新
+            if (mergedList.length !== this.list.length) {
+              this.list = mergedList
+              this.scrollToItem(items.length - 1)
+            }
           } else {
-            this.list = Object.freeze(items)
+            this.list = items
             this.scrollToBottom()
           }
         })
@@ -448,22 +465,35 @@ export default {
       if (!filter.start || !filter.end) {
         return
       }
+
       monitoringLogsApi.query(filter).then((data = {}) => {
         const items = this.getFormatRow(data.items)
         this.newPageObj.total = data.total || 0
-        const arr = uniqBy([...this.list, ...items], 'id')
-        if (arr.length === this.list.length) {
+
+        // 检查是否有新数据
+        if (!items.length) {
           this.resetNewPage()
           return
         }
-        this.newPageObj.page = filter.page
-        this.list = Object.freeze(arr)
-        if (this.isScrollBottom) {
-          this.scrollToBottom()
-        }
-        // 清空额外请求的计数
-        if (this.isEnterTimer) {
-          this.extraEnterCount = 0
+
+        // 优化合并逻辑
+        const mergedList = uniqBy([...this.list, ...items], 'id')
+
+        // 只有当合并后的数组与原数组不同时才更新
+        if (mergedList.length !== this.list.length) {
+          this.newPageObj.page = filter.page
+          this.list = mergedList
+
+          if (this.isScrollBottom) {
+            this.scrollToBottom()
+          }
+
+          // 清空额外请求的计数
+          if (this.isEnterTimer) {
+            this.extraEnterCount = 0
+          }
+        } else {
+          this.resetNewPage()
         }
       })
     },
@@ -596,7 +626,6 @@ export default {
 
     handleDownload() {
       this.downloadDialog = true
-      return
       const [start, end] = this.quotaTime.length
         ? this.quotaTime
         : this.getTimeRange(this.quotaTimeType)
@@ -767,15 +796,22 @@ export default {
       this.fullscreen = !this.fullscreen
     },
 
-    handleHideContent(data) {
-      const { item = {} } = data || {}
-      const dom = this.$refs[`icon${item.id}`] || {}
-      item.hideContent = dom.scrollHeight > dom.offsetHeight
-      return item.hideContent
-    },
+    handleLog(item, event) {
+      const domElement = event.currentTarget
 
-    handleLog(item) {
-      if (!item.hideContent) return
+      // 检查内容是否被截断
+      const isContentTruncated =
+        domElement.scrollHeight > domElement.offsetHeight
+
+      // 如果内容没有被截断，不需要展开/收起操作
+      if (!isContentTruncated) return
+
+      // 设置hideContent标记
+      if (item.hideContent === undefined) {
+        item.hideContent = true
+      }
+
+      // 切换展开状态
       item.expand = !item.expand
     },
 
@@ -881,6 +917,47 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
           },
         }).href,
       )
+    },
+
+    setupOverflowDetection() {
+      // 使用MutationObserver检测DOM变化
+      this.overflowObserver = new MutationObserver(() => {
+        this.$nextTick(() => {
+          // 在下一个tick处理，确保DOM已更新
+          this.checkOverflowForVisibleItems()
+        })
+      })
+
+      // 监控日志容器变化
+      const container = this.$refs.virtualScroller?.$el
+      if (container) {
+        this.overflowObserver.observe(container, {
+          childList: true,
+          subtree: true,
+        })
+      }
+    },
+
+    checkOverflowForVisibleItems() {
+      // 获取所有日志项
+      const logItems = document.querySelectorAll('.log-item')
+
+      // 检查每个日志项是否溢出
+      logItems.forEach((item) => {
+        const itemId = item.dataset.logId
+        if (itemId) {
+          const listItem = this.list.find((i) => i.id === itemId)
+          if (listItem) {
+            // 检查是否溢出
+            const isOverflowing = item.scrollHeight > item.offsetHeight
+
+            // 只在状态变化时更新，减少不必要的渲染
+            if (listItem.hideContent !== isOverflowing) {
+              listItem.hideContent = isOverflowing
+            }
+          }
+        }
+      })
     },
   },
 }
@@ -1028,6 +1105,7 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
               :item="item"
               :active="active"
               :data-index="index"
+              :data-log-id="item.id"
               :size-dependencies="[
                 item.id,
                 item.message,
@@ -1039,13 +1117,11 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
                 <div
                   :ref="`icon${item.id}`"
                   class="log-item"
+                  :data-log-id="item.id"
                   :class="{
-                    'hide-content cursor-pointer': handleHideContent(
-                      arguments[0],
-                      item,
-                    ),
+                    'hide-content cursor-pointer': item.hideContent,
                   }"
-                  @click="handleLog(item)"
+                  @click="handleLog(item, $event)"
                 >
                   <VIcon
                     class="expand-icon mr-1"
