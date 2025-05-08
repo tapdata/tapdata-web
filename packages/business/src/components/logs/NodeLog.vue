@@ -222,6 +222,7 @@ export default {
       },
       expandErrorMessage: false,
       downloadDialog: false,
+      overflowObserver: null,
     }
   },
   computed: {
@@ -295,9 +296,17 @@ export default {
   },
   mounted() {
     this.init()
+
+    // 添加MutationObserver检测日志内容溢出
+    this.setupOverflowDetection()
   },
   unmounted() {
     this.clearTimer()
+
+    // 清理观察器
+    if (this.overflowObserver) {
+      this.overflowObserver.disconnect()
+    }
   },
   methods: {
     init: debounce(function () {
@@ -617,7 +626,6 @@ export default {
 
     handleDownload() {
       this.downloadDialog = true
-      return
       const [start, end] = this.quotaTime.length
         ? this.quotaTime
         : this.getTimeRange(this.quotaTimeType)
@@ -788,34 +796,23 @@ export default {
       this.fullscreen = !this.fullscreen
     },
 
-    handleHideContent(item) {
-      // 如果已经计算过，直接返回缓存的结果
-      if (item.hideContent !== undefined) return item.hideContent
+    handleLog(item, event) {
+      const domElement = event.currentTarget
 
-      // 初始化为 false
-      item.hideContent = false
+      // 检查内容是否被截断
+      const isContentTruncated =
+        domElement.scrollHeight > domElement.offsetHeight
 
-      // 用 setTimeout 微任务延迟计算，避免阻塞渲染
-      setTimeout(() => {
-        const dom = this.$refs[`icon${item.id}`]
-        // 只有当 DOM 元素已渲染时才计算
-        if (dom && dom.scrollHeight && dom.offsetHeight) {
-          const shouldHide = dom.scrollHeight > dom.offsetHeight
-          if (shouldHide !== item.hideContent) {
-            this.$set(item, 'hideContent', shouldHide)
-          }
-        }
-      }, 0)
+      // 如果内容没有被截断，不需要展开/收起操作
+      if (!isContentTruncated) return
 
-      return item.hideContent
-    },
+      // 设置hideContent标记
+      if (item.hideContent === undefined) {
+        item.hideContent = true
+      }
 
-    handleLog(item) {
-      // 如果内容不隐藏，不需要展开/收起操作
-      if (!item.hideContent) return
-
-      // 使用 Vue 的响应式系统更新状态
-      this.$set(item, 'expand', !item.expand)
+      // 切换展开状态
+      item.expand = !item.expand
     },
 
     onCopy() {
@@ -920,6 +917,47 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
           },
         }).href,
       )
+    },
+
+    setupOverflowDetection() {
+      // 使用MutationObserver检测DOM变化
+      this.overflowObserver = new MutationObserver(() => {
+        this.$nextTick(() => {
+          // 在下一个tick处理，确保DOM已更新
+          this.checkOverflowForVisibleItems()
+        })
+      })
+
+      // 监控日志容器变化
+      const container = this.$refs.virtualScroller?.$el
+      if (container) {
+        this.overflowObserver.observe(container, {
+          childList: true,
+          subtree: true,
+        })
+      }
+    },
+
+    checkOverflowForVisibleItems() {
+      // 获取所有日志项
+      const logItems = document.querySelectorAll('.log-item')
+
+      // 检查每个日志项是否溢出
+      logItems.forEach((item) => {
+        const itemId = item.dataset.logId
+        if (itemId) {
+          const listItem = this.list.find((i) => i.id === itemId)
+          if (listItem) {
+            // 检查是否溢出
+            const isOverflowing = item.scrollHeight > item.offsetHeight
+
+            // 只在状态变化时更新，减少不必要的渲染
+            if (listItem.hideContent !== isOverflowing) {
+              listItem.hideContent = isOverflowing
+            }
+          }
+        }
+      })
     },
   },
 }
@@ -1067,6 +1105,7 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
               :item="item"
               :active="active"
               :data-index="index"
+              :data-log-id="item.id"
               :size-dependencies="[
                 item.id,
                 item.message,
@@ -1078,10 +1117,11 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
                 <div
                   :ref="`icon${item.id}`"
                   class="log-item"
+                  :data-log-id="item.id"
                   :class="{
-                    'hide-content cursor-pointer': handleHideContent(item),
+                    'hide-content cursor-pointer': item.hideContent,
                   }"
-                  @click="handleLog(item)"
+                  @click="handleLog(item, $event)"
                 >
                   <VIcon
                     class="expand-icon mr-1"
