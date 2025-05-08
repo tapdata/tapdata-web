@@ -61,6 +61,7 @@ export default {
       nodeSearchInput: '',
       refreshing: false,
       openDebug: false,
+      openValidation: false,
     }
   },
   computed: {

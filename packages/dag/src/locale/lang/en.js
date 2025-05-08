@@ -1001,7 +1001,10 @@ export default {
     'Merge table node cannot have JS node after it',
   packages_dag_merge_table_table_not_allow_target:
     'Merge table does not support writing to {val}',
+  packages_dag_full_validation: 'Full Validation',
   packages_dag_incremental_validation: 'Incremental Validation',
+  packages_dag_incremental_validation_tips:
+    'Only validate new and modified data',
   packages_dag_validation_frequency: 'Validation Frequency',
   packages_dag_every: 'Every',
   packages_dag_seconds: 'Seconds',
@@ -1063,4 +1066,13 @@ export default {
     'You have not enabled data validation',
   packages_dag_only_include_pk: 'Only Include Primary Key',
   packages_dag_only_include_uk: 'Only Include Unique Index',
+  packages_dag_auto_repair: 'Auto Repair',
+  packages_dag_auto_repair_tips: 'Enable auto repair',
+  packages_dag_auto_repair_disabled_tips:
+    'Please select at least one validation method',
+  packages_dag_inspect_operation_record: 'Operation Record',
+  packages_dag_inspect_operation_type: 'Operation Type',
+  packages_dag_inspect_operation_message: 'Operation Message',
+  packages_dag_inspect_operation_time: 'Operation Time',
+  packages_dag_inspect_operation_user: 'Operation User',
 }

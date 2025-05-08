@@ -2,6 +2,7 @@
 import axios from 'axios'
 import dayjs from 'dayjs'
 import { ref } from 'vue'
+import InspectRecordDialog from './InspectRecordDialog.vue'
 
 interface InspectionRow {
   sourceTable: string
@@ -130,6 +131,14 @@ function formatTime(time: string): string {
   if (!time) return '-'
   return dayjs(time).format('YYYY-MM-DD HH:mm:ss')
 }
+
+const recordDialogVisible = ref(false)
+const resultId = ref('')
+
+function handleRecordClick(row: DiffRow): void {
+  resultId.value = row.id
+  recordDialogVisible.value = true
+}
 </script>
 
 <template>
@@ -231,7 +240,7 @@ function formatTime(time: string): string {
         >
           <div class="flex gap-3 px-4 py-3 border-bottom">
             <span
-              class="bg-subtle rounded-lg px-3 py-2 cursor-pointer"
+              class="bg-subtle rounded-lg px-3 lh-8 cursor-pointer"
               :class="{
                 'active-primary': onlyShowDiffFields,
               }"
@@ -242,7 +251,7 @@ function formatTime(time: string): string {
             >
 
             <span
-              class="bg-subtle rounded-lg px-3 py-2 cursor-pointer"
+              class="bg-subtle rounded-lg px-3 lh-8 cursor-pointer"
               :class="{
                 'active-primary': !onlyShowDiffFields,
               }"
@@ -263,7 +272,6 @@ function formatTime(time: string): string {
                   <span class="bg-fill-hover rounded-lg px-2 py-1">
                     {{ $t('packages_dag_inspect_row_id') }}: {{ row.id }}
                   </span>
-                  <div class="flex-1" />
                   <ElTag
                     v-if="row.diffType === 'DIFF'"
                     class="rounded-4"
@@ -289,6 +297,12 @@ function formatTime(time: string): string {
                   >
                     {{ $t('packages_dag_inspect_diff_type_more') }}
                   </ElTag>
+
+                  <div class="flex-1" />
+
+                  <el-button text type="primary" @click="handleRecordClick(row)"
+                    >{{ $t('packages_dag_inspect_operation_record') }}
+                  </el-button>
                 </div>
 
                 <table
@@ -385,6 +399,8 @@ function formatTime(time: string): string {
         </div>
       </div>
     </div>
+
+    <InspectRecordDialog v-model="recordDialogVisible" :result-id="resultId" />
   </ElDialog>
 </template>
 

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { taskInspectApi } from '@tap/api'
 import { useI18n } from '@tap/i18n'
-import { ElButton, ElDialog, ElMessage, ElRadio } from 'element-plus'
 import { computed, ref, watch } from 'vue'
 
 interface TaskInspectConfig {
@@ -13,6 +12,12 @@ interface TaskInspectConfig {
         limit: number
       }
       type: 'CLOSE' | 'SAMPLE'
+    }
+    full?: {
+      enable: boolean
+    }
+    recover?: {
+      enable: boolean
     }
   }
   mode: 'CLOSE' | 'INTELLIGENT' | 'CUSTOM'
@@ -55,7 +60,8 @@ const emit = defineEmits<{
 const loading = ref(false)
 const saving = ref(false)
 const validationEnabled = ref(false)
-const validationType = ref('cdc')
+const cdcEnabled = ref(false)
+const fullEnabled = ref(false)
 const frequencyTime = ref(1)
 const frequencyRecords = ref(10)
 const recoverEnabled = ref(false)
@@ -80,7 +86,9 @@ async function initFormData() {
   try {
     const res = await taskInspectApi.getConfig(props.taskId, {})
     validationEnabled.value = res.mode && res.mode !== 'CLOSE'
-    recoverEnabled.value = res.custom.mode && res.mode !== 'CLOSE'
+    cdcEnabled.value = res.custom.cdc?.enable ?? false
+    fullEnabled.value = res.custom.full?.enable ?? false
+    recoverEnabled.value = res.custom.recover?.enable ?? false
     frequencyTime.value = res.custom.cdc.sample.interval
     frequencyRecords.value = res.custom.cdc.sample.limit
   } catch (error) {
@@ -99,13 +107,17 @@ async function handleSave() {
     mode: validationEnabled.value ? 'CUSTOM' : 'CLOSE',
     custom: {
       cdc: {
-        enable: true,
+        enable: cdcEnabled.value,
         sample: {
           interval: frequencyTime.value,
           limit: frequencyRecords.value,
         },
         type: 'SAMPLE',
       },
+      full: {
+        enable: fullEnabled.value,
+      },
+      recover: { enable: recoverEnabled.value },
     },
   }
 
@@ -116,9 +128,15 @@ async function handleSave() {
     ElMessage.success(t('public_message_save_ok'))
   } catch (error) {
     console.error('Failed to save validation settings:', error)
-    ElMessage.error(t('public_message_save_error'))
+    ElMessage.error(t('public_message_save_fail'))
   } finally {
     saving.value = false
+  }
+}
+
+function handleCheckChange() {
+  if (!cdcEnabled.value && !fullEnabled.value) {
+    recoverEnabled.value = false
   }
 }
 </script>
@@ -134,39 +152,46 @@ async function handleSave() {
   >
     <div v-loading="loading">
       <div class="validation-header gap-3 justify-content-between">
-        <div class="header-label fs-6 fw-sub">
+        <label
+          class="header-label fs-6 fw-sub cursor-pointer"
+          for="validation-switch"
+        >
           {{ t('packages_dag_enable_validation') }}
-        </div>
-        <ElSwitch v-model="validationEnabled" />
+        </label>
+        <ElSwitch id="validation-switch" v-model="validationEnabled" />
       </div>
 
       <div v-if="validationEnabled" class="mt-2">
         <div class="validation-option mb-4">
-          <ElCheckbox disabled>
+          <ElCheckbox
+            v-model="fullEnabled"
+            disabled
+            @change="handleCheckChange"
+          >
             <span class="radio-label flex align-center gap-2">
-              <span>全量校验</span>
+              <span>{{ $t('packages_dag_full_validation') }}</span>
               <el-tag type="info" size="small">开发中</el-tag>
             </span>
           </ElCheckbox>
         </div>
 
         <div class="validation-option mb-4">
-          <ElCheckbox :model-value="true" class="align-items-start">
-            <div class="radio-label">
-              <div class="fw-sub">
-                {{ t('packages_dag_incremental_validation') }}
-              </div>
-              <div class="font-color-light mt-1">仅检查新增和修改的数据</div>
+          <ElCheckbox v-model="cdcEnabled" @change="handleCheckChange">
+            <div class="fw-sub">
+              {{ $t('packages_dag_incremental_validation') }}
             </div>
           </ElCheckbox>
+          <div class="font-color-light fs-8 pl-6 mt-n0.5">
+            {{ $t('packages_dag_incremental_validation_tips') }}
+          </div>
         </div>
 
-        <div class="validation-frequency ml-6">
+        <div v-if="cdcEnabled" class="validation-frequency rounded-xl ml-6">
           <div class="font-color-dark mb-4">
-            {{ t('packages_dag_validation_frequency') }}
+            {{ $t('packages_dag_validation_frequency') }}
           </div>
           <div class="frequency-inputs">
-            <span class="frequency-text">{{ t('packages_dag_every') }}</span>
+            <span class="frequency-text">{{ $t('packages_dag_every') }}</span>
             <div class="input-number-container">
               <ElInputNumber
                 v-model="frequencyTime"
@@ -175,7 +200,7 @@ async function handleSave() {
                 controls-position="right"
               />
             </div>
-            <span class="frequency-text">{{ t('packages_dag_seconds') }}</span>
+            <span class="frequency-text">{{ $t('packages_dag_seconds') }}</span>
             <div class="input-number-container">
               <ElInputNumber
                 v-model="frequencyRecords"
@@ -184,7 +209,7 @@ async function handleSave() {
                 controls-position="right"
               />
             </div>
-            <span class="frequency-text">{{ t('packages_dag_records') }}</span>
+            <span class="frequency-text">{{ $t('packages_dag_records') }}</span>
           </div>
         </div>
 
@@ -192,11 +217,23 @@ async function handleSave() {
 
         <div class="flex align-center mb-2">
           <div class="flex-1">
-            <div class="fw-sub">自动修复</div>
-            <div class="font-color-light">启用后将自动修复数据差异</div>
+            <label class="fw-sub cursor-pointer" for="recover-switch">{{
+              $t('packages_dag_auto_repair')
+            }}</label>
+            <div class="fs-8 font-color-light mt-1">
+              {{
+                !cdcEnabled && !fullEnabled
+                  ? $t('packages_dag_auto_repair_disabled_tips')
+                  : $t('packages_dag_auto_repair_tips')
+              }}
+            </div>
           </div>
 
-          <ElSwitch v-model="recoverEnabled" />
+          <ElSwitch
+            id="recover-switch"
+            v-model="recoverEnabled"
+            :disabled="!cdcEnabled && !fullEnabled"
+          />
         </div>
       </div>
     </div>
@@ -288,6 +325,16 @@ async function handleSave() {
 }
 
 .validation-option {
+  .el-checkbox {
+    --el-checkbox-input-width: 16px;
+    --el-checkbox-input-height: 16px;
+    :deep(.el-checkbox__inner::after) {
+      width: 4px;
+      height: 8px;
+      left: 4px;
+    }
+  }
+
   .custom-radio {
     display: flex;
     align-items: center;

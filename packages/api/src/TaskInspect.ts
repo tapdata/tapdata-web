@@ -21,6 +21,9 @@ interface TaskInspectConfig {
       trigger: string
       type: string
     }
+    recover?: {
+      enable: boolean
+    }
   }
   intelligent?: {
     cdcSampleInterval: number
@@ -47,7 +50,9 @@ export default class TaskInspect extends Http {
   }
 
   async getConfig(taskId: string, params: any): Promise<TaskInspectConfig> {
-    const response = (await this.axios.get(this.url + `/${taskId}`, { params })) as unknown as TaskInspectConfig
+    const response = (await this.axios.get(`${this.url}/${taskId}`, {
+      params,
+    })) as unknown as TaskInspectConfig
 
     return (
       response || {
@@ -56,18 +61,21 @@ export default class TaskInspect extends Http {
           cdc: {
             enable: true,
             sample: { interval: 10, limit: 1 },
-            type: 'SAMPLE'
-          }
-        }
+            type: 'SAMPLE',
+          },
+        },
       }
     )
   }
 
   putConfig(taskId: string, params: TaskInspectConfig) {
-    return this.axios.put<TaskInspectConfig>(this.url + `/${taskId}`, params)
+    return this.axios.put<TaskInspectConfig>(`${this.url}/${taskId}`, params)
   }
 
   getHistories(taskId: string, params: any) {
-    return this.axios.get<TaskInspectHistory[]>(this.url + `/${taskId}/histories`, { params })
+    return this.axios.get<TaskInspectHistory[]>(
+      `${this.url}/${taskId}/histories`,
+      { params },
+    )
   }
 }
