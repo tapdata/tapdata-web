@@ -411,11 +411,19 @@ export default {
           const items = this.getFormatRow(data.items?.reverse())
           this.oldPageObj.total = data.total || 0
           this.oldPageObj.page = filter.page
+
+          // 避免重复添加相同的项
           if (this.list.length && this.oldPageObj.page !== 1) {
-            this.list = Object.freeze(uniqBy([...items, ...this.list], 'id'))
-            this.scrollToItem(items.length - 1)
+            // 使用优化的方式合并数组，减少不必要的循环
+            const mergedList = uniqBy([...items, ...this.list], 'id')
+
+            // 只有当合并后的数组与原数组不同时才更新
+            if (mergedList.length !== this.list.length) {
+              this.list = mergedList
+              this.scrollToItem(items.length - 1)
+            }
           } else {
-            this.list = Object.freeze(items)
+            this.list = items
             this.scrollToBottom()
           }
         })
@@ -448,22 +456,35 @@ export default {
       if (!filter.start || !filter.end) {
         return
       }
+
       monitoringLogsApi.query(filter).then((data = {}) => {
         const items = this.getFormatRow(data.items)
         this.newPageObj.total = data.total || 0
-        const arr = uniqBy([...this.list, ...items], 'id')
-        if (arr.length === this.list.length) {
+
+        // 检查是否有新数据
+        if (!items.length) {
           this.resetNewPage()
           return
         }
-        this.newPageObj.page = filter.page
-        this.list = Object.freeze(arr)
-        if (this.isScrollBottom) {
-          this.scrollToBottom()
-        }
-        // 清空额外请求的计数
-        if (this.isEnterTimer) {
-          this.extraEnterCount = 0
+
+        // 优化合并逻辑
+        const mergedList = uniqBy([...this.list, ...items], 'id')
+
+        // 只有当合并后的数组与原数组不同时才更新
+        if (mergedList.length !== this.list.length) {
+          this.newPageObj.page = filter.page
+          this.list = mergedList
+
+          if (this.isScrollBottom) {
+            this.scrollToBottom()
+          }
+
+          // 清空额外请求的计数
+          if (this.isEnterTimer) {
+            this.extraEnterCount = 0
+          }
+        } else {
+          this.resetNewPage()
         }
       })
     },
@@ -767,16 +788,34 @@ export default {
       this.fullscreen = !this.fullscreen
     },
 
-    handleHideContent(data) {
-      const { item = {} } = data || {}
-      const dom = this.$refs[`icon${item.id}`] || {}
-      item.hideContent = dom.scrollHeight > dom.offsetHeight
+    handleHideContent(item) {
+      // 如果已经计算过，直接返回缓存的结果
+      if (item.hideContent !== undefined) return item.hideContent
+
+      // 初始化为 false
+      item.hideContent = false
+
+      // 用 setTimeout 微任务延迟计算，避免阻塞渲染
+      setTimeout(() => {
+        const dom = this.$refs[`icon${item.id}`]
+        // 只有当 DOM 元素已渲染时才计算
+        if (dom && dom.scrollHeight && dom.offsetHeight) {
+          const shouldHide = dom.scrollHeight > dom.offsetHeight
+          if (shouldHide !== item.hideContent) {
+            this.$set(item, 'hideContent', shouldHide)
+          }
+        }
+      }, 0)
+
       return item.hideContent
     },
 
     handleLog(item) {
+      // 如果内容不隐藏，不需要展开/收起操作
       if (!item.hideContent) return
-      item.expand = !item.expand
+
+      // 使用 Vue 的响应式系统更新状态
+      this.$set(item, 'expand', !item.expand)
     },
 
     onCopy() {
@@ -920,7 +959,6 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
           class="min-w-0"
           type="primary"
           plain
-         
           @click="handleDownload"
         >
           <VIcon>download</VIcon>
@@ -942,7 +980,6 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
           class="min-w-0 ml-0"
           type="primary"
           plain
-         
           @click="openDataCapture"
           >{{ $t('public_data_capture') }}</el-button
         >
@@ -1042,10 +1079,7 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
                   :ref="`icon${item.id}`"
                   class="log-item"
                   :class="{
-                    'hide-content cursor-pointer': handleHideContent(
-                      arguments[0],
-                      item,
-                    ),
+                    'hide-content cursor-pointer': handleHideContent(item),
                   }"
                   @click="handleLog(item)"
                 >
@@ -1264,14 +1298,16 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
           >
             <div class="position-absolute end-0 top-0 px-2 pt-1">
               <el-button
-                text type="primary"
+                text
+                type="primary"
                 class="px-1 py-0.5 font-color-dark"
                 @click="handleCopyStack(codeDialog.data.errorStack)"
               >
                 <VIcon class="mr-1">copy</VIcon>
                 <span class="">{{ $t('public_button_copy') }}</span> </el-button
               ><el-button
-                text type="primary"
+                text
+                type="primary"
                 class="px-1 py-0.5 font-color-dark ml-2"
                 @click="expandErrorMessage = !expandErrorMessage"
               >

@@ -15,15 +15,7 @@ import {
   merge,
   uniqBy,
 } from 'lodash-es'
-import {
-  computed,
-  defineExpose,
-  inject,
-  onMounted,
-  reactive,
-  ref,
-  watch,
-} from 'vue'
+import { computed, inject, onMounted, reactive, ref, watch } from 'vue'
 import { CONNECTION_STATUS_MAP } from '../../../shared'
 import { inspectMethod as inspectMethodMap } from '../const'
 import CollateMap from './CollateMap.vue'

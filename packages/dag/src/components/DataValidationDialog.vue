@@ -1,17 +1,9 @@
 <script setup lang="ts">
 import { taskInspectApi } from '@tap/api'
 import { useI18n } from '@tap/i18n'
-import {
-  ElButton,
-  ElDialog,
-  ElInputNumber,
-  ElMessage,
-  ElRadio,
-  ElSwitch,
-} from 'element-plus'
+import { ElButton, ElDialog, ElMessage, ElRadio } from 'element-plus'
 import { computed, ref, watch } from 'vue'
 
-// Define type locally based on API structure
 interface TaskInspectConfig {
   custom: {
     cdc: {
@@ -26,7 +18,6 @@ interface TaskInspectConfig {
   mode: 'CLOSE' | 'INTELLIGENT' | 'CUSTOM'
 }
 
-// Get i18n instance
 const { t } = useI18n()
 
 interface ValidationSettings {
@@ -67,6 +58,7 @@ const validationEnabled = ref(false)
 const validationType = ref('cdc')
 const frequencyTime = ref(1)
 const frequencyRecords = ref(10)
+const recoverEnabled = ref(false)
 
 const dialogVisible = computed({
   get: () => props.visible,
@@ -88,6 +80,7 @@ async function initFormData() {
   try {
     const res = await taskInspectApi.getConfig(props.taskId, {})
     validationEnabled.value = res.mode && res.mode !== 'CLOSE'
+    recoverEnabled.value = res.custom.mode && res.mode !== 'CLOSE'
     frequencyTime.value = res.custom.cdc.sample.interval
     frequencyRecords.value = res.custom.cdc.sample.limit
   } catch (error) {
@@ -140,25 +133,35 @@ async function handleSave() {
     @close="handleClose"
   >
     <div v-loading="loading">
-      <div class="validation-header gap-3">
-        <div class="header-label">
+      <div class="validation-header gap-3 justify-content-between">
+        <div class="header-label fs-6 fw-sub">
           {{ t('packages_dag_enable_validation') }}
         </div>
-        <div class="switch-container">
-          <ElSwitch v-model="validationEnabled" />
-        </div>
+        <ElSwitch v-model="validationEnabled" />
       </div>
 
-      <div v-if="validationEnabled" class="validation-content">
-        <div class="validation-option">
-          <ElRadio v-model="validationType" label="cdc">
-            <span class="radio-label">{{
-              t('packages_dag_incremental_validation')
-            }}</span>
-          </ElRadio>
+      <div v-if="validationEnabled" class="mt-2">
+        <div class="validation-option mb-4">
+          <ElCheckbox disabled>
+            <span class="radio-label flex align-center gap-2">
+              <span>全量校验</span>
+              <el-tag type="info" size="small">开发中</el-tag>
+            </span>
+          </ElCheckbox>
         </div>
 
-        <div class="validation-frequency">
+        <div class="validation-option mb-4">
+          <ElCheckbox :model-value="true" class="align-items-start">
+            <div class="radio-label">
+              <div class="fw-sub">
+                {{ t('packages_dag_incremental_validation') }}
+              </div>
+              <div class="font-color-light mt-1">仅检查新增和修改的数据</div>
+            </div>
+          </ElCheckbox>
+        </div>
+
+        <div class="validation-frequency ml-6">
           <div class="font-color-dark mb-4">
             {{ t('packages_dag_validation_frequency') }}
           </div>
@@ -168,6 +171,7 @@ async function handleSave() {
               <ElInputNumber
                 v-model="frequencyTime"
                 :min="1"
+                :controls="false"
                 controls-position="right"
               />
             </div>
@@ -176,11 +180,23 @@ async function handleSave() {
               <ElInputNumber
                 v-model="frequencyRecords"
                 :min="1"
+                :controls="false"
                 controls-position="right"
               />
             </div>
             <span class="frequency-text">{{ t('packages_dag_records') }}</span>
           </div>
+        </div>
+
+        <el-divider />
+
+        <div class="flex align-center mb-2">
+          <div class="flex-1">
+            <div class="fw-sub">自动修复</div>
+            <div class="font-color-light">启用后将自动修复数据差异</div>
+          </div>
+
+          <ElSwitch v-model="recoverEnabled" />
         </div>
       </div>
     </div>
@@ -269,12 +285,9 @@ async function handleSave() {
 }
 
 .validation-content {
-  margin-top: 24px;
 }
 
 .validation-option {
-  margin-bottom: 24px;
-
   .custom-radio {
     display: flex;
     align-items: center;
@@ -326,7 +339,7 @@ async function handleSave() {
 
     .input-number-container {
       .el-input-number {
-        width: 100px;
+        width: 80px;
       }
     }
   }
