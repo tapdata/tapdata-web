@@ -55,6 +55,7 @@ function formatTime(timestamp: number): string {
   >
     <el-table
       v-loading="loadingList"
+      class="has-border-t"
       :data="list"
       :default-sort="{ prop: 'ts', order: 'descending' }"
     >
