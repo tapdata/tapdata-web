@@ -51,6 +51,8 @@ const filterForm = ref()
 const form = reactive<Record<string, any>>({})
 const rules = reactive<Record<string, FormRule[]>>({})
 
+const debouncedEmitMap = new Map()
+
 watch(
   () => props.value,
   (v) => {
@@ -126,7 +128,8 @@ function getRules() {
         newRules[el.key] = [
           {
             validator: (rule, value, callback) => {
-              const result = el.rules?.()
+              const result =
+                el.rules && typeof el.rules === 'function' ? el.rules() : null
               if (result) {
                 callback(new Error(result))
               } else {
@@ -143,6 +146,28 @@ function getRules() {
   Object.assign(rules, newRules)
 }
 
+function getDebouncedEmit(item: FilterItem) {
+  const debounceTime = item.debounce ?? 500
+
+  if (!debouncedEmitMap.has(item.key)) {
+    debouncedEmitMap.set(
+      item.key,
+      debounce((value) => {
+        emit('update:value', value)
+        emit('search', value)
+        props.changeRoute &&
+          router.replace({
+            name: route.name,
+            params: route.params,
+            query: value,
+          })
+      }, debounceTime),
+    )
+  }
+
+  return debouncedEmitMap.get(item.key)
+}
+
 function search(item: FilterItem, target: string) {
   if (item.type === 'input' && target === 'change') {
     return
@@ -150,16 +175,9 @@ function search(item: FilterItem, target: string) {
 
   filterForm.value.validate((valid: boolean) => {
     if (valid) {
-      debounce(() => {
-        emit('update:value', getValue())
-        emit('search', getValue())
-        props.changeRoute &&
-          router.replace({
-            name: route.name,
-            params: route.params,
-            query: getValue(),
-          })
-      }, item.debounce)
+      const value = getValue()
+      const debouncedFn = getDebouncedEmit(item)
+      debouncedFn(value)
     }
   })
 }
