@@ -29,7 +29,7 @@ import { inspectMethod as inspectMethodMap } from '../const'
 import CollateMap from './CollateMap.vue'
 import { DATA_NODE_TYPES, META_INSTANCE_FIELDS, TABLE_PARAMS } from './const'
 import DocsDrawer from './DocsDrawer.vue'
-import FieldDialog from './FieldDialog'
+import FieldDialog from './FieldDialog.vue'
 import FieldSelectWrap from './FieldSelectWrap.vue'
 
 // Types
@@ -1146,10 +1146,11 @@ const getTablesInTask = async (
           primaryKey,
           unique,
         } = t
+
         return {
           id,
           field_name,
-          primary_key_position: primaryKeyPosition,
+          primary_key_position,
           data_type,
           primaryKey,
           unique,
@@ -1564,14 +1565,6 @@ const autoAddTable = async () => {
       autoAddTableLoading.value = false
       updateAutoAddTableLoading()
     })
-}
-
-const loadList = () => {
-  const data = cloneDeep(props.data)
-  data.forEach((el: any) => {
-    el.modeType = el.source.columns ? 'custom' : 'all'
-  })
-  formData.tasks = data
 }
 
 const getList = () => {
@@ -2114,33 +2107,27 @@ const handleSizeChange = (size: number) => {
   }
 }
 
-const handleCustomFields = (item: any, index: number) => {
-  fieldDialog.value.open(item, index, {
+const handleCustomFields = (item: any) => {
+  fieldDialog.value.open(item, {
     source: dynamicSchemaMap[item.source.connectionId],
     target: dynamicSchemaMap[item.target.connectionId],
   })
 }
 
-const handleChangeModeType = (val: string, item: any, index: number) => {
+const handleChangeModeType = (val: string, item: any) => {
   if (val !== 'custom') {
     item.source.columns = null
     item.target.columns = null
   } else {
-    handleCustomFields(item, index)
+    handleCustomFields(item)
   }
-
-  // item.modeType = val // 防止 SchemaToForm 回流
 }
 
-const handleChangeFields = (data: any[] = [], index: number) => {
-  const item = formData.tasks[index]
+const handleChangeFields = (data: any[] = [], id: string) => {
+  const item = formData.tasks.find((t) => t.id === id)
+
   item.source.columns = data.map((t) => t.source)
   item.target.columns = data.map((t) => t.target)
-  // // 设置modeType
-  // fieldDialog.value[`schemaToForm_${item.id}`].form.setValuesIn(
-  //   'modeType',
-  //   'custom',
-  // )
 }
 
 const handleFocus = (opt: any = {}, visible) => {
@@ -2583,7 +2570,7 @@ defineExpose({
             <ElRadioGroup
               v-model="item.modeType"
               :disabled="getModeTypeDisabled(item)"
-              @change="handleChangeModeType(arguments[0], item, index)"
+              @change="handleChangeModeType($event, item)"
             >
               <ElRadio label="all">{{
                 $t('packages_business_components_fieldbox_quanziduan')
@@ -2592,17 +2579,22 @@ defineExpose({
                 $t('packages_business_connections_databaseform_zidingyi')
               }}</ElRadio>
             </ElRadioGroup>
-            <ElLink
+            <el-divider
               v-if="item.modeType === 'custom'"
+              direction="vertical"
+              class="mx-2"
+            />
+            <ElButton
+              v-if="item.modeType === 'custom'"
+              text
               type="primary"
-              class="ml-4"
-              @click="handleCustomFields(item, index)"
+              @click="handleCustomFields(item)"
             >
               {{
                 $t('packages_business_components_conditionbox_chakanzidingyi')
               }}
               ({{ item.source.columns ? item.source.columns.length : 0 }})
-            </ElLink>
+            </ElButton>
           </div>
           <div v-show="inspectMethod === 'field'" class="setting-item mt-4">
             <ElCheckbox

@@ -299,6 +299,8 @@ const getData = async (id: string) => {
           t.target.currentLabel = `${t.target.nodeName} / ${t.target.connectionName}`
         }
         t.id = t.taskId
+        t.modeType = t.source.columns ? 'custom' : 'all'
+
         return t
       })
 
