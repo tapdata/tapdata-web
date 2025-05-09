@@ -129,7 +129,12 @@ settingsApi
       //无权限，说明是首次进入页面，重新请求后台获取
       const user = await usersApi.getInfo().catch(async () => {
         init()
+        return null
       })
+
+      if (!user) {
+        return
+      }
 
       await store.dispatch('feature/getFeatures')
 

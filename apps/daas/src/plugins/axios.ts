@@ -87,6 +87,7 @@ const errorCallback = (error: AxiosError): Promise<AxiosError | string> => {
           } else {
             Message.error({
               message: i18n.global.t('public_message_401'),
+              grouping: true,
             })
           }
         }, 500)
@@ -97,10 +98,16 @@ const errorCallback = (error: AxiosError): Promise<AxiosError | string> => {
         Message.error({ message: i18n.global.t('public_message_404') })
         break
       case 504:
-        Message.error({ message: i18n.global.t('public_message_5xx') })
+        Message.error({
+          message: i18n.global.t('public_message_5xx'),
+          grouping: true,
+        })
         break
       case 500:
-        Message.error({ message: i18n.global.t('public_message_5xx') })
+        Message.error({
+          message: i18n.global.t('public_message_5xx'),
+          grouping: true,
+        })
         break
     }
   } else if (
@@ -110,10 +117,12 @@ const errorCallback = (error: AxiosError): Promise<AxiosError | string> => {
     // 这两种情况已在ws-client.js里监听 👉 error.message === 'Network Error' || !window.navigator.onLine
     Message.error({
       message: i18n.global.t('public_message_network_unconnected'),
+      grouping: true,
     })
   } else if (error.message && error.message.includes('timeout')) {
     Message.error({
       message: i18n.global.t('public_message_request_timeout'),
+      grouping: true,
     })
   }
   return Promise.reject(error)
