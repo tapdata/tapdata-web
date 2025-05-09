@@ -1,5 +1,5 @@
+import { nextTick } from 'vue'
 import msgboxVue from './Main.vue'
-import * as Vue from 'vue'
 const MessageBoxConstructor = msgboxVue
 
 let currentMsg, instance
@@ -38,12 +38,16 @@ export function hasOwn(obj, key) {
   return hasOwnProperty.call(obj, key)
 }
 function isVNode(node) {
-  return node !== null && typeof node === 'object' && hasOwn(node, 'componentOptions')
+  return (
+    node !== null &&
+    typeof node === 'object' &&
+    hasOwn(node, 'componentOptions')
+  )
 }
 
 const defaultCallback = (action) => {
   if (currentMsg) {
-    let callback = currentMsg.callback
+    const callback = currentMsg.callback
     if (typeof callback === 'function') {
       callback(action)
     }
@@ -71,16 +75,16 @@ const MessageBox = function (options, callback) {
     return new Promise((resolve, reject) => {
       currentMsg = {
         options: Object.assign({}, defaults, options),
-        callback: callback,
-        resolve: resolve,
-        reject: reject,
+        callback,
+        resolve,
+        reject,
       }
       showNextMsg()
     })
   } else {
     currentMsg = {
       options: Object.assign({}, defaults, options),
-      callback: callback,
+      callback,
     }
     showNextMsg()
   }
@@ -92,9 +96,9 @@ const showNextMsg = () => {
     })
   }
   instance.action = ''
-  let options = currentMsg.options
-  for (let prop in options) {
-    if (window.hasOwnProperty.call(options, prop)) {
+  const options = currentMsg.options
+  for (const prop in options) {
+    if (Object.prototype.hasOwnProperty.call(options, prop)) {
       instance[prop] = options[prop]
     }
   }
@@ -107,9 +111,9 @@ const showNextMsg = () => {
   if (options.callback === undefined) {
     instance.callback = defaultCallback
   }
-  document.body.appendChild(instance.$el)
+  document.body.append(instance.$el)
 
-  Vue.nextTick(() => {
+  nextTick(() => {
     instance.visible = true
   })
 }
@@ -124,8 +128,8 @@ MessageBox.confirm = (message, title, options) => {
   return MessageBox(
     Object.assign(
       {
-        title: title,
-        message: message,
+        title,
+        message,
         $type: 'confirm',
         showCancelButton: true,
       },

@@ -9,12 +9,12 @@ import overView from '@tap/ldp/src/store'
 import { getUrlSearch } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
 import { merge } from 'lodash-es'
-import * as Vuex from 'vuex'
+import { createStore } from 'vuex'
 import i18n from '../i18n'
 import axios from '../plugins/axios'
 import { buried } from '../plugins/buried'
 
-const store = Vuex.createStore({
+const store = createStore({
   modules: {
     dataflow,
     classification,

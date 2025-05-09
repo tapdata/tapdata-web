@@ -1,5 +1,5 @@
 <script>
-import * as Vue from 'vue'
+import { h } from 'vue'
 export default {
   name: 'VDivider',
 
@@ -13,7 +13,7 @@ export default {
     if (!this.$attrs.role || this.$attrs.role === 'separator') {
       orientation = this.vertical ? 'vertical' : 'horizontal'
     }
-    return Vue.h('hr', {
+    return h('hr', {
       role: 'separator',
       'aria-orientation': orientation,
       class: [

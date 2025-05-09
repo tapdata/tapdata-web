@@ -1,12 +1,9 @@
-import * as Vue from 'vue'
 import i18n from '@/i18n'
 import FastDownload from '@/views/agent-download/FastDownload.vue'
 import PaidUpgrade from '@/views/agent-download/PaidUpgrade.vue'
 import UpgradeVersion from '@/views/agent-download/UpgradeVersion.vue'
 import Lang from '../views/Lang.vue'
 import Layout from '../views/Layout.vue'
-
-import Parent from './Parent'
 
 const UserCenter = () => import('../views/user/Center.vue')
 const UserContactUs = () => import('../views/user/ContactUs.vue')
