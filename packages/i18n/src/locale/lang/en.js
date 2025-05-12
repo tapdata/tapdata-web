@@ -396,4 +396,9 @@ export default {
   public_code_edit: 'Code Edit',
   public_preview_form: 'Preview Form',
   public_template_example: 'Template Example',
+  public_usd: 'USD',
+  public_cny: 'CNY',
+  public_hkd: 'HKD',
+  public_selfHost: 'Semi-Managed',
+  public_fullManagement: 'Fully-Managed',
 }

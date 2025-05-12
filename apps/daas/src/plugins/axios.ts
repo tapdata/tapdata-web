@@ -1,10 +1,14 @@
-import axios, { AxiosRequestConfig, AxiosError, AxiosResponse } from 'axios'
-import { ElMessage as Message } from 'element-plus'
-import Cookie from '@tap/shared/src/cookie'
-import { signOut } from '../utils/util'
-import i18n from '@/i18n'
-import Qs from 'qs'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
+import Cookie from '@tap/shared/src/cookie'
+import axios, {
+  type AxiosError,
+  type AxiosRequestConfig,
+  type AxiosResponse,
+} from 'axios'
+import { ElMessageBox, ElMessage as Message } from 'element-plus'
+import Qs from 'qs'
+import i18n from '@/i18n'
+import { signOut } from '../utils/util'
 
 type AxiosRequestConfigPro = AxiosRequestConfig & {
   silenceMessage?: boolean
@@ -26,7 +30,10 @@ const getPendingKey = (config: AxiosRequestConfig): string => {
       headers[key] = value
     }
   }*/
-  config.data = Object.prototype.toString.call(data) === '[object String]' ? JSON.parse(data) : data
+  config.data =
+    Object.prototype.toString.call(data) === '[object String]'
+      ? JSON.parse(data)
+      : data
   const key = JSON.stringify({
     url,
     method,
@@ -38,8 +45,8 @@ const getPendingKey = (config: AxiosRequestConfig): string => {
 }
 const removePending = (config: AxiosRequestConfig): void => {
   const key = getPendingKey(config)
-  const index = pending.findIndex((it) => it === key)
-  if (index >= 0) {
+  const index = pending.indexOf(key)
+  if (index !== -1) {
     pending.splice(index, 1)
   }
 }
@@ -60,47 +67,69 @@ const errorCallback = (error: AxiosError): Promise<AxiosError | string> => {
     switch (rsp.status) {
       // 用户无权限访问接口
       case 401: {
-        const isSingleSession = window.__settings__?.find(item => item.key === 'login.single.session')?.open
+        const isSingleSession = window.__settings__?.find(
+          (item) => item.key === 'login.single.session',
+        )?.open
 
         signOut()
 
         setTimeout(() => {
           if (isSingleSession) {
-            VConfirm.confirm(i18n.t('public_alert_401_tip').toString(), i18n.t('public_alert_401').toString(), {
-              type: 'warning',
-              showCancelButton: false,
-              confirmButtonText: i18n.t('public_button_confirm')
-            })
+            ElMessageBox.confirm(
+              i18n.global.t('public_alert_401_tip'),
+              i18n.global.t('public_alert_401'),
+              {
+                type: 'warning',
+                showCancelButton: false,
+                confirmButtonText: i18n.global.t('public_button_confirm'),
+              },
+            )
           } else {
-            Message.error({ message: i18n.t('public_message_401').toString() })
+            Message.error({
+              message: i18n.global.t('public_message_401'),
+              grouping: true,
+            })
           }
         }, 500)
         break
       }
       // 请求的资源不存在
       case 404:
-        Message.error({ message: i18n.t('public_message_404').toString() })
+        Message.error({ message: i18n.global.t('public_message_404') })
         break
       case 504:
-        Message.error({ message: i18n.t('public_message_5xx').toString() })
+        Message.error({
+          message: i18n.global.t('public_message_5xx'),
+          grouping: true,
+        })
         break
       case 500:
-        Message.error({ message: i18n.t('public_message_5xx').toString() })
+        Message.error({
+          message: i18n.global.t('public_message_5xx'),
+          grouping: true,
+        })
         break
     }
-  } else if (error.code === 'ECONNABORTED' /* || error.message === 'Network Error' || !window.navigator.onLine*/) {
+  } else if (
+    error.code ===
+    'ECONNABORTED' /* || error.message === 'Network Error' || !window.navigator.onLine*/
+  ) {
     // 这两种情况已在ws-client.js里监听 👉 error.message === 'Network Error' || !window.navigator.onLine
     Message.error({
-      message: i18n.t('public_message_network_unconnected').toString(),
+      message: i18n.global.t('public_message_network_unconnected'),
+      grouping: true,
     })
   } else if (error.message && error.message.includes('timeout')) {
     Message.error({
-      message: i18n.t('public_message_request_timeout').toString(),
+      message: i18n.global.t('public_message_request_timeout'),
+      grouping: true,
     })
   }
   return Promise.reject(error)
 }
-axios.interceptors.request.use(function (config: AxiosRequestConfig): AxiosRequestConfig {
+axios.interceptors.request.use(function (
+  config: AxiosRequestConfig,
+): AxiosRequestConfig {
   config.paramsSerializer = (params) => {
     return Qs.stringify(params, {
       arrayFormat: 'brackets',
@@ -128,7 +157,7 @@ axios.interceptors.request.use(function (config: AxiosRequestConfig): AxiosReque
     cancelFunc = c
   })
   if (pending.includes(key)) {
-    console.warn('Cancel request:', JSON.parse(key)) //eslint-disable-line
+    console.warn('Cancel request:', JSON.parse(key))
     cancelFunc()
   } else if (config.method !== 'get') {
     pending.push(key)

@@ -2,7 +2,6 @@ import { showErrorMessage } from '@tap/business/src/components/error-message'
 import axios from 'axios'
 import { ElMessage as Message } from 'element-plus'
 import Qs from 'qs'
-import * as Vue from 'vue'
 import i18n from '@/i18n'
 
 // Full config:  https://github.com/axios/axios#request-config

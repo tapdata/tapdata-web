@@ -387,4 +387,9 @@ export default {
   public_code_edit: '代码编辑',
   public_preview_form: '预览表单',
   public_template_example: '模板示例',
+  public_usd: '美元',
+  public_cny: '人民币',
+  public_hkd: '港币',
+  public_selfHost: '半托管',
+  public_fullManagement: '全托管',
 }

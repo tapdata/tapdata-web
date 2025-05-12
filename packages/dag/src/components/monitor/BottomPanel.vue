@@ -162,7 +162,7 @@ export default {
         key="bottomPanel"
         v-model="currentTab"
         style="--el-tabs-padding-left: 1rem"
-        class="setting-tabs h-100 flex-1 flex w-100"
+        class="setting-tabs h-100 flex-1 flex w-100 monitor-bottom-tabs"
       >
         <ElTabPane
           :label="$t('packages_dag_monitor_bottompanel_renwujindu')"
@@ -176,7 +176,12 @@ export default {
             :current-tab="currentTab"
           />
         </ElTabPane>
-        <ElTabPane v-if="!hideLog" :label="$t('public_task_log')" name="log">
+        <ElTabPane
+          v-if="!hideLog"
+          :label="$t('public_task_log')"
+          name="log"
+          class="monitor-log-pane"
+        >
           <NodeLog
             v-if="currentTab === 'log'"
             v-bind="$attrs"
@@ -236,9 +241,11 @@ export default {
         </ElTabPane>
       </ElTabs>
 
-      <VIcon class="close-icon" size="16" @click="$emit('showBottomPanel')"
-        >close</VIcon
-      >
+      <el-button text class="close-icon" @click="$emit('showBottomPanel')">
+        <template #icon>
+          <VIcon size="16">close</VIcon>
+        </template>
+      </el-button>
     </div>
   </section>
 </template>
@@ -363,12 +370,30 @@ $headerHeight: 40px;
 }
 .close-icon {
   position: absolute;
-  right: 16px;
-  top: 10px;
+  right: 12px;
+  top: 6px;
 }
 .tabs-header__hidden {
   :deep(.el-tabs__header) {
     display: none;
+  }
+}
+
+.monitor-bottom-tabs {
+  :deep(.el-tabs__content) {
+    z-index: 1;
+  }
+}
+
+.monitor-log-pane {
+  :deep(.log-container) {
+    min-width: 1000px;
+    .node-list {
+      position: sticky;
+      left: 0;
+      background-color: #fff;
+      z-index: 11;
+    }
   }
 }
 </style>

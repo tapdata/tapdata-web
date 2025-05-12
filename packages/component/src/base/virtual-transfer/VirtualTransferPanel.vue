@@ -1,7 +1,7 @@
 <script lang="jsx">
 import { ElTransfer as Transfer } from 'element-plus'
 import { cloneDeep } from 'lodash-es'
-import * as Vue from 'vue'
+import { h } from 'vue'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import { $emit } from '../../../utils/gogocodeTransfer'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
@@ -33,7 +33,7 @@ export default {
         const transferSlots = transfer.$slots
 
         return panel.renderContent ? (
-          panel.renderContent(Vue.h, this.option)
+          panel.renderContent(h, this.option)
         ) : transferSlots.default ? (
           transferSlots.default({ option: this.option })
         ) : transferSlots.left || transferSlots.right ? (

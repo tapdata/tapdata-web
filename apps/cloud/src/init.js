@@ -3,8 +3,8 @@ import { WSClient } from '@tap/business/src/shared/ws-client'
 import { installElement, VButton, VIcon } from '@tap/component'
 import Time from '@tap/shared/src/time'
 import { ElLoading } from 'element-plus'
-import * as Vue from 'vue'
-import * as VueRouter from 'vue-router'
+import { createApp } from 'vue'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import { installAllPlugins } from '@/plugins'
 import axios from '@/plugins/axios'
 import { startTimeOnPage, startTimeOnSite } from '@/plugins/buried'
@@ -22,8 +22,8 @@ export default ({ routes }) => {
   let loading = null
 
   const init = (userInfo) => {
-    const router = VueRouter.createRouter({
-      history: VueRouter.createWebHashHistory(),
+    const router = createRouter({
+      history: createWebHashHistory(),
       routes,
     })
     startTimeOnPage(router)
@@ -70,7 +70,7 @@ export default ({ routes }) => {
     document.body.append(iframe)
     /*E 万维广告*/
 
-    const app = (window.App = window.$vueApp = Vue.createApp(App))
+    const app = (window.App = window.$vueApp = createApp(App))
 
     console.log('appContext', app)
 

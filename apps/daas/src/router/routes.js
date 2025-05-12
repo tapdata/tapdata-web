@@ -1,12 +1,9 @@
-import * as Vue from 'vue'
 import Layout from '@/layouts/Layout.vue'
 import NotifyLayout from '@/layouts/NotifyLayout.vue'
 import SettingLayout from '@/layouts/SettingLayout.vue'
-import Parent from './Parent'
 
-const FunctionForm = Vue.defineAsyncComponent(
-  () => import('@/views/function/Form'),
-)
+const FunctionForm = () => import('@/views/function/Form')
+
 const DagEditor = async () => {
   const { Editor } = await import(/* webpackChunkName: "dag" */ '@tap/dag')
   return Editor
@@ -60,7 +57,7 @@ const VerifyDetails = async () => {
   return VerifyDetails
 }
 
-const RoleDetails = Vue.defineAsyncComponent(() => import('@/views/role/Role'))
+const RoleDetails = () => import('@/views/role/Role')
 
 // 数据校验
 const VerificationList = async () => {
@@ -148,15 +145,13 @@ export default [
   {
     path: '/login',
     name: 'login',
-    component: Vue.defineAsyncComponent(() => import('@/views/login/Login')),
+    component: () => import('@/views/login/Login'),
     title: 'tap.login',
   },
   {
     path: '/verificationEmail',
     name: 'verificationEmail',
-    component: Vue.defineAsyncComponent(
-      () => import('@/views/login/VerificationEmail'),
-    ),
+    component: () => import('@/views/login/VerificationEmail'),
     meta: {
       title: 'tap.verificationEmail',
     },
@@ -164,9 +159,7 @@ export default [
   {
     path: '/passwordReset',
     name: 'passwordReset',
-    component: Vue.defineAsyncComponent(
-      () => import('@/views/login/PasswordReset'),
-    ),
+    component: () => import('@/views/login/PasswordReset'),
     meta: {
       title: 'tap.passwordReset',
     },
@@ -564,9 +557,7 @@ export default [
       {
         path: '',
         name: 'functionList',
-        component: Vue.defineAsyncComponent(
-          () => import('@/views/function/List'),
-        ),
+        component: () => import('@/views/function/List'),
         meta: {
           hideTitle: true,
           title: 'page_title_function',
@@ -585,9 +576,7 @@ export default [
       {
         path: 'import',
         name: 'FunctionImport',
-        component: Vue.defineAsyncComponent(
-          () => import('@/views/function/ImportForm'),
-        ),
+        component: () => import('@/views/function/ImportForm'),
         meta: {
           title: 'page_title_function_import',
           code: 'v2_function_management_import',
@@ -605,9 +594,7 @@ export default [
       {
         path: 'details/:id',
         name: 'FunctionDetails',
-        component: Vue.defineAsyncComponent(
-          () => import('@/views/function/Details'),
-        ),
+        component: () => import('@/views/function/Details'),
         meta: {
           title: 'page_title_function_details',
           code: 'v2_function_management_details',
@@ -707,9 +694,7 @@ export default [
       {
         path: ':id/details',
         name: 'dataServerAuditDetails',
-        component: Vue.defineAsyncComponent(
-          () => import('@/views/data-server-audit/Info'),
-        ),
+        component: () => import('@/views/data-server-audit/Info'),
         meta: {
           title: 'page_title_api_audit_details',
           code: 'v2_data_server_audit-details',
@@ -732,7 +717,7 @@ export default [
       {
         path: '',
         name: 'roleList',
-        component: Vue.defineAsyncComponent(() => import('@/views/role/Roles')),
+        component: () => import('@/views/role/Roles'),
         meta: {
           hideTitle: true,
           title: 'page_title_role',
