@@ -80,7 +80,7 @@ export default {
             'Clickhouse',
             'Elasticsearch',
             'Dummy',
-            'Kafka',
+            'Kafka-Enhanced',
             'Doris',
             'BigQuery',
           ],
@@ -178,7 +178,9 @@ export default {
           'packages_business_create_connection_elasticsearch_desc',
         ),
         Dummy: i18n.t('packages_business_create_connection_dummy_desc'),
-        Kafka: i18n.t('packages_business_create_connection_kafka_desc'),
+        'Kafka-Enhanced': i18n.t(
+          'packages_business_create_connection_kafka_desc',
+        ),
         Doris: i18n.t('packages_business_create_connection_doris_desc'),
         'MongoDB Atlas': i18n.t(
           'packages_business_create_connection_mongodbatlas_desc',
