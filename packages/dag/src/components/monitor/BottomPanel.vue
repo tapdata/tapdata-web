@@ -235,6 +235,7 @@ export default {
           <TaskInspect
             v-if="currentTab === 'inspect'"
             v-bind="$attrs"
+            style="min-width: 1000px"
             :current-tab="currentTab"
             @open-inspect="$emit('open-inspect')"
           />
