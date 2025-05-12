@@ -1,191 +1,214 @@
-<script>
+<script setup lang="ts">
 import { taskInspectApi } from '@tap/api'
 import { VEmpty } from '@tap/component'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
+import { onBeforeUnmount, ref, watch } from 'vue'
 import InspectDetailDialog from './InspectDetailDialog.vue'
 
-export default {
-  name: 'TaskInspect',
+interface Props {
+  dataflow: {
+    id?: string
+    [key: string]: any
+  }
+  currentTab: string
+}
 
-  components: { VEmpty, InspectDetailDialog },
+const props = defineProps<Props>()
+const emit = defineEmits<{
+  (e: 'openInspect'): void
+}>()
 
-  props: {
-    dataflow: {
-      type: Object,
-      default: () => ({}),
-    },
-    currentTab: {
-      type: String,
-      default: '',
-    },
+interface InspectItem {
+  id: string
+  type: string
+  beginTime: string
+  endTime: string
+  status: string
+  statusType: string
+  pingTime?: string
+  attrs: {
+    ignores: number
+    accepts: number
+    differences?: number
+  }
+}
+
+interface TaskInspectHistory {
+  id: string
+  type: string
+  beginTime: string
+  endTime: string
+  status: string
+  attrs: {
+    ignores: number
+    accepts: number
+    differences?: number
+  }
+}
+
+interface ApiResponse {
+  total: number
+  items: TaskInspectHistory[]
+}
+
+const columns = [
+  {
+    label: i18n.t('packages_dag_inspect_type'),
+    prop: 'type',
+    minWidth: 100,
   },
+  {
+    label: i18n.t('packages_dag_inspect_start_time'),
+    prop: 'beginTime',
+    minWidth: 170,
+    dataType: 'time',
+  },
+  {
+    label: i18n.t('packages_dag_inspect_end_time'),
+    prop: 'endTime',
+    minWidth: 170,
+    dataType: 'time',
+  },
+  {
+    label: i18n.t('packages_dag_inspect_status'),
+    prop: 'status',
+    slotName: 'status',
+    minWidth: 100,
+  },
+  {
+    label: i18n.t('public_operation'),
+    slotName: 'operation',
+    width: 100,
+  },
+]
 
-  data() {
+const loading = ref(false)
+const detailDialogVisible = ref(false)
+const currentInspectId = ref('')
+const inspectList = ref<InspectItem[]>([])
+const pingTime = ref('')
+const showEnabled = ref(false)
+let timeout: number | undefined
+
+const makeStatus = (status: string) => {
+  const statusMap: Record<string, string> = {
+    RUNNING: i18n.t('public_status_running'),
+    STOPPED: i18n.t('public_status_stop'),
+    DONE: i18n.t('public_status_finished'),
+    ERROR: i18n.t('public_status_error'),
+  }
+
+  const typeMap: Record<string, string> = {
+    RUNNING: 'success',
+    STOPPED: 'info',
+    DONE: 'primary',
+    ERROR: 'danger',
+  }
+
+  return {
+    status: statusMap[status],
+    statusType: typeMap[status],
+  }
+}
+
+const handleDetail = (row: InspectItem) => {
+  currentInspectId.value = row.id
+  pingTime.value = dayjs(row.pingTime || row.beginTime).format(
+    'YYYY-MM-DD HH:mm:ss',
+  )
+  detailDialogVisible.value = true
+}
+
+const remoteMethod = async ({
+  page,
+}: {
+  page: { current: number; size: number }
+}) => {
+  const { current, size } = page
+  const { id: taskId } = props.dataflow || {}
+
+  if (!taskId) return Promise.resolve({ total: 0, data: [] })
+
+  const params = {
+    page: current,
+    size,
+  }
+
+  try {
+    const response = await taskInspectApi.getHistories(taskId, params)
+    const data = response as unknown as ApiResponse
     return {
-      columns: [
-        {
-          label: i18n.t('packages_dag_inspect_type'),
-          prop: 'type',
-          minWidth: 100,
-        },
-        {
-          label: i18n.t('packages_dag_inspect_start_time'),
-          prop: 'beginTime',
-          minWidth: 170,
-          dataType: 'time',
-        },
-        {
-          label: i18n.t('packages_dag_inspect_end_time'),
-          prop: 'endTime',
-          minWidth: 170,
-          dataType: 'time',
-        },
-        {
-          label: i18n.t('packages_dag_inspect_status'),
-          prop: 'status',
-          slotName: 'status',
-          minWidth: 100,
-        },
+      total: data.total || 0,
+      data:
+        data.items?.map((item) => ({
+          id: item.id,
+          type: item.type,
+          beginTime: dayjs(item.beginTime).format('YYYY-MM-DD HH:mm:ss'),
+          endTime: item.endTime
+            ? dayjs(item.endTime).format('YYYY-MM-DD HH:mm:ss')
+            : '',
+          ...makeStatus(item.status),
+          attrs: item.attrs,
+        })) || [],
+    }
+  } catch (error) {
+    console.error('Failed to fetch inspection results:', error)
+    return { total: 0, data: [] }
+  }
+}
 
-        {
-          label: i18n.t('public_operation'),
-          slotName: 'operation',
-          width: 100,
-        },
-      ],
-      loading: false,
-      detailDialogVisible: false,
-      currentInspectId: '',
-      inspectList: [],
-      pingTime: '',
-      showEnabled: false,
+const fetch = async () => {
+  loading.value = true
+  const { data } = await remoteMethod({
+    page: { current: 1, size: 10 },
+  })
+
+  data.sort((a, b) => dayjs(b.beginTime).diff(dayjs(a.beginTime)))
+
+  inspectList.value = data
+  loading.value = false
+}
+
+const checkEnabled = async () => {
+  const res = await taskInspectApi.getConfig(props.dataflow.id)
+  return res.mode && res.mode !== 'CLOSE'
+}
+
+const startLoop = () => {
+  timeout = window.setInterval(fetch, 5000)
+}
+
+const stopLoop = () => {
+  if (timeout) {
+    clearInterval(timeout)
+  }
+}
+
+watch(
+  () => props.currentTab,
+  (val) => {
+    if (val === 'inspect') {
+      fetch()
+      startLoop()
+    } else {
+      stopLoop()
     }
   },
+)
 
-  watch: {
-    currentTab(val) {
-      if (val === 'inspect') {
-        this.fetch()
-        this.startLoop()
-      } else {
-        this.stopLoop()
-      }
-    },
-  },
+fetch().then(async () => {
+  if (!inspectList.value.length) {
+    const enabled = await checkEnabled()
+    if (!enabled) {
+      showEnabled.value = true
+    }
+  }
+})
 
-  created() {
-    this.fetch().then(async () => {
-      if (!this.inspectList.length) {
-        const enabled = await this.checkEnabled()
-        if (!enabled) {
-          this.showEnabled = true
-        }
-      }
-    })
-  },
-
-  beforeUnmount() {
-    this.stopLoop()
-  },
-
-  methods: {
-    startLoop() {
-      this.loop(this.fetch, 5000)
-    },
-
-    stopLoop() {
-      clearInterval(this.timeout)
-    },
-
-    loop(fn, interval) {
-      this.timeout = setInterval(fn, interval)
-    },
-
-    remoteMethod({ page }) {
-      const { current, size } = page
-      const { id: taskId } = this.dataflow || {}
-
-      if (!taskId) return Promise.resolve({ total: 0, data: [] })
-
-      const params = {
-        page: current,
-        size,
-      }
-
-      return taskInspectApi
-        .getHistories(taskId, params)
-        .then((data) => {
-          return {
-            total: data.total || 0,
-            data:
-              data.items?.map((item) => {
-                return {
-                  id: item.id,
-                  type: item.type,
-                  beginTime: dayjs(item.beginTime).format(
-                    'YYYY-MM-DD HH:mm:ss',
-                  ),
-                  endTime: item.endTime
-                    ? dayjs(item.endTime).format('YYYY-MM-DD HH:mm:ss')
-                    : '',
-                  ...this.makeStatus(item.status),
-                  attrs: item.attrs,
-                }
-              }) || [],
-          }
-        })
-        .catch((error) => {
-          console.error('Failed to fetch inspection results:', error)
-          return { total: 0, data: [] }
-        })
-    },
-
-    makeStatus(status) {
-      const statusMap = {
-        RUNNING: i18n.t('public_status_running'),
-        STOPPED: i18n.t('public_status_stop'),
-        DONE: i18n.t('public_status_finished'),
-        ERROR: i18n.t('public_status_error'),
-      }
-
-      const typeMap = {
-        RUNNING: 'success',
-        STOPPED: 'info',
-        DONE: 'primary',
-        ERROR: 'danger',
-      }
-
-      return {
-        status: statusMap[status],
-        statusType: typeMap[status],
-      }
-    },
-
-    handleDetail(row) {
-      this.currentInspectId = row.id
-      this.pingTime = dayjs(row.pingTime).format('YYYY-MM-DD HH:mm:ss')
-      this.detailDialogVisible = true
-    },
-
-    async fetch() {
-      this.loading = true
-      const { data } = await this.remoteMethod({
-        page: { current: 1, size: 10 },
-      })
-
-      data.sort((a, b) => dayjs(b.beginTime).diff(dayjs(a.beginTime)))
-
-      this.inspectList = data
-      this.loading = false
-    },
-
-    async checkEnabled() {
-      const res = await taskInspectApi.getConfig(this.dataflow.id)
-      return res.mode && res.mode !== 'CLOSE'
-    },
-  },
-}
+onBeforeUnmount(() => {
+  stopLoop()
+})
 </script>
 
 <template>
@@ -282,7 +305,7 @@ export default {
           <span class="font-color-light">{{
             $t('packages_dag_inspect_start_config_desc')
           }}</span>
-          <ElButton @click="$emit('open-inspect')">
+          <ElButton @click="emit('openInspect')">
             <VIcon>data-scan</VIcon>
             {{ $t('packages_dag_inspect_start_config') }}
           </ElButton>
