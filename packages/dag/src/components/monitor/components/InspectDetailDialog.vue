@@ -117,6 +117,7 @@ async function fetchTableDiff(sourceTable: string): Promise<void> {
 }
 
 function handleRowClick(row: InspectionRow): void {
+  if (currentSelectedRow.value === row) return
   currentSelectedRow.value = row
   fetchTableDiff(row.sourceTable)
 }
@@ -125,11 +126,6 @@ function onOpen(): void {
   if (props.inspectId) {
     fetchDiffList()
   }
-}
-
-function formatTime(time: string): string {
-  if (!time) return '-'
-  return dayjs(time).format('YYYY-MM-DD HH:mm:ss')
 }
 
 const recordDialogVisible = ref(false)
@@ -178,18 +174,19 @@ function handleRecordClick(row: DiffRow): void {
               <div>
                 <div class="flex align-items-center gap-2 fs-6 font-color-dark">
                   <VIcon :size="20">table</VIcon>
-                  <div class="flex flex-column">
-                    <span class="">{{ row.targetTable || '-' }}</span>
-                    <div
-                      v-if="row.sourceTable !== row.targetTable"
-                      class="font-color-light position-relative"
-                    >
-                      <VIcon style="transform: translateY(-25%)"
-                        >ArrowToTopRightLinear</VIcon
-                      >
-                      <span class="fs-7">{{ row.sourceTable || '-' }}</span>
+                  <div
+                    v-if="row.sourceTable !== row.targetTable"
+                    class="flex align-center gap-1"
+                  >
+                    <VIcon class="mt-1" size="16">ArrowsTurnForward</VIcon>
+                    <div>
+                      <div class="font-color-light fs-7">
+                        {{ row.sourceTable || '-' }}
+                      </div>
+                      <div>{{ row.targetTable || '-' }}</div>
                     </div>
                   </div>
+                  <div v-else>{{ row.targetTable || '-' }}</div>
                 </div>
               </div>
 
@@ -335,15 +332,25 @@ function handleRecordClick(row: DiffRow): void {
                       class="border-bottom hover:bg-light"
                     >
                       <td class="p-3 text-sm text-muted-foreground">
-                        {{ row.diffFieldsMap[field] }}
                         <div
                           v-if="row.diffFieldsMap[field] !== field"
-                          class="flex align-center font-color-sslight"
+                          class="flex align-center gap-1"
                         >
-                          <VIcon style="transform: translateY(-25%)"
-                            >ArrowToTopRightLinear</VIcon
+                          <VIcon class="mt-2" size="16"
+                            >ArrowsTurnForward</VIcon
                           >
-                          <span class="fs-7">{{ field }}</span>
+                          <div>
+                            <div class="font-color-sslight">
+                              {{ field }}
+                            </div>
+                            <div class="font-color-dark">
+                              {{ row.diffFieldsMap[field] }}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div v-else>
+                          {{ row.diffFieldsMap[field] }}
                         </div>
                       </td>
                       <td class="p-3 text-sm font-medium">
@@ -361,7 +368,23 @@ function handleRecordClick(row: DiffRow): void {
                       class="border-bottom hover:bg-light"
                     >
                       <td class="p-3 text-sm text-muted-foreground">
-                        {{ targetField }}
+                        <div
+                          v-if="row.sourceFields[i] !== targetField"
+                          class="flex align-center gap-1"
+                        >
+                          <VIcon class="mt-2" size="16"
+                            >ArrowsTurnForward</VIcon
+                          >
+                          <div>
+                            <div class="font-color-sslight">
+                              {{ row.sourceFields[i] }}
+                            </div>
+                            <div class="font-color-dark">
+                              {{ targetField }}
+                            </div>
+                          </div>
+                        </div>
+                        <span v-else>{{ targetField }}</span>
                       </td>
                       <td class="p-3 text-sm font-medium">
                         <span>{{ row.source[row.sourceFields[i]] }}</span>
