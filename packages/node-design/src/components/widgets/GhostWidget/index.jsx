@@ -1,11 +1,10 @@
-import * as Vue from 'vue'
-import { useCursor, usePrefix, useDesigner } from '../../../hooks'
-import { CursorStatus } from '../../../core'
 import { autorun } from '@formily/reactive'
 import { observer } from '@formily/reactive-vue'
+import { defineComponent, onBeforeUnmount, ref, unref } from 'vue'
+import { CursorStatus } from '../../../core'
+import { useCursor, useDesigner, usePrefix } from '../../../hooks'
 import { NodeTitleWidget } from '../NodeTitleWidget'
 import './styles.scss'
-import { defineComponent, ref, unref, onBeforeUnmount } from 'vue'
 
 export const GhostWidget = observer(
   defineComponent({
@@ -45,7 +44,8 @@ export const GhostWidget = observer(
           </span>
         )
       }
-      if (!firstNode || this.cursor.status !== CursorStatus.Dragging) return null
+      if (!firstNode || this.cursor.status !== CursorStatus.Dragging)
+        return null
       return (
         <div id="Ghost" ref="root" class={this.prefix}>
           {renderNodes()}

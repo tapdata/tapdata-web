@@ -79,7 +79,7 @@ export default {
     :close-on-click-modal="false"
     @update:model-value="handleVisible"
   >
-    <template #title>
+    <template #header>
       <span class="fs-6 fw-sub font-color-dark">
         {{ $t('packages_business_chuangjianfuwu') }}
       </span>

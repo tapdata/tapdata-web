@@ -1,6 +1,5 @@
 <script>
-import * as Vue from 'vue'
-import { plantRenderPara } from '../../utils/gogocodeTransfer'
+import { h } from 'vue'
 export default {
   name: 'VDivider',
 
@@ -14,7 +13,7 @@ export default {
     if (!this.$attrs.role || this.$attrs.role === 'separator') {
       orientation = this.vertical ? 'vertical' : 'horizontal'
     }
-    return Vue.h('hr', {
+    return h('hr', {
       class: {
         'v-divider': true,
         'v-divider--inset': this.inset,

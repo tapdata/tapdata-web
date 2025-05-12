@@ -1,8 +1,7 @@
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import * as Vue from 'vue'
 import { VCodeEditor } from '@tap/component'
+import { defineComponent } from 'vue'
 
-export const SqlEditor = {
+export const SqlEditor = defineComponent({
   props: {
     value: String,
     height: {
@@ -16,45 +15,33 @@ export const SqlEditor = {
     disabled: Boolean,
   },
 
-  data() {
-    return {
-      sql: this.value,
+  setup(props, { emit, attrs }) {
+    const onBlur = (val) => {
+      if (val !== props.value) {
+        emit('change', val)
+      }
+    }
+
+    return () => {
+      const options = {
+        enableBasicAutocompletion: true,
+        enableLiveAutocompletion: true,
+        ...props.options,
+        readOnly: props.disabled,
+      }
+
+      return (
+        <VCodeEditor
+          class="border rounded-2 p-0"
+          theme="chrome"
+          value={props.value}
+          lang="sql"
+          height={props.height}
+          onBlur={onBlur}
+          options={options}
+          {...attrs}
+        />
+      )
     }
   },
-
-  watch: {
-    value(v) {
-      this.sql = v
-    },
-  },
-
-  methods: {
-    onInput(v) {
-      this.sql = v
-      $emit(this, 'update:value', v)
-      $emit(this, 'change', v)
-    },
-  },
-
-  render() {
-    const options = {
-      enableBasicAutocompletion: true,
-      enableLiveAutocompletion: true,
-      ...this.options,
-      readOnly: this.disabled,
-    }
-    return (
-      <VCodeEditor
-        class="border rounded-2 p-0"
-        theme="sqlserver"
-        value={this.sql}
-        lang="sql"
-        height={this.height}
-        onInput={this.onInput}
-        options={options}
-      />
-    )
-  },
-}
-
-export default SqlEditor
+})

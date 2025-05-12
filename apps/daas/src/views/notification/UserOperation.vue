@@ -1,6 +1,6 @@
 <script>
+import { h } from 'vue'
 import { plantRenderPara } from '../../../utils/gogocodeTransfer'
-import * as Vue from 'vue'
 export default {
   props: {
     record: {
@@ -9,19 +9,27 @@ export default {
     },
   },
   render() {
-    let record = this.record
-    let activeTextStyle = 'color: #2C65FF; padding-right: 5px;'
-    return Vue.h(
+    const record = this.record
+    const activeTextStyle = 'color: #2C65FF; padding-right: 5px;'
+    return h(
       'div',
       plantRenderPara({
         class: 'user-operation-wrap',
       }),
       [
-        this.$t('notification_account') + ' ',
-        Vue.h('span', plantRenderPara({ style: activeTextStyle }), record.username || record.email),
-        this.$t('notification_operation_' + record.operation),
-        this.$t('notification_modular_' + record.modular) + ' ',
-        Vue.h('span', plantRenderPara({ style: activeTextStyle }), record.parameter1),
+        `${this.$t('notification_account')} `,
+        h(
+          'span',
+          plantRenderPara({ style: activeTextStyle }),
+          record.username || record.email,
+        ),
+        this.$t(`notification_operation_${record.operation}`),
+        `${this.$t(`notification_modular_${record.modular}`)} `,
+        h(
+          'span',
+          plantRenderPara({ style: activeTextStyle }),
+          record.parameter1,
+        ),
       ],
     )
   },

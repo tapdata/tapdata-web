@@ -12238,7 +12238,7 @@
 }
 
 .bg-color-disable {
-  background-color: map.get($color, disable) !important;
+  background-color: map.get($bgColor, disable) !important;
 }
 
 .bg-color-main {

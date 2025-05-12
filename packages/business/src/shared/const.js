@@ -193,7 +193,13 @@ export const ALARM_LEVEL_MAP = {
   },
 }
 
-export const ALARM_LEVEL_SORT = ['EMERGENCY', 'CRITICAL', 'WARNING', 'NORMAL', 'RECOVERY']
+export const ALARM_LEVEL_SORT = [
+  'EMERGENCY',
+  'CRITICAL',
+  'WARNING',
+  'NORMAL',
+  'RECOVERY',
+]
 
 export const ORDER_STATUS_MAP = {
   unPay: i18n.global.t('packages_business_shared_const_weizhifu'),
@@ -212,9 +218,9 @@ export const CURRENCY_SYMBOL_MAP = {
   cny: '¥',
 }
 export const CURRENCY_MAP = {
-  usd: i18n.global.t('dfs_agent_download_subscriptionmodeldialog_usd'),
-  hkd: i18n.global.t('dfs_agent_download_subscriptionmodeldialog_hkd'),
-  cny: i18n.global.t('dfs_agent_download_subscriptionmodeldialog_cny'),
+  usd: i18n.global.t('public_usd'),
+  hkd: i18n.global.t('public_hkd'),
+  cny: i18n.global.t('public_cny'),
 }
 
 export const NUMBER_MAP = {
@@ -244,12 +250,12 @@ export const AGENT_SPEC_MAP = {
 }
 
 export const AGENT_TYPE_MAP = {
-  local: i18n.global.t('dfs_instance_utils_bantuoguan'),
-  cloud: i18n.global.t('dfs_instance_utils_quantuoguan'),
-  selfHost: i18n.global.t('dfs_instance_utils_bantuoguan'),
-  fullManagement: i18n.global.t('dfs_instance_utils_quantuoguan'),
-  Local: i18n.global.t('dfs_instance_utils_bantuoguan'),
-  Cloud: i18n.global.t('dfs_instance_utils_quantuoguan'),
+  local: i18n.global.t('public_selfHost'),
+  cloud: i18n.global.t('public_fullManagement'),
+  selfHost: i18n.global.t('public_selfHost'),
+  fullManagement: i18n.global.t('public_fullManagement'),
+  Local: i18n.global.t('public_selfHost'),
+  Cloud: i18n.global.t('public_fullManagement'),
 }
 
 export const TIME_MAP = {

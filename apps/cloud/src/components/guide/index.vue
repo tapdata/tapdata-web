@@ -1,142 +1,19 @@
-<template>
-  <div>
-    <div
-      v-show="showGuideIcon"
-      v-loading="guideLoading"
-      element-loading-background="rgba(255, 255, 255, 0.4)"
-      id="user-guide-icon"
-      class="user-guide-icon clickable"
-    >
-      <ElImage @click="handleOpenGuide" :src="iconSrc"></ElImage>
-    </div>
-    <ElDialog
-      class="guide-dialog"
-      :model-value="visible"
-      @input="$emit('update:visible', $event)"
-      width="1000px"
-      :top="'10vh'"
-      :show-close="false"
-      :destroy-on-close="true"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      :before-close="postGuide"
-    >
-      <div class="guide-wrap flex justify-content-center">
-        <div class="nav-wrap p-10">
-          <div class="guide-header font-color-dark fw-bold fs-5 mb-4 mt-4">
-            {{ $t('dfs_guide_index_huanyingshiyongT') }}
-          </div>
-          <div class="guide-desc font-color-dark mb-10">
-            {{ $t('dfs_guide_index_tapda') }}
-          </div>
-          <el-steps
-            class="guide-steps bg-transparent mx-auto"
-            :active="activeStep"
-            style="height: 300px"
-            direction="vertical"
-          >
-            <el-step v-for="(step, i) in steps" :key="i" :title="keyLabelMap[step.key]">
-              <span>{{ i + 1 }}</span>
-            </el-step>
-          </el-steps>
-        </div>
-        <div class="guide-main flex-1 flex flex-column overflow-hidden ml-8 mt-4 mr-8">
-          <StepGroups :active="activeKey" class="main flex-1 overflow-hidden">
-            <StepItem name="Account">
-              <!--绑定手机号-->
-              <Account ref="bindPhone" @next="next"></Account>
-            </StepItem>
-            <StepItem name="Scenes">
-              <!--使用场景-->
-              <Scenes ref="scenes" :scenes="scenes" @handleScenes="handleScenes"></Scenes>
-            </StepItem>
-            <StepItem name="DeploymentMethod">
-              <!--部署方式-->
-              <DeploymentMethod
-                ref="deploymentMethod"
-                :platform="platform"
-                @changePlatform="changePlatform"
-              ></DeploymentMethod>
-            </StepItem>
-            <StepItem name="Spec">
-              <!--选择实例规格-->
-              <Spec ref="spec" :platform="platform" @changeSpec="changeSpec"></Spec>
-            </StepItem>
-            <StepItem name="Deploy">
-              <!--部署实例-->
-              <Deploy :agentId="agentId" @behavior="handleBehavior"></Deploy>
-            </StepItem>
-            <StepItem name="Pay">
-              <!--费用清单-->
-              <pay v-if="subscribeStatus === 'incomplete'" refs="pay" :subscribes="subscribes" @refresh="refresh"></pay>
-              <Details v-else ref="details" :orderInfo="orderInfo" :email="email"></Details>
-            </StepItem>
-          </StepGroups>
-          <div
-            v-if="subscribeStatus !== 'incomplete' && !isUnDeploy"
-            class="guide-footer flex my-5"
-            :class="[activeStep === 1 ? 'justify-content-end' : 'justify-content-between']"
-          >
-            <ElButton size="default" v-if="activeStep > 1" @click="previous()"
-              >{{ $t('public_button_previous') }}
-            </ElButton>
-            <ElButton
-              size="default"
-              type="primary"
-              @click="submitConfirm()"
-              v-if="this.activeStep === this.steps.length"
-              :loading="submitLoading"
-              >{{ $t('public_button_next') }}
-            </ElButton>
-
-            <!--绑定手机号单独一个提交按钮 -->
-            <ElButton
-              size="default"
-              type="primary"
-              auto-loading
-              @click="submitConfirm(arguments[0])"
-              v-else-if="this.activeStep === 1 && bindPhoneVisible"
-              >{{ $t('public_button_next') }}
-            </ElButton>
-            <ElButton
-              size="default"
-              type="primary"
-              :disabled="activeKey === 'Scenes' && !scenes.length"
-              @click="submitConfirm()"
-              v-else
-              >{{ $t('public_button_next') }}
-            </ElButton>
-          </div>
-          <div v-else-if="isUnDeploy" class="guide-footer flex my-5 justify-content-between">
-            <ElButton :loading="unsubscribeIng" size="default" @click="handleUnsubscribe"
-              >{{ $t('public_button_previous') }}
-            </ElButton>
-          </div>
-        </div>
-      </div>
-    </ElDialog>
-  </div>
-</template>
-
 <script lang="jsx">
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import * as Vue from 'vue'
-import i18n from '@/i18n'
+import { mapGetters, mapMutations } from 'vuex'
+import user_guide_cn from '@/assets/image/user_guide_cn.png'
 
+import user_guide_en from '@/assets/image/user_guide_en.png'
+import i18n from '@/i18n'
 import Account from './Account.vue'
-import DeploymentMethod from './DeploymentMethod.vue'
-import Scenes from './Scenes.vue'
-import Spec from './Spec.vue'
 import Deploy from './Deploy.vue'
+import DeploymentMethod from './DeploymentMethod.vue'
 import Details from './Details.vue'
 import Pay from './Pay.vue'
-import user_guide_cn from '@/assets/image/user_guide_cn.png'
-import user_guide_en from '@/assets/image/user_guide_en.png'
-import { mapGetters, mapMutations } from 'vuex'
+import Scenes from './Scenes.vue'
+import Spec from './Spec.vue'
 
 export default {
-  name: 'guide',
-  props: ['visible', 'agent', 'subscribes', 'step', 'isUnDeploy', 'guideLoading'],
+  name: 'Guide',
   components: {
     Account,
     Scenes,
@@ -159,12 +36,23 @@ export default {
       },
       render() {
         return (
-          this.$parent.active === this.name && this.$slots.default && this.$slots.default() && this.$slots.default()
+          this.$parent.active === this.name &&
+          this.$slots.default &&
+          this.$slots.default() &&
+          this.$slots.default()
         )
       },
     },
   },
   inject: ['buried'],
+  props: [
+    'visible',
+    'agent',
+    'subscribes',
+    'step',
+    'isUnDeploy',
+    'guideLoading',
+  ],
   data() {
     return {
       timer: null,
@@ -211,7 +99,9 @@ export default {
     },
 
     iconSrc() {
-      return this.$store.getters.isDomesticStation ? user_guide_cn : user_guide_en
+      return this.$store.getters.isDomesticStation
+        ? user_guide_cn
+        : user_guide_en
     },
 
     showGuideIcon() {
@@ -221,22 +111,27 @@ export default {
   watch: {
     visible(v) {
       if (this.pausedGuide) {
-        const icon = document.getElementById('user-guide-icon')
+        const icon = document.querySelector('#user-guide-icon')
         const windowWidth = document.documentElement.clientWidth
         const windowHeight = document.documentElement.clientHeight
         const iconStyle = window.getComputedStyle(icon)
-        const iconX = parseInt(iconStyle.left) + parseInt(iconStyle.width) / 2
-        const iconY = windowHeight - parseInt(iconStyle.bottom) - parseInt(iconStyle.height) / 2
+        const iconX =
+          Number.parseInt(iconStyle.left) + Number.parseInt(iconStyle.width) / 2
+        const iconY =
+          windowHeight -
+          Number.parseInt(iconStyle.bottom) -
+          Number.parseInt(iconStyle.height) / 2
         const dialog = this.$refs.dialogWrapper.$refs.dialog
         const computedStyle = window.getComputedStyle(dialog)
         let width = computedStyle.width
         if (width.endsWith('px')) {
-          width = parseInt(width)
+          width = Number.parseInt(width)
         } else if (width.endsWith('%')) {
-          width = (parseInt(width) / 100) * windowWidth
+          width = (Number.parseInt(width) / 100) * windowWidth
         }
         const transformOriginX = iconX - (windowWidth - width) / 2
-        const transformOriginY = iconY - parseInt(computedStyle.marginTop)
+        const transformOriginY =
+          iconY - Number.parseInt(computedStyle.marginTop)
         dialog.style.transformOrigin = `${transformOriginX}px ${transformOriginY}px`
       }
       if (v) {
@@ -270,7 +165,9 @@ export default {
 
     beforeClose(done) {
       if (this.bindPhoneVisible && this.activeStep === 1) {
-        this.$message.info(this.$t('dfs_components_taskalarmtour_account_zhuanghao'))
+        this.$message.info(
+          this.$t('dfs_components_taskalarmtour_account_zhuanghao'),
+        )
         return
       }
       this.pauseGuide()
@@ -281,7 +178,7 @@ export default {
       // this.postGuide()
     },
     postGuide() {
-      let params = {
+      const params = {
         installStep: this.activeStep,
         demand: this.scenes,
         selectAgentType: this.platform,
@@ -308,11 +205,11 @@ export default {
       }
     },
     previous() {
-      let step = this.steps[this.activeStep - 1]
+      const step = this.steps[this.activeStep - 1]
       //去掉支付
       if (step.key === 'Spec') {
-        let index = this.steps.findIndex((it) => it.key === 'Pay')
-        if (index > -1) {
+        const index = this.steps.findIndex((it) => it.key === 'Pay')
+        if (index !== -1) {
           this.steps.splice(index, 1)
         }
       }
@@ -360,7 +257,7 @@ export default {
     checkAgentStatus() {
       if (this.agentId) {
         this.$axios.get('api/tcm/agent').then((data) => {
-          let items = data?.items || []
+          const items = data?.items || []
           this.agentStatus = items.find((i) => i.id === this.agentId)?.status
           if (this.agentStatus !== 'Running') {
             clearTimeout(this.timer)
@@ -369,7 +266,7 @@ export default {
             }, 10000)
           } else {
             clearTimeout(this.timer)
-            $emit(this, 'update:visible', false)
+            this.$emit('update:visible', false)
             this.$router.push({
               name: 'migrate',
             })
@@ -379,8 +276,8 @@ export default {
     },
     //确认提交
     submitConfirm(res) {
-      let step = this.steps[this.activeStep - 1]
-      let isPay = this.steps.find((it) => it.key === 'Pay')
+      const step = this.steps[this.activeStep - 1]
+      const isPay = this.steps.find((it) => it.key === 'Pay')
       if (step.key === 'Spec') {
         this.getOrderInfo()
         //没有支付页-直接付款
@@ -397,7 +294,10 @@ export default {
         this.bindPhoneConfirm(res)
         return
       }
-      if (step.key === 'Scenes' && (!this.scenes || this.scenes?.length === 0)) {
+      if (
+        step.key === 'Scenes' &&
+        (!this.scenes || this.scenes?.length === 0)
+      ) {
         this.$message.error(i18n.t('dfs_guide_index_qingxuanzeninxiang'))
         return
       }
@@ -414,23 +314,23 @@ export default {
     },
     changePlatform(val) {
       this.platform = val
-      let index = this.steps.findIndex((it) => it.key === 'Deploy')
+      const index = this.steps.findIndex((it) => it.key === 'Deploy')
       if (val === 'selfHost' && index === -1) {
         this.steps.push({
           key: 'Deploy',
           title: i18n.t('dfs_guide_index_bushujisuanyin'),
         })
-      } else if (val !== 'selfHost') {
-        //移除
-        if (index > -1) {
-          this.steps.splice(index, 1)
-        }
+      } else if (
+        val !== 'selfHost' && //移除
+        index > -1
+      ) {
+        this.steps.splice(index, 1)
       }
     },
     //切换实例
     changeSpec(item) {
-      let index = this.steps.findIndex((it) => it.key === 'Pay')
-      let len = this.steps?.length - 1
+      const index = this.steps.findIndex((it) => it.key === 'Pay')
+      const len = this.steps?.length - 1
       this.isDepaly = false
       if (item?.price !== 0) {
         const payStep = {
@@ -454,7 +354,8 @@ export default {
     checkWechatPhone() {
       // 国内微信注册的用户绑定手机号
       const { user } = this.$store.state
-      this.bindPhoneVisible = 'social:wechatmp-qrcode' === user?.registerSource && !user?.telephone
+      this.bindPhoneVisible =
+        'social:wechatmp-qrcode' === user?.registerSource && !user?.telephone
 
       if (this.steps?.length === 0) {
         this.getSteps()
@@ -487,24 +388,26 @@ export default {
         try {
           this.behavior = guide.behavior ? JSON.parse(guide.behavior) : []
           this.behaviorAt = guide.behaviorAt
-        } catch (e) {
+        } catch {
           this.behavior = []
         }
 
         const step = guide.steps[guide.installStep - 1]
 
         if (step) {
-          let { key } = step
+          const { key } = step
 
           if (
             key === 'Pay' &&
-            (!guide.subscribeId || (this.subscribes?.status && this.subscribes?.status !== 'incomplete'))
+            (!guide.subscribeId ||
+              (this.subscribes?.status &&
+                this.subscribes?.status !== 'incomplete'))
           ) {
             // 走到支付，但是没有提交订阅
             if (guide.spec) {
               try {
                 this.orderInfo = JSON.parse(guide.spec)
-              } catch (e) {
+              } catch {
                 guide.installStep = --this.activeStep
                 this.postGuide()
               }
@@ -512,7 +415,8 @@ export default {
             // guide.installStep = --this.activeStep
             // this.postGuide()
           } else if (this.isUnDeploy && key !== 'Deploy') {
-            guide.installStep = this.activeStep = guide.steps.findIndex((step) => step.key === 'Deploy') + 1
+            guide.installStep = this.activeStep =
+              guide.steps.findIndex((step) => step.key === 'Deploy') + 1
             this.postGuide()
           }
         }
@@ -520,25 +424,35 @@ export default {
     },
     //刷新支付状态
     refresh() {
-      let filter = {
+      const filter = {
         where: {
           id: this.subscribes?.id,
         },
       }
-      this.$axios.get(`api/tcm/subscribe?filter=${encodeURIComponent(JSON.stringify(filter))}`).then((data) => {
-        let item = data.items || []
-        this.subscribeStatus = item?.[0]?.status
-        if (this.subscribeStatus === 'active' && item?.[0]?.platform === 'selfHost') {
-          //部署页面
-          if (this.bindPhoneVisible) {
-            this.activeStep = 6
-          } else {
-            this.activeStep = 5
+      this.$axios
+        .get(
+          `api/tcm/subscribe?filter=${encodeURIComponent(JSON.stringify(filter))}`,
+        )
+        .then((data) => {
+          const item = data.items || []
+          this.subscribeStatus = item?.[0]?.status
+          if (
+            this.subscribeStatus === 'active' &&
+            item?.[0]?.platform === 'selfHost'
+          ) {
+            //部署页面
+            if (this.bindPhoneVisible) {
+              this.activeStep = 6
+            } else {
+              this.activeStep = 5
+            }
+          } else if (
+            this.subscribeStatus === 'active' &&
+            item?.[0]?.platform === 'fullManagement'
+          ) {
+            this.$emit('update:visible', false)
           }
-        } else if (this.subscribeStatus === 'active' && item?.[0]?.platform === 'fullManagement') {
-          $emit(this, 'update:visible', false)
-        }
-      })
+        })
     },
     submitOrder() {
       this.$axios
@@ -555,7 +469,7 @@ export default {
           } else {
             //免费半托管 - 新人引导部署页面
             if (this.platform === 'selfHost') {
-              $emit(this, 'changeIsUnDeploy', true)
+              this.$emit('changeIsUnDeploy', true)
               this.next()
               this.$nextTick(() => {
                 this.checkAgentStatus()
@@ -563,7 +477,7 @@ export default {
             } else {
               this.postGuide()
               //订单不需要付款，只需对应跳转不同页面
-              $emit(this, 'update:visible', false)
+              this.$emit('update:visible', false)
               this.$router.push({
                 name: 'Instance',
               })
@@ -611,7 +525,8 @@ export default {
       this.$emit('changeIsUnDeploy', false)
       this.unsubscribeIng = false
       // 退回到部署方式
-      this.activeStep = this.steps.findIndex((step) => step.key === 'DeploymentMethod') + 1
+      this.activeStep =
+        this.steps.findIndex((step) => step.key === 'DeploymentMethod') + 1
 
       // 后端其实清不了agentId/subscribeId
       await this.postGuide()
@@ -628,6 +543,156 @@ export default {
   emits: ['update:visible', 'changeIsUnDeploy'],
 }
 </script>
+
+<template>
+  <div>
+    <div
+      v-show="showGuideIcon"
+      id="user-guide-icon"
+      v-loading="guideLoading"
+      element-loading-background="rgba(255, 255, 255, 0.4)"
+      class="user-guide-icon clickable"
+    >
+      <ElImage :src="iconSrc" @click="handleOpenGuide" />
+    </div>
+    <ElDialog
+      class="guide-dialog"
+      :model-value="visible"
+      width="1000px"
+      top="10vh"
+      :show-close="false"
+      :destroy-on-close="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :before-close="postGuide"
+      @input="$emit('update:visible', $event)"
+    >
+      <div class="guide-wrap flex justify-content-center">
+        <div class="nav-wrap p-10">
+          <div class="guide-header font-color-dark fw-bold fs-5 mb-4 mt-4">
+            {{ $t('dfs_guide_index_huanyingshiyongT') }}
+          </div>
+          <div class="guide-desc font-color-dark mb-10">
+            {{ $t('dfs_guide_index_tapda') }}
+          </div>
+          <el-steps
+            class="guide-steps bg-transparent mx-auto"
+            :active="activeStep"
+            style="height: 300px"
+            direction="vertical"
+          >
+            <el-step
+              v-for="(step, i) in steps"
+              :key="i"
+              :title="keyLabelMap[step.key]"
+            >
+              <span>{{ i + 1 }}</span>
+            </el-step>
+          </el-steps>
+        </div>
+        <div
+          class="guide-main flex-1 flex flex-column overflow-hidden ml-8 mt-4 mr-8"
+        >
+          <StepGroups :active="activeKey" class="main flex-1 overflow-hidden">
+            <StepItem name="Account">
+              <!--绑定手机号-->
+              <Account ref="bindPhone" @next="next" />
+            </StepItem>
+            <StepItem name="Scenes">
+              <!--使用场景-->
+              <Scenes
+                ref="scenes"
+                :scenes="scenes"
+                @handle-scenes="handleScenes"
+              />
+            </StepItem>
+            <StepItem name="DeploymentMethod">
+              <!--部署方式-->
+              <DeploymentMethod
+                ref="deploymentMethod"
+                :platform="platform"
+                @change-platform="changePlatform"
+              />
+            </StepItem>
+            <StepItem name="Spec">
+              <!--选择实例规格-->
+              <Spec ref="spec" :platform="platform" @change-spec="changeSpec" />
+            </StepItem>
+            <StepItem name="Deploy">
+              <!--部署实例-->
+              <Deploy :agent-id="agentId" @behavior="handleBehavior" />
+            </StepItem>
+            <StepItem name="Pay">
+              <!--费用清单-->
+              <pay
+                v-if="subscribeStatus === 'incomplete'"
+                refs="pay"
+                :subscribes="subscribes"
+                @refresh="refresh"
+              />
+              <Details
+                v-else
+                ref="details"
+                :order-info="orderInfo"
+                :email="email"
+              />
+            </StepItem>
+          </StepGroups>
+          <div
+            v-if="subscribeStatus !== 'incomplete' && !isUnDeploy"
+            class="guide-footer flex my-5"
+            :class="[
+              activeStep === 1
+                ? 'justify-content-end'
+                : 'justify-content-between',
+            ]"
+          >
+            <ElButton v-if="activeStep > 1" size="default" @click="previous()"
+              >{{ $t('public_button_previous') }}
+            </ElButton>
+            <ElButton
+              v-if="activeStep === steps.length"
+              size="default"
+              type="primary"
+              :loading="submitLoading"
+              @click="submitConfirm()"
+              >{{ $t('public_button_next') }}
+            </ElButton>
+
+            <!--绑定手机号单独一个提交按钮 -->
+            <ElButton
+              v-else-if="activeStep === 1 && bindPhoneVisible"
+              size="default"
+              type="primary"
+              auto-loading
+              @click="submitConfirm(arguments[0])"
+              >{{ $t('public_button_next') }}
+            </ElButton>
+            <ElButton
+              v-else
+              size="default"
+              type="primary"
+              :disabled="activeKey === 'Scenes' && !scenes.length"
+              @click="submitConfirm()"
+              >{{ $t('public_button_next') }}
+            </ElButton>
+          </div>
+          <div
+            v-else-if="isUnDeploy"
+            class="guide-footer flex my-5 justify-content-between"
+          >
+            <ElButton
+              :loading="unsubscribeIng"
+              size="default"
+              @click="handleUnsubscribe"
+              >{{ $t('public_button_previous') }}
+            </ElButton>
+          </div>
+        </div>
+      </div>
+    </ElDialog>
+  </div>
+</template>
 
 <style scoped lang="scss">
 .nav-wrap {

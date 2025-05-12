@@ -657,7 +657,7 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
       append-to-body
       @open="codeDialog.expandErrorMessage = false"
     >
-      <template #title>
+      <template #header>
         <div class="flex align-center gap-2">
           <VIcon class="color-danger" size="18">circle-close-filled</VIcon>
           <span class="fs-6 fw-sub">{{
