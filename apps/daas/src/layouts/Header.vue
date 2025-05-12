@@ -227,7 +227,8 @@ onMounted(() => {
 
   if (
     import.meta.env.VUE_APP_MODE !== 'community' &&
-    window.getSettingByKey?.('SHOW_LICENSE')
+    window.getSettingByKey?.('SHOW_LICENSE') &&
+    window.getSettingByKey('checkLicense') !== 'false'
   ) {
     getLicense()
   }
