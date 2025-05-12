@@ -125,14 +125,6 @@ interface TableFilter {
   nodeId?: string
 }
 
-interface TableParams {
-  nodeId: string
-  fields: any[]
-  page: number
-  pageSize: number
-  tableFilter?: string
-}
-
 interface ApiResult<T> {
   data: ApiResponse<T>
 }

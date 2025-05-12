@@ -21,6 +21,7 @@
     "lodash": "^4.17.15",
     "qs": "^6.11.0",
     "tiny-emitter": "^2.1.0",
+    "vue": "^3.0.0",
     "vue-json-viewer": "^2.2.15",
     "vue-virtual-scroller": "2.0.0-beta.8",
     "vuex": "^4.0.2"
