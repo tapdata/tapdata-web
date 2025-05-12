@@ -1049,8 +1049,10 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
           }}</ElCheckbox
         >
 
-        <span
-          class="color-primary cursor-pointer ml-auto"
+        <el-button
+          text
+          type="primary"
+          class="ml-auto"
           @click="handleFullScreen"
         >
           <VIcon class="mr-1">{{ fullscreen ? 'suoxiao' : 'fangda' }}</VIcon>
@@ -1059,7 +1061,7 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
               ? $t('packages_form_js_editor_exit_fullscreen')
               : $t('packages_form_js_editor_fullscreen')
           }}</span>
-        </span>
+        </el-button>
       </div>
       <div
         v-loading="loading"
