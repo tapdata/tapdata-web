@@ -40,7 +40,7 @@ const containerClass = computed(() => {
   }
   const base = baseClasses[props.mode] || baseClasses.default
   const paddingClasses = {
-    default: 'p-6 gap-4',
+    default: 'px-6 py-5 gap-4',
     full: '',
     auto: 'gap-4',
   }
@@ -53,7 +53,7 @@ const headerClass = computed(() => {
   const baseClasses = {
     default: '',
     plain: '',
-    auto: 'px-6 pt-6',
+    auto: 'px-6 pt-5',
   }
 
   return props.headerClass ?? baseClasses[props.mode] ?? baseClasses.default
@@ -64,7 +64,7 @@ const contentClass = computed(() => {
     table: 'flex-1 min-h-0',
     full: 'flex-1 min-h-0 overflow-auto',
     blank: 'flex-1 min-h-0 overflow-auto',
-    auto: 'flex-1 min-h-0 overflow-auto px-6 pb-6',
+    auto: 'flex-1 min-h-0 overflow-auto px-6 pb-5',
   }
 
   return props.contentClass || modeClasses[props.mode] || modeClasses.table
@@ -111,7 +111,9 @@ const handleBack = () => {
         </el-button>
 
         <slot name="title">
-          <span class="fs-5 font-color-dark lh-8">{{ $t($route.meta.title) }}</span>
+          <span class="fs-5 font-color-dark lh-8">{{
+            $t($route.meta.title)
+          }}</span>
         </slot>
 
         <slot name="left-actions" />
