@@ -253,7 +253,7 @@ export default {
             </span>
           </div>
 
-          <div class="flex flex-column gap-2">
+          <!-- <div class="flex flex-column gap-2">
             <span class="flex align-center gap-1"
               ><VIcon>FileChartColumnIncreasing</VIcon
               >{{ $t('packages_dag_inspect_diff_records') }}</span
@@ -266,7 +266,7 @@ export default {
             >
               {{ inspect.attrs.differences }}
             </span>
-          </div>
+          </div> -->
 
           <ElButton text type="primary">
             {{ $t('public_button_details') }}
