@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Check } from '@element-plus/icons-vue'
 import { databaseTypesApi, inspectApi, taskApi } from '@tap/api'
 import { AsyncSelect } from '@tap/form'
 import i18n from '@tap/i18n'
@@ -645,23 +646,36 @@ provide('ConnectorMap', ConnectorMap)
         :label="`${$t('packages_business_verification_type')}: `"
       >
         <div>
-          <ElRadioGroup
+          <el-radio-group
             v-model="form.inspectMethod"
+            class="align-top has-space"
             @change="handleChangeInspectMethod"
           >
-            <ElRadioButton label="row_count">{{
-              inspectMethodMap['row_count']
-            }}</ElRadioButton>
-            <ElRadioButton label="field">{{
-              inspectMethodMap['field']
-            }}</ElRadioButton>
-            <ElRadioButton label="jointField">{{
-              inspectMethodMap['jointField']
-            }}</ElRadioButton>
-            <ElRadioButton label="hash">{{
-              inspectMethodMap['hash']
-            }}</ElRadioButton>
-          </ElRadioGroup>
+            <el-radio-button value="row_count">
+              <div class="flex align-center gap-2">
+                <VIcon size="16">Lightning</VIcon>
+                {{ inspectMethodMap['row_count'] }}
+              </div>
+            </el-radio-button>
+            <el-radio-button value="field">
+              <div class="flex align-center gap-2">
+                <VIcon size="16">LucideTable</VIcon>
+                {{ inspectMethodMap['field'] }}
+              </div>
+            </el-radio-button>
+            <el-radio-button value="jointField">
+              <div class="flex align-center gap-2">
+                <VIcon size="16">LucideLink</VIcon>
+                {{ inspectMethodMap['jointField'] }}
+              </div>
+            </el-radio-button>
+            <el-radio-button value="hash">
+              <div class="flex align-center gap-2">
+                <VIcon size="16">LucideHash</VIcon>
+                {{ inspectMethodMap['hash'] }}
+              </div>
+            </el-radio-button>
+          </el-radio-group>
           <div v-if="typTipMap[form.inspectMethod]" class="font-color-light">
             <VIcon class="align-middle mr-1">info</VIcon>
             <span class="align-middle fs-8">{{
@@ -1017,10 +1031,17 @@ provide('ConnectorMap', ConnectorMap)
     <div
       class="position-sticky bottom-0 border-top bg-white z-10 mt-auto flex align-center content-footer flex-shrink-0"
     >
-      <ElButton @click="goBack()">{{ $t('public_button_back') }}</ElButton>
-      <ElButton type="primary" :disabled="saveDisabled" @click="save(true)"
+      <el-button size="large" @click="goBack()">{{
+        $t('public_button_back')
+      }}</el-button>
+      <el-button
+        size="large"
+        type="primary"
+        :disabled="saveDisabled"
+        :icon="Check"
+        @click="save(true)"
         >{{ $t('public_button_save') }}
-      </ElButton>
+      </el-button>
 
       <template v-if="!!errorMessageLevel">
         <el-divider class="mx-4" direction="vertical" />
@@ -1136,15 +1157,16 @@ provide('ConnectorMap', ConnectorMap)
 }
 
 .condition-panel {
-  :deep(.condition-footer) {
-    bottom: 72px;
-    backdrop-filter: blur(12px);
-    background-color: rgba(255, 255, 255, 0.8);
-    z-index: 10;
-  }
   &.is-active {
     :deep(.el-collapse-item__wrap) {
       overflow: unset;
+    }
+    :deep(.condition-footer) {
+      position: sticky;
+      bottom: 72px;
+      backdrop-filter: blur(12px);
+      background-color: rgba(255, 255, 255, 0.8);
+      z-index: 10;
     }
   }
 }

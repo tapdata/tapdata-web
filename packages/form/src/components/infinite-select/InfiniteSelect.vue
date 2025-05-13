@@ -257,7 +257,6 @@ onMounted(() => {
 <template>
   <el-select
     ref="selectRef"
-    placeholder="请选择"
     :model-value="modelValue"
     remote
     filterable

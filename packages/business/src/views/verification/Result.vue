@@ -1,6 +1,7 @@
 <script>
 import { inspectResultsApi } from '@tap/api'
 import dayjs from 'dayjs'
+import { ErrorMessage } from '../../components/error-message'
 import PageContainer from '../../components/PageContainer.vue'
 import { inspectMethod as typeMap } from './const'
 import mixins from './mixins'
@@ -86,7 +87,7 @@ export default {
         })
     },
     showErrorMessage() {
-      this.$alert(this.errorMsg)
+      ErrorMessage(this.errorMsg)
     },
   },
 }
@@ -133,18 +134,25 @@ export default {
     </template>
 
     <section v-loading="loading" class="flex flex-column h-100 gap-4">
-      <div
+      <el-alert
         v-if="errorMsg && (type === 'row_count' || type === 'hash')"
-        class="error-tips px-4"
+        :title="errorMsg.split('\n')[0]"
+        type="error"
+        show-icon
+        :closable="false"
+        class="fit-content"
       >
-        <VIcon class="color-danger">error</VIcon>
-        <span>
-          <ElLink type="danger" @click="showErrorMessage">{{
-            $t('packages_business_verification_see_details')
-          }}</ElLink>
-          <VIcon class="ml-2 color-info" size="12">close</VIcon>
-        </span>
-      </div>
+        <template #title>
+          <div class="flex align-center">
+            <span class="flex-1 text-truncate">{{
+              errorMsg.split('\n')[0]
+            }}</span>
+            <el-button text type="danger" @click="showErrorMessage">{{
+              $t('public_view_details')
+            }}</el-button>
+          </div>
+        </template>
+      </el-alert>
       <div
         v-if="inspect && !['running', 'scheduling'].includes(inspect.status)"
         class="result-table"

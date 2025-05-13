@@ -126,7 +126,7 @@ export default defineConfig(({ mode }) => {
             {
               name: 'removeAttributesBySelector',
               params: {
-                selector: ":not(path[fill='none'])",
+                selector: ":not(path[fill='none'],rect[fill='none'])",
                 attributes: ['fill'],
               },
             },

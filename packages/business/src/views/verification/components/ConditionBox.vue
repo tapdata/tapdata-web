@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { InfoFilled, Loading, Right } from '@element-plus/icons-vue'
+import { InfoFilled, Loading, Plus, Right } from '@element-plus/icons-vue'
 import { action } from '@formily/reactive'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import { GitBook, VCodeEditor } from '@tap/component'
@@ -20,6 +20,7 @@ import {
   computed,
   defineExpose,
   inject,
+  nextTick,
   onMounted,
   reactive,
   ref,
@@ -73,6 +74,7 @@ interface Props {
 }
 
 interface Emits {
+  (e: 'update:jointErrorMessage', value: string): void
   (e: 'update:errorMessageLevel', value: string): void
   (e: 'update:autoAddTableLoading', value: boolean): void
   (e: 'openTaskSelect'): void
@@ -597,8 +599,15 @@ const getItemOptions = () => {
 
 const addItem = () => {
   list.value.push(getItemOptions())
-  // Navigate to the last page when adding a new item
   currentPage.value = totalPages.value
+
+  nextTick(() => {
+    document
+      .querySelector('#data-verification-form .joint-table-item:last-child')
+      ?.scrollIntoView({
+        behavior: 'smooth',
+      })
+  })
 }
 
 const removeItem = (id: string) => {
@@ -1404,6 +1413,7 @@ const onVisibleChange = (opt: any = {}, visible) => {
 }
 
 const updateErrorMsg = (msg: string, level = '') => {
+  emit('update:jointErrorMessage', msg)
   emit('update:errorMessageLevel', level)
 }
 
@@ -1437,8 +1447,6 @@ const handleChangeCustomCommand = (val: string, item: any) => {
       }
       item.customCommand = customCommand
     }
-  } else {
-    item.customCommand = null
   }
 }
 
@@ -1536,9 +1544,12 @@ defineExpose({
           }}</span>
           <div class="joint-table-setting overflow-hidden">
             <div class="flex justify-content-between">
-              <div class="cond-item__title flex align-items-center gap-1">
+              <div
+                class="cond-item__title flex align-items-center gap-2 text-truncate min-w-0"
+              >
                 <DatabaseIcon
                   v-if="ConnectorMap[item.source.databaseType]"
+                  class="flex-shrink-0"
                   :pdk-hash="ConnectorMap[item.source.databaseType].pdkHash"
                   :size="20"
                 />
@@ -1552,6 +1563,7 @@ defineExpose({
                 <el-icon size="20"><Right /></el-icon>
                 <DatabaseIcon
                   v-if="ConnectorMap[item.target.databaseType]"
+                  class="flex-shrink-0"
                   :pdk-hash="ConnectorMap[item.target.databaseType].pdkHash"
                   :size="20"
                 />
@@ -1749,7 +1761,7 @@ defineExpose({
                   <label class="item-label" />
                   <div
                     v-if="
-                      item.target.databaseType.toLowerCase().includes('mongo')
+                      item.source.databaseType.toLowerCase().includes('mongo')
                     "
                     class="flex-1"
                   >
@@ -1800,20 +1812,53 @@ defineExpose({
               <div class="flex-1">
                 <div v-if="item.target.enableCustomCommand" class="mt-4 flex">
                   <label class="item-label" />
-                  <div class="flex-1">
-                    <JsonEditor
-                      v-model="item.target.customCommand.params.filter"
-                      class="flex-1"
-                    />
-                    <div class="flex align-center flex-wrap">
-                      <el-text>{{
-                        $t('packages_dag_nodes_table_jinzhichiqu')
-                      }}</el-text>
-                      <el-button text type="primary" @click="openApiDrawer">
-                        {{ $t('packages_business_view_more_apis') }}
-                      </el-button>
-                    </div>
+                  <div
+                    v-if="
+                      item.target.databaseType.toLowerCase().includes('mongo')
+                    "
+                    class="flex-1"
+                  >
+                    <template
+                      v-if="
+                        item.target.customCommand.command === 'executeQuery'
+                      "
+                    >
+                      <JsonEditor
+                        v-model:value="item.target.customCommand.params.filter"
+                      />
+                      <div class="flex align-center flex-wrap">
+                        <el-text>{{
+                          $t('packages_dag_nodes_table_jinzhichiqu')
+                        }}</el-text>
+                        <el-button text type="primary" @click="openApiDrawer">
+                          {{ $t('packages_business_view_more_apis') }}
+                        </el-button>
+                      </div>
+                    </template>
+                    <template
+                      v-else-if="
+                        item.target.customCommand.command === 'aggregate'
+                      "
+                    >
+                      <JsonEditor
+                        v-model:value="
+                          item.target.customCommand.params.pipeline
+                        "
+                      />
+                      <div class="flex align-center flex-wrap">
+                        <el-text>{{
+                          $t('packages_dag_nodes_table_shiligro')
+                        }}</el-text>
+                        <el-button text type="primary" @click="openApiDrawer">
+                          {{ $t('packages_business_view_more_apis') }}
+                        </el-button>
+                      </div>
+                    </template>
                   </div>
+                  <SqlEditor
+                    v-else
+                    v-model:value="item.target.customCommand.params.sql"
+                  />
                 </div>
               </div>
             </div>
@@ -1959,10 +2004,10 @@ defineExpose({
                 :disabled="getModeTypeDisabled(item)"
                 @change="handleChangeModeType($event, item)"
               >
-                <ElRadio label="all">{{
+                <ElRadio value="all">{{
                   $t('packages_business_components_fieldbox_quanziduan')
                 }}</ElRadio>
-                <ElRadio label="custom">{{
+                <ElRadio value="custom">{{
                   $t('packages_business_connections_databaseform_zidingyi')
                 }}</ElRadio>
               </ElRadioGroup>
@@ -2045,8 +2090,8 @@ defineExpose({
           <div class="text-center font-color-light">
             {{
               taskId
-                ? '暂无校验表配置，请自动添加表'
-                : '暂无校验表配置，请选择任务'
+                ? $t('packages_business_verification_empty_auto_add_table')
+                : $t('packages_business_verification_empty_chooseJob')
             }}
           </div>
 
@@ -2062,7 +2107,11 @@ defineExpose({
             type="primary"
             :loading="autoAddTableLoading"
             @click="autoAddTable"
-            >{{
+          >
+            <template #icon>
+              <VIcon>Sparkles</VIcon>
+            </template>
+            {{
               $t('packages_business_verification_button_auto_add_table')
             }}</el-button
           >
@@ -2070,29 +2119,18 @@ defineExpose({
 
         <template v-else>
           <div class="text-center font-color-light">
-            暂无校验表配置，请添加表
+            {{ $t('packages_business_verification_empty_add_table') }}
           </div>
-          <el-button type="primary" @click="addItem">{{
+          <el-button :icon="Plus" type="primary" @click="addItem">{{
             $t('packages_business_verification_addTable')
           }}</el-button>
         </template>
       </div>
 
-      <div
-        v-if="list.length"
-        class="py-4 condition-footer flex align-center position-sticky"
-      >
-        <ElButton @click="addItem">{{
+      <div v-if="list.length" class="py-4 condition-footer flex align-center">
+        <ElButton :icon="Plus" @click="addItem">{{
           $t('packages_business_verification_addTable')
         }}</ElButton>
-        <ElButton
-          v-if="taskId"
-          type="primary"
-          :disabled="!!list.length"
-          :loading="autoAddTableLoading"
-          @click="autoAddTable"
-          >{{ $t('packages_business_verification_button_auto_add_table') }}
-        </ElButton>
 
         <template v-if="!isCountOrHash">
           <el-divider class="mx-3" direction="vertical" />
@@ -2129,8 +2167,9 @@ defineExpose({
             v-model:current-page="currentPage"
             v-model:page-size="pageSize"
             hide-on-single-page
+            background
             :page-sizes="[10, 20, 50, 100]"
-            layout="total, sizes, prev, pager, next"
+            layout="sizes, prev, pager, next"
             :total="filteredList.length"
             @size-change="handleSizeChange"
             @current-change="handlePageChange"
