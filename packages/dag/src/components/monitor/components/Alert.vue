@@ -241,16 +241,18 @@ export default {
         <SelectList
           ref="select"
           v-model="form.level"
-          :empty-values="[undefined]"
+          :empty-values="[undefined, '']"
           :label="$t('packages_dag_components_alert_gaojingjibie')"
           :items="levelItems"
+          clearable
           @change="getList"
         />
         <SelectList
           v-model="form.status"
-          :empty-values="[undefined]"
+          :empty-values="[undefined, '']"
           :label="$t('packages_dag_components_alert_gaojingzhuangtai')"
           :items="statusItems"
+          clearable
           @change="getList"
         />
       </div>
@@ -274,15 +276,15 @@ export default {
           <div class="operate-columns flex flex-wrap">
             <ElButton
               class="ml-0"
-             
-              text type="primary"
+              text
+              type="primary"
               @click="handleLog(scope.row)"
               >{{ $t('packages_dag_monitor_bottompanel_rizhi') }}</ElButton
             >
             <ElButton
               class="ml-0"
-             
-              text type="primary"
+              text
+              type="primary"
               :disabled="scope.row.status === 'CLOESE'"
               @click="handleClose(scope.row)"
               >{{ $t('public_button_close') }}</ElButton

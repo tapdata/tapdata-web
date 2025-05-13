@@ -1,85 +1,15 @@
-<template>
-  <section
-    v-resize.top="{
-      minHeight: 40,
-    }"
-    class="console-panel border-top"
-    :class="showConsole ? 'flex' : 'none'"
-  >
-    <div class="console-panel-side border-end overflow-auto py-2 flex-shrink-0">
-      <!--<div class="console-panel-header p-4">日志</div>-->
-      <div class="step-list px-2">
-        <div
-          class="step-list-header step-item px-2 mb-1 flex align-center font-color-dark"
-          :class="{ active: !nodeId }"
-          @click="toggleNode()"
-        >
-          <VIcon size="20" class="mr-1">folder</VIcon>{{ $t('packages_dag_migration_consolepanel_quanburizhi') }}
-        </div>
-        <div
-          v-for="node in nodeList"
-          :key="node.id"
-          class="step-item px-2 mb-1 flex align-center font-color-dark"
-          :class="{ active: nodeId === node.id }"
-          @click="toggleNode(node.id)"
-        >
-          <NodeIcon :node="node" :size="18" />
-          <div class="flex-1 ml-1 text-truncate">{{ node.name }}</div>
-        </div>
-      </div>
-    </div>
-    <div class="flex-1 flex flex-column">
-      <div class="flex p-2">
-        <ElCheckboxGroup v-model="levels" :min="1" class="inline-flex flex-1" @change="autoLoad">
-          <ElCheckbox label="INFO">INFO</ElCheckbox>
-          <ElCheckbox label="WARN">WARN</ElCheckbox>
-          <ElCheckbox label="ERROR">ERROR</ElCheckbox>
-        </ElCheckboxGroup>
-
-        <VIcon class="ml-3" size="16" @click="toggleConsole(false)">close</VIcon>
-      </div>
-      <div class="log-list-wrap flex-1 min-h-0 px-2 pb-2">
-        <code class="log-list block h-100 overflow-auto py-1 rounded-2">
-          <VEmpty v-if="!logList.length && !ifAuto && !loading" large />
-          <pre
-            v-for="(item, i) in logList"
-            :key="i"
-            class="log-list-item m-0 px-1"
-          ><span class="log-list-item-level mr-1" :class="`log-${item.grade}`">[{{ item.grade }}]</span><span>{{ item.log }}</span></pre>
-
-          <pre v-if="warnNum || errorNum" class="flex m-0 px-1">
-                  <span class="mr-1">{{ $t('packages_dag_migration_consolepanel_dangqianjiancefaxian') }}</span>
-                  <span v-if="warnNum" class="color-warning mr-1">{{ warnNum + $t('public_unit_ge') }}<span class="ml-1">WARN</span></span>
-                  <span v-if="warnNum && errorNum" class="mr-1">{{ $t('public_and') }}</span>
-                  <span v-if="errorNum" class="color-danger mr-1">{{ errorNum + $t('public_unit_ge') }}<span class="ml-1">ERROR,</span></span>
-                  <span>{{ $t('packages_dag_migration_consolepanel_qingguanzhu') }}</span>
-                </pre>
-
-          <pre
-            class="justify-content-center align-center m-0 p-1"
-            :class="ifAuto || loading ? 'flex' : 'none'"
-          ><svg viewBox="25 25 50 50" class="circular">
-                    <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
-                  </svg><span class="ml-1 font-color-light">{{ $t('packages_dag_loading') }}</span>
-                </pre>
-        </code>
-      </div>
-    </div>
-  </section>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import dayjs from 'dayjs'
-import { cloneDeep } from 'lodash-es'
-import i18n from '@tap/i18n'
-
-import '@tap/component/src/directives/resize/index.scss'
-import resize from '@tap/component/src/directives/resize'
 import { taskApi } from '@tap/api'
 import { VEmpty, VIcon } from '@tap/component'
+import resize from '@tap/component/src/directives/resize'
+import i18n from '@tap/i18n'
+import dayjs from 'dayjs'
+
+import { cloneDeep } from 'lodash-es'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 import NodeIcon from '../NodeIcon'
+import '@tap/component/src/directives/resize/index.scss'
 
 export default {
   name: 'ConsolePanel',
@@ -102,7 +32,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
+    ...mapGetters('dataflow', [
+      'activeType',
+      'activeNode',
+      'nodeById',
+      'stateIsReadonly',
+    ]),
     ...mapState('dataflow', ['editVersion', 'showConsole', 'taskId']),
   },
   watch: {
@@ -144,7 +79,8 @@ export default {
       const resetList = data.list?.filter((t) => t.describe) || []
       const modelList = data.modelList || []
       this.loading = false
-      this.logList = list.concat(modelList).concat(this.getResetList(resetList)) || []
+      this.logList =
+        list.concat(modelList).concat(this.getResetList(resetList)) || []
       const { warnNum = 0, errorNum = 0 } = data || {}
       this.warnNum = warnNum
       this.errorNum = errorNum
@@ -152,7 +88,7 @@ export default {
 
       const nodeList = []
       Object.keys(data.nodes).forEach((id) => {
-        let node = this.nodeById(id)
+        const node = this.nodeById(id)
         node && nodeList.push(node)
       })
       this.nodeList = nodeList
@@ -191,7 +127,8 @@ export default {
     getResetList(data) {
       const I18N_MAP = {
         task_reset_start: 'packages_dag_task_reset_start',
-        task_reset_pdk_node_external_resource: 'packages_dag_task_reset_pdk_node_external_resource',
+        task_reset_pdk_node_external_resource:
+          'packages_dag_task_reset_pdk_node_external_resource',
         task_reset_pdk_node_state: 'packages_dag_task_reset_pdk_node_state',
         task_reset_merge_node: 'packages_dag_task_reset_merge_node',
         task_reset_aggregate_node: 'packages_dag_task_reset_aggregate_node',
@@ -204,13 +141,14 @@ export default {
         FAILED: 'packages_dag_console_log_status_fail',
         TASK_FAILED: 'packages_dag_console_log_status_fail',
       }
-      let result = []
+      const result = []
       data.forEach((el) => {
         el.st = el.status
-        el.status = i18n.t(I18N_MAP[el.status])
+        console.log('I18N_MAP[el.status]', I18N_MAP[el.describe])
+        el.status = i18n.global.t(I18N_MAP[el.describe])
         const time = dayjs(el.time).format('YYYY-MM-DD HH:mm:ss')
-        const desc = i18n.t(I18N_MAP[el.describe], el)
-        let item = {}
+        const desc = i18n.global.t(I18N_MAP[el.describe], el)
+        const item = {}
         item.id = el.id
         item.grade = el.level
         item.log = `${time} ${desc}`
@@ -218,22 +156,25 @@ export default {
           item.log += `\n${el.errorMsg}\n${el.errorStack}`
         }
         result.push(item)
-        if (el.describe === 'task_reset_end' && ['FAILED', 'TASK_FAILED'].includes(el.st)) {
-          let { resetTimes = 0, resetAllTimes = 0 } = el
+        if (
+          el.describe === 'task_reset_end' &&
+          ['FAILED', 'TASK_FAILED'].includes(el.st)
+        ) {
+          const { resetTimes = 0, resetAllTimes = 0 } = el
           const rest = resetAllTimes - resetTimes
           if (rest) {
-            let startItem = cloneDeep(item)
-            startItem.log = `${time} ${i18n.t('packages_dag_auto_reset_start', Object.assign({}, el, { rest }))}`
+            const startItem = cloneDeep(item)
+            startItem.log = `${time} ${i18n.global.t('packages_dag_auto_reset_start', Object.assign({}, el, { rest }))}`
             result.push(startItem)
           }
           if (resetTimes) {
-            let nthItem = cloneDeep(item)
-            nthItem.log = `${time} ${i18n.t('packages_dag_auto_reset_start_nth', el)}`
+            const nthItem = cloneDeep(item)
+            nthItem.log = `${time} ${i18n.global.t('packages_dag_auto_reset_start_nth', el)}`
             result.push(nthItem)
           }
           if (resetAllTimes && resetAllTimes === resetTimes) {
-            let resultItem = cloneDeep(item)
-            resultItem.log = `${time} ${i18n.t('packages_dag_auto_reset_start_result', el)}`
+            const resultItem = cloneDeep(item)
+            resultItem.log = `${time} ${i18n.global.t('packages_dag_auto_reset_start_result', el)}`
             result.push(resultItem)
           }
         }
@@ -258,6 +199,84 @@ export default {
   emits: ['stopAuto'],
 }
 </script>
+
+<template>
+  <section
+    v-resize.top="{
+      minHeight: 40,
+    }"
+    class="console-panel border-top"
+    :class="showConsole ? 'flex' : 'none'"
+  >
+    <div class="console-panel-side border-end overflow-auto py-2 flex-shrink-0">
+      <!--<div class="console-panel-header p-4">日志</div>-->
+      <div class="step-list px-2">
+        <div
+          class="step-list-header step-item px-2 mb-1 flex align-center font-color-dark"
+          :class="{ active: !nodeId }"
+          @click="toggleNode()"
+        >
+          <VIcon size="20" class="mr-1">folder</VIcon
+          >{{ $t('packages_dag_migration_consolepanel_quanburizhi') }}
+        </div>
+        <div
+          v-for="node in nodeList"
+          :key="node.id"
+          class="step-item px-2 mb-1 flex align-center font-color-dark"
+          :class="{ active: nodeId === node.id }"
+          @click="toggleNode(node.id)"
+        >
+          <NodeIcon :node="node" :size="18" />
+          <div class="flex-1 ml-1 text-truncate">{{ node.name }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="flex-1 flex flex-column">
+      <div class="flex p-2">
+        <ElCheckboxGroup
+          v-model="levels"
+          :min="1"
+          class="inline-flex flex-1"
+          @change="autoLoad"
+        >
+          <ElCheckbox label="INFO">INFO</ElCheckbox>
+          <ElCheckbox label="WARN">WARN</ElCheckbox>
+          <ElCheckbox label="ERROR">ERROR</ElCheckbox>
+        </ElCheckboxGroup>
+
+        <VIcon class="ml-3" size="16" @click="toggleConsole(false)"
+          >close</VIcon
+        >
+      </div>
+      <div class="log-list-wrap flex-1 min-h-0 px-2 pb-2">
+        <code class="log-list block h-100 overflow-auto py-1 rounded-2">
+          <VEmpty v-if="!logList.length && !ifAuto && !loading" large />
+          <pre
+            v-for="(item, i) in logList"
+            :key="i"
+            class="log-list-item m-0 px-1"
+          ><span class="log-list-item-level mr-1" :class="`log-${item.grade}`">[{{ item.grade }}]</span><span>{{ item.log }}</span></pre>
+
+          <pre v-if="warnNum || errorNum" class="flex m-0 px-1">
+                  <span class="mr-1">{{ $t('packages_dag_migration_consolepanel_dangqianjiancefaxian') }}</span>
+                  <span v-if="warnNum" class="color-warning mr-1">{{ warnNum + $t('public_unit_ge') }}<span class="ml-1">WARN</span></span>
+                  <span v-if="warnNum && errorNum" class="mr-1">{{ $t('public_and') }}</span>
+                  <span v-if="errorNum" class="color-danger mr-1">{{ errorNum + $t('public_unit_ge') }}<span class="ml-1">ERROR,</span></span>
+                  <span>{{ $t('packages_dag_migration_consolepanel_qingguanzhu') }}</span>
+                </pre>
+
+          <pre
+            class="justify-content-center align-center m-0 p-1"
+            :class="ifAuto || loading ? 'flex' : 'none'"
+          ><svg viewBox="25 25 50 50" class="circular">
+                    <circle cx="50" cy="50" r="20" fill="none" class="path"/>
+                  </svg><span class="ml-1 font-color-light">{{ $t('packages_dag_loading') }}</span>
+                </pre>
+        </code>
+      </div>
+    </div>
+  </section>
+</template>
 
 <style lang="scss">
 .databaseLinkDialog {
@@ -307,7 +326,9 @@ export default {
 
       &-item {
         white-space: pre-wrap;
-        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+        font-family:
+          'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier,
+          monospace;
       }
 
       .log-ERROR {

@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { InfoFilled, Loading, Plus, Right } from '@element-plus/icons-vue'
 import { action } from '@formily/reactive'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import { GitBook, VCodeEditor } from '@tap/component'
 import SwitchNumber from '@tap/component/src/SwitchNumber.vue'
-import { AsyncSelect, SchemaForm } from '@tap/form'
+import { AsyncSelect, JsonEditor, SqlEditor } from '@tap/form'
 import i18n from '@tap/i18n'
 import { uuid } from '@tap/shared'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -19,11 +20,13 @@ import {
   computed,
   defineExpose,
   inject,
+  nextTick,
   onMounted,
   reactive,
   ref,
   watch,
 } from 'vue'
+import { DatabaseIcon } from '../../../components'
 import { CONNECTION_STATUS_MAP } from '../../../shared'
 import { inspectMethod as inspectMethodMap } from '../const'
 import CollateMap from './CollateMap.vue'
@@ -74,6 +77,7 @@ interface Emits {
   (e: 'update:jointErrorMessage', value: string): void
   (e: 'update:errorMessageLevel', value: string): void
   (e: 'update:autoAddTableLoading', value: boolean): void
+  (e: 'openTaskSelect'): void
 }
 
 interface ApiResponse<T> {
@@ -125,37 +129,6 @@ interface TableFilter {
   nodeId?: string
 }
 
-interface TableParams {
-  nodeId: string
-  fields: any[]
-  page: number
-  pageSize: number
-  tableFilter?: string
-}
-
-interface ApiResult<T> {
-  data: ApiResponse<T>
-}
-
-interface FieldItem {
-  id: string
-  field_name: string
-  primary_key_position: number
-  data_type: string
-  primaryKey: boolean
-  unique: boolean
-  type: string
-  tapType: string
-}
-
-interface NodeSchemaResponse {
-  items: {
-    fields: FieldItem[]
-    name: string
-  }[]
-  total: number
-}
-
 interface StageItem {
   id: string
   name: string
@@ -168,8 +141,7 @@ interface StageItem {
 }
 
 const formData = inject('formData')
-
-const list = computed(() => formData.tasks)
+const ConnectorMap = inject('ConnectorMap')
 
 // Props and Emits
 const props = withDefaults(defineProps<Props>(), {
@@ -183,10 +155,7 @@ const emit = defineEmits<Emits>()
 // Refs and Reactive State
 const showDoc = ref(false)
 const docPath = ref('')
-// const list = ref<ConditionItem[]>([])
-const jointErrorMessage = ref('')
 const fieldsMap = reactive<Record<string, any[]>>({})
-const capabilitiesMap = reactive<Record<string, any>>({})
 const autoAddTableLoading = ref(false)
 const dynamicSchemaMap = reactive<Record<string, boolean>>({})
 const dialogAddScriptVisible = ref(false)
@@ -200,694 +169,9 @@ const autoSuggestJoinFields = ref(true)
 const searchValue = ref('')
 const fieldDialog = ref()
 
-// const list = computed(() => {
-//   return formData.tasks
-// })
-
-const formSchema = {
-  type: 'object',
-  properties: {
-    nameWrap: {
-      type: 'void',
-      'x-component': 'FormGrid',
-      'x-component-props': {
-        minColumns: 2,
-        maxColumns: 2,
-        columnGap: 16,
-      },
-      properties: {
-        source: {
-          type: 'object',
-          'x-component': 'FormGrid.GridColumn',
-          properties: {
-            databaseType: {
-              type: 'string',
-              'x-display': 'hidden',
-            },
-            fields: {
-              type: 'array',
-              'x-display': 'hidden',
-            },
-            nodeSchema: {
-              type: 'array',
-              'x-display': 'hidden',
-              'x-reactions': [
-                `{{useAsyncDataSource(loadTableFieldList, 'value', $values.source)}}`,
-                {
-                  target: 'source.conditions.*.key',
-                  fulfill: {
-                    state: {
-                      loading: '{{$self.loading}}',
-                      dataSource: '{{$self.value}}',
-                    },
-                  },
-                },
-              ],
-            },
-            enableCustomCommand: {
-              title: i18n.t(
-                'packages_business_components_conditionbox_laiyuanbiaoshuju',
-              ),
-              type: 'boolean',
-              'x-decorator': 'FormItem',
-              'x-decorator-props': {
-                className: 'item-control-horizontal',
-                layout: 'horizontal',
-                tooltip: i18n.t(
-                  'packages_business_components_conditionbox_enableCustomCommand_tip',
-                ),
-              },
-              'x-component': 'Switch',
-              default: false,
-              'x-reactions': [
-                {
-                  fulfill: {
-                    state: {
-                      visible: `{{$values.source.capabilities && $values.source.capabilities.some(item => item.id === 'execute_command_function')}}`,
-                    },
-                  },
-                },
-              ],
-            },
-            customCommand: {
-              type: 'object',
-              properties: {
-                command: {
-                  title: ' ',
-                  'x-decorator-props': {
-                    colon: false,
-                  },
-                  type: 'string',
-                  default: 'executeQuery',
-                  'x-decorator': 'FormItem',
-                  'x-component': 'Radio.Group',
-                  enum: [
-                    { label: i18n.t('public_query'), value: 'executeQuery' },
-                    { label: i18n.t('public_aggregate'), value: 'aggregate' },
-                  ],
-                  'x-reactions': {
-                    dependencies: ['source.databaseType'],
-                    fulfill: {
-                      state: {
-                        display:
-                          '{{$deps[0].toLowerCase().includes("mongo")?"visible":"hidden"}}',
-                      },
-                    },
-                  },
-                },
-                params: {
-                  type: 'object',
-                  properties: {
-                    mongoQuery: {
-                      title: ' ',
-                      'x-decorator-props': {
-                        colon: false,
-                      },
-                      type: 'void',
-                      'x-reactions': {
-                        dependencies: [
-                          'source.customCommand.command',
-                          'source.databaseType',
-                        ],
-                        fulfill: {
-                          state: {
-                            visible:
-                              '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="executeQuery"}}',
-                          },
-                        },
-                      },
-                      properties: {
-                        op: {
-                          type: 'string',
-                          default: 'find',
-                        },
-                        collection: {
-                          type: 'string',
-                          'x-reactions': {
-                            fulfill: {
-                              state: {
-                                value: '{{$values.tableName}}',
-                              },
-                            },
-                          },
-                        },
-                        filter: {
-                          title: ' ',
-                          'x-decorator-props': {
-                            colon: false,
-                            feedbackLayout: 'none',
-                          },
-                          type: 'string',
-                          'x-decorator': 'FormItem',
-                          'x-component': 'JsonEditor',
-                          'x-component-props': {
-                            options: {
-                              showPrintMargin: false,
-                              useWrapMode: true,
-                            },
-                          },
-                        },
-                        descWrap: {
-                          type: 'void',
-                          title: ' ',
-                          'x-decorator': 'FormItem',
-                          'x-decorator-props': {
-                            colon: false,
-                            feedbackLayout: 'none',
-                          },
-                          'x-component': 'div',
-                          'x-component-props': {
-                            class: 'flex align-center flex-wrap',
-                          },
-                          properties: {
-                            desc: {
-                              type: 'void',
-                              'x-component': 'div',
-                              'x-component-props': {
-                                style: {
-                                  color: '#909399',
-                                },
-                              },
-                              'x-content': i18n.t(
-                                'packages_dag_nodes_table_jinzhichiqu',
-                              ),
-                            },
-                            link: {
-                              type: 'void',
-                              'x-component': 'Button',
-                              'x-component-props': {
-                                text: true,
-                                type: 'primary',
-                                onClick: '{{openApiDrawer}}',
-                              },
-                              'x-content': i18n.t(
-                                'packages_business_view_more_apis',
-                              ),
-                            },
-                          },
-                        },
-                      },
-                    },
-                    mongoAgg: {
-                      title: ' ',
-                      'x-decorator-props': {
-                        colon: false,
-                      },
-                      type: 'void',
-                      'x-reactions': {
-                        dependencies: [
-                          'source.customCommand.command',
-                          'source.databaseType',
-                        ],
-                        fulfill: {
-                          state: {
-                            visible:
-                              '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="aggregate"}}',
-                          },
-                        },
-                      },
-                      properties: {
-                        collection: {
-                          type: 'string',
-                          'x-reactions': {
-                            dependencies: ['source.tableName'],
-                            fulfill: {
-                              state: {
-                                value: '{{$deps[0]}}',
-                              },
-                            },
-                          },
-                        },
-                        pipeline: {
-                          title: ' ',
-                          'x-decorator-props': {
-                            colon: false,
-                            feedbackLayout: 'none',
-                          },
-                          type: 'string',
-                          'x-decorator': 'FormItem',
-                          'x-component': 'JsonEditor',
-                          'x-component-props': {
-                            options: {
-                              showPrintMargin: false,
-                              useWrapMode: true,
-                            },
-                          },
-                        },
-                        descWrap: {
-                          type: 'void',
-                          title: ' ',
-                          'x-decorator': 'FormItem',
-                          'x-decorator-props': {
-                            colon: false,
-                            feedbackLayout: 'none',
-                          },
-                          'x-component': 'div',
-                          'x-component-props': {
-                            class: 'flex align-center flex-wrap',
-                          },
-                          properties: {
-                            desc: {
-                              type: 'void',
-                              'x-component': 'div',
-                              'x-component-props': {
-                                style: {
-                                  color: '#909399',
-                                },
-                              },
-                              'x-content': i18n.t(
-                                'packages_dag_nodes_table_shiligro',
-                              ),
-                            },
-                            link: {
-                              type: 'void',
-                              'x-component': 'Button',
-                              'x-component-props': {
-                                text: true,
-                                type: 'primary',
-                                onClick: '{{openApiDrawer}}',
-                              },
-                              'x-content': i18n.t(
-                                'packages_business_view_more_apis',
-                              ),
-                            },
-                          },
-                        },
-                      },
-                    },
-                    sql: {
-                      title: ' ',
-                      'x-decorator-props': {
-                        colon: false,
-                      },
-                      type: 'string',
-                      'x-decorator': 'FormItem',
-                      'x-component': 'SqlEditor',
-                      'x-component-props': {
-                        options: { showPrintMargin: false, useWrapMode: true },
-                      },
-                      'x-reactions': {
-                        dependencies: [
-                          'source.enableCustomCommand',
-                          'source.databaseType',
-                        ],
-                        fulfill: {
-                          state: {
-                            visible:
-                              '{{!!$deps[0] && !$deps[1].toLowerCase().includes("mongo")}}',
-                          },
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-              'x-reactions': [
-                {
-                  dependencies: ['source.enableCustomCommand'],
-                  fulfill: {
-                    state: {
-                      visible: `{{$deps[0]}}`,
-                    },
-                  },
-                },
-              ],
-            },
-          },
-        },
-        target: {
-          type: 'object',
-          'x-component': 'FormGrid.GridColumn',
-          properties: {
-            databaseType: {
-              type: 'string',
-              'x-display': 'hidden',
-            },
-            fields: {
-              type: 'array',
-              'x-display': 'hidden',
-            },
-            nodeSchema: {
-              type: 'array',
-              'x-display': 'hidden',
-              'x-reactions': [
-                `{{useAsyncDataSource(loadTableFieldList, 'value', $values.target)}}`,
-                {
-                  target: 'target.conditions.*.key',
-                  fulfill: {
-                    state: {
-                      loading: '{{$self.loading}}',
-                      dataSource: '{{$self.value}}',
-                    },
-                  },
-                },
-              ],
-            },
-            enableCustomCommand: {
-              title: i18n.t(
-                'packages_business_components_conditionbox_mubiaobiaoshuju',
-              ),
-              type: 'boolean',
-              'x-decorator': 'FormItem',
-              'x-decorator-props': {
-                className: 'item-control-horizontal',
-                layout: 'horizontal',
-                labelWrap: true,
-                tooltip: i18n.t(
-                  'packages_business_components_conditionbox_enableCustomCommand_tip',
-                ),
-              },
-              'x-component': 'Switch',
-              default: false,
-              'x-reactions': [
-                {
-                  fulfill: {
-                    state: {
-                      visible: `{{$values.target.capabilities && $values.target.capabilities.some(item => item.id === 'execute_command_function')}}`,
-                    },
-                  },
-                },
-              ],
-            },
-            customCommand: {
-              type: 'object',
-              properties: {
-                command: {
-                  title: ' ',
-                  'x-decorator-props': {
-                    colon: false,
-                  },
-                  type: 'string',
-                  default: 'executeQuery',
-                  'x-decorator': 'FormItem',
-                  'x-component': 'Radio.Group',
-                  enum: [
-                    { label: i18n.t('public_query'), value: 'executeQuery' },
-                    { label: i18n.t('public_aggregate'), value: 'aggregate' },
-                  ],
-                  'x-reactions': {
-                    dependencies: ['target.databaseType'],
-                    fulfill: {
-                      state: {
-                        display:
-                          '{{$deps[0].toLowerCase().includes("mongo")?"visible":"hidden"}}',
-                      },
-                    },
-                  },
-                },
-                params: {
-                  type: 'object',
-                  properties: {
-                    mongoQuery: {
-                      title: ' ',
-                      'x-decorator-props': {
-                        colon: false,
-                      },
-                      type: 'void',
-                      'x-reactions': {
-                        dependencies: [
-                          'target.customCommand.command',
-                          'target.databaseType',
-                        ],
-                        fulfill: {
-                          state: {
-                            visible:
-                              '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="executeQuery"}}',
-                          },
-                        },
-                      },
-                      properties: {
-                        op: {
-                          type: 'string',
-                          default: 'find',
-                        },
-                        collection: {
-                          type: 'string',
-                          'x-reactions': {
-                            fulfill: {
-                              state: {
-                                value: '{{$values.tableName}}',
-                              },
-                            },
-                          },
-                        },
-                        filter: {
-                          title: ' ',
-                          'x-decorator-props': {
-                            colon: false,
-                            feedbackLayout: 'none',
-                          },
-                          type: 'string',
-                          'x-decorator': 'FormItem',
-                          'x-component': 'JsonEditor',
-                          'x-component-props': {
-                            options: {
-                              showPrintMargin: false,
-                              useWrapMode: true,
-                            },
-                          },
-                        },
-                        descWrap: {
-                          type: 'void',
-                          title: ' ',
-                          'x-decorator': 'FormItem',
-                          'x-decorator-props': {
-                            colon: false,
-                            feedbackLayout: 'none',
-                          },
-                          'x-component': 'div',
-                          'x-component-props': {
-                            class: 'flex align-center flex-wrap',
-                          },
-                          properties: {
-                            desc: {
-                              type: 'void',
-                              'x-component': 'div',
-                              'x-component-props': {
-                                style: {
-                                  color: '#909399',
-                                },
-                              },
-                              'x-content': i18n.t(
-                                'packages_dag_nodes_table_jinzhichiqu',
-                              ),
-                            },
-                            link: {
-                              type: 'void',
-                              'x-component': 'Button',
-                              'x-component-props': {
-                                text: true,
-                                type: 'primary',
-                                onClick: '{{openApiDrawer}}',
-                              },
-                              'x-content': i18n.t(
-                                'packages_business_view_more_apis',
-                              ),
-                            },
-                          },
-                        },
-                      },
-                    },
-                    mongoAgg: {
-                      title: ' ',
-                      'x-decorator-props': {
-                        colon: false,
-                      },
-                      type: 'void',
-                      'x-reactions': {
-                        dependencies: [
-                          'target.customCommand.command',
-                          'target.databaseType',
-                        ],
-                        fulfill: {
-                          state: {
-                            visible:
-                              '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="aggregate"}}',
-                          },
-                        },
-                      },
-                      properties: {
-                        collection: {
-                          type: 'string',
-                          'x-reactions': {
-                            dependencies: ['target.tableName'],
-                            fulfill: {
-                              state: {
-                                value: '{{$deps[0]}}',
-                              },
-                            },
-                          },
-                        },
-                        pipeline: {
-                          title: ' ',
-                          'x-decorator-props': {
-                            colon: false,
-                            feedbackLayout: 'none',
-                          },
-                          type: 'string',
-                          'x-decorator': 'FormItem',
-                          'x-component': 'JsonEditor',
-                          'x-component-props': {
-                            options: {
-                              showPrintMargin: false,
-                              useWrapMode: true,
-                            },
-                          },
-                        },
-                        descWrap: {
-                          type: 'void',
-                          title: ' ',
-                          'x-decorator': 'FormItem',
-                          'x-decorator-props': {
-                            colon: false,
-                            feedbackLayout: 'none',
-                          },
-                          'x-component': 'div',
-                          'x-component-props': {
-                            class: 'flex align-center flex-wrap',
-                          },
-                          properties: {
-                            desc: {
-                              type: 'void',
-                              'x-component': 'div',
-                              'x-component-props': {
-                                style: {
-                                  color: '#909399',
-                                },
-                              },
-                              'x-content': i18n.t(
-                                'packages_dag_nodes_table_shiligro',
-                              ),
-                            },
-                            link: {
-                              type: 'void',
-                              'x-component': 'Button',
-                              'x-component-props': {
-                                text: true,
-                                type: 'primary',
-                                onClick: '{{openApiDrawer}}',
-                              },
-                              'x-content': i18n.t(
-                                'packages_business_view_more_apis',
-                              ),
-                            },
-                          },
-                        },
-                      },
-                    },
-                    sql: {
-                      title: ' ',
-                      'x-decorator-props': {
-                        colon: false,
-                      },
-                      type: 'string',
-                      'x-decorator': 'FormItem',
-                      'x-component': 'SqlEditor',
-                      'x-component-props': {
-                        options: { showPrintMargin: false, useWrapMode: true },
-                      },
-                      'x-reactions': {
-                        dependencies: [
-                          'target.enableCustomCommand',
-                          'target.databaseType',
-                        ],
-                        fulfill: {
-                          state: {
-                            visible:
-                              '{{!!$deps[0] && !$deps[1].toLowerCase().includes("mongo")}}',
-                          },
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-              'x-reactions': [
-                {
-                  dependencies: ['target.enableCustomCommand'],
-                  fulfill: {
-                    state: {
-                      visible: `{{$deps[0]}}`,
-                    },
-                  },
-                },
-              ],
-            },
-          },
-        },
-      },
-    },
-  },
-}
-
-const schemaScope = {
-  $supportFilterFunction:
-    props.inspectMethod === 'row_count'
-      ? 'count_by_partition_filter_function'
-      : 'query_by_advance_filter_function',
-  useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
-    return (field) => {
-      field.loading = true
-      service({ field }, ...serviceParams).then(
-        action.bound((data) => {
-          if (fieldName === 'value') {
-            field.setValue(data)
-          } else field[fieldName] = data
-          field.loading = false
-        }),
-      )
-    }
-  },
-  async loadTableFieldList(obj, item) {
-    try {
-      if (!item.connectionId || !item.table) return []
-      let fields = item.fields
-      if (!fields?.length) {
-        const params = {
-          where: {
-            meta_type: 'table',
-            sourceType: 'SOURCE',
-            original_name: item.table,
-            'source._id': item.connectionId,
-          },
-          limit: 1,
-        }
-        const data = await metadataInstancesApi.tapTables({
-          filter: JSON.stringify(params),
-        })
-        fields = Object.values(data.items[0]?.nameFieldMap || {}).map((t) => {
-          return {
-            id: t.id,
-            label: t.fieldName || t.field_name,
-            value: t.fieldName || t.field_name,
-            field_name: t.fieldName || t.field_name,
-            primary_key_position: t.primaryKey,
-            data_type: t.dataType || t.data_type,
-            primaryKey: t.primaryKey,
-            unique: t.unique,
-            type: t.dataType || t.data_type,
-            tapType: JSON.stringify(t.tapType),
-          }
-        })
-      }
-      const result = fields
-
-      if (result.length) {
-        item.fields = result
-      }
-
-      return result
-    } catch {
-      return []
-    }
-  },
-  openApiDrawer: (path) => {
-    docPath.value = isString(path) ? path : ''
-    showDoc.value = true
-  },
-}
-
 // Computed Properties
+const list = computed(() => formData.tasks)
+
 const flowStages = computed(() => {
   const types = props.isDB ? ['database'] : ['table']
   return props.allStages.filter((stg) => types.includes(stg.type))
@@ -919,55 +203,25 @@ const totalPages = computed(() => {
   return Math.ceil(filteredList.value.length / pageSize.value)
 })
 
-const nullsLastState = computed(() => {
-  return Object.keys(capabilitiesMap).reduce(
-    (cur, pre) => {
-      const tags = capabilitiesMap[pre]?.tags || []
-      if (tags.includes('NullsLast')) {
-        cur[pre] = true
-      }
-      return cur
-    },
-    {} as Record<string, boolean>,
-  )
-})
-
-// Watchers
-// watch(
-//   () => props.taskId,
-//   (v1, v2) => {
-//     if (v1 !== v2) {
-//       clearList()
-//     }
-//   },
-// )
-
-// watch(
-//   () => props.data,
-//   () => {
-//     loadList()
-//   },
-//   { deep: true },
-// )
-
-watch(
-  list,
-  () => {
-    debounceValidate()
-    // Reset to page 1 if list is empty
-    if (list.value.length === 0) {
-      currentPage.value = 1
-    }
-  },
-  { deep: true },
-)
-
 watch(searchValue, () => {
   // Reset to page 1 when search filter changes
   currentPage.value = 1
 })
 
 // Methods
+const openApiDrawer = (path: string) => {
+  docPath.value = isString(path) ? path : ''
+  showDoc.value = true
+}
+
+const hasCapability = (obj, capability) => {
+  if (!obj.databaseType) return false
+
+  const item = ConnectorMap.value[obj.databaseType]
+
+  return item?.capabilityMap[capability]
+}
+
 const getConnectionsListMethod = async (
   filter: any,
 ): Promise<ApiResponse<ConnectionResponse>> => {
@@ -1345,8 +599,15 @@ const getItemOptions = () => {
 
 const addItem = () => {
   list.value.push(getItemOptions())
-  // Navigate to the last page when adding a new item
   currentPage.value = totalPages.value
+
+  nextTick(() => {
+    document
+      .querySelector('#data-verification-form .joint-table-item:last-child')
+      ?.scrollIntoView({
+        behavior: 'smooth',
+      })
+  })
 }
 
 const removeItem = (id: string) => {
@@ -1376,9 +637,6 @@ const autoAddTable = async () => {
   })
 
   const connectionIds = [...connectionSet]
-
-  // 加载数据源的Capabilities
-  const capabilitiesMap = await getCapabilities(connectionIds)
 
   if (!matchNodeList.length) {
     autoAddTableLoading.value = false
@@ -1431,7 +689,6 @@ const autoAddTable = async () => {
         const sourceTableList = Object.keys(tableNameRelation)
         sourceTableList.forEach((ge: string) => {
           const item = getItemOptions()
-          // 填充source
           item.source.nodeId = source
           item.source.nodeName = sourceName
           item.source.databaseType = sourceDatabaseType
@@ -1439,9 +696,7 @@ const autoAddTable = async () => {
           item.source.connectionName = sourceConnectionName
           item.source.currentLabel = `${sourceName} / ${sourceConnectionName}`
           item.source.table = ge // findTable.original_name
-          item.source.capabilities =
-            capabilitiesMap[sourceConnectionId]?.capabilities || []
-          // 填充target
+
           item.target.nodeId = target
           item.target.nodeName = targetName
           item.target.databaseType = targetDatabaseType
@@ -1449,8 +704,6 @@ const autoAddTable = async () => {
           item.target.connectionName = targetConnectionName
           item.target.currentLabel = `${targetName} / ${targetConnectionName}`
           item.target.table = tableNameRelation[ge] // findTargetTable.original_name
-          item.target.capabilities =
-            capabilitiesMap[targetConnectionId]?.capabilities || []
 
           const updateList = cloneDeep(
             updateConditionFieldMap[tableNameRelation[ge]] || [],
@@ -1586,25 +839,12 @@ const handleChangeConnection = async (opt: any, item: any) => {
   item.sortColumn = '' // 重选连接，清空表
   item.databaseType = opt.databaseType
 
-  if (capabilitiesMap?.[opt.attrs?.connectionId]) {
-    item.capabilities =
-      capabilitiesMap[opt.attrs?.connectionId]?.capabilities || []
-  } else {
-    const { capabilities, tags } = await getConnectionCapabilities(
-      opt.attrs?.connectionId,
-    )
-    item.capabilities = capabilities
-    capabilitiesMap[opt.attrs?.connectionId] = {
-      capabilities,
-      tags,
-    }
-  }
-
   if (!props.taskId) {
     item.connectionName = opt.attrs?.connectionName
     item.currentLabel = item.connectionName
     return
   }
+
   const { nodeId, nodeName, connectionName } = opt.attrs || {}
   item.nodeId = nodeId
   item.nodeName = nodeName
@@ -1708,9 +948,6 @@ const handleChangeTable = (
   item.target.connectionName = targetConnectionName
   item.target.currentLabel = `${targetName} / ${targetConnectionName}`
   item.target.table = tableName ? tableName : tableNameRelation[val]
-
-  item.target.capabilities =
-    capabilitiesMap[targetConnectionId]?.capabilities || []
 
   const key = [target || '', targetConnectionId, item.target.table].join()
   if (fieldsMap[key]) {
@@ -1983,11 +1220,11 @@ const validate = async () => {
 const validateCapabilities = (tasks: any[], capability: string) => {
   const noSupportList = new Set()
   tasks.forEach((item) => {
-    if (!item.source.capabilities?.find((c: any) => c.id === capability)) {
+    if (!hasCapability(item.source, capability)) {
       noSupportList.add(item.source.databaseType)
     }
 
-    if (!item.target.capabilities?.find((c: any) => c.id === capability)) {
+    if (!hasCapability(item.target, capability)) {
       noSupportList.add(item.target.databaseType)
     }
   })
@@ -2130,11 +1367,11 @@ const handleChangeFields = (data: any[] = [], id: string) => {
   item.target.columns = data.map((t) => t.target)
 }
 
-const handleFocus = (opt: any = {}, visible) => {
+const onVisibleChange = (opt: any = {}, visible) => {
   if (!visible || opt.fields?.length) {
     return
   }
-
+  opt.fieldsLoading = true
   const connectionId = opt.connectionId
   const params = {
     where: {
@@ -2170,46 +1407,9 @@ const handleFocus = (opt: any = {}, visible) => {
         },
       )
     })
-}
-
-const getCapabilities = async (connectionIds: string[] = []) => {
-  if (!connectionIds.length) return
-
-  const map = {}
-
-  await Promise.all(
-    connectionIds.map(async (id) => {
-      const { capabilities, tags } = await getConnectionCapabilities(id)
-      map[id] = {
-        capabilities,
-        tags,
-      }
-    }),
-  )
-
-  // 重置 capabilitiesMap 后再更新
-  Object.keys(capabilitiesMap).forEach((key) => {
-    delete capabilitiesMap[key]
-  })
-  Object.assign(capabilitiesMap, map)
-
-  return map
-}
-
-const getMatchCapabilitiesMap = () => {
-  const list = cloneDeep(props.allStages)
-  return list.reduce((cur: any, pre: any) => {
-    cur[pre.connectionId] = pre.attrs?.capabilities
-    return cur
-  }, {})
-}
-
-const getConnectionCapabilities = async (id: string) => {
-  const data = await connectionsApi.getNoSchema(id)
-  return {
-    capabilities: data?.capabilities || [],
-    tags: data?.definitionTags || [],
-  }
+    .finally(() => {
+      opt.fieldsLoading = false
+    })
 }
 
 const updateErrorMsg = (msg: string, level = '') => {
@@ -2236,6 +1436,24 @@ const toggleCollate = (item: any, value: boolean) => {
   }
 }
 
+const handleChangeCustomCommand = (val: string, item: any) => {
+  if (val) {
+    let { customCommand } = item
+
+    if (!customCommand) {
+      customCommand = {
+        command: 'executeQuery',
+        params: {},
+      }
+      item.customCommand = customCommand
+    }
+  }
+}
+
+const isNullsLast = (item: any) => {
+  return ConnectorMap.value[item.databaseType]?.isNullsLast
+}
+
 // Lifecycle Hooks
 onMounted(() => {
   loadDoc()
@@ -2246,513 +1464,767 @@ defineExpose({
   autoAddTable,
   getList,
   validate,
-  getCapabilities,
 })
 </script>
 
 <template>
-  <div class="joint-table rounded-lg" :class="{ error: !!jointErrorMessage }">
-    <div
-      class="joint-table-header px-4 py-2 flex align-items-center border-bottom"
-    >
-      <span class="fs-6">{{
-        $t('packages_business_verification_verifyCondition')
-      }}</span>
-      <span
-        class="ml-2 rounded-pill font-color-light px-2 text-center"
-        style="min-width: 32px; background-color: #818b981f"
-        >{{ filteredList.length }}</span
-      >
-      <span v-if="!list.length" class="ml-4 color-danger">{{
-        $t('packages_business_verification_message_error_joint_table_not_set')
-      }}</span>
-      <span class="color-danger ml-6">{{ jointErrorMessage }}</span>
-      <div class="flex-1" />
-      <ElInput
-        v-model="searchValue"
-        :placeholder="$t('packages_form_table_rename_index_sousuobiaoming')"
-        class="w-auto mr-4"
-        clearable
-      >
-        <template #prefix>
-          <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
-        </template>
-      </ElInput>
-      <ElButton
-        v-if="
-          !isCountOrHash &&
-          list.some((t) => !t.source.sortColumn || !t.target.sortColumn)
-        "
-        text
-        type="primary"
-        :disabled="!list.length"
-        @click="handleClearIndexEmpty"
-        >{{ $t('packages_business_components_conditionbox_yijianqingchusuo') }}
-      </ElButton>
-      <ElButton
-        text
-        type="primary"
-        :disabled="!list.length"
-        @click="handleClear"
-        >{{ $t('packages_business_verification_clear') }}
-      </ElButton>
-    </div>
-    <!-- Replace virtual scroller with standard list -->
-    <div
-      id="data-verification-form"
-      class="joint-table-main scroller px-2 py-1 h-100"
-    >
-      <!-- <SchemaForm
-        :model-value="formData"
-        :schema="{
-          type: 'object',
-          properties: {
-            name: {
-              type: 'string',
-              'x-decorator': 'FormItem',
-              'x-component': 'Input',
-            },
-          },
-        }"
-        :colon="true"
-        class="w-100"
-        label-width="130"
-      /> -->
-      <div
-        v-for="(item, index) in paginatedList"
-        :key="item.id"
-        class="joint-table-item"
-      >
-        <div class="joint-table-setting overflow-hidden">
-          <div class="flex justify-content-between">
-            <div class="cond-item__title flex align-items-center">
-              <span class="font-color-main fs-7">{{
-                $t('packages_business_components_conditionbox_jianyantiaojian')
-              }}</span>
-              <span class="ml-1">{{
-                (currentPage - 1) * pageSize + index + 1
-              }}</span>
-            </div>
-            <div class="flex align-items-center">
-              <ElButton type="danger" text @click.stop="removeItem(item.id)">{{
-                $t('public_button_delete')
-              }}</ElButton>
-            </div>
-          </div>
-          <div :key="`connection${item.id}`" class="setting-item mt-4">
-            <label class="item-label"
-              >{{
-                $t(
-                  'packages_business_components_conditionbox_daijiaoyanlianjie',
-                )
-              }}:</label
-            >
-            <AsyncSelect
-              :key="`sourceConnectionId${item.id}`"
-              v-model="item.source.connectionId"
-              :method="getConnectionsListMethod"
-              item-query="name"
-              item-value="id"
-              filterable
-              class="item-select"
-              @option-select="handleChangeConnection($event, item.source)"
-            />
-            <span class="item-icon fs-6">
-              <el-icon><el-icon-arrow-right /></el-icon>
-            </span>
-            <AsyncSelect
-              :key="`targetConnectionId${item.id}`"
-              v-model="item.target.connectionId"
-              :method="getConnectionsListMethod"
-              item-query="name"
-              item-value="id"
-              filterable
-              class="item-select"
-              @option-select="handleChangeConnection($event, item.target)"
-            />
-          </div>
-          <div :key="`table${item.id}`" class="setting-item mt-4">
-            <label class="item-label"
-              >{{
-                $t('packages_business_components_conditionbox_laiyuanbiao')
-              }}:</label
-            >
-            <AsyncSelect
-              :key="`sourceTable${item.id}`"
-              v-model="item.source.table"
-              :method="getTableListMethod"
-              :params="{
-                connectionId: item.source.connectionId,
-                nodeId: item.source.nodeId,
-              }"
-              item-query="name"
-              item-type="string"
-              lazy
-              filterable
-              class="item-select"
-              @change="handleChangeTable($event, item, index, 'source')"
-            />
-            <span class="item-icon"
-              >{{
-                $t('packages_business_components_conditionbox_mubiaobiao')
-              }}:</span
-            >
-            <AsyncSelect
-              :key="`targetTable${item.id}`"
-              v-model="item.target.table"
-              :method="getTableListMethod"
-              :params="{
-                connectionId: item.target.connectionId,
-                nodeId: item.target.nodeId,
-              }"
-              item-query="name"
-              item-type="string"
-              lazy
-              filterable
-              class="item-select"
-              @change="handleChangeTable($event, item, index, 'target')"
-            />
-          </div>
-          <div
-            :key="`SchemaToForm${item.id}${index}${inspectMethod}`"
-            class="setting-item mt-4"
+  <ElCollapseItem name="condition">
+    <template #title="{ isActive }">
+      <div class="flex align-center gap-3">
+        <span>{{ $t('packages_business_verification_verifyCondition') }}</span>
+        <span
+          class="rounded-pill font-color-light px-2 text-center lh-lg"
+          style="min-width: 32px; background-color: #818b981f"
+        >
+          <el-text
+            v-if="formData.taskMode === 'pipeline' && autoAddTableLoading"
           >
-            <SchemaForm
-              :ref="`schemaToForm_${item.id}`"
-              :model-value="item"
-              :schema="formSchema"
-              :scope="schemaScope"
-              :colon="true"
-              class="w-100"
-              label-width="130"
-            />
-          </div>
-          <template v-if="!isCountOrHash">
-            <div class="setting-item mt-4">
-              <label class="item-label"
-                >{{ $t('packages_business_verification_indexField') }}:
-              </label>
-              <FieldSelectWrap
-                v-model:value="item.source.sortColumn"
-                :options="item.source.fields"
-                class="flex-1"
-                @visible-change="handleFocus(item.source, $event)"
-              />
-              <span class="item-icon" />
-              <FieldSelectWrap
-                v-model:value="item.target.sortColumn"
-                :options="item.target.fields"
-                class="flex-1"
-                @visible-change="handleFocus(item.target, $event)"
-              />
-            </div>
+            <el-icon class="is-loading">
+              <Loading />
+            </el-icon>
+          </el-text>
 
-            <div class="setting-item mt-4">
-              <label class="item-label"
-                >{{ $t('packages_business_custom_collate') }}:
-              </label>
-              <div class="flex-1">
-                <div class="flex gap-3 align-center">
-                  <ElSwitch
-                    v-model="item.source.enableCustomCollate"
-                    @change="toggleCollate(item.source, $event)"
-                  />
+          <span v-else>
+            {{ filteredList.length }}
+          </span>
+        </span>
 
-                  <ElButton
-                    text
-                    type="primary"
-                    @click="schemaScope.openApiDrawer('inspect-collate')"
-                  >
-                    <VIcon class="mr-1">question-circle</VIcon>
-                    {{ $t('public_view_docs') }}
-                  </ElButton>
-                </div>
+        <span
+          v-if="formData.taskMode === 'pipeline' && autoAddTableLoading"
+          class="font-color-sslight"
+          >{{ $t('packages_business_verification_form_zhengzaijiyuren') }}</span
+        >
 
-                <div v-if="item.source.enableCustomCollate">
-                  <CollateMap
-                    v-model:value="item.source.collate"
-                    :sort-coldumn="item.source.sortColumn"
-                    :fields="item.source.fields"
-                  />
-                </div>
+        <div v-if="isActive" class="felx align-center ml-auto" @click.stop>
+          <ElInput
+            v-model="searchValue"
+            :placeholder="$t('packages_form_table_rename_index_sousuobiaoming')"
+            class="w-auto mr-4"
+            clearable
+          >
+            <template #prefix>
+              <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
+            </template>
+          </ElInput>
+          <ElButton
+            v-if="
+              !isCountOrHash &&
+              list.some((t) => !t.source.sortColumn || !t.target.sortColumn)
+            "
+            text
+            type="primary"
+            :disabled="!list.length"
+            @click="handleClearIndexEmpty"
+            >{{
+              $t('packages_business_components_conditionbox_yijianqingchusuo')
+            }}
+          </ElButton>
+          <ElButton
+            text
+            type="primary"
+            :disabled="!list.length"
+            @click="handleClear"
+            >{{ $t('packages_business_verification_clear') }}
+          </ElButton>
+        </div>
+      </div>
+    </template>
+    <div class="joint-table rounded-lg">
+      <div
+        id="data-verification-form"
+        class="joint-table-main scroller h-100 flex flex-column gap-4"
+      >
+        <div
+          v-for="(item, index) in paginatedList"
+          :key="item.id"
+          class="joint-table-item rounded-xl border"
+        >
+          <span class="cond-item__index">{{
+            (currentPage - 1) * pageSize + index + 1
+          }}</span>
+          <div class="joint-table-setting overflow-hidden">
+            <div class="flex justify-content-between">
+              <div
+                class="cond-item__title flex align-items-center gap-2 text-truncate min-w-0"
+              >
+                <DatabaseIcon
+                  v-if="ConnectorMap[item.source.databaseType]"
+                  class="flex-shrink-0"
+                  :pdk-hash="ConnectorMap[item.source.databaseType].pdkHash"
+                  :size="20"
+                />
+                <span class="fw-sub">
+                  <el-text>
+                    {{ item.source.connectionName || '--' }}
+                  </el-text>
+                </span>
+                <span>/</span>
+                <span class="fw-sub">{{ item.source.table || '-' }}</span>
+                <el-icon size="20"><Right /></el-icon>
+                <DatabaseIcon
+                  v-if="ConnectorMap[item.target.databaseType]"
+                  class="flex-shrink-0"
+                  :pdk-hash="ConnectorMap[item.target.databaseType].pdkHash"
+                  :size="20"
+                />
+                <span class="fw-sub">{{
+                  item.target.connectionName || '--'
+                }}</span>
+                <span>/</span>
+                <span class="fw-sub">{{ item.target.table || '-' }}</span>
               </div>
-              <span class="item-icon" />
-              <div class="flex-1">
-                <div class="flex gap-3 align-center">
-                  <ElSwitch
-                    v-model="item.target.enableCustomCollate"
-                    @change="toggleCollate(item.target, $event)"
-                  />
-
-                  <ElButton
-                    text
-                    type="primary"
-                    @click="schemaScope.openApiDrawer('inspect-collate')"
-                  >
-                    <VIcon class="mr-1">question-circle</VIcon>
-                    {{ $t('public_view_docs') }}
-                  </ElButton>
-                </div>
-
-                <div v-if="item.target.enableCustomCollate">
-                  <CollateMap
-                    v-model:value="item.target.collate"
-                    :sort-column="item.target.sortColumn"
-                    :fields="item.target.fields"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div
-              v-if="
-                nullsLastState[item.source.connectionId] ||
-                nullsLastState[item.target.connectionId]
-              "
-              class="setting-item mt-4 align-items-center"
-            >
-              <label
-                v-if="nullsLastState[item.source.connectionId]"
-                class="item-label"
-                >{{ $t('packages_business_nulls_first') }}
-                <el-tooltip
-                  effect="dark"
-                  placement="top"
-                  :content="$t('packages_business_nulls_first_tip')"
+              <div class="flex align-items-center">
+                <ElButton text type="danger" @click.stop="removeItem(item.id)">
+                  <VIcon class="mr-1">delete</VIcon>
+                  {{ $t('public_button_delete') }}</ElButton
                 >
-                  <i
-                    class="el-tooltip el-icon-info"
-                    style="color: #909399; font-size: 14px"
-                  /> </el-tooltip
-                >:
-              </label>
-              <label v-else class="item-label" />
+              </div>
+            </div>
+            <div :key="`connection${item.id}`" class="setting-item mt-4">
+              <label class="item-label"
+                >{{
+                  $t(
+                    'packages_business_components_conditionbox_daijiaoyanlianjie',
+                  )
+                }}:</label
+              >
+              <AsyncSelect
+                :key="`sourceConnectionId${item.id}`"
+                v-model="item.source.connectionId"
+                :method="getConnectionsListMethod"
+                item-query="name"
+                item-value="id"
+                filterable
+                class="item-select"
+                @option-select="handleChangeConnection($event, item.source)"
+              />
+              <span class="item-icon fs-6">
+                <el-icon><el-icon-arrow-right /></el-icon>
+              </span>
+              <AsyncSelect
+                :key="`targetConnectionId${item.id}`"
+                v-model="item.target.connectionId"
+                :method="getConnectionsListMethod"
+                item-query="name"
+                item-value="id"
+                filterable
+                class="item-select"
+                @option-select="handleChangeConnection($event, item.target)"
+              />
+            </div>
+            <div :key="`table${item.id}`" class="setting-item mt-4">
+              <label class="item-label"
+                >{{
+                  $t('packages_business_components_conditionbox_laiyuanbiao')
+                }}:</label
+              >
+              <AsyncSelect
+                :key="`sourceTable${item.id}`"
+                v-model="item.source.table"
+                :method="getTableListMethod"
+                :params="{
+                  connectionId: item.source.connectionId,
+                  nodeId: item.source.nodeId,
+                }"
+                item-query="name"
+                item-type="string"
+                lazy
+                filterable
+                class="item-select"
+                @change="handleChangeTable($event, item, index, 'source')"
+              />
+              <span class="item-icon"
+                >{{
+                  $t('packages_business_components_conditionbox_mubiaobiao')
+                }}:</span
+              >
+              <AsyncSelect
+                :key="`targetTable${item.id}`"
+                v-model="item.target.table"
+                :method="getTableListMethod"
+                :params="{
+                  connectionId: item.target.connectionId,
+                  nodeId: item.target.nodeId,
+                }"
+                item-query="name"
+                item-type="string"
+                lazy
+                filterable
+                class="item-select"
+                @change="handleChangeTable($event, item, index, 'target')"
+              />
+            </div>
+
+            <div class="flex gap-4 setting-item">
               <div class="flex-1">
-                <SwitchNumber
-                  v-if="nullsLastState[item.source.connectionId]"
-                  v-model:value="item.source.customNullSort"
+                <div
+                  v-if="hasCapability(item.source, 'execute_command_function')"
+                  class="mt-4 flex align-center"
+                >
+                  <label class="item-label">
+                    <el-text>
+                      {{
+                        $t(
+                          'packages_business_components_conditionbox_laiyuanbiaoshuju',
+                        )
+                      }}
+                      <el-tooltip
+                        effect="dark"
+                        placement="top"
+                        :content="
+                          $t(
+                            'packages_business_components_conditionbox_enableCustomCommand_tip',
+                          )
+                        "
+                        ><el-icon color="#909399"
+                          ><InfoFilled
+                        /></el-icon> </el-tooltip
+                      ><span class="ml-0.5 mr-2">:</span>
+                    </el-text>
+                  </label>
+                  <el-switch
+                    v-model="item.source.enableCustomCommand"
+                    @change="handleChangeCustomCommand($event, item.source)"
+                  />
+
+                  <template
+                    v-if="
+                      item.source.enableCustomCommand &&
+                      item.source.databaseType.toLowerCase().includes('mongo')
+                    "
+                  >
+                    <el-divider direction="vertical" class="mx-4" />
+                    <el-radio-group v-model="item.source.customCommand.command">
+                      <el-radio value="executeQuery">{{
+                        $t('public_query')
+                      }}</el-radio>
+                      <el-radio value="aggregate">{{
+                        $t('public_aggregate')
+                      }}</el-radio>
+                    </el-radio-group>
+                  </template>
+                </div>
+              </div>
+              <div class="flex-1">
+                <div
+                  v-if="hasCapability(item.target, 'execute_command_function')"
+                  class="mt-4 flex align-center"
+                >
+                  <label class="item-label">
+                    <el-text>
+                      {{
+                        $t(
+                          'packages_business_components_conditionbox_laiyuanbiaoshuju',
+                        )
+                      }}
+                      <el-tooltip
+                        effect="dark"
+                        placement="top"
+                        :content="
+                          $t(
+                            'packages_business_components_conditionbox_enableCustomCommand_tip',
+                          )
+                        "
+                        ><el-icon color="#909399"
+                          ><InfoFilled
+                        /></el-icon> </el-tooltip
+                      ><span class="ml-0.5 mr-2">:</span>
+                    </el-text>
+                  </label>
+                  <el-switch
+                    v-model="item.target.enableCustomCommand"
+                    @change="handleChangeCustomCommand($event, item.target)"
+                  />
+                  <template
+                    v-if="
+                      item.target.enableCustomCommand &&
+                      item.target.databaseType.toLowerCase().includes('mongo')
+                    "
+                  >
+                    <el-divider direction="vertical" class="mx-4" />
+                    <el-radio-group v-model="item.target.customCommand.command">
+                      <el-radio value="executeQuery">{{
+                        $t('public_query')
+                      }}</el-radio>
+                      <el-radio value="aggregate">{{
+                        $t('public_aggregate')
+                      }}</el-radio>
+                    </el-radio-group>
+                  </template>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-4 setting-item">
+              <div class="flex-1">
+                <div v-if="item.source.enableCustomCommand" class="mt-4 flex">
+                  <label class="item-label" />
+                  <div
+                    v-if="
+                      item.source.databaseType.toLowerCase().includes('mongo')
+                    "
+                    class="flex-1"
+                  >
+                    <template
+                      v-if="
+                        item.source.customCommand.command === 'executeQuery'
+                      "
+                    >
+                      <JsonEditor
+                        v-model:value="item.source.customCommand.params.filter"
+                      />
+                      <div class="flex align-center flex-wrap">
+                        <el-text>{{
+                          $t('packages_dag_nodes_table_jinzhichiqu')
+                        }}</el-text>
+                        <el-button text type="primary" @click="openApiDrawer">
+                          {{ $t('packages_business_view_more_apis') }}
+                        </el-button>
+                      </div>
+                    </template>
+                    <template
+                      v-else-if="
+                        item.source.customCommand.command === 'aggregate'
+                      "
+                    >
+                      <JsonEditor
+                        v-model:value="
+                          item.source.customCommand.params.pipeline
+                        "
+                      />
+                      <div class="flex align-center flex-wrap">
+                        <el-text>{{
+                          $t('packages_dag_nodes_table_shiligro')
+                        }}</el-text>
+                        <el-button text type="primary" @click="openApiDrawer">
+                          {{ $t('packages_business_view_more_apis') }}
+                        </el-button>
+                      </div>
+                    </template>
+                  </div>
+                  <SqlEditor
+                    v-else
+                    v-model:value="item.source.customCommand.params.sql"
+                  />
+                </div>
+              </div>
+
+              <div class="flex-1">
+                <div v-if="item.target.enableCustomCommand" class="mt-4 flex">
+                  <label class="item-label" />
+                  <div
+                    v-if="
+                      item.target.databaseType.toLowerCase().includes('mongo')
+                    "
+                    class="flex-1"
+                  >
+                    <template
+                      v-if="
+                        item.target.customCommand.command === 'executeQuery'
+                      "
+                    >
+                      <JsonEditor
+                        v-model:value="item.target.customCommand.params.filter"
+                      />
+                      <div class="flex align-center flex-wrap">
+                        <el-text>{{
+                          $t('packages_dag_nodes_table_jinzhichiqu')
+                        }}</el-text>
+                        <el-button text type="primary" @click="openApiDrawer">
+                          {{ $t('packages_business_view_more_apis') }}
+                        </el-button>
+                      </div>
+                    </template>
+                    <template
+                      v-else-if="
+                        item.target.customCommand.command === 'aggregate'
+                      "
+                    >
+                      <JsonEditor
+                        v-model:value="
+                          item.target.customCommand.params.pipeline
+                        "
+                      />
+                      <div class="flex align-center flex-wrap">
+                        <el-text>{{
+                          $t('packages_dag_nodes_table_shiligro')
+                        }}</el-text>
+                        <el-button text type="primary" @click="openApiDrawer">
+                          {{ $t('packages_business_view_more_apis') }}
+                        </el-button>
+                      </div>
+                    </template>
+                  </div>
+                  <SqlEditor
+                    v-else
+                    v-model:value="item.target.customCommand.params.sql"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <template v-if="!isCountOrHash">
+              <div class="setting-item mt-4">
+                <label class="item-label"
+                  >{{ $t('packages_business_verification_indexField') }}:
+                </label>
+                <FieldSelectWrap
+                  v-model:value="item.source.sortColumn"
+                  :options="item.source.fields"
+                  class="flex-1"
+                  :loading="item.source.fieldsLoading"
+                  @visible-change="onVisibleChange(item.source, $event)"
+                />
+                <span class="item-icon" />
+                <FieldSelectWrap
+                  v-model:value="item.target.sortColumn"
+                  :options="item.target.fields"
+                  class="flex-1"
+                  :loading="item.target.fieldsLoading"
+                  @visible-change="onVisibleChange(item.target, $event)"
                 />
               </div>
 
-              <span
-                v-if="nullsLastState[item.target.connectionId]"
-                class="item-icon"
-                >{{ $t('packages_business_nulls_first')
-                }}<el-tooltip
-                  effect="dark"
-                  placement="top"
-                  :content="$t('packages_business_nulls_first_tip')"
-                >
-                  <i
-                    class="el-tooltip el-icon-info"
-                    style="color: #909399; font-size: 14px"
-                  /> </el-tooltip
-                >:</span
-              >
-              <div
-                v-if="nullsLastState[item.target.connectionId]"
-                class="flex-1"
-              >
-                <SwitchNumber v-model:value="item.target.customNullSort" />
-              </div>
-            </div>
-          </template>
+              <div class="setting-item mt-4">
+                <label class="item-label"
+                  >{{ $t('packages_business_custom_collate') }}:
+                </label>
+                <div class="flex-1">
+                  <div class="flex gap-3 align-center">
+                    <ElSwitch
+                      v-model="item.source.enableCustomCollate"
+                      @change="toggleCollate(item.source, $event)"
+                    />
 
-          <div
-            v-if="inspectMethod === 'field'"
-            class="setting-item align-items-center mt-4"
-          >
-            <label class="item-label"
-              >{{
-                $t('packages_business_components_fieldbox_daijiaoyanmoxing')
-              }}:</label
-            >
-            <ElRadioGroup
-              v-model="item.modeType"
-              :disabled="getModeTypeDisabled(item)"
-              @change="handleChangeModeType($event, item)"
-            >
-              <ElRadio label="all">{{
-                $t('packages_business_components_fieldbox_quanziduan')
-              }}</ElRadio>
-              <ElRadio label="custom">{{
-                $t('packages_business_connections_databaseform_zidingyi')
-              }}</ElRadio>
-            </ElRadioGroup>
-            <el-divider
-              v-if="item.modeType === 'custom'"
-              direction="vertical"
-              class="mx-2"
-            />
-            <ElButton
-              v-if="item.modeType === 'custom'"
-              text
-              type="primary"
-              @click="handleCustomFields(item)"
-            >
-              {{
-                $t('packages_business_components_conditionbox_chakanzidingyi')
-              }}
-              ({{ item.source.columns ? item.source.columns.length : 0 }})
-            </ElButton>
-          </div>
-          <div v-show="inspectMethod === 'field'" class="setting-item mt-4">
-            <ElCheckbox
-              v-model="item.showAdvancedVerification"
-              @change="handleChangeAdvanced(item)"
-              >{{ $t('packages_business_verification_advanceVerify') }}
-            </ElCheckbox>
-          </div>
-          <div
-            v-if="item.showAdvancedVerification && inspectMethod === 'field'"
-            class="setting-item mt-4"
-          >
-            <label class="item-label"
-              >{{ $t('packages_business_verification_JSVerifyLogic') }}:
-            </label>
-            <ElButton
-              v-if="!item.webScript || item.webScript === ''"
-              @click="addScript(index)"
-              >{{ $t('packages_business_verification_addJS') }}
-            </ElButton>
-            <template v-else>
-              <ElButton
-                text
-                type="primary"
-                class="ml-4"
-                @click="editScript(index)"
-                >{{ $t('public_button_edit') }}</ElButton
+                    <ElButton
+                      text
+                      type="primary"
+                      @click="openApiDrawer('inspect-collate')"
+                    >
+                      <VIcon class="mr-1">question-circle</VIcon>
+                      {{ $t('public_view_docs') }}
+                    </ElButton>
+                  </div>
+
+                  <div v-if="item.source.enableCustomCollate">
+                    <CollateMap
+                      v-model:value="item.source.collate"
+                      :sort-column="item.source.sortColumn"
+                      :fields="item.source.fields"
+                      :loading="item.source.fieldsLoading"
+                      @visible-change="onVisibleChange(item.source, $event)"
+                    />
+                  </div>
+                </div>
+                <span class="item-icon" />
+                <div class="flex-1">
+                  <div class="flex gap-3 align-center">
+                    <ElSwitch
+                      v-model="item.target.enableCustomCollate"
+                      @change="toggleCollate(item.target, $event)"
+                    />
+
+                    <ElButton
+                      text
+                      type="primary"
+                      @click="openApiDrawer('inspect-collate')"
+                    >
+                      <VIcon class="mr-1">question-circle</VIcon>
+                      {{ $t('public_view_docs') }}
+                    </ElButton>
+                  </div>
+
+                  <div v-if="item.target.enableCustomCollate">
+                    <CollateMap
+                      v-model:value="item.target.collate"
+                      :sort-column="item.target.sortColumn"
+                      :fields="item.target.fields"
+                      :loading="item.target.fieldsLoading"
+                      @visible-change="onVisibleChange(item.target, $event)"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div
+                v-if="isNullsLast(item.source) || isNullsLast(item.target)"
+                class="setting-item mt-4 align-items-center"
               >
+                <label v-if="isNullsLast(item.source)" class="item-label"
+                  >{{ $t('packages_business_nulls_first') }}
+                  <el-tooltip
+                    effect="dark"
+                    placement="top"
+                    :content="$t('packages_business_nulls_first_tip')"
+                  >
+                    <i
+                      class="el-tooltip el-icon-info"
+                      style="color: #909399; font-size: 14px"
+                    /> </el-tooltip
+                  >:
+                </label>
+                <label v-else class="item-label" />
+                <div class="flex-1">
+                  <SwitchNumber
+                    v-if="isNullsLast(item.source)"
+                    v-model:value="item.source.customNullSort"
+                  />
+                </div>
+
+                <span v-if="isNullsLast(item.target)" class="item-icon"
+                  >{{ $t('packages_business_nulls_first')
+                  }}<el-tooltip
+                    effect="dark"
+                    placement="top"
+                    :content="$t('packages_business_nulls_first_tip')"
+                  >
+                    <i
+                      class="el-tooltip el-icon-info"
+                      style="color: #909399; font-size: 14px"
+                    /> </el-tooltip
+                  >:</span
+                >
+                <div v-if="isNullsLast(item.target)" class="flex-1">
+                  <SwitchNumber v-model:value="item.target.customNullSort" />
+                </div>
+              </div>
+            </template>
+
+            <div
+              v-if="inspectMethod === 'field'"
+              class="setting-item align-items-center mt-4"
+            >
+              <label class="item-label"
+                >{{
+                  $t('packages_business_components_fieldbox_daijiaoyanmoxing')
+                }}:</label
+              >
+              <ElRadioGroup
+                v-model="item.modeType"
+                :disabled="getModeTypeDisabled(item)"
+                @change="handleChangeModeType($event, item)"
+              >
+                <ElRadio value="all">{{
+                  $t('packages_business_components_fieldbox_quanziduan')
+                }}</ElRadio>
+                <ElRadio value="custom">{{
+                  $t('packages_business_connections_databaseform_zidingyi')
+                }}</ElRadio>
+              </ElRadioGroup>
+              <el-divider
+                v-if="item.modeType === 'custom'"
+                direction="vertical"
+                class="mx-2"
+              />
               <ElButton
+                v-if="item.modeType === 'custom'"
                 text
                 type="primary"
-                class="ml-4"
-                @click="removeScript(item)"
-                >{{ $t('public_button_delete') }}
+                @click="handleCustomFields(item)"
+              >
+                {{
+                  $t('packages_business_components_conditionbox_chakanzidingyi')
+                }}
+                ({{ item.source.columns ? item.source.columns.length : 0 }})
               </ElButton>
-            </template>
-          </div>
-          <div
-            v-if="
-              inspectMethod === 'field' &&
-              item.showAdvancedVerification &&
-              item.webScript
-            "
-            class="setting-item mt-4"
-          >
-            <pre class="item-script">{{ item.webScript }}</pre>
+            </div>
+            <div v-show="inspectMethod === 'field'" class="setting-item mt-4">
+              <ElCheckbox
+                v-model="item.showAdvancedVerification"
+                @change="handleChangeAdvanced(item)"
+                >{{ $t('packages_business_verification_advanceVerify') }}
+              </ElCheckbox>
+            </div>
+            <div
+              v-if="item.showAdvancedVerification && inspectMethod === 'field'"
+              class="setting-item mt-4"
+            >
+              <label class="item-label"
+                >{{ $t('packages_business_verification_JSVerifyLogic') }}:
+              </label>
+              <ElButton
+                v-if="!item.webScript || item.webScript === ''"
+                @click="addScript(index)"
+                >{{ $t('packages_business_verification_addJS') }}
+              </ElButton>
+              <template v-else>
+                <ElButton
+                  text
+                  type="primary"
+                  class="ml-4"
+                  @click="editScript(index)"
+                  >{{ $t('public_button_edit') }}</ElButton
+                >
+                <ElButton
+                  text
+                  type="primary"
+                  class="ml-4"
+                  @click="removeScript(item)"
+                  >{{ $t('public_button_delete') }}
+                </ElButton>
+              </template>
+            </div>
+            <div
+              v-if="
+                inspectMethod === 'field' &&
+                item.showAdvancedVerification &&
+                item.webScript
+              "
+              class="setting-item mt-4"
+            >
+              <pre class="item-script">{{ item.webScript }}</pre>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- Add pagination controls -->
-
-    <div class="joint-table-footer flex align-center">
-      <ElButton @click="addItem">{{
-        $t('packages_business_verification_addTable')
-      }}</ElButton>
-      <ElButton
-        v-if="taskId"
-        type="primary"
-        :disabled="!!list.length"
-        :loading="autoAddTableLoading"
-        @click="autoAddTable"
-        >{{ $t('packages_business_verification_button_auto_add_table') }}
-      </ElButton>
-
-      <template v-if="!isCountOrHash">
-        <el-divider class="mx-3" direction="vertical" />
-        <div class="inline-flex align-items-center">
-          <span class="fs-7">{{
-            $t('packages_business_auto_fill_join_fields')
-          }}</span>
-          <el-tooltip class="color-primary" effect="dark" placement="top">
-            <template #content>
-              <div>
-                {{ $t('packages_business_auto_fill_join_tooltip_title') }}
-              </div>
-              <div>
-                {{ $t('packages_business_auto_fill_join_tooltip_primary') }}
-              </div>
-              <div>
-                {{ $t('packages_business_auto_fill_join_tooltip_notnull') }}
-              </div>
-              <div>
-                {{ $t('packages_business_auto_fill_join_tooltip_all') }}
-              </div>
-            </template>
-            <i class="el-icon-question" />
-          </el-tooltip>
-          <el-switch v-model="autoSuggestJoinFields" class="ml-3" />
-        </div>
-      </template>
 
       <div
-        v-if="filteredList.length > 0"
-        class="pagination-container text-center ml-auto"
+        v-if="list.length === 0"
+        class="bg-gray-50 p-4 rounded-xl flex flex-column justify-center align-center gap-2"
       >
-        <el-pagination
-          v-model:current-page="currentPage"
-          v-model:page-size="pageSize"
-          hide-on-single-page
-          :page-sizes="[10, 20, 50, 100]"
-          layout="total, sizes, prev, pager, next"
-          :total="filteredList.length"
-          @size-change="handleSizeChange"
-          @current-change="handlePageChange"
-        />
-      </div>
-    </div>
-    <ElDialog
-      v-model="dialogAddScriptVisible"
-      width="60%"
-      :title="$t('packages_business_verification_JSVerifyLogic')"
-      :before-close="handleAddScriptClose"
-    >
-      <div class="js-wrap">
-        <div class="jsBox">
-          <div class="js-fixText">
-            <span style="color: #0000ff">function </span
-            ><span> validate(sourceRow){</span>
-          </div>
-          <VCodeEditor
-            v-model:value="webScript"
-            height="500"
-            class="js-editor"
-          />
-          <div class="js-fixText">}</div>
+        <div class="flex rounded-pill bg-gray-100 p-3">
+          <VIcon :size="24" color="#9ca3af">database</VIcon>
         </div>
-        <GitBook
-          v-resize.left="{
-            minWidth: 350,
-            maxWidth: 500,
-          }"
-          :value="doc"
-          class="example ml-4 color-primary"
-        />
-      </div>
-      <template #footer>
-        <span class="dialog-footer">
-          <ElButton @click="handleAddScriptClose">{{
-            $t('public_button_cancel')
-          }}</ElButton>
-          <ElButton type="primary" @click="submitScript">{{
-            $t('public_button_confirm')
-          }}</ElButton>
-        </span>
-      </template>
-    </ElDialog>
-    <FieldDialog ref="fieldDialog" @save="handleChangeFields" />
 
-    <DocsDrawer v-model="showDoc" :path="docPath" />
-  </div>
+        <template v-if="formData.taskMode === 'pipeline'">
+          <div class="text-center font-color-light">
+            {{
+              taskId
+                ? $t('packages_business_verification_empty_auto_add_table')
+                : $t('packages_business_verification_empty_chooseJob')
+            }}
+          </div>
+
+          <el-button
+            v-if="!taskId"
+            type="primary"
+            :loading="autoAddTableLoading"
+            @click="$emit('openTaskSelect')"
+            >{{ $t('packages_business_verification_chooseJob') }}</el-button
+          >
+          <el-button
+            v-else
+            type="primary"
+            :loading="autoAddTableLoading"
+            @click="autoAddTable"
+          >
+            <template #icon>
+              <VIcon>Sparkles</VIcon>
+            </template>
+            {{
+              $t('packages_business_verification_button_auto_add_table')
+            }}</el-button
+          >
+        </template>
+
+        <template v-else>
+          <div class="text-center font-color-light">
+            {{ $t('packages_business_verification_empty_add_table') }}
+          </div>
+          <el-button :icon="Plus" type="primary" @click="addItem">{{
+            $t('packages_business_verification_addTable')
+          }}</el-button>
+        </template>
+      </div>
+
+      <div v-if="list.length" class="py-4 condition-footer flex align-center">
+        <ElButton :icon="Plus" @click="addItem">{{
+          $t('packages_business_verification_addTable')
+        }}</ElButton>
+
+        <template v-if="!isCountOrHash">
+          <el-divider class="mx-3" direction="vertical" />
+          <div class="inline-flex align-items-center">
+            <span class="fs-7">{{
+              $t('packages_business_auto_fill_join_fields')
+            }}</span>
+            <el-tooltip class="color-primary" effect="dark" placement="top">
+              <template #content>
+                <div>
+                  {{ $t('packages_business_auto_fill_join_tooltip_title') }}
+                </div>
+                <div>
+                  {{ $t('packages_business_auto_fill_join_tooltip_primary') }}
+                </div>
+                <div>
+                  {{ $t('packages_business_auto_fill_join_tooltip_notnull') }}
+                </div>
+                <div>
+                  {{ $t('packages_business_auto_fill_join_tooltip_all') }}
+                </div>
+              </template>
+              <i class="el-icon-question" />
+            </el-tooltip>
+            <el-switch v-model="autoSuggestJoinFields" class="ml-3" />
+          </div>
+        </template>
+
+        <div
+          v-if="filteredList.length > 0"
+          class="pagination-container text-center ml-auto"
+        >
+          <el-pagination
+            v-model:current-page="currentPage"
+            v-model:page-size="pageSize"
+            hide-on-single-page
+            background
+            :page-sizes="[10, 20, 50, 100]"
+            layout="sizes, prev, pager, next"
+            :total="filteredList.length"
+            @size-change="handleSizeChange"
+            @current-change="handlePageChange"
+          />
+        </div>
+      </div>
+      <ElDialog
+        v-model="dialogAddScriptVisible"
+        width="60%"
+        :title="$t('packages_business_verification_JSVerifyLogic')"
+        :before-close="handleAddScriptClose"
+      >
+        <div class="js-wrap">
+          <div class="jsBox">
+            <div class="js-fixText">
+              <span style="color: #0000ff">function </span
+              ><span> validate(sourceRow){</span>
+            </div>
+            <VCodeEditor
+              v-model:value="webScript"
+              height="500"
+              class="js-editor"
+            />
+            <div class="js-fixText">}</div>
+          </div>
+          <GitBook
+            v-resize.left="{
+              minWidth: 350,
+              maxWidth: 500,
+            }"
+            :value="doc"
+            class="example ml-4 color-primary"
+          />
+        </div>
+        <template #footer>
+          <span class="dialog-footer">
+            <ElButton @click="handleAddScriptClose">{{
+              $t('public_button_cancel')
+            }}</ElButton>
+            <ElButton type="primary" @click="submitScript">{{
+              $t('public_button_confirm')
+            }}</ElButton>
+          </span>
+        </template>
+      </ElDialog>
+      <FieldDialog ref="fieldDialog" @save="handleChangeFields" />
+      <DocsDrawer v-model="showDoc" :path="docPath" />
+    </div>
+  </ElCollapseItem>
 </template>
 
 <style lang="scss" scoped>
 .joint-table {
-  border-radius: 4px;
-  border: 1px solid #e8e8e8;
+  // border-radius: 4px;
+  // border: 1px solid #e8e8e8;
 
   &.error {
     border-color: map.get($color, danger);
@@ -2770,13 +2242,19 @@ defineExpose({
 }
 
 .joint-table-main {
-  max-height: 500px;
-  overflow-y: auto;
+  // max-height: 500px;
+  // overflow-y: auto;
 
   .joint-table-item {
+    position: relative;
     padding: 16px 24px;
     display: flex;
-    border-bottom: 1px solid map.get($borderColor, light);
+    // border-bottom: 1px solid map.get($borderColor, light);
+    &:hover {
+      .cond-item__index {
+        display: block;
+      }
+    }
   }
 
   .joint-table-setting {
@@ -2788,6 +2266,10 @@ defineExpose({
     display: flex;
     margin-bottom: 0;
 
+    .el-text {
+      --el-text-color: map.get($fontColor, light);
+    }
+
     .el-form-item__content {
       display: flex;
       align-items: center;
@@ -2795,10 +2277,13 @@ defineExpose({
     }
 
     .item-label {
-      width: 120px;
+      min-width: 120px;
       line-height: 32px;
       text-align: left;
       color: map.get($fontColor, light);
+      .el-text {
+        --el-text-color: map.get($fontColor, light);
+      }
     }
 
     .item-icon {
@@ -2887,6 +2372,23 @@ defineExpose({
     height: 32px;
     line-height: 32px;
   }
+}
+
+.cond-item__index {
+  min-width: 20px;
+  background-color: #eff0f1;
+  border-radius: 12px 0 12px;
+  color: #646a73;
+  display: none;
+  font-size: 12px;
+  text-align: center;
+  height: 22px;
+  line-height: 22px;
+  padding: 0 6px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 3;
 }
 </style>
 

@@ -1405,4 +1405,8 @@ export default {
   packages_business_checkTableThreadNum: '校驗線程數量',
   packages_business_checkTableThreadNum_tip:
     '校驗線程數量，在資源充足的情況下可進行調整，默認線程數為 10',
+  packages_business_verification_empty_add_table: '暫無校驗表配置，請添加表',
+  packages_business_verification_empty_auto_add_table:
+    '暫無校驗表配置，請自動添加表',
+  packages_business_verification_empty_chooseJob: '暫無校驗表配置，請選擇任務',
 }

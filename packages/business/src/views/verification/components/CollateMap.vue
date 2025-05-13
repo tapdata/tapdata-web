@@ -17,14 +17,17 @@ export default defineComponent({
     },
     fields: {
       type: Array,
-      default: () => [],
     },
     sortColumn: {
       type: String,
       required: true,
     },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
   },
-  emits: ['update:value'],
+  emits: ['update:value', 'visibleChange'],
   setup(props, { emit }) {
     const setCharset = (value) => {
       selectedFields.value.forEach((key) => {
@@ -62,8 +65,10 @@ export default defineComponent({
     })
 
     const sortFields = computed(() => {
-      return props.fields.filter((field) =>
-        sortColumns.value.includes(field.field_name),
+      return (
+        props.fields?.filter((field) =>
+          sortColumns.value.includes(field.field_name),
+        ) || []
       )
     })
 
@@ -87,6 +92,8 @@ export default defineComponent({
         :options="sortFields"
         :placeholder="$t('packages_business_please_select_field')"
         class="flex-1"
+        :loading="loading"
+        @visible-change="$emit('visibleChange', $event)"
       />
       <ElInput
         v-model="charset"

@@ -32,7 +32,7 @@ export const SqlEditor = defineComponent({
 
       return (
         <VCodeEditor
-          class="border rounded-2 p-0"
+          class="border rounded-xl p-0"
           theme="chrome"
           value={props.value}
           lang="sql"
