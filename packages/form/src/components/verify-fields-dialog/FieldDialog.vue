@@ -333,7 +333,7 @@ export default {
                     class="mx-2 px-2 color-primary"
                     @click="handleDelete(fIndex)"
                   >
-                    <VIcon> delete</VIcon>
+                    <VIcon>delete</VIcon>
                   </ElButton>
                 </div>
               </DynamicScrollerItem>
