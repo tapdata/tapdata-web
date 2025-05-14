@@ -968,6 +968,15 @@ export default observer({
                         interval: 300,
                         unit: 'SECOND',
                       },
+                      {
+                        type: 'TASK',
+                        open: isDaas,
+                        key: 'TASK_INSPECT_DIFFERENCE',
+                        sort: 7,
+                        notify: ['SYSTEM', 'EMAIL'],
+                        interval: 300,
+                        unit: 'SECOND',
+                      },
                     ],
                   },
                   alarmRules: {
@@ -1048,38 +1057,6 @@ export default observer({
                     'x-component': 'Checkbox.Group',
                     'x-component-props': {
                       onChange: `{{val=>(!val.length && ($values.alarmSettings[2].open=false))}}`,
-                    },
-                    default: ['SYSTEM', 'EMAIL'],
-                    'x-editable': true,
-                    'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}'],
-                  },
-                  'alarmSettings.3.open': {
-                    title: i18n.t(
-                      'packages_dag_migration_alarmpanel_renwuzengliangyan',
-                    ),
-                    type: 'boolean',
-                    default: true,
-                    'x-editable': true,
-                    'x-decorator': 'FormItem',
-                    'x-component': 'Switch',
-                    'x-component-props': {
-                      onChange: `{{val=>(val && !$values.alarmSettings[3].notify.length && ($values.alarmSettings[3].notify=["SYSTEM"]))}}`,
-                    },
-                    'x-reactions': {
-                      target: 'alarmRules.0.*',
-                      fulfill: {
-                        state: {
-                          disabled: `{{!$self.value}}`,
-                        },
-                      },
-                    },
-                  },
-                  'alarmSettings.3.notify': {
-                    type: 'array',
-                    'x-decorator': 'FormItem',
-                    'x-component': 'Checkbox.Group',
-                    'x-component-props': {
-                      onChange: `{{val=>(!val.length && ($values.alarmSettings[3].open=false))}}`,
                     },
                     default: ['SYSTEM', 'EMAIL'],
                     'x-editable': true,
@@ -1216,6 +1193,60 @@ export default observer({
                         },
                       },
                     },
+                  },
+                  'alarmSettings.3.open': {
+                    title: i18n.t(
+                      'packages_dag_migration_alarmpanel_renwuzengliangyan',
+                    ),
+                    type: 'boolean',
+                    default: true,
+                    'x-editable': true,
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Switch',
+                    'x-component-props': {
+                      onChange: `{{val=>(val && !$values.alarmSettings[3].notify.length && ($values.alarmSettings[3].notify=["SYSTEM"]))}}`,
+                    },
+                    'x-reactions': {
+                      target: 'alarmRules.0.*',
+                      fulfill: {
+                        state: {
+                          disabled: `{{!$self.value}}`,
+                        },
+                      },
+                    },
+                  },
+                  'alarmSettings.3.notify': {
+                    type: 'array',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Checkbox.Group',
+                    'x-component-props': {
+                      onChange: `{{val=>(!val.length && ($values.alarmSettings[3].open=false))}}`,
+                    },
+                    default: ['SYSTEM', 'EMAIL'],
+                    'x-editable': true,
+                    'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}'],
+                  },
+                  'alarmSettings.4.open': {
+                    title: i18n.t('packages_dag_task_inspect_difference_alarm'),
+                    type: 'boolean',
+                    default: true,
+                    'x-editable': true,
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Switch',
+                    'x-component-props': {
+                      onChange: `{{val=>(val && !$values.alarmSettings[4].notify.length && ($values.alarmSettings[4].notify=["SYSTEM"]))}}`,
+                    },
+                  },
+                  'alarmSettings.4.notify': {
+                    type: 'array',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Checkbox.Group',
+                    'x-component-props': {
+                      onChange: `{{val=>(!val.length && ($values.alarmSettings[4].open=false))}}`,
+                    },
+                    default: ['SYSTEM', 'EMAIL'],
+                    'x-editable': true,
+                    'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}'],
                   },
                   emailReceivers: {
                     title: i18n.t('packages_dag_email_receivers'),

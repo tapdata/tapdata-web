@@ -932,4 +932,5 @@ export default {
   packages_dag_inspect_operation_message: '操作信息',
   packages_dag_inspect_operation_time: '操作时间',
   packages_dag_inspect_operation_user: '操作人',
+  packages_dag_task_inspect_difference_alarm: '任务校验差异告警',
 }

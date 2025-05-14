@@ -1075,4 +1075,6 @@ export default {
   packages_dag_inspect_operation_message: 'Operation Message',
   packages_dag_inspect_operation_time: 'Operation Time',
   packages_dag_inspect_operation_user: 'Operation User',
+  packages_dag_task_inspect_difference_alarm:
+    'Task Inspection Difference Alarm',
 }

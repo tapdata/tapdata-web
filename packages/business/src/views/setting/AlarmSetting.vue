@@ -85,6 +85,9 @@ export default {
         SYSTEM_FLOW_EGINGE_UP: i18n.t(
           'packages_business_setting_alarmnotification_dangrenwuuP',
         ),
+        TASK_INSPECT_DIFFERENCE: i18n.t(
+          'packages_dag_task_inspect_difference_alarm',
+        ),
       },
       alarmRulesColumns: [
         {
