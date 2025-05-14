@@ -180,10 +180,11 @@ const loadSchema = async () => {
 }
 
 const checkAll = (val: boolean, type: 'table' | 'selected') => {
-  const target = type === 'table' ? table : selected
-  target.value.checked = val ? target.value.tables : []
-  target.value.isCheckAll = val
-  emit('change', selected.value.tables)
+  if (type === 'table') {
+    table.value.checked = val ? leftTableData.value : []
+  } else {
+    selected.value.checked = val ? selected.value.tables : []
+  }
 }
 
 const checkedChange = (type: 'table' | 'selected') => {

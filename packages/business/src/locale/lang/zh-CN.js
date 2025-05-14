@@ -1418,4 +1418,8 @@ export default {
   packages_business_checkTableThreadNum: '校验线程数量',
   packages_business_checkTableThreadNum_tip:
     '校验线程数量，在资源充足的情况下可进行调整，默认线程数为 10',
+  packages_business_verification_empty_chooseJob: '暂无校验表配置，请选择任务',
+  packages_business_verification_empty_add_table: '暂无校验表配置，请添加表',
+  packages_business_verification_empty_auto_add_table:
+    '暂无校验表配置，请自动添加表',
 }

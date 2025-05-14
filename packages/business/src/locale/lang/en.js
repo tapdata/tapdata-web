@@ -1592,4 +1592,10 @@ export default {
   packages_business_checkTableThreadNum: 'Thread Validation',
   packages_business_checkTableThreadNum_tip:
     'Number of threads to use. Default is 10. Can be increased if system resources permit.',
+  packages_business_verification_empty_add_table:
+    'No validation table configuration, please add tables',
+  packages_business_verification_empty_auto_add_table:
+    'No validation table configuration, please automatically add tables',
+  packages_business_verification_empty_chooseJob:
+    'No validation table configuration, please select a task',
 }

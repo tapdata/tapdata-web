@@ -1,11 +1,19 @@
 <script setup lang="ts">
-import { inspectApi, taskApi } from '@tap/api'
+import { Check } from '@element-plus/icons-vue'
+import { databaseTypesApi, inspectApi, taskApi } from '@tap/api'
 import { AsyncSelect } from '@tap/form'
 import i18n from '@tap/i18n'
 import Time from '@tap/shared/src/time'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { cloneDeep } from 'lodash-es'
-import { computed, onMounted, provide, reactive, ref } from 'vue'
+import {
+  computed,
+  onMounted,
+  provide,
+  reactive,
+  ref,
+  useTemplateRef,
+} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import PageContainer from '../../components/PageContainer.vue'
@@ -78,6 +86,8 @@ const defaultTime = ref([
   new Date(2025, 1, 1, 0, 0, 0),
   new Date(2025, 2, 1, 23, 59, 59),
 ])
+
+const taskSelect = useTemplateRef('taskSelect')
 
 const form = reactive({
   flowId: '',
@@ -202,6 +212,7 @@ const autoAddTableLoading = ref(false)
 const taskOptionCache = ref(null)
 const baseForm = ref(null)
 const conditionBox = ref(null)
+const activePanel = ref('condition')
 
 const saveDisabled = computed(() => {
   return (
@@ -279,21 +290,10 @@ const getData = async (id: string) => {
         applyTask(data.taskDto)
       }
 
-      // 任务一致性/任意表 都走异步获取 capabilities/tags
-      const capabilitiesMap = await conditionBox.value.getCapabilities([
-        ...new Set([
-          ...data.tasks.map((t) => t.source.connectionId),
-          ...data.tasks.map((t) => t.target.connectionId),
-        ]),
-      ])
-
       data.tasks = data.tasks.map((t) => {
         t.source = Object.assign({}, TABLE_PARAMS, t.source)
         t.target = Object.assign({}, TABLE_PARAMS, t.target)
-        t.source.capabilities =
-          capabilitiesMap[t.source.connectionId]?.capabilities || []
-        t.target.capabilities =
-          capabilitiesMap[t.target.connectionId]?.capabilities || []
+
         if (t.source.nodeId) {
           t.source.currentLabel = `${t.source.nodeName} / ${t.source.connectionName}`
           t.target.currentLabel = `${t.target.nodeName} / ${t.target.connectionName}`
@@ -476,12 +476,34 @@ const save = async (saveOnly = false) => {
               if (webScript && webScript !== '') {
                 script = `function validate(sourceRow){${webScript}}`
               }
+
+              if (
+                source.enableCustomCommand &&
+                source.databaseType.toLowerCase().includes('mongo')
+              ) {
+                source.customCommand.params.collection = source.tableName
+
+                if (source.customCommand.command === 'executeQuery') {
+                  source.customCommand.params.op = 'find'
+                }
+              }
+
+              if (
+                target.enableCustomCommand &&
+                target.databaseType.toLowerCase().includes('mongo')
+              ) {
+                target.customCommand.params.collection = target.tableName
+
+                if (target.customCommand.command === 'executeQuery') {
+                  target.customCommand.params.op = 'find'
+                }
+              }
+
               const newSource = cloneDeep(source)
               const newTarget = cloneDeep(target)
               newSource.fields = []
               newTarget.fields = []
-              newSource.capabilities = []
-              newTarget.capabilities = []
+
               return {
                 taskId,
                 source: newSource,
@@ -543,487 +565,493 @@ const handleSelectTask = (task: any, byClick: boolean) => {
   }
 }
 
+const ConnectorMap = ref({})
+
+const fetchDatabaseTypes = async () => {
+  const databaseItems = await databaseTypesApi.get()
+
+  ConnectorMap.value = databaseItems.reduce((map, item) => {
+    map[item.type] = {
+      pdkHash: item.pdkHash,
+      isNullsLast: item.tags?.includes('NullsLast'),
+      capabilityMap:
+        item.capabilities?.reduce((map, item) => {
+          map[item.id] = true
+          return map
+        }, {}) || {},
+    }
+    return map
+  }, {})
+}
+
+const openTaskSelect = () => {
+  taskSelect.value.focus()
+  taskSelect.value.$el.querySelector('input').click()
+}
+
+fetchDatabaseTypes()
+
 provide('formData', form)
+provide('ConnectorMap', ConnectorMap)
 </script>
 
 <template>
-  <PageContainer mode="auto">
-    <section v-loading="loading">
-      <div>
-        <ElForm
-          ref="baseForm"
-          class="grey"
-          label-position="left"
-          label-width="auto"
-          :model="form"
-          :rules="rules"
-          :validate-on-rule-change="false"
-        >
-          <ElFormItem
-            v-if="form.taskMode === 'pipeline'"
-            required
-            class="form-item"
-            prop="flowId"
-            :label="`${$t('packages_business_verification_chooseJob')}: `"
-          >
-            <AsyncSelect
-              v-model="form.flowId"
-              class="form-input"
-              :method="getTaskOptions"
-              :current-label="taskName"
-              item-label="name"
-              item-value="id"
-              item-query="name"
-              :page-size="10000000000"
-              @option-select="handleSelectTask"
-            />
-          </ElFormItem>
+  <PageContainer
+    v-loading="loading"
+    mode="auto"
+    content-class="flex flex-column flex-1 min-h-0 overflow-auto px-6 position-relative"
+  >
+    <ElForm
+      ref="baseForm"
+      class="grey"
+      label-position="left"
+      label-width="auto"
+      :model="form"
+      :rules="rules"
+      :validate-on-rule-change="false"
+    >
+      <ElFormItem
+        v-if="form.taskMode === 'pipeline'"
+        required
+        class="form-item"
+        prop="flowId"
+        :label="`${$t('packages_business_verification_chooseJob')}: `"
+      >
+        <AsyncSelect
+          ref="taskSelect"
+          v-model="form.flowId"
+          class="form-input"
+          :method="getTaskOptions"
+          :current-label="taskName"
+          item-label="name"
+          item-value="id"
+          item-query="name"
+          :page-size="10000000000"
+          @option-select="handleSelectTask"
+        />
+      </ElFormItem>
 
-          <ElFormItem
-            required
-            class="form-item"
-            prop="name"
-            :label="`${$t('packages_business_verification_task_name')}: `"
-          >
-            <ElInput v-model="form.name" class="form-input" />
-          </ElFormItem>
+      <ElFormItem
+        required
+        class="form-item"
+        prop="name"
+        :label="`${$t('packages_business_verification_task_name')}: `"
+      >
+        <ElInput v-model="form.name" class="form-input" />
+      </ElFormItem>
 
-          <ElFormItem
-            required
-            class="form-item"
-            :label="`${$t('packages_business_verification_type')}: `"
+      <ElFormItem
+        required
+        class="form-item"
+        :label="`${$t('packages_business_verification_type')}: `"
+      >
+        <div>
+          <el-radio-group
+            v-model="form.inspectMethod"
+            class="align-top has-space"
+            @change="handleChangeInspectMethod"
           >
-            <div>
-              <ElRadioGroup
-                v-model="form.inspectMethod"
-                @change="handleChangeInspectMethod"
-              >
-                <ElRadioButton label="row_count">{{
-                  inspectMethodMap['row_count']
-                }}</ElRadioButton>
-                <ElRadioButton label="field">{{
-                  inspectMethodMap['field']
-                }}</ElRadioButton>
-                <ElRadioButton label="jointField">{{
-                  inspectMethodMap['jointField']
-                }}</ElRadioButton>
-                <ElRadioButton label="hash">{{
-                  inspectMethodMap['hash']
-                }}</ElRadioButton>
-              </ElRadioGroup>
-              <div
-                v-if="typTipMap[form.inspectMethod]"
-                class="font-color-light"
-              >
-                <VIcon class="align-middle mr-1">info</VIcon>
-                <span class="align-middle fs-8">{{
-                  typTipMap[form.inspectMethod]
-                }}</span>
+            <el-radio-button value="row_count">
+              <div class="flex align-center gap-2">
+                <VIcon size="16">Lightning</VIcon>
+                {{ inspectMethodMap['row_count'] }}
               </div>
+            </el-radio-button>
+            <el-radio-button value="field">
+              <div class="flex align-center gap-2">
+                <VIcon size="16">LucideTable</VIcon>
+                {{ inspectMethodMap['field'] }}
+              </div>
+            </el-radio-button>
+            <el-radio-button value="jointField">
+              <div class="flex align-center gap-2">
+                <VIcon size="16">LucideLink</VIcon>
+                {{ inspectMethodMap['jointField'] }}
+              </div>
+            </el-radio-button>
+            <el-radio-button value="hash">
+              <div class="flex align-center gap-2">
+                <VIcon size="16">LucideHash</VIcon>
+                {{ inspectMethodMap['hash'] }}
+              </div>
+            </el-radio-button>
+          </el-radio-group>
+          <div v-if="typTipMap[form.inspectMethod]" class="font-color-light">
+            <VIcon class="align-middle mr-1">info</VIcon>
+            <span class="align-middle fs-8">{{
+              typTipMap[form.inspectMethod]
+            }}</span>
+          </div>
+        </div>
+      </ElFormItem>
+
+      <ElCollapse
+        v-model="activePanel"
+        class="collapse-fill has-sticky last-item-noborder"
+        accordion
+        expand-icon-position="left"
+        style="--collapse-padding-primary: 0"
+      >
+        <ElCollapseItem name="1">
+          <template #title>
+            <span>{{
+              $t('packages_business_verification_form_gaojipeizhi')
+            }}</span>
+          </template>
+          <ElFormItem
+            v-if="form.inspectMethod !== 'hash'"
+            class="form-item"
+            prop="inspectDifferenceMode"
+            :label="`${$t('packages_business_verification_form_jieguoshuchu')}: `"
+          >
+            <ElSelect
+              v-model="form.inspectDifferenceMode"
+              filterable
+              class="form-select"
+            >
+              <ElOption
+                :label="
+                  $t('packages_business_verification_form_shuchusuoyoubu')
+                "
+                value="All"
+              />
+              <ElOption
+                :label="
+                  $t('packages_business_verification_form_zhishuchulaiyuan')
+                "
+                value="OnSourceExists"
+              />
+            </ElSelect>
+          </ElFormItem>
+
+          <ElFormItem
+            class="form-item"
+            :label="`${$t('packages_business_verification_frequency')}: `"
+          >
+            <ElSelect
+              v-model="form.mode"
+              class="form-select"
+              @input="form.enabled = true"
+            >
+              <ElOption
+                :label="$t('packages_business_verification_single')"
+                value="manual"
+              />
+              <ElOption
+                :label="$t('packages_business_verification_repeating')"
+                value="cron"
+              />
+            </ElSelect>
+          </ElFormItem>
+          <ElFormItem
+            v-if="form.mode === 'cron'"
+            class="form-item"
+            :label="`${$t('packages_business_verification_is_enabled')}: `"
+          >
+            <ElSwitch v-model="form.enabled" />
+          </ElFormItem>
+          <template v-if="form.mode === 'cron'">
+            <ElFormItem
+              class="form-item"
+              prop="timing.start"
+              :label="`${$t('packages_business_verification_startAndStopTime')}: `"
+            >
+              <ElDatePicker
+                :model-value="[form.timing.start, form.timing.end]"
+                class="form-input"
+                type="datetimerange"
+                range-separator="-"
+                align="right"
+                :default-time="defaultTime"
+                value-format="x"
+                @update:model-value="timingChangeHandler"
+              />
+            </ElFormItem>
+            <ElFormItem
+              class="form-item"
+              prop="timing.intervals"
+              :label="`${$t('packages_business_verification_verifyInterval')}: `"
+            >
+              <ElInput
+                v-model="form.timing.intervals"
+                class="form-input"
+                onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+                onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+              >
+                <template #append>
+                  <ElSelect
+                    v-model="form.timing.intervalsUnit"
+                    style="width: 100px"
+                  >
+                    <ElOption
+                      v-for="unit in timeUnitOptions"
+                      :key="unit"
+                      :label="unit"
+                      :value="unit"
+                    />
+                  </ElSelect>
+                </template>
+              </ElInput>
+            </ElFormItem>
+          </template>
+
+          <ElFormItem
+            class="form-item"
+            :label="`${$t('packages_business_verification_form_task_alarm')}: `"
+          >
+            <div class="inline-block">
+              <div>
+                <ElCheckbox
+                  v-model="form.alarmSettings[0].open"
+                  @change="handleChangeAlarm(arguments[0], 0)"
+                  >{{
+                    $t(
+                      'packages_business_verification_form_task_alarm_when_error',
+                    )
+                  }}
+                </ElCheckbox>
+              </div>
+              <div>
+                <ElCheckbox
+                  v-show="form.inspectMethod === 'row_count'"
+                  v-model="form.alarmSettings[1].open"
+                  @change="handleChangeAlarm(arguments[0], 1)"
+                  >{{
+                    $t(
+                      'packages_business_verification_form_task_alarm_when_diff_result_over_count1',
+                    )
+                  }}
+                  <ElInputNumber
+                    v-model="form.alarmSettings[1].params.maxDifferentialRows"
+                    controls-position="right"
+                    :min="0"
+                    style="width: 100px"
+                    @click.native.prevent.stop
+                    @blur="
+                      () => {
+                        form.alarmSettings[1].params.maxDifferentialRows =
+                          form.alarmSettings[1].params.maxDifferentialRows || 0
+                      }
+                    "
+                  />
+                  {{
+                    $t(
+                      'packages_business_verification_form_task_alarm_when_diff_result_over_count2',
+                    )
+                  }}
+                </ElCheckbox>
+                <ElCheckbox
+                  v-show="['field', 'jointField'].includes(form.inspectMethod)"
+                  v-model="form.alarmSettings[2].open"
+                  @change="handleChangeAlarm(arguments[0], 2)"
+                  >{{
+                    $t(
+                      'packages_business_verification_form_task_alarm_when_result_table_over_count1',
+                    )
+                  }}
+                  <ElInputNumber
+                    v-model="form.alarmSettings[2].params.maxDifferentialValues"
+                    controls-position="right"
+                    :min="0"
+                    style="width: 100px"
+                    @click.native.prevent.stop
+                    @blur="
+                      () => {
+                        form.alarmSettings[2].params.maxDifferentialValues =
+                          form.alarmSettings[2].params.maxDifferentialValues ||
+                          0
+                      }
+                    "
+                  />
+                  {{
+                    $t(
+                      'packages_business_verification_form_task_alarm_when_diff_result_over_count2',
+                    )
+                  }}
+                </ElCheckbox>
+              </div>
+            </div>
+            <div class="inline-block ml-8">
+              <ElCheckboxGroup
+                v-model="form.alarmSettings[0].notify"
+                @change="handleChangeAlarmItem"
+              >
+                <ElCheckbox label="SYSTEM"
+                  >{{ $t('packages_business_verification_form_xitongtongzhi') }}
+                </ElCheckbox>
+                <ElCheckbox label="EMAIL"
+                  >{{
+                    $t('packages_business_verification_form_youjiantongzhi')
+                  }}
+                </ElCheckbox>
+              </ElCheckboxGroup>
+              <ElCheckboxGroup
+                v-show="form.inspectMethod === 'row_count'"
+                v-model="form.alarmSettings[1].notify"
+                @change="handleChangeAlarmItem"
+              >
+                <ElCheckbox label="SYSTEM"
+                  >{{ $t('packages_business_verification_form_xitongtongzhi') }}
+                </ElCheckbox>
+                <ElCheckbox label="EMAIL"
+                  >{{
+                    $t('packages_business_verification_form_youjiantongzhi')
+                  }}
+                </ElCheckbox>
+              </ElCheckboxGroup>
+              <ElCheckboxGroup
+                v-show="['field', 'jointField'].includes(form.inspectMethod)"
+                v-model="form.alarmSettings[2].notify"
+                @change="handleChangeAlarmItem"
+              >
+                <ElCheckbox label="SYSTEM"
+                  >{{ $t('packages_business_verification_form_xitongtongzhi') }}
+                </ElCheckbox>
+                <ElCheckbox label="EMAIL"
+                  >{{
+                    $t('packages_business_verification_form_youjiantongzhi')
+                  }}
+                </ElCheckbox>
+              </ElCheckboxGroup>
             </div>
           </ElFormItem>
 
-          <ElCollapse
-            class="collapse-fill db-list-container only-one"
-            accordion
-            style="--collapse-padding-primary: 0"
+          <ElFormItem
+            v-if="form.inspectMethod !== 'hash'"
+            class="form-item"
+            :label="`${$t(
+              'packages_business_verification_form_label_error_save_count',
+            )}: `"
           >
-            <ElCollapseItem name="1">
-              <template #title>
-                <span>{{
-                  $t('packages_business_verification_form_gaojipeizhi')
-                }}</span>
-                <span
-                  v-if="
-                    form.taskMode === 'pipeline' &&
-                    (autoAddTableLoading || loading)
-                  "
-                  class="ml-3 font-color-sslight"
-                  >{{
-                    $t('packages_business_verification_form_zhengzaijiyuren')
-                  }}</span
-                >
-                <VIcon
-                  v-if="
-                    form.taskMode === 'pipeline' &&
-                    (autoAddTableLoading || loading)
-                  "
-                  class="ml-2 animation-rotate"
-                  size="14"
-                  color="rgb(61, 156, 64)"
-                  >loading-circle
-                </VIcon>
-              </template>
-              <ElFormItem
-                v-if="form.inspectMethod !== 'hash'"
-                class="form-item"
-                prop="inspectDifferenceMode"
-                :label="`${$t('packages_business_verification_form_jieguoshuchu')}: `"
+            <ElSelect v-model="form.limit.keep" class="form-select">
+              <ElOption :value="100" label="100(rows)" />
+              <ElOption :value="1000" label="1000(rows)" />
+              <ElOption :value="10000" label="10000(rows)" />
+            </ElSelect>
+          </ElFormItem>
+
+          <ElFormItem v-if="!isCountOrHash" class="form-item">
+            <template #label>
+              <span>{{ $t('packages_business_ignoreTimePrecision') }}</span>
+              <el-tooltip
+                effect="dark"
+                placement="top"
+                :content="$t('packages_business_ignoreTimePrecision_tip')"
               >
-                <ElSelect
-                  v-model="form.inspectDifferenceMode"
-                  filterable
-                  class="form-select"
+                <VIcon class="align-self-center" color="#909399" size="14"
+                  >info</VIcon
                 >
-                  <ElOption
-                    :label="
-                      $t('packages_business_verification_form_shuchusuoyoubu')
-                    "
-                    value="All"
-                  />
-                  <ElOption
-                    :label="
-                      $t('packages_business_verification_form_zhishuchulaiyuan')
-                    "
-                    value="OnSourceExists"
-                  />
-                </ElSelect>
-              </ElFormItem>
+              </el-tooltip>
+              <span>:</span>
+            </template>
+            <ElSwitch v-model="form.ignoreTimePrecision" />
+          </ElFormItem>
 
-              <ElFormItem
-                class="form-item"
-                :label="`${$t('packages_business_verification_frequency')}: `"
+          <ElFormItem v-if="!isCountOrHash" class="form-item">
+            <template #label>
+              <span>{{ $t('packages_business_checkTableThreadNum') }}</span>
+              <el-tooltip
+                effect="dark"
+                placement="top"
+                :content="$t('packages_business_checkTableThreadNum_tip')"
               >
-                <ElSelect
-                  v-model="form.mode"
-                  class="form-select"
-                  @input="form.enabled = true"
+                <VIcon class="align-self-center" color="#909399" size="14"
+                  >info</VIcon
                 >
-                  <ElOption
-                    :label="$t('packages_business_verification_single')"
-                    value="manual"
-                  />
-                  <ElOption
-                    :label="$t('packages_business_verification_repeating')"
-                    value="cron"
-                  />
-                </ElSelect>
-              </ElFormItem>
-              <ElFormItem
-                v-if="form.mode === 'cron'"
-                class="form-item"
-                :label="`${$t('packages_business_verification_is_enabled')}: `"
+              </el-tooltip>
+              <span>:</span>
+            </template>
+            <ElInputNumber v-model="form.checkTableThreadNum" :min="1" />
+          </ElFormItem>
+
+          <template v-if="form.inspectMethod === 'cdcCount'">
+            <ElFormItem class="setting-item">
+              <label class="item-label">{{
+                $t('packages_business_verification_create_window_duration')
+              }}</label>
+              <ElInput
+                v-model="form.cdcDuration"
+                class="item-input"
+                onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+                onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
               >
-                <ElSwitch v-model="form.enabled" />
-              </ElFormItem>
-              <template v-if="form.mode === 'cron'">
-                <ElFormItem
-                  class="form-item"
-                  prop="timing.start"
-                  :label="`${$t('packages_business_verification_startAndStopTime')}: `"
-                >
-                  <ElDatePicker
-                    :model-value="[form.timing.start, form.timing.end]"
-                    class="form-input"
-                    type="datetimerange"
-                    range-separator="-"
-                    align="right"
-                    :default-time="defaultTime"
-                    value-format="x"
-                    @update:model-value="timingChangeHandler"
-                  />
-                </ElFormItem>
-                <ElFormItem
-                  class="form-item"
-                  prop="timing.intervals"
-                  :label="`${$t('packages_business_verification_verifyInterval')}: `"
-                >
-                  <ElInput
-                    v-model="form.timing.intervals"
-                    class="form-input"
-                    onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
-                    onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
-                  >
-                    <template #append>
-                      <ElSelect
-                        v-model="form.timing.intervalsUnit"
-                        style="width: 100px"
-                      >
-                        <ElOption
-                          v-for="unit in timeUnitOptions"
-                          :key="unit"
-                          :label="unit"
-                          :value="unit"
-                        />
-                      </ElSelect>
-                    </template>
-                  </ElInput>
-                </ElFormItem>
-              </template>
-
-              <ElFormItem
-                class="form-item"
-                :label="`${$t('packages_business_verification_form_task_alarm')}: `"
-              >
-                <div class="inline-block">
-                  <div>
-                    <ElCheckbox
-                      v-model="form.alarmSettings[0].open"
-                      @change="handleChangeAlarm(arguments[0], 0)"
-                      >{{
-                        $t(
-                          'packages_business_verification_form_task_alarm_when_error',
-                        )
-                      }}
-                    </ElCheckbox>
-                  </div>
-                  <div>
-                    <ElCheckbox
-                      v-show="form.inspectMethod === 'row_count'"
-                      v-model="form.alarmSettings[1].open"
-                      @change="handleChangeAlarm(arguments[0], 1)"
-                      >{{
-                        $t(
-                          'packages_business_verification_form_task_alarm_when_diff_result_over_count1',
-                        )
-                      }}
-                      <ElInputNumber
-                        v-model="
-                          form.alarmSettings[1].params.maxDifferentialRows
-                        "
-                        controls-position="right"
-                        :min="0"
-                        style="width: 100px"
-                        @click.native.prevent.stop
-                        @blur="
-                          () => {
-                            form.alarmSettings[1].params.maxDifferentialRows =
-                              form.alarmSettings[1].params
-                                .maxDifferentialRows || 0
-                          }
-                        "
-                      />
-                      {{
-                        $t(
-                          'packages_business_verification_form_task_alarm_when_diff_result_over_count2',
-                        )
-                      }}
-                    </ElCheckbox>
-                    <ElCheckbox
-                      v-show="
-                        ['field', 'jointField'].includes(form.inspectMethod)
-                      "
-                      v-model="form.alarmSettings[2].open"
-                      @change="handleChangeAlarm(arguments[0], 2)"
-                      >{{
-                        $t(
-                          'packages_business_verification_form_task_alarm_when_result_table_over_count1',
-                        )
-                      }}
-                      <ElInputNumber
-                        v-model="
-                          form.alarmSettings[2].params.maxDifferentialValues
-                        "
-                        controls-position="right"
-                        :min="0"
-                        style="width: 100px"
-                        @click.native.prevent.stop
-                        @blur="
-                          () => {
-                            form.alarmSettings[2].params.maxDifferentialValues =
-                              form.alarmSettings[2].params
-                                .maxDifferentialValues || 0
-                          }
-                        "
-                      />
-                      {{
-                        $t(
-                          'packages_business_verification_form_task_alarm_when_diff_result_over_count2',
-                        )
-                      }}
-                    </ElCheckbox>
-                  </div>
-                </div>
-                <div class="inline-block ml-8">
-                  <ElCheckboxGroup
-                    v-model="form.alarmSettings[0].notify"
-                    @change="handleChangeAlarmItem"
-                  >
-                    <ElCheckbox label="SYSTEM"
-                      >{{
-                        $t('packages_business_verification_form_xitongtongzhi')
-                      }}
-                    </ElCheckbox>
-                    <ElCheckbox label="EMAIL"
-                      >{{
-                        $t('packages_business_verification_form_youjiantongzhi')
-                      }}
-                    </ElCheckbox>
-                  </ElCheckboxGroup>
-                  <ElCheckboxGroup
-                    v-show="form.inspectMethod === 'row_count'"
-                    v-model="form.alarmSettings[1].notify"
-                    @change="handleChangeAlarmItem"
-                  >
-                    <ElCheckbox label="SYSTEM"
-                      >{{
-                        $t('packages_business_verification_form_xitongtongzhi')
-                      }}
-                    </ElCheckbox>
-                    <ElCheckbox label="EMAIL"
-                      >{{
-                        $t('packages_business_verification_form_youjiantongzhi')
-                      }}
-                    </ElCheckbox>
-                  </ElCheckboxGroup>
-                  <ElCheckboxGroup
-                    v-show="
-                      ['field', 'jointField'].includes(form.inspectMethod)
-                    "
-                    v-model="form.alarmSettings[2].notify"
-                    @change="handleChangeAlarmItem"
-                  >
-                    <ElCheckbox label="SYSTEM"
-                      >{{
-                        $t('packages_business_verification_form_xitongtongzhi')
-                      }}
-                    </ElCheckbox>
-                    <ElCheckbox label="EMAIL"
-                      >{{
-                        $t('packages_business_verification_form_youjiantongzhi')
-                      }}
-                    </ElCheckbox>
-                  </ElCheckboxGroup>
-                </div>
-              </ElFormItem>
-
-              <ElFormItem
-                v-if="form.inspectMethod !== 'hash'"
-                class="form-item"
-                :label="`${$t(
-                  'packages_business_verification_form_label_error_save_count',
-                )}: `"
-              >
-                <ElSelect v-model="form.limit.keep" class="form-select">
-                  <ElOption :value="100" label="100(rows)" />
-                  <ElOption :value="1000" label="1000(rows)" />
-                  <ElOption :value="10000" label="10000(rows)" />
-                </ElSelect>
-              </ElFormItem>
-
-              <ElFormItem v-if="!isCountOrHash" class="form-item">
-                <template #label>
-                  <span>{{ $t('packages_business_ignoreTimePrecision') }}</span>
-                  <el-tooltip
-                    effect="dark"
-                    placement="top"
-                    :content="$t('packages_business_ignoreTimePrecision_tip')"
-                  >
-                    <VIcon class="align-self-center" color="#909399" size="14"
-                      >info</VIcon
-                    >
-                  </el-tooltip>
-                  <span>:</span>
-                </template>
-                <ElSwitch v-model="form.ignoreTimePrecision" />
-              </ElFormItem>
-
-              <ElFormItem v-if="!isCountOrHash" class="form-item">
-                <template #label>
-                  <span>{{ $t('packages_business_checkTableThreadNum') }}</span>
-                  <el-tooltip
-                    effect="dark"
-                    placement="top"
-                    :content="$t('packages_business_checkTableThreadNum_tip')"
-                  >
-                    <VIcon class="align-self-center" color="#909399" size="14"
-                      >info</VIcon
-                    >
-                  </el-tooltip>
-                  <span>:</span>
-                </template>
-                <ElInputNumber v-model="form.checkTableThreadNum" :min="1" />
-              </ElFormItem>
-
-              <template v-if="form.inspectMethod === 'cdcCount'">
-                <ElFormItem class="setting-item">
-                  <label class="item-label">{{
-                    $t('packages_business_verification_create_window_duration')
-                  }}</label>
-                  <ElInput
-                    v-model="form.cdcDuration"
-                    class="item-input"
-                    onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
-                    onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
-                  >
-                    <template #append> {{ $t('public_time_m') }}</template>
-                  </ElInput>
-                </ElFormItem>
-                <ElFormItem class="setting-item" prop="cdcBeginDate">
-                  <label class="item-label is-required">{{
-                    $t('packages_business_verification_form_jiaoyankaishishi')
-                  }}</label>
-                  <ElDatePicker
-                    v-model="form.cdcBeginDate"
-                    class="item-select"
-                    type="datetime"
-                    :placeholder="
-                      $t('packages_business_verification_form_jiaoyankaishishi')
-                    "
-                    format="YYYY-MM-DD HH:mm:ss"
-                    value-format="YYYY-MM-DD HH:mm:ss"
-                  />
-                </ElFormItem>
-                <ElFormItem v-if="form.mode === 'manual'" class="setting-item">
-                  <label class="item-label">{{
-                    $t('packages_business_verification_form_jiaoyanjieshushi')
-                  }}</label>
-                  <ElDatePicker
-                    v-model="form.cdcEndDate"
-                    class="item-select"
-                    type="datetime"
-                    :placeholder="
-                      $t('packages_business_verification_form_jiaoyanjieshushi')
-                    "
-                    format="YYYY-MM-DD HH:mm:ss"
-                    value-format="YYYY-MM-DD HH:mm:ss"
-                  />
-                </ElFormItem>
-              </template>
-
-              <ConditionBox
-                v-if="form.taskMode === 'pipeline'"
-                ref="conditionBox"
-                v-model:joint-error-message="jointErrorMessage"
-                v-model:error-message-level="errorMessageLevel"
-                v-model:auto-add-table-loading="autoAddTableLoading"
-                :task-id="form.flowId"
-                :inspect-method="form.inspectMethod"
-                :data="form.tasks"
-                :edges="edges"
-                :all-stages="allStages"
-                :is-d-b="isDbClone"
+                <template #append> {{ $t('public_time_m') }}</template>
+              </ElInput>
+            </ElFormItem>
+            <ElFormItem class="setting-item" prop="cdcBeginDate">
+              <label class="item-label is-required">{{
+                $t('packages_business_verification_form_jiaoyankaishishi')
+              }}</label>
+              <ElDatePicker
+                v-model="form.cdcBeginDate"
+                class="item-select"
+                type="datetime"
+                :placeholder="
+                  $t('packages_business_verification_form_jiaoyankaishishi')
+                "
+                format="YYYY-MM-DD HH:mm:ss"
+                value-format="YYYY-MM-DD HH:mm:ss"
               />
-            </ElCollapseItem>
-          </ElCollapse>
-          <ConditionBox
-            v-if="form.taskMode !== 'pipeline'"
-            ref="conditionBox"
-            v-model:joint-error-message="jointErrorMessage"
-            v-model:error-message-level="errorMessageLevel"
-            v-model:auto-add-table-loading="autoAddTableLoading"
-            :task-id="form.flowId"
-            :inspect-method="form.inspectMethod"
-            :data="form.tasks"
-            :edges="edges"
-            :all-stages="allStages"
-            :is-d-b="isDbClone"
-            class="mt-6"
-          />
-        </ElForm>
-      </div>
-      <div
-        v-if="!!errorMessageLevel"
-        class="color-danger mt-2"
-        v-html="jointErrorMessage"
-      />
-      <div class="mt-4">
-        <ElButton @click="goBack()">{{ $t('public_button_back') }}</ElButton>
-        <ElButton type="primary" :disabled="saveDisabled" @click="save(true)"
-          >{{ $t('public_button_save') }}
-        </ElButton>
-      </div>
-    </section>
+            </ElFormItem>
+            <ElFormItem v-if="form.mode === 'manual'" class="setting-item">
+              <label class="item-label">{{
+                $t('packages_business_verification_form_jiaoyanjieshushi')
+              }}</label>
+              <ElDatePicker
+                v-model="form.cdcEndDate"
+                class="item-select"
+                type="datetime"
+                :placeholder="
+                  $t('packages_business_verification_form_jiaoyanjieshushi')
+                "
+                format="YYYY-MM-DD HH:mm:ss"
+                value-format="YYYY-MM-DD HH:mm:ss"
+              />
+            </ElFormItem>
+          </template>
+        </ElCollapseItem>
+
+        <ConditionBox
+          ref="conditionBox"
+          v-model:joint-error-message="jointErrorMessage"
+          v-model:error-message-level="errorMessageLevel"
+          v-model:auto-add-table-loading="autoAddTableLoading"
+          class="condition-panel"
+          :task-id="form.flowId"
+          :inspect-method="form.inspectMethod"
+          :data="form.tasks"
+          :edges="edges"
+          :all-stages="allStages"
+          :is-d-b="isDbClone"
+          @open-task-select="openTaskSelect"
+        />
+      </ElCollapse>
+    </ElForm>
+
+    <div
+      class="position-sticky bottom-0 border-top bg-white z-10 mt-auto flex align-center content-footer flex-shrink-0"
+    >
+      <el-button size="large" @click="goBack()">{{
+        $t('public_button_back')
+      }}</el-button>
+      <el-button
+        size="large"
+        type="primary"
+        :disabled="saveDisabled"
+        :icon="Check"
+        @click="save(true)"
+        >{{ $t('public_button_save') }}
+      </el-button>
+
+      <template v-if="!!errorMessageLevel">
+        <el-divider class="mx-4" direction="vertical" />
+        <el-alert type="error" show-icon :closable="false" class="w-auto">
+          <template #title>
+            <div v-html="jointErrorMessage" />
+          </template>
+        </el-alert>
+      </template>
+    </div>
   </PageContainer>
 </template>
 
@@ -1104,5 +1132,46 @@ provide('formData', form)
   :deep(.el-form-item__error) {
     margin-top: 8px;
   }
+}
+
+.has-sticky {
+  --sticky-top: 0px;
+  :deep(.el-collapse-item__header) {
+    position: sticky;
+    top: var(--sticky-top);
+    z-index: 10;
+  }
+}
+
+.el-collapse {
+  &.last-item-noborder {
+    border-bottom: none;
+    :deep(.el-collapse-item:last-child) {
+      margin-bottom: 0;
+      .el-collapse-item__header,
+      .el-collapse-item__wrap {
+        border-bottom: none;
+      }
+    }
+  }
+}
+
+.condition-panel {
+  &.is-active {
+    :deep(.el-collapse-item__wrap) {
+      overflow: unset;
+    }
+    :deep(.condition-footer) {
+      position: sticky;
+      bottom: 72px;
+      backdrop-filter: blur(12px);
+      background-color: rgba(255, 255, 255, 0.8);
+      z-index: 10;
+    }
+  }
+}
+
+.content-footer {
+  height: 72px;
 }
 </style>

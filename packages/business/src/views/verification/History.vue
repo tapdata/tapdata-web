@@ -278,7 +278,7 @@ export default {
             <span>{{ statusMap[scope.row.status] }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('public_operation')" width="60px">
+        <el-table-column :label="$t('public_operation')" width="100px">
           <template #default="scope">
             <ElButton text type="primary" @click="rowClick(scope.row)">{{
               $t('public_button_details')

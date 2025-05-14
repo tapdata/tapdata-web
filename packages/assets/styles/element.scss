@@ -157,6 +157,13 @@
 }
 
 // Radio
+.el-radio-group.has-space {
+  gap: 1rem;
+  .el-radio-button__inner {
+    border-left: var(--el-border);
+    border-radius: var(--el-border-radius-base);
+  }
+}
 .el-radio-group.button-style-outline {
   .el-radio-button {
     --el-radio-button-checked-bg-color: #fff;
@@ -456,6 +463,12 @@
 
 // Alert
 .el-alert {
+  &.fit-content {
+    .el-alert__content {
+      flex: 1;
+      min-width: 0;
+    }
+  }
   &--info.is-light {
     --el-alert-bg-color: var(--info-fill);
     --el-color-info: var(--el-text-color-title);

@@ -48,7 +48,7 @@ export const JsonEditor = defineComponent({
       }
       return (
         <VCodeEditor
-          class="border rounded-2 p-0"
+          class="border rounded-xl p-0"
           theme="chrome"
           value={editorVal.value}
           lang="json"

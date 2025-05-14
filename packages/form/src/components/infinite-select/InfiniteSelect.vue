@@ -66,7 +66,7 @@ const isStrItem = computed(() => {
 const emit = defineEmits([
   'update:modelValue',
   'update:loading',
-  'change-label',
+  'changeLabel',
   'optionSelect',
 ])
 
@@ -194,7 +194,7 @@ const handleChange = () => {
 
 const onChange = (value: any) => {
   nextTick(() => {
-    emit('change-label', selectRef.value.states.selected.currentLabel)
+    emit('changeLabel', selectRef.value.states.selected.currentLabel)
 
     // Find the selected object by matching itemValue with the selected value
     const selectedOption = isStrItem.value
@@ -223,6 +223,9 @@ const onUpdateModelValue = (val) => {
 
 defineExpose({
   loadDataList,
+  focus: () => {
+    selectRef.value.focus()
+  },
 })
 
 watch(
@@ -254,7 +257,6 @@ onMounted(() => {
 <template>
   <el-select
     ref="selectRef"
-    placeholder="请选择"
     :model-value="modelValue"
     remote
     filterable
