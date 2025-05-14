@@ -901,7 +901,7 @@ export default {
   packages_dag_inspect_target_records: '目標表記錄數',
   packages_dag_inspect_ignore_records: '忽略次數',
   packages_dag_inspect_accept_records: '接受次數',
-  packages_dag_inspect_diff_records: '差異次數',
+  packages_dag_inspect_diff_records: '差異條數',
   packages_dag_inspect_diff_records_num: '差異 {num} 條',
   packages_dag_inspect_target_more_num: '目標多 {num} 條',
   packages_dag_inspect_target_less_num: '目標少 {num} 條',

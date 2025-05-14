@@ -912,7 +912,7 @@ export default {
   packages_dag_inspect_target_records: '目标表记录数',
   packages_dag_inspect_ignore_records: '忽略次数',
   packages_dag_inspect_accept_records: '抽样次数',
-  packages_dag_inspect_diff_records: '差异次数',
+  packages_dag_inspect_diff_records: '差异条数',
   packages_dag_inspect_diff_records_num: '差异 {num} 条',
   packages_dag_inspect_target_more_num: '目标多 {num} 条',
   packages_dag_inspect_target_less_num: '目标少 {num} 条',

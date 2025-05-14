@@ -28,9 +28,9 @@ interface InspectItem {
   statusType: string
   pingTime?: string
   attrs: {
-    ignores: number
-    accepts: number
-    differences?: number
+    cdcIgnores: number
+    cdcAccepts: number
+    diffToTotals?: number
   }
 }
 
@@ -41,9 +41,9 @@ interface TaskInspectHistory {
   endTime: string
   status: string
   attrs: {
-    ignores: number
-    accepts: number
-    differences?: number
+    cdcIgnores: number
+    cdcAccepts: number
+    diffToTotals?: number
   }
 }
 
@@ -262,7 +262,7 @@ onBeforeUnmount(() => {
               >{{ $t('packages_dag_inspect_ignore_records') }}</span
             >
             <span class="fw-sub font-color-dark">
-              {{ inspect.attrs.ignores }}
+              {{ inspect.attrs.cdcIgnores }}
             </span>
           </div>
 
@@ -272,11 +272,11 @@ onBeforeUnmount(() => {
               >{{ $t('packages_dag_inspect_accept_records') }}</span
             >
             <span class="fw-sub font-color-dark">
-              {{ inspect.attrs.accepts }}
+              {{ inspect.attrs.cdcAccepts }}
             </span>
           </div>
 
-          <!-- <div class="flex flex-column gap-2">
+          <div class="flex flex-column gap-2">
             <span class="flex align-center gap-1"
               ><VIcon>FileChartColumnIncreasing</VIcon
               >{{ $t('packages_dag_inspect_diff_records') }}</span
@@ -284,12 +284,12 @@ onBeforeUnmount(() => {
             <span
               class="fw-sub font-color-dark"
               :class="{
-                'color-danger': inspect.attrs.differences > 0,
+                'color-danger': inspect.attrs.diffToTotals > 0,
               }"
             >
-              {{ inspect.attrs.differences }}
+              {{ inspect.attrs.diffToTotals }}
             </span>
-          </div> -->
+          </div>
 
           <ElButton text type="primary">
             {{ $t('public_button_details') }}
