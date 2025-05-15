@@ -218,7 +218,7 @@ onBeforeUnmount(() => {
       <div
         v-for="inspect in inspectList"
         :key="inspect.id"
-        class="flex align-items-stretch border rounded-lg overflow-hidden cursor-pointer hover:bg-light"
+        class="flex align-items-stretch border rounded-xl overflow-hidden cursor-pointer hover:bg-light"
         @click="handleDetail(inspect)"
       >
         <div
