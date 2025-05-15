@@ -287,7 +287,9 @@ onBeforeUnmount(() => {
             <span
               class="fw-sub font-color-dark"
               :class="{
-                'color-danger': inspect.attrs.diffToTotals > 0,
+                'color-danger':
+                  inspect.attrs.diffToTotals > 0 &&
+                  inspect.status === 'RUNNING',
               }"
             >
               {{ inspect.attrs.diffToTotals }}
