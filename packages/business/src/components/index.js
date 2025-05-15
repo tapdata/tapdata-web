@@ -1,35 +1,37 @@
-import StatusItem from './StatusItem'
-import SchemaProgress from './SchemaProgress'
-import StatusTag from './StatusTag'
-import SelectClassify from './SelectClassify'
-import UploadDialog from './UploadDialog'
+import ConnectorForm from './ConnectorForm.vue'
+import DiscoveryClassification from './DiscoveryClassification'
 import Log from './logs/Index.vue'
+import PageContainer from './PageContainer.vue'
+import PageHeader from './PageHeader'
+import SchemaProgress from './SchemaProgress'
+import SelectClassify from './SelectClassify'
+import StageButton from './StageButton'
+import StatusItem from './StatusItem'
+import StatusTag from './StatusTag'
+import SyncStatus from './SyncStatus.vue'
 import TablePage from './TablePage.vue'
 import TaskStatus from './TaskStatus'
-import PageHeader from './PageHeader'
-import DiscoveryClassification from './DiscoveryClassification'
-import StageButton from './StageButton'
-import UpgradeFee from './UpgradeFee'
 import UpgradeCharges from './UpgradeCharges'
-import SyncStatus from './SyncStatus.vue'
-import ConnectorForm from './ConnectorForm.vue'
+import UpgradeFee from './UpgradeFee'
+import UploadDialog from './UploadDialog'
 
 export {
-  StatusItem,
-  SchemaProgress,
-  StatusTag,
-  SelectClassify,
-  UploadDialog,
+  ConnectorForm,
+  DiscoveryClassification,
   Log,
+  PageContainer,
+  PageHeader,
+  SchemaProgress,
+  SelectClassify,
+  StageButton,
+  StatusItem,
+  StatusTag,
+  SyncStatus,
   TablePage,
   TaskStatus,
-  PageHeader,
-  DiscoveryClassification,
-  StageButton,
-  UpgradeFee,
   UpgradeCharges,
-  SyncStatus,
-  ConnectorForm
+  UpgradeFee,
+  UploadDialog,
 }
 
 export * from './DatabaseIcon'
