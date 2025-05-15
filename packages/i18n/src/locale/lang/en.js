@@ -81,6 +81,7 @@ export default {
   public_status_do_snapshot: 'Full Syncing',
   public_status_snapshot_completed: 'Full Sync Completed',
   public_status_do_cdc: 'Incremental Syncing',
+  public_status_ping_timeout: 'Ping Timeout',
   // button
   public_button_edit: 'Edit',
   public_button_confirm: 'OK',

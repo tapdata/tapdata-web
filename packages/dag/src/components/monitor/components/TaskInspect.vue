@@ -97,6 +97,7 @@ const makeStatus = (status: string) => {
     STOPPED: i18n.t('public_status_stop'),
     DONE: i18n.t('public_status_finished'),
     ERROR: i18n.t('public_status_error'),
+    PING_TIMEOUT: i18n.t('public_status_ping_timeout'),
   }
 
   const typeMap: Record<string, string> = {
@@ -104,6 +105,7 @@ const makeStatus = (status: string) => {
     STOPPED: 'info',
     DONE: 'primary',
     ERROR: 'danger',
+    PING_TIMEOUT: 'warning',
   }
 
   return {

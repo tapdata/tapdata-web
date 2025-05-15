@@ -81,6 +81,7 @@ export default {
   public_status_do_snapshot: '全量進行中',
   public_status_snapshot_completed: '全量已完成',
   public_status_do_cdc: '增量進行中',
+  public_status_ping_timeout: '心跳超時',
   // 按鈕
   public_button_edit: '編輯',
   public_button_confirm: '確定',
@@ -378,8 +379,8 @@ export default {
   public_load_more: '加載更多',
   public_loading: '拼命加載中',
   public_load_end: '到底了',
-  public_data_validation: '数据校验',
-  public_validation_record: '校验记录',
+  public_data_validation: '數據校驗',
+  public_validation_record: '校驗記錄',
   public_foreign_key_tip: '外鍵 {name} 指向 {val}',
   public_form_design: '表單設計',
   public_code_edit: '代碼編輯',

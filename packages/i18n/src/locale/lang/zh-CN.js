@@ -81,7 +81,7 @@ export default {
   public_status_do_snapshot: '全量进行中',
   public_status_snapshot_completed: '全量已完成',
   public_status_do_cdc: '增量进行中',
-
+  public_status_ping_timeout: '心跳超时',
   // 按钮
   public_button_edit: '编辑',
   public_button_confirm: '确定',
