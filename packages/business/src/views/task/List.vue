@@ -1188,7 +1188,7 @@ export default {
               v-else
               role="ellipsis"
               type="primary"
-              :underline="false"
+              underline="hover"
               class="justify-content-start ellipsis block mr-1"
               :class="['name', { 'has-children': row.hasChildren }]"
               @click.stop="handleClickName(row)"

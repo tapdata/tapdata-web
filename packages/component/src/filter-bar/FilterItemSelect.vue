@@ -24,10 +24,6 @@ const props = defineProps({
   },
 })
 
-// const { items } = toRefs(props)
-
-console.log('items', props)
-
 const selectStyle = computed(() => {
   return {
     // width: isEmpty.value && !props.filterable ? 'auto' : addUnit(props.width),
