@@ -345,16 +345,16 @@
     margin-left: 0;
   }
 
-  &.is-text.el-button--small:has(> i:only-child) {
+  &.is-text.el-button--small:has(> i:only-child), &.is-text.el-button--small:has(> i + span:empty) {
     font-size: 16px;
   }
 
   // 这里的default 介于按钮的 sm/default 之间
-  &.is-text.el-button--default:has(> i:only-child) {
+  &.is-text.el-button--default:has(> i:only-child), &.is-text.el-button--default:has(> i + span:empty) {
     font-size: 18px;
   }
 
-  &.is-text.el-button--large:has(> i:only-child) {
+  &.is-text.el-button--large:has(> i:only-child), &.is-text.el-button--large:has(> i + span:empty) {
     font-size: 24px;
   }
 }

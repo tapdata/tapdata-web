@@ -1502,6 +1502,8 @@ export default observer({
                               type: 'void',
                               'x-component': 'ArrayTable.Remove',
                               'x-component-props': {
+                                text: true,
+                                type: 'primary',
                                 onClick: `{{handleRemovePermissionsItem}}`,
                               },
                             },
