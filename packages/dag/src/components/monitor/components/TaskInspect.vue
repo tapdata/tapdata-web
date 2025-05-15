@@ -130,13 +130,14 @@ const remoteMethod = async ({
 
   if (!taskId) return Promise.resolve({ total: 0, data: [] })
 
-  const params = {
+  const filter = JSON.stringify({
     page: current,
     size,
-  }
+    sort: ['beginTime desc'],
+  })
 
   try {
-    const response = await taskInspectApi.getHistories(taskId, params)
+    const response = await taskInspectApi.getHistories(taskId, { filter })
     const data = response as unknown as ApiResponse
     return {
       total: data.total || 0,
@@ -164,7 +165,7 @@ const fetch = async () => {
     page: { current: 1, size: 10 },
   })
 
-  data.sort((a, b) => dayjs(b.beginTime).diff(dayjs(a.beginTime)))
+  // data.sort((a, b) => dayjs(b.beginTime).diff(dayjs(a.beginTime)))
 
   inspectList.value = data
   loading.value = false

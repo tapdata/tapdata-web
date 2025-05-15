@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import axios from 'axios'
-import dayjs from 'dayjs'
 import { ref } from 'vue'
 import InspectRecordDialog from './InspectRecordDialog.vue'
 
@@ -158,11 +157,12 @@ function handleRecordClick(row: DiffRow): void {
       </div>
     </template>
     <div class="inspect-detail-container border-top">
-      <div class="flex" style="min-height: 400px">
-        <div
-          v-loading="loadingList"
-          class="inspection-result-list bg-light p-3 overflow-y-auto"
-        >
+      <div
+        v-loading="loadingList"
+        :class="inspectList.length || loadingList ? 'flex' : 'none'"
+        style="min-height: 400px"
+      >
+        <div class="inspection-result-list bg-light p-3 overflow-y-auto">
           <div class="flex flex-column gap-3">
             <div
               v-for="(row, index) in inspectList"
@@ -232,7 +232,7 @@ function handleRecordClick(row: DiffRow): void {
         </div>
 
         <div
-          v-loading="loadingList || loadingDetails"
+          v-loading="loadingDetails"
           class="bg-white border-left flex-1 flex flex-column"
         >
           <div class="flex gap-3 px-4 py-3 border-bottom">
@@ -421,6 +421,10 @@ function handleRecordClick(row: DiffRow): void {
           </div>
         </div>
       </div>
+
+      <el-empty
+        v-show="!loadingList && !loadingDetails && !inspectList.length"
+      />
     </div>
 
     <InspectRecordDialog v-model="recordDialogVisible" :result-id="resultId" />
