@@ -336,6 +336,7 @@ export default {
   packages_dag_src_editor_juhe: 'Aggregate',
   packages_dag_src_editor_zhuijiahebing: 'Union',
   packages_dag_src_editor_join: 'Join',
+  packages_dag_src_editor_row_filter: 'Row Filter',
   packages_dag_src_migrationeditor_jSchuli: 'Enhanced JS',
   packages_dag_src_migrationeditor_jSchuli_standard: 'Standard JS',
   packages_dag_src_migrationeditor_ziduanbianji: 'Field Editor',
@@ -926,6 +927,8 @@ export default {
     'When enabled, the generated table names will have a date suffix corresponding to the runtime of the task',
   packages_dag_table_rename_multiple:
     'In the task, only one table editing node is allowed',
+  packages_dag_table_rename_multiple:
+    'In the task, only one table editing node is allowed',
   packages_dag_migrate_union: 'Union',
   packages_dag_merged_tableName: 'Merged Table Name',
   packages_dag_merged_tableName_ph: 'Please enter the merged table name',
@@ -998,8 +1001,10 @@ export default {
   packages_dag_field_path: 'Field Path',
   packages_dag_email_receivers: 'Email Receivers',
   packages_dag_merge_table_js_node_error:
+   
     'Merge table node cannot have JS node after it',
   packages_dag_merge_table_table_not_allow_target:
+   
     'Merge table does not support writing to {val}',
   packages_dag_full_validation: 'Full Validation',
   packages_dag_incremental_validation: 'Incremental Validation',

@@ -103,45 +103,6 @@ export default observer({
           }
         },
 
-        async loadAlarmChannels() {
-          const channels = await alarmApi.channels()
-          const MAP = {
-            system: {
-              label: i18n.t('packages_dag_migration_alarmpanel_xitongtongzhi'),
-              value: 'SYSTEM',
-            },
-            email: {
-              label: i18n.t('packages_dag_migration_alarmpanel_youjiantongzhi'),
-              value: 'EMAIL',
-            },
-          }
-          const options = []
-          if (!isDaas) {
-            const isOpenid = window.__USER_INFO__?.openid
-            Object.assign(MAP, {
-              wechat: {
-                label: i18n.t('packages_business_notify_webchat_notification'),
-                value: 'WECHAT',
-                disabled: !isOpenid,
-              },
-              sms: {
-                label: i18n.t('packages_business_notify_sms_notification'),
-                value: 'SMS',
-              },
-            })
-          }
-
-          for (const channel of channels) {
-            const option = MAP[channel.type]
-
-            if (!option) continue
-
-            options.push(option)
-          }
-
-          return options
-        },
-
         async loadRoleList(field, val) {
           try {
             const filter = {
@@ -922,7 +883,7 @@ export default observer({
                 type: 'void',
                 'x-component': 'FormTab.TabPane',
                 'x-component-props': {
-                  class: 'test',
+                  class: 'h-auto',
                   label: i18n.t(
                     'packages_dag_migration_configpanel_gaojingshezhi',
                   ),
@@ -990,83 +951,250 @@ export default observer({
                       },
                     ],
                   },
-                  'alarmSettings.0.open': {
+                  'alarmSettings.0': {
+                    type: 'object',
                     title: i18n.t(
                       'packages_dag_migration_alarmpanel_renwuyunxingchu',
                     ),
-                    type: 'boolean',
-                    default: true,
-                    'x-editable': true,
                     'x-decorator': 'FormItem',
-                    'x-component': 'Switch',
+                    'x-component': 'div',
                     'x-component-props': {
-                      onChange: `{{val=>(val && !$values.alarmSettings[0].notify.length && ($values.alarmSettings[0].notify=["SYSTEM"]))}}`,
+                      class: 'flex align-center',
+                    },
+                    properties: {
+                      open: {
+                        type: 'boolean',
+                        default: true,
+                        'x-editable': true,
+                        'x-component': 'Switch',
+                        'x-component-props': {
+                          onChange: `{{val=>(val && !$values.alarmSettings[0].notify.length && ($values.alarmSettings[0].notify=["SYSTEM"]))}}`,
+                        },
+                      },
+                      divider: {
+                        type: 'void',
+                        'x-component': 'Divider',
+                        'x-component-props': {
+                          direction: 'vertical',
+                          class: 'mx-4',
+                        },
+                        'x-reactions': {
+                          dependencies: ['.open'],
+                          fulfill: {
+                            state: {
+                              display: `{{$deps[0] ? 'visible' : 'hidden'}}`,
+                            },
+                          },
+                        },
+                      },
+                      notify: {
+                        type: 'array',
+                        'x-component': 'Checkbox.Group',
+                        'x-component-props': {
+                          onChange: `{{val=>(!val.length && ($values.alarmSettings[0].open=false))}}`,
+                        },
+                        default: ['SYSTEM', 'EMAIL'],
+                        'x-editable': true,
+                        'x-reactions': {
+                          dependencies: ['.open'],
+                          fulfill: {
+                            state: {
+                              display: `{{$deps[0] ? 'visible' : 'hidden'}}`,
+                            },
+                          },
+                        },
+                      },
                     },
                   },
-                  'alarmSettings.0.notify': {
-                    type: 'array',
-                    'x-decorator': 'FormItem',
-                    'x-component': 'Checkbox.Group',
-                    'x-component-props': {
-                      onChange: `{{val=>(!val.length && ($values.alarmSettings[0].open=false))}}`,
-                    },
-                    default: ['SYSTEM', 'EMAIL'],
-                    'x-editable': true,
-                    'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}'],
-                  },
-                  'alarmSettings.1.open': {
+
+                  'alarmSettings.1': {
+                    type: 'object',
                     title: i18n.t(
                       'packages_dag_migration_alarmpanel_renwuquanliangwan',
                     ),
-                    type: 'boolean',
-                    default: true,
-                    'x-editable': true,
                     'x-decorator': 'FormItem',
-                    'x-component': 'Switch',
+                    'x-component': 'div',
                     'x-component-props': {
-                      onChange: `{{val=>(val && !$values.alarmSettings[1].notify.length && ($values.alarmSettings[1].notify=["SYSTEM"]))}}`,
+                      class: 'flex align-center',
+                    },
+                    properties: {
+                      open: {
+                        type: 'boolean',
+                        default: true,
+                        'x-editable': true,
+                        'x-component': 'Switch',
+                        'x-component-props': {
+                          onChange: `{{val=>(val && !$values.alarmSettings[1].notify.length && ($values.alarmSettings[1].notify=["SYSTEM"]))}}`,
+                        },
+                      },
+                      divider: {
+                        type: 'void',
+                        'x-component': 'Divider',
+                        'x-component-props': {
+                          direction: 'vertical',
+                          class: 'mx-4',
+                        },
+                        'x-reactions': {
+                          dependencies: ['.open'],
+                          fulfill: {
+                            state: {
+                              display: `{{$deps[0] ? 'visible' : 'hidden'}}`,
+                            },
+                          },
+                        },
+                      },
+                      notify: {
+                        type: 'array',
+                        'x-component': 'Checkbox.Group',
+                        'x-component-props': {
+                          onChange: `{{val=>(!val.length && ($values.alarmSettings[1].open=false))}}`,
+                        },
+                        default: ['SYSTEM', 'EMAIL'],
+                        'x-editable': true,
+                        'x-reactions': {
+                          dependencies: ['.open'],
+                          fulfill: {
+                            state: {
+                              display: `{{$deps[0] ? 'visible' : 'hidden'}}`,
+                            },
+                          },
+                        },
+                      },
                     },
                   },
-                  'alarmSettings.1.notify': {
-                    type: 'array',
-                    'x-decorator': 'FormItem',
-                    'x-component': 'Checkbox.Group',
-                    'x-component-props': {
-                      onChange: `{{val=>(!val.length && ($values.alarmSettings[1].open=false))}}`,
-                    },
-                    default: ['SYSTEM', 'EMAIL'],
-                    'x-editable': true,
-                    'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}'],
-                  },
-                  'alarmSettings.2.open': {
+
+                  'alarmSettings.2': {
+                    type: 'object',
                     title: i18n.t(
                       'packages_dag_migration_alarmpanel_renwuzengliangkai',
                     ),
-                    type: 'boolean',
-                    default: true,
-                    'x-editable': true,
                     'x-decorator': 'FormItem',
-                    'x-component': 'Switch',
+                    'x-component': 'div',
                     'x-component-props': {
-                      onChange: `{{val=>(val && !$values.alarmSettings[2].notify.length && ($values.alarmSettings[2].notify=["SYSTEM"]))}}`,
+                      class: 'flex align-center',
                     },
-                  },
-                  'alarmSettings.2.notify': {
-                    type: 'array',
-                    'x-decorator': 'FormItem',
-                    'x-component': 'Checkbox.Group',
-                    'x-component-props': {
-                      onChange: `{{val=>(!val.length && ($values.alarmSettings[2].open=false))}}`,
-                    },
-                    default: ['SYSTEM', 'EMAIL'],
-                    'x-editable': true,
-                    'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}'],
-                  },
-                  space: {
-                    type: 'void',
-                    'x-component': 'Space',
                     properties: {
-                      'alarmRules.0.point': {
+                      open: {
+                        type: 'boolean',
+                        default: true,
+                        'x-editable': true,
+                        'x-component': 'Switch',
+                        'x-component-props': {
+                          onChange: `{{val=>(val && !$values.alarmSettings[2].notify.length && ($values.alarmSettings[2].notify=["SYSTEM"]))}}`,
+                        },
+                      },
+                      divider: {
+                        type: 'void',
+                        'x-component': 'Divider',
+                        'x-component-props': {
+                          direction: 'vertical',
+                          class: 'mx-4',
+                        },
+                        'x-reactions': {
+                          dependencies: ['.open'],
+                          fulfill: {
+                            state: {
+                              display: `{{$deps[0] ? 'visible' : 'hidden'}}`,
+                            },
+                          },
+                        },
+                      },
+                      notify: {
+                        type: 'array',
+                        'x-component': 'Checkbox.Group',
+                        'x-component-props': {
+                          onChange: `{{val=>(!val.length && ($values.alarmSettings[2].open=false))}}`,
+                        },
+                        default: ['SYSTEM', 'EMAIL'],
+                        'x-editable': true,
+                        'x-reactions': {
+                          dependencies: ['.open'],
+                          fulfill: {
+                            state: {
+                              display: `{{$deps[0] ? 'visible' : 'hidden'}}`,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+
+                  'alarmSettings.3': {
+                    type: 'object',
+                    title: i18n.t(
+                      'packages_dag_migration_alarmpanel_renwuzengliangyan',
+                    ),
+                    'x-decorator': 'FormItem',
+                    'x-component': 'div',
+                    'x-component-props': {
+                      class: 'flex align-center',
+                    },
+                    properties: {
+                      open: {
+                        type: 'boolean',
+                        default: true,
+                        'x-editable': true,
+                        'x-component': 'Switch',
+                        'x-component-props': {
+                          onChange: `{{val=>(val && !$values.alarmSettings[3].notify.length && ($values.alarmSettings[3].notify=["SYSTEM"]))}}`,
+                        },
+                        'x-reactions': {
+                          target: 'alarmRules.0.*',
+                          fulfill: {
+                            state: {
+                              disabled: `{{!$self.value}}`,
+                            },
+                          },
+                        },
+                      },
+                      divider: {
+                        type: 'void',
+                        'x-component': 'Divider',
+                        'x-component-props': {
+                          direction: 'vertical',
+                          class: 'mx-4',
+                        },
+                        'x-reactions': {
+                          dependencies: ['.open'],
+                          fulfill: {
+                            state: {
+                              display: `{{$deps[0] ? 'visible' : 'hidden'}}`,
+                            },
+                          },
+                        },
+                      },
+                      notify: {
+                        type: 'array',
+                        'x-component': 'Checkbox.Group',
+                        'x-component-props': {
+                          onChange: `{{val=>(!val.length && ($values.alarmSettings[3].open=false))}}`,
+                        },
+                        default: ['SYSTEM', 'EMAIL'],
+                        'x-editable': true,
+                        'x-reactions': {
+                          dependencies: ['.open'],
+                          fulfill: {
+                            state: {
+                              display: `{{$deps[0] ? 'visible' : 'hidden'}}`,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  'alarmRules.0': {
+                    type: 'object',
+                    'x-component': 'Space',
+                    'x-reactions': {
+                      dependencies: ['alarmSettings.3.open'],
+                      fulfill: {
+                        state: {
+                          display: `{{$deps[0] ? 'visible' : 'hidden'}}`,
+                        },
+                      },
+                    },
+                    properties: {
+                      point: {
                         type: 'number',
                         'x-reactions': [
                           {
@@ -1079,7 +1207,7 @@ export default observer({
                           },
                         ],
                       },
-                      'alarmRules.0._point': {
+                      _point: {
                         title: i18n.t(
                           'packages_dag_migration_alarmpanel_lianxu',
                         ),
@@ -1108,7 +1236,7 @@ export default observer({
                           },
                         ],
                       },
-                      'alarmRules.0.equalsFlag': {
+                      equalsFlag: {
                         title: i18n.t('public_time_m'),
                         type: 'number',
                         default: 1,
@@ -1142,7 +1270,7 @@ export default observer({
                           },
                         },
                       },
-                      'alarmRules.0.ms': {
+                      ms: {
                         type: 'number',
                         'x-reactions': [
                           {
@@ -1155,7 +1283,7 @@ export default observer({
                           },
                         ],
                       },
-                      'alarmRules.0._ms': {
+                      _ms: {
                         title: '',
                         type: 'number',
                         'x-editable': true,
@@ -1194,59 +1322,61 @@ export default observer({
                       },
                     },
                   },
-                  'alarmSettings.3.open': {
-                    title: i18n.t(
-                      'packages_dag_migration_alarmpanel_renwuzengliangyan',
-                    ),
-                    type: 'boolean',
-                    default: true,
-                    'x-editable': true,
+                  'alarmSettings.4': {
+                    type: 'object',
+                    title: i18n.t('packages_dag_task_inspect_difference_alarm'),
                     'x-decorator': 'FormItem',
-                    'x-component': 'Switch',
+                    'x-component': 'div',
                     'x-component-props': {
-                      onChange: `{{val=>(val && !$values.alarmSettings[3].notify.length && ($values.alarmSettings[3].notify=["SYSTEM"]))}}`,
+                      class: 'flex align-center',
                     },
-                    'x-reactions': {
-                      target: 'alarmRules.0.*',
-                      fulfill: {
-                        state: {
-                          disabled: `{{!$self.value}}`,
+                    properties: {
+                      open: {
+                        title: i18n.t(
+                          'packages_dag_task_inspect_difference_alarm',
+                        ),
+                        type: 'boolean',
+                        default: true,
+                        'x-editable': true,
+                        'x-component': 'Switch',
+                        'x-component-props': {
+                          onChange: `{{val=>(val && !$values.alarmSettings[4].notify.length && ($values.alarmSettings[4].notify=["SYSTEM"]))}}`,
+                        },
+                      },
+                      divider: {
+                        type: 'void',
+                        'x-component': 'Divider',
+                        'x-component-props': {
+                          direction: 'vertical',
+                          class: 'mx-4',
+                        },
+                        'x-reactions': {
+                          dependencies: ['.open'],
+                          fulfill: {
+                            state: {
+                              display: `{{$deps[0] ? 'visible' : 'hidden'}}`,
+                            },
+                          },
+                        },
+                      },
+                      notify: {
+                        type: 'array',
+                        'x-component': 'Checkbox.Group',
+                        'x-component-props': {
+                          onChange: `{{val=>(!val.length && ($values.alarmSettings[4].open=false))}}`,
+                        },
+                        default: ['SYSTEM', 'EMAIL'],
+                        'x-editable': true,
+                        'x-reactions': {
+                          dependencies: ['.open'],
+                          fulfill: {
+                            state: {
+                              display: `{{$deps[0] ? 'visible' : 'hidden'}}`,
+                            },
+                          },
                         },
                       },
                     },
-                  },
-                  'alarmSettings.3.notify': {
-                    type: 'array',
-                    'x-decorator': 'FormItem',
-                    'x-component': 'Checkbox.Group',
-                    'x-component-props': {
-                      onChange: `{{val=>(!val.length && ($values.alarmSettings[3].open=false))}}`,
-                    },
-                    default: ['SYSTEM', 'EMAIL'],
-                    'x-editable': true,
-                    'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}'],
-                  },
-                  'alarmSettings.4.open': {
-                    title: i18n.t('packages_dag_task_inspect_difference_alarm'),
-                    type: 'boolean',
-                    default: true,
-                    'x-editable': true,
-                    'x-decorator': 'FormItem',
-                    'x-component': 'Switch',
-                    'x-component-props': {
-                      onChange: `{{val=>(val && !$values.alarmSettings[4].notify.length && ($values.alarmSettings[4].notify=["SYSTEM"]))}}`,
-                    },
-                  },
-                  'alarmSettings.4.notify': {
-                    type: 'array',
-                    'x-decorator': 'FormItem',
-                    'x-component': 'Checkbox.Group',
-                    'x-component-props': {
-                      onChange: `{{val=>(!val.length && ($values.alarmSettings[4].open=false))}}`,
-                    },
-                    default: ['SYSTEM', 'EMAIL'],
-                    'x-editable': true,
-                    'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}'],
                   },
                   emailReceivers: {
                     title: i18n.t('packages_dag_email_receivers'),
@@ -1645,10 +1775,53 @@ export default observer({
           disabled: !this.buttonShowMap.Edit,
         })
       }
+
+      this.loadAlarmChannels()
     })
   },
 
   methods: {
+    async loadAlarmChannels() {
+      const channels = await alarmApi.channels()
+      const MAP = {
+        system: {
+          label: i18n.t('packages_dag_migration_alarmpanel_xitongtongzhi'),
+          value: 'SYSTEM',
+        },
+        email: {
+          label: i18n.t('packages_dag_migration_alarmpanel_youjiantongzhi'),
+          value: 'EMAIL',
+        },
+      }
+      const options = []
+
+      if (!this.isDaas) {
+        const isOpenid = window.__USER_INFO__?.openid
+        Object.assign(MAP, {
+          wechat: {
+            label: i18n.t('packages_business_notify_webchat_notification'),
+            value: 'WECHAT',
+            disabled: !isOpenid,
+          },
+          sms: {
+            label: i18n.t('packages_business_notify_sms_notification'),
+            value: 'SMS',
+          },
+        })
+      }
+
+      for (const channel of channels) {
+        const option = MAP[channel.type]
+
+        if (!option) continue
+
+        options.push(option)
+      }
+
+      this.form.setFieldState('alarmSettings.*.notify', {
+        dataSource: options,
+      })
+    },
     // 绑定表单事件
     useEffects() {
       onFieldInputValueChange(

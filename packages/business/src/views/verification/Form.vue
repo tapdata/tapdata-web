@@ -1035,6 +1035,7 @@ provide('ConnectorMap', ConnectorMap)
         $t('public_button_back')
       }}</el-button>
       <el-button
+        id="form-save-btn"
         size="large"
         type="primary"
         :disabled="saveDisabled"

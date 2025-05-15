@@ -171,6 +171,20 @@ export default {
             required: true,
           },
         ],
+        rules: {
+          username: [
+            {
+              required: true,
+              message: this.$t('account_user_null'),
+            },
+          ],
+          email: [
+            {
+              required: true,
+              message: this.$t('app_signIn_email_placeholder'),
+            },
+          ],
+        },
       },
       count1: 0,
       count2: 0,
@@ -600,16 +614,16 @@ export default {
     },
     // 关联用户
     permissionsmethod(data = [], roleusers = []) {
-      let html = ''
+      const roles = []
       if (data && data.length) {
         roleusers.forEach((item) => {
           const roleName = data.find((t) => t.roleId === item)?.role?.name
           if (roleName) {
-            html += ` ${roleName},`
+            roles.push(roleName)
           }
         })
       }
-      return html.slice(0, Math.max(0, html.lastIndexOf(',')))
+      return roles
     },
     // 重置激活码
     resetAccesCode() {
@@ -697,7 +711,7 @@ export default {
     >
       <template #nav>
         <div class="tapNav">
-          <ElTabs v-model="activePanel" @tab-click="handleTapClick">
+          <ElTabs v-model="activePanel" @tab-change="handleTapClick">
             <ElTabPane
               v-for="item in muneList"
               :key="item.icon"
@@ -752,7 +766,7 @@ export default {
         <template #default="scope">
           <div class="metadata-name">
             <p>{{ scope.row.username }}</p>
-            <div class="parent ellipsis">
+            <div class="ellipsis font-color-light">
               {{ scope.row.email }}
             </div>
           </div>
@@ -760,7 +774,18 @@ export default {
       </el-table-column>
       <el-table-column :label="$t('user_list_role')" prop="roleMappings">
         <template #default="scope">
-          {{ permissionsmethod(scope.row.roleMappings, scope.row.roleusers) }}
+          <!-- {{ permissionsmethod(scope.row.roleMappings, scope.row.roleusers) }} -->
+
+          <div class="flex flex-wrap gap-1">
+            <el-tag
+              v-for="role in permissionsmethod(
+                scope.row.roleMappings,
+                scope.row.roleusers,
+              )"
+              :key="role"
+              >{{ role }}</el-tag
+            >
+          </div>
         </template>
       </el-table-column>
       <el-table-column
@@ -927,8 +952,7 @@ export default {
             <el-input
               v-if="!createForm.id"
               v-model="createForm.email"
-              maxlength="100"
-              show-word-limit
+              type="email"
             />
             <span v-else>{{ createForm.email }}</span>
           </el-form-item>

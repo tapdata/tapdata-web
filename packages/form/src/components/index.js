@@ -1,5 +1,9 @@
 // export * from './select'
-import { ElAlert as Alert, ElLink as Link } from 'element-plus'
+import {
+  ElAlert as Alert,
+  ElDivider as Divider,
+  ElLink as Link,
+} from 'element-plus'
 import { FormCollapse, FormCollapseItem } from './form-collapse'
 import { FormTab } from './form-tab'
 import { Input } from './input'
@@ -7,7 +11,7 @@ import { Radio } from './radio'
 import { Space } from './space'
 import { Switch } from './switch'
 
-export { Alert, Link }
+export { Alert, Divider, Link }
 export { FormCollapse, FormCollapseItem, FormTab, Input, Radio, Space, Switch }
 export * from './js-editor'
 export * from './js-editor-dialog'

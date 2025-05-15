@@ -12,6 +12,8 @@ export default {
   packages_dag_dialog_createTable: '创建新表',
   packages_dag_dialog_placeholderTable:
     '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
+  packages_dag_dialog_placeholderTable:
+    '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
   packages_dag_dataFlow_flowEngineVersion: '引擎版本',
   packages_dag_dataFlow_flowEngineV1: 'Flow Engine V1',
   packages_dag_dataFlow_jetFlowEngineV2: 'Jet Flow Engine V2',
@@ -290,6 +292,7 @@ export default {
   packages_dag_src_editor_juhe: '聚合',
   packages_dag_src_editor_zhuijiahebing: '追加合并',
   packages_dag_src_editor_join: '连接',
+  packages_dag_src_editor_row_filter: '行过滤',
   packages_dag_src_migrationeditor_jSchuli: '增强JS',
   packages_dag_src_migrationeditor_jSchuli_standard: '标准JS',
   packages_dag_src_migrationeditor_ziduanbianji: '字段编辑',

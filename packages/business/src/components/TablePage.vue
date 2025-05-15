@@ -397,6 +397,12 @@ export default {
     display: none;
   }
 
+  .table-page-nav .el-tabs {
+    .el-tabs__header {
+      margin-bottom: 0;
+    }
+  }
+
   .table-page-topbar:has(.table-page-search-bar:empty):has(
       .table-page-operation-bar:empty
     ) {
