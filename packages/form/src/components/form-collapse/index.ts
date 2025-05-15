@@ -61,7 +61,6 @@ const usePanels = (collapseField: GeneralField, schema: Schema) => {
       })
     }
   })
-  console.log('panels', panels)
   return panels
 }
 
@@ -198,7 +197,6 @@ const FormCollapse = observer(
           {
             default: () => {
               return panels.map(({ props, schema, name }, key) => {
-                console.log('props', props)
                 return h(
                   ElCollapseItem,
                   {
