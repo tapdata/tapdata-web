@@ -167,7 +167,7 @@ function handleRecordClick(row: DiffRow): void {
             <div
               v-for="(row, index) in inspectList"
               :key="index"
-              class="inspection-result-card p-3 bg-white rounded-lg shadow-sm"
+              class="inspection-result-card p-3 bg-white rounded-xl shadow-sm"
               :class="{ 'border-primary': currentSelectedRow === row }"
               @click="handleRowClick(row)"
             >
@@ -263,7 +263,7 @@ function handleRecordClick(row: DiffRow): void {
               <div
                 v-for="(row, index) in rowDiffList"
                 :key="index"
-                class="border rounded-lg overflow-hidden"
+                class="border rounded-xl overflow-hidden"
               >
                 <div class="flex align-items-center gap-2 p-3 bg-light">
                   <span class="bg-fill-hover rounded-lg px-2 py-1">
