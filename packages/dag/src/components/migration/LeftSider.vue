@@ -47,6 +47,7 @@ export default {
   data() {
     return {
       collapseMode: 'db',
+      processCollapseActive: 'process',
       search: '',
       mapping: this.$route.query,
       groups: [],
@@ -432,6 +433,7 @@ export default {
         v-model="collapseMode"
         class="collapse-fill h-100"
         accordion
+        expand-icon-position="left"
       >
         <ElCollapseItem name="db">
           <template #title>
@@ -577,8 +579,9 @@ export default {
 
     <ElCollapse
       ref="processorCollapse"
+      v-model="processCollapseActive"
       class="collapse-fill processor-collapse border-top"
-      model-value="process"
+      expand-icon-position="left"
     >
       <ElCollapseItem name="process">
         <template #title>
@@ -854,18 +857,12 @@ $hoverBg: #eef3ff;
 
         &__header {
           position: relative;
-          padding-left: 16px;
-          padding-right: 16px;
           height: $headerH;
           font-size: 14px;
 
           &:hover {
             background-color: rgba(47, 46, 63, 0.05);
           }
-        }
-
-        &__arrow {
-          order: -1;
         }
 
         &__content {

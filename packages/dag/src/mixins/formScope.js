@@ -1009,7 +1009,7 @@ export default {
           let options = field.dataSource
           const nodeData = this.scope.findNodeById($values.id)
 
-          if (!$values.$inputs[0]) {
+          if (!$values.$inputs[0] || !$values.tableName) {
             return
           }
 
@@ -1055,7 +1055,7 @@ export default {
             }
           }
 
-          return !$values.updateConditionFields?.length
+          return !$values.updateConditionFields?.length && $values.tableName
             ? i18n.t('packages_dag_mixins_formscope_gaiziduanshibi')
             : ''
         },

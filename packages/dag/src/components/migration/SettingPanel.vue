@@ -268,6 +268,12 @@ export default observer({
                         type: 'void',
                         'x-decorator': 'FormItem',
                         'x-component': 'FormCollapse',
+                        'x-component-props': {
+                          expandIconPosition: 'left',
+                          style: {
+                            '--collapse-padding-primary': '0',
+                          },
+                        },
                         properties: {
                           tab1: {
                             type: 'void',
@@ -540,7 +546,6 @@ export default observer({
                                   tooltip: this.$t(
                                     'packages_dag_task_setting_syncPoint_tip',
                                   ),
-                                  feedbackLayout: 'none',
                                 },
                                 'x-component': 'SyncPoints',
                                 'x-decorator': 'FormItem',
@@ -1249,14 +1254,6 @@ export default observer({
                             value: 1,
                           },
                         ],
-                        'x-reactions': {
-                          dependencies: ['.open'],
-                          fulfill: {
-                            state: {
-                              disabled: `{{!$deps[0]}}`,
-                            },
-                          },
-                        },
                       },
                       ms: {
                         type: 'number',

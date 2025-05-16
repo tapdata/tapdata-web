@@ -653,6 +653,7 @@ export class Table extends NodeType {
                 'x-component': 'FormCollapse',
                 'x-component-props': {
                   class: 'advanced-collapse',
+                  expandIconPosition: 'left',
                 },
                 'x-reactions': {
                   dependencies: ['$inputs'],
@@ -1622,6 +1623,7 @@ export class Table extends NodeType {
                 'x-component': 'FormCollapse',
                 'x-component-props': {
                   class: 'advanced-collapse',
+                  expandIconPosition: 'left',
                 },
                 'x-reactions': {
                   dependencies: ['$inputs'],
@@ -2149,14 +2151,6 @@ export class Table extends NodeType {
                         value: 1,
                       },
                     ],
-                    'x-reactions': {
-                      dependencies: ['.open'],
-                      fulfill: {
-                        state: {
-                          disabled: `{{!$deps[0]}}`,
-                        },
-                      },
-                    },
                   },
                   ms: {
                     type: 'number',

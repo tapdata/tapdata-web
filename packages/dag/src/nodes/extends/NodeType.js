@@ -280,14 +280,6 @@ export class NodeType {
                         value: 1,
                       },
                     ],
-                    'x-reactions': {
-                      dependencies: ['.open'],
-                      fulfill: {
-                        state: {
-                          disabled: `{{!$deps[0]}}`,
-                        },
-                      },
-                    },
                   },
                   ms: {
                     type: 'number',

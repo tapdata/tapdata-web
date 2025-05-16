@@ -35,7 +35,8 @@
     word-break: normal;
   }
 
-  /*.el-table__inner-wrapper::after {
+  &.has-border-t {
+    .el-table__inner-wrapper::after {
       content: "" !important;
       position: absolute;
       background-color: var(--el-table-border-color);
@@ -45,7 +46,8 @@
       top: 0;
       width: 100%;
       height: 1px;
-  }*/
+    }  
+  }
 }
 
 // Tabs

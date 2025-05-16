@@ -301,7 +301,7 @@ export class Database extends NodeType {
                         default: [],
                         'x-component': 'TableSelector',
                         'x-component-props': {
-                          class: 'mt-4',
+                          class: 'my-4',
                           connectionId: '{{$values.connectionId}}',
                           syncPartitionTableEnable:
                             '{{$values.syncSourcePartitionTableEnable}}',
@@ -591,6 +591,7 @@ export class Database extends NodeType {
                 'x-component': 'FormCollapse',
                 'x-component-props': {
                   class: 'advanced-collapse',
+                  expandIconPosition: 'left',
                 },
                 'x-reactions': {
                   dependencies: ['$inputs'],
@@ -1000,6 +1001,7 @@ export class Database extends NodeType {
                 'x-component': 'FormCollapse',
                 'x-component-props': {
                   class: 'advanced-collapse',
+                  expandIconPosition: 'left',
                 },
                 'x-reactions': {
                   dependencies: ['$inputs'],
@@ -1306,7 +1308,7 @@ export class Database extends NodeType {
                 type: 'void',
                 'x-component': 'SchemaPanel',
                 'x-component-props': {
-                  class: 'mx-n4 my-n1',
+                  class: 'mx-n4',
                   formTab: '{{formTab}}',
                 },
               },
@@ -1485,14 +1487,6 @@ export class Database extends NodeType {
                         value: 1,
                       },
                     ],
-                    'x-reactions': {
-                      dependencies: ['.open'],
-                      fulfill: {
-                        state: {
-                          disabled: `{{!$deps[0]}}`,
-                        },
-                      },
-                    },
                   },
                   ms: {
                     type: 'number',

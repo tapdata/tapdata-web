@@ -130,7 +130,9 @@ export class MigrateDateProcessor extends NodeType {
               },
               fieldList: {
                 type: 'void',
-                title: i18n.t('packages_dag_src_editor_date_processor_field_list'),
+                title: i18n.t(
+                  'packages_dag_src_editor_date_processor_field_list',
+                ),
                 'x-decorator': 'FormItem',
                 'x-component': 'fieldList',
                 'x-component-props': {
@@ -151,7 +153,7 @@ export class MigrateDateProcessor extends NodeType {
                 type: 'void',
                 'x-component': 'SchemaPanel',
                 'x-component-props': {
-                  class: 'mx-n4 my-n1',
+                  class: 'mx-n4',
                   formTab: '{{formTab}}',
                 },
               },

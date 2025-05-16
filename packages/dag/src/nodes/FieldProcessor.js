@@ -105,7 +105,7 @@ export class FieldProcessor extends NodeType {
                 type: 'void',
                 'x-component': 'SchemaPanel',
                 'x-component-props': {
-                  class: 'mx-n4 my-n1',
+                  class: 'mx-n4',
                   formTab: '{{formTab}}',
                 },
               },

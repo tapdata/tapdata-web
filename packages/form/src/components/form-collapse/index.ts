@@ -187,6 +187,7 @@ const FormCollapse = observer(
         return h(
           ElCollapse,
           {
+            ...attrs,
             class: [prefixCls, attrs.class],
             modelValue: activeKey,
             onChange: (key) => {
