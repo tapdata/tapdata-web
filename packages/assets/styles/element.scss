@@ -276,6 +276,30 @@
       }
     }
   }
+
+  &.pro-confirm {
+    .el-message-box__status {
+      margin-top: 1px;
+      font-size: 22px;
+    }
+    .el-message-box__header {
+      padding-bottom: 8px;
+    }
+    .el-message-box__title {
+      justify-content: flex-start;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .el-message-box__content {
+      padding-inline-start: 38px;
+    }
+    .el-message-box__message p {
+      line-height: 22px;
+    }
+    .el-message-box__btns {
+      justify-content: flex-end;
+    }
+  }
 }
 // Button
 .el-button {

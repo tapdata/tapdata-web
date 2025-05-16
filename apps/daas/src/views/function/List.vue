@@ -70,6 +70,8 @@ export default {
         this.$t('function_message_delete_title'),
         {
           type: 'warning',
+          center: true,
+          customClass: 'pro-confirm',
         },
       ).then((resFlag) => {
         if (!resFlag) {

@@ -462,6 +462,7 @@ export default {
           this.$t('packages_dag_page_return_confirm_content'),
           this.$t('packages_dag_page_return_confirm_title'),
           {
+            center: true,
             type: 'warning',
             closeOnClickModal: false,
             confirmButtonText: this.$t(
