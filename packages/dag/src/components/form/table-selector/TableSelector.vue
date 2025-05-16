@@ -711,6 +711,7 @@ getTables()
   }
   > :deep(.el-checkbox__label) {
     overflow: hidden;
+    line-height: normal; // 微软雅黑下字符会溢出
   }
 }
 .selector-center {
