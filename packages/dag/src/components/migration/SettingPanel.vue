@@ -6,7 +6,6 @@ import {
   onFieldValueChange,
 } from '@formily/core'
 import { action } from '@formily/reactive'
-import { observer } from '@formily/reactive-vue'
 import { alarmApi, dataPermissionApi, taskApi, usersApi } from '@tap/api'
 import { getPickerOptionsBeforeTime } from '@tap/business/src/shared/util'
 import i18n from '@tap/i18n'
@@ -46,23 +45,10 @@ interface FormScope {
   handleRemovePermissionsItem: () => void
   getConnectionNameByAgent: (field: any) => void
   handleQuicklySyncPoints: () => void
-  loadEmailReceivers: (field: any) => void
-}
-
-interface UserInfo {
-  openid?: string
-}
-
-declare global {
-  interface Window {
-    __USER_INFO__?: UserInfo
-    getSettingByKey: (key: string) => any
-  }
 }
 
 // Props
 const props = defineProps<Props>()
-const emit = defineEmits(['update:settings'])
 
 // Store
 const store = useStore()
@@ -203,31 +189,6 @@ const formScope: FormScope = {
     props.settings.syncPoints.forEach((point: any) => {
       point.pointType = 'localTZ'
       point.dateTime = currentEventTimestamp
-    })
-  },
-  loadEmailReceivers: (field: any) => {
-    const str = window.getSettingByKey('email.receivers')
-    const receivers = str ? str.split(',').filter(Boolean) : []
-
-    const size = field.value.length
-
-    if (size) {
-      const filter = field.value.filter((email: string) =>
-        receivers.includes(email),
-      )
-
-      if (size !== filter.length) {
-        field.form.setValuesIn(field.path, [...filter])
-      }
-    } else {
-      field.setInitialValue(receivers)
-    }
-
-    field.dataSource = receivers.map((receiver: string) => {
-      return {
-        label: receiver,
-        value: receiver,
-      }
     })
   },
 }
@@ -1290,15 +1251,15 @@ const schema = {
                   interval: 300,
                   unit: 'SECOND',
                 },
-                      {
-                        type: 'TASK',
-                        open: isDaas,
-                        key: 'TASK_INSPECT_DIFFERENCE',
-                        sort: 7,
-                        notify: ['SYSTEM', 'EMAIL'],
-                        interval: 300,
-                        unit: 'SECOND',
-                      },
+                {
+                  type: 'TASK',
+                  open: isDaas,
+                  key: 'TASK_INSPECT_DIFFERENCE',
+                  sort: 7,
+                  notify: ['SYSTEM', 'EMAIL'],
+                  interval: 300,
+                  unit: 'SECOND',
+                },
               ],
             },
             alarmRules: {
@@ -1677,62 +1638,61 @@ const schema = {
                 },
               },
             },
-                  'alarmSettings.4': {
-                    type: 'object',
-                    title: i18n.t('packages_dag_task_inspect_difference_alarm'),
-                    'x-decorator': 'FormItem',
-                    'x-component': 'div',
-                    'x-component-props': {
-                      class: 'flex align-center',
-                    },
-                    properties: {
-                      open: {
-                        title: i18n.t(
-                          'packages_dag_task_inspect_difference_alarm',
-                        ),
-                        type: 'boolean',
-                        default: true,
-                        'x-editable': true,
-                        'x-component': 'Switch',
-                        'x-component-props': {
-                          onChange: `{{val=>(val && !$values.alarmSettings[4].notify.length && ($values.alarmSettings[4].notify=["SYSTEM"]))}}`,
-                        },
-                      },
-                      divider: {
-                        type: 'void',
-                        'x-component': 'Divider',
-                        'x-component-props': {
-                          direction: 'vertical',
-                          class: 'mx-4',
-                        },
-                        'x-reactions': {
-                          dependencies: ['.open'],
-                          fulfill: {
-                            state: {
-                              display: `{{$deps[0] ? 'visible' : 'hidden'}}`,
-                            },
-                          },
-                        },
-                      },
-                      notify: {
-                        type: 'array',
-                        'x-component': 'Checkbox.Group',
-                        'x-component-props': {
-                          onChange: `{{val=>(!val.length && ($values.alarmSettings[4].open=false))}}`,
-                        },
-                        default: ['SYSTEM', 'EMAIL'],
-                        'x-editable': true,
-                        'x-reactions': {
-                          dependencies: ['.open'],
-                          fulfill: {
-                            state: {
-                              display: `{{$deps[0] ? 'visible' : 'hidden'}}`,
-                            },
-                          },
-                        },
+            'alarmSettings.4': {
+              type: 'object',
+              title: i18n.t('packages_dag_task_inspect_difference_alarm'),
+              'x-decorator': 'FormItem',
+              'x-component': 'div',
+              'x-component-props': {
+                class: 'flex align-center',
+              },
+              properties: {
+                open: {
+                  title: i18n.t('packages_dag_task_inspect_difference_alarm'),
+                  type: 'boolean',
+                  default: true,
+                  'x-editable': true,
+                  'x-component': 'Switch',
+                  'x-component-props': {
+                    onChange: `{{val=>(val && !$values.alarmSettings[4].notify.length && ($values.alarmSettings[4].notify=["SYSTEM"]))}}`,
+                  },
+                },
+                divider: {
+                  type: 'void',
+                  'x-component': 'Divider',
+                  'x-component-props': {
+                    direction: 'vertical',
+                    class: 'mx-4',
+                  },
+                  'x-reactions': {
+                    dependencies: ['.open'],
+                    fulfill: {
+                      state: {
+                        display: `{{$deps[0] ? 'visible' : 'hidden'}}`,
                       },
                     },
                   },
+                },
+                notify: {
+                  type: 'array',
+                  'x-component': 'Checkbox.Group',
+                  'x-component-props': {
+                    onChange: `{{val=>(!val.length && ($values.alarmSettings[4].open=false))}}`,
+                  },
+                  default: ['SYSTEM', 'EMAIL'],
+                  enum: '{{$alarmChannels}}',
+                  'x-editable': true,
+                  'x-reactions': {
+                    dependencies: ['.open'],
+                    fulfill: {
+                      state: {
+                        display: `{{$deps[0] ? 'visible' : 'hidden'}}`,
+                      },
+                    },
+                  },
+                },
+              },
+            },
             emailReceivers: {
               title: i18n.t('packages_dag_email_receivers'),
               type: 'array',
@@ -1747,7 +1707,6 @@ const schema = {
               'x-content': {
                 prefix: () => h(ElIcon, [h(User)]),
               },
-              // 'x-reactions': `{{loadEmailReceivers}}`,
             },
           },
         },
@@ -1856,8 +1815,8 @@ const schema = {
                         type: 'void',
                         'x-component': 'ArrayTable.Remove',
                         'x-component-props': {
-                                text: true,
-                                type: 'primary',
+                          text: true,
+                          type: 'primary',
                           onClick: `{{handleRemovePermissionsItem}}`,
                         },
                       },

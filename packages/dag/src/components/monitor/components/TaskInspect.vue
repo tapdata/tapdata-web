@@ -179,7 +179,15 @@ const checkEnabled = async () => {
 }
 
 const startLoop = () => {
-  timeout = window.setInterval(fetch, 5000)
+  timeout = window.setInterval(async () => {
+    await fetch()
+    if (!inspectList.value.length) {
+      const enabled = await checkEnabled()
+      if (!enabled) {
+        showEnabled.value = true
+      }
+    }
+  }, 5000)
 }
 
 const stopLoop = () => {

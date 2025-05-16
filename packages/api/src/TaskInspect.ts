@@ -49,7 +49,7 @@ export default class TaskInspect extends Http {
     super('/api/task-inspect')
   }
 
-  async getConfig(taskId: string, params: any): Promise<TaskInspectConfig> {
+  async getConfig(taskId: string, params?: any): Promise<TaskInspectConfig> {
     const response = (await this.axios.get(`${this.url}/${taskId}`, {
       params,
     })) as unknown as TaskInspectConfig
