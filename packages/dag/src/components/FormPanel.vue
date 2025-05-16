@@ -1,27 +1,23 @@
-<template>
-  <FormRender v-bind="$attrs" :form="form" :schema="schema" :scope="scope" />
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import {
   createForm,
-  onFormValuesChange,
-  onFormInputChange,
+  onFieldInputValueChange,
   onFieldValueChange,
-  onFieldInputValueChange
+  onFormInputChange,
+  onFormValuesChange,
 } from '@formily/core'
 import { Path } from '@formily/path'
 import { toJS } from '@formily/reactive'
-
 import { alarmApi } from '@tap/api'
-import { deepEqual } from '@tap/shared'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 
-import FormRender from './FormRender'
-import { getSchema } from '../util'
+import { deepEqual } from '@tap/shared'
 import { debounce } from 'lodash-es'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+
+import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
+import { getSchema } from '../util'
+import FormRender from './FormRender'
 
 const mapEnum = (dataSource) => (item, index) => {
   const label = dataSource[index] || dataSource[item.value] || item.label
@@ -34,10 +30,10 @@ const mapEnum = (dataSource) => (item, index) => {
 
 export default {
   name: 'FormPanel',
+  components: { FormRender },
   props: {
     scope: {},
   },
-  components: { FormRender },
   data() {
     return {
       form: createForm(),
@@ -112,24 +108,30 @@ export default {
         if (oldNode && !this.stateIsReadonly) {
           try {
             if (oldNode) {
-              const schema = getSchema(oldNode.__Ctor.formSchema, oldNode, this.$store.state.dataflow.pdkPropertiesMap)
+              const schema = getSchema(
+                oldNode.__Ctor.formSchema,
+                oldNode,
+                this.$store.state.dataflow.pdkPropertiesMap,
+              )
               await validateBySchema(schema, oldNode, this.scope)
             }
 
-            if (this.hasNodeError(o) && typeof this.hasNodeError(o) !== 'string') {
+            if (
+              this.hasNodeError(o) &&
+              typeof this.hasNodeError(o) !== 'string'
+            ) {
               this.clearNodeError(o)
             }
-          } catch (e) {
-            // eslint-disable-next-line no-console
-            console.error(e)
-            if (node.type === 'table_rename_processor') {
+          } catch (error) {
+            console.error(error)
+            if (oldNode.type === 'table_rename_processor') {
               // 节点的特殊处理，直接拿表单校验结果设置错误信息
               this.setNodeErrorMsg({
-                id: node.id,
-                msg: e[0].messages[0],
+                id: oldNode.id,
+                msg: error[0].messages[0],
               })
             } else {
-              this.setNodeError(node.id)
+              this.setNodeError(oldNode.id)
             }
           }
         }
@@ -188,12 +190,12 @@ export default {
       try {
         await this.form.validate()
         this.clearNodeError(id)
-      } catch (e) {
+      } catch (error) {
         if (this.node.type === 'table_rename_processor') {
           // 节点的特殊处理，直接拿表单校验结果设置错误信息
           this.setNodeErrorMsg({
             id: this.node.id,
-            msg: e[0].messages[0],
+            msg: error[0].messages[0],
           })
         } else {
           this.setNodeError(id)
@@ -213,14 +215,24 @@ export default {
         effects: this.useEffects,
       })
 
-      this.schema = getSchema(schema, values, this.$store.state.dataflow.pdkPropertiesMap)
+      this.schema = getSchema(
+        schema,
+        values,
+        this.$store.state.dataflow.pdkPropertiesMap,
+      )
     },
 
     updateNodePropsDebounce(form) {
       clearTimeout(this.updateTimer)
       this.updateTimer = setTimeout(() => {
         const node = this.nodeById(form.values.id)
-        if (node && !deepEqual(toJS(form.values), node, ['alarmRules.0._ms', 'alarmRules.0._point'])) {
+        if (
+          node &&
+          !deepEqual(toJS(form.values), node, [
+            'alarmRules.0._ms',
+            'alarmRules.0._point',
+          ])
+        ) {
           console.debug('updateNodeProps in debounce')
           this.updateNodeProps(form)
         }
@@ -231,15 +243,23 @@ export default {
     updateNodeProps(form) {
       clearTimeout(this.updateTimer)
       const formValues = toJS(form.values)
-      const filterProps = ['id', 'isSource', 'isTarget', 'attrs.position', 'sourceNode', '$inputs', '$outputs'] // 排除属性的更新
+      const filterProps = [
+        'id',
+        'isSource',
+        'isTarget',
+        'attrs.position',
+        'sourceNode',
+        '$inputs',
+        '$outputs',
+      ] // 排除属性的更新
 
-      filterProps.forEach(path => {
+      filterProps.forEach((path) => {
         Path.deleteIn(formValues, path)
       })
       this.updateNodeProperties({
         id: form.values.id,
         overwrite: !this.stateIsReadonly,
-        properties: formValues
+        properties: formValues,
       })
       this.updateDag({ vm: this })
       clearTimeout(this.confirmTimer)
@@ -250,7 +270,7 @@ export default {
     useEffects() {
       // FIXME 目前无法区分告警配置的修改，
       // 放弃了onFieldInputValueChange(*)方案，因为有些字段没有主动在schema中定义
-      onFormValuesChange(form => {
+      onFormValuesChange((form) => {
         if (this.stateIsReadonly) return
         console.log('onFormValuesChange')
         this.updateNodePropsDebounce(form)
@@ -271,9 +291,12 @@ export default {
         this.updateNodePropsDebounce(form)
       })*/
 
-      onFieldValueChange('*(alarmSettings.0.*,alarmRules.0.*(!_point,_ms))', (field, form) => {
-        this.lazySaveNodeAlarmConfig()
-      })
+      onFieldValueChange(
+        '*(alarmSettings.0.*,alarmRules.0.*(!_point,_ms))',
+        (field, form) => {
+          this.lazySaveNodeAlarmConfig()
+        },
+      )
     },
 
     confirmNodeHasError() {
@@ -288,17 +311,21 @@ export default {
       const formValues = this.form.values
       this.updateNodeProperties({
         id: formValues.id,
-        properties: JSON.parse(JSON.stringify(formValues))
+        properties: JSON.parse(JSON.stringify(formValues)),
       })
 
       alarmApi.updateTaskAlarm({
         taskId: this.scope.$settings.id,
         nodeId: formValues.id,
         alarmRules: formValues.alarmRules,
-        alarmSettings: formValues.alarmSettings
+        alarmSettings: formValues.alarmSettings,
       })
     },
   },
   emits: ['update:InputsOrOutputs', 'setSchema'],
 }
 </script>
+
+<template>
+  <FormRender v-bind="$attrs" :form="form" :schema="schema" :scope="scope" />
+</template>

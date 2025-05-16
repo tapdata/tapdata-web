@@ -184,7 +184,6 @@ const FormCollapse = observer(
       return () => {
         const panels = usePanels(field.value, schema.value)
         const activeKey = takeActiveKeys(panels)
-        console.log('activeKey', activeKey)
         return h(
           ElCollapse,
           {

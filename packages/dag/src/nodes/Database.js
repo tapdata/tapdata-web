@@ -1319,7 +1319,6 @@ export class Database extends NodeType {
               label: i18n.t('packages_dag_migration_configpanel_gaojingshezhi'),
               locked: import.meta.env.VUE_APP_MODE === 'community',
             },
-            // 'x-hidden': '{{!$isMonitor}}',
             properties: {
               alarmSettings: {
                 type: 'array',
@@ -1346,43 +1345,83 @@ export class Database extends NodeType {
                   },
                 ],
               },
-              'alarmSettings.0.open': {
+              'alarmSettings.0': {
+                type: 'object',
                 title: i18n.t(
                   'packages_business_setting_alarmnotification_dangshujuyuanjie',
                 ),
-                type: 'boolean',
-                default: true,
-                'x-editable': true,
                 'x-decorator': 'FormItem',
-                'x-component': 'Switch',
+                'x-component': 'div',
                 'x-component-props': {
-                  onChange: `{{val=>(val && !$values.alarmRules[0].notify.length && ($values.alarmRules[0].notify=["SYSTEM"]))}}`,
+                  class: 'flex align-center',
                 },
-                'x-reactions': {
-                  target: 'alarmRules.0.*',
-                  fulfill: {
-                    state: {
-                      disabled: `{{!$self.value}}`,
+                properties: {
+                  open: {
+                    type: 'boolean',
+                    default: true,
+                    'x-editable': true,
+                    'x-component': 'Switch',
+                    'x-component-props': {
+                      onChange: `{{val=>(val && !$values.alarmSettings[0].notify.length && ($values.alarmSettings[0].notify=["SYSTEM"]))}}`,
+                    },
+                    'x-reactions': {
+                      target: 'alarmRules.0.*',
+                      fulfill: {
+                        state: {
+                          disabled: `{{!$self.value}}`,
+                        },
+                      },
+                    },
+                  },
+                  divider: {
+                    type: 'void',
+                    'x-component': 'Divider',
+                    'x-component-props': {
+                      direction: 'vertical',
+                      class: 'mx-4',
+                    },
+                    'x-reactions': {
+                      dependencies: ['.open'],
+                      fulfill: {
+                        state: {
+                          display: `{{$deps[0] ? 'visible' : 'hidden'}}`,
+                        },
+                      },
+                    },
+                  },
+                  notify: {
+                    type: 'array',
+                    'x-component': 'Checkbox.Group',
+                    'x-component-props': {
+                      onChange: `{{val=>(!val.length && ($values.alarmSettings[0].open=false))}}`,
+                    },
+                    default: ['SYSTEM', 'EMAIL'],
+                    enum: '{{$alarmChannels}}',
+                    'x-editable': true,
+                    'x-reactions': {
+                      dependencies: ['.open'],
+                      fulfill: {
+                        state: {
+                          display: `{{$deps[0] ? 'visible' : 'hidden'}}`,
+                        },
+                      },
                     },
                   },
                 },
               },
-              'alarmSettings.0.notify': {
-                type: 'array',
-                'x-editable': true,
-                'x-decorator': 'FormItem',
-                'x-component': 'Checkbox.Group',
-                'x-component-props': {
-                  onChange: `{{val=>(!val.length && ($values.alarmSettings[0].open=false))}}`,
-                },
-                default: ['SYSTEM', 'EMAIL'],
-                'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}'],
-              },
-              space: {
-                type: 'void',
+              'alarmRules.0': {
+                type: 'object',
                 'x-component': 'Space',
+                'x-reactions': {
+                  dependencies: ['alarmSettings.0.open'],
+                  fulfill: {
+                    state: {
+                      display: `{{$deps[0] ? 'visible' : 'hidden'}}`,
+                    },
+                  },
+                },
                 properties: {
-                  'alarmRules.0.point': {
+                  point: {
                     type: 'number',
                     'x-reactions': [
                       {
@@ -1404,7 +1443,7 @@ export class Database extends NodeType {
                       },
                     ],
                   },
-                  'alarmRules.0._point': {
+                  _point: {
                     title: i18n.t('packages_dag_migration_alarmpanel_lianxu'),
                     type: 'number',
                     'x-editable': true,
@@ -1421,7 +1460,7 @@ export class Database extends NodeType {
                       },
                     },
                   },
-                  'alarmRules.0.equalsFlag': {
+                  equalsFlag: {
                     title: i18n.t('public_time_m'),
                     type: 'number',
                     default: 1,
@@ -1455,7 +1494,7 @@ export class Database extends NodeType {
                       },
                     },
                   },
-                  'alarmRules.0.ms': {
+                  ms: {
                     type: 'number',
                     'x-reactions': [
                       {
@@ -1477,7 +1516,7 @@ export class Database extends NodeType {
                       },
                     ],
                   },
-                  'alarmRules.0._ms': {
+                  _ms: {
                     title: '',
                     type: 'number',
                     'x-editable': true,

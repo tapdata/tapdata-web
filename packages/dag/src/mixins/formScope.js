@@ -136,6 +136,8 @@ export default {
 
         $agentMap: {},
 
+        $alarmChannels: [], // 告警渠道
+
         $isDaas: isDaas, //区分云版、企业版
 
         $isMonitor: ['MigrationMonitor', 'TaskMonitor'].includes(
@@ -1241,6 +1243,7 @@ export default {
 
   async created() {
     this.scope.$settings = this.dataflow
+    this.scope.$alarmChannels = await this.scope.loadAlarmChannels()
     await this.loadAccessNode()
   },
 

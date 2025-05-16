@@ -256,7 +256,7 @@ getTables()
 <template>
   <div v-loading="loading" class="table-selector">
     <!-- 候选区 -->
-    <div class="candidate-panel selector-panel rounded-lg">
+    <div class="candidate-panel selector-panel rounded-xl">
       <div class="selector-panel__header">
         <div class="flex-1 flex align-center">
           <ElCheckbox
@@ -432,7 +432,7 @@ getTables()
       </div>
     </div>
     <!-- 已选择区 -->
-    <div class="checked-panel selector-panel rounded-lg">
+    <div class="checked-panel selector-panel rounded-xl">
       <div class="selector-panel__header">
         <div class="flex-1 flex align-center">
           <ElCheckbox

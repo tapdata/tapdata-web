@@ -45,10 +45,7 @@ export default observer({
           resolve(data)
         })
     }, 500)
-    const handleCheckCrontabExpressionFlag = debounce(function (
-      resolve,
-      value,
-    ) {
+    const handleCheckCrontabExpressionFlag = debounce(function (resolve) {
       taskApi.checkCheckCloudTaskLimit(id).then((data) => {
         resolve(data)
       })
@@ -1419,8 +1416,6 @@ export default observer({
                                   value: 'Stop',
                                 },
                               ],
-                              // default: ['SYSTEM', 'EMAIL'],
-                              // 'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}']
                             },
                           },
                         },
@@ -1717,6 +1712,13 @@ export default observer({
 
   methods: {
     async loadAlarmChannels() {
+      if (this.scope.$alarmChannels?.length) {
+        this.form.setFieldState('alarmSettings.*.notify', {
+          dataSource: this.scope.$alarmChannels,
+        })
+        return
+      }
+
       const channels = await alarmApi.channels()
       const MAP = {
         system: {
@@ -1761,12 +1763,12 @@ export default observer({
     useEffects() {
       onFieldInputValueChange(
         '*(alarmSettings.*.*,alarmRules.*.*,emailReceivers)',
-        (field, form) => {
+        () => {
           if (this.stateIsReadonly) this.lazySaveAlarmConfig()
         },
       )
       // 权限设置修改了
-      onFieldValueChange('*(permissions.*)', (field, form) => {
+      onFieldValueChange('*(permissions.*)', () => {
         this.lazySavePermissionsConfig()
       })
     },

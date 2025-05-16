@@ -286,7 +286,7 @@ $tabHeight: 44px;
       padding: 4px 16px;
       overflow: auto;
       .el-tab-pane {
-        height: 100%;
+        // height: 100%;
       }
     }
   }
