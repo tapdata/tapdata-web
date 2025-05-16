@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Check } from '@element-plus/icons-vue'
 import { databaseTypesApi, inspectApi, taskApi } from '@tap/api'
-import { AsyncSelect } from '@tap/form'
+import { InfiniteSelect } from '@tap/form'
 import i18n from '@tap/i18n'
 import Time from '@tap/shared/src/time'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -617,7 +617,7 @@ provide('ConnectorMap', ConnectorMap)
         prop="flowId"
         :label="`${$t('packages_business_verification_chooseJob')}: `"
       >
-        <AsyncSelect
+        <InfiniteSelect
           ref="taskSelect"
           v-model="form.flowId"
           class="form-input"

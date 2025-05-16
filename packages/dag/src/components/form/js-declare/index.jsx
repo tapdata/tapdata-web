@@ -32,11 +32,14 @@ export const JsDeclare = defineComponent({
       editorProps.options.readOnly = props.disabled
 
       return (
-        <el-collapse class="js-declare-collapse my-4 mx-n4 formily-element-plus-form-collapse inset">
+        <el-collapse
+          expand-icon-position="left"
+          class="js-declare-collapse my-4 mx-n4 formily-element-plus-form-collapse inset"
+        >
           <el-collapse-item>
             {{
               title: () => (
-                <>
+                <div class="flex align-items-center">
                   <span class="font-color-light fw-normal">
                     {i18n.t('packages_form_js_processor_index_moxingshengming')}
                   </span>
@@ -95,7 +98,7 @@ export const JsDeclare = defineComponent({
                       ),
                     }}
                   </el-dialog>
-                </>
+                </div>
               ),
               default: () => (
                 <FormItem.BaseItem feedbackLayout="none" class="pb-4">

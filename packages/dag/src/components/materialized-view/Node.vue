@@ -800,7 +800,7 @@ onMounted(() => {
 
 <template>
   <div
-    :id="props.node.id"
+    :id="`n_${node.id}`"
     tabindex="1"
     class="materialized-view-node position-absolute rounded-lg bg-white"
     :class="{

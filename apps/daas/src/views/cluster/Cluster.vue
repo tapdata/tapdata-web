@@ -197,7 +197,9 @@ export default {
       }
 
       if (status === 'running') {
-        this.$confirm(`${this.$t('public_message_delete_confirm')}?`, {
+        this.$confirm('', `${this.$t('public_message_delete_confirm')}?`, {
+          center: true,
+          customClass: 'pro-confirm',
           type: 'warning',
         }).then((resFlag) => {
           if (!resFlag) {
@@ -246,10 +248,13 @@ export default {
           operation: 'start',
         }
         this.$confirm(
+          '',
           `${this.$t('cluster_confirm_text')}${this.$t('cluster_start_server')}?`,
           {
             type: 'warning',
             closeOnClickModal: false,
+            center: true,
+            customClass: 'pro-confirm',
           },
         ).then((resFlag) => {
           if (!resFlag) {
@@ -276,10 +281,13 @@ export default {
           operation: 'stop',
         }
         this.$confirm(
+          '',
           `${this.$t('cluster_confirm_text') + this.$t('cluster_closeSever')}?`,
           {
             type: 'warning',
             closeOnClickModal: false,
+            center: true,
+            customClass: 'pro-confirm',
           },
         ).then((resFlag) => {
           if (!resFlag) {
@@ -297,10 +305,13 @@ export default {
           operation: 'restart',
         }
         this.$confirm(
+          '',
           `${this.$t('cluster_confirm_text') + this.$t('cluster_restart_server')}?`,
           {
             type: 'warning',
             closeOnClickModal: false,
+            center: true,
+            customClass: 'pro-confirm',
           },
         ).then((resFlag) => {
           if (!resFlag) {
@@ -314,10 +325,13 @@ export default {
     unbind(item, status, server) {
       if (status === 'stopped') {
         this.$confirm(
+          '',
           `${this.$t('cluster_confirm_text') + this.$t('cluster_unbind_server')}?`,
           {
             type: 'warning',
             closeOnClickModal: false,
+            center: true,
+            customClass: 'pro-confirm',
           },
         ).then((resFlag) => {
           if (!resFlag) {
@@ -505,12 +519,15 @@ export default {
       // this.delData = data
       // this.delData.agentName = this.delData.agentName || this.delData.systemInfo.hostname
       const agentName = item.agentName || item.systemInfo.hostname
-      const message = h('p', [
-        `${this.$t('public_message_delete_confirm')} ${agentName}`,
-      ])
-      this.$confirm(message, {
-        type: 'warning',
-      }).then((resFlag) => {
+      this.$confirm(
+        '',
+        `${this.$t('public_message_delete_confirm')} ${agentName}?`,
+        {
+          type: 'warning',
+          center: true,
+          customClass: 'pro-confirm',
+        },
+      ).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -685,13 +702,18 @@ export default {
     },
 
     deleteNode(id) {
-      this.$confirm('', {
-        title: this.$t('packages_business_application_delete_shifouquerenshan'),
-        confirmButtonText: this.$t('public_button_delete'),
-        cancelButtonText: this.$t('packages_component_message_cancel'),
-        type: 'warning',
-        closeOnClickModal: false,
-      }).then((resFlag) => {
+      this.$confirm(
+        '',
+        this.$t('packages_business_application_delete_shifouquerenshan'),
+        {
+          center: true,
+          customClass: 'pro-confirm',
+          confirmButtonText: this.$t('public_button_delete'),
+          cancelButtonText: this.$t('packages_component_message_cancel'),
+          type: 'warning',
+          closeOnClickModal: false,
+        },
+      ).then((resFlag) => {
         if (!resFlag) {
           return
         }

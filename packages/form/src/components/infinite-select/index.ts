@@ -9,6 +9,7 @@ const TransformAsyncSelect = transformComponent(AsyncSelect, {
   change: 'update:modelValue',
 })
 
+// ⚠️被connect包裹了一层，里面的defineExpose会访问不到
 const InnerAsyncSelect = connect(
   TransformAsyncSelect,
   mapProps({

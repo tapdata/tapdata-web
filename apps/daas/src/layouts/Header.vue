@@ -159,6 +159,8 @@ const command = (command: string) => {
     case 'signOut':
       ElMessageBox.confirm(i18n.t('app_signOutMsg'), i18n.t('app_signOut'), {
         type: 'warning',
+        center: true,
+        customClass: 'pro-confirm',
       }).then((resFlag) => {
         if (!resFlag) {
           return

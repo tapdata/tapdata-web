@@ -283,10 +283,11 @@ $tabHeight: 44px;
 
     > .el-tabs__content {
       height: calc(100% - $tabHeight);
-      padding: 4px 16px;
+      padding: 0 16px;
       overflow: auto;
       .el-tab-pane {
-        height: 100%;
+        // height: 100%;
+        display: contents;
       }
     }
   }

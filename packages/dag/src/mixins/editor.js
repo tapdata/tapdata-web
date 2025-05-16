@@ -2340,7 +2340,8 @@ export default {
         }
       } else if (code === 'Task.OldVersion') {
         this.$confirm('', i18n.t('packages_dag_task_old_version_confirm'), {
-          onlyTitle: true,
+          center: true,
+          customClass: 'pro-confirm',
           type: 'warning',
           closeOnClickModal: false,
           confirmButtonText: i18n.t('public_button_refresh'),

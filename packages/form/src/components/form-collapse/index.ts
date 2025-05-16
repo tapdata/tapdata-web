@@ -119,11 +119,11 @@ const FormCollapse = observer(
       const schema = useFieldSchema()
       const prefixCls = `${stylePrefix}-form-collapse`
       const formCollapseRef = computed(
-        () => props.formCollapse ?? createFormCollapse(),
+        () => props.formCollapse ?? createFormCollapse(props.activeKey),
       )
 
       const takeActiveKeys = (panels: Panels) => {
-        if (props.activeKey) return props.activeKey
+        // if (props.activeKey) return props.activeKey
         if (formCollapseRef.value?.activeKeys)
           return formCollapseRef.value?.activeKeys
         if (attrs.accordion) return panels[0]?.name
@@ -187,6 +187,7 @@ const FormCollapse = observer(
         return h(
           ElCollapse,
           {
+            ...attrs,
             class: [prefixCls, attrs.class],
             modelValue: activeKey,
             onChange: (key) => {
