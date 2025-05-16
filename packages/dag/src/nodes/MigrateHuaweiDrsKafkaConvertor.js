@@ -18,21 +18,21 @@ export class UnwindProcessor extends NodeType {
     properties: {
       $inputs: {
         type: 'array',
-        display: 'none'
+        display: 'none',
       },
       tabs: {
         type: 'void',
         'x-component': 'FormTab',
         'x-component-props': {
           class: 'config-tabs',
-          formTab: '{{formTab}}'
+          formTab: '{{formTab}}',
         },
         properties: {
           tab1: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: i18n.t('public_basic_settings')
+              label: i18n.t('public_basic_settings'),
             },
             properties: {
               nameWrap: {
@@ -41,12 +41,12 @@ export class UnwindProcessor extends NodeType {
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
                   asterisk: true,
-                  feedbackLayout: 'none'
+                  feedbackLayout: 'none',
                 },
                 'x-component': 'FormFlex',
                 'x-component-props': {
                   gap: 8,
-                  align: 'start'
+                  align: 'start',
                 },
                 properties: {
                   name: {
@@ -55,13 +55,13 @@ export class UnwindProcessor extends NodeType {
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       style: {
-                        flex: 1
-                      }
+                        flex: 1,
+                      },
                     },
                     'x-component': 'Input',
                     'x-component-props': {
-                      onChange: `{{() => { $values.attrs.hasNameEdited = true }}}`
-                    }
+                      onChange: `{{() => { $values.attrs.hasNameEdited = true }}}`,
+                    },
                   },
 
                   clipboardButton: {
@@ -70,10 +70,10 @@ export class UnwindProcessor extends NodeType {
                     'x-component-props': {
                       tooltip: i18n.t('packages_dag_copy_node_id'),
                       finishTooltip: i18n.t('packages_dag_nodes_table_yifuzhi'),
-                      content: '{{$values.id}}'
-                    }
-                  }
-                }
+                      content: '{{$values.id}}',
+                    },
+                  },
+                },
               },
 
               storeType: {
@@ -83,16 +83,23 @@ export class UnwindProcessor extends NodeType {
                 enum: ['AVRO', 'JSON', 'JSON_C'],
                 'x-decorator': 'FormItem',
                 'x-component': 'Radio.Group',
-                'x-display': 'hidden'
+                'x-display': 'hidden',
               },
 
               fromDBType: {
                 title: i18n.t('public_from_db_type'),
                 type: 'string',
                 default: 'MYSQL',
-                enum: ['MYSQL', 'GAUSSDB_MYSQL', 'GAUSSDB', 'ORACLE', 'MSSQL', 'POSTGRESQL'],
+                enum: [
+                  'MYSQL',
+                  'GAUSSDB_MYSQL',
+                  'GAUSSDB',
+                  'ORACLE',
+                  'MSSQL',
+                  'POSTGRESQL',
+                ],
                 'x-decorator': 'FormItem',
-                'x-component': 'Select'
+                'x-component': 'Select',
               },
 
               sampleSize: {
@@ -102,30 +109,30 @@ export class UnwindProcessor extends NodeType {
                 'x-decorator': 'FormItem',
                 'x-component': 'InputNumber',
                 'x-component-props': {
-                  min: 1
-                }
-              }
-            }
+                  min: 1,
+                },
+              },
+            },
           },
           tab2: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: i18n.t('packages_dag_data_schema')
+              label: i18n.t('packages_dag_data_schema'),
             },
             properties: {
               schemaPanel: {
                 type: 'void',
                 'x-component': 'SchemaPanel',
                 'x-component-props': {
-                  class: 'mx-n4 my-n1',
-                  formTab: '{{formTab}}'
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+                  class: 'mx-n4',
+                  formTab: '{{formTab}}',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   }
 }

@@ -279,7 +279,7 @@ export default {
           class="p-2"
           @input="handleSearchTable"
         >
-          <template #suffix>
+          <template #prefix>
             <ElIcon><ElIconSearch /></ElIcon>
           </template>
         </ElInput>
@@ -343,7 +343,7 @@ export default {
             clearable
             @input="handleSearchField"
           >
-            <template #suffix>
+            <template #prefix>
               <ElIcon><ElIconSearch /></ElIcon>
             </template>
           </ElInput>

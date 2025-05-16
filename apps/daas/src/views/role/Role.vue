@@ -377,6 +377,8 @@ export default {
         {
           type: 'warning',
           closeOnClickModal: false,
+          center: true,
+          customClass: 'pro-confirm',
         },
       ).then((flag) => {
         flag && this.save()

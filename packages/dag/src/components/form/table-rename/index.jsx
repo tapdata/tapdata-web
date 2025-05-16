@@ -320,7 +320,7 @@ export const TableRenamePreview = defineComponent({
           </div>
 
           <div
-            class="name-list flex flex-column border border-form rounded-4 overflow-hidden mt-4"
+            class="name-list flex flex-column border border-form rounded-xl overflow-hidden my-4"
             style={this.listStyle}
           >
             <div class="name-list-header flex flex-shrink-0">
@@ -657,7 +657,7 @@ export const TableRename = connect(
             )}
 
             <FormItem.BaseItem label={label}>
-              <div class="border border-form px-4 pb-2 rounded-4">
+              <div class="border border-form px-4 pb-2 rounded-xl">
                 <div class="flex gap-4">
                   <FormItem.BaseItem
                     class="flex-1"
@@ -765,7 +765,7 @@ export const TableRename = connect(
             </div>
 
             <div
-              class="name-list flex flex-column border border-form rounded-4 overflow-hidden mt-4"
+              class="name-list flex flex-column border border-form rounded-xl overflow-hidden my-4"
               style={this.listStyle}
             >
               <div class="name-list-header flex flex-shrink-0">

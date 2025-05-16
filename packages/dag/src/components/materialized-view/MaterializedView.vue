@@ -887,7 +887,6 @@ export default {
         >
           <Node
             v-for="node in nodes"
-            :id="`n_${node.id}`"
             :key="node.id"
             :disabled="disabled"
             :class="{
@@ -920,7 +919,6 @@ export default {
           />
           <TargetNode
             v-if="targetNode"
-            :id="targetNode.id"
             :disabled="disabled"
             :node="targetNode"
             :js-plumb-ins="jsPlumbIns"

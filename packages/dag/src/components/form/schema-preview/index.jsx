@@ -310,7 +310,7 @@ export const SchemaPreview = defineComponent({
         <ElDivider class="mt-8">
           <span class="inline-flex align-center gap-1">
             {i18n.t('public_schema')}
-            <el-divider direction="vertical" class="mx-0" staticClass="mx-1" />
+            <el-divider direction="vertical" class="mr-1" />
             <el-tooltip
               transition="tooltip-fade-in"
               content={i18n.t('packages_dag_refresh_schema')}

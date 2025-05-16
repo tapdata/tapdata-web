@@ -98,14 +98,15 @@ export class JavaScript extends NodeType {
               script: {
                 type: 'string',
                 required: true,
-                default: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}',
+                default:
+                  'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}',
                 'x-component': 'JsProcessor',
                 'x-component-props': {
                   height: 500,
                   options: { showPrintMargin: false, wrap: false },
                   includeBeforeAndAfter: true,
                   before: 'function process(record){',
-                  beforeRegexp: '^[^]*function\\s+process\\s*\\(record\\)\\{',
+                  beforeRegexp: String.raw`^[^]*function\s+process\s*\(record\)\{`,
                   afterRegexp: '}[^}]*$',
                   after: '}',
                   param: 'schemaApplyResultList',
@@ -125,7 +126,7 @@ export class JavaScript extends NodeType {
                 type: 'void',
                 'x-component': 'SchemaPanel',
                 'x-component-props': {
-                  class: 'mx-n4 my-n1',
+                  class: 'mx-n4',
                   formTab: '{{formTab}}',
                 },
               },

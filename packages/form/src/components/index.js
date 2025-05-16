@@ -1,14 +1,30 @@
-// export * from './select'
-import { ElAlert as Alert, ElLink as Link } from 'element-plus'
+import {
+  ElAlert as Alert,
+  ElDivider as Divider,
+  ElLink as Link,
+} from 'element-plus'
 import { FormCollapse, FormCollapseItem } from './form-collapse'
 import { FormTab } from './form-tab'
 import { Input } from './input'
 import { Radio } from './radio'
+import { Select } from './select'
 import { Space } from './space'
 import { Switch } from './switch'
 
-export { Alert, Link }
-export { FormCollapse, FormCollapseItem, FormTab, Input, Radio, Space, Switch }
+// element-plus
+export { Alert, Divider, Link }
+// 覆盖 formily-element-plus
+export {
+  FormCollapse,
+  FormCollapseItem,
+  FormTab,
+  Input,
+  Radio,
+  Select,
+  Space,
+  Switch,
+}
+// 自定义
 export * from './js-editor'
 export * from './js-editor-dialog'
 export * from './python-editor'
@@ -16,7 +32,6 @@ export * from './sql-editor'
 export * from './slider'
 export * from './clipboard-button'
 export * from './form-flex'
-// export * from './async-select'
 export * from './field-select'
 export * from './form-content'
 export * from './text-file-reader'

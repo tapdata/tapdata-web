@@ -10,7 +10,8 @@ export default {
   packages_dag_dag_table: '表',
   packages_dag_dag_create_table_as_node: '創建新表作為節點使用',
   packages_dag_dialog_createTable: '創建新表',
-  packages_dag_dialog_placeholderTable: '僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許 system 開頭',
+  packages_dag_dialog_placeholderTable:
+    '僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許 system 開頭',
   packages_dag_dataFlow_flowEngineVersion: '引擎版本',
   packages_dag_dataFlow_flowEngineV1: 'Flow Engine V1',
   packages_dag_dataFlow_jetFlowEngineV2: 'Jet Flow Engine V2',
@@ -49,7 +50,8 @@ export default {
   packages_dag_task_list_verify: '數據校驗',
   packages_dag_task_setting_is_schedule: '定期調度任務',
   packages_dag_dag_data_setting_expression: '表達式：',
-  packages_dag_dag_data_setting_explanation: '可以通過cron表達式設置固定時間、日期、間隔下運行定期任務',
+  packages_dag_dag_data_setting_explanation:
+    '可以通過cron表達式設置固定時間、日期、間隔下運行定期任務',
   packages_dag_dag_data_setting_grammar: '語法:',
   packages_dag_dag_data_setting_runMinute: '每分鐘運行一次',
   packages_dag_dag_data_setting_runDay: '每天2點運行',
@@ -91,16 +93,22 @@ export default {
   packages_dag_connection_status_testing: '測試中',
   packages_dag_connection_status_invalid: '無效',
   packages_dag_connection_status_ready: '有效',
-  packages_dag_dataFlow_delete_confirm_message: '刪除任務 xxx 後，此任務將無法恢復',
-  packages_dag_dataFlow_bulk_delete_confirm_message: '批量刪除任務後，任務將無法恢復',
-  packages_dag_dataFlow_stop_confirm_message: '暫停任務 xxx 後，任務中未完成全量同步的表再次啟動時，會重新執行全量同步',
+  packages_dag_dataFlow_delete_confirm_message:
+    '刪除任務 xxx 後，此任務將無法恢復',
+  packages_dag_dataFlow_bulk_delete_confirm_message:
+    '批量刪除任務後，任務將無法恢復',
+  packages_dag_dataFlow_stop_confirm_message:
+    '暫停任務 xxx 後，任務中未完成全量同步的表再次啟動時，會重新執行全量同步',
   packages_dag_dataFlow_bulk_stop_confirm_message:
     '批量暫停任務後，任務中未完成全量同步的表再次啟動時，會重新執行全量同步',
-  packages_dag_dataFlow_force_stop_confirm_message: '強制停止任務 xxx 將立即中斷數據傳輸強制任務快速停止，並重置該任務',
+  packages_dag_dataFlow_force_stop_confirm_message:
+    '強制停止任務 xxx 將立即中斷數據傳輸強制任務快速停止，並重置該任務',
   packages_dag_dataFlow_bulk_force_stop_confirm_message:
     '批量強制停止任務將立即中斷數據傳輸強制任務快速停止，並重置該任務',
-  packages_dag_dataFlow_initialize_confirm_message: '重置任務 xxx 將清除任務同步進度，任務將重新執行',
-  packages_dag_dataFlow_bulk_initialize_confirm_message: '批量重置任務將清除任務同步進度，任務將重新執行',
+  packages_dag_dataFlow_initialize_confirm_message:
+    '重置任務 xxx 將清除任務同步進度，任務將重新執行',
+  packages_dag_dataFlow_bulk_initialize_confirm_message:
+    '批量重置任務將清除任務同步進度，任務將重新執行',
   packages_dag_task_preview_status_error: '錯誤',
   packages_dag_task_preview_status_edit: '編輯中',
   packages_dag_task_preview_status_wait_run: '啟動中',
@@ -122,17 +130,21 @@ export default {
   packages_dag_customer_logs_no_search_data: '無搜索結果',
   packages_dag_src_command_qingshixianun: '請實現undo方法！ ',
   packages_dag_src_command_qingshixianex: '請實現exec方法！ ',
-  packages_dag_components_datapane_shanghaishiputuo: '上海市普陀區金沙江路 1518 弄',
+  packages_dag_components_datapane_shanghaishiputuo:
+    '上海市普陀區金沙江路 1518 弄',
   packages_dag_components_datapane_wangxiaohu: '王小虎',
   packages_dag_components_datapane_dizhi: '地址',
   packages_dag_components_datapane_xingming: '姓名',
   packages_dag_components_datapane_riqi: '日期',
-  packages_dag_components_dfnode_gaijiedianth: '該節點「{val1}」已經達到最大連線限制',
-  packages_dag_components_dfnode_tuodongshijianduan: '拖動時間段，或者距離變化小，觸發節點激活',
+  packages_dag_components_dfnode_gaijiedianth:
+    '該節點「{val1}」已經達到最大連線限制',
+  packages_dag_components_dfnode_tuodongshijianduan:
+    '拖動時間段，或者距離變化小，觸發節點激活',
   packages_dag_components_dfnode_qingjianchajiedian: '請檢查節點配置',
   packages_dag_components_dfnode_shanchujiedian: '刪除節點',
   packages_dag_components_dfnode_tianjiajiedian: '添加節點',
-  packages_dag_components_formpanel_zengliangzhihoupan: '增量滯後判斷時間設置(秒)',
+  packages_dag_components_formpanel_zengliangzhihoupan:
+    '增量滯後判斷時間設置(秒)',
   packages_dag_components_formpanel_shiwuzuidashi: '事務最大時長(小時)',
   packages_dag_components_formpanel_gongxiangwajueri: '共享挖掘日誌過濾',
   packages_dag_components_formpanel_meiciduqushu: '每次讀取數量',
@@ -237,7 +249,8 @@ export default {
   packages_dag_monitor_topheader_mubiaolianjiebu: '3.目標連接不支持校驗',
   packages_dag_monitor_topheader_yuanlianjiebuzhi: '2.源連接不支持校驗',
   packages_dag_monitor_topheader_tianjialezhongjian: '1.添加了中間處理節點',
-  packages_dag_monitor_topheader_dangqianrenwuzan: '當前任務暫不支持校驗，可能的原因：',
+  packages_dag_monitor_topheader_dangqianrenwuzan:
+    '當前任務暫不支持校驗，可能的原因：',
   packages_dag_monitor_topheader_qidongshijian: '啟動時間：',
   packages_dag_monitor_topheader_qingshururenwu: '請輸入任務名稱',
   packages_dag_monitor_verifypanel_zongji: '總計',
@@ -253,15 +266,18 @@ export default {
   packages_dag_components_paperempty_shiyinghuabu: '適應畫布',
   packages_dag_components_paperempty_huabushijichi: '畫布實際尺寸',
   packages_dag_components_paperempty_zhantie: '粘貼',
-  packages_dag_components_settingpanel_renwudetongbu: '任務的同步類型為增量或全量+增量時執行的',
+  packages_dag_components_settingpanel_renwudetongbu:
+    '任務的同步類型為增量或全量+增量時執行的',
   packages_dag_components_settingpanel_gongxiangwajueshe: '共享挖掘設置',
   packages_dag_components_settingpanel_shujuyuan: '數據源:',
   packages_dag_components_settingpanel_chuliqixiancheng: '處理器線程數:',
   packages_dag_components_settingpanel_miao: '秒',
   packages_dag_components_settingpanel_zengliangshezhi: '增量設置',
-  packages_dag_components_settingpanel_renwuzaijinhang: '任務在進行讀取和寫入時執行的策略',
+  packages_dag_components_settingpanel_renwuzaijinhang:
+    '任務在進行讀取和寫入時執行的策略',
   packages_dag_components_settingpanel_duxieshezhi: '讀寫設置',
-  packages_dag_components_settingpanel_renwuzaiqidong: '任務在啟動和運行時的環境設置',
+  packages_dag_components_settingpanel_renwuzaiqidong:
+    '任務在啟動和運行時的環境設置',
   packages_dag_components_settingpanel_yunxingshezhi: '運行設置',
   packages_dag_components_settingpanel_jibenshezhi: '基本設置',
   packages_dag_src_editor_chucuole: '出錯了',
@@ -274,6 +290,7 @@ export default {
   packages_dag_src_editor_juhe: '聚合',
   packages_dag_src_editor_zhuijiahebing: '追加合併',
   packages_dag_src_editor_join: '連接',
+  packages_dag_src_editor_row_filter: '行過濾',
   packages_dag_src_migrationeditor_jSchuli: '增強JS',
   packages_dag_src_migrationeditor_jSchuli_standard: '標準JS',
   packages_dag_src_migrationeditor_ziduanbianji: '字段編輯',
@@ -284,17 +301,22 @@ export default {
   packages_dag_src_migrationmonitor_noden: '「 {val1} 」配置異常',
   packages_dag_src_migrationmonitorviewer_gaifuzhirenwu: '該複製任務沒有子任務',
   packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi: '該節點不支持',
-  packages_dag_src_migrationmonitorviewer_cunzaibuzhichi: '存在不支持{val1}的節點',
+  packages_dag_src_migrationmonitorviewer_cunzaibuzhichi:
+    '存在不支持{val1}的節點',
   packages_dag_src_migrationmonitorviewer_noden: '「 {val1} 」沒有任何連線',
   packages_dag_mixins_editor_renwujiazaichu: '任務加載出錯',
   packages_dag_mixins_editor_renwubucunzai: '任務不存在',
   packages_dag_mixins_editor_renwuzhonghanyou:
     '任務中含有JS節點、自定義節點、追加合併節點、多表合併節點或節點設置增量自定義SQL，暫不支持DDL，請手動關閉',
-  packages_dag_mixins_editor_gaijiedianbuzhi: '該節點不支持在 {val1}（{val2}）上運行',
+  packages_dag_mixins_editor_gaijiedianbuzhi:
+    '該節點不支持在 {val1}（{val2}）上運行',
   packages_dag_mixins_editor_not_support_ddl: '該節點不支持DDL，請關閉',
-  packages_dag_mixins_editor_not_support_cdc: '該節點不支持增量，請將任務類型修改為全量',
-  packages_dag_mixins_editor_task_not_support_cdc: '任務中含有不支持增量的節點，請將任務類型修改為全量',
-  packages_dag_mixins_editor_buzhichiduotiao: '不支持多條鏈路，請重新編輯任務鏈路',
+  packages_dag_mixins_editor_not_support_cdc:
+    '該節點不支持增量，請將任務類型修改為全量',
+  packages_dag_mixins_editor_task_not_support_cdc:
+    '任務中含有不支持增量的節點，請將任務類型修改為全量',
+  packages_dag_mixins_editor_buzhichiduotiao:
+    '不支持多條鏈路，請重新編輯任務鏈路',
   packages_dag_mixins_editor_renwulianlubu: '任務鏈路不完整',
   packages_dag_mixins_editor_renwushezhiyi: '任務設置異常',
   packages_dag_mixins_editor_suoshuage: '所屬agent節點衝突',
@@ -331,7 +353,8 @@ export default {
   packages_dag_nodes_database_guolvjieguo: '過濾結果',
   packages_dag_nodes_database_dangqianjiedianzhi: '當前節點支持處理的DDL事件',
   packages_dag_nodes_database_ddLshijian: 'DDL事件採集',
-  packages_dag_nodes_database_kaiqihourenwu: '開啟後任務將會自動採集選中的源端DDL事件',
+  packages_dag_nodes_database_kaiqihourenwu:
+    '開啟後任務將會自動採集選中的源端DDL事件',
   packages_dag_nodes_database_dongtaixinzengbiao: '動態新增表',
   packages_dag_nodes_database_quanliangmeipici:
     '全量每批次讀取的條數, 一般保持默認值即可, 如果你的下游較慢, 任務出現源的游標丟失的情況, 請調小此值',
@@ -340,10 +363,12 @@ export default {
   packages_dag_nodes_database_zidingyi: '自定義',
   packages_dag_nodes_database_xuanzebiao: '選擇表',
   packages_dag_nodes_database_suoshuage: '所屬agent',
-  packages_dag_nodes_database_increment_exactly_once_enable_title: '增量精确一次写入',
+  packages_dag_nodes_database_increment_exactly_once_enable_title:
+    '增量精确一次写入',
   packages_dag_nodes_database_increment_exactly_once_enable_tips:
     '使用在目标缓存标记并检查的方式，实现增量数据的精确一次写入。当关联条件的值会发生改变时，建议开启，开启后会导致一定的同步速度下降。目标需要拥有创建表和写入权限。',
-  packages_dag_nodes_database_increment_exactly_once_enable_time_window_day_title: '時間窗口（天）',
+  packages_dag_nodes_database_increment_exactly_once_enable_time_window_day_title:
+    '時間窗口（天）',
   packages_dag_nodes_database_increment_exactly_once_enable_time_window_day_tips:
     '精確一次寫入，緩存數據的保留時長，也代表了精確一次生效的時間窗口，引擎運行時，一天會觸發一次自動清理。同時窗口時間設置的越長，會更佔用目標數據庫的存儲空間。 ',
   packages_dag_extends_nodetype_queshaobiyaode: '缺少必要的type屬性！ ',
@@ -389,7 +414,8 @@ export default {
   packages_dag_copy_node_id: '複製節點ID',
   packages_dag_nodes_table_shujuku: '數據庫',
   packages_dag_nodes_targetdatabase_mubiaocunzaishi: '目標存在時更新',
-  packages_dag_nodes_targetdatabase_baochimubiaoduan: '保持目標端原有表結構，清除數據',
+  packages_dag_nodes_targetdatabase_baochimubiaoduan:
+    '保持目標端原有表結構，清除數據',
   packages_dag_nodes_targetdatabase_jiedianmiaoshu: '節點描述',
   packages_dag_src_store_weizhaodaojiedian: '未找到節點',
   packages_dag_src_store_qingkongjiedianshu: '清空節點輸入輸出的監聽',
@@ -411,10 +437,14 @@ export default {
   packages_dag_components_nodedetaildialog_pingjunduquhao: '平均讀取耗時',
   packages_dag_components_nodedetaildialog_chulixieruhao: '處理/寫入耗時',
   packages_dag_components_nodedetaildialog_duquchulihao: '讀取/處理耗時',
-  packages_dag_components_nodedetaildialog_chulihaoshidang: '處理耗時：當前節點處理事件的平均耗時',
-  packages_dag_components_nodedetaildialog_xieruhaoshidang: '寫入耗時：當前目標節點寫入數據到目標數據庫的耗時',
-  packages_dag_components_nodedetaildialog_chulihaoshiyuan: '處理耗時：源節點從源數據庫讀取到事件後完成處理花費的時間',
-  packages_dag_components_nodedetaildialog_zengliangshijiandian2: '增量時間點：',
+  packages_dag_components_nodedetaildialog_chulihaoshidang:
+    '處理耗時：當前節點處理事件的平均耗時',
+  packages_dag_components_nodedetaildialog_xieruhaoshidang:
+    '寫入耗時：當前目標節點寫入數據到目標數據庫的耗時',
+  packages_dag_components_nodedetaildialog_chulihaoshiyuan:
+    '處理耗時：源節點從源數據庫讀取到事件後完成處理花費的時間',
+  packages_dag_components_nodedetaildialog_zengliangshijiandian2:
+    '增量時間點：',
   packages_dag_components_nodedetaildialog_dangqianbiaotongbu: '當前表同步進度',
   packages_dag_components_nodedetaildialog_quanliangkaishishi: '全量開始時間',
   packages_dag_components_timeselect_renwuzuijinyi: '任務最近一次啟動至今',
@@ -426,16 +456,22 @@ export default {
   packages_dag_monitor_leftsider_zuidazengliangyan: '最大增量延遲',
   packages_dag_monitor_leftsider_tongbuxinxi: '同步信息',
   packages_dag_monitor_leftsider_tiaoshixinxi: '調試信息',
-  packages_dag_components_nodedetaildialog_dangqianjiedianchu: '當前節點處理事件的平均耗時',
-  packages_dag_components_nodedetaildialog_dangqianjiedianping: '當前節點平均每秒處理的輸入事件數和輸出事件數',
-  packages_dag_components_nodedetaildialog_dangqianjiedianping2: '目前節點平均每秒處理的輸入事件大小和輸出事件大小',
+  packages_dag_components_nodedetaildialog_dangqianjiedianchu:
+    '當前節點處理事件的平均耗時',
+  packages_dag_components_nodedetaildialog_dangqianjiedianping:
+    '當前節點平均每秒處理的輸入事件數和輸出事件數',
+  packages_dag_components_nodedetaildialog_dangqianjiedianping2:
+    '目前節點平均每秒處理的輸入事件大小和輸出事件大小',
   packages_dag_monitor_leftsider_renwuchuliwan:
     '任務處理完成一條新產生事件需要消耗的總時間，當有多個目標時只統計最大的處理耗時',
   packages_dag_monitor_leftsider_shijiancongyuanku:
     '事件從源庫生成到經任務處理完成寫入目標的延遲時間，當有多個目標時只統計最大的增量延遲時間',
-  packages_dag_monitor_timeDifference: '數據源與引擎時間差過大（{val}）,增量延遲有偏差，請手動對齊時間',
-  packages_dag_monitor_leftsider_qpSshizhi: 'QPS是指任務平均每秒處理的輸入事件數和輸出事件數',
-  packages_dag_monitor_leftsider_qpSshizhi2: 'QPS是指任務平均每秒處理的輸入事件大小和輸出事件大小',
+  packages_dag_monitor_timeDifference:
+    '數據源與引擎時間差過大（{val}）,增量延遲有偏差，請手動對齊時間',
+  packages_dag_monitor_leftsider_qpSshizhi:
+    'QPS是指任務平均每秒處理的輸入事件數和輸出事件數',
+  packages_dag_monitor_leftsider_qpSshizhi2:
+    'QPS是指任務平均每秒處理的輸入事件大小和輸出事件大小',
   packages_dag_components_log_zuidashijianshu: '最大事件數（條）',
   packages_dag_message_save_fail: '保存失敗',
   packages_dag_task_reset_start: '開始清理任務',
@@ -449,13 +485,15 @@ export default {
     '清理聚合節點[{nodeName}({nodeId})]的緩存數據...{status}, 耗時: {elapsedTime} ms',
   packages_dag_task_reset_custom_node:
     '清理自定義節點[{nodeName}({nodeId})]的狀態數據...{status}, 耗時: {elapsedTime} ms',
-  packages_dag_task_reset_join_node: '清理連接節點[{nodeName}({nodeId})]的狀態數據...{status}, 耗時: {elapsedTime} ms',
+  packages_dag_task_reset_join_node:
+    '清理連接節點[{nodeName}({nodeId})]的狀態數據...{status}, 耗時: {elapsedTime} ms',
   packages_dag_task_reset_end:
     '任務完成清理，共{totalEvent}項需要清理，成功: {succeedEvent}項，失敗: {failedEvent}項...{status}, 耗時: {elapsedTime} ms',
   packages_dag_unknown_error: '清理節點[{nodeName}({nodeId})]出現未知錯誤',
   packages_dag_console_log_status_success: '成功',
   packages_dag_console_log_status_fail: '失敗',
-  packages_dag_auto_reset_start: '任務將自動在{resetInterval}秒後對清理失敗項嘗試{rest}次重置清理',
+  packages_dag_auto_reset_start:
+    '任務將自動在{resetInterval}秒後對清理失敗項嘗試{rest}次重置清理',
   packages_dag_auto_reset_start_nth: '任務開始進行第{resetTimes}次自動重置清理',
   packages_dag_auto_reset_start_result: '任務重置失敗，請稍後再試',
   packages_dag_migration_alarmpanel_lianxu: '连续',
@@ -477,8 +515,10 @@ export default {
   packages_dag_components_alert_guanbichenggong: '关闭成功',
   packages_dag_components_alert_quanbugaojing: '全部告警',
   packages_dag_mixins_editor_debug: '【DEBUG】初始化ws监听',
-  packages_dag_mixins_editor_debug2: '【DEBUG】轮询加载任务详情，出现状态不一致，按照返回状态更新',
-  packages_dag_mixins_editor_debug3: '【DEBUG】轮询加载任务详情，当前状态：[{val1}], 返回状态：[{val2}]',
+  packages_dag_mixins_editor_debug2:
+    '【DEBUG】轮询加载任务详情，出现状态不一致，按照返回状态更新',
+  packages_dag_mixins_editor_debug3:
+    '【DEBUG】轮询加载任务详情，当前状态：[{val1}], 返回状态：[{val2}]',
   packages_dag_mixins_editor_debug4: '【DEBUG】开始轮询加载任务，间隔3s',
   packages_dag_mixins_editor_debug5: '【DEBUG】ws返回，任务状态：[{val1}]',
   packages_dag_monitor_topheader_zuijinyiciqi: '最近一次啟動時間：',
@@ -505,7 +545,8 @@ export default {
     "// 增加一個字段，如果字段已存在則不操作\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n// 移除一個已存在字段\nTapModelDeclare.removeField({val2}, 'fieldName')\n// 更新一個已存在的字段\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n// 更新字段，如果不存在則新增\nTapModelDeclare.upsertField({val4}, 'fieldName', 'TapString')\n// 設置字段為主鍵\nTapModelDeclare.setPk({val5}, 'fieldName')\n// 取消主鍵\nTapModelDeclare.unSetPk({val6}, 'fieldName')\n// 增加索引\nTapModelDeclare.addIndex({val7}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])\n// 移除索引\nTapModelDeclare.removeIndex({val8}, 'indexName')\n",
   packages_dag_python_declare_index_zengjiayigezi:
     "# 增加一個字段，如果字段已存在則不操作\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n# 移除一個已存在字段\nTapModelDeclare.removeField({val2}, 'fieldName')\n# 更新一個已存在的字段\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n# 更新字段，如果不存在則新增\nTapModelDeclare.upsertField({val4}, 'fieldName', 'TapString')\n# 設置字段為主鍵\nTapModelDeclare.setPk({val5}, 'fieldName')\n# 取消主鍵\nTapModelDeclare.unSetPk({val6}, 'fieldName')\n# 增加索引\nTapModelDeclare.addIndex({val7}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])\n# 移除索引\nTapModelDeclare.removeIndex({val8}, 'indexName')\n",
-  packages_dag_python_not_support_windows: '目前Python節點僅支持在Linux下部署的Agent上使用，不支持Windows。',
+  packages_dag_python_not_support_windows:
+    '目前Python節點僅支持在Linux下部署的Agent上使用，不支持Windows。',
   packages_dag_js_processor_index_duibi: '對比',
   packages_dag_js_processor_index_yongfa: '用法：',
   packages_dag_js_processor_index_zuoyong: '作用：',
@@ -513,26 +554,32 @@ export default {
   packages_dag_js_processor_index_wangluogongju: '網絡工具',
   packages_dag_js_processor_index_iDshengchengqi: 'ID生成器',
   packages_dag_js_processor_index_riqichuli: '日期處理',
-  packages_dag_merge_table_tree_index_biaozhijianketong: '表之間可通過拖拽嵌套，確定主從關係',
+  packages_dag_merge_table_tree_index_biaozhijianketong:
+    '表之間可通過拖拽嵌套，確定主從關係',
   packages_dag_merge_table_tree_index_biaomingchengzhichi: '表名稱(支持拖拽)',
   packages_dag_migration_settingpanel_cronbiao: 'Cron表達式格式有誤',
-  packages_dag_hooks_useaftertasksaved_moxingyishengcheng: '模型已生成，執行 callback',
+  packages_dag_hooks_useaftertasksaved_moxingyishengcheng:
+    '模型已生成，執行 callback',
   packages_dag_mixins_editor_wsshoudaole: 'ws收到了其他任務的返回',
   packages_dag_nodes_database_tongjizhuijiaxie: '統計追加寫入',
   packages_dag_nodes_database_anshijianleixing: '按事件類型處理',
-  packages_dag_nodes_database_tongjizhuijiaxie2: '統計追加寫入: 只處理插入事件，丟棄更新和刪除事件',
-  packages_dag_nodes_database_setting_cdc_changjing_desc: '純增量場景下，不支持對目標表結構和數據的清除操作。 ',
+  packages_dag_nodes_database_tongjizhuijiaxie2:
+    '統計追加寫入: 只處理插入事件，丟棄更新和刪除事件',
+  packages_dag_nodes_database_setting_cdc_changjing_desc:
+    '純增量場景下，不支持對目標表結構和數據的清除操作。 ',
   packages_dag_nodes_database_xierumeipizui: '寫入每批最大等待時間(ms)',
   packages_dag_nodes_database_xierumeipizui_tips: '寫入每批最大等待時間(ms)',
   packages_dag_nodes_database_quanliangmeipici2: '全量每批次寫入的條數',
   packages_dag_nodes_database_piliangxierutiao: '批量寫入條數',
-  packages_dag_nodes_database_zhengzebiaodashi: '正則表達式匹配模式下，數據庫新增的符合表達式的表會被自動同步到目標',
+  packages_dag_nodes_database_zhengzebiaodashi:
+    '正則表達式匹配模式下，數據庫新增的符合表達式的表會被自動同步到目標',
   packages_dag_nodes_database_anzhengzebiaoda: '按正則表達式匹配',
   packages_dag_nodes_database_anbiaomingxuanze: '按表名選擇',
   packages_dag_nodes_database_value_zanbuzhiciddl: '暫不支持DDL事件採集',
   packages_dag_nodes_mergetable_const_zuiduozhichiliangceng: '最多支持兩層嵌套',
   packages_dag_nodes_mergetable_zhucongpeizhi: '主從配置',
-  packages_dag_nodes_table_isDaa_ruguoyuanweimongodb: '源為MongoDB時，需要同步刪除事件，請確保關聯 _id',
+  packages_dag_nodes_table_isDaa_ruguoyuanweimongodb:
+    '源為MongoDB時，需要同步刪除事件，請確保關聯 _id',
   packages_dag_nodes_table_tianjia: '添加',
   packages_dag_nodes_table_zidingyitiaojian: '自定義條件',
   packages_dag_nodes_table_guolushezhi: '過濾設置',
@@ -540,10 +587,12 @@ export default {
   packages_dag_nodes_table_lunxunjiangem: '輪詢間隔(ms)',
   packages_dag_nodes_table_lunxunziduanmo: '輪詢字段默認值',
   packages_dag_nodes_table_zhidinglunxunzi: '指定輪詢字段',
-  packages_dag_nodes_cdcPollingFields_tip: '請確保所選擇的輪詢字段具有索引，否則可能會因為查詢性能問題對源庫造成影響',
+  packages_dag_nodes_cdcPollingFields_tip:
+    '請確保所選擇的輪詢字段具有索引，否則可能會因為查詢性能問題對源庫造成影響',
   packages_dag_nodes_table_lunxun: '輪詢',
   packages_dag_nodes_table_rizhicdc: '日誌cdc',
-  packages_dag_nodes_table_tedingziduande: '特定字段的輪詢方式對數據進行增量採集',
+  packages_dag_nodes_table_tedingziduande:
+    '特定字段的輪詢方式對數據進行增量採集',
   packages_dag_nodes_table_zengliangtongbufang: '增量同步方式',
   packages_dag_table_list_card_index_zanshimeiyoupi: '暫時沒有匹配的表',
   packages_dag_nodes_database_pipeidaodebiao: '匹配到的表',
@@ -563,7 +612,8 @@ export default {
   packages_dag_field_inference_main_quanbubiao: '全部表',
   packages_dag_migration_settingpanel_zhuanweiputongC: '轉為普通CDC模式',
   packages_dag_migration_settingpanel_renwuzhijiebao: '任務直接報錯停止',
-  packages_dag_migration_settingpanel_danggongxiangwajue: '當共享挖掘不可用(任務啟動時)',
+  packages_dag_migration_settingpanel_danggongxiangwajue:
+    '當共享挖掘不可用(任務啟動時)',
   packages_dag_migration_settingpanel_danggongxiangwajuetooltip:
     '在任務啟動時會對共享挖掘的可用性進行檢測，當挖掘不可用時按照下方所選策略進行處理。\n可能出現的不可用的場景\n1. 數據連接裡面沒有打開開關\n2. 設置的起始時間比外存日誌數據的第一條更早\n3. 挖掘任務報錯停止',
   packages_dag_field_inference_list_gaiziduanyingshe:
@@ -574,7 +624,8 @@ export default {
     '選擇默認更新條件字段時默認優先按照主鍵字段關聯，無主鍵的按照唯一索引字段關聯，無主鍵且無唯一索引時自動添加 hash 字段。選擇指定字段時將按照指定更新條件字段進行關聯。\n注意：為了保證性能，系統會自動給更新條件字段創建索引，為避免對目標數據庫造成影響，您可以在運行任務前先手動創建索引。',
   packages_dag_nodes_table_zidingyichaxun: '自定義查詢',
   packages_dag_field_inference_main_gaibiaocunzaibu: '該表存在不支持的數據類型',
-  packages_dag_validate_customsql_fail: '當啟用全量自定義查詢後，處理節點僅支持使用JS節點',
+  packages_dag_validate_customsql_fail:
+    '當啟用全量自定義查詢後，處理節點僅支持使用JS節點',
   packages_dag_validate_customsql_target_fail:
     '當啟用全量自定義查詢後，只有弱schema類型的數據源才能作為目標，例如：MongoDB、Kafka、ES',
   packages_dag_field_inference_list_gaiziduanshuju:
@@ -589,7 +640,8 @@ export default {
   packages_dag_nodes_database_jiyumin: '基於min/max分片',
   packages_dag_nodes_database_fenpianfangshi: '分片方式',
   packages_dag_nodes_database_kaiqifenpian: '開啟分片',
-  packages_dag_nodes_database_fenpianpilianghezengliang: '分片批量和增量數據本地合併之後再發送',
+  packages_dag_nodes_database_fenpianpilianghezengliang:
+    '分片批量和增量數據本地合併之後再發送',
   packages_dag_nodes_database_guanbicigongnenghoufenpian:
     '關閉此功能後分片批量和增量數據不會在本地進行合併， 而是直接發送到目標。此功能適用於只有批量或者在批量過程中不會發生增量事件的場景。 ',
   packages_dag_nodes_database_quanliangduandianshi:
@@ -597,8 +649,10 @@ export default {
   packages_dag_nodes_database_quanliangduandianxu: '全量斷點續傳',
   packages_dag_nodes_table_depskai: '開啟全量斷點續傳時不支持開啟過濾設置。 ',
   packages_dag_nodes_table_depskai2: '開啟全量斷點續傳時不支持開啟自定義SQL。 ',
-  packages_dag_nodes_table_depsd: '開啟自定義SQL/過濾設置後，不支持開啟全量斷點續傳。 ',
-  packages_dag_task_old_version_confirm: '檢測到當前任務有更新，請刷新頁面加載最新版本',
+  packages_dag_nodes_table_depsd:
+    '開啟自定義SQL/過濾設置後，不支持開啟全量斷點續傳。 ',
+  packages_dag_task_old_version_confirm:
+    '檢測到當前任務有更新，請刷新頁面加載最新版本',
   packages_dag_date_processor: '時間運算',
   packages_dag_date_processor_data_types: '請選擇您要運算的時間類型',
   packages_dag_date_processor_method: '請選擇運算方式',
@@ -606,15 +660,20 @@ export default {
   packages_dag_date_processor_decrease: '減少',
   packages_dag_nodes_table_shiligro:
     '示例: {\'{\'}"$group": {\'{\'} "_id": "$name", totalQuantity: {\'{\'} $sum: "$quantity" {\'} }}\'}',
-  packages_dag_nodes_table_jinzhichiqu: '僅支持query, 例如: {\'{\'} "_id": "apples", "qty": 5 {\'}\'}',
+  packages_dag_nodes_table_jinzhichiqu:
+    '僅支持query, 例如: {\'{\'} "_id": "apples", "qty": 5 {\'}\'}',
   packages_dag_migration_settingpanel_shirenwubaocuo: '時，任務報錯停止',
   packages_dag_migration_settingpanel_dangtiaoguoshijian: '當跳過事件數超過',
-  packages_dag_migration_settingpanel_dangtiaoguoshijian2: '當跳過事件佔已同步事件的百分比超過',
+  packages_dag_migration_settingpanel_dangtiaoguoshijian2:
+    '當跳過事件佔已同步事件的百分比超過',
   packages_dag_migration_settingpanel_zhidingtiaoguoce: '指定跳過策略',
-  packages_dag_migration_settingpanel_renwutiaoguoshi: '跳過事件超過閾值時停止任務',
-  packages_dag_migration_settingpanel_tiaoguoyichangshi: '跳過異常事件，任務繼續運行',
+  packages_dag_migration_settingpanel_renwutiaoguoshi:
+    '跳過事件超過閾值時停止任務',
+  packages_dag_migration_settingpanel_tiaoguoyichangshi:
+    '跳過異常事件，任務繼續運行',
   packages_dag_migration_settingpanel_dangdanbiaotongbu: '事件處理出現異常時',
-  packages_dag_migration_settingpanel_anzhaomorenzhong: '按照默認重試邏輯進行重試',
+  packages_dag_migration_settingpanel_anzhaomorenzhong:
+    '按照默認重試邏輯進行重試',
   packages_dag_default_js: '默認JS',
   packages_dag_standardization_js: '標準化JS',
   packages_dag_mixins_formscope_gaiziduanshibi: '該字段是必填字段!',
@@ -623,7 +682,8 @@ export default {
   packages_dag_field_inference_list_anxishutiaozheng: '按係數調整',
   packages_dag_field_inference_list_zidingyitiaozheng: '自定義調整',
   packages_dag_field_inference_list_anzhaoxishu: '按係數調整字段長度',
-  packages_dag_field_inference_list_anzhaoxishu_tip: '按係數調整是指將原推演出的長度乘以設置的係數作為調整後的字段長度',
+  packages_dag_field_inference_list_anzhaoxishu_tip:
+    '按係數調整是指將原推演出的長度乘以設置的係數作為調整後的字段長度',
   packages_dag_field_rename_index_yixiacaozuoyi: '以下操作已匹配不到源字段',
   packages_dag_nodes_database_jinwuzhujianbiao: '無主鍵且無唯一索引',
   packages_dag_nodes_database_jinyouzhujianbiao: '包含主鍵或唯一索引',
@@ -637,7 +697,8 @@ export default {
   packages_dag_config_data_write: '數據寫入配置',
   packages_dag_config_incremental_mode: '增量模式配置',
   packages_dag_config_data_filter: '數據過濾配置',
-  packages_dag_config_data_filter_tip: '數據過濾配置可能會因為查詢過濾性能問題對源庫造成影響，請謹慎使用',
+  packages_dag_config_data_filter_tip:
+    '數據過濾配置可能會因為查詢過濾性能問題對源庫造成影響，請謹慎使用',
   packages_dag_field_add_del_index_zhidi: '置底',
   packages_dag_field_add_del_index_xiayi: '下移',
   packages_dag_field_add_del_index_shangyi: '上移',
@@ -657,7 +718,8 @@ export default {
   packages_dag_materialized_view_help_desc:
     '物化視圖是一種特殊的數據庫視圖，能提升數據讀取速度。使用 Tapdata Cloud 可創建實時物化視圖，簡化數據管理和應用開發過程。',
   packages_dag_materialized_view_help_tutorial_btn: '詳細教程',
-  packages_dag_materialized_view_help_video_desc: '以下視頻教程講解了，如何使用 Tapdata Cloud 構建物化視圖...',
+  packages_dag_materialized_view_help_video_desc:
+    '以下視頻教程講解了，如何使用 Tapdata Cloud 構建物化視圖...',
   packages_dag_select_database_tips: '請選擇數據庫',
   packages_dag_select_table_tips: '請選擇表',
   packages_dag_join_table: '關聯表',
@@ -689,10 +751,12 @@ export default {
   packages_dag_field_inference_list_zidingyileixing: '自訂類型',
   packages_dag_field_inference_list_xuanzetiaozhengde: '選擇調整的類型:',
   packages_dag_enableSyncMetricCollector_title: '同步指標收集',
-  packages_dag_enableSyncMetricCollector_tip: '啟用後會自動收集任務的同步指標，任務停止後會輸出對應的指標資訊供分析',
+  packages_dag_enableSyncMetricCollector_tip:
+    '啟用後會自動收集任務的同步指標，任務停止後會輸出對應的指標資訊供分析',
   packages_dag_update_conditions_tip:
     '注意：為了保證性能，Tapdata 會自動給更新條件字段創建索引，為避免對目標數據庫造成影響，您可以在運行任務前先手動創建索引',
-  packages_dag_existDataProcessMode_desc: '該行為會直接刪除目標表和數據，可能會對數據庫造成影響，請謹慎使用。',
+  packages_dag_existDataProcessMode_desc:
+    '該行為會直接刪除目標表和數據，可能會對數據庫造成影響，請謹慎使用。',
   packages_dag_ddl_events_collapse_tip:
     '開啓該能力後，會自動將源的DDL操作在目標數據庫應用，可能會對目標數據庫造成影響，請謹慎開啓',
   packages_dag_ddl_stopped_on_error: '遇到DDL時任務報錯停止',
@@ -704,18 +768,22 @@ export default {
   packages_dag_task_setting_syncPoint_from_now: '從此刻開始',
   packages_dag_feature_agent_version_tips: `Agent版本需 {val} 及以上時該功能才可用`,
   packages_dag_syncIndex: '建表同步索引',
-  packages_dag_syncIndex_desc: '目前僅支持同步唯一索引和普通索引，且索引不能使用函數',
+  packages_dag_syncIndex_desc:
+    '目前僅支持同步唯一索引和普通索引，且索引不能使用函數',
   packages_dag_ddl_ignore_rules: 'DDL忽略規則',
   packages_dag_ddl_ignore_rules_placeholder: '請輸入正則表達式以忽略特定的DDL',
   packages_dag_ddl_ignore_rules_tip:
     '當選擇了遇到DDL時任務報錯停止，可以通過正則表達式來配置忽略哪些DDL\n例如：\nALTER\\s+TABLE\\s+"([^"]+)"\\s+ADD\\s+\\("([^"]+)"\\s+[^\\)]+\\)',
   packages_dag_just_insert: '僅插入',
-  packages_dag_unwind_validate_error: '當使用Unwind節點時，目標節點寫入策略需要支持僅插入',
+  packages_dag_unwind_validate_error:
+    '當使用Unwind節點時，目標節點寫入策略需要支持僅插入',
   packages_dag_doubleActive: '雙向同步',
-  packages_dag_doubleActive_tip: '當需要進行雙向同步，且產生的增量事件不會對自身產生干擾時，請啓用此開關。',
+  packages_dag_doubleActive_tip:
+    '當需要進行雙向同步，且產生的增量事件不會對自身產生干擾時，請啓用此開關。',
   packages_dag_time_zone_offset: '時區偏移量',
   packages_dag_dynamic_date_suffix: '動態日期後綴',
-  packages_dag_dynamic_date_suffix_tip: '開啓後生成的表名將包含任務運行時的日期後綴',
+  packages_dag_dynamic_date_suffix_tip:
+    '開啓後生成的表名將包含任務運行時的日期後綴',
   packages_dag_table_rename_multiple: '任務中只允許存在一個表編輯節點',
   packages_dag_migrate_union: '多表合併',
   packages_dag_merged_tableName: '合併表名',
@@ -730,11 +798,14 @@ export default {
   packages_dag_refresh_schema: '刷新模型',
   packages_dag_switch_to_table_view: '切換至表格視圖',
   packages_dag_switch_to_tree_view: '切換至樹形視圖',
-  packages_dag_syncIndexTip: '開啓該能力後，會自動將源的索引同步到目標，該行為可能會對目標數據庫造成影響，請謹慎開啓',
-  packages_dag_updateConditionFields_alert: '為了保證性能，系統會自動給更新條件字段創建索引',
+  packages_dag_syncIndexTip:
+    '開啓該能力後，會自動將源的索引同步到目標，該行為可能會對目標數據庫造成影響，請謹慎開啓',
+  packages_dag_updateConditionFields_alert:
+    '為了保證性能，系統會自動給更新條件字段創建索引',
   packages_dag_syncPartitionTableEnable: '同步分區表',
   packages_dag_syncSourcePartitionTableEnable: '同步分區主表',
-  packages_dag_syncSourcePartitionTableEnable_tip: '開啓時會過濾掉子表，關閉時會過濾掉主表。',
+  packages_dag_syncSourcePartitionTableEnable_tip:
+    '開啓時會過濾掉子表，關閉時會過濾掉主表。',
   packages_dag_enableConcurrentRead: '開啓多表併發讀取',
   packages_dag_enableConcurrentRead_tips:
     '啓用後，系統將同時讀取並同步多張表的數據，適用於小表較多的場景，有助於提升性能。\n注意：啓用後，任務僅全量時無法同步新增表。請根據資源合理設置目標節點併發線程數，以確保系統穩定。',
@@ -745,10 +816,12 @@ export default {
   packages_dag_add_own_datasource: '添加我自己的數據源',
   packages_dag_add_own_target_datasource: '添加我自己的目標數據源',
   packages_dag_add_new_connection: '創建新的連接',
-  packages_dag_add_own_datasource_desc: '從 TapData 的連接器列表中配置新的數據源',
+  packages_dag_add_own_datasource_desc:
+    '從 TapData 的連接器列表中配置新的數據源',
   packages_dag_no_datasource: '我沒有數據源',
   packages_dag_no_target_datasource: '我沒有目標數據源',
-  packages_dag_no_datasource_desc: 'TapData 提供包含 2 個數據源和 2 個目標源的 Demo 庫',
+  packages_dag_no_datasource_desc:
+    'TapData 提供包含 2 個數據源和 2 個目標源的 Demo 庫',
   packages_dag_have_connection: '選擇已有連接',
   packages_dag_have_connection_desc: '選擇您已創建的連接',
   packages_dag_select_datasource: '選擇數據源',
@@ -756,23 +829,28 @@ export default {
   packages_dag_search_connection: '搜索連接',
   packages_dag_search_datasource: '搜索數據源',
   packages_dag_tour_task_success: '恭喜您創建了第一個複製任務',
-  packages_dag_tour_task_success_desc: '接下來可以使用我們的產品進行數據庫的複製、遷移等工作啦。',
+  packages_dag_tour_task_success_desc:
+    '接下來可以使用我們的產品進行數據庫的複製、遷移等工作啦。',
   packages_dag_access_task_list: '進入任務列表',
   packages_dag_current_selected: '當前已選',
   packages_dag_task_monitor: '任務監控',
-  packages_dag_select_HasKeys_alert: '僅同步具有主鍵或唯一索引的表。如需同步無主鍵的表，請手動切換',
+  packages_dag_select_HasKeys_alert:
+    '僅同步具有主鍵或唯一索引的表。如需同步無主鍵的表，請手動切換',
   packages_dag_counting: '統計中',
   packages_dag_counting_num_of_rows_table: '正在統計表行數',
   packages_dag_noPkSyncMode: '無主鍵表同步方式',
   packages_dag_noPkSyncMode_ADD_HASH: '新增哈希列',
   packages_dag_noPkSyncMode_ALL_COLUMNS: '全字段索引',
   packages_dag_join_keys_empty: '{tableName} 的關聯條件不能為空',
-  packages_dag_join_keys_field_empty: '{tableName} 的關聯條件第 {index} 項的字段不能為空',
-  packages_dag_src_editor_huawei_drs_kafka_convertor: '華為 DRS Kafka 消息轉換器',
+  packages_dag_join_keys_field_empty:
+    '{tableName} 的關聯條件第 {index} 項的字段不能為空',
+  packages_dag_src_editor_huawei_drs_kafka_convertor:
+    '華為 DRS Kafka 消息轉換器',
   packages_dag_field_path: '字段路徑',
   packages_dag_email_receivers: '郵件接收人',
   packages_dag_merge_table_js_node_error: '主從合併節點後不允許存在 JS 節點',
-  packages_dag_merge_table_table_not_allow_target: '主從合併後不支持將 {val} 作為寫入目標',
+  packages_dag_merge_table_table_not_allow_target:
+    '主從合併後不支持將 {val} 作為寫入目標',
   packages_dag_only_include_pk: '僅包含主鍵',
-  packages_dag_only_include_uk: '僅包含唯一索引'
+  packages_dag_only_include_uk: '僅包含唯一索引',
 }
