@@ -52,37 +52,6 @@ interface ApiResponse {
   items: TaskInspectHistory[]
 }
 
-const columns = [
-  {
-    label: i18n.t('packages_dag_inspect_type'),
-    prop: 'type',
-    minWidth: 100,
-  },
-  {
-    label: i18n.t('packages_dag_inspect_start_time'),
-    prop: 'beginTime',
-    minWidth: 170,
-    dataType: 'time',
-  },
-  {
-    label: i18n.t('packages_dag_inspect_end_time'),
-    prop: 'endTime',
-    minWidth: 170,
-    dataType: 'time',
-  },
-  {
-    label: i18n.t('packages_dag_inspect_status'),
-    prop: 'status',
-    slotName: 'status',
-    minWidth: 100,
-  },
-  {
-    label: i18n.t('public_operation'),
-    slotName: 'operation',
-    width: 100,
-  },
-]
-
 const loading = ref(false)
 const detailDialogVisible = ref(false)
 const currentInspectId = ref('')
