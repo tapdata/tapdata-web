@@ -286,7 +286,11 @@ const route = useRoute()
           @input="search(item, 'input')"
           @change="search(item, 'change')"
           @clear="fetch()"
-        />
+        >
+          <template v-if="item.type === 'input'" #prefix>
+            <VIcon>magnify</VIcon>
+          </template>
+        </component>
       </template>
     </ElFormItem>
     <ElFormItem v-if="!hideRefresh">
