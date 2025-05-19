@@ -1535,7 +1535,9 @@ export default {
     async validateSetting() {
       try {
         await this.$refs.configPanel.validateSetting()
-      } catch {
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(i18n.t('packages_dag_mixins_editor_renwushezhiyi'), error)
         this.setActiveType('settings')
         return i18n.t('packages_dag_mixins_editor_renwushezhiyi')
       }

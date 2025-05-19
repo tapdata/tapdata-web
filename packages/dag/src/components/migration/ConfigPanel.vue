@@ -102,7 +102,7 @@ export default {
     },
 
     async validateSetting() {
-      await this.$refs.setting?.form.validate()
+      await this.$refs.setting?.validate()
     },
 
     handleLoadMeta() {
