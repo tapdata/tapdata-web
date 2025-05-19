@@ -346,6 +346,7 @@ export default {
               <div
                 v-if="multipleSelection.length"
                 class="flex align-center gap-3"
+                style="--btn-space: 0"
               >
                 <ElCheckbox :model-value="true" @change="clearSelection" />
                 <span class="fw-sub text-nowrap color-primary"
