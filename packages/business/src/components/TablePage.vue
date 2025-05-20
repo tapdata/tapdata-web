@@ -331,6 +331,30 @@ export default {
             @row-dragend="handleDragEnd"
             @select="onSelectRow"
           >
+            <el-table-column
+              v-if="classificationVisible"
+              width="28"
+              align="center"
+              class-name="cell-no-padding"
+            >
+              <template #default="{ row, column }">
+                <el-button
+                  draggable="true"
+                  class="grabbable table-cell-drag-btn"
+                  :class="{
+                    'inline-flex': multipleSelection.includes(row),
+                  }"
+                  text
+                  size="small"
+                  @dragstart="handleDragStart(row, column, $event)"
+                  @dragend="handleDragEnd"
+                >
+                  <template #icon>
+                    <VIcon>drag</VIcon>
+                  </template>
+                </el-button>
+              </template>
+            </el-table-column>
             <slot />
             <template #empty>
               <div class="empty">

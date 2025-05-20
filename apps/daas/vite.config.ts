@@ -44,7 +44,6 @@ export default defineConfig(({ mode }) => {
     envPrefix,
 
     plugins: [
-      vueDevTools(),
       vue(),
       vueJsx(),
       AutoImport({

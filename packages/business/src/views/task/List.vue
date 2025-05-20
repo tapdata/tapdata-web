@@ -551,20 +551,18 @@ export default {
     },
 
     handleSelectTag() {
-      let tagList = []
+      const tagList = []
+      const tagMap = {}
+
       this.multipleSelection.forEach((row) => {
-        if (row.listtags) {
-          tagList = [...row.listtags, ...tagList]
-        }
+        row.listtags.forEach((item) => {
+          if (!tagMap[item.id]) {
+            tagList.push(item)
+            tagMap[item.id] = true
+          }
+        })
       })
-      //去重
-      const map = new Map()
-      for (const item of tagList) {
-        if (!map.has(item.id)) {
-          map.set(item.id, item)
-        }
-      }
-      tagList = [...map.values()]
+
       return tagList
     },
 
@@ -1162,9 +1160,10 @@ export default {
       </template>
 
       <el-table-column
+        class-name="cell-no-padding"
         reserve-selection
         type="selection"
-        width="38"
+        width="32"
         align="center"
         :selectable="
           (row) =>
@@ -1186,7 +1185,7 @@ export default {
               v-else
               role="ellipsis"
               type="primary"
-              underline="hover"
+              underline="never"
               class="justify-content-start ellipsis block mr-1"
               :class="['name', { 'has-children': row.hasChildren }]"
               @click.stop="handleClickName(row)"

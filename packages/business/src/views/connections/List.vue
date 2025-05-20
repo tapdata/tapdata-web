@@ -480,15 +480,19 @@ export default {
       }
     },
     handleSelectTag() {
-      const set = new Set()
+      const tagList = []
+      const tagMap = {}
+
       this.multipleSelection.forEach((row) => {
-        if (row.listtags) {
-          row.listtags.forEach((item) => {
-            set.add(item.id)
-          })
-        }
+        row.listtags.forEach((item) => {
+          if (!tagMap[item.id]) {
+            tagList.push(item)
+            tagMap[item.id] = true
+          }
+        })
       })
-      return [...set]
+
+      return tagList
     },
     handleOperationClassify(listtags) {
       const attributes = {
