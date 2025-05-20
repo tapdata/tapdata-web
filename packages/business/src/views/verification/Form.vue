@@ -86,6 +86,7 @@ const defaultTime = ref([
   new Date(2025, 1, 1, 0, 0, 0),
   new Date(2025, 2, 1, 23, 59, 59),
 ])
+const conditionList = ref([])
 
 const taskSelect = useTemplateRef('taskSelect')
 
@@ -108,7 +109,7 @@ const form = reactive({
     keep: 100,
   },
   enabled: true,
-  tasks: [],
+  // tasks: [],
   taskMode: 'pipeline',
   errorNotifys: ['SYSTEM', 'EMAIL'],
   inconsistentNotifys: ['SYSTEM', 'EMAIL'],
@@ -320,6 +321,10 @@ const getData = async (id: string) => {
           return t
         }) || []
 
+      conditionList.value = data.tasks
+
+      delete data.tasks
+
       Object.assign(form, data)
     }
   } catch (error) {
@@ -409,7 +414,7 @@ const goBack = () => {
 const save = async (saveOnly = false) => {
   await baseForm.value.validate(async (valid: boolean) => {
     if (valid) {
-      let tasks = conditionBox.value.getList()
+      let tasks = conditionList.value
       // 自动过滤出完整数据，以及索引字段数量不相等的情况
       tasks = tasks.filter((t) => {
         if (
@@ -472,7 +477,13 @@ const save = async (saveOnly = false) => {
               script,
               webScript,
               jsEngineName,
+              modeType,
             }) => {
+              if (modeType === 'all') {
+                source.columns = null
+                target.columns = null
+              }
+
               if (webScript && webScript !== '') {
                 script = `function validate(sourceRow){${webScript}}`
               }
@@ -592,6 +603,7 @@ const openTaskSelect = () => {
 fetchDatabaseTypes()
 
 provide('formData', form)
+provide('conditionList', conditionList)
 provide('ConnectorMap', ConnectorMap)
 </script>
 

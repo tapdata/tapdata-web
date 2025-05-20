@@ -4,10 +4,9 @@ import { action } from '@formily/reactive'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import { GitBook, VCodeEditor } from '@tap/component'
 import SwitchNumber from '@tap/component/src/SwitchNumber.vue'
-import { AsyncSelect, JsonEditor, SqlEditor } from '@tap/form'
+import { InfiniteSelect as AsyncSelect, JsonEditor, SqlEditor } from '@tap/form'
 import i18n from '@tap/i18n'
 import { uuid } from '@tap/shared'
-import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   cloneDeep,
   debounce,
@@ -141,6 +140,7 @@ interface StageItem {
 }
 
 const formData = inject('formData')
+const conditionList = inject('conditionList')
 const ConnectorMap = inject('ConnectorMap')
 
 // Props and Emits
@@ -164,13 +164,11 @@ const webScript = ref('')
 const jsEngineName = ref('graal.js')
 const doc = ref('')
 const currentPage = ref(1)
-const pageSize = ref(10)
+const pageSize = ref(5)
 const autoSuggestJoinFields = ref(true)
 const searchValue = ref('')
 const fieldDialog = ref()
-
-// Computed Properties
-const list = computed(() => formData.tasks)
+const filteredList = ref([])
 
 const flowStages = computed(() => {
   const types = props.isDB ? ['database'] : ['table']
@@ -181,17 +179,16 @@ const isCountOrHash = computed(() => {
   return props.inspectMethod === 'row_count' || props.inspectMethod === 'hash'
 })
 
-const filteredList = computed(() => {
-  if (!searchValue.value) return list.value
+// const filteredList = computed(() => {
+//   if (!searchValue.value) return conditionList.value
 
-  const searchTerm = searchValue.value.toLowerCase()
-  return list.value.filter((item) => {
-    const sourceTable = (item.source.table || '').toLowerCase()
-    const targetTable = (item.target.table || '').toLowerCase()
-
-    return sourceTable.includes(searchTerm) || targetTable.includes(searchTerm)
-  })
-})
+//   const searchTerm = searchValue.value.toLowerCase()
+//   return conditionList.value.filter((item) => {
+//     const sourceTable = (item.source.table || '').toLowerCase()
+//     const targetTable = (item.target.table || '').toLowerCase()
+//     return sourceTable.includes(searchTerm) || targetTable.includes(searchTerm)
+//   })
+// })
 
 const paginatedList = computed(() => {
   const startIndex = (currentPage.value - 1) * pageSize.value
@@ -214,10 +211,10 @@ const openApiDrawer = (path: string) => {
   showDoc.value = true
 }
 
-const hasCapability = (obj, capability) => {
-  if (!obj.databaseType) return false
+const hasCapability = (databaseType: string, capability: string) => {
+  if (!databaseType) return false
 
-  const item = ConnectorMap.value[obj.databaseType]
+  const item = ConnectorMap.value[databaseType]
 
   return item?.capabilityMap[capability]
 }
@@ -572,14 +569,14 @@ const handleClearIndexEmpty = () => {
       return
     }
 
-    formData.tasks = formData.tasks.filter(
+    conditionList.value = conditionList.value.filter(
       (t) => t.source.sortColumn && t.target.sortColumn,
     )
   })
 }
 
 const clearList = () => {
-  formData.tasks = []
+  conditionList.value = []
   currentPage.value = 1
   validate()
 }
@@ -598,7 +595,7 @@ const getItemOptions = () => {
 }
 
 const addItem = () => {
-  list.value.push(getItemOptions())
+  conditionList.value.push(getItemOptions())
   currentPage.value = totalPages.value
 
   nextTick(() => {
@@ -611,19 +608,19 @@ const addItem = () => {
 }
 
 const removeItem = (id: string) => {
-  const index = formData.tasks.findIndex((t) => t.id === id)
+  const index = conditionList.value.findIndex((t) => t.id === id)
   if (index !== -1) {
-    formData.tasks.splice(index, 1)
+    conditionList.value.splice(index, 1)
   }
 
   // If current page is now empty and it's not the first page, go to previous page
-  if (paginatedList.value.length === 0 && currentPage.value > 1) {
+  if (conditionList.value.length === 0 && currentPage.value > 1) {
     currentPage.value--
   }
 }
 
 const autoAddTable = async () => {
-  if (!props.taskId || formData.tasks.length) return
+  if (!props.taskId || conditionList.value.length) return
   autoAddTableLoading.value = true
   updateAutoAddTableLoading()
   const connectionSet = new Set()
@@ -809,7 +806,7 @@ const autoAddTable = async () => {
           i18n.t('packages_business_components_conditionbox_suoxuanrenwuque'),
         )
       }
-      formData.tasks = newItems
+      conditionList.value = newItems
 
       // 显示提示
       validate()
@@ -821,7 +818,7 @@ const autoAddTable = async () => {
 }
 
 const getList = () => {
-  const listData = formData.tasks
+  const listData = conditionList.value
   if (props.taskId) {
     listData.forEach((el: any) => {
       if (el.modeType === 'all') {
@@ -1003,7 +1000,7 @@ const handleAddScriptClose = () => {
 }
 
 const submitScript = () => {
-  const task = formData.tasks
+  const task = conditionList.value
   const currentFormIndex = formIndex.value
   task[currentFormIndex].webScript = webScript.value
   task[currentFormIndex].jsEngineName = jsEngineName.value
@@ -1015,7 +1012,7 @@ const submitScript = () => {
 
 const editScript = (index: number) => {
   formIndex.value = index
-  const task = paginatedList.value
+  const task = conditionList.value
   const script = JSON.parse(JSON.stringify(task[formIndex.value].webScript))
   jsEngineName.value = JSON.parse(
     JSON.stringify(task[formIndex.value].jsEngineName || 'nashorn'),
@@ -1220,11 +1217,11 @@ const validate = async () => {
 const validateCapabilities = (tasks: any[], capability: string) => {
   const noSupportList = new Set()
   tasks.forEach((item) => {
-    if (!hasCapability(item.source, capability)) {
+    if (!hasCapability(item.source.databaseType, capability)) {
       noSupportList.add(item.source.databaseType)
     }
 
-    if (!hasCapability(item.target, capability)) {
+    if (!hasCapability(item.target.databaseType, capability)) {
       noSupportList.add(item.target.databaseType)
     }
   })
@@ -1361,7 +1358,7 @@ const handleChangeModeType = (val: string, item: any) => {
 }
 
 const handleChangeFields = (data: any[] = [], id: string) => {
-  const item = formData.tasks.find((t) => t.id === id)
+  const item = conditionList.value.find((t) => t.id === id)
 
   item.source.columns = data.map((t) => t.source)
   item.target.columns = data.map((t) => t.target)
@@ -1457,6 +1454,7 @@ const isNullsLast = (item: any) => {
 // Lifecycle Hooks
 onMounted(() => {
   loadDoc()
+  handleSearch('')
 })
 
 // Expose methods to parent component
@@ -1464,6 +1462,25 @@ defineExpose({
   autoAddTable,
   getList,
   validate,
+})
+
+const handleSearch = debounce((value: string) => {
+  console.log('handleSearch', value)
+  if (!value) {
+    filteredList.value = conditionList.value
+    return
+  }
+
+  const searchTerm = value.toLowerCase()
+  filteredList.value = conditionList.value.filter((item) => {
+    const sourceTable = (item.source.table || '').toLowerCase()
+    const targetTable = (item.target.table || '').toLowerCase()
+    return sourceTable.includes(searchTerm) || targetTable.includes(searchTerm)
+  })
+}, 300)
+
+watch(conditionList, () => {
+  handleSearch(searchValue.value)
 })
 </script>
 
@@ -1499,8 +1516,10 @@ defineExpose({
           <ElInput
             v-model="searchValue"
             :placeholder="$t('packages_form_table_rename_index_sousuobiaoming')"
-            class="w-auto mr-4"
+            class="mr-4"
+            style="width: 240px"
             clearable
+            @input="handleSearch"
           >
             <template #prefix>
               <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
@@ -1509,11 +1528,13 @@ defineExpose({
           <ElButton
             v-if="
               !isCountOrHash &&
-              list.some((t) => !t.source.sortColumn || !t.target.sortColumn)
+              conditionList.some(
+                (t) => !t.source.sortColumn || !t.target.sortColumn,
+              )
             "
             text
             type="primary"
-            :disabled="!list.length"
+            :disabled="!conditionList.length"
             @click="handleClearIndexEmpty"
             >{{
               $t('packages_business_components_conditionbox_yijianqingchusuo')
@@ -1522,9 +1543,11 @@ defineExpose({
           <ElButton
             text
             type="primary"
-            :disabled="!list.length"
+            :disabled="!conditionList.length"
             @click="handleClear"
-            >{{ $t('packages_business_verification_clear') }}
+          >
+            <VIcon class="mr-1">close</VIcon>
+            {{ $t('packages_business_verification_clear') }}
           </ElButton>
         </div>
       </div>
@@ -1573,14 +1596,17 @@ defineExpose({
                 <span>/</span>
                 <span class="fw-sub">{{ item.target.table || '-' }}</span>
               </div>
-              <div class="flex align-items-center">
-                <ElButton text type="danger" @click.stop="removeItem(item.id)">
-                  <VIcon class="mr-1">delete</VIcon>
-                  {{ $t('public_button_delete') }}</ElButton
-                >
-              </div>
+              <ElButton
+                class="condition-del-btn"
+                text
+                type="danger"
+                @click.stop="removeItem(item.id)"
+              >
+                <VIcon class="mr-1">delete</VIcon>
+                {{ $t('public_button_delete') }}</ElButton
+              >
             </div>
-            <div :key="`connection${item.id}`" class="setting-item mt-4">
+            <div class="setting-item mt-4">
               <label class="item-label"
                 >{{
                   $t(
@@ -1589,7 +1615,6 @@ defineExpose({
                 }}:</label
               >
               <AsyncSelect
-                :key="`sourceConnectionId${item.id}`"
                 v-model="item.source.connectionId"
                 :method="getConnectionsListMethod"
                 item-query="name"
@@ -1602,7 +1627,6 @@ defineExpose({
                 <el-icon><el-icon-arrow-right /></el-icon>
               </span>
               <AsyncSelect
-                :key="`targetConnectionId${item.id}`"
                 v-model="item.target.connectionId"
                 :method="getConnectionsListMethod"
                 item-query="name"
@@ -1612,14 +1636,13 @@ defineExpose({
                 @option-select="handleChangeConnection($event, item.target)"
               />
             </div>
-            <div :key="`table${item.id}`" class="setting-item mt-4">
+            <div class="setting-item mt-4">
               <label class="item-label"
                 >{{
                   $t('packages_business_components_conditionbox_laiyuanbiao')
                 }}:</label
               >
               <AsyncSelect
-                :key="`sourceTable${item.id}`"
                 v-model="item.source.table"
                 :method="getTableListMethod"
                 :params="{
@@ -1639,7 +1662,6 @@ defineExpose({
                 }}:</span
               >
               <AsyncSelect
-                :key="`targetTable${item.id}`"
                 v-model="item.target.table"
                 :method="getTableListMethod"
                 :params="{
@@ -1654,11 +1676,15 @@ defineExpose({
                 @change="handleChangeTable($event, item, index, 'target')"
               />
             </div>
-
             <div class="flex gap-4 setting-item">
               <div class="flex-1">
                 <div
-                  v-if="hasCapability(item.source, 'execute_command_function')"
+                  v-if="
+                    hasCapability(
+                      item.source.databaseType,
+                      'execute_command_function',
+                    )
+                  "
                   class="mt-4 flex align-center"
                 >
                   <label class="item-label">
@@ -1707,7 +1733,12 @@ defineExpose({
               </div>
               <div class="flex-1">
                 <div
-                  v-if="hasCapability(item.target, 'execute_command_function')"
+                  v-if="
+                    hasCapability(
+                      item.target.databaseType,
+                      'execute_command_function',
+                    )
+                  "
                   class="mt-4 flex align-center"
                 >
                   <label class="item-label">
@@ -1862,7 +1893,6 @@ defineExpose({
                 </div>
               </div>
             </div>
-
             <template v-if="!isCountOrHash">
               <div class="setting-item mt-4">
                 <label class="item-label"
@@ -1989,7 +2019,6 @@ defineExpose({
                 </div>
               </div>
             </template>
-
             <div
               v-if="inspectMethod === 'field'"
               class="setting-item align-items-center mt-4"
@@ -2079,7 +2108,7 @@ defineExpose({
       </div>
 
       <div
-        v-if="list.length === 0"
+        v-if="conditionList.length === 0"
         class="bg-gray-50 p-4 rounded-xl flex flex-column justify-center align-center gap-2"
       >
         <div class="flex rounded-pill bg-gray-100 p-3">
@@ -2127,7 +2156,10 @@ defineExpose({
         </template>
       </div>
 
-      <div v-if="list.length" class="py-4 condition-footer flex align-center">
+      <div
+        v-if="conditionList.length"
+        class="py-4 condition-footer flex align-center"
+      >
         <ElButton :icon="Plus" @click="addItem">{{
           $t('packages_business_verification_addTable')
         }}</ElButton>
@@ -2168,7 +2200,7 @@ defineExpose({
             v-model:page-size="pageSize"
             hide-on-single-page
             background
-            :page-sizes="[10, 20, 50, 100]"
+            :page-sizes="[5, 10, 20, 50, 100]"
             layout="sizes, prev, pager, next"
             :total="filteredList.length"
             @size-change="handleSizeChange"
@@ -2250,9 +2282,17 @@ defineExpose({
     padding: 16px 24px;
     display: flex;
     // border-bottom: 1px solid map.get($borderColor, light);
+    .condition-del-btn {
+      visibility: hidden;
+      opacity: 0;
+    }
     &:hover {
       .cond-item__index {
         display: block;
+      }
+      .condition-del-btn {
+        visibility: visible;
+        opacity: 1;
       }
     }
   }
