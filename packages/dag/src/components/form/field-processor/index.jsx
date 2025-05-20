@@ -838,7 +838,7 @@ export const FieldRenameProcessor = connect(
           {
             label: i18n.t('public_operation_abb'),
             prop: 'operation',
-            // width: 60,
+            width: 88,
             slot: 'operation',
           },
         ]
@@ -1074,26 +1074,26 @@ export const FieldRenameProcessor = connect(
         }
         const renderOpNode = ({ row }) => {
           const show = row.isShow ? (
-            <span
-              class="text-primary cursor-pointer"
+            <el-button
+              disabled={props.disabled}
+              text
+              type="primary"
               onClick={() => doDeleteRow(row)}
             >
               {i18n.t('packages_form_field_processor_index_pingbi')}
-            </span>
+            </el-button>
           ) : (
-            <span
-              class="text-primary cursor-pointer"
+            <el-button
+              disabled={props.disabled}
+              text
+              type="primary"
               onClick={() => doShowRow(row)}
             >
               {i18n.t('packages_form_field_processor_index_huifu')}
-            </span>
+            </el-button>
           )
-          const disabled = row.isShow ? (
-            <span>{i18n.t('packages_form_field_processor_index_pingbi')}</span>
-          ) : (
-            <span>{i18n.t('packages_form_field_processor_index_huifu')}</span>
-          )
-          return props.disabled ? disabled : show
+
+          return show
         }
 
         const showBatchRemove = computed(() => {
