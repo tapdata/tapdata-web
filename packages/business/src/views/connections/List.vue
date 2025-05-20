@@ -742,7 +742,7 @@ export default {
       <ElTableColumn
         v-if="isDaas"
         type="selection"
-        width="38"
+        width="32"
         align="center"
         :reserve-selection="true"
       />

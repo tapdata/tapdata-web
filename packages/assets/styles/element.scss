@@ -33,6 +33,21 @@
     padding: 0;
   }
 
+  .el-table-column--selection .cell {
+    padding: 0;
+    .el-checkbox {
+      --el-checkbox-input-width: 16px;
+      --el-checkbox-input-height: 16px;
+      .el-checkbox__inner::after {
+        height: 8px;
+        left: 5px;
+      }
+      .el-checkbox__input.is-indeterminate .el-checkbox__inner::before {
+        top: 6px;
+      }
+    }
+  }
+
   .table-cell-drag-btn {
     display: none;
   }
