@@ -480,21 +480,15 @@ export default {
       }
     },
     handleSelectTag() {
-      let tagList = []
+      const set = new Set()
       this.multipleSelection.forEach((row) => {
         if (row.listtags) {
-          tagList = [...row.listtags, ...tagList]
+          row.listtags.forEach((item) => {
+            set.add(item.id)
+          })
         }
       })
-      //去重
-      const map = new Map()
-      for (const item of tagList) {
-        if (!map.has(item.id)) {
-          map.set(item.id, item)
-        }
-      }
-      tagList = [...map.values()]
-      return tagList
+      return [...set]
     },
     handleOperationClassify(listtags) {
       const attributes = {
@@ -738,7 +732,6 @@ export default {
           class="btn"
           @click="$refs.table.showClassify(handleSelectTag())"
         >
-          <i class="iconfont icon-biaoqian back-btn-icon" />
           <span> {{ $t('public_button_bulk_tag') }}</span>
         </ElButton>
       </template>

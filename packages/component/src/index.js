@@ -78,4 +78,6 @@ export * from './CloseIcon'
 
 export * from './RightBoldOutlined'
 
+export * from './DownBoldOutlined'
+
 export * from './InstallElement'

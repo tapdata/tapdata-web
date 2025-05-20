@@ -6,8 +6,7 @@ import {
   taskApi,
   workerApi,
 } from '@tap/api'
-import { FilterBar, SelectList } from '@tap/component'
-import InfiniteSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
+import { DownBoldOutlined, FilterBar, SelectList } from '@tap/component'
 import i18n from '@tap/i18n'
 import { generateId } from '@tap/shared'
 import dayjs from 'dayjs'
@@ -32,7 +31,7 @@ export default {
   name: 'List',
 
   components: {
-    InfiniteSelect,
+    DownBoldOutlined,
     DatabaseIcon,
     FilterBar,
     SelectList,
@@ -1008,10 +1007,7 @@ export default {
 </script>
 
 <template>
-  <section
-    v-loading="restLoading"
-    class="data-flow-wrap rounded-lg overflow-hidden"
-  >
+  <section v-loading="restLoading" class="data-flow-wrap rounded-lg">
     <TablePage
       ref="table"
       row-key="id"
@@ -1121,7 +1117,9 @@ export default {
             <span>
               {{ $t('packages_business_dataFlow_taskBulkOperation') }}</span
             >
-            <i class="el-icon-arrow-down el-icon--right" />
+            <el-icon class="ml-1">
+              <DownBoldOutlined />
+            </el-icon>
           </ElButton>
           <template #dropdown>
             <ElDropdownMenu>
