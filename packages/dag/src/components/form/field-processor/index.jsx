@@ -1329,13 +1329,17 @@ export const FieldRenameProcessor = connect(
                                 onClick={() => updateView(index)}
                               >
                                 <span>
-                                  <span>
+                                  <span class="mr-1">
                                     {i18n.t(
                                       'packages_form_dag_dialog_field_mapping_selected',
                                     )}
                                   </span>
-                                  {item.sourceFieldCount - item.userDeletedNum}{' '}
-                                  /{item.sourceFieldCount}
+                                  <span>
+                                    {item.sourceFieldCount -
+                                      item.userDeletedNum}
+                                    <span class="mx-0.5">/</span>
+                                    {item.sourceFieldCount}
+                                  </span>
                                 </span>
                               </div>
                             </div>
