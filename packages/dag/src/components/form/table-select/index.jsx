@@ -132,7 +132,7 @@ export const TableSelect = connect(
         const loading = ref(false)
 
         const loadSelectData = () => {
-          select.value.loadDataList(1)
+          select.value.getInnerRef()?.refresh?.()
         }
 
         const loadSchema = async (keys) => {

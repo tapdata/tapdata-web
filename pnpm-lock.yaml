@@ -21,6 +21,9 @@ patchedDependencies:
   '@formily/element-plus@1.1.0':
     hash: b1e72365abdc6112dde3a107e094ffbc07b8d534caf03a0500bdd8c6c4c380f6
     path: patches/@formily__element-plus@1.1.0.patch
+  '@formily/vue@2.3.3':
+    hash: b575cff2c1081e22c9bafc64ee247547bca91d60de4d342714efff2cd12f1700
+    path: patches/@formily__vue@2.3.3.patch
 
 importers:
 
@@ -122,7 +125,7 @@ importers:
         version: 2.3.3
       '@formily/vue':
         specifier: ^2.3.0
-        version: 2.3.3(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+        version: 2.3.3(patch_hash=b575cff2c1081e22c9bafc64ee247547bca91d60de4d342714efff2cd12f1700)(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
       '@tap/api':
         specifier: workspace:^1.0.0
         version: link:../../packages/api
@@ -621,7 +624,7 @@ importers:
         version: 2.3.3
       '@formily/vue':
         specifier: ^2.3.0
-        version: 2.3.3(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+        version: 2.3.3(patch_hash=b575cff2c1081e22c9bafc64ee247547bca91d60de4d342714efff2cd12f1700)(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
       '@tap/api':
         specifier: workspace:^1.0.0
         version: link:../api
@@ -6316,7 +6319,7 @@ snapshots:
       '@formily/reactive': 2.3.3
       '@formily/reactive-vue': 2.3.3(vue@3.5.13(typescript@5.8.3))
       '@formily/shared': 2.3.3
-      '@formily/vue': 2.3.3(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+      '@formily/vue': 2.3.3(patch_hash=b575cff2c1081e22c9bafc64ee247547bca91d60de4d342714efff2cd12f1700)(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
       element-plus: 2.9.10(vue@3.5.13(typescript@5.8.3))
       resize-observer-polyfill: 1.5.1
       vue: 3.5.13(typescript@5.8.3)
@@ -6363,7 +6366,7 @@ snapshots:
     dependencies:
       '@formily/shared': 2.3.3
 
-  '@formily/vue@2.3.3(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))':
+  '@formily/vue@2.3.3(patch_hash=b575cff2c1081e22c9bafc64ee247547bca91d60de4d342714efff2cd12f1700)(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))':
     dependencies:
       '@formily/core': 2.3.3
       '@formily/json-schema': 2.3.3(typescript@5.8.3)

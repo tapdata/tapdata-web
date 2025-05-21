@@ -2,7 +2,7 @@
 import { isNum } from '@tap/shared'
 import { debounce, escapeRegExp, isString, merge } from 'lodash-es'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
-import ElSelectLoading from './ElSelectLoading.vue'
+import SelectLoading from './SelectLoading.vue'
 
 const page = ref(0)
 const loadingData = ref(false)
@@ -160,8 +160,6 @@ const onVisibleChange = (visible: boolean) => {
  */
 const loadDataList = async (newPage: number) => {
   try {
-    loadingMore.value = true
-    emit('update:loading', true)
     const res = await props.method(getParams(newPage))
     const list = res.items || []
 
@@ -174,16 +172,24 @@ const loadDataList = async (newPage: number) => {
     page.value = newPage
   } catch (error) {
     console.error(error)
-  } finally {
-    loadingMore.value = false
   }
+}
+
+const refresh = async () => {
+  loadingData.value = true
+  await loadDataList(1).finally(() => {
+    loadingData.value = false
+  })
 }
 
 /**
  * 加载更多数据
  */
 const handleLoadMore = async (newPage: number) => {
-  await loadDataList(newPage)
+  loadingMore.value = true
+  await loadDataList(newPage).finally(() => {
+    loadingMore.value = false
+  })
 }
 
 const handleChange = () => {
@@ -222,7 +228,8 @@ const onUpdateModelValue = (val) => {
 }
 
 defineExpose({
-  loadDataList,
+  loadDataList: refresh,
+  refresh,
   focus: () => {
     selectRef.value.focus()
   },
@@ -301,7 +308,7 @@ onMounted(() => {
       </template>
     </div>
 
-    <ElSelectLoading
+    <SelectLoading
       v-if="optionTotal !== 0 && !showLoading"
       :page="page"
       :loading="loadingMore"
