@@ -3,7 +3,7 @@ import { taskInspectApi } from '@tap/api'
 import { VEmpty } from '@tap/component'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
-import { onBeforeUnmount, ref, watch } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import InspectDetailDialog from './InspectDetailDialog.vue'
 
 interface Props {
@@ -165,25 +165,9 @@ const stopLoop = () => {
   }
 }
 
-watch(
-  () => props.currentTab,
-  (val) => {
-    if (val === 'inspect') {
-      fetch()
-      startLoop()
-    } else {
-      stopLoop()
-    }
-  },
-)
-
-fetch().then(async () => {
-  if (!inspectList.value.length) {
-    const enabled = await checkEnabled()
-    if (!enabled) {
-      showEnabled.value = true
-    }
-  }
+onMounted(() => {
+  fetch()
+  startLoop()
 })
 
 onBeforeUnmount(() => {

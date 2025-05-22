@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { isNum } from '@tap/shared'
 import { debounce, escapeRegExp, isString, merge } from 'lodash-es'
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, markRaw, nextTick, onMounted, ref, toRaw, watch } from 'vue'
 import SelectLoading from './SelectLoading.vue'
 
 const page = ref(0)
@@ -32,6 +32,7 @@ interface Props {
   cache?: boolean
   loadingText?: string
   noMoreText?: string
+  hasCreate?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -41,6 +42,7 @@ const props = withDefaults(defineProps<Props>(), {
   itemValue: 'value',
   debounceWait: 200,
   cache: true,
+  hasCreate: false,
   paramsSerializer: (params: {
     query: string
     page: number
@@ -63,11 +65,24 @@ const isStrItem = computed(() => {
   return isString(selectOptions.value[0])
 })
 
+const showNewOption = computed(() => {
+  if (!query.value || !props.hasCreate) return false
+
+  const hasExistingOption = isStrItem.value
+    ? selectOptions.value.includes(query.value)
+    : selectOptions.value.some((option) => {
+        return option[props.itemLabel] === query.value
+      })
+
+  return !hasExistingOption
+})
+
 const emit = defineEmits([
   'update:modelValue',
   'update:loading',
   'changeLabel',
   'optionSelect',
+  'select',
 ])
 
 const showLoading = computed(() => props.loading || loadingData.value)
@@ -200,25 +215,17 @@ const handleChange = () => {
 
 const onChange = (value: any) => {
   nextTick(() => {
-    emit('changeLabel', selectRef.value.states.selected.currentLabel)
+    const selectedOption = selectRef.value.states.options.get(value)
 
-    // Find the selected object by matching itemValue with the selected value
-    const selectedOption = isStrItem.value
-      ? value
-      : selectOptions.value.find((option) => option[props.itemValue] === value)
-
-    if (selectedOption) {
-      // Pass the full object to onSetSelected
-      props.onSetSelected?.(selectedOption)
-      // Also emit the selected option and whether it was clicked
-      emit('optionSelect', selectedOption, true)
-    } else {
-      // Fallback to the hovering index method if needed
-      const index = selectRef.value.states.hoveringIndex
-      if (isNum(index) && index > -1) {
-        props.onSetSelected?.(selectOptions.value[index])
-        emit('optionSelect', selectOptions.value[index], true)
-      }
+    if (isStrItem.value) {
+      emit('changeLabel', value)
+      emit('optionSelect', value, true)
+      selectedOption && emit('select', value, value, selectedOption.created)
+    } else if (selectedOption) {
+      const originData = selectedOption.$attrs?.['origin-data']
+      emit('changeLabel', selectedOption.label)
+      emit('optionSelect', originData, true)
+      emit('select', value, originData, selectedOption.created)
     }
   })
 }
@@ -286,6 +293,8 @@ onMounted(() => {
       <span>{{ getLabel(value, label) }}</span>
     </template>
 
+    <slot v-if="showNewOption" name="created-option" :value="query" />
+
     <el-option v-if="showLoading" class="el-select-loading">
       <el-icon class="el-select-loading__icon"><ElIconLoading /></el-icon>
       <span class="el-select-loading__tips">{{
@@ -300,6 +309,7 @@ onMounted(() => {
           :key="item[itemValue]"
           :label="item[itemLabel]"
           :value="item[itemValue]"
+          :origin-data="toRaw(item)"
         />
       </template>
 
