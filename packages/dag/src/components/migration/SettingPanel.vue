@@ -1647,6 +1647,12 @@ const schema = {
                 class: 'flex align-center',
               },
               properties: {
+                key: {
+                  type: 'string',
+                  default: 'TASK_INSPECT_DIFFERENCE',
+                  'x-editable': true,
+                  'x-display': 'hidden',
+                },
                 open: {
                   title: i18n.t('packages_dag_task_inspect_difference_alarm'),
                   type: 'boolean',
