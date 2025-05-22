@@ -616,41 +616,42 @@ provide('ConnectorMap', ConnectorMap)
     <ElForm
       ref="baseForm"
       class="grey"
-      label-position="left"
-      label-width="auto"
+      label-position="top"
       :model="form"
       :rules="rules"
       :validate-on-rule-change="false"
     >
-      <ElFormItem
-        v-if="form.taskMode === 'pipeline'"
-        required
-        class="form-item"
-        prop="flowId"
-        :label="`${$t('packages_business_verification_chooseJob')}: `"
-      >
-        <InfiniteSelect
-          ref="taskSelect"
-          v-model="form.flowId"
-          class="form-input"
-          :method="getTaskOptions"
-          :current-label="taskName"
-          item-label="name"
-          item-value="id"
-          item-query="name"
-          :page-size="10000000000"
-          @option-select="handleSelectTask"
-        />
-      </ElFormItem>
+      <div class="flex gap-4">
+        <ElFormItem
+          v-if="form.taskMode === 'pipeline'"
+          required
+          class="form-item"
+          prop="flowId"
+          :label="`${$t('packages_business_verification_chooseJob')}: `"
+        >
+          <InfiniteSelect
+            ref="taskSelect"
+            v-model="form.flowId"
+            class="form-input"
+            :method="getTaskOptions"
+            :current-label="taskName"
+            item-label="name"
+            item-value="id"
+            item-query="name"
+            :page-size="10000000000"
+            @option-select="handleSelectTask"
+          />
+        </ElFormItem>
 
-      <ElFormItem
-        required
-        class="form-item"
-        prop="name"
-        :label="`${$t('packages_business_verification_task_name')}: `"
-      >
-        <ElInput v-model="form.name" class="form-input" />
-      </ElFormItem>
+        <ElFormItem
+          required
+          class="form-item"
+          prop="name"
+          :label="`${$t('packages_business_verification_task_name')}: `"
+        >
+          <ElInput v-model="form.name" class="form-input" />
+        </ElFormItem>
+      </div>
 
       <ElFormItem
         required
@@ -1100,9 +1101,9 @@ provide('ConnectorMap', ConnectorMap)
   color: map.get($fontColor, dark);
 }
 
-.form-item {
-  margin-bottom: 32px;
-}
+// .form-item {
+//   margin-bottom: 32px;
+// }
 
 .form-select {
   width: 276px;

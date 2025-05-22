@@ -82,7 +82,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="py-3 flex flex-column gap-3">
+  <div class="flex flex-column gap-3">
     <div class="flex flex-column gap-3">
       <FieldSelect
         v-model="selectedFields"
