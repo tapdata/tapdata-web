@@ -21,9 +21,6 @@ patchedDependencies:
   '@formily/element-plus@1.1.0':
     hash: b1e72365abdc6112dde3a107e094ffbc07b8d534caf03a0500bdd8c6c4c380f6
     path: patches/@formily__element-plus@1.1.0.patch
-  '@formily/vue@2.3.3':
-    hash: b575cff2c1081e22c9bafc64ee247547bca91d60de4d342714efff2cd12f1700
-    path: patches/@formily__vue@2.3.3.patch
 
 importers:
 
@@ -125,7 +122,7 @@ importers:
         version: 2.3.3
       '@formily/vue':
         specifier: ^2.3.0
-        version: 2.3.3(patch_hash=b575cff2c1081e22c9bafc64ee247547bca91d60de4d342714efff2cd12f1700)(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+        version: 2.3.3(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
       '@tap/api':
         specifier: workspace:^1.0.0
         version: link:../../packages/api
@@ -378,8 +375,8 @@ importers:
         specifier: ^0.19.0
         version: 0.19.3(@vue/compiler-sfc@3.5.13)
       unplugin-vue-components:
-        specifier: ^0.27.0
-        version: 0.27.5(@babel/parser@7.27.2)(rollup@4.40.0)(vue@3.5.13(typescript@5.8.3))
+        specifier: ^28.5.0
+        version: 28.5.0(@babel/parser@7.27.2)(vue@3.5.13(typescript@5.8.3))
       vite:
         specifier: ^6.2.4
         version: 6.3.1(@types/node@20.17.30)(sass@1.86.3)(terser@5.39.0)(yaml@2.7.1)
@@ -627,7 +624,7 @@ importers:
         version: 2.3.3
       '@formily/vue':
         specifier: ^2.3.0
-        version: 2.3.3(patch_hash=b575cff2c1081e22c9bafc64ee247547bca91d60de4d342714efff2cd12f1700)(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+        version: 2.3.3(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
       '@tap/api':
         specifier: workspace:^1.0.0
         version: link:../api
@@ -6337,7 +6334,7 @@ snapshots:
       '@formily/reactive': 2.3.3
       '@formily/reactive-vue': 2.3.3(vue@3.5.13(typescript@5.8.3))
       '@formily/shared': 2.3.3
-      '@formily/vue': 2.3.3(patch_hash=b575cff2c1081e22c9bafc64ee247547bca91d60de4d342714efff2cd12f1700)(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+      '@formily/vue': 2.3.3(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
       element-plus: 2.9.10(vue@3.5.13(typescript@5.8.3))
       resize-observer-polyfill: 1.5.1
       vue: 3.5.13(typescript@5.8.3)
@@ -6384,7 +6381,7 @@ snapshots:
     dependencies:
       '@formily/shared': 2.3.3
 
-  '@formily/vue@2.3.3(patch_hash=b575cff2c1081e22c9bafc64ee247547bca91d60de4d342714efff2cd12f1700)(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))':
+  '@formily/vue@2.3.3(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))':
     dependencies:
       '@formily/core': 2.3.3
       '@formily/json-schema': 2.3.3(typescript@5.8.3)
@@ -10838,6 +10835,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  unplugin-utils@0.2.4:
+    dependencies:
+      pathe: 2.0.3
+      picomatch: 4.0.2
+
   unplugin-vue-components@0.25.2(@babel/parser@7.27.2)(rollup@4.40.0)(vue@3.5.13(typescript@5.8.3)):
     dependencies:
       '@antfu/utils': 0.7.10
@@ -10857,7 +10859,7 @@ snapshots:
       - rollup
       - supports-color
 
-  unplugin-vue-components@0.27.5(@babel/parser@7.27.2)(rollup@4.40.0)(vue@3.5.13(typescript@5.8.3)):
+  unplugin-vue-components@28.5.0(@babel/parser@7.27.2)(vue@3.5.13(typescript@5.8.3)):
     dependencies:
       chokidar: 3.6.0
       debug: 4.4.0

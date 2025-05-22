@@ -3,7 +3,7 @@ import { connect, mapProps } from '@formily/vue'
 
 import { metadataInstancesApi, taskApi } from '@tap/api'
 import { VEmpty } from '@tap/component'
-import { AsyncSelect } from '@tap/form'
+import { InfiniteSelect } from '@tap/form'
 import i18n from '@tap/i18n'
 
 import {
@@ -17,8 +17,8 @@ import {
 import { useStore } from 'vuex'
 import './style.scss'
 
-const useTableExist = (attrs, selectRef, connectionId) => {
-  if (!attrs.allowCreate) {
+const useTableExist = (props, selectRef, connectionId) => {
+  if (!props.allowCreate) {
     return {
       showNotExistsTip: ref(false),
       leftPosition: ref(''),
@@ -56,9 +56,20 @@ const useTableExist = (attrs, selectRef, connectionId) => {
       showNotExistsTip.value = true
     }, 10)
   }
-  const handleChange = () => {
-    showNotExistsTip.value = false
+
+  const handleChange = (value, option, created) => {
+    clearTimeout(timer)
+    if (created) {
+      setTagPosition(value)
+
+      timer = setTimeout(() => {
+        showNotExistsTip.value = true
+      }, 10)
+    } else {
+      showNotExistsTip.value = false
+    }
   }
+
   const setTagPosition = (tableName) => {
     if (!$input || !tableName) return
 
@@ -76,10 +87,8 @@ const useTableExist = (attrs, selectRef, connectionId) => {
   let baseLeftPosition
   let leftPosition = ref('')
 
-  watch(() => attrs.value, handleChange)
-
   onMounted(() => {
-    /*$input = selectRef.value.$el.querySelector('input')
+    $input = selectRef.value.$el.querySelector('input')
     const { fontSize, fontFamily, fontWeight } = getComputedStyle($input)
 
     inputStyle = {
@@ -89,11 +98,11 @@ const useTableExist = (attrs, selectRef, connectionId) => {
       visibility: 'hidden',
     }
 
-    // 8: .el-input__prefix-inner > :last-child {margin-right: 8px;}
+    // 12: el-select__wrapper 左内边距
     // 4: 间距
-    baseLeftPosition = parseInt($input.offsetLeft) + 4*/
+    baseLeftPosition = Number.parseInt($input.offsetLeft) + 12 + 4
 
-    checkTableExist(attrs.value)
+    checkTableExist(props.modelValue)
   })
 
   return {
@@ -108,7 +117,7 @@ export const TableSelect = connect(
   observer(
     defineComponent({
       name: 'TableSelect',
-      props: ['reloadTime', 'connectionId', 'modelValue'],
+      props: ['reloadTime', 'connectionId', 'modelValue', 'allowCreate'],
       setup(props, { attrs }) {
         const select = ref(null)
         const store = useStore()
@@ -123,16 +132,13 @@ export const TableSelect = connect(
           }
         })
 
-        const { showNotExistsTip, leftPosition, handleCreated } = useTableExist(
-          attrs,
-          select,
-          props.connectionId,
-        )
+        const { showNotExistsTip, leftPosition, handleCreated, handleChange } =
+          useTableExist(props, select, props.connectionId)
 
         const loading = ref(false)
 
         const loadSelectData = () => {
-          select.value.getInnerRef()?.refresh?.()
+          select.value.refresh?.()
         }
 
         const loadSchema = async (keys) => {
@@ -162,16 +168,21 @@ export const TableSelect = connect(
           unWatch()
         })
 
-        return () => {
-          const scopedSlots = {
-            'created-option': ({ value }) => (
-              <span class="flex align-center gap-1">
-                {value}
-                <ElTag class="ml-1">
+        const renderCreatedOption = (scope) => {
+          return scope.value ? (
+            <ElOption created value={scope.value}>
+              <span class="flex align-center gap-2">
+                {scope.value}
+                <ElTag disable-transitions>
                   {i18n.t('packages_dag_table_not_exist')}
                 </ElTag>
               </span>
-            ),
+            </ElOption>
+          ) : null
+        }
+
+        return () => {
+          const scopedSlots = {
             empty: ({ query }) =>
               query ? (
                 <div class="pt-2">
@@ -203,6 +214,10 @@ export const TableSelect = connect(
               ),
           }
 
+          if (props.allowCreate) {
+            scopedSlots['created-option'] = renderCreatedOption
+          }
+
           if (showNotExistsTip.value) {
             scopedSlots.prefix = () => (
               <ElTag
@@ -215,19 +230,20 @@ export const TableSelect = connect(
           }
 
           return (
-            <AsyncSelect
+            <InfiniteSelect
               {...attrs}
               modelValue={props.modelValue}
               loading={loading.value}
-              class="async-select"
+              class="table-select"
               ref={select}
-              onCreate={handleCreated}
+              hasCreate={props.allowCreate}
               itemType={attrs.itemType || 'string'}
               itemQuery={attrs.itemQuery || 'original_name'}
               params={params.value}
+              onSelect={handleChange}
             >
               {scopedSlots}
-            </AsyncSelect>
+            </InfiniteSelect>
           )
         }
       },

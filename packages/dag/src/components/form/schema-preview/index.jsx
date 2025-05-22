@@ -89,7 +89,9 @@ export const SchemaPreview = defineComponent({
 
         tableName.value =
           schema.name || form.values.tableName || form.values.name
-        emit('update-table-name', tableName.value)
+
+        // 仅仅为了动态日期后缀更新，增加这个事件有风险，会循环更新表名
+        // emit('update-table-name', tableName.value)
 
         const {
           isMultiIndex: _isMultiIndex,
