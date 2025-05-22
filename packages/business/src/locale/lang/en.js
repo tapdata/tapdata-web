@@ -377,7 +377,7 @@ export default {
     'Source table field: value',
   packages_business_verification_details_xianshiwanzhengzi: 'Show full fields',
   packages_business_verification_details_jinxianshichayi:
-    'Display only fields with differences.',
+    'Show diff fields',
   packages_business_verification_details_yichangshujuhang:
     'Exception data (row):',
   packages_business_verification_details_mubiaobiao: 'Target table:',

@@ -1,5 +1,5 @@
-import Http from './Http'
 import { isPlainObj } from '@tap/shared'
+import Http from './Http'
 
 export default class Connections extends Http {
   constructor() {
@@ -8,10 +8,10 @@ export default class Connections extends Http {
   get(params = {}, filter) {
     if (Array.isArray(params)) {
       filter = typeof filter === 'object' ? JSON.stringify(filter) : filter
-      let qs = filter ? '?filter=' + encodeURIComponent(filter) : ''
-      return this.axios.get(this.url + '/' + params.join('/') + qs)
+      const qs = filter ? `?filter=${encodeURIComponent(filter)}` : ''
+      return this.axios.get(`${this.url}/${params.join('/')}${qs}`)
     } else if (typeof params === 'string') {
-      return this.axios.get(this.url + '/' + params, { params: filter })
+      return this.axios.get(`${this.url}/${params}`, { params: filter })
     }
 
     const config = { params }
@@ -23,12 +23,12 @@ export default class Connections extends Http {
   customQuery(id: string, params: { [key: string]: unknown }) {
     let url = `${this.url}/${id}` + '/customQuery?'
     for (const item in params) {
-      url += item + '=' + params[item] + '&'
+      url += `${item}=${params[item]}&`
     }
     return this.axios.get(url)
   }
   copy(id: string, params: unknown) {
-    return this.axios.post(this.url + '/' + id + '/copy', params)
+    return this.axios.post(`${this.url}/${id}/copy`, params)
   }
   batchUpdateListtags(params: unknown) {
     return this.axios.patch(`${this.url}/batchUpdateListtags`, params)
@@ -50,17 +50,25 @@ export default class Connections extends Http {
     return this.axios.patch(`${this.url}/${id}`, params)
   }
   findAll(filter: unknown) {
-    return this.axios.get(`${this.url}/findAll?filter=` + encodeURIComponent(JSON.stringify(filter)))
+    return this.axios.get(
+      `${this.url}/findAll?filter=${encodeURIComponent(
+        JSON.stringify(filter),
+      )}`,
+    )
   }
   listAll(filter: unknown) {
-    return this.axios.get(`${this.url}/listAll?filter=` + encodeURIComponent(JSON.stringify(filter)))
+    return this.axios.get(
+      `${this.url}/listAll?filter=${encodeURIComponent(
+        JSON.stringify(filter),
+      )}`,
+    )
   }
   checkConnectionTask(id: string) {
-    return this.axios.get(`${this.url}/task/` + id + '/10')
+    return this.axios.get(`${this.url}/task/${id}/10`)
   }
 
   getStats() {
-    return this.axios.get(this.url + '/stats')
+    return this.axios.get(`${this.url}/stats`)
   }
   create(params: unknown, urlParams: any) {
     let url = this.url
@@ -73,7 +81,13 @@ export default class Connections extends Http {
     return this.axios.get(`${this.url}/${connectionId}/heartbeat-task`)
   }
   usingDigginTaskByConnectionId(connectionId) {
-    return this.axios.get(`${this.url}/${connectionId}/usingDigginTaskByConnectionId`)
+    return this.axios.get(
+      `${this.url}/${connectionId}/usingDigginTaskByConnectionId`,
+    )
+  }
+
+  getDatabaseTypes() {
+    return this.axios.get(`${this.url}/databaseTypes`)
   }
 }
 
