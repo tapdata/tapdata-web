@@ -3,7 +3,7 @@ import { roleApi, roleMappingsApi, usersApi } from '@tap/api'
 import { TablePage } from '@tap/business'
 
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { FilterBar } from '@tap/component'
+import { DownBoldOutlined, FilterBar } from '@tap/component'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
 
@@ -12,6 +12,7 @@ export default {
     PageContainer,
     TablePage,
     FilterBar,
+    DownBoldOutlined,
   },
   data() {
     return {
@@ -344,14 +345,18 @@ export default {
 
     // 选择分类
     handleSelectTag() {
-      const tagList = {}
+      const tagList = []
+      const tagMap = {}
+
       this.multipleSelection.forEach((row) => {
-        if (row.listtags && row.listtags.length > 0) {
-          tagList[row.listtags[0].id] = {
-            value: row.listtags[0].value,
+        row.listtags.forEach((item) => {
+          if (!tagMap[item.id]) {
+            tagList.push(item)
+            tagMap[item.id] = true
           }
-        }
+        })
       })
+
       return tagList
     },
     // 分类设置保存
@@ -656,40 +661,6 @@ export default {
   <PageContainer>
     <template #actions>
       <el-button
-        v-show="multipleSelection.length > 0"
-        v-readonlybtn="'user_category_application'"
-        class="btn"
-        @click="$refs.table.showClassify(handleSelectTag())"
-      >
-        <span> {{ $t('public_button_bulk_tag') }}</span>
-      </el-button>
-      <el-dropdown
-        v-show="multipleSelection.length > 0"
-        v-readonlybtn="'user_edition'"
-        @command="handleCommand($event)"
-      >
-        <el-button class="btn btn-dropdowm">
-          <i class="iconfont icon-piliang back-btn-icon" />
-          <span> {{ $t('public_button_bulk_operation') }}</span>
-        </el-button>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item v-if="$has('user_edition')" command="activated">
-              {{ $t('user_list_bulk_activation') }}
-            </el-dropdown-item>
-            <el-dropdown-item v-if="$has('user_edition')" command="rejected">{{
-              $t('user_list_bulk_freeze')
-            }}</el-dropdown-item>
-            <el-dropdown-item
-              v-if="$has('user_edition')"
-              command="notActivated"
-            >
-              {{ $t('user_list_bulk_check') }}
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
-      <el-button
         v-readonlybtn="'new_model_creation'"
         class="btn btn-create"
         type="primary"
@@ -702,16 +673,35 @@ export default {
     <TablePage
       ref="table"
       row-key="id"
-      class="user-list"
-      :classify="{ authority: 'user_category_management', types: ['user'] }"
+      class="user-table-page"
+      :classify="{
+        authority: 'user_category_management',
+        types: ['user'],
+        hideIcon: true,
+      }"
       :remote-method="getData"
       @selection-change="handleSelectionChange"
       @classify-submit="handleOperationClassify"
       @sort-change="handleSortTable"
     >
-      <template #nav>
-        <div class="tapNav">
-          <ElTabs v-model="activePanel" @tab-change="handleTapClick">
+      <template #nav="{ openClassify }">
+        <div class="tapNav position-relative">
+          <el-button
+            class="position-absolute z-10 start-0"
+            text
+            style="top: 4px"
+            @click="openClassify"
+          >
+            <template #icon>
+              <VIcon>expand-list</VIcon>
+            </template>
+          </el-button>
+
+          <ElTabs
+            v-model="activePanel"
+            style="--el-tabs-padding-left: 36px; --el-tabs-header-height: 36px"
+            @tab-change="handleTapClick"
+          >
             <ElTabPane
               v-for="item in muneList"
               :key="item.icon"
@@ -755,6 +745,45 @@ export default {
             @fetch="table.fetch(1)"
           />
         </div>
+      </template>
+
+      <template #multipleSelectionActions>
+        <el-button
+          v-readonlybtn="'user_category_application'"
+          class="btn"
+          @click="$refs.table.showClassify(handleSelectTag())"
+        >
+          <span> {{ $t('public_button_bulk_tag') }}</span>
+        </el-button>
+        <el-dropdown
+          v-readonlybtn="'user_edition'"
+          @command="handleCommand($event)"
+        >
+          <el-button class="btn btn-dropdowm">
+            <span> {{ $t('public_button_bulk_operation') }}</span>
+            <el-icon class="ml-1">
+              <DownBoldOutlined />
+            </el-icon>
+          </el-button>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item v-if="$has('user_edition')" command="activated">
+                {{ $t('user_list_bulk_activation') }}
+              </el-dropdown-item>
+              <el-dropdown-item
+                v-if="$has('user_edition')"
+                command="rejected"
+                >{{ $t('user_list_bulk_freeze') }}</el-dropdown-item
+              >
+              <el-dropdown-item
+                v-if="$has('user_edition')"
+                command="notActivated"
+              >
+                {{ $t('user_list_bulk_check') }}
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
       </template>
 
       <el-table-column type="selection" width="45" :reserve-selection="true" />
@@ -1039,6 +1068,12 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+.user-table-page {
+  :deep(.classification) {
+    margin-top: -6px !important;
+  }
+}
+
 .user-list-wrap {
   .tapNav {
     :deep(.el-tabs__header) {
@@ -1075,38 +1110,6 @@ export default {
         color: map.get($color, disable);
       }
     }
-  }
-}
-</style>
-
-<style lang="scss">
-.user-list-wrap {
-  .table-page-container {
-    .table-page-body {
-      .table-page-topbar {
-        padding-inline: 16px;
-        background-color: map.get($bgColor, white);
-      }
-      .el-table,
-      .el-pagination {
-        padding-inline: 16px;
-        box-sizing: border-box;
-        overflow: hidden;
-      }
-      .table-page-pagination {
-        margin-top: 0;
-        //padding: 5px 20px;
-        background-color: map.get($bgColor, white);
-        box-sizing: border-box;
-      }
-      .status {
-        padding: 5px 10px;
-        border-radius: 4px;
-      }
-    }
-  }
-  .classification {
-    margin-left: 16px;
   }
 }
 </style>

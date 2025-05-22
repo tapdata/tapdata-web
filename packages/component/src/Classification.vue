@@ -49,6 +49,8 @@ export default {
 
       nodeName: '',
       parent_id: '',
+
+      showSearch: false,
     }
   },
   computed: {
@@ -482,28 +484,48 @@ export default {
         this.$message.info(this.$t('packages_component_data_already_exists'))
       }
     },
+
+    openSearch() {
+      this.showSearch = !this.showSearch
+      this.filterText = ''
+
+      if (this.showSearch) {
+        this.$nextTick(() => {
+          this.$refs.searchInput.focus()
+        })
+      }
+    },
   },
 }
 </script>
 
 <template>
-  <div class="classification py-0 px-3 bg-light rounded-xl" v-show="visible">
+  <div class="classification py-0 px-2 bg-light rounded-xl" v-show="visible">
     <div class="classification-header">
-      <div class="h-32 flex align-center mt-3">
-        <IconButton class="mr-2" @click="toggle()"> expand-list </IconButton>
-        <div class="fs-7 fw-sub flex-1">
+      <div class="h-32 flex align-center mt-2 gap-1" style="--btn-space: 0">
+        <el-button text @click="toggle">
+          <template #icon>
+            <VIcon class="rotate-180">expand-list</VIcon>
+          </template>
+        </el-button>
+        <div class="fs-6 flex-1">
           <span>{{ comTitle }}</span>
         </div>
-        <IconButton :disabled="$disabledReadonlyUserBtn()" v-readonlybtn="authority" @click="showDialog()">
-          add
-        </IconButton>
+        <el-button text @click="openSearch" :class="{ 'is-active': showSearch }">
+          <template #icon>
+            <VIcon size="18">magnify</VIcon>
+          </template>
+        </el-button>
+        <el-button text :disabled="$disabledReadonlyUserBtn()" v-readonlybtn="authority" @click="showDialog()">
+          <template #icon>
+            <VIcon>add</VIcon>
+          </template>
+        </el-button>
       </div>
-      <div class="pt-1 pb-2">
-        <ElInput v-model="filterText">
+      <div v-if="showSearch" class="my-2">
+        <ElInput v-model="filterText" clearable ref="searchInput">
           <template #prefix>
-            <span class="el-input__icon h-100 ml-1">
-              <VIcon size="14">search</VIcon>
-            </span>
+            <VIcon size="14">magnify</VIcon>
           </template>
         </ElInput>
       </div>

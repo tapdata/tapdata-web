@@ -4,10 +4,9 @@ import { action } from '@formily/reactive'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import { GitBook, VCodeEditor } from '@tap/component'
 import SwitchNumber from '@tap/component/src/SwitchNumber.vue'
-import { AsyncSelect, JsonEditor, SqlEditor } from '@tap/form'
+import { InfiniteSelect as AsyncSelect, JsonEditor, SqlEditor } from '@tap/form'
 import i18n from '@tap/i18n'
 import { uuid } from '@tap/shared'
-import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   cloneDeep,
   debounce,
@@ -141,6 +140,7 @@ interface StageItem {
 }
 
 const formData = inject('formData')
+const conditionList = inject('conditionList')
 const ConnectorMap = inject('ConnectorMap')
 
 // Props and Emits
@@ -164,13 +164,11 @@ const webScript = ref('')
 const jsEngineName = ref('graal.js')
 const doc = ref('')
 const currentPage = ref(1)
-const pageSize = ref(10)
+const pageSize = ref(5)
 const autoSuggestJoinFields = ref(true)
 const searchValue = ref('')
 const fieldDialog = ref()
-
-// Computed Properties
-const list = computed(() => formData.tasks)
+const filteredList = ref([])
 
 const flowStages = computed(() => {
   const types = props.isDB ? ['database'] : ['table']
@@ -181,17 +179,16 @@ const isCountOrHash = computed(() => {
   return props.inspectMethod === 'row_count' || props.inspectMethod === 'hash'
 })
 
-const filteredList = computed(() => {
-  if (!searchValue.value) return list.value
+// const filteredList = computed(() => {
+//   if (!searchValue.value) return conditionList.value
 
-  const searchTerm = searchValue.value.toLowerCase()
-  return list.value.filter((item) => {
-    const sourceTable = (item.source.table || '').toLowerCase()
-    const targetTable = (item.target.table || '').toLowerCase()
-
-    return sourceTable.includes(searchTerm) || targetTable.includes(searchTerm)
-  })
-})
+//   const searchTerm = searchValue.value.toLowerCase()
+//   return conditionList.value.filter((item) => {
+//     const sourceTable = (item.source.table || '').toLowerCase()
+//     const targetTable = (item.target.table || '').toLowerCase()
+//     return sourceTable.includes(searchTerm) || targetTable.includes(searchTerm)
+//   })
+// })
 
 const paginatedList = computed(() => {
   const startIndex = (currentPage.value - 1) * pageSize.value
@@ -214,10 +211,10 @@ const openApiDrawer = (path: string) => {
   showDoc.value = true
 }
 
-const hasCapability = (obj, capability) => {
-  if (!obj.databaseType) return false
+const hasCapability = (databaseType: string, capability: string) => {
+  if (!databaseType) return false
 
-  const item = ConnectorMap.value[obj.databaseType]
+  const item = ConnectorMap.value[databaseType]
 
   return item?.capabilityMap[capability]
 }
@@ -572,14 +569,14 @@ const handleClearIndexEmpty = () => {
       return
     }
 
-    formData.tasks = formData.tasks.filter(
+    conditionList.value = conditionList.value.filter(
       (t) => t.source.sortColumn && t.target.sortColumn,
     )
   })
 }
 
 const clearList = () => {
-  formData.tasks = []
+  conditionList.value = []
   currentPage.value = 1
   validate()
 }
@@ -598,7 +595,7 @@ const getItemOptions = () => {
 }
 
 const addItem = () => {
-  list.value.push(getItemOptions())
+  conditionList.value.push(getItemOptions())
   currentPage.value = totalPages.value
 
   nextTick(() => {
@@ -611,19 +608,19 @@ const addItem = () => {
 }
 
 const removeItem = (id: string) => {
-  const index = formData.tasks.findIndex((t) => t.id === id)
+  const index = conditionList.value.findIndex((t) => t.id === id)
   if (index !== -1) {
-    formData.tasks.splice(index, 1)
+    conditionList.value.splice(index, 1)
   }
 
   // If current page is now empty and it's not the first page, go to previous page
-  if (paginatedList.value.length === 0 && currentPage.value > 1) {
+  if (conditionList.value.length === 0 && currentPage.value > 1) {
     currentPage.value--
   }
 }
 
 const autoAddTable = async () => {
-  if (!props.taskId || formData.tasks.length) return
+  if (!props.taskId || conditionList.value.length) return
   autoAddTableLoading.value = true
   updateAutoAddTableLoading()
   const connectionSet = new Set()
@@ -809,7 +806,7 @@ const autoAddTable = async () => {
           i18n.t('packages_business_components_conditionbox_suoxuanrenwuque'),
         )
       }
-      formData.tasks = newItems
+      conditionList.value = newItems
 
       // 显示提示
       validate()
@@ -821,7 +818,7 @@ const autoAddTable = async () => {
 }
 
 const getList = () => {
-  const listData = formData.tasks
+  const listData = conditionList.value
   if (props.taskId) {
     listData.forEach((el: any) => {
       if (el.modeType === 'all') {
@@ -1003,7 +1000,7 @@ const handleAddScriptClose = () => {
 }
 
 const submitScript = () => {
-  const task = formData.tasks
+  const task = conditionList.value
   const currentFormIndex = formIndex.value
   task[currentFormIndex].webScript = webScript.value
   task[currentFormIndex].jsEngineName = jsEngineName.value
@@ -1015,7 +1012,7 @@ const submitScript = () => {
 
 const editScript = (index: number) => {
   formIndex.value = index
-  const task = paginatedList.value
+  const task = conditionList.value
   const script = JSON.parse(JSON.stringify(task[formIndex.value].webScript))
   jsEngineName.value = JSON.parse(
     JSON.stringify(task[formIndex.value].jsEngineName || 'nashorn'),
@@ -1220,11 +1217,11 @@ const validate = async () => {
 const validateCapabilities = (tasks: any[], capability: string) => {
   const noSupportList = new Set()
   tasks.forEach((item) => {
-    if (!hasCapability(item.source, capability)) {
+    if (!hasCapability(item.source.databaseType, capability)) {
       noSupportList.add(item.source.databaseType)
     }
 
-    if (!hasCapability(item.target, capability)) {
+    if (!hasCapability(item.target.databaseType, capability)) {
       noSupportList.add(item.target.databaseType)
     }
   })
@@ -1361,7 +1358,7 @@ const handleChangeModeType = (val: string, item: any) => {
 }
 
 const handleChangeFields = (data: any[] = [], id: string) => {
-  const item = formData.tasks.find((t) => t.id === id)
+  const item = conditionList.value.find((t) => t.id === id)
 
   item.source.columns = data.map((t) => t.source)
   item.target.columns = data.map((t) => t.target)
@@ -1457,6 +1454,7 @@ const isNullsLast = (item: any) => {
 // Lifecycle Hooks
 onMounted(() => {
   loadDoc()
+  handleSearch('')
 })
 
 // Expose methods to parent component
@@ -1464,6 +1462,25 @@ defineExpose({
   autoAddTable,
   getList,
   validate,
+})
+
+const handleSearch = debounce((value: string) => {
+  console.log('handleSearch', value)
+  if (!value) {
+    filteredList.value = conditionList.value
+    return
+  }
+
+  const searchTerm = value.toLowerCase()
+  filteredList.value = conditionList.value.filter((item) => {
+    const sourceTable = (item.source.table || '').toLowerCase()
+    const targetTable = (item.target.table || '').toLowerCase()
+    return sourceTable.includes(searchTerm) || targetTable.includes(searchTerm)
+  })
+}, 300)
+
+watch(conditionList, () => {
+  handleSearch(searchValue.value)
 })
 </script>
 
@@ -1499,8 +1516,10 @@ defineExpose({
           <ElInput
             v-model="searchValue"
             :placeholder="$t('packages_form_table_rename_index_sousuobiaoming')"
-            class="w-auto mr-4"
+            class="mr-4"
+            style="width: 240px"
             clearable
+            @input="handleSearch"
           >
             <template #prefix>
               <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
@@ -1509,11 +1528,13 @@ defineExpose({
           <ElButton
             v-if="
               !isCountOrHash &&
-              list.some((t) => !t.source.sortColumn || !t.target.sortColumn)
+              conditionList.some(
+                (t) => !t.source.sortColumn || !t.target.sortColumn,
+              )
             "
             text
             type="primary"
-            :disabled="!list.length"
+            :disabled="!conditionList.length"
             @click="handleClearIndexEmpty"
             >{{
               $t('packages_business_components_conditionbox_yijianqingchusuo')
@@ -1522,9 +1543,11 @@ defineExpose({
           <ElButton
             text
             type="primary"
-            :disabled="!list.length"
+            :disabled="!conditionList.length"
             @click="handleClear"
-            >{{ $t('packages_business_verification_clear') }}
+          >
+            <VIcon class="mr-1">close</VIcon>
+            {{ $t('packages_business_verification_clear') }}
           </ElButton>
         </div>
       </div>
@@ -1543,7 +1566,7 @@ defineExpose({
             (currentPage - 1) * pageSize + index + 1
           }}</span>
           <div class="joint-table-setting overflow-hidden">
-            <div class="flex justify-content-between">
+            <div class="flex justify-content-between mb-2">
               <div
                 class="cond-item__title flex align-items-center gap-2 text-truncate min-w-0"
               >
@@ -1573,359 +1596,328 @@ defineExpose({
                 <span>/</span>
                 <span class="fw-sub">{{ item.target.table || '-' }}</span>
               </div>
-              <div class="flex align-items-center">
-                <ElButton text type="danger" @click.stop="removeItem(item.id)">
-                  <VIcon class="mr-1">delete</VIcon>
-                  {{ $t('public_button_delete') }}</ElButton
-                >
-              </div>
-            </div>
-            <div :key="`connection${item.id}`" class="setting-item mt-4">
-              <label class="item-label"
-                >{{
-                  $t(
-                    'packages_business_components_conditionbox_daijiaoyanlianjie',
-                  )
-                }}:</label
+              <ElButton
+                class="condition-del-btn"
+                text
+                type="danger"
+                @click.stop="removeItem(item.id)"
               >
-              <AsyncSelect
-                :key="`sourceConnectionId${item.id}`"
-                v-model="item.source.connectionId"
-                :method="getConnectionsListMethod"
-                item-query="name"
-                item-value="id"
-                filterable
-                class="item-select"
-                @option-select="handleChangeConnection($event, item.source)"
-              />
-              <span class="item-icon fs-6">
-                <el-icon><el-icon-arrow-right /></el-icon>
-              </span>
-              <AsyncSelect
-                :key="`targetConnectionId${item.id}`"
-                v-model="item.target.connectionId"
-                :method="getConnectionsListMethod"
-                item-query="name"
-                item-value="id"
-                filterable
-                class="item-select"
-                @option-select="handleChangeConnection($event, item.target)"
-              />
+                <VIcon class="mr-1">delete</VIcon>
+                {{ $t('public_button_delete') }}</ElButton
+              >
             </div>
-            <div :key="`table${item.id}`" class="setting-item mt-4">
-              <label class="item-label"
-                >{{
+
+            <div class="flex gap-4">
+              <el-form-item
+                class="flex-1"
+                :label="$t('public_source_connection')"
+              >
+                <AsyncSelect
+                  v-model="item.source.connectionId"
+                  :method="getConnectionsListMethod"
+                  item-query="name"
+                  item-value="id"
+                  filterable
+                />
+              </el-form-item>
+
+              <el-form-item
+                class="flex-1"
+                :label="$t('public_target_connection')"
+              >
+                <AsyncSelect
+                  v-model="item.source.connectionId"
+                  :method="getConnectionsListMethod"
+                  item-query="name"
+                  item-value="id"
+                  filterable
+                />
+              </el-form-item>
+            </div>
+
+            <div class="flex gap-4">
+              <el-form-item
+                class="flex-1"
+                :label="
                   $t('packages_business_components_conditionbox_laiyuanbiao')
-                }}:</label
+                "
               >
-              <AsyncSelect
-                :key="`sourceTable${item.id}`"
-                v-model="item.source.table"
-                :method="getTableListMethod"
-                :params="{
-                  connectionId: item.source.connectionId,
-                  nodeId: item.source.nodeId,
-                }"
-                item-query="name"
-                item-type="string"
-                lazy
-                filterable
-                class="item-select"
-                @change="handleChangeTable($event, item, index, 'source')"
-              />
-              <span class="item-icon"
-                >{{
+                <AsyncSelect
+                  v-model="item.source.table"
+                  :method="getTableListMethod"
+                  :params="{
+                    connectionId: item.source.connectionId,
+                    nodeId: item.source.nodeId,
+                  }"
+                  item-query="name"
+                  item-type="string"
+                  lazy
+                  filterable
+                  class="item-select"
+                  @change="handleChangeTable($event, item, index, 'source')"
+                />
+              </el-form-item>
+
+              <el-form-item
+                class="flex-1"
+                :label="
                   $t('packages_business_components_conditionbox_mubiaobiao')
-                }}:</span
+                "
               >
-              <AsyncSelect
-                :key="`targetTable${item.id}`"
-                v-model="item.target.table"
-                :method="getTableListMethod"
-                :params="{
-                  connectionId: item.target.connectionId,
-                  nodeId: item.target.nodeId,
-                }"
-                item-query="name"
-                item-type="string"
-                lazy
-                filterable
-                class="item-select"
-                @change="handleChangeTable($event, item, index, 'target')"
-              />
+                <AsyncSelect
+                  v-model="item.target.table"
+                  :method="getTableListMethod"
+                  :params="{
+                    connectionId: item.target.connectionId,
+                    nodeId: item.target.nodeId,
+                  }"
+                  item-query="name"
+                  item-type="string"
+                  lazy
+                  filterable
+                  class="item-select"
+                  @change="handleChangeTable($event, item, index, 'target')"
+                />
+              </el-form-item>
             </div>
 
-            <div class="flex gap-4 setting-item">
-              <div class="flex-1">
-                <div
-                  v-if="hasCapability(item.source, 'execute_command_function')"
-                  class="mt-4 flex align-center"
-                >
-                  <label class="item-label">
-                    <el-text>
-                      {{
-                        $t(
-                          'packages_business_components_conditionbox_laiyuanbiaoshuju',
-                        )
-                      }}
-                      <el-tooltip
-                        effect="dark"
-                        placement="top"
-                        :content="
-                          $t(
-                            'packages_business_components_conditionbox_enableCustomCommand_tip',
-                          )
-                        "
-                        ><el-icon color="#909399"
-                          ><InfoFilled
-                        /></el-icon> </el-tooltip
-                      ><span class="ml-0.5 mr-2">:</span>
-                    </el-text>
-                  </label>
-                  <el-switch
-                    v-model="item.source.enableCustomCommand"
-                    @change="handleChangeCustomCommand($event, item.source)"
-                  />
+            <div class="grid gap-4 grid-cols-2">
+              <el-form-item
+                v-if="
+                  hasCapability(
+                    item.source.databaseType,
+                    'execute_command_function',
+                  )
+                "
+                label-position="left"
+                class="col-start-1 mb-2"
+              >
+                <template #label>
+                  <el-text>
+                    {{
+                      $t(
+                        'packages_business_components_conditionbox_laiyuanbiaoshuju',
+                      )
+                    }}
 
-                  <template
-                    v-if="
-                      item.source.enableCustomCommand &&
-                      item.source.databaseType.toLowerCase().includes('mongo')
-                    "
-                  >
-                    <el-divider direction="vertical" class="mx-4" />
-                    <el-radio-group v-model="item.source.customCommand.command">
-                      <el-radio value="executeQuery">{{
-                        $t('public_query')
-                      }}</el-radio>
-                      <el-radio value="aggregate">{{
-                        $t('public_aggregate')
-                      }}</el-radio>
-                    </el-radio-group>
-                  </template>
-                </div>
-              </div>
-              <div class="flex-1">
-                <div
-                  v-if="hasCapability(item.target, 'execute_command_function')"
-                  class="mt-4 flex align-center"
-                >
-                  <label class="item-label">
-                    <el-text>
-                      {{
+                    <el-tooltip
+                      effect="dark"
+                      placement="top"
+                      :content="
                         $t(
-                          'packages_business_components_conditionbox_laiyuanbiaoshuju',
+                          'packages_business_components_conditionbox_enableCustomCommand_tip',
                         )
-                      }}
-                      <el-tooltip
-                        effect="dark"
-                        placement="top"
-                        :content="
-                          $t(
-                            'packages_business_components_conditionbox_enableCustomCommand_tip',
-                          )
-                        "
-                        ><el-icon color="#909399"
-                          ><InfoFilled
-                        /></el-icon> </el-tooltip
-                      ><span class="ml-0.5 mr-2">:</span>
-                    </el-text>
-                  </label>
-                  <el-switch
-                    v-model="item.target.enableCustomCommand"
-                    @change="handleChangeCustomCommand($event, item.target)"
-                  />
-                  <template
-                    v-if="
-                      item.target.enableCustomCommand &&
-                      item.target.databaseType.toLowerCase().includes('mongo')
-                    "
-                  >
-                    <el-divider direction="vertical" class="mx-4" />
-                    <el-radio-group v-model="item.target.customCommand.command">
-                      <el-radio value="executeQuery">{{
-                        $t('public_query')
-                      }}</el-radio>
-                      <el-radio value="aggregate">{{
-                        $t('public_aggregate')
-                      }}</el-radio>
-                    </el-radio-group>
-                  </template>
-                </div>
-              </div>
+                      "
+                    >
+                      <el-icon color="#909399"><InfoFilled /></el-icon>
+                    </el-tooltip>
+                  </el-text>
+                </template>
+                <el-switch
+                  v-model="item.source.enableCustomCommand"
+                  @change="handleChangeCustomCommand($event, item.source)"
+                />
+              </el-form-item>
+
+              <el-form-item
+                v-if="
+                  hasCapability(
+                    item.target.databaseType,
+                    'execute_command_function',
+                  )
+                "
+                label-position="left"
+                class="col-start-2 mb-2"
+              >
+                <template #label>
+                  <el-text>
+                    {{
+                      $t(
+                        'packages_business_components_conditionbox_laiyuanbiaoshuju',
+                      )
+                    }}
+
+                    <el-tooltip
+                      effect="dark"
+                      placement="top"
+                      :content="
+                        $t(
+                          'packages_business_components_conditionbox_enableCustomCommand_tip',
+                        )
+                      "
+                    >
+                      <el-icon color="#909399"><InfoFilled /></el-icon>
+                    </el-tooltip>
+                  </el-text>
+                </template>
+                <el-switch
+                  v-model="item.target.enableCustomCommand"
+                  @change="handleChangeCustomCommand($event, item.target)"
+                />
+              </el-form-item>
             </div>
 
-            <div class="flex gap-4 setting-item">
-              <div class="flex-1">
-                <div v-if="item.source.enableCustomCommand" class="mt-4 flex">
-                  <label class="item-label" />
-                  <div
-                    v-if="
-                      item.source.databaseType.toLowerCase().includes('mongo')
-                    "
-                    class="flex-1"
+            <div class="grid gap-4 grid-cols-2">
+              <el-form-item
+                v-if="item.source.enableCustomCommand"
+                class="col-start-1"
+              >
+                <div
+                  v-if="
+                    item.source.databaseType.toLowerCase().includes('mongo')
+                  "
+                  class="flex-1"
+                >
+                  <template
+                    v-if="item.source.customCommand.command === 'executeQuery'"
                   >
-                    <template
-                      v-if="
-                        item.source.customCommand.command === 'executeQuery'
-                      "
-                    >
-                      <JsonEditor
-                        v-model:value="item.source.customCommand.params.filter"
-                      />
-                      <div class="flex align-center flex-wrap">
-                        <el-text>{{
-                          $t('packages_dag_nodes_table_jinzhichiqu')
-                        }}</el-text>
-                        <el-button text type="primary" @click="openApiDrawer">
-                          {{ $t('packages_business_view_more_apis') }}
-                        </el-button>
-                      </div>
-                    </template>
-                    <template
-                      v-else-if="
-                        item.source.customCommand.command === 'aggregate'
-                      "
-                    >
-                      <JsonEditor
-                        v-model:value="
-                          item.source.customCommand.params.pipeline
-                        "
-                      />
-                      <div class="flex align-center flex-wrap">
-                        <el-text>{{
-                          $t('packages_dag_nodes_table_shiligro')
-                        }}</el-text>
-                        <el-button text type="primary" @click="openApiDrawer">
-                          {{ $t('packages_business_view_more_apis') }}
-                        </el-button>
-                      </div>
-                    </template>
-                  </div>
-                  <SqlEditor
-                    v-else
-                    v-model:value="item.source.customCommand.params.sql"
-                  />
+                    <JsonEditor
+                      v-model:value="item.source.customCommand.params.filter"
+                    />
+                    <div class="flex align-center flex-wrap">
+                      <el-text>{{
+                        $t('packages_dag_nodes_table_jinzhichiqu')
+                      }}</el-text>
+                      <el-button text type="primary" @click="openApiDrawer">
+                        {{ $t('packages_business_view_more_apis') }}
+                      </el-button>
+                    </div>
+                  </template>
+                  <template
+                    v-else-if="
+                      item.source.customCommand.command === 'aggregate'
+                    "
+                  >
+                    <JsonEditor
+                      v-model:value="item.source.customCommand.params.pipeline"
+                    />
+                    <div class="flex align-center flex-wrap">
+                      <el-text>{{
+                        $t('packages_dag_nodes_table_shiligro')
+                      }}</el-text>
+                      <el-button text type="primary" @click="openApiDrawer">
+                        {{ $t('packages_business_view_more_apis') }}
+                      </el-button>
+                    </div>
+                  </template>
                 </div>
-              </div>
+                <SqlEditor
+                  v-else
+                  v-model:value="item.source.customCommand.params.sql"
+                />
+              </el-form-item>
 
-              <div class="flex-1">
-                <div v-if="item.target.enableCustomCommand" class="mt-4 flex">
-                  <label class="item-label" />
-                  <div
-                    v-if="
-                      item.target.databaseType.toLowerCase().includes('mongo')
-                    "
-                    class="flex-1"
+              <el-form-item
+                v-if="item.target.enableCustomCommand"
+                class="col-start-2"
+              >
+                <div
+                  v-if="
+                    item.target.databaseType.toLowerCase().includes('mongo')
+                  "
+                  class="flex-1"
+                >
+                  <template
+                    v-if="item.target.customCommand.command === 'executeQuery'"
                   >
-                    <template
-                      v-if="
-                        item.target.customCommand.command === 'executeQuery'
-                      "
-                    >
-                      <JsonEditor
-                        v-model:value="item.target.customCommand.params.filter"
-                      />
-                      <div class="flex align-center flex-wrap">
-                        <el-text>{{
-                          $t('packages_dag_nodes_table_jinzhichiqu')
-                        }}</el-text>
-                        <el-button text type="primary" @click="openApiDrawer">
-                          {{ $t('packages_business_view_more_apis') }}
-                        </el-button>
-                      </div>
-                    </template>
-                    <template
-                      v-else-if="
-                        item.target.customCommand.command === 'aggregate'
-                      "
-                    >
-                      <JsonEditor
-                        v-model:value="
-                          item.target.customCommand.params.pipeline
-                        "
-                      />
-                      <div class="flex align-center flex-wrap">
-                        <el-text>{{
-                          $t('packages_dag_nodes_table_shiligro')
-                        }}</el-text>
-                        <el-button text type="primary" @click="openApiDrawer">
-                          {{ $t('packages_business_view_more_apis') }}
-                        </el-button>
-                      </div>
-                    </template>
-                  </div>
-                  <SqlEditor
-                    v-else
-                    v-model:value="item.target.customCommand.params.sql"
-                  />
+                    <JsonEditor
+                      v-model:value="item.target.customCommand.params.filter"
+                    />
+                    <div class="flex align-center flex-wrap">
+                      <el-text>{{
+                        $t('packages_dag_nodes_table_jinzhichiqu')
+                      }}</el-text>
+                      <el-button text type="primary" @click="openApiDrawer">
+                        {{ $t('packages_business_view_more_apis') }}
+                      </el-button>
+                    </div>
+                  </template>
+                  <template
+                    v-else-if="
+                      item.target.customCommand.command === 'aggregate'
+                    "
+                  >
+                    <JsonEditor
+                      v-model:value="item.target.customCommand.params.pipeline"
+                    />
+                    <div class="flex align-center flex-wrap">
+                      <el-text>{{
+                        $t('packages_dag_nodes_table_shiligro')
+                      }}</el-text>
+                      <el-button text type="primary" @click="openApiDrawer">
+                        {{ $t('packages_business_view_more_apis') }}
+                      </el-button>
+                    </div>
+                  </template>
                 </div>
-              </div>
+                <SqlEditor
+                  v-else
+                  v-model:value="item.target.customCommand.params.sql"
+                />
+              </el-form-item>
             </div>
 
             <template v-if="!isCountOrHash">
-              <div class="setting-item mt-4">
-                <label class="item-label"
-                  >{{ $t('packages_business_verification_indexField') }}:
-                </label>
-                <FieldSelectWrap
-                  v-model:value="item.source.sortColumn"
-                  :options="item.source.fields"
-                  class="flex-1"
-                  :loading="item.source.fieldsLoading"
-                  @visible-change="onVisibleChange(item.source, $event)"
-                />
-                <span class="item-icon" />
-                <FieldSelectWrap
-                  v-model:value="item.target.sortColumn"
-                  :options="item.target.fields"
-                  class="flex-1"
-                  :loading="item.target.fieldsLoading"
-                  @visible-change="onVisibleChange(item.target, $event)"
-                />
+              <div class="grid gap-4 grid-cols-2">
+                <el-form-item
+                  class="col-start-1"
+                  :label="$t('packages_business_verification_indexField')"
+                >
+                  <FieldSelectWrap
+                    v-model:value="item.source.sortColumn"
+                    :options="item.source.fields"
+                  />
+                </el-form-item>
+
+                <el-form-item
+                  class="col-start-2"
+                  :label="$t('packages_business_verification_indexField')"
+                >
+                  <FieldSelectWrap
+                    v-model:value="item.target.sortColumn"
+                    :options="item.target.fields"
+                    :loading="item.target.fieldsLoading"
+                    @visible-change="onVisibleChange(item.target, $event)"
+                  />
+                </el-form-item>
               </div>
 
-              <div class="setting-item mt-4">
-                <label class="item-label"
-                  >{{ $t('packages_business_custom_collate') }}:
-                </label>
-                <div class="flex-1">
-                  <div class="flex gap-3 align-center">
+              <div class="grid gap-4 grid-cols-2">
+                <el-form-item
+                  label-position="left"
+                  class="col-start-1 mb-2"
+                  :label="$t('packages_business_custom_collate')"
+                >
+                  <div class="flex-1">
                     <ElSwitch
                       v-model="item.source.enableCustomCollate"
                       @change="toggleCollate(item.source, $event)"
                     />
-
                     <ElButton
                       text
                       type="primary"
+                      class="ml-2"
                       @click="openApiDrawer('inspect-collate')"
                     >
                       <VIcon class="mr-1">question-circle</VIcon>
                       {{ $t('public_view_docs') }}
                     </ElButton>
                   </div>
+                </el-form-item>
 
-                  <div v-if="item.source.enableCustomCollate">
-                    <CollateMap
-                      v-model:value="item.source.collate"
-                      :sort-column="item.source.sortColumn"
-                      :fields="item.source.fields"
-                      :loading="item.source.fieldsLoading"
-                      @visible-change="onVisibleChange(item.source, $event)"
-                    />
-                  </div>
-                </div>
-                <span class="item-icon" />
-                <div class="flex-1">
-                  <div class="flex gap-3 align-center">
+                <el-form-item
+                  label-position="left"
+                  class="col-start-2 mb-2"
+                  :label="$t('packages_business_custom_collate')"
+                >
+                  <div class="flex-1">
                     <ElSwitch
                       v-model="item.target.enableCustomCollate"
                       @change="toggleCollate(item.target, $event)"
                     />
-
                     <ElButton
                       text
+                      class="ml-2"
                       type="primary"
                       @click="openApiDrawer('inspect-collate')"
                     >
@@ -1933,153 +1925,195 @@ defineExpose({
                       {{ $t('public_view_docs') }}
                     </ElButton>
                   </div>
+                </el-form-item>
+              </div>
 
-                  <div v-if="item.target.enableCustomCollate">
-                    <CollateMap
-                      v-model:value="item.target.collate"
-                      :sort-column="item.target.sortColumn"
-                      :fields="item.target.fields"
-                      :loading="item.target.fieldsLoading"
-                      @visible-change="onVisibleChange(item.target, $event)"
-                    />
-                  </div>
+              <div class="grid gap-4 grid-cols-2">
+                <div
+                  v-if="item.source.enableCustomCollate"
+                  class="col-start-1 mb-4"
+                >
+                  <CollateMap
+                    v-model:value="item.source.collate"
+                    :sort-column="item.source.sortColumn"
+                    :fields="item.source.fields"
+                    :loading="item.source.fieldsLoading"
+                    @visible-change="onVisibleChange(item.source, $event)"
+                  />
+                </div>
+                <div
+                  v-if="item.target.enableCustomCollate"
+                  class="col-start-2 mb-4"
+                >
+                  <CollateMap
+                    v-model:value="item.target.collate"
+                    :sort-column="item.target.sortColumn"
+                    :fields="item.target.fields"
+                    :loading="item.target.fieldsLoading"
+                    @visible-change="onVisibleChange(item.target, $event)"
+                  />
                 </div>
               </div>
 
-              <div
-                v-if="isNullsLast(item.source) || isNullsLast(item.target)"
-                class="setting-item mt-4 align-items-center"
-              >
-                <label v-if="isNullsLast(item.source)" class="item-label"
-                  >{{ $t('packages_business_nulls_first') }}
-                  <el-tooltip
-                    effect="dark"
-                    placement="top"
-                    :content="$t('packages_business_nulls_first_tip')"
-                  >
-                    <i
-                      class="el-tooltip el-icon-info"
-                      style="color: #909399; font-size: 14px"
-                    /> </el-tooltip
-                  >:
-                </label>
-                <label v-else class="item-label" />
-                <div class="flex-1">
-                  <SwitchNumber
-                    v-if="isNullsLast(item.source)"
-                    v-model:value="item.source.customNullSort"
-                  />
-                </div>
-
-                <span v-if="isNullsLast(item.target)" class="item-icon"
-                  >{{ $t('packages_business_nulls_first')
-                  }}<el-tooltip
-                    effect="dark"
-                    placement="top"
-                    :content="$t('packages_business_nulls_first_tip')"
-                  >
-                    <i
-                      class="el-tooltip el-icon-info"
-                      style="color: #909399; font-size: 14px"
-                    /> </el-tooltip
-                  >:</span
+              <div class="grid gap-4 grid-cols-2">
+                <el-form-item
+                  v-if="isNullsLast(item.source)"
+                  class="col-start-1"
                 >
-                <div v-if="isNullsLast(item.target)" class="flex-1">
+                  <template #label>
+                    {{ $t('packages_business_nulls_first') }}
+                    <el-tooltip
+                      effect="dark"
+                      placement="top"
+                      :content="$t('packages_business_nulls_first_tip')"
+                    >
+                      <i
+                        class="el-tooltip el-icon-info"
+                        style="color: #909399; font-size: 14px"
+                      />
+                    </el-tooltip>
+                  </template>
+                  <SwitchNumber v-model:value="item.source.customNullSort" />
+                </el-form-item>
+
+                <el-form-item
+                  v-if="isNullsLast(item.target)"
+                  class="col-start-2"
+                  ><template #label>
+                    {{ $t('packages_business_nulls_first') }}
+                    <el-tooltip
+                      effect="dark"
+                      placement="top"
+                      :content="$t('packages_business_nulls_first_tip')"
+                    >
+                      <i
+                        class="el-tooltip el-icon-info"
+                        style="color: #909399; font-size: 14px"
+                      />
+                    </el-tooltip>
+                  </template>
                   <SwitchNumber v-model:value="item.target.customNullSort" />
-                </div>
+                </el-form-item>
               </div>
             </template>
 
+            <el-divider v-if="inspectMethod === 'field'" class="my-2" />
+
             <div
               v-if="inspectMethod === 'field'"
-              class="setting-item align-items-center mt-4"
+              class="grid gap-4 grid-cols-2"
             >
-              <label class="item-label"
-                >{{
+              <el-form-item
+                class="col-start-1 mb-2"
+                label-position="left"
+                :label="
                   $t('packages_business_components_fieldbox_daijiaoyanmoxing')
-                }}:</label
+                "
               >
-              <ElRadioGroup
-                v-model="item.modeType"
-                :disabled="getModeTypeDisabled(item)"
-                @change="handleChangeModeType($event, item)"
-              >
-                <ElRadio value="all">{{
-                  $t('packages_business_components_fieldbox_quanziduan')
-                }}</ElRadio>
-                <ElRadio value="custom">{{
-                  $t('packages_business_connections_databaseform_zidingyi')
-                }}</ElRadio>
-              </ElRadioGroup>
-              <el-divider
-                v-if="item.modeType === 'custom'"
-                direction="vertical"
-                class="mx-2"
-              />
-              <ElButton
-                v-if="item.modeType === 'custom'"
-                text
-                type="primary"
-                @click="handleCustomFields(item)"
-              >
-                {{
-                  $t('packages_business_components_conditionbox_chakanzidingyi')
-                }}
-                ({{ item.source.columns ? item.source.columns.length : 0 }})
-              </ElButton>
+                <ElRadioGroup
+                  v-model="item.modeType"
+                  :disabled="getModeTypeDisabled(item)"
+                  @change="handleChangeModeType($event, item)"
+                >
+                  <ElRadio value="all">{{
+                    $t('packages_business_components_fieldbox_quanziduan')
+                  }}</ElRadio>
+                  <ElRadio value="custom">{{
+                    $t('packages_business_connections_databaseform_zidingyi')
+                  }}</ElRadio>
+                </ElRadioGroup>
+                <el-divider
+                  v-if="item.modeType === 'custom'"
+                  direction="vertical"
+                  class="mx-2"
+                />
+                <ElButton
+                  v-if="item.modeType === 'custom'"
+                  text
+                  type="primary"
+                  @click="handleCustomFields(item)"
+                >
+                  {{
+                    $t(
+                      'packages_business_components_conditionbox_chakanzidingyi',
+                    )
+                  }}
+                  ({{ item.source.columns ? item.source.columns.length : 0 }})
+                </ElButton>
+              </el-form-item>
             </div>
-            <div v-show="inspectMethod === 'field'" class="setting-item mt-4">
-              <ElCheckbox
-                v-model="item.showAdvancedVerification"
-                @change="handleChangeAdvanced(item)"
-                >{{ $t('packages_business_verification_advanceVerify') }}
-              </ElCheckbox>
+
+            <div
+              v-if="inspectMethod === 'field'"
+              class="grid gap-4 grid-cols-2"
+            >
+              <el-form-item
+                label-position="left"
+                class="col-start-1 mb-2"
+                :label="$t('packages_business_verification_advanceVerify')"
+              >
+                <ElSwitch
+                  v-model="item.showAdvancedVerification"
+                  @change="handleChangeAdvanced(item)"
+                />
+              </el-form-item>
             </div>
+
             <div
               v-if="item.showAdvancedVerification && inspectMethod === 'field'"
-              class="setting-item mt-4"
+              class="grid gap-4 grid-cols-2"
             >
-              <label class="item-label"
-                >{{ $t('packages_business_verification_JSVerifyLogic') }}:
-              </label>
-              <ElButton
-                v-if="!item.webScript || item.webScript === ''"
-                @click="addScript(index)"
-                >{{ $t('packages_business_verification_addJS') }}
-              </ElButton>
-              <template v-else>
-                <ElButton
-                  text
-                  type="primary"
-                  class="ml-4"
-                  @click="editScript(index)"
-                  >{{ $t('public_button_edit') }}</ElButton
+              <el-form-item
+                class="col-start-1"
+                :label="$t('packages_business_verification_JSVerifyLogic')"
+              >
+                <template #label>
+                  <span class="flex align-center">
+                    <span class="mr-1">{{
+                      $t('packages_business_verification_JSVerifyLogic')
+                    }}</span>
+                    <el-button
+                      v-if="!item.webScript || item.webScript === ''"
+                      text
+                      type="primary"
+                      @click="addScript(index)"
+                    >
+                      <VIcon class="mr-1">plus</VIcon>
+                      {{
+                        $t('packages_business_verification_addJS')
+                      }}</el-button
+                    >
+                    <template v-else>
+                      <el-button
+                        text
+                        type="primary"
+                        class="ml-4"
+                        @click="editScript(index)"
+                        >{{ $t('public_button_edit') }}</el-button
+                      >
+                      <el-button
+                        text
+                        type="primary"
+                        class="ml-4"
+                        @click="removeScript(item)"
+                        >{{ $t('public_button_delete') }}
+                      </el-button>
+                    </template>
+                  </span>
+                </template>
+                <pre
+                  v-if="item.webScript"
+                  class="m-0 p-2 px-3 lh-base rounded-lg bg-color-main"
+                  >{{ item.webScript }}</pre
                 >
-                <ElButton
-                  text
-                  type="primary"
-                  class="ml-4"
-                  @click="removeScript(item)"
-                  >{{ $t('public_button_delete') }}
-                </ElButton>
-              </template>
-            </div>
-            <div
-              v-if="
-                inspectMethod === 'field' &&
-                item.showAdvancedVerification &&
-                item.webScript
-              "
-              class="setting-item mt-4"
-            >
-              <pre class="item-script">{{ item.webScript }}</pre>
+              </el-form-item>
             </div>
           </div>
         </div>
       </div>
 
       <div
-        v-if="list.length === 0"
+        v-if="conditionList.length === 0"
         class="bg-gray-50 p-4 rounded-xl flex flex-column justify-center align-center gap-2"
       >
         <div class="flex rounded-pill bg-gray-100 p-3">
@@ -2127,7 +2161,10 @@ defineExpose({
         </template>
       </div>
 
-      <div v-if="list.length" class="py-4 condition-footer flex align-center">
+      <div
+        v-if="conditionList.length"
+        class="py-4 condition-footer flex align-center"
+      >
         <ElButton :icon="Plus" @click="addItem">{{
           $t('packages_business_verification_addTable')
         }}</ElButton>
@@ -2168,7 +2205,7 @@ defineExpose({
             v-model:page-size="pageSize"
             hide-on-single-page
             background
-            :page-sizes="[10, 20, 50, 100]"
+            :page-sizes="[5, 10, 20, 50, 100]"
             layout="sizes, prev, pager, next"
             :total="filteredList.length"
             @size-change="handleSizeChange"
@@ -2250,9 +2287,17 @@ defineExpose({
     padding: 16px 24px;
     display: flex;
     // border-bottom: 1px solid map.get($borderColor, light);
+    .condition-del-btn {
+      visibility: hidden;
+      opacity: 0;
+    }
     &:hover {
       .cond-item__index {
         display: block;
+      }
+      .condition-del-btn {
+        visibility: visible;
+        opacity: 1;
       }
     }
   }

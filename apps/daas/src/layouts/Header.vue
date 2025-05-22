@@ -244,7 +244,11 @@ defineExpose({
 </script>
 
 <template>
-  <ElHeader v-if="!IS_IFRAME" class="flex align-center gap-4" height="64px">
+  <ElHeader
+    v-if="!IS_IFRAME"
+    class="flex align-center gap-4 layout-header"
+    height="64px"
+  >
     <a
       v-if="isOP"
       class="logo w-auto text-white flex align-center gap-2"
@@ -379,6 +383,11 @@ defineExpose({
 </template>
 
 <style lang="scss" scoped>
+.layout-header {
+  :deep(.el-button .el-icon:only-child) {
+    color: var(--icon-n1);
+  }
+}
 .divider {
   height: 1.8em;
   border-color: rgba(60, 60, 67, 0.12);

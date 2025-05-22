@@ -1847,6 +1847,14 @@ const schema = {
     },
   },
 }
+
+const validate = () => {
+  form.validate()
+}
+
+defineExpose({
+  validate,
+})
 </script>
 
 <template>
