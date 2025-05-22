@@ -13,6 +13,7 @@ import { ElSelect as Select } from 'element-plus'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 import DataCaptureDebug from './DataCaptureDebug.vue'
+import DataValidationDialog from './DataValidationDialog.vue'
 
 export default {
   name: 'TopHeader',
@@ -20,6 +21,7 @@ export default {
 
   components: {
     DataCaptureDebug,
+    DataValidationDialog,
     TextEditable,
     TaskStatus,
     VDivider,
@@ -59,6 +61,7 @@ export default {
       nodeSearchInput: '',
       refreshing: false,
       openDebug: false,
+      openValidation: false,
     }
   },
   computed: {
@@ -441,6 +444,17 @@ export default {
           <VIcon size="18">bug-outlined</VIcon>
         </button>
       </ElTooltip>
+      <template v-if="isDaas && !isCommunity">
+        <el-divider direction="vertical" />
+        <ElTooltip
+          transition="tooltip-fade-in"
+          :content="$t('public_data_validation')"
+        >
+          <button class="icon-btn" @click="openValidation = true">
+            <VIcon size="18">data-scan</VIcon>
+          </button>
+        </ElTooltip>
+      </template>
     </div>
     <!--复制dag查看不显示-->
     <div class="flex align-center flex-grow-1">
@@ -541,10 +555,12 @@ export default {
       @update:visible="openDebug = $event"
       @start="$emit('debug-start')"
     />
+
+    <DataValidationDialog v-model="openValidation" :task-id="dataflow.id" />
   </header>
 </template>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 $sidebarW: 236px;
 $hoverBg: #eef3ff;
 $radius: 6px;

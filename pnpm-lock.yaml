@@ -586,6 +586,9 @@ importers:
       resize-observer-polyfill:
         specifier: ^1.5.1
         version: 1.5.1
+      vue:
+        specifier: ^3.4.29
+        version: 3.5.13(typescript@5.8.3)
       vue-json-pretty:
         specifier: ^1.9.5
         version: 1.9.5

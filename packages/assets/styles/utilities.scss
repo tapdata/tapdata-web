@@ -1721,6 +1721,10 @@
   margin-bottom: -4rem !important;
 }
 
+.mt-n0\.5 {
+  margin-top: -0.125rem !important;
+}
+
 .mt-n1 {
   margin-top: -0.25rem !important;
 }
@@ -12542,6 +12546,30 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.active-primary {
+  background-color: rgb(59 71 229 / 10%) !important;
+  color: map-get($color, primary) !important;
+}
+
+.bg-fill-hover {
+  background-color: rgb(24 24 27 / 5%);
+}
+
+.last\:border-0:last-child {
+  border: 0 !important;
+}
+
+.text-muted-foreground {
+  color: rgb(113 113 122);
+}
+
+.hover\:bg-light:hover {
+  background-color: #f8f9fa !important;
+}
+
+
+
 
 .break-all {
   word-break: break-all;
