@@ -1,6 +1,6 @@
 <script>
 import { connectionsApi, databaseTypesApi } from '@tap/api'
-import { FilterBar, VIcon } from '@tap/component'
+import { FilterBar, SelectList, VIcon } from '@tap/component'
 
 import i18n from '@tap/i18n'
 
@@ -32,6 +32,7 @@ export default {
     FilterBar,
     UsedTaskDialog,
     PermissionseSettingsCreate,
+    SelectList,
   },
   inject: ['checkAgent', 'buried'],
   data() {
@@ -96,7 +97,6 @@ export default {
           value: 'testing',
         },
       ],
-      databaseTypeOptions: [],
       searchParams: {
         databaseType: null,
         keyword: '',
@@ -114,6 +114,8 @@ export default {
       connectionTaskDialog: false,
 
       connectionDialogProps,
+
+      databaseTypeOptions: [],
     }
   },
   computed: {
@@ -596,32 +598,30 @@ export default {
           items: this.databaseStatusOptions,
         },
         {
+          slotName: 'databaseType',
           label: this.$t(
             'packages_business_connection_list_form_database_type',
           ),
           key: 'databaseType',
           type: 'select-inner',
-          width: '250px',
+          width: 250,
           // dropdownWidth: '250px',
           filterable: true,
           items: async () => {
-            let data = await databaseTypesApi.get()
-            data = data || []
-            const databaseTypes = []
-            databaseTypes.push(...data)
-            const databaseTypeOptions = databaseTypes.sort((t1, t2) =>
-              t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1,
+            const data = await connectionsApi.getDatabaseTypes()
+
+            if (!data?.length) {
+              return []
+            }
+
+            data.sort((t1, t2) =>
+              t1.databaseType.localeCompare(t2.databaseType),
             )
-            //默认全部
-            // let all = {
-            //   name: this.$t('public_select_option_all'),
-            //   type: ''
-            // }
-            // databaseTypeOptions.unshift(all)
-            return databaseTypeOptions.map((item) => {
+
+            return data.map((item) => {
               return {
-                label: item.name,
-                value: item.type,
+                label: item.databaseType,
+                value: item.databaseType,
               }
             })
           },
@@ -664,6 +664,36 @@ export default {
     // 显示权限设置
     handlePermissionsSettings() {
       this.$refs.permissionseSettingsCreate.open(this.multipleSelection)
+    },
+    async fetchDatabaseTypeOptions() {
+      const data = await connectionsApi.getDatabaseTypes()
+
+      if (!data?.length) {
+        return []
+      }
+
+      data.sort((t1, t2) => t1.databaseType.localeCompare(t2.databaseType))
+
+      this.databaseTypeOptions = data.map((item) => {
+        return { label: item.databaseType, value: item.databaseType }
+      })
+    },
+    handleChangeDatabaseType(value) {
+      const query = {}
+
+      this.filterItems.forEach((item) => {
+        if (!item.slotName && item.value) {
+          query[item.key] = item.value
+        }
+      })
+
+      if (value) {
+        query.databaseType = value
+      }
+
+      this.$router.replace({
+        query,
+      })
     },
   },
 }
@@ -722,6 +752,20 @@ export default {
                 $t('public_connection_type_target')
               }}</ElRadioButton>
             </ElRadioGroup>
+          </template>
+
+          <template #databaseType>
+            <SelectList
+              v-model="searchParams.databaseType"
+              :label="
+                $t('packages_business_connection_list_form_database_type')
+              "
+              :items="databaseTypeOptions"
+              filterable
+              clearable
+              @change="handleChangeDatabaseType"
+              @visible-change="fetchDatabaseTypeOptions"
+            />
           </template>
         </FilterBar>
       </template>
