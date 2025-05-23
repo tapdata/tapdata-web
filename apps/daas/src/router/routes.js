@@ -57,8 +57,6 @@ const VerifyDetails = async () => {
   return VerifyDetails
 }
 
-const RoleDetails = () => import('@/views/role/Role')
-
 // 数据校验
 const VerificationList = async () => {
   const { VerificationList } = await import('@tap/business')
@@ -727,7 +725,7 @@ export default [
       {
         path: 'create',
         name: 'role',
-        component: RoleDetails,
+        component: () => import('@/views/role/Role'),
         meta: {
           title: 'role_list_setting_permissions',
           code: 'v2_role_creation',
@@ -736,7 +734,7 @@ export default [
       {
         path: ':id/edit',
         name: 'editRole',
-        component: RoleDetails,
+        component: () => import('@/views/role/Role'),
         meta: {
           title: 'role_list_setting_permissions',
           code: 'v2_role_edition',

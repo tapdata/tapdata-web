@@ -1,127 +1,29 @@
-<template>
-  <section class="dataflow-editor layout-wrap vh-100">
-    <!--头部-->
-    <TopHeader
-      :loading="loading"
-      :is-saving="isSaving"
-      :dataflow-name="dataflow.name"
-      :dataflow="dataflow"
-      :scale="scale"
-      :buttonShowMap="buttonShowMap"
-      @page-return="handlePageReturn"
-      @save="save"
-      @delete="handleDelete"
-      @undo="handleUndo"
-      @redo="handleRedo"
-      @zoom-out="handleZoomOut"
-      @zoom-in="handleZoomIn"
-      @zoom-to="handleZoomTo"
-      @showSettings="handleShowSettings"
-      @center-content="handleCenterContent"
-      @auto-layout="handleAutoLayout"
-      @change-name="handleUpdateName"
-      @locate-node="handleLocateNode"
-      @start="handleStart()"
-      @debug-start="handleStart(true)"
-      @stop="handleStop"
-      @forceStop="handleForceStop"
-      @reset="handleReset"
-      @edit="handleEdit"
-      @detail="handleDetail"
-    />
-    <section class="layout-wrap layout-has-sider position-relative">
-      <!--左侧边栏-->
-      <LeftSider
-        @move-node="handleDragMoveNode"
-        @drop-node="handleAddNodeByDrag"
-        @add-node="handleAddNodeToConnect"
-        @toggle-expand="handleToggleExpand"
-      />
-      <section class="layout-wrap flex-1">
-        <!--内容体-->
-        <main id="dfEditorContent" ref="layoutContent" class="layout-content flex-1 overflow-hidden">
-          <PaperScroller
-            ref="paperScroller"
-            :nav-lines="navLines"
-            @add-node="handleAddNodeToPos"
-            @mouse-select="handleMouseSelect"
-            @change-scale="handleChangeScale"
-          >
-            <DFNode
-              v-for="n in allNodes"
-              :key="n.id"
-              :node-id="n.id"
-              :id="NODE_PREFIX + n.id"
-              :js-plumb-ins="jsPlumbIns"
-              :class="{
-                'options-active': nodeMenu.typeId === n.id,
-              }"
-              hide-disable-action
-              @drag-start="onNodeDragStart"
-              @drag-move="onNodeDragMove"
-              @drag-stop="onNodeDragStop"
-              @deselectAllNodes="deselectAllNodes"
-              @deselectNode="nodeDeselectedById"
-              @nodeSelected="nodeSelectedById"
-              @delete="handleDeleteById"
-              @show-node-popover="showNodePopover"
-            ></DFNode>
-          </PaperScroller>
-          <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
-            <VEmpty large />
-          </div>
-          <PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>
-          <TransformLoading :show="transformLoading" />
-          <NodePopover
-            :popover="nodeMenu"
-            @click-node="handleClickNodePopover"
-            @hide="nodeMenu.typeId = ''"
-          ></NodePopover>
-        </main>
-        <ConsolePanel ref="console"></ConsolePanel>
-      </section>
-
-      <!--配置面板-->
-      <ConfigPanel
-        ref="configPanel"
-        :settings="dataflow"
-        :scope="scope"
-        :sync-type="dataflow.syncType"
-        :buttonShowMap="buttonShowMap"
-        @hide="onHideSidebar"
-      />
-
-      <SkipError ref="skipError" @skip="handleSkipAndRun"></SkipError>
-    </section>
-  </section>
-</template>
-
 <script>
-import i18n from '@tap/i18n'
+import { connectionsApi, taskApi } from '@tap/api'
 
+import { SkipError } from '@tap/business'
+import { VEmpty, VExpandXTransition } from '@tap/component'
+import resize from '@tap/component/src/directives/resize'
+import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
+import { showMessage } from '@tap/component/src/mixins/showMessage'
+import { titleChange } from '@tap/component/src/mixins/titleChange'
+import i18n from '@tap/i18n'
+import { uuid } from '@tap/shared'
+import { merge } from 'lodash-es'
+import DFNode from './components/DFNode'
+import ConfigPanel from './components/migration/ConfigPanel'
+import ConsolePanel from './components/migration/ConsolePanel'
+import LeftSider from './components/migration/LeftSider'
+import NodePopover from './components/NodePopover'
+import PaperEmpty from './components/PaperEmpty.vue'
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/TopHeader'
-import LeftSider from './components/migration/LeftSider'
-import DFNode from './components/DFNode'
-import { jsPlumb, config } from './instance'
-import { NODE_PREFIX } from './constants'
-import { allResourceIns } from './nodes/loader'
-import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
-import { titleChange } from '@tap/component/src/mixins/titleChange'
-import { showMessage } from '@tap/component/src/mixins/showMessage'
-import ConfigPanel from './components/migration/ConfigPanel'
-import { uuid } from '@tap/shared'
-import { connectionsApi, taskApi } from '@tap/api'
-import resize from '@tap/component/src/directives/resize'
-import { merge } from 'lodash-es'
-import formScope from './mixins/formScope'
-import editor from './mixins/editor'
-import NodePopover from './components/NodePopover'
 import TransformLoading from './components/TransformLoading'
-import { VExpandXTransition, VEmpty } from '@tap/component'
-import ConsolePanel from './components/migration/ConsolePanel'
-import PaperEmpty from './components/PaperEmpty.vue'
-import { SkipError } from '@tap/business'
+import { NODE_PREFIX } from './constants'
+import { config, jsPlumb } from './instance'
+import editor from './mixins/editor'
+import formScope from './mixins/formScope'
+import { allResourceIns } from './nodes/loader'
 
 export default {
   name: 'MigrationEditor',
@@ -129,8 +31,6 @@ export default {
   directives: {
     resize,
   },
-
-  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
     SkipError,
@@ -146,6 +46,8 @@ export default {
     LeftSider,
     TransformLoading,
   },
+
+  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   inject: ['buried'],
 
@@ -177,13 +79,16 @@ export default {
   },
 
   watch: {
-    'dataflow.status'(v) {
+    'dataflow.status': function (v) {
       this.checkGotoViewer()
-      if (['DataflowViewer', 'MigrateViewer'].includes(this.$route.name) && ['renewing', 'renew_failed'].includes(v)) {
+      if (
+        ['DataflowViewer', 'MigrateViewer'].includes(this.$route.name) &&
+        ['renewing', 'renew_failed'].includes(v)
+      ) {
         this.handleConsoleAutoLoad()
       }
     },
-    'dataflow.id'() {
+    'dataflow.id': function () {
       this.getTaskPermissions()
     },
   },
@@ -203,7 +108,7 @@ export default {
         await this.initView(true)
         // this.initWS()
       } catch (error) {
-        console.error(error) // eslint-disable-line
+        console.error(error)
       }
     })
   },
@@ -223,7 +128,7 @@ export default {
         {
           name: i18n.t('packages_dag_migrate_union'),
           type: 'migrate_union_processor',
-          hidden: !this.hasFeature('multipleTableMergeProcessor')
+          hidden: !this.hasFeature('multipleTableMergeProcessor'),
         },
         {
           name: i18n.t('packages_dag_src_migrationeditor_biaobianji'),
@@ -241,7 +146,7 @@ export default {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli'),
           type: 'migrate_js_processor',
           beta: true,
-          hidden: !this.hasFeature('enhanceJsProcessor')
+          hidden: !this.hasFeature('enhanceJsProcessor'),
         },
         {
           name: i18n.t('packages_dag_date_processor'),
@@ -249,17 +154,17 @@ export default {
         },
         {
           name: i18n.t('packages_dag_src_editor_leixingguolu'),
-          type: 'migrate_field_mod_type_filter_processor'
+          type: 'migrate_field_mod_type_filter_processor',
         },
         {
           name: i18n.t('packages_dag_time_field_injection'),
           type: 'migrate_add_date_field_processor',
-          hidden: !this.hasFeature('appendDatetimeFieldProcessor')
+          hidden: !this.hasFeature('appendDatetimeFieldProcessor'),
         } /* ,
         {
           name: i18n.t('packages_dag_src_editor_huawei_drs_kafka_convertor'),
           type: 'migrate_huawei_drs_kafka_convertor'
-        } */
+        } */,
       ])
       this.addResourceIns(allResourceIns)
     },
@@ -270,7 +175,11 @@ export default {
       if (data) {
         if (this.destory) return
         const { dag } = data
-        this.setStateReadonly(this.$route.name === 'MigrateViewer' ? true : this.dataflow.disabledData.edit)
+        this.setStateReadonly(
+          this.$route.name === 'MigrateViewer'
+            ? true
+            : this.dataflow.disabledData.edit,
+        )
         this.setTaskId(data.id)
         this.setEdges(dag.edges)
         this.setEditVersion(data.editVersion)
@@ -328,19 +237,18 @@ export default {
           name: 'MigrateEditor',
           params: { id: dataflow.id, action: 'dataflowEdit' },
         })
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error(i18n.t('packages_dag_src_editor_renwubaocunchu'), e)
+      } catch (error) {
+        console.error(i18n.t('packages_dag_src_editor_renwubaocunchu'), error)
         this.buried('migrationSubmit', { result: false })
-        if (e?.data?.code === 'Task.RepeatName') {
+        if (error?.data?.code === 'Task.RepeatName') {
           const newName = await this.makeTaskName(data.name)
           await this.newDataflow(newName)
-        } else if (e?.data?.code === 'InvalidPaidPlan') {
+        } else if (error?.data?.code === 'InvalidPaidPlan') {
           this.$router.push({
             name: 'migrateList',
           })
         } else {
-          this.handleError(e)
+          this.handleError(error)
         }
       }
       this.isSaving = false
@@ -366,15 +274,25 @@ export default {
     },
 
     handlePageReturn() {
-      if (!this.allNodes.length && !this.nameHasUpdated && this.$store.state.dataflow.taskId) {
+      if (
+        !this.allNodes.length &&
+        !this.nameHasUpdated &&
+        this.$store.state.dataflow.taskId
+      ) {
         this.$confirm(
           this.$t('packages_dag_page_return_confirm_content'),
           this.$t('packages_dag_page_return_confirm_title'),
           {
+            center: true,
+            customClass: 'pro-confirm',
             type: 'warning',
             closeOnClickModal: false,
-            confirmButtonText: this.$t('packages_dag_page_return_confirm_ok_text'),
-            cancelButtonText: this.$t('packages_dag_page_return_confirm_cancel_text'),
+            confirmButtonText: this.$t(
+              'packages_dag_page_return_confirm_ok_text',
+            ),
+            cancelButtonText: this.$t(
+              'packages_dag_page_return_confirm_cancel_text',
+            ),
           },
         ).then((res) => {
           if (res) {
@@ -415,9 +333,18 @@ export default {
     async save(needStart) {
       this.isSaving = true
       const errorMsg = await this.validate()
+
       if (errorMsg) {
         if (this.destory) return
         this.$message.error(errorMsg)
+        this.isSaving = false
+        return
+      }
+
+      // 验证数据校验是否支持开启
+      const result = await this.$refs.header.validateDataValidation()
+
+      if (!result) {
         this.isSaving = false
         return
       }
@@ -440,8 +367,8 @@ export default {
         this.setEditVersion(result.editVersion)
         this.isSaving = false
         isOk = true
-      } catch (e) {
-        this.handleError(e)
+      } catch (error) {
+        this.handleError(error)
       }
       this.isSaving = false
       this.toggleConsole(true)
@@ -458,7 +385,11 @@ export default {
 
       this.unWatchStatus?.()
       this.unWatchStatus = this.$watch('dataflow.status', (v) => {
-        if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
+        if (
+          ['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(
+            v,
+          )
+        ) {
           this.$refs.console?.loadData()
           if (v !== 'running') {
             this.$refs.console?.stopAuto()
@@ -500,7 +431,6 @@ export default {
     },
 
     checkGotoViewer() {
-      console.log('editor:checkGotoViewer') // eslint-disable-line
       if (!this.dataflow.disabledData) return
       if (this.dataflow.disabledData.edit) {
         // 不可编辑
@@ -537,13 +467,119 @@ export default {
             },
           })
         } catch (error) {
-          console.error(error) // eslint-disable-line
+          console.error(error)
         }
       })
     },
   },
 }
 </script>
+
+<template>
+  <section class="dataflow-editor layout-wrap vh-100">
+    <!--头部-->
+    <TopHeader
+      ref="header"
+      :loading="loading"
+      :is-saving="isSaving"
+      :dataflow-name="dataflow.name"
+      :dataflow="dataflow"
+      :scale="scale"
+      :button-show-map="buttonShowMap"
+      @page-return="handlePageReturn"
+      @save="save"
+      @delete="handleDelete"
+      @undo="handleUndo"
+      @redo="handleRedo"
+      @zoom-out="handleZoomOut"
+      @zoom-in="handleZoomIn"
+      @zoom-to="handleZoomTo"
+      @show-settings="handleShowSettings"
+      @center-content="handleCenterContent"
+      @auto-layout="handleAutoLayout"
+      @change-name="handleUpdateName"
+      @locate-node="handleLocateNode"
+      @start="handleStart()"
+      @debug-start="handleStart(true)"
+      @stop="handleStop"
+      @force-stop="handleForceStop"
+      @reset="handleReset"
+      @edit="handleEdit"
+      @detail="handleDetail"
+    />
+    <section class="layout-wrap layout-has-sider position-relative">
+      <!--左侧边栏-->
+      <LeftSider
+        @move-node="handleDragMoveNode"
+        @drop-node="handleAddNodeByDrag"
+        @add-node="handleAddNodeToConnect"
+        @toggle-expand="handleToggleExpand"
+      />
+      <section class="layout-wrap flex-1">
+        <!--内容体-->
+        <main
+          id="dfEditorContent"
+          ref="layoutContent"
+          class="layout-content flex-1 overflow-hidden"
+        >
+          <PaperScroller
+            ref="paperScroller"
+            :nav-lines="navLines"
+            @add-node="handleAddNodeToPos"
+            @mouse-select="handleMouseSelect"
+            @change-scale="handleChangeScale"
+          >
+            <DFNode
+              v-for="n in allNodes"
+              :id="NODE_PREFIX + n.id"
+              :key="n.id"
+              :node-id="n.id"
+              :js-plumb-ins="jsPlumbIns"
+              :class="{
+                'options-active': nodeMenu.typeId === n.id,
+              }"
+              hide-disable-action
+              @drag-start="onNodeDragStart"
+              @drag-move="onNodeDragMove"
+              @drag-stop="onNodeDragStop"
+              @deselect-all-nodes="deselectAllNodes"
+              @deselect-node="nodeDeselectedById"
+              @node-selected="nodeSelectedById"
+              @delete="handleDeleteById"
+              @show-node-popover="showNodePopover"
+            />
+          </PaperScroller>
+          <div
+            v-if="!allNodes.length && stateIsReadonly"
+            class="absolute-fill flex justify-center align-center"
+          >
+            <VEmpty large />
+          </div>
+          <PaperEmpty v-else-if="!allNodes.length" />
+          <TransformLoading :show="transformLoading" />
+          <NodePopover
+            :popover="nodeMenu"
+            @click-node="handleClickNodePopover"
+            @hide="nodeMenu.typeId = ''"
+          />
+        </main>
+        <ConsolePanel ref="console" />
+      </section>
+
+      <!--配置面板-->
+      <ConfigPanel
+        ref="configPanel"
+        :settings="dataflow"
+        :scope="scope"
+        :sync-type="dataflow.syncType"
+        :button-show-map="buttonShowMap"
+        @hide="onHideSidebar"
+      />
+
+      <SkipError ref="skipError" @skip="handleSkipAndRun" />
+    </section>
+  </section>
+</template>
 
 <style lang="scss" scoped>
 $sidebarW: 260px;

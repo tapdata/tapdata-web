@@ -3,7 +3,7 @@ import { roleApi, roleMappingsApi, usersApi } from '@tap/api'
 import { TablePage } from '@tap/business'
 
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { FilterBar } from '@tap/component'
+import { DownBoldOutlined, FilterBar } from '@tap/component'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
 
@@ -12,6 +12,7 @@ export default {
     PageContainer,
     TablePage,
     FilterBar,
+    DownBoldOutlined,
   },
   data() {
     return {
@@ -171,6 +172,20 @@ export default {
             required: true,
           },
         ],
+        rules: {
+          username: [
+            {
+              required: true,
+              message: this.$t('account_user_null'),
+            },
+          ],
+          email: [
+            {
+              required: true,
+              message: this.$t('app_signIn_email_placeholder'),
+            },
+          ],
+        },
       },
       count1: 0,
       count2: 0,
@@ -330,14 +345,18 @@ export default {
 
     // 选择分类
     handleSelectTag() {
-      const tagList = {}
+      const tagList = []
+      const tagMap = {}
+
       this.multipleSelection.forEach((row) => {
-        if (row.listtags && row.listtags.length > 0) {
-          tagList[row.listtags[0].id] = {
-            value: row.listtags[0].value,
+        row.listtags.forEach((item) => {
+          if (!tagMap[item.id]) {
+            tagList.push(item)
+            tagMap[item.id] = true
           }
-        }
+        })
       })
+
       return tagList
     },
     // 分类设置保存
@@ -600,16 +619,16 @@ export default {
     },
     // 关联用户
     permissionsmethod(data = [], roleusers = []) {
-      let html = ''
+      const roles = []
       if (data && data.length) {
         roleusers.forEach((item) => {
           const roleName = data.find((t) => t.roleId === item)?.role?.name
           if (roleName) {
-            html += ` ${roleName},`
+            roles.push(roleName)
           }
         })
       }
-      return html.slice(0, Math.max(0, html.lastIndexOf(',')))
+      return roles
     },
     // 重置激活码
     resetAccesCode() {
@@ -642,40 +661,6 @@ export default {
   <PageContainer>
     <template #actions>
       <el-button
-        v-show="multipleSelection.length > 0"
-        v-readonlybtn="'user_category_application'"
-        class="btn"
-        @click="$refs.table.showClassify(handleSelectTag())"
-      >
-        <span> {{ $t('public_button_bulk_tag') }}</span>
-      </el-button>
-      <el-dropdown
-        v-show="multipleSelection.length > 0"
-        v-readonlybtn="'user_edition'"
-        @command="handleCommand($event)"
-      >
-        <el-button class="btn btn-dropdowm">
-          <i class="iconfont icon-piliang back-btn-icon" />
-          <span> {{ $t('public_button_bulk_operation') }}</span>
-        </el-button>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item v-if="$has('user_edition')" command="activated">
-              {{ $t('user_list_bulk_activation') }}
-            </el-dropdown-item>
-            <el-dropdown-item v-if="$has('user_edition')" command="rejected">{{
-              $t('user_list_bulk_freeze')
-            }}</el-dropdown-item>
-            <el-dropdown-item
-              v-if="$has('user_edition')"
-              command="notActivated"
-            >
-              {{ $t('user_list_bulk_check') }}
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
-      <el-button
         v-readonlybtn="'new_model_creation'"
         class="btn btn-create"
         type="primary"
@@ -688,16 +673,35 @@ export default {
     <TablePage
       ref="table"
       row-key="id"
-      class="user-list"
-      :classify="{ authority: 'user_category_management', types: ['user'] }"
+      class="user-table-page"
+      :classify="{
+        authority: 'user_category_management',
+        types: ['user'],
+        hideIcon: true,
+      }"
       :remote-method="getData"
       @selection-change="handleSelectionChange"
       @classify-submit="handleOperationClassify"
       @sort-change="handleSortTable"
     >
-      <template #nav>
-        <div class="tapNav">
-          <ElTabs v-model="activePanel" @tab-click="handleTapClick">
+      <template #nav="{ openClassify }">
+        <div class="tapNav position-relative">
+          <el-button
+            class="position-absolute z-10 start-0"
+            text
+            style="top: 4px"
+            @click="openClassify"
+          >
+            <template #icon>
+              <VIcon>expand-list</VIcon>
+            </template>
+          </el-button>
+
+          <ElTabs
+            v-model="activePanel"
+            style="--el-tabs-padding-left: 36px; --el-tabs-header-height: 36px"
+            @tab-change="handleTapClick"
+          >
             <ElTabPane
               v-for="item in muneList"
               :key="item.icon"
@@ -743,6 +747,45 @@ export default {
         </div>
       </template>
 
+      <template #multipleSelectionActions>
+        <el-button
+          v-readonlybtn="'user_category_application'"
+          class="btn"
+          @click="$refs.table.showClassify(handleSelectTag())"
+        >
+          <span> {{ $t('public_button_bulk_tag') }}</span>
+        </el-button>
+        <el-dropdown
+          v-readonlybtn="'user_edition'"
+          @command="handleCommand($event)"
+        >
+          <el-button class="btn btn-dropdowm">
+            <span> {{ $t('public_button_bulk_operation') }}</span>
+            <el-icon class="ml-1">
+              <DownBoldOutlined />
+            </el-icon>
+          </el-button>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item v-if="$has('user_edition')" command="activated">
+                {{ $t('user_list_bulk_activation') }}
+              </el-dropdown-item>
+              <el-dropdown-item
+                v-if="$has('user_edition')"
+                command="rejected"
+                >{{ $t('user_list_bulk_freeze') }}</el-dropdown-item
+              >
+              <el-dropdown-item
+                v-if="$has('user_edition')"
+                command="notActivated"
+              >
+                {{ $t('user_list_bulk_check') }}
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </template>
+
       <el-table-column type="selection" width="45" :reserve-selection="true" />
       <el-table-column
         :label="$t('user_list_user_name')"
@@ -752,7 +795,7 @@ export default {
         <template #default="scope">
           <div class="metadata-name">
             <p>{{ scope.row.username }}</p>
-            <div class="parent ellipsis">
+            <div class="ellipsis font-color-light">
               {{ scope.row.email }}
             </div>
           </div>
@@ -760,7 +803,18 @@ export default {
       </el-table-column>
       <el-table-column :label="$t('user_list_role')" prop="roleMappings">
         <template #default="scope">
-          {{ permissionsmethod(scope.row.roleMappings, scope.row.roleusers) }}
+          <!-- {{ permissionsmethod(scope.row.roleMappings, scope.row.roleusers) }} -->
+
+          <div class="flex flex-wrap gap-1">
+            <el-tag
+              v-for="role in permissionsmethod(
+                scope.row.roleMappings,
+                scope.row.roleusers,
+              )"
+              :key="role"
+              >{{ role }}</el-tag
+            >
+          </div>
         </template>
       </el-table-column>
       <el-table-column
@@ -927,8 +981,7 @@ export default {
             <el-input
               v-if="!createForm.id"
               v-model="createForm.email"
-              maxlength="100"
-              show-word-limit
+              type="email"
             />
             <span v-else>{{ createForm.email }}</span>
           </el-form-item>
@@ -1015,6 +1068,12 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+.user-table-page {
+  :deep(.classification) {
+    margin-top: -6px !important;
+  }
+}
+
 .user-list-wrap {
   .tapNav {
     :deep(.el-tabs__header) {
@@ -1051,38 +1110,6 @@ export default {
         color: map.get($color, disable);
       }
     }
-  }
-}
-</style>
-
-<style lang="scss">
-.user-list-wrap {
-  .table-page-container {
-    .table-page-body {
-      .table-page-topbar {
-        padding-inline: 16px;
-        background-color: map.get($bgColor, white);
-      }
-      .el-table,
-      .el-pagination {
-        padding-inline: 16px;
-        box-sizing: border-box;
-        overflow: hidden;
-      }
-      .table-page-pagination {
-        margin-top: 0;
-        //padding: 5px 20px;
-        background-color: map.get($bgColor, white);
-        box-sizing: border-box;
-      }
-      .status {
-        padding: 5px 10px;
-        border-radius: 4px;
-      }
-    }
-  }
-  .classification {
-    margin-left: 16px;
   }
 }
 </style>

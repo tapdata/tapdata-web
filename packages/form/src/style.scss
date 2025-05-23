@@ -45,6 +45,7 @@
   padding-bottom: 16px;
   border-top: 0;
   border-bottom: 0;
+  --collapse-padding-primary: 0;
 
   .el-collapse-item {
     .el-collapse-item__header {
@@ -52,9 +53,9 @@
     }
 
     .el-collapse-item__wrap {
-      //padding: 8px 12px;
+      padding: 8px 16px;
       border: 1px solid #ebeef5;
-      border-radius: 8px;
+      border-radius: 12px;
     }
 
     .el-collapse-item__content {

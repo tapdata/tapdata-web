@@ -13,6 +13,7 @@ import { ElSelect as Select } from 'element-plus'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 import DataCaptureDebug from './DataCaptureDebug.vue'
+import DataValidationDialog from './DataValidationDialog.vue'
 
 export default {
   name: 'TopHeader',
@@ -20,6 +21,7 @@ export default {
 
   components: {
     DataCaptureDebug,
+    DataValidationDialog,
     TextEditable,
     TaskStatus,
     VDivider,
@@ -42,6 +44,46 @@ export default {
     },
   },
 
+  emits: [
+    'page-return',
+    'undo',
+    'redo',
+    'delete',
+    'center-content',
+    'auto-layout',
+    'zoom-out',
+    'zoom-in',
+    'zoom-to',
+    'showSettings',
+    'save',
+    'reset',
+    'detail',
+    'edit',
+    'forceStop',
+    'stop',
+    'start',
+    'change-name',
+    'locate-node',
+    'page-return',
+    'undo',
+    'redo',
+    'delete',
+    'center-content',
+    'auto-layout',
+    'zoom-out',
+    'zoom-in',
+    'zoom-to',
+    'showSettings',
+    'save',
+    'reset',
+    'detail',
+    'edit',
+    'forceStop',
+    'stop',
+    'start',
+    'debugStart',
+  ],
+
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
     return {
@@ -59,6 +101,7 @@ export default {
       nodeSearchInput: '',
       refreshing: false,
       openDebug: false,
+      openValidation: false,
     }
   },
   computed: {
@@ -161,45 +204,11 @@ export default {
         this.setSchemaRefreshing(false)
       })
     },
+
+    validateDataValidation() {
+      return this.$refs.dataValidationDialog.validate()
+    },
   },
-  emits: [
-    'page-return',
-    'undo',
-    'redo',
-    'delete',
-    'center-content',
-    'auto-layout',
-    'zoom-out',
-    'zoom-in',
-    'zoom-to',
-    'showSettings',
-    'save',
-    'reset',
-    'detail',
-    'edit',
-    'forceStop',
-    'stop',
-    'start',
-    'change-name',
-    'locate-node',
-    'page-return',
-    'undo',
-    'redo',
-    'delete',
-    'center-content',
-    'auto-layout',
-    'zoom-out',
-    'zoom-in',
-    'zoom-to',
-    'showSettings',
-    'save',
-    'reset',
-    'detail',
-    'edit',
-    'forceStop',
-    'stop',
-    'start',
-  ],
 }
 </script>
 
@@ -332,7 +341,7 @@ export default {
                 <kbd>⌘</kbd><span class="mx-1">+</span><kbd>–</kbd>
               </div>
             </div>
-            <VDivider class="my-1" />
+            <el-divider class="my-1" />
             <div
               v-for="val in chooseItems"
               :key="val"
@@ -406,7 +415,7 @@ export default {
         <div class="choose-pane-wrap">
           <ElInput
             v-model="nodeSearchInput"
-            class="input-filled"
+            class="input-filled my-1"
             clearable
             :placeholder="$t('packages_business_custom_node_placeholder')"
           >
@@ -441,6 +450,17 @@ export default {
           <VIcon size="18">bug-outlined</VIcon>
         </button>
       </ElTooltip>
+      <template v-if="isDaas && !isCommunity">
+        <el-divider direction="vertical" />
+        <ElTooltip
+          transition="tooltip-fade-in"
+          :content="$t('public_data_validation')"
+        >
+          <button class="icon-btn" @click="openValidation = true">
+            <VIcon size="18">data-scan</VIcon>
+          </button>
+        </ElTooltip>
+      </template>
     </div>
     <!--复制dag查看不显示-->
     <div class="flex align-center flex-grow-1">
@@ -539,12 +559,19 @@ export default {
       :task-id="dataflow.id"
       :visible="openDebug"
       @update:visible="openDebug = $event"
-      @start="$emit('debug-start')"
+      @start="$emit('debugStart')"
+    />
+
+    <DataValidationDialog
+      ref="dataValidationDialog"
+      v-model="openValidation"
+      :task-id="dataflow.id"
+      @start="$emit('debugStart')"
     />
   </header>
 </template>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 $sidebarW: 236px;
 $hoverBg: #eef3ff;
 $radius: 6px;
@@ -773,7 +800,7 @@ $sidebarBg: #fff;
     min-width: 148px;
     font-size: 12px;
     line-height: 32px;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
 
     &:hover {

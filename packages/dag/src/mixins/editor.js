@@ -831,7 +831,8 @@ export default {
           this.setStateReadonly(false)
           this.startLoopTask(id)
           this.initWS()
-          this.checkMaterializedView()
+
+          this.checkMaterializedView?.()
         }
 
         this.stopDagWatch = this.$watch(
@@ -1051,8 +1052,17 @@ export default {
     async save(needStart) {
       this.isSaving = true
       const errorMsg = await this.validate()
+
       if (errorMsg) {
         this.$message.error(errorMsg)
+        this.isSaving = false
+        return
+      }
+
+      // 验证数据校验是否支持开启
+      const result = await this.$refs.header.validateDataValidation()
+
+      if (!result) {
         this.isSaving = false
         return
       }
@@ -1535,7 +1545,9 @@ export default {
     async validateSetting() {
       try {
         await this.$refs.configPanel.validateSetting()
-      } catch {
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(i18n.t('packages_dag_mixins_editor_renwushezhiyi'), error)
         this.setActiveType('settings')
         return i18n.t('packages_dag_mixins_editor_renwushezhiyi')
       }
@@ -2340,7 +2352,8 @@ export default {
         }
       } else if (code === 'Task.OldVersion') {
         this.$confirm('', i18n.t('packages_dag_task_old_version_confirm'), {
-          onlyTitle: true,
+          center: true,
+          customClass: 'pro-confirm',
           type: 'warning',
           closeOnClickModal: false,
           confirmButtonText: i18n.t('public_button_refresh'),

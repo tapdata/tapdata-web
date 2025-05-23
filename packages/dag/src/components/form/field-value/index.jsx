@@ -72,7 +72,7 @@ export const FieldValue = connect(
         this.originalFields = JSON.parse(JSON.stringify(fields))
         return (
           <div
-            class="field-processors-tree-warp bg-body pt-2 pb-5"
+            class="field-processors-tree-warp bg-body pt-2"
             v-loading={this.loading}
           >
             <ElInput

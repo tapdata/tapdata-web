@@ -136,6 +136,8 @@ export default {
 
         $agentMap: {},
 
+        $alarmChannels: [], // 告警渠道
+
         $isDaas: isDaas, //区分云版、企业版
 
         $isMonitor: ['MigrationMonitor', 'TaskMonitor'].includes(
@@ -1007,7 +1009,7 @@ export default {
           let options = field.dataSource
           const nodeData = this.scope.findNodeById($values.id)
 
-          if (!$values.$inputs[0]) {
+          if (!$values.$inputs[0] || !$values.tableName) {
             return
           }
 
@@ -1053,7 +1055,7 @@ export default {
             }
           }
 
-          return !$values.updateConditionFields?.length
+          return !$values.updateConditionFields?.length && $values.tableName
             ? i18n.t('packages_dag_mixins_formscope_gaiziduanshibi')
             : ''
         },
@@ -1241,6 +1243,7 @@ export default {
 
   async created() {
     this.scope.$settings = this.dataflow
+    this.scope.$alarmChannels = await this.scope.loadAlarmChannels()
     await this.loadAccessNode()
   },
 

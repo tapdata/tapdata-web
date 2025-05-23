@@ -81,7 +81,7 @@ export default {
   public_status_do_snapshot: '全量进行中',
   public_status_snapshot_completed: '全量已完成',
   public_status_do_cdc: '增量进行中',
-
+  public_status_ping_timeout: '心跳超时',
   // 按钮
   public_button_edit: '编辑',
   public_button_confirm: '确定',
@@ -380,6 +380,8 @@ export default {
   public_load_more: '加载更多',
   public_loading: '拼命加载中',
   public_load_end: '到底了',
+  public_data_validation: '数据校验',
+  public_validation_record: '校验记录',
   public_foreign_key_tip: '外键 {name} 指向 {val}',
   public_form_design: '表单设计',
   public_code_edit: '代码编辑',

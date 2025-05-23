@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Check } from '@element-plus/icons-vue'
 import { databaseTypesApi, inspectApi, taskApi } from '@tap/api'
-import { AsyncSelect } from '@tap/form'
+import { InfiniteSelect } from '@tap/form'
 import i18n from '@tap/i18n'
 import Time from '@tap/shared/src/time'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -86,6 +86,7 @@ const defaultTime = ref([
   new Date(2025, 1, 1, 0, 0, 0),
   new Date(2025, 2, 1, 23, 59, 59),
 ])
+const conditionList = ref([])
 
 const taskSelect = useTemplateRef('taskSelect')
 
@@ -108,7 +109,7 @@ const form = reactive({
     keep: 100,
   },
   enabled: true,
-  tasks: [],
+  // tasks: [],
   taskMode: 'pipeline',
   errorNotifys: ['SYSTEM', 'EMAIL'],
   inconsistentNotifys: ['SYSTEM', 'EMAIL'],
@@ -320,6 +321,10 @@ const getData = async (id: string) => {
           return t
         }) || []
 
+      conditionList.value = data.tasks
+
+      delete data.tasks
+
       Object.assign(form, data)
     }
   } catch (error) {
@@ -409,7 +414,7 @@ const goBack = () => {
 const save = async (saveOnly = false) => {
   await baseForm.value.validate(async (valid: boolean) => {
     if (valid) {
-      let tasks = conditionBox.value.getList()
+      let tasks = conditionList.value
       // 自动过滤出完整数据，以及索引字段数量不相等的情况
       tasks = tasks.filter((t) => {
         if (
@@ -472,7 +477,13 @@ const save = async (saveOnly = false) => {
               script,
               webScript,
               jsEngineName,
+              modeType,
             }) => {
+              if (modeType === 'all') {
+                source.columns = null
+                target.columns = null
+              }
+
               if (webScript && webScript !== '') {
                 script = `function validate(sourceRow){${webScript}}`
               }
@@ -592,6 +603,7 @@ const openTaskSelect = () => {
 fetchDatabaseTypes()
 
 provide('formData', form)
+provide('conditionList', conditionList)
 provide('ConnectorMap', ConnectorMap)
 </script>
 
@@ -604,41 +616,42 @@ provide('ConnectorMap', ConnectorMap)
     <ElForm
       ref="baseForm"
       class="grey"
-      label-position="left"
-      label-width="auto"
+      label-position="top"
       :model="form"
       :rules="rules"
       :validate-on-rule-change="false"
     >
-      <ElFormItem
-        v-if="form.taskMode === 'pipeline'"
-        required
-        class="form-item"
-        prop="flowId"
-        :label="`${$t('packages_business_verification_chooseJob')}: `"
-      >
-        <AsyncSelect
-          ref="taskSelect"
-          v-model="form.flowId"
-          class="form-input"
-          :method="getTaskOptions"
-          :current-label="taskName"
-          item-label="name"
-          item-value="id"
-          item-query="name"
-          :page-size="10000000000"
-          @option-select="handleSelectTask"
-        />
-      </ElFormItem>
+      <div class="flex gap-4">
+        <ElFormItem
+          v-if="form.taskMode === 'pipeline'"
+          required
+          class="form-item"
+          prop="flowId"
+          :label="`${$t('packages_business_verification_chooseJob')}: `"
+        >
+          <InfiniteSelect
+            ref="taskSelect"
+            v-model="form.flowId"
+            class="form-input"
+            :method="getTaskOptions"
+            :current-label="taskName"
+            item-label="name"
+            item-value="id"
+            item-query="name"
+            :page-size="10000000000"
+            @option-select="handleSelectTask"
+          />
+        </ElFormItem>
 
-      <ElFormItem
-        required
-        class="form-item"
-        prop="name"
-        :label="`${$t('packages_business_verification_task_name')}: `"
-      >
-        <ElInput v-model="form.name" class="form-input" />
-      </ElFormItem>
+        <ElFormItem
+          required
+          class="form-item"
+          prop="name"
+          :label="`${$t('packages_business_verification_task_name')}: `"
+        >
+          <ElInput v-model="form.name" class="form-input" />
+        </ElFormItem>
+      </div>
 
       <ElFormItem
         required
@@ -1035,6 +1048,7 @@ provide('ConnectorMap', ConnectorMap)
         $t('public_button_back')
       }}</el-button>
       <el-button
+        id="form-save-btn"
         size="large"
         type="primary"
         :disabled="saveDisabled"
@@ -1087,9 +1101,9 @@ provide('ConnectorMap', ConnectorMap)
   color: map.get($fontColor, dark);
 }
 
-.form-item {
-  margin-bottom: 32px;
-}
+// .form-item {
+//   margin-bottom: 32px;
+// }
 
 .form-select {
   width: 276px;

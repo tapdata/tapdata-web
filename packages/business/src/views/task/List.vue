@@ -6,8 +6,7 @@ import {
   taskApi,
   workerApi,
 } from '@tap/api'
-import { FilterBar, SelectList } from '@tap/component'
-import InfiniteSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
+import { DownBoldOutlined, FilterBar, SelectList } from '@tap/component'
 import i18n from '@tap/i18n'
 import { generateId } from '@tap/shared'
 import dayjs from 'dayjs'
@@ -32,7 +31,7 @@ export default {
   name: 'List',
 
   components: {
-    InfiniteSelect,
+    DownBoldOutlined,
     DatabaseIcon,
     FilterBar,
     SelectList,
@@ -54,6 +53,14 @@ export default {
     route: {},
     taskBuried: {},
     syncType: String,
+    materializedViewLoading: {
+      type: Boolean,
+      default: false,
+    },
+    createLoading: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -552,41 +559,54 @@ export default {
     },
 
     handleSelectTag() {
-      let tagList = []
+      const tagList = []
+      const tagMap = {}
+
       this.multipleSelection.forEach((row) => {
-        if (row.listtags) {
-          tagList = [...row.listtags, ...tagList]
-        }
+        row.listtags.forEach((item) => {
+          if (!tagMap[item.id]) {
+            tagList.push(item)
+            tagMap[item.id] = true
+          }
+        })
       })
-      //去重
-      const map = new Map()
-      for (const item of tagList) {
-        if (!map.has(item.id)) {
-          map.set(item.id, item)
-        }
-      }
-      tagList = [...map.values()]
+
       return tagList
     },
 
-    async create(query) {
+    create() {
       this.buried(this.taskBuried.new)
-      this.createBtnLoading = true
+      this.$emit('update:createLoading', true)
       this.checkAgent(() => {
         this.$router.push({
           name: this.route.new,
-          query,
         })
-      }).catch(() => {
-        this.createBtnLoading = false
-        this.buried(this.taskBuried.newFail)
       })
+        .catch(() => {
+          this.buried(this.taskBuried.newFail)
+        })
+        .finally(() => {
+          this.$emit('update:createLoading', false)
+        })
     },
 
     handleCreateMaterializedView() {
-      this.create({
-        by: 'materialized-view',
+      this.buried(this.taskBuried.new)
+      this.$emit('update:materializedViewLoading', true)
+      this.checkAgent(() => {
+        this.$router.push({
+          name: this.route.new,
+          query: {
+            by: 'materialized-view',
+          },
+        })
       })
+        .catch(() => {
+          this.buried(this.taskBuried.newFail)
+        })
+        .finally(() => {
+          this.$emit('update:materializedViewLoading', false)
+        })
     },
 
     handleEditor(row) {
@@ -1008,10 +1028,7 @@ export default {
 </script>
 
 <template>
-  <section
-    v-loading="restLoading"
-    class="data-flow-wrap rounded-lg overflow-hidden"
-  >
+  <section v-loading="restLoading" class="data-flow-wrap rounded-lg">
     <TablePage
       ref="table"
       row-key="id"
@@ -1121,7 +1138,9 @@ export default {
             <span>
               {{ $t('packages_business_dataFlow_taskBulkOperation') }}</span
             >
-            <i class="el-icon-arrow-down el-icon--right" />
+            <el-icon class="ml-1">
+              <DownBoldOutlined />
+            </el-icon>
           </ElButton>
           <template #dropdown>
             <ElDropdownMenu>
@@ -1164,9 +1183,10 @@ export default {
       </template>
 
       <el-table-column
+        class-name="cell-no-padding"
         reserve-selection
         type="selection"
-        width="38"
+        width="32"
         align="center"
         :selectable="
           (row) =>
@@ -1188,7 +1208,7 @@ export default {
               v-else
               role="ellipsis"
               type="primary"
-              :underline="false"
+              underline="never"
               class="justify-content-start ellipsis block mr-1"
               :class="['name', { 'has-children': row.hasChildren }]"
               @click.stop="handleClickName(row)"

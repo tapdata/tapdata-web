@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { isNum } from '@tap/shared'
 import { debounce, escapeRegExp, isString, merge } from 'lodash-es'
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
-import ElSelectLoading from './ElSelectLoading.vue'
+import { computed, markRaw, nextTick, onMounted, ref, toRaw, watch } from 'vue'
+import SelectLoading from './SelectLoading.vue'
 
 const page = ref(0)
 const loadingData = ref(false)
@@ -32,6 +32,7 @@ interface Props {
   cache?: boolean
   loadingText?: string
   noMoreText?: string
+  hasCreate?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -41,6 +42,7 @@ const props = withDefaults(defineProps<Props>(), {
   itemValue: 'value',
   debounceWait: 200,
   cache: true,
+  hasCreate: false,
   paramsSerializer: (params: {
     query: string
     page: number
@@ -63,11 +65,24 @@ const isStrItem = computed(() => {
   return isString(selectOptions.value[0])
 })
 
+const showNewOption = computed(() => {
+  if (!query.value || !props.hasCreate) return false
+
+  const hasExistingOption = isStrItem.value
+    ? selectOptions.value.includes(query.value)
+    : selectOptions.value.some((option) => {
+        return option[props.itemLabel] === query.value
+      })
+
+  return !hasExistingOption
+})
+
 const emit = defineEmits([
   'update:modelValue',
   'update:loading',
   'changeLabel',
   'optionSelect',
+  'select',
 ])
 
 const showLoading = computed(() => props.loading || loadingData.value)
@@ -160,8 +175,6 @@ const onVisibleChange = (visible: boolean) => {
  */
 const loadDataList = async (newPage: number) => {
   try {
-    loadingMore.value = true
-    emit('update:loading', true)
     const res = await props.method(getParams(newPage))
     const list = res.items || []
 
@@ -174,16 +187,24 @@ const loadDataList = async (newPage: number) => {
     page.value = newPage
   } catch (error) {
     console.error(error)
-  } finally {
-    loadingMore.value = false
   }
+}
+
+const refresh = async () => {
+  loadingData.value = true
+  await loadDataList(1).finally(() => {
+    loadingData.value = false
+  })
 }
 
 /**
  * 加载更多数据
  */
 const handleLoadMore = async (newPage: number) => {
-  await loadDataList(newPage)
+  loadingMore.value = true
+  await loadDataList(newPage).finally(() => {
+    loadingMore.value = false
+  })
 }
 
 const handleChange = () => {
@@ -194,25 +215,17 @@ const handleChange = () => {
 
 const onChange = (value: any) => {
   nextTick(() => {
-    emit('changeLabel', selectRef.value.states.selected.currentLabel)
+    const selectedOption = selectRef.value.states.options.get(value)
 
-    // Find the selected object by matching itemValue with the selected value
-    const selectedOption = isStrItem.value
-      ? value
-      : selectOptions.value.find((option) => option[props.itemValue] === value)
-
-    if (selectedOption) {
-      // Pass the full object to onSetSelected
-      props.onSetSelected?.(selectedOption)
-      // Also emit the selected option and whether it was clicked
-      emit('optionSelect', selectedOption, true)
-    } else {
-      // Fallback to the hovering index method if needed
-      const index = selectRef.value.states.hoveringIndex
-      if (isNum(index) && index > -1) {
-        props.onSetSelected?.(selectOptions.value[index])
-        emit('optionSelect', selectOptions.value[index], true)
-      }
+    if (isStrItem.value) {
+      emit('changeLabel', value)
+      emit('optionSelect', value, true)
+      selectedOption && emit('select', value, value, selectedOption.created)
+    } else if (selectedOption) {
+      const originData = selectedOption.$attrs?.['origin-data']
+      emit('changeLabel', selectedOption.label)
+      emit('optionSelect', originData, true)
+      emit('select', value, originData, selectedOption.created)
     }
   })
 }
@@ -222,7 +235,8 @@ const onUpdateModelValue = (val) => {
 }
 
 defineExpose({
-  loadDataList,
+  loadDataList: refresh,
+  refresh,
   focus: () => {
     selectRef.value.focus()
   },
@@ -279,6 +293,8 @@ onMounted(() => {
       <span>{{ getLabel(value, label) }}</span>
     </template>
 
+    <slot v-if="showNewOption" name="created-option" :value="query" />
+
     <el-option v-if="showLoading" class="el-select-loading">
       <el-icon class="el-select-loading__icon"><ElIconLoading /></el-icon>
       <span class="el-select-loading__tips">{{
@@ -293,6 +309,7 @@ onMounted(() => {
           :key="item[itemValue]"
           :label="item[itemLabel]"
           :value="item[itemValue]"
+          :origin-data="toRaw(item)"
         />
       </template>
 
@@ -301,7 +318,7 @@ onMounted(() => {
       </template>
     </div>
 
-    <ElSelectLoading
+    <SelectLoading
       v-if="optionTotal !== 0 && !showLoading"
       :page="page"
       :loading="loadingMore"

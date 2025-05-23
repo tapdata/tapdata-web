@@ -33,6 +33,7 @@
     "jsplumb": "^2.15.6",
     "mousetrap": "^1.6.5",
     "resize-observer-polyfill": "^1.5.1",
+    "vue": "^3.0.0",
     "vue-json-pretty": "^1.9.5",
     "vue-request": "^2.0.4",
     "vue-virtual-scroller": "2.0.0-beta.8",

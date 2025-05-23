@@ -123,13 +123,14 @@ export default {
               $t('app_signIn_Registration')
             }}</span>
           </div>
-          <div
-            v-show="errorMessage"
-            class="error-tips align-center justify-content-start"
-          >
-            <el-icon class="mr-2"><el-icon-warning /></el-icon>
-            {{ errorMessage }}
-          </div>
+          <el-alert
+            v-show="!!errorMessage"
+            class="mb-5"
+            :title="errorMessage"
+            type="error"
+            show-icon
+            :closable="false"
+          />
           <form class="rounded-lg">
             <input
               v-model="form.email"

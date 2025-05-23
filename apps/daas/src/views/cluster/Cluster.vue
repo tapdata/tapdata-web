@@ -321,12 +321,21 @@ const delServe = (data: any, status: string) => {
 
   if (status === 'running') {
     // Show confirmation dialog
-    clusterApi.removeMonitor(params).then(() => {
-      getDataApi()
-      // Show success message
+    ElMessageBox.confirm('', t('daas_cluster_del_confirm'), {
+      center: true,
+      customClass: 'pro-confirm',
+      type: 'warning',
+      confirmButtonText: t('public_button_confirm'),
+      cancelButtonText: t('public_button_cancel'),
+      type: 'warning',
+    }).then(() => {
+      clusterApi.removeMonitor(params).then(() => {
+        getDataApi()
+        ElMessage.success(t('public_message_save_ok'))
+      })
     })
   } else {
-    // Show error message
+    ElMessage.error(t('cluster_startup_after_delete'))
   }
 }
 
@@ -572,11 +581,19 @@ const closeDialogForm = () => {
 
 const delConfirm = (item: any) => {
   const agentName = item.agentName || item.systemInfo.hostname
-  const message = h('p', [`public_message_delete_confirm ${agentName}`])
-  // Show confirmation dialog
-  clusterApi.delete(item.id, item.name).then(() => {
-    // Show success message
-    getDataApi()
+  ElMessageBox.confirm(
+    '',
+    `${t('public_message_delete_confirm')} ${agentName}?`,
+    {
+      type: 'warning',
+      center: true,
+      customClass: 'pro-confirm',
+    },
+  ).then(() => {
+    clusterApi.delete(item.id, item.name).then(() => {
+      ElMessage.success(t('public_message_delete_ok'))
+      getDataApi()
+    })
   })
 }
 
@@ -696,7 +713,7 @@ const saveTag = () => {
           })
       fetch
         .then(() => {
-          // Show success message
+          ElMessage.success(t('public_message_save_ok'))
           hideTagDialog()
           loadTags()
         })
@@ -737,9 +754,21 @@ const handleCommand = (command: string, node: any) => {
 }
 
 const deleteNode = (id: string) => {
-  // Show confirmation dialog
-  agentGroupApi.delete(id).then(() => {
-    loadTags()
+  ElMessageBox.confirm(
+    '',
+    t('packages_business_application_delete_shifouquerenshan'),
+    {
+      center: true,
+      customClass: 'pro-confirm',
+      confirmButtonText: t('public_button_delete'),
+      cancelButtonText: t('packages_component_message_cancel'),
+      type: 'warning',
+      closeOnClickModal: false,
+    },
+  ).then(() => {
+    agentGroupApi.delete(id).then(() => {
+      loadTags()
+    })
   })
 }
 

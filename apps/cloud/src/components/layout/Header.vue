@@ -86,6 +86,8 @@ export default {
             this.$t('header_log_out_tip'),
             this.$t('header_log_out_title'),
             {
+              center: true,
+              customClass: 'pro-confirm',
               type: 'warning',
               confirmButtonText: this.$t('public_button_confirm'),
               cancelButtonText: this.$t('public_button_cancel'),

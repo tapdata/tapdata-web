@@ -2,7 +2,7 @@
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { IconButton } from '@tap/component'
-import { AsyncSelect, FieldSelect } from '@tap/form'
+import { InfiniteSelect as AsyncSelect, FieldSelect } from '@tap/form'
 import i18n from '@tap/i18n'
 import { ClickOutside, Time } from '@tap/shared'
 import { merge, unionBy } from 'lodash-es'
@@ -800,7 +800,7 @@ onMounted(() => {
 
 <template>
   <div
-    :id="props.node.id"
+    :id="`n_${node.id}`"
     tabindex="1"
     class="materialized-view-node position-absolute rounded-lg bg-white"
     :class="{
@@ -844,7 +844,7 @@ onMounted(() => {
           item-query="name"
           lazy
           :current-label="dagNode.attrs.connectionName"
-          :on-set-selected="onConnectionSelect"
+          @option-select="onConnectionSelect"
           @change="onChangeConnection"
         >
           <template v-if="dagNode.connectionId" #prefix>
@@ -864,7 +864,7 @@ onMounted(() => {
           item-type="object"
           item-query="value"
           lazy
-          :on-set-selected="onTableSelect"
+          @option-select="onTableSelect"
           @change="onChangeTable"
         />
       </div>

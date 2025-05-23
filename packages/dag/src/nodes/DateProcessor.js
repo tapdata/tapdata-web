@@ -88,7 +88,7 @@ export class DateProcessor extends NodeType {
               },
               space: {
                 type: 'void',
-                title: i18n.t('packages_dag_date_processor_method') + '666',
+                title: i18n.t('packages_dag_date_processor_method'),
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
                   asterisk: true,

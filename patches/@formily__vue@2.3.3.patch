@@ -1,0 +1,81 @@
+diff --git a/esm/shared/connect.js b/esm/shared/connect.js
+index 11841dd0a4cc6231e4485fe0d9adfb93abec9db3..3c036b08a9b968587b06f4eb90155562dc1f6109 100644
+--- a/esm/shared/connect.js
++++ b/esm/shared/connect.js
+@@ -9,7 +9,7 @@ var __assign = (this && this.__assign) || function () {
+     };
+     return __assign.apply(this, arguments);
+ };
+-import { isVue2, markRaw, defineComponent } from 'vue-demi';
++import { isVue2, markRaw, defineComponent, ref } from 'vue-demi';
+ import { isFn, isStr, FormPath, each, isValid } from '@formily/shared';
+ import { isVoidField } from '@formily/core';
+ import { observer } from '@formily/reactive-vue';
+@@ -47,8 +47,14 @@ export function mapProps() {
+         return observer(defineComponent({
+             name: target.name ? "Connected".concat(target.name) : "ConnectedComponent",
+             setup: function (props, _a) {
+-                var attrs = _a.attrs, slots = _a.slots, listeners = _a.listeners;
++                var attrs = _a.attrs, slots = _a.slots, listeners = _a.listeners, expose = _a.expose;
+                 var fieldRef = useField();
++                var innerRef = ref(null)
++
++                expose({
++                    getInnerRef: () => innerRef.value?.getInnerRef?.() || innerRef.value
++                })
++
+                 return function () {
+                     var newAttrs = fieldRef.value
+                         ? transform(__assign({}, attrs), fieldRef.value)
+@@ -56,6 +62,7 @@ export function mapProps() {
+                     return h(target, {
+                         attrs: newAttrs,
+                         on: listeners,
++                        ref: innerRef
+                     }, slots);
+                 };
+             },
+@@ -67,8 +74,14 @@ export function mapReadPretty(component, readPrettyProps) {
+         return observer(defineComponent({
+             name: target.name ? "Read".concat(target.name) : "ReadComponent",
+             setup: function (props, _a) {
+-                var attrs = _a.attrs, slots = _a.slots, listeners = _a.listeners;
++                var attrs = _a.attrs, slots = _a.slots, listeners = _a.listeners, expose = _a.expose;
+                 var fieldRef = useField();
++                var innerRef = ref(null)
++
++                expose({
++                    getInnerRef: () => innerRef.value?.getInnerRef?.() || innerRef.value
++                })
++
+                 return function () {
+                     var field = fieldRef.value;
+                     return h(field && !isVoidField(field) && field.pattern === 'readPretty'
+@@ -76,6 +89,7 @@ export function mapReadPretty(component, readPrettyProps) {
+                         : target, {
+                         attrs: __assign(__assign({}, readPrettyProps), attrs),
+                         on: listeners,
++                        ref: innerRef
+                     }, slots);
+                 };
+             },
+@@ -104,10 +118,16 @@ export function connect(target) {
+     else {
+         var functionalComponent = defineComponent({
+             name: target.name,
+-            setup: function (props, _a) {
+-                var attrs = _a.attrs, slots = _a.slots;
++            setup: function (props, _a,) {
++                var attrs = _a.attrs, slots = _a.slots, expose = _a.expose;
++                var innerRef = ref(null)
++
++                expose({
++                    getInnerRef: () => innerRef.value?.getInnerRef?.() || innerRef.value
++                })
++
+                 return function () {
+-                    return h(Component, { props: props, attrs: attrs }, slots);
++                    return h(Component, { props: props, attrs: attrs, ref: innerRef }, slots);
+                 };
+             },
+         });

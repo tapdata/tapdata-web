@@ -158,20 +158,10 @@ export default {
           hidden: !this.hasFeature('enhanceJsProcessor'),
         },
         {
-          name: 'Python',
-          type: 'python_processor',
-          beta: true,
-          hidden: !this.hasFeature('pythonProcessor'),
-        },
-        {
-          name: 'Row Filter',
+          name: i18n.t('packages_dag_src_editor_row_filter'),
           type: 'row_filter_processor',
           hidden: !this.hasFeature('rowFilterProcessor'),
         },
-        // {
-        //   name: i18n.t('packages_dag_src_editor_juhe'),
-        //   type: 'aggregation_processor' //聚合节点
-        // }
         {
           name: i18n.t('packages_dag_src_editor_ziduanjisuan'),
           type: 'field_calc_processor',
@@ -289,10 +279,19 @@ export default {
       this.isSaving = true
 
       const errorMsg = await this.validate()
+
       if (errorMsg) {
         this.setMaterializedViewVisible(false)
         if (this.destory) return
         this.$message.error(errorMsg)
+        this.isSaving = false
+        return
+      }
+
+      // 验证数据校验是否支持开启
+      const result = await this.$refs.header.validateDataValidation()
+
+      if (!result) {
         this.isSaving = false
         return
       }
@@ -472,6 +471,8 @@ export default {
           this.$t('packages_dag_page_return_confirm_content'),
           this.$t('packages_dag_page_return_confirm_title'),
           {
+            center: true,
+            customClass: 'pro-confirm',
             type: 'warning',
             closeOnClickModal: false,
             confirmButtonText: this.$t(
@@ -714,6 +715,7 @@ export default {
   <section class="dataflow-editor layout-wrap vh-100">
     <!--头部-->
     <TopHeader
+      ref="header"
       :loading="loading"
       :is-saving="isSaving"
       :dataflow-name="dataflow.name"

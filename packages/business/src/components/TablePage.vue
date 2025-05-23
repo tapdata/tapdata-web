@@ -275,6 +275,7 @@ export default {
           v-if="classify && !hideClassify"
           ref="classification"
           v-model:visible="classificationVisible"
+          class="mt-n2 ml-n2"
           :com-title="classify.comTitle"
           :authority="classify.authority"
           :view-page="classify.viewPage"
@@ -288,16 +289,24 @@ export default {
         />
         <div class="table-page-body gap-4">
           <div class="table-page-nav">
-            <slot name="nav" />
+            <slot name="nav" :open-classify="handleToggleClassify" />
           </div>
           <div class="table-page-topbar">
             <div class="table-page-search-bar flex align-center gap-2">
-              <IconButton
-                v-if="classify && !hideClassify && !classificationVisible"
-                class="rotate-180"
+              <el-button
+                v-if="
+                  classify &&
+                  !hideClassify &&
+                  !classificationVisible &&
+                  !classify.hideIcon
+                "
+                text
                 @click="handleToggleClassify"
-                >expand-list</IconButton
               >
+                <template #icon>
+                  <VIcon>expand-list</VIcon>
+                </template>
+              </el-button>
               <slot name="search" />
             </div>
             <div class="table-page-operation-bar">
@@ -316,13 +325,36 @@ export default {
             :span-method="spanMethod"
             :data="list"
             :default-sort="defaultSort"
-            :draggable="draggable || classificationVisible"
             @selection-change="handleSelectionChange"
             @sort-change="$emit('sortChange', $event)"
             @row-dragstart="handleDragStart"
             @row-dragend="handleDragEnd"
             @select="onSelectRow"
           >
+            <el-table-column
+              v-if="classificationVisible"
+              width="28"
+              align="center"
+              class-name="cell-no-padding"
+            >
+              <template #default="{ row, column }">
+                <el-button
+                  draggable="true"
+                  class="grabbable table-cell-drag-btn"
+                  :class="{
+                    'inline-flex': multipleSelection.includes(row),
+                  }"
+                  text
+                  size="small"
+                  @dragstart="handleDragStart(row, column, $event)"
+                  @dragend="handleDragEnd"
+                >
+                  <template #icon>
+                    <VIcon>drag</VIcon>
+                  </template>
+                </el-button>
+              </template>
+            </el-table-column>
             <slot />
             <template #empty>
               <div class="empty">
@@ -346,6 +378,7 @@ export default {
               <div
                 v-if="multipleSelection.length"
                 class="flex align-center gap-3"
+                style="--btn-space: 0"
               >
                 <ElCheckbox :model-value="true" @change="clearSelection" />
                 <span class="fw-sub text-nowrap color-primary"
@@ -397,6 +430,12 @@ export default {
     display: none;
   }
 
+  .table-page-nav .el-tabs {
+    .el-tabs__header {
+      margin-bottom: 0;
+    }
+  }
+
   .table-page-topbar:has(.table-page-search-bar:empty):has(
       .table-page-operation-bar:empty
     ) {
@@ -433,7 +472,7 @@ export default {
     display: flex;
     flex: 1;
     // padding: 0 20px 20px 20px;
-    overflow: hidden;
+    min-height: 0;
     .table-page-main-box {
       display: flex;
       flex: 1;
@@ -443,17 +482,11 @@ export default {
     }
   }
 
-  .table-page-left {
-    //border-right: 1px solid #ebeef5;
-    // margin-right: 10px;
-  }
-
   .table-page-body {
     flex: 1;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    // background-color: map.get($bgColor, white);
     border-radius: 4px;
     .el-table--border {
       border: none;

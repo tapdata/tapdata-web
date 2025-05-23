@@ -1008,6 +1008,11 @@
   margin-left: 0 !important;
 }
 
+.mx-0\.5 {
+  margin-right: 0.125rem !important;
+  margin-left: 0.125rem !important;
+}
+
 .mx-1 {
   margin-right: 0.25rem !important;
   margin-left: 0.25rem !important;
@@ -1714,6 +1719,10 @@
 .my-n16 {
   margin-top: -4rem !important;
   margin-bottom: -4rem !important;
+}
+
+.mt-n0\.5 {
+  margin-top: -0.125rem !important;
 }
 
 .mt-n1 {
@@ -12538,6 +12547,30 @@
   text-overflow: ellipsis;
 }
 
+.active-primary {
+  background-color: rgb(59 71 229 / 10%) !important;
+  color: map-get($color, primary) !important;
+}
+
+.bg-fill-hover {
+  background-color: rgb(24 24 27 / 5%);
+}
+
+.last\:border-0:last-child {
+  border: 0 !important;
+}
+
+.text-muted-foreground {
+  color: rgb(113 113 122);
+}
+
+.hover\:bg-light:hover {
+  background-color: #f8f9fa !important;
+}
+
+
+
+
 .break-all {
   word-break: break-all;
 }
@@ -12571,4 +12604,14 @@
   background-color: rgb(229 231 235);
 }
 
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
 
+.col-start-1 {
+  grid-column-start: 1;
+}
+
+.col-start-2 {
+  grid-column-start: 2;
+}
