@@ -25,7 +25,7 @@ export default {
         editor: 'MigrateEditor',
         monitor: 'MigrationMonitor',
       },
-      createBtnLoading: false,
+      createLoading: false,
       quickCreateBtnLoading: false,
     }
   },
@@ -135,11 +135,13 @@ export default {
             class="btn btn-create"
             type="primary"
             :disabled="$disabledReadonlyUserBtn()"
-            :loading="createBtnLoading"
+            :loading="createLoading"
             @click="refFn('create')"
           >
             {{ $t('public_task_create') }}
           </el-button>
+
+          createLoading: {{ createLoading }}
         </div>
       </template>
     </template>
@@ -150,6 +152,7 @@ export default {
     <List
       v-else
       ref="list"
+      v-model:create-loading="createLoading"
       class="overflow-hidden bg-white rounded-lg"
       :route="route"
       :task-buried="taskBuried"
