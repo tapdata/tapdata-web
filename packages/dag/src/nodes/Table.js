@@ -201,6 +201,7 @@ export class Table extends NodeType {
                         },
                         'x-component': 'TableSelect',
                         'x-component-props': {
+                          id: 'node-table-select',
                           method: '{{loadTable}}',
                           connectionId: '{{$values.connectionId}}',
                           itemType: 'string',
