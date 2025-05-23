@@ -463,6 +463,7 @@ export default {
           this.$t('packages_dag_page_return_confirm_title'),
           {
             center: true,
+            customClass: 'pro-confirm',
             type: 'warning',
             closeOnClickModal: false,
             confirmButtonText: this.$t(
