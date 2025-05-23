@@ -831,7 +831,10 @@ export default {
           this.setStateReadonly(false)
           this.startLoopTask(id)
           this.initWS()
-          this.checkMaterializedView()
+
+          if (this.dataflow.syncType === 'dataflow') {
+            this.checkMaterializedView()
+          }
         }
 
         this.stopDagWatch = this.$watch(
