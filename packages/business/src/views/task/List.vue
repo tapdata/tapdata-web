@@ -53,6 +53,14 @@ export default {
     route: {},
     taskBuried: {},
     syncType: String,
+    materializedViewLoading: {
+      type: Boolean,
+      default: false,
+    },
+    createLoading: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -566,24 +574,39 @@ export default {
       return tagList
     },
 
-    async create(query) {
+    create() {
       this.buried(this.taskBuried.new)
-      this.createBtnLoading = true
+      this.$emit('update:createLoading', true)
       this.checkAgent(() => {
         this.$router.push({
           name: this.route.new,
-          query,
         })
-      }).catch(() => {
-        this.createBtnLoading = false
-        this.buried(this.taskBuried.newFail)
       })
+        .catch(() => {
+          this.buried(this.taskBuried.newFail)
+        })
+        .finally(() => {
+          this.$emit('update:createLoading', false)
+        })
     },
 
     handleCreateMaterializedView() {
-      this.create({
-        by: 'materialized-view',
+      this.buried(this.taskBuried.new)
+      this.$emit('update:materializedViewLoading', true)
+      this.checkAgent(() => {
+        this.$router.push({
+          name: this.route.new,
+          query: {
+            by: 'materialized-view',
+          },
+        })
       })
+        .catch(() => {
+          this.buried(this.taskBuried.newFail)
+        })
+        .finally(() => {
+          this.$emit('update:materializedViewLoading', false)
+        })
     },
 
     handleEditor(row) {

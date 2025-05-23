@@ -21,7 +21,7 @@ export default {
         editor: 'MigrateEditor',
         monitor: 'MigrationMonitor',
       },
-      createBtnLoading: false,
+      createLoading: false,
     }
   },
 
@@ -72,7 +72,7 @@ export default {
         class="btn btn-create"
         type="primary"
         :disabled="$disabledReadonlyUserBtn()"
-        :loading="createBtnLoading"
+        :loading="createLoading"
         @click="refFn('create')"
       >
         {{ $t('public_task_create') }}
@@ -80,6 +80,7 @@ export default {
     </template>
     <List
       ref="list"
+      v-model:create-loading="createLoading"
       :route="route"
       :task-buried="taskBuried"
       :sync-type="syncType"
