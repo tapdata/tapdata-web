@@ -44,6 +44,46 @@ export default {
     },
   },
 
+  emits: [
+    'page-return',
+    'undo',
+    'redo',
+    'delete',
+    'center-content',
+    'auto-layout',
+    'zoom-out',
+    'zoom-in',
+    'zoom-to',
+    'showSettings',
+    'save',
+    'reset',
+    'detail',
+    'edit',
+    'forceStop',
+    'stop',
+    'start',
+    'change-name',
+    'locate-node',
+    'page-return',
+    'undo',
+    'redo',
+    'delete',
+    'center-content',
+    'auto-layout',
+    'zoom-out',
+    'zoom-in',
+    'zoom-to',
+    'showSettings',
+    'save',
+    'reset',
+    'detail',
+    'edit',
+    'forceStop',
+    'stop',
+    'start',
+    'debugStart',
+  ],
+
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
     return {
@@ -164,45 +204,11 @@ export default {
         this.setSchemaRefreshing(false)
       })
     },
+
+    validateDataValidation() {
+      return this.$refs.dataValidationDialog.validate()
+    },
   },
-  emits: [
-    'page-return',
-    'undo',
-    'redo',
-    'delete',
-    'center-content',
-    'auto-layout',
-    'zoom-out',
-    'zoom-in',
-    'zoom-to',
-    'showSettings',
-    'save',
-    'reset',
-    'detail',
-    'edit',
-    'forceStop',
-    'stop',
-    'start',
-    'change-name',
-    'locate-node',
-    'page-return',
-    'undo',
-    'redo',
-    'delete',
-    'center-content',
-    'auto-layout',
-    'zoom-out',
-    'zoom-in',
-    'zoom-to',
-    'showSettings',
-    'save',
-    'reset',
-    'detail',
-    'edit',
-    'forceStop',
-    'stop',
-    'start',
-  ],
 }
 </script>
 
@@ -553,10 +559,15 @@ export default {
       :task-id="dataflow.id"
       :visible="openDebug"
       @update:visible="openDebug = $event"
-      @start="$emit('debug-start')"
+      @start="$emit('debugStart')"
     />
 
-    <DataValidationDialog v-model="openValidation" :task-id="dataflow.id" />
+    <DataValidationDialog
+      ref="dataValidationDialog"
+      v-model="openValidation"
+      :task-id="dataflow.id"
+      @start="$emit('debugStart')"
+    />
   </header>
 </template>
 

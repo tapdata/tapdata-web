@@ -754,7 +754,6 @@ const mutations = {
 
   setFormSchema(state, schema) {
     state.formSchema = schema
-    console.log('state', state) // eslint-disable-line
   },
 
   /**
@@ -776,7 +775,7 @@ const mutations = {
    * @param id
    */
   clearNodeError(state, id) {
-    delete state.nodeErrorState.id
+    delete state.nodeErrorState[id]
   },
 
   /**

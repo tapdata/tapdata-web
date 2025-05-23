@@ -936,4 +936,8 @@ export default {
   packages_dag_inspect_operation_time: '操作时间',
   packages_dag_inspect_operation_user: '操作人',
   packages_dag_task_inspect_difference_alarm: '任务校验差异告警',
+  packages_dag_task_inspect_enable_fail_1:
+    '数据校验开启失败：仅支持一个源节点和一个目标节点。',
+  packages_dag_task_inspect_enable_fail_2:
+    '数据校验开启失败：源节点和目标节点必须同时具备高级查询能力。',
 }

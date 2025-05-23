@@ -2,6 +2,9 @@
 import { taskInspectApi } from '@tap/api'
 import { useI18n } from '@tap/i18n'
 import { computed, ref, watch } from 'vue'
+import { useStore } from 'vuex'
+
+import type { ElDialog } from 'element-plus'
 
 interface TaskInspectConfig {
   custom: {
@@ -23,16 +26,8 @@ interface TaskInspectConfig {
   mode: 'CLOSE' | 'INTELLIGENT' | 'CUSTOM'
 }
 
+const store = useStore()
 const { t } = useI18n()
-
-interface ValidationSettings {
-  enabled: boolean
-  type: string
-  frequency: {
-    time: number
-    records: number
-  }
-}
 
 interface Props {
   taskId: string
@@ -75,6 +70,10 @@ function handleClose() {
 }
 
 async function handleSave() {
+  if (!validateAllowSave()) {
+    return
+  }
+
   const settings: TaskInspectConfig = {
     mode: validationEnabled.value ? 'CUSTOM' : 'CLOSE',
     custom: {
@@ -111,6 +110,66 @@ function handleCheckChange() {
     recoverEnabled.value = false
   }
 }
+
+const hasCapability = (node, capabilityId) =>
+  node?.attrs?.capabilities?.some(
+    (capability) => capability.id === capabilityId,
+  )
+
+function validateAllowSave() {
+  if (!validationEnabled.value) {
+    return true
+  }
+
+  const sourceNodes = []
+  const targetNodes = []
+  store.getters['dataflow/allNodes'].forEach((node) => {
+    if (node.type === 'table' || node.type === 'database') {
+      if (!node.$inputs.length) {
+        sourceNodes.push(node)
+      }
+      if (!node.$outputs.length) {
+        targetNodes.push(node)
+      }
+    }
+  })
+
+  if (sourceNodes.length !== 1 || targetNodes.length !== 1) {
+    // 源节点和目标节点只能有一个
+    ElMessage.error(t('packages_dag_task_inspect_enable_fail_1'))
+    return false
+  }
+
+  const [sourceNode] = sourceNodes
+  const [targetNode] = targetNodes
+
+  const sourceNodeHasCapability = hasCapability(
+    sourceNode,
+    'query_by_advance_filter_function',
+  )
+  const targetNodeHasCapability = hasCapability(
+    targetNode,
+    'query_by_advance_filter_function',
+  )
+
+  if (!sourceNodeHasCapability || !targetNodeHasCapability) {
+    // 源节点和目标节点必须同时具备查询能力
+    ElMessage.error(t('packages_dag_task_inspect_enable_fail_2'))
+    return false
+  }
+
+  return true
+}
+
+const validate = async () => {
+  await initFormData()
+
+  return validateAllowSave()
+}
+
+defineExpose({
+  validate,
+})
 </script>
 
 <template>

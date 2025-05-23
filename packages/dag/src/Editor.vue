@@ -279,10 +279,19 @@ export default {
       this.isSaving = true
 
       const errorMsg = await this.validate()
+
       if (errorMsg) {
         this.setMaterializedViewVisible(false)
         if (this.destory) return
         this.$message.error(errorMsg)
+        this.isSaving = false
+        return
+      }
+
+      // 验证数据校验是否支持开启
+      const result = await this.$refs.header.validateDataValidation()
+
+      if (!result) {
         this.isSaving = false
         return
       }
@@ -706,6 +715,7 @@ export default {
   <section class="dataflow-editor layout-wrap vh-100">
     <!--头部-->
     <TopHeader
+      ref="header"
       :loading="loading"
       :is-saving="isSaving"
       :dataflow-name="dataflow.name"

@@ -1052,8 +1052,17 @@ export default {
     async save(needStart) {
       this.isSaving = true
       const errorMsg = await this.validate()
+
       if (errorMsg) {
         this.$message.error(errorMsg)
+        this.isSaving = false
+        return
+      }
+
+      // 验证数据校验是否支持开启
+      const result = await this.$refs.header.validateDataValidation()
+
+      if (!result) {
         this.isSaving = false
         return
       }
