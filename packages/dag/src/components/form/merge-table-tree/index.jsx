@@ -426,7 +426,7 @@ export const MergeTableTree = observer(
 
       return () => {
         return (
-          <div class="merge-table-tree-space flex overflow-hidden rounded-4">
+          <div class="merge-table-tree-space flex overflow-hidden rounded-xl">
             <FormItem.BaseItem
               wrapperWidth={240}
               feedbackLayout="none"

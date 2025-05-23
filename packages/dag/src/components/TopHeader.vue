@@ -335,7 +335,7 @@ export default {
                 <kbd>⌘</kbd><span class="mx-1">+</span><kbd>–</kbd>
               </div>
             </div>
-            <VDivider class="my-1" />
+            <el-divider class="my-1" />
             <div
               v-for="val in chooseItems"
               :key="val"
@@ -409,7 +409,7 @@ export default {
         <div class="choose-pane-wrap">
           <ElInput
             v-model="nodeSearchInput"
-            class="input-filled"
+            class="input-filled my-1"
             clearable
             :placeholder="$t('packages_business_custom_node_placeholder')"
           >
@@ -789,7 +789,7 @@ $sidebarBg: #fff;
     min-width: 148px;
     font-size: 12px;
     line-height: 32px;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
 
     &:hover {

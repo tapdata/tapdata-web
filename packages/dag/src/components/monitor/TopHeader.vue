@@ -607,7 +607,7 @@ $sidebarBg: #fff;
     min-width: 148px;
     font-size: 12px;
     line-height: 32px;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
 
     &:hover {
