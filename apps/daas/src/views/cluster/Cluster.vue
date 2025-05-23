@@ -327,7 +327,6 @@ const delServe = (data: any, status: string) => {
       type: 'warning',
       confirmButtonText: t('public_button_confirm'),
       cancelButtonText: t('public_button_cancel'),
-      type: 'warning',
     }).then(() => {
       clusterApi.removeMonitor(params).then(() => {
         getDataApi()
