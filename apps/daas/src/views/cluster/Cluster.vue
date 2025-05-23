@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { agentGroupApi, clusterApi, proxyApi, workerApi } from '@tap/api'
-import { makeDragNodeImage } from '@tap/business'
+import { dayjs, makeDragNodeImage } from '@tap/business'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { FilterBar, IconButton, ProTable, VEmpty } from '@tap/component'
 import { useI18n } from '@tap/i18n'
@@ -9,7 +9,7 @@ import Cookie from '@tap/shared/src/cookie'
 import { h, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import SetTag from '@/views/cluster/SetTag.vue'
-import AddServe from './AddServe'
+import AddServe from './AddServe.vue'
 import { STATUS_MAP } from './const'
 
 const { t } = useI18n()
@@ -91,6 +91,14 @@ interface WorkerData {
 }
 
 interface LogMiningMonitor {
+  timestamp: string
+  pid: number
+  cpuPercent: number
+  memoryPercent: number
+  state: string
+  dataSource: string
+  serviceId: string
+  isAlive: boolean
   id: number
   name: string
   ip: string
@@ -155,7 +163,6 @@ const netStatDialog = reactive<NetStatDialog>({
 })
 const apiServerData = ref([])
 const engineData = ref([])
-console.log('engineData', engineData.value)
 const filterEngineData = ref([])
 const managementData = ref([])
 const tagData = ref([])
@@ -193,45 +200,13 @@ const dragState = reactive<DragState>({
 })
 const draggingNodeImage = ref(null)
 const loading = ref(false)
+const logMiningLoading = ref(false)
+const logMiningData = ref<LogMiningMonitor[]>([])
 
-const logMiningData = ref<LogMiningMonitor[]>([
-  {
-    id: 1,
-    name: '日志挖掘服务监控 1',
-    ip: '192.168.1.888',
-    startTime: '2023-05-20 18:12:14',
-    status: 'running',
-    cpuUsage: '0.13%',
-    memoryUsage: '2.54%',
-  },
-  {
-    id: 2,
-    name: '日志挖掘服务监控 1',
-    ip: '192.168.1.888',
-    startTime: '2023-05-20 18:12:14',
-    status: 'running',
-    cpuUsage: '0.13%',
-    memoryUsage: '2.54%',
-  },
-  {
-    id: 3,
-    name: '日志挖掘服务监控 1',
-    ip: '192.168.1.888',
-    startTime: '2023-05-20 18:12:14',
-    status: 'running',
-    cpuUsage: '0.13%',
-    memoryUsage: '2.54%',
-  },
-  {
-    id: 4,
-    name: '日志挖掘服务监控 1',
-    ip: '192.168.1.888',
-    startTime: '2023-05-20 18:12:14',
-    status: 'running',
-    cpuUsage: '0.13%',
-    memoryUsage: '2.54%',
-  },
-])
+// constants
+const DataSourceMap = {
+  nineBridge: 'Oracle 裸日志',
+} as const
 
 // Watchers
 watch(
@@ -917,14 +892,44 @@ const handleTreeDrop = async (ev: DragEvent, data: any) => {
 function handleLogMiningDetail(item: LogMiningMonitor) {
   // 这里可以实现详情弹窗或跳转
 }
+
+const fetchLogMiningData = async () => {
+  logMiningLoading.value = true
+  const data = await clusterApi.findRawServerInfo()
+
+  logMiningLoading.value = false
+
+  logMiningData.value = data.items.map((item) => {
+    item.timestamp = dayjs(item.timestamp).format('YYYY-MM-DD HH:mm:ss')
+    item.dataSource = DataSourceMap[item.dataSource]
+    item.cpuUsage = (item.reportedData.cpuPercent * 100).toFixed(2)
+    item.memoryUsage = (item.reportedData.memoryPercent * 100).toFixed(2)
+    item.startTime = dayjs(item.reportedData.createTime).format(
+      'YYYY-MM-DD HH:mm:ss',
+    )
+    return item
+  })
+
+  console.log('fetchLogMiningData', data)
+}
+
+const handleTabChange = (tab: string) => {
+  if (tab === 'logMining') {
+    fetchLogMiningData()
+  }
+}
 </script>
 
 <template>
   <PageContainer
     mode="auto"
-    content-class="flex-1 min-h-0 overflow-auto px-6 pb-5 position-relative"
+    content-class="flex-1 min-h-0 overflow-auto px-6 pb-5 position-relative flex flex-column"
   >
-    <el-tabs v-model="viewType" class="position-sticky top-0 z-10 bg-white">
+    <el-tabs
+      v-model="viewType"
+      class="position-sticky top-0 z-10 bg-white"
+      @tab-change="handleTabChange"
+    >
       <el-tab-pane :label="$t('daas_cluster_cluster_view')" name="cluster" />
       <el-tab-pane
         :label="$t('daas_cluster_component_view')"
@@ -933,868 +938,823 @@ function handleLogMiningDetail(item: LogMiningMonitor) {
       <el-tab-pane label="日志挖掘监控" name="logMining" />
     </el-tabs>
 
-    <section class="clusterManagement-container isCardBox overflow-auto">
+    <section class="clusterManagement-container">
       <div class="section-wrap-box">
-        <div class="search-bar mb-4">
+        <div v-if="viewType !== 'logMining'" class="search-bar mb-4">
           <FilterBar
             v-model:value="searchParams"
             :items="filterItems"
             @fetch="getDataApi()"
           />
         </div>
-        <div v-loading="loading" class="main">
-          <template v-if="waterfallData.length && viewType !== 'logMining'">
-            <section v-if="viewType === 'component'">
-              <div class="border rounded-xl mb-4">
-                <div class="flex align-center justify-content-between p-4 py-3">
-                  <span class="section-title font-color-dark fs-6 fw-sub">{{
-                    $t('cluster_sync_gover')
+      </div>
+
+      <div class="main">
+        <section
+          v-if="viewType === 'component'"
+          v-loading="loading"
+          class="content h-100"
+        >
+          <div class="border rounded-xl mb-4">
+            <div class="flex align-center justify-content-between p-4 py-3">
+              <span class="section-title font-color-dark fs-6 fw-sub">{{
+                $t('cluster_sync_gover')
+              }}</span>
+              <ElButton
+                :disabled="!multipleSelection.length"
+                type="primary"
+                @click="openSetTagDialog"
+                >{{ $t('dataExplorer_tag_title') }}</ElButton
+              >
+            </div>
+            <div class="flex border-top">
+              <div class="tag-tree-wrapper border-end p-3 pt-0">
+                <div class="flex align-center mb-2 h-40 gap-0">
+                  <span class="font-color-dark fw-sub flex-1">{{
+                    $t('public_tags')
                   }}</span>
-                  <ElButton
-                    :disabled="!multipleSelection.length"
-                    type="primary"
-                    @click="openSetTagDialog"
-                    >{{ $t('dataExplorer_tag_title') }}</ElButton
-                  >
+                  <IconButton @click="handleSearch">magnify</IconButton>
+                  <IconButton @click="handleAddTag">add</IconButton>
                 </div>
-                <div class="flex border-top">
-                  <div class="tag-tree-wrapper border-end p-3 pt-0">
-                    <div class="flex align-center mb-2 h-40 gap-0">
-                      <span class="font-color-dark fw-sub flex-1">{{
-                        $t('public_tags')
-                      }}</span>
-                      <IconButton @click="handleSearch">magnify</IconButton>
-                      <IconButton @click="handleAddTag">add</IconButton>
-                    </div>
-                    <ElInput
-                      v-if="showSearch"
-                      v-model="tagSearch"
-                      class="search mb-2"
-                      clearable
-                    >
-                      <template #prefix>
-                        <VIcon size="14" class="h-100">magnify</VIcon>
-                      </template>
-                    </ElInput>
-                    <ElTree
-                      ref="tree"
-                      check-strictly
-                      show-checkbox
-                      node-key="groupId"
-                      :props="treeProps"
-                      :data="tagData"
-                      icon-class="p-0 pl-2"
-                      :filter-node-method="handleFilterTag"
-                      class="engine-tag-tree has-dropdown"
-                      @node-click="handleCheckChange"
-                      @check="handleCheck"
-                    >
-                      <template #default="{ node, data }">
-                        <div
-                          class="flex align-center flex-1"
-                          @dragenter.stop="
-                            handleTreeDragEnter($event, data, node)
-                          "
-                          @dragover.stop="
-                            handleTreeDragOver($event, data, node)
-                          "
-                          @dragleave.stop="
-                            handleTreeDragLeave($event, data, node)
-                          "
-                          @drop.stop="handleTreeDrop($event, data, node)"
-                        >
-                          <VIcon size="12" class="color-primary mr-1"
-                            >folder-fill</VIcon
-                          >
-                          <span class="flex-1 text-ellipsis">{{
-                            data.name
-                          }}</span>
-                          <ElDropdown
-                            class="tree-node-dropdown"
-                            @command="handleCommand($event, node)"
-                          >
-                            <IconButton sm @click.stop>more</IconButton>
-                            <template #dropdown>
-                              <ElDropdownMenu>
-                                <ElDropdownItem command="edit">{{
-                                  $t('public_button_edit')
-                                }}</ElDropdownItem>
-                                <ElDropdownItem command="delete">{{
-                                  $t('public_button_delete')
-                                }}</ElDropdownItem>
-                              </ElDropdownMenu>
-                            </template>
-                          </ElDropdown>
-                        </div>
-                      </template>
-                    </ElTree>
-                  </div>
-                  <ProTable
-                    ref="engineTable"
-                    :data="filterEngineData"
-                    row-class-name="grabbable"
-                    row-key="process_id"
-                    draggable
-                    @selection-change="handleSelectionChange"
-                    @row-dragstart="handleDragStart"
-                    @row-dragend="handleDragEnd"
-                  >
-                    <ElTableColumn
-                      type="selection"
-                      width="45"
-                      :reserve-selection="true"
-                    />
-                    <ElTableColumn
-                      :label="$t('daas_cluster_engine_hostname')"
-                      prop="name"
-                    >
-                      <template #default="{ row }">
-                        <div>
-                          {{ row.hostname
-                          }}<span class="ip ml-1">{{ row.ip }}</span>
-                        </div>
-                        <span
-                          v-if="row.tags"
-                          class="justify-content-start ellipsis block"
-                        >
-                          <span
-                            v-for="item in row.tags"
-                            :key="item.id"
-                            class="tag inline-block"
-                            >{{ item.name }}</span
-                          >
-                        </span>
-                      </template>
-                    </ElTableColumn>
-                    <ElTableColumn
-                      :label="$t('daas_cluster_connection_count')"
-                      prop="netStatTotals"
-                    />
-                    <ElTableColumn :label="$t('public_status')" prop="status">
-                      <template #default="{ row }">
-                        <span :class="[`status-${row.status}`, 'status']">{{
-                          getStatus(row.status)
-                        }}</span>
-                      </template>
-                    </ElTableColumn>
-                    <ElTableColumn
-                      :label="$t('cluster_service_status')"
-                      prop="netStatTotals"
-                    >
-                      <template #default="{ row }">
-                        <span
-                          :class="[`status-${row.serviceStatus}`, 'status']"
-                          >{{ getStatus(row.serviceStatus) }}</span
-                        >
-                      </template>
-                    </ElTableColumn>
-                    <ElTableColumn
-                      :label="$t('public_operation')"
-                      prop="netStatTotals"
-                    >
-                      <template #default="{ row }">
-                        <div v-readonlybtn="'Cluster_operation'" class="btn">
-                          <ElButton
-                            text
-                            type="primary"
-                            :disabled="row.status == 'stopped' ? false : true"
-                            @click="startFn(row, row.status, 'engine')"
-                            >{{ $t('public_button_start') }}
-                          </ElButton>
-                          <ElDivider class="mx-1" direction="vertical" />
-                          <ElButton
-                            text
-                            type="primary"
-                            :disabled="row.status == 'running' ? false : true"
-                            @click="closeFn(row, row.status, 'engine')"
-                            >{{ $t('public_button_close') }}
-                          </ElButton>
-                          <ElDivider class="mx-1" direction="vertical" />
-                          <ElButton
-                            text
-                            type="primary"
-                            :disabled="row.status == 'running' ? false : true"
-                            @click="restartFn(row, row.status, 'engine')"
-                            >{{ $t('public_button_restart') }}
-                          </ElButton>
-                          <ElDivider
-                            v-if="bindWorkerMap[row.process_id]"
-                            class="mx-1"
-                            direction="vertical"
-                          />
-                          <ElButton
-                            v-if="bindWorkerMap[row.process_id]"
-                            text
-                            type="primary"
-                            :disabled="row.status == 'stopped' ? false : true"
-                            @click="unbind(row, row.status, 'engine')"
-                            >{{ $t('daas_unbind_license') }}
-                          </ElButton>
-                        </div>
-                      </template>
-                    </ElTableColumn>
-                  </ProTable>
-                </div>
-              </div>
-              <div class="flex gap-4">
-                <div class="flex-1 border rounded-xl p-4">
-                  <div class="flex align-center justify-content-between mb-3">
-                    <span class="section-title font-color-dark fs-6 fw-sub">{{
-                      $t('cluster_manage_sys')
-                    }}</span>
-                  </div>
-                  <ElTable :data="managementData">
-                    <ElTableColumn
-                      :label="$t('daas_cluster_engine_hostname')"
-                      prop="name"
-                    >
-                      <template #default="{ row }">
-                        <div>{{ row.hostname }}</div>
-                        <span class="ip">{{ row.ip }}</span>
-                      </template>
-                    </ElTableColumn>
-                    <ElTableColumn :label="$t('public_status')" prop="status">
-                      <template #default="{ row }">
-                        <span :class="[`status-${row.status}`, 'status']">{{
-                          getStatus(row.status)
-                        }}</span>
-                      </template>
-                    </ElTableColumn>
-                    <ElTableColumn
-                      :label="$t('cluster_service_status')"
-                      prop="netStatTotals"
-                    >
-                      <template #default="{ row }">
-                        <span
-                          :class="[`status-${row.serviceStatus}`, 'status']"
-                          >{{ getStatus(row.serviceStatus) }}</span
-                        >
-                      </template>
-                    </ElTableColumn>
-                    <ElTableColumn
-                      :label="$t('public_operation')"
-                      prop="netStatTotals"
-                    >
-                      <template #default="{ row }">
-                        <div v-readonlybtn="'Cluster_operation'" class="btn">
-                          <ElButton
-                            text
-                            type="primary"
-                            :disabled="row.status == 'stopped' ? false : true"
-                            @click="
-                              startFn(row, row.status, 'management', 'start')
-                            "
-                            >{{ $t('public_button_start') }}
-                          </ElButton>
-                          <ElDivider direction="vertical" />
-                          <ElButton
-                            text
-                            type="primary"
-                            :disabled="row.status == 'running' ? false : true"
-                            @click="
-                              closeFn(row, row.status, 'management', 'stop')
-                            "
-                            >{{ $t('public_button_close') }}
-                          </ElButton>
-                          <ElDivider direction="vertical" />
-                          <ElButton
-                            text
-                            type="primary"
-                            :disabled="row.status == 'running' ? false : true"
-                            @click="
-                              restartFn(
-                                row,
-                                row.status,
-                                'management',
-                                'restart',
-                              )
-                            "
-                            >{{ $t('public_button_restart') }}
-                          </ElButton>
-                        </div>
-                      </template>
-                    </ElTableColumn>
-                  </ElTable>
-                </div>
-                <div class="flex-1 border rounded-xl p-4">
-                  <div class="flex align-center justify-content-between mb-3">
-                    <span class="section-title font-color-dark fs-6 fw-sub"
-                      >API server</span
-                    >
-                  </div>
-                  <ElTable :data="apiServerData">
-                    <ElTableColumn
-                      :label="$t('daas_cluster_engine_hostname')"
-                      prop="name"
-                    >
-                      <template #default="{ row }">
-                        <div>{{ row.hostname }}</div>
-                        <span class="ip">{{ row.ip }}</span>
-                      </template>
-                    </ElTableColumn>
-                    <ElTableColumn :label="$t('public_status')" prop="status">
-                      <template #default="{ row }">
-                        <span :class="[`status-${row.status}`, 'status']">{{
-                          getStatus(row.status)
-                        }}</span>
-                      </template>
-                    </ElTableColumn>
-                    <ElTableColumn
-                      :label="$t('cluster_service_status')"
-                      prop="netStatTotals"
-                    >
-                      <template #default="{ row }">
-                        <span
-                          :class="[`status-${row.serviceStatus}`, 'status']"
-                          >{{ getStatus(row.serviceStatus) }}</span
-                        >
-                      </template>
-                    </ElTableColumn>
-                    <ElTableColumn
-                      :label="$t('public_operation')"
-                      prop="netStatTotals"
-                    >
-                      <template #default="{ row }">
-                        <div v-readonlybtn="'Cluster_operation'" class="btn">
-                          <ElButton
-                            text
-                            type="primary"
-                            :disabled="row.status == 'stopped' ? false : true"
-                            @click="startFn(row, row.status, 'apiServer')"
-                            >{{ $t('public_button_start') }}
-                          </ElButton>
-                          <ElDivider direction="vertical" />
-                          <ElButton
-                            text
-                            type="primary"
-                            :disabled="row.status == 'running' ? false : true"
-                            @click="closeFn(row, row.status, 'apiServer')"
-                            >{{ $t('public_button_close') }}
-                          </ElButton>
-                          <ElDivider direction="vertical" />
-                          <ElButton
-                            text
-                            type="primary"
-                            :disabled="row.status == 'running' ? false : true"
-                            @click="restartFn(row, row.status, 'apiServer')"
-                            >{{ $t('public_button_restart') }}
-                          </ElButton>
-                        </div>
-                      </template>
-                    </ElTableColumn>
-                  </ElTable>
-                </div>
-              </div>
-            </section>
-            <div v-else class="content">
-              <el-row class="waterfall" :gutter="24" style="row-gap: 24px">
-                <el-col
-                  v-for="item in waterfallData"
-                  :key="item.id"
-                  class="list"
-                  :md="12"
-                  :sm="24"
+                <ElInput
+                  v-if="showSearch"
+                  v-model="tagSearch"
+                  class="search mb-2"
+                  clearable
                 >
-                  <div class="grid-content list-box border rounded-xl">
-                    <div class="list-box-header">
-                      <div class="list-box-header-left">
-                        <img
-                          class="mr-4 rounded-xl"
-                          src="../../assets/images/serve.svg"
-                        />
-                        <i
-                          class="circular mr-2 mt-2"
-                          :class="
-                            item.status !== 'running' ? 'bgred' : 'bggreen'
-                          "
-                        />
-                        <div class="list-box-header-main">
-                          <h2 class="name fs-6">
-                            {{ item.agentName || item.systemInfo.hostname }}
-                          </h2>
-                          <div class="uuid fs-8 my-1">
-                            {{ item.systemInfo.uuid }}
-                          </div>
-                          <span class="ip">{{
-                            item.custIP ? item.custIP : item.systemInfo.ip
-                          }}</span>
-                        </div>
-                      </div>
-                      <div
-                        v-readonlybtn="'Cluster_operation'"
-                        class="operation-bar flex align-self-start align-center"
+                  <template #prefix>
+                    <VIcon size="14" class="h-100">magnify</VIcon>
+                  </template>
+                </ElInput>
+                <ElTree
+                  ref="tree"
+                  check-strictly
+                  show-checkbox
+                  node-key="groupId"
+                  :props="treeProps"
+                  :data="tagData"
+                  icon-class="p-0 pl-2"
+                  :filter-node-method="handleFilterTag"
+                  class="engine-tag-tree has-dropdown"
+                  @node-click="handleCheckChange"
+                  @check="handleCheck"
+                >
+                  <template #default="{ node, data }">
+                    <div
+                      class="flex align-center flex-1"
+                      @dragenter.stop="handleTreeDragEnter($event, data, node)"
+                      @dragover.stop="handleTreeDragOver($event, data, node)"
+                      @dragleave.stop="handleTreeDragLeave($event, data, node)"
+                      @drop.stop="handleTreeDrop($event, data, node)"
+                    >
+                      <VIcon size="12" class="color-primary mr-1"
+                        >folder-fill</VIcon
                       >
+                      <span class="flex-1 text-ellipsis">{{ data.name }}</span>
+                      <ElDropdown
+                        class="tree-node-dropdown"
+                        @command="handleCommand($event, node)"
+                      >
+                        <IconButton sm @click.stop>more</IconButton>
+                        <template #dropdown>
+                          <ElDropdownMenu>
+                            <ElDropdownItem command="edit">{{
+                              $t('public_button_edit')
+                            }}</ElDropdownItem>
+                            <ElDropdownItem command="delete">{{
+                              $t('public_button_delete')
+                            }}</ElDropdownItem>
+                          </ElDropdownMenu>
+                        </template>
+                      </ElDropdown>
+                    </div>
+                  </template>
+                </ElTree>
+              </div>
+              <ProTable
+                ref="engineTable"
+                :data="filterEngineData"
+                row-class-name="grabbable"
+                row-key="process_id"
+                draggable
+                @selection-change="handleSelectionChange"
+                @row-dragstart="handleDragStart"
+                @row-dragend="handleDragEnd"
+              >
+                <ElTableColumn
+                  type="selection"
+                  width="32"
+                  align="center"
+                  :reserve-selection="true"
+                />
+                <ElTableColumn
+                  :label="$t('daas_cluster_engine_hostname')"
+                  prop="name"
+                >
+                  <template #default="{ row }">
+                    <div>
+                      {{ row.hostname
+                      }}<span class="ip ml-1">{{ row.ip }}</span>
+                    </div>
+                    <span
+                      v-if="row.tags"
+                      class="justify-content-start ellipsis block"
+                    >
+                      <span
+                        v-for="item in row.tags"
+                        :key="item.id"
+                        class="tag inline-block"
+                        >{{ item.name }}</span
+                      >
+                    </span>
+                  </template>
+                </ElTableColumn>
+                <ElTableColumn
+                  :label="$t('daas_cluster_connection_count')"
+                  prop="netStatTotals"
+                />
+                <ElTableColumn :label="$t('public_status')" prop="status">
+                  <template #default="{ row }">
+                    <span :class="[`status-${row.status}`, 'status']">{{
+                      getStatus(row.status)
+                    }}</span>
+                  </template>
+                </ElTableColumn>
+                <ElTableColumn
+                  :label="$t('cluster_service_status')"
+                  prop="netStatTotals"
+                >
+                  <template #default="{ row }">
+                    <span :class="[`status-${row.serviceStatus}`, 'status']">{{
+                      getStatus(row.serviceStatus)
+                    }}</span>
+                  </template>
+                </ElTableColumn>
+                <ElTableColumn
+                  :label="$t('public_operation')"
+                  prop="netStatTotals"
+                >
+                  <template #default="{ row }">
+                    <div v-readonlybtn="'Cluster_operation'" class="btn">
+                      <ElButton
+                        text
+                        type="primary"
+                        :disabled="row.status == 'stopped' ? false : true"
+                        @click="startFn(row, row.status, 'engine')"
+                        >{{ $t('public_button_start') }}
+                      </ElButton>
+                      <ElDivider class="mx-1" direction="vertical" />
+                      <ElButton
+                        text
+                        type="primary"
+                        :disabled="row.status == 'running' ? false : true"
+                        @click="closeFn(row, row.status, 'engine')"
+                        >{{ $t('public_button_close') }}
+                      </ElButton>
+                      <ElDivider class="mx-1" direction="vertical" />
+                      <ElButton
+                        text
+                        type="primary"
+                        :disabled="row.status == 'running' ? false : true"
+                        @click="restartFn(row, row.status, 'engine')"
+                        >{{ $t('public_button_restart') }}
+                      </ElButton>
+                      <ElDivider
+                        v-if="bindWorkerMap[row.process_id]"
+                        class="mx-1"
+                        direction="vertical"
+                      />
+                      <ElButton
+                        v-if="bindWorkerMap[row.process_id]"
+                        text
+                        type="primary"
+                        :disabled="row.status == 'stopped' ? false : true"
+                        @click="unbind(row, row.status, 'engine')"
+                        >{{ $t('daas_unbind_license') }}
+                      </ElButton>
+                    </div>
+                  </template>
+                </ElTableColumn>
+              </ProTable>
+            </div>
+          </div>
+          <div class="flex gap-4">
+            <div class="flex-1 border rounded-xl p-4">
+              <div class="flex align-center justify-content-between mb-3">
+                <span class="section-title font-color-dark fs-6 fw-sub">{{
+                  $t('cluster_manage_sys')
+                }}</span>
+              </div>
+              <ElTable :data="managementData">
+                <ElTableColumn
+                  :label="$t('daas_cluster_engine_hostname')"
+                  prop="name"
+                >
+                  <template #default="{ row }">
+                    <div>{{ row.hostname }}</div>
+                    <span class="ip">{{ row.ip }}</span>
+                  </template>
+                </ElTableColumn>
+                <ElTableColumn :label="$t('public_status')" prop="status">
+                  <template #default="{ row }">
+                    <span :class="[`status-${row.status}`, 'status']">{{
+                      getStatus(row.status)
+                    }}</span>
+                  </template>
+                </ElTableColumn>
+                <ElTableColumn
+                  :label="$t('cluster_service_status')"
+                  prop="netStatTotals"
+                >
+                  <template #default="{ row }">
+                    <span :class="[`status-${row.serviceStatus}`, 'status']">{{
+                      getStatus(row.serviceStatus)
+                    }}</span>
+                  </template>
+                </ElTableColumn>
+                <ElTableColumn
+                  :label="$t('public_operation')"
+                  prop="netStatTotals"
+                >
+                  <template #default="{ row }">
+                    <div v-readonlybtn="'Cluster_operation'" class="btn">
+                      <ElButton
+                        text
+                        type="primary"
+                        :disabled="row.status == 'stopped' ? false : true"
+                        @click="startFn(row, row.status, 'management', 'start')"
+                        >{{ $t('public_button_start') }}
+                      </ElButton>
+                      <ElDivider direction="vertical" />
+                      <ElButton
+                        text
+                        type="primary"
+                        :disabled="row.status == 'running' ? false : true"
+                        @click="closeFn(row, row.status, 'management', 'stop')"
+                        >{{ $t('public_button_close') }}
+                      </ElButton>
+                      <ElDivider direction="vertical" />
+                      <ElButton
+                        text
+                        type="primary"
+                        :disabled="row.status == 'running' ? false : true"
+                        @click="
+                          restartFn(row, row.status, 'management', 'restart')
+                        "
+                        >{{ $t('public_button_restart') }}
+                      </ElButton>
+                    </div>
+                  </template>
+                </ElTableColumn>
+              </ElTable>
+            </div>
+            <div class="flex-1 border rounded-xl p-4">
+              <div class="flex align-center justify-content-between mb-3">
+                <span class="section-title font-color-dark fs-6 fw-sub"
+                  >API server</span
+                >
+              </div>
+              <ElTable :data="apiServerData">
+                <ElTableColumn
+                  :label="$t('daas_cluster_engine_hostname')"
+                  prop="name"
+                >
+                  <template #default="{ row }">
+                    <div>{{ row.hostname }}</div>
+                    <span class="ip">{{ row.ip }}</span>
+                  </template>
+                </ElTableColumn>
+                <ElTableColumn :label="$t('public_status')" prop="status">
+                  <template #default="{ row }">
+                    <span :class="[`status-${row.status}`, 'status']">{{
+                      getStatus(row.status)
+                    }}</span>
+                  </template>
+                </ElTableColumn>
+                <ElTableColumn
+                  :label="$t('cluster_service_status')"
+                  prop="netStatTotals"
+                >
+                  <template #default="{ row }">
+                    <span :class="[`status-${row.serviceStatus}`, 'status']">{{
+                      getStatus(row.serviceStatus)
+                    }}</span>
+                  </template>
+                </ElTableColumn>
+                <ElTableColumn
+                  :label="$t('public_operation')"
+                  prop="netStatTotals"
+                >
+                  <template #default="{ row }">
+                    <div v-readonlybtn="'Cluster_operation'" class="btn">
+                      <ElButton
+                        text
+                        type="primary"
+                        :disabled="row.status == 'stopped' ? false : true"
+                        @click="startFn(row, row.status, 'apiServer')"
+                        >{{ $t('public_button_start') }}
+                      </ElButton>
+                      <ElDivider direction="vertical" />
+                      <ElButton
+                        text
+                        type="primary"
+                        :disabled="row.status == 'running' ? false : true"
+                        @click="closeFn(row, row.status, 'apiServer')"
+                        >{{ $t('public_button_close') }}
+                      </ElButton>
+                      <ElDivider direction="vertical" />
+                      <ElButton
+                        text
+                        type="primary"
+                        :disabled="row.status == 'running' ? false : true"
+                        @click="restartFn(row, row.status, 'apiServer')"
+                        >{{ $t('public_button_restart') }}
+                      </ElButton>
+                    </div>
+                  </template>
+                </ElTableColumn>
+              </ElTable>
+            </div>
+          </div>
+        </section>
+        <div
+          v-else-if="viewType === 'cluster'"
+          v-loading="loading"
+          class="content h-100"
+        >
+          <el-row
+            v-if="waterfallData.length"
+            class="waterfall"
+            :gutter="24"
+            style="row-gap: 24px"
+          >
+            <el-col
+              v-for="item in waterfallData"
+              :key="item.id"
+              class="list"
+              :md="12"
+              :sm="24"
+            >
+              <div class="grid-content list-box border rounded-xl">
+                <div class="list-box-header">
+                  <div class="list-box-header-left">
+                    <img
+                      class="mr-4 rounded-xl"
+                      src="../../assets/images/serve.svg"
+                    />
+                    <i
+                      class="circular mr-2 mt-2"
+                      :class="item.status !== 'running' ? 'bgred' : 'bggreen'"
+                    />
+                    <div class="list-box-header-main">
+                      <h2 class="name fs-6">
+                        {{ item.agentName || item.systemInfo.hostname }}
+                      </h2>
+                      <div class="uuid fs-8 my-1">
+                        {{ item.systemInfo.uuid }}
+                      </div>
+                      <span class="ip">{{
+                        item.custIP ? item.custIP : item.systemInfo.ip
+                      }}</span>
+                    </div>
+                  </div>
+                  <div
+                    v-readonlybtn="'Cluster_operation'"
+                    class="operation-bar flex align-self-start align-center"
+                  >
+                    <ElButton
+                      v-if="item.canUpdate"
+                      type="danger"
+                      @click="
+                        updateFn(
+                          item,
+                          item.management.status,
+                          'management',
+                          'update',
+                        )
+                      "
+                      >{{ $t('cluster_update') }}
+                    </ElButton>
+                    <template
+                      v-if="item.engine.status === 'running' && !hideDownload"
+                    >
+                      <el-tooltip
+                        :content="$t('instance_details_xianchengziyuanxia')"
+                        placement="top"
+                      >
+                        <el-button
+                          text
+                          size="small"
+                          type="primary"
+                          @click="downServeFn(item)"
+                        >
+                          <template #icon>
+                            <VIcon>connectors</VIcon>
+                          </template>
+                        </el-button>
+                      </el-tooltip>
+                      <el-tooltip
+                        :content="$t('instance_details_shujuyuanziyuan')"
+                        placement="top"
+                      >
+                        <el-button
+                          text
+                          size="small"
+                          type="primary"
+                          @click="downConnectorsFn(item)"
+                        >
+                          <template #icon>
+                            <VIcon>supervisor</VIcon>
+                          </template>
+                        </el-button>
+                      </el-tooltip>
+                    </template>
+
+                    <el-button
+                      text
+                      size="small"
+                      type="primary"
+                      @click="addServeFn(item)"
+                    >
+                      <template #icon>
+                        <VIcon>bg-add</VIcon>
+                      </template>
+                    </el-button>
+
+                    <el-button
+                      text
+                      size="small"
+                      type="primary"
+                      @click="editAgent(item)"
+                    >
+                      <template #icon>
+                        <VIcon>cluster-setting</VIcon>
+                      </template>
+                    </el-button>
+                    <template v-if="item.status !== 'running'">
+                      <ElDivider direction="vertical" />
+                      <ElButton text type="danger" @click="delConfirm(item)">{{
+                        $t('public_button_delete')
+                      }}</ElButton>
+                    </template>
+                  </div>
+                </div>
+                <div v-if="item.metricValues" class="list-box-main">
+                  <div class="usageRate">
+                    <div class="fs-5 pb-1 fw-bolder">
+                      {{ item.metricValues.CpuUsage }}
+                    </div>
+                    {{ $t('cluster_cpu_usage') }}
+                  </div>
+                  <div class="line" />
+                  <div class="usageRate">
+                    <div class="fs-5 pb-1 fw-bolder">
+                      {{ item.metricValues.HeapMemoryUsage }}
+                    </div>
+                    {{ $t('cluster_heap_memory_usage') }}
+                  </div>
+                </div>
+                <!-- 监控数据 -->
+                <div class="list-box-footer">
+                  <el-row :gutter="16" class="list-box-footer-header">
+                    <el-col :span="6">
+                      <span class="txt fw-sub">{{ $t('cluster_name') }}</span>
+                    </el-col>
+                    <el-col :span="4">
+                      <span class="txt fw-sub">{{ $t('cluster_status') }}</span>
+                    </el-col>
+                    <el-col :span="4">
+                      <span class="txt fw-sub">{{
+                        $t('cluster_service_status')
+                      }}</span>
+                    </el-col>
+                    <el-col :span="10">
+                      <div class="btn txt fw-sub">
+                        {{ $t('public_operation') }}
+                      </div>
+                    </el-col>
+                  </el-row>
+                  <el-row :gutter="16" class="data-list">
+                    <el-col :span="6">
+                      <span class="txt fw-normal">{{
+                        $t('cluster_manage_sys')
+                      }}</span>
+                    </el-col>
+                    <el-col :span="4">
+                      <span
+                        :class="[`status-${item.management.status}`, 'status']"
+                        >{{ getStatus(item.management.status) }}</span
+                      >
+                    </el-col>
+                    <el-col :span="4">
+                      <span
+                        :class="[
+                          `status-${item.management.serviceStatus}`,
+                          'status',
+                        ]"
+                        >{{ getStatus(item.management.serviceStatus) }}</span
+                      >
+                    </el-col>
+                    <el-col :span="10">
+                      <div v-readonlybtn="'Cluster_operation'" class="btn">
                         <ElButton
-                          v-if="item.canUpdate"
-                          type="danger"
+                          text
+                          type="primary"
+                          :disabled="
+                            item.management.status == 'stopped' ? false : true
+                          "
                           @click="
-                            updateFn(
+                            startFn(
                               item,
                               item.management.status,
                               'management',
-                              'update',
+                              'start',
                             )
                           "
-                          >{{ $t('cluster_update') }}
+                          >{{ $t('public_button_start') }}
                         </ElButton>
-                        <template
-                          v-if="
-                            item.engine.status === 'running' && !hideDownload
+                        <ElDivider direction="vertical" />
+                        <ElButton
+                          text
+                          type="primary"
+                          :disabled="
+                            item.management.status == 'running' ? false : true
                           "
-                        >
-                          <el-tooltip
-                            :content="$t('instance_details_xianchengziyuanxia')"
-                            placement="top"
-                          >
-                            <el-button
-                              text
-                              size="small"
-                              type="primary"
-                              @click="downServeFn(item)"
-                            >
-                              <template #icon>
-                                <VIcon>connectors</VIcon>
-                              </template>
-                            </el-button>
-                          </el-tooltip>
-                          <el-tooltip
-                            :content="$t('instance_details_shujuyuanziyuan')"
-                            placement="top"
-                          >
-                            <el-button
-                              text
-                              size="small"
-                              type="primary"
-                              @click="downConnectorsFn(item)"
-                            >
-                              <template #icon>
-                                <VIcon>supervisor</VIcon>
-                              </template>
-                            </el-button>
-                          </el-tooltip>
-                        </template>
-
-                        <el-button
+                          @click="
+                            closeFn(
+                              item,
+                              item.management.status,
+                              'management',
+                              'stop',
+                            )
+                          "
+                          >{{ $t('public_button_close') }}
+                        </ElButton>
+                        <ElDivider direction="vertical" />
+                        <ElButton
                           text
-                          size="small"
                           type="primary"
-                          @click="addServeFn(item)"
-                        >
-                          <template #icon>
-                            <VIcon>bg-add</VIcon>
-                          </template>
-                        </el-button>
-
-                        <el-button
-                          text
-                          size="small"
-                          type="primary"
-                          @click="editAgent(item)"
-                        >
-                          <template #icon>
-                            <VIcon>cluster-setting</VIcon>
-                          </template>
-                        </el-button>
-                        <template v-if="item.status !== 'running'">
-                          <ElDivider direction="vertical" />
-                          <ElButton
-                            text
-                            type="danger"
-                            @click="delConfirm(item)"
-                            >{{ $t('public_button_delete') }}</ElButton
-                          >
-                        </template>
+                          :disabled="
+                            item.management.status == 'running' ? false : true
+                          "
+                          @click="
+                            restartFn(
+                              item,
+                              item.management.status,
+                              'management',
+                              'restart',
+                            )
+                          "
+                          >{{ $t('public_button_restart') }}
+                        </ElButton>
                       </div>
-                    </div>
-                    <div v-if="item.metricValues" class="list-box-main">
-                      <div class="usageRate">
-                        <div class="fs-5 pb-1 fw-bolder">
-                          {{ item.metricValues.CpuUsage }}
-                        </div>
-                        {{ $t('cluster_cpu_usage') }}
-                      </div>
-                      <div class="line" />
-                      <div class="usageRate">
-                        <div class="fs-5 pb-1 fw-bolder">
-                          {{ item.metricValues.HeapMemoryUsage }}
-                        </div>
-                        {{ $t('cluster_heap_memory_usage') }}
-                      </div>
-                    </div>
-                    <!-- 监控数据 -->
-                    <div class="list-box-footer">
-                      <el-row :gutter="16" class="list-box-footer-header">
-                        <el-col :span="6">
-                          <span class="txt fw-sub">{{
-                            $t('cluster_name')
-                          }}</span>
-                        </el-col>
-                        <el-col :span="4">
-                          <span class="txt fw-sub">{{
-                            $t('cluster_status')
-                          }}</span>
-                        </el-col>
-                        <el-col :span="4">
-                          <span class="txt fw-sub">{{
-                            $t('cluster_service_status')
-                          }}</span>
-                        </el-col>
-                        <el-col :span="10">
-                          <div class="btn txt fw-sub">
-                            {{ $t('public_operation') }}
-                          </div>
-                        </el-col>
-                      </el-row>
-                      <el-row :gutter="16" class="data-list">
-                        <el-col :span="6">
-                          <span class="txt fw-normal">{{
-                            $t('cluster_manage_sys')
-                          }}</span>
-                        </el-col>
-                        <el-col :span="4">
-                          <span
-                            :class="[
-                              `status-${item.management.status}`,
-                              'status',
-                            ]"
-                            >{{ getStatus(item.management.status) }}</span
-                          >
-                        </el-col>
-                        <el-col :span="4">
-                          <span
-                            :class="[
-                              `status-${item.management.serviceStatus}`,
-                              'status',
-                            ]"
-                            >{{
-                              getStatus(item.management.serviceStatus)
-                            }}</span
-                          >
-                        </el-col>
-                        <el-col :span="10">
-                          <div v-readonlybtn="'Cluster_operation'" class="btn">
-                            <ElButton
-                              text
-                              type="primary"
-                              :disabled="
-                                item.management.status == 'stopped'
-                                  ? false
-                                  : true
-                              "
-                              @click="
-                                startFn(
-                                  item,
-                                  item.management.status,
-                                  'management',
-                                  'start',
-                                )
-                              "
-                              >{{ $t('public_button_start') }}
-                            </ElButton>
-                            <ElDivider direction="vertical" />
-                            <ElButton
-                              text
-                              type="primary"
-                              :disabled="
-                                item.management.status == 'running'
-                                  ? false
-                                  : true
-                              "
-                              @click="
-                                closeFn(
-                                  item,
-                                  item.management.status,
-                                  'management',
-                                  'stop',
-                                )
-                              "
-                              >{{ $t('public_button_close') }}
-                            </ElButton>
-                            <ElDivider direction="vertical" />
-                            <ElButton
-                              text
-                              type="primary"
-                              :disabled="
-                                item.management.status == 'running'
-                                  ? false
-                                  : true
-                              "
-                              @click="
-                                restartFn(
-                                  item,
-                                  item.management.status,
-                                  'management',
-                                  'restart',
-                                )
-                              "
-                              >{{ $t('public_button_restart') }}
-                            </ElButton>
-                          </div>
-                        </el-col>
-                      </el-row>
-                      <el-row :gutter="16" class="data-list">
-                        <el-col :span="6">
-                          <span class="txt fw-normal">{{
-                            $t('cluster_sync_gover')
-                          }}</span>
-                        </el-col>
-                        <el-col :span="4">
-                          <span
-                            :class="[`status-${item.engine.status}`, 'status']"
-                            >{{ getStatus(item.engine.status) }}</span
-                          >
-                        </el-col>
-                        <el-col :span="4">
-                          <span
-                            :class="[
-                              `status-${item.engine.serviceStatus}`,
-                              'status',
-                            ]"
-                            >{{ getStatus(item.engine.serviceStatus) }}</span
-                          >
-                        </el-col>
-                        <el-col :span="10">
-                          <div v-readonlybtn="'Cluster_operation'" class="btn">
-                            <ElButton
-                              text
-                              type="primary"
-                              :disabled="
-                                item.engine.status == 'stopped' ? false : true
-                              "
-                              @click="
-                                startFn(item, item.engine.status, 'engine')
-                              "
-                              >{{ $t('public_button_start') }}
-                            </ElButton>
-                            <ElDivider direction="vertical" />
-                            <ElButton
-                              text
-                              type="primary"
-                              :disabled="
-                                item.engine.status == 'running' ? false : true
-                              "
-                              @click="
-                                closeFn(item, item.engine.status, 'engine')
-                              "
-                              >{{ $t('public_button_close') }}
-                            </ElButton>
-                            <ElDivider direction="vertical" />
-                            <ElButton
-                              text
-                              type="primary"
-                              :disabled="
-                                item.engine.status == 'running' ? false : true
-                              "
-                              @click="
-                                restartFn(item, item.engine.status, 'engine')
-                              "
-                              >{{ $t('public_button_restart') }}
-                            </ElButton>
-                            <ElDivider
-                              v-if="bindWorkerMap[item.systemInfo.process_id]"
-                              direction="vertical"
-                            />
-                            <ElButton
-                              v-if="bindWorkerMap[item.systemInfo.process_id]"
-                              text
-                              type="primary"
-                              :disabled="
-                                item.engine.status == 'stopped' ? false : true
-                              "
-                              @click="
-                                unbind(item, item.engine.status, 'engine')
-                              "
-                              >{{ $t('daas_unbind_license') }}
-                            </ElButton>
-                          </div>
-                        </el-col>
-                      </el-row>
-                      <el-row :gutter="16" class="data-list">
-                        <el-col :span="6">
-                          <span class="txt fw-normal">API server</span>
-                        </el-col>
-                        <el-col :span="4">
-                          <span
-                            :class="[
-                              `status-${item.apiServer.status}`,
-                              'status',
-                            ]"
-                            >{{ getStatus(item.apiServer.status) }}</span
-                          >
-                        </el-col>
-                        <el-col :span="4">
-                          <span
-                            :class="[
-                              `status-${item.apiServer.serviceStatus}`,
-                              'status',
-                            ]"
-                            >{{ getStatus(item.apiServer.status) }}</span
-                          >
-                        </el-col>
-                        <el-col :span="10">
-                          <div v-readonlybtn="'Cluster_operation'" class="btn">
-                            <ElButton
-                              text
-                              type="primary"
-                              :disabled="
-                                item.apiServer.status == 'stopped'
-                                  ? false
-                                  : true
-                              "
-                              @click="
-                                startFn(
-                                  item,
-                                  item.apiServer.status,
-                                  'apiServer',
-                                )
-                              "
-                              >{{ $t('public_button_start') }}
-                            </ElButton>
-                            <ElDivider direction="vertical" />
-                            <ElButton
-                              text
-                              type="primary"
-                              :disabled="
-                                item.apiServer.status == 'running'
-                                  ? false
-                                  : true
-                              "
-                              @click="
-                                closeFn(
-                                  item,
-                                  item.apiServer.status,
-                                  'apiServer',
-                                )
-                              "
-                              >{{ $t('public_button_close') }}
-                            </ElButton>
-                            <ElDivider direction="vertical" />
-                            <ElButton
-                              text
-                              type="primary"
-                              :disabled="
-                                item.apiServer.status == 'running'
-                                  ? false
-                                  : true
-                              "
-                              @click="
-                                restartFn(
-                                  item,
-                                  item.apiServer.status,
-                                  'apiServer',
-                                )
-                              "
-                              >{{ $t('public_button_restart') }}
-                            </ElButton>
-                          </div>
-                        </el-col>
-                      </el-row>
-                      <el-row
-                        v-for="child in item.customMonitorStatus"
-                        :key="child.id"
-                        :gutter="16"
-                        class="data-list"
-                      >
-                        <el-col :span="6">
-                          <span class="txt">{{ child.name }}</span>
-                        </el-col>
-                        <el-col :span="4">
-                          <span :class="child.status">{{ child.status }}</span>
-                        </el-col>
-                        <el-col :span="4">
-                          <span :class="child.status">{{ child.status }}</span>
-                        </el-col>
-                        <el-col v-readonlybtn="'Cluster_operation'" :md="10">
-                          <div class="btn">
-                            <ElButton
-                              text
-                              type="primary"
-                              @click="delServe(child, item.status)"
-                              >{{ $t('public_button_delete') }}
-                            </ElButton>
-                            <ElDivider direction="vertical" />
-                            <ElButton
-                              text
-                              type="primary"
-                              @click="editServe(child, item.status, item)"
-                              >{{ $t('public_button_edit') }}
-                            </ElButton>
-                          </div>
-                        </el-col>
-                      </el-row>
-                    </div>
-                    <div
-                      class="fs-6 font-color-dark flex align-center justify-content-between p-4 pt-2"
-                    >
-                      <span
-                        >{{ $t('daas_cluster_cluster_lianjiezongshu') }}:
-                        {{
-                          item.engine ? item.engine.netStatTotals || 0 : 0
-                        }}</span
-                      >
-                      <el-button type="primary" @click="openNetStatDialog(item)"
-                        >{{ $t('public_view_details') }}
-                      </el-button>
-                    </div>
-                  </div>
-                </el-col>
-              </el-row>
-            </div>
-          </template>
-          <div v-else-if="viewType === 'logMining'" class="content">
-            <el-row class="waterfall" :gutter="24" style="row-gap: 24px">
-              <el-col
-                v-for="item in logMiningData"
-                :key="item.id"
-                class="list"
-                :md="12"
-                :sm="24"
-              >
-                <div class="grid-content list-box border rounded-xl">
-                  <div class="list-box-header">
-                    <div class="list-box-header-left">
-                      <img
-                        class="mr-4 rounded-xl"
-                        src="../../assets/images/serve.svg"
-                      />
-                      <i
-                        class="circular mr-2 mt-2"
-                        :class="item.status !== 'running' ? 'bgred' : 'bggreen'"
-                      />
-                      <div class="list-box-header-main">
-                        <h2 class="name fs-6">{{ item.name }}</h2>
-                        <span class="ip">{{ item.ip }}</span>
-                      </div>
-                    </div>
-                    <div
-                      class="flex flex-column align-items-end justify-content-between"
-                    >
-                      <span>{{
-                        item.status === 'running' ? '进行中' : '已停止'
+                    </el-col>
+                  </el-row>
+                  <el-row :gutter="16" class="data-list">
+                    <el-col :span="6">
+                      <span class="txt fw-normal">{{
+                        $t('cluster_sync_gover')
                       }}</span>
-                      <span class="font-color-light"
-                        >启动时间: {{ item.startTime }}</span
+                    </el-col>
+                    <el-col :span="4">
+                      <span
+                        :class="[`status-${item.engine.status}`, 'status']"
+                        >{{ getStatus(item.engine.status) }}</span
                       >
+                    </el-col>
+                    <el-col :span="4">
+                      <span
+                        :class="[
+                          `status-${item.engine.serviceStatus}`,
+                          'status',
+                        ]"
+                        >{{ getStatus(item.engine.serviceStatus) }}</span
+                      >
+                    </el-col>
+                    <el-col :span="10">
+                      <div v-readonlybtn="'Cluster_operation'" class="btn">
+                        <ElButton
+                          text
+                          type="primary"
+                          :disabled="
+                            item.engine.status == 'stopped' ? false : true
+                          "
+                          @click="startFn(item, item.engine.status, 'engine')"
+                          >{{ $t('public_button_start') }}
+                        </ElButton>
+                        <ElDivider direction="vertical" />
+                        <ElButton
+                          text
+                          type="primary"
+                          :disabled="
+                            item.engine.status == 'running' ? false : true
+                          "
+                          @click="closeFn(item, item.engine.status, 'engine')"
+                          >{{ $t('public_button_close') }}
+                        </ElButton>
+                        <ElDivider direction="vertical" />
+                        <ElButton
+                          text
+                          type="primary"
+                          :disabled="
+                            item.engine.status == 'running' ? false : true
+                          "
+                          @click="restartFn(item, item.engine.status, 'engine')"
+                          >{{ $t('public_button_restart') }}
+                        </ElButton>
+                        <ElDivider
+                          v-if="bindWorkerMap[item.systemInfo.process_id]"
+                          direction="vertical"
+                        />
+                        <ElButton
+                          v-if="bindWorkerMap[item.systemInfo.process_id]"
+                          text
+                          type="primary"
+                          :disabled="
+                            item.engine.status == 'stopped' ? false : true
+                          "
+                          @click="unbind(item, item.engine.status, 'engine')"
+                          >{{ $t('daas_unbind_license') }}
+                        </ElButton>
+                      </div>
+                    </el-col>
+                  </el-row>
+                  <el-row :gutter="16" class="data-list">
+                    <el-col :span="6">
+                      <span class="txt fw-normal">API server</span>
+                    </el-col>
+                    <el-col :span="4">
+                      <span
+                        :class="[`status-${item.apiServer.status}`, 'status']"
+                        >{{ getStatus(item.apiServer.status) }}</span
+                      >
+                    </el-col>
+                    <el-col :span="4">
+                      <span
+                        :class="[
+                          `status-${item.apiServer.serviceStatus}`,
+                          'status',
+                        ]"
+                        >{{ getStatus(item.apiServer.status) }}</span
+                      >
+                    </el-col>
+                    <el-col :span="10">
+                      <div v-readonlybtn="'Cluster_operation'" class="btn">
+                        <ElButton
+                          text
+                          type="primary"
+                          :disabled="
+                            item.apiServer.status == 'stopped' ? false : true
+                          "
+                          @click="
+                            startFn(item, item.apiServer.status, 'apiServer')
+                          "
+                          >{{ $t('public_button_start') }}
+                        </ElButton>
+                        <ElDivider direction="vertical" />
+                        <ElButton
+                          text
+                          type="primary"
+                          :disabled="
+                            item.apiServer.status == 'running' ? false : true
+                          "
+                          @click="
+                            closeFn(item, item.apiServer.status, 'apiServer')
+                          "
+                          >{{ $t('public_button_close') }}
+                        </ElButton>
+                        <ElDivider direction="vertical" />
+                        <ElButton
+                          text
+                          type="primary"
+                          :disabled="
+                            item.apiServer.status == 'running' ? false : true
+                          "
+                          @click="
+                            restartFn(item, item.apiServer.status, 'apiServer')
+                          "
+                          >{{ $t('public_button_restart') }}
+                        </ElButton>
+                      </div>
+                    </el-col>
+                  </el-row>
+                  <el-row
+                    v-for="child in item.customMonitorStatus"
+                    :key="child.id"
+                    :gutter="16"
+                    class="data-list"
+                  >
+                    <el-col :span="6">
+                      <span class="txt">{{ child.name }}</span>
+                    </el-col>
+                    <el-col :span="4">
+                      <span :class="child.status">{{ child.status }}</span>
+                    </el-col>
+                    <el-col :span="4">
+                      <span :class="child.status">{{ child.status }}</span>
+                    </el-col>
+                    <el-col v-readonlybtn="'Cluster_operation'" :md="10">
+                      <div class="btn">
+                        <ElButton
+                          text
+                          type="primary"
+                          @click="delServe(child, item.status)"
+                          >{{ $t('public_button_delete') }}
+                        </ElButton>
+                        <ElDivider direction="vertical" />
+                        <ElButton
+                          text
+                          type="primary"
+                          @click="editServe(child, item.status, item)"
+                          >{{ $t('public_button_edit') }}
+                        </ElButton>
+                      </div>
+                    </el-col>
+                  </el-row>
+                </div>
+                <div
+                  class="fs-6 font-color-dark flex align-center justify-content-between p-4 pt-2"
+                >
+                  <span
+                    >{{ $t('daas_cluster_cluster_lianjiezongshu') }}:
+                    {{ item.engine ? item.engine.netStatTotals || 0 : 0 }}</span
+                  >
+                  <el-button type="primary" @click="openNetStatDialog(item)"
+                    >{{ $t('public_view_details') }}
+                  </el-button>
+                </div>
+              </div>
+            </el-col>
+          </el-row>
+          <el-empty v-else />
+        </div>
+        <div
+          v-else-if="viewType === 'logMining'"
+          v-loading="logMiningLoading"
+          class="content flex-1"
+        >
+          <el-row
+            v-if="logMiningData.length"
+            class="waterfall"
+            :gutter="24"
+            style="row-gap: 24px"
+          >
+            <el-col
+              v-for="item in logMiningData"
+              :key="item.id"
+              class="list"
+              :md="12"
+              :sm="24"
+            >
+              <div class="grid-content list-box border rounded-xl">
+                <div class="list-box-header">
+                  <div class="list-box-header-left">
+                    <img
+                      class="mr-4 rounded-xl"
+                      src="../../assets/images/serve.svg"
+                    />
+                    <i
+                      class="circular mr-2 mt-2"
+                      :class="!item.isAlive ? 'bgred' : 'bggreen'"
+                    />
+                    <div class="list-box-header-main">
+                      <h2 class="name fs-6 mb-1">{{ item.serviceId }}</h2>
+                      <span class="ip">{{ item.dataSource }}</span>
                     </div>
                   </div>
-                  <div class="list-box-main">
-                    <div class="usageRate">
-                      <div class="fs-5 pb-1 fw-bolder">{{ item.cpuUsage }}</div>
-                      CPU 使用率
-                    </div>
-                    <div class="line" />
-                    <div class="usageRate">
-                      <div class="fs-5 pb-1 fw-bolder">
-                        {{ item.memoryUsage }}
-                      </div>
-                      堆内存使用率
-                    </div>
+                  <div
+                    class="flex flex-column align-items-end justify-content-between"
+                  >
+                    <el-tag v-if="item.isAlive" type="success">{{
+                      $t('public_status_running')
+                    }}</el-tag>
+                    <el-tag v-else type="danger">{{
+                      $t('public_status_stop')
+                    }}</el-tag>
+                    <span class="font-color-light"
+                      >{{ $t('packages_business_task_preview_startTime') }}:
+                      {{ item.startTime }}</span
+                    >
                   </div>
                 </div>
-              </el-col>
-            </el-row>
-          </div>
-          <VEmpty v-else large />
+                <div class="list-box-main">
+                  <div class="usageRate">
+                    <div class="fs-5 pb-1 fw-bolder">{{ item.cpuUsage }}</div>
+                    CPU 使用率
+                  </div>
+                  <div class="line" />
+                  <div class="usageRate">
+                    <div class="fs-5 pb-1 fw-bolder">
+                      {{ item.memoryUsage }}
+                    </div>
+                    堆内存使用率
+                  </div>
+                </div>
+              </div>
+            </el-col>
+          </el-row>
+
+          <el-empty v-else />
         </div>
       </div>
 
@@ -1999,7 +1959,7 @@ function handleLogMiningDetail(item: LogMiningMonitor) {
 }
 
 .clusterManagement-container {
-  min-height: 100%;
+  display: contents;
   .status {
     display: inline-block;
     padding: 5px 10px;
@@ -2041,8 +2001,6 @@ function handleLogMiningDetail(item: LogMiningMonitor) {
   .main {
     flex: 1;
     display: flex;
-    height: 100%;
-    overflow: hidden;
     flex-direction: column;
 
     .search-bar {
@@ -2055,10 +2013,6 @@ function handleLogMiningDetail(item: LogMiningMonitor) {
     }
 
     .content {
-      width: 100%;
-      height: 100%;
-      box-sizing: border-box;
-
       .waterfall {
         height: 100%;
         overflow-x: hidden;
