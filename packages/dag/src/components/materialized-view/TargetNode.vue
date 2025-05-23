@@ -543,7 +543,7 @@ function onNodeExpandAndCollapse() {
           :params="params"
           item-value="id"
           item-query="name"
-          :on-set-selected="onConnectionSelect"
+          @option-select="onConnectionSelect"
           @change="onChangeConnection"
         >
           <template v-if="node.connectionId" #prefix>
@@ -558,7 +558,7 @@ function onNodeExpandAndCollapse() {
           </template>
         </AsyncSelect>
         <TableSelect
-          :model-value="node.tableName"
+          v-model="node.tableName"
           :placeholder="$t('packages_dag_select_table_tips')"
           :disabled="!node.connectionId || disabled"
           :method="loadTable"
@@ -566,13 +566,6 @@ function onNodeExpandAndCollapse() {
           item-type="object"
           item-query="value"
           allow-create
-          @update:model-value="
-            (val) =>
-              store.commit('dataflow/updateNodeProperties', {
-                id: node.id,
-                properties: { tableName: val },
-              })
-          "
           @change="onChangeTable"
         />
       </div>
