@@ -60,7 +60,7 @@ export default class TaskInspect extends Http {
         custom: {
           cdc: {
             enable: true,
-            sample: { interval: 10, limit: 1 },
+            sample: { interval: 1, limit: 10 },
             type: 'SAMPLE',
           },
         },

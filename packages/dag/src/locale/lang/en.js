@@ -1001,10 +1001,8 @@ export default {
   packages_dag_field_path: 'Field Path',
   packages_dag_email_receivers: 'Email Receivers',
   packages_dag_merge_table_js_node_error:
-   
     'Merge table node cannot have JS node after it',
   packages_dag_merge_table_table_not_allow_target:
-   
     'Merge table does not support writing to {val}',
   packages_dag_full_validation: 'Full Validation',
   packages_dag_incremental_validation: 'Incremental Validation',
@@ -1082,4 +1080,8 @@ export default {
   packages_dag_inspect_operation_user: 'Operation User',
   packages_dag_task_inspect_difference_alarm:
     'Task Inspection Difference Alarm',
+  packages_dag_task_inspect_enable_fail_1:
+    'Data validation enable failed: Only one source node and one target node are supported.',
+  packages_dag_task_inspect_enable_fail_2:
+    'Data validation enable failed: Both source and target nodes must have advanced query capabilities.',
 }
