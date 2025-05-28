@@ -139,10 +139,7 @@ export default {
         where.name = { like: escapeRegExp(taskName), options: 'i' }
       }
       if (connectionName) {
-        where.connectionName = {
-          like: escapeRegExp(connectionName),
-          options: 'i',
-        }
+        where.connectionName = connectionName
       }
 
       const filter = {
