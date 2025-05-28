@@ -8,7 +8,7 @@ const props = defineProps<{
   editor: Editor
 }>()
 
-const enableTooltip = inject('enableTooltip', true)
+const enableTooltip = inject('enableTooltip', false)
 const isCodeViewMode = inject('isCodeViewMode', false)
 
 const popoverRef = ref()

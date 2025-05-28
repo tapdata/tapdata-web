@@ -1,6 +1,15 @@
 import { InputRule, Mark, mergeAttributes, Node } from '@tiptap/core'
 import { Plugin, PluginKey, TextSelection } from '@tiptap/pm/state'
 
+declare module '@tiptap/core' {
+  interface Commands<ReturnType> {
+    systemVariable: {
+      insertSystemVariable: (variableName: string) => ReturnType
+      updateSystemVariable: (variableName: string) => ReturnType
+    }
+  }
+}
+
 export const SystemVariable = Node.create({
   name: 'systemVariable',
 
@@ -17,7 +26,6 @@ export const SystemVariable = Node.create({
         default: null,
         parseHTML: (element) => element.dataset.variable,
         renderHTML: (attributes) => {
-          console.log('attributes', attributes)
           if (!attributes.variableName) {
             return {}
           }
@@ -57,7 +65,7 @@ export const SystemVariable = Node.create({
   addCommands() {
     return {
       insertSystemVariable:
-        (variableName) =>
+        (variableName: string) =>
         ({ commands }) => {
           return commands.insertContent({
             type: this.name,
@@ -65,7 +73,7 @@ export const SystemVariable = Node.create({
           })
         },
       updateSystemVariable:
-        (variableName) =>
+        (variableName: string) =>
         ({ commands }) => {
           return commands.updateAttributes(this.name, { variableName })
         },
@@ -127,25 +135,27 @@ export const SystemVariable = Node.create({
 
   // 添加插件，用于自动转换文本为变量节点
   addProseMirrorPlugins() {
-    console.log(
-      'addProseMirrorPlugins',
-      new PluginKey('systemVariableAutoReplace'),
-    )
     return [
       new Plugin({
         key: new PluginKey('systemVariableAutoReplace'),
         appendTransaction(transactions, oldState, newState) {
-          const docChanged = transactions.some(
-            (transaction) => transaction.docChanged,
-          )
+          const docChanged = transactions.some((tr) => tr.docChanged)
           if (!docChanged) return null
 
           const tr = newState.tr
           const matches = []
 
-          // 先收集所有匹配项，不立即修改文档
           newState.doc.descendants((node, pos) => {
             if (!node.isText) return
+
+            // 检查是否在代码块内
+            let isInCodeBlock = false
+            newState.doc.nodesBetween(pos, pos + node.nodeSize, (parent) => {
+              if (parent.type.name === 'codeBlock') {
+                isInCodeBlock = true
+                return false
+              }
+            })
 
             const regex = /\{([a-z_]\w*)\}/gi
             let match
@@ -161,11 +171,10 @@ export const SystemVariable = Node.create({
                 newState.doc.nodesBetween(start, end, (node) => {
                   if (node.type.name === 'systemVariable') {
                     hasVariableNode = true
-                    return false // 停止遍历
+                    return false
                   }
                 })
               } catch {
-                // 忽略范围错误，跳过这个匹配
                 continue
               }
 
@@ -174,7 +183,7 @@ export const SystemVariable = Node.create({
                   start,
                   end,
                   variableName,
-                  text: match[0],
+                  isInCodeBlock,
                 })
               }
             }
@@ -185,16 +194,15 @@ export const SystemVariable = Node.create({
 
           for (const match of matches) {
             try {
-              // 再次验证位置是否有效
               if (match.start >= 0 && match.end <= newState.doc.content.size) {
                 const variableNode =
                   newState.schema.nodes.systemVariable.create({
                     variableName: match.variableName,
                   })
+
                 tr.replaceWith(match.start, match.end, variableNode)
               }
             } catch (error) {
-              // 忽略单个替换的错误，继续处理其他匹配
               console.warn('Failed to replace variable:', match, error)
             }
           }

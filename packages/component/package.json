@@ -18,6 +18,7 @@
     "@tiptap/core": "^2.12.0",
     "@tiptap/extension-bold": "^2.12.0",
     "@tiptap/extension-character-count": "^2.12.0",
+    "@tiptap/extension-code-block": "^2.12.0",
     "@tiptap/extension-color": "^2.12.0",
     "@tiptap/extension-document": "^2.12.0",
     "@tiptap/extension-highlight": "^2.12.0",

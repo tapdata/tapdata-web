@@ -376,8 +376,7 @@ export default {
   packages_business_verification_details_yuanbiaoziduanzhi:
     'Source table field: value',
   packages_business_verification_details_xianshiwanzhengzi: 'Show full fields',
-  packages_business_verification_details_jinxianshichayi:
-    'Show diff fields',
+  packages_business_verification_details_jinxianshichayi: 'Show diff fields',
   packages_business_verification_details_yichangshujuhang:
     'Exception data (row):',
   packages_business_verification_details_mubiaobiao: 'Target table:',
@@ -1598,4 +1597,11 @@ export default {
     'No validation table configuration, please automatically add tables',
   packages_business_verification_empty_chooseJob:
     'No validation table configuration, please select a task',
+  packages_business_custom_mail_template: 'Custom Mail Template',
+  packages_business_alarm_type: 'Alarm Type',
+  packages_business_mail_title: 'Mail Title',
+  packages_business_mail_content: 'Mail Content',
+  packages_business_available_variables: 'Available Variables',
+  packages_business_click_variable_name_insert_template:
+    'Click variable name to insert into template',
 }

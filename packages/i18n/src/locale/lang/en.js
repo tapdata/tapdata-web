@@ -402,4 +402,13 @@ export default {
   public_hkd: 'HKD',
   public_selfHost: 'Semi-Managed',
   public_fullManagement: 'Fully-Managed',
+
+  public_error_time: 'Error Time',
+  public_error_log: 'Error Log',
+  public_complete_time: 'Complete Time',
+  public_cdc_time: 'CDC Time',
+  public_stop_time: 'Stop Time',
+  public_delay_time: 'Delay Time',
+  public_current_cost_time: 'Current Cost Time',
+  public_threshold: 'Threshold',
 }

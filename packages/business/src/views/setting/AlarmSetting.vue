@@ -439,7 +439,7 @@ onMounted(async () => {
       </ElButton>
 
       <ElButton text type="primary" @click="showCustomMailTemplate"
-        >自定义邮件模板
+        >{{ $t('packages_business_custom_mail_template') }}
       </ElButton>
     </template>
 

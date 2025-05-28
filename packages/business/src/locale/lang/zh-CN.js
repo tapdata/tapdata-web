@@ -1422,4 +1422,11 @@ export default {
   packages_business_verification_empty_add_table: '暂无校验表配置，请添加表',
   packages_business_verification_empty_auto_add_table:
     '暂无校验表配置，请自动添加表',
+  packages_business_custom_mail_template: '自定义邮件模板',
+  packages_business_alarm_type: '告警类型',
+  packages_business_mail_title: '邮件主题',
+  packages_business_mail_content: '邮件正文',
+  packages_business_available_variables: '可用变量',
+  packages_business_click_variable_name_insert_template:
+    '点击变量名称插入到模板中',
 }

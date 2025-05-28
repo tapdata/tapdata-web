@@ -21,6 +21,10 @@ const emit = defineEmits(['update:modelValue'])
 
 const extensions = props.extensions
   .concat([
+    StarterKit.configure({
+      paragraph: false,
+      codeBlock: false,
+    }),
     TiptapPlaceholder.configure({
       emptyEditorClass: 'tiptap-editor--empty',
       emptyNodeClass: 'tiptap-editor__placeholder',
@@ -90,9 +94,11 @@ defineExpose({
 <template>
   <div v-if="editor" class="tiptap-editor border rounded-xl">
     <Toolbar :editor="editor" />
-    <div class="tiptap-editor__content p-4">
-      <EditorContent :editor="editor" />
-    </div>
+    <EditorContent
+      :editor="editor"
+      class="tiptap-editor__content p-4"
+      :class="editorContentClass"
+    />
   </div>
 </template>
 
@@ -164,31 +170,6 @@ defineExpose({
       font-size: 1rem;
     }
 
-    /* Code and preformatted text styles */
-    code {
-      background-color: var(--purple-light);
-      border-radius: 0.4rem;
-      color: var(--black);
-      font-size: 0.85rem;
-      padding: 0.25em 0.3em;
-    }
-
-    pre {
-      background: var(--black);
-      border-radius: 0.5rem;
-      color: var(--white);
-      font-family: 'JetBrainsMono', monospace;
-      margin: 1.5rem 0;
-      padding: 0.75rem 1rem;
-
-      code {
-        background: none;
-        color: inherit;
-        font-size: 0.8rem;
-        padding: 0;
-      }
-    }
-
     blockquote {
       border-left: 3px solid var(--gray-3);
       margin: 1.5rem 0;
@@ -203,6 +184,34 @@ defineExpose({
 
     .ace-line {
       margin: 4px 0;
+    }
+
+    *[data-indent='1'] {
+      margin-left: 24px !important;
+    }
+
+    *[data-indent='2'] {
+      margin-left: 48px !important;
+    }
+
+    *[data-indent='3'] {
+      margin-left: 72px !important;
+    }
+
+    *[data-indent='4'] {
+      margin-left: 96px !important;
+    }
+
+    *[data-indent='5'] {
+      margin-left: 120px !important;
+    }
+
+    *[data-indent='6'] {
+      margin-left: 144px !important;
+    }
+
+    *[data-indent='7'] {
+      margin-left: 168px !important;
     }
   }
 

@@ -11,7 +11,7 @@ const generateCommandButtonComponentSpecs = () => {
   console.log('extensionManager', extensionManager)
 
   return extensionManager.extensions.reduce((acc, extension) => {
-    const { button } = extension.options
+    const { button } = extension.options || {}
 
     if (!button || typeof button !== 'function') return acc
 
