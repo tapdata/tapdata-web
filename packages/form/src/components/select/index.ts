@@ -21,10 +21,13 @@ const InnerSelect = connect(
 
 const SelectOption = defineComponent({
   name: 'FSelect',
-  props: ['options'],
+  props: ['options', 'itemLabel', 'itemValue', 'itemDisabled'],
   setup(customProps, { attrs, slots }) {
     return () => {
       const options = customProps.options || []
+      const itemLabel = customProps.itemLabel || 'label'
+      const itemValue = customProps.itemValue || 'value'
+      const itemDisabled = customProps.itemDisabled || 'disabled'
       const children =
         options.length !== 0
           ? {
@@ -46,8 +49,9 @@ const SelectOption = defineComponent({
                     return h(
                       ElOption,
                       {
-                        key: option.value,
-                        ...option,
+                        value: option[itemValue],
+                        label: option[itemLabel],
+                        disabled: option[itemDisabled],
                       },
                       {
                         default: () =>
