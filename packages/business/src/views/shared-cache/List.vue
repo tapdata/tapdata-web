@@ -1,184 +1,30 @@
-<template>
-  <PageContainer>
-    <template #actions>
-      <el-button
-        v-show="multipleSelection.length > 0 && isDaas"
-        :disabled="$disabledReadonlyUserBtn()"
-        v-readonlybtn="'SYNC_job_export'"
-        class="btn message-button-cancel"
-        @click="handleExport"
-      >
-        <span> {{ $t('public_button_export') }}</span>
-      </el-button>
-      <el-button
-        v-if="isDaas"
-        v-readonlybtn="'SYNC_job_import'"
-        class="btn"
-        :disabled="$disabledReadonlyUserBtn()"
-        @click="handleImport"
-      >
-        <span> {{ $t('packages_business_button_bulk_import') }}</span>
-      </el-button>
-      <ElButton class="btn btn-create" type="primary" @click="create">
-        <span> {{ $t('packages_business_shared_cache_button_create') }}</span>
-      </ElButton>
-    </template>
-
-    <TablePage
-      ref="table"
-      row-key="id"
-      :remoteMethod="getData"
-      @sort-change="handleSortTable"
-      @selection-change="handleSelectionChange"
-    >
-      <template v-slot:search>
-        <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
-      </template>
-      <el-table-column
-        reserve-selection
-        type="selection"
-        width="45"
-        align="center"
-        :selectable="(row) => !row.hasChildren"
-      >
-      </el-table-column>
-      <ElTableColumn show-overflow-tooltip prop="name" :label="$t('packages_business_shared_cache_name')">
-        <template #default="{ row }">
-          <ElLink style="display: inline" type="primary" @click.stop="checkDetails(row)">{{ row.name }}</ElLink>
-        </template>
-      </ElTableColumn>
-      <ElTableColumn
-        show-overflow-tooltip
-        prop="connectionName"
-        width="260"
-        :label="$t('packages_business_shared_cache_column_connection')"
-      ></ElTableColumn>
-      <ElTableColumn
-        show-overflow-tooltip
-        prop="tableName"
-        width="240"
-        :label="$t('packages_business_shared_cache_column_table')"
-      ></ElTableColumn>
-      <ElTableColumn :label="$t('packages_business_shared_cache_status')" width="120">
-        <template #default="{ row }">
-          <TaskStatus :task="row" />
-        </template>
-      </ElTableColumn>
-      <ElTableColumn prop="createTime" :label="$t('public_create_time')" width="160" sortable="createTime">
-        <template v-slot="scope">
-          {{ scope.row.createTimeFmt }}
-        </template>
-      </ElTableColumn>
-      <ElTableColumn prop="cacheTimeAt" width="160" :label="$t('packages_business_shared_cache_time')">
-        <template v-slot="scope">
-          {{ scope.row.cacheTimeAtFmt }}
-        </template>
-      </ElTableColumn>
-      <ElTableColumn width="290" :label="$t('public_operation')" fixed="right">
-        <template #default="{ row }">
-          <div class="table-operations">
-            <ElButton
-              text
-              v-if="row.btnDisabled.stop && row.btnDisabled.forceStop"
-              v-readonlybtn="'SYNC_job_operation'"
-              type="primary"
-              :disabled="row.btnDisabled.start"
-              @click="start([row.id], row)"
-            >
-              {{ $t('public_button_start') }}
-            </ElButton>
-            <template v-else>
-              <ElButton
-                text
-                v-if="row.status === 'stopping'"
-                v-readonlybtn="'SYNC_job_operation'"
-                type="primary"
-                :disabled="row.btnDisabled.forceStop"
-                @click="forceStop([row.id], row)"
-              >
-                {{ $t('public_button_force_stop') }}
-              </ElButton>
-              <ElButton
-                text
-                v-else
-                v-readonlybtn="'SYNC_job_operation'"
-                type="primary"
-                :disabled="row.btnDisabled.stop"
-                @click="stop([row.id])"
-              >
-                {{ $t('public_button_stop') }}
-              </ElButton>
-            </template>
-            <ElDivider class="mx-1" v-readonlybtn="'SYNC_job_operation'" direction="vertical"></ElDivider>
-            <ElButton
-              text
-              v-readonlybtn="'SYNC_job_edition'"
-              type="primary"
-              :disabled="row.btnDisabled.edit || $disabledReadonlyUserBtn()"
-              @click="handleEditor(row)"
-            >
-              {{ $t('public_button_edit') }}
-            </ElButton>
-            <ElDivider class="mx-1" v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
-            <ElButton
-              text
-              v-readonlybtn="'SYNC_job_edition'"
-              type="primary"
-              :disabled="row.btnDisabled.monitor && !row.lastStartDate"
-              @click="handleDetails(row)"
-            >
-              {{ $t('packages_business_task_list_button_monitor') }}
-            </ElButton>
-            <ElDivider class="mx-1" v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
-            <ElButton
-              text
-              v-readonlybtn="'SYNC_job_edition'"
-              type="primary"
-              :disabled="row.btnDisabled.reset || $disabledReadonlyUserBtn()"
-              @click="handleReset(row)"
-            >
-              {{ $t('public_button_reset') }}
-            </ElButton>
-            <ElDivider class="mx-1" v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
-            <ElButton
-              text
-              v-readonlybtn="'SYNC_job_edition'"
-              type="primary"
-              :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
-              @click="del(row)"
-            >
-              {{ $t('public_button_delete') }}
-            </ElButton>
-          </div>
-        </template>
-      </ElTableColumn>
-    </TablePage>
-    <Editor ref="editor" @success="table.fetch(1)"></Editor>
-    <Details ref="details" width="380px"></Details>
-    <!-- 导入 -->
-    <Upload v-if="isDaas" type="dataflow" :show-tag="false" ref="upload" @success="table.fetch()"></Upload>
-  </PageContainer>
-</template>
-
 <script>
-import dayjs from 'dayjs'
-import { escapeRegExp } from 'lodash-es'
-
-import i18n from '@tap/i18n'
 import { externalStorageApi, sharedCacheApi, taskApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
-import { TablePage, TaskStatus } from '../../components'
-import { makeStatusAndDisabled } from '../../shared'
 
-import Editor from './Editor'
-import Details from './Details'
-import Upload from '../../components/UploadDialog'
+import i18n from '@tap/i18n'
+import dayjs from 'dayjs'
+import { escapeRegExp } from 'lodash-es'
+import { TablePage, TaskStatus } from '../../components'
 import PageContainer from '../../components/PageContainer.vue'
+
+import Upload from '../../components/UploadDialog'
+import { makeStatusAndDisabled } from '../../shared'
+import Details from './Details'
+import Editor from './Editor'
 
 let timeout = null
 export default {
+  components: {
+    PageContainer,
+    TablePage,
+    FilterBar,
+    TaskStatus,
+    Editor,
+    Details,
+    Upload,
+  },
   inject: ['buried'],
-  components: { PageContainer, TablePage, FilterBar, TaskStatus, Editor, Details, Upload },
   data() {
     return {
       isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
@@ -188,12 +34,16 @@ export default {
       },
       filterItems: [
         {
-          placeholder: this.$t('packages_business_shared_cache_placeholder_task_name'),
+          placeholder: this.$t(
+            'packages_business_shared_cache_placeholder_task_name',
+          ),
           key: 'name',
           type: 'input',
         },
         {
-          placeholder: this.$t('packages_business_shared_cache_placeholder_connection_name'),
+          placeholder: this.$t(
+            'packages_business_shared_cache_placeholder_connection_name',
+          ),
           key: 'connectionName',
           type: 'input',
         },
@@ -211,7 +61,7 @@ export default {
     },
   },
   watch: {
-    '$route.query'() {
+    '$route.query': function () {
       this.table.fetch(1)
     },
   },
@@ -229,9 +79,9 @@ export default {
   },
   methods: {
     getData({ page }) {
-      let { current, size } = page
-      let { name, connectionName } = this.searchParams
-      let where = {}
+      const { current, size } = page
+      const { name, connectionName } = this.searchParams
+      const where = {}
       name && (where.name = { like: escapeRegExp(name), options: 'i' })
       connectionName &&
         (where.connectionName = {
@@ -239,7 +89,7 @@ export default {
           options: 'i',
         })
 
-      let filter = {
+      const filter = {
         order: this.order,
         limit: size,
         skip: (current - 1) * size,
@@ -250,11 +100,13 @@ export default {
           filter: JSON.stringify(filter),
         })
         .then((data) => {
-          let list = data?.items || []
+          const list = data?.items || []
           return {
             total: data?.total,
             data: list.map((item) => {
-              item.createTimeFmt = item.createTime ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+              item.createTimeFmt = item.createTime
+                ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+                : '-'
 
               makeStatusAndDisabled(item)
               return item
@@ -271,9 +123,13 @@ export default {
       this.$refs.details.getData(row.id)
     },
     del(row = {}) {
-      this.$confirm(this.$t('public_message_delete_confirm'), this.$t('public_message_title_prompt'), {
-        type: 'warning',
-      }).then((flag) => {
+      this.$confirm(
+        this.$t('public_message_delete_confirm'),
+        this.$t('public_message_title_prompt'),
+        {
+          type: 'warning',
+        },
+      ).then((flag) => {
         if (flag) {
           sharedCacheApi.delete(row.id).then(() => {
             this.$message.success(this.$t('public_message_delete_ok'))
@@ -293,13 +149,17 @@ export default {
     },
 
     async start(ids, row) {
-      const externalStorage = await externalStorageApi.get(row.externalStorageId)
+      const externalStorage = await externalStorageApi.get(
+        row.externalStorageId,
+      )
       if (!externalStorage?.id) {
-        this.$message.error(i18n.t('packages_business_shared_cache_list_qingxianxiugaiwai'))
+        this.$message.error(
+          i18n.t('packages_business_shared_cache_list_qingxianxiugaiwai'),
+        )
         return
       }
       this.buried(this.taskBuried.start)
-      let filter = {
+      const filter = {
         where: {
           id: ids[0],
         },
@@ -309,7 +169,9 @@ export default {
           .batchStart(ids)
           .then((data) => {
             this.buried(this.taskBuried.start, '', { result: true })
-            this.$message.success(data?.message || this.$t('public_message_operation_success'))
+            this.$message.success(
+              data?.message || this.$t('public_message_operation_success'),
+            )
             this.table.fetch()
           })
           .catch(() => {
@@ -319,7 +181,7 @@ export default {
     },
 
     forceStop(ids, row) {
-      let msgObj = this.getConfirmMessage('force_stop', row)
+      const msgObj = this.getConfirmMessage('force_stop', row)
       this.$confirm(msgObj.msg, '', {
         type: 'warning',
         showClose: false,
@@ -329,7 +191,9 @@ export default {
           return
         }
         taskApi.forceStop(ids).then((data) => {
-          this.$message.success(data?.message || this.$t('public_message_operation_success'))
+          this.$message.success(
+            data?.message || this.$t('public_message_operation_success'),
+          )
           this.table.fetch()
         })
       })
@@ -347,7 +211,9 @@ export default {
           return
         }
         taskApi.batchStop(ids).then((data) => {
-          this.$message.success(data?.message || this.$t('public_message_operation_success'))
+          this.$message.success(
+            data?.message || this.$t('public_message_operation_success'),
+          )
           this.table.fetch()
         })
       })
@@ -375,10 +241,10 @@ export default {
     },
 
     getConfirmMessage(operateStr, task) {
-      let title = operateStr + '_confirm_title',
-        message = operateStr + '_confirm_message'
-      let strArr = this.$t('dataFlow_' + message).split('xxx')
-      let msg = `
+      const title = `${operateStr}_confirm_title`,
+        message = `${operateStr}_confirm_message`
+      const strArr = this.$t(`dataFlow_${message}`).split('xxx')
+      const msg = `
         <p>
           ${strArr[0]}
           <span class="color-primary">${task.name}</span>
@@ -386,13 +252,13 @@ export default {
         </p>`
       return {
         msg,
-        title: this.$t('dataFlow_' + title),
+        title: this.$t(`dataFlow_${title}`),
       }
     },
 
     handleReset(row) {
       const id = row.id
-      let msgObj = this.getConfirmMessage('initialize', row)
+      const msgObj = this.getConfirmMessage('initialize', row)
       this.$confirm(msgObj.msg, msgObj.title, {
         type: 'warning',
         dangerouslyUseHTMLString: true,
@@ -401,7 +267,9 @@ export default {
           return
         }
         taskApi.batchRenew([id]).then((data) => {
-          this.$message.success(data?.message || this.$t('public_message_operation_success'))
+          this.$message.success(
+            data?.message || this.$t('public_message_operation_success'),
+          )
           this.table.fetch()
         })
       })
@@ -418,6 +286,214 @@ export default {
   },
 }
 </script>
+
+<template>
+  <PageContainer>
+    <template #actions>
+      <el-button
+        v-show="multipleSelection.length > 0 && isDaas"
+        v-readonlybtn="'SYNC_job_export'"
+        :disabled="$disabledReadonlyUserBtn()"
+        class="btn message-button-cancel"
+        @click="handleExport"
+      >
+        <span> {{ $t('public_button_export') }}</span>
+      </el-button>
+      <el-button
+        v-if="isDaas"
+        v-readonlybtn="'SYNC_job_import'"
+        class="btn"
+        :disabled="$disabledReadonlyUserBtn()"
+        @click="handleImport"
+      >
+        <span> {{ $t('packages_business_button_bulk_import') }}</span>
+      </el-button>
+      <ElButton class="btn btn-create" type="primary" @click="create">
+        <span> {{ $t('packages_business_shared_cache_button_create') }}</span>
+      </ElButton>
+    </template>
+
+    <TablePage
+      ref="table"
+      row-key="id"
+      :remote-method="getData"
+      @sort-change="handleSortTable"
+      @selection-change="handleSelectionChange"
+    >
+      <template #search>
+        <FilterBar
+          v-model:value="searchParams"
+          :items="filterItems"
+          @fetch="table.fetch(1)"
+        />
+      </template>
+      <el-table-column
+        reserve-selection
+        type="selection"
+        width="45"
+        align="center"
+        :selectable="(row) => !row.hasChildren"
+      />
+      <ElTableColumn
+        show-overflow-tooltip
+        prop="name"
+        :label="$t('packages_business_shared_cache_name')"
+      >
+        <template #default="{ row }">
+          <ElLink
+            style="display: inline"
+            type="primary"
+            @click.stop="checkDetails(row)"
+            >{{ row.name }}</ElLink
+          >
+        </template>
+      </ElTableColumn>
+      <ElTableColumn
+        show-overflow-tooltip
+        prop="connectionName"
+        width="260"
+        :label="$t('packages_business_shared_cache_column_connection')"
+      />
+      <ElTableColumn
+        show-overflow-tooltip
+        prop="tableName"
+        width="240"
+        :label="$t('packages_business_shared_cache_column_table')"
+      />
+      <ElTableColumn
+        :label="$t('packages_business_shared_cache_status')"
+        width="120"
+      >
+        <template #default="{ row }">
+          <TaskStatus :task="row" />
+        </template>
+      </ElTableColumn>
+      <ElTableColumn
+        prop="createTime"
+        :label="$t('public_create_time')"
+        width="160"
+        sortable="createTime"
+      >
+        <template #default="scope">
+          {{ scope.row.createTimeFmt }}
+        </template>
+      </ElTableColumn>
+      <ElTableColumn
+        prop="cacheTimeAt"
+        width="160"
+        :label="$t('packages_business_shared_cache_time')"
+      >
+        <template #default="scope">
+          {{ scope.row.cacheTimeAtFmt }}
+        </template>
+      </ElTableColumn>
+      <ElTableColumn width="290" :label="$t('public_operation')" fixed="right">
+        <template #default="{ row }">
+          <div class="table-operations">
+            <ElButton
+              v-if="row.btnDisabled.stop && row.btnDisabled.forceStop"
+              v-readonlybtn="'SYNC_job_operation'"
+              text
+              type="primary"
+              :disabled="row.btnDisabled.start"
+              @click="start([row.id], row)"
+            >
+              {{ $t('public_button_start') }}
+            </ElButton>
+            <template v-else>
+              <ElButton
+                v-if="row.status === 'stopping'"
+                v-readonlybtn="'SYNC_job_operation'"
+                text
+                type="primary"
+                :disabled="row.btnDisabled.forceStop"
+                @click="forceStop([row.id], row)"
+              >
+                {{ $t('public_button_force_stop') }}
+              </ElButton>
+              <ElButton
+                v-else
+                v-readonlybtn="'SYNC_job_operation'"
+                text
+                type="primary"
+                :disabled="row.btnDisabled.stop"
+                @click="stop([row.id])"
+              >
+                {{ $t('public_button_stop') }}
+              </ElButton>
+            </template>
+            <ElDivider
+              v-readonlybtn="'SYNC_job_operation'"
+              class="mx-1"
+              direction="vertical"
+            />
+            <ElButton
+              v-readonlybtn="'SYNC_job_edition'"
+              text
+              type="primary"
+              :disabled="row.btnDisabled.edit || $disabledReadonlyUserBtn()"
+              @click="handleEditor(row)"
+            >
+              {{ $t('public_button_edit') }}
+            </ElButton>
+            <ElDivider
+              v-readonlybtn="'SYNC_job_edition'"
+              class="mx-1"
+              direction="vertical"
+            />
+            <ElButton
+              v-readonlybtn="'SYNC_job_edition'"
+              text
+              type="primary"
+              :disabled="row.btnDisabled.monitor && !row.lastStartDate"
+              @click="handleDetails(row)"
+            >
+              {{ $t('packages_business_task_list_button_monitor') }}
+            </ElButton>
+            <ElDivider
+              v-readonlybtn="'SYNC_job_edition'"
+              class="mx-1"
+              direction="vertical"
+            />
+            <ElButton
+              v-readonlybtn="'SYNC_job_edition'"
+              text
+              type="primary"
+              :disabled="row.btnDisabled.reset || $disabledReadonlyUserBtn()"
+              @click="handleReset(row)"
+            >
+              {{ $t('public_button_reset') }}
+            </ElButton>
+            <ElDivider
+              v-readonlybtn="'SYNC_job_edition'"
+              class="mx-1"
+              direction="vertical"
+            />
+            <ElButton
+              v-readonlybtn="'SYNC_job_edition'"
+              text
+              type="primary"
+              :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
+              @click="del(row)"
+            >
+              {{ $t('public_button_delete') }}
+            </ElButton>
+          </div>
+        </template>
+      </ElTableColumn>
+    </TablePage>
+    <Editor ref="editor" @success="table.fetch(1)" />
+    <Details ref="details" width="380px" />
+    <!-- 导入 -->
+    <Upload
+      v-if="isDaas"
+      ref="upload"
+      type="dataflow"
+      :show-tag="false"
+      @success="table.fetch()"
+    />
+  </PageContainer>
+</template>
 
 <style lang="scss" scoped>
 .shared-cache-list-wrap {
