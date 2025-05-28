@@ -64,6 +64,11 @@ const editor = useEditor({
       editor.view.dispatch(tr)
     }
   },
+  onBlur: ({ editor }) => {
+    console.log('onBlur', editor.getHTML())
+
+    emit('blur', editor.getHTML())
+  },
 })
 
 const insertVariable = (variableName) => {

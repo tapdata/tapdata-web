@@ -286,31 +286,31 @@ const handleSelectType = (item) => {
   activeType.value = item.key
   form.value = item
 
-  form.value.emailAlarmContent = `<div class="email-content-root" style="max-width: 600px;
-    margin: 20px auto;
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 32px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    color: #374151;
-    line-height: 1.6;box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);">
-    <div class="email-root-header">
-      <div class="email-root-header-icon">⚠️</div>
-    </div>
-    <h1>System Alert Notification</h1>
-    <hr>
-    <p><strong>Task Name</strong></p>
-    <p>{taskName}</p>
-    <p><strong>Error Time</strong></p>
-    <p><code>{errorTime}</code></p>
-    <p><strong>Error Details</strong></p>
-    <pre><code>{errorLog}</code></pre>
-    <hr>
-    <p><em>This email is sent by TapData</em>
-    </p>
-</div>
-`
+  //   form.value.emailAlarmContent = `<div class="email-content-root" style="max-width: 600px;
+  //     margin: 20px auto;
+  //     background: #ffffff;
+  //     border: 1px solid #e5e7eb;
+  //     border-radius: 12px;
+  //     padding: 32px;
+  //     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  //     color: #374151;
+  //     line-height: 1.6;box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);">
+  //     <div class="email-root-header">
+  //       <div class="email-root-header-icon">⚠️</div>
+  //     </div>
+  //     <h1>System Alert Notification</h1>
+  //     <hr>
+  //     <p><strong>Task Name</strong></p>
+  //     <p>{taskName}</p>
+  //     <p><strong>Error Time</strong></p>
+  //     <p><code>{errorTime}</code></p>
+  //     <p><strong>Error Details</strong></p>
+  //     <pre><code>{errorLog}</code></pre>
+  //     <hr>
+  //     <p><em>This email is sent by TapData</em>
+  //     </p>
+  // </div>
+  // `
 }
 
 const open = (data) => {
@@ -327,7 +327,18 @@ const open = (data) => {
 const emit = defineEmits(['save'])
 
 const onSave = () => {
-  const content = juice.inlineContent(
+  emit('save', rulesList.value)
+  visible.value = false
+
+  console.log('content', content)
+}
+
+const onCancel = () => {
+  visible.value = false
+}
+
+const handleEditorChange = () => {
+  form.value.emailAlarmContent = juice.inlineContent(
     form.value.emailAlarmContent,
     `
     .email-content-root {
@@ -440,15 +451,6 @@ const onSave = () => {
     }
   }`,
   )
-
-  emit('save', rulesList.value)
-  visible.value = false
-
-  console.log('content', content)
-}
-
-const onCancel = () => {
-  visible.value = false
 }
 
 console.log('rulesList', rulesList.value, form)
@@ -503,6 +505,7 @@ defineExpose({
               class="w-100"
               editor-content-class="email-content-root"
               :extensions="extensions"
+              @blur="handleEditorChange"
             />
           </el-form-item>
 
