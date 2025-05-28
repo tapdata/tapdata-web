@@ -223,12 +223,10 @@ export default {
     // 获取数据
     getData({ page, tags }) {
       const { current, size } = page
-      const { isFuzzy, keyword } = this.searchParams
+      const { keyword } = this.searchParams
       const where = {}
       if (keyword && keyword.trim()) {
-        const filterObj = isFuzzy
-          ? { like: escapeRegExp(keyword), options: 'i' }
-          : keyword
+        const filterObj = { like: escapeRegExp(keyword), options: 'i' }
         where.or = [{ username: filterObj }, { email: filterObj }]
       }
       if (this.activePanel !== 'all') {
