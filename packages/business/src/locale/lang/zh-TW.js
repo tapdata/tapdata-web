@@ -1402,6 +1402,8 @@ export default {
   packages_business_nulls_first_tip:
     '關聯字段存在NULL值時，數據庫默認將NULL排在最後，可能導致校驗失敗。開啓此選項將NULL值排在前面，但可能無法使用數據庫索引，增加數據庫負載。',
   packages_business_ignoreTimePrecision: '忽略時間精度',
+  packages_business_ignoreTimePrecision_tip:
+    '開啓此開關後，將忽略時間的毫秒級比較，只精確到秒級。可選擇“四捨五入”（如 ≥500ms 變為 1s）或“截斷”（去除毫秒部分）方式處理，適用於高精度時間字段與低精度時間字段同步的場景。',
   packages_business_checkTableThreadNum: '校驗線程數量',
   packages_business_checkTableThreadNum_tip:
     '校驗線程數量，在資源充足的情況下可進行調整，默認線程數為 10',
@@ -1416,4 +1418,6 @@ export default {
   packages_business_available_variables: '可用變量',
   packages_business_click_variable_name_insert_template:
     '點擊變量名稱插入到模板中',
+  packages_business_ignoreTimePrecision_round: '四捨五入',
+  packages_business_ignoreTimePrecision_truncate: '截斷',
 }

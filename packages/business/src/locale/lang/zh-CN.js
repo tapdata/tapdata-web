@@ -1414,7 +1414,7 @@ export default {
     '关联字段存在NULL值时，数据库默认将NULL排在最后，可能导致校验失败。开启此选项将NULL值排在前面，但可能无法使用数据库索引，增加数据库负载。',
   packages_business_ignoreTimePrecision: '忽略时间精度',
   packages_business_ignoreTimePrecision_tip:
-    '开启此开关后会忽略时间毫秒级的比较，只精确到秒级，适用于高精度时间字段同步低精度时间字段场景。',
+    '开启此开关后，将忽略时间的毫秒级比较，只精确到秒级。可选“四舍五入”（如 ≥500ms 变为 1s）或“截断”（去除毫秒部分）方式处理，适用于高精度时间字段同步低精度字段的场景。',
   packages_business_checkTableThreadNum: '校验线程数量',
   packages_business_checkTableThreadNum_tip:
     '校验线程数量，在资源充足的情况下可进行调整，默认线程数为 10',
@@ -1429,4 +1429,6 @@ export default {
   packages_business_available_variables: '可用变量',
   packages_business_click_variable_name_insert_template:
     '点击变量名称插入到模板中',
+  packages_business_ignoreTimePrecision_round: '四舍五入',
+  packages_business_ignoreTimePrecision_truncate: '截断',
 }
