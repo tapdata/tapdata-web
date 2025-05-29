@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { alarmApi, alarmMailApi, alarmRuleApi, settingsApi } from '@tap/api'
-import { VTable } from '@tap/component'
+import {
+  AdminOutlined,
+  FilterOutlined,
+  MemberOutlined,
+  VTable,
+} from '@tap/component'
 import i18n from '@tap/i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { cloneDeep } from 'lodash-es'
@@ -429,16 +434,19 @@ onMounted(async () => {
     content-class="flex flex-1 gap-6 min-h-0 overflow-auto px-6 position-relative"
   >
     <template #actions>
-      <ElButton v-if="!isDaas" text type="primary" @click="showAlarmRecipient"
-        >{{
+      <ElButton v-if="!isDaas" text @click="showAlarmRecipient">
+        <el-icon class="mr-1"><MemberOutlined /></el-icon>
+        {{
           $t('packages_business_setting_alarmnotification_recipient_default')
         }}
       </ElButton>
-      <ElButton text type="primary" @click="showAlarmRlues"
-        >{{ $t('packages_business_setting_alarmnotification_morengaojinggui') }}
+      <ElButton text @click="showAlarmRlues">
+        <el-icon class="mr-1"><FilterOutlined /></el-icon>
+        {{ $t('packages_business_setting_alarmnotification_morengaojinggui') }}
       </ElButton>
 
-      <ElButton text type="primary" @click="showCustomMailTemplate"
+      <ElButton text @click="showCustomMailTemplate">
+        <el-icon class="mr-1"><AdminOutlined /></el-icon
         >{{ $t('packages_business_custom_mail_template') }}
       </ElButton>
     </template>
