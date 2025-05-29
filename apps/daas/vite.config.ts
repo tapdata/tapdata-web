@@ -73,7 +73,6 @@ export default defineConfig(({ mode }) => {
 
       Icons({
         scale: 1,
-        defaultClass: 'icon',
       }),
 
       createSvgIconsPlugin({

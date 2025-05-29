@@ -400,4 +400,5 @@ export default {
   public_delay_time: '延遲時間',
   public_current_cost_time: '當前耗時',
   public_threshold: '閾值',
+  public_start_import: '開始導入',
 }

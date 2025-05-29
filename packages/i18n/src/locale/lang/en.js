@@ -411,4 +411,5 @@ export default {
   public_delay_time: 'Delay Time',
   public_current_cost_time: 'Current Cost Time',
   public_threshold: 'Threshold',
+  public_start_import: 'Start Import',
 }

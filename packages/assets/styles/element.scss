@@ -1,15 +1,15 @@
 :root {
-  --el-button-hover-bg-color: #{rgba(map.get($color, primary), 0.1)}; 
+  --el-button-hover-bg-color: #{rgba(map.get($color, primary), 0.1)};
   --el-font-weight-primary: 400;
 
   --primary-raw: 59, 71, 229;
   --primary-hover-light: rgba(var(--primary-raw), 0.1);
   --primary-hover: rgba(var(--primary-raw), 0.2);
+  --primary-dark: #0c1cc3;
   --info-fill: #f1f3fe;
   --collapse-padding-primary: 16px;
   --collapse-padding-sm: 12px;
   --btn-space: 12px;
-
   --icon-n1-raw: 43, 47, 54;
   --icon-n1: rgba(var(--icon-n1-raw), 1);
   --icon-n2: rgb(100, 106, 115);
@@ -64,7 +64,7 @@
 
   &.has-border-t {
     .el-table__inner-wrapper::after {
-      content: "" !important;
+      content: '' !important;
       position: absolute;
       background-color: var(--el-table-border-color);
       z-index: calc(var(--el-table-index) + 2);
@@ -73,7 +73,7 @@
       top: 0;
       width: 100%;
       height: 1px;
-    }  
+    }
   }
 }
 
@@ -124,7 +124,7 @@
 // Tooltip
 .el-popper[role='tooltip']:not(.el-popover):not(.el-select__popper) {
   max-width: 400px;
-  --el-popper-border-radius: var(--el-border-radius-base)
+  --el-popper-border-radius: var(--el-border-radius-base);
 }
 
 // Select
@@ -265,7 +265,10 @@
 .el-message {
   --el-border-radius-base: 8px;
   --el-message-border-color: var(--el-message-text-color);
-  box-shadow: 0 8px 24px 8px rgba(31, 35, 41, 0.04), 0 6px 12px 0 rgba(31, 35, 41, 0.04), 0 4px 8px -8px rgba(31, 35, 41, 0.06);
+  box-shadow:
+    0 8px 24px 8px rgba(31, 35, 41, 0.04),
+    0 6px 12px 0 rgba(31, 35, 41, 0.04),
+    0 4px 8px -8px rgba(31, 35, 41, 0.06);
 
   &--info {
     --el-message-text-color: var(--el-color-primary) !important;
@@ -284,7 +287,8 @@
   .el-message-box__btns {
     --el-messagebox-padding-primary: 16px;
   }
-  .el-message-box__header:has(.el-message-box__title:empty), .el-message-box__header:has(.el-message-box__title > span:empty) {
+  .el-message-box__header:has(.el-message-box__title:empty),
+  .el-message-box__header:has(.el-message-box__title > span:empty) {
     padding: 0;
   }
   .el-message-box__message {
@@ -336,7 +340,7 @@
 // Button
 .el-button {
   &--small {
-    --el-border-radius-base: var(--el-border-radius-small)
+    --el-border-radius-base: var(--el-border-radius-small);
   }
   & + .el-button.el-button {
     margin-left: var(--btn-space);
@@ -377,7 +381,8 @@
   }
 
   // 图标按钮
-  &.is-text:has(> i:only-child), &.is-text:has(> i + span:empty) {
+  &.is-text:has(> i:only-child),
+  &.is-text:has(> i + span:empty) {
     --el-button-text-color: var(--icon-color, var(--icon-n2));
     --el-border-radius-base: 8px;
     --el-fill-color-light: rgba(31, 35, 41, 0.1);
@@ -408,17 +413,20 @@
     margin-left: 0;
   }
 
-  &.is-text.el-button--small:has(> i:only-child), &.is-text.el-button--small:has(> i + span:empty) {
+  &.is-text.el-button--small:has(> i:only-child),
+  &.is-text.el-button--small:has(> i + span:empty) {
     --el-border-radius-base: var(--el-border-radius-small);
     font-size: 16px;
   }
 
   // 这里的default 介于按钮的 sm/default 之间
-  &.is-text.el-button--default:has(> i:only-child), &.is-text.el-button--default:has(> i + span:empty) {
+  &.is-text.el-button--default:has(> i:only-child),
+  &.is-text.el-button--default:has(> i + span:empty) {
     font-size: 18px;
   }
 
-  &.is-text.el-button--large:has(> i:only-child), &.is-text.el-button--large:has(> i + span:empty) {
+  &.is-text.el-button--large:has(> i:only-child),
+  &.is-text.el-button--large:has(> i + span:empty) {
     font-size: 24px;
   }
 }
@@ -479,7 +487,7 @@
   .el-input-number__increase,
   .el-input-number__decrease {
     opacity: 0;
-    transition: opacity .2s linear .2s;
+    transition: opacity 0.2s linear 0.2s;
   }
 
   &:hover {
@@ -498,8 +506,8 @@
 
 // Input
 .el-input {
-  &--small  {
-    --el-border-radius-base: var(--el-border-radius-small)
+  &--small {
+    --el-border-radius-base: var(--el-border-radius-small);
   }
 
   &__count-inner {
@@ -539,11 +547,15 @@
     .el-alert__icon {
       --color: var(--el-color-primary);
     }
+  }
 }
+
+// Upload
+.el-upload {
+  .el-upload-dragger {
+    border-radius: var(--el-border-radius-large);
+  }
 }
-
-
-
 
 // Custome Component
 .drag-node-image {

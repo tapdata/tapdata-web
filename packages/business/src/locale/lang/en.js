@@ -1606,4 +1606,8 @@ export default {
     'Click variable name to insert into template',
   packages_business_ignoreTimePrecision_round: 'Round',
   packages_business_ignoreTimePrecision_truncate: 'Truncate',
+  packages_business_validation_task_type: 'Validation Task Type',
+  packages_business_select_task_to_be_verified: 'Select Task to be Verified',
+  packages_business_drag_file_here:
+    'Drag .gz file here or <em>select file upload</em>',
 }

@@ -526,7 +526,11 @@
 }
 
 .border-primary {
-  border-color: #0d6efd !important;
+  border-color: var(--el-color-primary) !important;
+}
+
+.hover\:border-primary:hover {
+  border-color: var(--el-color-primary) !important;
 }
 
 .border-secondary {

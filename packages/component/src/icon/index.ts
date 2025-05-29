@@ -1,3 +1,7 @@
 export * from './FilterOutlined'
 export * from './AdminOutlined'
 export * from './MemberOutlined'
+export * from './ExportOutlined'
+export * from './ImportOutlined'
+export * from './FileAddColorful'
+export * from './FileDocxColorful'
