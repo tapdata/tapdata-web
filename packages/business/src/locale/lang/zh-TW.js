@@ -1409,4 +1409,11 @@ export default {
   packages_business_verification_empty_auto_add_table:
     '暫無校驗表配置，請自動添加表',
   packages_business_verification_empty_chooseJob: '暫無校驗表配置，請選擇任務',
+  packages_business_custom_mail_template: '自定義郵件模板',
+  packages_business_alarm_type: '告警類型',
+  packages_business_mail_title: '郵件主題',
+  packages_business_mail_content: '郵件正文',
+  packages_business_available_variables: '可用變量',
+  packages_business_click_variable_name_insert_template:
+    '點擊變量名稱插入到模板中',
 }

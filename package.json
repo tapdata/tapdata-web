@@ -29,6 +29,7 @@
     "vue-router": "^4.0.8"
   },
   "devDependencies": {
+    "@iconify-json/lucide": "^1.2.45",
     "@rushstack/eslint-patch": "^1.8.0",
     "@sxzz/eslint-config": "^6.1.1",
     "@sxzz/prettier-config": "^2.2.1",

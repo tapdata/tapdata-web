@@ -13,4 +13,8 @@ declare global {
   const ElInput: typeof import('element-plus/es')['ElInput']
   const ElMessage: typeof import('element-plus/es')['ElMessage']
   const ElMessageBox: typeof import('element-plus/es')['ElMessageBox']
+  const IconLucideClock: typeof import('~icons/lucide/clock')['default']
+  const IconLucideFileText: typeof import('~icons/lucide/file-text')['default']
+  const IconLucideHash: typeof import('~icons/lucide/hash')['default']
+  const IconLucideTriangleAlert: typeof import('~icons/lucide/triangle-alert')['default']
 }

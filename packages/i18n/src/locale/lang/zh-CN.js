@@ -392,4 +392,13 @@ export default {
   public_hkd: '港币',
   public_selfHost: '半托管',
   public_fullManagement: '全托管',
+
+  public_error_time: '错误时间',
+  public_error_log: '错误日志',
+  public_complete_time: '完成时间',
+  public_cdc_time: 'CDC 时间',
+  public_stop_time: '停止时间',
+  public_delay_time: '延迟时间',
+  public_current_cost_time: '当前耗时',
+  public_threshold: '阈值',
 }

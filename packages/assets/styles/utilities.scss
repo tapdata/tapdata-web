@@ -12615,3 +12615,13 @@
 .col-start-2 {
   grid-column-start: 2;
 }
+
+
+.list-item-hover:hover {
+  background-color: var(--fill-hover) !important;
+}
+
+.list-item-hover.is-active {
+  background-color: var(--primary-hover-light) !important;
+  color: var(--el-color-primary) !important;
+}
