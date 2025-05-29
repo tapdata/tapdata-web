@@ -114,6 +114,7 @@ const form = reactive({
   errorNotifys: ['SYSTEM', 'EMAIL'],
   inconsistentNotifys: ['SYSTEM', 'EMAIL'],
   checkTableThreadNum: 10,
+  roundingMode: 'HALF_UP',
   alarmSettings: [
     {
       type: 'INSPECT',
@@ -627,7 +628,7 @@ provide('ConnectorMap', ConnectorMap)
           required
           class="form-item"
           prop="flowId"
-          :label="`${$t('packages_business_verification_chooseJob')}: `"
+          :label="`${$t('packages_business_verification_chooseJob')}`"
         >
           <InfiniteSelect
             ref="taskSelect"
@@ -647,7 +648,7 @@ provide('ConnectorMap', ConnectorMap)
           required
           class="form-item"
           prop="name"
-          :label="`${$t('packages_business_verification_task_name')}: `"
+          :label="`${$t('packages_business_verification_task_name')}`"
         >
           <ElInput v-model="form.name" class="form-input" />
         </ElFormItem>
@@ -656,7 +657,7 @@ provide('ConnectorMap', ConnectorMap)
       <ElFormItem
         required
         class="form-item"
-        :label="`${$t('packages_business_verification_type')}: `"
+        :label="`${$t('packages_business_verification_type')}`"
       >
         <div>
           <el-radio-group
@@ -715,7 +716,7 @@ provide('ConnectorMap', ConnectorMap)
             v-if="form.inspectMethod !== 'hash'"
             class="form-item"
             prop="inspectDifferenceMode"
-            :label="`${$t('packages_business_verification_form_jieguoshuchu')}: `"
+            :label="`${$t('packages_business_verification_form_jieguoshuchu')}`"
           >
             <ElSelect
               v-model="form.inspectDifferenceMode"
@@ -739,7 +740,7 @@ provide('ConnectorMap', ConnectorMap)
 
           <ElFormItem
             class="form-item"
-            :label="`${$t('packages_business_verification_frequency')}: `"
+            :label="`${$t('packages_business_verification_frequency')}`"
           >
             <ElSelect
               v-model="form.mode"
@@ -759,7 +760,7 @@ provide('ConnectorMap', ConnectorMap)
           <ElFormItem
             v-if="form.mode === 'cron'"
             class="form-item"
-            :label="`${$t('packages_business_verification_is_enabled')}: `"
+            :label="`${$t('packages_business_verification_is_enabled')}`"
           >
             <ElSwitch v-model="form.enabled" />
           </ElFormItem>
@@ -767,7 +768,7 @@ provide('ConnectorMap', ConnectorMap)
             <ElFormItem
               class="form-item"
               prop="timing.start"
-              :label="`${$t('packages_business_verification_startAndStopTime')}: `"
+              :label="`${$t('packages_business_verification_startAndStopTime')}`"
             >
               <ElDatePicker
                 :model-value="[form.timing.start, form.timing.end]"
@@ -783,7 +784,7 @@ provide('ConnectorMap', ConnectorMap)
             <ElFormItem
               class="form-item"
               prop="timing.intervals"
-              :label="`${$t('packages_business_verification_verifyInterval')}: `"
+              :label="`${$t('packages_business_verification_verifyInterval')}`"
             >
               <ElInput
                 v-model="form.timing.intervals"
@@ -810,7 +811,7 @@ provide('ConnectorMap', ConnectorMap)
 
           <ElFormItem
             class="form-item"
-            :label="`${$t('packages_business_verification_form_task_alarm')}: `"
+            :label="`${$t('packages_business_verification_form_task_alarm')}`"
           >
             <div class="inline-block">
               <div>
@@ -932,9 +933,7 @@ provide('ConnectorMap', ConnectorMap)
           <ElFormItem
             v-if="form.inspectMethod !== 'hash'"
             class="form-item"
-            :label="`${$t(
-              'packages_business_verification_form_label_error_save_count',
-            )}: `"
+            :label="`${$t('packages_business_verification_form_label_error_save_count')}`"
           >
             <ElSelect v-model="form.limit.keep" class="form-select">
               <ElOption :value="100" label="100(rows)" />
@@ -945,9 +944,10 @@ provide('ConnectorMap', ConnectorMap)
 
           <ElFormItem v-if="!isCountOrHash" class="form-item">
             <template #label>
-              <span>{{ $t('packages_business_ignoreTimePrecision') }}</span>
+              <span class="align-middle mr-1">{{
+                $t('packages_business_ignoreTimePrecision')
+              }}</span>
               <el-tooltip
-                effect="dark"
                 placement="top"
                 :content="$t('packages_business_ignoreTimePrecision_tip')"
               >
@@ -955,16 +955,30 @@ provide('ConnectorMap', ConnectorMap)
                   >info</VIcon
                 >
               </el-tooltip>
-              <span>:</span>
             </template>
-            <ElSwitch v-model="form.ignoreTimePrecision" />
+            <div class="flex align-center">
+              <ElSwitch v-model="form.ignoreTimePrecision" />
+
+              <template v-if="form.ignoreTimePrecision">
+                <el-divider direction="vertical" class="mx-4" />
+                <el-radio-group v-model="form.roundingMode">
+                  <el-radio value="HALF_UP">
+                    {{ $t('packages_business_ignoreTimePrecision_round') }}
+                  </el-radio>
+                  <el-radio value="DOWN">
+                    {{ $t('packages_business_ignoreTimePrecision_truncate') }}
+                  </el-radio>
+                </el-radio-group>
+              </template>
+            </div>
           </ElFormItem>
 
           <ElFormItem v-if="!isCountOrHash" class="form-item">
             <template #label>
-              <span>{{ $t('packages_business_checkTableThreadNum') }}</span>
+              <span class="align-middle mr-1">{{
+                $t('packages_business_checkTableThreadNum')
+              }}</span>
               <el-tooltip
-                effect="dark"
                 placement="top"
                 :content="$t('packages_business_checkTableThreadNum_tip')"
               >
@@ -972,7 +986,6 @@ provide('ConnectorMap', ConnectorMap)
                   >info</VIcon
                 >
               </el-tooltip>
-              <span>:</span>
             </template>
             <ElInputNumber v-model="form.checkTableThreadNum" :min="1" />
           </ElFormItem>
