@@ -10,8 +10,8 @@ export function installDirectives(app) {
     return false
   }
   app.config.globalProperties.$disabledReadonlyUserBtn = function () {
-    let domainName = document.domain
-    let removeReadonly = localStorage.getItem('removeReadonly')
+    const domainName = document.domain
+    const removeReadonly = localStorage.getItem('removeReadonly')
     if (domainName === 'demo.cloud.tapdata.net' && !removeReadonly) {
       return true
     }

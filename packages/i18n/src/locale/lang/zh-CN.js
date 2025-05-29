@@ -401,4 +401,5 @@ export default {
   public_delay_time: '延迟时间',
   public_current_cost_time: '当前耗时',
   public_threshold: '阈值',
+  public_start_import: '开始导入',
 }
