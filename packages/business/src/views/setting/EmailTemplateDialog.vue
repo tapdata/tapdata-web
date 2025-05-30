@@ -329,8 +329,6 @@ const emit = defineEmits(['save'])
 const onSave = () => {
   emit('save', rulesList.value)
   visible.value = false
-
-  console.log('content', content)
 }
 
 const onCancel = () => {
@@ -453,8 +451,6 @@ const handleEditorChange = () => {
   )
 }
 
-console.log('rulesList', rulesList.value, form)
-
 defineExpose({
   open,
 })
@@ -465,6 +461,7 @@ defineExpose({
     v-model="visible"
     :title="$t('packages_business_custom_mail_template')"
     width="80vw"
+    top="10vh"
     append-to-body
     class="mail-template-dialog p-0"
   >
