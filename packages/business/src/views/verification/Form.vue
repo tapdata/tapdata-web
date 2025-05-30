@@ -1074,9 +1074,14 @@ provide('ConnectorMap', ConnectorMap)
 
       <template v-if="!!errorMessageLevel">
         <el-divider class="mx-4" direction="vertical" />
-        <el-alert type="error" show-icon :closable="false" class="w-auto">
+        <el-alert
+          type="error"
+          show-icon
+          :closable="false"
+          class="w-auto fit-content"
+        >
           <template #title>
-            <div v-html="jointErrorMessage" />
+            <div class="text-truncate" v-html="jointErrorMessage" />
           </template>
         </el-alert>
       </template>

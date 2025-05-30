@@ -1151,12 +1151,13 @@ const validate = async () => {
       message = i18n.t(
         'packages_business_verification_form_index_field_count_is_not_equal',
       )
+      const arr = []
       countNotArr.forEach((el, elIndex) => {
         if (elIndex <= SHOW_COUNT) {
-          message += `${el.source.table} `
-          message += `${el.target.table} `
+          arr.push(`${el.source.table} → ${el.target.table} `)
         }
       })
+      message += arr.join(', ')
       if (countNotArr.length > SHOW_COUNT) {
         message += `...${countNotArr.length - SHOW_COUNT}`
       }
