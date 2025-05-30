@@ -1618,6 +1618,7 @@ watch(conditionList, () => {
                   item-query="name"
                   item-value="id"
                   filterable
+                  @option-select="handleChangeConnection($event, item.source)"
                 />
               </el-form-item>
 
@@ -1626,11 +1627,12 @@ watch(conditionList, () => {
                 :label="$t('public_target_connection')"
               >
                 <AsyncSelect
-                  v-model="item.source.connectionId"
+                  v-model="item.target.connectionId"
                   :method="getConnectionsListMethod"
                   item-query="name"
                   item-value="id"
                   filterable
+                  @option-select="handleChangeConnection($event, item.target)"
                 />
               </el-form-item>
             </div>
