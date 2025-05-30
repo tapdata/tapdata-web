@@ -153,3 +153,12 @@
     line-height: inherit;
   }
 }
+
+
+.#{$formNamespace}-array-table {
+  .el-table {
+    .cell {
+      --btn-space: 2px;
+    }
+  }
+}

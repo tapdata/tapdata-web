@@ -351,7 +351,15 @@
   }
 
   // 文字按钮
-  &.is-text {
+  &.el-button--text {
+    --el-fill-color-light: #{rgba(map.get($color, primary), 0.1)};
+    --el-fill-color: #{rgba(map.get($color, primary), 0.2)};
+  }
+  &.el-button--text:not(.is-disabled):hover {
+    background-color: var(--el-fill-color);
+  }
+  &.is-text,
+  &.el-button--text {
     padding: 2px 4px;
     height: auto;
     line-height: 22px;
@@ -382,7 +390,9 @@
 
   // 图标按钮
   &.is-text:has(> i:only-child),
-  &.is-text:has(> i + span:empty) {
+  &.el-button--text:has(> i:only-child),
+  &.is-text:has(> i + span:empty),
+  &.el-button--text:has(> i + span:empty) {
     --el-button-text-color: var(--icon-color, var(--icon-n2));
     --el-border-radius-base: 8px;
     --el-fill-color-light: rgba(31, 35, 41, 0.1);
@@ -398,6 +408,7 @@
       --el-button-text-color: var(--icon-n1);
     }
 
+    &.el-button--text,
     &.el-button--primary {
       --el-button-text-color: var(--el-color-primary);
       --el-fill-color-light: var(--el-color-primary-light-9);
@@ -409,24 +420,31 @@
     }
   }
 
-  &.is-text i + span:empty {
+  &.is-text i + span:empty,
+  &.el-button--text i + span:empty {
     margin-left: 0;
   }
 
   &.is-text.el-button--small:has(> i:only-child),
-  &.is-text.el-button--small:has(> i + span:empty) {
+  &.is-text.el-button--small:has(> i + span:empty),
+  &.el-button--text.el-button--small:has(> i:only-child),
+  &.el-button--text.el-button--small:has(> i + span:empty) {
     --el-border-radius-base: var(--el-border-radius-small);
     font-size: 16px;
   }
 
   // 这里的default 介于按钮的 sm/default 之间
   &.is-text.el-button--default:has(> i:only-child),
-  &.is-text.el-button--default:has(> i + span:empty) {
+  &.is-text.el-button--default:has(> i + span:empty),
+  &.el-button--text.el-button--default:has(> i:only-child),
+  &.el-button--text.el-button--default:has(> i + span:empty) {
     font-size: 18px;
   }
 
   &.is-text.el-button--large:has(> i:only-child),
-  &.is-text.el-button--large:has(> i + span:empty) {
+  &.is-text.el-button--large:has(> i + span:empty),
+  &.el-button--text.el-button--large:has(> i:only-child),
+  &.el-button--text.el-button--large:has(> i + span:empty) {
     font-size: 24px;
   }
 }
