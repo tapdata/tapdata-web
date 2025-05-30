@@ -1413,8 +1413,14 @@ export default {
   packages_business_nulls_first_tip:
     '关联字段存在NULL值时，数据库默认将NULL排在最后，可能导致校验失败。开启此选项将NULL值排在前面，但可能无法使用数据库索引，增加数据库负载。',
   packages_business_ignoreTimePrecision: '忽略时间精度',
-  packages_business_ignoreTimePrecision_tip:
-    '开启此开关后，将忽略时间的毫秒级比较，只精确到秒级。可选“四舍五入”（如 ≥500ms 变为 1s）或“截断”（去除毫秒部分）方式处理，适用于高精度时间字段同步低精度字段的场景。',
+  packages_business_ignoreTimePrecision_tip: `<p>开启后，当源表与目标表时间精度不一致时，系统会统一为较低精度后再比对。</p>
+<p>可选择：</p>
+<ul class="pl-4">
+  <li class="list-disc">四舍五入（如：1267 微秒 → 127 毫秒）</li>
+  <li class="list-disc">截断（如：1267 微秒 → 126 毫秒）</li>
+</ul>
+<p>适用于高精度同步至低精度字段的场景。</p>
+<p>若精度相同但存储精度不同（如 Sybase 为约 3.33ms），系统会忽略超出部分。</p>`,
   packages_business_checkTableThreadNum: '校验线程数量',
   packages_business_checkTableThreadNum_tip:
     '校验线程数量，在资源充足的情况下可进行调整，默认线程数为 10',

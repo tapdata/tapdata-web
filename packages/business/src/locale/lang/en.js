@@ -1586,8 +1586,14 @@ export default {
   packages_business_nulls_first_tip:
     'When the associated fields contain NULL values, the database defaults to sorting NULL values last, which may cause validation failure. Enabling this option will set NULL values first, but may not use the database index, increasing database load.',
   packages_business_ignoreTimePrecision: 'Ignore time precision',
-  packages_business_ignoreTimePrecision_tip:
-    'When enabled, time comparison ignores milliseconds and is accurate to the second. Supports rounding (e.g. ≥500ms becomes 1s) or truncation (milliseconds are removed), useful for syncing high- and low-precision time fields.',
+  packages_business_ignoreTimePrecision_tip: `<p>When enabled, the system aligns time values to the lower precision before comparison if source and target differ.</p>
+<p>Options:</p>
+<ul class="pl-4">
+  <li class="list-disc">Round (e.g., 1267 microseconds → 127 milliseconds)</li>
+  <li class="list-disc">Truncate (e.g., 1267 microseconds → 126 milliseconds)</li>
+</ul>
+<p>Useful when syncing high-precision fields to lower-precision ones.</p>
+<p>If precision is the same but storage differs (e.g., Sybase ≈ 3.33ms), extra digits will be ignored.</p>`,
   packages_business_checkTableThreadNum: 'Thread Validation',
   packages_business_checkTableThreadNum_tip:
     'Number of threads to use. Default is 10. Can be increased if system resources permit.',

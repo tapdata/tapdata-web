@@ -947,10 +947,12 @@ provide('ConnectorMap', ConnectorMap)
               <span class="align-middle mr-1">{{
                 $t('packages_business_ignoreTimePrecision')
               }}</span>
-              <el-tooltip
-                placement="top"
-                :content="$t('packages_business_ignoreTimePrecision_tip')"
-              >
+              <el-tooltip placement="top">
+                <template #content>
+                  <div
+                    v-html="$t('packages_business_ignoreTimePrecision_tip')"
+                  />
+                </template>
                 <VIcon class="align-self-center" color="#909399" size="14"
                   >info</VIcon
                 >
