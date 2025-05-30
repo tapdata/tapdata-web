@@ -1596,21 +1596,19 @@ export default {
           <div class="data-server-panel__title mt-4 mb-3">
             {{ $t('packages_business_data_server_drawer_diaoyongfangshi') }}
           </div>
-          <div class="flex">
-            <div class="data-server-debug__url flex-1 flex align-center mr-4">
-              <ElSelect
-                v-model="debugMethod"
-                class="data-server-debug__method mr-4"
-                style="width: 100px"
-              >
-                <ElOption
-                  v-for="(item, i) in urlList"
-                  :key="i"
-                  :value="item.method"
-                />
-              </ElSelect>
-              <div>{{ urlsMap[debugMethod] }}</div>
-            </div>
+          <div class="flex gap-4">
+            <el-input :model-value="urlsMap[debugMethod]" readonly>
+              <template #prepend>
+                <ElSelect v-model="debugMethod" style="width: 100px">
+                  <ElOption
+                    v-for="(item, i) in urlList"
+                    :key="i"
+                    :value="item.method"
+                  />
+                </ElSelect>
+              </template>
+            </el-input>
+
             <ElButton
               type="primary"
               :disabled="debugDisabled"
