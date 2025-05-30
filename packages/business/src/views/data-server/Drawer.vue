@@ -276,9 +276,9 @@ export default {
             : this.$t('packages_business_data_server_drawer_chuangjianfuwu'),
         )
 
-        setTimeout(() => {
-          this.$refs.tabs.calcPaneInstances(true)
-        }, 0)
+        // setTimeout(() => {
+        //   this.$refs.tabs.calcPaneInstances(true)
+        // }, 0)
       }
     },
   },
