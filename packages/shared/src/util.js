@@ -1,9 +1,9 @@
+import dayjs from 'dayjs'
 // TODO 整理下方通用工具方法 ------------------------------------------------------------------------------------------------------------------------
 import Cookie from './cookie'
-import dayjs from 'dayjs'
 
 export function setPermission(list) {
-  let permissions = []
+  const permissions = []
   if (list) {
     list.forEach((permission) => {
       if (permission.resources && permission.resources.length > 0) {
@@ -28,13 +28,7 @@ export function signOut() {
   Cookie.remove('email')
   Cookie.remove('username')
   Cookie.remove('isReadonly')
-  if (window !== top) {
-    top.window.location.href = '/login'
-  } else {
-    window.App.$router.push({
-      name: 'login',
-    })
-  }
+  location.href = `${location.href.split('#')[0]}#/login`
 }
 
 export function getUrlSearch(name) {
@@ -42,12 +36,12 @@ export function getUrlSearch(name) {
   if (!name) return null
   // 查询参数：先通过search取值，如果取不到就通过hash来取
   var after = window.location.search
-  after = after.substr(1) || window.location.hash.split('?')[1]
+  after = after.slice(1) || window.location.hash.split('?')[1]
   // 地址栏URL没有查询参数，返回空
   if (!after) return null
   // 如果查询参数中没有"name"，返回空
-  if (after.indexOf(name) === -1) return null
-  var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)')
+  if (!after.includes(name)) return null
+  var reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`)
   // 当地址栏参数存在中文时，需要解码，不然会乱码
   var r = decodeURI(after).match(reg)
   // 如果url中"name"没有值，返回空
@@ -83,10 +77,15 @@ const CLASSTYPES = [
   'Error',
 ]
 
-const CLASS2TYPE = CLASSTYPES.reduce((obj, t) => ((obj[`[object ${t}]`] = t.toLowerCase()), obj), {})
+const CLASS2TYPE = CLASSTYPES.reduce(
+  (obj, t) => ((obj[`[object ${t}]`] = t.toLowerCase()), obj),
+  {},
+)
 
 export function getClassType(obj) {
-  return obj == null ? String(obj) : CLASS2TYPE[{}.toString.call(obj)] || 'object'
+  return obj == null
+    ? String(obj)
+    : CLASS2TYPE[Object.prototype.toString.call(obj)] || 'object'
 }
 
 export function isObject(obj) {
@@ -119,11 +118,14 @@ export function groupBy(data, key) {
 export const uuid = function () {
   // credit: http://stackoverflow.com/posts/2117523/revisions
 
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    let r = (Math.random() * 16) | 0
-    let v = c === 'x' ? r : (r & 0x3) | 0x8
-    return v.toString(16)
-  })
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replaceAll(
+    /[xy]/g,
+    function (c) {
+      const r = (Math.random() * 16) | 0
+      const v = c === 'x' ? r : (r & 0x3) | 0x8
+      return v.toString(16)
+    },
+  )
 }
 
 /**
@@ -146,7 +148,10 @@ export const os = (function () {
     isAndroid = /Android/.test(ua),
     isFireFox = /Firefox/.test(ua),
     isChrome = /Chrome|CriOS/.test(ua),
-    isTablet = /iPad|PlayBook/.test(ua) || (isAndroid && !/Mobile/.test(ua)) || (isFireFox && /(?:Tablet)/.test(ua)),
+    isTablet =
+      /iPad|PlayBook/.test(ua) ||
+      (isAndroid && !/Mobile/.test(ua)) ||
+      (isFireFox && /Tablet/.test(ua)),
     isIPhone = /iPhone/.test(ua) && !isTablet,
     isWeixin = /MicroMessenger/.test(ua),
     isPc = !isIPhone && !isAndroid && !isSymbian
@@ -161,7 +166,7 @@ export const os = (function () {
 })()
 
 export function checkConnectionName(name) {
-  return /^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-.]|[\u4e00-\u9fa5])*$/.test(name)
+  return /^([\u4E00-\u9FA5A-Z])([\w\s\-.\u4E00-\u9FA5])*$/i.test(name)
 }
 
 export function openUrl(url, target = '_blank', name = '') {
@@ -171,9 +176,9 @@ export function openUrl(url, target = '_blank', name = '') {
   dom.setAttribute('target', target)
   dom.setAttribute('ID', name)
   dom.style.display = 'none'
-  document.body.appendChild(dom)
+  document.body.append(dom)
   dom.click()
-  dom.parentNode.removeChild(dom)
+  dom.remove()
   window.URL.revokeObjectURL(url)
 }
 
@@ -181,16 +186,17 @@ export function submitForm(url, obj = {}, method = 'post') {
   const form = document.createElement('form')
   form.action = url
   form.method = method
-  for (let key in obj) {
+  for (const key in obj) {
     const dom = document.createElement('input')
     dom.setAttribute('type', 'hidden')
     dom.setAttribute('name', key)
-    dom.value = typeof obj[key] === 'object' ? JSON.stringify(obj[key]) : obj[key]
-    form.appendChild(dom)
+    dom.value =
+      typeof obj[key] === 'object' ? JSON.stringify(obj[key]) : obj[key]
+    form.append(dom)
   }
-  document.body.appendChild(form)
+  document.body.append(form)
   form.submit()
-  form.parentNode.removeChild(form)
+  form.remove()
 }
 
 // 下载Blob
@@ -199,7 +205,9 @@ export function downloadBlob(res, name = '') {
     return
   }
   const { data, headers } = res
-  const fileName = name || headers['content-disposition'].replace(/\w+;\s*filename="?([^"]+)"?/, '$1')
+  const fileName =
+    name ||
+    headers['content-disposition'].replace(/\w+;\s*filename="?([^"]+)"?/, '$1')
   const blob = new Blob([data], { type: headers['content-type'] })
   openUrl(window.URL.createObjectURL(blob), '_blank', fileName)
 }
@@ -215,7 +223,7 @@ export function downloadJson(data, name = '') {
 }
 
 export function dec2hex(dec) {
-  return ('0' + dec.toString(16)).substr(-2)
+  return `0${dec.toString(16)}`.slice(-2)
 }
 
 // generateId :: Integer -> String
@@ -228,17 +236,17 @@ export function generateId(len = 8) {
 // 转base64
 export const urlToBase64 = (url) => {
   return new Promise((resolve, reject) => {
-    let image = new Image()
-    image.onload = function () {
-      let canvas = document.createElement('canvas')
+    const image = new Image()
+    image.addEventListener('load', function () {
+      const canvas = document.createElement('canvas')
       canvas.width = this.naturalWidth
       canvas.height = this.naturalHeight
       // 将图片插入画布并开始绘制
       canvas.getContext('2d').drawImage(image, 0, 0)
       // result
-      let result = canvas.toDataURL('image/png')
+      const result = canvas.toDataURL('image/png')
       resolve(result)
-    }
+    })
     // CORS 策略，会存在跨域问题https://stackoverflow.com/questions/20424279/canvas-todataurl-securityerror
     image.setAttribute('crossOrigin', 'Anonymous')
     image.src = url
@@ -266,13 +274,17 @@ export function toLowerCase(str = '') {
 // 驼峰命名转蛇形命名
 // 处理逻辑：将源字段名中非首字母的大写字母前增加下划线_进行连接，并将所有字母转换为小写
 export function camelToSnake(camelStr) {
-  return camelStr.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase()).toLowerCase()
+  return camelStr
+    .replaceAll(/[A-Z]/g, (match) => `_${match.toLowerCase()}`)
+    .toLowerCase()
 }
 
 // 驼峰命名转蛇形命名
 // 处理逻辑：将源字段名中非首字母的大写字母前增加下划线_进行连接，并将所有字母转换为小写
 export function snakeToCamel(snakeStr) {
-  return snakeStr.replace(/_[a-z]/g, (match) => match.charAt(1).toUpperCase())
+  return snakeStr.replaceAll(/_[a-z]/g, (match) =>
+    match.charAt(1).toUpperCase(),
+  )
 }
 
 export function onCopy(value) {
@@ -283,14 +295,14 @@ export function onCopy(value) {
   input.style.margin = '0'
   input.style.position = 'absolute'
   input.style.left = '-9999px'
-  input.style.top = document.documentElement.scrollTop + 'px'
+  input.style.top = `${document.documentElement.scrollTop}px`
   input.setAttribute('readonly', '')
   input.value = value
 
-  document.body.appendChild(input)
+  document.body.append(input)
   input.select() // 这里会触发ElTooltip -> Button 的blur，下面要主动focus
   document.execCommand?.('copy')
-  document.body.removeChild(input)
+  input.remove()
 }
 
 export async function copyToClipboard(textToCopy, context) {
@@ -316,12 +328,18 @@ export async function copyToClipboard(textToCopy, context) {
       console.error(error)
     }
 
-    context.removeChild(textArea)
+    textArea.remove()
   }
 }
 
-export function deepEqual(obj1, obj2, excludedPaths = [], currentPath = '', seen = new Map()) {
-  const isExcluded = path => excludedPaths.includes(path)
+export function deepEqual(
+  obj1,
+  obj2,
+  excludedPaths = [],
+  currentPath = '',
+  seen = new Map(),
+) {
+  const isExcluded = (path) => excludedPaths.includes(path)
 
   // Handle identical references (including NaN)
   if (obj1 === obj2) {
@@ -329,7 +347,12 @@ export function deepEqual(obj1, obj2, excludedPaths = [], currentPath = '', seen
   }
 
   // Handle NaN case
-  if (typeof obj1 === 'number' && typeof obj2 === 'number' && isNaN(obj1) && isNaN(obj2)) {
+  if (
+    typeof obj1 === 'number' &&
+    typeof obj2 === 'number' &&
+    isNaN(obj1) &&
+    isNaN(obj2)
+  ) {
     return true
   }
 
@@ -371,8 +394,8 @@ export function deepEqual(obj1, obj2, excludedPaths = [], currentPath = '', seen
     const pathPrefix = currentPath ? `${currentPath}.` : ''
 
     if (excludedPaths.length) {
-      keys1 = keys1.filter(key => !isExcluded(pathPrefix + key))
-      keys2 = keys2.filter(key => !isExcluded(pathPrefix + key))
+      keys1 = keys1.filter((key) => !isExcluded(pathPrefix + key))
+      keys2 = keys2.filter((key) => !isExcluded(pathPrefix + key))
     }
 
     if (keys1.length !== keys2.length) {
@@ -380,7 +403,10 @@ export function deepEqual(obj1, obj2, excludedPaths = [], currentPath = '', seen
     }
 
     for (const key of keys1) {
-      if (!keys2.includes(key) || !deepEqual(obj1[key], obj2[key], excludedPaths, pathPrefix + key, seen)) {
+      if (
+        !keys2.includes(key) ||
+        !deepEqual(obj1[key], obj2[key], excludedPaths, pathPrefix + key, seen)
+      ) {
         return false
       }
     }

@@ -12,6 +12,7 @@ import { createApp } from 'vue'
 import App from '@/App.vue'
 import { installOEM } from '@/oem'
 import { installAllPlugins } from '@/plugins'
+import { setSettings } from '@/utils/settings'
 import { configUser, getUrlSearch } from '@/utils/util'
 import store from '@/vuex' // 引入全局数据控制
 
@@ -44,14 +45,6 @@ window._TAPDATA_OPTIONS_ = {
   homeUrl: import.meta.env.VUE_APP_HOME_URL,
 }
 
-window.getSettingByKey = (key) => {
-  let value = ''
-
-  const setting = window?.__settings__.find((it) => it.key === key) || {}
-  value = setting.isArray ? setting.value.split(',') : setting.value
-  return value
-}
-
 const IS_IFRAME = String(
   getUrlSearch('frame') ||
     sessionStorage.getItem('IS_IFRAME') ||
@@ -78,9 +71,7 @@ const init = () => {
   const lang = getCurrentLanguage()
   setCurrentLanguage(lang, i18n)
 
-  document.title =
-    /*window.getSettingByKey('PRODUCT_TITLE') ||*/ import.meta.env
-      .VUE_APP_PAGE_TITLE || 'Tapdata'
+  document.title = import.meta.env.VUE_APP_PAGE_TITLE || 'Tapdata'
 
   const loc = window.location
   let wsUrl = 'ws:'
@@ -89,7 +80,7 @@ const init = () => {
   }
   wsUrl += `//${loc.host}${location.pathname.replace(/\/$/, '')}/ws/agent`
 
-  const app = (window.App = window.$vueApp = createApp(App))
+  const app = createApp(App)
 
   installAllPlugins(app)
   installDirectives(app)
@@ -107,7 +98,6 @@ const init = () => {
   app.config.globalProperties.routerAppend = (path, pathToAppend) => {
     return path + (path.endsWith('/') ? '' : '/') + pathToAppend
   }
-  app.config.globalProperties.$getSettingByKey = window.getSettingByKey
   app.use(i18n)
   app.use(store)
   app.use(router)
@@ -120,7 +110,7 @@ settingsApi
   .get()
   .then(async (data) => {
     const initData = data || []
-    window.__settings__ = initData
+    setSettings(initData)
 
     if (initData.length) {
       localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(initData))

@@ -139,7 +139,7 @@ const AlarmNotification = async () => {
   return AlarmNotification
 }
 
-export default [
+export const routes = [
   {
     path: '/login',
     name: 'login',

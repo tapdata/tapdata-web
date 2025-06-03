@@ -264,7 +264,7 @@ export default {
       this.subscribeItems = subscribeItems
       this.trafficItems = trafficItems
 
-      const agentUrl = window.App.$router.resolve({
+      const agentUrl = this.$router.resolve({
         name: 'Instance',
         query: {
           id: subscribeItems[0].resourceId,

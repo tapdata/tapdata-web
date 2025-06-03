@@ -8,7 +8,7 @@ import {
 import { SceneDialog } from '@tap/business'
 import StageButton from '@tap/business/src/components/StageButton.vue'
 import { OverflowTooltip, VEmpty, VIcon } from '@tap/component'
-import mouseDrag from '@tap/component/src/directives/mousedrag'
+import { mouseDrag } from '@tap/component/src/directives/mousedrag'
 import resize from '@tap/component/src/directives/resize'
 import { getInitialValuesInBySchema } from '@tap/form'
 import { useResizeObserver } from '@vueuse/core'
@@ -16,7 +16,6 @@ import { getScrollBarWidth } from 'element-plus/es/utils/dom/scroll'
 import { debounce, escapeRegExp } from 'lodash-es'
 import { markRaw } from 'vue'
 import { mapGetters } from 'vuex'
-import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 import BaseNode from './BaseNode'
 import ConnectionType from './ConnectionType'
 import CreateTable from './CreateTable'
@@ -437,11 +436,11 @@ export default {
 
     onMove() {
       this.dragMoving = true
-      $emit(this, 'move-node', ...arguments)
+      this.$emit('move-node', ...arguments)
     },
 
     onDrop(item, position, rect) {
-      $emit(this, 'drop-node', this.dragNode, position, rect)
+      this.$emit('drop-node', this.dragNode, position, rect)
     },
 
     onStop() {
@@ -508,8 +507,7 @@ export default {
     },
 
     handleSaveTable(name) {
-      $emit(
-        this,
+      this.$emit(
         'add-table-as-node',
         this.getNodeProps(this.activeConnection, name),
       )
@@ -601,8 +599,7 @@ export default {
     onDBClick(tableName) {
       if (this.stateIsReadonly) return
 
-      $emit(
-        this,
+      this.$emit(
         'add-node',
         this.getNodeProps(this.activeConnection, tableName),
       )
@@ -615,7 +612,7 @@ export default {
     onDoubleClickProcessor(item) {
       if (this.stateIsReadonly) return
 
-      $emit(this, 'add-node', item)
+      this.$emit('add-node', item)
     },
   },
   emits: ['move-node', 'drop-node', 'add-table-as-node', 'add-node'],

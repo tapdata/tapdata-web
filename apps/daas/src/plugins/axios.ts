@@ -8,6 +8,7 @@ import axios, {
 import { ElMessageBox, ElMessage as Message } from 'element-plus'
 import Qs from 'qs'
 import i18n from '@/i18n'
+import { getSettingByKey } from '@/utils/settings'
 import { signOut } from '../utils/util'
 
 type AxiosRequestConfigPro = AxiosRequestConfig & {
@@ -67,9 +68,7 @@ const errorCallback = (error: AxiosError): Promise<AxiosError | string> => {
     switch (rsp.status) {
       // 用户无权限访问接口
       case 401: {
-        const isSingleSession = window.__settings__?.find(
-          (item) => item.key === 'login.single.session',
-        )?.open
+        const isSingleSession = getSettingByKey('login.single.session', 'open')
 
         signOut()
 

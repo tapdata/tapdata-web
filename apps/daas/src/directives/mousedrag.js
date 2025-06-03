@@ -1,4 +1,5 @@
-import { on, off, appendHtml } from '@/utils/dom'
+import { MousePosition } from '@tap/shared/src/mousePosition'
+import { appendHtml, off, on } from '@/utils/dom'
 
 const EVENT = {
   mouse: {
@@ -13,12 +14,22 @@ const EVENT = {
   },
 }
 
-export default {
+export const mouseDrag = {
   mounted(el, binding) {
+    // let dragging = false; // Removed unused variable
     // 事件名
     let eventsFor = EVENT.mouse
     let $drag
-    const { item, onStart, onMove, onStop, onDrop, box = [], domHtml, container } = binding.value
+    const {
+      item,
+      onStart,
+      onMove,
+      onStop,
+      onDrop,
+      box = [],
+      domHtml,
+      container,
+    } = binding.value
     const [t = 0, r = 0, b = 0, l = 0] = box
 
     const handleStart = (el._handleStart = (event) => {
@@ -38,14 +49,16 @@ export default {
     const handleMove = (el._handleMove = (event) => {
       event.preventDefault()
       if (!$drag) {
-        $drag = appendHtml(document.body, domHtml.replace(/\n/g, '').trim())
+        $drag = appendHtml(document.body, domHtml.replaceAll('\n', '').trim())
         document.body.classList.add('cursor-grabbing')
       }
 
       const { width, height } = $drag.getBoundingClientRect()
 
-      let posX = (event.touches ? event.touches[0].pageX : event.pageX) - width / 2
-      let posY = (event.touches ? event.touches[0].pageY : event.pageY) - height / 2
+      let posX =
+        (event.touches ? event.touches[0].pageX : event.pageX) - width / 2
+      let posY =
+        (event.touches ? event.touches[0].pageY : event.pageY) - height / 2
 
       posX = Math.max(posX, l)
       posX = Math.min(posX, document.documentElement.clientWidth - width - r)
@@ -53,14 +66,14 @@ export default {
       posY = Math.min(posY, document.documentElement.clientHeight - height - b)
 
       $drag.style.position = 'absolute'
-      $drag.style.left = posX + 'px'
-      $drag.style.top = posY + 'px'
+      $drag.style.left = `${posX}px`
+      $drag.style.top = `${posY}px`
       onMove?.(item, $drag)
     })
 
     const handleStop = (el._handleStop = (event) => {
-      let posX = event.touches ? event.touches[0].pageX : event.pageX
-      let posY = event.touches ? event.touches[0].pageY : event.pageY
+      const posX = event.touches ? event.touches[0].pageX : event.pageX
+      const posY = event.touches ? event.touches[0].pageY : event.pageY
 
       document.body.classList.remove('cursor-grabbing')
       onStop?.(item, [posX, posY])
@@ -74,7 +87,12 @@ export default {
           const $con = document.querySelector(container)
           if ($con) {
             const bound = $con.getBoundingClientRect()
-            if (posX > bound.left && posX < bound.right && posY > bound.top && posY < bound.bottom) {
+            if (
+              posX > bound.left &&
+              posX < bound.right &&
+              posY > bound.top &&
+              posY < bound.bottom
+            ) {
               onDrop?.(item, [posX - width / 2, posY - height / 2], {
                 width,
                 height,
@@ -92,7 +110,7 @@ export default {
     on(el, 'touchstart', handleStart)
   },
 
-  unMounted(el) {
+  unmounted(el) {
     const { _eventsFor } = el
     off(el, 'mousedown', el._handleStart)
     off(el, 'touchstart', el._handleStart)

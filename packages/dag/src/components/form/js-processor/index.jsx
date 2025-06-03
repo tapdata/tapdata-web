@@ -305,14 +305,15 @@ export const JsProcessor = observer(
       loadFunction()
 
       const onTabChange = (current) => {
-        // if (current == '1') {
-        //   beforeJsonRef.value.editor.resize(true)
-        //   afterJsonRef.value.editor.resize(true)
-        //   setTimeout(() => {
-        //     beforeJsonRef.value.editor.resize(true)
-        //     afterJsonRef.value.editor.resize(true)
-        //   }, 300)
-        // }
+        if (current == '1') {
+          beforeJsonRef.value.editor.resize(true)
+          afterJsonRef.value.editor.resize(true)
+
+          setTimeout(() => {
+            beforeJsonRef.value.editor.resize(true)
+            afterJsonRef.value.editor.resize(true)
+          }, 300)
+        }
       }
 
       function getPrefix(line, index) {

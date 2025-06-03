@@ -70,22 +70,20 @@ export default ({ routes }) => {
     document.body.append(iframe)
     /*E 万维广告*/
 
-    const app = (window.App = window.$vueApp = createApp(App))
-
-    console.log('appContext', app)
+    const app = createApp(App)
 
     installAllPlugins(app)
     installDirectives(app)
     installElement(app)
 
-    window.$vueApp.use(i18n)
-    window.$vueApp.use(store)
-    window.$vueApp.use(router)
+    app.use(i18n)
+    app.use(store)
+    app.use(router)
 
-    window.$vueApp.mount('#app')
+    app.mount('#app')
 
-    window.$vueApp.component(VIcon.name, VIcon)
-    window.$vueApp.config.globalProperties.$ws = new WSClient(wsUrl)
+    app.component(VIcon.name, VIcon)
+    app.config.globalProperties.$ws = new WSClient(wsUrl)
 
     startVersionPolling()
 

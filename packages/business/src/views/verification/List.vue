@@ -1,359 +1,448 @@
-<script>
+<script setup lang="ts">
 import { CircleCheckFilled, CircleCloseFilled } from '@element-plus/icons-vue'
-
 import { inspectApi, metadataInstancesApi } from '@tap/api'
 import loadingImg from '@tap/assets/icons/loading.svg'
-import { FilterBar, VIcon } from '@tap/component'
-import i18n from '@tap/i18n'
+import { ExportOutlined, FilterBar, VIcon } from '@tap/component'
+import { InfiniteSelect } from '@tap/form'
+import { useI18n } from '@tap/i18n'
+import { calcUnit } from '@tap/shared'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
+import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { TablePage } from '../../components'
 import { ErrorMessage } from '../../components/error-message'
 import PageContainer from '../../components/PageContainer.vue'
-import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
+import PermissionseSettingsCreate from '../../components/permissionse-settings/Create.vue'
 import { inspectMethod, statusMap, typeList as verifyTypeList } from './const'
 
-export default {
-  components: {
-    PermissionseSettingsCreate,
-    PageContainer,
-    TablePage,
-    VIcon,
-    FilterBar,
-    CircleCheckFilled,
-    CircleCloseFilled,
-    // ElIconError,
-    // ElIconSuccess
-  },
-  data() {
-    return {
-      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
-      searchParams: {
-        keyword: '',
-        inspectMethod: '',
-        mode: '',
-        enabled: '',
-        result: '',
-      },
-      filterItems: [],
-      loadingImg,
-      order: 'last_updated DESC',
-      inspectMethod,
-      statusMap,
-      validList: [
-        { label: this.$t('public_select_option_all'), value: '' },
-        {
-          label: this.$t('packages_business_verification_check_same'),
-          value: 'passed',
-        },
-        {
-          label: this.$t('packages_business_verification_count_difference'),
-          value: 'row_count',
-        },
-        {
-          label: this.$t('packages_business_verification_content_difference'),
-          value: 'valueDiff',
-        },
-        { label: 'Error', value: 'error' },
-      ],
-      verifyTypeList,
-      multipleSelection: [],
-      moreAuthority: this.$has('verify_job_delete_all_data'),
-    }
-  },
-  computed: {
-    table() {
-      return this.$refs.table
-    },
-  },
-  watch: {
-    '$route.query': function () {
-      this.searchParams = this.$route.query
-      this.table.fetch(1)
-    },
-  },
-  created() {
-    this.timer = setInterval(() => {
-      this.table.fetch(null, 0, true)
-    }, 8000)
-    this.getFilterItems()
-    this.searchParams = Object.assign(this.searchParams, this.$route.query)
-  },
-
-  beforeUnmount() {
-    clearInterval(this.timer)
-  },
-  methods: {
-    inspectMethodChange(val) {
-      if (val !== 'row_count' && this.searchParams.result === 'row_count') {
-        this.searchParams.result = ''
-      }
-      this.table.fetch(1)
-    },
-    // 批量导出
-    handleExport() {
-      const ids = this.multipleSelection.map((item) => item.id)
-      const where = {
-        _id: {
-          in: ids,
-        },
-      }
-      metadataInstancesApi.download(where, 'Inspect')
-    },
-    handleSelectionChange(val) {
-      this.multipleSelection = val
-    },
-    //筛选条件
-    handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
-      this.table.fetch(1)
-    },
-    getData({ page }) {
-      const { current, size } = page
-      let { keyword, inspectMethod, mode, enabled, result } = this.searchParams
-      const where = {}
-      //精准搜索 iModel
-      if (keyword && keyword.trim()) {
-        const filterObj = { like: escapeRegExp(keyword), options: 'i' }
-        where.$or = [{ name: filterObj }, { dataFlowName: filterObj }]
-      }
-      if (enabled) {
-        where.enabled = enabled == 1
-      }
-      if (result) {
-        if (result === 'error') {
-          where.status = 'error'
-        } else if (result === 'passed') {
-          where.status = { neq: 'error' }
-          where.result = 'passed'
-        } else if (result === 'row_count') {
-          where.status = { neq: 'error' }
-          where.result = 'failed'
-          inspectMethod = this.searchParams.inspectMethod = 'row_count'
-        } else {
-          where.status = { neq: 'error' }
-          where.result = 'failed'
-          if (inspectMethod === 'row_count') {
-            inspectMethod = this.searchParams.inspectMethod = ''
-          }
-          where.inspectMethod = { neq: 'row_count' }
-        }
-      }
-      inspectMethod && (where.inspectMethod = inspectMethod)
-      mode && (where.mode = mode)
-      const filter = {
-        order: this.order,
-        limit: size,
-        skip: (current - 1) * size,
-        where,
-      }
-      return inspectApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          const list = data?.items || []
-          return {
-            total: data?.total,
-            data: list.map((item) => {
-              const result = item.InspectResult
-              let sourceTotal = '-'
-              let targetTotal = '-'
-              if (result) {
-                sourceTotal = result.source_total
-                targetTotal = result.target_total
-              }
-              item.lastStartTime = item.lastStartTime
-                ? dayjs(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
-                : '-'
-              item.sourceTotal = sourceTotal
-              item.targetTotal = targetTotal
-              if (item.inspectMethod === 'hash') {
-                item.sourceTotal = '-'
-                item.targetTotal = '-'
-              }
-              return item
-            }),
-          }
-        })
-    },
-    handleCommand(command, node) {
-      let ids = ''
-      if (node) {
-        ids = node.id
-      }
-      this[command](ids, node)
-    },
-    toTableInfo(id) {
-      this.$router.push({
-        name: 'dataVerifyDetails',
-        params: {
-          id,
-        },
-      })
-    },
-    history(id) {
-      this.$router.push({
-        name: 'dataVerifyHistory',
-        params: {
-          id,
-        },
-      })
-    },
-    startTask(id) {
-      inspectApi
-        .update(
-          {
-            id,
-          },
-          {
-            status: 'scheduling',
-            ping_time: 0,
-            scheduleTimes: 0,
-            byFirstCheckId: '',
-          },
-        )
-        .then(() => {
-          this.$message.success(
-            this.$t('packages_business_verification_startVerify'),
-          )
-          this.table.fetch()
-        })
-    },
-    remove(id, row) {
-      const name = row.name
-      this.$confirm(
-        `${this.$t('packages_business_verification_deleteMessage')} ${name}?`,
-        this.$t('packages_business_dataFlow_importantReminder'),
-        {
-          confirmButtonText: this.$t('public_button_delete'),
-          cancelButtonText: this.$t('public_button_cancel'),
-          type: 'warning',
-        },
-      ).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        inspectApi.delete(id).then(() => {
-          this.$message.success(this.$t('public_message_delete_ok'))
-          this.table.fetch()
-        })
-      })
-    },
-    goEdit(id, flowId) {
-      const query = {
-        taskMode: flowId ? 'pipeline' : 'random',
-      }
-      if (flowId) {
-        query.flowId = flowId
-      }
-      this.$router.push({
-        name: 'dataVerificationEdit',
-        params: {
-          id,
-        },
-        query,
-      })
-    },
-    getFilterItems() {
-      this.filterItems = [
-        {
-          label: this.$t('packages_business_verification_type'),
-          key: 'inspectMethod',
-          type: 'select-inner',
-          items: this.verifyTypeList,
-          selectedWidth: '200px',
-          id: 'type-filter-select',
-        },
-        {
-          label: this.$t('packages_business_verification_check_frequency'),
-          key: 'mode',
-          type: 'select-inner',
-          items: [
-            { label: this.$t('public_select_option_all'), value: '' },
-            {
-              label: this.$t('packages_business_verification_single'),
-              value: 'MANUALLY_SPECIFIED_BY_THE_USER',
-            },
-            {
-              label: this.$t('packages_business_verification_repeating'),
-              value: 'cron',
-            },
-          ],
-          id: 'mode-filter-select',
-        },
-        {
-          label: this.$t('packages_business_verification_is_enabled'),
-          key: 'enabled',
-          type: 'select-inner',
-          items: [
-            { label: this.$t('public_select_option_all'), value: '' },
-            {
-              label: this.$t('packages_business_verification_job_enable'),
-              value: 1,
-            },
-            {
-              label: this.$t('packages_business_verification_job_disable'),
-              value: 2,
-            },
-          ],
-          id: 'enabled-filter-select',
-        },
-        {
-          label: this.$t('packages_business_verification_result_title'),
-          key: 'result',
-          type: 'select-inner',
-          items: this.validList,
-          id: 'result-filter-select',
-        },
-        {
-          placeholder: this.$t('packages_business_verification_task_name'),
-          key: 'keyword',
-          type: 'input',
-          id: 'name-filter-input',
-        },
-      ]
-    },
-    handleError(row = {}) {
-      ErrorMessage(row.errorMsg)
-    },
-    getInspectName(row = {}) {
-      if (row.tasks?.some((t) => !!t.source.columns || !!t.target.columns)) {
-        return i18n.t('packages_business_verification_list_biaobufenziduan')
-      }
-      return this.inspectMethod[row.inspectMethod]
-    },
-    stop(id = '') {
-      inspectApi
-        .update(
-          {
-            id,
-          },
-          { status: 'stopping' },
-        )
-        .then(() => {
-          this.$message.success(this.$t('public_message_operation_success'))
-          this.table.fetch()
-        })
-    },
-    handleCreate(type) {
-      this.$router.push({
-        name: 'dataVerificationCreate',
-        query: { taskMode: type },
-      })
-    },
-    havePermission(data = [], type = '') {
-      if (!this.isDaas) return true
-      return data.includes(type)
-    },
-    handlePermissionsSettings() {
-      this.$refs.permissionseSettingsCreate.open(
-        this.multipleSelection,
-        'Inspect',
-      )
-    },
-  },
+// 类型定义
+interface SearchParams {
+  keyword: string
+  inspectMethod: string
+  mode: string
+  enabled: string
+  result: string
 }
+
+interface FilterItem {
+  label: string
+  key: string
+  type: string
+  items?: Array<{ label: string; value: string | number }>
+  selectedWidth?: string
+  id: string
+  placeholder?: string
+}
+
+interface InspectResult {
+  source_total: number
+  target_total: number
+  progress?: number
+  parentId?: string
+}
+
+interface InspectItem {
+  id: string
+  name: string
+  inspectMethod: string
+  mode: string
+  enabled: boolean
+  status: string
+  result: string
+  lastStartTime: string
+  sourceTotal: string | number
+  targetTotal: string | number
+  InspectResult?: InspectResult
+  errorMsg?: string
+  difference_number?: number
+  flowId?: string
+  user_id?: string
+  permissionActions?: string[]
+  tasks?: Array<{
+    source: { columns?: any }
+    target: { columns?: any }
+  }>
+}
+
+interface ImportForm {
+  type: 'task' | 'table'
+  taskId: string
+  fileList: UploadUserFile[]
+}
+
+// Composables
+const route = useRoute()
+const router = useRouter()
+const { t } = useI18n()
+
+// Refs
+const table = ref<InstanceType<typeof TablePage>>()
+const permissionseSettingsCreate =
+  ref<InstanceType<typeof PermissionseSettingsCreate>>()
+let timer: NodeJS.Timeout | null = null
+
+// Reactive data
+const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
+const order = ref('last_updated DESC')
+const multipleSelection = ref<InspectItem[]>([])
+
+const searchParams = reactive<SearchParams>({
+  keyword: '',
+  inspectMethod: '',
+  mode: '',
+  enabled: '',
+  result: '',
+})
+
+const validList = [
+  { label: t('public_select_option_all'), value: '' },
+  {
+    label: t('packages_business_verification_check_same'),
+    value: 'passed',
+  },
+  {
+    label: t('packages_business_verification_count_difference'),
+    value: 'row_count',
+  },
+  {
+    label: t('packages_business_verification_content_difference'),
+    value: 'valueDiff',
+  },
+  { label: 'Error', value: 'error' },
+]
+
+const filterItems = ref<FilterItem[]>([])
+const taskOptions = ref([])
+const taskOptionsLoading = ref(false)
+
+// Computed
+const tableRef = computed(() => table.value)
+
+// Methods
+const inspectMethodChange = (val: string) => {
+  if (val !== 'row_count' && searchParams.result === 'row_count') {
+    searchParams.result = ''
+  }
+  table.value?.fetch(1)
+}
+
+const handleExport = () => {
+  const ids = multipleSelection.value.map((item) => item.id)
+  const where = {
+    _id: {
+      in: ids,
+    },
+  }
+  metadataInstancesApi.download(where, 'Inspect')
+}
+
+const handleSelectionChange = (val: InspectItem[]) => {
+  multipleSelection.value = val
+}
+
+const handleSortTable = ({
+  order: sortOrder,
+  prop,
+}: {
+  order: string
+  prop: string
+}) => {
+  order.value = `${sortOrder ? prop : 'last_updated'} ${sortOrder === 'ascending' ? 'ASC' : 'DESC'}`
+  table.value?.fetch(1)
+}
+
+const getData = ({ page }: { page: { current: number; size: number } }) => {
+  const { current, size } = page
+  let { keyword, inspectMethod: method, mode, enabled, result } = searchParams
+  const where: any = {}
+
+  // 精准搜索 iModel
+  if (keyword && keyword.trim()) {
+    const filterObj = { like: escapeRegExp(keyword), options: 'i' }
+    where.$or = [{ name: filterObj }, { dataFlowName: filterObj }]
+  }
+  if (enabled) {
+    where.enabled = enabled == '1'
+  }
+  if (result) {
+    if (result === 'error') {
+      where.status = 'error'
+    } else if (result === 'passed') {
+      where.status = { neq: 'error' }
+      where.result = 'passed'
+    } else if (result === 'row_count') {
+      where.status = { neq: 'error' }
+      where.result = 'failed'
+      method = searchParams.inspectMethod = 'row_count'
+    } else {
+      where.status = { neq: 'error' }
+      where.result = 'failed'
+      if (method === 'row_count') {
+        method = searchParams.inspectMethod = ''
+      }
+      where.inspectMethod = { neq: 'row_count' }
+    }
+  }
+  method && (where.inspectMethod = method)
+  mode && (where.mode = mode)
+  const filter = {
+    order: order.value,
+    limit: size,
+    skip: (current - 1) * size,
+    where,
+  }
+  return inspectApi
+    .get({
+      filter: JSON.stringify(filter),
+    })
+    .then((data: any) => {
+      const list = data?.items || []
+      return {
+        total: data?.total,
+        data: list.map((item: any) => {
+          const result = item.InspectResult
+          let sourceTotal: string | number = '-'
+          let targetTotal: string | number = '-'
+          if (result) {
+            sourceTotal = result.source_total
+            targetTotal = result.target_total
+          }
+          item.lastStartTime = item.lastStartTime
+            ? dayjs(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
+            : '-'
+          item.sourceTotal = sourceTotal
+          item.targetTotal = targetTotal
+          if (item.inspectMethod === 'hash') {
+            item.sourceTotal = '-'
+            item.targetTotal = '-'
+          }
+
+          delete item.tasks
+
+          if (item.status !== 'error') {
+            delete item.errorMsg
+          }
+
+          return item
+        }),
+      }
+    })
+}
+
+const toTableInfo = (id: string) => {
+  router.push({
+    name: 'dataVerifyDetails',
+    params: {
+      id,
+    },
+  })
+}
+
+const history = (id: string) => {
+  router.push({
+    name: 'dataVerifyHistory',
+    params: {
+      id,
+    },
+  })
+}
+
+const startTask = (id: string) => {
+  inspectApi
+    .update(
+      {
+        id,
+      },
+      {
+        status: 'scheduling',
+        ping_time: 0,
+        scheduleTimes: 0,
+        byFirstCheckId: '',
+      },
+    )
+    .then(() => {
+      ElMessage.success(t('packages_business_verification_startVerify'))
+      table.value?.fetch()
+    })
+}
+
+const remove = (id: string, row: InspectItem) => {
+  const name = row.name
+  ElMessageBox.confirm(
+    `${t('packages_business_verification_deleteMessage')} ${name}?`,
+    t('packages_business_dataFlow_importantReminder'),
+    {
+      confirmButtonText: t('public_button_delete'),
+      cancelButtonText: t('public_button_cancel'),
+      type: 'warning',
+    },
+  ).then((resFlag) => {
+    if (!resFlag) {
+      return
+    }
+    inspectApi.delete(id).then(() => {
+      ElMessage.success(t('public_message_delete_ok'))
+      table.value?.fetch()
+    })
+  })
+}
+
+const goEdit = (id: string, flowId?: string) => {
+  const query: any = {
+    taskMode: flowId ? 'pipeline' : 'random',
+  }
+  if (flowId) {
+    query.flowId = flowId
+  }
+  router.push({
+    name: 'dataVerificationEdit',
+    params: {
+      id,
+    },
+    query,
+  })
+}
+
+const getFilterItems = () => {
+  filterItems.value = [
+    {
+      label: t('packages_business_verification_type'),
+      key: 'inspectMethod',
+      type: 'select-inner',
+      items: verifyTypeList,
+      selectedWidth: '200px',
+      id: 'type-filter-select',
+    },
+    {
+      label: t('packages_business_verification_check_frequency'),
+      key: 'mode',
+      type: 'select-inner',
+      items: [
+        { label: t('public_select_option_all'), value: '' },
+        {
+          label: t('packages_business_verification_single'),
+          value: 'MANUALLY_SPECIFIED_BY_THE_USER',
+        },
+        {
+          label: t('packages_business_verification_repeating'),
+          value: 'cron',
+        },
+      ],
+      id: 'mode-filter-select',
+    },
+    {
+      label: t('packages_business_verification_is_enabled'),
+      key: 'enabled',
+      type: 'select-inner',
+      items: [
+        { label: t('public_select_option_all'), value: '' },
+        {
+          label: t('packages_business_verification_job_enable'),
+          value: 1,
+        },
+        {
+          label: t('packages_business_verification_job_disable'),
+          value: 2,
+        },
+      ],
+      id: 'enabled-filter-select',
+    },
+    {
+      label: t('packages_business_verification_result_title'),
+      key: 'result',
+      type: 'select-inner',
+      items: validList,
+      id: 'result-filter-select',
+    },
+    {
+      placeholder: t('packages_business_verification_task_name'),
+      key: 'keyword',
+      type: 'input',
+      id: 'name-filter-input',
+    },
+  ]
+}
+
+const handleError = (row: InspectItem = {} as InspectItem) => {
+  ErrorMessage(row.errorMsg)
+}
+
+const getInspectName = (row: InspectItem = {} as InspectItem) => {
+  // if (row.tasks?.some((t) => !!t.source.columns || !!t.target.columns)) {
+  //   return t('packages_business_verification_list_biaobufenziduan')
+  // }
+  return inspectMethod[row.inspectMethod]
+}
+
+const stop = (id: string = '') => {
+  inspectApi
+    .update(
+      {
+        id,
+      },
+      { status: 'stopping' },
+    )
+    .then(() => {
+      ElMessage.success(t('public_message_operation_success'))
+      table.value?.fetch()
+    })
+}
+
+const handleCreate = (type: string) => {
+  router.push({
+    name: 'dataVerificationCreate',
+    query: { taskMode: type },
+  })
+}
+
+const havePermission = (data: string[] = [], type: string = '') => {
+  if (!isDaas) return true
+  return data.includes(type)
+}
+
+const handlePermissionsSettings = () => {
+  permissionseSettingsCreate.value?.open(multipleSelection.value, 'Inspect')
+}
+
+const fetchTaskOptions = async () => {
+  if (taskOptions.value.length) return
+
+  taskOptionsLoading.value = true
+
+  const data = await inspectApi.getTaskList()
+
+  taskOptions.value = data || []
+  taskOptionsLoading.value = false
+}
+
+// Watchers
+watch(
+  () => route.query,
+  () => {
+    Object.assign(searchParams, route.query)
+    table.value?.fetch(1)
+  },
+)
+
+// Lifecycle
+onMounted(() => {
+  timer = setInterval(() => {
+    table.value?.fetch(null, 0, true)
+  }, 8000)
+  getFilterItems()
+  Object.assign(searchParams, route.query)
+})
+
+onUnmounted(() => {
+  if (timer) {
+    clearInterval(timer)
+    timer = null
+  }
+
+  table.value = null
+  permissionseSettingsCreate.value = null
+})
 </script>
 
 <template>
@@ -393,7 +482,7 @@ export default {
           <FilterBar
             v-model:value="searchParams"
             :items="filterItems"
-            @fetch="table.fetch(1)"
+            @fetch="table?.fetch(1)"
           />
         </div>
       </template>
@@ -404,10 +493,9 @@ export default {
         }}</ElButton>
         <ElButton
           v-readonlybtn="'SYNC_category_application'"
-          class="btn"
           @click="handleExport"
         >
-          <i class="iconfont icon-daoru back-btn-icon" />
+          <el-icon><ExportOutlined /></el-icon>
           <span> {{ $t('public_button_export') }}</span>
         </ElButton>
       </template>
@@ -534,9 +622,6 @@ export default {
               <span>{{ statusMap[scope.row.status] }}</span>
             </div>
             <div v-else>-</div>
-            <!--            <VIcon v-if="scope.row.InspectResult && scope.row.InspectResult.parentId" class="ml-2" size="16"-->
-            <!--              >ercijiaoyan</VIcon-->
-            <!--            >-->
           </div>
         </template>
       </el-table-column>
@@ -714,10 +799,6 @@ export default {
   }
 
   .btn {
-    i.iconfont {
-      font-size: 12px;
-    }
-
     &.btn-dropdowm {
       margin-left: 5px;
     }

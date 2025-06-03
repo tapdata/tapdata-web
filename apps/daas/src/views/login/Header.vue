@@ -1,21 +1,10 @@
-<template>
-  <div class="header">
-    <header>
-      <div class="logo">
-        <img :src="logoUrl" />
-        <div v-if="$getSettingByKey('SHOW_LANGUAGE')" class="switch-lang">
-          <span v-for="(value, key) in languages" :key="key" :class="{ bold: key === lang }" @click="langChange(key)">
-            {{ value }}
-          </span>
-        </div>
-      </div>
-      <!-- <div class="slogan">{{ $t('app_signIn_slogan') }}</div> -->
-    </header>
-  </div>
-</template>
-
 <script>
-import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
+import {
+  getCurrentLanguage,
+  langMenu,
+  setCurrentLanguage,
+} from '@tap/i18n/src/shared/util'
+import { getSettingByKey } from '@/utils/settings'
 
 export default {
   name: 'LoginHeader',
@@ -27,6 +16,7 @@ export default {
     }
   },
   methods: {
+    getSettingByKey,
     langChange(lang) {
       setCurrentLanguage(lang, this.$i18n)
       this.lang = lang
@@ -34,6 +24,27 @@ export default {
   },
 }
 </script>
+
+<template>
+  <div class="header">
+    <header>
+      <div class="logo">
+        <img :src="logoUrl" />
+        <div v-if="getSettingByKey('SHOW_LANGUAGE')" class="switch-lang">
+          <span
+            v-for="(value, key) in languages"
+            :key="key"
+            :class="{ bold: key === lang }"
+            @click="langChange(key)"
+          >
+            {{ value }}
+          </span>
+        </div>
+      </div>
+      <!-- <div class="slogan">{{ $t('app_signIn_slogan') }}</div> -->
+    </header>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 header {

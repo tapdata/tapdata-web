@@ -26,14 +26,14 @@ const bootstrap = () => {
       store.commit('setUser', userInfo)
       store.commit('setLanguage', userInfo.locale)
 
-      const app = (window.App = window.$vueApp = createApp(App))
+      const app = createApp(App)
 
       installAllPlugins(app)
       installDirectives(app)
       installElement(app)
 
-      window.$vueApp.use(i18n)
-      window.$vueApp.use(store)
+      app.use(i18n)
+      app.use(store)
 
       app.mount('#app')
     })
