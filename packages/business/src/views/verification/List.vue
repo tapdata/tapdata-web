@@ -89,7 +89,7 @@ const { t } = useI18n()
 const table = ref<InstanceType<typeof TablePage>>()
 const permissionseSettingsCreate =
   ref<InstanceType<typeof PermissionseSettingsCreate>>()
-const timer = ref<NodeJS.Timeout>()
+let timer: NodeJS.Timeout | null = null
 const importDialogVisible = ref(false)
 const importForm = ref<ImportForm>({
   type: 'task',
@@ -233,27 +233,17 @@ const getData = ({ page }: { page: { current: number; size: number } }) => {
             item.sourceTotal = '-'
             item.targetTotal = '-'
           }
+
+          delete item.tasks
+
+          if (item.status !== 'error') {
+            delete item.errorMsg
+          }
+
           return item
         }),
       }
     })
-}
-
-const handleCommand = (command: string, node?: InspectItem) => {
-  let ids = ''
-  if (node) {
-    ids = node.id
-  }
-  // 动态调用方法
-  const methods: Record<string, Function> = {
-    toTableInfo,
-    history,
-    startTask,
-    remove,
-    goEdit,
-    stop,
-  }
-  methods[command]?.(ids, node)
 }
 
 const toTableInfo = (id: string) => {
@@ -395,9 +385,9 @@ const handleError = (row: InspectItem = {} as InspectItem) => {
 }
 
 const getInspectName = (row: InspectItem = {} as InspectItem) => {
-  if (row.tasks?.some((t) => !!t.source.columns || !!t.target.columns)) {
-    return t('packages_business_verification_list_biaobufenziduan')
-  }
+  // if (row.tasks?.some((t) => !!t.source.columns || !!t.target.columns)) {
+  //   return t('packages_business_verification_list_biaobufenziduan')
+  // }
   return inspectMethod[row.inspectMethod]
 }
 
@@ -432,7 +422,6 @@ const handlePermissionsSettings = () => {
 }
 
 const handleImport = () => {
-  console.log('handleImport')
   importDialogVisible.value = true
 }
 
@@ -486,7 +475,7 @@ watch(
 
 // Lifecycle
 onMounted(() => {
-  timer.value = setInterval(() => {
+  timer = setInterval(() => {
     table.value?.fetch(null, 0, true)
   }, 8000)
   getFilterItems()
@@ -494,9 +483,13 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  if (timer.value) {
-    clearInterval(timer.value)
+  if (timer) {
+    clearInterval(timer)
+    timer = null
   }
+
+  table.value = null
+  permissionseSettingsCreate.value = null
 })
 </script>
 

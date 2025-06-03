@@ -168,7 +168,14 @@ export default {
   },
   beforeUnmount() {
     this.offEvent()
-    this.stopResizeObserver()
+    this.stopResizeObserver?.()
+
+    // Remove window event listeners
+    off(window, 'mousemove', this.mouseMove)
+    off(window, 'mouseup', this.mouseUp)
+
+    // Unbind Mousetrap events
+    Mousetrap.unbind(['mod+=', 'mod+-', 'mod+0', 'shift+1'])
   },
   methods: {
     ...mapMutations('dataflow', [
@@ -242,7 +249,8 @@ export default {
     },
 
     offEvent() {
-      off(document, 'keydown', this.onKeydown)
+      off(document, 'keydown', this.keyDown)
+      off(document, 'keyup', this.keyUp)
     },
 
     initVisibleArea(isFirst) {

@@ -1,4 +1,4 @@
-import { on, off, appendHtml } from '@tap/shared'
+import { appendHtml, off, on } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 
 const EVENT = {
@@ -14,12 +14,22 @@ const EVENT = {
   },
 }
 
-export default {
+export const mouseDrag = {
   mounted(el, binding) {
     // 事件名
     let eventsFor = EVENT.mouse
     let $drag, width, height
-    const { item, onStart, onMove, onStop, onDrop, box = [], domHtml, getDragDom, container } = binding.value
+    const {
+      item,
+      onStart,
+      onMove,
+      onStop,
+      onDrop,
+      box = [],
+      domHtml,
+      getDragDom,
+      container,
+    } = binding.value
     const [t = 0, r = 0, b = 0, l = 0] = box
     const GlobalState = {
       onMouseDownAt: 0,
@@ -36,12 +46,12 @@ export default {
       top = Math.min(top, document.documentElement.clientHeight - height - b)
 
       $drag.style.position = 'fixed'
-      $drag.style.left = left + 'px'
-      $drag.style.top = top + 'px'
+      $drag.style.left = `${left}px`
+      $drag.style.top = `${top}px`
       $drag.style.opacity = 1
     }
 
-    const handleStart = (el._handleStart = async (event) => {
+    const handleStart = (el._handleStart = (event) => {
       if (event.type === 'touchstart') {
         eventsFor = EVENT.touch
       } else {
@@ -64,9 +74,9 @@ export default {
     const handleMove = (el._handleMove = async (event) => {
       event.preventDefault()
 
-      const distance = Math.sqrt(
-        Math.pow(event.pageX - GlobalState.startEvent.pageX, 2) +
-          Math.pow(event.pageY - GlobalState.startEvent.pageY, 2),
+      const distance = Math.hypot(
+        event.pageX - GlobalState.startEvent.pageX,
+        event.pageY - GlobalState.startEvent.pageY,
       )
       const timeDelta = Time.now() - GlobalState.onMouseDownAt
 
@@ -75,21 +85,23 @@ export default {
       }
 
       if (!$drag) {
-        $drag = domHtml ? appendHtml(document.body, domHtml.replace(/\n/g, '').trim()) : await getDragDom()
+        $drag = domHtml
+          ? appendHtml(document.body, domHtml.replaceAll('\n', '').trim())
+          : await getDragDom()
         document.body.classList.add('cursor-grabbing')
         const rect = $drag.getBoundingClientRect()
         width = rect.width
         height = rect.height
       }
-      let posX = event.touches ? event.touches[0].pageX : event.pageX
-      let posY = event.touches ? event.touches[0].pageY : event.pageY
+      const posX = event.touches ? event.touches[0].pageX : event.pageX
+      const posY = event.touches ? event.touches[0].pageY : event.pageY
       moveAt(posX, posY)
       onMove?.(item, [posX, posY], $drag)
     })
 
     const handleStop = (el._handleStop = (event) => {
-      let posX = event.touches ? event.touches[0].pageX : event.pageX
-      let posY = event.touches ? event.touches[0].pageY : event.pageY
+      const posX = event.touches ? event.touches[0].pageX : event.pageX
+      const posY = event.touches ? event.touches[0].pageY : event.pageY
 
       document.body.classList.remove('cursor-grabbing')
       onStop?.(item, [posX, posY])
@@ -113,11 +125,10 @@ export default {
       off(document.documentElement, eventsFor.stop, handleStop)
     })
 
-    on(el, 'mousedown', handleStart)
-    on(el, 'touchstart', handleStart)
+    on(el, eventsFor.start, handleStart)
   },
 
-  unMounted(el) {
+  unmounted(el) {
     const { _eventsFor } = el
     off(el, 'mousedown', el._handleStart)
     off(el, 'touchstart', el._handleStart)

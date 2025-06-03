@@ -18,6 +18,7 @@ import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import logoImg from '@/assets/images/logo.svg'
 import { DropdownList as OriginalDropdownList } from '@/router/menu'
+import { getSettingByKey } from '@/utils/settings'
 import { signOut as utilSignOut } from '@/utils/util'
 import NotificationPopover from '@/views/notification/NotificationPopover.vue'
 
@@ -53,20 +54,20 @@ const IS_IFRAME = ref(sessionStorage.getItem('IS_IFRAME') === 'true')
 
 // Compute properties for UI visibility
 const showNotification = computed(() => {
-  return window.getSettingByKey && window.getSettingByKey('SHOW_NOTIFICATION')
+  return getSettingByKey('SHOW_NOTIFICATION')
 })
 
 const showQaAndHelp = computed(() => {
   return (
     !import.meta.env.VUE_APP_HIDE_QA_AND_HELP &&
-    window.getSettingByKey?.('SHOW_QA_AND_HELP')
+    getSettingByKey('SHOW_QA_AND_HELP')
   )
 })
 
 const showSettingButton = computed(() => {
   return (
     !import.meta.env.VUE_APP_HIDE_SETTING_BUTTON &&
-    window.getSettingByKey?.('SHOW_SETTING_BUTTON') &&
+    getSettingByKey('SHOW_SETTING_BUTTON') &&
     (hasPermissionByCode?.('home_notice_settings') ||
       (hasPermissionByCode?.('system_settings') &&
         hasPermissionByCode?.('system_settings_menu')))
@@ -75,8 +76,7 @@ const showSettingButton = computed(() => {
 
 const showLanguageButton = computed(() => {
   return (
-    !import.meta.env.VUE_APP_HIDE_LANGUAGE &&
-    window.getSettingByKey?.('SHOW_LANGUAGE')
+    !import.meta.env.VUE_APP_HIDE_LANGUAGE && getSettingByKey('SHOW_LANGUAGE')
   )
 })
 
@@ -103,7 +103,7 @@ const logoStyle = computed(() => {
 const showHomeButton = computed(() => {
   return (
     !import.meta.env.VUE_APP_HIDE_HOME_MENU &&
-    window.getSettingByKey?.('SHOW_HOME_BUTTON')
+    getSettingByKey('SHOW_HOME_BUTTON')
   )
 })
 
@@ -136,7 +136,7 @@ const command = (command: string) => {
       isShowCustomerService.value = !isShowCustomerService.value
       break
     case 'version':
-      if (window.getSettingByKey?.('SHOW_DK_VERSION')) {
+      if (getSettingByKey('SHOW_DK_VERSION')) {
         ElMessage.info({
           dangerouslyUseHTMLString: true,
           message: 'DK_VERSION_1</br>DK_VERSION_2',
@@ -211,7 +211,7 @@ const getLicense = async () => {
     if (Cookie.get('isAdmin') === '1') {
       let endTime = Number(expires_on) - Number(stime)
       endTime = Math.floor(endTime / 1000 / 60 / 60 / 24) //相差天数
-      const showDay = window.getSettingByKey?.('licenseNoticeDays') || 0
+      const showDay = getSettingByKey('licenseNoticeDays') || 0
       licenseExpireVisible.value = Number(showDay) > endTime
       licenseExpire.value = endTime.toString()
     }
@@ -229,8 +229,8 @@ onMounted(() => {
 
   if (
     import.meta.env.VUE_APP_MODE !== 'community' &&
-    window.getSettingByKey?.('SHOW_LICENSE') &&
-    window.getSettingByKey('checkLicense') !== 'false'
+    getSettingByKey('SHOW_LICENSE') &&
+    getSettingByKey('checkLicense') !== 'false'
   ) {
     getLicense()
   }

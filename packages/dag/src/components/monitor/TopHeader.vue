@@ -159,22 +159,13 @@ export default {
 
     back() {
       const mapping = this.$route.query.mapping
-      const $PLATFORM = window.getSettingByKey('DFS_TCM_PLATFORM')
-      const backToList = () => {
-        if ($PLATFORM === 'dfs') {
-          top.window.App.$router.push({
-            name: 'Task',
-          })
-        } else {
-          this.$router.push({
-            name: 'dataFlows',
-            query: {
-              mapping,
-            },
-          })
-        }
-      }
-      backToList()
+
+      this.$router.push({
+        name: 'dataFlows',
+        query: {
+          mapping,
+        },
+      })
     },
 
     handleOpenDebug() {
