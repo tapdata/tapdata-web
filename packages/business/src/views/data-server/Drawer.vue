@@ -333,9 +333,9 @@ export default {
         })
       }
     },
-    tabChanged() {
+    tabChanged(tab) {
       let debugParams = null
-      if (this.tab === 'debug') {
+      if (tab === 'debug') {
         this.isEdit = false
         debugParams = {}
         this.data.params.forEach((p) => {
@@ -995,7 +995,7 @@ export default {
           ref="tabs"
           v-model="tab"
           class="data-server__tabs flex-1"
-          @tab-click="tabChanged"
+          @tab-change="tabChanged"
         >
           <ElTabPane
             :label="$t('packages_business_data_server_drawer_peizhi')"
