@@ -305,15 +305,14 @@ export const JsProcessor = observer(
       loadFunction()
 
       const onTabChange = (current) => {
-        if (current == '1') {
-          beforeJsonRef.value.editor.resize(true)
-          afterJsonRef.value.editor.resize(true)
-
-          setTimeout(() => {
-            beforeJsonRef.value.editor.resize(true)
-            afterJsonRef.value.editor.resize(true)
-          }, 300)
-        }
+        // if (current == '1') {
+        //   beforeJsonRef.value.editor.resize(true)
+        //   afterJsonRef.value.editor.resize(true)
+        //   setTimeout(() => {
+        //     beforeJsonRef.value.editor.resize(true)
+        //     afterJsonRef.value.editor.resize(true)
+        //   }, 300)
+        // }
       }
 
       function getPrefix(line, index) {
@@ -455,6 +454,49 @@ export const JsProcessor = observer(
         </div>
       )
 
+      const jsonView = () => (
+        <div
+          class="flex json-view-wrap"
+          v-loading={running.value}
+          element-loading-text={runningText.value}
+        >
+          <div class="json-view flex-1 mr-4 border rounded-2 overflow-hidden">
+            <div class="json-view-header">
+              {i18n.t('packages_form_js_processor_index_tiaoshishuru')}
+            </div>
+            <VCodeEditor
+              ref={beforeJsonRef}
+              class="py-0 json-view-editor flex-1"
+              value={inputRef.value}
+              lang="json"
+              options={{
+                readOnly: true,
+                highlightActiveLine: false,
+                highlightGutterLine: false,
+              }}
+              theme="chrome"
+            ></VCodeEditor>
+          </div>
+          <div class="json-view flex-1 border rounded-2 overflow-hidden">
+            <div class="json-view-header">
+              {i18n.t('packages_form_js_processor_index_jieguoshuchu')}
+            </div>
+            <VCodeEditor
+              ref={afterJsonRef}
+              class="py-0 json-view-editor flex-1"
+              value={outputRef.value}
+              lang="json"
+              options={{
+                readOnly: true,
+                highlightActiveLine: false,
+                highlightGutterLine: false,
+              }}
+              theme="chrome"
+            ></VCodeEditor>
+          </div>
+        </div>
+      )
+
       return () => {
         const editorProps = { ...attrs }
         editorProps.options.readOnly = props.disabled
@@ -486,49 +528,6 @@ export const JsProcessor = observer(
                 <VIcon class="mr-1">fangda</VIcon>
                 {i18n.t('packages_form_js_editor_fullscreen')}
               </ElButton>
-            </div>
-          </div>
-        )
-
-        const jsonView = (
-          <div
-            class="flex json-view-wrap"
-            v-loading={running.value}
-            element-loading-text={runningText.value}
-          >
-            <div class="json-view flex-1 mr-4 border rounded-2 overflow-hidden">
-              <div class="json-view-header">
-                {i18n.t('packages_form_js_processor_index_tiaoshishuru')}
-              </div>
-              <VCodeEditor
-                ref={beforeJsonRef}
-                class="py-0 json-view-editor flex-1"
-                value={inputRef.value}
-                lang="json"
-                options={{
-                  readOnly: true,
-                  highlightActiveLine: false,
-                  highlightGutterLine: false,
-                }}
-                theme="chrome"
-              ></VCodeEditor>
-            </div>
-            <div class="json-view flex-1 border rounded-2 overflow-hidden">
-              <div class="json-view-header">
-                {i18n.t('packages_form_js_processor_index_jieguoshuchu')}
-              </div>
-              <VCodeEditor
-                ref={afterJsonRef}
-                class="py-0 json-view-editor flex-1"
-                value={outputRef.value}
-                lang="json"
-                options={{
-                  readOnly: true,
-                  highlightActiveLine: false,
-                  highlightGutterLine: false,
-                }}
-                theme="chrome"
-              ></VCodeEditor>
             </div>
           </div>
         )
@@ -690,7 +689,7 @@ export const JsProcessor = observer(
                           display: fullscreen.value ? 'contents' : 'none',
                         }}
                       >
-                        {jsonView}
+                        {jsonView()}
                       </div>
                     </ElTabPane>
                   </ElTabs>
@@ -713,7 +712,7 @@ export const JsProcessor = observer(
                 {renderTool()}
               </div>
               {showJsonArea.value && (
-                <div class="mt-4 json-view-area">{jsonView}</div>
+                <div class="mt-4 json-view-area">{jsonView()}</div>
               )}
             </div>
           </div>
