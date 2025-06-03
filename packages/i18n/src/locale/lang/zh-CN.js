@@ -402,4 +402,8 @@ export default {
   public_current_cost_time: '当前耗时',
   public_threshold: '阈值',
   public_start_import: '开始导入',
+  public_generate_recovery_sql: '生成修复SQL',
+  public_start_generate_recovery_sql: '开始生成修复SQL',
+  public_generate_recovery_sql_success: '生成修复SQL成功',
+  public_download_recovery_sql: '下载修复SQL',
 }

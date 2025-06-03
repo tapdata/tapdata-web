@@ -412,4 +412,8 @@ export default {
   public_current_cost_time: 'Current Cost Time',
   public_threshold: 'Threshold',
   public_start_import: 'Start Import',
+  public_generate_recovery_sql: 'Generate Recovery SQL',
+  public_start_generate_recovery_sql: 'Start Generate Recovery SQL',
+  public_generate_recovery_sql_success: 'Generate Recovery SQL Success',
+  public_download_recovery_sql: 'Download Recovery SQL',
 }
