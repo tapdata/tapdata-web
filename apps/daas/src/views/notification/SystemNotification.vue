@@ -251,7 +251,7 @@ export default {
     },
     handleClick(tab) {
       this.currentPage = 1
-      if (tab.name === 'first') {
+      if (tab === 'first') {
         this.read = true // 全部信息
       } else {
         this.read = false //未读
@@ -313,7 +313,7 @@ export default {
   >
     <div v-loading="loading" class="system-notification">
       <div class="position-sticky top-0 z-10 bg-white">
-        <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tabs v-model="activeName" @tab-change="handleClick">
           <el-tab-pane :label="$t('notify_user_all_notice')" name="first" />
           <el-tab-pane :label="$t('notify_unread_notice')" name="second" />
         </el-tabs>
