@@ -341,7 +341,7 @@ export default {
         this.data.params.forEach((p) => {
           debugParams[p.name] = p.defaultvalue || ''
         })
-        setTimeout(this.getWorkers, 2000)
+        this.getWorkers()
       }
       this.debugParams = debugParams
     },
