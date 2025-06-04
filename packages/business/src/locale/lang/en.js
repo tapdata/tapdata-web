@@ -1616,4 +1616,7 @@ export default {
   packages_business_select_task_to_be_verified: 'Select Task to be Verified',
   packages_business_drag_file_here:
     'Drag .gz file here or <em>select file upload</em>',
+  packages_business_request_speed_limit: 'Request Limit per Second',
+  packages_business_request_speed_limit_tag: 'Requests ≤ {val}/s',
+  packages_business_request_speed_limit_tip: 'Default is 0 (no limit)',
 }
