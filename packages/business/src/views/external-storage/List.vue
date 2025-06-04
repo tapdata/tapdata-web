@@ -65,7 +65,6 @@ export default {
       showUsingTaskDialog: false,
       usingTasks: [],
       schemaData: null,
-      dialogTestVisible: false,
       model: {},
     }
   },
@@ -429,13 +428,17 @@ export default {
     },
 
     startTest(data = {}) {
+      const loading = this.$loading()
       this.checkAgent(() => {
         Object.assign(this.model, data)
-        this.dialogTestVisible = true
         this.$refs.test.start(false)
-      }).catch(() => {
-        this.buried('externalStorage_connectionTestAgentFail')
       })
+        .catch(() => {
+          this.buried('externalStorage_connectionTestAgentFail')
+        })
+        .finally(() => {
+          loading.close()
+        })
     },
 
     returnTestData(data) {
@@ -696,8 +699,7 @@ export default {
 
     <Test
       ref="test"
-      v-model:visible="dialogTestVisible"
-      :form-data="model"
+      :connection="model"
       test-type="testExternalStorage"
       @return-test-data="returnTestData"
     />

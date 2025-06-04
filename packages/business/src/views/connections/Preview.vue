@@ -1,5 +1,627 @@
+<script setup lang="ts">
+import { connectionsApi, dataPermissionApi, proxyApi, usersApi } from '@tap/api'
+import { getIcon } from '@tap/assets/icons'
+import { Drawer, VIcon } from '@tap/component'
+import i18n from '@tap/i18n'
+import { openUrl } from '@tap/shared'
+import dayjs from 'dayjs'
+import { cloneDeep } from 'lodash-es'
+import { computed, inject, onBeforeUnmount, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import StatusTag from '../../components/StatusTag.vue'
+import PermissionsDialog from './PermissionsDialog.vue'
+import { getConnectionIcon as getConnectionIconUtil } from './util'
+import type Test from './Test.vue'
+
+interface Connection {
+  id: string
+  name: string
+  status: string
+  config: {
+    host?: string
+    port?: string
+    database?: string
+    sid?: string
+    schema?: string
+    user?: string
+    username?: string
+    extParams?: string
+    addtionalString?: string
+    timezone?: string
+    uri?: string
+    isUri?: boolean
+  }
+  pdkHash: string
+  definitionPdkId: string
+  agentType: string
+  heartbeatEnable?: boolean
+  heartbeatTable?: string
+  database_type?: string
+  uri?: string
+  databaseLogInfo?: {
+    key: string
+    value: string
+  }
+  last_updated: string
+  loadSchemaTime?: string
+  btnLoading: {
+    deploy: boolean
+    stop: boolean
+    delete: boolean
+  }
+  permissionActions?: string[]
+  // Additional properties from transformData
+  database_host?: string
+  database_port?: string
+  database_name?: string
+  database_owner?: string
+  database_username?: string
+  addtionalString?: string
+  database_datetype_without_timezone?: string
+  sourceFrom?: string
+  // Additional properties for source from
+  definitionScope?: string
+  beta?: boolean
+  loadFieldsStatus?: string
+}
+
+interface DatabaseLogInfo {
+  key: string
+  value: string
+}
+
+interface Props {
+  hideOperation?: boolean
+}
+
+interface ListItem {
+  icon: string
+  items: {
+    label: string
+    key: string
+    value?: string
+    class?: string
+    action?: () => void
+    labelAction?: () => void
+    labelActionTitle?: string
+  }[]
+}
+
+const emit = defineEmits<{
+  (e: 'test', connection: Connection): void
+  (e: 'close'): void
+  (e: 'loadSchema', connection: Connection): void
+}>()
+
+const router = useRouter()
+const checkAgent = inject('checkAgent') as (cb?: () => void) => void
+
+const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
+const visible = ref(false)
+const timer = ref<ReturnType<typeof setTimeout> | null>(null)
+const databaseLogInfoTimer = ref<ReturnType<typeof setTimeout> | null>(null)
+const loading = ref(false)
+const showProgress = ref(false)
+const progress = ref(0)
+const connection = reactive<Connection>({
+  btnLoading: {
+    deploy: false,
+    stop: false,
+    delete: false,
+  },
+} as Connection)
+
+const kafkaACK = {
+  0: i18n.t('packages_business_connection_preview_no_sure'),
+  '-1': i18n.t('packages_business_connection_preview_master_partition'),
+  1: i18n.t('packages_business_connection_preview_master_partition'),
+  all: i18n.t('packages_business_connection_preview_isr_partition'),
+}
+
+const list = ref<ListItem[]>([])
+const mqType = {
+  0: 'ActiveMQ',
+  1: 'RabbitMQ',
+  2: 'RocketMQ',
+}
+
+const configModel = {
+  default: [
+    {
+      icon: 'time',
+      items: [
+        {
+          label: i18n.t('public_connection_table_structure_update_time'),
+          key: 'loadSchemaTime',
+        },
+      ],
+    },
+    {
+      icon: 'database',
+      items: [
+        {
+          label: i18n.t('public_connection_form_database_address'),
+          key: 'database_host',
+        },
+      ],
+    },
+    {
+      icon: 'port',
+      items: [
+        {
+          label: i18n.t('public_connection_form_host'),
+          key: 'database_port',
+        },
+      ],
+    },
+    {
+      icon: 'name',
+      items: [
+        {
+          label: i18n.t('public_connection_form_database_name'),
+          key: 'database_name',
+        },
+      ],
+    },
+    {
+      icon: 'database-user-name',
+      items: [
+        {
+          label: i18n.t('public_connection_form_account'),
+          key: 'database_username',
+        },
+      ],
+    },
+    {
+      icon: 'connect_schema',
+      items: [
+        {
+          label: i18n.t('public_connection_form_schema'),
+          key: 'database_owner',
+        },
+      ],
+    },
+    {
+      icon: 'additional-string',
+      items: [
+        {
+          label: i18n.t('public_connection_form_other_connection_string'),
+          key: 'addtionalString',
+        },
+      ],
+    },
+    {
+      icon: 'origin-time',
+      items: [
+        {
+          label: i18n.t('public_connection_form_time_zone_of_time_type'),
+          key: 'database_datetype_without_timezone',
+        },
+      ],
+    },
+  ],
+}
+
+const formData = ref<Connection>({} as Connection)
+const permissions = ref<
+  { checked: string[]; roleId: string; roleName: string }[]
+>([])
+
+const clearTimer = () => {
+  clearTimeout(timer.value)
+  clearTimeout(databaseLogInfoTimer.value)
+  timer.value = null
+  databaseLogInfoTimer.value = null
+}
+
+const handleClose = () => {
+  clearTimer()
+  visible.value = false
+  showProgress.value = false
+  emit('close')
+}
+
+const getImgByType = (type: string) => {
+  if (!type) {
+    type = 'default'
+  }
+  return getIcon(type.toLowerCase())
+}
+
+const transformData = (row: Connection) => {
+  if (!row.config) {
+    row.config = {}
+  }
+  row.database_host = row.config.host
+  row.database_port = row.config.port
+  row.database_name = row.config.database || row.config.sid
+  row.database_owner = row.config.schema
+  row.database_username = row.config.user || row.config.username
+  row.addtionalString = row.config.extParams || row.config.addtionalString
+  row.database_datetype_without_timezone = row.config.timezone
+  row.sourceFrom = getSourceFrom(row)
+  row.loadSchemaTime = row.loadSchemaTime
+    ? dayjs(row.loadSchemaTime).format('YYYY-MM-DD HH:mm:ss')
+    : '-'
+  if (row.config.uri && row.config.isUri !== false) {
+    row.uri = row.config.uri
+  }
+  row.heartbeatTable = connection.heartbeatTable
+
+  if (row.loadFieldsStatus === 'loading') {
+    showProgress.value = true
+    progress.value = Math.floor((row.loadCount * 100) / row.tableCount || 0)
+  } else {
+    showProgress.value = false
+    progress.value = 0
+  }
+
+  return row
+}
+
+const open = async (row: Connection) => {
+  visible.value = true
+  Object.assign(connection, transformData(row))
+  connection.last_updated = dayjs(row.last_updated).format(
+    'YYYY-MM-DD HH:mm:ss',
+  )
+  await loadList(row)
+  if (isDaas) {
+    await loadPermissions(row.id)
+  }
+}
+
+const edit = () => {
+  const { id, pdkHash, definitionPdkId: pdkId, agentType, name } = connection
+
+  if (agentType === 'Local') {
+    ElMessageBox.confirm(
+      i18n.t('packages_business_connections_list_dangqianlianjie') +
+        name +
+        i18n.t('packages_business_connections_list_zhengzaizuoweiF'),
+      '',
+      {
+        type: 'warning',
+        showClose: false,
+      },
+    ).then((resFlag) => {
+      if (!resFlag) {
+        return
+      }
+
+      router.push({
+        name: 'connectionsEdit',
+        params: {
+          id,
+        },
+        query: {
+          pdkHash,
+          pdkId,
+        },
+      })
+    })
+  } else {
+    router.push({
+      name: 'connectionsEdit',
+      params: {
+        id,
+      },
+      query: {
+        pdkHash,
+        pdkId,
+      },
+    })
+  }
+}
+
+const beforeTest = () => {
+  checkAgent(() => {
+    connectionsApi
+      .updateById(connection.id, {
+        status: 'testing',
+      })
+      .then(() => {
+        testRef.value?.start(true)
+      })
+  })
+}
+
+const loadSchema = () => {
+  showProgress.value = true
+  progress.value = 0
+  emit('loadSchema', connection)
+}
+
+const loadList = async (row: Connection = {} as Connection) => {
+  const heartbeatTable = await loadHeartbeatTable(row)
+
+  connection.heartbeatTable = heartbeatTable?.[0]
+
+  if (row.uri) {
+    list.value = [
+      configModel.default?.[0],
+      ...(isDaas
+        ? []
+        : [
+            {
+              icon: 'link',
+              items: [
+                {
+                  label: i18n.t('public_connection_form_link_plugin_source'),
+                  key: 'sourceFrom',
+                },
+              ],
+            },
+          ]),
+      connection.heartbeatTable
+        ? {
+            icon: 'link',
+            items: [
+              {
+                label: i18n.t(
+                  'packages_business_connections_databaseform_kaiqixintiaobiao',
+                ),
+                key: 'heartbeatTable',
+                value: i18n.t(
+                  'packages_business_connections_databaseform_chakanxintiaoren',
+                ),
+                class: 'cursor-pointer color-primary text-decoration-underline',
+                action: () => {
+                  const routeUrl = router.resolve({
+                    name: 'HeartbeatMonitor',
+                    params: {
+                      id: connection.heartbeatTable,
+                    },
+                  })
+                  openUrl(routeUrl.href)
+                },
+              },
+            ],
+          }
+        : null,
+      row.uri
+        ? {
+            icon: 'link',
+            items: [
+              {
+                label: 'URI',
+                key: 'uri',
+                value: row.uri,
+                class: 'text-break text-wrap',
+              },
+            ],
+          }
+        : null,
+      row.databaseLogInfo?.value
+        ? {
+            icon: 'warning-circle',
+            items: [
+              {
+                label: row.databaseLogInfo.key,
+                key: 'databaseLogInfo',
+                value: row.databaseLogInfo.value,
+              },
+            ],
+          }
+        : null,
+    ].filter(Boolean) as ListItem[]
+  } else {
+    list.value = [
+      ...configModel.default,
+      ...(isDaas
+        ? []
+        : [
+            {
+              icon: 'link',
+              items: [
+                {
+                  label: i18n.t('public_connection_form_link_plugin_source'),
+                  key: 'sourceFrom',
+                },
+              ],
+            },
+          ]),
+      connection.heartbeatTable
+        ? {
+            icon: 'link',
+            items: [
+              {
+                label: i18n.t(
+                  'packages_business_connections_databaseform_kaiqixintiaobiao',
+                ),
+                key: 'heartbeatTable',
+                value: i18n.t(
+                  'packages_business_connections_databaseform_chakanxintiaoren',
+                ),
+                class: 'cursor-pointer color-primary text-decoration-underline',
+                action: () => {
+                  const routeUrl = router.resolve({
+                    name: 'HeartbeatMonitor',
+                    params: {
+                      id: connection.heartbeatTable,
+                    },
+                  })
+                  openUrl(routeUrl.href)
+                },
+              },
+            ],
+          }
+        : null,
+      row.databaseLogInfo?.value
+        ? {
+            icon: 'warning-circle',
+            items: [
+              {
+                label: row.databaseLogInfo.key,
+                key: 'databaseLogInfo',
+                value: row.databaseLogInfo.value,
+              },
+            ],
+          }
+        : null,
+    ].filter(Boolean) as ListItem[]
+  }
+
+  if (isDaas) {
+    list.value.unshift({
+      icon: 'link',
+      items: [
+        {
+          label: i18n.t(
+            'packages_business_connections_preview_shujulianjiequan',
+          ),
+          key: 'permissions',
+          labelActionTitle: i18n.t(
+            'packages_business_connections_preview_quanxianguanli',
+          ),
+          labelAction: () => {
+            permissionsDialogRef.value?.open(connection)
+          },
+        },
+      ],
+    })
+  }
+
+  await getDatabaseLogInfo(row)
+}
+
+const getConnectionIcon = () => {
+  if (!connection) {
+    return
+  }
+  return getConnectionIconUtil(connection?.pdkHash)
+}
+
+const sync = (list: Connection[]) => {
+  if (!visible.value) return
+  const result = list.find((item) => item.id === connection.id)
+  if (!result) return
+  formData.value = cloneDeep(result)
+  Object.assign(connection, transformData(result))
+}
+
+const getSourceFrom = (row: Connection = {} as Connection) => {
+  const { definitionScope, beta = false } = row
+  const MAP = {
+    publicfalse: i18n.t(
+      'packages_business_components_connectiontypeselectorsort_renzhengshujuyuan',
+    ),
+    publictrue: i18n.t(
+      'packages_business_components_connectiontypeselectorsort_betashu',
+    ),
+    customer: i18n.t(
+      'packages_business_components_connectiontypeselectorsort_wodeshujuyuan',
+    ),
+  }
+  return MAP[definitionScope + beta] || MAP.customer
+}
+
+const isFileSource = () => {
+  return ['CSV', 'EXCEL', 'JSON', 'XML'].includes(connection?.database_type)
+}
+
+const loadHeartbeatTable = async (row: Connection = {} as Connection) => {
+  if (!row.heartbeatEnable) return []
+  return await connectionsApi.heartbeatTask(row.id)
+}
+
+const handleClick = (temp: { action?: () => void }) => {
+  temp.action?.()
+}
+
+const loadPermissions = (id: string) => {
+  const filter = {
+    dataType: 'Connections',
+    dataId: id,
+  }
+  dataPermissionApi.permissions(filter).then((data) => {
+    usersApi
+      .role({
+        filter: JSON.stringify({
+          limit: 1000,
+        }),
+      })
+      .then((roleList) => {
+        permissions.value = data
+          .map((t) => {
+            const role = roleList.items?.find((r) => r.id === t.typeId) || {
+              name: '',
+            }
+            return {
+              checked: t.actions,
+              roleId: t.typeId,
+              roleName: role.name,
+            }
+          })
+          .filter((t) => !!t.roleName)
+      })
+  })
+}
+
+const getDisabled = (row: Connection = {} as Connection, type: string) => {
+  if (!isDaas) return false
+  const data = row.permissionActions || []
+  return !data.includes(type)
+}
+
+const getDatabaseLogInfo = async (row: Connection = {} as Connection) => {
+  const { id } = row
+  const params = {
+    className: 'PDKConnectionService',
+    method: 'databaseLogInfoService',
+    args: [id],
+  }
+  try {
+    const data = await proxyApi.call(params)
+    row.databaseLogInfo = data
+    const findDatabaseLogInfo = list.value.find(
+      (t) => t.items?.[0]?.key === 'databaseLogInfo',
+    )
+    if (findDatabaseLogInfo) {
+      findDatabaseLogInfo.items[0].label = row.databaseLogInfo.key
+      findDatabaseLogInfo.items[0].value = row.databaseLogInfo.value
+    } else {
+      row.databaseLogInfo.value &&
+        list.value.push({
+          icon: 'warning-circle',
+          items: [
+            {
+              label: row.databaseLogInfo.key,
+              key: 'databaseLogInfo',
+              value: row.databaseLogInfo.value,
+            },
+          ],
+        })
+    }
+    databaseLogInfoTimer.value = setTimeout(() => {
+      getDatabaseLogInfo(row)
+    }, 60000)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const testRef = ref<InstanceType<typeof Test> | null>(null)
+const permissionsDialogRef = ref<InstanceType<typeof PermissionsDialog> | null>(
+  null,
+)
+
+onBeforeUnmount(() => {
+  clearTimer()
+
+  permissionsDialogRef.value = null
+})
+
+defineExpose({
+  open,
+  sync,
+  handleClose,
+  beforeTest,
+})
+</script>
+
 <template>
-  <Drawer v-model:visible="visible" :width="'400px'">
+  <Drawer v-model:visible="visible" width="400px">
     <div v-loading="loading" class="details-container">
       <div class="container-item border-item flex pb-5">
         <div class="pt-2">
@@ -10,95 +632,152 @@
         <div class="ml-4 overflow-hidden">
           <div class="fs-6 mb-2 ellipsis">{{ connection.name }}</div>
           <div>
-            <status-tag text target="connection" :status="connection.status"></status-tag>
+            <status-tag text target="connection" :status="connection.status" />
           </div>
         </div>
       </div>
-      <div v-if="!hideOperation" class="button-line container-item border-item pt-4 pb-5">
+      <div
+        v-if="!hideOperation"
+        class="button-line container-item border-item pt-4 pb-5"
+      >
         <div class="flex">
+          <el-button
+            v-if="showProgress"
+            loading
+            type="primary"
+            class="flex-fill min-w-0"
+          >
+            {{ progress }}%
+          </el-button>
           <el-tooltip
+            v-else
             :disabled="!isFileSource()"
             :content="$t('packages_business_connections_list_wenjianleixingde')"
             placement="top"
             class="load-schema__tooltip"
           >
-            <span>
-              <el-button :disabled="isFileSource()" type="primary" class="flex-fill min-w-0" @click="reload()"
+            <span class="mr-3">
+              <el-button
+                :disabled="isFileSource()"
+                type="primary"
+                class="flex-fill min-w-0"
+                @click="loadSchema"
                 >{{ $t('public_connection_button_load_schema') }}
               </el-button>
             </span>
           </el-tooltip>
           <el-button
             class="flex-fill min-w-0"
-            @click="edit()"
             :disabled="
-              $disabledReadonlyUserBtn() || connection.agentType === 'Cloud' || getDisabled(connection, 'Edit')
+              connection.agentType === 'Cloud' ||
+              getDisabled(connection, 'Edit')
             "
+            @click="edit()"
           >
             {{ $t('public_button_edit') }}
           </el-button>
-          <el-button class="flex-fill min-w-0" @click="$emit('test', connection)">
+          <el-button
+            class="flex-fill min-w-0"
+            @click="$emit('test', connection)"
+          >
             {{ $t('public_connection_button_test') }}
           </el-button>
         </div>
-        <el-progress
-          v-if="showProgress"
-          class="details-progress mt-2"
-          color="#2c65ff"
-          :percentage="progress"
-        ></el-progress>
       </div>
-      <div v-for="(item, index) in list" :key="index + ''" class="container-item flex">
+      <div
+        v-for="(item, index) in list"
+        :key="`${index}`"
+        class="container-item flex"
+      >
         <div class="pt-2">
           <VIcon>{{ item.icon }}</VIcon>
         </div>
         <div class="flex-fill ml-4">
-          <div v-for="(temp, k) in item.items" :key="index + '' + k" class="box-line">
+          <div
+            v-for="(temp, k) in item.items"
+            :key="`${index}${k}`"
+            class="box-line"
+          >
             <div class="box-line__label flex justify-content-between">
               <span>{{ temp.label }}:</span>
-              <ElLink v-if="temp.labelAction" type="primary" @click="temp.labelAction">{{
-                temp.labelActionTitle
-              }}</ElLink>
+              <el-button
+                v-if="temp.labelAction"
+                text
+                type="primary"
+                @click="temp.labelAction"
+                >{{ temp.labelActionTitle }}</el-button
+              >
             </div>
-            <pre v-if="temp.key === 'databaseLogInfo'" class="box-line__value" v-html="temp.value"></pre>
+            <pre
+              v-if="temp.key === 'databaseLogInfo'"
+              class="box-line__value"
+              v-html="temp.value"
+            />
             <div v-else-if="['permissions'].includes(temp.key)" class="pt-2">
-              <ElTag v-for="per in permissions" :key="per.roleId" type="info" class="mr-2 mb-1">{{
-                per.roleName
-              }}</ElTag>
+              <ElTag
+                v-for="per in permissions"
+                :key="per.roleId"
+                type="info"
+                class="mr-2 mb-1"
+                >{{ per.roleName }}</ElTag
+              >
               <span v-if="!permissions.length">-</span>
             </div>
             <el-tooltip
               v-else-if="
                 connection[temp.key] &&
-                !['mqType', 'mqQueueSet', 'mqTopicSet', 'shareCdcEnable', 'redoLogParserEnable'].includes(temp.key) &&
+                ![
+                  'mqType',
+                  'mqQueueSet',
+                  'mqTopicSet',
+                  'shareCdcEnable',
+                  'redoLogParserEnable',
+                ].includes(temp.key) &&
                 connection[temp.key].toString()
               "
               effect="dark"
               :content="(temp.value || connection[temp.key]).toString()"
               placement="right-end"
             >
-              <div class="box-line__value ellipsis" :class="[temp.class]" @click="handleClick(temp)">
+              <div
+                class="box-line__value ellipsis"
+                :class="[temp.class]"
+                @click="handleClick(temp)"
+              >
                 {{ temp.value || connection[temp.key] || '-' }}
               </div>
             </el-tooltip>
-            <!-- MQ文字转换 start -->
-            <div v-else-if="connection[temp.key] && temp.key === 'mqType'" class="box-line__value ellipsis">
+            <div
+              v-else-if="connection[temp.key] && temp.key === 'mqType'"
+              class="box-line__value ellipsis"
+            >
               <span>{{ mqType[connection[temp.key]] || '-' }}</span>
             </div>
             <div
-              v-else-if="connection[temp.key] && (temp.key === 'mqQueueSet' || temp.key === 'mqTopicSet')"
+              v-else-if="
+                connection[temp.key] &&
+                (temp.key === 'mqQueueSet' || temp.key === 'mqTopicSet')
+              "
               class="box-line__value ellipsis"
             >
-              <span>{{ connection[temp.key].length > 0 ? connection[temp.key] : '-' }}</span>
+              <span>{{
+                connection[temp.key].length > 0 ? connection[temp.key] : '-'
+              }}</span>
             </div>
-            <!-- 共享挖掘文字转换 /裸日志文字转换  start -->
             <div
-              v-else-if="connection[temp.key] && (temp.key === 'shareCdcEnable' || temp.key === 'redoLogParserEnable')"
+              v-else-if="
+                connection[temp.key] &&
+                (temp.key === 'shareCdcEnable' ||
+                  temp.key === 'redoLogParserEnable')
+              "
               class="box-line__value ellipsis"
             >
-              <span>{{ connection[temp.key] ? $t('packages_business_text_open') : $t('public_button_close') }}</span>
+              <span>{{
+                connection[temp.key]
+                  ? $t('packages_business_text_open')
+                  : $t('public_button_close')
+              }}</span>
             </div>
-            <!-- MQ文字转换 end -->
             <div v-else class="box-line__value ellipsis">
               {{ connection[temp.key] || '-' }}
             </div>
@@ -106,600 +785,9 @@
         </div>
       </div>
     </div>
-    <Test ref="test" :formData="formData" @receive="receiveTestData"></Test>
-    <!--  权限管理  -->
-    <PermissionsDialog ref="permissionsDialog" />
+    <PermissionsDialog ref="permissionsDialogRef" />
   </Drawer>
 </template>
-
-<script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import i18n from '@tap/i18n'
-
-import dayjs from 'dayjs'
-import { cloneDeep } from 'lodash-es'
-import { connectionsApi, dataPermissionApi, usersApi, proxyApi } from '@tap/api'
-import { VIcon, Drawer } from '@tap/component'
-import { getIcon } from '@tap/assets/icons'
-
-import StatusTag from '../../components/StatusTag'
-import Test from '../connections/Test.vue'
-import PermissionsDialog from './PermissionsDialog'
-import { getConnectionIcon } from './util'
-import { openUrl } from '@tap/shared'
-
-export default {
-  name: 'DetailsDrawer',
-  components: { VIcon, Drawer, StatusTag, Test, PermissionsDialog },
-  inject: ['checkAgent'],
-  props: {
-    hideOperation: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  data() {
-    return {
-      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
-      drawer: false,
-      visible: false,
-      timer: null,
-      databaseLogInfoTimer: null,
-      direction: 'rtl',
-      loading: false,
-      showProgress: false,
-      progress: 0,
-      connection: {
-        btnLoading: {
-          deploy: false,
-          stop: false,
-          delete: false,
-        },
-      },
-      kafkaACK: {
-        0: this.$t('packages_business_connection_preview_no_sure'),
-        '-1': this.$t('packages_business_connection_preview_master_partition'),
-        1: this.$t('packages_business_connection_preview_master_partition'),
-        all: this.$t('packages_business_connection_preview_isr_partition'),
-      },
-      list: [],
-      mqType: {
-        0: 'ActiveMQ',
-        1: 'RabbitMQ',
-        2: 'RocketMQ',
-      },
-      configModel: {
-        default: [
-          {
-            icon: 'time',
-            items: [
-              {
-                label: this.$t('public_connection_table_structure_update_time'),
-                key: 'loadSchemaTime',
-              },
-            ],
-          },
-          {
-            icon: 'database',
-            items: [
-              {
-                label: this.$t('public_connection_form_database_address'),
-                key: 'database_host',
-              },
-            ],
-          },
-          {
-            icon: 'port',
-            items: [
-              {
-                label: this.$t('public_connection_form_host'),
-                key: 'database_port',
-              },
-            ],
-          },
-          {
-            icon: 'name',
-            items: [
-              {
-                label: this.$t('public_connection_form_database_name'),
-                key: 'database_name',
-              },
-            ],
-          },
-          {
-            icon: 'database-user-name',
-            items: [
-              {
-                label: this.$t('public_connection_form_account'),
-                key: 'database_username',
-              },
-            ],
-          },
-          {
-            icon: 'connect_schema',
-            items: [
-              {
-                label: this.$t('public_connection_form_schema'),
-                key: 'database_owner',
-              },
-            ],
-          },
-          {
-            icon: 'additional-string',
-            items: [
-              {
-                label: this.$t('public_connection_form_other_connection_string'),
-                key: 'addtionalString',
-              },
-            ],
-          },
-          {
-            icon: 'origin-time',
-            items: [
-              {
-                label: this.$t('public_connection_form_time_zone_of_time_type'),
-                key: 'database_datetype_without_timezone',
-              },
-            ],
-          },
-          // {
-          //   icon: 'connect_shared_mining',
-          //   items: [
-          //     {
-          //       label: this.$t('packages_business_connection_form_shared_mining'),
-          //       key: 'shareCdcEnable'
-          //     }
-          //   ]
-          // },
-          // {
-          //   icon: 'connect_journal',
-          //   items: [
-          //     {
-          //       label: this.$t('packages_business_connection_form_oracle_redoLog_parser'),
-          //       key: 'redoLogParserEnable'
-          //     }
-          //   ]
-          // }
-        ],
-      },
-      formData: {},
-      permissions: [],
-    }
-  },
-  beforeUnmount() {
-    this.clearTimer()
-  },
-  watch: {
-    visible(val) {
-      if (!val) {
-        this.clearTimer() //清除定时器
-      }
-    },
-  },
-  methods: {
-    clearTimer() {
-      // 清除定时器
-      clearTimeout(this.timer)
-      clearTimeout(this.databaseLogInfoTimer)
-      this.timer = null
-      this.databaseLogInfoTimer = null
-    },
-    handleClose() {
-      this.clearTimer()
-      this.visible = false
-      this.showProgress = false
-      $emit(this, 'close')
-    },
-    getImgByType(type) {
-      if (!type) {
-        type = 'default'
-      }
-      return getIcon(type.toLowerCase())
-    },
-    transformData(row) {
-      if (!row.config) {
-        row.config = {}
-      }
-      row.database_host = row.config.host
-      row.database_port = row.config.port
-      row.database_name = row.config.database || row.config.sid
-      row.database_owner = row.config.schema
-      row.database_username = row.config.user || row.config.username
-      row.addtionalString = row.config.extParams || row.config.addtionalString
-      row.database_datetype_without_timezone = row.config.timezone
-      row.sourceFrom = this.getSourceFrom(row)
-      row.loadSchemaTime = row.loadSchemaTime ? dayjs(row.loadSchemaTime).format('YYYY-MM-DD HH:mm:ss') : '-'
-      if (row.config.uri && row.config.isUri !== false) {
-        row.uri = row.config.uri
-      }
-      row.heartbeatTable = this.connection.heartbeatTable
-
-      return row
-    },
-    async open(row) {
-      this.visible = true
-      this.showProgress = false
-      this.formData = cloneDeep(row)
-      this.connection = this.transformData(row)
-      //组装数据
-      this.connection['last_updated'] = dayjs(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
-      // await this.getDatabaseLogInfo(row)
-      this.loadList(row)
-      this.isDaas && this.loadPermissions(row.id)
-    },
-    edit() {
-      const { connection = {} } = this
-      const { id, pdkHash, definitionPdkId: pdkId, agentType, name } = connection
-
-      if (agentType === 'Local') {
-        this.$confirm(
-          i18n.t('packages_business_connections_list_dangqianlianjie') +
-            name +
-            i18n.t('packages_business_connections_list_zhengzaizuoweiF'),
-          '',
-          {
-            type: 'warning',
-            showClose: false,
-          },
-        ).then((resFlag) => {
-          if (!resFlag) {
-            return
-          }
-
-          this.$router.push({
-            name: 'connectionsEdit',
-            params: {
-              id: id,
-            },
-            query: {
-              pdkHash,
-              pdkId,
-            },
-          })
-        })
-      } else {
-        this.$router.push({
-          name: 'connectionsEdit',
-          params: {
-            id: id,
-          },
-          query: {
-            pdkHash,
-            pdkId,
-          },
-        })
-      }
-    },
-    async beforeTest() {
-      this.checkAgent(() => {
-        //先将管理端状态改为testing
-        connectionsApi
-          .updateById(this.connection.id, {
-            status: 'testing',
-          })
-          .then(() => {
-            // let testData = JSON.parse(JSON.stringify(this.connection))
-            this.$refs.test.start(true)
-          })
-      })
-    },
-    async reload(cb) {
-      this.checkAgent(() => {
-        this.showProgress = true
-        this.progress = 0
-        this.testSchema(cb)
-        $emit(this, 'reload-schema')
-      })
-    },
-    //请求测试
-    testSchema(cb) {
-      let parms = {
-        loadCount: 0,
-        loadFieldsStatus: 'loading',
-      }
-      this.loadFieldsStatus = 'loading'
-      connectionsApi.updateById(this.connection.id, parms).then((data) => {
-        cb?.()
-        if (!this?.$refs?.test) {
-          return
-        }
-        this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
-        this.$refs.test.start(true, false, true)
-        this.getProgress()
-      })
-    },
-    getProgress() {
-      clearTimeout(this.timer)
-      connectionsApi
-        .getNoSchema(this.connection.id)
-        .then((data) => {
-          this.formData = cloneDeep(data)
-          this.connection = this.transformData(data)
-          //组装数据
-          this.connection['last_updated'] = dayjs(data.last_updated).format('YYYY-MM-DD HH:mm:ss')
-          this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
-          if (data.loadFieldsStatus === 'finished') {
-            this.progress = 100
-            setTimeout(() => {
-              this.showProgress = false
-              this.progress = 0 //加载完成
-              this.$message.success(i18n.t('packages_business_connections_preview_schem'))
-            }, 1000)
-          } else {
-            let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
-            this.progress = progress ? progress : 0
-            this.timer = setTimeout(() => {
-              this.visible && this.getProgress()
-            }, 2000)
-          }
-        })
-        .catch(() => {
-          this.showProgress = false
-          this.progress = 0 //加载完成
-        })
-    },
-    receiveTestData(data) {
-      if (!data.status || data.status === null) return
-      this.status = data.status
-    },
-    async loadList(row = {}) {
-      const heartbeatTable = await this.loadHeartbeatTable(row)
-
-      this.connection.heartbeatTable = heartbeatTable?.[0]
-      console.log('row', row.databaseLogInfo?.value)
-      // 有uri
-      if (row.uri) {
-        this.list = [
-          this.configModel['default']?.[0],
-          ...(this.isDaas
-            ? []
-            : [
-                {
-                  icon: 'link',
-                  items: [
-                    {
-                      label: i18n.t('public_connection_form_link_plugin_source'),
-                      key: 'sourceFrom',
-                    },
-                  ],
-                },
-              ]),
-          this.connection.heartbeatTable
-            ? {
-                icon: 'link',
-                items: [
-                  {
-                    label: i18n.t('packages_business_connections_databaseform_kaiqixintiaobiao'),
-                    key: 'heartbeatTable',
-                    value: i18n.t('packages_business_connections_databaseform_chakanxintiaoren'),
-                    class: 'cursor-pointer color-primary text-decoration-underline',
-                    action: () => {
-                      const routeUrl = this.$router.resolve({
-                        name: 'HeartbeatMonitor',
-                        params: {
-                          id: this.connection.heartbeatTable,
-                        },
-                      })
-                      openUrl(routeUrl.href)
-                    },
-                  },
-                ],
-              }
-            : {},
-          row.uri
-            ? {
-                icon: 'link',
-                items: [
-                  {
-                    label: 'URI',
-                    key: 'uri',
-                    value: row.uri,
-                    class: 'text-break text-wrap',
-                  },
-                ],
-              }
-            : {},
-          row.databaseLogInfo?.value
-            ? {
-                icon: 'warning-circle',
-                items: [
-                  {
-                    label: row.databaseLogInfo.key,
-                    key: 'databaseLogInfo',
-                    value: row.databaseLogInfo.value,
-                  },
-                ],
-              }
-            : {},
-        ]
-      } else {
-        this.list = [
-          ...this.configModel['default'],
-          ...(this.isDaas
-            ? []
-            : [
-                {
-                  icon: 'link',
-                  items: [
-                    {
-                      label: i18n.t('public_connection_form_link_plugin_source'),
-                      key: 'sourceFrom',
-                    },
-                  ],
-                },
-              ]),
-          this.connection.heartbeatTable
-            ? {
-                icon: 'link',
-                items: [
-                  {
-                    label: i18n.t('packages_business_connections_databaseform_kaiqixintiaobiao'),
-                    key: 'heartbeatTable',
-                    value: i18n.t('packages_business_connections_databaseform_chakanxintiaoren'),
-                    class: 'cursor-pointer color-primary text-decoration-underline',
-                    action: () => {
-                      const routeUrl = this.$router.resolve({
-                        name: 'HeartbeatMonitor',
-                        params: {
-                          id: this.connection.heartbeatTable,
-                        },
-                      })
-                      openUrl(routeUrl.href)
-                    },
-                  },
-                ],
-              }
-            : {},
-          row.databaseLogInfo?.value
-            ? {
-                icon: 'warning-circle',
-                items: [
-                  {
-                    label: row.databaseLogInfo.key,
-                    key: 'databaseLogInfo',
-                    value: row.databaseLogInfo.value,
-                  },
-                ],
-              }
-            : {},
-        ]
-      }
-
-      // 权限管理
-      this.isDaas &&
-        this.list.unshift({
-          icon: 'link',
-          items: [
-            {
-              label: i18n.t('packages_business_connections_preview_shujulianjiequan'),
-              key: 'permissions',
-              labelActionTitle: i18n.t('packages_business_connections_preview_quanxianguanli'),
-              labelAction: () => {
-                this.$refs.permissionsDialog.open(this.connection)
-              },
-            },
-          ],
-        })
-
-      // DatabaseLogInfo
-      this.getDatabaseLogInfo(row)
-    },
-    getConnectionIcon() {
-      const { connection } = this
-      if (!connection) {
-        return
-      }
-      return getConnectionIcon(connection?.pdkHash)
-    },
-
-    sync(list) {
-      if (!this.visible) return
-      const result = list.find((item) => item.id === this.connection.id)
-      if (!result) return
-      this.formData = cloneDeep(result)
-      this.connection = this.transformData(result)
-    },
-
-    getSourceFrom(row = {}) {
-      const { definitionScope, beta = false } = row
-      const MAP = {
-        publicfalse: i18n.t('packages_business_components_connectiontypeselectorsort_renzhengshujuyuan'),
-        publictrue: i18n.t('packages_business_components_connectiontypeselectorsort_betashu'),
-        customer: i18n.t('packages_business_components_connectiontypeselectorsort_wodeshujuyuan'),
-      }
-      return MAP[definitionScope + beta] || MAP['customer']
-    },
-
-    setConnectionData(row) {
-      this.formData = cloneDeep(row)
-      this.connection = this.transformData(row)
-    },
-
-    isFileSource() {
-      return ['CSV', 'EXCEL', 'JSON', 'XML'].includes(this.connection?.database_type)
-    },
-
-    async loadHeartbeatTable(row = {}) {
-      if (!row.heartbeatEnable) return []
-      return await connectionsApi.heartbeatTask(row.id)
-    },
-
-    handleClick(temp = {}) {
-      temp.action?.()
-    },
-
-    loadPermissions(id) {
-      const filter = {
-        dataType: 'Connections',
-        dataId: id,
-      }
-      dataPermissionApi.permissions(filter).then((data = []) => {
-        usersApi
-          .role({
-            filter: JSON.stringify({
-              limit: 1000,
-            }),
-          })
-          .then((roleList = []) => {
-            this.permissions = data
-              .map((t) => {
-                const role = roleList.items?.find((r) => r.id === t.typeId) || {}
-                return {
-                  checked: t.actions,
-                  roleId: t.typeId,
-                  roleName: role.name,
-                }
-              })
-              .filter((t) => !!t.roleName)
-          })
-      })
-    },
-
-    getDisabled(row = {}, type) {
-      if (!this.isDaas) return false
-      const data = row.permissionActions || []
-      return !data.includes(type)
-    },
-
-    async getDatabaseLogInfo(row = {}) {
-      const { id } = row
-      const params = {
-        className: 'PDKConnectionService',
-        method: 'databaseLogInfoService',
-        args: [id],
-      }
-      try {
-        const data = await proxyApi.call(params)
-        row.databaseLogInfo = data || {}
-        // list 添加findDatabaseLogInfo
-        let findDatabaseLogInfo = this.list.find((t) => t.items?.[0]?.key === 'databaseLogInfo')
-        if (findDatabaseLogInfo) {
-          findDatabaseLogInfo.items[0].label = row.databaseLogInfo.key
-          findDatabaseLogInfo.items[0].value = row.databaseLogInfo.value
-        } else {
-          row.databaseLogInfo.value &&
-            this.list.push({
-              icon: 'warning-circle',
-              items: [
-                {
-                  label: row.databaseLogInfo.key,
-                  key: 'databaseLogInfo',
-                  value: row.databaseLogInfo.value,
-                },
-              ],
-            })
-        }
-        this.databaseLogInfoTimer = setTimeout(() => {
-          this.getDatabaseLogInfo(row)
-        }, 60000)
-      } catch (e) {
-        console.log(e)
-      }
-    },
-  },
-  emits: ['test', 'close', 'reload-schema'],
-}
-</script>
 
 <style lang="scss" scoped>
 .details-container {

@@ -18,7 +18,7 @@ enum ReadyState {
   CONNECTING = 0,
   OPEN = 1,
   CLOSING = 2,
-  CLOSED = 3
+  CLOSED = 3,
 }
 
 class WSClient extends EventEmitter {
@@ -26,9 +26,14 @@ class WSClient extends EventEmitter {
   private ws: WebSocket | null
   private retryCount: number
   private __id?: string
-  private msg: { close: () => void, visible?: boolean } | null
+  private msg: { close: () => void; visible?: boolean } | null
+  private readyTimer: ReturnType<typeof setTimeout>
 
-  constructor(url: string, protocols?: string | string[], opts: Partial<WSClientOptions> = {}) {
+  constructor(
+    url: string,
+    protocols?: string | string[],
+    opts: Partial<WSClientOptions> = {},
+  ) {
     super()
 
     const defaultOptions: WSClientOptions = {
@@ -121,31 +126,42 @@ class WSClient extends EventEmitter {
       }, opts.retryInterval)
     } else {
       // eslint-disable-next-line no-console
-      console.log(i18n.t('packages_business_shared_ws_client_webso6') + opts.retryTimes)
+      console.log(
+        i18n.t('packages_business_shared_ws_client_webso6') + opts.retryTimes,
+      )
       this.retryCount = 0
     }
   }
 
   disconnect(): void {
+    if (this.readyTimer) {
+      clearTimeout(this.readyTimer)
+      this.readyTimer = null
+    }
     const ws = this.ws
-    if (ws && [ReadyState.CONNECTING, ReadyState.OPEN].includes(ws.readyState as ReadyState))
+    if (
+      ws &&
+      [ReadyState.CONNECTING, ReadyState.OPEN].includes(
+        ws.readyState as ReadyState,
+      )
+    )
       ws.close()
   }
 
   private __bindEvent(): void {
     const ws = this.ws
     if (!ws) return
-    
+
     ws.addEventListener('open', () => {
       // eslint-disable-next-line no-console
       console.log(i18n.t('packages_business_shared_ws_client_webso5'))
       this.emit('open')
     })
-    
+
     ws.addEventListener('message', (e) => {
       this.__receiveMessage(e)
     })
-    
+
     ws.addEventListener('error', () => {
       // eslint-disable-next-line no-console
       console.log(i18n.t('packages_business_shared_ws_client_webso4'))
@@ -154,7 +170,7 @@ class WSClient extends EventEmitter {
         this.reconnect()
       }
     })
-    
+
     ws.addEventListener('close', () => {
       // eslint-disable-next-line no-console
       console.log(i18n.t('packages_business_shared_ws_client_webso3'))
@@ -187,7 +203,10 @@ class WSClient extends EventEmitter {
         } else if (message.code === 'fail') {
           console.debug('fail', message) // eslint-disable-line no-console
           if (message.message === 'UserId is blank') {
-            console.debug(i18n.t('packages_business_shared_ws_client_acces'), event) // eslint-disable-line no-console
+            console.debug(
+              i18n.t('packages_business_shared_ws_client_acces'),
+              event,
+            )
             this.emit('401')
             this.connect()
           }
@@ -201,7 +220,10 @@ class WSClient extends EventEmitter {
       }
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.log(i18n.t('packages_business_shared_ws_client_webso') + msg, error)
+      console.log(
+        i18n.t('packages_business_shared_ws_client_webso') + msg,
+        error,
+      )
     }
   }
 
@@ -216,7 +238,12 @@ class WSClient extends EventEmitter {
     if (this.ws && this.ws.readyState === ReadyState.OPEN) {
       cb && cb()
     } else {
-      setTimeout(() => {
+      // 清除之前的定时器
+      if (this.readyTimer) {
+        clearTimeout(this.readyTimer)
+      }
+      this.readyTimer = setTimeout(() => {
+        this.readyTimer = null
         this.ready(cb)
       }, 500)
     }
