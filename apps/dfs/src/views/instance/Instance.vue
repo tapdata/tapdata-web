@@ -1522,7 +1522,12 @@ export default {
       let { orderInfo = {} } = row
       let { subscribeDto = {} } = orderInfo
       let { subscribeType, totalAmount, status } = subscribeDto
-      return !['active'].includes(status) || totalAmount === 0 || subscribeType === 'recurring' || row?.publicAgent
+      return (
+        !['active', 'past_due'].includes(status) ||
+        totalAmount === 0 ||
+        subscribeType === 'recurring' ||
+        row?.publicAgent
+      )
     },
     //退订存储禁用
     disableMdbUnsubscribe(row) {

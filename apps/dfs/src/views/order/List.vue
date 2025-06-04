@@ -162,7 +162,13 @@
                       >{{ $t('dfs_change_record') }}
                     </ElButton>
                     <ElButton
-                      v-if="!(!['active'].includes(item.status) || row.isFree || item.subscribeType === 'recurring')"
+                      v-if="
+                        !(
+                          !['active', 'past_due'].includes(item.status) ||
+                          row.isFree ||
+                          item.subscribeType === 'recurring'
+                        )
+                      "
                       type="primary"
                       plain
                       @click="openRenew(item)"
