@@ -123,8 +123,17 @@ watch(
   },
 )
 
+watch(
+  () => store.state.dataflow.schemaRefreshing,
+  (v) => {
+    if (!v) {
+      getTables()
+    }
+  },
+)
+
 // Methods
-const getTables = async () => {
+const getTables = () => {
   const { connectionId } = props
 
   if (!connectionId) return
