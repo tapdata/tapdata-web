@@ -1,403 +1,494 @@
-<script>
-import { proxyApi } from '@tap/api'
+<script setup lang="ts">
+import { connectionsApi, proxyApi } from '@tap/api'
 import loadingImg from '@tap/assets/images/loading.gif'
 import { VIcon } from '@tap/component'
 import i18n from '@tap/i18n'
 import { copyToClipboard, openUrl } from '@tap/shared'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
-export default {
-  name: 'Test',
-  components: {
-    VIcon,
-    // ElIconWarning,
-    // ElIconSuccess
-  },
-  props: {
-    visible: {
-      value: Boolean,
-    },
-    formData: {
-      value: Object,
-    },
-    testType: {
-      value: String,
-    },
-  },
-  emits: ['update:visible', 'returnTestData'],
-  data() {
-    const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
+import {
+  computed,
+  getCurrentInstance,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+} from 'vue'
+import { useRouter } from 'vue-router'
 
-    return {
-      isDaas,
-      loadingImg,
-      hideSeeAlso:
-        import.meta.env.VUE_APP_PAGE_TITLE === 'IKAS' ||
-        import.meta.env.VUE_APP_HIDE_LOG_SEE_ALSO,
-      progress: 0,
-      testData: {
-        testLogs: [],
-        testResult: '',
-        progress: 0,
-      },
-      wsError: '',
-      wsErrorMsg: '',
-      wsErrorStack: '',
-      showStack: false,
-      status: '',
-      timer: null,
-      isTimeout: true,
-      // hideTableInfo: false,
-      colorMap: {
-        passed: '#70AD47',
-        waiting: '#aaaaaa',
-        failed: '#f56c6c',
-        warning: '#ffc107',
-        ready: '#70AD47',
-        invalid: '#f56c6c',
-        testing: '#aaaaaa',
-        unTest: '#aaaaaa',
-      },
-      iconMap: {
-        ready: 'check-circle-fill',
-        invalid: 'circle-close-filled',
-        testing: '',
-        passed: 'check-circle-fill',
-        waiting: 'question-fill',
-        failed: 'circle-close-filled',
-        unTest: '',
-      },
-      statusMap: {
-        ready: this.$t('packages_business_dataForm_test_success'),
-        invalid: this.$t('packages_business_dataForm_test_fail'),
-        testing: this.$t('packages_business_dataForm_test_testing'),
-        passed: this.$t('packages_business_dataForm_test_success'),
-        waiting: this.$t('packages_business_dataForm_test_testing'),
-        failed: this.$t('packages_business_dataForm_test_fail'),
-        unTest: this.$t('packages_business_dataForm_test_unTest'),
-      },
-      showProgress: true,
-      fileInfo: {
-        fileSize: 0,
-        progress: 0,
-        status: '',
-      },
-      errorDialog: {
-        open: false,
-        stack: '',
-        solution: '',
-        message: '',
-        reason: '',
-        seeAlso: [],
-        isWarning: false,
-        module: '',
-      },
-      showTooltip: false,
-      expandErrorMessage: false,
-    }
-  },
-  mounted() {
-    this.handleWS()
-  },
-  unmounted() {
-    this.clearInterval()
-  },
-  methods: {
-    handleLink(val) {
-      openUrl(val)
-    },
+interface ErrorDialog {
+  open: boolean
+  stack: string
+  solution: string
+  message: string
+  reason: string
+  seeAlso: string[]
+  isWarning: boolean
+  module: string
+  title: string
+  status?: string
+}
 
-    rowStyleHandler({ row }) {
-      return row.status === 'waiting' ? { background: '#fff' } : ''
-    },
-    handleClose() {
-      $emit(this, 'update:visible', false)
-      this.clearInterval()
-    },
-    handleWS() {
-      this.$ws.ready(() => {
-        //接收数据
-        this.$ws.on('testConnectionResult', (data) => {
-          this.isTimeout = false //有回调
-          const result = data.result || []
-          this.wsError = data.status
-          this.wsErrorMsg = data.error
-          this.wsErrorStack = data.stack
-          clearTimeout(this.timer)
-          this.timer = null
-          const testData = {
-            wsError: data.status,
-          }
-          if (result.response_body) {
-            let validate_details = result.response_body.validate_details || []
-            const details = validate_details.filter(
-              (item) => item.status !== 'waiting',
-            )
-            if (details.length === 0) {
-              validate_details = validate_details.map((item) => {
-                item.status = 'unTest'
-                return item
-              })
-            }
+interface ErrorCodeResponse {
+  fullErrorCode?: string
+  errorCode?: string
+  describe?: string
+  dynamicDescribe?: string
+  solution?: string
+  seeAlso?: string[]
+  module?: string
+}
 
-            this.testData.testLogs = validate_details
-            testData['testLogs '] = validate_details
-            testData.status = result.status
-            this.status = result.status
-          } else {
-            const logs = this.testData.testLogs.map((item) => {
-              item.status = 'invalid'
-              return item
-            })
-            this.testData.testLogs = logs
-            testData['testLogs '] = logs
-            testData.status = data.status
-            this.status = data.status
-            this.wsError = data.status
-            //this.wsErrorMsg = data.error
-          }
-          $emit(this, 'returnTestData', testData)
-        })
-        //长连接失败
-        this.$ws.on('testConnection', (data) => {
-          this.wsError = data.status
-          this.wsErrorMsg = data.error
-          const testData = {
-            wsError: data.status,
-          }
-          $emit(this, 'returnTestData', testData)
-        })
-        //长连接失败
-        this.$ws.on('pipe', (data) => {
-          this.wsError = data.status
-          this.wsErrorMsg = data.error
-          const testData = {
-            wsError: data.status,
-          }
-          $emit(this, 'returnTestData', testData)
-        })
-      })
-    },
-    start(updateSchema, editTest) {
-      const data = Object.assign({}, this.formData)
-      delete data.schema
-      delete data.response_body
-      this.wsError = ''
-      this.wsErrorStack = ''
-      this.showStack = false
-      this.testData.testLogs = []
+interface Props {
+  visible: boolean
+  connection: Record<string, any>
+  testType: string
+}
 
-      if (this.testType === 'testExternalStorage') {
-        // 外存测试特殊处理
-        this.startByConnection(data, updateSchema, editTest)
-        return
+const props = defineProps<Props>()
+const emit = defineEmits<{
+  returnTestData: [data: any]
+}>()
+
+const router = useRouter()
+
+const instance = getCurrentInstance()
+const $ws = (instance?.proxy as any).$ws
+
+const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
+const hideSeeAlso =
+  import.meta.env.VUE_APP_PAGE_TITLE === 'IKAS' ||
+  import.meta.env.VUE_APP_HIDE_LOG_SEE_ALSO
+
+const testData = ref({
+  testLogs: [] as any[],
+  testResult: '',
+  progress: 0,
+})
+const wsError = ref('')
+const wsErrorMsg = ref('')
+const wsErrorStack = ref('')
+const showStack = ref(false)
+const visible = ref(false)
+const status = ref('')
+const isTimeout = ref(true)
+let timer: ReturnType<typeof setTimeout> | null = null
+
+const colorMap = {
+  passed: '#70AD47',
+  waiting: '#aaaaaa',
+  failed: '#f56c6c',
+  warning: '#ffc107',
+  ready: '#70AD47',
+  invalid: '#f56c6c',
+  testing: '#aaaaaa',
+  unTest: '#aaaaaa',
+}
+
+const iconMap = {
+  ready: 'check-circle-fill',
+  invalid: 'circle-close-filled',
+  testing: '',
+  passed: 'check-circle-fill',
+  waiting: 'question-fill',
+  failed: 'circle-close-filled',
+  unTest: '',
+}
+
+const statusMap = computed(() => ({
+  ready: i18n.t('packages_business_dataForm_test_success'),
+  invalid: i18n.t('packages_business_dataForm_test_fail'),
+  testing: i18n.t('packages_business_dataForm_test_testing'),
+  passed: i18n.t('packages_business_dataForm_test_success'),
+  waiting: i18n.t('packages_business_dataForm_test_testing'),
+  failed: i18n.t('packages_business_dataForm_test_fail'),
+  unTest: i18n.t('packages_business_dataForm_test_unTest'),
+}))
+
+const showProgress = ref(true)
+const fileInfo = ref({
+  fileSize: 0,
+  progress: 0,
+  status: '',
+})
+
+const errorDialog = ref<ErrorDialog>({
+  open: false,
+  stack: '',
+  solution: '',
+  message: '',
+  reason: '',
+  seeAlso: [],
+  isWarning: false,
+  module: '',
+  title: '',
+})
+
+const showTooltip = ref(false)
+const expandErrorMessage = ref(false)
+
+const handleLink = (val: string) => {
+  openUrl(val)
+}
+
+const rowStyleHandler = ({ row }: { row: any }) => {
+  return row.status === 'waiting' ? { background: '#fff' } : ''
+}
+
+const handleOpen = () => {
+  visible.value = true
+  handleWS()
+}
+
+const handleClose = () => {
+  visible.value = false
+}
+
+const handleWS = () => {
+  if (!$ws) return
+
+  $ws.ready(() => {
+    //接收数据
+    $ws.on('testConnectionResult', (data: any) => {
+      isTimeout.value = false //有回调
+      const result = data.result || []
+      wsError.value = data.status
+      wsErrorMsg.value = data.error
+      wsErrorStack.value = data.stack
+      if (timer) {
+        clearTimeout(timer)
+        timer = null
       }
-      this.startDownLoadConnector(data, updateSchema, editTest)
-    },
-
-    startByConnection(connection, updateSchema, editTest) {
-      const msg = {
-        type: 'testConnection',
-        data: connection,
-      }
-      if (this.testType) {
-        msg.type = this.testType
-      }
-      msg.data.updateSchema = false //默认值
-      msg.data.editTest = false //默认值
-
-      if (updateSchema) {
-        msg.data.updateSchema = updateSchema //是否需要更新Schema
-      }
-      if (editTest) {
-        msg.data.editTest = editTest //是否编辑测试
-      }
-
-      this.$ws.ready(() => {
-        this.$ws.send(msg)
-        // 连接测试时出现access_token过期,重发消息
-        this.$ws.once('401', () => {
-          this.$ws.send(msg)
-        })
-        this.timer && clearTimeout(this.timer)
-        this.timer = setTimeout(() => {
-          this.isTimeout = true //重置
-          this.wsError = 'ERROR'
-          this.wsErrorMsg = this.wsErrorMsg
-            ? this.wsErrorMsg
-            : this.$t('packages_business_dataForm_test_retryTest')
-          const testData = {
-            wsError: 'ERROR',
-          }
-          $emit(this, 'returnTestData', testData)
-        }, 120000)
-      })
-    },
-    clearInterval() {
-      // 取消长连接
-      this.$ws.off('testConnection')
-      this.$ws.off('downloadPdkFileFlag')
-      this.$ws.off('progressReporting')
-      this.testData.testLogs = []
-      this.status = ''
-    },
-
-    startDownLoadConnector(connection, updateSchema, editTest) {
-      this.fileInfo = {
-        fileSize: 0,
-        progress: 0,
+      const testDataResult = {
+        wsError: data.status,
+        testLogs: [] as any[],
         status: '',
       }
-      const msg = {
-        type: 'downLoadConnector',
-        data: connection,
-      }
-
-      this.showProgress = false
-      this.$ws.ready(() => {
-        this.$ws.send(msg)
-        // 连接测试时出现access_token过期,重发消息
-        this.$ws.once('401', () => {
-          this.$ws.send(msg)
-        })
-
-        // 检查下载器
-        this.$ws.on('downloadPdkFileFlag', (data) => {
-          this.showProgress = !!data.result
-          if (!this.showProgress) {
-            this.$ws.off('downloadPdkFileFlag')
-            this.startLoadTestItems(connection, updateSchema, editTest)
-            this.fileInfo.progress = 100
-          }
-        })
-        // 下载器进度
-        this.$ws.on('progressReporting', (data) => {
-          const { fileSize = 0, progress = 0, status } = data.result || {}
-          if (status === 'finish') {
-            this.$ws.off('progressReporting')
-            this.startLoadTestItems(connection, updateSchema, editTest)
-            this.fileInfo.progress = 100
-          } else {
-            this.fileInfo = {
-              fileSize,
-              progress,
-              status,
-            }
-          }
-        })
-        // 检查不到下载器
-        this.$ws.on('unknown_event_result', () => {
-          this.$ws.off('unknown_event_result')
-          this.startLoadTestItems(connection, updateSchema, editTest)
-        })
-      })
-    },
-
-    startLoadTestItems() {
-      this.startByConnection(...arguments)
-    },
-
-    replaceKeyword(str) {
-      return str
-        ? str.replaceAll(/tapdata\s?/gi, import.meta.env.VUE_APP_KEYWORD)
-        : ''
-    },
-
-    async showError(row) {
-      if (import.meta.env.VUE_APP_KEYWORD && row.item_exception) {
-        row.item_exception.stack = this.replaceKeyword(row.item_exception.stack)
-        row.item_exception.solution = this.replaceKeyword(
-          row.item_exception.solution,
+      if (result.response_body) {
+        let validate_details = result.response_body.validate_details || []
+        const details = validate_details.filter(
+          (item: any) => item.status !== 'waiting',
         )
-        row.item_exception.message = this.replaceKeyword(
-          row.item_exception.message,
-        )
-        row.item_exception.reason = this.replaceKeyword(
-          row.item_exception.reason,
-        )
-      }
-
-      Object.assign(this.errorDialog, row.item_exception)
-      this.errorDialog.title = row.show_msg
-      this.errorDialog.status = row.status
-      this.errorDialog.seeAlso = []
-      this.errorDialog.module = ''
-      this.errorDialog.isWarning = row.status === 'failed' && !row.required
-
-      if (row.error_code) {
-        const data = await proxyApi
-          .call({
-            className: 'ErrorCodeService',
-            method: 'getErrorCodeWithDynamic',
-            args: [
-              row.error_code,
-              i18n.locale === 'en' ? 'en' : 'cn',
-              row.dynamicDescriptionParameters,
-            ],
+        if (details.length === 0) {
+          validate_details = validate_details.map((item: any) => {
+            item.status = 'unTest'
+            return item
           })
-          .catch((error) => {
-            // this.errorDialog.open = true
-            console.error(error)
-          })
+        }
 
-        if (data) {
-          this.errorDialog.title = data.fullErrorCode || data.errorCode
-          this.errorDialog.message = data.describe
-          this.errorDialog.reason = data.dynamicDescribe
-          this.errorDialog.solution = data.solution
-          this.errorDialog.seeAlso = data.seeAlso
-          this.errorDialog.module = data.module
+        testData.value.testLogs = validate_details
+        testDataResult.testLogs = validate_details
+        testDataResult.status = result.status
+        status.value = result.status
+      } else {
+        const logs = testData.value.testLogs.map((item: any) => {
+          item.status = 'invalid'
+          return item
+        })
+        testData.value.testLogs = logs
+        testDataResult.testLogs = logs
+        testDataResult.status = data.status
+        status.value = data.status
+        wsError.value = data.status
+      }
+      emit('returnTestData', testDataResult)
+    })
+    //长连接失败
+    $ws.on('testConnection', (data: any) => {
+      wsError.value = data.status
+      wsErrorMsg.value = data.error
+      const testDataResult = {
+        wsError: data.status,
+      }
+      emit('returnTestData', testDataResult)
+    })
+    //长连接失败
+    $ws.on('pipe', (data: any) => {
+      wsError.value = data.status
+      wsErrorMsg.value = data.error
+      const testDataResult = {
+        wsError: data.status,
+      }
+      emit('returnTestData', testDataResult)
+    })
+  })
+}
+
+const start = (updateSchema?: boolean, editTest?: boolean) => {
+  handleOpen()
+
+  startTest(updateSchema, editTest)
+}
+
+const startTest = (updateSchema?: boolean, editTest?: boolean) => {
+  const data = { ...props.connection }
+  delete data.schema
+  delete data.response_body
+  wsError.value = ''
+  wsErrorStack.value = ''
+  showStack.value = false
+  testData.value.testLogs = []
+
+  if (props.testType === 'testExternalStorage') {
+    // 外存测试特殊处理
+    startByConnection(data, updateSchema, editTest)
+    return
+  }
+  startDownLoadConnector(data, updateSchema, editTest)
+}
+
+const startByConnection = (
+  connection: any,
+  updateSchema?: boolean,
+  editTest?: boolean,
+) => {
+  if (!$ws) return
+
+  const msg = {
+    type: props.testType || 'testConnection',
+    data: {
+      ...connection,
+      updateSchema: false,
+      editTest: false,
+    },
+  }
+
+  if (updateSchema) {
+    msg.data.updateSchema = updateSchema //是否需要更新Schema
+  }
+  if (editTest) {
+    msg.data.editTest = editTest //是否编辑测试
+  }
+
+  $ws.ready(() => {
+    $ws.send(msg)
+    // 连接测试时出现access_token过期,重发消息
+    $ws.once('401', () => {
+      $ws.send(msg)
+    })
+
+    if (timer) clearTimeout(timer)
+
+    timer = setTimeout(() => {
+      isTimeout.value = true //重置
+      wsError.value = 'ERROR'
+      wsErrorMsg.value = wsErrorMsg.value
+        ? wsErrorMsg.value
+        : i18n.t('packages_business_dataForm_test_retryTest')
+      const testDataResult = {
+        wsError: 'ERROR',
+      }
+      emit('returnTestData', testDataResult)
+    }, 120000)
+  })
+}
+
+const clearState = () => {
+  clearTimeout(timer)
+
+  if (!$ws) return
+
+  $ws.off('testConnection')
+  $ws.off('downloadPdkFileFlag')
+  $ws.off('progressReporting')
+  $ws.off('testConnectionResult')
+  $ws.off('pipe')
+  testData.value.testLogs = []
+  status.value = ''
+}
+
+const startDownLoadConnector = (
+  connection: any,
+  updateSchema?: boolean,
+  editTest?: boolean,
+) => {
+  if (!$ws) return
+
+  fileInfo.value = {
+    fileSize: 0,
+    progress: 0,
+    status: '',
+  }
+  const msg = {
+    type: 'downLoadConnector',
+    data: connection,
+  }
+
+  showProgress.value = false
+  $ws.ready(() => {
+    $ws.send(msg)
+    // 连接测试时出现access_token过期,重发消息
+    $ws.once('401', () => {
+      $ws.send(msg)
+    })
+
+    // 检查下载器
+    $ws.on('downloadPdkFileFlag', (data: any) => {
+      showProgress.value = !!data.result
+      if (!showProgress.value) {
+        $ws.off('downloadPdkFileFlag')
+        startLoadTestItems(connection, updateSchema, editTest)
+        fileInfo.value.progress = 100
+      }
+    })
+    // 下载器进度
+    $ws.on('progressReporting', (data: any) => {
+      const { fileSize = 0, progress = 0, status } = data.result || {}
+      if (status === 'finish') {
+        $ws.off('progressReporting')
+        startLoadTestItems(connection, updateSchema, editTest)
+        fileInfo.value.progress = 100
+      } else {
+        fileInfo.value = {
+          fileSize,
+          progress,
+          status,
         }
       }
-      this.errorDialog.open = true
-    },
-
-    onCopy() {
-      this.showTooltip = true
-    },
-
-    switchShowStack() {
-      this.showStack = !this.showStack
-    },
-
-    handleCopyStack(stack) {
-      copyToClipboard(stack)
-      this.$message.success(this.$t('public_message_copy_success'))
-    },
-
-    handleCreateTicket() {
-      const errorCode = this.errorDialog.title
-
-      window.open(
-        this.$router.resolve({
-          name: 'TicketSystem',
-          query: {
-            form: encodeURIComponent(
-              JSON.stringify({
-                connectionId: this.formData?.id,
-                subject: errorCode,
-                description: `Error Code: ${errorCode}
-Module: ${this.errorDialog.module || ''}
-Describe: ${this.errorDialog.message ? `\n${this.errorDialog.message}` : ''}
-Stack Trace: ${this.errorDialog.stack ? `\n${this.errorDialog.stack}` : ''}`,
-              }),
-            ),
-          },
-        }).href,
-      )
-    },
-  },
+    })
+    // 检查不到下载器
+    $ws.on('unknown_event_result', () => {
+      $ws.off('unknown_event_result')
+      startLoadTestItems(connection, updateSchema, editTest)
+    })
+  })
 }
+
+const startLoadTestItems = (
+  connection: any,
+  updateSchema?: boolean,
+  editTest?: boolean,
+) => {
+  startByConnection(connection, updateSchema, editTest)
+}
+
+const replaceKeyword = (str: string) => {
+  return str
+    ? str.replaceAll(/tapdata\s?/gi, import.meta.env.VUE_APP_KEYWORD)
+    : ''
+}
+
+const showError = async (row: any) => {
+  if (import.meta.env.VUE_APP_KEYWORD && row.item_exception) {
+    row.item_exception.stack = replaceKeyword(row.item_exception.stack)
+    row.item_exception.solution = replaceKeyword(row.item_exception.solution)
+    row.item_exception.message = replaceKeyword(row.item_exception.message)
+    row.item_exception.reason = replaceKeyword(row.item_exception.reason)
+  }
+
+  Object.assign(errorDialog.value, row.item_exception)
+  errorDialog.value.title = row.show_msg
+  errorDialog.value.status = row.status
+  errorDialog.value.seeAlso = []
+  errorDialog.value.module = ''
+  errorDialog.value.isWarning = row.status === 'failed' && !row.required
+
+  if (row.error_code) {
+    const data = (await proxyApi
+      .call({
+        className: 'ErrorCodeService',
+        method: 'getErrorCodeWithDynamic',
+        args: [
+          row.error_code,
+          (i18n as any).locale === 'en' ? 'en' : 'cn',
+          row.dynamicDescriptionParameters,
+        ],
+      })
+      .catch((error) => {
+        console.error(error)
+      })) as ErrorCodeResponse
+
+    if (data) {
+      errorDialog.value.title = data.fullErrorCode || data.errorCode || ''
+      errorDialog.value.message = data.describe || ''
+      errorDialog.value.reason = data.dynamicDescribe || ''
+      errorDialog.value.solution = data.solution || ''
+      errorDialog.value.seeAlso = data.seeAlso || []
+      errorDialog.value.module = data.module || ''
+    }
+  }
+  errorDialog.value.open = true
+}
+
+const onCopy = () => {
+  showTooltip.value = true
+}
+
+const switchShowStack = () => {
+  showStack.value = !showStack.value
+}
+
+const handleCopyStack = (stack: string) => {
+  copyToClipboard(stack)
+  ElMessage.success(i18n.t('public_message_copy_success'))
+}
+
+const handleCreateTicket = () => {
+  const errorCode = errorDialog.value.title
+
+  window.open(
+    router.resolve({
+      name: 'TicketSystem',
+      query: {
+        form: encodeURIComponent(
+          JSON.stringify({
+            connectionId: props.connection?.id,
+            subject: errorCode,
+            description: `Error Code: ${errorCode}
+Module: ${errorDialog.value.module || ''}
+Describe: ${errorDialog.value.message ? `\n${errorDialog.value.message}` : ''}
+Stack Trace: ${errorDialog.value.stack ? `\n${errorDialog.value.stack}` : ''}`,
+          }),
+        ),
+      },
+    }).href,
+  )
+}
+
+const triggerLoadSchema = async () => {
+  console.log('triggerLoadSchema', props.connection, props.connection.id)
+
+  const parms = {
+    loadCount: 0,
+    loadFieldsStatus: 'loading',
+  }
+
+  await connectionsApi.updateById(props.connection.id, parms)
+
+  startTest(true)
+}
+
+onBeforeUnmount(() => {
+  clearState()
+})
+
+// Expose all methods to maintain compatibility
+defineExpose({
+  handleLink,
+  rowStyleHandler,
+  handleClose,
+  handleWS,
+  start,
+  startByConnection,
+  clearState,
+  startDownLoadConnector,
+  startLoadTestItems,
+  replaceKeyword,
+  showError,
+  onCopy,
+  switchShowStack,
+  handleCopyStack,
+  handleCreateTicket,
+  triggerLoadSchema,
+})
 </script>
 
 <template>
   <el-dialog
+    v-model="visible"
     class="connection-test-dialog"
-    :model-value="visible"
     width="780px"
     append-to-body
-    :before-close="handleClose"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
+    @close="clearState"
   >
     <template #header>
       <div class="test-result">
@@ -414,7 +505,7 @@ Stack Trace: ${this.errorDialog.stack ? `\n${this.errorDialog.stack}` : ''}`,
               wsErrorMsg || $t('packages_business_dataForm_test_error')
             }}</span>
             <el-button
-              class="px-1 py-0.5"
+              v-if="!!wsErrorStack"
               text
               type="primary"
               @click="switchShowStack"
@@ -718,7 +809,7 @@ Stack Trace: ${this.errorDialog.stack ? `\n${this.errorDialog.stack}` : ''}`,
         $t('public_button_retry')
       }}</el-button>
       <slot name="cancel" :close="handleClose" :status="status">
-        <el-button type="primary" @click="handleClose()">{{
+        <el-button type="primary" @click="handleClose">{{
           $t('public_button_close')
         }}</el-button>
       </slot>

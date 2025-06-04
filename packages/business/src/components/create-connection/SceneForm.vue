@@ -80,7 +80,6 @@ export default {
       },
       status: '',
       loadingFrom: true,
-      dialogTestVisible: false,
       dialogEditNameVisible: false,
       submitBtnLoading: false,
       saveAndMoreLoading: false,
@@ -310,7 +309,6 @@ export default {
         pdkType: 'pdk',
         config: formValues,
       })
-      this.dialogTestVisible = true
 
       if (this.params.id) {
         //编辑需要特殊标识 updateSchema = false editTest = true
@@ -1683,12 +1681,7 @@ export default {
         />
       </div>
     </div>
-    <Test
-      ref="test"
-      v-model:visible="dialogTestVisible"
-      :form-data="model"
-      @return-test-data="returnTestData"
-    />
+    <Test ref="test" :connection="model" @return-test-data="returnTestData" />
     <el-dialog
       v-model="dialogEditNameVisible"
       :title="$t('packages_business_connection_rename')"
