@@ -12,6 +12,7 @@ import i18n from '@tap/i18n'
 import { debounce } from 'lodash-es'
 import { computed, h, inject, nextTick, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
+import { getSettingByKey } from '@/utils/settings'
 import { FormTab } from '../../../../form'
 import FormRender from '../FormRender.vue'
 
@@ -291,7 +292,7 @@ function updateSettings(path: string, value: any) {
 }
 
 function loadEmailReceivers() {
-  const str = window.getSettingByKey('email.receivers')
+  const str = getSettingByKey('email.receivers')
   const receivers = str ? str.split(',').filter(Boolean) : []
   let value = props.settings.emailReceivers || []
   const size = value.length

@@ -1,46 +1,9 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
+import { ref } from 'vue'
 import Header from '@/layouts/Header.vue'
-
-// Extend the Window interface to add custom properties
-declare global {
-  interface Window {
-    _TAPDATA_OPTIONS_: {
-      logoUrl: string
-      logoWidth?: string | number
-      logoHeight?: string | number
-      homeUrl?: string
-    }
-    getSettingByKey?: (key: string) => boolean | number
-    iframeRouterChange?: (route: string) => void
-    stateChange?: (key: string, data: any) => void
-    getFormLocal?: (data: string) => any
-    $getSettingByKey?: (key: string) => boolean
-  }
-}
-
-// Composition API setup
-const router = useRouter()
-const store = useStore()
 
 // Reactive state
 const IS_IFRAME = ref(Boolean(sessionStorage.getItem('IS_IFRAME') === 'true'))
-
-onMounted(() => {
-  window.iframeRouterChange = (route) => {
-    router.push(route)
-  }
-
-  window.stateChange = (key, data) => {
-    store.commit(key, data)
-  }
-
-  window.getFormLocal = (data) => {
-    return store.state[data]
-  }
-})
 </script>
 
 <template>

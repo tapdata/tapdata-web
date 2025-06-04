@@ -1402,6 +1402,14 @@ export default {
   packages_business_nulls_first_tip:
     '關聯字段存在NULL值時，數據庫默認將NULL排在最後，可能導致校驗失敗。開啓此選項將NULL值排在前面，但可能無法使用數據庫索引，增加數據庫負載。',
   packages_business_ignoreTimePrecision: '忽略時間精度',
+  packages_business_ignoreTimePrecision_tip: `<p>開啓後，當源表與目標表時間精度不一致時，系統會統一為較低精度後再比對。</p>
+<p>可選擇：</p>
+<ul class="pl-4">
+  <li class="list-disc">四捨五入（如：1267 微秒 → 127 毫秒）</li>
+  <li class="list-disc">截斷（如：1267 微秒 → 126 毫秒）</li>
+</ul>
+<p>適用於高精度同步至低精度字段的場景。</p>
+<p>若精度相同但存儲精度不同（如 Sybase 為約 3.33ms），系統會忽略超出部分。</p>`,
   packages_business_checkTableThreadNum: '校驗線程數量',
   packages_business_checkTableThreadNum_tip:
     '校驗線程數量，在資源充足的情況下可進行調整，默認線程數為 10',
@@ -1409,4 +1417,19 @@ export default {
   packages_business_verification_empty_auto_add_table:
     '暫無校驗表配置，請自動添加表',
   packages_business_verification_empty_chooseJob: '暫無校驗表配置，請選擇任務',
+  packages_business_custom_mail_template: '自定義郵件模板',
+  packages_business_alarm_type: '告警類型',
+  packages_business_mail_title: '郵件主題',
+  packages_business_mail_content: '郵件正文',
+  packages_business_available_variables: '可用變量',
+  packages_business_click_variable_name_insert_template:
+    '點擊變量名稱插入到模板中',
+  packages_business_ignoreTimePrecision_round: '四捨五入',
+  packages_business_ignoreTimePrecision_truncate: '截斷',
+  packages_business_validation_task_type: '校驗任務類型',
+  packages_business_select_task_to_be_verified: '選擇被校驗的任務',
+  packages_business_drag_file_here: '拖拽 .gz 文件至此或 <em>選擇文件上傳</em>',
+  packages_business_request_speed_limit: '每秒請求限制',
+  packages_business_request_speed_limit_tag: '每秒請求 ≤ {val}',
+  packages_business_request_speed_limit_tip: '默認是 0（表示不限制）',
 }

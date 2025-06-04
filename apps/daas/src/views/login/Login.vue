@@ -1,9 +1,9 @@
 <script>
 import { timeStampApi, usersApi } from '@tap/api'
-
 import Cookie from '@tap/shared/src/cookie'
 import cryptoJS from 'crypto-js'
 import i18n from '@/i18n'
+import { getSettingByKey } from '@/utils/settings'
 import { configUser } from '@/utils/util'
 import LoginPage from './LoginPage'
 
@@ -31,6 +31,7 @@ export default {
     }
   },
   methods: {
+    getSettingByKey,
     async loadAdEnable() {
       const data = await usersApi.checkLdapLoginEnable()
       this.adEnable = data
@@ -119,7 +120,7 @@ export default {
         <div class="sign-in-panel">
           <div class="title">
             {{ $t('app_signIn_signIn') }}
-            <span v-if="$getSettingByKey('SHOW_REGISTER')" @click="registry">{{
+            <span v-if="getSettingByKey('SHOW_REGISTER')" @click="registry">{{
               $t('app_signIn_Registration')
             }}</span>
           </div>

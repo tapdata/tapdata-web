@@ -22,7 +22,7 @@ import {
   UpgradeFee,
 } from '../../components'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
-import Upload from '../../components/UploadDialog'
+import Upload from '../../components/UploadDialog.vue'
 import syncTaskAgent from '../../mixins/syncTaskAgent'
 import { makeStatusAndDisabled, MILESTONE_TYPE, STATUS_MAP } from '../../shared'
 import SkipError from './SkipError'

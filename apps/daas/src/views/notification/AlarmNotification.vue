@@ -155,7 +155,7 @@ export default {
     },
     handleClick(tab) {
       this.currentPage = 1
-      if (tab.name === 'first') {
+      if (tab === 'first') {
         this.read = true // 全部信息
       } else {
         this.read = false //未读
@@ -188,7 +188,7 @@ export default {
       </div>
     </div>
 
-    <el-tabs v-model="activeName" @tab-click="handleClick">
+    <el-tabs v-model="activeName" @tab-change="handleClick">
       <div class="operation">
         <ElButton type="primary" @click="handlePageRead()">{{
           $t('notify_mask_read')

@@ -1,7 +1,6 @@
 <script>
 import { appApi } from '@tap/api'
-import { AsyncSelect } from '@tap/form'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+import { InfiniteSelect as AsyncSelect } from '@tap/form'
 
 export default {
   name: 'ListSelect',
@@ -41,15 +40,9 @@ export default {
     handleChange(opt) {
       const { label } = opt
       this.form.label = label
-      $emit(
-        this.$emit('update:value', this.form.value).$emit(
-          'update:label',
-          this.form.label,
-        ),
-        'change',
-        val,
-        opt,
-      )
+      this.$emit('change', this.form.value, opt)
+      this.$emit('update:value', this.form.value)
+      this.$emit('update:label', this.form.label)
     },
 
     async getData(filter = {}) {

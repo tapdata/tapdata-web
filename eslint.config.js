@@ -22,5 +22,10 @@ export default sxzz(
         'import/no-default-export': 'off',
       },
     },
+    {
+      rules: {
+        'unicorn/filename-case': 'off',
+      },
+    },
   ],
 )

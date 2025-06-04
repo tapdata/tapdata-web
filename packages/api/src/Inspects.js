@@ -15,5 +15,13 @@ export default class Inspect extends Http {
   startRecovery(id) {
     return this.axios.put(`${this.url}/${id}/recovery/start`)
   }
+
+  import(data) {
+    return this.axios.post(`${this.url}/batch/import`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+  }
 }
 export { Inspect }

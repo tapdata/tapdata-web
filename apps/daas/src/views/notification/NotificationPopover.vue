@@ -143,11 +143,11 @@ export default {
           break
       }
     },
-    tabHandler() {
-      if (this.activeTab === 'user') {
+    tabHandler(tab) {
+      if (tab === 'user') {
         this.getUserOperations()
       }
-      if (this.activeTab === 'alarm') {
+      if (tab === 'alarm') {
         this.getAlarmData()
       }
     },
@@ -243,7 +243,7 @@ export default {
       v-model="activeTab"
       stretch
       class="notification-popover-wrap"
-      @tab-click="tabHandler"
+      @tab-change="tabHandler"
     >
       <ElButton
         v-if="activeTab === 'system'"

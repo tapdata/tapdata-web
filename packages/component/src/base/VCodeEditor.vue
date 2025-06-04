@@ -4,6 +4,7 @@ import workerJavascriptUrl from 'ace-builds/src-noconflict/worker-javascript?url
 import workerJsonUrl from 'ace-builds/src-noconflict/worker-json?url'
 
 import 'ace-builds/src-noconflict/ext-searchbox'
+import 'ace-builds/src-noconflict/mode-java'
 import 'ace-builds/src-noconflict/mode-javascript'
 import 'ace-builds/src-noconflict/mode-json'
 import 'ace-builds/src-noconflict/mode-python'

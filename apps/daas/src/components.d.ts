@@ -82,6 +82,7 @@ declare module 'vue' {
     ElTree: typeof import('element-plus/es')['ElTree']
     ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
     ElUpload: typeof import('element-plus/es')['ElUpload']
+    ILucideTrash2: typeof import('~icons/lucide/trash2')['default']
     LockedDialog: typeof import('./components/LockedDialog.vue')['default']
     Main: typeof import('./components/v-confirm/Main.vue')['default']
     MultiSelection: typeof import('./components/MultiSelection.vue')['default']
