@@ -1378,13 +1378,22 @@ export default {
 
         <!-- 輸入参数 -->
         <div class="data-server-panel__title mt-4 mb-3">
-          <div>
+          <div class="flex align-items-center">
             <span>{{
               $t('packages_business_data_server_drawer_shurucanshu')
             }}</span>
-            <el-icon class="icon-button color-primary ml-4">
-              <el-icon-circle-plus />
-            </el-icon>
+            <el-button
+              v-if="isEdit && form.apiType === 'customerQuery'"
+              text
+              size="small"
+              type="primary"
+              class="ml-2"
+              @click="addItem('params')"
+            >
+              <template #icon>
+                <el-icon-circle-plus />
+              </template>
+            </el-button>
           </div>
         </div>
         <ElTable class="flex-1" :data="isEdit ? form.params : data.params">
@@ -1476,9 +1485,13 @@ export default {
             width="60"
           >
             <template #default="{ $index }">
-              <el-icon class="icon-button">
-                <el-icon-remove />
-              </el-icon>
+              <el-button text @click="removeItem('params', $index)">
+                <template #icon>
+                  <el-icon>
+                    <el-icon-remove />
+                  </el-icon>
+                </template>
+              </el-button>
             </template>
           </ElTableColumn>
         </ElTable>
