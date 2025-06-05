@@ -96,11 +96,9 @@ export default defineComponent({
   props: {
     title: {
       type: String,
-      default: '',
     },
     desc: {
       type: String,
-      default: '',
     },
     defaultPageSize: {
       type: Number,
@@ -108,11 +106,9 @@ export default defineComponent({
     },
     hideClassify: {
       type: Boolean,
-      default: false,
     },
     classify: {
       type: Object,
-      default: () => ({}),
     },
     remoteMethod: {
       type: Function as PropType<
@@ -121,11 +117,9 @@ export default defineComponent({
           tags: any[]
         }) => Promise<{ data: any[]; total: number }>
       >,
-      default: null,
     },
     rowKey: {
       type: [String, Function] as PropType<string | ((row: any) => string)>,
-      default: null,
     },
     spanMethod: {
       type: Function as PropType<
@@ -136,16 +130,11 @@ export default defineComponent({
           columnIndex: number
         }) => number[] | { rowspan: number; colspan: number }
       >,
-      default: null,
     },
     defaultSort: {
       type: Object as PropType<Sort>,
-      default: () => ({ prop: '', order: null }),
     },
-    draggable: {
-      type: Boolean,
-      default: false,
-    },
+    draggable: Boolean,
   },
   emits: ['selectionChange', 'sortChange', 'classifySubmit'],
   setup(props, { emit }) {
