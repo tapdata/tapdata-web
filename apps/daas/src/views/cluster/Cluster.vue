@@ -1344,12 +1344,10 @@ const handleTabChange = (tab: string) => {
                       >
                         <el-button
                           text
-                          size="small"
-                          type="primary"
                           @click="downServeFn(item)"
                         >
                           <template #icon>
-                            <VIcon>connectors</VIcon>
+                            <i-lucide:monitor-down />
                           </template>
                         </el-button>
                       </el-tooltip>
@@ -1359,43 +1357,42 @@ const handleTabChange = (tab: string) => {
                       >
                         <el-button
                           text
-                          size="small"
-                          type="primary"
                           @click="downConnectorsFn(item)"
                         >
                           <template #icon>
-                            <VIcon>supervisor</VIcon>
+                            <i-lucide:hard-drive-download />
                           </template>
                         </el-button>
                       </el-tooltip>
                     </template>
 
-                    <el-button
-                      text
-                      size="small"
-                      type="primary"
-                      @click="addServeFn(item)"
+                    <el-tooltip
+                      :content="$t('cluster_add_server_mon')"
+                      placement="top"
                     >
-                      <template #icon>
-                        <VIcon>bg-add</VIcon>
-                      </template>
-                    </el-button>
+                      <el-button text @click="addServeFn(item)">
+                        <template #icon>
+                          <i-lucide:square-plus />
+                        </template>
+                      </el-button>
+                  </el-tooltip>
+                    
 
                     <el-button
                       text
-                      size="small"
-                      type="primary"
                       @click="editAgent(item)"
                     >
                       <template #icon>
-                        <VIcon>cluster-setting</VIcon>
+                        <i-lucide:settings />
                       </template>
                     </el-button>
                     <template v-if="item.status !== 'running'">
                       <ElDivider direction="vertical" />
-                      <ElButton text type="danger" @click="delConfirm(item)">{{
-                        $t('public_button_delete')
-                      }}</ElButton>
+                      <ElButton text type="danger" @click="delConfirm(item)">
+                        <template #icon>
+                          <i-lucide:trash-2 />
+                        </template>
+                      </ElButton>
                     </template>
                   </div>
                 </div>
@@ -1793,16 +1790,16 @@ const handleTabChange = (tab: string) => {
           ref="editAgentForm"
           label-width="100px"
           class="edit-agent-form"
+          label-position="top"
         >
           <el-form-item :label="$t('cluster_server_name')">
-            <div class="name-box">
+            <div class="flex gap-2 w-100">
               <el-input
                 v-model="agentName"
-                style="width: 85%"
                 show-word-limit
                 :placeholder="$t('cluster_placeholder_mon_server')"
               />
-              <ElButton text class="rest-btn" @click="editNameRest">{{
+              <ElButton text type="primary" @click="editNameRest">{{
                 $t('public_button_reduction')
               }}</ElButton>
             </div>
@@ -1811,7 +1808,6 @@ const handleTabChange = (tab: string) => {
             <el-select
               v-model="custIP"
               :placeholder="$t('cluster_ip_display')"
-              style="width: 85%"
             >
               <el-option
                 v-for="item in ips"
