@@ -85,7 +85,6 @@ declare module 'vue' {
     ElUpload: typeof import('element-plus/es')['ElUpload']
     'ILucide:hardDriveDownload': typeof import('~icons/lucide/hard-drive-download')['default']
     'ILucide:monitorDown': typeof import('~icons/lucide/monitor-down')['default']
-    'ILucide:serverCog': typeof import('~icons/lucide/server-cog')['default']
     'ILucide:settings': typeof import('~icons/lucide/settings')['default']
     'ILucide:squarePlus': typeof import('~icons/lucide/square-plus')['default']
     'ILucide:trash2': typeof import('~icons/lucide/trash2')['default']
