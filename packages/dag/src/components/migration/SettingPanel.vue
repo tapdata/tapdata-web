@@ -462,11 +462,14 @@ watch(sourceNodes, () => {
       timeZone,
       pointType: 'current',
       dateTime: '',
+      isStreamOffset: false,
     }
     if (old && !item.hiddenPointType) {
       Object.assign(point, {
         pointType: old.pointType,
         dateTime: old.dateTime,
+        isStreamOffset: old.isStreamOffset,
+        streamOffsetString: old.streamOffsetString,
       })
     }
     return point

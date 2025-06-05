@@ -24,7 +24,24 @@ export default observer({
     items() {
       return this.value?.filter((item) => !!item.nodeId) || []
     },
+    supportStreamOffsetNode() {
+      return this.$store.getters['dataflow/allNodes']
+        .filter(node => node.$outputs.length && !node.$inputs.length)
+        .reduce((map, item) => {
+          map[item.id] = item?.attrs.capabilities.some(item => item.id === 'get_stream_offset_function')
+          return map
+        }, {})
+    }
   },
+  methods: {
+    handleChangeType(type, item) {
+      if (type === 'streamOffset') {
+        item.isStreamOffset = true
+      } else {
+        item.isStreamOffset = false
+      }
+    }
+  }
 })
 </script>
 
@@ -52,10 +69,17 @@ export default observer({
               value="localTZ"
             />
             <ElOption :label="$t('public_time_current')" value="current" />
+            <ElOption v-if="supportStreamOffsetNode[item.nodeId]" :label="$t('packages_dag_stream_offset')" value="streamOffset" />
           </ElSelect>
 
+          <ElInput
+            v-if="supportStreamOffsetNode[item.nodeId] && item.pointType === 'streamOffset'"
+            v-model="item.streamOffsetString"
+            :disabled="disabled"
+          />
+
           <ElDatePicker
-            v-if="item.pointType === 'localTZ'"
+            v-else-if="item.pointType === 'localTZ'"
             v-model="item.dateTime"
             :disabled="disabled"
             type="datetime"
