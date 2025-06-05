@@ -10,7 +10,6 @@ export default {
     PageContainer,
     TablePage,
     Upload,
-    ElIconRefresh,
   },
   data() {
     return {
@@ -22,6 +21,24 @@ export default {
         jar: this.$t('function_type_option_jar'),
         system: this.$t('function_type_option_system'),
       },
+      typeOptions: [
+        {
+          label: this.$t('public_all'),
+          value: '',
+        },
+        {
+          label: this.$t('function_type_option_custom'),
+          value: 'custom',
+        },
+        {
+          label: this.$t('function_type_option_jar'),
+          value: 'jar',
+        },
+        {
+          label: this.$t('function_type_option_system'),
+          value: 'system',
+        },
+      ],
       order: 'last_updated DESC',
       multipleSelection: [],
     }
@@ -131,7 +148,6 @@ export default {
         <el-button
           v-show="multipleSelection.length > 0"
           v-readonlybtn="'SYNC_job_export'"
-          :disabled="$disabledReadonlyUserBtn()"
           class="btn message-button-cancel"
           @click="handleExport"
         >
@@ -140,7 +156,6 @@ export default {
         <el-button
           v-readonlybtn="'SYNC_job_import'"
           class="btn"
-          :disabled="$disabledReadonlyUserBtn()"
           @click="handleImport"
         >
           <span> {{ $t('packages_business_button_bulk_import') }}</span>
@@ -168,21 +183,7 @@ export default {
       @selection-change="handleSelectionChange"
     >
       <template #search>
-        <ElRadioGroup
-          v-model="searchParams.type"
-          class="button-style-outline"
-          @input="table.fetch(1)"
-        >
-          <ElRadioButton label="">{{
-            $t('public_select_option_all')
-          }}</ElRadioButton>
-          <ElRadioButton
-            v-for="(label, value) in typeMapping"
-            :key="value"
-            :label="value"
-            >{{ label }}
-          </ElRadioButton>
-        </ElRadioGroup>
+        <el-segmented v-model="searchParams.type" :options="typeOptions" @change="table.fetch(1)" />
         <ElButton plain class="btn-refresh" @click="table.fetch()">
           <el-icon><el-icon-refresh /></el-icon>
         </ElButton>

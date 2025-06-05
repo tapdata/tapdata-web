@@ -691,11 +691,7 @@ export default {
                       </ElButton>
                     </li>
                   </ul>
-                  <ElButton
-                    type="primary"
-                    :disabled="$disabledReadonlyUserBtn()"
-                    @click="handleCreateAgent"
-                  >
+                  <ElButton type="primary" @click="handleCreateAgent">
                     <span>{{ $t('dfs_order_list_xinzengdingyue') }}</span>
                   </ElButton>
                 </div>

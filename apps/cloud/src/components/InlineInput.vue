@@ -104,26 +104,11 @@ export default {
         v-if="type === 'text'"
         type="primary"
         class="inline-input-link"
-        :disabled="$disabledReadonlyUserBtn()"
         @click="editing = true"
       >
         {{ editText }}
       </ElLink>
-      <IconButton
-        v-else
-        class="ml-3"
-        :disabled="$disabledReadonlyUserBtn()"
-        @click="editing = true"
-        >edit</IconButton
-      >
-      <!--<ElLink
-        class="inline-input-link"
-        style="margin-left: 5px"
-        :disabled="$disabledReadonlyUserBtn()"
-        @click="editing = true"
-      >
-        <VIcon v-bind="iconConfig" color="#999">edit-outline</VIcon>
-      </ElLink>-->
+      <IconButton v-else class="ml-3" @click="editing = true">edit</IconButton>
     </span>
     <span v-show="editing" class="inline-input-body gap-2">
       <ElTooltip

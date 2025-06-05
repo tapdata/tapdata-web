@@ -303,7 +303,6 @@ export default {
       }
     },
     handleClickName(row) {
-      if (this.$disabledReadonlyUserBtn()) return
       let routeName
 
       if (!['edit', 'wait_start'].includes(row.status)) {

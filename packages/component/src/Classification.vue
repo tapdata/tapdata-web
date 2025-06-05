@@ -1,5 +1,4 @@
 <script>
-import { $emit } from '../utils/gogocodeTransfer'
 import VIcon from './base/VIcon.vue'
 import { metadataDefinitionsApi, userGroupsApi } from '@tap/api'
 import { mapMutations, mapState, mapGetters } from 'vuex'
@@ -94,21 +93,21 @@ export default {
         if (!this.isExpand) return
         this.$nextTick(() => {
           this.$refs.tree?.setCheckedKeys(this.connections?.classification)
-          $emit(this, 'nodeChecked', this.connections?.classification)
+          this.$emit('nodeChecked', this.connections?.classification)
         })
         break
       case 'migrate':
         if (!this.isExpand) return
         this.$nextTick(() => {
           this.$refs.tree?.setCheckedKeys(this.migrate?.classification)
-          $emit(this, 'nodeChecked', this.migrate?.classification)
+          this.$emit('nodeChecked', this.migrate?.classification)
         })
         break
       case 'sync':
         if (!this.isExpand) return
         this.$nextTick(() => {
           this.$refs.tree?.setCheckedKeys(this.sync?.classification)
-          $emit(this, 'nodeChecked', this.sync?.classification)
+          this.$emit('nodeChecked', this.sync?.classification)
         })
         break
     }
@@ -151,13 +150,15 @@ export default {
       this.emitCheckedNodes()
     },
     nodeClickHandler(data, node) {
-      this.$nextTick(() => {
-        const checkedKeys = this.$refs.tree.getCheckedKeys()
-        if (checkedKeys.includes(data.id)) {
-          this.$refs.tree?.setCheckedKeys([data.id], true)
-        }
-        this.emitCheckedNodes()
-      })
+      let checkedNodes = this.$refs.tree.getCheckedKeys() || []
+
+      if (checkedNodes.includes(data.id)) {
+        this.$refs.tree?.setChecked(data.id, false)
+      } else {
+        this.$refs.tree?.setCheckedKeys([data.id], true)
+      }
+
+      this.emitCheckedNodes()
     },
     emitCheckedNodes() {
       let checkedNodes = this.$refs.tree.getCheckedKeys() || []
@@ -516,7 +517,7 @@ export default {
             <VIcon size="18">magnify</VIcon>
           </template>
         </el-button>
-        <el-button text :disabled="$disabledReadonlyUserBtn()" v-readonlybtn="authority" @click="showDialog()">
+        <el-button text  v-readonlybtn="authority" @click="showDialog()">
           <template #icon>
             <VIcon>add</VIcon>
           </template>
@@ -546,6 +547,8 @@ export default {
         :filter-node-method="filterNode"
         :render-after-expand="false"
         :indent="8"
+        :check-on-click-node="false"
+        :check-on-click-leaf="false"
         @node-click="nodeClickHandler"
         @check="checkHandler"
       >
@@ -564,7 +567,7 @@ export default {
               @command="handleRowCommand($event, node)"
               v-readonlybtn="authority"
             >
-              <IconButton @click.stop sm :disabled="$disabledReadonlyUserBtn()">more</IconButton>
+              <IconButton @click.stop sm>more</IconButton>
               <template #dropdown>
                 <ElDropdownMenu>
                   <ElDropdownItem command="add">

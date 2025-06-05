@@ -415,6 +415,12 @@
       --el-fill-color: var(--el-color-primary-light-8);
     }
 
+    &.el-button--danger {
+      --el-button-text-color: var(--el-color-danger);
+      --el-fill-color-light: var(--el-color-danger-light-9);
+      --el-fill-color: var(--el-color-danger-light-8);
+    }
+
     &:not(.is-disabled).is-active {
       background-color: var(--el-fill-color-light);
     }
@@ -572,6 +578,13 @@
 .el-upload {
   .el-upload-dragger {
     border-radius: var(--el-border-radius-large);
+  }
+}
+
+// Segmented
+.el-segmented {
+  &__item-selected {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
   }
 }
 
