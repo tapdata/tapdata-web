@@ -439,7 +439,7 @@ export default {
         <template #footer>
           <div class="dialog-footer">
             <el-button type="primary" @click="confirm">{{
-              $t('dialog_downAgent_ok')
+              $t('public_button_save')
             }}</el-button>
           </div>
         </template>
