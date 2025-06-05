@@ -929,9 +929,7 @@ onUnmounted(() => {
               $disabledByPermission(
                 'datasource_edition_all_data',
                 scope.row.user_id,
-              ) ||
-              $disabledReadonlyUserBtn() ||
-              scope.row.agentType === 'Cloud'
+              ) || scope.row.agentType === 'Cloud'
             "
             @click="edit(scope.row.id, scope.row)"
             >{{ $t('public_button_edit') }}
@@ -949,9 +947,7 @@ onUnmounted(() => {
             type="primary"
             data-testid="copy-connection"
             :loading="scope.row.copyLoading"
-            :disabled="
-              $disabledReadonlyUserBtn() || scope.row.agentType === 'Cloud'
-            "
+            :disabled="scope.row.agentType === 'Cloud'"
             @click="copy(scope.row)"
             >{{ $t('public_button_copy') }}
           </ElButton>
@@ -971,9 +967,7 @@ onUnmounted(() => {
               $disabledByPermission(
                 'datasource_delete_all_data',
                 scope.row.user_id,
-              ) ||
-              $disabledReadonlyUserBtn() ||
-              scope.row.agentType === 'Cloud'
+              ) || scope.row.agentType === 'Cloud'
             "
             @click="remove(scope.row)"
             >{{ $t('public_button_delete') }}

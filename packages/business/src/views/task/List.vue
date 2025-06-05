@@ -443,7 +443,6 @@ export default {
      * @param row
      */
     handleClickName(row) {
-      if (this.$disabledReadonlyUserBtn()) return
       if (!['edit', 'wait_start'].includes(row.status)) {
         this.toDetail(row)
       } else {
@@ -455,9 +454,7 @@ export default {
       if (!this.isDaas) return false
 
       return (
-        (row.btnDisabled?.edit ||
-          this.$disabledReadonlyUserBtn() ||
-          !this.havePermission(row, 'Edit')) &&
+        (row.btnDisabled?.edit || !this.havePermission(row, 'Edit')) &&
         row.btnDisabled.monitor &&
         !row.lastStartDate
       )
@@ -1128,7 +1125,6 @@ export default {
         </ElButton>
         <ElButton
           v-readonlybtn="'SYNC_category_application'"
-          :disabled="$disabledReadonlyUserBtn()"
           @click="$refs.table.showClassify(handleSelectTag())"
         >
           <span> {{ $t('public_button_bulk_tag') }}</span>
@@ -1147,25 +1143,19 @@ export default {
               <ElDropdownItem
                 v-readonlybtn="'SYNC_job_operation'"
                 command="start"
-                :disabled="$disabledReadonlyUserBtn()"
                 >{{ $t('packages_business_dataFlow_bulkScheuled') }}
               </ElDropdownItem>
               <ElDropdownItem
                 v-readonlybtn="'SYNC_job_operation'"
                 command="stop"
-                :disabled="$disabledReadonlyUserBtn()"
                 >{{ $t('packages_business_dataFlow_bulkStopping') }}
               </ElDropdownItem>
               <ElDropdownItem
                 v-readonlybtn="'SYNC_job_operation'"
                 command="initialize"
-                :disabled="$disabledReadonlyUserBtn()"
                 >{{ $t('packages_business_dataFlow_batchRest') }}
               </ElDropdownItem>
-              <ElDropdownItem
-                v-readonlybtn="'SYNC_job_delete'"
-                command="del"
-                :disabled="$disabledReadonlyUserBtn()"
+              <ElDropdownItem v-readonlybtn="'SYNC_job_delete'" command="del"
                 >{{ $t('packages_business_dataFlow_batchDelete') }}
               </ElDropdownItem>
             </ElDropdownMenu>
@@ -1175,7 +1165,6 @@ export default {
           v-if="buttonShowMap.export"
           v-show="isDaas"
           v-readonlybtn="'SYNC_job_export'"
-          :disabled="$disabledReadonlyUserBtn()"
           @click="handleCommand('export')"
         >
           <span> {{ $t('public_button_export') }}</span>
@@ -1314,7 +1303,7 @@ export default {
               text
               type="primary"
               data-testid="start-task"
-              :disabled="row.btnDisabled.start || $disabledReadonlyUserBtn()"
+              :disabled="row.btnDisabled.start"
               @click="start([row.id], row)"
             >
               {{ $t('public_button_start') }}
@@ -1326,9 +1315,7 @@ export default {
                 text
                 type="primary"
                 data-testid="force-stop-task"
-                :disabled="
-                  row.btnDisabled.forceStop || $disabledReadonlyUserBtn()
-                "
+                :disabled="row.btnDisabled.forceStop"
                 @click="forceStop([row.id], row)"
               >
                 {{ $t('public_button_force_stop') }}
@@ -1340,7 +1327,7 @@ export default {
                 type="primary"
                 name="stop-task-btn"
                 data-testid="stop-task"
-                :disabled="row.btnDisabled.stop || $disabledReadonlyUserBtn()"
+                :disabled="row.btnDisabled.stop"
                 @click="stop([row.id], row)"
               >
                 {{ $t('public_button_stop') }}
@@ -1358,7 +1345,7 @@ export default {
               text
               type="primary"
               data-testid="edit-task"
-              :disabled="row.btnDisabled.edit || $disabledReadonlyUserBtn()"
+              :disabled="row.btnDisabled.edit"
               @click="handleEditor(row)"
             >
               {{ $t('public_button_edit') }}
@@ -1390,7 +1377,7 @@ export default {
               text
               type="primary"
               data-testid="reset-task"
-              :disabled="row.btnDisabled.reset || $disabledReadonlyUserBtn()"
+              :disabled="row.btnDisabled.reset"
               @click="initialize([row.id], row)"
             >
               {{ $t('public_button_reset') }}
@@ -1407,7 +1394,6 @@ export default {
               text
               type="primary"
               data-testid="copy-task"
-              :disabled="$disabledReadonlyUserBtn()"
               @click="copy([row.id], row)"
             >
               {{ $t('public_button_copy') }}
@@ -1425,7 +1411,7 @@ export default {
               type="primary"
               name="delete-task-btn"
               data-testid="delete-task"
-              :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
+              :disabled="row.btnDisabled.delete"
               @click="del([row.id], row)"
             >
               {{ $t('public_button_delete') }}

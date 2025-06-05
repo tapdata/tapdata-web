@@ -236,9 +236,7 @@ export default {
 
         <template #dropdown>
           <ElDropdownMenu>
-            <ElDropdownItem
-              command="userCenter"
-              :disabled="$disabledReadonlyUserBtn()"
+            <ElDropdownItem command="userCenter"
               >{{ $t('the_header_Header_yongHuZhongXin') }}
             </ElDropdownItem>
             <ElDropdownItem command="order">{{
@@ -247,10 +245,7 @@ export default {
             <ElDropdownItem command="home">
               {{ $t('header_official_website') }}
             </ElDropdownItem>
-            <ElDropdownItem
-              command="signOut"
-              :disabled="$disabledReadonlyUserBtn()"
-            >
+            <ElDropdownItem command="signOut">
               {{ $t('header_sign_out') }}
             </ElDropdownItem>
           </ElDropdownMenu>

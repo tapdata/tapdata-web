@@ -66,9 +66,6 @@ export function installDirectives(app) {
   app.config.globalProperties.$disabledByPermission = function (code, id) {
     return permissionBtnDisable(code, id)
   }
-  app.config.globalProperties.$disabledReadonlyUserBtn = function () {
-    return false
-  }
 
   app.directive('loadmore', {
     // bind只调用一次，指令第一次绑定到元素时调用。在这里可以进行一次性的初始化设置

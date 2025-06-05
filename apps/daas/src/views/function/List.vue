@@ -10,7 +10,6 @@ export default {
     PageContainer,
     TablePage,
     Upload,
-    ElIconRefresh,
   },
   data() {
     return {
@@ -131,7 +130,6 @@ export default {
         <el-button
           v-show="multipleSelection.length > 0"
           v-readonlybtn="'SYNC_job_export'"
-          :disabled="$disabledReadonlyUserBtn()"
           class="btn message-button-cancel"
           @click="handleExport"
         >
@@ -140,7 +138,6 @@ export default {
         <el-button
           v-readonlybtn="'SYNC_job_import'"
           class="btn"
-          :disabled="$disabledReadonlyUserBtn()"
           @click="handleImport"
         >
           <span> {{ $t('packages_business_button_bulk_import') }}</span>
