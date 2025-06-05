@@ -401,7 +401,6 @@ export default {
       <ElButton
         v-show="multipleSelection.length > 0"
         v-readonlybtn="'SYNC_job_export'"
-        :disabled="$disabledReadonlyUserBtn()"
         class="btn message-button-cancel"
         @click="handleExport"
       >
@@ -410,7 +409,6 @@ export default {
       <ElButton
         v-readonlybtn="'SYNC_job_import'"
         class="btn"
-        :disabled="$disabledReadonlyUserBtn()"
         @click="handleImport"
       >
         <span> {{ $t('packages_business_button_bulk_import') }}</span>
@@ -418,9 +416,7 @@ export default {
       <ElButton
         v-readonlybtn="'SYNC_job_export'"
         class="btn"
-        :disabled="
-          $disabledReadonlyUserBtn() || !multipleSelectionActive.length
-        "
+        :disabled="!multipleSelectionActive.length"
         @click="handleExportApiDoc"
       >
         <span>{{ $t('packages_business_data_server_list_apIwendang') }}</span>

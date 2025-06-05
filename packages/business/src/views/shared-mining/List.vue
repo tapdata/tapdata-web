@@ -536,7 +536,7 @@ export default {
               v-readonlybtn="'SYNC_job_edition'"
               text
               type="primary"
-              :disabled="row.btnDisabled.edit || $disabledReadonlyUserBtn()"
+              :disabled="row.btnDisabled.edit"
               @click="handleEditor(row)"
             >
               {{ $t('public_button_edit') }}
@@ -564,7 +564,7 @@ export default {
               v-readonlybtn="'SYNC_job_edition'"
               text
               type="primary"
-              :disabled="row.btnDisabled.reset || $disabledReadonlyUserBtn()"
+              :disabled="row.btnDisabled.reset"
               @click="handleReset(row)"
             >
               {{ $t('public_button_reset') }}
@@ -578,7 +578,7 @@ export default {
               v-readonlybtn="'SYNC_job_edition'"
               text
               type="primary"
-              :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
+              :disabled="row.btnDisabled.delete"
               @click="handleDelete(row)"
             >
               {{ $t('public_button_delete') }}

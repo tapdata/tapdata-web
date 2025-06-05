@@ -102,7 +102,6 @@ export default {
         v-if="buttonShowMap.import && isDaas"
         v-readonlybtn="'SYNC_job_import'"
         class="btn"
-        :disabled="$disabledReadonlyUserBtn()"
         @click="refFn('handleImport')"
       >
         <span> {{ $t('packages_business_button_bulk_import') }}</span>
@@ -117,7 +116,6 @@ export default {
               style="height: 32px"
               type="primary"
               plain
-              :disabled="$disabledReadonlyUserBtn()"
               :loading="quickCreateBtnLoading"
               @click="useFormCreate"
             >
@@ -134,7 +132,6 @@ export default {
             v-readonlybtn="'SYNC_job_creation'"
             class="btn btn-create"
             type="primary"
-            :disabled="$disabledReadonlyUserBtn()"
             :loading="createLoading"
             @click="refFn('create')"
           >

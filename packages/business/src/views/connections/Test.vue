@@ -4,13 +4,7 @@ import loadingImg from '@tap/assets/images/loading.gif'
 import { VIcon } from '@tap/component'
 import i18n from '@tap/i18n'
 import { copyToClipboard, openUrl } from '@tap/shared'
-import {
-  computed,
-  getCurrentInstance,
-  onBeforeUnmount,
-  onMounted,
-  ref,
-} from 'vue'
+import { computed, getCurrentInstance, onBeforeUnmount, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 interface ErrorDialog {
@@ -37,7 +31,6 @@ interface ErrorCodeResponse {
 }
 
 interface Props {
-  visible: boolean
   connection: Record<string, any>
   testType: string
 }

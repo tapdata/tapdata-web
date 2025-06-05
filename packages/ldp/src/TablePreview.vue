@@ -498,7 +498,6 @@ export default {
     },
 
     handleClickName(row) {
-      if (this.$disabledReadonlyUserBtn()) return
       let routeName
 
       if (!['edit', 'wait_start'].includes(row.status)) {
@@ -1242,9 +1241,7 @@ export default {
                       v-if="row.btnDisabled.stop && row.btnDisabled.forceStop"
                       v-readonlybtn="'SYNC_job_operation'"
                       type="primary"
-                      :disabled="
-                        row.btnDisabled.start || $disabledReadonlyUserBtn()
-                      "
+                      :disabled="row.btnDisabled.start"
                       @click="startTask([row.id])"
                     >
                       {{ $t('public_button_start') }}
@@ -1254,10 +1251,7 @@ export default {
                         v-if="row.status === 'stopping'"
                         v-readonlybtn="'SYNC_job_operation'"
                         type="primary"
-                        :disabled="
-                          row.btnDisabled.forceStop ||
-                          $disabledReadonlyUserBtn()
-                        "
+                        :disabled="row.btnDisabled.forceStop"
                         @click="forceStopTask([row.id], row)"
                       >
                         {{ $t('public_button_force_stop') }}
@@ -1266,9 +1260,7 @@ export default {
                         v-else
                         v-readonlybtn="'SYNC_job_operation'"
                         type="primary"
-                        :disabled="
-                          row.btnDisabled.stop || $disabledReadonlyUserBtn()
-                        "
+                        :disabled="row.btnDisabled.stop"
                         @click="stopTask([row.id], row)"
                       >
                         {{ $t('public_button_stop') }}
@@ -1290,9 +1282,7 @@ export default {
                       v-else-if="!row.btnDisabled.edit"
                       v-readonlybtn="'SYNC_job_operation'"
                       type="primary"
-                      :disabled="
-                        row.btnDisabled.start || $disabledReadonlyUserBtn()
-                      "
+                      :disabled="row.btnDisabled.start"
                       @click="openEditor(row)"
                     >
                       {{ $t('public_button_edit') }}
@@ -1304,9 +1294,7 @@ export default {
                     <ElLink
                       v-readonlybtn="'SYNC_job_edition'"
                       type="danger"
-                      :disabled="
-                        row.btnDisabled.delete || $disabledReadonlyUserBtn()
-                      "
+                      :disabled="row.btnDisabled.delete"
                       @click="deleteTask([row.id], row)"
                     >
                       {{ $t('public_button_delete') }}

@@ -2,7 +2,6 @@
 import { connectionsApi, databaseTypesApi } from '@tap/api'
 import { FilterBar, SelectList, VIcon } from '@tap/component'
 import i18n from '@tap/i18n'
-import Cookie from '@tap/shared/src/cookie'
 import dayjs from 'dayjs'
 import { ElLoading, ElMessage, ElMessageBox } from 'element-plus'
 import {
@@ -24,6 +23,7 @@ import PageContainer from '../../components/PageContainer.vue'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create.vue'
 import SchemaProgress from '../../components/SchemaProgress.vue'
 import TablePage from '../../components/TablePage.vue'
+import { useHas } from '../../composables'
 import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP } from '../../shared'
 import Preview from './Preview.vue'
 import Test from './Test.vue'
@@ -87,25 +87,6 @@ const dialogDatabaseTypeVisible = ref(false)
 const multipleSelection = ref([])
 const order = ref('last_updated DESC')
 
-const databaseModelOptions = [
-  {
-    label: i18n.t('public_select_option_all'),
-    value: '',
-  },
-  {
-    label: i18n.t('public_connection_type_source'),
-    value: 'source',
-  },
-  {
-    label: i18n.t('public_connection_type_target'),
-    value: 'target',
-  },
-  {
-    label: i18n.t('public_connection_type_source_and_target'),
-    value: 'source_and_target',
-  },
-]
-
 const databaseStatusOptions = [
   {
     label: i18n.t('public_select_option_all'),
@@ -154,11 +135,12 @@ if (import.meta.env.VUE_APP_CONNECTION_DIALOG_PROPS) {
 }
 
 const databaseTypeOptions = ref<DatabaseTypeOption[]>([])
+const $has = useHas()
 
 // Computed
 const buttonShowMap = computed(() => ({
-  create: true, // Replace with actual permission check
-  copy: true, // Replace with actual permission check
+  create: $has('v2_datasource_creation'),
+  copy: $has('v2_datasource_copy'),
 }))
 
 // Watch
@@ -426,37 +408,6 @@ const remove = async (row: any) => {
     }
   } catch {
     // User cancelled
-  }
-}
-
-const goTaskList = (item: any) => {
-  if (item?.syncType === 'migrate') {
-    router.push({
-      name: 'migrateList',
-      query: {
-        keyword: item.name,
-      },
-    })
-  } else {
-    router.push({
-      name: 'dataflowList',
-      query: {
-        keyword: item.name,
-      },
-    })
-  }
-}
-
-const formatterConnectionType = (row: any) => {
-  switch (row.connection_type) {
-    case 'target':
-      return 'Target'
-    case 'source':
-      return 'Source'
-    case 'source_and_target':
-      return 'Source | Target'
-    default:
-      return ''
   }
 }
 
@@ -734,7 +685,6 @@ onUnmounted(() => {
         v-readonlybtn="'datasource_creation'"
         class="btn btn-create"
         type="primary"
-        :disabled="$disabledReadonlyUserBtn()"
         @click="checkTestConnectionAvailable"
       >
         <span> {{ $t('public_connection_button_create') }}</span>
@@ -979,9 +929,7 @@ onUnmounted(() => {
               $disabledByPermission(
                 'datasource_edition_all_data',
                 scope.row.user_id,
-              ) ||
-              $disabledReadonlyUserBtn() ||
-              scope.row.agentType === 'Cloud'
+              ) || scope.row.agentType === 'Cloud'
             "
             @click="edit(scope.row.id, scope.row)"
             >{{ $t('public_button_edit') }}
@@ -999,9 +947,7 @@ onUnmounted(() => {
             type="primary"
             data-testid="copy-connection"
             :loading="scope.row.copyLoading"
-            :disabled="
-              $disabledReadonlyUserBtn() || scope.row.agentType === 'Cloud'
-            "
+            :disabled="scope.row.agentType === 'Cloud'"
             @click="copy(scope.row)"
             >{{ $t('public_button_copy') }}
           </ElButton>
@@ -1021,9 +967,7 @@ onUnmounted(() => {
               $disabledByPermission(
                 'datasource_delete_all_data',
                 scope.row.user_id,
-              ) ||
-              $disabledReadonlyUserBtn() ||
-              scope.row.agentType === 'Cloud'
+              ) || scope.row.agentType === 'Cloud'
             "
             @click="remove(scope.row)"
             >{{ $t('public_button_delete') }}
