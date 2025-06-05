@@ -663,7 +663,6 @@ export default observer({
                                   tooltip: i18n.t('packages_dag_doubleActive_tip')
                                 },
                                 'x-component': 'Switch',
-                                'x-visible': '{{hasFeature("TwoWaySync")}}'
                               },
                               accessNodeType: {
                                 type: 'string',
