@@ -65,15 +65,6 @@ interface Connection {
   loadFieldsStatus?: string
 }
 
-interface DatabaseLogInfo {
-  key: string
-  value: string
-}
-
-interface Props {
-  hideOperation?: boolean
-}
-
 interface ListItem {
   icon: string
   items: {
@@ -86,6 +77,10 @@ interface ListItem {
     labelActionTitle?: string
   }[]
 }
+
+defineProps<{
+  hideOperation?: boolean
+}>()
 
 const emit = defineEmits<{
   (e: 'test', connection: Connection): void
@@ -110,13 +105,6 @@ const connection = reactive<Connection>({
     delete: false,
   },
 } as Connection)
-
-const kafkaACK = {
-  0: i18n.t('packages_business_connection_preview_no_sure'),
-  '-1': i18n.t('packages_business_connection_preview_master_partition'),
-  1: i18n.t('packages_business_connection_preview_master_partition'),
-  all: i18n.t('packages_business_connection_preview_isr_partition'),
-}
 
 const list = ref<ListItem[]>([])
 const mqType = {
@@ -219,13 +207,6 @@ const handleClose = () => {
   visible.value = false
   showProgress.value = false
   emit('close')
-}
-
-const getImgByType = (type: string) => {
-  if (!type) {
-    type = 'default'
-  }
-  return getIcon(type.toLowerCase())
 }
 
 const transformData = (row: Connection) => {
