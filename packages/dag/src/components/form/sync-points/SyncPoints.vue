@@ -63,6 +63,7 @@ export default observer({
           <ElSelect
             v-model="item.pointType"
             :disabled="disabled || item.hiddenPointType"
+            @change="handleChangeType($event, item)"
           >
             <ElOption
               :label="$t('public_time_user_specified_time')"
