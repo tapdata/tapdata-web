@@ -170,22 +170,13 @@ export default {
 
     back() {
       const mapping = this.$route.query.mapping
-      const $PLATFORM = window.getSettingByKey('DFS_TCM_PLATFORM')
-      const backToList = () => {
-        if ($PLATFORM === 'dfs') {
-          top.window.App.$router.push({
-            name: 'Task',
-          })
-        } else {
-          this.$router.push({
-            name: 'dataFlows',
-            query: {
-              mapping,
-            },
-          })
-        }
-      }
-      backToList()
+
+      this.$router.push({
+        name: 'dataFlows',
+        query: {
+          mapping,
+        },
+      })
     },
 
     handleClickNode(node) {
@@ -472,10 +463,7 @@ export default {
       <ElButton
         v-if="!stateIsReadonly && buttonShowMap.Edit"
         :loading="isSaving"
-        :disabled="
-          (dataflow.disabledData && dataflow.disabledData.edit) ||
-          $disabledReadonlyUserBtn()
-        "
+        :disabled="dataflow.disabledData && dataflow.disabledData.edit"
         class="ml-3"
         @click="$emit('save')"
       >
@@ -489,7 +477,6 @@ export default {
           !dataflow.disabledData.reset &&
           buttonShowMap.Reset
         "
-        :disabled="$disabledReadonlyUserBtn()"
         class="ml-3"
         :class="{ 'btn--text': isViewer }"
         type="warning"
@@ -511,10 +498,7 @@ export default {
         <ElButton
           v-if="$route.name !== 'MigrateEditor' && buttonShowMap.Edit"
           class="ml-3 btn--text"
-          :disabled="
-            (dataflow.disabledData && dataflow.disabledData.edit) ||
-            $disabledReadonlyUserBtn()
-          "
+          :disabled="dataflow.disabledData && dataflow.disabledData.edit"
           @click="$emit('edit')"
         >
           <VIcon class="mr-1">edit-outline</VIcon>{{ $t('public_button_edit') }}

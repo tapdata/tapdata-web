@@ -1,4 +1,5 @@
 <script>
+import { InfoFilled } from '@element-plus/icons-vue'
 import {
   applicationApi,
   connectionsApi,
@@ -24,6 +25,7 @@ export default {
     Drawer,
     VCodeEditor,
     ListSelect,
+    InfoFilled,
   },
   props: {
     host: String,
@@ -75,6 +77,7 @@ export default {
         acl: ['admin'],
         appValue: '',
         appLabel: '',
+        limit: 0,
       },
       tab: 'form',
       isEdit: false,
@@ -305,6 +308,7 @@ export default {
         acl: ['admin'],
         appValue: '',
         appLabel: '',
+        limit: 0,
       }
 
       this.formatData(formData || {})
@@ -365,6 +369,7 @@ export default {
         prefix,
         pathAccessMethod,
         listtags,
+        limit = 0,
       } = formData
       // 若为新建时，则默认值为 '默认查询(defaultApi)' 的值
 
@@ -399,6 +404,7 @@ export default {
         acl: path.acl || ['admin'],
         appValue,
         appLabel,
+        limit,
       }
       this.form = cloneDeep(this.data)
       const host = this.host
@@ -498,6 +504,7 @@ export default {
             pathAccessMethod,
             appLabel,
             appValue,
+            limit,
           } = this.form
 
           // basePath
@@ -532,7 +539,7 @@ export default {
             readConcern: '',
             readPreference: '',
             readPreferenceTag: '',
-
+            limit,
             datasource: connectionId, // 冗余老字段
             tablename: tableName, // 冗余老字段
             apiVersion, // 冗余老字段
@@ -1304,17 +1311,51 @@ export default {
                 <ElInput v-model="form.prefix" :disabled="!isEdit" />
               </ElFormItem>
             </div>
-            <ElFormItem
-              class="flex-1"
-              :label="$t('packages_business_data_server_drawer_base_path')"
-              prop="basePath"
-            >
-              <ElInput v-model="form.basePath" :disabled="!isEdit" />
-            </ElFormItem>
+            <div class="flex gap-4">
+              <ElFormItem
+                class="flex-1"
+                :label="$t('packages_business_data_server_drawer_base_path')"
+                prop="basePath"
+              >
+                <ElInput v-model="form.basePath" :disabled="!isEdit" />
+              </ElFormItem>
+              <ElFormItem class="flex-1" prop="limit">
+                <template #label>
+                  <el-text>
+                    <span>{{
+                      $t('packages_business_request_speed_limit')
+                    }}</span>
+                    <el-tooltip
+                      :content="$t('packages_business_request_speed_limit_tip')"
+                      placement="top"
+                      ><el-icon color="#909399" class="ml-1"
+                        ><InfoFilled
+                      /></el-icon>
+                    </el-tooltip>
+                  </el-text>
+                </template>
+                <el-input-number
+                  v-model="form.limit"
+                  :min="0"
+                  :disabled="!isEdit"
+                  :controls="false"
+                />
+              </ElFormItem>
+            </div>
           </section>
           <!--服务访问 -->
-          <div class="data-server-panel__title mt-4 mb-3">
+          <div
+            class="data-server-panel__title mt-4 mb-3 justify-content-start gap-2"
+          >
             <span>{{ $t('packages_business_fuwufangwen') }}</span>
+
+            <el-tag v-if="form.limit" type="warning">
+              {{
+                $t('packages_business_request_speed_limit_tag', {
+                  val: form.limit,
+                })
+              }}
+            </el-tag>
           </div>
           <ul class="data-server-path flex flex-column gap-2">
             <li
@@ -1337,13 +1378,22 @@ export default {
 
         <!-- 輸入参数 -->
         <div class="data-server-panel__title mt-4 mb-3">
-          <div>
+          <div class="flex align-items-center">
             <span>{{
               $t('packages_business_data_server_drawer_shurucanshu')
             }}</span>
-            <el-icon class="icon-button color-primary ml-4">
-              <el-icon-circle-plus />
-            </el-icon>
+            <el-button
+              v-if="isEdit && form.apiType === 'customerQuery'"
+              text
+              size="small"
+              type="primary"
+              class="ml-2"
+              @click="addItem('params')"
+            >
+              <template #icon>
+                <el-icon-circle-plus />
+              </template>
+            </el-button>
           </div>
         </div>
         <ElTable class="flex-1" :data="isEdit ? form.params : data.params">
@@ -1435,9 +1485,13 @@ export default {
             width="60"
           >
             <template #default="{ $index }">
-              <el-icon class="icon-button">
-                <el-icon-remove />
-              </el-icon>
+              <el-button text @click="removeItem('params', $index)">
+                <template #icon>
+                  <el-icon>
+                    <el-icon-remove />
+                  </el-icon>
+                </template>
+              </el-button>
             </template>
           </ElTableColumn>
         </ElTable>

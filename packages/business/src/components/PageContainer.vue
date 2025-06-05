@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import { useI18n } from '@tap/i18n'
-import { computed, h, inject, ref } from 'vue'
+import { computed, h, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
-const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 const activeMenu = inject('activeMenu') || {}
 
 const props = defineProps({

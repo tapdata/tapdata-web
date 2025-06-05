@@ -1,23 +1,48 @@
-<script>
-import { Classification, IconButton, ProTable, VIcon } from '@tap/component'
+<script lang="ts">
+import { Classification, ProTable, VIcon } from '@tap/component'
 import { delayTrigger, off, on } from '@tap/shared'
-import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
+import { debounce } from 'lodash-es'
+import {
+  defineComponent,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  ref,
+  shallowRef,
+  type PropType,
+} from 'vue'
+import { useRoute } from 'vue-router'
 import { makeDragNodeImage } from '../shared'
+import SelectClassify from './SelectClassify.vue'
 
-import SelectClassify from './SelectClassify'
+import type { TableColumnCtx } from 'element-plus'
 
-const tableSettings = {
+interface TableSettings {
+  settings: Record<string, { pageSize: number }>
+  init: () => void
+  getPageSize: (routeName: string, defaultSize?: number) => number
+  setPageSize: (routeName: string, pageSize: number) => void
+  save: () => void
+  load: () => void
+}
+
+interface Sort {
+  prop: string
+  order: 'ascending' | 'descending' | null
+}
+
+const tableSettings: TableSettings = {
   settings: {},
 
   init() {
     this.load()
   },
 
-  getPageSize(routeName, defaultSize = 20) {
+  getPageSize(routeName: string, defaultSize = 20) {
     return this.settings[routeName]?.pageSize || defaultSize
   },
 
-  setPageSize(routeName, pageSize) {
+  setPageSize(routeName: string, pageSize: number) {
     const setting = this.settings[routeName]
 
     if (setting) {
@@ -47,215 +72,314 @@ const tableSettings = {
 // Initialize settings on creation
 tableSettings.init()
 
-export default {
+interface Page {
+  current: number
+  size: number
+  total: number
+}
+
+interface DragState {
+  isDragging: boolean
+  draggingObjects: any[]
+  dropNode: any
+  allowDrop: boolean
+}
+
+export default defineComponent({
+  name: 'TablePage',
   components: {
     Classification,
     SelectClassify,
     VIcon,
     ProTable,
-    IconButton,
   },
   props: {
-    title: String,
-    desc: String,
+    title: {
+      type: String,
+    },
+    desc: {
+      type: String,
+    },
     defaultPageSize: {
       type: Number,
       default: 20,
     },
     hideClassify: {
-      // 是否隐藏左侧栏
       type: Boolean,
-      default: false,
     },
     classify: {
       type: Object,
     },
-    remoteMethod: Function,
-    rowKey: [String, Function],
-    spanMethod: [Function],
-    defaultSort: Object,
+    remoteMethod: {
+      type: Function as PropType<
+        (params: {
+          page: Page
+          tags: any[]
+        }) => Promise<{ data: any[]; total: number }>
+      >,
+    },
+    rowKey: {
+      type: [String, Function] as PropType<string | ((row: any) => string)>,
+    },
+    spanMethod: {
+      type: Function as PropType<
+        (data: {
+          row: any
+          rowIndex: number
+          column: TableColumnCtx<any>
+          columnIndex: number
+        }) => number[] | { rowspan: number; colspan: number }
+      >,
+    },
+    defaultSort: {
+      type: Object as PropType<Sort>,
+    },
     draggable: Boolean,
   },
-  data() {
+  emits: ['selectionChange', 'sortChange', 'classifySubmit'],
+  setup(props, { emit }) {
+    const isUnmounted = ref(false)
+    const route = useRoute()
     const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
+    const loading = ref(false)
+    const page = ref<Page>({
+      current: 1,
+      size: tableSettings.getPageSize(
+        route.name as string,
+        props.defaultPageSize,
+      ),
+      total: 0,
+    })
+    const list = shallowRef([])
+    const multipleSelection = ref([])
+    const tags = ref([])
+    const classificationVisible = ref(false)
+    const dragState = ref<DragState>({
+      isDragging: false,
+      draggingObjects: [],
+      dropNode: null,
+      allowDrop: true,
+    })
+    const draggingNodeImage = ref<HTMLElement | null>(null)
+    const shiftKeyPressed = ref(false)
+    const ifTableHeightAuto = ref(!!import.meta.env.VUE_APP_TABLE_HEIGHT_AUTO)
+    const lastSelectIndex = ref<number | undefined>(undefined)
+    const table = ref(null)
+    const classifyRef = ref(null)
+    const classification = ref(null)
 
-    return {
-      isDaas,
-      loading: false,
-      page: {
-        current: 1,
-        size: tableSettings.getPageSize(this.$route.name, this.defaultPageSize),
-        total: 0,
-      },
-      list: [],
-      multipleSelection: [],
-      tags: [],
-      classificationVisible: false,
-      dragState: {
-        isDragging: false,
-        draggingObjects: [],
-        dropNode: null,
-        allowDrop: true,
-      },
-      draggingNodeImage: null,
-      shiftKeyPressed: false,
-      ifTableHeightAuto: !!import.meta.env.VUE_APP_TABLE_HEIGHT_AUTO,
+    const handleKeyDown = (ev: KeyboardEvent) => {
+      shiftKeyPressed.value = ev.shiftKey
     }
-  },
-  mounted() {
-    this.fetch(1)
-    this.handleKeyDown = (ev) => {
-      this.shiftKeyPressed = ev.shiftKey
-    }
-    this.handleKeyUp = () => {
+
+    const handleKeyUp = () => {
       setTimeout(() => {
-        this.shiftKeyPressed = false
+        shiftKeyPressed.value = false
       }, 0)
     }
-    on(document, 'keydown', this.handleKeyDown)
-    on(document, 'keyup', this.handleKeyUp)
-  },
-  beforeUnmount() {
-    off(document, 'keydown', this.handleKeyDown)
-    off(document, 'keyup', this.handleKeyUp)
-  },
-  methods: {
-    fetch(pageNum, debounce = 0, hideLoading, callback) {
-      let timer = null
-      if (pageNum === 1) {
-        this.multipleSelection = []
-        $emit(this, 'selection-change', [])
-        this.$refs?.table?.clearSelection()
-        this.lastSelectIndex = undefined
-      }
-      this.page.current = pageNum || this.page.current
-      this.$nextTick(() => {
-        delayTrigger(() => {
-          if (!hideLoading) {
-            this.loading = true
-          }
-          this.remoteMethod &&
-            this.remoteMethod({
-              page: this.page,
-              tags: this.tags,
-              data: this.list,
-            })
-              .then(({ data, total }) => {
-                this.page.total = total
-                this.list = data || []
 
-                if (total > 0 && (!data || !data.length)) {
-                  clearTimeout(timer)
-                  timer = setTimeout(() => {
-                    this.fetch(this.page.current - 1)
-                  }, 2000)
-                }
-              })
-              .finally(() => {
-                this.loading = false
-                this.$nextTick(() => {
-                  this.$refs.table?.doLayout()
-                })
-                callback?.(this.getData())
-              })
-        }, debounce)
-      })
-    },
-    handleCurrent(val) {
-      this.multipleSelection = []
-      $emit(this, 'selection-change', [])
-      this.$refs?.table?.clearSelection()
-      this.fetch(val) //主要为了换页 清空选中数据
-    },
-    nodeChecked(tags) {
-      this.tags = tags
-      this.fetch(1)
-    },
-    handleSelectionChange(val) {
-      this.multipleSelection = val
-      $emit(this, 'selection-change', val)
-    },
-    showClassify(tagList) {
-      this.$refs.classify.show(tagList)
-    },
-    getData() {
-      return this.list
-    },
-    clearSelection() {
-      this.$refs?.table?.clearSelection()
-    },
-    handleToggleClassify() {
-      this.$refs.classification.toggle()
-    },
-    handleDragStart(row, column, ev) {
+    const fetch = (
+      pageNum: number,
+      debounce = 0,
+      hideLoading?: boolean,
+      callback?: Function,
+    ) => {
+      if (isUnmounted.value) return
+
+      let timer: ReturnType<typeof setTimeout> | null = null
+
+      if (pageNum === 1) {
+        multipleSelection.value = []
+        emit('selectionChange', [])
+        table.value?.clearSelection()
+        lastSelectIndex.value = undefined
+      }
+      page.value.current = pageNum || page.value.current
+
+      if (!hideLoading) {
+        loading.value = true
+      }
+
+      if (!props.remoteMethod) return
+
+      props
+        .remoteMethod({
+          page: page.value,
+          tags: tags.value,
+        })
+        .then(({ data, total }: { data: any[]; total: number }) => {
+          page.value.total = total
+          list.value = []
+          list.value = [...(data || [])]
+
+          if (total > 0 && (!data || !data.length)) {
+            if (timer) clearTimeout(timer)
+            timer = setTimeout(() => {
+              fetch(page.value.current - 1)
+            }, 2000)
+          }
+        })
+        .finally(() => {
+          loading.value = false
+          nextTick(() => {
+            table.value?.doLayout()
+          })
+          if (callback) callback(getData())
+        })
+    }
+
+    const handleCurrent = (val: number) => {
+      multipleSelection.value = []
+      emit('selectionChange', [])
+      table.value?.clearSelection()
+      fetch(val)
+    }
+
+    const nodeChecked = (newTags: any[]) => {
+      tags.value = newTags
+      fetch(1)
+    }
+
+    const handleSelectionChange = (val: any[]) => {
+      multipleSelection.value = val
+      emit('selectionChange', val)
+    }
+
+    const showClassify = (tagList: any[]) => {
+      classifyRef.value?.show(tagList)
+    }
+
+    const getData = () => {
+      return list.value
+    }
+
+    const clearSelection = () => {
+      table.value?.clearSelection()
+    }
+
+    const handleToggleClassify = () => {
+      classification.value?.toggle()
+    }
+
+    const handleDragStart = (row: any, column: any, ev: DragEvent) => {
       if (!row.id || !row.name) return false
 
-      this.dragState.isDragging = true
-      const selection = this.multipleSelection
+      dragState.value.isDragging = true
+      const selection = multipleSelection.value
 
       if (selection.some((it) => it.id === row.id)) {
-        this.dragState.draggingObjects = selection
+        dragState.value.draggingObjects = selection
       } else {
-        this.dragState.draggingObjects = [row]
+        dragState.value.draggingObjects = [row]
       }
 
-      this.draggingNodeImage = makeDragNodeImage(
-        ev.currentTarget.querySelector('.tree-item-icon'),
+      const target = ev.currentTarget as HTMLElement
+      draggingNodeImage.value = makeDragNodeImage(
+        target.querySelector('.tree-item-icon'),
         row.name,
-        this.dragState.draggingObjects.length,
+        dragState.value.draggingObjects.length,
       )
-      ev.dataTransfer.setDragImage(this.draggingNodeImage, 0, 0)
-    },
-    handleDragEnd() {
-      this.dragState.isDragging = false
-      this.dragState.draggingObjects = []
-      this.dragState.dropNode = null
-      this.draggingNodeImage.remove()
-      this.draggingNodeImage = null
-    },
-    onSelectRow(selection, current) {
+      ev.dataTransfer?.setDragImage(draggingNodeImage.value, 0, 0)
+    }
+
+    const handleDragEnd = () => {
+      dragState.value.isDragging = false
+      dragState.value.draggingObjects = []
+      dragState.value.dropNode = null
+      draggingNodeImage.value?.remove()
+      draggingNodeImage.value = null
+    }
+
+    const onSelectRow = (selection: any[], current: any) => {
       try {
         const selected = selection.some((row) => row.id === current.id)
 
         if (
-          this.shiftKeyPressed &&
-          this.multipleSelection.length &&
-          this.lastSelectIndex !== undefined
+          shiftKeyPressed.value &&
+          multipleSelection.value.length &&
+          lastSelectIndex.value !== undefined
         ) {
-          let lastIndex = this.lastSelectIndex
-          const currentIndex = this.list.findIndex(
+          let lastIndex = lastSelectIndex.value
+          const currentIndex = list.value.findIndex(
             (row) => row.id === current.id,
           )
 
           if (~lastIndex && ~currentIndex && lastIndex !== currentIndex) {
             const tmp = currentIndex < lastIndex ? -1 : 1
 
-            // 先触发selection-change
             setTimeout(() => {
               while (lastIndex !== currentIndex) {
-                this.$refs.table.toggleRowSelection(
-                  this.list[lastIndex],
-                  selected,
-                )
+                table.value?.toggleRowSelection(list.value[lastIndex], selected)
                 lastIndex += tmp
               }
             }, 0)
           }
         }
 
-        this.lastSelectIndex = selected
-          ? this.list.findIndex((row) => row.id === current.id)
+        lastSelectIndex.value = selected
+          ? list.value.findIndex((row) => row.id === current.id)
           : undefined
       } catch (error) {
         console.error(error)
       }
-    },
-    handleSizeChange(val) {
-      tableSettings.setPageSize(this.$route.name, val)
-      this.fetch(1)
-    },
+    }
+
+    const handleSizeChange = (val: number) => {
+      tableSettings.setPageSize(route.name as string, val)
+      fetch(1)
+    }
+
+    onMounted(() => {
+      fetch(1)
+      on(document, 'keydown', handleKeyDown)
+      on(document, 'keyup', handleKeyUp)
+    })
+
+    onUnmounted(() => {
+      isUnmounted.value = true
+
+      off(document, 'keydown', handleKeyDown)
+      off(document, 'keyup', handleKeyUp)
+
+      list.value = []
+      table.value = null
+      classifyRef.value = null
+      classification.value = null
+    })
+
+    return {
+      isDaas,
+      loading,
+      page,
+      list,
+      multipleSelection,
+      tags,
+      classificationVisible,
+      dragState,
+      draggingNodeImage,
+      shiftKeyPressed,
+      ifTableHeightAuto,
+      lastSelectIndex,
+      table,
+      classifyRef,
+      classification,
+      handleKeyDown,
+      handleKeyUp,
+      fetch,
+      handleCurrent,
+      nodeChecked,
+      handleSelectionChange,
+      showClassify,
+      getData,
+      clearSelection,
+      handleToggleClassify,
+      handleDragStart,
+      handleDragEnd,
+      onSelectRow,
+      handleSizeChange,
+    }
   },
-}
+})
 </script>
 
 <template>
@@ -285,7 +409,7 @@ export default {
           :drag-state="dragState"
           @node-checked="nodeChecked"
           @update:visible="classificationVisible = $event"
-          @drop-in-tag="fetch()"
+          @drop-in-tag="fetch(1)"
         />
         <div class="table-page-body gap-4">
           <div class="table-page-nav">
@@ -409,7 +533,7 @@ export default {
     </div>
     <SelectClassify
       v-if="classify"
-      ref="classify"
+      ref="classifyRef"
       :types="classify.types"
       @operations-classify="$emit('classifySubmit', $event)"
     />

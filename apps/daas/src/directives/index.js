@@ -27,21 +27,20 @@ export function permissionBtnDisable(code, id) {
   if (!id) {
     return true
   }
-  if (!window.$vueApp.config.globalProperties.$has(code) && id !== user_id) {
+  if (!hasPermissionByCode(code) && id !== user_id) {
     falg = true
   }
   return falg
 }
 
 export function installDirectives(app) {
-  // Provide hasPermissionByCode for injection in components
   app.provide('hasPermissionByCode', hasPermissionByCode)
 
   app.directive('readonlybtn', {
     mounted(el, binding, vnode) {
       const code = binding.value
 
-      if (!window.$vueApp.config.globalProperties.$has(code)) {
+      if (!hasPermissionByCode(code)) {
         el.remove()
         vnode.child && vnode.child.$destroy()
       }
@@ -66,9 +65,6 @@ export function installDirectives(app) {
   }
   app.config.globalProperties.$disabledByPermission = function (code, id) {
     return permissionBtnDisable(code, id)
-  }
-  app.config.globalProperties.$disabledReadonlyUserBtn = function () {
-    return false
   }
 
   app.directive('loadmore', {

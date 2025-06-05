@@ -1440,4 +1440,7 @@ export default {
   packages_business_validation_task_type: '校验任务类型',
   packages_business_select_task_to_be_verified: '选择被校验的任务',
   packages_business_drag_file_here: '拖拽 .gz 文件至此或 <em>选择文件上传</em>',
+  packages_business_request_speed_limit: '每秒请求限制',
+  packages_business_request_speed_limit_tag: '每秒请求 ≤ {val}',
+  packages_business_request_speed_limit_tip: '默认是 0（表示不限制）',
 }

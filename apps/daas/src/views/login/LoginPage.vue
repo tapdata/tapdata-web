@@ -1,23 +1,10 @@
-<template>
-  <div class="page">
-    <div class="page-image" :style="loginImageStyle"></div>
-
-    <div class="page-main">
-      <div class="page-main-box">
-        <div v-if="$getSettingByKey('SHOW_LANGUAGE')" class="switch-lang">
-          <span v-for="(value, key) in languages" :key="key" :class="{ bold: key === lang }" @click="langChange(key)">
-            {{ value }}
-            <ElDivider direction="vertical" v-if="key !== 'tc'"></ElDivider>
-          </span>
-        </div>
-        <slot name="main"></slot>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script>
-import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
+import {
+  getCurrentLanguage,
+  langMenu,
+  setCurrentLanguage,
+} from '@tap/i18n/src/shared/util'
+import { getSettingByKey } from '@/utils/settings'
 
 export default {
   name: 'LoginHeader',
@@ -38,6 +25,7 @@ export default {
   },
 
   methods: {
+    getSettingByKey,
     langChange(lang) {
       setCurrentLanguage(lang, this.$i18n)
       this.lang = lang
@@ -45,6 +33,29 @@ export default {
   },
 }
 </script>
+
+<template>
+  <div class="page">
+    <div class="page-image" :style="loginImageStyle" />
+
+    <div class="page-main">
+      <div class="page-main-box">
+        <div v-if="getSettingByKey('SHOW_LANGUAGE')" class="switch-lang">
+          <span
+            v-for="(value, key) in languages"
+            :key="key"
+            :class="{ bold: key === lang }"
+            @click="langChange(key)"
+          >
+            {{ value }}
+            <ElDivider v-if="key !== 'tc'" direction="vertical" />
+          </span>
+        </div>
+        <slot name="main" />
+      </div>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .page {

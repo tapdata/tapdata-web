@@ -293,7 +293,6 @@ export default {
       <el-button
         v-show="multipleSelection.length > 0 && isDaas"
         v-readonlybtn="'SYNC_job_export'"
-        :disabled="$disabledReadonlyUserBtn()"
         class="btn message-button-cancel"
         @click="handleExport"
       >
@@ -303,7 +302,6 @@ export default {
         v-if="isDaas"
         v-readonlybtn="'SYNC_job_import'"
         class="btn"
-        :disabled="$disabledReadonlyUserBtn()"
         @click="handleImport"
       >
         <span> {{ $t('packages_business_button_bulk_import') }}</span>
@@ -431,7 +429,7 @@ export default {
               v-readonlybtn="'SYNC_job_edition'"
               text
               type="primary"
-              :disabled="row.btnDisabled.edit || $disabledReadonlyUserBtn()"
+              :disabled="row.btnDisabled.edit"
               @click="handleEditor(row)"
             >
               {{ $t('public_button_edit') }}
@@ -459,7 +457,7 @@ export default {
               v-readonlybtn="'SYNC_job_edition'"
               text
               type="primary"
-              :disabled="row.btnDisabled.reset || $disabledReadonlyUserBtn()"
+              :disabled="row.btnDisabled.reset"
               @click="handleReset(row)"
             >
               {{ $t('public_button_reset') }}
@@ -473,7 +471,7 @@ export default {
               v-readonlybtn="'SYNC_job_edition'"
               text
               type="primary"
-              :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
+              :disabled="row.btnDisabled.delete"
               @click="del(row)"
             >
               {{ $t('public_button_delete') }}

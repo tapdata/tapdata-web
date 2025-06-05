@@ -26,7 +26,7 @@ export class MouseMoveDriver extends EventDriver {
   }
 
   detach() {
-    this.removeEventListener('mouseover', this.onMouseMove, {
+    this.removeEventListener('mousemove', this.onMouseMove, {
       mode: 'onlyOne',
     })
   }

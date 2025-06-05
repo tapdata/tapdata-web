@@ -1747,12 +1747,7 @@ export default {
         />
       </div>
     </div>
-    <Test
-      ref="test"
-      v-model:visible="dialogTestVisible"
-      :form-data="model"
-      @return-test-data="returnTestData"
-    />
+    <Test ref="test" :connection="model" @return-test-data="returnTestData" />
     <SceneDialog
       v-model:visible="dialogDatabaseTypeVisible"
       selector-type="source_and_target"

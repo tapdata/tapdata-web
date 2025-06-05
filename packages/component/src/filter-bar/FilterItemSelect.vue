@@ -2,7 +2,15 @@
 import { isFn } from '@tap/shared'
 
 import { escapeRegExp, get } from 'lodash-es'
-import { computed, nextTick, ref, useAttrs, useTemplateRef, watch } from 'vue'
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  ref,
+  useAttrs,
+  useTemplateRef,
+  watch,
+} from 'vue'
 
 defineOptions({
   name: 'FilterItemSelect',
@@ -33,8 +41,6 @@ const props = defineProps({
 
 const selectStyle = computed(() => {
   return {
-    // width: isEmpty.value && !props.filterable ? 'auto' : addUnit(props.width),
-    // width: !props.filterable ? 'auto' : addUnit(props.width),
     width: 'auto',
   }
 })
@@ -76,23 +82,6 @@ watch(
   },
 )
 
-const inputEvent = new Event('input', {
-  bubbles: true,
-  cancelable: true,
-})
-
-const handleSearch = (value) => {
-  // const inputRef = root.value.inputRef
-  // if (inputRef) {
-  //   inputRef.value = value
-  //   inputRef.dispatchEvent(inputEvent)
-  // }
-  nextTick(() => {
-    // console.log('handleSearch', root.value, root.value.handleResize)
-    root.value.handleResize()
-  })
-}
-
 const handleVisibleChange = (visible) => {
   if (props.filterable) {
     if (!visible) {
@@ -106,9 +95,10 @@ const handleVisibleChange = (visible) => {
   }
 }
 
-// onBeforeMount(async () => {
-//   setOptions()
-// })
+onBeforeUnmount(() => {
+  root.value = null
+  searchInput.value = null
+})
 </script>
 
 <template>
@@ -165,13 +155,6 @@ const handleVisibleChange = (visible) => {
     --el-text-color-regular: var(--el-color-primary);
 
     .el-select__wrapper {
-      // &:not(.is-filterable) {
-      //   .el-select__placeholder {
-      //     position: static;
-      //     transform: none;
-      //     width: auto;
-      //   }
-      // }
       .el-select__placeholder {
         position: static;
         transform: none;

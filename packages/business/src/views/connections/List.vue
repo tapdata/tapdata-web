@@ -1,702 +1,679 @@
-<script>
+<script setup lang="ts">
 import { connectionsApi, databaseTypesApi } from '@tap/api'
 import { FilterBar, SelectList, VIcon } from '@tap/component'
-
 import i18n from '@tap/i18n'
-
-import Cookie from '@tap/shared/src/cookie'
 import dayjs from 'dayjs'
-import { h } from 'vue'
+import { ElLoading, ElMessage, ElMessageBox } from 'element-plus'
+import {
+  computed,
+  h,
+  inject,
+  markRaw,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  reactive,
+  ref,
+  shallowRef,
+  watch,
+} from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import SceneDialog from '../../components/create-connection/SceneDialog.vue'
 import PageContainer from '../../components/PageContainer.vue'
-import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
-import SchemaProgress from '../../components/SchemaProgress'
-import TablePage from '../../components/TablePage'
+import PermissionseSettingsCreate from '../../components/permissionse-settings/Create.vue'
+import SchemaProgress from '../../components/SchemaProgress.vue'
+import TablePage from '../../components/TablePage.vue'
+import { useHas } from '../../composables'
 import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP } from '../../shared'
-import Preview from './Preview'
-import Test from './Test'
-import UsedTaskDialog from './UsedTaskDialog'
-import { defaultModel, getConnectionIcon, verify } from './util'
+import Preview from './Preview.vue'
+import Test from './Test.vue'
+import UsedTaskDialog from './UsedTaskDialog.vue'
+import { getConnectionIcon, verify } from './util'
 
-let timeout = null
-
-export default {
-  components: {
-    PageContainer,
-    SceneDialog,
-    TablePage,
-    Preview,
-    Test,
-    VIcon,
-    SchemaProgress,
-    FilterBar,
-    UsedTaskDialog,
-    PermissionseSettingsCreate,
-    SelectList,
-  },
-  inject: ['checkAgent', 'buried'],
-  data() {
-    let connectionDialogProps = {}
-
-    if (import.meta.env.VUE_APP_CONNECTION_DIALOG_PROPS) {
-      try {
-        connectionDialogProps = JSON.parse(
-          import.meta.env.VUE_APP_CONNECTION_DIALOG_PROPS,
-        )
-      } catch (error) {
-        console.error(error)
-      }
-    }
-
-    return {
-      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
-      showInstanceInfo: import.meta.env.VUE_APP_LICENSE_TYPE === 'PIPELINE',
-
-      filterItems: [],
-      user_id: Cookie.get('user_id'),
-      dialogDatabaseTypeVisible: false,
-      multipleSelection: [],
-      tableData: [],
-      databaseType: '',
-      id: '',
-      description: '',
-      order: 'last_updated DESC',
-      databaseModelOptions: [
-        {
-          label: this.$t('public_select_option_all'),
-          value: '',
-        },
-        {
-          label: this.$t('public_connection_type_source'),
-          value: 'source',
-        },
-        {
-          label: this.$t('public_connection_type_target'),
-          value: 'target',
-        },
-        {
-          label: this.$t('public_connection_type_source_and_target'),
-          value: 'source_and_target',
-        },
-      ],
-      databaseStatusOptions: [
-        {
-          label: this.$t('public_select_option_all'),
-          value: '',
-        },
-        {
-          label: this.$t('public_status_ready'),
-          value: 'ready',
-        },
-        {
-          label: this.$t('public_status_invalid'),
-          value: 'invalid',
-        },
-        {
-          label: this.$t('public_status_testing'),
-          value: 'testing',
-        },
-      ],
-      searchParams: {
-        databaseType: null,
-        keyword: '',
-        databaseModel: '',
-        status: '',
-        panelFlag: true,
-        sourceType: '',
-      },
-      testData: null,
-      dialogTestVisible: false, // 连接测试框
-      connectionTaskData: {
-        items: [],
-        total: 0,
-      },
-      connectionTaskDialog: false,
-
-      connectionDialogProps,
-
-      databaseTypeOptions: [],
-    }
-  },
-  computed: {
-    table() {
-      return this.$refs.table
-    },
-    buttonShowMap() {
-      return {
-        create: this.$has('v2_datasource_creation'),
-        copy: this.$has('v2_datasource_copy'),
-      }
-    },
-  },
-  watch: {
-    '$route.query': function () {
-      this.table.fetch(1)
-    },
-  },
-  created() {
-    // let helpUrl = 'https://docs.tapdata.net'
-    // let guideDoc =
-    //   ` <a style="color: #48B6E2" href="${helpUrl}/data-source">` +
-    //   this.$t('packages_business_connection_list_help_doc') +
-    //   '</a>'
-    //
-    // this.description = this.$t('packages_business_connection_list_desc') + guideDoc
-    //定时轮询
-    timeout = setInterval(() => {
-      this.table.fetch(null, 0, true)
-    }, 10000)
-    this.getFilterItems()
-
-    // console.log('baidu-cookie')
-    // Cookie.set('ken_bd_vid', 'kennen')
-    // Cookie.set('ken_bd_vid', 'kennen', {
-    //   domain: 'cloud.tapdata.net'
-    // })
-    // Cookie.set('ken_bd_vid', 'kennen', {
-    //   domain: 'tapdata.net'
-    // })
-  },
-  mounted() {
-    const { action, create } = this.$route.query || {}
-
-    if (create) {
-      this.dialogDatabaseTypeVisible = true
-    }
-
-    if (action === 'create') {
-      this.checkTestConnectionAvailable()
-    }
-
-    for (const key in this.searchParams) {
-      if (key in this.$route.query) {
-        this.searchParams[key] = this.$route.query[key]
-      }
-    }
-  },
-  unmounted() {
-    clearInterval(timeout)
-  },
-  methods: {
-    // 存在测试中，重新加载数据
-    reloadDataOnTesting(data) {
-      let flag = false
-      data.forEach((el) => {
-        if (el.status === 'testing') {
-          flag = true
-        }
-      })
-      flag &&
-        setTimeout(() => {
-          this.table.fetch(null, 0, true, (value) => {
-            this.reloadDataOnTesting(value)
-          })
-        }, 3000)
-    },
-    //兼容新手引导
-    handleGuide() {
-      const item = {
-        visible: true,
-        step: this.$route.query.step ? Number(this.$route.query.step) + 1 : 0,
-      }
-      window.parent &&
-        window.parent.noviceGuideChange &&
-        window.parent.noviceGuideChange(item)
-      this.$router.push({
-        name: 'connections',
-      })
-    },
-    //筛选条件
-    handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
-      this.table.fetch(1)
-    },
-
-    getData({ page, tags }) {
-      const { current, size } = page
-      const { keyword, databaseType, databaseModel, status, sourceType } =
-        this.searchParams
-      const where = {
-        createType: {
-          $ne: 'System',
-        },
-      }
-      //精准搜索 iModel
-      if (keyword && keyword.trim()) {
-        where.name = { like: verify(keyword), options: 'i' }
-      }
-      databaseType && (where.database_type = databaseType)
-
-      if (databaseModel) {
-        where.connection_type = {
-          $ne: databaseModel === 'source' ? 'target' : 'source',
-        }
-      }
-
-      sourceType && (where.sourceType = sourceType)
-      if (tags && tags.length) {
-        where['listtags.id'] = {
-          in: tags,
-        }
-      }
-      status && (where.status = status)
-      const filter = {
-        order: this.order,
-        limit: size,
-        noSchema: 1,
-        //fields: fields, //传noSchema 过滤schema
-        skip: (current - 1) * size,
-        where,
-      }
-      return connectionsApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          let list = data?.items || []
-          // 有选中行，列表刷新后无法更新行数据，比如状态
-          if (this.multipleSelection.length && list.length) {
-            const tempMap = list.reduce((map, item) => {
-              map[item.id] = item
-              return map
-            }, {})
-            this.multipleSelection.forEach((item, i) => {
-              const temp = tempMap[item.id]
-              if (temp) {
-                this.multipleSelection[i] = temp
-              }
-            })
-          }
-          list = list.map((item) => {
-            if (item.connectionString) {
-              item.connectionUrl = item.connectionString
-            } else if (item.config?.uri) {
-              const regResult =
-                /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/.exec(
-                  item.config.uri,
-                )
-              if (regResult && regResult.groups && regResult.groups.password) {
-                const { username, host, database, query } = regResult.groups
-                item.connectionUrl = `mongodb://${username}:***@${host}/${database}${query ? `/${query}` : ''}`
-              } else {
-                item.connectionUrl = item.config.uri
-              }
-            } else if (item.config) {
-              const { host, port, database, schema } = item.config
-              item.connectionUrl = host
-                ? `${host}${port ? `:${port}` : ''}${database ? `/${database}` : ''}${schema ? `/${schema}` : ''}`
-                : ''
-            }
-
-            item.lastUpdateTime = item.last_updated = item.last_updated
-              ? dayjs(item.last_updated).format('YY-MM-DD HH:mm:ss')
-              : '-'
-            item.loadSchemaTimeLabel = item.loadSchemaTime
-              ? dayjs(item.loadSchemaTime).format('YY-MM-DD HH:mm:ss')
-              : '-'
-            item.disabledLoadSchema = false
-            return item
-          })
-
-          // 同步抽屉数据
-          this.$refs.preview.sync(list)
-          return {
-            total: data?.total,
-            data: list,
-          }
-        })
-    },
-    getImgByType(type) {
-      // if (!type || type === 'jira') {
-      //   type = 'default'
-      // }
-      type = 'default'
-      return require(
-        `@tap/assets/images/databaseType/${type.toLowerCase()}.png`,
-      )
-    },
-    //列表全选
-    handleSelectionChange(val) {
-      this.multipleSelection = val
-    },
-    preview(row) {
-      this.$refs.preview.open(row)
-    },
-    edit(id, item) {
-      const { pdkHash, definitionPdkId: pdkId } = item
-
-      if (item.agentType === 'Local') {
-        this.$confirm(
-          i18n.t('packages_business_connections_list_dangqianlianjie') +
-            item.name +
-            i18n.t('packages_business_connections_list_zhengzaizuoweiF'),
-          '',
-          {
-            type: 'warning',
-            showClose: false,
-          },
-        ).then((resFlag) => {
-          if (!resFlag) {
-            return
-          }
-
-          if (this.connectionDialogProps.dialogMode) {
-            this.$refs.dialog.editConnection(item)
-            return
-          }
-
-          this.$router.push({
-            name: 'connectionsEdit',
-            params: {
-              id,
-            },
-            query: {
-              pdkHash,
-              pdkId,
-            },
-          })
-        })
-      } else {
-        if (this.connectionDialogProps.dialogMode) {
-          this.$refs.dialog.editConnection(item)
-          return
-        }
-
-        this.$router.push({
-          name: 'connectionsEdit',
-          params: {
-            id,
-          },
-          query: {
-            pdkHash,
-            pdkId,
-          },
-        })
-      }
-    },
-    copy(data) {
-      const headersName = { 'lconname-name': data.name }
-      data.copyLoading = true
-      connectionsApi
-        .copy(
-          data.id,
-          {
-            uri: `${data.id}/copy`,
-            headers: headersName,
-          },
-          data.name,
-        )
-        .then(() => {
-          this.table.fetch()
-          this.$message.success(this.$t('public_message_copy_success'))
-        })
-      // .catch(err => {
-      //   if (err && err.response) {
-      //     if (err.response.msg === 'duplicate source') {
-      //       this.$message.error(this.$t('packages_business_connection_copyFailedMsg'))
-      //     }
-      //   }
-      // })
-    },
-    remove(row) {
-      let strArr = this.$t(
-        'packages_business_connection_deteleDatabaseMsg',
-      ).split('xxx')
-      if (row.agentType === 'Local') {
-        const str = i18n.t(
-          'packages_business_connections_list_dangqianlianjiex',
-        )
-        strArr = str.split('xxx')
-      }
-      const msg = h('p', null, [
-        strArr[0],
-        h(
-          'span',
-          {
-            class: 'color-primary',
-          },
-          row.name,
-        ),
-        strArr[1],
-      ])
-      this.$confirm(msg, '', {
-        type: 'warning',
-        showClose: false,
-      }).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        //检查该连接是否被已有任务使用
-        connectionsApi.checkConnectionTask(row.id).then((data = {}) => {
-          if (data?.items?.length === 0) {
-            connectionsApi.delete(row.id).then((data) => {
-              const jobs = data?.jobs || []
-              const modules = data?.modules || []
-              if (jobs.length > 0 || modules.length > 0) {
-                this.$message.error(
-                  this.$t('packages_business_connection_checkMsg'),
-                )
-              } else {
-                this.$message.success(this.$t('public_message_delete_ok'))
-                this.table.fetch()
-              }
-            })
-          } else {
-            //展示已使用的任务列表
-            this.connectionTaskData = {
-              items: data.items || [],
-              total: data.total || 0,
-            }
-            this.connectionTaskDialog = true
-          }
-        })
-      })
-    },
-    //跳转到任务列表
-    goTaskList(item) {
-      if (item?.syncType === 'migrate') {
-        this.$router.push({
-          name: 'migrateList',
-          query: {
-            keyword: item.name,
-          },
-        })
-      } else {
-        this.$router.push({
-          name: 'dataflowList',
-          query: {
-            keyword: item.name,
-          },
-        })
-      }
-    },
-    //表格数据格式化
-    formatterConnectionType(row) {
-      switch (row.connection_type) {
-        case 'target':
-          return 'Target'
-        case 'source':
-          return 'Source'
-        case 'source_and_target':
-          return 'Source | Target'
-      }
-    },
-    handleSelectTag() {
-      const tagList = []
-      const tagMap = {}
-
-      this.multipleSelection.forEach((row) => {
-        row.listtags.forEach((item) => {
-          if (!tagMap[item.id]) {
-            tagList.push(item)
-            tagMap[item.id] = true
-          }
-        })
-      })
-
-      return tagList
-    },
-    handleOperationClassify(listtags) {
-      const attributes = {
-        id: this.multipleSelection.map((r) => r.id),
-        listtags,
-      }
-      connectionsApi.batchUpdateListtags(attributes).then(() => {
-        this.table.fetch()
-        this.$message.success(this.$t('public_message_save_ok'))
-      })
-    },
-    //选择创建类型
-    handleDialogDatabaseTypeVisible() {
-      this.dialogDatabaseTypeVisible = false
-    },
-    handleDatabaseType(item) {
-      this.handleDialogDatabaseTypeVisible()
-      const { pdkHash, pdkId } = item
-      this.$router.push({
-        name: 'connectionCreate',
-        query: { pdkHash, pdkId },
-      })
-    },
-
-    //检测agent 是否可用
-    async checkTestConnectionAvailable() {
-      if (import.meta.env.DEV) {
-        this.dialogDatabaseTypeVisible = true
-        return
-      }
-      this.buried('connectionCreateDialog')
-      this.checkAgent(() => {
-        this.dialogDatabaseTypeVisible = true
-      })
-    },
-    async testConnection(item) {
-      this.buried('connectionTest')
-      this.checkAgent(() => {
-        const loading = this.$loading()
-        this.testData = Object.assign({}, defaultModel.default, item)
-        connectionsApi
-          .updateById(
-            item.id,
-            Object.assign(
-              {},
-              {
-                status: 'testing',
-              },
-            ),
-          )
-          .then(() => {
-            this.dialogTestVisible = true
-            this.$refs.test.start()
-            this.table.fetch()
-          })
-          .catch(() => {
-            this.buried('connectionTestFail')
-          })
-          .finally(() => {
-            loading.close()
-          })
-      }).catch(() => {
-        this.buried('connectionTestAgentFail')
-      })
-    },
-    returnTestData(data) {
-      if (!data.status || data.status === null) return
-      const status = data.status
-      if (status === 'ready') {
-        this.$message.success(
-          this.$t('public_connection_button_test') +
-            this.$t('public_status_ready'),
-          false,
-        )
-      } else {
-        this.$message.error(
-          this.$t('public_connection_button_test') +
-            this.$t('public_status_invalid'),
-          false,
-        )
-      }
-
-      this.buried('connectionTest', '', {
-        result: status === 'ready',
-      })
-      this.table.fetch()
-    },
-    getFilterItems() {
-      this.filterItems = [
-        {
-          slotName: 'connectionType',
-          // label: this.$t('public_connection_type'),
-          key: 'databaseModel',
-          // type: 'select-inner',
-          // items: this.databaseModelOptions
-        },
-        {
-          label: this.$t('packages_business_connection_list_status'),
-          key: 'status',
-          type: 'select-inner',
-          items: this.databaseStatusOptions,
-        },
-        {
-          slotName: 'databaseType',
-          label: this.$t(
-            'packages_business_connection_list_form_database_type',
-          ),
-          key: 'databaseType',
-          type: 'select-inner',
-          width: 250,
-          // dropdownWidth: '250px',
-          filterable: true,
-          items: async () => {
-            const data = await connectionsApi.getDatabaseTypes()
-
-            if (!data?.length) {
-              return []
-            }
-
-            data.sort((t1, t2) =>
-              t1.databaseType.localeCompare(t2.databaseType),
-            )
-
-            return data.map((item) => {
-              return {
-                label: item.databaseType,
-                value: item.databaseType,
-              }
-            })
-          },
-        },
-        {
-          placeholder: this.$t('packages_business_connection_list_name'),
-          key: 'keyword',
-          type: 'input',
-          id: 'name-filter-input',
-        },
-      ]
-    },
-    getConnectionIcon() {
-      return getConnectionIcon(...arguments)
-    },
-    handleLoadSchema(row) {
-      if (!this.$refs.preview) {
-        return
-      }
-      this.$refs.preview.setConnectionData(row)
-      row.disabledLoadSchema = true
-      this.$refs.preview.reload?.(this.table.fetch(null, 0, true))
-      setTimeout(() => {
-        row.disabledLoadSchema = false
-      }, 3000)
-    },
-    isFileSource(row) {
-      return ['CSV', 'EXCEL', 'JSON', 'XML'].includes(row?.database_type)
-    },
-    getStatus(status) {
-      return CONNECTION_STATUS_MAP[status]?.text || '-'
-    },
-    getType(type) {
-      return CONNECTION_TYPE_MAP[type]?.text || '-'
-    },
-    havePermission(data = [], type = '') {
-      if (!this.isDaas) return true
-      return data.includes(type)
-    },
-    // 显示权限设置
-    handlePermissionsSettings() {
-      this.$refs.permissionseSettingsCreate.open(this.multipleSelection)
-    },
-    async fetchDatabaseTypeOptions() {
-      const data = await connectionsApi.getDatabaseTypes()
-
-      if (!data?.length) {
-        return []
-      }
-
-      data.sort((t1, t2) => t1.databaseType.localeCompare(t2.databaseType))
-
-      this.databaseTypeOptions = data.map((item) => {
-        return { label: item.databaseType, value: item.databaseType }
-      })
-    },
-    handleChangeDatabaseType(value) {
-      const query = {}
-
-      this.filterItems.forEach((item) => {
-        if (!item.slotName && item.value) {
-          query[item.key] = item.value
-        }
-      })
-
-      if (value) {
-        query.databaseType = value
-      }
-
-      this.$router.replace({
-        query,
-      })
-    },
-  },
+// Types
+interface ConnectionTaskData {
+  items: any[]
+  total: number
 }
+
+interface SearchParams {
+  databaseType: string | null
+  keyword: string
+  databaseModel: string
+  status: string
+  panelFlag: boolean
+  sourceType: string
+}
+
+interface DatabaseTypeOption {
+  label: string
+  value: string
+}
+
+interface ConnectionDialogProps {
+  dialogMode?: boolean
+}
+
+interface ApiResponse<T> {
+  data: T
+  items?: any[]
+  total?: number
+  jobs?: any[]
+  modules?: any[]
+}
+
+const checkAgent: any = inject('checkAgent')
+const buried: any = inject('buried')
+
+// Router and Route
+const router = useRouter()
+const route = useRoute()
+
+// Refs
+const table = ref()
+const previewRef = ref()
+const test = ref()
+const dialog = ref()
+const permissionseSettingsCreate = ref()
+
+// State
+let timeout: NodeJS.Timeout | null = null
+
+const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
+const showInstanceInfo = import.meta.env.VUE_APP_LICENSE_TYPE === 'PIPELINE'
+
+const filterItems = ref([])
+const dialogDatabaseTypeVisible = ref(false)
+const multipleSelection = ref([])
+const order = ref('last_updated DESC')
+
+const databaseStatusOptions = [
+  {
+    label: i18n.t('public_select_option_all'),
+    value: '',
+  },
+  {
+    label: i18n.t('public_status_ready'),
+    value: 'ready',
+  },
+  {
+    label: i18n.t('public_status_invalid'),
+    value: 'invalid',
+  },
+  {
+    label: i18n.t('public_status_testing'),
+    value: 'testing',
+  },
+]
+
+const searchParams = reactive<SearchParams>({
+  databaseType: null,
+  keyword: '',
+  databaseModel: '',
+  status: '',
+  panelFlag: true,
+  sourceType: '',
+})
+
+const testData = shallowRef(null)
+const connectionTaskData = reactive<ConnectionTaskData>({
+  items: [],
+  total: 0,
+})
+const connectionTaskDialog = ref(false)
+
+let connectionDialogProps: ConnectionDialogProps = {}
+
+if (import.meta.env.VUE_APP_CONNECTION_DIALOG_PROPS) {
+  try {
+    connectionDialogProps = JSON.parse(
+      import.meta.env.VUE_APP_CONNECTION_DIALOG_PROPS,
+    )
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const databaseTypeOptions = ref<DatabaseTypeOption[]>([])
+const $has = useHas()
+
+// Computed
+const buttonShowMap = computed(() => ({
+  create: $has('v2_datasource_creation'),
+  copy: $has('v2_datasource_copy'),
+}))
+
+// Watch
+watch(
+  () => route.query,
+  () => {
+    table.value?.fetch(1)
+  },
+)
+
+// Methods
+const reloadDataOnTesting = (data: any[]) => {
+  let flag = false
+  data.forEach((el) => {
+    if (el.status === 'testing') {
+      flag = true
+    }
+  })
+  flag &&
+    setTimeout(() => {
+      table.value?.fetch(null, 0, true, (value: any[]) => {
+        reloadDataOnTesting(value)
+      })
+    }, 3000)
+}
+
+const handleSortTable = ({
+  order: sortOrder,
+  prop,
+}: {
+  order: string
+  prop: string
+}) => {
+  order.value = `${sortOrder ? prop : 'last_updated'} ${sortOrder === 'ascending' ? 'ASC' : 'DESC'}`
+  table.value?.fetch(1)
+}
+
+const getData = async ({
+  page,
+  tags,
+}: {
+  page: { current: number; size: number }
+  tags?: string[]
+}) => {
+  const { current, size } = page
+  const { keyword, databaseType, databaseModel, status, sourceType } =
+    searchParams
+  const where: any = {
+    createType: {
+      $ne: 'System',
+    },
+  }
+
+  if (keyword && keyword.trim()) {
+    where.name = { like: verify(keyword), options: 'i' }
+  }
+  databaseType && (where.database_type = databaseType)
+
+  if (databaseModel) {
+    where.connection_type = {
+      $ne: databaseModel === 'source' ? 'target' : 'source',
+    }
+  }
+
+  sourceType && (where.sourceType = sourceType)
+  if (tags && tags.length) {
+    where['listtags.id'] = {
+      in: tags,
+    }
+  }
+  status && (where.status = status)
+
+  const filter = {
+    order: order.value,
+    limit: size,
+    noSchema: 1,
+    skip: (current - 1) * size,
+    where,
+  }
+
+  try {
+    const data = await connectionsApi.get({
+      filter: JSON.stringify(filter),
+    })
+    let list = data?.items || []
+
+    if (multipleSelection.value.length && list.length) {
+      const tempMap = list.reduce((map: any, item: any) => {
+        map[item.id] = item
+        return map
+      }, {})
+      multipleSelection.value.forEach((item: any, i: number) => {
+        const temp = tempMap[item.id]
+        if (temp) {
+          multipleSelection.value[i] = temp
+        }
+      })
+    }
+
+    list = list.map((item: any) => {
+      if (item.connectionString) {
+        item.connectionUrl = item.connectionString
+      } else if (item.config?.uri) {
+        const regResult =
+          /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/.exec(
+            item.config.uri,
+          )
+        if (regResult && regResult.groups && regResult.groups.password) {
+          const { username, host, database, query } = regResult.groups
+          item.connectionUrl = `mongodb://${username}:***@${host}/${database}${query ? `/${query}` : ''}`
+        } else {
+          item.connectionUrl = item.config.uri
+        }
+      } else if (item.config) {
+        const { host, port, database, schema } = item.config
+        item.connectionUrl = host
+          ? `${host}${port ? `:${port}` : ''}${database ? `/${database}` : ''}${schema ? `/${schema}` : ''}`
+          : ''
+      }
+
+      item.lastUpdateTime = item.last_updated = item.last_updated
+        ? dayjs(item.last_updated).format('YY-MM-DD HH:mm:ss')
+        : '-'
+      item.loadSchemaTimeLabel = item.loadSchemaTime
+        ? dayjs(item.loadSchemaTime).format('YY-MM-DD HH:mm:ss')
+        : '-'
+      item.disabledLoadSchema = false
+      return item
+    })
+
+    previewRef.value?.sync(list)
+    return {
+      total: data?.total || 0,
+      data: list,
+    }
+  } catch (error) {
+    console.error(error)
+    return {
+      total: 0,
+      data: [],
+    }
+  }
+}
+
+const handleSelectionChange = (val: any[]) => {
+  multipleSelection.value = val
+}
+
+const preview = (row: any) => {
+  previewRef.value?.open(row)
+}
+
+const edit = async (id: string, item: any) => {
+  const { pdkHash, definitionPdkId: pdkId } = item
+
+  if (item.agentType === 'Local') {
+    try {
+      await ElMessageBox.confirm(
+        i18n.t('packages_business_connections_list_dangqianlianjie') +
+          item.name +
+          i18n.t('packages_business_connections_list_zhengzaizuoweiF'),
+        '',
+        {
+          type: 'warning',
+          showClose: false,
+        },
+      )
+
+      if (connectionDialogProps.dialogMode) {
+        dialog.value?.editConnection(item)
+        return
+      }
+
+      router.push({
+        name: 'connectionsEdit',
+        params: {
+          id,
+        },
+        query: {
+          pdkHash,
+          pdkId,
+        },
+      })
+    } catch {
+      return
+    }
+  } else {
+    if (connectionDialogProps.dialogMode) {
+      dialog.value?.editConnection(item)
+      return
+    }
+
+    router.push({
+      name: 'connectionsEdit',
+      params: {
+        id,
+      },
+      query: {
+        pdkHash,
+        pdkId,
+      },
+    })
+  }
+}
+
+const copy = async (data: any) => {
+  const headersName = { 'lconname-name': data.name }
+  data.copyLoading = true
+  try {
+    await connectionsApi.copy(data.id, {
+      uri: `${data.id}/copy`,
+      headers: headersName,
+    })
+    table.value?.fetch()
+    ElMessage.success(i18n.t('public_message_copy_success'))
+  } catch (error) {
+    console.error(error)
+  } finally {
+    data.copyLoading = false
+  }
+}
+
+const remove = async (row: any) => {
+  let strArr = i18n
+    .t('packages_business_connection_deteleDatabaseMsg')
+    .split('xxx')
+  if (row.agentType === 'Local') {
+    const str = i18n.t('packages_business_connections_list_dangqianlianjiex')
+    strArr = str.split('xxx')
+  }
+  const msg = h('p', null, [
+    strArr[0],
+    h(
+      'span',
+      {
+        class: 'color-primary',
+      },
+      row.name,
+    ),
+    strArr[1],
+  ])
+
+  try {
+    await ElMessageBox.confirm(msg, '', {
+      type: 'warning',
+      showClose: false,
+    })
+
+    const response = await connectionsApi.checkConnectionTask(row.id)
+    const data = response?.data as ApiResponse<any>
+    if (data?.items?.length === 0) {
+      const result = await connectionsApi.delete(row.id)
+      const jobs = result?.data?.jobs || []
+      const modules = result?.data?.modules || []
+      if (jobs.length > 0 || modules.length > 0) {
+        ElMessage.error(i18n.t('packages_business_connection_checkMsg'))
+      } else {
+        ElMessage.success(i18n.t('public_message_delete_ok'))
+        table.value?.fetch()
+      }
+    } else {
+      connectionTaskData.items = data?.items || []
+      connectionTaskData.total = data?.total || 0
+      connectionTaskDialog.value = true
+    }
+  } catch {
+    // User cancelled
+  }
+}
+
+const handleSelectTag = () => {
+  const tagList = []
+  const tagMap: Record<string, boolean> = {}
+
+  multipleSelection.value.forEach((row: any) => {
+    row.listtags.forEach((item: any) => {
+      if (!tagMap[item.id]) {
+        tagList.push(item)
+        tagMap[item.id] = true
+      }
+    })
+  })
+
+  return tagList
+}
+
+const handleOperationClassify = async (listtags: any[]) => {
+  const attributes = {
+    id: multipleSelection.value.map((r: any) => r.id),
+    listtags,
+  }
+  try {
+    await connectionsApi.batchUpdateListtags(attributes)
+    table.value?.fetch()
+    ElMessage.success(i18n.t('public_message_save_ok'))
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const handleDialogDatabaseTypeVisible = () => {
+  dialogDatabaseTypeVisible.value = false
+}
+
+const handleDatabaseType = (item: any) => {
+  handleDialogDatabaseTypeVisible()
+  const { pdkHash, pdkId } = item
+  router.push({
+    name: 'connectionCreate',
+    query: { pdkHash, pdkId },
+  })
+}
+
+const checkTestConnectionAvailable = () => {
+  if (import.meta.env.DEV) {
+    dialogDatabaseTypeVisible.value = true
+    return
+  }
+  // Replace with actual buried point tracking
+  buried('connectionCreateDialog')
+  // Replace with actual agent check
+  checkAgent(() => {
+    dialogDatabaseTypeVisible.value = true
+  })
+}
+
+const testConnection = (item: any) => {
+  const loading = ElLoading.service()
+  buried('connectionTest')
+
+  checkAgent(async () => {
+    testData.value = markRaw(item)
+    try {
+      await connectionsApi.updateById(
+        item.id,
+        Object.assign(
+          {},
+          {
+            status: 'testing',
+          },
+        ),
+      )
+      test.value?.start()
+      table.value?.fetch()
+    } catch {
+      // Replace with actual buried point tracking
+      buried('connectionTestFail')
+    } finally {
+      loading.close()
+    }
+  }).catch(() => {
+    buried('connectionTestAgentFail')
+    loading.close()
+  })
+}
+
+const handleLoadSchema = (row: any) => {
+  const loading = ElLoading.service()
+  row.disabledLoadSchema = true
+  testData.value = markRaw(row)
+
+  checkAgent(() => {
+    nextTick(async () => {
+      await test.value?.triggerLoadSchema().finally(() => {
+        row.disabledLoadSchema = false
+        loading.close()
+      })
+
+      table.value?.fetch(null, 0, true)
+    })
+  }).catch(() => {
+    loading.close()
+  })
+
+  // previewRef.value.setConnectionData(row)
+  // previewRef.value.reload?.(table.value?.fetch(null, 0, true))
+  // setTimeout(() => {
+  //   row.disabledLoadSchema = false
+  // }, 3000)
+}
+
+const returnTestData = (data: any) => {
+  if (!data.status || data.status === null) return
+  const status = data.status
+  if (status === 'ready') {
+    ElMessage.success(
+      i18n.t('public_connection_button_test') + i18n.t('public_status_ready'),
+    )
+  } else {
+    ElMessage.error(
+      i18n.t('public_connection_button_test') + i18n.t('public_status_invalid'),
+    )
+  }
+
+  // Replace with actual buried point tracking
+  buried('connectionTest', '', {
+    result: status === 'ready',
+  })
+  table.value?.fetch()
+}
+
+const getFilterItems = () => {
+  filterItems.value = [
+    {
+      slotName: 'connectionType',
+      key: 'databaseModel',
+    },
+    {
+      label: i18n.t('packages_business_connection_list_status'),
+      key: 'status',
+      type: 'select-inner',
+      items: databaseStatusOptions,
+    },
+    {
+      slotName: 'databaseType',
+      label: i18n.t('packages_business_connection_list_form_database_type'),
+      key: 'databaseType',
+      type: 'select-inner',
+      width: 250,
+      filterable: true,
+      items: async () => {
+        const data = await connectionsApi.getDatabaseTypes()
+
+        if (!data?.length) {
+          return []
+        }
+
+        data.sort((t1: any, t2: any) =>
+          t1.databaseType.localeCompare(t2.databaseType),
+        )
+
+        return data.map((item: any) => {
+          return {
+            label: item.databaseType,
+            value: item.databaseType,
+          }
+        })
+      },
+    },
+    {
+      placeholder: i18n.t('packages_business_connection_list_name'),
+      key: 'keyword',
+      type: 'input',
+      id: 'name-filter-input',
+    },
+  ]
+}
+
+const isFileSource = (row: any) => {
+  return ['CSV', 'EXCEL', 'JSON', 'XML'].includes(row?.database_type)
+}
+
+const getStatus = (status: string) => {
+  return CONNECTION_STATUS_MAP[status]?.text || '-'
+}
+
+const getType = (type: string) => {
+  return CONNECTION_TYPE_MAP[type]?.text || '-'
+}
+
+const havePermission = (data: string[] = [], type: string = '') => {
+  if (!isDaas) return true
+  return data.includes(type)
+}
+
+const handlePermissionsSettings = () => {
+  permissionseSettingsCreate.value?.open(multipleSelection.value)
+}
+
+const fetchDatabaseTypeOptions = async () => {
+  const response = await connectionsApi.getDatabaseTypes()
+  const data = response?.data || []
+
+  if (!data?.length) {
+    return []
+  }
+
+  data.sort((t1: any, t2: any) =>
+    t1.databaseType.localeCompare(t2.databaseType),
+  )
+
+  databaseTypeOptions.value = data.map((item: any) => {
+    return { label: item.databaseType, value: item.databaseType }
+  })
+}
+
+const handleChangeDatabaseType = (value: string) => {
+  const query: Record<string, any> = {}
+
+  filterItems.value.forEach((item) => {
+    if (!item.slotName && item.value) {
+      query[item.key] = item.value
+    }
+  })
+
+  if (value) {
+    query.databaseType = value
+  }
+
+  router.replace({
+    query,
+  })
+}
+
+// Lifecycle hooks
+onMounted(() => {
+  const { action, create } = route.query || {}
+
+  if (create) {
+    dialogDatabaseTypeVisible.value = true
+  }
+
+  if (action === 'create') {
+    checkTestConnectionAvailable()
+  }
+
+  Object.keys(searchParams).forEach((key) => {
+    if (key in route.query) {
+      searchParams[key as keyof SearchParams] = route.query[key] as string
+    }
+  })
+
+  timeout = setInterval(() => {
+    table.value?.fetch(null, 0, true)
+  }, 10000)
+  getFilterItems()
+})
+
+onUnmounted(() => {
+  if (timeout) {
+    clearInterval(timeout)
+  }
+})
 </script>
 
 <template>
@@ -708,7 +685,6 @@ export default {
         v-readonlybtn="'datasource_creation'"
         class="btn btn-create"
         type="primary"
-        :disabled="$disabledReadonlyUserBtn()"
         @click="checkTestConnectionAvailable"
       >
         <span> {{ $t('public_connection_button_create') }}</span>
@@ -953,9 +929,7 @@ export default {
               $disabledByPermission(
                 'datasource_edition_all_data',
                 scope.row.user_id,
-              ) ||
-              $disabledReadonlyUserBtn() ||
-              scope.row.agentType === 'Cloud'
+              ) || scope.row.agentType === 'Cloud'
             "
             @click="edit(scope.row.id, scope.row)"
             >{{ $t('public_button_edit') }}
@@ -973,9 +947,7 @@ export default {
             type="primary"
             data-testid="copy-connection"
             :loading="scope.row.copyLoading"
-            :disabled="
-              $disabledReadonlyUserBtn() || scope.row.agentType === 'Cloud'
-            "
+            :disabled="scope.row.agentType === 'Cloud'"
             @click="copy(scope.row)"
             >{{ $t('public_button_copy') }}
           </ElButton>
@@ -995,9 +967,7 @@ export default {
               $disabledByPermission(
                 'datasource_delete_all_data',
                 scope.row.user_id,
-              ) ||
-              $disabledReadonlyUserBtn() ||
-              scope.row.agentType === 'Cloud'
+              ) || scope.row.agentType === 'Cloud'
             "
             @click="remove(scope.row)"
             >{{ $t('public_button_delete') }}
@@ -1005,7 +975,11 @@ export default {
         </template>
       </ElTableColumn>
     </TablePage>
-    <Preview ref="preview" @test="testConnection" />
+    <Preview
+      ref="previewRef"
+      @test="testConnection"
+      @load-schema="handleLoadSchema"
+    />
     <SceneDialog
       ref="dialog"
       v-model:visible="dialogDatabaseTypeVisible"
@@ -1016,8 +990,7 @@ export default {
     />
     <Test
       ref="test"
-      v-model:visible="dialogTestVisible"
-      :form-data="testData"
+      :connection="testData"
       @return-test-data="returnTestData"
     />
     <UsedTaskDialog v-model="connectionTaskDialog" :data="connectionTaskData" />

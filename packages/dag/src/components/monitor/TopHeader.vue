@@ -159,22 +159,13 @@ export default {
 
     back() {
       const mapping = this.$route.query.mapping
-      const $PLATFORM = window.getSettingByKey('DFS_TCM_PLATFORM')
-      const backToList = () => {
-        if ($PLATFORM === 'dfs') {
-          top.window.App.$router.push({
-            name: 'Task',
-          })
-        } else {
-          this.$router.push({
-            name: 'dataFlows',
-            query: {
-              mapping,
-            },
-          })
-        }
-      }
-      backToList()
+
+      this.$router.push({
+        name: 'dataFlows',
+        query: {
+          mapping,
+        },
+      })
     },
 
     handleOpenDebug() {
@@ -392,7 +383,6 @@ export default {
             !hideEdit &&
             buttonShowMap.Edit
           "
-          :disabled="$disabledReadonlyUserBtn()"
           class="ml-3"
           @click="$emit('edit')"
         >
@@ -404,7 +394,6 @@ export default {
             !(dataflow.disabledData && dataflow.disabledData.reset) &&
             buttonShowMap.Reset
           "
-          :disabled="$disabledReadonlyUserBtn()"
           class="ml-3"
           type="warning"
           @click="$emit('reset')"
@@ -416,7 +405,6 @@ export default {
             !(dataflow.disabledData && dataflow.disabledData.start) &&
             buttonShowMap.Start
           "
-          :disabled="$disabledReadonlyUserBtn()"
           class="ml-3"
           type="primary"
           @click="$emit('start')"
@@ -426,10 +414,7 @@ export default {
         <template v-else>
           <ElButton
             v-if="isShowForceStop(dataflow) && buttonShowMap.Stop"
-            :disabled="
-              (dataflow.disabledData && dataflow.disabledData.forceStop) ||
-              $disabledReadonlyUserBtn()
-            "
+            :disabled="dataflow.disabledData && dataflow.disabledData.forceStop"
             class="ml-3"
             type="danger"
             @click="$emit('forceStop')"
@@ -438,10 +423,7 @@ export default {
           </ElButton>
           <ElButton
             v-else-if="buttonShowMap.Stop"
-            :disabled="
-              (dataflow.disabledData && dataflow.disabledData.stop) ||
-              $disabledReadonlyUserBtn()
-            "
+            :disabled="dataflow.disabledData && dataflow.disabledData.stop"
             type="danger"
             class="ml-3"
             @click="$emit('stop')"

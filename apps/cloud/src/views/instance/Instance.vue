@@ -1399,11 +1399,7 @@ export default {
 <template>
   <PageContainer>
     <template #actions>
-      <ElButton
-        type="primary"
-        :disabled="$disabledReadonlyUserBtn()"
-        @click="handleCreateAgent"
-      >
+      <ElButton type="primary" @click="handleCreateAgent">
         <span>{{ $t('public_agent_button_create') }}</span>
       </ElButton>
     </template>
@@ -1933,9 +1929,7 @@ export default {
               <div class="flex">
                 <ElButton
                   :loading="selectedRow.btnLoading.deploy"
-                  :disabled="
-                    deployBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()
-                  "
+                  :disabled="deployBtnDisabled(selectedRow)"
                   type="primary"
                   class="flex-fill min-w-0"
                   @click="toDeploy(selectedRow)"
@@ -1947,9 +1941,7 @@ export default {
                 </ElButton>
                 <ElButton
                   :loading="selectedRow.btnLoading.stop"
-                  :disabled="
-                    stopBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()
-                  "
+                  :disabled="stopBtnDisabled(selectedRow)"
                   type="danger"
                   plain
                   class="flex-fill min-w-0"
