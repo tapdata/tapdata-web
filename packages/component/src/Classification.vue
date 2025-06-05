@@ -150,7 +150,15 @@ export default {
       this.emitCheckedNodes()
     },
     nodeClickHandler(data, node) {
-      this.$refs.tree?.setCheckedKeys([data.id], true)
+      let checkedNodes = this.$refs.tree.getCheckedKeys() || []
+
+      if (checkedNodes.includes(data.id)) {
+        this.$refs.tree?.setChecked(data.id, false)
+      } else {
+        this.$refs.tree?.setCheckedKeys([data.id], true)
+      }
+
+      this.emitCheckedNodes()
     },
     emitCheckedNodes() {
       let checkedNodes = this.$refs.tree.getCheckedKeys() || []
@@ -539,6 +547,8 @@ export default {
         :filter-node-method="filterNode"
         :render-after-expand="false"
         :indent="8"
+        :check-on-click-node="false"
+        :check-on-click-leaf="false"
         @node-click="nodeClickHandler"
         @check="checkHandler"
       >
