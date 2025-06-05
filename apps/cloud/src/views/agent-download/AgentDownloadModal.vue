@@ -55,6 +55,9 @@ export default {
       },
     },
   },
+  beforeUnmount() {
+    this.clearTimer()
+  },
   methods: {
     setTimer() {
       this.timer = setInterval(() => {
@@ -95,9 +98,6 @@ export default {
       this.version = data.deployInfo?.version || ''
       this.getAgentStatus()
       this.setTimer()
-      $once(this, 'hook:beforeDestroy', () => {
-        this.clearTimer()
-      })
     },
     handleDownLoad() {
       window.location = `${this.downloadUrl}tapdata.exe`
