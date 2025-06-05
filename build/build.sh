@@ -21,13 +21,10 @@ done
 
 sed -i.bak "s|DAAS_BUILD_NUMBER|$DAAS_BUILD_NUMBER|g" $base/apps/$app/.env
 
-if [[ `pnpm -v` != "7.30.5" ]]; then
-  npm i pnpm@7.30.5 -g
-fi
+echo "pnpm version: $(pnpm --version)"
 
-echo "pnpm build:$app --dest $dist --mode $mode"
+echo "pnpm build:$app --dest $dist --mode $mode --env $env"
 
-echo "pnpm version: "
-pnpm --version
+pnpm i
 
-pnpm i --frozen-lockfile && pnpm build:$app --dest $dist --mode $mode
+pnpm build:$app --dest $dist --mode $mode --env $env
