@@ -106,10 +106,25 @@ const databaseStatusOptions = [
   },
 ]
 
-const searchParams = reactive<SearchParams>({
+const connectionTypeOptions = [
+  {
+    label: i18n.t('public_all'),
+    value: undefined,
+  },
+  {
+    label: i18n.t('public_connection_type_source'),
+    value: 'source',
+  },
+  {
+    label: i18n.t('public_connection_type_target'),
+    value: 'target',
+  },
+]
+
+const searchParams = ref<SearchParams>({
   databaseType: null,
   keyword: '',
-  databaseModel: '',
+  databaseModel: undefined,
   status: '',
   panelFlag: true,
   sourceType: '',
@@ -187,7 +202,7 @@ const getData = async ({
 }) => {
   const { current, size } = page
   const { keyword, databaseType, databaseModel, status, sourceType } =
-    searchParams
+    searchParams.value
   const where: any = {
     createType: {
       $ne: 'System',
@@ -389,8 +404,7 @@ const remove = async (row: any) => {
       showClose: false,
     })
 
-    const response = await connectionsApi.checkConnectionTask(row.id)
-    const data = response?.data as ApiResponse<any>
+    const data = await connectionsApi.checkConnectionTask(row.id)
     if (data?.items?.length === 0) {
       const result = await connectionsApi.delete(row.id)
       const jobs = result?.data?.jobs || []
@@ -611,8 +625,7 @@ const handlePermissionsSettings = () => {
 }
 
 const fetchDatabaseTypeOptions = async () => {
-  const response = await connectionsApi.getDatabaseTypes()
-  const data = response?.data || []
+  const data = await connectionsApi.getDatabaseTypes()
 
   if (!data?.length) {
     return []
@@ -657,9 +670,9 @@ onMounted(() => {
     checkTestConnectionAvailable()
   }
 
-  Object.keys(searchParams).forEach((key) => {
+  Object.keys(searchParams.value).forEach((key) => {
     if (key in route.query) {
-      searchParams[key as keyof SearchParams] = route.query[key] as string
+      searchParams.value[key as keyof SearchParams] = route.query[key] as string
     }
   })
 
@@ -716,18 +729,7 @@ onUnmounted(() => {
           @fetch="table.fetch(1)"
         >
           <template #connectionType>
-            <ElRadioGroup
-              v-model="searchParams.databaseModel"
-              @change="table.fetch(1)"
-            >
-              <ElRadioButton label="">{{ $t('public_all') }}</ElRadioButton>
-              <ElRadioButton label="source">{{
-                $t('public_connection_type_source')
-              }}</ElRadioButton>
-              <ElRadioButton label="target">{{
-                $t('public_connection_type_target')
-              }}</ElRadioButton>
-            </ElRadioGroup>
+            <el-segmented v-model="searchParams.databaseModel" :options="connectionTypeOptions" @change="table.fetch(1)" />
           </template>
 
           <template #databaseType>
