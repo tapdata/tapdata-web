@@ -10,12 +10,11 @@ import {
   ImportOutlined,
   VIcon,
 } from '@tap/component'
-import { InfiniteSelect } from '@tap/form'
 import { useI18n } from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
-import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { TablePage } from '../../components'
 import { ErrorMessage } from '../../components/error-message'
@@ -35,7 +34,7 @@ interface SearchParams {
 }
 
 interface FilterItem {
-  label: string
+  label?: string
   key: string
   type: string
   items?: Array<{ label: string; value: string | number }>
@@ -103,7 +102,7 @@ const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 const order = ref('last_updated DESC')
 const multipleSelection = ref<InspectItem[]>([])
 
-const searchParams = reactive<SearchParams>({
+const searchParams = ref<SearchParams>({
   keyword: '',
   inspectMethod: '',
   mode: '',
@@ -137,8 +136,8 @@ const tableRef = computed(() => table.value)
 
 // Methods
 const inspectMethodChange = (val: string) => {
-  if (val !== 'row_count' && searchParams.result === 'row_count') {
-    searchParams.result = ''
+  if (val !== 'row_count' && searchParams.value.result === 'row_count') {
+    searchParams.value.result = ''
   }
   table.value?.fetch(1)
 }
@@ -170,7 +169,7 @@ const handleSortTable = ({
 
 const getData = ({ page }: { page: { current: number; size: number } }) => {
   const { current, size } = page
-  let { keyword, inspectMethod: method, mode, enabled, result } = searchParams
+  let { keyword, inspectMethod: method, mode, enabled, result } = searchParams.value
   const where: any = {}
 
   // 精准搜索 iModel
@@ -190,12 +189,12 @@ const getData = ({ page }: { page: { current: number; size: number } }) => {
     } else if (result === 'row_count') {
       where.status = { neq: 'error' }
       where.result = 'failed'
-      method = searchParams.inspectMethod = 'row_count'
+      method = searchParams.value.inspectMethod = 'row_count'
     } else {
       where.status = { neq: 'error' }
       where.result = 'failed'
       if (method === 'row_count') {
-        method = searchParams.inspectMethod = ''
+        method = searchParams.value.inspectMethod = ''
       }
       where.inspectMethod = { neq: 'row_count' }
     }
@@ -468,7 +467,7 @@ const onImportDialogClosed = () => {
 watch(
   () => route.query,
   () => {
-    Object.assign(searchParams, route.query)
+    Object.assign(searchParams.value, route.query)
     table.value?.fetch(1)
   },
 )
@@ -479,7 +478,7 @@ onMounted(() => {
     table.value?.fetch(null, 0, true)
   }, 8000)
   getFilterItems()
-  Object.assign(searchParams, route.query)
+  Object.assign(searchParams.value, route.query)
 })
 
 onUnmounted(() => {
