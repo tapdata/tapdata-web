@@ -523,7 +523,8 @@ export default {
       ref="drawer"
       :host="apiServerHost"
       @save="table.fetch(1)"
-      @visible="$emit('drawer-visible', arguments[0])"
+      @update="table.fetch()"
+      @visible="$emit('drawer-visible', $event)"
     />
     <!-- 导入 -->
     <Upload

@@ -1,4 +1,4 @@
-<script>
+<script setup lang="ts">
 import { InfoFilled } from '@element-plus/icons-vue'
 import {
   applicationApi,
@@ -11,969 +11,1008 @@ import {
 } from '@tap/api'
 import { Drawer, VCodeEditor } from '@tap/component'
 import i18n from '@tap/i18n'
-
 import { uid } from '@tap/shared'
 import axios from 'axios'
+import { ElMessage } from 'element-plus'
 import { cloneDeep } from 'lodash-es'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
-
-import ListSelect from '../api-application/ListSelect'
+import {
+  computed,
+  inject,
+  nextTick,
+  onMounted,
+  ref,
+  watch,
+  type Component,
+} from 'vue'
+import ListSelect from '../api-application/ListSelect.vue'
 import getTemplate from './template'
 
-export default {
-  components: {
-    Drawer,
-    VCodeEditor,
-    ListSelect,
-    InfoFilled,
-  },
-  props: {
-    host: String,
-    tag: {
-      type: String,
-      default: 'Drawer',
+// API Response Types
+interface ApiResponse<T = any> {
+  items?: T[]
+  data?: T
+}
+
+interface ListTag {
+  id: string
+  value: string
+}
+
+interface FormDataPath {
+  name?: string
+  method?: string
+  result?: string
+  type?: string
+  params?: Array<{
+    name: string
+    type: string
+    defaultvalue?: string
+    description: string
+    required?: boolean
+  }>
+  where?: any[]
+  sort?: any[]
+  fields?: Field[]
+  path?: string
+  acl?: string[]
+}
+
+interface FormData {
+  id?: string
+  name?: string
+  description?: string
+  apiType?: string
+  connectionType?: string
+  connectionName?: string
+  connectionId?: string
+  tableName?: string
+  basePath?: string
+  apiVersion?: string
+  prefix?: string
+  pathAccessMethod?: string
+  status?: string
+  paths?: FormDataPath[]
+  listtags?: ListTag[]
+  fields?: Field[]
+  connection?: string
+  source?: {
+    database_type: string
+    name: string
+  }
+  datasource?: string
+  tablename?: string
+  readConcern?: string
+  readPreference?: string
+  readPreferenceTag?: string
+  operationType?: string
+}
+
+// Types
+interface Field {
+  id: string
+  field_name: string
+  data_type: string
+  comment?: string
+}
+
+// Constants
+const typeOptions = ['number', 'string', 'boolean', 'date', 'datetime', 'time']
+const operatorOptions = ['>', '==', '<', '>=', '<=', '!=', 'like']
+const conditionOptions = ['null', 'and', 'or']
+const apiTypeMap = {
+  defaultApi: i18n.t('packages_business_data_server_drawer_morenchaxun'),
+  customerQuery: i18n.t('packages_business_data_server_drawer_zidingyichaxun'),
+}
+
+interface Props {
+  host?: string
+  tag?: string | Component
+  inDialog?: boolean
+  disableApp?: boolean
+  params?: Record<string, any>
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  tag: Drawer,
+  inDialog: false,
+  disableApp: false,
+})
+
+const emit = defineEmits(['visible', 'update:loading', 'save', 'update'])
+
+const apiApplication = inject('apiApplication')
+
+// Refs
+const form = ref<any>({
+  pathAccessMethod: 'customize',
+  apiVersion: 'v1',
+  prefix: '',
+  basePath: '',
+  acl: ['admin'],
+  appValue: '',
+  appLabel: '',
+})
+const visible = ref(false)
+const loading = ref(false)
+const data = ref<any>({})
+const tab = ref('form')
+const isEdit = ref(false)
+const debugParams = ref<any>(null)
+const debugMethod = ref('GET')
+const debugResult = ref('')
+const templateType = ref('java')
+const token = ref('')
+const roles = ref([])
+const workerStatus = ref('')
+const intervalId = ref(0)
+const allFields = ref([])
+const fieldLoading = ref(false)
+const databaseTypes = ref<string[] | null>(null)
+const connectionOptions = ref<any[] | null>(null)
+const tableOptions = ref<any[]>([])
+const templates = ref<Record<string, string>>({})
+
+// Template refs
+const form_ref = ref()
+const fieldTable = ref()
+const tabs = ref()
+
+// Regex validation patterns
+const PARAM_PATTERN = /^[a-z$_\u4E00-\u9FA5][\w$\u4E00-\u9FA5]*$/i
+const PATH_PATTERN = /^[a-z$_\u4E00-\u9FA5][\w\u4E00-\u9FA5$]*$/i
+
+// Validation rules
+const validateParams = (rule: any, value: string, callback: Function) => {
+  if (PARAM_PATTERN.test(value)) {
+    callback()
+  } else {
+    callback(i18n.t('packages_business_data_server_drawer_geshicuowu'))
+  }
+}
+
+const validateBasePath = (rule: any, value: string, callback: Function) => {
+  if (!value || PATH_PATTERN.test(value)) {
+    callback()
+  } else {
+    callback(i18n.t('packages_business_data_server_drawer_validate'))
+  }
+}
+
+const validatePrefix = (rule: any, value: string, callback: Function) => {
+  if (PATH_PATTERN.test(value) || value === '') {
+    callback()
+  } else {
+    callback(i18n.t('packages_business_data_server_drawer_validate'))
+  }
+}
+
+const rules = {
+  name: [
+    {
+      required: true,
+      message: i18n.t('packages_business_data_server_drawer_qingshurufuwu'),
+      trigger: 'blur',
     },
-    inDialog: Boolean,
-    disableApp: Boolean,
-    params: Object,
-  },
-  data() {
-    const validateParams = (rule, value, callback) => {
-      if (
-        /^([^\u0000-\u00FF]|[a-zA-Z_$])([^\u0000-\u00FF]|[\w$])*$/.test(value)
-      ) {
-        callback()
-      } else {
-        callback(i18n.t('packages_business_data_server_drawer_geshicuowu'))
-      }
-    }
-    const validateBasePath = (rule, value, callback) => {
-      if (!value || /^[a-z$_\u4E00-\u9FA5][\w\u4E00-\u9FA5$]*$/i.test(value)) {
-        callback()
-      } else {
-        callback(i18n.t('packages_business_data_server_drawer_validate'))
-      }
-    }
-    const validatePrefix = (rule, value, callback) => {
-      if (
-        /^[a-z$_\u4E00-\u9FA5][\w\u4E00-\u9FA5$]*$/i.test(value) ||
-        value === ''
-      ) {
-        callback()
-      } else {
-        callback(i18n.t('packages_business_data_server_drawer_validate'))
-      }
-    }
+  ],
+  acl: [
+    {
+      required: true,
+      message: i18n.t('packages_business_data_server_drawer_selectPermissions'),
+      trigger: 'blur',
+    },
+  ],
+  connectionType: [
+    {
+      required: true,
+      message: i18n.t('packages_business_data_server_drawer_qingxuanzelianjie'),
+      trigger: 'blur',
+    },
+  ],
+  connectionId: [
+    {
+      required: true,
+      message: i18n.t('public_input_placeholder') + i18n.t('public_connection'),
+      trigger: 'blur',
+    },
+  ],
+  tableName: [
+    {
+      required: true,
+      message: i18n.t(
+        'packages_business_data_server_drawer_qingxuanzeduixiang',
+      ),
+      trigger: 'blur',
+    },
+  ],
+  param: [
+    {
+      required: true,
+      validator: validateParams,
+      trigger: ['blur', 'change'],
+    },
+  ],
+  basePath: [
+    {
+      required: true,
+      message:
+        i18n.t('public_input_placeholder') +
+        i18n.t('packages_business_data_server_drawer_base_path'),
+      trigger: ['blur', 'change'],
+    },
+    { validator: validateBasePath, trigger: ['blur', 'change'] },
+  ],
+  prefix: [
+    {
+      required: false,
+      validator: validatePrefix,
+      trigger: ['blur', 'change'],
+    },
+  ],
+  apiVersion: [
+    {
+      required: false,
+      validator: validateBasePath,
+      trigger: ['blur', 'change'],
+    },
+  ],
+  appValue: [
+    {
+      required: true,
+      message: i18n.t('packages_business_data_server_drawer_qingxuanzesuoshu'),
+      trigger: ['blur', 'change'],
+    },
+  ],
+}
 
-    return {
-      loading: false,
-      visible: false,
-      data: {},
-      form: {
-        pathAccessMethod: 'customize',
-        apiVersion: 'v1',
-        prefix: '',
-        basePath: '',
-        acl: ['admin'],
-        appValue: '',
-        appLabel: '',
-      },
-      tab: 'form',
-      isEdit: false,
-      rules: {
-        name: [
-          {
-            required: true,
-            message: i18n.t(
-              'packages_business_data_server_drawer_qingshurufuwu',
-            ),
-            trigger: 'blur',
-          },
-        ],
-        acl: [
-          {
-            required: true,
-            message: i18n.t(
-              'packages_business_data_server_drawer_selectPermissions',
-            ),
-            trigger: 'blur',
-          },
-        ],
-        connectionType: [
-          {
-            required: true,
-            message: i18n.t(
-              'packages_business_data_server_drawer_qingxuanzelianjie',
-            ),
-            trigger: 'blur',
-          },
-        ],
-        connectionId: [
-          {
-            required: true,
-            message:
-              i18n.t('public_input_placeholder') + i18n.t('public_connection'),
-            trigger: 'blur',
-          },
-        ],
-        tableName: [
-          {
-            required: true,
-            message: i18n.t(
-              'packages_business_data_server_drawer_qingxuanzeduixiang',
-            ),
-            trigger: 'blur',
-          },
-        ],
-        param: [
-          {
-            required: true,
-            validator: validateParams,
-            trigger: ['blur', 'change'],
-          },
-        ],
-        basePath: [
-          {
-            required: true,
-            message:
-              i18n.t('public_input_placeholder') +
-              i18n.t('packages_business_data_server_drawer_base_path'),
-            trigger: ['blur', 'change'],
-          },
-          { validator: validateBasePath, trigger: ['blur', 'change'] },
-        ],
-        prefix: [
-          {
-            required: false,
-            validator: validatePrefix,
-            trigger: ['blur', 'change'],
-          },
-        ],
-        apiVersion: [
-          {
-            required: true,
-            validator: validateBasePath,
-            trigger: ['blur', 'change'],
-          },
-        ],
-        prefix: [
-          {
-            required: false,
-            validator: validatePrefix,
-            trigger: ['blur', 'change'],
-          },
-        ],
-        apiVersion: [
-          {
-            required: false,
-            validator: validateBasePath,
-            trigger: ['blur', 'change'],
-          },
-        ],
-        appValue: [
-          {
-            required: true,
-            message: i18n.t(
-              'packages_business_data_server_drawer_qingxuanzesuoshu',
-            ),
-            trigger: ['blur', 'change'],
-          },
-        ],
-      },
-      apiTypeMap: {
-        defaultApi: i18n.t('packages_business_data_server_drawer_morenchaxun'),
-        customerQuery: i18n.t(
-          'packages_business_data_server_drawer_zidingyichaxun',
-        ),
-      },
-      databaseTypes: null,
-      connectionOptions: null,
-      tableOptions: [],
-      typeOptions: ['number', 'string', 'boolean', 'date', 'datetime', 'time'],
-      operatorOptions: ['>', '==', '<', '>=', '<=', '!=', 'like'],
-      conditionOptions: ['null', 'and', 'or'],
-      allFields: [],
-      fieldLoading: false,
+// Computed properties
+const parameterOptions = computed(() => {
+  return (
+    form.value?.params?.filter(
+      (item: any) => item.name && !['page', 'limit'].includes(item.name),
+    ) || []
+  )
+})
 
-      debugParams: null,
-      debugMethod: 'GET',
-      debugResult: '',
-      templates: {},
-      templateType: 'java',
+const customizePath = computed(() => {
+  const arr = []
+  if (form.value?.apiVersion && form.value?.apiVersion !== '') {
+    arr.push(form.value?.apiVersion)
+  }
+  if (form.value?.prefix && form.value?.prefix !== '') {
+    arr.push(form.value?.prefix)
+  }
+  if (form.value?.basePath && form.value?.basePath !== '') {
+    arr.push(form.value?.basePath)
+  }
+  return `/api/${arr.join('/')}`
+})
 
-      token: '',
-      roles: [],
-      workerStatus: '',
-      intervalId: 0,
-      appData: {
-        label: '',
-        value: '',
-      },
-    }
-  },
-  computed: {
-    parameterOptions() {
-      return (
-        this.form?.params?.filter(
-          (item) => item.name && !['page', 'limit'].includes(item.name),
-        ) || []
+const urlList = computed(() => {
+  const baseUrl = props.host + customizePath.value
+
+  return [
+    {
+      method: 'POST',
+      url: `${baseUrl}/find`,
+    },
+    {
+      method: 'GET',
+      url: String(baseUrl),
+    },
+    {
+      method: 'TOKEN',
+      url: `${location.origin + location.pathname}oauth/token`,
+    },
+  ]
+})
+
+const urlsMap = computed(() => {
+  return urlList.value.reduce((acc: Record<string, string>, item) => {
+    acc[item.method] = item.url
+    return acc
+  }, {})
+})
+
+const formatData = (formData: FormData = {}) => {
+  // 兼容老数据类型
+  if (formData.apiType === 'customerApi') {
+    formData.apiType = 'customerQuery'
+  }
+  const path = formData?.paths?.[0] || {}
+  const {
+    id,
+    name,
+    description,
+    status,
+    connectionType,
+    connectionName,
+    connectionId,
+    tableName,
+    basePath,
+    apiVersion,
+    prefix,
+    pathAccessMethod,
+    listtags,
+    appLabel: _appLabel,
+    appValue: _appValue,
+  } = formData
+
+  const appData = listtags?.[0] || {}
+  const appValue = apiApplication?.value?.id || _appValue || appData.id || ''
+  const appLabel =
+    apiApplication?.value?.value || _appLabel || appData.value || ''
+
+  const apiType = formData?.apiType || 'defaultApi'
+  const fields = formData.paths?.[0]?.fields || []
+
+  data.value = {
+    status: status || 'generating',
+    id,
+    name,
+    description,
+    apiType,
+    connectionType,
+    connectionName,
+    connectionId,
+    tableName,
+    basePath,
+    apiVersion,
+    prefix,
+    pathAccessMethod,
+    method: path.method || 'GET',
+    fields,
+    params:
+      path.params?.filter((t: any) => t.name !== 'sort') ||
+      getDefaultParams(apiType),
+    where: path.where || [],
+    sort: path.sort || [],
+    path: path.path || '',
+    acl: path.acl || ['admin'],
+    appValue,
+    appLabel,
+  }
+  form.value = cloneDeep(data.value)
+
+  if (data.value.status === 'active') {
+    getAPIServerToken((token: string) => {
+      templates.value = getTemplate(props.host + data.value.path, token)
+    })
+  }
+}
+
+const getDefaultParams = (apiType: string) => {
+  const params = [
+    {
+      name: 'page',
+      type: 'number',
+      defaultvalue: '1',
+      description: i18n.t('packages_business_data_server_drawer_fenyebianhao'),
+      required: true,
+    },
+    {
+      name: 'limit',
+      type: 'number',
+      defaultvalue: '20',
+      description: i18n.t('packages_business_data_server_drawer_meigefenyefan'),
+      required: true,
+    },
+  ]
+  if (apiType === 'defaultApi') {
+    params.push({
+      name: 'filter',
+      type: 'object',
+      defaultvalue: '',
+      description: i18n.t('public_data_filter_condition'),
+      required: false,
+    })
+  }
+  return params
+}
+
+const getDatabaseTypes = async () => {
+  databaseTypes.value = null
+  const data = await databaseTypesApi.get().catch(() => {
+    databaseTypes.value = []
+    return []
+  })
+
+  databaseTypes.value =
+    data
+      .filter((it: any) =>
+        [
+          'mysql',
+          'sqlserver',
+          'oracle',
+          'mongodb',
+          'postgres',
+          'tidb',
+          'doris',
+        ].includes(it.pdkId),
       )
+      .map((it: any) => it.name) || []
+  await getConnectionOptions()
+}
+
+const getConnectionOptions = async () => {
+  const filter = {
+    fields: {
+      id: true,
+      name: true,
+      connection_type: true,
+      status: true,
+      user_id: true,
+      database_type: true,
     },
-    //计算基础路径
-    customizePath() {
-      const arr = []
-      if (this.form?.apiVersion && this.form?.apiVersion !== '') {
-        arr.push(this.form?.apiVersion)
-      }
-      if (this.form?.prefix && this.form?.prefix !== '') {
-        arr.push(this.form?.prefix)
-      }
-      if (this.form?.basePath && this.form?.basePath !== '') {
-        arr.push(this.form?.basePath)
-      }
-      // this.form.path = '/api/' + arr.join('/')
-      return `/api/${arr.join('/')}`
+    where: {
+      database_type: form.value.connectionType
+        ? form.value.connectionType
+        : {
+            in: databaseTypes.value,
+          },
+      connection_type:
+        import.meta.env.VUE_APP_MODE !== 'msa'
+          ? {
+              in: ['source_and_target', 'target'],
+            }
+          : undefined,
     },
+  }
 
-    debugDisabled() {
-      return this.workerStatus !== 'running'
+  connectionOptions.value = null
+  const data = await connectionsApi.listAll(filter).catch(() => {
+    connectionOptions.value = []
+    return []
+  })
+
+  connectionOptions.value =
+    data.map((it: any) => ({
+      name: it.name,
+      type: it.database_type,
+      id: it.id,
+    })) || []
+}
+
+const getTableOptions = async (id: string) => {
+  tableOptions.value = []
+  const data = await metadataInstancesApi
+    .getTablesValue({ connectionId: id })
+    .catch(() => {
+      tableOptions.value = []
+      return []
+    })
+  tableOptions.value = data || []
+}
+
+const getFields = async () => {
+  fieldLoading.value = true
+  const filter = {
+    where: {
+      'source.id': form.value.connectionId,
+      original_name: form.value.tableName,
+      is_deleted: false,
+      sourceType: 'SOURCE',
     },
+  }
 
-    urlList() {
-      const baseUrl = this.host + this.customizePath
+  try {
+    const data = await metadataInstancesApi.get({
+      filter: JSON.stringify(filter),
+    })
 
-      return [
-        {
-          method: 'POST',
-          url: `${baseUrl}/find`,
-        },
-        {
-          method: 'GET',
-          url: String(baseUrl),
-        },
-        {
-          method: 'TOKEN',
-          url: `${location.origin + location.pathname}oauth/token`,
-        },
-      ]
-    },
+    allFields.value =
+      data.items?.[0]?.fields?.map((it: any) => ({
+        ...it,
+        id: it.id,
+        field_name: it.field_name,
+        originalDataType: it.data_type,
+        comment: it.comment,
+      })) || []
 
-    urlsMap() {
-      return this.urlList.reduce((acc, item) => {
-        acc[item.method] = item.url
-        return acc
-      }, {})
-    },
-  },
-  watch: {
-    visible(v) {
-      if (!v) {
-        this.intervalId && clearTimeout(this.intervalId)
-      }
+    if (!form.value.id) {
+      form.value.fields = cloneDeep(allFields.value)
+    }
 
-      if (v) {
-        this.setTabTitle(
-          this.data.id
-            ? this.$t('packages_business_data_server_drawer_fuwuxiangqing')
-            : this.$t('packages_business_data_server_drawer_chuangjianfuwu'),
-        )
+    // 回显选中字段
+    nextTick(() => {
+      const fields = form.value.fields || []
+      fields.forEach((row: any) => {
+        const targetRow = allFields.value.find((it: any) => it.id === row.id)
 
-        // setTimeout(() => {
-        //   this.$refs.tabs.calcPaneInstances(true)
-        // }, 0)
-      }
-    },
-  },
-  mounted() {
-    this.getRoles()
-  },
-  methods: {
-    // 打开并初始化抽屉
-    open(formData) {
-      this.orginData = formData
-      this.tab = 'form'
-      this.visible = true
-      this.isEdit = false
-      this.debugParams = null
-      this.debugMethod = 'GET'
-      this.debugResult = ''
-      this.allFields = []
-      this.workerStatus = ''
-      this.form = {
-        pathAccessMethod: 'customize',
-        apiVersion: 'v1',
-        prefix: '',
-        basePath: '',
-        acl: ['admin'],
-        appValue: '',
-        appLabel: '',
-      }
+        if (targetRow) {
+          fieldTable.value?.toggleRowSelection(targetRow, true)
+        }
+      })
+    })
+  } finally {
+    fieldLoading.value = false
+  }
+}
 
-      this.formatData(formData || {})
+const getAPIServerToken = async (callback?: (token: string) => void) => {
+  const clientInfo = await applicationApi.get({
+    filter: JSON.stringify({
+      where: {
+        clientName: 'Data Explorer',
+      },
+    }),
+  })
+  const clientInfoItem = clientInfo?.items?.[0] || {}
 
-      // 若为新建时，则默认值为 '默认查询(defaultApi)' 的值
-      this.form.pathAccessMethod = this.data?.pathAccessMethod || 'customize'
-      this.getDatabaseTypes()
-      const { connectionId, tableName } = this.form
-      if (connectionId) {
-        this.getTableOptions(connectionId)
-      }
-      if (connectionId && tableName) {
-        this.getFields()
-      }
-      if (!this.data.id) {
-        this.form.basePath = uid(11, 'a')
-        this.edit()
-      }
+  const paramsStr = `grant_type=client_credentials&client_id=${clientInfoItem.id}&client_secret=${clientInfoItem.clientSecret}`
+  const result = await axios.create().post('/oauth/token', paramsStr)
+  const newToken = result?.data?.access_token || ''
+  token.value = newToken
+  callback?.(newToken)
+}
 
-      const formVM = this.$refs.form
+const setTabTitle = (title: string) => {
+  let $title = tabs.value?.$el.querySelector('.el-tabs__nav-title')
+  if (!$title) {
+    $title = document.createElement('span')
+    $title.setAttribute(
+      'class',
+      'el-tabs__nav-title mr-4 float-start fs-6 fw-sub font-color-dark',
+    )
 
-      if (formVM) {
-        this.$nextTick(() => {
-          formVM.clearValidate()
-          formVM.$el.scrollTop = 0
-        })
-      }
-    },
-    tabChanged(tab) {
-      let debugParams = null
-      if (tab === 'debug') {
-        this.isEdit = false
-        debugParams = {}
-        this.data.params.forEach((p) => {
-          debugParams[p.name] = p.defaultvalue || ''
-        })
-        this.getWorkers()
-      }
-      this.debugParams = debugParams
-    },
-    formatData(formData = {}) {
-      // 兼容老数据类型
-      if (formData.apiType === 'customerApi') {
-        formData.apiType = 'customerQuery'
-      }
-      const path = formData?.paths?.[0] || {}
-      const {
+    const tabsHeader = tabs.value?.$el.querySelector('.el-tabs__nav-wrap')
+    tabsHeader?.insertBefore($title, tabsHeader.firstChild)
+  }
+
+  $title.textContent = title
+}
+
+// Methods
+const open = async (formData?: any) => {
+  data.value = formData || {}
+  tab.value = 'form'
+  visible.value = true
+  isEdit.value = false
+  debugParams.value = null
+  debugMethod.value = 'GET'
+  debugResult.value = ''
+  allFields.value = []
+  workerStatus.value = ''
+  form.value = {
+    pathAccessMethod: 'customize',
+    apiVersion: 'v1',
+    prefix: '',
+    basePath: '',
+    acl: ['admin'],
+    appValue: '',
+    appLabel: '',
+  }
+
+  formatData(formData || {})
+
+  form.value.pathAccessMethod = data.value?.pathAccessMethod || 'customize'
+  getDatabaseTypes()
+  const { connectionId, tableName } = form.value
+  if (connectionId) {
+    getTableOptions(connectionId)
+  }
+  if (connectionId && tableName) {
+    getFields()
+  }
+  if (!data.value.id) {
+    form.value.basePath = uid(11, 'a')
+    edit()
+  }
+
+  if (form_ref.value) {
+    nextTick(() => {
+      form_ref.value.clearValidate()
+      form_ref.value.$el.scrollTop = 0
+    })
+  }
+}
+
+const save = async (type?: boolean) => {
+  const valid = await form_ref.value?.validate()
+  if (valid) {
+    const {
+      id,
+      name,
+      description,
+      apiType,
+      basePath,
+      connectionId,
+      tableName,
+      params,
+      where,
+      sort,
+      fields,
+      method,
+      path,
+      status,
+      acl,
+      connectionType,
+      connectionName,
+      apiVersion,
+      prefix,
+      pathAccessMethod,
+      appLabel,
+      appValue,
+    } = form.value
+
+    if (params.some((it: any) => !it.name.trim())) {
+      ElMessage.error(
+        i18n.t('packages_business_data_server_drawer_qingshurucanshu'),
+      )
+      return
+    }
+
+    loading.value = true
+    emit('update:loading', true)
+
+    try {
+      const formData: FormData = {
         id,
-        name,
-        description,
-        status,
-        connectionType,
-        connectionName,
-        connectionId,
-        tableName,
-        basePath,
-        apiVersion,
-        prefix,
-        pathAccessMethod,
-        listtags,
-      } = formData
-      // 若为新建时，则默认值为 '默认查询(defaultApi)' 的值
-
-      const appData = listtags?.[0] || {}
-      const appValue = appData.id || '' // 不改变appValue 的原始值，防止首次创建触发所属应用的必填校验
-      const appLabel = appData.value
-
-      const apiType = formData?.apiType || 'defaultApi'
-      const fields = formData.paths?.[0]?.fields || []
-      this.data = {
-        status: status || 'generating', // generating,pending,active
-        id,
+        status: basePath && basePath !== '' ? 'pending' : status,
         name,
         description,
         apiType,
-        connectionType,
-        connectionName,
         connectionId,
+        connectionName,
+        connectionType,
+        operationType: method,
         tableName,
         basePath,
+        readConcern: '',
+        readPreference: '',
+        readPreferenceTag: '',
+        datasource: connectionId,
+        tablename: tableName,
         apiVersion,
         prefix,
         pathAccessMethod,
-        method: path.method || 'GET',
-        fields,
-        params:
-          path.params?.filter((t) => t.name !== 'sort') ||
-          this.getDefaultParams(apiType),
-        where: path.where || [],
-        sort: path.sort || [],
-        path: path.path || '',
-        acl: path.acl || ['admin'],
-        appValue,
-        appLabel,
-      }
-      this.form = cloneDeep(this.data)
-      const host = this.host
-      const _path = this.data.path
-      const baseUrl = host + _path
-      if (this.data.status === 'active') {
-        this.getAPIServerToken((token) => {
-          this.templates = getTemplate(baseUrl, token)
-        })
-      }
-    },
-    // 获取角色
-    getRoles() {
-      const filter = {
-        limit: 500,
-        skip: 0,
-      }
-      roleApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          this.roles = data?.items || []
-        })
-    },
-    getDefaultParams(apiType) {
-      const params = [
-        {
-          name: 'page',
-          type: 'number',
-          defaultvalue: '1',
-          description: i18n.t(
-            'packages_business_data_server_drawer_fenyebianhao',
-          ),
-          required: true,
-        },
-        {
-          name: 'limit',
-          type: 'number',
-          defaultvalue: '20',
-          description: i18n.t(
-            'packages_business_data_server_drawer_meigefenyefan',
-          ),
-          required: true,
-        },
-      ]
-      if (apiType === 'defaultApi') {
-        params.push(
-          ...[
-            // { name: 'sort', type: 'object', description: i18n.t('public_button_sort') },
-            {
-              name: 'filter',
-              type: 'object',
-              description: i18n.t('public_data_filter_condition'),
-            },
-          ],
-        )
-      }
-      return params
-    },
-    // 切换到编辑状态
-    edit() {
-      this.form.status = 'pending'
-      this.isEdit = true
-      this.$nextTick(() => {
-        this.data.fields.forEach((f) => {
-          this.$refs?.fieldTable.toggleRowSelection(
-            this.allFields.find((it) => it.id === f.id),
-          )
-        })
-      })
-    },
-    // 保存，新建和修改
-    save(type) {
-      this.$refs.form.validate(async (valid) => {
-        if (valid) {
-          let {
-            id,
-            name,
-            description,
-            apiType,
-            basePath,
-            connectionId,
-            tableName,
-            params,
-            where,
-            sort,
-            fields,
-            method,
-            path,
-            status,
-            acl,
-            connectionType,
-            connectionName,
-            apiVersion,
-            prefix,
-            pathAccessMethod,
-            appLabel,
-            appValue,
-          } = this.form
-
-          // basePath
-          if (basePath && basePath !== '') {
-            status = 'pending'
-          }
-
-          if (params.some((it) => !it.name.trim())) {
-            return this.$message.error(
-              i18n.t('packages_business_data_server_drawer_qingshurucanshu'),
-            )
-          }
-
-          // 排除 fields: [null]
-          fields = fields.filter((f) => !!f)
-
-          this.loading = true
-          this.$emit('update:loading', true)
-
-          const formData = {
-            id,
-            status,
-            name,
-            description,
-            apiType,
-            connectionId,
-            connectionName,
-            connectionType,
-            operationType: method,
-            tableName,
-            basePath,
-            readConcern: '',
-            readPreference: '',
-            readPreferenceTag: '',
-
-            datasource: connectionId, // 冗余老字段
-            tablename: tableName, // 冗余老字段
-            apiVersion, // 冗余老字段
-            prefix,
-            pathAccessMethod, // 冗余老字段
-            listtags: [
-              {
-                id: appValue,
-                value: appLabel,
-              },
-            ], // 冗余老字段
-
-            paths: [
-              {
-                name:
-                  apiType === 'customerQuery' ? 'customerQuery' : 'findPage', // 冗余老字段
-                result: 'Page<Document>', // 冗余老字段
-                type: apiType === 'customerQuery' ? 'customerQuery' : 'preset', // 冗余老字段
-                acl, // 冗余老字段
-
-                method,
-                params,
-                where,
-                sort,
-                fields,
-                path,
-              },
-            ],
-          }
-          if (!type) {
-            //生成按钮 不传fields覆盖数据库已有数据 (open 抽屉this.allFields 就清空了数据)
-            if (connectionId && tableName) {
-              await this.loadAllFields()
-            }
-            formData.fields = this.allFields
-          }
-
-          const data = await modulesApi[id ? 'patch' : 'post'](
-            formData,
-          ).finally(() => {
-            this.loading = false
-            this.$emit('update:loading', false)
-          })
-          data.connection = connectionId
-          data.source = {
-            database_type: connectionType,
-            name: connectionName,
-          }
-          this.formatData(data || [])
-          this.orginData && Object.assign(this.orginData, data)
-          this.$emit('save', data)
-          this.isEdit = false
-        }
-      })
-    },
-    // 获取可选数据源类型
-    async getDatabaseTypes() {
-      this.databaseTypes = null
-      const data = await databaseTypesApi.get().catch(() => {
-        this.databaseTypes = []
-      })
-      this.databaseTypes =
-        data
-          ?.filter((it) =>
-            [
-              'mysql',
-              'sqlserver',
-              'oracle',
-              'mongodb',
-              'postgres',
-              'tidb',
-              'doris',
-            ].includes(it.pdkId),
-          )
-          ?.map((it) => it.name) || []
-      // this.databaseTypes = data?.map(it => it.name) || []
-      this.getConnectionOptions()
-    },
-    // 获取可选连接
-    async getConnectionOptions() {
-      const filter = {
-        fields: {
-          id: true,
-          name: true,
-          connection_type: true,
-          status: true,
-          user_id: true,
-          database_type: true,
-        },
-        where: {
-          database_type: this.form.connectionType
-            ? this.form.connectionType
-            : {
-                in: this.databaseTypes,
-              },
-          connection_type:
-            import.meta.env.VUE_APP_MODE !== 'msa'
-              ? {
-                  in: ['source_and_target', 'target'],
-                }
-              : undefined,
-        },
-      }
-      const type = this.form.connectionType
-      if (type) {
-        filter.where.database_type = type
-      }
-      this.connectionOptions = null
-      const data = await connectionsApi.listAll(filter).catch(() => {
-        this.connectionOptions = []
-      })
-      this.connectionOptions =
-        data?.map((it) => ({
-          name: it.name,
-          type: it.database_type,
-          id: it.id,
-        })) || []
-    },
-    // 获取可选表，依赖连接id
-    async getTableOptions(id) {
-      this.tableOptions = null
-      const data = await metadataInstancesApi
-        .getTablesValue({ connectionId: id })
-        .catch(() => {
-          this.tableOptions = []
-        })
-      this.tableOptions = data || []
-    },
-    // 获取输出结果中可配置的所有字段
-    async getFields() {
-      this.fieldLoading = true
-      const filter = {
-        where: {
-          'source.id': this.form.connectionId,
-          original_name: this.form.tableName,
-          is_deleted: false,
-          sourceType: 'SOURCE',
-        },
-      }
-      const data = await metadataInstancesApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .finally(() => {
-          this.fieldLoading = false
-        })
-      this.allFields =
-        data?.items?.[0]?.fields?.map((it) => {
-          return Object.assign({}, it, {
-            id: it.id,
-            field_name: it.field_name,
-            originalDataType: it.data_type,
-            comment: it.comment,
-          })
-        }) || []
-      if (!this.form.id) {
-        this.form.fields = cloneDeep(this.allFields)
-      }
-      // 回显输出结果中被选中的字段
-      const fields = this.form.fields || []
-      this.$nextTick(() => {
-        fields.forEach((row) => {
-          this.$refs?.fieldTable.toggleRowSelection(
-            this.allFields.find((it) => it.id === row.id),
-          )
-        })
-      })
-    },
-    apiTypeChanged() {
-      this.form.params = this.getDefaultParams(this.form.apiType)
-    },
-    connectionTypeChanged() {
-      this.getConnectionOptions()
-      this.form.connectionName = ''
-      this.form.tableName = ''
-      this.form.fields = []
-      this.allFields = []
-      this.$refs?.form?.clearValidate('connectionType')
-    },
-    connectionNameChanged() {
-      // 选择连接名时自动填充连接类型
-      const connection = this.connectionOptions.find(
-        (it) => it.name === this.form.connectionName,
-      )
-      this.form.connectionType = connection.type
-      this.form.connectionId = connection.id
-      this.form.tableName = ''
-      this.form.fields = []
-      this.allFields = []
-      this.getTableOptions(connection.id)
-      this.$refs?.form?.clearValidate('connectionId')
-    },
-    tableChanged() {
-      this.form.fields = []
-      this.allFields = []
-      this.getFields()
-      this.$refs?.form?.clearValidate('tableName')
-    },
-    aclChanged() {
-      this.$refs?.form?.clearValidate('acl')
-      this.handleChangePermissionsAndSave()
-    },
-    fieldsChanged(val) {
-      this.form.fields = val
-    },
-    addItem(key) {
-      const map = {
-        params: { name: '', type: 'string', description: '', defaultvalue: '' },
-        where: {
-          fieldName: '',
-          parameter: '',
-          operator: '>',
-          condition: 'and',
-        },
-        sort: { fieldName: '', type: 'asc' },
-      }
-      if (key === 'where') {
-        const list = this.form.where
-        const lastItem = list.at(-1)
-        if (list.length && lastItem.condition === 'null') {
-          lastItem.condition = 'and'
-        }
-      }
-      this.form[key].push(cloneDeep(map[key]))
-    },
-    removeItem(key, index) {
-      this.form[key].splice(index, 1)
-    },
-    async getAPIServerToken(callback) {
-      const clientInfo = await applicationApi.get({
-        filter: JSON.stringify({
-          where: {
-            clientName: 'Data Explorer',
-          },
-        }),
-      })
-      const clientInfoItem = clientInfo?.items?.[0] || {}
-
-      const paramsStr = `grant_type=client_credentials&client_id=${clientInfoItem.id}&client_secret=${clientInfoItem.clientSecret}`
-      const result = await axios.create().post('/oauth/token', paramsStr)
-      const token = result?.data?.access_token || ''
-      this.token = token
-      callback && callback(token)
-    },
-    async debugData() {
-      const http = axios.create()
-      let params = this.debugParams
-      const method = this.debugMethod
-      if (method === 'TOKEN') {
-        this.debugResult = JSON.stringify(
-          {
-            access_token: this.token,
-            expires_in: 1209599,
-            scope: 'admin',
-            token_type: 'Bearer',
-          },
-          null,
-          2,
-        )
-      } else {
-        const url = `${this.urlsMap[this.debugMethod]}?access_token=${this.token}`
-        for (const key in params) {
-          const value = params[key]
-          if (!value) {
-            delete params[key]
-          }
-        }
-        if (method === 'GET') {
-          params = {
-            params,
-          }
-        }
-        const result = await http[method.toLowerCase()](url, params).catch(
-          (error) => {
-            let result = error?.response?.data
-            result = result ? JSON.stringify(result, null, 2) : ''
-            this.debugResult = result
-          },
-        )
-        if (result) {
-          this.debugResult = JSON.stringify(result?.data, null, 2)
-        }
-      }
-    },
-
-    getWorkers() {
-      const where = {
-        worker_type: 'api-server',
-        ping_time: {
-          gte: '$serverDate',
-          gte_offset: 30000,
-        },
-      }
-      const filter = {
-        order: 'ping_time DESC',
-        limit: 1,
-        fields: {
-          worker_status: true,
-        },
-        where,
-      }
-      workerApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          if (data?.items?.length) {
-            const record = data.items[0] || {}
-            const workerStatus =
-              record.workerStatus || record.worker_status || {}
-            if (this.status !== workerStatus.status) {
-              this.workerStatus = workerStatus.status
-            }
-          } else {
-            this.workerStatus = 'stop'
-          }
-        })
-        .finally(() => {
-          this.intervalId = setTimeout(this.getWorkers, 2000)
-        })
-    },
-
-    async loadAllFields() {
-      const filter = {
-        where: {
-          'source.id': this.form.connectionId,
-          original_name: this.form.tableName,
-          is_deleted: false,
-          sourceType: 'SOURCE',
-        },
-      }
-      const data = await metadataInstancesApi.get({
-        filter: JSON.stringify(filter),
-      })
-      this.allFields =
-        data?.items?.[0]?.fields?.map((it) => {
-          return Object.assign({}, it, {
-            id: it.id,
-            field_name: it.field_name,
-            originalDataType: it.data_type,
-            comment: '',
-          })
-        }) || []
-    },
-
-    handleChangePermissionsAndSave() {
-      if (this.isEdit) return
-      this.$refs.form.validate(async (valid) => {
-        if (!valid) return
-        const {
-          id,
-          apiType,
-          params,
-          where,
-          sort,
-          fields,
-          method,
-          path,
-          acl,
-          appLabel,
-          appValue,
-        } = this.form
-
-        const formData = {
-          id,
-          listtags: [
-            {
-              id: appValue,
-              value: appLabel,
-            },
-          ],
-          paths: [
-            {
-              name: apiType === 'customerQuery' ? 'customerQuery' : 'findPage',
-              result: 'Page<Document>',
-              type: apiType === 'customerQuery' ? 'customerQuery' : 'preset',
-              acl,
-              method,
-              params,
-              where,
-              sort,
-              fields,
-              path,
-            },
-          ],
-        }
-        modulesApi.patch(formData).then(() => {
-          this.$message.success(this.$t('public_message_operation_success'))
-        })
-      })
-    },
-
-    async handleUpdateRole() {
-      if (!this.data.id) return
-
-      await modulesApi.updatePermissions({
-        moduleId: this.data.id,
-        acl: this.form.acl,
-      })
-      this.$message.success(this.$t('public_message_operation_success'))
-    },
-
-    async handleUpdateApp() {
-      if (!this.data.id) return
-
-      const { appLabel, appValue } = this.form
-      await modulesApi.updateTags({
-        moduleId: this.data.id,
         listtags: [
           {
             id: appValue,
             value: appLabel,
           },
         ],
-      })
-      this.$message.success(this.$t('public_message_operation_success'))
-    },
-
-    setTabTitle(title) {
-      let $title = this.$refs.tabs.$el.querySelector('.el-tabs__nav-title')
-      if (!$title) {
-        // 创建一个新的span元素
-        $title = document.createElement('span')
-        $title.setAttribute(
-          'class',
-          'el-tabs__nav-title mr-4 float-start fs-6 fw-sub font-color-dark',
-        )
-
-        // 获取el-tabs__header元素
-        const tabsHeader =
-          this.$refs.tabs.$el.querySelector('.el-tabs__nav-wrap')
-
-        // 在el-tabs__header元素之前插入新的span元素
-        tabsHeader.insertBefore($title, tabsHeader.firstChild)
+        paths: [
+          {
+            name: apiType === 'customerQuery' ? 'customerQuery' : 'findPage',
+            result: 'Page<Document>',
+            type: apiType === 'customerQuery' ? 'customerQuery' : 'preset',
+            acl,
+            method,
+            params,
+            where,
+            sort,
+            fields: fields.filter((f: any) => !!f),
+            path,
+          },
+        ],
       }
 
-      $title.textContent = title
+      if (!type && connectionId && tableName) {
+        await loadAllFields()
+        formData.fields = allFields.value
+      }
+
+      console.log('formData', formData)
+
+      const data = await modulesApi[id ? 'patch' : 'post'](formData)
+
+      data.connection = connectionId
+      data.source = {
+        database_type: connectionType,
+        name: connectionName,
+      }
+      formatData(data)
+      emit('save', data)
+      isEdit.value = false
+    } finally {
+      loading.value = false
+      emit('update:loading', false)
+    }
+  }
+}
+
+const edit = () => {
+  form.value.status = 'pending'
+  isEdit.value = true
+  nextTick(() => {
+    data.value.fields.forEach((f: any) => {
+      fieldTable.value?.toggleRowSelection(
+        allFields.value.find((it: any) => it.id === f.id),
+      )
+    })
+  })
+}
+
+// Watch effects
+watch(visible, (v) => {
+  if (!v) {
+    intervalId.value && clearTimeout(intervalId.value)
+  }
+
+  if (v) {
+    setTabTitle(
+      data.value.id
+        ? i18n.t('packages_business_data_server_drawer_fuwuxiangqing')
+        : i18n.t('packages_business_data_server_drawer_chuangjianfuwu'),
+    )
+  }
+})
+
+// Event handlers
+const tabChanged = (tab: string) => {
+  if (tab === 'debug') {
+    isEdit.value = false
+    const newDebugParams: Record<string, any> = {}
+    data.value.params?.forEach((p: any) => {
+      newDebugParams[p.name] = p.defaultvalue || ''
+    })
+    debugParams.value = newDebugParams
+    getWorkers()
+  }
+}
+
+const apiTypeChanged = () => {
+  form.value.params = getDefaultParams(form.value.apiType)
+}
+
+const connectionTypeChanged = () => {
+  getConnectionOptions()
+  form.value.connectionName = ''
+  form.value.tableName = ''
+  form.value.fields = []
+  allFields.value = []
+  form_ref.value?.clearValidate('connectionType')
+}
+
+const connectionNameChanged = () => {
+  // 选择连接名时自动填充连接类型
+  const connection = connectionOptions.value?.find(
+    (it) => it.name === form.value.connectionName,
+  )
+  if (connection) {
+    form.value.connectionType = connection.type
+    form.value.connectionId = connection.id
+    form.value.tableName = ''
+    form.value.fields = []
+    allFields.value = []
+    getTableOptions(connection.id)
+    form_ref.value?.clearValidate('connectionId')
+  }
+}
+
+const tableChanged = () => {
+  form.value.fields = []
+  allFields.value = []
+  getFields()
+  form_ref.value?.clearValidate('tableName')
+}
+
+const fieldsChanged = (val: any[]) => {
+  form.value.fields = val
+}
+
+const addItem = (key: 'params' | 'where' | 'sort') => {
+  const map = {
+    params: { name: '', type: 'string', description: '', defaultvalue: '' },
+    where: {
+      fieldName: '',
+      parameter: '',
+      operator: '>',
+      condition: 'and',
     },
-  },
+    sort: { fieldName: '', type: 'asc' },
+  }
+  if (key === 'where') {
+    const list = form.value.where
+    const lastItem = list.at(-1)
+    if (list.length && lastItem.condition === 'null') {
+      lastItem.condition = 'and'
+    }
+  }
+  form.value[key].push(cloneDeep(map[key]))
+}
+
+const removeItem = (key: 'params' | 'where' | 'sort', index: number) => {
+  form.value[key].splice(index, 1)
+}
+
+const debugDisabled = computed(() => {
+  return workerStatus.value !== 'running'
+})
+
+const debugData = async () => {
+  const http = axios.create()
+  let params = debugParams.value
+  const method = debugMethod.value
+  if (method === 'TOKEN') {
+    debugResult.value = JSON.stringify(
+      {
+        access_token: token.value,
+        expires_in: 1209599,
+        scope: 'admin',
+        token_type: 'Bearer',
+      },
+      null,
+      2,
+    )
+  } else {
+    const url = `${urlsMap.value[debugMethod.value]}?access_token=${token.value}`
+    if (params) {
+      const newParams: Record<string, any> = {}
+      Object.keys(params).forEach((key) => {
+        const value = params[key]
+        if (value) {
+          newParams[key] = value
+        }
+      })
+      params = method === 'GET' ? { params: newParams } : newParams
+    }
+    try {
+      const result = await http[method.toLowerCase()](url, params)
+      debugResult.value = JSON.stringify(result?.data, null, 2)
+    } catch (error: any) {
+      const result = error?.response?.data
+      debugResult.value = result ? JSON.stringify(result, null, 2) : ''
+    }
+  }
+}
+
+const getWorkers = () => {
+  const where = {
+    worker_type: 'api-server',
+    ping_time: {
+      gte: '$serverDate',
+      gte_offset: 30000,
+    },
+  }
+  const filter = {
+    order: 'ping_time DESC',
+    limit: 1,
+    fields: {
+      worker_status: true,
+    },
+    where,
+  }
+  workerApi
+    .get({
+      filter: JSON.stringify(filter),
+    })
+    .then((data) => {
+      if (data?.items?.length) {
+        const record = data.items[0] || {}
+        const workerStatus = record.workerStatus || record.worker_status || {}
+        if (status !== workerStatus.status) {
+          workerStatus.value = workerStatus.status
+        }
+      } else {
+        workerStatus.value = 'stop'
+      }
+    })
+    .finally(() => {
+      intervalId.value = setTimeout(getWorkers, 2000)
+    })
+}
+
+// Expose key methods
+defineExpose({
+  open,
+  save,
+  edit,
+})
+
+// Add event handlers
+const handleChangePermissionsAndSave = async () => {
+  if (isEdit.value) return
+  const valid = await form_ref.value?.validate()
+  if (!valid) return
+
+  const {
+    id,
+    apiType,
+    params,
+    where,
+    sort,
+    fields,
+    method,
+    path,
+    acl,
+    appLabel,
+    appValue,
+  } = form.value
+
+  const formData = {
+    id,
+    listtags: [
+      {
+        id: appValue,
+        value: appLabel,
+      },
+    ],
+    paths: [
+      {
+        name: apiType === 'customerQuery' ? 'customerQuery' : 'findPage',
+        result: 'Page<Document>',
+        type: apiType === 'customerQuery' ? 'customerQuery' : 'preset',
+        acl,
+        method,
+        params,
+        where,
+        sort,
+        fields,
+        path,
+      },
+    ],
+  }
+
+  await modulesApi.patch(formData)
+  ElMessage.success(i18n.t('public_message_operation_success'))
+}
+
+const handleUpdateRole = async () => {
+  if (!data.value.id) return
+
+  await modulesApi.updatePermissions({
+    moduleId: data.value.id,
+    acl: form.value.acl,
+  })
+  emit('update')
+  ElMessage.success(i18n.t('public_message_operation_success'))
+}
+
+const handleUpdateApp = async () => {
+  if (!data.value.id) return
+
+  const { appLabel, appValue } = form.value
+  await modulesApi.updateTags({
+    moduleId: data.value.id,
+    listtags: [
+      {
+        id: appValue,
+        value: appLabel,
+      },
+    ],
+  })
+
+  emit('update')
+  ElMessage.success(i18n.t('public_message_operation_success'))
+}
+
+// Add after the watch effects
+onMounted(() => {
+  getRoles()
+})
+
+const getRoles = async () => {
+  const filter = {
+    limit: 500,
+    skip: 0,
+  }
+  const data = await roleApi.get({
+    filter: JSON.stringify(filter),
+  })
+  roles.value = data?.items || []
+}
+
+const loadAllFields = async () => {
+  const filter = {
+    where: {
+      'source.id': form.value.connectionId,
+      original_name: form.value.tableName,
+      is_deleted: false,
+      sourceType: 'SOURCE',
+    },
+  }
+  const data = await metadataInstancesApi.get({
+    filter: JSON.stringify(filter),
+  })
+  allFields.value =
+    data?.data?.items?.[0]?.fields?.map((it: any) => ({
+      ...it,
+      id: it.id,
+      field_name: it.field_name,
+      originalDataType: it.data_type,
+      comment: '',
+    })) || []
 }
 </script>
 
@@ -984,7 +1023,7 @@ export default {
     v-loading="loading"
     class="overflow-hidden"
     width="850px"
-    @visible="$emit('visible', arguments[0])"
+    @visible="$emit('visible', $event)"
   >
     <div class="flex flex-column overflow-hidden pt-0 h-100">
       <!-- 顶部 标题 Tab -->
@@ -1012,7 +1051,7 @@ export default {
       </div>
 
       <ElForm
-        ref="form"
+        ref="form_ref"
         hide-required-asterisk
         class="data-server__form overflow-auto flex-1"
         :class="{
@@ -1028,8 +1067,6 @@ export default {
               <ElInput
                 v-if="isEdit"
                 v-model="form.name"
-                text
-                type="primary"
                 maxlength="50"
                 :placeholder="
                   $t('public_input_placeholder') + $t('public_name')
@@ -1093,7 +1130,7 @@ export default {
               <ListSelect
                 v-model:value="form.appValue"
                 v-model:label="form.appLabel"
-                :disabled="disableApp"
+                :disabled="disableApp || apiApplication"
                 class="w-100"
                 @change="handleUpdateApp"
               />
