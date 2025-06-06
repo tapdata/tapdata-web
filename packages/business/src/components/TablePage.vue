@@ -512,6 +512,11 @@ export default defineComponent({
                     })
                   }}
                 </span>
+                <el-divider
+                  v-if="$slots.multipleSelectionActions"
+                  direction="vertical"
+                  class="mx-0"
+                />
                 <slot name="multipleSelectionActions" />
               </div>
             </transition>

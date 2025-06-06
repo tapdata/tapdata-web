@@ -13,7 +13,7 @@ overrides:
   '@formily/reactive-vue': ^2.3.0
   '@formily/shared': ^2.3.0
   '@formily/vue': ^2.3.0
-  element-plus: ^2.9.10
+  element-plus: ^2.9.11
   vue: ^3.4.29
   vue-virtual-scroller: 2.0.0-beta.8
 
@@ -27,8 +27,8 @@ importers:
   .:
     dependencies:
       element-plus:
-        specifier: ^2.9.10
-        version: 2.9.10(vue@3.5.13(typescript@5.8.3))
+        specifier: ^2.9.11
+        version: 2.9.11(vue@3.5.13(typescript@5.8.3))
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
@@ -178,8 +178,8 @@ importers:
         specifier: ^5.0.2
         version: 5.6.0
       element-plus:
-        specifier: ^2.9.10
-        version: 2.9.10(vue@3.5.13(typescript@5.8.3))
+        specifier: ^2.9.11
+        version: 2.9.11(vue@3.5.13(typescript@5.8.3))
       github-markdown-css:
         specifier: ^4.0.0
         version: 4.0.0
@@ -314,8 +314,8 @@ importers:
         specifier: ^5.0.2
         version: 5.6.0
       element-plus:
-        specifier: ^2.9.10
-        version: 2.9.10(vue@3.5.13(typescript@5.8.3))
+        specifier: ^2.9.11
+        version: 2.9.11(vue@3.5.13(typescript@5.8.3))
       github-markdown-css:
         specifier: ^4.0.0
         version: 4.0.0
@@ -713,8 +713,8 @@ importers:
         specifier: ^4.6.0
         version: 4.9.0
       element-plus:
-        specifier: ^2.9.10
-        version: 2.9.10(vue@3.5.13(typescript@5.8.3))
+        specifier: ^2.9.11
+        version: 2.9.11(vue@3.5.13(typescript@5.8.3))
       highlight.js:
         specifier: ^11.9.0
         version: 11.9.0
@@ -749,8 +749,8 @@ importers:
         specifier: ^2.1.0
         version: 2.1.0
       vue-i18n:
-        specifier: ^9.6.5
-        version: 9.14.4(vue@3.5.13(typescript@5.8.3))
+        specifier: ^11.1.5
+        version: 11.1.5(vue@3.5.13(typescript@5.8.3))
 
   packages/ldp:
     dependencies:
@@ -1559,16 +1559,16 @@ packages:
     resolution: {integrity: sha512-eOg92lvrn/aRUqbxRyvpEWnrvRuTYRifixHkYVpJiygTgVSBIHDqLh0SrMQXkafvULg3ck11V7xvR+zcgvpHFw==}
     engines: {node: '>=18'}
 
-  '@intlify/core-base@9.14.4':
-    resolution: {integrity: sha512-vtZCt7NqWhKEtHa3SD/322DlgP5uR9MqWxnE0y8Q0tjDs9H5Lxhss+b5wv8rmuXRoHKLESNgw9d+EN9ybBbj9g==}
+  '@intlify/core-base@11.1.5':
+    resolution: {integrity: sha512-xGRkISwV/2Trqb8yVQevlHm5roaQqy+75qwUzEQrviaQF0o4c5VDhjBW7WEGEoKFx09HSgq7NkvK/DAyuerTDg==}
     engines: {node: '>= 16'}
 
-  '@intlify/message-compiler@9.14.4':
-    resolution: {integrity: sha512-vcyCLiVRN628U38c3PbahrhbbXrckrM9zpy0KZVlDk2Z0OnGwv8uQNNXP3twwGtfLsCf4gu3ci6FMIZnPaqZsw==}
+  '@intlify/message-compiler@11.1.5':
+    resolution: {integrity: sha512-YLSBbjD7qUdShe3ZAat9Hnf9E8FRpN6qmNFD/x5Xg5JVXjsks0kJ90Zj6aAuyoppJQA/YJdWZ8/bB7k3dg2TjQ==}
     engines: {node: '>= 16'}
 
-  '@intlify/shared@9.14.4':
-    resolution: {integrity: sha512-P9zv6i1WvMc9qDBWvIgKkymjY2ptIiQ065PjDv7z7fDqH3J/HBRBN5IoiR46r/ujRcU7hCuSIZWvCAFCyuOYZA==}
+  '@intlify/shared@11.1.5':
+    resolution: {integrity: sha512-+I4vRzHm38VjLr/CAciEPJhGYFzWWW4HMTm+6H3WqknXLh0ozNX9oC8ogMUwTSXYR/wGUb1/lTpNziiCH5MybQ==}
     engines: {node: '>= 16'}
 
   '@jridgewell/gen-mapping@0.3.8':
@@ -3038,8 +3038,8 @@ packages:
   electron-to-chromium@1.5.138:
     resolution: {integrity: sha512-FWlQc52z1dXqm+9cCJ2uyFgJkESd+16j6dBEjsgDNuHjBpuIzL8/lRc0uvh1k8RNI6waGo6tcy2DvwkTBJOLDg==}
 
-  element-plus@2.9.10:
-    resolution: {integrity: sha512-W2v9jWnm1kl/zm4bSvCh8aFCVlxvhG3fmqiDZwyd6WQiWGE595J/mpjcCggEr+49QDgIymhXrpPMOPPSARUbng==}
+  element-plus@2.9.11:
+    resolution: {integrity: sha512-x4L/6YC8de4JtuE3vpaEugJdQIeHQaHtIYKyk67IeF6dTIiVax45aX4nWOygnh+xX+0gTvL6xO+9BZhPA3G82w==}
     peerDependencies:
       vue: ^3.4.29
 
@@ -5899,8 +5899,8 @@ packages:
     peerDependencies:
       vue: ^3.4.29
 
-  vue-i18n@9.14.4:
-    resolution: {integrity: sha512-B934C8yUyWLT0EMud3DySrwSUJI7ZNiWYsEEz2gknTthqKiG4dzWE/WSa8AzCuSQzwBEv4HtG1jZDhgzPfWSKQ==}
+  vue-i18n@11.1.5:
+    resolution: {integrity: sha512-XCwuaEA5AF97g1frvH/EI1zI9uo1XKTf2/OCFgts7NvUWRsjlgeHPrkJV+a3gpzai2pC4quZ4AnOHFO8QK9hsg==}
     engines: {node: '>= 16'}
     peerDependencies:
       vue: ^3.4.29
@@ -6724,7 +6724,7 @@ snapshots:
       '@formily/reactive-vue': 2.3.3(vue@3.5.13(typescript@5.8.3))
       '@formily/shared': 2.3.3
       '@formily/vue': 2.3.3(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
-      element-plus: 2.9.10(vue@3.5.13(typescript@5.8.3))
+      element-plus: 2.9.11(vue@3.5.13(typescript@5.8.3))
       resize-observer-polyfill: 1.5.1
       vue: 3.5.13(typescript@5.8.3)
       vue-slicksort: 1.2.0(vue@3.5.13(typescript@5.8.3))
@@ -6819,17 +6819,17 @@ snapshots:
 
   '@inquirer/figures@1.0.11': {}
 
-  '@intlify/core-base@9.14.4':
+  '@intlify/core-base@11.1.5':
     dependencies:
-      '@intlify/message-compiler': 9.14.4
-      '@intlify/shared': 9.14.4
+      '@intlify/message-compiler': 11.1.5
+      '@intlify/shared': 11.1.5
 
-  '@intlify/message-compiler@9.14.4':
+  '@intlify/message-compiler@11.1.5':
     dependencies:
-      '@intlify/shared': 9.14.4
+      '@intlify/shared': 11.1.5
       source-map-js: 1.2.1
 
-  '@intlify/shared@9.14.4': {}
+  '@intlify/shared@11.1.5': {}
 
   '@jridgewell/gen-mapping@0.3.8':
     dependencies:
@@ -8393,7 +8393,7 @@ snapshots:
 
   electron-to-chromium@1.5.138: {}
 
-  element-plus@2.9.10(vue@3.5.13(typescript@5.8.3)):
+  element-plus@2.9.11(vue@3.5.13(typescript@5.8.3)):
     dependencies:
       '@ctrl/tinycolor': 3.6.1
       '@element-plus/icons-vue': 2.3.1(vue@3.5.13(typescript@5.8.3))
@@ -11845,10 +11845,10 @@ snapshots:
     dependencies:
       vue: 3.5.13(typescript@5.8.3)
 
-  vue-i18n@9.14.4(vue@3.5.13(typescript@5.8.3)):
+  vue-i18n@11.1.5(vue@3.5.13(typescript@5.8.3)):
     dependencies:
-      '@intlify/core-base': 9.14.4
-      '@intlify/shared': 9.14.4
+      '@intlify/core-base': 11.1.5
+      '@intlify/shared': 11.1.5
       '@vue/devtools-api': 6.6.4
       vue: 3.5.13(typescript@5.8.3)
 

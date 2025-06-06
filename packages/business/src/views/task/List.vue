@@ -1,16 +1,9 @@
 <script>
-import {
-  clusterApi,
-  databaseTypesApi,
-  licensesApi,
-  taskApi,
-  workerApi,
-} from '@tap/api'
+import { clusterApi, licensesApi, taskApi, workerApi } from '@tap/api'
 import { DownBoldOutlined, FilterBar, SelectList } from '@tap/component'
 import i18n from '@tap/i18n'
-import { generateId } from '@tap/shared'
 import dayjs from 'dayjs'
-import { escapeRegExp } from 'lodash-es'
+import { escapeRegExp, uniqBy } from 'lodash-es'
 
 import { h } from 'vue'
 import {
@@ -386,7 +379,7 @@ export default {
             }
             if (this.isDaas) {
               const clusterData = await clusterApi.get()
-              return clusterData.items
+              const options = clusterData.items
                 .filter((item) => item.systemInfo.process_id)
                 .map((item) => {
                   return {
@@ -394,6 +387,7 @@ export default {
                     value: item.systemInfo.process_id,
                   }
                 })
+              return uniqBy(options, 'value')
             }
             const data = await this.$axios.get(
               `api/tcm/agent?filter=${encodeURIComponent(
@@ -560,7 +554,7 @@ export default {
       const tagMap = {}
 
       this.multipleSelection.forEach((row) => {
-        row.listtags.forEach((item) => {
+        row.listtags?.forEach((item) => {
           if (!tagMap[item.id]) {
             tagList.push(item)
             tagMap[item.id] = true

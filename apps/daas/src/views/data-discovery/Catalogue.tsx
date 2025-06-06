@@ -291,7 +291,11 @@ export default defineComponent({
               </el-button>
             )}
           </template>
-          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column
+            type="selection"
+            width="32"
+            align="center"
+          ></el-table-column>
           <el-table-column
             label={i18n.t('public_name')}
             prop="name"

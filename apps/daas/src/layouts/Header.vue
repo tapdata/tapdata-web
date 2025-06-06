@@ -313,14 +313,14 @@ defineExpose({
           </template>
         </el-button>
         <template #dropdown>
-          <ElDropdownMenu class="no-triangle">
+          <ElDropdownMenu>
             <ElDropdownItem
               v-if="settingCode && email === 'admin@admin.com'"
               command="settings"
               >{{ $t('page_title_setting') }}
             </ElDropdownItem>
             <ElDropdownItem
-              v-readonlybtn="'home_notice_settings'"
+              v-if="hasPermissionByCode('home_notice_settings')"
               command="setting"
               >{{ $t('notify_setting') }}
             </ElDropdownItem>
@@ -340,7 +340,7 @@ defineExpose({
           </template>
         </el-button>
         <template #dropdown>
-          <ElDropdownMenu class="no-triangle">
+          <ElDropdownMenu>
             <ElDropdownItem
               v-for="(value, key) in languages"
               :key="key"
@@ -366,7 +366,7 @@ defineExpose({
           <span>{{ userName }}</span>
         </el-button>
         <template #dropdown>
-          <ElDropdownMenu class="no-triangle">
+          <ElDropdownMenu>
             <template v-for="item in dropdownListComputed" :key="item.name">
               <ElDropdownItem v-if="!item.route" :command="item.name">{{
                 $t(item.label)

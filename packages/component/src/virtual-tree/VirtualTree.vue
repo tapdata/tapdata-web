@@ -60,10 +60,6 @@ const el$ = ref<Nullable<HTMLElement>>(null)
 const dropIndicator$ = ref<Nullable<HTMLElement>>(null)
 const nodeRef = ref<Nullable<HTMLElement>>(null)
 
-setTimeout(() => {
-  console.log('nodeRef', nodeRef.value)
-}, 3000)
-
 provide(ROOT_TREE_INJECTION_KEY, {
   ctx: {
     emit,
