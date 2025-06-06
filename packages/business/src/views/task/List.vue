@@ -1,14 +1,9 @@
 <script>
-import {
-  clusterApi,
-  licensesApi,
-  taskApi,
-  workerApi,
-} from '@tap/api'
+import { clusterApi, licensesApi, taskApi, workerApi } from '@tap/api'
 import { DownBoldOutlined, FilterBar, SelectList } from '@tap/component'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
-import { escapeRegExp } from 'lodash-es'
+import { escapeRegExp, uniqBy } from 'lodash-es'
 
 import { h } from 'vue'
 import {
@@ -24,7 +19,6 @@ import Upload from '../../components/UploadDialog.vue'
 import syncTaskAgent from '../../mixins/syncTaskAgent'
 import { makeStatusAndDisabled, MILESTONE_TYPE, STATUS_MAP } from '../../shared'
 import SkipError from './SkipError'
-import { uniqBy } from 'lodash-es'
 
 export default {
   name: 'List',
@@ -560,7 +554,7 @@ export default {
       const tagMap = {}
 
       this.multipleSelection.forEach((row) => {
-        row.listtags.forEach((item) => {
+        row.listtags?.forEach((item) => {
           if (!tagMap[item.id]) {
             tagList.push(item)
             tagMap[item.id] = true

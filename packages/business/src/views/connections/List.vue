@@ -430,7 +430,7 @@ const handleSelectTag = () => {
   const tagMap: Record<string, boolean> = {}
 
   multipleSelection.value.forEach((row: any) => {
-    row.listtags.forEach((item: any) => {
+    row.listtags?.forEach((item: any) => {
       if (!tagMap[item.id]) {
         tagList.push(item)
         tagMap[item.id] = true

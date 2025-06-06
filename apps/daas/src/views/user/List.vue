@@ -347,7 +347,7 @@ export default {
       const tagMap = {}
 
       this.multipleSelection.forEach((row) => {
-        row.listtags.forEach((item) => {
+        row.listtags?.forEach((item) => {
           if (!tagMap[item.id]) {
             tagList.push(item)
             tagMap[item.id] = true
