@@ -784,7 +784,12 @@ export default {
         </el-dropdown>
       </template>
 
-      <el-table-column type="selection" width="45" :reserve-selection="true" />
+      <el-table-column
+        type="selection"
+        width="32"
+        align="center"
+        :reserve-selection="true"
+      />
       <el-table-column
         :label="$t('user_list_user_name')"
         prop="username"

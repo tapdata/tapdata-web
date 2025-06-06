@@ -228,7 +228,11 @@ export default defineComponent({
               onFetch={this.loadTableData}
             ></FilterBar>
           </template>
-          <el-table-column width="55" type="selection"></el-table-column>
+          <el-table-column
+            width="32"
+            type="selection"
+            align="center"
+          ></el-table-column>
           <el-table-column
             label={this.$t('object_list_name')}
             prop="name"

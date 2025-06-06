@@ -187,7 +187,7 @@ export default {
       <el-table-column
         reserve-selection
         type="selection"
-        width="45"
+        width="32"
         align="center"
         :selectable="(row) => !row.hasChildren"
       />

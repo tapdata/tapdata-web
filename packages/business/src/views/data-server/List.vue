@@ -91,6 +91,8 @@ export default {
       return [
         {
           type: 'selection',
+          width: 32,
+          align: 'center',
         },
         {
           label: this.$t('packages_business_data_server_list_fuwumingcheng'),

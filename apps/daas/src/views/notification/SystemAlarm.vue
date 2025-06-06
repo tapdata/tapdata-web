@@ -180,7 +180,7 @@ export default {
             @fetch="table.fetch(1)"
           />
         </template>
-        <el-table-column type="selection" />
+        <el-table-column type="selection" width="32" align="center" />
         <el-table-column
           :label="$t('packages_dag_components_alert_gaojingjibie')"
           prop="level"

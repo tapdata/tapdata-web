@@ -1,4 +1,5 @@
 <script>
+import { InfoFilled } from '@element-plus/icons-vue'
 import {
   applicationApi,
   connectionsApi,
@@ -24,6 +25,7 @@ export default {
     Drawer,
     VCodeEditor,
     ListSelect,
+    InfoFilled,
   },
   props: {
     host: String,
@@ -213,7 +215,7 @@ export default {
     parameterOptions() {
       return (
         this.form?.params?.filter(
-          (item) => !['page', 'limit'].includes(item.name),
+          (item) => item.name && !['page', 'limit'].includes(item.name),
         ) || []
       )
     },
@@ -1014,7 +1016,7 @@ export default {
         hide-required-asterisk
         class="data-server__form overflow-auto flex-1"
         :class="{
-          'p-6 pb-16': !inDialog,
+          'p-6': !inDialog,
         }"
         label-position="top"
         :model="form"
@@ -1337,13 +1339,22 @@ export default {
 
         <!-- 輸入参数 -->
         <div class="data-server-panel__title mt-4 mb-3">
-          <div>
+          <div class="flex align-items-center">
             <span>{{
               $t('packages_business_data_server_drawer_shurucanshu')
             }}</span>
-            <el-icon class="icon-button color-primary ml-4">
-              <el-icon-circle-plus />
-            </el-icon>
+            <el-button
+              v-if="isEdit && form.apiType === 'customerQuery'"
+              text
+              size="small"
+              type="primary"
+              class="ml-1"
+              @click="addItem('params')"
+            >
+              <template #icon>
+                <el-icon-circle-plus />
+              </template>
+            </el-button>
           </div>
         </div>
         <ElTable class="flex-1" :data="isEdit ? form.params : data.params">
@@ -1361,6 +1372,7 @@ export default {
                   :error="!form.params[$index].name ? 'true' : ''"
                   :show-message="false"
                   :rules="rules.param"
+                  class="mb-0"
                 >
                   <ElInput v-model="form.params[$index].name" />
                 </ElFormItem>
@@ -1435,9 +1447,18 @@ export default {
             width="60"
           >
             <template #default="{ $index }">
-              <el-icon class="icon-button">
-                <el-icon-remove />
-              </el-icon>
+              <el-button
+                v-if="$index > 1"
+                text
+                size="small"
+                @click="removeItem('params', $index)"
+              >
+                <template #icon>
+                  <el-icon>
+                    <el-icon-remove />
+                  </el-icon>
+                </template>
+              </el-button>
             </template>
           </ElTableColumn>
         </ElTable>
@@ -1449,16 +1470,25 @@ export default {
         >
           <!-- 筛选条件 -->
           <div class="data-server-panel__title mt-4 mb-3">
-            <div>
+            <div class="flex align-items-center">
               <span>{{
                 $t('packages_business_data_server_drawer_shaixuantiaojian')
               }}</span>
-              <el-icon class="icon-button color-primary ml-4">
-                <el-icon-circle-plus />
-              </el-icon>
+              <el-button
+                v-if="isEdit"
+                text
+                size="small"
+                type="primary"
+                class="ml-1"
+                @click="addItem('where')"
+              >
+                <template #icon>
+                  <el-icon-circle-plus />
+                </template>
+              </el-button>
             </div>
           </div>
-          <ul v-if="isEdit">
+          <ul v-if="isEdit" class="flex flex-column gap-2">
             <li
               v-for="(item, index) in form.where"
               :key="index"
@@ -1497,12 +1527,20 @@ export default {
                   />
                 </template>
               </ElSelect>
-              <el-icon class="icon-button">
-                <el-icon-remove />
-              </el-icon>
+
+              <el-button
+                text
+                size="small"
+                class="flex-shrink-0"
+                @click="removeItem('where', index)"
+              >
+                <template #icon>
+                  <el-icon-remove />
+                </template>
+              </el-button>
             </li>
           </ul>
-          <ul v-else>
+          <ul v-else class="flex flex-column gap-2">
             <li
               v-for="(item, index) in data.where"
               :key="index"
@@ -1517,16 +1555,25 @@ export default {
 
           <!-- 排列条件 -->
           <div class="data-server-panel__title mt-4 mb-3">
-            <div>
+            <div class="flex align-items-center">
               <span>{{
                 $t('packages_business_data_server_drawer_pailietiaojian')
               }}</span>
-              <el-icon class="icon-button color-primary ml-4">
-                <el-icon-circle-plus />
-              </el-icon>
+              <el-button
+                v-if="isEdit"
+                text
+                size="small"
+                type="primary"
+                class="ml-1"
+                @click="addItem('sort')"
+              >
+                <template #icon>
+                  <el-icon-circle-plus />
+                </template>
+              </el-button>
             </div>
           </div>
-          <ul v-if="isEdit">
+          <ul v-if="isEdit" class="flex flex-column gap-2">
             <li
               v-for="(item, index) in form.sort"
               :key="index"
@@ -1544,12 +1591,19 @@ export default {
                 <ElOption value="asc" label="ASC" />
                 <ElOption value="desc" label="DESC" />
               </ElSelect>
-              <el-icon class="icon-button">
-                <el-icon-remove />
-              </el-icon>
+              <el-button
+                class="flex-shrink-0"
+                text
+                size="small"
+                @click="removeItem('sort', index)"
+              >
+                <template #icon>
+                  <el-icon-remove />
+                </template>
+              </el-button>
             </li>
           </ul>
-          <ul v-else>
+          <ul v-else class="flex flex-column gap-2">
             <li
               v-for="(item, index) in data.sort"
               :key="index"
@@ -1572,21 +1626,26 @@ export default {
             :loading="fieldLoading"
             @selection-change="fieldsChanged"
           >
-            <ElTableColumn v-if="isEdit" type="selection" width="55" />
+            <ElTableColumn
+              v-if="isEdit"
+              type="selection"
+              width="32"
+              align="center"
+            />
             <ElTableColumn
               :label="$t('public_name')"
               prop="field_name"
-              min-width="200"
+              min-width="150"
             />
             <ElTableColumn
               :label="$t('public_type')"
               prop="originalDataType"
-              min-width="120"
+              min-width="100"
             />
             <ElTableColumn
               :label="$t('public_description')"
               prop="comment"
-              min-width="50"
+              min-width="150"
             />
           </ElTable>
         </template>
