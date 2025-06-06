@@ -205,7 +205,7 @@ const logMiningData = ref<LogMiningMonitor[]>([])
 
 // constants
 const DataSourceMap = {
-  nineBridge: 'Oracle 裸日志',
+  nineBridge: t('public_oracle_raw_log'),
 } as const
 
 // Watchers
@@ -909,8 +909,6 @@ const fetchLogMiningData = async () => {
     )
     return item
   })
-
-  console.log('fetchLogMiningData', data)
 }
 
 const handleTabChange = (tab: string) => {
@@ -923,6 +921,7 @@ const handleTabChange = (tab: string) => {
 <template>
   <PageContainer
     mode="auto"
+    container-class="bg-white rounded-xl shadow-sm gap-1"
     content-class="flex-1 min-h-0 overflow-auto px-6 pb-5 position-relative flex flex-column"
   >
     <el-tabs
@@ -935,7 +934,7 @@ const handleTabChange = (tab: string) => {
         :label="$t('daas_cluster_component_view')"
         name="component"
       />
-      <el-tab-pane label="日志挖掘监控" name="logMining" />
+      <el-tab-pane :label="$t('public_log_mining_monitor')" name="logMining" />
     </el-tabs>
 
     <section class="clusterManagement-container">

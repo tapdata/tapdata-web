@@ -94,11 +94,6 @@ const handleVisibleChange = (visible) => {
     }
   }
 }
-
-onBeforeUnmount(() => {
-  root.value = null
-  searchInput.value = null
-})
 </script>
 
 <template>
@@ -119,7 +114,6 @@ onBeforeUnmount(() => {
         v-model="search"
         :placeholder="$attrs.placeholder || 'Search'"
         clearable
-        @input="handleSearch"
       >
         <template #prefix>
           <VIcon>magnify</VIcon>

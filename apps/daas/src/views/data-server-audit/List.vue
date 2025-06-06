@@ -1,4 +1,5 @@
 <script>
+import { CircleCloseFilled, SuccessFilled } from '@element-plus/icons-vue'
 import { apiCallsApi } from '@tap/api'
 import { TablePage } from '@tap/business'
 
@@ -12,6 +13,8 @@ export default {
     PageContainer,
     TablePage,
     FilterBar,
+    CircleCloseFilled,
+    SuccessFilled,
   },
   data() {
     return {
@@ -221,22 +224,18 @@ export default {
         :show-overflow-tooltip="true"
       >
         <template #default="{ row }">
-          <span v-if="row.code == 200" class="success">
-            <el-icon class="connections-status__icon"
-              ><SuccessFilled
-            /></el-icon>
-            <span>
+          <el-text v-if="String(row.code) === '200'" type="success">
+            <el-icon><SuccessFilled /></el-icon>
+            <span class="ml-1">
               {{ $t('apiaudit_success') }}
             </span>
-          </span>
-          <span v-else class="error">
-            <el-icon class="connections-status__icon"
-              ><CircleCloseFilled
-            /></el-icon>
-            <span>
+          </el-text>
+          <el-text v-else type="danger">
+            <el-icon><CircleCloseFilled /></el-icon>
+            <span class="ml-1">
               {{ $t('public_status_failed') }}
             </span>
-          </span>
+          </el-text>
         </template>
       </el-table-column>
       <el-table-column

@@ -45,6 +45,5 @@ export const installElement = (app) => {
   ElSelectV2.props.clearIcon.default = CloseBoldOutlined
   ElSelectV2.props.suffixIcon.default = DownBoldOutlined
   ElDropdown.props.popperOptions.default = getDefault
-  ElLink.props.underline.default = false
   ElCollapseItem.props.icon.default = RightBoldOutlined
 }

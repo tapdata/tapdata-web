@@ -18,6 +18,10 @@ const locale = computed(() => {
   return langMap[i18nLocale.value || 'en']
 })
 
+const linkProps = {
+  underline: 'never',
+}
+
 provide('checkAgent', async (cb) => {
   const data = await workerApi.getAvailableAgent()
   if (!data?.result?.length) {
@@ -47,7 +51,7 @@ provide('openLocked', () => {
 </script>
 
 <template>
-  <ElConfigProvider :locale="locale">
+  <ElConfigProvider :locale="locale" :link="linkProps">
     <RouterView />
     <LockedDialog v-model:visible="showLocked" />
   </ElConfigProvider>

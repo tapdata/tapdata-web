@@ -31,8 +31,8 @@ interface ErrorCodeResponse {
 }
 
 interface Props {
-  connection: Record<string, any>
-  testType: string
+  connection?: Record<string, any>
+  testType?: string
 }
 
 const props = defineProps<Props>()

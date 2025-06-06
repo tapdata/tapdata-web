@@ -6,7 +6,13 @@ import {
   metadataInstancesApi,
   modulesApi,
 } from '@tap/api'
-import { FilterBar, VEmpty, VTable } from '@tap/component'
+import {
+  ExportOutlined,
+  FilterBar,
+  ImportOutlined,
+  VEmpty,
+  VTable,
+} from '@tap/component'
 
 import i18n from '@tap/i18n'
 import { escapeRegExp } from 'lodash-es'
@@ -16,7 +22,16 @@ import Upload from '../../components/UploadDialog'
 import Drawer from './Drawer'
 
 export default {
-  components: { PageContainer, FilterBar, Drawer, VTable, VEmpty, Upload },
+  components: {
+    PageContainer,
+    FilterBar,
+    Drawer,
+    VTable,
+    VEmpty,
+    Upload,
+    ImportOutlined,
+    ExportOutlined,
+  },
   props: {
     showFilter: {
       type: Boolean,
@@ -392,34 +407,14 @@ export default {
     </template>
     <template #actions>
       <ElButton
-        v-show="pendingSelection.length > 0"
-        size="mini"
-        @click="batchPublish"
-      >
-        <span> {{ $t('public_batch_publish') }}</span>
-      </ElButton>
-      <ElButton
-        v-show="multipleSelection.length > 0"
-        v-readonlybtn="'SYNC_job_export'"
-        class="btn message-button-cancel"
-        @click="handleExport"
-      >
-        <span> {{ $t('public_button_export') }}</span>
-      </ElButton>
-      <ElButton
         v-readonlybtn="'SYNC_job_import'"
         class="btn"
         @click="handleImport"
       >
+        <template #icon>
+          <ImportOutlined />
+        </template>
         <span> {{ $t('packages_business_button_bulk_import') }}</span>
-      </ElButton>
-      <ElButton
-        v-readonlybtn="'SYNC_job_export'"
-        class="btn"
-        :disabled="!multipleSelectionActive.length"
-        @click="handleExportApiDoc"
-      >
-        <span>{{ $t('packages_business_data_server_list_apIwendang') }}</span>
       </ElButton>
       <ElButton
         class="btn btn-create"
@@ -449,6 +444,32 @@ export default {
         class="flex-fill"
         @selection-change="handleSelectionChange"
       >
+        <template #multipleSelectionActions>
+          <ElButton v-show="pendingSelection.length > 0" @click="batchPublish">
+            <template #icon>
+              <i-lucide:cloud-upload />
+            </template>
+            <span> {{ $t('public_batch_publish') }}</span>
+          </ElButton>
+          <ElButton v-readonlybtn="'SYNC_job_export'" @click="handleExport">
+            <template #icon>
+              <ExportOutlined />
+            </template>
+            <span> {{ $t('public_button_export') }}</span>
+          </ElButton>
+          <ElButton
+            v-readonlybtn="'SYNC_job_export'"
+            class="btn"
+            @click="handleExportApiDoc"
+          >
+            <template #icon>
+              <ExportOutlined />
+            </template>
+            <span>{{
+              $t('packages_business_data_server_list_apIwendang')
+            }}</span>
+          </ElButton>
+        </template>
         <template #name="{ row }">
           <ElLink
             class="ellipsis"

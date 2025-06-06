@@ -343,6 +343,7 @@ export default {
           <ElLink
             v-readonlybtn="'SYNC_job_edition'"
             type="primary"
+            underline="never"
             @click="handleDetails(row)"
           >
             {{ row.value }}

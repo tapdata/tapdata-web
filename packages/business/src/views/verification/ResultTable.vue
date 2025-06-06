@@ -1,8 +1,12 @@
 <script>
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+import { CircleCloseFilled, SuccessFilled } from '@element-plus/icons-vue'
 import loadingImg from '@tap/assets/icons/loading.svg'
 
 export default {
+  components: {
+    CircleCloseFilled,
+    SuccessFilled,
+  },
   props: {
     type: String,
     data: {
@@ -12,11 +16,11 @@ export default {
       },
     },
   },
-  emits: ['row-click'],
+  emits: ['rowClick'],
   data() {
     return {
       current: 0,
-      loadingImg
+      loadingImg,
     }
   },
   computed: {
@@ -72,7 +76,7 @@ export default {
     },
     rowClickHandler(row) {
       this.current = row.taskId
-      $emit(this, 'row-click', row)
+      this.$emit('rowClick', row)
     },
   },
 }
