@@ -240,7 +240,7 @@ function getOptions(item: FilterItem) {
       break
     case 'datetimerange':
     case 'datetime':
-      setDefaultValue(item, 'value-format', 'timestamp')
+      // setDefaultValue(item, 'value-format', 'timestamp')
       break
     default:
       break
