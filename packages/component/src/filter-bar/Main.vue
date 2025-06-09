@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { debounce } from 'lodash-es'
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import VIcon from '../base/VIcon.vue'
@@ -85,7 +85,9 @@ function init() {
         const result: any[] = []
         el.key.split(',').forEach((k) => {
           newForm[k] = value?.[k]
-          result.push(newForm[k])
+          result.push(
+            newForm[k] && !Number.isNaN(newForm[k]) ? +newForm[k] : null,
+          )
         })
         newForm[el.key] = result
         el.value = newForm[el.key]

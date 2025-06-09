@@ -152,11 +152,8 @@ export default {
           selectedWidth: '200px',
         },
         {
-          // label: this.$t('apiaudit_interview_time'),
           key: 'start,end',
           type: 'datetimerange',
-          placeholder: this.$t('public_select_placeholder'),
-          selectedWidth: '200px',
           startPlaceholder: this.$t('apiaudit_interview_time_start'),
           endPlaceholder: this.$t('apiaudit_interview_time_end'),
         },

@@ -403,4 +403,6 @@ export default {
   public_start_import: '開始導入',
   public_log_mining_monitor: '日誌挖掘監控',
   public_oracle_raw_log: 'Oracle 裸日志',
+  public_start_time: '開始時間',
+  public_end_time: '結束時間',
 }

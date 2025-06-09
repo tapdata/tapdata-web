@@ -120,14 +120,14 @@ export default {
       <div
         class="search-bar flex gap-4 position-sticky top-0 bg-white z-10 pb-2"
       >
-        <el-date-picker
+        <DatetimeRange
           v-model="search.range"
           type="datetimerange"
           class="flex-grow-0"
-          style="width: 400px"
           range-separator="-"
           :start-placeholder="$t('dataFlow_startTime')"
           :end-placeholder="$t('dataFlow_endTime')"
+          @change="getData(1)"
         />
 
         <SelectList

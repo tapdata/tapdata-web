@@ -1,36 +1,54 @@
 <script setup lang="tsx">
+import { useI18n } from '@tap/i18n'
+import { computed, shallowRef } from 'vue'
 import { CloseIcon } from '../CloseIcon'
+
+const { t } = useI18n()
 
 const props = withDefaults(
   defineProps<{
-    label: string
+    label?: string
     width?: string
+    startPlaceholder?: string
+    endPlaceholder?: string
   }>(),
   {
     width: '380px',
   },
 )
 
-const model = defineModel<string[]>({
+const model = defineModel<string[] | undefined>({
   required: true,
 })
 
-const prefixIcon = () => {
-  return props.label ? (
-    <span class="filter-item-datetime-range__label">{props.label}</span>
-  ) : null
-}
+const startPlaceholder = computed(() => {
+  return props.startPlaceholder || t('public_start_time')
+})
 
-const clearIcon = () => {
-  return (
-    <span class="filter-item-datetime-range__clear-icon">
-      <el-icon>
-        <i-lucide-calendar-days class="filter-item-datetime-range__clear-icon__calendar" />
-        <CloseIcon class="filter-item-datetime-range__clear-icon__close" />
-      </el-icon>
-    </span>
-  )
-}
+const endPlaceholder = computed(() => {
+  return props.endPlaceholder || t('public_end_time')
+})
+
+const prefixIcon = shallowRef({
+  render: () => {
+    return props.label ? (
+      <span class="filter-item-datetime-range__label">{props.label}</span>
+    ) : null
+  },
+})
+
+const clearIcon = shallowRef({
+  render: () => {
+    return (
+      <span class="filter-item-datetime-range__clear-icon">
+        <el-icon>
+          <i-lucide-calendar-days class="filter-item-datetime-range__clear-icon__calendar" />
+          <CloseIcon class="filter-item-datetime-range__clear-icon__close" />
+        </el-icon>
+      </span>
+    )
+  },
+})
 </script>
 
 <template>
@@ -42,6 +60,8 @@ const clearIcon = () => {
     :prefix-icon="prefixIcon"
     :clear-icon="clearIcon"
     :style="{ width: props.width }"
+    :start-placeholder="startPlaceholder"
+    :end-placeholder="endPlaceholder"
   />
 </template>
 
