@@ -358,7 +358,7 @@ export default {
       <main class="api-monitor-main">
         <section
           v-loading="loadingTotal"
-          class="bg-white api-monitor-card mb-5"
+          class="bg-white api-monitor-card rounded-xl mb-5"
         >
           <div class="p-6">
             <span class="fs-6">{{ $t($route.meta.title) }}</span
@@ -469,7 +469,7 @@ export default {
         >
           <div
             v-loading="loadingTotal"
-            class="flex flex-column api-monitor-chart api-monitor-card bg-white overflow-hidden pt-5"
+            class="flex flex-column api-monitor-chart api-monitor-card bg-white overflow-hidden pt-5 rounded-xl"
           >
             <div class="api-monitor-chart__text mb-2 pl-5">
               {{ $t('api_monitor_total_warningCount') }}
@@ -507,7 +507,7 @@ export default {
             </div>
           </div>
           <div
-            class="flex flex-column flex-1 bg-white api-monitor-table api-monitor-card overflow-hidden ml-5 mr-5 pl-5 pt-5"
+            class="flex flex-column flex-1 bg-white api-monitor-table api-monitor-card overflow-hidden ml-5 mr-5 pl-5 pt-5 rounded-xl"
           >
             <div class="api-monitor-chart__text mb-2">
               {{ $t('api_monitor_total_FailRate') }}
@@ -541,7 +541,7 @@ export default {
             </VTable>
             <el-pagination
               v-model:current-page="page.failRateCurrent"
-              class="mb-5 mr-2"
+              class="mb-5 mt-3 mr-3"
               layout="->,total, prev,pager, next"
               background
               :page-size="5"
@@ -550,7 +550,7 @@ export default {
             />
           </div>
           <div
-            class="flex flex-column flex-1 bg-white api-monitor-card overflow-hidden pl-5 pt-5"
+            class="flex flex-column flex-1 bg-white api-monitor-card overflow-hidden pl-5 pt-5 rounded-xl"
           >
             <div class="api-monitor-chart__text mb-2">
               {{ $t('api_monitor_total_consumingTime') }}
@@ -589,7 +589,7 @@ export default {
             </VTable>
             <el-pagination
               v-model:current-page="page.consumingTimeCurrent"
-              class="mb-5 mr-2"
+              class="mb-5 mt-3 mr-3"
               layout="->,total, prev,pager, next"
               background
               :page-size="5"
@@ -600,7 +600,7 @@ export default {
         </section>
         <!--api list -->
         <section
-          class="flex flex-column bg-white api-monitor-card api-monitor-list__min__height pl-5 pt-5"
+          class="flex flex-column bg-white api-monitor-card api-monitor-list__min__height pl-5 pt-5 rounded-xl"
         >
           <header class="api-monitor-chart__text mb-2">
             {{ $t('api_monitor_total_api_list') }}
