@@ -538,6 +538,7 @@ const getMatchNodeList = () => {
       objectNames,
       tableName: targetNode.tableName,
       tableNameRelation,
+      noPKVirtualFieldName: targetNode.noPKVirtualFieldName || '_no_pk_hash',
     }
   })
 }
@@ -626,11 +627,13 @@ const autoAddTable = async () => {
   const connectionSet = new Set()
   const tableNames = []
   const matchNodeList = getMatchNodeList()
+  const noPKVirtualFieldName = new Set()
 
   matchNodeList.forEach((m: any) => {
     connectionSet.add(m.sourceConnectionId)
     connectionSet.add(m.targetConnectionId)
     tableNames.push(...m.tableNames, ...m.objectNames)
+    noPKVirtualFieldName.add(m.noPKVirtualFieldName)
   })
 
   const connectionIds = [...connectionSet]
@@ -704,7 +707,7 @@ const autoAddTable = async () => {
 
           const updateList = cloneDeep(
             updateConditionFieldMap[tableNameRelation[ge]] || [],
-          ).filter((t: string) => t !== '_no_pk_hash')
+          ).filter((t: string) => !noPKVirtualFieldName.has(t))
           const findTable = data.find(
             (t: any) =>
               t.source.id === sourceConnectionId && t.original_name === ge,
