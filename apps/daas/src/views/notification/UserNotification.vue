@@ -145,18 +145,11 @@ export default {
           class="search-item"
           :placeholder="$t('notification_placeholder_keyword')"
           @change="getData(1)"
-        />
-        <!-- <el-select
-              clearable
-              v-if="isAdmin"
-              class="search-item"
-
-              v-model="search.userId"
-              :placeholder="$t('notification_placeholder_user')"
-              @change="getData(1)"
-            >
-              <el-option v-for="user in userOptions" :key="user.id" :value="user.id" :label="user.username"></el-option>
-            </el-select> -->
+        >
+          <template #prefix>
+            <VIcon>magnify</VIcon>
+          </template>
+        </el-input>
       </div>
       <ul class="list">
         <li v-for="record in list" :key="record._id" class="item">
