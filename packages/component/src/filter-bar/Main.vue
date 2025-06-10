@@ -322,7 +322,7 @@ const route = useRoute()
 
   .el-form-item {
     margin-bottom: 0;
-    margin-right: 8px;
+    margin-right: 12px;
   }
 }
 .filter-el-input {

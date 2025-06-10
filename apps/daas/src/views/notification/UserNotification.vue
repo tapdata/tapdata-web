@@ -118,7 +118,7 @@ export default {
   >
     <div v-loading="loading" class="user-notification">
       <div
-        class="search-bar flex gap-4 position-sticky top-0 bg-white z-10 pb-2"
+        class="search-bar flex gap-3 position-sticky top-0 bg-white z-10 pb-2"
       >
         <DatetimeRange
           v-model="search.range"
