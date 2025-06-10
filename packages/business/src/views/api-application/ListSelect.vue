@@ -9,6 +9,9 @@ export default {
     value: {
       type: [String, Number],
     },
+    label: {
+      type: String,
+    },
     params: {
       type: Object,
       default: () => {
@@ -40,9 +43,9 @@ export default {
     handleChange(opt) {
       const { label } = opt
       this.form.label = label
-      this.$emit('change', this.form.value, opt)
       this.$emit('update:value', this.form.value)
       this.$emit('update:label', this.form.label)
+      this.$emit('change', this.form.value, opt)
     },
 
     async getData(filter = {}) {
@@ -92,6 +95,7 @@ export default {
     :method="getData"
     :current-label="form.label"
     filterable
+    lazy
     @option-select="handleChange"
   />
 </template>

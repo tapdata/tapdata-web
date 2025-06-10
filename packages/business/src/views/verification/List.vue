@@ -169,7 +169,13 @@ const handleSortTable = ({
 
 const getData = ({ page }: { page: { current: number; size: number } }) => {
   const { current, size } = page
-  let { keyword, inspectMethod: method, mode, enabled, result } = searchParams.value
+  let {
+    keyword,
+    inspectMethod: method,
+    mode,
+    enabled,
+    result,
+  } = searchParams.value
   const where: any = {}
 
   // 精准搜索 iModel
@@ -644,7 +650,7 @@ onUnmounted(() => {
       <el-table-column
         reserve-selection
         type="selection"
-        width="38"
+        width="32"
         align="center"
       />
       <el-table-column

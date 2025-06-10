@@ -299,6 +299,8 @@ export default {
   apiaudit_visitor: 'Visitor',
   apiaudit_ip: 'Visitor IP',
   apiaudit_interview_time: 'Access Time',
+  apiaudit_interview_time_start: 'Access start time',
+  apiaudit_interview_time_end: 'Access end time',
   apiaudit_visit_result: 'Result',
   apiaudit_reason_fail: 'Failure reason',
   apiaudit_log_info: 'Log details',

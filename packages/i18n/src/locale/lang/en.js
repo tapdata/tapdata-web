@@ -412,4 +412,8 @@ export default {
   public_current_cost_time: 'Current Cost Time',
   public_threshold: 'Threshold',
   public_start_import: 'Start Import',
+  public_log_mining_monitor: 'Log Mining Monitor',
+  public_oracle_raw_log: 'Oracle Raw Log',
+  public_start_time: 'Start Time',
+  public_end_time: 'End Time',
 }

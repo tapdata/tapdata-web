@@ -1,12 +1,7 @@
 <script>
 import { modulesApi } from '@tap/api'
 import ApiForm from '@tap/business/src/views/data-server/Drawer.vue'
-import i18n from '@tap/i18n'
-
 import { generateId } from '@tap/shared'
-import axios from 'axios'
-import { cloneDeep } from 'lodash-es'
-import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 
 export default {
   name: 'CreateRestApi',
@@ -75,7 +70,7 @@ export default {
   <ElDialog
     v-model="visible"
     custom-class="t-dialog"
-    width="600"
+    width="800px"
     :close-on-click-modal="false"
     @update:model-value="handleVisible"
   >

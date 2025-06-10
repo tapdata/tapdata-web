@@ -98,9 +98,9 @@ export default {
   mounted() {
     this.init()
     window.addEventListener('resize', this.resize)
-    $once(this, 'hook:beforeDestroy', () => {
-      window.removeEventListener('resize', this.resize)
-    })
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.resize)
   },
   methods: {
     init() {

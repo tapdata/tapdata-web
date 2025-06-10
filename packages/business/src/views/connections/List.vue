@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { connectionsApi, databaseTypesApi } from '@tap/api'
+import { connectionsApi } from '@tap/api'
 import { FilterBar, SelectList, VIcon } from '@tap/component'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
@@ -430,7 +430,7 @@ const handleSelectTag = () => {
   const tagMap: Record<string, boolean> = {}
 
   multipleSelection.value.forEach((row: any) => {
-    row.listtags.forEach((item: any) => {
+    row.listtags?.forEach((item: any) => {
       if (!tagMap[item.id]) {
         tagList.push(item)
         tagMap[item.id] = true
@@ -729,7 +729,11 @@ onUnmounted(() => {
           @fetch="table.fetch(1)"
         >
           <template #connectionType>
-            <el-segmented v-model="searchParams.databaseModel" :options="connectionTypeOptions" @change="table.fetch(1)" />
+            <el-segmented
+              v-model="searchParams.databaseModel"
+              :options="connectionTypeOptions"
+              @change="table.fetch(1)"
+            />
           </template>
 
           <template #databaseType>
@@ -783,6 +787,7 @@ onUnmounted(() => {
                 alt=""
               />
               <ElLink
+                underline="never"
                 class="ellipsis block lh-base"
                 type="primary"
                 @click.stop="preview(row)"

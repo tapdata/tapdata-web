@@ -1,230 +1,108 @@
-<script>
-import i18n from '@tap/i18n'
-import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
+<script setup lang="tsx">
+import { useI18n } from '@tap/i18n'
+import { computed, shallowRef } from 'vue'
+import { CloseIcon } from '../CloseIcon'
 
-import Datetime from './Datetime'
+const { t } = useI18n()
 
-export default {
-  name: 'DatetimeRange',
-  components: { Datetime },
-  props: {
-    value: [String, Array, Number, Object],
-    label: {
-      type: String,
-      default: '',
-    },
-    startPlaceholder: {
-      type: String,
-      default: () => {
-        return i18n.t(
-          'packages_component_filter_bar_datetimerange_kaishishijian',
-        )
-      },
-    },
-    endPlaceholder: {
-      type: String,
-      default: () => {
-        return i18n.t(
-          'packages_component_filter_bar_datetimerange_jieshushijian',
-        )
-      },
-    },
-    range: {
-      type: Number,
-    },
+const props = withDefaults(
+  defineProps<{
+    label?: string
+    width?: string
+    startPlaceholder?: string
+    endPlaceholder?: string
+  }>(),
+  {
+    width: '380px',
   },
-  emits: ['change', 'update:value', , , 'update:value'],
-  data() {
-    return {
-      start: '',
-      end: '',
-      startOptions: {
-        disabledDate: (time) => {
-          const { end } = this
-          if (this.range) {
-            return (
-              Math.abs(
-                (end ? this.getTimestamp(end) : Date.now()) -
-                  this.getTimestamp(time),
-              ) > this.range
-            )
-          }
-          if (end) {
-            if (this.getTimestamp(end) === this.getDayStartTimestamp(end)) {
-              return (
-                this.getTimestamp(time) > this.getDayStartTimestamp(end) - 1
-              )
-            }
-            return this.getTimestamp(time) > this.getDayStartTimestamp(end)
-          }
-        },
-        selectableRange: null,
-      },
-      endOptions: {
-        disabledDate: (time) => {
-          const { start } = this
-          if (this.range) {
-            return (
-              Math.abs(
-                this.getTimestamp(time) -
-                  (start ? this.getTimestamp(start) : Date.now()),
-              ) > this.range
-            )
-          }
-          if (start) {
-            if (this.getTimestamp(start) === this.getDayEndTimestamp(start)) {
-              return (
-                this.getTimestamp(time) < this.getDayStartTimestamp(start) + 1
-              )
-            }
-            return this.getTimestamp(time) < this.getDayStartTimestamp(start)
-          }
-        },
-        selectableRange: null,
-      },
-      startRange: '00:00:00',
-      endRange: '23:59:59',
-    }
+)
+
+const model = defineModel<string[] | undefined>({
+  required: true,
+})
+
+const startPlaceholder = computed(() => {
+  return props.startPlaceholder || t('public_start_time')
+})
+
+const endPlaceholder = computed(() => {
+  return props.endPlaceholder || t('public_end_time')
+})
+
+const prefixIcon = shallowRef({
+  render: () => {
+    return props.label ? (
+      <span class="filter-item-datetime-range__label">{props.label}</span>
+    ) : null
   },
-  watch: {
-    start() {
-      this.setStartValue()
-      this.setStartRange()
-    },
-    end() {
-      this.setEndValue()
-      this.setEndRange()
-    },
+})
+
+const clearIcon = shallowRef({
+  render: () => {
+    return (
+      <span class="filter-item-datetime-range__clear-icon">
+        <el-icon>
+          <i-lucide-calendar-days class="filter-item-datetime-range__clear-icon__calendar" />
+          <CloseIcon class="filter-item-datetime-range__clear-icon__close" />
+        </el-icon>
+      </span>
+    )
   },
-  mounted() {
-    this.init()
-  },
-  methods: {
-    init() {
-      const { value } = this
-      if (value) {
-        this.start = Number(value[0])
-        this.end = Number(value[1])
-      }
-    },
-    changeStart() {
-      this.setEndRange()
-      this.emitFnc()
-    },
-    changeEnd() {
-      this.setStartRange()
-      this.emitFnc()
-    },
-    emitFnc() {
-      const { start, end } = this
-      const arr = [start, end]
-      $emit($emit(this, 'update:value', arr), 'change', arr)
-    },
-    resetRange(type) {
-      const { startRange, endRange } = this
-      const all = `${startRange}-${endRange}`
-      switch (type) {
-        case 'start':
-          this.startOptions.selectableRange = all
-          break
-        case 'end':
-          this.endOptions.selectableRange = all
-          break
-        default:
-          this.startOptions.selectableRange = all
-          this.endOptions.selectableRange = all
-          break
-      }
-    },
-    setStartRange() {
-      if (!this.end || !this.isSameDay()) {
-        this.resetRange()
-      } else {
-        this.startOptions.selectableRange = `${this.startRange}-${this.getHMs(this.end - 1000)}`
-      }
-    },
-    setEndRange() {
-      if (!this.start || !this.isSameDay()) {
-        this.resetRange()
-      } else {
-        this.endOptions.selectableRange = `${this.getHMs(this.start + 1000)}-${this.endRange}`
-      }
-    },
-    setStartValue() {
-      const { start, end } = this
-      if (start && end && start >= end) {
-        this.start = end - 1000
-      }
-    },
-    setEndValue() {
-      const { start, end } = this
-      if (start && end && start >= end) {
-        this.end = start + 1000
-      }
-    },
-    isSameDay() {
-      const { start, end } = this
-      return this.getDayStartTimestamp(start) === this.getDayStartTimestamp(end)
-    },
-    // 获取时分秒，自动补零
-    getHMs(timestamp) {
-      if (!timestamp) {
-        return
-      }
-      const date = new Date(timestamp)
-      const hours = date.getHours().toString().padStart(2, '0')
-      const minutes = date.getMinutes().toString().padStart(2, '0')
-      const seconds = date.getSeconds().toString().padStart(2, '0')
-      return `${hours}:${minutes}:${seconds}`
-    },
-    getTimestamp(timestamp) {
-      return new Date(timestamp).getTime()
-    },
-    // 获取当天00:00:00时间戳
-    getDayStartTimestamp(timestamp) {
-      return new Date(new Date(timestamp).setHours(0, 0, 0, 0)).getTime()
-    },
-    // 获取当天23:59:59时间戳，精确到s
-    getDayEndTimestamp(timestamp) {
-      return new Date(
-        new Date(timestamp).setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000 - 1000,
-      ).getTime()
-    },
-  },
-}
+})
 </script>
 
 <template>
-  <div class="filter-datetime-range flex gap-2">
-    <div v-if="!!label" class="filter-datetime-range__title">{{ label }}</div>
-    <Datetime
-      v-bind="$attrs"
-      ref="startTime"
-      v-model:value="start"
-      :picker-options="startOptions"
-      :placeholder="startPlaceholder"
-      class="none-border"
-      @change="changeStart"
-    />
-    <Datetime
-      v-bind="$attrs"
-      ref="endTime"
-      v-model:value="end"
-      :picker-options="endOptions"
-      :placeholder="endPlaceholder"
-      :title="$t('packages_component_filter_bar_datetimerange_zhi')"
-      class="none-border"
-      @change="changeEnd"
-    />
-  </div>
+  <el-date-picker
+    v-model="model"
+    class="filter-item-datetime-range"
+    type="datetimerange"
+    value-format="x"
+    :prefix-icon="prefixIcon"
+    :clear-icon="clearIcon"
+    :style="{ width: props.width }"
+    :start-placeholder="startPlaceholder"
+    :end-placeholder="endPlaceholder"
+  />
 </template>
 
-<style lang="scss" scoped>
-.filter-datetime-range {
-  cursor: pointer;
-  font-size: $fontBaseTitle;
-  .filter-datetime-range__title {
-    color: map.get($fontColor, slight);
+<style lang="scss">
+.filter-item-datetime-range {
+  &__label {
+    margin-right: 6px;
+    white-space: nowrap;
+    color: var(--el-text-color-caption);
+  }
+
+  .el-range__icon {
+    width: auto;
+  }
+
+  .el-range-input {
+    text-align: left;
+    flex: 1;
+  }
+
+  .el-range-separator {
+    flex: unset;
+    padding: 0 16px;
+  }
+
+  .el-range__close-icon {
+    visibility: visible !important;
+    margin-left: 6px;
+    opacity: 1 !important;
+
+    &.el-range__close-icon--hidden {
+      .filter-item-datetime-range__clear-icon__close {
+        display: none;
+      }
+    }
+
+    &:not(.el-range__close-icon--hidden) {
+      .filter-item-datetime-range__clear-icon__calendar {
+        display: none;
+      }
+    }
   }
 }
 </style>

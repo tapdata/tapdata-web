@@ -292,6 +292,8 @@ export default {
   apiaudit_visitor: '訪問人員',
   apiaudit_ip: '訪問人員IP',
   apiaudit_interview_time: '訪問時間',
+  apiaudit_interview_time_start: '訪問開始時間',
+  apiaudit_interview_time_end: '訪問結束時間',
   apiaudit_visit_result: '訪問結果',
   apiaudit_reason_fail: '失敗原因',
   apiaudit_log_info: '日誌詳情',

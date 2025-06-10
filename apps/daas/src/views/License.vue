@@ -193,7 +193,7 @@ export default {
       :remote-method="getData"
       @sort-change="handleSortTable"
     >
-      <ElTableColumn type="selection" width="45" />
+      <ElTableColumn type="selection" width="32" align="center" />
       <ElTableColumn
         prop="hostname"
         :label="$t('license_node_name')"

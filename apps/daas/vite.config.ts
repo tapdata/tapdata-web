@@ -209,15 +209,15 @@ export default defineConfig(({ mode }) => {
       //     assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
       //   },
       // },
-      cssCodeSplit: true,
-      sourcemap: false,
-      minify: 'terser',
-      terserOptions: {
-        compress: {
-          drop_console: true,
-          drop_debugger: true,
-        },
-      },
+      // cssCodeSplit: true,
+      // sourcemap: true,
+      // minify: 'terser',
+      // terserOptions: {
+      //   compress: {
+      //     drop_console: true,
+      //     drop_debugger: true,
+      //   },
+      // },
     },
   }
 })
