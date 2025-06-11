@@ -750,6 +750,7 @@ export default {
     class="sw-table-drawer flex flex-column"
     :visible="visible"
     width="850px"
+    :with-header="false"
     @update:visible="handleUpdateVisible"
   >
     <header class="px-6 pt-3">

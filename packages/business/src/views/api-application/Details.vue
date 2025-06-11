@@ -82,6 +82,7 @@ defineExpose({
     class="app-details"
     :class="{ 'flex flex-column': visible }"
     width="800px"
+    :withHeader="false"
     @visible="handleVisible"
   >
     <DataServerList

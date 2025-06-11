@@ -238,7 +238,7 @@ export default defineComponent({
                       tag="div"
                       ref={previewRef}
                       host={apiServerHost.value}
-                      class="border rounded-4 sw-table-drawer h-100 overflow-y-auto"
+                      class="border rounded-4 sw-table-drawer h-100 overflow-y-auto px-4"
                     ></ApiPreview>
                   ) : (
                     <TablePreview
