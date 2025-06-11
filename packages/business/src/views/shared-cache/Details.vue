@@ -6,16 +6,15 @@
     v-model:visible="visible"
     @visible="handleVisible"
   >
-    <div v-if="details.id" class="shared-cache-details--header flex pb-3">
-      <div class="img-box">
+    <template #header="{ titleClass }">
+      <div v-if="details.id" class="flex align-center gap-3 overflow-hidden" :class="titleClass">
         <VIcon class="icon">text</VIcon>
-      </div>
-      <div class="flex-fill ml-4 overflow-hidden">
         <div class="fs-6 ellipsis">{{ details.name }}</div>
-        <TaskStatus class="mt-2" :task="details" />
-      </div>
-    </div>
-    <ul class="mt-2">
+        <TaskStatus :task="details" />
+      </div>  
+    </template>
+    
+    <ul>
       <li v-for="item in info" :key="item.label" class="drawer-info__item">
         <VIcon class="fs-7 mt-2">{{ item.icon }}</VIcon>
         <div class="body ml-4">
