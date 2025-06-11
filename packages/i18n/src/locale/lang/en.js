@@ -416,5 +416,8 @@ export default {
   public_oracle_raw_log: 'Oracle Raw Log',
   public_start_time: 'Start Time',
   public_end_time: 'End Time',
+  public_start_download: 'Start Download',
   public_download_sdk: 'Download SDK',
+  public_please_input_version: 'Please input version',
+  public_please_select_client: 'Please select client',
 }

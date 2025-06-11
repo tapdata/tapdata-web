@@ -405,5 +405,8 @@ export default {
   public_oracle_raw_log: 'Oracle 裸日志',
   public_start_time: '開始時間',
   public_end_time: '結束時間',
+  public_start_download: '開始下載',
   public_download_sdk: '下載 SDK',
+  public_please_input_version: '請輸入版本',
+  public_please_select_client: '請選擇客戶端',
 }

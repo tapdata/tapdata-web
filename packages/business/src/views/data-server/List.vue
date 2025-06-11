@@ -15,12 +15,11 @@ import {
 } from '@tap/component'
 import i18n from '@tap/i18n'
 
-import { downloadBlob } from '@tap/shared'
-import axios from 'axios'
 import { escapeRegExp } from 'lodash-es'
 import PageContainer from '../../components/PageContainer.vue'
 
 import Upload from '../../components/UploadDialog'
+import DownloadSdkDialog from './DownloadSdkDialog.vue'
 import Drawer from './Drawer'
 
 export default {
@@ -33,6 +32,7 @@ export default {
     Upload,
     ImportOutlined,
     ExportOutlined,
+    DownloadSdkDialog,
   },
   props: {
     showFilter: {
@@ -81,7 +81,7 @@ export default {
           value: 'generating',
         },
       ],
-      downloadSdkLoading: false,
+      downloadSdkDialogVisible: false,
     }
   },
   computed: {
@@ -401,43 +401,6 @@ export default {
         this.$refs.table.doLayout()
       })
     },
-    async downloadSdk() {
-      this.downloadSdkLoading = true
-
-      const {
-        items: [apiServer],
-      } = await apiServerApi.get()
-
-      const blogData = await axios
-        .post(
-          '/api/openapi/generator/generate',
-          {
-            oas: apiServer.clientURI,
-            lan: 'java',
-            packageName: 'io.tapdata.sdk',
-            artifactId: 'tapdata-sdk',
-            groupId: 'io.tapdata',
-            version: '1.1.0',
-          },
-          {
-            responseType: 'blob',
-          },
-        )
-        .finally(() => {
-          this.downloadSdkLoading = false
-        })
-
-      if (blogData.data.type === 'application/json') {
-        this.$message.error(
-          this.$t('packages_business_connections_test_xiazaishibai'),
-        )
-        return
-      }
-
-      downloadBlob(blogData)
-
-      this.$message.success(this.$t('public_message_download_ok'))
-    },
   },
 }
 </script>
@@ -458,7 +421,7 @@ export default {
         </template>
         <span> {{ $t('packages_business_button_bulk_import') }}</span>
       </ElButton>
-      <el-button :loading="downloadSdkLoading" @click="downloadSdk">
+      <el-button @click="downloadSdkDialogVisible = true">
         <template #icon>
           <i-lucide:download />
         </template>
@@ -579,6 +542,8 @@ export default {
       :show-tag="false"
       @success="table.fetch()"
     />
+
+    <DownloadSdkDialog v-model="downloadSdkDialogVisible" />
   </PageContainer>
 </template>
 
