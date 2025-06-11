@@ -748,6 +748,8 @@ const tabChanged = (tab: string) => {
     })
     debugParams.value = newDebugParams
     getWorkers()
+  } else {
+    clearTimeout(intervalId.value)
   }
 }
 
@@ -880,10 +882,8 @@ const getWorkers = () => {
     .then((data) => {
       if (data?.items?.length) {
         const record = data.items[0] || {}
-        const workerStatus = record.workerStatus || record.worker_status || {}
-        if (status !== workerStatus.status) {
-          workerStatus.value = workerStatus.status
-        }
+        const worker = record.workerStatus || record.worker_status || {}
+        workerStatus.value = worker.status
       } else {
         workerStatus.value = 'stop'
       }
