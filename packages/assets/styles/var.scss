@@ -127,6 +127,9 @@ $tag-icon-span-gap: (
     'border-radius': 12px,
     //'title-font-size': var(--el-font-size-medium),
   ),
+  $drawer: (
+    'padding-primary': 20px 24px,
+  ),
   $table: (
     // 'header-bg-color': #fafafa,
     'header-text-color': var(--el-text-color-caption),

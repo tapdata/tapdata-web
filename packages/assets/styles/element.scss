@@ -216,9 +216,6 @@
   &__title {
     font-weight: 500;
   }
-  &__body {
-    //margin-bottom: var(--el-dialog-padding-primary);
-  }
   &__footer {
     //padding-top: calc(var(--el-dialog-padding-primary) / 2);
     padding-top: 16px;
@@ -250,6 +247,41 @@
     display: flex;
     width: 100%;
   }
+}
+
+// Drawer
+.el-drawer {
+  &__header {
+    padding: var(--el-drawer-padding-primary) !important;
+    margin-bottom: 0;
+    color: var(--el-text-color-primary);
+    // font-size: 18px;
+    font-weight: 500;
+  }
+
+  &__body {
+    --el-drawer-padding-primary: 8px 24px;
+  }
+
+  &__close-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px !important;
+    height: 24px !important;
+    line-height: 1;
+    font-size: 16px !important;
+    border-radius: var(--el-border-radius-small);
+    &:hover {
+      color: var(--icon-n1);
+      background-color: var(--icon-n1-hover);
+      text-decoration: none;
+      > * {
+        color: inherit !important;
+      }
+    }
+  }
+  
 }
 
 // Breadcrumb

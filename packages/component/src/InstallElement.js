@@ -1,8 +1,8 @@
 import {
   ElCollapseItem,
   ElDialog,
+  ElDrawer,
   ElDropdown,
-  ElLink,
   ElLoading,
   ElMessage,
   ElMessageBox,
@@ -39,6 +39,7 @@ export const installElement = (app) => {
   }
 
   ElDialog.props.closeIcon.default = CloseIcon
+  ElDrawer.props.closeIcon.default = CloseIcon
   ElSelect.props.popperOptions.default = getDefault
   ElSelect.props.suffixIcon.default = DownBoldOutlined
   ElSelectV2.props.popperOptions.default = getDefault

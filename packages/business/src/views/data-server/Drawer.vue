@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { InfoFilled } from '@element-plus/icons-vue'
+import { EditPen, InfoFilled } from '@element-plus/icons-vue'
 import {
   applicationApi,
   connectionsApi,
@@ -547,22 +547,6 @@ const getAPIServerToken = async (callback?: (token: string) => void) => {
   callback?.(newToken)
 }
 
-const setTabTitle = (title: string) => {
-  let $title = tabs.value?.$el.querySelector('.el-tabs__nav-title')
-  if (!$title) {
-    $title = document.createElement('span')
-    $title.setAttribute(
-      'class',
-      'el-tabs__nav-title mr-4 float-start fs-6 fw-sub font-color-dark',
-    )
-
-    const tabsHeader = tabs.value?.$el.querySelector('.el-tabs__nav-wrap')
-    tabsHeader?.insertBefore($title, tabsHeader.firstChild)
-  }
-
-  $title.textContent = title
-}
-
 // Methods
 const open = async (formData?: any) => {
   data.value = formData || {}
@@ -731,14 +715,6 @@ watch(visible, (v) => {
   if (!v) {
     intervalId.value && clearTimeout(intervalId.value)
   }
-
-  if (v) {
-    setTabTitle(
-      data.value.id
-        ? i18n.t('packages_business_data_server_drawer_fuwuxiangqing')
-        : i18n.t('packages_business_data_server_drawer_chuangjianfuwu'),
-    )
-  }
 })
 
 // Event handlers
@@ -751,6 +727,8 @@ const tabChanged = (tab: string) => {
     })
     debugParams.value = newDebugParams
     getWorkers()
+  } else {
+    clearTimeout(intervalId.value)
   }
 }
 
@@ -883,10 +861,8 @@ const getWorkers = () => {
     .then((data) => {
       if (data?.items?.length) {
         const record = data.items[0] || {}
-        const workerStatus = record.workerStatus || record.worker_status || {}
-        if (status !== workerStatus.status) {
-          workerStatus.value = workerStatus.status
-        }
+        const worker = record.workerStatus || record.worker_status || {}
+        workerStatus.value = worker.status
       } else {
         workerStatus.value = 'stop'
       }
@@ -1024,15 +1000,38 @@ const loadAllFields = async () => {
     :is="tag"
     v-model:visible="visible"
     v-loading="loading"
+    :title="$t('packages_business_data_server_drawer_fuwuxiangqing')"
+    body-class="pt-0"
     class="overflow-hidden"
     width="850px"
     @visible="$emit('visible', $event)"
   >
-    <div class="flex flex-column overflow-hidden pt-0 h-100">
+    <template #header="{ titleClass }">
+      <div :class="titleClass" class="flex align-center gap-3">
+        <span>{{
+          $t('packages_business_data_server_drawer_fuwuxiangqing')
+        }}</span>
+        <el-button
+          text
+          type="primary"
+          :class="{
+            invisible: !(tab === 'form' && data.status !== 'active' && !isEdit),
+          }"
+          @click="isEdit = true"
+        >
+          <el-icon class="mr-1">
+            <EditPen />
+          </el-icon>
+          {{ $t('public_button_edit') }}
+        </el-button>
+      </div>
+    </template>
+
+    <div class="flex flex-column overflow-hidden h-100">
       <!-- 顶部 标题 Tab -->
       <div
         v-if="!inDialog"
-        class="flex position-relative px-4"
+        class="flex position-relative"
         style="line-height: 48px"
       >
         <ElTabs
@@ -1057,29 +1056,31 @@ const loadAllFields = async () => {
         ref="form_ref"
         hide-required-asterisk
         class="data-server__form overflow-auto flex-1"
-        :class="{
-          'p-6': !inDialog,
-        }"
         label-position="top"
         :model="form"
         :rules="rules"
       >
         <template v-if="!inDialog">
           <div class="flex justify-content-between align-items-start">
-            <ElFormItem class="flex-1 form-item-name" prop="name">
+            <ElFormItem
+              class="flex-1 form-item-name"
+              prop="name"
+              :label="$t('daas_data_server_list_fuwumingcheng')"
+            >
               <ElInput
-                v-if="isEdit"
                 v-model="form.name"
+                :disabled="!isEdit"
                 maxlength="50"
                 :placeholder="
-                  $t('public_input_placeholder') + $t('public_name')
+                  $t('public_input_placeholder') +
+                  $t('daas_data_server_list_fuwumingcheng')
                 "
               />
-              <div v-else class="fw-sub fs-7 font-color-normal">
+              <!-- <div v-else class="fw-sub fs-7 font-color-normal">
                 {{ data.name }}
-              </div>
+              </div> -->
             </ElFormItem>
-            <template v-if="tab === 'form' && data.status !== 'active'">
+            <!-- <template v-if="tab === 'form' && data.status !== 'active'">
               <div v-if="isEdit" class="ml-4">
                 <ElButton v-if="data.id" @click="isEdit = false">{{
                   $t('public_button_cancel')
@@ -1091,17 +1092,23 @@ const loadAllFields = async () => {
               <ElButton v-else class="ml-4" type="primary" @click="edit">{{
                 $t('public_button_edit')
               }}</ElButton>
-            </template>
+            </template> -->
           </div>
           <div class="flex-1 mt-3 mb-3">
-            <ElInput
-              v-model="form.description"
-              type="textarea"
-              :placeholder="
-                $t('public_input_placeholder') + $t('public_description')
-              "
-              :disabled="!isEdit"
-            />
+            <ElFormItem
+              class="flex-1 form-item-name"
+              prop="name"
+              :label="$t('public_description')"
+            >
+              <ElInput
+                v-model="form.description"
+                type="textarea"
+                :placeholder="
+                  $t('public_input_placeholder') + $t('public_description')
+                "
+                :disabled="!isEdit"
+              />
+            </ElFormItem>
           </div>
           <div class="flex gap-4">
             <ElFormItem
@@ -1790,6 +1797,15 @@ const loadAllFields = async () => {
         </template>
       </ElForm>
     </div>
+
+    <template v-if="isEdit" #footer>
+      <ElButton v-if="data.id" @click="isEdit = false">{{
+        $t('public_button_cancel')
+      }}</ElButton>
+      <ElButton type="primary" @click="save()">{{
+        $t('public_button_save')
+      }}</ElButton>
+    </template>
   </component>
 </template>
 
@@ -1808,10 +1824,10 @@ const loadAllFields = async () => {
 }
 
 .data-server__tabs {
-  --el-tabs-header-height: 48px;
-  :deep(.el-tabs__header.is-top) {
-    margin: 0;
-  }
+  // --el-tabs-header-height: 48px;
+  // :deep(.el-tabs__header.is-top) {
+  //   margin: 0;
+  // }
 }
 
 .data-server__form {

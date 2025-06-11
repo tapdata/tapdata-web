@@ -351,6 +351,7 @@ export default defineComponent({
     })
   },
   beforeUnmount() {
+    this.isDestroyed = true
     clearTimeout(this.treeTimer)
     this.unwatchFdmAndMdm?.()
   },
@@ -464,6 +465,7 @@ export default defineComponent({
 
     async initTree() {
       clearTimeout(this.treeTimer)
+      if (this.isDestroyed) return
       this.treeData = await this.getConnectionList()
 
       if (this.startingTour && this.newConnectionId) {
