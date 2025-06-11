@@ -13,7 +13,7 @@ const formRef = useTemplateRef<FormInstance>('formRef')
 
 const loading = ref(false)
 const form = reactive({
-  version: 'v1.0.0',
+  version: '1.0.0',
   clientId: '',
 })
 const clientOptions = ref<{ label: string; value: string }[]>([])
