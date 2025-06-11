@@ -15,8 +15,8 @@ const visible = defineModel<boolean>('visible')
 
 <template>
   <el-drawer v-model="visible" :size="width" modal-class="bg-transparent">
-    <template #header>
-      <slot name="header" />
+    <template #header="scope">
+      <slot name="header" v-bind="scope" />
     </template>
 
     <slot />
