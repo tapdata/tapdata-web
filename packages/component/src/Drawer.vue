@@ -1,60 +1,36 @@
-<script>
-import { $emit, $off, $on, $once } from '../utils/gogocodeTransfer'
-export default {
-  name: 'Drawer',
-  props: {
-    visible: Boolean,
-    width: {
-      type: String,
-      default: () => {
-        return '304px'
-      },
-    },
+<script setup lang="ts">
+import { ref } from 'vue'
+
+withDefaults(
+  defineProps<{
+    width?: string
+  }>(),
+  {
+    width: '400px',
   },
-  emits: ['update:visible', 'visible'],
-  watch: {
-    visible() {
-      this.resize()
-    },
-  },
-  mounted() {
-    const mainContainer = document.body.querySelectorAll('.layout-main')[0]
-    if (mainContainer) {
-      mainContainer.append(this.$el)
-    } else {
-      document.body.append(this.$el)
-    }
-    this.resize()
-    document.querySelector('#app').addEventListener('mouseup', this.blur)
-  },
-  unmounted() {
-    this?.$el?.parentNode?.removeChild(this.$el)
-    document.querySelector('#app').removeEventListener('mouseup', this.blur)
-  },
-  methods: {
-    resize() {
-      const top =
-        document.body.querySelectorAll('.layout-header')?.[0]?.clientHeight || 0
-      const height = document.body.clientHeight - top
-      this.height = `${height}px`
-    },
-    blur(e) {
-      if (this.visible) {
-        const drawer = this.$refs.drawer
-        if (drawer && !drawer.contains(e.target)) {
-          $emit(this, 'update:visible', false)
-          $emit(this, 'visible', false)
-        }
-      }
-    },
-  },
-}
+)
+
+const visible = defineModel<boolean>('visible')
 </script>
 
 <template>
-  <div v-show="visible" ref="drawer" class="drawer-wrapper" :style="{ width }">
+  <el-drawer v-model="visible" :size="width" modal-class="bg-transparent">
+    <template #header>
+      <slot name="header" />
+    </template>
+
     <slot />
-  </div>
+
+    <template v-if="$slots.footer" #footer>
+      <slot name="footer" />
+    </template>
+  </el-drawer>
+  <!-- <div
+    v-show="visible"
+    ref="drawer"
+    class="drawer-wrapper"
+    :style="{ width }"
+  /> -->
 </template>
 
 <style lang="scss">

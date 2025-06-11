@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { connectionsApi, dataPermissionApi, proxyApi, usersApi } from '@tap/api'
-import { getIcon } from '@tap/assets/icons'
 import { Drawer, VIcon } from '@tap/component'
 import i18n from '@tap/i18n'
 import { openUrl } from '@tap/shared'
@@ -8,6 +7,7 @@ import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash-es'
 import { computed, inject, onBeforeUnmount, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { DatabaseIcon } from '../../components/DatabaseIcon'
 import StatusTag from '../../components/StatusTag.vue'
 import PermissionsDialog from './PermissionsDialog.vue'
 import { getConnectionIcon as getConnectionIconUtil } from './util'
@@ -515,7 +515,7 @@ const loadPermissions = (id: string) => {
     dataType: 'Connections',
     dataId: id,
   }
-  dataPermissionApi.permissions(filter).then((data) => {
+  dataPermissionApi.permissions(filter).then((data: any = []) => {
     usersApi
       .role({
         filter: JSON.stringify({
@@ -603,24 +603,21 @@ defineExpose({
 
 <template>
   <Drawer v-model:visible="visible" width="400px">
-    <div v-loading="loading" class="details-container">
-      <div class="container-item border-item flex pb-5">
-        <div class="pt-2">
-          <div class="img-box">
-            <img :src="getConnectionIcon()" />
-          </div>
-        </div>
-        <div class="ml-4 overflow-hidden">
-          <div class="fs-6 mb-2 ellipsis">{{ connection.name }}</div>
-          <div>
-            <status-tag text target="connection" :status="connection.status" />
-          </div>
-        </div>
+    <template #header>
+      <div class="flex align-center gap-2 font-color-dark overflow-hidden">
+        <DatabaseIcon
+          v-if="connection.pdkHash"
+          class="flex-shrink-0"
+          :pdk-hash="connection.pdkHash"
+          :size="24"
+        />
+        <div class="fs-6 ellipsis">{{ connection.name }}</div>
+        <status-tag text target="connection" :status="connection.status" />
       </div>
-      <div
-        v-if="!hideOperation"
-        class="button-line container-item border-item pt-4 pb-5"
-      >
+    </template>
+
+    <div v-loading="loading" class="details-container">
+      <div v-if="!hideOperation" class="mb-4">
         <div class="flex">
           <el-button
             v-if="showProgress"
@@ -772,7 +769,6 @@ defineExpose({
 
 <style lang="scss" scoped>
 .details-container {
-  padding: 16px 12px 16px 20px;
   overflow-y: auto;
 }
 .container-item {
