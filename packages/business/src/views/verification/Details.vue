@@ -3,6 +3,8 @@ import { inspectApi, inspectResultsApi } from '@tap/api'
 import { IconButton } from '@tap/component'
 import i18n from '@tap/i18n'
 import { checkEllipsisActive } from '@tap/shared'
+import Cookie from '@tap/shared/src/cookie'
+import axios from 'axios'
 import dayjs from 'dayjs'
 import PageContainer from '../../components/PageContainer.vue'
 import DataCorrectionDialog from './components/DataCorrectionDialog'
@@ -22,6 +24,7 @@ export default {
   mixins: [mixins],
   data() {
     return {
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       loading: false,
       typeMap,
       inspect: {},
@@ -34,6 +37,7 @@ export default {
         visible: false,
       },
       hasMoreErrorMsg: false,
+      exportSqlLoading: false,
     }
   },
   computed: {
@@ -83,16 +87,39 @@ export default {
         this.canStart
       )
     },
+    resultStatus() {
+      return this.resultInfo.status
+    },
   },
   created() {
     this.getData()
-    setInterval(() => {
+    this.interval = setInterval(() => {
       if (['running', 'scheduling'].includes(this.inspect?.status)) {
         this.getData(false)
       }
     }, 10000)
   },
+  beforeUnmount() {
+    clearInterval(this.interval)
+    clearTimeout(this.pollingTimer)
+  },
   methods: {
+    async fetchResultStatus() {
+      await inspectResultsApi
+        .get({
+          filter: JSON.stringify({
+            where: {
+              id: this.resultInfo.id,
+            },
+          }),
+        })
+        .then((data) => {
+          const result = data?.items?.[0]
+          if (result) {
+            this.resultInfo.status = result.status
+          }
+        })
+    },
     getData(showLoading = true) {
       if (showLoading) {
         this.loading = true
@@ -198,6 +225,51 @@ export default {
       this.dataCorrection.visible = true
     },
 
+    async handleExportSql() {
+      this.exportSqlLoading = true
+
+      try {
+        await inspectApi.exportSql(this.inspect.id, this.resultInfo.id)
+        this.$message.success(this.$t('public_start_generate_recovery_sql'))
+
+        this.startPolling()
+      } catch {
+        this.exportSqlLoading = false
+      }
+    },
+
+    async startPolling() {
+      clearTimeout(this.pollingTimer)
+
+      await this.fetchResultStatus()
+
+      if (this.resultInfo.status !== 'exported') {
+        this.pollingTimer = setTimeout(() => {
+          this.startPolling()
+        }, 5000)
+      } else {
+        this.exportSqlLoading = false
+        this.$message.success(this.$t('public_generate_recovery_sql_success'))
+      }
+    },
+
+    handleDownloadSql() {
+      let url =
+        `${axios.defaults.baseURL}/api/proxy/exportRecoverySql?inspectId=${this.inspect.id}&inspectResultId=${this.resultInfo.id}`.replace(
+          '//',
+          '/',
+        )
+
+      if (this.isDaas) {
+        const accessToken = Cookie.get('access_token')
+        url += `&access_token=${accessToken}`
+      } else if (TAP_ACCESS_TOKEN) {
+        url += `&__token=${TAP_ACCESS_TOKEN}`
+      }
+
+      window.open(url)
+    },
+
     onStarted() {
       this.dataCorrection.visible = false
       this.getData()
@@ -268,13 +340,26 @@ export default {
           />
 
           <!-- 一键修复 -->
-          <ElButton
-            v-if="showCorrection"
-            type="primary"
-            class="ml-4"
-            @click="handleCorrection"
-            >{{ $t('packages_business_data_correction') }}</ElButton
-          >
+          <template v-if="showCorrection">
+            <ElButton type="primary" class="ml-4" @click="handleCorrection">{{
+              $t('packages_business_data_correction')
+            }}</ElButton>
+            <ElButton
+              v-if="resultStatus !== 'exported'"
+              type="primary"
+              class="ml-4"
+              :loading="exportSqlLoading || resultStatus === 'exporting'"
+              @click="handleExportSql"
+              >{{ $t('public_generate_recovery_sql') }}</ElButton
+            >
+            <ElButton
+              v-else
+              type="primary"
+              class="ml-4"
+              @click="handleDownloadSql"
+              >{{ $t('public_download_recovery_sql') }}</ElButton
+            >
+          </template>
 
           <!-- 差异校验 -->
           <div v-if="showDiffInspect" class="flex align-items-center ml-4">
