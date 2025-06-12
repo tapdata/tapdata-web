@@ -405,4 +405,5 @@ export default {
   public_oracle_raw_log: 'Oracle 裸日志',
   public_start_time: '開始時間',
   public_end_time: '結束時間',
+  public_current_is_editing: '當前正在編輯，確定要關閉嗎？',
 }

@@ -416,4 +416,5 @@ export default {
   public_oracle_raw_log: 'Oracle Raw Log',
   public_start_time: 'Start Time',
   public_end_time: 'End Time',
+  public_current_is_editing: 'Current is editing, confirm to close?',
 }
