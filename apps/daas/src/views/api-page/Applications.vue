@@ -82,19 +82,17 @@ export default {
       const message = h('p', [
         `${this.$t('public_message_delete_confirm')} ${item.name}`,
       ])
-      this.$confirm(message, this.$t('public_message_title_prompt'), {
-        type: 'warning',
-      }).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        applicationApi.delete(item.id).then(() => {
-          this.$message.success(this.$t('public_message_delete_ok'))
-          this.table.fetch()
-        })
-        // .catch(() => {
-        // })
-      })
+      this.$confirm(this.$t('public_message_title_prompt'), message).then(
+        (resFlag) => {
+          if (!resFlag) {
+            return
+          }
+          applicationApi.delete(item.id).then(() => {
+            this.$message.success(this.$t('public_message_delete_ok'))
+            this.table.fetch()
+          })
+        },
+      )
     },
     // 保存
     createApplication() {

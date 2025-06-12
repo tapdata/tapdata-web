@@ -83,15 +83,8 @@ export default {
           break
         case 'signOut':
           this.$confirm(
-            this.$t('header_log_out_tip'),
             this.$t('header_log_out_title'),
-            {
-              center: true,
-              customClass: 'pro-confirm',
-              type: 'warning',
-              confirmButtonText: this.$t('public_button_confirm'),
-              cancelButtonText: this.$t('public_button_cancel'),
-            },
+            this.$t('header_log_out_tip'),
           ).then((res) => {
             if (res) {
               this.clearCookie()

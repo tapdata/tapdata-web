@@ -1,4 +1,5 @@
 import { showErrorMessage } from '@tap/business/src/components/error-message'
+import { Modal } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
 import axios, {
   type AxiosError,
@@ -74,14 +75,9 @@ const errorCallback = (error: AxiosError): Promise<AxiosError | string> => {
 
         setTimeout(() => {
           if (isSingleSession) {
-            ElMessageBox.confirm(
-              i18n.global.t('public_alert_401_tip'),
+            Modal.warning(
               i18n.global.t('public_alert_401'),
-              {
-                type: 'warning',
-                showCancelButton: false,
-                confirmButtonText: i18n.global.t('public_button_confirm'),
-              },
+              i18n.global.t('public_alert_401_tip'),
             )
           } else {
             Message.error({

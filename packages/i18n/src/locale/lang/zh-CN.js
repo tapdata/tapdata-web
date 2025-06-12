@@ -84,6 +84,7 @@ export default {
   public_status_ping_timeout: '心跳超时',
   // 按钮
   public_button_edit: '编辑',
+  public_button_ok: '知道了',
   public_button_confirm: '确定',
   public_button_cancel: '取消',
   public_button_back: '返回',

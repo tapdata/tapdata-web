@@ -83,13 +83,8 @@ export default {
     },
     remove(item) {
       this.$confirm(
-        this.$t('function_message_delete_content'),
         this.$t('function_message_delete_title'),
-        {
-          type: 'warning',
-          center: true,
-          customClass: 'pro-confirm',
-        },
+        this.$t('function_message_delete_content'),
       ).then((resFlag) => {
         if (!resFlag) {
           return
@@ -183,7 +178,11 @@ export default {
       @selection-change="handleSelectionChange"
     >
       <template #search>
-        <el-segmented v-model="searchParams.type" :options="typeOptions" @change="table.fetch(1)" />
+        <el-segmented
+          v-model="searchParams.type"
+          :options="typeOptions"
+          @change="table.fetch(1)"
+        />
         <ElButton plain class="btn-refresh" @click="table.fetch()">
           <el-icon><el-icon-refresh /></el-icon>
         </ElButton>

@@ -2,7 +2,7 @@
 import { settingsApi, webhookApi } from '@tap/api'
 import { dayjs } from '@tap/business'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { CloseIcon, VEmpty } from '@tap/component'
+import { CloseIcon, Modal, VEmpty } from '@tap/component'
 import { HighlightCode, JsonEditor } from '@tap/form'
 import { useI18n } from '@tap/i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -315,16 +315,15 @@ const loadHistory = (pageNum = 1) => {
     .finally(() => (historyState.loading = false))
 }
 
-const delWebhook = ({ id }: { id: string }) => {
-  ElMessageBox.confirm(t('packages_ldp_src_tablepreview_querenshanchu'), {
-    type: 'warning',
-  }).then(async (resFlag) => {
-    if (!resFlag) {
-      return
-    }
+const delWebhook = async ({ id }: { id: string }) => {
+  const confirmed = await Modal.confirm(
+    t('packages_ldp_src_tablepreview_querenshanchu'),
+  )
+
+  if (confirmed) {
     await webhookApi.deleteOne(id)
     await loadData()
-  })
+  }
 }
 
 const sendPing = () => {

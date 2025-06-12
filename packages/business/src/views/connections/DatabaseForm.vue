@@ -164,11 +164,9 @@ export default {
         : i18n.t('packages_business_connections_databaseform_cicaozuohuidiu')
       // let title = this.$route.params.id ? '是否放弃修改内容？' : '是否放弃创建该连接？'
 
-      this.$confirm(msg, '', {
+      this.$confirm(msg, {
         confirmButtonText: this.$t('packages_business_connection_form_give_up'),
         cancelButtonText: this.$t('public_button_cancel'),
-        type: 'warning',
-        showClose: false,
       }).then((resFlag) => {
         if (!resFlag) {
           return

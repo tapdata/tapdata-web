@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { User, WarningFilled } from '@element-plus/icons-vue'
 import { licensesApi, settingsApi, timeStampApi, usersApi } from '@tap/api'
-import { VIcon } from '@tap/component'
+import { Modal, VIcon } from '@tap/component'
 import { useI18n } from '@tap/i18n'
 import {
   getCurrentLanguage,
@@ -157,16 +157,9 @@ const command = (command: string) => {
       )
       break
     case 'signOut':
-      ElMessageBox.confirm(i18n.t('app_signOutMsg'), i18n.t('app_signOut'), {
-        type: 'warning',
-        center: true,
-        customClass: 'pro-confirm',
-      }).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        signOut()
-      })
+      Modal.confirm(i18n.t('app_signOut'), i18n.t('app_signOutMsg')).then(
+        (resFlag) => resFlag && signOut(),
+      )
       break
     case 'settings':
       router.push({

@@ -115,16 +115,16 @@ export default {
 
     // 确认删除角色
     handleDelete(item) {
-      this.$confirm(this.$t('role_list_delete_remind', [item.name]), '', {
-        type: 'warning',
-      }).then((flag) => {
-        if (flag) {
-          roleApi.delete(item.id, item.name).then(() => {
-            this.table.fetch()
-            this.$message.success(this.$t('role_list_delete_success'))
-          })
-        }
-      })
+      this.$confirm(this.$t('role_list_delete_remind', [item.name])).then(
+        (flag) => {
+          if (flag) {
+            roleApi.delete(item.id, item.name).then(() => {
+              this.table.fetch()
+              this.$message.success(this.$t('role_list_delete_success'))
+            })
+          }
+        },
+      )
     },
     // 查看删除角色权限
     delLinkRole(id) {

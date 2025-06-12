@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Check } from '@element-plus/icons-vue'
 import { databaseTypesApi, inspectApi, taskApi } from '@tap/api'
+import { Modal } from '@tap/component'
 import { InfiniteSelect } from '@tap/form'
 import i18n from '@tap/i18n'
 import Time from '@tap/shared/src/time'
@@ -397,19 +398,15 @@ const timingChangeHandler = (times: any) => {
   form.timing.end = times?.[1] || ''
 }
 
-const goBack = () => {
-  ElMessageBox.confirm(
-    i18n.t('packages_business_verification_backConfirmMessage'),
+const goBack = async () => {
+  const confirmed = await Modal.confirm(
     i18n.t('packages_business_verification_backConfirmTitle'),
-    {
-      type: 'warning',
-    },
-  ).then((resFlag) => {
-    if (!resFlag) {
-      return
-    }
+    i18n.t('packages_business_verification_backConfirmMessage'),
+  )
+
+  if (confirmed) {
     router.back()
-  })
+  }
 }
 
 const save = async (saveOnly = false) => {

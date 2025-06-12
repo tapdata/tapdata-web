@@ -311,11 +311,6 @@ export default {
       this.usingTasks = (await externalStorageApi.usingTask(row.id)) || []
       const flag = await this.$confirm(
         i18n.t('packages_business_external_storage_list_querenshanchuwai'),
-        '',
-        {
-          type: 'warning',
-          showClose: false,
-        },
       )
       if (flag) {
         if (this.usingTasks?.length) {

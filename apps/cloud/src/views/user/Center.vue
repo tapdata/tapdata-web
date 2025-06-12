@@ -346,11 +346,8 @@ export default {
     editPassword() {
       if (this.isDomesticStation && !this.userData.telephone) {
         this.$confirm(
-          i18n.t('user_Center_qingXianBangDingShou'),
           i18n.t('user_Center_bangDingShouJi'),
-          {
-            type: 'warning',
-          },
+          i18n.t('user_Center_qingXianBangDingShou'),
         ).then((resFlag) => {
           if (resFlag) {
             this.dialogObj.bindPhone = true
@@ -456,11 +453,8 @@ export default {
     },
     unbindWx() {
       this.$confirm(
-        i18n.t('user_Center_jieChuHouJiangWu'),
         i18n.t('user_Center_jieChuWeiXin'),
-        {
-          type: 'warning',
-        },
+        i18n.t('user_Center_jieChuHouJiangWu'),
       ).then((resFlag) => {
         if (resFlag) {
           this.$axios.patch('tm/api/user/unbindWx').then(() => {
@@ -600,13 +594,12 @@ export default {
           ? i18n.t('public_time_year')
           : i18n.t('dfs_instance_utils_geyue'))
       this.$confirm(
+        i18n.t('dfs_user_center_xudingfuwu'),
         i18n.t('dfs_user_center_ninjiangxudingr', {
           val1: row.content,
           val2: label,
         }),
-        i18n.t('dfs_user_center_xudingfuwu'),
         {
-          type: 'warning',
           dangerouslyUseHTMLString: true,
         },
       ).then((res) => {

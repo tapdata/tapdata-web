@@ -6,7 +6,6 @@ import {
   databaseTypesApi,
   externalStorageApi,
   logcollectorApi,
-  pdkApi,
   proxyApi,
 } from '@tap/api'
 import resize from '@tap/component/src/directives/resize'
@@ -16,7 +15,6 @@ import i18n from '@tap/i18n'
 import { checkConnectionName, openUrl, submitForm } from '@tap/shared'
 import { cloneDeep, isEmpty } from 'lodash-es'
 import { mapGetters } from 'vuex'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 import Test from '../../views/connections/Test'
 import { getConnectionIcon } from '../../views/connections/util'
 import ConnectorDoc from '../ConnectorDoc'
@@ -180,16 +178,14 @@ export default {
         : i18n.t('packages_business_connections_databaseform_cicaozuohuidiu')
       // let title = this.params.id ? '是否放弃修改内容？' : '是否放弃创建该连接？'
 
-      this.$confirm(msg, '', {
+      this.$confirm(msg, {
         confirmButtonText: this.$t('packages_business_connection_form_give_up'),
         cancelButtonText: this.$t('public_button_cancel'),
-        type: 'warning',
-        showClose: false,
       }).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        $emit(this, 'back')
+        this.$emit('back')
       })
     },
     submit(addNext = false) {
@@ -254,7 +250,7 @@ export default {
               result: true,
             })
             this.$message.success(this.$t('public_message_save_ok'))
-            $emit(this, addNext ? 'saveAndMore' : 'success', data)
+            this.$emit(addNext ? 'saveAndMore' : 'success', data)
           })
           .catch(() => {
             this.buried('connectionSubmit', '', {

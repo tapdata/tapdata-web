@@ -989,9 +989,7 @@ export default {
           item.name,
         )
       }
-      this.$confirm(msgObj.msg, '', {
-        type: 'warning',
-        showClose: false,
+      this.$confirm(msgObj.msg, {
         zIndex: 999999,
       }).then((resFlag) => {
         if (!resFlag) {
@@ -1010,9 +1008,7 @@ export default {
     stopTask(ids, item) {
       const msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name)
       const message = msgObj.msg
-      this.$confirm(message, '', {
-        type: 'warning',
-        showClose: false,
+      this.$confirm(message, {
         zIndex: 999999,
       }).then((resFlag) => {
         if (!resFlag) {

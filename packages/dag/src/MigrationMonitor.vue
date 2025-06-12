@@ -1112,9 +1112,7 @@ export default {
 
     handleReset() {
       const msg = this.getConfirmMessage('initialize')
-      this.$confirm(msg, '', {
-        type: 'warning',
-      }).then(async (resFlag) => {
+      this.$confirm(msg).then(async (resFlag) => {
         if (!resFlag) {
           return
         }

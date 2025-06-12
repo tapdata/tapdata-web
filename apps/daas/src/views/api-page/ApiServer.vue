@@ -135,9 +135,7 @@ export default {
       const message = h('p', [
         `${this.$t('public_message_delete_confirm')} ${item.clientName}`,
       ])
-      this.$confirm(message, '', {
-        type: 'warning',
-      }).then((resFlag) => {
+      this.$confirm(message).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -145,8 +143,6 @@ export default {
           this.$message.success(this.$t('public_message_delete_ok'))
           this.table.fetch()
         })
-        // .catch(() => {
-        // })
       })
     },
 

@@ -779,7 +779,7 @@ export default {
       cancelButtonText,
     ) {
       try {
-        await this.$confirm(message, headline, {
+        await this.$confirm(headline, message, {
           confirmButtonText,
           cancelButtonText,
           type,
@@ -2351,11 +2351,7 @@ export default {
           }
         }
       } else if (code === 'Task.OldVersion') {
-        this.$confirm('', i18n.t('packages_dag_task_old_version_confirm'), {
-          center: true,
-          customClass: 'pro-confirm',
-          type: 'warning',
-          closeOnClickModal: false,
+        this.$confirm(i18n.t('packages_dag_task_old_version_confirm'), {
           confirmButtonText: i18n.t('public_button_refresh'),
         }).then((resFlag) => {
           resFlag && location.reload()
@@ -2433,10 +2429,7 @@ export default {
     handleStop() {
       const message = this.getConfirmMessage('stop')
 
-      this.$confirm(message, '', {
-        type: 'warning',
-        showClose: false,
-      }).then(async (resFlag) => {
+      this.$confirm(message).then(async (resFlag) => {
         if (!resFlag) {
           return
         }
@@ -2454,10 +2447,7 @@ export default {
 
     handleForceStop() {
       const msg = this.getConfirmMessage('force_stop')
-      this.$confirm(msg, '', {
-        type: 'warning',
-        showClose: false,
-      }).then(async (resFlag) => {
+      this.$confirm(msg).then(async (resFlag) => {
         if (!resFlag) {
           return
         }
@@ -2470,9 +2460,7 @@ export default {
 
     handleReset() {
       const msg = this.getConfirmMessage('initialize')
-      this.$confirm(msg, '', {
-        type: 'warning',
-      }).then(async (resFlag) => {
+      this.$confirm(msg).then(async (resFlag) => {
         if (!resFlag) {
           return
         }

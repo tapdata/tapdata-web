@@ -35,7 +35,6 @@
 </template>
 
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 
 import { appApi, modulesApi } from '@tap/api'
@@ -82,12 +81,11 @@ export default {
             return
           }
           this.$confirm(
+            i18n.t('packages_business_application_delete_shanchuyingyong'),
             i18n.t('packages_business_application_delete_ninzhengzaishanchu', {
               val1: row.value,
             }),
-            i18n.t('packages_business_application_delete_shanchuyingyong'),
             {
-              type: 'warning',
               dangerouslyUseHTMLString: true,
             },
           ).then((resFlag) => {
@@ -141,7 +139,7 @@ export default {
       appApi
         .delete(id)
         .then(() => {
-          $emit(this, 'success')
+          this.$emit('success')
           this.$message.success(this.$t('public_message_delete_ok'))
           this.handleClose()
         })

@@ -256,9 +256,7 @@ export default {
 
     forceStop(ids, row) {
       const msgObj = this.getConfirmMessage('force_stop', row)
-      this.$confirm(msgObj.msg, '', {
-        type: 'warning',
-        showClose: false,
+      this.$confirm(this.$t('public_message_title_prompt'), msgObj.msg, {
         dangerouslyUseHTMLString: true,
       }).then((resFlag) => {
         if (!resFlag) {
@@ -275,11 +273,8 @@ export default {
 
     stop(ids) {
       this.$confirm(
-        this.$t('packages_business_stop_confirm_message'),
         this.$t('packages_business_important_reminder'),
-        {
-          type: 'warning',
-        },
+        this.$t('packages_business_stop_confirm_message'),
       ).then((resFlag) => {
         if (!resFlag) {
           return
@@ -333,8 +328,7 @@ export default {
     handleReset(row) {
       const id = row.id
       const msgObj = this.getConfirmMessage('initialize', row)
-      this.$confirm(msgObj.msg, msgObj.title, {
-        type: 'warning',
+      this.$confirm(msgObj.title, msgObj.msg, {
         dangerouslyUseHTMLString: true,
       }).then((resFlag) => {
         if (!resFlag) {
@@ -357,12 +351,11 @@ export default {
       this.showUsingTaskDialog.list = await taskApi.taskConsoleRelations(filter)
 
       this.$confirm(
+        this.$t('packages_ldp_src_tablepreview_querenshanchu'),
         this.$t('packages_business_shared_mining_list_shanchurenwus', {
           val1: row.name,
         }),
-        '',
         {
-          type: 'warning',
           dangerouslyUseHTMLString: true,
         },
       ).then((flag) => {

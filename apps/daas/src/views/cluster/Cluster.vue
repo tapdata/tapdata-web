@@ -2,7 +2,7 @@
 import { agentGroupApi, clusterApi, proxyApi, workerApi } from '@tap/api'
 import { dayjs, makeDragNodeImage } from '@tap/business'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { FilterBar, IconButton, ProTable, VEmpty } from '@tap/component'
+import { FilterBar, IconButton, Modal, ProTable } from '@tap/component'
 import { useI18n } from '@tap/i18n'
 import { downloadJson } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
@@ -288,26 +288,20 @@ const editServe = (item: any, status: string, data: any) => {
   dialogForm.value = true
 }
 
-const delServe = (data: any, status: string) => {
+const delServe = async (data: any, status: string) => {
   const params = {
     uuid: data.uuid,
     id: data.id,
   }
 
   if (status === 'running') {
-    // Show confirmation dialog
-    ElMessageBox.confirm('', t('daas_cluster_del_confirm'), {
-      center: true,
-      customClass: 'pro-confirm',
-      type: 'warning',
-      confirmButtonText: t('public_button_confirm'),
-      cancelButtonText: t('public_button_cancel'),
-    }).then(() => {
+    const confirmed = await Modal.confirm(t('daas_cluster_del_confirm'))
+    if (confirmed) {
       clusterApi.removeMonitor(params).then(() => {
         getDataApi()
         ElMessage.success(t('public_message_save_ok'))
       })
-    })
+    }
   } else {
     ElMessage.error(t('cluster_startup_after_delete'))
   }
@@ -553,22 +547,18 @@ const closeDialogForm = () => {
   childRules.value?.closeDialogForm()
 }
 
-const delConfirm = (item: any) => {
+const delConfirm = async (item: any) => {
   const agentName = item.agentName || item.systemInfo.hostname
-  ElMessageBox.confirm(
-    '',
+  const confirmed = await Modal.confirm(
     `${t('public_message_delete_confirm')} ${agentName}?`,
-    {
-      type: 'warning',
-      center: true,
-      customClass: 'pro-confirm',
-    },
-  ).then(() => {
+  )
+
+  if (confirmed) {
     clusterApi.delete(item.id, item.name).then(() => {
       ElMessage.success(t('public_message_delete_ok'))
       getDataApi()
     })
-  })
+  }
 }
 
 const removeNode = (id: string) => {
@@ -727,23 +717,16 @@ const handleCommand = (command: string, node: any) => {
   }
 }
 
-const deleteNode = (id: string) => {
-  ElMessageBox.confirm(
-    '',
+const deleteNode = async (id: string) => {
+  const confirmed = await Modal.confirm(
     t('packages_business_application_delete_shifouquerenshan'),
-    {
-      center: true,
-      customClass: 'pro-confirm',
-      confirmButtonText: t('public_button_delete'),
-      cancelButtonText: t('packages_component_message_cancel'),
-      type: 'warning',
-      closeOnClickModal: false,
-    },
-  ).then(() => {
+  )
+
+  if (confirmed) {
     agentGroupApi.delete(id).then(() => {
       loadTags()
     })
-  })
+  }
 }
 
 const openSetTagDialog = () => {
@@ -1341,10 +1324,7 @@ const handleTabChange = (tab: string) => {
                         :content="$t('instance_details_xianchengziyuanxia')"
                         placement="top"
                       >
-                        <el-button
-                          text
-                          @click="downServeFn(item)"
-                        >
+                        <el-button text @click="downServeFn(item)">
                           <template #icon>
                             <i-lucide:monitor-down />
                           </template>
@@ -1354,10 +1334,7 @@ const handleTabChange = (tab: string) => {
                         :content="$t('instance_details_shujuyuanziyuan')"
                         placement="top"
                       >
-                        <el-button
-                          text
-                          @click="downConnectorsFn(item)"
-                        >
+                        <el-button text @click="downConnectorsFn(item)">
                           <template #icon>
                             <i-lucide:hard-drive-download />
                           </template>
@@ -1374,13 +1351,9 @@ const handleTabChange = (tab: string) => {
                           <i-lucide:square-plus />
                         </template>
                       </el-button>
-                  </el-tooltip>
-                    
+                    </el-tooltip>
 
-                    <el-button
-                      text
-                      @click="editAgent(item)"
-                    >
+                    <el-button text @click="editAgent(item)">
                       <template #icon>
                         <i-lucide:settings />
                       </template>
@@ -1804,10 +1777,7 @@ const handleTabChange = (tab: string) => {
             </div>
           </el-form-item>
           <el-form-item :label="$t('cluster_ip_display')" prop="command">
-            <el-select
-              v-model="custIP"
-              :placeholder="$t('cluster_ip_display')"
-            >
+            <el-select v-model="custIP" :placeholder="$t('cluster_ip_display')">
               <el-option
                 v-for="item in ips"
                 :key="item"

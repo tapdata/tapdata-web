@@ -83,3 +83,5 @@ export * from './DownBoldOutlined'
 export * from './InstallElement'
 
 export * from './icon'
+
+export * from './modal'

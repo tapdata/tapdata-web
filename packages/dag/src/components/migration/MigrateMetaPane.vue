@@ -208,14 +208,7 @@ export default {
     },
 
     rollbackAll() {
-      this.$confirm(
-        i18n.t('packages_form_field_inference_main_ninquerenyaoquan'),
-        '',
-        {
-          type: 'warning',
-          closeOnClickModal: false,
-        },
-      ).then((resFlag) => {
+      this.$confirm(i18n.t('packages_form_field_inference_main_ninquerenyaoquan')).then((resFlag) => {
         if (resFlag) {
           this.fieldChangeRules = []
           this.handleUpdate()

@@ -585,9 +585,7 @@ export default {
           item.name,
         )
       }
-      this.$confirm(msgObj.msg, '', {
-        type: 'warning',
-        showClose: false,
+      this.$confirm(msgObj.msg, {
         zIndex: 999999,
       }).then((resFlag) => {
         if (!resFlag) {
@@ -606,9 +604,7 @@ export default {
     stopTask(ids, item) {
       const msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name)
       const message = msgObj.msg
-      this.$confirm(message, '', {
-        type: 'warning',
-        showClose: false,
+      this.$confirm(message, {
         zIndex: 999999,
       }).then((resFlag) => {
         if (!resFlag) {
@@ -626,8 +622,7 @@ export default {
 
     deleteTask(ids, item = {}, canNotList) {
       const msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name)
-      this.$confirm(msgObj.msg, '', {
-        type: 'warning',
+      this.$confirm(msgObj.msg, {
         zIndex: 999999,
       }).then((resFlag) => {
         if (!resFlag) {
@@ -705,11 +700,9 @@ export default {
       }
 
       this.$confirm(
-        i18n.t('packages_ldp_src_tablepreview_gaibiaojianghuicong'),
         i18n.t('packages_ldp_src_tablepreview_querenshanchu'),
+        i18n.t('packages_ldp_src_tablepreview_gaibiaojianghuicong'),
         {
-          type: 'warning',
-          showClose: false,
           zIndex: 999999,
         },
       ).then((resFlag) => {

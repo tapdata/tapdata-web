@@ -94,9 +94,7 @@ export default {
         })
     },
     remove(item) {
-      this.$confirm(this.$t('public_message_delete_confirm'), this.$t('public_message_title_prompt'), {
-        type: 'warning',
-      }).then((resFlag) => {
+      this.$confirm(this.$t('public_message_title_prompt'), this.$t('public_message_delete_confirm')).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -126,6 +124,7 @@ export default {
           return
         }
         this.$confirm(
+          this.$t('dataFlow_importantReminder'),
           <div class="w-100">
             <div>{this.$t('packages_business_custom_node_edit_confirm')}</div>
             <div class="p-3 mt-3" style="background: #FAFAFA; font-size: 12px;">
@@ -150,12 +149,10 @@ export default {
               })}
             </div>
           </div>,
-          this.$t('dataFlow_importantReminder'),
           {
             customClass: 'custom-node-edit-confirm',
             confirmButtonText: this.$t('dataFlow_continueEditing'),
-            type: 'warning',
-          },
+          }, 
         ).then((resFlag) => {
           if (!resFlag) return
           open()
