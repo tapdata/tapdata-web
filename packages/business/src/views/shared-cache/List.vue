@@ -124,11 +124,8 @@ export default {
     },
     del(row = {}) {
       this.$confirm(
-        this.$t('public_message_delete_confirm'),
         this.$t('public_message_title_prompt'),
-        {
-          type: 'warning',
-        },
+        this.$t('public_message_delete_confirm'),
       ).then((flag) => {
         if (flag) {
           sharedCacheApi.delete(row.id).then(() => {
@@ -182,9 +179,7 @@ export default {
 
     forceStop(ids, row) {
       const msgObj = this.getConfirmMessage('force_stop', row)
-      this.$confirm(msgObj.msg, '', {
-        type: 'warning',
-        showClose: false,
+      this.$confirm(this.$t('public_message_title_prompt'), msgObj.msg, {
         dangerouslyUseHTMLString: true,
       }).then((resFlag) => {
         if (!resFlag) {
@@ -201,11 +196,8 @@ export default {
 
     stop(ids) {
       this.$confirm(
-        this.$t('packages_business_stop_confirm_message'),
         this.$t('packages_business_important_reminder'),
-        {
-          type: 'warning',
-        },
+        this.$t('packages_business_stop_confirm_message'),
       ).then((resFlag) => {
         if (!resFlag) {
           return
@@ -259,8 +251,7 @@ export default {
     handleReset(row) {
       const id = row.id
       const msgObj = this.getConfirmMessage('initialize', row)
-      this.$confirm(msgObj.msg, msgObj.title, {
-        type: 'warning',
+      this.$confirm(msgObj.title, msgObj.msg, {
         dangerouslyUseHTMLString: true,
       }).then((resFlag) => {
         if (!resFlag) {

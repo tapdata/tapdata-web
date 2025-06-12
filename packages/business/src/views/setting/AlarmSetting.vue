@@ -4,6 +4,7 @@ import {
   AdminOutlined,
   FilterOutlined,
   MemberOutlined,
+  Modal,
   VTable,
 } from '@tap/component'
 import i18n from '@tap/i18n'
@@ -363,32 +364,28 @@ const getChannels = async () => {
   }
 }
 
-const handleCheckMail = (val: boolean) => {
+const handleCheckMail = async (val: boolean) => {
   const email = (window as any).__USER_INFO__?.email
   if (isDaas.value || email || !val) {
     return
   }
-  ElMessageBox.confirm(
-    i18n.t('packages_business_setting_alarmsetting_jiancedaoninhai'),
+  const confirmed = await Modal.confirm(
     i18n.t('public_message_title_prompt'),
+    i18n.t('packages_business_setting_alarmsetting_jiancedaoninhai'),
     {
-      type: 'warning',
       confirmButtonText: i18n.t(
         'packages_business_setting_alarmsetting_qubangding',
       ),
     },
   )
-    .then(() => {
-      router.push({
-        name: 'userCenter',
-        query: {
-          bind: 'email',
-        },
-      })
+  if (confirmed) {
+    router.push({
+      name: 'userCenter',
+      query: {
+        bind: 'email',
+      },
     })
-    .catch(() => {
-      // 用户取消
-    })
+  }
 }
 
 const showCustomMailTemplate = () => {

@@ -52,7 +52,7 @@ export default defineConfig(({ mode }) => {
         resolvers: [
           IconsResolver({
             prefix: 'Icon',
-            enabledCollections: ['lucide'],
+            enabledCollections: ['lucide', 'mingcute'],
           }),
           ElementPlusResolver({ importStyle: 'sass' }),
         ],
@@ -62,7 +62,7 @@ export default defineConfig(({ mode }) => {
       Components({
         resolvers: [
           IconsResolver({
-            enabledCollections: ['lucide'],
+            enabledCollections: ['lucide', 'mingcute'],
           }),
           ElementPlusResolver({ importStyle: 'sass' }),
         ],

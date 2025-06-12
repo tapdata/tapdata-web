@@ -654,9 +654,7 @@ export default {
         ids.length > 1,
         item.name,
       )
-      this.$confirm(msgObj.msg, msgObj.title, {
-        type: 'warning',
-      }).then((resFlag) => {
+      this.$confirm(msgObj.title, msgObj.msg, {}).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -679,9 +677,7 @@ export default {
 
     del(ids, item = {}, canNotList) {
       const msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name)
-      this.$confirm(msgObj.msg, '', {
-        type: 'warning',
-      }).then((resFlag) => {
+      this.$confirm(msgObj.msg).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -750,10 +746,7 @@ export default {
           item.name,
         )
       }
-      this.$confirm(msgObj.msg, '', {
-        type: 'warning',
-        showClose: false,
-      }).then((resFlag) => {
+      this.$confirm(msgObj.msg).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -770,10 +763,7 @@ export default {
     stop(ids, item = {}, canNotList) {
       const msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name)
       const message = msgObj.msg
-      this.$confirm(message, '', {
-        type: 'warning',
-        showClose: false,
-      }).then((resFlag) => {
+      this.$confirm(message).then((resFlag) => {
         if (!resFlag) {
           return
         }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { connectionsApi, dataPermissionApi, proxyApi, usersApi } from '@tap/api'
-import { Drawer, VIcon } from '@tap/component'
+import { Drawer, Modal, VIcon } from '@tap/component'
 import i18n from '@tap/i18n'
 import { openUrl } from '@tap/shared'
 import dayjs from 'dayjs'
@@ -252,34 +252,25 @@ const open = async (row: Connection) => {
   }
 }
 
-const edit = () => {
+const edit = async () => {
   const { id, pdkHash, definitionPdkId: pdkId, agentType, name } = connection
 
   if (agentType === 'Local') {
-    ElMessageBox.confirm(
-      i18n.t('packages_business_connections_list_dangqianlianjie') +
-        name +
-        i18n.t('packages_business_connections_list_zhengzaizuoweiF'),
-      '',
-      {
-        type: 'warning',
-        showClose: false,
-      },
-    ).then((resFlag) => {
-      if (!resFlag) {
-        return
-      }
+    const confirmed = await Modal.confirm(
+      `${i18n.t('packages_business_connections_list_dangqianlianjie')}${name}${i18n.t('packages_business_connections_list_zhengzaizuoweiF')}`,
+    )
 
-      router.push({
-        name: 'connectionsEdit',
-        params: {
-          id,
-        },
-        query: {
-          pdkHash,
-          pdkId,
-        },
-      })
+    if (!confirmed) return
+
+    router.push({
+      name: 'connectionsEdit',
+      params: {
+        id,
+      },
+      query: {
+        pdkHash,
+        pdkId,
+      },
     })
   } else {
     router.push({

@@ -278,11 +278,10 @@ export default {
         return
       }
       this.$confirm(
-        i18n.t('packages_business_setting_alarmsetting_jiancedaoninhai'),
         this.$t('public_message_title_prompt'),
+        i18n.t('packages_business_setting_alarmsetting_jiancedaoninhai'),
         {
-          type: 'warning',
-          confirmButtonText: i18n.t(
+          confirmButtonText: this.$t(
             'packages_business_setting_alarmsetting_qubangding',
           ),
         },

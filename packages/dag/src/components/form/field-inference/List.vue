@@ -435,12 +435,7 @@ export default {
         return
       }
       this.$confirm(
-        i18n.t('packages_form_field_inference_list_ninquerenyaohui'),
-        '',
-        {
-          type: 'warning',
-          closeOnClickModal: false,
-        },
+        i18n.t('packages_form_field_inference_list_ninquerenyaohui')
       ).then((resFlag) => {
         if (resFlag) {
           const { qualified_name } = this.data

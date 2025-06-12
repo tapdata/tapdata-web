@@ -9,7 +9,7 @@ import {
   roleApi,
   workerApi,
 } from '@tap/api'
-import { Drawer, VCodeEditor } from '@tap/component'
+import { Drawer, Modal, VCodeEditor } from '@tap/component'
 import i18n from '@tap/i18n'
 import { uid } from '@tap/shared'
 import axios from 'axios'
@@ -1006,14 +1006,7 @@ const handleBeforeClose = async (done: () => void) => {
     })
 
     if (hasChanges) {
-      const isConfirm = await ElMessageBox.confirm(
-        i18n.t('public_current_is_editing'),
-        {
-          type: 'warning',
-          confirmButtonText: i18n.t('public_button_confirm'),
-          cancelButtonText: i18n.t('public_button_cancel'),
-        },
-      ).catch(() => false)
+      const isConfirm = await Modal.confirm(i18n.t('public_current_is_editing'))
 
       isConfirm && done()
     } else {

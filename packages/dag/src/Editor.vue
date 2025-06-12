@@ -468,13 +468,9 @@ export default {
         this.$store.state.dataflow.taskId
       ) {
         this.$confirm(
-          this.$t('packages_dag_page_return_confirm_content'),
           this.$t('packages_dag_page_return_confirm_title'),
+          this.$t('packages_dag_page_return_confirm_content'),
           {
-            center: true,
-            customClass: 'pro-confirm',
-            type: 'warning',
-            closeOnClickModal: false,
             confirmButtonText: this.$t(
               'packages_dag_page_return_confirm_ok_text',
             ),

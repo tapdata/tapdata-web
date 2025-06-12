@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@iconify-json/lucide": "^1.2.45",
+    "@iconify-json/mingcute": "^1.2.3",
     "@rushstack/eslint-patch": "^1.8.0",
     "@sxzz/eslint-config": "^6.1.1",
     "@sxzz/prettier-config": "^2.2.1",

@@ -737,13 +737,10 @@ export default {
 
     deleteNode(data) {
       this.$confirm(
-        this.$t('packages_business_catalog_delete_confirm_message'),
         `${this.$t('public_message_delete_confirm')}: ${data.name}?`,
+        this.$t('packages_business_catalog_delete_confirm_message'),
         {
           confirmButtonText: this.$t('public_button_delete'),
-          cancelButtonText: this.$t('packages_component_message_cancel'),
-          type: 'warning',
-          closeOnClickModal: false,
         },
       ).then((resFlag) => {
         if (!resFlag) {

@@ -13,6 +13,7 @@ import {
 import { CloseBoldOutlined } from './CloseBoldOutlined'
 import { CloseIcon } from './CloseIcon'
 import { DownBoldOutlined } from './DownBoldOutlined'
+import { Modal } from './modal'
 import { RightBoldOutlined } from './RightBoldOutlined'
 import 'element-plus/theme-chalk/src/message.scss'
 import 'element-plus/theme-chalk/src/message-box.scss'
@@ -23,6 +24,8 @@ export const installElement = (app) => {
   app.use(ElMessage)
   app.use(ElMessageBox)
   app.use(ElNotification)
+
+  app.config.globalProperties.$confirm = Modal.confirm
 
   // 隐藏箭头后的offset
   const getDefault = () => {

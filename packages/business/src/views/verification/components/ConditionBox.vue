@@ -2,7 +2,7 @@
 import { InfoFilled, Loading, Plus, Right } from '@element-plus/icons-vue'
 import { action } from '@formily/reactive'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
-import { GitBook, VCodeEditor } from '@tap/component'
+import { GitBook, Modal, VCodeEditor } from '@tap/component'
 import SwitchNumber from '@tap/component/src/SwitchNumber.vue'
 import { InfiniteSelect as AsyncSelect, JsonEditor, SqlEditor } from '@tap/form'
 import i18n from '@tap/i18n'
@@ -542,37 +542,27 @@ const getMatchNodeList = () => {
   })
 }
 
-const handleClear = () => {
-  ElMessageBox.confirm(
-    i18n.t('packages_business_components_conditionbox_shifouqingkongsuo'),
+const handleClear = async () => {
+  const confirmed = await Modal.confirm(
     i18n.t('public_message_title_prompt'),
-    {
-      type: 'warning',
-    },
-  ).then((res) => {
-    if (!res) {
-      return
-    }
+    i18n.t('packages_business_components_conditionbox_shifouqingkongsuo'),
+  )
+  if (confirmed) {
     clearList()
-  })
+  }
 }
 
-const handleClearIndexEmpty = () => {
-  ElMessageBox.confirm(
-    i18n.t('packages_business_components_conditionbox_shifouquerenqing'),
+const handleClearIndexEmpty = async () => {
+  const confirmed = await Modal.confirm(
     i18n.t('public_message_title_prompt'),
-    {
-      type: 'warning',
-    },
-  ).then((res) => {
-    if (!res) {
-      return
-    }
+    i18n.t('packages_business_components_conditionbox_shifouquerenqing'),
+  )
 
+  if (confirmed) {
     conditionList.value = conditionList.value.filter(
       (t) => t.source.sortColumn && t.target.sortColumn,
     )
-  })
+  }
 }
 
 const clearList = () => {
@@ -1021,19 +1011,15 @@ const editScript = (index: number) => {
   dialogAddScriptVisible.value = true
 }
 
-const removeScript = (item: any) => {
-  ElMessageBox.confirm(
-    i18n.t('packages_business_verification_message_confirm_delete_script'),
+const removeScript = async (item: any) => {
+  const confirmed = await Modal.confirm(
     i18n.t('public_button_delete'),
-    {
-      type: 'warning',
-    },
-  ).then((resFlag) => {
-    if (!resFlag) {
-      return
-    }
+    i18n.t('packages_business_verification_message_confirm_delete_script'),
+  )
+
+  if (confirmed) {
     item.webScript = ''
-  })
+  }
 }
 
 const setFieldsByItem = (item: any[] = [], data: any[] = []) => {

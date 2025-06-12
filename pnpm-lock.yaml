@@ -39,6 +39,9 @@ importers:
       '@iconify-json/lucide':
         specifier: ^1.2.45
         version: 1.2.45
+      '@iconify-json/mingcute':
+        specifier: ^1.2.3
+        version: 1.2.3
       '@rushstack/eslint-patch':
         specifier: ^1.8.0
         version: 1.11.0
@@ -1548,6 +1551,9 @@ packages:
 
   '@iconify-json/lucide@1.2.45':
     resolution: {integrity: sha512-izW3wk7Ll5HgNMc/m41eOKXb7nL1zFxXZdMyBOtqdwusHXPr8IWSC/ReSgWgxUF3xyNwiQsso5Ppkta2wsUrPg==}
+
+  '@iconify-json/mingcute@1.2.3':
+    resolution: {integrity: sha512-yiEQfLBF5iwyOdxuY0kEU06+8Mp6Mrp14KVXTb+5jjSVuD71C9EQrzM/mm1Efd8Nu2amJalTPisl3loC8pHBqQ==}
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -6799,6 +6805,10 @@ snapshots:
   '@humanwhocodes/retry@0.4.2': {}
 
   '@iconify-json/lucide@1.2.45':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/mingcute@1.2.3':
     dependencies:
       '@iconify/types': 2.0.0
 

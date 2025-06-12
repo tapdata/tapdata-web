@@ -372,14 +372,8 @@ export default {
       }
 
       this.$confirm(
-        i18n.t('daas_role_role_ninhaiweibaocun'),
         this.$t('public_message_title_prompt'),
-        {
-          type: 'warning',
-          closeOnClickModal: false,
-          center: true,
-          customClass: 'pro-confirm',
-        },
+        this.$t('daas_role_role_ninhaiweibaocun'),
       ).then((flag) => {
         flag && this.save()
       })

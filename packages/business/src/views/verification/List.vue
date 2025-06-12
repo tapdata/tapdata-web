@@ -8,6 +8,7 @@ import {
   FileDocxColorful,
   FilterBar,
   ImportOutlined,
+  Modal,
   VIcon,
 } from '@tap/component'
 import { useI18n } from '@tap/i18n'
@@ -288,25 +289,21 @@ const startTask = (id: string) => {
     })
 }
 
-const remove = (id: string, row: InspectItem) => {
+const remove = async (id: string, row: InspectItem) => {
   const name = row.name
-  ElMessageBox.confirm(
-    `${t('packages_business_verification_deleteMessage')} ${name}?`,
+  const confirmed = await Modal.confirm(
     t('packages_business_dataFlow_importantReminder'),
+    `${t('packages_business_verification_deleteMessage')} ${name}?`,
     {
       confirmButtonText: t('public_button_delete'),
-      cancelButtonText: t('public_button_cancel'),
-      type: 'warning',
     },
-  ).then((resFlag) => {
-    if (!resFlag) {
-      return
-    }
-    inspectApi.delete(id).then(() => {
-      ElMessage.success(t('public_message_delete_ok'))
-      table.value?.fetch()
-    })
-  })
+  )
+
+  if (confirmed) {
+    await inspectApi.delete(id)
+    ElMessage.success(t('public_message_delete_ok'))
+    table.value?.fetch()
+  }
 }
 
 const goEdit = (id: string, flowId?: string) => {

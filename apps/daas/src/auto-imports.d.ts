@@ -17,4 +17,11 @@ declare global {
   const IconLucideFileText: typeof import('~icons/lucide/file-text')['default']
   const IconLucideHash: typeof import('~icons/lucide/hash')['default']
   const IconLucideTriangleAlert: typeof import('~icons/lucide/triangle-alert')['default']
+  const IconMingcuteCheckCircleFill: typeof import('~icons/mingcute/check-circle-fill')['default']
+  const IconMingcuteCloseCircleFill: typeof import('~icons/mingcute/close-circle-fill')['default']
+  const IconMingcuteErrorFill: typeof import('~icons/mingcute/error-fill')['default']
+  const IconMingcuteInformationFill: typeof import('~icons/mingcute/information-fill')['default']
+  const IconMingcuteWarning: typeof import('~icons/mingcute/warning')['default']
+  const IconMingcuteWarningFill: typeof import('~icons/mingcute/warning-fill')['default']
+  const IconMingcuteWarningFilled: typeof import('~icons/mingcute/warning-filled')['default']
 }

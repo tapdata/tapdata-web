@@ -459,8 +459,6 @@ export default {
       this.$confirm(this.$t('packages_component_classification_deteleMessage'), {
         confirmButtonText: this.$t('public_button_delete'),
         cancelButtonText: this.$t('public_button_cancel'),
-        type: 'warning',
-        closeOnClickModal: false,
       }).then((resFlag) => {
         if (!resFlag) {
           return

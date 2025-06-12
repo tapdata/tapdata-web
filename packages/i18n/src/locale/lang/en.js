@@ -84,6 +84,7 @@ export default {
   public_status_ping_timeout: 'Ping Timeout',
   // button
   public_button_edit: 'Edit',
+  public_button_ok: 'OK',
   public_button_confirm: 'OK',
   public_button_cancel: 'Cancel',
   public_button_back: 'Back',

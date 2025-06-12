@@ -385,12 +385,8 @@ export default {
             }, 1000)
           } else if (code === 'Ldp.RepeatTableName') {
             this.$confirm(
-              '',
               i18n.t('packages_business_mdm_table_duplication_confirm'),
               {
-                onlyTitle: true,
-                type: 'warning',
-                closeOnClickModal: false,
                 zIndex: 999999,
               },
             ).then((resFlag) => {
@@ -711,13 +707,10 @@ export default {
 
     deleteNode(data) {
       this.$confirm(
-        this.$t('packages_business_catalog_delete_confirm_message'),
         `${this.$t('public_message_delete_confirm')}: ${data.name}?`,
+        this.$t('packages_business_catalog_delete_confirm_message'),
         {
           confirmButtonText: this.$t('public_button_delete'),
-          cancelButtonText: this.$t('packages_component_message_cancel'),
-          type: 'warning',
-          closeOnClickModal: false,
         },
       ).then((resFlag) => {
         if (!resFlag) {

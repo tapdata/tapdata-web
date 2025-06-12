@@ -483,10 +483,7 @@ export default {
     },
     // 删除用户
     remove(item) {
-      this.$confirm(this.$t('user_list_del_user', [item.username]), '', {
-        type: 'warning',
-        closeOnClickModal: false,
-        showClose: false,
+      this.$confirm(this.$t('user_list_del_user', [item.username]), {
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
@@ -515,13 +512,13 @@ export default {
       const successMsg = this.$t('user_list_activetion_success')
       const errorMsg = this.$t('user_list_activetion_error')
       this.$confirm(
-        this.$t('user_list_activetion_user', [item.username]),
         this.handleStatus(
           params,
           successMsg,
           errorMsg,
           this.$t('user_list_activation'),
         ),
+        this.$t('user_list_activetion_user', [item.username]),
       )
     },
     // 冻结
@@ -533,13 +530,13 @@ export default {
       const successMsg = this.$t('user_list_freeze_success')
       const errorMsg = this.$t('user_list_freeze_error')
       this.$confirm(
-        this.$t('user_list_freeze_user', [item.username]),
         this.handleStatus(
           params,
           successMsg,
           errorMsg,
           this.$t('user_list_freeze'),
         ),
+        this.$t('user_list_freeze_user', [item.username]),
       )
     },
     // 校验
@@ -551,13 +548,13 @@ export default {
       const successMsg = this.$t('user_list_check_success')
       const errorMsg = this.$t('user_list_check_error')
       this.$confirm(
-        this.$t('user_list_check_user', [item.username]),
         this.handleStatus(
           params,
           successMsg,
           errorMsg,
           this.$t('user_list_check'),
         ),
+        this.$t('user_list_check_user', [item.username]),
       )
     },
     // 改变状态提示

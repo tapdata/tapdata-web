@@ -326,11 +326,6 @@ export default {
     async removeServer(row) {
       const flag = await this.$confirm(
         i18n.t('packages_business_data_server_list_querenshanchufu'),
-        '',
-        {
-          type: 'warning',
-          showClose: false,
-        },
       )
       if (flag) {
         await modulesApi.delete(row.id)
@@ -342,10 +337,7 @@ export default {
       if (row.status === 'active') {
         msg = i18n.t('packages_business_data_server_list_quedingchexiaogai')
       }
-      const flag = await this.$confirm(msg, '', {
-        type: 'warning',
-        showClose: false,
-      })
+      const flag = await this.$confirm(msg)
       if (flag) {
         await modulesApi.patch({
           id: row.id,

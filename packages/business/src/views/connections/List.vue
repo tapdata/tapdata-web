@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { connectionsApi } from '@tap/api'
-import { FilterBar, SelectList, VIcon } from '@tap/component'
+import { FilterBar, Modal, SelectList, VIcon } from '@tap/component'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
-import { ElLoading, ElMessage, ElMessageBox } from 'element-plus'
+import { ElLoading, ElMessage } from 'element-plus'
 import {
   computed,
   h,
@@ -313,16 +313,13 @@ const edit = async (id: string, item: any) => {
 
   if (item.agentType === 'Local') {
     try {
-      await ElMessageBox.confirm(
+      const confirmed = await Modal.confirm(
         i18n.t('packages_business_connections_list_dangqianlianjie') +
           item.name +
           i18n.t('packages_business_connections_list_zhengzaizuoweiF'),
-        '',
-        {
-          type: 'warning',
-          showClose: false,
-        },
       )
+
+      if (!confirmed) return
 
       if (connectionDialogProps.dialogMode) {
         dialog.value?.editConnection(item)
@@ -399,10 +396,9 @@ const remove = async (row: any) => {
   ])
 
   try {
-    await ElMessageBox.confirm(msg, '', {
-      type: 'warning',
-      showClose: false,
-    })
+    const confirmed = await Modal.confirm(msg)
+
+    if (!confirmed) return
 
     const data = await connectionsApi.checkConnectionTask(row.id)
     if (data?.items?.length === 0) {
