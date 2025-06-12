@@ -32,11 +32,12 @@ export default {
     }
   },
   watch: {
-    value(v) {
-      if (this.form.value !== v) {
+    value: {
+      handler(v) {
         this.form.value = v
         this.form.label = this.label
-      }
+      },
+      immediate: true,
     },
   },
   methods: {
