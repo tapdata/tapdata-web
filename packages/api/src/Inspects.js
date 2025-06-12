@@ -23,5 +23,11 @@ export default class Inspect extends Http {
       },
     })
   }
+
+  exportSql(id, resultId) {
+    return this.axios.put(
+      `${this.url}/${id}/exportRecoverySql?inspectResultId=${resultId}`,
+    )
+  }
 }
 export { Inspect }

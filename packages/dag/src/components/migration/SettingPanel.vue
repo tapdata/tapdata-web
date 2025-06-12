@@ -462,11 +462,14 @@ watch(sourceNodes, () => {
       timeZone,
       pointType: 'current',
       dateTime: '',
+      isStreamOffset: false,
     }
     if (old && !item.hiddenPointType) {
       Object.assign(point, {
         pointType: old.pointType,
         dateTime: old.dateTime,
+        isStreamOffset: old.isStreamOffset,
+        streamOffsetString: old.streamOffsetString,
       })
     }
     return point
@@ -867,7 +870,7 @@ const schema = {
                         syncPoints: {
                           title: i18n.t('packages_dag_task_setting_sync_point'), //增量采集开始时刻
                           type: 'array',
-                          default: [{ type: 'current', date: '' }],
+                          default: [{ type: 'current', date: '', isStreamOffset: false, streamOffsetString: '' }],
                           'x-decorator-props': {
                             tooltip: i18n.t(
                               'packages_dag_task_setting_syncPoint_tip',
