@@ -410,4 +410,5 @@ export default {
   public_download_sdk: '下载 SDK',
   public_please_input_version: '请输入版本',
   public_please_select_client: '请选择客户端',
+  public_current_is_editing: '当前正在编辑，确定要关闭吗？',
 }

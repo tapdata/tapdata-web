@@ -14,7 +14,7 @@ import i18n from '@tap/i18n'
 import { uid } from '@tap/shared'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep, isEqual } from 'lodash-es'
 import {
   computed,
   inject,
@@ -135,6 +135,7 @@ const form = ref<any>({
 const visible = ref(false)
 const loading = ref(false)
 const data = ref<any>({})
+let initialFormData = {}
 const tab = ref('form')
 const isEdit = ref(false)
 const debugParams = ref<any>(null)
@@ -259,7 +260,7 @@ const rules = {
     {
       required: true,
       message: i18n.t('packages_business_data_server_drawer_qingxuanzesuoshu'),
-      trigger: ['blur', 'change'],
+      trigger: ['blur'],
     },
   ],
 }
@@ -701,6 +702,7 @@ const save = async (type?: boolean) => {
 const edit = () => {
   form.value.status = 'pending'
   isEdit.value = true
+  initialFormData = cloneDeep(form.value)
   nextTick(() => {
     data.value.fields.forEach((f: any) => {
       fieldTable.value?.toggleRowSelection(
@@ -993,6 +995,34 @@ const loadAllFields = async () => {
       comment: '',
     })) || []
 }
+
+const handleBeforeClose = async (done: () => void) => {
+  if (isEdit.value) {
+    const hasChanges = Object.keys(form.value).some((key) => {
+      if (['status', 'path'].includes(key)) {
+        return false
+      }
+      return !isEqual(initialFormData[key], form.value[key])
+    })
+
+    if (hasChanges) {
+      const isConfirm = await ElMessageBox.confirm(
+        i18n.t('public_current_is_editing'),
+        {
+          type: 'warning',
+          confirmButtonText: i18n.t('public_button_confirm'),
+          cancelButtonText: i18n.t('public_button_cancel'),
+        },
+      ).catch(() => false)
+
+      isConfirm && done()
+    } else {
+      done()
+    }
+  } else {
+    done()
+  }
+}
 </script>
 
 <template>
@@ -1004,6 +1034,7 @@ const loadAllFields = async () => {
     body-class="pt-0"
     class="overflow-hidden"
     width="850px"
+    :before-close="handleBeforeClose"
     @visible="$emit('visible', $event)"
   >
     <template #header="{ titleClass }">

@@ -409,4 +409,5 @@ export default {
   public_download_sdk: '下載 SDK',
   public_please_input_version: '請輸入版本',
   public_please_select_client: '請選擇客戶端',
+  public_current_is_editing: '當前正在編輯，確定要關閉嗎？',
 }
