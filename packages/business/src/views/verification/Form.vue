@@ -568,13 +568,11 @@ const setVerifyName = () => {
   }
 }
 
-const handleSelectTask = (task: any, byClick: boolean) => {
-  if (byClick) {
-    form.tasks = []
-    taskName.value = task.name
-    setVerifyName()
-    getFlowStages(task.id, conditionBox.value.autoAddTable)
-  }
+const handleSelectTask = (task: any) => {
+  conditionList.value = []
+  taskName.value = task.name
+  setVerifyName()
+  getFlowStages(task.id, conditionBox.value.autoAddTable)
 }
 
 const ConnectorMap = ref({})
