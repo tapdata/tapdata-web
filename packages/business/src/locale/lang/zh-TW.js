@@ -528,7 +528,7 @@ export default {
   packages_business_verification_advanceVerify: '高级校验',
   packages_business_verification_JSVerifyLogic: 'JS校验逻辑',
   packages_business_verification_addJS: '添加逻辑',
-  packages_business_verification_clear: '清空',
+  packages_business_verification_clear: '清空配置',
   packages_business_verification_returnMsg: '返回的message',
   packages_business_verification_returnedData: '返回的data',
   packages_business_verification_sourceTableData: '源表數據',

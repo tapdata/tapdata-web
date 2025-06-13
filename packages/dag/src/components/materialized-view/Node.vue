@@ -926,12 +926,14 @@ onMounted(() => {
                   v-model="keys.source"
                   class="flex-1"
                   :options="props.schema"
+                  :fit-input-width="292"
                 />
                 <span>=</span>
                 <FieldSelect
                   v-model="keys.target"
                   class="flex-1"
                   :options="state.targetFields"
+                  :fit-input-width="292"
                   @visible-change="handleFieldSelectVisible"
                 />
                 <IconButton

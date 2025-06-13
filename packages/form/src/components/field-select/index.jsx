@@ -2,14 +2,15 @@ import { PreviewText } from '@formily/element-plus'
 import { connect, mapProps, mapReadPretty } from '@formily/vue'
 import { VIcon } from '@tap/component'
 import i18n from '@tap/i18n'
+// import { Select } from '../select'
+import { ElSelectV2 as Select } from 'element-plus'
 import { computed, defineComponent } from 'vue'
-import { Select } from '../select'
 
 const DefineFieldSelect = defineComponent({
   props: {
     options: Array,
   },
-  setup: (props, { attrs }) => {
+  setup: (props, { attrs, slots }) => {
     // public static final byte TYPE_DATETIME = 1;
     // public static final byte TYPE_ARRAY = 2;
     // public static final byte TYPE_BOOLEAN = 3;
@@ -44,11 +45,13 @@ const DefineFieldSelect = defineComponent({
     }
 
     const fieldOptions = computed(() => {
-      return props.options?.map((option) => {
-        if (option.tapType) option.icon = getIcon(option.tapType)
-        if (option.source === 'virtual_hash') option.icon = 'file-hash'
-        return option
-      })
+      return (
+        props.options?.map((option) => {
+          if (option.tapType) option.icon = getIcon(option.tapType)
+          if (option.source === 'virtual_hash') option.icon = 'file-hash'
+          return option
+        }) || []
+      )
     })
 
     const renderIcon = (option) => {
@@ -134,6 +137,14 @@ const DefineFieldSelect = defineComponent({
       }
     }
 
+    const fieldNames = computed(() => {
+      return {
+        label: attrs['item-label'] || 'label',
+        value: attrs['item-value'] || 'value',
+        disabled: attrs['item-disabled'] || 'disabled',
+      }
+    })
+
     return () => {
       const newAttrs = { ...attrs }
       if (
@@ -143,23 +154,25 @@ const DefineFieldSelect = defineComponent({
       ) {
         newAttrs.defaultFirstOption = true
       }
-      const itemLabel = newAttrs['item-label'] || 'label'
+
       return (
         <Select
           {...newAttrs}
+          props={fieldNames.value}
           popper-class="field-select-popper"
           options={fieldOptions.value}
           dataSource={fieldOptions.value}
         >
           {{
-            option: ({ option }) => (
+            header: slots.header,
+            default: ({ item: option }) => (
               <div class="flex align-center gap-1">
                 {option.icon && (
                   <VIcon size="16" title={option.type}>
                     {option.icon}
                   </VIcon>
                 )}
-                {option[itemLabel]}
+                {option[fieldNames.value.label]}
                 {renderIcon(option)}
               </div>
             ),
@@ -169,6 +182,8 @@ const DefineFieldSelect = defineComponent({
     }
   },
 })
+
+export { DefineFieldSelect as BaseFieldSelect }
 
 export const FieldSelect = connect(
   DefineFieldSelect,

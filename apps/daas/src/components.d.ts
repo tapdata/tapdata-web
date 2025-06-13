@@ -93,6 +93,8 @@ declare module 'vue' {
     'ILucide:trash2': typeof import('~icons/lucide/trash2')['default']
     ILucideCalendarDays: typeof import('~icons/lucide/calendar-days')['default']
     ILucideTrash2: typeof import('~icons/lucide/trash2')['default']
+    'IMingcute:checkLine': typeof import('~icons/mingcute/check-line')['default']
+    'IMingcute:searchLine': typeof import('~icons/mingcute/search-line')['default']
     LockedDialog: typeof import('./components/LockedDialog.vue')['default']
     Main: typeof import('./components/v-confirm/Main.vue')['default']
     MultiSelection: typeof import('./components/MultiSelection.vue')['default']

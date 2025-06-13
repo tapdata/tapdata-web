@@ -150,6 +150,10 @@
     &__item {
       border-radius: map.get($border-radius, base);
     }
+    &.is-multiple .el-select-dropdown__item.is-selected::after {
+      width: 16px;
+      height: 16px;
+    }
   }
   .el-popper__arrow {
     display: none;

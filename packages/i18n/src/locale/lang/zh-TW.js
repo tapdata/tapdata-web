@@ -411,4 +411,7 @@ export default {
   public_start_time: '開始時間',
   public_end_time: '結束時間',
   public_current_is_editing: '當前正在編輯，確定要關閉嗎？',
+  public_search_field_name: '搜索字段名',
+  public_all_selected: '全部選中',
+  public_cancel_all_selected: '取消全選',
 }

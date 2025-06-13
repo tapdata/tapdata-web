@@ -412,4 +412,7 @@ export default {
   public_start_time: '开始时间',
   public_end_time: '结束时间',
   public_current_is_editing: '当前正在编辑，确定要关闭吗？',
+  public_search_field_name: '搜索字段名',
+  public_all_selected: '全部选中',
+  public_cancel_all_selected: '取消全选',
 }
