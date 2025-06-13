@@ -534,7 +534,7 @@ export default {
   packages_business_verification_indexField: '关联字段',
   packages_business_verification_BasicSettings: '基本设置',
   packages_business_verification_verifyCondition: '校验表配置',
-  packages_business_verification_clear: '清空',
+  packages_business_verification_clear: '清空配置',
   packages_business_verification_fastCountTip:
     '快速count仅对源表和目标表的行数进行count校验，速度极快，但是不会展示差异的具体字段内容。',
   packages_business_verification_contentVerifyTip:

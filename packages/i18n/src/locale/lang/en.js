@@ -426,4 +426,7 @@ export default {
   public_please_input_version: 'Please input version',
   public_please_select_client: 'Please select client',
   public_current_is_editing: 'Current is editing, confirm to close?',
+  public_search_field_name: 'Search Field Name',
+  public_all_selected: 'Select All',
+  public_cancel_all_selected: 'Unselect All',
 }

@@ -416,4 +416,7 @@ export default {
   public_please_input_version: '请输入版本',
   public_please_select_client: '请选择客户端',
   public_current_is_editing: '当前正在编辑，确定要关闭吗？',
+  public_search_field_name: '搜索字段名',
+  public_all_selected: '全部选中',
+  public_cancel_all_selected: '取消全选',
 }

@@ -67,7 +67,6 @@ interface Props {
   taskId?: string
   isDB?: boolean
   inspectMethod?: string
-  data?: ConditionItem[]
   allStages?: any[]
   edges?: any[]
 }
@@ -1500,18 +1499,6 @@ watch(conditionList, () => {
         >
 
         <div v-if="isActive" class="felx align-center ml-auto" @click.stop>
-          <ElInput
-            v-model="searchValue"
-            :placeholder="$t('packages_form_table_rename_index_sousuobiaoming')"
-            class="mr-4"
-            style="width: 240px"
-            clearable
-            @input="handleSearch"
-          >
-            <template #prefix>
-              <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
-            </template>
-          </ElInput>
           <ElButton
             v-if="
               !isCountOrHash &&
@@ -1533,9 +1520,24 @@ watch(conditionList, () => {
             :disabled="!conditionList.length"
             @click="handleClear"
           >
-            <VIcon class="mr-1">close</VIcon>
             {{ $t('packages_business_verification_clear') }}
           </ElButton>
+
+          <el-divider class="mx-3" direction="vertical" />
+
+          <ElInput
+            v-model="searchValue"
+            :placeholder="$t('packages_form_table_rename_index_sousuobiaoming')"
+            style="width: 240px"
+            clearable
+            @input="handleSearch"
+            @keydown.stop
+            @keyup.stop
+          >
+            <template #prefix>
+              <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
+            </template>
+          </ElInput>
         </div>
       </div>
     </template>
