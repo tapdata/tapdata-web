@@ -271,6 +271,10 @@
     --el-drawer-padding-primary: 8px 24px;
   }
 
+  &__footer {
+    padding: 16px 24px !important;
+  }
+
   &__close-btn {
     display: flex;
     justify-content: center;

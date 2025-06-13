@@ -1021,7 +1021,7 @@ const handleBeforeClose = async (done: () => void) => {
 <template>
   <component
     :is="tag"
-    v-model:visible="visible"
+    v-model="visible"
     v-loading="loading"
     :title="$t('packages_business_data_server_drawer_fuwuxiangqing')"
     body-class="pt-0"

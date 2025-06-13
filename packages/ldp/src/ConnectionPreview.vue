@@ -211,7 +211,7 @@ export default {
 
 <template>
   <Drawer
-    v-model:visible="visible"
+    v-model="visible"
     class="sw-connection-drawer"
     width="850px"
     :with-header="false"

@@ -741,12 +741,12 @@ export default {
     :is="tag"
     v-if="visible"
     class="sw-table-drawer flex flex-column"
-    :visible="visible"
+    :model-value="visible"
     width="850px"
     :with-header="false"
-    @update:visible="handleUpdateVisible"
+    @update:model-value="handleUpdateVisible"
   >
-    <header class="px-6 pt-3">
+    <header class="pt-3">
       <div class="mb-2 flex align-center">
         <span class="table-name inline-block ellipsis">{{
           selected.name

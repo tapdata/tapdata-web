@@ -84,8 +84,6 @@ declare module 'vue' {
     ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     'ILucide:cloudUpload': typeof import('~icons/lucide/cloud-upload')['default']
-    'ILucide:download': typeof import('~icons/lucide/download')['default']
-    'ILucide:edit': typeof import('~icons/lucide/edit')['default']
     'ILucide:hardDriveDownload': typeof import('~icons/lucide/hard-drive-download')['default']
     'ILucide:monitorDown': typeof import('~icons/lucide/monitor-down')['default']
     'ILucide:settings': typeof import('~icons/lucide/settings')['default']

@@ -593,7 +593,7 @@ defineExpose({
 </script>
 
 <template>
-  <Drawer v-model:visible="visible" width="400px">
+  <Drawer v-model="visible" width="400px">
     <template #header>
       <div class="flex align-center gap-2 font-color-dark overflow-hidden">
         <DatabaseIcon

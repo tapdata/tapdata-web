@@ -77,13 +77,12 @@ defineExpose({
 <template>
   <Drawer
     v-bind="$attrs"
-    v-model:visible="visible"
+    v-model="visible"
     v-loading="loading"
     class="app-details"
     :class="{ 'flex flex-column': visible }"
     width="800px"
-    :withHeader="false"
-    @visible="handleVisible"
+    :with-header="false"
   >
     <DataServerList
       ref="table"

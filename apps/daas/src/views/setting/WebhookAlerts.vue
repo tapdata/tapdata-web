@@ -415,6 +415,14 @@ const showExample = () => {
   })
 }
 
+const handleBeforeClose = async (done: () => void) => {
+  const confirmed = await Modal.confirm(t('public_current_is_editing'))
+
+  if (confirmed) {
+    done()
+  }
+}
+
 // Lifecycle hooks
 onMounted(() => {
   loadEventType()
@@ -492,6 +500,8 @@ onMounted(() => {
       v-model="drawerState.visible"
       :wrapper-closable="false"
       :size="800"
+      modal-class="bg-transparent"
+      :before-close="handleBeforeClose"
       @closed="afterClose"
     >
       <template #title>
@@ -500,7 +510,7 @@ onMounted(() => {
         }}</span>
       </template>
       <div class="flex flex-column h-100">
-        <div ref="formWrapperRef" class="flex-1 overflow-y-auto">
+        <div ref="formWrapperRef" class="flex-1">
           <ElForm
             ref="formRef"
             class="flex-1"
@@ -556,29 +566,27 @@ onMounted(() => {
             </ElFormItem>
           </ElForm>
         </div>
-
-        <div class="text-left pt-4">
-          <ElButton
-            :loading="drawerState.ping"
-            type="primary"
-            @click="sendPing"
-            >{{ $t('webhook_send_ping') }}</ElButton
-          >
-          <ElButton
-            :loading="drawerState.saving"
-            type="primary"
-            @click="save"
-            >{{ $t('public_button_save') }}</ElButton
-          >
-          <ElButton @click="drawerState.visible = false">{{
-            $t('public_button_cancel')
-          }}</ElButton>
-        </div>
       </div>
+
+      <template #footer>
+        <ElButton @click="drawerState.visible = false">{{
+          $t('public_button_cancel')
+        }}</ElButton>
+        <ElButton
+          :loading="drawerState.ping"
+          type="primary"
+          @click="sendPing"
+          >{{ $t('webhook_send_ping') }}</ElButton
+        >
+        <ElButton :loading="drawerState.saving" type="primary" @click="save">{{
+          $t('public_button_save')
+        }}</ElButton>
+      </template>
     </ElDrawer>
 
     <ElDrawer
       v-model="historyState.visible"
+      modal-class="bg-transparent"
       :wrapper-closable="false"
       :size="800"
       @closed="afterCloseHistory"
@@ -594,7 +602,7 @@ onMounted(() => {
         </span>
       </template>
       <div v-loading="historyState.loading" class="flex flex-column h-100">
-        <div ref="historyListRef" class="flex-1 overflow-y-auto">
+        <div ref="historyListRef" class="flex-1">
           <el-collapse
             v-if="historyState.list.length"
             v-model="historyState.collapse"
@@ -691,19 +699,20 @@ onMounted(() => {
 
           <VEmpty v-else />
         </div>
-        <div class="p-4">
-          <el-pagination
-            v-model:current-page="page.current"
-            v-model:page-size="page.size"
-            background
-            layout="->,total, sizes,  prev, pager, next, jumper"
-            :page-sizes="[10, 20, 50, 100]"
-            :total="page.total"
-            @size-change="loadHistory(1)"
-            @current-change="loadHistory"
-          />
-        </div>
       </div>
+
+      <template #footer>
+        <el-pagination
+          v-model:current-page="page.current"
+          v-model:page-size="page.size"
+          background
+          layout="->,total, sizes,  prev, pager, next"
+          :page-sizes="[10, 20, 50, 100]"
+          :total="page.total"
+          @size-change="loadHistory(1)"
+          @current-change="loadHistory"
+        />
+      </template>
     </ElDrawer>
   </PageContainer>
 </template>
