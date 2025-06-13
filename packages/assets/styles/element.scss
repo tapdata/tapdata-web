@@ -255,6 +255,10 @@
 
 // Drawer
 .el-drawer {
+  &.rtl {
+    border-radius: var(--el-border-radius-large) 0 0 var(--el-border-radius-large);
+  }
+  
   &__header {
     padding: var(--el-drawer-padding-primary) !important;
     margin-bottom: 0;
