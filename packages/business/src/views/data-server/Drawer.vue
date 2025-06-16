@@ -1006,7 +1006,7 @@ const loadAllFields = async () => {
     filter: JSON.stringify(filter),
   })
   allFields.value =
-    data?.data?.items?.[0]?.fields?.map((it: any) => ({
+    data?.items?.[0]?.fields?.map((it: any) => ({
       ...it,
       id: it.id,
       field_name: it.field_name,
