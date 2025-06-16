@@ -513,22 +513,24 @@ const getFields = async () => {
 
     if (!form.value.id) {
       form.value.fields = cloneDeep(allFields.value)
-    }
-
-    // 回显选中字段
-    nextTick(() => {
-      const fields = form.value.fields || []
-      fields.forEach((row: any) => {
-        const targetRow = allFields.value.find((it: any) => it.id === row.id)
-
-        if (targetRow) {
-          fieldTable.value?.toggleRowSelection(targetRow, true)
-        }
+      nextTick(() => {
+        fieldTable.value?.toggleAllSelection()
       })
-    })
+    }
   } finally {
     fieldLoading.value = false
   }
+}
+
+const handleFieldsSelection = () => {
+  const fields = data.value.fields || []
+  fields.forEach((row: any) => {
+    const targetRow = allFields.value.find((it: any) => it.id === row.id)
+
+    if (targetRow) {
+      fieldTable.value?.toggleRowSelection(targetRow, true)
+    }
+  })
 }
 
 const getAPIServerToken = async (callback?: (token: string) => void) => {
@@ -987,7 +989,7 @@ const loadAllFields = async () => {
     filter: JSON.stringify(filter),
   })
   allFields.value =
-    data?.data?.items?.[0]?.fields?.map((it: any) => ({
+    data?.items?.[0]?.fields?.map((it: any) => ({
       ...it,
       id: it.id,
       field_name: it.field_name,
@@ -1016,6 +1018,13 @@ const handleBeforeClose = async (done: () => void) => {
     done()
   }
 }
+
+const openEdit = () => {
+  isEdit.value = true
+  nextTick(() => {
+    handleFieldsSelection()
+  })
+}
 </script>
 
 <template>
@@ -1041,7 +1050,7 @@ const handleBeforeClose = async (done: () => void) => {
           :class="{
             invisible: !(tab === 'form' && data.status !== 'active' && !isEdit),
           }"
-          @click="isEdit = true"
+          @click="openEdit"
         >
           <el-icon class="mr-1">
             <EditPen />
