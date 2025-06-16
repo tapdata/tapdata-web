@@ -1050,7 +1050,7 @@ const openEdit = () => {
           :class="{
             invisible: !(tab === 'form' && data.status !== 'active' && !isEdit),
           }"
-          @click="openEdit"
+          @click="edit"
         >
           <el-icon class="mr-1">
             <EditPen />
