@@ -1,2 +1,2 @@
-import SceneDialog from './SceneDialog'
+import SceneDialog from './SceneDialog.vue'
 export { SceneDialog }

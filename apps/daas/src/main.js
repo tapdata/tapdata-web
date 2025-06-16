@@ -1,6 +1,7 @@
 import { settingsApi, timeStampApi, usersApi } from '@tap/api'
-import { WSClient } from '@tap/business/src/shared/ws-client'
-import { installElement, VIcon } from '@tap/component'
+import { WSClient } from '@tap/business/src/shared/ws-client.ts'
+import VIcon from '@tap/component/src/base/VIcon.vue'
+import { installElement } from '@tap/component/src/installElement'
 import {
   getCurrentLanguage,
   setCurrentLanguage,

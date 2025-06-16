@@ -1,13 +1,6 @@
-<template>
-  <div class="h-100">
-    <GitBook v-if="!showIframe" class="bg-white border-0" :value="doc"></GitBook>
-    <iframe v-else ref="docsIframe" :src="src" class="w-100 h-100 block"> </iframe>
-  </div>
-</template>
-
 <script>
-import { GitBook } from '@tap/component'
 import { pdkApi } from '@tap/api'
+import GitBook from '@tap/component/src/GitBook.vue'
 
 const pdkDocMap = {
   'supported-databases': 'prerequisites/supported-databases',
@@ -50,21 +43,28 @@ const pdkDocMap = {
   tidb: 'prerequisites/on-prem-databases/tidb',
   vastbase: 'prerequisites/on-prem-databases/vastbase',
   'aliyun-adb-mysql': 'prerequisites/cloud-databases/aliyun-adb-mysql',
-  'aliyun-adb-postgresql': 'prerequisites/cloud-databases/aliyun-adb-postgresql',
+  'aliyun-adb-postgresql':
+    'prerequisites/cloud-databases/aliyun-adb-postgresql',
   'aliyun-mongodb': 'prerequisites/cloud-databases/aliyun-mongodb',
-  'aliyun-rds-for-mariadb': 'prerequisites/cloud-databases/aliyun-rds-for-mariadb',
-  'aliyun-rds-for-mongodb': 'prerequisites/cloud-databases/aliyun-rds-for-mongodb',
+  'aliyun-rds-for-mariadb':
+    'prerequisites/cloud-databases/aliyun-rds-for-mariadb',
+  'aliyun-rds-for-mongodb':
+    'prerequisites/cloud-databases/aliyun-rds-for-mongodb',
   'aliyun-rds-for-mysql': 'prerequisites/cloud-databases/aliyun-rds-for-mysql',
   'aliyun-rds-for-pg': 'prerequisites/cloud-databases/aliyun-rds-for-pg',
-  'aliyun-rds-for-sql-server': 'prerequisites/cloud-databases/aliyun-rds-for-sql-server',
+  'aliyun-rds-for-sql-server':
+    'prerequisites/cloud-databases/aliyun-rds-for-sql-server',
   'amazon-rds-mysql': 'prerequisites/cloud-databases/amazon-rds-mysql',
   'huawei-cloud-gaussdb': 'prerequisites/cloud-databases/huawei-cloud-gaussdb',
   'polardb-mysql': 'prerequisites/cloud-databases/polardb-mysql',
   'polardb-postgresql': 'prerequisites/cloud-databases/polardb-postgresql',
-  'tencentdb-for-mariadb': 'prerequisites/cloud-databases/tencentdb-for-mariadb',
-  'tencentdb-for-mongodb': 'prerequisites/cloud-databases/tencentdb-for-mongodb',
+  'tencentdb-for-mariadb':
+    'prerequisites/cloud-databases/tencentdb-for-mariadb',
+  'tencentdb-for-mongodb':
+    'prerequisites/cloud-databases/tencentdb-for-mongodb',
   'tencentdb-for-pg': 'prerequisites/cloud-databases/tencentdb-for-pg',
-  'tencentdb-for-sql-server': 'prerequisites/cloud-databases/tencentdb-for-sql-server',
+  'tencentdb-for-sql-server':
+    'prerequisites/cloud-databases/tencentdb-for-sql-server',
   'tencentdb-td-mysql': 'prerequisites/cloud-databases/tencentdb-td-mysql',
   activemq: 'prerequisites/mq-and-middleware/activemq',
   'ai-chat': 'prerequisites/mq-and-middleware/ai-chat',
@@ -99,7 +99,7 @@ const pdkDocMap = {
   'mock-source': 'prerequisites/others/mock-source',
   'mock-target': 'prerequisites/others/mock-target',
   dws: 'prerequisites/warehouses-and-lake/gaussdb',
-  kafka_enhanced: 'prerequisites/mq-and-middleware/kafka-enhanced'
+  kafka_enhanced: 'prerequisites/mq-and-middleware/kafka-enhanced',
 }
 
 // 维护一个DocMap还有一个NameDictionary的原因是，docMap从文档仓库直接复制过来，有些命名和pdkId不一致
@@ -130,19 +130,19 @@ const pdkNameDictionary = {
   'tencent-db-mysql': 'tencentdb-for-mysql',
   'tencent-db-postgres': 'tencentdb-for-pg',
   'tencent-db-sqlserver': 'tencentdb-for-sql-server',
-  mongodb3: 'mongodb-below34'
+  mongodb3: 'mongodb-below34',
 }
 
 export default {
   name: 'ConnectorDoc',
 
+  components: {
+    GitBook,
+  },
+
   props: {
     pdkId: String,
     pdkHash: String,
-  },
-
-  components: {
-    GitBook,
   },
 
   data() {
@@ -169,7 +169,7 @@ export default {
             : 'https://docs.tapdata.net/'
       }
 
-      return domain + this.docUrl + '?from=cloud'
+      return `${domain + this.docUrl}?from=cloud`
     },
     showIframe() {
       return !!this.docUrl
@@ -191,3 +191,10 @@ export default {
   },
 }
 </script>
+
+<template>
+  <div class="h-100">
+    <GitBook v-if="!showIframe" class="bg-white border-0" :value="doc" />
+    <iframe v-else :src="src" class="w-100 h-100 block" />
+  </div>
+</template>

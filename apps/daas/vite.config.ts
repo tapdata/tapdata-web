@@ -45,6 +45,41 @@ export default defineConfig(({ mode }) => {
 
     envPrefix,
 
+    optimizeDeps: {
+      include: [
+        '@tap/api',
+        '@tap/shared',
+        '@tap/assets',
+        'vue',
+        'vue-router',
+        'element-plus',
+        '@vueuse/core',
+        'lodash-es',
+        '@formily/vue',
+        '@formily/core',
+        '@formily/reactive',
+        '@formily/reactive-vue',
+        '@formily/shared',
+        '@formily/path',
+        '@formily/json-schema',
+        '@formily/element-plus',
+      ],
+      exclude: [
+        '@tap/dag',
+        '@tap/ldp',
+        '@tap/business',
+        '@tap/component',
+        '@tap/node-design',
+      ],
+      force: false,
+      esbuildOptions: {
+        target: 'esnext',
+        supported: {
+          'top-level-await': true,
+        },
+      },
+    },
+
     plugins: [
       vue(),
       vueJsx(),
@@ -66,9 +101,8 @@ export default defineConfig(({ mode }) => {
           }),
           ElementPlusResolver({ importStyle: 'sass' }),
         ],
-        // directoryAsNamespace: true,
         dts: 'src/components.d.ts',
-        include: [/\.vue$/, /\.vue\?vue/, /\.[tj]sx?$/],
+        include: [/\.vue$/, /\.vue\?vue/, /\.[tj]sx$/],
       }),
 
       Icons({
@@ -176,48 +210,21 @@ export default defineConfig(({ mode }) => {
     },
 
     build: {
+      target: 'esnext',
+      minify: 'esbuild',
+      cssCodeSplit: false,
+      sourcemap: false,
       outDir: '../../dist',
       emptyOutDir: true,
-      // rollupOptions: {
-      //   output: {
-      //     manualChunks: (id) => {
-      //       // Create separate chunks for node_modules
-      //       if (id.includes('node_modules')) {
-      //         // Group element-plus related packages
-      //         if (id.includes('element-plus') || id.includes('@element-plus')) {
-      //           return 'element-plus-vendor'
-      //         }
-      //         // Group vue related packages
-      //         if (id.includes('vue') || id.includes('@vue')) {
-      //           return 'vue-vendor'
-      //         }
-      //         // Group chart related packages
-      //         if (id.includes('echarts') || id.includes('vue-echarts')) {
-      //           return 'chart-vendor'
-      //         }
-      //         // Group tap packages
-      //         if (id.includes('@tap/')) {
-      //           const packageName = id.split('@tap/')[1].split('/')[0]
-      //           return `tap-${packageName}`
-      //         }
-      //         // Other npm dependencies
-      //         return 'vendor'
-      //       }
-      //     },
-      //     chunkFileNames: 'assets/js/[name]-[hash].js',
-      //     entryFileNames: 'assets/js/[name]-[hash].js',
-      //     assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
-      //   },
-      // },
-      // cssCodeSplit: true,
-      // sourcemap: true,
-      // minify: 'terser',
-      // terserOptions: {
-      //   compress: {
-      //     drop_console: true,
-      //     drop_debugger: true,
-      //   },
-      // },
+      rollupOptions: {
+        output: {
+          manualChunks: undefined,
+        },
+      },
+      commonjsOptions: {
+        include: [/node_modules/],
+        transformMixedEsModules: true,
+      },
     },
   }
 })

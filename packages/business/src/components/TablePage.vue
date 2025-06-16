@@ -1,7 +1,6 @@
 <script lang="ts">
-import { Classification, ProTable, VIcon } from '@tap/component'
-import { delayTrigger, off, on } from '@tap/shared'
-import { debounce } from 'lodash-es'
+import Classification from '@tap/component/src/Classification.vue'
+import { off, on } from '@tap/shared'
 import {
   defineComponent,
   nextTick,
@@ -90,8 +89,6 @@ export default defineComponent({
   components: {
     Classification,
     SelectClassify,
-    VIcon,
-    ProTable,
   },
   props: {
     title: {
@@ -437,7 +434,7 @@ export default defineComponent({
               <slot name="operation" />
             </div>
           </div>
-          <ProTable
+          <el-table
             v-bind="$attrs"
             ref="table"
             v-loading="loading"
@@ -486,7 +483,7 @@ export default defineComponent({
                 <slot name="noDataText" />
               </div>
             </template>
-          </ProTable>
+          </el-table>
           <div class="table-footer">
             <slot name="tableFooter" />
           </div>

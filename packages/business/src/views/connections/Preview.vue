@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { connectionsApi, dataPermissionApi, proxyApi, usersApi } from '@tap/api'
-import { Drawer, Modal, VIcon } from '@tap/component'
+import Drawer from '@tap/component/src/Drawer.vue'
+import { Modal } from '@tap/component/src/modal'
 import i18n from '@tap/i18n'
 import { openUrl } from '@tap/shared'
 import dayjs from 'dayjs'

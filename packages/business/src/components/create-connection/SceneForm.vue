@@ -10,7 +10,7 @@ import {
 } from '@tap/api'
 import resize from '@tap/component/src/directives/resize'
 
-import { SchemaToForm } from '@tap/form'
+import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
 import i18n from '@tap/i18n'
 import { checkConnectionName, openUrl, submitForm } from '@tap/shared'
 import { cloneDeep, isEmpty } from 'lodash-es'

@@ -1,6 +1,6 @@
 <script>
 import PageContainer from '../../components/PageContainer.vue'
-import List from './List'
+import List from './List.vue'
 
 export default {
   name: 'TaskList',

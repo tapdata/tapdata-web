@@ -4,8 +4,6 @@ import i18n from '@tap/i18n'
 
 import { mapActions } from 'vuex'
 
-import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
-
 export default {
   name: 'StageButton',
   props: {
@@ -60,7 +58,7 @@ export default {
         .then((data) => {
           this.progress = '0%'
           this.getProgress()
-          $emit(this, 'start')
+          this.$emit('start')
           this.startByConnection(data, true, false)
         })
     },
@@ -89,7 +87,7 @@ export default {
               })
               .then(this.updateDag)
           }
-          !check && $emit(this, 'complete') // 防止跟父组件的加载重复
+          !check && this.$emit('complete') // 防止跟父组件的加载重复
           this.loading = false
         }
       })

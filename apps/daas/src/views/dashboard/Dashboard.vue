@@ -1,10 +1,11 @@
 <script>
 import { ArrowRight } from '@element-plus/icons-vue'
 import { clusterApi, taskApi, workerApi } from '@tap/api'
-import { STATUS_MAP } from '@tap/business'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
+import { STATUS_MAP } from '@tap/business/src/shared/task'
 import { statusMap as InspectStatusMap } from '@tap/business/src/views/verification/const'
-import { Chart, CountUp } from '@tap/component'
+import Chart from '@tap/component/src/chart/Chart.vue'
+import CountUp from '@tap/component/src/CountUp.vue'
 import { toThousandsUnit } from '@/utils/util'
 import { STATUS_MAP as DASHBOARD_STATUS_MAP } from './const'
 

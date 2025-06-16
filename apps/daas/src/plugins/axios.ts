@@ -1,5 +1,5 @@
 import { showErrorMessage } from '@tap/business/src/components/error-message'
-import { Modal } from '@tap/component'
+import { Modal } from '@tap/component/src/modal'
 import Cookie from '@tap/shared/src/cookie'
 import axios, {
   type AxiosError,

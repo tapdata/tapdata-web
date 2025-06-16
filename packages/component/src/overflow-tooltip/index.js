@@ -1,3 +1,3 @@
-import OverflowTooltip from './OverflowTooltip'
+import OverflowTooltip from './OverflowTooltip.vue'
 
 export default OverflowTooltip

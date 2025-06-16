@@ -1,54 +1,4 @@
-<template>
-  <el-dialog
-    :title="$t('packages_business_dataFlow_batchSortOperation')"
-    :model-value="dialogVisible"
-    width="600px"
-    class="SelectClassify-dialog"
-    :before-close="handleClose"
-    :close-on-click-modal="false"
-  >
-    <div>
-      <el-tag
-        v-bind:key="item.value"
-        class="SelectClassify-tag"
-        closable
-        v-for="item in tagList"
-        @close="handleCloseTag(item)"
-        >{{ item.value }}</el-tag
-      >
-    </div>
-    <el-tree
-      node-key="id"
-      :props="props"
-      :expand-on-click-node="false"
-      :data="treeData"
-      :filter-node-method="filterNode"
-      ref="tree"
-      check-strictly
-      @node-click="handleCheckChange"
-      class="SelectClassify-tree"
-    >
-      <template v-slot="{ data }">
-        <span class="custom-tree-node">
-          <span>
-            <VIcon size="12" class="color-primary mr-1">folder-fill</VIcon>
-            <span class="table-label">{{ data.value }}</span>
-          </span>
-        </span>
-      </template>
-    </el-tree>
-    <template v-slot:footer>
-      <span class="dialog-footer">
-        <el-button class="message-button-cancel" @click="handleCancel">{{ $t('public_button_cancel') }}</el-button>
-        <el-button type="primary" @click="handleAdd">{{ $t('public_button_save') }}</el-button>
-      </span>
-    </template>
-  </el-dialog>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
-import Cookie from '@tap/shared/src/cookie'
 import { metadataDefinitionsApi, userGroupsApi } from '@tap/api'
 
 export default {
@@ -61,6 +11,7 @@ export default {
       },
     },
   },
+  emits: ['operationsClassify'],
   data() {
     return {
       dialogVisible: false,
@@ -81,12 +32,12 @@ export default {
       this.getData()
     },
     getData(cb) {
-      let where = {}
+      const where = {}
       if (this.types.length) {
         where.or = this.types.map((t) => ({ item_type: t }))
       }
 
-      let filter = {
+      const filter = {
         where,
       }
 
@@ -98,8 +49,8 @@ export default {
             }),
           })
           .then((data) => {
-            let items = data?.items || []
-            let treeData = items.map((item) => ({
+            const items = data?.items || []
+            const treeData = items.map((item) => ({
               value: item.name,
               id: item.id,
               gid: item.gid,
@@ -116,7 +67,7 @@ export default {
             filter: JSON.stringify(filter),
           })
           .then((data) => {
-            let items = data?.items || []
+            const items = data?.items || []
             this.treeData = this.formatData(items)
             cb && cb(items)
           })
@@ -125,12 +76,12 @@ export default {
     //格式化分类数据
     formatData(items) {
       if (items && items.length) {
-        let map = {}
-        let nodes = []
+        const map = {}
+        const nodes = []
         //遍历第一次， 先把所有子类按照id分成若干数组
         items.forEach((it) => {
           if (it.parent_id) {
-            let children = map[it.parent_id] || []
+            const children = map[it.parent_id] || []
             children.push(it)
             map[it.parent_id] = children
           } else {
@@ -138,9 +89,9 @@ export default {
           }
         })
         //接着从没有子类的数据开始递归，将之前分好的数组分配给每一个类目
-        let checkChildren = (nodes) => {
+        const checkChildren = (nodes) => {
           return nodes.map((it) => {
-            let children = map[it.id]
+            const children = map[it.id]
             if (children) {
               it.children = checkChildren(children)
             }
@@ -197,13 +148,64 @@ export default {
       if (this.tagList && this.tagList.length === 0) {
         this.tagList = []
       }
-      $emit(this, 'operationsClassify', this.tagList)
+      this.$emit('operationsClassify', this.tagList)
       this.handleClose()
     },
   },
-  emits: ['operationsClassify'],
 }
 </script>
+
+<template>
+  <el-dialog
+    :title="$t('packages_business_dataFlow_batchSortOperation')"
+    :model-value="dialogVisible"
+    width="600px"
+    class="SelectClassify-dialog"
+    :before-close="handleClose"
+    :close-on-click-modal="false"
+  >
+    <div>
+      <el-tag
+        :key="item.value"
+        class="SelectClassify-tag"
+        v-for="item in tagList"
+        closable
+        @close="handleCloseTag(item)"
+        >{{ item.value }}</el-tag
+      >
+    </div>
+    <el-tree
+      node-key="id"
+      :props="props"
+      :expand-on-click-node="false"
+      :data="treeData"
+      ref="tree"
+      :filter-node-method="filterNode"
+      check-strictly
+      class="SelectClassify-tree"
+      @node-click="handleCheckChange"
+    >
+      <template #default="{ data }">
+        <span class="custom-tree-node">
+          <span>
+            <VIcon size="12" class="color-primary mr-1">folder-fill</VIcon>
+            <span class="table-label">{{ data.value }}</span>
+          </span>
+        </span>
+      </template>
+    </el-tree>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button class="message-button-cancel" @click="handleCancel">{{
+          $t('public_button_cancel')
+        }}</el-button>
+        <el-button type="primary" @click="handleAdd">{{
+          $t('public_button_save')
+        }}</el-button>
+      </span>
+    </template>
+  </el-dialog>
+</template>
 
 <style lang="scss" scoped>
 .filter-icon {

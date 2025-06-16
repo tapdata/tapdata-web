@@ -10,7 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@tap/shared": "workspace:^1.0.0",
+    "@tap/shared": "workspace:*",
     "axios": "^0.21.1",
     "qs": "^6.10.3"
   }

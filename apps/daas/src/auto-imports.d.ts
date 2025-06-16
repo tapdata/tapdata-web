@@ -11,6 +11,7 @@ declare global {
   const ElIconRefresh: typeof import('@element-plus/icons-vue')['Refresh']
   const ElIconSearch: typeof import('@element-plus/icons-vue')['Search']
   const ElInput: typeof import('element-plus/es')['ElInput']
+  const ElLoading: typeof import('element-plus/es')['ElLoading']
   const ElMessage: typeof import('element-plus/es')['ElMessage']
   const ElMessageBox: typeof import('element-plus/es')['ElMessageBox']
   const IconLucideClock: typeof import('~icons/lucide/clock')['default']

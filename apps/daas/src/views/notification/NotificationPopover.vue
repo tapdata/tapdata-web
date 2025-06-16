@@ -1,7 +1,6 @@
 <script>
 import { notificationApi, userLogsApi } from '@tap/api'
-import { ALARM_LEVEL_MAP } from '@tap/business'
-import { VIcon } from '@tap/component'
+import { ALARM_LEVEL_MAP } from '@tap/business/src/shared/const'
 import Cookie from '@tap/shared/src/cookie'
 
 import dayjs from 'dayjs'
@@ -15,7 +14,6 @@ import UserOperation from './UserOperation'
 export default {
   components: {
     UserOperation,
-    VIcon,
   },
   data() {
     return {

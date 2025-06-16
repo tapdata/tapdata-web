@@ -4,14 +4,17 @@ import {
   onFormValuesChange,
   setValidateLanguage,
 } from '@formily/core'
+import { Form } from '@formily/element-plus'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
-
-import { Form } from './components'
-import { SchemaField } from './shared'
 
 export default {
   name: 'SchemaToForm',
-  components: { Form, SchemaField },
+  components: {
+    Form,
+    // 动态注册组件
+    SchemaField: () =>
+      import('./shared/create').then((module) => module.SchemaField),
+  },
   props: {
     schema: {
       type: Object,

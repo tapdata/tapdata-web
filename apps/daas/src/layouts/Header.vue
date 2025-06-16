@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { User, WarningFilled } from '@element-plus/icons-vue'
 import { licensesApi, settingsApi, timeStampApi, usersApi } from '@tap/api'
-import { Modal, VIcon } from '@tap/component'
+import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 import {
   getCurrentLanguage,
