@@ -8,7 +8,7 @@ import dayjs from 'dayjs'
 import { escapeRegExp, uniqBy } from 'lodash-es'
 
 import { h } from 'vue'
-import { DatabaseIcon } from '../../components/DatabaseIcon.jsx'
+import { DatabaseIcon } from '../../components/DatabaseIcon'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
 import SyncStatus from '../../components/SyncStatus.vue'
 import TablePage from '../../components/TablePage.vue'

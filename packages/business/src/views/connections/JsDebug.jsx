@@ -1,16 +1,15 @@
-import { proxyApi, taskApi } from '@tap/api'
-import { VCodeEditor, VEmpty, VirtualSelect } from '@tap/component'
+import { proxyApi } from '@tap/api'
+import { VEmpty } from '@tap/component/src/base/v-empty'
+import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import resize from '@tap/component/src/directives/resize'
-import {
-  createForm,
-  Form,
-  FormItem,
-  HighlightCode,
-  observer,
-  SchemaField,
-} from '@tap/form'
+import { Form } from '@tap/form/src/components/ElementPlus'
+import { HighlightCode } from '@tap/form/src/components/highlight-code'
+import { observer } from '@tap/form/src/FormilyReactiveVue'
+import { createForm } from '@tap/form/src/FormilyVue'
+import { SchemaField } from '@tap/form/src/shared/create'
 import i18n from '@tap/i18n'
 import { computed, defineComponent, reactive, ref, watch } from 'vue'
+
 import './style.scss'
 
 // 自定义数据源调试

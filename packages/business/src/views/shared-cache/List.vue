@@ -1,19 +1,17 @@
 <script>
 import { externalStorageApi, sharedCacheApi, taskApi } from '@tap/api'
-import { FilterBar } from '@tap/component'
-
+import { FilterBar } from '@tap/component/src/filter-bar'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
-import { TablePage, TaskStatus } from '../../components'
 import PageContainer from '../../components/PageContainer.vue'
-
-import Upload from '../../components/UploadDialog'
+import TablePage from '../../components/TablePage.vue'
+import TaskStatus from '../../components/TaskStatus.vue'
+import Upload from '../../components/UploadDialog.vue'
 import { makeStatusAndDisabled } from '../../shared'
-import Details from './Details'
-import Editor from './Editor'
+import Details from './Details.vue'
+import Editor from './Editor.vue'
 
-let timeout = null
 export default {
   components: {
     PageContainer,
@@ -67,15 +65,15 @@ export default {
   },
   mounted() {
     //定时轮询
-    timeout = setInterval(() => {
+    this.timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
     }, 8000)
     this.searchParams = Object.assign(this.searchParams, {
       name: this.$route.query?.keyword || '',
     })
   },
-  unmounted() {
-    clearInterval(timeout)
+  beforeUnmount() {
+    clearInterval(this.timeout)
   },
   methods: {
     getData({ page }) {

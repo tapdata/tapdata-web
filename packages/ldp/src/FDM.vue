@@ -1,24 +1,23 @@
-<script lang="jsx">
+<script lang="tsx">
 import { connectionsApi, ldpApi, metadataDefinitionsApi } from '@tap/api'
+import { DatabaseIcon } from '@tap/business/src/components/DatabaseIcon'
 import {
-  DatabaseIcon,
   makeDragNodeImage,
   makeStatusAndDisabled,
   TASK_SETTINGS,
-} from '@tap/business'
-import { IconButton, VExpandXTransition, VirtualTree } from '@tap/component'
+} from '@tap/business/src/shared'
+import { VExpandXTransition } from '@tap/component/src/base/v-expand-x-transition'
+import { IconButton } from '@tap/component/src/icon-button'
 
-import { validateCron } from '@tap/form'
 import i18n from '@tap/i18n'
 import { generateId, uuid } from '@tap/shared'
 import { cloneDeep, debounce, merge } from 'lodash-es'
 import { h } from 'vue'
-import { $emit, $off, $on, $once } from '../utils/gogocodeTransfer'
 import commonMix from './mixins/common'
 
 export default {
   name: 'FDM',
-  components: { VirtualTree, IconButton, DatabaseIcon, VExpandXTransition },
+  components: { IconButton, DatabaseIcon },
   mixins: [commonMix],
   props: {
     dragState: Object,
@@ -213,7 +212,7 @@ export default {
         <div
           class={className}
           onClick={() => {
-            data.isObject && $emit(this, 'preview', data, this.fdmConnection)
+            data.isObject && this.$emit('preview', data, this.fdmConnection)
           }}
           onDrop={this.handleTreeNodeDrop}
         >
@@ -321,7 +320,7 @@ export default {
     handleCommand(command) {
       switch (command) {
         case 'config':
-          $emit(this, 'show-settings')
+          this.$emit('show-settings')
           break
       }
     },
@@ -652,7 +651,7 @@ export default {
     },
 
     handleDragEnd() {
-      $emit(this, 'node-drag-end')
+      this.$emit('node-drag-end')
     },
 
     setNodeExpand() {
@@ -675,7 +674,7 @@ export default {
           node && (node.loading = false)
         }, 1000)
       } else {
-        $emit(this, 'load-directory')
+        this.$emit('load-directory')
       }
       // this.taskDialogConfig.from
     },

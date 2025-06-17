@@ -1,3 +1,107 @@
+<script>
+export default {
+  name: 'queryCond',
+  props: {
+    primaryKeyOptions: {
+      type: Array,
+      default() {
+        return []
+      },
+    },
+    value: {
+      type: Object,
+      default() {
+        return { conditions: [] }
+      },
+    },
+    databaseType: {
+      type: String,
+    },
+    level: {
+      type: Number,
+      default() {
+        return 1
+      },
+    },
+  },
+  computed: {
+    conditions() {
+      return this.value.conditions
+    },
+    isDatetime() {
+      let field = this.fields.filter((v) => v.value === this.queryField)[0]
+      if (field) {
+        let type = field.type
+
+        if (type === 'string' && field.format === 'date-time') {
+          return true
+        }
+      }
+      return false
+    },
+  },
+  data() {
+    return {
+      calculationList: ['=', '<>', '>', '<', '>=', '<=', 'like'],
+      color: 'level1',
+    }
+  },
+  mounted() {
+    this.color = 'level' + ((this.level % 7) + 1)
+  },
+  watch: {
+    value: {
+      deep: true,
+      handler() {
+        this.$emit('update:value', this.value)
+      },
+    },
+  },
+  methods: {
+    handleCommand(command) {
+      if (command == 'cond') this.addChild('condition', '')
+      if (command == 'andQ') this.addChild('group', 'and')
+      if (command == 'and') this.addChild('condition', 'and')
+      if (command == 'orQ') this.addChild('group', 'or')
+      if (command == 'or') this.addChild('condition', 'or')
+    },
+    addChild(type, operator) {
+      let child = {}
+      if (type === 'group') {
+        child = {
+          type: 'group',
+          operator: operator,
+          conditions: [
+            {
+              type: 'condition',
+              field: '',
+              command: '',
+              value: '',
+            },
+          ],
+        }
+      } else if (type === 'condition') {
+        child = {
+          type: 'condition',
+          operator: operator,
+          field: '',
+          command: '',
+          value: '',
+        }
+      }
+      this.value.conditions.push(child)
+      this.$emit('update:value', this.value)
+    },
+    removeChild(index) {
+      this.value.conditions.splice(index, 1)
+      //if (this.value.conditions.length > 0) this.value.conditions[0].operator = '';
+      if (this.value.conditions.length == 0) this.$emit('remove')
+    },
+  },
+  emits: ['update:value', 'remove'],
+}
+</script>
+
 <template>
   <div style="" :class="color">
     <div v-for="(cond, idx) in value.conditions" :key="idx">
@@ -60,111 +164,6 @@
     </div>
   </div>
 </template>
-
-<script>
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
-export default {
-  name: 'queryCond',
-  props: {
-    primaryKeyOptions: {
-      type: Array,
-      default() {
-        return []
-      },
-    },
-    value: {
-      type: Object,
-      default() {
-        return { conditions: [] }
-      },
-    },
-    databaseType: {
-      type: String,
-    },
-    level: {
-      type: Number,
-      default() {
-        return 1
-      },
-    },
-  },
-  computed: {
-    conditions() {
-      return this.value.conditions
-    },
-    isDatetime() {
-      let field = this.fields.filter((v) => v.value === this.queryField)[0]
-      if (field) {
-        let type = field.type
-
-        if (type === 'string' && field.format === 'date-time') {
-          return true
-        }
-      }
-      return false
-    },
-  },
-  data() {
-    return {
-      calculationList: ['=', '<>', '>', '<', '>=', '<=', 'like'],
-      color: 'level1',
-    }
-  },
-  mounted() {
-    this.color = 'level' + ((this.level % 7) + 1)
-  },
-  watch: {
-    value: {
-      deep: true,
-      handler() {
-        $emit(this, 'update:value', this.value)
-      },
-    },
-  },
-  methods: {
-    handleCommand(command) {
-      if (command == 'cond') this.addChild('condition', '')
-      if (command == 'andQ') this.addChild('group', 'and')
-      if (command == 'and') this.addChild('condition', 'and')
-      if (command == 'orQ') this.addChild('group', 'or')
-      if (command == 'or') this.addChild('condition', 'or')
-    },
-    addChild(type, operator) {
-      let child = {}
-      if (type === 'group') {
-        child = {
-          type: 'group',
-          operator: operator,
-          conditions: [
-            {
-              type: 'condition',
-              field: '',
-              command: '',
-              value: '',
-            },
-          ],
-        }
-      } else if (type === 'condition') {
-        child = {
-          type: 'condition',
-          operator: operator,
-          field: '',
-          command: '',
-          value: '',
-        }
-      }
-      this.value.conditions.push(child)
-      $emit(this, 'update:value', this.value)
-    },
-    removeChild(index) {
-      this.value.conditions.splice(index, 1)
-      //if (this.value.conditions.length > 0) this.value.conditions[0].operator = '';
-      if (this.value.conditions.length == 0) $emit(this, 'remove')
-    },
-  },
-  emits: ['update:value', 'remove'],
-}
-</script>
 
 <style lang="scss">
 .level2 {

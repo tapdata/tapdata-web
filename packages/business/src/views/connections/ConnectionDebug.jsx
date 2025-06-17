@@ -1,9 +1,15 @@
-import { computed, defineComponent, ref, watch, reactive } from 'vue'
-import { createForm, observer, Form, SchemaField, HighlightCode, FormItem } from '@tap/form'
-import i18n from '@tap/i18n'
-import resize from '@tap/component/src/directives/resize'
-import { VEmpty, VCodeEditor } from '@tap/component'
 import { proxyApi } from '@tap/api'
+import { VEmpty } from '@tap/component/src/base/v-empty'
+
+import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
+import resize from '@tap/component/src/directives/resize'
+import { Form, FormItem } from '@tap/form/src/components/ElementPlus'
+import { HighlightCode } from '@tap/form/src/components/highlight-code'
+import { observer } from '@tap/form/src/FormilyReactiveVue'
+import { createForm } from '@tap/form/src/FormilyVue'
+import { SchemaField } from '@tap/form/src/shared/create'
+import i18n from '@tap/i18n'
+import { computed, defineComponent, reactive, ref, watch } from 'vue'
 import './style.scss'
 
 // 自定义数据源调试
@@ -59,8 +65,8 @@ export const ConnectionDebug = observer(
           2,
         ),
       })
-      let asSource = ref(false)
-      let asTarget = ref(false)
+      const asSource = ref(false)
+      const asTarget = ref(false)
       let connectionType
       const LEVEL2CLS = {
         INFO: 'font-color-dark',
@@ -101,13 +107,13 @@ export const ConnectionDebug = observer(
           'cdcScript',
         ]
         return whiteList.reduce((prev, current) => {
-          let field = (prev[current] = {
+          const field = (prev[current] = {
             ...properties[current],
           })
           field.title = field.title?.trim()
 
           if (field['x-component'] === 'Switch') {
-            let props = field['x-decorator-props'] || {}
+            const props = field['x-decorator-props'] || {}
             props.layout = 'horizontal'
             props.feedbackLayout = 'none'
             field['x-decorator-props'] = props
@@ -135,13 +141,15 @@ export const ConnectionDebug = observer(
             let inputArg
             try {
               inputArg = JSON.parse(params.input)
-            } catch (e) {
-              root.$message.error(i18n.t('packages_business_connection_debug_input_arg_error'))
+            } catch {
+              root.$message.error(
+                i18n.t('packages_business_connection_debug_input_arg_error'),
+              )
               return
             }
 
             logLoading.value = true
-            let query = {
+            const query = {
               connectionId: props.pdkOptions.id,
               type: params.connectType,
               pdkHash: props.pdkOptions.pdkHash,
@@ -160,16 +168,18 @@ export const ConnectionDebug = observer(
             }
 
             try {
-              let result = await proxyApi.command(query)
+              const result = await proxyApi.command(query)
               logList.value = result
-            } catch (e) {
-              console.error(e) // eslint-disable-line
+            } catch (error) {
+              console.error(error)
             }
 
             logLoading.value = false
           },
           () => {
-            root.$message.error(i18n.t('packages_business_connection_debug_form_error'))
+            root.$message.error(
+              i18n.t('packages_business_connection_debug_form_error'),
+            )
           },
         )
       }
@@ -195,10 +205,14 @@ export const ConnectionDebug = observer(
                     }}
                   >
                     {asSource.value && (
-                      <ElRadioButton label="source">{i18n.t('public_connection_type_source')}</ElRadioButton>
+                      <ElRadioButton label="source">
+                        {i18n.t('public_connection_type_source')}
+                      </ElRadioButton>
                     )}
                     {asTarget.value && (
-                      <ElRadioButton label="target">{i18n.t('public_connection_type_target')}</ElRadioButton>
+                      <ElRadioButton label="target">
+                        {i18n.t('public_connection_type_target')}
+                      </ElRadioButton>
                     )}
                   </ElRadioGroup>
                 </FormItem.BaseItem>
@@ -220,7 +234,12 @@ export const ConnectionDebug = observer(
                     controls-position="right"
                   ></ElInputNumber>
                 </FormItem.BaseItem>
-                <ElButton loading={logLoading.value} class="mx-4" onClick={handleRun} type="primary">
+                <ElButton
+                  loading={logLoading.value}
+                  class="mx-4"
+                  onClick={handleRun}
+                  type="primary"
+                >
                   {i18n.t('packages_form_js_processor_index_shiyunxing')}
                 </ElButton>
 
@@ -237,9 +256,18 @@ export const ConnectionDebug = observer(
               </div>
               <div class="flex-1 flex w-100 min-h-0">
                 <div class="flex-1 overflow-y-auto p-4 border-end">
-                  <Form layout="vertical" feedbackLayout="terse" class-name="form-wrap" form={form}>
+                  <Form
+                    layout="vertical"
+                    feedbackLayout="terse"
+                    class-name="form-wrap"
+                    form={form}
+                  >
                     {params.connectType === 'target' && (
-                      <FormItem.BaseItem label={i18n.t('packages_business_connection_debug_input_arg')}>
+                      <FormItem.BaseItem
+                        label={i18n.t(
+                          'packages_business_connection_debug_input_arg',
+                        )}
+                      >
                         <VCodeEditor
                           class="border rounded-2 p-0"
                           theme="one_dark"
@@ -279,18 +307,32 @@ export const ConnectionDebug = observer(
                           if (/^[{[].*[\]}]$/.test(item.message)) {
                             let code
                             try {
-                              code = JSON.stringify(JSON.parse(item.message), null, 2)
-                            } catch (e) {
-                              const message = item.message.replace(/^[{[](.*)[\]}]$/, '$1').split(', ')
+                              code = JSON.stringify(
+                                JSON.parse(item.message),
+                                null,
+                                2,
+                              )
+                            } catch {
+                              const message = item.message
+                                .replace(/^[{[](.*)[\]}]$/, '$1')
+                                .split(', ')
                               code = `${item.message.charAt(0)}\n${message
                                 .map((line) => `  ${line}`)
-                                .join('\n')}\n${item.message.charAt(item.message.length - 1)}`
+                                .join(
+                                  '\n',
+                                )}\n${item.message.charAt(item.message.length - 1)}`
                             }
 
                             return (
                               <details class="js-log-list-item p-2">
-                                <summary class="text-truncate px-2">{item.message}</summary>
-                                <HighlightCode class="m-0" language="json" code={code}></HighlightCode>
+                                <summary class="text-truncate px-2">
+                                  {item.message}
+                                </summary>
+                                <HighlightCode
+                                  class="m-0"
+                                  language="json"
+                                  code={code}
+                                ></HighlightCode>
                               </details>
                             )
                           }
@@ -306,11 +348,24 @@ export const ConnectionDebug = observer(
                           )
                         })
                       : !logLoading.value && <VEmpty large></VEmpty>}
-                    <div class={['justify-content-center align-center m-0 p-2', logLoading.value ? 'flex' : 'none']}>
+                    <div
+                      class={[
+                        'justify-content-center align-center m-0 p-2',
+                        logLoading.value ? 'flex' : 'none',
+                      ]}
+                    >
                       <svg viewBox="25 25 50 50" class="circular">
-                        <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="20"
+                          fill="none"
+                          class="path"
+                        ></circle>
                       </svg>
-                      <span class="ml-1 font-color-light">{i18n.t('packages_dag_loading')}</span>
+                      <span class="ml-1 font-color-light">
+                        {i18n.t('packages_dag_loading')}
+                      </span>
                     </div>
                   </div>
                 </div>

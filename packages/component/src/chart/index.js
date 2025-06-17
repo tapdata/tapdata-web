@@ -5,3 +5,5 @@ Chart.install = function (app) {
 }
 
 export default Chart
+
+export { Chart }

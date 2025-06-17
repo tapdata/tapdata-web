@@ -68,8 +68,7 @@ export default defineConfig(({ mode }) => {
         '@tap/dag',
         '@tap/ldp',
         '@tap/business',
-        '@tap/component',
-        '@tap/node-design',
+        '@tap/component', // 排除整个组件库，改用按需加载
       ],
       force: false,
       esbuildOptions: {
@@ -171,15 +170,15 @@ export default defineConfig(({ mode }) => {
       }),
 
       // 添加性能优化插件
-      process.env.NODE_ENV === 'development' && {
-        name: 'optimize-persist',
-        apply: 'serve',
-        enforce: 'pre',
-        configResolved(config) {
-          // 持久化依赖预构建结果
-          config.optimizeDeps.force = false
-        },
-      },
+      // process.env.NODE_ENV === 'development' && {
+      //   name: 'optimize-persist',
+      //   apply: 'serve',
+      //   enforce: 'pre',
+      //   configResolved(config) {
+      //     // 持久化依赖预构建结果
+      //     config.optimizeDeps.force = false
+      //   },
+      // },
 
       // Add visualizer plugin conditionally
       process.env.NODE_ENV === 'analyze' &&

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Drawer } from '@tap/component'
+import Drawer from '@tap/component/src/Drawer.vue'
 import { useI18n } from '@tap/i18n'
 import { provide, ref } from 'vue'
 import DataServerList from '../data-server/List.vue'

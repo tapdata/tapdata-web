@@ -1,15 +1,16 @@
 <script>
-import { databaseTypesApi, externalStorageApi } from '@tap/api'
+import { externalStorageApi } from '@tap/api'
 
-import { Drawer, FilterBar } from '@tap/component'
-import { SchemaToForm } from '@tap/form'
+import Drawer from '@tap/component/src/Drawer.vue'
+import { FilterBar } from '@tap/component/src/filter-bar'
+import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
 
 import { openUrl } from '@tap/shared'
 import dayjs from 'dayjs'
 import { cloneDeep, escapeRegExp } from 'lodash-es'
 import i18n from '@/i18n'
-import { TablePage } from '../../components'
 import PageContainer from '../../components/PageContainer.vue'
+import TablePage from '../../components/TablePage.vue'
 import { CONNECTION_STATUS_MAP, EXTERNAL_STORAGE_TYPE_MAP } from '../../shared'
 import Test from '../connections/Test.vue'
 

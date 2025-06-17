@@ -1,19 +1,12 @@
 <script>
-import {
-  connectionsApi,
-  ldpApi,
-  lineageApi,
-  metadataDefinitionsApi,
-} from '@tap/api'
-import {
-  EventEmitter,
-  SceneDialog,
-  UpgradeCharges,
-  UpgradeFee,
-} from '@tap/business'
+import { connectionsApi, lineageApi, metadataDefinitionsApi } from '@tap/api'
+import SceneDialog from '@tap/business/src/components/create-connection/SceneDialog.vue'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { IconButton } from '@tap/component'
-import { jsPlumb } from '@tap/dag'
+import UpgradeCharges from '@tap/business/src/components/UpgradeCharges.vue'
+import UpgradeFee from '@tap/business/src/components/UpgradeFee.vue'
+import { EventEmitter } from '@tap/business/src/shared'
+import { IconButton } from '@tap/component/src/icon-button'
+import { jsPlumb } from '@tap/dag/src/instance'
 import Catalogue from './components/Catalogue'
 import ConnectionPreview from './ConnectionPreview'
 import FDMItem from './FDM'
@@ -21,7 +14,6 @@ import MDMItem from './MDM'
 import Settings from './Settings'
 import SourceItem from './Source'
 import TablePreview from './TablePreview'
-
 import TargetItem from './Target'
 
 const TYPE2NAME = {

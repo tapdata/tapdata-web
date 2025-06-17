@@ -1,6 +1,6 @@
 <script>
 import { appApi } from '@tap/api'
-import { InfiniteSelect as AsyncSelect } from '@tap/form'
+import { InfiniteSelect as AsyncSelect } from '@tap/form/src/components/infinite-select'
 
 export default {
   name: 'ListSelect',

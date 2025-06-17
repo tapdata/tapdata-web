@@ -1,62 +1,16 @@
-<template>
-  <div id="replication-board" class="swim-lane flex flex-column h-100 position-relative">
-    <div class="list flex flex-fill overflow-hidden bg-white">
-      <SourceItem
-        ref="source"
-        class="board-source"
-        :fdmAndMdmId="fdmAndMdmId"
-        :dragState="dragState"
-        :event-driver="eventDriver"
-        @create-connection="handleAdd"
-        @node-drag-end="handleDragEnd"
-        @preview="handlePreview"
-        @handle-connection="handleConnection"
-      ></SourceItem>
-      <TargetItem
-        ref="target"
-        :fdmAndMdmId="fdmAndMdmId"
-        :dragState="dragState"
-        :event-driver="eventDriver"
-        @create-connection="handleAdd"
-        @node-drag-end="handleDragEnd"
-        @preview="handlePreview"
-        @handle-connection="handleConnection"
-        @handle-show-upgrade="handleShowUpgradeDialog"
-      ></TargetItem>
-    </div>
-    <SceneDialog
-      :visible="showSceneDialog"
-      @update:visible="handleUpdateVisible"
-      v-model:selector-type="selectorType"
-      @success="handleSuccess"
-      @saveAndMore="handleSuccess"
-    ></SceneDialog>
-    <TablePreview ref="tablePreview" @create-single-task="hanldeCreateSingleTask" />
-    <ConnectionPreview ref="connectionView" />
-    <UpgradeFee
-      v-model:visible="upgradeFeeVisible"
-      :tooltip="upgradeFeeVisibleTips || $t('packages_business_task_list_nindekeyunxing')"
-      :go-page="upgradeFeeGoPage"
-    ></UpgradeFee>
-    <UpgradeCharges
-      v-model:visible="upgradeChargesVisible"
-      :tooltip="upgradeChargesVisibleTips || $t('packages_business_task_list_nindekeyunxing')"
-      :go-page="upgradeFeeGoPage"
-    ></UpgradeCharges>
-  </div>
-</template>
-
 <script>
-import { SceneDialog, EventEmitter, UpgradeCharges, UpgradeFee } from '@tap/business'
-import { connectionsApi, lineageApi, metadataDefinitionsApi, ldpApi } from '@tap/api'
-import { mapMutations, mapState, mapGetters } from 'vuex'
+import { connectionsApi, lineageApi, metadataDefinitionsApi } from '@tap/api'
+import SceneDialog from '@tap/business/src/components/create-connection/SceneDialog.vue'
+import UpgradeCharges from '@tap/business/src/components/UpgradeCharges.vue'
+import UpgradeFee from '@tap/business/src/components/UpgradeFee.vue'
+import { EventEmitter } from '@tap/business/src/shared/event'
+import { jsPlumb } from '@tap/dag/src/instance'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 
-import SourceItem from './Source'
-import TargetItem from './TargetPanel'
-import TablePreview from './TablePreview'
 import ConnectionPreview from './ConnectionPreview'
-
-import { jsPlumb } from '@tap/dag'
+import SourceItem from './Source'
+import TablePreview from './TablePreview'
+import TargetItem from './TargetPanel'
 
 const TYPE2NAME = {
   target: 'TARGET&SERVICE',
@@ -64,8 +18,6 @@ const TYPE2NAME = {
 
 export default {
   name: 'ReplicationBoard',
-
-  inject: ['buried'],
 
   components: {
     UpgradeFee,
@@ -76,6 +28,8 @@ export default {
     ConnectionPreview,
     SceneDialog,
   },
+
+  inject: ['buried'],
 
   data() {
     return {
@@ -136,21 +90,26 @@ export default {
           level: 'base',
         },
       ]
-      return this.mode === 'service' ? result : result.filter((t) => t.level === 'base')
+      return this.mode === 'service'
+        ? result
+        : result.filter((t) => t.level === 'base')
     },
 
     fdmAndMdmId() {
-      return [this.settings?.fdmStorageConnectionId, this.settings?.mdmStorageConnectionId]
+      return [
+        this.settings?.fdmStorageConnectionId,
+        this.settings?.mdmStorageConnectionId,
+      ]
     },
   },
 
   watch: {
-    async 'settings.mdmStorageConnectionId'(v) {
+    'settings.mdmStorageConnectionId': async function (v) {
       this.mdmConnection = await connectionsApi.get(v)
       this.mdmNotExist = !this.mdmConnection
     },
 
-    async 'settings.fdmStorageConnectionId'(v) {
+    'settings.fdmStorageConnectionId': async function (v) {
       this.fdmConnection = await connectionsApi.get(v)
       this.fdmNotExist = !this.fdmConnection
     },
@@ -210,7 +169,7 @@ export default {
         type = type.charAt(0).toUpperCase() + type.slice(1)
 
         this.$store.commit('setReplicationTour', {
-          behavior: 'add-' + this.selectorType,
+          behavior: `add-${this.selectorType}`,
           [`${this.selectorType}ConnectionId`]: connection.id,
           [`isDemo${type}`]: connection.isDemo,
         })
@@ -250,7 +209,7 @@ export default {
     },
 
     loadDirectory() {
-      let filter = {
+      const filter = {
         where: {
           item_type: { $nin: ['database', 'dataflow', 'api'] },
         },
@@ -272,8 +231,8 @@ export default {
           filter: JSON.stringify(filter),
         })
         .then((data) => {
-          let items = data?.items || []
-          let treeData = this.formatCatalog(items)
+          const items = data?.items || []
+          const treeData = this.formatCatalog(items)
           treeData?.forEach((item) => {
             this.directoryMap[item.item_type[0]] = item
           })
@@ -304,7 +263,7 @@ export default {
         const nodes = []
         const setChildren = (nodes) => {
           return nodes.map((it) => {
-            let children = map[it.id]
+            const children = map[it.id]
             if (children) {
               it.children = setChildren(children)
             }
@@ -315,7 +274,7 @@ export default {
         items.forEach((it) => {
           this.mapCatalog(it)
           if (it.parent_id) {
-            let children = map[it.parent_id] || []
+            const children = map[it.parent_id] || []
             children.push(it)
             map[it.parent_id] = children
           } else {
@@ -378,61 +337,65 @@ export default {
     },
 
     handleFindParent(parentNode, tableInfo = {}, ldpType = 'mdm') {
-      lineageApi.findByTable(tableInfo.connectionId, tableInfo.name).then((data) => {
-        const { edges, nodes } = data.dag || {}
-        this.nodes = nodes
-        const otherLdpType = ldpType === 'mdm' ? 'fdm' : 'mdm'
-        let edgsLinks = edges.map((t) => {
-          let sourceNode = this.nodes.find((el) => el.id === t.source)
-          let targetNode = this.nodes.find((el) => el.id === t.target)
-          sourceNode.dom = null
-          targetNode.dom = null
-          sourceNode.ldpType =
-            sourceNode.type === 'apiserverLineage'
-              ? 'target'
-              : this.settings.fdmStorageConnectionId === sourceNode.connectionId
-                ? otherLdpType
-                : 'source'
-          targetNode.ldpType =
-            targetNode.type === 'apiserverLineage'
-              ? 'target'
-              : this.settings.fdmStorageConnectionId === targetNode.connectionId
-                ? otherLdpType
-                : 'source'
-          // 记录事件触发的dom和ldpType
-          if (sourceNode.table === tableInfo.name) {
-            sourceNode.ldpType = ldpType
-            sourceNode.dom = parentNode
-          } else if (targetNode.table === tableInfo.name) {
-            targetNode.ldpType = ldpType
-            targetNode.dom = parentNode
-          }
-          return Object.assign(t, {
-            sourceNode,
-            targetNode,
+      lineageApi
+        .findByTable(tableInfo.connectionId, tableInfo.name)
+        .then((data) => {
+          const { edges, nodes } = data.dag || {}
+          this.nodes = nodes
+          const otherLdpType = ldpType === 'mdm' ? 'fdm' : 'mdm'
+          const edgsLinks = edges.map((t) => {
+            const sourceNode = this.nodes.find((el) => el.id === t.source)
+            const targetNode = this.nodes.find((el) => el.id === t.target)
+            sourceNode.dom = null
+            targetNode.dom = null
+            sourceNode.ldpType =
+              sourceNode.type === 'apiserverLineage'
+                ? 'target'
+                : this.settings.fdmStorageConnectionId ===
+                    sourceNode.connectionId
+                  ? otherLdpType
+                  : 'source'
+            targetNode.ldpType =
+              targetNode.type === 'apiserverLineage'
+                ? 'target'
+                : this.settings.fdmStorageConnectionId ===
+                    targetNode.connectionId
+                  ? otherLdpType
+                  : 'source'
+            // 记录事件触发的dom和ldpType
+            if (sourceNode.table === tableInfo.name) {
+              sourceNode.ldpType = ldpType
+              sourceNode.dom = parentNode
+            } else if (targetNode.table === tableInfo.name) {
+              targetNode.ldpType = ldpType
+              targetNode.dom = parentNode
+            }
+            return Object.assign(t, {
+              sourceNode,
+              targetNode,
+            })
           })
-        })
-        this.edgsLinks = edgsLinks
+          this.edgsLinks = edgsLinks
 
-        this.showParentLineage = true
-        this.handleConnection()
-      })
+          this.showParentLineage = true
+          this.handleConnection()
+        })
     },
 
     async handleConnection() {
       if (!this.showParentLineage) return
-      let connectionLines = []
+      const connectionLines = []
 
       // 获取dom的方法
       const map = {
         source: this.$refs.source.handleFindTreeDom,
         target: this.$refs.target.handleFindTaskDom,
-        mdm: function () {},
+        mdm() {},
         fdm: this.$refs.fdm[0].handleFindTreeDom,
       }
 
       // 需要过滤的数据
-      let keywordOptions = {
+      const keywordOptions = {
         source: [],
         target: [],
         fdm: [],
@@ -451,11 +414,21 @@ export default {
             })
           }
         } else {
-          const { connectionId, connectionName, pdkHash, table, metadata = {} } = el || {}
+          const {
+            connectionId,
+            connectionName,
+            pdkHash,
+            table,
+            metadata = {},
+          } = el || {}
           // ldpType为source，且是连线目标节点的ldpType也为source，则过滤不展示
           const flag =
             el.ldpType === 'source' &&
-            this.edgsLinks.some((t) => t.sourceNode?.id === el.id && t.targetNode?.ldpType === 'source')
+            this.edgsLinks.some(
+              (t) =>
+                t.sourceNode?.id === el.id &&
+                t.targetNode?.ldpType === 'source',
+            )
           if (!flag) {
             keywordOptions[el.ldpType]?.push({
               connectionId,
@@ -561,13 +534,12 @@ export default {
       !this.isDaas &&
         this.$axios
           .get(
-            'api/tcm/agent?filter=' +
-              encodeURIComponent(
-                JSON.stringify({
-                  size: 100,
-                  page: 1,
-                }),
-              ),
+            `api/tcm/agent?filter=${encodeURIComponent(
+              JSON.stringify({
+                size: 100,
+                page: 1,
+              }),
+            )}`,
           )
           .then(async (data) => {
             const { items = [] } = data
@@ -577,7 +549,12 @@ export default {
               return
             }
 
-            items.length <= 1 && items.some((t) => t.orderInfo?.chargeProvider === 'FreeTier' || !t.orderInfo?.amount)
+            items.length <= 1 &&
+            items.some(
+              (t) =>
+                t.orderInfo?.chargeProvider === 'FreeTier' ||
+                !t.orderInfo?.amount,
+            )
               ? this.handleShowUpgradeFee(err.message)
               : this.handleShowUpgradeCharges(err.message)
           })
@@ -585,6 +562,66 @@ export default {
   },
 }
 </script>
+
+<template>
+  <div
+    id="replication-board"
+    class="swim-lane flex flex-column h-100 position-relative"
+  >
+    <div class="list flex flex-fill overflow-hidden bg-white">
+      <SourceItem
+        ref="source"
+        class="board-source"
+        :fdm-and-mdm-id="fdmAndMdmId"
+        :drag-state="dragState"
+        :event-driver="eventDriver"
+        @create-connection="handleAdd"
+        @node-drag-end="handleDragEnd"
+        @preview="handlePreview"
+        @handle-connection="handleConnection"
+      />
+      <TargetItem
+        ref="target"
+        :fdm-and-mdm-id="fdmAndMdmId"
+        :drag-state="dragState"
+        :event-driver="eventDriver"
+        @create-connection="handleAdd"
+        @node-drag-end="handleDragEnd"
+        @preview="handlePreview"
+        @handle-connection="handleConnection"
+        @handle-show-upgrade="handleShowUpgradeDialog"
+      />
+    </div>
+    <SceneDialog
+      v-model:selector-type="selectorType"
+      :visible="showSceneDialog"
+      @update:visible="handleUpdateVisible"
+      @success="handleSuccess"
+      @save-and-more="handleSuccess"
+    />
+    <TablePreview
+      ref="tablePreview"
+      @create-single-task="hanldeCreateSingleTask"
+    />
+    <ConnectionPreview ref="connectionView" />
+    <UpgradeFee
+      v-model:visible="upgradeFeeVisible"
+      :tooltip="
+        upgradeFeeVisibleTips ||
+        $t('packages_business_task_list_nindekeyunxing')
+      "
+      :go-page="upgradeFeeGoPage"
+    />
+    <UpgradeCharges
+      v-model:visible="upgradeChargesVisible"
+      :tooltip="
+        upgradeChargesVisibleTips ||
+        $t('packages_business_task_list_nindekeyunxing')
+      "
+      :go-page="upgradeFeeGoPage"
+    />
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .board-source {

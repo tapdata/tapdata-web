@@ -1,12 +1,12 @@
 <script>
 import { taskApi } from '@tap/api'
+import SchemaProgress from '@tap/business/src/components/SchemaProgress.vue'
+import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import {
   CONNECTION_STATUS_MAP,
   CONNECTION_TYPE_MAP,
-  SchemaProgress,
-  TaskStatus,
-} from '@tap/business'
-import { Drawer } from '@tap/component'
+} from '@tap/business/src/shared'
+import Drawer from '@tap/component/src/Drawer.vue'
 import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash-es'
 

@@ -1,17 +1,18 @@
 <script>
-import { logcollectorApi, taskApi, workerApi } from '@tap/api'
-import { FilterBar, VTable } from '@tap/component'
+import { logcollectorApi, taskApi } from '@tap/api'
+import { VTable } from '@tap/component/src/base/v-table'
+import { FilterBar } from '@tap/component/src/filter-bar'
 import i18n from '@tap/i18n'
 import { calcTimeUnit, openUrl } from '@tap/shared'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
 
-import { TablePage, TaskStatus } from '../../components'
 import PageContainer from '../../components/PageContainer.vue'
+import TablePage from '../../components/TablePage.vue'
+import TaskStatus from '../../components/TaskStatus.vue'
 import { makeStatusAndDisabled } from '../../shared'
-import Editor from './Editor'
+import Editor from './Editor.vue'
 
-let timeout = null
 export default {
   components: {
     PageContainer,
@@ -118,15 +119,15 @@ export default {
   },
   mounted() {
     //定时轮询
-    timeout = setInterval(() => {
+    this.timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
     }, 8000)
     this.searchParams = Object.assign(this.searchParams, {
       taskName: this.$route.query?.keyword || '',
     })
   },
-  unmounted() {
-    clearInterval(timeout)
+  beforeUnmount() {
+    clearInterval(this.timeout)
   },
   methods: {
     // 获取列表数据

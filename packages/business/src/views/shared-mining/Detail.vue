@@ -1,139 +1,17 @@
-<template>
-  <div class="share-detail h-100 flex flex-column">
-    <div class="share-detail-box share-detail-head flex justify-content-between fs-8">
-      <div class="share-detail-head-left py-6 px-4">
-        <div class="flex align-items-center">
-          <span class="fw-sub mb-4 fs-7">{{ $t('packages_business_shared_detail_mining_info') }}</span>
-        </div>
-        <div class="flex justify-content-start mb-4 text-left fs-8">
-          <div class="fw-normal head-label font-color-light">{{ $t('packages_business_shared_detail_name') }}:</div>
-          <ElTooltip effect="dark" :content="detailData.name" placement="top-start">
-            <div class="name font-color-dark fw-normal">
-              {{ detailData.name }}
-            </div>
-          </ElTooltip>
-        </div>
-        <div class="flex justify-content-start mb-4 text-left fs-8">
-          <div class="fw-normal head-label font-color-light">
-            {{ $t('packages_business_shared_detail_log_mining_time') }}:
-          </div>
-          <div class="font-color-dark fw-normal">
-            {{ formatTime(detailData.logTime) }}
-          </div>
-        </div>
-        <div class="flex justify-content-start mb-4 text-left fs-8">
-          <div class="fw-normal head-label font-color-light">{{ $t('packages_business_shared_detail_log_time') }}:</div>
-          <div class="font-color-dark fw-normal">
-            {{ detailData.storageTime }}
-          </div>
-        </div>
-      </div>
-      <div class="share-detail-head-center py-5 px-6" style="min-height: 250px">
-        <div class="flex">
-          <span class="label font-color-dark fs-8">{{ $t('packages_business_shared_detail_statistics_time') }}</span>
-          <DatetimeRange
-            v-model:value="timeRange"
-            :range="2 * 365 * 24 * 60 * 60 * 1000"
-            value-format="x"
-            class="filter-datetime-range ml-2"
-            @change="changeTimeRangeFnc"
-          ></DatetimeRange>
-        </div>
-        <!-- <Chart ref="chart" type="line" :extend="lineOptions" class="v-echart h-100"></Chart> -->
-        <div class="flex flex-column flex-fill" style="height: 250px" v-loading="!lineDataDeep.x.length">
-          <Chart ref="chart" type="line" :data="lineData" :options="lineOptions" class="type-chart h-100"></Chart>
-        </div>
-      </div>
-      <div class="flex share-detail-head-right text-center p-6 pl-0">
-        <div class="flex text-center bg-color-main w-100 h-100">
-          <div class="box py-3">
-            <div class="title fs-7 font-color-dark">
-              {{ $t('public_event_incremental_delay') }}
-            </div>
-            <div class="time py-4 fs-2 text-primary">
-              {{ getReplicateLagTime(replicateLag) }}
-            </div>
-            <div class="text-muted font-color-slight fs-8" v-if="detailData.cdcTime">
-              {{ $t('packages_business_shared_detail_incremental_time') }}：{{ formatTime(detailData.cdcTime) }}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="share-detail-box share-detail-main mt-5 p-5 overflow-hidden">
-      <VTable
-        v-if="detailData"
-        :data="detailData.taskList"
-        :columns="columns"
-        :remote-data="id"
-        height="100%"
-        :has-pagination="false"
-        ref="VTable"
-      >
-        <template v-slot:sourceTimestamp="scope">
-          <span>{{ formatTime(scope.row.sourceTimestamp) }}</span>
-        </template>
-        <template v-slot:syncTimestamp="scope">
-          <span> {{ formatTime(scope.row.syncTimestamp) }}</span>
-        </template>
-        <template v-slot:status="scope">
-          <TaskStatus :task="scope.row" />
-        </template>
-        <template v-slot:operation="scope">
-          <div class="operate-columns">
-            <ElButton text @click="goDetail(scope.row)">{{ $t('public_button_check') }}</ElButton>
-            <ElButton text @click="getTables(scope.row.id)">{{
-              $t('packages_business_shared_detail_button_table_info')
-            }}</ElButton>
-          </div>
-        </template>
-      </VTable>
-    </div>
-    <el-dialog
-      width="400px"
-      class="edit-dialog"
-      :title="$t('packages_business_shared_detail_title')"
-      :close-on-click-modal="false"
-      v-model="tableDialogVisible"
-    >
-      <VTable
-        :data="tableNameList"
-        :columns="columnsTableName"
-        :remote-data="id"
-        height="100%"
-        :has-pagination="false"
-        ref="tableName"
-      >
-      </VTable>
-      <template v-slot:footer>
-        <span class="dialog-footer">
-          <el-pagination
-            @current-change="getTableNames"
-            :current-page="currentPage"
-            :page-sizes="[20, 50, 100]"
-            :page-size="pageSize"
-            layout="total, prev, pager, next, jumper"
-            :total="tableNameTotal"
-          >
-          </el-pagination>
-        </span>
-      </template>
-    </el-dialog>
-  </div>
-</template>
-
 <script>
-import i18n from '@/i18n'
-
-import { Chart, DatetimeRange, VTable } from '@tap/component'
-import { formatMs } from '@/utils/util'
-import dayjs from 'dayjs'
-import { measurementApi, logcollectorApi } from '@tap/api'
-import { TaskStatus, makeStatusAndDisabled } from '@tap/business'
+import { logcollectorApi, measurementApi } from '@tap/api'
+import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
+import { makeStatusAndDisabled } from '@tap/business/src/shared'
+import { VTable } from '@tap/component/src/base/v-table'
+import { Chart } from '@tap/component/src/chart'
+import DatetimeRange from '@tap/component/src/filter-bar/DatetimeRange.vue'
 import Time from '@tap/shared/src/time'
+import dayjs from 'dayjs'
+import i18n from '@/i18n'
+import { formatMs } from '@/utils/util'
 
 export default {
-  name: 'Info',
+  name: 'Detail',
   components: { Chart, VTable, DatetimeRange, TaskStatus },
   data() {
     return {
@@ -167,9 +45,9 @@ export default {
             // max: 'dataMax',
             // name: 'QPS',
             axisLabel: {
-              formatter: function (value) {
+              formatter(value) {
                 if (value >= 1000) {
-                  value = value / 1000 + 'K'
+                  value = `${value / 1000}K`
                 }
                 return value
               },
@@ -178,9 +56,9 @@ export default {
           {
             // max: 'dataMax',
             axisLabel: {
-              formatter: function (value) {
+              formatter(value) {
                 if (value >= 1000) {
-                  value = value / 1000 + 'K'
+                  value = `${value / 1000}K`
                 }
                 return value
               },
@@ -297,7 +175,7 @@ export default {
 
     getData(id) {
       logcollectorApi.getDetail(id).then((data) => {
-        let detailData = data || {}
+        const detailData = data || {}
         detailData.taskList = detailData.taskList?.map(makeStatusAndDisabled)
         this.detailData = detailData
         this.getMeasurement()
@@ -308,7 +186,7 @@ export default {
       this.getTableNames(id)
     },
     getMeasurement() {
-      let params = {
+      const params = {
         samples: [
           {
             tags: {
@@ -332,7 +210,7 @@ export default {
       }
       let start = this.timeRange?.[0]
       let end = this.timeRange?.[1]
-      if (!(start && !isNaN(start)) && !(end && !isNaN(end))) {
+      if ((!start || isNaN(start)) && (!end || isNaN(end))) {
         // 默认最近一分钟范围
         start = Time.now() - 60 * 1000
       }
@@ -346,34 +224,36 @@ export default {
       } else {
         end = undefined
       }
-      let diff = (end || Date.now()) - start
+      const diff = (end || Date.now()) - start
       params.samples[0].guanluary = this.getGuanluary(diff)
-      let guanluaryFormat = this.getGuanluary(diff, true)
+      const guanluaryFormat = this.getGuanluary(diff, true)
       measurementApi.query(params).then((data) => {
-        let { samples } = data || {}
+        const { samples } = data || {}
         samples.forEach((el) => {
-          for (let key in el) {
+          for (const key in el) {
             el[key] = el[key].reverse()
           }
         })
-        let statistics = data.statistics?.[0] || {}
+        const statistics = data.statistics?.[0] || {}
         this.replicateLag = statistics.replicateLag || 0
         // 折线图
         const qpsData = samples?.[0] || {}
-        let { inputQPS = [], outputQPS = [] } = qpsData
-        let qpsDataTime = qpsData?.time || []
+        const { inputQPS = [], outputQPS = [] } = qpsData
+        const qpsDataTime = qpsData?.time || []
 
-        let xArr = qpsDataTime.map((t) => this.formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
+        const xArr = qpsDataTime.map((t) =>
+          this.formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS'),
+        ) // 时间不在这里格式化.map(t => formatTime(t))
         const xArrLen = xArr.length
         if (this.lineDataDeep.x.length > 20) {
           this.lineDataDeep.x.splice(0, xArrLen)
           this.lineDataDeep.y[0].splice(0, xArrLen)
           this.lineDataDeep.y[1].splice(0, xArrLen)
         }
-        let inArr = []
-        let outArr = []
+        const inArr = []
+        const outArr = []
         xArr.forEach((el, i) => {
-          let time = el
+          const time = el
           inArr.push({
             name: time,
             value: [time, inputQPS[i]],
@@ -418,7 +298,7 @@ export default {
       })
     },
     resetTimer() {
-      let ms = 60 * 1000
+      const ms = 60 * 1000
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {
         this.getMeasurement()
@@ -442,7 +322,7 @@ export default {
       }
     },
     getGuanluary(val, format) {
-      let diff = val / 1000
+      const diff = val / 1000
       let timeType
       let formatRes = ''
       // <= 1h(1 * 60 * 60s) --> minute, second point, max 60 * 12 = 720 period 5s
@@ -472,25 +352,179 @@ export default {
     },
     getReplicateLagTime(val) {
       if (val < 1000) {
-        return '<1' + this.$t('public_time_s')
+        return `<1${this.$t('public_time_s')}`
       } else if (val > 24 * 60 * 60 * 1000) {
-        return '>1' + this.$t('public_time_d')
+        return `>1${this.$t('public_time_d')}`
       }
       return formatMs(val, 'time')
     },
     getTableNames(callSubId) {
-      let filter = {
+      const filter = {
         limit: this.pageSize,
         skip: (this.currentPage - 1) * this.pageSize,
       }
-      logcollectorApi.newTableNames(this.detailData.id, callSubId, filter).then((data) => {
-        this.tableNameList = data?.items || []
-        this.tableNameTotal = data?.total || 0
-      })
+      logcollectorApi
+        .newTableNames(this.detailData.id, callSubId, filter)
+        .then((data) => {
+          this.tableNameList = data?.items || []
+          this.tableNameTotal = data?.total || 0
+        })
     },
   },
 }
 </script>
+
+<template>
+  <div class="share-detail h-100 flex flex-column">
+    <div
+      class="share-detail-box share-detail-head flex justify-content-between fs-8"
+    >
+      <div class="share-detail-head-left py-6 px-4">
+        <div class="flex align-items-center">
+          <span class="fw-sub mb-4 fs-7">{{
+            $t('packages_business_shared_detail_mining_info')
+          }}</span>
+        </div>
+        <div class="flex justify-content-start mb-4 text-left fs-8">
+          <div class="fw-normal head-label font-color-light">
+            {{ $t('packages_business_shared_detail_name') }}:
+          </div>
+          <ElTooltip
+            effect="dark"
+            :content="detailData.name"
+            placement="top-start"
+          >
+            <div class="name font-color-dark fw-normal">
+              {{ detailData.name }}
+            </div>
+          </ElTooltip>
+        </div>
+        <div class="flex justify-content-start mb-4 text-left fs-8">
+          <div class="fw-normal head-label font-color-light">
+            {{ $t('packages_business_shared_detail_log_mining_time') }}:
+          </div>
+          <div class="font-color-dark fw-normal">
+            {{ formatTime(detailData.logTime) }}
+          </div>
+        </div>
+        <div class="flex justify-content-start mb-4 text-left fs-8">
+          <div class="fw-normal head-label font-color-light">
+            {{ $t('packages_business_shared_detail_log_time') }}:
+          </div>
+          <div class="font-color-dark fw-normal">
+            {{ detailData.storageTime }}
+          </div>
+        </div>
+      </div>
+      <div class="share-detail-head-center py-5 px-6" style="min-height: 250px">
+        <div class="flex">
+          <span class="label font-color-dark fs-8">{{
+            $t('packages_business_shared_detail_statistics_time')
+          }}</span>
+          <DatetimeRange
+            v-model:value="timeRange"
+            :range="2 * 365 * 24 * 60 * 60 * 1000"
+            value-format="x"
+            class="filter-datetime-range ml-2"
+            @change="changeTimeRangeFnc"
+          />
+        </div>
+        <!-- <Chart ref="chart" type="line" :extend="lineOptions" class="v-echart h-100"></Chart> -->
+        <div
+          v-loading="!lineDataDeep.x.length"
+          class="flex flex-column flex-fill"
+          style="height: 250px"
+        >
+          <Chart
+            ref="chart"
+            type="line"
+            :data="lineData"
+            :options="lineOptions"
+            class="type-chart h-100"
+          />
+        </div>
+      </div>
+      <div class="flex share-detail-head-right text-center p-6 pl-0">
+        <div class="flex text-center bg-color-main w-100 h-100">
+          <div class="box py-3">
+            <div class="title fs-7 font-color-dark">
+              {{ $t('public_event_incremental_delay') }}
+            </div>
+            <div class="time py-4 fs-2 text-primary">
+              {{ getReplicateLagTime(replicateLag) }}
+            </div>
+            <div
+              v-if="detailData.cdcTime"
+              class="text-muted font-color-slight fs-8"
+            >
+              {{ $t('packages_business_shared_detail_incremental_time') }}：{{
+                formatTime(detailData.cdcTime)
+              }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="share-detail-box share-detail-main mt-5 p-5 overflow-hidden">
+      <VTable
+        v-if="detailData"
+        :data="detailData.taskList"
+        :columns="columns"
+        :remote-data="id"
+        height="100%"
+        :has-pagination="false"
+      >
+        <template #sourceTimestamp="scope">
+          <span>{{ formatTime(scope.row.sourceTimestamp) }}</span>
+        </template>
+        <template #syncTimestamp="scope">
+          <span> {{ formatTime(scope.row.syncTimestamp) }}</span>
+        </template>
+        <template #status="scope">
+          <TaskStatus :task="scope.row" />
+        </template>
+        <template #operation="scope">
+          <div class="operate-columns">
+            <ElButton text @click="goDetail(scope.row)">{{
+              $t('public_button_check')
+            }}</ElButton>
+            <ElButton text @click="getTables(scope.row.id)">{{
+              $t('packages_business_shared_detail_button_table_info')
+            }}</ElButton>
+          </div>
+        </template>
+      </VTable>
+    </div>
+    <el-dialog
+      v-model="tableDialogVisible"
+      width="400px"
+      class="edit-dialog"
+      :title="$t('packages_business_shared_detail_title')"
+      :close-on-click-modal="false"
+    >
+      <VTable
+        ref="tableName"
+        :data="tableNameList"
+        :columns="columnsTableName"
+        :remote-data="id"
+        height="100%"
+        :has-pagination="false"
+      />
+      <template #footer>
+        <span class="dialog-footer">
+          <el-pagination
+            :current-page="currentPage"
+            :page-sizes="[20, 50, 100]"
+            :page-size="pageSize"
+            layout="total, prev, pager, next, jumper"
+            :total="tableNameTotal"
+            @current-change="getTableNames"
+          />
+        </span>
+      </template>
+    </el-dialog>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .share-detail {

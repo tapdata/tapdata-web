@@ -8,32 +8,29 @@ import {
   proxyApi,
 } from '@tap/api'
 
-import { VIcon } from '@tap/component'
 import resize from '@tap/component/src/directives/resize'
-import { SchemaToForm } from '@tap/form'
+import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
 import i18n from '@tap/i18n'
 import { checkConnectionName, submitForm, uuid } from '@tap/shared'
-import { cloneDeep, isEmpty } from 'lodash-es'
+import { isEmpty } from 'lodash-es'
 
-import { DatabaseIcon } from '../../components'
-import ConnectorDoc from '../../components/ConnectorDoc'
+import ConnectorDoc from '../../components/ConnectorDoc.vue'
 import mixins from '../../components/create-connection/mixins'
 import SceneDialog from '../../components/create-connection/SceneDialog.vue'
+import { DatabaseIcon } from '../../components/DatabaseIcon'
 import { ConnectionDebug } from './ConnectionDebug'
 import { JsDebug } from './JsDebug'
-import Test from './Test'
-import UsedTaskDialog from './UsedTaskDialog'
+import Test from './Test.vue'
+import UsedTaskDialog from './UsedTaskDialog.vue'
 import { getConnectionIcon } from './util'
 
 export default {
-  name: 'DatabaseForm',
   name: 'DatabaseForm',
   components: {
     ConnectorDoc,
     DatabaseIcon,
     SceneDialog,
     Test,
-    VIcon,
     SchemaToForm,
     ConnectionDebug,
     UsedTaskDialog,

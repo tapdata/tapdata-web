@@ -1,10 +1,9 @@
 <script>
-import { externalStorageApi, sharedCacheApi } from '@tap/api'
-import { Drawer } from '@tap/component'
 import dayjs from 'dayjs'
-
-import { TaskStatus } from '../../components'
-import CodeView from './CodeView'
+import { externalStorageApi, sharedCacheApi } from '@tap/api'
+import Drawer from '@tap/component/src/Drawer.vue'
+import TaskStatus from '../../components/TaskStatus.vue'
+import CodeView from './CodeView.vue'
 
 export default {
   name: 'Details',

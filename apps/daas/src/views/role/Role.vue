@@ -1,7 +1,7 @@
 <script>
 import { Check } from '@element-plus/icons-vue'
 import { permissionsApi, roleMappingsApi, usersApi } from '@tap/api'
-import { PageContainer } from '@tap/business'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import i18n from '@/i18n'
 
 const pageSort = [

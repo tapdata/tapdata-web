@@ -1,8 +1,8 @@
 <script>
 import { apiServerApi } from '@tap/api'
-import { TablePage } from '@tap/business'
+import TablePage from '@tap/business/src/components/TablePage.vue'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { FilterBar } from '@tap/component'
+import { FilterBar } from '@tap/component/src/filter-bar'
 import Cookie from '@tap/shared/src/cookie'
 import { escapeRegExp } from 'lodash-es'
 import { h } from 'vue'

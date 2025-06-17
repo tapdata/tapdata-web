@@ -5,8 +5,6 @@ import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
 import i18n from '@tap/i18n'
 
 export default {
-  name: 'UsedTaskDialog',
-
   components: { SchemaToForm },
 
   data() {
