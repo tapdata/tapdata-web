@@ -83,6 +83,27 @@ export default defineConfig(({ mode }) => {
     plugins: [
       vue(),
       vueJsx(),
+      // // 开发环境优化插件
+      // process.env.NODE_ENV === 'development' && {
+      //   name: 'dev-optimize',
+      //   apply: 'serve',
+      //   enforce: 'pre',
+      //   configResolved(config) {
+      //     // 禁用一些开发时不需要的功能
+      //     config.optimizeDeps.force = false
+      //     config.build.sourcemap = false
+      //     config.build.minify = 'esbuild'
+      //     config.build.cssCodeSplit = false
+      //   },
+      //   configureServer(server) {
+      //     // 优化开发服务器
+      //     server.middlewares.use((req, res, next) => {
+      //       // 添加缓存控制头
+      //       res.setHeader('Cache-Control', 'no-cache')
+      //       next()
+      //     })
+      //   },
+      // },
       AutoImport({
         resolvers: [
           IconsResolver({
@@ -149,6 +170,17 @@ export default defineConfig(({ mode }) => {
         },
       }),
 
+      // 添加性能优化插件
+      process.env.NODE_ENV === 'development' && {
+        name: 'optimize-persist',
+        apply: 'serve',
+        enforce: 'pre',
+        configResolved(config) {
+          // 持久化依赖预构建结果
+          config.optimizeDeps.force = false
+        },
+      },
+
       // Add visualizer plugin conditionally
       process.env.NODE_ENV === 'analyze' &&
         visualizer({
@@ -162,6 +194,38 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
+        '@tap/component/src': path.resolve(
+          __dirname,
+          '../../packages/component/src',
+        ),
+        '@tap/business/src': path.resolve(
+          __dirname,
+          '../../packages/business/src',
+        ),
+        '@tap/i18n/src': path.resolve(__dirname, '../../packages/i18n/src'),
+        '@tap/shared/src': path.resolve(__dirname, '../../packages/shared/src'),
+        '@tap/dag/src': path.resolve(__dirname, '../../packages/dag/src'),
+        '@tap/ldp/src': path.resolve(__dirname, '../../packages/ldp/src'),
+        // '@tap/assets/src': path.resolve(__dirname, '../../packages/assets/src'),
+        '@tap/assets/fonts': path.resolve(
+          __dirname,
+          '../../packages/assets/fonts',
+        ),
+        '@tap/assets/styles': path.resolve(
+          __dirname,
+          '../../packages/assets/styles',
+        ),
+        '@tap/api': path.resolve(__dirname, '../../packages/api/src'),
+        '@tap/component': path.resolve(
+          __dirname,
+          '../../packages/component/src',
+        ),
+        '@tap/shared': path.resolve(__dirname, '../../packages/shared/src'),
+        '@tap/dag': path.resolve(__dirname, '../../packages/dag/src'),
+        '@tap/ldp': path.resolve(__dirname, '../../packages/ldp/src'),
+        '@tap/business': path.resolve(__dirname, '../../packages/business/src'),
+        '@tap/i18n': path.resolve(__dirname, '../../packages/i18n/src'),
+        '@tap/assets': path.resolve(__dirname, '../../packages/assets'),
       },
 
       // TODO 建议显式指定扩展名，vite 默认就不支持忽略.vue
@@ -181,6 +245,18 @@ export default defineConfig(({ mode }) => {
           secure: false,
           target: proxy.target.replace(/^https?/, 'ws'),
         },
+      },
+      // 添加开发服务器优化配置
+      hmr: {
+        overlay: false, // 禁用错误覆盖层，减少启动时的开销
+      },
+      watch: {
+        usePolling: false, // 禁用轮询，使用系统原生文件监听
+        ignored: ['**/node_modules/**', '**/dist/**', '**/.git/**'], // 忽略不需要监听的文件
+      },
+      fs: {
+        strict: false, // 禁用严格模式，提高文件系统性能
+        allow: ['..'], // 允许访问上级目录
       },
     },
 

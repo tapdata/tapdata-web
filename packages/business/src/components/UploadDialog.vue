@@ -1,6 +1,6 @@
 <script>
 import { connectionsApi, metadataDefinitionsApi } from '@tap/api'
-import { InfiniteSelect as AsyncSelect } from '@tap/form/src/components/infinite-select'
+import AsyncSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 import Cookie from '@tap/shared/src/cookie'
 import axios from 'axios'
 import { merge } from 'lodash-es'
