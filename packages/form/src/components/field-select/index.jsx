@@ -1,6 +1,5 @@
 import { PreviewText } from '@formily/element-plus'
 import { connect, mapProps, mapReadPretty } from '@formily/vue'
-import { VIcon } from '@tap/component'
 import i18n from '@tap/i18n'
 // import { Select } from '../select'
 import { ElSelectV2 as Select } from 'element-plus'

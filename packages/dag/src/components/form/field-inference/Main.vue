@@ -1,149 +1,17 @@
-<template>
-  <div class="field-inference">
-    <div class="field-inference__main flex">
-      <div class="field-inference__nav flex flex-column m-3 bg-white rounded-4">
-        <div class="nav-filter__list flex text-center lh-1 p-2">
-          <ElSelect v-model="activeClassification" @change="loadData">
-            <ElOption v-for="(item, index) in tableClassification" :key="index" :value="item.type" :label="item.label">
-              <span>{{ item.title }}</span>
-              <span :class="[item.total && item.type ? 'color-danger' : 'color-info']">({{ item.total }})</span>
-            </ElOption>
-          </ElSelect>
-        </div>
-        <ElInput
-          v-model="searchTable"
-          :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
-          clearable
-          class="p-2"
-          @input="handleSearchTable"
-        >
-          <template #suffix>
-            <ElIcon><ElIconSearch /></ElIcon>
-          </template>
-        </ElInput>
-        <div v-loading="navLoading" class="nav-list flex-fill font-color-normal">
-          <ul v-if="navList.length">
-            <li
-              v-for="(item, index) in navList"
-              :key="index"
-              :class="{ active: position === index }"
-              class="flex align-items-center justify-content-between"
-              @click="handleSelect(index)"
-            >
-              <div class="task-form-text-box pl-2 inline-block flex-1 min-w-0">
-                <OverflowTooltip class="w-100 text-truncate target" :text="item.name" placement="right" />
-              </div>
-              <!--<ElTooltip
-                      v-if="item.matchedDataTypeLevel === 'error'"
-                      placement="top"
-                      transition="tooltip-fade-in"
-                      :content="$t('packages_dag_field_inference_main_gaibiaocunzaibu')"
-                      class="mr-1"
-                    >
-                      <VIcon size="16" class="color-warning">warning</VIcon>
-                    </ElTooltip>-->
-            </li>
-          </ul>
-          <div v-else class="task-form-left__ul flex flex-column align-items-center">
-            <div class="table__empty_img" style="margin-top: 22%">
-              <img style="" :src="noData" />
-            </div>
-            <div class="noData">{{ $t('public_data_no_data') }}</div>
-          </div>
-        </div>
-        <ElPagination
-          small
-          class="flex mt-3 p-0 din-font mx-auto"
-          layout="total, prev, slot, next"
-          v-model:current-page="page.current"
-          v-model:page-size="page.size"
-          :total="page.total"
-          :pager-count="5"
-          @current-change="loadData"
-        >
-          <div class="text-center">
-            <span class="page__current" style="min-width: 22px">{{ page.current }}</span>
-            <span class="icon-color" style="min-width: 22px">/</span>
-            <span class="icon-color" style="min-width: 22px">{{ page.count }}</span>
-          </div>
-        </ElPagination>
-      </div>
-      <div v-loading="fieldsLoading" class="field-inference__content flex-fill flex flex-column p-3">
-        <div>
-          <div class="flex align-center">
-            <span class="font-color-dark">{{ $t('packages_dag_nodes_table_gengxintiaojianzi') }}</span>
-            <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_field_inference_main_xuanzemorengeng')">
-              <VIcon size="16" class="color-primary ml-1">info</VIcon>
-            </ElTooltip>
-          </div>
-          <!-- formily 上下文使用 dataSource 属性 -->
-          <FieldSelect
-            v-model="updateList"
-            :disabled="navLoading || disabled"
-            allowCreate
-            multiple
-            filterable
-            :placeholder="$t('public_select_option_default')"
-            :class="['update-list-select', { error: isErrorSelect }]"
-            :dataSource="fieldOptions"
-            @visible-change="handleVisibleChange"
-            @remove-tag="handleRemoveTag"
-          />
-        </div>
-        <div class="flex-fill flex flex-column bg-white mt-4 rounded-4">
-          <div class="flex align-items-center p-2 font-color-dark">
-            <ElInput
-              v-model="searchField"
-              :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
-              clearable
-              @input="handleSearchField"
-            >
-              <template #suffix>
-                <ElIcon><ElIconSearch /></ElIcon>
-              </template>
-            </ElInput>
-            <ElButton plain class="btn-refresh ml-2" @click="refresh">
-              <VIcon>refresh</VIcon>
-            </ElButton>
-          </div>
-          <List
-            ref="list"
-            :data="selected"
-            :show-columns="['index', 'field_name', 'data_type', 'operation']"
-            v-model:fieldChangeRules="fieldChangeRules"
-            :dataTypesJson="dataTypesJson"
-            :readonly="readonly"
-            ignore-error
-            class="content__list flex-fill"
-            @update-rules="handleUpdateRules"
-            @open-update-rules="handleOpen"
-          ></List>
-        </div>
-      </div>
-    </div>
-    <Dialog
-      v-model:visible="visible"
-      :form="form"
-      v-model:fieldChangeRules="fieldChangeRules"
-      :readonly="readonly"
-    ></Dialog>
-  </div>
-</template>
-
 <script>
-import { mapGetters, mapState } from 'vuex'
-import { debounce, cloneDeep } from 'lodash-es'
-
-import i18n from '@tap/i18n'
+import { databaseTypesApi, metadataInstancesApi } from '@tap/api'
 import noData from '@tap/assets/images/noData.png'
+
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
-import { metadataInstancesApi, databaseTypesApi } from '@tap/api'
 import { FieldSelect, mapFieldsData } from '@tap/form'
+import i18n from '@tap/i18n'
+import { cloneDeep, debounce } from 'lodash-es'
+import { mapGetters, mapState } from 'vuex'
 
 import { getCanUseDataTypes, getMatchedDataTypeLevel } from '../../../util'
+import Dialog from './Dialog.vue'
+import List from './List.vue'
 import mixins from './mixins'
-import List from './List'
-import Dialog from './Dialog'
 
 export default {
   name: 'FieldInference',
@@ -200,7 +68,7 @@ export default {
       transformExNum: 0,
       updateExNum: 0,
       dataTypesJson: {},
-      fieldOptions: []
+      fieldOptions: [],
     }
   },
 
@@ -216,14 +84,10 @@ export default {
     },
 
     isErrorSelect() {
-      const { hasPrimaryKey, hasUnionIndex, hasUpdateField } = this.selected || {}
-      return !(hasPrimaryKey || hasUnionIndex || hasUpdateField)
+      const { hasPrimaryKey, hasUnionIndex, hasUpdateField } =
+        this.selected || {}
+      return !hasPrimaryKey && !hasUnionIndex && !hasUpdateField
     },
-  },
-
-  mounted() {
-    this.activeClassification = this.tableClassification[0].type
-    this.loadData()
   },
   watch: {
     updateExNum(newVal, oldVal) {
@@ -235,17 +99,24 @@ export default {
     },
   },
 
+  mounted() {
+    this.activeClassification = this.tableClassification[0].type
+    this.loadData()
+  },
+
   methods: {
     async loadData(resetSelect = false) {
       this.navLoading = true
       this.fieldsLoading = true
       // TODO 获取原字段类型
-      let rules = this.form.getValuesIn('fieldChangeRules') || []
-      let nodeAttrs = this.form.getValuesIn('attrs') || {}
+      const rules = this.form.getValuesIn('fieldChangeRules') || []
+      const nodeAttrs = this.form.getValuesIn('attrs') || {}
       const pdkHashData = await databaseTypesApi.pdkHash(nodeAttrs.pdkHash)
-      this.dataTypesJson = pdkHashData ? JSON.parse(pdkHashData?.expression || '{}') : {}
+      this.dataTypesJson = pdkHashData
+        ? JSON.parse(pdkHashData?.expression || '{}')
+        : {}
       if (rules.length) {
-        let allTableFields = []
+        const allTableFields = []
         this.navList.forEach((el) => {
           allTableFields.push(...el.fields.filter((t) => !!t.changeRuleId))
         })
@@ -258,7 +129,9 @@ export default {
       }
       this.fieldChangeRules = rules
       this.$refs.list.setRules(this.fieldChangeRules)
-      this.updateConditionFieldMap = cloneDeep(this.form.getValuesIn('updateConditionFieldMap') || {})
+      this.updateConditionFieldMap = cloneDeep(
+        this.form.getValuesIn('updateConditionFieldMap') || {},
+      )
       const { size, current } = this.page
       const tableFilterRegex = this.searchTable ? `.*${this.searchTable}.*` : ''
       const res = await this.getData({
@@ -273,8 +146,10 @@ export default {
       this.navList = items.map((t) => {
         const { fields = [], findPossibleDataTypes = {} } = t
         fields.forEach((el) => {
-          const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
-          el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
+          const { dataTypes = [], lastMatchedDataType = '' } =
+            findPossibleDataTypes[el.field_name] || {}
+          el.canUseDataTypes =
+            getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
           el.matchedDataTypeLevel = getMatchedDataTypeLevel(
             el,
             el.canUseDataTypes,
@@ -282,7 +157,9 @@ export default {
             findPossibleDataTypes,
           )
         })
-        t.matchedDataTypeLevel = fields.some((f) => f.matchedDataTypeLevel === 'error')
+        t.matchedDataTypeLevel = fields.some(
+          (f) => f.matchedDataTypeLevel === 'error',
+        )
           ? 'error'
           : fields.some((f) => f.matchedDataTypeLevel === 'warning')
             ? 'warning'
@@ -295,7 +172,7 @@ export default {
         if (!el.type) {
           el.total = res.wholeNum
         } else {
-          el.total = res[el.type + 'Num']
+          el.total = res[`${el.type}Num`]
         }
         el.label = `${el.title}(${el.total})`
       })
@@ -314,11 +191,13 @@ export default {
 
     async filterFields() {
       this.fieldsLoading = true
-      let item = this.navList[this.position]
+      const item = this.navList[this.position]
       let fields = item?.fields
       const findPossibleDataTypes = item?.findPossibleDataTypes || {}
       if (this.searchField) {
-        fields = item.fields.filter((t) => t.field_name.toLowerCase().includes(this.searchField?.toLowerCase()))
+        fields = item.fields.filter((t) =>
+          t.field_name.toLowerCase().includes(this.searchField?.toLowerCase()),
+        )
       }
       fields = await this.getCurrentTableFields(item, this.fieldChangeRules)
       this.selected = Object.assign({}, item, { fields, findPossibleDataTypes })
@@ -340,7 +219,9 @@ export default {
     },
 
     rollbackAll() {
-      this.$confirm(i18n.t('packages_form_field_inference_main_ninquerenyaoquan')).then((resFlag) => {
+      this.$confirm(
+        i18n.t('packages_form_field_inference_main_ninquerenyaoquan'),
+      ).then((resFlag) => {
         if (resFlag) {
           this.fieldChangeRules = []
           this.handleUpdate()
@@ -371,13 +252,18 @@ export default {
 
     handleUpdateList() {
       this.updateConditionFieldMap[this.selected.name] = this.updateList
-      this.form.setValuesIn('updateConditionFieldMap', cloneDeep(this.updateConditionFieldMap))
+      this.form.setValuesIn(
+        'updateConditionFieldMap',
+        cloneDeep(this.updateConditionFieldMap),
+      )
     },
 
     async handleUpdateRules(val = []) {
       this.fieldChangeRules = val
       this.handleUpdate()
-      this.updateSelectedAllFields(await this.getCurrentTableFields(this.selected, val))
+      this.updateSelectedAllFields(
+        await this.getCurrentTableFields(this.selected, val),
+      )
     },
 
     updateSelectedAllFields(fields = []) {
@@ -394,7 +280,10 @@ export default {
       const { qualified_name, nodeId, source = {}, fields = [] } = item
       const { database_type } = source
       const params = {
-        rules: rules.filter((t) => t.namespace.length === 1 || t.namespace.includes(qualified_name)),
+        rules: rules.filter(
+          (t) =>
+            t.namespace.length === 1 || t.namespace.includes(qualified_name),
+        ),
         qualifiedName: qualified_name,
         nodeId,
         databaseType: database_type,
@@ -412,6 +301,174 @@ export default {
   },
 }
 </script>
+
+<template>
+  <div class="field-inference">
+    <div class="field-inference__main flex">
+      <div class="field-inference__nav flex flex-column m-3 bg-white rounded-4">
+        <div class="nav-filter__list flex text-center lh-1 p-2">
+          <ElSelect v-model="activeClassification" @change="loadData">
+            <ElOption
+              v-for="(item, index) in tableClassification"
+              :key="index"
+              :value="item.type"
+              :label="item.label"
+            >
+              <span>{{ item.title }}</span>
+              <span
+                :class="[
+                  item.total && item.type ? 'color-danger' : 'color-info',
+                ]"
+                >({{ item.total }})</span
+              >
+            </ElOption>
+          </ElSelect>
+        </div>
+        <ElInput
+          v-model="searchTable"
+          :placeholder="
+            $t('packages_form_field_mapping_list_qingshurubiaoming')
+          "
+          clearable
+          class="p-2"
+          @input="handleSearchTable"
+        >
+          <template #suffix>
+            <ElIcon><ElIconSearch /></ElIcon>
+          </template>
+        </ElInput>
+        <div
+          v-loading="navLoading"
+          class="nav-list flex-fill font-color-normal"
+        >
+          <ul v-if="navList.length">
+            <li
+              v-for="(item, index) in navList"
+              :key="index"
+              :class="{ active: position === index }"
+              class="flex align-items-center justify-content-between"
+              @click="handleSelect(index)"
+            >
+              <div class="task-form-text-box pl-2 inline-block flex-1 min-w-0">
+                <OverflowTooltip
+                  class="w-100 text-truncate target"
+                  :text="item.name"
+                  placement="right"
+                />
+              </div>
+              <!--<ElTooltip
+                      v-if="item.matchedDataTypeLevel === 'error'"
+                      placement="top"
+                      transition="tooltip-fade-in"
+                      :content="$t('packages_dag_field_inference_main_gaibiaocunzaibu')"
+                      class="mr-1"
+                    >
+                      <VIcon size="16" class="color-warning">warning</VIcon>
+                    </ElTooltip>-->
+            </li>
+          </ul>
+          <div
+            v-else
+            class="task-form-left__ul flex flex-column align-items-center"
+          >
+            <div class="table__empty_img" style="margin-top: 22%">
+              <img style="" :src="noData" />
+            </div>
+            <div class="noData">{{ $t('public_data_no_data') }}</div>
+          </div>
+        </div>
+        <ElPagination
+          v-model:current-page="page.current"
+          v-model:page-size="page.size"
+          small
+          class="flex mt-3 p-0 din-font mx-auto"
+          layout="total, prev, slot, next"
+          :total="page.total"
+          :pager-count="5"
+          @current-change="loadData"
+        >
+          <div class="text-center">
+            <span class="page__current" style="min-width: 22px">{{
+              page.current
+            }}</span>
+            <span class="icon-color" style="min-width: 22px">/</span>
+            <span class="icon-color" style="min-width: 22px">{{
+              page.count
+            }}</span>
+          </div>
+        </ElPagination>
+      </div>
+      <div
+        v-loading="fieldsLoading"
+        class="field-inference__content flex-fill flex flex-column p-3"
+      >
+        <div>
+          <div class="flex align-center">
+            <span class="font-color-dark">{{
+              $t('packages_dag_nodes_table_gengxintiaojianzi')
+            }}</span>
+            <ElTooltip
+              transition="tooltip-fade-in"
+              :content="$t('packages_dag_field_inference_main_xuanzemorengeng')"
+            >
+              <VIcon size="16" class="color-primary ml-1">info</VIcon>
+            </ElTooltip>
+          </div>
+          <!-- formily 上下文使用 dataSource 属性 -->
+          <FieldSelect
+            v-model="updateList"
+            :disabled="navLoading || disabled"
+            allow-create
+            multiple
+            filterable
+            :placeholder="$t('public_select_option_default')"
+            :class="['update-list-select', { error: isErrorSelect }]"
+            :data-source="fieldOptions"
+            @visible-change="handleVisibleChange"
+            @remove-tag="handleRemoveTag"
+          />
+        </div>
+        <div class="flex-fill flex flex-column bg-white mt-4 rounded-4">
+          <div class="flex align-items-center p-2 font-color-dark">
+            <ElInput
+              v-model="searchField"
+              :placeholder="
+                $t('packages_form_field_mapping_list_qingshuruziduan')
+              "
+              clearable
+              @input="handleSearchField"
+            >
+              <template #suffix>
+                <ElIcon><ElIconSearch /></ElIcon>
+              </template>
+            </ElInput>
+            <ElButton plain class="btn-refresh ml-2" @click="refresh">
+              <VIcon>refresh</VIcon>
+            </ElButton>
+          </div>
+          <List
+            ref="list"
+            v-model:field-change-rules="fieldChangeRules"
+            :data="selected"
+            :show-columns="['index', 'field_name', 'data_type', 'operation']"
+            :data-types-json="dataTypesJson"
+            :readonly="readonly"
+            ignore-error
+            class="content__list flex-fill"
+            @update-rules="handleUpdateRules"
+            @open-update-rules="handleOpen"
+          />
+        </div>
+      </div>
+    </div>
+    <Dialog
+      v-model:visible="visible"
+      v-model:field-change-rules="fieldChangeRules"
+      :form="form"
+      :readonly="readonly"
+    />
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .field-inference__header {

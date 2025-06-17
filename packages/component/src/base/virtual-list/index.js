@@ -5,3 +5,5 @@ Main.install = function (app) {
 }
 
 export default Main
+
+export { Main as VirtualList }

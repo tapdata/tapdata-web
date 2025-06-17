@@ -1,11 +1,13 @@
 <script setup lang="tsx">
 import { settingsApi, webhookApi } from '@tap/api'
-import { dayjs } from '@tap/business'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { CloseIcon, Modal, VEmpty } from '@tap/component'
-import { HighlightCode, JsonEditor } from '@tap/form'
+import { dayjs } from '@tap/business/src/shared/dayjs'
+import { VEmpty } from '@tap/component/src/base/v-empty'
+import { CloseIcon } from '@tap/component/src/CloseIcon'
+import { Modal } from '@tap/component/src/modal'
+import { HighlightCode } from '@tap/form/src/components/highlight-code'
+import { JsonEditor } from '@tap/form/src/components/json-editor'
 import { useI18n } from '@tap/i18n'
-import { ElMessage, ElMessageBox } from 'element-plus'
 import { nextTick, onMounted, reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 

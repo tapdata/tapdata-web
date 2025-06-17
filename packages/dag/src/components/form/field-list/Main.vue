@@ -1,89 +1,12 @@
-<template>
-  <div class="field-inference" v-loading="transformLoading">
-    <div class="field-inference__main flex">
-      <div v-if="!hideNav" class="field-inference__nav flex flex-column">
-        <ElInput
-          v-model="searchTable"
-          :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
-          clearable
-          class="p-2"
-          @input="handleSearchTable"
-        >
-          <template #prefix>
-            <ElIcon><ElIconSearch /></ElIcon>
-          </template>
-        </ElInput>
-        <div v-loading="navLoading" class="nav-list flex-fill font-color-normal">
-          <ul v-if="navList.length">
-            <li
-              v-for="(item, index) in navList"
-              :key="index"
-              :class="{ active: position === index }"
-              class="flex align-items-center justify-content-between"
-              @click="handleSelect(index)"
-            >
-              <div class="task-form-text-box pl-2 inline-block flex-1 min-w-0">
-                <OverflowTooltip class="w-100 text-truncate target" :text="item.name" placement="right" />
-              </div>
-            </li>
-          </ul>
-          <div v-else class="task-form-left__ul flex flex-column align-items-center">
-            <div class="table__empty_img" style="margin-top: 22%">
-              <img style="" :src="noData" />
-            </div>
-            <div class="noData">{{ $t('public_data_no_data') }}</div>
-          </div>
-        </div>
-        <ElPagination
-          small
-          class="flex mt-3 p-0 din-font mx-auto"
-          layout="total, prev, slot, next"
-          v-model:current-page="page.current"
-          v-model:page-size="page.size"
-          :total="page.total"
-          :pager-count="5"
-          @current-change="loadData"
-        >
-          <div class="text-center">
-            <span class="page__current" style="min-width: 22px">{{ page.current }}</span>
-            <span class="icon-color" style="min-width: 22px">/</span>
-            <span class="icon-color" style="min-width: 22px">{{ page.count }}</span>
-          </div>
-        </ElPagination>
-      </div>
-      <div class="field-inference__content flex-fill flex flex-column">
-        <div class="flex align-items-center p-2">
-          <ElInput
-            v-model="searchField"
-            :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
-            clearable
-            @input="handleSearchField"
-          >
-            <template #prefix>
-              <ElIcon><ElIconSearch /></ElIcon>
-            </template>
-          </ElInput>
-          <ElButton circle class="ml-2 rounded-4" @click="refresh">
-            <template #icon>
-              <VIcon>refresh</VIcon>
-            </template>
-          </ElButton>
-        </div>
-        <List ref="list" :data="selected" class="content__list flex-fill"></List>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script>
-import { mapState } from 'vuex'
-import { debounce } from 'lodash-es'
-
-import noData from '@tap/assets/images/noData.png'
-import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 import { metadataInstancesApi } from '@tap/api'
+import noData from '@tap/assets/images/noData.png'
 
-import List from './List'
+import OverflowTooltip from '@tap/component/src/overflow-tooltip'
+import { debounce } from 'lodash-es'
+import { mapState } from 'vuex'
+
+import List from './List.vue'
 
 export default {
   name: 'FieldInference',
@@ -142,14 +65,20 @@ export default {
         const params = Object.assign(
           {
             nodeId,
-            fields: ['original_name', 'fields', 'qualified_name', 'name', 'indices'],
+            fields: [
+              'original_name',
+              'fields',
+              'qualified_name',
+              'name',
+              'indices',
+            ],
             page: 1,
             pageSize: 20,
           },
           op,
         )
         data = await metadataInstancesApi.nodeSchemaPage(params)
-      } catch (e) {
+      } catch {
         // catch
       }
       return data
@@ -168,7 +97,9 @@ export default {
       if (this.includesDataTypes.length) {
         const types = this.includesDataTypes.map((t) => t.split(/[[(]/)?.[0])
         items.forEach((el) => {
-          el.fields = el.fields.filter((t) => types.includes(t.data_type.split(/[[(]/)?.[0]))
+          el.fields = el.fields.filter((t) =>
+            types.includes(t.data_type.split(/[[(]/)?.[0]),
+          )
         })
       }
       this.navList = items
@@ -188,11 +119,13 @@ export default {
     },
 
     filterFields() {
-      let item = this.navList[this.position]
+      const item = this.navList[this.position]
       let fields = item?.fields
       const findPossibleDataTypes = item?.findPossibleDataTypes || {}
       if (this.searchField) {
-        fields = item.fields.filter((t) => t.field_name.toLowerCase().includes(this.searchField?.toLowerCase()))
+        fields = item.fields.filter((t) =>
+          t.field_name.toLowerCase().includes(this.searchField?.toLowerCase()),
+        )
       }
       this.selected = Object.assign({}, item, { fields, findPossibleDataTypes })
     },
@@ -212,6 +145,101 @@ export default {
   },
 }
 </script>
+
+<template>
+  <div v-loading="transformLoading" class="field-inference">
+    <div class="field-inference__main flex">
+      <div v-if="!hideNav" class="field-inference__nav flex flex-column">
+        <ElInput
+          v-model="searchTable"
+          :placeholder="
+            $t('packages_form_field_mapping_list_qingshurubiaoming')
+          "
+          clearable
+          class="p-2"
+          @input="handleSearchTable"
+        >
+          <template #prefix>
+            <ElIcon><ElIconSearch /></ElIcon>
+          </template>
+        </ElInput>
+        <div
+          v-loading="navLoading"
+          class="nav-list flex-fill font-color-normal"
+        >
+          <ul v-if="navList.length">
+            <li
+              v-for="(item, index) in navList"
+              :key="index"
+              :class="{ active: position === index }"
+              class="flex align-items-center justify-content-between"
+              @click="handleSelect(index)"
+            >
+              <div class="task-form-text-box pl-2 inline-block flex-1 min-w-0">
+                <OverflowTooltip
+                  class="w-100 text-truncate target"
+                  :text="item.name"
+                  placement="right"
+                />
+              </div>
+            </li>
+          </ul>
+          <div
+            v-else
+            class="task-form-left__ul flex flex-column align-items-center"
+          >
+            <div class="table__empty_img" style="margin-top: 22%">
+              <img style="" :src="noData" />
+            </div>
+            <div class="noData">{{ $t('public_data_no_data') }}</div>
+          </div>
+        </div>
+        <ElPagination
+          v-model:current-page="page.current"
+          v-model:page-size="page.size"
+          small
+          class="flex mt-3 p-0 din-font mx-auto"
+          layout="total, prev, slot, next"
+          :total="page.total"
+          :pager-count="5"
+          @current-change="loadData"
+        >
+          <div class="text-center">
+            <span class="page__current" style="min-width: 22px">{{
+              page.current
+            }}</span>
+            <span class="icon-color" style="min-width: 22px">/</span>
+            <span class="icon-color" style="min-width: 22px">{{
+              page.count
+            }}</span>
+          </div>
+        </ElPagination>
+      </div>
+      <div class="field-inference__content flex-fill flex flex-column">
+        <div class="flex align-items-center p-2">
+          <ElInput
+            v-model="searchField"
+            :placeholder="
+              $t('packages_form_field_mapping_list_qingshuruziduan')
+            "
+            clearable
+            @input="handleSearchField"
+          >
+            <template #prefix>
+              <ElIcon><ElIconSearch /></ElIcon>
+            </template>
+          </ElInput>
+          <ElButton circle class="ml-2 rounded-4" @click="refresh">
+            <template #icon>
+              <VIcon>refresh</VIcon>
+            </template>
+          </ElButton>
+        </div>
+        <List ref="list" :data="selected" class="content__list flex-fill" />
+      </div>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .field-inference__main {

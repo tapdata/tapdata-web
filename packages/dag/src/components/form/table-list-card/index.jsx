@@ -1,6 +1,7 @@
 import { observer } from '@formily/reactive-vue'
 import { metadataInstancesApi } from '@tap/api'
-import { OverflowTooltip, VEmpty } from '@tap/component'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
+import { VEmpty } from '@tap/component/src/base/v-empty'
 
 import i18n from '@tap/i18n'
 import { debounce } from 'lodash-es'

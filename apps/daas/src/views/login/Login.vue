@@ -1,9 +1,8 @@
 <script>
 import { timeStampApi, usersApi } from '@tap/api'
 import Cookie from '@tap/shared/src/cookie'
+import { getSettingByKey } from '@tap/shared/src/settings'
 import cryptoJS from 'crypto-js'
-import i18n from '@/i18n'
-import { getSettingByKey } from '@/utils/settings'
 import { configUser } from '@/utils/util'
 import LoginPage from './LoginPage.vue'
 

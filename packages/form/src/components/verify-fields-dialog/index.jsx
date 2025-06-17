@@ -1,7 +1,5 @@
-import { defineComponent, reactive, ref } from 'vue'
+import { defineComponent, ref } from 'vue'
 import i18n from '@tap/i18n'
-import { useField, JsEditor } from '../../index'
-import { GitBook } from '@tap/component'
 import Dialog from './FieldDialog.vue'
 import './style.scss'
 export const VerifyFieldsDialog = defineComponent({

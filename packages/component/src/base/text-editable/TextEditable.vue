@@ -1,6 +1,5 @@
 <script>
 import i18n from '@tap/i18n'
-import { $emit } from '../../../utils/gogocodeTransfer'
 
 import VIcon from '../../base/VIcon.vue'
 
@@ -53,13 +52,13 @@ export default {
   },
   methods: {
     handleInput(event) {
-      $emit(this, 'update:value', event.target.value)
+      this.$emit('update:value', event.target.value)
     },
 
     handleChange(event) {
       const val = event.target.value.trim()
-      $emit(this, 'update:value', val)
-      $emit(this, 'change', val)
+      this.$emit('update:value', val)
+      this.$emit('change', val)
     },
 
     handleFocusInput() {

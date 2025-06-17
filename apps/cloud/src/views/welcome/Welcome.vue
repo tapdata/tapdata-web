@@ -1,12 +1,12 @@
 <script>
 import { getIcon } from '@tap/assets/icons'
 import Cookie from '@tap/shared/src/cookie'
+import { $on } from '@tap/shared/src/event'
 import { mapGetters, mapState } from 'vuex'
 
 export default {
   inject: ['checkAgent', 'buried'],
   data() {
-    const $t = this.$t.bind(this)
     return {
       demand: '',
       suggestion: '',
@@ -47,9 +47,9 @@ export default {
   },
 
   created() {
-    this.$root.$on('select-connection-type', this.selectConnectionType)
-    this.$root.$on('show-guide', this.showGuide)
-    this.$root.$on('get-user', this.getUser)
+    $on(this.$root, 'select-connection-type', this.selectConnectionType)
+    $on(this.$root, 'show-guide', this.showGuide)
+    $on(this.$root, 'get-user', this.getUser)
   },
   mounted() {
     //获取cookie 是否用户有操作过 稍后部署 且缓存是当前用户 不在弹窗

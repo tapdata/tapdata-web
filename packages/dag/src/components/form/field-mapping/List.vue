@@ -1,203 +1,5 @@
-<template>
-  <section v-loading="transformLoading">
-    <div class="node-field-mapping flex flex-column">
-      <div class="task-form-body">
-        <div class="task-form-left flex flex-column">
-          <div class="flex mb-2 ml-2 mr-2">
-            <div class="flex">
-              <ElInput
-                v-model="searchTable"
-                :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
-                clearable
-                @input="getMetadataTransformer(searchTable, 'search')"
-              >
-                <template #suffix>
-                  <ElIcon><ElIconSearch /></ElIcon>
-                </template>
-              </ElInput>
-            </div>
-          </div>
-          <div class="flex bg-main justify-content-between mb-2 pl-2">
-            <span class="table-name ml-1">{{ $t('packages_form_field_mapping_list_biaoming') }}</span>
-          </div>
-          <div class="task-form-left__ul flex flex-column" v-loading="loadingNav">
-            <ul v-if="navData.length > 0">
-              <li
-                v-for="(item, index) in navData"
-                :key="index"
-                :class="{ active: position === index }"
-                @click="select(item, index)"
-              >
-                <div class="task-form__img" v-if="item.invalid">
-                  <img :src="fieldMapping_table_error" alt="" />
-                </div>
-                <div class="task-form-text-box">
-                  <OverflowTooltip
-                    class="w-100 text-truncate target"
-                    :text="item.sinkObjectName"
-                    placement="right"
-                    :open-delay="400"
-                  />
-                </div>
-              </li>
-            </ul>
-            <div class="task-form-left__ul flex flex-column align-items-center" v-else>
-              <div class="table__empty_img" style="margin-top: 22%">
-                <img style="" :src="noData" />
-              </div>
-              <div class="noData">{{ $t('public_data_no_data') }}</div>
-            </div>
-          </div>
-          <ElPagination
-            small
-            class="flex mt-3 din-font"
-            layout="total, prev, slot, next"
-            v-model:current-page="page.current"
-            v-model:page-size="page.size"
-            :total="page.total"
-            :pager-count="5"
-            @current-change="getMetadataTransformer"
-          >
-            <div class="text-center">
-              <span class="page__current" style="min-width: 22px">{{ page.current }}</span>
-              <span class="icon-color" style="min-width: 22px">/</span>
-              <span class="icon-color" style="min-width: 22px">{{ page.count }}</span>
-            </div>
-          </ElPagination>
-        </div>
-        <div class="main">
-          <div class="flex ml-2 text-start" style="margin-bottom: 8px">
-            <div class="flex">
-              <ElInput
-                :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
-                v-model="searchField"
-                clearable
-                @input="search()"
-              >
-                <template #suffix>
-                  <ElIcon><ElIconSearch /></ElIcon>
-                </template>
-              </ElInput>
-            </div>
-            <div class="item ml-2">
-              <ElButton plain class="btn-refresh" @click="rest">
-                <VIcon>refresh</VIcon>
-              </ElButton>
-              <ElButton v-if="!readOnly" text class="btn-rest" @click="updateMetaData">
-                {{ $t('public_button_reset') }}
-              </ElButton>
-            </div>
-          </div>
-          <ElTable
-            class="field-mapping-table table-border"
-            height="100%"
-            :data="viewTableData"
-            v-loading="loadingTable"
-          >
-            <ElTableColumn
-              type="index"
-              width="55"
-              :label="$t('packages_form_field_mapping_list_xuhao')"
-            ></ElTableColumn>
-            <ElTableColumn
-              show-overflow-tooltip
-              :label="$t('packages_form_dag_dialog_field_mapping_field')"
-              prop="field_name"
-            >
-              <template #default="{ row }">
-                <span v-if="row.primary_key_position > 0" :show-overflow-tooltip="true"
-                  >{{ row.targetFieldName }}
-                  <VIcon size="12" class="color-darkorange">key</VIcon>
-                </span>
-                <span v-else class="item" :show-overflow-tooltip="true">{{ row.targetFieldName }}</span>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn :label="$t('packages_form_dag_dialog_field_mapping_type')" prop="sourceFieldType">
-              <template #default="{ row }">
-                <div>
-                  <span :show-overflow-tooltip="true">{{ row.sourceFieldType }}</span>
-                </div>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn :label="$t('packages_form_meta_table_default')">
-              <template #default="{ row }">
-                <div class="cursor-pointer" v-if="!readOnly" @click="edit(row, 'defaultValue')">
-                  <ElTooltip class="item" effect="dark" :content="row.defaultValue" placement="left">
-                    <span class="field-mapping-table__default_value">{{ row.defaultValue }}</span>
-                  </ElTooltip>
-                  <el-icon class="field-mapping__icon"><Edit /></el-icon>
-                </div>
-                <div v-else>{{ row.defaultValue }}</div>
-              </template>
-            </ElTableColumn>
-            <template v-slot:empty>
-              <div class="field-mapping-table__empty">
-                <div class="table__empty_img" style="margin-left: 30%">
-                  <img style="" :src="noData" />
-                </div>
-                <div class="noData">{{ $t('public_data_no_data') }}</div>
-              </div>
-            </template>
-          </ElTable>
-        </div>
-      </div>
-    </div>
-    <ElDialog
-      :title="titleType[currentOperationType]"
-      v-model="dialogVisible"
-      width="30%"
-      append-to-body
-      :close-on-click-modal="false"
-      :before-close="handleClose"
-    >
-      <div v-if="['sourceFieldType'].includes(currentOperationType)">
-        <ElAutocomplete
-          v-model="editValueType[currentOperationType]"
-          class="inline-input"
-          style="width: 350px"
-          :fetch-suggestions="querySearchPdkType"
-        ></ElAutocomplete>
-        <div class="mt-3 fs-8">{{ getPdkEditValueType() }}</div>
-        <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
-          <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
-            <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
-              <div v-if="index === 0">
-                {{ $t('packages_form_dag_dialog_field_mapping_range_precision') }}
-              </div>
-              <div>
-                {{ `[ ${item.minPrecision} , ${item.maxPrecision} ]` }}
-              </div>
-            </div>
-            <div v-if="item.maxScale && item.minScale !== item.maxScale" style="margin-top: 10px">
-              <div>
-                {{ $t('packages_form_dag_dialog_field_mapping_range_scale') }}
-              </div>
-              <div>
-                {{ `[ ${item.minScale} , ${item.maxScale} ]` }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <ElInput
-        type="textarea"
-        v-if="['defaultValue'].includes(currentOperationType)"
-        v-model="editValueType[currentOperationType]"
-      ></ElInput>
-      <template v-slot:footer>
-        <span class="dialog-footer">
-          <ElButton @click="handleClose()">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton type="primary" @click="editSave()">{{ $t('public_button_confirm') }}</ElButton>
-        </span>
-      </template>
-    </ElDialog>
-  </section>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../../utils/gogocodeTransfer'
 import { delayTrigger } from '@tap/shared'
-import { VIcon } from '@tap/component'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 import rollback from '@tap/assets/icons/svg/rollback.svg'
 import refresh from '@tap/assets/icons/svg/refresh.svg'
@@ -209,7 +11,6 @@ import { mapState } from 'vuex'
 
 export default {
   components: {
-    VIcon,
     OverflowTooltip,
   },
   name: 'List',
@@ -444,7 +245,7 @@ export default {
       metadataInstancesApi.saveTable(data).then(() => {
         if (val) {
           this.closeDialog()
-          $emit(this, 'updateVisible')
+          this.$emit('updateVisible')
         }
       })
     },
@@ -484,9 +285,205 @@ export default {
       return findOne?.rules || ''
     },
   },
-  emits: ['updateVisible'],
+  emits: ['update-visible'],
 }
 </script>
+
+<template>
+  <section v-loading="transformLoading">
+    <div class="node-field-mapping flex flex-column">
+      <div class="task-form-body">
+        <div class="task-form-left flex flex-column">
+          <div class="flex mb-2 ml-2 mr-2">
+            <div class="flex">
+              <ElInput
+                v-model="searchTable"
+                :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
+                clearable
+                @input="getMetadataTransformer(searchTable, 'search')"
+              >
+                <template #suffix>
+                  <ElIcon><ElIconSearch /></ElIcon>
+                </template>
+              </ElInput>
+            </div>
+          </div>
+          <div class="flex bg-main justify-content-between mb-2 pl-2">
+            <span class="table-name ml-1">{{ $t('packages_form_field_mapping_list_biaoming') }}</span>
+          </div>
+          <div class="task-form-left__ul flex flex-column" v-loading="loadingNav">
+            <ul v-if="navData.length > 0">
+              <li
+                v-for="(item, index) in navData"
+                :key="index"
+                :class="{ active: position === index }"
+                @click="select(item, index)"
+              >
+                <div class="task-form__img" v-if="item.invalid">
+                  <img :src="fieldMapping_table_error" alt="" />
+                </div>
+                <div class="task-form-text-box">
+                  <OverflowTooltip
+                    class="w-100 text-truncate target"
+                    :text="item.sinkObjectName"
+                    placement="right"
+                    :open-delay="400"
+                  />
+                </div>
+              </li>
+            </ul>
+            <div class="task-form-left__ul flex flex-column align-items-center" v-else>
+              <div class="table__empty_img" style="margin-top: 22%">
+                <img style="" :src="noData" />
+              </div>
+              <div class="noData">{{ $t('public_data_no_data') }}</div>
+            </div>
+          </div>
+          <ElPagination
+            small
+            class="flex mt-3 din-font"
+            layout="total, prev, slot, next"
+            v-model:current-page="page.current"
+            v-model:page-size="page.size"
+            :total="page.total"
+            :pager-count="5"
+            @current-change="getMetadataTransformer"
+          >
+            <div class="text-center">
+              <span class="page__current" style="min-width: 22px">{{ page.current }}</span>
+              <span class="icon-color" style="min-width: 22px">/</span>
+              <span class="icon-color" style="min-width: 22px">{{ page.count }}</span>
+            </div>
+          </ElPagination>
+        </div>
+        <div class="main">
+          <div class="flex ml-2 text-start" style="margin-bottom: 8px">
+            <div class="flex">
+              <ElInput
+                :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
+                v-model="searchField"
+                clearable
+                @input="search()"
+              >
+                <template #suffix>
+                  <ElIcon><ElIconSearch /></ElIcon>
+                </template>
+              </ElInput>
+            </div>
+            <div class="item ml-2">
+              <ElButton plain class="btn-refresh" @click="rest">
+                <VIcon>refresh</VIcon>
+              </ElButton>
+              <ElButton v-if="!readOnly" text class="btn-rest" @click="updateMetaData">
+                {{ $t('public_button_reset') }}
+              </ElButton>
+            </div>
+          </div>
+          <ElTable
+            class="field-mapping-table table-border"
+            height="100%"
+            :data="viewTableData"
+            v-loading="loadingTable"
+          >
+            <ElTableColumn
+              type="index"
+              width="55"
+              :label="$t('packages_form_field_mapping_list_xuhao')"
+            ></ElTableColumn>
+            <ElTableColumn
+              show-overflow-tooltip
+              :label="$t('packages_form_dag_dialog_field_mapping_field')"
+              prop="field_name"
+            >
+              <template #default="{ row }">
+                <span v-if="row.primary_key_position > 0" :show-overflow-tooltip="true"
+                  >{{ row.targetFieldName }}
+                  <VIcon size="12" class="color-darkorange">key</VIcon>
+                </span>
+                <span v-else class="item" :show-overflow-tooltip="true">{{ row.targetFieldName }}</span>
+              </template>
+            </ElTableColumn>
+            <ElTableColumn :label="$t('packages_form_dag_dialog_field_mapping_type')" prop="sourceFieldType">
+              <template #default="{ row }">
+                <div>
+                  <span :show-overflow-tooltip="true">{{ row.sourceFieldType }}</span>
+                </div>
+              </template>
+            </ElTableColumn>
+            <ElTableColumn :label="$t('packages_form_meta_table_default')">
+              <template #default="{ row }">
+                <div class="cursor-pointer" v-if="!readOnly" @click="edit(row, 'defaultValue')">
+                  <ElTooltip class="item" effect="dark" :content="row.defaultValue" placement="left">
+                    <span class="field-mapping-table__default_value">{{ row.defaultValue }}</span>
+                  </ElTooltip>
+                  <el-icon class="field-mapping__icon"><Edit /></el-icon>
+                </div>
+                <div v-else>{{ row.defaultValue }}</div>
+              </template>
+            </ElTableColumn>
+            <template v-slot:empty>
+              <div class="field-mapping-table__empty">
+                <div class="table__empty_img" style="margin-left: 30%">
+                  <img style="" :src="noData" />
+                </div>
+                <div class="noData">{{ $t('public_data_no_data') }}</div>
+              </div>
+            </template>
+          </ElTable>
+        </div>
+      </div>
+    </div>
+    <ElDialog
+      :title="titleType[currentOperationType]"
+      v-model="dialogVisible"
+      width="30%"
+      append-to-body
+      :close-on-click-modal="false"
+      :before-close="handleClose"
+    >
+      <div v-if="['sourceFieldType'].includes(currentOperationType)">
+        <ElAutocomplete
+          v-model="editValueType[currentOperationType]"
+          class="inline-input"
+          style="width: 350px"
+          :fetch-suggestions="querySearchPdkType"
+        ></ElAutocomplete>
+        <div class="mt-3 fs-8">{{ getPdkEditValueType() }}</div>
+        <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
+          <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
+            <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
+              <div v-if="index === 0">
+                {{ $t('packages_form_dag_dialog_field_mapping_range_precision') }}
+              </div>
+              <div>
+                {{ `[ ${item.minPrecision} , ${item.maxPrecision} ]` }}
+              </div>
+            </div>
+            <div v-if="item.maxScale && item.minScale !== item.maxScale" style="margin-top: 10px">
+              <div>
+                {{ $t('packages_form_dag_dialog_field_mapping_range_scale') }}
+              </div>
+              <div>
+                {{ `[ ${item.minScale} , ${item.maxScale} ]` }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ElInput
+        type="textarea"
+        v-if="['defaultValue'].includes(currentOperationType)"
+        v-model="editValueType[currentOperationType]"
+      ></ElInput>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <ElButton @click="handleClose()">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton type="primary" @click="editSave()">{{ $t('public_button_confirm') }}</ElButton>
+        </span>
+      </template>
+    </ElDialog>
+  </section>
+</template>
 
 <style lang="scss">
 .node-field-mapping {

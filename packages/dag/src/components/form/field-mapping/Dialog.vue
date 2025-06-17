@@ -1,33 +1,11 @@
-<template>
-  <el-dialog
-    :title="$t('packages_form_field_mapping_dialog_bianjituiyanjie')"
-    :model-value="visible"
-    width="70%"
-    append-to-body
-    class="field-mapping-table-dialog"
-    :close-on-click-modal="false"
-    @close="closeDialog"
-  >
-    <List v-if="visible" ref="fieldMappingList" :readOnly="false" @updateVisible="updateVisible"></List>
-    <template v-slot:footer>
-      <span class="dialog-footer">
-        <el-button @click="closeDialog()">{{ $t('packages_form_field_mapping_dialog_quxiao') }}</el-button>
-        <el-button type="primary" :loading="loadingSave" @click="save(true)">{{
-          $t('packages_form_field_mapping_dialog_queding')
-        }}</el-button>
-      </span>
-    </template>
-  </el-dialog>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../../utils/gogocodeTransfer'
-import List from './List'
+import List from './List.vue'
 
 export default {
   name: 'Dialog',
   components: { List },
   props: ['visible'],
+  emits: ['update:visible'],
   data() {
     return {
       dialogVisible: false,
@@ -41,15 +19,43 @@ export default {
     },
     updateVisible() {
       this.loadingSave = false
-      $emit(this, 'update:visible', false)
+      this.$emit('update:visible', false)
     },
     closeDialog() {
-      $emit(this, 'update:visible', false)
+      this.$emit('update:visible', false)
     },
   },
-  emits: ['update:visible'],
 }
 </script>
+
+<template>
+  <el-dialog
+    :title="$t('packages_form_field_mapping_dialog_bianjituiyanjie')"
+    :model-value="visible"
+    width="70%"
+    append-to-body
+    class="field-mapping-table-dialog"
+    :close-on-click-modal="false"
+    @close="closeDialog"
+  >
+    <List
+      v-if="visible"
+      ref="fieldMappingList"
+      :read-only="false"
+      @update-visible="updateVisible"
+    />
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="closeDialog()">{{
+          $t('packages_form_field_mapping_dialog_quxiao')
+        }}</el-button>
+        <el-button type="primary" :loading="loadingSave" @click="save(true)">{{
+          $t('packages_form_field_mapping_dialog_queding')
+        }}</el-button>
+      </span>
+    </template>
+  </el-dialog>
+</template>
 
 <style lang="scss" scoped>
 :deep(.field-mapping-table-dialog) {

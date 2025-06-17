@@ -1,6 +1,5 @@
-import { mapGetters } from 'vuex'
-
 import { metadataInstancesApi } from '@tap/api'
+import { mapGetters } from 'vuex'
 
 export default {
   data() {
@@ -27,14 +26,20 @@ export default {
         const params = Object.assign(
           {
             nodeId,
-            fields: ['original_name', 'fields', 'qualified_name', 'name', 'indices'],
+            fields: [
+              'original_name',
+              'fields',
+              'qualified_name',
+              'name',
+              'indices',
+            ],
             page: 1,
             pageSize: 20,
           },
           op,
         )
         data = await metadataInstancesApi.nodeSchemaPage(params)
-      } catch (e) {
+      } catch {
         // catch
       }
       return data

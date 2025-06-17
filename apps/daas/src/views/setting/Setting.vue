@@ -1,10 +1,9 @@
 <script>
-import { alarmRuleApi, licensesApi, settingsApi, usersApi } from '@tap/api'
-import { showErrorMessage } from '@tap/business'
+import { licensesApi, settingsApi, usersApi } from '@tap/api'
+import { showErrorMessage } from '@tap/business/src/components/error-message'
 
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { VIcon, VTable } from '@tap/component'
-import { TextFileReader } from '@tap/form'
+import { TextFileReader } from '@tap/form/src/components/text-file-reader'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 import Cookie from '@tap/shared/src/cookie'
 import Time from '@tap/shared/src/time'
@@ -13,7 +12,7 @@ import i18n from '@/i18n'
 
 export default {
   name: 'Setting',
-  components: { VIcon, TextFileReader, PageContainer },
+  components: { TextFileReader, PageContainer },
   data() {
     return {
       title: import.meta.env.VUE_APP_PAGE_TITLE,

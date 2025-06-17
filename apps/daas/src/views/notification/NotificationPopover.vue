@@ -3,10 +3,10 @@ import { notificationApi, userLogsApi } from '@tap/api'
 import { ALARM_LEVEL_MAP } from '@tap/business/src/shared/const'
 import Cookie from '@tap/shared/src/cookie'
 
+import { $emit, $on } from '@tap/shared/src/event'
 import dayjs from 'dayjs'
 import { debounce } from 'lodash-es'
 import { mapState } from 'vuex'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 
 import { TYPEMAP } from './tyepMap'
 import UserOperation from './UserOperation'
@@ -54,7 +54,6 @@ export default {
       this.$router.push({ name: 'notification' })
     },
     init() {
-      const self = this
       const msg = {
         type: 'notification',
       }

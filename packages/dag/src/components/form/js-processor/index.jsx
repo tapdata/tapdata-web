@@ -6,7 +6,8 @@ import {
   monitoringLogsApi,
   taskApi,
 } from '@tap/api'
-import { VCodeEditor, VEmpty, VirtualSelect } from '@tap/component'
+import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
+import {  VEmpty } from '@tap/component/src/base/v-empty'
 import resize from '@tap/component/src/directives/resize'
 
 import { FormItem, HighlightCode, JsEditor, useForm } from '@tap/form'
@@ -413,7 +414,7 @@ export const JsProcessor = observer(
               layout="horizontal"
               feedbackLayout="none"
             >
-              <VirtualSelect
+              <ElSelectV2
                 disabled={props.disabled}
                 v-model={params.tableName}
                 filterable

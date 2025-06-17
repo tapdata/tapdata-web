@@ -1,15 +1,13 @@
 <script>
 import { notificationApi } from '@tap/api'
-import { ALARM_LEVEL_MAP } from '@tap/business'
+import { ALARM_LEVEL_MAP } from '@tap/business/src/shared/const'
 
-import { VIcon } from '@tap/component'
+import { $emit } from '@tap/shared/src/event'
 import { debounce, uniqBy } from 'lodash-es'
 import timeFunction from '@/mixins/timeFunction'
-import { $emit } from '../../../utils/gogocodeTransfer'
 import { TYPEMAP } from './tyepMap'
 
 export default {
-  components: { VIcon },
   mixins: [timeFunction],
   emits: ['notificationUpdate'],
   data() {

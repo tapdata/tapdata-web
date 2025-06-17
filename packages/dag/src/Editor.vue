@@ -1,8 +1,8 @@
 <script>
 import { connectionsApi, taskApi } from '@tap/api'
 
-import { SkipError } from '@tap/business'
-import { VEmpty } from '@tap/component'
+import SkipError from '@tap/business/src/views/task/SkipError.vue'
+import { VEmpty } from '@tap/component/src/base/v-empty'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
 import { titleChange } from '@tap/component/src/mixins/titleChange'
@@ -10,7 +10,6 @@ import i18n from '@tap/i18n'
 import { uuid } from '@tap/shared'
 import dagre from 'dagre'
 import { merge } from 'lodash-es'
-import { mapMutations } from 'vuex'
 import { MoveNodeCommand } from './command'
 import DFNode from './components/DFNode'
 import LeftSidebar from './components/LeftSidebar'

@@ -4,7 +4,7 @@ import {
   langMenu,
   setCurrentLanguage,
 } from '@tap/i18n/src/shared/util'
-import { getSettingByKey } from '@/utils/settings'
+import { getSettingByKey } from '@tap/shared/src/settings'
 
 export default {
   name: 'LoginHeader',

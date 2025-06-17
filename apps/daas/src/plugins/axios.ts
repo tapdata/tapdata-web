@@ -1,15 +1,15 @@
 import { showErrorMessage } from '@tap/business/src/components/error-message'
 import { Modal } from '@tap/component/src/modal'
 import Cookie from '@tap/shared/src/cookie'
+import { getSettingByKey } from '@tap/shared/src/settings'
 import axios, {
   type AxiosError,
   type AxiosRequestConfig,
   type AxiosResponse,
 } from 'axios'
-import { ElMessageBox, ElMessage as Message } from 'element-plus'
+import { ElMessage as Message } from 'element-plus'
 import Qs from 'qs'
 import i18n from '@/i18n'
-import { getSettingByKey } from '@/utils/settings'
 import { signOut } from '../utils/util'
 
 type AxiosRequestConfigPro = AxiosRequestConfig & {

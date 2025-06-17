@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { metadataInstancesApi, taskApi } from '@tap/api'
-import { RightBoldOutlined, VEmpty, VIcon } from '@tap/component'
+import { RightBoldOutlined } from '@tap/component/src/RightBoldOutlined'
+import { VEmpty } from '@tap/component/src/base/v-empty'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 import { useI18n } from '@tap/i18n'
 import { computed, ref, watch } from 'vue'

@@ -2,7 +2,6 @@
 import focusSelect from '@tap/component/src/directives/focusSelect'
 import resize from '@tap/component/src/directives/resize'
 
-import { cloneDeep } from 'lodash-es'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import FormPanel from '../FormPanel'
 import NodeIcon from '../NodeIcon'

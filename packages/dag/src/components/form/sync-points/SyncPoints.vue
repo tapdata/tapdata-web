@@ -1,7 +1,7 @@
 <script>
 import { observer } from '@formily/reactive-vue'
 import { getPickerOptionsBeforeTime } from '@tap/business/src/shared/util'
-import { VEmpty } from '@tap/component'
+import { VEmpty } from '@tap/component/src/base/v-empty'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
