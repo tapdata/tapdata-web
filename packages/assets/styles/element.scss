@@ -259,7 +259,7 @@
     border-radius: var(--el-border-radius-large) 0 0 var(--el-border-radius-large);
   }
   
-  &__header {
+  > .el-drawer__header {
     padding: var(--el-drawer-padding-primary) !important;
     margin-bottom: 0;
     color: var(--el-text-color-primary);
