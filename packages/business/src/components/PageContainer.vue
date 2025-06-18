@@ -108,7 +108,7 @@ const handleBack = () => {
         </el-button>
 
         <slot name="title">
-          <span class="fs-5 font-color-dark lh-8">{{
+          <span class="fs-5 font-color-dark lh-8 ellipsis">{{
             $t($route.meta.title)
           }}</span>
         </slot>
