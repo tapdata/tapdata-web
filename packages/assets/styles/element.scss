@@ -255,7 +255,7 @@
 
 // Drawer
 .el-drawer {
-  &.rtl {
+  &.rtl:not([style*="width: 100%"]) {
     border-radius: var(--el-border-radius-large) 0 0 var(--el-border-radius-large);
   }
   

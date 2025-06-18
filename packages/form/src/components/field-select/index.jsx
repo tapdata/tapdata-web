@@ -191,8 +191,11 @@ export const FieldSelect = connect(
     (props) => {
       const _props = { ...props }
 
-      if (_props.dataSource) {
-        _props.options = _props.dataSource
+      console.log('props', props)
+      const dataSource = props.dataSource || props['data-source']
+
+      if (dataSource) {
+        _props.options = dataSource
       }
 
       return _props

@@ -1,6 +1,6 @@
 <script>
 import { appApi } from '@tap/api'
-import { InfiniteSelect as AsyncSelect } from '@tap/form/src/components/infinite-select'
+import AsyncSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 
 export default {
   name: 'ListSelect',

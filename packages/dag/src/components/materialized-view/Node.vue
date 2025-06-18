@@ -624,8 +624,10 @@ async function loadTargetField() {
 
     if (arr.length > 1) {
       const parentPath = arr.slice(0, -1).join('.')
-      const tableName = props.targetPathMap[parentPath].tableNode.tableName
-      label = `${tableName}.${arr.pop()}`
+      const tableName = props.targetPathMap[parentPath]?.tableNode?.tableName
+      if (tableName) {
+        label = `${tableName}.${arr.pop()}`
+      }
     }
 
     return {
