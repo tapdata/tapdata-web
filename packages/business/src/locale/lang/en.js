@@ -723,7 +723,7 @@ export default {
     'Alert Notification',
   packages_business_setting_alarmnotification_gaojingzhibiao: 'Alert Indicator',
   packages_business_setting_alarmnotification_dangjiediandeping:
-    'When the average processing time of the node exceeds the threshold',
+    'When the average processing time of the processing node exceeds the threshold',
   packages_business_setting_alarmnotification_dangshujuyuanjie:
     'When the average processing time of the data source node exceeds the threshold',
   packages_business_setting_alarmnotification_dangshujuyuanxie:

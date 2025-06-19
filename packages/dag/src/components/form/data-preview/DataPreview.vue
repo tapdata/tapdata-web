@@ -1,22 +1,31 @@
 <script setup lang="ts">
 import { useResizeObserver } from '@vueuse/core'
-import { computed, inject, onUnmounted, ref, useTemplateRef } from 'vue'
+import {
+  computed,
+  inject,
+  onUnmounted,
+  ref,
+  useTemplateRef,
+  type Ref,
+} from 'vue'
 import VueJsonPretty from 'vue-json-pretty'
 import { useStore } from 'vuex'
 import 'vue-json-pretty/lib/styles.css'
 
 const store = useStore()
 
-const previewData = inject('previewData')
-const previewLoading = inject('previewLoading')
-const handlePreview = inject('handlePreview')
+const previewData = inject<Ref<Record<string, { data: any }>>>('previewData')
+const previewLoading = inject<Ref<boolean>>('previewLoading')
+const handlePreview = inject<((id: string) => void) | undefined>(
+  'handlePreview',
+)
 
 const activeNode = computed(() => store.getters['dataflow/activeNode'])
 
 const data = computed(() => {
-  if (!activeNode.value || !previewData.value) return {}
+  if (!activeNode.value || !previewData?.value) return {}
 
-  return previewData.value[activeNode.value.id]?.data || {}
+  return previewData?.value[activeNode.value.id]?.data || {}
 })
 
 const jsonRef = useTemplateRef('jsonRef')

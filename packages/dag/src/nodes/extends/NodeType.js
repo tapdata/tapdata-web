@@ -38,7 +38,7 @@ export class NodeType {
     return node.type === this.type
   }
 
-  getSchema(syncType) {
+  getSchema(syncType, readonly) {
     const { formSchema } = this
 
     if (formSchema.properties.tabs) {
@@ -337,6 +337,7 @@ export class NodeType {
       }
 
       if (
+        !readonly &&
         syncType === 'sync' &&
         !formSchema.properties.tabs.properties.previewTab
       ) {

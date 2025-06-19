@@ -651,7 +651,7 @@ export default {
     '告警通知',
   packages_business_setting_alarmnotification_gaojingzhibiao: '告警指标',
   packages_business_setting_alarmnotification_dangjiediandeping:
-    '当节点的平均处理耗时超过阀值时',
+    '当处理节点的平均处理耗时超过阀值时',
   packages_business_setting_alarmnotification_dangshujuyuanjie:
     '当数据源节点的平均处理耗时超过阀值时',
   packages_business_setting_alarmnotification_dangshujuyuanxie:

@@ -381,8 +381,8 @@ $headerHeight: 40px;
 }
 
 .monitor-bottom-tabs {
-  :deep(.el-tabs__content) {
-    z-index: 1;
+  :deep(.el-tabs__nav-wrap) {
+    margin-bottom: 0;
   }
 }
 
