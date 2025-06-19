@@ -23,6 +23,7 @@ export default {
     },
     jsPlumbIns: Object,
     hideDisableAction: Boolean,
+    isSync: Boolean,
   },
   data() {
     return {
@@ -317,6 +318,18 @@ export default {
         <VIcon v-if="ins.beta" class="mr-1" size="32">beta</VIcon>
       </template>
       <div v-if="!stateIsReadonly" class="df-node-options gap-4" @click.stop>
+        <div
+          v-if="isSync"
+          :disabled="data.disabled"
+          class="cursor-pointer"
+          :class="{
+            'opacity-50 cursor-not-allowed': data.disabled,
+          }"
+          @click.stop="!data.disabled && $emit('preview', nodeId, data)"
+        >
+          <VIcon size="20">action-play</VIcon>
+        </div>
+
         <div
           :disabled="data.disabled"
           class="cursor-pointer"

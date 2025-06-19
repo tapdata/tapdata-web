@@ -415,4 +415,5 @@ export default {
   public_search_field_name: '搜索字段名',
   public_all_selected: '全部选中',
   public_cancel_all_selected: '取消全选',
+  public_data_preview: '数据预览',
 }

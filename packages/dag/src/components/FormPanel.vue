@@ -95,7 +95,9 @@ export default {
           this.schema = null
           return
         }
-        await this.setSchema(this.ins.getSchema() || formSchema.node)
+        await this.setSchema(
+          this.ins.getSchema(this.scope.$settings.syncType) || formSchema.node,
+        )
 
         // 如果节点存在错误状态，走一遍校验，可以让用户看到错误信息
         // 脏代码。节点错误原先是布尔值，又增加字符串类型

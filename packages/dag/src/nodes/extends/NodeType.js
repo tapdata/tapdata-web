@@ -38,7 +38,7 @@ export class NodeType {
     return node.type === this.type
   }
 
-  getSchema() {
+  getSchema(syncType) {
     const { formSchema } = this
 
     if (formSchema.properties.tabs) {
@@ -334,8 +334,25 @@ export class NodeType {
             },
           }
         }
+      }
 
-        return formSchema
+      if (
+        syncType === 'sync' &&
+        !formSchema.properties.tabs.properties.previewTab
+      ) {
+        formSchema.properties.tabs.properties.previewTab = {
+          type: 'void',
+          'x-component': 'FormTab.TabPane',
+          'x-component-props': {
+            label: i18n.t('public_data_preview'),
+          },
+          properties: {
+            preview: {
+              type: 'void',
+              'x-component': 'DataPreview',
+            },
+          },
+        }
       }
     }
 

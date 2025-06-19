@@ -34,7 +34,7 @@
     "mousetrap": "^1.6.5",
     "resize-observer-polyfill": "^1.5.1",
     "vue": "^3.0.0",
-    "vue-json-pretty": "^1.9.5",
+    "vue-json-pretty": "^2.4.0",
     "vue-request": "^2.0.4",
     "vue-virtual-scroller": "2.0.0-beta.8",
     "vuex": "^4.0.2"

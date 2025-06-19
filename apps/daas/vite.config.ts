@@ -19,7 +19,7 @@ const serveUrlMap = {
 }
 let origin
 const { argv } = process
-const { SERVE_ENV = 'mock' } = process.env
+const { SERVE_ENV = 'test' } = process.env
 
 // 通过origin参数注入服务代理，优先级最高
 if (~argv.indexOf('--origin')) {
@@ -45,39 +45,39 @@ export default defineConfig(({ mode }) => {
 
     envPrefix,
 
-    optimizeDeps: {
-      include: [
-        '@tap/api',
-        '@tap/shared',
-        '@tap/assets',
-        'vue',
-        'vue-router',
-        'element-plus',
-        '@vueuse/core',
-        'lodash-es',
-        '@formily/vue',
-        '@formily/core',
-        '@formily/reactive',
-        '@formily/reactive-vue',
-        '@formily/shared',
-        '@formily/path',
-        '@formily/json-schema',
-        '@formily/element-plus',
-      ],
-      exclude: [
-        '@tap/dag',
-        '@tap/ldp',
-        '@tap/business',
-        '@tap/component', // 排除整个组件库，改用按需加载
-      ],
-      force: false,
-      esbuildOptions: {
-        target: 'esnext',
-        supported: {
-          'top-level-await': true,
-        },
-      },
-    },
+    // optimizeDeps: {
+    //   include: [
+    //     '@tap/api',
+    //     '@tap/shared',
+    //     '@tap/assets',
+    //     'vue',
+    //     'vue-router',
+    //     'element-plus',
+    //     '@vueuse/core',
+    //     'lodash-es',
+    //     '@formily/vue',
+    //     '@formily/core',
+    //     '@formily/reactive',
+    //     '@formily/reactive-vue',
+    //     '@formily/shared',
+    //     '@formily/path',
+    //     '@formily/json-schema',
+    //     '@formily/element-plus',
+    //   ],
+    //   exclude: [
+    //     '@tap/dag',
+    //     '@tap/ldp',
+    //     '@tap/business',
+    //     '@tap/component', // 排除整个组件库，改用按需加载
+    //   ],
+    //   force: false,
+    //   esbuildOptions: {
+    //     target: 'esnext',
+    //     supported: {
+    //       'top-level-await': true,
+    //     },
+    //   },
+    // },
 
     plugins: [
       vue(),

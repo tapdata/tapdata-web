@@ -1,5 +1,5 @@
 <script>
-import { connectionsApi, taskApi } from '@tap/api'
+import { connectionsApi, proxyApi, taskApi } from '@tap/api'
 
 import SkipError from '@tap/business/src/views/task/SkipError.vue'
 import { VEmpty } from '@tap/component/src/base/v-empty'
@@ -10,6 +10,7 @@ import i18n from '@tap/i18n'
 import { uuid } from '@tap/shared'
 import dagre from 'dagre'
 import { merge } from 'lodash-es'
+import { getCurrentInstance, nextTick, provide, ref, shallowRef } from 'vue'
 import { MoveNodeCommand } from './command'
 import DFNode from './components/DFNode'
 import LeftSidebar from './components/LeftSidebar'
@@ -25,6 +26,7 @@ import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from './constants'
 import { config, jsPlumb } from './instance'
 import editor from './mixins/editor'
 import formScope from './mixins/formScope'
+
 import { allResourceIns } from './nodes/loader'
 
 export default {
@@ -48,6 +50,64 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   inject: ['buried'],
+
+  // provide() {
+  //   return {
+  //     previewData: this.previewData,
+  //     previewLoading: this.previewLoading,
+  //   }
+  // },
+
+  setup() {
+    const previewData = shallowRef({})
+    const previewLoading = ref(false)
+
+    const ins = getCurrentInstance()
+
+    const handlePreview = async (nodeId, nodeData) => {
+      previewLoading.value = true
+      ins.proxy.setActiveNode(nodeId)
+
+      nextTick(() => {
+        ins.proxy.scope?.formTab?.setActiveKey('previewTab')
+      })
+
+      const data = await proxyApi
+        .call({
+          className: 'TaskPreviewService',
+          method: 'preview',
+          args: [
+            JSON.stringify({
+              id: ins.proxy.dataflow.id,
+              dag: {
+                edges: ins.proxy.allEdges,
+                nodes: ins.proxy.allNodes,
+              },
+            }),
+            // inputs,
+            [],
+            1,
+          ],
+        })
+        .finally(() => (previewLoading.value = false))
+
+      if (data.code !== 200) {
+        ElMessage.error(data.message || 'Internal error')
+        return
+      }
+
+      previewData.value = data.nodeResult
+    }
+
+    provide('previewData', previewData)
+    provide('previewLoading', previewLoading)
+
+    return {
+      previewData,
+      previewLoading,
+      handlePreview,
+    }
+  },
 
   data() {
     return {
@@ -73,6 +133,10 @@ export default {
 
       isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       scale: 1,
+
+      previewLoading: false,
+      currentPreviewNodeId: null,
+      previewData: shallowRef({}),
     }
   },
 
@@ -702,6 +766,42 @@ export default {
         this.setMaterializedViewVisible(true)
       }, 120)
     },
+
+    // async handlePreview(nodeId, nodeData) {
+    //   this.previewLoading = true
+    //   this.currentPreviewNodeId = nodeId
+    //   this.setActiveNode(nodeId)
+
+    //   this.$nextTick(() => {
+    //     this.scope?.formTab?.setActiveKey('previewTab')
+    //   })
+
+    //   const data = await proxyApi
+    //     .call({
+    //       className: 'TaskPreviewService',
+    //       method: 'preview',
+    //       args: [
+    //         JSON.stringify({
+    //           id: this.dataflow.id,
+    //           dag: {
+    //             edges: this.allEdges,
+    //             nodes: this.allNodes,
+    //           },
+    //         }),
+    //         // inputs,
+    //         [],
+    //         1,
+    //       ],
+    //     })
+    //     .finally(() => (this.previewLoading = false))
+
+    //   if (data.code !== 200) {
+    //     this.$message.error(data.message || 'Internal error')
+    //     return
+    //   }
+
+    //   this.previewData = data.nodeResult
+    // },
   },
 }
 </script>
@@ -775,6 +875,7 @@ export default {
               :class="{
                 'options-active': nodeMenu.typeId === n.id,
               }"
+              :is-sync="dataflow.syncType === 'sync'"
               @drag-start="onNodeDragStart"
               @drag-move="onNodeDragMove"
               @drag-stop="onNodeDragStop"
@@ -785,6 +886,7 @@ export default {
               @disable="handleDisableNode($event, true)"
               @enable="handleDisableNode($event, false)"
               @show-node-popover="showNodePopover"
+              @preview="handlePreview"
             />
           </PaperScroller>
           <div
