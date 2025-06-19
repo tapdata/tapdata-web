@@ -51,20 +51,13 @@ export default {
 
   inject: ['buried'],
 
-  // provide() {
-  //   return {
-  //     previewData: this.previewData,
-  //     previewLoading: this.previewLoading,
-  //   }
-  // },
-
   setup() {
-    const previewData = shallowRef({})
+    const previewData = shallowRef(null)
     const previewLoading = ref(false)
 
     const ins = getCurrentInstance()
 
-    const handlePreview = async (nodeId, nodeData) => {
+    const handlePreview = async (nodeId) => {
       previewLoading.value = true
       ins.proxy.setActiveNode(nodeId)
 
@@ -84,7 +77,6 @@ export default {
                 nodes: ins.proxy.allNodes,
               },
             }),
-            // inputs,
             [],
             1,
           ],
@@ -101,6 +93,7 @@ export default {
 
     provide('previewData', previewData)
     provide('previewLoading', previewLoading)
+    provide('handlePreview', handlePreview)
 
     return {
       previewData,
@@ -133,10 +126,6 @@ export default {
 
       isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       scale: 1,
-
-      previewLoading: false,
-      currentPreviewNodeId: null,
-      previewData: shallowRef({}),
     }
   },
 

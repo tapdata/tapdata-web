@@ -86,7 +86,10 @@ export default {
         const formSchema = this.$store.getters['dataflow/formSchema'] || {}
 
         // 重置TAB
-        if (this.ins?.group !== oldNode?.__Ctor.group) {
+        if (
+          this.ins?.group !== oldNode?.__Ctor.group &&
+          this.scope?.formTab?.activeKey !== 'previewTab'
+        ) {
           this.scope?.formTab?.setActiveKey('tab1')
         }
 

@@ -9,6 +9,7 @@ const store = useStore()
 
 const previewData = inject('previewData')
 const previewLoading = inject('previewLoading')
+const handlePreview = inject('handlePreview')
 
 const activeNode = computed(() => store.getters['dataflow/activeNode'])
 
@@ -27,6 +28,12 @@ const { stop } = useResizeObserver(jsonRef, (entries) => {
   }
 })
 
+const preview = () => {
+  if (!activeNode.value) return
+
+  handlePreview?.(activeNode.value.id)
+}
+
 onUnmounted(() => {
   stop()
 })
@@ -34,7 +41,11 @@ onUnmounted(() => {
 
 <template>
   <div class="h-100 flex flex-column py-3">
-    <div v-loading="previewLoading" class="flex-1">
+    <div
+      v-show="!!previewData"
+      v-loading="previewLoading"
+      class="flex-1 json-pretty-wrapper"
+    >
       <VueJsonPretty
         ref="jsonRef"
         class="h-100"
@@ -47,5 +58,26 @@ onUnmounted(() => {
         :select-on-click-node="true"
       />
     </div>
+
+    <el-empty v-if="!previewLoading && !previewData">
+      <template #description>
+        <el-button size="large" @click="preview">
+          <VIcon class="mr-2" size="20">action-play</VIcon>
+          {{ $t('public_data_preview') }}
+        </el-button>
+      </template>
+    </el-empty>
   </div>
 </template>
+
+<style scoped lang="scss">
+.json-pretty-wrapper {
+  :deep(.vjs-tree-node.vjs-tree-node.vjs-tree-node) {
+    border-radius: 4px;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+  }
+}
+</style>
