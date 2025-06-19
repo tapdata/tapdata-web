@@ -74,10 +74,10 @@ export const TableListCard = observer(
                   >
                     <span>
                       <span>{name}</span>
-                      {tableMap.value[name]?.tableComment && (
+                      {!!tableMap.value[name]?.tableComment && (
                         <span class="font-color-sslight">{`(${tableMap.value[name].tableComment})`}</span>
                       )}
-                      {tableMap.value[name]?.primaryKeyCounts && (
+                      {!!tableMap.value[name]?.primaryKeyCounts && (
                         <VIcon size="12" class="text-warning ml-1">
                           key
                         </VIcon>
