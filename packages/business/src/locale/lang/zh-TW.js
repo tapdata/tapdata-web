@@ -650,7 +650,7 @@ export default {
     '告警通知',
   packages_business_setting_alarmnotification_gaojingzhibiao: '告警指標',
   packages_business_setting_alarmnotification_dangjiediandeping:
-    '當節點的平均處理耗時超過閥值時',
+    '當處理節點的平均處理耗時超過閥值時',
   packages_business_setting_alarmnotification_dangshujuyuanjie:
     '當數據源節點的平均處理耗時超過閥值時',
   packages_business_setting_alarmnotification_dangshujuyuanxie:
