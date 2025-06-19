@@ -123,13 +123,19 @@ export default {
     },
     handleGo(item) {
       switch (item.system) {
+        case 'migration':
+          this.$router.push({
+            name: 'MigrateEditor',
+            params: {
+              id: item.sourceId,
+            },
+          })
+          break
         case 'dataFlow':
           this.$router.push({
-            name: 'job',
-            query: {
+            name: 'DataflowEditor',
+            params: {
               id: item.sourceId,
-              isMoniting: true,
-              mapping: item.mappingTemplate,
             },
           })
           break
@@ -296,7 +302,7 @@ export default {
                   <span
                     v-else
                     class="cursor-pointer px-1 primary"
-                    @click="handleGo(item)"
+                    @click.stop="handleGo(item)"
                   >
                     {{ item.serverName }}
                   </span>
@@ -389,7 +395,7 @@ export default {
                 </div>
                 <div>
                   <span :class="[`level-${item.levelType}`]"
-                    >【{{ item.levelLabel }}】</span
+                    >【{{ item.title }}】</span
                   >
                   <template>
                     <span>{{ item.title }}</span>
