@@ -1,8 +1,8 @@
 <script>
 import { CircleCloseFilled, SuccessFilled } from '@element-plus/icons-vue'
 import { apiCallsApi } from '@tap/api'
-import { TablePage } from '@tap/business'
-import { FilterBar } from '@tap/component'
+import TablePage from '@tap/business/src/components/TablePage.vue'
+import { FilterBar } from '@tap/component/src/filter-bar'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
 

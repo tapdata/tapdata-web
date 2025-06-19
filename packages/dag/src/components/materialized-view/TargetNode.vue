@@ -1,15 +1,15 @@
 <script setup lang="tsx">
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
-import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
-import { AsyncSelect } from '@tap/form'
+import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared/const'
+import AsyncSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 import i18n from '@tap/i18n'
-import { ClickOutside, Time } from '@tap/shared'
+import { Time } from '@tap/shared'
 import { merge } from 'lodash-es'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { NODE_PREFIX } from '../../constants'
 import { targetEndpoint } from '../../style'
-import { TableSelect } from '../form'
+import { TableSelect } from '../form/table-select'
 import NodeIcon from '../NodeIcon.vue'
 
 interface Props {

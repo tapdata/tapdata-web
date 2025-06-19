@@ -9,11 +9,13 @@ import {
   roleApi,
   workerApi,
 } from '@tap/api'
-import { Drawer, Modal, VCodeEditor } from '@tap/component'
+import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
+import Drawer from '@tap/component/src/Drawer.vue'
+import { Modal } from '@tap/component/src/modal'
+
 import i18n from '@tap/i18n'
 import { uid } from '@tap/shared'
 import axios from 'axios'
-import { ElMessage } from 'element-plus'
 import { cloneDeep, isEqual } from 'lodash-es'
 import {
   computed,
@@ -120,7 +122,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['visible', 'update:loading', 'save', 'update'])
 
-const apiApplication = inject('apiApplication')
+const apiApplication = inject('apiApplication', null)
 
 // Refs
 const form = ref<any>({
@@ -513,22 +515,24 @@ const getFields = async () => {
 
     if (!form.value.id) {
       form.value.fields = cloneDeep(allFields.value)
-    }
-
-    // 回显选中字段
-    nextTick(() => {
-      const fields = form.value.fields || []
-      fields.forEach((row: any) => {
-        const targetRow = allFields.value.find((it: any) => it.id === row.id)
-
-        if (targetRow) {
-          fieldTable.value?.toggleRowSelection(targetRow, true)
-        }
+      nextTick(() => {
+        fieldTable.value?.toggleAllSelection()
       })
-    })
+    }
   } finally {
     fieldLoading.value = false
   }
+}
+
+const handleFieldsSelection = () => {
+  const fields = data.value.fields || []
+  fields.forEach((row: any) => {
+    const targetRow = allFields.value.find((it: any) => it.id === row.id)
+
+    if (targetRow) {
+      fieldTable.value?.toggleRowSelection(targetRow, true)
+    }
+  })
 }
 
 const getAPIServerToken = async (callback?: (token: string) => void) => {
@@ -987,7 +991,7 @@ const loadAllFields = async () => {
     filter: JSON.stringify(filter),
   })
   allFields.value =
-    data?.data?.items?.[0]?.fields?.map((it: any) => ({
+    data?.items?.[0]?.fields?.map((it: any) => ({
       ...it,
       id: it.id,
       field_name: it.field_name,
@@ -1016,12 +1020,19 @@ const handleBeforeClose = async (done: () => void) => {
     done()
   }
 }
+
+const openEdit = () => {
+  isEdit.value = true
+  nextTick(() => {
+    handleFieldsSelection()
+  })
+}
 </script>
 
 <template>
   <component
     :is="tag"
-    v-model:visible="visible"
+    v-model="visible"
     v-loading="loading"
     :title="$t('packages_business_data_server_drawer_fuwuxiangqing')"
     body-class="pt-0"
@@ -1041,7 +1052,7 @@ const handleBeforeClose = async (done: () => void) => {
           :class="{
             invisible: !(tab === 'form' && data.status !== 'active' && !isEdit),
           }"
-          @click="isEdit = true"
+          @click="edit"
         >
           <el-icon class="mr-1">
             <EditPen />

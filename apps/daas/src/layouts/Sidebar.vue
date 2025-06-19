@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { VIcon } from '@tap/component'
 import { useI18n } from '@tap/i18n'
 import { computed, inject, onMounted, ref, watch, type Ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'

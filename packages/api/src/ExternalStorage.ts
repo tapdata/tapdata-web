@@ -5,20 +5,20 @@ export default class ExternalStorage extends Http {
     super('/api/ExternalStorage')
   }
   changeExternalStorage(id) {
-    return this.axios.patch(this.url + '/' + id + '/default')
+    return this.axios.patch(`${this.url}/${id}/default`)
   }
   async list(params: unknown, filter: unknown) {
     return this.get(params, filter)
   }
   usingTask(id) {
-    return this.axios.get(this.url + '/' + id + '/usingTask')
+    return this.axios.get(`${this.url}/${id}/usingTask`)
   }
 
   async get(params: unknown, filter: unknown) {
-    const mapData = data => {
+    const mapData = (data) => {
       if (data?.items?.length) {
-        data?.items.forEach(item => {
-          item.name = item.name.replace(/tapdata\s?/gi, '')
+        data?.items.forEach((item) => {
+          item.name = item.name.replaceAll(/tapdata\s?/gi, '')
         })
       }
       return data
@@ -31,15 +31,17 @@ export default class ExternalStorage extends Http {
       } else if (typeof filter === 'string') {
         queryStr = filter
       }
-      const qs = queryStr ? '?filter=' + encodeURIComponent(queryStr) : ''
-      const data = await this.axios.get(this.url + '/' + params.join('/') + qs)
+      const qs = queryStr ? `?filter=${encodeURIComponent(queryStr)}` : ''
+      const data = await this.axios.get(`${this.url}/${params.join('/')}${qs}`)
 
       return mapData(data)
     } else if (typeof params === 'string') {
-      const data = await this.axios.get(this.url + '/' + params, { params: filter })
+      const data = await this.axios.get(`${this.url}/${params}`, {
+        params: filter,
+      })
 
       if (data?.name) {
-        data.name = data.name.replace(/tapdata\s?/gi, '')
+        data.name = data.name.replaceAll(/tapdata\s?/gi, '')
       }
 
       return data

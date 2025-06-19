@@ -1,10 +1,7 @@
 <script>
 import pricingCardImg from '@tap/assets/images/pricing-card-glow.png'
-import { VIcon } from '@tap/component'
-import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 export default {
   name: 'UpgradeFeeDialog',
-  components: { VIcon },
   props: ['visible', 'tooltip', 'goPage'],
   emits: ['update:visible'],
   data() {
@@ -25,7 +22,7 @@ export default {
       this.handleClose()
     },
     handleClose() {
-      $emit(this, 'update:visible', false)
+      this.$emit('update:visible', false)
     },
   },
 }
@@ -39,7 +36,7 @@ export default {
     width="880px"
     class="paid-upgrade-dialog"
     :before-close="handleClose"
-    @input="$emit('update:visible', $event)"
+    @update:model-value="$emit('update:visible', $event)"
   >
     <div
       v-if="tooltip"

@@ -1,7 +1,8 @@
-import { defineComponent, nextTick, ref } from 'vue'
-import { Highlight, IconButton } from '@tap/component'
-import { copyToClipboard } from '@tap/shared'
+import Highlight from '@tap/component/src/base/Highlight'
+import { IconButton } from '@tap/component/src/icon-button'
 import i18n from '@tap/i18n'
+import { copyToClipboard } from '@tap/shared'
+import { defineComponent, nextTick, ref } from 'vue'
 import 'highlight.js/styles/atom-one-light.min.css'
 import './style.scss'
 
@@ -57,7 +58,12 @@ export const HighlightCode = defineComponent({
           code={props.code}
         >
           {props.copy && (
-            <ElTooltip ref="tooltipRef" transition="tooltip-fade-in" placement="top" content={contentRef.value}>
+            <ElTooltip
+              ref="tooltipRef"
+              transition="tooltip-fade-in"
+              placement="top"
+              content={contentRef.value}
+            >
               <IconButton
                 onClick={copy}
                 onMouseleave={onMouseleave}

@@ -1,7 +1,6 @@
-import { CloseIcon } from '@tap/component'
+import { CloseIcon } from '@tap/component/src/CloseIcon'
 import i18n from '@tap/i18n'
 import { copyToClipboard } from '@tap/shared'
-import { useRouter } from 'vue-router'
 import './index.scss'
 
 function renderDialog(stack) {

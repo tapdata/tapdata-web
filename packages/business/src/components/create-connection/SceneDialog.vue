@@ -1,11 +1,11 @@
 <script>
 import { databaseTypesApi } from '@tap/api'
 import { getConnectorImage, getIcon } from '@tap/assets'
-import { IconButton, VEmpty } from '@tap/component'
+import { VEmpty } from '@tap/component/src/base/v-empty'
+import { IconButton } from '@tap/component/src/icon-button'
 
 import i18n from '@tap/i18n'
 import { mapGetters } from 'vuex'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 import { DatabaseIcon } from '../DatabaseIcon'
 import RequestDialog from './RequestDialog.vue'
 import ConnectionForm from './SceneForm'
@@ -555,7 +555,7 @@ export default {
       }
     },
     showDialog(v) {
-      $emit(this, 'update:visible', v)
+      this.$emit('update:visible', v)
     },
   },
   mounted() {
@@ -563,7 +563,7 @@ export default {
 
     // add-source/add-target
     if (type?.startsWith('add-') && this.selectorType !== 'source_and_target') {
-      $emit(this, 'update:selectorType', type.split('-').pop())
+      this.$emit('update:selectorType', type.split('-').pop())
       this.showDialog = true
       this.$nextTick(() => {
         this.formParams.pdkHash = pdkHash
@@ -599,8 +599,8 @@ export default {
     },
 
     handleClose() {
-      $emit(this, 'visible', false)
-      $emit(this, 'update:visible', false)
+      this.$emit('visible', false)
+      this.$emit('update:visible', false)
     },
 
     onClosed() {
@@ -685,8 +685,8 @@ export default {
       this.handleClose()
     },
 
-    handleSaveAndMore() {
-      $emit(this, 'saveAndMore', ...arguments)
+    handleSaveAndMore(...args) {
+      this.$emit('saveAndMore', ...args)
       this.init()
     },
 

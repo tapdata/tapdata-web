@@ -6,21 +6,17 @@ import {
   metadataInstancesApi,
   modulesApi,
 } from '@tap/api'
-import {
-  ExportOutlined,
-  FilterBar,
-  ImportOutlined,
-  VEmpty,
-  VTable,
-} from '@tap/component'
+import { VEmpty } from '@tap/component/src/base/v-empty'
+import { VTable } from '@tap/component/src/base/v-table'
+import FilterBar from '@tap/component/src/filter-bar/Main.vue'
+import { ExportOutlined, ImportOutlined } from '@tap/component/src/icon'
 import i18n from '@tap/i18n'
 
 import { escapeRegExp } from 'lodash-es'
 import PageContainer from '../../components/PageContainer.vue'
-
-import Upload from '../../components/UploadDialog'
+import Upload from '../../components/UploadDialog.vue'
 import DownloadSdkDialog from './DownloadSdkDialog.vue'
-import Drawer from './Drawer'
+import Drawer from './Drawer.vue'
 
 export default {
   components: {

@@ -1,3 +1,3 @@
-import VExpandXTransition from './VExpandXTransition'
+import VExpandXTransition from './VExpandXTransition.vue'
 
 export { VExpandXTransition }

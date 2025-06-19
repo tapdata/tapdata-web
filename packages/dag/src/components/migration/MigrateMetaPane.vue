@@ -1,8 +1,8 @@
 <script>
-import { VEmpty } from '@tap/component'
+import { VEmpty } from '@tap/component/src/base/v-empty'
 
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
-import { mapFieldsData } from '@tap/form'
+import { mapFieldsData } from '@tap/form/src/components/field-select'
 
 import i18n from '@tap/i18n'
 import { cloneDeep, debounce } from 'lodash-es'
@@ -208,7 +208,9 @@ export default {
     },
 
     rollbackAll() {
-      this.$confirm(i18n.t('packages_form_field_inference_main_ninquerenyaoquan')).then((resFlag) => {
+      this.$confirm(
+        i18n.t('packages_form_field_inference_main_ninquerenyaoquan'),
+      ).then((resFlag) => {
         if (resFlag) {
           this.fieldChangeRules = []
           this.handleUpdate()

@@ -1,8 +1,10 @@
 <script>
 import { apiMonitorApi } from '@tap/api'
-import { dayjs } from '@tap/business'
+import { dayjs } from '@tap/business/src/shared/dayjs'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { Chart, FilterBar, VTable } from '@tap/component'
+import { Chart } from '@tap/component/src/chart'
+import { FilterBar } from '@tap/component/src/filter-bar'
+import { VTable } from '@tap/component/src/base/v-table'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
 import { escapeRegExp } from 'lodash-es'
 

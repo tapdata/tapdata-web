@@ -11,9 +11,9 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0",
-    "@tap/api": "workspace:^1.0.0",
+    "@tap/api": "workspace:*",
     "@tap/assets": "workspace:^",
-    "@tap/i18n": "workspace:^1.0.0",
+    "@tap/i18n": "workspace:*",
     "@tap/shared": "workspace:^",
     "@tiptap/core": "^2.12.0",
     "@tiptap/extension-bold": "^2.12.0",

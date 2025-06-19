@@ -1,31 +1,4 @@
-<template>
-  <ElDialog :title="$t('public_message_title_prompt')" width="40%" v-model="visible" @close="handleClose">
-    <span>{{
-      $t('packages_business_connections_list_gailianjieyibei', {
-        val1: data.total,
-      })
-    }}</span>
-    <el-table class="mt-4" height="250px" :data="data.items">
-      <el-table-column min-width="240" :label="$t('public_task_name')" :show-overflow-tooltip="true">
-        <template #default="{ row }">
-          <span class="dataflow-name link-primary flex">
-            <ElLink
-              role="ellipsis"
-              type="primary"
-              class="justify-content-start ellipsis block"
-              :class="['name']"
-              @click.stop="goTaskList(row)"
-              >{{ row.name }}</ElLink
-            >
-          </span>
-        </template>
-      </el-table-column>
-    </el-table>
-  </ElDialog>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 export default {
   name: 'UsedTaskDialog',
   props: {
@@ -40,6 +13,7 @@ export default {
       },
     },
   },
+  emits: ['update:value'],
   data() {
     return {
       visible: false,
@@ -53,7 +27,7 @@ export default {
   methods: {
     handleClose() {
       this.visible = false
-      $emit(this, 'update:value', this.visible)
+      this.$emit('update:value', this.visible)
     },
 
     goTaskList(item = {}) {
@@ -63,7 +37,7 @@ export default {
         logCollector: 'sharedMiningList',
         mem_cache: 'sharedCacheList',
       }
-      let routeUrl = this.$router.resolve({
+      const routeUrl = this.$router.resolve({
         name: map[item.syncType],
         query: { keyword: item.name },
       })
@@ -85,6 +59,40 @@ export default {
       // }
     },
   },
-  emits: ['update:value'],
 }
 </script>
+
+<template>
+  <ElDialog
+    v-model="visible"
+    :title="$t('public_message_title_prompt')"
+    width="40%"
+    @close="handleClose"
+  >
+    <span>{{
+      $t('packages_business_connections_list_gailianjieyibei', {
+        val1: data.total,
+      })
+    }}</span>
+    <el-table class="mt-4" height="250px" :data="data.items">
+      <el-table-column
+        min-width="240"
+        :label="$t('public_task_name')"
+        :show-overflow-tooltip="true"
+      >
+        <template #default="{ row }">
+          <span class="dataflow-name link-primary flex">
+            <ElLink
+              role="ellipsis"
+              type="primary"
+              class="justify-content-start ellipsis block"
+              :class="['name']"
+              @click.stop="goTaskList(row)"
+              >{{ row.name }}</ElLink
+            >
+          </span>
+        </template>
+      </el-table-column>
+    </el-table>
+  </ElDialog>
+</template>

@@ -1,18 +1,19 @@
 import { settingsApi, timeStampApi, usersApi } from '@tap/api'
-import { WSClient } from '@tap/business/src/shared/ws-client'
-import { installElement, VIcon } from '@tap/component'
+import { WSClient } from '@tap/business/src/shared/ws-client.ts'
+import VIcon from '@tap/component/src/base/VIcon.vue'
+import { installElement } from '@tap/component/src/InstallElement'
 import {
   getCurrentLanguage,
   setCurrentLanguage,
 } from '@tap/i18n/src/shared/util'
 import Cookie from '@tap/shared/src/cookie'
+import { setSettings } from '@tap/shared/src/settings'
 import Time from '@tap/shared/src/time'
 import { ElLoading } from 'element-plus'
 import { createApp } from 'vue'
 import App from '@/App.vue'
 import { installOEM } from '@/oem'
 import { installAllPlugins } from '@/plugins'
-import { setSettings } from '@/utils/settings'
 import { configUser, getUrlSearch } from '@/utils/util'
 import store from '@/vuex' // 引入全局数据控制
 

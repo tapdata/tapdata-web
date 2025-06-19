@@ -5,10 +5,10 @@ import {
   sharedCacheApi,
   taskApi,
 } from '@tap/api'
-import { makeStatusAndDisabled } from '@tap/business'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
+import { makeStatusAndDisabled } from '@tap/business/src/shared/task'
 import resize from '@tap/component/src/directives/resize'
-import { computed as reactiveComputed } from '@tap/form'
+import { computed as reactiveComputed } from '@tap/form/src/shared/reactive'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 import i18n from '@tap/i18n'
 import { setPageTitle } from '@tap/shared'
@@ -18,7 +18,6 @@ import { merge } from 'lodash-es'
 import Mousetrap from 'mousetrap'
 import { h, markRaw } from 'vue'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 import {
   AddConnectionCommand,
   AddNodeCommand,
@@ -2618,7 +2617,7 @@ export default {
           if (data.status === 'edit') data.btnDisabled.start = false // 任务编辑中，在编辑页面可以启动
           Object.assign(this.dataflow.disabledData, data.btnDisabled)
 
-          $emit(this, 'loop-task')
+          this.$emit('loop-task')
           this.startLoopTask(id)
         }
       }, 5000)

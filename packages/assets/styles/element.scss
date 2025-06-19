@@ -255,7 +255,11 @@
 
 // Drawer
 .el-drawer {
-  &__header {
+  &.rtl:not([style*="width: 100%"]) {
+    border-radius: var(--el-border-radius-large) 0 0 var(--el-border-radius-large);
+  }
+  
+  > .el-drawer__header {
     padding: var(--el-drawer-padding-primary) !important;
     margin-bottom: 0;
     color: var(--el-text-color-primary);
@@ -265,6 +269,10 @@
 
   &__body {
     --el-drawer-padding-primary: 8px 24px;
+  }
+
+  &__footer {
+    padding: 16px 24px !important;
   }
 
   &__close-btn {

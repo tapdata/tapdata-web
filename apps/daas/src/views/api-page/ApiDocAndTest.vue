@@ -1,16 +1,3 @@
-<template>
-  <div class="api-doc">
-    <div class="section-wrap-box h-100">
-      <div class="api-doc-box">
-        <el-button :title="$t('daas_api_page_apidocandtest_daochudaopo')" @click="exportJson">
-          {{ $t('public_button_export') }}
-        </el-button>
-      </div>
-      <iframe src frameborder="0" class="doc-test-iframe" id="docTestIframe"></iframe>
-    </div>
-  </div>
-</template>
-
 <script>
 import i18n from '@/i18n'
 
@@ -185,6 +172,19 @@ export default {
   },
 }
 </script>
+
+<template>
+  <div class="api-doc">
+    <div class="section-wrap-box h-100">
+      <div class="api-doc-box">
+        <el-button :title="$t('daas_api_page_apidocandtest_daochudaopo')" @click="exportJson">
+          {{ $t('public_button_export') }}
+        </el-button>
+      </div>
+      <iframe src frameborder="0" class="doc-test-iframe" id="docTestIframe"></iframe>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .api-doc {

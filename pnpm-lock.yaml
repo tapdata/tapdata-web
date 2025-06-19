@@ -130,37 +130,37 @@ importers:
         specifier: ^2.3.0
         version: 2.3.3(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
       '@tap/api':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../../packages/api
       '@tap/assets':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../../packages/assets
       '@tap/business':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../../packages/business
       '@tap/component':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../../packages/component
       '@tap/dag':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../../packages/dag
       '@tap/form':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../../packages/form
       '@tap/i18n':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../../packages/i18n
       '@tap/ldp':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../../packages/ldp
       '@tap/node-design':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../../packages/node-design
       '@tap/shared':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../../packages/shared
       '@tap/task':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../../packages/task
       ali-oss:
         specifier: ^6.17.1
@@ -272,34 +272,34 @@ importers:
         specifier: ^2.3.0
         version: 2.3.3
       '@tap/api':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../../packages/api
       '@tap/assets':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../../packages/assets
       '@tap/business':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../../packages/business
       '@tap/component':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../../packages/component
       '@tap/dag':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../../packages/dag
       '@tap/form':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../../packages/form
       '@tap/i18n':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../../packages/i18n
       '@tap/ldp':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../../packages/ldp
       '@tap/node-design':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../../packages/node-design
       '@tap/shared':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../../packages/shared
       axios:
         specifier: ^0.21.1
@@ -393,7 +393,7 @@ importers:
   packages/api:
     dependencies:
       '@tap/shared':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../shared
       axios:
         specifier: ^0.21.1
@@ -413,22 +413,22 @@ importers:
         specifier: ^2.3.0
         version: 2.3.3
       '@tap/api':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../api
       '@tap/assets':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../assets
       '@tap/component':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../component
       '@tap/form':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../form
       '@tap/i18n':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../i18n
       '@tap/shared':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../shared
       axios:
         specifier: ^0.21.1
@@ -470,13 +470,13 @@ importers:
         specifier: ^2.1.0
         version: 2.3.1(vue@3.5.13(typescript@5.8.3))
       '@tap/api':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../api
       '@tap/assets':
         specifier: workspace:^
         version: link:../assets
       '@tap/i18n':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../i18n
       '@tap/shared':
         specifier: workspace:^
@@ -599,25 +599,25 @@ importers:
         specifier: ^2.3.0
         version: 2.3.3(vue@3.5.13(typescript@5.8.3))
       '@tap/api':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../api
       '@tap/assets':
         specifier: workspace:^
         version: link:../assets
       '@tap/business':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../business
       '@tap/component':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../component
       '@tap/form':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../form
       '@tap/i18n':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../i18n
       '@tap/shared':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../shared
       '@vueuse/core':
         specifier: ^10.5.0
@@ -647,8 +647,8 @@ importers:
         specifier: ^3.4.29
         version: 3.5.13(typescript@5.8.3)
       vue-json-pretty:
-        specifier: ^1.9.5
-        version: 1.9.5
+        specifier: ^2.4.0
+        version: 2.4.0(vue@3.5.13(typescript@5.8.3))
       vue-request:
         specifier: ^2.0.4
         version: 2.0.4(vue@3.5.13(typescript@5.8.3))
@@ -686,16 +686,16 @@ importers:
         specifier: ^2.3.0
         version: 2.3.3(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
       '@tap/api':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../api
       '@tap/assets':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../assets
       '@tap/component':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../component
       '@tap/i18n':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../i18n
       '@tap/shared':
         specifier: workspace:^
@@ -743,7 +743,7 @@ importers:
   packages/i18n:
     dependencies:
       '@tap/shared':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../shared
       core-js:
         specifier: ^3.8.3
@@ -758,28 +758,28 @@ importers:
   packages/ldp:
     dependencies:
       '@tap/api':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../api
       '@tap/assets':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../assets
       '@tap/business':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../business
       '@tap/component':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../component
       '@tap/dag':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../dag
       '@tap/form':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../form
       '@tap/i18n':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../i18n
       '@tap/shared':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../shared
       '@vueuse/core':
         specifier: ^10.5.0
@@ -827,22 +827,22 @@ importers:
         specifier: ^2.3.0
         version: 2.3.3
       '@tap/api':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../api
       '@tap/assets':
         specifier: workspace:^
         version: link:../assets
       '@tap/component':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../component
       '@tap/form':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../form
       '@tap/i18n':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../i18n
       '@tap/shared':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../shared
       core-js:
         specifier: ^3.8.3
@@ -875,10 +875,10 @@ importers:
   packages/task:
     dependencies:
       '@tap/business':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../business
       '@tap/ldp':
-        specifier: workspace:^1.0.0
+        specifier: workspace:*
         version: link:../ldp
       core-js:
         specifier: ^3.8.3
@@ -5911,9 +5911,11 @@ packages:
     peerDependencies:
       vue: ^3.4.29
 
-  vue-json-pretty@1.9.5:
-    resolution: {integrity: sha512-fwbiH/ky/raX1D4MXRZZLFeKm157e9AkumMD7Y+djdLU1Sb0Tp5q2iOPvCnkWNzRpUfxx/zUjONUG+MIWsqx/w==}
+  vue-json-pretty@2.4.0:
+    resolution: {integrity: sha512-e9bP41DYYIc2tWaB6KuwqFJq5odZ8/GkE6vHQuGcbPn37kGk4a3n1RNw3ZYeDrl66NWXgTlOfS+M6NKkowmkWw==}
     engines: {node: '>= 10.0.0', npm: '>= 5.0.0'}
+    peerDependencies:
+      vue: ^3.4.29
 
   vue-json-viewer@2.2.22:
     resolution: {integrity: sha512-3oPH5BxoUWva/qp7wNJj+15FBXyi9Yu5VDW4mCWivjHR1pUpMv34fjqqxML7jh2uOqm1S/3Xks5nQ5JjC5+OWw==}
@@ -11862,7 +11864,9 @@ snapshots:
       '@vue/devtools-api': 6.6.4
       vue: 3.5.13(typescript@5.8.3)
 
-  vue-json-pretty@1.9.5: {}
+  vue-json-pretty@2.4.0(vue@3.5.13(typescript@5.8.3)):
+    dependencies:
+      vue: 3.5.13(typescript@5.8.3)
 
   vue-json-viewer@2.2.22(vue@3.5.13(typescript@5.8.3)):
     dependencies:

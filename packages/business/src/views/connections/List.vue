@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { connectionsApi } from '@tap/api'
-import { FilterBar, Modal, SelectList, VIcon } from '@tap/component'
+import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
+import FilterBar from '@tap/component/src/filter-bar/Main.vue'
+import { Modal } from '@tap/component/src/modal'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
-import { ElLoading, ElMessage } from 'element-plus'
 import {
   computed,
   h,

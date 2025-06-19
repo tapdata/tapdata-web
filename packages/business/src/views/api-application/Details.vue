@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Drawer } from '@tap/component'
+import Drawer from '@tap/component/src/Drawer.vue'
 import { useI18n } from '@tap/i18n'
 import { provide, ref } from 'vue'
 import DataServerList from '../data-server/List.vue'
@@ -77,13 +77,12 @@ defineExpose({
 <template>
   <Drawer
     v-bind="$attrs"
-    v-model:visible="visible"
+    v-model="visible"
     v-loading="loading"
     class="app-details"
     :class="{ 'flex flex-column': visible }"
     width="800px"
-    :withHeader="false"
-    @visible="handleVisible"
+    :with-header="false"
   >
     <DataServerList
       ref="table"

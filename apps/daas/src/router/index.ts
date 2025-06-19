@@ -1,6 +1,8 @@
 import { setPageTitle } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
+import { getSettingByKey } from '@tap/shared/src/settings'
 import { ElMessage as Message } from 'element-plus'
+
 import {
   createRouter,
   createWebHashHistory,
@@ -8,8 +10,6 @@ import {
 } from 'vue-router'
 
 import i18n from '@/i18n'
-
-import { getSettingByKey } from '@/utils/settings'
 import { routes } from './routes'
 
 const router = createRouter({

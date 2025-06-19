@@ -1,9 +1,11 @@
 import { discoveryApi } from '@tap/api'
-import { OverflowTooltip, VTable } from '@tap/component'
-import NodeViewer from '@tap/dag/src/nodeView'
+import { OverflowTooltip } from '@tap/component/src/base/overflow-tooltip'
+import { VTable } from '@tap/component/src/base/v-table'
+import NodeViewer from '@tap/dag/src/nodeView.vue'
 import dayjs from 'dayjs'
 import { computed, defineComponent, reactive, ref } from 'vue'
 import i18n from '@/i18n'
+
 import './index.scss'
 
 export const PreviewDrawer = defineComponent({

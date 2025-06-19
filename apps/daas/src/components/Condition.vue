@@ -1,5 +1,4 @@
 <script>
-import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 export default {
   name: 'Condition',
   props: {
@@ -192,7 +191,7 @@ export default {
         }
       }
       this.value.conditions.push(child)
-      $emit(this, 'update:value', this.value)
+      this.$emit('update:value', this.value)
     },
     setValue() {
       this.model.queryField = this.value.field
@@ -218,9 +217,7 @@ export default {
       } else if (['inq', 'nin'].includes(this.model.queryCommand)) {
         data.value = this.model.queryValue.split(',')
       }
-      // eslint-disable-next-line
-      console.log('data', data)
-      $emit(this, 'update:value', data)
+      this.$emit('update:value', data)
     },
     commandChange() {
       this.model.queryValue = ''

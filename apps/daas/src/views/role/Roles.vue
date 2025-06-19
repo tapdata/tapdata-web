@@ -1,8 +1,8 @@
 <script>
 import { permissionsApi, roleApi, roleMappingsApi, usersApi } from '@tap/api'
-import { TablePage } from '@tap/business'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { FilterBar } from '@tap/component'
+import TablePage from '@tap/business/src/components/TablePage.vue'
+import { FilterBar } from '@tap/component/src/filter-bar'
 import { escapeRegExp } from 'lodash-es'
 
 export default {
@@ -133,7 +133,6 @@ export default {
 
     // 创建保存
     createSave() {
-      const self = this
       this.$refs.form.validate((valid) => {
         if (valid) {
           const record = {
@@ -153,7 +152,7 @@ export default {
               }
             })
             .finally(() => {
-              self.dialogFormVisible = false
+              this.dialogFormVisible = false
             })
         } else {
           return false
@@ -165,9 +164,8 @@ export default {
     async handleAssociatUsers(id) {
       this.dialogUserVisible = true
       this.roleId = id
-      const _this = this
-      _this.roleusers = []
-      _this.oldUser = []
+      this.roleusers = []
+      this.oldUser = []
       const filter = {
         where: {
           roleId: id,
@@ -181,8 +179,8 @@ export default {
         })
         .then((data) => {
           if (data?.length) {
-            _this.roleusers = data.map((item) => item.principalId)
-            _this.oldUser = data
+            this.roleusers = data.map((item) => item.principalId)
+            this.oldUser = data
           }
         })
     },

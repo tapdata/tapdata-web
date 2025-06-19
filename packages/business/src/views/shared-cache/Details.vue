@@ -1,54 +1,9 @@
-<template>
-  <Drawer
-    v-bind="$attrs"
-    v-loading="loading"
-    class="shared-cache-details"
-    v-model:visible="visible"
-    @visible="handleVisible"
-  >
-    <template #header="{ titleClass }">
-      <div v-if="details.id" class="flex align-center gap-3 overflow-hidden" :class="titleClass">
-        <VIcon class="icon">text</VIcon>
-        <div class="fs-6 ellipsis">{{ details.name }}</div>
-        <TaskStatus :task="details" />
-      </div>  
-    </template>
-    
-    <ul>
-      <li v-for="item in info" :key="item.label" class="drawer-info__item">
-        <VIcon class="fs-7 mt-2">{{ item.icon }}</VIcon>
-        <div class="body ml-4">
-          <label class="label">{{ item.label }}</label>
-          <p class="value mt-2">{{ item.value }}</p>
-        </div>
-      </li>
-    </ul>
-    <div class="shared-cache--keys">
-      <div class="title">{{ $t('packages_business_shared_cache_keys') }}</div>
-      <div class="content">
-        <div v-for="key in details.cacheKeysArr" :key="key">{{ key }}</div>
-      </div>
-    </div>
-    <div class="shared-cache--keys">
-      <div class="title">{{ $t('packages_business_shared_cache_fields') }}</div>
-      <div class="content">
-        <div v-for="key in details.fields" :key="key" class="mt-2">
-          {{ key }}
-        </div>
-      </div>
-    </div>
-    <div class="mt-4">{{ $t('packages_business_shared_cache_code') }}</div>
-    <CodeView class="mt-2" :data="details"></CodeView>
-  </Drawer>
-</template>
-
 <script>
-import { sharedCacheApi, externalStorageApi } from '@tap/api'
-import { Drawer } from '@tap/component'
-import { TaskStatus } from '../../components'
-
-import CodeView from './CodeView'
 import dayjs from 'dayjs'
+import { externalStorageApi, sharedCacheApi } from '@tap/api'
+import Drawer from '@tap/component/src/Drawer.vue'
+import TaskStatus from '../../components/TaskStatus.vue'
+import CodeView from './CodeView.vue'
 
 export default {
   name: 'Details',
@@ -76,7 +31,9 @@ export default {
         .get(id)
         .then((data) => {
           data.cacheKeysArr = data.cacheKeys?.split(',') || []
-          data.cacheTimeAtFmt = data.cacheTimeAt ? dayjs(data.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss') : '-'
+          data.cacheTimeAtFmt = data.cacheTimeAt
+            ? dayjs(data.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss')
+            : '-'
           externalStorageApi
             .get(data.externalStorageId, {
               fields: JSON.stringify({
@@ -136,6 +93,54 @@ export default {
   },
 }
 </script>
+
+<template>
+  <Drawer
+    v-bind="$attrs"
+    v-model="visible"
+    v-loading="loading"
+    class="shared-cache-details"
+    @visible="handleVisible"
+  >
+    <template #header="{ titleClass }">
+      <div
+        v-if="details.id"
+        class="flex align-center gap-3 overflow-hidden"
+        :class="titleClass"
+      >
+        <VIcon class="icon">text</VIcon>
+        <div class="fs-6 ellipsis">{{ details.name }}</div>
+        <TaskStatus :task="details" />
+      </div>
+    </template>
+
+    <ul>
+      <li v-for="item in info" :key="item.label" class="drawer-info__item">
+        <VIcon class="fs-7 mt-2">{{ item.icon }}</VIcon>
+        <div class="body ml-4">
+          <label class="label">{{ item.label }}</label>
+          <p class="value mt-2">{{ item.value }}</p>
+        </div>
+      </li>
+    </ul>
+    <div class="shared-cache--keys">
+      <div class="title">{{ $t('packages_business_shared_cache_keys') }}</div>
+      <div class="content">
+        <div v-for="key in details.cacheKeysArr" :key="key">{{ key }}</div>
+      </div>
+    </div>
+    <div class="shared-cache--keys">
+      <div class="title">{{ $t('packages_business_shared_cache_fields') }}</div>
+      <div class="content">
+        <div v-for="key in details.fields" :key="key" class="mt-2">
+          {{ key }}
+        </div>
+      </div>
+    </div>
+    <div class="mt-4">{{ $t('packages_business_shared_cache_code') }}</div>
+    <CodeView class="mt-2" :data="details" />
+  </Drawer>
+</template>
 
 <style lang="scss" scoped>
 .shared-cache-details {

@@ -1,3 +1,30 @@
+<script>
+import { ClipboardButton } from '@tap/form/src/components/clipboard-button'
+import { getCode } from '@tap/shared'
+
+export default {
+  components: {
+    ClipboardButton,
+  },
+  props: {
+    data: {
+      type: Object,
+      default: () => {
+        return {}
+      },
+    },
+  },
+  computed: {
+    cacheKeysArr() {
+      return this.data?.cacheKeys?.split(',') || []
+    },
+    script() {
+      return getCode(this.data)
+    },
+  },
+}
+</script>
+
 <template>
   <div class="code-view overflow-hidden">
     <div class="flex">
@@ -33,32 +60,6 @@
     </div>
   </div>
 </template>
-
-<script>
-import { ClipboardButton } from '@tap/form'
-import { getCode } from '@tap/shared'
-export default {
-  components: {
-    ClipboardButton,
-  },
-  props: {
-    data: {
-      type: Object,
-      default: () => {
-        return {}
-      },
-    },
-  },
-  computed: {
-    cacheKeysArr() {
-      return this.data?.cacheKeys?.split(',') || []
-    },
-    script() {
-      return getCode(this.data)
-    },
-  },
-}
-</script>
 
 <style lang="scss" scoped>
 .code-view {

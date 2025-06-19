@@ -1,62 +1,7 @@
-<template>
-  <el-dialog
-    width="900px"
-    class="browse_query"
-    :before-close="handleClose"
-    :title="$t('dataExplorer_query')"
-    :close-on-click-modal="false"
-    :append-to-body="true"
-    v-model="dialogFormVisible"
-  >
-    <div class="dialog-content">
-      <!-- 过滤条件 -->
-      <QueryBuild
-        v-model:value="condition"
-        :fields="fields"
-        :max-level="3"
-        field-label="text"
-        field-value="value"
-      ></QueryBuild>
-      <div class="browse_button">
-        <el-button @click="handleFavorite()">
-          {{ $t('dataExplorer_add_favorite') }}
-        </el-button>
-        <!-- <el-button type="primary" @click="search(1)" >
-              {{ $t('dataExplorer_query') }}
-            </el-button> -->
-      </div>
-    </div>
-    <div class="browse_rows">
-      <h3 class="pb-4">{{ $t('dataExplorer_show_column') }}</h3>
-      <el-checkbox :indeterminate="isIndeterminate" v-model="showAllColumn" @change="showAllColumns">{{
-        $t('role_all_check')
-      }}</el-checkbox>
-      <div style="margin: 15px 0"></div>
-      <el-checkbox-group v-model="selectionRow" @change="handleCheckedFieldChange">
-        <el-checkbox
-          v-for="item in header.filter((v) => v.value !== '__operation' && v.value !== '__tapd8' && v.value !== '_id')"
-          :label="item.text"
-          :key="item.value"
-          >{{ item.text }}</el-checkbox
-        >
-      </el-checkbox-group>
-    </div>
-
-    <template v-slot:footer>
-      <div class="dialog-footer">
-        <el-button class="cancel" @click="handleClose()">
-          {{ $t('public_button_cancel') }}
-        </el-button>
-        <el-button type="primary" @click="save()">{{ $t('public_button_confirm') }}</el-button>
-      </div>
-    </template>
-  </el-dialog>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import QueryBuild from '@/components/QueryBuild'
+import QueryBuild from '@/components/QueryBuild.vue'
 import { usersApi } from '@tap/api'
+
 export default {
   name: 'BrowseQuery',
   components: { QueryBuild },
@@ -144,8 +89,8 @@ export default {
     // 保存
     save() {
       this.dialogFormVisible = false
-      $emit(this, 'backShowColumn', this.selectionRow, this.condition)
-      $emit(this, 'backDialogVisible', false)
+      this.$emit('backShowColumn', this.selectionRow, this.condition)
+      this.$emit('backDialogVisible', false)
     },
 
     // 收藏
@@ -192,12 +137,67 @@ export default {
     // 关闭弹窗
     handleClose() {
       this.dialogFormVisible = false
-      $emit(this, 'backDialogVisible', false)
+      this.$emit('backDialogVisible', false)
     },
   },
   emits: ['backShowColumn', 'backDialogVisible'],
 }
 </script>
+
+<template>
+  <el-dialog
+    width="900px"
+    class="browse_query"
+    :before-close="handleClose"
+    :title="$t('dataExplorer_query')"
+    :close-on-click-modal="false"
+    :append-to-body="true"
+    v-model="dialogFormVisible"
+  >
+    <div class="dialog-content">
+      <!-- 过滤条件 -->
+      <QueryBuild
+        v-model:value="condition"
+        :fields="fields"
+        :max-level="3"
+        field-label="text"
+        field-value="value"
+      ></QueryBuild>
+      <div class="browse_button">
+        <el-button @click="handleFavorite()">
+          {{ $t('dataExplorer_add_favorite') }}
+        </el-button>
+        <!-- <el-button type="primary" @click="search(1)" >
+              {{ $t('dataExplorer_query') }}
+            </el-button> -->
+      </div>
+    </div>
+    <div class="browse_rows">
+      <h3 class="pb-4">{{ $t('dataExplorer_show_column') }}</h3>
+      <el-checkbox :indeterminate="isIndeterminate" v-model="showAllColumn" @change="showAllColumns">{{
+        $t('role_all_check')
+      }}</el-checkbox>
+      <div style="margin: 15px 0"></div>
+      <el-checkbox-group v-model="selectionRow" @change="handleCheckedFieldChange">
+        <el-checkbox
+          v-for="item in header.filter((v) => v.value !== '__operation' && v.value !== '__tapd8' && v.value !== '_id')"
+          :label="item.text"
+          :key="item.value"
+          >{{ item.text }}</el-checkbox
+        >
+      </el-checkbox-group>
+    </div>
+
+    <template v-slot:footer>
+      <div class="dialog-footer">
+        <el-button class="cancel" @click="handleClose()">
+          {{ $t('public_button_cancel') }}
+        </el-button>
+        <el-button type="primary" @click="save()">{{ $t('public_button_confirm') }}</el-button>
+      </div>
+    </template>
+  </el-dialog>
+</template>
 
 <style lang="scss">
 .browse_query {

@@ -1,132 +1,9 @@
-<template>
-  <ElDialog v-if="visible" v-model="visible" :title="$t('dfs_change_instance_title')" width="60%">
-    <section class="change-container">
-      <el-alert
-        class="alert-primary mb-4 text-primary"
-        type="info"
-        :title="$t('dfs_change_instance_tip')"
-        show-icon
-        :closable="false"
-      />
-      <el-form label-position="top" ref="ruleForm">
-        <ElFormItem v-if="agentList.length > 0">
-          <template v-slot:label>
-            <div class="font-color-dark">
-              {{ $t('dfs_change_instance_object') }}
-            </div>
-          </template>
-          <div class="border rounded-lg overflow-hidden">
-            <VTable
-              ref="table"
-              row-key="id"
-              :columns="paidDetailColumns"
-              :data="agentList"
-              :has-pagination="false"
-            ></VTable>
-          </div>
-        </ElFormItem>
-        <!--选择规格-->
-        <ElFormItem>
-          <template v-slot:label>
-            <div class="font-color-dark">
-              {{ $t('dfs_guide_index_xuanzejisuanyin') }}
-            </div>
-          </template>
-          <el-row type="flex" class="flex-wrap lh-base" :gutter="16" style="row-gap: 16px">
-            <el-col :span="12" v-for="(item, i) in specificationItems" :key="i">
-              <div
-                class="position-relative px-4 py-2 cursor-pointer active-group rounded-lg overflow-hidden border"
-                :class="{
-                  active: specification === item.value,
-                }"
-                @click="changeSpec(item.value)"
-              >
-                <div class="is-active position-absolute top-0 end-0">
-                  <div class="is-active-triangle"></div>
-                  <VIcon size="16" class="is-active-icon">check-bold</VIcon>
-                </div>
-                <div class="spec-li-title lh-base fw-bold font-color-dark">
-                  <span class="align-middle">{{ item.name }}: {{ item.desc }}</span>
-                  <ElTag v-if="item.chargeProvider === 'FreeTier'" class="bg-color-warning text-white border-0 ml-2">{{
-                    platform === 'selfHost'
-                      ? $t('dfs_instance_instance_mianfei')
-                      : $t('dfs_instance_createagent_mianfeitiyan')
-                  }}</ElTag>
-                </div>
-                <div
-                  v-if="platform === 'selfHost'"
-                  class="spec-li-title mt-1 lh-base font-color-sslight"
-                  v-html="$t('dfs_agent_specification_description', updateAgentCap(item.cpu, item.memory))"
-                ></div>
-              </div>
-            </el-col>
-          </el-row>
-        </ElFormItem>
-        <!--订阅方式-->
-        <ElFormItem v-if="isFree">
-          <template v-slot:label>
-            <div class="font-color-dark">
-              {{ $t('dfs_instance_instance_dingyuefangshi') }}
-            </div>
-          </template>
-          <ElRadioGroup v-model="currentPackage" @input="handleChange" class="flex flex-wrap gap-4">
-            <ElRadio
-              v-for="(item, index) in packageItems"
-              :key="index"
-              :label="item.value"
-              border
-              class="rounded-4 subscription-radio m-0 position-relative"
-            >
-              <span class="inline-flex align-center">
-                {{ item.label }}
-                <template v-if="item.type === 'recurring' || item.periodUnit === 'year'">
-                  <ElTag class="discount-tag fw-sub rounded-4 border-0 ml-2">{{
-                    $t('dfs_agent_subscription_discount', {
-                      val: getDiscount(item),
-                    })
-                  }}</ElTag>
-                  <VIcon class="position-absolute discount-hot-icon">hot-o</VIcon>
-                </template>
-              </span>
-            </ElRadio>
-          </ElRadioGroup>
-        </ElFormItem>
-        <!--        <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')">
-              <ElSelect v-model="specification" @change="changeSpec" class="w-50 rounded-4">
-                <ElOption v-for="(item, i) in specificationItems" :key="i" :label="item.name" :value="item.value">
-                  <span>{{ item.name }}: </span>
-                  <span>{{ item.desc }}</span>
-                  <div
-                    class="spec-li-title mt-1 lh-base font-color-sslight"
-                    v-html="$t('dfs_agent_specification_description', updateAgentCap(item.cpu, item.memory))"
-                  ></div>
-                </ElOption>
-              </ElSelect>
-            </ElFormItem>-->
-      </el-form>
-    </section>
-    <template v-slot:footer>
-      <span class="dialog-footer flex justify-content-end align-center">
-        <span class="mr-4"
-          ><span class="fs-6 font-color-dark font-weight-light">{{ $t('dfs_change_instance_price') }}：</span
-          ><span class="color-primary fs-4"> {{ formatPrice(currency) }}</span></span
-        >
-        <el-button @click="visible = false">{{ $t('public_button_cancel') }}</el-button>
-        <el-button type="primary" :loading="loadingCancelSubmit" @click="submit">{{
-          $t('dfs_change_instance_submit')
-        }}</el-button>
-      </span>
-    </template>
-  </ElDialog>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import { uniqBy } from 'lodash-es'
-import dayjs from 'dayjs'
-import { VTable } from '@tap/component'
+import VTable from '@tap/component/src/base/v-table'
 import i18n from '@tap/i18n'
 import { isObj } from '@tap/shared'
+import dayjs from 'dayjs'
+import { uniqBy } from 'lodash-es'
 import { CURRENCY_SYMBOL_MAP, TIME_MAP } from '../../shared/const'
 import { getPaymentMethod, getSpec } from '../../shared/util'
 
@@ -134,6 +11,7 @@ export default {
   name: 'ChangeSubscribe',
   components: { VTable },
   inject: ['buried'],
+  emits: ['closeVisible'],
   data() {
     return {
       visible: false,
@@ -173,16 +51,25 @@ export default {
   },
   computed: {
     isFree() {
-      return !this.currentRow.totalAmount || this.currentRow.subscribeType === 'FreeTier'
+      return (
+        !this.currentRow.totalAmount ||
+        this.currentRow.subscribeType === 'FreeTier'
+      )
     },
     singleMonth() {
-      return this.packageItems.find((item) => item.type === 'one_time' && item.periodUnit === 'month')
+      return this.packageItems.find(
+        (item) => item.type === 'one_time' && item.periodUnit === 'month',
+      )
     },
     singleMonthAmount() {
-      return this.singleMonth?.currencyOption.find((item) => item.currency === this.currencyType)?.amount
+      return this.singleMonth?.currencyOption.find(
+        (item) => item.currency === this.currencyType,
+      )?.amount
     },
     singleYearAmount() {
-      return this.singleMonthAmount ? this.singleMonthAmount * 12 : this.singleMonthAmount
+      return this.singleMonthAmount
+        ? this.singleMonthAmount * 12
+        : this.singleMonthAmount
     },
     defaultCurrencyType() {
       return this.$store.getters.currencyType
@@ -190,16 +77,20 @@ export default {
   },
   methods: {
     openChange(item = {}) {
-      let agent = item.subscribeItems?.find((it) => it.productType === 'Engine')
-      let specLabel = getSpec(agent?.spec)
+      const agent = item.subscribeItems?.find(
+        (it) => it.productType === 'Engine',
+      )
+      const specLabel = getSpec(agent?.spec)
       //组装续订列表
-      let node = {
+      const node = {
         id: item.id,
         endAt: this.formatterTime(item.endAt),
-        specLabel: specLabel,
+        specLabel,
         subscriptionMethodLabel:
-          getPaymentMethod({ periodUnit: item.periodUnit, type: item.subscribeType }, item.paymentMethod || 'Stripe') ||
-          '-',
+          getPaymentMethod(
+            { periodUnit: item.periodUnit, type: item.subscribeType },
+            item.paymentMethod || 'Stripe',
+          ) || '-',
       }
       this.agentList = [node]
       this.visible = true
@@ -218,7 +109,7 @@ export default {
         let { paidPrice = [] } = data?.[0] || {}
 
         // 过滤掉按量计费的价格
-        paidPrice = paidPrice.filter(t => t.usageType !== 'metered')
+        paidPrice = paidPrice.filter((t) => t.usageType !== 'metered')
 
         const { spec: currentSpec, amount } = this.agent
 
@@ -228,7 +119,8 @@ export default {
               const { cpu, memory } = item.spec
               return (
                 item.chargeProvider !== 'FreeTier' &&
-                (cpu > currentSpec.cpu || (cpu === currentSpec.cpu && memory > currentSpec.memory)) &&
+                (cpu > currentSpec.cpu ||
+                  (cpu === currentSpec.cpu && memory > currentSpec.memory)) &&
                 this.currentRow?.subscribeType === item.type &&
                 this.currentRow?.periodUnit === item.periodUnit
               )
@@ -246,9 +138,12 @@ export default {
               memory,
               name: t.spec.name.toUpperCase(),
               chargeProvider: t.chargeProvider,
-              desc: i18n.t('dfs_agent_download_subscriptionmodeldialog_renwushujianyi', {
-                val: t.limitTask,
-              }),
+              desc: i18n.t(
+                'dfs_agent_download_subscriptionmodeldialog_renwushujianyi',
+                {
+                  val: t.limitTask,
+                },
+              ),
             }
           }),
           'value',
@@ -257,7 +152,9 @@ export default {
         })
         // 如果是单独订购存储，默认调过免费实例，避免后续step受免费实例影响
         this.specification =
-          !this.agentCount && this.orderStorage ? this.specificationItems[1]?.value : this.specificationItems[0]?.value
+          !this.agentCount && this.orderStorage
+            ? this.specificationItems[1]?.value
+            : this.specificationItems[0]?.value
         // 价格套餐
         this.allPackages = paidPrice.map((t) => {
           return Object.assign(t, {
@@ -288,9 +185,16 @@ export default {
     },
     //订购时长对应价格
     loadPackageItems() {
-      const specification = this.specificationItems.find((t) => t.value === this.specification)
-      this.agentSizeCap = this.updateAgentCap(specification.cpu, specification.memory)
-      const specificationLabel = this.specificationItems.find((t) => t.value === this.specification)?.name
+      const specification = this.specificationItems.find(
+        (t) => t.value === this.specification,
+      )
+      this.agentSizeCap = this.updateAgentCap(
+        specification.cpu,
+        specification.memory,
+      )
+      const specificationLabel = this.specificationItems.find(
+        (t) => t.value === this.specification,
+      )?.name
       this.currentSpecName = specificationLabel
       this.packageItems = this.allPackages
         .filter((it) => this.specification === it.specification)
@@ -303,8 +207,8 @@ export default {
               specification?.chargeProvider !== 'FreeTier'
                 ? t.label
                 : this.agentDeploy !== 'selfHost'
-                ? i18n.t('dfs_instance_createagent_mianfeishiyonggui')
-                : i18n.t('dfs_instance_utils_baoyue'),
+                  ? i18n.t('dfs_instance_createagent_mianfeishiyonggui')
+                  : i18n.t('dfs_instance_utils_baoyue'),
           })
         })
         .sort((a, b) => {
@@ -332,15 +236,23 @@ export default {
       }
       let currentItem = this.packageItems[0]
       this.currentPackage = currentItem?.value
-      if (this.selected?.type && currentItem?.chargeProvider !== 'FreeTier' && this.selected?.type !== 'FreeTier') {
+      if (
+        this.selected?.type &&
+        currentItem?.chargeProvider !== 'FreeTier' &&
+        this.selected?.type !== 'FreeTier'
+      ) {
         currentItem = this.packageItems.find(
-          (it) => it.type === this.selected?.type && it.periodUnit === this.selected?.periodUnit, //切换规格不改变原来的订阅方式
+          (it) =>
+            it.type === this.selected?.type &&
+            it.periodUnit === this.selected?.periodUnit, //切换规格不改变原来的订阅方式
         )
       }
       this.selected = currentItem
       if (currentItem?.chargeProvider !== 'FreeTier') {
         this.changeCurrencyOption(currentItem)
-        this.currency = this.currencyOption.find((it) => it.currency === this.currencyType) || {}
+        this.currency =
+          this.currencyOption.find((it) => it.currency === this.currencyType) ||
+          {}
       } else {
         this.currencyOption = []
         this.currency = currentItem
@@ -349,7 +261,7 @@ export default {
     },
     updateAgentCap(cpu, memory) {
       return {
-        mem: parseInt(memory * 1.1 + 2) + 'G',
+        mem: `${Number.parseInt(memory * 1.1 + 2)}G`,
         pipeline: this.getSuggestPipelineNumber(cpu, memory),
         tps: cpu * 2000,
       }
@@ -361,22 +273,23 @@ export default {
     formatPrice(item, isOriginalPrice) {
       if (!item || item?.chargeProvider === 'FreeTier') return 0
 
-      let amount = this.getAmount(item, isOriginalPrice)
-      return (
-        CURRENCY_SYMBOL_MAP[item.currency] +
-        ' ' +
-        (amount / 100).toLocaleString('zh', {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })
-      )
+      const amount = this.getAmount(item, isOriginalPrice)
+      return `${CURRENCY_SYMBOL_MAP[item.currency]} ${(
+        amount / 100
+      ).toLocaleString('zh', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`
     },
     getAmount(item, isOriginalPrice) {
       const current = this.currentRow
       let amount = item?.amount
 
       // 基于单月算原价
-      if (isOriginalPrice && (current.subscribeType === 'recurring' || current.periodUnit === 'year')) {
+      if (
+        isOriginalPrice &&
+        (current.subscribeType === 'recurring' || current.periodUnit === 'year')
+      ) {
         if (current.periodUnit === 'month') {
           amount = this.singleMonthAmount
         } else if (current.periodUnit === 'year') {
@@ -390,10 +303,14 @@ export default {
       const options = item.currencyOption
       const { defaultCurrencyType } = this
       // 设置了默认币种, 币种选项默认的排到第一位
-      if (options?.length && defaultCurrencyType && options[0] !== defaultCurrencyType) {
+      if (
+        options?.length &&
+        defaultCurrencyType &&
+        options[0] !== defaultCurrencyType
+      ) {
         options.sort((a, b) => {
-          let aVal = a.currency === defaultCurrencyType ? 0 : 1
-          let bVal = b.currency === defaultCurrencyType ? 0 : 1
+          const aVal = a.currency === defaultCurrencyType ? 0 : 1
+          const bVal = b.currency === defaultCurrencyType ? 0 : 1
           return aVal - bVal
         })
       }
@@ -401,8 +318,9 @@ export default {
     },
 
     submit() {
-      let { id, paymentMethod, currency, subscribeType, periodUnit } = this.currentRow
-      let { resourceId } = this.agent
+      let { id, paymentMethod, currency, subscribeType, periodUnit } =
+        this.currentRow
+      const { resourceId } = this.agent
       const {
         type,
         priceId,
@@ -418,19 +336,19 @@ export default {
         currency = this.defaultCurrencyType || selectCurrency
       }
 
-      let param = {
+      const param = {
         subscribeId: id, // 原订阅ID
         subscribeType,
         periodUnit,
         currency,
-        paymentMethod: paymentMethod, // 支付方式
+        paymentMethod, // 支付方式
         successUrl: location.href, // 支付成功跳转地址
         cancelUrl: location.href, // 支付失败跳转地址
         subscribeItems: [
           {
             // 跟新增订阅一样
-            resourceId: resourceId, // 要变更的产品id，为空时表示新增订阅产品
-            priceId: priceId, // 变更后的价格方案
+            resourceId, // 要变更的产品id，为空时表示新增订阅产品
+            priceId, // 变更后的价格方案
             productType: 'Engine', // 产品类型：Engine,MongoDB
           },
         ],
@@ -446,7 +364,7 @@ export default {
           this.$message.success(this.$t('public_message_operation_success'))
           this.visible = false
           this.loadingCancelSubmit = false
-          $emit(this, 'closeVisible')
+          this.$emit('closeVisible')
 
           // 连续订阅变更不需要付款
           if (subscribeType !== 'recurring' || this.isFree) {
@@ -467,7 +385,7 @@ export default {
           }
 
           //刷新页面
-          $emit(this, 'closeVisible')
+          this.$emit('closeVisible')
         })
         .finally(() => {
           this.showUnsubscribeDetailVisible = false
@@ -493,16 +411,176 @@ export default {
       this.selected = item
       if (item?.chargeProvider !== 'FreeTier') {
         this.changeCurrencyOption(item)
-        this.currency = this.currencyOption.find((it) => it.currency === this.currencyType) || {}
+        this.currency =
+          this.currencyOption.find((it) => it.currency === this.currencyType) ||
+          {}
       } else {
         this.currencyOption = []
         this.currency = item
       }
     },
   },
-  emits: ['closeVisible'],
 }
 </script>
+
+<template>
+  <ElDialog
+    v-if="visible"
+    v-model="visible"
+    :title="$t('dfs_change_instance_title')"
+    width="60%"
+  >
+    <section class="change-container">
+      <el-alert
+        class="alert-primary mb-4 text-primary"
+        type="info"
+        :title="$t('dfs_change_instance_tip')"
+        show-icon
+        :closable="false"
+      />
+      <el-form ref="ruleForm" label-position="top">
+        <ElFormItem v-if="agentList.length > 0">
+          <template #label>
+            <div class="font-color-dark">
+              {{ $t('dfs_change_instance_object') }}
+            </div>
+          </template>
+          <div class="border rounded-lg overflow-hidden">
+            <VTable
+              ref="table"
+              row-key="id"
+              :columns="paidDetailColumns"
+              :data="agentList"
+              :has-pagination="false"
+            />
+          </div>
+        </ElFormItem>
+        <!--选择规格-->
+        <ElFormItem>
+          <template #label>
+            <div class="font-color-dark">
+              {{ $t('dfs_guide_index_xuanzejisuanyin') }}
+            </div>
+          </template>
+          <el-row
+            type="flex"
+            class="flex-wrap lh-base"
+            :gutter="16"
+            style="row-gap: 16px"
+          >
+            <el-col v-for="(item, i) in specificationItems" :key="i" :span="12">
+              <div
+                class="position-relative px-4 py-2 cursor-pointer active-group rounded-lg overflow-hidden border"
+                :class="{
+                  active: specification === item.value,
+                }"
+                @click="changeSpec(item.value)"
+              >
+                <div class="is-active position-absolute top-0 end-0">
+                  <div class="is-active-triangle" />
+                  <VIcon size="16" class="is-active-icon">check-bold</VIcon>
+                </div>
+                <div class="spec-li-title lh-base fw-bold font-color-dark">
+                  <span class="align-middle"
+                    >{{ item.name }}: {{ item.desc }}</span
+                  >
+                  <ElTag
+                    v-if="item.chargeProvider === 'FreeTier'"
+                    class="bg-color-warning text-white border-0 ml-2"
+                    >{{
+                      platform === 'selfHost'
+                        ? $t('dfs_instance_instance_mianfei')
+                        : $t('dfs_instance_createagent_mianfeitiyan')
+                    }}</ElTag
+                  >
+                </div>
+                <div
+                  v-if="platform === 'selfHost'"
+                  class="spec-li-title mt-1 lh-base font-color-sslight"
+                  v-html="
+                    $t(
+                      'dfs_agent_specification_description',
+                      updateAgentCap(item.cpu, item.memory),
+                    )
+                  "
+                />
+              </div>
+            </el-col>
+          </el-row>
+        </ElFormItem>
+        <!--订阅方式-->
+        <ElFormItem v-if="isFree">
+          <template #label>
+            <div class="font-color-dark">
+              {{ $t('dfs_instance_instance_dingyuefangshi') }}
+            </div>
+          </template>
+          <ElRadioGroup
+            v-model="currentPackage"
+            class="flex flex-wrap gap-4"
+            @input="handleChange"
+          >
+            <ElRadio
+              v-for="(item, index) in packageItems"
+              :key="index"
+              :label="item.value"
+              border
+              class="rounded-4 subscription-radio m-0 position-relative"
+            >
+              <span class="inline-flex align-center">
+                {{ item.label }}
+                <template
+                  v-if="item.type === 'recurring' || item.periodUnit === 'year'"
+                >
+                  <ElTag class="discount-tag fw-sub rounded-4 border-0 ml-2">{{
+                    $t('dfs_agent_subscription_discount', {
+                      val: getDiscount(item),
+                    })
+                  }}</ElTag>
+                  <VIcon class="position-absolute discount-hot-icon"
+                    >hot-o</VIcon
+                  >
+                </template>
+              </span>
+            </ElRadio>
+          </ElRadioGroup>
+        </ElFormItem>
+        <!--        <ElFormItem :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')">
+              <ElSelect v-model="specification" @change="changeSpec" class="w-50 rounded-4">
+                <ElOption v-for="(item, i) in specificationItems" :key="i" :label="item.name" :value="item.value">
+                  <span>{{ item.name }}: </span>
+                  <span>{{ item.desc }}</span>
+                  <div
+                    class="spec-li-title mt-1 lh-base font-color-sslight"
+                    v-html="$t('dfs_agent_specification_description', updateAgentCap(item.cpu, item.memory))"
+                  ></div>
+                </ElOption>
+              </ElSelect>
+            </ElFormItem>-->
+      </el-form>
+    </section>
+    <template #footer>
+      <span class="dialog-footer flex justify-content-end align-center">
+        <span class="mr-4"
+          ><span class="fs-6 font-color-dark font-weight-light"
+            >{{ $t('dfs_change_instance_price') }}：</span
+          ><span class="color-primary fs-4">
+            {{ formatPrice(currency) }}</span
+          ></span
+        >
+        <el-button @click="visible = false">{{
+          $t('public_button_cancel')
+        }}</el-button>
+        <el-button
+          type="primary"
+          :loading="loadingCancelSubmit"
+          @click="submit"
+          >{{ $t('dfs_change_instance_submit') }}</el-button
+        >
+      </span>
+    </template>
+  </ElDialog>
+</template>
 
 <style lang="scss" scoped>
 .discount-tag {

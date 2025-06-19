@@ -1,7 +1,7 @@
-import { connect, useForm } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
+import Highlight from '@tap/component/src/base/Highlight'
+import { connect, useForm } from '@tap/form'
 import { defineComponent } from 'vue'
-import { Highlight } from '@tap/component'
 
 export const ArrayAggregate = connect(
   observer(
@@ -23,9 +23,18 @@ export const ArrayAggregate = connect(
               result[key] = 'XXX'
             })
           }
-          result[aggregation.aggFunction] = aggregation.aggFunction === 'COUNT' ? 100 : aggregation.aggExpression
+          result[aggregation.aggFunction] =
+            aggregation.aggFunction === 'COUNT'
+              ? 100
+              : aggregation.aggExpression
 
-          return <Highlight class="mt-0" language="json" code={JSON.stringify(result, null, 2)}></Highlight>
+          return (
+            <Highlight
+              class="mt-0"
+              language="json"
+              code={JSON.stringify(result, null, 2)}
+            ></Highlight>
+          )
         }
       },
     }),

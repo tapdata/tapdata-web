@@ -1,83 +1,8 @@
-<template>
-  <div>
-    <ElTree
-      class="ldp-tree"
-      ref="tree"
-      node-key="id"
-      highlight-current
-      :data="treeData"
-      :props="props"
-      draggable
-      :default-expanded-keys="expandedKeys"
-      :filter-node-method="filterNode"
-      :render-content="renderContent"
-      :expand-on-click-node="false"
-      :allow-drag="checkAllowDrag"
-      :allow-drop="checkAllowDrop"
-      :renderContent="renderContent"
-      @node-click="handleNodeClick"
-      @node-drag-start="handleDragStart"
-      @node-drop="handleDrop"
-      @node-expand="handleNodeExpand"
-    >
-      <!--<template #default="{ node, data }">
-        <NodeContent :renderIcon="renderIcon" :node="node" :data="data" />
-      </template>-->
-    </ElTree>
-    <ElDialog v-model="dialogConfig.visible" width="30%" :close-on-click-modal="false">
-      <template #header>
-        <span style="font-size: 14px">{{ dialogConfig.title }}</span>
-      </template>
-      <ElForm ref="form" :model="dialogConfig" label-width="90px">
-        <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
-          <ElInput
-            v-model="dialogConfig.label"
-            :placeholder="$t('packages_component_classification_nodeName')"
-            maxlength="50"
-            show-word-limit
-          ></ElInput>
-        </ElFormItem>
-        <ElFormItem
-          :label="$t('packages_component_src_discoveryclassification_mulufenlei')"
-          v-if="dialogConfig.isParent"
-        >
-          <ElSelect v-model="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
-            <el-option
-              :label="$t('packages_component_src_discoveryclassification_ziyuanmulu')"
-              value="resource"
-            ></el-option>
-            <!--            <el-option label="任务目录" value="task"></el-option>-->
-          </ElSelect>
-        </ElFormItem>
-        <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumiaoshu')">
-          <ElInput
-            type="textarea"
-            v-model="dialogConfig.desc"
-            :placeholder="$t('packages_component_src_discoveryclassification_qingshurumulu')"
-            maxlength="50"
-            show-word-limit
-          ></ElInput>
-        </ElFormItem>
-      </ElForm>
-      <template v-slot:footer>
-        <span class="dialog-footer">
-          <ElButton @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton type="primary" @click="dialogSubmit()">
-            {{ $t('public_button_confirm') }}
-          </ElButton>
-        </span>
-      </template>
-    </ElDialog>
-  </div>
-</template>
-
-<script lang="jsx">
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
+<script lang="tsx">
 import i18n from '@tap/i18n'
-
-import { VIcon, VirtualTree } from '@tap/component'
+import { VirtualTree } from '@tap/component/src/virtual-tree'
 import { metadataDefinitionsApi, userGroupsApi, discoveryApi, connectionsApi, metadataInstancesApi } from '@tap/api'
-import { makeDragNodeImage } from '@tap/business'
+import { makeDragNodeImage } from '@tap/business/src/shared'
 
 export default {
   name: 'ClassificationTree',
@@ -190,7 +115,7 @@ export default {
                 <VIcon
                   size="18"
                   onClick={() => {
-                    $emit(this, 'view-details', data)
+                    this.$emit('view-details', data)
                   }}
                 >
                   view-details
@@ -350,7 +275,7 @@ export default {
                 <VIcon
                   size="18"
                   onClick={() => {
-                    $emit(this, 'view-details', data)
+                    this.$emit('view-details', data)
                   }}
                 >
                   view-details
@@ -384,7 +309,7 @@ export default {
 
     emitCheckedNodes(data, node) {
       if (!data) return
-      $emit(this, 'nodeChecked', data, node)
+      this.$emit('nodeChecked', data, node)
     },
 
     getData(cb) {
@@ -886,6 +811,79 @@ export default {
   emits: ['view-details', 'nodeChecked'],
 }
 </script>
+
+<template>
+  <div>
+    <ElTree
+      class="ldp-tree"
+      ref="tree"
+      node-key="id"
+      highlight-current
+      :data="treeData"
+      :props="props"
+      draggable
+      :default-expanded-keys="expandedKeys"
+      :filter-node-method="filterNode"
+      :render-content="renderContent"
+      :expand-on-click-node="false"
+      :allow-drag="checkAllowDrag"
+      :allow-drop="checkAllowDrop"
+      :renderContent="renderContent"
+      @node-click="handleNodeClick"
+      @node-drag-start="handleDragStart"
+      @node-drop="handleDrop"
+      @node-expand="handleNodeExpand"
+    >
+      <!--<template #default="{ node, data }">
+        <NodeContent :renderIcon="renderIcon" :node="node" :data="data" />
+      </template>-->
+    </ElTree>
+    <ElDialog v-model="dialogConfig.visible" width="30%" :close-on-click-modal="false">
+      <template #header>
+        <span style="font-size: 14px">{{ dialogConfig.title }}</span>
+      </template>
+      <ElForm ref="form" :model="dialogConfig" label-width="90px">
+        <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
+          <ElInput
+            v-model="dialogConfig.label"
+            :placeholder="$t('packages_component_classification_nodeName')"
+            maxlength="50"
+            show-word-limit
+          ></ElInput>
+        </ElFormItem>
+        <ElFormItem
+          :label="$t('packages_component_src_discoveryclassification_mulufenlei')"
+          v-if="dialogConfig.isParent"
+        >
+          <ElSelect v-model="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
+            <el-option
+              :label="$t('packages_component_src_discoveryclassification_ziyuanmulu')"
+              value="resource"
+            ></el-option>
+            <!--            <el-option label="任务目录" value="task"></el-option>-->
+          </ElSelect>
+        </ElFormItem>
+        <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumiaoshu')">
+          <ElInput
+            type="textarea"
+            v-model="dialogConfig.desc"
+            :placeholder="$t('packages_component_src_discoveryclassification_qingshurumulu')"
+            maxlength="50"
+            show-word-limit
+          ></ElInput>
+        </ElFormItem>
+      </ElForm>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <ElButton @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton type="primary" @click="dialogSubmit()">
+            {{ $t('public_button_confirm') }}
+          </ElButton>
+        </span>
+      </template>
+    </ElDialog>
+  </div>
+</template>
 
 <style lang="scss">
 $nodeH: 32px;

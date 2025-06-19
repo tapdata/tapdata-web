@@ -1,7 +1,7 @@
 <script>
 import { javascriptFunctionsApi } from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { JsEditor } from '@tap/component'
+import JsEditor from '@tap/component/src/JsEditor.vue'
 import Cookie from '@tap/shared/src/cookie'
 
 const getScriptObj = (script) => {
@@ -20,6 +20,7 @@ const getScriptObj = (script) => {
     bodyLength: matchArr2?.length || 0,
   }
 }
+
 export default {
   components: { JsEditor, PageContainer },
   data() {

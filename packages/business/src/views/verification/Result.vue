@@ -19,6 +19,21 @@ export default {
       resultInfo: {},
       errorMsg: '',
       taskId: null,
+      filterOptions: [
+        {
+          label: this.$t('public_all'),
+          value: '',
+        },
+        {
+          label: this.$t('packages_business_verification_consistent'),
+          value: 'passed',
+        },
+        {
+          label: this.$t('packages_business_verification_inconsistent'),
+          value: 'failed',
+        },
+      ],
+      resultFilter: '',
     }
   },
   computed: {
@@ -27,6 +42,9 @@ export default {
     },
     tableData() {
       let list = this.resultInfo.stats || []
+      if (this.resultFilter) {
+        list = list.filter((item) => item.result === this.resultFilter)
+      }
       if (this.$route.name === 'VerifyDiffDetails') {
         list = list.filter((item) => {
           return item.source_total > 0
@@ -155,17 +173,33 @@ export default {
       </el-alert>
       <div
         v-if="inspect && !['running', 'scheduling'].includes(inspect.status)"
-        class="result-table"
+        class="result-table border-top"
       >
-        <ResultTable
-          ref="singleTable"
-          :type="type"
-          :data="tableData"
-          @row-click="rowClick"
-        />
+        <div class="flex-1 h-100 flex flex-column">
+          <div class="py-3 pr-3 flex align-center">
+            <span class="fs-6 font-color-dark lh-8">{{
+              $t('packages_business_verification_details_jiaoyanjieguo')
+            }}</span>
+            <el-segmented
+              v-model="resultFilter"
+              class="w-auto ml-auto"
+              :options="filterOptions"
+            />
+          </div>
+          <div class="min-h-0 flex-1">
+            <ResultTable
+              ref="singleTable"
+              :type="type"
+              :data="tableData"
+              @row-click="rowClick"
+            />
+          </div>
+        </div>
+
         <ResultView
           v-if="type !== 'row_count' && type !== 'hash'"
           ref="resultView"
+          class="border-start"
           :remote-method="getResultData"
           :show-type="showType"
           @update:show-type="showType = $event"
@@ -214,6 +248,10 @@ export default {
   flex: 1;
   display: flex;
   overflow: auto;
+
+  .el-table__inner-wrapper::before {
+    content: none;
+  }
 }
 </style>
 

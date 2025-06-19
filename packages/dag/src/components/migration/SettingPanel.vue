@@ -9,10 +9,10 @@ import { action } from '@formily/reactive'
 import { alarmApi, dataPermissionApi, taskApi, usersApi } from '@tap/api'
 import { getPickerOptionsBeforeTime } from '@tap/business/src/shared/util'
 import i18n from '@tap/i18n'
+import { getSettingByKey } from '@tap/shared/src/settings'
 import { debounce } from 'lodash-es'
 import { computed, h, inject, nextTick, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
-import { getSettingByKey } from '@/utils/settings'
 import { FormTab } from '../../../../form'
 import FormRender from '../FormRender.vue'
 
@@ -870,7 +870,14 @@ const schema = {
                         syncPoints: {
                           title: i18n.t('packages_dag_task_setting_sync_point'), //增量采集开始时刻
                           type: 'array',
-                          default: [{ type: 'current', date: '', isStreamOffset: false, streamOffsetString: '' }],
+                          default: [
+                            {
+                              type: 'current',
+                              date: '',
+                              isStreamOffset: false,
+                              streamOffsetString: '',
+                            },
+                          ],
                           'x-decorator-props': {
                             tooltip: i18n.t(
                               'packages_dag_task_setting_syncPoint_tip',

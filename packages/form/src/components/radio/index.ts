@@ -3,8 +3,6 @@ import { defineComponent, PropType, h } from 'vue'
 import { composeExport, resolveComponent, SlotTypes } from '@formily/element-plus/esm/__builtins__'
 import { PreviewText } from '@formily/element-plus'
 
-import { ElRadio, ElRadioGroup, ElRadioButton } from 'element-plus'
-
 export type ElRadioProps = typeof ElRadio
 export type RadioGroupProps = typeof ElRadioGroup & {
   value: any

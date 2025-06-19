@@ -5,21 +5,22 @@ import {
   databaseTypesApi,
   metadataInstancesApi,
 } from '@tap/api'
-import { SceneDialog } from '@tap/business'
+import SceneDialog from '@tap/business/src/components/create-connection/SceneDialog.vue'
 import StageButton from '@tap/business/src/components/StageButton.vue'
-import { OverflowTooltip, VEmpty, VIcon } from '@tap/component'
+import { VEmpty } from '@tap/component/src/base/v-empty'
 import { mouseDrag } from '@tap/component/src/directives/mousedrag'
 import resize from '@tap/component/src/directives/resize'
-import { getInitialValuesInBySchema } from '@tap/form'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
+import { getInitialValuesInBySchema } from '@tap/form/src/shared/validate'
 import { useResizeObserver } from '@vueuse/core'
 import { getScrollBarWidth } from 'element-plus/es/utils/dom/scroll'
 import { debounce, escapeRegExp } from 'lodash-es'
 import { markRaw } from 'vue'
 import { mapGetters } from 'vuex'
-import BaseNode from './BaseNode'
-import ConnectionType from './ConnectionType'
-import CreateTable from './CreateTable'
-import NodeIcon from './NodeIcon'
+import BaseNode from './BaseNode.vue'
+import ConnectionType from './ConnectionType.vue'
+import CreateTable from './CreateTable.vue'
+import NodeIcon from './NodeIcon.vue'
 
 export default {
   name: 'LeftSidebar',
@@ -30,7 +31,6 @@ export default {
     VEmpty,
     OverflowTooltip,
     BaseNode,
-    VIcon,
     ConnectionType,
     StageButton,
   },

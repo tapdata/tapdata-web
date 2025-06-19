@@ -1,15 +1,14 @@
 <script>
 import { ApiClient, settingsApi, workerApi, usersApi, apiServerApi, modulesApi } from '@tap/api'
-import { TablePage } from '@tap/business'
-
-import { JsEditor, SelectList } from '@tap/component'
-
+import TablePage from '@tap/business/src/components/TablePage.vue'
+import JsEditor from '@tap/component/src/JsEditor.vue'
+import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import Time from '@tap/shared/src/time'
 import dayjs from 'dayjs'
 import { h } from 'vue'
 import i18n from '@/i18n'
 
-import BrowseQuery from './BrowseQuery'
+import BrowseQuery from './BrowseQuery.vue'
 
 let time = 0
 export default {

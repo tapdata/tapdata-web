@@ -1,10 +1,11 @@
 <script>
 import { taskApi } from '@tap/api'
-import { FilterBar } from '@tap/component'
+import { FilterBar } from '@tap/component/src/filter-bar'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
-import { TablePage, TaskStatus } from '../../components'
 import PageContainer from '../../components/PageContainer.vue'
+import TablePage from '../../components/TablePage.vue'
+import TaskStatus from '../../components/TaskStatus.vue'
 import { makeStatusAndDisabled, TASK_TYPE_MAP } from '../../shared'
 
 let timeout = null

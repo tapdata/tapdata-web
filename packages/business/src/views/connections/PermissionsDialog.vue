@@ -1,40 +1,10 @@
-<template>
-  <ElDialog
-    :title="$t('packages_business_connections_permissionsdialog_lianjiequanxianshe')"
-    width="700px"
-    v-model="visible"
-    :close-on-click-modal="false"
-    append-to-body
-    @close="handleClose"
-  >
-    <SchemaToForm
-      ref="schemaToForm"
-      :schema="schema"
-      :scope="formScope"
-      :colon="true"
-      class="w-100"
-      label-width="120"
-    />
-
-    <template v-slot:footer>
-      <span class="dialog-footer">
-        <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton type="primary" @click="handleSave">{{ $t('public_button_save') }}</ElButton>
-      </span>
-    </template>
-  </ElDialog>
-</template>
-
 <script>
 import { action } from '@formily/reactive'
-
-import { SchemaToForm } from '@tap/form'
 import { dataPermissionApi, usersApi } from '@tap/api'
+import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
 import i18n from '@tap/i18n'
 
 export default {
-  name: 'UsedTaskDialog',
-
   components: { SchemaToForm },
 
   data() {
@@ -42,7 +12,11 @@ export default {
       visible: false,
       row: {},
       formScope: {
-        useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
+        useAsyncDataSource: (
+          service,
+          fieldName = 'dataSource',
+          ...serviceParams
+        ) => {
           return (field) => {
             field.loading = true
             service({ field }, ...serviceParams).then(
@@ -58,7 +32,7 @@ export default {
 
         async loadRoleList(field, val) {
           try {
-            let filter = {
+            const filter = {
               limit: 1000,
             }
 
@@ -74,7 +48,7 @@ export default {
                 disabled: usedId.includes(item.id),
               }
             })
-          } catch (e) {
+          } catch {
             return []
           }
         },
@@ -99,7 +73,9 @@ export default {
                   type: 'void',
                   'x-component': 'ArrayTable.Column',
                   'x-component-props': {
-                    title: i18n.t('packages_business_connections_permissionsdialog_shouquanjuese'),
+                    title: i18n.t(
+                      'packages_business_connections_permissionsdialog_shouquanjuese',
+                    ),
                     align: 'center',
                     asterisk: false,
                     width: 200,
@@ -113,7 +89,9 @@ export default {
                       'x-component-props': {
                         filterable: true,
                       },
-                      'x-reactions': [`{{useAsyncDataSource(loadRoleList, 'dataSource', $values.permissions)}}`],
+                      'x-reactions': [
+                        `{{useAsyncDataSource(loadRoleList, 'dataSource', $values.permissions)}}`,
+                      ],
                     },
                   },
                 },
@@ -121,7 +99,9 @@ export default {
                   type: 'void',
                   'x-component': 'ArrayTable.Column',
                   'x-component-props': {
-                    title: i18n.t('packages_business_connections_permissionsdialog_gongnengquanxian'),
+                    title: i18n.t(
+                      'packages_business_connections_permissionsdialog_gongnengquanxian',
+                    ),
                     align: 'center',
                     asterisk: false,
                   },
@@ -173,7 +153,9 @@ export default {
             properties: {
               addition: {
                 type: 'void',
-                title: i18n.t('packages_business_connections_permissionsdialog_tianjiashouquan'),
+                title: i18n.t(
+                  'packages_business_connections_permissionsdialog_tianjiashouquan',
+                ),
                 'x-component': 'ArrayTable.Addition',
               },
             },
@@ -242,3 +224,36 @@ export default {
   },
 }
 </script>
+
+<template>
+  <ElDialog
+    v-model="visible"
+    :title="
+      $t('packages_business_connections_permissionsdialog_lianjiequanxianshe')
+    "
+    width="700px"
+    :close-on-click-modal="false"
+    append-to-body
+    @close="handleClose"
+  >
+    <SchemaToForm
+      ref="schemaToForm"
+      :schema="schema"
+      :scope="formScope"
+      :colon="true"
+      class="w-100"
+      label-width="120"
+    />
+
+    <template #footer>
+      <span class="dialog-footer">
+        <ElButton @click="handleClose">{{
+          $t('public_button_cancel')
+        }}</ElButton>
+        <ElButton type="primary" @click="handleSave">{{
+          $t('public_button_save')
+        }}</ElButton>
+      </span>
+    </template>
+  </ElDialog>
+</template>

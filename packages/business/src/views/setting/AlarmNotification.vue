@@ -1,7 +1,6 @@
 <script>
 import { notificationApi } from '@tap/api'
-import { SelectList } from '@tap/component'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import PageContainer from '../../components/PageContainer.vue'
 import { ALARM_LEVEL_MAP } from '../../shared/const'
 import AlarmSetting from './AlarmSetting'
@@ -126,7 +125,7 @@ export default {
         // this.getUnreadNum() //未读消息数量
         this.getData()
         this.read = read
-        $emit(this.$root, 'notificationUpdate')
+        this.$root.$emit('notificationUpdate')
         const msg = {
           type: 'notification',
         }
@@ -148,7 +147,7 @@ export default {
         // this.getUnreadNum() //未读消息数量
         this.getData()
         this.read = read
-        $emit(this.$root, 'notificationUpdate')
+        this.$root.$emit('notificationUpdate')
         const msg = {
           type: 'notification',
         }

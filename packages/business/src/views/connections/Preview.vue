@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { connectionsApi, dataPermissionApi, proxyApi, usersApi } from '@tap/api'
-import { Drawer, Modal, VIcon } from '@tap/component'
+import Drawer from '@tap/component/src/Drawer.vue'
+import { Modal } from '@tap/component/src/modal'
 import i18n from '@tap/i18n'
 import { openUrl } from '@tap/shared'
 import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash-es'
-import { computed, inject, onBeforeUnmount, reactive, ref } from 'vue'
+import { inject, onBeforeUnmount, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { DatabaseIcon } from '../../components/DatabaseIcon'
 import StatusTag from '../../components/StatusTag.vue'
@@ -593,7 +594,7 @@ defineExpose({
 </script>
 
 <template>
-  <Drawer v-model:visible="visible" width="400px">
+  <Drawer v-model="visible" width="400px">
     <template #header>
       <div class="flex align-center gap-2 font-color-dark overflow-hidden">
         <DatabaseIcon

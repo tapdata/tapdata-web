@@ -1,5 +1,5 @@
 import { connect, mapProps } from '@formily/vue'
-import { JsEditor as _JsEditor, VIcon } from '@tap/component'
+import _JsEditor from '@tap/component/src/JsEditor.vue'
 import { HighlightCode } from '../highlight-code'
 import './style.scss'
 

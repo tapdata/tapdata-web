@@ -1,9 +1,9 @@
 import { action } from '@formily/reactive'
 import { databaseTypesApi, metadataInstancesApi, taskApi } from '@tap/api'
-import { IconButton } from '@tap/component'
+import { IconButton } from '@tap/component/src/icon-button'
 import { mapFieldsData, useField, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
-import { defineComponent, getCurrentInstance, onBeforeUnmount, ref } from 'vue'
+import { defineComponent, onBeforeUnmount, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useSchemaEffect } from '../../../hooks/useAfterTaskSaved'
 import {

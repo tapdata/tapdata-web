@@ -5,7 +5,6 @@ import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import Cookie from '@tap/shared/src/cookie'
 import i18n from '@/i18n'
 
-let timer = null
 export default {
   components: { PageContainer },
   data() {
@@ -46,9 +45,9 @@ export default {
   created() {
     this?.$ws?.on('loadJarLibResult', this.hanlderResult)
   },
-  unmounted() {
+  beforeUnmount() {
     this?.$ws?.off('loadJarLibResult', this.hanlderResult)
-    clearTimeout(timer)
+    clearTimeout(this.timer)
   },
   methods: {
     getRepeatNames(list) {
@@ -131,7 +130,7 @@ export default {
         this.$message.error(this.$t('function_message_load_function_fail'))
       }
       this.loading = false
-      clearTimeout(timer)
+      clearTimeout(this.timer)
     },
     loadFunction() {
       this.$refs.form.validate((valid) => {
@@ -146,7 +145,7 @@ export default {
             },
           })
           // 设置10秒超时
-          timer = setTimeout(() => {
+          this.timer = setTimeout(() => {
             this?.hanlderResult({ status: 'TIME_OUT' })
           }, 10000)
         }

@@ -43,7 +43,7 @@ export default {
     'countByName',
     'globalNameMap',
   ],
-  emits: ['change', 'update:value', , 'update:value'],
+  emits: ['change', 'update:value'],
   methods: {
     handleChange(name, event) {
       const val = event.target.value

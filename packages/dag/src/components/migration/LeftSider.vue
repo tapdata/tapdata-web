@@ -1,32 +1,19 @@
 <script>
 import { CancelToken, connectionsApi, databaseTypesApi } from '@tap/api'
 import { getIcon } from '@tap/assets/icons'
-import { SceneDialog } from '@tap/business'
-import { OverflowTooltip, VEmpty, VIcon } from '@tap/component'
+import SceneDialog from '@tap/business/src/components/create-connection/SceneDialog.vue'
+import { VEmpty } from '@tap/component/src/base/v-empty'
 import { mouseDrag } from '@tap/component/src/directives/mousedrag'
 import resize from '@tap/component/src/directives/resize'
-import { getInitialValuesInBySchema } from '@tap/form'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
+import { getInitialValuesInBySchema } from '@tap/form/src/shared/validate'
 import { getScrollBarWidth } from 'element-plus/es/utils/dom/scroll'
 import { debounce, escapeRegExp } from 'lodash-es'
 import { markRaw } from 'vue'
 import { mapGetters } from 'vuex'
-import BaseNode from '../BaseNode'
-import ConnectionType from '../ConnectionType'
-import NodeIcon from '../NodeIcon'
-import '@tap/assets/icons/svg/magnify.svg'
-import '@tap/assets/icons/svg/table.svg'
-import '@tap/assets/icons/svg/javascript.svg'
-import '@tap/assets/icons/svg/joint-cache.svg'
-import '@tap/assets/icons/svg/row-filter.svg'
-import '@tap/assets/icons/svg/aggregator.svg'
-import '@tap/assets/icons/svg/field-processor.svg'
-import '@tap/assets/icons/svg/join.svg'
-import '@tap/assets/icons/svg/custom-node.svg'
-import '@tap/assets/icons/svg/merge_table.svg'
-import '@tap/assets/icons/svg/field_calc.svg'
-import '@tap/assets/icons/svg/field_add_del.svg'
-import '@tap/assets/icons/svg/field_rename.svg'
-import '@tap/assets/icons/svg/field_mod_type.svg'
+import BaseNode from '../BaseNode.vue'
+import ConnectionType from '../ConnectionType.vue'
+import NodeIcon from '../NodeIcon.vue'
 
 export default {
   name: 'LeftSider',
@@ -36,7 +23,6 @@ export default {
     VEmpty,
     OverflowTooltip,
     BaseNode,
-    VIcon,
     ConnectionType,
   },
   directives: {

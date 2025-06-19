@@ -1,5 +1,5 @@
 import { licensesApi } from '@tap/api'
-import { getSettingByKey } from '@/utils/settings'
+import { getSettingByKey } from '@tap/shared/src/settings'
 
 const MENU_FEATURE_MAP = {
   dataService: 'dataService',

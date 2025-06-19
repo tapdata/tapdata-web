@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { User, WarningFilled } from '@element-plus/icons-vue'
 import { licensesApi, settingsApi, timeStampApi, usersApi } from '@tap/api'
-import { Modal, VIcon } from '@tap/component'
+import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 import {
   getCurrentLanguage,
@@ -9,8 +9,9 @@ import {
   setCurrentLanguage,
 } from '@tap/i18n/src/shared/util'
 import Cookie from '@tap/shared/src/cookie'
-import Time from '@tap/shared/src/time'
+import { getSettingByKey } from '@tap/shared/src/settings'
 
+import Time from '@tap/shared/src/time'
 import dayjs from 'dayjs'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { computed, inject, onMounted, ref } from 'vue'
@@ -18,7 +19,6 @@ import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import logoImg from '@/assets/images/logo.svg'
 import { DropdownList as OriginalDropdownList } from '@/router/menu'
-import { getSettingByKey } from '@/utils/settings'
 import { signOut as utilSignOut } from '@/utils/util'
 import NotificationPopover from '@/views/notification/NotificationPopover.vue'
 

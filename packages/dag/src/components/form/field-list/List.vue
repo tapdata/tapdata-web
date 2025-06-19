@@ -1,33 +1,12 @@
-<template>
-  <div class="field-inference__list">
-    <VTable
-      :columns="columnsList"
-      :data="tableList"
-      :has-pagination="false"
-      ref="table"
-      height="100%"
-      :row-class-name="tableRowClassName"
-    >
-      <template v-slot:field_name="scope">
-        <span class="flex align-center"
-          ><span class="ellipsis">{{ scope.row.field_name }}</span>
-          <VIcon v-if="scope.row.primary_key_position > 0" size="12" class="text-warning ml-1">key</VIcon>
-        </span>
-      </template>
-    </VTable>
-  </div>
-</template>
-
 <script>
-import { mapGetters } from 'vuex'
-
-import { VTable, VIcon } from '@tap/component'
+import { VTable } from '@tap/component/src/base/v-table'
 import i18n from '@tap/i18n'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'List',
 
-  components: { VTable, VIcon },
+  components: { VTable },
 
   props: {
     data: {
@@ -79,7 +58,7 @@ export default {
 
     tableList() {
       const { fields } = this.data
-      let list = fields || []
+      const list = fields || []
       const result = this.showDelete ? list : list.filter((t) => !t.is_deleted)
       return result.sort((a, b) => a.is_deleted - b.is_deleted)
     },
@@ -96,6 +75,31 @@ export default {
   },
 }
 </script>
+
+<template>
+  <div class="field-inference__list">
+    <VTable
+      ref="table"
+      :columns="columnsList"
+      :data="tableList"
+      :has-pagination="false"
+      height="100%"
+      :row-class-name="tableRowClassName"
+    >
+      <template #field_name="scope">
+        <span class="flex align-center"
+          ><span class="ellipsis">{{ scope.row.field_name }}</span>
+          <VIcon
+            v-if="scope.row.primary_key_position > 0"
+            size="12"
+            class="text-warning ml-1"
+            >key</VIcon
+          >
+        </span>
+      </template>
+    </VTable>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .field-inference__list {

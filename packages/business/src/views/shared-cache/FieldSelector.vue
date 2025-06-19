@@ -1,6 +1,5 @@
 <script>
-import { ClipboardButton } from '@tap/form'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+import { ClipboardButton } from '@tap/form/src/components/clipboard-button'
 
 export default {
   components: {

@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { agentGroupApi, clusterApi, proxyApi, workerApi } from '@tap/api'
-import { dayjs, makeDragNodeImage } from '@tap/business'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { FilterBar, IconButton, Modal, ProTable } from '@tap/component'
+import { dayjs, makeDragNodeImage } from '@tap/business/src/shared'
+import { FilterBar } from '@tap/component/src/filter-bar'
+import { IconButton } from '@tap/component/src/icon-button'
+import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 import { downloadJson } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
-import { h, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import { nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import SetTag from '@/views/cluster/SetTag.vue'
 import AddServe from './AddServe.vue'
@@ -1013,7 +1015,7 @@ const handleTabChange = (tab: string) => {
                   </template>
                 </ElTree>
               </div>
-              <ProTable
+              <el-table
                 ref="engineTable"
                 :data="filterEngineData"
                 row-class-name="grabbable"
@@ -1117,7 +1119,7 @@ const handleTabChange = (tab: string) => {
                     </div>
                   </template>
                 </ElTableColumn>
-              </ProTable>
+              </el-table>
             </div>
           </div>
           <div class="flex gap-4">

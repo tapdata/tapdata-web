@@ -1,4 +1,4 @@
-import BaseNode from './BaseNode'
-import NodeIcon from './NodeIcon'
+import BaseNode from './BaseNode.vue'
+import NodeIcon from './NodeIcon.vue'
 
 export { BaseNode, NodeIcon }

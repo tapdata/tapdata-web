@@ -429,4 +429,5 @@ export default {
   public_search_field_name: 'Search Field Name',
   public_all_selected: 'Select All',
   public_cancel_all_selected: 'Unselect All',
+  public_data_preview: 'Data Preview',
 }

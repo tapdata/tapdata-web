@@ -1,6 +1,6 @@
 import { useField } from '@formily/vue'
-import { VCodeEditor } from '@tap/component'
-import { computed, defineComponent, ref, watch } from 'vue'
+import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
+import { computed, defineComponent } from 'vue'
 
 export const JsonEditor = defineComponent({
   props: {
@@ -22,7 +22,6 @@ export const JsonEditor = defineComponent({
   },
 
   setup(props, { emit, attrs }) {
-    const fieldRef = useField()
     const editorVal = computed(() => {
       return props.type === 'object'
         ? JSON.stringify(props.value, null, props.needFormat ? 2 : 0)

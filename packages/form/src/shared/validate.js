@@ -1,6 +1,7 @@
 import { createForm } from '@formily/core'
 import { Schema } from '@formily/json-schema'
 import { isStr } from '@formily/shared'
+import cronParse from 'cron-parser'
 
 function recursiveField(form, schema, scope, basePath, name) {
   // 校验的特殊处理：1.x-reactions作为异步请求时；2.去掉默认值
@@ -9,7 +10,9 @@ function recursiveField(form, schema, scope, basePath, name) {
     if (isStr(reactions) && /use\w+\(.+\)/.test(reactions)) {
       delete schema['x-reactions']
     } else if (Array.isArray(reactions)) {
-      schema['x-reactions'] = reactions.filter((item) => !(isStr(item) && /use\w+\(.+\)/.test(item)))
+      schema['x-reactions'] = reactions.filter(
+        (item) => !isStr(item) || !/use\w+\(.+\)/.test(item),
+      )
     }
   }
   delete schema.default
@@ -50,7 +53,9 @@ function recursiveField(form, schema, scope, basePath, name) {
     const fieldValues = field.value
     fieldValues?.forEach((value, index) => {
       if (schema.items) {
-        const itemsSchema = Array.isArray(schema.items) ? schema.items[index] || schema.items[0] : schema.items
+        const itemsSchema = Array.isArray(schema.items)
+          ? schema.items[index] || schema.items[0]
+          : schema.items
 
         recursiveField(form, itemsSchema, scope, fieldAddress, index)
       }
@@ -108,7 +113,9 @@ function makeField(form, schema, scope, basePath, name) {
     const fieldValues = field.value
     fieldValues?.forEach((value, index) => {
       if (schema.items) {
-        const itemsSchema = Array.isArray(schema.items) ? schema.items[index] || schema.items[0] : schema.items
+        const itemsSchema = Array.isArray(schema.items)
+          ? schema.items[index] || schema.items[0]
+          : schema.items
 
         recursiveField(form, itemsSchema, scope, fieldAddress, index)
       }
@@ -176,10 +183,31 @@ export const getInitialValuesInBySchema = (schema, scope, path) => {
   const form = createForm()
   try {
     makeField(form, schema, scope)
-  } catch (e) {
-    console.log('error', e) // eslint-disable-line
+  } catch (error) {
+    console.log('error', error) // eslint-disable-line
   }
   const initialValue = form.getInitialValuesIn(path)
   form.onUnmount() // 触发卸载
   return { ...initialValue }
+}
+
+export const validateCron = (value) => {
+  value = value?.trim()
+  if (!value) return true
+  const list = value.split(/\s+/g)
+  if (list.length < 6 || list.length > 7) return false
+  // 包含年份的情况（一般不会...
+  if (list.length === 7) {
+    if (!/\d{4}$/.test(list.pop())) return false
+    // cron-parser 暂不支持年份，将年份去掉，进行校验
+    value = list.join(' ')
+  }
+  try {
+    if (cronParse.parseExpression(value).hasNext()) {
+      return true
+    }
+  } catch (error) {
+    console.log('cron-rule', error) // eslint-disable-line
+  }
+  return false
 }

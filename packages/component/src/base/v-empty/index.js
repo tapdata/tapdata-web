@@ -1,3 +1,3 @@
-import VEmpty from './VEmpty'
+import VEmpty from './VEmpty.vue'
 
 export { VEmpty }

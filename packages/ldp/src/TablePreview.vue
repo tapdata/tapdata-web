@@ -9,13 +9,14 @@ import {
   taskApi,
   workerApi,
 } from '@tap/api'
-import {
-  DatabaseIcon,
-  makeStatusAndDisabled,
-  TASK_TYPE_MAP,
-  TaskStatus,
-} from '@tap/business'
-import { Drawer, IconButton, VCodeEditor, VEmpty, VTable } from '@tap/component'
+import { DatabaseIcon } from '@tap/business/src/components/DatabaseIcon'
+import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
+import { makeStatusAndDisabled, TASK_TYPE_MAP } from '@tap/business/src/shared'
+import {VEmpty} from '@tap/component/src/base/v-empty'
+import VTable from '@tap/component/src/base/v-table'
+import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
+import Drawer from '@tap/component/src/Drawer.vue'
+import { IconButton } from '@tap/component/src/icon-button'
 import i18n from '@tap/i18n'
 
 import { calcTimeUnit, calcUnit, isNum } from '@tap/shared'
@@ -741,12 +742,12 @@ export default {
     :is="tag"
     v-if="visible"
     class="sw-table-drawer flex flex-column"
-    :visible="visible"
+    :model-value="visible"
     width="850px"
     :with-header="false"
-    @update:visible="handleUpdateVisible"
+    @update:model-value="handleUpdateVisible"
   >
-    <header class="px-6 pt-3">
+    <header class="pt-3">
       <div class="mb-2 flex align-center">
         <span class="table-name inline-block ellipsis">{{
           selected.name

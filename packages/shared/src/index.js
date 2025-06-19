@@ -21,3 +21,5 @@ export * from './time'
 export * from './directives'
 
 export * from './countUp'
+
+export * from './settings'

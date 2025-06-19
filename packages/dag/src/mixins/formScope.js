@@ -10,7 +10,7 @@ import {
   taskApi,
 } from '@tap/api'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
-import { FormTab } from '@tap/form'
+import { FormTab } from '@tap/form/src/components/form-tab'
 import i18n from '@tap/i18n'
 import { Cookie, isPlainObj } from '@tap/shared'
 import axios from 'axios'

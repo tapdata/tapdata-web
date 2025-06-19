@@ -2,25 +2,24 @@
 import { CircleCheckFilled, CircleCloseFilled } from '@element-plus/icons-vue'
 import { inspectApi, metadataInstancesApi } from '@tap/api'
 import loadingImg from '@tap/assets/icons/loading.svg'
+import FilterBar from '@tap/component/src/filter-bar/Main.vue'
 import {
   ExportOutlined,
   FileAddColorful,
   FileDocxColorful,
-  FilterBar,
   ImportOutlined,
-  Modal,
-  VIcon,
-} from '@tap/component'
+} from '@tap/component/src/icon'
+import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { TablePage } from '../../components'
 import { ErrorMessage } from '../../components/error-message'
 import PageContainer from '../../components/PageContainer.vue'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create.vue'
+import TablePage from '../../components/TablePage.vue'
 import { inspectMethod, statusMap, typeList as verifyTypeList } from './const'
 
 import type { UploadUserFile } from 'element-plus'

@@ -1,8 +1,8 @@
 <script>
 import { javascriptFunctionsApi } from '@tap/api'
-import { TablePage } from '@tap/business'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import Upload from '@tap/business/src/components/UploadDialog'
+import TablePage from '@tap/business/src/components/TablePage.vue'
+import Upload from '@tap/business/src/components/UploadDialog.vue'
 import dayjs from 'dayjs'
 
 export default {

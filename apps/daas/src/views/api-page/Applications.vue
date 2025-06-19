@@ -1,9 +1,8 @@
 <script>
 import { applicationApi, roleApi } from '@tap/api'
-import { TablePage } from '@tap/business'
-
+import TablePage from '@tap/business/src/components/TablePage.vue'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { FilterBar } from '@tap/component'
+import { FilterBar } from '@tap/component/src/filter-bar'
 import { cloneDeep, escapeRegExp } from 'lodash-es'
 import { h } from 'vue'
 

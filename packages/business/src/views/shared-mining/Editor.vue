@@ -5,9 +5,8 @@ import {
   logcollectorApi,
   taskApi,
 } from '@tap/api'
-import { SchemaToForm } from '@tap/form'
+import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
 import dayjs from 'dayjs'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 
 export default {
   name: 'Editor',
@@ -212,11 +211,11 @@ export default {
       this.visible = false
     },
 
-    handleSave() {
+    handleSave(...args) {
       this.$refs.form?.validate((valid) => {
         if (valid) {
           logcollectorApi.patchId(this.taskId, this.editForm).then(() => {
-            $emit(this, 'success', ...arguments)
+            this.$emit('success', ...args)
             this.$message.success(
               this.$t('packages_business_shared_cdc_setting_message_edit_save'),
             )

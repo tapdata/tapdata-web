@@ -2,14 +2,13 @@
 import { EditPen, Refresh } from '@element-plus/icons-vue'
 import { usersApi } from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { IconButton } from '@tap/component'
+import { IconButton } from '@tap/component/src/icon-button'
 import Cookie from '@tap/shared/src/cookie'
 import { copyToClipboard } from '@tap/shared/src/util'
 export default {
   name: 'List',
   components: {
     IconButton,
-    EditPen,
     PageContainer,
   },
   data() {

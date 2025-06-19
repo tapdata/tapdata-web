@@ -1,20 +1,20 @@
 <script>
 import { clusterApi, licensesApi, taskApi, workerApi } from '@tap/api'
-import { DownBoldOutlined, FilterBar, SelectList } from '@tap/component'
+import { DownBoldOutlined } from '@tap/component/src/DownBoldOutlined'
+import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
+import FilterBar from '@tap/component/src/filter-bar/Main.vue'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
 import { escapeRegExp, uniqBy } from 'lodash-es'
 
 import { h } from 'vue'
-import {
-  DatabaseIcon,
-  SyncStatus,
-  TablePage,
-  TaskStatus,
-  UpgradeCharges,
-  UpgradeFee,
-} from '../../components'
+import { DatabaseIcon } from '../../components/DatabaseIcon'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
+import SyncStatus from '../../components/SyncStatus.vue'
+import TablePage from '../../components/TablePage.vue'
+import TaskStatus from '../../components/TaskStatus.vue'
+import UpgradeCharges from '../../components/UpgradeCharges.vue'
+import UpgradeFee from '../../components/UpgradeFee.vue'
 import Upload from '../../components/UploadDialog.vue'
 import syncTaskAgent from '../../mixins/syncTaskAgent'
 import { makeStatusAndDisabled, MILESTONE_TYPE, STATUS_MAP } from '../../shared'

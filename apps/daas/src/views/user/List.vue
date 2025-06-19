@@ -1,9 +1,10 @@
 <script>
 import { roleApi, roleMappingsApi, usersApi } from '@tap/api'
-import { TablePage } from '@tap/business'
-
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { DownBoldOutlined, FilterBar } from '@tap/component'
+
+import TablePage from '@tap/business/src/components/TablePage.vue'
+import { DownBoldOutlined } from '@tap/component/src/DownBoldOutlined'
+import { FilterBar } from '@tap/component/src/filter-bar'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
 

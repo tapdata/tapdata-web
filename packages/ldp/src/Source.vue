@@ -1,190 +1,14 @@
-<template>
-  <div class="list__item flex flex-column flex-1 overflow-hidden">
-    <div class="list__title list__title__source flex align-center px-4">
-      <span class="fs-6">{{ $t('packages_business_data_console_sources') }}</span>
-      <div class="flex-grow-1"></div>
-      <IconButton :disabled="highlightBoard" id="btn-add-source" @click="handleAdd">add</IconButton>
-      <IconButton :disabled="highlightBoard" :class="{ active: enableSearch }" @click="toggleEnableSearch"
-        >search-outline
-      </IconButton>
-      <!--<IconButton>more</IconButton>-->
-    </div>
-    <div class="flex-1 min-h-0 flex flex-column">
-      <div v-if="enableSearch" class="px-2 pt-2">
-        <ElInput
-          ref="search"
-          v-model="search"
-          clearable
-          autofocus
-          @keydown.stop
-          @keyup.stop
-          @click.stop
-          @input="handleSearch"
-        >
-          <template #prefix>
-            <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
-          </template>
-        </ElInput>
-      </div>
-      <div
-        v-if="!showParentLineage"
-        class="flex-fill min-h-0 pl-1 py-1"
-        v-loading="loading || searchIng"
-        ref="treeContainer"
-      >
-        <VirtualTree
-          v-if="showSearch"
-          class="ldp-tree h-100"
-          ref="tree"
-          :indent="0"
-          :keeps="60"
-          node-key="id"
-          :props="props"
-          :height="treeHeight"
-          draggable
-          wrapper-class-name="p-2"
-          :default-expanded-keys="searchExpandedKeys"
-          :data="filterTreeData"
-          :expand-on-click-node="false"
-          :allow-drag="(node) => node.data.isObject"
-          :allow-drop="() => false"
-          @node-drag-start="handleDragStart"
-          @node-drag-end="handleDragEnd"
-          @node-expand="handleNodeExpand"
-          @handle-scroll="handleScroll"
-        >
-          <template #default="{ node, data }">
-            <!--<NodeContent :render-content="renderDefaultContent" :node="node" :data="data"></NodeContent>-->
-            <span
-              class="custom-tree-node flex align-items-center position-relative"
-              :class="{
-                grabbable: data.isObject,
-                'opacity-50': data.disabled,
-              }"
-              @click="$emit('preview', data, node.parent?.data)"
-            >
-              <VIcon
-                v-if="node.data.loadFieldsStatus === 'loading'"
-                class="v-icon animation-rotate"
-                size="14"
-                color="rgb(61, 156, 64)"
-                >loading-circle</VIcon
-              >
-              <NodeIcon v-if="!node.data.isLeaf" :node="node.data" :size="18" class="tree-item-icon mr-2" />
-              <div v-else-if="node.data.isEmpty" class="flex align-items-center">
-                <span class="mr-1">{{ $t('public_data_no_data') }}</span>
-                <StageButton :connection-id="getConnectionId(node)"> </StageButton>
-              </div>
-              <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
-              <span class="table-label" :title="data.name">
-                {{ data.name }}
-                <span v-if="data.comment" class="font-color-sslight">{{ `(${data.comment})` }}</span>
-                <ElTag v-if="data.disabled" type="info">{{ $t('public_status_invalid') }}</ElTag>
-              </span>
-            </span>
-          </template>
-        </VirtualTree>
-        <template v-else>
-          <VirtualTree
-            key="tree"
-            v-show="treeData.length > 0"
-            class="ldp-tree h-100"
-            empty-text=""
-            ref="tree"
-            :height="treeHeight"
-            :item-size="32"
-            :indent="0"
-            :keeps="60"
-            node-key="id"
-            :props="props"
-            draggable
-            wrapper-class-name="p-2"
-            :default-expanded-keys="expandedKeys"
-            :data="treeData"
-            :filter-node-method="filterNode"
-            :render-after-expand="false"
-            :expand-on-click-node="false"
-            :allow-drag="(node) => node.data.isObject"
-            :allow-drop="() => false"
-            @node-expand="handleNodeExpand"
-            @node-collapse="handeNodeCollapse"
-            @node-drag-start="handleDragStart"
-            @node-drag-end="handleDragEnd"
-            @handle-scroll="handleScroll"
-          >
-            <template #default="{ node, data }">
-              <!--<NodeContent :render-content="renderDefaultContent" :node="node" :data="data"></NodeContent>-->
-              <span
-                class="custom-tree-node flex align-items-center position-relative"
-                :class="{
-                  grabbable: data.isObject,
-                  'opacity-50': data.disabled,
-                }"
-                @click="$emit('preview', data, node.parent?.data)"
-              >
-                <VIcon
-                  v-if="node.data.loadFieldsStatus === 'loading'"
-                  class="v-icon animation-rotate"
-                  size="14"
-                  color="rgb(61, 156, 64)"
-                  >loading-circle</VIcon
-                >
-                <NodeIcon v-if="!node.data.isLeaf" :node="node.data" :size="18" class="tree-item-icon mr-2" />
-                <div v-else-if="node.data.isEmpty" class="flex align-items-center">
-                  <span class="mr-1">{{ $t('public_data_no_data') }}</span>
-                  <StageButton :connection-id="getConnectionId(node)"> </StageButton>
-                </div>
-                <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
-                <span class="table-label" :title="data.name">
-                  {{ data.name }}
-                  <span v-if="data.comment" class="font-color-sslight">{{ `(${data.comment})` }}</span>
-                  <ElTag v-if="data.disabled" type="info">{{ $t('public_status_invalid') }}</ElTag>
-                </span>
-              </span>
-            </template>
-          </VirtualTree>
-          <div v-if="!treeData.length" class="h-100 flex align-center justify-center">
-            <VEmpty :description="$t('packages_ldp_source_empty_text')"></VEmpty>
-          </div>
-        </template>
-      </div>
-      <div v-else class="flex-fill min-h-0" v-loading="loading || searchIng">
-        <VirtualTree
-          key="searchTree"
-          class="ldp-tree h-100"
-          ref="tree"
-          node-key="id"
-          :props="props"
-          :keeps="60"
-          draggable
-          height="100%"
-          wrapper-class-name="p-2"
-          :default-expanded-keys="searchExpandedKeys"
-          :data="filterTreeData"
-          :render-content="renderContent"
-          :expand-on-click-node="false"
-          :allow-drag="(node) => node.data.isObject"
-          :allow-drop="() => false"
-          @node-drag-start="handleDragStart"
-          @node-drag-end="handleDragEnd"
-          @node-expand="handleNodeExpand"
-          @handle-scroll="handleScroll"
-        >
-        </VirtualTree>
-      </div>
-    </div>
-  </div>
-</template>
-
-<script lang="jsx">
+<script lang="tsx">
 import { defineComponent, h } from 'vue'
 import { useResizeObserver } from '@vueuse/core'
-import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import { debounce } from 'lodash-es'
 import { connectionsApi, metadataInstancesApi, ldpApi, CancelToken } from '@tap/api'
-import { VEmpty, VirtualTree, IconButton } from '@tap/component'
-import NodeIcon from '@tap/dag/src/components/NodeIcon'
-import { makeDragNodeImage, StageButton, DatabaseIcon } from '@tap/business'
+import { IconButton } from '@tap/component/src/icon-button'
+import {VEmpty} from '@tap/component/src/base/v-empty'
+import VirtualTree from '@tap/component/src/virtual-tree'
+import NodeIcon from '@tap/dag/src/components/NodeIcon.vue'
+import { makeDragNodeImage } from '@tap/business/src/shared'
+import StageButton from '@tap/business/src/components/StageButton.vue'
 import commonMix from './mixins/common'
 
 const NodeContent = defineComponent(
@@ -374,7 +198,7 @@ export default defineComponent({
         <div
           class={className}
           onClick={() => {
-            $emit(this, 'preview', data, node.parent.data)
+            this.$emit('preview', data, node.parent.data)
           }}
         >
           <div
@@ -396,7 +220,7 @@ export default defineComponent({
               class="btn-menu"
               sm
               onClick={() => {
-                $emit(this, 'preview', data, node.parent.data)
+                this.$emit('preview', data, node.parent.data)
               }}
             >
               {' '}
@@ -420,7 +244,7 @@ export default defineComponent({
             { grabbable: data.isObject, 'opacity-50': data.disabled },
           ]}
           onClick={() => {
-            $emit(this, 'preview', data, node.parent.data)
+            this.$emit('preview', data, node.parent.data)
           }}
         >
           {schemaLoading && (
@@ -460,7 +284,7 @@ export default defineComponent({
     },
 
     handleAdd() {
-      $emit(this, 'create-connection', 'source')
+      this.$emit('create-connection', 'source')
     },
 
     async initTree() {
@@ -593,7 +417,7 @@ export default defineComponent({
     },
 
     handleDragEnd(draggingNode, dropNode, dropType, ev) {
-      $emit(this, 'node-drag-end', ev)
+      this.$emit('node-drag-end', ev)
       // this.eventDriver.emit('source-drag-end', ev)
     },
 
@@ -666,7 +490,7 @@ export default defineComponent({
     },
 
     handleScroll: debounce(function () {
-      $emit(this, 'on-scroll')
+      this.$emit('on-scroll')
     }, 200),
 
     async searchByKeywordList(val = []) {
@@ -701,6 +525,184 @@ export default defineComponent({
   emits: ['preview', 'create-connection', 'node-drag-end', 'handle-connection'],
 })
 </script>
+
+<template>
+  <div class="list__item flex flex-column flex-1 overflow-hidden">
+    <div class="list__title list__title__source flex align-center px-4">
+      <span class="fs-6">{{ $t('packages_business_data_console_sources') }}</span>
+      <div class="flex-grow-1"></div>
+      <IconButton :disabled="highlightBoard" id="btn-add-source" @click="handleAdd">add</IconButton>
+      <IconButton :disabled="highlightBoard" :class="{ active: enableSearch }" @click="toggleEnableSearch"
+        >search-outline
+      </IconButton>
+      <!--<IconButton>more</IconButton>-->
+    </div>
+    <div class="flex-1 min-h-0 flex flex-column">
+      <div v-if="enableSearch" class="px-2 pt-2">
+        <ElInput
+          ref="search"
+          v-model="search"
+          clearable
+          autofocus
+          @keydown.stop
+          @keyup.stop
+          @click.stop
+          @input="handleSearch"
+        >
+          <template #prefix>
+            <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
+          </template>
+        </ElInput>
+      </div>
+      <div
+        v-if="!showParentLineage"
+        class="flex-fill min-h-0 pl-1 py-1"
+        v-loading="loading || searchIng"
+        ref="treeContainer"
+      >
+        <VirtualTree
+          v-if="showSearch"
+          class="ldp-tree h-100"
+          ref="tree"
+          :indent="0"
+          :keeps="60"
+          node-key="id"
+          :props="props"
+          :height="treeHeight"
+          draggable
+          wrapper-class-name="p-2"
+          :default-expanded-keys="searchExpandedKeys"
+          :data="filterTreeData"
+          :expand-on-click-node="false"
+          :allow-drag="(node) => node.data.isObject"
+          :allow-drop="() => false"
+          @node-drag-start="handleDragStart"
+          @node-drag-end="handleDragEnd"
+          @node-expand="handleNodeExpand"
+          @handle-scroll="handleScroll"
+        >
+          <template #default="{ node, data }">
+            <!--<NodeContent :render-content="renderDefaultContent" :node="node" :data="data"></NodeContent>-->
+            <span
+              class="custom-tree-node flex align-items-center position-relative"
+              :class="{
+                grabbable: data.isObject,
+                'opacity-50': data.disabled,
+              }"
+              @click="$emit('preview', data, node.parent?.data)"
+            >
+              <VIcon
+                v-if="node.data.loadFieldsStatus === 'loading'"
+                class="v-icon animation-rotate"
+                size="14"
+                color="rgb(61, 156, 64)"
+                >loading-circle</VIcon
+              >
+              <NodeIcon v-if="!node.data.isLeaf" :node="node.data" :size="18" class="tree-item-icon mr-2" />
+              <div v-else-if="node.data.isEmpty" class="flex align-items-center">
+                <span class="mr-1">{{ $t('public_data_no_data') }}</span>
+                <StageButton :connection-id="getConnectionId(node)"> </StageButton>
+              </div>
+              <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
+              <span class="table-label" :title="data.name">
+                {{ data.name }}
+                <span v-if="data.comment" class="font-color-sslight">{{ `(${data.comment})` }}</span>
+                <ElTag v-if="data.disabled" type="info">{{ $t('public_status_invalid') }}</ElTag>
+              </span>
+            </span>
+          </template>
+        </VirtualTree>
+        <template v-else>
+          <VirtualTree
+            key="tree"
+            v-show="treeData.length > 0"
+            class="ldp-tree h-100"
+            empty-text=""
+            ref="tree"
+            :height="treeHeight"
+            :item-size="32"
+            :indent="0"
+            :keeps="60"
+            node-key="id"
+            :props="props"
+            draggable
+            wrapper-class-name="p-2"
+            :default-expanded-keys="expandedKeys"
+            :data="treeData"
+            :filter-node-method="filterNode"
+            :render-after-expand="false"
+            :expand-on-click-node="false"
+            :allow-drag="(node) => node.data.isObject"
+            :allow-drop="() => false"
+            @node-expand="handleNodeExpand"
+            @node-collapse="handeNodeCollapse"
+            @node-drag-start="handleDragStart"
+            @node-drag-end="handleDragEnd"
+            @handle-scroll="handleScroll"
+          >
+            <template #default="{ node, data }">
+              <!--<NodeContent :render-content="renderDefaultContent" :node="node" :data="data"></NodeContent>-->
+              <span
+                class="custom-tree-node flex align-items-center position-relative"
+                :class="{
+                  grabbable: data.isObject,
+                  'opacity-50': data.disabled,
+                }"
+                @click="$emit('preview', data, node.parent?.data)"
+              >
+                <VIcon
+                  v-if="node.data.loadFieldsStatus === 'loading'"
+                  class="v-icon animation-rotate"
+                  size="14"
+                  color="rgb(61, 156, 64)"
+                  >loading-circle</VIcon
+                >
+                <NodeIcon v-if="!node.data.isLeaf" :node="node.data" :size="18" class="tree-item-icon mr-2" />
+                <div v-else-if="node.data.isEmpty" class="flex align-items-center">
+                  <span class="mr-1">{{ $t('public_data_no_data') }}</span>
+                  <StageButton :connection-id="getConnectionId(node)"> </StageButton>
+                </div>
+                <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
+                <span class="table-label" :title="data.name">
+                  {{ data.name }}
+                  <span v-if="data.comment" class="font-color-sslight">{{ `(${data.comment})` }}</span>
+                  <ElTag v-if="data.disabled" type="info">{{ $t('public_status_invalid') }}</ElTag>
+                </span>
+              </span>
+            </template>
+          </VirtualTree>
+          <div v-if="!treeData.length" class="h-100 flex align-center justify-center">
+            <VEmpty :description="$t('packages_ldp_source_empty_text')"></VEmpty>
+          </div>
+        </template>
+      </div>
+      <div v-else class="flex-fill min-h-0" v-loading="loading || searchIng">
+        <VirtualTree
+          key="searchTree"
+          class="ldp-tree h-100"
+          ref="tree"
+          node-key="id"
+          :props="props"
+          :keeps="60"
+          draggable
+          height="100%"
+          wrapper-class-name="p-2"
+          :default-expanded-keys="searchExpandedKeys"
+          :data="filterTreeData"
+          :render-content="renderContent"
+          :expand-on-click-node="false"
+          :allow-drag="(node) => node.data.isObject"
+          :allow-drop="() => false"
+          @node-drag-start="handleDragStart"
+          @node-drag-end="handleDragEnd"
+          @node-expand="handleNodeExpand"
+          @handle-scroll="handleScroll"
+        >
+        </VirtualTree>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .tree-list {

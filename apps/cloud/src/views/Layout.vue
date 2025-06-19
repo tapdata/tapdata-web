@@ -1,31 +1,21 @@
 <script>
-import { PageHeader, SceneDialog, UpgradeFee } from '@tap/business'
-import { VIcon } from '@tap/component'
+import UpgradeFee from '@tap/business/src/components/UpgradeFee.vue'
 import Cookie from '@tap/shared/src/cookie'
+import { $on } from '@tap/shared/src/event'
 import { defineComponent } from 'vue'
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import AgentGuide from '@/components/guide/index'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 
 import Header from '@/components/layout/Header.vue'
-import MarketplaceGuide from '@/components/MarketplaceGuide'
-import TaskAlarmTour from '@/components/TaskAlarmTour'
+import MarketplaceGuide from '@/components/MarketplaceGuide.vue'
 import tour from '@/mixins/tour'
-import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
-// import AgentGuideDialog from '@/views/agent-download/AgentGuideDialog'
-import BindPhone from '@/views/user/components/BindPhone'
-import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
+import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal.vue'
 
 export default defineComponent({
   name: 'Layout',
   components: {
-    UpgradeFee,
     Header,
-    VIcon,
-    SceneDialog,
+    UpgradeFee,
     AgentDownloadModal,
-    AgentGuide,
-    PageHeader,
-    TaskAlarmTour,
     MarketplaceGuide,
   },
   mixins: [tour],

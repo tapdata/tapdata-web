@@ -1,39 +1,3 @@
-<template>
-  <ElDialog
-    :model-value="visible"
-    :append-to-body="true"
-    width="800px"
-    top="10vh"
-    class="connection-dialog ldp-conection-dialog flex flex-column"
-    @close="handleClose"
-  >
-    <template #header>
-      <div class="flex align-items-center">
-        <VIcon class="color-warning mr-2">warning</VIcon>
-        <span>{{ $t('packages_business_application_delete_shanchuyingyong') }}</span>
-      </div>
-    </template>
-    <div>
-      <div v-html="desc"></div>
-      <ListSelect
-        v-model:value="form.appValue"
-        v-model:label="form.appLabel"
-        :format="handleFormat"
-        class="my-3"
-      ></ListSelect>
-      <div>
-        {{ $t('packages_business_application_delete_shifouquerenshan') }}
-      </div>
-    </div>
-    <template v-slot:footer>
-      <span class="dialog-footer">
-        <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton type="primary" :loading="saveLoading" @click="handleSave">{{ $t('public_button_confirm') }}</ElButton>
-      </span>
-    </template>
-  </ElDialog>
-</template>
-
 <script>
 import i18n from '@tap/i18n'
 
@@ -155,3 +119,39 @@ export default {
   emits: ['success'],
 }
 </script>
+
+<template>
+  <ElDialog
+    :model-value="visible"
+    :append-to-body="true"
+    width="800px"
+    top="10vh"
+    class="connection-dialog ldp-conection-dialog flex flex-column"
+    @close="handleClose"
+  >
+    <template #header>
+      <div class="flex align-items-center">
+        <VIcon class="color-warning mr-2">warning</VIcon>
+        <span>{{ $t('packages_business_application_delete_shanchuyingyong') }}</span>
+      </div>
+    </template>
+    <div>
+      <div v-html="desc"></div>
+      <ListSelect
+        v-model:value="form.appValue"
+        v-model:label="form.appLabel"
+        :format="handleFormat"
+        class="my-3"
+      ></ListSelect>
+      <div>
+        {{ $t('packages_business_application_delete_shifouquerenshan') }}
+      </div>
+    </div>
+    <template v-slot:footer>
+      <span class="dialog-footer">
+        <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" :loading="saveLoading" @click="handleSave">{{ $t('public_button_confirm') }}</ElButton>
+      </span>
+    </template>
+  </ElDialog>
+</template>
