@@ -99,7 +99,10 @@ export default {
           return
         }
         await this.setSchema(
-          this.ins.getSchema(this.scope.$settings.syncType) || formSchema.node,
+          this.ins.getSchema(
+            this.scope.$settings.syncType,
+            this.stateIsReadonly,
+          ) || formSchema.node,
         )
 
         // 如果节点存在错误状态，走一遍校验，可以让用户看到错误信息
