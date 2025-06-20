@@ -22,7 +22,7 @@
           <span>{{ $t('application_create') }}</span>
         </ElButton>
       </div>
-      <el-table-column :label="$t('application_header_id')" :show-overflow-tooltip="true" prop="id" width="220">
+      <el-table-column :label="$t('application_header_id')" :show-overflow-tooltip="true" prop="clientId" width="220">
         <!-- <template slot-scope="scope"> -->
       </el-table-column>
       <el-table-column
