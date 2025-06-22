@@ -46,7 +46,7 @@
 
         &:not([readonly="true"]):hover,
         &:not([readonly="true"]):focus {
-          border-color: map.get($color, primary);
+          border-color: var(--color-primary);
         }
       }
 

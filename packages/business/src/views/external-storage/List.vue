@@ -641,7 +641,7 @@ export default {
         </span>
       </template>
     </ElDialog>
-    <Drawer v-model:visible="isShowDetails" class="shared-cache-details">
+    <Drawer v-model="isShowDetails" class="shared-cache-details">
       <template #header="{ titleClass }">
         <div
           v-if="details.id"
@@ -738,7 +738,7 @@ export default {
   }
 
   &.icon-status--danger {
-    color: map.get($color, danger);
+    color: var(--color-danger);
     background: #ffecec;
   }
 }
@@ -748,7 +748,7 @@ export default {
 }
 
 .shared-cache-details--header {
-  border-bottom: 1px solid map.get($borderColor, light);
+  border-bottom: 1px solid var(--border-light);
 
   .icon {
     font-size: 18px;
@@ -762,16 +762,16 @@ export default {
     flex: 1;
     padding: 8px 0;
     line-height: 17px;
-    border-bottom: 1px solid map.get($borderColor, light);
+    border-bottom: 1px solid var(--border-light);
 
     .label {
-      font-size: $fontBaseTitle;
+      font-size: var(--font-base-title);
       color: rgba(0, 0, 0, 0.6);
     }
 
     .value {
-      font-size: $fontBaseTitle;
-      color: map.get($fontColor, dark);
+      font-size: var(--font-base-title);
+      color: var(--text-dark);
     }
   }
 }

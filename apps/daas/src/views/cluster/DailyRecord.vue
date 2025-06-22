@@ -235,12 +235,12 @@ export default {
   }
   .title {
     font-size: 16px;
-    color: map.get($fontColor, dark);
+    color: var(--text-dark);
     font-weight: 600;
   }
   .serviceCluMangeBtn {
     font-size: 14px;
-    color: map.get($color, primary);
+    color: var(--color-primary);
     cursor: pointer;
     float: right;
     font-weight: normal;

@@ -1851,7 +1851,7 @@ const openEdit = () => {
 }
 
 .el-icon-remove {
-  color: map.get($iconFillColor, normal);
+  color: var(--icon-n2);
 }
 
 .line-height {
@@ -1904,7 +1904,7 @@ const openEdit = () => {
   line-height: 22px;
   font-weight: 500;
   font-size: 14px;
-  color: map.get($fontColor, dark);
+  color: var(--text-dark);
   user-select: none;
 
   position: relative;
@@ -1920,7 +1920,7 @@ const openEdit = () => {
     top: 50%;
     transform: translateY(-50%);
     position: absolute;
-    background-color: map.get($color, primary);
+    background-color: var(--color-primary);
     //background-color: #bcbfc3;
   }
 }
@@ -1941,7 +1941,7 @@ const openEdit = () => {
   line-height: 28px;
   text-align: center;
   border-radius: 2px;
-  color: map.get($fontColor, white);
+  color: var(--text-white);
 
   &.method--POST {
     background: #478c6c;
@@ -1957,8 +1957,8 @@ const openEdit = () => {
 }
 
 .data-server-debug__url {
-  border: 1px solid map.get($borderColor, form);
-  background: map.get($bgColor, form);
+  border: 1px solid var(--border-form);
+  background: var(--bg-form);
   border-radius: 4px;
 }
 

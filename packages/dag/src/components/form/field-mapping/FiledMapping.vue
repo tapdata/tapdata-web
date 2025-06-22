@@ -51,8 +51,8 @@ export default {
   font-size: 15px;
   &:hover,
   &.is-plain:focus:hover {
-    border-color: map.get($color, primary);
-    background-color: map.get($color, disable);
+    border-color: var(--color-primary);
+    background-color: var(--color-disable);
   }
 }
 </style>

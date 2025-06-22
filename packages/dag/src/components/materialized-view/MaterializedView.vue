@@ -992,7 +992,7 @@ $sidebarBg: #fff;
   cursor: pointer;
   &.active,
   &:hover {
-    color: map.get($color, primary);
+    color: var(--color-primary);
     background: $hoverBg;
   }
 }

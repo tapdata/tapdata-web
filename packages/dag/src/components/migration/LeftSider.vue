@@ -234,10 +234,6 @@ export default {
       this.init()
     },
 
-    genIconSrc(item) {
-      return getIcon(item.databaseType)
-    },
-
     async getDragDom() {
       await this.$nextTick()
       return document.querySelector('#dragNode')
@@ -518,7 +514,7 @@ export default {
                       onDrop,
                       onStop,
                     }"
-                    class="db-item flex align-center px-1 user-select-none rounded-2"
+                    class="db-item flex align-center px-1 user-select-none rounded-lg"
                     :class="{ grabbable: !stateIsReadonly }"
                     @dblclick="onDoubleClickDB(db)"
                   >
@@ -593,7 +589,7 @@ export default {
               onDrop,
               onStop,
             }"
-            class="node-item flex align-center px-2 user-select-none rounded-2"
+            class="node-item flex align-center px-2 user-select-none rounded-lg"
             :class="{ grabbable: !stateIsReadonly }"
             @dblclick="onDoubleClickProcessor(n)"
           >
@@ -656,17 +652,17 @@ $hoverBg: #eef3ff;
       cursor: pointer;
 
       &:hover {
-        color: map.get($color, primary);
+        color: var(--color-primary);
       }
 
       &.active {
-        color: map.get($color, primary);
+        color: var(--color-primary);
 
         &:before {
           position: absolute;
           content: '';
           height: 2px;
-          background: map.get($color, primary);
+          background: var(--color-primary);
           left: 12px;
           right: 12px;
           bottom: 0;
@@ -715,7 +711,7 @@ $hoverBg: #eef3ff;
   }
 
   :deep(.click-btn:hover) {
-    color: map.get($color, primary);
+    color: var(--color-primary);
     background: $hoverBg;
   }
 
@@ -751,7 +747,7 @@ $hoverBg: #eef3ff;
     .node-item {
       height: 42px;
       margin-bottom: 4px;
-      font-size: $fontBaseTitle;
+      font-size: var(--font-base-title);
       line-height: normal;
 
       &.active {
@@ -779,7 +775,7 @@ $hoverBg: #eef3ff;
 
         > :not(:last-child) {
           margin-bottom: 4px;
-          font-size: $fontBaseTitle;
+          font-size: var(--font-base-title);
         }
 
         > :last-child {
@@ -907,7 +903,7 @@ $hoverBg: #eef3ff;
     }
 
     &-txt {
-      font-size: $fontBaseTitle;
+      font-size: var(--font-base-title);
       line-height: 1;
       white-space: nowrap;
     }

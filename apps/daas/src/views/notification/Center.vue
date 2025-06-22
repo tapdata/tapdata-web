@@ -142,30 +142,30 @@ $unreadColor: #ee5353;
     display: flex;
     flex-direction: row;
     height: 100%;
-    background-color: map.get($bgColor, white);
+    background-color: var(--color-white);
     border-radius: 4px;
     .left-panel {
-      border-right: 1px solid map.get($borderColor, light);
+      border-right: 1px solid var(--border-light);
       width: 200px;
       ul.menu li {
         display: flex;
         height: 44px;
         padding-left: 20px;
         align-items: center;
-        font-size: $fontBaseTitle;
+        font-size: var(--font-base-title);
         font-weight: 400;
-        color: map.get($fontColor, normal);
+        color: var(--text-normal);
         cursor: pointer;
         &.active,
         &:hover {
           background: rgba(44, 101, 255, 0.05);
           .iconfont {
-            color: map.get($color, primary);
+            color: var(--color-primary);
           }
         }
         .iconfont {
           margin-right: 5px;
-          color: map.get($fontColor, normal);
+          color: var(--text-normal);
         }
         .content {
           flex: 1;
@@ -177,7 +177,7 @@ $unreadColor: #ee5353;
           height: 17px;
           border-radius: 10px;
           line-height: 17px;
-          color: map.get($fontColor, white);
+          color: var(--text-white);
           font-weight: 500;
           font-size: 12px;
           white-space: nowrap;

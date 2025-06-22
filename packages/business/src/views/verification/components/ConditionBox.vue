@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { InfoFilled, Loading, Plus, Right } from '@element-plus/icons-vue'
-import { action } from '@formily/reactive'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
-import { GitBook, Modal, VCodeEditor } from '@tap/component'
+import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
+import GitBook from '@tap/component/src/GitBook.vue'
+import { Modal } from '@tap/component/src/modal'
 import SwitchNumber from '@tap/component/src/SwitchNumber.vue'
-import { InfiniteSelect as AsyncSelect, JsonEditor, SqlEditor } from '@tap/form'
+import AsyncSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
+import { JsonEditor } from '@tap/form/src/components/json-editor'
+import { SqlEditor } from '@tap/form/src/components/sql-editor'
 import i18n from '@tap/i18n'
 import { uuid } from '@tap/shared'
 import {
@@ -25,9 +28,9 @@ import {
   ref,
   watch,
 } from 'vue'
-import { DatabaseIcon } from '../../../components'
-import { CONNECTION_STATUS_MAP } from '../../../shared'
-import { inspectMethod as inspectMethodMap } from '../const'
+import { DatabaseIcon } from '../../../components/DatabaseIcon'
+import { CONNECTION_STATUS_MAP } from '../../../shared/const'
+import { inspectMethod as inspectMethodMap } from '../const.js'
 import CollateMap from './CollateMap.vue'
 import { DATA_NODE_TYPES, META_INSTANCE_FIELDS, TABLE_PARAMS } from './const'
 import DocsDrawer from './DocsDrawer.vue'
@@ -1350,7 +1353,7 @@ const handleChangeFields = (data: any[] = [], id: string) => {
   item.target.columns = data.map((t) => t.target)
 }
 
-const onVisibleChange = (opt: any = {}, visible) => {
+const onVisibleChange = (opt: any = {}, visible: boolean) => {
   if (!visible || opt.fields?.length) {
     return
   }
@@ -1572,7 +1575,7 @@ watch(conditionList, () => {
                 </span>
                 <span>/</span>
                 <span class="fw-sub">{{ item.source.table || '-' }}</span>
-                <el-icon size="20"><Right /></el-icon>
+                <el-icon size="20"><i-mingcute:arrow-right-line /></el-icon>
                 <DatabaseIcon
                   v-if="ConnectorMap[item.target.databaseType]"
                   class="flex-shrink-0"
@@ -1608,7 +1611,18 @@ watch(conditionList, () => {
                   item-value="id"
                   filterable
                   @option-select="handleChangeConnection($event, item.source)"
-                />
+                >
+                  <template #option="{ item: option }">
+                    <div class="flex align-center gap-2">
+                      <DatabaseIcon
+                        v-if="ConnectorMap[option.databaseType]"
+                        :pdk-hash="ConnectorMap[option.databaseType].pdkHash"
+                        :size="20"
+                      />
+                      <span>{{ option.name }}</span>
+                    </div>
+                  </template>
+                </AsyncSelect>
               </el-form-item>
 
               <el-form-item
@@ -1622,7 +1636,18 @@ watch(conditionList, () => {
                   item-value="id"
                   filterable
                   @option-select="handleChangeConnection($event, item.target)"
-                />
+                >
+                  <template #option="{ item: option }">
+                    <div class="flex align-center gap-2">
+                      <DatabaseIcon
+                        v-if="ConnectorMap[option.databaseType]"
+                        :pdk-hash="ConnectorMap[option.databaseType].pdkHash"
+                        :size="20"
+                      />
+                      <span>{{ option.name }}</span>
+                    </div>
+                  </template>
+                </AsyncSelect>
               </el-form-item>
             </div>
 
@@ -1857,6 +1882,8 @@ watch(conditionList, () => {
                   <FieldSelectWrap
                     v-model:value="item.source.sortColumn"
                     :options="item.source.fields"
+                    :loading="item.source.fieldsLoading"
+                    @visible-change="onVisibleChange(item.source, $event)"
                   />
                 </el-form-item>
 
@@ -2255,12 +2282,12 @@ watch(conditionList, () => {
   // border: 1px solid #e8e8e8;
 
   &.error {
-    border-color: map.get($color, danger);
+    border-color: var(--color-danger);
   }
 }
 
 .joint-table-header {
-  background: map.get($bgColor, normal);
+  background: var(--bg-normal);
   border-top-left-radius: inherit;
   border-top-right-radius: inherit;
 }
@@ -2277,7 +2304,7 @@ watch(conditionList, () => {
     position: relative;
     padding: 16px 24px;
     display: flex;
-    // border-bottom: 1px solid map.get($borderColor, light);
+    // border-bottom: 1px solid var(--border-light);
     .condition-del-btn {
       visibility: hidden;
       opacity: 0;
@@ -2295,7 +2322,7 @@ watch(conditionList, () => {
 
   .joint-table-setting {
     flex: 1;
-    background-color: map.get($bgColor, white);
+    background-color: var(--color-white);
   }
 
   .setting-item {
@@ -2303,7 +2330,7 @@ watch(conditionList, () => {
     margin-bottom: 0;
 
     .el-text {
-      --el-text-color: map.get($fontColor, light);
+      --el-text-color: var(--text-light);
     }
 
     .el-form-item__content {
@@ -2316,9 +2343,9 @@ watch(conditionList, () => {
       min-width: 120px;
       line-height: 32px;
       text-align: left;
-      color: map.get($fontColor, light);
+      color: var(--text-light);
       .el-text {
-        --el-text-color: map.get($fontColor, light);
+        --el-text-color: var(--text-light);
       }
     }
 
@@ -2326,7 +2353,7 @@ watch(conditionList, () => {
       margin: 0 10px;
       width: 120px;
       line-height: 32px;
-      color: map.get($fontColor, light);
+      color: var(--text-light);
       text-align: center;
     }
 
@@ -2342,9 +2369,9 @@ watch(conditionList, () => {
 
     .item-filter-body {
       padding: 16px;
-      background: map.get($fontColor, normal);
+      background: var(--text-normal);
       border-radius: 2px;
-      color: map.get($fontColor, slight);
+      color: var(--text-slight);
 
       .filter-example-label {
         margin-top: 8px;
@@ -2374,7 +2401,7 @@ watch(conditionList, () => {
       max-height: 130px;
       overflow: auto;
       border-radius: 5px;
-      border-left: 5px solid map.get($color, primary);
+      border-left: 5px solid var(--color-primary);
       background: #eff1f4;
       font-size: 12px;
       font-family:

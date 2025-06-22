@@ -2,7 +2,7 @@
 import { measurementApi } from '@tap/api'
 
 import SharedMiningTable from '@tap/business/src/views/shared-mining/Table'
-import { TimeSelect } from '@tap/component'
+import TimeSelect from '@tap/component/src/TimeSelect.vue'
 
 import i18n from '@tap/i18n'
 import { calcTimeUnit } from '@tap/shared'
@@ -631,7 +631,7 @@ export default {
         class="select__row flex align-items-center"
         @click.stop="handleSelect"
       >
-        <span>{{
+        <span class="text-nowrap">{{
           $t('packages_dag_components_nodedetaildialog_jiedian')
         }}</span>
         <ElSelect
@@ -990,9 +990,6 @@ export default {
   height: 28px;
   cursor: pointer;
   white-space: nowrap;
-  &:hover {
-    background: #eef3ff;
-  }
 
   :deep(.el-select) {
     &.dark {

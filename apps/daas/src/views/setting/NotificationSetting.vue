@@ -207,19 +207,19 @@ $unreadColor: #ee5353;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  font-size: $fontBaseTitle;
+  font-size: var(--font-base-title);
   .notification-head {
     display: flex;
     justify-content: space-between;
     align-items: center;
     height: 54px;
-    font-size: $fontBaseTitle;
-    color: map.get($color, primary);
+    font-size: var(--font-base-title);
+    color: var(--color-primary);
     padding: 20px 20px 0 24px;
     .title {
       font-size: 14px;
       font-weight: bold;
-      color: map.get($fontColor, dark);
+      color: var(--text-dark);
       line-height: 34px;
     }
     .search {
@@ -236,25 +236,25 @@ $unreadColor: #ee5353;
       padding-top: 5px;
       span {
         padding: 4px 100px 4px 20px;
-        font-size: $fontBaseTitle;
+        font-size: var(--font-base-title);
         white-space: nowrap;
-        color: map.get($fontColor, light);
-        border: 1px solid map.get($borderColor, light);
-        border-left: 2px solid map.get($color, primary);
+        color: var(--text-light);
+        border: 1px solid var(--border-light);
+        border-left: 2px solid var(--color-primary);
         box-sizing: border-box;
       }
     }
     .run-notification {
       .title {
-        font-size: $fontBaseTitle;
+        font-size: var(--font-base-title);
         font-weight: bold;
-        color: map.get($fontColor, dark);
+        color: var(--text-dark);
         line-height: 32px;
         margin-bottom: 20px;
       }
       .notice,
       .email {
-        color: map.get($fontColor, light);
+        color: var(--text-light);
       }
       ul {
         // margin-left: 0;
@@ -265,11 +265,11 @@ $unreadColor: #ee5353;
         .label {
           display: inline-block;
           width: 30%;
-          color: map.get($fontColor, light);
+          color: var(--text-light);
           font-weight: 500;
         }
         .label {
-          color: map.get($fontColor, normal);
+          color: var(--text-normal);
         }
         .item-input {
           width: 200px;
@@ -277,7 +277,7 @@ $unreadColor: #ee5353;
 
         :deep(.el-checkbox) {
           .el-checkbox__label {
-            color: map.get($fontColor, light);
+            color: var(--text-light);
           }
         }
       }

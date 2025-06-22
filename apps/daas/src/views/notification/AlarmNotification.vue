@@ -270,7 +270,7 @@ $unreadColor: #ee5353;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  font-size: $fontBaseTitle;
+  font-size: var(--font-base-title);
   .notification-head {
     .title {
       font-weight: bold;
@@ -317,8 +317,8 @@ $unreadColor: #ee5353;
   }
   .list-item {
     position: relative;
-    background-color: map.get($bgColor, white);
-    border-bottom: 1px solid map.get($bgColor, disable);
+    background-color: var(--color-white);
+    border-bottom: 1px solid var(--bg-disable);
     margin-right: 30px;
     .list-item-content {
       position: relative;
@@ -338,7 +338,7 @@ $unreadColor: #ee5353;
       border-radius: 50%;
     }
     .list-item-desc {
-      color: map.get($fontColor, light);
+      color: var(--text-light);
       position: absolute;
       top: 0;
       left: 30px;
@@ -349,11 +349,11 @@ $unreadColor: #ee5353;
     }
     .list-item-time {
       float: right;
-      color: map.get($fontColor, light);
-      font-size: $fontBaseTitle;
+      color: var(--text-light);
+      font-size: var(--font-base-title);
     }
     &:hover {
-      background: map.get($bgColor, normal);
+      background: var(--bg-normal);
     }
   }
 }
@@ -387,12 +387,12 @@ $unreadColor: #ee5353;
   .el-tabs__item {
     height: 40px;
     line-height: 40px;
-    font-size: $fontBaseTitle;
-    // color: map.get($fontColor, light);
+    font-size: var(--font-base-title);
+    // color: var(--text-light);
     font-weight: 400;
     &.is-active {
       font-weight: 500;
-      // color: map.get($color, primary);
+      // color: var(--color-primary);
     }
   }
 }

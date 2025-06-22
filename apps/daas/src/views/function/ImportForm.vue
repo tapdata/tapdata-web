@@ -460,7 +460,7 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background-color: map.get($bgColor, white);
+  background-color: var(--color-white);
   box-shadow: 0px 0px 3px 0px #cccccc;
   overflow: hidden;
   :deep(.el-form-item__label) {

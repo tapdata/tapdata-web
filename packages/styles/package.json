@@ -1,0 +1,21 @@
+{
+  "name": "@tap/styles",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./ele": {
+      "default": "./src/ele/index.scss"
+    },
+    "./global": {
+      "default": "./src/global/index.scss"
+    }
+  }
+}

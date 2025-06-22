@@ -1,13 +1,13 @@
+import { autorun, reaction } from '@formily/reactive'
 import {
+  onBeforeUnmount,
+  shallowRef,
   computed as vueComputed,
-  ComputedGetter,
-  ComputedRef,
   watch as vueWatch,
   watchEffect as VueWatchEffect,
-  shallowRef,
-  onBeforeUnmount
+  type ComputedGetter,
+  type ComputedRef,
 } from 'vue'
-import { autorun, reaction } from '@formily/reactive'
 
 export const computed = <T>(calc: ComputedGetter<T>): ComputedRef<T> => {
   const temp = shallowRef<T>()
@@ -24,7 +24,7 @@ type Watch = typeof vueWatch
 export const watch = (
   deps: Parameters<Watch>[0],
   callback: Parameters<Watch>[1],
-  options?: Parameters<Watch>[2]
+  options?: Parameters<Watch>[2],
 ): ReturnType<Watch> => {
   if (Array.isArray(deps)) {
     const disposes = deps
@@ -39,10 +39,12 @@ export const watch = (
           })
         }
       })
-      .filter(item => item !== undefined)
-    onBeforeUnmount(() => disposes.forEach(dispose => dispose?.()))
+      .filter((item) => item !== undefined)
+    onBeforeUnmount(() => disposes.forEach((dispose) => dispose?.()))
   } else if (typeof deps === 'function') {
-    const dispose = reaction(deps as () => unknown, (n, o) => callback(n as any, o as any, onBeforeUnmount))
+    const dispose = reaction(deps as () => unknown, (n, o) =>
+      callback(n as any, o as any, onBeforeUnmount),
+    )
     onBeforeUnmount(() => dispose?.())
   }
   return vueWatch(deps, callback, options)
@@ -51,10 +53,10 @@ export const watch = (
 type WatchEffect = typeof VueWatchEffect
 export const watchEffect: WatchEffect = (
   effect: Parameters<WatchEffect>[0],
-  options: Parameters<WatchEffect>[1]
+  options: Parameters<WatchEffect>[1],
 ): ReturnType<WatchEffect> => {
   let dispose: () => void
-  return VueWatchEffect(onInvalidate => {
+  return VueWatchEffect((onInvalidate) => {
     dispose = autorun(() => effect(onInvalidate))
     onInvalidate(dispose)
   }, options)

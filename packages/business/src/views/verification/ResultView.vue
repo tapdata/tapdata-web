@@ -328,7 +328,7 @@ $margin: 10px;
     .error-band {
       background: #fdf6ec;
       border: 1px solid #f8e2c0;
-      color: map.get($color, warning);
+      color: var(--color-warning);
       margin: 10px;
       line-height: 20px;
       max-height: 160px;
@@ -343,11 +343,11 @@ $margin: 10px;
       text-overflow: ellipsis;
       font-size: 12px;
       padding: 8px;
-      color: map.get($fontColor, light);
+      color: var(--text-light);
       margin: 20% auto;
       i {
         font-size: 36px;
-        color: map.get($color, primary);
+        color: var(--color-primary);
       }
     }
     .inspect-result {
@@ -365,15 +365,15 @@ $margin: 10px;
         padding: 0 10px 10px 10px;
       }
       .title-box {
-        color: map.get($fontColor, dark);
-        background: map.get($bgColor, normal);
+        color: var(--text-dark);
+        background: var(--bg-normal);
         font-size: 12px;
         line-height: 28px;
         padding-left: 10px;
         border-bottom: 1px solid #dedee4;
       }
       .message-box {
-        color: map.get($fontColor, dark);
+        color: var(--text-dark);
         font-size: 12px;
         div {
           padding: 5px 10px;
@@ -419,7 +419,7 @@ $margin: 10px;
     .inspect-result-box {
       overflow: auto;
       .red {
-        color: map.get($color, danger);
+        color: var(--color-danger);
       }
       .inspect-details {
         li {
@@ -434,11 +434,11 @@ $margin: 10px;
           word-wrap: break-word;
         }
         li + li {
-          border-left: 1px solid map.get($borderColor, light);
+          border-left: 1px solid var(--border-light);
         }
         .father-table {
           display: flex;
-          border-top: 1px solid map.get($borderColor, light);
+          border-top: 1px solid var(--border-light);
           li {
             padding-top: 16px;
             padding-bottom: 16px;
@@ -451,7 +451,7 @@ $margin: 10px;
         .sub-table {
           display: flex;
           &:nth-child(2n + 1) {
-            background: map.get($bgColor, normal);
+            background: var(--bg-normal);
           }
           li {
             flex: 1;
@@ -491,7 +491,7 @@ $margin: 10px;
     line-height: 1;
     white-space: nowrap;
     cursor: pointer;
-    background: map.get($color, primary);
+    background: var(--color-primary);
     border: 0;
     text-align: center;
     box-sizing: border-box;

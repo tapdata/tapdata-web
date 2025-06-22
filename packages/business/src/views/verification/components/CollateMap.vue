@@ -1,6 +1,5 @@
 <script>
-import { IconButton } from '@tap/component'
-import { FieldSelect } from '@tap/form'
+import { FieldSelect } from '@tap/form/src/components/field-select/FieldSelect'
 import { computed, defineComponent } from 'vue'
 
 export default defineComponent({
@@ -8,7 +7,6 @@ export default defineComponent({
 
   components: {
     FieldSelect,
-    IconButton,
   },
   props: {
     value: {

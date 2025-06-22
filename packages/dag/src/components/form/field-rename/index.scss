@@ -1,30 +1,30 @@
 .field-processors-tree-warp {
   .clickable {
-    color: map.get($color, primary);
+    color: var(--color-primary);
   }
   .disable__btn {
-    background-color: map.get($bgColor, disable);
+    background-color: var(--bg-disable);
     border-color: #e4e7ed;
     color: #c0c4cc;
     cursor: not-allowed;
   }
   .active__delete {
-    color: map.get($color, disable);
+    color: var(--color-disable);
   }
   .field-type {
     width: 100px;
   }
   .active__name {
-    color: map.get($color, primary);
+    color: var(--color-primary);
   }
   .active__name__inner {
     .el-input__inner {
-      color: map.get($color, primary);
+      color: var(--color-primary);
     }
   }
   .active__type {
     .el-input__inner {
-      color: map.get($color, primary);
+      color: var(--color-primary);
     }
   }
   .check-all {
@@ -55,7 +55,7 @@
     }
     .tree-field-input-primary {
       input {
-        color: map.get($color, primary);
+        color: var(--color-primary);
       }
     }
     //.tree-field-input .el-input__inner:hover{
@@ -80,7 +80,7 @@
     }
     .el-input__prefix,
     .el-input__suffix .el-select__caret {
-      color: map.get($color, primary);
+      color: var(--color-primary);
     }
     .e-select {
       width: 100px;

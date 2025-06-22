@@ -1516,9 +1516,9 @@ export default {
 
 .expried {
   padding: 2px 4px;
-  color: map.get($color, warning);
+  color: var(--color-warning);
   border-radius: 4px;
-  border: 1px solid map.get($color, warning);
+  border: 1px solid var(--color-warning);
 }
 
 .avatar-uploader-icon {
@@ -1564,7 +1564,7 @@ export default {
 .click-style {
   padding-left: 10px;
   font-style: normal;
-  color: map.get($color, primary);
+  color: var(--color-primary);
   font-weight: normal;
   cursor: pointer;
 }

@@ -468,7 +468,7 @@ export default {
   box-sizing: border-box;
 
   .icon {
-    color: map.get($color, danger);
+    color: var(--color-danger);
     font-size: 16px;
   }
 }

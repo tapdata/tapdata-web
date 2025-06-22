@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { GitBook } from '@tap/component'
+import GitBook from '@tap/component/src/GitBook.vue'
 import { useI18n } from '@tap/i18n'
 import axios from 'axios'
 import { ref } from 'vue'

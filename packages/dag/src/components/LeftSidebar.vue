@@ -736,7 +736,7 @@ export default {
                       onDrop,
                       onStop,
                     }"
-                    class="db-item flex align-center px-1 user-select-none rounded-2"
+                    class="db-item flex align-center px-1 user-select-none rounded-lg"
                     :class="{
                       grabbable: !stateIsReadonly,
                       active: activeConnection.id === db.id,
@@ -885,7 +885,7 @@ export default {
                   onDrop,
                   onStop,
                 }"
-                class="tb-item flex align-center px-2 user-select-none rounded-2"
+                class="tb-item flex align-center px-2 user-select-none rounded-lg"
                 :class="{ grabbable: !stateIsReadonly }"
                 @dblclick="onDBClick(tb.name)"
               >
@@ -948,7 +948,7 @@ export default {
               onDrop,
               onStop,
             }"
-            class="node-item flex align-center px-2 user-select-none rounded-2"
+            class="node-item flex align-center px-2 user-select-none rounded-lg"
             :class="{ grabbable: !stateIsReadonly }"
             @dblclick="onDoubleClickProcessor(n)"
           >
@@ -1008,7 +1008,7 @@ $hoverBg: #eef3ff;
     }
 
     .el-collapse-item__header {
-      color: map.get($fontColor, normal) !important;
+      color: var(--text-normal) !important;
     }
   }
 
@@ -1020,12 +1020,12 @@ $hoverBg: #eef3ff;
       border-radius: 4px;
 
       &.refresh {
-        color: map.get($iconFillColor, normal);
+        color: var(--icon-n2);
       }
 
       &:hover,
       &.active {
-        color: map.get($color, primary);
+        color: var(--color-primary);
         background: $hoverBg;
       }
 
@@ -1072,7 +1072,7 @@ $hoverBg: #eef3ff;
     .tb-item,
     .node-item {
       height: 28px;
-      font-size: $fontBaseTitle;
+      font-size: var(--font-base-title);
       &.active {
         background-color: #eef3ff;
       }
@@ -1196,7 +1196,7 @@ $hoverBg: #eef3ff;
     }
 
     &-txt {
-      font-size: $fontBaseTitle;
+      font-size: var(--font-base-title);
       line-height: 1;
       white-space: nowrap;
     }

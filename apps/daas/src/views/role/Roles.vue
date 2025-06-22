@@ -520,7 +520,7 @@ export default {
 
     .btn {
       padding: 7px;
-      background: map.get($bgColor, main);
+      background: var(--bg-main);
 
       i.iconfont {
         font-size: 12px;

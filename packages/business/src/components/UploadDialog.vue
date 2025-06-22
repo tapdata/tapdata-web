@@ -459,10 +459,10 @@ export default {
   .el-upload-list {
     .el-upload-list__item {
       line-height: 28px;
-      background-color: map.get($bgColor, disable);
+      background-color: var(--bg-disable);
 
       &:hover {
-        background-color: map.get($bgColor, disable);
+        background-color: var(--bg-disable);
       }
 
       &.is-success {
@@ -479,11 +479,11 @@ export default {
 
     .el-upload-list__item-name {
       &:hover {
-        color: map.get($color, primary);
+        color: var(--color-primary);
       }
 
       i {
-        color: map.get($color, primary);
+        color: var(--color-primary);
       }
     }
 
@@ -495,7 +495,7 @@ export default {
       top: 7px;
 
       &:hover {
-        color: map.get($color, primary);
+        color: var(--color-primary);
       }
     }
   }

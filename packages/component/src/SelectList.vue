@@ -595,10 +595,10 @@ export default {
 
   &.none-border {
     &:hover {
-      background-color: map.get($bgColor, normal);
+      background-color: var(--bg-normal);
 
       .icon-btn {
-        color: map.get($fontColor, dark);
+        color: var(--text-dark);
       }
     }
 
@@ -639,21 +639,21 @@ export default {
 }
 
 .inner-select__label {
-  color: map.get($fontColor, light);
+  color: var(--text-light);
 }
 
 .inner-select__selected {
   padding-left: 8px;
-  color: map.get($fontColor, dark);
+  color: var(--text-dark);
 }
 
 .icon-btn {
-  color: map.get($fontColor, slight);
+  color: var(--text-slight);
 }
 
 .el-select__input {
   &::placeholder {
-    color: map.get($color, disable);
+    color: var(--color-disable);
   }
 }
 </style>

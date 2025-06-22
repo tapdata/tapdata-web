@@ -1101,14 +1101,14 @@ export default {
     }
     .metadata-name {
       .name {
-        color: map.get($color, primary);
+        color: var(--color-primary);
         a {
           color: inherit;
           cursor: pointer;
         }
       }
       .parent {
-        color: map.get($color, disable);
+        color: var(--color-disable);
       }
     }
   }

@@ -690,11 +690,11 @@ $nodeH: 28px;
   user-select: none;
   box-sizing: border-box;
   border-top: none;
-  background: map.get($bgColor, white);
+  background: var(--color-white);
   border-radius: 3px; /*// overflow: hidden;*/ /*// box-shadow: 0px -2px 10px 0px rgba(0, 0, 0, 0.1);*/
   .btn-expand {
     // padding: 2px 3px;
-    // color: map.get($fontColor, light);
+    // color: var(--text-light);
     transform: rotate(0);
     box-sizing: border-box;
     // background: #eff1f4;
@@ -707,14 +707,14 @@ $nodeH: 28px;
   }
   .toggle {
     margin-top: 16px;
-    // color: map.get($color, lprimary);
+    // color: var(--color-lprimary);
     z-index: 2;
   }
   &.expand {
     height: 100%;
     //width: 100%;
     padding: 12px 0 20px 0;
-    // border-right: 1px solid map.get($borderColor, light);
+    // border-right: 1px solid var(--border-light);
     width: 214px;
     .btn-expand {
       position: absolute;
@@ -731,13 +731,13 @@ $nodeH: 28px;
       top: 2px;
       right: 12px;
       font-size: 12px;
-      color: map.get($fontColor, light);
+      color: var(--text-light);
       .iconfont.icon-jia {
         display: flex;
         flex-direction: row;
         justify-content: center;
         align-items: center;
-        color: map.get($fontColor, light);
+        color: var(--text-light);
         font-size: 16px;
         height: 66%;
         margin-top: 0px;
@@ -745,7 +745,7 @@ $nodeH: 28px;
         border-radius: 3px;
         cursor: pointer;
         &:hover {
-          color: map.get($color, primary);
+          color: var(--color-primary);
         }
       }
     }
@@ -754,9 +754,9 @@ $nodeH: 28px;
       right: 54px;
       .icon-fangdajing {
         font-size: 16px;
-        color: map.get($fontColor, light);
+        color: var(--text-light);
         &:hover {
-          color: map.get($color, primary);
+          color: var(--color-primary);
         }
       }
     }
@@ -766,7 +766,7 @@ $nodeH: 28px;
   .classification-header {
     position: relative;
     padding: 0 12px;
-    // background: map.get($bgColor, normal);
+    // background: var(--bg-normal);
     // border-bottom: 1px solid #dedee4;
     font-size: 12px;
     line-height: 31px;
@@ -779,7 +779,7 @@ $nodeH: 28px;
       font-weight: 500;
       font-size: 14px;
       justify-content: space-between;
-      color: map.get($fontColor, dark);
+      color: var(--text-dark);
       // background-color: #eff1f4;
     }
 
@@ -801,7 +801,7 @@ $nodeH: 28px;
   .create {
     padding: 5px 10px;
     font-size: 12px;
-    // color: map.get($color, primary);
+    // color: var(--color-primary)
     cursor: pointer;
   }
 
@@ -836,8 +836,8 @@ $nodeH: 28px;
       .icon-folder {
         margin-right: 5px;
         font-size: 12px;
-        color: map.get($color, primary);
-        // color: map.get($color, lprimary);
+        color: var(--color-primary);
+        // color: var(--color-lprimary);
       }
       .table-label {
         flex: 1;
@@ -845,10 +845,10 @@ $nodeH: 28px;
         overflow: hidden;
         text-overflow: ellipsis;
         font-weight: 400;
-        color: map.get($fontColor, normal);
+        color: var(--text-normal);
       }
       .count-label {
-        color: map.get($fontColor, sslight);
+        color: var(--text-sslight);
       }
       .btn-menu {
         display: none;

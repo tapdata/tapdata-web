@@ -218,19 +218,19 @@ export default {
     font-weight: 600;
     font-size: 16px;
     line-height: 21px;
-    color: map.get($fontColor, dark);
+    color: var(--text-dark);
   }
   .currentList {
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
-    color: map.get($color, dark);
+    color: var(--text-dark);
   }
   .desc {
     font-weight: 400;
     font-size: 12px;
     line-height: 17px;
-    color: map.get($color, light);
+    color: var(--text-light);;
   }
   .tip {
     font-style: normal;
@@ -240,7 +240,7 @@ export default {
     color: #535f72;
   }
   .link {
-    border-bottom: 1px solid map.get($borderColor, light);
+    border-bottom: 1px solid var(--border-light);
   }
   .breadcrumb {
     height: 50px;

@@ -1,3 +1,5 @@
+$formNamespace: formily-element-plus;
+
 .#{$formNamespace}-form-item-label-tooltip {
   * {
     cursor: pointer;
@@ -29,7 +31,7 @@
 
 .#{$formNamespace}-form-item.danger-description {
   .#{$formNamespace}-form-item-extra {
-    color: map.get($color, danger);
+    color: var(--color-danger);
   }
 }
 

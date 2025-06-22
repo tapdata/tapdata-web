@@ -7,7 +7,7 @@
   "author": "",
   "main": "src/index.js",
   "dependencies": {
-    "@element-plus/icons-vue": "^2.1.0",
+    "@element-plus/icons-vue": "catalog:",
     "@formily/reactive": "^2.3.0",
     "@tap/api": "workspace:*",
     "@tap/assets": "workspace:*",
@@ -15,16 +15,16 @@
     "@tap/form": "workspace:*",
     "@tap/i18n": "workspace:*",
     "@tap/shared": "workspace:*",
-    "axios": "^0.21.1",
-    "cron-parser": "^4.6.0",
-    "dayjs": "^1.11.2",
-    "juice": "^11.0.1",
-    "lodash": "^4.17.15",
+    "axios": "catalog:",
+    "cron-parser": "catalog:",
+    "dayjs": "catalog:",
+    "juice": "catalog:",
+    "lodash": "catalog:",
     "qs": "^6.11.0",
-    "tiny-emitter": "^2.1.0",
-    "vue": "^3.0.0",
-    "vue-json-viewer": "^2.2.15",
-    "vue-virtual-scroller": "2.0.0-beta.8",
-    "vuex": "^4.0.2"
+    "tiny-emitter": "catalog:",
+    "vue": "catalog:",
+    "vue-json-viewer": "catalog:",
+    "vue-virtual-scroller": "catalog:",
+    "vuex": "catalog:"
   }
 }

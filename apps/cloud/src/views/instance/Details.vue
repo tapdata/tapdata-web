@@ -675,7 +675,7 @@ export default {
     height: 470px;
   }
   .el-pager li.active {
-    color: map.get($color, primary);
+    color: var(--color-primary);
   }
 }
 </style>

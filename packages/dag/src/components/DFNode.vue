@@ -424,7 +424,7 @@ export default {
   }
 }
 .df-node-text {
-  font-size: $fontBaseTitle;
+  font-size: var(--font-base-title);
 }
 .df-node-text-tooltip {
   transform: translateY(-6px);

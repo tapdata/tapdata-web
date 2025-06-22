@@ -695,7 +695,7 @@ getTables()
   //height: 100%;
   display: flex;
   flex-direction: column;
-  border: 1px solid map.get($borderColor, light);
+  border: 1px solid var(--border-light);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -705,7 +705,7 @@ getTables()
   align-items: center;
   background: #f7f8fa;
   height: 40px;
-  color: map.get($fontColor, normal);
+  color: var(--text-normal);
   font-size: 13px;
   font-weight: 500;
 }
@@ -743,7 +743,7 @@ getTables()
   display: flex;
   align-items: center;
   &:hover {
-    background-color: map.get($bgColor, disable);
+    background-color: var(--bg-disable);
   }
   > :deep(.el-checkbox__label) {
     overflow: hidden;
@@ -771,22 +771,22 @@ getTables()
     line-height: 28px;
     border-radius: 2px;
     font-size: 14px;
-    background: map.get($bgColor, main);
-    color: map.get($fontColor, normal);
+    background: var(--bg-main);
+    color: var(--text-normal);
     text-align: center;
     cursor: pointer;
     &:hover {
-      background: map.get($color, primary);
-      color: map.get($fontColor, white);
+      background: var(--color-primary);
+      color: var(--text-white);
     }
     &.btn-transfer--disabled {
-      background: map.get($bgColor, main);
-      color: map.get($fontColor, normal);
+      background: var(--bg-main);
+      color: var(--text-normal);
       cursor: not-allowed;
     }
     &.btn-transfer--primary {
-      background: map.get($color, primary);
-      color: map.get($fontColor, white);
+      background: var(--color-primary);
+      color: var(--text-white);
     }
   }
 }
@@ -807,12 +807,12 @@ getTables()
     line-height: 20px;
     //height: 20px;
     font-size: 12px;
-    color: map.get($fontColor, normal);
+    color: var(--text-normal);
     word-break: break-word;
   }
   .selector-clipboard__view--empty {
     padding: 5px 11px;
-    color: map.get($fontColor, slight);
+    color: var(--text-slight);
     font-size: 12px;
     font-weight: normal;
     line-height: 20px;

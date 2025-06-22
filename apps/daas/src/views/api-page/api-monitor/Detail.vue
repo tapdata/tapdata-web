@@ -300,12 +300,12 @@ export default {
     font-size: 12px;
     font-weight: 500;
     height: 30px;
-    color: map.get($fontColor, normal);
+    color: var(--text-normal);
     text-align: center;
   }
   .api-monitor-detail-wrap__value {
     font-size: 20px;
-    color: map.get($color, primary);
+    color: var(--color-primary);
     line-height: 38px;
     text-align: center;
   }

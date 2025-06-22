@@ -1124,11 +1124,11 @@ export default {
 .ldp-tree {
   :deep(.el-tree-node__content) {
     .lineage-icon {
-      color: map.get($color, info);
+      color: var(--color-info);
     }
     &:hover {
       .lineage-icon {
-        color: map.get($color, primary);
+        color: var(--color-primary);
       }
     }
   }

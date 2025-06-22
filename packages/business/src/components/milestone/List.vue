@@ -810,7 +810,7 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
   left: 50%;
   top: 24px;
   bottom: 4px;
-  border-left: 1px dashed map.get($color, primary);
+  border-left: 1px dashed var(--color-primary);
   transform: translateX(-50%);
 }
 .step__line_pt {

@@ -469,7 +469,7 @@ $sidebarBg: #fff;
   .nav-icon {
     width: 40px;
     height: 100%;
-    background-color: map.get($color, primary);
+    background-color: var(--color-primary);
     cursor: pointer;
     font-size: 24px;
 
@@ -497,7 +497,7 @@ $sidebarBg: #fff;
 
     &.active,
     &:not(.disabled):hover {
-      color: map.get($color, primary);
+      color: var(--color-primary);
       background: $hoverBg;
     }
 
@@ -554,7 +554,7 @@ $sidebarBg: #fff;
       cursor: pointer;
 
       &:hover {
-        color: map.get($color, primary);
+        color: var(--color-primary);
         background: $hoverBg;
       }
     }

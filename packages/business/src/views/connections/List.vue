@@ -1024,8 +1024,8 @@ onUnmounted(() => {
   font-weight: 400;
   font-size: 12px;
   line-height: 20px;
-  color: map.get($color, tag);
-  border: 1px solid map.get($bgColor, tag);
+  color: var(--color-tag);
+  border: 1px solid var(--bg-tag);
   border-radius: 4px;
 }
 
@@ -1035,7 +1035,7 @@ onUnmounted(() => {
 }
 
 .btn-text {
-  // color: map.get($color, primary);
+  // color: var(--color-primary);
   font-size: 12px;
   padding-right: 5px;
 }

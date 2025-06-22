@@ -431,6 +431,7 @@ export default {
         :remote-method="getData"
         height="100%"
         class="flex-fill"
+        table-class="has-border-t"
         @selection-change="handleSelectionChange"
       >
         <template #multipleSelectionActions>

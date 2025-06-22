@@ -49,12 +49,8 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="h-100 flex flex-column py-3">
-    <div
-      v-show="!!previewData"
-      v-loading="previewLoading"
-      class="flex-1 json-pretty-wrapper"
-    >
+  <div v-loading="previewLoading" class="h-100 flex flex-column py-3">
+    <div v-show="!!previewData" class="flex-1 json-pretty-wrapper">
       <VueJsonPretty
         ref="jsonRef"
         class="h-100"

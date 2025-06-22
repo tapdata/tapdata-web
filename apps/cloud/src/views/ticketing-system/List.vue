@@ -410,7 +410,7 @@ export default {
   }
   .ticket-name {
     &:hover {
-      color: map.get($color, primary);
+      color: var(--color-primary);
     }
   }
 }

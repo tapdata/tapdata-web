@@ -1,7 +1,12 @@
 <script>
-import { getIcon } from '@tap/assets/icons'
+import mockSourceIcon from '@tap/assets/icons/connections/mock-source.svg'
+import mockTargetIcon from '@tap/assets/icons/connections/mock-target.svg'
+import mongodbIcon from '@tap/assets/icons/connections/mongodb.svg'
+import mysqlIcon from '@tap/assets/icons/connections/mysql.svg'
+
 import Cookie from '@tap/shared/src/cookie'
 import { $on } from '@tap/shared/src/event'
+
 import { mapGetters, mapState } from 'vuex'
 
 export default {
@@ -13,30 +18,22 @@ export default {
       sourceList: [
         {
           type: 'mysql',
-          icon: getIcon('mysql'),
+          icon: mysqlIcon,
         },
         {
           type: 'dummy',
-          icon: getIcon('mock-source'),
-        } /*,
-        {
-          type: 'mongodb',
-          icon: getIcon('mongodb')
-        }*/,
+          icon: mockSourceIcon,
+        },
       ],
       targetList: [
         {
           type: 'mongodb',
-          icon: getIcon('mongodb'),
+          icon: mongodbIcon,
         },
         {
           type: 'dummy',
-          icon: getIcon('mock-target'),
-        } /*,
-        {
-          type: 'mongodb',
-          icon: getIcon('mongodb')
-        }*/,
+          icon: mockTargetIcon,
+        },
       ],
     }
   },
@@ -432,14 +429,14 @@ export default {
   padding-top: 52px;
   word-wrap: break-word;
   word-break: break-word;
-  background: map.get($color, submenu);
+  background: var(--color-submenu);
 
   .left-aside {
-    // border-right: 1px map.get($borderColor, aside) solid;
-    background: map.get($color, submenu);
+    // border-right: 1px var(--border-aside) solid;
+    background: var(--color-submenu);
 
     .el-menu {
-      background-color: map.get($color, submenu);
+      background-color: var(--color-submenu);
     }
 
     :deep(.el-menu-item),
@@ -448,20 +445,20 @@ export default {
       line-height: 50px;
 
       .v-icon {
-        color: map.get($iconFillColor, normal);
+        color: var(--icon-n2);
       }
 
       &.is-active,
       &:hover {
-        background-color: map.get($color, white);
-        color: map.get($color, primary);
+        background-color: var(--color-white);
+        color: var(--color-primary);
         border-radius: 8px;
       }
 
       &.is-active,
       &:hover {
         :deep(.v-icon) {
-          color: map.get($color, primary);
+          color: var(--color-primary);
         }
       }
 
@@ -475,7 +472,7 @@ export default {
       font-size: 14px;
       font-weight: 700;
       line-height: 60px;
-      color: map.get($fontColor, normal);
+      color: var(--text-normal);
     }
   }
 
@@ -508,7 +505,7 @@ export default {
     }
 
     :deep(.el-breadcrumb__separator) {
-      color: map.get($fontColor, sub);
+      color: var(--text-light);
     }
   }
 
@@ -554,7 +551,7 @@ export default {
   width: 100%;
   height: 52px !important;
   padding: 0 7px;
-  background: map.get($color, submenu);
+  background: var(--color-submenu);
   box-sizing: border-box;
 
   .logo {
@@ -577,15 +574,15 @@ export default {
     .command-item {
       padding: 4px 8px;
       cursor: pointer;
-      color: map.get($fontColor, light);
+      color: var(--text-light);
 
       &:hover {
-        color: map.get($color, primary);
-        background-color: map.get($color, white);
+        color: var(--color-primary);
+        background-color: var(--color-white);
         border-radius: 4px;
 
         &.icon {
-          color: map.get($color, primary);
+          color: var(--color-primary);
         }
       }
     }

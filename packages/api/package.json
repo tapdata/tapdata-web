@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@tap/shared": "workspace:*",
-    "axios": "^0.21.1",
+    "axios": "catalog:",
     "qs": "^6.10.3"
   }
 }

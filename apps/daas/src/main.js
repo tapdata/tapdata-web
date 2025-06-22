@@ -24,6 +24,7 @@ import router from './router'
 import '@/plugins/axios.ts'
 
 import 'virtual:svg-icons-register'
+import '@tap/styles'
 import '@/styles/app.scss'
 
 window._TAPDATA_OPTIONS_ = {

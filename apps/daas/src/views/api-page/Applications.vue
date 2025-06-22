@@ -1,7 +1,7 @@
 <script>
 import { applicationApi, roleApi } from '@tap/api'
-import TablePage from '@tap/business/src/components/TablePage.vue'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
+import TablePage from '@tap/business/src/components/TablePage.vue'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import { cloneDeep, escapeRegExp } from 'lodash-es'
 import { h } from 'vue'
@@ -55,9 +55,6 @@ export default {
     // 创建
     openCreateDialog() {
       this.createDialogVisible = true
-      this.$nextTick(() => {
-        this.$refs.form.clearValidate()
-      })
       this.createForm = {
         clientName: '',
         grantTypes: ['implicit', 'client_credentials'],
@@ -67,6 +64,11 @@ export default {
         redirectUrisStr: '',
         showMenu: true,
       }
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.$refs.form.clearValidate()
+        }, 50)
+      })
     },
     // 编辑
     edit(item) {
@@ -220,8 +222,8 @@ export default {
       <el-table-column
         :label="$t('application_header_id')"
         :show-overflow-tooltip="true"
-        prop="id"
-        width="220"
+        prop="clientId"
+        width="230"
       >
         <!-- <template slot-scope="scope"> -->
       </el-table-column>
@@ -448,7 +450,7 @@ export default {
         }
       }
       .el-form-item__label {
-        font-size: $fontBaseTitle;
+        font-size: var(--font-base-title);
       }
     }
   }

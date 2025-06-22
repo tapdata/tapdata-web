@@ -88,16 +88,16 @@ export default {
   .filter-datetime__title {
     margin-right: 8px;
     cursor: pointer;
-    color: map.get($fontColor, normal);
+    color: var(--text-normal);
   }
   .el-date-editor {
     max-width: 150px;
     :deep(input) {
-      color: map.get($fontColor, dark);
+      color: var(--text-dark);
     }
 
     :deep(input::placeholder) {
-      color: map.get($fontColor, dark);
+      color: var(--text-dark);
     }
 
     &.empty-time {
@@ -127,7 +127,7 @@ export default {
     }
 
     .icon-btn {
-      color: map.get($fontColor, dark);
+      color: var(--text-dark);
     }
   }
 }
@@ -135,6 +135,6 @@ export default {
   position: absolute;
   top: 11px;
   right: 4px;
-  color: map.get($fontColor, slight);
+  color: var(--text-slight);
 }
 </style>

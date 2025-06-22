@@ -574,7 +574,7 @@ export default {
     padding: 0 8px;
     height: 32px;
     cursor: pointer;
-    color: map.get($fontColor, light);
+    color: var(--text-light);
     white-space: nowrap;
     user-select: none;
     .title {
@@ -614,7 +614,7 @@ export default {
     .title {
       display: inline-block;
       padding: 0 0 20px;
-      color: map.get($fontColor, dark);
+      color: var(--text-dark);
       font-size: 14px;
       font-weight: 500;
     }
@@ -644,7 +644,7 @@ export default {
   .footer {
     flex: 0 0 auto;
     width: 100%;
-    border-top: 1px solid map.get($borderColor, light);
+    border-top: 1px solid var(--border-light);
   }
 }
 .dialog-email-template {
@@ -655,12 +655,12 @@ export default {
       padding: 5px 20px 5px 0;
       display: block;
       text-align: right;
-      border-right: 3px solid map.get($borderColor, light);
+      border-right: 3px solid var(--border-light);
       cursor: pointer;
     }
     .active {
-      color: map.get($color, primary);
-      border-right: 3px solid map.get($color, primary);
+      color: var(--color-primary);
+      border-right: 3px solid var(--color-primary);
     }
   }
   .settings-email-template {

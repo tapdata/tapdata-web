@@ -1,6 +1,6 @@
 $borderColor: #d3d3d3;
 $selectedColor: #d3d3d3;
-$primary: map.get($color, primary);
+$primary: var(--color-primary);
 
 .resize-trigger {
   background-color: transparent;

@@ -1167,7 +1167,7 @@ export default {
     }
 
     &.active {
-      color: map.get($color, primary);
+      color: var(--color-primary);
       background-color: #f0f4ff;
     }
   }

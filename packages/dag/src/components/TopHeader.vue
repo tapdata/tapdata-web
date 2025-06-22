@@ -597,7 +597,7 @@ $sidebarBg: #fff;
   .nav-icon {
     width: 40px;
     height: 100%;
-    background-color: map.get($color, primary);
+    background-color: var(--color-primary);
     cursor: pointer;
     font-size: 24px;
     &:hover {
@@ -616,7 +616,7 @@ $sidebarBg: #fff;
         border-color: #dcdfe6;
       }
       .title-input-icon {
-        color: map.get($color, primary);
+        color: var(--color-primary);
       }
     }
 
@@ -635,9 +635,9 @@ $sidebarBg: #fff;
       transition: border-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
 
       &:focus {
-        border-color: map.get($color, primary);
+        border-color: var(--color-primary);
         & + .title-input-icon {
-          color: map.get($color, primary);
+          color: var(--color-primary);
         }
       }
     }
@@ -668,7 +668,7 @@ $sidebarBg: #fff;
 
     &.active,
     &:hover {
-      color: map.get($color, primary);
+      color: var(--color-primary);
       background: $hoverBg;
     }
   }
@@ -716,7 +716,7 @@ $sidebarBg: #fff;
       cursor: pointer;
 
       &:hover {
-        color: map.get($color, primary);
+        color: var(--color-primary);
         background: $hoverBg;
       }
     }
