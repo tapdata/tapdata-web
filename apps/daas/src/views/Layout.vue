@@ -11,9 +11,6 @@
         <ElButton v-if="isCommunity" id="add-jira-issue-btn" type="primary" size="mini"
           ><VIcon>bug-outlined</VIcon> New Issue
         </ElButton>
-        <ElButton v-else-if="creatAuthority" type="primary" size="mini" @click="command('newDataFlow')">
-          {{ $t('dataFlow_createNew') }}
-        </ElButton>
         <NotificationPopover v-if="$getSettingByKey('SHOW_NOTIFICATION')" class="ml-4"></NotificationPopover>
         <ElDropdown v-if="showHelp" class="btn" placement="bottom" @command="command" command="help" :show-timeout="0">
           <div class="flex align-center icon-btn p-2 ml-2">
