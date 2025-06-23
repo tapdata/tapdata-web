@@ -247,8 +247,8 @@ export default {
         },
         () => {
           this.$el
-            .querySelector('.formily-element-form-item-error')
-            .scrollIntoView()
+            .querySelector('.formily-element-plus-form-item-error')
+            ?.scrollIntoView()
         },
       )
     },
@@ -1595,7 +1595,7 @@ export default {
 </script>
 
 <template>
-  <div v-loading="loadingFrom" class="connection-from rounded-lg">
+  <div v-loading="loadingFrom" class="connection-from">
     <div class="connection-from-body gap-4">
       <main class="connection-from-main bg-white rounded-xl overflow-hidden">
         <div class="connection-from-title p-4">
@@ -1735,7 +1735,7 @@ export default {
           </el-button>
         </footer>
       </main>
-      <div class="flex-1 overflow-x-hidden bg-white rounded-lg">
+      <div class="flex-1 overflow-x-hidden bg-white rounded-xl">
         <ConnectorDoc
           :pdk-hash="$route.query.pdkHash"
           :pdk-id="$route.query.pdkId"
@@ -1831,16 +1831,16 @@ export default {
     //padding-left: 24px;
     //border-radius: 4px;
     overflow: hidden;
-    //background-color: map.get($bgColor, white);
+    //background-color: var(--color-white);
     .connection-from-main {
       display: flex;
       flex: 1;
       flex-direction: column;
 
       .connection-from-title {
-        font-size: $fontSubtitle;
+        font-size: 16px;
         font-weight: 500;
-        color: map.get($fontColor, dark);
+        color: var(--text-dark);
         line-height: 28px;
       }
 
@@ -1857,8 +1857,8 @@ export default {
 
         .label {
           width: 160px;
-          font-size: $fontBaseTitle;
-          color: map.get($fontColor, light);
+          font-size: var(--font-base-title);
+          color: var(--text-light);
           text-transform: capitalize;
         }
 
@@ -1866,9 +1866,9 @@ export default {
           display: flex;
           max-width: 680px;
           line-height: 22px;
-          font-size: $fontBaseTitle;
+          font-size: var(--font-base-title);
           font-weight: 400;
-          color: map.get($fontColor, dark);
+          color: var(--text-dark);
           align-items: center;
           white-space: nowrap;
           word-break: break-word;
@@ -1882,7 +1882,7 @@ export default {
           height: 25px;
           justify-content: center;
           align-items: center;
-          background: map.get($bgColor, white);
+          background: var(--color-white);
           border-radius: 3px;
 
           img {
@@ -1929,12 +1929,12 @@ export default {
 
               .url-tip {
                 font-size: 12px;
-                color: map.get($fontColor, light);
+                color: var(--text-light);
 
                 b {
                   font-size: 12px;
                   font-weight: 400;
-                  color: map.get($fontColor, light);
+                  color: var(--text-light);
                 }
               }
 
@@ -2036,7 +2036,7 @@ export default {
     gap: 8px;
     font-weight: 400;
     &.is-active {
-      color: map.get($color, primary);
+      color: var(--color-primary);
     }
   }
   :deep(.el-collapse-item__arrow) {

@@ -283,10 +283,10 @@ defineExpose({
   }
 
   :deep(.formily-element-plus-form-item) {
-    font-size: $fontBaseTitle;
+    font-size: var(--font-base-title);
     .formily-element-plus-form-item-label {
       label {
-        color: map.get($fontColor, light);
+        color: var(--text-light);
         text-transform: capitalize;
       }
     }

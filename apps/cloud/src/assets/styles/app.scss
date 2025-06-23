@@ -176,7 +176,7 @@ body.hide-chart > [data-id='zsalesiq'] {
   visibility: hidden !important;
 }
 
-$primary: map.get($color, primary);
+$primary: var(--color-primary);
 $dotSize: 16px;
 $dotSpace: $dotSize + 8px;
 $dotLeft: 9999px;

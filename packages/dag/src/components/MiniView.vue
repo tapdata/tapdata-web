@@ -1,16 +1,5 @@
-<template>
-  <div class="miniview shadow flex justify-center align-center" :style="style">
-    <div class="miniview-paper-wrap" :style="wrapStyle">
-      <div ref="paperView" class="miniview-paper" :style="paperStyle" @mousedown="mouseDown($event, true)">
-        <div v-for="(c, i) in coms" :style="c" :key="i" class="component-placeholder"></div>
-      </div>
-      <div ref="currentView" class="current-view" :style="currentViewStyle" @mousedown="mouseDown"></div>
-    </div>
-  </div>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
+import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 export default {
   name: 'MiniView',
   props: {
@@ -33,12 +22,13 @@ export default {
       default: 10,
     },
   },
+  emits: ['drag-move'],
   computed: {
     style() {
       return {
-        width: this.width + 'px',
-        height: this.height + 'px',
-        padding: this.padding + 'px',
+        width: `${this.width}px`,
+        height: `${this.height}px`,
+        padding: `${this.padding}px`,
       }
     },
     scale() {
@@ -50,14 +40,14 @@ export default {
     },
     wrapStyle() {
       return {
-        width: this.paperSize.width * this.scale + 'px',
-        height: this.paperSize.height * this.scale + 'px',
+        width: `${this.paperSize.width * this.scale}px`,
+        height: `${this.paperSize.height * this.scale}px`,
       }
     },
     paperStyle() {
       return {
-        width: this.paperSize.width + 'px',
-        height: this.paperSize.height + 'px',
+        width: `${this.paperSize.width}px`,
+        height: `${this.paperSize.height}px`,
         transform: `scale(${this.scale})`,
       }
     },
@@ -65,8 +55,8 @@ export default {
       const { w, h } = this.paperReverseSize
       const nodes = this.$store.getters['dataflow/allNodes']
       return nodes.map((n) => ({
-        left: n.attrs.position[0] + w + 'px',
-        top: n.attrs.position[1] + h + 'px',
+        left: `${n.attrs.position[0] + w}px`,
+        top: `${n.attrs.position[1] + h}px`,
       }))
     },
     viewPosition() {
@@ -88,10 +78,10 @@ export default {
     currentViewStyle() {
       const obj = this.viewPosition
       return {
-        left: obj.left + 'px',
-        top: obj.top + 'px',
-        width: obj.width + 'px',
-        height: obj.height + 'px',
+        left: `${obj.left}px`,
+        top: `${obj.top}px`,
+        width: `${obj.width}px`,
+        height: `${obj.height}px`,
       }
     },
   },
@@ -118,7 +108,9 @@ export default {
           a = { pageX: event.pageX, pageY: event.pageY }
           flag || ((Math.abs(s.x) >= 5 || Math.abs(s.y) >= 5) && (flag = true))
           const isNotSame = c.x !== s.x || c.y !== s.y
-          flag && isNotSame && ((c = Object.assign({}, s)), moveCallback(event, s, r, point))
+          flag &&
+            isNotSame &&
+            ((c = Object.assign({}, s)), moveCallback(event, s, r, point))
         },
         h = (e) => {
           point = undefined
@@ -157,16 +149,41 @@ export default {
     },
 
     getMousePositionWithinPaperView(e) {
-      let { x, y } = this.$refs.paperView.getBoundingClientRect()
+      const { x, y } = this.$refs.paperView.getBoundingClientRect()
       return {
         x: e.pageX - x,
         y: e.pageY - y,
       }
     },
   },
-  emits: ['drag-move'],
 }
 </script>
+
+<template>
+  <div class="miniview shadow flex justify-center align-center" :style="style">
+    <div class="miniview-paper-wrap" :style="wrapStyle">
+      <div
+        ref="paperView"
+        class="miniview-paper"
+        :style="paperStyle"
+        @mousedown="mouseDown($event, true)"
+      >
+        <div
+          v-for="(c, i) in coms"
+          :key="i"
+          :style="c"
+          class="component-placeholder"
+        />
+      </div>
+      <div
+        ref="currentView"
+        class="current-view"
+        :style="currentViewStyle"
+        @mousedown="mouseDown"
+      />
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .miniview {
@@ -193,13 +210,13 @@ export default {
       position: absolute;
       width: 160px;
       height: 36px;
-      background-color: map.get($color, primary);
+      background-color: var(--color-primary);
     }
   }
 
   .current-view {
     position: absolute;
-    border: 1px solid map.get($color, primary);
+    border: 1px solid var(--color-primary);
     cursor: move;
   }
 }

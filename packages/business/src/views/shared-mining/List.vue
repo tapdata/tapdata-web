@@ -721,7 +721,7 @@ export default {
 .share-list-wrap {
   height: 100%;
   .refresh {
-    color: map.get($color, primary);
+    color: var(--color-primary);
     font-weight: normal;
     font-size: 12px;
     cursor: pointer;
@@ -749,7 +749,7 @@ export default {
     }
     .metadata-name {
       .name {
-        color: map.get($color, primary);
+        color: var(--color-primary);
         a {
           color: inherit;
           cursor: pointer;
@@ -760,12 +760,12 @@ export default {
       }
       .tag {
         margin-left: 5px;
-        color: map.get($fontColor, slight);
-        background: map.get($bgColor, main);
+        color: var(--text-slight);
+        background: var(--bg-main);
         border: 1px solid #dedee4;
       }
       .parent {
-        color: map.get($fontColor, slight);
+        color: var(--text-slight);
       }
     }
   }

@@ -525,8 +525,8 @@ export default {
     height: 40px !important;
     line-height: 40px;
     font-size: 14px;
-    color: map.get($fontColor, light);
-    background-color: map.get($bgColor, main);
+    color: var(--text-light);
+    background-color: var(--bg-main);
     .e-col {
       padding-left: 12px;
     }
@@ -608,7 +608,7 @@ export default {
         padding: 5px 0;
         margin: 0;
         font-size: 12px;
-        color: map.get($fontColor, light);
+        color: var(--text-light);
       }
     }
   }

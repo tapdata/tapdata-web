@@ -117,6 +117,6 @@ export default {
   }
 }
 .copied-icon {
-  color: map.get($color, primary);
+  color: var(--color-primary);
 }
 </style>

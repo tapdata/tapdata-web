@@ -325,11 +325,11 @@ const route = useRoute()
 .filter-el-input {
   :deep(.el-input__inner) {
     &:hover {
-      border-color: map.get($borderColor, disable);
+      border-color: #e4e7ed;
     }
     &:focus,
     &:target {
-      border-color: map.get($color, primary);
+      border-color: #3b47e5;
     }
   }
 }

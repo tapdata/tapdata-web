@@ -106,12 +106,12 @@ export default {
 .header {
   font-weight: 500;
   font-size: 18px;
-  color: map.get($color, white);
+  color: var(--color-white);
 }
 .main {
   width: 686px;
   height: 673px;
-  background: map.get($color, white);
+  background: var(--color-white);
   box-shadow: 0px 4px 4px rgba(198, 198, 198, 0.25);
   border-radius: 8px;
 }
@@ -119,7 +119,7 @@ export default {
   width: 686px;
   height: 57px;
   line-height: 57px;
-  background: map.get($color, primary);
+  background: var(--color-primary);
   border-bottom: 1px solid #f2f2f2;
   border-radius: 8px 8px 0px 0px;
 }
@@ -127,12 +127,12 @@ export default {
   width: 70px;
 }
 .step li {
-  color: map.get($fontColor, light);
+  color: var(--text-light);
   margin-bottom: 8px;
 }
 .button {
-  color: map.get($color, white);
-  background: map.get($color, primary);
+  color: var(--color-white);
+  background: var(--color-primary);
   display: inline-block;
   line-height: 1;
   white-space: nowrap;

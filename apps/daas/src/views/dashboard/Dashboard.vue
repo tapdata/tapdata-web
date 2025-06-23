@@ -854,10 +854,9 @@ export default {
                     >
                       <div class="server-list-box rounded-lg py-2">
                         <img
-                          src="../../assets/images/serve.svg"
+                          src="../../assets/static/serve.svg"
                           class="rounded-4"
                         />
-                        <!-- <img src="../../assets/icons/svg/serve.svg" alt="" /> -->
                         <div class="server-main ml-5">
                           <div class="flex align-center gap-2">
                             <div class="title">
@@ -953,7 +952,7 @@ export default {
           </template>
           <template v-else>
             <div class="dashboard-wrap-box">
-              <img src="../../assets/images/undraw_secure_files_re_6vdh.svg" />
+              <img src="../../assets/static/undraw_secure_files_re_6vdh.svg" />
               <div class="txt pt-4">{{ $t('dashboard_no_data_here') }}</div>
             </div>
           </template>
@@ -990,7 +989,7 @@ export default {
       span {
         display: inline-block;
         text-align: left;
-        font-size: $fontBaseTitle;
+        font-size: var(--font-base-title);
         &::before {
           content: '';
         }
@@ -1009,7 +1008,7 @@ export default {
         height: 100%;
         padding: 16px;
         border-radius: 12px;
-        background-color: map.get($bgColor, white);
+        background-color: var(--color-white);
         box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
       }
       .dashboard-label {
@@ -1017,13 +1016,13 @@ export default {
       }
       .dashboard-num {
         font-size: 65px;
-        color: map.get($color, primary);
+        color: var(--color-primary);
       }
       .charts-list {
         height: 100%;
         overflow: hidden;
         box-sizing: border-box;
-        background-color: map.get($bgColor, white);
+        background-color: var(--color-white);
         border-radius: 12px;
         box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.1);
         .charts-list-text {
@@ -1053,7 +1052,7 @@ export default {
             span {
               display: inline-block;
               text-align: left;
-              font-size: $fontBaseTitle;
+              font-size: var(--font-base-title);
               &::before {
                 content: '';
               }
@@ -1078,7 +1077,7 @@ export default {
           }
           .server-main {
             .title {
-              color: map.get($fontColor, dark);
+              color: var(--text-dark);
               font-weight: 500;
             }
           }
@@ -1093,7 +1092,7 @@ export default {
           li {
             display: inline-block;
             padding-right: 10px;
-            color: map.get($fontColor, dark);
+            color: var(--text-dark);
             font-weight: 600;
             span {
               padding-right: 5px;
@@ -1111,12 +1110,12 @@ export default {
     display: flex;
     flex-direction: column;
     height: 100%;
-    background-color: map.get($bgColor, white);
+    background-color: var(--color-white);
     border-radius: 4px;
     justify-content: center;
     align-items: center;
     .txt {
-      font-size: $fontBaseTitle;
+      font-size: var(--font-base-title);
       color: rgba(0, 0, 0, 0.43);
     }
   }

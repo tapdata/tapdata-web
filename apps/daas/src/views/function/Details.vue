@@ -100,7 +100,7 @@ export default {
 <style lang="scss" scoped>
 .function-details-wrapper {
   .details-value {
-    color: map.get($fontColor, dark);
+    color: var(--text-dark);
   }
 
   :deep(.el-form) {

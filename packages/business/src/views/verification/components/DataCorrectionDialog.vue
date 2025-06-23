@@ -276,7 +276,7 @@ export default {
       top: 0;
       bottom: 0;
       position: absolute;
-      background-color: map.get($color, primary);
+      background-color: var(--color-primary);
       //background-color: #bcbfc3;
     }
   }

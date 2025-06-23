@@ -49,13 +49,13 @@
         transition: background, color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
 
         &:hover {
-          color: map.get($color, primary);
+          color: var(--color-primary);
           background: $hoverBg;
         }
       }
 
       &-logo {
-        color: map.get($color, primary);
+        color: var(--color-primary);
       }
 
       .title-input-wrap {
@@ -69,7 +69,7 @@
             border-color: #dcdfe6;
           }
           .title-input-icon {
-            color: map.get($color, primary);
+            color: var(--color-primary);
           }
         }
 
@@ -89,9 +89,9 @@
           transition: border-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
 
           &:focus {
-            border-color: map.get($color, primary);
+            border-color: var(--color-primary);
             & + .title-input-icon {
-              color: map.get($color, primary);
+              color: var(--color-primary);
             }
           }
         }
@@ -126,7 +126,7 @@
 
         &:hover,
         &.active {
-          color: map.get($color, primary);
+          color: var(--color-primary);
           background: $hoverBg;
         }
       }

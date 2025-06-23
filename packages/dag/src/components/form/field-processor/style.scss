@@ -6,7 +6,7 @@
     color: red;
   }
   .icon-color {
-    color: map.get($iconFillColor, normal);
+    color: var(--icon-n2);
   }
   .processor-ml-10 {
     padding-left: 10px;
@@ -21,16 +21,16 @@
   }
   .noData {
     font-size: 12px;
-    color: map.get($bgColor, special);
+    color: var(--bg-special);
   }
   .page__current {
     width: 22px;
     height: 22px;
     font-size: 14px;
     font-weight: 400;
-    color: map.get($color, primary);
+    color: var(--color-primary);
     line-height: 22px;
-    background-color: map.get($bgColor, pageCount);
+    background-color: var(--bg-pageCount);
   }
   .task-form__text {
     display: inline-block;
@@ -49,22 +49,22 @@
     font-size: 16px;
     &:hover,
     &.is-plain:focus:hover {
-      border-color: map.get($color, primary);
-      background-color: map.get($color, white);
+      border-color: var(--color-primary);
+      background-color: var(--color-white);
     }
   }
   .task-form-body {
     display: flex;
     height: 80vh;
-    border: 1px solid map.get($borderColor, light);
+    border: 1px solid var(--border-light);
     border-radius: 4px;
     .task-form-left {
       padding-top: 8px;
       width: 200px;
-      border-right: 1px solid map.get($borderColor, light);
+      border-right: 1px solid var(--border-light);
       .table-name {
         font-size: 12px;
-        color: map.get($fontColor, normal);
+        color: var(--text-normal);
         font-weight: 500;
       }
       .line-height {
@@ -77,19 +77,19 @@
       overflow-x: hidden;
       overflow-y: auto;
       li {
-        background: map.get($bgColor, white);
+        background: var(--color-white);
         border-left: 2px solid transparent;
-        border-bottom: 1px solid map.get($borderColor, light);
+        border-bottom: 1px solid var(--border-light);
         display: flex;
         padding: 10px;
         &:hover {
-          background: map.get($bgColor, disactive);
+          background: var(--bg-disactive);
           cursor: pointer;
-          border-left-color: map.get($color, primary);
+          border-left-color: var(--color-primary);
         }
         &.active {
-          background: map.get($bgColor, disactive);
-          border-left-color: map.get($color, primary);
+          background: var(--bg-disactive);
+          border-left-color: var(--color-primary);
           cursor: pointer;
         }
         .task-form-text-box {
@@ -144,17 +144,17 @@
 
       &:hover,
       &:focus {
-        border-color: map.get($color, primary);
+        border-color: var(--color-primary);
       }
     }
     .row-deleted {
-      color: map.get($color, disable);
+      color: var(--color-disable);
     }
     .color-darkorange {
       color: darkorange;
     }
     .field-mapping__icon {
-      color: map.get($color, primary);
+      color: var(--color-primary);
     }
     .field-mapping-table__default_value {
       overflow: hidden;
@@ -194,19 +194,19 @@
         border-bottom: 0;
       }
       &:hover {
-        border-right: 1px solid map.get($borderColor, light);
+        border-right: 1px solid var(--border-light);
       }
     }
     th {
-      color: map.get($fontColor, normal);
+      color: var(--text-normal);
       font-weight: 500;
       white-space: nowrap;
-      background-color: map.get($bgColor, normal);
+      background-color: var(--bg-normal);
     }
   }
   .el-table__body {
     td {
-      color: map.get($fontColor, light);
+      color: var(--text-light);
     }
   }
   &:after {

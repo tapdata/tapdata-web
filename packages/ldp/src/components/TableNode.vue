@@ -265,7 +265,7 @@ export default {
     position: static;
 
     .df-node-text {
-      font-size: $fontBaseTitle;
+      font-size: var(--font-base-title);
     }
 
     .df-node-text-tooltip {

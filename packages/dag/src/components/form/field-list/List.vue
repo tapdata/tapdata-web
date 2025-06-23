@@ -105,7 +105,7 @@ export default {
 .field-inference__list {
   height: 100%;
   :deep(.is-deleted) {
-    color: map.get($color, disable);
+    color: var(--color-disable);
   }
 }
 </style>

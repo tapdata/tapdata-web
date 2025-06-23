@@ -933,10 +933,10 @@ initTask()
         width: auto;
         &.is-process {
           color: #fff;
-          border-color: map.get($color, primary);
+          border-color: var(--color-primary);
 
           .el-step__icon {
-            background-color: map.get($color, primary);
+            background-color: var(--color-primary);
           }
         }
       }
@@ -952,7 +952,7 @@ initTask()
         text-overflow: ellipsis;
         white-space: nowrap;
         &.is-process {
-          color: map.get($color, primary);
+          color: var(--color-primary);
         }
       }
       .el-step__description {

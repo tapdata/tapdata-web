@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { alarmApi, alarmMailApi, alarmRuleApi, settingsApi } from '@tap/api'
+import { VTable } from '@tap/component/src/base/v-table'
 import {
   AdminOutlined,
   FilterOutlined,
   MemberOutlined,
-  Modal,
-  VTable,
-} from '@tap/component'
+} from '@tap/component/src/icon'
+import { Modal } from '@tap/component/src/modal'
 import i18n from '@tap/i18n'
-import { ElMessage, ElMessageBox } from 'element-plus'
 import { cloneDeep } from 'lodash-es'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'

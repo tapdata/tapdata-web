@@ -727,7 +727,7 @@ $sidebarBg: #fff;
 
   &.active,
   &:not(.disabled):hover {
-    color: map.get($color, primary);
+    color: var(--color-primary);
     background: $hoverBg;
   }
 }

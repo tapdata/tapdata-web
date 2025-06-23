@@ -254,7 +254,7 @@ export default {
     :deep(.el-collapse-item__header) {
       padding-bottom: 5px;
       border-bottom: 0;
-      color: map.get($color, primary);
+      color: var(--color-primary);
       font-size: 12px;
       .el-collapse-item__arrow {
         margin-left: 6px;

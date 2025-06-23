@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { metadataInstancesApi } from '@tap/api'
-import { VIcon, VirtualSelect } from '@tap/component'
 import i18n from '@tap/i18n'
-import { ElButton, ElDialog, ElIcon, ElInput, ElMessage } from 'element-plus'
 import { cloneDeep, uniqueId } from 'lodash-es'
 import { computed, ref } from 'vue'
 import { RecycleScroller } from 'vue-virtual-scroller'
+
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
 interface Field {
   id: string
@@ -359,7 +359,7 @@ defineExpose({
                 >
                   {{ filterList.indexOf(item) + 1 }}
                 </div>
-                <VirtualSelect
+                <ElSelectV2
                   v-model="item.source"
                   :item-size="30"
                   :options="sourceFields"
@@ -373,7 +373,7 @@ defineExpose({
                   filterable
                   class="flex-fill"
                 />
-                <VirtualSelect
+                <ElSelectV2
                   v-model="item.target"
                   :item-size="34"
                   :options="targetFields"

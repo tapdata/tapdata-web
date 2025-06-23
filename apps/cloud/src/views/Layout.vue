@@ -675,7 +675,7 @@ export default defineComponent({
 
   a {
     outline: none;
-    color: map.get($color, primary);
+    color: var(--color-primary);
     text-decoration: underline;
   }
 
@@ -709,14 +709,14 @@ export default defineComponent({
 
       &:hover,
       &:focus {
-        color: map.get($color, primary);
-        border-color: map.get($color, primary);
+        color: var(--color-primary);
+        border-color: var(--color-primary);
         background-color: #fff;
       }
     }
 
     .driver-popover-next-btn {
-      background-color: map.get($color, primary);
+      background-color: var(--color-primary);
       color: #fff;
 
       &:hover,

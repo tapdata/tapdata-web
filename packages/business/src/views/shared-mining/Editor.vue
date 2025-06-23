@@ -46,6 +46,7 @@ export default {
       dagForm: {
         cdcConcurrent: false,
         cdcConcurrentWriteNum: 4,
+        increaseReadSize: 1,
       },
       schemaData: null,
       schemaScope: null,
@@ -146,6 +147,8 @@ export default {
           // 获取连接信息
           const con = await databaseTypesApi.pdkHash(node.attrs.pdkHash)
           const nodeProperties = con.properties?.node?.properties
+
+          this.dagForm.increaseReadSize = node.increaseReadSize ?? 1
 
           if (!nodeProperties || !Object.keys(nodeProperties).length) {
             this.schemaData = null
@@ -264,7 +267,8 @@ export default {
 
     saveTaskDag() {
       const { dag } = this
-      const { cdcConcurrent, cdcConcurrentWriteNum } = this.dagForm
+      const { cdcConcurrent, cdcConcurrentWriteNum, increaseReadSize } =
+        this.dagForm
 
       const getFormValues = this.$refs.schemaToForm?.getFormValues() || {}
       dag.nodes.forEach((el) => {
@@ -278,6 +282,7 @@ export default {
           Object.assign(el, {
             nodeConfig: formVal.nodeConfig,
             storageTime: this.editForm.storageTime,
+            increaseReadSize,
           })
         }
       })
@@ -360,6 +365,13 @@ export default {
           v-model="dagForm.cdcConcurrentWriteNum"
           class="ml-4"
           :min="0"
+        />
+      </ElFormItem>
+      <ElFormItem :label="$t('packages_dag_nodes_database_zengliangmeipici')">
+        <ElInputNumber
+          v-model="dagForm.increaseReadSize"
+          :min="1"
+          controls-position="right"
         />
       </ElFormItem>
       <div

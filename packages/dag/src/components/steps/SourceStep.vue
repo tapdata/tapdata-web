@@ -691,7 +691,7 @@ export default defineComponent({
   }
 
   &.active {
-    $primary: map.get($color, primary);
+    $primary: var(--color-primary);
     border-color: $primary !important;
     box-shadow: 0 2px 16px rgba(44, 101, 255, 0.2);
 

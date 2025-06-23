@@ -493,16 +493,16 @@ export default {
 .nav-list {
   overflow: hidden auto;
   li {
-    background-color: map.get($bgColor, white);
+    background-color: #fff;
     box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
-    border-bottom: 1px solid map.get($borderColor, light);
+    border-bottom: 1px solid #e4e7ed;
     border-left: 2px solid transparent;
     &:hover,
     &.active {
-      background: map.get($bgColor, disactive);
+      background: rgba(106, 161, 255, 0.1);
       cursor: pointer;
-      color: map.get($color, primary);
-      border-left-color: map.get($color, primary);
+      color: #3b47e5;
+      border-left-color: #3b47e5;
     }
     .task-form-text-box {
       //width: 140px;
@@ -532,8 +532,8 @@ export default {
   font-size: 16px;
   &:hover,
   &.is-plain:focus:hover {
-    border-color: map.get($color, primary);
-    background-color: map.get($color, white);
+    border-color: #3b47e5;
+    background-color: #fff;
   }
 }
 .content__list {
@@ -547,39 +547,22 @@ export default {
   height: 22px;
   font-size: 14px;
   font-weight: 400;
-  color: map.get($color, primary);
+  color: #3b47e5;
   line-height: 22px;
-  background-color: map.get($bgColor, pageCount);
+  background-color: rgba(44, 101, 255, 0.08);
 }
 .nav-filter__list {
   background-color: #e5e6eb;
-  /*.el-select {
-    :deep(.el-input) {
-      .el-input__inner {
-        background-color: #e5e6eb;
-        border-color: #e5e6eb;
-        color: map.get($fontColor, dark);
-
-        &:hover {
-          background-color: #fff;
-          border-color: map.get($color, primary);
-        }
-      }
-      .el-select__caret {
-        color: map.get($fontColor, dark);
-      }
-    }
-  }*/
 }
 .nav-filter__item {
   &.active {
-    background: map.get($bgColor, disactive);
+    background: rgba(106, 161, 255, 0.1);
   }
 }
 .update-list-select {
   &.error {
     :deep(.el-input__inner) {
-      border-color: map.get($color, danger);
+      border-color: #f54a45;
     }
   }
 }

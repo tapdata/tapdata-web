@@ -1284,7 +1284,7 @@ const handleTabChange = (tab: string) => {
                   <div class="list-box-header-left">
                     <img
                       class="mr-4 rounded-xl"
-                      src="../../assets/images/serve.svg"
+                      src="../../assets/static/serve.svg"
                     />
                     <i
                       class="circular mr-2 mt-2"
@@ -1682,7 +1682,7 @@ const handleTabChange = (tab: string) => {
                   <div class="list-box-header-left">
                     <img
                       class="mr-4 rounded-xl"
-                      src="../../assets/images/serve.svg"
+                      src="../../assets/static/serve.svg"
                     />
                     <i
                       class="circular mr-2 mt-2"
@@ -1887,14 +1887,14 @@ const handleTabChange = (tab: string) => {
   font-weight: 400;
   font-size: 10px;
   line-height: 14px;
-  color: map.get($color, tag);
-  border: 1px solid map.get($bgColor, tag);
+  color: var(--color-tag);
+  border: 1px solid var(--bg-tag);
   border-radius: 2px;
   margin-left: 5px;
 }
 .view-radio-group {
   :deep(.el-radio-button__orig-radio:checked + .el-radio-button__inner) {
-    background-color: map.get($color, primary);
+    background-color: var(--color-primary);
     color: #fff;
   }
 }
@@ -1911,7 +1911,7 @@ const handleTabChange = (tab: string) => {
     bottom: 0;
     left: 0;
     border-radius: 10px;
-    background-color: map.get($color, primary);
+    background-color: var(--color-primary);
   }
 }
 
@@ -1938,14 +1938,14 @@ const handleTabChange = (tab: string) => {
   .ip {
     display: inline-block;
     padding: 2px 10px;
-    color: map.get($color, primary);
+    color: var(--color-primary);
     background-color: #ebf3fd;
     border-radius: 6px;
   }
 
   .header {
     padding: 15px 20px;
-    background: map.get($bgColor, white);
+    background: var(--color-white);
     overflow: hidden;
     border-bottom: 1px solid #dedee4;
     box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
@@ -1953,13 +1953,13 @@ const handleTabChange = (tab: string) => {
 
     .title {
       font-size: 16px;
-      color: map.get($fontColor, dark);
+      color: var(--text-dark);
       font-weight: 600;
     }
 
     .log_btn {
       font-size: 14px;
-      color: map.get($color, primary);
+      color: var(--color-primary);
       cursor: pointer;
       float: right;
     }
@@ -1992,7 +1992,7 @@ const handleTabChange = (tab: string) => {
         box-sizing: border-box;
 
         .list-box {
-          background-color: map.get($bgColor, white);
+          background-color: var(--color-white);
           //height: 340px;
           .list-box-header {
             overflow: hidden;
@@ -2023,11 +2023,11 @@ const handleTabChange = (tab: string) => {
                   white-space: nowrap;
                   text-overflow: ellipsis;
                   overflow: hidden;
-                  color: map.get($fontColor, dark);
+                  color: var(--text-dark);
                 }
 
                 .uuid {
-                  color: map.get($fontColor, slight);
+                  color: var(--text-slight);
                 }
               }
             }
@@ -2050,17 +2050,17 @@ const handleTabChange = (tab: string) => {
             justify-content: center;
             padding: 16px 0;
             text-align: center;
-            border-top: 1px solid map.get($borderColor, light);
+            border-top: 1px solid var(--border-light);
 
             .usageRate {
               width: 50%;
               text-align: center;
               font-size: 12px;
               font-weight: 400;
-              color: map.get($fontColor, slight);
+              color: var(--text-slight);
 
               div {
-                color: map.get($fontColor, dark);
+                color: var(--text-dark);
               }
             }
 
@@ -2083,11 +2083,11 @@ const handleTabChange = (tab: string) => {
               margin: 0 !important;
               line-height: 35px;
               font-size: 12px;
-              background-color: map.get($bgColor, normal);
+              background-color: var(--bg-normal);
 
               .txt {
-                font-size: $fontBaseTitle;
-                color: map.get($fontColor, light);
+                font-size: var(--font-base-title);
+                color: var(--text-light);
               }
             }
 
@@ -2096,13 +2096,13 @@ const handleTabChange = (tab: string) => {
               margin: 0 !important;
               margin-bottom: 5px;
               line-height: 35px;
-              border-bottom: 1px solid map.get($borderColor, light);
+              border-bottom: 1px solid var(--border-light);
 
               .txt {
                 display: inline-block;
                 width: 120px;
-                font-size: $fontBaseTitle;
-                color: map.get($fontColor, dark);
+                font-size: var(--font-base-title);
+                color: var(--text-dark);
                 text-overflow: ellipsis;
                 white-space: nowrap;
 
@@ -2144,18 +2144,18 @@ const handleTabChange = (tab: string) => {
           .usageRate {
             padding-left: 12px;
             font-size: 12px;
-            color: map.get($fontColor, light);
+            color: var(--text-light);
           }
 
           .uuid {
             padding: 5px 0;
             font-size: 12px;
-            color: map.get($fontColor, light);
+            color: var(--text-light);
           }
 
           span {
             font-size: 14px;
-            color: map.get($fontColor, normal);
+            color: var(--text-normal);
           }
         }
       }
@@ -2165,7 +2165,7 @@ const handleTabChange = (tab: string) => {
       }
 
       .red {
-        color: map.get($color, danger);
+        color: var(--color-danger);
       }
 
       .bgred {
@@ -2173,7 +2173,7 @@ const handleTabChange = (tab: string) => {
       }
 
       .green {
-        color: map.get($color, primary);
+        color: var(--color-primary);
       }
 
       .bggreen {
@@ -2187,9 +2187,9 @@ const handleTabChange = (tab: string) => {
     height: calc(100% - 60px);
     align-items: center;
     justify-content: center;
-    color: map.get($color, primary);
+    color: var(--color-primary);
     font-size: 16px;
-    background-color: map.get($bgColor, white);
+    background-color: var(--color-white);
   }
 
   .edit-agent-form {

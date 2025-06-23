@@ -280,7 +280,7 @@ export default {
     }
   }
   .status-block {
-    color: map.get($fontColor, white);
+    color: var(--text-white);
   }
 }
 </style>

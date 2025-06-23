@@ -526,7 +526,7 @@ export default {
   }
 
   &.active {
-    border-color: map.get($color, primary) !important;
+    border-color: var(--color-primary) !important;
     .mode-card-image {
     }
   }
@@ -571,7 +571,7 @@ export default {
     top: 50%;
     transform: translateY(-50%);
     position: absolute;
-    background-color: map.get($color, primary);
+    background-color: var(--color-primary);
   }
 }
 </style>

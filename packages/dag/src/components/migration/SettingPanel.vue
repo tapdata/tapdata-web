@@ -1895,11 +1895,11 @@ defineExpose({
   }
 
   :deep(.formily-element-plus-form-item-label label) {
-    font-size: $fontBaseTitle;
+    font-size: var(--font-base-title);
   }
 
   :deep(.el-collapse-item__header) {
-    font-size: $fontBaseTitle;
+    font-size: var(--font-base-title);
     font-weight: 500;
   }
 }

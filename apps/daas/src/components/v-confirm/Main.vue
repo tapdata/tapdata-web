@@ -136,7 +136,7 @@ export default {
     }
     &__title {
       font-size: 14px;
-      color: map.get($fontColor, normal);
+      color: var(--text-normal);
     }
     &__content {
       padding: 10px 24px;

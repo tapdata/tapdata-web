@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { Check } from '@element-plus/icons-vue'
 import { databaseTypesApi, inspectApi, taskApi } from '@tap/api'
-import { Modal } from '@tap/component'
-import { InfiniteSelect } from '@tap/form'
+import { Modal } from '@tap/component/src/modal'
+import InfiniteSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 import i18n from '@tap/i18n'
-import Time from '@tap/shared/src/time'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import Time from '@tap/shared/src/time.js'
 import { cloneDeep } from 'lodash-es'
 import {
   computed,
@@ -19,8 +18,8 @@ import { useRoute, useRouter } from 'vue-router'
 
 import PageContainer from '../../components/PageContainer.vue'
 import ConditionBox from './components/ConditionBox.vue'
-import { TABLE_PARAMS } from './components/const'
-import { inspectMethod as inspectMethodMap } from './const'
+import { TABLE_PARAMS } from './components/const.js'
+import { inspectMethod as inspectMethodMap } from './const.js'
 
 interface Timing {
   intervals: number
@@ -1112,7 +1111,7 @@ provide('ConnectorMap', ConnectorMap)
   margin-bottom: 24px;
   line-height: 22px;
   font-size: 14px;
-  color: map.get($fontColor, dark);
+  color: var(--text-dark);
 }
 
 // .form-item {
@@ -1152,7 +1151,7 @@ provide('ConnectorMap', ConnectorMap)
   }
 
   .js-editor {
-    border: 1px solid map.get($borderColor, light);
+    border: 1px solid var(--border-light);
   }
 }
 

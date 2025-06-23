@@ -166,14 +166,14 @@ export default {
     flex: 1;
     padding: 8px 0;
     line-height: 17px;
-    border-bottom: 1px solid map.get($borderColor, light);
+    border-bottom: 1px solid var(--border-light);
     .label {
-      font-size: $fontBaseTitle;
+      font-size: var(--font-base-title);
       color: rgba(0, 0, 0, 0.6);
     }
     .value {
-      font-size: $fontBaseTitle;
-      color: map.get($fontColor, dark);
+      font-size: var(--font-base-title);
+      color: var(--text-dark);
     }
   }
 }
@@ -185,11 +185,11 @@ export default {
     padding: 0 16px;
     height: 38px;
     line-height: 38px;
-    background: map.get($bgColor, normal);
+    background: var(--bg-normal);
   }
   .content {
     padding: 0 16px 8px 16px;
-    background-color: map.get($bgColor, white);
+    background-color: var(--color-white);
   }
 }
 </style>

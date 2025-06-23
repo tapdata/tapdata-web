@@ -1,13 +1,105 @@
 packages:
   - packages/*
   - apps/*
+  - dev/*
 onlyBuiltDependencies:
   - vue-demi
 ignoredBuiltDependencies:
-  - '@formily/vue'
-  - '@parcel/watcher'
+  - "@formily/vue"
+  - "@parcel/watcher"
   - core-js
   - ejs
   - fsevents
   - vue-echarts
   - yorkie
+catalog:
+  "@cn-xufei/vite-plugin-svg-icons": ^2.1.0
+  "@element-plus/icons-vue": ^2.1.0
+  "@figmania/anim": ^2.3.12
+  "@figmania/webcomponent": ^2.3.12
+  "@formily/element-plus": ^2.0.9
+  "@formily/json-schema": ^2.0.9
+  "@formily/path": ^2.0.12
+  "@formily/shared": ^2.0.9
+  "@iconify-json/lucide": ^1.2.45
+  "@iconify-json/mingcute": ^1.2.3
+  "@rushstack/eslint-patch": ^1.8.0
+  "@sxzz/eslint-config": ^6.1.1
+  "@sxzz/prettier-config": ^2.2.1
+  "@tiptap/core": ^2.12.0
+  "@tiptap/extension-bold": ^2.12.0
+  "@tiptap/extension-character-count": ^2.12.0
+  "@tiptap/extension-code-block": ^2.12.0
+  "@tiptap/extension-color": ^2.12.0
+  "@tiptap/extension-document": ^2.12.0
+  "@tiptap/extension-highlight": ^2.12.0
+  "@tiptap/extension-italic": ^2.12.0
+  "@tiptap/extension-list-item": ^2.12.0
+  "@tiptap/extension-paragraph": ^2.12.0
+  "@tiptap/extension-placeholder": ^2.12.0
+  "@tiptap/extension-text": ^2.12.0
+  "@tiptap/extension-text-style": ^2.12.0
+  "@tiptap/extension-underline": ^2.12.0
+  "@tiptap/pm": ^2.12.0
+  "@tiptap/starter-kit": ^2.12.0
+  "@tiptap/vue-3": ^2.12.0
+  "@tsconfig/node20": ^20.1.4
+  "@types/jsdom": ^21.1.7
+  "@types/lodash-es": ^4.17.12
+  "@types/node": ^20.14.5
+  "@types/qs": ^6.9.15
+  "@vitejs/plugin-vue": ^4.4.0
+  "@vitejs/plugin-vue-jsx": ^3.0.2
+  "@vue/shared": ^3.4.35
+  "@vue/tsconfig": ^0.5.1
+  "@vueuse/core": ^10.5.0
+  ace-builds: ^1.4.13
+  ali-oss: ^6.17.1
+  axios: ^0.21.1
+  core-js: ^3.8.3
+  cron-parser: ^4.6.0
+  cross-env: ^7.0.3
+  crypto-js: ^4.0.0
+  dagre: ^0.8.5
+  dayjs: ^1.11.2
+  driver.js: ^1.2.1
+  echarts: ^5.0.2
+  eslint: ^9.23.0
+  eslint-config-prettier: ^8.3.0
+  eslint-plugin-prettier: ^4.0.0
+  eslint-plugin-vue: ^8.0.3
+  express: ^4.17.1
+  fecha: ^4.2.3
+  file-loader: ^6.2.0
+  github-markdown-css: ^4.0.0
+  inquirer: "9"
+  inquirer-autocomplete-prompt: ^3.0.1
+  jsdom: ^24.1.0
+  jsplumb: ^2.15.6
+  juice: ^11.0.1
+  lodash: ^4.17.15
+  lodash-es: ^4.17.21
+  markdown-it: ^13.0.1
+  mockjs: ^1.1.0
+  mousetrap: ^1.6.5
+  npm-run-all2: ^6.2.0
+  prettier: ^3.5.3
+  requestidlecallback: ^0.3.0
+  resize-observer-polyfill: ^1.5.1
+  rollup-plugin-visualizer: ^5.14.0
+  sass: ^1.87.0
+  tiny-emitter: ^2.1.0
+  typescript: ^5.4.5
+  vite: ^6.2.4
+  vue: ^3.0.0
+  vue-echarts: ^6.0.0
+  vue-i18n: ^11.1.5
+  vue-json-pretty: ^2.4.0
+  vue-json-viewer: ^2.2.15
+  vue-request: ^2.0.4
+  vue-router: ^4.0.8
+  vue-tsc: ^2.0.21
+  vue-virtual-scroll-list: ^2.3.4
+  vue-virtual-scroller: 2.0.0-beta.8
+  vuedraggable: ^4.1.0
+  vuex: ^4.0.2

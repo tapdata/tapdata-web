@@ -44,7 +44,7 @@ export default defineComponent({
       stroke-dasharray: 90, 150;
       stroke-dashoffset: 0;
       stroke-width: 4;
-      stroke: map.get($color, primary);
+      stroke: var(--color-primary);
       stroke-linecap: round;
     }
   }

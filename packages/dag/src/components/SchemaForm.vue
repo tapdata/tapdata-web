@@ -63,10 +63,10 @@ export default {
 
   // 覆盖数字输入框的宽度
   .formily-element-form-item {
-    font-size: $fontBaseTitle;
+    font-size: var(--font-base-title);
     &-label {
       label {
-        color: map.get($fontColor, light);
+        color: var(--text-light);
       }
     }
     .el-input-number {

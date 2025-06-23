@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { BaseFieldSelect as FieldSelect } from '@tap/form'
+import { FieldSelect } from '@tap/form/src/components/field-select/FieldSelect'
 import { debounce } from 'lodash-es'
-import { computed, nextTick, ref, useTemplateRef, watchEffect } from 'vue'
+import { computed, nextTick, ref, useTemplateRef, watch, watchEffect } from 'vue'
 import type { ElInput } from 'element-plus'
 
 // Define props with TypeScript types
@@ -75,6 +75,10 @@ const updateSelectAll = () => {
     selectFields.value.length >= filteredOptions.value.length &&
     filteredNames.value.every((item) => selectFields.value.includes(item))
 }
+
+watch(() => props.options, (newVal) => {
+  filteredOptions.value = newVal || []
+})
 
 watchEffect(() => {
   updateSelectAll()

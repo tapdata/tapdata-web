@@ -1397,7 +1397,7 @@ export default {
     gap: 8px;
     font-weight: 400;
     &.is-active {
-      color: map.get($color, primary);
+      color: var(--color-primary);
     }
   }
   :deep(.el-collapse-item__arrow) {
@@ -1447,10 +1447,10 @@ export default {
 
   // 覆盖数字输入框的宽度
   :deep(.formily-element-form-item) {
-    font-size: $fontBaseTitle;
+    font-size: var(--font-base-title);
     .formily-element-form-item-label {
       label {
-        color: map.get($fontColor, light);
+        color: var(--text-light);
       }
     }
     .el-input-number {

@@ -533,11 +533,11 @@ export default {
     //   height: 300px;
     // }
     width: 100%;
-    background-color: map.get($bgColor, white);
+    background-color: var(--color-white);
     border-radius: 4px;
     .share-detail-head-left {
       width: 260px;
-      border-right: 1px solid map.get($borderColor, light);
+      border-right: 1px solid var(--border-light);
       .head-label {
         min-width: 100px;
       }

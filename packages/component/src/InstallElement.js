@@ -15,9 +15,9 @@ import { CloseIcon } from './CloseIcon'
 import { DownBoldOutlined } from './DownBoldOutlined'
 import { Modal } from './modal'
 import { RightBoldOutlined } from './RightBoldOutlined'
-import 'element-plus/theme-chalk/src/message.scss'
-import 'element-plus/theme-chalk/src/message-box.scss'
-import 'element-plus/theme-chalk/src/notification.scss'
+// import 'element-plus/theme-chalk/src/message.scss'
+// import 'element-plus/theme-chalk/src/message-box.scss'
+// import 'element-plus/theme-chalk/src/notification.scss'
 
 export const installElement = (app) => {
   app.use(ElLoading)

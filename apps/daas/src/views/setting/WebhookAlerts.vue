@@ -608,7 +608,7 @@ onMounted(() => {
           <el-collapse
             v-if="historyState.list.length"
             v-model="historyState.collapse"
-            class="history-collapse border-0"
+            class="history-collapse"
           >
             <el-collapse-item
               v-for="item in historyState.list"
@@ -739,7 +739,7 @@ $unreadColor: #ee5353;
   .title {
     padding-bottom: 20px;
     font-size: 14px;
-    color: map.get($fontColor, dark);
+    color: var(--text-dark);
     font-weight: bold;
   }
   .content {

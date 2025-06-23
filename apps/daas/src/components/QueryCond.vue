@@ -204,7 +204,7 @@ export default {
       float: left;
       display: inline-block;
       text-align: center;
-      color: map.get($fontColor, slight);
+      color: var(--text-slight);
       font-size: 12px;
       cursor: pointer;
       box-sizing: border-box;
@@ -246,7 +246,7 @@ export default {
         line-height: 28px;
         text-align: center;
         font-size: 12px;
-        background-color: map.get($bgColor, disable);
+        background-color: var(--bg-disable);
       }
       .e-select {
         width: 160px;
@@ -258,7 +258,7 @@ export default {
     .selectSql {
       padding-top: 10px;
       font-size: 12px;
-      color: map.get($fontColor, slight);
+      color: var(--text-slight);
       overflow: hidden;
       div {
         width: 100%;
@@ -286,7 +286,7 @@ export default {
   }
   .el-switch__label * {
     font-size: 12px !important;
-    color: map.get($fontColor, slight);
+    color: var(--text-slight);
   }
 }
 .field {

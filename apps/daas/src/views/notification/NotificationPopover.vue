@@ -123,13 +123,19 @@ export default {
     },
     handleGo(item) {
       switch (item.system) {
+        case 'migration':
+          this.$router.push({
+            name: 'MigrateEditor',
+            params: {
+              id: item.sourceId,
+            },
+          })
+          break
         case 'dataFlow':
           this.$router.push({
-            name: 'job',
-            query: {
+            name: 'DataflowEditor',
+            params: {
               id: item.sourceId,
-              isMoniting: true,
-              mapping: item.mappingTemplate,
             },
           })
           break
@@ -296,7 +302,7 @@ export default {
                   <span
                     v-else
                     class="cursor-pointer px-1 primary"
-                    @click="handleGo(item)"
+                    @click.stop="handleGo(item)"
                   >
                     {{ item.serverName }}
                   </span>
@@ -389,7 +395,7 @@ export default {
                 </div>
                 <div>
                   <span :class="[`level-${item.levelType}`]"
-                    >【{{ item.levelLabel }}】</span
+                    >【{{ item.title }}】</span
                   >
                   <template>
                     <span>{{ item.title }}</span>
@@ -421,8 +427,8 @@ export default {
   .notification-popover-wrap {
     overflow: hidden;
     .el-tabs__header {
-      color: map.get($fontColor, light);
-      border-bottom: 1px solid map.get($borderColor, light);
+      color: var(--text-light);
+      border-bottom: 1px solid var(--border-light);
       .el-tabs__nav-wrap {
         .el-tabs__nav-scroll {
           width: 280px;
@@ -433,9 +439,9 @@ export default {
         font-weight: 400;
 
         &.is-active {
-          // color: map.get($color, primary);
+          // color: var(--color-primary);
           font-weight: 500;
-          border-color: map.get($color, primary);
+          border-color: var(--color-primary);
         }
       }
       .el-tabs__active-bar {
@@ -468,7 +474,7 @@ export default {
   .notice-footer {
     display: flex;
     justify-content: space-between;
-    font-size: $fontBaseTitle;
+    font-size: var(--font-base-title);
     height: 40px;
     line-height: 40px;
     padding: 0 25px;
@@ -478,7 +484,7 @@ export default {
     .more-text {
       display: inline-block;
       cursor: pointer;
-      color: map.get($fontColor, light);
+      color: var(--text-light);
     }
   }
   .tab-item {
@@ -497,11 +503,11 @@ export default {
       box-sizing: border-box;
       .notification-item {
         padding: 5px 20px 4px 20px;
-        border-bottom: 1px solid map.get($borderColor, light);
-        font-size: $fontBaseTitle;
-        color: map.get($fontColor, light);
+        border-bottom: 1px solid var(--border-light);
+        font-size: var(--font-base-title);
+        color: var(--text-light);
         .primary {
-          color: map.get($color, primary);
+          color: var(--color-primary);
         }
         .unread-1zPaAXtSu {
           top: 22px;
@@ -519,8 +525,8 @@ export default {
         }
         .item-time {
           margin-top: 5px;
-          color: map.get($fontColor, light);
-          font-size: $fontBaseTitle;
+          color: var(--text-light);
+          font-size: var(--font-base-title);
         }
       }
     }

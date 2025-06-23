@@ -12,7 +12,7 @@
   "dependencies": {
     "@tap/business": "workspace:*",
     "@tap/ldp": "workspace:*",
-    "core-js": "^3.8.3",
-    "tiny-emitter": "^2.1.0"
+    "core-js": "catalog:",
+    "tiny-emitter": "catalog:"
   }
 }

@@ -6,6 +6,10 @@ export default {
   name: 'VTable',
   components: { ColumnItem },
   props: {
+    tableClass: {
+      type: String,
+      default: '',
+    },
     columns: {
       type: Array,
       default: () => {
@@ -110,6 +114,12 @@ export default {
     table() {
       return this.$refs?.table
     },
+    tableProps() {
+      return {
+        ...this.$attrs,
+        class: this.tableClass,
+      }
+    },
   },
   watch: {
     data: {
@@ -202,11 +212,12 @@ export default {
 <template>
   <div ref="vTableContainer" class="v-table-container">
     <ElTable
-      v-bind="$attrs"
+      v-bind="tableProps"
       ref="table"
       v-loading="loading"
       :data="list"
       class="table-container__table"
+      :class="tableClass"
       @selection-change="handleSelectionChange"
     >
       <ColumnItem v-for="(item, index) in columns" :key="index" :item="item">

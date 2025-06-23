@@ -1,7 +1,8 @@
 <script>
 import { userLogsApi, usersApi } from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { DatetimeRange, SelectList } from '@tap/component'
+import DatetimeRange from '@tap/component/src/filter-bar/DatetimeRange.vue'
+import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import Cookie from '@tap/shared/src/cookie'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
@@ -186,7 +187,7 @@ export default {
   .filter-datetime-range {
     padding-left: 0;
     text-align: left;
-    font-size: $fontBaseTitle;
+    font-size: var(--font-base-title);
     line-height: 32px;
     :deep(.filter-datetime:first-child) {
       padding-left: 0;
@@ -196,7 +197,7 @@ export default {
     }
 
     :deep(.el-input) {
-      font-size: $fontBaseTitle;
+      font-size: var(--font-base-title);
     }
   }
   .header {
@@ -222,11 +223,11 @@ export default {
       justify-content: space-between;
       align-items: center;
       line-height: 50px;
-      border-bottom: 1px solid map.get($borderColor, light);
-      font-size: $fontBaseTitle;
+      border-bottom: 1px solid var(--border-light);
+      font-size: var(--font-base-title);
       color: #202d40;
       .item-time {
-        color: map.get($fontColor, light);
+        color: var(--text-light);
         font-weight: 400;
       }
     }

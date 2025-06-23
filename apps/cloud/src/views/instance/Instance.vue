@@ -2180,28 +2180,28 @@ export default {
   }
 
   .instance-table__empty {
-    color: map.get($fontColor, light);
+    color: var(--text-light);
   }
 
   .upgrade-text {
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
-    color: map.get($color, dark);
+    color: var(--text-dark);
   }
 
   .upgrade-version {
     font-weight: 500;
     font-size: 14px;
     line-height: 20px;
-    color: map.get($color, dark);
+    color: var(--text-dark);
   }
 
   .upgrade-desc {
     font-weight: 400;
     font-size: 14px;
     line-height: 17px;
-    color: map.get($color, light);
+    color: var(--text-light);;
   }
 
   .imgBox {
@@ -2264,12 +2264,12 @@ export default {
 }
 
 :deep(.el-dropdown-menu__item.dropdown-item--disabled) {
-  color: map.get($color, disable);
+  color: var(--color-disable);
   cursor: default;
 
   &:hover {
     background: unset;
-    color: map.get($color, disable);
+    color: var(--color-disable);
   }
 }
 

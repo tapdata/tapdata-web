@@ -210,8 +210,8 @@ export default {
 <style lang="scss" scoped>
 .filter-icon {
   padding-right: 10px;
-  font-size: $fontBaseTitle;
-  color: map.get($color, primary);
+  font-size: var(--font-base-title);
+  color: var(--color-primary);
 }
 .SelectClassify-tree {
   max-height: 500px;

@@ -6,7 +6,7 @@
 
     &-item {
       margin: 0;
-      color: map.get($fontColor, light);
+      color: var(--text-light);
       cursor: pointer;
       border-radius: 8px 8px 0 0;
       transition: color .1s ease-in,background-color .1s ease-in,border-color .1s ease-in,width .2s ease-in;
@@ -14,7 +14,7 @@
 
       &:not(.tab-bar-list-item--active):hover {
         background-color: rgba(31,35, 41, .05);
-        color: map.get($fontColor, normal);
+        color: var(--text-normal);
 
         .tab-bar-list-item__arc-angle {
           display: block;
@@ -32,7 +32,7 @@
 
       &--active {
         background-color: #fff;
-        color: map.get($color, primary);
+        color: var(--color-primary);
 
         .tab-bar-list-item__arc-angle {
           display: block;

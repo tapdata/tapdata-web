@@ -236,7 +236,7 @@ export default {
 .error-tips {
   background: #fdf6ec;
   border: 1px solid #f8e2c0;
-  color: map.get($color, warning);
+  color: var(--color-warning);
   line-height: 20px;
   max-height: 160px;
   text-overflow: ellipsis;
@@ -283,7 +283,7 @@ export default {
 .error-tips {
   background: #fdf6ec;
   border: 1px solid #f8e2c0;
-  color: map.get($color, warning);
+  color: var(--color-warning);
   line-height: 20px;
   max-height: 160px;
   text-overflow: ellipsis;

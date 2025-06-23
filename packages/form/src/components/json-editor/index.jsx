@@ -1,4 +1,3 @@
-import { useField } from '@formily/vue'
 import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import { computed, defineComponent } from 'vue'
 

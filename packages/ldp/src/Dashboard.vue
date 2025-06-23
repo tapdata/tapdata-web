@@ -709,7 +709,7 @@ export default {
   }
 
   :deep(.list__title__source) {
-    color: map.get($color, primary);
+    color: var(--color-primary);
     background: #e8f3ff;
   }
 
@@ -727,7 +727,7 @@ export default {
 
   :deep(.icon-color) {
     &:hover {
-      background-color: map.get($bgColor, hover);
+      background-color: var(--bg-hover);
     }
   }
 }
@@ -741,7 +741,7 @@ export default {
 
   :deep(.ldp-tree.is-drop),
   :deep(.is-drop .ldp-tree) {
-    box-shadow: 0px 0px 0px 2px map.get($color, primary) inset;
+    box-shadow: 0px 0px 0px 2px var(--color-primary) inset;
     & + .drop-mask {
       display: none !important;
     }
@@ -753,7 +753,7 @@ export default {
 
   :deep(.pipeline-desc) {
     background-color: #f8f8fa;
-    border-left: 4px solid map.get($color, primary);
+    border-left: 4px solid var(--color-primary);
     line-height: 22px;
     li {
       margin-left: 20px;

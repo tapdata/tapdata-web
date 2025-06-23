@@ -257,15 +257,15 @@ export default {
 .nav-list {
   overflow: hidden auto;
   li {
-    background-color: map.get($bgColor, white);
+    background-color: var(--color-white);
     box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
-    border-bottom: 1px solid map.get($borderColor, light);
+    border-bottom: 1px solid var(--border-light);
     border-left: 2px solid transparent;
     &:hover,
     &.active {
-      background: map.get($bgColor, disactive);
+      background: var(--bg-disactive);
       cursor: pointer;
-      border-left-color: map.get($color, primary);
+      border-left-color: var(--color-primary);
     }
     .task-form-text-box {
       //width: 140px;
@@ -295,8 +295,8 @@ export default {
   font-size: 16px;
   &:hover,
   &.is-plain:focus:hover {
-    border-color: map.get($color, primary);
-    background-color: map.get($color, white);
+    border-color: var(--color-primary);
+    background-color: var(--color-white);
   }
 }
 .content__list {
@@ -307,8 +307,8 @@ export default {
   height: 22px;
   font-size: 14px;
   font-weight: 400;
-  color: map.get($color, primary);
+  color: var(--color-primary);
   line-height: 22px;
-  background-color: map.get($bgColor, pageCount);
+  background-color: var(--bg-pageCount);
 }
 </style>

@@ -765,7 +765,7 @@ defineExpose({
 }
 .container-item {
   &.border-item {
-    border-bottom: 1px solid map.get($borderColor, light);
+    border-bottom: 1px solid var(--border-light);
   }
   &.button-line {
     margin-bottom: -1px;
@@ -776,15 +776,15 @@ defineExpose({
 }
 .box-line {
   padding: 8px 0;
-  border-top: 1px solid map.get($borderColor, light);
+  border-top: 1px solid var(--border-light);
 }
 .box-line__label {
-  color: map.get($fontColor, light);
+  color: var(--text-light);
 }
 .box-line__value {
   max-width: 280px;
   margin-top: 8px;
-  color: map.get($fontColor, dark);
+  color: var(--text-dark);
 }
 .img-box {
   width: 24px;

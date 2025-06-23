@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@tap/shared": "workspace:*",
-    "core-js": "^3.8.3",
-    "tiny-emitter": "^2.1.0",
-    "vue-i18n": "^11.1.5"
+    "core-js": "catalog:",
+    "tiny-emitter": "catalog:",
+    "vue-i18n": "catalog:"
   }
 }

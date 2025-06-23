@@ -1,0 +1,159 @@
+:root {
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
+  'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --code-font-family: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  --font-base-title: 14px;
+
+  --color-primary: #3b47e5;
+  --color-dprimary: #0e42d2;
+  --color-lprimary: #4080ff;
+  --color-disprimary: #94bfff;
+  --color-success: #00b42a;
+  --color-lsuccess: #e8ffea;
+  --color-danger: #f54a45;
+  --color-warning: #ff7d00;
+  --color-info: #75849b;
+  --color-lsuccess: #e9edf2;
+  --color-disable: #c9cdd4;
+  --color-white: #fff;
+  --color-tag: #008eff;
+  --color-secondary: #ff7d00;
+  --color-submenu: #f1f2f4;
+
+  --text-dark: #1d2129;
+  --text-normal: #333c4a;
+  --text-light: #535f72;
+  --text-slight: #c9cdd4;
+  --text-sslight: #86909c;
+  --text-white: #fff;
+
+  --bg-disable: #f7f8fa;
+  --bg-hover: #e5e6eb;
+  --bg-main: #f2f3f5;
+  --bg-normal: #fafafa;
+  --bg-form: rgba(239, 241, 244, 0.2);
+  --bg-special: #c9cdd4;
+  --bg-pageCount: rgba(44, 101, 255, 0.08);
+  --bg-disactive: rgba(106, 161, 255, 0.1);
+  --bg-tag: #009bff33;
+
+  --border-normal: #ddd;
+  --border-slight: #f6f7f7;
+  --border-light: #e4e7ed;
+  --border-form: #dcdfe6;
+  --border-aside: #e1e3e9;
+  --border-sslight: #cdd0d6;
+}
+
+:root {
+  
+    --el-color-primary: #3b47e5;
+    --el-color-primary-light-3: rgb(117.8, 126.2, 236.8);
+    --el-color-primary-light-5: #9da3f2;
+    --el-color-primary-light-7: rgb(196.2, 199.8, 247.2);
+    --el-color-primary-light-8: rgb(215.8, 218.2, 249.8);
+    --el-color-primary-light-9: rgb(235.4, 236.6, 252.4);
+    --el-color-primary-dark-2: rgb(47.2, 56.8, 183.2);
+    --el-color-success: #67c23a;
+    --el-color-success-light-3: rgb(148.6, 212.3, 117.1);
+    --el-color-success-light-5: rgb(179, 224.5, 156.5);
+    --el-color-success-light-7: rgb(209.4, 236.7, 195.9);
+    --el-color-success-light-8: rgb(224.6, 242.8, 215.6);
+    --el-color-success-light-9: rgb(239.8, 248.9, 235.3);
+    --el-color-success-dark-2: rgb(82.4, 155.2, 46.4);
+    --el-color-warning: #ff7d00;
+    --el-color-warning-light-3: rgb(255, 164, 76.5);
+    --el-color-warning-light-5: rgb(255, 190, 127.5);
+    --el-color-warning-light-7: rgb(255, 216, 178.5);
+    --el-color-warning-light-8: #ffe5cc;
+    --el-color-warning-light-9: rgb(255, 242, 229.5);
+    --el-color-warning-dark-2: #cc6400;
+    --el-color-danger: #f54a45;
+    --el-color-danger-light-3: rgb(248, 128.3, 124.8);
+    --el-color-danger-light-5: rgb(250, 164.5, 162);
+    --el-color-danger-light-7: rgb(252, 200.7, 199.2);
+    --el-color-danger-light-8: rgb(253, 218.8, 217.8);
+    --el-color-danger-light-9: rgb(254, 236.9, 236.4);
+    --el-color-danger-dark-2: rgb(196, 59.2, 55.2);
+    --el-color-error: #f56c6c;
+    --el-color-error-light-3: rgb(248, 152.1, 152.1);
+    --el-color-error-light-5: rgb(250, 181.5, 181.5);
+    --el-color-error-light-7: rgb(252, 210.9, 210.9);
+    --el-color-error-light-8: rgb(253, 225.6, 225.6);
+    --el-color-error-light-9: rgb(254, 240.3, 240.3);
+    --el-color-error-dark-2: rgb(196, 86.4, 86.4);
+    --el-color-info: #909399;
+    --el-color-info-light-3: rgb(177.3, 179.4, 183.6);
+    --el-color-info-light-5: rgb(199.5, 201, 204);
+    --el-color-info-light-7: rgb(221.7, 222.6, 224.4);
+    --el-color-info-light-8: rgb(232.8, 233.4, 234.6);
+    --el-color-info-light-9: rgb(243.9, 244.2, 244.8);
+    --el-color-info-dark-2: rgb(115.2, 117.6, 122.4);
+    --el-bg-color: #ffffff;
+    --el-bg-color-page: #f2f3f5;
+    --el-bg-color-overlay: #ffffff;
+    --el-text-color-primary: rgba(0, 0, 0, .88);
+    --el-text-color-regular: rgba(0, 0, 0, .88);
+    --el-text-color-secondary: rgba(0, 0, 0, .65);
+    --el-text-color-placeholder: #8F959E;
+    --el-text-color-disabled: #BBBFC4;
+    --el-text-color-title: #1F2329;
+    --el-text-color-caption: #646A73;
+    --el-border-color: #dcdfe6;
+    --el-border-color-light: #e4e7ed;
+    --el-border-color-lighter: #ebeef5;
+    --el-border-color-extra-light: #f2f6fc;
+    --el-border-color-dark: #d4d7de;
+    --el-border-color-darker: #cdd0d6;
+    --el-fill-color: #f0f2f5;
+    --el-fill-color-light: #f5f5f5;
+    --el-fill-color-lighter: #fafafa;
+    --el-fill-color-extra-light: #fafcff;
+    --el-fill-color-dark: rgba(0, 0, 0, .06);
+    --el-fill-color-darker: #e6e8eb;
+    --el-fill-color-blank: #ffffff;
+    --el-box-shadow: 0px 12px 32px 4px rgba(0, 0, 0, .04), 0px 8px 20px rgba(0, 0, 0, .08);
+    --el-box-shadow-light: 0px 0px 12px rgba(0, 0, 0, .12);
+    --el-box-shadow-lighter: 0px 0px 6px rgba(0, 0, 0, .12);
+    --el-box-shadow-dark: 0px 16px 48px 16px rgba(0, 0, 0, .08), 0px 12px 32px rgba(0, 0, 0, .12), 0px 8px 16px -8px rgba(0, 0, 0, .16);
+    --el-disabled-bg-color: var(--el-fill-color-light);
+    --el-disabled-text-color: var(--el-text-color-placeholder);
+    --el-disabled-border-color: var(--el-border-color-light);
+    --el-overlay-color: rgba(0, 0, 0, .8);
+    --el-overlay-color-light: rgba(0, 0, 0, .7);
+    --el-overlay-color-lighter: rgba(0, 0, 0, .5);
+    --el-mask-color: rgba(255, 255, 255, .9);
+    --el-mask-color-extra-light: rgba(255, 255, 255, .3);
+    --el-border-width: 1px;
+    --el-border-style: solid;
+    --el-border-color-hover: var(--el-text-color-disabled);
+    --el-border: var(--el-border-width) var(--el-border-style) var(--el-border-color);
+    --el-svg-monochrome-grey: var(--el-border-color);
+
+
+    --el-border-radius-base: 8px;
+    --el-border-radius-small: 6px;
+    --el-border-radius-large: 12px;
+
+
+    --el-button-hover-bg-color: #3b47e51a;
+    --el-font-weight-primary: 400;
+  
+    --primary-raw: 59, 71, 229;
+    --primary-hover-light: rgba(var(--primary-raw), 0.1);
+    --primary-hover: rgba(var(--primary-raw), 0.2);
+    --primary-dark: #0c1cc3;
+    --danger-raw: 245, 74, 69;
+    --info-fill: #f1f3fe;
+    --collapse-padding-primary: 16px;
+    --collapse-padding-sm: 12px;
+    --btn-space: 12px;
+    --icon-n1-raw: 43, 47, 54;
+    --icon-n1: rgba(var(--icon-n1-raw), 1);
+    --icon-n2: rgb(100, 106, 115);
+    --icon-n3: rgb(143, 149, 158);
+    --icon-n1-hover: rgba(var(--icon-n1-raw), 0.1);
+  
+    --fill-hover: rgba(31, 35, 41, 0.08);
+    --fill-hover-raw: 31, 35, 41;
+  }
