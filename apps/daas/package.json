@@ -47,6 +47,7 @@
   },
   "devDependencies": {
     "@cn-xufei/vite-plugin-svg-icons": "catalog:",
+    "@tap/types": "workspace:*",
     "@vitejs/plugin-vue": "catalog:",
     "@vitejs/plugin-vue-jsx": "catalog:",
     "cross-env": "catalog:",
