@@ -112,9 +112,13 @@
                           style="width: 300px"
                           @change="changeTimeSelect"
                         ></TimeSelect>
-                        <Frequency :range="timeSelectRange" style="width: 200px" @change="changeFrequency"></Frequency>
+                        <Frequency
+                          :range="timeSelectRange"
+                          style="width: 200px"
+                          @change="handleChangeFrequency"
+                        ></Frequency>
                         <ElTooltip transition="tooltip-fade-in" :content="$t('public_button_refresh')">
-                          <IconButton class="color-primary" @click="$emit('load-data')"> refresh </IconButton>
+                          <IconButton class="color-primary" @click="init"> refresh </IconButton>
                         </ElTooltip>
                       </div>
 
@@ -2033,7 +2037,7 @@ export default {
     },
 
     changeTimeSelect(val, isTime, source) {
-      this.$emit('changeTimeSelect', val, isTime, source)
+      this.handleChangeTimeSelect(val, isTime, source)
       this.timeSelectLabel = this.$refs.timeSelect?.getPeriod()?.label
     },
 
