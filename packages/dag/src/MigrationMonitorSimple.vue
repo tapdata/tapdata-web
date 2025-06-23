@@ -1705,7 +1705,7 @@ export default {
     },
 
     changeTimeSelect(val, isTime, source) {
-      this.$emit('changeTimeSelect', val, isTime, source)
+      this.handleChangeTimeSelect(val, isTime, source)
       this.timeSelectLabel = this.$refs.timeSelect?.getPeriod()?.label
     },
 
@@ -2007,7 +2007,7 @@ export default {
                         <Frequency
                           :range="timeSelectRange"
                           style="width: 200px"
-                          @change="changeFrequency"
+                          @change="handleChangeFrequency"
                         />
                         <ElTooltip
                           transition="tooltip-fade-in"
