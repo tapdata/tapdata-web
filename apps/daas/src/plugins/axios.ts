@@ -1,5 +1,10 @@
+import { requestClient } from '@tap/api'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
 import { Modal } from '@tap/component/src/modal'
+import {
+  defaultResponseInterceptor,
+  errorMessageResponseInterceptor,
+} from '@tap/request'
 import Cookie from '@tap/shared/src/cookie'
 import { getSettingByKey } from '@tap/shared/src/settings'
 import axios, {
@@ -16,42 +21,8 @@ type AxiosRequestConfigPro = AxiosRequestConfig & {
   silenceMessage?: boolean
 }
 
-const pending = [] //声明一个数组用于存储每个ajax请求的取消函数和ajax标识
-
-const CancelToken = axios.CancelToken
-
 axios.defaults.baseURL = import.meta.env.BASE_URL || './'
 
-const getPendingKey = (config: AxiosRequestConfig): string => {
-  const { url, method, data, params } = config
-  const headers = {}
-  // headers 这里，有时候服务端响应的时候会多一些头，造成响应头跟请求头不一致，无法remove，后续的请求都会被cancel
-  /*for (const key in config.headers) {
-    const value = config.headers[key]
-    if (Object.prototype.toString.call(value) === '[object String]' && !['Content-Type', 'Accept'].includes(key)) {
-      headers[key] = value
-    }
-  }*/
-  config.data =
-    Object.prototype.toString.call(data) === '[object String]'
-      ? JSON.parse(data)
-      : data
-  const key = JSON.stringify({
-    url,
-    method,
-    data: config.data,
-    params,
-    headers,
-  })
-  return key
-}
-const removePending = (config: AxiosRequestConfig): void => {
-  const key = getPendingKey(config)
-  const index = pending.indexOf(key)
-  if (index !== -1) {
-    pending.splice(index, 1)
-  }
-}
 const errorCallback = (error: AxiosError): Promise<AxiosError | string> => {
   if (axios.isCancel(error)) {
     // eslint-disable-next-line no-console
@@ -122,6 +93,7 @@ const errorCallback = (error: AxiosError): Promise<AxiosError | string> => {
   }
   return Promise.reject(error)
 }
+
 axios.interceptors.request.use(function (
   config: AxiosRequestConfig,
 ): AxiosRequestConfig {
@@ -143,20 +115,6 @@ axios.interceptors.request.use(function (
   }
   config.headers['x-requested-with'] = 'XMLHttpRequest'
 
-  // 业务内设置了cancel
-  if (config.cancelToken) return config
-
-  const key = getPendingKey(config)
-  let cancelFunc = null
-  config.cancelToken = new CancelToken((c) => {
-    cancelFunc = c
-  })
-  if (pending.includes(key)) {
-    console.warn('Cancel request:', JSON.parse(key))
-    cancelFunc()
-  } else if (config.method !== 'get') {
-    pending.push(key)
-  }
   return config
 }, errorCallback)
 
@@ -183,3 +141,111 @@ axios.interceptors.response.use((response: AxiosResponse) => {
 }, errorCallback)
 
 export default axios
+
+export function initRequestClient() {
+  requestClient.setBaseURL(import.meta.env.BASE_URL || './')
+
+  requestClient.addRequestInterceptor({
+    fulfilled: (config) => {
+      const accessToken = Cookie.get('access_token')
+      if (accessToken) {
+        if (config.url?.indexOf?.('?') !== -1) {
+          if (config.url?.indexOf?.('access_token') === -1) {
+            config.url = `${config.url}&access_token=${accessToken}`
+          }
+        } else {
+          config.url = `${config.url}?access_token=${accessToken}`
+        }
+      }
+      return config
+    },
+  })
+
+  requestClient.addResponseInterceptor(
+    defaultResponseInterceptor({
+      codeField: 'code',
+      dataField: 'data',
+      successCode: 'ok',
+    }),
+  )
+
+  requestClient.addResponseInterceptor({
+    rejected: (error: any) => {
+      if (axios.isCancel(error)) {
+        return Promise.reject(error)
+      }
+
+      const err: string = error?.toString?.() ?? ''
+      let errMsg = ''
+
+      if (err?.includes('Network Error')) {
+        errMsg = i18n.global.t('public_message_network_unconnected')
+      } else if (error?.message?.includes?.('timeout')) {
+        errMsg = i18n.global.t('public_message_request_timeout')
+      }
+
+      if (errMsg) {
+        ElMessage.error(errMsg)
+        return Promise.reject(error)
+      }
+
+      let errorMessage = ''
+      const status = error?.response?.status
+
+      switch (status) {
+        case 400: {
+          errorMessage = i18n.global.t('public_message_400')
+          break
+        }
+        case 401: {
+          const isSingleSession = getSettingByKey(
+            'login.single.session',
+            'open',
+          )
+
+          signOut()
+
+          setTimeout(() => {
+            if (isSingleSession) {
+              Modal.warning(
+                i18n.global.t('public_alert_401'),
+                i18n.global.t('public_alert_401_tip'),
+              )
+            } else {
+              Message.error({
+                message: i18n.global.t('public_message_401'),
+                grouping: true,
+              })
+            }
+          }, 500)
+          errorMessage = i18n.global.t('public_message_401')
+          break
+        }
+        case 403: {
+          errorMessage = i18n.global.t('public_message_403')
+          break
+        }
+        case 404: {
+          errorMessage = i18n.global.t('public_message_404')
+          break
+        }
+        case 408: {
+          errorMessage = i18n.global.t('public_message_408')
+          break
+        }
+        default: {
+          errorMessage = i18n.global.t('public_message_inner_error')
+          break
+        }
+      }
+
+      const responseData = error?.response?.data ?? {}
+      const message = responseData?.error ?? responseData?.message ?? ''
+      // 如果没有错误信息，则会根据状态码进行提示
+      ElMessage.error(message || errorMessage)
+      return Promise.reject(error)
+    },
+  })
+
+  return requestClient
+}

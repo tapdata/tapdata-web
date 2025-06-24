@@ -121,8 +121,8 @@ catalogs:
       specifier: ^6.17.1
       version: 6.22.0
     axios:
-      specifier: ^0.21.1
-      version: 0.21.4
+      specifier: ^1.9.0
+      version: 1.10.0
     core-js:
       specifier: ^3.8.3
       version: 3.41.0
@@ -250,7 +250,7 @@ catalogs:
       specifier: ^4.1.0
       version: 4.1.0
     vuex:
-      specifier: ^4.0.2
+      specifier: ^4.1.0
       version: 4.1.0
 
 overrides:
@@ -303,6 +303,9 @@ importers:
       '@tap/tsconfig':
         specifier: workspace:*
         version: link:dev/tsconfig
+      '@tap/types':
+        specifier: workspace:^
+        version: link:packages/types
       '@tsconfig/node20':
         specifier: 'catalog:'
         version: 20.1.5
@@ -419,7 +422,7 @@ importers:
         version: 6.22.0
       axios:
         specifier: 'catalog:'
-        version: 0.21.4
+        version: 1.10.0
       crypto-js:
         specifier: 'catalog:'
         version: 4.2.0
@@ -547,6 +550,9 @@ importers:
       '@tap/node-design':
         specifier: workspace:*
         version: link:../../packages/node-design
+      '@tap/request':
+        specifier: workspace:*
+        version: link:../../packages/request
       '@tap/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -555,7 +561,7 @@ importers:
         version: link:../../packages/styles
       axios:
         specifier: 'catalog:'
-        version: 0.21.4
+        version: 1.10.0
       core-js:
         specifier: 'catalog:'
         version: 3.41.0
@@ -656,12 +662,15 @@ importers:
 
   packages/api:
     dependencies:
+      '@tap/request':
+        specifier: workspace:*
+        version: link:../request
       '@tap/shared':
         specifier: workspace:*
         version: link:../shared
       axios:
         specifier: 'catalog:'
-        version: 0.21.4
+        version: 1.10.0
       qs:
         specifier: ^6.10.3
         version: 6.14.0
@@ -696,7 +705,7 @@ importers:
         version: link:../shared
       axios:
         specifier: 'catalog:'
-        version: 0.21.4
+        version: 1.10.0
       cron-parser:
         specifier: 'catalog:'
         version: 4.9.0
@@ -888,7 +897,7 @@ importers:
         version: 10.11.1(vue@3.5.13(typescript@5.8.3))
       axios:
         specifier: 'catalog:'
-        version: 0.21.4
+        version: 1.10.0
       core-js:
         specifier: 'catalog:'
         version: 3.41.0
@@ -1050,7 +1059,7 @@ importers:
         version: 10.11.1(vue@3.5.13(typescript@5.8.3))
       axios:
         specifier: 'catalog:'
-        version: 0.21.4
+        version: 1.10.0
       core-js:
         specifier: 'catalog:'
         version: 3.41.0
@@ -1120,6 +1129,25 @@ importers:
       vue:
         specifier: ^3.4.29
         version: 3.5.13(typescript@5.8.3)
+
+  packages/request:
+    dependencies:
+      '@tap/i18n':
+        specifier: workspace:*
+        version: link:../i18n
+      '@tap/shared':
+        specifier: workspace:*
+        version: link:../shared
+      axios:
+        specifier: 'catalog:'
+        version: 1.10.0
+      qs:
+        specifier: ^6.14.0
+        version: 6.14.0
+    devDependencies:
+      '@types/qs':
+        specifier: 'catalog:'
+        version: 6.9.18
 
   packages/shared:
     dependencies:
@@ -2849,8 +2877,8 @@ packages:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
 
-  axios@0.21.4:
-    resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
+  axios@1.10.0:
+    resolution: {integrity: sha512-/1xYAC4MP/HEG+3duIhFr4ZQXR4sQXOIe+o6sdqzeykGLx6Upp/1p8MHqhINOvGeP7xyNHe7tsiJByc4SSVUxw==}
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -5169,6 +5197,9 @@ packages:
   proxy-addr@2.0.7:
     resolution: {integrity: sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==}
     engines: {node: '>= 0.10'}
+
+  proxy-from-env@1.1.0:
+    resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
 
   psl@1.15.0:
     resolution: {integrity: sha512-JZd3gMVBAVQkSs6HdNZo9Sdo0LNcQeMNP3CozBJb3JYC/QUYZTnKxP+f8oWRX4rHP5EurWxqAHTSwUCjlNKa1w==}
@@ -8253,9 +8284,11 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.1.0
 
-  axios@0.21.4:
+  axios@1.10.0:
     dependencies:
       follow-redirects: 1.15.9
+      form-data: 4.0.2
+      proxy-from-env: 1.1.0
     transitivePeerDependencies:
       - debug
 
@@ -11088,6 +11121,8 @@ snapshots:
     dependencies:
       forwarded: 0.2.0
       ipaddr.js: 1.9.1
+
+  proxy-from-env@1.1.0: {}
 
   psl@1.15.0:
     dependencies:

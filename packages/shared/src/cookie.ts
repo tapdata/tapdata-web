@@ -1,17 +1,20 @@
 const defAttr = { path: '/' }
 const defCover = {
-  read(value) {
+  read(value: string) {
     if (value[0] === '"') {
       value = value.slice(1, -1)
     }
-    return value.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent)
+    return value.replaceAll(/(%[\dA-F]{2})+/gi, decodeURIComponent)
   },
-  write(value) {
-    return encodeURIComponent(value).replace(/%(2[346BF]|3[AC-F]|40|5[BDE]|60|7[BCD])/g, decodeURIComponent)
+  write(value: string) {
+    return encodeURIComponent(value).replaceAll(
+      /%(2[346BF]|3[AC-F]|40|5[BDE]|60|7[BCD])/g,
+      decodeURIComponent,
+    )
   },
 }
 
-function set(key, value, attrs) {
+function set(key: string, value: string, attrs?: Record<string, any>) {
   attrs = Object.assign({}, defAttr, attrs)
   if (typeof attrs.expires === 'number') {
     attrs.expires = new Date(Date.now() + attrs.expires * 864e5)
@@ -19,27 +22,33 @@ function set(key, value, attrs) {
   if (attrs.expires) {
     attrs.expires = attrs.expires.toUTCString()
   }
-  key = defCover.write(key).replace(/=/g, '%3D')
+  key = defCover.write(key).replaceAll('=', '%3D')
   value = defCover.write(String(value))
   let str = ''
-  for (let name in attrs) {
-    if (!attrs[name]) continue
-    str += '; ' + name
-    if (attrs[name] === true) continue
-    str += '=' + attrs[name].split(';')[0]
+  for (const name of Object.keys(attrs)) {
+    if (!attrs[name]) {
+      continue
+    }
+    str += `; ${name}`
+    if (attrs[name] === true) {
+      continue
+    }
+    str += `=${attrs[name].split(';')[0]}`
   }
-  return (document.cookie = key + '=' + value + str)
+  return (document.cookie = `${key}=${value}${str}`)
 }
 
-function get(key) {
-  let cookies = document.cookie ? document.cookie.split('; ') : []
-  let tmp = {}
-  for (let c of cookies) {
-    let parts = c.split('=')
-    let value = parts.slice(1).join('=')
-    let _key = defCover.read(parts[0]).replace(/%3D/g, '=')
+function get(key: string) {
+  const cookies = document.cookie ? document.cookie.split('; ') : []
+  const tmp: Record<string, string> = {}
+  for (const c of cookies) {
+    const parts = c.split('=')
+    const value = parts.slice(1).join('=')
+    const _key = defCover.read(parts[0] ?? '').replaceAll('%3D', '=')
     tmp[_key] = defCover.read(value)
-    if (key === _key) break
+    if (key === _key) {
+      break
+    }
   }
   return key ? tmp[key] : tmp
 }
@@ -47,7 +56,7 @@ function get(key) {
 export const Cookie = {
   get,
   set,
-  remove(key, attrs) {
+  remove(key: string, attrs?: Record<string, any>) {
     set(
       key,
       '',

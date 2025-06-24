@@ -1,6 +1,25 @@
 import dayjs from 'dayjs'
-// TODO 整理下方通用工具方法 ------------------------------------------------------------------------------------------------------------------------
 import Cookie from './cookie'
+
+export function bindMethods<T extends object>(instance: T): void {
+  const prototype = Object.getPrototypeOf(instance)
+  const propertyNames = Object.getOwnPropertyNames(prototype)
+
+  propertyNames.forEach((propertyName) => {
+    const descriptor = Object.getOwnPropertyDescriptor(prototype, propertyName)
+    const propertyValue = instance[propertyName as keyof T]
+
+    if (
+      typeof propertyValue === 'function' &&
+      propertyName !== 'constructor' &&
+      descriptor &&
+      !descriptor.get &&
+      !descriptor.set
+    ) {
+      instance[propertyName as keyof T] = propertyValue.bind(instance)
+    }
+  })
+}
 
 export function setPermission(list) {
   const permissions = []
@@ -35,15 +54,15 @@ export function getUrlSearch(name) {
   // 未传参，返回空
   if (!name) return null
   // 查询参数：先通过search取值，如果取不到就通过hash来取
-  var after = window.location.search
+  let after = window.location.search
   after = after.slice(1) || window.location.hash.split('?')[1]
   // 地址栏URL没有查询参数，返回空
   if (!after) return null
   // 如果查询参数中没有"name"，返回空
   if (!after.includes(name)) return null
-  var reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`)
+  const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`)
   // 当地址栏参数存在中文时，需要解码，不然会乱码
-  var r = decodeURI(after).match(reg)
+  const r = decodeURI(after).match(reg)
   // 如果url中"name"没有值，返回空
   if (!r) return null
   return r[2]
@@ -142,7 +161,7 @@ export function sameNumber(num1, num2, tolerance = Number.EPSILON) {
 }
 
 export const os = (function () {
-  var ua = navigator.userAgent,
+  const ua = navigator.userAgent,
     isWindowsPhone = /(Windows Phone)/.test(ua),
     isSymbian = /SymbianOS/.test(ua) || isWindowsPhone,
     isAndroid = /Android/.test(ua),

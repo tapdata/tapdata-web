@@ -3,7 +3,7 @@ import i18n from '@tap/i18n'
 import { copyToClipboard } from '@tap/shared'
 import './index.scss'
 
-function renderDialog(stack) {
+function renderDialog(stack: string) {
   return (
     <div id="error-message-dialog">
       <div class="flex align-center mb-4">
@@ -45,7 +45,7 @@ function renderDialog(stack) {
   )
 }
 
-function renderMessage(message, stack) {
+function renderMessage(message: string, stack: string) {
   return (
     <div>
       <div class="el-message__content">
@@ -65,7 +65,7 @@ function renderMessage(message, stack) {
   )
 }
 
-export function ErrorMessage(stack, message) {
+export function ErrorMessage(stack: string, message: string) {
   if (import.meta.env.VITE_APP_KEYWORD) {
     stack = stack.replaceAll(/tapdata\s?/gi, import.meta.env.VUE_APP_KEYWORD)
   }
@@ -105,7 +105,7 @@ export function ErrorMessage(stack, message) {
   })
 }
 
-export function showErrorMessage(error) {
+export function showErrorMessage(error: Record<string, any>) {
   let message =
     error?.message || error?.msg || i18n.t('public_message_request_error')
   let duration = 3000

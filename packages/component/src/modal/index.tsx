@@ -1,8 +1,8 @@
 import i18n from '@tap/i18n'
-import { ElMessageBox, type ElMessageBoxOptions } from 'element-plus'
 import { isFunction, isObject } from 'lodash-es'
 import { isVNode, type AppContext, type VNode } from 'vue'
 import { CloseIcon } from '../CloseIcon'
+import type { ElMessageBoxOptions } from 'element-plus'
 
 export const TypeComponentsMap = {
   primary: IconMingcuteInformationFill,
@@ -14,7 +14,7 @@ export const TypeComponentsMap = {
 
 const TYPES = ['confirm', 'success', 'warning', 'error', 'info']
 
-const renderContent = (options) => {
+const renderContent = (options: ElMessageBoxOptions) => {
   const IconComponent = options.icon ?? TypeComponentsMap[options.type]
 
   return (
@@ -35,7 +35,7 @@ const renderContent = (options) => {
           <div
             class="modal-confirm-content"
             style={!options.title && 'margin-top: 1px'}
-            innerHTML={options.message}
+            innerHTML={options.message as string}
           />
         ) : (
           <div
