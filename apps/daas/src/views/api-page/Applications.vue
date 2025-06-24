@@ -154,10 +154,11 @@ export default {
         keyword: ''
       },
       filterItems: [],
-      order: 'clientName DESC',
+      order: 'last_updated DESC',
       createDialogVisible: false,
       roles: [],
       createForm: {
+        clientId: '',
         clientName: '',
         grantTypes: [],
         clientSecret: '',
@@ -194,6 +195,7 @@ export default {
         this.$refs.form.clearValidate()
       })
       this.createForm = {
+        clientId: '',
         clientName: '',
         grantTypes: ['implicit', 'client_credentials'],
         clientSecret: '',
@@ -320,6 +322,227 @@ export default {
   }
 }
 </script>
+<template>
+  <PageContainer>
+    <template #actions>
+      <ElButton
+        v-readonlybtn="'API_creation'"
+        class="btn btn-create"
+        type="primary"
+        @click="openCreateDialog"
+      >
+        <span>{{ $t('application_create') }}</span>
+      </ElButton>
+    </template>
+    <!-- api客户端 -->
+    <TablePage
+      ref="table"
+      row-key="id"
+      class="applications-list"
+      :remote-method="getData"
+      @sort-change="handleSortTable"
+    >
+      <template #search>
+        <div class="search-bar">
+          <FilterBar
+            v-model:value="searchParams"
+            :items="filterItems"
+            @fetch="table.fetch(1)"
+          />
+        </div>
+      </template>
+
+      <el-table-column
+        :label="$t('application_header_id')"
+        :show-overflow-tooltip="true"
+        prop="clientId"
+        width="230"
+      >
+        <!-- <template slot-scope="scope"> -->
+      </el-table-column>
+      <el-table-column
+        :label="$t('application_header_client_name')"
+        prop="clientName"
+        sortable="clientName"
+        width="130"
+      />
+      <el-table-column
+        :label="$t('application_header_grant_type')"
+        prop="grantTypes"
+        sortable="grantTypes"
+        min-width="160"
+      >
+        <template #default="scope">
+          <div class="classfy">
+            <span
+              v-for="item in scope.row.grantTypes"
+              :key="item"
+              class="table-span text-break"
+              >{{ item }}</span
+            >
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('application_header_client_secret')"
+        :show-overflow-tooltip="true"
+        prop="clientSecret"
+        sortable="clientSecret"
+        min-width="160"
+        max-width="300"
+      />
+      <el-table-column
+        :label="$t('application_header_redirect_uri')"
+        :show-overflow-tooltip="true"
+        prop="redirectUrisStr"
+        min-width="140"
+      />
+      <el-table-column
+        :label="$t('application_header_scopes')"
+        prop="scopeNames"
+        min-width="160"
+        max-width="300"
+      >
+        <template #default="scope">
+          <span
+            v-for="item in scope.row.scopeNames"
+            :key="item"
+            class="table-span"
+            >{{ item }}</span
+          >
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('public_operation')"
+        min-width="120"
+        fixed="right"
+      >
+        <template #default="scope">
+          <ElButton
+            v-readonlybtn="'API_clients_amangement'"
+            text
+            type="primary"
+            @click="edit(scope.row)"
+          >
+            {{ $t('public_button_edit') }}
+          </ElButton>
+          <template v-if="scope.row.clientName !== 'Data Explorer'">
+            <ElDivider class="mx-1" direction="vertical" />
+            <ElButton
+              v-readonlybtn="'API_clients_amangement'"
+              text
+              type="primary"
+              @click="remove(scope.row)"
+              >{{ $t('public_button_delete') }}</ElButton
+            >
+          </template>
+        </template>
+      </el-table-column>
+    </TablePage>
+    <!-- 创建客户端 -->
+    <ElDialog
+      v-model="createDialogVisible"
+      width="600px"
+      class="create-dialog"
+      :title="$t('application_create')"
+      :close-on-click-modal="false"
+    >
+      <ElForm
+        ref="form"
+        :model="createForm"
+        class="applications-form"
+        label-width="100px"
+        label-position="top"
+      >
+        <ElFormItem
+          :label="$t('application_header_id')"
+          prop="clientId"
+        >
+          <ElInput v-model="createForm.clientId" :placeholder="$t('application_header_id')" />
+        </ElFormItem>
+        <ElFormItem
+          :label="$t('application_header_client_name')"
+          required
+          prop="clientName"
+        >
+          <ElInput v-model="createForm.clientName" />
+        </ElFormItem>
+        <ElFormItem
+          :label="$t('application_header_grant_type')"
+          required
+          prop="grantTypes"
+        >
+          <ElSelect v-model="createForm.grantTypes" multiple>
+            <ElOption label="Implicit" value="implicit" />
+            <ElOption label="Client Credentials" value="client_credentials" />
+            <ElOption label="Refresh Token" value="refresh_token" />
+          </ElSelect>
+        </ElFormItem>
+        <ElFormItem
+          :label="$t('application_header_client_secret')"
+          required
+          prop="clientSecret"
+        >
+          <template #label>
+            <span class="align-middle mr-1">{{
+              $t('application_header_client_secret')
+            }}</span>
+            <el-button tag="a" text type="primary" @click="generatorSecret">{{
+              $t('application_generator')
+            }}</el-button>
+          </template>
+          <ElInput v-model="createForm.clientSecret" />
+        </ElFormItem>
+        <ElFormItem
+          :label="$t('application_header_scopes')"
+          required
+          prop="scopes"
+        >
+          <ElSelect v-model="createForm.scopes" multiple>
+            <ElOption
+              v-for="item in roles"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </ElSelect>
+        </ElFormItem>
+        <ElFormItem
+          :label="$t('application_header_redirect_uri')"
+          required
+          prop="redirectUrisStr"
+        >
+          <ElInput
+            v-model="createForm.redirectUrisStr"
+            type="textarea"
+            :maxlength="200"
+            :show-word-limit="true"
+          />
+        </ElFormItem>
+        <ElFormItem
+          :label="$t('application_show_menu')"
+          required
+          prop="showMenu"
+        >
+          <ElSelect v-model="createForm.showMenu">
+            <ElOption :label="$t('application_true')" :value="true" />
+            <ElOption :label="$t('application_false')" :value="false" />
+          </ElSelect>
+        </ElFormItem>
+      </ElForm>
+      <template #footer>
+        <span class="dialog-footer">
+          <ElButton @click="createDialogVisible = false">{{
+            $t('public_button_cancel')
+          }}</ElButton>
+          <ElButton type="primary" @click="createApplication()">{{
+            $t('public_button_confirm')
+          }}</ElButton>
+        </span>
+      </template>
+    </ElDialog>
+  </PageContainer>
+</template>
 <style lang="scss" scoped>
 .applications-wrap {
   height: 100%;
