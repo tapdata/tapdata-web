@@ -223,6 +223,7 @@ export default {
   application_true: '是',
   application_false: '否',
   application_create: '创建客户端',
+  application_client_id_placeholder: '可留空，系统将自动生成',
   //api 监控
   api_monitor_total_totalCount: 'API总数',
   api_monitor_total_warningApiCount: 'API访问总数',
