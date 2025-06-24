@@ -230,6 +230,8 @@ export default {
   application_false: 'No',
   application_create: 'Create Client',
   application_edit: 'Edit client',
+  application_client_id_placeholder: 'Can be left empty, system will auto-generate',
+  //api 监控
   api_monitor_total_totalCount: 'Total number of APIs',
   api_monitor_total_warningApiCount: 'Total API Access',
   api_monitor_total_warningVisitCount: 'Total API Access Warning',
