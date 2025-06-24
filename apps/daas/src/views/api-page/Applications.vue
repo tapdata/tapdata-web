@@ -24,6 +24,7 @@ export default {
       roles: [],
       createForm: {
         clientName: '',
+        clientId: '',
         grantTypes: [],
         clientSecret: '',
         scopes: [],
@@ -57,6 +58,7 @@ export default {
       this.createDialogVisible = true
       this.createForm = {
         clientName: '',
+        clientId: '',
         grantTypes: ['implicit', 'client_credentials'],
         clientSecret: '',
         scopes: [],
@@ -105,6 +107,11 @@ export default {
       params.responseTypes = ['token']
       params.redirectUris = params.redirectUrisStr?.split(',') || []
       delete params.redirectUrisStr
+
+      // 如果clientId为空，则不传递该字段
+      if (!params.clientId || params.clientId.trim() === '') {
+        delete params['clientId']
+      }
 
       this.$refs.form.validate((valid) => {
         if (valid) {
@@ -327,6 +334,9 @@ export default {
           prop="clientName"
         >
           <ElInput v-model="createForm.clientName" />
+        </ElFormItem>
+        <ElFormItem :label="$t('application_header_id')" prop="clientId">
+          <ElInput v-model="createForm.clientId" size="mini" :placeholder="$t('application_client_id_placeholder')"></ElInput>
         </ElFormItem>
         <ElFormItem
           :label="$t('application_header_grant_type')"
