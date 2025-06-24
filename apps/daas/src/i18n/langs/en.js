@@ -228,6 +228,8 @@ export default {
   application_show_menu: 'Show to the menu',
   application_true: 'Yes',
   application_false: 'No',
+  application_client_id_placeholder: 'Can be left empty, system will auto-generate',
+  //api 监控
   application_create: 'Create Client',
   application_edit: 'Edit client',
   api_monitor_total_totalCount: 'Total number of APIs',
