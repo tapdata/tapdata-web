@@ -61,5 +61,6 @@
     "patchedDependencies": {
       "element-ui@2.15.7": "patches/element-ui@2.15.7.patch"
     }
-  }
+  },
+  "packageManager": "pnpm@8.5.0"
 }
