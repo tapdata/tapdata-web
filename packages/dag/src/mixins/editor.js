@@ -2485,17 +2485,23 @@ export default {
     getConfirmMessage(operateStr) {
       const message = `${operateStr}_confirm_message`
       const strArr = this.$t(`packages_dag_dataFlow_${message}`).split('xxx')
-      const msg = h('p', null, [
-        strArr[0],
-        h(
-          'span',
-          {
-            class: 'color-primary',
-          },
-          this.dataflow.name,
-        ),
-        strArr[1],
-      ])
+      const msg = h(
+        'p',
+        {
+          class: 'break-all',
+        },
+        [
+          strArr[0],
+          h(
+            'span',
+            {
+              class: 'color-primary',
+            },
+            this.dataflow.name,
+          ),
+          strArr[1],
+        ],
+      )
       return msg
     },
 
