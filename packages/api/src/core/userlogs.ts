@@ -9,7 +9,7 @@ export function createUserLog(params: any) {
 // Base Http methods that are used in the codebase
 export function fetchUserLogs(filter?: object) {
   return requestClient.get(BASE_URL, {
-    params: filter ? JSON.stringify(filter) : undefined,
+    params: { filter: filter ? JSON.stringify(filter) : undefined },
   })
 }
 

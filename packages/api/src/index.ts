@@ -114,8 +114,6 @@ import TypeMapping from './TypeMapping'
 
 import UserGroups from './UserGroup'
 
-import UserLogs from './UserLogs'
-
 import Users from './Users'
 
 import Webhook from './Webhook'
@@ -133,8 +131,6 @@ const pdkApi = new PDK()
 const taskApi = new Task()
 
 const subtaskApi = new SubTask()
-
-const userLogsApi = new UserLogs()
 
 const measurementApi = new Measurement()
 
@@ -175,8 +171,6 @@ const workerApi = new Worker()
 const apiCallsApi = new ApiCalls()
 
 const applicationApi = new Application()
-
-const clusterApi = new Cluster()
 
 const sharedCacheApi = new SharedCache()
 
@@ -237,12 +231,10 @@ const dataPermissionApi = new DataPermission()
 const connectorRecordApi = new ConnectorRecord()
 
 const alarmMailApi = new AlarmMail()
-const agentGroupApi = new AgentGroup()
 const webhookApi = new Webhook()
 const taskInspectApi = new TaskInspect()
 
 export {
-  agentGroupApi,
   alarmApi,
   alarmMailApi,
   alarmRuleApi,
@@ -251,7 +243,6 @@ export {
   apiServerApi,
   appApi,
   applicationApi,
-  clusterApi,
   connectionsApi,
   connectorRecordApi,
   customerJobLogsApi,
@@ -291,7 +282,6 @@ export {
   roleApi,
   roleMappingsApi,
   scheduleTasksApi,
-  settingsApi,
   shareCdcTableMetricsApi,
   sharedCacheApi,
   subtaskApi,
@@ -300,7 +290,6 @@ export {
   tcmApi,
   typeMappingApi,
   userGroupsApi,
-  userLogsApi,
   usersApi,
   webhookApi,
   workerApi,

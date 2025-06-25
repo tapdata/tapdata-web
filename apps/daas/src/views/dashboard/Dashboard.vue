@@ -1,6 +1,6 @@
 <script>
 import { ArrowRight } from '@element-plus/icons-vue'
-import { clusterApi, taskApi, workerApi } from '@tap/api'
+import { fetchClusterStates, getProcessInfo, getTaskChart } from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { STATUS_MAP } from '@tap/business/src/shared/task'
 import { statusMap as InspectStatusMap } from '@tap/business/src/views/verification/const'
@@ -297,10 +297,9 @@ export default {
     },
     // 获取服务器与进程的数据
     getClsterDataApi() {
-      const params = {
+      fetchClusterStates({
         type: 'dashboard',
-      }
-      clusterApi.get(params).then((data) => {
+      }).then((data) => {
         this.agentRunningTask = {}
         const processIdSet = new Set()
         const items = data?.items || []
@@ -334,8 +333,8 @@ export default {
           return item
         })
 
-        workerApi.getProcessInfo(Array.from(processIdSet)).then((data) => {
-          for (const id in data) {
+        getProcessInfo(Array.from(processIdSet)).then((data) => {
+          for (const id of Object.keys(data)) {
             this.agentRunningTask[id] = data[id].runningTaskNum
           }
         })
@@ -346,8 +345,7 @@ export default {
     // 获取dataflows数据
     getDataFlowApi() {
       this.loading = true
-      taskApi
-        .chart()
+      getTaskChart()
         .then((data) => {
           if (data) {
             const setColor = (list) => {

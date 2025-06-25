@@ -1,8 +1,41 @@
-import { requestClient } from '../request'
 import { isPlainObj } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
+import { requestClient } from '../request'
 
 const BASE_URL = '/api/Task'
+
+export interface TaskChart {
+  chart1: {
+    total: number
+    items: {
+      count: number
+      _id: string
+    }[]
+  }
+  chart3: {
+    total: number
+    items: {
+      count: number
+      _id: string
+    }[]
+  }
+  chart5: {
+    running: number
+    total: number
+    waiting: number
+    stopping: number
+    scheduling: number
+    error: number
+    done: number
+  }
+  chart6: {
+    outputTotal: number
+    inputTotal: number
+    insertedTotal: number
+    updatedTotal: number
+    deletedTotal: number
+  }
+}
 
 export function fetchTasks(params?: any, filter?: any, headers?: any) {
   if (Array.isArray(params)) {
@@ -12,10 +45,13 @@ export function fetchTasks(params?: any, filter?: any, headers?: any) {
     } else if (typeof filter === 'string') {
       queryStr = filter
     }
-    const qs = queryStr ? '?filter=' + encodeURIComponent(queryStr) : ''
-    return requestClient.get(BASE_URL + '/' + params.join('/') + qs)
+    const qs = queryStr ? `?filter=${encodeURIComponent(queryStr)}` : ''
+    return requestClient.get(`${BASE_URL}/${params.join('/')}${qs}`)
   } else if (typeof params === 'string') {
-    return requestClient.get(BASE_URL + '/' + params, { params: filter, headers })
+    return requestClient.get(`${BASE_URL}/${params}`, {
+      params: filter,
+      headers,
+    })
   }
   params = params || {}
   return requestClient.get(BASE_URL, { params })
@@ -30,15 +66,21 @@ export function pauseTask(id: string) {
 }
 
 export function batchDeleteTasks(ids: string[]) {
-  return requestClient.delete(`${BASE_URL}/batchDelete?taskIds=${ids.join('&taskIds=')}`)
+  return requestClient.delete(
+    `${BASE_URL}/batchDelete?taskIds=${ids.join('&taskIds=')}`,
+  )
 }
 
 export function batchRenewTasks(ids: string[]) {
-  return requestClient.patch(`${BASE_URL}/batchRenew?taskIds=${ids.join('&taskIds=')}`)
+  return requestClient.patch(
+    `${BASE_URL}/batchRenew?taskIds=${ids.join('&taskIds=')}`,
+  )
 }
 
 export function batchStopTasks(ids: string[]) {
-  return requestClient.put(`${BASE_URL}/batchStop?taskIds=${ids.join('&taskIds=')}`)
+  return requestClient.put(
+    `${BASE_URL}/batchStop?taskIds=${ids.join('&taskIds=')}`,
+  )
 }
 
 export function patchTaskById(id: string, params: any) {
@@ -56,7 +98,7 @@ export function tranModelVersionControl(params: any) {
 export function getTaskById(id: string, params?: any, filter?: any) {
   if (Array.isArray(params)) {
     filter = typeof filter === 'object' ? JSON.stringify(filter) : filter
-    const qs = filter ? '?filter=' + encodeURIComponent(filter) : ''
+    const qs = filter ? `?filter=${encodeURIComponent(filter)}` : ''
     return requestClient.get(`${BASE_URL}/${id}${params.join('/')}${qs}`)
   }
   params = params || {}
@@ -81,11 +123,19 @@ export function batchUpdateTaskListtags(params: any) {
 }
 
 export function saveTask(params: any, config?: any) {
-  return requestClient.patch(`${BASE_URL}/confirm/${params.id || ''}`, params, config)
+  return requestClient.patch(
+    `${BASE_URL}/confirm/${params.id || ''}`,
+    params,
+    config,
+  )
 }
 
 export function saveAndStartTask(params: any, config?: any) {
-  return requestClient.patch(`${BASE_URL}/confirmStart/${params.id || ''}`, params, config)
+  return requestClient.patch(
+    `${BASE_URL}/confirmStart/${params.id || ''}`,
+    params,
+    config,
+  )
 }
 
 export function getTaskMetadata(params: any) {
@@ -97,7 +147,11 @@ export function startTask(id: string, config?: any) {
 }
 
 export function batchStartTasks(taskIds: string[], config?: any) {
-  return requestClient.put(`${BASE_URL}/batchStart?taskIds=${taskIds.join('&taskIds=')}`, null, config)
+  return requestClient.put(
+    `${BASE_URL}/batchStart?taskIds=${taskIds.join('&taskIds=')}`,
+    null,
+    config,
+  )
 }
 
 export function stopTask(id: string) {
@@ -114,9 +168,9 @@ export function resetTask(id: string) {
 
 export function getTaskChart(id?: string) {
   if (id) {
-    return requestClient.get(`${BASE_URL}/chart?user_id=${id}`)
+    return requestClient.get<TaskChart>(`${BASE_URL}/chart?user_id=${id}`)
   } else {
-    return requestClient.get(`${BASE_URL}/chart`)
+    return requestClient.get<TaskChart>(`${BASE_URL}/chart`)
   }
 }
 
@@ -133,7 +187,9 @@ export function getNodeTableInfo(params: any = {}) {
 }
 
 export function getTableStatus(connectionId: string, tableName: string) {
-  return requestClient.get(`${BASE_URL}/table/status?connectionId=${connectionId}&tableName=${tableName}`)
+  return requestClient.get(
+    `${BASE_URL}/table/status?connectionId=${connectionId}&tableName=${tableName}`,
+  )
 }
 
 export function getTaskConsole(params: any) {
@@ -161,11 +217,16 @@ export function getTaskRecords(id: string, params: any) {
 }
 
 export function autoInspectResultsGroupByTable(params: any) {
-  return requestClient.post(`${BASE_URL}/auto-inspect-results-group-by-table`, params)
+  return requestClient.post(
+    `${BASE_URL}/auto-inspect-results-group-by-table`,
+    params,
+  )
 }
 
 export function getAutoInspectResults(taskId: string, params: any) {
-  return requestClient.get(`${BASE_URL}/${taskId}/auto-inspect-results`, { params })
+  return requestClient.get(`${BASE_URL}/${taskId}/auto-inspect-results`, {
+    params,
+  })
 }
 
 export function getAutoInspectTotals(params: any) {
@@ -189,7 +250,9 @@ export function taskConsoleRelations(params: any) {
 }
 
 export function renameTask(taskId: string, newName: string) {
-  return requestClient.patch(`${BASE_URL}/rename/${taskId}?newName=${encodeURIComponent(newName)}`)
+  return requestClient.patch(
+    `${BASE_URL}/rename/${taskId}?newName=${encodeURIComponent(newName)}`,
+  )
 }
 
 export function getTaskByConnection(params: any) {
@@ -219,7 +282,7 @@ export function skipErrorEvents(taskId: string, ids: any) {
 export function getTaskTimeRange(data: any, params: any) {
   return requestClient.get(`${BASE_URL}/calculatedTimeRange`, {
     data: JSON.stringify(data),
-    params
+    params,
   })
 }
 
@@ -234,13 +297,13 @@ export function getTaskErrorEvents(taskId: string) {
 export function downloadTaskAnalyze(taskId: string, params: any) {
   return requestClient.post(`${BASE_URL}/analyze/${taskId}`, null, {
     ...params,
-    responseType: 'blob'
+    responseType: 'blob',
   })
 }
 
 export function refreshTaskSchema(taskId: string, params: any) {
   return requestClient.put(`${BASE_URL}/${taskId}/re-schemas`, null, {
-    params
+    params,
   })
 }
 

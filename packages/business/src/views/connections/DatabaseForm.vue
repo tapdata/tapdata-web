@@ -1,10 +1,10 @@
 <script>
 import { action } from '@formily/reactive'
 import {
-  clusterApi,
   connectionsApi,
   databaseTypesApi,
   externalStorageApi,
+  findAccessNodeInfo,
   proxyApi,
 } from '@tap/api'
 
@@ -1270,7 +1270,7 @@ export default {
           }
         },
         loadAccessNode: async (fieldName, others = {}) => {
-          const data = await clusterApi.findAccessNodeInfo()
+          const data = await findAccessNodeInfo()
 
           const mapNode = (item) => ({
             value: item.processId,

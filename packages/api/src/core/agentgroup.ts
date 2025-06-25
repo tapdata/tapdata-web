@@ -1,4 +1,4 @@
-import { requestClient } from '../request'
+import { requestClient, type PageFetchResult } from '../request'
 
 const BASE_URL = '/api/agent-group'
 
@@ -19,21 +19,10 @@ export function addAgent(params: any) {
 }
 
 // Base Http methods that are used in the codebase
-export function fetchAgentGroups(params?: any, filter?: any) {
-  if (Array.isArray(params)) {
-    let queryStr = ''
-    if (typeof filter === 'object') {
-      queryStr = JSON.stringify(filter)
-    } else if (typeof filter === 'string') {
-      queryStr = filter
-    }
-    const qs = queryStr ? `?filter=${encodeURIComponent(queryStr)}` : ''
-    return requestClient.get(`${BASE_URL}/${params.join('/')}${qs}`)
-  } else if (typeof params === 'string') {
-    return requestClient.get(`${BASE_URL}/${params}`, { params: filter })
-  }
-  params = params || {}
-  return requestClient.get(BASE_URL, { params })
+export function fetchAgentGroups(params?: any) {
+  return requestClient.get<PageFetchResult<any>>(BASE_URL, {
+    params,
+  })
 }
 
 export function deleteAgentGroup(id: string) {

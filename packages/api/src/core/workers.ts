@@ -1,6 +1,39 @@
-import { requestClient } from '../request'
+import { requestClient, type PageFetchResult } from '../request'
 
 const BASE_URL = '/api/Workers'
+
+export interface WorkerInfo {
+  dataFlows: Record<string, any>[]
+  systemInfo: Record<string, any>[]
+  runningNum: number
+  runningTaskNum: Record<string, number>
+}
+
+export interface Worker {
+  id: string
+  lastUpdBy: string
+  createUser: string
+  cpuLoad: number
+  hostname: string
+  usedMemory: number
+  version: string
+  metricValues: {
+    HeapMemoryUsage: number | string
+    CpuUsage: number | string
+  }
+  stopping: boolean
+  gitCommitId: string
+  singletonLock: string
+  licenseBind: boolean
+  createTime: string
+  last_updated: string
+  user_id: string
+  process_id: string
+  worker_type: string
+  ping_time: number
+  total_thread: number
+  worker_date: string
+}
 
 export function getAvailableAgent() {
   return requestClient.get(`${BASE_URL}/availableAgent`)
@@ -11,7 +44,9 @@ export function getTaskUsedAgent(id: string) {
 }
 
 export function queryAllBindWorker() {
-  return requestClient.get(`${BASE_URL}/queryAllBindWorker`)
+  return requestClient.get<Record<string, any>[]>(
+    `${BASE_URL}/queryAllBindWorker`,
+  )
 }
 
 export function unbindByProcessId(id: string) {
@@ -19,29 +54,21 @@ export function unbindByProcessId(id: string) {
 }
 
 export function getProcessInfo(processIds: string[]) {
-  return requestClient.get(`${BASE_URL}/getProcessInfo`, {
-    params: {
-      process_id: JSON.stringify(processIds)
-    }
-  })
+  return requestClient.get<{ string: WorkerInfo }>(
+    `${BASE_URL}/getProcessInfo`,
+    {
+      params: {
+        process_id: JSON.stringify(processIds),
+      },
+    },
+  )
 }
 
 // Base Http methods that are used in the codebase
-export function fetchWorkers(params?: any, filter?: any) {
-  if (Array.isArray(params)) {
-    let queryStr = ''
-    if (typeof filter === 'object') {
-      queryStr = JSON.stringify(filter)
-    } else if (typeof filter === 'string') {
-      queryStr = filter
-    }
-    const qs = queryStr ? `?filter=${encodeURIComponent(queryStr)}` : ''
-    return requestClient.get(`${BASE_URL}/${params.join('/')}${qs}`)
-  } else if (typeof params === 'string') {
-    return requestClient.get(`${BASE_URL}/${params}`, { params: filter })
-  }
-  params = params || {}
-  return requestClient.get(BASE_URL, { params })
+export function fetchWorkers(filter?: object) {
+  return requestClient.get<PageFetchResult<Worker>>(BASE_URL, {
+    params: { filter: filter ? JSON.stringify(filter) : undefined },
+  })
 }
 
 export function countWorkers(params: any) {

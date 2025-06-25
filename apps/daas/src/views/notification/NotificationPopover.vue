@@ -2,9 +2,9 @@
 import {
   countNotifications,
   fetchNotifications,
+  fetchUserLogs,
   listNotifications,
   patchNotification,
-  userLogsApi,
 } from '@tap/api'
 import { ALARM_LEVEL_MAP } from '@tap/business/src/shared/const'
 import Cookie from '@tap/shared/src/cookie'
@@ -170,10 +170,7 @@ export default {
           type: 'userOperation',
         },
       }
-      userLogsApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
+      fetchUserLogs(filter)
         .then((data) => {
           this.userOperations =
             data?.items?.map((item) => {
