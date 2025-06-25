@@ -1,5 +1,5 @@
 <script>
-import { userLogsApi, usersApi } from '@tap/api'
+import { fetchUserLogs, fetchUsers } from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import DatetimeRange from '@tap/component/src/filter-bar/DatetimeRange.vue'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
@@ -41,7 +41,7 @@ export default {
   },
   methods: {
     getUsers() {
-      usersApi.get().then((data) => {
+      fetchUsers().then((data) => {
         const items = data?.items || []
         this.userOptions = items.map((item) => {
           const { email, ldapAccount } = item
@@ -89,12 +89,8 @@ export default {
         where,
       }
 
-      userLogsApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
+      fetchUserLogs(filter)
         .then((data) => {
-          console.log(data)
           this.page.total = data?.total || 0
           this.page.index = current
           this.list = (data?.items || []).map((item) => {

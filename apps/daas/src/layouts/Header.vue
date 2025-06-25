@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { User, WarningFilled } from '@element-plus/icons-vue'
-import { licensesApi, settingsApi, timeStampApi, usersApi } from '@tap/api'
+import {
+  fetchAppVersion,
+  fetchTimestamp,
+  getLicenseExpires,
+  logout,
+} from '@tap/api'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 import {
@@ -13,7 +18,6 @@ import { getSettingByKey } from '@tap/shared/src/settings'
 
 import Time from '@tap/shared/src/time'
 import dayjs from 'dayjs'
-import { ElMessage, ElMessageBox } from 'element-plus'
 import { computed, inject, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -110,8 +114,8 @@ const showHomeButton = computed(() => {
 // Methods
 const getAppVersion = async () => {
   try {
-    const data = await settingsApi.getAppVersion()
-    store.commit('SET_APP_VERSION', data.toString())
+    const data = await fetchAppVersion()
+    store.commit('SET_APP_VERSION', data)
   } catch (error) {
     console.error('Error fetching app version:', error)
   }
@@ -172,7 +176,7 @@ const command = (command: string) => {
 }
 
 const signOut = () => {
-  usersApi.logout().then(() => {
+  logout().then(() => {
     utilSignOut()
   })
 }
@@ -186,14 +190,14 @@ const changeLanguage = (lang: string) => {
 const getLicense = async () => {
   let stime: any = ''
   try {
-    const data = await timeStampApi.get()
+    const data = await fetchTimestamp()
     stime = data || Time.now()
   } catch (error) {
     console.error('Error fetching timestamp:', error)
     stime = Time.now()
   }
 
-  licensesApi.expires().then((data: any) => {
+  getLicenseExpires().then((data: any) => {
     const expires_on = data?.data?.expires_on
 
     if (!expires_on) {

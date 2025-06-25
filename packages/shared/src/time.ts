@@ -1,9 +1,9 @@
 // 设置和获取服务器时间
 const current = Date.now()
-let Time = {
+const Time = {
   serverTime: current,
   systemTime: current,
-  setTime(t) {
+  setTime(t: number) {
     Time.systemTime = Date.now()
     Time.serverTime = t || Time.systemTime
   },
@@ -13,6 +13,6 @@ let Time = {
   },
 }
 
-export default Time
-
 export { Time }
+
+export default Time

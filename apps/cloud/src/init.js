@@ -1,4 +1,4 @@
-import { timeStampApi } from '@tap/api'
+import { fetchTimestamp } from '@tap/api'
 import { WSClient } from '@tap/business/src/shared/ws-client'
 import { installElement, VButton, VIcon } from '@tap/component'
 import Time from '@tap/shared/src/time'
@@ -135,7 +135,7 @@ export default ({ routes }) => {
         init(userInfo)
 
         // 设置服务器时间
-        timeStampApi.get().then((t) => {
+        fetchTimestamp().then((t) => {
           Time.setTime(t)
         })
       })

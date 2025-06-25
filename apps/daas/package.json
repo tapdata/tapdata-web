@@ -28,6 +28,7 @@
     "@tap/i18n": "workspace:*",
     "@tap/ldp": "workspace:*",
     "@tap/node-design": "workspace:*",
+    "@tap/request": "workspace:*",
     "@tap/shared": "workspace:*",
     "@tap/styles": "workspace:*",
     "axios": "catalog:",

@@ -1,5 +1,11 @@
 <script>
-import { notificationApi } from '@tap/api'
+import {
+  countNotifications,
+  fetchNotifications,
+  pageReadNotification,
+  patchNotification,
+  readAllNotifications,
+} from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import { $emit, $on } from '@tap/shared/src/event'
@@ -137,8 +143,7 @@ export default {
       }
 
       this.loading = true
-      notificationApi
-        .get({ filter: JSON.stringify(filter) })
+      fetchNotifications(filter)
         .then((data) => {
           this.listData = data?.items || []
           this.total = data?.total || 0
@@ -175,8 +180,7 @@ export default {
       if (this.searchParams.msg || this.searchParams.msg !== '') {
         where.msg = this.searchParams.msg
       }
-      notificationApi
-        .count({ where: JSON.stringify(where) })
+      countNotifications({ where: JSON.stringify(where) })
         .then((data) => {
           this.total = data?.count
         })
@@ -187,7 +191,7 @@ export default {
     handleRead(item) {
       const read = this.read
       if (!item.read) {
-        notificationApi.patch({ read: true, id: item.id }).then(() => {
+        patchNotification({ read: true, id: item.id }).then(() => {
           this.read = read
           $emit(this.$root, 'notificationUpdate')
           const msg = {
@@ -214,7 +218,7 @@ export default {
         id,
       }
       const read = this.read
-      notificationApi.pageRead(data).then(() => {
+      pageReadNotification(data).then(() => {
         // this.getUnreadNum() //未读消息数量
         this.getData()
         this.read = read
@@ -236,7 +240,7 @@ export default {
       // }
       where = JSON.stringify(where)
       const read = this.read
-      notificationApi.readAll(where).then(() => {
+      readAllNotifications(where).then(() => {
         // this.getUnreadNum() //未读消息数量
         this.getData()
         this.read = read

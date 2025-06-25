@@ -1,5 +1,5 @@
 <script>
-import { notificationApi } from '@tap/api'
+import { listNotifications, patchNotification } from '@tap/api'
 import { ALARM_LEVEL_MAP } from '@tap/business/src/shared/const'
 
 import { $emit } from '@tap/shared/src/event'
@@ -89,7 +89,7 @@ export default {
         size: 20,
         read: false,
       }
-      notificationApi.list(where).then((data) => {
+      listNotifications(where).then((data) => {
         const list = data?.items || []
         this.unRead = data?.total
         loadData &&
@@ -102,7 +102,7 @@ export default {
     },
     // 已读消息
     handleRead(id) {
-      notificationApi.patch({ read: true, id }).then(() => {
+      patchNotification({ read: true, id }).then(() => {
         this.getUnreadData()
         $emit(this.$root, 'notificationUpdate')
       })
