@@ -1,7 +1,7 @@
 lockfileVersion: '6.0'
 
 overrides:
-  webpack: 4.47.0
+  webpack: ^4.46.0
   '@formily/core': 2.2.13
   '@formily/element': 2.2.13
   '@formily/json-schema': 2.2.13
@@ -11,8 +11,8 @@ overrides:
   '@formily/shared': 2.2.13
   '@formily/vue': 2.2.13
   vue-demi: ^0.12.1
-  vue: 2.6.14
-  vue-template-compiler: 2.6.14
+  vue: ~2.6.14
+  vue-template-compiler: ~2.6.11
   vue-resize: ^0.5.0
 
 patchedDependencies:
@@ -34,7 +34,7 @@ importers:
         specifier: ^4.17.15
         version: 4.17.21
       vue:
-        specifier: 2.6.14
+        specifier: ~2.6.14
         version: 2.6.14
       vue-router:
         specifier: ^3.2.0
@@ -170,7 +170,7 @@ importers:
         specifier: ^6.10.3
         version: 6.12.1
       vue:
-        specifier: 2.6.14
+        specifier: ~2.6.14
         version: 2.6.14
       vue-clipboard2:
         specifier: ^0.3.1
@@ -276,7 +276,7 @@ importers:
         specifier: ^3.0.0
         version: 3.0.3
       vue-template-compiler:
-        specifier: 2.6.14
+        specifier: ~2.6.11
         version: 2.6.14
 
   apps/dfs:
@@ -384,7 +384,7 @@ importers:
         specifier: ^6.10.3
         version: 6.12.1
       vue:
-        specifier: 2.6.14
+        specifier: ~2.6.14
         version: 2.6.14
       vue-clipboard2:
         specifier: ^0.3.1
@@ -484,7 +484,7 @@ importers:
         specifier: ^1.0.1
         version: 1.0.1
       vue-template-compiler:
-        specifier: 2.6.14
+        specifier: ~2.6.11
         version: 2.6.14
 
   packages/api:
@@ -567,7 +567,7 @@ importers:
         specifier: ^13.0.1
         version: 13.0.2
       vue:
-        specifier: 2.6.14
+        specifier: ~2.6.14
         version: 2.6.14
       vue-echarts:
         specifier: ^6.0.0
@@ -699,7 +699,7 @@ importers:
         specifier: ^1.5.1
         version: 1.5.1
       vue:
-        specifier: 2.6.14
+        specifier: ~2.6.14
         version: 2.6.14
       vue-demi:
         specifier: ^0.12.1
