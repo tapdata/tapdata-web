@@ -1,5 +1,3 @@
-import AgentGroup from './AgentGroup'
-
 import Alarm from './Alarm'
 
 import AlarmMail from './AlarmMail'
@@ -15,8 +13,6 @@ import ApiServer from './ApiServer'
 import App from './App'
 
 import Application from './Application'
-
-import Cluster from './Cluster'
 
 import Connections from './Connections'
 
