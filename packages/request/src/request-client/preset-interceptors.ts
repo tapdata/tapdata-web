@@ -111,6 +111,7 @@ export const authenticateResponseInterceptor = ({
 
 export const errorMessageResponseInterceptor = (
   makeErrorMessage?: MakeErrorMessageFn,
+  statusHandler?: Record<number, (error: any) => string>,
 ): ResponseInterceptorConfig => {
   return {
     rejected: (error: any) => {
@@ -133,36 +134,46 @@ export const errorMessageResponseInterceptor = (
       }
 
       let errorMessage = ''
-      const status = error?.response?.status
+      const status = error?.response?.status as number
 
-      switch (status) {
-        case 400: {
-          errorMessage = i18n.global.t('public_message_400')
-          break
-        }
-        case 401: {
-          errorMessage = i18n.global.t('public_message_401')
-          break
-        }
-        case 403: {
-          errorMessage = i18n.global.t('public_message_403')
-          break
-        }
-        case 404: {
-          errorMessage = i18n.global.t('public_message_404')
-          break
-        }
-        case 408: {
-          errorMessage = i18n.global.t('public_message_408')
-          break
-        }
-        default: {
-          errorMessage = i18n.global.t('public_message_inner_error')
-          break
+      if (statusHandler?.[status]) {
+        errorMessage = statusHandler[status](error)
+      } else {
+        switch (status) {
+          case 400: {
+            errorMessage = i18n.global.t('public_message_400')
+            break
+          }
+          case 401: {
+            errorMessage = i18n.global.t('public_message_401')
+            break
+          }
+          case 403: {
+            errorMessage = i18n.global.t('public_message_403')
+            break
+          }
+          case 404: {
+            errorMessage = i18n.global.t('public_message_404')
+            break
+          }
+          case 408: {
+            errorMessage = i18n.global.t('public_message_408')
+            break
+          }
+          default: {
+            errorMessage = i18n.global.t('public_message_inner_error')
+            break
+          }
         }
       }
 
-      makeErrorMessage?.(errorMessage, error)
+      if (
+        !error?.response?.config?.skipErrorHandler &&
+        !error?.response?.config?.silenceMessage
+      ) {
+        makeErrorMessage?.(errorMessage, error)
+      }
+
       return Promise.reject(error)
     },
   }

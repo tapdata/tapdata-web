@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { alarmApi, alarmMailApi, alarmRuleApi, settingsApi } from '@tap/api'
+import {
+  alarmApi,
+  alarmMailApi,
+  alarmRuleApi,
+  findAlarm,
+  saveAlarm,
+} from '@tap/api'
 import { VTable } from '@tap/component/src/base/v-table'
 import {
   AdminOutlined,
@@ -225,7 +231,7 @@ const channels = ref<string[]>(['wechat', 'system', 'sms', 'email'])
 // Methods
 const remoteMethod = async (type?: string) => {
   try {
-    const data = await settingsApi.findAlarm()
+    const data = await findAlarm()
     tableData.value = data
     if (!isDaas.value && type) {
       emit('updateVisible', false)
@@ -246,7 +252,7 @@ const save = async () => {
   try {
     // 合并agent停止时
     const data = [...tableData.value, ...currentData.value]
-    await settingsApi.saveAlarm(data)
+    await saveAlarm(data)
     ElMessage.success(i18n.t('public_message_save_ok'))
     if (!isDaas.value) {
       emit('updateVisible', false)

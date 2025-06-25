@@ -8,9 +8,9 @@ import {
 import Cookie from '@tap/shared/src/cookie'
 import { getSettingByKey } from '@tap/shared/src/settings'
 import axios, {
-  type AxiosError,
   type AxiosRequestConfig,
   type AxiosResponse,
+  type InternalAxiosRequestConfig,
 } from 'axios'
 import { ElMessage as Message } from 'element-plus'
 import Qs from 'qs'
@@ -21,16 +21,36 @@ type AxiosRequestConfigPro = AxiosRequestConfig & {
   silenceMessage?: boolean
 }
 
+// Pending requests map for cancellation
+const pendingRequests = new Map<string, AbortController>()
+
+// Function to generate request key
+const generateRequestKey = (config: AxiosRequestConfig): string => {
+  return `${config.method}:${config.url}`
+}
+
+// Function to remove pending request
+const removePending = (config: AxiosRequestConfig): void => {
+  const requestKey = generateRequestKey(config)
+  if (pendingRequests.has(requestKey)) {
+    const controller = pendingRequests.get(requestKey)
+    controller?.abort()
+    pendingRequests.delete(requestKey)
+  }
+}
+
 axios.defaults.baseURL = import.meta.env.BASE_URL || './'
 
-const errorCallback = (error: AxiosError): Promise<AxiosError | string> => {
+const errorCallback = (error: any): Promise<any> => {
   if (axios.isCancel(error)) {
     // eslint-disable-next-line no-console
     console.log('Request canceled', error.message)
     return Promise.reject(error)
   }
   if (error?.config || error?.response?.config) {
-    removePending(error.config || error.response.config)
+    removePending(
+      (error.config || error.response?.config) as AxiosRequestConfig,
+    )
   }
   const rsp = error.response
   if (rsp) {
@@ -95,8 +115,8 @@ const errorCallback = (error: AxiosError): Promise<AxiosError | string> => {
 }
 
 axios.interceptors.request.use(function (
-  config: AxiosRequestConfig,
-): AxiosRequestConfig {
+  config: InternalAxiosRequestConfig,
+): InternalAxiosRequestConfig {
   config.paramsSerializer = (params) => {
     return Qs.stringify(params, {
       arrayFormat: 'brackets',
@@ -104,7 +124,7 @@ axios.interceptors.request.use(function (
     })
   }
   const accessToken = Cookie.get('access_token')
-  if (accessToken) {
+  if (accessToken && config.url) {
     if (~config.url.indexOf('?')) {
       if (!~config.url.indexOf('access_token')) {
         config.url = `${config.url}&access_token=${accessToken}`
@@ -113,14 +133,16 @@ axios.interceptors.request.use(function (
       config.url = `${config.url}?access_token=${accessToken}`
     }
   }
-  config.headers['x-requested-with'] = 'XMLHttpRequest'
+  if (config.headers) {
+    config.headers['x-requested-with'] = 'XMLHttpRequest'
+  }
 
   return config
 }, errorCallback)
 
 axios.interceptors.response.use((response: AxiosResponse) => {
   return new Promise((resolve, reject) => {
-    removePending(response.config)
+    removePending(response.config as AxiosRequestConfig)
     const code = response.data.code
 
     if (response?.config?.responseType === 'blob') {
@@ -169,35 +191,25 @@ export function initRequestClient() {
     }),
   )
 
-  requestClient.addResponseInterceptor({
-    rejected: (error: any) => {
-      if (axios.isCancel(error)) {
-        return Promise.reject(error)
-      }
+  requestClient.addResponseInterceptor(
+    errorMessageResponseInterceptor(
+      (msg: string, error) => {
+        // 这里可以根据业务进行定制,你可以拿到 error 内的信息进行定制化处理，根据不同的 code 做不同的提示，而不是直接使用 message.error 提示 msg
+        const responseData = error?.response?.data ?? {}
+        const errorMessage = responseData?.message ?? responseData?.msg
 
-      const err: string = error?.toString?.() ?? ''
-      let errMsg = ''
-
-      if (err?.includes('Network Error')) {
-        errMsg = i18n.global.t('public_message_network_unconnected')
-      } else if (error?.message?.includes?.('timeout')) {
-        errMsg = i18n.global.t('public_message_request_timeout')
-      }
-
-      if (errMsg) {
-        ElMessage.error(errMsg)
-        return Promise.reject(error)
-      }
-
-      let errorMessage = ''
-      const status = error?.response?.status
-
-      switch (status) {
-        case 400: {
-          errorMessage = i18n.global.t('public_message_400')
-          break
+        if (errorMessage) {
+          showErrorMessage(error.response.data)
+          return
         }
-        case 401: {
+
+        ElMessage.error({
+          message: msg || i18n.global.t('public_message_inner_error'),
+          grouping: true,
+        })
+      },
+      {
+        401: () => {
           const isSingleSession = getSettingByKey(
             'login.single.session',
             'open',
@@ -211,41 +223,14 @@ export function initRequestClient() {
                 i18n.global.t('public_alert_401'),
                 i18n.global.t('public_alert_401_tip'),
               )
-            } else {
-              Message.error({
-                message: i18n.global.t('public_message_401'),
-                grouping: true,
-              })
             }
           }, 500)
-          errorMessage = i18n.global.t('public_message_401')
-          break
-        }
-        case 403: {
-          errorMessage = i18n.global.t('public_message_403')
-          break
-        }
-        case 404: {
-          errorMessage = i18n.global.t('public_message_404')
-          break
-        }
-        case 408: {
-          errorMessage = i18n.global.t('public_message_408')
-          break
-        }
-        default: {
-          errorMessage = i18n.global.t('public_message_inner_error')
-          break
-        }
-      }
 
-      const responseData = error?.response?.data ?? {}
-      const message = responseData?.error ?? responseData?.message ?? ''
-      // 如果没有错误信息，则会根据状态码进行提示
-      ElMessage.error(message || errorMessage)
-      return Promise.reject(error)
-    },
-  })
+          return i18n.global.t('public_message_401')
+        },
+      },
+    ),
+  )
 
   return requestClient
 }

@@ -304,7 +304,7 @@ importers:
         specifier: workspace:*
         version: link:dev/tsconfig
       '@tap/types':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:packages/types
       '@tsconfig/node20':
         specifier: 'catalog:'

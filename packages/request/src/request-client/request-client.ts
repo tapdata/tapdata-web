@@ -18,7 +18,7 @@ function getParamsSerializer(
     switch (paramsSerializer) {
       case 'brackets': {
         return (params: any) =>
-          qs.stringify(params, { arrayFormat: 'brackets' })
+          qs.stringify(params, { arrayFormat: 'brackets', encode: true })
       }
       case 'comma': {
         return (params: any) => qs.stringify(params, { arrayFormat: 'comma' })
@@ -54,6 +54,7 @@ class RequestClient {
   constructor(options: RequestClientOptions = {}) {
     // 合并默认配置和传入的配置
     const defaultConfig: RequestClientOptions = {
+      paramsSerializer: 'brackets',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
       },
@@ -126,6 +127,17 @@ class RequestClient {
     config?: RequestClientConfig,
   ): Promise<T> {
     return this.request<T>(url, { ...config, data, method: 'PUT' })
+  }
+
+  /**
+   * PATCH请求方法
+   */
+  public patch<T = any>(
+    url: string,
+    data?: any,
+    config?: RequestClientConfig,
+  ): Promise<T> {
+    return this.request<T>(url, { ...config, data, method: 'PATCH' })
   }
 
   /**

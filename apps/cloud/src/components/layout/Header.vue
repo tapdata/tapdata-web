@@ -8,7 +8,7 @@ import {
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import slackImg from '@/assets/image/slack.svg'
 
-import NotificationPopover from '@/views/workbench/NotificationPopover'
+import NotificationPopover from '@/views/workbench/NotificationPopover.vue'
 
 import { daysdifference, extractTimeFromObjectId } from '../../util'
 

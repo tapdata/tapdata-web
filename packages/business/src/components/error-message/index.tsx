@@ -107,7 +107,9 @@ export function ErrorMessage(stack: string, message: string) {
 
 export function showErrorMessage(error: Record<string, any>) {
   let message =
-    error?.message || error?.msg || i18n.t('public_message_request_error')
+    error?.message ||
+    error?.msg ||
+    i18n.global.t('public_message_request_error')
   let duration = 3000
   let showClose = false
 
@@ -128,5 +130,6 @@ export function showErrorMessage(error: Record<string, any>) {
     message,
     duration,
     showClose,
+    grouping: true,
   })
 }

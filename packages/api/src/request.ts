@@ -77,3 +77,12 @@ export interface PageFetchParams {
   pageNo?: number
   pageSize?: number
 }
+
+export interface PageFetchResult<T> {
+  total: number
+  items: T[]
+}
+
+export interface CountFetchResult {
+  count: number
+}

@@ -32,53 +32,12 @@ const proxy = {
   changeOrigin: false,
 }
 
-export default defineConfig(({ mode }) => {
-  // 加载环境变量
-  const envPrefix = ['VUE_APP_', 'VITE_', 'TAP_']
-  const env = loadEnv(mode, process.cwd(), envPrefix)
-
+export default defineConfig(() => {
   return {
     define: {
-      // 'process.env': process.env,
       TAP_ACCESS_TOKEN: "''",
     },
-
-    envPrefix,
-
-    optimizeDeps: {
-      include: [
-        '@tap/api',
-        '@tap/shared',
-        // '@tap/assets',
-        // 'vue',
-        // 'vue-router',
-        // 'element-plus',
-        // '@vueuse/core',
-        // 'lodash-es',
-        // '@formily/vue',
-        // '@formily/core',
-        // '@formily/reactive',
-        // '@formily/reactive-vue',
-        // '@formily/shared',
-        // '@formily/path',
-        // '@formily/json-schema',
-        // '@formily/element-plus',
-      ],
-      // exclude: [
-      //   '@tap/dag',
-      //   '@tap/ldp',
-      //   '@tap/business',
-      //   '@tap/component', // 排除整个组件库，改用按需加载
-      // ],
-      // force: false,
-      // esbuildOptions: {
-      //   target: 'esnext',
-      //   supported: {
-      //     'top-level-await': true,
-      //   },
-      // },
-    },
-
+    envPrefix: ['VUE_APP_', 'VITE_', 'TAP_'],
     plugins: [
       vue(),
       vueJsx(),

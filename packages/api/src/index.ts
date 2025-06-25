@@ -80,8 +80,6 @@ import Modules from './Modules'
 
 import MonitoringLogs from './MonitoringLogs'
 
-import Notification from './Notification'
-
 import Paid from './Paid'
 
 import PDK from './PDK'
@@ -100,8 +98,6 @@ import RoleMappings from './RoleMapping'
 
 import ScheduleTasks from './ScheduleTasks'
 
-import Settings from './Settings'
-
 import ShareCdcTableMetrics from './ShareCdcTableMetrics'
 
 import SharedCache from './SharedCache'
@@ -113,8 +109,6 @@ import Task from './Task'
 import TaskInspect from './TaskInspect'
 
 import TCM from './Tcm'
-
-import TimeStamp from './TimeStamp'
 
 import TypeMapping from './TypeMapping'
 
@@ -166,8 +160,6 @@ const previewDataApi = new PreviewData()
 
 const dataRuleApi = new DataRule()
 
-const notificationApi = new Notification()
-
 const usersApi = new Users()
 
 const apiMonitorApi = new ApiMonitor()
@@ -179,8 +171,6 @@ const apiServerApi = new ApiServer()
 const roleApi = new Role()
 
 const workerApi = new Worker()
-
-const settingsApi = new Settings()
 
 const apiCallsApi = new ApiCalls()
 
@@ -197,8 +187,6 @@ const inspectApi = new Inspect()
 const inspectDetailsApi = new InspectDetails()
 
 const inspectResultsApi = new InspectResults()
-
-const timeStampApi = new TimeStamp()
 
 const roleMappingsApi = new RoleMappings()
 
@@ -294,7 +282,6 @@ export {
   metadataTransformerApi,
   modulesApi,
   monitoringLogsApi,
-  notificationApi,
   paidApi,
   pdkApi,
   permissionsApi,
@@ -311,7 +298,6 @@ export {
   taskApi,
   taskInspectApi,
   tcmApi,
-  timeStampApi,
   typeMappingApi,
   userGroupsApi,
   userLogsApi,

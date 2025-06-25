@@ -1,4 +1,4 @@
-import { fetchSettings, timeStampApi, usersApi } from '@tap/api'
+import { fetchSettings, fetchTimestamp, getUserInfoByToken } from '@tap/api'
 import { WSClient } from '@tap/business/src/shared/ws-client'
 import VIcon from '@tap/component/src/base/VIcon.vue'
 import { installElement } from '@tap/component/src/InstallElement'
@@ -119,7 +119,7 @@ fetchSettings()
     }
     if (token) {
       //无权限，说明是首次进入页面，重新请求后台获取
-      const user = await usersApi.getInfo().catch(async () => {
+      const user = await getUserInfoByToken().catch(() => {
         init()
         return null
       })
@@ -136,13 +136,13 @@ fetchSettings()
 
     init()
     // 设置服务器时间
-    timeStampApi.get().then((t) => {
+    fetchTimestamp().then((t) => {
       Time.setTime(t)
     })
   })
   .catch((error) => {
     // eslint-disable-next-line
-    console.log(i18n.t('daas_src_main_qingqiuquanjupei') + error)
+    console.log(i18n.global.t('daas_src_main_qingqiuquanjupei') + error)
   })
   .finally(() => {
     loading.close()
