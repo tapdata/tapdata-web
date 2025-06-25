@@ -1,12 +1,11 @@
-import * as Vue from 'vue'
-import 'virtual:svg-icons-register'
 import init from '../init'
+import 'virtual:svg-icons-register'
 
-let routes = [
+const routes = [
   {
     path: '/',
     name: 'aliyunMarketLicense',
-    component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/aliyun-market/License.vue'))),
+    component: () => import('../views/aliyun-market/License.vue'),
   },
 ]
 init({

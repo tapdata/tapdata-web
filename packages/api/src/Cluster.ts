@@ -6,22 +6,25 @@ export class Cluster extends Http {
     super('/api/clusterStates')
   }
   updateStatus(params: unknown) {
-    return this.axios.post(this.url + '/updataStatus', params)
+    return this.axios.post(`${this.url}/updataStatus`, params)
   }
   addMonitor(params: unknown) {
-    return this.axios.post(this.url + '/addMonitor', params)
+    return this.axios.post(`${this.url}/addMonitor`, params)
   }
   removeMonitor(params: unknown) {
-    return this.axios.post(this.url + '/removeMonitor', params)
+    return this.axios.post(`${this.url}/removeMonitor`, params)
   }
   editMonitor(params: unknown) {
-    return this.axios.post(this.url + '/editMonitor', params)
+    return this.axios.post(`${this.url}/editMonitor`, params)
   }
   editAgent(id: string, params: unknown) {
-    return this.axios.patch(this.url + '/' + id, params)
+    return this.axios.patch(`${this.url}/${id}`, params)
   }
   findAccessNodeInfo(params: unknown) {
-    return this.axios.get(this.url + '/findAccessNodeInfo', { params })
+    return this.axios.get(`${this.url}/findAccessNodeInfo`, { params })
+  }
+  findRawServerInfo(params: any) {
+    return this.axios.get(`${this.url}/findRawServerInfo`, { params })
   }
 }
 export default Cluster

@@ -1,14 +1,16 @@
 import { settingsApi, timeStampApi, usersApi } from '@tap/api'
-import { WSClient } from '@tap/business/src/shared/ws-client'
-import { installElement, VIcon } from '@tap/component'
+import { WSClient } from '@tap/business/src/shared/ws-client.ts'
+import VIcon from '@tap/component/src/base/VIcon.vue'
+import { installElement } from '@tap/component/src/InstallElement'
 import {
   getCurrentLanguage,
   setCurrentLanguage,
 } from '@tap/i18n/src/shared/util'
 import Cookie from '@tap/shared/src/cookie'
+import { setSettings } from '@tap/shared/src/settings'
 import Time from '@tap/shared/src/time'
 import { ElLoading } from 'element-plus'
-import * as Vue from 'vue'
+import { createApp } from 'vue'
 import App from '@/App.vue'
 import { installOEM } from '@/oem'
 import { installAllPlugins } from '@/plugins'
@@ -22,6 +24,7 @@ import router from './router'
 import '@/plugins/axios.ts'
 
 import 'virtual:svg-icons-register'
+import '@tap/styles'
 import '@/styles/app.scss'
 
 window._TAPDATA_OPTIONS_ = {
@@ -42,14 +45,6 @@ window._TAPDATA_OPTIONS_ = {
   logoHeight: import.meta.env.VUE_APP_LOGO_HEIGHT,
   loginSize: import.meta.env.VUE_APP_LOGIN_IMG_SIZE,
   homeUrl: import.meta.env.VUE_APP_HOME_URL,
-}
-
-window.getSettingByKey = (key) => {
-  let value = ''
-
-  const setting = window?.__settings__.find((it) => it.key === key) || {}
-  value = setting.isArray ? setting.value.split(',') : setting.value
-  return value
 }
 
 const IS_IFRAME = String(
@@ -78,9 +73,7 @@ const init = () => {
   const lang = getCurrentLanguage()
   setCurrentLanguage(lang, i18n)
 
-  document.title =
-    /*window.getSettingByKey('PRODUCT_TITLE') ||*/ import.meta.env
-      .VUE_APP_PAGE_TITLE || 'Tapdata'
+  document.title = import.meta.env.VUE_APP_PAGE_TITLE || 'Tapdata'
 
   const loc = window.location
   let wsUrl = 'ws:'
@@ -89,13 +82,13 @@ const init = () => {
   }
   wsUrl += `//${loc.host}${location.pathname.replace(/\/$/, '')}/ws/agent`
 
-  const app = (window.App = window.$vueApp = Vue.createApp(App))
+  const app = createApp(App)
 
   installAllPlugins(app)
   installDirectives(app)
   installElement(app)
 
-  window.$vueApp.config.globalProperties.$ws = new WSClient(wsUrl, undefined, {
+  app.config.globalProperties.$ws = new WSClient(wsUrl, undefined, {
     getQuery: () => {
       return {
         access_token: Cookie.get('access_token'),
@@ -103,19 +96,14 @@ const init = () => {
     },
   })
 
-  window.$vueApp.component(VIcon.name, VIcon)
-  window.$vueApp.config.globalProperties.routerAppend = (
-    path,
-    pathToAppend,
-  ) => {
+  app.component(VIcon.name, VIcon)
+  app.config.globalProperties.routerAppend = (path, pathToAppend) => {
     return path + (path.endsWith('/') ? '' : '/') + pathToAppend
   }
-  window.$vueApp.config.globalProperties.$getSettingByKey =
-    window.getSettingByKey
-  window.$vueApp.use(i18n)
-  window.$vueApp.use(store)
-  window.$vueApp.use(router)
-  window.$vueApp.mount('#app')
+  app.use(i18n)
+  app.use(store)
+  app.use(router)
+  app.mount('#app')
 }
 
 const loading = ElLoading.service({ fullscreen: true })
@@ -124,7 +112,7 @@ settingsApi
   .get()
   .then(async (data) => {
     const initData = data || []
-    window.__settings__ = initData
+    setSettings(initData)
 
     if (initData.length) {
       localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(initData))
@@ -133,7 +121,12 @@ settingsApi
       //无权限，说明是首次进入页面，重新请求后台获取
       const user = await usersApi.getInfo().catch(async () => {
         init()
+        return null
       })
+
+      if (!user) {
+        return
+      }
 
       await store.dispatch('feature/getFeatures')
 

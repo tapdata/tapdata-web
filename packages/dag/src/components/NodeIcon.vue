@@ -1,5 +1,5 @@
-<script lang="jsx">
-import { getNodeIconSrc } from '@tap/business'
+<script lang="tsx">
+import { getNodeIconSrc } from '@tap/business/src/shared/task'
 
 export default function render(_props, { attrs }) {
   const props = {
@@ -10,20 +10,15 @@ export default function render(_props, { attrs }) {
 
   if (props.size) {
     props.style = {
-      width: props.size + 'px',
-      height: props.size + 'px',
+      width: `${props.size}px`,
+      height: `${props.size}px`,
     }
   }
 
   return props.src ? (
     <ElImage {...props}></ElImage>
   ) : (
-    <div
-      {...{
-        class: 'inline-block',
-        ...props,
-      }}
-    ></div>
+    <div class="inline-block" {...props}></div>
   )
 }
 </script>

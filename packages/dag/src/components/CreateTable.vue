@@ -1,40 +1,10 @@
-<template>
-  <ElDialog
-    width="30%"
-    append-to-body
-    :title="dialog.title"
-    :close-on-click-modal="false"
-    v-model="dialog.visible"
-    @close="closeDialogForm"
-  >
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" @submit.prevent>
-      <el-form-item prop="newTable">
-        <el-input
-          v-model="ruleForm.newTable"
-          :placeholder="dialog.placeholder"
-          maxlength="50"
-          show-word-limit
-          @keypress.enter="confirm"
-        ></el-input>
-      </el-form-item>
-    </el-form>
-
-    <template v-slot:footer>
-      <span class="dialog-footer">
-        <el-button @click="closeDialogForm">{{ $t('public_button_cancel') }}</el-button>
-        <el-button type="primary" @click="confirm">{{ $t('public_button_confirm') }}</el-button>
-      </span>
-    </template>
-  </ElDialog>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 export default {
   name: 'CreateTable',
   props: {
     dialog: Object,
   },
+  emits: ['handleTable'],
   data() {
     return {
       flag: null,
@@ -65,7 +35,7 @@ export default {
     // 子组件校验，传递到父组件
     validateForm() {
       let flag = null
-      this.$refs['ruleForm'].validate((valid) => {
+      this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           flag = true
         } else {
@@ -75,18 +45,54 @@ export default {
       return flag
     },
     confirm() {
-      let flag = this.validateForm()
-      let first = this.ruleForm.newTable.split('.')[0] == 'system' ? true : false
+      const flag = this.validateForm()
+      const first =
+        this.ruleForm.newTable.split('.')[0] == 'system' ? true : false
       if (flag) {
         if (this.dialog.type === 'collection' && first) {
-          this.$message.error(this.$t('packages_dag_dialog_collectionValidateTip'))
+          this.$message.error(
+            this.$t('packages_dag_dialog_collectionValidateTip'),
+          )
         } else {
           this.dialog.visible = false
-          $emit(this, 'handleTable', this.ruleForm.newTable)
+          this.$emit('handleTable', this.ruleForm.newTable)
         }
       }
     },
   },
-  emits: ['handleTable'],
 }
 </script>
+
+<template>
+  <ElDialog
+    v-model="dialog.visible"
+    width="30%"
+    append-to-body
+    :title="dialog.title"
+    :close-on-click-modal="false"
+    @close="closeDialogForm"
+  >
+    <el-form ref="ruleForm" :model="ruleForm" :rules="rules" @submit.prevent>
+      <el-form-item prop="newTable">
+        <el-input
+          v-model="ruleForm.newTable"
+          :placeholder="dialog.placeholder"
+          maxlength="50"
+          show-word-limit
+          @keypress.enter="confirm"
+        />
+      </el-form-item>
+    </el-form>
+
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="closeDialogForm">{{
+          $t('public_button_cancel')
+        }}</el-button>
+        <el-button type="primary" @click="confirm">{{
+          $t('public_button_confirm')
+        }}</el-button>
+      </span>
+    </template>
+  </ElDialog>
+</template>

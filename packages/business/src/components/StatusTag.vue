@@ -1,34 +1,14 @@
-<template>
-  <span v-if="onlyImg" class="td-status-tag inline-flex align-items-center">
-    <img :src="imgSrc" :data-status="statusObj.text" alt="" />
-  </span>
-  <span v-else class="td-status-tag">
-    <ElTag v-if="type === 'tag'" :type="statusObj.type">{{ statusObj.text }}</ElTag>
-    <span :class="['flex', 'align-items-center', 'icon-span', status]" v-else>
-      <VIcon v-if="statusObj.icon" :class="['v-icon', `color-${statusObj.type}`]" size="16">{{ statusObj.icon }}</VIcon>
-      <span
-        v-else
-        :class="['circle-icon', 'mr-2', `bg-color-${statusObj.type}`]"
-        :style="{ 'background-color': statusObj.color }"
-      ></span>
-      <span class="td-status-tag__text font-color-light">{{ statusObj.text }}</span>
-    </span>
-  </span>
-</template>
-
 <script>
-import { VIcon } from '@tap/component'
 import {
   CONNECTION_STATUS_MAP,
-  TASK_STATUS_MAP,
-  MILESTONE_STATUS_MAP,
   ETL_STATUS_MAP,
   ETL_SUB_STATUS_MAP,
+  MILESTONE_STATUS_MAP,
   SHARECDC_MAP,
+  TASK_STATUS_MAP,
 } from '../shared/const'
 export default {
   name: 'StatusTag',
-  components: { VIcon },
   props: {
     type: {
       type: String,
@@ -78,6 +58,33 @@ export default {
   },
 }
 </script>
+
+<template>
+  <span v-if="onlyImg" class="td-status-tag inline-flex align-items-center">
+    <img :src="imgSrc" :data-status="statusObj.text" alt="" />
+  </span>
+  <span v-else class="td-status-tag">
+    <ElTag v-if="type === 'tag'" :type="statusObj.type">{{
+      statusObj.text
+    }}</ElTag>
+    <span v-else :class="['flex', 'align-items-center', 'icon-span', status]">
+      <VIcon
+        v-if="statusObj.icon"
+        :class="['v-icon', `color-${statusObj.type}`]"
+        size="16"
+        >{{ statusObj.icon }}</VIcon
+      >
+      <span
+        v-else
+        :class="['circle-icon', 'mr-2', `bg-color-${statusObj.type}`]"
+        :style="{ 'background-color': statusObj.color }"
+      />
+      <span class="td-status-tag__text font-color-light">{{
+        statusObj.text
+      }}</span>
+    </span>
+  </span>
+</template>
 
 <style lang="scss">
 .td-status-tag {

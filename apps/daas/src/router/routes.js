@@ -1,162 +1,86 @@
-import * as Vue from 'vue'
 import Layout from '@/layouts/Layout.vue'
 import NotifyLayout from '@/layouts/NotifyLayout.vue'
 import SettingLayout from '@/layouts/SettingLayout.vue'
-import Parent from './Parent'
 
-const FunctionForm = Vue.defineAsyncComponent(
-  () => import('@/views/function/Form'),
-)
-const DagEditor = async () => {
-  const { Editor } = await import(/* webpackChunkName: "dag" */ '@tap/dag')
-  return Editor
-}
-const MigrationEditor = async () => {
-  const { MigrationEditor } = await import('@tap/dag')
-  return MigrationEditor
-}
-const MigrationMonitor = async () => {
-  const { MigrationMonitor } = await import('@tap/dag')
-  return MigrationMonitor
-}
-const MigrationMonitorViewer = async () => {
-  const { MigrationMonitorViewer } = await import('@tap/dag')
-  return MigrationMonitorViewer
-}
-const DataCapture = async () => {
-  const { DataCapture } = await import('@tap/dag')
-  return DataCapture
-}
-const CustomNodeList = async () => {
-  const { CustomNodeList } = await import('@tap/business')
-  return CustomNodeList
-}
-const NodeEditor = async () => {
-  const { Editor } = await import(
-    /* webpackChunkName: "node-design" */ '@tap/node-design'
-  )
-  return Editor
-}
-const ConnectionForm = async () => {
-  const { ConnectionForm } = await import('@tap/business')
-  return ConnectionForm
-}
-const TaskList = async () => {
-  const { TaskList } = await import('@tap/business')
-  return TaskList
-}
+const FunctionForm = () => import('@/views/function/Form.vue')
 
-const ConnectionList = async () => {
-  const { ConnectionList } = await import('@tap/business')
-  return ConnectionList
-}
-const MigrateList = async () => {
-  const { MigrateList } = await import('@tap/business')
-  return MigrateList
-}
+const DagEditor = () => import('@tap/dag/src/Editor.vue')
+const MigrationEditor = () => import('@tap/dag/src/MigrationEditor.vue')
+const MigrationMonitor = () => import('@tap/dag/src/MigrationMonitor.vue')
+const MigrationMonitorViewer = () =>
+  import('@tap/dag/src/MigrationMonitorViewer.vue')
+const DataCapture = () => import('@tap/dag/src/data-capture/DataCapture.vue')
+const CustomNodeList = () =>
+  import('@tap/business/src/views/custom-node/List.vue')
+const NodeEditor = () => import('@tap/node-design/src/Editor.vue')
+const ConnectionForm = () =>
+  import('@tap/business/src/views/connections/DatabaseForm.vue')
+const TaskList = () => import('@tap/business/src/views/task/TaskList.vue')
+const ConnectionList = () =>
+  import('@tap/business/src/views/connections/List.vue')
+const MigrateList = () => import('@tap/business/src/views/task/MigrateList.vue')
 
-const VerifyDetails = async () => {
-  const { VerifyDetails } = await import('@tap/business')
-  return VerifyDetails
-}
-
-const RoleDetails = Vue.defineAsyncComponent(() => import('@/views/role/Role'))
+const VerifyDetails = () => import('@tap/business/src/views/verify/Details.vue')
 
 // 数据校验
-const VerificationList = async () => {
-  const { VerificationList } = await import('@tap/business')
-  return VerificationList
-}
+const VerificationList = () =>
+  import('@tap/business/src/views/verification/List.vue')
 
-const VerificationDetails = async () => {
-  const { VerificationDetails } = await import('@tap/business')
-  return VerificationDetails
-}
+const VerificationDetails = () =>
+  import('@tap/business/src/views/verification/Details.vue')
+const VerificationForm = () =>
+  import('@tap/business/src/views/verification/Form.vue')
 
-const VerificationForm = async () => {
-  const { VerificationForm } = await import('@tap/business')
-  return VerificationForm
-}
+const VerificationHistory = () =>
+  import('@tap/business/src/views/verification/History.vue')
 
-const VerificationHistory = async () => {
-  const { VerificationHistory } = await import('@tap/business')
-  return VerificationHistory
-}
-
-const VerificationResult = async () => {
-  const { VerificationResult } = await import('@tap/business')
-  return VerificationResult
-}
+const VerificationResult = () =>
+  import('@tap/business/src/views/verification/Result.vue')
 
 //告警设置
-const AlarmSetting = async () => {
-  const { AlarmSetting } = await import('@tap/business')
-  return AlarmSetting
-}
+const AlarmSetting = () =>
+  import('@tap/business/src/views/setting/AlarmSetting.vue')
 
-const SharedMiningList = async () => {
-  const { SharedMiningList } = await import('@tap/business')
-  return SharedMiningList
-}
+const SharedMiningList = () =>
+  import('@tap/business/src/views/shared-mining/List.vue')
 
-const DataConsoleDashboard = async () => {
-  const { Dashboard } = await import('@tap/ldp')
-  return Dashboard
-}
-
-const DataServerList = async () => {
-  const { DataServerList } = await import('@tap/business')
-  return DataServerList
-}
+const DataServerList = () =>
+  import('@tap/business/src/views/data-server/List.vue')
 
 // 心跳任务
-const HeartbeatTableList = async () => {
-  const { HeartbeatTableList } = await import('@tap/business')
-  return HeartbeatTableList
-}
+const HeartbeatTableList = () =>
+  import('@tap/business/src/views/heartbeat-table/List.vue')
 
 // 共享缓存
-const SharedCacheList = async () => {
-  const { SharedCacheList } = await import('@tap/business')
-  return SharedCacheList
-}
+const SharedCacheList = () =>
+  import('@tap/business/src/views/shared-cache/List.vue')
 
-const SharedCacheForm = async () => {
-  const { SharedCacheForm } = await import('@tap/business')
-  return SharedCacheForm
-}
+const SharedCacheForm = () =>
+  import('@tap/business/src/views/shared-cache/Form.vue')
 
 // 应用管理
-const ApiApplicationList = async () => {
-  const { ApiApplicationList } = await import('@tap/business')
-  return ApiApplicationList
-}
+const ApiApplicationList = () =>
+  import('@tap/business/src/views/api-application/List.vue')
 
 // 外存管理
-const ExternalStorageList = async () => {
-  const { ExternalStorageList } = await import('@tap/business')
-  return ExternalStorageList
-}
+const ExternalStorageList = () =>
+  import('@tap/business/src/views/external-storage/List.vue')
 
 // 告警通知
-const AlarmNotification = async () => {
-  const { AlarmNotification } = await import('@tap/business')
-  return AlarmNotification
-}
+const AlarmNotification = () =>
+  import('@tap/business/src/views/setting/AlarmNotification.vue')
 
-export default [
+export const routes = [
   {
     path: '/login',
     name: 'login',
-    component: Vue.defineAsyncComponent(() => import('@/views/login/Login')),
+    component: () => import('@/views/login/Login'),
     title: 'tap.login',
   },
   {
     path: '/verificationEmail',
     name: 'verificationEmail',
-    component: Vue.defineAsyncComponent(
-      () => import('@/views/login/VerificationEmail'),
-    ),
+    component: () => import('@/views/login/VerificationEmail'),
     meta: {
       title: 'tap.verificationEmail',
     },
@@ -164,9 +88,7 @@ export default [
   {
     path: '/passwordReset',
     name: 'passwordReset',
-    component: Vue.defineAsyncComponent(
-      () => import('@/views/login/PasswordReset'),
-    ),
+    component: () => import('@/views/login/PasswordReset'),
     meta: {
       title: 'tap.passwordReset',
     },
@@ -564,9 +486,7 @@ export default [
       {
         path: '',
         name: 'functionList',
-        component: Vue.defineAsyncComponent(
-          () => import('@/views/function/List'),
-        ),
+        component: () => import('@/views/function/List'),
         meta: {
           hideTitle: true,
           title: 'page_title_function',
@@ -585,9 +505,7 @@ export default [
       {
         path: 'import',
         name: 'FunctionImport',
-        component: Vue.defineAsyncComponent(
-          () => import('@/views/function/ImportForm'),
-        ),
+        component: () => import('@/views/function/ImportForm'),
         meta: {
           title: 'page_title_function_import',
           code: 'v2_function_management_import',
@@ -605,9 +523,7 @@ export default [
       {
         path: 'details/:id',
         name: 'FunctionDetails',
-        component: Vue.defineAsyncComponent(
-          () => import('@/views/function/Details'),
-        ),
+        component: () => import('@/views/function/Details'),
         meta: {
           title: 'page_title_function_details',
           code: 'v2_function_management_details',
@@ -707,9 +623,7 @@ export default [
       {
         path: ':id/details',
         name: 'dataServerAuditDetails',
-        component: Vue.defineAsyncComponent(
-          () => import('@/views/data-server-audit/Info'),
-        ),
+        component: () => import('@/views/data-server-audit/Info'),
         meta: {
           title: 'page_title_api_audit_details',
           code: 'v2_data_server_audit-details',
@@ -732,7 +646,7 @@ export default [
       {
         path: '',
         name: 'roleList',
-        component: Vue.defineAsyncComponent(() => import('@/views/role/Roles')),
+        component: () => import('@/views/role/Roles'),
         meta: {
           hideTitle: true,
           title: 'page_title_role',
@@ -742,7 +656,7 @@ export default [
       {
         path: 'create',
         name: 'role',
-        component: RoleDetails,
+        component: () => import('@/views/role/Role'),
         meta: {
           title: 'role_list_setting_permissions',
           code: 'v2_role_creation',
@@ -751,7 +665,7 @@ export default [
       {
         path: ':id/edit',
         name: 'editRole',
-        component: RoleDetails,
+        component: () => import('@/views/role/Role'),
         meta: {
           title: 'role_list_setting_permissions',
           code: 'v2_role_edition',
@@ -875,7 +789,7 @@ export default [
       {
         path: '/data-console',
         name: 'dataConsole',
-        component: DataConsoleDashboard,
+        component: () => import('@tap/ldp/src/Dashboard.vue'),
         meta: {
           title: 'page_title_data_hub',
           hideTitle: true,

@@ -1,6 +1,6 @@
 <script>
 import PageContainer from '../../components/PageContainer.vue'
-import List from './List'
+import List from './List.vue'
 
 export default {
   name: 'MigrateList',
@@ -21,7 +21,7 @@ export default {
         editor: 'MigrateEditor',
         monitor: 'MigrationMonitor',
       },
-      createBtnLoading: false,
+      createLoading: false,
     }
   },
 
@@ -60,7 +60,6 @@ export default {
         v-if="buttonShowMap.import && isDaas"
         v-readonlybtn="'SYNC_job_import'"
         class="btn"
-        :disabled="$disabledReadonlyUserBtn()"
         @click="refFn('handleImport')"
       >
         <span> {{ $t('packages_business_button_bulk_import') }}</span>
@@ -71,8 +70,7 @@ export default {
         v-readonlybtn="'SYNC_job_creation'"
         class="btn btn-create"
         type="primary"
-        :disabled="$disabledReadonlyUserBtn()"
-        :loading="createBtnLoading"
+        :loading="createLoading"
         @click="refFn('create')"
       >
         {{ $t('public_task_create') }}
@@ -80,6 +78,7 @@ export default {
     </template>
     <List
       ref="list"
+      v-model:create-loading="createLoading"
       :route="route"
       :task-buried="taskBuried"
       :sync-type="syncType"

@@ -1,47 +1,89 @@
-<script>
+<script setup lang="tsx">
 import { settingsApi, webhookApi } from '@tap/api'
-import { dayjs } from '@tap/business'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { VEmpty } from '@tap/component'
-import { HighlightCode, JsonEditor } from '@tap/form'
-import i18n from '@tap/i18n'
+import { dayjs } from '@tap/business/src/shared/dayjs'
+import { VEmpty } from '@tap/component/src/base/v-empty'
+import { CloseIcon } from '@tap/component/src/CloseIcon'
+import { Modal } from '@tap/component/src/modal'
+import { HighlightCode } from '@tap/form/src/components/highlight-code'
+import { JsonEditor } from '@tap/form/src/components/json-editor'
+import { useI18n } from '@tap/i18n'
+import { nextTick, onMounted, reactive, ref } from 'vue'
+import type { FormInstance, FormRules } from 'element-plus'
 
-export default {
-  name: 'WebhookAlerts',
-  components: { HighlightCode, VEmpty, JsonEditor, PageContainer },
-  data() {
-    const validateUrl = (rule, value, callback) => {
-      // 正则校验URL
-      if (!value) {
-        return callback(new Error(this.$t('webhook_server_url_empty')))
-      }
-      const urlRegex = /^(https?):\/\/[^\s/$.?#].\S*$/
-      if (!urlRegex.test(value)) {
-        return callback(new Error(this.$t('webhook_server_url_error')))
-      }
-      callback()
-    }
+const { t } = useI18n()
 
-    const validateHookTypes = (rule, value, callback) => {
-      if (!value?.length) {
-        return callback(new Error(this.$t('webhook_event_type_empty')))
-      }
-      callback()
-    }
+interface WebhookForm {
+  id: string
+  url: string
+  open: boolean
+  customTemplate: string
+  hookTypes: string[]
+  mark: string
+  customHttpHeaders: string
+}
 
-    return {
-      loading: false,
-      list: [],
-      drawerState: {
-        visible: false,
-        ping: false,
-        saving: false,
-      },
-      form: {
-        id: '',
-        url: '',
-        open: true,
-        customTemplate: `{
+interface WebhookItem extends WebhookForm {
+  pingResult?: string
+}
+
+interface HistoryItem {
+  id: string
+  createAt: string
+  createAtLabel: string
+  historyStatus: string
+  requestHeaders: string
+  requestBody: string
+  requestBodyFmt: string
+  responseHeaders: string
+  responseResult: string
+  responseResultFmt: string
+  responseType: string
+  responseCode: string
+  'x-event': string
+}
+
+interface EventDataItem {
+  value: string
+  label: string
+  children: { label: string; value: string }[]
+}
+
+// Form validation
+const validateUrl = (rule: any, value: string, callback: any) => {
+  if (!value) {
+    return callback(new Error(t('webhook_server_url_empty')))
+  }
+  // Fix: use non-capturing group to avoid linter error
+  const urlRegex = /^https?:\/\/[^\s/$.?#].\S*$/
+  if (!urlRegex.test(value)) {
+    return callback(new Error(t('webhook_server_url_error')))
+  }
+  callback()
+}
+
+const validateHookTypes = (rule: any, value: string[], callback: any) => {
+  if (!value?.length) {
+    return callback(new Error(t('webhook_event_type_empty')))
+  }
+  callback()
+}
+
+// Data refs and reactives
+const loading = ref(false)
+const list = ref<WebhookItem[]>([])
+const drawerState = reactive({
+  visible: false,
+  ping: false,
+  saving: false,
+  original: null as WebhookItem | null,
+})
+
+const form = reactive<WebhookForm>({
+  id: '',
+  url: '',
+  open: true,
+  customTemplate: `{
     "action": "TaskAlter",
     "hookId": "\${hookId}",
     "actionTime": "\${actionTime}",
@@ -70,274 +112,324 @@ export default {
       "agentId": "\${actionData.agentId}"
     }
 }`,
-        hookTypes: [],
-        mark: '',
-        customHttpHeaders: '',
-      },
-      rules: {
-        // mark: [{ required: true, message: '请输入备注', trigger: 'blur' }],
-        url: [{ required: true, validator: validateUrl, trigger: 'blur' }],
-        hookTypes: [
-          { required: true, validator: validateHookTypes, trigger: 'change' },
-        ],
-      },
-      eventData: [
-        {
-          value: 'task',
-          label: i18n.t('public_task_alert'),
-          children: [],
-        },
-      ],
-      keyMap: {
-        TASK_STATUS_ERROR: i18n.t(
-          'packages_business_setting_alarmnotification_dangrenwuyudao',
-        ),
-        TASK_INSPECT_ERROR: i18n.t(
-          'packages_business_setting_alarmnotification_dangrenwujiaoyan',
-        ),
-        TASK_FULL_COMPLETE: i18n.t(
-          'packages_business_setting_alarmnotification_dangrenwuquanliang',
-        ),
-        TASK_INCREMENT_START: i18n.t(
-          'packages_business_setting_alarmnotification_dangrenwuzengliang',
-        ),
-        TASK_STATUS_STOP: i18n.t(
-          'packages_business_setting_alarmnotification_dangrenwutingzhi',
-        ),
-        TASK_INCREMENT_DELAY: i18n.t(
-          'packages_business_setting_alarmnotification_dangrenwudezeng',
-        ),
-        DATANODE_CANNOT_CONNECT: i18n.t(
-          'packages_business_setting_alarmnotification_dangshujuwufa',
-        ),
-        DATANODE_HTTP_CONNECT_CONSUME: i18n.t(
-          'packages_business_setting_alarmnotification_dangshujuyuanwang',
-        ),
-        DATANODE_TCP_CONNECT_CONSUME: i18n.t(
-          'packages_business_setting_alarmnotification_dangshujuyuanxie',
-        ),
-        DATANODE_AVERAGE_HANDLE_CONSUME: i18n.t(
-          'packages_business_setting_alarmnotification_dangshujuyuanjie',
-        ),
-        PROCESSNODE_AVERAGE_HANDLE_CONSUME: i18n.t(
-          'packages_business_setting_alarmnotification_dangjiediandeping',
-        ),
-        INSPECT_TASK_ERROR: i18n.t(
-          'packages_business_setting_alarmnotification_dangjiaoyanrenwucuowu',
-        ),
-        INSPECT_COUNT_ERROR: i18n.t(
-          'packages_business_setting_alarmnotification_dangjiaoyanrenwushuliangcuowu',
-        ),
-        INSPECT_VALUE_ERROR: i18n.t(
-          'packages_business_setting_alarmnotification_dangjiaoyanrenwuzhicuowu',
-        ),
-        SYSTEM_FLOW_EGINGE_DOWN: i18n.t(
-          'packages_business_setting_alarmnotification_dangrenwustop',
-        ),
-        SYSTEM_FLOW_EGINGE_UP: i18n.t(
-          'packages_business_setting_alarmnotification_dangrenwuuP',
-        ),
-      },
-      historyState: {
-        visible: false,
-        loading: false,
-        list: [],
-        collapse: [],
-      },
-      page: {
-        current: 1,
-        size: 20,
-        total: 0,
-      },
-      switchStateMap: {},
-      resendStateMap: {},
-    }
+  hookTypes: [],
+  mark: '',
+  customHttpHeaders: '',
+})
+
+const rules = reactive<FormRules>({
+  url: [{ required: true, validator: validateUrl, trigger: 'blur' }],
+  hookTypes: [
+    { required: true, validator: validateHookTypes, trigger: 'change' },
+  ],
+})
+
+const eventData = ref<EventDataItem[]>([
+  {
+    value: 'task',
+    label: t('public_task_alert'),
+    children: [],
   },
-  created() {
-    this.loadEventType()
-    this.loadData()
-  },
-  mounted() {},
-  methods: {
-    async loadData() {
-      this.loading = true
-      const filter = {
-        order: 'createTime DESC',
-      }
-      const { items = [] } = await webhookApi.list({
-        filter: JSON.stringify(filter),
-      })
+])
 
-      this.loading = false
-      this.list = items
-    },
-    async loadEventType() {
-      const data = await settingsApi.findAlarm()
-      this.eventData[0].children = data.map((item) => ({
-        label: this.keyMap[item.key],
-        value: item.key,
-      }))
-    },
-    afterClose() {
-      this.$refs.form.resetFields()
-      this.form.id = ''
-    },
-    async addWebhook() {
-      this.drawerState.visible = true
-      this.$refs.form?.clearValidate()
-
-      await this.$nextTick()
-      this.jsonEditor?.resize()
-      this.$refs.formWrapper && (this.$refs.formWrapper.scrollTop = 0)
-    },
-    async viewDetail(row) {
-      this.drawerState.visible = true
-      this.drawerState.original = row
-      await this.$nextTick()
-
-      Object.keys(this.form).forEach((key) => {
-        this.form[key] = row[key]
-      })
-      this.jsonEditor?.resize()
-      this.$refs.formWrapper && (this.$refs.formWrapper.scrollTop = 0)
-    },
-    async viewHistory({ id }) {
-      this.historyState.visible = true
-      this.historyState.loading = true
-      this.historyState.id = id
-      this.loadHistory()
-
-      await this.$nextTick()
-
-      this.$refs.historyList && (this.$refs.historyList.scrollTop = 0)
-    },
-    mapHistory(item) {
-      item.createAtLabel = dayjs(item.createAt).format('YYYY-MM-DD HH:mm:ss')
-      if (item.responseResult) {
-        item.responseResultFmt = item.responseResult
-        item.responseType = 'html'
-        if (/content-Type: application\/json/i.test(item.responseHeaders)) {
-          item.responseType = 'json'
-          item.responseResultFmt = JSON.stringify(
-            JSON.parse(item.responseResult),
-            null,
-            2,
-          )
-        }
-      }
-
-      if (item.requestBody) {
-        item.requestBodyFmt = JSON.stringify(
-          JSON.parse(item.requestBody),
-          null,
-          2,
-        )
-      }
-
-      if (item.requestHeaders) {
-        const result = item.requestHeaders.match(/X-Event:\s*(.*)/i)
-        const event = result?.[1] || ''
-
-        item['x-event'] = this.keyMap[event]
-
-        if (item['x-event']) {
-          item['x-event'] = item['x-event']
-            .replace(/^当|When the?|當/, '')
-            .replace(/时|時$/, '')
-        } else {
-          item['x-event'] = event || '--'
-        }
-      }
-      return item
-    },
-    loadHistory(pageNum = 1) {
-      webhookApi
-        .history({
-          hookId: this.historyState.id,
-          pageFrom: (pageNum - 1) * this.page.size,
-          pageSize: this.page.size,
-        })
-        .then(({ items, total }) => {
-          this.historyState.list = items.map(this.mapHistory)
-          this.page.total = total
-        })
-        .finally(() => (this.historyState.loading = false))
-    },
-    delWebhook({ id }) {
-      this.$confirm(this.$t('packages_ldp_src_tablepreview_querenshanchu'), {
-        type: 'warning',
-      }).then(async (resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        await webhookApi.deleteOne(id)
-        await this.loadData()
-      })
-    },
-    sendPing() {
-      this.$refs.form.validate((valid) => {
-        if (valid) {
-          this.drawerState.ping = true
-          webhookApi
-            .ping(this.form)
-            .then((data) => {
-              this.$message.success(this.$t('public_message_send_success'))
-
-              if (this.form.id) {
-                this.viewHistory(this.form)
-
-                if (data?.status && this.drawerState.original) {
-                  this.drawerState.original.pingResult = data.status
-                }
-              }
-            })
-            .finally(() => (this.drawerState.ping = false))
-        }
-      })
-    },
-    save() {
-      this.$refs.form.validate((valid) => {
-        if (valid) {
-          this.drawerState.saving = true
-          webhookApi[this.form.id ? 'update' : 'save'](this.form)
-            .then(() => {
-              this.$message.success(this.$t('public_message_save_ok'))
-              this.drawerState.visible = false
-              this.loadData()
-            })
-            .finally(() => (this.drawerState.saving = false))
-        }
-      })
-    },
-    handleSwitch(row) {
-      this.$set(this.switchStateMap, row.id, true)
-      webhookApi[row.open ? 'close' : 'open'](row.id)
-        .then(() => {
-          row.open = !row.open
-          this.$message.success(this.$t('public_message_operation_success'))
-        })
-        .catch(() => {
-          row.open = !row.open
-        })
-        .finally(() => {
-          this.$delete(this.switchStateMap, row.id)
-        })
-    },
-    async reSend(request) {
-      this.$set(this.resendStateMap, request.id, true)
-      const result = await webhookApi.resend(request)
-      Object.assign(request, this.mapHistory(result))
-      this.$message.success(this.$t('public_message_send_success'))
-      this.$delete(this.resendStateMap, request.id)
-    },
-    afterCloseHistory() {
-      this.historyState.collapse = []
-    },
-    initJsonEditor(editor) {
-      this.jsonEditor = editor
-    },
-  },
+const keyMap: Record<string, string> = {
+  TASK_STATUS_ERROR: t(
+    'packages_business_setting_alarmnotification_dangrenwuyudao',
+  ),
+  TASK_INSPECT_ERROR: t(
+    'packages_business_setting_alarmnotification_dangrenwujiaoyan',
+  ),
+  TASK_FULL_COMPLETE: t(
+    'packages_business_setting_alarmnotification_dangrenwuquanliang',
+  ),
+  TASK_INCREMENT_START: t(
+    'packages_business_setting_alarmnotification_dangrenwuzengliang',
+  ),
+  TASK_STATUS_STOP: t(
+    'packages_business_setting_alarmnotification_dangrenwutingzhi',
+  ),
+  TASK_INCREMENT_DELAY: t(
+    'packages_business_setting_alarmnotification_dangrenwudezeng',
+  ),
+  DATANODE_CANNOT_CONNECT: t(
+    'packages_business_setting_alarmnotification_dangshujuwufa',
+  ),
+  DATANODE_HTTP_CONNECT_CONSUME: t(
+    'packages_business_setting_alarmnotification_dangshujuyuanwang',
+  ),
+  DATANODE_TCP_CONNECT_CONSUME: t(
+    'packages_business_setting_alarmnotification_dangshujuyuanxie',
+  ),
+  DATANODE_AVERAGE_HANDLE_CONSUME: t(
+    'packages_business_setting_alarmnotification_dangshujuyuanjie',
+  ),
+  PROCESSNODE_AVERAGE_HANDLE_CONSUME: t(
+    'packages_business_setting_alarmnotification_dangjiediandeping',
+  ),
+  INSPECT_TASK_ERROR: t(
+    'packages_business_setting_alarmnotification_dangjiaoyanrenwucuowu',
+  ),
+  INSPECT_COUNT_ERROR: t(
+    'packages_business_setting_alarmnotification_dangjiaoyanrenwushuliangcuowu',
+  ),
+  INSPECT_VALUE_ERROR: t(
+    'packages_business_setting_alarmnotification_dangjiaoyanrenwuzhicuowu',
+  ),
+  SYSTEM_FLOW_EGINGE_DOWN: t(
+    'packages_business_setting_alarmnotification_dangrenwustop',
+  ),
+  SYSTEM_FLOW_EGINGE_UP: t(
+    'packages_business_setting_alarmnotification_dangrenwuuP',
+  ),
 }
+
+const historyState = reactive({
+  visible: false,
+  loading: false,
+  list: [] as HistoryItem[],
+  collapse: [] as string[],
+  id: '',
+})
+
+const page = reactive({
+  current: 1,
+  size: 20,
+  total: 0,
+})
+
+const switchStateMap = reactive<Record<string, boolean>>({})
+const resendStateMap = reactive<Record<string, boolean>>({})
+
+// Refs
+const formRef = ref<FormInstance>()
+const formWrapperRef = ref<HTMLElement>()
+const historyListRef = ref<HTMLElement>()
+let jsonEditor: any = null
+
+// Methods
+const loadData = async () => {
+  loading.value = true
+  const filter = {
+    order: 'createTime DESC',
+  }
+  try {
+    const { items = [] } = await webhookApi.list({
+      filter: JSON.stringify(filter),
+    })
+    list.value = items
+  } finally {
+    loading.value = false
+  }
+}
+
+const loadEventType = async () => {
+  const data = await settingsApi.findAlarm()
+  eventData.value[0].children = data.map((item: any) => ({
+    label: keyMap[item.key],
+    value: item.key,
+  }))
+}
+
+const afterClose = () => {
+  formRef.value?.resetFields()
+  form.id = ''
+}
+
+const addWebhook = async () => {
+  drawerState.visible = true
+  formRef.value?.clearValidate()
+
+  await nextTick()
+  jsonEditor?.resize()
+  formWrapperRef.value && (formWrapperRef.value.scrollTop = 0)
+}
+
+const viewDetail = async (row: WebhookItem) => {
+  drawerState.visible = true
+  drawerState.original = row
+  await nextTick()
+
+  Object.keys(form).forEach((key) => {
+    // @ts-ignore - dynamic key access
+    form[key] = row[key]
+  })
+  jsonEditor?.resize()
+  formWrapperRef.value && (formWrapperRef.value.scrollTop = 0)
+}
+
+const viewHistory = async ({ id }: { id: string }) => {
+  historyState.visible = true
+  historyState.loading = true
+  historyState.id = id
+  loadHistory()
+
+  await nextTick()
+  historyListRef.value && (historyListRef.value.scrollTop = 0)
+}
+
+const mapHistory = (item: any): HistoryItem => {
+  item.createAtLabel = dayjs(item.createAt).format('YYYY-MM-DD HH:mm:ss')
+  if (item.responseResult) {
+    item.responseResultFmt = item.responseResult
+    item.responseType = 'html'
+    if (/content-Type: application\/json/i.test(item.responseHeaders)) {
+      item.responseType = 'json'
+      item.responseResultFmt = JSON.stringify(
+        JSON.parse(item.responseResult),
+        null,
+        2,
+      )
+    }
+  }
+
+  if (item.requestBody) {
+    item.requestBodyFmt = JSON.stringify(JSON.parse(item.requestBody), null, 2)
+  }
+
+  if (item.requestHeaders) {
+    const result = item.requestHeaders.match(/X-Event:\s*(.*)/i)
+    const event = result?.[1] || ''
+
+    item['x-event'] = keyMap[event]
+
+    if (item['x-event']) {
+      item['x-event'] = item['x-event']
+        .replace(/^当|When the?|當/, '')
+        .replace(/时|時$/, '')
+    } else {
+      item['x-event'] = event || '--'
+    }
+  }
+  return item
+}
+
+const loadHistory = (pageNum = 1) => {
+  webhookApi
+    .history({
+      hookId: historyState.id,
+      pageFrom: (pageNum - 1) * page.size,
+      pageSize: page.size,
+    })
+    .then(({ items, total }: { items: any[]; total: number }) => {
+      historyState.list = items.map(mapHistory)
+      page.total = total
+    })
+    .finally(() => (historyState.loading = false))
+}
+
+const delWebhook = async ({ id }: { id: string }) => {
+  const confirmed = await Modal.confirm(
+    t('packages_ldp_src_tablepreview_querenshanchu'),
+  )
+
+  if (confirmed) {
+    await webhookApi.deleteOne(id)
+    await loadData()
+  }
+}
+
+const sendPing = () => {
+  formRef.value?.validate((valid) => {
+    if (valid) {
+      drawerState.ping = true
+      webhookApi
+        .ping(form)
+        .then((data) => {
+          ElMessage.success(t('public_message_send_success'))
+
+          if (form.id) {
+            viewHistory({ id: form.id })
+
+            if (data?.status && drawerState.original) {
+              drawerState.original.pingResult = data.status
+            }
+          }
+        })
+        .finally(() => (drawerState.ping = false))
+    }
+  })
+}
+
+const save = () => {
+  formRef.value?.validate((valid) => {
+    if (valid) {
+      drawerState.saving = true
+      webhookApi[form.id ? 'update' : 'save'](form)
+        .then(() => {
+          ElMessage.success(t('public_message_save_ok'))
+          drawerState.visible = false
+          loadData()
+        })
+        .finally(() => (drawerState.saving = false))
+    }
+  })
+}
+
+const handleSwitch = (row: WebhookItem) => {
+  switchStateMap[row.id] = true
+  webhookApi[row.open ? 'close' : 'open'](row.id)
+    .then(() => {
+      row.open = !row.open
+      ElMessage.success(t('public_message_operation_success'))
+    })
+    .catch(() => {
+      row.open = !row.open
+    })
+    .finally(() => {
+      delete switchStateMap[row.id]
+    })
+}
+
+const reSend = async (request: HistoryItem) => {
+  resendStateMap[request.id] = true
+  try {
+    const result = await webhookApi.resend(request)
+    Object.assign(request, mapHistory(result))
+    ElMessage.success(t('public_message_send_success'))
+  } finally {
+    delete resendStateMap[request.id]
+  }
+}
+
+const afterCloseHistory = () => {
+  historyState.collapse = []
+}
+
+const initJsonEditor = (editor: any) => {
+  jsonEditor = editor
+}
+
+const showExample = () => {
+  ElMessageBox({
+    title: t('public_template_example'),
+    showClose: true,
+    closeIcon: CloseIcon,
+    customClass: 'w-80 max-w-1000',
+    message: () => (
+      <HighlightCode
+        class="m-0 rounded-xl overflow-hidden"
+        theme="atom-one-light"
+        code={t('webhook_custom_template_tip')}
+        language="json"
+      />
+    ),
+    confirmButtonText: t('public_button_close'),
+  })
+}
+
+const handleBeforeClose = async (done: () => void) => {
+  const confirmed = await Modal.confirm(t('public_current_is_editing'))
+
+  if (confirmed) {
+    done()
+  }
+}
+
+// Lifecycle hooks
+onMounted(() => {
+  loadEventType()
+  loadData()
+})
 </script>
 
 <template>
@@ -347,13 +439,7 @@ export default {
         $t('webhook_alerts_add')
       }}</ElButton>
     </template>
-    <ElTable
-      ref="table"
-      v-loading="loading"
-      row-key="id"
-      :data="list"
-      height="100%"
-    >
+    <ElTable v-loading="loading" row-key="id" :data="list" height="100%">
       <el-table-column
         show-overflow-tooltip
         class-name="text-nowrap"
@@ -396,15 +482,15 @@ export default {
       <el-table-column :label="$t('public_operation')" width="240">
         <template #default="{ row }">
           <div class="flex gap-2 align-center">
-            <ElButton text type="primary" @click="viewDetail(row, $event)"
+            <ElButton text type="primary" @click="viewDetail(row)"
               >{{ $t('public_button_details') }}
             </ElButton>
             <ElDivider direction="vertical" class="mx-0" />
-            <ElButton text type="primary" @click="viewHistory(row, $event)"
+            <ElButton text type="primary" @click="viewHistory(row)"
               >{{ $t('webhook_send_log') }}
             </ElButton>
             <ElDivider direction="vertical" class="mx-0" />
-            <ElButton text type="danger" @click="delWebhook(row, $event)"
+            <ElButton text type="danger" @click="delWebhook(row)"
               >{{ $t('public_button_delete') }}
             </ElButton>
           </div>
@@ -416,7 +502,8 @@ export default {
       v-model="drawerState.visible"
       :wrapper-closable="false"
       :size="800"
-      @update:visible="drawerState.visible = $event"
+      modal-class="bg-transparent"
+      :before-close="handleBeforeClose"
       @closed="afterClose"
     >
       <template #title>
@@ -425,9 +512,9 @@ export default {
         }}</span>
       </template>
       <div class="flex flex-column h-100">
-        <div ref="formWrapper" class="flex-1 overflow-y-auto">
+        <div ref="formWrapperRef" class="flex-1">
           <ElForm
-            ref="form"
+            ref="formRef"
             class="flex-1"
             label-position="top"
             :model="form"
@@ -458,23 +545,17 @@ export default {
             <ElFormItem prop="customTemplate">
               <template #label>
                 <span>
-                  <span class="align-middle">{{
+                  <span class="align-middle mr-1">{{
                     $t('webhook_custom_template')
                   }}</span>
-                  <ElTooltip :content="$t('webhook_custom_template_tip')">
-                    <VIcon class="align-middle ml-1">question-circle</VIcon>
-                    <template #content>
-                      <HighlightCode
-                        theme="atom-one-dark"
-                        :code="$t('webhook_custom_template_tip')"
-                        language="javascript"
-                      />
-                    </template>
-                  </ElTooltip>
+                  <el-button text type="primary" @click="showExample">
+                    <VIcon class="mr-1">question-circle</VIcon
+                    >{{ $t('public_button_check') }}</el-button
+                  >
                 </span>
               </template>
               <JsonEditor
-                v-model="form.customTemplate"
+                v-model:value="form.customTemplate"
                 height="320"
                 :options="{
                   options: { showPrintMargin: false, useWrapMode: true },
@@ -487,29 +568,27 @@ export default {
             </ElFormItem>
           </ElForm>
         </div>
-
-        <div class="text-left">
-          <ElButton
-            :loading="drawerState.ping"
-            type="primary"
-            @click="sendPing"
-            >{{ $t('webhook_send_ping') }}</ElButton
-          >
-          <ElButton
-            :loading="drawerState.saving"
-            type="primary"
-            @click="save"
-            >{{ $t('public_button_save') }}</ElButton
-          >
-          <ElButton @click="drawerState.visible = false">{{
-            $t('public_button_cancel')
-          }}</ElButton>
-        </div>
       </div>
+
+      <template #footer>
+        <ElButton @click="drawerState.visible = false">{{
+          $t('public_button_cancel')
+        }}</ElButton>
+        <ElButton
+          :loading="drawerState.ping"
+          type="primary"
+          @click="sendPing"
+          >{{ $t('webhook_send_ping') }}</ElButton
+        >
+        <ElButton :loading="drawerState.saving" type="primary" @click="save">{{
+          $t('public_button_save')
+        }}</ElButton>
+      </template>
     </ElDrawer>
 
     <ElDrawer
       v-model="historyState.visible"
+      modal-class="bg-transparent"
       :wrapper-closable="false"
       :size="800"
       @closed="afterCloseHistory"
@@ -525,11 +604,11 @@ export default {
         </span>
       </template>
       <div v-loading="historyState.loading" class="flex flex-column h-100">
-        <div ref="historyList" class="flex-1 px-4 overflow-y-auto">
+        <div ref="historyListRef" class="flex-1">
           <el-collapse
             v-if="historyState.list.length"
             v-model="historyState.collapse"
-            class="history-collapse border-0"
+            class="history-collapse"
           >
             <el-collapse-item
               v-for="item in historyState.list"
@@ -622,19 +701,20 @@ export default {
 
           <VEmpty v-else />
         </div>
-        <div class="p-4">
-          <el-pagination
-            v-model:current-page="page.current"
-            v-model:page-size="page.size"
-            background
-            layout="->,total, sizes,  prev, pager, next, jumper"
-            :page-sizes="[10, 20, 50, 100]"
-            :total="page.total"
-            @size-change="loadHistory(1)"
-            @current-change="loadHistory"
-          />
-        </div>
       </div>
+
+      <template #footer>
+        <el-pagination
+          v-model:current-page="page.current"
+          v-model:page-size="page.size"
+          background
+          layout="->,total, sizes,  prev, pager, next"
+          :page-sizes="[10, 20, 50, 100]"
+          :total="page.total"
+          @size-change="loadHistory(1)"
+          @current-change="loadHistory"
+        />
+      </template>
     </ElDrawer>
   </PageContainer>
 </template>
@@ -659,7 +739,7 @@ $unreadColor: #ee5353;
   .title {
     padding-bottom: 20px;
     font-size: 14px;
-    color: map.get($fontColor, dark);
+    color: var(--text-dark);
     font-weight: bold;
   }
   .content {

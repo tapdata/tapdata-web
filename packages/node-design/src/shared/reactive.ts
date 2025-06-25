@@ -1,13 +1,13 @@
+import { autorun, reaction } from '@formily/reactive'
 import {
+  onBeforeUnmount,
+  shallowRef,
   computed as vueComputed,
-  ComputedGetter,
-  ComputedRef,
   watch as vueWatch,
   watchEffect as VueWatchEffect,
-  shallowRef,
-  onBeforeUnmount,
+  type ComputedGetter,
+  type ComputedRef,
 } from 'vue'
-import { autorun, reaction } from '@formily/reactive'
 
 export const computed = <T>(calc: ComputedGetter<T>): ComputedRef<T> => {
   const temp = shallowRef<T>()
@@ -42,7 +42,9 @@ export const watch = (
       .filter((item) => item !== undefined)
     onBeforeUnmount(() => disposes.forEach((dispose) => dispose?.()))
   } else if (typeof deps === 'function') {
-    const dispose = reaction(deps as () => unknown, (n, o) => callback(n as any, o as any, onBeforeUnmount))
+    const dispose = reaction(deps as () => unknown, (n, o) =>
+      callback(n as any, o as any, onBeforeUnmount),
+    )
     onBeforeUnmount(() => dispose?.())
   }
   return vueWatch(deps, callback, options)

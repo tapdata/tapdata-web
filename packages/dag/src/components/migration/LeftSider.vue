@@ -1,33 +1,19 @@
 <script>
 import { CancelToken, connectionsApi, databaseTypesApi } from '@tap/api'
 import { getIcon } from '@tap/assets/icons'
-import { SceneDialog } from '@tap/business'
-import { OverflowTooltip, VEmpty, VIcon } from '@tap/component'
-import mouseDrag from '@tap/component/src/directives/mousedrag'
+import SceneDialog from '@tap/business/src/components/create-connection/SceneDialog.vue'
+import { VEmpty } from '@tap/component/src/base/v-empty'
+import { mouseDrag } from '@tap/component/src/directives/mousedrag'
 import resize from '@tap/component/src/directives/resize'
-import { getInitialValuesInBySchema } from '@tap/form'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
+import { getInitialValuesInBySchema } from '@tap/form/src/shared/validate'
 import { getScrollBarWidth } from 'element-plus/es/utils/dom/scroll'
 import { debounce, escapeRegExp } from 'lodash-es'
 import { markRaw } from 'vue'
 import { mapGetters } from 'vuex'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
-import BaseNode from '../BaseNode'
-import ConnectionType from '../ConnectionType'
-import NodeIcon from '../NodeIcon'
-import '@tap/assets/icons/svg/magnify.svg'
-import '@tap/assets/icons/svg/table.svg'
-import '@tap/assets/icons/svg/javascript.svg'
-import '@tap/assets/icons/svg/joint-cache.svg'
-import '@tap/assets/icons/svg/row-filter.svg'
-import '@tap/assets/icons/svg/aggregator.svg'
-import '@tap/assets/icons/svg/field-processor.svg'
-import '@tap/assets/icons/svg/join.svg'
-import '@tap/assets/icons/svg/custom-node.svg'
-import '@tap/assets/icons/svg/merge_table.svg'
-import '@tap/assets/icons/svg/field_calc.svg'
-import '@tap/assets/icons/svg/field_add_del.svg'
-import '@tap/assets/icons/svg/field_rename.svg'
-import '@tap/assets/icons/svg/field_mod_type.svg'
+import BaseNode from '../BaseNode.vue'
+import ConnectionType from '../ConnectionType.vue'
+import NodeIcon from '../NodeIcon.vue'
 
 export default {
   name: 'LeftSider',
@@ -37,7 +23,6 @@ export default {
     VEmpty,
     OverflowTooltip,
     BaseNode,
-    VIcon,
     ConnectionType,
   },
   directives: {
@@ -47,6 +32,7 @@ export default {
   data() {
     return {
       collapseMode: 'db',
+      processCollapseActive: 'process',
       search: '',
       mapping: this.$route.query,
       groups: [],
@@ -248,10 +234,6 @@ export default {
       this.init()
     },
 
-    genIconSrc(item) {
-      return getIcon(item.databaseType)
-    },
-
     async getDragDom() {
       await this.$nextTick()
       return document.querySelector('#dragNode')
@@ -291,11 +273,11 @@ export default {
 
     onMove() {
       this.dragMoving = true
-      $emit(this, 'move-node', ...arguments)
+      this.$emit('move-node', ...arguments)
     },
 
     onDrop(item, position, rect) {
-      $emit(this, 'drop-node', this.dragNode, position, rect)
+      this.$emit('drop-node', this.dragNode, position, rect)
     },
 
     onStop() {
@@ -407,7 +389,7 @@ export default {
     onDoubleClickDB(item) {
       if (this.stateIsReadonly) return
 
-      $emit(this, 'add-node', this.getNodeProps(item))
+      this.$emit('add-node', this.getNodeProps(item))
     },
 
     /**
@@ -417,7 +399,7 @@ export default {
     onDoubleClickProcessor(item) {
       if (this.stateIsReadonly) return
 
-      $emit(this, 'add-node', item)
+      this.$emit('add-node', item)
     },
   },
   emits: ['move-node', 'drop-node', 'add-node'],
@@ -432,6 +414,7 @@ export default {
         v-model="collapseMode"
         class="collapse-fill h-100"
         accordion
+        expand-icon-position="left"
       >
         <ElCollapseItem name="db">
           <template #title>
@@ -443,26 +426,38 @@ export default {
                 {{ $t('packages_dag_dag_connection') }}
                 <span v-show="dbTotal > 0" class="badge">{{ dbTotal }}</span>
               </span>
-              <VIcon
-                size="18"
-                class="click-btn mr-1"
-                :class="{ active: showDBInput }"
+
+              <el-button
+                id="connection-search-btn"
+                text
+                size="small"
+                :class="{ 'is-active': showDBInput }"
                 @click.stop="handleShowDBInput"
-                >search-outline
-              </VIcon>
-              <VIcon
-                size="20"
-                class="click-btn"
-                :class="{ 'click-btn-disabled': stateIsReadonly }"
+              >
+                <template #icon>
+                  <VIcon size="18" @click.stop="handleShowDBInput"
+                    >search-outline</VIcon
+                  >
+                </template>
+              </el-button>
+              <el-button
+                text
+                size="small"
+                class="ml-1"
+                :disabled="stateIsReadonly"
                 @mousedown.stop
                 @click.stop="creat"
-                >add-outline
-              </VIcon>
+              >
+                <template #icon>
+                  <VIcon size="20">add-outline</VIcon>
+                </template>
+              </el-button>
             </div>
           </template>
           <div class="flex flex-column h-100">
             <div v-show="showDBInput" class="p-2">
               <ElInput
+                id="connection-search-input"
                 ref="dbInput"
                 v-model="dbSearchTxt"
                 :placeholder="
@@ -475,7 +470,7 @@ export default {
                 @input="handleDBInput"
               >
                 <template #prefix>
-                  <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
+                  <VIcon size="14" class="h-100">search-outline</VIcon>
                 </template>
               </ElInput>
             </div>
@@ -519,7 +514,7 @@ export default {
                       onDrop,
                       onStop,
                     }"
-                    class="db-item flex align-center px-1 user-select-none rounded-2"
+                    class="db-item flex align-center px-1 user-select-none rounded-lg"
                     :class="{ grabbable: !stateIsReadonly }"
                     @dblclick="onDoubleClickDB(db)"
                   >
@@ -565,8 +560,9 @@ export default {
 
     <ElCollapse
       ref="processorCollapse"
+      v-model="processCollapseActive"
       class="collapse-fill processor-collapse border-top"
-      model-value="process"
+      expand-icon-position="left"
     >
       <ElCollapseItem name="process">
         <template #title>
@@ -593,7 +589,7 @@ export default {
               onDrop,
               onStop,
             }"
-            class="node-item flex align-center px-2 user-select-none rounded-2"
+            class="node-item flex align-center px-2 user-select-none rounded-lg"
             :class="{ grabbable: !stateIsReadonly }"
             @dblclick="onDoubleClickProcessor(n)"
           >
@@ -656,17 +652,17 @@ $hoverBg: #eef3ff;
       cursor: pointer;
 
       &:hover {
-        color: map.get($color, primary);
+        color: var(--color-primary);
       }
 
       &.active {
-        color: map.get($color, primary);
+        color: var(--color-primary);
 
         &:before {
           position: absolute;
           content: '';
           height: 2px;
-          background: map.get($color, primary);
+          background: var(--color-primary);
           left: 12px;
           right: 12px;
           bottom: 0;
@@ -715,7 +711,7 @@ $hoverBg: #eef3ff;
   }
 
   :deep(.click-btn:hover) {
-    color: map.get($color, primary);
+    color: var(--color-primary);
     background: $hoverBg;
   }
 
@@ -751,7 +747,7 @@ $hoverBg: #eef3ff;
     .node-item {
       height: 42px;
       margin-bottom: 4px;
-      font-size: $fontBaseTitle;
+      font-size: var(--font-base-title);
       line-height: normal;
 
       &.active {
@@ -779,7 +775,7 @@ $hoverBg: #eef3ff;
 
         > :not(:last-child) {
           margin-bottom: 4px;
-          font-size: $fontBaseTitle;
+          font-size: var(--font-base-title);
         }
 
         > :last-child {
@@ -824,6 +820,7 @@ $hoverBg: #eef3ff;
 
           .el-collapse-item__wrap {
             height: calc(100% - #{$headerH - 1});
+            border-bottom: none;
           }
 
           .el-collapse-item__content {
@@ -841,18 +838,12 @@ $hoverBg: #eef3ff;
 
         &__header {
           position: relative;
-          padding-left: 16px;
-          padding-right: 16px;
           height: $headerH;
           font-size: 14px;
 
           &:hover {
             background-color: rgba(47, 46, 63, 0.05);
           }
-        }
-
-        &__arrow {
-          order: -1;
         }
 
         &__content {
@@ -912,7 +903,7 @@ $hoverBg: #eef3ff;
     }
 
     &-txt {
-      font-size: $fontBaseTitle;
+      font-size: var(--font-base-title);
       line-height: 1;
       white-space: nowrap;
     }

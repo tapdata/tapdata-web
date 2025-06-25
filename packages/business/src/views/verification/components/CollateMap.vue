@@ -1,6 +1,5 @@
 <script>
-import { IconButton } from '@tap/component'
-import { FieldSelect } from '@tap/form'
+import { FieldSelect } from '@tap/form/src/components/field-select/FieldSelect'
 import { computed, defineComponent } from 'vue'
 
 export default defineComponent({
@@ -8,7 +7,6 @@ export default defineComponent({
 
   components: {
     FieldSelect,
-    IconButton,
   },
   props: {
     value: {
@@ -17,14 +15,17 @@ export default defineComponent({
     },
     fields: {
       type: Array,
-      default: () => [],
     },
     sortColumn: {
       type: String,
       required: true,
     },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
   },
-
+  emits: ['update:value', 'visibleChange'],
   setup(props, { emit }) {
     const setCharset = (value) => {
       selectedFields.value.forEach((key) => {
@@ -42,7 +43,7 @@ export default defineComponent({
           return acc
         }, {})
 
-        emit('input', result)
+        emit('update:value', result)
       },
     })
 
@@ -62,8 +63,10 @@ export default defineComponent({
     })
 
     const sortFields = computed(() => {
-      return props.fields.filter((field) =>
-        sortColumns.value.includes(field.field_name),
+      return (
+        props.fields?.filter((field) =>
+          sortColumns.value.includes(field.field_name),
+        ) || []
       )
     })
 
@@ -77,7 +80,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="py-3 flex flex-column gap-3">
+  <div class="flex flex-column gap-3">
     <div class="flex flex-column gap-3">
       <FieldSelect
         v-model="selectedFields"
@@ -87,6 +90,8 @@ export default defineComponent({
         :options="sortFields"
         :placeholder="$t('packages_business_please_select_field')"
         class="flex-1"
+        :loading="loading"
+        @visible-change="$emit('visibleChange', $event)"
       />
       <ElInput
         v-model="charset"

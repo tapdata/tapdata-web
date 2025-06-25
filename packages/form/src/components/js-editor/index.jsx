@@ -1,7 +1,5 @@
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import * as Vue from 'vue'
-import { JsEditor as _JsEditor, VIcon } from '@tap/component'
 import { connect, mapProps } from '@formily/vue'
+import _JsEditor from '@tap/component/src/JsEditor.vue'
 import { HighlightCode } from '../highlight-code'
 import './style.scss'
 
@@ -59,22 +57,24 @@ export const JsEditor = connect(
       onFocus() {
         this.bindEvent()
       },
-      onBlur(val, ...args) {
-        console.log('args', val, ...args)
+      onBlur(val) {
         if (val !== this.code) {
           if (this.includeBeforeAndAfter) {
             val = `${this.before}${val}${this.after}`
           }
-          $emit(this, 'change', val)
+          this.$emit('change', val)
         }
         this.unbindEvent()
       },
 
       onInit(editor, tools) {
-        if (this.handleAddCompleter && typeof this.handleAddCompleter === 'function') {
+        if (
+          this.handleAddCompleter &&
+          typeof this.handleAddCompleter === 'function'
+        ) {
           this.handleAddCompleter(editor, tools)
         }
-        $emit(this, 'init', editor)
+        this.$emit('init', editor)
       },
 
       // 防止写代码时，不小心返回或者关闭页面
@@ -100,12 +100,17 @@ export const JsEditor = connect(
       }
       return this.before || this.after ? (
         <div
-          class={['form-js-editor-wrap flex flex-column border rounded-4', { 'full-mode': this.fullscreen }]}
-          style={{ height: this.height + 'px' }}
+          class={[
+            'form-js-editor-wrap flex flex-column border rounded-4',
+            { 'full-mode': this.fullscreen },
+          ]}
+          style={{ height: `${this.height}px` }}
         >
           {this.showFullscreen && (
             <div class="js-editor-toolbar flex align-center px-4">
-              <div class="js-editor-toolbar-title flex-1">{this.$t('packages_form_js_processor_index_jiaoben')}</div>
+              <div class="js-editor-toolbar-title flex-1">
+                {this.$t('packages_form_js_processor_index_jiaoben')}
+              </div>
               <ElLink
                 onClick={() => {
                   this.fullscreen = !this.fullscreen
@@ -117,8 +122,14 @@ export const JsEditor = connect(
                 type="primary"
               >
                 {this.fullscreen
-                  ? [<VIcon class="mr-1">suoxiao</VIcon>, this.$t('packages_form_js_editor_exit_fullscreen')]
-                  : [<VIcon class="mr-1">fangda</VIcon>, this.$t('packages_form_js_editor_fullscreen')]}
+                  ? [
+                      <VIcon class="mr-1">suoxiao</VIcon>,
+                      this.$t('packages_form_js_editor_exit_fullscreen'),
+                    ]
+                  : [
+                      <VIcon class="mr-1">fangda</VIcon>,
+                      this.$t('packages_form_js_editor_fullscreen'),
+                    ]}
               </ElLink>
             </div>
           )}

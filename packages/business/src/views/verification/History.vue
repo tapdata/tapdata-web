@@ -278,7 +278,7 @@ export default {
             <span>{{ statusMap[scope.row.status] }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('public_operation')" width="60px">
+        <el-table-column :label="$t('public_operation')" width="100px">
           <template #default="scope">
             <ElButton text type="primary" @click="rowClick(scope.row)">{{
               $t('public_button_details')
@@ -315,7 +315,7 @@ export default {
     overflow: hidden;
   }
   .data-verify-history__icon {
-    color: map.get($fontColor, white);
+    color: var(--text-white);
   }
   .panel-slider {
     width: 200px;
@@ -331,13 +331,13 @@ export default {
     .tip {
       height: 30px;
       font-size: 12px;
-      background: map.get($bgColor, main);
-      border: 1px solid map.get($borderColor, light);
+      background: var(--bg-main);
+      border: 1px solid var(--border-light);
       line-height: 30px;
     }
     .title {
       font-weight: bold;
-      color: map.get($color, primary);
+      color: var(--color-primary);
       margin: 10px 0;
     }
 
@@ -347,16 +347,16 @@ export default {
         display: inline-block;
       }
       .error {
-        color: map.get($color, danger);
+        color: var(--color-danger);
       }
       .success {
-        color: map.get($color, success);
+        color: var(--color-success);
       }
     }
     .pagination {
       white-space: nowrap;
       padding: 2px 5px;
-      color: map.get($fontColor, dark);
+      color: var(--text-dark);
       font-weight: 700;
     }
     .back-btn-icon-box {
@@ -367,7 +367,7 @@ export default {
       line-height: 1;
       white-space: nowrap;
       cursor: pointer;
-      background: map.get($color, primary);
+      background: var(--color-primary);
       border: 0;
       -webkit-appearance: none;
       text-align: center;

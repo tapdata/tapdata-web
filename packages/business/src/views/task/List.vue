@@ -1,29 +1,21 @@
 <script>
-import {
-  clusterApi,
-  databaseTypesApi,
-  licensesApi,
-  taskApi,
-  workerApi,
-} from '@tap/api'
-import { FilterBar, SelectList } from '@tap/component'
-import InfiniteSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
+import { clusterApi, licensesApi, taskApi, workerApi } from '@tap/api'
+import { DownBoldOutlined } from '@tap/component/src/DownBoldOutlined'
+import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
+import FilterBar from '@tap/component/src/filter-bar/Main.vue'
 import i18n from '@tap/i18n'
-import { generateId } from '@tap/shared'
 import dayjs from 'dayjs'
-import { escapeRegExp } from 'lodash-es'
+import { escapeRegExp, uniqBy } from 'lodash-es'
 
 import { h } from 'vue'
-import {
-  DatabaseIcon,
-  SyncStatus,
-  TablePage,
-  TaskStatus,
-  UpgradeCharges,
-  UpgradeFee,
-} from '../../components'
+import { DatabaseIcon } from '../../components/DatabaseIcon'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
-import Upload from '../../components/UploadDialog'
+import SyncStatus from '../../components/SyncStatus.vue'
+import TablePage from '../../components/TablePage.vue'
+import TaskStatus from '../../components/TaskStatus.vue'
+import UpgradeCharges from '../../components/UpgradeCharges.vue'
+import UpgradeFee from '../../components/UpgradeFee.vue'
+import Upload from '../../components/UploadDialog.vue'
 import syncTaskAgent from '../../mixins/syncTaskAgent'
 import { makeStatusAndDisabled, MILESTONE_TYPE, STATUS_MAP } from '../../shared'
 import SkipError from './SkipError'
@@ -32,7 +24,7 @@ export default {
   name: 'List',
 
   components: {
-    InfiniteSelect,
+    DownBoldOutlined,
     DatabaseIcon,
     FilterBar,
     SelectList,
@@ -54,6 +46,14 @@ export default {
     route: {},
     taskBuried: {},
     syncType: String,
+    materializedViewLoading: {
+      type: Boolean,
+      default: false,
+    },
+    createLoading: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -342,12 +342,14 @@ export default {
           key: 'status',
           type: 'select-inner',
           items: this.statusOptions,
+          id: 'status-filter-select',
         },
         {
           label: this.$t('packages_business_task_list_sync_type'),
           key: 'type',
           type: 'select-inner',
           items: this.typeOptions,
+          id: 'type-filter-select',
         },
         {
           label: this.$t('packages_business_task_monitor_mission_milestone'),
@@ -361,6 +363,7 @@ export default {
             })),
           ],
           width: 240,
+          id: 'sync-status-filter-select',
         },
         {
           label: i18n.t('public_agent_name'),
@@ -376,7 +379,7 @@ export default {
             }
             if (this.isDaas) {
               const clusterData = await clusterApi.get()
-              return clusterData.items
+              const options = clusterData.items
                 .filter((item) => item.systemInfo.process_id)
                 .map((item) => {
                   return {
@@ -384,6 +387,7 @@ export default {
                     value: item.systemInfo.process_id,
                   }
                 })
+              return uniqBy(options, 'value')
             }
             const data = await this.$axios.get(
               `api/tcm/agent?filter=${encodeURIComponent(
@@ -402,6 +406,7 @@ export default {
           placeholder: this.$t('public_task_name'),
           key: 'keyword',
           type: 'input',
+          id: 'name-filter-input',
         },
       ]
 
@@ -432,7 +437,6 @@ export default {
      * @param row
      */
     handleClickName(row) {
-      if (this.$disabledReadonlyUserBtn()) return
       if (!['edit', 'wait_start'].includes(row.status)) {
         this.toDetail(row)
       } else {
@@ -444,9 +448,7 @@ export default {
       if (!this.isDaas) return false
 
       return (
-        (row.btnDisabled?.edit ||
-          this.$disabledReadonlyUserBtn() ||
-          !this.havePermission(row, 'Edit')) &&
+        (row.btnDisabled?.edit || !this.havePermission(row, 'Edit')) &&
         row.btnDisabled.monitor &&
         !row.lastStartDate
       )
@@ -548,41 +550,54 @@ export default {
     },
 
     handleSelectTag() {
-      let tagList = []
+      const tagList = []
+      const tagMap = {}
+
       this.multipleSelection.forEach((row) => {
-        if (row.listtags) {
-          tagList = [...row.listtags, ...tagList]
-        }
+        row.listtags?.forEach((item) => {
+          if (!tagMap[item.id]) {
+            tagList.push(item)
+            tagMap[item.id] = true
+          }
+        })
       })
-      //去重
-      const map = new Map()
-      for (const item of tagList) {
-        if (!map.has(item.id)) {
-          map.set(item.id, item)
-        }
-      }
-      tagList = [...map.values()]
+
       return tagList
     },
 
-    async create(query) {
+    create() {
       this.buried(this.taskBuried.new)
-      this.createBtnLoading = true
+      this.$emit('update:createLoading', true)
       this.checkAgent(() => {
         this.$router.push({
           name: this.route.new,
-          query,
         })
-      }).catch(() => {
-        this.createBtnLoading = false
-        this.buried(this.taskBuried.newFail)
       })
+        .catch(() => {
+          this.buried(this.taskBuried.newFail)
+        })
+        .finally(() => {
+          this.$emit('update:createLoading', false)
+        })
     },
 
     handleCreateMaterializedView() {
-      this.create({
-        by: 'materialized-view',
+      this.buried(this.taskBuried.new)
+      this.$emit('update:materializedViewLoading', true)
+      this.checkAgent(() => {
+        this.$router.push({
+          name: this.route.new,
+          query: {
+            by: 'materialized-view',
+          },
+        })
       })
+        .catch(() => {
+          this.buried(this.taskBuried.newFail)
+        })
+        .finally(() => {
+          this.$emit('update:materializedViewLoading', false)
+        })
     },
 
     handleEditor(row) {
@@ -639,9 +654,7 @@ export default {
         ids.length > 1,
         item.name,
       )
-      this.$confirm(msgObj.msg, msgObj.title, {
-        type: 'warning',
-      }).then((resFlag) => {
+      this.$confirm(msgObj.title, msgObj.msg, {}).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -664,9 +677,7 @@ export default {
 
     del(ids, item = {}, canNotList) {
       const msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name)
-      this.$confirm(msgObj.msg, '', {
-        type: 'warning',
-      }).then((resFlag) => {
+      this.$confirm(msgObj.msg).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -735,10 +746,7 @@ export default {
           item.name,
         )
       }
-      this.$confirm(msgObj.msg, '', {
-        type: 'warning',
-        showClose: false,
-      }).then((resFlag) => {
+      this.$confirm(msgObj.msg).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -755,10 +763,7 @@ export default {
     stop(ids, item = {}, canNotList) {
       const msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name)
       const message = msgObj.msg
-      this.$confirm(message, '', {
-        type: 'warning',
-        showClose: false,
-      }).then((resFlag) => {
+      this.$confirm(message).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -1004,10 +1009,7 @@ export default {
 </script>
 
 <template>
-  <section
-    v-loading="restLoading"
-    class="data-flow-wrap rounded-lg overflow-hidden"
-  >
+  <section v-loading="restLoading" class="data-flow-wrap rounded-lg">
     <TablePage
       ref="table"
       row-key="id"
@@ -1107,7 +1109,6 @@ export default {
         </ElButton>
         <ElButton
           v-readonlybtn="'SYNC_category_application'"
-          :disabled="$disabledReadonlyUserBtn()"
           @click="$refs.table.showClassify(handleSelectTag())"
         >
           <span> {{ $t('public_button_bulk_tag') }}</span>
@@ -1117,32 +1118,28 @@ export default {
             <span>
               {{ $t('packages_business_dataFlow_taskBulkOperation') }}</span
             >
-            <i class="el-icon-arrow-down el-icon--right" />
+            <el-icon class="ml-1">
+              <DownBoldOutlined />
+            </el-icon>
           </ElButton>
           <template #dropdown>
             <ElDropdownMenu>
               <ElDropdownItem
                 v-readonlybtn="'SYNC_job_operation'"
                 command="start"
-                :disabled="$disabledReadonlyUserBtn()"
                 >{{ $t('packages_business_dataFlow_bulkScheuled') }}
               </ElDropdownItem>
               <ElDropdownItem
                 v-readonlybtn="'SYNC_job_operation'"
                 command="stop"
-                :disabled="$disabledReadonlyUserBtn()"
                 >{{ $t('packages_business_dataFlow_bulkStopping') }}
               </ElDropdownItem>
               <ElDropdownItem
                 v-readonlybtn="'SYNC_job_operation'"
                 command="initialize"
-                :disabled="$disabledReadonlyUserBtn()"
                 >{{ $t('packages_business_dataFlow_batchRest') }}
               </ElDropdownItem>
-              <ElDropdownItem
-                v-readonlybtn="'SYNC_job_delete'"
-                command="del"
-                :disabled="$disabledReadonlyUserBtn()"
+              <ElDropdownItem v-readonlybtn="'SYNC_job_delete'" command="del"
                 >{{ $t('packages_business_dataFlow_batchDelete') }}
               </ElDropdownItem>
             </ElDropdownMenu>
@@ -1152,7 +1149,6 @@ export default {
           v-if="buttonShowMap.export"
           v-show="isDaas"
           v-readonlybtn="'SYNC_job_export'"
-          :disabled="$disabledReadonlyUserBtn()"
           @click="handleCommand('export')"
         >
           <span> {{ $t('public_button_export') }}</span>
@@ -1160,9 +1156,10 @@ export default {
       </template>
 
       <el-table-column
+        class-name="cell-no-padding"
         reserve-selection
         type="selection"
-        width="38"
+        width="32"
         align="center"
         :selectable="
           (row) =>
@@ -1184,7 +1181,7 @@ export default {
               v-else
               role="ellipsis"
               type="primary"
-              :underline="false"
+              underline="never"
               class="justify-content-start ellipsis block mr-1"
               :class="['name', { 'has-children': row.hasChildren }]"
               @click.stop="handleClickName(row)"
@@ -1286,10 +1283,11 @@ export default {
                 havePermission(row, 'Start')
               "
               v-readonlybtn="'SYNC_job_operation'"
+              name="start-task-btn"
               text
               type="primary"
               data-testid="start-task"
-              :disabled="row.btnDisabled.start || $disabledReadonlyUserBtn()"
+              :disabled="row.btnDisabled.start"
               @click="start([row.id], row)"
             >
               {{ $t('public_button_start') }}
@@ -1301,9 +1299,7 @@ export default {
                 text
                 type="primary"
                 data-testid="force-stop-task"
-                :disabled="
-                  row.btnDisabled.forceStop || $disabledReadonlyUserBtn()
-                "
+                :disabled="row.btnDisabled.forceStop"
                 @click="forceStop([row.id], row)"
               >
                 {{ $t('public_button_force_stop') }}
@@ -1313,8 +1309,9 @@ export default {
                 v-readonlybtn="'SYNC_job_operation'"
                 text
                 type="primary"
+                name="stop-task-btn"
                 data-testid="stop-task"
-                :disabled="row.btnDisabled.stop || $disabledReadonlyUserBtn()"
+                :disabled="row.btnDisabled.stop"
                 @click="stop([row.id], row)"
               >
                 {{ $t('public_button_stop') }}
@@ -1332,7 +1329,7 @@ export default {
               text
               type="primary"
               data-testid="edit-task"
-              :disabled="row.btnDisabled.edit || $disabledReadonlyUserBtn()"
+              :disabled="row.btnDisabled.edit"
               @click="handleEditor(row)"
             >
               {{ $t('public_button_edit') }}
@@ -1364,7 +1361,7 @@ export default {
               text
               type="primary"
               data-testid="reset-task"
-              :disabled="row.btnDisabled.reset || $disabledReadonlyUserBtn()"
+              :disabled="row.btnDisabled.reset"
               @click="initialize([row.id], row)"
             >
               {{ $t('public_button_reset') }}
@@ -1381,7 +1378,6 @@ export default {
               text
               type="primary"
               data-testid="copy-task"
-              :disabled="$disabledReadonlyUserBtn()"
               @click="copy([row.id], row)"
             >
               {{ $t('public_button_copy') }}
@@ -1397,8 +1393,9 @@ export default {
               v-readonlybtn="'SYNC_job_edition'"
               text
               type="primary"
+              name="delete-task-btn"
               data-testid="delete-task"
-              :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
+              :disabled="row.btnDisabled.delete"
               @click="del([row.id], row)"
             >
               {{ $t('public_button_delete') }}
@@ -1559,8 +1556,8 @@ export default {
         font-weight: 400;
         font-size: 12px;
         line-height: 20px;
-        color: map.get($color, tag);
-        border: 1px solid map.get($bgColor, tag);
+        color: var(--color-tag);
+        border: 1px solid var(--bg-tag);
         border-radius: 4px;
       }
 

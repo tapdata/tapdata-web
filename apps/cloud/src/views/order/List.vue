@@ -691,11 +691,7 @@ export default {
                       </ElButton>
                     </li>
                   </ul>
-                  <ElButton
-                    type="primary"
-                    :disabled="$disabledReadonlyUserBtn()"
-                    @click="handleCreateAgent"
-                  >
+                  <ElButton type="primary" @click="handleCreateAgent">
                     <span>{{ $t('dfs_order_list_xinzengdingyue') }}</span>
                   </ElButton>
                 </div>
@@ -1083,7 +1079,7 @@ export default {
 }
 
 .color-subscribe {
-  color: map.get($color, warning);
+  color: var(--color-warning);
 }
 
 .sub-li-header {
@@ -1099,12 +1095,12 @@ export default {
 }
 
 :deep(.el-dropdown-menu__item.dropdown-item--disabled) {
-  color: map.get($color, disable);
+  color: var(--color-disable);
   cursor: default;
 
   &:hover {
     background: unset;
-    color: map.get($color, disable);
+    color: var(--color-disable);
   }
 }
 
@@ -1117,14 +1113,14 @@ export default {
 }
 
 .list-li {
-  border: 1px solid map.get($bgColor, hover);
+  border: 1px solid var(--bg-hover);
 
   &.primary {
-    border-left: 8px solid map.get($color, primary);
+    border-left: 8px solid var(--color-primary);
   }
 
   &.warning {
-    border-left: 8px solid map.get($color, warning);
+    border-left: 8px solid var(--color-warning);
   }
 }
 
@@ -1153,7 +1149,7 @@ export default {
   &.active,
   &:hover {
     background-color: #e8f3ff;
-    color: map.get($color, primary);
+    color: var(--color-primary);
   }
 }
 

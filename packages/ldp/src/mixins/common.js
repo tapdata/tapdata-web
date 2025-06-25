@@ -1,26 +1,29 @@
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { CancelToken, discoveryApi, taskApi } from '@tap/api'
-import { validateCron } from '@tap/form'
+import { validateCron } from '@tap/form/src/shared/validate'
 import i18n from '@tap/i18n'
+import { mapState } from 'vuex'
 
 export default {
   data() {
     const validateTaskName = async (rule, value, callback) => {
       value = value.trim()
       if (!value) {
-        callback(new Error(this.$t('packages_business_relation_list_qingshururenwu')))
+        callback(
+          new Error(this.$t('packages_business_relation_list_qingshururenwu')),
+        )
       } else {
         try {
           const isExist = await taskApi.checkName({
             name: value,
           })
           if (isExist) {
-            callback(new Error(this.$t('packages_dag_task_form_error_name_duplicate')))
+            callback(
+              new Error(this.$t('packages_dag_task_form_error_name_duplicate')),
+            )
           } else {
             callback()
           }
-        } catch (e) {
+        } catch {
           callback()
         }
       }
@@ -30,7 +33,9 @@ export default {
       if (!value) {
         callback(new Error(this.$t('public_form_not_empty')))
       } else if (!/\w+/.test(value)) {
-        callback(new Error(this.$t('packages_business_data_server_drawer_geshicuowu')))
+        callback(
+          new Error(this.$t('packages_business_data_server_drawer_geshicuowu')),
+        )
       } else {
         callback()
       }
@@ -90,7 +95,7 @@ export default {
     startingTour() {
       return this.$store.getters.startingTour
     },
-    ...mapState(['highlightBoard'])
+    ...mapState(['highlightBoard']),
   },
   unmounted() {
     this.debouncedSearch?.cancel()
@@ -133,9 +138,11 @@ export default {
       let routeName
 
       if (!['edit', 'wait_start'].includes(task.status)) {
-        routeName = task.syncType === 'migrate' ? 'MigrationMonitor' : 'TaskMonitor'
+        routeName =
+          task.syncType === 'migrate' ? 'MigrationMonitor' : 'TaskMonitor'
       } else {
-        routeName = task.syncType === 'migrate' ? 'MigrateEditor' : 'DataflowEditor'
+        routeName =
+          task.syncType === 'migrate' ? 'MigrateEditor' : 'DataflowEditor'
       }
 
       this.openRoute({
@@ -150,7 +157,7 @@ export default {
     },
 
     loadObjects(node, isCurrent = true, queryKey, cancelToken) {
-      let where = {
+      const where = {
         page: 1,
         pageSize: 10000,
         tagId: node.id,
@@ -184,10 +191,15 @@ export default {
       this.cancelSource?.cancel()
       this.cancelSource = CancelToken.source()
       this.searchIng = true
-      const result = await this.loadObjects(this.directory, false, search, this.cancelSource.token)
+      const result = await this.loadObjects(
+        this.directory,
+        false,
+        search,
+        this.cancelSource.token,
+      )
       const map = result.reduce((obj, item) => {
-        let id = item.listtags?.[0]?.id || this.directory.id
-        let children = obj[id] || []
+        const id = item.listtags?.[0]?.id || this.directory.id
+        const children = obj[id] || []
         children.push(item)
         obj[id] = children
         return obj
@@ -198,27 +210,31 @@ export default {
 
         if (node.children?.length) {
           newNode.children = node.children
-            .map(child => filterTree(child))
-            .filter(child => child.LDP_TYPE === 'folder' && (child.name.includes(search) || child.children.length))
+            .map((child) => filterTree(child))
+            .filter(
+              (child) =>
+                child.LDP_TYPE === 'folder' &&
+                (child.name.includes(search) || child.children.length),
+            )
         } else {
           newNode.children = []
         }
 
         if (map[node.id]) {
-          newNode.children.push(...map[node.id].map(child => ({ ...child })))
+          newNode.children.push(...map[node.id].map((child) => ({ ...child })))
         }
 
         return newNode
       }
 
-      let root = filterTree(this.directory)
+      const root = filterTree(this.directory)
       this.searchIng = false
       this.filterTreeData = root.children
     },
 
     handleFindParent(event) {
       const parentNode = event.target?.parentElement
-      $emit(this, 'find-parent', parentNode)
+      this.$emit('find-parent', parentNode)
     },
 
     handleChangeCronType(val) {
@@ -236,9 +252,7 @@ export default {
       const i = this.expandedKeys.indexOf(id)
       if (!isExpand) {
         if (~i) this.expandedKeys.splice(i, 1)
-      } else {
-        if (!~i) this.expandedKeys.push(id)
-      }
+      } else if (!~i) this.expandedKeys.push(id)
     },
 
     handeNodeCollapse(data) {
@@ -255,7 +269,7 @@ export default {
       })
       let def = 1
       if (taskNames?.items.length) {
-        let arr = [0]
+        const arr = [0]
         taskNames.items.forEach((item) => {
           const res = item.name.match(new RegExp(`^${source}(\\d+)$`))
           if (res && res[1]) arr.push(+res[1])
@@ -271,6 +285,6 @@ export default {
         parent = parent.parentNode
       }
       return parent
-    }
-  }
+    },
+  },
 }

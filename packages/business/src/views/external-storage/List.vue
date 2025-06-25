@@ -1,15 +1,16 @@
 <script>
-import { databaseTypesApi, externalStorageApi } from '@tap/api'
+import { externalStorageApi } from '@tap/api'
 
-import { Drawer, FilterBar } from '@tap/component'
-import { SchemaToForm } from '@tap/form'
+import Drawer from '@tap/component/src/Drawer.vue'
+import { FilterBar } from '@tap/component/src/filter-bar'
+import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
 
 import { openUrl } from '@tap/shared'
 import dayjs from 'dayjs'
 import { cloneDeep, escapeRegExp } from 'lodash-es'
 import i18n from '@/i18n'
-import { TablePage } from '../../components'
 import PageContainer from '../../components/PageContainer.vue'
+import TablePage from '../../components/TablePage.vue'
 import { CONNECTION_STATUS_MAP, EXTERNAL_STORAGE_TYPE_MAP } from '../../shared'
 import Test from '../connections/Test.vue'
 
@@ -65,7 +66,6 @@ export default {
       showUsingTaskDialog: false,
       usingTasks: [],
       schemaData: null,
-      dialogTestVisible: false,
       model: {},
     }
   },
@@ -312,11 +312,6 @@ export default {
       this.usingTasks = (await externalStorageApi.usingTask(row.id)) || []
       const flag = await this.$confirm(
         i18n.t('packages_business_external_storage_list_querenshanchuwai'),
-        '',
-        {
-          type: 'warning',
-          showClose: false,
-        },
       )
       if (flag) {
         if (this.usingTasks?.length) {
@@ -429,13 +424,17 @@ export default {
     },
 
     startTest(data = {}) {
+      const loading = this.$loading()
       this.checkAgent(() => {
         Object.assign(this.model, data)
-        this.dialogTestVisible = true
         this.$refs.test.start(false)
-      }).catch(() => {
-        this.buried('externalStorage_connectionTestAgentFail')
       })
+        .catch(() => {
+          this.buried('externalStorage_connectionTestAgentFail')
+        })
+        .finally(() => {
+          loading.close()
+        })
     },
 
     returnTestData(data) {
@@ -642,16 +641,19 @@ export default {
         </span>
       </template>
     </ElDialog>
-    <Drawer v-model:visible="isShowDetails" class="shared-cache-details">
-      <div v-if="details.id" class="shared-cache-details--header flex pb-3">
-        <div class="img-box">
+    <Drawer v-model="isShowDetails" class="shared-cache-details">
+      <template #header="{ titleClass }">
+        <div
+          v-if="details.id"
+          class="flex align-center gap-3 overflow-hidden"
+          :class="titleClass"
+        >
           <VIcon class="icon">text</VIcon>
+          <div class="ellipsis">{{ details.name }}</div>
         </div>
-        <div class="flex-fill ml-4 overflow-hidden">
-          <div class="fs-6 ellipsis">{{ details.name }}</div>
-        </div>
-      </div>
-      <ul class="mt-2">
+      </template>
+
+      <ul>
         <li v-for="item in info" :key="item.label" class="drawer-info__item">
           <VIcon class="fs-7 mt-2">{{ item.icon }}</VIcon>
           <div class="body ml-4">
@@ -696,8 +698,7 @@ export default {
 
     <Test
       ref="test"
-      v-model:visible="dialogTestVisible"
-      :form-data="model"
+      :connection="model"
       test-type="testExternalStorage"
       @return-test-data="returnTestData"
     />
@@ -737,7 +738,7 @@ export default {
   }
 
   &.icon-status--danger {
-    color: map.get($color, danger);
+    color: var(--color-danger);
     background: #ffecec;
   }
 }
@@ -747,7 +748,7 @@ export default {
 }
 
 .shared-cache-details--header {
-  border-bottom: 1px solid map.get($borderColor, light);
+  border-bottom: 1px solid var(--border-light);
 
   .icon {
     font-size: 18px;
@@ -761,16 +762,16 @@ export default {
     flex: 1;
     padding: 8px 0;
     line-height: 17px;
-    border-bottom: 1px solid map.get($borderColor, light);
+    border-bottom: 1px solid var(--border-light);
 
     .label {
-      font-size: $fontBaseTitle;
+      font-size: var(--font-base-title);
       color: rgba(0, 0, 0, 0.6);
     }
 
     .value {
-      font-size: $fontBaseTitle;
-      color: map.get($fontColor, dark);
+      font-size: var(--font-base-title);
+      color: var(--text-dark);
     }
   }
 }

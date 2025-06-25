@@ -1,4 +1,4 @@
-import { GitBook } from '@tap/component'
+import GitBook from '@tap/component/src/GitBook.vue'
 import i18n from '@tap/i18n'
 import { defineComponent, ref } from 'vue'
 import { JsEditor } from '../../index'

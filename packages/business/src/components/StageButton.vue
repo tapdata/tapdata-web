@@ -4,8 +4,6 @@ import i18n from '@tap/i18n'
 
 import { mapActions } from 'vuex'
 
-import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
-
 export default {
   name: 'StageButton',
   props: {
@@ -60,7 +58,7 @@ export default {
         .then((data) => {
           this.progress = '0%'
           this.getProgress()
-          $emit(this, 'start')
+          this.$emit('start')
           this.startByConnection(data, true, false)
         })
     },
@@ -89,7 +87,7 @@ export default {
               })
               .then(this.updateDag)
           }
-          !check && $emit(this, 'complete') // 防止跟父组件的加载重复
+          !check && this.$emit('complete') // 防止跟父组件的加载重复
           this.loading = false
         }
       })
@@ -131,11 +129,14 @@ export default {
     <template v-if="loading">
       <span>{{ progress }}</span>
     </template>
-    <template v-else>
-      <slot>
-        <span>{{ label }}</span>
-        <VIcon class="ml-1" size="9">icon_table_selector_load</VIcon>
-      </slot>
+
+    <slot v-if="!$slots.icon && !loading">
+      <span>{{ label }}</span>
+      <VIcon class="ml-1" size="9">icon_table_selector_load</VIcon>
+    </slot>
+
+    <template v-if="$slots.icon && !loading" #icon>
+      <slot name="icon" />
     </template>
   </ElButton>
 </template>

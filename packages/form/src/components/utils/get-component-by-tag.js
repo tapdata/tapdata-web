@@ -1,7 +1,6 @@
-import * as Vue from 'vue'
 import { merge } from '@formily/shared'
 import { h } from '@formily/vue'
-import { isVue2 } from 'vue'
+import { isVue2, h as vueH } from 'vue'
 
 export const getComponentByTag = (tag, transformRules, defaultProps) => {
   if (isVue2) {
@@ -24,7 +23,7 @@ export const getComponentByTag = (tag, transformRules, defaultProps) => {
       if (defaultProps) {
         data.props = merge(defaultProps, data.props)
       }
-      return Vue.h(tag, data, context.children)
+      return vueH(tag, data, context.children)
     }
   } else {
     return {

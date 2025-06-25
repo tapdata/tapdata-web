@@ -1,29 +1,7 @@
-<template>
-  <!-- api过滤条件 -->
-  <div class="query-build-wrap">
-    <ConditionGroup
-      :field-label="fieldLabel"
-      :field-value="fieldValue"
-      :fields="fields"
-      v-model:value="root"
-      :level="1"
-      :max-level="maxLevel"
-    ></ConditionGroup>
-    <div class="query-build-show-filter">
-      <el-collapse accordion>
-        <el-collapse-item class="query-build-pre" :title="$t('query_build_show_filter')" name="1">
-          <pre>{{ value }}</pre>
-        </el-collapse-item>
-      </el-collapse>
-    </div>
-    <!-- :showFilterDialog="showFilterDialog" -->
-  </div>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
-import ConditionGroup from './ConditionGroup'
+import ConditionGroup from './ConditionGroup.vue'
 const command = ['eq', 'gt', 'gte', 'lt', 'lte', /*'between',*/ 'inq', 'nin', 'near', 'neq', 'like', 'nlike', 'regexp']
+
 export default {
   name: 'QueryBuild',
   components: { ConditionGroup },
@@ -80,7 +58,7 @@ export default {
         let condition = this.flat(this.root)
         // eslint-disable-next-line
         console.log('root', this.root)
-        $emit(this, 'update:value', condition)
+        this.$emit('update:value', condition)
       },
     },
     value: {
@@ -235,6 +213,28 @@ export default {
 }
 </script>
 
+<template>
+  <!-- api过滤条件 -->
+  <div class="query-build-wrap">
+    <ConditionGroup
+      :field-label="fieldLabel"
+      :field-value="fieldValue"
+      :fields="fields"
+      v-model:value="root"
+      :level="1"
+      :max-level="maxLevel"
+    ></ConditionGroup>
+    <div class="query-build-show-filter">
+      <el-collapse accordion>
+        <el-collapse-item class="query-build-pre" :title="$t('query_build_show_filter')" name="1">
+          <pre>{{ value }}</pre>
+        </el-collapse-item>
+      </el-collapse>
+    </div>
+    <!-- :showFilterDialog="showFilterDialog" -->
+  </div>
+</template>
+
 <style lang="scss" scoped>
 .query-build-wrap {
   .query-build-show-filter {
@@ -254,7 +254,7 @@ export default {
     :deep(.el-collapse-item__header) {
       padding-bottom: 5px;
       border-bottom: 0;
-      color: map.get($color, primary);
+      color: var(--color-primary);
       font-size: 12px;
       .el-collapse-item__arrow {
         margin-left: 6px;

@@ -1,8 +1,8 @@
 <script>
-import { connectionsApi, taskApi } from '@tap/api'
+import { connectionsApi, proxyApi, taskApi } from '@tap/api'
 
-import { SkipError } from '@tap/business'
-import { VEmpty } from '@tap/component'
+import SkipError from '@tap/business/src/views/task/SkipError.vue'
+import { VEmpty } from '@tap/component/src/base/v-empty'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
 import { titleChange } from '@tap/component/src/mixins/titleChange'
@@ -10,7 +10,7 @@ import i18n from '@tap/i18n'
 import { uuid } from '@tap/shared'
 import dagre from 'dagre'
 import { merge } from 'lodash-es'
-import { mapMutations } from 'vuex'
+import { getCurrentInstance, nextTick, provide, ref, shallowRef } from 'vue'
 import { MoveNodeCommand } from './command'
 import DFNode from './components/DFNode'
 import LeftSidebar from './components/LeftSidebar'
@@ -26,6 +26,7 @@ import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from './constants'
 import { config, jsPlumb } from './instance'
 import editor from './mixins/editor'
 import formScope from './mixins/formScope'
+
 import { allResourceIns } from './nodes/loader'
 
 export default {
@@ -49,6 +50,57 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   inject: ['buried'],
+
+  setup() {
+    const previewData = shallowRef(null)
+    const previewLoading = ref(false)
+
+    const ins = getCurrentInstance()
+
+    const handlePreview = async (nodeId) => {
+      previewLoading.value = true
+      ins.proxy.setActiveNode(nodeId)
+
+      nextTick(() => {
+        ins.proxy.scope?.formTab?.setActiveKey('previewTab')
+      })
+
+      const data = await proxyApi
+        .call({
+          className: 'TaskPreviewService',
+          method: 'preview',
+          args: [
+            JSON.stringify({
+              id: ins.proxy.dataflow.id,
+              dag: {
+                edges: ins.proxy.allEdges,
+                nodes: ins.proxy.allNodes,
+              },
+            }),
+            [],
+            1,
+          ],
+        })
+        .finally(() => (previewLoading.value = false))
+
+      if (data.code !== 200) {
+        ElMessage.error(data.message || 'Internal error')
+        return
+      }
+
+      previewData.value = data.nodeResult
+    }
+
+    provide('previewData', previewData)
+    provide('previewLoading', previewLoading)
+    provide('handlePreview', handlePreview)
+
+    return {
+      previewData,
+      previewLoading,
+      handlePreview,
+    }
+  },
 
   data() {
     return {
@@ -121,8 +173,6 @@ export default {
         this.initNodeView()
         await this.initView(true)
         this.autoAddNode(query)
-        this.checkMaterializedView(query)
-        // this.initWS()
       } catch (error) {
         console.error(error)
       }
@@ -160,20 +210,10 @@ export default {
           hidden: !this.hasFeature('enhanceJsProcessor'),
         },
         {
-          name: 'Python',
-          type: 'python_processor',
-          beta: true,
-          hidden: !this.hasFeature('pythonProcessor'),
-        },
-        {
-          name: 'Row Filter',
+          name: i18n.t('packages_dag_src_editor_row_filter'),
           type: 'row_filter_processor',
           hidden: !this.hasFeature('rowFilterProcessor'),
         },
-        // {
-        //   name: i18n.t('packages_dag_src_editor_juhe'),
-        //   type: 'aggregation_processor' //聚合节点
-        // }
         {
           name: i18n.t('packages_dag_src_editor_ziduanjisuan'),
           type: 'field_calc_processor',
@@ -291,10 +331,19 @@ export default {
       this.isSaving = true
 
       const errorMsg = await this.validate()
+
       if (errorMsg) {
         this.setMaterializedViewVisible(false)
         if (this.destory) return
         this.$message.error(errorMsg)
+        this.isSaving = false
+        return
+      }
+
+      // 验证数据校验是否支持开启
+      const result = await this.$refs.header.validateDataValidation()
+
+      if (!result) {
         this.isSaving = false
         return
       }
@@ -338,10 +387,13 @@ export default {
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
         this.setTaskInfo(this.dataflow)
+
         await this.$router.replace({
           name: 'DataflowEditor',
           params: { id: dataflow.id, action: 'dataflowEdit' },
+          query: { ...this.$route.query },
         })
+
         this.$nextTick(() => {
           this.$refs.paperScroller.initVisibleArea()
         })
@@ -468,11 +520,9 @@ export default {
         this.$store.state.dataflow.taskId
       ) {
         this.$confirm(
-          this.$t('packages_dag_page_return_confirm_content'),
           this.$t('packages_dag_page_return_confirm_title'),
+          this.$t('packages_dag_page_return_confirm_content'),
           {
-            type: 'warning',
-            closeOnClickModal: false,
             confirmButtonText: this.$t(
               'packages_dag_page_return_confirm_ok_text',
             ),
@@ -626,7 +676,8 @@ export default {
       })
     },
 
-    async checkMaterializedView(query = {}) {
+    async checkMaterializedView() {
+      const { query } = this.$route
       const { by, connectionId, tableName } = query
       let connection
 
@@ -635,7 +686,7 @@ export default {
 
       await this.$router.replace({
         params: {
-          action: 'dataflowEdit',
+          id: this.$route.params.id,
         },
         query: {
           ...query,
@@ -704,6 +755,42 @@ export default {
         this.setMaterializedViewVisible(true)
       }, 120)
     },
+
+    // async handlePreview(nodeId, nodeData) {
+    //   this.previewLoading = true
+    //   this.currentPreviewNodeId = nodeId
+    //   this.setActiveNode(nodeId)
+
+    //   this.$nextTick(() => {
+    //     this.scope?.formTab?.setActiveKey('previewTab')
+    //   })
+
+    //   const data = await proxyApi
+    //     .call({
+    //       className: 'TaskPreviewService',
+    //       method: 'preview',
+    //       args: [
+    //         JSON.stringify({
+    //           id: this.dataflow.id,
+    //           dag: {
+    //             edges: this.allEdges,
+    //             nodes: this.allNodes,
+    //           },
+    //         }),
+    //         // inputs,
+    //         [],
+    //         1,
+    //       ],
+    //     })
+    //     .finally(() => (this.previewLoading = false))
+
+    //   if (data.code !== 200) {
+    //     this.$message.error(data.message || 'Internal error')
+    //     return
+    //   }
+
+    //   this.previewData = data.nodeResult
+    // },
   },
 }
 </script>
@@ -712,6 +799,7 @@ export default {
   <section class="dataflow-editor layout-wrap vh-100">
     <!--头部-->
     <TopHeader
+      ref="header"
       :loading="loading"
       :is-saving="isSaving"
       :dataflow-name="dataflow.name"
@@ -776,6 +864,7 @@ export default {
               :class="{
                 'options-active': nodeMenu.typeId === n.id,
               }"
+              :is-sync="dataflow.syncType === 'sync'"
               @drag-start="onNodeDragStart"
               @drag-move="onNodeDragMove"
               @drag-stop="onNodeDragStop"
@@ -786,6 +875,7 @@ export default {
               @disable="handleDisableNode($event, true)"
               @enable="handleDisableNode($event, false)"
               @show-node-popover="showNodePopover"
+              @preview="handlePreview"
             />
           </PaperScroller>
           <div

@@ -1,8 +1,8 @@
 <script>
-import { VEmpty } from '@tap/component'
+import { VEmpty } from '@tap/component/src/base/v-empty'
 
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
-import { mapFieldsData } from '@tap/form'
+import { mapFieldsData } from '@tap/form/src/components/field-select'
 
 import i18n from '@tap/i18n'
 import { cloneDeep, debounce } from 'lodash-es'
@@ -210,11 +210,6 @@ export default {
     rollbackAll() {
       this.$confirm(
         i18n.t('packages_form_field_inference_main_ninquerenyaoquan'),
-        '',
-        {
-          type: 'warning',
-          closeOnClickModal: false,
-        },
       ).then((resFlag) => {
         if (resFlag) {
           this.fieldChangeRules = []
@@ -279,7 +274,7 @@ export default {
           class="p-2"
           @input="handleSearchTable"
         >
-          <template #suffix>
+          <template #prefix>
             <ElIcon><ElIconSearch /></ElIcon>
           </template>
         </ElInput>
@@ -343,7 +338,7 @@ export default {
             clearable
             @input="handleSearchField"
           >
-            <template #suffix>
+            <template #prefix>
               <ElIcon><ElIconSearch /></ElIcon>
             </template>
           </ElInput>
@@ -382,14 +377,14 @@ export default {
 .nav-list {
   overflow: hidden auto;
   li {
-    background-color: map.get($bgColor, white);
-    border-bottom: 1px solid map.get($borderColor, light);
+    background-color: var(--color-white);
+    border-bottom: 1px solid var(--border-light);
     border-left: 2px solid transparent;
     &:hover,
     &.active {
-      background: map.get($bgColor, disactive);
+      background: var(--bg-disactive);
       cursor: pointer;
-      border-left-color: map.get($color, primary);
+      border-left-color: var(--color-primary);
     }
     .task-form-text-box {
       //width: 140px;
@@ -419,8 +414,8 @@ export default {
   font-size: 16px;
   &:hover,
   &.is-plain:focus:hover {
-    border-color: map.get($color, primary);
-    background-color: map.get($color, white);
+    border-color: var(--color-primary);
+    background-color: var(--color-white);
   }
 }
 .content__list {
@@ -431,22 +426,22 @@ export default {
   height: 22px;
   font-size: 14px;
   font-weight: 400;
-  color: map.get($color, primary);
+  color: var(--color-primary);
   line-height: 22px;
-  background-color: map.get($bgColor, pageCount);
+  background-color: var(--bg-pageCount);
 }
 .nav-filter__list {
   background-color: #fafafa;
 }
 .nav-filter__item {
   &.active {
-    background: map.get($bgColor, disactive);
+    background: var(--bg-disactive);
   }
 }
 .update-list-select {
   &.error {
     :deep(.el-input__inner) {
-      border-color: map.get($color, danger);
+      border-color: var(--color-danger);
     }
   }
 }

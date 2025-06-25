@@ -1,4 +1,4 @@
-<script lang="jsx">
+<script lang="tsx">
 import {
   apiServerApi,
   appApi,
@@ -7,21 +7,16 @@ import {
   proxyApi,
   taskApi,
 } from '@tap/api'
-import {
-  DataServerDrawer as ApiPreview,
-  DatabaseIcon,
-  makeStatusAndDisabled,
-  TASK_SETTINGS,
-  TaskStatus,
-} from '@tap/business'
-import { IconButton, VIcon } from '@tap/component'
+import { DatabaseIcon } from '@tap/business/src/components/DatabaseIcon'
+import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
+import { makeStatusAndDisabled, TASK_SETTINGS } from '@tap/business/src/shared'
+import ApiPreview from '@tap/business/src/views/data-server/Drawer.vue'
+import { IconButton } from '@tap/component/src/icon-button'
 import i18n from '@tap/i18n'
 import { generateId, uuid } from '@tap/shared'
-// import draggable from 'vuedraggable'
 import { cloneDeep, debounce } from 'lodash-es'
 import { defineComponent, h } from 'vue'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-import { $emit, $off, $on, $once } from '../utils/gogocodeTransfer'
 import CreateRestApi from './components/CreateRestApi'
 import commonMix from './mixins/common'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
@@ -107,7 +102,6 @@ export default {
     DatabaseIcon,
     TaskList,
     IconButton,
-    VIcon,
     DynamicScroller,
     DynamicScrollerItem,
   },
@@ -279,7 +273,7 @@ export default {
     },
 
     handleAdd() {
-      $emit(this, 'create-connection', 'target')
+      this.$emit('create-connection', 'target')
     },
 
     async getData() {
@@ -812,7 +806,7 @@ export default {
     },
 
     handleScroll: debounce(function () {
-      $emit(this, 'on-scroll')
+      this.$emit('on-scroll')
     }, 200),
 
     searchByKeywordList(val = []) {
@@ -820,7 +814,7 @@ export default {
     },
 
     handleExpandAll(id) {
-      this.$set(this.expandState, id, !this.expandState[id])
+      this.expandState[id] = !this.expandState[id]
     },
 
     createAPI(connection, tableObj) {

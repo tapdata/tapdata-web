@@ -1,7 +1,6 @@
 <script>
 import { notificationApi } from '@tap/api'
-import { SelectList } from '@tap/component'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import PageContainer from '../../components/PageContainer.vue'
 import { ALARM_LEVEL_MAP } from '../../shared/const'
 import AlarmSetting from './AlarmSetting'
@@ -126,7 +125,7 @@ export default {
         // this.getUnreadNum() //未读消息数量
         this.getData()
         this.read = read
-        $emit(this.$root, 'notificationUpdate')
+        this.$root.$emit('notificationUpdate')
         const msg = {
           type: 'notification',
         }
@@ -148,7 +147,7 @@ export default {
         // this.getUnreadNum() //未读消息数量
         this.getData()
         this.read = read
-        $emit(this.$root, 'notificationUpdate')
+        this.$root.$emit('notificationUpdate')
         const msg = {
           type: 'notification',
         }
@@ -159,7 +158,7 @@ export default {
     },
     handleClick(tab) {
       this.currentPage = 1
-      if (tab.name === 'first') {
+      if (tab === 'first') {
         this.read = true // 全部信息
       } else {
         this.read = false //未读
@@ -195,7 +194,7 @@ export default {
   >
     <div v-loading="loading" class="system-notification">
       <div class="position-sticky top-0 z-10 bg-white">
-        <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tabs v-model="activeName" @tab-change="handleClick">
           <el-tab-pane
             :label="$t('packages_business_notify_user_all_notice')"
             name="first"
@@ -328,8 +327,8 @@ $unreadColor: #ee5353;
   }
   .list-item {
     position: relative;
-    background-color: map.get($bgColor, white);
-    border-bottom: 1px solid map.get($bgColor, disable);
+    background-color: var(--color-white);
+    border-bottom: 1px solid var(--bg-disable);
     .list-item-content {
       position: relative;
       min-height: 50px;
@@ -347,15 +346,15 @@ $unreadColor: #ee5353;
       border-radius: 50%;
     }
     .list-item-desc {
-      color: map.get($fontColor, light);
+      color: var(--text-light);
     }
     .list-item-time {
       float: right;
-      color: map.get($fontColor, light);
-      font-size: $fontBaseTitle;
+      color: var(--text-light);
+      font-size: var(--font-base-title);
     }
     &:hover {
-      background: map.get($bgColor, normal);
+      background: var(--bg-normal);
     }
   }
 }
@@ -389,12 +388,12 @@ $unreadColor: #ee5353;
   .el-tabs__item {
     height: 40px;
     line-height: 40px;
-    font-size: $fontBaseTitle;
-    // color: map.get($fontColor, light);
+    font-size: var(--font-base-title);
+    // color: var(--text-light);
     font-weight: 400;
     &.is-active {
       font-weight: 500;
-      // color: map.get($color, primary);
+      // color: var(--color-primary);
     }
   }
 }

@@ -1,41 +1,4 @@
-<template>
-  <ElDialog
-    :model-value="visible"
-    :append-to-body="true"
-    width="800px"
-    top="10vh"
-    class="connection-dialog ldp-conection-dialog flex flex-column"
-    @close="handleClose"
-  >
-    <template #header>
-      <div class="flex align-items-center">
-        <VIcon class="color-warning mr-2">warning</VIcon>
-        <span>{{ $t('packages_business_application_delete_shanchuyingyong') }}</span>
-      </div>
-    </template>
-    <div>
-      <div v-html="desc"></div>
-      <ListSelect
-        v-model:value="form.appValue"
-        v-model:label="form.appLabel"
-        :format="handleFormat"
-        class="my-3"
-      ></ListSelect>
-      <div>
-        {{ $t('packages_business_application_delete_shifouquerenshan') }}
-      </div>
-    </div>
-    <template v-slot:footer>
-      <span class="dialog-footer">
-        <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton type="primary" :loading="saveLoading" @click="handleSave">{{ $t('public_button_confirm') }}</ElButton>
-      </span>
-    </template>
-  </ElDialog>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 
 import { appApi, modulesApi } from '@tap/api'
@@ -82,12 +45,11 @@ export default {
             return
           }
           this.$confirm(
+            i18n.t('packages_business_application_delete_shanchuyingyong'),
             i18n.t('packages_business_application_delete_ninzhengzaishanchu', {
               val1: row.value,
             }),
-            i18n.t('packages_business_application_delete_shanchuyingyong'),
             {
-              type: 'warning',
               dangerouslyUseHTMLString: true,
             },
           ).then((resFlag) => {
@@ -141,7 +103,7 @@ export default {
       appApi
         .delete(id)
         .then(() => {
-          $emit(this, 'success')
+          this.$emit('success')
           this.$message.success(this.$t('public_message_delete_ok'))
           this.handleClose()
         })
@@ -157,3 +119,39 @@ export default {
   emits: ['success'],
 }
 </script>
+
+<template>
+  <ElDialog
+    :model-value="visible"
+    :append-to-body="true"
+    width="800px"
+    top="10vh"
+    class="connection-dialog ldp-conection-dialog flex flex-column"
+    @close="handleClose"
+  >
+    <template #header>
+      <div class="flex align-items-center">
+        <VIcon class="color-warning mr-2">warning</VIcon>
+        <span>{{ $t('packages_business_application_delete_shanchuyingyong') }}</span>
+      </div>
+    </template>
+    <div>
+      <div v-html="desc"></div>
+      <ListSelect
+        v-model:value="form.appValue"
+        v-model:label="form.appLabel"
+        :format="handleFormat"
+        class="my-3"
+      ></ListSelect>
+      <div>
+        {{ $t('packages_business_application_delete_shifouquerenshan') }}
+      </div>
+    </div>
+    <template v-slot:footer>
+      <span class="dialog-footer">
+        <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" :loading="saveLoading" @click="handleSave">{{ $t('public_button_confirm') }}</ElButton>
+      </span>
+    </template>
+  </ElDialog>
+</template>

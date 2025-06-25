@@ -1,10 +1,11 @@
 <script setup lang="tsx">
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
-import { IconButton } from '@tap/component'
-import { AsyncSelect, FieldSelect } from '@tap/form'
+import { IconButton } from '@tap/component/src/icon-button'
+import { FieldSelect } from '@tap/form/src/components/field-select'
+import AsyncSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 import i18n from '@tap/i18n'
-import { ClickOutside, Time } from '@tap/shared'
+import { Time } from '@tap/shared'
 import { merge, unionBy } from 'lodash-es'
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
@@ -623,8 +624,10 @@ async function loadTargetField() {
 
     if (arr.length > 1) {
       const parentPath = arr.slice(0, -1).join('.')
-      const tableName = props.targetPathMap[parentPath].tableNode.tableName
-      label = `${tableName}.${arr.pop()}`
+      const tableName = props.targetPathMap[parentPath]?.tableNode?.tableName
+      if (tableName) {
+        label = `${tableName}.${arr.pop()}`
+      }
     }
 
     return {
@@ -800,7 +803,7 @@ onMounted(() => {
 
 <template>
   <div
-    :id="props.node.id"
+    :id="`n_${node.id}`"
     tabindex="1"
     class="materialized-view-node position-absolute rounded-lg bg-white"
     :class="{
@@ -844,7 +847,7 @@ onMounted(() => {
           item-query="name"
           lazy
           :current-label="dagNode.attrs.connectionName"
-          :on-set-selected="onConnectionSelect"
+          @option-select="onConnectionSelect"
           @change="onChangeConnection"
         >
           <template v-if="dagNode.connectionId" #prefix>
@@ -864,7 +867,7 @@ onMounted(() => {
           item-type="object"
           item-query="value"
           lazy
-          :on-set-selected="onTableSelect"
+          @option-select="onTableSelect"
           @change="onChangeTable"
         />
       </div>
@@ -926,12 +929,14 @@ onMounted(() => {
                   v-model="keys.source"
                   class="flex-1"
                   :options="props.schema"
+                  :fit-input-width="292"
                 />
                 <span>=</span>
                 <FieldSelect
                   v-model="keys.target"
                   class="flex-1"
                   :options="state.targetFields"
+                  :fit-input-width="292"
                   @visible-change="handleFieldSelectVisible"
                 />
                 <IconButton

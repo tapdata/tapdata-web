@@ -1,91 +1,53 @@
-<template>
-  <ElContainer :class="['layout-wrap', $i18n && $i18n.locale]" class="position-relative">
-    <ElHeader class="layout-header bg-transparent z-10 dfs-header">
-      <div class="dfs-header__body flex">
-        <ElLink class="logo ml-2">
-          <img src="../../assets/image/logo.svg" alt="logo" />
-        </ElLink>
-        <div class="dfs-header__button button-bar pr-4 fs-7 flex gap-4 align-center">
-          <ElDropdown class="command-item menu-user rounded-4" placement="bottom" :show-timeout="0" @command="command">
-            <div class="username flex align-items-center">
-              <img
-                v-if="user.avatar"
-                :src="user.avatar"
-                alt=""
-                class="mr-2"
-                style="width: 30px; height: 30px; border-radius: 50%"
-              />
-              <VIcon v-else class="mr-2" size="20">account</VIcon>
-              <span>{{ user.username || user.nickname || user.phone || user.email }}</span>
-            </div>
-
-            <template #dropdown>
-              <ElDropdownMenu slot="dropdown">
-                <ElDropdownItem command="signOut" :disabled="$disabledReadonlyUserBtn()">
-                  {{ $t('header_sign_out') }}
-                </ElDropdownItem>
-              </ElDropdownMenu>
-            </template>
-          </ElDropdown>
-        </div>
-      </div>
-    </ElHeader>
-
-    <ElContainer direction="vertical" class="layout-main p-0">
-      <ElMain class="main rounded-lg p-4 pb-0 mb-4">
-        <RouterView></RouterView>
-      </ElMain>
-    </ElContainer>
-  </ElContainer>
-</template>
-
 <script>
-import { mapGetters, mapState } from 'vuex'
+import mockSourceIcon from '@tap/assets/icons/connections/mock-source.svg'
+import mockTargetIcon from '@tap/assets/icons/connections/mock-target.svg'
+import mongodbIcon from '@tap/assets/icons/connections/mongodb.svg'
+import mysqlIcon from '@tap/assets/icons/connections/mysql.svg'
 
 import Cookie from '@tap/shared/src/cookie'
-import { getIcon } from '@tap/assets/icons'
+import { $on } from '@tap/shared/src/event'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   inject: ['checkAgent', 'buried'],
   data() {
-    const $t = this.$t.bind(this)
     return {
       continueUse: '',
       suggestion: '',
       sourceList: [
         {
           type: 'mysql',
-          icon: getIcon('mysql')
+          icon: mysqlIcon,
         },
         {
           type: 'dummy',
-          icon: getIcon('dummy')
+          icon: mockSourceIcon,
         },
         {
           type: 'mongodb',
-          icon: getIcon('mongodb')
-        }
+          icon: mongodbIcon,
+        },
       ],
       targetList: [
         {
           type: 'mysql',
-          icon: getIcon('mysql')
+          icon: mysqlIcon,
         },
         {
           type: 'dummy',
-          icon: getIcon('dummy')
+          icon: mockTargetIcon,
         },
         {
           type: 'mongodb',
-          icon: getIcon('mongodb')
-        }
-      ]
+          icon: mongodbIcon,
+        },
+      ],
     }
   },
 
   computed: {
     ...mapGetters(['isDomesticStation']),
-    ...mapState(['user'])
+    ...mapState(['user']),
   },
 
   created() {
@@ -93,25 +55,25 @@ export default {
       this.loadChat()
     }
 
-    this.$root.$on('select-connection-type', this.selectConnectionType)
-    this.$root.$on('show-guide', this.showGuide)
-    this.$root.$on('get-user', this.getUser)
+    $on(this.$root, 'select-connection-type', this.selectConnectionType)
+    $on(this.$root, 'show-guide', this.showGuide)
+    $on(this.$root, 'get-user', this.getUser)
   },
   mounted() {
     //获取cookie 是否用户有操作过 稍后部署 且缓存是当前用户 不在弹窗
-    let user = window.__USER_INFO__
+    const user = window.__USER_INFO__
     this.userInfo = user
     //检查是云市场用户授权码有效期
     // if (user?.enableLicense) {
     //   this.checkLicense(user)
     // }
-    let isCurrentUser = Cookie.get('deployLaterUser') === user?.userId
+    const isCurrentUser = Cookie.get('deployLaterUser') === user?.userId
     if (Cookie.get('deployLater') == 1 && isCurrentUser) return
   },
   methods: {
     hideCustomTip() {
       setTimeout(() => {
-        let tDom = document.getElementById('titlediv')
+        const tDom = document.querySelector('#titlediv')
         if (tDom) {
           tDom.style.display = 'none'
         } else {
@@ -121,23 +83,25 @@ export default {
     },
 
     loadChat() {
-      let $zoho = $zoho || {}
+      const $zoho = $zoho || {}
       const { isDomesticStation } = this
       $zoho.salesiq = $zoho.salesiq || {
         widgetcode: isDomesticStation
           ? '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f'
           : 'siqc6975654b695513072e7c944c1b63ce0561c932c06ea37e561e3a2f7fe5ae1f7',
         values: {},
-        ready: function () {}
+        ready() {},
       }
       window.$zoho = $zoho
-      let d = document
-      let s = d.createElement('script')
+      const d = document
+      const s = d.createElement('script')
       s.type = 'text/javascript'
       s.id = 'zsiqscript'
       s.defer = true
-      s.src = isDomesticStation ? 'https://salesiq.zoho.com.cn/widget' : 'https://salesiq.zohopublic.com/widget'
-      let t = d.getElementsByTagName('script')[0]
+      s.src = isDomesticStation
+        ? 'https://salesiq.zoho.com.cn/widget'
+        : 'https://salesiq.zohopublic.com/widget'
+      const t = d.querySelectorAll('script')[0]
       t.parentNode.insertBefore(s, t)
       this.hideCustomTip()
 
@@ -147,36 +111,42 @@ export default {
         $zoho.salesiq.visitor.info({
           tapdata_username: user.nickname || user.username,
           tapdata_phone: user.telephone,
-          tapdata_email: user.email
+          tapdata_email: user.email,
         })
 
-        $zoho.salesiq.onload = function () {
-          let siqiframe = document.getElementById('siqiframe')
+        $zoho.salesiq.addEventListener('load', function () {
+          const siqiframe = document.querySelector('#siqiframe')
 
           if (siqiframe) {
-            let style = document.createElement('style')
+            const style = document.createElement('style')
             style.type = 'text/css'
             style.innerHTML = `.botactions em { white-space: nowrap; }`
-            siqiframe.contentWindow.document.getElementsByTagName('head').item(0).appendChild(style)
+            siqiframe.contentWindow.document
+              .querySelectorAll('head')
+              .item(0)
+              .append(style)
           }
-        }
+        })
       }
     },
 
     handleCreateTask() {
       const { expand } = this.$store.state.guide
 
-      Object.assign(expand, { continueUse: this.continueUse, suggestion: this.suggestion })
+      Object.assign(expand, {
+        continueUse: this.continueUse,
+        suggestion: this.suggestion,
+      })
 
       this.$axios.post('api/tcm/user_guide', {
-        expand
+        expand,
       })
 
       this.$router.replace({
         name: 'MigrateForm',
         query: {
-          guide: true
-        }
+          guide: true,
+        },
       })
     },
 
@@ -191,20 +161,19 @@ export default {
           break
         case 'userCenter':
           this.$router.push({
-            name: 'userCenter'
+            name: 'userCenter',
           })
           break
         case 'order':
           this.$router.push({
-            name: 'order'
+            name: 'order',
           })
           break
         case 'signOut':
-          this.$confirm(this.$t('header_log_out_tip'), this.$t('header_log_out_title'), {
-            type: 'warning',
-            confirmButtonText: this.$t('public_button_confirm'),
-            cancelButtonText: this.$t('public_button_cancel')
-          }).then(res => {
+          this.$confirm(
+            this.$t('header_log_out_title'),
+            this.$t('header_log_out_tip'),
+          ).then((res) => {
             if (res) {
               this.clearCookie()
               location.href = './logout'
@@ -215,16 +184,71 @@ export default {
     },
 
     clearCookie() {
-      let keys = document.cookie.match(/[^ =;]+(?==)/g)
+      const keys = document.cookie.match(/[^ =;]+(?==)/g)
       if (keys) {
         for (let i = keys.length; i--; ) {
-          document.cookie = keys[i] + '=0;path=/;domain=' + document.domain + ';expires=' + new Date(0).toUTCString()
+          document.cookie = `${keys[i]}=0;path=/;domain=${
+            document.domain
+          };expires=${new Date(0).toUTCString()}`
         }
       }
-    }
-  }
+    },
+  },
 }
 </script>
+
+<template>
+  <ElContainer
+    :class="['layout-wrap', $i18n && $i18n.locale]"
+    class="position-relative"
+  >
+    <ElHeader class="layout-header bg-transparent z-10 dfs-header">
+      <div class="dfs-header__body flex">
+        <ElLink class="logo ml-2">
+          <img src="../../assets/image/logo.svg" alt="logo" />
+        </ElLink>
+        <div
+          class="dfs-header__button button-bar pr-4 fs-7 flex gap-4 align-center"
+        >
+          <ElDropdown
+            class="command-item menu-user rounded-4"
+            placement="bottom"
+            :show-timeout="0"
+            @command="command"
+          >
+            <div class="username flex align-items-center">
+              <img
+                v-if="user.avatar"
+                :src="user.avatar"
+                alt=""
+                class="mr-2"
+                style="width: 30px; height: 30px; border-radius: 50%"
+              />
+              <VIcon v-else class="mr-2" size="20">account</VIcon>
+              <span>{{
+                user.username || user.nickname || user.phone || user.email
+              }}</span>
+            </div>
+
+            <template #dropdown>
+              <ElDropdownMenu>
+                <ElDropdownItem command="signOut">
+                  {{ $t('header_sign_out') }}
+                </ElDropdownItem>
+              </ElDropdownMenu>
+            </template>
+          </ElDropdown>
+        </div>
+      </div>
+    </ElHeader>
+
+    <ElContainer direction="vertical" class="layout-main p-0">
+      <ElMain class="main rounded-lg p-4 pb-0 mb-4">
+        <RouterView />
+      </ElMain>
+    </ElContainer>
+  </ElContainer>
+</template>
 
 <style lang="scss" scoped>
 .layout-main {
@@ -236,14 +260,14 @@ export default {
   padding-top: 52px;
   word-wrap: break-word;
   word-break: break-word;
-  background: map.get($color, submenu);
+  background: var(--color-submenu);
 
   .left-aside {
-    // border-right: 1px map.get($borderColor, aside) solid;
-    background: map.get($color, submenu);
+    // border-right: 1px var(--border-aside) solid;
+    background: var(--color-submenu);
 
     .el-menu {
-      background-color: map.get($color, submenu);
+      background-color: var(--color-submenu);
     }
 
     :deep(.el-menu-item),
@@ -252,20 +276,20 @@ export default {
       line-height: 50px;
 
       .v-icon {
-        color: map.get($iconFillColor, normal);
+        color: var(--icon-n2);
       }
 
       &.is-active,
       &:hover {
-        background-color: map.get($color, white);
-        color: map.get($color, primary);
+        background-color: var(--color-white);
+        color: var(--color-primary);
         border-radius: 8px;
       }
 
       &.is-active,
       &:hover {
         :deep(.v-icon) {
-          color: map.get($color, primary);
+          color: var(--color-primary);
         }
       }
 
@@ -279,7 +303,7 @@ export default {
       font-size: 14px;
       font-weight: 700;
       line-height: 60px;
-      color: map.get($fontColor, normal);
+      color: var(--text-normal);
     }
   }
 
@@ -312,7 +336,7 @@ export default {
     }
 
     :deep(.el-breadcrumb__separator) {
-      color: map.get($fontColor, sub);
+      color: var(--text-light);
     }
   }
 
@@ -335,7 +359,7 @@ export default {
   width: 100%;
   height: 52px !important;
   padding: 0 7px;
-  background: map.get($color, submenu);
+  background: var(--color-submenu);
   box-sizing: border-box;
   .logo {
     display: block;
@@ -354,13 +378,13 @@ export default {
     .command-item {
       padding: 4px 8px;
       cursor: pointer;
-      color: map.get($fontColor, light);
+      color: var(--text-light);
       &:hover {
-        color: map.get($color, primary);
-        background-color: map.get($color, white);
+        color: var(--color-primary);
+        background-color: var(--color-white);
         border-radius: 4px;
         &.icon {
-          color: map.get($color, primary);
+          color: var(--color-primary);
         }
       }
     }

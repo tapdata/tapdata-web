@@ -1,6 +1,5 @@
-import * as Vue from 'vue'
+import { Fragment, h } from '@formily/vue'
 import { defineComponent, onBeforeUnmount } from 'vue'
-import { h, Fragment } from '@formily/vue'
 
 const PortalMap = new Map()
 

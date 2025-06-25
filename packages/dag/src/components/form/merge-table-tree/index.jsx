@@ -1,7 +1,8 @@
 import { observe } from '@formily/reactive'
 import { observer } from '@formily/reactive-vue'
 import { metadataInstancesApi } from '@tap/api'
-import { IconButton, OverflowTooltip, VIcon } from '@tap/component'
+import { IconButton } from '@tap/component/src/icon-button'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import {
   h as createElement,
   FormItem,
@@ -426,7 +427,7 @@ export const MergeTableTree = observer(
 
       return () => {
         return (
-          <div class="merge-table-tree-space flex overflow-hidden rounded-4">
+          <div class="merge-table-tree-space flex overflow-hidden rounded-xl">
             <FormItem.BaseItem
               wrapperWidth={240}
               feedbackLayout="none"

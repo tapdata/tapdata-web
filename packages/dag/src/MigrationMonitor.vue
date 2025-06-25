@@ -1112,9 +1112,7 @@ export default {
 
     handleReset() {
       const msg = this.getConfirmMessage('initialize')
-      this.$confirm(msg, '', {
-        type: 'warning',
-      }).then(async (resFlag) => {
+      this.$confirm(msg).then(async (resFlag) => {
         if (!resFlag) {
           return
         }
@@ -1200,6 +1198,10 @@ export default {
         this.handleShowUpgradeDialog()
       }
     },
+
+    handleOpenInspect() {
+      this.$refs.topHeader.openValidation = true
+    },
   },
 }
 </script>
@@ -1208,6 +1210,7 @@ export default {
   <section class="dataflow-editor layout-wrap vh-100">
     <!--头部-->
     <TopHeader
+      ref="topHeader"
       :loading="loading"
       :is-saving="isSaving"
       :dataflow-name="dataflow.name"
@@ -1357,6 +1360,7 @@ export default {
           :log-totals="logTotals"
           :task-record="taskRecord"
           :quota="quota"
+          @open-inspect="handleOpenInspect"
           @load-data="init"
           @show-bottom-panel="handleShowBottomPanel"
           @action="handleBottomPanelAction"
@@ -1583,7 +1587,7 @@ $sidebarBg: #fff;
   box-shadow: 0px 0px 30px rgb(0 0 0 / 6%);
 
   &:hover .v-icon {
-    color: map.get($color, primary);
+    color: var(--color-primary);
   }
 }
 </style>

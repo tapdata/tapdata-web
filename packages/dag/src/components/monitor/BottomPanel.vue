@@ -10,11 +10,19 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
 
 import Alert from './components/Alert'
 import Record from './components/Record'
+import TaskInspect from './components/TaskInspect'
 import '@tap/component/src/directives/resize/index.scss'
 
 export default {
   name: 'ConfigPanel',
-  components: { Record, Alert, RelationList, NodeLog, MilestoneList },
+  components: {
+    Record,
+    Alert,
+    RelationList,
+    NodeLog,
+    MilestoneList,
+    TaskInspect,
+  },
   directives: {
     resize,
     focusSelect,
@@ -28,6 +36,8 @@ export default {
   },
   data() {
     return {
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
+      isCommunity: import.meta.env.VUE_APP_MODE === 'community',
       currentTab: 'milestone',
       name: this.activeNode?.name,
       relationCount: 0,
@@ -152,7 +162,7 @@ export default {
         key="bottomPanel"
         v-model="currentTab"
         style="--el-tabs-padding-left: 1rem"
-        class="setting-tabs h-100 flex-1 flex w-100"
+        class="setting-tabs h-100 flex-1 flex w-100 monitor-bottom-tabs"
       >
         <ElTabPane
           :label="$t('packages_dag_monitor_bottompanel_renwujindu')"
@@ -166,7 +176,12 @@ export default {
             :current-tab="currentTab"
           />
         </ElTabPane>
-        <ElTabPane v-if="!hideLog" :label="$t('public_task_log')" name="log">
+        <ElTabPane
+          v-if="!hideLog"
+          :label="$t('public_task_log')"
+          name="log"
+          class="monitor-log-pane"
+        >
           <NodeLog
             v-if="currentTab === 'log'"
             v-bind="$attrs"
@@ -212,17 +227,32 @@ export default {
             @load-data="$emit('load-data')"
           />
         </ElTabPane>
+        <ElTabPane
+          v-if="isDaas && !isCommunity"
+          :label="$t('public_validation_record')"
+          name="inspect"
+        >
+          <TaskInspect
+            v-if="currentTab === 'inspect'"
+            v-bind="$attrs"
+            style="min-width: 1000px"
+            :current-tab="currentTab"
+            @open-inspect="$emit('open-inspect')"
+          />
+        </ElTabPane>
       </ElTabs>
 
-      <VIcon class="close-icon" size="16" @click="$emit('showBottomPanel')"
-        >close</VIcon
-      >
+      <el-button text class="close-icon" @click="$emit('showBottomPanel')">
+        <template #icon>
+          <VIcon size="16">close</VIcon>
+        </template>
+      </el-button>
     </div>
   </section>
 </template>
 
 <style scoped lang="scss">
-$color: map.get($color, primary);
+$color: var(--color-primary);
 $tabsHeaderWidth: 180px;
 $headerHeight: 40px;
 
@@ -341,12 +371,30 @@ $headerHeight: 40px;
 }
 .close-icon {
   position: absolute;
-  right: 16px;
-  top: 10px;
+  right: 12px;
+  top: 6px;
 }
 .tabs-header__hidden {
   :deep(.el-tabs__header) {
     display: none;
+  }
+}
+
+.monitor-bottom-tabs {
+  :deep(.el-tabs__nav-wrap) {
+    margin-bottom: 0;
+  }
+}
+
+.monitor-log-pane {
+  :deep(.log-container) {
+    min-width: 1000px;
+    .node-list {
+      position: sticky;
+      left: 0;
+      background-color: #fff;
+      z-index: 11;
+    }
   }
 }
 </style>

@@ -1,79 +1,6 @@
-<template>
-  <section class="api-monitor-detail-wrap flex flex-direction" v-loading="loadingDetail">
-    <div class="flex-direction pt-5 mt-8" style="width: 350px">
-      <div class="flex flex-direction flex-1">
-        <div class="flex-1">
-          <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_visitTotalCount') }}</div>
-          <el-tooltip
-            :open-delay="400"
-            :disabled="!detail.totalCount || detail.totalCount < 1000"
-            :content="`${detail.totalCount}`"
-            placement="bottom"
-          >
-            <div class="api-monitor-detail-wrap__value">{{ calcUnit(detail.totalCount) }}</div>
-          </el-tooltip>
-        </div>
-        <div class="flex-1">
-          <div class="api-monitor-detail-wrap__text">
-            {{ $t('api_monitor_detail_visitQuantity') }}
-          </div>
-          <div class="api-monitor-detail-wrap__value">
-            {{ calcUnit(detail.visitQuantity, 'b') || 0 }}
-          </div>
-        </div>
-        <div class="flex-1 cursor-pointer" @click="getDetail(false, 'visitTotalLine')">
-          <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_visitTotalLine') }}</div>
-          <el-tooltip
-            :open-delay="400"
-            :disabled="!detail.visitTotalLine || detail.visitTotalLine < 1000"
-            :content="`${detail.visitTotalLine}`"
-            placement="bottom"
-          >
-            <div class="api-monitor-detail-wrap__value">{{ calcUnit(detail.visitTotalLine || 0) }}</div>
-          </el-tooltip>
-        </div>
-      </div>
-      <div class="flex flex-direction flex-1 pb-5 mt-8">
-        <div class="flex-1 cursor-pointer" @click="getDetail(false, 'speed')">
-          <div class="api-monitor-detail-wrap__text">
-            {{ $t('api_monitor_detail_speed') }}
-          </div>
-          <div class="api-monitor-detail-wrap__value">
-            {{ detail.speed ? calcUnit(detail.speed, 'b') + '/S' : '0 M/S' }}
-          </div>
-        </div>
-        <!--<div class="flex-1 cursor-pointer" @click="getDetail(false, 'responseTime')">
-          <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_responseTime') }}</div>
-          <div class="api-monitor-detail-wrap__value">{{ formatMs(detail.responseTime) || 0 }}</div>
-        </div>-->
-        <div class="flex-1 cursor-pointer" @click="getDetail(false, 'latency')">
-          <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_timeConsuming') }}</div>
-          <div class="api-monitor-detail-wrap__value">{{ formatMs(detail.timeConsuming) || 0 }}</div>
-        </div>
-      </div>
-    </div>
-    <div class="flex-1 pt-3">
-      <FilterBar v-model:value="searchParams" :items="filterItems" :hideRefresh="true" @fetch="getDetail()">
-      </FilterBar>
-      <div v-loading="!qpsDataTime.length" style="height: 200px">
-        <Chart ref="chart" :extend="lineOptions" class="type-chart h-100"></Chart>
-      </div>
-    </div>
-    <div class="pt-5 ml-4" style="width: 200px">
-      <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">{{
-        $t('role_all_check')
-      }}</el-checkbox>
-      <span class="ml-2">{{ clientName.length }}/{{ clientNameList.length }}</span>
-      <div style="margin: 15px 0"></div>
-      <el-checkbox-group v-model="clientName" @change="handleCheckedCitiesChange">
-        <el-checkbox v-for="item in clientNameList" :key="item.id" :label="item.id">{{ item.name }}</el-checkbox>
-      </el-checkbox-group>
-    </div>
-  </section>
-</template>
-
 <script>
-import { Chart, FilterBar } from '@tap/component'
+import { Chart } from '@tap/component/src/chart'
+import { FilterBar } from '@tap/component/src/filter-bar'
 import { formatTime } from '@/utils/util'
 import { apiMonitorApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
@@ -293,18 +220,92 @@ export default {
 }
 </script>
 
+<template>
+  <section class="api-monitor-detail-wrap flex flex-direction" v-loading="loadingDetail">
+    <div class="flex-direction pt-5 mt-8" style="width: 350px">
+      <div class="flex flex-direction flex-1">
+        <div class="flex-1">
+          <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_visitTotalCount') }}</div>
+          <el-tooltip
+            :open-delay="400"
+            :disabled="!detail.totalCount || detail.totalCount < 1000"
+            :content="`${detail.totalCount}`"
+            placement="bottom"
+          >
+            <div class="api-monitor-detail-wrap__value">{{ calcUnit(detail.totalCount) }}</div>
+          </el-tooltip>
+        </div>
+        <div class="flex-1">
+          <div class="api-monitor-detail-wrap__text">
+            {{ $t('api_monitor_detail_visitQuantity') }}
+          </div>
+          <div class="api-monitor-detail-wrap__value">
+            {{ calcUnit(detail.visitQuantity, 'b') || 0 }}
+          </div>
+        </div>
+        <div class="flex-1 cursor-pointer" @click="getDetail(false, 'visitTotalLine')">
+          <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_visitTotalLine') }}</div>
+          <el-tooltip
+            :open-delay="400"
+            :disabled="!detail.visitTotalLine || detail.visitTotalLine < 1000"
+            :content="`${detail.visitTotalLine}`"
+            placement="bottom"
+          >
+            <div class="api-monitor-detail-wrap__value">{{ calcUnit(detail.visitTotalLine || 0) }}</div>
+          </el-tooltip>
+        </div>
+      </div>
+      <div class="flex flex-direction flex-1 pb-5 mt-8">
+        <div class="flex-1 cursor-pointer" @click="getDetail(false, 'speed')">
+          <div class="api-monitor-detail-wrap__text">
+            {{ $t('api_monitor_detail_speed') }}
+          </div>
+          <div class="api-monitor-detail-wrap__value">
+            {{ detail.speed ? calcUnit(detail.speed, 'b') + '/S' : '0 M/S' }}
+          </div>
+        </div>
+        <!--<div class="flex-1 cursor-pointer" @click="getDetail(false, 'responseTime')">
+          <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_responseTime') }}</div>
+          <div class="api-monitor-detail-wrap__value">{{ formatMs(detail.responseTime) || 0 }}</div>
+        </div>-->
+        <div class="flex-1 cursor-pointer" @click="getDetail(false, 'latency')">
+          <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_timeConsuming') }}</div>
+          <div class="api-monitor-detail-wrap__value">{{ formatMs(detail.timeConsuming) || 0 }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="flex-1 pt-3">
+      <FilterBar v-model:value="searchParams" :items="filterItems" :hideRefresh="true" @fetch="getDetail()">
+      </FilterBar>
+      <div v-loading="!qpsDataTime.length" style="height: 200px">
+        <Chart ref="chart" :extend="lineOptions" class="type-chart h-100"></Chart>
+      </div>
+    </div>
+    <div class="pt-5 ml-4" style="width: 200px">
+      <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">{{
+        $t('role_all_check')
+      }}</el-checkbox>
+      <span class="ml-2">{{ clientName.length }}/{{ clientNameList.length }}</span>
+      <div style="margin: 15px 0"></div>
+      <el-checkbox-group v-model="clientName" @change="handleCheckedCitiesChange">
+        <el-checkbox v-for="item in clientNameList" :key="item.id" :label="item.id">{{ item.name }}</el-checkbox>
+      </el-checkbox-group>
+    </div>
+  </section>
+</template>
+
 <style lang="scss" scoped>
 .api-monitor-detail-wrap {
   .api-monitor-detail-wrap__text {
     font-size: 12px;
     font-weight: 500;
     height: 30px;
-    color: map.get($fontColor, normal);
+    color: var(--text-normal);
     text-align: center;
   }
   .api-monitor-detail-wrap__value {
     font-size: 20px;
-    color: map.get($color, primary);
+    color: var(--color-primary);
     line-height: 38px;
     text-align: center;
   }

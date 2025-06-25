@@ -332,7 +332,6 @@ export default {
         },
       },
       status: '',
-      dialogTestVisible: false,
       model: {
         config: null,
       },
@@ -383,7 +382,6 @@ export default {
       this.model.pdkType = 'pdk'
       this.model.pdkHash = this.pdkOptions.pdkHash
       this.model.database_type = this.pdkOptions.pdkId
-      this.dialogTestVisible = true
       if (this.$route.params.id) {
         //编辑需要特殊标识 updateSchema = false editTest = true
         this.$refs.test.start(false, true)
@@ -1383,12 +1381,7 @@ export default {
       />
     </div>
 
-    <Test
-      ref="test"
-      v-model:visible="dialogTestVisible"
-      :form-data="model"
-      @return-test-data="returnTestData"
-    >
+    <Test ref="test" :connection="model" @return-test-data="returnTestData">
       <template #cancel="scope">
         <slot name="test-cancel" v-bind="scope" />
       </template>
@@ -1404,7 +1397,7 @@ export default {
     gap: 8px;
     font-weight: 400;
     &.is-active {
-      color: map.get($color, primary);
+      color: var(--color-primary);
     }
   }
   :deep(.el-collapse-item__arrow) {
@@ -1454,10 +1447,10 @@ export default {
 
   // 覆盖数字输入框的宽度
   :deep(.formily-element-form-item) {
-    font-size: $fontBaseTitle;
+    font-size: var(--font-base-title);
     .formily-element-form-item-label {
       label {
-        color: map.get($fontColor, light);
+        color: var(--text-light);
       }
     }
     .el-input-number {

@@ -1,6 +1,5 @@
 <script>
-import { ClipboardButton } from '@tap/form'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+import { ClipboardButton } from '@tap/form/src/components/clipboard-button'
 
 export default {
   components: {
@@ -100,7 +99,7 @@ export default {
 .fields-selector--display {
   flex-wrap: wrap;
   max-height: 100px;
-  background: map.get($bgColor, normal);
+  background: var(--bg-normal);
   border-radius: 4px;
   overflow: auto;
 }
@@ -112,7 +111,7 @@ export default {
   text-align: center;
   background: #f2f3f5;
   font-size: 12px;
-  color: map.get($fontColor, dark);
+  color: var(--text-dark);
 }
 .fields-selector--clip {
   position: absolute;

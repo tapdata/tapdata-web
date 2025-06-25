@@ -1,5 +1,5 @@
 import { licensesApi } from '@tap/api'
-import { SettingList } from '@/router/menu'
+import { getSettingByKey } from '@tap/shared/src/settings'
 
 const MENU_FEATURE_MAP = {
   dataService: 'dataService',
@@ -85,7 +85,7 @@ const getters = {
 const actions = {
   async getFeatures({ commit }) {
     if (
-      window.getSettingByKey('checkLicense') === 'false' ||
+      getSettingByKey('checkLicense') === 'false' ||
       import.meta.env.DEV ||
       import.meta.env.VUE_APP_MODE === 'community'
     ) {

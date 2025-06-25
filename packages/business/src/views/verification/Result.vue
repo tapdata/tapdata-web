@@ -1,6 +1,7 @@
 <script>
 import { inspectResultsApi } from '@tap/api'
 import dayjs from 'dayjs'
+import { ErrorMessage } from '../../components/error-message'
 import PageContainer from '../../components/PageContainer.vue'
 import { inspectMethod as typeMap } from './const'
 import mixins from './mixins'
@@ -18,6 +19,21 @@ export default {
       resultInfo: {},
       errorMsg: '',
       taskId: null,
+      filterOptions: [
+        {
+          label: this.$t('public_all'),
+          value: '',
+        },
+        {
+          label: this.$t('packages_business_verification_consistent'),
+          value: 'passed',
+        },
+        {
+          label: this.$t('packages_business_verification_inconsistent'),
+          value: 'failed',
+        },
+      ],
+      resultFilter: '',
     }
   },
   computed: {
@@ -26,6 +42,9 @@ export default {
     },
     tableData() {
       let list = this.resultInfo.stats || []
+      if (this.resultFilter) {
+        list = list.filter((item) => item.result === this.resultFilter)
+      }
       if (this.$route.name === 'VerifyDiffDetails') {
         list = list.filter((item) => {
           return item.source_total > 0
@@ -86,7 +105,7 @@ export default {
         })
     },
     showErrorMessage() {
-      this.$alert(this.errorMsg)
+      ErrorMessage(this.errorMsg)
     },
   },
 }
@@ -133,31 +152,54 @@ export default {
     </template>
 
     <section v-loading="loading" class="flex flex-column h-100 gap-4">
-      <div
+      <el-alert
         v-if="errorMsg && (type === 'row_count' || type === 'hash')"
-        class="error-tips px-4"
+        :title="errorMsg.split('\n')[0]"
+        type="error"
+        show-icon
+        :closable="false"
+        class="fit-content"
       >
-        <VIcon class="color-danger">error</VIcon>
-        <span>
-          <ElLink type="danger" @click="showErrorMessage">{{
-            $t('packages_business_verification_see_details')
-          }}</ElLink>
-          <VIcon class="ml-2 color-info" size="12">close</VIcon>
-        </span>
-      </div>
+        <template #title>
+          <div class="flex align-center">
+            <span class="flex-1 text-truncate">{{
+              errorMsg.split('\n')[0]
+            }}</span>
+            <el-button text type="danger" @click="showErrorMessage">{{
+              $t('public_view_details')
+            }}</el-button>
+          </div>
+        </template>
+      </el-alert>
       <div
         v-if="inspect && !['running', 'scheduling'].includes(inspect.status)"
-        class="result-table"
+        class="result-table border-top"
       >
-        <ResultTable
-          ref="singleTable"
-          :type="type"
-          :data="tableData"
-          @row-click="rowClick"
-        />
+        <div class="flex-1 h-100 flex flex-column">
+          <div class="py-3 pr-3 flex align-center">
+            <span class="fs-6 font-color-dark lh-8">{{
+              $t('packages_business_verification_details_jiaoyanjieguo')
+            }}</span>
+            <el-segmented
+              v-model="resultFilter"
+              class="w-auto ml-auto"
+              :options="filterOptions"
+            />
+          </div>
+          <div class="min-h-0 flex-1">
+            <ResultTable
+              ref="singleTable"
+              :type="type"
+              :data="tableData"
+              @row-click="rowClick"
+            />
+          </div>
+        </div>
+
         <ResultView
           v-if="type !== 'row_count' && type !== 'hash'"
           ref="resultView"
+          class="border-start"
           :remote-method="getResultData"
           :show-type="showType"
           @update:show-type="showType = $event"
@@ -194,7 +236,7 @@ export default {
 .error-tips {
   background: #fdf6ec;
   border: 1px solid #f8e2c0;
-  color: map.get($color, warning);
+  color: var(--color-warning);
   line-height: 20px;
   max-height: 160px;
   text-overflow: ellipsis;
@@ -206,6 +248,10 @@ export default {
   flex: 1;
   display: flex;
   overflow: auto;
+
+  .el-table__inner-wrapper::before {
+    content: none;
+  }
 }
 </style>
 
@@ -237,7 +283,7 @@ export default {
 .error-tips {
   background: #fdf6ec;
   border: 1px solid #f8e2c0;
-  color: map.get($color, warning);
+  color: var(--color-warning);
   line-height: 20px;
   max-height: 160px;
   text-overflow: ellipsis;

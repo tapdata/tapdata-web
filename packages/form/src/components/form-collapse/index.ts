@@ -61,7 +61,6 @@ const usePanels = (collapseField: GeneralField, schema: Schema) => {
       })
     }
   })
-  console.log('panels', panels)
   return panels
 }
 
@@ -114,17 +113,17 @@ const FormCollapse = observer(
         type: [String, Number],
       },
     },
-    emits: ['input'],
+    emits: ['update:value'],
     setup(props, { attrs, emit }) {
       const field = useField()
       const schema = useFieldSchema()
       const prefixCls = `${stylePrefix}-form-collapse`
       const formCollapseRef = computed(
-        () => props.formCollapse ?? createFormCollapse(),
+        () => props.formCollapse ?? createFormCollapse(props.activeKey),
       )
 
       const takeActiveKeys = (panels: Panels) => {
-        if (props.activeKey) return props.activeKey
+        // if (props.activeKey) return props.activeKey
         if (formCollapseRef.value?.activeKeys)
           return formCollapseRef.value?.activeKeys
         if (attrs.accordion) return panels[0]?.name
@@ -188,17 +187,17 @@ const FormCollapse = observer(
         return h(
           ElCollapse,
           {
+            ...attrs,
             class: [prefixCls, attrs.class],
             modelValue: activeKey,
             onChange: (key) => {
-              emit('input', key)
+              emit('update:value', key)
               formCollapseRef.value.setActiveKeys(key)
             },
           },
           {
             default: () => {
               return panels.map(({ props, schema, name }, key) => {
-                console.log('props', props)
                 return h(
                   ElCollapseItem,
                   {

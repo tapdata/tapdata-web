@@ -10,9 +10,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@tap/shared": "workspace:^1.0.0",
-    "core-js": "^3.8.3",
-    "tiny-emitter": "^2.1.0",
-    "vue-i18n": "^9.6.5"
+    "@tap/shared": "workspace:*",
+    "core-js": "catalog:",
+    "tiny-emitter": "catalog:",
+    "vue-i18n": "catalog:"
   }
 }

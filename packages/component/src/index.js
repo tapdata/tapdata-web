@@ -76,4 +76,12 @@ export * from './icon-button'
 
 export * from './CloseIcon'
 
+export * from './RightBoldOutlined'
+
+export * from './DownBoldOutlined'
+
 export * from './InstallElement'
+
+export * from './icon'
+
+export * from './modal'

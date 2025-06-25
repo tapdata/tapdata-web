@@ -1,22 +1,6 @@
-<template>
-  <section>
-    <ElLink
-      type="primary"
-      class="position-absolute"
-      style="right: 10px; top: 41px"
-      :disabled="stateIsReadonly"
-      @click.stop="dialogVisible = true"
-    >
-      {{ $t('public_button_edit') }}
-    </ElLink>
-    <List ref="list" :isMetaData="true" :readOnly="true" :updateList="updateList"></List>
-    <Dialog v-if="dialogVisible" v-model:visible="dialogVisible"></Dialog>
-  </section>
-</template>
-
 <script>
-import List from './List'
-import Dialog from './Dialog'
+import Dialog from './Dialog.vue'
+import List from './List.vue'
 
 export default {
   name: 'FieldMapping',
@@ -36,6 +20,27 @@ export default {
 }
 </script>
 
+<template>
+  <section>
+    <ElLink
+      type="primary"
+      class="position-absolute"
+      style="right: 10px; top: 41px"
+      :disabled="stateIsReadonly"
+      @click.stop="dialogVisible = true"
+    >
+      {{ $t('public_button_edit') }}
+    </ElLink>
+    <List
+      ref="list"
+      :is-meta-data="true"
+      :read-only="true"
+      :update-list="updateList"
+    />
+    <Dialog v-if="dialogVisible" v-model:visible="dialogVisible" />
+  </section>
+</template>
+
 <style lang="scss" scoped>
 .btn-refresh {
   padding: 0;
@@ -46,8 +51,8 @@ export default {
   font-size: 15px;
   &:hover,
   &.is-plain:focus:hover {
-    border-color: map.get($color, primary);
-    background-color: map.get($color, disable);
+    border-color: var(--color-primary);
+    background-color: var(--color-disable);
   }
 }
 </style>

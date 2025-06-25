@@ -2,7 +2,6 @@
 import focusSelect from '@tap/component/src/directives/focusSelect'
 import resize from '@tap/component/src/directives/resize'
 
-import { cloneDeep } from 'lodash-es'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import FormPanel from '../FormPanel'
 import NodeIcon from '../NodeIcon'
@@ -102,7 +101,7 @@ export default {
     },
 
     async validateSetting() {
-      await this.$refs.setting?.form.validate()
+      await this.$refs.setting?.validate()
     },
 
     handleLoadMeta() {
@@ -183,7 +182,7 @@ export default {
 </style>
 
 <style lang="scss" scoped>
-$color: map.get($color, primary);
+$color: var(--color-primary);
 $tabsHeaderWidth: 180px;
 $headerHeight: 40px;
 $tabHeight: 44px;
@@ -283,10 +282,11 @@ $tabHeight: 44px;
 
     > .el-tabs__content {
       height: calc(100% - $tabHeight);
-      padding: 4px 16px;
+      padding: 0 16px;
       overflow: auto;
       .el-tab-pane {
-        height: 100%;
+        // height: 100%;
+        display: contents;
       }
     }
   }

@@ -1,9 +1,9 @@
 <script>
+import { CircleCloseFilled, SuccessFilled } from '@element-plus/icons-vue'
 import { apiCallsApi } from '@tap/api'
-import { TablePage } from '@tap/business'
-
+import TablePage from '@tap/business/src/components/TablePage.vue'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { FilterBar } from '@tap/component'
+import { FilterBar } from '@tap/component/src/filter-bar'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
 
@@ -12,6 +12,8 @@ export default {
     PageContainer,
     TablePage,
     FilterBar,
+    CircleCloseFilled,
+    SuccessFilled,
   },
   data() {
     return {
@@ -149,11 +151,10 @@ export default {
           selectedWidth: '200px',
         },
         {
-          title: this.$t('apiaudit_interview_time'),
           key: 'start,end',
           type: 'datetimerange',
-          placeholder: this.$t('public_select_placeholder'),
-          selectedWidth: '200px',
+          startPlaceholder: this.$t('apiaudit_interview_time_start'),
+          endPlaceholder: this.$t('apiaudit_interview_time_end'),
         },
         {
           placeholder: this.$t('apiaudit_placeholder'),
@@ -221,22 +222,18 @@ export default {
         :show-overflow-tooltip="true"
       >
         <template #default="{ row }">
-          <span v-if="row.code == 200" class="success">
-            <el-icon class="connections-status__icon"
-              ><SuccessFilled
-            /></el-icon>
-            <span>
+          <el-text v-if="String(row.code) === '200'" type="success">
+            <el-icon><SuccessFilled /></el-icon>
+            <span class="ml-1">
               {{ $t('apiaudit_success') }}
             </span>
-          </span>
-          <span v-else class="error">
-            <el-icon class="connections-status__icon"
-              ><CircleCloseFilled
-            /></el-icon>
-            <span>
+          </el-text>
+          <el-text v-else type="danger">
+            <el-icon><CircleCloseFilled /></el-icon>
+            <span class="ml-1">
               {{ $t('public_status_failed') }}
             </span>
-          </span>
+          </el-text>
         </template>
       </el-table-column>
       <el-table-column
@@ -283,7 +280,7 @@ export default {
     }
   }
   .status-block {
-    color: map.get($fontColor, white);
+    color: var(--text-white);
   }
 }
 </style>

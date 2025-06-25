@@ -5,8 +5,8 @@ export default class Licenses extends Http {
     super('/api/Licenses')
   }
 
-  expires(params) {
-    return this.axios.get(this.url + '/expires', params)
+  expires() {
+    return this.axios.get(`${this.url}/expires`)
   }
 
   getSid(ids) {
@@ -26,11 +26,11 @@ export default class Licenses extends Http {
   }
 
   getFeatures() {
-    return this.axios.get(`${this.url}/features`).catch(err => {
-      if (err.response.status == 404 &&  import.meta.env.DEV) {
+    return this.axios.get(`${this.url}/features`).catch((error) => {
+      if (error.response.status === 404 && import.meta.env.DEV) {
         return Promise.resolve({
           licenseType: 'OP',
-          features: []
+          features: [],
         })
       }
     })

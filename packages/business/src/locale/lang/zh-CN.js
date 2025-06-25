@@ -534,7 +534,7 @@ export default {
   packages_business_verification_indexField: '关联字段',
   packages_business_verification_BasicSettings: '基本设置',
   packages_business_verification_verifyCondition: '校验表配置',
-  packages_business_verification_clear: '清空',
+  packages_business_verification_clear: '清空配置',
   packages_business_verification_fastCountTip:
     '快速count仅对源表和目标表的行数进行count校验，速度极快，但是不会展示差异的具体字段内容。',
   packages_business_verification_contentVerifyTip:
@@ -651,7 +651,7 @@ export default {
     '告警通知',
   packages_business_setting_alarmnotification_gaojingzhibiao: '告警指标',
   packages_business_setting_alarmnotification_dangjiediandeping:
-    '当节点的平均处理耗时超过阀值时',
+    '当处理节点的平均处理耗时超过阀值时',
   packages_business_setting_alarmnotification_dangshujuyuanjie:
     '当数据源节点的平均处理耗时超过阀值时',
   packages_business_setting_alarmnotification_dangshujuyuanxie:
@@ -1413,9 +1413,34 @@ export default {
   packages_business_nulls_first_tip:
     '关联字段存在NULL值时，数据库默认将NULL排在最后，可能导致校验失败。开启此选项将NULL值排在前面，但可能无法使用数据库索引，增加数据库负载。',
   packages_business_ignoreTimePrecision: '忽略时间精度',
-  packages_business_ignoreTimePrecision_tip:
-    '开启此开关后会忽略时间毫秒级的比较，只精确到秒级，适用于高精度时间字段同步低精度时间字段场景。',
+  packages_business_ignoreTimePrecision_tip: `<p>开启后，当源表与目标表时间精度不一致时，系统会统一为较低精度后再比对。</p>
+<p>可选择：</p>
+<ul class="pl-4">
+  <li class="list-disc">四舍五入（如：1267 微秒 → 127 毫秒）</li>
+  <li class="list-disc">截断（如：1267 微秒 → 126 毫秒）</li>
+</ul>
+<p>适用于高精度同步至低精度字段的场景。</p>
+<p>若精度相同但存储精度不同（如 Sybase 为约 3.33ms），系统会忽略超出部分。</p>`,
   packages_business_checkTableThreadNum: '校验线程数量',
   packages_business_checkTableThreadNum_tip:
     '校验线程数量，在资源充足的情况下可进行调整，默认线程数为 10',
+  packages_business_verification_empty_chooseJob: '暂无校验表配置，请选择任务',
+  packages_business_verification_empty_add_table: '暂无校验表配置，请添加表',
+  packages_business_verification_empty_auto_add_table:
+    '暂无校验表配置，请自动添加表',
+  packages_business_custom_mail_template: '自定义邮件模板',
+  packages_business_alarm_type: '告警类型',
+  packages_business_mail_title: '邮件主题',
+  packages_business_mail_content: '邮件正文',
+  packages_business_available_variables: '可用变量',
+  packages_business_click_variable_name_insert_template:
+    '点击变量名称插入到模板中',
+  packages_business_ignoreTimePrecision_round: '四舍五入',
+  packages_business_ignoreTimePrecision_truncate: '截断',
+  packages_business_validation_task_type: '校验任务类型',
+  packages_business_select_task_to_be_verified: '选择被校验的任务',
+  packages_business_drag_file_here: '拖拽 .gz 文件至此或 <em>选择文件上传</em>',
+  packages_business_request_speed_limit: '每秒请求限制',
+  packages_business_request_speed_limit_tag: '每秒请求 ≤ {val}',
+  packages_business_request_speed_limit_tip: '默认是 0（表示不限制）',
 }

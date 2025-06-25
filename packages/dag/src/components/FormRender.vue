@@ -1,15 +1,5 @@
-<template>
-  <div class="attr-panel">
-    <div class="attr-panel-body overflow-auto pt-1">
-      <Form v-bind="formProps" class-name="form-wrap" :form="form">
-        <SchemaField v-if="schema" ref="schema" :schema="schema" :scope="scope" />
-      </Form>
-    </div>
-  </div>
-</template>
-
 <script>
-import { Form, createSchemaField, components } from '@tap/form'
+import { components, createSchemaField, Form } from '@tap/form'
 import * as _components from '../components/form'
 
 const { SchemaField } = createSchemaField({
@@ -21,6 +11,8 @@ const { SchemaField } = createSchemaField({
 
 export default {
   name: 'FormRender',
+
+  components: { Form, SchemaField },
 
   props: {
     form: Object,
@@ -37,17 +29,31 @@ export default {
     },
   },
 
-  components: { Form, SchemaField },
-
   methods: {
     handleDestroy() {
       this.$refs.schema?.$destroy()
-    }
-  }
+    },
+  },
 }
 </script>
 
+<template>
+  <div class="attr-panel">
+    <div class="attr-panel-body overflow-auto pt-1">
+      <Form v-bind="formProps" class-name="form-wrap" :form="form">
+        <SchemaField
+          v-if="schema"
+          ref="schema"
+          :schema="schema"
+          :scope="scope"
+        />
+      </Form>
+    </div>
+  </div>
+</template>
+
 <style lang="scss" scoped>
+$formNamespace: formily-element-plus;
 $radius: 4px;
 $headerH: 48px;
 $padding: 16px;
@@ -77,7 +83,7 @@ $headerBg: #fff;
       width: $headerH;
       height: $headerH;
       text-align: center;
-      background-color: map.get($color, primary);
+      background-color: var(--color-primary);
       cursor: pointer;
       color: #fff;
     }
@@ -114,11 +120,11 @@ $headerBg: #fff;
   }
 
   :deep(.#{$formNamespace}-form-item) {
-    font-size: $fontBaseTitle;
+    font-size: var(--font-base-title);
 
     .#{$formNamespace}-form-item-label {
       label {
-        color: map.get($fontColor, light);
+        color: var(--text-light);
       }
     }
 
@@ -177,11 +183,11 @@ $headerBg: #fff;
   }
 
   :deep(
-      .form-item-dense
-        .#{$formNamespace}-form-item-control
-        .#{$formNamespace}-form-item-control-content
-        .#{$formNamespace}-form-item-control-content-component
-    ) {
+    .form-item-dense
+      .#{$formNamespace}-form-item-control
+      .#{$formNamespace}-form-item-control-content
+      .#{$formNamespace}-form-item-control-content-component
+  ) {
     min-height: unset;
     line-height: normal;
   }

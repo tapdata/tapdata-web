@@ -103,10 +103,10 @@ export default {
 .header {
   font-size: 14px;
   font-weight: 500;
-  color: map.get($fontColor, dark);
+  color: var(--text-dark);
 }
 .step li {
-  color: map.get($fontColor, light);
+  color: var(--text-light);
   margin-bottom: 8px;
 }
 

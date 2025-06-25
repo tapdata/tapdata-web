@@ -1,8 +1,12 @@
 <script>
 import { alarmApi } from '@tap/api'
-import { ALARM_LEVEL_MAP, ALARM_STATUS_MAP, TablePage } from '@tap/business'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { FilterBar } from '@tap/component'
+import TablePage from '@tap/business/src/components/TablePage.vue'
+import {
+  ALARM_LEVEL_MAP,
+  ALARM_STATUS_MAP,
+} from '@tap/business/src/shared/const'
+import { FilterBar } from '@tap/component/src/filter-bar'
 import dayjs from 'dayjs'
 import i18n from '@/i18n'
 
@@ -180,7 +184,7 @@ export default {
             @fetch="table.fetch(1)"
           />
         </template>
-        <el-table-column type="selection" />
+        <el-table-column type="selection" width="32" align="center" />
         <el-table-column
           :label="$t('packages_dag_components_alert_gaojingjibie')"
           prop="level"

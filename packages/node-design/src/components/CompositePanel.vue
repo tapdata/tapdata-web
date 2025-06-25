@@ -72,7 +72,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.composite-panel{//width:350px;&-tabs-content {
+.composite-panel{
+  
+  &-tabs-content {
     width: 300px;
   }
 
@@ -90,11 +92,11 @@ export default {
     height: 48px;
 
     &:hover {
-      color: map.get($color, primary);
+      color: var(--color-primary);
     }
 
     &.active {
-      color: map.get($color, primary);
+      color: var(--color-primary);
       &:before {
         content: '';
         display: block;
@@ -103,8 +105,9 @@ export default {
         left: 0;
         width: 3px;
         height: 100%;
-        background-color: map.get($color, primary);
+        background-color: var(--color-primary);
       }
     }
-  }}
+  }
+}
 </style>

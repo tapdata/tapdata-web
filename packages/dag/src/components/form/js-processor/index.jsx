@@ -1,19 +1,24 @@
-import { defineComponent, ref, reactive, onUnmounted } from 'vue'
-import { useForm } from '@tap/form'
-import { observer } from '@formily/reactive-vue'
 import { observe } from '@formily/reactive'
-import { groupBy } from 'lodash-es'
-
-import i18n from '@tap/i18n'
-import { FormItem, JsEditor, HighlightCode } from '@tap/form'
-import { VCodeEditor, VirtualSelect, VEmpty } from '@tap/component'
+import { observer } from '@formily/reactive-vue'
+import {
+  javascriptFunctionsApi,
+  metadataInstancesApi,
+  monitoringLogsApi,
+  taskApi,
+} from '@tap/api'
+import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
+import {  VEmpty } from '@tap/component/src/base/v-empty'
 import resize from '@tap/component/src/directives/resize'
-import { javascriptFunctionsApi, taskApi, monitoringLogsApi, metadataInstancesApi } from '@tap/api'
+
+import { FormItem, HighlightCode, JsEditor, useForm } from '@tap/form'
+import i18n from '@tap/i18n'
 import Time from '@tap/shared/src/time'
+import { groupBy } from 'lodash-es'
+import { defineComponent, onUnmounted, reactive, ref } from 'vue'
+import { useStore } from 'vuex'
+import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 import { JsDeclare } from '../js-declare'
 import './style.scss'
-import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
-import { useStore } from 'vuex'
 
 export const JsProcessor = observer(
   defineComponent({
@@ -89,27 +94,35 @@ export const JsProcessor = observer(
       let outTimer
       let logTimer
       let version
-      let logList = ref([])
-      let logLoading = ref(false)
+      const logList = ref([])
+      const logLoading = ref(false)
       const nodeId = form.values.id
 
       const queryLog = async () => {
-        const logData = await monitoringLogsApi.query({
-          taskId: store.state.dataflow.taskInfo.testTaskId,
-          type: 'testRun',
-          order: 'asc',
-          page: 1,
-          pageSize: 50,
-          start: queryStart,
-          nodeId,
-          end: Time.now(),
-        })
-        logList.value = logData?.items.filter((item) => !new RegExp(`^.*\\[${nodeId}]`).test(item.message)) || []
+        try {
+          const logData = await monitoringLogsApi.query({
+            taskId: store.state.dataflow.taskInfo.testTaskId,
+            type: 'testRun',
+            order: 'asc',
+            page: 1,
+            pageSize: 50,
+            start: queryStart,
+            nodeId,
+            end: Time.now(),
+          })
+          logList.value =
+            logData?.items.filter(
+              (item) => !new RegExp(`^.*\\[${nodeId}]`).test(item.message),
+            ) || []
+        } catch (error) {
+          console.error('Failed to query logs:', error)
+          logList.value = []
+        }
       }
 
       const handleQuery = async () => {
-        let lastVersion = version
-        let isOver = await taskApi
+        const lastVersion = version
+        const isOver = await taskApi
           .getRunJsResult({
             version,
             taskId,
@@ -118,8 +131,12 @@ export const JsProcessor = observer(
           .then((res) => {
             // 版本号不一致
             if (lastVersion !== version) return true
-            inputRef.value = res.before ? JSON.stringify(res.before, null, 2) : ''
-            outputRef.value = res.after ? JSON.stringify(res.after, null, 2) : ''
+            inputRef.value = res.before
+              ? JSON.stringify(res.before, null, 2)
+              : ''
+            outputRef.value = res.after
+              ? JSON.stringify(res.after, null, 2)
+              : ''
             return res.over
           })
 
@@ -145,12 +162,16 @@ export const JsProcessor = observer(
         queryTimes++
         clearTimeout(timer)
         if (queryTimes > 5) {
-          runningText.value = i18n.t('packages_form_js_processor_index_rengzaipinmingjia')
+          runningText.value = i18n.t(
+            'packages_form_js_processor_index_rengzaipinmingjia',
+          )
         }
 
         if (queryTimes > 40) {
           resetQuery()
-          ElMessage.error(i18n.t('packages_form_js_processor_index_qingqiuchaoshiqing'))
+          ElMessage.error(
+            i18n.t('packages_form_js_processor_index_qingqiuchaoshiqing'),
+          )
           return
         }
         handleQuery()
@@ -209,29 +230,34 @@ export const JsProcessor = observer(
               script: props.value,
               jsType,
             })
-          } catch (e) {
-            console.log(e) // eslint-disable-line
-            result = e?.data?.data
+          } catch (error) {
+            console.log(error) // eslint-disable-line
+            result = error?.data?.data
           }
           before = result?.before
           after = result?.after
           logs = result?.logs
           inputRef.value = before ? JSON.stringify(before, null, 2) : ''
           outputRef.value = after ? JSON.stringify(after, null, 2) : ''
-          logList.value = logs?.filter((item) => !new RegExp(`^.*\\[${nodeId}]`).test(item.message)) || []
+          logList.value =
+            logs?.filter(
+              (item) => !new RegExp(`^.*\\[${nodeId}]`).test(item.message),
+            ) || []
           resetQuery()
         } else {
-          taskApi.testRunJs({ ...params, version, script: props.value, jsType }).then(
-            () => {
-              queryStart = Time.now()
-              handleAutoQuery()
-            },
-            async () => {
-              // 脚本执行出错
-              await queryLog()
-              resetQuery()
-            },
-          )
+          taskApi
+            .testRunJs({ ...params, version, script: props.value, jsType })
+            .then(
+              () => {
+                queryStart = Time.now()
+                handleAutoQuery()
+              },
+              async () => {
+                // 脚本执行出错
+                await queryLog()
+                resetQuery()
+              },
+            )
         }
       }
 
@@ -251,7 +277,7 @@ export const JsProcessor = observer(
         showDoc.value = !showDoc.value
       }
 
-      let functionGroup = ref({})
+      const functionGroup = ref({})
       const classDescMap = {
         DateUtil: i18n.t('packages_dag_js_processor_index_riqichuli'),
         idGen: i18n.t('packages_dag_js_processor_index_iDshengchengqi'),
@@ -294,7 +320,7 @@ export const JsProcessor = observer(
       function getPrefix(line, index) {
         let prefix = ''
         let i = index - 1
-        while (i >= 0 && /^[a-zA-Z0-9_]+$/.test(line.charAt(i))) {
+        while (i >= 0 && /^\w+$/.test(line.charAt(i))) {
           prefix = line.charAt(i) + prefix
           i--
         }
@@ -304,14 +330,16 @@ export const JsProcessor = observer(
       let jsEditor
       const onEditorInit = (editor) => {
         jsEditor = editor
-        const idx = editor.completers?.findIndex((item) => item.id === 'recordFields') || -1
+        const idx =
+          editor.completers?.findIndex((item) => item.id === 'recordFields') ||
+          -1
 
         if (~idx) editor.completers.splice(idx, 1)
 
         editor.completers.push({
           id: 'recordFields',
           // 获取补全提示列表
-          getCompletions: function (editor, session, pos, prefix, callback) {
+          getCompletions(editor, session, pos, prefix, callback) {
             // 判断当前行是否包含 '.'
             const line = session.getLine(pos.row)
             const index = pos.column - 1
@@ -326,7 +354,7 @@ export const JsProcessor = observer(
         })
         // 绑定 '.' 按键事件
         editor.keyBinding.addKeyboardHandler({
-          handleKeyboard: function ({ editor }, hash, keyString, keyCode, event) {
+          handleKeyboard({ editor }, hash, keyString, keyCode, event) {
             if (keyString === '.' && keyCode !== undefined) {
               setTimeout(() => {
                 editor.execCommand('startAutocomplete')
@@ -341,9 +369,15 @@ export const JsProcessor = observer(
         let fields = []
         if (!formRef.value.values.$inputs.length) return
         if (form.values.type.includes('migrate')) {
-          let result = await metadataInstancesApi.nodeSchemaPage({
+          const result = await metadataInstancesApi.nodeSchemaPage({
             nodeId,
-            fields: ['original_name', 'fields', 'qualified_name', 'name', 'indices'],
+            fields: [
+              'original_name',
+              'fields',
+              'qualified_name',
+              'name',
+              'indices',
+            ],
             page: 1,
             pageSize: 1,
           })
@@ -370,6 +404,101 @@ export const JsProcessor = observer(
       // 模型自动改变
       useAfterTaskSaved(formRef.value.values.$inputs, loadFields)
 
+      const renderTool = () => (
+        <div class="flex align-center">
+          {isMigrate && (
+            <FormItem.BaseItem
+              asterisk
+              class="flex-1 mr-4"
+              label={i18n.t('packages_form_js_processor_index_xuanzebiao')}
+              layout="horizontal"
+              feedbackLayout="none"
+            >
+              <ElSelectV2
+                disabled={props.disabled}
+                v-model={params.tableName}
+                filterable
+                class="form-input"
+                item-size={34}
+                options={tableList.value}
+                loading={tableLoading.value}
+              />
+            </FormItem.BaseItem>
+          )}
+          <div class="flex-1 flex justify-content-between">
+            <FormItem.BaseItem
+              label={i18n.t('packages_form_js_processor_index_shujuhangshu')}
+              layout="horizontal"
+              feedbackLayout="none"
+            >
+              <ElInputNumber
+                disabled={props.disabled}
+                style="width: 100px;"
+                modelValue={params.rows}
+                min={1}
+                max={10}
+                onInput={(val) => {
+                  params.rows = val
+                }}
+                controls-position="right"
+              ></ElInputNumber>
+            </FormItem.BaseItem>
+            <ElButton
+              class="ml-4"
+              disabled={props.disabled || (isMigrate && !params.tableName)}
+              loading={running.value || tableLoading.value}
+              onClick={handleRun}
+              type="primary"
+            >
+              {i18n.t('packages_form_js_processor_index_shiyunxing')}
+            </ElButton>
+          </div>
+        </div>
+      )
+
+      const jsonView = () => (
+        <div
+          class="flex json-view-wrap"
+          v-loading={running.value}
+          element-loading-text={runningText.value}
+        >
+          <div class="json-view flex-1 mr-4 border rounded-2 overflow-hidden">
+            <div class="json-view-header">
+              {i18n.t('packages_form_js_processor_index_tiaoshishuru')}
+            </div>
+            <VCodeEditor
+              ref={beforeJsonRef}
+              class="py-0 json-view-editor flex-1"
+              value={inputRef.value}
+              lang="json"
+              options={{
+                readOnly: true,
+                highlightActiveLine: false,
+                highlightGutterLine: false,
+              }}
+              theme="chrome"
+            ></VCodeEditor>
+          </div>
+          <div class="json-view flex-1 border rounded-2 overflow-hidden">
+            <div class="json-view-header">
+              {i18n.t('packages_form_js_processor_index_jieguoshuchu')}
+            </div>
+            <VCodeEditor
+              ref={afterJsonRef}
+              class="py-0 json-view-editor flex-1"
+              value={outputRef.value}
+              lang="json"
+              options={{
+                readOnly: true,
+                highlightActiveLine: false,
+                highlightGutterLine: false,
+              }}
+              theme="chrome"
+            ></VCodeEditor>
+          </div>
+        </div>
+      )
+
       return () => {
         const editorProps = { ...attrs }
         editorProps.options.readOnly = props.disabled
@@ -387,101 +516,20 @@ export const JsProcessor = observer(
                 </VIcon>
               </ElTooltip>
             </div>
-            <div class="flex align-center">
-              <ElLink class="mr-3" onClick={toggleDoc} type="primary">
+            <div class="flex align-center" style="--btn-space: 4px;">
+              <ElButton text tag="a" onClick={toggleDoc} type="primary">
                 {i18n.t('packages_dag_api_docs')}
-              </ElLink>
-              <ElLink onClick={toggleFullscreen} class="js-editor-fullscreen" type="primary">
-                <VIcon class="mr-1">fangda</VIcon>
-                {i18n.t('packages_form_js_editor_fullscreen')}
-              </ElLink>
-            </div>
-          </div>
-        )
-
-        const runTool = (
-          <div class="flex align-center">
-            {isMigrate && (
-              <FormItem.BaseItem
-                asterisk
-                class="flex-1 mr-4"
-                label={i18n.t('packages_form_js_processor_index_xuanzebiao')}
-                layout="horizontal"
-                feedbackLayout="none"
-              >
-                <VirtualSelect
-                  disabled={props.disabled}
-                  v-model={params.tableName}
-                  filterable
-                  class="form-input"
-                  item-size={34}
-                  options={tableList.value}
-                  loading={tableLoading.value}
-                />
-              </FormItem.BaseItem>
-            )}
-            <div class="flex-1 flex justify-content-between">
-              <FormItem.BaseItem
-                label={i18n.t('packages_form_js_processor_index_shujuhangshu')}
-                layout="horizontal"
-                feedbackLayout="none"
-              >
-                <ElInputNumber
-                  disabled={props.disabled}
-                  style="width: 100px;"
-                  modelValue={params.rows}
-                  min={1}
-                  max={10}
-                  onInput={(val) => {
-                    params.rows = val
-                  }}
-                  controls-position="right"
-                ></ElInputNumber>
-              </FormItem.BaseItem>
+              </ElButton>
               <ElButton
-                class="ml-4"
-                disabled={props.disabled || (isMigrate && !params.tableName)}
-                loading={running.value || tableLoading.value}
-                onClick={handleRun}
+                text
+                tag="a"
+                onClick={toggleFullscreen}
+                class="js-editor-fullscreen"
                 type="primary"
               >
-                {i18n.t('packages_form_js_processor_index_shiyunxing')}
+                <VIcon class="mr-1">fangda</VIcon>
+                {i18n.t('packages_form_js_editor_fullscreen')}
               </ElButton>
-            </div>
-          </div>
-        )
-
-        const jsonView = (
-          <div class="flex json-view-wrap" v-loading={running.value} element-loading-text={runningText.value}>
-            <div class="json-view flex-1 mr-4 border rounded-2 overflow-hidden">
-              <div class="json-view-header">{i18n.t('packages_form_js_processor_index_tiaoshishuru')}</div>
-              <VCodeEditor
-                ref={beforeJsonRef}
-                class="py-0 json-view-editor flex-1"
-                value={inputRef.value}
-                lang="json"
-                options={{
-                  readOnly: true,
-                  highlightActiveLine: false,
-                  highlightGutterLine: false,
-                }}
-                theme="chrome"
-              ></VCodeEditor>
-            </div>
-            <div class="json-view flex-1 border rounded-2 overflow-hidden">
-              <div class="json-view-header">{i18n.t('packages_form_js_processor_index_jieguoshuchu')}</div>
-              <VCodeEditor
-                ref={afterJsonRef}
-                class="py-0 json-view-editor flex-1"
-                value={outputRef.value}
-                lang="json"
-                options={{
-                  readOnly: true,
-                  highlightActiveLine: false,
-                  highlightGutterLine: false,
-                }}
-                theme="chrome"
-              ></VCodeEditor>
             </div>
           </div>
         )
@@ -507,14 +555,24 @@ export const JsProcessor = observer(
               ]}
             >
               <div class="js-processor-editor-toolbar border-bottom justify-content-between align-center px-4 py-2">
-                {fullscreen.value && runTool}
-                <div>
-                  <ElLink class="mr-3" onClick={toggleDoc} type="primary">
+                <div
+                  style={{ display: fullscreen.value ? 'contents' : 'none' }}
+                >
+                  {renderTool()}
+                </div>
+                <div style="--btn-space: 4px;">
+                  <ElButton text type="primary" onClick={toggleDoc}>
                     {i18n.t('packages_dag_api_docs')}
-                  </ElLink>
-                  <ElLink onClick={toggleFullscreen} class="js-editor-fullscreen" type="primary">
-                    <VIcon class="mr-1">suoxiao</VIcon> {i18n.t('packages_form_js_editor_exit_fullscreen')}
-                  </ElLink>
+                  </ElButton>
+                  <ElButton
+                    text
+                    type="primary"
+                    onClick={toggleFullscreen}
+                    class="js-editor-fullscreen"
+                  >
+                    <VIcon class="mr-1">suoxiao</VIcon>{' '}
+                    {i18n.t('packages_form_js_editor_exit_fullscreen')}
+                  </ElButton>
                 </div>
               </div>
 
@@ -554,7 +612,11 @@ export const JsProcessor = observer(
                   }}
                   class="js-processor-editor-console border-start"
                 >
-                  <ElTabs onInput={onTabChange} class="w-100 flex flex-column">
+                  <ElTabs
+                    onInput={onTabChange}
+                    class="w-100 flex"
+                    style="--el-tabs-padding-left: 1rem;"
+                  >
                     <ElTabPane label={i18n.t('public_time_output')}>
                       <div class="js-processor-editor-console-panel h-100 overflow-auto">
                         <div class="js-log-list">
@@ -563,18 +625,32 @@ export const JsProcessor = observer(
                                 if (/^[{[].*[\]}]$/.test(item.message)) {
                                   let code
                                   try {
-                                    code = JSON.stringify(JSON.parse(item.message), null, 2)
-                                  } catch (e) {
-                                    const message = item.message.replace(/^[{[](.*)[\]}]$/, '$1').split(', ')
+                                    code = JSON.stringify(
+                                      JSON.parse(item.message),
+                                      null,
+                                      2,
+                                    )
+                                  } catch {
+                                    const message = item.message
+                                      .replace(/^[{[](.*)[\]}]$/, '$1')
+                                      .split(', ')
                                     code = `${item.message.charAt(0)}\n${message
                                       .map((line) => `  ${line}`)
-                                      .join('\n')}\n${item.message.charAt(item.message.length - 1)}`
+                                      .join(
+                                        '\n',
+                                      )}\n${item.message.charAt(item.message.length - 1)}`
                                   }
 
                                   return (
                                     <details class="js-log-list-item p-2">
-                                      <summary class="text-truncate px-2">{item.message}</summary>
-                                      <HighlightCode class="m-0" language="json" code={code}></HighlightCode>
+                                      <summary class="text-truncate px-2">
+                                        {item.message}
+                                      </summary>
+                                      <HighlightCode
+                                        class="m-0"
+                                        language="json"
+                                        code={code}
+                                      ></HighlightCode>
                                     </details>
                                   )
                                 }
@@ -586,18 +662,37 @@ export const JsProcessor = observer(
                               })
                             : !logLoading.value && <VEmpty large></VEmpty>}
                           <div
-                            class={['justify-content-center align-center m-0 p-2', logLoading.value ? 'flex' : 'none']}
+                            class={[
+                              'justify-content-center align-center m-0 p-2',
+                              logLoading.value ? 'flex' : 'none',
+                            ]}
                           >
                             <svg viewBox="25 25 50 50" class="circular">
-                              <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
+                              <circle
+                                cx="50"
+                                cy="50"
+                                r="20"
+                                fill="none"
+                                class="path"
+                              ></circle>
                             </svg>
-                            <span class="ml-1 font-color-light">{i18n.t('packages_dag_loading')}</span>
+                            <span class="ml-1 font-color-light">
+                              {i18n.t('packages_dag_loading')}
+                            </span>
                           </div>
                         </div>
                       </div>
                     </ElTabPane>
-                    <ElTabPane label={i18n.t('packages_dag_js_processor_index_duibi')}>
-                      {fullscreen.value && jsonView}
+                    <ElTabPane
+                      label={i18n.t('packages_dag_js_processor_index_duibi')}
+                    >
+                      <div
+                        style={{
+                          display: fullscreen.value ? 'contents' : 'none',
+                        }}
+                      >
+                        {jsonView()}
+                      </div>
                     </ElTabPane>
                   </ElTabs>
                 </div>
@@ -614,8 +709,14 @@ export const JsProcessor = observer(
               param={editorProps.param}
               handleAddCompleter={editorProps.handleAddCompleter}
             />
-            {runTool}
-            {showJsonArea.value && <div class="mt-4 json-view-area">{jsonView}</div>}
+            <div class="pb-4">
+              <div style={{ display: !fullscreen.value ? 'contents' : 'none' }}>
+                {renderTool()}
+              </div>
+              {showJsonArea.value && (
+                <div class="mt-4 json-view-area">{jsonView()}</div>
+              )}
+            </div>
           </div>
         )
       }

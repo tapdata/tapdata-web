@@ -1,11 +1,26 @@
 <script setup>
 import { isFn } from '@tap/shared'
-import { addUnit } from 'element-plus/es/utils/index.mjs'
-import { computed, onBeforeMount, ref, toRefs, watch } from 'vue'
+
+import { escapeRegExp, get } from 'lodash-es'
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  ref,
+  useAttrs,
+  useTemplateRef,
+  watch,
+} from 'vue'
 
 defineOptions({
   name: 'FilterItemSelect',
 })
+
+const attrs = useAttrs()
+
+const search = ref('')
+const root = useTemplateRef('root')
+const searchInput = useTemplateRef('searchInput')
 
 const model = defineModel()
 
@@ -24,19 +39,27 @@ const props = defineProps({
   },
 })
 
-// const { items } = toRefs(props)
-
-console.log('items', props)
-
 const selectStyle = computed(() => {
   return {
-    // width: isEmpty.value && !props.filterable ? 'auto' : addUnit(props.width),
-    width: !props.filterable ? 'auto' : addUnit(props.width),
+    width: 'auto',
   }
 })
 
 const isEmpty = computed(() => {
   return props.emptyValues.includes(model.value)
+})
+
+const filteredOptions = computed(() => {
+  if (!props.filterable || !search.value) {
+    return options.value
+  }
+
+  const labelKey = attrs.props?.label || 'label'
+
+  const regexp = new RegExp(escapeRegExp(search.value), 'i')
+  return options.value.filter((item) => {
+    return regexp.test(get(item, labelKey))
+  })
 })
 
 const options = ref([])
@@ -59,21 +82,45 @@ watch(
   },
 )
 
-// onBeforeMount(async () => {
-//   setOptions()
-// })
+const handleVisibleChange = (visible) => {
+  if (props.filterable) {
+    if (!visible) {
+      search.value = ''
+      searchInput.value.blur()
+    } else {
+      nextTick(() => {
+        searchInput.value.focus()
+      })
+    }
+  }
+}
 </script>
 
 <template>
   <ElSelectV2
+    ref="root"
     v-model="model"
     class="filter-item-select"
+    popper-class="filter-item-select-popper"
     :class="{ 'is-empty': isEmpty, 'is-active': !isEmpty }"
     :style="selectStyle"
-    :filterable="filterable"
-    :options="options"
-    :fit-input-width="props.width"
+    :options="filteredOptions"
+    :fit-input-width="width"
+    @visible-change="handleVisibleChange"
   >
+    <template v-if="filterable" #header>
+      <el-input
+        ref="searchInput"
+        v-model="search"
+        :placeholder="$attrs.placeholder || 'Search'"
+        clearable
+      >
+        <template #prefix>
+          <VIcon>magnify</VIcon>
+        </template>
+      </el-input>
+    </template>
+
     <template #prefix>
       {{ label }}
     </template>
@@ -94,16 +141,18 @@ watch(
     color: var(--el-text-color-caption);
   }
 
+  .el-select__input-wrapper {
+    display: none;
+  }
+
   &.is-active {
     --el-text-color-regular: var(--el-color-primary);
 
     .el-select__wrapper {
-      &:not(.is-filterable) {
-        .el-select__placeholder {
-          position: static;
-          transform: none;
-          width: auto;
-        }
+      .el-select__placeholder {
+        position: static;
+        transform: none;
+        width: auto;
       }
       box-shadow: 0 0 0 1px var(--el-color-primary) inset;
     }
@@ -124,6 +173,15 @@ watch(
     }
     .el-select__clear {
       color: var(--el-color-primary);
+    }
+  }
+}
+
+.filter-item-select-popper {
+  .el-select-dropdown__header {
+    padding: 4px 0;
+    .el-input__wrapper {
+      box-shadow: none;
     }
   }
 }

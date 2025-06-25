@@ -1,6 +1,6 @@
 <script>
 import { ArrowRight } from '@element-plus/icons-vue'
-import * as Vue from 'vue'
+import { h } from 'vue'
 import { plantRenderPara } from '../../utils/gogocodeTransfer'
 export default {
   components: {
@@ -13,13 +13,13 @@ export default {
           if (
             Object.prototype.toString.call(this.desc) === '[object Function]'
           ) {
-            return Vue.h(
+            return h(
               'span',
               plantRenderPara({ class: 'flex align-items-center' }),
-              [this.desc(Vue.h, this.$t.bind(this))],
+              [this.desc(h, this.$t.bind(this))],
             )
           } else {
-            return Vue.h('span', this.desc)
+            return h('span', this.desc)
           }
         }
         return null
@@ -43,7 +43,7 @@ export default {
   },
   methods: {
     getBreadcrumb(route) {
-      let matched = route.matched.slice(1)
+      const matched = route.matched.slice(1)
       const data = []
       let isHidden = false
 
@@ -120,7 +120,7 @@ export default {
   .el-breadcrumb__item:last-child .el-breadcrumb__inner a,
   .el-breadcrumb__item:last-child .el-breadcrumb__inner a:hover,
   .el-breadcrumb__item:last-child .el-breadcrumb__inner:hover {
-    color: map.get($fontColor, normal) !important;
+    color: var(--text-normal) !important;
   }
 }
 </style>

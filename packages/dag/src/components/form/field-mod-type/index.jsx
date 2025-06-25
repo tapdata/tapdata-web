@@ -1,13 +1,11 @@
-import { $on, $off, $once, $emit } from '../../../../utils/gogocodeTransfer'
-import * as Vue from 'vue'
-import i18n from '@tap/i18n'
-import { useForm, useField } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
+import { IconButton } from '@tap/component/src/icon-button'
+import { useField, useForm } from '@tap/form'
+import i18n from '@tap/i18n'
 import { defineComponent, ref } from 'vue'
-import { IconButton, VIcon } from '@tap/component'
+import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 import { convertSchemaToTreeData } from '../field-rename/util'
 import '../field-rename/index.scss'
-import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 // import de from 'element-ui/src/locale/lang/de'
 
 export const FieldModType = observer(
@@ -30,7 +28,7 @@ export const FieldModType = observer(
           return
         }
 
-        let fields = await props.getFields(form?.values.id)
+        const fields = await props.getFields(form?.values.id)
         options.value = fields.filter((item) => !item.is_deleted)
         fieldMap = options.value.reduce((map, field) => {
           map[field.previousFieldName] = true
@@ -106,15 +104,12 @@ export const FieldModType = observer(
       operations: {
         deep: true,
         handler(v) {
-          $emit(this, 'change', v)
-          console.log('operations', v) // eslint-disable-line
+          this.$emit('change', v)
         },
       },
     },
 
     render() {
-      // eslint-disable-next-line no-console
-      console.log('🚗 FieldProcessor', this.loading, this.options)
       let fields = this.options || []
       fields = fields.filter((item) => !item.is_deleted)
       fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
@@ -122,17 +117,22 @@ export const FieldModType = observer(
       this.searchFiledName = this.searchFiledName.trim().toString() //去空格
       if (this.searchFiledName !== '') {
         fields = fields.filter((v) => {
-          let str = v.label.toLowerCase()
-          return str.indexOf(this.searchFiledName.toLowerCase()) > -1
+          const str = v.label.toLowerCase()
+          return str.includes(this.searchFiledName.toLowerCase())
         })
       }
       this.fields = fields
       this.originalFields = JSON.parse(JSON.stringify(fields))
       return (
-        <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
+        <div
+          class="field-processors-tree-warp bg-body pt-2"
+          v-loading={this.loading}
+        >
           <ElInput
             class="mb-3"
-            placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
+            placeholder={i18n.t(
+              'packages_form_field_mapping_list_qingshuruziduan',
+            )}
             v-model={this.searchFiledName}
             prefix-icon={ElIconSearch}
           ></ElInput>
@@ -147,7 +147,11 @@ export const FieldModType = observer(
               {i18n.t('packages_form_field_mod_type_index_mubiaoziduanlei')}
             </span>
             <span class="flex align-center gap-2 px-2">
-              <IconButton sm disabled={this.disabled} onClick={() => this.handleAllReset()}>
+              <IconButton
+                sm
+                disabled={this.disabled}
+                onClick={() => this.handleAllReset()}
+              >
                 revoke
               </IconButton>
             </span>
@@ -185,13 +189,20 @@ export const FieldModType = observer(
                       onChange={() => this.handleDataType(node, data)}
                     >
                       {this.selectList.map((op) => (
-                        <ElOption label={op.label} value={op.value} key={op.value} />
+                        <ElOption
+                          label={op.label}
+                          value={op.value}
+                          key={op.value}
+                        />
                       ))}
                     </ElSelect>
                     <span class="flex align-center gap-2 px-2">
                       <IconButton
                         sm
-                        disabled={!this.isConvertDataType(data.previousFieldName) || this.disabled}
+                        disabled={
+                          !this.isConvertDataType(data.previousFieldName) ||
+                          this.disabled
+                        }
                         onClick={() => this.handleReset(node, data)}
                       >
                         revoke
@@ -207,18 +218,19 @@ export const FieldModType = observer(
     },
     methods: {
       isConvertDataType(field) {
-        let ops = this.operations.filter((v) => v.field === field && v.op === 'CONVERT')
+        const ops = this.operations.filter(
+          (v) => v.field === field && v.op === 'CONVERT',
+        )
         return ops && ops.length > 0
       },
       getNativeData(id) {
-        let fields = this.originalFields || []
+        const fields = this.originalFields || []
         let field = null
-        let fn = function (fields) {
+        const fn = function (fields) {
           if (!fields) {
             return
           }
-          for (let i = 0; i < fields.length; i++) {
-            let f = fields[i]
+          for (const f of fields) {
             if (f.id === id) {
               field = f
               break
@@ -234,7 +246,9 @@ export const FieldModType = observer(
         if (this.operations?.length > 0 && fields?.length > 0) {
           for (let i = 0; i < this.operations.length; i++) {
             if (this.operations[i]?.op === 'CONVERT') {
-              let targetIndex = fields.findIndex((n) => n.field === this.operations[i].field)
+              const targetIndex = fields.findIndex(
+                (n) => n.field === this.operations[i].field,
+              )
               if (targetIndex === -1) {
                 continue
               }
@@ -249,10 +263,11 @@ export const FieldModType = observer(
       },
       handleDataType(node, data) {
         console.log('fieldProcessor.handleDataType', node, data) //eslint-disable-line
-        let nativeData = this.getNativeData(data.id)
-        let ops = this.operations.filter(
+        const nativeData = this.getNativeData(data.id)
+        const ops = this.operations.filter(
           (v) =>
-            v.field === data.previousFieldName /*|| data?.oldIdList.findIndex(t => t === v.id) > -1*/ &&
+            v.field ===
+              data.previousFieldName /*|| data?.oldIdList.findIndex(t => t === v.id) > -1*/ &&
             v.op === 'CONVERT',
         )
         let op
@@ -279,16 +294,16 @@ export const FieldModType = observer(
       },
       handleReset(node, data) {
         console.log('fieldProcessor.handleReset', node, data) //eslint-disable-line
-        let self = this
-        let fn = function (node, data) {
-          let nativeData = self.getNativeData(data.id)
+        const self = this
+        const fn = function (node, data) {
+          const nativeData = self.getNativeData(data.id)
           for (let i = 0; i < node.childNodes.length; i++) {
-            let childNode = node.childNodes[i]
+            const childNode = node.childNodes[i]
             fn(childNode, childNode.data)
           }
           for (let i = 0; i < self.operations.length; i++) {
             if (self.operations[i].field === data.field) {
-              let ops = self.operations[i]
+              const ops = self.operations[i]
               if (ops.op === 'CONVERT') {
                 if (nativeData) node.data.data_type = data.previousDataType
                 self.operations.splice(i, 1)
@@ -302,10 +317,11 @@ export const FieldModType = observer(
         this.checkAll = false
       },
       getParentFieldName(node) {
-        let fieldName = node.data && node.data.field_name ? node.data.field_name : ''
+        let fieldName =
+          node.data && node.data.field_name ? node.data.field_name : ''
         if (node.level > 1 && node.parent && node.parent.data) {
-          let parentFieldName = this.getParentFieldName(node.parent)
-          if (parentFieldName) fieldName = parentFieldName + '.' + fieldName
+          const parentFieldName = this.getParentFieldName(node.parent)
+          if (parentFieldName) fieldName = `${parentFieldName}.${fieldName}`
         }
         return fieldName
       },

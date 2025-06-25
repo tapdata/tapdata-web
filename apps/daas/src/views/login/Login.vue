@@ -1,11 +1,10 @@
 <script>
 import { timeStampApi, usersApi } from '@tap/api'
-
 import Cookie from '@tap/shared/src/cookie'
+import { getSettingByKey } from '@tap/shared/src/settings'
 import cryptoJS from 'crypto-js'
-import i18n from '@/i18n'
 import { configUser } from '@/utils/util'
-import LoginPage from './LoginPage'
+import LoginPage from './LoginPage.vue'
 
 export default {
   name: 'SignIn',
@@ -31,6 +30,7 @@ export default {
     }
   },
   methods: {
+    getSettingByKey,
     async loadAdEnable() {
       const data = await usersApi.checkLdapLoginEnable()
       this.adEnable = data
@@ -119,17 +119,18 @@ export default {
         <div class="sign-in-panel">
           <div class="title">
             {{ $t('app_signIn_signIn') }}
-            <span v-if="$getSettingByKey('SHOW_REGISTER')" @click="registry">{{
+            <span v-if="getSettingByKey('SHOW_REGISTER')" @click="registry">{{
               $t('app_signIn_Registration')
             }}</span>
           </div>
-          <div
-            v-show="errorMessage"
-            class="error-tips align-center justify-content-start"
-          >
-            <el-icon class="mr-2"><el-icon-warning /></el-icon>
-            {{ errorMessage }}
-          </div>
+          <el-alert
+            v-show="!!errorMessage"
+            class="mb-5"
+            :title="errorMessage"
+            type="error"
+            show-icon
+            :closable="false"
+          />
           <form class="rounded-lg">
             <input
               v-model="form.email"
@@ -181,7 +182,7 @@ export default {
 .page-sign-in {
   display: flex;
   align-items: center;
-  justify-content: center; /*// background: map.get($bgColor, normal);*/
+  justify-content: center; /*// background: var(--bg-normal);*/
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -195,13 +196,13 @@ export default {
       margin-bottom: 30px;
       font-size: 32px;
       font-weight: 600;
-      color: map.get($fontColor, dark);
+      color: var(--text-dark);
       span {
         float: right;
         padding-top: 16px;
         font-size: 12px;
         text-align: right;
-        color: map.get($color, primary);
+        color: var(--color-primary);
         cursor: pointer;
       }
     }
@@ -224,7 +225,7 @@ export default {
         padding-left: 15px;
         width: 100%;
         height: 44px;
-        color: map.get($fontColor, light);
+        color: var(--text-light);
         line-height: 44px;
         border-radius: 0;
         box-sizing: border-box;
@@ -238,7 +239,7 @@ export default {
         &::placeholder {
           font-weight: 400;
           font-size: 14px;
-          color: map.get($fontColor, slight);
+          color: var(--text-slight);
         }
       }
     }
@@ -254,13 +255,13 @@ export default {
     }
 
     :deep(.el-checkbox__label) {
-      color: map.get($fontColor, light);
+      color: var(--text-light);
     }
 
     .remember {
       padding-top: 16px;
       font-size: 12px;
-      color: map.get($color, primary);
+      color: var(--color-primary);
       span {
         cursor: pointer;
         user-select: none;

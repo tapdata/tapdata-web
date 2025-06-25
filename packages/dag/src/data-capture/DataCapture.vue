@@ -357,8 +357,6 @@ export default defineComponent({
         ).format('YYYY-MM-DD HH:mm:ss')
       }
 
-      // this.$set(this.dataflow, 'shareCdcStop', data.shareCdcStop)
-      // this.$set(this.dataflow, 'shareCdcStopMessage', data.shareCdcStopMessage)
       // 前端不关心的属性
       dataflow.value.attrs = data.attrs
 
@@ -729,7 +727,7 @@ $sidebarBg: #fff;
 
   &.active,
   &:not(.disabled):hover {
-    color: map.get($color, primary);
+    color: var(--color-primary);
     background: $hoverBg;
   }
 }

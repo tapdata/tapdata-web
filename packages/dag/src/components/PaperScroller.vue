@@ -2,11 +2,9 @@
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
 import { off, on } from '@tap/shared'
 import Time from '@tap/shared/src/time'
-// import ResizeObserver from 'resize-observer-polyfill'
 import { useResizeObserver } from '@vueuse/core'
 import Mousetrap from 'mousetrap'
 import { mapGetters, mapMutations, mapState } from 'vuex'
-import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 import MiniView from '../components/MiniView'
 import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from '../constants'
 import { getDataflowCorners } from '../helpers'
@@ -168,7 +166,14 @@ export default {
   },
   beforeUnmount() {
     this.offEvent()
-    this.stopResizeObserver()
+    this.stopResizeObserver?.()
+
+    // Remove window event listeners
+    off(window, 'mousemove', this.mouseMove)
+    off(window, 'mouseup', this.mouseUp)
+
+    // Unbind Mousetrap events
+    Mousetrap.unbind(['mod+=', 'mod+-', 'mod+0', 'shift+1'])
   },
   methods: {
     ...mapMutations('dataflow', [
@@ -242,7 +247,8 @@ export default {
     },
 
     offEvent() {
-      off(document, 'keydown', this.onKeydown)
+      off(document, 'keydown', this.keyDown)
+      off(document, 'keyup', this.keyUp)
     },
 
     initVisibleArea(isFirst) {
@@ -538,7 +544,7 @@ export default {
           event.target,
         )
       ) {
-        $emit(this, 'click-blank')
+        this.$emit('click-blank')
       }
       this.mouseUpMouseSelect(ifMoved)
       this.removeActiveAction('dragActive')
@@ -559,7 +565,7 @@ export default {
         boxAttr = { x, y, right, bottom }
       }
 
-      $emit(this, 'mouse-select', ifMoved, this.showSelectBox, boxAttr)
+      this.$emit('mouse-select', ifMoved, this.showSelectBox, boxAttr)
       this.hideSelectBox()
     },
 
@@ -651,7 +657,7 @@ export default {
      */
     changeScale(scale) {
       this.paperScale = scale
-      $emit(this, 'change-scale', scale)
+      this.$emit('change-scale', scale)
       this.cumulativeZoomFactor = 1
     },
 

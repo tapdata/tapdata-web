@@ -1,14 +1,12 @@
 <script>
 import { metadataInstancesApi } from '@tap/api'
-
-import { VirtualSelect } from '@tap/component'
 import i18n from '@tap/i18n'
 import { cloneDeep } from 'lodash-es'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 
 export default {
   name: 'FieldDialog',
-  components: { DynamicScroller, DynamicScrollerItem, VirtualSelect },
+  components: { DynamicScroller, DynamicScrollerItem },
   props: {
     data: {
       type: Object,
@@ -301,7 +299,7 @@ export default {
                   <div class="line__index mr-2 text-center">
                     {{ fIndex + 1 }}
                   </div>
-                  <VirtualSelect
+                  <ElSelectV2
                     v-model="fItem.source"
                     :item-size="30"
                     :options="sourceFields"
@@ -315,7 +313,7 @@ export default {
                     filterable
                     class="flex-fill"
                   />
-                  <VirtualSelect
+                  <ElSelectV2
                     v-model="fItem.target"
                     :item-size="34"
                     :options="targetFields"
@@ -333,7 +331,7 @@ export default {
                     class="mx-2 px-2 color-primary"
                     @click="handleDelete(fIndex)"
                   >
-                    <VIcon> delete</VIcon>
+                    <VIcon>delete</VIcon>
                   </ElButton>
                 </div>
               </DynamicScrollerItem>

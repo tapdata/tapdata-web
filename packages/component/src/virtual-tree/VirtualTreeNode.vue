@@ -154,6 +154,8 @@ defineExpose({
 </template>
 
 <style lang="scss" scoped>
+$namespace: 'el';
+
 .#{$namespace}-tree-node {
   .el-tree-node__loading-icon {
     margin-right: 0;

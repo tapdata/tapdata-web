@@ -1,15 +1,20 @@
 import { setPageTitle } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
+import { getSettingByKey } from '@tap/shared/src/settings'
 import { ElMessage as Message } from 'element-plus'
 
-import { createRouter, createWebHashHistory } from 'vue-router'
+import {
+  createRouter,
+  createWebHashHistory,
+  type RouteRecordRaw,
+} from 'vue-router'
 
 import i18n from '@/i18n'
-import routes from './routes'
+import { routes } from './routes'
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes,
+  routes: routes as readonly RouteRecordRaw[],
 })
 
 router.beforeEach((to, from, next) => {
@@ -20,8 +25,8 @@ router.beforeEach((to, from, next) => {
     next(false)
     return
   }
-  if (to.meta.title && window.getSettingByKey('SHOW_PAGE_TITLE')) {
-    setPageTitle(i18n.global.t(to.meta.title))
+  if (to.meta.title && getSettingByKey('SHOW_PAGE_TITLE')) {
+    setPageTitle(i18n.global.t(to.meta.title as string))
   }
   const token = Cookie.get('access_token')
   if (token) {

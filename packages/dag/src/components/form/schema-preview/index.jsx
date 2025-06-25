@@ -1,9 +1,9 @@
 import { action } from '@formily/reactive'
 import { databaseTypesApi, metadataInstancesApi, taskApi } from '@tap/api'
-import { IconButton } from '@tap/component'
+import { IconButton } from '@tap/component/src/icon-button'
 import { mapFieldsData, useField, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
-import { defineComponent, getCurrentInstance, onBeforeUnmount, ref } from 'vue'
+import { defineComponent, onBeforeUnmount, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useSchemaEffect } from '../../../hooks/useAfterTaskSaved'
 import {
@@ -89,7 +89,9 @@ export const SchemaPreview = defineComponent({
 
         tableName.value =
           schema.name || form.values.tableName || form.values.name
-        emit('update-table-name', tableName.value)
+
+        // 仅仅为了动态日期后缀更新，增加这个事件有风险，会循环更新表名
+        // emit('update-table-name', tableName.value)
 
         const {
           isMultiIndex: _isMultiIndex,
@@ -310,7 +312,7 @@ export const SchemaPreview = defineComponent({
         <ElDivider class="mt-8">
           <span class="inline-flex align-center gap-1">
             {i18n.t('public_schema')}
-            <el-divider direction="vertical" class="mx-0" staticClass="mx-1" />
+            <el-divider direction="vertical" class="mr-1" />
             <el-tooltip
               transition="tooltip-fade-in"
               content={i18n.t('packages_dag_refresh_schema')}

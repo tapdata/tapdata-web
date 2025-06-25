@@ -1,6 +1,6 @@
 import { observer } from '@formily/reactive-vue'
 import { metadataInstancesApi, pdkApi } from '@tap/api'
-import { GitBook, VIcon } from '@tap/component'
+import GitBook from '@tap/component/src/GitBook.vue'
 import { FormItem, JsEditor, useField, useForm } from '@tap/form'
 
 import i18n from '@tap/i18n'

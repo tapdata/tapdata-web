@@ -1,6 +1,6 @@
 <script>
 import PageContainer from '../../components/PageContainer.vue'
-import List from './List'
+import List from './List.vue'
 
 export default {
   name: 'TaskList',
@@ -24,7 +24,8 @@ export default {
         monitor: 'TaskMonitor',
       },
 
-      createBtnLoading: false,
+      createLoading: false,
+      materializedViewLoading: false,
     }
   },
 
@@ -63,7 +64,6 @@ export default {
         v-if="buttonShowMap.import && isDaas"
         v-readonlybtn="'SYNC_job_import'"
         class="btn"
-        :disabled="$disabledReadonlyUserBtn()"
         @click="refFn('handleImport')"
       >
         <span> {{ $t('packages_business_button_bulk_import') }}</span>
@@ -74,7 +74,6 @@ export default {
         v-feature="'mongodbRelmig'"
         name="importRelmig"
         class="btn"
-        :disabled="$disabledReadonlyUserBtn()"
         @click="refFn('handleImportRelmig')"
       >
         <span> {{ $t('packages_business_relmig_import') }}</span>
@@ -84,7 +83,7 @@ export default {
         v-feature="'buildingMaterializedView'"
         class="--with-icon inline-flex align-center px-2 py-0 gap-1 align-top"
         name="materializedView"
-        :loading="createBtnLoading"
+        :loading="materializedViewLoading"
         @click="refFn('handleCreateMaterializedView')"
       >
         <VIcon size="28">beta</VIcon>
@@ -96,8 +95,7 @@ export default {
         v-readonlybtn="'SYNC_job_creation'"
         class="btn btn-create"
         type="primary"
-        :disabled="$disabledReadonlyUserBtn()"
-        :loading="createBtnLoading"
+        :loading="createLoading"
         @click="refFn('create')"
       >
         {{ $t('public_task_create') }}
@@ -105,6 +103,8 @@ export default {
     </template>
     <List
       ref="list"
+      v-model:materialized-view-loading="materializedViewLoading"
+      v-model:create-loading="createLoading"
       :route="route"
       :task-buried="taskBuried"
       :sync-type="syncType"
@@ -156,8 +156,8 @@ export default {
     .dataflow-name {
       .tag {
         margin-left: 5px;
-        color: map.get($fontColor, light);
-        background: map.get($bgColor, main);
+        color: var(--text-light);
+        background: var(--bg-main);
         border: 1px solid #dedee4;
       }
       .name {

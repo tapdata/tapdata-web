@@ -1,5 +1,4 @@
 <script>
-import { $emit } from '../utils/gogocodeTransfer'
 import VIcon from './base/VIcon.vue'
 import { metadataDefinitionsApi, userGroupsApi } from '@tap/api'
 import { mapMutations, mapState, mapGetters } from 'vuex'
@@ -49,6 +48,8 @@ export default {
 
       nodeName: '',
       parent_id: '',
+
+      showSearch: false,
     }
   },
   computed: {
@@ -92,21 +93,21 @@ export default {
         if (!this.isExpand) return
         this.$nextTick(() => {
           this.$refs.tree?.setCheckedKeys(this.connections?.classification)
-          $emit(this, 'nodeChecked', this.connections?.classification)
+          this.$emit('nodeChecked', this.connections?.classification)
         })
         break
       case 'migrate':
         if (!this.isExpand) return
         this.$nextTick(() => {
           this.$refs.tree?.setCheckedKeys(this.migrate?.classification)
-          $emit(this, 'nodeChecked', this.migrate?.classification)
+          this.$emit('nodeChecked', this.migrate?.classification)
         })
         break
       case 'sync':
         if (!this.isExpand) return
         this.$nextTick(() => {
           this.$refs.tree?.setCheckedKeys(this.sync?.classification)
-          $emit(this, 'nodeChecked', this.sync?.classification)
+          this.$emit('nodeChecked', this.sync?.classification)
         })
         break
     }
@@ -149,13 +150,15 @@ export default {
       this.emitCheckedNodes()
     },
     nodeClickHandler(data, node) {
-      this.$nextTick(() => {
-        const checkedKeys = this.$refs.tree.getCheckedKeys()
-        if (checkedKeys.includes(data.id)) {
-          this.$refs.tree?.setCheckedKeys([data.id], true)
-        }
-        this.emitCheckedNodes()
-      })
+      let checkedNodes = this.$refs.tree.getCheckedKeys() || []
+
+      if (checkedNodes.includes(data.id)) {
+        this.$refs.tree?.setChecked(data.id, false)
+      } else {
+        this.$refs.tree?.setCheckedKeys([data.id], true)
+      }
+
+      this.emitCheckedNodes()
     },
     emitCheckedNodes() {
       let checkedNodes = this.$refs.tree.getCheckedKeys() || []
@@ -367,9 +370,6 @@ export default {
       let that = this
       this.$confirm(this.$t('packages_component_classification_deteleMessage'), {
         confirmButtonText: this.$t('public_button_delete'),
-        cancelButtonText: this.$t('packages_component_message_cancel'),
-        type: 'warning',
-        closeOnClickModal: false,
       }).then((resFlag) => {
         if (!resFlag) {
           return
@@ -482,28 +482,48 @@ export default {
         this.$message.info(this.$t('packages_component_data_already_exists'))
       }
     },
+
+    openSearch() {
+      this.showSearch = !this.showSearch
+      this.filterText = ''
+
+      if (this.showSearch) {
+        this.$nextTick(() => {
+          this.$refs.searchInput.focus()
+        })
+      }
+    },
   },
 }
 </script>
 
 <template>
-  <div class="classification py-0 px-3 bg-light rounded-xl" v-show="visible">
+  <div class="classification py-0 px-2 bg-light rounded-xl" v-show="visible">
     <div class="classification-header">
-      <div class="h-32 flex align-center mt-3">
-        <IconButton class="mr-2" @click="toggle()"> expand-list </IconButton>
-        <div class="fs-7 fw-sub flex-1">
+      <div class="h-32 flex align-center mt-2 gap-1" style="--btn-space: 0">
+        <el-button text @click="toggle">
+          <template #icon>
+            <VIcon class="rotate-180">expand-list</VIcon>
+          </template>
+        </el-button>
+        <div class="fs-6 flex-1">
           <span>{{ comTitle }}</span>
         </div>
-        <IconButton :disabled="$disabledReadonlyUserBtn()" v-readonlybtn="authority" @click="showDialog()">
-          add
-        </IconButton>
+        <el-button text @click="openSearch" :class="{ 'is-active': showSearch }">
+          <template #icon>
+            <VIcon size="18">magnify</VIcon>
+          </template>
+        </el-button>
+        <el-button text  v-readonlybtn="authority" @click="showDialog()">
+          <template #icon>
+            <VIcon>add</VIcon>
+          </template>
+        </el-button>
       </div>
-      <div class="pt-1 pb-2">
-        <ElInput v-model="filterText">
+      <div v-if="showSearch" class="my-2">
+        <ElInput v-model="filterText" clearable ref="searchInput">
           <template #prefix>
-            <span class="el-input__icon h-100 ml-1">
-              <VIcon size="14">search</VIcon>
-            </span>
+            <VIcon size="14">magnify</VIcon>
           </template>
         </ElInput>
       </div>
@@ -524,6 +544,8 @@ export default {
         :filter-node-method="filterNode"
         :render-after-expand="false"
         :indent="8"
+        :check-on-click-node="false"
+        :check-on-click-leaf="false"
         @node-click="nodeClickHandler"
         @check="checkHandler"
       >
@@ -542,7 +564,7 @@ export default {
               @command="handleRowCommand($event, node)"
               v-readonlybtn="authority"
             >
-              <IconButton @click.stop sm :disabled="$disabledReadonlyUserBtn()">more</IconButton>
+              <IconButton @click.stop sm>more</IconButton>
               <template #dropdown>
                 <ElDropdownMenu>
                   <ElDropdownItem command="add">
@@ -598,10 +620,10 @@ export default {
   user-select: none;
   box-sizing: border-box;
   border-top: none;
-  background: map.get($bgColor, white);
+  background: var(--color-white);
   .btn-expand {
     // padding: 2px 3px;
-    // color: map.get($fontColor, light);
+    // color: var(--text-light);
     transform: rotate(0);
     box-sizing: border-box;
     // background: #eff1f4;
@@ -614,14 +636,14 @@ export default {
   }
   .toggle {
     margin-top: 18px;
-    // color: map.get($color, lprimary);
+    // color: var(--color-lprimary);
     z-index: 2;
   }
   &.expand {
     height: 100%;
     //width: 100%;
     padding: 20px 0;
-    // border-right: 1px solid map.get($borderColor, light);
+    // border-right: 1px solid var(--border-light);
     width: 214px;
     .btn-expand {
       position: absolute;
@@ -636,15 +658,15 @@ export default {
     .btn-addIcon {
       position: absolute;
       right: 12px;
-      font-size: $fontBaseTitle;
+      font-size: var(--font-base-title);
       .iconfont.icon-jia {
         display: flex;
         flex-direction: row;
         justify-content: center;
         align-items: center;
-        color: map.get($fontColor, light);
+        color: var(--text-light);
         font-size: 16px;
-        // background-color: map.get($bgColor, white);
+        // background-color: var(--color-white);
         // border: 1px solid #dedee4;
         height: 66%;
         // padding: 0 4px;
@@ -655,7 +677,7 @@ export default {
         border-radius: 3px;
         cursor: pointer;
         &:hover {
-          color: map.get($color, primary);
+          color: var(--color-primary);
         }
       }
     }
@@ -664,9 +686,9 @@ export default {
       right: 54px;
       .icon-fangdajing {
         font-size: 16px;
-        color: map.get($fontColor, light);
+        color: var(--text-light);
         &:hover {
-          color: map.get($color, primary);
+          color: var(--color-primary);
         }
       }
     }
@@ -684,7 +706,7 @@ export default {
       align-items: center;
       justify-content: space-between;
       padding: 0 8px 0 46px;
-      color: map.get($fontColor, light);
+      color: var(--text-light);
       // background-color: #eff1f4;
     }
   }
@@ -699,7 +721,7 @@ export default {
     flex: 1;
     display: flex;
     align-items: center;
-    font-size: $fontBaseTitle;
+    font-size: var(--font-base-title);
     padding-right: 8px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -707,12 +729,12 @@ export default {
     .icon-folder {
       margin-right: 5px;
       font-size: 12px;
-      color: map.get($color, primary);
-      // color: map.get($color, lprimary);
+      color: var(--color-primary);
+      // color: var(--color-lprimary);
     }
     .table-label {
       flex: 1;
-      font-size: $fontBaseTitle;
+      font-size: var(--font-base-title);
       vertical-align: middle;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -728,8 +750,8 @@ export default {
   }
   .create {
     padding: 5px 10px;
-    font-size: $fontBaseTitle;
-    // color: map.get($color, primary);
+    font-size: var(--font-base-title);
+    // color: var(--color-primary);
     cursor: pointer;
   }
 

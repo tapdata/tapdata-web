@@ -1,13 +1,14 @@
-.async-select {
+.table-select {
   //.el-input--prefix .el-input__inner {
   //  // prefix 用来做Tag显示, 不需要padding
   //  padding-left: 15px;
   //}
-  .el-input__prefix-inner > :last-child {
-    margin-right: 0;
+  .el-select__prefix:has(.prefix-tag) {
+    margin-left: -6px;
   }
-  &.is-drop-menu-visible {
-    .el-input__prefix {
+  // aria-describedby 表明下拉菜单显示
+  .is-focused[aria-describedby] {
+    .el-select__prefix {
       display: none;
     }
   }

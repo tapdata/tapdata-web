@@ -1,8 +1,8 @@
-import i18n from '@tap/i18n'
 import { getIcon } from '@tap/assets/icons'
+import i18n from '@tap/i18n'
+import { getConnectionIcon } from '../views/connections/util'
 // 获取子任务状态统计
 import { ETL_STATUS_MAP, ETL_SUB_STATUS_MAP } from './const'
-import { getConnectionIcon } from '../views'
 
 export const TASK_SETTINGS = {
   name: '', // 任务名称
@@ -31,12 +31,12 @@ export function getSubTaskStatus(rows = []) {
     item = {}
   if (len === 0) {
     result = [
-      Object.assign({ count: 1 }, ETL_SUB_STATUS_MAP['edit'], {
+      Object.assign({ count: 1 }, ETL_SUB_STATUS_MAP.edit, {
         status: 'edit',
       }),
     ]
   } else {
-    let tempMap = {}
+    const tempMap = {}
     rows.forEach((r) => {
       tempMap[r.status] = true
     })
@@ -46,11 +46,11 @@ export function getSubTaskStatus(rows = []) {
       status = status === 'schedule_failed' ? 'error' : status
       result = [
         Object.assign({ count: 1 }, ETL_SUB_STATUS_MAP[status], {
-          status: status,
+          status,
         }),
       ]
     } else {
-      for (let key in ETL_STATUS_MAP) {
+      for (const key in ETL_STATUS_MAP) {
         item = Object.assign({}, ETL_STATUS_MAP[key])
         item.status = key
         item.count = 0
@@ -68,7 +68,7 @@ export function getSubTaskStatus(rows = []) {
 
 // 同步主任务，按钮的禁用逻辑
 export function getTaskBtnDisabled(row, or) {
-  let result = {
+  const result = {
     start: false,
     stop: false,
     edit: false,
@@ -82,11 +82,27 @@ export function getTaskBtnDisabled(row, or) {
   // 删除可用：编辑中、待启动、已完成、错误、调度失败、已停止
   result.start = ['wait_run', 'complete', 'error', 'stop'].includes(row.status)
   result.stop = !['running', 'stopping'].includes(row.status)
-  result.edit = !['edit', 'ready', 'complete', 'error', 'schedule_failed', 'stop'].includes(row.status)
-  result.reset = !['complete', 'error', 'schedule_failed', 'stop'].includes(row.status)
-  result.delete = !['edit', 'ready', 'complete', 'error', 'stop', 'schedule_failed'].includes(row.status)
+  result.edit = ![
+    'edit',
+    'ready',
+    'complete',
+    'error',
+    'schedule_failed',
+    'stop',
+  ].includes(row.status)
+  result.reset = !['complete', 'error', 'schedule_failed', 'stop'].includes(
+    row.status,
+  )
+  result.delete = ![
+    'edit',
+    'ready',
+    'complete',
+    'error',
+    'stop',
+    'schedule_failed',
+  ].includes(row.status)
   if (or) {
-    for (let key in result) {
+    for (const key in result) {
       result[key] = or || result[key]
     }
   }
@@ -101,7 +117,10 @@ export function getNodeIconSrc(node) {
   if (pdkHash) {
     return getConnectionIcon(pdkHash)
   }
-  let icon = node.type === 'table' || node.type === 'database' || node.databaseType ? node.databaseType : node.type
+  let icon =
+    node.type === 'table' || node.type === 'database' || node.databaseType
+      ? node.databaseType
+      : node.type
   if (node.type === 'hazelcastIMDG') {
     const map = {
       memory: 'memory',
@@ -157,12 +176,15 @@ export const STATUS_MAP = {
   },
 }
 
-export const STATUS_MERGE = Object.entries(STATUS_MAP).reduce((merge, [key, value]) => {
-  if (value.in) {
-    value.in.reduce((res, val) => ((res[val] = key), res), merge)
-  }
-  return merge
-}, {})
+export const STATUS_MERGE = Object.entries(STATUS_MAP).reduce(
+  (merge, [key, value]) => {
+    if (value.in) {
+      value.in.reduce((res, val) => ((res[val] = key), res), merge)
+    }
+    return merge
+  },
+  {},
+)
 
 //'renewing' 不可以删除
 const BUTTON_WITH_STATUS = {
@@ -172,7 +194,15 @@ const BUTTON_WITH_STATUS = {
   stop: ['running'],
   forceStop: ['stopping'],
   reset: ['wait_start', 'complete', 'error', 'stop', 'renew_failed'],
-  monitor: ['running', 'complete', 'error', 'stop', 'stopping', 'renewing', 'renew_failed'],
+  monitor: [
+    'running',
+    'complete',
+    'error',
+    'stop',
+    'stopping',
+    'renewing',
+    'renew_failed',
+  ],
 }
 
 export function makeStatusAndDisabled(item) {
@@ -189,14 +219,17 @@ export function makeStatusAndDisabled(item) {
         val1: status,
       }),
       i18n.t('packages_business_shared_task_yijingzhiweie'),
-    ) // eslint-disable-line
+    )
     item.status = status = 'error'
   }
 
-  item.btnDisabled = Object.entries(BUTTON_WITH_STATUS).reduce((map, [key, value]) => {
-    map[key] = !value.includes(status)
-    return map
-  }, {})
+  item.btnDisabled = Object.entries(BUTTON_WITH_STATUS).reduce(
+    (map, [key, value]) => {
+      map[key] = !value.includes(status)
+      return map
+    },
+    {},
+  )
 
   // 当返回false时，任务不可点击强制停止
   if (item.canForceStopping === false) {
@@ -208,21 +241,23 @@ export function makeStatusAndDisabled(item) {
 
 export const MILESTONE_TYPE = {
   TASK: {
-    text: i18n.global.t('packages_business_milestone_list_renwudiaodu')
+    text: i18n.global.t('packages_business_milestone_list_renwudiaodu'),
   },
   DEDUCTION: {
-    text: i18n.global.t('packages_business_milestone_list_load_table_structure')
+    text: i18n.global.t(
+      'packages_business_milestone_list_load_table_structure',
+    ),
   },
   DATA_NODE_INIT: {
-    text: i18n.global.t('packages_business_milestone_list_shujujiedianchu')
+    text: i18n.global.t('packages_business_milestone_list_shujujiedianchu'),
   },
   TABLE_INIT: {
-    text: i18n.global.t('packages_business_milestone_list_biaojiegouqianyi')
+    text: i18n.global.t('packages_business_milestone_list_biaojiegouqianyi'),
   },
   SNAPSHOT: {
-    text: i18n.global.t('packages_business_milestone_list_quanliangshujuqian')
+    text: i18n.global.t('packages_business_milestone_list_quanliangshujuqian'),
   },
   CDC: {
-    text: i18n.global.t('packages_business_milestone_list_jinruzengliangshu')
-  }
+    text: i18n.global.t('packages_business_milestone_list_jinruzengliangshu'),
+  },
 }

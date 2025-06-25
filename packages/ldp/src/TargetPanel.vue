@@ -1,4 +1,4 @@
-<script lang="jsx">
+<script lang="tsx">
 import {
   apiServerApi,
   appApi,
@@ -9,22 +9,18 @@ import {
   taskApi,
   workerApi,
 } from '@tap/api'
-import {
-  DataServerDrawer as ApiPreview,
-  DatabaseIcon,
-  makeStatusAndDisabled,
-  TASK_SETTINGS,
-  TaskStatus,
-} from '@tap/business'
-import { IconButton, VEmpty, VIcon } from '@tap/component'
+import { DatabaseIcon } from '@tap/business/src/components/DatabaseIcon'
+import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
+import { makeStatusAndDisabled, TASK_SETTINGS } from '@tap/business/src/shared'
+import ApiPreview from '@tap/business/src/views/data-server/Drawer.vue'
+import {VEmpty} from '@tap/component/src/base/v-empty'
+import { IconButton } from '@tap/component/src/icon-button'
 import i18n from '@tap/i18n'
 
 import { calcTimeUnit, generateId, Time, uuid } from '@tap/shared'
-// import draggable from 'vuedraggable'
 import { cloneDeep, debounce } from 'lodash-es'
 import { defineComponent, h, ref } from 'vue'
 import { mapGetters } from 'vuex'
-import { $emit, $off, $on, $once } from '../utils/gogocodeTransfer'
 import CreateRestApi from './components/CreateRestApi'
 import commonMix from './mixins/common'
 
@@ -348,7 +344,7 @@ export default {
     },
 
     handleAdd() {
-      $emit(this, 'create-connection', 'target')
+      this.$emit('create-connection', 'target')
     },
 
     async getData() {
@@ -944,7 +940,7 @@ export default {
     },
 
     handleScroll: debounce(function () {
-      $emit(this, 'on-scroll')
+      this.$emit('on-scroll')
     }, 200),
 
     searchByKeywordList(val = []) {
@@ -989,9 +985,7 @@ export default {
           item.name,
         )
       }
-      this.$confirm(msgObj.msg, '', {
-        type: 'warning',
-        showClose: false,
+      this.$confirm(msgObj.msg, {
         zIndex: 999999,
       }).then((resFlag) => {
         if (!resFlag) {
@@ -1010,9 +1004,7 @@ export default {
     stopTask(ids, item) {
       const msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name)
       const message = msgObj.msg
-      this.$confirm(message, '', {
-        type: 'warning',
-        showClose: false,
+      this.$confirm(message, {
         zIndex: 999999,
       }).then((resFlag) => {
         if (!resFlag) {

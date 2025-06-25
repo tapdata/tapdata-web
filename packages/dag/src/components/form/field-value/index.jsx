@@ -1,12 +1,10 @@
-import { $on, $off, $once, $emit } from '../../../../utils/gogocodeTransfer'
-import * as Vue from 'vue'
-import i18n from '@tap/i18n'
-import { connect, JsEditor, mapProps, useForm } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
+import { IconButton } from '@tap/component/src/icon-button'
+import { connect, JsEditor, mapProps, useForm } from '@tap/form'
+import i18n from '@tap/i18n'
 import { defineComponent } from 'vue'
-import { IconButton, VIcon } from '@tap/component'
-import '../field-rename/index.scss'
 import { convertSchemaToTreeData } from '../field-rename/util'
+import '../field-rename/index.scss'
 
 export const FieldValue = connect(
   observer(
@@ -33,7 +31,7 @@ export const FieldValue = connect(
             open: false,
             script: '//Enter you code at here',
             fieldName: '',
-            fn: function () {},
+            fn() {},
           },
           current: '',
           /*字段处理器支持功能类型*/
@@ -51,8 +49,7 @@ export const FieldValue = connect(
           deep: true,
           handler(v) {
             this.form.setValuesIn('scripts', v)
-            $emit(this, 'change', v)
-            console.log('scripts', v) // eslint-disable-line
+            this.$emit('change', v)
           },
         },
       },
@@ -67,17 +64,22 @@ export const FieldValue = connect(
         this.searchFiledName = this.searchFiledName.trim().toString() //去空格
         if (this.searchFiledName !== '') {
           fields = fields.filter((v) => {
-            let str = v.label.toLowerCase()
-            return str.indexOf(this.searchFiledName.toLowerCase()) > -1
+            const str = v.label.toLowerCase()
+            return str.includes(this.searchFiledName.toLowerCase())
           })
         }
         this.fields = fields
         this.originalFields = JSON.parse(JSON.stringify(fields))
         return (
-          <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
+          <div
+            class="field-processors-tree-warp bg-body pt-2"
+            v-loading={this.loading}
+          >
             <ElInput
               class="mb-3"
-              placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
+              placeholder={i18n.t(
+                'packages_form_field_mapping_list_qingshuruziduan',
+              )}
               v-model={this.searchFiledName}
               prefix-icon={ElIconSearch}
               clearable
@@ -86,9 +88,15 @@ export const FieldValue = connect(
               <span class="flex-1 text inline-block ml-6">
                 {i18n.t('packages_form_field_add_del_index_ziduanmingcheng')}
               </span>
-              <span class="flex-1 text inline-block ml-7">{i18n.t('packages_form_field_value_index_ziduanfuzhi')}</span>
+              <span class="flex-1 text inline-block ml-7">
+                {i18n.t('packages_form_field_value_index_ziduanfuzhi')}
+              </span>
               <span class="flex align-center gap-2 px-2">
-                <IconButton sm disabled={this.disabled} onClick={() => this.handleAllReset()}>
+                <IconButton
+                  sm
+                  disabled={this.disabled}
+                  onClick={() => this.handleAllReset()}
+                >
                   revoke
                 </IconButton>
               </span>
@@ -115,9 +123,15 @@ export const FieldValue = connect(
                           ''
                         )}
                       </span>
-                      <span class="field-name inline-block ellipsis">{data.script}</span>
+                      <span class="field-name inline-block ellipsis">
+                        {data.script}
+                      </span>
                       <span class="flex align-center gap-2 px-2">
-                        <IconButton sm disabled={this.disabled} onClick={() => this.handleScript(node, data)}>
+                        <IconButton
+                          sm
+                          disabled={this.disabled}
+                          onClick={() => this.handleScript(node, data)}
+                        >
                           js
                         </IconButton>
                         <IconButton
@@ -152,7 +166,7 @@ export const FieldValue = connect(
                           value={this.scriptDialog.script}
                           onChange={(val) => (this.scriptDialog.script = val)}
                           onInit={(editor) => {
-                            $emit(this, 'editor-init', editor)
+                            this.$emit('editor-init', editor)
                           }}
                           height={80}
                           showFullscreen={false}
@@ -161,11 +175,23 @@ export const FieldValue = connect(
                       </ElFormItem>
                     </ElForm>
                     <div class="example">
-                      <div>{i18n.t('packages_form_field_value_index_shili')}</div>
-                      <div>var result = "a" + "b" // 字符串拼接, result的结果为 "ab"</div>
-                      <div>var result = 1 + 2 // 数字计算, result 的结果为 3</div>
-                      <div>var result = fn("1") // 调用自定义函数或内置函数, result的结果为 fn 函数的返回值</div>
-                      <div>{i18n.t('packages_form_field_value_index_varre')}</div>
+                      <div>
+                        {i18n.t('packages_form_field_value_index_shili')}
+                      </div>
+                      <div>
+                        var result = "a" + "b" // 字符串拼接, result的结果为
+                        "ab"
+                      </div>
+                      <div>
+                        var result = 1 + 2 // 数字计算, result 的结果为 3
+                      </div>
+                      <div>
+                        var result = fn("1") // 调用自定义函数或内置函数,
+                        result的结果为 fn 函数的返回值
+                      </div>
+                      <div>
+                        {i18n.t('packages_form_field_value_index_varre')}
+                      </div>
                     </div>
                   </>
                 ),
@@ -174,7 +200,10 @@ export const FieldValue = connect(
                     <ElButton onClick={() => (this.scriptDialog.open = false)}>
                       {i18n.t('public_button_cancel')}
                     </ElButton>
-                    <ElButton type="primary" onClick={() => this.scriptDialog.fn()}>
+                    <ElButton
+                      type="primary"
+                      onClick={() => this.scriptDialog.fn()}
+                    >
                       {i18n.t('packages_form_dataVerify_confirm')}
                     </ElButton>
                   </div>
@@ -186,21 +215,20 @@ export const FieldValue = connect(
       },
       methods: {
         isScript(id) {
-          let scripts = this.scripts.filter((v) => v.id === id)
+          const scripts = this.scripts.filter((v) => v.id === id)
           return scripts.length > 0 ? scripts[0].script : ''
         },
         /*rename
          * @node 当前tree
          * @data 当前数据*/
         getNativeData(id) {
-          let fields = this.originalFields || []
+          const fields = this.originalFields || []
           let field = null
-          let fn = function (fields) {
+          const fn = function (fields) {
             if (!fields) {
               return
             }
-            for (let i = 0; i < fields.length; i++) {
-              let f = fields[i]
+            for (const f of fields) {
               if (f.id === id) {
                 field = f
                 break
@@ -216,7 +244,9 @@ export const FieldValue = connect(
           if (this.scripts?.length > 0 && fields?.length > 0) {
             for (let i = 0; i < this.scripts.length; i++) {
               if (this.scripts[i]?.scriptType === 'js') {
-                let targetIndex = fields.findIndex((n) => n.id === this.scripts[i].id)
+                const targetIndex = fields.findIndex(
+                  (n) => n.id === this.scripts[i].id,
+                )
                 if (targetIndex === -1) {
                   continue
                 }
@@ -227,10 +257,13 @@ export const FieldValue = connect(
           return fields
         },
         getParentFieldName(node) {
-          let fieldName = node.data && node.data.previousFieldName ? node.data.previousFieldName : ''
+          let fieldName =
+            node.data && node.data.previousFieldName
+              ? node.data.previousFieldName
+              : ''
           if (node.level > 1 && node.parent && node.parent.data) {
-            let parentFieldName = this.getParentFieldName(node.parent)
-            if (parentFieldName) fieldName = parentFieldName + '.' + fieldName
+            const parentFieldName = this.getParentFieldName(node.parent)
+            if (parentFieldName) fieldName = `${parentFieldName}.${fieldName}`
           }
           return fieldName
         },
@@ -243,13 +276,14 @@ export const FieldValue = connect(
          * @param data
          */
         handleScript(node, data) {
-          let self = this
+          const self = this
 
-          let fieldName = (self.scriptDialog.fieldName = self.getParentFieldName(node))
-          let tableName = (self.scriptDialog.tableName = data.table_name)
-          let id = data.id
+          const fieldName = (self.scriptDialog.fieldName =
+            self.getParentFieldName(node))
+          const tableName = (self.scriptDialog.tableName = data.table_name)
+          const id = data.id
 
-          let idx = self.scripts.findIndex((script) => script.id === id)
+          const idx = self.scripts.findIndex((script) => script.id === id)
           let script
           if (idx !== -1) {
             script = self.scripts[idx]
@@ -288,10 +322,10 @@ export const FieldValue = connect(
         },
         handleReset(node, data) {
           if (!this.scripts || this.scripts?.length < 0) return
-          let self = this
-          let fn = function (node, data) {
+          const self = this
+          const fn = function (node, data) {
             for (let i = 0; i < node.childNodes.length; i++) {
-              let childNode = node.childNodes[i]
+              const childNode = node.childNodes[i]
               fn(childNode, childNode.data)
             }
             for (let i = 0; i < self.scripts.length; i++) {

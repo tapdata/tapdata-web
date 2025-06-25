@@ -1,20 +1,29 @@
-import { debounce } from 'lodash-es'
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import { RecycleScroller } from 'vue-virtual-scroller'
+import { observer } from '@formily/reactive-vue'
+import { metadataInstancesApi } from '@tap/api'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
+import { VEmpty } from '@tap/component/src/base/v-empty'
 
 import i18n from '@tap/i18n'
+import { debounce } from 'lodash-es'
 import { defineComponent, ref, watch } from 'vue'
-import { metadataInstancesApi } from '@tap/api'
-import { VEmpty, OverflowTooltip } from '@tap/component'
-import { observer } from '@formily/reactive-vue'
-
+import { RecycleScroller } from 'vue-virtual-scroller'
 import { getPrimaryKeyTablesByType } from '../../../util'
+
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import './style.scss'
 
 export const TableListCard = observer(
   defineComponent({
-    props: ['connectionId', 'value', 'title', 'params', 'reloadTime', 'filterType', 'hasPartition'],
-    setup(props, { emit }) {
+    props: [
+      'connectionId',
+      'value',
+      'title',
+      'params',
+      'reloadTime',
+      'filterType',
+      'hasPartition',
+    ],
+    setup(props) {
       const loading = ref(false)
       const list = ref([])
       const total = ref(0)
@@ -32,17 +41,19 @@ export const TableListCard = observer(
           : metadataInstancesApi.pageTables(params)
 
         fn.then((data) => {
-          let map = {}
-          let items = data?.items || []
+          const map = {}
+          const items = data?.items || []
           items.forEach((t) => {
             if (t.uniqueIndexCounts || t.primaryKeyCounts) {
               map[t.tableName] = t
             }
           })
           tableMap.value = map
-          list.value = Object.freeze(
-            getPrimaryKeyTablesByType(items.map((t) => t.tableName) || [], props.filterType, tableMap.value),
-          )
+          list.value = getPrimaryKeyTablesByType(
+            items.map((t) => t.tableName) || [],
+            props.filterType,
+            tableMap.value,
+          ).map((tableName) => ({ tableName }))
           total.value = data?.total || 0
         }).finally(() => (loading.value = false))
       }
@@ -52,7 +63,11 @@ export const TableListCard = observer(
       watch(
         () => props.filterType,
         () => {
-          list.value = Object.freeze(getPrimaryKeyTablesByType(list.value, props.filterType, tableMap.value))
+          list.value = getPrimaryKeyTablesByType(
+            list.value.map((t) => t.tableName) || [],
+            props.filterType,
+            tableMap.value,
+          ).map((tableName) => ({ tableName }))
         },
       )
 
@@ -64,13 +79,14 @@ export const TableListCard = observer(
               v-loading={loading.value}
               class="h-100 p-2 flex-1"
               items={list.value}
+              key-field="tableName"
               itemSize={32}
               buffer={50}
             >
               {{
-                default: ({ item: name }) => (
+                default: ({ item: { tableName: name } }) => (
                   <OverflowTooltip
-                    class="w-100 text-truncate source table-list-item font-color-light rounded-2 px-2"
+                    class="w-100 text-truncate source table-list-item font-color-light rounded-lg px-2"
                     text={name}
                     key={name}
                     placement="right"
@@ -100,7 +116,11 @@ export const TableListCard = observer(
         } else {
           listDom = (
             <div class="flex-1 flex flex-column justify-center">
-              <VEmpty description={i18n.t('packages_dag_table_list_card_index_zanshimeiyoupi')}></VEmpty>
+              <VEmpty
+                description={i18n.t(
+                  'packages_dag_table_list_card_index_zanshimeiyoupi',
+                )}
+              ></VEmpty>
             </div>
           )
         }
@@ -110,8 +130,15 @@ export const TableListCard = observer(
             {{
               header: () => (
                 <div class="clearfix">
-                  <span>{props.title || i18n.t('packages_form_field_mapping_list_biaoming')}</span>
-                  {!loading.value && <span class="font-color-light float-end">{list.value.length}</span>}
+                  <span>
+                    {props.title ||
+                      i18n.t('packages_form_field_mapping_list_biaoming')}
+                  </span>
+                  {!loading.value && (
+                    <span class="font-color-light float-end">
+                      {list.value.length}
+                    </span>
+                  )}
                 </div>
               ),
               default: () => listDom,

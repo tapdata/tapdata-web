@@ -9,14 +9,6 @@ export function installDirectives(app) {
   app.config.globalProperties.$disabledByPermission = function () {
     return false
   }
-  app.config.globalProperties.$disabledReadonlyUserBtn = function () {
-    let domainName = document.domain
-    let removeReadonly = localStorage.getItem('removeReadonly')
-    if (domainName === 'demo.cloud.tapdata.net' && !removeReadonly) {
-      return true
-    }
-    return false
-  }
 
   app.use(ClipboardPlugin)
 }

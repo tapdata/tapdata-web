@@ -376,8 +376,7 @@ export default {
   packages_business_verification_details_yuanbiaoziduanzhi:
     'Source table field: value',
   packages_business_verification_details_xianshiwanzhengzi: 'Show full fields',
-  packages_business_verification_details_jinxianshichayi:
-    'Display only fields with differences.',
+  packages_business_verification_details_jinxianshichayi: 'Show diff fields',
   packages_business_verification_details_yichangshujuhang:
     'Exception data (row):',
   packages_business_verification_details_mubiaobiao: 'Target table:',
@@ -587,7 +586,7 @@ export default {
   packages_business_verification_indexField: 'Associated Fields',
   packages_business_verification_BasicSettings: 'Basic Settings',
   packages_business_verification_verifyCondition: 'Validation Conditions',
-  packages_business_verification_clear: 'Clear',
+  packages_business_verification_clear: 'Clear Conditions',
   packages_business_verification_fastCountTip:
     'The fast count mode, which only verifies the number of rows in the source and target tables, is extremely fast, but it does not display the differential field values',
   packages_business_verification_contentVerifyTip:
@@ -724,7 +723,7 @@ export default {
     'Alert Notification',
   packages_business_setting_alarmnotification_gaojingzhibiao: 'Alert Indicator',
   packages_business_setting_alarmnotification_dangjiediandeping:
-    'When the average processing time of the node exceeds the threshold',
+    'When the average processing time of the processing node exceeds the threshold',
   packages_business_setting_alarmnotification_dangshujuyuanjie:
     'When the average processing time of the data source node exceeds the threshold',
   packages_business_setting_alarmnotification_dangshujuyuanxie:
@@ -1587,9 +1586,37 @@ export default {
   packages_business_nulls_first_tip:
     'When the associated fields contain NULL values, the database defaults to sorting NULL values last, which may cause validation failure. Enabling this option will set NULL values first, but may not use the database index, increasing database load.',
   packages_business_ignoreTimePrecision: 'Ignore time precision',
-  packages_business_ignoreTimePrecision_tip:
-    'When enabled, time will be compared up to seconds only, ignoring milliseconds. Useful for syncing high-precision and low-precision time fields.',
+  packages_business_ignoreTimePrecision_tip: `<p>When enabled, the system aligns time values to the lower precision before comparison if source and target differ.</p>
+<p>Options:</p>
+<ul class="pl-4">
+  <li class="list-disc">Round (e.g., 1267 microseconds → 127 milliseconds)</li>
+  <li class="list-disc">Truncate (e.g., 1267 microseconds → 126 milliseconds)</li>
+</ul>
+<p>Useful when syncing high-precision fields to lower-precision ones.</p>
+<p>If precision is the same but storage differs (e.g., Sybase ≈ 3.33ms), extra digits will be ignored.</p>`,
   packages_business_checkTableThreadNum: 'Thread Validation',
   packages_business_checkTableThreadNum_tip:
     'Number of threads to use. Default is 10. Can be increased if system resources permit.',
+  packages_business_verification_empty_add_table:
+    'No validation table configuration, please add tables',
+  packages_business_verification_empty_auto_add_table:
+    'No validation table configuration, please automatically add tables',
+  packages_business_verification_empty_chooseJob:
+    'No validation table configuration, please select a task',
+  packages_business_custom_mail_template: 'Custom Mail Template',
+  packages_business_alarm_type: 'Alarm Type',
+  packages_business_mail_title: 'Mail Title',
+  packages_business_mail_content: 'Mail Content',
+  packages_business_available_variables: 'Available Variables',
+  packages_business_click_variable_name_insert_template:
+    'Click variable name to insert into template',
+  packages_business_ignoreTimePrecision_round: 'Round',
+  packages_business_ignoreTimePrecision_truncate: 'Truncate',
+  packages_business_validation_task_type: 'Validation Task Type',
+  packages_business_select_task_to_be_verified: 'Select Task to be Verified',
+  packages_business_drag_file_here:
+    'Drag .gz file here or <em>select file upload</em>',
+  packages_business_request_speed_limit: 'Request Limit per Second',
+  packages_business_request_speed_limit_tag: 'Requests ≤ {val}/s',
+  packages_business_request_speed_limit_tip: 'Default is 0 (no limit)',
 }

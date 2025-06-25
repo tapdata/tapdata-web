@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { User, WarningFilled } from '@element-plus/icons-vue'
 import { licensesApi, settingsApi, timeStampApi, usersApi } from '@tap/api'
-import { VIcon } from '@tap/component'
+import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 import {
   getCurrentLanguage,
@@ -9,8 +9,9 @@ import {
   setCurrentLanguage,
 } from '@tap/i18n/src/shared/util'
 import Cookie from '@tap/shared/src/cookie'
-import Time from '@tap/shared/src/time'
+import { getSettingByKey } from '@tap/shared/src/settings'
 
+import Time from '@tap/shared/src/time'
 import dayjs from 'dayjs'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { computed, inject, onMounted, ref } from 'vue'
@@ -53,20 +54,20 @@ const IS_IFRAME = ref(sessionStorage.getItem('IS_IFRAME') === 'true')
 
 // Compute properties for UI visibility
 const showNotification = computed(() => {
-  return window.getSettingByKey && window.getSettingByKey('SHOW_NOTIFICATION')
+  return getSettingByKey('SHOW_NOTIFICATION')
 })
 
 const showQaAndHelp = computed(() => {
   return (
     !import.meta.env.VUE_APP_HIDE_QA_AND_HELP &&
-    window.getSettingByKey?.('SHOW_QA_AND_HELP')
+    getSettingByKey('SHOW_QA_AND_HELP')
   )
 })
 
 const showSettingButton = computed(() => {
   return (
     !import.meta.env.VUE_APP_HIDE_SETTING_BUTTON &&
-    window.getSettingByKey?.('SHOW_SETTING_BUTTON') &&
+    getSettingByKey('SHOW_SETTING_BUTTON') &&
     (hasPermissionByCode?.('home_notice_settings') ||
       (hasPermissionByCode?.('system_settings') &&
         hasPermissionByCode?.('system_settings_menu')))
@@ -75,8 +76,7 @@ const showSettingButton = computed(() => {
 
 const showLanguageButton = computed(() => {
   return (
-    !import.meta.env.VUE_APP_HIDE_LANGUAGE &&
-    window.getSettingByKey?.('SHOW_LANGUAGE')
+    !import.meta.env.VUE_APP_HIDE_LANGUAGE && getSettingByKey('SHOW_LANGUAGE')
   )
 })
 
@@ -103,7 +103,7 @@ const logoStyle = computed(() => {
 const showHomeButton = computed(() => {
   return (
     !import.meta.env.VUE_APP_HIDE_HOME_MENU &&
-    window.getSettingByKey?.('SHOW_HOME_BUTTON')
+    getSettingByKey('SHOW_HOME_BUTTON')
   )
 })
 
@@ -136,7 +136,7 @@ const command = (command: string) => {
       isShowCustomerService.value = !isShowCustomerService.value
       break
     case 'version':
-      if (window.getSettingByKey?.('SHOW_DK_VERSION')) {
+      if (getSettingByKey('SHOW_DK_VERSION')) {
         ElMessage.info({
           dangerouslyUseHTMLString: true,
           message: 'DK_VERSION_1</br>DK_VERSION_2',
@@ -157,14 +157,9 @@ const command = (command: string) => {
       )
       break
     case 'signOut':
-      ElMessageBox.confirm(i18n.t('app_signOutMsg'), i18n.t('app_signOut'), {
-        type: 'warning',
-      }).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        signOut()
-      })
+      Modal.confirm(i18n.t('app_signOut'), i18n.t('app_signOutMsg')).then(
+        (resFlag) => resFlag && signOut(),
+      )
       break
     case 'settings':
       router.push({
@@ -198,7 +193,7 @@ const getLicense = async () => {
     stime = Time.now()
   }
 
-  licensesApi.expires({}).then((data: any) => {
+  licensesApi.expires().then((data: any) => {
     const expires_on = data?.data?.expires_on
 
     if (!expires_on) {
@@ -209,7 +204,7 @@ const getLicense = async () => {
     if (Cookie.get('isAdmin') === '1') {
       let endTime = Number(expires_on) - Number(stime)
       endTime = Math.floor(endTime / 1000 / 60 / 60 / 24) //相差天数
-      const showDay = window.getSettingByKey?.('licenseNoticeDays') || 0
+      const showDay = getSettingByKey('licenseNoticeDays') || 0
       licenseExpireVisible.value = Number(showDay) > endTime
       licenseExpire.value = endTime.toString()
     }
@@ -227,7 +222,8 @@ onMounted(() => {
 
   if (
     import.meta.env.VUE_APP_MODE !== 'community' &&
-    window.getSettingByKey?.('SHOW_LICENSE')
+    getSettingByKey('SHOW_LICENSE') &&
+    getSettingByKey('checkLicense') !== 'false'
   ) {
     getLicense()
   }
@@ -241,7 +237,11 @@ defineExpose({
 </script>
 
 <template>
-  <ElHeader v-if="!IS_IFRAME" class="flex align-center gap-4" height="64px">
+  <ElHeader
+    v-if="!IS_IFRAME"
+    class="flex align-center gap-4 layout-header"
+    height="64px"
+  >
     <a
       v-if="isOP"
       class="logo w-auto text-white flex align-center gap-2"
@@ -306,14 +306,14 @@ defineExpose({
           </template>
         </el-button>
         <template #dropdown>
-          <ElDropdownMenu class="no-triangle">
+          <ElDropdownMenu>
             <ElDropdownItem
               v-if="settingCode && email === 'admin@admin.com'"
               command="settings"
               >{{ $t('page_title_setting') }}
             </ElDropdownItem>
             <ElDropdownItem
-              v-readonlybtn="'home_notice_settings'"
+              v-if="hasPermissionByCode('home_notice_settings')"
               command="setting"
               >{{ $t('notify_setting') }}
             </ElDropdownItem>
@@ -333,7 +333,7 @@ defineExpose({
           </template>
         </el-button>
         <template #dropdown>
-          <ElDropdownMenu class="no-triangle">
+          <ElDropdownMenu>
             <ElDropdownItem
               v-for="(value, key) in languages"
               :key="key"
@@ -359,7 +359,7 @@ defineExpose({
           <span>{{ userName }}</span>
         </el-button>
         <template #dropdown>
-          <ElDropdownMenu class="no-triangle">
+          <ElDropdownMenu>
             <template v-for="item in dropdownListComputed" :key="item.name">
               <ElDropdownItem v-if="!item.route" :command="item.name">{{
                 $t(item.label)
@@ -376,6 +376,11 @@ defineExpose({
 </template>
 
 <style lang="scss" scoped>
+.layout-header {
+  :deep(.el-button .el-icon:only-child) {
+    color: var(--icon-n1);
+  }
+}
 .divider {
   height: 1.8em;
   border-color: rgba(60, 60, 67, 0.12);

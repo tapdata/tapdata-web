@@ -6,17 +6,15 @@ import {
   databaseTypesApi,
   externalStorageApi,
   logcollectorApi,
-  pdkApi,
   proxyApi,
 } from '@tap/api'
 import resize from '@tap/component/src/directives/resize'
 
-import { SchemaToForm } from '@tap/form'
+import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
 import i18n from '@tap/i18n'
 import { checkConnectionName, openUrl, submitForm } from '@tap/shared'
 import { cloneDeep, isEmpty } from 'lodash-es'
 import { mapGetters } from 'vuex'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 import Test from '../../views/connections/Test'
 import { getConnectionIcon } from '../../views/connections/util'
 import ConnectorDoc from '../ConnectorDoc'
@@ -80,7 +78,6 @@ export default {
       },
       status: '',
       loadingFrom: true,
-      dialogTestVisible: false,
       dialogEditNameVisible: false,
       submitBtnLoading: false,
       saveAndMoreLoading: false,
@@ -181,16 +178,14 @@ export default {
         : i18n.t('packages_business_connections_databaseform_cicaozuohuidiu')
       // let title = this.params.id ? '是否放弃修改内容？' : '是否放弃创建该连接？'
 
-      this.$confirm(msg, '', {
+      this.$confirm(msg, {
         confirmButtonText: this.$t('packages_business_connection_form_give_up'),
         cancelButtonText: this.$t('public_button_cancel'),
-        type: 'warning',
-        showClose: false,
       }).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        $emit(this, 'back')
+        this.$emit('back')
       })
     },
     submit(addNext = false) {
@@ -255,7 +250,7 @@ export default {
               result: true,
             })
             this.$message.success(this.$t('public_message_save_ok'))
-            $emit(this, addNext ? 'saveAndMore' : 'success', data)
+            this.$emit(addNext ? 'saveAndMore' : 'success', data)
           })
           .catch(() => {
             this.buried('connectionSubmit', '', {
@@ -310,7 +305,6 @@ export default {
         pdkType: 'pdk',
         config: formValues,
       })
-      this.dialogTestVisible = true
 
       if (this.params.id) {
         //编辑需要特殊标识 updateSchema = false editTest = true
@@ -1683,12 +1677,7 @@ export default {
         />
       </div>
     </div>
-    <Test
-      ref="test"
-      v-model:visible="dialogTestVisible"
-      :form-data="model"
-      @return-test-data="returnTestData"
-    />
+    <Test ref="test" :connection="model" @return-test-data="returnTestData" />
     <el-dialog
       v-model="dialogEditNameVisible"
       :title="$t('packages_business_connection_rename')"
@@ -1750,7 +1739,7 @@ export default {
     //padding-left: 24px;
     //border-radius: 4px;
     overflow: hidden;
-    background-color: map.get($bgColor, white);
+    background-color: var(--color-white);
     .connection-from-main {
       display: flex;
       flex: 1;
@@ -1759,12 +1748,12 @@ export default {
       .connection-from-title {
         padding-top: 20px;
         margin-bottom: 24px;
-        font-size: $fontSubtitle;
+        font-size: 16px;
         font-family:
           PingFangSC-Medium,
           PingFang SC;
         font-weight: 500;
-        color: map.get($fontColor, dark);
+        color: var(--text-dark);
         line-height: 28px;
       }
       .connection-from-label {
@@ -1778,19 +1767,19 @@ export default {
         }
         .label {
           width: 160px;
-          font-size: $fontBaseTitle;
-          color: map.get($fontColor, light);
+          font-size: var(--font-base-title);
+          color: var(--text-light);
         }
         .content-box {
           display: flex;
           max-width: 680px;
           line-height: 22px;
-          font-size: $fontBaseTitle;
+          font-size: var(--font-base-title);
           font-family:
             PingFangSC-Regular,
             PingFang SC;
           font-weight: 400;
-          color: map.get($fontColor, dark);
+          color: var(--text-dark);
           align-items: center;
           white-space: nowrap;
           word-break: break-word;
@@ -1803,7 +1792,7 @@ export default {
           height: 25px;
           justify-content: center;
           align-items: center;
-          background: map.get($bgColor, white);
+          background: var(--color-white);
           border-radius: 3px;
           img {
             width: 100%;
@@ -1847,11 +1836,11 @@ export default {
             :deep(.e-form-builder-item) {
               .url-tip {
                 font-size: 12px;
-                color: map.get($fontColor, light);
+                color: var(--text-light);
                 b {
                   font-size: 12px;
                   font-weight: 400;
-                  color: map.get($fontColor, light);
+                  color: var(--text-light);
                 }
               }
               .fb-radio-group {
@@ -1902,7 +1891,7 @@ export default {
   .footer {
     width: 100%;
     //height: 62px;
-    background-color: map.get($bgColor, white);
+    background-color: var(--color-white);
     border-left: none;
     //line-height: 62px;
     border-top: 1px solid #e1e3e9;

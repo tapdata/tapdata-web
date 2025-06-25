@@ -22,14 +22,14 @@ export class Union extends NodeType {
         'x-component': 'FormTab',
         'x-component-props': {
           class: 'config-tabs',
-          formTab: '{{formTab}}'
+          formTab: '{{formTab}}',
         },
         properties: {
           tab1: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: i18n.t('public_basic_settings')
+              label: i18n.t('public_basic_settings'),
             },
             properties: {
               nameWrap: {
@@ -38,12 +38,12 @@ export class Union extends NodeType {
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
                   asterisk: true,
-                  feedbackLayout: 'none'
+                  feedbackLayout: 'none',
                 },
                 'x-component': 'FormFlex',
                 'x-component-props': {
                   gap: 8,
-                  align: 'start'
+                  align: 'start',
                 },
                 properties: {
                   name: {
@@ -52,13 +52,13 @@ export class Union extends NodeType {
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       style: {
-                        flex: 1
-                      }
+                        flex: 1,
+                      },
                     },
                     'x-component': 'Input',
                     'x-component-props': {
-                      onChange: `{{() => { $values.attrs.hasNameEdited = true }}}`
-                    }
+                      onChange: `{{() => { $values.attrs.hasNameEdited = true }}}`,
+                    },
                   },
 
                   clipboardButton: {
@@ -67,10 +67,10 @@ export class Union extends NodeType {
                     'x-component-props': {
                       tooltip: i18n.t('packages_dag_copy_node_id'),
                       finishTooltip: i18n.t('packages_dag_nodes_table_yifuzhi'),
-                      content: '{{$values.id}}'
-                    }
-                  }
-                }
+                      content: '{{$values.id}}',
+                    },
+                  },
+                },
               },
               tableName: {
                 title: i18n.t('packages_dag_merged_tableName'),
@@ -82,34 +82,34 @@ export class Union extends NodeType {
                   filterable: true,
                   clearable: true,
                   defaultFirstOption: true,
-                  placeholder: i18n.t('packages_dag_merged_tableName_ph')
+                  placeholder: i18n.t('packages_dag_merged_tableName_ph'),
                 },
                 'x-reactions': [
-                  '{{useAsyncDataSourceByConfig({service: getNodeTableOptions, withoutField: true}, $values.id, $values.$inputs[0])}}'
+                  '{{useAsyncDataSourceByConfig({service: getNodeTableOptions, withoutField: true}, $values.id, $values.$inputs[0])}}',
                   // '{{useAfterPatchAsyncDataSource({service: getNodeTableOptions, withoutField: true}, $values.id, $values.$inputs[0])}}'
-                ]
-              }
-            }
+                ],
+              },
+            },
           },
           tab2: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: i18n.t('packages_dag_data_schema')
+              label: i18n.t('packages_dag_data_schema'),
             },
             properties: {
               schemaPanel: {
                 type: 'void',
                 'x-component': 'SchemaPanel',
                 'x-component-props': {
-                  class: 'mx-n4 my-n1',
-                  formTab: '{{formTab}}'
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+                  class: 'mx-n4',
+                  formTab: '{{formTab}}',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   }
 }

@@ -148,7 +148,7 @@ export default {
       :remote-method="remoteMethod"
       :columns="columns"
       :page-options="{
-        layout: 'total, ->, prev, pager, next, sizes, jumper',
+        layout: 'total, ->, prev, pager, next, sizes',
       }"
       height="100%"
       hide-on-single-page

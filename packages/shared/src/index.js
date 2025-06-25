@@ -1,7 +1,6 @@
 export * from './cache'
 export * from './cookie'
 export * from './dom'
-export * from './loadMore'
 export * from './util'
 export * from './types'
 export * from './uid'
@@ -22,3 +21,5 @@ export * from './time'
 export * from './directives'
 
 export * from './countUp'
+
+export * from './settings'

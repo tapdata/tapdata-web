@@ -1,7 +1,6 @@
 <script>
 import { appApi } from '@tap/api'
-import { AsyncSelect } from '@tap/form'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+import AsyncSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 
 export default {
   name: 'ListSelect',
@@ -9,6 +8,9 @@ export default {
   props: {
     value: {
       type: [String, Number],
+    },
+    label: {
+      type: String,
     },
     params: {
       type: Object,
@@ -30,26 +32,21 @@ export default {
     }
   },
   watch: {
-    value(v) {
-      if (this.form.value !== v) {
+    value: {
+      handler(v) {
         this.form.value = v
         this.form.label = this.label
-      }
+      },
+      immediate: true,
     },
   },
   methods: {
     handleChange(opt) {
       const { label } = opt
       this.form.label = label
-      $emit(
-        this.$emit('update:value', this.form.value).$emit(
-          'update:label',
-          this.form.label,
-        ),
-        'change',
-        val,
-        opt,
-      )
+      this.$emit('update:value', this.form.value)
+      this.$emit('update:label', this.form.label)
+      this.$emit('change', this.form.value, opt)
     },
 
     async getData(filter = {}) {
@@ -99,6 +96,7 @@ export default {
     :method="getData"
     :current-label="form.label"
     filterable
+    lazy
     @option-select="handleChange"
   />
 </template>

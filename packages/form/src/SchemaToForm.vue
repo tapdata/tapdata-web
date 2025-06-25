@@ -1,29 +1,23 @@
-<template>
-  <div class="scheme-to-form">
-    <Form
-      v-bind="$attrs"
-      class-name="form-wrap"
-      :form="form"
-      :colon="colon"
-      :layout="layout"
-      :label-align="labelAlign"
-      :label-width="labelWidth"
-    >
-      <SchemaField v-if="!!objData" :schema="objData" :scope="scope" />
-    </Form>
-  </div>
-</template>
-
 <script>
-import { createForm, onFormValuesChange, setValidateLanguage } from '@formily/core'
+import {
+  createForm,
+  onFormValuesChange,
+  setValidateLanguage,
+} from '@formily/core'
+import { Form } from '@formily/element-plus'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
+import { defineAsyncComponent } from 'vue'
 
-import { SchemaField } from './shared'
-import { Form } from './components'
 
 export default {
   name: 'SchemaToForm',
-  components: { Form, SchemaField },
+  components: {
+    Form,
+    // 动态注册组件
+    SchemaField: defineAsyncComponent(() =>
+      import('./shared/create').then((module) => module.SchemaField),
+    ),
+  },
   props: {
     schema: {
       type: Object,
@@ -103,9 +97,24 @@ export default {
       })
     },
   },
-  emits: ['update:value'],
 }
 </script>
+
+<template>
+  <div class="scheme-to-form">
+    <Form
+      v-bind="$attrs"
+      class-name="form-wrap"
+      :form="form"
+      :colon="colon"
+      :layout="layout"
+      :label-align="labelAlign"
+      :label-width="labelWidth"
+    >
+      <SchemaField v-if="!!objData" :schema="objData" :scope="scope" />
+    </Form>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .scheme-to-form {
@@ -114,10 +123,10 @@ export default {
   }
 
   :deep(.formily-element-plus-form-item) {
-    font-size: $fontBaseTitle;
+    font-size: var(--font-base-title);
     .formily-element-plus-form-item-label {
       label {
-        color: map.get($fontColor, light);
+        color: var(--text-light);
         text-transform: capitalize;
       }
     }

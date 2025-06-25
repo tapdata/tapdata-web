@@ -1,55 +1,52 @@
-<script>
-import { GitBook } from '@tap/component'
+<script setup lang="ts">
+import GitBook from '@tap/component/src/GitBook.vue'
+import { useI18n } from '@tap/i18n'
 import axios from 'axios'
+import { ref } from 'vue'
 
-export default {
-  components: { GitBook },
-  props: {
-    visible: Boolean,
-    path: {
-      type: String,
-      default: 'data-inspect',
-    },
+defineOptions({
+  name: 'DocsDrawer',
+})
+
+const props = defineProps({
+  path: {
+    type: String,
+    default: 'data-inspect',
   },
-  data() {
-    return {
-      loading: false,
-      mdContent: '',
-    }
-  },
-  methods: {
-    handleOpen() {
-      this.loading = true
-      axios
-        .get(
-          `static/docs/${this.path || 'data-inspect'}/${this.$i18n.locale?.toLowerCase() || 'en'}.md`.toLowerCase(),
-          {
-            responseType: 'blob',
-            headers: {
-              Accept: 'application/json',
-              'Cache-Control': 'no-cache',
-            },
-          },
-        )
-        .then((res) => {
-          this.mdContent = res.data
-        })
-        .finally(() => {
-          this.loading = false
-        })
-    },
-  },
+})
+
+const i18n = useI18n()
+const loading = ref(false)
+const mdContent = ref('')
+
+const handleOpen = () => {
+  loading.value = true
+  axios
+    .get(
+      `static/docs/${props.path || 'data-inspect'}/${i18n.locale?.value?.toLowerCase() || 'en'}.md`.toLowerCase(),
+      {
+        responseType: 'blob',
+        headers: {
+          Accept: 'application/json',
+          'Cache-Control': 'no-cache',
+        },
+      },
+    )
+    .then((res) => {
+      mdContent.value = res.data
+    })
+    .finally(() => {
+      loading.value = false
+    })
 }
 </script>
 
 <template>
   <ElDrawer
     append-to-body
-    :modal="false"
-    :title="$t('packages_dag_api_docs')"
+    :title="i18n.t('packages_dag_api_docs')"
     :size="680"
-    :model-value="visible"
-    @update:model-value="$emit('update:visible', $event)"
+    modal-class="bg-transparent"
     @open="handleOpen"
   >
     <div v-loading="loading">

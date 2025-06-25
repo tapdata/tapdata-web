@@ -16,15 +16,15 @@
 
 .link-primary {
   // color: #0d6efd;
-  color: map.get($color, primary);
+  color: var(--color-primary);
 }
 
 .link-primary:hover {
-  color: map.get($color, lprimary);
+  color: var(--color-lprimary);
 }
 
 .link-primary:focus {
-  color: map.get($color, dprimary);
+  color: var(--color-dprimary);
 }
 
 .link-secondary {
@@ -526,7 +526,11 @@
 }
 
 .border-primary {
-  border-color: #0d6efd !important;
+  border-color: var(--el-color-primary) !important;
+}
+
+.hover\:border-primary:hover {
+  border-color: var(--el-color-primary) !important;
 }
 
 .border-secondary {
@@ -562,7 +566,7 @@
 }
 
 .border-form {
-  border-color: map.get($borderColor, form) !important;
+  border-color: var(--border-form) !important;
 }
 
 .border-1 {
@@ -1006,6 +1010,11 @@
 .mx-0 {
   margin-right: 0 !important;
   margin-left: 0 !important;
+}
+
+.mx-0\.5 {
+  margin-right: 0.125rem !important;
+  margin-left: 0.125rem !important;
 }
 
 .mx-1 {
@@ -1714,6 +1723,10 @@
 .my-n16 {
   margin-top: -4rem !important;
   margin-bottom: -4rem !important;
+}
+
+.mt-n0\.5 {
+  margin-top: -0.125rem !important;
 }
 
 .mt-n1 {
@@ -2640,7 +2653,7 @@
 /* rtl:end:remove */
 .text-primary {
   // color: #0d6efd !important;
-  color: map.get($color, primary) !important;
+  color: var(--color-primary) !important;
 }
 
 .text-secondary {
@@ -2672,7 +2685,7 @@
 }
 
 .text-white {
-  color: map.get($fontColor, white) !important;
+  color: var(--text-white) !important;
 }
 
 .text-body {
@@ -2700,7 +2713,7 @@
 }
 
 .bg-primary {
-  background-color: map.get($color, primary) !important;
+  background-color: var(--color-primary) !important;
 }
 
 .bg-secondary {
@@ -12160,65 +12173,65 @@
 
 //TODO 应该通过语法生成 color-* 的颜色原子类
 .color-primary {
-  color: map.get($color, primary) !important;
+  color: var(--color-primary) !important;
 }
 
 .color-danger {
-  color: map.get($color, danger) !important;
+  color: var(--color-danger) !important;
 }
 
 .color-success {
-  color: map.get($color, success) !important;
+  color: var(--color-success) !important;
 }
 
 .color-warning {
-  color: map.get($color, warning) !important;
+  color: var(--color-warning) !important;
 }
 
 .color-lprimary {
-  color: map.get($color, lprimary) !important;
+  color: var(--color-lprimary) !important;
 }
 
 .color-lsuccess {
-  color: map.get($color, lsuccess) !important;
+  color: var(--color-lsuccess) !important;
 }
 
 .color-info {
-  color: map.get($color, info) !important;
+  color: var(--color-info) !important;
 }
 
 .color-linfo {
-  color: map.get($color, linfo) !important;
+  color: var(--color-linfo) !important;
 }
 
 .color-disable {
-  color: map.get($color, disable) !important;
+  color: var(--color-disable) !important;
 }
 
 // 字体颜色
 .font-color-dark {
-  color: map.get($fontColor, dark);
+  color: var(--text-dark);
 }
 
 .font-color-normal {
-  color: map.get($fontColor, normal);
+  color: var(--text-normal);
 }
 
 .font-color-light {
-  color: map.get($fontColor, light);
+  color: var(--text-light);
 }
 
 .font-color-slight {
-  color: map.get($fontColor, slight);
+  color: var(--text-slight);
 }
 
 .font-color-sslight {
-  color: map.get($fontColor, sslight);
+  color: var(--text-sslight);
 }
 
 // 背景颜色
 .bg-color-primary {
-  background-color: map.get($color, primary) !important;
+  background-color: var(--color-primary) !important;
 }
 
 .bg-color-primary-light-9 {
@@ -12226,31 +12239,31 @@
 }
 
 .bg-color-danger {
-  background-color: map.get($color, danger) !important;
+  background-color: var(--color-danger) !important;
 }
 
 .bg-color-success {
-  background-color: map.get($color, success) !important;
+  background-color: var(--color-success) !important;
 }
 
 .bg-color-warning {
-  background-color: map.get($color, warning) !important;
+  background-color: var(--color-warning) !important;
 }
 
 .bg-color-disable {
-  background-color: map.get($color, disable) !important;
+  background-color: var(--bg-disable) !important;
 }
 
 .bg-color-main {
-  background-color: map.get($bgColor, main) !important;
+  background-color: var(--bg-main) !important;
 }
 
 .bg-color-white {
-  background-color: map.get($bgColor, white) !important;
+  background-color: var(--color-white) !important;
 }
 
 .bg-color-normal {
-  background-color: map.get($bgColor, normal) !important;
+  background-color: var(--bg-normal) !important;
 }
 
 /*
@@ -12444,7 +12457,7 @@
 
 // icon
 .icon-color-normal {
-  color: map.get($iconFillColor, normal) !important;
+  color: var(--icon-n2) !important;
 }
 
 // TODO: 将来使用Tailwind CSS 或者 Windi CSS 替换
@@ -12496,7 +12509,7 @@
   line-height: 24px;
   font-weight: 500;
   font-size: 16px;
-  color: map.get($fontColor, dark);
+  color: var(--text-dark);
   padding-left: 12px;
   --bar-width: 3px;
   $bar-width: 3px;
@@ -12510,7 +12523,7 @@
     top: 50%;
     transform: translateY(-50%);
     position: absolute;
-    background-color: map.get($color, primary);
+    background-color: var(--color-primary);
     //background-color: #bcbfc3;
   }
 }
@@ -12530,12 +12543,37 @@
   list-style: decimal !important;
 }
 
+.list-disc {
+  list-style: disc !important;
+}
+
 .truncate-two-lines {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.active-primary {
+  background-color: rgb(59 71 229 / 10%) !important;
+  color: var(--color-primary) !important;
+}
+
+.bg-fill-hover {
+  background-color: rgb(24 24 27 / 5%);
+}
+
+.last\:border-0:last-child {
+  border: 0 !important;
+}
+
+.text-muted-foreground {
+  color: rgb(113 113 122);
+}
+
+.hover\:bg-light:hover {
+  background-color: #f8f9fa !important;
 }
 
 .break-all {
@@ -12557,4 +12595,38 @@
 
 .-z-10 {
   z-index: -10;
+}
+
+.bg-gray-50 {
+  background-color: rgb(249 250 251);
+}
+
+.bg-gray-100 {
+  background-color: rgb(243 244 246);
+}
+
+.bg-gray-200 {
+  background-color: rgb(229 231 235);
+}
+
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.col-start-1 {
+  grid-column-start: 1;
+}
+
+.col-start-2 {
+  grid-column-start: 2;
+}
+
+
+.list-item-hover:hover {
+  background-color: var(--fill-hover) !important;
+}
+
+.list-item-hover.is-active {
+  background-color: var(--primary-hover-light) !important;
+  color: var(--el-color-primary) !important;
 }

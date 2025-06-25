@@ -1,11 +1,11 @@
 <script>
 import { metadataInstancesApi } from '@tap/api'
-import { IconButton, VDivider, VIcon } from '@tap/component'
+import VDivider from '@tap/component/src/base/VDivider.vue'
+import { IconButton } from '@tap/component/src/icon-button'
 import { mapFieldsData } from '@tap/form'
 import dagre from 'dagre'
 import Mousetrap from 'mousetrap'
 import { mapActions, mapGetters, mapState } from 'vuex'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 import { config, jsPlumb } from '../../instance'
 import PaperScroller from '../PaperScroller'
 import TransformLoading from '../TransformLoading.vue'
@@ -15,7 +15,6 @@ import TargetNode from './TargetNode'
 export default {
   name: 'MaterializedView',
   components: {
-    VIcon,
     VDivider,
     PaperScroller,
     TargetNode,
@@ -187,7 +186,7 @@ export default {
     },
 
     handleUpdateVisible(val) {
-      $emit(this, 'update:visible', val)
+      this.$emit('update:visible', val)
     },
 
     handleCenterContent() {
@@ -257,7 +256,7 @@ export default {
         childrenNode.parentId = parentId
       }
 
-      $emit(this, 'delete-node', id)
+      this.$emit('delete-node', id)
 
       await this.afterTaskSaved()
       await this.onLoadTargetSchema(this.targetNode.id)
@@ -380,8 +379,7 @@ export default {
     initMainNode() {
       const mergeProperties = this.activeNode.mergeProperties
 
-      $emit(
-        this,
+      this.$emit(
         'add-node',
         {
           children: mergeProperties,
@@ -887,7 +885,6 @@ export default {
         >
           <Node
             v-for="node in nodes"
-            :id="`n_${node.id}`"
             :key="node.id"
             :disabled="disabled"
             :class="{
@@ -920,7 +917,6 @@ export default {
           />
           <TargetNode
             v-if="targetNode"
-            :id="targetNode.id"
             :disabled="disabled"
             :node="targetNode"
             :js-plumb-ins="jsPlumbIns"
@@ -996,7 +992,7 @@ $sidebarBg: #fff;
   cursor: pointer;
   &.active,
   &:hover {
-    color: map.get($color, primary);
+    color: var(--color-primary);
     background: $hoverBg;
   }
 }

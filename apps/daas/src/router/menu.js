@@ -104,7 +104,7 @@ export const MENU = [
     group: 'bottom',
     code: 'v2_system-management',
     children: [
-      { name: 'roleList', code: 'v2_role_management', parent: 'roleList' },
+      { name: 'roleList', code: 'v2_role_management', parent: 'roles' },
       { name: 'users', code: 'v2_user_management_menu', parent: 'users' },
       {
         name: 'clusterManagement',

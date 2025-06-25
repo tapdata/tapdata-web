@@ -1,55 +1,9 @@
-<template>
-  <Drawer
-    v-bind="$attrs"
-    v-loading="loading"
-    class="shared-cache-details"
-    v-model:visible="visible"
-    @visible="handleVisible"
-  >
-    <div v-if="details.id" class="shared-cache-details--header flex pb-3">
-      <div class="img-box">
-        <VIcon class="icon">text</VIcon>
-      </div>
-      <div class="flex-fill ml-4 overflow-hidden">
-        <div class="fs-6 ellipsis">{{ details.name }}</div>
-        <TaskStatus class="mt-2" :task="details" />
-      </div>
-    </div>
-    <ul class="mt-2">
-      <li v-for="item in info" :key="item.label" class="drawer-info__item">
-        <VIcon class="fs-7 mt-2">{{ item.icon }}</VIcon>
-        <div class="body ml-4">
-          <label class="label">{{ item.label }}</label>
-          <p class="value mt-2">{{ item.value }}</p>
-        </div>
-      </li>
-    </ul>
-    <div class="shared-cache--keys">
-      <div class="title">{{ $t('packages_business_shared_cache_keys') }}</div>
-      <div class="content">
-        <div v-for="key in details.cacheKeysArr" :key="key">{{ key }}</div>
-      </div>
-    </div>
-    <div class="shared-cache--keys">
-      <div class="title">{{ $t('packages_business_shared_cache_fields') }}</div>
-      <div class="content">
-        <div v-for="key in details.fields" :key="key" class="mt-2">
-          {{ key }}
-        </div>
-      </div>
-    </div>
-    <div class="mt-4">{{ $t('packages_business_shared_cache_code') }}</div>
-    <CodeView class="mt-2" :data="details"></CodeView>
-  </Drawer>
-</template>
-
 <script>
-import { sharedCacheApi, externalStorageApi } from '@tap/api'
-import { Drawer } from '@tap/component'
-import { TaskStatus } from '../../components'
-
-import CodeView from './CodeView'
 import dayjs from 'dayjs'
+import { externalStorageApi, sharedCacheApi } from '@tap/api'
+import Drawer from '@tap/component/src/Drawer.vue'
+import TaskStatus from '../../components/TaskStatus.vue'
+import CodeView from './CodeView.vue'
 
 export default {
   name: 'Details',
@@ -77,7 +31,9 @@ export default {
         .get(id)
         .then((data) => {
           data.cacheKeysArr = data.cacheKeys?.split(',') || []
-          data.cacheTimeAtFmt = data.cacheTimeAt ? dayjs(data.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss') : '-'
+          data.cacheTimeAtFmt = data.cacheTimeAt
+            ? dayjs(data.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss')
+            : '-'
           externalStorageApi
             .get(data.externalStorageId, {
               fields: JSON.stringify({
@@ -138,12 +94,60 @@ export default {
 }
 </script>
 
+<template>
+  <Drawer
+    v-bind="$attrs"
+    v-model="visible"
+    v-loading="loading"
+    class="shared-cache-details"
+    @visible="handleVisible"
+  >
+    <template #header="{ titleClass }">
+      <div
+        v-if="details.id"
+        class="flex align-center gap-3 overflow-hidden"
+        :class="titleClass"
+      >
+        <VIcon class="icon">text</VIcon>
+        <div class="fs-6 ellipsis">{{ details.name }}</div>
+        <TaskStatus :task="details" />
+      </div>
+    </template>
+
+    <ul>
+      <li v-for="item in info" :key="item.label" class="drawer-info__item">
+        <VIcon class="fs-7 mt-2">{{ item.icon }}</VIcon>
+        <div class="body ml-4">
+          <label class="label">{{ item.label }}</label>
+          <p class="value mt-2">{{ item.value }}</p>
+        </div>
+      </li>
+    </ul>
+    <div class="shared-cache--keys">
+      <div class="title">{{ $t('packages_business_shared_cache_keys') }}</div>
+      <div class="content">
+        <div v-for="key in details.cacheKeysArr" :key="key">{{ key }}</div>
+      </div>
+    </div>
+    <div class="shared-cache--keys">
+      <div class="title">{{ $t('packages_business_shared_cache_fields') }}</div>
+      <div class="content">
+        <div v-for="key in details.fields" :key="key" class="mt-2">
+          {{ key }}
+        </div>
+      </div>
+    </div>
+    <div class="mt-4">{{ $t('packages_business_shared_cache_code') }}</div>
+    <CodeView class="mt-2" :data="details" />
+  </Drawer>
+</template>
+
 <style lang="scss" scoped>
 .shared-cache-details {
   padding: 16px;
 }
 .shared-cache-details--header {
-  border-bottom: 1px solid map.get($borderColor, light);
+  border-bottom: 1px solid var(--border-light);
   .icon {
     font-size: 18px;
   }
@@ -154,14 +158,14 @@ export default {
     flex: 1;
     padding: 8px 0;
     line-height: 17px;
-    border-bottom: 1px solid map.get($borderColor, light);
+    border-bottom: 1px solid var(--border-light);
     .label {
-      font-size: $fontBaseTitle;
+      font-size: var(--font-base-title);
       color: rgba(0, 0, 0, 0.6);
     }
     .value {
-      font-size: $fontBaseTitle;
-      color: map.get($fontColor, dark);
+      font-size: var(--font-base-title);
+      color: var(--text-dark);
     }
   }
 }
@@ -173,11 +177,11 @@ export default {
     padding: 0 16px;
     height: 38px;
     line-height: 38px;
-    background: map.get($bgColor, normal);
+    background: var(--bg-normal);
   }
   .content {
     padding: 0 16px 8px 16px;
-    background-color: map.get($bgColor, white);
+    background-color: var(--color-white);
   }
 }
 </style>

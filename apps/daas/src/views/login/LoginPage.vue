@@ -1,23 +1,10 @@
-<template>
-  <div class="page">
-    <div class="page-image" :style="loginImageStyle"></div>
-
-    <div class="page-main">
-      <div class="page-main-box">
-        <div v-if="$getSettingByKey('SHOW_LANGUAGE')" class="switch-lang">
-          <span v-for="(value, key) in languages" :key="key" :class="{ bold: key === lang }" @click="langChange(key)">
-            {{ value }}
-            <ElDivider direction="vertical" v-if="key !== 'tc'"></ElDivider>
-          </span>
-        </div>
-        <slot name="main"></slot>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script>
-import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
+import {
+  getCurrentLanguage,
+  langMenu,
+  setCurrentLanguage,
+} from '@tap/i18n/src/shared/util'
+import { getSettingByKey } from '@tap/shared/src/settings'
 
 export default {
   name: 'LoginHeader',
@@ -38,6 +25,7 @@ export default {
   },
 
   methods: {
+    getSettingByKey,
     langChange(lang) {
       setCurrentLanguage(lang, this.$i18n)
       this.lang = lang
@@ -45,6 +33,29 @@ export default {
   },
 }
 </script>
+
+<template>
+  <div class="page">
+    <div class="page-image" :style="loginImageStyle" />
+
+    <div class="page-main">
+      <div class="page-main-box">
+        <div v-if="getSettingByKey('SHOW_LANGUAGE')" class="switch-lang">
+          <span
+            v-for="(value, key) in languages"
+            :key="key"
+            :class="{ bold: key === lang }"
+            @click="langChange(key)"
+          >
+            {{ value }}
+            <ElDivider v-if="key !== 'tc'" direction="vertical" />
+          </span>
+        </div>
+        <slot name="main" />
+      </div>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .page {
@@ -67,7 +78,7 @@ export default {
     flex: 1;
     justify-content: center;
     align-items: center;
-    background-color: map.get($bgColor, white);
+    background-color: var(--color-white);
     .page-main-box {
       display: flex;
       flex-direction: column;
@@ -77,7 +88,7 @@ export default {
     .switch-lang {
       padding-top: 50px;
       text-align: right;
-      color: map.get($fontColor, slight);
+      color: var(--text-slight);
       font-weight: 500;
       font-size: 14px;
       span {
@@ -87,11 +98,11 @@ export default {
         line-height: 18px;
         cursor: pointer;
         &:hover {
-          color: map.get($fontColor, dark);
+          color: var(--text-dark);
         }
       }
       .bold {
-        color: map.get($fontColor, dark);
+        color: var(--text-dark);
         font-weight: 500;
       }
     }
@@ -118,7 +129,7 @@ header {
       span {
         display: inline-block;
         padding: 0 10px;
-        border-left: 1px solid map.get($fontColor, dark);
+        border-left: 1px solid var(--text-dark);
         box-sizing: border-box;
         height: 18px;
         line-height: 18px;
@@ -127,7 +138,7 @@ header {
           border: none;
         }
         &:hover {
-          color: map.get($fontColor, dark);
+          color: var(--text-dark);
         }
       }
     }

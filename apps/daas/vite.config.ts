@@ -4,7 +4,10 @@ import { createSvgIconsPlugin } from '@cn-xufei/vite-plugin-svg-icons'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import { visualizer } from 'rollup-plugin-visualizer'
+import { NodePackageImporter } from 'sass'
 import AutoImport from 'unplugin-auto-import/vite'
+import IconsResolver from 'unplugin-icons/resolver'
+import Icons from 'unplugin-icons/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
 import { defineConfig, loadEnv } from 'vite'
@@ -17,7 +20,7 @@ const serveUrlMap = {
 }
 let origin
 const { argv } = process
-const { SERVE_ENV = 'mock' } = process.env
+const { SERVE_ENV = 'test' } = process.env
 
 // 通过origin参数注入服务代理，优先级最高
 if (~argv.indexOf('--origin')) {
@@ -43,19 +46,67 @@ export default defineConfig(({ mode }) => {
 
     envPrefix,
 
+    optimizeDeps: {
+      include: [
+        '@tap/api',
+        '@tap/shared',
+        // '@tap/assets',
+        // 'vue',
+        // 'vue-router',
+        // 'element-plus',
+        // '@vueuse/core',
+        // 'lodash-es',
+        // '@formily/vue',
+        // '@formily/core',
+        // '@formily/reactive',
+        // '@formily/reactive-vue',
+        // '@formily/shared',
+        // '@formily/path',
+        // '@formily/json-schema',
+        // '@formily/element-plus',
+      ],
+      // exclude: [
+      //   '@tap/dag',
+      //   '@tap/ldp',
+      //   '@tap/business',
+      //   '@tap/component', // 排除整个组件库，改用按需加载
+      // ],
+      // force: false,
+      // esbuildOptions: {
+      //   target: 'esnext',
+      //   supported: {
+      //     'top-level-await': true,
+      //   },
+      // },
+    },
+
     plugins: [
       vue(),
       vueJsx(),
       AutoImport({
-        resolvers: [ElementPlusResolver({ importStyle: 'sass' })],
+        resolvers: [
+          IconsResolver({
+            prefix: 'Icon',
+            enabledCollections: ['lucide', 'mingcute'],
+          }),
+          ElementPlusResolver(/* { importStyle: 'sass' } */),
+        ],
         dts: 'src/auto-imports.d.ts',
       }),
 
       Components({
-        resolvers: [ElementPlusResolver({ importStyle: 'sass' })],
-        // directoryAsNamespace: true,
+        resolvers: [
+          IconsResolver({
+            enabledCollections: ['lucide', 'mingcute'],
+          }),
+          ElementPlusResolver(/* { importStyle: 'sass' } */),
+        ],
         dts: 'src/components.d.ts',
-        include: [/\.vue$/, /\.vue\?vue/, /\.[tj]sx?$/],
+        include: [/\.vue$/, /\.vue\?vue/, /\.[tj]sx$/],
+      }),
+
+      Icons({
+        scale: 1,
       }),
 
       createSvgIconsPlugin({
@@ -77,7 +128,7 @@ export default defineConfig(({ mode }) => {
             {
               name: 'removeAttributesBySelector',
               params: {
-                selector: ":not(path[fill='none'])",
+                selector: ":not(path[fill='none'],rect[fill='none'])",
                 attributes: ['fill'],
               },
             },
@@ -97,6 +148,17 @@ export default defineConfig(({ mode }) => {
           ],
         },
       }),
+
+      // 添加性能优化插件
+      // process.env.NODE_ENV === 'development' && {
+      //   name: 'optimize-persist',
+      //   apply: 'serve',
+      //   enforce: 'pre',
+      //   configResolved(config) {
+      //     // 持久化依赖预构建结果
+      //     config.optimizeDeps.force = false
+      //   },
+      // },
 
       // Add visualizer plugin conditionally
       process.env.NODE_ENV === 'analyze' &&
@@ -142,63 +204,37 @@ export default defineConfig(({ mode }) => {
         },
         scss: {
           // additionalData: '@use "@tap/assets/styles/var.scss" as *;',
-          additionalData: (content, filePath) => {
-            const themeVar =
-              env.VUE_APP_THEME_VAR || '@tap/assets/styles/var.scss'
-            if (filePath.includes('node_modules')) {
-              return `@use "${themeVar}" as *;\n${content}`
-            }
+          // additionalData: (content, filePath) => {
+          //   const themeVar =
+          //     env.VUE_APP_THEME_VAR || '@tap/assets/styles/var.scss'
 
-            return `@use "sass:map";\n@use "${themeVar}" as *;\n${content}`
-          },
+          //   if (filePath.includes('packages/styles')) {
+          //     return content
+          //   }
+
+          //   if (filePath.includes('node_modules')) {
+          //     return `@use "${themeVar}" as *;\n${content}`
+          //   }
+
+          //   return `@use "sass:map";\n@use "${themeVar}" as *;\n${content}`
+          // },
           // 禁用依赖包中的@import弃用警告
           quietDeps: true,
           silenceDeprecations: ['import', 'global-builtin'],
+          api: 'modern',
+          importers: [new NodePackageImporter()],
         },
       },
     },
 
     build: {
+      target: 'esnext',
       outDir: '../../dist',
-      emptyOutDir: true,
-      // rollupOptions: {
-      //   output: {
-      //     manualChunks: (id) => {
-      //       // Create separate chunks for node_modules
-      //       if (id.includes('node_modules')) {
-      //         // Group element-plus related packages
-      //         if (id.includes('element-plus') || id.includes('@element-plus')) {
-      //           return 'element-plus-vendor'
-      //         }
-      //         // Group vue related packages
-      //         if (id.includes('vue') || id.includes('@vue')) {
-      //           return 'vue-vendor'
-      //         }
-      //         // Group chart related packages
-      //         if (id.includes('echarts') || id.includes('vue-echarts')) {
-      //           return 'chart-vendor'
-      //         }
-      //         // Group tap packages
-      //         if (id.includes('@tap/')) {
-      //           const packageName = id.split('@tap/')[1].split('/')[0]
-      //           return `tap-${packageName}`
-      //         }
-      //         // Other npm dependencies
-      //         return 'vendor'
-      //       }
-      //     },
-      //     chunkFileNames: 'assets/js/[name]-[hash].js',
-      //     entryFileNames: 'assets/js/[name]-[hash].js',
-      //     assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
-      //   },
-      // },
-      cssCodeSplit: true,
-      sourcemap: false,
-      minify: 'terser',
-      terserOptions: {
-        compress: {
-          drop_console: true,
-          drop_debugger: true,
+      rollupOptions: {
+        output: {
+          assetFileNames: 'static/assets/[name]-[hash].[ext]',
+          chunkFileNames: 'static/js/[name]-[hash].js',
+          entryFileNames: 'static/js/[name]-[hash].js',
         },
       },
     },

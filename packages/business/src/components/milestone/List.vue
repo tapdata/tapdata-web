@@ -657,7 +657,7 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
       append-to-body
       @open="codeDialog.expandErrorMessage = false"
     >
-      <template #title>
+      <template #header>
         <div class="flex align-center gap-2">
           <VIcon class="color-danger" size="18">circle-close-filled</VIcon>
           <span class="fs-6 fw-sub">{{
@@ -810,7 +810,7 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
   left: 50%;
   top: 24px;
   bottom: 4px;
-  border-left: 1px dashed map.get($color, primary);
+  border-left: 1px dashed var(--color-primary);
   transform: translateX(-50%);
 }
 .step__line_pt {

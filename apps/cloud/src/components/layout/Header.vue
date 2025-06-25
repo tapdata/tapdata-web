@@ -83,13 +83,8 @@ export default {
           break
         case 'signOut':
           this.$confirm(
-            this.$t('header_log_out_tip'),
             this.$t('header_log_out_title'),
-            {
-              type: 'warning',
-              confirmButtonText: this.$t('public_button_confirm'),
-              cancelButtonText: this.$t('public_button_cancel'),
-            },
+            this.$t('header_log_out_tip'),
           ).then((res) => {
             if (res) {
               this.clearCookie()
@@ -234,9 +229,7 @@ export default {
 
         <template #dropdown>
           <ElDropdownMenu>
-            <ElDropdownItem
-              command="userCenter"
-              :disabled="$disabledReadonlyUserBtn()"
+            <ElDropdownItem command="userCenter"
               >{{ $t('the_header_Header_yongHuZhongXin') }}
             </ElDropdownItem>
             <ElDropdownItem command="order">{{
@@ -245,10 +238,7 @@ export default {
             <ElDropdownItem command="home">
               {{ $t('header_official_website') }}
             </ElDropdownItem>
-            <ElDropdownItem
-              command="signOut"
-              :disabled="$disabledReadonlyUserBtn()"
-            >
+            <ElDropdownItem command="signOut">
               {{ $t('header_sign_out') }}
             </ElDropdownItem>
           </ElDropdownMenu>
@@ -289,7 +279,7 @@ export default {
   width: 100%;
   height: 52px !important;
   padding: 0 7px;
-  background: map.get($color, submenu);
+  background: var(--color-submenu);
   box-sizing: border-box;
 
   .current {
@@ -312,15 +302,15 @@ export default {
     .command-item {
       padding: 4px 8px;
       cursor: pointer;
-      color: map.get($fontColor, light);
+      color: var(--text-light);
 
       &:hover {
-        color: map.get($color, primary);
-        background-color: map.get($color, white);
+        color: var(--color-primary);
+        background-color: var(--color-white);
         border-radius: 4px;
 
         &.icon {
-          color: map.get($color, primary);
+          color: var(--color-primary);
         }
       }
     }

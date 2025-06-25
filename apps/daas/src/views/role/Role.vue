@@ -1,8 +1,8 @@
 <script>
+import { Check } from '@element-plus/icons-vue'
 import { permissionsApi, roleMappingsApi, usersApi } from '@tap/api'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import i18n from '@/i18n'
-
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 
 const pageSort = [
   { name: 'v2_data-console', children: [{ name: 'v2_data-console' }] },
@@ -131,6 +131,10 @@ const pageSort = [
 ]
 
 export default {
+  components: {
+    PageContainer,
+    Check,
+  },
   emits: ['saveBack'],
   data() {
     return {
@@ -347,7 +351,7 @@ export default {
       usersApi
         .updatePermissionRoleMapping(roleId, data)
         .then(() => {
-          $emit(this, 'saveBack')
+          this.$emit('saveBack')
           this.$message.success(this.$t('public_message_save_ok'))
           this.adds = []
           this.deletes = []
@@ -368,12 +372,8 @@ export default {
       }
 
       this.$confirm(
-        i18n.t('daas_role_role_ninhaiweibaocun'),
         this.$t('public_message_title_prompt'),
-        {
-          type: 'warning',
-          closeOnClickModal: false,
-        },
+        this.$t('daas_role_role_ninhaiweibaocun'),
       ).then((flag) => {
         flag && this.save()
       })
@@ -383,303 +383,240 @@ export default {
 </script>
 
 <template>
-  <div v-loading="loading" class="role flex-fill overflow-auto px-5 pb-5">
-    <div class="section-wrap-box">
-      <head class="head flex justify-content-between mb-4">
-        <div class="flex">
-          <div class="mr-3 fs-5 fw-sub">{{ $t('role_settingTitle') }}</div>
-          <span>{{ $t('role_currentRole') }}: {{ roleName }}</span>
-        </div>
-        <div>
-          <el-button @click="back">{{ $t('public_button_back') }} </el-button>
-          <el-button
-            type="primary"
-            :loading="saveloading"
-            @click="save('ruleForm')"
-            >{{ $t('public_button_save') }}
-          </el-button>
-        </div>
-      </head>
+  <PageContainer mode="auto">
+    <template #left-actions>
+      <el-divider direction="vertical" />
+      <span class="flex align-center gap-2 bg-color-main rounded-lg px-2 py-1"
+        >{{ $t('role_currentRole') }}
+        <el-tag type="primary">{{ roleName }}</el-tag>
+      </span>
+    </template>
+    <template #actions>
+      <el-button
+        type="primary"
+        :loading="saveloading"
+        @click="save('ruleForm')"
+      >
+        <template #icon>
+          <Check />
+        </template>
+        {{ $t('public_button_save') }}
+      </el-button>
+    </template>
 
-      <div class="role-tableBox">
-        <div
-          class="alert-tip flex align-items-center mb-4 bg-warning-light rounded-2 px-4 py-2"
-        >
-          <VIcon class="color-warning mr-3" size="20">warning</VIcon>
-          <span>{{ $t('daas_role_role_gouxuanxiangyingmo') }}</span>
-        </div>
-        <ul class="role-table page-table">
-          <li class="role-head">
-            <el-row class="e-row">
-              <el-col class="e-col borderRight" :span="4">{{
-                $t('daas_role_role_gongnengmokuai')
-              }}</el-col>
-              <el-col class="e-col borderRight" :span="4">{{
-                $t('daas_role_role_yemianquanxian')
-              }}</el-col>
-              <el-col class="e-col borderRight" :span="14">{{
-                $t('daas_role_role_gongnengquanxian')
-              }}</el-col>
-              <el-col class="e-col flex align-items-center" :span="2">
-                <span>{{ $t('daas_role_role_chakanquanbushu') }}</span>
-                <ElTooltip
-                  transition="tooltip-fade-in"
-                  placement="top"
-                  :content="$t('daas_role_role_chakanquanbushu')"
-                >
-                  <VIcon size="16" class="color-info ml-2">info</VIcon>
-                </ElTooltip>
-              </el-col>
-            </el-row>
-          </li>
-          <li v-for="item in dataList" :key="item.id">
-            <el-row class="e-row flex">
-              <el-col
-                class="e-col flex justify-content-center align-items-center"
-                :span="4"
+    <div v-loading="loading">
+      <el-alert
+        class="mb-4"
+        type="warning"
+        show-icon
+        :closable="false"
+        :title="$t('daas_role_role_gouxuanxiangyingmo')"
+      />
+
+      <ul class="role-table border rounded-xl page-table overflow-hidden">
+        <li class="role-head">
+          <el-row class="e-row">
+            <el-col class="e-col borderRight pl-0 text-center" :span="4">{{
+              $t('daas_role_role_gongnengmokuai')
+            }}</el-col>
+            <el-col class="e-col borderRight pl-5" :span="4">{{
+              $t('daas_role_role_yemianquanxian')
+            }}</el-col>
+            <el-col class="e-col borderRight pl-5" :span="14">{{
+              $t('daas_role_role_gongnengquanxian')
+            }}</el-col>
+            <el-col class="e-col flex align-items-center" :span="2">
+              <span>{{ $t('daas_role_role_chakanquanbushu') }}</span>
+            </el-col>
+          </el-row>
+        </li>
+        <li v-for="item in dataList" :key="item.id">
+          <el-row class="e-row flex">
+            <el-col
+              class="e-col flex justify-content-center align-items-center"
+              :span="4"
+            >
+              <span>{{ item.description }}</span>
+            </el-col>
+            <el-col class="e-col border-start" :span="4">
+              <div
+                v-for="(second, secondIndex) in item.children"
+                :key="secondIndex"
+                :class="['pl-3', secondIndex !== 0 ? 'border-top' : '']"
               >
-                <span>{{ item.description }}</span>
-              </el-col>
-              <el-col class="e-col border-start" :span="4">
-                <div
-                  v-for="(second, secondIndex) in item.children"
-                  :key="secondIndex"
-                  :class="['pl-3', secondIndex !== 0 ? 'border-top' : '']"
+                <el-checkbox
+                  v-if="second.id"
+                  v-cloak
+                  v-model="second.checked"
+                  @change="handleCheckChange(second, item, 'page')"
                 >
-                  <el-checkbox
-                    v-if="second.id"
-                    v-cloak
-                    v-model="second.checked"
-                    @change="handleCheckChange(second, item, 'page')"
-                  >
-                    <span>
-                      {{ second.description }}
-                    </span>
-                  </el-checkbox>
-                </div>
-              </el-col>
-              <el-col class="e-col border-start border-end" :span="14">
-                <div
-                  v-for="(second, secondIndex) in item.children"
-                  :key="secondIndex"
-                  :class="['pl-3', secondIndex !== 0 ? 'border-top' : '']"
+                  <span>
+                    {{ second.description }}
+                  </span>
+                </el-checkbox>
+              </div>
+            </el-col>
+            <el-col class="e-col border-start border-end" :span="14">
+              <div
+                v-for="(second, secondIndex) in item.children"
+                :key="secondIndex"
+                :class="['pl-3', secondIndex !== 0 ? 'border-top' : '']"
+              >
+                <el-checkbox
+                  v-if="!second.buttons || !second.buttons.length"
+                  v-cloak
+                  :model-value="true"
+                  disabled
                 >
-                  <el-checkbox
-                    v-if="!second.buttons || !second.buttons.length"
-                    v-cloak
-                    :model-value="true"
-                    disabled
-                  >
-                    <span>{{ $t('daas_role_role_quanbugongneng') }}</span>
-                  </el-checkbox>
-                  <el-checkbox
-                    v-for="(sItem, sIndex) in second.buttons"
-                    v-else
-                    v-cloak
-                    v-model="sItem.checked"
-                    class="mr-10"
-                    @change="handleCheckChange(sItem, second, 'button')"
-                  >
-                    <span>{{ sItem.label }} </span>
-                  </el-checkbox>
-                </div>
-              </el-col>
-              <el-col class="e-col" :span="2">
-                <div
-                  v-for="(second, secondIndex) in item.children"
-                  :key="secondIndex"
-                  :class="[
-                    'pl-3',
-                    secondIndex !== 0 && second.filterData
-                      ? 'border-top border-bottom'
-                      : '',
-                  ]"
+                  <span>{{ $t('daas_role_role_quanbugongneng') }}</span>
+                </el-checkbox>
+                <el-checkbox
+                  v-for="(sItem, sIndex) in second.buttons"
+                  v-else
+                  v-cloak
+                  v-model="sItem.checked"
+                  class="mr-10"
+                  @change="handleCheckChange(sItem, second, 'button')"
                 >
-                  <span v-if="!second.filterData" class="invisible">-</span>
-                  <el-switch
-                    v-for="(sItem, sIndex) in second.filterData"
-                    v-else
-                    v-model="sItem.checked"
-                    @change="handleCheckChange(sItem, second, 'data')"
-                  />
-                </div>
-              </el-col>
-            </el-row>
-          </li>
-        </ul>
-      </div>
+                  <span>{{ sItem.label }} </span>
+                </el-checkbox>
+              </div>
+            </el-col>
+            <el-col class="e-col" :span="2">
+              <div
+                v-for="(second, secondIndex) in item.children"
+                :key="secondIndex"
+                :class="[
+                  'pl-3',
+                  secondIndex !== 0 && second.filterData
+                    ? 'border-top border-bottom'
+                    : '',
+                ]"
+              >
+                <span v-if="!second.filterData" class="invisible">-</span>
+                <el-switch
+                  v-for="(sItem, sIndex) in second.filterData"
+                  v-else
+                  v-model="sItem.checked"
+                  @change="handleCheckChange(sItem, second, 'data')"
+                />
+              </div>
+            </el-col>
+          </el-row>
+        </li>
+      </ul>
     </div>
-  </div>
+  </PageContainer>
 </template>
 
 <style lang="scss" scoped>
-.role {
-  box-sizing: border-box;
-  .head {
-    height: 28px;
-    line-height: 28px;
-    i {
-      display: inline-block;
-      cursor: pointer;
-    }
-    h1 {
-      display: inline-block;
-      height: 60px;
-      padding-right: 30px;
-      line-height: 60px;
-      font-size: 16px;
-      color: map.get($fontColor, dark);
-      font-weight: bold;
-    }
-    span {
-      font-size: 12px;
-      color: map.get($fontColor, light);
+.role-table {
+  position: relative;
+
+  li {
+    min-height: 39px;
+    overflow: hidden;
+    border-bottom: 1px solid #e7e7e7;
+    &:last-child {
+      border-bottom: 0;
     }
   }
-
-  .role-tableBox {
-    display: flex;
-    flex-direction: column;
-    padding: 10px 0;
-    box-sizing: border-box;
-    overflow: auto;
-    .headTitle {
-      padding-bottom: 8px;
-      h4 {
-        display: inline-block;
-        padding-right: 20px;
-        font-size: 14px;
-        color: map.get($fontColor, dark);
-      }
-      p {
-        display: inline-block;
-        font-size: 12px;
-        color: map.get($fontColor, light);
-      }
+  .role-head {
+    height: 40px !important;
+    line-height: 40px;
+    font-size: 14px;
+    color: var(--text-light);
+    background-color: var(--bg-main);
+    .e-col {
+      padding-left: 12px;
     }
-
-    .role-table {
-      position: relative;
-      margin-bottom: 20px;
-      border: 1px solid #e0e0e0;
-      overflow: auto;
-      // .header {
-      // 	height: 40px;
-      // 	line-height: 40px;
-      // 	text-align: center;
-      // 	border-bottom: 1px solid #e7e7e7;
-      // 	background: #f8f8f9;
-      // }
-
-      li {
-        min-height: 39px;
-        // line-height: 40px;
-        overflow: hidden;
-        border-bottom: 1px solid #e7e7e7;
-        &:last-child {
-          border-bottom: 0;
-        }
-      }
-      .role-head {
-        min-height: 29px;
-        height: 30px !important;
-        line-height: 30px;
-        font-size: 12px;
-        color: map.get($fontColor, light);
-        background-color: map.get($bgColor, main);
-        .e-col {
-          padding-left: 12px;
-        }
-      }
-      .module-style {
-        .e-row {
-          border-bottom: 1px solid #e7e7e7;
-          &:last-child {
-            border-bottom: 0;
-          }
-          .nav {
-            display: block;
-            padding-left: 12px;
-            font-size: 14px;
-          }
-
-          .box {
-            .e-col {
-              padding-top: 8px;
-              border-right: 1px solid #e7e7e7;
-              border-bottom: 0;
-              box-sizing: border-box;
-              &:last-child {
-                border: 0;
-              }
-            }
-          }
-        }
-        .heightStyle {
-          line-height: 40px;
-          .e-col {
-            padding-top: 0 !important;
-            line-height: 34px;
-            min-height: 40px;
-
-            .checkbox-radio {
-              vertical-align: middle;
-            }
-          }
-        }
-      }
-      .line {
-        width: 100%;
-        height: 1px;
-        background: #e7e7e7;
-      }
-      .borderRight {
-        border-right: 1px solid #e7e7e7;
-      }
-      .borderLine {
-        border-left: 1px solid #e7e7e7;
+  }
+  .module-style {
+    .e-row {
+      border-bottom: 1px solid #e7e7e7;
+      &:last-child {
         border-bottom: 0;
-        // border-right: 1px solid #e7e7e7;
+      }
+      .nav {
+        display: block;
+        padding-left: 12px;
+        font-size: 14px;
       }
 
-      :deep(.e-row) {
-        .allSelectBox {
-          line-height: 20px;
-        }
-        .el-checkbox {
-          margin: 0 10px;
-          line-height: 20px;
+      .box {
+        .e-col {
+          padding-top: 8px;
+          border-right: 1px solid #e7e7e7;
+          border-bottom: 0;
           box-sizing: border-box;
-        }
-        .checkbox-position {
-          line-height: 1px;
-          vertical-align: top;
-          .el-checkbox__input {
-            padding-top: 0;
-            vertical-align: top;
+          &:last-child {
+            border: 0;
           }
         }
+      }
+    }
+    .heightStyle {
+      line-height: 40px;
+      .e-col {
+        padding-top: 0 !important;
+        line-height: 34px;
+        min-height: 40px;
+
         .checkbox-radio {
-          .el-checkbox__input {
-            padding-top: 3px;
-            vertical-align: top;
-          }
-
-          .e-checkbox {
-            padding: 5px 0;
-            margin: 0;
-            font-size: 12px;
-            color: map.get($fontColor, light);
-          }
+          vertical-align: middle;
         }
       }
     }
+  }
+  .line {
+    width: 100%;
+    height: 1px;
+    background: #e7e7e7;
+  }
+  .borderRight {
+    border-right: 1px solid #e7e7e7;
+  }
+  .borderLine {
+    border-left: 1px solid #e7e7e7;
+    border-bottom: 0;
+    // border-right: 1px solid #e7e7e7;
+  }
 
-    .page-table {
-      li {
-        line-height: 40px;
+  :deep(.e-row) {
+    .allSelectBox {
+      line-height: 20px;
+    }
+    .el-checkbox {
+      margin: 0 8px;
+      box-sizing: border-box;
+    }
+    .checkbox-position {
+      line-height: 1px;
+      vertical-align: top;
+      .el-checkbox__input {
+        padding-top: 0;
+        vertical-align: top;
       }
     }
+    .checkbox-radio {
+      .el-checkbox__input {
+        padding-top: 3px;
+        vertical-align: top;
+      }
+
+      .e-checkbox {
+        padding: 5px 0;
+        margin: 0;
+        font-size: 12px;
+        color: var(--text-light);
+      }
+    }
+  }
+}
+
+.page-table {
+  li {
+    line-height: 40px;
   }
 }
 [v-cloak] {

@@ -1,6 +1,8 @@
 import { observer } from '@formily/reactive-vue'
 import { metadataInstancesApi, taskApi } from '@tap/api'
-import { OverflowTooltip, VEmpty, VIcon, VirtualList } from '@tap/component'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
+import { VEmpty } from '@tap/component/src/base/v-empty'
+import { VirtualList } from '@tap/component/src/base/virtual-list'
 import {
   connect,
   FormGrid,
@@ -11,17 +13,11 @@ import {
   useForm,
 } from '@tap/form'
 import i18n from '@tap/i18n'
-import {
-  camelToSnake,
-  snakeToCamel,
-  toLowerCase,
-  toUpperCase,
-} from '@tap/shared'
-import { cloneDeep, debounce } from 'lodash-es'
+
+import { debounce } from 'lodash-es'
 import { computed, defineComponent, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
-import { $emit, $off, $on, $once } from '../../../../utils/gogocodeTransfer'
 import './style.scss'
 
 const InnerInput = {
@@ -46,7 +42,7 @@ const InnerInput = {
         class="px-1"
         readOnly={this.readOnly}
         value={this.val}
-        onChange={(ev) => $emit(this, 'change', ev)}
+        onChange={(ev) => this.$emit('change', ev)}
       />
     )
   },
@@ -838,7 +834,7 @@ export const FieldRenameProcessor = connect(
           {
             label: i18n.t('public_operation_abb'),
             prop: 'operation',
-            // width: 60,
+            width: 88,
             slot: 'operation',
           },
         ]
@@ -1074,26 +1070,26 @@ export const FieldRenameProcessor = connect(
         }
         const renderOpNode = ({ row }) => {
           const show = row.isShow ? (
-            <span
-              class="text-primary cursor-pointer"
+            <el-button
+              disabled={props.disabled}
+              text
+              type="primary"
               onClick={() => doDeleteRow(row)}
             >
               {i18n.t('packages_form_field_processor_index_pingbi')}
-            </span>
+            </el-button>
           ) : (
-            <span
-              class="text-primary cursor-pointer"
+            <el-button
+              disabled={props.disabled}
+              text
+              type="primary"
               onClick={() => doShowRow(row)}
             >
               {i18n.t('packages_form_field_processor_index_huifu')}
-            </span>
+            </el-button>
           )
-          const disabled = row.isShow ? (
-            <span>{i18n.t('packages_form_field_processor_index_pingbi')}</span>
-          ) : (
-            <span>{i18n.t('packages_form_field_processor_index_huifu')}</span>
-          )
-          return props.disabled ? disabled : show
+
+          return show
         }
 
         const showBatchRemove = computed(() => {
@@ -1329,13 +1325,17 @@ export const FieldRenameProcessor = connect(
                                 onClick={() => updateView(index)}
                               >
                                 <span>
-                                  <span>
+                                  <span class="mr-1">
                                     {i18n.t(
                                       'packages_form_dag_dialog_field_mapping_selected',
                                     )}
                                   </span>
-                                  {item.sourceFieldCount - item.userDeletedNum}{' '}
-                                  /{item.sourceFieldCount}
+                                  <span>
+                                    {item.sourceFieldCount -
+                                      item.userDeletedNum}
+                                    <span class="mx-0.5">/</span>
+                                    {item.sourceFieldCount}
+                                  </span>
                                 </span>
                               </div>
                             </div>

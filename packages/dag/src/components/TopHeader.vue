@@ -1,18 +1,14 @@
 <script>
 import { taskApi } from '@tap/api'
-import { TaskStatus } from '@tap/business'
-import {
-  IconButton,
-  TextEditable,
-  VDivider,
-  VEmpty,
-  VIcon,
-} from '@tap/component'
+import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
+import { TextEditable } from '@tap/component/src/base/text-editable'
+import { VEmpty } from '@tap/component/src/base/v-empty'
 import focusSelect from '@tap/component/src/directives/focusSelect'
+import { IconButton } from '@tap/component/src/icon-button'
 import { ElSelect as Select } from 'element-plus'
 import { mapGetters, mapMutations, mapState } from 'vuex'
-import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 import DataCaptureDebug from './DataCaptureDebug.vue'
+import DataValidationDialog from './DataValidationDialog.vue'
 
 export default {
   name: 'TopHeader',
@@ -20,10 +16,9 @@ export default {
 
   components: {
     DataCaptureDebug,
+    DataValidationDialog,
     TextEditable,
     TaskStatus,
-    VDivider,
-    VIcon,
     ElScrollbar: Select.components.ElScrollbar,
     VEmpty,
     IconButton,
@@ -42,6 +37,46 @@ export default {
     },
   },
 
+  emits: [
+    'page-return',
+    'undo',
+    'redo',
+    'delete',
+    'center-content',
+    'auto-layout',
+    'zoom-out',
+    'zoom-in',
+    'zoom-to',
+    'showSettings',
+    'save',
+    'reset',
+    'detail',
+    'edit',
+    'forceStop',
+    'stop',
+    'start',
+    'change-name',
+    'locate-node',
+    'page-return',
+    'undo',
+    'redo',
+    'delete',
+    'center-content',
+    'auto-layout',
+    'zoom-out',
+    'zoom-in',
+    'zoom-to',
+    'showSettings',
+    'save',
+    'reset',
+    'detail',
+    'edit',
+    'forceStop',
+    'stop',
+    'start',
+    'debugStart',
+  ],
+
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
     return {
@@ -59,6 +94,7 @@ export default {
       nodeSearchInput: '',
       refreshing: false,
       openDebug: false,
+      openValidation: false,
     }
   },
   computed: {
@@ -117,7 +153,7 @@ export default {
       if (!this.name) {
         this.name = this.dataflowName
       } else {
-        $emit(this, 'change-name', this.name)
+        this.$emit('change-name', this.name)
       }
     },
 
@@ -127,27 +163,18 @@ export default {
 
     back() {
       const mapping = this.$route.query.mapping
-      const $PLATFORM = window.getSettingByKey('DFS_TCM_PLATFORM')
-      const backToList = () => {
-        if ($PLATFORM === 'dfs') {
-          top.window.App.$router.push({
-            name: 'Task',
-          })
-        } else {
-          this.$router.push({
-            name: 'dataFlows',
-            query: {
-              mapping,
-            },
-          })
-        }
-      }
-      backToList()
+
+      this.$router.push({
+        name: 'dataFlows',
+        query: {
+          mapping,
+        },
+      })
     },
 
     handleClickNode(node) {
       this.showSearchNodePopover = false
-      $emit(this, 'locate-node', node)
+      this.$emit('locate-node', node)
     },
 
     refreshSchema() {
@@ -161,45 +188,11 @@ export default {
         this.setSchemaRefreshing(false)
       })
     },
+
+    validateDataValidation() {
+      return this.$refs.dataValidationDialog.validate()
+    },
   },
-  emits: [
-    'page-return',
-    'undo',
-    'redo',
-    'delete',
-    'center-content',
-    'auto-layout',
-    'zoom-out',
-    'zoom-in',
-    'zoom-to',
-    'showSettings',
-    'save',
-    'reset',
-    'detail',
-    'edit',
-    'forceStop',
-    'stop',
-    'start',
-    'change-name',
-    'locate-node',
-    'page-return',
-    'undo',
-    'redo',
-    'delete',
-    'center-content',
-    'auto-layout',
-    'zoom-out',
-    'zoom-in',
-    'zoom-to',
-    'showSettings',
-    'save',
-    'reset',
-    'detail',
-    'edit',
-    'forceStop',
-    'stop',
-    'start',
-  ],
 }
 </script>
 
@@ -332,7 +325,7 @@ export default {
                 <kbd>⌘</kbd><span class="mx-1">+</span><kbd>–</kbd>
               </div>
             </div>
-            <VDivider class="my-1" />
+            <el-divider class="my-1" />
             <div
               v-for="val in chooseItems"
               :key="val"
@@ -406,7 +399,7 @@ export default {
         <div class="choose-pane-wrap">
           <ElInput
             v-model="nodeSearchInput"
-            class="input-filled"
+            class="input-filled my-1"
             clearable
             :placeholder="$t('packages_business_custom_node_placeholder')"
           >
@@ -441,6 +434,17 @@ export default {
           <VIcon size="18">bug-outlined</VIcon>
         </button>
       </ElTooltip>
+      <template v-if="isDaas && !isCommunity">
+        <el-divider direction="vertical" />
+        <ElTooltip
+          transition="tooltip-fade-in"
+          :content="$t('public_data_validation')"
+        >
+          <button class="icon-btn" @click="openValidation = true">
+            <VIcon size="18">data-scan</VIcon>
+          </button>
+        </ElTooltip>
+      </template>
     </div>
     <!--复制dag查看不显示-->
     <div class="flex align-center flex-grow-1">
@@ -452,10 +456,7 @@ export default {
       <ElButton
         v-if="!stateIsReadonly && buttonShowMap.Edit"
         :loading="isSaving"
-        :disabled="
-          (dataflow.disabledData && dataflow.disabledData.edit) ||
-          $disabledReadonlyUserBtn()
-        "
+        :disabled="dataflow.disabledData && dataflow.disabledData.edit"
         class="ml-3"
         @click="$emit('save')"
       >
@@ -469,7 +470,6 @@ export default {
           !dataflow.disabledData.reset &&
           buttonShowMap.Reset
         "
-        :disabled="$disabledReadonlyUserBtn()"
         class="ml-3"
         :class="{ 'btn--text': isViewer }"
         type="warning"
@@ -491,10 +491,7 @@ export default {
         <ElButton
           v-if="$route.name !== 'MigrateEditor' && buttonShowMap.Edit"
           class="ml-3 btn--text"
-          :disabled="
-            (dataflow.disabledData && dataflow.disabledData.edit) ||
-            $disabledReadonlyUserBtn()
-          "
+          :disabled="dataflow.disabledData && dataflow.disabledData.edit"
           @click="$emit('edit')"
         >
           <VIcon class="mr-1">edit-outline</VIcon>{{ $t('public_button_edit') }}
@@ -539,12 +536,19 @@ export default {
       :task-id="dataflow.id"
       :visible="openDebug"
       @update:visible="openDebug = $event"
-      @start="$emit('debug-start')"
+      @start="$emit('debugStart')"
+    />
+
+    <DataValidationDialog
+      ref="dataValidationDialog"
+      v-model="openValidation"
+      :task-id="dataflow.id"
+      @start="$emit('debugStart')"
     />
   </header>
 </template>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 $sidebarW: 236px;
 $hoverBg: #eef3ff;
 $radius: 6px;
@@ -593,7 +597,7 @@ $sidebarBg: #fff;
   .nav-icon {
     width: 40px;
     height: 100%;
-    background-color: map.get($color, primary);
+    background-color: var(--color-primary);
     cursor: pointer;
     font-size: 24px;
     &:hover {
@@ -612,7 +616,7 @@ $sidebarBg: #fff;
         border-color: #dcdfe6;
       }
       .title-input-icon {
-        color: map.get($color, primary);
+        color: var(--color-primary);
       }
     }
 
@@ -631,9 +635,9 @@ $sidebarBg: #fff;
       transition: border-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
 
       &:focus {
-        border-color: map.get($color, primary);
+        border-color: var(--color-primary);
         & + .title-input-icon {
-          color: map.get($color, primary);
+          color: var(--color-primary);
         }
       }
     }
@@ -664,7 +668,7 @@ $sidebarBg: #fff;
 
     &.active,
     &:hover {
-      color: map.get($color, primary);
+      color: var(--color-primary);
       background: $hoverBg;
     }
   }
@@ -712,7 +716,7 @@ $sidebarBg: #fff;
       cursor: pointer;
 
       &:hover {
-        color: map.get($color, primary);
+        color: var(--color-primary);
         background: $hoverBg;
       }
     }
@@ -773,7 +777,7 @@ $sidebarBg: #fff;
     min-width: 148px;
     font-size: 12px;
     line-height: 32px;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
 
     &:hover {

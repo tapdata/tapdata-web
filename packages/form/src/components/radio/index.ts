@@ -1,9 +1,11 @@
-import { connect, mapProps, mapReadPretty } from '@formily/vue'
-import { defineComponent, PropType, h } from 'vue'
-import { composeExport, resolveComponent, SlotTypes } from '@formily/element-plus/esm/__builtins__'
 import { PreviewText } from '@formily/element-plus'
-
-import { ElRadio, ElRadioGroup, ElRadioButton } from 'element-plus'
+import {
+  composeExport,
+  resolveComponent,
+  type SlotTypes,
+} from '@formily/element-plus/esm/__builtins__'
+import { connect, mapProps, mapReadPretty } from '@formily/vue'
+import { defineComponent, h, type PropType } from 'vue'
 
 export type ElRadioProps = typeof ElRadio
 export type RadioGroupProps = typeof ElRadioGroup & {
@@ -33,7 +35,8 @@ const RadioGroupOption = defineComponent({
   setup(customProps, { attrs, slots }) {
     return () => {
       const options = customProps.options || []
-      const OptionType = customProps.optionType === 'button' ? ElRadioButton : ElRadio
+      const OptionType =
+        customProps.optionType === 'button' ? ElRadioButton : ElRadio
       const children =
         options.length !== 0
           ? {
@@ -44,7 +47,9 @@ const RadioGroupOption = defineComponent({
                       OptionType,
                       { label: option },
                       {
-                        default: () => [resolveComponent(slots?.option ?? option, { option })],
+                        default: () => [
+                          resolveComponent(slots?.option ?? option, { option }),
+                        ],
                       },
                     )
                   } else {

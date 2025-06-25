@@ -372,7 +372,7 @@ export default {
       padding-left: 10px;
       font-size: 12px;
       font-style: normal;
-      color: map.get($color, primary);
+      color: var(--color-primary);
       font-weight: normal;
       cursor: pointer;
     }
@@ -391,8 +391,8 @@ export default {
         padding: 10px 50px;
         font-size: 12px;
         cursor: pointer;
-        color: map.get($iconFillColor, normal);
-        background: map.get($bgColor, main);
+        color: var(--icon-n2);
+        background: var(--bg-main);
         border-radius: 4px;
         &:hover {
           background-color: #e5e8ee;
@@ -400,8 +400,8 @@ export default {
         }
       }
       .active {
-        border: 1px solid map.get($color, primary);
-        background-color: map.get($color, primary);
+        border: 1px solid var(--color-primary);
+        background-color: var(--color-primary);
         color: #fff;
       }
     }
@@ -425,10 +425,10 @@ export default {
     }
     .el-button + .el-button {
       margin-left: 30px;
-      background-color: map.get($color, primary);
+      background-color: var(--color-primary);
     }
     .el-button + .el-button:hover {
-      background-color: map.get($color, lprimary);
+      background-color: var(--color-lprimary);
     }
   }
 }

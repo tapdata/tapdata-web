@@ -1,24 +1,17 @@
-<script lang="jsx">
-import {
-  CancelToken,
-  discoveryApi,
-  ldpApi,
-  metadataDefinitionsApi,
-  userGroupsApi,
-} from '@tap/api'
-import { DatabaseIcon, makeDragNodeImage, TASK_SETTINGS } from '@tap/business'
-import { IconButton, VirtualTree } from '@tap/component'
+<script lang="tsx">
+import { discoveryApi, ldpApi, metadataDefinitionsApi } from '@tap/api'
+import { makeDragNodeImage, TASK_SETTINGS } from '@tap/business/src/shared'
+import { IconButton } from '@tap/component/src/icon-button'
 
 import i18n from '@tap/i18n'
 import { generateId, uuid } from '@tap/shared'
 import { debounce } from 'lodash-es'
 import { h } from 'vue'
-import { $emit, $off, $on, $once } from '../utils/gogocodeTransfer'
 import commonMix from './mixins/common'
 
 export default {
   name: 'MDM',
-  components: { DatabaseIcon, VirtualTree, IconButton },
+  components: { IconButton },
   mixins: [commonMix],
   props: {
     directory: Object,
@@ -169,7 +162,7 @@ export default {
           class="custom-tree-node grabbable flex justify-content-between"
           onClick={() => {
             data.isObject &&
-              $emit(this, 'preview', data, this.mdmConnection, {
+              this.$emit('preview', data, this.mdmConnection, {
                 onDelete: (tagId) => {
                   // this.setNodeExpand(tagId)
                   this.$refs.tree.remove(data.id)
@@ -243,7 +236,7 @@ export default {
     handleCommand(command) {
       switch (command) {
         case 'config':
-          $emit(this, 'show-settings')
+          this.$emit('show-settings')
           break
       }
     },
@@ -385,12 +378,8 @@ export default {
             }, 1000)
           } else if (code === 'Ldp.RepeatTableName') {
             this.$confirm(
-              '',
               i18n.t('packages_business_mdm_table_duplication_confirm'),
               {
-                onlyTitle: true,
-                type: 'warning',
-                closeOnClickModal: false,
                 zIndex: 999999,
               },
             ).then((resFlag) => {
@@ -601,7 +590,7 @@ export default {
     },
 
     handleDragEnd() {
-      $emit(this, 'node-drag-end')
+      this.$emit('node-drag-end')
     },
 
     showDialog(data, dialogType) {
@@ -711,13 +700,10 @@ export default {
 
     deleteNode(data) {
       this.$confirm(
-        this.$t('packages_business_catalog_delete_confirm_message'),
         `${this.$t('public_message_delete_confirm')}: ${data.name}?`,
+        this.$t('packages_business_catalog_delete_confirm_message'),
         {
           confirmButtonText: this.$t('public_button_delete'),
-          cancelButtonText: this.$t('packages_component_message_cancel'),
-          type: 'warning',
-          closeOnClickModal: false,
         },
       ).then((resFlag) => {
         if (!resFlag) {
@@ -736,8 +722,7 @@ export default {
       const el = document.getElementById(
         `ldp_mdm_table_${data.id}_${data.name}`,
       )
-      $emit(
-        this,
+      this.$emit(
         'find-parent',
         this.findParentByClassName(el, 'el-tree-node__content'),
         data,
@@ -745,7 +730,7 @@ export default {
     },
 
     handleScroll: debounce(function () {
-      $emit(this, 'on-scroll')
+      this.$emit('on-scroll')
     }, 200),
 
     openMaterializedDialog() {
@@ -1139,11 +1124,11 @@ export default {
 .ldp-tree {
   :deep(.el-tree-node__content) {
     .lineage-icon {
-      color: map.get($color, info);
+      color: var(--color-info);
     }
     &:hover {
       .lineage-icon {
-        color: map.get($color, primary);
+        color: var(--color-primary);
       }
     }
   }

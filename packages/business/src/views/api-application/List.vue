@@ -1,16 +1,16 @@
 <script>
 import { appApi, logcollectorApi, taskApi } from '@tap/api'
 
-import { FilterBar } from '@tap/component'
+import {FilterBar} from '@tap/component/src/filter-bar'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
-import { TablePage } from '../../components'
+import TablePage from '../../components/TablePage.vue'
 
 import PageContainer from '../../components/PageContainer.vue'
-import Delete from './Delete'
-import Details from './Details'
-import Editor from './Editor'
+import Delete from './Delete.vue'
+import Details from './Details.vue'
+import Editor from './Editor.vue'
 
 let timeout = null
 export default {
@@ -225,9 +225,7 @@ export default {
 
     forceStop(ids, row) {
       const msgObj = this.getConfirmMessage('force_stop', row)
-      this.$confirm(msgObj.msg, '', {
-        type: 'warning',
-        showClose: false,
+      this.$confirm(this.$t('public_message_title_prompt'), msgObj.msg, {
         dangerouslyUseHTMLString: true,
       }).then((resFlag) => {
         if (!resFlag) {
@@ -244,11 +242,8 @@ export default {
 
     stop(ids) {
       this.$confirm(
-        this.$t('packages_business_stop_confirm_message'),
         this.$t('packages_business_important_reminder'),
-        {
-          type: 'warning',
-        },
+        this.$t('packages_business_stop_confirm_message'),
       ).then((resFlag) => {
         if (!resFlag) {
           return
@@ -343,6 +338,7 @@ export default {
           <ElLink
             v-readonlybtn="'SYNC_job_edition'"
             type="primary"
+            underline="never"
             @click="handleDetails(row)"
           >
             {{ row.value }}

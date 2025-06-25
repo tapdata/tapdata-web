@@ -10,7 +10,7 @@ import {
   taskApi,
 } from '@tap/api'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
-import { FormTab } from '@tap/form'
+import { FormTab } from '@tap/form/src/components/form-tab'
 import i18n from '@tap/i18n'
 import { Cookie, isPlainObj } from '@tap/shared'
 import axios from 'axios'
@@ -135,6 +135,8 @@ export default {
         $agents: [],
 
         $agentMap: {},
+
+        $alarmChannels: [], // 告警渠道
 
         $isDaas: isDaas, //区分云版、企业版
 
@@ -723,6 +725,8 @@ export default {
           const capabilities = field.query('attrs.capabilities').get('value')
           let insertPolicy
           let updatePolicy
+          let deletePolicy
+
           if (capabilities) {
             insertPolicy = capabilities.find(
               ({ id }) => id === 'dml_insert_policy',
@@ -730,9 +734,14 @@ export default {
             updatePolicy = capabilities.find(
               ({ id }) => id === 'dml_update_policy',
             )
+            deletePolicy = capabilities.find(
+              ({ id }) => id === 'dml_delete_policy',
+            )
           }
+
           const insertField = field.query('dmlPolicy.insertPolicy').take()
           const updateField = field.query('dmlPolicy.updatePolicy').take()
+          const deleteField = field.query('dmlPolicy.deletePolicy').take()
           // 查找上游是否包含Unwind节点
           const unwindNode = this.scope.findParentNodeByType(
             field.form.values,
@@ -784,6 +793,15 @@ export default {
 
           insertField && func(insertPolicy, insertField)
           updateField && func(updatePolicy, updateField)
+          deleteField && func(deletePolicy, deleteField)
+
+          if (
+            !insertField?.visible &&
+            !updateField?.visible &&
+            !deleteField?.visible
+          ) {
+            deleteField?.parent.setDisplay('hidden')
+          }
         },
 
         findParentNodeByType: (node, type) => {
@@ -991,7 +1009,7 @@ export default {
           let options = field.dataSource
           const nodeData = this.scope.findNodeById($values.id)
 
-          if (!$values.$inputs[0]) {
+          if (!$values.$inputs[0] || !$values.tableName) {
             return
           }
 
@@ -1037,7 +1055,7 @@ export default {
             }
           }
 
-          return !$values.updateConditionFields?.length
+          return !$values.updateConditionFields?.length && $values.tableName
             ? i18n.t('packages_dag_mixins_formscope_gaiziduanshibi')
             : ''
         },
@@ -1225,6 +1243,7 @@ export default {
 
   async created() {
     this.scope.$settings = this.dataflow
+    this.scope.$alarmChannels = await this.scope.loadAlarmChannels()
     await this.loadAccessNode()
   },
 

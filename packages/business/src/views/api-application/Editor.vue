@@ -1,39 +1,4 @@
-<template>
-  <ElDialog
-    :title="taskId ? $t('public_button_edit') : $t('public_button_create')"
-    :model-value="visible"
-    :append-to-body="true"
-    width="800px"
-    top="10vh"
-    class="connection-dialog ldp-conection-dialog flex flex-column"
-    @close="handleClose"
-  >
-    <ElForm
-      v-loading="loading"
-      ref="form"
-      label-position="left"
-      label-width="150px"
-      :model="editForm"
-      :rules="rulesEdit"
-    >
-      <ElFormItem :label="$t('packages_business_application_list_yingyongmingcheng')" prop="value">
-        <ElInput v-model="editForm.value" text maxlength="50" clearable></ElInput>
-      </ElFormItem>
-      <ElFormItem :label="$t('packages_business_application_editor_yingyongmiaoshu')" prop="desc">
-        <ElInput v-model="editForm.desc" type="textarea"></ElInput>
-      </ElFormItem>
-    </ElForm>
-    <template v-slot:footer>
-      <span class="dialog-footer">
-        <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton type="primary" :loading="saveLoading" @click="handleSave">{{ $t('public_button_save') }}</ElButton>
-      </span>
-    </template>
-  </ElDialog>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 import { appApi } from '@tap/api'
 
@@ -100,7 +65,7 @@ export default {
           this.saveLoading = true
           ;(this.taskId ? appApi.updateById(this.taskId, this.editForm) : appApi.post(this.editForm))
             .then(() => {
-              $emit(this, 'success', ...arguments)
+              this.$emit('success', ...arguments)
               this.$message.success(this.$t('public_message_save_ok'))
               this.init()
               this.handleClose()
@@ -115,3 +80,37 @@ export default {
   emits: ['success'],
 }
 </script>
+
+<template>
+  <ElDialog
+    :title="taskId ? $t('public_button_edit') : $t('public_button_create')"
+    :model-value="visible"
+    :append-to-body="true"
+    width="800px"
+    top="10vh"
+    class="connection-dialog ldp-conection-dialog flex flex-column"
+    @close="handleClose"
+  >
+    <ElForm
+      v-loading="loading"
+      ref="form"
+      label-position="left"
+      label-width="150px"
+      :model="editForm"
+      :rules="rulesEdit"
+    >
+      <ElFormItem :label="$t('packages_business_application_list_yingyongmingcheng')" prop="value">
+        <ElInput v-model="editForm.value" text maxlength="50" clearable></ElInput>
+      </ElFormItem>
+      <ElFormItem :label="$t('packages_business_application_editor_yingyongmiaoshu')" prop="desc">
+        <ElInput v-model="editForm.desc" type="textarea"></ElInput>
+      </ElFormItem>
+    </ElForm>
+    <template v-slot:footer>
+      <span class="dialog-footer">
+        <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" :loading="saveLoading" @click="handleSave">{{ $t('public_button_save') }}</ElButton>
+      </span>
+    </template>
+  </ElDialog>
+</template>

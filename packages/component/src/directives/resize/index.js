@@ -1,4 +1,4 @@
-import { on, off, appendHtml } from '@tap/shared'
+import { appendHtml, off, on } from '@tap/shared'
 
 const EVENT = {
   mouse: {
@@ -14,7 +14,10 @@ const EVENT = {
 }
 
 function initEvent($el, position, options) {
-  let $trigger = appendHtml($el, `<div class="resize-trigger --${position}"></div>`)
+  const $trigger = appendHtml(
+    $el,
+    `<div class="resize-trigger --${position}"></div>`,
+  )
   const isHorizontal = position === 'left' || position === 'right'
   const num = position === 'left' || position === 'top' ? 1 : -1
   let initOffset, oldVal, xOry, attr, cls
@@ -43,7 +46,7 @@ function initEvent($el, position, options) {
       eventsFor = EVENT.mouse
     }
 
-    let page = event.touches ? event.touches[0] : event
+    const page = event.touches ? event.touches[0] : event
 
     initOffset = page[xOry]
     oldVal = $el[`offset${attr}`]
@@ -60,8 +63,8 @@ function initEvent($el, position, options) {
     event.preventDefault()
     $trigger.classList.add('active')
 
-    let page = event.touches ? event.touches[0] : event
-    let offset = initOffset - page[xOry]
+    const page = event.touches ? event.touches[0] : event
+    const offset = initOffset - page[xOry]
     let newVal = oldVal + offset * num // 正向或者负向移动
     newVal = Math.min(max, Math.max(min, newVal))
 
@@ -71,7 +74,7 @@ function initEvent($el, position, options) {
       newVal,
     })
 
-    $el.style[_attr] = newVal + 'px'
+    $el.style[_attr] = `${newVal}px`
   }
 
   const handleStop = () => {
@@ -86,8 +89,9 @@ function initEvent($el, position, options) {
   on($trigger, 'touchstart', handleStart)
 }
 
+// Vue 3 directive format
 export default {
-  inserted: function (el, binding) {
+  mounted(el, binding) {
     // 事件名
     const options = binding.value
     const { left, right, top, bottom } = binding.modifiers

@@ -25,7 +25,7 @@ export default {
         editor: 'MigrateEditor',
         monitor: 'MigrationMonitor',
       },
-      createBtnLoading: false,
+      createLoading: false,
       quickCreateBtnLoading: false,
     }
   },
@@ -102,7 +102,6 @@ export default {
         v-if="buttonShowMap.import && isDaas"
         v-readonlybtn="'SYNC_job_import'"
         class="btn"
-        :disabled="$disabledReadonlyUserBtn()"
         @click="refFn('handleImport')"
       >
         <span> {{ $t('packages_business_button_bulk_import') }}</span>
@@ -117,7 +116,6 @@ export default {
               style="height: 32px"
               type="primary"
               plain
-              :disabled="$disabledReadonlyUserBtn()"
               :loading="quickCreateBtnLoading"
               @click="useFormCreate"
             >
@@ -134,12 +132,13 @@ export default {
             v-readonlybtn="'SYNC_job_creation'"
             class="btn btn-create"
             type="primary"
-            :disabled="$disabledReadonlyUserBtn()"
-            :loading="createBtnLoading"
+            :loading="createLoading"
             @click="refFn('create')"
           >
             {{ $t('public_task_create') }}
           </el-button>
+
+          createLoading: {{ createLoading }}
         </div>
       </template>
     </template>
@@ -150,6 +149,7 @@ export default {
     <List
       v-else
       ref="list"
+      v-model:create-loading="createLoading"
       class="overflow-hidden bg-white rounded-lg"
       :route="route"
       :task-buried="taskBuried"
@@ -161,7 +161,7 @@ export default {
 <style lang="scss" scoped>
 .view-radio-group {
   :deep(.el-radio-button__orig-radio:checked + .el-radio-button__inner) {
-    background-color: map.get($color, primary);
+    background-color: var(--color-primary);
     color: #fff;
   }
 }

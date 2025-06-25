@@ -55,6 +55,9 @@ export default {
       },
     },
   },
+  beforeUnmount() {
+    this.clearTimer()
+  },
   methods: {
     setTimer() {
       this.timer = setInterval(() => {
@@ -95,9 +98,6 @@ export default {
       this.version = data.deployInfo?.version || ''
       this.getAgentStatus()
       this.setTimer()
-      $once(this, 'hook:beforeDestroy', () => {
-        this.clearTimer()
-      })
     },
     handleDownLoad() {
       window.location = `${this.downloadUrl}tapdata.exe`
@@ -488,7 +488,7 @@ export default {
       padding-left: 10px;
       font-size: 12px;
       font-style: normal;
-      color: map.get($color, primary);
+      color: var(--color-primary);
       font-weight: normal;
       cursor: pointer;
     }
@@ -513,8 +513,8 @@ export default {
         padding: 10px 50px;
         font-size: 12px;
         cursor: pointer;
-        color: map.get($iconFillColor, normal);
-        background: map.get($bgColor, main);
+        color: var(--icon-n2);
+        background: var(--bg-main);
         border-radius: 4px;
         &:hover {
           background-color: #e5e8ee;
@@ -522,14 +522,14 @@ export default {
         }
       }
       .active {
-        border: 1px solid map.get($color, primary);
-        background-color: map.get($color, primary);
+        border: 1px solid var(--color-primary);
+        background-color: var(--color-primary);
         color: #fff;
       }
     }
     .line {
       margin: 20px 0 0 15px;
-      border-left: 3px solid map.get($color, primary);
+      border-left: 3px solid var(--color-primary);
       p {
         padding-top: 5px;
       }
@@ -545,8 +545,8 @@ export default {
     padding: 5px 20px;
     font-size: 12px;
     cursor: pointer;
-    color: map.get($iconFillColor, normal);
-    background: map.get($bgColor, main);
+    color: var(--icon-n2);
+    background: var(--bg-main);
     border-radius: 4px;
     &:hover {
       background-color: #e5e8ee;
@@ -554,8 +554,8 @@ export default {
     }
   }
   .active {
-    border: 1px solid map.get($color, primary);
-    background-color: map.get($color, primary);
+    border: 1px solid var(--color-primary);
+    background-color: var(--color-primary);
     color: #fff;
   }
 }

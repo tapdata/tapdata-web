@@ -2,7 +2,6 @@ import { showErrorMessage } from '@tap/business/src/components/error-message'
 import axios from 'axios'
 import { ElMessage as Message } from 'element-plus'
 import Qs from 'qs'
-import * as Vue from 'vue'
 import i18n from '@/i18n'
 
 // Full config:  https://github.com/axios/axios#request-config
@@ -201,32 +200,9 @@ _axios.interceptors.request.use(requestInterceptor, errorCallback)
 // 请求返回拦截器
 _axios.interceptors.response.use(responseInterceptor, errorCallback)
 
-/*const Plugin = {}
-Plugin.install = function (Vue) {
-  Vue.axios = _axios
-  window.axios = _axios
-  Object.defineProperties(window.$vueApp.config.globalProperties, {
-    axios: {
-      get() {
-        return _axios
-      }
-    },
-    $axios: {
-      get() {
-        return _axios
-      }
-    }
-  })
-}
-
-window.$vueApp.use(Plugin)
-
-export default Plugin*/
-
 export default _axios
 
 export const install = (app) => {
-  // window.axios = _axios
   Object.defineProperties(app.config.globalProperties, {
     axios: {
       get() {

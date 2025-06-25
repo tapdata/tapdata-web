@@ -8,18 +8,19 @@ import { IconWidget } from './widgets'
 import { observer } from '@formily/reactive-vue'
 import { TextEditable } from '@tap/component'
 import { useRouter } from 'vue-router'
-import i18n from '@tap/i18n'
+import { useI18n } from '@tap/i18n'
 
 export const StudioHeader = observer(
   defineComponent({
     directives: { focusSelect },
-    setup: (props) => {
+    setup: () => {
       const workbenchRef = useWorkbench()
       const designerRef = useDesigner()
       const customNodeRef = useCustomNode()
       const saving = ref(false)
       const router = useRouter()
-
+      const { t } = useI18n()
+      
       watch(
         router.currentRoute,
         async (route) => {
@@ -40,7 +41,7 @@ export const StudioHeader = observer(
       const save = async () => {
         const customNode = customNodeRef.value
         if (!customNode.name) {
-          ElMessage.warning(i18n.global.t('packages_nodeDesign_custom_node_name_required'))
+          ElMessage.warning(t('packages_nodeDesign_custom_node_name_required'))
           return
         }
         saving.value = true
@@ -54,7 +55,7 @@ export const StudioHeader = observer(
               params: { id: data.id, action: 'nodeSave' },
             })
           }
-          ElMessage.success(i18n.global.t('public_message_save_ok'))
+          ElMessage.success(t('public_message_save_ok'))
         } catch (e) {
           // eslint-disable-next-line no-console
           console.log('CustomNode save error', e)
@@ -82,7 +83,7 @@ export const StudioHeader = observer(
           <div class="panel-header-title">
             <TextEditable
               maxWidth="254"
-              placeholder={i18n.t('packages_nodeDesign_custom_node_name_required')}
+              placeholder={t('packages_nodeDesign_custom_node_name_required')}
               value={customNodeRef.value.name}
               onChange={(val) => {
                 customNodeRef.value.name = val
@@ -90,7 +91,7 @@ export const StudioHeader = observer(
             />
           </div>
           <div class="panel-header-tools flex align-center">
-            <ElTooltip transition="tooltip-fade-in" content="表单设计">
+            <ElTooltip transition="tooltip-fade-in" content={t('public_form_design')}>
               <button
                 class={['icon-btn', { active: workbenchRef.value.type === 'DESIGNABLE' }]}
                 onClick={() => {
@@ -110,7 +111,7 @@ export const StudioHeader = observer(
                 <IconWidget infer="JSON" size={20} />
               </button>
             </ElTooltip>
-            <ElTooltip transition="tooltip-fade-in" content="代码编辑">
+            <ElTooltip transition="tooltip-fade-in" content={t('public_code_edit')}>
               <button
                 class={['icon-btn', { active: workbenchRef.value.type === 'CODE' }]}
                 onClick={() => {
@@ -120,7 +121,7 @@ export const StudioHeader = observer(
                 <IconWidget infer="Code" size={20} />
               </button>
             </ElTooltip>
-            <ElTooltip transition="tooltip-fade-in" content="预览表单">
+            <ElTooltip transition="tooltip-fade-in" content={t('public_preview_form')}>
               <button
                 class={['icon-btn', { active: workbenchRef.value.type === 'PREVIEW' }]}
                 onClick={() => {
@@ -133,7 +134,7 @@ export const StudioHeader = observer(
           </div>
           <div class="panel-header-actions text-end flex-grow-1 mr-3">
             <ElButton loading={saving.value} type="primary" onClick={save}>
-              保存
+              {t('public_button_save')}
             </ElButton>
           </div>
         </div>

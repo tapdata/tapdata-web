@@ -6,6 +6,10 @@ export default {
   name: 'VTable',
   components: { ColumnItem },
   props: {
+    tableClass: {
+      type: String,
+      default: '',
+    },
     columns: {
       type: Array,
       default: () => {
@@ -93,7 +97,7 @@ export default {
       multipleSelection: [],
       options: {
         background: true,
-        layout: 'total, sizes, ->, prev, pager, next, jumper',
+        layout: '->, total, sizes, prev, pager, next, jumper',
         pageSizes: [10, 20, 50, 100],
       },
       nonePage: false,
@@ -109,6 +113,12 @@ export default {
     },
     table() {
       return this.$refs?.table
+    },
+    tableProps() {
+      return {
+        ...this.$attrs,
+        class: this.tableClass,
+      }
     },
   },
   watch: {
@@ -134,7 +144,7 @@ export default {
     fetch(pageNum, debounce = 0, hideLoading, callback) {
       if (pageNum === 1) {
         this.multipleSelection = []
-        $emit(this, 'selection-change', [])
+        this.$emit('selection-change', [])
         this.$refs?.table?.clearSelection()
       }
       this.page.current = pageNum || this.page.current
@@ -186,6 +196,15 @@ export default {
     getPage() {
       return this.page
     },
+    handleSelectionChange(selection) {
+      this.multipleSelection = selection
+      this.$emit('selection-change', selection)
+    },
+    clearSelection() {
+      this.multipleSelection = []
+      this.$emit('selection-change', [])
+      this.$refs?.table?.clearSelection()
+    },
   },
 }
 </script>
@@ -193,11 +212,13 @@ export default {
 <template>
   <div ref="vTableContainer" class="v-table-container">
     <ElTable
-      v-bind="$attrs"
+      v-bind="tableProps"
       ref="table"
       v-loading="loading"
       :data="list"
       class="table-container__table"
+      :class="tableClass"
+      @selection-change="handleSelectionChange"
     >
       <ColumnItem v-for="(item, index) in columns" :key="index" :item="item">
         <template v-for="(key, slot) of $slots" #[slot]="scope">
@@ -209,12 +230,36 @@ export default {
       </template>
     </ElTable>
 
-    <div v-if="showPage" class="pt-4 px-4">
+    <div v-if="showPage" class="pt-4 px-4 flex align-center gap-3">
+      <transition name="el-fade-in-linear">
+        <div
+          v-if="multipleSelection.length"
+          class="flex align-center gap-3"
+          style="--btn-space: 0"
+        >
+          <ElCheckbox :model-value="true" @change="clearSelection" />
+          <span class="fw-sub text-nowrap color-primary"
+            >{{
+              $t('packages_business_selected_rows', {
+                val: multipleSelection.length,
+              })
+            }}
+          </span>
+          <el-divider
+            v-if="$slots.multipleSelectionActions"
+            direction="vertical"
+            class="mx-0"
+          />
+          <slot name="multipleSelectionActions" />
+        </div>
+      </transition>
+
       <ElPagination
         v-bind="Object.assign({}, options, pageOptions)"
         v-model:current-page="page.current"
         v-model:page-size="page.size"
         :total="page.total"
+        class="ml-auto"
         @size-change="fetch(1)"
         @current-change="fetch"
       />

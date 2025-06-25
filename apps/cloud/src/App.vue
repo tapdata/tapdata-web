@@ -23,6 +23,10 @@ const langMap = {
   en,
 }
 
+const linkProps = {
+  underline: 'never',
+}
+
 const locale = computed(() => {
   return langMap[i18n.locale || 'en']
 })
@@ -168,7 +172,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <ElConfigProvider :locale="locale">
+  <ElConfigProvider :locale="locale" :link="linkProps">
     <RouterView />
 
     <ReplicationTour

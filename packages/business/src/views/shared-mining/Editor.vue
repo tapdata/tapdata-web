@@ -5,9 +5,8 @@ import {
   logcollectorApi,
   taskApi,
 } from '@tap/api'
-import { SchemaToForm } from '@tap/form'
+import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
 import dayjs from 'dayjs'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 
 export default {
   name: 'Editor',
@@ -47,6 +46,7 @@ export default {
       dagForm: {
         cdcConcurrent: false,
         cdcConcurrentWriteNum: 4,
+        increaseReadSize: 1,
       },
       schemaData: null,
       schemaScope: null,
@@ -148,6 +148,8 @@ export default {
           const con = await databaseTypesApi.pdkHash(node.attrs.pdkHash)
           const nodeProperties = con.properties?.node?.properties
 
+          this.dagForm.increaseReadSize = node.increaseReadSize ?? 1
+
           if (!nodeProperties || !Object.keys(nodeProperties).length) {
             this.schemaData = null
             return
@@ -212,11 +214,11 @@ export default {
       this.visible = false
     },
 
-    handleSave() {
+    handleSave(...args) {
       this.$refs.form?.validate((valid) => {
         if (valid) {
           logcollectorApi.patchId(this.taskId, this.editForm).then(() => {
-            $emit(this, 'success', ...arguments)
+            this.$emit('success', ...args)
             this.$message.success(
               this.$t('packages_business_shared_cdc_setting_message_edit_save'),
             )
@@ -265,7 +267,8 @@ export default {
 
     saveTaskDag() {
       const { dag } = this
-      const { cdcConcurrent, cdcConcurrentWriteNum } = this.dagForm
+      const { cdcConcurrent, cdcConcurrentWriteNum, increaseReadSize } =
+        this.dagForm
 
       const getFormValues = this.$refs.schemaToForm?.getFormValues() || {}
       dag.nodes.forEach((el) => {
@@ -279,6 +282,7 @@ export default {
           Object.assign(el, {
             nodeConfig: formVal.nodeConfig,
             storageTime: this.editForm.storageTime,
+            increaseReadSize,
           })
         }
       })
@@ -347,7 +351,7 @@ export default {
             popper-class="hide-current__dateTime"
             type="datetime"
             format="YYYY-MM-DD HH:mm:ss"
-            value-format="timestamp"
+            value-format="x"
             class="ml-4"
           />
         </div>
@@ -361,6 +365,13 @@ export default {
           v-model="dagForm.cdcConcurrentWriteNum"
           class="ml-4"
           :min="0"
+        />
+      </ElFormItem>
+      <ElFormItem :label="$t('packages_dag_nodes_database_zengliangmeipici')">
+        <ElInputNumber
+          v-model="dagForm.increaseReadSize"
+          :min="1"
+          controls-position="right"
         />
       </ElFormItem>
       <div

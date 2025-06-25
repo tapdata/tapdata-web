@@ -1,7 +1,6 @@
 import { defineComponent, reactive, watch, ref, computed } from 'vue'
 import { observer } from '@formily/reactive-vue'
 import { useForm, useField } from '@tap/form'
-import { VIcon } from '@tap/component'
 import { taskApi } from '@tap/api'
 import { dayjs } from '@tap/business/src/shared/dayjs'
 import i18n from '@tap/i18n'
