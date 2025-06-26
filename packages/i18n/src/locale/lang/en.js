@@ -156,7 +156,9 @@ export default {
   public_message_loading: 'Loading',
   public_message_401: 'Login expired, Please login again',
   public_message_404: 'The requested resource does not exist',
+  public_message_408: 'Request Timeout, Please try again later',
   public_message_5xx: 'Server Exception',
+  public_message_inner_error: 'Inner Server Error, Please try again later',
   public_message_network_unconnected:
     'An abnormal network connection has been detected',
   public_message_network_connected:

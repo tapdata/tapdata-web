@@ -1,5 +1,23 @@
 <script setup lang="ts">
-import { agentGroupApi, clusterApi, proxyApi, workerApi } from '@tap/api'
+import {
+  addAgent,
+  addClusterMonitor,
+  deleteAgentGroup,
+  deleteClusterState,
+  editClusterAgent,
+  editClusterMonitor,
+  fetchAgentGroups,
+  fetchClusterStates,
+  fetchWorkers,
+  findRawServerInfo,
+  proxyApi,
+  queryAllBindWorker,
+  removeClusterMonitor,
+  saveAgentGroup,
+  unbindByProcessId,
+  updateAgentGroup,
+  updateClusterStatus,
+} from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { dayjs, makeDragNodeImage } from '@tap/business/src/shared'
 import { FilterBar } from '@tap/component/src/filter-bar'
@@ -267,10 +285,10 @@ const submitForm = async () => {
 
       try {
         if (getFrom.id === '') {
-          await clusterApi.addMonitor(data)
+          await addClusterMonitor(data)
         } else {
           data.id = getFrom.id
-          await clusterApi.editMonitor(data)
+          await editClusterMonitor(data)
         }
         dialogForm.value = false
         await getDataApi()
@@ -299,7 +317,7 @@ const delServe = async (data: any, status: string) => {
   if (status === 'running') {
     const confirmed = await Modal.confirm(t('daas_cluster_del_confirm'))
     if (confirmed) {
-      clusterApi.removeMonitor(params).then(() => {
+      removeClusterMonitor(params).then(() => {
         getDataApi()
         ElMessage.success(t('public_message_save_ok'))
       })
@@ -373,7 +391,7 @@ const unbind = (item: any, status: string) => {
   if (status === 'stopped') {
     // Show confirmation dialog
     const { process_id } = item.systemInfo || {}
-    workerApi.unbindByProcessId(process_id).then((data) => {
+    unbindByProcessId(process_id).then(() => {
       init()
       // Show success/error message
     })
@@ -403,23 +421,24 @@ const getVersion = (datas: any[]) => {
 }
 
 const operationFn = async (data: any) => {
-  await clusterApi.updateStatus(data)
+  await updateClusterStatus(data)
   await getDataApi()
 }
 
-const getUsageRate = (processId: string) => {
-  const where = {
-    process_id: {
-      inq: processId,
+const getUsageRate = (processId: string[]) => {
+  return fetchWorkers({
+    where: {
+      process_id: {
+        inq: processId,
+      },
+      worker_type: 'connector',
     },
-    worker_type: 'connector',
-  }
-  return workerApi.get({ filter: JSON.stringify({ where }) })
+  })
 }
 
 const getAllBindWorker = async () => {
   try {
-    const data = await workerApi.queryAllBindWorker()
+    const data = await queryAllBindWorker()
     bindWorkerMap.value = data.reduce((pre, current) => {
       return { ...pre, [current.processId]: current }
     }, {})
@@ -447,14 +466,10 @@ const getDataApi = async (noFilter?: boolean) => {
     })
   }
   loading.value = true
-  const clusterResponse = (await clusterApi.get(
-    params,
-  )) as ApiResponse<ClusterData>
+  const clusterResponse = await fetchClusterStates(params)
   const clusterData = clusterResponse?.items || []
   const processId = clusterData.map((it) => it?.systemInfo?.process_id)
-  const workerResponse = (await getUsageRate(
-    processId,
-  )) as ApiResponse<WorkerData>
+  const workerResponse = await getUsageRate(processId)
   const workerData = workerResponse?.items || []
 
   loading.value = false
@@ -556,18 +571,11 @@ const delConfirm = async (item: any) => {
   )
 
   if (confirmed) {
-    clusterApi.delete(item.id, item.name).then(() => {
+    deleteClusterState(item.id).then(() => {
       ElMessage.success(t('public_message_delete_ok'))
       getDataApi()
     })
   }
-}
-
-const removeNode = (id: string) => {
-  clusterApi.delete(id).then(() => {
-    deleteDialogVisible.value = false
-    // Show success message
-  })
 }
 
 const editAgent = (item: any) => {
@@ -582,27 +590,21 @@ const editAgent = (item: any) => {
 const submitEditAgent = () => {
   if (agentName.value === '') {
     agentName.value = currentNde.value.hostname
-    // Show error message
+    ElMessage.error(t('cluster_server_name') + t('public_form_not_empty'))
     return
   }
   const data = {
     custIP: custIP.value,
     agentName: agentName.value,
   }
-  clusterApi.editAgent(custId.value, data).then(() => {
+  editClusterAgent(custId.value, data).then(() => {
     editAgentDialog.value = false
-    // Show success message
+    ElMessage.success(t('public_message_save_ok'))
   })
 }
 
 const editNameRest = () => {
   agentName.value = currentNde.value.hostname
-}
-
-const goDailyRecord = () => {
-  router.push({
-    name: 'dailyRecord',
-  })
 }
 
 const getStatus = (type: string) => {
@@ -628,7 +630,7 @@ const editTag = (tag: any) => {
 }
 
 const loadTags = async () => {
-  const { items } = await agentGroupApi.get({
+  const { items } = await fetchAgentGroups({
     containWorker: false,
   })
   tagMap.value = {}
@@ -670,11 +672,11 @@ const saveTag = () => {
     if (valid) {
       tagDialog.saving = true
       const fetch = tagDialog.id
-        ? agentGroupApi.update({
+        ? updateAgentGroup({
             name: tagDialog.value,
             groupId: tagDialog.id,
           })
-        : agentGroupApi.save({
+        : saveAgentGroup({
             name: tagDialog.value,
           })
       fetch
@@ -725,7 +727,7 @@ const deleteNode = async (id: string) => {
   )
 
   if (confirmed) {
-    agentGroupApi.delete(id).then(() => {
+    deleteAgentGroup(id).then(() => {
       loadTags()
     })
   }
@@ -857,7 +859,7 @@ const handleTreeDrop = async (ev: DragEvent, data: any) => {
   for (const row of draggingObjects) {
     if (!data.agentIds?.includes(row.process_id)) {
       list.push(
-        agentGroupApi.addAgent({
+        addAgent({
           groupId: data.groupId,
           agentId: row.process_id,
         }),
@@ -880,7 +882,7 @@ function handleLogMiningDetail(item: LogMiningMonitor) {
 
 const fetchLogMiningData = async () => {
   logMiningLoading.value = true
-  const data = await clusterApi.findRawServerInfo()
+  const data = await findRawServerInfo()
 
   logMiningLoading.value = false
 

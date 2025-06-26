@@ -35,6 +35,7 @@
     "@sxzz/eslint-config": "catalog:",
     "@sxzz/prettier-config": "catalog:",
     "@tap/tsconfig": "workspace:*",
+    "@tap/types": "workspace:*",
     "@tsconfig/node20": "catalog:",
     "@types/jsdom": "catalog:",
     "@types/lodash-es": "catalog:",

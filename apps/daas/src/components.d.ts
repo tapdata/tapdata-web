@@ -87,7 +87,6 @@ declare module 'vue' {
     'ILucide:cloudUpload': typeof import('~icons/lucide/cloud-upload')['default']
     'ILucide:hardDriveDownload': typeof import('~icons/lucide/hard-drive-download')['default']
     'ILucide:monitorDown': typeof import('~icons/lucide/monitor-down')['default']
-    'ILucide:moveRight': typeof import('~icons/lucide/move-right')['default']
     'ILucide:settings': typeof import('~icons/lucide/settings')['default']
     'ILucide:squarePlus': typeof import('~icons/lucide/square-plus')['default']
     'ILucide:trash2': typeof import('~icons/lucide/trash2')['default']

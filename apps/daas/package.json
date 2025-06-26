@@ -28,6 +28,7 @@
     "@tap/i18n": "workspace:*",
     "@tap/ldp": "workspace:*",
     "@tap/node-design": "workspace:*",
+    "@tap/request": "workspace:*",
     "@tap/shared": "workspace:*",
     "@tap/styles": "workspace:*",
     "axios": "catalog:",
@@ -47,6 +48,7 @@
   },
   "devDependencies": {
     "@cn-xufei/vite-plugin-svg-icons": "catalog:",
+    "@tap/types": "workspace:*",
     "@vitejs/plugin-vue": "catalog:",
     "@vitejs/plugin-vue-jsx": "catalog:",
     "cross-env": "catalog:",

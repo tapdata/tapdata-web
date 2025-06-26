@@ -223,7 +223,7 @@ export default {
   packages_dag_components_timeselect_renwuquanzhouqi: '任务全周期',
   packages_dag_components_timeselect_incremental_phase: '增量阶段',
   packages_dag_components_timeselect_zuijintian: '最近1天',
-  packages_dag_components_timeselect_zuixinxiaoshi: '最新1小时',
+  packages_dag_components_timeselect_zuixinxiaoshi: '最近1小时',
   packages_dag_components_timeselect_zuijinfenzhong: '最近5分钟',
   packages_dag_components_timeselect_zhouqi: '周期',
   packages_dag_components_timeselect_jieshuriqi: '结束日期',

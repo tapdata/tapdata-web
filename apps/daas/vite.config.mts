@@ -3,7 +3,6 @@ import process from 'node:process'
 import { createSvgIconsPlugin } from '@cn-xufei/vite-plugin-svg-icons'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
-import { visualizer } from 'rollup-plugin-visualizer'
 import { NodePackageImporter } from 'sass'
 import AutoImport from 'unplugin-auto-import/vite'
 import IconsResolver from 'unplugin-icons/resolver'
@@ -33,53 +32,12 @@ const proxy = {
   changeOrigin: false,
 }
 
-export default defineConfig(({ mode }) => {
-  // 加载环境变量
-  const envPrefix = ['VUE_APP_', 'VITE_', 'TAP_']
-  const env = loadEnv(mode, process.cwd(), envPrefix)
-
+export default defineConfig(() => {
   return {
     define: {
-      // 'process.env': process.env,
       TAP_ACCESS_TOKEN: "''",
     },
-
-    envPrefix,
-
-    optimizeDeps: {
-      include: [
-        '@tap/api',
-        '@tap/shared',
-        // '@tap/assets',
-        // 'vue',
-        // 'vue-router',
-        // 'element-plus',
-        // '@vueuse/core',
-        // 'lodash-es',
-        // '@formily/vue',
-        // '@formily/core',
-        // '@formily/reactive',
-        // '@formily/reactive-vue',
-        // '@formily/shared',
-        // '@formily/path',
-        // '@formily/json-schema',
-        // '@formily/element-plus',
-      ],
-      // exclude: [
-      //   '@tap/dag',
-      //   '@tap/ldp',
-      //   '@tap/business',
-      //   '@tap/component', // 排除整个组件库，改用按需加载
-      // ],
-      // force: false,
-      // esbuildOptions: {
-      //   target: 'esnext',
-      //   supported: {
-      //     'top-level-await': true,
-      //   },
-      // },
-    },
-
+    envPrefix: ['VUE_APP_', 'VITE_', 'TAP_'],
     plugins: [
       vue(),
       vueJsx(),
@@ -148,26 +106,6 @@ export default defineConfig(({ mode }) => {
           ],
         },
       }),
-
-      // 添加性能优化插件
-      // process.env.NODE_ENV === 'development' && {
-      //   name: 'optimize-persist',
-      //   apply: 'serve',
-      //   enforce: 'pre',
-      //   configResolved(config) {
-      //     // 持久化依赖预构建结果
-      //     config.optimizeDeps.force = false
-      //   },
-      // },
-
-      // Add visualizer plugin conditionally
-      process.env.NODE_ENV === 'analyze' &&
-        visualizer({
-          open: true,
-          gzipSize: true,
-          brotliSize: true,
-          filename: 'dist/stats.html',
-        }),
     ],
 
     resolve: {
@@ -175,12 +113,10 @@ export default defineConfig(({ mode }) => {
         '@': path.resolve(__dirname, './src'),
       },
 
-      // TODO 建议显式指定扩展名，vite 默认就不支持忽略.vue
       extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
     },
 
     server: {
-      // port: 8080,
       host: true,
       proxy: {
         '/api/': proxy,
@@ -203,21 +139,6 @@ export default defineConfig(({ mode }) => {
           silenceDeprecations: ['import', 'global-builtin'],
         },
         scss: {
-          // additionalData: '@use "@tap/assets/styles/var.scss" as *;',
-          // additionalData: (content, filePath) => {
-          //   const themeVar =
-          //     env.VUE_APP_THEME_VAR || '@tap/assets/styles/var.scss'
-
-          //   if (filePath.includes('packages/styles')) {
-          //     return content
-          //   }
-
-          //   if (filePath.includes('node_modules')) {
-          //     return `@use "${themeVar}" as *;\n${content}`
-          //   }
-
-          //   return `@use "sass:map";\n@use "${themeVar}" as *;\n${content}`
-          // },
           // 禁用依赖包中的@import弃用警告
           quietDeps: true,
           silenceDeprecations: ['import', 'global-builtin'],

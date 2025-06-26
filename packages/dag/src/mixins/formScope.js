@@ -1,10 +1,10 @@
 import { action } from '@formily/reactive'
 import {
   alarmApi,
-  clusterApi,
   connectionsApi,
   databaseTypesApi,
   externalStorageApi,
+  findAccessNodeInfo,
   metadataInstancesApi,
   proxyApi,
   taskApi,
@@ -1249,7 +1249,7 @@ export default {
 
   methods: {
     async loadAccessNode() {
-      const data = await clusterApi.findAccessNodeInfo()
+      const data = await findAccessNodeInfo()
       const mapNode = (item) => ({
         value: item.processId,
         label: `${item.agentName || item.hostName}（${

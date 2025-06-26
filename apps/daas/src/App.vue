@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { workerApi } from '@tap/api'
+import { getAvailableAgent } from '@tap/api'
 import { useI18n } from '@tap/i18n'
 import en from 'element-plus/dist/locale/en.mjs'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
@@ -23,7 +23,7 @@ const linkProps = {
 }
 
 provide('checkAgent', async (cb) => {
-  const data = await workerApi.getAvailableAgent()
+  const data = await getAvailableAgent()
   if (!data?.result?.length) {
     ElMessage.error(t('agent_check_error'))
   } else {

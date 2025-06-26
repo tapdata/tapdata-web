@@ -1,5 +1,10 @@
 <script>
-import { notificationApi } from '@tap/api'
+import {
+  listNotifications,
+  pageReadNotification,
+  patchNotification,
+  readAllNotifications,
+} from '@tap/api'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import PageContainer from '../../components/PageContainer.vue'
 import { ALARM_LEVEL_MAP } from '../../shared/const'
@@ -67,8 +72,7 @@ export default {
         where.read = false
       }
       this.loading = true
-      notificationApi
-        .list(where)
+      listNotifications(where)
         .then((data) => {
           const list = data?.items || []
           this.listData = list.map((item) => {
@@ -94,7 +98,7 @@ export default {
     handleRead(item) {
       const read = this.read
       if (!item.read) {
-        notificationApi.patch({ read: true, id: item.id }).then(() => {
+        patchNotification({ read: true, id: item.id }).then(() => {
           this.read = read
           const msg = {
             type: 'notification',
@@ -121,7 +125,7 @@ export default {
         id,
       }
       const read = this.read
-      notificationApi.pageRead(data).then(() => {
+      pageReadNotification(data).then(() => {
         // this.getUnreadNum() //未读消息数量
         this.getData()
         this.read = read
@@ -143,7 +147,7 @@ export default {
       // }
       where = JSON.stringify(where)
       const read = this.read
-      notificationApi.readAll(where).then(() => {
+      readAllNotifications(where).then(() => {
         // this.getUnreadNum() //未读消息数量
         this.getData()
         this.read = read

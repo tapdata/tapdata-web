@@ -256,7 +256,7 @@ export default {
       this.$refs.form.validate(async (valid) => {
         if (valid) {
           const main = async () => {
-            const formValues = this.$refs.schemaToForm?.getFormValues?.()
+            const formValues = this.$refs.schemaToForm?.getFormValues?.() || {}
 
             this.loading = true
             const { id, name, type, uri, defaultStorage } = this.form

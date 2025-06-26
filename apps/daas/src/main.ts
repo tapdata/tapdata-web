@@ -1,5 +1,5 @@
-import { settingsApi, timeStampApi, usersApi } from '@tap/api'
-import { WSClient } from '@tap/business/src/shared/ws-client.ts'
+import { fetchSettings, fetchTimestamp, getUserInfoByToken } from '@tap/api'
+import { WSClient } from '@tap/business/src/shared/ws-client'
 import VIcon from '@tap/component/src/base/VIcon.vue'
 import { installElement } from '@tap/component/src/InstallElement'
 import {
@@ -14,18 +14,19 @@ import { createApp } from 'vue'
 import App from '@/App.vue'
 import { installOEM } from '@/oem'
 import { installAllPlugins } from '@/plugins'
+import { initRequestClient } from '@/plugins/axios'
 import { configUser, getUrlSearch } from '@/utils/util'
 import store from '@/vuex' // 引入全局数据控制
 
 import { installDirectives } from './directives'
-
 import i18n from './i18n'
 import router from './router'
-import '@/plugins/axios.ts'
 
 import 'virtual:svg-icons-register'
 import '@tap/styles'
 import '@/styles/app.scss'
+
+initRequestClient()
 
 window._TAPDATA_OPTIONS_ = {
   version: import.meta.env.VUE_APP_VERSION,
@@ -108,8 +109,7 @@ const init = () => {
 
 const loading = ElLoading.service({ fullscreen: true })
 
-settingsApi
-  .get()
+fetchSettings()
   .then(async (data) => {
     const initData = data || []
     setSettings(initData)
@@ -119,7 +119,7 @@ settingsApi
     }
     if (token) {
       //无权限，说明是首次进入页面，重新请求后台获取
-      const user = await usersApi.getInfo().catch(async () => {
+      const user = await getUserInfoByToken().catch(() => {
         init()
         return null
       })
@@ -136,13 +136,13 @@ settingsApi
 
     init()
     // 设置服务器时间
-    timeStampApi.get().then((t) => {
+    fetchTimestamp().then((t) => {
       Time.setTime(t)
     })
   })
   .catch((error) => {
     // eslint-disable-next-line
-    console.log(i18n.t('daas_src_main_qingqiuquanjupei') + error)
+    console.log(i18n.global.t('daas_src_main_qingqiuquanjupei') + error)
   })
   .finally(() => {
     loading.close()

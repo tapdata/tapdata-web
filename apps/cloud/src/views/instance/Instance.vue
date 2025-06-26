@@ -1055,7 +1055,7 @@ export default {
       const { subscribeDto = {} } = orderInfo
       const { subscribeType, totalAmount, status } = subscribeDto
       return (
-        !['active'].includes(status) ||
+        !['active', 'past_due'].includes(status) ||
         totalAmount === 0 ||
         subscribeType === 'recurring' ||
         row?.publicAgent
@@ -2201,7 +2201,7 @@ export default {
     font-weight: 400;
     font-size: 14px;
     line-height: 17px;
-    color: var(--text-light);;
+    color: var(--text-light);
   }
 
   .imgBox {

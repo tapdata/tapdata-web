@@ -1,4 +1,4 @@
-import { clusterApi } from '@tap/api'
+import { fetchClusterStates } from '@tap/api'
 
 export default {
   data() {
@@ -30,9 +30,9 @@ export default {
 
   methods: {
     async getClusterStatus() {
-      const { items = [] } = await clusterApi.get()
+      const { items = [] } = await fetchClusterStates()
       const map = items.reduce((res, item) => {
-        res[item.systemInfo['process_id']] = {
+        res[item.systemInfo.process_id] = {
           status: this.agentStatusLabel[item.status] || '-',
           name: item.systemInfo.hostname,
           itemId: item.id,
@@ -45,13 +45,12 @@ export default {
 
     async getAgentStatus() {
       const { items = [] } = await this.$axios.get(
-        'api/tcm/agent?filter=' +
-          encodeURIComponent(
-            JSON.stringify({
-              size: 10000,
-              page: 1,
-            }),
-          ),
+        `api/tcm/agent?filter=${encodeURIComponent(
+          JSON.stringify({
+            size: 10000,
+            page: 1,
+          }),
+        )}`,
       )
 
       const map = items.reduce((res, item) => {

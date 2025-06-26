@@ -7,6 +7,7 @@ import UpgradeFee from '@tap/business/src/components/UpgradeFee.vue'
 import { EventEmitter } from '@tap/business/src/shared'
 import { IconButton } from '@tap/component/src/icon-button'
 import { jsPlumb } from '@tap/dag/src/instance'
+import Cookie from '@tap/shared/src/cookie'
 import Catalogue from './components/Catalogue'
 import ConnectionPreview from './ConnectionPreview'
 import FDMItem from './FDM'
@@ -223,8 +224,17 @@ export default {
         .then((data) => {
           const items = data?.items || []
           const treeData = this.formatCatalog(items)
+          console.log('treeData', treeData)
+          const username = Cookie.get('username')
+          const email = Cookie.get('email')
           treeData?.forEach((item) => {
-            this.directoryMap[item.item_type[0]] = item
+            if (item.createUser === username || item.createUser === email) {
+              this.directoryMap[item.item_type[0]] = item
+            }
+
+            // if (item.item_type[0] === 'fdm') {
+            //   console.log('item', item)
+            // }
           })
         })
         .finally(() => {

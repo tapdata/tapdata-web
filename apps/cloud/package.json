@@ -59,7 +59,6 @@
     "cross-env": "catalog:",
     "eslint-config-prettier": "catalog:",
     "eslint-plugin-prettier": "catalog:",
-    "eslint-plugin-vue": "catalog:",
     "express-ws": "^5.0.2",
     "mockjs": "catalog:",
     "nodemon": "^2.0.12",

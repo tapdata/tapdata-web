@@ -1,5 +1,11 @@
 <script>
-import { licensesApi, settingsApi, usersApi } from '@tap/api'
+import {
+  fetchSettings,
+  licensesApi,
+  saveSettings,
+  testEmail,
+  usersApi,
+} from '@tap/api'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
 
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
@@ -136,10 +142,10 @@ export default {
       licensesApi.get({}).then((data) => {
         auth_data = data?.items || []
       })
-      settingsApi.get().then((data) => {
-        let items = [],
-          itemsCategories = [],
-          cat = []
+      fetchSettings().then((data) => {
+        let items = []
+        const itemsCategories = []
+        const cat = []
         data = data || []
         items = data.map((item) => {
           if (item.documentation) {
@@ -231,12 +237,9 @@ export default {
           settingData.push(childItem)
         })
       })
-      settingsApi.save(settingData).then(() => {
+      saveSettings(settingData).then(() => {
         this.$message.success(this.$t('public_message_save_ok'))
       })
-      // .catch(e => {
-      //   this.$message.error(e.response.msg)
-      // })
     },
     // 邮件模板
     checkTemplate() {
@@ -258,7 +261,7 @@ export default {
         title: `Tapdata Notification:`,
         text: 'This is a test email',
       }
-      settingsApi.testEmail(params).then((data) => {
+      testEmail(params).then((data) => {
         localStorage.setItem('Tapdata_settings_email_countdown', now)
 
         if (data?.result) {
