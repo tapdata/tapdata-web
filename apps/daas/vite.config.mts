@@ -50,6 +50,7 @@ export default defineConfig(() => {
           ElementPlusResolver(/* { importStyle: 'sass' } */),
         ],
         dts: 'src/auto-imports.d.ts',
+        include: [/\.vue$/, /\.vue\?vue/, /\.[tj]sx$/],
       }),
 
       Components({
