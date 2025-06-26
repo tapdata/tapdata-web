@@ -132,8 +132,14 @@ export default defineComponent({
       type: Object as PropType<Sort>,
     },
     draggable: Boolean,
+    treeProps: Object,
   },
-  emits: ['selectionChange', 'sortChange', 'classifySubmit'],
+  emits: [
+    'selectionChange',
+    'sortChange',
+    'classifySubmit',
+    'update:drag-state',
+  ],
   setup(props, { emit }) {
     const isUnmounted = ref(false)
     const route = useRoute()
@@ -270,6 +276,8 @@ export default defineComponent({
         dragState.value.draggingObjects = [row]
       }
 
+      emit('update:drag-state', dragState.value)
+
       const target = ev.currentTarget as HTMLElement
       draggingNodeImage.value = makeDragNodeImage(
         target.querySelector('.tree-item-icon'),
@@ -285,6 +293,8 @@ export default defineComponent({
       dragState.value.dropNode = null
       draggingNodeImage.value?.remove()
       draggingNodeImage.value = null
+
+      emit('update:drag-state', dragState.value)
     }
 
     const onSelectRow = (selection: any[], current: any) => {
@@ -404,10 +414,15 @@ export default defineComponent({
           :title="classify.title"
           :kai-title="classify.title"
           :drag-state="dragState"
+          :tree-props="treeProps"
           @node-checked="nodeChecked"
           @update:visible="classificationVisible = $event"
           @drop-in-tag="fetch(1)"
-        />
+        >
+          <template #node>
+            <slot name="tagNode" />
+          </template>
+        </Classification>
         <div class="table-page-body gap-4">
           <div class="table-page-nav">
             <slot name="nav" :open-classify="handleToggleClassify" />
@@ -453,7 +468,7 @@ export default defineComponent({
             @select="onSelectRow"
           >
             <el-table-column
-              v-if="classificationVisible"
+              v-if="classificationVisible || draggable"
               width="28"
               align="center"
               class-name="cell-no-padding"

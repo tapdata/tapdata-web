@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Drawer from '@tap/component/src/Drawer.vue'
 import { useI18n } from '@tap/i18n'
-import { provide, ref } from 'vue'
+import { nextTick, provide, ref } from 'vue'
 import DataServerList from '../data-server/List.vue'
 
 interface Details {
@@ -49,8 +49,10 @@ const listColumns = [
 const loadData = (data: Details, opt: ListParams = {}) => {
   details.value = data
   listParams.value = opt
-  table.value?.fetch()
   visible.value = true
+  nextTick(() => {
+    table.value?.fetch()
+  })
 }
 
 const handleVisible = () => {
@@ -91,6 +93,7 @@ defineExpose({
       :params="listParams"
       class="flex-fill"
       mode="blank"
+      in-app-list
       @drawer-visible="handleDataServerListVisible"
     >
       <template #title>

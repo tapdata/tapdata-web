@@ -24,6 +24,7 @@ export default {
       type: String,
     },
     dragState: Object,
+    treeProps: Object,
   },
   data() {
     return {
@@ -500,7 +501,7 @@ export default {
 <template>
   <div class="classification py-0 px-2 bg-light rounded-xl" v-show="visible">
     <div class="classification-header">
-      <div class="h-32 flex align-center mt-2 gap-1" style="--btn-space: 0">
+      <div class="h-8 flex align-center mt-2 gap-1" style="--btn-space: 0">
         <el-button text @click="toggle">
           <template #icon>
             <VIcon class="rotate-180">expand-list</VIcon>
@@ -538,6 +539,7 @@ export default {
         ref="tree"
         node-key="id"
         highlight-current
+        v-bind="treeProps"
         :props="props"
         :expand-on-click-node="false"
         :data="treeData"
@@ -550,32 +552,34 @@ export default {
         @check="checkHandler"
       >
         <template v-slot="{ node, data }">
-          <span
-            class="custom-tree-node"
-            @dragenter.stop="handleTreeDragEnter($event, data, node)"
-            @dragover.stop="handleTreeDragOver($event, data, node)"
-            @dragleave.stop="handleTreeDragLeave($event, data, node)"
-            @drop.stop="handleTreeDrop($event, data, node)"
-          >
-            <VIcon size="16" class="color-primary mr-1">folder-fill</VIcon>
-            <span class="table-label">{{ data.value }}</span>
-            <ElDropdown
-              class="btn-menu flex align-center"
-              @command="handleRowCommand($event, node)"
-              v-readonlybtn="authority"
+          <slot name="node" :node="node" :data="data">
+            <span
+              class="custom-tree-node"
+              @dragenter.stop="handleTreeDragEnter($event, data, node)"
+              @dragover.stop="handleTreeDragOver($event, data, node)"
+              @dragleave.stop="handleTreeDragLeave($event, data, node)"
+              @drop.stop="handleTreeDrop($event, data, node)"
             >
-              <IconButton @click.stop sm>more</IconButton>
-              <template #dropdown>
-                <ElDropdownMenu>
-                  <ElDropdownItem command="add">
-                    {{ $t('packages_component_classification_addChildernNode') }}
-                  </ElDropdownItem>
-                  <ElDropdownItem command="edit">{{ $t('public_button_edit') }}</ElDropdownItem>
-                  <ElDropdownItem command="delete">{{ $t('public_button_delete') }}</ElDropdownItem>
-                </ElDropdownMenu>
-              </template>
-            </ElDropdown>
-          </span>
+              <VIcon size="16" class="color-primary mr-1">folder-fill</VIcon>
+              <span class="table-label">{{ data.value }}</span>
+              <ElDropdown
+                class="btn-menu flex align-center"
+                @command="handleRowCommand($event, node)"
+                v-readonlybtn="authority"
+              >
+                <IconButton @click.stop sm>more</IconButton>
+                <template #dropdown>
+                  <ElDropdownMenu>
+                    <ElDropdownItem command="add">
+                      {{ $t('packages_component_classification_addChildernNode') }}
+                    </ElDropdownItem>
+                    <ElDropdownItem command="edit">{{ $t('public_button_edit') }}</ElDropdownItem>
+                    <ElDropdownItem command="delete">{{ $t('public_button_delete') }}</ElDropdownItem>
+                  </ElDropdownMenu>
+                </template>
+              </ElDropdown>
+            </span>
+          </slot>
         </template>
       </ElTree>
       <div class="text-center">
@@ -692,10 +696,6 @@ export default {
         }
       }
     }
-  }
-
-  .h-32 {
-    height: 32px;
   }
 
   /*头部样式*/

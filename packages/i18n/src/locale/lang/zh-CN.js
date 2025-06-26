@@ -420,4 +420,5 @@ export default {
   public_all_selected: '全部选中',
   public_cancel_all_selected: '取消全选',
   public_data_preview: '数据预览',
+  public_application: '应用',
 }

@@ -13,6 +13,7 @@
     "@tap/request": "workspace:*",
     "@tap/shared": "workspace:*",
     "axios": "catalog:",
-    "qs": "^6.10.3"
+    "qs": "^6.10.3",
+    "vue-request": "catalog:"
   }
 }
