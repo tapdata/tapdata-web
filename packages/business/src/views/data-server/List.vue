@@ -10,7 +10,7 @@ import {
   useRequest,
 } from '@tap/api'
 import FilterBar from '@tap/component/src/filter-bar/Main.vue'
-import { ImportOutlined } from '@tap/component/src/icon'
+import { EditOutlined, ImportOutlined } from '@tap/component/src/icon'
 import { useI18n } from '@tap/i18n'
 import { ElInput, ElMessage, ElMessageBox } from 'element-plus'
 import { escapeRegExp } from 'lodash-es'
@@ -29,6 +29,7 @@ import { useRoute } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
 import TablePage from '../../components/TablePage.vue'
 import Upload from '../../components/UploadDialog.vue'
+import Delete from '../api-application/Delete.vue'
 import Editor from '../api-application/Editor.vue'
 import Drawer from './Drawer.vue'
 
@@ -73,6 +74,7 @@ const searchInput = ref<InstanceType<typeof ElInput>>()
 const showAppList = ref(true)
 const dragState = shallowRef<any>({})
 const appEditor = ref<InstanceType<typeof Editor>>()
+const appDelete = ref<InstanceType<typeof Delete>>()
 const currentApp = ref<any>()
 
 // Reactive data
@@ -491,6 +493,8 @@ const handleDrop = async (event: DragEvent, app: any) => {
 const handleAppCommand = (command: string, app: any) => {
   if (command === 'edit') {
     appEditor.value?.openEdit(app)
+  } else if (command === 'delete') {
+    appDelete.value?.init(app)
   }
 }
 
@@ -530,6 +534,7 @@ defineExpose({
     </template>
 
     <Editor ref="appEditor" @success="refreshAppList" />
+    <Delete ref="appDelete" width="380px" @success="fetch(1)" />
 
     <div class="flex w-100 h-100 gap-4">
       <div
@@ -575,7 +580,7 @@ defineExpose({
         <el-scrollbar class="flex-1 min-h-0" wrap-class="p-2">
           <div class="flex flex-column gap-1">
             <div
-              class="list-item-hover rounded-lg p-2 flex align-center gap-2 cursor-pointer font-color-light"
+              class="list-item-hover rounded-lg p-2 flex align-center gap-2 cursor-pointer font-color-light position-relative"
               :class="{
                 'bg-white shadow-sm font-color-dark': !searchParams.appId,
               }"
@@ -591,7 +596,7 @@ defineExpose({
             <div
               v-for="app in filterAppList"
               :key="app.id"
-              class="list-item-hover rounded-lg p-2 flex align-center gap-2 cursor-pointer font-color-light"
+              class="list-item-hover rounded-lg p-2 flex align-center gap-2 cursor-pointer font-color-light position-relative"
               :class="{
                 'bg-white shadow-sm font-color-dark':
                   app.id === searchParams.appId,
@@ -602,24 +607,19 @@ defineExpose({
               @dragleave.stop="handleDragLeave($event)"
               @drop.stop="handleDrop($event, app)"
             >
-              <!-- <el-button text class="el-button--xs p-0.5">
-              <template #icon>
-                <i-mingcute:down-line />
-              </template>
-            </el-button> -->
               <div class="flex flex-column gap-1 flex-1 min-w-0">
                 <div class="flex align-center gap-1">
                   <el-icon size="16"
                     ><i-mingcute:wechat-miniprogram-line
                   /></el-icon>
-                  <span class="ellipsis" :title="app.value">{{
+                  <span class="ellipsis lh-6" :title="app.value">{{
                     app.value
                   }}</span>
                   <el-tag size="small" type="info" disable-transitions
                     >{{ app.publishedApiCount }}/{{ app.apiCount }}</el-tag
                   >
                   <ElDropdown
-                    class="btn-menu flex align-center ml-auto"
+                    class="btn-menu align-center ml-auto"
                     @command="handleAppCommand($event, app)"
                   >
                     <el-button text size="small" @click.stop>
@@ -629,12 +629,23 @@ defineExpose({
                     </el-button>
                     <template #dropdown>
                       <ElDropdownMenu>
-                        <ElDropdownItem command="edit">{{
-                          $t('public_button_edit')
-                        }}</ElDropdownItem>
-                        <ElDropdownItem command="delete">{{
-                          $t('public_button_delete')
-                        }}</ElDropdownItem>
+                        <ElDropdownItem command="edit">
+                          <el-icon class="mr-2">
+                            <EditOutlined />
+                          </el-icon>
+                          {{ $t('public_button_edit') }}</ElDropdownItem
+                        >
+                        <ElDropdownItem
+                          id="test"
+                          command="delete"
+                          class="is-danger"
+                        >
+                          <el-icon class="mr-2">
+                            <!-- <i-mingcute:delete-2-line /> -->
+                            <i-lucide:trash-2 />
+                          </el-icon>
+                          {{ $t('public_button_delete') }}</ElDropdownItem
+                        >
                       </ElDropdownMenu>
                     </template>
                   </ElDropdown>
@@ -800,25 +811,22 @@ defineExpose({
 }
 .list-item-hover {
   .btn-menu {
-    width: 0;
-    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    right: 8px;
+    top: 8px;
   }
   .btn-menu:has(button[aria-expanded='true']) {
-    width: max-content;
-    flex-shrink: 0;
-    overflow: unset;
-  }
-  .btn-menu button:not([aria-expanded='true']) {
-    visibility: hidden;
+    opacity: 1;
+    pointer-events: auto;
+    position: static;
   }
   &:hover {
     .btn-menu {
-      width: max-content;
-      flex-shrink: 0;
-      overflow: unset;
-    }
-    .btn-menu button {
-      visibility: visible;
+      opacity: 1;
+      pointer-events: auto;
+      position: static;
     }
   }
 }
