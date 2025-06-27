@@ -104,10 +104,10 @@ const pageSort = [
       { name: 'v2_shared_cache' },
     ],
   },
-  {
-    name: 'v2_data_discovery',
-    children: [{ name: 'v2_data_object' }, { name: 'v2_data_catalogue' }],
-  },
+  // {
+  //   name: 'v2_data_discovery',
+  //   children: [{ name: 'v2_data_object' }, { name: 'v2_data_catalogue' }],
+  // },
   {
     name: 'v2_data-server',
     children: [
@@ -387,8 +387,10 @@ export default {
     <template #left-actions>
       <el-divider direction="vertical" />
       <span class="flex align-center gap-2 bg-color-main rounded-lg px-2 py-1"
-        >{{ $t('role_currentRole') }}
-        <el-tag type="primary">{{ roleName }}</el-tag>
+        ><span class="font-color-light">{{ $t('role_currentRole') }}</span>
+        <el-tag type="primary" class="border-0 bg-white shadow-sm">{{
+          roleName
+        }}</el-tag>
       </span>
     </template>
     <template #actions>
