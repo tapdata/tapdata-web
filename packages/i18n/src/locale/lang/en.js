@@ -428,4 +428,5 @@ export default {
   public_all_selected: 'Select All',
   public_cancel_all_selected: 'Unselect All',
   public_data_preview: 'Data Preview',
+  public_application: 'Application',
 }

@@ -629,7 +629,7 @@ export default {
                     <el-skeleton-item
                       v-for="i in 2"
                       :key="i"
-                      class="rounded-4 h-32"
+                      class="rounded-4 h-8"
                       variant="button"
                     />
                   </div>
@@ -671,7 +671,7 @@ export default {
                     <el-skeleton-item
                       v-for="i in 4"
                       :key="i"
-                      class="rounded-4 h-32"
+                      class="rounded-4 h-8"
                       variant="button"
                     />
                   </div>
@@ -711,7 +711,7 @@ export default {
                   <el-skeleton-item
                     v-for="i in 4"
                     :key="i"
-                    class="rounded-4 h-32"
+                    class="rounded-4 h-8"
                     variant="button"
                   />
                 </div>
@@ -805,7 +805,7 @@ export default {
                   <el-skeleton-item
                     v-for="i in 1"
                     :key="i"
-                    class="rounded-4 h-32"
+                    class="rounded-4 h-8"
                     variant="button"
                   />
                 </div>
@@ -839,7 +839,7 @@ export default {
                   <el-skeleton-item
                     v-for="i in 4"
                     :key="i"
-                    class="rounded-4 h-32"
+                    class="rounded-4 h-8"
                     variant="button"
                   />
                 </div>

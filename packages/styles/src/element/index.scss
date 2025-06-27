@@ -31,7 +31,7 @@
     display: none;
   }
 
-  .hover-row .table-cell-drag-btn {
+  .hover-row .table-cell-drag-btn, .el-table__row:hover .table-cell-drag-btn {
     display: inline-flex;
   }
 
@@ -474,6 +474,14 @@
   &.is-text i + span:empty,
   &.el-button--text i + span:empty {
     margin-left: 0;
+  }
+
+  &.is-text.el-button--xs:has(> i:only-child),
+  &.is-text.el-button--xs:has(> i + span:empty),
+  &.el-button--text.el-button--xs:has(> i:only-child),
+  &.el-button--text.el-button--xs:has(> i + span:empty) {
+    --el-border-radius-base: var(--el-border-radius-small);
+    font-size: 12px;
   }
 
   &.is-text.el-button--small:has(> i:only-child),

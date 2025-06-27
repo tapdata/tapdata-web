@@ -876,7 +876,10 @@ export default {
             <template v-if="item.LDP_TYPE === 'app'">
               <div class="item__header p-3">
                 <div class="flex align-center gap-2 overflow-hidden">
-                  <VIcon size="20">mini-app</VIcon>
+                  <!-- <VIcon size="20">mini-app</VIcon> -->
+                  <el-icon size="20" class="color-primary"
+                    ><i-mingcute:wechat-miniprogram-line
+                  /></el-icon>
                   <span
                     class="font-color-normal fw-sub fs-6 ellipsis lh-base"
                     :title="item.value"
@@ -1024,7 +1027,10 @@ export default {
               <template v-if="item.LDP_TYPE === 'app'">
                 <div class="item__header p-3">
                   <div class="flex align-center gap-2 overflow-hidden">
-                    <VIcon size="20">mini-app</VIcon>
+                    <!-- <VIcon size="20">mini-app</VIcon> -->
+                    <el-icon class="color-primary" size="20"
+                      ><i-mingcute:wechat-miniprogram-fill
+                    /></el-icon>
                     <span
                       class="font-color-normal fw-sub fs-6 ellipsis lh-base"
                       :title="item.value"

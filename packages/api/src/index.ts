@@ -298,3 +298,5 @@ export default Http
 
 export * from './request'
 export * from './core'
+
+export { useRequest } from 'vue-request'
