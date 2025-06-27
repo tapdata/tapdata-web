@@ -109,7 +109,7 @@ export default {
         : $t('packages_business_application_list_chuangjianyingyong')
     "
     :append-to-body="true"
-    width="800px"
+    width="600px"
     top="10vh"
     class="connection-dialog ldp-conection-dialog flex flex-column"
     @closed="onClosed"
@@ -117,8 +117,7 @@ export default {
     <ElForm
       ref="form"
       v-loading="loading"
-      label-position="left"
-      label-width="150px"
+      label-position="top"
       :model="editForm"
       :rules="rulesEdit"
     >

@@ -413,7 +413,7 @@ const findParentNodeByClassName = (el: HTMLElement, cls: string) => {
   return parent
 }
 
-const handleDragEnter = (event: DragEvent, app: any) => {
+const handleDragEnter = (event: DragEvent) => {
   event.preventDefault()
 
   if (!dragState.value.isDragging) return
@@ -425,18 +425,14 @@ const handleDragEnter = (event: DragEvent, app: any) => {
   dropNode?.classList.add('is-active')
 }
 
-const handleDragOver = (event: DragEvent, app: any) => {
+const handleDragOver = (event: DragEvent) => {
   event.preventDefault()
 }
 
-const handleDragLeave = (event: DragEvent, app: any) => {
+const handleDragLeave = (event: DragEvent) => {
   event.preventDefault()
 
-  if (
-    event.currentTarget &&
-    event.relatedTarget &&
-    !event.currentTarget.contains(event.relatedTarget)
-  ) {
+  if (!event.currentTarget?.contains?.(event.relatedTarget)) {
     const dropNode = findParentNodeByClassName(
       event.currentTarget as HTMLElement,
       'list-item-hover',
@@ -519,10 +515,13 @@ defineExpose({
     <div class="flex w-100 h-100 gap-4">
       <div
         v-if="showAppList && !inAppList"
-        class="py-0 px-2 bg-light rounded-xl mt-n2 ml-n2 flex flex-column h-100"
+        class="py-0 bg-light rounded-xl mt-n2 ml-n2 flex flex-column h-100"
         style="width: 240px"
       >
-        <div class="h-8 flex align-center mt-2 gap-1" style="--btn-space: 0">
+        <div
+          class="h-8 flex align-center gap-1 p-2 mt-2"
+          style="--btwen-space: 0"
+        >
           <el-button text @click="showAppList = !showAppList">
             <template #icon>
               <VIcon class="rotate-180">expand-list</VIcon>
@@ -554,82 +553,83 @@ defineExpose({
           </ElInput>
         </div>
 
-        <div
-          class="flex flex-column gap-1 mt-2 overflow-y-auto flex-1 min-h-0"
-          style="--el-scrollbar-width: 0"
-        >
-          <div
-            class="list-item-hover rounded-lg p-2 flex align-center gap-2 cursor-pointer font-color-light"
-            :class="{
-              'bg-white shadow-sm font-color-dark': !searchParams.appId,
-            }"
-            @click="handleAppSelect('')"
-          >
-            <el-icon size="16"><i-mingcute:grid-line /></el-icon>
-            <div class="flex flex-column gap-1 flex-1 min-w-0">
-              <div class="flex align-center gap-1">
-                <span class="ellipsis">{{ $t('public_all') }}</span>
+        <el-scrollbar class="flex-1 min-h-0" wrap-class="p-2">
+          <div class="flex flex-column gap-1">
+            <div
+              class="list-item-hover rounded-lg p-2 flex align-center gap-2 cursor-pointer font-color-light"
+              :class="{
+                'bg-white shadow-sm font-color-dark': !searchParams.appId,
+              }"
+              @click="handleAppSelect('')"
+            >
+              <el-icon size="16"><i-mingcute:grid-line /></el-icon>
+              <div class="flex flex-column gap-1 flex-1 min-w-0">
+                <div class="flex align-center gap-1">
+                  <span class="ellipsis">{{ $t('public_all') }}</span>
+                </div>
               </div>
             </div>
-          </div>
-          <div
-            v-for="app in appList"
-            :key="app.id"
-            class="list-item-hover rounded-lg p-2 flex align-center gap-2 cursor-pointer font-color-light"
-            :class="{
-              'bg-white shadow-sm font-color-dark':
-                app.id === searchParams.appId,
-            }"
-            @click="handleAppSelect(app.id, app)"
-            @dragenter.stop="handleDragEnter($event, app)"
-            @dragover.stop="handleDragOver($event, app)"
-            @dragleave.stop="handleDragLeave($event, app)"
-            @drop.stop="handleDrop($event, app)"
-          >
-            <!-- <el-button text class="el-button--xs p-0.5">
+            <div
+              v-for="app in appList"
+              :key="app.id"
+              class="list-item-hover rounded-lg p-2 flex align-center gap-2 cursor-pointer font-color-light"
+              :class="{
+                'bg-white shadow-sm font-color-dark':
+                  app.id === searchParams.appId,
+              }"
+              @click="handleAppSelect(app.id, app)"
+              @dragenter.stop="handleDragEnter($event)"
+              @dragover.stop="handleDragOver($event)"
+              @dragleave.stop="handleDragLeave($event)"
+              @drop.stop="handleDrop($event, app)"
+            >
+              <!-- <el-button text class="el-button--xs p-0.5">
               <template #icon>
                 <i-mingcute:down-line />
               </template>
             </el-button> -->
-            <div class="flex flex-column gap-1 flex-1 min-w-0">
-              <div class="flex align-center gap-1">
-                <el-icon size="16"
-                  ><i-mingcute:wechat-miniprogram-line
-                /></el-icon>
-                <span class="ellipsis" :title="app.value">{{ app.value }}</span>
-                <el-tag size="small" type="info" disable-transitions
-                  >{{ app.publishedApiCount }}/{{ app.apiCount }}</el-tag
-                >
-                <ElDropdown
-                  class="btn-menu flex align-center ml-auto"
-                  @command="handleAppCommand($event, app)"
-                >
-                  <el-button text size="small" @click.stop>
-                    <template #icon>
-                      <VIcon>more</VIcon>
+              <div class="flex flex-column gap-1 flex-1 min-w-0">
+                <div class="flex align-center gap-1">
+                  <el-icon size="16"
+                    ><i-mingcute:wechat-miniprogram-line
+                  /></el-icon>
+                  <span class="ellipsis" :title="app.value">{{
+                    app.value
+                  }}</span>
+                  <el-tag size="small" type="info" disable-transitions
+                    >{{ app.publishedApiCount }}/{{ app.apiCount }}</el-tag
+                  >
+                  <ElDropdown
+                    class="btn-menu flex align-center ml-auto"
+                    @command="handleAppCommand($event, app)"
+                  >
+                    <el-button text size="small" @click.stop>
+                      <template #icon>
+                        <VIcon>more</VIcon>
+                      </template>
+                    </el-button>
+                    <template #dropdown>
+                      <ElDropdownMenu>
+                        <ElDropdownItem command="edit">{{
+                          $t('public_button_edit')
+                        }}</ElDropdownItem>
+                        <ElDropdownItem command="delete">{{
+                          $t('public_button_delete')
+                        }}</ElDropdownItem>
+                      </ElDropdownMenu>
                     </template>
-                  </el-button>
-                  <template #dropdown>
-                    <ElDropdownMenu>
-                      <ElDropdownItem command="edit">{{
-                        $t('public_button_edit')
-                      }}</ElDropdownItem>
-                      <ElDropdownItem command="delete">{{
-                        $t('public_button_delete')
-                      }}</ElDropdownItem>
-                    </ElDropdownMenu>
-                  </template>
-                </ElDropdown>
+                  </ElDropdown>
+                </div>
+                <span
+                  v-if="app.desc && app.id === searchParams.appId"
+                  class="color-info ellipsis fs-8"
+                  :title="app.desc"
+                  >{{ app.desc }}</span
+                >
               </div>
-              <span
-                v-if="app.desc && app.id === searchParams.appId"
-                class="color-info ellipsis fs-8"
-                :title="app.desc"
-                >{{ app.desc }}</span
-              >
             </div>
           </div>
-        </div>
+        </el-scrollbar>
       </div>
       <TablePage
         ref="table"
@@ -695,11 +695,12 @@ defineExpose({
           </template>
         </el-table-column>
         <template v-if="!inAppList">
-          <!-- <el-table-column
+          <el-table-column
+            v-if="!showAppList"
             :label="$t('packages_business_application_list_yingyongmingcheng')"
             prop="appName"
             :min-width="140"
-          /> -->
+          />
           <el-table-column
             :label="$t('public_connection_type')"
             prop="connectionType"
