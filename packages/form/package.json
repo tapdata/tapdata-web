@@ -11,10 +11,10 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "catalog:",
-    "@formily/core": "^2.0.9",
+    "@formily/core": "catalog:",
     "@formily/element-plus": "catalog:",
     "@formily/json-schema": "catalog:",
-    "@formily/reactive": "^2.0.9",
+    "@formily/reactive": "catalog:",
     "@formily/reactive-vue": "^2.0.9",
     "@formily/shared": "catalog:",
     "@formily/vue": "^2.1.2",
