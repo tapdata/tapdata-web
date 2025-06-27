@@ -423,4 +423,5 @@ export default {
   public_all_selected: '全部選中',
   public_cancel_all_selected: '取消全選',
   public_data_preview: '數據預覽',
+  public_application: '應用',
 }

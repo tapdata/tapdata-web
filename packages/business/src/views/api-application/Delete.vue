@@ -1,12 +1,12 @@
 <script>
-import i18n from '@tap/i18n'
-
 import { appApi, modulesApi } from '@tap/api'
+import i18n from '@tap/i18n'
 import ListSelect from './ListSelect'
 
 export default {
   name: 'Delete',
   components: { ListSelect },
+  emits: ['success'],
   data() {
     return {
       visible: false,
@@ -24,7 +24,10 @@ export default {
   },
   computed: {
     desc() {
-      return i18n.t('packages_business_application_delete_ninzhengzaishanchu2', { val1: this.details.value })
+      return i18n.t(
+        'packages_business_application_delete_ninzhengzaishanchu2',
+        { val1: this.details.value },
+      )
     },
   },
   methods: {
@@ -61,7 +64,7 @@ export default {
     },
 
     async loadData() {
-      let params = {
+      const params = {
         where: {
           item_type: 'app',
           readOnly: true,
@@ -116,7 +119,6 @@ export default {
       return data.filter((t) => t.value !== this.details.id)
     },
   },
-  emits: ['success'],
 }
 </script>
 
@@ -126,31 +128,40 @@ export default {
     :append-to-body="true"
     width="800px"
     top="10vh"
+    :show-close="false"
     class="connection-dialog ldp-conection-dialog flex flex-column"
     @close="handleClose"
   >
-    <template #header>
+    <template #header="{ titleClass }">
       <div class="flex align-items-center">
-        <VIcon class="color-warning mr-2">warning</VIcon>
-        <span>{{ $t('packages_business_application_delete_shanchuyingyong') }}</span>
+        <el-icon size="20" class="color-warning mr-4">
+          <i-mingcute:warning-fill />
+        </el-icon>
+        <span :class="titleClass">{{
+          $t('packages_business_application_delete_shanchuyingyong')
+        }}</span>
       </div>
     </template>
     <div>
-      <div v-html="desc"></div>
+      <div v-html="desc" />
       <ListSelect
         v-model:value="form.appValue"
         v-model:label="form.appLabel"
         :format="handleFormat"
         class="my-3"
-      ></ListSelect>
+      />
       <div>
         {{ $t('packages_business_application_delete_shifouquerenshan') }}
       </div>
     </div>
-    <template v-slot:footer>
+    <template #footer>
       <span class="dialog-footer">
-        <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton type="primary" :loading="saveLoading" @click="handleSave">{{ $t('public_button_confirm') }}</ElButton>
+        <ElButton @click="handleClose">{{
+          $t('public_button_cancel')
+        }}</ElButton>
+        <ElButton type="primary" :loading="saveLoading" @click="handleSave">{{
+          $t('public_button_confirm')
+        }}</ElButton>
       </span>
     </template>
   </ElDialog>

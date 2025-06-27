@@ -86,3 +86,13 @@ export interface PageFetchResult<T> {
 export interface CountFetchResult {
   count: number
 }
+
+export interface Filter {
+  where?: Record<string, any>
+  order?: string
+  limit?: number
+  skip?: number
+  pageNo?: number
+  pageSize?: number
+  fields?: any
+}

@@ -1175,7 +1175,7 @@ const openEdit = () => {
               <ListSelect
                 v-model:value="form.appValue"
                 v-model:label="form.appLabel"
-                :disabled="disableApp || apiApplication"
+                :disabled="disableApp"
                 class="w-100"
                 @change="handleUpdateApp"
               />

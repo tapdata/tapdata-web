@@ -1,9 +1,10 @@
 <script>
-import i18n from '@tap/i18n'
 import { appApi } from '@tap/api'
+import i18n from '@tap/i18n'
 
 export default {
   name: 'Editor',
+  emits: ['success'],
   data() {
     return {
       visible: false,
@@ -15,7 +16,9 @@ export default {
         value: [
           {
             required: true,
-            message: i18n.t('packages_business_application_delete_yingyongmingchengbu'),
+            message: i18n.t(
+              'packages_business_application_delete_yingyongmingchengbu',
+            ),
             trigger: 'blur',
           },
         ],
@@ -55,6 +58,16 @@ export default {
       this.visible = true
     },
 
+    openEdit(app) {
+      this.taskId = app.id
+      this.editForm = {
+        id: app.id,
+        value: app.value,
+        desc: app.desc,
+      }
+      this.visible = true
+    },
+
     handleClose() {
       this.visible = false
     },
@@ -63,7 +76,10 @@ export default {
       this.$refs.form?.validate((valid) => {
         if (valid) {
           this.saveLoading = true
-          ;(this.taskId ? appApi.updateById(this.taskId, this.editForm) : appApi.post(this.editForm))
+          ;(this.taskId
+            ? appApi.updateById(this.taskId, this.editForm)
+            : appApi.post(this.editForm)
+          )
             .then(() => {
               this.$emit('success', ...arguments)
               this.$message.success(this.$t('public_message_save_ok'))
@@ -76,40 +92,56 @@ export default {
         }
       })
     },
+
+    onClosed() {
+      this.$refs.form?.resetFields()
+    },
   },
-  emits: ['success'],
 }
 </script>
 
 <template>
   <ElDialog
-    :title="taskId ? $t('public_button_edit') : $t('public_button_create')"
-    :model-value="visible"
+    v-model="visible"
+    :title="
+      taskId
+        ? $t('public_button_edit')
+        : $t('packages_business_application_list_chuangjianyingyong')
+    "
     :append-to-body="true"
-    width="800px"
+    width="600px"
     top="10vh"
     class="connection-dialog ldp-conection-dialog flex flex-column"
-    @close="handleClose"
+    @closed="onClosed"
   >
     <ElForm
-      v-loading="loading"
       ref="form"
-      label-position="left"
-      label-width="150px"
+      v-loading="loading"
+      label-position="top"
       :model="editForm"
       :rules="rulesEdit"
     >
-      <ElFormItem :label="$t('packages_business_application_list_yingyongmingcheng')" prop="value">
-        <ElInput v-model="editForm.value" text maxlength="50" clearable></ElInput>
+      <ElFormItem
+        :label="$t('packages_business_application_list_yingyongmingcheng')"
+        prop="value"
+      >
+        <ElInput v-model="editForm.value" text maxlength="50" clearable />
       </ElFormItem>
-      <ElFormItem :label="$t('packages_business_application_editor_yingyongmiaoshu')" prop="desc">
-        <ElInput v-model="editForm.desc" type="textarea"></ElInput>
+      <ElFormItem
+        :label="$t('packages_business_application_editor_yingyongmiaoshu')"
+        prop="desc"
+      >
+        <ElInput v-model="editForm.desc" type="textarea" />
       </ElFormItem>
     </ElForm>
-    <template v-slot:footer>
+    <template #footer>
       <span class="dialog-footer">
-        <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton type="primary" :loading="saveLoading" @click="handleSave">{{ $t('public_button_save') }}</ElButton>
+        <ElButton @click="handleClose">{{
+          $t('public_button_cancel')
+        }}</ElButton>
+        <ElButton type="primary" :loading="saveLoading" @click="handleSave">{{
+          $t('public_button_save')
+        }}</ElButton>
       </span>
     </template>
   </ElDialog>

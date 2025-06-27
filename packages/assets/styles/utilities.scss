@@ -1989,6 +1989,10 @@
   padding: 0 !important;
 }
 
+.p-0\.5 {
+  padding: 0.125rem !important;
+}
+
 .p-1 {
   padding: 0.25rem !important;
 }
@@ -2582,6 +2586,10 @@
 
 .lh-lg {
   line-height: 2 !important;
+}
+
+.lh-6 {
+  line-height: 1.5rem !important;
 }
 
 .lh-8 {
@@ -12209,24 +12217,26 @@
 }
 
 // 字体颜色
-.font-color-dark {
-  color: var(--text-dark);
-}
 
-.font-color-normal {
-  color: var(--text-normal);
-}
-
-.font-color-light {
-  color: var(--text-light);
+.font-color-sslight {
+  color: var(--text-sslight);
 }
 
 .font-color-slight {
   color: var(--text-slight);
 }
 
-.font-color-sslight {
-  color: var(--text-sslight);
+.font-color-light {
+  color: var(--text-light);
+}
+
+
+.font-color-normal {
+  color: var(--text-normal);
+}
+
+.font-color-dark {
+  color: var(--text-dark);
 }
 
 // 背景颜色
@@ -12622,7 +12632,7 @@
 }
 
 
-.list-item-hover:hover {
+.list-item-hover:hover:not(.bg-white) {
   background-color: var(--fill-hover) !important;
 }
 

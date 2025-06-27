@@ -50,7 +50,7 @@
             <el-skeleton :loading="loading || loadingProvider" animated>
               <template #template>
                 <div class="flex gap-4">
-                  <el-skeleton-item v-for="i in 2" :key="i" class="rounded-4 h-32" variant="button" />
+                  <el-skeleton-item v-for="i in 2" :key="i" class="rounded-4 h-8" variant="button" />
                 </div>
               </template>
               <template #default>
@@ -76,7 +76,7 @@
             <el-skeleton :loading="loading || loadingProvider" animated>
               <template #template>
                 <div class="flex gap-4">
-                  <el-skeleton-item v-for="i in 2" :key="i" class="rounded-4 h-32" variant="button" />
+                  <el-skeleton-item v-for="i in 2" :key="i" class="rounded-4 h-8" variant="button" />
                 </div>
               </template>
               <template #default>
@@ -109,7 +109,7 @@
           <el-skeleton :loading="loadingProvider || loadingMongoCluster" animated>
             <template #template>
               <div class="flex gap-4">
-                <el-skeleton-item v-for="i in 4" :key="i" class="rounded-4 h-32" variant="button" />
+                <el-skeleton-item v-for="i in 4" :key="i" class="rounded-4 h-8" variant="button" />
               </div>
             </template>
             <template #default>
@@ -144,7 +144,7 @@
           <el-skeleton :loading="loadingProvider || loadingMongoCluster" animated>
             <template #template>
               <div class="flex gap-4">
-                <el-skeleton-item v-for="i in 2" :key="i" class="rounded-4 h-32" variant="button" />
+                <el-skeleton-item v-for="i in 2" :key="i" class="rounded-4 h-8" variant="button" />
               </div>
             </template>
             <template #default>
@@ -174,7 +174,7 @@
           <el-skeleton :loading="loadingProvider || loadingMongoCluster" animated>
             <template #template>
               <div class="flex gap-4">
-                <el-skeleton-item v-for="i in 2" :key="i" class="rounded-4 h-32" variant="button" />
+                <el-skeleton-item v-for="i in 2" :key="i" class="rounded-4 h-8" variant="button" />
               </div>
             </template>
             <template #default>
@@ -591,10 +591,6 @@ export default {
 
 <style lang="scss" scoped>
 .create-storage-container {
-  .h-32 {
-    height: 32px;
-  }
-
   .color-primary-light-9 {
     background-color: #e8f3ff;
   }
