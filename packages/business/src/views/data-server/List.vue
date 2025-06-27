@@ -121,6 +121,18 @@ const { data: appList, refresh: refreshAppList } = useRequest(async () => {
 
 // Computed properties
 
+const filterAppList = computed(() => {
+  const search = filterText.value.toLowerCase()
+
+  if (!search) {
+    return appList.value || []
+  }
+
+  return (
+    appList.value?.filter((t) => t.value.toLowerCase().includes(search)) || []
+  )
+})
+
 // 选中的已发布数据
 const multipleSelectionActive = computed(() => {
   return multipleSelection.value.filter((t) => t.status === 'active')
@@ -347,8 +359,8 @@ const showDrawer = (item?: any) => {
   drawer.value?.open(item)
 }
 
-const fetch = () => {
-  table.value?.fetch()
+const fetch = (...args: any[]) => {
+  table.value?.fetch(...args)
 }
 
 const handleExport = () => {
@@ -391,18 +403,25 @@ const showSearch = ref(false)
 const filterText = ref('')
 const authority = ref('')
 
-const toggle = () => {
-  // Toggle functionality
-}
-
 const openSearch = () => {
   showSearch.value = !showSearch.value
+  filterText.value = ''
+
+  if (showSearch.value) {
+    nextTick(() => {
+      searchInput.value?.focus()
+    })
+  }
 }
 
-const handleAppSelect = (appId: string, app?: any) => {
+const handleAppSelect = (app?: any) => {
+  const appId = app?.id || ''
+  const needFetch = searchParams.appId !== appId
+
   searchParams.appId = appId
   currentApp.value = app
-  fetch()
+
+  needFetch && fetch(1)
 }
 
 const findParentNodeByClassName = (el: HTMLElement, cls: string) => {
@@ -520,7 +539,7 @@ defineExpose({
       >
         <div
           class="h-8 flex align-center gap-1 p-2 mt-2"
-          style="--btwen-space: 0"
+          style="--btn-space: 0"
         >
           <el-button text @click="showAppList = !showAppList">
             <template #icon>
@@ -536,16 +555,16 @@ defineExpose({
             @click="openSearch"
           >
             <template #icon>
-              <VIcon size="18">magnify</VIcon>
+              <i-mingcute:search-line />
             </template>
           </el-button>
           <el-button text @click="appEditor.open()">
             <template #icon>
-              <VIcon>add</VIcon>
+              <i-mingcute:add-line />
             </template>
           </el-button>
         </div>
-        <div v-if="showSearch" class="mt-2">
+        <div v-if="showSearch" class="mt-2 px-2">
           <ElInput ref="searchInput" v-model="filterText" clearable>
             <template #prefix>
               <VIcon size="14">magnify</VIcon>
@@ -560,7 +579,7 @@ defineExpose({
               :class="{
                 'bg-white shadow-sm font-color-dark': !searchParams.appId,
               }"
-              @click="handleAppSelect('')"
+              @click="handleAppSelect()"
             >
               <el-icon size="16"><i-mingcute:grid-line /></el-icon>
               <div class="flex flex-column gap-1 flex-1 min-w-0">
@@ -570,14 +589,14 @@ defineExpose({
               </div>
             </div>
             <div
-              v-for="app in appList"
+              v-for="app in filterAppList"
               :key="app.id"
               class="list-item-hover rounded-lg p-2 flex align-center gap-2 cursor-pointer font-color-light"
               :class="{
                 'bg-white shadow-sm font-color-dark':
                   app.id === searchParams.appId,
               }"
-              @click="handleAppSelect(app.id, app)"
+              @click="handleAppSelect(app)"
               @dragenter.stop="handleDragEnter($event)"
               @dragover.stop="handleDragOver($event)"
               @dragleave.stop="handleDragLeave($event)"

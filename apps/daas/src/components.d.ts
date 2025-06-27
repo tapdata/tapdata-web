@@ -93,6 +93,7 @@ declare module 'vue' {
     'ILucide:trash2': typeof import('~icons/lucide/trash2')['default']
     ILucideCalendarDays: typeof import('~icons/lucide/calendar-days')['default']
     ILucideTrash2: typeof import('~icons/lucide/trash2')['default']
+    'IMingcute:addLine': typeof import('~icons/mingcute/add-line')['default']
     'IMingcute:arrowRightLine': typeof import('~icons/mingcute/arrow-right-line')['default']
     'IMingcute:checkLine': typeof import('~icons/mingcute/check-line')['default']
     'IMingcute:downLine': typeof import('~icons/mingcute/down-line')['default']
