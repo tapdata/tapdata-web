@@ -1,5 +1,5 @@
 <script>
-import { appApi } from '@tap/api'
+import { createApp } from '@tap/api'
 import resize from '@tap/component/src/directives/resize'
 import GitBook from '@tap/component/src/GitBook.vue'
 import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
@@ -68,8 +68,7 @@ export default {
       this.schemaFormInstance?.validate().then(() => {
         this.submitBtnLoading = true
         const { values } = this.schemaFormInstance
-        appApi
-          .post(values)
+        createApp(values)
           .then((data) => {
             data.LDP_TYPE = 'app'
             this.$emit(addNext ? 'saveAndMore' : 'success', data)

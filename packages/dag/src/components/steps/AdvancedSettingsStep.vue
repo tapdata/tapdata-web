@@ -14,7 +14,7 @@ import {
   raw,
   untracked,
 } from '@formily/reactive'
-import { alarmApi, findAccessNodeInfo, taskApi } from '@tap/api'
+import { findAccessNodeInfo, getAlarmChannels, taskApi } from '@tap/api'
 import { showErrorMessage, UpgradeCharges, UpgradeFee } from '@tap/business'
 import i18n from '@tap/i18n'
 import axios from 'axios'
@@ -70,7 +70,7 @@ export default defineComponent({
         }
       },
       async loadAlarmChannels() {
-        const channels = await alarmApi.channels()
+        const channels = await getAlarmChannels()
         const MAP = {
           system: {
             label: i18n.t('packages_dag_migration_alarmpanel_xitongtongzhi'),

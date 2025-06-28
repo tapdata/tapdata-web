@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import {
-  alarmApi,
   alarmMailApi,
   alarmRuleApi,
   findAlarm,
+  getAlarmChannels,
   saveAlarm,
 } from '@tap/api'
 import { VTable } from '@tap/component/src/base/v-table'
@@ -362,7 +362,7 @@ const handleSettingValue = async () => {
 // 获取支持通知方式
 const getChannels = async () => {
   try {
-    const data = await alarmApi.channels()
+    const data = await getAlarmChannels()
     channels.value = data.map((item: Channel) => item.type)
   } catch (error) {
     console.error('Failed to load channels:', error)

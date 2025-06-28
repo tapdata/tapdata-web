@@ -1,10 +1,10 @@
 import { action } from '@formily/reactive'
 import {
-  alarmApi,
   connectionsApi,
   databaseTypesApi,
   externalStorageApi,
   findAccessNodeInfo,
+  getAlarmChannels,
   metadataInstancesApi,
   proxyApi,
   taskApi,
@@ -1125,7 +1125,7 @@ export default {
         },
 
         async loadAlarmChannels() {
-          const channels = await alarmApi.channels()
+          const channels = await getAlarmChannels()
           const MAP = {
             system: {
               label: i18n.t('packages_dag_migration_alarmpanel_xitongtongzhi'),

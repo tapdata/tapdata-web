@@ -1,5 +1,3 @@
-import Alarm from './Alarm'
-
 import AlarmMail from './AlarmMail'
 
 import AlarmRule from './AlarmRule'
@@ -9,8 +7,6 @@ import ApiCalls from './ApiCalls'
 import ApiMonitor from './ApiMonitor'
 
 import ApiServer from './ApiServer'
-
-import App from './App'
 
 import Application from './Application'
 
@@ -204,8 +200,6 @@ const alarmRuleApi = new AlarmRule()
 
 const externalStorageApi = new ExternalStorage()
 
-const alarmApi = new Alarm()
-
 const proxyApi = new Proxy()
 
 const paidApi = new Paid()
@@ -218,8 +212,6 @@ const ldpApi = new LDP()
 
 const shareCdcTableMetricsApi = new ShareCdcTableMetrics()
 
-const appApi = new App()
-
 const lineageApi = new Lineage()
 
 const dataPermissionApi = new DataPermission()
@@ -231,13 +223,11 @@ const webhookApi = new Webhook()
 const taskInspectApi = new TaskInspect()
 
 export {
-  alarmApi,
   alarmMailApi,
   alarmRuleApi,
   apiCallsApi,
   apiMonitorApi,
   apiServerApi,
-  appApi,
   applicationApi,
   connectionsApi,
   connectorRecordApi,

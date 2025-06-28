@@ -1,7 +1,7 @@
 <script>
 import { createForm, onFieldValueChange } from '@formily/core'
 import { action } from '@formily/reactive'
-import { alarmApi, taskApi } from '@tap/api'
+import { getAlarmChannels, taskApi } from '@tap/api'
 import i18n from '@tap/i18n'
 import { debounce } from 'lodash-es'
 import { defineComponent, ref } from 'vue'
@@ -1493,7 +1493,7 @@ export default defineComponent({
         }
       },
       async loadAlarmChannels() {
-        const channels = await alarmApi.channels()
+        const channels = await getAlarmChannels()
         const MAP = {
           system: {
             label: i18n.t('packages_dag_migration_alarmpanel_xitongtongzhi'),

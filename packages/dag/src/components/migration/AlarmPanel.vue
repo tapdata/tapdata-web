@@ -2,7 +2,7 @@
 import { createForm, onFormValuesChange } from '@formily/core'
 
 import { observer } from '@formily/reactive-vue'
-import { alarmApi, taskApi } from '@tap/api'
+import { getAlarmChannels, taskApi } from '@tap/api'
 import i18n from '@tap/i18n'
 import { debounce } from 'lodash-es'
 import { mapGetters, mapState } from 'vuex'
@@ -55,7 +55,7 @@ export default {
         this.allNodesResult = this.allNodes
       }
       //获取支持通知方式
-      alarmApi.channels().then((data) => {
+      getAlarmChannels().then((data) => {
         this.channels = []
         this.channels = data.map((item) => item.type)
         this.loadSchema()

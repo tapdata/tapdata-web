@@ -1,5 +1,5 @@
 <script>
-import { appApi, modulesApi } from '@tap/api'
+import { deleteApp, fetchApps, modulesApi, moveApp } from '@tap/api'
 import i18n from '@tap/i18n'
 import ListSelect from './ListSelect'
 
@@ -63,17 +63,13 @@ export default {
         })
     },
 
-    async loadData() {
-      const params = {
+    loadData() {
+      return fetchApps({
         where: {
           item_type: 'app',
           readOnly: true,
         },
-      }
-      appApi
-        .get({
-          filter: JSON.stringify(params),
-        })
+      })
         .then((data) => {
           const item = data.items?.[0] || {}
           this.form = {
@@ -92,9 +88,8 @@ export default {
 
     handleSave() {
       this.saveLoading = true
-      appApi
-        .move(this.details.id, this.form.appValue)
-        .then((dd) => {
+      moveApp(this.details.id, this.form.appValue)
+        .then(() => {
           this.handleDelete(this.details.id)
         })
         .catch(() => {
@@ -103,8 +98,7 @@ export default {
     },
 
     handleDelete(id) {
-      appApi
-        .delete(id)
+      deleteApp(id)
         .then(() => {
           this.$emit('success')
           this.$message.success(this.$t('public_message_delete_ok'))

@@ -1,8 +1,8 @@
 <script lang="tsx">
 import {
   apiServerApi,
-  appApi,
   connectionsApi,
+  fetchApps,
   modulesApi,
   proxyApi,
   taskApi,
@@ -393,16 +393,12 @@ export default {
         },
       }
 
-      return appApi
-        .get({
-          filter: JSON.stringify(filter),
+      return fetchApps(filter).then(({ items }) => {
+        return items.map((item) => {
+          item.LDP_TYPE = 'app'
+          return item
         })
-        .then(({ items }) => {
-          return items.map((item) => {
-            item.LDP_TYPE = 'app'
-            return item
-          })
-        })
+      })
     },
 
     loadApiModule(appId) {
