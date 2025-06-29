@@ -1,7 +1,7 @@
 <script lang="tsx">
 import {
   apiServerApi,
-  connectionsApi,
+  fetchConnections,
   fetchApps,
   measurementApi,
   modulesApi,
@@ -9,6 +9,7 @@ import {
   taskApi,
   workerApi,
 } from '@tap/api'
+
 import { DatabaseIcon } from '@tap/business/src/components/DatabaseIcon'
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import { makeStatusAndDisabled, TASK_SETTINGS } from '@tap/business/src/shared'
