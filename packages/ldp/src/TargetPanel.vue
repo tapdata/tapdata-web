@@ -359,9 +359,7 @@ export default {
           },
         },
       }
-      const res = await connectionsApi.get({
-        filter: JSON.stringify(filter),
-      })
+      const res = await fetchConnections(filter)
 
       return res.items.map(this.mapConnection)
     },

@@ -1,5 +1,5 @@
 <script>
-import { connectionsApi, taskApi } from '@tap/api'
+import { getConnectionStats, taskApi } from '@tap/api'
 import { Chart, VIcon } from '@tap/component'
 
 import { mapMutations } from 'vuex'
@@ -251,7 +251,7 @@ export default {
       const connectionLoading = this.$loading({
         target: this.$refs.connection?.[0],
       })
-      const data = await connectionsApi.getStats().finally(() => {
+      const data = await getConnectionStats().finally(() => {
         connectionLoading.close()
       })
       const connection = this.agentList.find(({ key }) => key === 'connection')

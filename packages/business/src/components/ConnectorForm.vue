@@ -1,12 +1,13 @@
 <script>
 import { action } from '@formily/reactive'
 import {
-  connectionsApi,
   databaseTypesApi,
   externalStorageApi,
   findAccessNodeInfo,
+  getUsingDigginTaskByConnectionId,
   proxyApi,
 } from '@tap/api'
+import { createConnection, updateConnectionById } from '@tap/api/src/core'
 import { SchemaToForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import { submitForm, uuid } from '@tap/shared'
@@ -1247,7 +1248,7 @@ export default {
         const { shareCdcEnable, shareCDCExternalStorageId } = this.model
         if (shareCdcEnable && shareCDCExternalStorageId) {
           this.connectionLogCollectorTaskData =
-            await connectionsApi.usingDigginTaskByConnectionId(id)
+            await getUsingDigginTaskByConnectionId(id)
         }
         delete result.properties.START.properties.__TAPDATA.properties.name
       }
@@ -1289,11 +1290,11 @@ export default {
 
       if (id) {
         params.id = id
-        promise = connectionsApi.updateById(id, params)
+        promise = updateConnectionById(id, params)
       } else {
         const { commandCallbackFunctionId } = this
         params.status = this.status ? this.status : 'testing' //默认值 0 代表没有点击过测试
-        promise = connectionsApi.create(params, {
+        promise = createConnection(params, {
           id: commandCallbackFunctionId,
         })
       }

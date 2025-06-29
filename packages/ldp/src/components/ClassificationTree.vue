@@ -1,7 +1,7 @@
 <script lang="tsx">
 import i18n from '@tap/i18n'
 import { VirtualTree } from '@tap/component/src/virtual-tree'
-import { metadataDefinitionsApi, userGroupsApi, discoveryApi, connectionsApi, metadataInstancesApi } from '@tap/api'
+import { metadataDefinitionsApi, userGroupsApi, discoveryApi, fetchConnections, metadataInstancesApi } from '@tap/api'
 import { makeDragNodeImage } from '@tap/business/src/shared'
 
 export default {
@@ -767,9 +767,7 @@ export default {
           },
         },
       }
-      const res = await connectionsApi.get({
-        filter: JSON.stringify(filter),
-      })
+      const res = await fetchConnections(filter)
 
       return res.items.map((t) => {
         const { status, loadCount = 0, tableCount = 0 } = t

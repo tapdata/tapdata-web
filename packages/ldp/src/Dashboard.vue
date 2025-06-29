@@ -1,5 +1,9 @@
 <script>
-import { connectionsApi, lineageApi, metadataDefinitionsApi } from '@tap/api'
+import {
+  getConnectionNoSchema,
+  lineageApi,
+  metadataDefinitionsApi,
+} from '@tap/api'
 import SceneDialog from '@tap/business/src/components/create-connection/SceneDialog.vue'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import UpgradeCharges from '@tap/business/src/components/UpgradeCharges.vue'
@@ -124,12 +128,12 @@ export default {
 
   watch: {
     'settings.mdmStorageConnectionId': async function (v) {
-      this.mdmConnection = await connectionsApi.getNoSchema(v)
+      this.mdmConnection = await getConnectionNoSchema(v)
       this.mdmNotExist = !this.mdmConnection
     },
 
     'settings.fdmStorageConnectionId': async function (v) {
-      this.fdmConnection = await connectionsApi.getNoSchema(v)
+      this.fdmConnection = await getConnectionNoSchema(v)
       this.fdmNotExist = !this.fdmConnection
     },
 

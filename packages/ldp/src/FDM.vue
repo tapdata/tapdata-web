@@ -1,5 +1,5 @@
 <script lang="tsx">
-import { connectionsApi, ldpApi, metadataDefinitionsApi } from '@tap/api'
+import { fetchConnections, ldpApi, metadataDefinitionsApi } from '@tap/api'
 import { DatabaseIcon } from '@tap/business/src/components/DatabaseIcon'
 import {
   makeDragNodeImage,
@@ -294,9 +294,7 @@ export default {
           },
           order: ['status DESC', 'name ASC'],
         }
-        const result = await connectionsApi.get({
-          filter: JSON.stringify(merge(filter, _filter)),
-        })
+        const result = await fetchConnections(merge(filter, _filter))
 
         result.items = result.items.map((item) => {
           return {

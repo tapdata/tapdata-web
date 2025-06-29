@@ -2,7 +2,7 @@
 import { defineComponent, h } from 'vue'
 import { useResizeObserver } from '@vueuse/core'
 import { debounce } from 'lodash-es'
-import { connectionsApi, metadataInstancesApi, ldpApi, CancelToken } from '@tap/api'
+import { metadataInstancesApi, ldpApi, CancelToken, fetchConnections } from '@tap/api'
 import { IconButton } from '@tap/component/src/icon-button'
 import {VEmpty} from '@tap/component/src/base/v-empty'
 import VirtualTree from '@tap/component/src/virtual-tree'
@@ -324,9 +324,7 @@ export default defineComponent({
           },
         },
       }
-      const res = await connectionsApi.get({
-        filter: JSON.stringify(filter),
-      })
+      const res = await fetchConnections(filter)
       // this.connectionMap = {}
       const items = []
       const map = {}

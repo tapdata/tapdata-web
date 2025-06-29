@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { connectionsApi, metadataInstancesApi } from '@tap/api'
+import { fetchConnections, metadataInstancesApi } from '@tap/api'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared/const'
 import AsyncSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 import i18n from '@tap/i18n'
@@ -327,9 +327,7 @@ async function loadDatabases(filter: FilterParams): Promise<DatabaseResponse> {
       }
     }
 
-    const result = await connectionsApi.get({
-      filter: JSON.stringify(merge(filter, _filter)),
-    })
+    const result = await fetchConnections(merge(filter, _filter))
 
     return {
       items: result.items.map((item: DatabaseItem) => ({

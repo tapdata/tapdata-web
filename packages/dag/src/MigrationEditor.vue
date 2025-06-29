@@ -1,5 +1,5 @@
 <script>
-import { connectionsApi, taskApi } from '@tap/api'
+import { getConnectionNoSchema, taskApi } from '@tap/api'
 
 import SkipError from '@tap/business/src/views/task/SkipError.vue'
 import { VEmpty } from '@tap/component/src/base/v-empty'
@@ -445,7 +445,7 @@ export default {
 
       this.jsPlumbIns.ready(async () => {
         try {
-          const con = await connectionsApi.get(connectionId)
+          const con = await getConnectionNoSchema(connectionId)
           this.handleAddNodeToPos([-300, 300], {
             name: tableName,
             type: 'database',

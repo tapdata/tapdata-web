@@ -1,7 +1,7 @@
 <script lang="tsx">
 import {
   apiServerApi,
-  connectionsApi,
+  fetchConnections,
   fetchApps,
   modulesApi,
   proxyApi,
@@ -288,9 +288,7 @@ export default {
           },
         },
       }
-      const res = await connectionsApi.get({
-        filter: JSON.stringify(filter),
-      })
+      const res = await fetchConnections(filter)
 
       return res.items.map(this.mapConnection)
     },

@@ -2,8 +2,8 @@
 import { EditPen, InfoFilled } from '@element-plus/icons-vue'
 import {
   applicationApi,
-  connectionsApi,
   databaseTypesApi,
+  listAllConnections,
   metadataInstancesApi,
   modulesApi,
   roleApi,
@@ -464,7 +464,7 @@ const getConnectionOptions = async () => {
   }
 
   connectionOptions.value = null
-  const data = await connectionsApi.listAll(filter).catch(() => {
+  const data = await listAllConnections(filter).catch(() => {
     connectionOptions.value = []
     return []
   })

@@ -1,11 +1,14 @@
 <script>
 import { action } from '@formily/reactive'
 import {
-  connectionsApi,
+  createConnection,
   databaseTypesApi,
   externalStorageApi,
   findAccessNodeInfo,
+  getUsingDigginTaskByConnectionId,
+  patchConnectionById,
   proxyApi,
+  updateConnectionById,
 } from '@tap/api'
 
 import resize from '@tap/component/src/directives/resize'
@@ -220,11 +223,11 @@ export default {
           let promise = null
           if (id) {
             params.id = id
-            promise = connectionsApi.updateById(id, params)
+            promise = updateConnectionById(id, params)
           } else {
             const { commandCallbackFunctionId } = this
             params.status = this.status ? this.status : 'testing' //默认值 0 代表没有点击过测试
-            promise = connectionsApi.create(params, {
+            promise = createConnection(params, {
               id: commandCallbackFunctionId,
             })
           }
@@ -318,8 +321,7 @@ export default {
             id: this.model.id,
             submit: true,
           }
-          connectionsApi
-            .patchId(params)
+          patchConnectionById(params)
             .then(() => {
               this.editBtnLoading = false
               this.model.name = this.renameData.rename
@@ -1219,7 +1221,7 @@ export default {
         const { shareCdcEnable, shareCDCExternalStorageId } = this.model
         if (shareCdcEnable && shareCDCExternalStorageId) {
           this.connectionLogCollectorTaskData =
-            await connectionsApi.usingDigginTaskByConnectionId(id)
+            await getUsingDigginTaskByConnectionId(id)
         }
         delete result.properties.START.properties.__TAPDATA.properties.name
       }
