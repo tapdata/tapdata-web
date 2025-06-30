@@ -1100,36 +1100,6 @@ async function searchObject(search: string) {
   filterTreeData.value = root.children
 }
 
-function handleFindParent(event: any) {
-  const parentNode = event.target?.parentElement
-  emit('find-parent', parentNode)
-}
-
-async function makeTaskName(source: string) {
-  const taskNames = await taskApi.get(
-    {
-      filter: JSON.stringify({
-        limit: 9999,
-        fields: { name: 1 },
-        where: { name: { like: `^${source}\\d+$` } },
-      }),
-    },
-    {},
-    {},
-  )
-  let def = 1
-  if (taskNames?.items?.length) {
-    const arr = [0]
-    taskNames.items.forEach((item: any) => {
-      const res = item.name.match(new RegExp(`^${source}(\\d+)$`))
-      if (res && res[1]) arr.push(+res[1])
-    })
-    arr.sort((a, b) => a - b)
-    def = arr.pop() + 1
-  }
-  return `${source}${def}`
-}
-
 const handleScroll = debounce(function () {
   emit('on-scroll')
 }, 200)
@@ -1231,7 +1201,6 @@ defineExpose({
             draggable
             default-expand-all
             height="100%"
-            wrapper-class-name="p-2"
             :render-content="renderContent"
             :render-after-expand="false"
             :expand-on-click-node="false"
@@ -1334,7 +1303,6 @@ defineExpose({
             draggable
             default-expand-all
             height="100%"
-            wrapper-class-name="p-2"
             :render-content="renderContent"
             :render-after-expand="false"
             :expand-on-click-node="false"

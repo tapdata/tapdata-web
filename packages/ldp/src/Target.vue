@@ -1,8 +1,8 @@
 <script lang="tsx">
 import {
   apiServerApi,
-  fetchConnections,
   fetchApps,
+  fetchConnections,
   modulesApi,
   proxyApi,
   taskApi,
@@ -860,7 +860,7 @@ export default {
           <div
             :ref="`wrap__item${item.id}`"
             :key="item.id"
-            class="wrap__item rounded-lg position-relative overflow-hidden"
+            class="wrap__item rounded-xl position-relative overflow-hidden"
             :class="{ 'opacity-50': item.disabled }"
             @dragover="handleDragOver"
             @dragenter.stop="handleDragEnter($event, item)"
@@ -1011,7 +1011,7 @@ export default {
             <div
               :ref="`wrap__item${item.id}`"
               :key="item.id"
-              class="wrap__item rounded-lg position-relative overflow-hidden"
+              class="wrap__item rounded-xl position-relative overflow-hidden"
               :class="{ 'opacity-50': item.disabled }"
               @dragover="handleDragOver"
               @dragenter.stop="handleDragEnter($event, item)"

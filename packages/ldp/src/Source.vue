@@ -274,7 +274,7 @@ export default defineComponent({
             {data.name}
             {data.comment && <span class="font-color-sslight">{`(${data.comment})`}</span>}
             {data.disabled && (
-              <ElTag type="info" class="ml-2">
+              <ElTag disable-transitions type="info" class="ml-2">
                 {this.$t('public_status_invalid')}
               </ElTag>
             )}
@@ -605,7 +605,7 @@ export default defineComponent({
               <span class="table-label" :title="data.name">
                 {{ data.name }}
                 <span v-if="data.comment" class="font-color-sslight">{{ `(${data.comment})` }}</span>
-                <ElTag v-if="data.disabled" type="info">{{ $t('public_status_invalid') }}</ElTag>
+                <ElTag v-if="data.disabled" disable-transitions type="info">{{ $t('public_status_invalid') }}</ElTag>
               </span>
             </span>
           </template>
@@ -664,7 +664,7 @@ export default defineComponent({
                 <span class="table-label" :title="data.name">
                   {{ data.name }}
                   <span v-if="data.comment" class="font-color-sslight">{{ `(${data.comment})` }}</span>
-                  <ElTag v-if="data.disabled" type="info">{{ $t('public_status_invalid') }}</ElTag>
+                  <ElTag v-if="data.disabled" disable-transitions type="info">{{ $t('public_status_invalid') }}</ElTag>
                 </span>
               </span>
             </template>
