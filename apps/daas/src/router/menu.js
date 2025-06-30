@@ -43,9 +43,7 @@ export const MENU = [
     hidden: isCommunity,
     children: [
       {
-        name: 'apiApplication',
-        code: 'v2_api-application',
-        parent: 'apiApplication',
+        name: 'apiSdk',
       },
       { name: 'dataServer', code: 'v2_data-server-list', parent: 'dataServer' },
       {

@@ -685,9 +685,20 @@ export const routes = [
       {
         path: 'dashboard',
         name: 'dashboard',
-        component: () => import('@/views/dashboard/Dashboard'),
+        component: () => import('@/views/dashboard/Dashboard.vue'),
         meta: {
           title: 'page_title_overview',
+        },
+      },
+
+      {
+        path: '/api/sdk',
+        name: 'apiSdk',
+        component: () => import('@tap/business/src/views/api/SdkList.vue'),
+        meta: {
+          title: 'page_title_api_sdk',
+          code: 'v2_data-server-list',
+          hideTitle: true,
         },
       },
 

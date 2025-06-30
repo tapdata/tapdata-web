@@ -433,4 +433,9 @@ export default {
   public_cancel_all_selected: 'Unselect All',
   public_data_preview: 'Data Preview',
   public_application: 'Application',
+
+  page_title_api_sdk: 'SDK Management',
+  public_sdk_name: 'SDK Name',
+  public_latest_version: 'Latest Version',
+  public_create_sdk: 'Create SDK',
 }

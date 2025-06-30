@@ -424,4 +424,9 @@ export default {
   public_cancel_all_selected: '取消全選',
   public_data_preview: '數據預覽',
   public_application: '應用',
+
+  page_title_api_sdk: 'SDK 管理',
+  public_sdk_name: 'SDK 名稱',
+  public_latest_version: '最新版本',
+  public_create_sdk: '創建 SDK',
 }

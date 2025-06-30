@@ -3,6 +3,7 @@ import { applicationApi, roleApi } from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
 import { FilterBar } from '@tap/component/src/filter-bar'
+import { ShieldKeyhole } from '@tap/component/src/icon'
 import { cloneDeep, escapeRegExp } from 'lodash-es'
 import { h } from 'vue'
 
@@ -12,6 +13,7 @@ export default {
     PageContainer,
     TablePage,
     FilterBar,
+    ShieldKeyhole,
   },
   data() {
     return {
@@ -264,19 +266,24 @@ export default {
         prop="redirectUrisStr"
         min-width="140"
       />
-      <el-table-column
-        :label="$t('application_header_scopes')"
-        prop="scopeNames"
-        min-width="160"
-        max-width="300"
-      >
+      <el-table-column prop="scopeNames" min-width="160" max-width="300">
+        <template #header>
+          <div class="flex align-center gap-1">
+            <VIcon size="16"> ShieldKeyhole </VIcon>
+            <span>{{ $t('application_header_scopes') }}</span>
+          </div>
+        </template>
         <template #default="scope">
-          <span
-            v-for="item in scope.row.scopeNames"
-            :key="item"
-            class="table-span"
-            >{{ item }}</span
-          >
+          <div class="flex flex-wrap gap-1">
+            <el-tag
+              v-for="item in scope.row.scopeNames"
+              :key="item"
+              type="info"
+              size="small"
+              class="table-span"
+              >{{ item }}</el-tag
+            >
+          </div>
         </template>
       </el-table-column>
       <el-table-column
