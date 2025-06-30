@@ -24,6 +24,7 @@
     "dagre": "catalog:",
     "dayjs": "catalog:",
     "tiny-emitter": "catalog:",
+    "vue": "catalog:",
     "vue-virtual-scroller": "catalog:",
     "vuex": "catalog:"
   }

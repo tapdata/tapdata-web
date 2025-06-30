@@ -1,5 +1,11 @@
-<script lang="tsx">
-import { fetchConnections, ldpApi, metadataDefinitionsApi } from '@tap/api'
+<script setup lang="ts">
+import {
+  CancelToken,
+  discoveryApi,
+  ldpApi,
+  metadataDefinitionsApi,
+  taskApi,
+} from '@tap/api'
 import { DatabaseIcon } from '@tap/business/src/components/DatabaseIcon'
 import {
   makeDragNodeImage,
@@ -7,907 +13,1168 @@ import {
   TASK_SETTINGS,
 } from '@tap/business/src/shared'
 import { VExpandXTransition } from '@tap/component/src/base/v-expand-x-transition'
+import VIcon from '@tap/component/src/base/VIcon.vue'
 import { IconButton } from '@tap/component/src/icon-button'
-
-import i18n from '@tap/i18n'
+import { validateCron } from '@tap/form/src/shared/validate'
+import { useI18n } from '@tap/i18n'
 import { generateId, uuid } from '@tap/shared'
-import { cloneDeep, debounce, merge } from 'lodash-es'
-import { h } from 'vue'
-import commonMix from './mixins/common'
+import { useResizeObserver } from '@vueuse/core'
+import { cloneDeep, debounce } from 'lodash-es'
+import {
+  computed,
+  h,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  useTemplateRef,
+  watch,
+} from 'vue'
+import { useRouter } from 'vue-router'
 
-export default {
-  name: 'FDM',
-  components: { IconButton, DatabaseIcon },
-  mixins: [commonMix],
-  props: {
-    dragState: Object,
-    settings: Object,
-    fdmConnection: Object,
-    fdmNotExist: Boolean,
-    directory: Object,
-    eventDriver: Object,
-    mapCatalog: Function,
-    showParentLineage: Boolean,
+// Props
+interface Props {
+  dragState: any
+  settings: any
+  fdmConnection: any
+  fdmNotExist: boolean
+  directory: any
+  eventDriver: any
+  mapCatalog: Function
+  showParentLineage: boolean
+  loadingDirectory?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  loadingDirectory: false,
+})
+
+// Emits
+const emit = defineEmits<{
+  'node-drag-end': []
+  preview: [data: any, connection: any]
+  'show-settings': []
+  'load-directory': []
+  'on-scroll': []
+  'find-parent': [parentNode: any]
+}>()
+
+// Router and i18n
+const router = useRouter()
+const { t } = useI18n()
+
+// Refs
+const tree = ref()
+const treeWrap = ref()
+const search = ref()
+const form = ref()
+
+// Reactive data
+const fixedPrefix = ref('FDM_')
+const maxPrefixLength = ref(10)
+const keyword = ref('')
+const taskType = ref('')
+const creating = ref(false)
+const expandedKeys = ref<string[]>([])
+const searchIng = ref(false)
+const searchValue = ref('')
+const enableSearch = ref(false)
+const filterTreeData = ref<any[]>([])
+const checkCanStartIng = ref(false)
+const startedTags = ref<string[]>([])
+const prefixMap = ref<Record<string, string>>({})
+const autoUpdateObjectsTimer = ref<number>()
+const cancelSource = ref<any>()
+const debouncedSearch = ref<any>()
+const draggingNode = ref<any>()
+const draggingNodeImage = ref<any>()
+const tag2Task = ref<Record<string, any>>({})
+const searchExpandedKeys = ref<string[]>([])
+
+// Task dialog config
+const taskDialogConfig = ref({
+  from: null as any,
+  to: null as any,
+  visible: false,
+  prefix: '',
+  tableName: null as string | null,
+  canStart: false,
+  notSupportedCDC: false,
+  task: {
+    type: 'initial_sync+cdc',
+    crontabExpressionFlag: false,
+    crontabExpression: '',
+    crontabExpressionType: 'once',
   },
-  data() {
-    return {
-      fixedPrefix: 'FDM_',
-      maxPrefixLength: 10,
-      keyword: '',
-      taskType: '',
-      taskDialogConfig: {
-        from: null,
-        to: null,
-        visible: false,
-        prefix: '',
-        tableName: null,
-        canStart: false,
-        notSupportedCDC: false,
-        task: {
-          type: 'initial_sync+cdc',
-          crontabExpressionFlag: false,
-          crontabExpression: '',
-          crontabExpressionType: 'once',
-        },
-      },
-      creating: false,
-      expandedKeys: [],
-      searchIng: false,
-      search: '',
-      enableSearch: false,
-      filterTreeData: [],
-      dialogConfig: {
-        type: 'add',
-        id: '',
-        gid: '',
-        label: '',
-        title: '',
-        itemType: 'resource',
-        desc: '',
-        visible: false,
-      },
-      checkCanStartIng: false,
-      startedTags: [],
-      prefixMap: {},
-    }
+})
+
+// Dialog config
+const dialogConfig = ref({
+  type: 'add',
+  id: '',
+  gid: '',
+  label: '',
+  title: '',
+  itemType: 'resource',
+  desc: '',
+  visible: false,
+})
+
+const treeHeight = ref(0)
+const treeWrapRef = useTemplateRef('treeWrapRef')
+
+const { stop } = useResizeObserver(treeWrapRef, (entries) => {
+  for (const entry of entries) {
+    treeHeight.value = entry.contentRect.height
+  }
+})
+
+// Computed
+const showSearch = computed(() => {
+  return searchValue.value || searchIng.value
+})
+
+const allowDrop = computed(() => {
+  return (
+    !props.fdmNotExist &&
+    props.dragState.isDragging &&
+    props.dragState.from === 'SOURCE' &&
+    props.dragState.draggingObjects[0]?.data.LDP_TYPE === 'table'
+  )
+})
+
+const treeData = computed(() => {
+  return props.directory?.children || []
+})
+
+console.log('treeData', treeData)
+
+const treeMap = computed(() => {
+  return treeData.value.reduce(
+    (obj: any, item: any) => ((obj[item.id] = item), obj),
+    {},
+  )
+})
+
+// Cron options
+const cronOptions = ref([
+  {
+    label: t('packages_ldp_run_only_once'),
+    value: 'once',
   },
-  computed: {
-    showSearch() {
-      return this.search || this.searchIng
-    },
-    allowDrop() {
-      return (
-        !this.fdmNotExist &&
-        this.dragState.isDragging &&
-        this.dragState.from === 'SOURCE' &&
-        this.dragState.draggingObjects[0]?.data.LDP_TYPE === 'table'
-      )
-    },
-    treeData() {
-      return this.directory?.children || []
-    },
-    treeMap() {
-      return this.treeData.reduce(
-        (obj, item) => ((obj[item.id] = item), obj),
-        {},
-      )
-    },
+  {
+    label: t('packages_ldp_run_every_10_minutes'),
+    value: '0 */10 * * * ?',
   },
-  watch: {
-    loadingDirectory(v) {
-      if (!v) {
-        this.loadTask()
-      }
+  {
+    label: t('packages_ldp_run_every_hour'),
+    value: '0 0 * * * ?',
+  },
+  {
+    label: t('packages_ldp_run_every_day'),
+    value: '0 0 0 * * ?',
+  },
+  {
+    label: t('packages_ldp_custom_cron_expression'),
+    value: 'custom',
+  },
+])
+
+// Form rules
+const formRules = ref({
+  taskName: [{ validator: validateTaskName, trigger: 'blur' }],
+  newTableName: [{ required: true }],
+  prefix: [{ validator: validatePrefix, trigger: 'blur' }],
+  'task.crontabExpression': [
+    {
+      required: true,
+      message: t('public_form_not_empty'),
+      trigger: ['blur', 'change'],
     },
-  },
-  created() {
-    this.tag2Task = {}
-    this.debouncedSearch = debounce(this.searchObject, 300)
-  },
-  mounted() {
-    if (!this.loadingDirectory) {
-      this.$nextTick(() => {
-        this.loadTask()
+    { validator: validateCrontabExpression, trigger: ['blur', 'change'] },
+  ],
+})
+
+// Validation functions
+async function validateTaskName(rule: any, value: string, callback: any) {
+  value = value.trim()
+  if (!value) {
+    callback(new Error(t('packages_business_relation_list_qingshururenwu')))
+  } else {
+    try {
+      const isExist = await taskApi.checkName({
+        name: value,
       })
+      if (isExist) {
+        callback(new Error(t('packages_dag_task_form_error_name_duplicate')))
+      } else {
+        callback()
+      }
+    } catch {
+      callback()
     }
-    this.autoUpdateObjects()
-  },
-  beforeUnmount() {
-    // this.eventDriver.off('source-drag-end')
-    clearInterval(this.autoUpdateObjectsTimer)
-  },
-  methods: {
-    autoUpdateObjects() {
-      this.autoUpdateObjectsTimer = setInterval(() => {
-        if (this.showSearch) return
-        this.expandedKeys.forEach((id) => {
-          this.updateObject(id)
-        })
-        this.loadTask()
-      }, 5000)
-    },
+  }
+}
 
-    async updateObject(id) {
-      const node = this.$refs.tree.getNode(id)
+function validatePrefix(rule: any, value: string, callback: any) {
+  value = value.trim()
+  if (!value) {
+    callback(new Error(t('public_form_not_empty')))
+  } else if (!/\w+/.test(value)) {
+    callback(new Error(t('packages_business_data_server_drawer_geshicuowu')))
+  } else {
+    callback()
+  }
+}
 
-      if (node) {
-        node.loadTime = Date.now()
-        const objects = await this.loadObjects(node.data)
-        this.$refs.tree.updateKeyChildren(id, objects)
-      }
-    },
+function validateCrontabExpression(rule: any, value: string, callback: any) {
+  value = value.trim()
+  if (!value) {
+    callback(new Error(t('public_form_not_empty')))
+  } else if (!validateCron(value)) {
+    callback(t('packages_dag_migration_settingpanel_cronbiao'))
+  } else {
+    callback()
+  }
+}
 
-    openRoute(route, newTab = true) {
-      if (newTab) {
-        window.open(this.$router.resolve(route).href)
-      } else {
-        this.$router.push(route)
-      }
-    },
+// Methods
+function autoUpdateObjects() {
+  autoUpdateObjectsTimer.value = setInterval(() => {
+    if (showSearch.value) return
+    expandedKeys.value.forEach((id) => {
+      updateObject(id)
+    })
+    loadTask()
+  }, 5000)
+}
 
-    renderContent(h, { node, data }) {
-      let icon
-      const className = [
-        'custom-tree-node',
-        'overflow-visible',
-        'position-relative',
-        'min-width-0',
-      ]
+async function updateObject(id: string) {
+  const node = tree.value?.getNode(id)
 
-      if (data.isObject) {
-        className.push('grabbable')
-      }
+  if (node) {
+    node.loadTime = Date.now()
+    const objects = await loadObjects(node.data)
+    tree.value?.updateKeyChildren(id, objects)
+  }
+}
 
-      if (data.LDP_TYPE === 'table') {
-        node.isLeaf = true
-        icon = 'table'
-      } else {
-        node.isLeaf = false
-        icon = 'folder-o'
-      }
+function openRoute(route: any, newTab = true) {
+  if (newTab) {
+    window.open(router.resolve(route).href)
+  } else {
+    router.push(route)
+  }
+}
 
-      const actions = []
+function renderContent(h: any, { node, data }: { node: any; data: any }) {
+  let icon
+  const className = [
+    'custom-tree-node',
+    'overflow-visible',
+    'position-relative',
+    'min-width-0',
+  ]
 
-      if (!data.isObject) {
-        if (data.children.some((child) => child.isVirtual)) {
-          actions.push(
-            <IconButton
-              sm
-              disabled={node.loading}
-              onClick={() => {
-                this.startTagTask(data, node)
-              }}
-            >
-              play-circle
-            </IconButton>,
-          )
-        }
-        actions.push(
-          <ElDropdown
-            placement="bottom"
-            trigger="click"
-            onCommand={(command) => this.handleMoreCommand(command, data)}
-          >
-            {{
-              default: () => (
-                <IconButton sm class="ml-2">
-                  more
-                </IconButton>
-              ),
-              dropdown: () => (
-                <ElDropdownMenu>
-                  <ElDropdownItem command="edit">
-                    {this.$t('public_button_edit')}
-                  </ElDropdownItem>
-                </ElDropdownMenu>
-              ),
-            }}
-          </ElDropdown>,
-        )
-      }
+  if (data.isObject) {
+    className.push('grabbable')
+  }
 
-      data.SWIM_TYPE = 'fdm'
+  if (data.LDP_TYPE === 'table') {
+    node.isLeaf = true
+    icon = 'table'
+  } else {
+    node.isLeaf = false
+    icon = 'folder-o'
+  }
 
-      return (
-        <div
-          class={className}
-          onClick={() => {
-            data.isObject && this.$emit('preview', data, this.fdmConnection)
-          }}
-          onDrop={this.handleTreeNodeDrop}
-        >
-          {data.isObject && data.isVirtual && (
-            <div class="table-status-dot rounded-circle position-absolute"></div>
-          )}
-          <div
-            class={[
-              'w-0 flex-1 overflow-hidden flex align-center',
-              {
-                'opacity-50': data.isObject && data.isVirtual,
-              },
-            ]}
-          >
-            {!data.isObject && (
-              <VExpandXTransition>
-                {data.showProgress && (
-                  <el-progress
-                    class="mr-2"
-                    color="#2c65ff"
-                    width={16}
-                    stroke-width={2}
-                    type="circle"
-                    percentage={50}
-                    show-text={false}
-                  ></el-progress>
-                )}
-              </VExpandXTransition>
-            )}
-            <span
-              id={
-                data.isObject
-                  ? `fdm_table_${data.connectionId}_${data.name}`
-                  : `connection_${data.id}`
-              }
-              class="inline-flex align-items-center overflow-hidden"
-            >
-              {icon && (
-                <VIcon size="18" class="tree-item-icon mr-2">
-                  {icon}
-                </VIcon>
-              )}
-              <span class="table-label" title={data.name}>
-                {data.name}
-              </span>
-            </span>
-            {data.comment && (
-              <span class="font-color-sslight">{`(${data.comment})`}</span>
-            )}
-            {!data.isObject && <div class="btn-menu ml-auto">{actions}</div>}
-          </div>
-        </div>
-      )
-    },
+  const actions = []
 
-    async loadDatabases(filter) {
-      try {
-        const _filter = {
-          where: {
-            status: 'ready',
-            database_type: 'MongoDB',
-            connection_type: 'source_and_target',
-            createType: {
-              $ne: 'System',
+  if (!data.isObject) {
+    if (data.children.some((child: any) => child.isVirtual)) {
+      actions.push(
+        h(
+          IconButton,
+          {
+            sm: true,
+            disabled: node.loading,
+            onClick: () => {
+              startTagTask(data, node)
             },
           },
-          fields: {
-            name: 1,
-            id: 1,
-            database_type: 1,
-            connection_type: 1,
-            status: 1,
-            accessNodeType: 1,
-            accessNodeProcessId: 1,
-            accessNodeProcessIdList: 1,
-            pdkType: 1,
-            pdkHash: 1,
-            capabilities: 1,
-          },
-          order: ['status DESC', 'name ASC'],
-        }
-        const result = await fetchConnections(merge(filter, _filter))
-
-        result.items = result.items.map((item) => {
-          return {
-            id: item.id,
-            name: item.name,
-            label: item.name,
-            value: item.id,
-            databaseType: item.database_type,
-            connectionType: item.connection_type,
-            accessNodeProcessId: item.accessNodeProcessId,
-          }
-        })
-
-        return result
-      } catch (error) {
-        console.log('catch', error) // eslint-disable-line
-        return { items: [], total: 0 }
-      }
-    },
-
-    handleCommand(command) {
-      switch (command) {
-        case 'config':
-          this.$emit('show-settings')
-          break
-      }
-    },
-
-    showTaskDialog() {
-      const connectionId = this.taskDialogConfig.from?.id
-
-      this.taskDialogConfig.prefix = this.getSmartPrefix(
-        this.taskDialogConfig.from.name,
+          { default: () => 'play-circle' },
+        ),
       )
-      this.taskDialogConfig.visible = true
-      this.$refs.form?.resetFields()
-
-      // 读取缓存
-      if (this.prefixMap[connectionId]) {
-        this.taskDialogConfig.prefix = this.prefixMap[connectionId]
-      }
-
-      this.taskDialogConfig.task.crontabExpressionFlag = false
-      this.taskDialogConfig.task.crontabExpression = ''
-
-      const capbilitiesMap = this.taskDialogConfig.from.capabilities.reduce(
-        (map, item) => {
-          map[item.id] = true
-          return map
+    }
+    actions.push(
+      h(
+        'ElDropdown',
+        {
+          placement: 'bottom',
+          trigger: 'click',
+          onCommand: (command: string) => handleMoreCommand(command, data),
         },
-        {},
-      )
-
-      if (
-        !capbilitiesMap.stream_read_function &&
-        !capbilitiesMap.raw_data_callback_filter_function &&
-        !capbilitiesMap.raw_data_callback_filter_function_v2 &&
-        (!capbilitiesMap.query_by_advance_filter_function ||
-          !capbilitiesMap.batch_read_function)
-      ) {
-        this.taskDialogConfig.notSupportedCDC = true
-        this.taskDialogConfig.task.type = 'initial_sync'
-      } else {
-        this.taskDialogConfig.notSupportedCDC = false
-      }
-      // this.$refs.form?.clearValidate()
-
-      this.checkCanStart()
-    },
-
-    async checkCanStart() {
-      this.taskDialogConfig.canStart = false
-      this.checkCanStartIng = true
-      const tag = this.treeData.find(
-        (item) => item.linkId === this.taskDialogConfig.from.id,
-      )
-      const task = this.tag2Task[tag?.id]
-
-      if (task) {
-        this.taskDialogConfig.task.type = task.type
-        this.taskDialogConfig.task.crontabExpressionFlag =
-          task.crontabExpressionFlag
-        this.taskDialogConfig.task.crontabExpression = task.crontabExpression
-        this.taskDialogConfig.canStart = await ldpApi.checkCanStartByTag(tag.id)
-        // TODO: 这里不能点击保存，可以加个消息提示，或者常驻的 alert， 解释下原因
-      } else {
-        this.taskDialogConfig.canStart = true
-      }
-
-      this.checkCanStartIng = false
-    },
-
-    async taskDialogSubmit(start) {
-      this.$refs.form.validate(async (valid) => {
-        if (!valid) return
-
-        const {
-          tableName,
-          from = {},
-          task: settings,
-          prefix,
-        } = this.taskDialogConfig
-        const task = Object.assign(
-          this.makeMigrateTask(from, tableName),
-          settings,
-        )
-        // 缓存表名前缀
-        this.prefixMap[from.id] = prefix
-
-        this.creating = true
-        try {
-          const result = await ldpApi.createFDMTask(task, {
-            silenceMessage: true,
-            params: { start },
-          })
-          this.taskDialogConfig.visible = false
-          this.$message.success({
-            message: h(
-              'span',
-              {
-                class: 'color-primary fs-7 clickable',
-                onClick: () => {
-                  this.handleClickName(result)
-                },
-              },
-              this.$t('packages_business_task_created_success'),
+        {
+          default: () =>
+            h(
+              IconButton,
+              { sm: true, class: 'ml-2' },
+              { default: () => 'more' },
             ),
-          })
-        } catch (error) {
-          console.log(error) // eslint-disable-line
-          let msg
+          dropdown: () =>
+            h(
+              'ElDropdownMenu',
+              {},
+              {
+                default: () =>
+                  h(
+                    'ElDropdownItem',
+                    { command: 'edit' },
+                    { default: () => t('public_button_edit') },
+                  ),
+              },
+            ),
+        },
+      ),
+    )
+  }
 
-          if (error?.data?.code === 'Task.ListWarnMessage' && error.data.data) {
-            const keys = Object.keys(error.data.data)
-            msg = error.data.data[keys[0]]?.[0]?.msg
-          }
+  data.SWIM_TYPE = 'fdm'
 
-          this.$message.error(
-            msg || error?.data?.message || this.$t('public_message_save_fail'),
-          )
-        }
-
-        await this.loadFDMDirectory()
-        this.setNodeExpand()
-
-        this.creating = false
-      })
+  return h(
+    'div',
+    {
+      class: className,
+      onClick: () => {
+        data.isObject && emit('preview', data, props.fdmConnection)
+      },
+      onDrop: handleTreeNodeDrop,
     },
-
-    async loadFDMDirectory() {
-      const { items } = await metadataDefinitionsApi.get({
-        filter: JSON.stringify({
-          where: {
-            item_type: { $nin: ['database', 'dataflow', 'api'] },
-            parent_id: this.directory.id,
-          },
+    [
+      data.isObject &&
+        data.isVirtual &&
+        h('div', {
+          class: 'table-status-dot rounded-circle position-absolute',
         }),
+      h(
+        'div',
+        {
+          class: [
+            'w-0 flex-1 overflow-hidden flex align-center',
+            {
+              'opacity-50': data.isObject && data.isVirtual,
+            },
+          ],
+        },
+        [
+          !data.isObject &&
+            h(
+              VExpandXTransition,
+              {},
+              {
+                default: () =>
+                  data.showProgress &&
+                  h('el-progress', {
+                    class: 'mr-2',
+                    color: '#2c65ff',
+                    width: 16,
+                    'stroke-width': 2,
+                    type: 'circle',
+                    percentage: 50,
+                    'show-text': false,
+                  }),
+              },
+            ),
+          h(
+            'span',
+            {
+              id: data.isObject
+                ? `fdm_table_${data.connectionId}_${data.name}`
+                : `connection_${data.id}`,
+              class: 'inline-flex align-items-center overflow-hidden',
+            },
+            [
+              icon &&
+                h(VIcon, { size: 18, class: 'tree-item-icon mr-2' }, icon),
+              h('span', { class: 'table-label', title: data.name }, data.name),
+            ],
+          ),
+          data.comment &&
+            h('span', { class: 'font-color-sslight' }, `(${data.comment})`),
+          !data.isObject && h('div', { class: 'btn-menu ml-auto' }, actions),
+        ],
+      ),
+    ],
+  )
+}
+
+function showTaskDialog() {
+  const connectionId = taskDialogConfig.value.from?.id
+
+  taskDialogConfig.value.prefix = getSmartPrefix(
+    taskDialogConfig.value.from.name,
+  )
+  taskDialogConfig.value.visible = true
+  form.value?.resetFields()
+
+  // 读取缓存
+  if (prefixMap.value[connectionId]) {
+    taskDialogConfig.value.prefix = prefixMap.value[connectionId]
+  }
+
+  taskDialogConfig.value.task.crontabExpressionFlag = false
+  taskDialogConfig.value.task.crontabExpression = ''
+
+  const capbilitiesMap = taskDialogConfig.value.from.capabilities.reduce(
+    (map: any, item: any) => {
+      map[item.id] = true
+      return map
+    },
+    {},
+  )
+
+  if (
+    !capbilitiesMap.stream_read_function &&
+    !capbilitiesMap.raw_data_callback_filter_function &&
+    !capbilitiesMap.raw_data_callback_filter_function_v2 &&
+    (!capbilitiesMap.query_by_advance_filter_function ||
+      !capbilitiesMap.batch_read_function)
+  ) {
+    taskDialogConfig.value.notSupportedCDC = true
+    taskDialogConfig.value.task.type = 'initial_sync'
+  } else {
+    taskDialogConfig.value.notSupportedCDC = false
+  }
+
+  checkCanStart()
+}
+
+async function checkCanStart() {
+  taskDialogConfig.value.canStart = false
+  checkCanStartIng.value = true
+  const tag = treeData.value.find(
+    (item: any) => item.linkId === taskDialogConfig.value.from.id,
+  )
+  const task = tag2Task.value[tag?.id]
+
+  if (task) {
+    taskDialogConfig.value.task.type = task.type
+    taskDialogConfig.value.task.crontabExpressionFlag =
+      task.crontabExpressionFlag
+    taskDialogConfig.value.task.crontabExpression = task.crontabExpression
+    taskDialogConfig.value.canStart = await ldpApi.checkCanStartByTag(tag.id)
+  } else {
+    taskDialogConfig.value.canStart = true
+  }
+
+  checkCanStartIng.value = false
+}
+
+async function taskDialogSubmit(start: boolean) {
+  form.value?.validate(async (valid: boolean) => {
+    if (!valid) return
+
+    const {
+      tableName,
+      from = {},
+      task: settings,
+      prefix,
+    } = taskDialogConfig.value
+    const task = Object.assign(makeMigrateTask(from, tableName), settings)
+    // 缓存表名前缀
+    prefixMap.value[from.id] = prefix
+
+    creating.value = true
+    try {
+      const result = await ldpApi.createFDMTask(task, {
+        silenceMessage: true,
+        params: { start },
       })
+      taskDialogConfig.value.visible = false
+      ElMessage.success({
+        message: h(
+          'span',
+          {
+            class: 'color-primary fs-7 clickable',
+            onClick: () => {
+              handleClickName(result)
+            },
+          },
+          t('packages_business_task_created_success'),
+        ),
+      })
+    } catch (error: any) {
+      console.log(error)
+      let msg
 
-      /*items.forEach(item => {
-      item = this.mapCatalog(item)
-      const children = this.treeMap[item.id]?.children
-      if (children.length) {
-        this.$refs.tree.remove()
-        item.children = children
+      if (error?.data?.code === 'Task.ListWarnMessage' && error.data.data) {
+        const keys = Object.keys(error.data.data)
+        msg = error.data.data[keys[0]]?.[0]?.msg
       }
-      return item
-    })*/
 
-      this.directory.children = items.map((item) => {
-        item = this.mapCatalog(item)
-        const children = this.treeMap[item.id]?.children
+      ElMessage.error(
+        msg || error?.data?.message || t('public_message_save_fail'),
+      )
+    }
 
-        if (children?.length) {
-          item.children = cloneDeep(children)
+    await loadFDMDirectory()
+    setNodeExpand()
+
+    creating.value = false
+  })
+}
+
+async function loadFDMDirectory() {
+  const { items } = await metadataDefinitionsApi.get({
+    filter: JSON.stringify({
+      where: {
+        item_type: { $nin: ['database', 'dataflow', 'api'] },
+        parent_id: props.directory.id,
+      },
+    }),
+  })
+
+  props.directory.children = items.map((item: any) => {
+    item = props.mapCatalog(item)
+    const children = treeMap.value[item.id]?.children
+
+    if (children?.length) {
+      item.children = cloneDeep(children)
+    }
+
+    return item
+  })
+  await nextTick()
+  tree.value?.$forceUpdate()
+}
+
+function handleDragOver(ev: DragEvent) {
+  ev.preventDefault()
+}
+
+function handleDragEnter(ev: DragEvent) {
+  ev.preventDefault()
+
+  if (!allowDrop.value) return
+
+  const dropNode = findParentByClassName(
+    ev.currentTarget as Element,
+    'tree-wrap',
+  )
+  dropNode?.classList.add('is-drop')
+}
+
+function handleDragLeave(ev: DragEvent) {
+  ev.preventDefault()
+
+  if (!allowDrop.value) return
+  if (!(ev.currentTarget as Element).contains(ev.relatedTarget as Element)) {
+    removeDropEffect(ev, 'tree-wrap', 'is-drop')
+  }
+}
+
+function handleDrop(ev: DragEvent) {
+  ev.preventDefault()
+
+  if (!allowDrop.value) return
+
+  removeDropEffect(ev, 'tree-wrap', 'is-drop')
+
+  const { draggingObjects } = props.dragState
+  if (!draggingObjects.length) return
+  const object = draggingObjects[0]
+
+  if (object.data.type === 'connection') {
+    taskDialogConfig.value.from = object.data
+    taskDialogConfig.value.tableName = null
+  } else if (object.data.type === 'table') {
+    taskDialogConfig.value.from = object.parent.data
+    taskDialogConfig.value.tableName = object.data.name
+  }
+
+  showTaskDialog()
+}
+
+function removeDropEffect(
+  ev: DragEvent,
+  cls = 'wrap__item',
+  removeCls = 'is-drop-inner',
+) {
+  const dropNode = findParentByClassName(ev.currentTarget as Element, cls)
+  dropNode?.classList.remove(removeCls)
+}
+
+function handleTreeNodeDrop(ev: DragEvent) {
+  ev.stopPropagation()
+  handleDrop(ev)
+}
+
+function findParentByClassName(
+  parent: Element | null,
+  cls: string,
+): Element | null {
+  while (parent && !parent.classList.contains(cls)) {
+    parent = parent.parentNode as Element
+  }
+  return parent
+}
+
+function makeMigrateTask(from: any, tableName: string) {
+  const source = getSourceNode(from, tableName)
+  const target = getDatabaseNode(props.fdmConnection)
+  const tableReNameNode = getTableReNameNode()
+  return {
+    ...TASK_SETTINGS,
+    syncType: 'migrate',
+    name: getTaskName(from),
+    dag: {
+      edges: [
+        { source: source.id, target: tableReNameNode.id },
+        { source: tableReNameNode.id, target: target.id },
+      ],
+      nodes: [source, tableReNameNode, target],
+    },
+  }
+}
+
+function getSourceNode(from: any, tableName: string) {
+  const source = getDatabaseNode(from)
+
+  Object.assign(
+    source,
+    tableName
+      ? {
+          migrateTableSelectType: 'custom',
+          tableNames: [tableName],
         }
+      : {
+          migrateTableSelectType: 'expression',
+          tableExpression: '.*',
+        },
+  )
 
+  return source
+}
+
+function getTaskName(from: any) {
+  return `${from.name}_Clone_To_FDM_${generateId(6)}`
+}
+
+function getDatabaseNode(db: any) {
+  return {
+    id: uuid(),
+    type: 'database',
+    name: db.name,
+    connectionId: db.id,
+    databaseType: db.database_type,
+    attrs: {
+      connectionName: db.name,
+      connectionType: db.connection_type,
+      accessNodeProcessId: db.accessNodeProcessId,
+      pdkType: db.pdkType,
+      pdkHash: db.pdkHash,
+      capabilities: db.capabilities || [],
+    },
+  }
+}
+
+function getTableReNameNode() {
+  return {
+    id: uuid(),
+    type: 'table_rename_processor',
+    name: t('packages_business_swimlane_fdm_biaobianji'),
+    prefix: `${fixedPrefix.value}${taskDialogConfig.value.prefix}_`,
+  }
+}
+
+async function handleNodeExpand(data: any, node: any, forceLoad?: boolean) {
+  setExpand(data.id, true)
+  // 十秒内加载过资源，不再继续加载
+  if (!forceLoad && node.loadTime && Date.now() - node.loadTime < 10000) return
+
+  node.loadTime = Date.now()
+  node.loading = true
+  const objects = await loadObjects(data)
+  node.loading = false
+  tree.value?.updateKeyChildren(data.id, objects)
+}
+
+function handeNodeCollapse(data: any) {
+  setExpand(data.id, false)
+}
+
+function checkAllowDrag(node: any) {
+  return node.data.LDP_TYPE === 'table'
+}
+
+function handleDragStart(draggingNode: any, ev: DragEvent) {
+  draggingNode = {
+    ...draggingNode,
+    parent: {
+      data: props.fdmConnection,
+    },
+  }
+  draggingNode.value = draggingNode
+  draggingNodeImage.value = makeDragNodeImage(
+    (ev.currentTarget as Element).querySelector('.tree-item-icon'),
+    draggingNode.data.name,
+  )
+  ev.dataTransfer?.setDragImage(draggingNodeImage.value, 4, 4)
+  if (ev.dataTransfer) {
+    ev.dataTransfer.effectAllowed = 'copy'
+  }
+  props.dragState.isDragging = true
+  props.dragState.draggingObjects = [draggingNode]
+  props.dragState.from = 'FDM'
+}
+
+function handleDragEnd() {
+  emit('node-drag-end')
+}
+
+function setNodeExpand() {
+  const target = treeData.value.find(
+    (item: any) => item.linkId === taskDialogConfig.value.from.id,
+  )
+  if (target) {
+    const node = tree.value?.getNode(target.id)
+    node && (node.loading = true)
+    setTimeout(async () => {
+      setExpand(target.id, true)
+      let objects = await loadObjects(target)
+      objects = objects.map((item: any) => {
+        item.parent_id = target.id
+        item.isObject = true
+        item.connectionId = item.sourceConId
         return item
       })
-      await this.$nextTick()
-      this.$refs.tree.$forceUpdate()
-    },
-
-    handleDragOver(ev) {
-      ev.preventDefault()
-    },
-
-    handleDragEnter(ev) {
-      ev.preventDefault()
-
-      if (!this.allowDrop) return
-
-      const dropNode = this.findParentByClassName(ev.currentTarget, 'tree-wrap')
-      dropNode.classList.add('is-drop')
-    },
-
-    handleDragLeave(ev) {
-      ev.preventDefault()
-
-      if (!this.allowDrop) return
-      if (!ev.currentTarget.contains(ev.relatedTarget)) {
-        this.removeDropEffect(ev, 'tree-wrap', 'is-drop')
-      }
-    },
-
-    handleDrop(ev) {
-      ev.preventDefault()
-
-      if (!this.allowDrop) return
-
-      this.removeDropEffect(ev, 'tree-wrap', 'is-drop')
-
-      const { draggingObjects } = this.dragState
-      if (!draggingObjects.length) return
-      const object = draggingObjects[0]
-
-      if (object.data.type === 'connection') {
-        this.taskDialogConfig.from = object.data
-        this.taskDialogConfig.tableName = null
-      } else if (object.data.type === 'table') {
-        this.taskDialogConfig.from = object.parent.data
-        this.taskDialogConfig.tableName = object.data.name
-      }
-
-      this.showTaskDialog()
-    },
-
-    removeDropEffect(ev, cls = 'wrap__item', removeCls = 'is-drop-inner') {
-      const dropNode = this.findParentByClassName(ev.currentTarget, cls)
-      dropNode.classList.remove(removeCls)
-    },
-
-    handleTreeNodeDrop(ev) {
-      ev.stopPropagation()
-      this.handleDrop(ev)
-    },
-
-    findParentByClassName(parent, cls) {
-      while (parent && !parent.classList.contains(cls)) {
-        parent = parent.parentNode
-      }
-      return parent
-    },
-
-    makeMigrateTask(from, tableName) {
-      const source = this.getSourceNode(from, tableName)
-      const target = this.getDatabaseNode(this.fdmConnection)
-      const tableReNameNode = this.getTableReNameNode()
-      return {
-        ...TASK_SETTINGS,
-        syncType: 'migrate',
-        name: this.getTaskName(from),
-        dag: {
-          edges: [
-            { source: source.id, target: tableReNameNode.id },
-            { source: tableReNameNode.id, target: target.id },
-          ],
-          nodes: [source, tableReNameNode, target],
-        },
-      }
-    },
-
-    getSourceNode(from, tableName) {
-      const source = this.getDatabaseNode(from)
-
-      Object.assign(
-        source,
-        tableName
-          ? {
-              migrateTableSelectType: 'custom',
-              tableNames: [tableName],
-            }
-          : {
-              migrateTableSelectType: 'expression',
-              tableExpression: '.*',
-            },
-      )
-
-      return source
-    },
-
-    getTaskName(from) {
-      return `${from.name}_Clone_To_FDM_${generateId(6)}`
-    },
-
-    getDatabaseNode(db) {
-      return {
-        id: uuid(),
-        type: 'database',
-        name: db.name,
-        connectionId: db.id,
-        databaseType: db.database_type,
-        attrs: {
-          connectionName: db.name,
-          connectionType: db.connection_type,
-          accessNodeProcessId: db.accessNodeProcessId,
-          pdkType: db.pdkType,
-          pdkHash: db.pdkHash,
-          capabilities: db.capabilities || [],
-        },
-      }
-    },
-
-    getTableReNameNode() {
-      return {
-        id: uuid(),
-        type: 'table_rename_processor',
-        name: i18n.t('packages_business_swimlane_fdm_biaobianji'),
-        prefix: `${this.fixedPrefix}${this.taskDialogConfig.prefix}_`,
-      }
-    },
-
-    async handleNodeExpand(data, node, forceLoad) {
-      this.setExpand(data.id, true)
-      // 十秒内加载过资源，不再继续加载
-      if (!forceLoad && node.loadTime && Date.now() - node.loadTime < 10000)
-        return
-
-      node.loadTime = Date.now()
-      node.loading = true
-      const objects = await this.loadObjects(data)
-      node.loading = false
-      // data.children = objects
-      this.$refs.tree.updateKeyChildren(data.id, objects)
-    },
-
-    handeNodeCollapse(data) {
-      this.setExpand(data.id, false)
-    },
-
-    checkAllowDrag(node) {
-      return node.data.LDP_TYPE === 'table'
-    },
-
-    handleDragStart(draggingNode, ev) {
-      draggingNode = {
-        ...draggingNode,
-        parent: {
-          data: this.fdmConnection,
-        },
-      }
-      this.draggingNode = draggingNode
-      this.draggingNodeImage = makeDragNodeImage(
-        ev.currentTarget.querySelector('.tree-item-icon'),
-        draggingNode.data.name,
-      )
-      ev.dataTransfer.setDragImage(this.draggingNodeImage, 4, 4)
-      ev.dataTransfer.effectAllowed = 'copy'
-      this.dragState.isDragging = true
-      this.dragState.draggingObjects = [draggingNode]
-      this.dragState.from = 'FDM'
-    },
-
-    handleDragEnd() {
-      this.$emit('node-drag-end')
-    },
-
-    setNodeExpand() {
-      const target = this.treeData.find(
-        (item) => item.linkId === this.taskDialogConfig.from.id,
-      )
-      if (target) {
-        const node = this.$refs.tree.getNode(target.id)
-        node && (node.loading = true)
-        setTimeout(async () => {
-          this.setExpand(target.id, true)
-          let objects = await this.loadObjects(target)
-          objects = objects.map((item) => {
-            item.parent_id = target.id
-            item.isObject = true
-            item.connectionId = item.sourceConId
-            return item
-          })
-          this.$refs.tree.updateKeyChildren(target.id, objects)
-          node && (node.loading = false)
-        }, 1000)
-      } else {
-        this.$emit('load-directory')
-      }
-      // this.taskDialogConfig.from
-    },
-
-    setExpand(id, isExpand) {
-      const i = this.expandedKeys.indexOf(id)
-      if (!isExpand) {
-        if (~i) this.expandedKeys.splice(i, 1)
-      } else if (!~i) this.expandedKeys.push(id)
-    },
-
-    getSmartPrefix(connectionName) {
-      connectionName = connectionName
-        .replaceAll(/[\u4E00-\u9FA5\s]+/g, '')
-        .replace(/^[-_]+/, '')
-      const planA = connectionName.split('_').shift()
-      const planB = connectionName.split('-').shift()
-
-      return (planA.length < planB.length ? planA : planB).slice(0, 5)
-    },
-
-    handleMoreCommand(command, data) {
-      switch (command) {
-        case 'add':
-        case 'edit':
-          this.showDialog(data, command)
-          break
-        case 'delete':
-          this.deleteNode(data)
-      }
-    },
-
-    showDialog(data, dialogType) {
-      const type = dialogType || 'add'
-      let itemType = 'resource'
-      if (data && data.item_type) {
-        itemType = data.item_type?.join('')
-      }
-      this.dialogConfig = {
-        itemType,
-        visible: true,
-        type,
-        item: data,
-        id: data ? data.id : '',
-        gid: data?.gid || '',
-        label: type === 'edit' ? data.name : '',
-        isParent: true,
-        desc: type === 'edit' ? data?.desc : '',
-        title:
-          type === 'add'
-            ? this.$t('packages_component_classification_addChildernNode')
-            : this.$t('public_button_edit'),
-      }
-    },
-
-    hideDialog() {
-      this.dialogConfig.visible = false
-    },
-
-    deleteNode(data) {
-      this.$confirm(
-        `${this.$t('public_message_delete_confirm')}: ${data.name}?`,
-        this.$t('packages_business_catalog_delete_confirm_message'),
-        {
-          confirmButtonText: this.$t('public_button_delete'),
-        },
-      ).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        metadataDefinitionsApi.delete(data.id).then(() => {
-          this.$refs.tree.remove(data.id)
-        })
-      })
-    },
-
-    async dialogSubmit() {
-      const config = this.dialogConfig
-      const value = config.label
-      const id = config.id
-      const itemType = [config.itemType]
-      let method = 'post'
-
-      if (!value || value.trim() === '') {
-        this.$message.error(
-          this.$t('packages_component_classification_nodeName'),
-        )
-        return
-      }
-
-      const params = {
-        item_type: itemType,
-        desc: config.desc,
-        value,
-      }
-
-      if (config.type === 'edit') {
-        method = 'changeById'
-        params.id = id
-        delete params.item_type
-      } else if (id) {
-        params.parent_id = id
-      }
-
-      try {
-        const data = await metadataDefinitionsApi[method](params)
-        this.hideDialog()
-        this.$message.success(this.$t('public_message_operation_success'))
-        if (data && config.type === 'add') {
-          this.dialogConfig.item.children.push(this.mapCatalog(data))
-        } else if (config.type === 'edit') {
-          this.dialogConfig.item.name = params.value
-          this.dialogConfig.item.desc = params.desc
-        }
-      } catch (error) {
-        this.$message.error(error.message)
-      }
-    },
-
-    async loadTask() {
-      if (!this.treeData.length) return
-
-      const map = await ldpApi.getTaskByTag(
-        this.treeData.map((item) => item.id).join(','),
-      )
-      const newMap = {}
-      for (const tagId in map) {
-        let task = map[tagId].find(
-          (task) =>
-            !['deleting', 'delete_failed'].includes(task.status) &&
-            !task.is_deleted &&
-            task.fdmMain,
-        )
-        if (task) {
-          task = makeStatusAndDisabled(task)
-          newMap[tagId] = {
-            id: task.id,
-            name: task.name,
-            type: task.type,
-            crontabExpressionFlag: task.crontabExpressionFlag,
-            crontabExpression: task.crontabExpression,
-            status: task.status,
-            disabledData: task.disabledData,
-          }
-        }
-      }
-      this.tag2Task = newMap
-      this.checkStartedTag()
-    },
-
-    checkStartedTag() {
-      this.startedTags = this.startedTags.filter((tagId) => {
-        const task = this.tag2Task[tagId]
-        const node = this.$refs.tree.getNode(tagId)
-        if (
-          node &&
-          task &&
-          ['running', 'complete', 'stop', 'error'].includes(task.status)
-        ) {
-          this.handleNodeExpand(node.data, node, true)
-          return false
-        }
-        return true
-      })
-    },
-
-    async startTagTask(tag, node) {
-      if (!this.startedTags.includes(tag.id)) this.startedTags.push(tag.id)
-
-      node.loading = true
-      node.expanded = false
-      this.setExpand(tag.id, false)
-      await ldpApi.batchStart(tag.id)
-      this.$message.success(this.$t('public_message_operation_success'))
-    },
-
-    handleFindTreeDom(val = {}, getParent = false) {
-      const el = document.getElementById(
-        `fdm_table_${val.connectionId}_${val.table}`,
-      ) // this.$refs[`table_${val.connectionId}_${val.table}`]
-      return getParent
-        ? el?.parentNode
-        : this.findParentByClassName(el, 'el-tree-node__content')
-    },
-
-    async searchByKeywordList(val = []) {
-      const searchExpandedKeys = []
-      this.filterTreeData = val.map((t) => {
-        searchExpandedKeys.push(t.connectionId)
-        return {
-          LDP_TYPE: 'connection',
-          id: t.connectionId,
-          name: t.connectionName,
-          status: 'ready',
-          isLeaf: false,
-          level: 0,
-          disabled: false,
-          children: [
-            {
-              id: t.tableId,
-              name: t.table,
-              connectionId: t.connectionId,
-              isLeaf: true,
-              isObject: true,
-              type: 'table',
-              LDP_TYPE: 'table',
-            },
-          ],
-        }
-      })
-      this.searchExpandedKeys = searchExpandedKeys
-    },
-
-    handleChangeCronType(val) {
-      if (val === 'once') {
-        this.taskDialogConfig.task.crontabExpressionFlag = false
-      } else {
-        this.taskDialogConfig.task.crontabExpressionFlag = true
-        if (val !== 'custom') {
-          this.taskDialogConfig.task.crontabExpression = val
-        }
-      }
-    },
-
-    handleScroll: debounce(function () {
-      this.$emit('on-scroll')
-    }, 200),
-  },
+      tree.value?.updateKeyChildren(target.id, objects)
+      node && (node.loading = false)
+    }, 1000)
+  } else {
+    emit('load-directory')
+  }
 }
+
+function setExpand(id: string, isExpand: boolean) {
+  const i = expandedKeys.value.indexOf(id)
+  if (!isExpand) {
+    if (~i) expandedKeys.value.splice(i, 1)
+  } else if (!~i) expandedKeys.value.push(id)
+}
+
+function getSmartPrefix(connectionName: string) {
+  connectionName = connectionName
+    .replaceAll(/[\u4E00-\u9FA5\s]+/g, '')
+    .replace(/^[-_]+/, '')
+  const planA = connectionName.split('_').shift() || ''
+  const planB = connectionName.split('-').shift() || ''
+
+  return (planA.length < planB.length ? planA : planB).slice(0, 5)
+}
+
+function handleMoreCommand(command: string, data: any) {
+  switch (command) {
+    case 'add':
+    case 'edit':
+      showDialog(data, command)
+      break
+    case 'delete':
+      deleteNode(data)
+  }
+}
+
+function showDialog(data: any, dialogType: string) {
+  const type = dialogType || 'add'
+  let itemType = 'resource'
+  if (data && data.item_type) {
+    itemType = data.item_type?.join('')
+  }
+  dialogConfig.value = {
+    itemType,
+    visible: true,
+    type,
+    item: data,
+    id: data ? data.id : '',
+    gid: data?.gid || '',
+    label: type === 'edit' ? data.name : '',
+    isParent: true,
+    desc: type === 'edit' ? data?.desc : '',
+    title:
+      type === 'add'
+        ? t('packages_component_classification_addChildernNode')
+        : t('public_button_edit'),
+  }
+}
+
+function hideDialog() {
+  dialogConfig.value.visible = false
+}
+
+function deleteNode(data: any) {
+  ElMessageBox.confirm(
+    `${t('public_message_delete_confirm')}: ${data.name}?`,
+    t('packages_business_catalog_delete_confirm_message'),
+    {
+      confirmButtonText: t('public_button_delete'),
+    },
+  ).then((resFlag) => {
+    if (!resFlag) {
+      return
+    }
+    metadataDefinitionsApi.delete(data.id).then(() => {
+      tree.value?.remove(data.id)
+    })
+  })
+}
+
+async function dialogSubmit() {
+  const config = dialogConfig.value
+  const value = config.label
+  const id = config.id
+  const itemType = [config.itemType]
+  let method = 'post'
+
+  if (!value || value.trim() === '') {
+    ElMessage.error(t('packages_component_classification_nodeName'))
+    return
+  }
+
+  const params: any = {
+    item_type: itemType,
+    desc: config.desc,
+    value,
+  }
+
+  if (config.type === 'edit') {
+    method = 'changeById'
+    params.id = id
+    delete params.item_type
+  } else if (id) {
+    params.parent_id = id
+  }
+
+  try {
+    const data = await metadataDefinitionsApi[method](params)
+    hideDialog()
+    ElMessage.success(t('public_message_operation_success'))
+    if (data && config.type === 'add') {
+      dialogConfig.value.item.children.push(props.mapCatalog(data))
+    } else if (config.type === 'edit') {
+      dialogConfig.value.item.name = params.value
+      dialogConfig.value.item.desc = params.desc
+    }
+  } catch (error: any) {
+    ElMessage.error(error.message)
+  }
+}
+
+async function loadTask() {
+  if (!treeData.value.length) return
+
+  const map = await ldpApi.getTaskByTag(
+    treeData.value.map((item: any) => item.id).join(','),
+  )
+  const newMap: Record<string, any> = {}
+  for (const tagId in map) {
+    let task = map[tagId].find(
+      (task: any) =>
+        !['deleting', 'delete_failed'].includes(task.status) &&
+        !task.is_deleted &&
+        task.fdmMain,
+    )
+    if (task) {
+      task = makeStatusAndDisabled(task)
+      newMap[tagId] = {
+        id: task.id,
+        name: task.name,
+        type: task.type,
+        crontabExpressionFlag: task.crontabExpressionFlag,
+        crontabExpression: task.crontabExpression,
+        status: task.status,
+        disabledData: task.disabledData,
+      }
+    }
+  }
+  tag2Task.value = newMap
+  checkStartedTag()
+}
+
+function checkStartedTag() {
+  startedTags.value = startedTags.value.filter((tagId) => {
+    const task = tag2Task.value[tagId]
+    const node = tree.value?.getNode(tagId)
+    if (
+      node &&
+      task &&
+      ['running', 'complete', 'stop', 'error'].includes(task.status)
+    ) {
+      handleNodeExpand(node.data, node, true)
+      return false
+    }
+    return true
+  })
+}
+
+async function startTagTask(tag: any, node: any) {
+  if (!startedTags.value.includes(tag.id)) startedTags.value.push(tag.id)
+
+  node.loading = true
+  node.expanded = false
+  setExpand(tag.id, false)
+  await ldpApi.batchStart(tag.id, {})
+  ElMessage.success(t('public_message_operation_success'))
+}
+
+function handleFindTreeDom(val: any = {}, getParent = false) {
+  const el = document.getElementById(
+    `fdm_table_${val.connectionId}_${val.table}`,
+  )
+  return getParent
+    ? el?.parentNode
+    : findParentByClassName(el, 'el-tree-node__content')
+}
+
+async function searchByKeywordList(val: any[] = []) {
+  const searchExpandedKeys: string[] = []
+  filterTreeData.value = val.map((t) => {
+    searchExpandedKeys.push(t.connectionId)
+    return {
+      LDP_TYPE: 'connection',
+      id: t.connectionId,
+      name: t.connectionName,
+      status: 'ready',
+      isLeaf: false,
+      level: 0,
+      disabled: false,
+      children: [
+        {
+          id: t.tableId,
+          name: t.table,
+          connectionId: t.connectionId,
+          isLeaf: true,
+          isObject: true,
+          type: 'table',
+          LDP_TYPE: 'table',
+        },
+      ],
+    }
+  })
+  searchExpandedKeys.value = searchExpandedKeys
+}
+
+function handleChangeCronType(val: string) {
+  if (val === 'once') {
+    taskDialogConfig.value.task.crontabExpressionFlag = false
+  } else {
+    taskDialogConfig.value.task.crontabExpressionFlag = true
+    if (val !== 'custom') {
+      taskDialogConfig.value.task.crontabExpression = val
+    }
+  }
+}
+
+// Common mixin methods
+function toggleEnableSearch() {
+  if (enableSearch.value) {
+    searchValue.value = ''
+    enableSearch.value = false
+  } else {
+    enableSearch.value = true
+    nextTick(() => {
+      search.value?.focus()
+    })
+  }
+}
+
+function handleSearch(val: string) {
+  if (!val) {
+    searchIng.value = false
+    debouncedSearch.value?.cancel()
+    return
+  }
+  searchIng.value = true
+  debouncedSearch.value(val)
+}
+
+function handleClickName(task: any) {
+  if (!task?.id) return
+
+  let routeName
+
+  if (!['edit', 'wait_start'].includes(task.status)) {
+    routeName = task.syncType === 'migrate' ? 'MigrationMonitor' : 'TaskMonitor'
+  } else {
+    routeName = task.syncType === 'migrate' ? 'MigrateEditor' : 'DataflowEditor'
+  }
+
+  openRoute({
+    name: routeName,
+    query: {
+      tour: false, // TODO: get from store
+    },
+    params: {
+      id: task.id,
+    },
+  })
+}
+
+function loadObjects(
+  node: any,
+  isCurrent = true,
+  queryKey?: string,
+  cancelToken?: any,
+) {
+  const where = {
+    page: 1,
+    pageSize: 10000,
+    tagId: node.id,
+    range: isCurrent ? 'current' : undefined,
+    sourceType: 'table',
+    queryKey,
+    regUnion: false,
+    fields: {
+      allTags: 1,
+    },
+  }
+  return discoveryApi
+    .discoveryList(where, {
+      cancelToken,
+    })
+    .then((res: any) => {
+      return res.items.map((item: any) =>
+        Object.assign(item, {
+          isLeaf: true,
+          isObject: true,
+          connectionId: item.sourceConId,
+          LDP_TYPE: 'table',
+          parent_id: node.id,
+          isVirtual: item.status === 'noRunning',
+        }),
+      )
+    })
+}
+
+async function searchObject(search: string) {
+  cancelSource.value?.cancel()
+  cancelSource.value = CancelToken.source()
+  searchIng.value = true
+  const result = await loadObjects(
+    props.directory,
+    false,
+    search,
+    cancelSource.value.token,
+  )
+  const map = result.reduce((obj: any, item: any) => {
+    const id = item.listtags?.[0]?.id || props.directory.id
+    const children = obj[id] || []
+    children.push(item)
+    obj[id] = children
+    return obj
+  }, {})
+
+  const filterTree = (node: any) => {
+    const newNode = { ...node }
+
+    if (node.children?.length) {
+      newNode.children = node.children
+        .map((child: any) => filterTree(child))
+        .filter(
+          (child: any) =>
+            child.LDP_TYPE === 'folder' &&
+            (child.name.includes(search) || child.children.length),
+        )
+    } else {
+      newNode.children = []
+    }
+
+    if (map[node.id]) {
+      newNode.children.push(...map[node.id].map((child: any) => ({ ...child })))
+    }
+
+    return newNode
+  }
+
+  const root = filterTree(props.directory)
+  searchIng.value = false
+  filterTreeData.value = root.children
+}
+
+function handleFindParent(event: any) {
+  const parentNode = event.target?.parentElement
+  emit('find-parent', parentNode)
+}
+
+async function makeTaskName(source: string) {
+  const taskNames = await taskApi.get(
+    {
+      filter: JSON.stringify({
+        limit: 9999,
+        fields: { name: 1 },
+        where: { name: { like: `^${source}\\d+$` } },
+      }),
+    },
+    {},
+    {},
+  )
+  let def = 1
+  if (taskNames?.items?.length) {
+    const arr = [0]
+    taskNames.items.forEach((item: any) => {
+      const res = item.name.match(new RegExp(`^${source}(\\d+)$`))
+      if (res && res[1]) arr.push(+res[1])
+    })
+    arr.sort((a, b) => a - b)
+    def = arr.pop() + 1
+  }
+  return `${source}${def}`
+}
+
+const handleScroll = debounce(function () {
+  emit('on-scroll')
+}, 200)
+
+// Watchers
+watch(
+  () => props.loadingDirectory,
+  (v) => {
+    if (!v) {
+      loadTask()
+    }
+  },
+)
+
+// Lifecycle
+onMounted(() => {
+  if (!props.loadingDirectory) {
+    nextTick(() => {
+      loadTask()
+    })
+  }
+  autoUpdateObjects()
+  debouncedSearch.value = debounce(searchObject, 300)
+})
+
+onBeforeUnmount(() => {
+  if (autoUpdateObjectsTimer.value) {
+    clearInterval(autoUpdateObjectsTimer.value)
+  }
+  debouncedSearch.value?.cancel()
+  cancelSource.value?.cancel()
+  stop()
+})
+
+// Expose methods and properties for external use
+defineExpose({
+  handleFindTreeDom,
+  searchByKeywordList,
+})
 </script>
 
 <template>
   <div class="list__item flex flex-column flex-1 overflow-hidden">
     <div class="list__title flex align-center px-4">
-      <span class="fs-6">{{ $t('packages_business_data_console_fdm') }}</span>
+      <span class="fs-6">{{ t('packages_business_data_console_fdm') }}</span>
       <div class="flex-grow-1" />
       <IconButton
         :disabled="fdmNotExist"
@@ -933,7 +1200,7 @@ export default {
       <div v-if="enableSearch" class="px-2 pt-2">
         <ElInput
           ref="search"
-          v-model="search"
+          v-model="searchValue"
           clearable
           @keydown.stop
           @keyup.stop
@@ -946,7 +1213,11 @@ export default {
         </ElInput>
       </div>
 
-      <div v-if="!showParentLineage" class="flex-1 min-h-0 position-relative">
+      <div
+        v-if="!showParentLineage"
+        ref="treeWrapRef"
+        class="flex-1 min-h-0 position-relative p-1 overflow-y-auto"
+      >
         <div
           v-if="showSearch"
           v-loading="searchIng"
@@ -954,7 +1225,7 @@ export default {
         >
           <ElTree
             ref="tree"
-            class="ldp-tree h-100"
+            class="ldp-tree"
             node-key="id"
             :data="filterTreeData"
             draggable
@@ -973,12 +1244,10 @@ export default {
         <template v-else>
           <ElTree
             ref="tree"
-            class="ldp-tree h-100"
+            class="ldp-tree"
             node-key="id"
             :data="treeData"
             draggable
-            height="100%"
-            wrapper-class-name="p-2"
             empty-text=""
             :default-expanded-keys="expandedKeys"
             :render-content="renderContent"
@@ -990,14 +1259,65 @@ export default {
             @node-drag-end="handleDragEnd"
             @node-expand="handleNodeExpand"
             @node-collapse="handeNodeCollapse"
-          />
+          >
+            <!-- <template #default="{ node, data }">
+              <div
+                class="custom-tree-node position-relative min-w-0 flex align-center"
+                :class="{
+                  grabbable: node.isLeaf,
+                }"
+              >
+                <div
+                  v-if="data.isVirtual && node.isLeaf"
+                  class="table-status-dot rounded-circle position-absolute"
+                />
+
+                <div
+                  class="w-0 flex-1 overflow-hidden flex align-center"
+                  :class="{
+                    'opacity-50': data.isObject && data.isVirtual,
+                  }"
+                >
+                  <VExpandXTransition v-if="node.isLeaf">
+                    <el-progress
+                      v-if="data.showProgress"
+                      class="mr-2"
+                      :width="16"
+                      :stroke-width="2"
+                      type="circle"
+                      :show-text="false"
+                      color="#2c65ff"
+                      :percentage="50"
+                    />
+                  </VExpandXTransition>
+
+                  <span
+                    :id="
+                      node.isLeaf
+                        ? `fdm_table_${data.connectionId}_${data.name}`
+                        : `connection_${data.id}`
+                    "
+                    class="inline-flex align-items-center overflow-hidden"
+                  >
+                    <VIcon size="18" class="tree-item-icon mr-2">{{
+                      !node.isLeaf ? 'folder-o' : 'table'
+                    }}</VIcon>
+                    <span class="table-label" :title="data.name">{{
+                      data.name
+                    }}</span>
+                  </span>
+                  <div class="flex-1 overflow-hidden text-ellipsis" />
+                </div>
+              </div>
+            </template> -->
+          </ElTree>
           <div
             v-if="!treeData.length"
             class="flex justify-center align-center absolute-fill fs-7 font-color-light px-3"
           >
             <span
               class="text-center lh-base"
-              v-html="$t('packages_business_fdm_empty_text')"
+              v-html="t('packages_business_fdm_empty_text')"
             />
           </div>
         </template>
@@ -1038,7 +1358,7 @@ export default {
         v-if="fdmNotExist"
         class="drop-mask pe-auto flex justify-center align-center absolute-fill font-color-dark fs-6"
       >
-        {{ $t('packages_ldp_connection_expired') }}
+        {{ t('packages_ldp_connection_expired') }}
       </div>
     </div>
     <ElDialog v-model="taskDialogConfig.visible" :close-on-click-modal="false">

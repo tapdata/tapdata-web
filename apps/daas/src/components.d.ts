@@ -83,6 +83,7 @@ declare module 'vue' {
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElTree: typeof import('element-plus/es')['ElTree']
     ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
+    ElTreeV2: typeof import('element-plus/es')['ElTreeV2']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     'ILucide:alertTriangle': typeof import('~icons/lucide/alert-triangle')['default']
     'ILucide:chevronDown': typeof import('~icons/lucide/chevron-down')['default']
@@ -117,8 +118,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     VDivider: typeof import('./components/VDivider.vue')['default']
   }
-  export interface ComponentCustomProperties {
-    vInfiniteScroll: typeof import('element-plus/es')['ElInfiniteScroll']
+  export interface GlobalDirectives {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }

@@ -1,4 +1,4 @@
-<script lang="jsx">
+<script lang="tsx">
 import { defineComponent, Fragment, ref, Text } from 'vue'
 
 function convertToUnit(str, unit = 'px') {

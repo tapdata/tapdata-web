@@ -215,7 +215,7 @@ export default defineComponent({
             <span class="table-label" title={data.name}>
               {data.name}
             </span>
-            {data.disabled && <ElTag type="info">{this.$t('public_status_invalid')}</ElTag>}
+            {data.disabled && <ElTag disable-transitions type="info">{this.$t('public_status_invalid')}</ElTag>}
             <IconButton
               class="btn-menu"
               sm

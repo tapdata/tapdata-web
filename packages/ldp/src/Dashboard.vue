@@ -617,7 +617,7 @@ export default {
     <template #actions>
       <span
         v-if="showParentLineage"
-        class="parent-lineage-quit color-linfo cursor-pointer rounded-2 px-4 py-2 position-absolute top-50 start-50 translate-middle"
+        class="parent-lineage-quit color-white cursor-pointer rounded-2 px-4 py-2 position-absolute top-50 start-50 translate-middle"
         @click="handleQuit"
         >{{ $t('packages_ldp_src_dashboard_anEsctui') }}</span
       >
