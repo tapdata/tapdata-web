@@ -5,6 +5,7 @@ import {
   useLocale,
   useNamespace,
 } from 'element-plus'
+import 'element-plus/es/components/virtual-list/style/css'
 import {
   ROOT_TREE_INJECTION_KEY,
   treeEmits,
