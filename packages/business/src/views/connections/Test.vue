@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { connectionsApi, proxyApi } from '@tap/api'
+import { proxyApi, updateConnectionById } from '@tap/api'
 import loadingImg from '@tap/assets/images/loading.gif'
 import i18n from '@tap/i18n'
 import { copyToClipboard, openUrl } from '@tap/shared'
@@ -442,7 +442,7 @@ const triggerLoadSchema = async () => {
     loadFieldsStatus: 'loading',
   }
 
-  await connectionsApi.updateById(props.connection.id, parms)
+  await updateConnectionById(props.connection.id, parms)
 
   startTest(true)
 }

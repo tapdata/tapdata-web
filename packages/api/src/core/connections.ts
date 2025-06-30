@@ -1,22 +1,14 @@
 import { requestClient } from '../request'
-import { isPlainObj } from '@tap/shared'
 
 const BASE_URL = '/api/Connections'
 
-export function fetchConnections(params: any = {}, filter?: any) {
-  if (Array.isArray(params)) {
-    filter = typeof filter === 'object' ? JSON.stringify(filter) : filter
-    const qs = filter ? `?filter=${encodeURIComponent(filter)}` : ''
-    return requestClient.get(`${BASE_URL}/${params.join('/')}${qs}`)
-  } else if (typeof params === 'string') {
-    return requestClient.get(`${BASE_URL}/${params}`, { params: filter })
-  }
-
-  const config = { params }
-  if (isPlainObj(filter)) {
-    Object.assign(config, filter)
-  }
-  return requestClient.get(BASE_URL, config)
+export function fetchConnections(filter?: any, config: any = {}) {
+  return requestClient.get(BASE_URL, {
+    params: {
+      filter: filter ? JSON.stringify(filter) : undefined,
+    },
+    ...config,
+  })
 }
 
 export function customQuery(id: string, params: { [key: string]: unknown }) {
@@ -31,7 +23,7 @@ export function copyConnection(id: string, params: any) {
   return requestClient.post(`${BASE_URL}/${id}/copy`, params)
 }
 
-export function batchUpdateListtags(params: any) {
+export function batchUpdateConnectionTags(params: any) {
   return requestClient.patch(`${BASE_URL}/batchUpdateListtags`, params)
 }
 
@@ -57,17 +49,13 @@ export function patchConnectionById(params: any) {
 
 export function findAllConnections(filter: any) {
   return requestClient.get(
-    `${BASE_URL}/findAll?filter=${encodeURIComponent(
-      JSON.stringify(filter),
-    )}`,
+    `${BASE_URL}/findAll?filter=${encodeURIComponent(JSON.stringify(filter))}`,
   )
 }
 
 export function listAllConnections(filter: any) {
   return requestClient.get(
-    `${BASE_URL}/listAll?filter=${encodeURIComponent(
-      JSON.stringify(filter),
-    )}`,
+    `${BASE_URL}/listAll?filter=${encodeURIComponent(JSON.stringify(filter))}`,
   )
 }
 
@@ -89,7 +77,7 @@ export function createConnection(params: any, urlParams?: any) {
   return requestClient.post(url, params)
 }
 
-export function getHeartbeatTask(connectionId: string) {
+export function getHeartbeatTaskByConnectionId(connectionId: string) {
   return requestClient.get(`${BASE_URL}/${connectionId}/heartbeat-task`)
 }
 
@@ -99,7 +87,7 @@ export function getUsingDigginTaskByConnectionId(connectionId: string) {
   )
 }
 
-export function getDatabaseTypes() {
+export function getConnectionDatabaseTypes() {
   return requestClient.get(`${BASE_URL}/databaseTypes`)
 }
 
@@ -114,6 +102,10 @@ export function deleteConnection(id: string) {
 
 export function updateConnection(params: any) {
   return requestClient.post(BASE_URL, params)
+}
+
+export function updateConnectionById(id: string, params: any) {
+  return requestClient.patch(`${BASE_URL}/${id}`, params)
 }
 
 export function findOneConnection(params: any) {

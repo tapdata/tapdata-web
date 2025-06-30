@@ -20,7 +20,7 @@
     "dayjs": "catalog:",
     "juice": "catalog:",
     "lodash": "catalog:",
-    "qs": "^6.11.0",
+    "qs": "catalog:",
     "tiny-emitter": "catalog:",
     "vue": "catalog:",
     "vue-json-viewer": "catalog:",

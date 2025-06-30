@@ -1,7 +1,7 @@
 <script>
 import {
-  connectionsApi,
   databaseTypesApi,
+  getConnectionNoSchema,
   logcollectorApi,
   taskApi,
 } from '@tap/api'
@@ -165,8 +165,7 @@ export default {
 
           if (nodeConfig) {
             if (connectionId) {
-              const connectionInfo =
-                await connectionsApi.getNoSchema(connectionId)
+              const connectionInfo = await getConnectionNoSchema(connectionId)
               attrs.db_version = connectionInfo.db_version
             }
 

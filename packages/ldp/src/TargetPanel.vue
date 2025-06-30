@@ -1,19 +1,20 @@
 <script lang="tsx">
 import {
   apiServerApi,
-  appApi,
-  connectionsApi,
+  fetchConnections,
+  fetchApps,
   measurementApi,
   modulesApi,
   proxyApi,
   taskApi,
   workerApi,
 } from '@tap/api'
+
 import { DatabaseIcon } from '@tap/business/src/components/DatabaseIcon'
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import { makeStatusAndDisabled, TASK_SETTINGS } from '@tap/business/src/shared'
 import ApiPreview from '@tap/business/src/views/data-server/Drawer.vue'
-import {VEmpty} from '@tap/component/src/base/v-empty'
+import { VEmpty } from '@tap/component/src/base/v-empty'
 import { IconButton } from '@tap/component/src/icon-button'
 import i18n from '@tap/i18n'
 
@@ -359,9 +360,7 @@ export default {
           },
         },
       }
-      const res = await connectionsApi.get({
-        filter: JSON.stringify(filter),
-      })
+      const res = await fetchConnections(filter)
 
       return res.items.map(this.mapConnection)
     },
@@ -502,16 +501,12 @@ export default {
         },
       }
 
-      return appApi
-        .get({
-          filter: JSON.stringify(filter),
+      return fetchApps(filter).then(({ items }) => {
+        return items.map((item) => {
+          item.LDP_TYPE = 'app'
+          return item
         })
-        .then(({ items }) => {
-          return items.map((item) => {
-            item.LDP_TYPE = 'app'
-            return item
-          })
-        })
+      })
     },
 
     loadApiModule(appId) {

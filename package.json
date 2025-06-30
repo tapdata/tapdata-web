@@ -24,7 +24,7 @@
     "catalog": "pnpx codemod pnpm/catalog"
   },
   "dependencies": {
-    "element-plus": "^2.9.10",
+    "element-plus": "catalog:",
     "lodash-es": "catalog:",
     "vue-router": "catalog:"
   },
@@ -52,7 +52,6 @@
     "npm-run-all2": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:",
-    "vite": "^6.2.4",
     "vue-tsc": "catalog:"
   },
   "pnpm": {

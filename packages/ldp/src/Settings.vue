@@ -1,5 +1,5 @@
 <script>
-import { connectionsApi, liveDataPlatformApi } from '@tap/api'
+import { fetchConnections, liveDataPlatformApi } from '@tap/api'
 import dataIntegrationModeImg from '@tap/assets/images/swimlane/data-integration-mode.png'
 import dataServicePlatformModeImg from '@tap/assets/images/swimlane/data-service-platform-mode.png'
 import i18n from '@tap/i18n'
@@ -142,19 +142,15 @@ export default {
           },
         },
       }
-      connectionsApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          this.connectionsList =
-            data?.items.map((t) => {
-              return {
-                label: t.name,
-                value: t.id,
-              }
-            }) || []
-        })
+      fetchConnections(filter).then((data) => {
+        this.connectionsList =
+          data?.items.map((t) => {
+            return {
+              label: t.name,
+              value: t.id,
+            }
+          }) || []
+      })
     },
 
     setData(data = {}, update = false) {

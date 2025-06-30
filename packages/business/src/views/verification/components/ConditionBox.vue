@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { InfoFilled, Loading, Plus, Right } from '@element-plus/icons-vue'
-import { connectionsApi, metadataInstancesApi } from '@tap/api'
+import { InfoFilled, Loading, Plus } from '@element-plus/icons-vue'
+import { fetchConnections, metadataInstancesApi } from '@tap/api'
 import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import GitBook from '@tap/component/src/GitBook.vue'
 import { Modal } from '@tap/component/src/modal'
@@ -249,9 +249,7 @@ const getConnectionsListMethod = async (
       },
       order: ['status DESC', 'name ASC'],
     }
-    const result = await connectionsApi.get({
-      filter: JSON.stringify(merge(filter, _filter)),
-    })
+    const result = await fetchConnections(merge(filter, _filter))
 
     const response: ApiResponse<ConnectionResponse> = {
       items: result.items.map((item: ConnectionItem) => {

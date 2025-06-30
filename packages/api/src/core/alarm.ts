@@ -1,5 +1,4 @@
 import { requestClient } from '../request'
-import { isPlainObj } from '@tap/shared'
 
 // Re-export types from the original file
 export interface ApifoxModel {
@@ -34,7 +33,7 @@ export enum Key {
   TaskIncrementStart = 'TASK_INCREMENT_START',
   TaskInspectError = 'TASK_INSPECT_ERROR',
   TaskStatusError = 'TASK_STATUS_ERROR',
-  TaskStatusStop = 'TASK_STATUS_STOP'
+  TaskStatusStop = 'TASK_STATUS_STOP',
 }
 
 export interface AlarmSettingVO {
@@ -53,7 +52,7 @@ export enum Notify {
   Email = 'EMAIL',
   SMS = 'SMS',
   System = 'SYSTEM',
-  Wechat = 'WECHAT'
+  Wechat = 'WECHAT',
 }
 
 export interface MapObject {
@@ -66,7 +65,7 @@ export enum Type {
   Inspect = 'INSPECT',
   Processnode = 'PROCESSNODE',
   System = 'SYSTEM',
-  Task = 'TASK'
+  Task = 'TASK',
 }
 
 export enum Unit {
@@ -75,7 +74,7 @@ export enum Unit {
   MS = 'MS',
   Minute = 'MINUTE',
   Second = 'SECOND',
-  Week = 'WEEK'
+  Week = 'WEEK',
 }
 
 const BASE_URL = '/api/alarm'
@@ -85,11 +84,7 @@ export function listAlarmTasks() {
 }
 
 export function listAlarms(params: any) {
-  const config = { params }
-  if (isPlainObj(params)) {
-    Object.assign(config, params)
-  }
-  return requestClient.get(`${BASE_URL}/list`, config)
+  return requestClient.get(`${BASE_URL}/list`, { params })
 }
 
 export function closeAlarms(ids: string) {

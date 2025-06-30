@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { connectionsApi, dataPermissionApi, proxyApi, usersApi } from '@tap/api'
+import {
+  dataPermissionApi,
+  getHeartbeatTaskByConnectionId,
+  proxyApi,
+  updateConnectionById,
+  usersApi,
+} from '@tap/api'
 import Drawer from '@tap/component/src/Drawer.vue'
 import { Modal } from '@tap/component/src/modal'
 import i18n from '@tap/i18n'
@@ -289,13 +295,11 @@ const edit = async () => {
 
 const beforeTest = () => {
   checkAgent(() => {
-    connectionsApi
-      .updateById(connection.id, {
-        status: 'testing',
-      })
-      .then(() => {
-        testRef.value?.start(true)
-      })
+    updateConnectionById(connection.id, {
+      status: 'testing',
+    }).then(() => {
+      testRef.value?.start(true)
+    })
   })
 }
 
@@ -495,7 +499,7 @@ const isFileSource = () => {
 
 const loadHeartbeatTable = async (row: Connection = {} as Connection) => {
   if (!row.heartbeatEnable) return []
-  return await connectionsApi.heartbeatTask(row.id)
+  return await getHeartbeatTaskByConnectionId(row.id)
 }
 
 const handleClick = (temp: { action?: () => void }) => {

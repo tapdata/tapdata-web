@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { connectionsApi, metadataInstancesApi } from '@tap/api'
+import { fetchConnections, metadataInstancesApi } from '@tap/api'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { IconButton } from '@tap/component/src/icon-button'
 import { FieldSelect } from '@tap/form/src/components/field-select'
@@ -386,9 +386,7 @@ async function loadDatabases(filter) {
       }
     }
 
-    const result = await connectionsApi.get({
-      filter: JSON.stringify(merge(filter, _filter)),
-    })
+    const result = await fetchConnections(merge(filter, _filter))
 
     result.items = result.items.map((item) => {
       return {

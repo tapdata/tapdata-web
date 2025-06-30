@@ -1,12 +1,17 @@
-import { defineComponent, ref, watch, onMounted, onUnmounted } from 'vue'
 import { observer } from '@formily/reactive-vue'
+import {
+  getConnectionNoSchema,
+  metadataInstancesApi,
+  proxyApi,
+  taskApi,
+} from '@tap/api'
 import { useForm } from '@tap/form'
 import i18n from '@tap/i18n'
 
-import { metadataInstancesApi, proxyApi, taskApi, connectionsApi } from '@tap/api'
+import { defineComponent, onMounted, onUnmounted, ref, watch } from 'vue'
 
-import './style.scss'
 import { useStore } from 'vuex'
+import './style.scss'
 
 export const loadSchemaTree = observer(
   defineComponent({
@@ -67,11 +72,14 @@ export const loadSchemaTree = observer(
         const formValues = getState?.values || {}
         const { nodeConfig, connectionId } = formValues
         const { tableNameField } = props
-        let params = {
+        const params = {
           className: 'DiscoverSchemaService',
           method: 'discoverSchema',
           nodeId,
-          args: [connectionId, Object.assign({ file: 'file', nodeId }, nodeConfig)],
+          args: [
+            connectionId,
+            Object.assign({ file: 'file', nodeId }, nodeConfig),
+          ],
         }
         loading.value = true
         isTransformed.value = true
@@ -100,7 +108,7 @@ export const loadSchemaTree = observer(
                   },
                   order: ['original_name ASC'],
                 }
-                connectionsApi.get(connectionId).then((con) => {
+                getConnectionNoSchema(connectionId).then((con) => {
                   if (con.loadFieldErrMsg) {
                     errorMsg.value = con.loadFieldErrMsg
                     loadStatus.value = true
@@ -114,7 +122,7 @@ export const loadSchemaTree = observer(
                         setTimeout(() => {
                           form.setValuesIn(tableNameField || 'tableName', table)
                           isTransformed.value = false
-                          let unwatchSaving = watch(
+                          const unwatchSaving = watch(
                             () => store.state.dataflow.taskSaving,
                             (v) => {
                               if (!v) {
@@ -132,9 +140,9 @@ export const loadSchemaTree = observer(
                   }
                 })
               })
-              .catch((err) => {
+              .catch((error) => {
                 loadStatus.value = true
-                const msg = err?.data?.message
+                const msg = error?.data?.message
                 errorMsg.value = msg
                 ElMessage.error(msg)
                 loading.value = false
@@ -157,12 +165,23 @@ export const loadSchemaTree = observer(
 
       const loadStatusDom = () => {
         return loadStatus.value ? (
-          <el-tooltip disabled={!errorMsg.value} content={errorMsg.value} placement="top" class="ml-2">
+          <el-tooltip
+            disabled={!errorMsg.value}
+            content={errorMsg.value}
+            placement="top"
+            class="ml-2"
+          >
             <span className="inline-flex align-content-center">
-              <VIcon size="16" class="mr-1 color-danger" style="padding-bottom: 2px">
+              <VIcon
+                size="16"
+                class="mr-1 color-danger"
+                style="padding-bottom: 2px"
+              >
                 info
               </VIcon>
-              <span class="color-danger">{i18n.t('packages_form_load_schema_tree_load_fail')}</span>
+              <span class="color-danger">
+                {i18n.t('packages_form_load_schema_tree_load_fail')}
+              </span>
             </span>
           </el-tooltip>
         ) : (
@@ -172,7 +191,9 @@ export const loadSchemaTree = observer(
 
       const formValuesChangeDom = () => {
         return formIsChange.value ? (
-          <span class="ml-2 color-warning">{i18n.t('packages_form_load_schema_tree_form_values_change')}</span>
+          <span class="ml-2 color-warning">
+            {i18n.t('packages_form_load_schema_tree_form_values_change')}
+          </span>
         ) : (
           ''
         )
@@ -182,7 +203,12 @@ export const loadSchemaTree = observer(
         return (
           <div>
             <div class="mb-2">
-              <el-button type="primary" plain loading={loading.value} onClick={handleLoadSchema}>
+              <el-button
+                type="primary"
+                plain
+                loading={loading.value}
+                onClick={handleLoadSchema}
+              >
                 {title}
               </el-button>
               {loadStatusDom()}

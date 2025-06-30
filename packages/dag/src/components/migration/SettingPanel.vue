@@ -6,7 +6,7 @@ import {
   onFieldValueChange,
 } from '@formily/core'
 import { action } from '@formily/reactive'
-import { alarmApi, dataPermissionApi, taskApi, usersApi } from '@tap/api'
+import { dataPermissionApi, taskApi, updateTaskAlarm, usersApi } from '@tap/api'
 import { getPickerOptionsBeforeTime } from '@tap/business/src/shared/util'
 import i18n from '@tap/i18n'
 import { getSettingByKey } from '@tap/shared/src/settings'
@@ -337,7 +337,7 @@ function saveAlarmConfig() {
     return
   }
 
-  alarmApi.updateTaskAlarm({
+  updateTaskAlarm({
     taskId: values.id,
     alarmSettings: values.alarmSettings,
     alarmRules: values.alarmRules,

@@ -1,10 +1,11 @@
 import { action } from '@formily/reactive'
 import {
-  alarmApi,
-  connectionsApi,
   databaseTypesApi,
   externalStorageApi,
+  fetchConnections,
   findAccessNodeInfo,
+  getAlarmChannels,
+  getConnectionNoSchema,
   metadataInstancesApi,
   proxyApi,
   taskApi,
@@ -326,9 +327,7 @@ export default {
                 options: 'i',
               }
             }
-            const result = await connectionsApi.get({
-              filter: JSON.stringify(merge(filter, _filter)),
-            })
+            const result = await fetchConnections(merge(filter, _filter))
 
             result.items = result.items.map((item) => {
               return {
@@ -824,7 +823,7 @@ export default {
         useSyncConnection: async (field) => {
           const id = field.value
           const form = field.form
-          const connection = await connectionsApi.getNoSchema(id)
+          const connection = await getConnectionNoSchema(id)
 
           if (!connection) {
             console.error('ConnectionNotFound', id)
@@ -1125,7 +1124,7 @@ export default {
         },
 
         async loadAlarmChannels() {
-          const channels = await alarmApi.channels()
+          const channels = await getAlarmChannels()
           const MAP = {
             system: {
               label: i18n.t('packages_dag_migration_alarmpanel_xitongtongzhi'),

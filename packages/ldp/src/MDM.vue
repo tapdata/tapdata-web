@@ -826,7 +826,7 @@ export default {
         </ElInput>
       </div>
 
-      <div class="flex-1 min-h-0 position-relative">
+      <div class="flex-1 min-h-0 position-relative overflow-y-auto p-1">
         <div
           v-if="search || searchIng"
           v-loading="searchIng"
@@ -834,7 +834,7 @@ export default {
         >
           <ElTree
             ref="tree"
-            class="ldp-tree h-100"
+            class="ldp-tree"
             node-key="id"
             :data="filterTreeData"
             draggable
@@ -855,7 +855,7 @@ export default {
         <template v-else>
           <ElTree
             ref="tree"
-            class="ldp-tree h-100"
+            class="ldp-tree"
             node-key="id"
             :data="treeData"
             draggable

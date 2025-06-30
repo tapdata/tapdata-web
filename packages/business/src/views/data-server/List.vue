@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import {
   apiServerApi,
-  appApi,
   databaseTypesApi,
   fetchApps,
-  metadataDefinitionsApi,
   metadataInstancesApi,
   modulesApi,
   useRequest,

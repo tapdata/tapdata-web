@@ -1,5 +1,5 @@
 <script>
-import { connectionsApi, metadataDefinitionsApi } from '@tap/api'
+import { fetchConnections, metadataDefinitionsApi } from '@tap/api'
 import AsyncSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 import Cookie from '@tap/shared/src/cookie'
 import axios from 'axios'
@@ -255,9 +255,7 @@ export default {
             options: 'i',
           }
         }
-        const result = await connectionsApi.get({
-          filter: JSON.stringify(merge(filter, _filter)),
-        })
+        const result = await fetchConnections(merge(filter, _filter))
 
         result.items = result.items.map((item) => {
           return {

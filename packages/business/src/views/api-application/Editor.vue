@@ -1,5 +1,5 @@
 <script>
-import { appApi } from '@tap/api'
+import { createApp, getAppDetail, updateApp } from '@tap/api'
 import i18n from '@tap/i18n'
 
 export default {
@@ -37,8 +37,7 @@ export default {
 
     loadData(id) {
       this.loading = true
-      appApi
-        .detail(id)
+      getAppDetail(id)
         .then((task = {}) => {
           const { id, value, desc } = task
           this.editForm = {
@@ -77,11 +76,11 @@ export default {
         if (valid) {
           this.saveLoading = true
           ;(this.taskId
-            ? appApi.updateById(this.taskId, this.editForm)
-            : appApi.post(this.editForm)
+            ? updateApp(this.taskId, this.editForm)
+            : createApp(this.editForm)
           )
-            .then(() => {
-              this.$emit('success', ...arguments)
+            .then((...args) => {
+              this.$emit('success', ...args)
               this.$message.success(this.$t('public_message_save_ok'))
               this.init()
               this.handleClose()
