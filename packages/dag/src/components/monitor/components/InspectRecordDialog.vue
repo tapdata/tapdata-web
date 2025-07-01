@@ -125,7 +125,7 @@ function formatTime(timestamp: number): string {
         :label="$t('packages_dag_inspect_operation_type')"
       >
         <template #default="{ row }">
-          <el-tag :type="row.opStatus">
+          <el-tag :type="row.opStatus" disable-transitions>
             {{ row.op }}
           </el-tag>
         </template>
