@@ -293,7 +293,7 @@ async function handleConfirmRecover(): Promise<void> {
             {{ $t('public_diff_check') }}
           </el-button>
 
-          <el-button v-else text @click="handleConfirmCheck">
+          <el-button v-else bg text @click="handleConfirmCheck">
             <template #icon>
               <el-icon class="is-loading" size="16">
                 <i-mingcute:loading-line />
@@ -315,7 +315,7 @@ async function handleConfirmRecover(): Promise<void> {
             {{ $t('public_one_key_repair') }}
           </el-button>
 
-          <el-button v-else text @click="handleConfirmRecover">
+          <el-button v-else bg text @click="handleConfirmRecover">
             <!-- <el-progress
             class="mr-1"
             type="circle"
