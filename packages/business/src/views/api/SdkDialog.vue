@@ -139,6 +139,16 @@ const onClosed = () => {
         />
       </ElFormItem>
 
+      <ElFormItem label="包名" prop="packageName">
+        <ElInput
+          v-model="form.packageName"
+          :placeholder="$t('public_input_placeholder_package_name')"
+          clearable
+          maxlength="50"
+          show-word-limit
+        />
+      </ElFormItem>
+
       <!-- 版本号 -->
       <ElFormItem :label="$t('public_version')" prop="version">
         <ElInput
@@ -146,6 +156,14 @@ const onClosed = () => {
           :placeholder="$t('public_input_placeholder_version')"
           clearable
           maxlength="20"
+        />
+      </ElFormItem>
+
+      <ElFormItem label="客户端" prop="clientId">
+        <ElInput
+          v-model="form.clientId"
+          :placeholder="$t('public_input_placeholder_client_id')"
+          clearable
         />
       </ElFormItem>
 
