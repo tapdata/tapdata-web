@@ -17,11 +17,25 @@ const currentPage = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
 
-// 计算当前页数据
+// 排序相关
+const sortProp = ref<'ts' | 'user' | 'op' | string>('ts')
+const sortOrder = ref<'ascending' | 'descending' | null>('descending')
+
+// 计算当前页数据，先排序再分页
 const paginatedList = computed(() => {
+  const sorted = [...list.value]
+  if (sortProp.value && sortOrder.value) {
+    sorted.sort((a, b) => {
+      const aVal = (a as any)?.[sortProp.value]
+      const bVal = (b as any)?.[sortProp.value]
+      if (aVal === bVal) return 0
+      if (sortOrder.value === 'ascending') return aVal > bVal ? 1 : -1
+      return aVal < bVal ? 1 : -1
+    })
+  }
   const start = (currentPage.value - 1) * pageSize.value
   const end = start + pageSize.value
-  return list.value.slice(start, end)
+  return sorted.slice(start, end)
 })
 
 function handleCurrentChange(page: number) {
@@ -30,6 +44,11 @@ function handleCurrentChange(page: number) {
 function handleSizeChange(size: number) {
   pageSize.value = size
   currentPage.value = 1
+}
+function handleSortChange({ prop, order }: { prop: string; order: string }) {
+  sortProp.value = prop
+  sortOrder.value = order as 'ascending' | 'descending' | null
+  currentPage.value = 1 // 排序时回到第一页
 }
 
 const props = defineProps({
@@ -95,6 +114,7 @@ function formatTime(timestamp: number): string {
       class="has-border-t"
       :data="paginatedList"
       :default-sort="{ prop: 'ts', order: 'descending' }"
+      @sort-change="handleSortChange"
     >
       <el-table-column
         prop="user"
