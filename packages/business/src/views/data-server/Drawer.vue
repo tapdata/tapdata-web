@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { EditPen, InfoFilled } from '@element-plus/icons-vue'
 import {
-  applicationApi,
   databaseTypesApi,
+  fetchApiClients,
   listAllConnections,
   metadataInstancesApi,
   modulesApi,
@@ -536,12 +536,10 @@ const handleFieldsSelection = () => {
 }
 
 const getAPIServerToken = async (callback?: (token: string) => void) => {
-  const clientInfo = await applicationApi.get({
-    filter: JSON.stringify({
-      where: {
-        clientName: 'Data Explorer',
-      },
-    }),
+  const clientInfo = await fetchApiClients({
+    where: {
+      clientName: 'Data Explorer',
+    },
   })
   const clientInfoItem = clientInfo?.items?.[0] || {}
 

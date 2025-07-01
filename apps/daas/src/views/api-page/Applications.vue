@@ -1,9 +1,14 @@
 <script>
-import { applicationApi, roleApi } from '@tap/api'
+import {
+  createApiClient,
+  deleteApiClient,
+  fetchApiClients,
+  roleApi,
+  updateApiClient,
+} from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
 import { FilterBar } from '@tap/component/src/filter-bar'
-import { ShieldKeyhole } from '@tap/component/src/icon'
 import { cloneDeep, escapeRegExp } from 'lodash-es'
 import { h } from 'vue'
 
@@ -13,7 +18,6 @@ export default {
     PageContainer,
     TablePage,
     FilterBar,
-    ShieldKeyhole,
   },
   data() {
     return {
@@ -90,7 +94,7 @@ export default {
           if (!resFlag) {
             return
           }
-          applicationApi.delete(item.id).then(() => {
+          deleteApiClient(item.id).then(() => {
             this.$message.success(this.$t('public_message_delete_ok'))
             this.table.fetch()
           })
@@ -99,7 +103,7 @@ export default {
     },
     // 保存
     createApplication() {
-      const method = this.createForm.id ? 'patch' : 'post'
+      const method = this.createForm.id ? updateApiClient : createApiClient
       const params = cloneDeep(this.createForm)
       params.name = this.createForm.clientName
       params.tokenType = 'jwt'
@@ -110,7 +114,7 @@ export default {
 
       this.$refs.form.validate((valid) => {
         if (valid) {
-          applicationApi[method](params).then(() => {
+          method(params).then(() => {
             this.table.fetch()
             this.createDialogVisible = false
             this.$message.success(this.$t('public_message_save_ok'))
@@ -145,22 +149,18 @@ export default {
         skip: (current - 1) * size,
         where,
       }
-      return applicationApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          return {
-            total: data?.total || 0,
-            data:
-              data?.items.map((item) => {
-                item.redirectUrisStr = item.redirectUris
-                  ? item.redirectUris.join(',')
-                  : ''
-                return item
-              }) || [],
-          }
-        })
+      return fetchApiClients(filter).then((data) => {
+        return {
+          total: data?.total || 0,
+          data:
+            data?.items.map((item) => {
+              item.redirectUrisStr = item.redirectUris
+                ? item.redirectUris.join(',')
+                : ''
+              return item
+            }) || [],
+        }
+      })
     },
     // 获取角色
     getRoles() {

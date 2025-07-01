@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { apiServerApi, applicationApi } from '@tap/api'
+import { apiServerApi, fetchApiClients } from '@tap/api'
 import { useI18n } from '@tap/i18n'
 import { downloadBlob } from '@tap/shared'
 import axios from 'axios'
@@ -24,12 +24,10 @@ const rules = {
 }
 
 const fetchClientOptions = async () => {
-  const { items } = await applicationApi.get({
-    filter: JSON.stringify({
-      order: 'createdAt',
-      limit: 1000,
-      skip: 0,
-    }),
+  const { items } = await fetchApiClients({
+    order: 'createdAt',
+    limit: 1000,
+    skip: 0,
   })
 
   form.clientId = items?.[0]?.clientId

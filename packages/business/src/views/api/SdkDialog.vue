@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { fetch } from '@tap/api'
 import { useI18n } from '@tap/i18n'
 import { computed, reactive, ref, useTemplateRef } from 'vue'
 import type { Sdk } from '@tap/api'
@@ -116,7 +117,7 @@ const onClosed = () => {
   <ElDialog
     v-model="visible"
     :title="$t('public_create_sdk')"
-    width="500px"
+    width="640px"
     :close-on-click-modal="false"
     :before-close="handleClose"
     @closed="onClosed"
@@ -169,7 +170,11 @@ const onClosed = () => {
 
       <!-- 选择 API -->
       <ElFormItem :label="$t('public_select_api')" prop="apiList">
-        <ElSelect
+        <div class="flex border rounded-xl overflow-hidden w-100">
+          <div class="bg-light border-end p-3">选择客户端</div>
+          <div class="flex-1 p-3">选择API</div>
+        </div>
+        <!-- <ElSelect
           v-model="form.apiList"
           multiple
           filterable
@@ -185,7 +190,7 @@ const onClosed = () => {
             :label="option.label"
             :value="option.value"
           />
-        </ElSelect>
+        </ElSelect> -->
       </ElFormItem>
     </ElForm>
 
