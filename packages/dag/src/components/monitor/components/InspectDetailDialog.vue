@@ -254,7 +254,7 @@ async function handleConfirmRecover(): Promise<void> {
             v-if="!showCheckProgress"
             text
             :loading="manualCheckLoading"
-            :disabled="manualRecoverLoading"
+            :disabled="manualRecoverLoading || showRecoverProgress"
             @click="handleManualCheck"
           >
             <template #icon>
@@ -276,7 +276,7 @@ async function handleConfirmRecover(): Promise<void> {
             v-if="!showRecoverProgress"
             text
             :loading="manualRecoverLoading"
-            :disabled="manualCheckLoading"
+            :disabled="manualCheckLoading || showCheckProgress"
             @click="handleManualRecover"
           >
             <template #icon>
