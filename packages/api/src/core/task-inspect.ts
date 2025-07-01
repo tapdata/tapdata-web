@@ -21,6 +21,14 @@ export interface DiffRow {
   diffFieldsMap: Record<string, string>
 }
 
+export interface TaskInspectOperation {
+  ts: number
+  op: string
+  msg: string
+  userId: string
+  user: string
+}
+
 export function getTaskInspectConfig(taskId: string) {
   return requestClient.get(`${BASE_URL}/${taskId}`)
 }
@@ -87,5 +95,11 @@ export function getTaskInspectHistoriesResults(
         }),
       },
     },
+  )
+}
+
+export function getTaskInspectResultsOperations(resultId: string) {
+  return requestClient.get<TaskInspectOperation[]>(
+    `/api/task-inspect-results/${resultId}/operations`,
   )
 }

@@ -1,10 +1,16 @@
 <script setup lang="ts">
-import axios from 'axios'
+import {
+  getTaskInspectResultsOperations,
+  type TaskInspectOperation,
+} from '@tap/api'
+import { useI18n } from '@tap/i18n'
 import dayjs from 'dayjs'
 import { ref } from 'vue'
 
+const { t } = useI18n()
+
 const loadingList = ref(false)
-const list = ref([])
+const list = ref<TaskInspectOperation[]>([])
 
 const props = defineProps({
   resultId: {
@@ -13,21 +19,24 @@ const props = defineProps({
   },
 })
 
-interface Operation {
-  ts: number // 操作时间
-  op: string // 操作类型
-  msg: string // 操作信息
-  userId: string // 用户编号
-  user: string // 用户名
+const OP_TYPE_MAP = {
+  CDC_CHECK: t('public_op_cdc_check'),
+  AUTO_RECHECK: t('public_op_auto_recheck'),
+  AUTO_RECOVER: t('public_op_auto_recover'),
+  AUTO_RECOVER_CHECK: t('public_op_auto_recover_check'),
+  MANUAL_CHECK: t('public_op_manual_check'),
+  MANUAL_RECOVER: t('public_op_manual_recover'),
+  MANUAL_RECOVER_CHECK: t('public_op_manual_recover_check'),
 }
 
 async function fetchList(): Promise<void> {
   loadingList.value = true
   try {
-    const data = await axios.get<Operation[]>(
-      `/api/task-inspect-results/${props.resultId}/operations`,
-    )
-    list.value = data
+    const data = await getTaskInspectResultsOperations(props.resultId)
+    list.value = data.map((item) => ({
+      ...item,
+      op: OP_TYPE_MAP[item.op as keyof typeof OP_TYPE_MAP],
+    }))
   } catch (error) {
     console.error('Failed to fetch inspect list:', error)
   } finally {
@@ -62,22 +71,23 @@ function formatTime(timestamp: number): string {
       <el-table-column
         prop="user"
         :label="$t('packages_dag_inspect_operation_user')"
-        width="150"
       />
       <el-table-column
         prop="op"
         :label="$t('packages_dag_inspect_operation_type')"
-        width="180"
-      />
-      <el-table-column
+      >
+        <template #default="{ row }">
+          <el-tag type="info">{{ row.op }}</el-tag>
+        </template>
+      </el-table-column>
+      <!-- <el-table-column
         prop="msg"
         :label="$t('packages_dag_inspect_operation_message')"
         show-overflow-tooltip
-      />
+      /> -->
       <el-table-column
         prop="ts"
         :label="$t('packages_dag_inspect_operation_time')"
-        width="180"
         sortable
       >
         <template #default="{ row }">

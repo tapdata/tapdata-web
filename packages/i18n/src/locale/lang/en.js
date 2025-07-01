@@ -440,4 +440,11 @@ export default {
   public_start_check_confirm:
     'The “Check” operation is still in progress. Do you want to override it and start a new one?',
   public_last_operation_not_finished: 'Previous operation not completed',
+  public_op_cdc_check: 'Incremental Check',
+  public_op_auto_recheck: 'Auto Recheck',
+  public_op_auto_recover: 'Auto Fix',
+  public_op_auto_recover_check: 'Auto Fix Check',
+  public_op_manual_check: 'Manual Check',
+  public_op_manual_recover: 'Manual Fix',
+  public_op_manual_recover_check: 'Manual Fix Check',
 }

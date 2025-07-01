@@ -432,4 +432,11 @@ export default {
   public_start_check_confirm:
     '当前正在执行“校验”操作，是否确认覆盖并重新开始？',
   public_last_operation_not_finished: '上一次操作尚未完成',
+  public_op_cdc_check: '增量校验',
+  public_op_auto_recheck: '自动二次校验',
+  public_op_auto_recover: '自动修复',
+  public_op_auto_recover_check: '自动修复校验',
+  public_op_manual_check: '手动校验',
+  public_op_manual_recover: '手动修复',
+  public_op_manual_recover_check: '手动修复校验',
 }
