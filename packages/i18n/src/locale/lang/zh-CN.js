@@ -421,4 +421,15 @@ export default {
   public_cancel_all_selected: '取消全选',
   public_data_preview: '数据预览',
   public_application: '应用',
+  public_diff_check: '差异校验',
+  public_one_key_repair: '一键修复',
+  public_start_repair: '开始修复，请稍等...',
+  public_start_check: '开始校验，请稍等...',
+  public_repairing: '修复中',
+  public_checking: '校验中',
+  public_start_repair_confirm:
+    '当前正在执行“修复”操作，是否确认覆盖并重新开始？',
+  public_start_check_confirm:
+    '当前正在执行“校验”操作，是否确认覆盖并重新开始？',
+  public_last_operation_not_finished: '上一次操作尚未完成',
 }

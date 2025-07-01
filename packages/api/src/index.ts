@@ -98,8 +98,6 @@ import SubTask from './SubTask'
 
 import Task from './Task'
 
-import TaskInspect from './TaskInspect'
-
 import TCM from './Tcm'
 
 import TypeMapping from './TypeMapping'
@@ -220,7 +218,6 @@ const connectorRecordApi = new ConnectorRecord()
 
 const alarmMailApi = new AlarmMail()
 const webhookApi = new Webhook()
-const taskInspectApi = new TaskInspect()
 
 export {
   alarmMailApi,
@@ -272,7 +269,6 @@ export {
   sharedCacheApi,
   subtaskApi,
   taskApi,
-  taskInspectApi,
   tcmApi,
   typeMappingApi,
   userGroupsApi,

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { taskInspectApi } from '@tap/api'
+import { getTaskInspectConfig, updateTaskInspectConfig } from '@tap/api'
 import { useI18n } from '@tap/i18n'
 import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
@@ -51,7 +51,7 @@ const dialogRef = ref<InstanceType<typeof ElDialog> | null>(null)
 async function initFormData() {
   loading.value = true
   try {
-    const res = await taskInspectApi.getConfig(props.taskId, {})
+    const res = await getTaskInspectConfig(props.taskId, {})
     validationEnabled.value = res.mode && res.mode !== 'CLOSE'
     cdcEnabled.value = res.custom.cdc?.enable ?? false
     fullEnabled.value = res.custom.full?.enable ?? false
@@ -94,7 +94,7 @@ async function handleSave() {
 
   saving.value = true
   try {
-    await taskInspectApi.putConfig(props.taskId, settings)
+    await updateTaskInspectConfig(props.taskId, settings)
     ElMessage.success(t('public_message_save_ok'))
     handleClose()
   } catch (error) {
@@ -201,7 +201,7 @@ defineExpose({
           >
             <span class="radio-label flex align-center gap-2">
               <span>{{ $t('packages_dag_full_validation') }}</span>
-              <el-tag type="info" size="small">开发中</el-tag>
+              <el-tag type="info" size="small">Coming Soon</el-tag>
             </span>
           </ElCheckbox>
         </div>

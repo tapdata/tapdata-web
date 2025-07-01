@@ -429,4 +429,15 @@ export default {
   public_cancel_all_selected: 'Unselect All',
   public_data_preview: 'Data Preview',
   public_application: 'Application',
+  public_diff_check: 'Diff Check',
+  public_one_key_repair: 'Fix Now',
+  public_start_repair: 'Start Repair, Please wait...',
+  public_start_check: 'Start Check, Please wait...',
+  public_repairing: 'Fixing',
+  public_checking: 'Checking',
+  public_start_repair_confirm:
+    'The “Fix” operation is still in progress. Do you want to override it and start a new one?',
+  public_start_check_confirm:
+    'The “Check” operation is still in progress. Do you want to override it and start a new one?',
+  public_last_operation_not_finished: 'Previous operation not completed',
 }

@@ -418,15 +418,18 @@
     --el-border-radius-base: 6px;
     --el-fill-color-light: rgba(31, 35, 41, 0.1);
     --el-fill-color: rgba(31, 35, 41, 0.1);
+    --el-button-text-color: var(--el-text-color-title);
 
     &.el-button--primary {
       --el-fill-color-light: rgba(var(--primary-raw), 0.1);
       --el-fill-color: rgba(var(--primary-raw), 0.2);
+      --el-button-text-color: var(--el-color-primary);
     }
 
     &.el-button--danger {
       --el-fill-color-light: rgba(var(--danger-raw), 0.1);
       --el-fill-color: rgba(var(--danger-raw), 0.2);
+      --el-button-text-color: var(--el-color-danger);
     }
 
     &.el-button--small {

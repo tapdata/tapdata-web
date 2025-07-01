@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { taskInspectApi } from '@tap/api'
-import { VEmpty } from '@tap/component'
+import { getTaskInspectConfig, getTaskInspectHistories } from '@tap/api'
+import { VEmpty } from '@tap/component/src/base/v-empty'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import InspectDetailDialog from './InspectDetailDialog.vue'
 
 interface Props {
@@ -108,7 +108,7 @@ const remoteMethod = async ({
   })
 
   try {
-    const response = await taskInspectApi.getHistories(taskId, { filter })
+    const response = await getTaskInspectHistories(taskId, { filter })
     const data = response as unknown as ApiResponse
     return {
       total: data.total || 0,
@@ -143,7 +143,7 @@ const fetch = async () => {
 }
 
 const checkEnabled = async () => {
-  const res = await taskInspectApi.getConfig(props.dataflow.id)
+  const res = await getTaskInspectConfig(props.dataflow.id)
   return res.mode && res.mode !== 'CLOSE'
 }
 
@@ -283,6 +283,7 @@ onBeforeUnmount(() => {
       v-model="detailDialogVisible"
       :inspect-id="currentInspectId"
       :ping-time="pingTime"
+      :task-id="dataflow.id"
     />
   </div>
 </template>

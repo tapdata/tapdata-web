@@ -12,7 +12,7 @@ import axios, {
   type AxiosResponse,
   type InternalAxiosRequestConfig,
 } from 'axios'
-import { ElMessage as Message } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import Qs from 'qs'
 import i18n from '@/i18n'
 import { signOut } from '../utils/util'
@@ -71,7 +71,7 @@ const errorCallback = (error: any): Promise<any> => {
               i18n.global.t('public_alert_401_tip'),
             )
           } else {
-            Message.error({
+            ElMessage.error({
               message: i18n.global.t('public_message_401'),
               grouping: true,
             })
@@ -81,16 +81,16 @@ const errorCallback = (error: any): Promise<any> => {
       }
       // 请求的资源不存在
       case 404:
-        Message.error({ message: i18n.global.t('public_message_404') })
+        ElMessage.error({ message: i18n.global.t('public_message_404') })
         break
       case 504:
-        Message.error({
+        ElMessage.error({
           message: i18n.global.t('public_message_5xx'),
           grouping: true,
         })
         break
       case 500:
-        Message.error({
+        ElMessage.error({
           message: i18n.global.t('public_message_5xx'),
           grouping: true,
         })
@@ -101,12 +101,12 @@ const errorCallback = (error: any): Promise<any> => {
     'ECONNABORTED' /* || error.message === 'Network Error' || !window.navigator.onLine*/
   ) {
     // 这两种情况已在ws-client.js里监听 👉 error.message === 'Network Error' || !window.navigator.onLine
-    Message.error({
+    ElMessage.error({
       message: i18n.global.t('public_message_network_unconnected'),
       grouping: true,
     })
   } else if (error.message && error.message.includes('timeout')) {
-    Message.error({
+    ElMessage.error({
       message: i18n.global.t('public_message_request_timeout'),
       grouping: true,
     })

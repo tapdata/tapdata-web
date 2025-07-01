@@ -420,4 +420,15 @@ export default {
   public_cancel_all_selected: '取消全選',
   public_data_preview: '數據預覽',
   public_application: '應用',
+  public_diff_check: '差異校驗',
+  public_one_key_repair: '一鍵修復',
+  public_start_repair: '開始修復，請稍等...',
+  public_start_check: '開始校驗，請稍等...',
+  public_repairing: '修復中',
+  public_checking: '校驗中',
+  public_start_repair_confirm:
+    '當前正在執行“修復”操作，是否確認覆蓋並重新開始？',
+  public_start_check_confirm:
+    '當前正在執行“校驗”操作，是否確認覆蓋並重新開始？',
+  public_last_operation_not_finished: '上一次操作尚未完成',
 }
