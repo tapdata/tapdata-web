@@ -427,15 +427,19 @@ export default {
   public_repairing: '修復中',
   public_checking: '校驗中',
   public_start_repair_confirm:
-    '當前正在執行“修復”操作，是否確認覆蓋並重新開始？',
+    '當前正在執行「一鍵修復」（啟動於 {time}），是否確認覆蓋並重新開始？',
   public_start_check_confirm:
-    '當前正在執行“校驗”操作，是否確認覆蓋並重新開始？',
+    '當前正在執行「差異校驗」（啟動於 {time}），是否確認覆蓋並重新開始？',
+  public_start_check_confirm_tip:
+    '當前正在執行「一鍵修復」（啟動於 {time}），是否確認開始「差異校驗」？',
+  public_start_repair_confirm_tip:
+    '當前正在執行「差異校驗」（啟動於 {time}），是否確認開始「一鍵修復」？',
   public_last_operation_not_finished: '上一次操作尚未完成',
   public_op_cdc_check: '增量校驗',
   public_op_auto_recheck: '自動二次校驗',
   public_op_auto_recover: '自動修復',
-  public_op_auto_recover_check: '自動修復校驗',
+  public_op_auto_recover_check: '自動修復失敗',
   public_op_manual_check: '手動校驗',
   public_op_manual_recover: '手動修復',
-  public_op_manual_recover_check: '手動修復校驗',
+  public_op_manual_recover_check: '手動修復失敗',
 }

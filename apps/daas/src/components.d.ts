@@ -88,6 +88,7 @@ declare module 'vue' {
     'ILucide:alertTriangle': typeof import('~icons/lucide/alert-triangle')['default']
     'ILucide:chevronDown': typeof import('~icons/lucide/chevron-down')['default']
     'ILucide:cloudUpload': typeof import('~icons/lucide/cloud-upload')['default']
+    'ILucide:download': typeof import('~icons/lucide/download')['default']
     'ILucide:gitCompareArrows': typeof import('~icons/lucide/git-compare-arrows')['default']
     'ILucide:hardDriveDownload': typeof import('~icons/lucide/hard-drive-download')['default']
     'ILucide:loader': typeof import('~icons/lucide/loader')['default']

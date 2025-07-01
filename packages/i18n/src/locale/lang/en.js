@@ -436,15 +436,19 @@ export default {
   public_repairing: 'Fixing',
   public_checking: 'Checking',
   public_start_repair_confirm:
-    'The “Fix” operation is still in progress. Do you want to override it and start a new one?',
+    'The Fix Now operation is still in progress (started {time}). Do you want to override it and start a new one?',
   public_start_check_confirm:
-    'The “Check” operation is still in progress. Do you want to override it and start a new one?',
+    'The Diff Check operation is still in progress (started {time}). Do you want to override it and start a new one?',
+  public_start_check_confirm_tip:
+    'The Fix Now operation is still in progress (started {time}). Do you want to start the Diff Check?',
+  public_start_repair_confirm_tip:
+    'The Diff Check operation is still in progress (started {time}). Do you want to start the Fix Now?',
   public_last_operation_not_finished: 'Previous operation not completed',
   public_op_cdc_check: 'Incremental Check',
   public_op_auto_recheck: 'Auto Recheck',
   public_op_auto_recover: 'Auto Fix',
-  public_op_auto_recover_check: 'Auto Fix Check',
+  public_op_auto_recover_check: 'Auto Fix Failed',
   public_op_manual_check: 'Manual Check',
   public_op_manual_recover: 'Manual Fix',
-  public_op_manual_recover_check: 'Manual Fix Check',
+  public_op_manual_recover_check: 'Manual Fix Failed',
 }

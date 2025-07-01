@@ -9,6 +9,7 @@ import {
   type DiffRow,
   type InspectionRow,
 } from '@tap/api'
+import { dayjs } from '@tap/business/src/shared/dayjs'
 import { CloseIcon } from '@tap/component/src/CloseIcon'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
@@ -46,6 +47,7 @@ const onlyShowDiffFields = ref(true)
 const showCheckProgress = ref(false)
 const showRecoverProgress = ref(false)
 const progress = ref(0)
+const lastOpTime = ref('')
 
 function onClose(): void {
   resetData()
@@ -140,11 +142,25 @@ const loadLastOp = async () => {
     data.totals > 0
       ? Math.round((data.totals - data.unfinished) / data.totals)
       : 0
+
+  lastOpTime.value = dayjs(data.created).fromNow()
 }
 
-const { run: handleManualCheck, loading: manualCheckLoading } = useRequest(
+const handleManualCheck = async () => {
+  if (showRecoverProgress.value) {
+    const result = await Modal.confirm(
+      t('public_last_operation_not_finished'),
+      t('public_start_check_confirm_tip', { time: lastOpTime.value }),
+    )
+    if (!result) {
+      return
+    }
+  }
+  runManualCheck()
+}
+
+const { run: runManualCheck, loading: manualCheckLoading } = useRequest(
   async () => {
-    showCheckProgress.value = false
     await manualCheck(props.taskId)
     startPolling()
     ElMessage.success(t('public_start_check'))
@@ -155,9 +171,21 @@ const { run: handleManualCheck, loading: manualCheckLoading } = useRequest(
   },
 )
 
-const { run: handleManualRecover, loading: manualRecoverLoading } = useRequest(
+const handleManualRecover = async () => {
+  if (showCheckProgress.value) {
+    const result = await Modal.confirm(
+      t('public_last_operation_not_finished'),
+      t('public_start_repair_confirm_tip', { time: lastOpTime.value }),
+    )
+    if (!result) {
+      return
+    }
+  }
+  runManualRecover()
+}
+
+const { run: runManualRecover, loading: manualRecoverLoading } = useRequest(
   async () => {
-    showRecoverProgress.value = false
     await manualRecover(props.taskId)
     startPolling()
     ElMessage.success(t('public_start_repair'))
@@ -207,22 +235,24 @@ function handleRecordClick(row: DiffRow): void {
 async function handleConfirmCheck(): Promise<void> {
   const result = await Modal.confirm(
     t('public_last_operation_not_finished'),
-    t('public_start_check_confirm'),
+    t('public_start_check_confirm', { time: lastOpTime.value }),
   )
 
   if (result) {
-    handleManualCheck()
+    showCheckProgress.value = false
+    runManualCheck()
   }
 }
 
 async function handleConfirmRecover(): Promise<void> {
   const result = await Modal.confirm(
     t('public_last_operation_not_finished'),
-    t('public_start_repair_confirm'),
+    t('public_start_repair_confirm', { time: lastOpTime.value }),
   )
 
   if (result) {
-    handleManualRecover()
+    showRecoverProgress.value = false
+    runManualRecover()
   }
 }
 </script>
@@ -254,7 +284,7 @@ async function handleConfirmRecover(): Promise<void> {
             v-if="!showCheckProgress"
             text
             :loading="manualCheckLoading"
-            :disabled="manualRecoverLoading || showRecoverProgress"
+            :disabled="manualRecoverLoading"
             @click="handleManualCheck"
           >
             <template #icon>
@@ -276,7 +306,7 @@ async function handleConfirmRecover(): Promise<void> {
             v-if="!showRecoverProgress"
             text
             :loading="manualRecoverLoading"
-            :disabled="manualCheckLoading || showCheckProgress"
+            :disabled="manualCheckLoading"
             @click="handleManualRecover"
           >
             <template #icon>
