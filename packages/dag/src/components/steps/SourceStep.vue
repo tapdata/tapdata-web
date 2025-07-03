@@ -1,5 +1,9 @@
 <script>
-import { connectionsApi, databaseTypesApi } from '@tap/api'
+import {
+  databaseTypesApi,
+  fetchConnections,
+  getConnectionNoSchema,
+} from '@tap/api'
 import { getConnectorImage } from '@tap/assets'
 import {
   CONNECTION_STATUS_MAP,
@@ -165,9 +169,7 @@ export default defineComponent({
         where.name = { like: search.value, options: 'i' }
       }
 
-      const data = await connectionsApi.get({
-        filter: JSON.stringify(filter),
-      })
+      const data = await fetchConnections(filter)
 
       let list = data?.items || []
 
@@ -226,7 +228,7 @@ export default defineComponent({
     const loadConnection = async () => {
       const id = nodeRef.value.connectionId
       if (id) {
-        const connection = await connectionsApi.getNoSchema(id)
+        const connection = await getConnectionNoSchema(id)
         connectionSelected.value = connection
       }
     }
@@ -691,7 +693,7 @@ export default defineComponent({
   }
 
   &.active {
-    $primary: map.get($color, primary);
+    $primary: var(--color-primary);
     border-color: $primary !important;
     box-shadow: 0 2px 16px rgba(44, 101, 255, 0.2);
 

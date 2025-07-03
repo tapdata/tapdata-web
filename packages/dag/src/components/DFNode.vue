@@ -1,20 +1,18 @@
 <script>
-import { OverflowTooltip, VIcon } from '@tap/component'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import i18n from '@tap/i18n'
 
 import Time from '@tap/shared/src/time'
 import { mapGetters, mapMutations, mapState } from 'vuex'
-import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 import { NODE_PREFIX } from '../constants'
 import { sourceEndpoint, targetEndpoint } from '../style'
-import BaseNode from './BaseNode'
+import BaseNode from './BaseNode.vue'
 
 export default {
   name: 'DFNode',
   components: {
     OverflowTooltip,
-    VIcon,
     BaseNode,
   },
   mixins: [deviceSupportHelpers],
@@ -25,6 +23,7 @@ export default {
     },
     jsPlumbIns: Object,
     hideDisableAction: Boolean,
+    isSync: Boolean,
   },
   data() {
     return {
@@ -137,14 +136,14 @@ export default {
 
           this.addActiveAction('dragActive')
 
-          $emit(this, 'drag-start', params)
+          this.$emit('drag-start', params)
           return true
         },
         drag: (params) => {
           // console.log('node-drag-move', params.pos)
           params.id = nodeId // 增加id参数
           this.isDrag = true // 拖动标记
-          $emit(this, 'drag-move', params)
+          this.$emit('drag-move', params)
         },
         stop: () => {
           // console.log('node-drag-stop', params)
@@ -219,7 +218,7 @@ export default {
           }
 
           this.onMouseDownAt = undefined
-          $emit(this, 'drag-stop', this.isNotMove, oldProperties, newProperties)
+          this.$emit('drag-stop', this.isNotMove, oldProperties, newProperties)
         },
       })
 
@@ -269,14 +268,14 @@ export default {
         if (!this.ins) return
         if (this.isCtrlKeyPressed(e) === false) {
           // 如果不是多选模式则取消所有节点选中
-          $emit(this, 'deselectAllNodes')
+          this.$emit('deselectAllNodes')
         }
 
         if (this.isNodeSelected(this.nodeId)) {
-          $emit(this, 'deselectNode', this.nodeId)
+          this.$emit('deselectNode', this.nodeId)
         } else {
           // 选中节点并且active
-          $emit(this, 'nodeSelected', this.nodeId, true)
+          this.$emit('nodeSelected', this.nodeId, true)
         }
       }
     },
@@ -319,6 +318,18 @@ export default {
         <VIcon v-if="ins.beta" class="mr-1" size="32">beta</VIcon>
       </template>
       <div v-if="!stateIsReadonly" class="df-node-options gap-4" @click.stop>
+        <div
+          v-if="isSync"
+          :disabled="data.disabled"
+          class="cursor-pointer"
+          :class="{
+            'opacity-50 cursor-not-allowed': data.disabled,
+          }"
+          @click.stop="!data.disabled && $emit('preview', nodeId, data)"
+        >
+          <VIcon size="20">action-play</VIcon>
+        </div>
+
         <div
           :disabled="data.disabled"
           class="cursor-pointer"
@@ -413,7 +424,7 @@ export default {
   }
 }
 .df-node-text {
-  font-size: $fontBaseTitle;
+  font-size: var(--font-base-title);
 }
 .df-node-text-tooltip {
   transform: translateY(-6px);

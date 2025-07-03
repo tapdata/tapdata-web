@@ -2,7 +2,7 @@ import { observer } from '@formily/reactive-vue'
 import { connect, mapProps } from '@formily/vue'
 
 import { metadataInstancesApi, taskApi } from '@tap/api'
-import { VEmpty } from '@tap/component'
+import { VEmpty } from '@tap/component/src/base/v-empty'
 import { InfiniteSelect } from '@tap/form'
 import i18n from '@tap/i18n'
 

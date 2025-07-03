@@ -1,8 +1,7 @@
 <script>
-import { connectionsApi } from '@tap/api'
-import { AsyncSelect } from '@tap/form'
+import { fetchConnections } from '@tap/api'
+import { InfiniteSelect as AsyncSelect } from '@tap/form/src/components/infinite-select'
 import { merge } from 'lodash-es'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 
 export default {
   name: 'ListSelect',
@@ -49,15 +48,9 @@ export default {
     handleChange(val, opt) {
       const { label } = opt
       this.form.label = label
-      $emit(
-        this.$emit('update:value', this.form.value).$emit(
-          'update:label',
-          this.form.label,
-        ),
-        'change',
-        val,
-        opt,
-      )
+      this.$emit('update:value', this.form.value)
+      this.$emit('update:label', this.form.label)
+      this.$emit('change', val, opt)
     },
 
     async getData(filter = {}) {
@@ -77,9 +70,7 @@ export default {
         })
       }
 
-      const res = await connectionsApi.get({
-        filter: JSON.stringify(merge(params, this.params)),
-      })
+      const res = await fetchConnections(merge(params, this.params))
 
       res.items = res.items.map((t) => {
         return {

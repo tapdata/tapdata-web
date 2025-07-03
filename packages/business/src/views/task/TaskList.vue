@@ -1,6 +1,6 @@
 <script>
 import PageContainer from '../../components/PageContainer.vue'
-import List from './List'
+import List from './List.vue'
 
 export default {
   name: 'TaskList',
@@ -156,8 +156,8 @@ export default {
     .dataflow-name {
       .tag {
         margin-left: 5px;
-        color: map.get($fontColor, light);
-        background: map.get($bgColor, main);
+        color: var(--text-light);
+        background: var(--bg-main);
         border: 1px solid #dedee4;
       }
       .name {

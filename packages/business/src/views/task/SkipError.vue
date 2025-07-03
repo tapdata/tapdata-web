@@ -154,7 +154,7 @@ export default {
     margin-left: 12px;
     margin-right: 12px;
     .error-content {
-      background-color: map.get($bgColor, white);
+      background-color: var(--color-white);
       border: 1px solid #dedee4;
       padding: 5px 10px;
     }
@@ -198,7 +198,7 @@ export default {
     bottom: 0;
     width: 4px;
     border-radius: 8px;
-    background-color: map.get($color, primary);
+    background-color: var(--color-primary);
   }
 }
 </style>

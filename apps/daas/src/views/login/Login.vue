@@ -1,11 +1,15 @@
 <script>
-import { timeStampApi, usersApi } from '@tap/api'
+import {
+  checkLdapLoginEnable,
+  fetchTimestamp,
+  getUserInfoByToken,
+  login,
+} from '@tap/api'
 import Cookie from '@tap/shared/src/cookie'
+import { getSettingByKey } from '@tap/shared/src/settings'
 import cryptoJS from 'crypto-js'
-import i18n from '@/i18n'
-import { getSettingByKey } from '@/utils/settings'
 import { configUser } from '@/utils/util'
-import LoginPage from './LoginPage'
+import LoginPage from './LoginPage.vue'
 
 export default {
   name: 'SignIn',
@@ -33,7 +37,7 @@ export default {
   methods: {
     getSettingByKey,
     async loadAdEnable() {
-      const data = await usersApi.checkLdapLoginEnable()
+      const data = await checkLdapLoginEnable()
       this.adEnable = data
     },
     async submit() {
@@ -62,7 +66,7 @@ export default {
       this.loading = true
       try {
         //登陆密码加密
-        const timeStampData = await timeStampApi.get()
+        const timeStampData = await fetchTimestamp()
         this.form.stime = timeStampData.data
         this.form.password = cryptoJS.RC4.encrypt(
           this.form.password,
@@ -71,13 +75,13 @@ export default {
         const Str = `${this.form.email + this.form.password + this.form.stime}Gotapd8`
         this.form.sign = cryptoJS.SHA1(Str).toString().toUpperCase()
 
-        const data = await usersApi.login(this.form)
+        const data = await login(this.form)
         Cookie.set('access_token', data?.id)
         Cookie.set('tem_token', data?.id)
 
         await this.$store.dispatch('feature/getFeatures')
 
-        const user = await usersApi.getInfo()
+        const user = await getUserInfoByToken()
         configUser(user)
         const lastLocationHref = sessionStorage.getItem('lastLocationHref')
         if (lastLocationHref) {
@@ -183,7 +187,7 @@ export default {
 .page-sign-in {
   display: flex;
   align-items: center;
-  justify-content: center; /*// background: map.get($bgColor, normal);*/
+  justify-content: center; /*// background: var(--bg-normal);*/
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -197,13 +201,13 @@ export default {
       margin-bottom: 30px;
       font-size: 32px;
       font-weight: 600;
-      color: map.get($fontColor, dark);
+      color: var(--text-dark);
       span {
         float: right;
         padding-top: 16px;
         font-size: 12px;
         text-align: right;
-        color: map.get($color, primary);
+        color: var(--color-primary);
         cursor: pointer;
       }
     }
@@ -226,7 +230,7 @@ export default {
         padding-left: 15px;
         width: 100%;
         height: 44px;
-        color: map.get($fontColor, light);
+        color: var(--text-light);
         line-height: 44px;
         border-radius: 0;
         box-sizing: border-box;
@@ -240,7 +244,7 @@ export default {
         &::placeholder {
           font-weight: 400;
           font-size: 14px;
-          color: map.get($fontColor, slight);
+          color: var(--text-slight);
         }
       }
     }
@@ -256,13 +260,13 @@ export default {
     }
 
     :deep(.el-checkbox__label) {
-      color: map.get($fontColor, light);
+      color: var(--text-light);
     }
 
     .remember {
       padding-top: 16px;
       font-size: 12px;
-      color: map.get($color, primary);
+      color: var(--color-primary);
       span {
         cursor: pointer;
         user-select: none;

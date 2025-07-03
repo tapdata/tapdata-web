@@ -1,13 +1,18 @@
 <script>
-import { notificationApi, userLogsApi } from '@tap/api'
-import { ALARM_LEVEL_MAP } from '@tap/business'
-import { VIcon } from '@tap/component'
+import {
+  countNotifications,
+  fetchNotifications,
+  fetchUserLogs,
+  listNotifications,
+  patchNotification,
+} from '@tap/api'
+import { ALARM_LEVEL_MAP } from '@tap/business/src/shared/const'
 import Cookie from '@tap/shared/src/cookie'
 
+import { $emit, $on } from '@tap/shared/src/event'
 import dayjs from 'dayjs'
 import { debounce } from 'lodash-es'
 import { mapState } from 'vuex'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 
 import { TYPEMAP } from './tyepMap'
 import UserOperation from './UserOperation'
@@ -15,7 +20,6 @@ import UserOperation from './UserOperation'
 export default {
   components: {
     UserOperation,
-    VIcon,
   },
   data() {
     return {
@@ -56,7 +60,6 @@ export default {
       this.$router.push({ name: 'notification' })
     },
     init() {
-      const self = this
       const msg = {
         type: 'notification',
       }
@@ -88,9 +91,9 @@ export default {
       const where = {
         read: false,
       }
-      notificationApi.count({ where: JSON.stringify(where) }).then((data) => {
+      countNotifications({ where: JSON.stringify(where) }).then((data) => {
         this.$store.commit('notification', {
-          unRead: data || 0,
+          unRead: data?.count || 0,
         })
       })
     },
@@ -103,7 +106,7 @@ export default {
         limit: 20,
         skip: 0,
       }
-      notificationApi.get({ filter: JSON.stringify(filter) }).then((data) => {
+      fetchNotifications(filter).then((data) => {
         const { items, total } = data || {}
         this.$store.commit('notification', {
           unRead: total,
@@ -115,7 +118,7 @@ export default {
       })
     },
     handleRead(id, type) {
-      notificationApi.patch({ read: true, id }).then(() => {
+      patchNotification({ read: true, id }).then(() => {
         if (type === 'alarm') {
           this.getAlarmData()
           return
@@ -126,13 +129,19 @@ export default {
     },
     handleGo(item) {
       switch (item.system) {
+        case 'migration':
+          this.$router.push({
+            name: 'MigrateEditor',
+            params: {
+              id: item.sourceId,
+            },
+          })
+          break
         case 'dataFlow':
           this.$router.push({
-            name: 'job',
-            query: {
+            name: 'DataflowEditor',
+            params: {
               id: item.sourceId,
-              isMoniting: true,
-              mapping: item.mappingTemplate,
             },
           })
           break
@@ -161,10 +170,7 @@ export default {
           type: 'userOperation',
         },
       }
-      userLogsApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
+      fetchUserLogs(filter)
         .then((data) => {
           this.userOperations =
             data?.items?.map((item) => {
@@ -186,7 +192,7 @@ export default {
         read: false,
       }
       this.loadingAlarm = true
-      notificationApi.list(where).then((data) => {
+      listNotifications(where).then((data) => {
         const list = data?.items || []
         this.alarmData = list.map((item) => {
           item.levelLabel = ALARM_LEVEL_MAP[item.level].text
@@ -299,7 +305,7 @@ export default {
                   <span
                     v-else
                     class="cursor-pointer px-1 primary"
-                    @click="handleGo(item)"
+                    @click.stop="handleGo(item)"
                   >
                     {{ item.serverName }}
                   </span>
@@ -392,7 +398,7 @@ export default {
                 </div>
                 <div>
                   <span :class="[`level-${item.levelType}`]"
-                    >【{{ item.levelLabel }}】</span
+                    >【{{ item.title }}】</span
                   >
                   <template>
                     <span>{{ item.title }}</span>
@@ -424,8 +430,8 @@ export default {
   .notification-popover-wrap {
     overflow: hidden;
     .el-tabs__header {
-      color: map.get($fontColor, light);
-      border-bottom: 1px solid map.get($borderColor, light);
+      color: var(--text-light);
+      border-bottom: 1px solid var(--border-light);
       .el-tabs__nav-wrap {
         .el-tabs__nav-scroll {
           width: 280px;
@@ -436,9 +442,9 @@ export default {
         font-weight: 400;
 
         &.is-active {
-          // color: map.get($color, primary);
+          // color: var(--color-primary);
           font-weight: 500;
-          border-color: map.get($color, primary);
+          border-color: var(--color-primary);
         }
       }
       .el-tabs__active-bar {
@@ -471,7 +477,7 @@ export default {
   .notice-footer {
     display: flex;
     justify-content: space-between;
-    font-size: $fontBaseTitle;
+    font-size: var(--font-base-title);
     height: 40px;
     line-height: 40px;
     padding: 0 25px;
@@ -481,7 +487,7 @@ export default {
     .more-text {
       display: inline-block;
       cursor: pointer;
-      color: map.get($fontColor, light);
+      color: var(--text-light);
     }
   }
   .tab-item {
@@ -500,11 +506,11 @@ export default {
       box-sizing: border-box;
       .notification-item {
         padding: 5px 20px 4px 20px;
-        border-bottom: 1px solid map.get($borderColor, light);
-        font-size: $fontBaseTitle;
-        color: map.get($fontColor, light);
+        border-bottom: 1px solid var(--border-light);
+        font-size: var(--font-base-title);
+        color: var(--text-light);
         .primary {
-          color: map.get($color, primary);
+          color: var(--color-primary);
         }
         .unread-1zPaAXtSu {
           top: 22px;
@@ -522,8 +528,8 @@ export default {
         }
         .item-time {
           margin-top: 5px;
-          color: map.get($fontColor, light);
-          font-size: $fontBaseTitle;
+          color: var(--text-light);
+          font-size: var(--font-base-title);
         }
       }
     }

@@ -10,9 +10,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@tap/business": "workspace:^1.0.0",
-    "@tap/ldp": "workspace:^1.0.0",
-    "core-js": "^3.8.3",
-    "tiny-emitter": "^2.1.0"
+    "@tap/business": "workspace:*",
+    "@tap/ldp": "workspace:*",
+    "core-js": "catalog:",
+    "tiny-emitter": "catalog:"
   }
 }

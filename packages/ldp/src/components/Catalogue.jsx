@@ -1,7 +1,8 @@
-import { defineComponent, reactive, ref, watch, nextTick, onMounted } from 'vue'
+import { defineComponent, reactive, ref, nextTick } from 'vue'
 import i18n from '@tap/i18n'
-import { VIcon, ProTable } from '@tap/component'
-import { DatabaseIcon, DataServerDrawer as ApiPreview, makeDragNodeImage } from '@tap/business'
+import { DatabaseIcon } from '@tap/business/src/components/DatabaseIcon'
+import ApiPreview from '@tap/business/src/views/data-server/Drawer.vue'
+import { makeDragNodeImage } from '@tap/business/src/shared'
 import TablePreview from '../TablePreview'
 import ClassificationTree from './ClassificationTree'
 import resize from '@tap/component/src/directives/resize'
@@ -205,7 +206,7 @@ export default defineComponent({
               </div>
             </div>
             <div class="flex-1 min-h-0 position-relative">
-              <ProTable
+              <el-table
                 class={['catalog-table']}
                 row-key="id"
                 height="100%"
@@ -229,7 +230,7 @@ export default defineComponent({
                   }}
                 </el-table-column>
                 <el-table-column label={i18n.t('public_change_time')} prop="changeTime"></el-table-column>
-              </ProTable>
+              </el-table>
 
               {options.isShowDetails && (
                 <div class="position-absolute top-0 bottom-0 left-0 right-0 w-100 bg-white object-preview-wrap pl-3">
@@ -238,7 +239,7 @@ export default defineComponent({
                       tag="div"
                       ref={previewRef}
                       host={apiServerHost.value}
-                      class="border rounded-4 sw-table-drawer h-100 overflow-y-auto"
+                      class="border rounded-4 sw-table-drawer h-100 overflow-y-auto px-4"
                     ></ApiPreview>
                   ) : (
                     <TablePreview

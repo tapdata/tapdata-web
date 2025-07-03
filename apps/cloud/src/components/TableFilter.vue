@@ -134,11 +134,11 @@ export default {
 
 <style lang="scss">
 .table-filter__icon {
-  color: map.get($fontColor, normal);
+  color: var(--text-normal);
   font-size: 12px;
   cursor: pointer;
   &.is-active {
-    color: map.get($color, primary);
+    color: var(--color-primary);
   }
 }
 .table-filter__select {
@@ -153,11 +153,11 @@ export default {
 
 <style lang="scss">
 .table-filter__icon {
-  color: map.get($fontColor, normal);
+  color: var(--text-normal);
   font-size: 12px;
   cursor: pointer;
   &.is-active {
-    color: map.get($color, primary);
+    color: var(--color-primary);
   }
 }
 .table-filter__select {

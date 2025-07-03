@@ -1,7 +1,7 @@
 <script>
 import { javascriptFunctionsApi } from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { JsEditor } from '@tap/component'
+import JsEditor from '@tap/component/src/JsEditor.vue'
 import Cookie from '@tap/shared/src/cookie'
 
 const getScriptObj = (script) => {
@@ -20,6 +20,7 @@ const getScriptObj = (script) => {
     bodyLength: matchArr2?.length || 0,
   }
 }
+
 export default {
   components: { JsEditor, PageContainer },
   data() {
@@ -257,7 +258,7 @@ export default {
 
 <style lang="scss" scoped>
 .details-value {
-  color: map.get($fontColor, dark);
+  color: var(--text-dark);
   font-size: 12px;
 }
 .custom-form__body {
@@ -265,7 +266,7 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background-color: map.get($bgColor, white);
+  background-color: var(--color-white);
   box-shadow: 0px 0px 3px 0px #cccccc;
   overflow: hidden;
 
@@ -289,7 +290,7 @@ export default {
   }
 }
 .footer {
-  background-color: map.get($bgColor, white);
+  background-color: var(--color-white);
   border-top: 1px solid #f0f0f0;
 }
 </style>

@@ -221,7 +221,7 @@ export default {
   packages_dag_components_timeselect_renwuquanzhouqi: '任務全週期',
   packages_dag_components_timeselect_incremental_phase: '增量階段',
   packages_dag_components_timeselect_zuijintian: '最近1天',
-  packages_dag_components_timeselect_zuixinxiaoshi: '最新1小時',
+  packages_dag_components_timeselect_zuixinxiaoshi: '最近1小時',
   packages_dag_components_timeselect_zuijinfenzhong: '最近5分鐘',
   packages_dag_components_timeselect_zhouqi: '週期',
   packages_dag_components_timeselect_jieshuriqi: '結束日期',
@@ -842,6 +842,7 @@ export default {
   packages_dag_noPkSyncMode_ADD_HASH: '新增哈希列',
   packages_dag_noPkSyncMode_ALL_COLUMNS: '全字段索引',
   packages_dag_noPKVirtualFieldName: '哈希列字段名',
+  packages_dag_stream_offset: '精確位置',
   packages_dag_join_keys_empty: '{tableName} 的關聯條件不能為空',
   packages_dag_join_keys_field_empty:
     '{tableName} 的關聯條件第 {index} 項的字段不能為空',

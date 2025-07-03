@@ -1,5 +1,5 @@
 <script>
-import { connectionsApi, taskApi } from '@tap/api'
+import { getConnectionStats, taskApi } from '@tap/api'
 import { Chart, VIcon } from '@tap/component'
 
 import { mapMutations } from 'vuex'
@@ -251,7 +251,7 @@ export default {
       const connectionLoading = this.$loading({
         target: this.$refs.connection?.[0],
       })
-      const data = await connectionsApi.getStats().finally(() => {
+      const data = await getConnectionStats().finally(() => {
         connectionLoading.close()
       })
       const connection = this.agentList.find(({ key }) => key === 'connection')
@@ -1206,8 +1206,8 @@ export default {
 .create-list__index {
   width: 22px;
   height: 22px;
-  color: map.get($color, primary);
-  border: 1px solid map.get($color, primary);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
   border-radius: 50%;
 }
 
@@ -1222,7 +1222,7 @@ export default {
 }
 
 .agent-list__list {
-  background: map.get($color, white);
+  background: var(--color-white);
 }
 
 .agent-list__item {
@@ -1231,7 +1231,7 @@ export default {
   margin-right: 16px;
   padding: 16px;
   background-color: #f5f7fa;
-  color: map.get($fontColor, dark);
+  color: var(--text-dark);
 }
 
 .agent-list__item:last-child {
@@ -1240,14 +1240,14 @@ export default {
 
 .agent-list__name {
   .vicon {
-    color: map.get($fontColor, dark);
+    color: var(--text-dark);
   }
 }
 
 .agent-list__detail {
   width: 232px;
   background-color: #fafafb;
-  color: map.get($fontColor, light);
+  color: var(--text-light);
 
   .agent-list__status {
     white-space: nowrap;
@@ -1283,12 +1283,12 @@ export default {
 
 .dialog-upgrade__text {
   font-size: 12px;
-  color: map.get($fontColor, light);
+  color: var(--text-light);
 }
 
 .dialog-upgrade__text__header {
   font-size: 14px;
-  color: map.get($fontColor, normal);
+  color: var(--text-normal);
 }
 
 .dialog-upgrade {
@@ -1336,7 +1336,7 @@ export default {
 .position-text {
   top: 0;
   left: 0;
-  color: map.get($color, white);
+  color: var(--color-white);
   width: 100%;
   line-height: 14px;
 }
@@ -1350,7 +1350,7 @@ export default {
 .position-sub-text {
   top: 33px;
   left: 52px;
-  color: map.get($color, white);
+  color: var(--color-white);
 }
 
 .quick-start-button {

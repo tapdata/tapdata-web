@@ -8,7 +8,7 @@ import {
 } from '@formily/core'
 import { Path } from '@formily/path'
 import { toJS } from '@formily/reactive'
-import { alarmApi } from '@tap/api'
+import { updateTaskAlarm } from '@tap/api'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 
 import { deepEqual } from '@tap/shared'
@@ -86,7 +86,10 @@ export default {
         const formSchema = this.$store.getters['dataflow/formSchema'] || {}
 
         // 重置TAB
-        if (this.ins?.group !== oldNode?.__Ctor.group) {
+        if (
+          this.ins?.group !== oldNode?.__Ctor.group &&
+          this.scope?.formTab?.activeKey !== 'previewTab'
+        ) {
           this.scope?.formTab?.setActiveKey('tab1')
         }
 
@@ -95,7 +98,12 @@ export default {
           this.schema = null
           return
         }
-        await this.setSchema(this.ins.getSchema() || formSchema.node)
+        await this.setSchema(
+          this.ins.getSchema(
+            this.scope.$settings.syncType,
+            this.stateIsReadonly,
+          ) || formSchema.node,
+        )
 
         // 如果节点存在错误状态，走一遍校验，可以让用户看到错误信息
         // 脏代码。节点错误原先是布尔值，又增加字符串类型
@@ -314,7 +322,7 @@ export default {
         properties: JSON.parse(JSON.stringify(formValues)),
       })
 
-      alarmApi.updateTaskAlarm({
+      updateTaskAlarm({
         taskId: this.scope.$settings.id,
         nodeId: formValues.id,
         alarmRules: formValues.alarmRules,

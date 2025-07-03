@@ -1,3 +1,3 @@
-import TextEditable from './TextEditable'
+import TextEditable from './TextEditable.vue'
 
 export { TextEditable }

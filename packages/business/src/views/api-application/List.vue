@@ -1,16 +1,16 @@
 <script>
-import { appApi, logcollectorApi, taskApi } from '@tap/api'
+import { fetchApps, logcollectorApi, taskApi } from '@tap/api'
 
-import { FilterBar } from '@tap/component'
+import { FilterBar } from '@tap/component/src/filter-bar'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
-import { TablePage } from '../../components'
-
 import PageContainer from '../../components/PageContainer.vue'
-import Delete from './Delete'
-import Details from './Details'
-import Editor from './Editor'
+
+import TablePage from '../../components/TablePage.vue'
+import Delete from './Delete.vue'
+import Details from './Details.vue'
+import Editor from './Editor.vue'
 
 let timeout = null
 export default {
@@ -127,27 +127,23 @@ export default {
         skip: (current - 1) * size,
         where,
       }
-      return appApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          const list = data?.items || []
-          return {
-            total: data?.total || 0,
-            data: list.map((item) => {
-              if (item.value === 'Default') {
-                item.desc = i18n.t(
-                  'packages_business_api_application_list_xitongmorenchuang',
-                )
-              }
-              item.createTime = item.createTime
-                ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-                : '-'
-              return item
-            }),
-          }
-        })
+      return fetchApps(filter).then((data) => {
+        const list = data?.items || []
+        return {
+          total: data?.total || 0,
+          data: list.map((item) => {
+            if (item.value === 'Default') {
+              item.desc = i18n.t(
+                'packages_business_api_application_list_xitongmorenchuang',
+              )
+            }
+            item.createTime = item.createTime
+              ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+              : '-'
+            return item
+          }),
+        }
+      })
     },
 
     handleSortTable({ order, prop }) {
@@ -225,9 +221,7 @@ export default {
 
     forceStop(ids, row) {
       const msgObj = this.getConfirmMessage('force_stop', row)
-      this.$confirm(msgObj.msg, '', {
-        type: 'warning',
-        showClose: false,
+      this.$confirm(this.$t('public_message_title_prompt'), msgObj.msg, {
         dangerouslyUseHTMLString: true,
       }).then((resFlag) => {
         if (!resFlag) {
@@ -244,11 +238,8 @@ export default {
 
     stop(ids) {
       this.$confirm(
-        this.$t('packages_business_stop_confirm_message'),
         this.$t('packages_business_important_reminder'),
-        {
-          type: 'warning',
-        },
+        this.$t('packages_business_stop_confirm_message'),
       ).then((resFlag) => {
         if (!resFlag) {
           return

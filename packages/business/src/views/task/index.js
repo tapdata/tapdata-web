@@ -1,3 +1,3 @@
-import SkipError from './SkipError'
+import SkipError from './SkipError.vue'
 
 export { SkipError }

@@ -5,10 +5,10 @@ import {
   sharedCacheApi,
   taskApi,
 } from '@tap/api'
-import { makeStatusAndDisabled } from '@tap/business'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
+import { makeStatusAndDisabled } from '@tap/business/src/shared/task'
 import resize from '@tap/component/src/directives/resize'
-import { computed as reactiveComputed } from '@tap/form'
+import { computed as reactiveComputed } from '@tap/form/src/shared/reactive'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 import i18n from '@tap/i18n'
 import { setPageTitle } from '@tap/shared'
@@ -18,7 +18,6 @@ import { merge } from 'lodash-es'
 import Mousetrap from 'mousetrap'
 import { h, markRaw } from 'vue'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 import {
   AddConnectionCommand,
   AddNodeCommand,
@@ -779,7 +778,7 @@ export default {
       cancelButtonText,
     ) {
       try {
-        await this.$confirm(message, headline, {
+        await this.$confirm(headline, message, {
           confirmButtonText,
           cancelButtonText,
           type,
@@ -2351,11 +2350,7 @@ export default {
           }
         }
       } else if (code === 'Task.OldVersion') {
-        this.$confirm('', i18n.t('packages_dag_task_old_version_confirm'), {
-          center: true,
-          customClass: 'pro-confirm',
-          type: 'warning',
-          closeOnClickModal: false,
+        this.$confirm(i18n.t('packages_dag_task_old_version_confirm'), {
           confirmButtonText: i18n.t('public_button_refresh'),
         }).then((resFlag) => {
           resFlag && location.reload()
@@ -2433,10 +2428,7 @@ export default {
     handleStop() {
       const message = this.getConfirmMessage('stop')
 
-      this.$confirm(message, '', {
-        type: 'warning',
-        showClose: false,
-      }).then(async (resFlag) => {
+      this.$confirm(message).then(async (resFlag) => {
         if (!resFlag) {
           return
         }
@@ -2454,10 +2446,7 @@ export default {
 
     handleForceStop() {
       const msg = this.getConfirmMessage('force_stop')
-      this.$confirm(msg, '', {
-        type: 'warning',
-        showClose: false,
-      }).then(async (resFlag) => {
+      this.$confirm(msg).then(async (resFlag) => {
         if (!resFlag) {
           return
         }
@@ -2470,9 +2459,7 @@ export default {
 
     handleReset() {
       const msg = this.getConfirmMessage('initialize')
-      this.$confirm(msg, '', {
-        type: 'warning',
-      }).then(async (resFlag) => {
+      this.$confirm(msg).then(async (resFlag) => {
         if (!resFlag) {
           return
         }
@@ -2498,17 +2485,23 @@ export default {
     getConfirmMessage(operateStr) {
       const message = `${operateStr}_confirm_message`
       const strArr = this.$t(`packages_dag_dataFlow_${message}`).split('xxx')
-      const msg = h('p', null, [
-        strArr[0],
-        h(
-          'span',
-          {
-            class: 'color-primary',
-          },
-          this.dataflow.name,
-        ),
-        strArr[1],
-      ])
+      const msg = h(
+        'p',
+        {
+          class: 'break-all',
+        },
+        [
+          strArr[0],
+          h(
+            'span',
+            {
+              class: 'color-primary',
+            },
+            this.dataflow.name,
+          ),
+          strArr[1],
+        ],
+      )
       return msg
     },
 
@@ -2630,7 +2623,7 @@ export default {
           if (data.status === 'edit') data.btnDisabled.start = false // 任务编辑中，在编辑页面可以启动
           Object.assign(this.dataflow.disabledData, data.btnDisabled)
 
-          $emit(this, 'loop-task')
+          this.$emit('loop-task')
           this.startLoopTask(id)
         }
       }, 5000)

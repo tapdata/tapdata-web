@@ -1,20 +1,5 @@
-<template>
-  <section class="operation-logs-wrapper g-panel-container" v-if="$route.name === 'noticeList'">
-    <div class="main">
-      <VTable ref="table" row-key="id" :columns="columns" :data="list" height="100%" :has-pagination="false">
-        <template #noticeName="{ row }">
-          <span class="cursor-pointer color-primary" @click="toNotice(row)">{{ row.name }}</span>
-        </template>
-      </VTable>
-    </div>
-  </section>
-  <RouterView v-else></RouterView>
-</template>
-
 <script>
-import { escapeRegExp, isEmpty } from 'lodash-es'
-import { VIcon, FilterBar, VTable } from '@tap/component'
-import { delayTrigger } from '@tap/shared'
+import { VTable } from '@tap/component/src/base/v-table'
 
 import i18n from '@/i18n'
 
@@ -134,3 +119,28 @@ export default {
   },
 }
 </script>
+
+<template>
+  <section
+    v-if="$route.name === 'noticeList'"
+    class="operation-logs-wrapper g-panel-container"
+  >
+    <div class="main">
+      <VTable
+        ref="table"
+        row-key="id"
+        :columns="columns"
+        :data="list"
+        height="100%"
+        :has-pagination="false"
+      >
+        <template #noticeName="{ row }">
+          <span class="cursor-pointer color-primary" @click="toNotice(row)">{{
+            row.name
+          }}</span>
+        </template>
+      </VTable>
+    </div>
+  </section>
+  <RouterView v-else />
+</template>

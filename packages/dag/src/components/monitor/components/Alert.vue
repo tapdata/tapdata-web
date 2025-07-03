@@ -1,5 +1,5 @@
 <script>
-import { alarmApi } from '@tap/api'
+import { closeAlarms } from '@tap/api'
 import { ALARM_LEVEL_MAP, ALARM_STATUS_MAP } from '@tap/business'
 
 import { OverflowTooltip, SelectList, VIcon, VTable } from '@tap/component'
@@ -194,7 +194,7 @@ export default {
     },
 
     handleClose(row = {}) {
-      alarmApi.close([row.id]).then(() => {
+      closeAlarms([row.id]).then(() => {
         this.$message.success(
           i18n.t('packages_dag_components_alert_guanbichenggong'),
         )

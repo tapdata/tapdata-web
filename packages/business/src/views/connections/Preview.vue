@@ -1,13 +1,20 @@
 <script setup lang="ts">
-import { connectionsApi, dataPermissionApi, proxyApi, usersApi } from '@tap/api'
-import { getIcon } from '@tap/assets/icons'
-import { Drawer, VIcon } from '@tap/component'
+import {
+  dataPermissionApi,
+  getHeartbeatTaskByConnectionId,
+  proxyApi,
+  updateConnectionById,
+  usersApi,
+} from '@tap/api'
+import Drawer from '@tap/component/src/Drawer.vue'
+import { Modal } from '@tap/component/src/modal'
 import i18n from '@tap/i18n'
 import { openUrl } from '@tap/shared'
 import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash-es'
-import { computed, inject, onBeforeUnmount, reactive, ref } from 'vue'
+import { inject, onBeforeUnmount, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { DatabaseIcon } from '../../components/DatabaseIcon'
 import StatusTag from '../../components/StatusTag.vue'
 import PermissionsDialog from './PermissionsDialog.vue'
 import { getConnectionIcon as getConnectionIconUtil } from './util'
@@ -252,34 +259,25 @@ const open = async (row: Connection) => {
   }
 }
 
-const edit = () => {
+const edit = async () => {
   const { id, pdkHash, definitionPdkId: pdkId, agentType, name } = connection
 
   if (agentType === 'Local') {
-    ElMessageBox.confirm(
-      i18n.t('packages_business_connections_list_dangqianlianjie') +
-        name +
-        i18n.t('packages_business_connections_list_zhengzaizuoweiF'),
-      '',
-      {
-        type: 'warning',
-        showClose: false,
-      },
-    ).then((resFlag) => {
-      if (!resFlag) {
-        return
-      }
+    const confirmed = await Modal.confirm(
+      `${i18n.t('packages_business_connections_list_dangqianlianjie')}${name}${i18n.t('packages_business_connections_list_zhengzaizuoweiF')}`,
+    )
 
-      router.push({
-        name: 'connectionsEdit',
-        params: {
-          id,
-        },
-        query: {
-          pdkHash,
-          pdkId,
-        },
-      })
+    if (!confirmed) return
+
+    router.push({
+      name: 'connectionsEdit',
+      params: {
+        id,
+      },
+      query: {
+        pdkHash,
+        pdkId,
+      },
     })
   } else {
     router.push({
@@ -297,13 +295,11 @@ const edit = () => {
 
 const beforeTest = () => {
   checkAgent(() => {
-    connectionsApi
-      .updateById(connection.id, {
-        status: 'testing',
-      })
-      .then(() => {
-        testRef.value?.start(true)
-      })
+    updateConnectionById(connection.id, {
+      status: 'testing',
+    }).then(() => {
+      testRef.value?.start(true)
+    })
   })
 }
 
@@ -503,7 +499,7 @@ const isFileSource = () => {
 
 const loadHeartbeatTable = async (row: Connection = {} as Connection) => {
   if (!row.heartbeatEnable) return []
-  return await connectionsApi.heartbeatTask(row.id)
+  return await getHeartbeatTaskByConnectionId(row.id)
 }
 
 const handleClick = (temp: { action?: () => void }) => {
@@ -515,7 +511,7 @@ const loadPermissions = (id: string) => {
     dataType: 'Connections',
     dataId: id,
   }
-  dataPermissionApi.permissions(filter).then((data) => {
+  dataPermissionApi.permissions(filter).then((data: any = []) => {
     usersApi
       .role({
         filter: JSON.stringify({
@@ -602,25 +598,22 @@ defineExpose({
 </script>
 
 <template>
-  <Drawer v-model:visible="visible" width="400px">
-    <div v-loading="loading" class="details-container">
-      <div class="container-item border-item flex pb-5">
-        <div class="pt-2">
-          <div class="img-box">
-            <img :src="getConnectionIcon()" />
-          </div>
-        </div>
-        <div class="ml-4 overflow-hidden">
-          <div class="fs-6 mb-2 ellipsis">{{ connection.name }}</div>
-          <div>
-            <status-tag text target="connection" :status="connection.status" />
-          </div>
-        </div>
+  <Drawer v-model="visible" width="400px">
+    <template #header>
+      <div class="flex align-center gap-2 font-color-dark overflow-hidden">
+        <DatabaseIcon
+          v-if="connection.pdkHash"
+          class="flex-shrink-0"
+          :pdk-hash="connection.pdkHash"
+          :size="24"
+        />
+        <div class="fs-6 ellipsis">{{ connection.name }}</div>
+        <status-tag text target="connection" :status="connection.status" />
       </div>
-      <div
-        v-if="!hideOperation"
-        class="button-line container-item border-item pt-4 pb-5"
-      >
+    </template>
+
+    <div v-loading="loading" class="details-container">
+      <div v-if="!hideOperation" class="mb-4">
         <div class="flex">
           <el-button
             v-if="showProgress"
@@ -772,12 +765,11 @@ defineExpose({
 
 <style lang="scss" scoped>
 .details-container {
-  padding: 16px 12px 16px 20px;
   overflow-y: auto;
 }
 .container-item {
   &.border-item {
-    border-bottom: 1px solid map.get($borderColor, light);
+    border-bottom: 1px solid var(--border-light);
   }
   &.button-line {
     margin-bottom: -1px;
@@ -788,15 +780,15 @@ defineExpose({
 }
 .box-line {
   padding: 8px 0;
-  border-top: 1px solid map.get($borderColor, light);
+  border-top: 1px solid var(--border-light);
 }
 .box-line__label {
-  color: map.get($fontColor, light);
+  color: var(--text-light);
 }
 .box-line__value {
   max-width: 280px;
   margin-top: 8px;
-  color: map.get($fontColor, dark);
+  color: var(--text-dark);
 }
 .img-box {
   width: 24px;

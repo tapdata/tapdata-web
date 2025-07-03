@@ -1,6 +1,6 @@
 import { PreviewText } from '@formily/element-plus'
 import { connect, mapProps, mapReadPretty } from '@formily/vue'
-import { transformComponent } from '../../shared'
+import { transformComponent } from '../../shared/transform'
 import InfiniteSelect from './InfiniteSelect.vue'
 
 const AsyncSelect = InfiniteSelect

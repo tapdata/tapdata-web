@@ -1,9 +1,8 @@
 <script>
 import { applicationApi, roleApi } from '@tap/api'
-import { TablePage } from '@tap/business'
-
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { FilterBar } from '@tap/component'
+import TablePage from '@tap/business/src/components/TablePage.vue'
+import { FilterBar } from '@tap/component/src/filter-bar'
 import { cloneDeep, escapeRegExp } from 'lodash-es'
 import { h } from 'vue'
 
@@ -56,9 +55,6 @@ export default {
     // 创建
     openCreateDialog() {
       this.createDialogVisible = true
-      this.$nextTick(() => {
-        this.$refs.form.clearValidate()
-      })
       this.createForm = {
         clientName: '',
         grantTypes: ['implicit', 'client_credentials'],
@@ -68,6 +64,11 @@ export default {
         redirectUrisStr: '',
         showMenu: true,
       }
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.$refs.form.clearValidate()
+        }, 50)
+      })
     },
     // 编辑
     edit(item) {
@@ -82,19 +83,17 @@ export default {
       const message = h('p', [
         `${this.$t('public_message_delete_confirm')} ${item.name}`,
       ])
-      this.$confirm(message, this.$t('public_message_title_prompt'), {
-        type: 'warning',
-      }).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        applicationApi.delete(item.id).then(() => {
-          this.$message.success(this.$t('public_message_delete_ok'))
-          this.table.fetch()
-        })
-        // .catch(() => {
-        // })
-      })
+      this.$confirm(this.$t('public_message_title_prompt'), message).then(
+        (resFlag) => {
+          if (!resFlag) {
+            return
+          }
+          applicationApi.delete(item.id).then(() => {
+            this.$message.success(this.$t('public_message_delete_ok'))
+            this.table.fetch()
+          })
+        },
+      )
     },
     // 保存
     createApplication() {
@@ -223,8 +222,8 @@ export default {
       <el-table-column
         :label="$t('application_header_id')"
         :show-overflow-tooltip="true"
-        prop="id"
-        width="220"
+        prop="clientId"
+        width="230"
       >
         <!-- <template slot-scope="scope"> -->
       </el-table-column>
@@ -451,7 +450,7 @@ export default {
         }
       }
       .el-form-item__label {
-        font-size: $fontBaseTitle;
+        font-size: var(--font-base-title);
       }
     }
   }

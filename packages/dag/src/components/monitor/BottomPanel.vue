@@ -252,7 +252,7 @@ export default {
 </template>
 
 <style scoped lang="scss">
-$color: map.get($color, primary);
+$color: var(--color-primary);
 $tabsHeaderWidth: 180px;
 $headerHeight: 40px;
 
@@ -381,8 +381,8 @@ $headerHeight: 40px;
 }
 
 .monitor-bottom-tabs {
-  :deep(.el-tabs__content) {
-    z-index: 1;
+  :deep(.el-tabs__nav-wrap) {
+    margin-bottom: 0;
   }
 }
 

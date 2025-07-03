@@ -1,17 +1,12 @@
 <script>
 import { taskApi } from '@tap/api'
-import { TaskStatus } from '@tap/business'
-import {
-  IconButton,
-  TextEditable,
-  VDivider,
-  VEmpty,
-  VIcon,
-} from '@tap/component'
+import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
+import { TextEditable } from '@tap/component/src/base/text-editable'
+import { VEmpty } from '@tap/component/src/base/v-empty'
 import focusSelect from '@tap/component/src/directives/focusSelect'
+import { IconButton } from '@tap/component/src/icon-button'
 import { ElSelect as Select } from 'element-plus'
 import { mapGetters, mapMutations, mapState } from 'vuex'
-import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 import DataCaptureDebug from './DataCaptureDebug.vue'
 import DataValidationDialog from './DataValidationDialog.vue'
 
@@ -24,8 +19,6 @@ export default {
     DataValidationDialog,
     TextEditable,
     TaskStatus,
-    VDivider,
-    VIcon,
     ElScrollbar: Select.components.ElScrollbar,
     VEmpty,
     IconButton,
@@ -160,7 +153,7 @@ export default {
       if (!this.name) {
         this.name = this.dataflowName
       } else {
-        $emit(this, 'change-name', this.name)
+        this.$emit('change-name', this.name)
       }
     },
 
@@ -181,7 +174,7 @@ export default {
 
     handleClickNode(node) {
       this.showSearchNodePopover = false
-      $emit(this, 'locate-node', node)
+      this.$emit('locate-node', node)
     },
 
     refreshSchema() {
@@ -604,7 +597,7 @@ $sidebarBg: #fff;
   .nav-icon {
     width: 40px;
     height: 100%;
-    background-color: map.get($color, primary);
+    background-color: var(--color-primary);
     cursor: pointer;
     font-size: 24px;
     &:hover {
@@ -623,7 +616,7 @@ $sidebarBg: #fff;
         border-color: #dcdfe6;
       }
       .title-input-icon {
-        color: map.get($color, primary);
+        color: var(--color-primary);
       }
     }
 
@@ -642,9 +635,9 @@ $sidebarBg: #fff;
       transition: border-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
 
       &:focus {
-        border-color: map.get($color, primary);
+        border-color: var(--color-primary);
         & + .title-input-icon {
-          color: map.get($color, primary);
+          color: var(--color-primary);
         }
       }
     }
@@ -675,7 +668,7 @@ $sidebarBg: #fff;
 
     &.active,
     &:hover {
-      color: map.get($color, primary);
+      color: var(--color-primary);
       background: $hoverBg;
     }
   }
@@ -723,7 +716,7 @@ $sidebarBg: #fff;
       cursor: pointer;
 
       &:hover {
-        color: map.get($color, primary);
+        color: var(--color-primary);
         background: $hoverBg;
       }
     }

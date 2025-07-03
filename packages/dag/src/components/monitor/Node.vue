@@ -478,11 +478,11 @@ export default defineComponent({
               width="auto"
               trigger="hover"
               close-delay={0}
-              popper-class="node-statistic-popover rounded-lg"
+              popper-class="node-statistic-popover"
             >
               {{
                 reference: () => (
-                  <div class="node-card rounded-lg px-2 pb-2 pt-4 mt-n2">
+                  <div class="node-card rounded-xl px-2 pb-2 pt-4 mt-n2">
                     <div class="flex align-center">
                       <div class="node-card-content p-2 flex-1 rounded-sm">
                         {renderStatistic()}
@@ -576,7 +576,7 @@ export default defineComponent({
 
   .statistic {
     display: inline-block;
-    color: map.get($fontColor, sslight);
+    color: var(--text-sslight);
 
     &-title {
       font-size: 12px;
@@ -586,7 +586,7 @@ export default defineComponent({
     &-value {
       display: inline-block;
       vertical-align: middle;
-      color: map.get($fontColor, dark);
+      color: var(--text-dark);
       line-height: 1;
       //font-weight: 700;
       font-size: 12px;
@@ -614,7 +614,7 @@ export default defineComponent({
 
   &.active,
   &:hover {
-    color: map.get($color, primary);
+    color: var(--color-primary);
     background: #eef3ff;
   }
 }

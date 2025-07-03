@@ -1,13 +1,14 @@
 <script>
 import { licensesApi } from '@tap/api'
-import { DatabaseIcon, TablePage, TaskStatus } from '@tap/business'
+import { DatabaseIcon } from '@tap/business/src/components/DatabaseIcon'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { VEmpty } from '@tap/component'
+import TablePage from '@tap/business/src/components/TablePage.vue'
+import { VEmpty } from '@tap/component/src/base/v-empty'
 import Time from '@tap/shared/src/time'
 import dayjs from 'dayjs'
 
 export default {
-  components: { VEmpty, DatabaseIcon, PageContainer, TablePage, TaskStatus },
+  components: { VEmpty, DatabaseIcon, PageContainer, TablePage },
   data() {
     const TYPE_MAP = {
       OP: this.$t('daas_licenseType_op'),

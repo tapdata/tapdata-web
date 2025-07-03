@@ -56,6 +56,7 @@ declare module 'vue' {
     ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
     ElOption: typeof import('element-plus/es')['ElOption']
     ElPagination: typeof import('element-plus/es')['ElPagination']
+    ElPopconfirm: typeof import('element-plus/es')['ElPopconfirm']
     ElPopover: typeof import('element-plus/es')['ElPopover']
     ElProgress: typeof import('element-plus/es')['ElProgress']
     ElRadio: typeof import('element-plus/es')['ElRadio']
@@ -83,7 +84,6 @@ declare module 'vue' {
     ElTree: typeof import('element-plus/es')['ElTree']
     ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
     ElUpload: typeof import('element-plus/es')['ElUpload']
-    'ILucide:cloudUpload': typeof import('~icons/lucide/cloud-upload')['default']
     'ILucide:hardDriveDownload': typeof import('~icons/lucide/hard-drive-download')['default']
     'ILucide:monitorDown': typeof import('~icons/lucide/monitor-down')['default']
     'ILucide:settings': typeof import('~icons/lucide/settings')['default']
@@ -91,6 +91,14 @@ declare module 'vue' {
     'ILucide:trash2': typeof import('~icons/lucide/trash2')['default']
     ILucideCalendarDays: typeof import('~icons/lucide/calendar-days')['default']
     ILucideTrash2: typeof import('~icons/lucide/trash2')['default']
+    'IMingcute:addLine': typeof import('~icons/mingcute/add-line')['default']
+    'IMingcute:arrowRightLine': typeof import('~icons/mingcute/arrow-right-line')['default']
+    'IMingcute:checkLine': typeof import('~icons/mingcute/check-line')['default']
+    'IMingcute:gridLine': typeof import('~icons/mingcute/grid-line')['default']
+    'IMingcute:searchLine': typeof import('~icons/mingcute/search-line')['default']
+    'IMingcute:warningFill': typeof import('~icons/mingcute/warning-fill')['default']
+    'IMingcute:wechatMiniprogramFill': typeof import('~icons/mingcute/wechat-miniprogram-fill')['default']
+    'IMingcute:wechatMiniprogramLine': typeof import('~icons/mingcute/wechat-miniprogram-line')['default']
     LockedDialog: typeof import('./components/LockedDialog.vue')['default']
     Main: typeof import('./components/v-confirm/Main.vue')['default']
     MultiSelection: typeof import('./components/MultiSelection.vue')['default']
@@ -100,7 +108,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     VDivider: typeof import('./components/VDivider.vue')['default']
   }
-  export interface ComponentCustomProperties {
+  export interface GlobalDirectives {
     vInfiniteScroll: typeof import('element-plus/es')['ElInfiniteScroll']
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }

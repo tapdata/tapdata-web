@@ -1,11 +1,8 @@
-import Mousetrap from 'mousetrap'
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { countConnections, taskApi } from '@tap/api'
 import { driver } from 'driver.js'
-import 'driver.js/dist/driver.css'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import i18n from '@/i18n'
-import { connectionsApi, taskApi } from '@tap/api'
-import Cookie from '@tap/shared/src/cookie'
-import { getUrlSearch } from '@tap/shared/src/util'
+import 'driver.js/dist/driver.css'
 
 export default {
   data() {
@@ -40,7 +37,7 @@ export default {
   async created() {
     if (this.isGCPMarketplaceUser) {
       // GCP Marketplace 用户，直接跳过引导
-      let { total = 0 } = await this.$axios.get(`api/tcm/subscribe`)
+      const { total = 0 } = await this.$axios.get(`api/tcm/subscribe`)
       if (total === 0) {
         // 显示正在创建实例的提示
         this.marketplaceGuideVisible = true
@@ -83,13 +80,13 @@ export default {
       if (replicationTour.status) return
 
       this.guideLoading = true
-      let subscribe = await this.$axios.get(`api/tcm/subscribe`)
+      const subscribe = await this.$axios.get(`api/tcm/subscribe`)
       const data = await this.$axios.get('api/tcm/agent')
       this.guideLoading = false
 
       const { subscribeId, agentId } = guide
-      let items = data?.items || []
-      let subItems = subscribe?.items || []
+      const items = data?.items || []
+      const subItems = subscribe?.items || []
 
       // 没有订阅和实例
       if (!items.length && !subItems.length) {
@@ -98,7 +95,7 @@ export default {
       }
 
       // 是否有运行中的实例
-      let isRunning = items.find((i) => i.status === 'Running')
+      const isRunning = items.find((i) => i.status === 'Running')
       if (isRunning) {
         return
       }
@@ -106,11 +103,13 @@ export default {
       if (subscribeId) {
         if (subscribeId === '-') {
           // agent 引导过程中退订: subscribeId === '-', 所有订阅都是canceled按引导退订处理，能开启引导
-          this.subscriptionModelVisible = subItems.every((item) => item.status === 'canceled')
+          this.subscriptionModelVisible = subItems.every(
+            (item) => item.status === 'canceled',
+          )
           return
         }
 
-        let subscribe = subItems.find((i) => guide.subscribeId === i.id)
+        const subscribe = subItems.find((i) => guide.subscribeId === i.id)
 
         if (subscribe && subscribe.status === 'incomplete') {
           // 引导订阅的agent未支付
@@ -122,7 +121,12 @@ export default {
 
       if (agentId) {
         //检查是否有待部署状态
-        let isUnDeploy = items.find((i) => i.status === 'Creating' && i.agentType === 'Local' && i.id === agentId)
+        const isUnDeploy = items.find(
+          (i) =>
+            i.status === 'Creating' &&
+            i.agentType === 'Local' &&
+            i.id === agentId,
+        )
         //未部署
         if (isUnDeploy) {
           this.agent = {
@@ -145,7 +149,8 @@ export default {
       return this.$axios
         .get('api/tcm/agent/agentCount')
         .then((data) => {
-          this.showAgentWarning = data.agentTotalCount && !data.agentRunningCount
+          this.showAgentWarning =
+            data.agentTotalCount && !data.agentRunningCount
           this.agentRunningCount = data.agentRunningCount
           window.__agentCount__ = data
           this.$store.commit('setAgentCount', data)
@@ -164,7 +169,7 @@ export default {
     },
 
     async getCount($in) {
-      const { count } = await connectionsApi.count({
+      const { count } = await countConnections({
         where: JSON.stringify({
           connection_type: {
             $in,
@@ -184,7 +189,11 @@ export default {
 
       if (!count) return true
 
-      const total = await this.getCount(['source', 'target', 'source_and_target'])
+      const total = await this.getCount([
+        'source',
+        'target',
+        'source_and_target',
+      ])
       return total < 2
     },
 
@@ -286,17 +295,19 @@ export default {
 
     async initAgentTour() {
       const { items: agentData } = await this.$axios.get(
-        'api/tcm/agent?filter=' +
-          encodeURIComponent(
-            JSON.stringify({
-              where: {
-                status: { $in: ['Error', 'Stopped'] },
-              },
-            }),
-          ),
+        `api/tcm/agent?filter=${encodeURIComponent(
+          JSON.stringify({
+            where: {
+              status: { $in: ['Error', 'Stopped'] },
+            },
+          }),
+        )}`,
       )
       const agent = agentData.find((agent) => {
-        if (agent.tapdataAgentStatus !== 'stopped' && (agent.agentType !== 'Cloud' || !agent.publicAgent)) {
+        if (
+          agent.tapdataAgentStatus !== 'stopped' &&
+          (agent.agentType !== 'Cloud' || !agent.publicAgent)
+        ) {
           // if (agent.agentType !== 'Cloud' || !agent.publicAgent) {
           return true
         }
@@ -305,7 +316,7 @@ export default {
       if (!agent) return
 
       const element = `#agent-${agent.id} [name="${agent.agentType === 'Cloud' ? 'restart' : 'start'}"]`
-      let unwatch = this.$watch('$store.state.instanceLoading', (loading) => {
+      const unwatch = this.$watch('$store.state.instanceLoading', (loading) => {
         if (
           !loading &&
           this.$route.name === 'Instance' &&
@@ -384,7 +395,11 @@ export default {
         // 有可用的agent
         this.marketplaceGuideVisible = false
         this.checkReplicationTour()
-      } else if (this.showAgentWarning && !this.enterAgentTour && !this.startingTour) {
+      } else if (
+        this.showAgentWarning &&
+        !this.enterAgentTour &&
+        !this.startingTour
+      ) {
         // 存在异常的agent
         await this.initAgentTour()
       }
@@ -492,7 +507,7 @@ export default {
         onPopoverRender: (popover, { config, state }) => {
           const closeBtn = document.createElement('button')
           closeBtn.innerText = this.$t('public_button_close')
-          popover.footerButtons.appendChild(closeBtn)
+          popover.footerButtons.append(closeBtn)
 
           closeBtn.addEventListener('click', () => {
             this.pauseGuideAndTour()
@@ -506,38 +521,49 @@ export default {
 
       // 监听任务引导行为
       this.unwatchTourBehavior?.()
-      this.unwatchTourBehavior = this.$watch('replicationTour.behavior', async (behavior) => {
-        if (!this.startingTour || !this.replicationDriverObj) {
-          this.unwatchTourBehavior()
-          return
-        }
+      this.unwatchTourBehavior = this.$watch(
+        'replicationTour.behavior',
+        async (behavior) => {
+          if (!this.startingTour || !this.replicationDriverObj) {
+            this.unwatchTourBehavior()
+            return
+          }
 
-        if (behavior === 'add-task') {
-          // this.setCompleted()
-          // 设置进入任务监控的引导
-          // 设置step的element
-          const { steps } = this.replicationDriverObj.getConfig()
-          steps[steps.length - 1].element = `#task-${this.replicationTour.taskId} [name="monitor"]`
-          console.log(this.replicationDriverObj)
-          await this.$nextTick()
-        }
-        this.replicationDriverObj.drive(this.replicationTour.activeIndex + 1)
-      })
+          if (behavior === 'add-task') {
+            // this.setCompleted()
+            // 设置进入任务监控的引导
+            // 设置step的element
+            const { steps } = this.replicationDriverObj.getConfig()
+            steps.at(-1).element =
+              `#task-${this.replicationTour.taskId} [name="monitor"]`
+            console.log(this.replicationDriverObj)
+            await this.$nextTick()
+          }
+          this.replicationDriverObj.drive(this.replicationTour.activeIndex + 1)
+        },
+      )
 
       // 监听任务引导状态
       this.unwatchTourStatus?.()
-      this.unwatchTourStatus = this.$watch('replicationTour.status', (status, oldStatus) => {
-        if (status === 'complete') this.unwatchTourStatus?.()
-        // 从开始窗口点击开始任务引导
-        if (status === 'starting' && !oldStatus) this.replicationDriverObj.drive(0)
-      })
+      this.unwatchTourStatus = this.$watch(
+        'replicationTour.status',
+        (status, oldStatus) => {
+          if (status === 'complete') this.unwatchTourStatus?.()
+          // 从开始窗口点击开始任务引导
+          if (status === 'starting' && !oldStatus)
+            this.replicationDriverObj.drive(0)
+        },
+      )
 
       // 监听路由变化
       this.unwatchTourRoute?.()
       this.unwatchTourRoute = this.$watch(
         '$route',
         (to) => {
-          if (to.name === 'migrateList' && (this.pausedTour || this.startingTour)) {
+          if (
+            to.name === 'migrateList' &&
+            (this.pausedTour || this.startingTour)
+          ) {
             this.startTour()
             this.startGuide()
             if (!this.$store.state.replicationConnectionDialog) {
@@ -556,14 +582,17 @@ export default {
 
                 if (index === 3 && !document.querySelector(taskMonitorId)) {
                   // 如果没有渲染，监听任务列表的加载时间
-                  const unwatch = this.$watch('$store.state.taskLoadedTime', () => {
-                    this.$nextTick(() => {
-                      if (document.querySelector(taskMonitorId)) {
-                        unwatch()
-                        this.replicationDriverObj.drive(index)
-                      }
-                    })
-                  })
+                  const unwatch = this.$watch(
+                    '$store.state.taskLoadedTime',
+                    () => {
+                      this.$nextTick(() => {
+                        if (document.querySelector(taskMonitorId)) {
+                          unwatch()
+                          this.replicationDriverObj.drive(index)
+                        }
+                      })
+                    },
+                  )
                 } else {
                   this.replicationDriverObj.drive(index || 0)
                 }

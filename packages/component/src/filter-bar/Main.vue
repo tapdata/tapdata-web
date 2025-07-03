@@ -4,12 +4,9 @@ import { onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import VIcon from '../base/VIcon.vue'
-import DarkSelect from '../DarkSelect.vue'
 import Datetime from './Datetime.vue'
 import DatetimeRange from './DatetimeRange.vue'
 import SelectList from './FilterItemSelect.vue'
-
-import PopInput from './PopInput.vue'
 
 interface FormRule {
   validator?: (rule: any, value: any, callback: (error?: Error) => void) => void
@@ -204,10 +201,10 @@ function getComponent(type: string) {
   const obj = {
     select: SelectList,
     'select-inner': SelectList,
-    'dark-select': DarkSelect,
+    'dark-select': SelectList,
     datetime: Datetime,
     datetimerange: DatetimeRange,
-    'input-pop': PopInput,
+    // 'input-pop': PopInput,
     input: ElInput,
   }
   return obj[type] || obj.input
@@ -322,17 +319,17 @@ const route = useRoute()
 
   .el-form-item {
     margin-bottom: 0;
-    margin-right: 8px;
+    margin-right: 12px;
   }
 }
 .filter-el-input {
   :deep(.el-input__inner) {
     &:hover {
-      border-color: map.get($borderColor, disable);
+      border-color: #e4e7ed;
     }
     &:focus,
     &:target {
-      border-color: map.get($color, primary);
+      border-color: #3b47e5;
     }
   }
 }

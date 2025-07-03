@@ -1,15 +1,9 @@
-/* 请注意样式排序导致的优先级问题
------------------------------*/
-//@import '~@tap/assets/styles/var';
 @import '@tap/assets/styles/reboot';
 @import '@tap/assets/styles/utilities';
 @import '@tap/assets/fonts/DIN/index.css';
 
-@import '@/styles/font/iconfont.css';
-
 @import 'github-markdown-css';
 
-@import 'overrides';
 
 #app {
   width: 100%;
@@ -163,12 +157,12 @@
 }
 
 .message-button-cancel {
-  color: map.get($fontColor, normal);
+  color: var(--text-normal);
   border-color: #f2f3f5;
   background-color: #f2f3f5;
 }
 .message-button-cancel:hover {
-  background-color: map.get($bgColor, white);
+  background-color: var(--color-white);
   border: 1px solid #2c65ff;
 }
 

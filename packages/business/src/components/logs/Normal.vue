@@ -1,8 +1,8 @@
 <script>
 import { customerJobLogsApi } from '@tap/api'
+import noData from '@tap/assets/images/noData.svg'
 import { delayTrigger } from '@tap/shared'
 import dayjs from 'dayjs'
-
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
@@ -26,7 +26,7 @@ export default {
       timer: null,
       loading: false,
       preLoading: false,
-      imageUrl: require('@tap/assets/images/noData.svg'),
+      imageUrl: noData,
       list: [],
       colorMap: {
         FATAL: 'color-red',
@@ -413,11 +413,11 @@ export default {
 
   .el-loading-spinner .el-loading-text {
     font-size: 12px;
-    color: map.get($fontColor, dark);
+    color: var(--text-dark);
   }
 
   :deep(.keyword) {
-    color: map.get($color, danger);
+    color: var(--color-danger);
   }
 }
 

@@ -1,11 +1,13 @@
 <script setup lang="tsx">
-import { settingsApi, webhookApi } from '@tap/api'
-import { dayjs } from '@tap/business'
+import { findAlarm, webhookApi } from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { CloseIcon, VEmpty } from '@tap/component'
-import { HighlightCode, JsonEditor } from '@tap/form'
+import { dayjs } from '@tap/business/src/shared/dayjs'
+import { VEmpty } from '@tap/component/src/base/v-empty'
+import { CloseIcon } from '@tap/component/src/CloseIcon'
+import { Modal } from '@tap/component/src/modal'
+import { HighlightCode } from '@tap/form/src/components/highlight-code'
+import { JsonEditor } from '@tap/form/src/components/json-editor'
 import { useI18n } from '@tap/i18n'
-import { ElMessage, ElMessageBox } from 'element-plus'
 import { nextTick, onMounted, reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 
@@ -221,7 +223,7 @@ const loadData = async () => {
 }
 
 const loadEventType = async () => {
-  const data = await settingsApi.findAlarm()
+  const data = await findAlarm()
   eventData.value[0].children = data.map((item: any) => ({
     label: keyMap[item.key],
     value: item.key,
@@ -315,16 +317,15 @@ const loadHistory = (pageNum = 1) => {
     .finally(() => (historyState.loading = false))
 }
 
-const delWebhook = ({ id }: { id: string }) => {
-  ElMessageBox.confirm(t('packages_ldp_src_tablepreview_querenshanchu'), {
-    type: 'warning',
-  }).then(async (resFlag) => {
-    if (!resFlag) {
-      return
-    }
+const delWebhook = async ({ id }: { id: string }) => {
+  const confirmed = await Modal.confirm(
+    t('packages_ldp_src_tablepreview_querenshanchu'),
+  )
+
+  if (confirmed) {
     await webhookApi.deleteOne(id)
     await loadData()
-  })
+  }
 }
 
 const sendPing = () => {
@@ -416,6 +417,14 @@ const showExample = () => {
   })
 }
 
+const handleBeforeClose = async (done: () => void) => {
+  const confirmed = await Modal.confirm(t('public_current_is_editing'))
+
+  if (confirmed) {
+    done()
+  }
+}
+
 // Lifecycle hooks
 onMounted(() => {
   loadEventType()
@@ -493,6 +502,8 @@ onMounted(() => {
       v-model="drawerState.visible"
       :wrapper-closable="false"
       :size="800"
+      modal-class="bg-transparent"
+      :before-close="handleBeforeClose"
       @closed="afterClose"
     >
       <template #title>
@@ -501,7 +512,7 @@ onMounted(() => {
         }}</span>
       </template>
       <div class="flex flex-column h-100">
-        <div ref="formWrapperRef" class="flex-1 overflow-y-auto">
+        <div ref="formWrapperRef" class="flex-1">
           <ElForm
             ref="formRef"
             class="flex-1"
@@ -557,29 +568,27 @@ onMounted(() => {
             </ElFormItem>
           </ElForm>
         </div>
-
-        <div class="text-left pt-4">
-          <ElButton
-            :loading="drawerState.ping"
-            type="primary"
-            @click="sendPing"
-            >{{ $t('webhook_send_ping') }}</ElButton
-          >
-          <ElButton
-            :loading="drawerState.saving"
-            type="primary"
-            @click="save"
-            >{{ $t('public_button_save') }}</ElButton
-          >
-          <ElButton @click="drawerState.visible = false">{{
-            $t('public_button_cancel')
-          }}</ElButton>
-        </div>
       </div>
+
+      <template #footer>
+        <ElButton @click="drawerState.visible = false">{{
+          $t('public_button_cancel')
+        }}</ElButton>
+        <ElButton
+          :loading="drawerState.ping"
+          type="primary"
+          @click="sendPing"
+          >{{ $t('webhook_send_ping') }}</ElButton
+        >
+        <ElButton :loading="drawerState.saving" type="primary" @click="save">{{
+          $t('public_button_save')
+        }}</ElButton>
+      </template>
     </ElDrawer>
 
     <ElDrawer
       v-model="historyState.visible"
+      modal-class="bg-transparent"
       :wrapper-closable="false"
       :size="800"
       @closed="afterCloseHistory"
@@ -595,11 +604,11 @@ onMounted(() => {
         </span>
       </template>
       <div v-loading="historyState.loading" class="flex flex-column h-100">
-        <div ref="historyListRef" class="flex-1 overflow-y-auto">
+        <div ref="historyListRef" class="flex-1">
           <el-collapse
             v-if="historyState.list.length"
             v-model="historyState.collapse"
-            class="history-collapse border-0"
+            class="history-collapse"
           >
             <el-collapse-item
               v-for="item in historyState.list"
@@ -692,19 +701,20 @@ onMounted(() => {
 
           <VEmpty v-else />
         </div>
-        <div class="p-4">
-          <el-pagination
-            v-model:current-page="page.current"
-            v-model:page-size="page.size"
-            background
-            layout="->,total, sizes,  prev, pager, next, jumper"
-            :page-sizes="[10, 20, 50, 100]"
-            :total="page.total"
-            @size-change="loadHistory(1)"
-            @current-change="loadHistory"
-          />
-        </div>
       </div>
+
+      <template #footer>
+        <el-pagination
+          v-model:current-page="page.current"
+          v-model:page-size="page.size"
+          background
+          layout="->,total, sizes,  prev, pager, next"
+          :page-sizes="[10, 20, 50, 100]"
+          :total="page.total"
+          @size-change="loadHistory(1)"
+          @current-change="loadHistory"
+        />
+      </template>
     </ElDrawer>
   </PageContainer>
 </template>
@@ -729,7 +739,7 @@ $unreadColor: #ee5353;
   .title {
     padding-bottom: 20px;
     font-size: 14px;
-    color: map.get($fontColor, dark);
+    color: var(--text-dark);
     font-weight: bold;
   }
   .content {

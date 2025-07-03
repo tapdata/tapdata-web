@@ -1,21 +1,43 @@
-import { defineComponent, ref, onMounted } from 'vue'
 import { observer } from '@formily/reactive-vue'
+import { useField, useForm } from '@tap/form'
 
 import i18n from '@tap/i18n'
-import { useForm, useField } from '@tap/form'
+import { defineComponent, ref } from 'vue'
 
 const EVENT_MAP = {
-  alter_field_name_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaiziduanming'),
-  alter_field_attributes_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaiziduanshu'),
-  create_table_event: i18n.t('packages_form_ddl_event_checkbox_index_chuangjianbiao'),
-  drop_table_event: i18n.t('packages_form_ddl_event_checkbox_index_shanchubiao'),
-  clear_table_event: i18n.t('packages_form_ddl_event_checkbox_index_qingkongbiao'),
-  alter_primary_key_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaizhujian'),
-  drop_field_event: i18n.t('packages_form_ddl_event_checkbox_index_shanchuziduan'),
-  new_field_event: i18n.t('packages_form_ddl_event_checkbox_index_xinzengziduan'),
-  alter_table_charset_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaibiaozifu'),
-  alter_database_timezone_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaishujuku'),
-  rename_table_event: i18n.t('packages_form_ddl_event_checkbox_index_xiugaibiaoming'),
+  alter_field_name_event: i18n.t(
+    'packages_form_ddl_event_checkbox_index_xiugaiziduanming',
+  ),
+  alter_field_attributes_event: i18n.t(
+    'packages_form_ddl_event_checkbox_index_xiugaiziduanshu',
+  ),
+  create_table_event: i18n.t(
+    'packages_form_ddl_event_checkbox_index_chuangjianbiao',
+  ),
+  drop_table_event: i18n.t(
+    'packages_form_ddl_event_checkbox_index_shanchubiao',
+  ),
+  clear_table_event: i18n.t(
+    'packages_form_ddl_event_checkbox_index_qingkongbiao',
+  ),
+  alter_primary_key_event: i18n.t(
+    'packages_form_ddl_event_checkbox_index_xiugaizhujian',
+  ),
+  drop_field_event: i18n.t(
+    'packages_form_ddl_event_checkbox_index_shanchuziduan',
+  ),
+  new_field_event: i18n.t(
+    'packages_form_ddl_event_checkbox_index_xinzengziduan',
+  ),
+  alter_table_charset_event: i18n.t(
+    'packages_form_ddl_event_checkbox_index_xiugaibiaozifu',
+  ),
+  alter_database_timezone_event: i18n.t(
+    'packages_form_ddl_event_checkbox_index_xiugaishujuku',
+  ),
+  rename_table_event: i18n.t(
+    'packages_form_ddl_event_checkbox_index_xiugaibiaoming',
+  ),
 }
 
 export const DdlEventCheckbox = observer(
@@ -30,7 +52,9 @@ export const DdlEventCheckbox = observer(
       const capabilities = values.attrs.capabilities || []
       const unselected = ref(props.value || [])
 
-      events.value = capabilities.filter((item) => item.type === 10).map((item) => item.id)
+      events.value = capabilities
+        .filter((item) => item.type === 10)
+        .map((item) => item.id)
       selected.value = unselected.value.length
         ? events.value.filter((name) => !unselected.value.includes(name))
         : [...events.value]
@@ -68,7 +92,13 @@ export const DdlEventCheckbox = observer(
 )
 
 export const DdlEventList = defineComponent({
-  props: ['value', 'findParentNode', 'findParentNodes', 'hideParent', 'formValues'],
+  props: [
+    'value',
+    'findParentNode',
+    'findParentNodes',
+    'hideParent',
+    'formValues',
+  ],
   setup(props) {
     const formRef = useForm()
     const fieldRef = useField()
@@ -80,16 +110,19 @@ export const DdlEventList = defineComponent({
       .findParentNodes(values.id)
       .filter(
         (parent) =>
-          (parent.type === 'database' || parent.type === 'table') && parent.ddlConfiguration === 'SYNCHRONIZATION',
+          (parent.type === 'database' || parent.type === 'table') &&
+          parent.ddlConfiguration === 'SYNCHRONIZATION',
       )
 
     const parentEnable = ref(!!parents.length)
 
     if (parents.length) {
-      const functions = values.attrs.capabilities.filter((item) => item.type === 11).map((item) => item.id)
+      const functions = values.attrs.capabilities
+        .filter((item) => item.type === 11)
+        .map((item) => item.id)
       parents.forEach((parent) => {
         const disabledEvents = parent.disabledEvents || []
-        let events = parent.attrs.capabilities
+        const events = parent.attrs.capabilities
           .filter((item) => {
             if (item.type !== 10 || disabledEvents.includes(item.id)) return
             const functionName = item.id.replace(/_event$/, '_function')
@@ -117,22 +150,26 @@ export const DdlEventList = defineComponent({
           {list.value.length
             ? list.value.map((item, i) => {
                 return [
-                  <div class={['font-color-light mb-2 lh-1', { 'mt-2': i > 0 }]}>
-                    {i18n.t('packages_form_ddl_event_checkbox_index_laiziyuanlianjie')}
+                  <div
+                    class={['font-color-light mb-2 lh-1', { 'mt-2': i > 0 }]}
+                  >
+                    {i18n.t(
+                      'packages_form_ddl_event_checkbox_index_laiziyuanlianjie',
+                    )}
                     {item.source}
                   </div>,
                   <div class="flex flex-wrap gap-1">
-                    {item.events.map(name => (
+                    {item.events.map((name) => (
                       <ElTag type="info" effect="light">
                         {EVENT_MAP[name]}
                       </ElTag>
                     ))}
-                  </div>
+                  </div>,
                 ]
               })
             : i18n.t('packages_form_ddl_event_checkbox_index_mubiaozanbuzhi')}
         </div>
       )
     }
-  }
+  },
 })

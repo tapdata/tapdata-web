@@ -1,10 +1,11 @@
 <script setup lang="tsx">
-import { connectionsApi, metadataInstancesApi } from '@tap/api'
+import { fetchConnections, metadataInstancesApi } from '@tap/api'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
-import { IconButton } from '@tap/component'
-import { InfiniteSelect as AsyncSelect, FieldSelect } from '@tap/form'
+import { IconButton } from '@tap/component/src/icon-button'
+import { FieldSelect } from '@tap/form/src/components/field-select'
+import AsyncSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 import i18n from '@tap/i18n'
-import { ClickOutside, Time } from '@tap/shared'
+import { Time } from '@tap/shared'
 import { merge, unionBy } from 'lodash-es'
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
@@ -385,9 +386,7 @@ async function loadDatabases(filter) {
       }
     }
 
-    const result = await connectionsApi.get({
-      filter: JSON.stringify(merge(filter, _filter)),
-    })
+    const result = await fetchConnections(merge(filter, _filter))
 
     result.items = result.items.map((item) => {
       return {
@@ -623,8 +622,10 @@ async function loadTargetField() {
 
     if (arr.length > 1) {
       const parentPath = arr.slice(0, -1).join('.')
-      const tableName = props.targetPathMap[parentPath].tableNode.tableName
-      label = `${tableName}.${arr.pop()}`
+      const tableName = props.targetPathMap[parentPath]?.tableNode?.tableName
+      if (tableName) {
+        label = `${tableName}.${arr.pop()}`
+      }
     }
 
     return {
@@ -926,12 +927,14 @@ onMounted(() => {
                   v-model="keys.source"
                   class="flex-1"
                   :options="props.schema"
+                  :fit-input-width="292"
                 />
                 <span>=</span>
                 <FieldSelect
                   v-model="keys.target"
                   class="flex-1"
                   :options="state.targetFields"
+                  :fit-input-width="292"
                   @visible-change="handleFieldSelectVisible"
                 />
                 <IconButton

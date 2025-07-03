@@ -1,19 +1,17 @@
 <script>
 import { externalStorageApi, sharedCacheApi, taskApi } from '@tap/api'
-import { FilterBar } from '@tap/component'
-
+import { FilterBar } from '@tap/component/src/filter-bar'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
-import { TablePage, TaskStatus } from '../../components'
 import PageContainer from '../../components/PageContainer.vue'
-
-import Upload from '../../components/UploadDialog'
+import TablePage from '../../components/TablePage.vue'
+import TaskStatus from '../../components/TaskStatus.vue'
+import Upload from '../../components/UploadDialog.vue'
 import { makeStatusAndDisabled } from '../../shared'
-import Details from './Details'
-import Editor from './Editor'
+import Details from './Details.vue'
+import Editor from './Editor.vue'
 
-let timeout = null
 export default {
   components: {
     PageContainer,
@@ -67,15 +65,15 @@ export default {
   },
   mounted() {
     //定时轮询
-    timeout = setInterval(() => {
+    this.timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
     }, 8000)
     this.searchParams = Object.assign(this.searchParams, {
       name: this.$route.query?.keyword || '',
     })
   },
-  unmounted() {
-    clearInterval(timeout)
+  beforeUnmount() {
+    clearInterval(this.timeout)
   },
   methods: {
     getData({ page }) {
@@ -124,11 +122,8 @@ export default {
     },
     del(row = {}) {
       this.$confirm(
-        this.$t('public_message_delete_confirm'),
         this.$t('public_message_title_prompt'),
-        {
-          type: 'warning',
-        },
+        this.$t('public_message_delete_confirm'),
       ).then((flag) => {
         if (flag) {
           sharedCacheApi.delete(row.id).then(() => {
@@ -182,9 +177,7 @@ export default {
 
     forceStop(ids, row) {
       const msgObj = this.getConfirmMessage('force_stop', row)
-      this.$confirm(msgObj.msg, '', {
-        type: 'warning',
-        showClose: false,
+      this.$confirm(this.$t('public_message_title_prompt'), msgObj.msg, {
         dangerouslyUseHTMLString: true,
       }).then((resFlag) => {
         if (!resFlag) {
@@ -201,11 +194,8 @@ export default {
 
     stop(ids) {
       this.$confirm(
-        this.$t('packages_business_stop_confirm_message'),
         this.$t('packages_business_important_reminder'),
-        {
-          type: 'warning',
-        },
+        this.$t('packages_business_stop_confirm_message'),
       ).then((resFlag) => {
         if (!resFlag) {
           return
@@ -259,8 +249,7 @@ export default {
     handleReset(row) {
       const id = row.id
       const msgObj = this.getConfirmMessage('initialize', row)
-      this.$confirm(msgObj.msg, msgObj.title, {
-        type: 'warning',
+      this.$confirm(msgObj.title, msgObj.msg, {
         dangerouslyUseHTMLString: true,
       }).then((resFlag) => {
         if (!resFlag) {
@@ -517,7 +506,7 @@ export default {
     background: #ffe9cf;
   }
   &.icon-status--danger {
-    color: map.get($color, danger);
+    color: var(--color-danger);
     background: #ffecec;
   }
 }
@@ -525,7 +514,7 @@ export default {
   padding: 16px;
 }
 .shared-cache-details--header {
-  border-bottom: 1px solid map.get($borderColor, light);
+  border-bottom: 1px solid var(--border-light);
   .icon {
     font-size: 18px;
   }
@@ -536,14 +525,14 @@ export default {
     flex: 1;
     padding: 8px 0;
     line-height: 17px;
-    border-bottom: 1px solid map.get($borderColor, light);
+    border-bottom: 1px solid var(--border-light);
     .label {
-      font-size: $fontBaseTitle;
+      font-size: var(--font-base-title);
       color: rgba(0, 0, 0, 0.6);
     }
     .value {
-      font-size: $fontBaseTitle;
-      color: map.get($fontColor, dark);
+      font-size: var(--font-base-title);
+      color: var(--text-dark);
     }
   }
 }
@@ -555,11 +544,11 @@ export default {
     padding: 0 16px;
     height: 38px;
     line-height: 38px;
-    background: map.get($bgColor, normal);
+    background: var(--bg-normal);
   }
   .content {
     padding: 0 16px 8px 16px;
-    background-color: map.get($bgColor, white);
+    background-color: var(--color-white);
   }
 }
 </style>

@@ -1,27 +1,28 @@
 <script>
 import { inspectApi, inspectResultsApi } from '@tap/api'
-import { IconButton } from '@tap/component'
-import i18n from '@tap/i18n'
 import { checkEllipsisActive } from '@tap/shared'
+import Cookie from '@tap/shared/src/cookie'
+import axios from 'axios'
 import dayjs from 'dayjs'
+import { ErrorMessage } from '../../components/error-message'
 import PageContainer from '../../components/PageContainer.vue'
 import DataCorrectionDialog from './components/DataCorrectionDialog'
 import { inspectMethod as typeMap } from './const'
 import mixins from './mixins'
-import ResultTable from './ResultTable'
-import ResultView from './ResultView'
+import ResultTable from './ResultTable.vue'
+import ResultView from './ResultView.vue'
 
 export default {
   components: {
     ResultTable,
     ResultView,
     DataCorrectionDialog,
-    IconButton,
     PageContainer,
   },
   mixins: [mixins],
   data() {
     return {
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       loading: false,
       typeMap,
       inspect: {},
@@ -34,6 +35,21 @@ export default {
         visible: false,
       },
       hasMoreErrorMsg: false,
+      exportSqlLoading: false,
+      filterOptions: [
+        {
+          label: this.$t('public_all'),
+          value: '',
+        },
+        {
+          label: this.$t('packages_business_verification_consistent'),
+          value: 'passed',
+        },
+        {
+          label: this.$t('packages_business_verification_inconsistent'),
+          value: 'failed',
+        },
+      ],
     }
   },
   computed: {
@@ -83,16 +99,40 @@ export default {
         this.canStart
       )
     },
+    resultStatus() {
+      return this.resultInfo.status
+    },
   },
   created() {
     this.getData()
-    setInterval(() => {
+    this.interval = setInterval(() => {
       if (['running', 'scheduling'].includes(this.inspect?.status)) {
         this.getData(false)
       }
     }, 10000)
   },
+  beforeUnmount() {
+    clearInterval(this.interval)
+    clearTimeout(this.pollingTimer)
+  },
   methods: {
+    ErrorMessage,
+    async fetchResultStatus() {
+      await inspectResultsApi
+        .get({
+          filter: JSON.stringify({
+            where: {
+              id: this.resultInfo.id,
+            },
+          }),
+        })
+        .then((data) => {
+          const result = data?.items?.[0]
+          if (result) {
+            this.resultInfo.status = result.status
+          }
+        })
+    },
     getData(showLoading = true) {
       if (showLoading) {
         this.loading = true
@@ -198,6 +238,51 @@ export default {
       this.dataCorrection.visible = true
     },
 
+    async handleExportSql() {
+      this.exportSqlLoading = true
+
+      try {
+        await inspectApi.exportSql(this.inspect.id, this.resultInfo.id)
+        this.$message.success(this.$t('public_start_generate_recovery_sql'))
+
+        this.startPolling()
+      } catch {
+        this.exportSqlLoading = false
+      }
+    },
+
+    async startPolling() {
+      clearTimeout(this.pollingTimer)
+
+      await this.fetchResultStatus()
+
+      if (this.resultInfo.status !== 'exported') {
+        this.pollingTimer = setTimeout(() => {
+          this.startPolling()
+        }, 5000)
+      } else {
+        this.exportSqlLoading = false
+        this.$message.success(this.$t('public_generate_recovery_sql_success'))
+      }
+    },
+
+    handleDownloadSql() {
+      let url =
+        `${axios.defaults.baseURL}/api/proxy/exportRecoverySql?inspectId=${this.inspect.id}&inspectResultId=${this.resultInfo.id}`.replace(
+          '//',
+          '/',
+        )
+
+      if (this.isDaas) {
+        const accessToken = Cookie.get('access_token')
+        url += `&access_token=${accessToken}`
+      } else if (TAP_ACCESS_TOKEN) {
+        url += `&__token=${TAP_ACCESS_TOKEN}`
+      }
+
+      window.open(url)
+    },
+
     onStarted() {
       this.dataCorrection.visible = false
       this.getData()
@@ -222,132 +307,135 @@ export default {
       <ElTag type="info" class="ml-3">{{ typeMap[type] }}</ElTag>
     </template>
 
+    <template v-if="!isCountOrHash" #actions>
+      <div class="flex align-items-center ml-auto">
+        <div
+          v-if="resultInfo.parentId"
+          class="color-info flex align-items-center"
+          style="font-size: 12px"
+        >
+          {{ $t('packages_business_verification_last_start_time') }}:
+          {{ inspect.lastStartTimeFmt }}
+          <ElButton class="ml-4" text type="primary" @click="toDiffHistory">{{
+            $t('packages_business_verification_button_diff_task_history')
+          }}</ElButton>
+        </div>
+
+        <!--下载详情-->
+        <ElButton
+          v-if="showDiffInspect"
+          class="ml-4"
+          text
+          type="primary"
+          :loading="downloading"
+          @click="downloadDetails"
+          >{{ $t('packages_business_download_details') }}</ElButton
+        >
+
+        <el-divider
+          v-if="showCorrection || showDiffInspect"
+          class="ml-4 mr-0"
+          direction="vertical"
+        />
+
+        <!-- 一键修复 -->
+        <template v-if="showCorrection">
+          <ElButton type="primary" class="ml-4" @click="handleCorrection">{{
+            $t('packages_business_data_correction')
+          }}</ElButton>
+          <ElButton
+            v-if="resultStatus !== 'exported'"
+            type="primary"
+            class="ml-4"
+            :loading="exportSqlLoading || resultStatus === 'exporting'"
+            @click="handleExportSql"
+            >{{ $t('public_generate_recovery_sql') }}</ElButton
+          >
+          <ElButton
+            v-else
+            type="primary"
+            class="ml-4"
+            @click="handleDownloadSql"
+            >{{ $t('public_download_recovery_sql') }}</ElButton
+          >
+        </template>
+
+        <!-- 差异校验 -->
+        <div v-if="showDiffInspect" class="flex align-items-center ml-4">
+          <ElButton type="primary" @click="diffInspect">{{
+            $t('packages_business_verification_button_diff_verify')
+          }}</ElButton>
+          <ElTooltip effect="dark" placement="top">
+            <template #content>
+              <div style="width: 232px">
+                {{
+                  $t('packages_business_verification_button_diff_verify_tips')
+                }}
+              </div>
+            </template>
+            <VIcon class="ml-2 color-info" size="14">warning-circle</VIcon>
+          </ElTooltip>
+        </div>
+      </div>
+    </template>
+
     <section
       v-loading="loading"
       class="verify-details-wrap section-wrap h-100 gap-4"
     >
-      <div class="flex align-center">
-        <ElRadioGroup v-model="resultFilter">
-          <ElRadioButton label="">{{ $t('public_all') }}</ElRadioButton>
-          <ElRadioButton label="passed">{{
-            $t('packages_business_verification_consistent')
-          }}</ElRadioButton>
-          <ElRadioButton label="failed">{{
-            $t('packages_business_verification_inconsistent')
-          }}</ElRadioButton>
-        </ElRadioGroup>
-
-        <div v-if="!isCountOrHash" class="flex align-items-center ml-auto">
-          <div
-            v-if="resultInfo.parentId"
-            class="color-info flex align-items-center"
-            style="font-size: 12px"
-          >
-            {{ $t('packages_business_verification_last_start_time') }}:
-            {{ inspect.lastStartTimeFmt }}
-            <ElButton class="ml-4" text type="primary" @click="toDiffHistory">{{
-              $t('packages_business_verification_button_diff_task_history')
-            }}</ElButton>
-          </div>
-
-          <!--下载详情-->
-          <ElButton
-            v-if="showDiffInspect"
-            class="ml-4"
-            text
-            type="primary"
-            :loading="downloading"
-            @click="downloadDetails"
-            >{{ $t('packages_business_download_details') }}</ElButton
-          >
-
-          <el-divider
-            v-if="showCorrection || showDiffInspect"
-            class="ml-4 mr-0"
-            direction="vertical"
-          />
-
-          <!-- 一键修复 -->
-          <ElButton
-            v-if="showCorrection"
-            type="primary"
-            class="ml-4"
-            @click="handleCorrection"
-            >{{ $t('packages_business_data_correction') }}</ElButton
-          >
-
-          <!-- 差异校验 -->
-          <div v-if="showDiffInspect" class="flex align-items-center ml-4">
-            <ElButton type="primary" @click="diffInspect">{{
-              $t('packages_business_verification_button_diff_verify')
-            }}</ElButton>
-            <ElTooltip effect="dark" placement="top">
-              <template #content>
-                <div style="width: 232px">
-                  {{
-                    $t('packages_business_verification_button_diff_verify_tips')
-                  }}
-                </div>
-              </template>
-              <VIcon class="ml-2 color-info" size="14">warning-circle</VIcon>
-            </ElTooltip>
-          </div>
-        </div>
-      </div>
-
-      <div
+      <el-alert
         v-if="errorMsg && isCountOrHash"
-        class="error-tips mt-4 pl-4 pr-0 rounded-lg flex-shrink-0"
+        type="error"
+        show-icon
+        class="fit-content"
+        :closable="false"
       >
-        <VIcon size="16" class="color-danger mt-0.5">error</VIcon>
-        <span
-          ref="errorSummary"
-          class="mx-2 flex-1"
-          :class="{
-            ellipsis: !expandErrorMessage,
-            'text-pre': expandErrorMessage,
-          }"
-          >{{ expandErrorMessage ? errorMsg : errorSummary }}</span
-        >
-        <span
-          class="sticky-top-0 end-0 px-2 flex-shrink-0 align-self-start"
-          style="background: inherit"
-        >
-          <ElLink
-            v-if="hasMoreErrorMsg"
-            class="align-middle"
-            type="danger"
-            @click="expandErrorMessage = !expandErrorMessage"
-            >{{
-              expandErrorMessage
-                ? $t('packages_business_verification_details_shouqi')
-                : $t('public_button_expand')
-            }}</ElLink
-          >
-          <IconButton
-            class="ml-2 color-info align-middle"
-            size="12"
-            sm
-            @click="errorMsg = ''"
-            >close</IconButton
-          >
-        </span>
-      </div>
+        <template #title>
+          <div class="flex align-center">
+            <div class="text-truncate">{{ errorSummary }}</div>
+            <el-button
+              type="text"
+              class="ml-auto"
+              @click="ErrorMessage(errorMsg)"
+              >{{ $t('public_button_check') }}</el-button
+            >
+          </div>
+        </template>
+      </el-alert>
 
       <div
         v-if="inspect"
-        class="result-table"
+        class="result-table border-top"
         :element-loading-text="$t('packages_business_verification_checking')"
       >
-        <ResultTable
-          ref="singleTable"
-          :type="type"
-          :data="tableData"
-          @row-click="rowClick"
-        />
+        <div class="flex-1 h-100">
+          <div class="flex flex-column h-100">
+            <div class="py-3 pr-3 flex align-center">
+              <span class="fs-6 font-color-dark lh-8">{{
+                $t('packages_business_verification_details_jiaoyanjieguo')
+              }}</span>
+              <el-segmented
+                v-model="resultFilter"
+                class="w-auto ml-auto"
+                :options="filterOptions"
+              />
+            </div>
+
+            <div class="min-h-0 flex-1">
+              <ResultTable
+                ref="singleTable"
+                :type="type"
+                :data="tableData"
+                @row-click="rowClick"
+              />
+            </div>
+          </div>
+        </div>
+
         <ResultView
           v-if="!isCountOrHash"
           ref="resultView"
+          class="border-start"
           :remote-method="getResultData"
           :show-type="showType"
           @update:show-type="showType = $event"
@@ -399,6 +487,10 @@ export default {
   flex: 1;
   display: flex;
   overflow: auto;
+
+  .el-table__inner-wrapper::before {
+    content: none;
+  }
 }
 .sticky-top-0 {
   position: sticky;

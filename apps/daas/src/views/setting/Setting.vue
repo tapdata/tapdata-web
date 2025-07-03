@@ -1,10 +1,15 @@
 <script>
-import { alarmRuleApi, licensesApi, settingsApi, usersApi } from '@tap/api'
-import { showErrorMessage } from '@tap/business'
+import {
+  fetchSettings,
+  licensesApi,
+  saveSettings,
+  testEmail,
+  usersApi,
+} from '@tap/api'
+import { showErrorMessage } from '@tap/business/src/components/error-message'
 
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { VIcon, VTable } from '@tap/component'
-import { TextFileReader } from '@tap/form'
+import { TextFileReader } from '@tap/form/src/components/text-file-reader'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 import Cookie from '@tap/shared/src/cookie'
 import Time from '@tap/shared/src/time'
@@ -13,7 +18,7 @@ import i18n from '@/i18n'
 
 export default {
   name: 'Setting',
-  components: { VIcon, TextFileReader, PageContainer },
+  components: { TextFileReader, PageContainer },
   data() {
     return {
       title: import.meta.env.VUE_APP_PAGE_TITLE,
@@ -137,10 +142,10 @@ export default {
       licensesApi.get({}).then((data) => {
         auth_data = data?.items || []
       })
-      settingsApi.get().then((data) => {
-        let items = [],
-          itemsCategories = [],
-          cat = []
+      fetchSettings().then((data) => {
+        let items = []
+        const itemsCategories = []
+        const cat = []
         data = data || []
         items = data.map((item) => {
           if (item.documentation) {
@@ -232,12 +237,9 @@ export default {
           settingData.push(childItem)
         })
       })
-      settingsApi.save(settingData).then(() => {
+      saveSettings(settingData).then(() => {
         this.$message.success(this.$t('public_message_save_ok'))
       })
-      // .catch(e => {
-      //   this.$message.error(e.response.msg)
-      // })
     },
     // 邮件模板
     checkTemplate() {
@@ -259,7 +261,7 @@ export default {
         title: `Tapdata Notification:`,
         text: 'This is a test email',
       }
-      settingsApi.testEmail(params).then((data) => {
+      testEmail(params).then((data) => {
         localStorage.setItem('Tapdata_settings_email_countdown', now)
 
         if (data?.result) {
@@ -575,7 +577,7 @@ export default {
     padding: 0 8px;
     height: 32px;
     cursor: pointer;
-    color: map.get($fontColor, light);
+    color: var(--text-light);
     white-space: nowrap;
     user-select: none;
     .title {
@@ -615,7 +617,7 @@ export default {
     .title {
       display: inline-block;
       padding: 0 0 20px;
-      color: map.get($fontColor, dark);
+      color: var(--text-dark);
       font-size: 14px;
       font-weight: 500;
     }
@@ -645,7 +647,7 @@ export default {
   .footer {
     flex: 0 0 auto;
     width: 100%;
-    border-top: 1px solid map.get($borderColor, light);
+    border-top: 1px solid var(--border-light);
   }
 }
 .dialog-email-template {
@@ -656,12 +658,12 @@ export default {
       padding: 5px 20px 5px 0;
       display: block;
       text-align: right;
-      border-right: 3px solid map.get($borderColor, light);
+      border-right: 3px solid var(--border-light);
       cursor: pointer;
     }
     .active {
-      color: map.get($color, primary);
-      border-right: 3px solid map.get($color, primary);
+      color: var(--color-primary);
+      border-right: 3px solid var(--color-primary);
     }
   }
   .settings-email-template {

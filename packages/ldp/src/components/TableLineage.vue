@@ -1,86 +1,24 @@
-<template>
-  <div
-    class="table-lineage h-100 position-relative"
-    :class="{
-      fullscreen: isFullscreen,
-    }"
-    v-loading="loading"
-    :element-loading-text="`${$t('packages_business_loading')}...\n${$t('packages_ldp_lineage_loading_tips')}`"
-  >
-    <PaperScroller ref="paperScroller" @change-scale="handleChangeScale">
-      <TableNode
-        v-for="node in allNodes"
-        class="shadow-sm"
-        :data="node"
-        :key="node.id"
-        :node-id="node.id"
-        :id="NODE_PREFIX + node.id"
-        :js-plumb-ins="jsPlumbIns"
-        :class="{
-          active: node.table === tableName && node.connectionId === connectionId,
-        }"
-        @dblclick="handleNodeDblClick(node)"
-        @drag-stop="onNodeDragStop"
-      ></TableNode>
-    </PaperScroller>
-
-    <div class="paper-toolbar position-absolute flex gap-1 bg-white p-1 rounded-lg shadow-sm">
-      <IconButton clickAndRotate @click="handleRefresh">refresh</IconButton>
-      <ElTooltip
-        transition="tooltip-fade-in"
-        :open-delay="50"
-        :content="$t('packages_dag_button_center_content') + '(Shift + 1)'"
-      >
-        <IconButton @click="handleCenterContent">compress</IconButton>
-      </ElTooltip>
-      <ElTooltip
-        transition="tooltip-fade-in"
-        :open-delay="50"
-        :content="$t('packages_dag_button_zoom_out') + `(${commandCode} -)`"
-      >
-        <IconButton @click="handleZoomOut">remove-outline</IconButton>
-      </ElTooltip>
-      <ElTooltip
-        transition="tooltip-fade-in"
-        :open-delay="50"
-        :content="$t('packages_dag_button_zoom_in') + `(${commandCode} +)`"
-      >
-        <IconButton @click="handleZoomIn">add-outline</IconButton>
-      </ElTooltip>
-      <ElTooltip
-        transition="tooltip-fade-in"
-        ref="fullscreenTooltip"
-        :open-delay="50"
-        :disabled="fullscreenDisabled"
-        :content="fullscreenTip"
-      >
-        <IconButton @click="toggleFullscreen">{{ isFullscreen ? 'suoxiao' : 'fangda' }}</IconButton>
-      </ElTooltip>
-    </div>
-
-    <LinePopover :popover="nodeMenu" @click-task="$emit('click-task', $event)"></LinePopover>
-  </div>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
-import { mapGetters, mapMutations } from 'vuex'
-import dagre from 'dagre'
-import { config, PaperScroller, jsPlumb, NODE_PREFIX, NODE_WIDTH, NODE_HEIGHT } from '@tap/dag'
 import { CancelToken, lineageApi } from '@tap/api'
-import { IconButton, VIcon } from '@tap/component'
-import { makeStatusAndDisabled } from '@tap/business'
+import { makeStatusAndDisabled } from '@tap/business/src/shared'
+import { IconButton } from '@tap/component/src/icon-button'
+import PaperScroller from '@tap/dag/src/components/PaperScroller.vue'
+import { config } from '@tap/dag/src/config'
+import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from '@tap/dag/src/constants'
+import { jsPlumb } from '@tap/dag/src/instance'
 import { connectorActiveStyle } from '@tap/dag/src/style'
-import TableNode from './TableNode'
+import dagre from 'dagre'
+import { mapGetters, mapMutations } from 'vuex'
 import LinePopover from './LinePopover'
+import TableNode from './TableNode'
 export default {
   name: 'TableLineage',
+  components: { PaperScroller, TableNode, IconButton, LinePopover },
   props: {
     connectionId: String,
     tableName: String,
     isShow: Boolean,
   },
-  components: { VIcon, PaperScroller, TableNode, IconButton, LinePopover },
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
     return {
@@ -115,8 +53,6 @@ export default {
         this.initView()
       },
     )
-    // this.initNodeView()
-    // this.loadLineage()
   },
   unmounted() {
     this.unwatch?.()
@@ -226,17 +162,21 @@ export default {
       this.cancelSource?.cancel()
       this.cancelSource = CancelToken.source()
       try {
-        const result = await lineageApi.findByTable(this.connectionId, this.tableName, {
-          cancelToken: this.cancelSource.token,
-        })
+        const result = await lineageApi.findByTable(
+          this.connectionId,
+          this.tableName,
+          {
+            cancelToken: this.cancelSource.token,
+          },
+        )
         dag = result.dag || {}
         this.setEdges(dag.edges)
         // await this.$nextTick()
         await this.addNodes(dag)
         await this.$nextTick()
         this.handleAutoLayout()
-      } catch (e) {
-        console.log(e) // eslint-disable-line
+      } catch (error) {
+        console.log(error) // eslint-disable-line
       }
       this.loading = false
     },
@@ -265,7 +205,9 @@ export default {
 
       nodes.forEach((n) => {
         let { width = NODE_WIDTH, height = NODE_HEIGHT } =
-          document.getElementById(NODE_PREFIX + n.id)?.getBoundingClientRect() || {}
+          document
+            .getElementById(NODE_PREFIX + n.id)
+            ?.getBoundingClientRect() || {}
         width /= scale
         height /= scale
         dg.setNode(NODE_PREFIX + n.id, { width, height })
@@ -309,8 +251,8 @@ export default {
       const inputsMap = {}
 
       edges.forEach(({ source, target }) => {
-        let _source = outputsMap[source]
-        let _target = inputsMap[target]
+        const _source = outputsMap[source]
+        const _target = inputsMap[target]
 
         if (!_source) {
           outputsMap[source] = [target]
@@ -348,7 +290,9 @@ export default {
 
       // 连线
       edges.forEach(({ source, target, attrs }) => {
-        const tasks = attrs.tasks ? Object.values(attrs.tasks).map(makeStatusAndDisabled) : []
+        const tasks = attrs.tasks
+          ? Object.values(attrs.tasks).map(makeStatusAndDisabled)
+          : []
         let overlays
 
         if (tasks.length) {
@@ -362,9 +306,9 @@ export default {
                   const taskName = tasks[0].name
                   const div = document.createElement('div')
 
-                  div.className =
-                    'table-lineage-connection-label flex align-center overflow-hidden rounded-4 task-status-' +
+                  div.className = `table-lineage-connection-label flex align-center overflow-hidden rounded-4 task-status-${
                     tasks[0].status
+                  }`
                   div.innerHTML = `<span title="${taskName}" class="overflow-hidden clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4">${taskName}</span>`
 
                   if (size > 1) {
@@ -378,7 +322,7 @@ export default {
                     dropdownSlot.innerHTML = `+${size - 1}<i tabindex="0" class="el-icon-arrow-down"></i>`
                     dropdownSlot.addEventListener('click', handleClick)
                     div.classList.add('compact-tag')
-                    div.appendChild(dropdownSlot)
+                    div.append(dropdownSlot)
 
                     div.destroy = () => {
                       dropdownSlot.removeEventListener('click', handleClick)
@@ -389,7 +333,7 @@ export default {
                 },
                 events: {
                   click: () => {
-                    $emit(this, 'click-task', tasks[0])
+                    this.$emit('click-task', tasks[0])
                   },
                 },
               },
@@ -398,7 +342,10 @@ export default {
         }
 
         this.jsPlumbIns.connect({
-          uuids: [`${NODE_PREFIX}${source}_source`, `${NODE_PREFIX}${target}_target`],
+          uuids: [
+            `${NODE_PREFIX}${source}_source`,
+            `${NODE_PREFIX}${target}_target`,
+          ],
           overlays,
         })
       })
@@ -447,7 +394,6 @@ export default {
       if (node.type === 'apiserverLineage') return
       if (!node.metadata.id) return
 
-      console.log('handleNodeDblClick', node) // eslint-disable-line
       const table = {
         ...node,
         id: node.metadata.id,
@@ -455,13 +401,8 @@ export default {
         LDP_TYPE: 'table',
         isObject: true,
       }
-      const connection = {
-        id: node.connectionId,
-        name: node.connectionName,
-        pdkHash: node.pdkHash,
-      }
 
-      $emit(this, 'node-dblclick', table)
+      this.$emit('node-dblclick', table)
     },
 
     toggleFullscreen() {
@@ -475,7 +416,9 @@ export default {
         this.$nextTick(() => {
           this.fullscreenDisabled = false
           this.fullscreenTip = this.$t(
-            this.isFullscreen ? 'packages_form_js_editor_exit_fullscreen' : 'packages_form_js_editor_fullscreen',
+            this.isFullscreen
+              ? 'packages_form_js_editor_exit_fullscreen'
+              : 'packages_form_js_editor_fullscreen',
           )
         })
       }, 15)
@@ -483,11 +426,83 @@ export default {
 
     handleChangeScale(scale) {
       this.jsPlumbIns.setZoom(scale)
-    }
+    },
   },
   emits: ['click-task', 'node-dblclick'],
 }
 </script>
+
+<template>
+  <div
+    v-loading="loading"
+    class="table-lineage h-100 position-relative"
+    :class="{
+      fullscreen: isFullscreen,
+    }"
+    :element-loading-text="`${$t('packages_business_loading')}...\n${$t('packages_ldp_lineage_loading_tips')}`"
+  >
+    <PaperScroller ref="paperScroller" @change-scale="handleChangeScale">
+      <TableNode
+        v-for="node in allNodes"
+        :id="NODE_PREFIX + node.id"
+        :key="node.id"
+        class="shadow-sm"
+        :data="node"
+        :node-id="node.id"
+        :js-plumb-ins="jsPlumbIns"
+        :class="{
+          active:
+            node.table === tableName && node.connectionId === connectionId,
+        }"
+        @dblclick="handleNodeDblClick(node)"
+        @drag-stop="onNodeDragStop"
+      />
+    </PaperScroller>
+
+    <div
+      class="paper-toolbar position-absolute flex gap-1 bg-white p-1 rounded-lg shadow-sm"
+    >
+      <IconButton click-and-rotate @click="handleRefresh">refresh</IconButton>
+      <ElTooltip
+        transition="tooltip-fade-in"
+        :open-delay="50"
+        :content="`${$t('packages_dag_button_center_content')}(Shift + 1)`"
+      >
+        <IconButton @click="handleCenterContent">compress</IconButton>
+      </ElTooltip>
+      <ElTooltip
+        transition="tooltip-fade-in"
+        :open-delay="50"
+        :content="`${$t('packages_dag_button_zoom_out')}(${commandCode} -)`"
+      >
+        <IconButton @click="handleZoomOut">remove-outline</IconButton>
+      </ElTooltip>
+      <ElTooltip
+        transition="tooltip-fade-in"
+        :open-delay="50"
+        :content="`${$t('packages_dag_button_zoom_in')}(${commandCode} +)`"
+      >
+        <IconButton @click="handleZoomIn">add-outline</IconButton>
+      </ElTooltip>
+      <ElTooltip
+        ref="fullscreenTooltip"
+        transition="tooltip-fade-in"
+        :open-delay="50"
+        :disabled="fullscreenDisabled"
+        :content="fullscreenTip"
+      >
+        <IconButton @click="toggleFullscreen">{{
+          isFullscreen ? 'suoxiao' : 'fangda'
+        }}</IconButton>
+      </ElTooltip>
+    </div>
+
+    <LinePopover
+      :popover="nodeMenu"
+      @click-task="$emit('click-task', $event)"
+    />
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .paper-toolbar {

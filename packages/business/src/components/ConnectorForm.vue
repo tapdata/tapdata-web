@@ -1,12 +1,13 @@
 <script>
 import { action } from '@formily/reactive'
 import {
-  clusterApi,
-  connectionsApi,
   databaseTypesApi,
   externalStorageApi,
+  findAccessNodeInfo,
+  getUsingDigginTaskByConnectionId,
   proxyApi,
 } from '@tap/api'
+import { createConnection, updateConnectionById } from '@tap/api/src/core'
 import { SchemaToForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import { submitForm, uuid } from '@tap/shared'
@@ -80,7 +81,7 @@ export default {
           }
         },
         loadAccessNode: async (fieldName, others = {}) => {
-          const data = await clusterApi.findAccessNodeInfo()
+          const data = await findAccessNodeInfo()
 
           const mapNode = (item) => ({
             value: item.processId,
@@ -1247,7 +1248,7 @@ export default {
         const { shareCdcEnable, shareCDCExternalStorageId } = this.model
         if (shareCdcEnable && shareCDCExternalStorageId) {
           this.connectionLogCollectorTaskData =
-            await connectionsApi.usingDigginTaskByConnectionId(id)
+            await getUsingDigginTaskByConnectionId(id)
         }
         delete result.properties.START.properties.__TAPDATA.properties.name
       }
@@ -1289,11 +1290,11 @@ export default {
 
       if (id) {
         params.id = id
-        promise = connectionsApi.updateById(id, params)
+        promise = updateConnectionById(id, params)
       } else {
         const { commandCallbackFunctionId } = this
         params.status = this.status ? this.status : 'testing' //默认值 0 代表没有点击过测试
-        promise = connectionsApi.create(params, {
+        promise = createConnection(params, {
           id: commandCallbackFunctionId,
         })
       }
@@ -1397,7 +1398,7 @@ export default {
     gap: 8px;
     font-weight: 400;
     &.is-active {
-      color: map.get($color, primary);
+      color: var(--color-primary);
     }
   }
   :deep(.el-collapse-item__arrow) {
@@ -1447,10 +1448,10 @@ export default {
 
   // 覆盖数字输入框的宽度
   :deep(.formily-element-form-item) {
-    font-size: $fontBaseTitle;
+    font-size: var(--font-base-title);
     .formily-element-form-item-label {
       label {
-        color: map.get($fontColor, light);
+        color: var(--text-light);
       }
     }
     .el-input-number {

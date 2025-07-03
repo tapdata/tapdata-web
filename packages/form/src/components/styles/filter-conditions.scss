@@ -24,7 +24,7 @@
   .clickable {
     cursor: pointer;
     &:hover {
-      color: map.get($color, primary) !important;
+      color: var(--color-primary) !important;
     }
   }
 }

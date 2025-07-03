@@ -1,7 +1,6 @@
 <script lang="ts">
-import { Classification, ProTable, VIcon } from '@tap/component'
-import { delayTrigger, off, on } from '@tap/shared'
-import { debounce } from 'lodash-es'
+import Classification from '@tap/component/src/Classification.vue'
+import { off, on } from '@tap/shared'
 import {
   defineComponent,
   nextTick,
@@ -90,8 +89,6 @@ export default defineComponent({
   components: {
     Classification,
     SelectClassify,
-    VIcon,
-    ProTable,
   },
   props: {
     title: {
@@ -135,8 +132,14 @@ export default defineComponent({
       type: Object as PropType<Sort>,
     },
     draggable: Boolean,
+    treeProps: Object,
   },
-  emits: ['selectionChange', 'sortChange', 'classifySubmit'],
+  emits: [
+    'selectionChange',
+    'sortChange',
+    'classifySubmit',
+    'update:drag-state',
+  ],
   setup(props, { emit }) {
     const isUnmounted = ref(false)
     const route = useRoute()
@@ -273,6 +276,8 @@ export default defineComponent({
         dragState.value.draggingObjects = [row]
       }
 
+      emit('update:drag-state', dragState.value)
+
       const target = ev.currentTarget as HTMLElement
       draggingNodeImage.value = makeDragNodeImage(
         target.querySelector('.tree-item-icon'),
@@ -288,6 +293,8 @@ export default defineComponent({
       dragState.value.dropNode = null
       draggingNodeImage.value?.remove()
       draggingNodeImage.value = null
+
+      emit('update:drag-state', dragState.value)
     }
 
     const onSelectRow = (selection: any[], current: any) => {
@@ -407,10 +414,15 @@ export default defineComponent({
           :title="classify.title"
           :kai-title="classify.title"
           :drag-state="dragState"
+          :tree-props="treeProps"
           @node-checked="nodeChecked"
           @update:visible="classificationVisible = $event"
           @drop-in-tag="fetch(1)"
-        />
+        >
+          <template #node>
+            <slot name="tagNode" />
+          </template>
+        </Classification>
         <div class="table-page-body gap-4">
           <div class="table-page-nav">
             <slot name="nav" :open-classify="handleToggleClassify" />
@@ -437,7 +449,7 @@ export default defineComponent({
               <slot name="operation" />
             </div>
           </div>
-          <ProTable
+          <el-table
             v-bind="$attrs"
             ref="table"
             v-loading="loading"
@@ -456,7 +468,7 @@ export default defineComponent({
             @select="onSelectRow"
           >
             <el-table-column
-              v-if="classificationVisible"
+              v-if="classificationVisible || draggable"
               width="28"
               align="center"
               class-name="cell-no-padding"
@@ -486,7 +498,7 @@ export default defineComponent({
                 <slot name="noDataText" />
               </div>
             </template>
-          </ProTable>
+          </el-table>
           <div class="table-footer">
             <slot name="tableFooter" />
           </div>
@@ -550,7 +562,7 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: map.get($bgColor, white);
+  background: var(--color-white);
   min-width: 720px;
   flex: 1;
   width: 100%;
@@ -581,7 +593,7 @@ export default defineComponent({
 
     .page-header-title {
       font-size: 16px;
-      color: map.get($fontColor, dark);
+      color: var(--text-dark);
       font-weight: 600;
 
       &.link {
@@ -593,7 +605,7 @@ export default defineComponent({
     .page-header-desc {
       margin-top: 10px;
       font-size: 12px;
-      color: map.get($fontColor, slight);
+      color: var(--text-slight);
     }
   }
 
@@ -607,7 +619,7 @@ export default defineComponent({
       flex: 1;
       width: 100%;
       border-radius: 4px;
-      background-color: map.get($bgColor, white);
+      background-color: var(--color-white);
     }
   }
 
@@ -636,7 +648,7 @@ export default defineComponent({
       border-bottom: none;
       border-radius: 3px;
       font-size: 14px;
-      background-color: map.get($bgColor, white);
+      background-color: var(--color-white);
       overflow: hidden;
       // .el-table__fixed-right {
       //   height: 100% !important; //设置高优先，以覆盖内联样式
@@ -645,7 +657,7 @@ export default defineComponent({
         height: 1px;
       }
       .el-table__fixed-body-wrapper {
-        background-color: map.get($bgColor, white);
+        background-color: var(--color-white);
       }
       .el-table__fixed {
         height: auto !important; //设置高优先，以覆盖内联样式
@@ -673,7 +685,7 @@ export default defineComponent({
 
     .el-table--border td {
       .cell {
-        color: map.get($fontColor, light);
+        color: var(--text-light);
       }
     }
 

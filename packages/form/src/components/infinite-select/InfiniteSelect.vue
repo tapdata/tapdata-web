@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { isNum } from '@tap/shared'
 import { debounce, escapeRegExp, isString, merge } from 'lodash-es'
 import { computed, markRaw, nextTick, onMounted, ref, toRaw, watch } from 'vue'
 import SelectLoading from './SelectLoading.vue'
@@ -310,7 +309,9 @@ onMounted(() => {
           :label="item[itemLabel]"
           :value="item[itemValue]"
           :origin-data="toRaw(item)"
-        />
+        >
+          <slot name="option" :item="item" />
+        </el-option>
       </template>
 
       <template v-else>

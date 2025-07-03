@@ -1,9 +1,169 @@
+<script>
+import mockSourceIcon from '@tap/assets/icons/connections/mock-source.svg'
+import mockTargetIcon from '@tap/assets/icons/connections/mock-target.svg'
+import mongodbIcon from '@tap/assets/icons/connections/mongodb.svg'
+import mysqlIcon from '@tap/assets/icons/connections/mysql.svg'
+
+import Cookie from '@tap/shared/src/cookie'
+import { $on } from '@tap/shared/src/event'
+
+import { mapGetters, mapState } from 'vuex'
+
+export default {
+  inject: ['checkAgent', 'buried'],
+  data() {
+    return {
+      demand: '',
+      suggestion: '',
+      sourceList: [
+        {
+          type: 'mysql',
+          icon: mysqlIcon,
+        },
+        {
+          type: 'dummy',
+          icon: mockSourceIcon,
+        },
+      ],
+      targetList: [
+        {
+          type: 'mongodb',
+          icon: mongodbIcon,
+        },
+        {
+          type: 'dummy',
+          icon: mockTargetIcon,
+        },
+      ],
+    }
+  },
+
+  computed: {
+    ...mapGetters(['isDomesticStation']),
+    ...mapState(['user']),
+  },
+
+  created() {
+    $on(this.$root, 'select-connection-type', this.selectConnectionType)
+    $on(this.$root, 'show-guide', this.showGuide)
+    $on(this.$root, 'get-user', this.getUser)
+  },
+  mounted() {
+    //获取cookie 是否用户有操作过 稍后部署 且缓存是当前用户 不在弹窗
+    const user = window.__USER_INFO__
+    this.userInfo = user
+    //检查是云市场用户授权码有效期
+    // if (user?.enableLicense) {
+    //   this.checkLicense(user)
+    // }
+    const isCurrentUser = Cookie.get('deployLaterUser') === user?.userId
+    if (Cookie.get('deployLater') == 1 && isCurrentUser) return
+  },
+  methods: {
+    loadChat() {
+      const $zoho = $zoho || {}
+      const { isDomesticStation } = this
+      $zoho.salesiq = $zoho.salesiq || {
+        widgetcode: isDomesticStation
+          ? '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f'
+          : 'siqc6975654b695513072e7c944c1b63ce0561c932c06ea37e561e3a2f7fe5ae1f7',
+        values: {},
+        ready() {},
+      }
+      window.$zoho = $zoho
+      const d = document
+      const s = d.createElement('script')
+      s.type = 'text/javascript'
+      s.id = 'zsiqscript'
+      s.defer = true
+      s.src = isDomesticStation
+        ? 'https://salesiq.zoho.com.cn/widget'
+        : 'https://salesiq.zohopublic.com/widget'
+      const t = d.querySelectorAll('script')[0]
+      t.parentNode.insertBefore(s, t)
+      this.hideCustomTip()
+
+      $zoho.salesiq.ready = function () {
+        const user = window.__USER_INFO__
+        $zoho.salesiq.visitor.contactnumber(user.telephone)
+        $zoho.salesiq.visitor.info({
+          tapdata_username: user.nickname || user.username,
+          tapdata_phone: user.telephone,
+          tapdata_email: user.email,
+        })
+
+        $zoho.salesiq.addEventListener('load', function () {
+          const siqiframe = document.querySelector('#siqiframe')
+
+          if (siqiframe) {
+            const style = document.createElement('style')
+            style.type = 'text/css'
+            style.innerHTML = `.botactions em { white-space: nowrap; }`
+            siqiframe.contentWindow.document
+              .querySelectorAll('head')
+              .item(0)
+              .append(style)
+          }
+        })
+      }
+    },
+
+    handleCreateTask() {
+      this.$store.dispatch('startGuideTask', {
+        demand: this.demand,
+        suggestion: this.suggestion,
+      })
+
+      this.$router.replace({
+        name: 'WelcomeTask',
+      })
+    },
+
+    command(command) {
+      // let downloadUrl = '';
+      switch (command) {
+        case 'workbench':
+          this.$router.push({ name: 'Home' })
+          break
+        case 'home':
+          window.open(this.officialWebsiteAddress, '_blank')
+          break
+        case 'userCenter':
+          this.$router.push({
+            name: 'userCenter',
+          })
+          break
+        case 'order':
+          this.$router.push({
+            name: 'order',
+          })
+          break
+        case 'signOut':
+          this.$confirm(
+            this.$t('header_log_out_title'),
+            this.$t('header_log_out_tip'),
+          ).then((res) => {
+            if (res) {
+              this.clearCookie()
+              location.href = './logout'
+            }
+          })
+          break
+      }
+    },
+  },
+}
+</script>
+
 <template>
   <div class="flex absolute-fill">
     <div class="flex-1 flex flex-column justify-center align-center my-8">
       <div class="text-center mb-14">
-        <div class="fs-2 fw-sub lh-sm mb-4" v-html="$t('welcome_page_title')"></div>
-        <div class="font-color-sslight lh-base mb-10" v-html="$t('welcome_page_subtitle')"></div>
+        <div class="fs-2 fw-sub lh-sm mb-4" v-html="$t('welcome_page_title')" />
+        <div
+          class="font-color-sslight lh-base mb-10"
+          v-html="$t('welcome_page_subtitle')"
+        />
       </div>
 
       <div class="flex align-center">
@@ -15,11 +175,11 @@
           </div>
           <div class="flex flex-column gap-6 connector-list p-4">
             <div
-              class="connector-list-item flex justify-center align-center"
               v-for="item in sourceList"
               :key="item.type"
+              class="connector-list-item flex justify-center align-center"
             >
-              <ElImage :src="item.icon" style="width: 30px; height: 30px"></ElImage>
+              <ElImage :src="item.icon" style="width: 30px; height: 30px" />
             </div>
             <div class="connector-list-item flex justify-center align-center">
               <VIcon class="color-primary" :size="24">more</VIcon>
@@ -28,7 +188,13 @@
         </div>
 
         <div>
-          <svg width="398" height="201" viewBox="0 0 398 201" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg
+            width="398"
+            height="201"
+            viewBox="0 0 398 201"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <path
               d="M149 101.43H102.046C93.4902 101.103 76.3782 103.391 76.3782 115.156C76.3782 126.921 76.3782 148.382 76.3782 168.754C76.3782 175.617 71.3697 181.5 46.3277 181.5C21.2857 181.5 5.00841 181.5 1.78814e-06 181.5"
               stroke="#C9CDD4"
@@ -42,7 +208,15 @@
               stroke-dasharray="6 6"
             />
             <g filter="url(#filter0_dd_21257_9136)">
-              <rect x="149" y="50.8638" width="100" height="100" rx="16" fill="white" shape-rendering="crispEdges" />
+              <rect
+                x="149"
+                y="50.8638"
+                width="100"
+                height="100"
+                rx="16"
+                fill="white"
+                shape-rendering="crispEdges"
+              />
               <path
                 fill-rule="evenodd"
                 clip-rule="evenodd"
@@ -71,7 +245,12 @@
               stroke-dasharray="6 6"
             />
 
-            <path id="target2" d="M249 101.429H295.954L398 101" stroke="#3B47E5" stroke-width="2" />
+            <path
+              id="target2"
+              d="M249 101.429H295.954L398 101"
+              stroke="#3B47E5"
+              stroke-width="2"
+            />
             <path
               id="source1"
               d="M149 101.371H102.046C93.4902 101.701 76.3782 99.3905 76.3782 87.5075C76.3782 75.6244 76.3782 53.9487 76.3782 33.3734C76.3782 20.5 71.3698 20.5 46.3277 20.5C21.2857 20.5 5.0084 20.5 0 20.5"
@@ -92,7 +271,7 @@
                 calcMode="linear"
                 keyPoints="1;0"
               >
-                <mpath data-v-e4731dd0="" xlink:href="#source1"></mpath>
+                <mpath data-v-e4731dd0="" xlink:href="#source1" />
               </animateMotion>
             </path>
             <path
@@ -101,7 +280,7 @@
               fill="#3B47E5"
             >
               <animateMotion dur="3s" repeatCount="indefinite" rotate="auto">
-                <mpath xlink:href="#target2"></mpath>
+                <mpath xlink:href="#target2" />
               </animateMotion>
             </path>
             <defs>
@@ -124,8 +303,15 @@
                 <feOffset dx="25" dy="12.5" />
                 <feGaussianBlur stdDeviation="18.75" />
                 <feComposite in2="hardAlpha" operator="out" />
-                <feColorMatrix type="matrix" values="0 0 0 0 0.231373 0 0 0 0 0.278431 0 0 0 0 0.898039 0 0 0 0.2 0" />
-                <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_21257_9136" />
+                <feColorMatrix
+                  type="matrix"
+                  values="0 0 0 0 0.231373 0 0 0 0 0.278431 0 0 0 0 0.898039 0 0 0 0.2 0"
+                />
+                <feBlend
+                  mode="normal"
+                  in2="BackgroundImageFix"
+                  result="effect1_dropShadow_21257_9136"
+                />
                 <feColorMatrix
                   in="SourceAlpha"
                   type="matrix"
@@ -135,9 +321,21 @@
                 <feOffset dx="-25" dy="-12.5" />
                 <feGaussianBlur stdDeviation="18.75" />
                 <feComposite in2="hardAlpha" operator="out" />
-                <feColorMatrix type="matrix" values="0 0 0 0 0.952941 0 0 0 0 0.588235 0 0 0 0 0.101961 0 0 0 0.2 0" />
-                <feBlend mode="normal" in2="effect1_dropShadow_21257_9136" result="effect2_dropShadow_21257_9136" />
-                <feBlend mode="normal" in="SourceGraphic" in2="effect2_dropShadow_21257_9136" result="shape" />
+                <feColorMatrix
+                  type="matrix"
+                  values="0 0 0 0 0.952941 0 0 0 0 0.588235 0 0 0 0 0.101961 0 0 0 0.2 0"
+                />
+                <feBlend
+                  mode="normal"
+                  in2="effect1_dropShadow_21257_9136"
+                  result="effect2_dropShadow_21257_9136"
+                />
+                <feBlend
+                  mode="normal"
+                  in="SourceGraphic"
+                  in2="effect2_dropShadow_21257_9136"
+                  result="shape"
+                />
               </filter>
             </defs>
           </svg>
@@ -151,11 +349,11 @@
           </div>
           <div class="flex flex-column gap-6 connector-list p-4">
             <div
-              class="connector-list-item flex justify-center align-center"
               v-for="item in targetList"
               :key="item.type"
+              class="connector-list-item flex justify-center align-center"
             >
-              <ElImage :src="item.icon" style="width: 30px; height: 30px"></ElImage>
+              <ElImage :src="item.icon" style="width: 30px; height: 30px" />
             </div>
             <div class="connector-list-item flex justify-center align-center">
               <VIcon class="color-primary" :size="24">more</VIcon>
@@ -164,11 +362,19 @@
         </div>
       </div>
     </div>
-    <div class="flex-1 bg-white p-8 flex flex-column justify-center align-center">
+    <div
+      class="flex-1 bg-white p-8 flex flex-column justify-center align-center"
+    >
       <div class="flex flex-column">
-        <div class="fs-4 fw-sub lh-sm mb-10">{{ $t('welcome_demand_collection') }}</div>
+        <div class="fs-4 fw-sub lh-sm mb-10">
+          {{ $t('welcome_demand_collection') }}
+        </div>
 
-        <ElRadioGroup v-model="demand" class="flex flex-column gap-4 text-start mb-4" size="medium">
+        <ElRadioGroup
+          v-model="demand"
+          class="flex flex-column gap-4 text-start mb-4"
+          size="medium"
+        >
           <ElRadio label="project_evaluation" class="m-0 bg-white" border>{{
             $t('welcome_demand_collection_1')
           }}</ElRadio>
@@ -188,11 +394,13 @@
             <ElInput
               v-model="suggestion"
               type="textarea"
-              :placeholder="$t('dfs_replication_tour_dialog_finished_survey_placeholder')"
+              :placeholder="
+                $t('dfs_replication_tour_dialog_finished_survey_placeholder')
+              "
               :rows="2"
               :maxlength="200"
               show-word-limit
-            ></ElInput>
+            />
           </div>
         </el-collapse-transition>
 
@@ -211,162 +419,6 @@
   </div>
 </template>
 
-<script>
-import { mapGetters, mapState } from 'vuex'
-import Cookie from '@tap/shared/src/cookie'
-import { getIcon } from '@tap/assets/icons'
-
-export default {
-  inject: ['checkAgent', 'buried'],
-  data() {
-    const $t = this.$t.bind(this)
-    return {
-      demand: '',
-      suggestion: '',
-      sourceList: [
-        {
-          type: 'mysql',
-          icon: getIcon('mysql')
-        },
-        {
-          type: 'dummy',
-          icon: getIcon('mock-source')
-        } /*,
-        {
-          type: 'mongodb',
-          icon: getIcon('mongodb')
-        }*/
-      ],
-      targetList: [
-        {
-          type: 'mongodb',
-          icon: getIcon('mongodb')
-        },
-        {
-          type: 'dummy',
-          icon: getIcon('mock-target')
-        } /*,
-        {
-          type: 'mongodb',
-          icon: getIcon('mongodb')
-        }*/
-      ]
-    }
-  },
-
-  computed: {
-    ...mapGetters(['isDomesticStation']),
-    ...mapState(['user'])
-  },
-
-  created() {
-    this.$root.$on('select-connection-type', this.selectConnectionType)
-    this.$root.$on('show-guide', this.showGuide)
-    this.$root.$on('get-user', this.getUser)
-  },
-  mounted() {
-    //获取cookie 是否用户有操作过 稍后部署 且缓存是当前用户 不在弹窗
-    let user = window.__USER_INFO__
-    this.userInfo = user
-    //检查是云市场用户授权码有效期
-    // if (user?.enableLicense) {
-    //   this.checkLicense(user)
-    // }
-    let isCurrentUser = Cookie.get('deployLaterUser') === user?.userId
-    if (Cookie.get('deployLater') == 1 && isCurrentUser) return
-  },
-  methods: {
-    loadChat() {
-      let $zoho = $zoho || {}
-      const { isDomesticStation } = this
-      $zoho.salesiq = $zoho.salesiq || {
-        widgetcode: isDomesticStation
-          ? '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f'
-          : 'siqc6975654b695513072e7c944c1b63ce0561c932c06ea37e561e3a2f7fe5ae1f7',
-        values: {},
-        ready: function () {}
-      }
-      window.$zoho = $zoho
-      let d = document
-      let s = d.createElement('script')
-      s.type = 'text/javascript'
-      s.id = 'zsiqscript'
-      s.defer = true
-      s.src = isDomesticStation ? 'https://salesiq.zoho.com.cn/widget' : 'https://salesiq.zohopublic.com/widget'
-      let t = d.getElementsByTagName('script')[0]
-      t.parentNode.insertBefore(s, t)
-      this.hideCustomTip()
-
-      $zoho.salesiq.ready = function () {
-        const user = window.__USER_INFO__
-        $zoho.salesiq.visitor.contactnumber(user.telephone)
-        $zoho.salesiq.visitor.info({
-          tapdata_username: user.nickname || user.username,
-          tapdata_phone: user.telephone,
-          tapdata_email: user.email
-        })
-
-        $zoho.salesiq.onload = function () {
-          let siqiframe = document.getElementById('siqiframe')
-
-          if (siqiframe) {
-            let style = document.createElement('style')
-            style.type = 'text/css'
-            style.innerHTML = `.botactions em { white-space: nowrap; }`
-            siqiframe.contentWindow.document.getElementsByTagName('head').item(0).appendChild(style)
-          }
-        }
-      }
-    },
-
-    handleCreateTask() {
-      this.$store.dispatch('startGuideTask', {
-        demand: this.demand,
-        suggestion: this.suggestion
-      })
-
-      this.$router.replace({
-        name: 'WelcomeTask'
-      })
-    },
-
-    command(command) {
-      // let downloadUrl = '';
-      switch (command) {
-        case 'workbench':
-          this.$router.push({ name: 'Home' })
-          break
-        case 'home':
-          window.open(this.officialWebsiteAddress, '_blank')
-          break
-        case 'userCenter':
-          this.$router.push({
-            name: 'userCenter'
-          })
-          break
-        case 'order':
-          this.$router.push({
-            name: 'order'
-          })
-          break
-        case 'signOut':
-          this.$confirm(this.$t('header_log_out_tip'), this.$t('header_log_out_title'), {
-            type: 'warning',
-            confirmButtonText: this.$t('public_button_confirm'),
-            cancelButtonText: this.$t('public_button_cancel')
-          }).then(res => {
-            if (res) {
-              this.clearCookie()
-              location.href = './logout'
-            }
-          })
-          break
-      }
-    }
-  }
-}
-</script>
-
 <style lang="scss" scoped>
 .layout-main {
   padding: 0 16px 16px 16px;
@@ -377,14 +429,14 @@ export default {
   padding-top: 52px;
   word-wrap: break-word;
   word-break: break-word;
-  background: map.get($color, submenu);
+  background: var(--color-submenu);
 
   .left-aside {
-    // border-right: 1px map.get($borderColor, aside) solid;
-    background: map.get($color, submenu);
+    // border-right: 1px var(--border-aside) solid;
+    background: var(--color-submenu);
 
     .el-menu {
-      background-color: map.get($color, submenu);
+      background-color: var(--color-submenu);
     }
 
     :deep(.el-menu-item),
@@ -393,20 +445,20 @@ export default {
       line-height: 50px;
 
       .v-icon {
-        color: map.get($iconFillColor, normal);
+        color: var(--icon-n2);
       }
 
       &.is-active,
       &:hover {
-        background-color: map.get($color, white);
-        color: map.get($color, primary);
+        background-color: var(--color-white);
+        color: var(--color-primary);
         border-radius: 8px;
       }
 
       &.is-active,
       &:hover {
         :deep(.v-icon) {
-          color: map.get($color, primary);
+          color: var(--color-primary);
         }
       }
 
@@ -420,7 +472,7 @@ export default {
       font-size: 14px;
       font-weight: 700;
       line-height: 60px;
-      color: map.get($fontColor, normal);
+      color: var(--text-normal);
     }
   }
 
@@ -453,7 +505,7 @@ export default {
     }
 
     :deep(.el-breadcrumb__separator) {
-      color: map.get($fontColor, sub);
+      color: var(--text-light);
     }
   }
 
@@ -499,7 +551,7 @@ export default {
   width: 100%;
   height: 52px !important;
   padding: 0 7px;
-  background: map.get($color, submenu);
+  background: var(--color-submenu);
   box-sizing: border-box;
 
   .logo {
@@ -522,15 +574,15 @@ export default {
     .command-item {
       padding: 4px 8px;
       cursor: pointer;
-      color: map.get($fontColor, light);
+      color: var(--text-light);
 
       &:hover {
-        color: map.get($color, primary);
-        background-color: map.get($color, white);
+        color: var(--color-primary);
+        background-color: var(--color-white);
         border-radius: 4px;
 
         &.icon {
-          color: map.get($color, primary);
+          color: var(--color-primary);
         }
       }
     }

@@ -1,13 +1,9 @@
 <script setup lang="ts">
-import {
-  connectionsApi,
-  metadataInstancesApi,
-  taskApi,
-  workerApi,
-} from '@tap/api'
-import { RightBoldOutlined, VEmpty } from '@tap/component'
-import VIcon from '@tap/component/src/base/VIcon'
+import { metadataInstancesApi, taskApi } from '@tap/api'
+import { RightBoldOutlined } from '@tap/component/src/RightBoldOutlined'
+import { VEmpty } from '@tap/component/src/base/v-empty'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
+import { useI18n } from '@tap/i18n'
 import { computed, ref, watch } from 'vue'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import { useStore } from 'vuex'
@@ -17,6 +13,7 @@ import { getPrimaryKeyTablesByType } from '../../../util'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
 const store = useStore()
+const { t } = useI18n()
 
 // Props
 const props = defineProps({
@@ -25,7 +22,7 @@ const props = defineProps({
     required: true,
   },
   value: {
-    type: Array as PropType<string[]>,
+    type: Array,
     default: () => [],
   },
   disabled: Boolean,
@@ -232,17 +229,48 @@ const changeSeletedMode = () => {
   }
 }
 
+const getErrorTables = (tables: string[]) => {
+  const errors = {}
+  const allTables = table.value.tables
+
+  if (!loading.value) {
+    tables.forEach((table) => {
+      if (!allTables.includes(table)) {
+        errors[table] = t(
+          'packages_form_component_table_selector_error_not_exit',
+        )
+      }
+    })
+  }
+
+  errorTables.value = errors
+  return errors
+}
+
 const submitClipboard = () => {
-  selected.value.tables = clipboardTables.value
+  const errorTables = getErrorTables(clipboardTables.value)
+
+  if (Object.keys(errorTables).length) return
+
+  selected.value.tables = Array.from(
+    new Set(selected.value.tables.concat(clipboardTables.value)),
+  )
   isOpenClipMode.value = false
   emit('change', selected.value.tables)
 }
 
 const autofix = () => {
-  selected.value.tables = selected.value.tables.filter(
-    (t) => !errorTables.value[t],
-  )
-  emit('change', selected.value.tables)
+  if (isOpenClipMode.value) {
+    clipboardValue.value = clipboardTables.value
+      .filter((t) => !errorTables.value[t])
+      .join(', ')
+    errorTables.value = {}
+  } else {
+    selected.value.tables = selected.value.tables.filter(
+      (t) => !errorTables.value[t],
+    )
+    emit('change', selected.value.tables)
+  }
 }
 
 const getTableInfo = (table: string) => {
@@ -252,7 +280,7 @@ const getTableInfo = (table: string) => {
 // Watch
 watch(
   () => props.value,
-  (val) => {
+  (val: string[]) => {
     selected.value.tables = val || []
   },
   { immediate: true },
@@ -641,15 +669,14 @@ getTables()
           <span class="color-danger"
             >*{{ $t('packages_form_component_table_selector_error') }}</span
           >
-          <ElLink class="ml-2" type="primary" @click="autofix">{{
+          <el-button text class="ml-1" type="primary" @click="autofix">{{
             $t('packages_form_component_table_selector_autofix')
-          }}</ElLink>
+          }}</el-button>
         </div>
         <div v-if="isOpenClipMode" class="px-4 pb-4 text-end">
-          <!--          <ElButton @click="changeSeletedMode()">{{ $t('public_button_cancel') }}</ElButton>-->
-          <ElButton type="primary" @click="submitClipboard">{{
+          <el-button type="primary" @click="submitClipboard">{{
             $t('public_button_confirm')
-          }}</ElButton>
+          }}</el-button>
         </div>
       </div>
     </div>
@@ -668,7 +695,7 @@ getTables()
   //height: 100%;
   display: flex;
   flex-direction: column;
-  border: 1px solid map.get($borderColor, light);
+  border: 1px solid var(--border-light);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -678,7 +705,7 @@ getTables()
   align-items: center;
   background: #f7f8fa;
   height: 40px;
-  color: map.get($fontColor, normal);
+  color: var(--text-normal);
   font-size: 13px;
   font-weight: 500;
 }
@@ -716,7 +743,7 @@ getTables()
   display: flex;
   align-items: center;
   &:hover {
-    background-color: map.get($bgColor, disable);
+    background-color: var(--bg-disable);
   }
   > :deep(.el-checkbox__label) {
     overflow: hidden;
@@ -744,22 +771,22 @@ getTables()
     line-height: 28px;
     border-radius: 2px;
     font-size: 14px;
-    background: map.get($bgColor, main);
-    color: map.get($fontColor, normal);
+    background: var(--bg-main);
+    color: var(--text-normal);
     text-align: center;
     cursor: pointer;
     &:hover {
-      background: map.get($color, primary);
-      color: map.get($fontColor, white);
+      background: var(--color-primary);
+      color: var(--text-white);
     }
     &.btn-transfer--disabled {
-      background: map.get($bgColor, main);
-      color: map.get($fontColor, normal);
+      background: var(--bg-main);
+      color: var(--text-normal);
       cursor: not-allowed;
     }
     &.btn-transfer--primary {
-      background: map.get($color, primary);
-      color: map.get($fontColor, white);
+      background: var(--color-primary);
+      color: var(--text-white);
     }
   }
 }
@@ -780,12 +807,12 @@ getTables()
     line-height: 20px;
     //height: 20px;
     font-size: 12px;
-    color: map.get($fontColor, normal);
+    color: var(--text-normal);
     word-break: break-word;
   }
   .selector-clipboard__view--empty {
     padding: 5px 11px;
-    color: map.get($fontColor, slight);
+    color: var(--text-slight);
     font-size: 12px;
     font-weight: normal;
     line-height: 20px;

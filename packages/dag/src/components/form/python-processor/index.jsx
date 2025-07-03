@@ -6,14 +6,15 @@ import {
   pythonFunctionsApi,
   taskApi,
 } from '@tap/api'
-import { VCodeEditor, VEmpty, VirtualSelect } from '@tap/component'
+import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
+import { VEmpty } from '@tap/component/src/base/v-empty'
 import resize from '@tap/component/src/directives/resize'
 
 import { FormItem, HighlightCode, PythonEditor, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import Time from '@tap/shared/src/time'
 import { groupBy } from 'lodash-es'
-import { defineComponent, onUnmounted, reactive, ref, watch } from 'vue'
+import { defineComponent, onUnmounted, reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 import { PythonDeclare } from '../python-declare'
@@ -422,7 +423,7 @@ export const PythonProcessor = observer(
                 layout="horizontal"
                 feedbackLayout="none"
               >
-                <VirtualSelect
+                <ElSelectV2
                   disabled={props.disabled}
                   v-model={params.tableName}
                   filterable

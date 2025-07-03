@@ -1617,9 +1617,7 @@ export default {
 
     handleReset() {
       const msg = this.getConfirmMessage('initialize')
-      this.$confirm(msg, '', {
-        type: 'warning',
-      }).then(async (resFlag) => {
+      this.$confirm(msg).then(async (resFlag) => {
         if (!resFlag) {
           return
         }
@@ -1707,7 +1705,7 @@ export default {
     },
 
     changeTimeSelect(val, isTime, source) {
-      this.$emit('changeTimeSelect', val, isTime, source)
+      this.handleChangeTimeSelect(val, isTime, source)
       this.timeSelectLabel = this.$refs.timeSelect?.getPeriod()?.label
     },
 
@@ -2009,7 +2007,7 @@ export default {
                         <Frequency
                           :range="timeSelectRange"
                           style="width: 200px"
-                          @change="changeFrequency"
+                          @change="handleChangeFrequency"
                         />
                         <ElTooltip
                           transition="tooltip-fade-in"
@@ -2626,7 +2624,7 @@ $sidebarBg: #fff;
   box-shadow: 0px 0px 30px rgb(0 0 0 / 6%);
 
   &:hover .v-icon {
-    color: map.get($color, primary);
+    color: var(--color-primary);
   }
 }
 

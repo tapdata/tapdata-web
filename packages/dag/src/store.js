@@ -2,11 +2,11 @@ import { setValidateLanguage } from '@formily/core'
 import { Path } from '@formily/path'
 import { observable } from '@formily/reactive'
 import { customNodeApi, isCancel, taskApi } from '@tap/api'
+import { Modal } from '@tap/component/src/modal'
 import i18n from '@tap/i18n'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 import { isObject, lowerSnake, mergeLocales, uuid } from '@tap/shared'
 
-import { ElMessageBox } from 'element-plus'
 import { debounce } from 'lodash-es'
 import { markRaw } from 'vue'
 
@@ -261,19 +261,15 @@ const actions = {
       commit('toggleTaskSaving', false) // 任务保存请求被cancel不希望设置为false
 
       if (error?.data?.code === 'Task.OldVersion') {
-        ElMessageBox.confirm(
-          '',
+        const confirmed = await Modal.confirm(
           i18n.t('packages_dag_task_old_version_confirm'),
           {
-            center: true,
-            type: 'warning',
-            customClass: 'pro-confirm',
-            cancelButtonText: i18n.t('public_button_cancel'),
             confirmButtonText: i18n.t('public_button_refresh'),
           },
-        ).then((resFlag) => {
-          resFlag && location.reload()
-        })
+        )
+        if (confirmed) {
+          location.reload()
+        }
       } else if (error?.data?.message) {
         vm.$message.error(error.data.message)
       }
@@ -304,18 +300,15 @@ const actions = {
       commit('toggleTaskSaving', false) // 任务保存请求被cancel不希望设置为false
 
       if (error?.data?.code === 'Task.OldVersion') {
-        ElMessageBox.confirm(
-          '',
+        const confirmed = await Modal.confirm(
           i18n.t('packages_dag_task_old_version_confirm'),
           {
-            center: true,
-            customClass: 'pro-confirm',
-            cancelButtonText: i18n.t('public_button_cancel'),
             confirmButtonText: i18n.t('public_button_refresh'),
           },
-        ).then((resFlag) => {
-          resFlag && location.reload()
-        })
+        )
+        if (confirmed) {
+          location.reload()
+        }
       } else if (error?.data?.message) {
         vm.$message.error(error.data.message)
       }

@@ -586,7 +586,7 @@ export default {
   packages_business_verification_indexField: 'Associated Fields',
   packages_business_verification_BasicSettings: 'Basic Settings',
   packages_business_verification_verifyCondition: 'Validation Conditions',
-  packages_business_verification_clear: 'Clear',
+  packages_business_verification_clear: 'Clear Conditions',
   packages_business_verification_fastCountTip:
     'The fast count mode, which only verifies the number of rows in the source and target tables, is extremely fast, but it does not display the differential field values',
   packages_business_verification_contentVerifyTip:
@@ -723,7 +723,7 @@ export default {
     'Alert Notification',
   packages_business_setting_alarmnotification_gaojingzhibiao: 'Alert Indicator',
   packages_business_setting_alarmnotification_dangjiediandeping:
-    'When the average processing time of the node exceeds the threshold',
+    'When the average processing time of the processing node exceeds the threshold',
   packages_business_setting_alarmnotification_dangshujuyuanjie:
     'When the average processing time of the data source node exceeds the threshold',
   packages_business_setting_alarmnotification_dangshujuyuanxie:

@@ -53,6 +53,7 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+$formNamespace: formily-element-plus;
 $radius: 4px;
 $headerH: 48px;
 $padding: 16px;
@@ -82,7 +83,7 @@ $headerBg: #fff;
       width: $headerH;
       height: $headerH;
       text-align: center;
-      background-color: map.get($color, primary);
+      background-color: var(--color-primary);
       cursor: pointer;
       color: #fff;
     }
@@ -119,11 +120,11 @@ $headerBg: #fff;
   }
 
   :deep(.#{$formNamespace}-form-item) {
-    font-size: $fontBaseTitle;
+    font-size: var(--font-base-title);
 
     .#{$formNamespace}-form-item-label {
       label {
-        color: map.get($fontColor, light);
+        color: var(--text-light);
       }
     }
 

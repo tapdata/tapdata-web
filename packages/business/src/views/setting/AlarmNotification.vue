@@ -1,7 +1,11 @@
 <script>
-import { notificationApi } from '@tap/api'
-import { SelectList } from '@tap/component'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+import {
+  listNotifications,
+  pageReadNotification,
+  patchNotification,
+  readAllNotifications,
+} from '@tap/api'
+import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import PageContainer from '../../components/PageContainer.vue'
 import { ALARM_LEVEL_MAP } from '../../shared/const'
 import AlarmSetting from './AlarmSetting'
@@ -68,8 +72,7 @@ export default {
         where.read = false
       }
       this.loading = true
-      notificationApi
-        .list(where)
+      listNotifications(where)
         .then((data) => {
           const list = data?.items || []
           this.listData = list.map((item) => {
@@ -95,7 +98,7 @@ export default {
     handleRead(item) {
       const read = this.read
       if (!item.read) {
-        notificationApi.patch({ read: true, id: item.id }).then(() => {
+        patchNotification({ read: true, id: item.id }).then(() => {
           this.read = read
           const msg = {
             type: 'notification',
@@ -122,11 +125,11 @@ export default {
         id,
       }
       const read = this.read
-      notificationApi.pageRead(data).then(() => {
+      pageReadNotification(data).then(() => {
         // this.getUnreadNum() //未读消息数量
         this.getData()
         this.read = read
-        $emit(this.$root, 'notificationUpdate')
+        this.$root.$emit('notificationUpdate')
         const msg = {
           type: 'notification',
         }
@@ -144,11 +147,11 @@ export default {
       // }
       where = JSON.stringify(where)
       const read = this.read
-      notificationApi.readAll(where).then(() => {
+      readAllNotifications(where).then(() => {
         // this.getUnreadNum() //未读消息数量
         this.getData()
         this.read = read
-        $emit(this.$root, 'notificationUpdate')
+        this.$root.$emit('notificationUpdate')
         const msg = {
           type: 'notification',
         }
@@ -328,8 +331,8 @@ $unreadColor: #ee5353;
   }
   .list-item {
     position: relative;
-    background-color: map.get($bgColor, white);
-    border-bottom: 1px solid map.get($bgColor, disable);
+    background-color: var(--color-white);
+    border-bottom: 1px solid var(--bg-disable);
     .list-item-content {
       position: relative;
       min-height: 50px;
@@ -347,15 +350,15 @@ $unreadColor: #ee5353;
       border-radius: 50%;
     }
     .list-item-desc {
-      color: map.get($fontColor, light);
+      color: var(--text-light);
     }
     .list-item-time {
       float: right;
-      color: map.get($fontColor, light);
-      font-size: $fontBaseTitle;
+      color: var(--text-light);
+      font-size: var(--font-base-title);
     }
     &:hover {
-      background: map.get($bgColor, normal);
+      background: var(--bg-normal);
     }
   }
 }
@@ -389,12 +392,12 @@ $unreadColor: #ee5353;
   .el-tabs__item {
     height: 40px;
     line-height: 40px;
-    font-size: $fontBaseTitle;
-    // color: map.get($fontColor, light);
+    font-size: var(--font-base-title);
+    // color: var(--text-light);
     font-weight: 400;
     &.is-active {
       font-weight: 500;
-      // color: map.get($color, primary);
+      // color: var(--color-primary);
     }
   }
 }

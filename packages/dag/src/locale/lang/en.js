@@ -993,6 +993,7 @@ export default {
   packages_dag_noPkSyncMode_ADD_HASH: 'Add Hash Column',
   packages_dag_noPkSyncMode_ALL_COLUMNS: 'Full Column Index',
   packages_dag_noPKVirtualFieldName: 'Hash Column Name',
+  packages_dag_stream_offset: 'Stream Offset',
   packages_dag_join_keys_empty:
     'Association conditions for {tableName} cannot be empty',
   packages_dag_join_keys_field_empty:

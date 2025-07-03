@@ -16,15 +16,15 @@
 
 .link-primary {
   // color: #0d6efd;
-  color: map.get($color, primary);
+  color: var(--color-primary);
 }
 
 .link-primary:hover {
-  color: map.get($color, lprimary);
+  color: var(--color-lprimary);
 }
 
 .link-primary:focus {
-  color: map.get($color, dprimary);
+  color: var(--color-dprimary);
 }
 
 .link-secondary {
@@ -566,7 +566,7 @@
 }
 
 .border-form {
-  border-color: map.get($borderColor, form) !important;
+  border-color: var(--border-form) !important;
 }
 
 .border-1 {
@@ -1989,6 +1989,10 @@
   padding: 0 !important;
 }
 
+.p-0\.5 {
+  padding: 0.125rem !important;
+}
+
 .p-1 {
   padding: 0.25rem !important;
 }
@@ -2584,6 +2588,10 @@
   line-height: 2 !important;
 }
 
+.lh-6 {
+  line-height: 1.5rem !important;
+}
+
 .lh-8 {
   line-height: 2rem !important;
 }
@@ -2653,7 +2661,7 @@
 /* rtl:end:remove */
 .text-primary {
   // color: #0d6efd !important;
-  color: map.get($color, primary) !important;
+  color: var(--color-primary) !important;
 }
 
 .text-secondary {
@@ -2685,7 +2693,7 @@
 }
 
 .text-white {
-  color: map.get($fontColor, white) !important;
+  color: var(--text-white) !important;
 }
 
 .text-body {
@@ -2713,7 +2721,7 @@
 }
 
 .bg-primary {
-  background-color: map.get($color, primary) !important;
+  background-color: var(--color-primary) !important;
 }
 
 .bg-secondary {
@@ -12173,65 +12181,67 @@
 
 //TODO 应该通过语法生成 color-* 的颜色原子类
 .color-primary {
-  color: map.get($color, primary) !important;
+  color: var(--color-primary) !important;
 }
 
 .color-danger {
-  color: map.get($color, danger) !important;
+  color: var(--color-danger) !important;
 }
 
 .color-success {
-  color: map.get($color, success) !important;
+  color: var(--color-success) !important;
 }
 
 .color-warning {
-  color: map.get($color, warning) !important;
+  color: var(--color-warning) !important;
 }
 
 .color-lprimary {
-  color: map.get($color, lprimary) !important;
+  color: var(--color-lprimary) !important;
 }
 
 .color-lsuccess {
-  color: map.get($color, lsuccess) !important;
+  color: var(--color-lsuccess) !important;
 }
 
 .color-info {
-  color: map.get($color, info) !important;
+  color: var(--color-info) !important;
 }
 
 .color-linfo {
-  color: map.get($color, linfo) !important;
+  color: var(--color-linfo) !important;
 }
 
 .color-disable {
-  color: map.get($color, disable) !important;
+  color: var(--color-disable) !important;
 }
 
 // 字体颜色
-.font-color-dark {
-  color: map.get($fontColor, dark);
-}
 
-.font-color-normal {
-  color: map.get($fontColor, normal);
-}
-
-.font-color-light {
-  color: map.get($fontColor, light);
+.font-color-sslight {
+  color: var(--text-sslight);
 }
 
 .font-color-slight {
-  color: map.get($fontColor, slight);
+  color: var(--text-slight);
 }
 
-.font-color-sslight {
-  color: map.get($fontColor, sslight);
+.font-color-light {
+  color: var(--text-light);
+}
+
+
+.font-color-normal {
+  color: var(--text-normal);
+}
+
+.font-color-dark {
+  color: var(--text-dark);
 }
 
 // 背景颜色
 .bg-color-primary {
-  background-color: map.get($color, primary) !important;
+  background-color: var(--color-primary) !important;
 }
 
 .bg-color-primary-light-9 {
@@ -12239,31 +12249,31 @@
 }
 
 .bg-color-danger {
-  background-color: map.get($color, danger) !important;
+  background-color: var(--color-danger) !important;
 }
 
 .bg-color-success {
-  background-color: map.get($color, success) !important;
+  background-color: var(--color-success) !important;
 }
 
 .bg-color-warning {
-  background-color: map.get($color, warning) !important;
+  background-color: var(--color-warning) !important;
 }
 
 .bg-color-disable {
-  background-color: map.get($bgColor, disable) !important;
+  background-color: var(--bg-disable) !important;
 }
 
 .bg-color-main {
-  background-color: map.get($bgColor, main) !important;
+  background-color: var(--bg-main) !important;
 }
 
 .bg-color-white {
-  background-color: map.get($bgColor, white) !important;
+  background-color: var(--color-white) !important;
 }
 
 .bg-color-normal {
-  background-color: map.get($bgColor, normal) !important;
+  background-color: var(--bg-normal) !important;
 }
 
 /*
@@ -12457,7 +12467,7 @@
 
 // icon
 .icon-color-normal {
-  color: map.get($iconFillColor, normal) !important;
+  color: var(--icon-n2) !important;
 }
 
 // TODO: 将来使用Tailwind CSS 或者 Windi CSS 替换
@@ -12509,7 +12519,7 @@
   line-height: 24px;
   font-weight: 500;
   font-size: 16px;
-  color: map.get($fontColor, dark);
+  color: var(--text-dark);
   padding-left: 12px;
   --bar-width: 3px;
   $bar-width: 3px;
@@ -12523,7 +12533,7 @@
     top: 50%;
     transform: translateY(-50%);
     position: absolute;
-    background-color: map.get($color, primary);
+    background-color: var(--color-primary);
     //background-color: #bcbfc3;
   }
 }
@@ -12557,7 +12567,7 @@
 
 .active-primary {
   background-color: rgb(59 71 229 / 10%) !important;
-  color: map-get($color, primary) !important;
+  color: var(--color-primary) !important;
 }
 
 .bg-fill-hover {
@@ -12575,9 +12585,6 @@
 .hover\:bg-light:hover {
   background-color: #f8f9fa !important;
 }
-
-
-
 
 .break-all {
   word-break: break-all;
@@ -12625,7 +12632,7 @@
 }
 
 
-.list-item-hover:hover {
+.list-item-hover:hover:not(.bg-white) {
   background-color: var(--fill-hover) !important;
 }
 

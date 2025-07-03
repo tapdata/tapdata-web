@@ -161,7 +161,7 @@ export default {
 <style lang="scss" scoped>
 .view-radio-group {
   :deep(.el-radio-button__orig-radio:checked + .el-radio-button__inner) {
-    background-color: map.get($color, primary);
+    background-color: var(--color-primary);
     color: #fff;
   }
 }

@@ -1,11 +1,9 @@
-import Main from './Main'
-import { observer } from '@formily/reactive-vue'
-import { ref, computed, defineComponent } from 'vue'
-import { useForm, FormItem } from '@tap/form'
-import { VIcon } from '@tap/component'
+import { FormItem, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
-import SchemaFieldList from './List.vue'
+import { computed, defineComponent, ref } from 'vue'
 import { connect, mapProps } from '../../../../../form'
+import SchemaFieldList from './List.vue'
+import Main from './Main.vue'
 
 export const fieldInference = connect(
   defineComponent({
@@ -15,7 +13,10 @@ export const fieldInference = connect(
       const form = formRef.value
 
       const batchRuleCounts = computed(() => {
-        return form.values.fieldChangeRules?.filter((t) => t.scope === 'Node').length || 0
+        return (
+          form.values.fieldChangeRules?.filter((t) => t.scope === 'Node')
+            .length || 0
+        )
       })
 
       const fieldMapping = ref(null)
@@ -34,13 +35,27 @@ export const fieldInference = connect(
             <span>{i18n.t('packages_dag_nodes_database_tuiyanjieguo')}</span>
 
             {batchRuleCounts.value > 0 && (
-              <div class="flex align-items-center cursor-pointer color-primary" onClick={open}>
+              <div
+                class="flex align-items-center cursor-pointer color-primary"
+                onClick={open}
+              >
                 <VIcon>info</VIcon>
-                <span v-html={i18n.t('packages_form_batch_rule_active', { val: batchRuleCounts.value })}></span>
+                <span
+                  v-html={i18n.t('packages_form_batch_rule_active', {
+                    val: batchRuleCounts.value,
+                  })}
+                ></span>
               </div>
             )}
 
-            <ElButton class="ml-auto" disabled={props.disabled} type="primary" text tag="a" onClick={rollbackAll}>
+            <ElButton
+              class="ml-auto"
+              disabled={props.disabled}
+              type="primary"
+              text
+              tag="a"
+              onClick={rollbackAll}
+            >
               <div class="flex align-center px-1">
                 <VIcon class="mr-1">reset</VIcon>
                 {i18n.t('packages_form_field_inference_main_quanbuhuifumo')}
@@ -49,11 +64,19 @@ export const fieldInference = connect(
           </div>
         )
 
-        console.log('form.values.uniqueIndexEnable', form.values.uniqueIndexEnable)
+        console.log(
+          'form.values.uniqueIndexEnable',
+          form.values.uniqueIndexEnable,
+        )
         return (
           <div>
             <FormItem.BaseItem label={label}>
-              <Main ref="fieldMapping" form={form} attrs={attrs} uniqueIndexEnable={form.values.uniqueIndexEnable} />
+              <Main
+                ref="fieldMapping"
+                form={form}
+                attrs={attrs}
+                uniqueIndexEnable={form.values.uniqueIndexEnable}
+              />
             </FormItem.BaseItem>
           </div>
         )

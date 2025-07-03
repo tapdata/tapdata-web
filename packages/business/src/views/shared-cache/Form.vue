@@ -5,10 +5,9 @@ import {
   metadataInstancesApi,
   sharedCacheApi,
 } from '@tap/api'
-import { Switch as ConfirmSwitch } from '@tap/form'
+import { Switch as ConfirmSwitch } from '@tap/form/src/components/switch'
 import i18n from '@tap/i18n'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
-import ConnectionListSelect from '../connections/ListSelect'
+import ConnectionListSelect from '../connections/ListSelect.vue'
 import CodeView from './CodeView.vue'
 import FieldSelector from './FieldSelector'
 
@@ -324,14 +323,14 @@ export default {
             },
           }
           const method = id ? 'patch' : 'post'
-          $emit(this, 'update:loading', true)
+          this.$emit('update:loading', true)
           sharedCacheApi[method](params)
             .then(() => {
               this.$message.success(this.$t('public_message_save_ok'))
-              $emit(this, 'success')
+              this.$emit('success')
             })
             .finally(() => {
-              $emit(this, 'update:loading', false)
+              this.$emit('update:loading', false)
             })
         }
       })

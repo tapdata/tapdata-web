@@ -2,24 +2,24 @@
 import { CircleCheckFilled, CircleCloseFilled } from '@element-plus/icons-vue'
 import { inspectApi, metadataInstancesApi } from '@tap/api'
 import loadingImg from '@tap/assets/icons/loading.svg'
+import FilterBar from '@tap/component/src/filter-bar/Main.vue'
 import {
   ExportOutlined,
   FileAddColorful,
   FileDocxColorful,
-  FilterBar,
   ImportOutlined,
-  VIcon,
-} from '@tap/component'
+} from '@tap/component/src/icon'
+import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { TablePage } from '../../components'
 import { ErrorMessage } from '../../components/error-message'
 import PageContainer from '../../components/PageContainer.vue'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create.vue'
+import TablePage from '../../components/TablePage.vue'
 import { inspectMethod, statusMap, typeList as verifyTypeList } from './const'
 
 import type { UploadUserFile } from 'element-plus'
@@ -288,25 +288,21 @@ const startTask = (id: string) => {
     })
 }
 
-const remove = (id: string, row: InspectItem) => {
+const remove = async (id: string, row: InspectItem) => {
   const name = row.name
-  ElMessageBox.confirm(
-    `${t('packages_business_verification_deleteMessage')} ${name}?`,
+  const confirmed = await Modal.confirm(
     t('packages_business_dataFlow_importantReminder'),
+    `${t('packages_business_verification_deleteMessage')} ${name}?`,
     {
       confirmButtonText: t('public_button_delete'),
-      cancelButtonText: t('public_button_cancel'),
-      type: 'warning',
     },
-  ).then((resFlag) => {
-    if (!resFlag) {
-      return
-    }
-    inspectApi.delete(id).then(() => {
-      ElMessage.success(t('public_message_delete_ok'))
-      table.value?.fetch()
-    })
-  })
+  )
+
+  if (confirmed) {
+    await inspectApi.delete(id)
+    ElMessage.success(t('public_message_delete_ok'))
+    table.value?.fetch()
+  }
 }
 
 const goEdit = (id: string, flowId?: string) => {

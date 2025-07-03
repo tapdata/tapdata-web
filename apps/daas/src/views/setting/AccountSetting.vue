@@ -2,14 +2,13 @@
 import { EditPen, Refresh } from '@element-plus/icons-vue'
 import { usersApi } from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { IconButton } from '@tap/component'
+import { IconButton } from '@tap/component/src/icon-button'
 import Cookie from '@tap/shared/src/cookie'
 import { copyToClipboard } from '@tap/shared/src/util'
 export default {
   name: 'List',
   components: {
     IconButton,
-    EditPen,
     PageContainer,
   },
   data() {
@@ -177,13 +176,10 @@ export default {
           break
         case 'accessCode':
           this.$confirm(
-            this.$t('account_accessCode_tip'),
             this.$t('account_accessCode_confirm'),
+            this.$t('account_accessCode_tip'),
             {
-              confirmButtonText: this.$t('public_button_confirm'),
-              cancelButtonText: this.$t('public_button_cancel'),
               dangerouslyUseHTMLString: true,
-              type: 'warning',
             },
           ).then((res) => {
             if (res) {
@@ -460,7 +456,7 @@ $unreadColor: #ee5353;
   .title {
     padding-bottom: 20px;
     font-size: 14px;
-    color: map.get($fontColor, dark);
+    color: var(--text-dark);
     font-weight: bold;
   }
   .content {

@@ -1,17 +1,18 @@
 <script>
-import { logcollectorApi, taskApi, workerApi } from '@tap/api'
-import { FilterBar, VTable } from '@tap/component'
+import { logcollectorApi, taskApi } from '@tap/api'
+import { VTable } from '@tap/component/src/base/v-table'
+import { FilterBar } from '@tap/component/src/filter-bar'
 import i18n from '@tap/i18n'
 import { calcTimeUnit, openUrl } from '@tap/shared'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
 
-import { TablePage, TaskStatus } from '../../components'
 import PageContainer from '../../components/PageContainer.vue'
+import TablePage from '../../components/TablePage.vue'
+import TaskStatus from '../../components/TaskStatus.vue'
 import { makeStatusAndDisabled } from '../../shared'
-import Editor from './Editor'
+import Editor from './Editor.vue'
 
-let timeout = null
 export default {
   components: {
     PageContainer,
@@ -118,15 +119,15 @@ export default {
   },
   mounted() {
     //定时轮询
-    timeout = setInterval(() => {
+    this.timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
     }, 8000)
     this.searchParams = Object.assign(this.searchParams, {
       taskName: this.$route.query?.keyword || '',
     })
   },
-  unmounted() {
-    clearInterval(timeout)
+  beforeUnmount() {
+    clearInterval(this.timeout)
   },
   methods: {
     // 获取列表数据
@@ -256,9 +257,7 @@ export default {
 
     forceStop(ids, row) {
       const msgObj = this.getConfirmMessage('force_stop', row)
-      this.$confirm(msgObj.msg, '', {
-        type: 'warning',
-        showClose: false,
+      this.$confirm(this.$t('public_message_title_prompt'), msgObj.msg, {
         dangerouslyUseHTMLString: true,
       }).then((resFlag) => {
         if (!resFlag) {
@@ -275,11 +274,8 @@ export default {
 
     stop(ids) {
       this.$confirm(
-        this.$t('packages_business_stop_confirm_message'),
         this.$t('packages_business_important_reminder'),
-        {
-          type: 'warning',
-        },
+        this.$t('packages_business_stop_confirm_message'),
       ).then((resFlag) => {
         if (!resFlag) {
           return
@@ -333,8 +329,7 @@ export default {
     handleReset(row) {
       const id = row.id
       const msgObj = this.getConfirmMessage('initialize', row)
-      this.$confirm(msgObj.msg, msgObj.title, {
-        type: 'warning',
+      this.$confirm(msgObj.title, msgObj.msg, {
         dangerouslyUseHTMLString: true,
       }).then((resFlag) => {
         if (!resFlag) {
@@ -357,12 +352,11 @@ export default {
       this.showUsingTaskDialog.list = await taskApi.taskConsoleRelations(filter)
 
       this.$confirm(
+        this.$t('packages_ldp_src_tablepreview_querenshanchu'),
         this.$t('packages_business_shared_mining_list_shanchurenwus', {
           val1: row.name,
         }),
-        '',
         {
-          type: 'warning',
           dangerouslyUseHTMLString: true,
         },
       ).then((flag) => {
@@ -727,7 +721,7 @@ export default {
 .share-list-wrap {
   height: 100%;
   .refresh {
-    color: map.get($color, primary);
+    color: var(--color-primary);
     font-weight: normal;
     font-size: 12px;
     cursor: pointer;
@@ -755,7 +749,7 @@ export default {
     }
     .metadata-name {
       .name {
-        color: map.get($color, primary);
+        color: var(--color-primary);
         a {
           color: inherit;
           cursor: pointer;
@@ -766,12 +760,12 @@ export default {
       }
       .tag {
         margin-left: 5px;
-        color: map.get($fontColor, slight);
-        background: map.get($bgColor, main);
+        color: var(--text-slight);
+        background: var(--bg-main);
         border: 1px solid #dedee4;
       }
       .parent {
-        color: map.get($fontColor, slight);
+        color: var(--text-slight);
       }
     }
   }

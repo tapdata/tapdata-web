@@ -1,7 +1,8 @@
 import { observer } from '@formily/reactive-vue'
 import { SchemaExpressionScopeSymbol } from '@formily/vue'
 import { taskApi } from '@tap/api'
-import { IconButton, VEmpty, VIcon } from '@tap/component'
+import { IconButton } from '@tap/component/src/icon-button'
+import { VEmpty } from '@tap/component/src/base/v-empty'
 import {
   connect,
   FormGrid,
@@ -17,7 +18,6 @@ import { debounce } from 'lodash-es'
 import {
   computed,
   defineComponent,
-  getCurrentInstance,
   inject,
   reactive,
   ref,

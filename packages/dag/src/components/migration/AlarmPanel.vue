@@ -1,16 +1,12 @@
-<template>
-  <FormRender :form="form" :schema="schema" :scope="formScope" :key="activeNodeId" />
-</template>
-
 <script>
-import i18n from '@tap/i18n'
-
-import { mapGetters, mapState } from 'vuex'
 import { createForm, onFormValuesChange } from '@formily/core'
+
 import { observer } from '@formily/reactive-vue'
-import FormRender from '../FormRender'
+import { getAlarmChannels, taskApi } from '@tap/api'
+import i18n from '@tap/i18n'
 import { debounce } from 'lodash-es'
-import { alarmApi, taskApi } from '@tap/api'
+import { mapGetters, mapState } from 'vuex'
+import FormRender from '../FormRender'
 
 export default {
   name: 'SettingPanel',
@@ -55,13 +51,11 @@ export default {
 
   methods: {
     init: debounce(function () {
-      if (this.isNode) {
-        if (!this.allNodesResult.length) {
-          this.allNodesResult = this.allNodes
-        }
+      if (this.isNode && !this.allNodesResult.length) {
+        this.allNodesResult = this.allNodes
       }
       //获取支持通知方式
-      alarmApi.channels().then((data) => {
+      getAlarmChannels().then((data) => {
         this.channels = []
         this.channels = data.map((item) => item.type)
         this.loadSchema()
@@ -72,25 +66,27 @@ export default {
     useEffects() {
       onFormValuesChange((form) => {
         const values = JSON.parse(JSON.stringify(form.values))
-        this.isNode ? this.saveNodeSettings(values, this) : this.saveTaskSettings(values, this)
+        this.isNode
+          ? this.saveNodeSettings(values, this)
+          : this.saveTaskSettings(values, this)
       })
     },
 
     saveTaskSettings: debounce((values, _self) => {
       const { settings } = _self
-      let { id, alarmSettings, alarmRules } = settings
+      const { id, alarmSettings, alarmRules } = settings
       alarmSettings.forEach((el) => {
-        for (let key in el) {
+        for (const key in el) {
           el[key] = values[el.key][key]
         }
       })
       alarmRules.forEach((el) => {
-        for (let key in el) {
+        for (const key in el) {
           el[key] = values[el.key][key]
         }
         //单位转化
-        el['point'] = Math.ceil(el['point'] * 12) < 1 ? 1 : Math.ceil(el['point'] * 12)
-        el['ms'] = Math.ceil(el['ms'] * 1000) < 1 ? 1 : Math.ceil(el['ms'] * 1000)
+        el.point = Math.max(Math.ceil(el.point * 12), 1)
+        el.ms = Math.max(Math.ceil(el.ms * 1000), 1)
       })
       taskApi.patch({
         id,
@@ -102,21 +98,21 @@ export default {
     saveNodeSettings: debounce((values, _self) => {
       const { allEdges, activeNodeId, settings, allNodesResult } = _self
       const { id } = settings
-      let findOne = allNodesResult.find((t) => t.id === activeNodeId) || {}
-      let alarmSettings = findOne.alarmSettings || []
-      let alarmRules = findOne.alarmRules || []
+      const findOne = allNodesResult.find((t) => t.id === activeNodeId) || {}
+      const alarmSettings = findOne.alarmSettings || []
+      const alarmRules = findOne.alarmRules || []
       alarmSettings.forEach((el) => {
-        for (let key in el) {
+        for (const key in el) {
           el[key] = values[el.key][key]
         }
       })
       alarmRules.forEach((el) => {
-        for (let key in el) {
+        for (const key in el) {
           el[key] = values[el.key][key]
         }
         //单位转化
-        el['point'] = Math.ceil(el['point'] * 12) < 1 ? 1 : Math.ceil(el['point'] * 12)
-        el['ms'] = Math.ceil(el['ms'] * 1000) < 1 ? 1 : Math.ceil(el['ms'] * 1000)
+        el.point = Math.max(Math.ceil(el.point * 12), 1)
+        el.ms = Math.max(Math.ceil(el.ms * 1000), 1)
       })
       const dag = {
         edges: allEdges,
@@ -171,12 +167,15 @@ export default {
                   //   'DATANODE_TCP_CONNECT_CONSUME.ms'
                   // ),
                   'DATANODE_AVERAGE_HANDLE_CONSUME.open': this.getSwitch(
-                    i18n.t('packages_business_setting_alarmnotification_dangshujuyuanjie'),
+                    i18n.t(
+                      'packages_business_setting_alarmnotification_dangshujuyuanjie',
+                    ),
                     'DATANODE_AVERAGE_HANDLE_CONSUME.notify',
                   ),
-                  'DATANODE_AVERAGE_HANDLE_CONSUME.notify': this.getCheckboxGroup(
-                    'DATANODE_AVERAGE_HANDLE_CONSUME.open',
-                  ),
+                  'DATANODE_AVERAGE_HANDLE_CONSUME.notify':
+                    this.getCheckboxGroup(
+                      'DATANODE_AVERAGE_HANDLE_CONSUME.open',
+                    ),
                   space3: this.getSpace(
                     'DATANODE_AVERAGE_HANDLE_CONSUME.point',
                     'DATANODE_AVERAGE_HANDLE_CONSUME.equalsFlag',
@@ -196,12 +195,15 @@ export default {
                 type: 'void',
                 properties: {
                   'PROCESSNODE_AVERAGE_HANDLE_CONSUME.open': this.getSwitch(
-                    i18n.t('packages_business_setting_alarmnotification_dangjiediandeping'),
+                    i18n.t(
+                      'packages_business_setting_alarmnotification_dangjiediandeping',
+                    ),
                     'PROCESSNODE_AVERAGE_HANDLE_CONSUME.notify',
                   ),
-                  'PROCESSNODE_AVERAGE_HANDLE_CONSUME.notify': this.getCheckboxGroup(
-                    'PROCESSNODE_AVERAGE_HANDLE_CONSUME.open',
-                  ),
+                  'PROCESSNODE_AVERAGE_HANDLE_CONSUME.notify':
+                    this.getCheckboxGroup(
+                      'PROCESSNODE_AVERAGE_HANDLE_CONSUME.open',
+                    ),
                   space1: this.getSpace(
                     'PROCESSNODE_AVERAGE_HANDLE_CONSUME.point',
                     'PROCESSNODE_AVERAGE_HANDLE_CONSUME.equalsFlag',
@@ -224,32 +226,48 @@ export default {
                     i18n.t('packages_dag_migration_alarmpanel_renwuyunxingchu'),
                     'TASK_STATUS_ERROR.notify',
                   ),
-                  'TASK_STATUS_ERROR.notify': this.getCheckboxGroup('TASK_STATUS_ERROR.open'),
+                  'TASK_STATUS_ERROR.notify': this.getCheckboxGroup(
+                    'TASK_STATUS_ERROR.open',
+                  ),
                   // 'TASK_INSPECT_ERROR.open': this.getSwitch(
                   //   i18n.t('packages_dag_migration_alarmpanel_renwujiaoyanchu'),
                   //   'TASK_INSPECT_ERROR.notify'
                   // ),
                   // 'TASK_INSPECT_ERROR.notify': this.getCheckboxGroup('TASK_INSPECT_ERROR.open'),
                   'TASK_FULL_COMPLETE.open': this.getSwitch(
-                    i18n.t('packages_dag_migration_alarmpanel_renwuquanliangwan'),
+                    i18n.t(
+                      'packages_dag_migration_alarmpanel_renwuquanliangwan',
+                    ),
                     'TASK_FULL_COMPLETE.notify',
                   ),
-                  'TASK_FULL_COMPLETE.notify': this.getCheckboxGroup('TASK_FULL_COMPLETE.open'),
+                  'TASK_FULL_COMPLETE.notify': this.getCheckboxGroup(
+                    'TASK_FULL_COMPLETE.open',
+                  ),
                   'TASK_INCREMENT_START.open': this.getSwitch(
-                    i18n.t('packages_dag_migration_alarmpanel_renwuzengliangkai'),
+                    i18n.t(
+                      'packages_dag_migration_alarmpanel_renwuzengliangkai',
+                    ),
                     'TASK_INCREMENT_START.notify',
                   ),
-                  'TASK_INCREMENT_START.notify': this.getCheckboxGroup('TASK_INCREMENT_START.open'),
+                  'TASK_INCREMENT_START.notify': this.getCheckboxGroup(
+                    'TASK_INCREMENT_START.open',
+                  ),
                   'TASK_STATUS_STOP.open': this.getSwitch(
                     i18n.t('packages_dag_migration_alarmpanel_renwutingzhigao'),
                     'TASK_STATUS_STOP.notify',
                   ),
-                  'TASK_STATUS_STOP.notify': this.getCheckboxGroup('TASK_STATUS_STOP.open'),
+                  'TASK_STATUS_STOP.notify': this.getCheckboxGroup(
+                    'TASK_STATUS_STOP.open',
+                  ),
                   'TASK_INCREMENT_DELAY.open': this.getSwitch(
-                    i18n.t('packages_dag_migration_alarmpanel_renwuzengliangyan'),
+                    i18n.t(
+                      'packages_dag_migration_alarmpanel_renwuzengliangyan',
+                    ),
                     'TASK_INCREMENT_DELAY.notify',
                   ),
-                  'TASK_INCREMENT_DELAY.notify': this.getCheckboxGroup('TASK_INCREMENT_DELAY.open'),
+                  'TASK_INCREMENT_DELAY.notify': this.getCheckboxGroup(
+                    'TASK_INCREMENT_DELAY.open',
+                  ),
                   space1: this.getSpace(
                     'TASK_INCREMENT_DELAY.point',
                     'TASK_INCREMENT_DELAY.equalsFlag',
@@ -271,18 +289,19 @@ export default {
       // 节点类型
       if (this.isNode) {
         const { activeNodeId, allNodesResult } = this
-        const activeNode = allNodesResult.find((t) => t.id === activeNodeId) || {}
+        const activeNode =
+          allNodesResult.find((t) => t.id === activeNodeId) || {}
         alarmSettings = activeNode.alarmSettings || []
         alarmRules = activeNode.alarmRules || []
       }
       const alarmRulesMap = alarmRules.reduce((cur, next) => {
-        let rule = (cur[next.key] = { ...next })
+        const rule = (cur[next.key] = { ...next })
         //单位转化
-        rule.point = Math.ceil(next.point / 12) < 1 ? 1 : Math.ceil(next.point / 12)
-        rule.ms = Math.ceil(next.ms / 1000) < 1 ? 1 : Math.ceil(next.ms / 1000)
+        rule.point = Math.max(Math.ceil(next.point / 12), 1)
+        rule.ms = Math.max(Math.ceil(next.ms / 1000), 1)
         return cur
       }, {})
-      let values = alarmSettings.reduce((cur, next) => {
+      const values = alarmSettings.reduce((cur, next) => {
         cur[next.key] = { ...next, ...alarmRulesMap[next.key] }
         return cur
       }, {})
@@ -294,7 +313,7 @@ export default {
     },
 
     getSwitch(title, key = '') {
-      let options = {
+      const options = {
         title,
         type: 'boolean',
         required: true,
@@ -312,7 +331,7 @@ export default {
     },
 
     getCheckboxGroup(key = '') {
-      let options = {
+      const options = {
         type: 'array',
         'x-decorator': 'FormItem',
         'x-component': 'Checkbox.Group',
@@ -322,7 +341,7 @@ export default {
         },
         default: ['SYSTEM'],
       }
-      let enums = []
+      const enums = []
       if (this.channels.includes('system')) {
         enums.push({
           label: i18n.t('packages_dag_migration_alarmpanel_xitongtongzhi'),
@@ -336,7 +355,7 @@ export default {
         })
       }
       if (import.meta.env.VUE_APP_PLATFORM !== 'DAAS') {
-        let isOpenid = window.__USER_INFO__?.openid
+        const isOpenid = window.__USER_INFO__?.openid
         if (this.channels.includes('wechat')) {
           enums.push({
             label: i18n.t('packages_business_notify_webchat_notification'),
@@ -423,12 +442,16 @@ export default {
     },
 
     getSpace(key1, key2, key3, key4) {
-      let result = {
+      const result = {
         type: 'void',
         'x-component': 'Space',
         properties: {},
       }
-      result.properties[key1] = this.getInputNumber(i18n.t('packages_dag_migration_alarmpanel_lianxu'), 10, key4)
+      result.properties[key1] = this.getInputNumber(
+        i18n.t('packages_dag_migration_alarmpanel_lianxu'),
+        10,
+        key4,
+      )
       result.properties[key2] = this.getSelect(i18n.t('public_time_m'))
       result.properties[key3] = this.getInputNumber('', 1000, key4)
       result.properties.ms = {
@@ -445,7 +468,8 @@ export default {
 
     getNodeType() {
       const { activeNodeId, allNodes } = this
-      const { type, $inputs, $outputs } = allNodes.find((t) => t.id === activeNodeId) || {}
+      const { type, $inputs, $outputs } =
+        allNodes.find((t) => t.id === activeNodeId) || {}
       if (!type) return ''
       if (type === 'database' || type === 'table') {
         if (!$inputs.length) return 'source'
@@ -456,6 +480,15 @@ export default {
   },
 }
 </script>
+
+<template>
+  <FormRender
+    :key="activeNodeId"
+    :form="form"
+    :schema="schema"
+    :scope="formScope"
+  />
+</template>
 
 <style lang="scss" scoped>
 .attr-panel {

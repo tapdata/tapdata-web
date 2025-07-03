@@ -1,8 +1,10 @@
 <script>
 import { apiMonitorApi } from '@tap/api'
-import { dayjs } from '@tap/business'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { Chart, FilterBar, VTable } from '@tap/component'
+import { dayjs } from '@tap/business/src/shared/dayjs'
+import { VTable } from '@tap/component/src/base/v-table'
+import { Chart } from '@tap/component/src/chart'
+import { FilterBar } from '@tap/component/src/filter-bar'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
 import { escapeRegExp } from 'lodash-es'
 
@@ -607,7 +609,7 @@ export default {
           </header>
           <FilterBar
             v-model:value="searchParams"
-            class="mb-2"
+            class="mb-4"
             :items="filterItems"
             @fetch="getApiList(1)"
           />
@@ -615,7 +617,7 @@ export default {
             ref="table"
             v-loading="loadingApiList"
             row-key="id"
-            class="data-flow-list"
+            class="data-flow-list has-border-t"
             :data="apiList"
             :default-sort="{ prop: 'createTime', order: 'descending' }"
             @expand-change="expandChange"
@@ -689,19 +691,19 @@ export default {
   }
   .api-monitor-total__tittle {
     font-size: 18px;
-    color: map.get($fontColor, dark);
+    color: var(--text-dark);
     height: 30px;
   }
   .api-monitor-total__text {
     font-size: 46px;
     line-height: 92px;
     font-weight: 500;
-    color: map.get($color, primary);
+    color: var(--color-primary);
   }
   .api-monitor-chart__text {
     font-size: 14px;
     font-weight: 500;
-    color: map.get($fontColor, dark);
+    color: var(--text-dark);
   }
   .api-monitor-card {
     box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
@@ -722,7 +724,7 @@ export default {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: map.get($color, primary);
+    background: var(--color-primary);
     display: inline-block;
   }
   //排序样式
@@ -745,10 +747,10 @@ export default {
     left: 6px;
     top: 11px;
     border: 4px solid transparent;
-    border-top-color: map.get($iconFillColor, normal);
+    border-top-color: var(--icon-n2);
   }
   .triangle-active {
-    border-top-color: map.get($color, primary);
+    border-top-color: var(--color-primary);
   }
   .api-monitor-triangle-top {
     display: inline-block;
@@ -757,11 +759,11 @@ export default {
     left: 6px;
     top: 0;
     border: 4px solid transparent;
-    border-bottom-color: map.get($iconFillColor, normal);
+    border-bottom-color: var(--icon-n2);
     cursor: pointer;
   }
   .active-top {
-    border-bottom-color: map.get($color, primary);
+    border-bottom-color: var(--color-primary);
   }
 }
 </style>

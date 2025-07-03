@@ -1,7 +1,8 @@
 import { observe } from '@formily/reactive'
 import { observer } from '@formily/reactive-vue'
 import { metadataInstancesApi } from '@tap/api'
-import { IconButton, OverflowTooltip, VIcon } from '@tap/component'
+import { IconButton } from '@tap/component/src/icon-button'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import {
   h as createElement,
   FormItem,

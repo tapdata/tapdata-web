@@ -1,15 +1,13 @@
 <script>
-import { notificationApi } from '@tap/api'
-import { ALARM_LEVEL_MAP } from '@tap/business'
+import { listNotifications, patchNotification } from '@tap/api'
+import { ALARM_LEVEL_MAP } from '@tap/business/src/shared/const'
 
-import { VIcon } from '@tap/component'
+import { $emit } from '@tap/shared/src/event'
 import { debounce, uniqBy } from 'lodash-es'
 import timeFunction from '@/mixins/timeFunction'
-import { $emit } from '../../../utils/gogocodeTransfer'
 import { TYPEMAP } from './tyepMap'
 
 export default {
-  components: { VIcon },
   mixins: [timeFunction],
   emits: ['notificationUpdate'],
   data() {
@@ -91,7 +89,7 @@ export default {
         size: 20,
         read: false,
       }
-      notificationApi.list(where).then((data) => {
+      listNotifications(where).then((data) => {
         const list = data?.items || []
         this.unRead = data?.total
         loadData &&
@@ -104,7 +102,7 @@ export default {
     },
     // 已读消息
     handleRead(id) {
-      notificationApi.patch({ read: true, id }).then(() => {
+      patchNotification({ read: true, id }).then(() => {
         this.getUnreadData()
         $emit(this.$root, 'notificationUpdate')
       })
@@ -245,11 +243,11 @@ export default {
     }
     .notification-item {
       padding: 5px 20px 4px 20px;
-      border-bottom: 1px solid map.get($borderColor, light);
-      font-size: $fontBaseTitle;
-      color: map.get($fontColor, light);
+      border-bottom: 1px solid var(--border-light);
+      font-size: var(--font-base-title);
+      color: var(--text-light);
       .primary {
-        color: map.get($color, primary);
+        color: var(--color-primary);
       }
       .unread-1zPaAXtSu {
         top: 22px;
@@ -267,8 +265,8 @@ export default {
       }
       .item-time {
         margin-top: 5px;
-        color: map.get($fontColor, light);
-        font-size: $fontBaseTitle;
+        color: var(--text-light);
+        font-size: var(--font-base-title);
       }
     }
     .connection-table__empty {

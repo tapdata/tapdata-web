@@ -1,6 +1,6 @@
 <script>
-import { appApi } from '@tap/api'
-import { InfiniteSelect as AsyncSelect } from '@tap/form'
+import { fetchApps } from '@tap/api'
+import AsyncSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 
 export default {
   name: 'ListSelect',
@@ -32,11 +32,12 @@ export default {
     }
   },
   watch: {
-    value(v) {
-      if (this.form.value !== v) {
+    value: {
+      handler(v) {
         this.form.value = v
         this.form.label = this.label
-      }
+      },
+      immediate: true,
     },
   },
   methods: {
@@ -66,9 +67,7 @@ export default {
         })
       }
 
-      const res = await appApi.get({
-        filter: JSON.stringify(Object.assign(params, this.params)),
-      })
+      const res = await fetchApps(Object.assign(params, this.params))
 
       res.items = res.items.map((t) => {
         return {

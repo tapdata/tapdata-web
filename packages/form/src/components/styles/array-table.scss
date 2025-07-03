@@ -1,4 +1,5 @@
 $array-table-prefix-cls: '#{$formily-prefix}-form-array-table';
+$namespace: 'el';
 
 .#{$array-table-prefix-cls} {
   .#{$formily-prefix}-form-item:not(.#{$formily-prefix}-form-item-feedback-layout-popover),

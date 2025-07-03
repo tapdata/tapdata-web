@@ -1,8 +1,8 @@
 <script>
-import { connectionsApi, taskApi } from '@tap/api'
+import { getConnectionNoSchema, proxyApi, taskApi } from '@tap/api'
 
-import { SkipError } from '@tap/business'
-import { VEmpty } from '@tap/component'
+import SkipError from '@tap/business/src/views/task/SkipError.vue'
+import { VEmpty } from '@tap/component/src/base/v-empty'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
 import { titleChange } from '@tap/component/src/mixins/titleChange'
@@ -10,7 +10,7 @@ import i18n from '@tap/i18n'
 import { uuid } from '@tap/shared'
 import dagre from 'dagre'
 import { merge } from 'lodash-es'
-import { mapMutations } from 'vuex'
+import { getCurrentInstance, nextTick, provide, ref, shallowRef } from 'vue'
 import { MoveNodeCommand } from './command'
 import DFNode from './components/DFNode'
 import LeftSidebar from './components/LeftSidebar'
@@ -26,6 +26,7 @@ import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from './constants'
 import { config, jsPlumb } from './instance'
 import editor from './mixins/editor'
 import formScope from './mixins/formScope'
+
 import { allResourceIns } from './nodes/loader'
 
 export default {
@@ -49,6 +50,57 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   inject: ['buried'],
+
+  setup() {
+    const previewData = shallowRef(null)
+    const previewLoading = ref(false)
+
+    const ins = getCurrentInstance()
+
+    const handlePreview = async (nodeId) => {
+      previewLoading.value = true
+      ins.proxy.setActiveNode(nodeId)
+
+      nextTick(() => {
+        ins.proxy.scope?.formTab?.setActiveKey('previewTab')
+      })
+
+      const data = await proxyApi
+        .call({
+          className: 'TaskPreviewService',
+          method: 'preview',
+          args: [
+            JSON.stringify({
+              id: ins.proxy.dataflow.id,
+              dag: {
+                edges: ins.proxy.allEdges,
+                nodes: ins.proxy.allNodes,
+              },
+            }),
+            [],
+            1,
+          ],
+        })
+        .finally(() => (previewLoading.value = false))
+
+      if (data.code !== 200) {
+        ElMessage.error(data.message || 'Internal error')
+        return
+      }
+
+      previewData.value = data.nodeResult
+    }
+
+    provide('previewData', previewData)
+    provide('previewLoading', previewLoading)
+    provide('handlePreview', handlePreview)
+
+    return {
+      previewData,
+      previewLoading,
+      handlePreview,
+    }
+  },
 
   data() {
     return {
@@ -468,13 +520,9 @@ export default {
         this.$store.state.dataflow.taskId
       ) {
         this.$confirm(
-          this.$t('packages_dag_page_return_confirm_content'),
           this.$t('packages_dag_page_return_confirm_title'),
+          this.$t('packages_dag_page_return_confirm_content'),
           {
-            center: true,
-            customClass: 'pro-confirm',
-            type: 'warning',
-            closeOnClickModal: false,
             confirmButtonText: this.$t(
               'packages_dag_page_return_confirm_ok_text',
             ),
@@ -572,7 +620,7 @@ export default {
       if (!addNode) return
 
       try {
-        const con = await connectionsApi.get(connectionId)
+        const con = await getConnectionNoSchema(connectionId)
         this.handleAddNodeToPos(
           [-300, 300],
           this.$refs.leftSidebar.getNodeProps(con, tableName),
@@ -651,7 +699,7 @@ export default {
       this.setTaskId(this.$route.params.id)
 
       if (connectionId) {
-        connection = await connectionsApi.get(connectionId)
+        connection = await getConnectionNoSchema(connectionId)
       }
 
       if (by === 'transformation-materialized') {
@@ -707,6 +755,42 @@ export default {
         this.setMaterializedViewVisible(true)
       }, 120)
     },
+
+    // async handlePreview(nodeId, nodeData) {
+    //   this.previewLoading = true
+    //   this.currentPreviewNodeId = nodeId
+    //   this.setActiveNode(nodeId)
+
+    //   this.$nextTick(() => {
+    //     this.scope?.formTab?.setActiveKey('previewTab')
+    //   })
+
+    //   const data = await proxyApi
+    //     .call({
+    //       className: 'TaskPreviewService',
+    //       method: 'preview',
+    //       args: [
+    //         JSON.stringify({
+    //           id: this.dataflow.id,
+    //           dag: {
+    //             edges: this.allEdges,
+    //             nodes: this.allNodes,
+    //           },
+    //         }),
+    //         // inputs,
+    //         [],
+    //         1,
+    //       ],
+    //     })
+    //     .finally(() => (this.previewLoading = false))
+
+    //   if (data.code !== 200) {
+    //     this.$message.error(data.message || 'Internal error')
+    //     return
+    //   }
+
+    //   this.previewData = data.nodeResult
+    // },
   },
 }
 </script>
@@ -780,6 +864,7 @@ export default {
               :class="{
                 'options-active': nodeMenu.typeId === n.id,
               }"
+              :is-sync="dataflow.syncType === 'sync'"
               @drag-start="onNodeDragStart"
               @drag-move="onNodeDragMove"
               @drag-stop="onNodeDragStop"
@@ -790,6 +875,7 @@ export default {
               @disable="handleDisableNode($event, true)"
               @enable="handleDisableNode($event, false)"
               @show-node-popover="showNodePopover"
+              @preview="handlePreview"
             />
           </PaperScroller>
           <div

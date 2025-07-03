@@ -188,8 +188,8 @@ export default {
     height: 200px;
     padding: 20px;
     margin: 0;
-    color: map.get($fontColor, normal);
-    background-color: map.get($bgColor, disable);
+    color: var(--text-normal);
+    background-color: var(--bg-disable);
     border-radius: 2px;
   }
 }

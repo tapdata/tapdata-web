@@ -707,11 +707,7 @@ export default {
       const message = flag
         ? this.$t('agent_button_stop_tip_running')
         : this.$t('agent_button_stop_tip_no_running')
-      this.$confirm(message, this.$t('agent_button_stop_tip'), {
-        type: 'warning',
-        confirmButtonText: this.$t('public_button_confirm'),
-        cancelButtonText: this.$t('public_button_cancel'),
-      }).then((res) => {
+      this.$confirm(this.$t('agent_button_stop_tip'), message).then((res) => {
         if (res) {
           if (row.btnLoading) {
             row.btnLoading.stop = true
@@ -1059,7 +1055,7 @@ export default {
       const { subscribeDto = {} } = orderInfo
       const { subscribeType, totalAmount, status } = subscribeDto
       return (
-        !['active'].includes(status) ||
+        !['active', 'past_due'].includes(status) ||
         totalAmount === 0 ||
         subscribeType === 'recurring' ||
         row?.publicAgent
@@ -1168,14 +1164,13 @@ export default {
       const href =
         'https://market.aliyun.com/products/56024006/cmgj00061912.html?spm=5176.730005.result.4.519c3524QzKxHM&innerSource=search_tapdata#sku=yuncode5591200001'
       this.$confirm(
-        i18n.t('dfs_instance_instance_pclas', { val1: href }),
         i18n.t('dfs_instance_instance_shouquanmafuwu'),
+        i18n.t('dfs_instance_instance_pclas', { val1: href }),
         {
           dangerouslyUseHTMLString: true,
           confirmButtonText: i18n.t(
             'dfs_aliyun_market_checklicnese_jihuoshouquanma',
           ),
-          type: 'warning',
         },
       ).then((resFlag) => {
         if (resFlag) {
@@ -1303,11 +1298,8 @@ export default {
     //退订
     handleUnsubscribe(row = {}) {
       this.$confirm(
-        i18n.t('dfs_user_center_ninjiangtuidingr', { val1: row.content }),
         i18n.t('dfs_user_center_tuidingfuwu'),
-        {
-          type: 'warning',
-        },
+        i18n.t('dfs_user_center_ninjiangtuidingr', { val1: row.content }),
       ).then((res) => {
         if (!res) return
         const { paidType } = row
@@ -1335,11 +1327,8 @@ export default {
     //删除公共引擎
     handleDelete(row) {
       this.$confirm(
-        i18n.t('dfs_user_center_ninjiangtuidingr', { val1: row.content }),
         i18n.t('dfs_user_center_tuidingfuwu'),
-        {
-          type: 'warning',
-        },
+        i18n.t('dfs_user_center_ninjiangtuidingr', { val1: row.content }),
       ).then((res) => {
         if (!res) return
         this.$axios.post('tm/api/Workers/share/delete').then(() => {
@@ -1351,11 +1340,8 @@ export default {
     //删除存储
     handleDeleteMdb(row) {
       this.$confirm(
-        i18n.t('agent_button_delete_mdb_confirm_title'),
         i18n.t('button_delete'),
-        {
-          type: 'warning',
-        },
+        i18n.t('agent_button_delete_mdb_confirm_title'),
       ).then((res) => {
         if (!res) return
         let url = `api/tcm/mdb/share/${row.id}`
@@ -1379,10 +1365,9 @@ export default {
     handleVisitInfo(row = {}) {
       const { showUri, copyUri } = row.visitInfo || {}
       this.$confirm(
-        showUri || this.$t('public_data_no_data'),
         i18n.t('dfs_instance_instance_access_information'),
+        showUri || this.$t('public_data_no_data'),
         {
-          type: 'warning',
           confirmButtonText: i18n.t('public_button_copy'),
           showCancelButton: false,
         },
@@ -2195,28 +2180,28 @@ export default {
   }
 
   .instance-table__empty {
-    color: map.get($fontColor, light);
+    color: var(--text-light);
   }
 
   .upgrade-text {
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
-    color: map.get($color, dark);
+    color: var(--text-dark);
   }
 
   .upgrade-version {
     font-weight: 500;
     font-size: 14px;
     line-height: 20px;
-    color: map.get($color, dark);
+    color: var(--text-dark);
   }
 
   .upgrade-desc {
     font-weight: 400;
     font-size: 14px;
     line-height: 17px;
-    color: map.get($color, light);
+    color: var(--text-light);
   }
 
   .imgBox {
@@ -2279,12 +2264,12 @@ export default {
 }
 
 :deep(.el-dropdown-menu__item.dropdown-item--disabled) {
-  color: map.get($color, disable);
+  color: var(--color-disable);
   cursor: default;
 
   &:hover {
     background: unset;
-    color: map.get($color, disable);
+    color: var(--color-disable);
   }
 }
 

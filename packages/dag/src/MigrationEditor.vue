@@ -1,8 +1,9 @@
 <script>
-import { connectionsApi, taskApi } from '@tap/api'
+import { getConnectionNoSchema, taskApi } from '@tap/api'
 
-import { SkipError } from '@tap/business'
-import { VEmpty, VExpandXTransition } from '@tap/component'
+import SkipError from '@tap/business/src/views/task/SkipError.vue'
+import { VEmpty } from '@tap/component/src/base/v-empty'
+import { VExpandXTransition } from '@tap/component/src/base/v-expand-x-transition'
 import resize from '@tap/component/src/directives/resize'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
@@ -10,15 +11,15 @@ import { titleChange } from '@tap/component/src/mixins/titleChange'
 import i18n from '@tap/i18n'
 import { uuid } from '@tap/shared'
 import { merge } from 'lodash-es'
-import DFNode from './components/DFNode'
-import ConfigPanel from './components/migration/ConfigPanel'
-import ConsolePanel from './components/migration/ConsolePanel'
-import LeftSider from './components/migration/LeftSider'
-import NodePopover from './components/NodePopover'
+import DFNode from './components/DFNode.vue'
+import ConfigPanel from './components/migration/ConfigPanel.vue'
+import ConsolePanel from './components/migration/ConsolePanel.vue'
+import LeftSider from './components/migration/LeftSider.vue'
+import NodePopover from './components/NodePopover.vue'
 import PaperEmpty from './components/PaperEmpty.vue'
-import PaperScroller from './components/PaperScroller'
-import TopHeader from './components/TopHeader'
-import TransformLoading from './components/TransformLoading'
+import PaperScroller from './components/PaperScroller.vue'
+import TopHeader from './components/TopHeader.vue'
+import TransformLoading from './components/TransformLoading.vue'
 import { NODE_PREFIX } from './constants'
 import { config, jsPlumb } from './instance'
 import editor from './mixins/editor'
@@ -280,13 +281,9 @@ export default {
         this.$store.state.dataflow.taskId
       ) {
         this.$confirm(
-          this.$t('packages_dag_page_return_confirm_content'),
           this.$t('packages_dag_page_return_confirm_title'),
+          this.$t('packages_dag_page_return_confirm_content'),
           {
-            center: true,
-            customClass: 'pro-confirm',
-            type: 'warning',
-            closeOnClickModal: false,
             confirmButtonText: this.$t(
               'packages_dag_page_return_confirm_ok_text',
             ),
@@ -448,7 +445,7 @@ export default {
 
       this.jsPlumbIns.ready(async () => {
         try {
-          const con = await connectionsApi.get(connectionId)
+          const con = await getConnectionNoSchema(connectionId)
           this.handleAddNodeToPos([-300, 300], {
             name: tableName,
             type: 'database',
@@ -720,7 +717,7 @@ $sidebarBg: #fff;
   background: #fff;
   box-shadow: 0px 0px 30px rgb(0 0 0 / 6%);
   &:hover .v-icon {
-    color: map.get($color, primary);
+    color: var(--color-primary);
   }
 }
 </style>

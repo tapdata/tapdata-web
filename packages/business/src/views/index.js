@@ -1,51 +1,51 @@
-import ConnectionList from './connections/List.vue'
+import ApiApplicationList from './api-application/List.vue'
 import ConnectionForm from './connections/DatabaseForm.vue'
-import MigrateList from './task/MigrateList'
-import TaskList from './task/TaskList'
+import ConnectionList from './connections/List.vue'
 import ConnectionTest from './connections/Test.vue'
-import VerifyDetails from './verify/Details'
-import VerificationList from './verification/List'
-import VerificationForm from './verification/Form'
-import VerificationDetails from './verification/Details'
-import VerificationHistory from './verification/History'
-import VerificationResult from './verification/Result'
-import AlarmSetting from './setting/AlarmSetting'
+import CustomNodeList from './custom-node/List.vue'
+import DataServerDrawer from './data-server/Drawer.vue'
+import DataServerList from './data-server/List.vue'
+import ExternalStorageList from './external-storage/List.vue'
+import HeartbeatTableList from './heartbeat-table/List.vue'
+import NoticeList from './notice/List.vue'
 import AlarmNotification from './setting/AlarmNotification.vue'
-import CustomNodeList from './custom-node/List'
-import SharedMiningList from './shared-mining/List'
-import DataServerList from './data-server/List'
-import DataServerDrawer from './data-server/Drawer'
-import HeartbeatTableList from './heartbeat-table/List'
-import SharedCacheList from './shared-cache/List'
-import SharedCacheForm from './shared-cache/Form'
-import ApiApplicationList from './api-application/List'
-import ExternalStorageList from './external-storage/List'
-import NoticeList from './notice/List'
+import AlarmSetting from './setting/AlarmSetting.vue'
+import SharedCacheForm from './shared-cache/Form.vue'
+import SharedCacheList from './shared-cache/List.vue'
+import SharedMiningList from './shared-mining/List.vue'
+import MigrateList from './task/MigrateList.vue'
+import TaskList from './task/TaskList.vue'
+import VerificationDetails from './verification/Details.vue'
+import VerificationForm from './verification/Form.vue'
+import VerificationHistory from './verification/History.vue'
+import VerificationList from './verification/List.vue'
+import VerificationResult from './verification/Result.vue'
+import VerifyDetails from './verify/Details.vue'
 
 export {
+  AlarmNotification,
+  AlarmSetting,
+  ApiApplicationList,
   ConnectionForm,
   ConnectionList,
   ConnectionTest,
-  MigrateList,
-  TaskList,
-  VerifyDetails,
-  VerificationList,
-  VerificationForm,
-  VerificationDetails,
-  VerificationHistory,
-  VerificationResult,
-  AlarmSetting,
-  AlarmNotification,
   CustomNodeList,
-  SharedMiningList,
-  DataServerList,
   DataServerDrawer,
-  HeartbeatTableList,
-  SharedCacheList,
-  SharedCacheForm,
-  ApiApplicationList,
+  DataServerList,
   ExternalStorageList,
+  HeartbeatTableList,
+  MigrateList,
   NoticeList,
+  SharedCacheForm,
+  SharedCacheList,
+  SharedMiningList,
+  TaskList,
+  VerificationDetails,
+  VerificationForm,
+  VerificationHistory,
+  VerificationList,
+  VerificationResult,
+  VerifyDetails,
 }
 
 export * from './connections/util'

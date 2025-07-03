@@ -1561,7 +1561,7 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
 
 .icon-btn {
   &:hover {
-    background-color: map.get($bgColor, hover);
+    background-color: var(--bg-hover);
   }
 }
 

@@ -1,8 +1,8 @@
 <script>
 import { apiServerApi } from '@tap/api'
-import { TablePage } from '@tap/business'
+import TablePage from '@tap/business/src/components/TablePage.vue'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { FilterBar } from '@tap/component'
+import { FilterBar } from '@tap/component/src/filter-bar'
 import Cookie from '@tap/shared/src/cookie'
 import { escapeRegExp } from 'lodash-es'
 import { h } from 'vue'
@@ -135,9 +135,7 @@ export default {
       const message = h('p', [
         `${this.$t('public_message_delete_confirm')} ${item.clientName}`,
       ])
-      this.$confirm(message, '', {
-        type: 'warning',
-      }).then((resFlag) => {
+      this.$confirm(message).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -145,8 +143,6 @@ export default {
           this.$message.success(this.$t('public_message_delete_ok'))
           this.table.fetch()
         })
-        // .catch(() => {
-        // })
       })
     },
 

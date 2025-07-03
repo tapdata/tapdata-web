@@ -1,25 +1,26 @@
 <script>
 import {
   CancelToken,
-  connectionsApi,
   databaseTypesApi,
+  fetchConnections,
   metadataInstancesApi,
 } from '@tap/api'
-import { SceneDialog } from '@tap/business'
+import SceneDialog from '@tap/business/src/components/create-connection/SceneDialog.vue'
 import StageButton from '@tap/business/src/components/StageButton.vue'
-import { OverflowTooltip, VEmpty, VIcon } from '@tap/component'
+import { VEmpty } from '@tap/component/src/base/v-empty'
 import { mouseDrag } from '@tap/component/src/directives/mousedrag'
 import resize from '@tap/component/src/directives/resize'
-import { getInitialValuesInBySchema } from '@tap/form'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
+import { getInitialValuesInBySchema } from '@tap/form/src/shared/validate'
 import { useResizeObserver } from '@vueuse/core'
 import { getScrollBarWidth } from 'element-plus/es/utils/dom/scroll'
 import { debounce, escapeRegExp } from 'lodash-es'
 import { markRaw } from 'vue'
 import { mapGetters } from 'vuex'
-import BaseNode from './BaseNode'
-import ConnectionType from './ConnectionType'
-import CreateTable from './CreateTable'
-import NodeIcon from './NodeIcon'
+import BaseNode from './BaseNode.vue'
+import ConnectionType from './ConnectionType.vue'
+import CreateTable from './CreateTable.vue'
+import NodeIcon from './NodeIcon.vue'
 
 export default {
   name: 'LeftSidebar',
@@ -30,7 +31,6 @@ export default {
     VEmpty,
     OverflowTooltip,
     BaseNode,
-    VIcon,
     ConnectionType,
     StageButton,
   },
@@ -213,7 +213,7 @@ export default {
         $ne: 'System',
       }
 
-      return { filter: JSON.stringify(filter) }
+      return filter
     },
 
     async loadDatabase(loadMore) {
@@ -228,13 +228,11 @@ export default {
         this.dbPage = 1
       }
 
-      const data = await connectionsApi
-        .get(this.getDbFilter(), {
-          cancelToken: this.connectionCancelSource.token,
-        })
-        .finally(() => {
-          this.connectionCancelSource = null
-        })
+      const data = await fetchConnections(this.getDbFilter(), {
+        cancelToken: this.connectionCancelSource.token,
+      }).finally(() => {
+        this.connectionCancelSource = null
+      })
 
       this.dbTotal = data.total
 
@@ -736,7 +734,7 @@ export default {
                       onDrop,
                       onStop,
                     }"
-                    class="db-item flex align-center px-1 user-select-none rounded-2"
+                    class="db-item flex align-center px-1 user-select-none rounded-lg"
                     :class="{
                       grabbable: !stateIsReadonly,
                       active: activeConnection.id === db.id,
@@ -885,7 +883,7 @@ export default {
                   onDrop,
                   onStop,
                 }"
-                class="tb-item flex align-center px-2 user-select-none rounded-2"
+                class="tb-item flex align-center px-2 user-select-none rounded-lg"
                 :class="{ grabbable: !stateIsReadonly }"
                 @dblclick="onDBClick(tb.name)"
               >
@@ -948,7 +946,7 @@ export default {
               onDrop,
               onStop,
             }"
-            class="node-item flex align-center px-2 user-select-none rounded-2"
+            class="node-item flex align-center px-2 user-select-none rounded-lg"
             :class="{ grabbable: !stateIsReadonly }"
             @dblclick="onDoubleClickProcessor(n)"
           >
@@ -1008,7 +1006,7 @@ $hoverBg: #eef3ff;
     }
 
     .el-collapse-item__header {
-      color: map.get($fontColor, normal) !important;
+      color: var(--text-normal) !important;
     }
   }
 
@@ -1020,12 +1018,12 @@ $hoverBg: #eef3ff;
       border-radius: 4px;
 
       &.refresh {
-        color: map.get($iconFillColor, normal);
+        color: var(--icon-n2);
       }
 
       &:hover,
       &.active {
-        color: map.get($color, primary);
+        color: var(--color-primary);
         background: $hoverBg;
       }
 
@@ -1072,7 +1070,7 @@ $hoverBg: #eef3ff;
     .tb-item,
     .node-item {
       height: 28px;
-      font-size: $fontBaseTitle;
+      font-size: var(--font-base-title);
       &.active {
         background-color: #eef3ff;
       }
@@ -1196,7 +1194,7 @@ $hoverBg: #eef3ff;
     }
 
     &-txt {
-      font-size: $fontBaseTitle;
+      font-size: var(--font-base-title);
       line-height: 1;
       white-space: nowrap;
     }

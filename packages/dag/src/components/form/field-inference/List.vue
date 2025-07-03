@@ -1,16 +1,14 @@
 <script>
 import { metadataInstancesApi } from '@tap/api'
-import { VIcon, VTable } from '@tap/component'
+import { VTable } from '@tap/component/src/base/v-table'
 import i18n from '@tap/i18n'
-
 import { uuid } from '@tap/shared'
 import { cloneDeep } from 'lodash-es'
 import { mapGetters } from 'vuex'
-import { $emit, $off, $on, $once } from '../../../../utils/gogocodeTransfer'
 
 export default {
   name: 'List',
-  components: { VTable, VIcon },
+  components: { VTable },
   props: {
     data: {
       type: Object,
@@ -258,7 +256,7 @@ export default {
     },
 
     handleUpdate(data) {
-      $emit(this, 'update-rules', cloneDeep(data || this.rules))
+      this.$emit('update-rules', cloneDeep(data || this.rules))
     },
 
     submitEdit() {
@@ -436,11 +434,6 @@ export default {
       }
       this.$confirm(
         i18n.t('packages_form_field_inference_list_ninquerenyaohui'),
-        '',
-        {
-          type: 'warning',
-          closeOnClickModal: false,
-        },
       ).then((resFlag) => {
         if (resFlag) {
           const { qualified_name } = this.data
@@ -725,7 +718,8 @@ export default {
       </template>
       <template #operationHeader>
         <ElButton
-          text type="primary"
+          text
+          type="primary"
           :class="!revokeTableDisabled ? 'color-primary' : 'color-disable'"
           @click="revokeAll()"
           >{{ $t('public_button_revoke') }}</ElButton
@@ -738,7 +732,8 @@ export default {
           placement="top"
         >
           <ElButton
-            text type="primary"
+            text
+            type="primary"
             :class="getRevokeColorClass(scope.row)"
             @click="revoke(scope.row)"
             >{{ $t('public_button_revoke') }}</ElButton

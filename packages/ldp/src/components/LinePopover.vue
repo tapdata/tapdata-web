@@ -1,31 +1,6 @@
-<template>
-  <ElPopover
-    v-bind="$attrs"
-    v-if="popover.reference"
-    ref="nodeMenu"
-    v-model="popover.show"
-    placement="bottom"
-    popper-class="rounded-lg p-0 line-popover"
-    :reference="popover.reference"
-  >
-    <div class="popover-list p-1">
-      <div
-        v-for="(task, i) in popover.tasks"
-        @click="handleClickTask(task)"
-        :key="i"
-        class="popover-list-item ellipsis px-3"
-      >
-        {{ task.name }}
-        <TaskStatus class="popover-list-item-status" :task="task"></TaskStatus>
-      </div>
-    </div>
-  </ElPopover>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
+import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import { mapGetters } from 'vuex'
-import { TaskStatus } from '@tap/business'
 
 export default {
   name: 'NodePopover',
@@ -40,17 +15,41 @@ export default {
   },
   methods: {
     handleClick(node) {
-      $emit(this, 'click-node', node)
+      this.$emit('click-node', node)
     },
 
     handleClickTask(task) {
-      $emit(this, 'click-task', task)
+      this.$emit('click-task', task)
       this.popover.show = false
     },
   },
   emits: ['click-node', 'click-task'],
 }
 </script>
+
+<template>
+  <ElPopover
+    v-if="popover.reference"
+    v-bind="$attrs"
+    ref="nodeMenu"
+    v-model="popover.show"
+    placement="bottom"
+    popper-class="rounded-lg p-0 line-popover"
+    :reference="popover.reference"
+  >
+    <div class="popover-list p-1">
+      <div
+        v-for="(task, i) in popover.tasks"
+        :key="i"
+        class="popover-list-item ellipsis px-3"
+        @click="handleClickTask(task)"
+      >
+        {{ task.name }}
+        <TaskStatus class="popover-list-item-status" :task="task" />
+      </div>
+    </div>
+  </ElPopover>
+</template>
 
 <style lang="scss" scoped>
 .line-popover {

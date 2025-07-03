@@ -1,12 +1,32 @@
 <script setup lang="ts">
-import { agentGroupApi, clusterApi, proxyApi, workerApi } from '@tap/api'
-import { dayjs, makeDragNodeImage } from '@tap/business'
+import {
+  addAgent,
+  addClusterMonitor,
+  deleteAgentGroup,
+  deleteClusterState,
+  editClusterAgent,
+  editClusterMonitor,
+  fetchAgentGroups,
+  fetchClusterStates,
+  fetchWorkers,
+  findRawServerInfo,
+  proxyApi,
+  queryAllBindWorker,
+  removeClusterMonitor,
+  saveAgentGroup,
+  unbindByProcessId,
+  updateAgentGroup,
+  updateClusterStatus,
+} from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { FilterBar, IconButton, ProTable, VEmpty } from '@tap/component'
+import { dayjs, makeDragNodeImage } from '@tap/business/src/shared'
+import { FilterBar } from '@tap/component/src/filter-bar'
+import { IconButton } from '@tap/component/src/icon-button'
+import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 import { downloadJson } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
-import { h, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import { nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import SetTag from '@/views/cluster/SetTag.vue'
 import AddServe from './AddServe.vue'
@@ -265,10 +285,10 @@ const submitForm = async () => {
 
       try {
         if (getFrom.id === '') {
-          await clusterApi.addMonitor(data)
+          await addClusterMonitor(data)
         } else {
           data.id = getFrom.id
-          await clusterApi.editMonitor(data)
+          await editClusterMonitor(data)
         }
         dialogForm.value = false
         await getDataApi()
@@ -288,26 +308,20 @@ const editServe = (item: any, status: string, data: any) => {
   dialogForm.value = true
 }
 
-const delServe = (data: any, status: string) => {
+const delServe = async (data: any, status: string) => {
   const params = {
     uuid: data.uuid,
     id: data.id,
   }
 
   if (status === 'running') {
-    // Show confirmation dialog
-    ElMessageBox.confirm('', t('daas_cluster_del_confirm'), {
-      center: true,
-      customClass: 'pro-confirm',
-      type: 'warning',
-      confirmButtonText: t('public_button_confirm'),
-      cancelButtonText: t('public_button_cancel'),
-    }).then(() => {
-      clusterApi.removeMonitor(params).then(() => {
+    const confirmed = await Modal.confirm(t('daas_cluster_del_confirm'))
+    if (confirmed) {
+      removeClusterMonitor(params).then(() => {
         getDataApi()
         ElMessage.success(t('public_message_save_ok'))
       })
-    })
+    }
   } else {
     ElMessage.error(t('cluster_startup_after_delete'))
   }
@@ -377,7 +391,7 @@ const unbind = (item: any, status: string) => {
   if (status === 'stopped') {
     // Show confirmation dialog
     const { process_id } = item.systemInfo || {}
-    workerApi.unbindByProcessId(process_id).then((data) => {
+    unbindByProcessId(process_id).then(() => {
       init()
       // Show success/error message
     })
@@ -407,23 +421,24 @@ const getVersion = (datas: any[]) => {
 }
 
 const operationFn = async (data: any) => {
-  await clusterApi.updateStatus(data)
+  await updateClusterStatus(data)
   await getDataApi()
 }
 
-const getUsageRate = (processId: string) => {
-  const where = {
-    process_id: {
-      inq: processId,
+const getUsageRate = (processId: string[]) => {
+  return fetchWorkers({
+    where: {
+      process_id: {
+        inq: processId,
+      },
+      worker_type: 'connector',
     },
-    worker_type: 'connector',
-  }
-  return workerApi.get({ filter: JSON.stringify({ where }) })
+  })
 }
 
 const getAllBindWorker = async () => {
   try {
-    const data = await workerApi.queryAllBindWorker()
+    const data = await queryAllBindWorker()
     bindWorkerMap.value = data.reduce((pre, current) => {
       return { ...pre, [current.processId]: current }
     }, {})
@@ -451,14 +466,10 @@ const getDataApi = async (noFilter?: boolean) => {
     })
   }
   loading.value = true
-  const clusterResponse = (await clusterApi.get(
-    params,
-  )) as ApiResponse<ClusterData>
+  const clusterResponse = await fetchClusterStates(params)
   const clusterData = clusterResponse?.items || []
   const processId = clusterData.map((it) => it?.systemInfo?.process_id)
-  const workerResponse = (await getUsageRate(
-    processId,
-  )) as ApiResponse<WorkerData>
+  const workerResponse = await getUsageRate(processId)
   const workerData = workerResponse?.items || []
 
   loading.value = false
@@ -553,29 +564,18 @@ const closeDialogForm = () => {
   childRules.value?.closeDialogForm()
 }
 
-const delConfirm = (item: any) => {
+const delConfirm = async (item: any) => {
   const agentName = item.agentName || item.systemInfo.hostname
-  ElMessageBox.confirm(
-    '',
+  const confirmed = await Modal.confirm(
     `${t('public_message_delete_confirm')} ${agentName}?`,
-    {
-      type: 'warning',
-      center: true,
-      customClass: 'pro-confirm',
-    },
-  ).then(() => {
-    clusterApi.delete(item.id, item.name).then(() => {
+  )
+
+  if (confirmed) {
+    deleteClusterState(item.id).then(() => {
       ElMessage.success(t('public_message_delete_ok'))
       getDataApi()
     })
-  })
-}
-
-const removeNode = (id: string) => {
-  clusterApi.delete(id).then(() => {
-    deleteDialogVisible.value = false
-    // Show success message
-  })
+  }
 }
 
 const editAgent = (item: any) => {
@@ -590,27 +590,21 @@ const editAgent = (item: any) => {
 const submitEditAgent = () => {
   if (agentName.value === '') {
     agentName.value = currentNde.value.hostname
-    // Show error message
+    ElMessage.error(t('cluster_server_name') + t('public_form_not_empty'))
     return
   }
   const data = {
     custIP: custIP.value,
     agentName: agentName.value,
   }
-  clusterApi.editAgent(custId.value, data).then(() => {
+  editClusterAgent(custId.value, data).then(() => {
     editAgentDialog.value = false
-    // Show success message
+    ElMessage.success(t('public_message_save_ok'))
   })
 }
 
 const editNameRest = () => {
   agentName.value = currentNde.value.hostname
-}
-
-const goDailyRecord = () => {
-  router.push({
-    name: 'dailyRecord',
-  })
 }
 
 const getStatus = (type: string) => {
@@ -636,7 +630,7 @@ const editTag = (tag: any) => {
 }
 
 const loadTags = async () => {
-  const { items } = await agentGroupApi.get({
+  const { items } = await fetchAgentGroups({
     containWorker: false,
   })
   tagMap.value = {}
@@ -678,11 +672,11 @@ const saveTag = () => {
     if (valid) {
       tagDialog.saving = true
       const fetch = tagDialog.id
-        ? agentGroupApi.update({
+        ? updateAgentGroup({
             name: tagDialog.value,
             groupId: tagDialog.id,
           })
-        : agentGroupApi.save({
+        : saveAgentGroup({
             name: tagDialog.value,
           })
       fetch
@@ -727,23 +721,16 @@ const handleCommand = (command: string, node: any) => {
   }
 }
 
-const deleteNode = (id: string) => {
-  ElMessageBox.confirm(
-    '',
+const deleteNode = async (id: string) => {
+  const confirmed = await Modal.confirm(
     t('packages_business_application_delete_shifouquerenshan'),
-    {
-      center: true,
-      customClass: 'pro-confirm',
-      confirmButtonText: t('public_button_delete'),
-      cancelButtonText: t('packages_component_message_cancel'),
-      type: 'warning',
-      closeOnClickModal: false,
-    },
-  ).then(() => {
-    agentGroupApi.delete(id).then(() => {
+  )
+
+  if (confirmed) {
+    deleteAgentGroup(id).then(() => {
       loadTags()
     })
-  })
+  }
 }
 
 const openSetTagDialog = () => {
@@ -872,7 +859,7 @@ const handleTreeDrop = async (ev: DragEvent, data: any) => {
   for (const row of draggingObjects) {
     if (!data.agentIds?.includes(row.process_id)) {
       list.push(
-        agentGroupApi.addAgent({
+        addAgent({
           groupId: data.groupId,
           agentId: row.process_id,
         }),
@@ -895,7 +882,7 @@ function handleLogMiningDetail(item: LogMiningMonitor) {
 
 const fetchLogMiningData = async () => {
   logMiningLoading.value = true
-  const data = await clusterApi.findRawServerInfo()
+  const data = await findRawServerInfo()
 
   logMiningLoading.value = false
 
@@ -1030,7 +1017,7 @@ const handleTabChange = (tab: string) => {
                   </template>
                 </ElTree>
               </div>
-              <ProTable
+              <el-table
                 ref="engineTable"
                 :data="filterEngineData"
                 row-class-name="grabbable"
@@ -1134,7 +1121,7 @@ const handleTabChange = (tab: string) => {
                     </div>
                   </template>
                 </ElTableColumn>
-              </ProTable>
+              </el-table>
             </div>
           </div>
           <div class="flex gap-4">
@@ -1299,7 +1286,7 @@ const handleTabChange = (tab: string) => {
                   <div class="list-box-header-left">
                     <img
                       class="mr-4 rounded-xl"
-                      src="../../assets/images/serve.svg"
+                      src="../../assets/static/serve.svg"
                     />
                     <i
                       class="circular mr-2 mt-2"
@@ -1341,10 +1328,7 @@ const handleTabChange = (tab: string) => {
                         :content="$t('instance_details_xianchengziyuanxia')"
                         placement="top"
                       >
-                        <el-button
-                          text
-                          @click="downServeFn(item)"
-                        >
+                        <el-button text @click="downServeFn(item)">
                           <template #icon>
                             <i-lucide:monitor-down />
                           </template>
@@ -1354,10 +1338,7 @@ const handleTabChange = (tab: string) => {
                         :content="$t('instance_details_shujuyuanziyuan')"
                         placement="top"
                       >
-                        <el-button
-                          text
-                          @click="downConnectorsFn(item)"
-                        >
+                        <el-button text @click="downConnectorsFn(item)">
                           <template #icon>
                             <i-lucide:hard-drive-download />
                           </template>
@@ -1374,13 +1355,9 @@ const handleTabChange = (tab: string) => {
                           <i-lucide:square-plus />
                         </template>
                       </el-button>
-                  </el-tooltip>
-                    
+                    </el-tooltip>
 
-                    <el-button
-                      text
-                      @click="editAgent(item)"
-                    >
+                    <el-button text @click="editAgent(item)">
                       <template #icon>
                         <i-lucide:settings />
                       </template>
@@ -1707,7 +1684,7 @@ const handleTabChange = (tab: string) => {
                   <div class="list-box-header-left">
                     <img
                       class="mr-4 rounded-xl"
-                      src="../../assets/images/serve.svg"
+                      src="../../assets/static/serve.svg"
                     />
                     <i
                       class="circular mr-2 mt-2"
@@ -1804,10 +1781,7 @@ const handleTabChange = (tab: string) => {
             </div>
           </el-form-item>
           <el-form-item :label="$t('cluster_ip_display')" prop="command">
-            <el-select
-              v-model="custIP"
-              :placeholder="$t('cluster_ip_display')"
-            >
+            <el-select v-model="custIP" :placeholder="$t('cluster_ip_display')">
               <el-option
                 v-for="item in ips"
                 :key="item"
@@ -1915,14 +1889,14 @@ const handleTabChange = (tab: string) => {
   font-weight: 400;
   font-size: 10px;
   line-height: 14px;
-  color: map.get($color, tag);
-  border: 1px solid map.get($bgColor, tag);
+  color: var(--color-tag);
+  border: 1px solid var(--bg-tag);
   border-radius: 2px;
   margin-left: 5px;
 }
 .view-radio-group {
   :deep(.el-radio-button__orig-radio:checked + .el-radio-button__inner) {
-    background-color: map.get($color, primary);
+    background-color: var(--color-primary);
     color: #fff;
   }
 }
@@ -1939,7 +1913,7 @@ const handleTabChange = (tab: string) => {
     bottom: 0;
     left: 0;
     border-radius: 10px;
-    background-color: map.get($color, primary);
+    background-color: var(--color-primary);
   }
 }
 
@@ -1966,14 +1940,14 @@ const handleTabChange = (tab: string) => {
   .ip {
     display: inline-block;
     padding: 2px 10px;
-    color: map.get($color, primary);
+    color: var(--color-primary);
     background-color: #ebf3fd;
     border-radius: 6px;
   }
 
   .header {
     padding: 15px 20px;
-    background: map.get($bgColor, white);
+    background: var(--color-white);
     overflow: hidden;
     border-bottom: 1px solid #dedee4;
     box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
@@ -1981,13 +1955,13 @@ const handleTabChange = (tab: string) => {
 
     .title {
       font-size: 16px;
-      color: map.get($fontColor, dark);
+      color: var(--text-dark);
       font-weight: 600;
     }
 
     .log_btn {
       font-size: 14px;
-      color: map.get($color, primary);
+      color: var(--color-primary);
       cursor: pointer;
       float: right;
     }
@@ -2020,7 +1994,7 @@ const handleTabChange = (tab: string) => {
         box-sizing: border-box;
 
         .list-box {
-          background-color: map.get($bgColor, white);
+          background-color: var(--color-white);
           //height: 340px;
           .list-box-header {
             overflow: hidden;
@@ -2051,11 +2025,11 @@ const handleTabChange = (tab: string) => {
                   white-space: nowrap;
                   text-overflow: ellipsis;
                   overflow: hidden;
-                  color: map.get($fontColor, dark);
+                  color: var(--text-dark);
                 }
 
                 .uuid {
-                  color: map.get($fontColor, slight);
+                  color: var(--text-slight);
                 }
               }
             }
@@ -2078,17 +2052,17 @@ const handleTabChange = (tab: string) => {
             justify-content: center;
             padding: 16px 0;
             text-align: center;
-            border-top: 1px solid map.get($borderColor, light);
+            border-top: 1px solid var(--border-light);
 
             .usageRate {
               width: 50%;
               text-align: center;
               font-size: 12px;
               font-weight: 400;
-              color: map.get($fontColor, slight);
+              color: var(--text-slight);
 
               div {
-                color: map.get($fontColor, dark);
+                color: var(--text-dark);
               }
             }
 
@@ -2111,11 +2085,11 @@ const handleTabChange = (tab: string) => {
               margin: 0 !important;
               line-height: 35px;
               font-size: 12px;
-              background-color: map.get($bgColor, normal);
+              background-color: var(--bg-normal);
 
               .txt {
-                font-size: $fontBaseTitle;
-                color: map.get($fontColor, light);
+                font-size: var(--font-base-title);
+                color: var(--text-light);
               }
             }
 
@@ -2124,13 +2098,13 @@ const handleTabChange = (tab: string) => {
               margin: 0 !important;
               margin-bottom: 5px;
               line-height: 35px;
-              border-bottom: 1px solid map.get($borderColor, light);
+              border-bottom: 1px solid var(--border-light);
 
               .txt {
                 display: inline-block;
                 width: 120px;
-                font-size: $fontBaseTitle;
-                color: map.get($fontColor, dark);
+                font-size: var(--font-base-title);
+                color: var(--text-dark);
                 text-overflow: ellipsis;
                 white-space: nowrap;
 
@@ -2172,18 +2146,18 @@ const handleTabChange = (tab: string) => {
           .usageRate {
             padding-left: 12px;
             font-size: 12px;
-            color: map.get($fontColor, light);
+            color: var(--text-light);
           }
 
           .uuid {
             padding: 5px 0;
             font-size: 12px;
-            color: map.get($fontColor, light);
+            color: var(--text-light);
           }
 
           span {
             font-size: 14px;
-            color: map.get($fontColor, normal);
+            color: var(--text-normal);
           }
         }
       }
@@ -2193,7 +2167,7 @@ const handleTabChange = (tab: string) => {
       }
 
       .red {
-        color: map.get($color, danger);
+        color: var(--color-danger);
       }
 
       .bgred {
@@ -2201,7 +2175,7 @@ const handleTabChange = (tab: string) => {
       }
 
       .green {
-        color: map.get($color, primary);
+        color: var(--color-primary);
       }
 
       .bggreen {
@@ -2215,9 +2189,9 @@ const handleTabChange = (tab: string) => {
     height: calc(100% - 60px);
     align-items: center;
     justify-content: center;
-    color: map.get($color, primary);
+    color: var(--color-primary);
     font-size: 16px;
-    background-color: map.get($bgColor, white);
+    background-color: var(--color-white);
   }
 
   .edit-agent-form {

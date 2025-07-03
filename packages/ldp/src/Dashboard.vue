@@ -1,19 +1,17 @@
 <script>
 import {
-  connectionsApi,
-  ldpApi,
+  getConnectionNoSchema,
   lineageApi,
   metadataDefinitionsApi,
 } from '@tap/api'
-import {
-  EventEmitter,
-  SceneDialog,
-  UpgradeCharges,
-  UpgradeFee,
-} from '@tap/business'
+import SceneDialog from '@tap/business/src/components/create-connection/SceneDialog.vue'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { IconButton } from '@tap/component'
-import { jsPlumb } from '@tap/dag'
+import UpgradeCharges from '@tap/business/src/components/UpgradeCharges.vue'
+import UpgradeFee from '@tap/business/src/components/UpgradeFee.vue'
+import { EventEmitter } from '@tap/business/src/shared'
+import { IconButton } from '@tap/component/src/icon-button'
+import { jsPlumb } from '@tap/dag/src/instance'
+import Cookie from '@tap/shared/src/cookie'
 import Catalogue from './components/Catalogue'
 import ConnectionPreview from './ConnectionPreview'
 import FDMItem from './FDM'
@@ -21,7 +19,6 @@ import MDMItem from './MDM'
 import Settings from './Settings'
 import SourceItem from './Source'
 import TablePreview from './TablePreview'
-
 import TargetItem from './Target'
 
 const TYPE2NAME = {
@@ -131,12 +128,12 @@ export default {
 
   watch: {
     'settings.mdmStorageConnectionId': async function (v) {
-      this.mdmConnection = await connectionsApi.getNoSchema(v)
+      this.mdmConnection = await getConnectionNoSchema(v)
       this.mdmNotExist = !this.mdmConnection
     },
 
     'settings.fdmStorageConnectionId': async function (v) {
-      this.fdmConnection = await connectionsApi.getNoSchema(v)
+      this.fdmConnection = await getConnectionNoSchema(v)
       this.fdmNotExist = !this.fdmConnection
     },
 
@@ -231,8 +228,17 @@ export default {
         .then((data) => {
           const items = data?.items || []
           const treeData = this.formatCatalog(items)
+          console.log('treeData', treeData)
+          const username = Cookie.get('username')
+          const email = Cookie.get('email')
           treeData?.forEach((item) => {
-            this.directoryMap[item.item_type[0]] = item
+            if (item.createUser === username || item.createUser === email) {
+              this.directoryMap[item.item_type[0]] = item
+            }
+
+            // if (item.item_type[0] === 'fdm') {
+            //   console.log('item', item)
+            // }
           })
         })
         .finally(() => {
@@ -611,7 +617,7 @@ export default {
     <template #actions>
       <span
         v-if="showParentLineage"
-        class="parent-lineage-quit color-linfo cursor-pointer rounded-2 px-4 py-2 position-absolute top-50 start-50 translate-middle"
+        class="parent-lineage-quit color-white cursor-pointer rounded-2 px-4 py-2 position-absolute top-50 start-50 translate-middle"
         @click="handleQuit"
         >{{ $t('packages_ldp_src_dashboard_anEsctui') }}</span
       >
@@ -717,7 +723,7 @@ export default {
   }
 
   :deep(.list__title__source) {
-    color: map.get($color, primary);
+    color: var(--color-primary);
     background: #e8f3ff;
   }
 
@@ -735,7 +741,7 @@ export default {
 
   :deep(.icon-color) {
     &:hover {
-      background-color: map.get($bgColor, hover);
+      background-color: var(--bg-hover);
     }
   }
 }
@@ -749,7 +755,7 @@ export default {
 
   :deep(.ldp-tree.is-drop),
   :deep(.is-drop .ldp-tree) {
-    box-shadow: 0px 0px 0px 2px map.get($color, primary) inset;
+    box-shadow: 0px 0px 0px 2px var(--color-primary) inset;
     & + .drop-mask {
       display: none !important;
     }
@@ -761,7 +767,7 @@ export default {
 
   :deep(.pipeline-desc) {
     background-color: #f8f8fa;
-    border-left: 4px solid map.get($color, primary);
+    border-left: 4px solid var(--color-primary);
     line-height: 22px;
     li {
       margin-left: 20px;

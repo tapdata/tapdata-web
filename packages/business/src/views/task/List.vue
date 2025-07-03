@@ -1,20 +1,20 @@
 <script>
-import { clusterApi, licensesApi, taskApi, workerApi } from '@tap/api'
-import { DownBoldOutlined, FilterBar, SelectList } from '@tap/component'
+import { fetchClusterStates, licensesApi, taskApi, workerApi } from '@tap/api'
+import { DownBoldOutlined } from '@tap/component/src/DownBoldOutlined'
+import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
+import FilterBar from '@tap/component/src/filter-bar/Main.vue'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
 import { escapeRegExp, uniqBy } from 'lodash-es'
 
 import { h } from 'vue'
-import {
-  DatabaseIcon,
-  SyncStatus,
-  TablePage,
-  TaskStatus,
-  UpgradeCharges,
-  UpgradeFee,
-} from '../../components'
+import { DatabaseIcon } from '../../components/DatabaseIcon'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
+import SyncStatus from '../../components/SyncStatus.vue'
+import TablePage from '../../components/TablePage.vue'
+import TaskStatus from '../../components/TaskStatus.vue'
+import UpgradeCharges from '../../components/UpgradeCharges.vue'
+import UpgradeFee from '../../components/UpgradeFee.vue'
 import Upload from '../../components/UploadDialog.vue'
 import syncTaskAgent from '../../mixins/syncTaskAgent'
 import { makeStatusAndDisabled, MILESTONE_TYPE, STATUS_MAP } from '../../shared'
@@ -378,7 +378,7 @@ export default {
               size: 100,
             }
             if (this.isDaas) {
-              const clusterData = await clusterApi.get()
+              const clusterData = await fetchClusterStates()
               const options = clusterData.items
                 .filter((item) => item.systemInfo.process_id)
                 .map((item) => {
@@ -654,9 +654,7 @@ export default {
         ids.length > 1,
         item.name,
       )
-      this.$confirm(msgObj.msg, msgObj.title, {
-        type: 'warning',
-      }).then((resFlag) => {
+      this.$confirm(msgObj.title, msgObj.msg, {}).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -679,9 +677,7 @@ export default {
 
     del(ids, item = {}, canNotList) {
       const msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name)
-      this.$confirm(msgObj.msg, '', {
-        type: 'warning',
-      }).then((resFlag) => {
+      this.$confirm(msgObj.msg).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -750,10 +746,7 @@ export default {
           item.name,
         )
       }
-      this.$confirm(msgObj.msg, '', {
-        type: 'warning',
-        showClose: false,
-      }).then((resFlag) => {
+      this.$confirm(msgObj.msg).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -770,10 +763,7 @@ export default {
     stop(ids, item = {}, canNotList) {
       const msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name)
       const message = msgObj.msg
-      this.$confirm(message, '', {
-        type: 'warning',
-        showClose: false,
-      }).then((resFlag) => {
+      this.$confirm(message).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -1566,8 +1556,8 @@ export default {
         font-weight: 400;
         font-size: 12px;
         line-height: 20px;
-        color: map.get($color, tag);
-        border: 1px solid map.get($bgColor, tag);
+        color: var(--color-tag);
+        border: 1px solid var(--bg-tag);
         border-radius: 4px;
       }
 

@@ -6,13 +6,13 @@ import {
   onFieldValueChange,
 } from '@formily/core'
 import { action } from '@formily/reactive'
-import { alarmApi, dataPermissionApi, taskApi, usersApi } from '@tap/api'
+import { dataPermissionApi, taskApi, updateTaskAlarm, usersApi } from '@tap/api'
 import { getPickerOptionsBeforeTime } from '@tap/business/src/shared/util'
 import i18n from '@tap/i18n'
+import { getSettingByKey } from '@tap/shared/src/settings'
 import { debounce } from 'lodash-es'
 import { computed, h, inject, nextTick, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
-import { getSettingByKey } from '@/utils/settings'
 import { FormTab } from '../../../../form'
 import FormRender from '../FormRender.vue'
 
@@ -337,7 +337,7 @@ function saveAlarmConfig() {
     return
   }
 
-  alarmApi.updateTaskAlarm({
+  updateTaskAlarm({
     taskId: values.id,
     alarmSettings: values.alarmSettings,
     alarmRules: values.alarmRules,
@@ -462,11 +462,14 @@ watch(sourceNodes, () => {
       timeZone,
       pointType: 'current',
       dateTime: '',
+      isStreamOffset: false,
     }
     if (old && !item.hiddenPointType) {
       Object.assign(point, {
         pointType: old.pointType,
         dateTime: old.dateTime,
+        isStreamOffset: old.isStreamOffset,
+        streamOffsetString: old.streamOffsetString,
       })
     }
     return point
@@ -867,7 +870,14 @@ const schema = {
                         syncPoints: {
                           title: i18n.t('packages_dag_task_setting_sync_point'), //增量采集开始时刻
                           type: 'array',
-                          default: [{ type: 'current', date: '' }],
+                          default: [
+                            {
+                              type: 'current',
+                              date: '',
+                              isStreamOffset: false,
+                              streamOffsetString: '',
+                            },
+                          ],
                           'x-decorator-props': {
                             tooltip: i18n.t(
                               'packages_dag_task_setting_syncPoint_tip',
@@ -1885,11 +1895,11 @@ defineExpose({
   }
 
   :deep(.formily-element-plus-form-item-label label) {
-    font-size: $fontBaseTitle;
+    font-size: var(--font-base-title);
   }
 
   :deep(.el-collapse-item__header) {
-    font-size: $fontBaseTitle;
+    font-size: var(--font-base-title);
     font-weight: 500;
   }
 }

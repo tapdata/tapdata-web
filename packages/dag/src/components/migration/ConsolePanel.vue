@@ -1,14 +1,13 @@
 <script>
 import { taskApi } from '@tap/api'
-import { VEmpty, VIcon } from '@tap/component'
+import { VEmpty } from '@tap/component/src/base/v-empty'
 import resize from '@tap/component/src/directives/resize'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
 
 import { cloneDeep } from 'lodash-es'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
-import NodeIcon from '../NodeIcon'
+import NodeIcon from '../NodeIcon.vue'
 import '@tap/component/src/directives/resize/index.scss'
 
 export default {
@@ -16,7 +15,7 @@ export default {
   directives: {
     resize,
   },
-  components: { VEmpty, NodeIcon, VIcon },
+  components: { VEmpty, NodeIcon },
   data() {
     return {
       levels: ['INFO', 'WARN', 'ERROR'],
@@ -114,7 +113,7 @@ export default {
 
     stopAuto() {
       this.ifAuto = false
-      $emit(this, 'stopAuto')
+      this.$emit('stopAuto')
       clearTimeout(this.timerId)
     },
 
@@ -332,13 +331,13 @@ export default {
       }
 
       .log-ERROR {
-        color: map.get($color, danger);
+        color: var(--color-danger);
       }
       .log-WARN {
-        color: map.get($color, warning);
+        color: var(--color-warning);
       }
       .log-INFO {
-        color: map.get($fontColor, dark);
+        color: var(--text-dark);
       }
     }
   }
@@ -353,7 +352,7 @@ export default {
       stroke-dasharray: 90, 150;
       stroke-dashoffset: 0;
       stroke-width: 2;
-      stroke: map.get($color, primary);
+      stroke: var(--color-primary);
       stroke-linecap: round;
     }
   }

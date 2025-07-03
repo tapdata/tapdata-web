@@ -1,13 +1,19 @@
 <script setup lang="ts">
-import { alarmApi, alarmMailApi, alarmRuleApi, settingsApi } from '@tap/api'
+import {
+  alarmMailApi,
+  alarmRuleApi,
+  findAlarm,
+  getAlarmChannels,
+  saveAlarm,
+} from '@tap/api'
+import { VTable } from '@tap/component/src/base/v-table'
 import {
   AdminOutlined,
   FilterOutlined,
   MemberOutlined,
-  VTable,
-} from '@tap/component'
+} from '@tap/component/src/icon'
+import { Modal } from '@tap/component/src/modal'
 import i18n from '@tap/i18n'
-import { ElMessage, ElMessageBox } from 'element-plus'
 import { cloneDeep } from 'lodash-es'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -225,7 +231,7 @@ const channels = ref<string[]>(['wechat', 'system', 'sms', 'email'])
 // Methods
 const remoteMethod = async (type?: string) => {
   try {
-    const data = await settingsApi.findAlarm()
+    const data = await findAlarm()
     tableData.value = data
     if (!isDaas.value && type) {
       emit('updateVisible', false)
@@ -246,7 +252,7 @@ const save = async () => {
   try {
     // 合并agent停止时
     const data = [...tableData.value, ...currentData.value]
-    await settingsApi.saveAlarm(data)
+    await saveAlarm(data)
     ElMessage.success(i18n.t('public_message_save_ok'))
     if (!isDaas.value) {
       emit('updateVisible', false)
@@ -356,39 +362,35 @@ const handleSettingValue = async () => {
 // 获取支持通知方式
 const getChannels = async () => {
   try {
-    const data = await alarmApi.channels()
+    const data = await getAlarmChannels()
     channels.value = data.map((item: Channel) => item.type)
   } catch (error) {
     console.error('Failed to load channels:', error)
   }
 }
 
-const handleCheckMail = (val: boolean) => {
+const handleCheckMail = async (val: boolean) => {
   const email = (window as any).__USER_INFO__?.email
   if (isDaas.value || email || !val) {
     return
   }
-  ElMessageBox.confirm(
-    i18n.t('packages_business_setting_alarmsetting_jiancedaoninhai'),
+  const confirmed = await Modal.confirm(
     i18n.t('public_message_title_prompt'),
+    i18n.t('packages_business_setting_alarmsetting_jiancedaoninhai'),
     {
-      type: 'warning',
       confirmButtonText: i18n.t(
         'packages_business_setting_alarmsetting_qubangding',
       ),
     },
   )
-    .then(() => {
-      router.push({
-        name: 'userCenter',
-        query: {
-          bind: 'email',
-        },
-      })
+  if (confirmed) {
+    router.push({
+      name: 'userCenter',
+      query: {
+        bind: 'email',
+      },
     })
-    .catch(() => {
-      // 用户取消
-    })
+  }
 }
 
 const showCustomMailTemplate = () => {

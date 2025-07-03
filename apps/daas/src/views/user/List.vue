@@ -1,9 +1,10 @@
 <script>
 import { roleApi, roleMappingsApi, usersApi } from '@tap/api'
-import { TablePage } from '@tap/business'
-
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { DownBoldOutlined, FilterBar } from '@tap/component'
+
+import TablePage from '@tap/business/src/components/TablePage.vue'
+import { DownBoldOutlined } from '@tap/component/src/DownBoldOutlined'
+import { FilterBar } from '@tap/component/src/filter-bar'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
 
@@ -483,10 +484,7 @@ export default {
     },
     // 删除用户
     remove(item) {
-      this.$confirm(this.$t('user_list_del_user', [item.username]), '', {
-        type: 'warning',
-        closeOnClickModal: false,
-        showClose: false,
+      this.$confirm(this.$t('user_list_del_user', [item.username]), {
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
@@ -515,13 +513,13 @@ export default {
       const successMsg = this.$t('user_list_activetion_success')
       const errorMsg = this.$t('user_list_activetion_error')
       this.$confirm(
-        this.$t('user_list_activetion_user', [item.username]),
         this.handleStatus(
           params,
           successMsg,
           errorMsg,
           this.$t('user_list_activation'),
         ),
+        this.$t('user_list_activetion_user', [item.username]),
       )
     },
     // 冻结
@@ -533,13 +531,13 @@ export default {
       const successMsg = this.$t('user_list_freeze_success')
       const errorMsg = this.$t('user_list_freeze_error')
       this.$confirm(
-        this.$t('user_list_freeze_user', [item.username]),
         this.handleStatus(
           params,
           successMsg,
           errorMsg,
           this.$t('user_list_freeze'),
         ),
+        this.$t('user_list_freeze_user', [item.username]),
       )
     },
     // 校验
@@ -551,13 +549,13 @@ export default {
       const successMsg = this.$t('user_list_check_success')
       const errorMsg = this.$t('user_list_check_error')
       this.$confirm(
-        this.$t('user_list_check_user', [item.username]),
         this.handleStatus(
           params,
           successMsg,
           errorMsg,
           this.$t('user_list_check'),
         ),
+        this.$t('user_list_check_user', [item.username]),
       )
     },
     // 改变状态提示
@@ -1103,14 +1101,14 @@ export default {
     }
     .metadata-name {
       .name {
-        color: map.get($color, primary);
+        color: var(--color-primary);
         a {
           color: inherit;
           cursor: pointer;
         }
       }
       .parent {
-        color: map.get($color, disable);
+        color: var(--color-disable);
       }
     }
   }

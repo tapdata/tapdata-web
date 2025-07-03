@@ -1,8 +1,12 @@
 <script>
-import { alarmApi } from '@tap/api'
-import { ALARM_LEVEL_MAP, ALARM_STATUS_MAP, TablePage } from '@tap/business'
+import { closeAlarms, listAlarms } from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { FilterBar } from '@tap/component'
+import TablePage from '@tap/business/src/components/TablePage.vue'
+import {
+  ALARM_LEVEL_MAP,
+  ALARM_STATUS_MAP,
+} from '@tap/business/src/shared/const'
+import { FilterBar } from '@tap/component/src/filter-bar'
 import dayjs from 'dayjs'
 import i18n from '@/i18n'
 
@@ -63,7 +67,7 @@ export default {
       if (end) {
         where.end = end
       }
-      return alarmApi.list(where).then((data) => {
+      return listAlarms(where).then((data) => {
         const list = data?.items || []
         return {
           total: data?.total || 0,
@@ -120,7 +124,7 @@ export default {
       if (this.multipleSelection?.length > 0) {
         ids = this.multipleSelection.map((item) => item.id)
       }
-      alarmApi.close(ids).then(() => {
+      closeAlarms(ids).then(() => {
         this.$message.success(
           i18n.t('daas_notification_systemalarm_guanbichenggong'),
         )

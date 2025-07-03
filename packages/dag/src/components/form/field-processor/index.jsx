@@ -1,6 +1,8 @@
 import { observer } from '@formily/reactive-vue'
 import { metadataInstancesApi, taskApi } from '@tap/api'
-import { OverflowTooltip, VEmpty, VIcon, VirtualList } from '@tap/component'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
+import { VEmpty } from '@tap/component/src/base/v-empty'
+import { VirtualList } from '@tap/component/src/base/virtual-list'
 import {
   connect,
   FormGrid,
@@ -11,17 +13,11 @@ import {
   useForm,
 } from '@tap/form'
 import i18n from '@tap/i18n'
-import {
-  camelToSnake,
-  snakeToCamel,
-  toLowerCase,
-  toUpperCase,
-} from '@tap/shared'
-import { cloneDeep, debounce } from 'lodash-es'
+
+import { debounce } from 'lodash-es'
 import { computed, defineComponent, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
-import { $emit, $off, $on, $once } from '../../../../utils/gogocodeTransfer'
 import './style.scss'
 
 const InnerInput = {
@@ -46,7 +42,7 @@ const InnerInput = {
         class="px-1"
         readOnly={this.readOnly}
         value={this.val}
-        onChange={(ev) => $emit(this, 'change', ev)}
+        onChange={(ev) => this.$emit('change', ev)}
       />
     )
   },

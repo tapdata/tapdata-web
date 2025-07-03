@@ -1,77 +1,7 @@
-<template>
-  <!-- 过api过滤条件 -->
-  <div class="condition-group-wrap" :class="color">
-    <div class="query-build-header">
-      <div class="query-build-header-left">
-        <span class="fw-sub pr-5">{{ $t('query_build_match_condition') }}</span>
-        <el-radio v-model="value.operator" label="and">{{ $t('public_select_option_all') }}</el-radio>
-        <el-radio v-model="value.operator" label="or">{{ $t('query_build_any') }}</el-radio>
-        <!-- <el-radio-group v-model="value.operator"  class="query-build-header-radio">
-              <el-radio-button label="and">{{ $t('public_select_option_all') }}</el-radio-button>
-              <el-radio-button label="or">{{ $t('query_build_any') }}</el-radio-button>
-            </el-radio-group> -->
-      </div>
-      <div class="query-build-header-right">
-        <el-tooltip class="item" effect="dark" :content="$t('query_build_addGroup')" placement="top">
-          <el-button v-if="level < maxLevel" @click="addChild('group')" text>{{ $t('query_build_add') }}</el-button>
-        </el-tooltip>
-
-        <el-tooltip class="item" effect="dark" :content="$t('query_build_removeGroup')" placement="top">
-          <el-button v-if="level > 1" @click="removeGroup(value)" text>{{ $t('public_button_delete') }}</el-button>
-        </el-tooltip>
-      </div>
-    </div>
-    <div class="query-build-group">
-      <div class="query-build-group-item" v-for="(item, index) in conditions" :key="item.field">
-        <template v-if="item.type === 'group'">
-          <ConditionGroup
-            v-model:value="conditions[index]"
-            :fields="fieldList"
-            :field-label="fieldLabel"
-            :field-value="fieldValue"
-            :key="index"
-            :level="childLevel"
-            @remove="removeChild(conditions[index], index)"
-          ></ConditionGroup>
-        </template>
-        <!-- 选择字段 -->
-        <template v-if="item.type === 'condition'">
-          <div class="query-build-group-row">
-            <div class="query-build-group-col">
-              <Condition
-                :field-label="fieldLabel"
-                :field-value="fieldValue"
-                :fields="fieldList"
-                v-model:value="conditions[index]"
-                :key="index"
-                :level="childLevel"
-              ></Condition>
-              <!-- :showFilterDialog="showFilterDialog" -->
-            </div>
-            <!-- 添加 条件 -->
-            <div class="query-build-group-col query-build-group-button">
-              <el-tooltip class="item" effect="dark" :content="$t('query_build_addCondition')" placement="top">
-                <el-button v-if="item.type === 'condition'" @click="addChild('condition')" text>{{
-                  $t('query_build_add')
-                }}</el-button>
-              </el-tooltip>
-              <el-tooltip class="item" effect="dark" :content="$t('query_build_removeCondition')" placement="top">
-                <el-button v-if="conditionCount > 1" @click="removeChild(item, index)" text>{{
-                  $t('public_button_delete')
-                }}</el-button>
-              </el-tooltip>
-            </div>
-          </div>
-        </template>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
-import ConditionGroup from './ConditionGroup'
+import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 import Condition from './Condition'
+import ConditionGroup from './ConditionGroup'
 export default {
   name: 'ConditionGroup',
   components: { ConditionGroup, Condition },
@@ -117,21 +47,12 @@ export default {
     //   }
     // }
   },
+  emits: ['update:value', 'remove'],
   data() {
     return {
       color: '',
       fieldList: [],
     }
-  },
-  watch: {
-    // showFilterDialog: {
-    //   deep: true,
-    //   immediate: true,
-    //   handler() {
-    //     this.$emit('input', this.value)
-    //     this.value.operator = this.value.conditions
-    //   }
-    // }
   },
   computed: {
     childLevel() {
@@ -147,11 +68,21 @@ export default {
       return this.value.conditions.length
     },
   },
+  watch: {
+    // showFilterDialog: {
+    //   deep: true,
+    //   immediate: true,
+    //   handler() {
+    //     this.$emit('input', this.value)
+    //     this.value.operator = this.value.conditions
+    //   }
+    // }
+  },
   created() {
     this.fieldList = this.fields
   },
   mounted() {
-    this.color = 'level' + ((this.level % 7) + 1)
+    this.color = `level${(this.level % 7) + 1}`
   },
   methods: {
     // 添加
@@ -187,18 +118,125 @@ export default {
     },
     // 删除条件
     removeChild(item, index) {
-      let self = this
+      const self = this
       self.value.conditions.splice(index, 1)
     },
   },
-  emits: ['update:value', 'remove'],
 }
 </script>
+
+<template>
+  <!-- 过api过滤条件 -->
+  <div class="condition-group-wrap" :class="color">
+    <div class="query-build-header">
+      <div class="query-build-header-left">
+        <span class="fw-sub pr-5">{{ $t('query_build_match_condition') }}</span>
+        <el-radio v-model="value.operator" label="and">{{
+          $t('public_select_option_all')
+        }}</el-radio>
+        <el-radio v-model="value.operator" label="or">{{
+          $t('query_build_any')
+        }}</el-radio>
+        <!-- <el-radio-group v-model="value.operator"  class="query-build-header-radio">
+              <el-radio-button label="and">{{ $t('public_select_option_all') }}</el-radio-button>
+              <el-radio-button label="or">{{ $t('query_build_any') }}</el-radio-button>
+            </el-radio-group> -->
+      </div>
+      <div class="query-build-header-right">
+        <el-tooltip
+          class="item"
+          effect="dark"
+          :content="$t('query_build_addGroup')"
+          placement="top"
+        >
+          <el-button v-if="level < maxLevel" text @click="addChild('group')">{{
+            $t('query_build_add')
+          }}</el-button>
+        </el-tooltip>
+
+        <el-tooltip
+          class="item"
+          effect="dark"
+          :content="$t('query_build_removeGroup')"
+          placement="top"
+        >
+          <el-button v-if="level > 1" text @click="removeGroup(value)">{{
+            $t('public_button_delete')
+          }}</el-button>
+        </el-tooltip>
+      </div>
+    </div>
+    <div class="query-build-group">
+      <div
+        v-for="(item, index) in conditions"
+        :key="item.field"
+        class="query-build-group-item"
+      >
+        <template v-if="item.type === 'group'">
+          <ConditionGroup
+            :key="index"
+            v-model:value="conditions[index]"
+            :fields="fieldList"
+            :field-label="fieldLabel"
+            :field-value="fieldValue"
+            :level="childLevel"
+            @remove="removeChild(conditions[index], index)"
+          />
+        </template>
+        <!-- 选择字段 -->
+        <template v-if="item.type === 'condition'">
+          <div class="query-build-group-row">
+            <div class="query-build-group-col">
+              <Condition
+                :key="index"
+                v-model:value="conditions[index]"
+                :field-label="fieldLabel"
+                :field-value="fieldValue"
+                :fields="fieldList"
+                :level="childLevel"
+              />
+              <!-- :showFilterDialog="showFilterDialog" -->
+            </div>
+            <!-- 添加 条件 -->
+            <div class="query-build-group-col query-build-group-button">
+              <el-tooltip
+                class="item"
+                effect="dark"
+                :content="$t('query_build_addCondition')"
+                placement="top"
+              >
+                <el-button
+                  v-if="item.type === 'condition'"
+                  text
+                  @click="addChild('condition')"
+                  >{{ $t('query_build_add') }}</el-button
+                >
+              </el-tooltip>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                :content="$t('query_build_removeCondition')"
+                placement="top"
+              >
+                <el-button
+                  v-if="conditionCount > 1"
+                  text
+                  @click="removeChild(item, index)"
+                  >{{ $t('public_button_delete') }}</el-button
+                >
+              </el-tooltip>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .condition-group-wrap {
   margin-bottom: 10px;
-  border: 1px solid map.get($borderColor, light);
+  border: 1px solid var(--border-light);
   border-left-width: 3px;
   overflow: hidden;
   .query-build-header {
@@ -207,16 +245,16 @@ export default {
     height: 38px;
     line-height: 38px;
     padding: 0 10px;
-    background-color: map.get($bgColor, main);
+    background-color: var(--bg-main);
     .query-build-header-left {
       font-size: 12px;
       span {
         display: inline-block;
-        color: map.get($fontColor, light);
+        color: var(--text-light);
       }
       :deep(.el-radio) {
         .el-radio__label {
-          color: map.get($fontColor, dark);
+          color: var(--text-dark);
         }
         &.is-checked .el-radio__label {
           color: rgba(0, 0, 0, 0.65);
@@ -230,7 +268,7 @@ export default {
     .query-build-header-right {
       :deep(.el-button--text) {
         font-size: 12px;
-        background-color: map.get($bgColor, main);
+        background-color: var(--bg-main);
       }
     }
   }
@@ -254,7 +292,7 @@ export default {
   border-left-color: #818182;
 }
 .condition-group-wrap.level2 {
-  border-left-color: map.get($color, primary);
+  border-left-color: var(--color-primary);
 }
 .condition-group-wrap.level3 {
   border-left-color: #a463f2;

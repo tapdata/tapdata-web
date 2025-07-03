@@ -1,7 +1,8 @@
 <script>
-import { userLogsApi, usersApi } from '@tap/api'
+import { fetchUserLogs, fetchUsers } from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { DatetimeRange, SelectList } from '@tap/component'
+import DatetimeRange from '@tap/component/src/filter-bar/DatetimeRange.vue'
+import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import Cookie from '@tap/shared/src/cookie'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
@@ -40,7 +41,7 @@ export default {
   },
   methods: {
     getUsers() {
-      usersApi.get().then((data) => {
+      fetchUsers().then((data) => {
         const items = data?.items || []
         this.userOptions = items.map((item) => {
           const { email, ldapAccount } = item
@@ -88,12 +89,8 @@ export default {
         where,
       }
 
-      userLogsApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
+      fetchUserLogs(filter)
         .then((data) => {
-          console.log(data)
           this.page.total = data?.total || 0
           this.page.index = current
           this.list = (data?.items || []).map((item) => {
@@ -118,7 +115,7 @@ export default {
   >
     <div v-loading="loading" class="user-notification">
       <div
-        class="search-bar flex gap-4 position-sticky top-0 bg-white z-10 pb-2"
+        class="search-bar flex gap-3 position-sticky top-0 bg-white z-10 pb-2"
       >
         <DatetimeRange
           v-model="search.range"
@@ -145,18 +142,11 @@ export default {
           class="search-item"
           :placeholder="$t('notification_placeholder_keyword')"
           @change="getData(1)"
-        />
-        <!-- <el-select
-              clearable
-              v-if="isAdmin"
-              class="search-item"
-
-              v-model="search.userId"
-              :placeholder="$t('notification_placeholder_user')"
-              @change="getData(1)"
-            >
-              <el-option v-for="user in userOptions" :key="user.id" :value="user.id" :label="user.username"></el-option>
-            </el-select> -->
+        >
+          <template #prefix>
+            <VIcon>magnify</VIcon>
+          </template>
+        </el-input>
       </div>
       <ul class="list">
         <li v-for="record in list" :key="record._id" class="item">
@@ -193,7 +183,7 @@ export default {
   .filter-datetime-range {
     padding-left: 0;
     text-align: left;
-    font-size: $fontBaseTitle;
+    font-size: var(--font-base-title);
     line-height: 32px;
     :deep(.filter-datetime:first-child) {
       padding-left: 0;
@@ -203,7 +193,7 @@ export default {
     }
 
     :deep(.el-input) {
-      font-size: $fontBaseTitle;
+      font-size: var(--font-base-title);
     }
   }
   .header {
@@ -229,11 +219,11 @@ export default {
       justify-content: space-between;
       align-items: center;
       line-height: 50px;
-      border-bottom: 1px solid map.get($borderColor, light);
-      font-size: $fontBaseTitle;
+      border-bottom: 1px solid var(--border-light);
+      font-size: var(--font-base-title);
       color: #202d40;
       .item-time {
-        color: map.get($fontColor, light);
+        color: var(--text-light);
         font-weight: 400;
       }
     }

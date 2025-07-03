@@ -24,6 +24,7 @@ export default {
       type: String,
     },
     dragState: Object,
+    treeProps: Object,
   },
   data() {
     return {
@@ -370,9 +371,6 @@ export default {
       let that = this
       this.$confirm(this.$t('packages_component_classification_deteleMessage'), {
         confirmButtonText: this.$t('public_button_delete'),
-        cancelButtonText: this.$t('packages_component_message_cancel'),
-        type: 'warning',
-        closeOnClickModal: false,
       }).then((resFlag) => {
         if (!resFlag) {
           return
@@ -503,7 +501,7 @@ export default {
 <template>
   <div class="classification py-0 px-2 bg-light rounded-xl" v-show="visible">
     <div class="classification-header">
-      <div class="h-32 flex align-center mt-2 gap-1" style="--btn-space: 0">
+      <div class="h-8 flex align-center mt-2 gap-1" style="--btn-space: 0">
         <el-button text @click="toggle">
           <template #icon>
             <VIcon class="rotate-180">expand-list</VIcon>
@@ -541,6 +539,7 @@ export default {
         ref="tree"
         node-key="id"
         highlight-current
+        v-bind="treeProps"
         :props="props"
         :expand-on-click-node="false"
         :data="treeData"
@@ -553,32 +552,34 @@ export default {
         @check="checkHandler"
       >
         <template v-slot="{ node, data }">
-          <span
-            class="custom-tree-node"
-            @dragenter.stop="handleTreeDragEnter($event, data, node)"
-            @dragover.stop="handleTreeDragOver($event, data, node)"
-            @dragleave.stop="handleTreeDragLeave($event, data, node)"
-            @drop.stop="handleTreeDrop($event, data, node)"
-          >
-            <VIcon size="16" class="color-primary mr-1">folder-fill</VIcon>
-            <span class="table-label">{{ data.value }}</span>
-            <ElDropdown
-              class="btn-menu flex align-center"
-              @command="handleRowCommand($event, node)"
-              v-readonlybtn="authority"
+          <slot name="node" :node="node" :data="data">
+            <span
+              class="custom-tree-node"
+              @dragenter.stop="handleTreeDragEnter($event, data, node)"
+              @dragover.stop="handleTreeDragOver($event, data, node)"
+              @dragleave.stop="handleTreeDragLeave($event, data, node)"
+              @drop.stop="handleTreeDrop($event, data, node)"
             >
-              <IconButton @click.stop sm>more</IconButton>
-              <template #dropdown>
-                <ElDropdownMenu>
-                  <ElDropdownItem command="add">
-                    {{ $t('packages_component_classification_addChildernNode') }}
-                  </ElDropdownItem>
-                  <ElDropdownItem command="edit">{{ $t('public_button_edit') }}</ElDropdownItem>
-                  <ElDropdownItem command="delete">{{ $t('public_button_delete') }}</ElDropdownItem>
-                </ElDropdownMenu>
-              </template>
-            </ElDropdown>
-          </span>
+              <VIcon size="16" class="color-primary mr-1">folder-fill</VIcon>
+              <span class="table-label">{{ data.value }}</span>
+              <ElDropdown
+                class="btn-menu flex align-center"
+                @command="handleRowCommand($event, node)"
+                v-readonlybtn="authority"
+              >
+                <IconButton @click.stop sm>more</IconButton>
+                <template #dropdown>
+                  <ElDropdownMenu>
+                    <ElDropdownItem command="add">
+                      {{ $t('packages_component_classification_addChildernNode') }}
+                    </ElDropdownItem>
+                    <ElDropdownItem command="edit">{{ $t('public_button_edit') }}</ElDropdownItem>
+                    <ElDropdownItem command="delete">{{ $t('public_button_delete') }}</ElDropdownItem>
+                  </ElDropdownMenu>
+                </template>
+              </ElDropdown>
+            </span>
+          </slot>
         </template>
       </ElTree>
       <div class="text-center">
@@ -623,10 +624,10 @@ export default {
   user-select: none;
   box-sizing: border-box;
   border-top: none;
-  background: map.get($bgColor, white);
+  background: var(--color-white);
   .btn-expand {
     // padding: 2px 3px;
-    // color: map.get($fontColor, light);
+    // color: var(--text-light);
     transform: rotate(0);
     box-sizing: border-box;
     // background: #eff1f4;
@@ -639,14 +640,14 @@ export default {
   }
   .toggle {
     margin-top: 18px;
-    // color: map.get($color, lprimary);
+    // color: var(--color-lprimary);
     z-index: 2;
   }
   &.expand {
     height: 100%;
     //width: 100%;
     padding: 20px 0;
-    // border-right: 1px solid map.get($borderColor, light);
+    // border-right: 1px solid var(--border-light);
     width: 214px;
     .btn-expand {
       position: absolute;
@@ -661,15 +662,15 @@ export default {
     .btn-addIcon {
       position: absolute;
       right: 12px;
-      font-size: $fontBaseTitle;
+      font-size: var(--font-base-title);
       .iconfont.icon-jia {
         display: flex;
         flex-direction: row;
         justify-content: center;
         align-items: center;
-        color: map.get($fontColor, light);
+        color: var(--text-light);
         font-size: 16px;
-        // background-color: map.get($bgColor, white);
+        // background-color: var(--color-white);
         // border: 1px solid #dedee4;
         height: 66%;
         // padding: 0 4px;
@@ -680,7 +681,7 @@ export default {
         border-radius: 3px;
         cursor: pointer;
         &:hover {
-          color: map.get($color, primary);
+          color: var(--color-primary);
         }
       }
     }
@@ -689,16 +690,12 @@ export default {
       right: 54px;
       .icon-fangdajing {
         font-size: 16px;
-        color: map.get($fontColor, light);
+        color: var(--text-light);
         &:hover {
-          color: map.get($color, primary);
+          color: var(--color-primary);
         }
       }
     }
-  }
-
-  .h-32 {
-    height: 32px;
   }
 
   /*头部样式*/
@@ -709,7 +706,7 @@ export default {
       align-items: center;
       justify-content: space-between;
       padding: 0 8px 0 46px;
-      color: map.get($fontColor, light);
+      color: var(--text-light);
       // background-color: #eff1f4;
     }
   }
@@ -724,7 +721,7 @@ export default {
     flex: 1;
     display: flex;
     align-items: center;
-    font-size: $fontBaseTitle;
+    font-size: var(--font-base-title);
     padding-right: 8px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -732,12 +729,12 @@ export default {
     .icon-folder {
       margin-right: 5px;
       font-size: 12px;
-      color: map.get($color, primary);
-      // color: map.get($color, lprimary);
+      color: var(--color-primary);
+      // color: var(--color-lprimary);
     }
     .table-label {
       flex: 1;
-      font-size: $fontBaseTitle;
+      font-size: var(--font-base-title);
       vertical-align: middle;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -753,8 +750,8 @@ export default {
   }
   .create {
     padding: 5px 10px;
-    font-size: $fontBaseTitle;
-    // color: map.get($color, primary);
+    font-size: var(--font-base-title);
+    // color: var(--color-primary);
     cursor: pointer;
   }
 

@@ -1,9 +1,15 @@
 <script>
-import { notificationApi } from '@tap/api'
+import {
+  countNotifications,
+  fetchNotifications,
+  pageReadNotification,
+  patchNotification,
+  readAllNotifications,
+} from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { SelectList } from '@tap/component'
+import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
+import { $emit, $on } from '@tap/shared/src/event'
 import dayjs from 'dayjs'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 import { TYPEMAP } from './tyepMap'
 
 export default {
@@ -137,8 +143,7 @@ export default {
       }
 
       this.loading = true
-      notificationApi
-        .get({ filter: JSON.stringify(filter) })
+      fetchNotifications(filter)
         .then((data) => {
           this.listData = data?.items || []
           this.total = data?.total || 0
@@ -175,8 +180,7 @@ export default {
       if (this.searchParams.msg || this.searchParams.msg !== '') {
         where.msg = this.searchParams.msg
       }
-      notificationApi
-        .count({ where: JSON.stringify(where) })
+      countNotifications({ where: JSON.stringify(where) })
         .then((data) => {
           this.total = data?.count
         })
@@ -187,7 +191,7 @@ export default {
     handleRead(item) {
       const read = this.read
       if (!item.read) {
-        notificationApi.patch({ read: true, id: item.id }).then(() => {
+        patchNotification({ read: true, id: item.id }).then(() => {
           this.read = read
           $emit(this.$root, 'notificationUpdate')
           const msg = {
@@ -214,7 +218,7 @@ export default {
         id,
       }
       const read = this.read
-      notificationApi.pageRead(data).then(() => {
+      pageReadNotification(data).then(() => {
         // this.getUnreadNum() //未读消息数量
         this.getData()
         this.read = read
@@ -236,7 +240,7 @@ export default {
       // }
       where = JSON.stringify(where)
       const read = this.read
-      notificationApi.readAll(where).then(() => {
+      readAllNotifications(where).then(() => {
         // this.getUnreadNum() //未读消息数量
         this.getData()
         this.read = read
@@ -333,7 +337,7 @@ export default {
         </div>
       </div>
 
-      <div class="flex gap-4 mb-2">
+      <div class="flex gap-3 mb-2">
         <SelectList
           v-if="options.length"
           v-model="searchParams.search"
@@ -488,8 +492,8 @@ $unreadColor: #ee5353;
   }
   .list-item {
     position: relative;
-    background-color: map.get($bgColor, white);
-    border-bottom: 1px solid map.get($bgColor, disable);
+    background-color: var(--color-white);
+    border-bottom: 1px solid var(--bg-disable);
     .list-item-content {
       position: relative;
       height: 50px;
@@ -508,7 +512,7 @@ $unreadColor: #ee5353;
       border-radius: 50%;
     }
     .list-item-desc {
-      color: map.get($fontColor, light);
+      color: var(--text-light);
       position: absolute;
       top: 0;
       left: 30px;
@@ -519,11 +523,11 @@ $unreadColor: #ee5353;
     }
     .list-item-time {
       float: right;
-      color: map.get($fontColor, light);
-      font-size: $fontBaseTitle;
+      color: var(--text-light);
+      font-size: var(--font-base-title);
     }
     &:hover {
-      background: map.get($bgColor, normal);
+      background: var(--bg-normal);
     }
   }
 }
@@ -552,11 +556,11 @@ $unreadColor: #ee5353;
     height: 40px;
     line-height: 40px;
     font-size: 14px;
-    // color: map.get($fontColor, light);
+    // color: var(--text-light);
     font-weight: 400;
     &.is-active {
       font-weight: 500;
-      // color: map.get($color, primary);
+      // color: var(--color-primary);
     }
   }
 }

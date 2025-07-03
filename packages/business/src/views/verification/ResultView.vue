@@ -1,11 +1,10 @@
 <script>
-import { VIcon } from '@tap/component'
 import { checkEllipsisActive } from '@tap/shared'
 import JsonViewer from 'vue-json-viewer'
+import { ErrorMessage } from '../../components/error-message'
 export default {
   components: {
     JsonViewer,
-    VIcon,
   },
   props: {
     remoteMethod: Function,
@@ -27,6 +26,20 @@ export default {
       inspectMethod: '',
       expandErrorMessage: false,
       hasMoreErrorMsg: false,
+      filterOptions: [
+        {
+          label: this.$t(
+            'packages_business_verification_details_jinxianshichayi',
+          ),
+          value: 'diff',
+        },
+        {
+          label: this.$t(
+            'packages_business_verification_details_xianshiwanzhengzi',
+          ),
+          value: 'all',
+        },
+      ],
     }
   },
   computed: {
@@ -52,6 +65,7 @@ export default {
     },
   },
   methods: {
+    ErrorMessage,
     fetch(current) {
       // this.loading = true
       this.remoteMethod({ current, size: this.page.size })
@@ -140,127 +154,62 @@ export default {
 
 <template>
   <div v-loading="loading" class="verification-result-view panel-box">
-    <div class="header">
-      {{ $t('packages_business_verification_verifyDetail') }}
+    <div class="py-3 pl-3 fs-6 font-color-dark flex align-center">
+      <span class="lh-8">
+        {{ $t('packages_business_verification_verifyDetail') }}
+      </span>
+
+      <el-segmented
+        v-if="statsInfo.result !== 'passed' && inspectMethod !== 'jointField'"
+        :model-value="showType"
+        :options="filterOptions"
+        class="ml-auto"
+        @update:model-value="$emit('update:showType', $event)"
+      />
     </div>
     <div class="main">
-      <ul v-if="statsInfo.status" class="inspect-result">
-        <li>
-          <span>
-            {{
-              `${$t('packages_business_verification_sourceTable')} : ${
-                statsInfo.source.table
-              } / ${statsInfo.source.connectionName}`
-            }}
-          </span>
-          <span class="font-color-slight">
-            {{ `( Row: ${statsInfo.source_total} )` }}
-          </span>
-        </li>
-        <li>
-          <span>
-            {{
-              `${$t('packages_business_verification_targetTable')} : ${
-                statsInfo.target.table
-              } / ${statsInfo.target.connectionName}`
-            }}
-          </span>
-          <span class="font-color-slight">
-            {{ `( Row: ${statsInfo.target_total} )` }}
-          </span>
-        </li>
-        <li>
-          <span>{{
-            `${$t('packages_business_verification_result_title')} : ${
-              statsInfo.result || '-'
-            }`
-          }}</span>
-        </li>
-        <template v-if="statsInfo.result !== 'passed'">
-          <li>
-            <span>{{ statsInfo.countResultText }}</span>
-          </li>
-          <li>
-            <span>{{ statsInfo.contentResultText }}</span>
-          </li>
-        </template>
-      </ul>
       <el-result
         v-if="statsInfo.result === 'passed'"
         icon="success"
         :title="$t('packages_business_verification_success')"
       />
 
-      <div
+      <el-alert
         v-if="statsInfo.status === 'error'"
-        class="error-tips mt-0 ml-4 pl-4 pr-0 rounded-lg flex-shrink-0"
-        :style="!filterResultList.length ? 'max-height: unset' : ''"
+        type="error"
+        show-icon
+        class="fit-content ml-3 mb-3"
+        :closable="false"
       >
-        <VIcon size="16" class="color-danger mt-0.5">error</VIcon>
-        <span
-          ref="errorSummary"
-          class="mx-2 flex-1"
-          :class="{
-            ellipsis: !expandErrorMessage,
-            'text-pre': expandErrorMessage,
-          }"
-          >{{ expandErrorMessage ? errorMsg : errorSummary }}</span
-        >
-        <span
-          class="sticky-top-0 end-0 px-2 flex-shrink-0 align-self-start"
-          style="background: inherit"
-        >
-          <ElLink
-            v-if="hasMoreErrorMsg"
-            class="align-middle"
-            type="danger"
-            @click="expandErrorMessage = !expandErrorMessage"
-            >{{
-              expandErrorMessage
-                ? $t('packages_business_verification_details_shouqi')
-                : $t('public_button_expand')
-            }}</ElLink
-          >
-        </span>
-      </div>
+        <template #title>
+          <div class="flex align-center">
+            <div class="text-truncate">{{ errorSummary }}</div>
+            <el-button
+              type="text"
+              class="ml-auto"
+              @click="ErrorMessage(errorMsg)"
+              >{{ $t('public_button_check') }}</el-button
+            >
+          </div>
+        </template>
+      </el-alert>
 
       <template v-if="statsInfo.result !== 'passed'">
-        <div
-          v-if="inspectMethod !== 'jointField'"
-          class="flex justify-content-between p-4"
-        >
-          <ElRadioGroup
-            :model-value="showType"
-            @update:model-value="$emit('update:showType', $event)"
-          >
-            <ElRadio label="diff">{{
-              $t('packages_business_verification_details_jinxianshichayi')
-            }}</ElRadio>
-            <ElRadio label="all">{{
-              $t('packages_business_verification_details_xianshiwanzhengzi')
-            }}</ElRadio>
-          </ElRadioGroup>
-        </div>
         <div
           v-if="!showAdvancedVerification"
           class="flex-fill flex flex-column"
         >
           <div class="table__header">
             <ElRow
-              class="table__header flex align-items-center p-4 font-color-normal fw-bold border-bottom"
-              style="
-                height: 54px;
-                background: #fafafa;
-                border-radius: 4px 4px 0 0;
-              "
+              class="table__header-row flex align-items-center fw-bold border-bottom"
             >
               <ElCol :span="12">
-                <span>{{
+                <span class="px-3">{{
                   $t('packages_business_verification_details_yuanbiaoziduanzhi')
                 }}</span>
               </ElCol>
               <ElCol :span="12">
-                <span>{{
+                <span class="px-3">{{
                   $t('packages_business_verification_details_mubiaobiaoziduan')
                 }}</span>
               </ElCol>
@@ -349,8 +298,9 @@ export default {
     <ElPagination
       v-model:page-size="page.size"
       v-model:current-page="page.current"
-      class="result-view-pagination"
+      class="pt-3 pl-3"
       background
+      hide-on-single-page
       layout="total, ->, prev, pager, next, sizes"
       :page-sizes="!showAdvancedVerification ? [20, 30, 50, 100] : [1]"
       :total="page.total"
@@ -367,16 +317,10 @@ $margin: 10px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-left: 1px solid map.get($borderColor, light);
   .header {
-    padding: 12px 24px;
-    font-size: 12px;
-    background: map.get($bgColor, main);
-    font-size: 14px;
     line-height: 22px;
   }
   .main {
-    padding-bottom: 16px;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -384,7 +328,7 @@ $margin: 10px;
     .error-band {
       background: #fdf6ec;
       border: 1px solid #f8e2c0;
-      color: map.get($color, warning);
+      color: var(--color-warning);
       margin: 10px;
       line-height: 20px;
       max-height: 160px;
@@ -399,11 +343,11 @@ $margin: 10px;
       text-overflow: ellipsis;
       font-size: 12px;
       padding: 8px;
-      color: map.get($fontColor, light);
+      color: var(--text-light);
       margin: 20% auto;
       i {
         font-size: 36px;
-        color: map.get($color, primary);
+        color: var(--color-primary);
       }
     }
     .inspect-result {
@@ -421,15 +365,15 @@ $margin: 10px;
         padding: 0 10px 10px 10px;
       }
       .title-box {
-        color: map.get($fontColor, dark);
-        background: map.get($bgColor, normal);
+        color: var(--text-dark);
+        background: var(--bg-normal);
         font-size: 12px;
         line-height: 28px;
         padding-left: 10px;
         border-bottom: 1px solid #dedee4;
       }
       .message-box {
-        color: map.get($fontColor, dark);
+        color: var(--text-dark);
         font-size: 12px;
         div {
           padding: 5px 10px;
@@ -475,7 +419,7 @@ $margin: 10px;
     .inspect-result-box {
       overflow: auto;
       .red {
-        color: map.get($color, danger);
+        color: var(--color-danger);
       }
       .inspect-details {
         li {
@@ -490,11 +434,11 @@ $margin: 10px;
           word-wrap: break-word;
         }
         li + li {
-          border-left: 1px solid map.get($borderColor, light);
+          border-left: 1px solid var(--border-light);
         }
         .father-table {
           display: flex;
-          border-top: 1px solid map.get($borderColor, light);
+          border-top: 1px solid var(--border-light);
           li {
             padding-top: 16px;
             padding-bottom: 16px;
@@ -507,7 +451,7 @@ $margin: 10px;
         .sub-table {
           display: flex;
           &:nth-child(2n + 1) {
-            background: map.get($bgColor, normal);
+            background: var(--bg-normal);
           }
           li {
             flex: 1;
@@ -530,6 +474,15 @@ $margin: 10px;
       }
     }
   }
+
+  .table__header {
+    color: var(--el-text-color-caption);
+
+    &-row {
+      height: 40px;
+    }
+  }
+
   .back-btn-icon-box {
     width: 30px;
     height: 30px;
@@ -538,7 +491,7 @@ $margin: 10px;
     line-height: 1;
     white-space: nowrap;
     cursor: pointer;
-    background: map.get($color, primary);
+    background: var(--color-primary);
     border: 0;
     text-align: center;
     box-sizing: border-box;

@@ -1,43 +1,9 @@
-<template>
-  <div class="serve-form flex overflow-hidden">
-    <div class="flex flex-column flex-1 min-w-0 p-6">
-      <SchemaToForm
-        ref="schemaToForm"
-        :schema="schemaData"
-        :colon="false"
-        layout="vertical"
-        :label-width="null"
-        :wrapper-col="16"
-        class="schema-form flex-fill"
-      ></SchemaToForm>
-      <div class="footer-operation pt-4">
-        <el-button type="primary" :loading="submitBtnLoading" @click="submit()">
-          {{ $t('public_button_save') }}
-        </el-button>
-        <el-button type="primary" :loading="saveAndMoreLoading" @click="saveAndMore">{{
-          $t('packages_business_save_and_more')
-        }}</el-button>
-      </div>
-    </div>
-    <GitBook
-      v-resize.left="{
-        minWidth: 350,
-      }"
-      :value="params.md"
-      class="git-book overflow-auto"
-    ></GitBook>
-  </div>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-// import MarkdownIt from 'markdown-it'
-import i18n from '@tap/i18n'
-
-import { SchemaToForm } from '@tap/form'
-import { appApi } from '@tap/api'
-import { GitBook } from '@tap/component'
+import { createApp } from '@tap/api'
 import resize from '@tap/component/src/directives/resize'
+import GitBook from '@tap/component/src/GitBook.vue'
+import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
+import i18n from '@tap/i18n'
 
 export default {
   name: 'ServeForm',
@@ -53,6 +19,7 @@ export default {
       },
     },
   },
+  emits: [],
   data() {
     return {
       schemaData: null,
@@ -71,7 +38,7 @@ export default {
   },
   methods: {
     getForm() {
-      let result = {
+      const result = {
         type: 'object',
         properties: {
           value: {
@@ -101,12 +68,10 @@ export default {
       this.schemaFormInstance?.validate().then(() => {
         this.submitBtnLoading = true
         const { values } = this.schemaFormInstance
-        console.log('this.schemaFormInstance', values, this.schemaFormInstance) // eslint-disable-line
-        appApi
-          .post(values)
+        createApp(values)
           .then((data) => {
             data.LDP_TYPE = 'app'
-            $emit(this, addNext ? 'saveAndMore' : 'success', data)
+            this.$emit(addNext ? 'saveAndMore' : 'success', data)
           })
           .finally(() => {
             this.submitBtnLoading = false
@@ -124,9 +89,42 @@ export default {
       this.html = md.render(`### API 应用`)
     },
   },
-  emits: [],
 }
 </script>
+
+<template>
+  <div class="serve-form flex overflow-hidden">
+    <div class="flex flex-column flex-1 min-w-0 p-6">
+      <SchemaToForm
+        ref="schemaToForm"
+        :schema="schemaData"
+        :colon="false"
+        layout="vertical"
+        :label-width="null"
+        :wrapper-col="16"
+        class="schema-form flex-fill"
+      />
+      <div class="footer-operation pt-4">
+        <el-button type="primary" :loading="submitBtnLoading" @click="submit()">
+          {{ $t('public_button_save') }}
+        </el-button>
+        <el-button
+          type="primary"
+          :loading="saveAndMoreLoading"
+          @click="saveAndMore"
+          >{{ $t('packages_business_save_and_more') }}</el-button
+        >
+      </div>
+    </div>
+    <GitBook
+      v-resize.left="{
+        minWidth: 350,
+      }"
+      :value="params.md"
+      class="git-book overflow-auto"
+    />
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .footer-operation {

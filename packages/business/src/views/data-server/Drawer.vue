@@ -1,20 +1,22 @@
 <script setup lang="ts">
-import { InfoFilled } from '@element-plus/icons-vue'
+import { EditPen, InfoFilled } from '@element-plus/icons-vue'
 import {
   applicationApi,
-  connectionsApi,
   databaseTypesApi,
+  listAllConnections,
   metadataInstancesApi,
   modulesApi,
   roleApi,
   workerApi,
 } from '@tap/api'
-import { Drawer, VCodeEditor } from '@tap/component'
+import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
+import Drawer from '@tap/component/src/Drawer.vue'
+import { Modal } from '@tap/component/src/modal'
+
 import i18n from '@tap/i18n'
 import { uid } from '@tap/shared'
 import axios from 'axios'
-import { ElMessage } from 'element-plus'
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep, isEqual } from 'lodash-es'
 import {
   computed,
   inject,
@@ -120,7 +122,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['visible', 'update:loading', 'save', 'update'])
 
-const apiApplication = inject('apiApplication')
+const apiApplication = inject('apiApplication', null)
 
 // Refs
 const form = ref<any>({
@@ -135,6 +137,7 @@ const form = ref<any>({
 const visible = ref(false)
 const loading = ref(false)
 const data = ref<any>({})
+let initialFormData = {}
 const tab = ref('form')
 const isEdit = ref(false)
 const debugParams = ref<any>(null)
@@ -259,7 +262,7 @@ const rules = {
     {
       required: true,
       message: i18n.t('packages_business_data_server_drawer_qingxuanzesuoshu'),
-      trigger: ['blur', 'change'],
+      trigger: ['blur'],
     },
   ],
 }
@@ -461,7 +464,7 @@ const getConnectionOptions = async () => {
   }
 
   connectionOptions.value = null
-  const data = await connectionsApi.listAll(filter).catch(() => {
+  const data = await listAllConnections(filter).catch(() => {
     connectionOptions.value = []
     return []
   })
@@ -512,22 +515,24 @@ const getFields = async () => {
 
     if (!form.value.id) {
       form.value.fields = cloneDeep(allFields.value)
-    }
-
-    // 回显选中字段
-    nextTick(() => {
-      const fields = form.value.fields || []
-      fields.forEach((row: any) => {
-        const targetRow = allFields.value.find((it: any) => it.id === row.id)
-
-        if (targetRow) {
-          fieldTable.value?.toggleRowSelection(targetRow, true)
-        }
+      nextTick(() => {
+        fieldTable.value?.toggleAllSelection()
       })
-    })
+    }
   } finally {
     fieldLoading.value = false
   }
+}
+
+const handleFieldsSelection = () => {
+  const fields = data.value.fields || []
+  fields.forEach((row: any) => {
+    const targetRow = allFields.value.find((it: any) => it.id === row.id)
+
+    if (targetRow) {
+      fieldTable.value?.toggleRowSelection(targetRow, true)
+    }
+  })
 }
 
 const getAPIServerToken = async (callback?: (token: string) => void) => {
@@ -545,22 +550,6 @@ const getAPIServerToken = async (callback?: (token: string) => void) => {
   const newToken = result?.data?.access_token || ''
   token.value = newToken
   callback?.(newToken)
-}
-
-const setTabTitle = (title: string) => {
-  let $title = tabs.value?.$el.querySelector('.el-tabs__nav-title')
-  if (!$title) {
-    $title = document.createElement('span')
-    $title.setAttribute(
-      'class',
-      'el-tabs__nav-title mr-4 float-start fs-6 fw-sub font-color-dark',
-    )
-
-    const tabsHeader = tabs.value?.$el.querySelector('.el-tabs__nav-wrap')
-    tabsHeader?.insertBefore($title, tabsHeader.firstChild)
-  }
-
-  $title.textContent = title
 }
 
 // Methods
@@ -717,6 +706,7 @@ const save = async (type?: boolean) => {
 const edit = () => {
   form.value.status = 'pending'
   isEdit.value = true
+  initialFormData = cloneDeep(form.value)
   nextTick(() => {
     data.value.fields.forEach((f: any) => {
       fieldTable.value?.toggleRowSelection(
@@ -731,14 +721,6 @@ watch(visible, (v) => {
   if (!v) {
     intervalId.value && clearTimeout(intervalId.value)
   }
-
-  if (v) {
-    setTabTitle(
-      data.value.id
-        ? i18n.t('packages_business_data_server_drawer_fuwuxiangqing')
-        : i18n.t('packages_business_data_server_drawer_chuangjianfuwu'),
-    )
-  }
 })
 
 // Event handlers
@@ -751,6 +733,8 @@ const tabChanged = (tab: string) => {
     })
     debugParams.value = newDebugParams
     getWorkers()
+  } else {
+    clearTimeout(intervalId.value)
   }
 }
 
@@ -883,10 +867,8 @@ const getWorkers = () => {
     .then((data) => {
       if (data?.items?.length) {
         const record = data.items[0] || {}
-        const workerStatus = record.workerStatus || record.worker_status || {}
-        if (status !== workerStatus.status) {
-          workerStatus.value = workerStatus.status
-        }
+        const worker = record.workerStatus || record.worker_status || {}
+        workerStatus.value = worker.status
       } else {
         workerStatus.value = 'stop'
       }
@@ -1009,7 +991,7 @@ const loadAllFields = async () => {
     filter: JSON.stringify(filter),
   })
   allFields.value =
-    data?.data?.items?.[0]?.fields?.map((it: any) => ({
+    data?.items?.[0]?.fields?.map((it: any) => ({
       ...it,
       id: it.id,
       field_name: it.field_name,
@@ -1017,22 +999,74 @@ const loadAllFields = async () => {
       comment: '',
     })) || []
 }
+
+const handleBeforeClose = async (done: () => void) => {
+  if (isEdit.value) {
+    const hasChanges = Object.keys(form.value).some((key) => {
+      if (['status', 'path'].includes(key)) {
+        return false
+      }
+      return !isEqual(initialFormData[key], form.value[key])
+    })
+
+    if (hasChanges) {
+      const isConfirm = await Modal.confirm(i18n.t('public_current_is_editing'))
+
+      isConfirm && done()
+    } else {
+      done()
+    }
+  } else {
+    done()
+  }
+}
+
+const openEdit = () => {
+  isEdit.value = true
+  nextTick(() => {
+    handleFieldsSelection()
+  })
+}
 </script>
 
 <template>
   <component
     :is="tag"
-    v-model:visible="visible"
+    v-model="visible"
     v-loading="loading"
+    :title="$t('packages_business_data_server_drawer_fuwuxiangqing')"
+    body-class="pt-0"
     class="overflow-hidden"
     width="850px"
+    :before-close="handleBeforeClose"
     @visible="$emit('visible', $event)"
   >
-    <div class="flex flex-column overflow-hidden pt-0 h-100">
+    <template #header="{ titleClass }">
+      <div :class="titleClass" class="flex align-center gap-3">
+        <span>{{
+          $t('packages_business_data_server_drawer_fuwuxiangqing')
+        }}</span>
+        <el-button
+          text
+          type="primary"
+          :class="{
+            invisible: !(tab === 'form' && data.status !== 'active' && !isEdit),
+          }"
+          @click="edit"
+        >
+          <el-icon class="mr-1">
+            <EditPen />
+          </el-icon>
+          {{ $t('public_button_edit') }}
+        </el-button>
+      </div>
+    </template>
+
+    <div class="flex flex-column overflow-hidden h-100">
       <!-- 顶部 标题 Tab -->
       <div
         v-if="!inDialog"
-        class="flex position-relative px-4"
+        class="flex position-relative"
         style="line-height: 48px"
       >
         <ElTabs
@@ -1057,29 +1091,31 @@ const loadAllFields = async () => {
         ref="form_ref"
         hide-required-asterisk
         class="data-server__form overflow-auto flex-1"
-        :class="{
-          'p-6': !inDialog,
-        }"
         label-position="top"
         :model="form"
         :rules="rules"
       >
         <template v-if="!inDialog">
           <div class="flex justify-content-between align-items-start">
-            <ElFormItem class="flex-1 form-item-name" prop="name">
+            <ElFormItem
+              class="flex-1 form-item-name"
+              prop="name"
+              :label="$t('daas_data_server_list_fuwumingcheng')"
+            >
               <ElInput
-                v-if="isEdit"
                 v-model="form.name"
+                :disabled="!isEdit"
                 maxlength="50"
                 :placeholder="
-                  $t('public_input_placeholder') + $t('public_name')
+                  $t('public_input_placeholder') +
+                  $t('daas_data_server_list_fuwumingcheng')
                 "
               />
-              <div v-else class="fw-sub fs-7 font-color-normal">
+              <!-- <div v-else class="fw-sub fs-7 font-color-normal">
                 {{ data.name }}
-              </div>
+              </div> -->
             </ElFormItem>
-            <template v-if="tab === 'form' && data.status !== 'active'">
+            <!-- <template v-if="tab === 'form' && data.status !== 'active'">
               <div v-if="isEdit" class="ml-4">
                 <ElButton v-if="data.id" @click="isEdit = false">{{
                   $t('public_button_cancel')
@@ -1091,17 +1127,23 @@ const loadAllFields = async () => {
               <ElButton v-else class="ml-4" type="primary" @click="edit">{{
                 $t('public_button_edit')
               }}</ElButton>
-            </template>
+            </template> -->
           </div>
           <div class="flex-1 mt-3 mb-3">
-            <ElInput
-              v-model="form.description"
-              type="textarea"
-              :placeholder="
-                $t('public_input_placeholder') + $t('public_description')
-              "
-              :disabled="!isEdit"
-            />
+            <ElFormItem
+              class="flex-1 form-item-name"
+              prop="name"
+              :label="$t('public_description')"
+            >
+              <ElInput
+                v-model="form.description"
+                type="textarea"
+                :placeholder="
+                  $t('public_input_placeholder') + $t('public_description')
+                "
+                :disabled="!isEdit"
+              />
+            </ElFormItem>
           </div>
           <div class="flex gap-4">
             <ElFormItem
@@ -1133,7 +1175,7 @@ const loadAllFields = async () => {
               <ListSelect
                 v-model:value="form.appValue"
                 v-model:label="form.appLabel"
-                :disabled="disableApp || apiApplication"
+                :disabled="disableApp"
                 class="w-100"
                 @change="handleUpdateApp"
               />
@@ -1790,6 +1832,15 @@ const loadAllFields = async () => {
         </template>
       </ElForm>
     </div>
+
+    <template v-if="isEdit" #footer>
+      <ElButton v-if="data.id" @click="isEdit = false">{{
+        $t('public_button_cancel')
+      }}</ElButton>
+      <ElButton type="primary" @click="save()">{{
+        $t('public_button_save')
+      }}</ElButton>
+    </template>
   </component>
 </template>
 
@@ -1800,7 +1851,7 @@ const loadAllFields = async () => {
 }
 
 .el-icon-remove {
-  color: map.get($iconFillColor, normal);
+  color: var(--icon-n2);
 }
 
 .line-height {
@@ -1808,10 +1859,10 @@ const loadAllFields = async () => {
 }
 
 .data-server__tabs {
-  --el-tabs-header-height: 48px;
-  :deep(.el-tabs__header.is-top) {
-    margin: 0;
-  }
+  // --el-tabs-header-height: 48px;
+  // :deep(.el-tabs__header.is-top) {
+  //   margin: 0;
+  // }
 }
 
 .data-server__form {
@@ -1853,7 +1904,7 @@ const loadAllFields = async () => {
   line-height: 22px;
   font-weight: 500;
   font-size: 14px;
-  color: map.get($fontColor, dark);
+  color: var(--text-dark);
   user-select: none;
 
   position: relative;
@@ -1869,7 +1920,7 @@ const loadAllFields = async () => {
     top: 50%;
     transform: translateY(-50%);
     position: absolute;
-    background-color: map.get($color, primary);
+    background-color: var(--color-primary);
     //background-color: #bcbfc3;
   }
 }
@@ -1890,7 +1941,7 @@ const loadAllFields = async () => {
   line-height: 28px;
   text-align: center;
   border-radius: 2px;
-  color: map.get($fontColor, white);
+  color: var(--text-white);
 
   &.method--POST {
     background: #478c6c;
@@ -1906,8 +1957,8 @@ const loadAllFields = async () => {
 }
 
 .data-server-debug__url {
-  border: 1px solid map.get($borderColor, form);
-  background: map.get($bgColor, form);
+  border: 1px solid var(--border-form);
+  background: var(--bg-form);
   border-radius: 4px;
 }
 

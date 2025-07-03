@@ -84,6 +84,7 @@ export default {
   public_status_ping_timeout: 'Ping Timeout',
   // button
   public_button_edit: 'Edit',
+  public_button_ok: 'OK',
   public_button_confirm: 'OK',
   public_button_cancel: 'Cancel',
   public_button_back: 'Back',
@@ -155,7 +156,9 @@ export default {
   public_message_loading: 'Loading',
   public_message_401: 'Login expired, Please login again',
   public_message_404: 'The requested resource does not exist',
+  public_message_408: 'Request Timeout, Please try again later',
   public_message_5xx: 'Server Exception',
+  public_message_inner_error: 'Inner Server Error, Please try again later',
   public_message_network_unconnected:
     'An abnormal network connection has been detected',
   public_message_network_connected:
@@ -412,8 +415,18 @@ export default {
   public_current_cost_time: 'Current Cost Time',
   public_threshold: 'Threshold',
   public_start_import: 'Start Import',
+  public_generate_recovery_sql: 'Generate Recovery SQL',
+  public_start_generate_recovery_sql: 'Start Generate Recovery SQL',
+  public_generate_recovery_sql_success: 'Generate Recovery SQL Success',
+  public_download_recovery_sql: 'Download Recovery SQL',
   public_log_mining_monitor: 'Log Mining Monitor',
   public_oracle_raw_log: 'Oracle Raw Log',
   public_start_time: 'Start Time',
   public_end_time: 'End Time',
+  public_current_is_editing: 'Current is editing, confirm to close?',
+  public_search_field_name: 'Search Field Name',
+  public_all_selected: 'Select All',
+  public_cancel_all_selected: 'Unselect All',
+  public_data_preview: 'Data Preview',
+  public_application: 'Application',
 }

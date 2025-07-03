@@ -11,7 +11,6 @@ import {
   useField,
   useFieldSchema,
 } from '@formily/vue'
-import { VIcon } from '@tap/component'
 import { ElBadge, ElTabPane, ElTabs } from 'element-plus'
 import { computed, defineComponent, inject, reactive, type PropType } from 'vue'
 import type { Schema, SchemaKey } from '@formily/json-schema'

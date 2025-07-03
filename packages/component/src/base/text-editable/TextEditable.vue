@@ -1,6 +1,5 @@
 <script>
 import i18n from '@tap/i18n'
-import { $emit } from '../../../utils/gogocodeTransfer'
 
 import VIcon from '../../base/VIcon.vue'
 
@@ -53,13 +52,13 @@ export default {
   },
   methods: {
     handleInput(event) {
-      $emit(this, 'update:value', event.target.value)
+      this.$emit('update:value', event.target.value)
     },
 
     handleChange(event) {
       const val = event.target.value.trim()
-      $emit(this, 'update:value', val)
-      $emit(this, 'change', val)
+      this.$emit('update:value', val)
+      this.$emit('change', val)
     },
 
     handleFocusInput() {
@@ -117,7 +116,7 @@ export default {
     transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
     &:hover,
     &:focus-within {
-      border-color: map.get($color, primary);
+      border-color: var(--color-primary);
     }
     input {
       max-width: 100%;
@@ -136,7 +135,7 @@ export default {
       visibility: hidden;
     }
     &-icon:hover {
-      color: map.get($color, primary);
+      color: var(--color-primary);
     }
   }
 }

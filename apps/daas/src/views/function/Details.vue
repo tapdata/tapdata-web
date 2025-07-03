@@ -1,7 +1,7 @@
 <script>
 import { javascriptFunctionsApi } from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
-import { JsEditor } from '@tap/component'
+import JsEditor from '@tap/component/src/JsEditor.vue'
 
 export default {
   components: { JsEditor, PageContainer },
@@ -100,7 +100,7 @@ export default {
 <style lang="scss" scoped>
 .function-details-wrapper {
   .details-value {
-    color: map.get($fontColor, dark);
+    color: var(--text-dark);
   }
 
   :deep(.el-form) {

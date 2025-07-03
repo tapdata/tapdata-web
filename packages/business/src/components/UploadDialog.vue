@@ -1,135 +1,8 @@
-<template>
-  <ElDialog
-    width="680px"
-    class="import-upload-dialog"
-    :title="title"
-    :close-on-click-modal="false"
-    v-model="dialogVisible"
-    :before-close="handleClose"
-  >
-    <ElForm
-      ref="form"
-      :rules="rules"
-      :model="importForm"
-      class="applications-form"
-      label-position="top"
-      label-width="100px"
-    >
-      <ElAlert
-        v-if="isRelmig"
-        class="bg-color-primary-light-9 mb-2 text-primary"
-        type="info"
-        show-icon
-        :closable="false"
-      >
-        <template v-slot:title>
-          <span class="inline-block lh-sm align-middle">
-            {{ $t('packages_business_relmig_import_desc') }}
-          </span>
-        </template>
-      </ElAlert>
-
-      <ElFormItem v-if="!isRelmig" prop="upsert" :label="$t('packages_business_modules_dialog_condition')">
-        <el-radio v-model="importForm.upsert" :label="1"
-          >{{ $t('packages_business_modules_dialog_overwrite_data') }}
-        </el-radio>
-        <el-radio v-model="importForm.upsert" :label="0"
-          >{{ $t('packages_business_modules_dialog_skip_data') }}
-        </el-radio>
-      </ElFormItem>
-      <ElFormItem prop="fileList" :label="$t('packages_business_modules_dialog_file')">
-        <ElUpload
-          class="w-75"
-          ref="upload"
-          :action="importForm.action"
-          :accept="fileAccept"
-          :file-list="importForm.fileList"
-          :auto-upload="false"
-          :on-success="handleSuccess"
-          :on-error="handleError"
-          :on-change="handleChange"
-          :on-remove="handleRemove"
-          :data="uploadData"
-        >
-          <template v-slot:trigger>
-            <ElButton class="align-top" type="primary">
-              <VIcon class="mr-1">upload</VIcon>
-              {{ uploadText }}
-            </ElButton>
-          </template>
-        </ElUpload>
-      </ElFormItem>
-      <template v-if="isRelmig && importForm.fileList.length">
-        <ElFormItem
-          :label-width="`${this.$i18n.locale === 'en' ? 150 : 100}px`"
-          required
-          :label="$t('public_source_connection')"
-          prop="source"
-        >
-          <AsyncSelect
-            :placeholder="$t('packages_business__relmig_import_source_connection_placeholder')"
-            class="w-100"
-            v-model="importForm.source"
-            :method="getSourceDatabase"
-            itemQuery="name"
-            lazy
-          />
-          <div>
-            <ElLink @click="goCreateConnection" type="primary"
-              >{{ $t('packages_business__relmig_import_connection_tip') }}
-            </ElLink>
-          </div>
-        </ElFormItem>
-        <ElFormItem
-          :label-width="`${this.$i18n.locale === 'en' ? 150 : 100}px`"
-          required
-          :label="$t('public_target_connection')"
-          prop="sink"
-        >
-          <AsyncSelect
-            :placeholder="$t('packages_business__relmig_import_target_connection_placeholder')"
-            class="w-100"
-            v-model="importForm.sink"
-            :method="getTargetDatabase"
-            itemQuery="name"
-            lazy
-          />
-          <div>
-            <ElLink @click="goCreateConnection" type="primary"
-              >{{ $t('packages_business__relmig_import_connection_tip') }}
-            </ElLink>
-          </div>
-        </ElFormItem>
-      </template>
-      <ElFormItem prop="tag" v-show="showTag" :label="$t('public_tags')">
-        <ElSelect
-          v-model="importForm.tag"
-          multiple
-          class="w-100"
-          :placeholder="$t('packages_business_task_tag_placeholder')"
-        >
-          <ElOption v-for="item in classifyList" :label="item.value" :value="item.id" :key="item.id"></ElOption>
-        </ElSelect>
-      </ElFormItem>
-    </ElForm>
-    <template v-slot:footer>
-      <span class="dialog-footer">
-        <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton :loading="uploading" type="primary" @click="submitUpload()">{{
-          $t('public_button_confirm')
-        }}</ElButton>
-      </span>
-    </template>
-  </ElDialog>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
-import axios from 'axios'
+import { fetchConnections, metadataDefinitionsApi } from '@tap/api'
+import AsyncSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 import Cookie from '@tap/shared/src/cookie'
-import { VIcon } from '@tap/component'
-import { connectionsApi, metadataDefinitionsApi } from '@tap/api'
-import { AsyncSelect } from '@tap/form'
+import axios from 'axios'
 import { merge } from 'lodash-es'
 import { CONNECTION_STATUS_MAP } from '../shared'
 
@@ -137,7 +10,6 @@ export default {
   name: 'Upload',
   components: {
     AsyncSelect,
-    VIcon,
   },
   props: {
     showCondition: {
@@ -153,8 +25,9 @@ export default {
       default: true,
     },
   },
+  emits: ['success'],
   data() {
-    const isDaas =  import.meta.env.VUE_APP_PLATFORM === 'DAAS'
+    const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
     return {
       isDaas,
       // title: '',
@@ -171,8 +44,20 @@ export default {
         sink: '',
       },
       rules: {
-        source: [{ required: true, message: this.$t('public_select_placeholder'), trigger: 'blur' }],
-        sink: [{ required: true, message: this.$t('public_select_placeholder'), trigger: 'blur' }],
+        source: [
+          {
+            required: true,
+            message: this.$t('public_select_placeholder'),
+            trigger: 'blur',
+          },
+        ],
+        sink: [
+          {
+            required: true,
+            message: this.$t('public_select_placeholder'),
+            trigger: 'blur',
+          },
+        ],
       },
       uploading: false,
     }
@@ -180,12 +65,16 @@ export default {
   computed: {
     title() {
       return this.$t(
-        this.isRelmig ? 'packages_business_relmig_import' : 'packages_business_modules_dialog_import_title',
+        this.isRelmig
+          ? 'packages_business_relmig_import'
+          : 'packages_business_modules_dialog_import_title',
       )
     },
     uploadText() {
       return this.$t(
-        this.isRelmig ? 'packages_business_relmig_upload' : 'packages_business_modules_dialog_upload_files',
+        this.isRelmig
+          ? 'packages_business_relmig_upload'
+          : 'packages_business_modules_dialog_upload_files',
       )
     },
     isRelmig() {
@@ -243,7 +132,9 @@ export default {
 
       this.importForm.fileList = [file]
       const originPath = window.location.origin + window.location.pathname
-      const accessToken = this.accessToken ? `?access_token=${this.accessToken}` : ''
+      const accessToken = this.accessToken
+        ? `?access_token=${this.accessToken}`
+        : ''
       const map = {
         api: `api/MetadataInstances/upload${accessToken}`,
         Javascript_functions: `api/Javascript_functions/batch/import${accessToken}`,
@@ -253,12 +144,15 @@ export default {
       let apiBaseURL = axios.defaults.baseURL.replace(/^\.?\//, '')
       if (apiBaseURL) apiBaseURL += '/'
 
-      this.importForm.action = originPath + apiBaseURL + (map[this.type] || `api/Task/batch/import${accessToken}`)
+      this.importForm.action =
+        originPath +
+        apiBaseURL +
+        (map[this.type] || `api/Task/batch/import${accessToken}`)
     },
 
     // 获取分类
     getClassify() {
-      let filter = {
+      const filter = {
         where: { or: [{ item_type: this.type }] },
       }
       metadataDefinitionsApi
@@ -273,11 +167,15 @@ export default {
     handleSuccess(response) {
       this.uploading = false
       if (response.code !== 'ok') {
-        this.$message.error(response.message || this.$t('packages_business_message_upload_fail'))
+        this.$message.error(
+          response.message || this.$t('packages_business_message_upload_fail'),
+        )
         this.importForm.fileList.forEach((file) => (file.status = 'ready'))
       } else {
-        this.$message.success(this.$t('packages_business_message_upload_success'))
-        $emit(this, 'success')
+        this.$message.success(
+          this.$t('packages_business_message_upload_success'),
+        )
+        this.$emit('success')
         this.importForm.fileList = []
         this.$refs.upload.clearFiles()
         this.dialogVisible = false
@@ -357,9 +255,7 @@ export default {
             options: 'i',
           }
         }
-        let result = await connectionsApi.get({
-          filter: JSON.stringify(merge(filter, _filter)),
-        })
+        const result = await fetchConnections(merge(filter, _filter))
 
         result.items = result.items.map((item) => {
           return {
@@ -374,8 +270,8 @@ export default {
         })
 
         return result
-      } catch (e) {
-        console.log('catch', e) // eslint-disable-line
+      } catch (error) {
+        console.log('catch', error) // eslint-disable-line
         return { items: [], total: 0 }
       }
     },
@@ -406,19 +302,165 @@ export default {
       })
     },
   },
-  emits: ['success'],
 }
 </script>
+
+<template>
+  <ElDialog
+    v-model="dialogVisible"
+    width="680px"
+    class="import-upload-dialog"
+    :title="title"
+    :close-on-click-modal="false"
+    :before-close="handleClose"
+  >
+    <ElForm
+      ref="form"
+      :rules="rules"
+      :model="importForm"
+      class="applications-form"
+      label-position="top"
+      label-width="100px"
+    >
+      <ElAlert
+        v-if="isRelmig"
+        class="bg-color-primary-light-9 mb-2 text-primary"
+        type="info"
+        show-icon
+        :closable="false"
+      >
+        <template #title>
+          <span class="inline-block lh-sm align-middle">
+            {{ $t('packages_business_relmig_import_desc') }}
+          </span>
+        </template>
+      </ElAlert>
+
+      <ElFormItem
+        v-if="!isRelmig"
+        prop="upsert"
+        :label="$t('packages_business_modules_dialog_condition')"
+      >
+        <el-radio v-model="importForm.upsert" :label="1"
+          >{{ $t('packages_business_modules_dialog_overwrite_data') }}
+        </el-radio>
+        <el-radio v-model="importForm.upsert" :label="0"
+          >{{ $t('packages_business_modules_dialog_skip_data') }}
+        </el-radio>
+      </ElFormItem>
+      <ElFormItem
+        prop="fileList"
+        :label="$t('packages_business_modules_dialog_file')"
+      >
+        <ElUpload
+          ref="upload"
+          class="w-75"
+          :action="importForm.action"
+          :accept="fileAccept"
+          :file-list="importForm.fileList"
+          :auto-upload="false"
+          :on-success="handleSuccess"
+          :on-error="handleError"
+          :on-change="handleChange"
+          :on-remove="handleRemove"
+          :data="uploadData"
+        >
+          <template #trigger>
+            <ElButton class="align-top" type="primary">
+              <VIcon class="mr-1">upload</VIcon>
+              {{ uploadText }}
+            </ElButton>
+          </template>
+        </ElUpload>
+      </ElFormItem>
+      <template v-if="isRelmig && importForm.fileList.length">
+        <ElFormItem
+          :label-width="`${$i18n.locale === 'en' ? 150 : 100}px`"
+          required
+          :label="$t('public_source_connection')"
+          prop="source"
+        >
+          <AsyncSelect
+            v-model="importForm.source"
+            :placeholder="
+              $t(
+                'packages_business__relmig_import_source_connection_placeholder',
+              )
+            "
+            class="w-100"
+            :method="getSourceDatabase"
+            item-query="name"
+            lazy
+          />
+          <div>
+            <ElLink type="primary" @click="goCreateConnection"
+              >{{ $t('packages_business__relmig_import_connection_tip') }}
+            </ElLink>
+          </div>
+        </ElFormItem>
+        <ElFormItem
+          :label-width="`${$i18n.locale === 'en' ? 150 : 100}px`"
+          required
+          :label="$t('public_target_connection')"
+          prop="sink"
+        >
+          <AsyncSelect
+            v-model="importForm.sink"
+            :placeholder="
+              $t(
+                'packages_business__relmig_import_target_connection_placeholder',
+              )
+            "
+            class="w-100"
+            :method="getTargetDatabase"
+            item-query="name"
+            lazy
+          />
+          <div>
+            <ElLink type="primary" @click="goCreateConnection"
+              >{{ $t('packages_business__relmig_import_connection_tip') }}
+            </ElLink>
+          </div>
+        </ElFormItem>
+      </template>
+      <ElFormItem v-show="showTag" prop="tag" :label="$t('public_tags')">
+        <ElSelect
+          v-model="importForm.tag"
+          multiple
+          class="w-100"
+          :placeholder="$t('packages_business_task_tag_placeholder')"
+        >
+          <ElOption
+            v-for="item in classifyList"
+            :key="item.id"
+            :label="item.value"
+            :value="item.id"
+          />
+        </ElSelect>
+      </ElFormItem>
+    </ElForm>
+    <template #footer>
+      <span class="dialog-footer">
+        <ElButton @click="handleClose">{{
+          $t('public_button_cancel')
+        }}</ElButton>
+        <ElButton :loading="uploading" type="primary" @click="submitUpload()">{{
+          $t('public_button_confirm')
+        }}</ElButton>
+      </span>
+    </template>
+  </ElDialog>
+</template>
 
 <style lang="scss">
 .import-upload-dialog {
   .el-upload-list {
     .el-upload-list__item {
       line-height: 28px;
-      background-color: map.get($bgColor, disable);
+      background-color: var(--bg-disable);
 
       &:hover {
-        background-color: map.get($bgColor, disable);
+        background-color: var(--bg-disable);
       }
 
       &.is-success {
@@ -435,11 +477,11 @@ export default {
 
     .el-upload-list__item-name {
       &:hover {
-        color: map.get($color, primary);
+        color: var(--color-primary);
       }
 
       i {
-        color: map.get($color, primary);
+        color: var(--color-primary);
       }
     }
 
@@ -451,7 +493,7 @@ export default {
       top: 7px;
 
       &:hover {
-        color: map.get($color, primary);
+        color: var(--color-primary);
       }
     }
   }

@@ -1,7 +1,7 @@
 <script>
 import { Check } from '@element-plus/icons-vue'
 import { permissionsApi, roleMappingsApi, usersApi } from '@tap/api'
-import { PageContainer } from '@tap/business'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import i18n from '@/i18n'
 
 const pageSort = [
@@ -104,10 +104,10 @@ const pageSort = [
       { name: 'v2_shared_cache' },
     ],
   },
-  {
-    name: 'v2_data_discovery',
-    children: [{ name: 'v2_data_object' }, { name: 'v2_data_catalogue' }],
-  },
+  // {
+  //   name: 'v2_data_discovery',
+  //   children: [{ name: 'v2_data_object' }, { name: 'v2_data_catalogue' }],
+  // },
   {
     name: 'v2_data-server',
     children: [
@@ -372,14 +372,8 @@ export default {
       }
 
       this.$confirm(
-        i18n.t('daas_role_role_ninhaiweibaocun'),
         this.$t('public_message_title_prompt'),
-        {
-          type: 'warning',
-          closeOnClickModal: false,
-          center: true,
-          customClass: 'pro-confirm',
-        },
+        this.$t('daas_role_role_ninhaiweibaocun'),
       ).then((flag) => {
         flag && this.save()
       })
@@ -393,8 +387,10 @@ export default {
     <template #left-actions>
       <el-divider direction="vertical" />
       <span class="flex align-center gap-2 bg-color-main rounded-lg px-2 py-1"
-        >{{ $t('role_currentRole') }}
-        <el-tag type="primary">{{ roleName }}</el-tag>
+        ><span class="font-color-light">{{ $t('role_currentRole') }}</span>
+        <el-tag type="primary" class="border-0 bg-white shadow-sm">{{
+          roleName
+        }}</el-tag>
       </span>
     </template>
     <template #actions>
@@ -531,8 +527,8 @@ export default {
     height: 40px !important;
     line-height: 40px;
     font-size: 14px;
-    color: map.get($fontColor, light);
-    background-color: map.get($bgColor, main);
+    color: var(--text-light);
+    background-color: var(--bg-main);
     .e-col {
       padding-left: 12px;
     }
@@ -614,7 +610,7 @@ export default {
         padding: 5px 0;
         margin: 0;
         font-size: 12px;
-        color: map.get($fontColor, light);
+        color: var(--text-light);
       }
     }
   }

@@ -1,7 +1,6 @@
 <script>
 import { ElSelect as Select } from 'element-plus'
 import { mapGetters } from 'vuex'
-import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
 
 export default {
   name: 'NodePopover',
@@ -11,15 +10,15 @@ export default {
   props: {
     popover: {},
   },
+  emits: ['clickNode'],
   computed: {
     ...mapGetters('dataflow', ['processorNodeTypes']),
   },
   methods: {
     handleClick(node) {
-      $emit(this, 'click-node', node)
+      this.$emit('clickNode', node)
     },
   },
-  emits: ['click-node'],
 }
 </script>
 

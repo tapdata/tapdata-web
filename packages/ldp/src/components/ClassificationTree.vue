@@ -1,83 +1,8 @@
-<template>
-  <div>
-    <ElTree
-      class="ldp-tree"
-      ref="tree"
-      node-key="id"
-      highlight-current
-      :data="treeData"
-      :props="props"
-      draggable
-      :default-expanded-keys="expandedKeys"
-      :filter-node-method="filterNode"
-      :render-content="renderContent"
-      :expand-on-click-node="false"
-      :allow-drag="checkAllowDrag"
-      :allow-drop="checkAllowDrop"
-      :renderContent="renderContent"
-      @node-click="handleNodeClick"
-      @node-drag-start="handleDragStart"
-      @node-drop="handleDrop"
-      @node-expand="handleNodeExpand"
-    >
-      <!--<template #default="{ node, data }">
-        <NodeContent :renderIcon="renderIcon" :node="node" :data="data" />
-      </template>-->
-    </ElTree>
-    <ElDialog v-model="dialogConfig.visible" width="30%" :close-on-click-modal="false">
-      <template #header>
-        <span style="font-size: 14px">{{ dialogConfig.title }}</span>
-      </template>
-      <ElForm ref="form" :model="dialogConfig" label-width="90px">
-        <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
-          <ElInput
-            v-model="dialogConfig.label"
-            :placeholder="$t('packages_component_classification_nodeName')"
-            maxlength="50"
-            show-word-limit
-          ></ElInput>
-        </ElFormItem>
-        <ElFormItem
-          :label="$t('packages_component_src_discoveryclassification_mulufenlei')"
-          v-if="dialogConfig.isParent"
-        >
-          <ElSelect v-model="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
-            <el-option
-              :label="$t('packages_component_src_discoveryclassification_ziyuanmulu')"
-              value="resource"
-            ></el-option>
-            <!--            <el-option label="任务目录" value="task"></el-option>-->
-          </ElSelect>
-        </ElFormItem>
-        <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumiaoshu')">
-          <ElInput
-            type="textarea"
-            v-model="dialogConfig.desc"
-            :placeholder="$t('packages_component_src_discoveryclassification_qingshurumulu')"
-            maxlength="50"
-            show-word-limit
-          ></ElInput>
-        </ElFormItem>
-      </ElForm>
-      <template v-slot:footer>
-        <span class="dialog-footer">
-          <ElButton @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton type="primary" @click="dialogSubmit()">
-            {{ $t('public_button_confirm') }}
-          </ElButton>
-        </span>
-      </template>
-    </ElDialog>
-  </div>
-</template>
-
-<script lang="jsx">
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
+<script lang="tsx">
 import i18n from '@tap/i18n'
-
-import { VIcon, VirtualTree } from '@tap/component'
-import { metadataDefinitionsApi, userGroupsApi, discoveryApi, connectionsApi, metadataInstancesApi } from '@tap/api'
-import { makeDragNodeImage } from '@tap/business'
+import { VirtualTree } from '@tap/component/src/virtual-tree'
+import { metadataDefinitionsApi, userGroupsApi, discoveryApi, fetchConnections, metadataInstancesApi } from '@tap/api'
+import { makeDragNodeImage } from '@tap/business/src/shared'
 
 export default {
   name: 'ClassificationTree',
@@ -190,7 +115,7 @@ export default {
                 <VIcon
                   size="18"
                   onClick={() => {
-                    $emit(this, 'view-details', data)
+                    this.$emit('view-details', data)
                   }}
                 >
                   view-details
@@ -350,7 +275,7 @@ export default {
                 <VIcon
                   size="18"
                   onClick={() => {
-                    $emit(this, 'view-details', data)
+                    this.$emit('view-details', data)
                   }}
                 >
                   view-details
@@ -384,7 +309,7 @@ export default {
 
     emitCheckedNodes(data, node) {
       if (!data) return
-      $emit(this, 'nodeChecked', data, node)
+      this.$emit('nodeChecked', data, node)
     },
 
     getData(cb) {
@@ -594,9 +519,6 @@ export default {
       let that = this
       this.$confirm(this.$t('packages_component_classification_deteleMessage'), {
         confirmButtonText: this.$t('public_button_delete'),
-        cancelButtonText: this.$t('packages_component_message_cancel'),
-        type: 'warning',
-        closeOnClickModal: false,
       }).then((resFlag) => {
         if (!resFlag) {
           return
@@ -845,9 +767,7 @@ export default {
           },
         },
       }
-      const res = await connectionsApi.get({
-        filter: JSON.stringify(filter),
-      })
+      const res = await fetchConnections(filter)
 
       return res.items.map((t) => {
         const { status, loadCount = 0, tableCount = 0 } = t
@@ -890,6 +810,79 @@ export default {
 }
 </script>
 
+<template>
+  <div>
+    <ElTree
+      class="ldp-tree"
+      ref="tree"
+      node-key="id"
+      highlight-current
+      :data="treeData"
+      :props="props"
+      draggable
+      :default-expanded-keys="expandedKeys"
+      :filter-node-method="filterNode"
+      :render-content="renderContent"
+      :expand-on-click-node="false"
+      :allow-drag="checkAllowDrag"
+      :allow-drop="checkAllowDrop"
+      :renderContent="renderContent"
+      @node-click="handleNodeClick"
+      @node-drag-start="handleDragStart"
+      @node-drop="handleDrop"
+      @node-expand="handleNodeExpand"
+    >
+      <!--<template #default="{ node, data }">
+        <NodeContent :renderIcon="renderIcon" :node="node" :data="data" />
+      </template>-->
+    </ElTree>
+    <ElDialog v-model="dialogConfig.visible" width="30%" :close-on-click-modal="false">
+      <template #header>
+        <span style="font-size: 14px">{{ dialogConfig.title }}</span>
+      </template>
+      <ElForm ref="form" :model="dialogConfig" label-width="90px">
+        <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
+          <ElInput
+            v-model="dialogConfig.label"
+            :placeholder="$t('packages_component_classification_nodeName')"
+            maxlength="50"
+            show-word-limit
+          ></ElInput>
+        </ElFormItem>
+        <ElFormItem
+          :label="$t('packages_component_src_discoveryclassification_mulufenlei')"
+          v-if="dialogConfig.isParent"
+        >
+          <ElSelect v-model="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
+            <el-option
+              :label="$t('packages_component_src_discoveryclassification_ziyuanmulu')"
+              value="resource"
+            ></el-option>
+            <!--            <el-option label="任务目录" value="task"></el-option>-->
+          </ElSelect>
+        </ElFormItem>
+        <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumiaoshu')">
+          <ElInput
+            type="textarea"
+            v-model="dialogConfig.desc"
+            :placeholder="$t('packages_component_src_discoveryclassification_qingshurumulu')"
+            maxlength="50"
+            show-word-limit
+          ></ElInput>
+        </ElFormItem>
+      </ElForm>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <ElButton @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton type="primary" @click="dialogSubmit()">
+            {{ $t('public_button_confirm') }}
+          </ElButton>
+        </span>
+      </template>
+    </ElDialog>
+  </div>
+</template>
+
 <style lang="scss">
 $nodeH: 32px;
 .ldp-tree {
@@ -910,7 +903,6 @@ $nodeH: 32px;
       height: $nodeH;
       margin-bottom: 1px;
       overflow: hidden;
-      border-radius: 6px;
     }
 
     //&.is-current > .el-tree-node__content {
@@ -935,8 +927,8 @@ $nodeH: 32px;
     .icon-folder {
       margin-right: 5px;
       font-size: 12px;
-      color: map.get($color, primary);
-      // color: map.get($color, lprimary);
+      color: var(--color-primary);
+      // color: var(--color-lprimary);
     }
 
     .table-label {
@@ -945,11 +937,11 @@ $nodeH: 32px;
       overflow: hidden;
       text-overflow: ellipsis;
       font-weight: 400;
-      color: map.get($fontColor, normal);
+      color: var(--text-normal);
     }
 
     .count-label {
-      color: map.get($fontColor, sslight);
+      color: var(--text-sslight);
     }
 
     .btn-menu {
@@ -1022,7 +1014,7 @@ $nodeH: 32px;
     position: absolute;
     right: -12px;
     top: -12px;
-    background-color: map.get($color, danger);
+    background-color: var(--color-danger);
     color: #fff;
     width: 24px;
     height: 24px;

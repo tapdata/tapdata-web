@@ -1,16 +1,24 @@
 <script setup lang="ts">
-import { connectionsApi } from '@tap/api'
-import { FilterBar, SelectList, VIcon } from '@tap/component'
+import {
+  checkConnectionTask,
+  copyConnection,
+  deleteConnection,
+  fetchConnections,
+  getConnectionDatabaseTypes,
+  updateConnectionById,
+} from '@tap/api'
+import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
+import FilterBar from '@tap/component/src/filter-bar/Main.vue'
+import { Modal } from '@tap/component/src/modal'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
-import { ElLoading, ElMessage, ElMessageBox } from 'element-plus'
 import {
   computed,
   h,
   inject,
   markRaw,
   nextTick,
-  onMounted,
+  onBeforeMount,
   onUnmounted,
   reactive,
   ref,
@@ -237,9 +245,7 @@ const getData = async ({
   }
 
   try {
-    const data = await connectionsApi.get({
-      filter: JSON.stringify(filter),
-    })
+    const data = await fetchConnections(filter)
     let list = data?.items || []
 
     if (multipleSelection.value.length && list.length) {
@@ -313,16 +319,13 @@ const edit = async (id: string, item: any) => {
 
   if (item.agentType === 'Local') {
     try {
-      await ElMessageBox.confirm(
+      const confirmed = await Modal.confirm(
         i18n.t('packages_business_connections_list_dangqianlianjie') +
           item.name +
           i18n.t('packages_business_connections_list_zhengzaizuoweiF'),
-        '',
-        {
-          type: 'warning',
-          showClose: false,
-        },
       )
+
+      if (!confirmed) return
 
       if (connectionDialogProps.dialogMode) {
         dialog.value?.editConnection(item)
@@ -365,7 +368,7 @@ const copy = async (data: any) => {
   const headersName = { 'lconname-name': data.name }
   data.copyLoading = true
   try {
-    await connectionsApi.copy(data.id, {
+    await copyConnection(data.id, {
       uri: `${data.id}/copy`,
       headers: headersName,
     })
@@ -399,14 +402,13 @@ const remove = async (row: any) => {
   ])
 
   try {
-    await ElMessageBox.confirm(msg, '', {
-      type: 'warning',
-      showClose: false,
-    })
+    const confirmed = await Modal.confirm(msg)
 
-    const data = await connectionsApi.checkConnectionTask(row.id)
+    if (!confirmed) return
+
+    const data = await checkConnectionTask(row.id)
     if (data?.items?.length === 0) {
-      const result = await connectionsApi.delete(row.id)
+      const result = await deleteConnection(row.id)
       const jobs = result?.data?.jobs || []
       const modules = result?.data?.modules || []
       if (jobs.length > 0 || modules.length > 0) {
@@ -447,7 +449,7 @@ const handleOperationClassify = async (listtags: any[]) => {
     listtags,
   }
   try {
-    await connectionsApi.batchUpdateListtags(attributes)
+    await batchUpdateConnectionTags(attributes)
     table.value?.fetch()
     ElMessage.success(i18n.t('public_message_save_ok'))
   } catch (error) {
@@ -488,7 +490,7 @@ const testConnection = (item: any) => {
   checkAgent(async () => {
     testData.value = markRaw(item)
     try {
-      await connectionsApi.updateById(
+      await updateConnectionById(
         item.id,
         Object.assign(
           {},
@@ -576,7 +578,7 @@ const getFilterItems = () => {
       width: 250,
       filterable: true,
       items: async () => {
-        const data = await connectionsApi.getDatabaseTypes()
+        const data = await getConnectionDatabaseTypes()
 
         if (!data?.length) {
           return []
@@ -625,7 +627,7 @@ const handlePermissionsSettings = () => {
 }
 
 const fetchDatabaseTypeOptions = async () => {
-  const data = await connectionsApi.getDatabaseTypes()
+  const data = await getConnectionDatabaseTypes()
 
   if (!data?.length) {
     return []
@@ -659,7 +661,7 @@ const handleChangeDatabaseType = (value: string) => {
 }
 
 // Lifecycle hooks
-onMounted(() => {
+onBeforeMount(() => {
   const { action, create } = route.query || {}
 
   if (create) {
@@ -1027,8 +1029,8 @@ onUnmounted(() => {
   font-weight: 400;
   font-size: 12px;
   line-height: 20px;
-  color: map.get($color, tag);
-  border: 1px solid map.get($bgColor, tag);
+  color: var(--color-tag);
+  border: 1px solid var(--bg-tag);
   border-radius: 4px;
 }
 
@@ -1038,7 +1040,7 @@ onUnmounted(() => {
 }
 
 .btn-text {
-  // color: map.get($color, primary);
+  // color: var(--color-primary);
   font-size: 12px;
   padding-right: 5px;
 }

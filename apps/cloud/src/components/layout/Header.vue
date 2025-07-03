@@ -8,7 +8,7 @@ import {
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import slackImg from '@/assets/image/slack.svg'
 
-import NotificationPopover from '@/views/workbench/NotificationPopover'
+import NotificationPopover from '@/views/workbench/NotificationPopover.vue'
 
 import { daysdifference, extractTimeFromObjectId } from '../../util'
 
@@ -83,15 +83,8 @@ export default {
           break
         case 'signOut':
           this.$confirm(
-            this.$t('header_log_out_tip'),
             this.$t('header_log_out_title'),
-            {
-              center: true,
-              customClass: 'pro-confirm',
-              type: 'warning',
-              confirmButtonText: this.$t('public_button_confirm'),
-              cancelButtonText: this.$t('public_button_cancel'),
-            },
+            this.$t('header_log_out_tip'),
           ).then((res) => {
             if (res) {
               this.clearCookie()
@@ -286,7 +279,7 @@ export default {
   width: 100%;
   height: 52px !important;
   padding: 0 7px;
-  background: map.get($color, submenu);
+  background: var(--color-submenu);
   box-sizing: border-box;
 
   .current {
@@ -309,15 +302,15 @@ export default {
     .command-item {
       padding: 4px 8px;
       cursor: pointer;
-      color: map.get($fontColor, light);
+      color: var(--text-light);
 
       &:hover {
-        color: map.get($color, primary);
-        background-color: map.get($color, white);
+        color: var(--color-primary);
+        background-color: var(--color-white);
         border-radius: 4px;
 
         &.icon {
-          color: map.get($color, primary);
+          color: var(--color-primary);
         }
       }
     }

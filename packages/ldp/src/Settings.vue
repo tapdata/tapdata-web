@@ -1,182 +1,8 @@
-<template>
-  <ElDialog
-    :title="title"
-    :model-value="visible"
-    :append-to-body="true"
-    width="800px"
-    top="10vh"
-    @open="handleOpen"
-    @close="handleClose"
-  >
-    <template #header>
-      <div class="font-color-dark fs-6 fw-sub">
-        {{ $t('packages_business_data_console_mode') }}
-      </div>
-    </template>
-    <div>
-      <div class="flex gap-6 justify-content-center p-4 rounded-lg mode-card-container">
-        <div
-          class="flex-1 rounded-xl bg-white border mode-card overflow-hidden clickable"
-          :class="{ active: mode === 'integration' }"
-          @click="handleSelectMode('integration')"
-        >
-          <ElImage class="px-5 py-2 mode-card-image align-top" :src="dataIntegrationModeImg"></ElImage>
-          <div class="px-4 flex align-center mode-card-title border-bottom">
-            <ElRadio v-model="mode" class="mr-0" label="integration">
-              <span class="fs-7 fw-sub">{{ $t('packages_business_data_console_mode_integration') }}</span>
-            </ElRadio>
-          </div>
-          <div class="px-4 py-2 mode-desc">
-            1.
-            {{ $t('packages_business_data_console_mode_integration_tooltip_1') }}
-            <br />
-            2.
-            {{ $t('packages_business_data_console_mode_integration_tooltip_2') }}
-            <br />
-            3.
-            {{ $t('packages_business_data_console_mode_integration_tooltip_3') }}
-          </div>
-        </div>
-        <div
-          class="flex-1 rounded-xl bg-white border mode-card overflow-hidden clickable"
-          :class="{ active: mode === 'service' }"
-          @click="handleSelectMode('service')"
-        >
-          <ElImage class="px-5 py-2 mode-card-image align-top" :src="dataServicePlatformModeImg"></ElImage>
-          <div class="px-4 flex align-center mode-card-title border-bottom">
-            <ElRadio v-model="mode" class="mr-0" label="service">
-              <span class="fs-7 fw-sub"
-                >{{ $t('packages_business_data_console_mode_service') }}<VIcon class="ml-1" size="32">beta</VIcon></span
-              >
-            </ElRadio>
-          </div>
-          <div class="px-4 py-2 mode-desc">
-            1.
-            {{ $t('packages_business_data_console_mode_service_tooltip_1') }}
-            <br />
-            2.
-            {{ $t('packages_business_data_console_mode_service_tooltip_2') }}
-            <br />
-            3. {{ $t('packages_business_data_console_mode_service_tooltip_3') }}
-          </div>
-        </div>
-      </div>
-
-      <ElForm :model="form" :rules="rules" ref="form" label-position="top" class="mode-setting-form">
-        <template v-if="mode === 'service'">
-          <div class="my-4 fs-6 font-color-dark form-title">
-            <span class="align-middle">{{ $t('packages_business_data_console_fdm_mdm_storage') }}</span>
-            <ElTooltip
-              class="ml-1"
-              placement="top"
-              :content="$t('packages_business_data_console_fdm_mdm_storage_tooltip')"
-            >
-              <VIcon class="color-primary align-middle" size="16">info</VIcon>
-            </ElTooltip>
-          </div>
-          <div class="px-4 py-3 rounded-lg border">
-            <ElFormItem prop="fdmStorageConnectionId">
-              <template #label>
-                <span class="inline-flex align-center">
-                  <span>{{ $t('packages_business_data_console_fdm_storage') }}</span>
-                </span>
-              </template>
-
-              <ElRadioGroup
-                v-if="!isDaas"
-                v-model="form.fdmStorageCluster"
-                @change="handleChangeFDMStorage"
-                :disabled="disabled"
-                class="mb-2"
-              >
-                <ElRadio v-for="item in options" :label="item.value" :key="'FDM' + item.value" border class="mr-4 ml-0">
-                  <span>{{ item.label }}</span>
-                </ElRadio>
-              </ElRadioGroup>
-
-              <ElSelect
-                v-if="form.fdmStorageCluster === 'self'"
-                v-model="form.fdmStorageConnectionId"
-                :disabled="disabled"
-                class="w-100"
-              >
-                <ElOption v-for="op in connectionsList" :label="op.label" :value="op.value" :key="op.value"></ElOption>
-              </ElSelect>
-              <template v-else>
-                <div class="flex align-center gap-4">
-                  <span class="preview-text inline-block rounded-4 bg-subtle ellipsis" v-if="fdmConnection">{{
-                    fdmConnection.name
-                  }}</span>
-                  <ElButton class="flex-shrink-0" type="primary" @click="handleOrderStorage">{{
-                    $t('packages_ldp_order_fully_managed_storage')
-                  }}</ElButton>
-                </div>
-              </template>
-            </ElFormItem>
-
-            <ElFormItem prop="mdmStorageConnectionId">
-              <template v-slot:label>
-                <span class="inline-flex align-center">
-                  <span>{{ $t('packages_business_data_console_mdm_storage') }}</span>
-                </span>
-              </template>
-              <ElRadioGroup
-                v-if="!isDaas"
-                class="mb-2"
-                v-model="form.mdmStorageCluster"
-                @change="handleChangeMDMStorage"
-                :disabled="disabled"
-              >
-                <ElRadio v-for="item in options" :label="item.value" :key="'FDM' + item.value" border class="mr-4 ml-0">
-                  <span>{{ item.label }}</span>
-                </ElRadio>
-              </ElRadioGroup>
-
-              <ElSelect
-                v-if="form.mdmStorageCluster === 'self'"
-                v-model="form.mdmStorageConnectionId"
-                :disabled="disabled"
-                class="w-100"
-              >
-                <ElOption v-for="op in connectionsList" :label="op.label" :value="op.value" :key="op.value"></ElOption>
-              </ElSelect>
-              <template v-else>
-                <div class="flex align-center gap-4">
-                  <span class="preview-text inline-block rounded-4 bg-subtle ellipsis" v-if="mdmConnection">{{
-                    mdmConnection.name
-                  }}</span>
-                  <ElButton class="flex-shrink-0" type="primary" @click="handleOrderStorage">{{
-                    $t('packages_ldp_order_fully_managed_storage')
-                  }}</ElButton>
-                </div>
-              </template>
-            </ElFormItem>
-
-            <div v-if="isDaas" class="flex align-items-center font-color-sslight">
-              <VIcon class="mr-1" size="14">info</VIcon>
-              <span class="font-color-sslight">{{ $t('packages_business_data_console_setting_saved_tooltip') }}</span>
-            </div>
-          </div>
-        </template>
-      </ElForm>
-    </div>
-    <template v-slot:footer>
-      <div>
-        <ElButton class="ml-4" @click="cancel">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton v-loading="loading" type="primary" :disabled="disabledBtn" @click="submit">{{
-          $t('public_button_save')
-        }}</ElButton>
-      </div>
-    </template>
-  </ElDialog>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
-import i18n from '@tap/i18n'
-import { connectionsApi, liveDataPlatformApi } from '@tap/api'
+import { fetchConnections, liveDataPlatformApi } from '@tap/api'
 import dataIntegrationModeImg from '@tap/assets/images/swimlane/data-integration-mode.png'
 import dataServicePlatformModeImg from '@tap/assets/images/swimlane/data-service-platform-mode.png'
+import i18n from '@tap/i18n'
 
 export default {
   name: 'Settings',
@@ -194,8 +20,15 @@ export default {
     fdmConnection: Object,
     mdmConnection: Object,
   },
+  emits: [
+    'init',
+    'update:mode',
+    'update:fdmStorageConnectionId',
+    'update:visible',
+    ' success',
+  ],
   data() {
-    const isCommunity =  import.meta.env.VUE_APP_MODE === 'community'
+    const isCommunity = import.meta.env.VUE_APP_MODE === 'community'
     const options = [
       {
         label: this.$t('packages_business_mongodb_self_hosted_cluster'),
@@ -271,8 +104,11 @@ export default {
     disabledBtn() {
       return (
         this.isDaas &&
-        ((this.disabled && this.mode === 'service' && this.mode === this.setting?.mode) ||
-          (this.mode === 'service' && this.form.fdmStorageCluster === 'full-management'))
+        ((this.disabled &&
+          this.mode === 'service' &&
+          this.mode === this.setting?.mode) ||
+          (this.mode === 'service' &&
+            this.form.fdmStorageCluster === 'full-management'))
       )
     },
   },
@@ -285,7 +121,7 @@ export default {
       const data = await this.getData()
       this.setting = data
       this.setData(data, true)
-      $emit(this, 'init', data)
+      this.$emit('init', data)
     },
 
     async getData() {
@@ -306,19 +142,15 @@ export default {
           },
         },
       }
-      connectionsApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          this.connectionsList =
-            data?.items.map((t) => {
-              return {
-                label: t.name,
-                value: t.id,
-              }
-            }) || []
-        })
+      fetchConnections(filter).then((data) => {
+        this.connectionsList =
+          data?.items.map((t) => {
+            return {
+              label: t.name,
+              value: t.id,
+            }
+          }) || []
+      })
     },
 
     setData(data = {}, update = false) {
@@ -327,12 +159,22 @@ export default {
 
       if (this.mode === 'service') {
         const { options, connectionsList } = this
-        this.form.fdmStorageCluster = data.fdmStorageCluster || this.form.fdmStorageCluster || options[0]?.value
+        this.form.fdmStorageCluster =
+          data.fdmStorageCluster ||
+          this.form.fdmStorageCluster ||
+          options[0]?.value
         this.form.fdmStorageConnectionId =
-          data.fdmStorageConnectionId || this.form.fdmStorageConnectionId || connectionsList[0]?.value
-        this.form.mdmStorageCluster = data.mdmStorageCluster || this.form.mdmStorageCluster || options[0]?.value
+          data.fdmStorageConnectionId ||
+          this.form.fdmStorageConnectionId ||
+          connectionsList[0]?.value
+        this.form.mdmStorageCluster =
+          data.mdmStorageCluster ||
+          this.form.mdmStorageCluster ||
+          options[0]?.value
         this.form.mdmStorageConnectionId =
-          data.mdmStorageConnectionId || this.form.mdmStorageConnectionId || connectionsList[0]?.value
+          data.mdmStorageConnectionId ||
+          this.form.mdmStorageConnectionId ||
+          connectionsList[0]?.value
       }
 
       update && this.$emit('update:mode', this.mode)
@@ -372,7 +214,7 @@ export default {
           .then(() => {
             const result = { mode, ...form }
             this.$message.success(this.$t('public_message_save_ok'))
-            $emit(this, 'success', result)
+            this.$emit('success', result)
             this.handleClose()
 
             Object.assign(this.setting, result)
@@ -394,9 +236,259 @@ export default {
       })
     },
   },
-  emits: ['init', 'update:mode', 'update:fdmStorageConnectionId', 'update:visible', ' success'],
 }
 </script>
+
+<template>
+  <ElDialog
+    :title="title"
+    :model-value="visible"
+    :append-to-body="true"
+    width="800px"
+    top="10vh"
+    @open="handleOpen"
+    @close="handleClose"
+  >
+    <template #header>
+      <div class="font-color-dark fs-6 fw-sub">
+        {{ $t('packages_business_data_console_mode') }}
+      </div>
+    </template>
+    <div>
+      <div
+        class="flex gap-6 justify-content-center p-4 rounded-lg mode-card-container"
+      >
+        <div
+          class="flex-1 rounded-xl bg-white border mode-card overflow-hidden clickable"
+          :class="{ active: mode === 'integration' }"
+          @click="handleSelectMode('integration')"
+        >
+          <ElImage
+            class="px-5 py-2 mode-card-image align-top"
+            :src="dataIntegrationModeImg"
+          />
+          <div class="px-4 flex align-center mode-card-title border-bottom">
+            <ElRadio v-model="mode" class="mr-0" label="integration">
+              <span class="fs-7 fw-sub">{{
+                $t('packages_business_data_console_mode_integration')
+              }}</span>
+            </ElRadio>
+          </div>
+          <div class="px-4 py-2 mode-desc">
+            1.
+            {{
+              $t('packages_business_data_console_mode_integration_tooltip_1')
+            }}
+            <br />
+            2.
+            {{
+              $t('packages_business_data_console_mode_integration_tooltip_2')
+            }}
+            <br />
+            3.
+            {{
+              $t('packages_business_data_console_mode_integration_tooltip_3')
+            }}
+          </div>
+        </div>
+        <div
+          class="flex-1 rounded-xl bg-white border mode-card overflow-hidden clickable"
+          :class="{ active: mode === 'service' }"
+          @click="handleSelectMode('service')"
+        >
+          <ElImage
+            class="px-5 py-2 mode-card-image align-top"
+            :src="dataServicePlatformModeImg"
+          />
+          <div class="px-4 flex align-center mode-card-title border-bottom">
+            <ElRadio v-model="mode" class="mr-0" label="service">
+              <span class="fs-7 fw-sub"
+                >{{ $t('packages_business_data_console_mode_service')
+                }}<VIcon class="ml-1" size="32">beta</VIcon></span
+              >
+            </ElRadio>
+          </div>
+          <div class="px-4 py-2 mode-desc">
+            1.
+            {{ $t('packages_business_data_console_mode_service_tooltip_1') }}
+            <br />
+            2.
+            {{ $t('packages_business_data_console_mode_service_tooltip_2') }}
+            <br />
+            3. {{ $t('packages_business_data_console_mode_service_tooltip_3') }}
+          </div>
+        </div>
+      </div>
+
+      <ElForm
+        ref="form"
+        :model="form"
+        :rules="rules"
+        label-position="top"
+        class="mode-setting-form"
+      >
+        <template v-if="mode === 'service'">
+          <div class="my-4 fs-6 font-color-dark form-title">
+            <span class="align-middle">{{
+              $t('packages_business_data_console_fdm_mdm_storage')
+            }}</span>
+            <ElTooltip
+              class="ml-1"
+              placement="top"
+              :content="
+                $t('packages_business_data_console_fdm_mdm_storage_tooltip')
+              "
+            >
+              <VIcon class="color-primary align-middle" size="16">info</VIcon>
+            </ElTooltip>
+          </div>
+          <div class="px-4 py-3 rounded-lg border">
+            <ElFormItem prop="fdmStorageConnectionId">
+              <template #label>
+                <span class="inline-flex align-center">
+                  <span>{{
+                    $t('packages_business_data_console_fdm_storage')
+                  }}</span>
+                </span>
+              </template>
+
+              <ElRadioGroup
+                v-if="!isDaas"
+                v-model="form.fdmStorageCluster"
+                :disabled="disabled"
+                class="mb-2"
+                @change="handleChangeFDMStorage"
+              >
+                <ElRadio
+                  v-for="item in options"
+                  :key="`FDM${item.value}`"
+                  :label="item.value"
+                  border
+                  class="mr-4 ml-0"
+                >
+                  <span>{{ item.label }}</span>
+                </ElRadio>
+              </ElRadioGroup>
+
+              <ElSelect
+                v-if="form.fdmStorageCluster === 'self'"
+                v-model="form.fdmStorageConnectionId"
+                :disabled="disabled"
+                class="w-100"
+              >
+                <ElOption
+                  v-for="op in connectionsList"
+                  :key="op.value"
+                  :label="op.label"
+                  :value="op.value"
+                />
+              </ElSelect>
+              <template v-else>
+                <div class="flex align-center gap-4">
+                  <span
+                    v-if="fdmConnection"
+                    class="preview-text inline-block rounded-4 bg-subtle ellipsis"
+                    >{{ fdmConnection.name }}</span
+                  >
+                  <ElButton
+                    class="flex-shrink-0"
+                    type="primary"
+                    @click="handleOrderStorage"
+                    >{{
+                      $t('packages_ldp_order_fully_managed_storage')
+                    }}</ElButton
+                  >
+                </div>
+              </template>
+            </ElFormItem>
+
+            <ElFormItem prop="mdmStorageConnectionId">
+              <template #label>
+                <span class="inline-flex align-center">
+                  <span>{{
+                    $t('packages_business_data_console_mdm_storage')
+                  }}</span>
+                </span>
+              </template>
+              <ElRadioGroup
+                v-if="!isDaas"
+                v-model="form.mdmStorageCluster"
+                class="mb-2"
+                :disabled="disabled"
+                @change="handleChangeMDMStorage"
+              >
+                <ElRadio
+                  v-for="item in options"
+                  :key="`FDM${item.value}`"
+                  :label="item.value"
+                  border
+                  class="mr-4 ml-0"
+                >
+                  <span>{{ item.label }}</span>
+                </ElRadio>
+              </ElRadioGroup>
+
+              <ElSelect
+                v-if="form.mdmStorageCluster === 'self'"
+                v-model="form.mdmStorageConnectionId"
+                :disabled="disabled"
+                class="w-100"
+              >
+                <ElOption
+                  v-for="op in connectionsList"
+                  :key="op.value"
+                  :label="op.label"
+                  :value="op.value"
+                />
+              </ElSelect>
+              <template v-else>
+                <div class="flex align-center gap-4">
+                  <span
+                    v-if="mdmConnection"
+                    class="preview-text inline-block rounded-4 bg-subtle ellipsis"
+                    >{{ mdmConnection.name }}</span
+                  >
+                  <ElButton
+                    class="flex-shrink-0"
+                    type="primary"
+                    @click="handleOrderStorage"
+                    >{{
+                      $t('packages_ldp_order_fully_managed_storage')
+                    }}</ElButton
+                  >
+                </div>
+              </template>
+            </ElFormItem>
+
+            <div
+              v-if="isDaas"
+              class="flex align-items-center font-color-sslight"
+            >
+              <VIcon class="mr-1" size="14">info</VIcon>
+              <span class="font-color-sslight">{{
+                $t('packages_business_data_console_setting_saved_tooltip')
+              }}</span>
+            </div>
+          </div>
+        </template>
+      </ElForm>
+    </div>
+    <template #footer>
+      <div>
+        <ElButton class="ml-4" @click="cancel">{{
+          $t('public_button_cancel')
+        }}</ElButton>
+        <ElButton
+          v-loading="loading"
+          type="primary"
+          :disabled="disabledBtn"
+          @click="submit"
+          >{{ $t('public_button_save') }}</ElButton
+        >
+      </div>
+    </template>
+  </ElDialog>
+</template>
 
 <style lang="scss" scoped>
 .dialog__content {
@@ -430,7 +522,7 @@ export default {
   }
 
   &.active {
-    border-color: map.get($color, primary) !important;
+    border-color: var(--color-primary) !important;
     .mode-card-image {
     }
   }
@@ -475,7 +567,7 @@ export default {
     top: 50%;
     transform: translateY(-50%);
     position: absolute;
-    background-color: map.get($color, primary);
+    background-color: var(--color-primary);
   }
 }
 </style>

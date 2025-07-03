@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { User, WarningFilled } from '@element-plus/icons-vue'
-import { licensesApi, settingsApi, timeStampApi, usersApi } from '@tap/api'
-import { VIcon } from '@tap/component'
+import {
+  fetchAppVersion,
+  fetchTimestamp,
+  getLicenseExpires,
+  logout,
+} from '@tap/api'
+import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 import {
   getCurrentLanguage,
@@ -9,16 +14,15 @@ import {
   setCurrentLanguage,
 } from '@tap/i18n/src/shared/util'
 import Cookie from '@tap/shared/src/cookie'
-import Time from '@tap/shared/src/time'
+import { getSettingByKey } from '@tap/shared/src/settings'
 
+import Time from '@tap/shared/src/time'
 import dayjs from 'dayjs'
-import { ElMessage, ElMessageBox } from 'element-plus'
 import { computed, inject, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import logoImg from '@/assets/images/logo.svg'
 import { DropdownList as OriginalDropdownList } from '@/router/menu'
-import { getSettingByKey } from '@/utils/settings'
 import { signOut as utilSignOut } from '@/utils/util'
 import NotificationPopover from '@/views/notification/NotificationPopover.vue'
 
@@ -110,8 +114,8 @@ const showHomeButton = computed(() => {
 // Methods
 const getAppVersion = async () => {
   try {
-    const data = await settingsApi.getAppVersion()
-    store.commit('SET_APP_VERSION', data.toString())
+    const data = await fetchAppVersion()
+    store.commit('SET_APP_VERSION', data)
   } catch (error) {
     console.error('Error fetching app version:', error)
   }
@@ -157,16 +161,9 @@ const command = (command: string) => {
       )
       break
     case 'signOut':
-      ElMessageBox.confirm(i18n.t('app_signOutMsg'), i18n.t('app_signOut'), {
-        type: 'warning',
-        center: true,
-        customClass: 'pro-confirm',
-      }).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        signOut()
-      })
+      Modal.confirm(i18n.t('app_signOut'), i18n.t('app_signOutMsg')).then(
+        (resFlag) => resFlag && signOut(),
+      )
       break
     case 'settings':
       router.push({
@@ -179,7 +176,7 @@ const command = (command: string) => {
 }
 
 const signOut = () => {
-  usersApi.logout().then(() => {
+  logout().then(() => {
     utilSignOut()
   })
 }
@@ -193,14 +190,14 @@ const changeLanguage = (lang: string) => {
 const getLicense = async () => {
   let stime: any = ''
   try {
-    const data = await timeStampApi.get()
+    const data = await fetchTimestamp()
     stime = data || Time.now()
   } catch (error) {
     console.error('Error fetching timestamp:', error)
     stime = Time.now()
   }
 
-  licensesApi.expires().then((data: any) => {
+  getLicenseExpires().then((data: any) => {
     const expires_on = data?.data?.expires_on
 
     if (!expires_on) {
