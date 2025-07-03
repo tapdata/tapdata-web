@@ -12,8 +12,6 @@ export default {
   packages_dag_dialog_createTable: '创建新表',
   packages_dag_dialog_placeholderTable:
     '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
-  packages_dag_dialog_placeholderTable:
-    '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
   packages_dag_dataFlow_flowEngineVersion: '引擎版本',
   packages_dag_dataFlow_flowEngineV1: 'Flow Engine V1',
   packages_dag_dataFlow_jetFlowEngineV2: 'Jet Flow Engine V2',
@@ -853,6 +851,7 @@ export default {
   packages_dag_noPkSyncMode: '无主键表同步方式',
   packages_dag_noPkSyncMode_ADD_HASH: '新增哈希列',
   packages_dag_noPkSyncMode_ALL_COLUMNS: '全字段索引',
+  packages_dag_noPKVirtualFieldName: '哈希列字段名',
   packages_dag_stream_offset: '精确位置',
   packages_dag_join_keys_empty: '{tableName} 的关联条件不能为空',
   packages_dag_join_keys_field_empty:
