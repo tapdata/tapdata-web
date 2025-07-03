@@ -12632,11 +12632,19 @@
 }
 
 
-.list-item-hover:hover:not(.bg-white) {
+.list-item-hover:hover:not(.bg-white):not(.is-active) {
   background-color: var(--fill-hover) !important;
 }
 
 .list-item-hover.is-active {
   background-color: var(--primary-hover-light) !important;
   color: var(--el-color-primary) !important;
+}
+
+.text-caption {
+  color: var(--el-text-color-caption);
+}
+
+.text-disabled {
+  color: var(--el-text-color-disabled);
 }

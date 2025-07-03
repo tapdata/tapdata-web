@@ -2,9 +2,9 @@
 import {
   CancelToken,
   discoveryApi,
+  getApiModuleList,
   ldpApi,
   metadataInstancesApi,
-  modulesApi,
   proxyApi,
   taskApi,
   workerApi,
@@ -23,7 +23,6 @@ import { calcTimeUnit, calcUnit, isNum } from '@tap/shared'
 import dayjs from 'dayjs'
 import { cloneDeep, debounce } from 'lodash-es'
 import { h } from 'vue'
-import { $emit, $off, $on, $once } from '../utils/gogocodeTransfer'
 import TableLineage from './components/TableLineage'
 
 export default {
@@ -44,6 +43,7 @@ export default {
       default: 'Drawer',
     },
   },
+  emits: ['createSingleTask', 'handleShowUpgrade', 'createApi'],
   data() {
     return {
       visible: false,
@@ -465,9 +465,8 @@ export default {
     getApisData() {
       const { connectionId, name } = this.selected || {}
 
-      return modulesApi
-        .apiList({ connectionId, tableName: name })
-        .then((data) => {
+      return getApiModuleList({ connectionId, tableName: name }).then(
+        (data) => {
           return {
             total: data.total || 0,
             data:
@@ -479,11 +478,12 @@ export default {
                 return t
               }) || [],
           }
-        })
+        },
+      )
     },
 
     handleCreateTask() {
-      $emit(this, 'create-single-task', this.selected, this.swimType)
+      this.$emit('createSingleTask', this.selected, this.swimType)
     },
 
     getTaskType(type) {
@@ -561,7 +561,7 @@ export default {
             (t) => t.code === 'Task.ScheduleLimit',
           )
           if (findScheduleLimit) {
-            $emit(this, 'handle-show-upgrade', findScheduleLimit)
+            this.$emit('handleShowUpgrade', findScheduleLimit)
             return
           } else if (findManuallyScheduleLimit) {
             this.$message.error(findManuallyScheduleLimit.message)
@@ -731,7 +731,7 @@ export default {
     },
 
     handleCreateAPI() {
-      this.$emit('create-api', this.connection, this.selected)
+      this.$emit('createApi', this.connection, this.selected)
     },
   },
 }

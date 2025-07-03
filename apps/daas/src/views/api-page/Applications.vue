@@ -300,7 +300,7 @@ export default {
           >
             {{ $t('public_button_edit') }}
           </ElButton>
-          <template v-if="scope.row.clientName !== 'Data Explorer'">
+          <template v-if="scope.row.id !== '5c0e750b7a5cd42464a5099d'">
             <ElDivider class="mx-1" direction="vertical" />
             <ElButton
               v-readonlybtn="'API_clients_amangement'"

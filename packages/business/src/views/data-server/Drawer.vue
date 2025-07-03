@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { EditPen, InfoFilled } from '@element-plus/icons-vue'
 import {
+  createApiModule,
   databaseTypesApi,
-  fetchApiClients,
+  fetchApiServerToken,
   listAllConnections,
   metadataInstancesApi,
-  modulesApi,
   roleApi,
+  updateApiModule,
+  updateApiModulePermissions,
+  updateApiModuleTags,
   workerApi,
 } from '@tap/api'
 import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
@@ -536,18 +539,8 @@ const handleFieldsSelection = () => {
 }
 
 const getAPIServerToken = async (callback?: (token: string) => void) => {
-  const clientInfo = await fetchApiClients({
-    where: {
-      clientName: 'Data Explorer',
-    },
-  })
-  const clientInfoItem = clientInfo?.items?.[0] || {}
-
-  const paramsStr = `grant_type=client_credentials&client_id=${clientInfoItem.id}&client_secret=${clientInfoItem.clientSecret}`
-  const result = await axios.create().post('/oauth/token', paramsStr)
-  const newToken = result?.data?.access_token || ''
-  token.value = newToken
-  callback?.(newToken)
+  token.value = await fetchApiServerToken()
+  callback?.(token.value)
 }
 
 // Methods
@@ -684,7 +677,8 @@ const save = async (type?: boolean) => {
         formData.fields = allFields.value
       }
 
-      const data = await modulesApi[id ? 'patch' : 'post'](formData)
+      const method = id ? updateApiModule : createApiModule
+      const data = await method(formData)
 
       data.connection = connectionId
       data.source = {
@@ -927,14 +921,14 @@ const handleChangePermissionsAndSave = async () => {
     ],
   }
 
-  await modulesApi.patch(formData)
+  await updateApiModule(formData)
   ElMessage.success(i18n.t('public_message_operation_success'))
 }
 
 const handleUpdateRole = async () => {
   if (!data.value.id) return
 
-  await modulesApi.updatePermissions({
+  await updateApiModulePermissions({
     moduleId: data.value.id,
     acl: form.value.acl,
   })
@@ -946,7 +940,7 @@ const handleUpdateApp = async () => {
   if (!data.value.id) return
 
   const { appLabel, appValue } = form.value
-  await modulesApi.updateTags({
+  await updateApiModuleTags({
     moduleId: data.value.id,
     listtags: [
       {

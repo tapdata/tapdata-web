@@ -454,7 +454,11 @@ export default defineComponent({
             ref="table"
             v-loading="loading"
             class="table-page-table"
-            :row-class-name="classificationVisible ? 'grabbable' : ''"
+            :row-class-name="
+              classificationVisible
+                ? `${$attrs['row-class-name']} grabbable`
+                : $attrs['row-class-name']
+            "
             :height="ifTableHeightAuto ? null : '100%'"
             :element-loading-text="$t('packages_business_dataFlow_dataLoading')"
             :row-key="rowKey"

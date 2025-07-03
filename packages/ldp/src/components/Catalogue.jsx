@@ -6,7 +6,7 @@ import { makeDragNodeImage } from '@tap/business/src/shared'
 import TablePreview from '../TablePreview'
 import ClassificationTree from './ClassificationTree'
 import resize from '@tap/component/src/directives/resize'
-import { apiServerApi, modulesApi } from '@tap/api'
+import { apiServerApi, fetchApiModule } from '@tap/api'
 import { useRoute } from 'vue-router'
 import './index.scss'
 
@@ -65,7 +65,7 @@ export default defineComponent({
       console.log('handleNodeClick', data) // eslint-disable-line
       if (data.isObject) {
         if (data.type === 'defaultApi') {
-          const apiInfo = await modulesApi.get(data.id)
+          const apiInfo = await fetchApiModule(data.id)
           previewRef.value.open(apiInfo)
         } else {
           nextTick(() => {

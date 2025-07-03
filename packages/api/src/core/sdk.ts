@@ -5,6 +5,7 @@ const BASE_URL = '/api/sdk'
 export interface Sdk {
   id: string
   name: string
+  artifactId: string
   packageName: string
   latestVersion: string
   status: string
@@ -48,6 +49,8 @@ export function fetchSdkList(filter?: any, config: any = {}) {
           {
             id: '1',
             name: '1.0.0',
+            artifactId: 'tapdata-sdk',
+            packageName: 'io.tapdata',
             latestVersion: '1.0.0',
             status: 'published',
             createdAt: '2025-01-01',

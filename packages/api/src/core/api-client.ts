@@ -1,4 +1,9 @@
-import { requestClient, type Filter, type PageFetchResult } from '../request'
+import {
+  baseRequestClient,
+  requestClient,
+  type Filter,
+  type PageFetchResult,
+} from '../request'
 
 const BASE_URL = '/api/Applications'
 
@@ -38,4 +43,33 @@ export function createApiClient(client: any) {
 
 export function updateApiClient(client: any) {
   return requestClient.patch(BASE_URL, client)
+}
+
+export async function fetchApiServerToken() {
+  const apiToken = localStorage.getItem('__api_server_token') || ''
+  if (apiToken) {
+    return apiToken
+  }
+
+  const clientInfo: any = await requestClient.get(BASE_URL, {
+    params: {
+      filter: JSON.stringify({
+        where: {
+          id: '5c0e750b7a5cd42464a5099d',
+        },
+      }),
+    },
+  })
+  const clientInfoItem = clientInfo?.items[0] || {}
+  const data = `grant_type=client_credentials&client_id=${clientInfoItem.id}&client_secret=${clientInfoItem.clientSecret}`
+  const result = await baseRequestClient.post('/oauth/token', data, {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+  })
+  const token = result?.data?.access_token || ''
+
+  localStorage.setItem('__api_server_token', token)
+
+  return token
 }

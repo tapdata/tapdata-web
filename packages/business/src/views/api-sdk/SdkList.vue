@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { fetchSdkList } from '@tap/api'
 import { FilterBar } from '@tap/component/src/filter-bar'
+import { RightBoldOutlined } from '@tap/component/src/RightBoldOutlined'
 import i18n from '@tap/i18n'
 import { ref } from 'vue'
 import PageContainer from '../../components/PageContainer.vue'
@@ -27,6 +28,10 @@ const getData = async ({
 }
 
 const dialogVisible = ref(false)
+
+const handleDetails = (row: any, column: any, event: Event) => {
+  console.log(row)
+}
 </script>
 
 <template>
@@ -47,7 +52,9 @@ const dialogVisible = ref(false)
     <TablePage
       ref="table"
       :remote-method="getData"
+      row-class-name="cursor-pointer"
       @sort-change="handleSortTable"
+      @row-click="handleDetails"
     >
       <template #search>
         <FilterBar
@@ -60,18 +67,20 @@ const dialogVisible = ref(false)
         min-width="250"
         :label="$t('public_sdk_name')"
         :show-overflow-tooltip="true"
+        prop="artifactId"
       >
-        <template #default="{ row }">
+        <!-- <template #default="{ row }">
           <ElLink
             v-readonlybtn="'SYNC_job_edition'"
             type="primary"
             underline="never"
             @click="handleDetails(row)"
           >
-            {{ row.name }}
+            {{ row.artifactId }}
           </ElLink>
-        </template>
+        </template> -->
       </el-table-column>
+      <el-table-column min-width="160" label="包名" prop="packageName" />
       <el-table-column
         min-width="160"
         :label="$t('public_latest_version')"
@@ -88,36 +97,13 @@ const dialogVisible = ref(false)
         :label="$t('public_update_time')"
         sortable
       />
-      <el-table-column
-        width="220"
-        fixed="right"
-        :label="$t('public_operation')"
-      >
+      <el-table-column width="100" align="right">
         <template #default="{ row }">
-          <div class="table-operations">
-            <ElButton
-              v-readonlybtn="'SYNC_job_edition'"
-              text
-              :disabled="row.readOnly"
-              type="primary"
-              @click="handleEditor(row)"
-            >
-              {{ $t('public_button_edit') }}
-            </ElButton>
-            <ElDivider
-              v-readonlybtn="'SYNC_job_edition'"
-              class="mx-1"
-              direction="vertical"
-            />
-            <ElButton
-              v-readonlybtn="'SYNC_job_edition'"
-              text
-              type="primary"
-              @click="handleDetails(row)"
-            >
-              {{ $t('public_button_details') }}
-            </ElButton>
-          </div>
+          <ElButton text @click="handleDetails(row)">
+            <template #icon>
+              <i-mingcute:right-line />
+            </template>
+          </ElButton>
         </template>
       </el-table-column>
     </TablePage>

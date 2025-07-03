@@ -1,5 +1,5 @@
 <script>
-import { modulesApi } from '@tap/api'
+import { updateApiModule } from '@tap/api'
 import ApiForm from '@tap/business/src/views/data-server/Drawer.vue'
 import { generateId } from '@tap/shared'
 
@@ -55,9 +55,9 @@ export default {
     async onSaved(data) {
       data.status = 'pending'
       this.loading = true
-      data = await modulesApi.patch(data)
+      data = await updateApiModule(data)
       data.status = 'active'
-      data = await modulesApi.patch(data)
+      data = await updateApiModule(data)
       this.loading = false
       this.handleVisible(false)
       this.$emit('save', data, this.params.to)

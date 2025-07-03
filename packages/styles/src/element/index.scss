@@ -595,6 +595,10 @@
 
 // Input
 .el-input.el-input {
+  &.is-borderless {
+    --el-input-border-color: transparent;
+    --el-input-focus-border-color: transparent;
+  }
   &.el-input--small {
     --el-border-radius-base: var(--el-border-radius-small);
   }

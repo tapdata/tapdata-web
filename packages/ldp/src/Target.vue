@@ -1,9 +1,9 @@
 <script lang="tsx">
 import {
   apiServerApi,
+  fetchApiModules,
   fetchApps,
   fetchConnections,
-  modulesApi,
   proxyApi,
   taskApi,
 } from '@tap/api'
@@ -408,13 +408,9 @@ export default {
         },
       }
 
-      return modulesApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then(({ items }) => {
-          return items.map(this.mapApi)
-        })
+      return fetchApiModules(filter).then(({ items }) => {
+        return items.map(this.mapApi)
+      })
     },
 
     mapApi(item) {
@@ -870,9 +866,8 @@ export default {
             <template v-if="item.LDP_TYPE === 'app'">
               <div class="item__header p-3">
                 <div class="flex align-center gap-2 overflow-hidden">
-                  <!-- <VIcon size="20">mini-app</VIcon> -->
                   <el-icon size="20" class="color-primary"
-                    ><i-mingcute:wechat-miniprogram-line
+                    ><i-fluent:folder-link-16-regular
                   /></el-icon>
                   <span
                     class="font-color-normal fw-sub fs-6 ellipsis lh-base"
@@ -1021,9 +1016,8 @@ export default {
               <template v-if="item.LDP_TYPE === 'app'">
                 <div class="item__header p-3">
                   <div class="flex align-center gap-2 overflow-hidden">
-                    <!-- <VIcon size="20">mini-app</VIcon> -->
-                    <el-icon class="color-primary" size="20"
-                      ><i-mingcute:wechat-miniprogram-fill
+                    <el-icon size="20"
+                      ><i-fluent:folder-link-16-regular
                     /></el-icon>
                     <span
                       class="font-color-normal fw-sub fs-6 ellipsis lh-base"
