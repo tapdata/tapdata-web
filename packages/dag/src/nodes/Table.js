@@ -197,7 +197,9 @@ export class Table extends NodeType {
                           method: '{{loadTable}}',
                           connectionId: '{{$values.connectionId}}',
                           itemType: 'object',
-                          itemQuery: 'value'
+                          itemQuery: 'value',
+                          hasPartition: `{{$values.attrs.capabilities.some(item => item.id==="source_support_partition")}}`,
+                          syncPartitionTableEnable: '{{$values.syncSourcePartitionTableEnable}}'
                         },
                         'x-reactions': [
                           {
@@ -233,6 +235,25 @@ export class Table extends NodeType {
                               'x-component-props.content': '{{$deps[0]}}'
                             }
                           }
+                        }
+                      }
+                    }
+                  },
+
+                  syncSourcePartitionTableEnable: {
+                    title: i18n.t('packages_dag_syncSourcePartitionTableEnable'),
+                    type: 'boolean',
+                    default: true,
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      class: 'flex-1',
+                      tooltip: i18n.t('packages_dag_syncSourcePartitionTableEnable_tip')
+                    },
+                    'x-component': 'Switch',
+                    'x-reactions': {
+                      fulfill: {
+                        state: {
+                          visible: '{{$values.attrs.capabilities.some(item => item.id==="source_support_partition")}}'
                         }
                       }
                     }
