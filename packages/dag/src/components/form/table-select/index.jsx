@@ -117,7 +117,15 @@ export const TableSelect = connect(
   observer(
     defineComponent({
       name: 'TableSelect',
-      props: ['reloadTime', 'connectionId', 'modelValue', 'allowCreate'],
+      props: [
+        'reloadTime',
+        'connectionId',
+        'modelValue',
+        'allowCreate',
+        'hasPartition',
+        'syncPartitionTableEnable',
+        'method',
+      ],
       setup(props, { attrs }) {
         const select = ref(null)
         const store = useStore()
@@ -138,7 +146,7 @@ export const TableSelect = connect(
         const loading = ref(false)
 
         const loadSelectData = () => {
-          select.value.refresh?.()
+          select.value?.refresh?.()
         }
 
         const loadSchema = async (keys) => {
@@ -179,6 +187,57 @@ export const TableSelect = connect(
               </span>
             </ElOption>
           ) : null
+        }
+
+        let cacheTables = []
+
+        watch(
+          () => props.syncPartitionTableEnable,
+          () => {
+            cacheTables = []
+            loadSelectData()
+          },
+        )
+
+        const fetchMethod = async (filter, config) => {
+          if (props.hasPartition) {
+            if (cacheTables.length) {
+              if (!filter.where?.name?.like)
+                return {
+                  items: cacheTables,
+                  total: cacheTables.length,
+                }
+
+              const search = filter.where?.name?.like.toLowerCase()
+              const filtered = cacheTables.filter((it) =>
+                it.value.toLowerCase().includes(search),
+              )
+              return {
+                items: filtered,
+                total: filtered.length,
+              }
+            } else {
+              const res = await metadataInstancesApi.pagePartitionTables({
+                connectionId: props.connectionId,
+                limit: 0,
+                syncPartitionTableEnable: props.syncPartitionTableEnable,
+              })
+              cacheTables = res.items.map((it) => ({
+                label:
+                  it.tableName +
+                  (it.tableComment ? `(${it.tableComment})` : ''),
+                value: it.tableName,
+              }))
+              return {
+                items: cacheTables,
+                total: cacheTables.length,
+              }
+            }
+          } else {
+            cacheTables = []
+
+            return props.method(filter, config)
+          }
         }
 
         return () => {
@@ -232,6 +291,7 @@ export const TableSelect = connect(
           return (
             <InfiniteSelect
               {...attrs}
+              method={fetchMethod}
               modelValue={props.modelValue}
               loading={loading.value}
               class="table-select"
