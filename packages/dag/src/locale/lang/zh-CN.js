@@ -12,8 +12,6 @@ export default {
   packages_dag_dialog_createTable: '创建新表',
   packages_dag_dialog_placeholderTable:
     '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
-  packages_dag_dialog_placeholderTable:
-    '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
   packages_dag_dataFlow_flowEngineVersion: '引擎版本',
   packages_dag_dataFlow_flowEngineV1: 'Flow Engine V1',
   packages_dag_dataFlow_jetFlowEngineV2: 'Jet Flow Engine V2',
