@@ -206,7 +206,7 @@ const handleVersionSelect = (version: any) => {
         </div>
 
         <div class="bg-light rounded-xl min-h-0 flex flex-column">
-          <div class="px-4 py-2 fs-6 lh-8">服务列表</div>
+          <div class="px-4 py-2 fs-6 lh-8">API 列表</div>
           <div class="px-2 pb-2 flex-1 min-h-0">
             <div
               class="bg-white rounded-xl p-2 h-100"
