@@ -42,7 +42,7 @@
     "@types/node": "catalog:",
     "@types/qs": "catalog:",
     "@vue/tsconfig": "catalog:",
-    "chalk": "5",
+    "chalk": "catalog:",
     "cross-env": "catalog:",
     "eslint": "catalog:",
     "file-loader": "catalog:",

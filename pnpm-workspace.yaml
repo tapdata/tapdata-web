@@ -60,6 +60,7 @@ catalog:
   ace-builds: ^1.4.13
   ali-oss: ^6.17.1
   axios: ^1.9.0
+  chalk: ^5.4.1
   core-js: ^3.8.3
   cron-parser: ^4.6.0
   cross-env: ^7.0.3
@@ -68,7 +69,7 @@ catalog:
   dayjs: ^1.11.2
   driver.js: ^1.2.1
   echarts: ^5.0.2
-  element-plus: ^2.9.11
+  element-plus: ^2.10.2
   eslint: ^9.23.0
   eslint-config-prettier: ^8.3.0
   eslint-plugin-prettier: ^4.0.0
