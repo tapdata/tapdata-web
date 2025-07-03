@@ -569,6 +569,13 @@
   .el-tag__content .el-icon {
     vertical-align: -2px;
   }
+
+  &.is-code {
+    --el-tag-text-color: var(--el-text-color-title);
+    // --el-tag-bg-color: var(--el-fill-color-light);
+    --el-tag-bg-color: rgba(129, 139, 152, 0.12);
+    --el-tag-border-color: transparent;
+  }
 }
 
 // InputNumber

@@ -791,7 +791,13 @@ defineExpose({
             :label="$t('daas_data_server_drawer_path')"
             prop="_path"
             :min-width="130"
-          />
+          >
+            <template #default="{ row }">
+              <el-tag type="info" class="is-code">
+                {{ row._path }}
+              </el-tag>
+            </template>
+          </el-table-column>
         </template>
 
         <el-table-column

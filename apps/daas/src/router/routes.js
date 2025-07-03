@@ -613,7 +613,7 @@ export const routes = [
       {
         path: '',
         name: 'dataServerAuditList',
-        component: () => import('@/views/data-server-audit/List'),
+        component: () => import('@/views/data-server-audit/List.vue'),
         meta: {
           hideTitle: true,
           title: 'page_title_api_audit',
@@ -623,7 +623,7 @@ export const routes = [
       {
         path: ':id/details',
         name: 'dataServerAuditDetails',
-        component: () => import('@/views/data-server-audit/Info'),
+        component: () => import('@/views/data-server-audit/Info.vue'),
         meta: {
           title: 'page_title_api_audit_details',
           code: 'v2_data_server_audit-details',
@@ -675,6 +675,39 @@ export const routes = [
   },
 
   {
+    path: '/api-sdk',
+    name: 'apiSdk',
+    component: Layout,
+    redirect: {
+      name: 'apiSdkList',
+    },
+    meta: {
+      title: 'page_title_role',
+    },
+    children: [
+      {
+        path: '',
+        name: 'apiSdkList',
+        component: () => import('@tap/business/src/views/api-sdk/SdkList.vue'),
+        meta: {
+          title: 'page_title_api_sdk',
+          code: 'v2_data-server-list',
+        },
+      },
+      {
+        path: ':id',
+        name: 'apiSdkDetails',
+        component: () =>
+          import('@tap/business/src/views/api-sdk/SdkDetails.vue'),
+        meta: {
+          title: 'page_title_api_sdk_details',
+          code: 'v2_role_creation',
+        },
+      },
+    ],
+  },
+
+  {
     path: '/',
     name: 'layout',
     redirect: '/dashboard',
@@ -688,17 +721,6 @@ export const routes = [
         component: () => import('@/views/dashboard/Dashboard.vue'),
         meta: {
           title: 'page_title_overview',
-        },
-      },
-
-      {
-        path: '/api/sdk',
-        name: 'apiSdk',
-        component: () => import('@tap/business/src/views/api/SdkList.vue'),
-        meta: {
-          title: 'page_title_api_sdk',
-          code: 'v2_data-server-list',
-          hideTitle: true,
         },
       },
 
@@ -728,7 +750,7 @@ export const routes = [
       {
         path: '/api-client',
         name: 'apiClient',
-        component: () => import('@/views/api-page/Applications'),
+        component: () => import('@/views/api-page/Applications.vue'),
         meta: {
           title: 'page_title_api_client',
           code: 'v2_api-client',
@@ -739,7 +761,7 @@ export const routes = [
       {
         path: '/api-servers',
         name: 'apiServer',
-        component: () => import('@/views/api-page/ApiServer'),
+        component: () => import('@/views/api-page/ApiServer.vue'),
         meta: {
           title: 'page_title_api_servers',
           code: 'v2_api-servers',
@@ -751,7 +773,7 @@ export const routes = [
       {
         path: '/api-monitor',
         name: 'apiMonitor',
-        component: () => import('@/views/api-page/api-monitor/ApiMonitor'),
+        component: () => import('@/views/api-page/api-monitor/ApiMonitor.vue'),
         meta: {
           title: 'page_title_api_monitor',
           code: 'v2_api_monitor',
@@ -761,7 +783,7 @@ export const routes = [
       {
         path: '/cluster',
         name: 'clusterManagement',
-        component: () => import('@/views/cluster/Cluster'),
+        component: () => import('@/views/cluster/Cluster.vue'),
         meta: {
           title: 'page_title_cluster',
           code: 'v2_cluster-management_menu',
@@ -781,7 +803,7 @@ export const routes = [
       {
         path: '/user',
         name: 'users',
-        component: () => import('@/views/user/List'),
+        component: () => import('@/views/user/List.vue'),
         meta: {
           title: 'page_title_user',
           code: 'v2_user_management_menu',
@@ -791,7 +813,7 @@ export const routes = [
       {
         path: 'license',
         name: 'License',
-        component: () => import('@/views/License'),
+        component: () => import('@/views/License.vue'),
         meta: {
           title: 'page_title_license',
           hideTitle: true,
@@ -826,21 +848,21 @@ export const routes = [
         path: 'accountSetting',
         name: 'accountSetting',
         code: 'v2_account-setting-setting',
-        component: () => import('@/views/setting/AccountSetting'),
+        component: () => import('@/views/setting/AccountSetting.vue'),
         meta: { title: 'page_title_account' },
       },
       {
         path: 'notificationSetting',
         name: 'notificationSetting',
         code: 'v2_notification-setting',
-        component: () => import('@/views/setting/NotificationSetting'),
+        component: () => import('@/views/setting/NotificationSetting.vue'),
         meta: { title: 'notify_setting', isNotAside: true },
       },
       /* ---------- 系统设置  ----------*/
       {
         path: 'settings',
         name: 'settings',
-        component: () => import('@/views/setting/Setting'),
+        component: () => import('@/views/setting/Setting.vue'),
         meta: {
           title: 'page_title_setting',
           code: 'v2_system_settings_menu',
@@ -862,7 +884,7 @@ export const routes = [
       {
         path: 'webhook-alerts',
         name: 'webhookAlerts',
-        component: () => import('@/views/setting/WebhookAlerts'),
+        component: () => import('@/views/setting/WebhookAlerts.vue'),
         meta: {
           title: 'page_title_webhook_alerts',
           isNotAside: true,

@@ -4,9 +4,12 @@ import { FilterBar } from '@tap/component/src/filter-bar'
 import { RightBoldOutlined } from '@tap/component/src/RightBoldOutlined'
 import i18n from '@tap/i18n'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
 import TablePage from '../../components/TablePage.vue'
 import SdkDialog from './SdkDialog.vue'
+
+const router = useRouter()
 
 const getData = async ({
   page,
@@ -29,8 +32,13 @@ const getData = async ({
 
 const dialogVisible = ref(false)
 
-const handleDetails = (row: any, column: any, event: Event) => {
-  console.log(row)
+const handleDetails = (row: any) => {
+  router.push({
+    name: 'apiSdkDetails',
+    params: {
+      id: row.id,
+    },
+  })
 }
 </script>
 
@@ -90,7 +98,11 @@ const handleDetails = (row: any, column: any, event: Event) => {
         min-width="160"
         :label="$t('public_status')"
         prop="status"
-      />
+      >
+        <template #default="{ row }">
+          <el-tag> 构建中 </el-tag>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="createTime"
         min-width="160"
