@@ -14,6 +14,8 @@ import { computed, ref, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
 import { dayjs } from '../../shared/dayjs'
+import ApiDrawer from '../data-server/Drawer.vue'
+import Status from './Status.vue'
 
 const router = useRouter()
 
@@ -26,8 +28,24 @@ const searchInput = ref<any>(null)
 const table = ref<any>(null)
 const dragState = ref<any>(null)
 const pendingSelection = ref<any>([])
+const apiDrawer = ref<any>(null)
 
 const selectedVersion = ref<any>()
+
+const statusMap = {
+  FAILED: {
+    text: '失败',
+    type: 'danger',
+  },
+  GENERATED: {
+    text: '已生成',
+    type: 'success',
+  },
+  GENERATING: {
+    text: '生成中',
+    type: '',
+  },
+}
 
 const mapApi = (item: any) => {
   const pathJoin: string[] = []
@@ -139,12 +157,22 @@ const handleVersionSelect = (version: any) => {
   selectedVersion.value = version
   runFetchApiList()
 }
+
+const openApiDrawer = (item?: any) => {
+  apiDrawer.value?.open(item)
+}
+
+const handleDownload = (gridfsId: string) => {
+  window.open(`/api/SDK/download/${gridfsId}`, '_blank')
+}
 </script>
 
 <template>
   <PageContainer>
     <template #title>
-      <span class="fs-5 font-color-dark lh-8 ellipsis"> TapData - sdk </span>
+      <span class="fs-5 font-color-dark lh-8 ellipsis">{{
+        sdk?.artifactId
+      }}</span>
       <el-tag v-if="selectedVersion" class="ml-2 is-code">
         <VIcon class="align-middle mr-1" size="14">Versions</VIcon>
         <span class="align-middle">{{ selectedVersion.version }}</span>
@@ -217,6 +245,28 @@ const handleVersionSelect = (version: any) => {
                       version.updatedFromNow
                     }}</span>
                   </span>
+                  <Status
+                    v-if="
+                      version.generateStatus &&
+                      version.generateStatus !== 'GENERATED'
+                    "
+                    size="small"
+                    class="ml-auto"
+                    :status="version.generateStatus"
+                    :error-message="version.generationErrorMessage"
+                  />
+
+                  <!-- <el-tag
+                    v-if="
+                      version.generateStatus &&
+                      version.generateStatus !== 'GENERATED'
+                    "
+                    size="small"
+                    class="ml-auto"
+                    :type="statusMap[version.generateStatus].type"
+                  >
+                    {{ statusMap[version.generateStatus].text }}
+                  </el-tag> -->
                 </div>
               </div>
             </div>
@@ -229,7 +279,7 @@ const handleVersionSelect = (version: any) => {
           <div class="px-4 py-2 fs-6 lh-8">版本信息</div>
           <div class="px-2 pb-2">
             <div
-              v-if="sdk"
+              v-if="sdk && selectedVersion"
               class="bg-white rounded-xl p-3"
               style="border: 1px solid #f2f4f7"
             >
@@ -251,7 +301,11 @@ const handleVersionSelect = (version: any) => {
                     zip包
                   </span>
                   <span class="flex align-center gap-2">
-                    <el-button text>
+                    <el-button
+                      v-if="selectedVersion.zipGridfsId"
+                      text
+                      @click="handleDownload(selectedVersion.zipGridfsId)"
+                    >
                       <el-icon class="mr-1">
                         <i-mingcute:arrow-to-down-line />
                       </el-icon>
@@ -260,6 +314,7 @@ const handleVersionSelect = (version: any) => {
                         selectedVersion.zipSize
                       }}</span>
                     </el-button>
+                    <span v-else>-</span>
                   </span>
                 </div>
                 <div class="flex flex-column gap-2 desc-item">
@@ -270,7 +325,11 @@ const handleVersionSelect = (version: any) => {
                     jar包
                   </span>
                   <span class="flex align-center gap-2">
-                    <el-button text>
+                    <el-button
+                      v-if="selectedVersion.jarGridfsId"
+                      text
+                      @click="handleDownload(selectedVersion.jarGridfsId)"
+                    >
                       <el-icon class="mr-1">
                         <i-mingcute:arrow-to-down-line />
                       </el-icon>
@@ -279,6 +338,12 @@ const handleVersionSelect = (version: any) => {
                         selectedVersion.jarSize
                       }}</span>
                     </el-button>
+                    <Status
+                      v-else-if="selectedVersion.jarGenerationErrorMessage"
+                      status="FAILED"
+                      :error-message="selectedVersion.jarGenerationErrorMessage"
+                    />
+                    <span v-else>-</span>
                   </span>
                 </div>
                 <div class="flex flex-column gap-2 desc-item">
@@ -325,6 +390,7 @@ const handleVersionSelect = (version: any) => {
                 class="w-100"
                 height="100%"
                 row-class-name="cursor-pointer"
+                @row-click="openApiDrawer"
               >
                 <el-table-column
                   prop="name"
@@ -373,6 +439,8 @@ const handleVersionSelect = (version: any) => {
             </div>
           </div>
         </div>
+
+        <ApiDrawer ref="apiDrawer" />
       </div>
     </div>
   </PageContainer>

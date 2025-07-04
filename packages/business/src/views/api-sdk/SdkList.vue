@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { fetchSdkList } from '@tap/api'
 import { FilterBar } from '@tap/component/src/filter-bar'
+import { calcUnit } from '@tap/shared'
 import { onBeforeUnmount, ref, useTemplateRef } from 'vue'
 import { useRouter } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
 import TablePage from '../../components/TablePage.vue'
 import { dayjs } from '../../shared/dayjs'
 import SdkDialog from './SdkDialog.vue'
+import Status from './Status.vue'
 
 const router = useRouter()
 
@@ -37,6 +39,8 @@ const getData = async ({
 }
 
 const dialogVisible = ref(false)
+const sdkDialogRef =
+  useTemplateRef<InstanceType<typeof SdkDialog>>('sdkDialogRef')
 
 const statusMap = {
   FAILED: {
@@ -66,6 +70,18 @@ const fetch = (...args: any[]) => {
   tableRef.value?.fetch(...args)
 }
 
+const handleDownload = (gridfsId: string) => {
+  window.open(`/api/SDK/download/${gridfsId}`, '_blank')
+}
+
+const handleCreate = () => {
+  sdkDialogRef.value?.open(null)
+}
+
+const handleNewVersion = (row: any) => {
+  sdkDialogRef.value?.open(row)
+}
+
 const interval = setInterval(() => {
   fetch(null, 0, true)
 }, 8000)
@@ -81,14 +97,13 @@ onBeforeUnmount(() => {
       <ElButton
         v-readonlybtn="'new_model_creation'"
         type="primary"
-        class="btn btn-create"
-        @click="dialogVisible = true"
+        @click="handleCreate"
       >
         <span>{{ $t('public_create_sdk') }}</span>
       </ElButton>
     </template>
 
-    <SdkDialog v-model="dialogVisible" @success="fetch(1)" />
+    <SdkDialog ref="sdkDialogRef" v-model="dialogVisible" @success="fetch(1)" />
 
     <TablePage
       ref="tableRef"
@@ -146,18 +161,10 @@ onBeforeUnmount(() => {
         prop="status"
       >
         <template #default="{ row }">
-          <el-tag
-            :type="statusMap[row.lastGenerateStatus].type"
-            disable-transitions
-          >
-            <el-icon
-              v-if="row.lastGenerateStatus === 'GENERATING'"
-              class="is-loading"
-            >
-              <i-lucide:loader />
-            </el-icon>
-            {{ statusMap[row.lastGenerateStatus].text }}
-          </el-tag>
+          <Status
+            :status="row.lastGenerateStatus"
+            :error-message="row.generationErrorMessage"
+          />
         </template>
       </el-table-column>
       <el-table-column
@@ -166,13 +173,65 @@ onBeforeUnmount(() => {
         :label="$t('public_update_time')"
         sortable
       />
-      <el-table-column width="100" align="right">
+      <el-table-column min-width="200">
+        <template #header>
+          <el-icon class="ml-1">
+            <i-mingcute:download-2-line />
+          </el-icon>
+          下载
+        </template>
         <template #default="{ row }">
-          <ElButton text @click="handleDetails(row)">
+          <el-button-group style="--btn-space: 0">
+            <el-button
+              v-if="row.lastZipGridfsId"
+              @click.stop="handleDownload(row.lastZipGridfsId)"
+            >
+              <!-- <el-icon class="ml-1">
+                <i-mingcute:download-2-line />
+              </el-icon> -->
+              ZIP {{ calcUnit(row.lastZipSizeOfByte, 'byte', 1) }}
+            </el-button>
+            <el-button
+              v-if="row.lastJarGridfsId"
+              @click.stop="handleDownload(row.lastJarGridfsId)"
+            >
+              JAR {{ calcUnit(row.lastJarSizeOfByte, 'byte', 1) }}
+            </el-button>
+          </el-button-group>
+        </template>
+      </el-table-column>
+      <el-table-column width="120" align="center">
+        <template #default="{ row }">
+          <!-- <el-button
+            v-if="row.lastZipGridfsId"
+            text
+            type="primary"
+            @click="handleDetails(row)"
+          >
+            下载 ZIP<el-icon class="ml-1">
+              <i-mingcute:download-2-line />
+            </el-icon>
+          </el-button>
+          <el-divider class="mx-1" direction="vertical" />
+          <el-button
+            v-if="row.lastJarGridfsId"
+            text
+            type="primary"
+            @click="handleDetails(row)"
+          >
+            下载 JAR<el-icon class="ml-1">
+              <i-mingcute:download-2-line />
+            </el-icon>
+          </el-button>
+          <el-divider class="mx-1" direction="vertical" /> -->
+          <el-button text type="primary" @click.stop="handleNewVersion(row)">
+            发布新版
+          </el-button>
+          <!-- <el-button text type="primary" @click="handleDetails(row)">
             <template #icon>
               <i-mingcute:right-line />
             </template>
-          </ElButton>
+          </el-button> -->
         </template>
       </el-table-column>
     </TablePage>

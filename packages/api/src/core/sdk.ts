@@ -102,10 +102,10 @@ export function fetchSdkVersionApiList(filter: Filter) {
   })
 }
 
-export function fetchSdkVersion(id: string, version: string) {
-  return requestClient.get<SdkVersion>(`${BASE_URL}/${id}/versions/${version}`)
-}
-
 export function createSdk(data: Partial<CreateSdkParams>) {
   return requestClient.post(`/api/openapi/async/generate`, data)
+}
+
+export function downloadSdk(gridfsId: string) {
+  return requestClient.get(`${BASE_URL}/download/${gridfsId}`)
 }

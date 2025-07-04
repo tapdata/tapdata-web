@@ -26,6 +26,7 @@ interface Emits {
 }
 
 const visible = defineModel<boolean>('modelValue', { required: true })
+const isNewVersion = ref(false)
 
 const emit = defineEmits<Emits>()
 
@@ -48,6 +49,13 @@ const rules: FormRules = {
     {
       required: true,
       message: t('public_input_placeholder_sdk_name'),
+      trigger: 'blur',
+    },
+  ],
+  packageName: [
+    {
+      required: true,
+      message: t('public_input_placeholder_package_name'),
       trigger: 'blur',
     },
   ],
@@ -219,7 +227,13 @@ const handleCreate = async () => {
 
 // 重置表单
 const resetForm = () => {
-  formRef.value?.resetFields()
+  formRef.value?.clearValidate()
+
+  form.artifactId = ''
+  form.packageName = ''
+  form.moduleIds = []
+  form.clientId = ''
+  form.version = ''
 }
 
 const onOpen = () => {
@@ -254,12 +268,36 @@ const getNodeCount = (node: any) => {
 const handleCheckApi = () => {
   form.moduleIds = treeRef.value?.getCheckedKeys(true) as string[]
 }
+
+const open = (row: any) => {
+  if (!row) {
+    visible.value = true
+    isNewVersion.value = false
+    return
+  }
+
+  visible.value = true
+  isNewVersion.value = true
+
+  form.artifactId = row.artifactId
+  form.packageName = row.packageName
+  form.moduleIds = row.moduleIds
+  form.clientId = row.clientId
+}
+
+defineExpose({
+  open,
+})
 </script>
 
 <template>
   <ElDialog
     v-model="visible"
-    :title="$t('public_create_sdk')"
+    :title="
+      isNewVersion
+        ? `发布新版 - ${form.artifactId} (${form.packageName})`
+        : $t('public_create_sdk')
+    "
     width="800px"
     :close-on-click-modal="false"
     :before-close="handleClose"
@@ -274,7 +312,11 @@ const handleCheckApi = () => {
       class="sdk-form"
     >
       <!-- SDK 名称 -->
-      <ElFormItem :label="$t('public_sdk_name')" prop="name">
+      <ElFormItem
+        v-if="!isNewVersion"
+        :label="$t('public_sdk_name')"
+        prop="artifactId"
+      >
         <ElInput
           v-model="form.artifactId"
           :placeholder="$t('public_input_placeholder_sdk_name')"
@@ -284,7 +326,7 @@ const handleCheckApi = () => {
         />
       </ElFormItem>
 
-      <ElFormItem label="包名" prop="packageName">
+      <ElFormItem v-if="!isNewVersion" label="包名" prop="packageName">
         <ElInput
           v-model="form.packageName"
           :placeholder="$t('public_input_placeholder_package_name')"
@@ -295,10 +337,10 @@ const handleCheckApi = () => {
       </ElFormItem>
 
       <!-- 版本号 -->
-      <ElFormItem :label="$t('public_version')" prop="version">
+      <ElFormItem label="版本名称" prop="version">
         <ElInput
           v-model="form.version"
-          :placeholder="$t('public_input_placeholder_version')"
+          placeholder="例如：1.0.0"
           clearable
           maxlength="20"
         />
