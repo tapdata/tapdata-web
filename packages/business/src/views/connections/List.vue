@@ -18,7 +18,7 @@ import {
   inject,
   markRaw,
   nextTick,
-  onMounted,
+  onBeforeMount,
   onUnmounted,
   reactive,
   ref,
@@ -661,7 +661,7 @@ const handleChangeDatabaseType = (value: string) => {
 }
 
 // Lifecycle hooks
-onMounted(() => {
+onBeforeMount(() => {
   const { action, create } = route.query || {}
 
   if (create) {
