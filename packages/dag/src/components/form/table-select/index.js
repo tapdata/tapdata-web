@@ -169,13 +169,13 @@ export const TableSelect = observer(
       const fetchMethod = async (filter, config) => {
         if (props.hasPartition) {
           if (cacheTables.length) {
-            if (!filter.where?.name?.like)
+            if (!filter.where?.value?.like)
               return {
                 items: cacheTables,
                 total: cacheTables.length
               }
 
-            const search = filter.where?.name?.like.toLowerCase()
+            const search = filter.where?.value?.like.toLowerCase()
             const filtered = cacheTables.filter(it => it.value.toLowerCase().includes(search))
             return {
               items: filtered,
