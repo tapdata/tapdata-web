@@ -5,9 +5,11 @@ import {
   type PageFetchResult,
 } from '../request'
 
+import type { ApiModule } from './modules'
+
 const BASE_URL = '/api/Applications'
 
-export interface ApiClient {
+export interface ApiClientVo {
   id: string
   name: string
   lastUpdBy: string
@@ -28,7 +30,7 @@ export interface ApiClient {
 }
 
 export function fetchApiClients(filter?: Filter) {
-  return requestClient.get<PageFetchResult<ApiClient>>(BASE_URL, {
+  return requestClient.get<PageFetchResult<ApiClientVo>>(BASE_URL, {
     params: { filter: filter ? JSON.stringify(filter) : undefined },
   })
 }
@@ -72,4 +74,8 @@ export async function fetchApiServerToken() {
   localStorage.setItem('__api_server_token', token)
 
   return token
+}
+
+export function fetchApisByClient(clientId: string) {
+  return requestClient.get<ApiModule[]>(`${BASE_URL}/${clientId}/modules`)
 }

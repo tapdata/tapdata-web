@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { fetchSdkList } from '@tap/api'
 import { FilterBar } from '@tap/component/src/filter-bar'
-import { RightBoldOutlined } from '@tap/component/src/RightBoldOutlined'
-import i18n from '@tap/i18n'
-import { ref } from 'vue'
+import { onBeforeUnmount, ref, useTemplateRef } from 'vue'
 import { useRouter } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
 import TablePage from '../../components/TablePage.vue'
+import { dayjs } from '../../shared/dayjs'
 import SdkDialog from './SdkDialog.vue'
 
 const router = useRouter()
+
+const tableRef = useTemplateRef<InstanceType<typeof TablePage>>('tableRef')
 
 const getData = async ({
   page,
@@ -25,12 +26,32 @@ const getData = async ({
   const { items, total } = await fetchSdkList(filter)
 
   return {
-    data: items,
+    data: items.map((item) => {
+      item.lastGenerationTime = dayjs(item.lastGenerationTime).format(
+        'YYYY-MM-DD HH:mm:ss',
+      )
+      return item
+    }),
     total,
   }
 }
 
 const dialogVisible = ref(false)
+
+const statusMap = {
+  FAILED: {
+    text: '失败',
+    type: 'danger',
+  },
+  GENERATED: {
+    text: '已生成',
+    type: 'success',
+  },
+  GENERATING: {
+    text: '生成中',
+    type: '',
+  },
+}
 
 const handleDetails = (row: any) => {
   router.push({
@@ -40,6 +61,18 @@ const handleDetails = (row: any) => {
     },
   })
 }
+
+const fetch = (...args: any[]) => {
+  tableRef.value?.fetch(...args)
+}
+
+const interval = setInterval(() => {
+  fetch(null, 0, true)
+}, 8000)
+
+onBeforeUnmount(() => {
+  clearInterval(interval)
+})
 </script>
 
 <template>
@@ -55,10 +88,10 @@ const handleDetails = (row: any) => {
       </ElButton>
     </template>
 
-    <SdkDialog v-model="dialogVisible" />
+    <SdkDialog v-model="dialogVisible" @success="fetch(1)" />
 
     <TablePage
-      ref="table"
+      ref="tableRef"
       :remote-method="getData"
       row-class-name="cursor-pointer"
       @sort-change="handleSortTable"
@@ -68,7 +101,7 @@ const handleDetails = (row: any) => {
         <FilterBar
           v-model:value="searchParams"
           :items="filterItems"
-          @fetch="table.fetch(1)"
+          @fetch="fetch(1)"
         />
       </template>
       <el-table-column
@@ -92,19 +125,43 @@ const handleDetails = (row: any) => {
       <el-table-column
         min-width="160"
         :label="$t('public_latest_version')"
-        prop="latestVersion"
-      />
+        prop="lastGeneratedVersion"
+      >
+        <template #default="{ row }">
+          <el-tag
+            v-if="row.lastGeneratedVersion"
+            class="is-code"
+            disable-transitions
+          >
+            <VIcon class="align-middle" size="14">Versions</VIcon>
+            <span class="ml-1 align-middle">{{
+              row.lastGeneratedVersion
+            }}</span>
+          </el-tag>
+        </template>
+      </el-table-column>
       <el-table-column
         min-width="160"
         :label="$t('public_status')"
         prop="status"
       >
         <template #default="{ row }">
-          <el-tag> 构建中 </el-tag>
+          <el-tag
+            :type="statusMap[row.lastGenerateStatus].type"
+            disable-transitions
+          >
+            <el-icon
+              v-if="row.lastGenerateStatus === 'GENERATING'"
+              class="is-loading"
+            >
+              <i-lucide:loader />
+            </el-icon>
+            {{ statusMap[row.lastGenerateStatus].text }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column
-        prop="createTime"
+        prop="lastGenerationTime"
         min-width="160"
         :label="$t('public_update_time')"
         sortable

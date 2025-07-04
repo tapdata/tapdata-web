@@ -1,8 +1,16 @@
 <script setup lang="ts">
-import { fetchApiClients, fetchApiModules, useRequest } from '@tap/api'
+import {
+  createSdk,
+  fetchApiClients,
+  fetchApiModules,
+  fetchApisByClient,
+  fetchApiServers,
+  fetchApiServerToken,
+  useRequest,
+  type CreateSdkParams,
+} from '@tap/api'
 import { useI18n } from '@tap/i18n'
 import { computed, reactive, ref, useTemplateRef } from 'vue'
-import type { Sdk } from '@tap/api'
 import type {
   FilterNodeMethodFunction,
   FormInstance,
@@ -22,33 +30,21 @@ const visible = defineModel<boolean>('modelValue', { required: true })
 const emit = defineEmits<Emits>()
 
 const formRef = useTemplateRef<FormInstance>('formRef')
-const apiTotal = ref(0)
 const searchApi = ref('')
 const treeRef = useTemplateRef<TreeInstance>('treeRef')
 
-// 加载状态
 const submitting = ref(false)
 
-// 表单数据
-const form = reactive({
-  name: '',
+const form = reactive<Partial<CreateSdkParams>>({
   packageName: '',
+  artifactId: '',
   version: '',
   clientId: '',
-  apiList: [],
+  moduleIds: [],
 })
 
-// 可选的 API 列表
-const apiOptions = ref([
-  { label: 'Api 1', value: 'api1' },
-  { label: 'Api 2', value: 'api2' },
-  { label: 'Api 3', value: 'api3' },
-  { label: 'Api 4', value: 'api4' },
-])
-
-// 表单验证规则
 const rules: FormRules = {
-  name: [
+  artifactId: [
     {
       required: true,
       message: t('public_input_placeholder_sdk_name'),
@@ -106,15 +102,9 @@ const {
   run: runFetchApiModules,
 } = useRequest(
   async () => {
-    const res = await fetchApiModules({
-      order: 'createAt DESC',
-      limit: 1000,
-      where: { status: 'active' },
-    })
+    const apis = await fetchApisByClient(form.clientId)
 
-    apiTotal.value = res.total
-
-    const group = res.items.reduce(
+    const group = apis.reduce(
       (tree, item) => {
         // 获取第一个应用标签
         const firstTag = item.listtags?.[0]
@@ -195,14 +185,27 @@ const handleCreate = async () => {
 
   submitting.value = true
 
+  const {
+    items: [apiServer],
+  } = await fetchApiServers({
+    limit: 1,
+  })
+
+  if (!apiServer?.clientURI) {
+    ElMessage.error(t('packages_business_connections_test_xiazaishibai'))
+    return
+  }
+
   try {
     // TODO: 调用创建 SDK 的 API
-    // const result = await createSdk(form)
+    await createSdk({
+      ...form,
+      // oas: `http://localhost:3080/openapi.json`,
+      oas: `${apiServer.clientURI.replaceAll(/\/+$/g, '')}/openapi.json`,
+      requestAddress: location.origin,
+    })
 
-    // 模拟 API 调用
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    ElMessage.success(t('public_message_create_success'))
+    ElMessage.success(t('创建成功'))
     emit('success', form)
     handleClose()
     resetForm()
@@ -216,9 +219,6 @@ const handleCreate = async () => {
 
 // 重置表单
 const resetForm = () => {
-  form.name = ''
-  form.version = ''
-  form.apiList = []
   formRef.value?.resetFields()
 }
 
@@ -233,6 +233,7 @@ const onClosed = () => {
 
 const handleSelectApiClient = (client: any) => {
   form.clientId = client.id
+  form.moduleIds = []
 
   runFetchApiModules()
 }
@@ -250,13 +251,16 @@ const getNodeCount = (node: any) => {
     return count + (child.isLeaf ? 1 : getNodeCount(child))
   }, 0)
 }
+const handleCheckApi = () => {
+  form.moduleIds = treeRef.value?.getCheckedKeys(true) as string[]
+}
 </script>
 
 <template>
   <ElDialog
     v-model="visible"
     :title="$t('public_create_sdk')"
-    width="640px"
+    width="800px"
     :close-on-click-modal="false"
     :before-close="handleClose"
     @open="onOpen"
@@ -272,7 +276,7 @@ const getNodeCount = (node: any) => {
       <!-- SDK 名称 -->
       <ElFormItem :label="$t('public_sdk_name')" prop="name">
         <ElInput
-          v-model="form.name"
+          v-model="form.artifactId"
           :placeholder="$t('public_input_placeholder_sdk_name')"
           clearable
           maxlength="50"
@@ -302,8 +306,21 @@ const getNodeCount = (node: any) => {
 
       <!-- 选择 API -->
       <ElFormItem label="选择API" prop="apiList">
-        <div class="flex bg-light rounded-xl overflow-hidden w-100 lh-base">
-          <div style="width: 200px">
+        <template #label>
+          <div class="flex align-center gap-2">
+            <span>选择API</span>
+            <el-tag v-show="form.moduleIds?.length" type="info" class="is-code">
+              已选:
+              {{ form.moduleIds?.length }}
+              APIs
+            </el-tag>
+          </div>
+        </template>
+        <div
+          class="flex bg-light rounded-xl overflow-hidden w-100 lh-base"
+          style="max-height: 400px"
+        >
+          <div style="width: 200px" class="flex-shrink-0">
             <div class="text-caption p-2 pl-4">客户端</div>
             <div class="p-2 pt-0">
               <div class="flex flex-column gap-1">
@@ -325,8 +342,11 @@ const getNodeCount = (node: any) => {
               </div>
             </div>
           </div>
-          <div class="p-2 flex-1">
-            <div class="bg-white rounded-xl" style="border: 1px solid #f2f4f7">
+          <div class="p-2 flex-1 min-w-0 flex flex-column">
+            <div
+              class="bg-white rounded-xl min-h-0 flex flex-column"
+              style="border: 1px solid #f2f4f7"
+            >
               <div class="p-2">
                 <el-input
                   v-model="searchApi"
@@ -343,16 +363,20 @@ const getNodeCount = (node: any) => {
                   </template>
                 </el-input>
               </div>
-              <div v-loading="apiModulesLoading" class="p-2 pt-0">
+              <div
+                v-loading="apiModulesLoading"
+                class="p-2 pt-0 min-h-0 overflow-y-auto"
+              >
                 <el-tree
                   ref="treeRef"
                   node-key="id"
                   :indent="8"
                   :data="apiModules"
-                  :default-expanded-keys="['ROOT']"
+                  default-expand-all
                   :filter-node-method="filterNode"
                   show-checkbox
                   style="--el-tree-node-content-height: 32px"
+                  @check="handleCheckApi"
                 >
                   <template #default="{ node, data }">
                     <div class="flex align-center gap-1">

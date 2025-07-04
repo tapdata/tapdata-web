@@ -1,16 +1,24 @@
 <script setup lang="ts">
-import { fetchApiClients, fetchApiModules, useRequest } from '@tap/api'
+import {
+  fetchApiClients,
+  fetchApiModules,
+  fetchSdk,
+  fetchSdkVersionApiList,
+  fetchSdkVersions,
+  useRequest,
+  type ApiClientVo,
+} from '@tap/api'
 import { RightBoldOutlined } from '@tap/component/src/RightBoldOutlined'
-import { ref, toRefs } from 'vue'
+import { calcUnit } from '@tap/shared'
+import { computed, ref, toRefs } from 'vue'
+import { useRouter } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
+import { dayjs } from '../../shared/dayjs'
 
-const props = defineProps<{
-  id: string
-}>()
+const router = useRouter()
 
-const { id } = toRefs(props)
+const { id } = toRefs(router.currentRoute.value.params)
 
-const sdk = ref<any>(null)
 const showList = ref(false)
 const showSearch = ref(false)
 const filterText = ref('')
@@ -18,21 +26,8 @@ const searchInput = ref<any>(null)
 const table = ref<any>(null)
 const dragState = ref<any>(null)
 const pendingSelection = ref<any>([])
-const versionList = ref<any>([
-  {
-    id: '1',
-    name: '1.0.0',
-    publishedApiCount: 10,
-    apiCount: 10,
-  },
-  {
-    id: '2',
-    name: '2.0.0',
-    apiCount: 5,
-  },
-])
 
-const selectedVersion = ref<any>(versionList.value[0])
+const selectedVersion = ref<any>()
 
 const mapApi = (item: any) => {
   const pathJoin: string[] = []
@@ -45,21 +40,96 @@ const mapApi = (item: any) => {
   return item
 }
 
+const {
+  data: clientMap,
+  loading: apiClientsLoading,
+  run: runFetchApiClients,
+} = useRequest(
+  async () => {
+    const res = await fetchApiClients({
+      limit: 1000,
+    })
+
+    if (res.items.length === 0) {
+      return {}
+    }
+
+    return res.items.reduce(
+      (acc, item) => {
+        acc[item.clientId] = item
+        return acc
+      },
+      {} as Record<string, ApiClientVo>,
+    )
+  },
+  {
+    initialData: {},
+  },
+)
+
+const { data: sdk, run: runFetchSdk } = useRequest(
+  async () => {
+    const res = await fetchSdk(router.currentRoute.value.params.id as string)
+    return res
+  },
+  {
+    initialData: null,
+  },
+)
+
+const { data: versionList, run: runFetchSdkVersions } = useRequest(
+  async () => {
+    const res = await fetchSdkVersions({
+      order: 'createTime DESC',
+      limit: 1000,
+      where: {
+        sdkId: router.currentRoute.value.params.id as string,
+      },
+    })
+
+    const list = res.items.map((item) => {
+      item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+      item.last_updated = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+      item.updatedFromNow = dayjs(item.createTime).fromNow()
+
+      item.zipSize = calcUnit(item.zipSizeOfByte, 'byte', 2)
+      item.jarSize = calcUnit(item.jarSizeOfByte, 'byte', 2)
+      return item
+    })
+
+    if (!selectedVersion.value) {
+      handleVersionSelect(list[0])
+    }
+
+    return list
+  },
+  {
+    initialData: [],
+  },
+)
+
 const { data: apiList, run: runFetchApiList } = useRequest(
   async () => {
-    const res = await fetchApiModules({
+    const res = await fetchSdkVersionApiList({
       order: 'createAt DESC',
       limit: 1000,
-      where: { status: 'active' },
+      where: {
+        sdkVersionId: selectedVersion.value.id,
+        sdkId: router.currentRoute.value.params.id as string,
+      },
     })
 
     return res.items.map(mapApi)
   },
   {
-    // manual: true,
+    manual: true,
     initialData: [],
   },
 )
+
+const clientName = computed(() => {
+  return clientMap.value[sdk.value?.clientId]?.name
+})
 
 const openSearch = () => {
   showSearch.value = !showSearch.value
@@ -67,6 +137,7 @@ const openSearch = () => {
 
 const handleVersionSelect = (version: any) => {
   selectedVersion.value = version
+  runFetchApiList()
 }
 </script>
 
@@ -74,11 +145,9 @@ const handleVersionSelect = (version: any) => {
   <PageContainer>
     <template #title>
       <span class="fs-5 font-color-dark lh-8 ellipsis"> TapData - sdk </span>
-      <el-tag class="ml-2">
-        <span class="flex align-center gap-1">
-          <VIcon size="16">Versions</VIcon>
-          <span>{{ selectedVersion.name }}</span>
-        </span>
+      <el-tag v-if="selectedVersion" class="ml-2 is-code">
+        <VIcon class="align-middle mr-1" size="14">Versions</VIcon>
+        <span class="align-middle">{{ selectedVersion.version }}</span>
       </el-tag>
     </template>
 
@@ -125,28 +194,28 @@ const handleVersionSelect = (version: any) => {
               class="list-item-hover rounded-lg p-2 flex align-center gap-2 cursor-pointer font-color-light position-relative"
               :class="{
                 'bg-white shadow-sm font-color-dark':
-                  version === selectedVersion,
+                  version.id === selectedVersion.id,
               }"
               @click="handleVersionSelect(version)"
             >
               <div class="flex flex-column gap-1 flex-1 min-w-0">
                 <div class="flex align-center gap-2">
                   <VIcon size="16">Versions</VIcon>
-                  <span class="ellipsis lh-6" :title="version.value">{{
-                    version.name
-                  }}</span>
+                  <span class="ellipsis lh-6">{{ version.version }}</span>
                 </div>
                 <div class="flex align-center gap-2 text-caption">
-                  <span class="text-caption">
+                  <!-- <span class="text-caption">
                     {{ version.apiCount }}
                     APIs
                   </span>
-                  <el-divider direction="vertical" class="mx-0" />
+                  <el-divider direction="vertical" class="mx-0" /> -->
                   <span class="text-caption">
                     <el-icon class="align-middle mr-1">
                       <i-lucide:clock />
                     </el-icon>
-                    <span class="align-middle">3 hours ago</span>
+                    <span class="align-middle">{{
+                      version.updatedFromNow
+                    }}</span>
                   </span>
                 </div>
               </div>
@@ -160,6 +229,7 @@ const handleVersionSelect = (version: any) => {
           <div class="px-4 py-2 fs-6 lh-8">版本信息</div>
           <div class="px-2 pb-2">
             <div
+              v-if="sdk"
               class="bg-white rounded-xl p-3"
               style="border: 1px solid #f2f4f7"
             >
@@ -171,16 +241,45 @@ const handleVersionSelect = (version: any) => {
                     </el-icon>
                     包名
                   </span>
-                  <span>io.tapdata</span>
+                  <span>{{ sdk.packageName }}</span>
                 </div>
                 <div class="flex flex-column gap-2 desc-item">
                   <span class="text-caption flex align-center gap-2">
                     <el-icon>
-                      <i-lucide:hard-drive />
+                      <i-mingcute:folder-zip-line />
                     </el-icon>
-                    包大小
+                    zip包
                   </span>
-                  <span>2MB</span>
+                  <span class="flex align-center gap-2">
+                    <el-button text>
+                      <el-icon class="mr-1">
+                        <i-mingcute:arrow-to-down-line />
+                      </el-icon>
+                      下载
+                      <span class="text-caption ml-1">{{
+                        selectedVersion.zipSize
+                      }}</span>
+                    </el-button>
+                  </span>
+                </div>
+                <div class="flex flex-column gap-2 desc-item">
+                  <span class="text-caption flex align-center gap-2">
+                    <el-icon>
+                      <i-mingcute:folder-zip-line />
+                    </el-icon>
+                    jar包
+                  </span>
+                  <span class="flex align-center gap-2">
+                    <el-button text>
+                      <el-icon class="mr-1">
+                        <i-mingcute:arrow-to-down-line />
+                      </el-icon>
+                      下载
+                      <span class="text-caption ml-1">{{
+                        selectedVersion.jarSize
+                      }}</span>
+                    </el-button>
+                  </span>
                 </div>
                 <div class="flex flex-column gap-2 desc-item">
                   <span class="text-caption flex align-center gap-2">
@@ -189,7 +288,7 @@ const handleVersionSelect = (version: any) => {
                     </el-icon>
                     客户端
                   </span>
-                  <span>io.tapdata</span>
+                  <span>{{ clientName }}</span>
                 </div>
                 <div class="flex flex-column gap-2 desc-item">
                   <span class="text-caption flex align-center gap-2">
@@ -198,8 +297,17 @@ const handleVersionSelect = (version: any) => {
                     </el-icon>
                     发布时间
                   </span>
-                  <span>2021-01-01 12:00:00</span>
+                  <span>{{ selectedVersion.createTime }}</span>
                 </div>
+                <!-- <div class="flex flex-column gap-2 desc-item">
+                  <span class="text-caption flex align-center gap-2">
+                    <el-icon>
+                      <i-lucide:calendar />
+                    </el-icon>
+                    更新时间
+                  </span>
+                  <span>{{ selectedVersion.last_updated }}</span>
+                </div> -->
               </div>
             </div>
           </div>
