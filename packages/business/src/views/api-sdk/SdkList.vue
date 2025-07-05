@@ -24,6 +24,7 @@ const getData = async ({
     limit: size,
     skip: (current - 1) * size,
     where: {},
+    order: tableOrder.value,
   }
   const { items, total } = await fetchSdkList(filter)
 
@@ -41,21 +42,6 @@ const getData = async ({
 const dialogVisible = ref(false)
 const sdkDialogRef =
   useTemplateRef<InstanceType<typeof SdkDialog>>('sdkDialogRef')
-
-const statusMap = {
-  FAILED: {
-    text: '失败',
-    type: 'danger',
-  },
-  GENERATED: {
-    text: '已生成',
-    type: 'success',
-  },
-  GENERATING: {
-    text: '生成中',
-    type: '',
-  },
-}
 
 const handleDetails = (row: any) => {
   router.push({
@@ -80,6 +66,13 @@ const handleCreate = () => {
 
 const handleNewVersion = (row: any) => {
   sdkDialogRef.value?.open(row)
+}
+
+const tableOrder = ref('lastGenerationTime DESC')
+
+const handleSortTable = ({ order, prop }: { order: string; prop: string }) => {
+  tableOrder.value = `${order ? prop : 'lastGenerationTime'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
+  fetch(1)
 }
 
 const interval = setInterval(() => {
@@ -108,6 +101,7 @@ onBeforeUnmount(() => {
     <TablePage
       ref="tableRef"
       :remote-method="getData"
+      :default-sort="{ prop: 'lastGenerationTime', order: 'descending' }"
       row-class-name="cursor-pointer"
       @sort-change="handleSortTable"
       @row-click="handleDetails"
@@ -124,19 +118,12 @@ onBeforeUnmount(() => {
         :label="$t('public_sdk_name')"
         :show-overflow-tooltip="true"
         prop="artifactId"
-      >
-        <!-- <template #default="{ row }">
-          <ElLink
-            v-readonlybtn="'SYNC_job_edition'"
-            type="primary"
-            underline="never"
-            @click="handleDetails(row)"
-          >
-            {{ row.artifactId }}
-          </ElLink>
-        </template> -->
-      </el-table-column>
-      <el-table-column min-width="160" label="包名" prop="packageName" />
+      />
+      <el-table-column
+        min-width="160"
+        :label="$t('public_package_name')"
+        prop="packageName"
+      />
       <el-table-column
         min-width="160"
         :label="$t('public_latest_version')"
@@ -178,21 +165,20 @@ onBeforeUnmount(() => {
           <el-icon class="ml-1">
             <i-mingcute:download-2-line />
           </el-icon>
-          下载
+          {{ $t('public_button_download') }}
         </template>
         <template #default="{ row }">
-          <el-button-group style="--btn-space: 0">
+          <el-button-group style="--btn-space: 0" size="small">
             <el-button
               v-if="row.lastZipGridfsId"
+              style="--el-button-size: 26px"
               @click.stop="handleDownload(row.lastZipGridfsId)"
             >
-              <!-- <el-icon class="ml-1">
-                <i-mingcute:download-2-line />
-              </el-icon> -->
               ZIP {{ calcUnit(row.lastZipSizeOfByte, 'byte', 1) }}
             </el-button>
             <el-button
               v-if="row.lastJarGridfsId"
+              style="--el-button-size: 26px"
               @click.stop="handleDownload(row.lastJarGridfsId)"
             >
               JAR {{ calcUnit(row.lastJarSizeOfByte, 'byte', 1) }}
@@ -202,36 +188,9 @@ onBeforeUnmount(() => {
       </el-table-column>
       <el-table-column width="120" align="center">
         <template #default="{ row }">
-          <!-- <el-button
-            v-if="row.lastZipGridfsId"
-            text
-            type="primary"
-            @click="handleDetails(row)"
-          >
-            下载 ZIP<el-icon class="ml-1">
-              <i-mingcute:download-2-line />
-            </el-icon>
-          </el-button>
-          <el-divider class="mx-1" direction="vertical" />
-          <el-button
-            v-if="row.lastJarGridfsId"
-            text
-            type="primary"
-            @click="handleDetails(row)"
-          >
-            下载 JAR<el-icon class="ml-1">
-              <i-mingcute:download-2-line />
-            </el-icon>
-          </el-button>
-          <el-divider class="mx-1" direction="vertical" /> -->
           <el-button text type="primary" @click.stop="handleNewVersion(row)">
-            发布新版
+            {{ $t('public_new_release') }}
           </el-button>
-          <!-- <el-button text type="primary" @click="handleDetails(row)">
-            <template #icon>
-              <i-mingcute:right-line />
-            </template>
-          </el-button> -->
         </template>
       </el-table-column>
     </TablePage>

@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { useI18n } from '@tap/i18n'
 import { ErrorMessage } from '../../components/error-message'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   status: string
@@ -8,15 +11,15 @@ const props = defineProps<{
 
 const statusMap = {
   FAILED: {
-    text: '失败',
+    text: t('public_status_failed'),
     type: 'danger',
   },
   GENERATED: {
-    text: '已生成',
+    text: t('public_generated'),
     type: 'success',
   },
   GENERATING: {
-    text: '生成中',
+    text: t('public_generating'),
     type: '',
   },
 }

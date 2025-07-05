@@ -109,3 +109,7 @@ export function createSdk(data: Partial<CreateSdkParams>) {
 export function downloadSdk(gridfsId: string) {
   return requestClient.get(`${BASE_URL}/download/${gridfsId}`)
 }
+
+export function deleteSdkVersion(id: string) {
+  return requestClient.delete(`/api/SdkVersion/${id}`)
+}

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  deleteSdkVersion,
   fetchApiClients,
   fetchApiModules,
   fetchSdk,
@@ -8,27 +9,27 @@ import {
   useRequest,
   type ApiClientVo,
 } from '@tap/api'
+import { Modal } from '@tap/component/src/modal'
 import { RightBoldOutlined } from '@tap/component/src/RightBoldOutlined'
 import { calcUnit } from '@tap/shared'
-import { computed, ref, toRefs } from 'vue'
+import { debounce } from 'lodash-es'
+import { computed, nextTick, ref, toRefs, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
 import { dayjs } from '../../shared/dayjs'
 import ApiDrawer from '../data-server/Drawer.vue'
+import SdkDialog from './SdkDialog.vue'
 import Status from './Status.vue'
 
 const router = useRouter()
 
 const { id } = toRefs(router.currentRoute.value.params)
 
-const showList = ref(false)
 const showSearch = ref(false)
 const filterText = ref('')
 const searchInput = ref<any>(null)
-const table = ref<any>(null)
-const dragState = ref<any>(null)
-const pendingSelection = ref<any>([])
 const apiDrawer = ref<any>(null)
+const sdkDialog = ref<any>(null)
 
 const selectedVersion = ref<any>()
 
@@ -85,7 +86,7 @@ const {
   },
 )
 
-const { data: sdk, run: runFetchSdk } = useRequest(
+const { data: sdk } = useRequest(
   async () => {
     const res = await fetchSdk(router.currentRoute.value.params.id as string)
     return res
@@ -95,7 +96,7 @@ const { data: sdk, run: runFetchSdk } = useRequest(
   },
 )
 
-const { data: versionList, run: runFetchSdkVersions } = useRequest(
+const { data: allVersionList, runAsync: runFetchSdkVersions } = useRequest(
   async () => {
     const res = await fetchSdkVersions({
       order: 'createTime DESC',
@@ -123,8 +124,21 @@ const { data: versionList, run: runFetchSdkVersions } = useRequest(
   },
   {
     initialData: [],
+    pollingInterval: 10000,
   },
 )
+
+// 前端搜索过滤的版本列表
+const versionList = computed(() => {
+  if (!filterText.value.trim()) {
+    return allVersionList.value
+  }
+
+  const searchText = filterText.value.toLowerCase()
+  return allVersionList.value.filter((version) => {
+    return version.version.toLowerCase().includes(searchText)
+  })
+})
 
 const { data: apiList, run: runFetchApiList } = useRequest(
   async () => {
@@ -151,6 +165,15 @@ const clientName = computed(() => {
 
 const openSearch = () => {
   showSearch.value = !showSearch.value
+  if (showSearch.value) {
+    // 当打开搜索时，聚焦到搜索框
+    nextTick(() => {
+      searchInput.value?.focus()
+    })
+  } else {
+    // 当关闭搜索时，清空搜索内容
+    filterText.value = ''
+  }
 }
 
 const handleVersionSelect = (version: any) => {
@@ -164,6 +187,39 @@ const openApiDrawer = (item?: any) => {
 
 const handleDownload = (gridfsId: string) => {
   window.open(`/api/SDK/download/${gridfsId}`, '_blank')
+}
+
+// 防抖搜索函数
+const debouncedSearch = debounce((value: string) => {
+  filterText.value = value
+}, 300)
+
+const handleSearchVersion = (value: string) => {
+  debouncedSearch(value)
+}
+
+const handleAddVersion = () => {
+  sdkDialog.value.open(sdk.value)
+}
+
+const handleDeleteVersion = async () => {
+  const res = await Modal.confirm({
+    title: '删除版本',
+    message: `确定删除版本 ${selectedVersion.value.version} 吗？`,
+  })
+
+  if (res) {
+    await deleteSdkVersion(selectedVersion.value.id)
+    await runFetchSdkVersions()
+
+    ElMessage.success('删除成功')
+
+    if (allVersionList.value.length > 0) {
+      handleVersionSelect(allVersionList.value[0])
+    } else {
+      selectedVersion.value = null
+    }
+  }
 }
 </script>
 
@@ -179,6 +235,46 @@ const handleDownload = (gridfsId: string) => {
       </el-tag>
     </template>
 
+    <template v-if="selectedVersion" #actions>
+      <el-button
+        v-if="selectedVersion.zipGridfsId"
+        @click="handleDownload(selectedVersion.zipGridfsId)"
+      >
+        <el-icon class="mr-1">
+          <i-mingcute:download-2-line />
+        </el-icon>
+        {{ $t('public_button_download') }} ZIP
+      </el-button>
+
+      <el-button
+        v-if="selectedVersion.jarGridfsId"
+        @click="handleDownload(selectedVersion.jarGridfsId)"
+      >
+        <el-icon class="mr-1">
+          <i-mingcute:download-2-line />
+        </el-icon>
+        {{ $t('public_button_download') }} JAR
+      </el-button>
+
+      <el-dropdown trigger="click">
+        <el-button circle class="rounded-lg">
+          <el-icon size="16">
+            <i-mingcute:more-1-fill />
+          </el-icon>
+        </el-button>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item class="is-danger" @click="handleDeleteVersion">
+              <el-icon class="mr-2">
+                <i-lucide:trash-2 />
+              </el-icon>
+              {{ $t('public_button_delete') }}
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+    </template>
+
     <div class="flex w-100 h-100 gap-4">
       <div
         class="py-0 bg-light rounded-xl flex flex-column h-100"
@@ -189,7 +285,7 @@ const handleDownload = (gridfsId: string) => {
           style="--btn-space: 0"
         >
           <div class="fs-6 flex-1">
-            <span>历史版本</span>
+            <span>{{ $t('public_history_version') }}</span>
           </div>
           <el-button
             text
@@ -200,14 +296,20 @@ const handleDownload = (gridfsId: string) => {
               <i-mingcute:search-line />
             </template>
           </el-button>
-          <el-button text>
+          <el-button text @click="handleAddVersion">
             <template #icon>
               <i-mingcute:add-line />
             </template>
           </el-button>
         </div>
         <div v-if="showSearch" class="px-2 pb-2">
-          <ElInput ref="searchInput" v-model="filterText" clearable>
+          <ElInput
+            ref="searchInput"
+            v-model="filterText"
+            clearable
+            :placeholder="$t('public_search_version')"
+            @input="handleSearchVersion"
+          >
             <template #prefix>
               <VIcon size="14">magnify</VIcon>
             </template>
@@ -215,6 +317,22 @@ const handleDownload = (gridfsId: string) => {
         </div>
 
         <el-scrollbar class="flex-1 min-h-0" wrap-class="p-2 pt-0">
+          <div
+            v-if="filterText && versionList.length === 0"
+            class="text-center py-8 text-disabled"
+          >
+            <el-icon size="24" class="mb-2">
+              <i-mingcute:search-line />
+            </el-icon>
+            <div>{{ $t('public_no_match_version') }}</div>
+          </div>
+          <div
+            v-else-if="filterText && versionList.length > 0"
+            class="text-caption text-disabled px-2 py-1 mb-2"
+          >
+            {{ $t('public_find_version', { count: versionList.length }) }}
+          </div>
+
           <div class="flex flex-column gap-1">
             <div
               v-for="version in versionList"
@@ -237,13 +355,11 @@ const handleDownload = (gridfsId: string) => {
                     APIs
                   </span>
                   <el-divider direction="vertical" class="mx-0" /> -->
-                  <span class="text-caption">
-                    <el-icon class="align-middle mr-1">
+                  <span class="text-caption flex align-center gap-1">
+                    <el-icon>
                       <i-lucide:clock />
                     </el-icon>
-                    <span class="align-middle">{{
-                      version.updatedFromNow
-                    }}</span>
+                    <span class="fs-8">{{ version.updatedFromNow }}</span>
                   </span>
                   <Status
                     v-if="
@@ -276,7 +392,7 @@ const handleDownload = (gridfsId: string) => {
 
       <div class="flex-1 flex flex-column gap-4">
         <div class="bg-light rounded-xl">
-          <div class="px-4 py-2 fs-6 lh-8">版本信息</div>
+          <div class="px-4 py-2 fs-6 lh-8">{{ $t('public_version_info') }}</div>
           <div class="px-2 pb-2">
             <div
               v-if="sdk && selectedVersion"
@@ -289,18 +405,21 @@ const handleDownload = (gridfsId: string) => {
                     <el-icon>
                       <i-lucide:package />
                     </el-icon>
-                    包名
+                    {{ $t('public_package_name') }}
                   </span>
                   <span>{{ sdk.packageName }}</span>
                 </div>
                 <div class="flex flex-column gap-2 desc-item">
                   <span class="text-caption flex align-center gap-2">
                     <el-icon>
-                      <i-mingcute:folder-zip-line />
+                      <i-lucide:hard-drive />
                     </el-icon>
-                    zip包
+                    {{ $t('public_zip_package') }}
                   </span>
-                  <span class="flex align-center gap-2">
+                  <span>{{
+                    selectedVersion.zipGridfsId ? selectedVersion.zipSize : '-'
+                  }}</span>
+                  <!-- <span class="flex align-center gap-2">
                     <el-button
                       v-if="selectedVersion.zipGridfsId"
                       text
@@ -315,16 +434,19 @@ const handleDownload = (gridfsId: string) => {
                       }}</span>
                     </el-button>
                     <span v-else>-</span>
-                  </span>
+                  </span> -->
                 </div>
                 <div class="flex flex-column gap-2 desc-item">
                   <span class="text-caption flex align-center gap-2">
                     <el-icon>
-                      <i-mingcute:folder-zip-line />
+                      <i-lucide:hard-drive />
                     </el-icon>
-                    jar包
+                    {{ $t('public_jar_package') }}
                   </span>
-                  <span class="flex align-center gap-2">
+                  <span>{{
+                    selectedVersion.jarGridfsId ? selectedVersion.jarSize : '-'
+                  }}</span>
+                  <!-- <span class="flex align-center gap-2">
                     <el-button
                       v-if="selectedVersion.jarGridfsId"
                       text
@@ -344,14 +466,14 @@ const handleDownload = (gridfsId: string) => {
                       :error-message="selectedVersion.jarGenerationErrorMessage"
                     />
                     <span v-else>-</span>
-                  </span>
+                  </span> -->
                 </div>
                 <div class="flex flex-column gap-2 desc-item">
                   <span class="text-caption flex align-center gap-2">
                     <el-icon>
                       <i-lucide:server />
                     </el-icon>
-                    客户端
+                    {{ $t('public_client') }}
                   </span>
                   <span>{{ clientName }}</span>
                 </div>
@@ -360,7 +482,7 @@ const handleDownload = (gridfsId: string) => {
                     <el-icon>
                       <i-lucide:calendar />
                     </el-icon>
-                    发布时间
+                    {{ $t('public_release_time') }}
                   </span>
                   <span>{{ selectedVersion.createTime }}</span>
                 </div>
@@ -379,7 +501,7 @@ const handleDownload = (gridfsId: string) => {
         </div>
 
         <div class="bg-light rounded-xl min-h-0 flex flex-column">
-          <div class="px-4 py-2 fs-6 lh-8">API 列表</div>
+          <div class="px-4 py-2 fs-6 lh-8">{{ $t('public_api_list') }}</div>
           <div class="px-2 pb-2 flex-1 min-h-0">
             <div
               class="bg-white rounded-xl p-2 h-100"
@@ -443,11 +565,13 @@ const handleDownload = (gridfsId: string) => {
         <ApiDrawer ref="apiDrawer" />
       </div>
     </div>
+
+    <SdkDialog ref="sdkDialog" @success="runFetchSdkVersions" />
   </PageContainer>
 </template>
 
 <style lang="scss" scoped>
 .desc-item {
-  min-width: 160px;
+  min-width: 140px;
 }
 </style>

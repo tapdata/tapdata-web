@@ -15,6 +15,7 @@ import type {
   FilterNodeMethodFunction,
   FormInstance,
   FormRules,
+  InputInstance,
   TreeInstance,
 } from 'element-plus'
 
@@ -25,13 +26,15 @@ interface Emits {
   (e: 'success', data: any): void
 }
 
-const visible = defineModel<boolean>('modelValue', { required: true })
+const visible = defineModel<boolean>('modelValue', { required: false })
 const isNewVersion = ref(false)
+const lastVersion = ref('')
 
 const emit = defineEmits<Emits>()
 
 const formRef = useTemplateRef<FormInstance>('formRef')
 const searchApi = ref('')
+const versionInputRef = useTemplateRef<InputInstance>('versionInputRef')
 const treeRef = useTemplateRef<TreeInstance>('treeRef')
 
 const submitting = ref(false)
@@ -48,26 +51,34 @@ const rules: FormRules = {
   artifactId: [
     {
       required: true,
-      message: t('public_input_placeholder_sdk_name'),
+      message: t('public_placeholder_sdk_name'),
       trigger: 'blur',
     },
   ],
   packageName: [
     {
       required: true,
-      message: t('public_input_placeholder_package_name'),
+      message: t('public_placeholder_package_name'),
       trigger: 'blur',
     },
   ],
   version: [
     {
       required: true,
-      message: t('public_input_placeholder_version'),
+      message: t('public_placeholder_version'),
       trigger: 'blur',
     },
   ],
   // apiList: [{ required: true, message: t('public_select_api') }],
 }
+
+const nextVersion = computed(() => {
+  if (!lastVersion.value) {
+    return '1.0.0'
+  }
+
+  return getNextVersion(lastVersion.value)
+})
 
 const {
   data: apiClients,
@@ -83,7 +94,8 @@ const {
       return []
     }
 
-    handleSelectApiClient(res.items[0])
+    const selectedClientId = form.clientId || res.items[0].id
+    handleSelectApiClient(selectedClientId)
 
     return res.items
   },
@@ -107,7 +119,7 @@ const mapApi = (item: any) => {
 const {
   data: apiModules,
   loading: apiModulesLoading,
-  run: runFetchApiModules,
+  runAsync: runFetchApiModules,
 } = useRequest(
   async () => {
     const apis = await fetchApisByClient(form.clientId)
@@ -191,6 +203,16 @@ const handleCreate = async () => {
     return
   }
 
+  if (!form.clientId) {
+    ElMessage.error(t('public_message_select_client'))
+    return
+  }
+
+  if (!form.moduleIds?.length) {
+    ElMessage.error(t('public_message_select_api'))
+    return
+  }
+
   submitting.value = true
 
   const {
@@ -245,11 +267,16 @@ const onClosed = () => {
   resetForm()
 }
 
-const handleSelectApiClient = (client: any) => {
-  form.clientId = client.id
+const handleSelectApiClient = (clientId: string) => {
+  const moduleIds = form.moduleIds || []
+  form.clientId = clientId
   form.moduleIds = []
 
-  runFetchApiModules()
+  runFetchApiModules().then(() => {
+    if (moduleIds.length > 0) {
+      treeRef.value?.setCheckedKeys(moduleIds)
+    }
+  })
 }
 
 const handleSearchApi = (value: string) => {
@@ -269,6 +296,22 @@ const handleCheckApi = () => {
   form.moduleIds = treeRef.value?.getCheckedKeys(true) as string[]
 }
 
+const getNextVersion = (version: string) => {
+  // 处理空版本号
+  if (!version) return '1.0.0'
+
+  // 使用正则表达式匹配最后一个数字并递增
+  // 这个正则会匹配版本号中的最后一个数字序列
+  return version.replace(/(\d+)(?=\D*$)/, (match, num) => {
+    return (Number.parseInt(num, 10) + 1).toString()
+  })
+}
+
+const handleEnterVersion = () => {
+  form.version = nextVersion.value
+  versionInputRef.value?.focus()
+}
+
 const open = (row: any) => {
   if (!row) {
     visible.value = true
@@ -278,7 +321,7 @@ const open = (row: any) => {
 
   visible.value = true
   isNewVersion.value = true
-
+  lastVersion.value = row.lastGeneratedVersion
   form.artifactId = row.artifactId
   form.packageName = row.packageName
   form.moduleIds = row.moduleIds
@@ -295,7 +338,7 @@ defineExpose({
     v-model="visible"
     :title="
       isNewVersion
-        ? `发布新版 - ${form.artifactId} (${form.packageName})`
+        ? `${$t('public_new_release')} - ${form.artifactId} (${form.packageName})`
         : $t('public_create_sdk')
     "
     width="800px"
@@ -319,17 +362,21 @@ defineExpose({
       >
         <ElInput
           v-model="form.artifactId"
-          :placeholder="$t('public_input_placeholder_sdk_name')"
+          :placeholder="$t('public_placeholder_sdk_name')"
           clearable
           maxlength="50"
           show-word-limit
         />
       </ElFormItem>
 
-      <ElFormItem v-if="!isNewVersion" label="包名" prop="packageName">
+      <ElFormItem
+        v-if="!isNewVersion"
+        :label="$t('public_package_name')"
+        prop="packageName"
+      >
         <ElInput
           v-model="form.packageName"
-          :placeholder="$t('public_input_placeholder_package_name')"
+          :placeholder="$t('public_placeholder_package_name')"
           clearable
           maxlength="50"
           show-word-limit
@@ -337,20 +384,32 @@ defineExpose({
       </ElFormItem>
 
       <!-- 版本号 -->
-      <ElFormItem label="版本名称" prop="version">
+      <ElFormItem :label="$t('public_version_name')" prop="version">
         <ElInput
+          ref="versionInputRef"
           v-model="form.version"
-          placeholder="例如：1.0.0"
-          clearable
+          :placeholder="`${$t('public_example')}: 1.0.0`"
           maxlength="20"
-        />
+        >
+          <template v-if="isNewVersion" #suffix>
+            <el-button text type="primary" @click="handleEnterVersion">
+              {{ $t('public_quick_fill') }}: {{ nextVersion }}
+            </el-button>
+          </template>
+        </ElInput>
+        <div
+          v-if="isNewVersion && lastVersion"
+          class="text-caption text-disabled lh-base mt-1"
+        >
+          {{ $t('public_last_version') }}: {{ lastVersion }}
+        </div>
       </ElFormItem>
 
       <!-- 选择 API -->
-      <ElFormItem label="选择API" prop="apiList">
+      <ElFormItem prop="apiList">
         <template #label>
           <div class="flex align-center gap-2">
-            <span>选择API</span>
+            <span>{{ $t('public_select_api') }}</span>
             <el-tag v-show="form.moduleIds?.length" type="info" class="is-code">
               已选:
               {{ form.moduleIds?.length }}
@@ -363,7 +422,7 @@ defineExpose({
           style="max-height: 400px"
         >
           <div style="width: 200px" class="flex-shrink-0">
-            <div class="text-caption p-2 pl-4">客户端</div>
+            <div class="text-caption p-2 pl-4">{{ $t('public_client') }}</div>
             <div class="p-2 pt-0">
               <div class="flex flex-column gap-1">
                 <div
@@ -371,7 +430,7 @@ defineExpose({
                   :key="client.id"
                   class="flex align-center gap-2 h-8 list-item-hover px-2 rounded-lg cursor-pointer"
                   :class="{ 'is-active': form.clientId === client.id }"
-                  @click="handleSelectApiClient(client)"
+                  @click="handleSelectApiClient(client.clientId)"
                 >
                   <span class="flex-1 ellipsis">{{ client.clientName }}</span>
                   <el-icon
@@ -394,7 +453,7 @@ defineExpose({
                   v-model="searchApi"
                   class="is-borderless"
                   clearable
-                  placeholder="搜索API"
+                  :placeholder="$t('public_search_api')"
                   :style="{
                     '--el-input-bg-color': 'var(--el-fill-color-light)',
                   }"
