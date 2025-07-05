@@ -453,4 +453,6 @@ export default {
   public_api_list: 'API 列表',
   public_generated: '已生成',
   public_generating: '生成中',
+  public_delete_version: '删除版本',
+  public_delete_version_message: '确定删除版本 {version} 吗？',
 }

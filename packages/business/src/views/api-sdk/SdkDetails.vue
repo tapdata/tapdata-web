@@ -11,6 +11,7 @@ import {
 } from '@tap/api'
 import { Modal } from '@tap/component/src/modal'
 import { RightBoldOutlined } from '@tap/component/src/RightBoldOutlined'
+import { useI18n } from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
 import { debounce } from 'lodash-es'
 import { computed, nextTick, ref, toRefs, watch } from 'vue'
@@ -20,6 +21,8 @@ import { dayjs } from '../../shared/dayjs'
 import ApiDrawer from '../data-server/Drawer.vue'
 import SdkDialog from './SdkDialog.vue'
 import Status from './Status.vue'
+
+const { t } = useI18n()
 
 const router = useRouter()
 
@@ -146,6 +149,10 @@ const {
   loading: apiListLoading,
 } = useRequest(
   async () => {
+    if (!selectedVersion.value) {
+      return []
+    }
+
     const res = await fetchSdkVersionApiList({
       order: 'createAt DESC',
       limit: 1000,
@@ -208,15 +215,17 @@ const handleAddVersion = () => {
 
 const handleDeleteVersion = async () => {
   const res = await Modal.confirm({
-    title: '删除版本',
-    message: `确定删除版本 ${selectedVersion.value.version} 吗？`,
+    title: t('public_delete_version'),
+    message: t('public_delete_version_message', {
+      version: selectedVersion.value.version,
+    }),
   })
 
   if (res) {
     await deleteSdkVersion(selectedVersion.value.id)
     await runFetchSdkVersions()
 
-    ElMessage.success('删除成功')
+    ElMessage.success(t('public_message_delete_ok'))
 
     if (allVersionList.value.length > 0) {
       handleVersionSelect(allVersionList.value[0])
