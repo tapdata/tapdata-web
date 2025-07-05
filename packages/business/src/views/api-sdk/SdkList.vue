@@ -1,16 +1,21 @@
 <script setup lang="ts">
 import { fetchSdkList } from '@tap/api'
 import { FilterBar } from '@tap/component/src/filter-bar'
+import { useI18n } from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
-import { onBeforeUnmount, ref, useTemplateRef } from 'vue'
-import { useRouter } from 'vue-router'
+import { escapeRegExp } from 'lodash-es'
+import { onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
 import TablePage from '../../components/TablePage.vue'
 import { dayjs } from '../../shared/dayjs'
 import SdkDialog from './SdkDialog.vue'
 import Status from './Status.vue'
 
+const { t } = useI18n()
+
 const router = useRouter()
+const route = useRoute()
 
 const tableRef = useTemplateRef<InstanceType<typeof TablePage>>('tableRef')
 
@@ -26,6 +31,27 @@ const getData = async ({
     where: {},
     order: tableOrder.value,
   }
+
+  let { keyword } = searchParams.value
+
+  if (keyword) {
+    keyword = escapeRegExp(keyword)
+    filter.where.$or = [
+      {
+        artifactId: {
+          like: keyword,
+          options: 'i',
+        },
+      },
+      {
+        packageName: {
+          like: keyword,
+          options: 'i',
+        },
+      },
+    ]
+  }
+
   const { items, total } = await fetchSdkList(filter)
 
   return {
@@ -42,6 +68,26 @@ const getData = async ({
 const dialogVisible = ref(false)
 const sdkDialogRef =
   useTemplateRef<InstanceType<typeof SdkDialog>>('sdkDialogRef')
+const searchParams = ref({
+  keyword: '',
+})
+const filterItems = ref([
+  {
+    placeholder: `${t('public_sdk_name')} / ${t('public_package_name')}`,
+    key: 'keyword',
+    type: 'input',
+    id: 'name-filter-input',
+    width: '240px',
+  },
+])
+
+watch(
+  () => route.query,
+  () => {
+    Object.assign(searchParams.value, route.query)
+    fetch(1)
+  },
+)
 
 const handleDetails = (row: any) => {
   router.push({
@@ -162,10 +208,12 @@ onBeforeUnmount(() => {
       />
       <el-table-column min-width="200">
         <template #header>
-          <el-icon class="ml-1">
-            <i-mingcute:download-2-line />
-          </el-icon>
-          {{ $t('public_button_download') }}
+          <div class="flex align-center">
+            <el-icon class="mr-1" size="16">
+              <i-mingcute:download-2-line />
+            </el-icon>
+            {{ $t('public_button_download') }}
+          </div>
         </template>
         <template #default="{ row }">
           <el-button-group style="--btn-space: 0" size="small">

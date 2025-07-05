@@ -140,7 +140,11 @@ const versionList = computed(() => {
   })
 })
 
-const { data: apiList, run: runFetchApiList } = useRequest(
+const {
+  data: apiList,
+  run: runFetchApiList,
+  loading: apiListLoading,
+} = useRequest(
   async () => {
     const res = await fetchSdkVersionApiList({
       order: 'createAt DESC',
@@ -508,6 +512,7 @@ const handleDeleteVersion = async () => {
               style="border: 1px solid #f2f4f7"
             >
               <el-table
+                v-loading="apiListLoading"
                 :data="apiList"
                 class="w-100"
                 height="100%"
