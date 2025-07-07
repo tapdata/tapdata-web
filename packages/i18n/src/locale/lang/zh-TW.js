@@ -456,4 +456,6 @@ export default {
   public_delete_version_message: '確定刪除版本 {version} 嗎？',
   public_select_client: '請選擇客戶端',
   public_selected_apis: '已選 {count} APIs',
+  public_delete_sdk_message: '刪除 SDK “{sdk}”？',
+  public_type_to_confirm: '請輸入 {val} 確認',
 }

@@ -434,7 +434,7 @@ export default {
   public_data_preview: 'Data Preview',
   public_application: 'Application',
 
-  page_title_api_sdk: 'SDK Management',
+  page_title_api_sdk: 'SDK List',
   public_sdk_name: 'SDK Name',
   public_latest_version: 'Latest Version',
   public_create_sdk: 'Create SDK',
@@ -466,4 +466,6 @@ export default {
     'Are you sure you want to delete version {version}?',
   public_select_client: 'Please select client',
   public_selected_apis: 'Selected {count} APIs',
+  public_delete_sdk_message: 'Delete SDK "{sdk}"?',
+  public_type_to_confirm: 'Please type {val} to confirm.',
 }

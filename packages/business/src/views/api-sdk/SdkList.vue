@@ -1,16 +1,24 @@
 <script setup lang="ts">
-import { fetchSdkList } from '@tap/api'
+import { deleteSdk, fetchSdkList } from '@tap/api'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import { useI18n } from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
 import { escapeRegExp } from 'lodash-es'
-import { onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
+import {
+  nextTick,
+  onBeforeUnmount,
+  reactive,
+  ref,
+  useTemplateRef,
+  watch,
+} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
 import TablePage from '../../components/TablePage.vue'
 import { dayjs } from '../../shared/dayjs'
 import SdkDialog from './SdkDialog.vue'
 import Status from './Status.vue'
+import type { InputInstance } from 'element-plus'
 
 const { t } = useI18n()
 
@@ -66,6 +74,8 @@ const getData = async ({
 }
 
 const dialogVisible = ref(false)
+const confirmDialogVisible = ref(false)
+const confirmInputRef = useTemplateRef<InputInstance>('confirmInputRef')
 const sdkDialogRef =
   useTemplateRef<InstanceType<typeof SdkDialog>>('sdkDialogRef')
 const searchParams = ref({
@@ -81,6 +91,14 @@ const filterItems = ref([
   },
 ])
 
+const currentSdk = reactive({
+  id: '',
+  artifactId: '',
+
+  confirmInput: '',
+  deleteLoading: false,
+})
+
 watch(
   () => route.query,
   () => {
@@ -89,7 +107,11 @@ watch(
   },
 )
 
-const handleDetails = (row: any) => {
+const handleDetails = (row: any, column: any) => {
+  if (column.property === 'operation') {
+    return
+  }
+
   router.push({
     name: 'apiSdkDetails',
     params: {
@@ -112,6 +134,26 @@ const handleCreate = () => {
 
 const handleNewVersion = (row: any) => {
   sdkDialogRef.value?.open(row)
+}
+
+const handleDelete = (row: any) => {
+  confirmDialogVisible.value = true
+  currentSdk.id = row.id
+  currentSdk.artifactId = row.artifactId
+  currentSdk.confirmInput = ''
+}
+
+const onConfirmDialogOpened = () => {
+  confirmInputRef.value?.focus()
+}
+
+const handleDeleteConfirm = async () => {
+  currentSdk.deleteLoading = true
+  await deleteSdk(currentSdk.id)
+  currentSdk.deleteLoading = false
+  confirmDialogVisible.value = false
+  fetch(1)
+  ElMessage.success(t('public_message_delete_ok'))
 }
 
 const tableOrder = ref('lastGenerationTime DESC')
@@ -146,6 +188,7 @@ onBeforeUnmount(() => {
 
     <TablePage
       ref="tableRef"
+      row-key="id"
       :remote-method="getData"
       :default-sort="{ prop: 'lastGenerationTime', order: 'descending' }"
       row-class-name="cursor-pointer"
@@ -202,7 +245,7 @@ onBeforeUnmount(() => {
       </el-table-column>
       <el-table-column
         prop="lastGenerationTime"
-        min-width="160"
+        width="172"
         :label="$t('public_update_time')"
         sortable
       />
@@ -234,7 +277,12 @@ onBeforeUnmount(() => {
           </el-button-group>
         </template>
       </el-table-column>
-      <el-table-column width="120" align="center">
+      <el-table-column
+        width="180"
+        align="center"
+        prop="operation"
+        fixed="right"
+      >
         <template #default="{ row }">
           <el-button
             text
@@ -242,10 +290,74 @@ onBeforeUnmount(() => {
             :disabled="row.lastGenerateStatus === 'generating'"
             @click.stop="handleNewVersion(row)"
           >
+            <el-icon class="mr-1">
+              <i-lucide:rocket />
+            </el-icon>
             {{ $t('public_new_release') }}
           </el-button>
+          <el-dropdown trigger="click">
+            <el-button text>
+              <template #icon>
+                <el-icon size="16">
+                  <i-mingcute:more-1-fill />
+                </el-icon>
+              </template>
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item class="is-danger" @click="handleDelete(row)">
+                  <el-icon class="mr-2">
+                    <i-lucide:trash-2 />
+                  </el-icon>
+                  {{ $t('public_button_delete') }}
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </template>
       </el-table-column>
     </TablePage>
+
+    <el-dialog
+      v-model="confirmDialogVisible"
+      width="420"
+      :show-close="false"
+      @opened="onConfirmDialogOpened"
+    >
+      <template #header="{ titleClass }">
+        <div class="flex align-center gap-4" :class="titleClass">
+          <el-icon size="24" class="color-warning">
+            <i-mingcute:warning-fill />
+          </el-icon>
+          {{ $t('public_delete_sdk_message', { sdk: currentSdk.artifactId }) }}
+        </div>
+      </template>
+      <div class="flex flex-column gap-2 w-100 bg-subtle p-3 rounded-xl">
+        <i18n-t tag="p" keypath="public_type_to_confirm">
+          <template #val>
+            <strong>{{ currentSdk.artifactId }}</strong>
+          </template>
+        </i18n-t>
+        <el-input
+          ref="confirmInputRef"
+          v-model="currentSdk.confirmInput"
+          autofocus
+          @keyup.enter="handleDeleteConfirm"
+        />
+      </div>
+      <template #footer>
+        <el-button @click="confirmDialogVisible = false">{{
+          $t('public_button_cancel')
+        }}</el-button>
+        <el-button
+          :loading="currentSdk.deleteLoading"
+          type="danger"
+          :disabled="currentSdk.confirmInput !== currentSdk.artifactId"
+          @click="handleDeleteConfirm"
+        >
+          {{ $t('public_button_delete') }}
+        </el-button>
+      </template>
+    </el-dialog>
   </PageContainer>
 </template>

@@ -95,6 +95,7 @@ declare module 'vue' {
     'ILucide:loader': typeof import('~icons/lucide/loader')['default']
     'ILucide:monitorDown': typeof import('~icons/lucide/monitor-down')['default']
     'ILucide:package': typeof import('~icons/lucide/package')['default']
+    'ILucide:rocket': typeof import('~icons/lucide/rocket')['default']
     'ILucide:server': typeof import('~icons/lucide/server')['default']
     'ILucide:settings': typeof import('~icons/lucide/settings')['default']
     'ILucide:squarePlus': typeof import('~icons/lucide/square-plus')['default']

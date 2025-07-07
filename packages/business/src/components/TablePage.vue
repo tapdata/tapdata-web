@@ -467,8 +467,6 @@ export default defineComponent({
             :default-sort="defaultSort"
             @selection-change="handleSelectionChange"
             @sort-change="$emit('sortChange', $event)"
-            @row-dragstart="handleDragStart"
-            @row-dragend="handleDragEnd"
             @select="onSelectRow"
           >
             <el-table-column

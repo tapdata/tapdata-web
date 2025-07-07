@@ -95,6 +95,7 @@ const { data: allVersionList, runAsync: runFetchSdkVersions } = useRequest(
     })
 
     let someGenerating = false
+    let currentVersion = null
 
     const list = res.items.map((item) => {
       item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
@@ -108,6 +109,10 @@ const { data: allVersionList, runAsync: runFetchSdkVersions } = useRequest(
         someGenerating = true
       }
 
+      if (item.id === selectedVersion.value?.id) {
+        currentVersion = item
+      }
+
       return item
     })
 
@@ -115,6 +120,8 @@ const { data: allVersionList, runAsync: runFetchSdkVersions } = useRequest(
 
     if (!selectedVersion.value) {
       handleVersionSelect(list[0])
+    } else {
+      Object.assign(selectedVersion.value, currentVersion)
     }
 
     return list
@@ -360,19 +367,6 @@ const onSuccess = () => {
                 <div class="flex align-center gap-2">
                   <VIcon size="16">Versions</VIcon>
                   <span class="ellipsis lh-6">{{ version.version }}</span>
-                </div>
-                <div class="flex align-center gap-2 text-caption">
-                  <!-- <span class="text-caption">
-                    {{ version.apiCount }}
-                    APIs
-                  </span>
-                  <el-divider direction="vertical" class="mx-0" /> -->
-                  <span class="text-caption flex align-center gap-1">
-                    <el-icon>
-                      <i-lucide:clock />
-                    </el-icon>
-                    <span class="fs-8">{{ version.updatedFromNow }}</span>
-                  </span>
                   <Status
                     v-if="
                       version.generateStatus &&
@@ -383,6 +377,19 @@ const onSuccess = () => {
                     :status="version.generateStatus"
                     :error-message="version.generationErrorMessage"
                   />
+                </div>
+                <div class="flex align-center gap-2 text-caption">
+                  <span class="text-caption fs-8">
+                    {{ version.moduleIds.length }}
+                    APIs
+                  </span>
+                  <el-divider direction="vertical" class="mx-0" />
+                  <span class="text-caption flex align-center gap-1">
+                    <el-icon>
+                      <i-lucide:clock />
+                    </el-icon>
+                    <span class="fs-8">{{ version.updatedFromNow }}</span>
+                  </span>
 
                   <!-- <el-tag
                     v-if="
