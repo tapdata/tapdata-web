@@ -435,25 +435,9 @@ const onSuccess = () => {
                     </el-icon>
                     {{ $t('public_zip_package') }}
                   </span>
-                  <span>{{
+                  <span class="lh-5">{{
                     selectedVersion.zipGridfsId ? selectedVersion.zipSize : '-'
                   }}</span>
-                  <!-- <span class="flex align-center gap-2">
-                    <el-button
-                      v-if="selectedVersion.zipGridfsId"
-                      text
-                      @click="handleDownload(selectedVersion.zipGridfsId)"
-                    >
-                      <el-icon class="mr-1">
-                        <i-mingcute:arrow-to-down-line />
-                      </el-icon>
-                      下载
-                      <span class="text-caption ml-1">{{
-                        selectedVersion.zipSize
-                      }}</span>
-                    </el-button>
-                    <span v-else>-</span>
-                  </span> -->
                 </div>
                 <div class="flex flex-column gap-2 desc-item">
                   <span class="text-caption flex align-center gap-2">
@@ -462,30 +446,16 @@ const onSuccess = () => {
                     </el-icon>
                     {{ $t('public_jar_package') }}
                   </span>
-                  <span>{{
-                    selectedVersion.jarGridfsId ? selectedVersion.jarSize : '-'
-                  }}</span>
-                  <!-- <span class="flex align-center gap-2">
-                    <el-button
-                      v-if="selectedVersion.jarGridfsId"
-                      text
-                      @click="handleDownload(selectedVersion.jarGridfsId)"
-                    >
-                      <el-icon class="mr-1">
-                        <i-mingcute:arrow-to-down-line />
-                      </el-icon>
-                      下载
-                      <span class="text-caption ml-1">{{
-                        selectedVersion.jarSize
-                      }}</span>
-                    </el-button>
-                    <Status
-                      v-else-if="selectedVersion.jarGenerationErrorMessage"
-                      status="FAILED"
-                      :error-message="selectedVersion.jarGenerationErrorMessage"
-                    />
-                    <span v-else>-</span>
-                  </span> -->
+                  <span v-if="selectedVersion.jarGridfsId" class="lh-5">
+                    {{ selectedVersion.jarSize }}
+                  </span>
+                  <Status
+                    v-else-if="selectedVersion.jarGenerationErrorMessage"
+                    status="FAILED"
+                    :error-message="selectedVersion.jarGenerationErrorMessage"
+                    size="small"
+                    class="align-self-start"
+                  />
                 </div>
                 <div class="flex flex-column gap-2 desc-item">
                   <span class="text-caption flex align-center gap-2">
@@ -494,7 +464,7 @@ const onSuccess = () => {
                     </el-icon>
                     {{ $t('public_client') }}
                   </span>
-                  <span>{{ clientName }}</span>
+                  <span class="lh-5">{{ clientName }}</span>
                 </div>
                 <div class="flex flex-column gap-2 desc-item">
                   <span class="text-caption flex align-center gap-2">
@@ -503,17 +473,8 @@ const onSuccess = () => {
                     </el-icon>
                     {{ $t('public_release_time') }}
                   </span>
-                  <span>{{ selectedVersion.createTime }}</span>
+                  <span class="lh-5">{{ selectedVersion.createTime }}</span>
                 </div>
-                <!-- <div class="flex flex-column gap-2 desc-item">
-                  <span class="text-caption flex align-center gap-2">
-                    <el-icon>
-                      <i-lucide:calendar />
-                    </el-icon>
-                    更新时间
-                  </span>
-                  <span>{{ selectedVersion.last_updated }}</span>
-                </div> -->
               </div>
             </div>
           </div>

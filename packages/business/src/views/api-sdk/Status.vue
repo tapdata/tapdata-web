@@ -35,17 +35,22 @@ const handleClick = (event) => {
 <template>
   <el-tag
     :type="statusMap[status].type"
+    :class="{
+      'cursor-pointer': status === 'FAILED' && errorMessage,
+    }"
     disable-transitions
     @click="handleClick"
   >
-    <el-icon v-if="status === 'GENERATING'" class="is-loading">
-      <i-lucide:loader />
-    </el-icon>
+    <span class="flex align-center gap-1">
+      <el-icon v-if="status === 'GENERATING'" class="is-loading">
+        <i-lucide:loader />
+      </el-icon>
 
-    <el-icon v-if="status === 'FAILED' && errorMessage" size="14">
-      <i-mingcute:question-line />
-    </el-icon>
+      <el-icon v-if="status === 'FAILED' && errorMessage" size="14">
+        <i-mingcute:question-line />
+      </el-icon>
 
-    {{ statusMap[status].text }}
+      {{ statusMap[status].text }}
+    </span>
   </el-tag>
 </template>
