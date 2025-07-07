@@ -401,25 +401,30 @@ defineExpose({
           :placeholder="`${$t('public_example')}: 1.0.0`"
           maxlength="20"
         >
-          <template v-if="isNewVersion" #suffix>
-            <el-button text type="primary" @click="handleEnterVersion">
+          <template #suffix>
+            <el-button
+              v-if="isNewVersion"
+              text
+              type="primary"
+              @click="handleEnterVersion"
+            >
               {{ $t('public_quick_fill') }}: {{ nextVersion }}
             </el-button>
           </template>
         </ElInput>
         <div
           v-if="isNewVersion && lastVersion"
-          class="text-caption text-disabled lh-base mt-1"
+          class="text-caption lh-base mt-1 fs-8"
         >
           {{ $t('public_last_version') }}: {{ lastVersion }}
         </div>
       </ElFormItem>
 
       <!-- 选择 API -->
-      <ElFormItem prop="apiList">
+      <ElFormItem prop="apiList" class="mb-0">
         <template #label>
           <div class="flex align-center gap-2">
-            <span>{{ $t('public_select_api') }}</span>
+            <span class="lh-6">{{ $t('public_select_api') }}</span>
             <el-tag v-show="form.moduleIds?.length" type="info" class="is-code">
               {{
                 $t('public_selected_apis', { count: form.moduleIds?.length })
