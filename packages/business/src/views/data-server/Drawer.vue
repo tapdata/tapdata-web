@@ -1056,11 +1056,11 @@ const openEdit = () => {
       </div>
     </template>
 
-    <div class="flex flex-column overflow-hidden h-100">
+    <div class="flex flex-column">
       <!-- 顶部 标题 Tab -->
       <div
         v-if="!inDialog"
-        class="flex position-relative"
+        class="flex position-sticky top-0 bg-white z-10"
         style="line-height: 48px"
       >
         <ElTabs
