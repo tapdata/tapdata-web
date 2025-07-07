@@ -464,4 +464,6 @@ export default {
   public_delete_version: 'Delete Version',
   public_delete_version_message:
     'Are you sure you want to delete version {version}?',
+  public_select_client: 'Please select client',
+  public_selected_apis: 'Selected {count} APIs',
 }

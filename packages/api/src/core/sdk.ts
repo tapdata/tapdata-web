@@ -55,31 +55,12 @@ export interface SdkModuleItem extends ApiModule {
 }
 
 export function fetchSdkList(filter?: any, config: any = {}) {
-  return requestClient
-    .get<PageFetchResult<Sdk>>(BASE_URL, {
-      params: {
-        filter: filter ? JSON.stringify(filter) : undefined,
-      },
-      ...config,
-    })
-    .catch((error) => {
-      console.error(error)
-      return {
-        items: [
-          {
-            id: '1',
-            name: '1.0.0',
-            artifactId: 'tapdata-sdk',
-            packageName: 'io.tapdata',
-            latestVersion: '1.0.0',
-            status: 'published',
-            createdAt: '2025-01-01',
-            updatedAt: '2025-01-01',
-          },
-        ],
-        total: 0,
-      }
-    })
+  return requestClient.get<PageFetchResult<Sdk>>(BASE_URL, {
+    params: {
+      filter: filter ? JSON.stringify(filter) : undefined,
+    },
+    ...config,
+  })
 }
 
 export function fetchSdk(id: string) {

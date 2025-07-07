@@ -454,4 +454,6 @@ export default {
   public_generating: '生成中',
   public_delete_version: '刪除版本',
   public_delete_version_message: '確定刪除版本 {version} 嗎？',
+  public_select_client: '請選擇客戶端',
+  public_selected_apis: '已選 {count} APIs',
 }

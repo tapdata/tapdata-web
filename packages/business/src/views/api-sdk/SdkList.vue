@@ -236,7 +236,12 @@ onBeforeUnmount(() => {
       </el-table-column>
       <el-table-column width="120" align="center">
         <template #default="{ row }">
-          <el-button text type="primary" @click.stop="handleNewVersion(row)">
+          <el-button
+            text
+            type="primary"
+            :disabled="row.lastGenerateStatus === 'generating'"
+            @click.stop="handleNewVersion(row)"
+          >
             {{ $t('public_new_release') }}
           </el-button>
         </template>

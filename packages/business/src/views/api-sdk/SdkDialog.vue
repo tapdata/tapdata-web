@@ -6,6 +6,7 @@ import {
   fetchApisByClient,
   fetchApiServers,
   fetchApiServerToken,
+  fetchSdk,
   useRequest,
   type CreateSdkParams,
 } from '@tap/api'
@@ -85,7 +86,7 @@ const {
   loading: apiClientsLoading,
   run: runFetchApiClients,
 } = useRequest(
-  async () => {
+  async (moduleIds?: string[]) => {
     const res = await fetchApiClients({
       limit: 1000,
     })
@@ -94,8 +95,14 @@ const {
       return []
     }
 
-    const selectedClientId = form.clientId || res.items[0].id
-    handleSelectApiClient(selectedClientId)
+    const selectedClientId = form.clientId || res.items[0]!.clientId
+
+    handleSelectApiClient(selectedClientId).then(() => {
+      if (moduleIds?.length) {
+        form.moduleIds = moduleIds
+        treeRef.value?.setCheckedKeys(moduleIds)
+      }
+    })
 
     return res.items
   },
@@ -204,12 +211,12 @@ const handleCreate = async () => {
   }
 
   if (!form.clientId) {
-    ElMessage.error(t('public_message_select_client'))
+    ElMessage.error(t('public_select_client'))
     return
   }
 
   if (!form.moduleIds?.length) {
-    ElMessage.error(t('public_message_select_api'))
+    ElMessage.error(t('public_select_api'))
     return
   }
 
@@ -259,7 +266,7 @@ const resetForm = () => {
 }
 
 const onOpen = () => {
-  runFetchApiClients()
+  // runFetchApiClients()
 }
 
 // 对话框关闭后的回调
@@ -268,15 +275,12 @@ const onClosed = () => {
 }
 
 const handleSelectApiClient = (clientId: string) => {
-  const moduleIds = form.moduleIds || []
+  // const moduleIds = form.moduleIds || []
   form.clientId = clientId
   form.moduleIds = []
+  treeRef.value?.setCheckedKeys([])
 
-  runFetchApiModules().then(() => {
-    if (moduleIds.length > 0) {
-      treeRef.value?.setCheckedKeys(moduleIds)
-    }
-  })
+  return runFetchApiModules()
 }
 
 const handleSearchApi = (value: string) => {
@@ -312,20 +316,26 @@ const handleEnterVersion = () => {
   versionInputRef.value?.focus()
 }
 
-const open = (row: any) => {
+const open = async (row: any) => {
   if (!row) {
     visible.value = true
     isNewVersion.value = false
+    runFetchApiClients()
     return
   }
 
   visible.value = true
   isNewVersion.value = true
-  lastVersion.value = row.lastGeneratedVersion
-  form.artifactId = row.artifactId
-  form.packageName = row.packageName
-  form.moduleIds = row.moduleIds
-  form.clientId = row.clientId
+
+  const sdk = await fetchSdk(row.id)
+
+  lastVersion.value = sdk.lastGeneratedVersion
+  form.artifactId = sdk.artifactId
+  form.packageName = sdk.packageName
+  form.moduleIds = sdk.lastModuleIds
+  form.clientId = sdk.lastClientId
+
+  runFetchApiClients(row.lastModuleIds)
 }
 
 defineExpose({
@@ -411,9 +421,9 @@ defineExpose({
           <div class="flex align-center gap-2">
             <span>{{ $t('public_select_api') }}</span>
             <el-tag v-show="form.moduleIds?.length" type="info" class="is-code">
-              已选:
-              {{ form.moduleIds?.length }}
-              APIs
+              {{
+                $t('public_selected_apis', { count: form.moduleIds?.length })
+              }}
             </el-tag>
           </div>
         </template>
@@ -434,7 +444,7 @@ defineExpose({
                 >
                   <span class="flex-1 ellipsis">{{ client.clientName }}</span>
                   <el-icon
-                    v-if="form.clientId === client.id"
+                    v-if="form.clientId === client.clientId"
                     class="ml-auto"
                     size="16"
                     ><i-mingcute:check-line

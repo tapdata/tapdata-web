@@ -114,6 +114,7 @@ interface Props {
   tag?: string | Component
   inDialog?: boolean
   disableApp?: boolean
+  readonly?: boolean
   params?: Record<string, any>
 }
 
@@ -121,6 +122,7 @@ const props = withDefaults(defineProps<Props>(), {
   tag: Drawer,
   inDialog: false,
   disableApp: false,
+  readonly: false,
 })
 
 const emit = defineEmits(['visible', 'update:loading', 'save', 'update'])
@@ -1062,6 +1064,7 @@ const openEdit = () => {
         style="line-height: 48px"
       >
         <ElTabs
+          v-if="!readonly"
           ref="tabs"
           v-model="tab"
           class="data-server__tabs flex-1"
@@ -1147,6 +1150,7 @@ const openEdit = () => {
                 v-model="form.acl"
                 multiple
                 class="w-100"
+                :disabled="readonly"
                 @change="handleUpdateRole"
               >
                 <ElOption
@@ -1167,7 +1171,7 @@ const openEdit = () => {
               <ListSelect
                 v-model:value="form.appValue"
                 v-model:label="form.appLabel"
-                :disabled="disableApp"
+                :disabled="disableApp || readonly"
                 class="w-100"
                 @change="handleUpdateApp"
               />

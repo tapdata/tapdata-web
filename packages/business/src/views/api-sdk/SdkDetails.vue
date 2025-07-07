@@ -33,23 +33,8 @@ const filterText = ref('')
 const searchInput = ref<any>(null)
 const apiDrawer = ref<any>(null)
 const sdkDialog = ref<any>(null)
-
+const hasGenerating = ref(false)
 const selectedVersion = ref<any>()
-
-const statusMap = {
-  FAILED: {
-    text: '失败',
-    type: 'danger',
-  },
-  GENERATED: {
-    text: '已生成',
-    type: 'success',
-  },
-  GENERATING: {
-    text: '生成中',
-    type: '',
-  },
-}
 
 const mapApi = (item: any) => {
   const pathJoin: string[] = []
@@ -78,7 +63,7 @@ const {
 
     return res.items.reduce(
       (acc, item) => {
-        acc[item.clientId] = item
+        acc[item.clientId] = item.clientName
         return acc
       },
       {} as Record<string, ApiClientVo>,
@@ -89,7 +74,7 @@ const {
   },
 )
 
-const { data: sdk } = useRequest(
+const { data: sdk, run: runFetchSdk } = useRequest(
   async () => {
     const res = await fetchSdk(router.currentRoute.value.params.id as string)
     return res
@@ -109,6 +94,8 @@ const { data: allVersionList, runAsync: runFetchSdkVersions } = useRequest(
       },
     })
 
+    let someGenerating = false
+
     const list = res.items.map((item) => {
       item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
       item.last_updated = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
@@ -116,8 +103,15 @@ const { data: allVersionList, runAsync: runFetchSdkVersions } = useRequest(
 
       item.zipSize = calcUnit(item.zipSizeOfByte, 'byte', 2)
       item.jarSize = calcUnit(item.jarSizeOfByte, 'byte', 2)
+
+      if (item.generateStatus === 'GENERATING') {
+        someGenerating = true
+      }
+
       return item
     })
+
+    hasGenerating.value = someGenerating
 
     if (!selectedVersion.value) {
       handleVersionSelect(list[0])
@@ -171,7 +165,7 @@ const {
 )
 
 const clientName = computed(() => {
-  return clientMap.value[sdk.value?.clientId]?.name
+  return clientMap.value[sdk.value?.lastClientId]
 })
 
 const openSearch = () => {
@@ -233,6 +227,11 @@ const handleDeleteVersion = async () => {
       selectedVersion.value = null
     }
   }
+}
+
+const onSuccess = () => {
+  runFetchSdkVersions()
+  runFetchSdk()
 }
 </script>
 
@@ -309,7 +308,7 @@ const handleDeleteVersion = async () => {
               <i-mingcute:search-line />
             </template>
           </el-button>
-          <el-button text @click="handleAddVersion">
+          <el-button text :disabled="hasGenerating" @click="handleAddVersion">
             <template #icon>
               <i-mingcute:add-line />
             </template>
@@ -576,11 +575,11 @@ const handleDeleteVersion = async () => {
           </div>
         </div>
 
-        <ApiDrawer ref="apiDrawer" />
+        <ApiDrawer ref="apiDrawer" readonly />
       </div>
     </div>
 
-    <SdkDialog ref="sdkDialog" @success="runFetchSdkVersions" />
+    <SdkDialog ref="sdkDialog" @success="onSuccess" />
   </PageContainer>
 </template>
 
