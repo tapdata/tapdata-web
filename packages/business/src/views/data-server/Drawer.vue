@@ -679,8 +679,8 @@ const save = async (type?: boolean) => {
         formData.fields = allFields.value
       }
 
-      const method = id ? updateApiModule : createApiModule
-      const data = await method(formData)
+      const func = id ? updateApiModule : createApiModule
+      const data = await func(formData)
 
       data.connection = connectionId
       data.source = {
