@@ -27,6 +27,7 @@ import {
   reactive,
   ref,
   watch,
+  type Ref,
 } from 'vue'
 import { DatabaseIcon } from '../../../components/DatabaseIcon'
 import { CONNECTION_STATUS_MAP } from '../../../shared/const'
@@ -142,7 +143,7 @@ interface StageItem {
 }
 
 const formData = inject('formData')
-const conditionList = inject('conditionList')
+const conditionList = inject<Ref<ConditionItem[]>>('conditionList')
 const ConnectorMap = inject('ConnectorMap')
 
 // Props and Emits
@@ -598,13 +599,18 @@ const addItem = () => {
 }
 
 const removeItem = (id: string) => {
-  const index = conditionList.value.findIndex((t) => t.id === id)
+  const index = filteredList.value.findIndex((t) => t.id === id)
   if (index !== -1) {
-    conditionList.value.splice(index, 1)
+    filteredList.value.splice(index, 1)
+  }
+
+  const index2 = conditionList.value.findIndex((t) => t.id === id)
+  if (index2 !== -1) {
+    conditionList.value.splice(index2, 1)
   }
 
   // If current page is now empty and it's not the first page, go to previous page
-  if (conditionList.value.length === 0 && currentPage.value > 1) {
+  if (paginatedList.value.length === 0 && currentPage.value > 1) {
     currentPage.value--
   }
 }
@@ -1452,7 +1458,6 @@ defineExpose({
 })
 
 const handleSearch = debounce((value: string) => {
-  console.log('handleSearch', value)
   if (!value) {
     filteredList.value = conditionList.value
     return
