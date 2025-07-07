@@ -1,13 +1,6 @@
 import { t } from '@tap/i18n'
 import { isFunction, isObject } from 'lodash-es'
-import {
-  h,
-  isVNode,
-  ref,
-  type AppContext,
-  type Component,
-  type VNode,
-} from 'vue'
+import { h, isVNode, type AppContext, type Component, type VNode } from 'vue'
 import { CloseIcon } from '../CloseIcon'
 import type { ElMessageBoxOptions } from 'element-plus'
 
@@ -40,65 +33,35 @@ const renderContent = (options: ExtendedMessageBoxOptions) => {
     options.icon ??
     (options.type ? TypeComponentsMap[options.type] : TypeComponentsMap.primary)
 
-  const inputValue = ref('')
-
-  console.log('options', options, inputValue)
-
-  options.confirmButtonDisabled = true
-
-  const handleInput = () => {
-    options.confirmButtonDisabled =
-      inputValue.value !== options.needInputToConfirm
-
-    options.confirmButtonDisabled = false
-
-    console.log('handleInput', this)
-  }
-
-  return () => (
-    <div class="modal-confirm-body">
-      <div class="flex gap-4">
-        <ElIcon
-          size={24}
-          class={`el-message-box__status el-message-box-icon--${options.type}`}
-        >
-          {IconComponent && h(IconComponent)}
-        </ElIcon>
-        <div class="modal-confirm-paragraph flex flex-column gap-2 lh-base">
-          {options.title && (
-            <div class="modal-confirm-title fs-6 fw-sub">
-              {isFunction(options.title) ? options.title() : options.title}
-            </div>
-          )}
-          {options.dangerouslyUseHTMLString ? (
-            <div
-              class="modal-confirm-content"
-              style={!options.title && 'margin-top: 1px'}
-              innerHTML={options.message as string}
-            />
-          ) : (
-            <>
-              <div
-                class="modal-confirm-content"
-                style={!options.title && 'margin-top: 1px'}
-              >
-                {isFunction(options.message)
-                  ? options.message()
-                  : options.message}
-              </div>
-            </>
-          )}
-        </div>
+  return (
+    <div class="modal-confirm-body flex gap-4">
+      <ElIcon
+        size={24}
+        class={`el-message-box__status el-message-box-icon--${options.type}`}
+      >
+        {IconComponent && h(IconComponent)}
+      </ElIcon>
+      <div class="modal-confirm-paragraph flex flex-column gap-2 lh-base">
+        {options.title && (
+          <div class="modal-confirm-title fs-6 fw-sub">
+            {isFunction(options.title) ? options.title() : options.title}
+          </div>
+        )}
+        {options.dangerouslyUseHTMLString ? (
+          <div
+            class="modal-confirm-content"
+            style={!options.title && 'margin-top: 1px'}
+            innerHTML={options.message as string}
+          />
+        ) : (
+          <div
+            class="modal-confirm-content"
+            style={!options.title && 'margin-top: 1px'}
+          >
+            {isFunction(options.message) ? options.message() : options.message}
+          </div>
+        )}
       </div>
-      {options.needInputToConfirm && (
-        <div class="flex flex-column gap-2 w-100 bg-subtle p-3 mt-3 rounded-xl">
-          <p>
-            Please type <strong>{options.needInputToConfirm}</strong> to
-            confirm.
-          </p>
-          <el-input v-model={inputValue.value} onInput={handleInput} />
-        </div>
-      )}
     </div>
   )
 }
