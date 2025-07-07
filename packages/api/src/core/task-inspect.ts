@@ -29,8 +29,22 @@ export interface TaskInspectOperation {
   user: string
 }
 
-export function getTaskInspectConfig(taskId: string) {
-  return requestClient.get(`${BASE_URL}/${taskId}`)
+export async function getTaskInspectConfig(taskId: string) {
+  const res = await requestClient.get(`${BASE_URL}/${taskId}`)
+
+  return (
+    res || {
+      mode: 'CLOSE',
+      timeCheckMode: 'NORMAL',
+      custom: {
+        cdc: {
+          enable: true,
+          sample: { interval: 1, limit: 10 },
+          type: 'SAMPLE',
+        },
+      },
+    }
+  )
 }
 
 export function updateTaskInspectConfig(taskId: string, config: any) {
@@ -65,15 +79,9 @@ export interface InspectResultsLastOp {
 }
 
 export function getTaskInspectResultsLastOp(taskId: string) {
-  return requestClient
-    .get<InspectResultsLastOp>(`${BASE_URL}/${taskId}/results-last-op`)
-    .catch(() => ({
-      manualId: '',
-      manualType: '',
-      totals: 0,
-      unfinished: 0,
-      created: '',
-    }))
+  return requestClient.get<InspectResultsLastOp>(
+    `${BASE_URL}/${taskId}/results-last-op`,
+  )
 }
 
 export function getTaskInspectResultsGroupByTable(inspectId: string) {

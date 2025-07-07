@@ -442,4 +442,8 @@ export default {
   public_op_manual_check: '手動校驗',
   public_op_manual_recover: '手動修復',
   public_op_manual_recover_check: '手動修復失敗',
+  public_time_precision: '時間精度',
+  public_time_precision_normal: '嚴格匹配',
+  public_time_precision_round: '四舍五入',
+  public_time_precision_truncate: '截斷',
 }

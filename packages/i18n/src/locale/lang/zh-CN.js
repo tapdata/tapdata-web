@@ -443,4 +443,8 @@ export default {
   public_op_manual_check: '手动校验',
   public_op_manual_recover: '手动修复',
   public_op_manual_recover_check: '手动修复失败',
+  public_time_precision: '时间精度',
+  public_time_precision_normal: '严格匹配',
+  public_time_precision_round: '四舍五入',
+  public_time_precision_truncate: '截断',
 }

@@ -451,4 +451,8 @@ export default {
   public_op_manual_check: 'Manual Check',
   public_op_manual_recover: 'Manual Fix',
   public_op_manual_recover_check: 'Manual Fix Failed',
+  public_time_precision: 'Time Precision',
+  public_time_precision_normal: 'Strict Match',
+  public_time_precision_round: 'Round',
+  public_time_precision_truncate: 'Truncate',
 }
