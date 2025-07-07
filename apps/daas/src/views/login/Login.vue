@@ -129,7 +129,7 @@ export default {
             }}</span>
           </div>
           <el-alert
-            v-show="!!errorMessage"
+            v-if="!!errorMessage"
             class="mb-5"
             :title="errorMessage"
             type="error"

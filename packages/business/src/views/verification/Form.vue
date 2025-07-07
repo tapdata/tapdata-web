@@ -628,6 +628,7 @@ provide('ConnectorMap', ConnectorMap)
             ref="taskSelect"
             v-model="form.flowId"
             class="form-input"
+            lazy
             :method="getTaskOptions"
             :current-label="taskName"
             item-label="name"

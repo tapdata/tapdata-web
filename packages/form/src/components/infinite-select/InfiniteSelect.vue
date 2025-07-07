@@ -42,23 +42,42 @@ const props = withDefaults(defineProps<Props>(), {
   debounceWait: 200,
   cache: true,
   hasCreate: false,
-  paramsSerializer: (params: {
-    query: string
+})
+
+const paramsSerializer = (params: {
+  query: string | null
+  page: number
+  pageSize: number | undefined
+}) => {
+  if (props.paramsSerializer) {
+    return props.paramsSerializer(params)
+  }
+
+  const filter: {
     page: number
-    pageSize: number
-  }) => {
-    return {
-      page: params.page,
-      size: params.pageSize || 20,
-      where: {
-        name: {
-          like: escapeRegExp(params.query),
-          options: 'i',
-        },
+    size: number
+    where?: {
+      [key: string]: {
+        like: string
+        options: string
+      }
+    }
+  } = {
+    page: params.page,
+    size: params.pageSize || 20,
+  }
+
+  if (params.query) {
+    filter.where = {
+      [props.itemValue || props.itemLabel]: {
+        like: escapeRegExp(params.query),
+        options: 'i',
       },
     }
-  },
-})
+  }
+
+  return filter
+}
 
 const isStrItem = computed(() => {
   return isString(selectOptions.value[0])
@@ -88,7 +107,7 @@ const showLoading = computed(() => props.loading || loadingData.value)
 
 const getParams = (pageNum = page.value) => {
   return merge(
-    props.paramsSerializer({
+    paramsSerializer({
       query: query.value,
       page: pageNum,
       pageSize: props.pageSize,

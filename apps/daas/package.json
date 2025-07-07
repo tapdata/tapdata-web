@@ -52,7 +52,7 @@
     "@vitejs/plugin-vue-jsx": "catalog:",
     "cross-env": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
-    "sass": "^1.87.0",
+    "sass": "catalog:",
     "unplugin-auto-import": "catalog:",
     "unplugin-icons": "catalog:",
     "unplugin-vue-components": "catalog:",
