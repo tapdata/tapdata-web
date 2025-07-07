@@ -248,9 +248,9 @@ const onSuccess = () => {
       <span class="fs-5 font-color-dark lh-8 ellipsis">{{
         sdk?.artifactId
       }}</span>
-      <el-tag v-if="selectedVersion" class="ml-2 is-code">
-        <VIcon class="align-middle mr-1" size="14">Versions</VIcon>
-        <span class="align-middle">{{ selectedVersion.version }}</span>
+      <el-tag v-if="selectedVersion" class="ml-2 rounded-lg">
+        <VIcon class="align-middle mr-1" size="16">Versions</VIcon>
+        <span class="align-middle fs-7">{{ selectedVersion.version }}</span>
       </el-tag>
     </template>
 
@@ -456,6 +456,7 @@ const onSuccess = () => {
                     size="small"
                     class="align-self-start"
                   />
+                  <span v-else class="lh-5">-</span>
                 </div>
                 <div class="flex flex-column gap-2 desc-item">
                   <span class="text-caption flex align-center gap-2">
