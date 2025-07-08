@@ -1432,4 +1432,5 @@ export default {
   packages_business_request_speed_limit: '每秒請求限制',
   packages_business_request_speed_limit_tag: '每秒請求 ≤ {val}',
   packages_business_request_speed_limit_tip: '默認是 0（表示不限制）',
+  packages_business_data_source_monitor: '數據源監控',
 }

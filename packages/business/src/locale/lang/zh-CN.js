@@ -1443,4 +1443,5 @@ export default {
   packages_business_request_speed_limit: '每秒请求限制',
   packages_business_request_speed_limit_tag: '每秒请求 ≤ {val}',
   packages_business_request_speed_limit_tip: '默认是 0（表示不限制）',
+  packages_business_data_source_monitor: '数据源监控',
 }

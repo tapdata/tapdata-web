@@ -17,7 +17,6 @@ import { useRouter } from 'vue-router'
 import { DatabaseIcon } from '../../components/DatabaseIcon'
 import StatusTag from '../../components/StatusTag.vue'
 import PermissionsDialog from './PermissionsDialog.vue'
-import { getConnectionIcon as getConnectionIconUtil } from './util'
 import type Test from './Test.vue'
 
 interface Connection {
@@ -105,13 +104,7 @@ const databaseLogInfoTimer = ref<ReturnType<typeof setTimeout> | null>(null)
 const loading = ref(false)
 const showProgress = ref(false)
 const progress = ref(0)
-const connection = reactive<Connection>({
-  btnLoading: {
-    deploy: false,
-    stop: false,
-    delete: false,
-  },
-} as Connection)
+const connection = ref<Connection>({} as Connection)
 
 const list = ref<ListItem[]>([])
 const mqType = {
@@ -234,7 +227,7 @@ const transformData = (row: Connection) => {
   if (row.config.uri && row.config.isUri !== false) {
     row.uri = row.config.uri
   }
-  row.heartbeatTable = connection.heartbeatTable
+  // row.heartbeatTable = connection.heartbeatTable
 
   if (row.loadFieldsStatus === 'loading') {
     showProgress.value = true
@@ -249,11 +242,13 @@ const transformData = (row: Connection) => {
 
 const open = async (row: Connection) => {
   visible.value = true
-  Object.assign(connection, transformData(row))
-  connection.last_updated = dayjs(row.last_updated).format(
+  connection.value = cloneDeep(transformData(row))
+  connection.value.last_updated = dayjs(row.last_updated).format(
     'YYYY-MM-DD HH:mm:ss',
   )
+
   await loadList(row)
+
   if (isDaas) {
     await loadPermissions(row.id)
   }
@@ -295,7 +290,7 @@ const edit = async () => {
 
 const beforeTest = () => {
   checkAgent(() => {
-    updateConnectionById(connection.id, {
+    updateConnectionById(connection.value.id, {
       status: 'testing',
     }).then(() => {
       testRef.value?.start(true)
@@ -306,13 +301,13 @@ const beforeTest = () => {
 const loadSchema = () => {
   showProgress.value = true
   progress.value = 0
-  emit('loadSchema', connection)
+  emit('loadSchema', connection.value)
 }
 
 const loadList = async (row: Connection = {} as Connection) => {
   const heartbeatTable = await loadHeartbeatTable(row)
 
-  connection.heartbeatTable = heartbeatTable?.[0]
+  connection.value.heartbeatTable = heartbeatTable?.[0]
 
   if (row.uri) {
     list.value = [
@@ -330,7 +325,7 @@ const loadList = async (row: Connection = {} as Connection) => {
               ],
             },
           ]),
-      connection.heartbeatTable
+      connection.value.heartbeatTable
         ? {
             icon: 'link',
             items: [
@@ -347,7 +342,7 @@ const loadList = async (row: Connection = {} as Connection) => {
                   const routeUrl = router.resolve({
                     name: 'HeartbeatMonitor',
                     params: {
-                      id: connection.heartbeatTable,
+                      id: connection.value.heartbeatTable,
                     },
                   })
                   openUrl(routeUrl.href)
@@ -398,7 +393,7 @@ const loadList = async (row: Connection = {} as Connection) => {
               ],
             },
           ]),
-      connection.heartbeatTable
+      connection.value.heartbeatTable
         ? {
             icon: 'link',
             items: [
@@ -415,7 +410,7 @@ const loadList = async (row: Connection = {} as Connection) => {
                   const routeUrl = router.resolve({
                     name: 'HeartbeatMonitor',
                     params: {
-                      id: connection.heartbeatTable,
+                      id: connection.value.heartbeatTable,
                     },
                   })
                   openUrl(routeUrl.href)
@@ -462,19 +457,12 @@ const loadList = async (row: Connection = {} as Connection) => {
   await getDatabaseLogInfo(row)
 }
 
-const getConnectionIcon = () => {
-  if (!connection) {
-    return
-  }
-  return getConnectionIconUtil(connection?.pdkHash)
-}
-
 const sync = (list: Connection[]) => {
   if (!visible.value) return
-  const result = list.find((item) => item.id === connection.id)
+  const result = list.find((item) => item.id === connection.value.id)
   if (!result) return
   formData.value = cloneDeep(result)
-  Object.assign(connection, transformData(result))
+  connection.value = cloneDeep(transformData(result))
 }
 
 const getSourceFrom = (row: Connection = {} as Connection) => {
@@ -494,7 +482,9 @@ const getSourceFrom = (row: Connection = {} as Connection) => {
 }
 
 const isFileSource = () => {
-  return ['CSV', 'EXCEL', 'JSON', 'XML'].includes(connection?.database_type)
+  return ['CSV', 'EXCEL', 'JSON', 'XML'].includes(
+    connection.value?.database_type,
+  )
 }
 
 const loadHeartbeatTable = async (row: Connection = {} as Connection) => {
@@ -758,6 +748,30 @@ defineExpose({
           </div>
         </div>
       </div>
+
+      <template v-if="connection.monitorAPI">
+        <el-divider class="my-4" />
+        <div class="font-color-dark lh-6 mb-2">
+          {{ $t('packages_business_data_source_monitor') }}
+        </div>
+        <div
+          v-for="(value, key) in connection.monitorAPI"
+          :key="key"
+          class="container-item flex"
+        >
+          <div class="pt-2">
+            <VIcon>additional-string</VIcon>
+          </div>
+          <div class="flex-fill ml-4">
+            <div class="box-line">
+              <div class="box-line__label flex justify-content-between">
+                <span>{{ key }}:</span>
+              </div>
+              <div class="box-line__value ellipsis">{{ value }}</div>
+            </div>
+          </div>
+        </div>
+      </template>
     </div>
     <PermissionsDialog ref="permissionsDialogRef" />
   </Drawer>
