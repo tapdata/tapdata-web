@@ -663,7 +663,7 @@ defineExpose({
             class="box-line"
           >
             <div class="box-line__label flex justify-content-between">
-              <span>{{ temp.label }}:</span>
+              <span>{{ temp.label }}</span>
               <el-button
                 v-if="temp.labelAction"
                 text
@@ -765,7 +765,7 @@ defineExpose({
           <div class="flex-fill ml-4">
             <div class="box-line">
               <div class="box-line__label flex justify-content-between">
-                <span>{{ key }}:</span>
+                <span>{{ key }}</span>
               </div>
               <div class="box-line__value ellipsis">{{ value }}</div>
             </div>
