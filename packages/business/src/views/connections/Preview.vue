@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  databaseTypesApi,
   dataPermissionApi,
   getHeartbeatTaskByConnectionId,
   proxyApi,
@@ -240,6 +241,36 @@ const transformData = (row: Connection) => {
   return row
 }
 
+const MonitorApiSchemaMap = reactive({})
+
+const monitorApiList = ref([])
+
+const loadMonitorApiSchema = async () => {
+  const res = await databaseTypesApi.pdkHash(connection.value.pdkHash)
+
+  MonitorApiSchemaMap[connection.value.pdkHash] = res.properties.monitorAPI
+
+  return res.properties.monitorAPI
+}
+
+const initMonitorApi = async () => {
+  const { monitorAPI } = connection.value
+  if (monitorAPI) {
+    const schema =
+      MonitorApiSchemaMap[connection.value.pdkHash] ||
+      (await loadMonitorApiSchema())
+
+    monitorApiList.value = Object.keys(schema).map((key) => {
+      return {
+        title: schema[key].title,
+        value: monitorAPI[key],
+      }
+    })
+  } else {
+    monitorApiList.value = []
+  }
+}
+
 const open = async (row: Connection) => {
   visible.value = true
   connection.value = cloneDeep(transformData(row))
@@ -248,6 +279,8 @@ const open = async (row: Connection) => {
   )
 
   await loadList(row)
+
+  initMonitorApi()
 
   if (isDaas) {
     await loadPermissions(row.id)
@@ -749,14 +782,14 @@ defineExpose({
         </div>
       </div>
 
-      <template v-if="connection.monitorAPI">
+      <template v-if="monitorApiList.length">
         <el-divider class="my-4" />
         <div class="font-color-dark lh-6 mb-2">
           {{ $t('packages_business_data_source_monitor') }}
         </div>
         <div
-          v-for="(value, key) in connection.monitorAPI"
-          :key="key"
+          v-for="(item, index) in monitorApiList"
+          :key="index"
           class="container-item flex"
         >
           <div class="pt-2">
@@ -765,9 +798,9 @@ defineExpose({
           <div class="flex-fill ml-4">
             <div class="box-line">
               <div class="box-line__label flex justify-content-between">
-                <span>{{ key }}</span>
+                <span>{{ item.title }}</span>
               </div>
-              <div class="box-line__value ellipsis">{{ value }}</div>
+              <div class="box-line__value ellipsis">{{ item.value }}</div>
             </div>
           </div>
         </div>
