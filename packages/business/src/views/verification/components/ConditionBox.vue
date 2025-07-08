@@ -60,7 +60,7 @@
                   <span class="ml-1">{{ index + 1 }}</span>
                 </div>
                 <div class="flex align-items-center">
-                  <ElButton type="text" @click.stop="removeItem(index)">{{ $t('public_button_delete') }}</ElButton>
+                  <ElButton type="text" @click.stop="removeItem(item.id)">{{ $t('public_button_delete') }}</ElButton>
                 </div>
               </div>
               <div class="setting-item mt-4" :key="'connection' + item.id">
@@ -1583,8 +1583,12 @@ export default {
         })
     },
 
-    removeItem(index) {
-      this.list.splice(index, 1)
+    removeItem(id) {
+      const index = this.list.findIndex(t => t.id === id)
+
+      if (~index) {
+        this.list.splice(index, 1)
+      }
     },
 
     loadList() {
