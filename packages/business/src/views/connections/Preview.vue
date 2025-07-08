@@ -9,7 +9,7 @@ import {
 } from '@tap/api'
 import Drawer from '@tap/component/src/Drawer.vue'
 import { Modal } from '@tap/component/src/modal'
-import i18n from '@tap/i18n'
+import i18n, { useI18n } from '@tap/i18n'
 import { openUrl } from '@tap/shared'
 import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash-es'
@@ -97,6 +97,7 @@ const emit = defineEmits<{
 
 const router = useRouter()
 const checkAgent = inject('checkAgent') as (cb?: () => void) => void
+const { t } = useI18n()
 
 const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 const visible = ref(false)
@@ -243,7 +244,8 @@ const transformData = (row: Connection) => {
 
 const MonitorApiSchemaMap = reactive({})
 
-const monitorApiList = ref([])
+const monitorApiList = ref<any[]>([])
+const monitorApiButtonList = ref<any[]>([])
 
 const loadMonitorApiSchema = async () => {
   const res = await databaseTypesApi.pdkHash(connection.value.pdkHash)
@@ -253,21 +255,53 @@ const loadMonitorApiSchema = async () => {
   return res.properties.monitorAPI
 }
 
+function sortSchemaKeysByIndex<
+  T extends Record<string, { 'x-index'?: number }>,
+>(schema: T): (keyof T)[] {
+  return Object.keys(schema).sort((a, b) => {
+    const aIndex = schema[a]?.['x-index']
+    const bIndex = schema[b]?.['x-index']
+
+    if (aIndex === undefined && bIndex === undefined) return 0
+    if (aIndex === undefined) return 1
+    if (bIndex === undefined) return -1
+    return aIndex - bIndex
+  })
+}
+
 const initMonitorApi = async () => {
   const { monitorAPI } = connection.value
   if (monitorAPI) {
-    const schema =
+    const schema: Record<string, { title: string; 'x-index'?: number }> =
       MonitorApiSchemaMap[connection.value.pdkHash] ||
       (await loadMonitorApiSchema())
 
-    monitorApiList.value = Object.keys(schema).map((key) => {
-      return {
-        title: schema[key].title,
-        value: monitorAPI[key],
+    // 基于 x-index 排序 schema 的 keys
+    const sortedKeys = sortSchemaKeysByIndex(schema)
+
+    const list = []
+    const buttonList = []
+
+    for (const key of sortedKeys) {
+      const item = schema[key]
+
+      if (item.type === 'button') {
+        buttonList.push({
+          ...item,
+        })
+      } else {
+        list.push({
+          title: schema[key]?.title || '',
+          value: monitorAPI[key],
+        })
       }
-    })
+    }
+
+    monitorApiList.value = list
+    monitorApiButtonList.value = buttonList
   } else {
     monitorApiList.value = []
+    monitorApiButtonList.value = []
   }
 }
 
@@ -601,6 +635,22 @@ const getDatabaseLogInfo = async (row: Connection = {} as Connection) => {
   }
 }
 
+const handleMonitorApiClick = async (item: any) => {
+  item.loading = true
+  try {
+    await proxyApi.call({
+      className: item.className,
+      method: item.method,
+      args: item.args ? JSON.parse(item.args) : [],
+    })
+    ElMessage.success(t('public_message_operation_success'))
+  } catch (error) {
+    ElMessage.error(`${t('public_message_operation_failed')}: ${error}`)
+  } finally {
+    item.loading = false
+  }
+}
+
 const testRef = ref<InstanceType<typeof Test> | null>(null)
 const permissionsDialogRef = ref<InstanceType<typeof PermissionsDialog> | null>(
   null,
@@ -782,7 +832,7 @@ defineExpose({
         </div>
       </div>
 
-      <template v-if="monitorApiList.length">
+      <template v-if="connection.monitorAPI">
         <el-divider class="my-4" />
         <div class="font-color-dark lh-6 mb-2">
           {{ $t('packages_business_data_source_monitor') }}
@@ -793,7 +843,7 @@ defineExpose({
           class="container-item flex"
         >
           <div class="pt-2">
-            <VIcon>additional-string</VIcon>
+            <VIcon>record</VIcon>
           </div>
           <div class="flex-fill ml-4">
             <div class="box-line">
@@ -801,6 +851,24 @@ defineExpose({
                 <span>{{ item.title }}</span>
               </div>
               <div class="box-line__value ellipsis">{{ item.value }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="monitorApiButtonList.length" class="container-item flex">
+          <div class="pt-4">
+            <VIcon class="align-top">additional-string</VIcon>
+          </div>
+          <div class="flex-fill ml-4">
+            <div class="box-line flex flex-wrap gap-3" style="--btn-space: 0px">
+              <el-button
+                v-for="(item, index) in monitorApiButtonList"
+                :key="index"
+                :loading="item.loading"
+                type="primary"
+                @click="handleMonitorApiClick(item)"
+                >{{ item.title }}</el-button
+              >
             </div>
           </div>
         </div>
