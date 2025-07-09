@@ -401,26 +401,6 @@ export default {
             </div>
             <div class="flex-1 text-center">
               <header class="api-monitor-total__tittle">
-                {{ $t('api_monitor_total_warningVisitCount') }}
-              </header>
-              <div class="api-monitor-total__text din-font">
-                <el-tooltip
-                  :open-delay="400"
-                  :disabled="
-                    !previewData.warningVisitTotalCount ||
-                    previewData.warningVisitTotalCount < 1000
-                  "
-                  :content="`${previewData.warningVisitTotalCount}`"
-                  placement="bottom"
-                >
-                  <span>{{
-                    calcUnit(previewData.warningVisitTotalCount)
-                  }}</span>
-                </el-tooltip>
-              </div>
-            </div>
-            <div class="flex-1 text-center">
-              <header class="api-monitor-total__tittle">
                 {{ $t('api_monitor_total_warningApiCount') }}
               </header>
               <div class="api-monitor-total__text din-font">
