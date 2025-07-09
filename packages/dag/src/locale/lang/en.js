@@ -1081,6 +1081,9 @@ export default {
   packages_dag_inspect_operation_user: 'Operation User',
   packages_dag_task_inspect_difference_alarm:
     'Task Inspection Difference Alarm',
+  packages_dag_task_retry_alert: 'Task Retry Alert',
+  packages_dag_task_retry_alert_desc:
+    'Alert when consecutive retries exceed {count}',
   packages_dag_task_inspect_enable_fail_1:
     'Data validation enable failed: Only one source node and one target node are supported.',
   packages_dag_task_inspect_enable_fail_2:

@@ -13,7 +13,7 @@ import {
   MemberOutlined,
 } from '@tap/component/src/icon'
 import { Modal } from '@tap/component/src/modal'
-import i18n from '@tap/i18n'
+import { useI18n } from '@tap/i18n'
 import { cloneDeep } from 'lodash-es'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -81,6 +81,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 
+const { t } = useI18n()
+
 // Router
 const router = useRouter()
 
@@ -92,18 +94,18 @@ const templateDialog = ref()
 // Reactive Data
 const columns = ref([
   {
-    label: i18n.t('public_description'),
+    label: t('public_description'),
     slotName: 'key',
   },
   {
-    label: i18n.t(
+    label: t(
       'packages_business_setting_notification_alarm_notification_gaojingtongzhi',
     ),
     prop: 'notify',
     slotName: 'notify',
   },
   {
-    label: i18n.t(
+    label: t(
       'packages_business_setting_alarm_notification_notify_noticeInterval',
     ),
     prop: 'interval',
@@ -112,82 +114,83 @@ const columns = ref([
 ])
 
 const keyMapping = reactive({
-  TASK_STATUS_ERROR: i18n.t(
+  TASK_STATUS_ERROR: t(
     'packages_business_setting_alarmnotification_dangrenwuyudao',
   ),
-  TASK_INSPECT_ERROR: i18n.t(
+  TASK_INSPECT_ERROR: t(
     'packages_business_setting_alarmnotification_dangrenwujiaoyan',
   ),
-  TASK_FULL_COMPLETE: i18n.t(
+  TASK_FULL_COMPLETE: t(
     'packages_business_setting_alarmnotification_dangrenwuquanliang',
   ),
-  TASK_INCREMENT_START: i18n.t(
+  TASK_INCREMENT_START: t(
     'packages_business_setting_alarmnotification_dangrenwuzengliang',
   ),
-  TASK_STATUS_STOP: i18n.t(
+  TASK_STATUS_STOP: t(
     'packages_business_setting_alarmnotification_dangrenwutingzhi',
   ),
-  TASK_INCREMENT_DELAY: i18n.t(
+  TASK_INCREMENT_DELAY: t(
     'packages_business_setting_alarmnotification_dangrenwudezeng',
   ),
-  DATANODE_CANNOT_CONNECT: i18n.t(
+  DATANODE_CANNOT_CONNECT: t(
     'packages_business_setting_alarmnotification_dangshujuwufa',
   ),
-  DATANODE_HTTP_CONNECT_CONSUME: i18n.t(
+  DATANODE_HTTP_CONNECT_CONSUME: t(
     'packages_business_setting_alarmnotification_dangshujuyuanwang',
   ),
-  DATANODE_TCP_CONNECT_CONSUME: i18n.t(
+  DATANODE_TCP_CONNECT_CONSUME: t(
     'packages_business_setting_alarmnotification_dangshujuyuanxie',
   ),
-  DATANODE_AVERAGE_HANDLE_CONSUME: i18n.t(
+  DATANODE_AVERAGE_HANDLE_CONSUME: t(
     'packages_business_setting_alarmnotification_dangshujuyuanjie',
   ),
-  PROCESSNODE_AVERAGE_HANDLE_CONSUME: i18n.t(
+  PROCESSNODE_AVERAGE_HANDLE_CONSUME: t(
     'packages_business_setting_alarmnotification_dangjiediandeping',
   ),
-  INSPECT_TASK_ERROR: i18n.t(
+  INSPECT_TASK_ERROR: t(
     'packages_business_setting_alarmnotification_dangjiaoyanrenwucuowu',
   ),
-  INSPECT_COUNT_ERROR: i18n.t(
+  INSPECT_COUNT_ERROR: t(
     'packages_business_setting_alarmnotification_dangjiaoyanrenwushuliangcuowu',
   ),
-  INSPECT_VALUE_ERROR: i18n.t(
+  INSPECT_VALUE_ERROR: t(
     'packages_business_setting_alarmnotification_dangjiaoyanrenwuzhicuowu',
   ),
-  SYSTEM_FLOW_EGINGE_DOWN: i18n.t(
+  SYSTEM_FLOW_EGINGE_DOWN: t(
     'packages_business_setting_alarmnotification_dangrenwustop',
   ),
-  SYSTEM_FLOW_EGINGE_UP: i18n.t(
+  SYSTEM_FLOW_EGINGE_UP: t(
     'packages_business_setting_alarmnotification_dangrenwuuP',
   ),
-  TASK_INSPECT_DIFFERENCE: i18n.t('packages_dag_task_inspect_difference_alarm'),
+  TASK_INSPECT_DIFFERENCE: t('packages_dag_task_inspect_difference_alarm'),
+  TASK_RETRY_WARN: t('packages_dag_task_retry_alert'),
 })
 
 const alarmRulesColumns = ref([
   {
-    label: i18n.t('packages_business_setting_alarmnotification_gaojingzhibiao'),
+    label: t('packages_business_setting_alarmnotification_gaojingzhibiao'),
     slotName: 'keySlot',
   },
   {
-    label: i18n.t('packages_business_setting_alarmnotification_gaojingzhibiao'),
+    label: t('packages_business_setting_alarmnotification_gaojingzhibiao'),
     slotName: 'valueSlot',
   },
 ])
 
 const alarmRecipientColumns = ref([
   {
-    label: i18n.t('packages_business_setting_alarmnotification_channel'),
+    label: t('packages_business_setting_alarmnotification_channel'),
     slotName: 'keySlot',
   },
   {
-    label: i18n.t('packages_business_setting_alarmnotification_recipient'),
+    label: t('packages_business_setting_alarmnotification_recipient'),
     slotName: 'valueSlot',
     headerSlot: 'valueHeader',
   },
 ])
 
 const channelMap = reactive({
-  EMAIL: i18n.t('packages_business_notify_email_notification'),
+  EMAIL: t('packages_business_notify_email_notification'),
 })
 
 // Computed
@@ -253,7 +256,7 @@ const save = async () => {
     // 合并agent停止时
     const data = [...tableData.value, ...currentData.value]
     await saveAlarm(data)
-    ElMessage.success(i18n.t('public_message_save_ok'))
+    ElMessage.success(t('public_message_save_ok'))
     if (!isDaas.value) {
       emit('updateVisible', false)
     }
@@ -320,7 +323,7 @@ const saveAlarmRules = async () => {
     })
     await alarmRuleApi.save(data)
     alarmRulesVisible.value = false
-    ElMessage.success(i18n.t('public_message_save_ok'))
+    ElMessage.success(t('public_message_save_ok'))
   } catch (error) {
     console.error('Failed to save alarm rules:', error)
     ElMessage.error('保存失败')
@@ -338,10 +341,10 @@ const saveAlarmRecipient = async () => {
         : [],
     })
     alarmRecipientVisible.value = false
-    ElMessage.success(i18n.t('public_message_save_ok'))
+    ElMessage.success(t('public_message_save_ok'))
   } catch (error) {
     console.error('Failed to save alarm recipients:', error)
-    ElMessage.error(i18n.t('public_message_save_fail'))
+    ElMessage.error(t('public_message_save_fail'))
   } finally {
     savingRecipient.value = false
   }
@@ -375,12 +378,10 @@ const handleCheckMail = async (val: boolean) => {
     return
   }
   const confirmed = await Modal.confirm(
-    i18n.t('public_message_title_prompt'),
-    i18n.t('packages_business_setting_alarmsetting_jiancedaoninhai'),
+    t('public_message_title_prompt'),
+    t('packages_business_setting_alarmsetting_jiancedaoninhai'),
     {
-      confirmButtonText: i18n.t(
-        'packages_business_setting_alarmsetting_qubangding',
-      ),
+      confirmButtonText: t('packages_business_setting_alarmsetting_qubangding'),
     },
   )
   if (confirmed) {
@@ -654,35 +655,49 @@ onMounted(async () => {
             }}</span>
           </template>
           <template #valueSlot="scope">
-            <span class="mr-2">{{
-              $t('packages_business_setting_alarmnotification_lianxu')
-            }}</span>
-            <el-input-number
-              v-model="scope.row.point"
-              :controls="false"
-              :precision="0"
-              :min="1"
-              style="width: 100px"
-            />
-            <span class="ml-2 mr-2"> {{ $t('public_time_m') }}</span>
-            <el-select
-              v-model="scope.row.equalsFlag"
-              style="width: 100px"
-              class="mr-2"
+            <i18n-t
+              v-if="scope.row.key === 'TASK_RETRY_WARN'"
+              tag="div"
+              class="flex align-center gap-2"
+              keypath="packages_dag_task_retry_alert_desc"
             >
-              <el-option label=">=" :value="1" />
-              <el-option label="<=" :value="-1" />
-            </el-select>
-            <el-input-number
-              v-model="scope.row.ms"
-              :controls="false"
-              :precision="0"
-              :min="1"
-              style="width: 80px"
-            />
-            <span class="ml-2">{{
-              $t('packages_business_setting_alarmnotification_msshigaojing')
-            }}</span>
+              <template #count>
+                <el-input-number
+                  v-model="scope.row.times"
+                  :controls="false"
+                  :min="1"
+                  style="width: 80px"
+                />
+              </template>
+            </i18n-t>
+            <template v-else>
+              <el-input-number
+                v-model="scope.row.point"
+                :controls="false"
+                :precision="0"
+                :min="1"
+                style="width: 100px"
+              />
+              <span class="ml-2 mr-2"> {{ $t('public_time_m') }}</span>
+              <el-select
+                v-model="scope.row.equalsFlag"
+                style="width: 100px"
+                class="mr-2"
+              >
+                <el-option label=">=" :value="1" />
+                <el-option label="<=" :value="-1" />
+              </el-select>
+              <el-input-number
+                v-model="scope.row.ms"
+                :controls="false"
+                :precision="0"
+                :min="1"
+                style="width: 80px"
+              />
+              <span class="ml-2">{{
+                $t('packages_business_setting_alarmnotification_msshigaojing')
+              }}</span>
+            </template>
           </template>
         </VTable>
         <footer class="flex justify-content-end mt-4">
