@@ -12,7 +12,7 @@ import { Modal } from '@tap/component/src/modal'
 import i18n, { useI18n } from '@tap/i18n'
 import { openUrl } from '@tap/shared'
 import dayjs from 'dayjs'
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep, isArray, isString } from 'lodash-es'
 import { inject, onBeforeUnmount, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { DatabaseIcon } from '../../components/DatabaseIcon'
@@ -635,14 +635,36 @@ const getDatabaseLogInfo = async (row: Connection = {} as Connection) => {
   }
 }
 
+function renderArgs(template: any, data: any) {
+  return isString(template)
+    ? template.replaceAll(/\{\{\s*(\w+)\s*\}\}/g, (_, key) => data[key] ?? '')
+    : template
+}
+
 const handleMonitorApiClick = async (item: any) => {
   item.loading = true
+
+  const rootData = {
+    connectionId: connection.value.id,
+  }
+
   try {
+    let { args } = item
+
+    if (isString(args)) {
+      args = JSON.parse(args)
+    }
+
+    if (isArray(args)) {
+      args = args.map((t) => renderArgs(t, rootData))
+    }
+
     await proxyApi.call({
       className: item.className,
       method: item.method,
-      args: item.args ? JSON.parse(item.args) : [],
+      args,
     })
+
     ElMessage.success(t('public_message_operation_success'))
   } catch (error) {
     ElMessage.error(`${t('public_message_operation_failed')}: ${error}`)
