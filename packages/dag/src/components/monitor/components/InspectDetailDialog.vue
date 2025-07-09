@@ -496,17 +496,19 @@ async function handleConfirmRecover(): Promise<void> {
                   <thead class="bg-light border-bottom">
                     <tr>
                       <th
-                        class="text-start p-3 text-sm fw-sub text-muted-foreground w-1/4"
+                        class="text-start p-3 text-sm fw-sub text-muted-foreground w-1/4 break-all"
                       >
                         {{
                           $t('packages_business_verification_result_field_name')
                         }}
                       </th>
-                      <th class="text-start p-3 text-sm fw-sub w-[37.5%]">
+                      <th
+                        class="text-start p-3 text-sm fw-sub w-[37.5%] break-all"
+                      >
                         {{ $t('packages_dag_inspect_source_value') }}
                       </th>
                       <th
-                        class="text-start p-3 text-sm fw-sub text-destructive w-[37.5%]"
+                        class="text-start p-3 text-sm fw-sub text-destructive w-[37.5%] break-all"
                       >
                         {{ $t('packages_dag_inspect_target_value') }}
                       </th>
@@ -526,7 +528,7 @@ async function handleConfirmRecover(): Promise<void> {
                           <VIcon class="mt-2" size="16"
                             >ArrowsTurnForward</VIcon
                           >
-                          <div>
+                          <div class="break-all">
                             <div class="font-color-sslight">
                               {{ field }}
                             </div>
@@ -562,7 +564,7 @@ async function handleConfirmRecover(): Promise<void> {
                           <VIcon class="mt-2" size="16"
                             >ArrowsTurnForward</VIcon
                           >
-                          <div>
+                          <div class="break-all">
                             <div class="font-color-sslight">
                               {{ row.sourceFields[i] }}
                             </div>
@@ -574,7 +576,9 @@ async function handleConfirmRecover(): Promise<void> {
                         <span v-else>{{ targetField }}</span>
                       </td>
                       <td class="p-3 text-sm font-medium">
-                        <span>{{ row.source[row.sourceFields[i]] }}</span>
+                        <span class="break-all">{{
+                          row.source[row.sourceFields[i]]
+                        }}</span>
                       </td>
                       <td
                         class="p-3 text-sm font-medium"
@@ -583,7 +587,9 @@ async function handleConfirmRecover(): Promise<void> {
                             row.diffFieldsMap[row.sourceFields[i]],
                         }"
                       >
-                        <span>{{ row.target[targetField] }}</span>
+                        <span class="break-all">{{
+                          row.target[targetField]
+                        }}</span>
                       </td>
                     </tr>
                   </tbody>
@@ -595,10 +601,12 @@ async function handleConfirmRecover(): Promise<void> {
                     :key="key"
                     class="flex border-bottom last:border-0 hover:bg-light"
                   >
-                    <div class="flex-1 p-3 text-sm text-muted-foreground">
+                    <div
+                      class="flex-1 p-3 text-sm text-muted-foreground break-all"
+                    >
                       {{ key }}
                     </div>
-                    <div class="flex-1 p-3 text-sm font-medium">
+                    <div class="flex-1 p-3 text-sm font-medium break-all">
                       <span>{{ value }}</span>
                     </div>
                   </div>
