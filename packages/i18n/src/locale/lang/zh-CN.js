@@ -421,4 +421,6 @@ export default {
   public_cancel_all_selected: '取消全选',
   public_data_preview: '数据预览',
   public_application: '应用',
+  public_retry_times: '重试次数',
+  public_retry_threshold: '重试告警阈值',
 }

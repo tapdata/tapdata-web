@@ -420,4 +420,6 @@ export default {
   public_cancel_all_selected: '取消全選',
   public_data_preview: '數據預覽',
   public_application: '應用',
+  public_retry_times: '重試次數',
+  public_retry_threshold: '重試告警閾值',
 }

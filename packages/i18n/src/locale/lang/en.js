@@ -429,4 +429,6 @@ export default {
   public_cancel_all_selected: 'Unselect All',
   public_data_preview: 'Data Preview',
   public_application: 'Application',
+  public_retry_times: 'Retry Times',
+  public_retry_threshold: 'Retry Threshold',
 }
