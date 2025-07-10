@@ -1087,4 +1087,5 @@ export default {
     'Data validation enable failed: Both source and target nodes must have advanced query capabilities.',
   packages_dag_table_selector_all_tables_selected:
     'You have selected all tables',
+  packages_dag_syncForeignKeyEnable: 'Sync Foreign Key',
 }
