@@ -1948,24 +1948,6 @@ export class Table extends NodeType {
                           },
                         ],
                         'x-visible': '{{hasFeature("noPrimaryKey")}}',
-                        'x-reactions': {
-                          target: 'noPKVirtualFieldName',
-                          fulfill: {
-                            state: {
-                              visible: '{{$self.value==="ADD_HASH"}}',
-                            },
-                          },
-                        },
-                      },
-                      noPKVirtualFieldName: {
-                        type: 'string',
-                        default: '_no_pk_hash',
-                        title: i18n.t('packages_dag_noPKVirtualFieldName'),
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Input',
-                        'x-component-props': {
-                          placeholder: `${i18n.t('public_data_default')}: _no_pk_hash`,
-                        },
                       },
                     },
                   },
