@@ -942,4 +942,5 @@ export default {
   packages_dag_task_inspect_enable_fail_2:
     '数据校验开启失败：源节点和目标节点必须同时具备高级查询能力。',
   packages_dag_table_selector_all_tables_selected: '您已选择所有表进行复制',
+  packages_dag_syncForeignKeyEnable: '同步外键',
 }
