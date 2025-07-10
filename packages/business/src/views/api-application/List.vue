@@ -1,12 +1,10 @@
 <script>
 import { fetchApps, logcollectorApi, taskApi } from '@tap/api'
-
 import { FilterBar } from '@tap/component/src/filter-bar'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
 import PageContainer from '../../components/PageContainer.vue'
-
 import TablePage from '../../components/TablePage.vue'
 import Delete from './Delete.vue'
 import Details from './Details.vue'

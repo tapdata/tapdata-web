@@ -1,10 +1,10 @@
 <script lang="tsx">
 import {
   apiServerApi,
-  fetchConnections,
+  fetchApiModules,
   fetchApps,
+  fetchConnections,
   measurementApi,
-  modulesApi,
   proxyApi,
   taskApi,
   workerApi,
@@ -518,13 +518,9 @@ export default {
         },
       }
 
-      return modulesApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then(({ items }) => {
-          return items.map(this.mapApi)
-        })
+      return fetchApiModules(filter).then(({ items }) => {
+        return items.map(this.mapApi)
+      })
     },
 
     mapApi(item) {

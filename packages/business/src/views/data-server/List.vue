@@ -1,24 +1,34 @@
 <script setup lang="ts">
 import {
   apiServerApi,
+  batchUpdateApiModules,
+  batchUpdateApiModuleTags,
   databaseTypesApi,
+  deleteApiModule,
+  exportApiDocumentation,
+  exportApiModules,
+  fetchApiModules,
   fetchApps,
   metadataInstancesApi,
-  modulesApi,
+  updateApiModule,
   useRequest,
 } from '@tap/api'
 import FilterBar from '@tap/component/src/filter-bar/Main.vue'
-import { EditOutlined, ImportOutlined } from '@tap/component/src/icon'
+import {
+  EditOutlined,
+  ExportOutlined,
+  ImportOutlined,
+} from '@tap/component/src/icon'
 import { useI18n } from '@tap/i18n'
+
 import { ElInput, ElMessage, ElMessageBox } from 'element-plus'
 import { escapeRegExp } from 'lodash-es'
 import {
   computed,
   nextTick,
+  onBeforeMount,
   onBeforeUnmount,
-  onMounted,
   provide,
-  reactive,
   ref,
   shallowRef,
   watch,
@@ -29,6 +39,7 @@ import TablePage from '../../components/TablePage.vue'
 import Upload from '../../components/UploadDialog.vue'
 import Delete from '../api-application/Delete.vue'
 import Editor from '../api-application/Editor.vue'
+import DownloadSdkDialog from './DownloadSdkDialog.vue'
 import Drawer from './Drawer.vue'
 
 interface Props {
@@ -65,6 +76,7 @@ const route = useRoute()
 const { t } = useI18n()
 
 // Refs
+const downloadSdkDialogVisible = ref(false)
 const table = ref<InstanceType<typeof TablePage>>()
 const drawer = ref<InstanceType<typeof Drawer>>()
 const upload = ref<InstanceType<typeof Upload>>()
@@ -82,7 +94,7 @@ const order = ref('createAt DESC')
 const apiServerHost = ref('')
 const intervalId = ref<number | null>(null)
 
-const searchParams = reactive<SearchParams>({
+const searchParams = ref<SearchParams>({
   type: '',
   status: '',
   keyword: '',
@@ -151,8 +163,8 @@ watch(
 )
 
 // Lifecycle hooks
-onMounted(() => {
-  Object.assign(searchParams, route.query)
+onBeforeMount(() => {
+  Object.assign(searchParams.value, route.query)
   getFilterItems()
   getApiServerHost()
 })
@@ -243,7 +255,7 @@ const getData = ({
   page?: { current?: number; size?: number }
 }) => {
   const { current, size } = page
-  const { type, status, keyword, appId } = searchParams
+  const { type, status, keyword, appId } = searchParams.value
   const where: any = {}
   if (keyword?.trim()) {
     const obj = { like: escapeRegExp(keyword), options: 'i' }
@@ -275,29 +287,25 @@ const getData = ({
     Object.assign(filter, props.params)
   }
 
-  return modulesApi
-    .get({
-      filter: JSON.stringify(filter),
-    })
-    .then((data: any) => {
-      const list = (data?.items || []).map((item: any) => {
-        item.statusFmt =
-          statusOptions.find((it) => it.value === item.status)?.label || '-'
-        item.appName = item.listtags?.[0]?.value || '-'
+  return fetchApiModules(filter).then((data: any) => {
+    const list = (data?.items || []).map((item: any) => {
+      item.statusFmt =
+        statusOptions.find((it) => it.value === item.status)?.label || '-'
+      item.appName = item.listtags?.[0]?.value || '-'
 
-        const pathJoin: string[] = []
-        item.apiVersion && pathJoin.push(item.apiVersion)
-        item.prefix && pathJoin.push(item.prefix)
-        item.basePath && pathJoin.push(item.basePath)
-        item._path = `/${pathJoin.join('/')}`
-        return item
-      })
-      // doLayout()
-      return {
-        total: data?.total,
-        data: list,
-      }
+      const pathJoin: string[] = []
+      item.apiVersion && pathJoin.push(item.apiVersion)
+      item.prefix && pathJoin.push(item.prefix)
+      item.basePath && pathJoin.push(item.basePath)
+      item._path = `/${pathJoin.join('/')}`
+      return item
     })
+    // doLayout()
+    return {
+      total: data?.total,
+      data: list,
+    }
+  })
 }
 
 const getApiServerHost = async () => {
@@ -323,7 +331,7 @@ const removeServer = async (row: any) => {
     t('packages_business_data_server_list_querenshanchufu'),
   )
   if (flag) {
-    await modulesApi.delete(row.id)
+    await deleteApiModule(row.id)
     table.value?.fetch()
   }
 }
@@ -335,7 +343,7 @@ const changeStatus = async (row: any) => {
   }
   const flag = await ElMessageBox.confirm(msg)
   if (flag) {
-    await modulesApi.patch({
+    await updateApiModule({
       id: row.id,
       status: row.status === 'active' ? 'pending' : 'active',
       tableName: row.tableName,
@@ -365,7 +373,7 @@ const fetch = (...args: any[]) => {
 
 const handleExport = () => {
   const ids = multipleSelection.value.map((t) => t.id)
-  modulesApi.export(ids)
+  exportApiModules(ids)
 }
 
 const handleImport = () => {
@@ -374,13 +382,13 @@ const handleImport = () => {
 
 const handleExportApiDoc = () => {
   const ids = multipleSelectionActive.value.map((t) => t.id)
-  modulesApi.apiExport(ids, apiServerHost.value)
+  exportApiDocumentation(ids, apiServerHost.value)
 }
 
 const batchPublish = async () => {
   if (!pendingSelection.value.length) return
 
-  await modulesApi.batchUpdate(
+  await batchUpdateApiModules(
     pendingSelection.value.map((item) => ({
       id: item.id,
       status: 'active',
@@ -416,9 +424,9 @@ const openSearch = () => {
 
 const handleAppSelect = (app?: any) => {
   const appId = app?.id || ''
-  const needFetch = searchParams.appId !== appId
+  const needFetch = searchParams.value.appId !== appId
 
-  searchParams.appId = appId
+  searchParams.value.appId = appId
   currentApp.value = app
 
   needFetch && fetch(1)
@@ -473,7 +481,7 @@ const handleDrop = async (event: DragEvent, app: any) => {
   const ids = draggingObjects.map((item) => item.id)
 
   if (ids.length) {
-    await modulesApi.batchUpdateListtags({
+    await batchUpdateApiModuleTags({
       id: ids,
       listtags: [
         {
@@ -520,6 +528,12 @@ defineExpose({
         </template>
         <span> {{ $t('packages_business_button_bulk_import') }}</span>
       </ElButton>
+      <!-- <el-button @click="downloadSdkDialogVisible = true">
+        <template #icon>
+          <i-lucide:download />
+        </template>
+        {{ $t('public_download_sdk') }}
+      </el-button> -->
       <ElButton
         class="btn btn-create"
         type="primary"
@@ -584,7 +598,9 @@ defineExpose({
               }"
               @click="handleAppSelect()"
             >
-              <el-icon size="16"><i-mingcute:grid-line /></el-icon>
+              <el-icon size="18">
+                <i-fluent:folder-link-16-regular />
+              </el-icon>
               <div class="flex flex-column gap-1 flex-1 min-w-0">
                 <div class="flex align-center gap-1">
                   <span class="ellipsis">{{ $t('public_all') }}</span>
@@ -606,10 +622,10 @@ defineExpose({
               @drop.stop="handleDrop($event, app)"
             >
               <div class="flex flex-column gap-1 flex-1 min-w-0">
-                <div class="flex align-center gap-1">
-                  <el-icon size="16"
-                    ><i-mingcute:wechat-miniprogram-line
-                  /></el-icon>
+                <div class="flex align-center gap-2">
+                  <el-icon size="18">
+                    <i-fluent:folder-link-16-regular />
+                  </el-icon>
                   <span class="ellipsis lh-6" :title="app.value">{{
                     app.value
                   }}</span>
@@ -687,6 +703,33 @@ defineExpose({
           />
         </template>
 
+        <template #multipleSelectionActions>
+          <ElButton v-show="pendingSelection.length > 0" @click="batchPublish">
+            <template #icon>
+              <i-lucide:cloud-upload />
+            </template>
+            <span> {{ $t('public_batch_publish') }}</span>
+          </ElButton>
+          <ElButton v-readonlybtn="'SYNC_job_export'" @click="handleExport">
+            <template #icon>
+              <ExportOutlined />
+            </template>
+            <span> {{ $t('public_button_export') }}</span>
+          </ElButton>
+          <ElButton
+            v-readonlybtn="'SYNC_job_export'"
+            class="btn"
+            @click="handleExportApiDoc"
+          >
+            <template #icon>
+              <ExportOutlined />
+            </template>
+            <span>{{
+              $t('packages_business_data_server_list_apIwendang')
+            }}</span>
+          </ElButton>
+        </template>
+
         <el-table-column
           v-if="!inAppList"
           type="selection"
@@ -748,7 +791,13 @@ defineExpose({
             :label="$t('daas_data_server_drawer_path')"
             prop="_path"
             :min-width="130"
-          />
+          >
+            <template #default="{ row }">
+              <el-tag type="info" class="is-code">
+                {{ row._path }}
+              </el-tag>
+            </template>
+          </el-table-column>
         </template>
 
         <el-table-column
@@ -788,17 +837,14 @@ defineExpose({
     <Drawer
       ref="drawer"
       :host="apiServerHost"
-      @save="table?.fetch(1)"
-      @update="table?.fetch()"
+      @save="fetch(1)"
+      @update="fetch()"
       @visible="emit('drawerVisible', $event)"
     />
     <!-- 导入 -->
-    <Upload
-      ref="upload"
-      type="Modules"
-      :show-tag="false"
-      @success="table?.fetch()"
-    />
+    <Upload ref="upload" type="Modules" :show-tag="false" @success="fetch(1)" />
+
+    <!-- <DownloadSdkDialog v-model="downloadSdkDialogVisible" /> -->
   </PageContainer>
 </template>
 

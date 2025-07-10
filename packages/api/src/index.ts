@@ -68,8 +68,6 @@ import MetadataInstances from './MetadataInstances'
 
 import MetadataTransformer from './MetadataTransformer'
 
-import Modules from './Modules'
-
 import MonitoringLogs from './MonitoringLogs'
 
 import Paid from './Paid'
@@ -151,8 +149,6 @@ const dataRuleApi = new DataRule()
 const usersApi = new Users()
 
 const apiMonitorApi = new ApiMonitor()
-
-const modulesApi = new Modules()
 
 const apiServerApi = new ApiServer()
 
@@ -257,7 +253,6 @@ export {
   metadataDefinitionsApi,
   metadataInstancesApi,
   metadataTransformerApi,
-  modulesApi,
   monitoringLogsApi,
   paidApi,
   pdkApi,

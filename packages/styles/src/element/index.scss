@@ -569,6 +569,13 @@
   .el-tag__content .el-icon {
     vertical-align: -2px;
   }
+
+  &.is-code {
+    --el-tag-text-color: var(--el-text-color-title);
+    // --el-tag-bg-color: var(--el-fill-color-light);
+    --el-tag-bg-color: rgba(129, 139, 152, 0.12);
+    --el-tag-border-color: transparent;
+  }
 }
 
 // InputNumber
@@ -595,6 +602,10 @@
 
 // Input
 .el-input.el-input {
+  &.is-borderless {
+    --el-input-border-color: transparent;
+    --el-input-focus-border-color: transparent;
+  }
   &.el-input--small {
     --el-border-radius-base: var(--el-border-radius-small);
   }

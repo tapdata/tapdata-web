@@ -1,5 +1,5 @@
 <script>
-import { deleteApp, fetchApps, modulesApi, moveApp } from '@tap/api'
+import { deleteApp, fetchApiModules, fetchApps, moveApp } from '@tap/api'
 import i18n from '@tap/i18n'
 import ListSelect from './ListSelect'
 
@@ -32,35 +32,31 @@ export default {
   },
   methods: {
     init(row = {}) {
-      modulesApi
-        .get({
-          filter: JSON.stringify({
-            where: {
-              'listtags.id': row.id,
-            },
+      fetchApiModules({
+        where: {
+          'listtags.id': row.id,
+        },
+      }).then((data) => {
+        if (data.total) {
+          this.details.id = row.id
+          this.details.value = row.value
+          this.loadData()
+          return
+        }
+        this.$confirm(
+          i18n.t('packages_business_application_delete_shanchuyingyong'),
+          i18n.t('packages_business_application_delete_ninzhengzaishanchu', {
+            val1: row.value,
           }),
+          {
+            dangerouslyUseHTMLString: true,
+          },
+        ).then((resFlag) => {
+          if (!resFlag) return
+          this.saveLoading = true
+          this.handleDelete(row.id)
         })
-        .then((data) => {
-          if (data.total) {
-            this.details.id = row.id
-            this.details.value = row.value
-            this.loadData()
-            return
-          }
-          this.$confirm(
-            i18n.t('packages_business_application_delete_shanchuyingyong'),
-            i18n.t('packages_business_application_delete_ninzhengzaishanchu', {
-              val1: row.value,
-            }),
-            {
-              dangerouslyUseHTMLString: true,
-            },
-          ).then((resFlag) => {
-            if (!resFlag) return
-            this.saveLoading = true
-            this.handleDelete(row.id)
-          })
-        })
+      })
     },
 
     loadData() {
