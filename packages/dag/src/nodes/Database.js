@@ -307,9 +307,7 @@ export class Database extends NodeType {
                             '{{$values.syncSourcePartitionTableEnable}}',
                           hasPartition: `{{$values.attrs.capabilities.some(item => item.id==="source_support_partition")}}`,
                           style: {
-                            height: 'unset',
-                            minHeight: 0,
-                            maxHeight: 'calc((100vh - 120px) * 0.618)',
+                            height: 'calc((100vh - 120px) * 0.618)',
                           },
                           hideReload: true,
                           filterType: `{{ $values.noPrimaryKeyTableSelectType }}`,

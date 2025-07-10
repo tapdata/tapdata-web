@@ -1085,4 +1085,6 @@ export default {
     'Data validation enable failed: Only one source node and one target node are supported.',
   packages_dag_task_inspect_enable_fail_2:
     'Data validation enable failed: Both source and target nodes must have advanced query capabilities.',
+  packages_dag_table_selector_all_tables_selected:
+    'You have selected all tables',
 }

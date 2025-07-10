@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { metadataInstancesApi, taskApi } from '@tap/api'
-import { RightBoldOutlined } from '@tap/component/src/RightBoldOutlined'
 import { VEmpty } from '@tap/component/src/base/v-empty'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
+import { RightBoldOutlined } from '@tap/component/src/RightBoldOutlined'
 import { useI18n } from '@tap/i18n'
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import { useStore } from 'vuex'
 
@@ -40,6 +40,8 @@ const props = defineProps({
 const emit = defineEmits(['update:value', 'change'])
 
 // State
+const leftScroller = ref(null)
+const rightScroller = ref(null)
 const loading = ref(false)
 const schemaLoading = ref(false)
 const isOpenClipMode = ref(false)
@@ -72,36 +74,45 @@ const isIndeterminate = computed(() => {
 const selectedIsIndeterminate = computed(() => {
   return (
     selected.value.checked.length > 0 &&
-    selected.value.checked.length < selected.value.tables.length
+    selected.value.checked.length < filteredRightTableNames.value.length
   )
 })
 
 const leftTableData = computed(() => {
-  return getPrimaryKeyTablesByType(
+  const allTables = getPrimaryKeyTablesByType(
     table.value.tables,
     props.filterType,
     tableMap.value,
   )
+  return allTables.filter(
+    (tableName: string) => !selected.value.tables.includes(tableName),
+  )
+})
+
+const filteredLeftTableNames = computed(() => {
+  const searchKeyword = table.value.searchKeyword?.toLowerCase()
+
+  if (!searchKeyword) return leftTableData.value
+
+  return leftTableData.value.filter((name: string) =>
+    name.toLowerCase().includes(searchKeyword),
+  )
 })
 
 const filteredData = computed(() => {
-  const searchKeyword = table.value.searchKeyword?.toLowerCase()
+  return filteredLeftTableNames.value.map((name: string) => ({ name }))
+})
 
-  if (!searchKeyword) return leftTableData.value.map((name) => ({ name }))
-
-  return leftTableData.value
-    .filter((name: string) => name.toLowerCase().includes(searchKeyword))
-    .map((name) => ({ name }))
+const filteredRightTableNames = computed(() => {
+  const searchKeyword = selected.value.searchKeyword?.toLowerCase()
+  if (!searchKeyword) return selected.value.tables
+  return selected.value.tables.filter((name: string) =>
+    name.toLowerCase().includes(searchKeyword),
+  )
 })
 
 const filterSelectedData = computed(() => {
-  const searchKeyword = selected.value.searchKeyword?.toLowerCase()
-
-  if (!searchKeyword) return selected.value.tables.map((name) => ({ name }))
-
-  return selected.value.tables
-    .filter((item: string) => item.toLowerCase().includes(searchKeyword))
-    .map((name) => ({ name }))
+  return filteredRightTableNames.value.map((name) => ({ name }))
 })
 
 const clipboardTables = computed(() => {
@@ -187,26 +198,50 @@ const loadSchema = async () => {
 
 const checkAll = (val: boolean, type: 'table' | 'selected') => {
   if (type === 'table') {
-    table.value.checked = val ? leftTableData.value : []
+    table.value.checked = val
+      ? Array.from(
+          new Set([...table.value.checked, ...filteredLeftTableNames.value]),
+        )
+      : table.value.checked.filter(
+          (name) => !filteredLeftTableNames.value.includes(name),
+        )
   } else {
-    selected.value.checked = val ? selected.value.tables : []
+    selected.value.checked = val
+      ? Array.from(
+          new Set([
+            ...selected.value.checked,
+            ...filteredRightTableNames.value,
+          ]),
+        )
+      : selected.value.checked.filter(
+          (name) => !filteredRightTableNames.value.includes(name),
+        )
   }
 }
 
-const checkedChange = (type: 'table' | 'selected') => {
-  const target = type === 'table' ? table : selected
-  target.value.isCheckAll =
-    target.value.checked.length === target.value.tables.length
-  if (type === 'selected') {
-    emit('change', selected.value.tables)
-  }
-}
+const isLeftCheckAll = computed(() => {
+  return filteredLeftTableNames.value.length
+    ? filteredLeftTableNames.value.every((name: string) =>
+        table.value.checked.includes(name),
+      )
+    : false
+})
+
+const isRightCheckAll = computed(() => {
+  return filteredRightTableNames.value.length
+    ? filteredRightTableNames.value.every((name) =>
+        selected.value.checked.includes(name),
+      )
+    : false
+})
 
 const add = () => {
   if (isOpenClipMode.value || props.disabled) return
+
   selected.value.tables = [
     ...new Set([...selected.value.tables, ...table.value.checked]),
   ]
+
   table.value.checked = []
   table.value.isCheckAll = false
   emit('change', selected.value.tables)
@@ -214,9 +249,11 @@ const add = () => {
 
 const remove = () => {
   if (isOpenClipMode.value || props.disabled) return
+
   selected.value.tables = selected.value.tables.filter(
     (t) => !selected.value.checked.includes(t),
   )
+
   selected.value.checked = []
   selected.value.isCheckAll = false
   emit('change', selected.value.tables)
@@ -231,7 +268,12 @@ const changeSeletedMode = () => {
 
 const getErrorTables = (tables: string[]) => {
   const errors = {}
-  const allTables = table.value.tables
+
+  const allTables = getPrimaryKeyTablesByType(
+    table.value.tables,
+    props.filterType,
+    tableMap.value,
+  )
 
   if (!loading.value) {
     tables.forEach((table) => {
@@ -277,6 +319,17 @@ const getTableInfo = (table: string) => {
   return tableMap.value[table] || {}
 }
 
+const handleLeftScrollEnd = () => {
+  leftScroller.value?.scrollToItem(0)
+  nextTick(() => {
+    leftScroller.value?.updateVisibleItems(true)
+  })
+}
+
+const handleRightScrollEnd = () => {
+  rightScroller.value?.scrollToItem(0)
+}
+
 // Watch
 watch(
   () => props.value,
@@ -294,26 +347,26 @@ getTables()
   <div v-loading="loading" class="table-selector">
     <!-- 候选区 -->
     <div class="candidate-panel selector-panel rounded-xl">
-      <div class="selector-panel__header">
+      <div class="selector-panel__header flex-shrink-0">
         <div class="flex-1 flex align-center">
           <ElCheckbox
             v-if="table.tables.length"
-            v-model="table.isCheckAll"
+            :model-value="isLeftCheckAll"
             :disabled="disabled"
             :indeterminate="isIndeterminate"
             @change="checkAll($event, 'table')"
-          />
-          <span class="ml-3">{{
+          >
+            <span>{{
+              $t('packages_form_component_table_selector_candidate_label')
+            }}</span>
+          </ElCheckbox>
+          <span v-else>{{
             $t('packages_form_component_table_selector_candidate_label')
           }}</span>
           <span v-if="table.tables.length" class="font-color-light ml-2"
             >({{ table.checked.length }}/{{ filteredData.length }})</span
           >
         </div>
-        <span v-if="showProgress" class="ml-2 color-primary">
-          <el-icon class="mx-2"><el-icon-loading /></el-icon>
-          <span>{{ progress }}%</span>
-        </span>
       </div>
 
       <div class="selector-panel__body">
@@ -322,7 +375,8 @@ getTables()
             id="table-selector-left-filter-input"
             v-model="table.searchKeyword"
             clearable
-            :placeholder="$t('public_input_placeholder_search')"
+            :placeholder="$t('packages_form_table_rename_index_sousuobiaoming')"
+            @input="handleLeftScrollEnd"
           >
             <template #prefix>
               <ElIcon><ElIconSearch /></ElIcon>
@@ -334,17 +388,17 @@ getTables()
           v-model="table.checked"
           :disabled="disabled"
           class="selector-panel__list"
-          @change="checkedChange('table')"
         >
           <RecycleScroller
+            ref="leftScroller"
             class="selector-panel__scroller"
             :item-size="36"
-            :buffer="50"
+            :buffer="100"
             :items="filteredData"
             key-field="name"
           >
             <template #default="{ item: { name: item } }">
-              <ElCheckbox class="selector-panel__item" :label="item">
+              <ElCheckbox class="selector-panel__item" :value="item">
                 <OverflowTooltip
                   :text="
                     item +
@@ -359,13 +413,13 @@ getTables()
                     <VIcon
                       v-if="!!getTableInfo(item).primaryKeyCounts"
                       size="12"
-                      class="text-warning mr-1 mt-n1"
+                      class="text-warning mr-1"
                       >key</VIcon
                     >
                     <VIcon
                       v-if="!!getTableInfo(item).uniqueIndexCounts"
                       size="12"
-                      class="text-text-dark mr-1 mt-n1"
+                      class="text-text-dark mr-1"
                       >fingerprint</VIcon
                     >
                     <span>{{ item }}</span>
@@ -384,14 +438,19 @@ getTables()
           v-if="!filteredData.length"
           class="flex-1 flex flex-column justify-center"
         >
-          <VEmpty
-            v-if="!table.searchKeyword && !alwaysShowReload"
-            :description="`${$t('packages_form_component_table_selector_tables_empty')}~`"
-          />
+          <VEmpty v-if="selected.tables.length && !table.searchKeyword">
+            <span>{{
+              $t('packages_dag_table_selector_all_tables_selected')
+            }}</span>
+          </VEmpty>
           <VEmpty v-else>
-            <span
+            <span class="align-middle"
               >{{
-                $t('packages_form_component_table_selector_error_not_exit')
+                $t(
+                  table.searchKeyword || alwaysShowReload
+                    ? 'packages_form_component_table_selector_error_not_exit'
+                    : 'public_data_no_data',
+                )
               }},</span
             >
             <el-button
@@ -443,49 +502,32 @@ getTables()
             <RightBoldOutlined class="rotate-180" />
           </template>
         </el-button>
-
-        <!-- <span
-          class="btn-transfer rounded-4"
-          :class="{
-            'btn-transfer--disabled': isOpenClipMode || disabled,
-            'btn-transfer--primary':
-              table.checked.length > 0 && !isOpenClipMode && !disabled,
-          }"
-          @click="add"
-        >
-          <el-icon><el-icon-arrow-right /></el-icon>
-        </span>
-        <span
-          class="btn-transfer rounded-4 mt-4 rounded-4"
-          :class="{
-            'btn-transfer--disabled': isOpenClipMode || disabled,
-            'btn-transfer--primary':
-              selected.checked.length > 0 && !isOpenClipMode && !disabled,
-          }"
-          @click="remove"
-        >
-          <el-icon><el-icon-arrow-left /></el-icon>
-        </span> -->
       </div>
     </div>
     <!-- 已选择区 -->
     <div class="checked-panel selector-panel rounded-xl">
-      <div class="selector-panel__header">
+      <div class="selector-panel__header flex-shrink-0">
         <div class="flex-1 flex align-center">
           <ElCheckbox
             v-if="selected.tables.length && !isOpenClipMode"
-            v-model="selected.isCheckAll"
+            :model-value="isRightCheckAll"
             :disabled="disabled"
             :indeterminate="selectedIsIndeterminate"
             @change="checkAll($event, 'selected')"
-          />
-          <span class="ml-3">{{
+          >
+            <span>{{
+              $t('packages_form_component_table_selector_checked_label')
+            }}</span>
+          </ElCheckbox>
+          <span v-else>{{
             $t('packages_form_component_table_selector_checked_label')
           }}</span>
           <span
             v-if="selected.tables.length && !isOpenClipMode"
             class="font-color-light ml-2"
-            >({{ selected.checked.length }}/{{ selected.tables.length }})</span
+            >({{ selected.checked.length }}/{{
+              filteredRightTableNames.length
+            }})</span
           >
         </div>
 
@@ -514,7 +556,8 @@ getTables()
             id="table-selector-right-filter-input"
             v-model="selected.searchKeyword"
             clearable
-            :placeholder="$t('public_input_placeholder_search')"
+            :placeholder="$t('packages_form_table_rename_index_sousuobiaoming')"
+            @input="handleRightScrollEnd"
           >
             <template #prefix>
               <ElIcon><ElIconSearch /></ElIcon>
@@ -526,9 +569,9 @@ getTables()
           v-model="selected.checked"
           class="selector-panel__list"
           :disabled="disabled"
-          @change="checkedChange('selected')"
         >
           <RecycleScroller
+            ref="rightScroller"
             class="selector-panel__scroller"
             :item-size="36"
             :buffer="50"
@@ -536,11 +579,7 @@ getTables()
             key-field="name"
           >
             <template #default="{ item: { name: item } }">
-              <ElCheckbox
-                :key="item"
-                class="selector-panel__item"
-                :label="item"
-              >
+              <ElCheckbox class="selector-panel__item" :value="item">
                 <OverflowTooltip
                   v-if="!errorTables[item]"
                   :text="
@@ -556,13 +595,13 @@ getTables()
                     <VIcon
                       v-if="!!getTableInfo(item).primaryKeyCounts"
                       size="12"
-                      class="text-warning mr-1 mt-n1"
+                      class="text-warning mr-1"
                       >key</VIcon
                     >
                     <VIcon
                       v-if="!!getTableInfo(item).uniqueIndexCounts"
                       size="12"
-                      class="text-text-dark mr-1 mt-n1"
+                      class="text-text-dark mr-1"
                       >fingerprint</VIcon
                     >
                     <slot name="right-item" :row="item"
@@ -613,7 +652,7 @@ getTables()
           class="flex-1 flex flex-column justify-center"
         >
           <VEmpty
-            :description="`${$t('packages_form_component_table_selector_not_checked')}~`"
+            :description="`${$t('packages_form_component_table_selector_not_checked')}`"
           />
         </div>
         <div v-if="isOpenClipMode" class="selector-clipboard flex flex-column">
@@ -621,8 +660,8 @@ getTables()
             v-show="!isFocus"
             class="selector-clipboard__view"
             @click="
-              ;(isFocus = true),
-                (clipboardValue = clipboardTables.concat().join(', '))
+              ;((isFocus = true),
+                (clipboardValue = clipboardTables.concat().join(', ')))
             "
           >
             <template v-if="clipboardTables.length">
@@ -706,8 +745,8 @@ getTables()
   background: #f7f8fa;
   height: 40px;
   color: var(--text-normal);
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(5, 5, 5, 0.06);
 }
 .selector-panel__body {
   padding: 12px 0;
