@@ -771,5 +771,6 @@ export default {
   packages_dag_field_path: '字段路徑',
   packages_dag_email_receivers: '郵件接收人',
   packages_dag_merge_table_js_node_error: '主從合併節點後不允許存在 JS 節點',
-  packages_dag_merge_table_table_not_allow_target: '主從合併後不支持將 {val} 作為寫入目標'
+  packages_dag_merge_table_table_not_allow_target: '主從合併後不支持將 {val} 作為寫入目標',
+  packages_dag_syncForeignKeyEnable: '同步外鍵',
 }

@@ -1735,6 +1735,24 @@ export class Table extends NodeType {
                           }
                         }
                       },
+                      syncForeignKeyEnable: {
+                        title: i18n.t('packages_dag_syncForeignKeyEnable'),
+                        type: 'boolean',
+                        default: true,
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal',
+                        },
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          fulfill: {
+                            state: {
+                              visible:
+                                '{{$values.attrs.capabilities.some(item => item.id==="create_constraint_function")}}',
+                            },
+                          },
+                        },
+                      },
                       noPkSyncMode: {
                         type: 'string',
                         title: i18n.t('packages_dag_noPkSyncMode'),
