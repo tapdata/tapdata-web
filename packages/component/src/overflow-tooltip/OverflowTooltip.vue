@@ -23,7 +23,6 @@ export default {
 
   beforeUnmount() {
     if (this.resizeObserver) {
-      console.log('this.$el', this.$el)
       this.resizeObserver.unobserve(this.$el)
       this.resizeObserver = null
     }
