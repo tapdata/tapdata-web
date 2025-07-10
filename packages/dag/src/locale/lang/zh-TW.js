@@ -924,4 +924,5 @@ export default {
     '數據校驗開啟失敗：源節點和目標節點只能有一個',
   packages_dag_task_inspect_enable_fail_2:
     '數據校驗開啟失敗：源節點和目標節點必須同時具備高級查詢能力',
+  packages_dag_table_selector_all_tables_selected: '您已選擇所有表進行複製',
 }

@@ -1619,4 +1619,5 @@ export default {
   packages_business_request_speed_limit: 'Request Limit per Second',
   packages_business_request_speed_limit_tag: 'Requests ≤ {val}/s',
   packages_business_request_speed_limit_tip: 'Default is 0 (no limit)',
+  packages_business_data_source_monitor: 'Connection Monitor',
 }
