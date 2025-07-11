@@ -459,4 +459,6 @@ export default {
   public_selected_apis: '已选 {count} APIs',
   public_delete_sdk_message: '删除 SDK “{sdk}”？',
   public_type_to_confirm: '请输入 {val} 确认',
+  public_retry_times: '重试次数',
+  public_retry_threshold: '重试告警阈值',
 }

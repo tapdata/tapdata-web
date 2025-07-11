@@ -641,7 +641,7 @@
       min-width: 0;
     }
   }
-  .el-alert--info.is-light {
+  &.el-alert--info.is-light {
     --el-alert-bg-color: var(--info-fill);
     --el-color-info: var(--el-text-color-title);
     .el-alert__icon {

@@ -468,4 +468,6 @@ export default {
   public_selected_apis: 'Selected {count} APIs',
   public_delete_sdk_message: 'Delete SDK "{sdk}"?',
   public_type_to_confirm: 'Please type {val} to confirm.',
+  public_retry_times: 'Retry Times',
+  public_retry_threshold: 'Retry Threshold',
 }
