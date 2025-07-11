@@ -703,9 +703,12 @@ const edit = () => {
   initialFormData = cloneDeep(form.value)
   nextTick(() => {
     data.value.fields.forEach((f: any) => {
-      fieldTable.value?.toggleRowSelection(
-        allFields.value.find((it: any) => it.id === f.id),
-      )
+      const field = allFields.value.find((it: any) => it.id === f.id)
+      if (field) {
+        fieldTable.value?.toggleRowSelection(field)
+      } else {
+        console.log('field not found', f.field_name, f)
+      }
     })
   })
 }
