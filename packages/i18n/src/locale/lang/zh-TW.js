@@ -460,4 +460,30 @@ export default {
   public_type_to_confirm: '請輸入 {val} 確認',
   public_retry_times: '重試次數',
   public_retry_threshold: '重試告警閾值',
+  public_diff_check: '差異校驗',
+  public_one_key_repair: '一鍵修復',
+  public_start_repair: '開始修復，請稍等...',
+  public_start_check: '開始校驗，請稍等...',
+  public_repairing: '修復中',
+  public_checking: '校驗中',
+  public_start_repair_confirm:
+    '當前正在執行「一鍵修復」（啟動於 {time}），是否確認覆蓋並重新開始？',
+  public_start_check_confirm:
+    '當前正在執行「差異校驗」（啟動於 {time}），是否確認覆蓋並重新開始？',
+  public_start_check_confirm_tip:
+    '當前正在執行「一鍵修復」（啟動於 {time}），是否確認開始「差異校驗」？',
+  public_start_repair_confirm_tip:
+    '當前正在執行「差異校驗」（啟動於 {time}），是否確認開始「一鍵修復」？',
+  public_last_operation_not_finished: '上一次操作尚未完成',
+  public_op_cdc_check: '增量校驗',
+  public_op_auto_recheck: '自動二次校驗',
+  public_op_auto_recover: '自動修復',
+  public_op_auto_recover_check: '自動修復失敗',
+  public_op_manual_check: '手動校驗',
+  public_op_manual_recover: '手動修復',
+  public_op_manual_recover_check: '手動修復失敗',
+  public_time_precision: '時間精度',
+  public_time_precision_normal: '嚴格匹配',
+  public_time_precision_round: '四舍五入',
+  public_time_precision_truncate: '截斷',
 }

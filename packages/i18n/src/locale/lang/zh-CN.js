@@ -461,4 +461,30 @@ export default {
   public_type_to_confirm: '请输入 {val} 确认',
   public_retry_times: '重试次数',
   public_retry_threshold: '重试告警阈值',
+  public_diff_check: '差异校验',
+  public_one_key_repair: '一键修复',
+  public_start_repair: '开始修复，请稍等...',
+  public_start_check: '开始校验，请稍等...',
+  public_repairing: '修复中',
+  public_checking: '校验中',
+  public_start_repair_confirm:
+    '当前正在执行「一键修复」（启动于 {time}），是否确认覆盖并重新开始？',
+  public_start_check_confirm_tip:
+    '当前正在执行「一键修复」（启动于 {time}），是否确认开始「差异校验」？',
+  public_start_repair_confirm_tip:
+    '当前正在执行「差异校验」（启动于 {time}），是否确认开始「一键修复」？',
+  public_start_check_confirm:
+    '当前正在执行「差异校验」（启动于 {time}），是否确认覆盖并重新开始？',
+  public_last_operation_not_finished: '上一次操作尚未完成',
+  public_op_cdc_check: '增量校验',
+  public_op_auto_recheck: '自动二次校验',
+  public_op_auto_recover: '自动修复',
+  public_op_auto_recover_check: '自动修复失败',
+  public_op_manual_check: '手动校验',
+  public_op_manual_recover: '手动修复',
+  public_op_manual_recover_check: '手动修复失败',
+  public_time_precision: '时间精度',
+  public_time_precision_normal: '严格匹配',
+  public_time_precision_round: '四舍五入',
+  public_time_precision_truncate: '截断',
 }

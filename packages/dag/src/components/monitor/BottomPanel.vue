@@ -10,7 +10,7 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
 
 import Alert from './components/Alert'
 import Record from './components/Record'
-import TaskInspect from './components/TaskInspect'
+import TaskInspect from './components/TaskInspect.vue'
 import '@tap/component/src/directives/resize/index.scss'
 
 export default {

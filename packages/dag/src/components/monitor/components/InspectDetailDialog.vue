@@ -1,26 +1,20 @@
 <script setup lang="ts">
-import axios from 'axios'
+import {
+  getTaskInspectHistoriesResults,
+  getTaskInspectResultsGroupByTable,
+  getTaskInspectResultsLastOp,
+  manualCheck,
+  manualRecover,
+  useRequest,
+  type DiffRow,
+  type InspectionRow,
+} from '@tap/api'
+import { dayjs } from '@tap/business/src/shared/dayjs'
+import { CloseIcon } from '@tap/component/src/CloseIcon'
+import { Modal } from '@tap/component/src/modal'
+import { useI18n } from '@tap/i18n'
 import { ref } from 'vue'
 import InspectRecordDialog from './InspectRecordDialog.vue'
-
-interface InspectionRow {
-  sourceTable: string
-  targetTable: string
-  countDiff: number
-  countMore: number
-  countMiss: number
-}
-
-interface DiffRow {
-  id: string
-  diffType: 'DIFF' | 'MISS' | 'MORE'
-  source: Record<string, any>
-  target: Record<string, any>
-  diffFields: string[]
-  sourceFields: string[]
-  targetFields: string[]
-  diffFieldsMap?: Record<string, string>
-}
 
 const props = defineProps({
   inspectId: {
@@ -31,25 +25,33 @@ const props = defineProps({
     type: String,
     default: '',
   },
-  visible: {
-    type: Boolean,
-    default: false,
+  taskId: {
+    type: String,
+    default: '',
   },
 })
 
-const emit = defineEmits(['update:visible'])
+const visible = defineModel<boolean>('modelValue', {
+  required: true,
+})
+
+const { t } = useI18n()
 
 const activeTab = ref('details')
 const inspectList = ref<InspectionRow[]>([])
 const rowDiffList = ref<DiffRow[]>([])
 const loadingList = ref(false)
 const loadingDetails = ref(false)
-const currentSelectedRow = ref<InspectionRow | null>(null)
+const currentSelectedRow = ref<InspectionRow | null | undefined>()
 const onlyShowDiffFields = ref(true)
+const showCheckProgress = ref(false)
+const showRecoverProgress = ref(false)
+const progress = ref(0)
+const lastOpTime = ref('')
 
 function onClose(): void {
-  emit('update:visible', false)
   resetData()
+  stopPolling()
 }
 
 function resetData(): void {
@@ -60,14 +62,20 @@ function resetData(): void {
 async function fetchDiffList(): Promise<void> {
   loadingList.value = true
   try {
-    const data = await axios.get(
-      `/api/task-inspect-histories/${props.inspectId}/results/group-by-table`,
-    )
+    const data = await getTaskInspectResultsGroupByTable(props.inspectId)
     inspectList.value = data?.items || []
 
     if (inspectList.value.length > 0) {
-      currentSelectedRow.value = inspectList.value[0]
-      fetchTableDiff(inspectList.value[0].sourceTable)
+      if (currentSelectedRow.value) {
+        const item = inspectList.value.find(
+          (item) => item.sourceTable === currentSelectedRow.value?.sourceTable,
+        )
+        currentSelectedRow.value = item || inspectList.value[0]
+      } else {
+        currentSelectedRow.value = inspectList.value[0]
+      }
+
+      fetchTableDiff(currentSelectedRow.value!.sourceTable)
     }
   } catch (error) {
     console.error('Failed to fetch inspect list:', error)
@@ -82,15 +90,9 @@ async function fetchTableDiff(sourceTable: string): Promise<void> {
   loadingDetails.value = true
 
   try {
-    const data = await axios.get<ApiResponse<DiffRow>>(
-      `/api/task-inspect-histories/${props.inspectId}/results`,
-      {
-        params: {
-          filter: JSON.stringify({
-            where: { sourceTable },
-          }),
-        },
-      },
+    const data = await getTaskInspectHistoriesResults(
+      props.inspectId,
+      sourceTable,
     )
 
     rowDiffList.value = (data?.items || []).map((item: DiffRow) => {
@@ -99,7 +101,10 @@ async function fetchTableDiff(sourceTable: string): Promise<void> {
           ...item,
           diffFieldsMap: item.diffFields.reduce(
             (acc: Record<string, string>, field: string) => {
-              acc[field] = item.targetFields[item.sourceFields.indexOf(field)]
+              const index = item.sourceFields.indexOf(field)
+              if (index !== -1 && item.targetFields[index]) {
+                acc[field] = item.targetFields[index]
+              }
               return acc
             },
             {},
@@ -115,6 +120,97 @@ async function fetchTableDiff(sourceTable: string): Promise<void> {
   }
 }
 
+const loadLastOp = async () => {
+  const data = await getTaskInspectResultsLastOp(props.taskId)
+
+  if (!data) {
+    showCheckProgress.value = false
+    showRecoverProgress.value = false
+    progress.value = 0
+    return
+  }
+
+  if (data.manualType === 'manualCheck') {
+    showCheckProgress.value = data.unfinished > 0
+    showRecoverProgress.value = false
+  } else if (data.manualType === 'manualRecover') {
+    showRecoverProgress.value = data.unfinished > 0
+    showCheckProgress.value = false
+  }
+
+  progress.value =
+    data.totals > 0
+      ? Math.round((data.totals - data.unfinished) / data.totals)
+      : 0
+
+  lastOpTime.value = dayjs(data.created).fromNow()
+}
+
+const handleManualCheck = async () => {
+  if (showRecoverProgress.value) {
+    const result = await Modal.confirm(
+      t('public_last_operation_not_finished'),
+      t('public_start_check_confirm_tip', { time: lastOpTime.value }),
+    )
+    if (!result) {
+      return
+    }
+  }
+  runManualCheck()
+}
+
+const { run: runManualCheck, loading: manualCheckLoading } = useRequest(
+  async () => {
+    await manualCheck(props.taskId)
+    startPolling()
+    ElMessage.success(t('public_start_check'))
+  },
+  {
+    manual: true,
+    loadingKeep: 500,
+  },
+)
+
+const handleManualRecover = async () => {
+  if (showCheckProgress.value) {
+    const result = await Modal.confirm(
+      t('public_last_operation_not_finished'),
+      t('public_start_repair_confirm_tip', { time: lastOpTime.value }),
+    )
+    if (!result) {
+      return
+    }
+  }
+  runManualRecover()
+}
+
+const { run: runManualRecover, loading: manualRecoverLoading } = useRequest(
+  async () => {
+    await manualRecover(props.taskId)
+    startPolling()
+    ElMessage.success(t('public_start_repair'))
+  },
+  {
+    manual: true,
+    loadingKeep: 500,
+  },
+)
+
+const { run: startPolling, cancel: stopPolling } = useRequest(
+  async () => {
+    await loadLastOp()
+    await fetchDiffList()
+
+    if (!showCheckProgress.value && !showRecoverProgress.value) {
+      stopPolling()
+    }
+  },
+  {
+    pollingInterval: 3000,
+    manual: true,
+  },
+)
+
 function handleRowClick(row: InspectionRow): void {
   if (currentSelectedRow.value === row) return
   currentSelectedRow.value = row
@@ -123,7 +219,8 @@ function handleRowClick(row: InspectionRow): void {
 
 function onOpen(): void {
   if (props.inspectId) {
-    fetchDiffList()
+    // fetchDiffList()
+    startPolling()
   }
 }
 
@@ -134,15 +231,41 @@ function handleRecordClick(row: DiffRow): void {
   resultId.value = row.id
   recordDialogVisible.value = true
 }
+
+async function handleConfirmCheck(): Promise<void> {
+  const result = await Modal.confirm(
+    t('public_last_operation_not_finished'),
+    t('public_start_check_confirm', { time: lastOpTime.value }),
+  )
+
+  if (result) {
+    showCheckProgress.value = false
+    runManualCheck()
+  }
+}
+
+async function handleConfirmRecover(): Promise<void> {
+  const result = await Modal.confirm(
+    t('public_last_operation_not_finished'),
+    t('public_start_repair_confirm', { time: lastOpTime.value }),
+  )
+
+  if (result) {
+    showRecoverProgress.value = false
+    runManualRecover()
+  }
+}
 </script>
 
 <template>
   <ElDialog
+    v-model="visible"
     :title="$t('packages_dag_inspect_detail_title')"
     width="80%"
     append-to-body
     class="inspect-detail-dialog p-0"
     :close-on-click-modal="false"
+    :show-close="false"
     @open="onOpen"
     @close="onClose"
   >
@@ -154,6 +277,70 @@ function handleRecordClick(row: DiffRow): void {
           >{{ $t('packages_dag_inspect_last_verify_time') }}:
           {{ pingTime }}</span
         >
+        <div class="flex-1" />
+
+        <template v-if="inspectList.length">
+          <el-button
+            v-if="!showCheckProgress"
+            text
+            :loading="manualCheckLoading"
+            :disabled="manualRecoverLoading"
+            @click="handleManualCheck"
+          >
+            <template #icon>
+              <i-lucide:git-compare-arrows />
+            </template>
+            {{ $t('public_diff_check') }}
+          </el-button>
+
+          <el-button v-else bg text @click="handleConfirmCheck">
+            <template #icon>
+              <el-icon class="is-loading" size="16">
+                <i-mingcute:loading-line />
+              </el-icon>
+            </template>
+            {{ $t('public_checking') }} ({{ progress }}%)
+          </el-button>
+
+          <el-button
+            v-if="!showRecoverProgress"
+            text
+            :loading="manualRecoverLoading"
+            :disabled="manualCheckLoading"
+            @click="handleManualRecover"
+          >
+            <template #icon>
+              <i-lucide:wand-sparkles />
+            </template>
+            {{ $t('public_one_key_repair') }}
+          </el-button>
+
+          <el-button v-else bg text @click="handleConfirmRecover">
+            <!-- <el-progress
+            class="mr-1"
+            type="circle"
+            :percentage="80"
+            width="16"
+            :show-text="false"
+            :stroke-width="2"
+            color="var(--el-color-primary)"
+          /> -->
+            <template #icon>
+              <el-icon class="is-loading" size="16">
+                <i-mingcute:loading-line />
+              </el-icon>
+            </template>
+            {{ $t('public_repairing') }} ({{ progress }}%)
+          </el-button>
+          <el-divider class="mx-3" direction="vertical" />
+        </template>
+
+        <el-button
+          text
+          size="small"
+          :icon="CloseIcon"
+          @click="visible = false"
+        />
       </div>
     </template>
     <div class="inspect-detail-container border-top">
@@ -309,17 +496,19 @@ function handleRecordClick(row: DiffRow): void {
                   <thead class="bg-light border-bottom">
                     <tr>
                       <th
-                        class="text-start p-3 text-sm fw-sub text-muted-foreground w-1/4"
+                        class="text-start p-3 text-sm fw-sub text-muted-foreground w-1/4 break-all"
                       >
                         {{
                           $t('packages_business_verification_result_field_name')
                         }}
                       </th>
-                      <th class="text-start p-3 text-sm fw-sub w-[37.5%]">
+                      <th
+                        class="text-start p-3 text-sm fw-sub w-[37.5%] break-all"
+                      >
                         {{ $t('packages_dag_inspect_source_value') }}
                       </th>
                       <th
-                        class="text-start p-3 text-sm fw-sub text-destructive w-[37.5%]"
+                        class="text-start p-3 text-sm fw-sub text-destructive w-[37.5%] break-all"
                       >
                         {{ $t('packages_dag_inspect_target_value') }}
                       </th>
@@ -339,7 +528,7 @@ function handleRecordClick(row: DiffRow): void {
                           <VIcon class="mt-2" size="16"
                             >ArrowsTurnForward</VIcon
                           >
-                          <div>
+                          <div class="break-all">
                             <div class="font-color-sslight">
                               {{ field }}
                             </div>
@@ -375,7 +564,7 @@ function handleRecordClick(row: DiffRow): void {
                           <VIcon class="mt-2" size="16"
                             >ArrowsTurnForward</VIcon
                           >
-                          <div>
+                          <div class="break-all">
                             <div class="font-color-sslight">
                               {{ row.sourceFields[i] }}
                             </div>
@@ -387,7 +576,9 @@ function handleRecordClick(row: DiffRow): void {
                         <span v-else>{{ targetField }}</span>
                       </td>
                       <td class="p-3 text-sm font-medium">
-                        <span>{{ row.source[row.sourceFields[i]] }}</span>
+                        <span class="break-all">{{
+                          row.source[row.sourceFields[i]]
+                        }}</span>
                       </td>
                       <td
                         class="p-3 text-sm font-medium"
@@ -396,7 +587,9 @@ function handleRecordClick(row: DiffRow): void {
                             row.diffFieldsMap[row.sourceFields[i]],
                         }"
                       >
-                        <span>{{ row.target[targetField] }}</span>
+                        <span class="break-all">{{
+                          row.target[targetField]
+                        }}</span>
                       </td>
                     </tr>
                   </tbody>
@@ -408,10 +601,12 @@ function handleRecordClick(row: DiffRow): void {
                     :key="key"
                     class="flex border-bottom last:border-0 hover:bg-light"
                   >
-                    <div class="flex-1 p-3 text-sm text-muted-foreground">
+                    <div
+                      class="flex-1 p-3 text-sm text-muted-foreground break-all"
+                    >
                       {{ key }}
                     </div>
-                    <div class="flex-1 p-3 text-sm font-medium">
+                    <div class="flex-1 p-3 text-sm font-medium break-all">
                       <span>{{ value }}</span>
                     </div>
                   </div>
