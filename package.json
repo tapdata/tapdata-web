@@ -53,6 +53,7 @@
     "npm-run-all2": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:",
+    "vite": "catalog:",
     "vue-tsc": "catalog:"
   },
   "pnpm": {

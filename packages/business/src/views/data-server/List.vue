@@ -528,12 +528,6 @@ defineExpose({
         </template>
         <span> {{ $t('packages_business_button_bulk_import') }}</span>
       </ElButton>
-      <!-- <el-button @click="downloadSdkDialogVisible = true">
-        <template #icon>
-          <i-lucide:download />
-        </template>
-        {{ $t('public_download_sdk') }}
-      </el-button> -->
       <ElButton
         class="btn btn-create"
         type="primary"

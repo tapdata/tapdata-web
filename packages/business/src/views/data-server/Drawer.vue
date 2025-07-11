@@ -101,6 +101,7 @@ interface Field {
 }
 
 // Constants
+const isHa = import.meta.env.MODE === 'ha'
 const typeOptions = ['number', 'string', 'boolean', 'date', 'datetime', 'time']
 const operatorOptions = ['>', '==', '<', '>=', '<=', '!=', 'like']
 const conditionOptions = ['null', 'and', 'or']
@@ -1395,7 +1396,7 @@ const openEdit = () => {
               >
                 <ElInput v-model="form.basePath" :disabled="!isEdit" />
               </ElFormItem>
-              <!-- <ElFormItem class="flex-1" prop="limit">
+              <ElFormItem v-if="isHa" class="flex-1" prop="limit">
                 <template #label>
                   <el-text>
                     <span>{{
@@ -1416,7 +1417,7 @@ const openEdit = () => {
                   :disabled="!isEdit"
                   :controls="false"
                 />
-              </ElFormItem> -->
+              </ElFormItem>
             </div>
           </section>
           <!--服务访问 -->

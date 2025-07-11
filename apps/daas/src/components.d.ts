@@ -89,7 +89,6 @@ declare module 'vue' {
     'ILucide:calendar': typeof import('~icons/lucide/calendar')['default']
     'ILucide:clock': typeof import('~icons/lucide/clock')['default']
     'ILucide:cloudUpload': typeof import('~icons/lucide/cloud-upload')['default']
-    'ILucide:download': typeof import('~icons/lucide/download')['default']
     'ILucide:hardDrive': typeof import('~icons/lucide/hard-drive')['default']
     'ILucide:hardDriveDownload': typeof import('~icons/lucide/hard-drive-download')['default']
     'ILucide:loader': typeof import('~icons/lucide/loader')['default']
