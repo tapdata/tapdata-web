@@ -623,6 +623,9 @@ function makeMigrateTask(from: any, tableName: string) {
   const source = getSourceNode(from, tableName)
   const target = getDatabaseNode(props.fdmConnection)
   const tableReNameNode = getTableReNameNode()
+
+  target.dmlPolicy = useDmlPolicy(props.fdmConnection)
+
   return {
     ...TASK_SETTINGS,
     syncType: 'migrate',
@@ -676,6 +679,60 @@ function getDatabaseNode(db: any) {
       capabilities: db.capabilities || [],
     },
   }
+}
+
+const useDmlPolicy = (db: any) => {
+  const capabilities = db.capabilities || []
+  let insertPolicy
+  let updatePolicy
+  let deletePolicy
+
+  const dmlPolicy = {
+    insertPolicy: 'update_on_exists',
+    updatePolicy: 'ignore_on_nonexists',
+    deletePolicy: 'ignore_on_nonexists',
+  }
+
+  const enumMap = {
+    insertPolicy: ['update_on_exists', 'ignore_on_exists', 'just_insert'],
+    updatePolicy: [
+      'ignore_on_nonexists',
+      'insert_on_nonexists',
+      'log_on_nonexists',
+    ],
+    deletePolicy: ['ignore_on_nonexists', 'log_on_nonexists'],
+  }
+
+  if (capabilities) {
+    insertPolicy = capabilities.find(
+      ({ id }: any) => id === 'dml_insert_policy',
+    )
+    updatePolicy = capabilities.find(
+      ({ id }: any) => id === 'dml_update_policy',
+    )
+    deletePolicy = capabilities.find(
+      ({ id }: any) => id === 'dml_delete_policy',
+    )
+  }
+
+  const func = (policy: any, policyField: string) => {
+    if (policy && policy.alternatives?.length) {
+      const values = enumMap[policyField as keyof typeof enumMap]
+      const alternative = policy.alternatives.find((key) =>
+        values.includes(key),
+      )
+
+      if (alternative) {
+        dmlPolicy[policyField as keyof typeof dmlPolicy] = alternative
+      }
+    }
+  }
+
+  func(insertPolicy, 'insertPolicy')
+  func(updatePolicy, 'updatePolicy')
+  func(deletePolicy, 'deletePolicy')
+
+  return dmlPolicy
 }
 
 function getTableReNameNode() {
@@ -1411,6 +1468,7 @@ defineExpose({
           class="flex align-center gap-3"
         >
           <ElFormItem
+            class="w-100"
             :label="$t('packages_dag_task_setting_crontabExpressionFlag')"
             prop="task.crontabExpressionType"
           >
