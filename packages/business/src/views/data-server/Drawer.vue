@@ -1395,7 +1395,7 @@ const openEdit = () => {
               >
                 <ElInput v-model="form.basePath" :disabled="!isEdit" />
               </ElFormItem>
-              <ElFormItem class="flex-1" prop="limit">
+              <!-- <ElFormItem class="flex-1" prop="limit">
                 <template #label>
                   <el-text>
                     <span>{{
@@ -1416,7 +1416,7 @@ const openEdit = () => {
                   :disabled="!isEdit"
                   :controls="false"
                 />
-              </ElFormItem>
+              </ElFormItem> -->
             </div>
           </section>
           <!--服务访问 -->

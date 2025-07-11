@@ -42,10 +42,10 @@ export const MENU = [
     code: 'v2_data-server',
     hidden: isCommunity,
     children: [
-      {
+      /* {
         name: 'apiSdkList',
         parent: 'apiSdk',
-      },
+      }, */
       { name: 'dataServer', code: 'v2_data-server-list', parent: 'dataServer' },
       {
         name: 'dataServerAuditList',
