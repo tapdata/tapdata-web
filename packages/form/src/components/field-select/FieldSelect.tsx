@@ -1,22 +1,46 @@
 import i18n from '@tap/i18n'
-import { computed, defineComponent } from 'vue'
+import {
+  computed,
+  defineComponent,
+  nextTick,
+  onBeforeMount,
+  onMounted,
+  ref,
+  watch,
+} from 'vue'
+import type { ElSelectV2 } from 'element-plus'
 
 export const FieldSelect = defineComponent({
   props: {
     options: Array,
+    enableTooltip: Boolean,
+    modelValue: String,
   },
   setup: (props, { attrs, slots }) => {
-    // public static final byte TYPE_DATETIME = 1;
-    // public static final byte TYPE_ARRAY = 2;
-    // public static final byte TYPE_BOOLEAN = 3;
-    // public static final byte TYPE_MAP = 4;
-    // public static final byte TYPE_YEAR = 5;
-    // public static final byte TYPE_TIME = 6;
-    // public static final byte TYPE_RAW = 7;
-    // public static final byte TYPE_NUMBER = 8;
-    // public static final byte TYPE_BINARY = 9;
-    // public static final byte TYPE_STRING = 10
-    // public static final byte TYPE_DATE = 11;
+    const labelRef = ref<HTMLElement>()
+    const showTooltip = ref(false)
+    const isTextOverflow = ref(false)
+    const tooltipContent = ref('')
+    const selectRef = ref<ElSelectV2>()
+
+    const checkTextOverflow = (element: HTMLElement, text: string) => {
+      if (!element || !text) return false
+      const range = document.createRange()
+      range.setStart(element, 0)
+      range.setEnd(element, element.childNodes.length)
+      const rangeWidth = range.getBoundingClientRect().width
+      const elementWidth = element.getBoundingClientRect().width
+
+      if (
+        rangeWidth > elementWidth ||
+        element.scrollWidth > element.offsetWidth
+      ) {
+        tooltipContent.value = text
+        return true
+      }
+      tooltipContent.value = text
+      return false
+    }
 
     const TYPE_ICON = {
       1: 'calendar',
@@ -140,6 +164,39 @@ export const FieldSelect = defineComponent({
       }
     })
 
+    const onChange = () => {
+      if (props.enableTooltip) {
+        nextTick(() => {
+          isTextOverflow.value = checkTextOverflow(
+            labelRef.value?.parentElement,
+            labelRef.value?.textContent,
+          )
+        })
+      }
+    }
+
+    const onMouseEnter = () => {
+      if (props.enableTooltip) {
+        showTooltip.value = isTextOverflow.value
+      }
+    }
+
+    let unwatch: any
+
+    onBeforeMount(() => {
+      unwatch?.()
+    })
+
+    onMounted(() => {
+      setTimeout(() => {
+        if (props.enableTooltip) {
+          unwatch = watch(() => props.modelValue, onChange, {
+            immediate: true,
+          })
+        }
+      }, 100)
+    })
+
     return () => {
       const newAttrs = { ...attrs }
       if (
@@ -150,8 +207,48 @@ export const FieldSelect = defineComponent({
         newAttrs.defaultFirstOption = true
       }
 
-      return (
+      return props.enableTooltip ? (
+        <ElTooltip
+          visible={showTooltip.value}
+          placement="top"
+          content={tooltipContent.value}
+          transition="el-fade-in-linear"
+          open-delay={300}
+        >
+          <ElSelectV2
+            ref={selectRef}
+            modelValue={props.modelValue}
+            {...newAttrs}
+            props={fieldNames.value}
+            popper-class="field-select-popper"
+            options={fieldOptions.value}
+            dataSource={fieldOptions.value}
+            onMouseenter={onMouseEnter}
+            onMouseleave={() => {
+              showTooltip.value = false
+            }}
+          >
+            {{
+              header: slots.header,
+              label: ({ label }) => <span ref={labelRef}>{label}</span>,
+              default: ({ item: option }) => (
+                <div class="flex align-center gap-1">
+                  {option.icon && (
+                    <VIcon size="16" title={option.type}>
+                      {option.icon}
+                    </VIcon>
+                  )}
+                  {option[fieldNames.value.label]}
+                  {renderIcon(option)}
+                </div>
+              ),
+            }}
+          </ElSelectV2>
+        </ElTooltip>
+      ) : (
         <ElSelectV2
+          ref={selectRef}
+          modelValue={props.modelValue}
           {...newAttrs}
           props={fieldNames.value}
           popper-class="field-select-popper"
