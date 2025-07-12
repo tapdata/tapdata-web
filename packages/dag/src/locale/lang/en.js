@@ -1092,4 +1092,5 @@ export default {
   packages_dag_table_selector_all_tables_selected:
     'You have selected all tables',
   packages_dag_syncForeignKeyEnable: 'Sync Foreign Key',
+  packages_dag_check_no_pk_table: 'Check No Primary Key Table',
 }

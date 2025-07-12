@@ -29,13 +29,38 @@ export interface TaskInspectOperation {
   user: string
 }
 
+export interface TaskInspectConfig {
+  timeCheckMode: 'NORMAL' | 'ROUND' | 'TRUNCATE'
+  checkNoPkTable: boolean
+  custom: {
+    cdc: {
+      enable: boolean
+      sample: {
+        interval: number
+        limit: number
+      }
+      type: 'CLOSE' | 'SAMPLE'
+    }
+    full?: {
+      enable: boolean
+    }
+    recover?: {
+      enable: boolean
+    }
+  }
+  mode: 'CLOSE' | 'INTELLIGENT' | 'CUSTOM'
+}
+
 export async function getTaskInspectConfig(taskId: string) {
-  const res = await requestClient.get(`${BASE_URL}/${taskId}`)
+  const res = await requestClient.get<TaskInspectConfig>(
+    `${BASE_URL}/${taskId}`,
+  )
 
   return (
     res || {
       mode: 'CLOSE',
       timeCheckMode: 'NORMAL',
+      checkNoPkTable: false,
       custom: {
         cdc: {
           enable: true,

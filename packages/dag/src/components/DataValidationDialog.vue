@@ -1,31 +1,14 @@
 <script setup lang="ts">
-import { getTaskInspectConfig, updateTaskInspectConfig } from '@tap/api'
+import {
+  getTaskInspectConfig,
+  updateTaskInspectConfig,
+  type TaskInspectConfig,
+} from '@tap/api'
 import { useI18n } from '@tap/i18n'
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
+
 import { useStore } from 'vuex'
-
 import type { ElDialog } from 'element-plus'
-
-interface TaskInspectConfig {
-  timeCheckMode: 'NORMAL' | 'ROUND' | 'TRUNCATE'
-  custom: {
-    cdc: {
-      enable: boolean
-      sample: {
-        interval: number
-        limit: number
-      }
-      type: 'CLOSE' | 'SAMPLE'
-    }
-    full?: {
-      enable: boolean
-    }
-    recover?: {
-      enable: boolean
-    }
-  }
-  mode: 'CLOSE' | 'INTELLIGENT' | 'CUSTOM'
-}
 
 const store = useStore()
 const { t } = useI18n()
@@ -46,13 +29,15 @@ const fullEnabled = ref(false)
 const frequencyTime = ref(1)
 const frequencyRecords = ref(10)
 const recoverEnabled = ref(false)
-const timeCheckMode = ref('NORMAL')
 const timeCheckModeOptions = [
   { label: t('public_time_precision_normal'), value: 'NORMAL' },
   { label: t('public_time_precision_round'), value: 'ROUND' },
   { label: t('public_time_precision_truncate'), value: 'TRUNCATE' },
 ]
-
+const config = reactive<Partial<TaskInspectConfig>>({
+  checkNoPkTable: false,
+  timeCheckMode: 'NORMAL',
+})
 const dialogRef = ref<InstanceType<typeof ElDialog> | null>(null)
 
 async function initFormData() {
@@ -65,7 +50,9 @@ async function initFormData() {
     recoverEnabled.value = res.custom.recover?.enable ?? false
     frequencyTime.value = res.custom.cdc.sample.interval
     frequencyRecords.value = res.custom.cdc.sample.limit
-    timeCheckMode.value = res.timeCheckMode || 'NORMAL'
+
+    config.timeCheckMode = res.timeCheckMode
+    config.checkNoPkTable = res.checkNoPkTable
   } catch (error) {
     console.error('Failed to load validation settings:', error)
   } finally {
@@ -84,7 +71,8 @@ async function handleSave() {
 
   const settings: TaskInspectConfig = {
     mode: validationEnabled.value ? 'CUSTOM' : 'CLOSE',
-    timeCheckMode: timeCheckMode.value as 'NORMAL' | 'ROUND' | 'TRUNCATE',
+    timeCheckMode: config.timeCheckMode!,
+    checkNoPkTable: config.checkNoPkTable!,
     custom: {
       cdc: {
         enable: cdcEnabled.value,
@@ -261,12 +249,26 @@ defineExpose({
               <label class="fw-sub cursor-pointer" for="recover-switch">{{
                 t('public_time_precision')
               }}</label>
-              <div class="fs-8 font-color-light mt-1" />
             </div>
 
             <el-segmented
-              v-model="timeCheckMode"
+              v-model="config.timeCheckMode"
               :options="timeCheckModeOptions"
+            />
+          </div>
+
+          <div class="flex align-center">
+            <div class="flex-1">
+              <label
+                class="fw-sub cursor-pointer"
+                for="checkNoPkTable-switch"
+                >{{ $t('packages_dag_check_no_pk_table') }}</label
+              >
+            </div>
+
+            <ElSwitch
+              id="checkNoPkTable-switch"
+              v-model="config.checkNoPkTable"
             />
           </div>
 
