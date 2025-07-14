@@ -1,5 +1,3 @@
-import AlarmMail from './AlarmMail'
-
 import AlarmRule from './AlarmRule'
 
 import ApiCalls from './ApiCalls'
@@ -212,11 +210,9 @@ const dataPermissionApi = new DataPermission()
 
 const connectorRecordApi = new ConnectorRecord()
 
-const alarmMailApi = new AlarmMail()
 const webhookApi = new Webhook()
 
 export {
-  alarmMailApi,
   alarmRuleApi,
   apiCallsApi,
   apiMonitorApi,

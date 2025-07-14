@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import {
-  alarmMailApi,
   alarmRuleApi,
+  fetchAlarmMails,
   findAlarm,
   getAlarmChannels,
   saveAlarm,
+  saveAlarmMailConfig,
 } from '@tap/api'
 import { VTable } from '@tap/component/src/base/v-table'
 import {
@@ -293,8 +294,8 @@ const getAlarmData = async () => {
 const loadAlarmRecipient = async () => {
   loadingRecipient.value = true
   try {
-    const { emailAddressList = [] } = await alarmMailApi.get()
-    alarmRecipientData.value[0].value = emailAddressList.join(',')
+    const { emailAddressList = [] } = await fetchAlarmMails()
+    alarmRecipientData.value[0]!.value = emailAddressList.join(',')
   } catch (error) {
     console.error('Failed to load alarm recipients:', error)
   } finally {
@@ -333,8 +334,8 @@ const saveAlarmRules = async () => {
 const saveAlarmRecipient = async () => {
   savingRecipient.value = true
   try {
-    const value = alarmRecipientData.value[0].value?.trim()
-    await alarmMailApi.save({
+    const value = alarmRecipientData.value[0]!.value?.trim()
+    await saveAlarmMailConfig({
       type: 'EMAIL',
       emailAddressList: value
         ? value.split(',').map((item: string) => item.trim())
