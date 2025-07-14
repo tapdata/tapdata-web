@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import {
-  alarmRuleApi,
   fetchAlarmMails,
+  fetchAlarmRules,
   findAlarm,
   getAlarmChannels,
   saveAlarm,
   saveAlarmMailConfig,
+  saveAlarmRules as saveAlarmRulesApi,
 } from '@tap/api'
 import { VTable } from '@tap/component/src/base/v-table'
 import {
@@ -280,7 +281,7 @@ const showAlarmRecipient = () => {
 // 告警设置 单独请求接口 单独提交数据
 const getAlarmData = async () => {
   try {
-    const data = await alarmRuleApi.find()
+    const data = await fetchAlarmRules()
     alarmData.value = data.map((item: AlarmRule) => {
       item.point = getPoints(item.point)
       item.ms = getSecond(item.ms)
@@ -322,7 +323,7 @@ const saveAlarmRules = async () => {
       item.ms = Math.max(Math.ceil(item.ms * 1000), 1)
       return item
     })
-    await alarmRuleApi.save(data)
+    await saveAlarmRulesApi(data)
     alarmRulesVisible.value = false
     ElMessage.success(t('public_message_save_ok'))
   } catch (error) {

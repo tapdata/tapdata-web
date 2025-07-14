@@ -1,5 +1,3 @@
-import AlarmRule from './AlarmRule'
-
 import ApiCalls from './ApiCalls'
 
 import ApiMonitor from './ApiMonitor'
@@ -188,8 +186,6 @@ const monitoringLogsApi = new MonitoringLogs()
 
 const discoveryApi = new Discovery()
 
-const alarmRuleApi = new AlarmRule()
-
 const externalStorageApi = new ExternalStorage()
 
 const proxyApi = new Proxy()
@@ -213,7 +209,6 @@ const connectorRecordApi = new ConnectorRecord()
 const webhookApi = new Webhook()
 
 export {
-  alarmRuleApi,
   apiCallsApi,
   apiMonitorApi,
   apiServerApi,
