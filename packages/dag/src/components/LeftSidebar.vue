@@ -1,8 +1,8 @@
 <script>
 import {
   CancelToken,
-  connectionsApi,
   databaseTypesApi,
+  fetchConnections,
   metadataInstancesApi,
 } from '@tap/api'
 import SceneDialog from '@tap/business/src/components/create-connection/SceneDialog.vue'
@@ -213,7 +213,7 @@ export default {
         $ne: 'System',
       }
 
-      return { filter: JSON.stringify(filter) }
+      return filter
     },
 
     async loadDatabase(loadMore) {
@@ -228,13 +228,11 @@ export default {
         this.dbPage = 1
       }
 
-      const data = await connectionsApi
-        .get(this.getDbFilter(), {
-          cancelToken: this.connectionCancelSource.token,
-        })
-        .finally(() => {
-          this.connectionCancelSource = null
-        })
+      const data = await fetchConnections(this.getDbFilter(), {
+        cancelToken: this.connectionCancelSource.token,
+      }).finally(() => {
+        this.connectionCancelSource = null
+      })
 
       this.dbTotal = data.total
 

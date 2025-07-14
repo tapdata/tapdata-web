@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { connectionsApi } from '@tap/api'
+import {
+  checkConnectionTask,
+  copyConnection,
+  deleteConnection,
+  fetchConnections,
+  getConnectionDatabaseTypes,
+  updateConnectionById,
+} from '@tap/api'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import FilterBar from '@tap/component/src/filter-bar/Main.vue'
 import { Modal } from '@tap/component/src/modal'
@@ -11,7 +18,7 @@ import {
   inject,
   markRaw,
   nextTick,
-  onMounted,
+  onBeforeMount,
   onUnmounted,
   reactive,
   ref,
@@ -238,9 +245,7 @@ const getData = async ({
   }
 
   try {
-    const data = await connectionsApi.get({
-      filter: JSON.stringify(filter),
-    })
+    const data = await fetchConnections(filter)
     let list = data?.items || []
 
     if (multipleSelection.value.length && list.length) {
@@ -363,7 +368,7 @@ const copy = async (data: any) => {
   const headersName = { 'lconname-name': data.name }
   data.copyLoading = true
   try {
-    await connectionsApi.copy(data.id, {
+    await copyConnection(data.id, {
       uri: `${data.id}/copy`,
       headers: headersName,
     })
@@ -401,9 +406,9 @@ const remove = async (row: any) => {
 
     if (!confirmed) return
 
-    const data = await connectionsApi.checkConnectionTask(row.id)
+    const data = await checkConnectionTask(row.id)
     if (data?.items?.length === 0) {
-      const result = await connectionsApi.delete(row.id)
+      const result = await deleteConnection(row.id)
       const jobs = result?.data?.jobs || []
       const modules = result?.data?.modules || []
       if (jobs.length > 0 || modules.length > 0) {
@@ -444,7 +449,7 @@ const handleOperationClassify = async (listtags: any[]) => {
     listtags,
   }
   try {
-    await connectionsApi.batchUpdateListtags(attributes)
+    await batchUpdateConnectionTags(attributes)
     table.value?.fetch()
     ElMessage.success(i18n.t('public_message_save_ok'))
   } catch (error) {
@@ -485,7 +490,7 @@ const testConnection = (item: any) => {
   checkAgent(async () => {
     testData.value = markRaw(item)
     try {
-      await connectionsApi.updateById(
+      await updateConnectionById(
         item.id,
         Object.assign(
           {},
@@ -573,7 +578,7 @@ const getFilterItems = () => {
       width: 250,
       filterable: true,
       items: async () => {
-        const data = await connectionsApi.getDatabaseTypes()
+        const data = await getConnectionDatabaseTypes()
 
         if (!data?.length) {
           return []
@@ -622,7 +627,7 @@ const handlePermissionsSettings = () => {
 }
 
 const fetchDatabaseTypeOptions = async () => {
-  const data = await connectionsApi.getDatabaseTypes()
+  const data = await getConnectionDatabaseTypes()
 
   if (!data?.length) {
     return []
@@ -656,7 +661,7 @@ const handleChangeDatabaseType = (value: string) => {
 }
 
 // Lifecycle hooks
-onMounted(() => {
+onBeforeMount(() => {
   const { action, create } = route.query || {}
 
   if (create) {

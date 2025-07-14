@@ -1,5 +1,5 @@
 <script>
-import { CancelToken, connectionsApi, databaseTypesApi } from '@tap/api'
+import { CancelToken, databaseTypesApi, fetchConnections } from '@tap/api'
 import { getIcon } from '@tap/assets/icons'
 import SceneDialog from '@tap/business/src/components/create-connection/SceneDialog.vue'
 import { VEmpty } from '@tap/component/src/base/v-empty'
@@ -156,7 +156,7 @@ export default {
         filter.where.name = { like: txt, options: 'i' }
       }
 
-      return { filter: JSON.stringify(filter) }
+      return filter
     },
 
     async loadDatabase(loadMore) {
@@ -172,7 +172,7 @@ export default {
         this.dbTotal = 0
       }
 
-      const data = await connectionsApi.get(this.getDbFilter(), {
+      const data = await fetchConnections(this.getDbFilter(), {
         cancelToken: this.connectionCancelSource.token,
       })
 

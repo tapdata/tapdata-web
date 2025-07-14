@@ -2,7 +2,7 @@
 import { defineComponent, h } from 'vue'
 import { useResizeObserver } from '@vueuse/core'
 import { debounce } from 'lodash-es'
-import { connectionsApi, metadataInstancesApi, ldpApi, CancelToken } from '@tap/api'
+import { metadataInstancesApi, ldpApi, CancelToken, fetchConnections } from '@tap/api'
 import { IconButton } from '@tap/component/src/icon-button'
 import {VEmpty} from '@tap/component/src/base/v-empty'
 import VirtualTree from '@tap/component/src/virtual-tree'
@@ -215,7 +215,7 @@ export default defineComponent({
             <span class="table-label" title={data.name}>
               {data.name}
             </span>
-            {data.disabled && <ElTag type="info">{this.$t('public_status_invalid')}</ElTag>}
+            {data.disabled && <ElTag disable-transitions type="info">{this.$t('public_status_invalid')}</ElTag>}
             <IconButton
               class="btn-menu"
               sm
@@ -274,7 +274,7 @@ export default defineComponent({
             {data.name}
             {data.comment && <span class="font-color-sslight">{`(${data.comment})`}</span>}
             {data.disabled && (
-              <ElTag type="info" class="ml-2">
+              <ElTag disable-transitions type="info" class="ml-2">
                 {this.$t('public_status_invalid')}
               </ElTag>
             )}
@@ -324,9 +324,7 @@ export default defineComponent({
           },
         },
       }
-      const res = await connectionsApi.get({
-        filter: JSON.stringify(filter),
-      })
+      const res = await fetchConnections(filter)
       // this.connectionMap = {}
       const items = []
       const map = {}
@@ -607,7 +605,7 @@ export default defineComponent({
               <span class="table-label" :title="data.name">
                 {{ data.name }}
                 <span v-if="data.comment" class="font-color-sslight">{{ `(${data.comment})` }}</span>
-                <ElTag v-if="data.disabled" type="info">{{ $t('public_status_invalid') }}</ElTag>
+                <ElTag v-if="data.disabled" disable-transitions type="info">{{ $t('public_status_invalid') }}</ElTag>
               </span>
             </span>
           </template>
@@ -666,7 +664,7 @@ export default defineComponent({
                 <span class="table-label" :title="data.name">
                   {{ data.name }}
                   <span v-if="data.comment" class="font-color-sslight">{{ `(${data.comment})` }}</span>
-                  <ElTag v-if="data.disabled" type="info">{{ $t('public_status_invalid') }}</ElTag>
+                  <ElTag v-if="data.disabled" disable-transitions type="info">{{ $t('public_status_invalid') }}</ElTag>
                 </span>
               </span>
             </template>

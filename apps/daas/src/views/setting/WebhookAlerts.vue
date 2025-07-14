@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { settingsApi, webhookApi } from '@tap/api'
+import { findAlarm, webhookApi } from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { dayjs } from '@tap/business/src/shared/dayjs'
 import { VEmpty } from '@tap/component/src/base/v-empty'
@@ -223,7 +223,7 @@ const loadData = async () => {
 }
 
 const loadEventType = async () => {
-  const data = await settingsApi.findAlarm()
+  const data = await findAlarm()
   eventData.value[0].children = data.map((item: any) => ({
     label: keyMap[item.key],
     value: item.key,

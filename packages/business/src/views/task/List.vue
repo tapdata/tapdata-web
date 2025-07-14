@@ -1,5 +1,5 @@
 <script>
-import { clusterApi, licensesApi, taskApi, workerApi } from '@tap/api'
+import { fetchClusterStates, licensesApi, taskApi, workerApi } from '@tap/api'
 import { DownBoldOutlined } from '@tap/component/src/DownBoldOutlined'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import FilterBar from '@tap/component/src/filter-bar/Main.vue'
@@ -378,7 +378,7 @@ export default {
               size: 100,
             }
             if (this.isDaas) {
-              const clusterData = await clusterApi.get()
+              const clusterData = await fetchClusterStates()
               const options = clusterData.items
                 .filter((item) => item.systemInfo.process_id)
                 .map((item) => {

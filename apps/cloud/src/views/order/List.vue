@@ -886,7 +886,7 @@ export default {
                           <ElButton
                             v-if="
                               !(
-                                !['active'].includes(item.status) ||
+                                !['active', 'past_due'].includes(item.status) ||
                                 row.isFree ||
                                 item.subscribeType === 'recurring'
                               )

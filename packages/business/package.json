@@ -8,7 +8,7 @@
   "main": "src/index.js",
   "dependencies": {
     "@element-plus/icons-vue": "catalog:",
-    "@formily/reactive": "^2.3.0",
+    "@formily/reactive": "catalog:",
     "@tap/api": "workspace:*",
     "@tap/assets": "workspace:*",
     "@tap/component": "workspace:*",
@@ -20,7 +20,7 @@
     "dayjs": "catalog:",
     "juice": "catalog:",
     "lodash": "catalog:",
-    "qs": "^6.11.0",
+    "qs": "catalog:",
     "tiny-emitter": "catalog:",
     "vue": "catalog:",
     "vue-json-viewer": "catalog:",

@@ -10,6 +10,7 @@ export default {
   data() {
     return {
       visible: false,
+      loading: false,
       row: {},
       formScope: {
         useAsyncDataSource: (
@@ -167,6 +168,7 @@ export default {
 
   methods: {
     async loadData() {
+      this.loading = true
       const roleList = (await this.formScope.loadRoleList()) || []
       const filter = {
         dataType: 'Connections',
@@ -186,6 +188,7 @@ export default {
           permissions,
         })
       })
+      this.loading = false
     },
 
     open(row = {}) {
@@ -236,14 +239,16 @@ export default {
     append-to-body
     @close="handleClose"
   >
-    <SchemaToForm
-      ref="schemaToForm"
-      :schema="schema"
-      :scope="formScope"
-      :colon="true"
-      class="w-100"
-      label-width="120"
-    />
+    <div v-loading="loading">
+      <SchemaToForm
+        ref="schemaToForm"
+        :schema="schema"
+        :scope="formScope"
+        :colon="true"
+        class="w-100"
+        label-width="120"
+      />
+    </div>
 
     <template #footer>
       <span class="dialog-footer">

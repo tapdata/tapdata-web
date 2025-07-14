@@ -1,6 +1,7 @@
 <script lang="jsx">
 export default {
   name: 'OverflowTooltip',
+  // inheritAttrs: false,
   props: {
     text: String,
   },
@@ -9,33 +10,6 @@ export default {
     return {
       overflow: false,
     }
-  },
-
-  render() {
-    const { text, $slots, $attrs } = this
-    const elm = ($slots.default && $slots.default())?.[0]?.elm
-    const defaultText = elm?.innerText || text
-
-    return this.overflow ? (
-      <el-tooltip
-        content={defaultText}
-        {...{
-          props: this.$attrs,
-        }}
-      >
-        <div ref="container" class={['overflow-tip', $attrs.class]}>
-          <span ref="text" class="overflow-tip-text">
-            {$slots.default && $slots.default() ? $slots.default && $slots.default() : text}
-          </span>
-        </div>
-      </el-tooltip>
-    ) : (
-      <div ref="container" class="overflow-tip">
-        <span ref="text" class="overflow-tip-text">
-          {$slots.default && $slots.default() ? $slots.default && $slots.default() : text}
-        </span>
-      </div>
-    )
   },
 
   mounted() {
@@ -47,7 +21,7 @@ export default {
     this.resizeObserver.observe(this.$el)
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.resizeObserver) {
       this.resizeObserver.unobserve(this.$el)
       this.resizeObserver = null
@@ -59,8 +33,44 @@ export default {
       const containerWidth = this.$refs.container?.getBoundingClientRect().width
       const textWidth = this.$refs.text?.getBoundingClientRect().width
       this.overflow = textWidth > containerWidth
+    },
+  },
+
+  render() {
+    const { text, $slots, $attrs } = this
+    const elm = ($slots.default && $slots.default())?.[0]?.elm
+    const defaultText = elm?.textContent || text
+
+    const tooltipProps = {
+      ...this.$attrs,
+      class: undefined,
+      style: undefined,
     }
-  }
+
+    return (
+      <div ref="container">
+        {this.overflow ? (
+          <el-tooltip content={defaultText} {...tooltipProps}>
+            <div class={['overflow-tip']}>
+              <span ref="text" class="overflow-tip-text">
+                {$slots.default && $slots.default()
+                  ? $slots.default && $slots.default()
+                  : text}
+              </span>
+            </div>
+          </el-tooltip>
+        ) : (
+          <div class="overflow-tip">
+            <span ref="text" class="overflow-tip-text">
+              {$slots.default && $slots.default()
+                ? $slots.default && $slots.default()
+                : text}
+            </span>
+          </div>
+        )}
+      </div>
+    )
+  },
 }
 </script>
 

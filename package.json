@@ -24,24 +24,26 @@
     "catalog": "pnpx codemod pnpm/catalog"
   },
   "dependencies": {
-    "element-plus": "^2.9.10",
+    "element-plus": "catalog:",
     "lodash-es": "catalog:",
     "vue-router": "catalog:"
   },
   "devDependencies": {
+    "@iconify-json/fluent": "^1.2.26",
     "@iconify-json/lucide": "catalog:",
     "@iconify-json/mingcute": "catalog:",
     "@rushstack/eslint-patch": "catalog:",
     "@sxzz/eslint-config": "catalog:",
     "@sxzz/prettier-config": "catalog:",
     "@tap/tsconfig": "workspace:*",
+    "@tap/types": "workspace:*",
     "@tsconfig/node20": "catalog:",
     "@types/jsdom": "catalog:",
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
     "@types/qs": "catalog:",
     "@vue/tsconfig": "catalog:",
-    "chalk": "5",
+    "chalk": "catalog:",
     "cross-env": "catalog:",
     "eslint": "catalog:",
     "file-loader": "catalog:",
@@ -51,7 +53,7 @@
     "npm-run-all2": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:",
-    "vite": "^6.2.4",
+    "vite": "catalog:",
     "vue-tsc": "catalog:"
   },
   "pnpm": {

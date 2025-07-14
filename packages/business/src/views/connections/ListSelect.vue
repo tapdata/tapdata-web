@@ -1,5 +1,5 @@
 <script>
-import { connectionsApi } from '@tap/api'
+import { fetchConnections } from '@tap/api'
 import { InfiniteSelect as AsyncSelect } from '@tap/form/src/components/infinite-select'
 import { merge } from 'lodash-es'
 
@@ -70,9 +70,7 @@ export default {
         })
       }
 
-      const res = await connectionsApi.get({
-        filter: JSON.stringify(merge(params, this.params)),
-      })
+      const res = await fetchConnections(merge(params, this.params))
 
       res.items = res.items.map((t) => {
         return {

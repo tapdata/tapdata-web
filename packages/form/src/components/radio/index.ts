@@ -5,6 +5,7 @@ import {
   type SlotTypes,
 } from '@formily/element-plus/esm/__builtins__'
 import { connect, mapProps, mapReadPretty } from '@formily/vue'
+import { ElRadio, ElRadioButton, ElRadioGroup } from 'element-plus'
 import { defineComponent, h, type PropType } from 'vue'
 
 export type ElRadioProps = typeof ElRadio

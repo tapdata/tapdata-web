@@ -1,5 +1,9 @@
 <script>
-import { connectionsApi, metadataInstancesApi } from '@tap/api'
+import {
+  getConnectionNoSchema,
+  metadataInstancesApi,
+  updateConnectionById,
+} from '@tap/api'
 import i18n from '@tap/i18n'
 
 import { mapActions } from 'vuex'
@@ -50,17 +54,15 @@ export default {
 
     loadSchema() {
       if (this.disabled) return
-      connectionsApi
-        .updateById(this.connectionId, {
-          loadCount: 0,
-          loadFieldsStatus: 'loading',
-        })
-        .then((data) => {
-          this.progress = '0%'
-          this.getProgress()
-          this.$emit('start')
-          this.startByConnection(data, true, false)
-        })
+      updateConnectionById(this.connectionId, {
+        loadCount: 0,
+        loadFieldsStatus: 'loading',
+      }).then((data) => {
+        this.progress = '0%'
+        this.getProgress()
+        this.$emit('start')
+        this.startByConnection(data, true, false)
+      })
     },
 
     getProgress(check = false) {
@@ -71,7 +73,7 @@ export default {
         this.loading = true
       }
       clearTimeout(this.timer)
-      connectionsApi.getNoSchema(this.connectionId).then((res) => {
+      getConnectionNoSchema(this.connectionId).then((res) => {
         if (res.loadFieldsStatus === 'loading') {
           this.progress = `${
             Math.round((res.loadCount / res.tableCount) * 10000) / 100 || 0

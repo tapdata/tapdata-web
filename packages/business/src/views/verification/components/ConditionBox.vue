@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { InfoFilled, Loading, Plus, Right } from '@element-plus/icons-vue'
-import { connectionsApi, metadataInstancesApi } from '@tap/api'
+import { InfoFilled, Loading, Plus } from '@element-plus/icons-vue'
+import { fetchConnections, metadataInstancesApi } from '@tap/api'
 import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import GitBook from '@tap/component/src/GitBook.vue'
 import { Modal } from '@tap/component/src/modal'
@@ -20,13 +20,13 @@ import {
 } from 'lodash-es'
 import {
   computed,
-  defineExpose,
   inject,
   nextTick,
   onMounted,
   reactive,
   ref,
   watch,
+  type Ref,
 } from 'vue'
 import { DatabaseIcon } from '../../../components/DatabaseIcon'
 import { CONNECTION_STATUS_MAP } from '../../../shared/const'
@@ -142,7 +142,7 @@ interface StageItem {
 }
 
 const formData = inject('formData')
-const conditionList = inject('conditionList')
+const conditionList = inject<Ref<ConditionItem[]>>('conditionList')
 const ConnectorMap = inject('ConnectorMap')
 
 // Props and Emits
@@ -249,9 +249,7 @@ const getConnectionsListMethod = async (
       },
       order: ['status DESC', 'name ASC'],
     }
-    const result = await connectionsApi.get({
-      filter: JSON.stringify(merge(filter, _filter)),
-    })
+    const result = await fetchConnections(merge(filter, _filter))
 
     const response: ApiResponse<ConnectionResponse> = {
       items: result.items.map((item: ConnectionItem) => {
@@ -540,6 +538,7 @@ const getMatchNodeList = () => {
       objectNames,
       tableName: targetNode.tableName,
       tableNameRelation,
+      noPKVirtualFieldName: targetNode.noPKVirtualFieldName || '_no_pk_hash',
     }
   })
 }
@@ -600,13 +599,18 @@ const addItem = () => {
 }
 
 const removeItem = (id: string) => {
-  const index = conditionList.value.findIndex((t) => t.id === id)
+  const index = filteredList.value.findIndex((t) => t.id === id)
   if (index !== -1) {
-    conditionList.value.splice(index, 1)
+    filteredList.value.splice(index, 1)
+  }
+
+  const index2 = conditionList.value.findIndex((t) => t.id === id)
+  if (index2 !== -1) {
+    conditionList.value.splice(index2, 1)
   }
 
   // If current page is now empty and it's not the first page, go to previous page
-  if (conditionList.value.length === 0 && currentPage.value > 1) {
+  if (paginatedList.value.length === 0 && currentPage.value > 1) {
     currentPage.value--
   }
 }
@@ -618,11 +622,13 @@ const autoAddTable = async () => {
   const connectionSet = new Set()
   const tableNames = []
   const matchNodeList = getMatchNodeList()
+  const noPKVirtualFieldName = new Set()
 
   matchNodeList.forEach((m: any) => {
     connectionSet.add(m.sourceConnectionId)
     connectionSet.add(m.targetConnectionId)
     tableNames.push(...m.tableNames, ...m.objectNames)
+    noPKVirtualFieldName.add(m.noPKVirtualFieldName)
   })
 
   const connectionIds = [...connectionSet]
@@ -696,7 +702,7 @@ const autoAddTable = async () => {
 
           const updateList = cloneDeep(
             updateConditionFieldMap[tableNameRelation[ge]] || [],
-          ).filter((t: string) => t !== '_no_pk_hash')
+          ).filter((t: string) => !noPKVirtualFieldName.has(t))
           const findTable = data.find(
             (t: any) =>
               t.source.id === sourceConnectionId && t.original_name === ge,
@@ -1454,7 +1460,6 @@ defineExpose({
 })
 
 const handleSearch = debounce((value: string) => {
-  console.log('handleSearch', value)
   if (!value) {
     filteredList.value = conditionList.value
     return

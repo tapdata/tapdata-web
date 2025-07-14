@@ -10,8 +10,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@tap/request": "workspace:*",
     "@tap/shared": "workspace:*",
     "axios": "catalog:",
-    "qs": "^6.10.3"
+    "qs": "catalog:",
+    "vue-request": "catalog:"
   }
 }

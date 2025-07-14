@@ -206,6 +206,9 @@ export class Table extends NodeType {
                           connectionId: '{{$values.connectionId}}',
                           itemType: 'string',
                           itemQuery: 'value',
+                          hasPartition: `{{$values.attrs.capabilities.some(item => item.id==="source_support_partition")}}`,
+                          syncPartitionTableEnable:
+                            '{{$values.syncSourcePartitionTableEnable}}',
                         },
                         'x-reactions': [
                           {
@@ -246,6 +249,30 @@ export class Table extends NodeType {
                               'x-component-props.content': '{{$deps[0]}}',
                             },
                           },
+                        },
+                      },
+                    },
+                  },
+
+                  syncSourcePartitionTableEnable: {
+                    title: i18n.t(
+                      'packages_dag_syncSourcePartitionTableEnable',
+                    ),
+                    type: 'boolean',
+                    default: true,
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      class: 'flex-1',
+                      tooltip: i18n.t(
+                        'packages_dag_syncSourcePartitionTableEnable_tip',
+                      ),
+                    },
+                    'x-component': 'Switch',
+                    'x-reactions': {
+                      fulfill: {
+                        state: {
+                          visible:
+                            '{{$values.attrs.capabilities.some(item => item.id==="source_support_partition")}}',
                         },
                       },
                     },
@@ -1724,6 +1751,7 @@ export class Table extends NodeType {
                         },
                       },
                       dmlPolicy: {
+                        required: true,
                         title: i18n.t(
                           'packages_dag_nodes_database_shujuxieruce',
                         ),
@@ -1925,6 +1953,24 @@ export class Table extends NodeType {
                             state: {
                               visible:
                                 '{{hasFeature("syncPartitionTable") && $values.attrs.capabilities.some(item => item.id==="target_support_partition")}}',
+                            },
+                          },
+                        },
+                      },
+                      syncForeignKeyEnable: {
+                        title: i18n.t('packages_dag_syncForeignKeyEnable'),
+                        type: 'boolean',
+                        default: true,
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal',
+                        },
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          fulfill: {
+                            state: {
+                              visible:
+                                '{{$values.attrs.capabilities.some(item => item.id==="create_constraint_function")}}',
                             },
                           },
                         },

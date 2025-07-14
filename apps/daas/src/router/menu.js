@@ -43,9 +43,9 @@ export const MENU = [
     hidden: isCommunity,
     children: [
       {
-        name: 'apiApplication',
-        code: 'v2_api-application',
-        parent: 'apiApplication',
+        name: 'apiSdkList',
+        parent: 'apiSdk',
+        hidden: import.meta.env.MODE !== 'ha',
       },
       { name: 'dataServer', code: 'v2_data-server-list', parent: 'dataServer' },
       {

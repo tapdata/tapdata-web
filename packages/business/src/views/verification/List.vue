@@ -14,7 +14,7 @@ import { useI18n } from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, onBeforeMount, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ErrorMessage } from '../../components/error-message'
 import PageContainer from '../../components/PageContainer.vue'
@@ -475,7 +475,7 @@ watch(
 )
 
 // Lifecycle
-onMounted(() => {
+onBeforeMount(() => {
   timer = setInterval(() => {
     table.value?.fetch(null, 0, true)
   }, 8000)

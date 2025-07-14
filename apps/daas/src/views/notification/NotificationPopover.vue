@@ -1,5 +1,11 @@
 <script>
-import { notificationApi, userLogsApi } from '@tap/api'
+import {
+  countNotifications,
+  fetchNotifications,
+  fetchUserLogs,
+  listNotifications,
+  patchNotification,
+} from '@tap/api'
 import { ALARM_LEVEL_MAP } from '@tap/business/src/shared/const'
 import Cookie from '@tap/shared/src/cookie'
 
@@ -85,9 +91,9 @@ export default {
       const where = {
         read: false,
       }
-      notificationApi.count({ where: JSON.stringify(where) }).then((data) => {
+      countNotifications({ where: JSON.stringify(where) }).then((data) => {
         this.$store.commit('notification', {
-          unRead: data || 0,
+          unRead: data?.count || 0,
         })
       })
     },
@@ -100,7 +106,7 @@ export default {
         limit: 20,
         skip: 0,
       }
-      notificationApi.get({ filter: JSON.stringify(filter) }).then((data) => {
+      fetchNotifications(filter).then((data) => {
         const { items, total } = data || {}
         this.$store.commit('notification', {
           unRead: total,
@@ -112,7 +118,7 @@ export default {
       })
     },
     handleRead(id, type) {
-      notificationApi.patch({ read: true, id }).then(() => {
+      patchNotification({ read: true, id }).then(() => {
         if (type === 'alarm') {
           this.getAlarmData()
           return
@@ -164,10 +170,7 @@ export default {
           type: 'userOperation',
         },
       }
-      userLogsApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
+      fetchUserLogs(filter)
         .then((data) => {
           this.userOperations =
             data?.items?.map((item) => {
@@ -189,7 +192,7 @@ export default {
         read: false,
       }
       this.loadingAlarm = true
-      notificationApi.list(where).then((data) => {
+      listNotifications(where).then((data) => {
         const list = data?.items || []
         this.alarmData = list.map((item) => {
           item.levelLabel = ALARM_LEVEL_MAP[item.level].text

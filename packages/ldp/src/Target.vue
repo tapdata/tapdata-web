@@ -1,9 +1,9 @@
 <script lang="tsx">
 import {
   apiServerApi,
-  appApi,
-  connectionsApi,
-  modulesApi,
+  fetchApiModules,
+  fetchApps,
+  fetchConnections,
   proxyApi,
   taskApi,
 } from '@tap/api'
@@ -288,9 +288,7 @@ export default {
           },
         },
       }
-      const res = await connectionsApi.get({
-        filter: JSON.stringify(filter),
-      })
+      const res = await fetchConnections(filter)
 
       return res.items.map(this.mapConnection)
     },
@@ -393,16 +391,12 @@ export default {
         },
       }
 
-      return appApi
-        .get({
-          filter: JSON.stringify(filter),
+      return fetchApps(filter).then(({ items }) => {
+        return items.map((item) => {
+          item.LDP_TYPE = 'app'
+          return item
         })
-        .then(({ items }) => {
-          return items.map((item) => {
-            item.LDP_TYPE = 'app'
-            return item
-          })
-        })
+      })
     },
 
     loadApiModule(appId) {
@@ -414,13 +408,9 @@ export default {
         },
       }
 
-      return modulesApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then(({ items }) => {
-          return items.map(this.mapApi)
-        })
+      return fetchApiModules(filter).then(({ items }) => {
+        return items.map(this.mapApi)
+      })
     },
 
     mapApi(item) {
@@ -866,7 +856,7 @@ export default {
           <div
             :ref="`wrap__item${item.id}`"
             :key="item.id"
-            class="wrap__item rounded-lg position-relative overflow-hidden"
+            class="wrap__item rounded-xl position-relative overflow-hidden"
             :class="{ 'opacity-50': item.disabled }"
             @dragover="handleDragOver"
             @dragenter.stop="handleDragEnter($event, item)"
@@ -876,7 +866,9 @@ export default {
             <template v-if="item.LDP_TYPE === 'app'">
               <div class="item__header p-3">
                 <div class="flex align-center gap-2 overflow-hidden">
-                  <VIcon size="20">mini-app</VIcon>
+                  <el-icon size="20" class="color-primary"
+                    ><i-fluent:folder-link-16-regular
+                  /></el-icon>
                   <span
                     class="font-color-normal fw-sub fs-6 ellipsis lh-base"
                     :title="item.value"
@@ -1014,7 +1006,7 @@ export default {
             <div
               :ref="`wrap__item${item.id}`"
               :key="item.id"
-              class="wrap__item rounded-lg position-relative overflow-hidden"
+              class="wrap__item rounded-xl position-relative overflow-hidden"
               :class="{ 'opacity-50': item.disabled }"
               @dragover="handleDragOver"
               @dragenter.stop="handleDragEnter($event, item)"
@@ -1024,7 +1016,9 @@ export default {
               <template v-if="item.LDP_TYPE === 'app'">
                 <div class="item__header p-3">
                   <div class="flex align-center gap-2 overflow-hidden">
-                    <VIcon size="20">mini-app</VIcon>
+                    <el-icon size="20"
+                      ><i-fluent:folder-link-16-regular
+                    /></el-icon>
                     <span
                       class="font-color-normal fw-sub fs-6 ellipsis lh-base"
                       :title="item.value"

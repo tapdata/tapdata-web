@@ -1,17 +1,23 @@
 <script setup lang="ts">
-import { connectionsApi, dataPermissionApi, proxyApi, usersApi } from '@tap/api'
+import {
+  databaseTypesApi,
+  dataPermissionApi,
+  getHeartbeatTaskByConnectionId,
+  proxyApi,
+  updateConnectionById,
+  usersApi,
+} from '@tap/api'
 import Drawer from '@tap/component/src/Drawer.vue'
 import { Modal } from '@tap/component/src/modal'
-import i18n from '@tap/i18n'
+import i18n, { useI18n } from '@tap/i18n'
 import { openUrl } from '@tap/shared'
 import dayjs from 'dayjs'
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep, isArray, isString } from 'lodash-es'
 import { inject, onBeforeUnmount, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { DatabaseIcon } from '../../components/DatabaseIcon'
 import StatusTag from '../../components/StatusTag.vue'
 import PermissionsDialog from './PermissionsDialog.vue'
-import { getConnectionIcon as getConnectionIconUtil } from './util'
 import type Test from './Test.vue'
 
 interface Connection {
@@ -91,6 +97,7 @@ const emit = defineEmits<{
 
 const router = useRouter()
 const checkAgent = inject('checkAgent') as (cb?: () => void) => void
+const { t } = useI18n()
 
 const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 const visible = ref(false)
@@ -99,13 +106,7 @@ const databaseLogInfoTimer = ref<ReturnType<typeof setTimeout> | null>(null)
 const loading = ref(false)
 const showProgress = ref(false)
 const progress = ref(0)
-const connection = reactive<Connection>({
-  btnLoading: {
-    deploy: false,
-    stop: false,
-    delete: false,
-  },
-} as Connection)
+const connection = ref<Connection>({} as Connection)
 
 const list = ref<ListItem[]>([])
 const mqType = {
@@ -228,7 +229,7 @@ const transformData = (row: Connection) => {
   if (row.config.uri && row.config.isUri !== false) {
     row.uri = row.config.uri
   }
-  row.heartbeatTable = connection.heartbeatTable
+  // row.heartbeatTable = connection.heartbeatTable
 
   if (row.loadFieldsStatus === 'loading') {
     showProgress.value = true
@@ -241,13 +242,80 @@ const transformData = (row: Connection) => {
   return row
 }
 
+const MonitorApiSchemaMap = reactive({})
+
+const monitorApiList = ref<any[]>([])
+const monitorApiButtonList = ref<any[]>([])
+
+const loadMonitorApiSchema = async () => {
+  const res = await databaseTypesApi.pdkHash(connection.value.pdkHash)
+
+  MonitorApiSchemaMap[connection.value.pdkHash] = res.properties.monitorAPI
+
+  return res.properties.monitorAPI
+}
+
+function sortSchemaKeysByIndex<
+  T extends Record<string, { 'x-index'?: number }>,
+>(schema: T): (keyof T)[] {
+  return Object.keys(schema).sort((a, b) => {
+    const aIndex = schema[a]?.['x-index']
+    const bIndex = schema[b]?.['x-index']
+
+    if (aIndex === undefined && bIndex === undefined) return 0
+    if (aIndex === undefined) return 1
+    if (bIndex === undefined) return -1
+    return aIndex - bIndex
+  })
+}
+
+const initMonitorApi = async () => {
+  const { monitorAPI } = connection.value
+  if (monitorAPI) {
+    const schema: Record<string, { title: string; 'x-index'?: number }> =
+      MonitorApiSchemaMap[connection.value.pdkHash] ||
+      (await loadMonitorApiSchema())
+
+    // 基于 x-index 排序 schema 的 keys
+    const sortedKeys = sortSchemaKeysByIndex(schema)
+
+    const list = []
+    const buttonList = []
+
+    for (const key of sortedKeys) {
+      const item = schema[key]
+
+      if (item.type === 'button') {
+        buttonList.push({
+          ...item,
+        })
+      } else {
+        list.push({
+          title: schema[key]?.title || '',
+          value: monitorAPI[key],
+        })
+      }
+    }
+
+    monitorApiList.value = list
+    monitorApiButtonList.value = buttonList
+  } else {
+    monitorApiList.value = []
+    monitorApiButtonList.value = []
+  }
+}
+
 const open = async (row: Connection) => {
   visible.value = true
-  Object.assign(connection, transformData(row))
-  connection.last_updated = dayjs(row.last_updated).format(
+  connection.value = cloneDeep(transformData(row))
+  connection.value.last_updated = dayjs(row.last_updated).format(
     'YYYY-MM-DD HH:mm:ss',
   )
+
   await loadList(row)
+
+  initMonitorApi()
+
   if (isDaas) {
     await loadPermissions(row.id)
   }
@@ -289,26 +357,24 @@ const edit = async () => {
 
 const beforeTest = () => {
   checkAgent(() => {
-    connectionsApi
-      .updateById(connection.id, {
-        status: 'testing',
-      })
-      .then(() => {
-        testRef.value?.start(true)
-      })
+    updateConnectionById(connection.value.id, {
+      status: 'testing',
+    }).then(() => {
+      testRef.value?.start(true)
+    })
   })
 }
 
 const loadSchema = () => {
   showProgress.value = true
   progress.value = 0
-  emit('loadSchema', connection)
+  emit('loadSchema', connection.value)
 }
 
 const loadList = async (row: Connection = {} as Connection) => {
   const heartbeatTable = await loadHeartbeatTable(row)
 
-  connection.heartbeatTable = heartbeatTable?.[0]
+  connection.value.heartbeatTable = heartbeatTable?.[0]
 
   if (row.uri) {
     list.value = [
@@ -326,7 +392,7 @@ const loadList = async (row: Connection = {} as Connection) => {
               ],
             },
           ]),
-      connection.heartbeatTable
+      connection.value.heartbeatTable
         ? {
             icon: 'link',
             items: [
@@ -343,7 +409,7 @@ const loadList = async (row: Connection = {} as Connection) => {
                   const routeUrl = router.resolve({
                     name: 'HeartbeatMonitor',
                     params: {
-                      id: connection.heartbeatTable,
+                      id: connection.value.heartbeatTable,
                     },
                   })
                   openUrl(routeUrl.href)
@@ -394,7 +460,7 @@ const loadList = async (row: Connection = {} as Connection) => {
               ],
             },
           ]),
-      connection.heartbeatTable
+      connection.value.heartbeatTable
         ? {
             icon: 'link',
             items: [
@@ -411,7 +477,7 @@ const loadList = async (row: Connection = {} as Connection) => {
                   const routeUrl = router.resolve({
                     name: 'HeartbeatMonitor',
                     params: {
-                      id: connection.heartbeatTable,
+                      id: connection.value.heartbeatTable,
                     },
                   })
                   openUrl(routeUrl.href)
@@ -458,19 +524,12 @@ const loadList = async (row: Connection = {} as Connection) => {
   await getDatabaseLogInfo(row)
 }
 
-const getConnectionIcon = () => {
-  if (!connection) {
-    return
-  }
-  return getConnectionIconUtil(connection?.pdkHash)
-}
-
 const sync = (list: Connection[]) => {
   if (!visible.value) return
-  const result = list.find((item) => item.id === connection.id)
+  const result = list.find((item) => item.id === connection.value.id)
   if (!result) return
   formData.value = cloneDeep(result)
-  Object.assign(connection, transformData(result))
+  connection.value = cloneDeep(transformData(result))
 }
 
 const getSourceFrom = (row: Connection = {} as Connection) => {
@@ -490,12 +549,14 @@ const getSourceFrom = (row: Connection = {} as Connection) => {
 }
 
 const isFileSource = () => {
-  return ['CSV', 'EXCEL', 'JSON', 'XML'].includes(connection?.database_type)
+  return ['CSV', 'EXCEL', 'JSON', 'XML'].includes(
+    connection.value?.database_type,
+  )
 }
 
 const loadHeartbeatTable = async (row: Connection = {} as Connection) => {
   if (!row.heartbeatEnable) return []
-  return await connectionsApi.heartbeatTask(row.id)
+  return await getHeartbeatTaskByConnectionId(row.id)
 }
 
 const handleClick = (temp: { action?: () => void }) => {
@@ -571,6 +632,44 @@ const getDatabaseLogInfo = async (row: Connection = {} as Connection) => {
     }, 60000)
   } catch (error) {
     console.log(error)
+  }
+}
+
+function renderArgs(template: any, data: any) {
+  return isString(template)
+    ? template.replaceAll(/\{\{\s*(\w+)\s*\}\}/g, (_, key) => data[key] ?? '')
+    : template
+}
+
+const handleMonitorApiClick = async (item: any) => {
+  item.loading = true
+
+  const rootData = {
+    connectionId: connection.value.id,
+  }
+
+  try {
+    let { args } = item
+
+    if (isString(args)) {
+      args = JSON.parse(args)
+    }
+
+    if (isArray(args)) {
+      args = args.map((t) => renderArgs(t, rootData))
+    }
+
+    await proxyApi.call({
+      className: item.className,
+      method: item.method,
+      args,
+    })
+
+    ElMessage.success(t('public_message_operation_success'))
+  } catch (error) {
+    ElMessage.error(`${t('public_message_operation_failed')}: ${error}`)
+  } finally {
+    item.loading = false
   }
 }
 
@@ -669,7 +768,7 @@ defineExpose({
             class="box-line"
           >
             <div class="box-line__label flex justify-content-between">
-              <span>{{ temp.label }}:</span>
+              <span>{{ temp.label }}</span>
               <el-button
                 v-if="temp.labelAction"
                 text
@@ -754,6 +853,48 @@ defineExpose({
           </div>
         </div>
       </div>
+
+      <template v-if="connection.monitorAPI">
+        <el-divider class="my-4" />
+        <div class="font-color-dark lh-6 mb-2">
+          {{ $t('packages_business_data_source_monitor') }}
+        </div>
+        <div
+          v-for="(item, index) in monitorApiList"
+          :key="index"
+          class="container-item flex"
+        >
+          <div class="pt-2">
+            <VIcon>record</VIcon>
+          </div>
+          <div class="flex-fill ml-4">
+            <div class="box-line">
+              <div class="box-line__label flex justify-content-between">
+                <span>{{ item.title }}</span>
+              </div>
+              <div class="box-line__value ellipsis">{{ item.value }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="monitorApiButtonList.length" class="container-item flex">
+          <div class="pt-4">
+            <VIcon class="align-top">additional-string</VIcon>
+          </div>
+          <div class="flex-fill ml-4">
+            <div class="box-line flex flex-wrap gap-3" style="--btn-space: 0px">
+              <el-button
+                v-for="(item, index) in monitorApiButtonList"
+                :key="index"
+                :loading="item.loading"
+                type="primary"
+                @click="handleMonitorApiClick(item)"
+                >{{ item.title }}</el-button
+              >
+            </div>
+          </div>
+        </div>
+      </template>
     </div>
     <PermissionsDialog ref="permissionsDialogRef" />
   </Drawer>

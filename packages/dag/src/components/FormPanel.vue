@@ -8,7 +8,7 @@ import {
 } from '@formily/core'
 import { Path } from '@formily/path'
 import { toJS } from '@formily/reactive'
-import { alarmApi } from '@tap/api'
+import { updateTaskAlarm } from '@tap/api'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 
 import { deepEqual } from '@tap/shared'
@@ -322,7 +322,7 @@ export default {
         properties: JSON.parse(JSON.stringify(formValues)),
       })
 
-      alarmApi.updateTaskAlarm({
+      updateTaskAlarm({
         taskId: this.scope.$settings.id,
         nodeId: formValues.id,
         alarmRules: formValues.alarmRules,

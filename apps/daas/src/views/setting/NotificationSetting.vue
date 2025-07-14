@@ -1,5 +1,5 @@
 <script>
-import { settingsApi } from '@tap/api'
+import { findOneSetting } from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { notificationMAP } from '../notification/tyepMap'
 
@@ -21,8 +21,7 @@ export default {
   methods: {
     getData() {
       this.loading = true
-      settingsApi
-        .findOne('76')
+      findOneSetting('76')
         .then((data) => {
           const value = JSON.parse(data?.value || '{}')
           this.runNotification = value.runNotification

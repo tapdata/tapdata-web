@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { EditPen, InfoFilled } from '@element-plus/icons-vue'
 import {
-  applicationApi,
-  connectionsApi,
+  createApiModule,
   databaseTypesApi,
+  fetchApiServerToken,
+  listAllConnections,
   metadataInstancesApi,
-  modulesApi,
   roleApi,
+  updateApiModule,
+  updateApiModulePermissions,
+  updateApiModuleTags,
   workerApi,
 } from '@tap/api'
 import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
@@ -98,6 +101,7 @@ interface Field {
 }
 
 // Constants
+const isHa = import.meta.env.MODE === 'ha'
 const typeOptions = ['number', 'string', 'boolean', 'date', 'datetime', 'time']
 const operatorOptions = ['>', '==', '<', '>=', '<=', '!=', 'like']
 const conditionOptions = ['null', 'and', 'or']
@@ -111,6 +115,7 @@ interface Props {
   tag?: string | Component
   inDialog?: boolean
   disableApp?: boolean
+  readonly?: boolean
   params?: Record<string, any>
 }
 
@@ -118,6 +123,7 @@ const props = withDefaults(defineProps<Props>(), {
   tag: Drawer,
   inDialog: false,
   disableApp: false,
+  readonly: false,
 })
 
 const emit = defineEmits(['visible', 'update:loading', 'save', 'update'])
@@ -464,7 +470,7 @@ const getConnectionOptions = async () => {
   }
 
   connectionOptions.value = null
-  const data = await connectionsApi.listAll(filter).catch(() => {
+  const data = await listAllConnections(filter).catch(() => {
     connectionOptions.value = []
     return []
   })
@@ -536,20 +542,8 @@ const handleFieldsSelection = () => {
 }
 
 const getAPIServerToken = async (callback?: (token: string) => void) => {
-  const clientInfo = await applicationApi.get({
-    filter: JSON.stringify({
-      where: {
-        clientName: 'Data Explorer',
-      },
-    }),
-  })
-  const clientInfoItem = clientInfo?.items?.[0] || {}
-
-  const paramsStr = `grant_type=client_credentials&client_id=${clientInfoItem.id}&client_secret=${clientInfoItem.clientSecret}`
-  const result = await axios.create().post('/oauth/token', paramsStr)
-  const newToken = result?.data?.access_token || ''
-  token.value = newToken
-  callback?.(newToken)
+  token.value = await fetchApiServerToken()
+  callback?.(token.value)
 }
 
 // Methods
@@ -686,7 +680,8 @@ const save = async (type?: boolean) => {
         formData.fields = allFields.value
       }
 
-      const data = await modulesApi[id ? 'patch' : 'post'](formData)
+      const func = id ? updateApiModule : createApiModule
+      const data = await func(formData)
 
       data.connection = connectionId
       data.source = {
@@ -709,9 +704,12 @@ const edit = () => {
   initialFormData = cloneDeep(form.value)
   nextTick(() => {
     data.value.fields.forEach((f: any) => {
-      fieldTable.value?.toggleRowSelection(
-        allFields.value.find((it: any) => it.id === f.id),
-      )
+      const field = allFields.value.find((it: any) => it.id === f.id)
+      if (field) {
+        fieldTable.value?.toggleRowSelection(field)
+      } else {
+        console.log('field not found', f.field_name, f)
+      }
     })
   })
 }
@@ -929,14 +927,14 @@ const handleChangePermissionsAndSave = async () => {
     ],
   }
 
-  await modulesApi.patch(formData)
+  await updateApiModule(formData)
   ElMessage.success(i18n.t('public_message_operation_success'))
 }
 
 const handleUpdateRole = async () => {
   if (!data.value.id) return
 
-  await modulesApi.updatePermissions({
+  await updateApiModulePermissions({
     moduleId: data.value.id,
     acl: form.value.acl,
   })
@@ -948,7 +946,7 @@ const handleUpdateApp = async () => {
   if (!data.value.id) return
 
   const { appLabel, appValue } = form.value
-  await modulesApi.updateTags({
+  await updateApiModuleTags({
     moduleId: data.value.id,
     listtags: [
       {
@@ -1062,14 +1060,15 @@ const openEdit = () => {
       </div>
     </template>
 
-    <div class="flex flex-column overflow-hidden h-100">
+    <div class="flex flex-column">
       <!-- 顶部 标题 Tab -->
       <div
         v-if="!inDialog"
-        class="flex position-relative"
+        class="flex position-sticky top-0 bg-white z-10"
         style="line-height: 48px"
       >
         <ElTabs
+          v-if="!readonly"
           ref="tabs"
           v-model="tab"
           class="data-server__tabs flex-1"
@@ -1155,6 +1154,7 @@ const openEdit = () => {
                 v-model="form.acl"
                 multiple
                 class="w-100"
+                :disabled="readonly"
                 @change="handleUpdateRole"
               >
                 <ElOption
@@ -1175,7 +1175,7 @@ const openEdit = () => {
               <ListSelect
                 v-model:value="form.appValue"
                 v-model:label="form.appLabel"
-                :disabled="disableApp || apiApplication"
+                :disabled="disableApp || readonly"
                 class="w-100"
                 @change="handleUpdateApp"
               />
@@ -1396,7 +1396,7 @@ const openEdit = () => {
               >
                 <ElInput v-model="form.basePath" :disabled="!isEdit" />
               </ElFormItem>
-              <ElFormItem class="flex-1" prop="limit">
+              <ElFormItem v-if="isHa" class="flex-1" prop="limit">
                 <template #label>
                   <el-text>
                     <span>{{

@@ -221,7 +221,7 @@ export default {
   packages_dag_components_timeselect_renwuquanzhouqi: '任務全週期',
   packages_dag_components_timeselect_incremental_phase: '增量階段',
   packages_dag_components_timeselect_zuijintian: '最近1天',
-  packages_dag_components_timeselect_zuixinxiaoshi: '最新1小時',
+  packages_dag_components_timeselect_zuixinxiaoshi: '最近1小時',
   packages_dag_components_timeselect_zuijinfenzhong: '最近5分鐘',
   packages_dag_components_timeselect_zhouqi: '週期',
   packages_dag_components_timeselect_jieshuriqi: '結束日期',
@@ -841,6 +841,7 @@ export default {
   packages_dag_noPkSyncMode: '無主鍵表同步方式',
   packages_dag_noPkSyncMode_ADD_HASH: '新增哈希列',
   packages_dag_noPkSyncMode_ALL_COLUMNS: '全字段索引',
+  packages_dag_noPKVirtualFieldName: '哈希列字段名',
   packages_dag_stream_offset: '精確位置',
   packages_dag_join_keys_empty: '{tableName} 的關聯條件不能為空',
   packages_dag_join_keys_field_empty:
@@ -920,8 +921,13 @@ export default {
   packages_dag_auto_repair_disabled_tips: '請先選擇至少一種校驗方式',
   packages_dag_inspect_operation_record: '操作記錄',
   packages_dag_task_inspect_difference_alarm: '任務校驗差異告警',
+  packages_dag_task_retry_alert: '任務重試告警',
+  packages_dag_task_retry_alert_desc: '連續重試超過{count}次時進行告警',
   packages_dag_task_inspect_enable_fail_1:
     '數據校驗開啟失敗：源節點和目標節點只能有一個',
   packages_dag_task_inspect_enable_fail_2:
     '數據校驗開啟失敗：源節點和目標節點必須同時具備高級查詢能力',
+  packages_dag_table_selector_all_tables_selected: '您已選擇所有表進行複製',
+  packages_dag_syncForeignKeyEnable: '同步外鍵',
+  packages_dag_check_no_pk_table: '校驗無主鍵表',
 }

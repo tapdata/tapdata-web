@@ -1,5 +1,11 @@
 <script>
-import { applicationApi, roleApi } from '@tap/api'
+import {
+  createApiClient,
+  deleteApiClient,
+  fetchApiClients,
+  roleApi,
+  updateApiClient,
+} from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
 import { FilterBar } from '@tap/component/src/filter-bar'
@@ -88,7 +94,7 @@ export default {
           if (!resFlag) {
             return
           }
-          applicationApi.delete(item.id).then(() => {
+          deleteApiClient(item.id).then(() => {
             this.$message.success(this.$t('public_message_delete_ok'))
             this.table.fetch()
           })
@@ -97,7 +103,7 @@ export default {
     },
     // 保存
     createApplication() {
-      const method = this.createForm.id ? 'patch' : 'post'
+      const method = this.createForm.id ? updateApiClient : createApiClient
       const params = cloneDeep(this.createForm)
       params.name = this.createForm.clientName
       params.tokenType = 'jwt'
@@ -108,7 +114,7 @@ export default {
 
       this.$refs.form.validate((valid) => {
         if (valid) {
-          applicationApi[method](params).then(() => {
+          method(params).then(() => {
             this.table.fetch()
             this.createDialogVisible = false
             this.$message.success(this.$t('public_message_save_ok'))
@@ -143,22 +149,18 @@ export default {
         skip: (current - 1) * size,
         where,
       }
-      return applicationApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          return {
-            total: data?.total || 0,
-            data:
-              data?.items.map((item) => {
-                item.redirectUrisStr = item.redirectUris
-                  ? item.redirectUris.join(',')
-                  : ''
-                return item
-              }) || [],
-          }
-        })
+      return fetchApiClients(filter).then((data) => {
+        return {
+          total: data?.total || 0,
+          data:
+            data?.items.map((item) => {
+              item.redirectUrisStr = item.redirectUris
+                ? item.redirectUris.join(',')
+                : ''
+              return item
+            }) || [],
+        }
+      })
     },
     // 获取角色
     getRoles() {
@@ -264,19 +266,24 @@ export default {
         prop="redirectUrisStr"
         min-width="140"
       />
-      <el-table-column
-        :label="$t('application_header_scopes')"
-        prop="scopeNames"
-        min-width="160"
-        max-width="300"
-      >
+      <el-table-column prop="scopeNames" min-width="160" max-width="300">
+        <template #header>
+          <div class="flex align-center gap-1">
+            <VIcon size="16"> ShieldKeyhole </VIcon>
+            <span>{{ $t('application_header_scopes') }}</span>
+          </div>
+        </template>
         <template #default="scope">
-          <span
-            v-for="item in scope.row.scopeNames"
-            :key="item"
-            class="table-span"
-            >{{ item }}</span
-          >
+          <div class="flex flex-wrap gap-1">
+            <el-tag
+              v-for="item in scope.row.scopeNames"
+              :key="item"
+              type="info"
+              size="small"
+              class="table-span"
+              >{{ item }}</el-tag
+            >
+          </div>
         </template>
       </el-table-column>
       <el-table-column
@@ -293,7 +300,7 @@ export default {
           >
             {{ $t('public_button_edit') }}
           </ElButton>
-          <template v-if="scope.row.clientName !== 'Data Explorer'">
+          <template v-if="scope.row.id !== '5c0e750b7a5cd42464a5099d'">
             <ElDivider class="mx-1" direction="vertical" />
             <ElButton
               v-readonlybtn="'API_clients_amangement'"

@@ -1,5 +1,5 @@
 <script>
-import { connectionsApi, proxyApi, taskApi } from '@tap/api'
+import { getConnectionNoSchema, proxyApi, taskApi } from '@tap/api'
 
 import SkipError from '@tap/business/src/views/task/SkipError.vue'
 import { VEmpty } from '@tap/component/src/base/v-empty'
@@ -620,7 +620,7 @@ export default {
       if (!addNode) return
 
       try {
-        const con = await connectionsApi.get(connectionId)
+        const con = await getConnectionNoSchema(connectionId)
         this.handleAddNodeToPos(
           [-300, 300],
           this.$refs.leftSidebar.getNodeProps(con, tableName),
@@ -699,7 +699,7 @@ export default {
       this.setTaskId(this.$route.params.id)
 
       if (connectionId) {
-        connection = await connectionsApi.get(connectionId)
+        connection = await getConnectionNoSchema(connectionId)
       }
 
       if (by === 'transformation-materialized') {
