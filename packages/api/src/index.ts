@@ -1,5 +1,3 @@
-import ApiCalls from './ApiCalls'
-
 import ApiMonitor from './ApiMonitor'
 
 import ApiServer from './ApiServer'
@@ -150,8 +148,6 @@ const roleApi = new Role()
 
 const workerApi = new Worker()
 
-const apiCallsApi = new ApiCalls()
-
 const applicationApi = new Application()
 
 const sharedCacheApi = new SharedCache()
@@ -209,7 +205,6 @@ const connectorRecordApi = new ConnectorRecord()
 const webhookApi = new Webhook()
 
 export {
-  apiCallsApi,
   apiMonitorApi,
   apiServerApi,
   applicationApi,
