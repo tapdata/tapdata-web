@@ -40,3 +40,10 @@ export function fetchApiCalls(filter?: Filter) {
 export function fetchApiCall(id: string) {
   return requestClient.get(`${BASE_URL}/${id}`)
 }
+
+/**
+ * 获取API客户端名称列表 - 用于筛选条件
+ */
+export function fetchApiClientNames() {
+  return requestClient.get(`${BASE_URL}/findClients`)
+}

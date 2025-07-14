@@ -1,5 +1,3 @@
-import ApiMonitor from './ApiMonitor'
-
 import ApiServer from './ApiServer'
 
 import Application from './Application'
@@ -140,8 +138,6 @@ const dataRuleApi = new DataRule()
 
 const usersApi = new Users()
 
-const apiMonitorApi = new ApiMonitor()
-
 const apiServerApi = new ApiServer()
 
 const roleApi = new Role()
@@ -205,7 +201,6 @@ const connectorRecordApi = new ConnectorRecord()
 const webhookApi = new Webhook()
 
 export {
-  apiMonitorApi,
   apiServerApi,
   applicationApi,
   connectionsApi,
