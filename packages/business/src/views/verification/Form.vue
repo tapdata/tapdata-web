@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { Check } from '@element-plus/icons-vue'
-import { databaseTypesApi, inspectApi, taskApi } from '@tap/api'
+import { databaseTypesApi, inspectApi, taskApi, useRequest } from '@tap/api'
 import { Modal } from '@tap/component/src/modal'
-import InfiniteSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 import i18n from '@tap/i18n'
 import Time from '@tap/shared/src/time.js'
 import { cloneDeep } from 'lodash-es'
@@ -20,6 +19,8 @@ import PageContainer from '../../components/PageContainer.vue'
 import ConditionBox from './components/ConditionBox.vue'
 import { TABLE_PARAMS } from './components/const.js'
 import { inspectMethod as inspectMethodMap } from './const.js'
+
+import type { SelectV2Instance } from 'element-plus'
 
 interface Timing {
   intervals: number
@@ -88,7 +89,7 @@ const defaultTime = ref([
 ])
 const conditionList = ref([])
 
-const taskSelect = useTemplateRef('taskSelect')
+const taskSelect = useTemplateRef<SelectV2Instance>('taskSelect')
 
 const form = reactive({
   flowId: '',
@@ -241,40 +242,54 @@ onMounted(() => {
   }
 })
 
-const getTaskOptions = async (filter: any) => {
-  let data
+const {
+  data: taskOptions,
+  loading: taskOptionsLoading,
+  run: runFetchTaskOptions,
+} = useRequest<[]>(
+  () => {
+    return inspectApi.getTaskList()
+  },
+  {
+    manual: true,
+    initialData: [],
+  },
+)
 
-  if (filter.where?.id) {
-    return {
-      items: [
-        {
-          id: filter.where.id,
-          name: taskName.value,
-        },
-      ],
-      total: 1,
-    }
-  }
+// const getTaskOptions = async (filter: any) => {
+//   let data
 
-  if (!taskOptionCache.value) {
-    taskOptionCache.value = await inspectApi.getTaskList()
-  }
+//   if (filter.where?.id) {
+//     return {
+//       items: [
+//         {
+//           id: filter.where.id,
+//           name: taskName.value,
+//         },
+//       ],
+//       total: 1,
+//     }
+//   }
 
-  data = taskOptionCache.value || []
+//   if (!taskOptionCache.value) {
+//     taskOptionCache.value = await inspectApi.getTaskList()
+//   }
 
-  let query = filter?.where?.name
-  query = typeof query === 'object' ? query.like : query
-  if (query) {
-    query = query.toLowerCase()
-    const reg = new RegExp(query, 'i')
-    data = data.filter((item) => reg.test(item.name))
-  }
+//   data = taskOptionCache.value || []
 
-  return {
-    items: data,
-    total: data.length,
-  }
-}
+//   let query = filter?.where?.name
+//   query = typeof query === 'object' ? query.like : query
+//   if (query) {
+//     query = query.toLowerCase()
+//     const reg = new RegExp(query, 'i')
+//     data = data.filter((item) => reg.test(item.name))
+//   }
+
+//   return {
+//     items: data,
+//     total: data.length,
+//   }
+// }
 
 const getData = async (id: string) => {
   try {
@@ -564,11 +579,11 @@ const setVerifyName = () => {
   }
 }
 
-const handleSelectTask = (task: any) => {
+const handleSelectTask = (taskId: any) => {
   conditionList.value = []
-  taskName.value = task.name
+  taskName.value = taskSelect.value!.selectedLabel as string
   setVerifyName()
-  getFlowStages(task.id, conditionBox.value.autoAddTable)
+  getFlowStages(taskId, conditionBox.value.autoAddTable)
 }
 
 const ConnectorMap = ref({})
@@ -591,8 +606,8 @@ const fetchDatabaseTypes = async () => {
 }
 
 const openTaskSelect = () => {
-  taskSelect.value.focus()
-  taskSelect.value.$el.querySelector('input').click()
+  taskSelect.value?.focus()
+  taskSelect.value?.$el.querySelector('input').click()
 }
 
 fetchDatabaseTypes()
@@ -624,7 +639,26 @@ provide('ConnectorMap', ConnectorMap)
           prop="flowId"
           :label="`${$t('packages_business_verification_chooseJob')}`"
         >
-          <InfiniteSelect
+          <el-select-v2
+            ref="taskSelect"
+            v-model="form.flowId"
+            class="form-input"
+            filterable
+            :options="taskOptions"
+            :loading="taskOptionsLoading"
+            :props="{
+              label: 'name',
+              value: 'id',
+            }"
+            @change="handleSelectTask"
+            @visible-change="runFetchTaskOptions"
+          >
+            <template #label="{ label, value }">
+              <span>{{ taskName }}</span>
+            </template>
+          </el-select-v2>
+
+          <!-- <InfiniteSelect
             ref="taskSelect"
             v-model="form.flowId"
             class="form-input"
@@ -636,7 +670,7 @@ provide('ConnectorMap', ConnectorMap)
             item-query="name"
             :page-size="10000000000"
             @option-select="handleSelectTask"
-          />
+          /> -->
         </ElFormItem>
 
         <ElFormItem

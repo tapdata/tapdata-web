@@ -2137,14 +2137,14 @@ watch(conditionList, () => {
 
       <div
         v-if="conditionList.length === 0"
-        class="bg-gray-50 p-4 rounded-xl flex flex-column justify-center align-center gap-2"
+        class="bg-gray-50 p-6 rounded-xl flex flex-column justify-center align-center gap-2"
       >
         <div class="flex rounded-pill bg-gray-100 p-3">
           <VIcon :size="24" color="#9ca3af">database</VIcon>
         </div>
 
         <template v-if="formData.taskMode === 'pipeline'">
-          <div class="text-center font-color-light">
+          <div class="text-center font-color-light mb-2">
             {{
               taskId
                 ? $t('packages_business_verification_empty_auto_add_table')

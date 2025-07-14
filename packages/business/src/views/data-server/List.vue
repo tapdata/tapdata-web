@@ -39,7 +39,6 @@ import TablePage from '../../components/TablePage.vue'
 import Upload from '../../components/UploadDialog.vue'
 import Delete from '../api-application/Delete.vue'
 import Editor from '../api-application/Editor.vue'
-import DownloadSdkDialog from './DownloadSdkDialog.vue'
 import Drawer from './Drawer.vue'
 
 interface Props {
