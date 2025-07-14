@@ -1,7 +1,3 @@
-import ConnectorRecord from './ConnectorRecord'
-
-import CustomerJobLogs from './CustomerJobLogs'
-
 import CustomNode from './CustomNode'
 
 import DatabaseTypes from './DatabaseTypes'
@@ -148,8 +144,6 @@ const roleMappingsApi = new RoleMappings()
 
 const customNodeApi = new CustomNode()
 
-const customerJobLogsApi = new CustomerJobLogs()
-
 const permissionsApi = new Permissions()
 
 const typeMappingApi = new TypeMapping()
@@ -184,13 +178,9 @@ const lineageApi = new Lineage()
 
 const dataPermissionApi = new DataPermission()
 
-const connectorRecordApi = new ConnectorRecord()
-
 const webhookApi = new Webhook()
 
 export {
-  connectorRecordApi,
-  customerJobLogsApi,
   customNodeApi,
   databaseTypesApi,
   dataFlowInsightsApi,
