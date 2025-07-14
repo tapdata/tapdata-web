@@ -1,5 +1,3 @@
-import CustomNode from './CustomNode'
-
 import DatabaseTypes from './DatabaseTypes'
 
 import DataFlowInsights from './DataFlowInsights'
@@ -142,8 +140,6 @@ const inspectResultsApi = new InspectResults()
 
 const roleMappingsApi = new RoleMappings()
 
-const customNodeApi = new CustomNode()
-
 const permissionsApi = new Permissions()
 
 const typeMappingApi = new TypeMapping()
@@ -181,7 +177,6 @@ const dataPermissionApi = new DataPermission()
 const webhookApi = new Webhook()
 
 export {
-  customNodeApi,
   databaseTypesApi,
   dataFlowInsightsApi,
   dataFlowsApi,
