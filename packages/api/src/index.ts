@@ -1,9 +1,3 @@
-import ApiServer from './ApiServer'
-
-import Application from './Application'
-
-import Connections from './Connections'
-
 import ConnectorRecord from './ConnectorRecord'
 
 import CustomerJobLogs from './CustomerJobLogs'
@@ -100,8 +94,6 @@ import Webhook from './Webhook'
 
 import Worker from './Workers'
 
-const connectionsApi = new Connections()
-
 const databaseTypesApi = new DatabaseTypes()
 
 const logcollectorApi = new Logcollector()
@@ -138,13 +130,9 @@ const dataRuleApi = new DataRule()
 
 const usersApi = new Users()
 
-const apiServerApi = new ApiServer()
-
 const roleApi = new Role()
 
 const workerApi = new Worker()
-
-const applicationApi = new Application()
 
 const sharedCacheApi = new SharedCache()
 
@@ -201,9 +189,6 @@ const connectorRecordApi = new ConnectorRecord()
 const webhookApi = new Webhook()
 
 export {
-  apiServerApi,
-  applicationApi,
-  connectionsApi,
   connectorRecordApi,
   customerJobLogsApi,
   customNodeApi,

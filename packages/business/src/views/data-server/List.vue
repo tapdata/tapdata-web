@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {
-  apiServerApi,
   batchUpdateApiModules,
   batchUpdateApiModuleTags,
   databaseTypesApi,
@@ -8,6 +7,7 @@ import {
   exportApiDocumentation,
   exportApiModules,
   fetchApiModules,
+  fetchApiServers,
   fetchApps,
   metadataInstancesApi,
   updateApiModule,
@@ -312,7 +312,7 @@ const getApiServerHost = async () => {
   const showError = () => {
     ElMessage.error(t('packages_business_data_server_list_huoqufuwuyu'))
   }
-  const data = await apiServerApi.get().catch(() => {
+  const data = await fetchApiServers().catch(() => {
     showError()
   })
   apiServerHost.value = (data as any)?.items?.[0]?.clientURI || ''
@@ -837,8 +837,6 @@ defineExpose({
     />
     <!-- 导入 -->
     <Upload ref="upload" type="Modules" :show-tag="false" @success="fetch(1)" />
-
-    <!-- <DownloadSdkDialog v-model="downloadSdkDialogVisible" /> -->
   </PageContainer>
 </template>
 
