@@ -220,6 +220,7 @@ export const FieldSelect = defineComponent({
             modelValue={props.modelValue}
             {...newAttrs}
             props={fieldNames.value}
+            fit-input-width={false}
             popper-class="field-select-popper"
             options={fieldOptions.value}
             dataSource={fieldOptions.value}
