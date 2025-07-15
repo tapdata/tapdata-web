@@ -2,7 +2,7 @@
 import { Check } from '@element-plus/icons-vue'
 import { databaseTypesApi, inspectApi, taskApi, useRequest } from '@tap/api'
 import { Modal } from '@tap/component/src/modal'
-import i18n from '@tap/i18n'
+import { useI18n } from '@tap/i18n'
 import Time from '@tap/shared/src/time.js'
 import { cloneDeep } from 'lodash-es'
 import {
@@ -78,6 +78,7 @@ interface Task {
 
 const router = useRouter()
 const route = useRoute()
+const { t } = useI18n()
 
 const loading = ref(false)
 const timeUnitOptions = ['second', 'minute', 'hour', 'day', 'week', 'month']
@@ -90,6 +91,66 @@ const defaultTime = ref([
 const conditionList = ref([])
 
 const taskSelect = useTemplateRef<SelectV2Instance>('taskSelect')
+
+const SyncTypeMap = {
+  migrate: t('public_task_type_migrate'),
+  sync: t('public_task_type_sync'),
+}
+
+const TaskTypeMap = {
+  initial_sync: t('public_task_type_initial_sync'),
+  cdc: t('public_task_type_cdc'),
+  'initial_sync+cdc': t('public_task_type_initial_sync_and_cdc'),
+}
+
+const STATUS_MAP = {
+  edit: {
+    text: t('public_status_edit'),
+    type: 'info',
+  },
+  wait_start: {
+    text: t('public_status_wait_run'),
+  },
+  starting: {
+    text: t('public_status_starting'),
+    in: ['preparing', 'scheduling', 'wait_run'],
+  },
+  running: {
+    text: t('public_status_running'),
+    type: 'primary',
+  },
+  complete: {
+    text: t('public_status_finished'),
+    type: 'success',
+  },
+  stopping: {
+    text: t('public_status_stopping'),
+    type: '',
+  },
+  stop: {
+    text: t('public_status_stop'),
+    type: 'info',
+  },
+  error: {
+    text: t('public_status_error'),
+    type: 'danger',
+  },
+  renewing: {
+    text: t('public_status_renewing'),
+  },
+  renew_failed: {
+    text: t('public_status_renew_failed'),
+  },
+  deleting: {
+    text: t('public_status_deleting'),
+  },
+  delete_failed: {
+    text: t('public_status_delete_failed'),
+  },
+  deleted: {
+    text: t('public_status_deleted'),
+  },
+}
 
 const form = reactive({
   flowId: '',
@@ -163,21 +224,21 @@ const rules = ref({
   flowId: [
     {
       validator: requiredValidator(
-        i18n.t('packages_business_verification_tasksDataFlow'),
+        t('packages_business_verification_tasksDataFlow'),
       ),
     },
   ],
   name: [
     {
       validator: requiredValidator(
-        i18n.t('packages_business_verification_tasksJobName'),
+        t('packages_business_verification_tasksJobName'),
       ),
     },
   ],
   'timing.start': [
     {
       validator: requiredValidator(
-        i18n.t('packages_business_verification_tasksTime'),
+        t('packages_business_verification_tasksTime'),
         checkMode,
       ),
     },
@@ -185,7 +246,7 @@ const rules = ref({
   'timing.intervals': [
     {
       validator: requiredValidator(
-        i18n.t('packages_business_verification_tasksVerifyInterval'),
+        t('packages_business_verification_tasksVerifyInterval'),
         checkMode,
       ),
     },
@@ -193,7 +254,7 @@ const rules = ref({
   cdcBeginDate: [
     {
       validator: requiredValidator(
-        i18n.t('packages_business_verification_form_qingshurukaishi'),
+        t('packages_business_verification_form_qingshurukaishi'),
         () => {
           return form.inspectMethod === 'cdcCount'
         },
@@ -205,9 +266,9 @@ const rules = ref({
 const edges = ref([])
 const allStages = ref([])
 const typTipMap = ref({
-  row_count: i18n.t('packages_business_verification_fastCountTip'),
-  field: i18n.t('packages_business_verification_contentVerifyTip'),
-  jointField: i18n.t('packages_business_verification_jointFieldTip'),
+  row_count: t('packages_business_verification_fastCountTip'),
+  field: t('packages_business_verification_contentVerifyTip'),
+  jointField: t('packages_business_verification_jointFieldTip'),
 })
 const jointErrorMessage = ref('')
 const errorMessageLevel = ref('')
@@ -414,8 +475,8 @@ const timingChangeHandler = (times: any) => {
 
 const goBack = async () => {
   const confirmed = await Modal.confirm(
-    i18n.t('packages_business_verification_backConfirmTitle'),
-    i18n.t('packages_business_verification_backConfirmMessage'),
+    t('packages_business_verification_backConfirmTitle'),
+    t('packages_business_verification_backConfirmMessage'),
   )
 
   if (confirmed) {
@@ -444,7 +505,7 @@ const save = async (saveOnly = false) => {
 
       if (!tasks.length) {
         return ElMessage.error(
-          i18n.t('packages_business_verification_tasksVerifyCondition'),
+          t('packages_business_verification_tasksVerifyCondition'),
         )
       }
       const validateMsg = await conditionBox.value.validate()
@@ -547,7 +608,7 @@ const save = async (saveOnly = false) => {
           alarmSettings,
         }),
       )
-      ElMessage.success(i18n.t('public_message_save_ok'))
+      ElMessage.success(t('public_message_save_ok'))
       router.back() // back 保留上个路由的参数
     }
   })
@@ -610,6 +671,17 @@ const openTaskSelect = () => {
   taskSelect.value?.$el.querySelector('input').click()
 }
 
+const handleOpenTask = (task: any) => {
+  window.open(
+    router.resolve({
+      name: task.syncType === 'migrate' ? 'MigrationMonitor' : 'TaskMonitor',
+      params: {
+        id: task.id,
+      },
+    }).href,
+  )
+}
+
 fetchDatabaseTypes()
 
 provide('formData', form)
@@ -644,33 +716,60 @@ provide('ConnectorMap', ConnectorMap)
             v-model="form.flowId"
             class="form-input"
             filterable
+            :item-height="46"
             :options="taskOptions"
             :loading="taskOptionsLoading"
             :props="{
               label: 'name',
               value: 'id',
             }"
+            popper-class="task-option-popper"
             @change="handleSelectTask"
             @visible-change="runFetchTaskOptions"
           >
-            <template #label="{ label, value }">
+            <template #label>
               <span>{{ taskName }}</span>
             </template>
-          </el-select-v2>
+            <template #default="{ item }">
+              <div class="flex align-center lh-base gap-2 task-option-item">
+                <div class="min-w-0">
+                  <div class="flex align-center gap-2">
+                    <span :title="item.name" class="ellipsis">{{
+                      item.name
+                    }}</span>
+                    <el-tag
+                      class="border-0"
+                      :type="STATUS_MAP[item.status].type"
+                      disable-transitions
+                      size="small"
+                      >{{ STATUS_MAP[item.status].text }}</el-tag
+                    >
+                  </div>
+                  <div
+                    v-if="item.syncType"
+                    class="text-disabled fs-8 flex align-center"
+                  >
+                    {{ SyncTypeMap[item.syncType] }}
+                    <el-divider direction="vertical" />
+                    <span>{{ TaskTypeMap[item.type] }}</span>
+                  </div>
+                </div>
 
-          <!-- <InfiniteSelect
-            ref="taskSelect"
-            v-model="form.flowId"
-            class="form-input"
-            lazy
-            :method="getTaskOptions"
-            :current-label="taskName"
-            item-label="name"
-            item-value="id"
-            item-query="name"
-            :page-size="10000000000"
-            @option-select="handleSelectTask"
-          /> -->
+                <el-button
+                  v-if="item.syncType"
+                  text
+                  class="ml-auto task-option-item-button"
+                  @click.stop="handleOpenTask(item)"
+                >
+                  <template #icon>
+                    <el-icon>
+                      <i-mingcute:external-link-line />
+                    </el-icon>
+                  </template>
+                </el-button>
+              </div>
+            </template>
+          </el-select-v2>
         </ElFormItem>
 
         <ElFormItem
@@ -1235,5 +1334,25 @@ provide('ConnectorMap', ConnectorMap)
 
 .content-footer {
   height: 72px;
+}
+</style>
+
+<style>
+.task-option-popper {
+  .el-select-dropdown__item {
+    padding-right: 16px;
+    .task-option-item {
+      height: 46px;
+    }
+    .task-option-item-button {
+      display: none;
+    }
+  }
+
+  .is-hovering {
+    .task-option-item-button {
+      display: flex;
+    }
+  }
 }
 </style>

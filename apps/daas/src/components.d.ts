@@ -107,6 +107,7 @@ declare module 'vue' {
     'IMingcute:arrowRightLine': typeof import('~icons/mingcute/arrow-right-line')['default']
     'IMingcute:checkLine': typeof import('~icons/mingcute/check-line')['default']
     'IMingcute:download2Line': typeof import('~icons/mingcute/download2-line')['default']
+    'IMingcute:externalLinkLine': typeof import('~icons/mingcute/external-link-line')['default']
     'IMingcute:loadingLine': typeof import('~icons/mingcute/loading-line')['default']
     'IMingcute:more1Fill': typeof import('~icons/mingcute/more1-fill')['default']
     'IMingcute:questionLine': typeof import('~icons/mingcute/question-line')['default']
