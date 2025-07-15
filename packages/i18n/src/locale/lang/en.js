@@ -496,4 +496,5 @@ export default {
   public_time_precision_normal: 'Strict Match',
   public_time_precision_round: 'Round',
   public_time_precision_truncate: 'Truncate',
+  public_button_unpublish: 'Unpublish',
 }

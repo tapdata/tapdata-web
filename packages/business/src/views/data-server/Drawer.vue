@@ -168,7 +168,7 @@ const tabs = ref()
 
 // Regex validation patterns
 const PARAM_PATTERN = /^[a-z$_\u4E00-\u9FA5][\w$\u4E00-\u9FA5]*$/i
-const PATH_PATTERN = /^[a-z$_\u4E00-\u9FA5][\w\u4E00-\u9FA5$]*$/i
+const PATH_PATTERN = /^[\w$-]+$/
 
 // Validation rules
 const validateParams = (rule: any, value: string, callback: Function) => {
