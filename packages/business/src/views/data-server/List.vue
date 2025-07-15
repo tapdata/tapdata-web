@@ -76,7 +76,6 @@ const route = useRoute()
 const { t } = useI18n()
 
 // Refs
-const downloadSdkDialogVisible = ref(false)
 const table = ref<InstanceType<typeof TablePage>>()
 const drawer = ref<InstanceType<typeof Drawer>>()
 const upload = ref<InstanceType<typeof Upload>>()
@@ -819,7 +818,7 @@ defineExpose({
               text
               type="primary"
               @click="changeStatus(row)"
-              >{{ $t('public_button_revoke') }}</ElButton
+              >{{ $t('public_button_unpublish') }}</ElButton
             >
             <ElDivider class="mx-1" direction="vertical" />
             <ElButton text type="primary" @click="output(row)">{{

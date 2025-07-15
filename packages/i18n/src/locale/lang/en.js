@@ -468,4 +468,33 @@ export default {
   public_selected_apis: 'Selected {count} APIs',
   public_delete_sdk_message: 'Delete SDK "{sdk}"?',
   public_type_to_confirm: 'Please type {val} to confirm.',
+  public_retry_times: 'Retry Times',
+  public_retry_threshold: 'Retry Threshold',
+  public_diff_check: 'Diff Check',
+  public_one_key_repair: 'Fix Now',
+  public_start_repair: 'Start Repair, Please wait...',
+  public_start_check: 'Start Check, Please wait...',
+  public_repairing: 'Fixing',
+  public_checking: 'Checking',
+  public_start_repair_confirm:
+    'The Fix Now operation is still in progress (started {time}). Do you want to override it and start a new one?',
+  public_start_check_confirm:
+    'The Diff Check operation is still in progress (started {time}). Do you want to override it and start a new one?',
+  public_start_check_confirm_tip:
+    'The Fix Now operation is still in progress (started {time}). Do you want to start the Diff Check?',
+  public_start_repair_confirm_tip:
+    'The Diff Check operation is still in progress (started {time}). Do you want to start the Fix Now?',
+  public_last_operation_not_finished: 'Previous operation not completed',
+  public_op_cdc_check: 'Incremental Check',
+  public_op_auto_recheck: 'Auto Recheck',
+  public_op_auto_recover: 'Auto Fix',
+  public_op_auto_recover_check: 'Auto Fix Failed',
+  public_op_manual_check: 'Manual Check',
+  public_op_manual_recover: 'Manual Fix',
+  public_op_manual_recover_check: 'Manual Fix Failed',
+  public_time_precision: 'Time Precision',
+  public_time_precision_normal: 'Strict Match',
+  public_time_precision_round: 'Round',
+  public_time_precision_truncate: 'Truncate',
+  public_button_unpublish: 'Unpublish',
 }
