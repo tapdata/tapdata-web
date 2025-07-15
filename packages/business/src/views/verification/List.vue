@@ -167,7 +167,13 @@ const handleSortTable = ({
   table.value?.fetch(1)
 }
 
-const getData = ({ page }: { page: { current: number; size: number } }) => {
+const getData = ({
+  page,
+  tags,
+}: {
+  page: { current: number; size: number }
+  tags: string[]
+}) => {
   const { current, size } = page
   let {
     keyword,
@@ -203,6 +209,11 @@ const getData = ({ page }: { page: { current: number; size: number } }) => {
         method = searchParams.value.inspectMethod = ''
       }
       where.inspectMethod = { neq: 'row_count' }
+    }
+  }
+  if (tags && tags.length) {
+    where['listtags.id'] = {
+      in: tags,
     }
   }
   method && (where.inspectMethod = method)
@@ -465,6 +476,40 @@ const onImportDialogClosed = () => {
   importForm.value.type = 'task'
 }
 
+const handleSelectTag = () => {
+  const tagList = []
+  const tagMap = {}
+
+  multipleSelection.value.forEach((row) => {
+    row.listtags?.forEach((item) => {
+      if (!tagMap[item.id]) {
+        tagList.push(item)
+        tagMap[item.id] = true
+      }
+    })
+  })
+
+  return tagList
+}
+
+const handleOperationClassify = async (listtags) => {
+  if (!listtags.length || !multipleSelection.value.length) {
+    return
+  }
+
+  const params = {
+    id: multipleSelection.value.map((r) => r.id),
+    listtags,
+  }
+
+  try {
+    await inspectApi.batchUpdateListtags(params)
+    table.value?.fetch()
+    ElMessage.success(t('public_message_save_ok'))
+  } catch (error) {
+    console.error(error)
+  }
+}
 // Watchers
 watch(
   () => route.query,
@@ -617,8 +662,15 @@ onUnmounted(() => {
       ref="table"
       row-key="id"
       :remote-method="getData"
+      :classify="{
+        authority: 'SYNC_category_management',
+        viewPage: 'inspect',
+        types: ['inspect'],
+        title: $t('public_tags'),
+      }"
       @selection-change="handleSelectionChange"
       @sort-change="handleSortTable"
+      @classify-submit="handleOperationClassify"
     >
       <template #search>
         <div class="search-bar">
@@ -634,10 +686,10 @@ onUnmounted(() => {
         <ElButton @click="handlePermissionsSettings">{{
           $t('packages_business_permissionse_settings_create_quanxianshezhi')
         }}</ElButton>
-        <ElButton
-          v-readonlybtn="'SYNC_category_application'"
-          @click="handleExport"
-        >
+        <ElButton @click="$refs.table.showClassify(handleSelectTag())">
+          <span> {{ $t('public_button_bulk_tag') }}</span>
+        </ElButton>
+        <ElButton @click="handleExport">
           <el-icon><ExportOutlined /></el-icon>
           <span> {{ $t('public_button_export') }}</span>
         </ElButton>
@@ -651,12 +703,14 @@ onUnmounted(() => {
       />
       <el-table-column
         :label="$t('packages_business_verification_task_name')"
-        min-width="250"
+        min-width="260"
         show-overflow-tooltip
       >
         <template #default="scope">
-          <div class="ellipsis">{{ scope.row.name }}</div>
-          <div>
+          <div class="ellipsis">
+            {{ scope.row.name }}
+          </div>
+          <div class="flex align-center gap-1 flex-wrap">
             <el-tag type="info" size="small" disable-transitions
               >{{ getInspectName(scope.row) }} (
               {{
@@ -666,6 +720,16 @@ onUnmounted(() => {
               }}
               )
             </el-tag>
+
+            <template v-if="scope.row.listtags">
+              <span
+                v-for="item in scope.row.listtags"
+                :key="item.id"
+                class="tag ellipsis"
+                :title="item.value"
+                >{{ item.value }}</span
+              ></template
+            >
             <span v-if="!scope.row.enabled" class="font-color-slight"
               >&nbsp;Disabled</span
             >
@@ -919,45 +983,15 @@ onUnmounted(() => {
 </template>
 
 <style lang="scss" scoped>
-.data-verify-wrap {
-  height: 100%;
-  .btn-refresh {
-    padding: 0;
-    height: 32px;
-    line-height: 32px;
-    width: 32px;
-    font-size: 16px;
-  }
-
-  .search-bar {
-    display: flex;
-
-    .item {
-      margin-right: 10px;
-    }
-  }
-
-  .btn + .btn {
-    margin-left: 10px;
-  }
-
-  .btn {
-    &.btn-dropdowm {
-      margin-left: 5px;
-    }
-  }
-
-  .data-verify__status {
-    display: flex;
-    align-items: center;
-  }
-
-  .data-verify__icon {
-    margin-left: -5px;
-    width: 26px;
-    text-align: center;
-    font-size: 14px;
-  }
+.tag {
+  padding: 0 4px;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--color-tag);
+  border: 1px solid var(--bg-tag);
+  border-radius: 6px;
 }
 :deep(.verify-list-error-msg) {
   .el-message-box__message {

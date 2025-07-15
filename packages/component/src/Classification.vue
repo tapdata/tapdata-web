@@ -54,7 +54,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('classification', ['connections', 'migrate', 'sync']),
+    ...mapState('classification', ['connections', 'migrate', 'sync', 'inspect']),
     ...mapGetters('classification', ['stateConnections', 'stateMigrate', 'stateSync']),
 
     comTitle() {
@@ -85,6 +85,9 @@ export default {
         break
       case 'sync':
         this.isExpand = this.sync?.panelFlag
+        break
+      case 'inspect':
+        this.isExpand = this.inspect?.panelFlag
         break
     }
   },
@@ -197,7 +200,7 @@ export default {
             cb && cb(treeData)
           })
       } else {
-        metadataDefinitionsApi.getTags(type).then((data) => {
+        metadataDefinitionsApi.getTags(type || this.viewPage).then((data) => {
           let items = data?.items || []
           this.treeData = this.formatData(items)
           cb && cb(items)
@@ -260,6 +263,7 @@ export default {
         }
         return checkChildren(nodes)
       }
+      return []
     },
     filterNode(value, data) {
       if (!value) return true
@@ -460,6 +464,9 @@ export default {
         case 'sync':
           tableName = 'Task'
           break
+        case 'inspect':
+          tableName = 'Inspect'
+          break
       }
 
       if (!tableName) {
@@ -499,9 +506,9 @@ export default {
 </script>
 
 <template>
-  <div class="classification py-0 px-2 bg-light rounded-xl" v-show="visible">
+  <div class="classification bg-light rounded-xl" v-show="visible">
     <div class="classification-header">
-      <div class="h-8 flex align-center mt-2 gap-1" style="--btn-space: 0">
+      <div class="h-8 flex align-center my-2 p-2 gap-1" style="--btn-space: 0">
         <el-button text @click="toggle">
           <template #icon>
             <VIcon class="rotate-180">expand-list</VIcon>
@@ -521,7 +528,7 @@ export default {
           </template>
         </el-button>
       </div>
-      <div v-if="showSearch" class="my-2">
+      <div v-if="showSearch" class="mb-2 px-2">
         <ElInput v-model="filterText" clearable ref="searchInput">
           <template #prefix>
             <VIcon size="14">magnify</VIcon>
@@ -530,7 +537,7 @@ export default {
       </div>
     </div>
 
-    <div v-if="visible" class="overflow-auto">
+    <div v-if="visible" class="overflow-auto px-2 pb-2">
       <ElTree
         v-if="treeData && treeData.length > 0"
         check-strictly
@@ -582,17 +589,21 @@ export default {
           </slot>
         </template>
       </ElTree>
-      <div class="text-center">
+    </div>
+
+    <div v-if="treeData && treeData.length === 0 && visible" class="text-center flex-1 flex align-center justify-center">
         <ElButton
-          v-if="treeData && treeData.length === 0 && visible"
-          text
           v-readonlybtn="authority"
           @click="showDialog()"
           class="create"
-          >{{ $t('packages_component_src_classification_chuangjianfenlei') }}</ElButton
+          >
+          <template #icon>
+            <i-mingcute:add-line />
+          </template>
+          {{ $t('packages_component_src_classification_chuangjianfenlei') }}</ElButton
         >
       </div>
-    </div>
+
     <ElDialog v-model="dialogConfig.visible" width="30%" :close-on-click-modal="false">
       <template #header="{ titleClass }">
         <span :class="titleClass">{{ dialogConfig.title }}</span>
