@@ -13,6 +13,10 @@ const getState = function () {
       panelFlag: state?.sync?.panelFlag || false,
       classification: state?.sync?.classification || [],
     },
+    inspect: {
+      panelFlag: state?.inspect?.panelFlag || false,
+      classification: state?.inspect?.classification || [],
+    },
   }
 }
 
