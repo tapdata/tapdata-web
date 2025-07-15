@@ -716,6 +716,7 @@ provide('ConnectorMap', ConnectorMap)
             v-model="form.flowId"
             class="form-input"
             filterable
+            :fit-input-width="false"
             :item-height="46"
             :options="taskOptions"
             :loading="taskOptionsLoading"
