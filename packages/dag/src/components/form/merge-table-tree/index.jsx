@@ -222,6 +222,7 @@ export const MergeTableTree = observer(
         metadataInstancesApi
           .getMergerNodeParentFields(route.params.id, selfId)
           .then((fields) => {
+            fields.sort((a, b) => a.field_name.localeCompare(b.field_name))
             form.setFieldState(
               `*(mergeProperties.${selfPath}.*(joinKeys.*.target))`,
               {
