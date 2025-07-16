@@ -222,6 +222,7 @@ export const FieldSelect = defineComponent({
             props={fieldNames.value}
             fit-input-width={false}
             popper-class="field-select-popper"
+            fallback-placements={['bottom-start', 'bottom-end']}
             options={fieldOptions.value}
             dataSource={fieldOptions.value}
             onMouseenter={onMouseEnter}
