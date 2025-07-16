@@ -217,6 +217,18 @@
     border-radius: 8px;
   }
 }
+.el-radio-group.el-radio-group.is-button {
+  gap: 1rem;
+  .el-radio-button {
+    --el-radio-button-checked-bg-color: #fff;
+    --el-radio-button-checked-text-color: var(--el-color-primary);
+  }
+  .el-radio-button__inner {
+    border-left: var(--el-border);
+    border-radius: 8px;
+    box-shadow: none !important;
+  }
+}
 .el-radio-group.el-radio-group.button-style-outline {
   .el-radio-button {
     --el-radio-button-checked-bg-color: #fff;
