@@ -1,7 +1,13 @@
 <script>
-import { apiServerApi } from '@tap/api'
-import TablePage from '@tap/business/src/components/TablePage.vue'
+import {
+  API_SERVER_BASE_URL,
+  createApiServer,
+  deleteApiServer,
+  fetchApiServers,
+  updateApiServer,
+} from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
+import TablePage from '@tap/business/src/components/TablePage.vue'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import Cookie from '@tap/shared/src/cookie'
 import { escapeRegExp } from 'lodash-es'
@@ -139,7 +145,7 @@ export default {
         if (!resFlag) {
           return
         }
-        apiServerApi.delete(item.id).then(() => {
+        deleteApiServer(item.id).then(() => {
           this.$message.success(this.$t('public_message_delete_ok'))
           this.table.fetch()
         })
@@ -150,18 +156,21 @@ export default {
     downloadConfig(item) {
       const token = Cookie.get('access_token')
       window.open(
-        `${apiServerApi.url}/download/${item.id}?access_token=${token}`,
+        `${API_SERVER_BASE_URL}/download/${item.id}?access_token=${token}`,
         '_blank',
       )
     },
 
     // 保存
     createServer() {
-      const method = this.createForm.id ? 'patch' : 'post'
       const params = this.createForm
       this.$refs.form.validate((valid) => {
         if (valid) {
-          apiServerApi[method](params).then(() => {
+          const apiCall = this.createForm.id
+            ? updateApiServer(this.createForm.id, params)
+            : createApiServer(params)
+
+          apiCall.then(() => {
             this.table.fetch()
             this.createDialogVisible = false
             this.$message.success(this.$t('public_message_save_ok'))
@@ -198,16 +207,12 @@ export default {
         skip: (current - 1) * size,
         where,
       }
-      return apiServerApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          return {
-            total: data?.total || 0,
-            data: data?.items || [],
-          }
-        })
+      return fetchApiServers(filter).then((data) => {
+        return {
+          total: data?.total || 0,
+          data: data?.items || [],
+        }
+      })
     },
 
     // 表格排序

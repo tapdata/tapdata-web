@@ -1,23 +1,3 @@
-import AlarmMail from './AlarmMail'
-
-import AlarmRule from './AlarmRule'
-
-import ApiCalls from './ApiCalls'
-
-import ApiMonitor from './ApiMonitor'
-
-import ApiServer from './ApiServer'
-
-import Application from './Application'
-
-import Connections from './Connections'
-
-import ConnectorRecord from './ConnectorRecord'
-
-import CustomerJobLogs from './CustomerJobLogs'
-
-import CustomNode from './CustomNode'
-
 import DatabaseTypes from './DatabaseTypes'
 
 import DataFlowInsights from './DataFlowInsights'
@@ -96,8 +76,6 @@ import SubTask from './SubTask'
 
 import Task from './Task'
 
-import TaskInspect from './TaskInspect'
-
 import TCM from './Tcm'
 
 import TypeMapping from './TypeMapping'
@@ -109,8 +87,6 @@ import Users from './Users'
 import Webhook from './Webhook'
 
 import Worker from './Workers'
-
-const connectionsApi = new Connections()
 
 const databaseTypesApi = new DatabaseTypes()
 
@@ -148,17 +124,9 @@ const dataRuleApi = new DataRule()
 
 const usersApi = new Users()
 
-const apiMonitorApi = new ApiMonitor()
-
-const apiServerApi = new ApiServer()
-
 const roleApi = new Role()
 
 const workerApi = new Worker()
-
-const apiCallsApi = new ApiCalls()
-
-const applicationApi = new Application()
 
 const sharedCacheApi = new SharedCache()
 
@@ -171,10 +139,6 @@ const inspectDetailsApi = new InspectDetails()
 const inspectResultsApi = new InspectResults()
 
 const roleMappingsApi = new RoleMappings()
-
-const customNodeApi = new CustomNode()
-
-const customerJobLogsApi = new CustomerJobLogs()
 
 const permissionsApi = new Permissions()
 
@@ -191,8 +155,6 @@ const functionApi = new Function()
 const monitoringLogsApi = new MonitoringLogs()
 
 const discoveryApi = new Discovery()
-
-const alarmRuleApi = new AlarmRule()
 
 const externalStorageApi = new ExternalStorage()
 
@@ -212,23 +174,9 @@ const lineageApi = new Lineage()
 
 const dataPermissionApi = new DataPermission()
 
-const connectorRecordApi = new ConnectorRecord()
-
-const alarmMailApi = new AlarmMail()
 const webhookApi = new Webhook()
-const taskInspectApi = new TaskInspect()
 
 export {
-  alarmMailApi,
-  alarmRuleApi,
-  apiCallsApi,
-  apiMonitorApi,
-  apiServerApi,
-  applicationApi,
-  connectionsApi,
-  connectorRecordApi,
-  customerJobLogsApi,
-  customNodeApi,
   databaseTypesApi,
   dataFlowInsightsApi,
   dataFlowsApi,
@@ -267,7 +215,6 @@ export {
   sharedCacheApi,
   subtaskApi,
   taskApi,
-  taskInspectApi,
   tcmApi,
   typeMappingApi,
   userGroupsApi,
@@ -275,7 +222,6 @@ export {
   webhookApi,
   workerApi,
 }
-export * from './ApiClient'
 
 export { CancelToken, isCancel }
 

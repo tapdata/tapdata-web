@@ -125,7 +125,7 @@ const handleAllSelected = () => {
         </el-input>
         <el-divider class="my-1" />
         <div
-          class="px-5 mx-1 flex align-center gap-1 fs-7 rounded-lg all-selected-item cursor-pointer"
+          class="px-3 mx-1 flex align-center gap-1 fs-7 rounded-lg all-selected-item cursor-pointer"
           :class="{ none: filteredOptions.length === 0 }"
           @click="handleAllSelected"
         >
@@ -135,15 +135,6 @@ const handleAllSelected = () => {
                 ? $t('public_cancel_all_selected')
                 : $t('public_all_selected')
             }}</span>
-            <!-- <span
-              class="fw-normal bg-gray-100 rounded-lg p-1 font-color-light ml-2"
-              ><span
-                :class="{
-                  'font-color-dark': selectFields.length > 0,
-                }"
-                >{{ selectFields.length }}</span
-              >/{{ filteredOptions.length }}</span
-            > -->
           </el-checkbox>
 
           <el-icon v-if="allSelected" class="ml-auto color-primary" size="16">

@@ -1,4 +1,4 @@
-import { createI18n, useI18n } from 'vue-i18n'
+import { createI18n, I18nT, useI18n } from 'vue-i18n'
 
 import locale from './locale'
 import { getCurrentLanguage, langKeyMap } from './shared/util'
@@ -23,4 +23,4 @@ export default i18n
 
 export const { t } = i18n.global
 
-export { useI18n }
+export { I18nT, useI18n }

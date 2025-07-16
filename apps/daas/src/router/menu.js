@@ -45,6 +45,7 @@ export const MENU = [
       {
         name: 'apiSdkList',
         parent: 'apiSdk',
+        hidden: import.meta.env.MODE !== 'ha',
       },
       { name: 'dataServer', code: 'v2_data-server-list', parent: 'dataServer' },
       {

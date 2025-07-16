@@ -1,5 +1,5 @@
 <script>
-import { apiCallsApi } from '@tap/api'
+import { fetchApiCall } from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 
 import { calcUnit } from '@tap/shared'
@@ -40,8 +40,7 @@ export default {
     getData() {
       const id = this.$route.params?.id
       this.loading = true
-      apiCallsApi
-        .get([id])
+      fetchApiCall(id)
         .then((data) => {
           if (data) {
             this.auditData = data
@@ -50,7 +49,7 @@ export default {
               : '-'
 
             this.list.forEach((item) => {
-              for (const el in data) {
+              for (const el of Object.keys(data)) {
                 if (item.key === el) {
                   item.value = data[el]
                 }
@@ -78,8 +77,8 @@ export default {
     formatMs(ms) {
       return formatMs(ms)
     },
-    calcUnit() {
-      return calcUnit(...arguments)
+    calcUnit(...args) {
+      return calcUnit(...args)
     },
   },
 }

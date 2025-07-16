@@ -12,8 +12,6 @@ export default {
   packages_dag_dialog_createTable: '创建新表',
   packages_dag_dialog_placeholderTable:
     '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
-  packages_dag_dialog_placeholderTable:
-    '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
   packages_dag_dataFlow_flowEngineVersion: '引擎版本',
   packages_dag_dataFlow_flowEngineV1: 'Flow Engine V1',
   packages_dag_dataFlow_jetFlowEngineV2: 'Jet Flow Engine V2',
@@ -853,6 +851,7 @@ export default {
   packages_dag_noPkSyncMode: '无主键表同步方式',
   packages_dag_noPkSyncMode_ADD_HASH: '新增哈希列',
   packages_dag_noPkSyncMode_ALL_COLUMNS: '全字段索引',
+  packages_dag_noPKVirtualFieldName: '哈希列字段名',
   packages_dag_stream_offset: '精确位置',
   packages_dag_join_keys_empty: '{tableName} 的关联条件不能为空',
   packages_dag_join_keys_field_empty:
@@ -937,10 +936,13 @@ export default {
   packages_dag_inspect_operation_time: '操作时间',
   packages_dag_inspect_operation_user: '操作人',
   packages_dag_task_inspect_difference_alarm: '任务校验差异告警',
+  packages_dag_task_retry_alert: '任务重试告警',
+  packages_dag_task_retry_alert_desc: '连续重试超过{count}次时进行告警',
   packages_dag_task_inspect_enable_fail_1:
     '数据校验开启失败：仅支持一个源节点和一个目标节点。',
   packages_dag_task_inspect_enable_fail_2:
     '数据校验开启失败：源节点和目标节点必须同时具备高级查询能力。',
   packages_dag_table_selector_all_tables_selected: '您已选择所有表进行复制',
   packages_dag_syncForeignKeyEnable: '同步外键',
+  packages_dag_check_no_pk_table: '校验无主键表',
 }

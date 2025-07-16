@@ -1,30 +1,14 @@
 <script setup lang="ts">
-import { taskInspectApi } from '@tap/api'
+import {
+  getTaskInspectConfig,
+  updateTaskInspectConfig,
+  type TaskInspectConfig,
+} from '@tap/api'
 import { useI18n } from '@tap/i18n'
-import { computed, ref, watch } from 'vue'
+import { reactive, ref } from 'vue'
+
 import { useStore } from 'vuex'
-
 import type { ElDialog } from 'element-plus'
-
-interface TaskInspectConfig {
-  custom: {
-    cdc: {
-      enable: boolean
-      sample: {
-        interval: number
-        limit: number
-      }
-      type: 'CLOSE' | 'SAMPLE'
-    }
-    full?: {
-      enable: boolean
-    }
-    recover?: {
-      enable: boolean
-    }
-  }
-  mode: 'CLOSE' | 'INTELLIGENT' | 'CUSTOM'
-}
 
 const store = useStore()
 const { t } = useI18n()
@@ -45,19 +29,30 @@ const fullEnabled = ref(false)
 const frequencyTime = ref(1)
 const frequencyRecords = ref(10)
 const recoverEnabled = ref(false)
-
+const timeCheckModeOptions = [
+  { label: t('public_time_precision_normal'), value: 'NORMAL' },
+  { label: t('public_time_precision_round'), value: 'ROUND' },
+  { label: t('public_time_precision_truncate'), value: 'TRUNCATE' },
+]
+const config = reactive<Partial<TaskInspectConfig>>({
+  checkNoPkTable: false,
+  timeCheckMode: 'NORMAL',
+})
 const dialogRef = ref<InstanceType<typeof ElDialog> | null>(null)
 
 async function initFormData() {
   loading.value = true
   try {
-    const res = await taskInspectApi.getConfig(props.taskId, {})
+    const res = await getTaskInspectConfig(props.taskId)
     validationEnabled.value = res.mode && res.mode !== 'CLOSE'
     cdcEnabled.value = res.custom.cdc?.enable ?? false
     fullEnabled.value = res.custom.full?.enable ?? false
     recoverEnabled.value = res.custom.recover?.enable ?? false
     frequencyTime.value = res.custom.cdc.sample.interval
     frequencyRecords.value = res.custom.cdc.sample.limit
+
+    config.timeCheckMode = res.timeCheckMode
+    config.checkNoPkTable = res.checkNoPkTable
   } catch (error) {
     console.error('Failed to load validation settings:', error)
   } finally {
@@ -76,6 +71,8 @@ async function handleSave() {
 
   const settings: TaskInspectConfig = {
     mode: validationEnabled.value ? 'CUSTOM' : 'CLOSE',
+    timeCheckMode: config.timeCheckMode!,
+    checkNoPkTable: config.checkNoPkTable!,
     custom: {
       cdc: {
         enable: cdcEnabled.value,
@@ -94,7 +91,7 @@ async function handleSave() {
 
   saving.value = true
   try {
-    await taskInspectApi.putConfig(props.taskId, settings)
+    await updateTaskInspectConfig(props.taskId, settings)
     ElMessage.success(t('public_message_save_ok'))
     handleClose()
   } catch (error) {
@@ -201,7 +198,7 @@ defineExpose({
           >
             <span class="radio-label flex align-center gap-2">
               <span>{{ $t('packages_dag_full_validation') }}</span>
-              <el-tag type="info" size="small">开发中</el-tag>
+              <el-tag type="info" size="small">Coming Soon</el-tag>
             </span>
           </ElCheckbox>
         </div>
@@ -246,25 +243,55 @@ defineExpose({
 
         <el-divider />
 
-        <div class="flex align-center mb-2">
-          <div class="flex-1">
-            <label class="fw-sub cursor-pointer" for="recover-switch">{{
-              $t('packages_dag_auto_repair')
-            }}</label>
-            <div class="fs-8 font-color-light mt-1">
-              {{
-                !cdcEnabled && !fullEnabled
-                  ? $t('packages_dag_auto_repair_disabled_tips')
-                  : $t('packages_dag_auto_repair_tips')
-              }}
+        <div class="flex flex-column gap-4">
+          <div class="flex align-center">
+            <div class="flex-1">
+              <label class="fw-sub cursor-pointer" for="recover-switch">{{
+                t('public_time_precision')
+              }}</label>
             </div>
+
+            <el-segmented
+              v-model="config.timeCheckMode"
+              :options="timeCheckModeOptions"
+            />
           </div>
 
-          <ElSwitch
-            id="recover-switch"
-            v-model="recoverEnabled"
-            :disabled="!cdcEnabled && !fullEnabled"
-          />
+          <div class="flex align-center">
+            <div class="flex-1">
+              <label
+                class="fw-sub cursor-pointer"
+                for="checkNoPkTable-switch"
+                >{{ $t('packages_dag_check_no_pk_table') }}</label
+              >
+            </div>
+
+            <ElSwitch
+              id="checkNoPkTable-switch"
+              v-model="config.checkNoPkTable"
+            />
+          </div>
+
+          <div class="flex align-center">
+            <div class="flex-1">
+              <label class="fw-sub cursor-pointer" for="recover-switch">{{
+                $t('packages_dag_auto_repair')
+              }}</label>
+              <div class="fs-8 font-color-light mt-1">
+                {{
+                  !cdcEnabled && !fullEnabled
+                    ? $t('packages_dag_auto_repair_disabled_tips')
+                    : $t('packages_dag_auto_repair_tips')
+                }}
+              </div>
+            </div>
+
+            <ElSwitch
+              id="recover-switch"
+              v-model="recoverEnabled"
+              :disabled="!cdcEnabled && !fullEnabled"
+            />
+          </div>
         </div>
       </div>
     </div>

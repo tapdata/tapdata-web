@@ -1,8 +1,8 @@
 <script>
 import { CircleCloseFilled, SuccessFilled } from '@element-plus/icons-vue'
-import { apiCallsApi } from '@tap/api'
-import TablePage from '@tap/business/src/components/TablePage.vue'
+import { fetchAllMethods, fetchAllResponseCodes, fetchApiCalls } from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
+import TablePage from '@tap/business/src/components/TablePage.vue'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
@@ -90,22 +90,18 @@ export default {
         skip: (current - 1) * size,
         where,
       }
-      return apiCallsApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          return {
-            total: data?.total || 0,
-            data:
-              data?.items.map((item) => {
-                item.createTimeFmt = item.createTime
-                  ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-                  : '-'
-                return item
-              }) || [],
-          }
-        })
+      return fetchApiCalls(filter).then((data) => {
+        return {
+          total: data?.total || 0,
+          data:
+            data?.items.map((item) => {
+              item.createTimeFmt = item.createTime
+                ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+                : '-'
+              return item
+            }) || [],
+        }
+      })
     },
 
     // 表格排序
@@ -120,7 +116,7 @@ export default {
           key: 'method',
           type: 'select-inner',
           items: async () => {
-            let data = await apiCallsApi.getAllMethod()
+            let data = await fetchAllMethods()
             data = data || []
             return data.map((item) => {
               return {
@@ -136,7 +132,7 @@ export default {
           key: 'code',
           type: 'select-inner',
           items: async () => {
-            let data = await apiCallsApi.getAllResponseCode()
+            let data = await fetchAllResponseCodes()
             data = data || []
             return data.map((item) => {
               return {
