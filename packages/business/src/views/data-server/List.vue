@@ -399,16 +399,8 @@ const batchPublish = async () => {
   fetch()
 }
 
-const doLayout = () => {
-  nextTick(() => {
-    table.value?.doLayout()
-  })
-}
-
-// Additional variables and methods for template
 const showSearch = ref(false)
 const filterText = ref('')
-const authority = ref('')
 
 const openSearch = () => {
   showSearch.value = !showSearch.value

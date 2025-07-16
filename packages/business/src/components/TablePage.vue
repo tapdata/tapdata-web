@@ -212,8 +212,7 @@ export default defineComponent({
         })
         .then(({ data, total }: { data: any[]; total: number }) => {
           page.value.total = total
-          list.value = []
-          list.value = [...(data || [])]
+          list.value = data || []
 
           if (total > 0 && (!data || !data.length)) {
             if (timer) clearTimeout(timer)
@@ -224,9 +223,9 @@ export default defineComponent({
         })
         .finally(() => {
           loading.value = false
-          nextTick(() => {
-            table.value?.doLayout()
-          })
+          // nextTick(() => {
+          //   table.value?.doLayout()
+          // })
           if (callback) callback(getData())
         })
     }
