@@ -1,5 +1,3 @@
-import DatabaseTypes from './DatabaseTypes'
-
 import DataFlowInsights from './DataFlowInsights'
 
 import DataFlows from './DataFlows'
@@ -88,8 +86,6 @@ import Webhook from './Webhook'
 
 import Worker from './Workers'
 
-const databaseTypesApi = new DatabaseTypes()
-
 const logcollectorApi = new Logcollector()
 
 const pdkApi = new PDK()
@@ -177,7 +173,6 @@ const dataPermissionApi = new DataPermission()
 const webhookApi = new Webhook()
 
 export {
-  databaseTypesApi,
   dataFlowInsightsApi,
   dataFlowsApi,
   dataPermissionApi,

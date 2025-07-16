@@ -1,8 +1,8 @@
 <script>
 import { action } from '@formily/reactive'
 import {
-  databaseTypesApi,
   externalStorageApi,
+  fetchDatabaseTypeByPdkHash,
   findAccessNodeInfo,
   getUsingDigginTaskByConnectionId,
   proxyApi,
@@ -404,12 +404,10 @@ export default {
       if (this.connector) {
         this.pdkOptions = this.connector
       } else {
-        this.pdkOptions = await databaseTypesApi.pdkHash(this.pdkHash)
+        this.pdkOptions = await fetchDatabaseTypeByPdkHash(this.pdkHash)
       }
 
-      // const data = await databaseTypesApi.pdkHash(this.pdkHash)
       const id = this.id
-      // this.pdkOptions = data || {}
 
       if (
         this.pdkOptions.capabilities?.some(

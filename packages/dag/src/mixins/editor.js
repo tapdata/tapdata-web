@@ -1,7 +1,7 @@
 import { observable } from '@formily/reactive'
 import {
-  databaseTypesApi,
   dataPermissionApi,
+  fetchDatabaseTypes,
   sharedCacheApi,
   taskApi,
 } from '@tap/api'
@@ -2743,15 +2743,13 @@ export default {
     },
 
     async initPdkProperties() {
-      const databaseItems = await databaseTypesApi.get({
-        filter: JSON.stringify({
-          fields: {
-            messages: true,
-            tags: true,
-            pdkHash: true,
-            properties: true,
-          },
-        }),
+      const databaseItems = await fetchDatabaseTypes({
+        fields: {
+          messages: true,
+          tags: true,
+          pdkHash: true,
+          properties: true,
+        },
       })
       const tagsMap = {}
       const doubleActiveMap = {}

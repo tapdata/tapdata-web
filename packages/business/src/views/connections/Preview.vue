@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {
-  databaseTypesApi,
   dataPermissionApi,
+  fetchDatabaseTypeByPdkHash,
   getHeartbeatTaskByConnectionId,
   proxyApi,
   updateConnectionById,
@@ -248,7 +248,7 @@ const monitorApiList = ref<any[]>([])
 const monitorApiButtonList = ref<any[]>([])
 
 const loadMonitorApiSchema = async () => {
-  const res = await databaseTypesApi.pdkHash(connection.value.pdkHash)
+  const res = await fetchDatabaseTypeByPdkHash(connection.value.pdkHash)
 
   MonitorApiSchemaMap[connection.value.pdkHash] = res.properties.monitorAPI
 

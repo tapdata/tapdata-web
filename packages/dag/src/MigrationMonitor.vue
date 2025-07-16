@@ -1,6 +1,6 @@
 <script>
 import { observable } from '@formily/reactive'
-import { databaseTypesApi, measurementApi, taskApi } from '@tap/api'
+import { measurementApi, taskApi } from '@tap/api'
 import {
   ALARM_LEVEL_SORT,
   SkipError,

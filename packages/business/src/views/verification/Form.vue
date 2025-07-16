@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { databaseTypesApi, inspectApi, taskApi, useRequest } from '@tap/api'
+import { fetchDatabaseTypes, inspectApi, taskApi, useRequest } from '@tap/api'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 import Time from '@tap/shared/src/time.js'
@@ -648,8 +648,8 @@ const handleSelectTask = (taskId: any) => {
 
 const ConnectorMap = ref({})
 
-const fetchDatabaseTypes = async () => {
-  const databaseItems = await databaseTypesApi.get()
+const runfetchDatabaseTypes = async () => {
+  const databaseItems = await fetchDatabaseTypes()
 
   ConnectorMap.value = databaseItems.reduce((map, item) => {
     map[item.type] = {
@@ -681,7 +681,7 @@ const handleOpenTask = (task: any) => {
   )
 }
 
-fetchDatabaseTypes()
+runfetchDatabaseTypes()
 
 provide('formData', form)
 provide('conditionList', conditionList)
