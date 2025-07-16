@@ -2147,7 +2147,7 @@ watch(conditionList, () => {
           <div class="text-center font-color-light mb-2">
             {{
               taskId
-                ? $t('packages_business_verification_empty_auto_add_table')
+                ? $t('packages_business_verification_empty_add_table')
                 : $t('packages_business_verification_empty_chooseJob')
             }}
           </div>
@@ -2159,19 +2159,21 @@ watch(conditionList, () => {
             @click="$emit('openTaskSelect')"
             >{{ $t('packages_business_verification_chooseJob') }}</el-button
           >
-          <el-button
-            v-else
-            type="primary"
-            :loading="autoAddTableLoading"
-            @click="autoAddTable"
-          >
-            <template #icon>
-              <VIcon>Sparkles</VIcon>
-            </template>
-            {{
-              $t('packages_business_verification_button_auto_add_table')
-            }}</el-button
-          >
+          <div v-else>
+            <el-button :icon="Plus" @click="addItem">{{
+              $t('packages_business_verification_addTable')
+            }}</el-button>
+            <el-button
+              type="primary"
+              :loading="autoAddTableLoading"
+              @click="autoAddTable"
+            >
+              <template #icon>
+                <VIcon>Sparkles</VIcon>
+              </template>
+              {{ $t('packages_business_verification_button_auto_add_table') }}
+            </el-button>
+          </div>
         </template>
 
         <template v-else>
