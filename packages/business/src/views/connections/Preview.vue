@@ -779,6 +779,7 @@ defineExpose({
                 v-if="temp.labelAction"
                 text
                 type="primary"
+                class="align-self-center"
                 @click="temp.labelAction"
                 >{{ temp.labelActionTitle }}</el-button
               >
