@@ -13,7 +13,7 @@ import i18n, { useI18n } from '@tap/i18n'
 import { openUrl } from '@tap/shared'
 import dayjs from 'dayjs'
 import { cloneDeep, isArray, isString } from 'lodash-es'
-import { inject, onBeforeUnmount, reactive, ref } from 'vue'
+import { inject, onBeforeUnmount, ref, shallowReactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { DatabaseIcon } from '../../components/DatabaseIcon'
 import StatusTag from '../../components/StatusTag.vue'
@@ -242,7 +242,7 @@ const transformData = (row: Connection) => {
   return row
 }
 
-const MonitorApiSchemaMap = reactive({})
+const MonitorApiSchemaMap = shallowReactive({})
 
 const monitorApiList = ref<any[]>([])
 const monitorApiButtonList = ref<any[]>([])
@@ -250,9 +250,16 @@ const monitorApiButtonList = ref<any[]>([])
 const loadMonitorApiSchema = async () => {
   const res = await fetchDatabaseTypeByPdkHash(connection.value.pdkHash)
 
-  MonitorApiSchemaMap[connection.value.pdkHash] = res.properties.monitorAPI
+  const schema = res.properties.monitorAPI
 
-  return res.properties.monitorAPI
+  const result = {
+    schema,
+    sortedKeys: sortSchemaKeysByIndex(schema),
+  }
+
+  MonitorApiSchemaMap[connection.value.pdkHash] = result
+
+  return result
 }
 
 function sortSchemaKeysByIndex<
@@ -271,13 +278,13 @@ function sortSchemaKeysByIndex<
 
 const initMonitorApi = async () => {
   const { monitorAPI } = connection.value
+
   if (monitorAPI) {
-    const schema: Record<string, { title: string; 'x-index'?: number }> =
+    const result =
       MonitorApiSchemaMap[connection.value.pdkHash] ||
       (await loadMonitorApiSchema())
 
-    // 基于 x-index 排序 schema 的 keys
-    const sortedKeys = sortSchemaKeysByIndex(schema)
+    const { sortedKeys = [], schema } = result
 
     const list = []
     const buttonList = []
@@ -289,7 +296,7 @@ const initMonitorApi = async () => {
         buttonList.push({
           ...item,
         })
-      } else {
+      } else if (key in monitorAPI) {
         list.push({
           title: schema[key]?.title || '',
           value: monitorAPI[key],
