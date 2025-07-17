@@ -1,6 +1,6 @@
 <script>
 import {
-  databaseTypesApi,
+  fetchDatabaseTypeByPdkHash,
   getConnectionNoSchema,
   logcollectorApi,
   taskApi,
@@ -145,7 +145,7 @@ export default {
           this.dagForm.cdcConcurrentWriteNum = node.cdcConcurrentWriteNum || 4
         } else if (node.type === 'logCollector') {
           // 获取连接信息
-          const con = await databaseTypesApi.pdkHash(node.attrs.pdkHash)
+          const con = await fetchDatabaseTypeByPdkHash(node.attrs.pdkHash)
           const nodeProperties = con.properties?.node?.properties
 
           this.dagForm.increaseReadSize = node.increaseReadSize ?? 1

@@ -1,236 +1,15 @@
-<template>
-  <section class="flex flex-column flex-1 overflow-hidden create-storage-container gap-4">
-    <div class="bg-white rounded-lg p-4">
-      <div class="flex align-center">
-        <IconButton @click="$router.back()">left</IconButton>
-        <span class="fs-5 ml-2">{{ $t('page_title_subscribe_storage') }}</span>
-      </div>
-    </div>
-
-    <div class="flex flex-column bg-white rounded-lg overflow-hidden px-6">
-      <div v-if="!loading" class="px-4 py-2 mt-6 lh-base color-primary-light-9 rounded-lg">
-        <div class="mb-1 flex align-center">
-          <VIcon class="text-primary mr-2" size="18">info</VIcon>
-          <div class="font-color-dark fs-6 fw-sub">
-            {{ $t('dfs_subscribe_storage_tip_title') }}
-          </div>
-        </div>
-        <div
-          class="lh-lg"
-          v-html="
-            $t(currentPaid.price > 0 ? 'dfs_subscribe_storage_tip_content' : 'dfs_subscribe_free_storage_tip_content')
-          "
-        ></div>
-        <div class="lh-lg">
-          {{ $t('dfs_use_self_atlas') }},
-          <ElLink type="primary" class="text-decoration-underline align-baseline" @click="addAtlasVisible = true">{{
-            $t('dfs_use_self_atlas_click_here')
-          }}</ElLink>
-        </div>
-      </div>
-      <ElForm label-position="top" class="flex-1 overflow-x-hidden overflow-y-auto mt-4">
-        <!--存储地区-->
-        <ElFormItem>
-          <template v-slot:label>
-            <div class="font-color-dark fw-sub">
-              {{ $t('dfs_subscribe_storage_deploy_region') }}
-            </div>
-          </template>
-
-          <div class="cloud-region-grid">
-            <span
-              class="font-color-light inline-block"
-              :class="[
-                { 'form-label': this.$i18n.locale === 'zh-CN' },
-                { 'form-label-en': this.$i18n.locale === 'en' },
-              ]"
-              >{{ $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang') }}</span
-            >
-
-            <el-skeleton :loading="loading || loadingProvider" animated>
-              <template #template>
-                <div class="flex gap-4">
-                  <el-skeleton-item v-for="i in 2" :key="i" class="rounded-4 h-8" variant="button" />
-                </div>
-              </template>
-              <template #default>
-                <ElRadioGroup v-model="provider" @change="changeProvider" class="flex flex-wrap gap-4">
-                  <ElRadio
-                    v-for="(item, index) in cloudProviderList"
-                    :key="index"
-                    :label="item.cloudProvider"
-                    border
-                    class="rounded-4 subscription-radio m-0 position-relative"
-                  >
-                    <span class="inline-flex align-center">
-                      {{ item.cloudProviderName }}
-                    </span>
-                  </ElRadio>
-                </ElRadioGroup>
-              </template>
-            </el-skeleton>
-
-            <span class="font-color-light inline-block">{{
-              $t('dfs_agent_download_subscriptionmodeldialog_diqu')
-            }}</span>
-            <el-skeleton :loading="loading || loadingProvider" animated>
-              <template #template>
-                <div class="flex gap-4">
-                  <el-skeleton-item v-for="i in 2" :key="i" class="rounded-4 h-8" variant="button" />
-                </div>
-              </template>
-              <template #default>
-                <ElRadioGroup v-model="region" class="flex flex-wrap gap-4" @change="changeRegion">
-                  <ElRadio
-                    v-for="(item, index) in cloudDetail"
-                    :key="index"
-                    :label="item.region"
-                    border
-                    class="rounded-4 subscription-radio m-0 position-relative"
-                  >
-                    <span class="inline-flex align-center">
-                      {{ item.regionName }}
-                    </span>
-
-                    <sup v-if="item.hasFreeTrial" class="el-badge__content is-fixed is-dot bg-color-warning"></sup>
-                  </ElRadio>
-                </ElRadioGroup>
-              </template>
-            </el-skeleton>
-          </div>
-        </ElFormItem>
-        <!--请选择您需要的存储资源规格-->
-        <ElFormItem>
-          <template v-slot:label>
-            <div class="font-color-dark fw-sub">
-              {{ $t('dfs_subscribe_storage_specification') }}
-            </div>
-          </template>
-          <el-skeleton :loading="loadingProvider || loadingMongoCluster" animated>
-            <template #template>
-              <div class="flex gap-4">
-                <el-skeleton-item v-for="i in 4" :key="i" class="rounded-4 h-8" variant="button" />
-              </div>
-            </template>
-            <template #default>
-              <ElRadioGroup v-model="current.clusterTier" @change="handleChangeTier" class="flex flex-wrap gap-4">
-                <ElRadio
-                  v-for="(item, index) in tierOptions"
-                  :key="index"
-                  :label="item.value"
-                  border
-                  class="rounded-4 subscription-radio m-0 position-relative"
-                >
-                  <span
-                    class="inline-flex align-center"
-                    :class="{
-                      'color-warning': freeTierNames.includes(item.value),
-                    }"
-                  >
-                    {{ freeTierNames.includes(item.value) ? 'Free Trial' : item.label }}
-                  </span>
-                </ElRadio>
-              </ElRadioGroup>
-            </template>
-          </el-skeleton>
-        </ElFormItem>
-        <!--请选择您需要的存储空间-->
-        <ElFormItem>
-          <template v-slot:label>
-            <div class="font-color-dark fw-sub">
-              {{ $t('dfs_instance_createagent_qingxuanzeninxu') }}
-            </div>
-          </template>
-          <el-skeleton :loading="loadingProvider || loadingMongoCluster" animated>
-            <template #template>
-              <div class="flex gap-4">
-                <el-skeleton-item v-for="i in 2" :key="i" class="rounded-4 h-8" variant="button" />
-              </div>
-            </template>
-            <template #default>
-              <ElRadioGroup v-model="current.storageSize" @change="handleChangeSize" class="flex flex-wrap gap-4">
-                <ElRadio
-                  v-for="(item, index) in sizeOptions"
-                  :key="index"
-                  :label="item.value"
-                  border
-                  class="rounded-4 subscription-radio m-0 position-relative"
-                >
-                  <span class="inline-flex align-center">
-                    {{ item.label }}
-                  </span>
-                </ElRadio>
-              </ElRadioGroup>
-            </template>
-          </el-skeleton>
-        </ElFormItem>
-        <!--订阅方式-->
-        <ElFormItem>
-          <template v-slot:label>
-            <div class="font-color-dark fw-sub">
-              {{ $t('dfs_instance_instance_dingyuefangshi') }}
-            </div>
-          </template>
-          <el-skeleton :loading="loadingProvider || loadingMongoCluster" animated>
-            <template #template>
-              <div class="flex gap-4">
-                <el-skeleton-item v-for="i in 2" :key="i" class="rounded-4 h-8" variant="button" />
-              </div>
-            </template>
-            <template #default>
-              <ElRadioGroup v-model="current.priceId" class="flex gap-4">
-                <ElRadio
-                  v-for="(item, index) in periodOptions"
-                  :key="index"
-                  :label="item.value"
-                  border
-                  class="rounded-4 subscription-radio m-0 position-relative"
-                >
-                  <span class="inline-flex align-center">
-                    {{ item.label }}
-                  </span>
-                </ElRadio>
-              </ElRadioGroup>
-            </template>
-          </el-skeleton>
-        </ElFormItem>
-      </ElForm>
-    </div>
-
-    <div class="bg-white rounded-lg px-6 py-4 flex align-center gap-4">
-      <ElButton type="primary" :loading="submitLoading" @click="submit">{{
-        $t('public_button_subscription')
-      }}</ElButton>
-      <div class="flex align-items-end lh-1">
-        <span>{{ $t('public_total') }}:</span>
-        <span class="color-primary fs-5 ml-1">{{ priceLabel }}</span>
-        <span class="font-color-dark mx-2" v-if="periodLabel">
-          {{ periodLabel }}
-        </span>
-      </div>
-    </div>
-
-    <SceneDialog
-      v-model:visible="addAtlasVisible"
-      fixed-pdk-id="mongodb-atlas"
-      selector-type="source_and_target"
-      @success="handleSaveAtlas"
-    ></SceneDialog>
-  </section>
-</template>
-
 <script>
-import i18n from '@tap/i18n'
-import { IconButton } from '@tap/component'
+import { fetchDatabaseTypes, liveDataPlatformApi } from '@tap/api'
 import { CURRENCY_SYMBOL_MAP, PERIOD_MAP, SceneDialog } from '@tap/business'
-import { databaseTypesApi, liveDataPlatformApi } from '@tap/api'
+import { IconButton } from '@tap/component'
+import i18n from '@tap/i18n'
 
 export default {
   name: 'CreateAgent',
 
-  inject: ['buried'],
-
   components: { IconButton, SceneDialog },
+
+  inject: ['buried'],
 
   data() {
     return {
@@ -262,11 +41,17 @@ export default {
 
   computed: {
     providerMap() {
-      return this.cloudProviderList.reduce((prev, curr) => ((prev[curr.cloudProvider] = curr), prev), {})
+      return this.cloudProviderList.reduce(
+        (prev, curr) => ((prev[curr.cloudProvider] = curr), prev),
+        {},
+      )
     },
 
     priceMap() {
-      return this.paidPrice.reduce((map, curr) => ((map[curr.priceId] = curr), map), {})
+      return this.paidPrice.reduce(
+        (map, curr) => ((map[curr.priceId] = curr), map),
+        {},
+      )
     },
 
     currentPaid() {
@@ -373,12 +158,10 @@ export default {
   methods: {
     async loadAtlas() {
       this.loadingAtlas = true
-      const data = await databaseTypesApi.get({
-        filter: JSON.stringify({
-          where: {
-            pdkId: 'mongodb-atlas',
-          },
-        }),
+      const data = await fetchDatabaseTypes({
+        where: {
+          pdkId: 'mongodb-atlas',
+        },
       })
 
       console.log('loadAtlas', data) // eslint-disable-line no-console
@@ -387,7 +170,7 @@ export default {
 
     //切换云厂商
     changeProvider() {
-      let cloudProvider = this.providerMap[this.provider]
+      const cloudProvider = this.providerMap[this.provider]
       this.cloudDetail = cloudProvider.cloudDetail || []
       this.region = this.cloudDetail[0].region
       this.changeRegion()
@@ -403,20 +186,24 @@ export default {
       const data = await this.$axios.get('api/tcm/orders/queryCloudProvider')
       this.loadingProvider = false
       //数据模式（带存储）过滤只带存储的云厂商
-      let original = data?.items || []
+      const original = data?.items || []
       this.cloudProviderList = original.filter((it) => {
         // 暂时过滤掉阿里云
         it.cloudDetail =
           it.cloudDetail
             .filter((item) => {
               item.hasFreeTrial = item.tag?.includes('supportFreeTrialStorage')
-              return item.productList.includes('mongodb') && it.cloudProvider !== 'AliCloud'
+              return (
+                item.productList.includes('mongodb') &&
+                it.cloudProvider !== 'AliCloud'
+              )
             })
             .sort((item1, item2) => {
               const a = item1.hasFreeTrial ? 1 : 2
               const b = item2.hasFreeTrial ? 1 : 2
 
-              if (a === b) return item1.regionName.localeCompare(item2.regionName)
+              if (a === b)
+                return item1.regionName.localeCompare(item2.regionName)
 
               return a - b
             }) || []
@@ -441,7 +228,7 @@ export default {
       this.loadingMongoCluster = false
       const { paidPrice = [] } = data?.[0] || {}
       const freeTierNames = [] // 记录免费存储实例名
-      for (let item of paidPrice) {
+      for (const item of paidPrice) {
         if (!item.price) {
           freeTierNames.push(item.spec.name)
         }
@@ -456,14 +243,12 @@ export default {
 
     //存储价格
     formatAmount(price) {
-      return (
-        CURRENCY_SYMBOL_MAP[this.currencyType] +
-        ' ' +
-        (price / 100).toLocaleString('zh', {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })
-      )
+      return `${CURRENCY_SYMBOL_MAP[this.currencyType]} ${(
+        price / 100
+      ).toLocaleString('zh', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`
     },
 
     //是否有存储agent
@@ -476,7 +261,8 @@ export default {
 
     //提交订单
     async submit(row = {}, paymentType = 'online') {
-      const { type, priceId, currency, periodUnit, productId, spec } = this.priceMap[this.current.priceId]
+      const { type, priceId, currency, periodUnit, productId, spec } =
+        this.priceMap[this.current.priceId]
 
       if (paymentType === 'online') {
         this.submitOnlineLoading = true
@@ -485,7 +271,7 @@ export default {
       }
 
       //组装参数
-      let params = {
+      const params = {
         onlyMdb: true,
         subscribeType: type, // 订阅类型：one_time-一次订阅，recurring-连续订阅
         platform: 'realTime',
@@ -588,6 +374,301 @@ export default {
   },
 }
 </script>
+
+<template>
+  <section
+    class="flex flex-column flex-1 overflow-hidden create-storage-container gap-4"
+  >
+    <div class="bg-white rounded-lg p-4">
+      <div class="flex align-center">
+        <IconButton @click="$router.back()">left</IconButton>
+        <span class="fs-5 ml-2">{{ $t('page_title_subscribe_storage') }}</span>
+      </div>
+    </div>
+
+    <div class="flex flex-column bg-white rounded-lg overflow-hidden px-6">
+      <div
+        v-if="!loading"
+        class="px-4 py-2 mt-6 lh-base color-primary-light-9 rounded-lg"
+      >
+        <div class="mb-1 flex align-center">
+          <VIcon class="text-primary mr-2" size="18">info</VIcon>
+          <div class="font-color-dark fs-6 fw-sub">
+            {{ $t('dfs_subscribe_storage_tip_title') }}
+          </div>
+        </div>
+        <div
+          class="lh-lg"
+          v-html="
+            $t(
+              currentPaid.price > 0
+                ? 'dfs_subscribe_storage_tip_content'
+                : 'dfs_subscribe_free_storage_tip_content',
+            )
+          "
+        />
+        <div class="lh-lg">
+          {{ $t('dfs_use_self_atlas') }},
+          <ElLink
+            type="primary"
+            class="text-decoration-underline align-baseline"
+            @click="addAtlasVisible = true"
+            >{{ $t('dfs_use_self_atlas_click_here') }}</ElLink
+          >
+        </div>
+      </div>
+      <ElForm
+        label-position="top"
+        class="flex-1 overflow-x-hidden overflow-y-auto mt-4"
+      >
+        <!--存储地区-->
+        <ElFormItem>
+          <template #label>
+            <div class="font-color-dark fw-sub">
+              {{ $t('dfs_subscribe_storage_deploy_region') }}
+            </div>
+          </template>
+
+          <div class="cloud-region-grid">
+            <span
+              class="font-color-light inline-block"
+              :class="[
+                { 'form-label': $i18n.locale === 'zh-CN' },
+                { 'form-label-en': $i18n.locale === 'en' },
+              ]"
+              >{{
+                $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang')
+              }}</span
+            >
+
+            <el-skeleton :loading="loading || loadingProvider" animated>
+              <template #template>
+                <div class="flex gap-4">
+                  <el-skeleton-item
+                    v-for="i in 2"
+                    :key="i"
+                    class="rounded-4 h-8"
+                    variant="button"
+                  />
+                </div>
+              </template>
+              <template #default>
+                <ElRadioGroup
+                  v-model="provider"
+                  class="flex flex-wrap gap-4"
+                  @change="changeProvider"
+                >
+                  <ElRadio
+                    v-for="(item, index) in cloudProviderList"
+                    :key="index"
+                    :label="item.cloudProvider"
+                    border
+                    class="rounded-4 subscription-radio m-0 position-relative"
+                  >
+                    <span class="inline-flex align-center">
+                      {{ item.cloudProviderName }}
+                    </span>
+                  </ElRadio>
+                </ElRadioGroup>
+              </template>
+            </el-skeleton>
+
+            <span class="font-color-light inline-block">{{
+              $t('dfs_agent_download_subscriptionmodeldialog_diqu')
+            }}</span>
+            <el-skeleton :loading="loading || loadingProvider" animated>
+              <template #template>
+                <div class="flex gap-4">
+                  <el-skeleton-item
+                    v-for="i in 2"
+                    :key="i"
+                    class="rounded-4 h-8"
+                    variant="button"
+                  />
+                </div>
+              </template>
+              <template #default>
+                <ElRadioGroup
+                  v-model="region"
+                  class="flex flex-wrap gap-4"
+                  @change="changeRegion"
+                >
+                  <ElRadio
+                    v-for="(item, index) in cloudDetail"
+                    :key="index"
+                    :label="item.region"
+                    border
+                    class="rounded-4 subscription-radio m-0 position-relative"
+                  >
+                    <span class="inline-flex align-center">
+                      {{ item.regionName }}
+                    </span>
+
+                    <sup
+                      v-if="item.hasFreeTrial"
+                      class="el-badge__content is-fixed is-dot bg-color-warning"
+                    />
+                  </ElRadio>
+                </ElRadioGroup>
+              </template>
+            </el-skeleton>
+          </div>
+        </ElFormItem>
+        <!--请选择您需要的存储资源规格-->
+        <ElFormItem>
+          <template #label>
+            <div class="font-color-dark fw-sub">
+              {{ $t('dfs_subscribe_storage_specification') }}
+            </div>
+          </template>
+          <el-skeleton
+            :loading="loadingProvider || loadingMongoCluster"
+            animated
+          >
+            <template #template>
+              <div class="flex gap-4">
+                <el-skeleton-item
+                  v-for="i in 4"
+                  :key="i"
+                  class="rounded-4 h-8"
+                  variant="button"
+                />
+              </div>
+            </template>
+            <template #default>
+              <ElRadioGroup
+                v-model="current.clusterTier"
+                class="flex flex-wrap gap-4"
+                @change="handleChangeTier"
+              >
+                <ElRadio
+                  v-for="(item, index) in tierOptions"
+                  :key="index"
+                  :label="item.value"
+                  border
+                  class="rounded-4 subscription-radio m-0 position-relative"
+                >
+                  <span
+                    class="inline-flex align-center"
+                    :class="{
+                      'color-warning': freeTierNames.includes(item.value),
+                    }"
+                  >
+                    {{
+                      freeTierNames.includes(item.value)
+                        ? 'Free Trial'
+                        : item.label
+                    }}
+                  </span>
+                </ElRadio>
+              </ElRadioGroup>
+            </template>
+          </el-skeleton>
+        </ElFormItem>
+        <!--请选择您需要的存储空间-->
+        <ElFormItem>
+          <template #label>
+            <div class="font-color-dark fw-sub">
+              {{ $t('dfs_instance_createagent_qingxuanzeninxu') }}
+            </div>
+          </template>
+          <el-skeleton
+            :loading="loadingProvider || loadingMongoCluster"
+            animated
+          >
+            <template #template>
+              <div class="flex gap-4">
+                <el-skeleton-item
+                  v-for="i in 2"
+                  :key="i"
+                  class="rounded-4 h-8"
+                  variant="button"
+                />
+              </div>
+            </template>
+            <template #default>
+              <ElRadioGroup
+                v-model="current.storageSize"
+                class="flex flex-wrap gap-4"
+                @change="handleChangeSize"
+              >
+                <ElRadio
+                  v-for="(item, index) in sizeOptions"
+                  :key="index"
+                  :label="item.value"
+                  border
+                  class="rounded-4 subscription-radio m-0 position-relative"
+                >
+                  <span class="inline-flex align-center">
+                    {{ item.label }}
+                  </span>
+                </ElRadio>
+              </ElRadioGroup>
+            </template>
+          </el-skeleton>
+        </ElFormItem>
+        <!--订阅方式-->
+        <ElFormItem>
+          <template #label>
+            <div class="font-color-dark fw-sub">
+              {{ $t('dfs_instance_instance_dingyuefangshi') }}
+            </div>
+          </template>
+          <el-skeleton
+            :loading="loadingProvider || loadingMongoCluster"
+            animated
+          >
+            <template #template>
+              <div class="flex gap-4">
+                <el-skeleton-item
+                  v-for="i in 2"
+                  :key="i"
+                  class="rounded-4 h-8"
+                  variant="button"
+                />
+              </div>
+            </template>
+            <template #default>
+              <ElRadioGroup v-model="current.priceId" class="flex gap-4">
+                <ElRadio
+                  v-for="(item, index) in periodOptions"
+                  :key="index"
+                  :label="item.value"
+                  border
+                  class="rounded-4 subscription-radio m-0 position-relative"
+                >
+                  <span class="inline-flex align-center">
+                    {{ item.label }}
+                  </span>
+                </ElRadio>
+              </ElRadioGroup>
+            </template>
+          </el-skeleton>
+        </ElFormItem>
+      </ElForm>
+    </div>
+
+    <div class="bg-white rounded-lg px-6 py-4 flex align-center gap-4">
+      <ElButton type="primary" :loading="submitLoading" @click="submit">{{
+        $t('public_button_subscription')
+      }}</ElButton>
+      <div class="flex align-items-end lh-1">
+        <span>{{ $t('public_total') }}:</span>
+        <span class="color-primary fs-5 ml-1">{{ priceLabel }}</span>
+        <span v-if="periodLabel" class="font-color-dark mx-2">
+          {{ periodLabel }}
+        </span>
+      </div>
+    </div>
+
+    <SceneDialog
+      v-model:visible="addAtlasVisible"
+      fixed-pdk-id="mongodb-atlas"
+      selector-type="source_and_target"
+      @success="handleSaveAtlas"
+    />
+  </section>
+</template>
 
 <style lang="scss" scoped>
 .create-storage-container {

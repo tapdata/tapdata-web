@@ -1,5 +1,9 @@
 import { action } from '@formily/reactive'
-import { databaseTypesApi, metadataInstancesApi, taskApi } from '@tap/api'
+import {
+  fetchDatabaseTypeByPdkHash,
+  metadataInstancesApi,
+  taskApi,
+} from '@tap/api'
 import { IconButton } from '@tap/component/src/icon-button'
 import { mapFieldsData, useField, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
@@ -126,7 +130,7 @@ export const SchemaPreview = defineComponent({
     const loadDatatypesjson = async () => {
       const pdkHash = form.values.attrs?.pdkHash
       if (pdkHash) {
-        const pdkHashData = await databaseTypesApi.pdkHash(
+        const pdkHashData = await fetchDatabaseTypeByPdkHash(
           form.values.attrs?.pdkHash,
         )
         dataTypesJson.value = pdkHashData

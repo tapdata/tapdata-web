@@ -1,5 +1,5 @@
 <script>
-import { CancelToken, databaseTypesApi, fetchConnections } from '@tap/api'
+import { CancelToken, fetchConnections, fetchDatabaseTypes } from '@tap/api'
 import { getIcon } from '@tap/assets/icons'
 import SceneDialog from '@tap/business/src/components/create-connection/SceneDialog.vue'
 import { VEmpty } from '@tap/component/src/base/v-empty'
@@ -92,7 +92,7 @@ export default {
       this.connectionDialog = !this.stateIsReadonly
     },
     async getDatabaseType() {
-      await databaseTypesApi.get().then((res) => {
+      await fetchDatabaseTypes().then((res) => {
         if (res) {
           this.getPdkData(res)
         }

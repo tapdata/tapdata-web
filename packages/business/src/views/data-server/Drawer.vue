@@ -2,7 +2,7 @@
 import { EditPen, InfoFilled } from '@element-plus/icons-vue'
 import {
   createApiModule,
-  databaseTypesApi,
+  fetchDatabaseTypes,
   fetchApiServerToken,
   listAllConnections,
   metadataInstancesApi,
@@ -422,7 +422,7 @@ const getDefaultParams = (apiType: string) => {
 
 const getDatabaseTypes = async () => {
   databaseTypes.value = null
-  const data = await databaseTypesApi.get().catch(() => {
+  const data = await fetchDatabaseTypes().catch(() => {
     databaseTypes.value = []
     return []
   })

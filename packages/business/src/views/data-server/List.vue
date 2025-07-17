@@ -2,13 +2,13 @@
 import {
   batchUpdateApiModules,
   batchUpdateApiModuleTags,
-  databaseTypesApi,
   deleteApiModule,
   exportApiDocumentation,
   exportApiModules,
   fetchApiModules,
   fetchApiServers,
   fetchApps,
+  fetchDatabaseTypes,
   metadataInstancesApi,
   updateApiModule,
   useRequest,
@@ -208,7 +208,7 @@ const getFilterItems = () => {
       key: 'type', //对象分类
       type: 'select-inner',
       items: async () => {
-        let data = await databaseTypesApi.get()
+        let data = await fetchDatabaseTypes()
         data = data || []
         let databaseTypes: any[] = []
         databaseTypes =
