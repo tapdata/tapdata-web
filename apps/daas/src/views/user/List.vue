@@ -654,7 +654,9 @@ export default {
 </script>
 
 <template>
-  <PageContainer>
+  <PageContainer
+    container-class="flex flex-column h-100 overflow-hidden bg-white rounded-xl shadow-sm px-6 py-5 gap-1"
+  >
     <template #actions>
       <el-button
         v-readonlybtn="'new_model_creation'"
@@ -685,7 +687,7 @@ export default {
           <el-button
             class="position-absolute z-10 start-0"
             text
-            style="top: 4px"
+            style="top: 10px"
             @click="openClassify"
           >
             <template #icon>
@@ -695,7 +697,7 @@ export default {
 
           <ElTabs
             v-model="activePanel"
-            style="--el-tabs-padding-left: 36px; --el-tabs-header-height: 36px"
+            style="--el-tabs-padding-left: 36px"
             @tab-change="handleTapClick"
           >
             <ElTabPane

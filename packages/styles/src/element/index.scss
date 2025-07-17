@@ -65,6 +65,7 @@
 // Tabs
 // css3 var in packages/theme-chalk/src/tabs.scss
 .el-tabs.el-tabs {
+  --el-tabs-header-height: 48px;
   .el-tabs__active-bar {
     height: 3px;
     border-top-left-radius: 3px;
@@ -73,10 +74,34 @@
   .el-tabs__nav-wrap.is-top {
     // padding: 0;
     padding-left: var(--el-tabs-padding-left, 0);
+    margin-bottom: 0;
   }
 
   .el-tabs__item {
     padding: 0 16px;
+  }
+
+  .el-tabs__item:has(:first-child) {
+    padding: 0 4px;
+    color: var(--el-text-color-secondary);
+
+    > :first-child {
+      padding: 4px 8px;
+      line-height: 24px;
+      border-radius: var(--el-border-radius-base);
+      transition: all .3s;
+    }
+
+    &:hover {
+      color: var(--el-text-color-primary);
+      > :first-child {
+        background-color: var(--el-fill-color-light);
+      }
+    }
+
+    &.is-active {
+      color: var(--el-color-primary);
+    }
   }
 
   .el-tabs__nav-wrap::after {
