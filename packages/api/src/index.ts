@@ -1,12 +1,4 @@
-import DataFlowInsights from './DataFlowInsights'
-
-import DataFlows from './DataFlows'
-
 import DataPermission from './DataPermission'
-
-import DataRule from './DataRule'
-
-import Dictionaries from './Dictionary'
 
 import Discovery from './Discovery'
 
@@ -44,11 +36,7 @@ import MetadataDefinitions from './MetadataDefinitions'
 
 import MetadataInstances from './MetadataInstances'
 
-import MetadataTransformer from './MetadataTransformer'
-
 import MonitoringLogs from './MonitoringLogs'
-
-import Paid from './Paid'
 
 import PDK from './PDK'
 
@@ -64,17 +52,9 @@ import Role from './Role'
 
 import RoleMappings from './RoleMapping'
 
-import ScheduleTasks from './ScheduleTasks'
-
-import ShareCdcTableMetrics from './ShareCdcTableMetrics'
-
 import SharedCache from './SharedCache'
 
-import SubTask from './SubTask'
-
 import Task from './Task'
-
-import TCM from './Tcm'
 
 import TypeMapping from './TypeMapping'
 
@@ -92,13 +72,7 @@ const pdkApi = new PDK()
 
 const taskApi = new Task()
 
-const subtaskApi = new SubTask()
-
 const measurementApi = new Measurement()
-
-const dataFlowInsightsApi = new DataFlowInsights()
-
-const dataFlowsApi = new DataFlows()
 
 const javascriptFunctionsApi = new JavascriptFunctions()
 
@@ -112,11 +86,7 @@ const userGroupsApi = new UserGroups()
 
 const fileApi = new File()
 
-const scheduleTasksApi = new ScheduleTasks()
-
 const previewDataApi = new PreviewData()
-
-const dataRuleApi = new DataRule()
 
 const usersApi = new Users()
 
@@ -142,10 +112,6 @@ const typeMappingApi = new TypeMapping()
 
 const logsApi = new Logs()
 
-const dictionariesApi = new Dictionaries()
-
-const metadataTransformerApi = new MetadataTransformer()
-
 const functionApi = new Function()
 
 const monitoringLogsApi = new MonitoringLogs()
@@ -156,15 +122,9 @@ const externalStorageApi = new ExternalStorage()
 
 const proxyApi = new Proxy()
 
-const paidApi = new Paid()
-
-const tcmApi = new TCM()
-
 const liveDataPlatformApi = new LiveDataPlatform()
 
 const ldpApi = new LDP()
-
-const shareCdcTableMetricsApi = new ShareCdcTableMetrics()
 
 const lineageApi = new Lineage()
 
@@ -173,11 +133,7 @@ const dataPermissionApi = new DataPermission()
 const webhookApi = new Webhook()
 
 export {
-  dataFlowInsightsApi,
-  dataFlowsApi,
   dataPermissionApi,
-  dataRuleApi,
-  dictionariesApi,
   discoveryApi,
   externalStorageApi,
   fileApi,
@@ -195,9 +151,7 @@ export {
   measurementApi,
   metadataDefinitionsApi,
   metadataInstancesApi,
-  metadataTransformerApi,
   monitoringLogsApi,
-  paidApi,
   pdkApi,
   permissionsApi,
   previewDataApi,
@@ -205,12 +159,8 @@ export {
   pythonFunctionsApi,
   roleApi,
   roleMappingsApi,
-  scheduleTasksApi,
-  shareCdcTableMetricsApi,
   sharedCacheApi,
-  subtaskApi,
   taskApi,
-  tcmApi,
   typeMappingApi,
   userGroupsApi,
   usersApi,
