@@ -243,7 +243,7 @@ defineExpose({
     height="64px"
   >
     <a
-      v-if="isOP"
+      v-if="isOP || isCommunity"
       class="logo w-auto text-white flex align-center gap-2"
       href="/"
     >
@@ -268,7 +268,10 @@ defineExpose({
         </template>
       </el-alert>
       <ElButton v-if="isCommunity" id="add-jira-issue-btn" type="primary"
-        ><VIcon>bug-outlined</VIcon> New Issue
+        ><template #icon>
+          <VIcon>bug-outlined</VIcon>
+        </template>
+        New Issue
       </ElButton>
       <NotificationPopover v-if="showNotification" class="ml-4" />
       <ElDropdown

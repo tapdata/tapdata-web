@@ -8,9 +8,9 @@ export {}
 declare global {
   const ElIcon: typeof import('element-plus/es')['ElIcon']
   const ElIconCopyDocument: typeof import('@element-plus/icons-vue')['CopyDocument']
-  const ElIconRefresh: typeof import('@element-plus/icons-vue')['Refresh']
   const ElIconSearch: typeof import('@element-plus/icons-vue')['Search']
   const ElInput: typeof import('element-plus/es')['ElInput']
+  const ElInputNumber: typeof import('element-plus/es')['ElInputNumber']
   const ElLoading: typeof import('element-plus/es')['ElLoading']
   const ElMessage: typeof import('element-plus/es')['ElMessage']
   const ElMessageBox: typeof import('element-plus/es')['ElMessageBox']
@@ -24,9 +24,6 @@ declare global {
   const IconLucideTriangleAlert: typeof import('~icons/lucide/triangle-alert')['default']
   const IconMingcuteCheckCircleFill: typeof import('~icons/mingcute/check-circle-fill')['default']
   const IconMingcuteCloseCircleFill: typeof import('~icons/mingcute/close-circle-fill')['default']
-  const IconMingcuteErrorFill: typeof import('~icons/mingcute/error-fill')['default']
   const IconMingcuteInformationFill: typeof import('~icons/mingcute/information-fill')['default']
-  const IconMingcuteWarning: typeof import('~icons/mingcute/warning')['default']
   const IconMingcuteWarningFill: typeof import('~icons/mingcute/warning-fill')['default']
-  const IconMingcuteWarningFilled: typeof import('~icons/mingcute/warning-filled')['default']
 }

@@ -10,7 +10,9 @@ export default {
     },
     goOP() {
       this.handleClose()
-      window.open('https://tapdata.mike-x.com/lV5o0?m=3VXe4lCHe9LjBsda')
+      window.open(
+        'https://tapdata.feishu.cn/share/base/form/shrcnoYXtxkXe7L4wu3vKDYzUUc',
+      )
     },
     goCloud() {
       this.handleClose()

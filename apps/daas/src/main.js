@@ -159,14 +159,23 @@ document.addEventListener('visibilitychange', () => {
 
 // community add jira issue collector
 if (import.meta.env.VUE_APP_MODE === 'community') {
-  window.ATL_JQ_PAGE_PROPS = {
-    triggerFunction(showCollectorDialog) {
-      document.addEventListener('click', function (event) {
-        const target = document.querySelector('#add-jira-issue-btn')
-        if (event.target === target || target.contains(event.target)) {
-          showCollectorDialog()
-        }
-      })
-    },
-  }
+  const script = document.createElement('script')
+  script.type = 'text/javascript'
+  script.src =
+    'https://tapdata.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-vg1gsr/b/9/c95134bc67d3a521bb3f4331beb9b804/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=11deaaeb'
+
+  script.addEventListener('load', () => {
+    window.ATL_JQ_PAGE_PROPS = {
+      triggerFunction(showCollectorDialog) {
+        document.addEventListener('click', function (event) {
+          const target = document.querySelector('#add-jira-issue-btn')
+          if (event.target === target || target.contains(event.target)) {
+            showCollectorDialog()
+          }
+        })
+      },
+    }
+  })
+
+  document.head.append(script)
 }

@@ -171,6 +171,9 @@ onMounted(() => {
             <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
             <template #title>
               <span class="ml-4 title">{{ menu.label }}</span>
+              <VIcon v-if="lockedFeature[menu.name]" class="ml-2" size="24"
+                >lock-circle</VIcon
+              >
             </template>
           </ElMenuItem>
         </template>

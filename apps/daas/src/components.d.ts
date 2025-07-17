@@ -104,7 +104,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     VDivider: typeof import('./components/VDivider.vue')['default']
   }
-  export interface ComponentCustomProperties {
+  export interface GlobalDirectives {
     vInfiniteScroll: typeof import('element-plus/es')['ElInfiniteScroll']
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
