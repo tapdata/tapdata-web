@@ -322,7 +322,13 @@ const open = async (row: Connection) => {
 }
 
 const edit = async () => {
-  const { id, pdkHash, definitionPdkId: pdkId, agentType, name } = connection
+  const {
+    id,
+    pdkHash,
+    definitionPdkId: pdkId,
+    agentType,
+    name,
+  } = connection.value
 
   if (agentType === 'Local') {
     const confirmed = await Modal.confirm(
