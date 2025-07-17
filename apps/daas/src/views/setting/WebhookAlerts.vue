@@ -473,8 +473,8 @@ onMounted(() => {
       <el-table-column :label="$t('webhook_switch')" prop="open" width="120">
         <template #default="{ row }">
           <ElSwitch
-            :disabled="switchStateMap[row.id]"
-            :value="row.open"
+            :loading="switchStateMap[row.id]"
+            :model-value="row.open"
             @change="handleSwitch(row)"
           />
         </template>
