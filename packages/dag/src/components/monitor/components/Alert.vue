@@ -16,15 +16,6 @@ export default {
       type: Object,
       default: () => {},
     },
-    logsData: {
-      type: Object,
-      default: () => {
-        return {
-          total: 0,
-          items: [],
-        }
-      },
-    },
     alarmData: {
       type: Object,
       default: () => {
@@ -80,7 +71,6 @@ export default {
           width: 150,
         },
       ],
-      list: [],
     }
   },
   computed: {
@@ -150,17 +140,29 @@ export default {
           .filter((t) => t.num),
       ]
     },
-  },
-  watch: {
-    alarmData: {
-      deep: true,
-      handler() {
-        this.getList()
-      },
+
+    list() {
+      let data = this.alarmData?.alarmList || []
+      const { activeNodeId } = this
+      const { level, status } = this.form
+      if (activeNodeId !== 'all') {
+        data = data.filter((t) => t.nodeId === activeNodeId)
+      }
+      if (level) {
+        data = data.filter((t) => t.level === level)
+      }
+      if (status) {
+        data = data.filter((t) => t.status === status)
+      }
+      return (
+        data.map((t) => {
+          t.levelLabel = ALARM_LEVEL_MAP[t.level].text
+          t.levelType = ALARM_LEVEL_MAP[t.level].type
+          t.statusLabel = ALARM_STATUS_MAP[t.status].text
+          return t
+        }) || []
+      )
     },
-  },
-  mounted() {
-    this.getList()
   },
   methods: {
     getList() {
@@ -190,7 +192,6 @@ export default {
         return
       }
       this.activeNodeId = item.value
-      this.getList()
     },
 
     handleClose(row = {}) {
@@ -245,7 +246,6 @@ export default {
           :label="$t('packages_dag_components_alert_gaojingjibie')"
           :items="levelItems"
           clearable
-          @change="getList"
         />
         <SelectList
           v-model="form.status"
@@ -253,7 +253,6 @@ export default {
           :label="$t('packages_dag_components_alert_gaojingzhuangtai')"
           :items="statusItems"
           clearable
-          @change="getList"
         />
       </div>
       <VTable

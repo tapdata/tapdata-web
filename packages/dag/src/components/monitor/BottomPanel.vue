@@ -161,13 +161,15 @@ export default {
       <ElTabs
         key="bottomPanel"
         v-model="currentTab"
-        style="--el-tabs-padding-left: 1rem"
+        style="--el-tabs-padding-left: 1rem; --el-tabs-header-height: 44px"
         class="setting-tabs h-100 flex-1 flex w-100 monitor-bottom-tabs"
       >
-        <ElTabPane
-          :label="$t('packages_dag_monitor_bottompanel_renwujindu')"
-          name="milestone"
-        >
+        <ElTabPane name="milestone">
+          <template #label>
+            <span>
+              {{ $t('packages_dag_monitor_bottompanel_renwujindu') }}
+            </span>
+          </template>
           <MilestoneList
             v-if="currentTab === 'milestone'"
             v-bind="$attrs"
@@ -176,12 +178,12 @@ export default {
             :current-tab="currentTab"
           />
         </ElTabPane>
-        <ElTabPane
-          v-if="!hideLog"
-          :label="$t('public_task_log')"
-          name="log"
-          class="monitor-log-pane"
-        >
+        <ElTabPane v-if="!hideLog" name="log" class="monitor-log-pane">
+          <template #label>
+            <span>
+              {{ $t('public_task_log') }}
+            </span>
+          </template>
           <NodeLog
             v-if="currentTab === 'log'"
             v-bind="$attrs"
@@ -191,21 +193,24 @@ export default {
             @action="$emit('action', arguments[0])"
           />
         </ElTabPane>
-        <ElTabPane
-          :label="$t('packages_dag_monitor_bottompanel_yunxingjilu')"
-          name="record"
-        >
+        <ElTabPane name="record">
+          <template #label>
+            <span>
+              {{ $t('packages_dag_monitor_bottompanel_yunxingjilu') }}
+            </span>
+          </template>
           <Record
             v-if="currentTab === 'record'"
             v-bind="$attrs"
             :current-tab="currentTab"
           />
         </ElTabPane>
-        <ElTabPane
-          v-if="showAlert"
-          :label="$t('packages_dag_monitor_bottompanel_gaojingliebiao')"
-          name="alert"
-        >
+        <ElTabPane v-if="showAlert" name="alert">
+          <template #label>
+            <span>
+              {{ $t('packages_dag_monitor_bottompanel_gaojingliebiao') }}
+            </span>
+          </template>
           <Alert
             v-if="currentTab === 'alert'"
             v-bind="$attrs"
@@ -214,11 +219,12 @@ export default {
             @load-data="$emit('load-data')"
           />
         </ElTabPane>
-        <ElTabPane
-          v-if="relationCount"
-          :label="$t('packages_dag_monitor_bottompanel_guanlianrenwu')"
-          name="relation"
-        >
+        <ElTabPane v-if="relationCount" name="relation">
+          <template #label>
+            <span>
+              {{ $t('packages_dag_monitor_bottompanel_guanlianrenwu') }}
+            </span>
+          </template>
           <RelationList
             v-bind="$attrs"
             :current-tab="currentTab"
@@ -227,11 +233,12 @@ export default {
             @load-data="$emit('load-data')"
           />
         </ElTabPane>
-        <ElTabPane
-          v-if="isDaas && !isCommunity"
-          :label="$t('public_validation_record')"
-          name="inspect"
-        >
+        <ElTabPane v-if="isDaas && !isCommunity" name="inspect">
+          <template #label>
+            <span>
+              {{ $t('public_validation_record') }}
+            </span>
+          </template>
           <TaskInspect
             v-if="currentTab === 'inspect'"
             v-bind="$attrs"
