@@ -424,7 +424,11 @@ export default defineComponent({
         </Classification>
         <div class="table-page-body gap-4">
           <div class="table-page-nav">
-            <slot name="nav" :open-classify="handleToggleClassify" />
+            <slot
+              name="nav"
+              :open-classify="handleToggleClassify"
+              :classification-visible="classificationVisible"
+            />
           </div>
           <div class="table-page-topbar">
             <div class="table-page-search-bar flex align-center gap-2">
