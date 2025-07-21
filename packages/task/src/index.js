@@ -1,2 +1,2 @@
-import MigrateList from './MigrateList'
+import MigrateList from './MigrateList.vue'
 export { MigrateList }

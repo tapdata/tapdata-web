@@ -1,4 +1,4 @@
-import { fetchTimestamp } from '@tap/api'
+import { baseRequestClient, fetchTimestamp } from '@tap/api'
 import { WSClient } from '@tap/business/src/shared/ws-client'
 import { installElement, VButton, VIcon } from '@tap/component'
 import Time from '@tap/shared/src/time'
@@ -6,7 +6,7 @@ import { ElLoading } from 'element-plus'
 import { createApp } from 'vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { installAllPlugins } from '@/plugins'
-import axios from '@/plugins/axios'
+import { initRequestClient } from '@/plugins/axios'
 import { startTimeOnPage, startTimeOnSite } from '@/plugins/buried'
 import store from '@/store'
 import { errorConfirmFnc } from '@/util'
@@ -16,7 +16,11 @@ import i18n from './i18n'
 import dayjs from './plugins/dayjs'
 import { startVersionPolling } from './plugins/version-polling'
 import 'github-markdown-css'
+import '@tap/styles'
 import './assets/styles/app.scss'
+// import '@/styles/app.scss'
+
+const requestClient = initRequestClient()
 
 export default ({ routes }) => {
   let loading = null
@@ -125,8 +129,10 @@ export default ({ routes }) => {
   let count = 0
 
   const getData = () => {
-    axios
-      .get('api/tcm/user')
+    requestClient
+      .get('api/tcm/user', {
+        baseURL: './',
+      })
       .then((data) => {
         const userInfo = data
         window.__USER_INFO__ = userInfo
@@ -158,7 +164,7 @@ export default ({ routes }) => {
       })
   }
 
-  axios
+  baseRequestClient
     .get('config/config.json', {
       responseType: 'json',
       headers: {

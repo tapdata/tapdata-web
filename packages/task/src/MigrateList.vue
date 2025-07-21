@@ -137,8 +137,6 @@ export default {
           >
             {{ $t('public_task_create') }}
           </el-button>
-
-          createLoading: {{ createLoading }}
         </div>
       </template>
     </template>
