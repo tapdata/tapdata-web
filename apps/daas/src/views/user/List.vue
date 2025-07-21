@@ -682,9 +682,10 @@ export default {
       @classify-submit="handleOperationClassify"
       @sort-change="handleSortTable"
     >
-      <template #nav="{ openClassify }">
+      <template #nav="{ openClassify, classificationVisible }">
         <div class="tapNav position-relative">
           <el-button
+            v-if="!classificationVisible"
             class="position-absolute z-10 start-0"
             text
             style="top: 10px"
@@ -697,7 +698,9 @@ export default {
 
           <ElTabs
             v-model="activePanel"
-            style="--el-tabs-padding-left: 36px"
+            :style="
+              !classificationVisible ? '--el-tabs-padding-left: 36px' : ''
+            "
             @tab-change="handleTapClick"
           >
             <ElTabPane
@@ -1073,7 +1076,7 @@ export default {
 <style lang="scss" scoped>
 .user-table-page {
   :deep(.classification) {
-    margin-top: -6px !important;
+    margin-top: 0 !important;
   }
 }
 

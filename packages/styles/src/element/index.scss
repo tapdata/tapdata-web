@@ -79,6 +79,7 @@
 
   .el-tabs__item {
     padding: 0 16px;
+    font-weight: 400;
   }
 
   .el-tabs__item:has(:first-child) {
@@ -89,10 +90,10 @@
       padding: 4px 8px;
       line-height: 24px;
       border-radius: var(--el-border-radius-base);
-      transition: all .3s;
     }
 
     &:hover {
+      transition: background-color, color .12s ease-out;
       color: var(--el-text-color-primary);
       > :first-child {
         background-color: var(--el-fill-color-light);
@@ -102,6 +103,10 @@
     &.is-active {
       color: var(--el-color-primary);
     }
+  }
+
+  .el-tabs__item:nth-child(2) {
+    padding-left: 0;
   }
 
   .el-tabs__nav-wrap::after {

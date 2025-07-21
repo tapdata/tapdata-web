@@ -1093,4 +1093,5 @@ export default {
     'You have selected all tables',
   packages_dag_syncForeignKeyEnable: 'Sync Foreign Key',
   packages_dag_check_no_pk_table: 'Check No Primary Key Table',
+  packages_dag_writeWithGroupByTableEnable: 'Write with Group By Table',
 }

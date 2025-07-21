@@ -237,7 +237,7 @@ export default {
         <div><VIcon>arrow-right</VIcon></div>
       </div>
     </div>
-    <div class="main alert-main flex-fill flex flex-column pt-5">
+    <div class="main alert-main flex-fill flex flex-column pt-4">
       <div class="flex ml-4 mb-4 align-items-center gap-4">
         <SelectList
           ref="select"
@@ -264,6 +264,7 @@ export default {
         }"
         height="100"
         class="table-list"
+        table-class="has-border-t"
         hide-on-single-page
       >
         <template #levelSlot="scope">

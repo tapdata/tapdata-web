@@ -930,4 +930,5 @@ export default {
   packages_dag_table_selector_all_tables_selected: '您已選擇所有表進行複製',
   packages_dag_syncForeignKeyEnable: '同步外鍵',
   packages_dag_check_no_pk_table: '校驗無主鍵表',
+  packages_dag_writeWithGroupByTableEnable: '按表分組寫入',
 }
