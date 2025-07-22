@@ -1269,6 +1269,7 @@ export class Database extends NodeType {
                         },
                       },
                       writeWithGroupByTableEnable: {
+                        default: true,
                         title: i18n.t(
                           'packages_dag_writeWithGroupByTableEnable',
                         ),
