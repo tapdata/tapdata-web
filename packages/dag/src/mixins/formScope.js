@@ -1,8 +1,8 @@
 import { action } from '@formily/reactive'
 import {
-  databaseTypesApi,
   externalStorageApi,
   fetchConnections,
+  fetchDatabaseTypeByPdkHash,
   findAccessNodeInfo,
   getAlarmChannels,
   getConnectionNoSchema,
@@ -534,7 +534,7 @@ export default {
 
             try {
               field.loading = true
-              const pdk = await databaseTypesApi.pdkHash(parent.attrs.pdkHash)
+              const pdk = await fetchDatabaseTypeByPdkHash(parent.attrs.pdkHash)
               const expression = JSON.parse(pdk.expression)
               const dataTypes = []
               const dataTypeOptions = []

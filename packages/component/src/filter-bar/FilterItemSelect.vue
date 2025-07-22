@@ -105,7 +105,7 @@ const handleVisibleChange = (visible) => {
     :class="{ 'is-empty': isEmpty, 'is-active': !isEmpty }"
     :style="selectStyle"
     :options="filteredOptions"
-    :fit-input-width="width"
+    :fit-input-width="false"
     @visible-change="handleVisibleChange"
   >
     <template v-if="filterable" #header>
@@ -130,7 +130,9 @@ const handleVisibleChange = (visible) => {
     </template>
 
     <template #default="{ item }">
-      <slot name="default" :item="item" />
+      <slot name="default" :item="item">
+        <div>{{ item.label }}</div>
+      </slot>
     </template>
   </ElSelectV2>
 </template>

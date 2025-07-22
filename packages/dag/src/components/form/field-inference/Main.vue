@@ -1,5 +1,5 @@
 <script>
-import { databaseTypesApi, metadataInstancesApi } from '@tap/api'
+import { fetchDatabaseTypeByPdkHash, metadataInstancesApi } from '@tap/api'
 import noData from '@tap/assets/images/noData.png'
 
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
@@ -111,7 +111,7 @@ export default {
       // TODO 获取原字段类型
       const rules = this.form.getValuesIn('fieldChangeRules') || []
       const nodeAttrs = this.form.getValuesIn('attrs') || {}
-      const pdkHashData = await databaseTypesApi.pdkHash(nodeAttrs.pdkHash)
+      const pdkHashData = await fetchDatabaseTypeByPdkHash(nodeAttrs.pdkHash)
       this.dataTypesJson = pdkHashData
         ? JSON.parse(pdkHashData?.expression || '{}')
         : {}

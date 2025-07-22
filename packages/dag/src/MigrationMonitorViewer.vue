@@ -1,131 +1,36 @@
-<template>
-  <section class="dataflow-editor layout-wrap vh-100">
-    <!--头部-->
-    <TopHeader
-      :loading="loading"
-      :is-saving="isSaving"
-      :dataflow-name="dataflow.name"
-      :dataflow="dataflow"
-      :scale="scale"
-      :showBottomPanel="showBottomPanel"
-      :hide-menus="['verify', 'operation', 'agent']"
-      @page-return="handlePageReturn"
-      @save="save"
-      @delete="handleDelete"
-      @change-name="handleUpdateName"
-      @showSettings="handleShowSettings"
-      @showVerify="handleShowVerify"
-      @showBottomPanel="handleShowBottomPanel"
-      @locate-node="handleLocateNode"
-      @start="handleStart"
-      @stop="handleStop"
-      @forceStop="handleForceStop"
-      @reset="handleReset"
-      @edit="handleEdit"
-      @detail="handleDetail"
-    >
-      <template #status="{ result }">
-        <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block', 'mr-2']">
-          {{ getTaskStatus(result[0].status) }}
-        </span>
-      </template>
-    </TopHeader>
-    <section class="layout-wrap layout-has-sider position-relative font-color-light">
-      <!--内容体-->
-      <section class="layout-wrap flex-1">
-        <main id="dfEditorContent" ref="layoutContent" class="layout-content flex flex-column flex-1 overflow-hidden">
-          <PaperScroller
-            ref="paperScroller"
-            :nav-lines="navLines"
-            @add-node="handleAddNodeToPos"
-            @mouse-select="handleMouseSelect"
-            @change-scale="handleChangeScale"
-          >
-            <DFNode
-              v-for="n in allNodes"
-              :key="n.id"
-              :node-id="n.id"
-              :id="NODE_PREFIX + n.id"
-              :js-plumb-ins="jsPlumbIns"
-              :class="{
-                'options-active': nodeMenu.typeId === n.id,
-              }"
-              @drag-start="onNodeDragStart"
-              @drag-move="onNodeDragMove"
-              @drag-stop="onNodeDragStop"
-              @deselectAllNodes="deselectAllNodes"
-              @deselectNode="nodeDeselectedById"
-              @nodeSelected="nodeSelectedById"
-              @delete="handleDeleteById"
-              @show-node-popover="showNodePopover"
-            ></DFNode>
-          </PaperScroller>
-          <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
-            <VEmpty large></VEmpty>
-          </div>
-        </main>
-        <BottomPanel
-          v-if="showBottomPanel"
-          v-resize.top="{
-            minHeight: 328,
-          }"
-          :dataflow="dataflow"
-          class="tabs-header__hidden"
-          @showBottomPanel="handleShowBottomPanel"
-        ></BottomPanel>
-      </section>
-      <!--配置面板-->
-      <ConfigPanel
-        ref="configPanel"
-        :settings="dataflow"
-        :scope="formScope"
-        :buttonShowMap="buttonShowMap"
-        @hide="onHideSidebar"
-      />
-
-      <!--   节点详情   -->
-      <NodeDetailDialog
-        v-model:value="nodeDetailDialog"
-        :dataflow="dataflow"
-        :node-id="nodeDetailDialogId"
-        :timeFormat="timeFormat"
-        :range="[firstStartTime, lastStopTime || getTime()]"
-        :quotaTime="quotaTime"
-        :quotaTimeType="quotaTimeType"
-        :getTimeRange="getTimeRange"
-        ref="nodeDetailDialog"
-      ></NodeDetailDialog>
-    </section>
-  </section>
-</template>
-
 <script>
+import { observable } from '@formily/reactive'
+import { fetchDatabaseTypes, measurementApi, taskApi } from '@tap/api'
+
+import { TASK_STATUS_MAP } from '@tap/business'
+import { VEmpty } from '@tap/component'
+import resize from '@tap/component/src/directives/resize'
+import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
+import { showMessage } from '@tap/component/src/mixins/showMessage'
+import { titleChange } from '@tap/component/src/mixins/titleChange'
 import i18n from '@tap/i18n'
 import Time from '@tap/shared/src/time'
-
-import PaperScroller from './components/PaperScroller'
-import TopHeader from './components/monitor/TopHeader'
+import dagre from 'dagre'
+import { mapMutations } from 'vuex'
+import { MoveNodeCommand } from './command'
 import DFNode from './components/DFNode'
-import { jsPlumb, config } from './instance'
-import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH, NONSUPPORT_CDC, NONSUPPORT_SYNC } from './constants'
-import { allResourceIns } from './nodes/loader'
-import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
-import { titleChange } from '@tap/component/src/mixins/titleChange'
-import { showMessage } from '@tap/component/src/mixins/showMessage'
 import ConfigPanel from './components/migration/ConfigPanel'
 import BottomPanel from './components/monitor/BottomPanel'
-import resize from '@tap/component/src/directives/resize'
-import formScope from './mixins/formScope'
-import editor from './mixins/editor'
-import { VEmpty } from '@tap/component'
-import { observable } from '@formily/reactive'
-import { databaseTypesApi, measurementApi, taskApi } from '@tap/api'
-import dagre from 'dagre'
-import { MoveNodeCommand } from './command'
 import NodeDetailDialog from './components/monitor/components/NodeDetailDialog'
-import { TIME_FORMAT_MAP, getTimeGranularity } from './components/monitor/util'
-import { mapMutations } from 'vuex'
-import { TASK_STATUS_MAP } from '@tap/business'
+import TopHeader from './components/monitor/TopHeader'
+import { getTimeGranularity, TIME_FORMAT_MAP } from './components/monitor/util'
+import PaperScroller from './components/PaperScroller'
+import {
+  NODE_HEIGHT,
+  NODE_PREFIX,
+  NODE_WIDTH,
+  NONSUPPORT_CDC,
+  NONSUPPORT_SYNC,
+} from './constants'
+import { config, jsPlumb } from './instance'
+import editor from './mixins/editor'
+import formScope from './mixins/formScope'
+import { allResourceIns } from './nodes/loader'
 
 export default {
   name: 'MigrationMonitorViewer',
@@ -133,8 +38,6 @@ export default {
   directives: {
     resize,
   },
-
-  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
     VEmpty,
@@ -145,6 +48,8 @@ export default {
     DFNode,
     NodeDetailDialog,
   },
+
+  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   data() {
     const dataflow = observable({
@@ -208,12 +113,16 @@ export default {
     },
 
     isEnterTimer() {
-      return this.quotaTimeType !== 'custom' && !this.nodeDetailDialog && this.dataflow?.status === 'running'
+      return (
+        this.quotaTimeType !== 'custom' &&
+        !this.nodeDetailDialog &&
+        this.dataflow?.status === 'running'
+      )
     },
   },
 
   watch: {
-    'dataflow.type'(v) {
+    'dataflow.type': function (v) {
       v && this.init()
     },
   },
@@ -237,7 +146,7 @@ export default {
         await this.openDataflow(id)
         this.setStateReadonly(true)
       } catch (error) {
-        console.error(error) // eslint-disable-line
+        console.error(error)
       }
     })
   },
@@ -296,7 +205,8 @@ export default {
     gotoViewer() {},
 
     async validate() {
-      if (!this.dataflow.name) return this.$t('packages_dag_editor_cell_validate_empty_name')
+      if (!this.dataflow.name)
+        return this.$t('packages_dag_editor_cell_validate_empty_name')
 
       // 至少两个数据节点
       const tableNode = this.allNodes.filter((node) => node.type === 'database')
@@ -310,8 +220,8 @@ export default {
         targetMap = {},
         edges = this.allEdges
       edges.forEach((item) => {
-        let _source = sourceMap[item.source]
-        let _target = targetMap[item.target]
+        const _source = sourceMap[item.source]
+        const _target = targetMap[item.target]
 
         if (!_source) {
           sourceMap[item.source] = [item]
@@ -335,17 +245,26 @@ export default {
 
         if (!sourceMap[id] && !targetMap[id]) {
           // 存在没有连线的节点
-          someErrorMsg = i18n.t('packages_dag_src_migrationmonitorviewer_noden', { val1: node.name })
+          someErrorMsg = i18n.t(
+            'packages_dag_src_migrationmonitorviewer_noden',
+            { val1: node.name },
+          )
           return true
         }
 
         if (inputNum < minInputs) {
-          someErrorMsg = i18n.t('packages_dag_src_migrationmonitorviewer_noden', { val1: node.name, val2: minInputs })
+          someErrorMsg = i18n.t(
+            'packages_dag_src_migrationmonitorviewer_noden',
+            { val1: node.name, val2: minInputs },
+          )
           return true
         }
 
         if (this.hasNodeError(id)) {
-          someErrorMsg = i18n.t('packages_dag_src_migrationmonitorviewer_noden', { val1: node.name })
+          someErrorMsg = i18n.t(
+            'packages_dag_src_migrationmonitorviewer_noden',
+            { val1: node.name },
+          )
           return true
         }
       })
@@ -359,46 +278,66 @@ export default {
         tableNode.forEach((node) => {
           if (
             sourceMap[node.id] &&
-            (NONSUPPORT_SYNC.includes(node.databaseType) || NONSUPPORT_CDC.includes(node.databaseType))
+            (NONSUPPORT_SYNC.includes(node.databaseType) ||
+              NONSUPPORT_CDC.includes(node.databaseType))
           ) {
             nodeNames.push(node.name)
             this.setNodeErrorMsg({
               id: node.id,
-              msg: i18n.t('packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi') + typeName,
+              msg:
+                i18n.t(
+                  'packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi',
+                ) + typeName,
             })
           }
         })
       } else if (this.dataflow.type === 'initial_sync') {
         typeName = i18n.t('public_task_type_initial_sync')
         tableNode.forEach((node) => {
-          if (sourceMap[node.id] && NONSUPPORT_SYNC.includes(node.databaseType)) {
+          if (
+            sourceMap[node.id] &&
+            NONSUPPORT_SYNC.includes(node.databaseType)
+          ) {
             nodeNames.push(node.name)
             this.setNodeErrorMsg({
               id: node.id,
-              msg: i18n.t('packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi') + typeName,
+              msg:
+                i18n.t(
+                  'packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi',
+                ) + typeName,
             })
           }
         })
       } else if (this.dataflow.type === 'cdc') {
         typeName = i18n.t('public_task_type_cdc')
         tableNode.forEach((node) => {
-          if (sourceMap[node.id] && NONSUPPORT_CDC.includes(node.databaseType)) {
+          if (
+            sourceMap[node.id] &&
+            NONSUPPORT_CDC.includes(node.databaseType)
+          ) {
             nodeNames.push(node.name)
             this.setNodeErrorMsg({
               id: node.id,
-              msg: i18n.t('packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi') + typeName,
+              msg:
+                i18n.t(
+                  'packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi',
+                ) + typeName,
             })
           }
         })
       }
 
       if (nodeNames.length) {
-        someErrorMsg = i18n.t('packages_dag_src_migrationmonitorviewer_cunzaibuzhichi', { val1: typeName })
+        someErrorMsg = i18n.t(
+          'packages_dag_src_migrationmonitorviewer_cunzaibuzhichi',
+          { val1: typeName },
+        )
       }
 
       const accessNodeProcessIdArr = [
         ...tableNode.reduce((set, item) => {
-          item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
+          item.attrs.accessNodeProcessId &&
+            set.add(item.attrs.accessNodeProcessId)
           return set
         }, new Set()),
       ]
@@ -414,13 +353,19 @@ export default {
           let isError = false
           const agent = this.scope.$agentMap[chooseId]
           tableNode.forEach((node) => {
-            if (node.attrs.accessNodeProcessId && chooseId !== node.attrs.accessNodeProcessId) {
+            if (
+              node.attrs.accessNodeProcessId &&
+              chooseId !== node.attrs.accessNodeProcessId
+            ) {
               this.setNodeErrorMsg({
                 id: node.id,
-                msg: i18n.t('packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi', {
-                  val1: agent.hostName,
-                  val2: agent.ip,
-                }),
+                msg: i18n.t(
+                  'packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi',
+                  {
+                    val1: agent.hostName,
+                    val2: agent.ip,
+                  },
+                ),
               })
               isError = true
             }
@@ -429,16 +374,22 @@ export default {
         }
       } else if (accessNodeProcessIdArr.length === 1) {
         // 如果画布上仅有一个所属agent，自动设置为任务的agent
-        this.dataflow['accessNodeType'] = 'MANUALLY_SPECIFIED_BY_THE_USER'
-        this.dataflow['accessNodeProcessId'] = accessNodeProcessIdArr[0]
+        this.dataflow.accessNodeType = 'MANUALLY_SPECIFIED_BY_THE_USER'
+        this.dataflow.accessNodeProcessId = accessNodeProcessIdArr[0]
       }
 
       if (someErrorMsg) return someErrorMsg
 
       // 检查链路的末尾节点类型是否是表节点
       const firstNodes = this.allNodes.filter((node) => !targetMap[node.id]) // 链路的首节点
-      const nodeMap = this.allNodes.reduce((map, node) => ((map[node.id] = node), map), {})
-      if (firstNodes.some((node) => !this.isEndOfTable(node, sourceMap, nodeMap))) return `链路的末位需要是一个数据节点`
+      const nodeMap = this.allNodes.reduce(
+        (map, node) => ((map[node.id] = node), map),
+        {},
+      )
+      if (
+        firstNodes.some((node) => !this.isEndOfTable(node, sourceMap, nodeMap))
+      )
+        return `链路的末位需要是一个数据节点`
 
       return null
     },
@@ -464,9 +415,11 @@ export default {
     },
 
     handleDetail() {
-      let subId = this.dataflow.statuses[0]?.id || ''
+      const subId = this.dataflow.statuses[0]?.id || ''
       if (!subId) {
-        this.$message.error(i18n.t('packages_dag_src_migrationmonitorviewer_gaifuzhirenwu'))
+        this.$message.error(
+          i18n.t('packages_dag_src_migrationmonitorviewer_gaifuzhirenwu'),
+        )
         return
       }
 
@@ -474,7 +427,7 @@ export default {
         name: 'MigrateStatistics',
         query: {
           id: this.dataflow.id,
-          subId: subId,
+          subId,
         },
       })
     },
@@ -498,8 +451,8 @@ export default {
         await taskApi.start(this.dataflow.id)
         this.$message.success(this.$t('public_message_operation_success'))
         this.isSaving = false
-      } catch (e) {
-        this.handleError(e)
+      } catch (error) {
+        this.handleError(error)
         this.isSaving = false
       }
     },
@@ -507,7 +460,7 @@ export default {
     getQuotaFilter() {
       const taskId = this.dataflow?.id
       const [startAt, endAt] = this.quotaTime
-      let params = {
+      const params = {
         startAt,
         endAt,
         samples: {
@@ -611,7 +564,7 @@ export default {
     },
 
     getParams() {
-      let params = {
+      const params = {
         quota: {
           uri: '/api/measurement/query/v2',
           param: this.getQuotaFilter(),
@@ -628,7 +581,7 @@ export default {
         const map = {
           quota: this.loadQuotaData,
         }
-        for (let key in data) {
+        for (const key in data) {
           const item = data[key]
           if (item.code === 'ok') {
             map[key]?.(data[key].data)
@@ -712,14 +665,17 @@ export default {
         }
       })
 
-      hasMove && this.command.exec(new MoveNodeCommand(oldProperties, newProperties))
+      hasMove &&
+        this.command.exec(new MoveNodeCommand(oldProperties, newProperties))
       this.$refs.paperScroller.autoResizePaper()
       this.$refs.paperScroller.centerContent()
     },
 
     handleChangeTimeSelect(val, isTime, source) {
       this.quotaTimeType = source?.type ?? val
-      this.quotaTime = isTime ? val?.split(',')?.map((t) => Number(t)) : this.getTimeRange(val)
+      this.quotaTime = isTime
+        ? val?.split(',')?.map((t) => Number(t))
+        : this.getTimeRange(val)
       this.init()
     },
 
@@ -762,7 +718,7 @@ export default {
     },
 
     handleVerifyDetails(table) {
-      let routeUrl = this.$router.resolve({
+      const routeUrl = this.$router.resolve({
         name: 'VerifyDetails',
         params: {
           id: this.dataflow?.id,
@@ -775,7 +731,7 @@ export default {
     },
 
     handleConnectionList(keyword) {
-      let routeUrl = this.$router.resolve({
+      const routeUrl = this.$router.resolve({
         name: 'connectionsList',
         query: {
           keyword,
@@ -790,7 +746,9 @@ export default {
         const { parent_task_sign } = this.$route.query || {}
         const data = await taskApi.get(id, params, { parent_task_sign })
         if (!data) {
-          this.$message.error(i18n.t('packages_dag_mixins_editor_renwubucunzai'))
+          this.$message.error(
+            i18n.t('packages_dag_mixins_editor_renwubucunzai'),
+          )
           this.handlePageReturn()
           return
         }
@@ -798,22 +756,20 @@ export default {
         this.reformDataflow(data)
         this.setTaskInfo(this.dataflow)
         return data
-      } catch (e) {
-        console.log(i18n.t('packages_dag_mixins_editor_renwujiazaichu'), e) // eslint-disable-line
+      } catch (error) {
+        console.log(i18n.t('packages_dag_mixins_editor_renwujiazaichu'), error) // eslint-disable-line
       } finally {
         this.loading = false
       }
     },
 
     async initPdkProperties() {
-      const databaseItems = await databaseTypesApi.get({
-        filter: JSON.stringify({
-          fields: {
-            messages: true,
-            pdkHash: true,
-            properties: true,
-          },
-        }),
+      const databaseItems = await fetchDatabaseTypes({
+        where: {
+          messages: true,
+          pdkHash: true,
+          properties: true,
+        },
       })
       this.setPdkPropertiesMap(
         databaseItems.reduce((map, item) => {
@@ -836,6 +792,119 @@ export default {
   },
 }
 </script>
+
+<template>
+  <section class="dataflow-editor layout-wrap vh-100">
+    <!--头部-->
+    <TopHeader
+      :loading="loading"
+      :is-saving="isSaving"
+      :dataflow-name="dataflow.name"
+      :dataflow="dataflow"
+      :scale="scale"
+      :show-bottom-panel="showBottomPanel"
+      :hide-menus="['verify', 'operation', 'agent']"
+      @page-return="handlePageReturn"
+      @save="save"
+      @delete="handleDelete"
+      @change-name="handleUpdateName"
+      @show-settings="handleShowSettings"
+      @show-verify="handleShowVerify"
+      @show-bottom-panel="handleShowBottomPanel"
+      @locate-node="handleLocateNode"
+      @start="handleStart"
+      @stop="handleStop"
+      @force-stop="handleForceStop"
+      @reset="handleReset"
+      @edit="handleEdit"
+      @detail="handleDetail"
+    >
+      <template #status="{ result }">
+        <span
+          v-if="result && result[0]"
+          :class="[`status-${result[0].status}`, 'status-block', 'mr-2']"
+        >
+          {{ getTaskStatus(result[0].status) }}
+        </span>
+      </template>
+    </TopHeader>
+    <section
+      class="layout-wrap layout-has-sider position-relative font-color-light"
+    >
+      <!--内容体-->
+      <section class="layout-wrap flex-1">
+        <main
+          id="dfEditorContent"
+          ref="layoutContent"
+          class="layout-content flex flex-column flex-1 overflow-hidden"
+        >
+          <PaperScroller
+            ref="paperScroller"
+            :nav-lines="navLines"
+            @add-node="handleAddNodeToPos"
+            @mouse-select="handleMouseSelect"
+            @change-scale="handleChangeScale"
+          >
+            <DFNode
+              v-for="n in allNodes"
+              :id="NODE_PREFIX + n.id"
+              :key="n.id"
+              :node-id="n.id"
+              :js-plumb-ins="jsPlumbIns"
+              :class="{
+                'options-active': nodeMenu.typeId === n.id,
+              }"
+              @drag-start="onNodeDragStart"
+              @drag-move="onNodeDragMove"
+              @drag-stop="onNodeDragStop"
+              @deselect-all-nodes="deselectAllNodes"
+              @deselect-node="nodeDeselectedById"
+              @node-selected="nodeSelectedById"
+              @delete="handleDeleteById"
+              @show-node-popover="showNodePopover"
+            />
+          </PaperScroller>
+          <div
+            v-if="!allNodes.length && stateIsReadonly"
+            class="absolute-fill flex justify-center align-center"
+          >
+            <VEmpty large />
+          </div>
+        </main>
+        <BottomPanel
+          v-if="showBottomPanel"
+          v-resize.top="{
+            minHeight: 328,
+          }"
+          :dataflow="dataflow"
+          class="tabs-header__hidden"
+          @show-bottom-panel="handleShowBottomPanel"
+        />
+      </section>
+      <!--配置面板-->
+      <ConfigPanel
+        ref="configPanel"
+        :settings="dataflow"
+        :scope="formScope"
+        :button-show-map="buttonShowMap"
+        @hide="onHideSidebar"
+      />
+
+      <!--   节点详情   -->
+      <NodeDetailDialog
+        ref="nodeDetailDialog"
+        v-model:value="nodeDetailDialog"
+        :dataflow="dataflow"
+        :node-id="nodeDetailDialogId"
+        :time-format="timeFormat"
+        :range="[firstStartTime, lastStopTime || getTime()]"
+        :quota-time="quotaTime"
+        :quota-time-type="quotaTimeType"
+        :get-time-range="getTimeRange"
+      />
+    </section>
+  </section>
+</template>
 
 <style lang="scss" scoped>
 $sidebarW: 356px;

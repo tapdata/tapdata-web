@@ -420,9 +420,15 @@ importers:
       '@tap/node-design':
         specifier: workspace:*
         version: link:../../packages/node-design
+      '@tap/request':
+        specifier: workspace:*
+        version: link:../../packages/request
       '@tap/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      '@tap/styles':
+        specifier: workspace:*
+        version: link:../../packages/styles
       '@tap/task':
         specifier: workspace:*
         version: link:../../packages/task

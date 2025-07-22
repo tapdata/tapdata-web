@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { Check } from '@element-plus/icons-vue'
-import { databaseTypesApi, inspectApi, taskApi, useRequest } from '@tap/api'
+import { fetchDatabaseTypes, inspectApi, taskApi, useRequest } from '@tap/api'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 import Time from '@tap/shared/src/time.js'
@@ -649,8 +648,8 @@ const handleSelectTask = (taskId: any) => {
 
 const ConnectorMap = ref({})
 
-const fetchDatabaseTypes = async () => {
-  const databaseItems = await databaseTypesApi.get()
+const runfetchDatabaseTypes = async () => {
+  const databaseItems = await fetchDatabaseTypes()
 
   ConnectorMap.value = databaseItems.reduce((map, item) => {
     map[item.type] = {
@@ -682,7 +681,7 @@ const handleOpenTask = (task: any) => {
   )
 }
 
-fetchDatabaseTypes()
+runfetchDatabaseTypes()
 
 provide('formData', form)
 provide('conditionList', conditionList)
@@ -716,6 +715,7 @@ provide('ConnectorMap', ConnectorMap)
             v-model="form.flowId"
             class="form-input"
             filterable
+            :fit-input-width="false"
             :item-height="46"
             :options="taskOptions"
             :loading="taskOptionsLoading"
@@ -790,7 +790,7 @@ provide('ConnectorMap', ConnectorMap)
         <div>
           <el-radio-group
             v-model="form.inspectMethod"
-            class="align-top has-space"
+            class="align-top is-button"
             @change="handleChangeInspectMethod"
           >
             <el-radio-button value="row_count">
@@ -1194,9 +1194,14 @@ provide('ConnectorMap', ConnectorMap)
         size="large"
         type="primary"
         :disabled="saveDisabled"
-        :icon="Check"
         @click="save(true)"
-        >{{ $t('public_button_save') }}
+      >
+        <template #icon>
+          <el-icon size="16">
+            <i-mingcute:check-line />
+          </el-icon>
+        </template>
+        {{ $t('public_button_save') }}
       </el-button>
 
       <template v-if="!!errorMessageLevel">

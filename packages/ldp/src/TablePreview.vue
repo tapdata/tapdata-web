@@ -938,10 +938,12 @@ export default {
           v-model="activeName"
           class="h-100 table-preview-tabs tabs-fill"
         >
-          <el-tab-pane
-            :label="$t('packages_business_business_information')"
-            name="overView"
-          >
+          <el-tab-pane name="overView">
+            <template #label>
+              <span>
+                {{ $t('packages_business_business_information') }}
+              </span>
+            </template>
             <div v-loading="loading" class="pt-4">
               <section class="bg-white rounded-xl p-3 border border-gray-200">
                 <!--<div class="flex align-center">
@@ -1024,10 +1026,13 @@ export default {
                   v-model="activeNameItems"
                   class="tabs-fill tabs-as-card"
                 >
-                  <el-tab-pane
-                    :label="$t('packages_business_field_description')"
-                    name="columnsPreview"
-                  >
+                  <el-tab-pane name="columnsPreview">
+                    <template #label>
+                      <span>
+                        {{ $t('packages_business_field_description') }}
+                      </span>
+                    </template>
+
                     <VTable
                       class="discovery-page-table border rounded-xl mt-4"
                       :columns="columnsPreview"
@@ -1052,10 +1057,13 @@ export default {
                       </template>
                     </VTable>
                   </el-tab-pane>
-                  <el-tab-pane
-                    :label="$t('packages_business_sample_data')"
-                    name="sampleData"
-                  >
+                  <el-tab-pane name="sampleData">
+                    <template #label>
+                      <span>
+                        {{ $t('packages_business_sample_data') }}
+                      </span>
+                    </template>
+
                     <div
                       v-loading="loadingSampleData"
                       class="position-relative overflow-hidden mt-4 border rounded-xl"
@@ -1127,11 +1135,12 @@ export default {
             <!--            </ul>-->
             <!--          </section>-->
           </el-tab-pane>
-          <el-tab-pane
-            :label="$t('public_connection_form_schema')"
-            name="schema"
-            class="pt-4"
-          >
+          <el-tab-pane name="schema" class="pt-4">
+            <template #label>
+              <span>
+                {{ $t('public_connection_form_schema') }}
+              </span>
+            </template>
             <VTable
               v-loading="loading"
               class="discovery-page-table border rounded-xl"
@@ -1164,7 +1173,13 @@ export default {
               </template>
             </VTable>
           </el-tab-pane>
-          <el-tab-pane :label="$t('packages_business_tasks')" name="tasks">
+
+          <el-tab-pane name="tasks">
+            <template #label>
+              <span>
+                {{ $t('packages_business_tasks') }}
+              </span>
+            </template>
             <div class="overflow-hidden mt-4 border rounded-xl">
               <div class="flex align-center p-3">
                 <ElRadioGroup v-model="asTaskType">
@@ -1322,6 +1337,7 @@ export default {
               </el-table>
             </div>
           </el-tab-pane>
+
           <!--<el-tab-pane label="APIs" name="apis">
               <VTable
                 v-if="activeName === 'apis'"
@@ -1335,11 +1351,12 @@ export default {
                 </template>
               </VTable>
             </el-tab-pane>-->
-          <el-tab-pane
-            :label="$t('packages_ldp_lineage')"
-            name="lineage"
-            class="pt-4"
-          >
+          <el-tab-pane name="lineage" class="pt-4">
+            <template #label>
+              <span>
+                {{ $t('packages_ldp_lineage') }}
+              </span>
+            </template>
             <TableLineage
               class="border rounded-xl overflow-hidden"
               :is-show="activeName === 'lineage'"

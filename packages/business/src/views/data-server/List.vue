@@ -2,13 +2,13 @@
 import {
   batchUpdateApiModules,
   batchUpdateApiModuleTags,
-  databaseTypesApi,
   deleteApiModule,
   exportApiDocumentation,
   exportApiModules,
   fetchApiModules,
   fetchApiServers,
   fetchApps,
+  fetchDatabaseTypes,
   metadataInstancesApi,
   updateApiModule,
   useRequest,
@@ -208,7 +208,7 @@ const getFilterItems = () => {
       key: 'type', //对象分类
       type: 'select-inner',
       items: async () => {
-        let data = await databaseTypesApi.get()
+        let data = await fetchDatabaseTypes()
         data = data || []
         let databaseTypes: any[] = []
         databaseTypes =
@@ -399,16 +399,8 @@ const batchPublish = async () => {
   fetch()
 }
 
-const doLayout = () => {
-  nextTick(() => {
-    table.value?.doLayout()
-  })
-}
-
-// Additional variables and methods for template
 const showSearch = ref(false)
 const filterText = ref('')
-const authority = ref('')
 
 const openSearch = () => {
   showSearch.value = !showSearch.value

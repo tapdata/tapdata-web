@@ -1,8 +1,8 @@
 <script>
 import {
   CancelToken,
-  databaseTypesApi,
   fetchConnections,
+  fetchDatabaseTypes,
   metadataInstancesApi,
 } from '@tap/api'
 import SceneDialog from '@tap/business/src/components/create-connection/SceneDialog.vue'
@@ -150,7 +150,7 @@ export default {
       this.connectionDialog = !this.stateIsReadonly
     },
     getDatabaseType() {
-      databaseTypesApi.get().then((res) => {
+      fetchDatabaseTypes().then((res) => {
         if (res) {
           this.getPdkData(res)
         }

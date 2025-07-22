@@ -1,8 +1,8 @@
 <script>
-import VIcon from './base/VIcon.vue'
 import { metadataDefinitionsApi, userGroupsApi } from '@tap/api'
-import { mapMutations, mapState, mapGetters } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 import { IconButton } from './icon-button'
+import VIcon from './base/VIcon.vue'
 
 export default {
   components: { IconButton, VIcon },
@@ -55,7 +55,6 @@ export default {
   },
   computed: {
     ...mapState('classification', ['connections', 'migrate', 'sync', 'inspect']),
-    ...mapGetters('classification', ['stateConnections', 'stateMigrate', 'stateSync']),
 
     comTitle() {
       return (
@@ -71,6 +70,17 @@ export default {
       set(value) {
         this.$emit('update:visible', value)
       },
+    },
+  },
+  watch: {
+    types(_new, _old) {
+      if (_new.toString() !== _old.toString()) {
+        this.clear()
+        this.getData()
+      }
+    },
+    filterText(val) {
+      this.$refs.tree.filter(val)
     },
   },
   mounted() {
@@ -90,42 +100,6 @@ export default {
         this.isExpand = this.inspect?.panelFlag
         break
     }
-  },
-  updated() {
-    switch (this.viewPage) {
-      case 'connections':
-        if (!this.isExpand) return
-        this.$nextTick(() => {
-          this.$refs.tree?.setCheckedKeys(this.connections?.classification)
-          this.$emit('nodeChecked', this.connections?.classification)
-        })
-        break
-      case 'migrate':
-        if (!this.isExpand) return
-        this.$nextTick(() => {
-          this.$refs.tree?.setCheckedKeys(this.migrate?.classification)
-          this.$emit('nodeChecked', this.migrate?.classification)
-        })
-        break
-      case 'sync':
-        if (!this.isExpand) return
-        this.$nextTick(() => {
-          this.$refs.tree?.setCheckedKeys(this.sync?.classification)
-          this.$emit('nodeChecked', this.sync?.classification)
-        })
-        break
-    }
-  },
-  watch: {
-    types(_new, _old) {
-      if (_new.toString() !== _old.toString()) {
-        this.clear()
-        this.getData()
-      }
-    },
-    filterText(val) {
-      this.$refs.tree.filter(val)
-    },
   },
   methods: {
     ...mapMutations('classification', ['setTag', 'setPanelFlag']),
@@ -561,20 +535,24 @@ export default {
         <template v-slot="{ node, data }">
           <slot name="node" :node="node" :data="data">
             <span
-              class="custom-tree-node"
+              class="custom-tree-node position-relative"
               @dragenter.stop="handleTreeDragEnter($event, data, node)"
               @dragover.stop="handleTreeDragOver($event, data, node)"
               @dragleave.stop="handleTreeDragLeave($event, data, node)"
               @drop.stop="handleTreeDrop($event, data, node)"
             >
               <VIcon size="16" class="color-primary mr-1">folder-fill</VIcon>
-              <span class="table-label">{{ data.value }}</span>
+              <span class="table-label" :title="data.value">{{ data.value }}</span>
               <ElDropdown
-                class="btn-menu flex align-center"
+                class="btn-menu ml-auto"
                 @command="handleRowCommand($event, node)"
                 v-readonlybtn="authority"
               >
-                <IconButton @click.stop sm>more</IconButton>
+                <el-button text size="small" @click.stop>
+                  <template #icon>
+                    <VIcon>more</VIcon>
+                  </template>
+                </el-button>
                 <template #dropdown>
                   <ElDropdownMenu>
                     <ElDropdownItem command="add">
@@ -752,12 +730,31 @@ export default {
       max-width: 120px;
     }
 
-    .btn-menu button:not([aria-expanded='true']) {
-      visibility: hidden;
+    .btn-menu {
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+  }
+  .btn-menu:has(button[aria-expanded='true']) {
+    opacity: 1;
+    pointer-events: auto;
+    position: static;
+  }
+    &:hover {
+      .btn-menu {
+        opacity: 1;
+        pointer-events: auto;
+        position: static;
+      }
     }
-    &:hover .btn-menu button {
-      visibility: visible;
-    }
+    // .btn-menu button:not([aria-expanded='true']) {
+    //   visibility: hidden;
+    // }
+    // &:hover .btn-menu button {
+    //   visibility: visible;
+    // }
   }
   .create {
     padding: 5px 10px;
