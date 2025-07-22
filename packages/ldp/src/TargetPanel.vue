@@ -178,7 +178,6 @@ export default {
     DatabaseIcon,
     TaskList,
     IconButton,
-    VIcon,
     VEmpty,
   },
 

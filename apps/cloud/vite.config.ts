@@ -5,6 +5,8 @@ import { createSvgIconsPlugin } from '@cn-xufei/vite-plugin-svg-icons'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import AutoImport from 'unplugin-auto-import/vite'
+import IconsResolver from 'unplugin-icons/resolver'
+import Icons from 'unplugin-icons/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
 import { defineConfig } from 'vite'
@@ -53,16 +55,6 @@ export default defineConfig(({ mode }) => {
           silenceDeprecations: ['import', 'global-builtin'],
         },
         scss: {
-          // additionalData: '@use "@tap/assets/styles/var.scss" as *;',
-          additionalData: (content, filePath) => {
-            if (filePath.includes('node_modules')) {
-              return `@use "@tap/assets/styles/var.scss" as *;\n${content}`
-            }
-
-            return `@use "sass:map";\n@use "@tap/assets/styles/var.scss" as *;\n${
-              content
-            }`
-          },
           // 禁用依赖包中的@import弃用警告
           quietDeps: true,
           silenceDeprecations: ['import', 'global-builtin'],
@@ -89,24 +81,32 @@ export default defineConfig(({ mode }) => {
       vue(),
       vueJsx(),
       AutoImport({
-        resolvers: [ElementPlusResolver({ importStyle: 'sass' })],
-        dts: 'src/auto-imports.d.ts',
-        include: [
-          /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
-          /\.vue$/,
-          /\.vue\?vue/, // .vue
-          /\.md$/, // .md
+        resolvers: [
+          IconsResolver({
+            prefix: 'Icon',
+            enabledCollections: ['lucide', 'mingcute', 'fluent'],
+          }),
+          ElementPlusResolver(/* { importStyle: 'sass' } */),
         ],
+        dts: 'src/auto-imports.d.ts',
+        include: [/\.vue$/, /\.vue\?vue/, /\.[tj]sx$/],
       }),
+
       Components({
         resolvers: [
-          ElementPlusResolver({
-            importStyle: 'sass',
+          IconsResolver({
+            enabledCollections: ['lucide', 'mingcute', 'fluent'],
           }),
+          ElementPlusResolver(/* { importStyle: 'sass' } */),
         ],
         dts: 'src/components.d.ts',
-        include: [/\.vue$/, /\.vue\?vue/, /\.jsx|tsx$/],
+        include: [/\.vue$/, /\.vue\?vue/, /\.[tj]sx$/],
       }),
+
+      Icons({
+        scale: 1,
+      }),
+
       createSvgIconsPlugin({
         iconDirs: [
           path.resolve(process.cwd(), 'src/assets/icons/svg'),

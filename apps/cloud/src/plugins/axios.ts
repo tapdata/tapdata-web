@@ -1,13 +1,14 @@
+import { requestClient } from '@tap/api'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
+import {
+  defaultResponseInterceptor,
+  errorMessageResponseInterceptor,
+} from '@tap/request'
 import axios from 'axios'
-import { ElMessage as Message } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import Qs from 'qs'
 import i18n from '@/i18n'
 
-// Full config:  https://github.com/axios/axios#request-config
-// axios.defaults.baseURL =  import.meta.env.baseURL ||  '';
-// axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 const headers = {
   'x-requested-with': 'XMLHttpRequest',
 }
@@ -62,7 +63,7 @@ const errorCallback = (error) => {
     location.replace(`${location.href.split('#/')[0]}login`)
   } else if (error.code && error.message) {
     // 其他错误
-    Message.error(String(error.message || error))
+    ElMessage.error(String(error.message || error))
   }
   //暂时注释 62-2 迭代先authing错误页面提示
   // if (status === 404) {
@@ -179,10 +180,10 @@ const responseInterceptor = (response) => {
     if (!skipErrorHandler) {
       // 手机号码
       if (['Authing.User.Update.Failed'].includes(code)) {
-        Message.error(i18n.t('dfs_user_center_phone_error'))
+        ElMessage.error(i18n.t('dfs_user_center_phone_error'))
       } else {
         if (code === '8051') {
-          Message.error(i18n.t('agent_version_not_support'))
+          ElMessage.error(i18n.t('agent_version_not_support'))
           return reject(response)
         }
         showErrorMessage(data)
@@ -191,13 +192,11 @@ const responseInterceptor = (response) => {
     return reject(Object.assign(response))
   })
 }
-// 请求发起拦截器
+
 axios.interceptors.request.use(requestInterceptor, errorCallback)
 axios.interceptors.response.use(responseInterceptor, errorCallback)
 
 _axios.interceptors.request.use(requestInterceptor, errorCallback)
-
-// 请求返回拦截器
 _axios.interceptors.response.use(responseInterceptor, errorCallback)
 
 export default _axios
@@ -215,4 +214,86 @@ export const install = (app) => {
       },
     },
   })
+}
+
+export function initRequestClient() {
+  requestClient.setBaseURL('./tm')
+
+  requestClient.addRequestInterceptor({
+    fulfilled: (config) => {
+      if (!config.params) config.params = {}
+
+      // 配置请求头
+      if (TAP_ACCESS_TOKEN) {
+        config.params.__token = TAP_ACCESS_TOKEN
+      }
+
+      // headers里面注入用户token，并开启鉴权
+      if (TAP_USER_ID) {
+        config.headers.user_id = TAP_USER_ID
+      }
+
+      return config
+    },
+  })
+
+  requestClient.addResponseInterceptor(
+    defaultResponseInterceptor({
+      codeField: 'code',
+      dataField: 'data',
+      successCode: 'ok',
+    }),
+  )
+
+  requestClient.addResponseInterceptor(
+    errorMessageResponseInterceptor(
+      (msg: string, error) => {
+        const responseData = error?.response?.data ?? {}
+        const errorMessage = responseData?.message ?? responseData?.msg
+
+        if (
+          ['SystemError', 'SubscribeFailed.OrderLimit'].includes(
+            responseData.code,
+          ) ||
+          errorMessage
+        ) {
+          showErrorMessage(responseData)
+          return
+        }
+
+        if (
+          [
+            'Datasource.TableNotFound',
+            'SubscribeFailed.OrderLimit',
+            'Task.ScheduleLimit',
+            'Task.ManuallyScheduleLimit',
+          ].includes(responseData.code)
+        ) {
+          return
+        }
+
+        if (['Authing.User.Update.Failed'].includes(responseData.code)) {
+          ElMessage.error(i18n.t('dfs_user_center_phone_error'))
+        } else {
+          if (responseData.code === '8051') {
+            ElMessage.error(i18n.t('agent_version_not_support'))
+            return
+          }
+          showErrorMessage(
+            Object.assign({}, responseData, {
+              message: msg || i18n.global.t('public_message_inner_error'),
+            }),
+          )
+        }
+      },
+      {
+        401: () => {
+          location.replace(`${location.href.split('#/')[0]}login`)
+          return i18n.global.t('public_message_401')
+        },
+      },
+    ),
+  )
+
+  return requestClient
 }

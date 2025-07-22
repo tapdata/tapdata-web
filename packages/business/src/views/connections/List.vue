@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  batchUpdateConnectionTags,
   checkConnectionTask,
   copyConnection,
   deleteConnection,

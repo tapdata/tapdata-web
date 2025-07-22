@@ -1558,7 +1558,7 @@ export default {
         line-height: 20px;
         color: var(--color-tag);
         border: 1px solid var(--bg-tag);
-        border-radius: 4px;
+        border-radius: 6px;
       }
 
       .name {
