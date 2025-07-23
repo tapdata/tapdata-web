@@ -6,8 +6,8 @@ import {
   monitoringLogsApi,
   taskApi,
 } from '@tap/api'
+import { VEmpty } from '@tap/component/src/base/v-empty'
 import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
-import {  VEmpty } from '@tap/component/src/base/v-empty'
 import resize from '@tap/component/src/directives/resize'
 
 import { FormItem, HighlightCode, JsEditor, useForm } from '@tap/form'
@@ -544,7 +544,7 @@ export const JsProcessor = observer(
               v-model={showDoc.value}
               class="js-api-drawer"
             >
-              <iframe ref="docsIframe" src={docSrc} class="w-100 h-100 block" />
+              <iframe src={docSrc} class="w-100 h-100 block" />
             </ElDrawer>
             <div
               class={[
@@ -579,7 +579,6 @@ export const JsProcessor = observer(
               <div class="js-editor-form-item-wrap overflow-hidden">
                 <FormItem.BaseItem class="js-editor-form-item" label={label}>
                   <JsEditor
-                    ref="jsEditor"
                     value={props.value}
                     onChange={(val) => {
                       emit('change', val)

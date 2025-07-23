@@ -6,8 +6,8 @@ import {
   pythonFunctionsApi,
   taskApi,
 } from '@tap/api'
-import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import { VEmpty } from '@tap/component/src/base/v-empty'
+import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import resize from '@tap/component/src/directives/resize'
 
 import { FormItem, HighlightCode, PythonEditor, useForm } from '@tap/form'
@@ -572,7 +572,6 @@ export const PythonProcessor = observer(
               <div class="js-editor-form-item-wrap overflow-hidden">
                 <FormItem.BaseItem class="js-editor-form-item" label={label}>
                   <PythonEditor
-                    ref="pythonEditor"
                     value={props.value}
                     onChange={(val) => {
                       emit('change', val)
