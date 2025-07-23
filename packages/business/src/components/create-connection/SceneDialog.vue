@@ -1093,7 +1093,7 @@ export default {
 </template>
 
 <style lang="scss">
-.ldp-connection-dialog {
+.ldp-connection-dialog.el-dialog {
   margin-top: 32px !important;
   margin-bottom: 32px !important;
   height: calc(100% - 64px);
