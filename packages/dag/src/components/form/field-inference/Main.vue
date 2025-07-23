@@ -205,6 +205,11 @@ export default {
       this.fieldsLoading = false
 
       const { fields: newFields } = mapFieldsData(this.selected)
+
+      newFields.forEach((t) => {
+        delete t.dataType
+      })
+
       this.fieldOptions = newFields
       this.selected.fields = newFields
     },
