@@ -390,7 +390,6 @@ export const SchemaPreview = defineComponent({
             </div>
           ) : (
             <FieldList
-              ref="table"
               class="w-100 border rounded-lg overflow-hidden"
               data={schemaData.value}
               readonly={readonly.value}
