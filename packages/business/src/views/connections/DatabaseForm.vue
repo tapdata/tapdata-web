@@ -2,8 +2,8 @@
 import { action } from '@formily/reactive'
 import {
   createConnection,
-  fetchDatabaseTypeByPdkHash,
   externalStorageApi,
+  fetchDatabaseTypeByPdkHash,
   findAccessNodeInfo,
   getUsingDigginTaskByConnectionId,
   patchConnectionById,
@@ -427,6 +427,14 @@ export default {
               placeholder: this.$t(
                 'packages_business_connection_form_shared_mining_tip',
               ),
+            },
+            'x-reactions': {
+              dependencies: ['__TAPDATA.connection_type'],
+              fulfill: {
+                state: {
+                  visible: '{{$deps[0]!=="target"}}',
+                },
+              },
             },
           },
           shareCDCExternalStorageId: {
