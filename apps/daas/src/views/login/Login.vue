@@ -163,6 +163,7 @@ export default {
             {{ $t('app_signIn_keepSignIn') }}
           </el-checkbox>
           <ElButton
+            id="login-button"
             class="mt-12 w-100"
             size="large"
             type="primary"
