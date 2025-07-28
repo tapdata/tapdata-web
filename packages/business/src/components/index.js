@@ -1,6 +1,5 @@
 import ConnectorForm from './ConnectorForm.vue'
 import DiscoveryClassification from './DiscoveryClassification.vue'
-import Log from './logs/Index.vue'
 import PageContainer from './PageContainer.vue'
 import PageHeader from './PageHeader.vue'
 import SchemaProgress from './SchemaProgress.vue'
@@ -18,7 +17,6 @@ import UploadDialog from './UploadDialog.vue'
 export {
   ConnectorForm,
   DiscoveryClassification,
-  Log,
   PageContainer,
   PageHeader,
   SchemaProgress,

@@ -162,22 +162,14 @@ export const BatchAddField = defineComponent({
                       label={i18n.t('packages_form_batch_add_field_prefix')}
                       class="flex-1"
                     >
-                      <ElInput
-                        modelValue={form.prefix}
-                        onInput={(v) => (form.prefix = v)}
-                      ></ElInput>
+                      <ElInput v-model={form.prefix}></ElInput>
                     </ElFormItem>
                     <ElFormItem
                       prop="type"
                       label={i18n.t('packages_form_batch_add_field_type')}
                       class="flex-1"
                     >
-                      <ElSelect
-                        allowCreate
-                        filterable
-                        modelValue={form.type}
-                        onInput={(v) => (form.type = v)}
-                      >
+                      <ElSelect allowCreate filterable v-model={form.type}>
                         {options.map((item) => (
                           <ElOption {...item} />
                         ))}
@@ -192,8 +184,7 @@ export const BatchAddField = defineComponent({
                       class="flex-1"
                     >
                       <ElInputNumber
-                        modelValue={form.count}
-                        onInput={(v) => (form.count = v)}
+                        v-model={form.count}
                         min={1}
                         max={1000}
                         controls-position="right"
@@ -205,8 +196,7 @@ export const BatchAddField = defineComponent({
                       class="flex-1"
                     >
                       <ElInputNumber
-                        modelValue={form.start}
-                        onInput={(v) => (form.start = v)}
+                        v-model={form.start}
                         min={0}
                         controls-position="right"
                       ></ElInputNumber>

@@ -1,27 +1,14 @@
-<template>
-  <div v-loading="loading" class="metadata-list-wrap">
-    <List
-      v-bind="$attrs"
-      ref="table"
-      :data="selected"
-      :dataTypesJson="dataTypesJson"
-      :readonly="stateIsReadonly || !isTarget"
-      v-model:fieldChangeRules="fieldChangeRules"
-      :type="isTarget ? 'target' : isSource ? 'source' : ''"
-      single-table
-      :ignore-error="!isTarget"
-      @update-rules="handleUpdateRules"
-    ></List>
-  </div>
-</template>
-
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { fetchDatabaseTypeByPdkHash } from '@tap/api'
 
+import {
+  errorFiledType,
+  getCanUseDataTypes,
+  getMatchedDataTypeLevel,
+} from '@tap/dag/src/util'
+import { mapGetters, mapState } from 'vuex'
 import List from './form/field-inference/List'
 import mixins from './form/field-inference/mixins.js'
-import { getCanUseDataTypes, getMatchedDataTypeLevel, errorFiledType } from '@tap/dag/src/util'
-import { databaseTypesApi } from '@tap/api'
 
 export default {
   name: 'MetaPane',
@@ -109,8 +96,10 @@ export default {
             //如果findPossibleDataTypes = {}，不做类型校验
             if (this.isTarget) {
               fields.forEach((el) => {
-                const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
-                el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
+                const { dataTypes = [], lastMatchedDataType = '' } =
+                  findPossibleDataTypes[el.field_name] || {}
+                el.canUseDataTypes =
+                  getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
                 el.matchedDataTypeLevel = getMatchedDataTypeLevel(
                   el,
                   el.canUseDataTypes,
@@ -121,14 +110,16 @@ export default {
             } else {
               // 源节点 JSON.parse('{\"type\":7}').type==7
               fields.forEach((el) => {
-                const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
-                el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
+                const { dataTypes = [], lastMatchedDataType = '' } =
+                  findPossibleDataTypes[el.field_name] || {}
+                el.canUseDataTypes =
+                  getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
                 el.matchedDataTypeLevel = errorFiledType(el)
               })
             }
             return t
           })?.[0] || {}
-      } catch (e) {
+      } catch {
         // catch
       }
 
@@ -141,9 +132,11 @@ export default {
     },
 
     async loadDataTypesJson() {
-      let nodeAttrs = this.form.getValuesIn('attrs') || {}
-      const pdkHashData = await databaseTypesApi.pdkHash(nodeAttrs.pdkHash)
-      this.dataTypesJson = pdkHashData ? JSON.parse(pdkHashData?.expression || '{}') : {}
+      const nodeAttrs = this.form.getValuesIn('attrs') || {}
+      const pdkHashData = await fetchDatabaseTypeByPdkHash(nodeAttrs.pdkHash)
+      this.dataTypesJson = pdkHashData
+        ? JSON.parse(pdkHashData?.expression || '{}')
+        : {}
     },
 
     handleUpdateRules(val = []) {
@@ -153,6 +146,23 @@ export default {
   },
 }
 </script>
+
+<template>
+  <div v-loading="loading" class="metadata-list-wrap">
+    <List
+      v-bind="$attrs"
+      ref="table"
+      v-model:field-change-rules="fieldChangeRules"
+      :data="selected"
+      :data-types-json="dataTypesJson"
+      :readonly="stateIsReadonly || !isTarget"
+      :type="isTarget ? 'target' : isSource ? 'source' : ''"
+      single-table
+      :ignore-error="!isTarget"
+      @update-rules="handleUpdateRules"
+    />
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .metadata-list-wrap {

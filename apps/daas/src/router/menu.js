@@ -3,6 +3,18 @@ const isCommunity = import.meta.env.VUE_APP_MODE === 'community'
 export const MENU = [
   { name: 'dashboard', icon: 'gongzuotai', alias: 'page_title_dashboard' },
   {
+    name: 'dataConsole',
+    icon: 'process-platform',
+    code: 'v2_data-console',
+    hidden: isCommunity,
+  },
+  {
+    name: 'connectionsList',
+    icon: 'agent',
+    code: 'v2_datasource_menu',
+    parent: 'connections',
+  },
+  {
     name: 'migrateList',
     icon: 'migrate',
     code: 'v2_data_replication',
@@ -15,30 +27,9 @@ export const MENU = [
     parent: 'dataflow',
   },
   {
-    name: 'dataVerificationList',
-    icon: 'data-validation',
-    code: 'v2_data_check',
-    parent: 'dataVerification',
-  },
-  {
-    name: 'dataConsole',
-    icon: 'process-platform',
-    code: 'v2_data-console',
-    hidden: isCommunity,
-  },
-
-  {
-    name: 'connectionsList',
-    icon: 'agent',
-    group: 'bottom',
-    code: 'v2_datasource_menu',
-    parent: 'connections',
-  },
-  {
     name: 'dataService',
     label: 'page_title_data_service',
     icon: 'apiServer_navbar',
-    group: 'bottom',
     code: 'v2_data-server',
     hidden: isCommunity,
     children: [
@@ -58,6 +49,13 @@ export const MENU = [
       { name: 'apiServer', code: 'v2_api-servers', parent: 'apiServer' },
     ],
   },
+  {
+    name: 'dataVerificationList',
+    icon: 'data-validation',
+    code: 'v2_data_check',
+    parent: 'dataVerification',
+  },
+
   {
     name: 'advancedFeatures',
     label: 'page_title_advanced_features',

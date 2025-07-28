@@ -2,8 +2,8 @@
 import { action } from '@formily/reactive'
 import {
   createConnection,
-  databaseTypesApi,
   externalStorageApi,
+  fetchDatabaseTypeByPdkHash,
   findAccessNodeInfo,
   getUsingDigginTaskByConnectionId,
   patchConnectionById,
@@ -359,7 +359,7 @@ export default {
     },
     async getPdkForm() {
       const pdkHash = this.$route.query?.pdkHash
-      const data = await databaseTypesApi.pdkHash(pdkHash)
+      const data = await fetchDatabaseTypeByPdkHash(pdkHash)
       const id = this.id || this.$route.params.id
       this.pdkOptions = data || {}
 
@@ -427,6 +427,14 @@ export default {
               placeholder: this.$t(
                 'packages_business_connection_form_shared_mining_tip',
               ),
+            },
+            'x-reactions': {
+              dependencies: ['__TAPDATA.connection_type'],
+              fulfill: {
+                state: {
+                  visible: '{{$deps[0]!=="target"}}',
+                },
+              },
             },
           },
           shareCDCExternalStorageId: {

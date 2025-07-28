@@ -32,6 +32,7 @@ export default {
               'qualified_name',
               'name',
               'indices',
+              'constraints',
             ],
             page: 1,
             pageSize: 20,

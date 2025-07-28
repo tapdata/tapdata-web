@@ -654,7 +654,9 @@ export default {
 </script>
 
 <template>
-  <PageContainer>
+  <PageContainer
+    container-class="flex flex-column h-100 overflow-hidden bg-white rounded-xl shadow-sm px-6 py-5 gap-1"
+  >
     <template #actions>
       <el-button
         v-readonlybtn="'new_model_creation'"
@@ -680,12 +682,13 @@ export default {
       @classify-submit="handleOperationClassify"
       @sort-change="handleSortTable"
     >
-      <template #nav="{ openClassify }">
+      <template #nav="{ openClassify, classificationVisible }">
         <div class="tapNav position-relative">
           <el-button
+            v-if="!classificationVisible"
             class="position-absolute z-10 start-0"
             text
-            style="top: 4px"
+            style="top: 10px"
             @click="openClassify"
           >
             <template #icon>
@@ -695,7 +698,9 @@ export default {
 
           <ElTabs
             v-model="activePanel"
-            style="--el-tabs-padding-left: 36px; --el-tabs-header-height: 36px"
+            :style="
+              !classificationVisible ? '--el-tabs-padding-left: 36px' : ''
+            "
             @tab-change="handleTapClick"
           >
             <ElTabPane
@@ -1071,7 +1076,7 @@ export default {
 <style lang="scss" scoped>
 .user-table-page {
   :deep(.classification) {
-    margin-top: -6px !important;
+    margin-top: 0 !important;
   }
 }
 

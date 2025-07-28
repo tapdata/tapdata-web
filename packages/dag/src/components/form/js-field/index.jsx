@@ -224,7 +224,6 @@ export const JsField = observer(
               <div class="js-editor-form-item-wrap overflow-hidden">
                 <FormItem.BaseItem class="js-editor-form-item" label={label}>
                   <JsEditor
-                    ref="jsEditor"
                     value={props.value}
                     onChange={(val) => {
                       emit('change', val)

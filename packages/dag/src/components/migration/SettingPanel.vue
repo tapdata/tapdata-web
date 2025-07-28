@@ -1064,25 +1064,6 @@ const schema = {
                           },
                           'x-component': 'Switch',
                         },
-                        isAutoInspect: {
-                          title: t('packages_dag_task_list_verify'),
-                          type: 'boolean',
-                          default: true,
-                          'x-decorator': 'FormItem',
-                          'x-decorator-props': {
-                            tooltip: t(
-                              'packages_dag_migration_settingpanel_dangrenwufuhe',
-                            ),
-                          },
-                          'x-component': 'Switch',
-                          'x-reactions': {
-                            fulfill: {
-                              state: {
-                                visible: '{{$values.syncType === "migrate"}}',
-                              },
-                            },
-                          },
-                        },
                         enableSyncMetricCollector: {
                           title: t(
                             'packages_dag_enableSyncMetricCollector_title',

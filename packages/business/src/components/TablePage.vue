@@ -212,8 +212,7 @@ export default defineComponent({
         })
         .then(({ data, total }: { data: any[]; total: number }) => {
           page.value.total = total
-          list.value = []
-          list.value = [...(data || [])]
+          list.value = data || []
 
           if (total > 0 && (!data || !data.length)) {
             if (timer) clearTimeout(timer)
@@ -224,9 +223,9 @@ export default defineComponent({
         })
         .finally(() => {
           loading.value = false
-          nextTick(() => {
-            table.value?.doLayout()
-          })
+          // nextTick(() => {
+          //   table.value?.doLayout()
+          // })
           if (callback) callback(getData())
         })
     }
@@ -425,7 +424,11 @@ export default defineComponent({
         </Classification>
         <div class="table-page-body gap-4">
           <div class="table-page-nav">
-            <slot name="nav" :open-classify="handleToggleClassify" />
+            <slot
+              name="nav"
+              :open-classify="handleToggleClassify"
+              :classification-visible="classificationVisible"
+            />
           </div>
           <div class="table-page-topbar">
             <div class="table-page-search-bar flex align-center gap-2">

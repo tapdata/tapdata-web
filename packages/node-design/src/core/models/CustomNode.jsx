@@ -1,6 +1,6 @@
 //节点模型
 import { define, observable } from '@formily/reactive'
-import { customNodeApi } from '@tap/api'
+import { patchCustomNode, createCustomNode } from '@tap/api'
 import { transformToSchema } from '../transformer'
 
 export class CustomNode {
@@ -59,6 +59,7 @@ export class CustomNode {
 
   async save(tree) {
     this.formSchema = transformToSchema(tree)
-    return await customNodeApi[this.id ? 'patch' : 'post'](this.serialize())
+    const apiCall = this.id ? patchCustomNode : createCustomNode
+    return await apiCall(this.serialize())
   }
 }

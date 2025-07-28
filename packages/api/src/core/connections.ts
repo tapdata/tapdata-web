@@ -1,8 +1,8 @@
-import { requestClient } from '../request'
+import { requestClient, type Filter } from '../request'
 
 const BASE_URL = '/api/Connections'
 
-export function fetchConnections(filter?: any, config: any = {}) {
+export function fetchConnections(filter?: Filter, config: any = {}) {
   return requestClient.get(BASE_URL, {
     params: {
       filter: filter ? JSON.stringify(filter) : undefined,

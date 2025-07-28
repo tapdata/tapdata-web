@@ -1,5 +1,9 @@
 <script lang="tsx">
-import { customNodeApi } from '@tap/api'
+import {
+  checkCustomNodeUsed,
+  deleteCustomNode,
+  fetchCustomNodes,
+} from '@tap/api'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import dayjs from 'dayjs'
 import PageContainer from '../../components/PageContainer.vue'
@@ -48,24 +52,20 @@ export default {
         limit: size,
         skip: (current - 1) * size,
       }
-      return customNodeApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then(({ total, items }) => {
-          return {
-            total,
-            data: items.map((item) => {
-              item.createTime = dayjs(item.createTime).format(
-                'YYYY-MM-DD HH:mm:ss',
-              )
-              item.last_updated = dayjs(item.last_updated).format(
-                'YYYY-MM-DD HH:mm:ss',
-              )
-              return item
-            }),
-          }
-        })
+      return fetchCustomNodes(filter).then(({ total, items }) => {
+        return {
+          total,
+          data: items.map((item) => {
+            item.createTime = dayjs(item.createTime).format(
+              'YYYY-MM-DD HH:mm:ss',
+            )
+            item.last_updated = dayjs(item.last_updated).format(
+              'YYYY-MM-DD HH:mm:ss',
+            )
+            return item
+          }),
+        }
+      })
     },
     remove(item) {
       this.$confirm(
@@ -75,7 +75,7 @@ export default {
         if (!resFlag) {
           return
         }
-        customNodeApi.delete(item.id).then(() => {
+        deleteCustomNode(item.id).then(() => {
           this.table.fetch()
         })
       })
@@ -90,7 +90,7 @@ export default {
             },
           }).href,
         )
-      const usedTaskData = await customNodeApi.checkUsed(row.id)
+      const usedTaskData = await checkCustomNodeUsed(row.id)
       if (usedTaskData?.length) {
         const arr = ['starting', 'running']
         const filterData = usedTaskData

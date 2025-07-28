@@ -29,5 +29,9 @@ export default class Inspect extends Http {
       `${this.url}/${id}/exportRecoverySql?inspectResultId=${resultId}`,
     )
   }
+
+  batchUpdateListtags(params) {
+    return this.axios.patch(`${this.url}/batchUpdateListtags`, params)
+  }
 }
 export { Inspect }

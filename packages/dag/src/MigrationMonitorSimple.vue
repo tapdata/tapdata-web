@@ -2,7 +2,6 @@
 import { createForm, onFieldValueChange } from '@formily/core'
 import { observable } from '@formily/reactive'
 import {
-  databaseTypesApi,
   externalStorageApi,
   logcollectorApi,
   measurementApi,

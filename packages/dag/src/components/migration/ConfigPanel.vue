@@ -272,11 +272,6 @@ $tabHeight: 44px;
         line-height: $tabHeight;
         height: $tabHeight;
         font-weight: 400;
-
-        &.is-active,
-        &:hover {
-          color: $color;
-        }
       }
     }
 

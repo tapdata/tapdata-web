@@ -1,7 +1,7 @@
 <script>
 import {
-  databaseTypesApi,
   fetchConnections,
+  fetchDatabases,
   getConnectionNoSchema,
 } from '@tap/api'
 import { getConnectorImage } from '@tap/assets'
@@ -93,7 +93,7 @@ export default defineComponent({
         order: 'name ASC',
       }
 
-      let data = await databaseTypesApi.getDatabases({
+      let data = await fetchDatabases({
         filter: JSON.stringify(params),
       })
 

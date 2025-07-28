@@ -2,8 +2,8 @@
 import { action } from '@formily/reactive'
 import {
   createConnection,
-  databaseTypesApi,
   externalStorageApi,
+  fetchDatabaseTypeByPdkHash,
   findAccessNodeInfo,
   getUsingDigginTaskByConnectionId,
   logcollectorApi,
@@ -369,14 +369,12 @@ export default {
     },
     async getPdkForm() {
       const pdkHash = this.params?.pdkHash
-      // const data = await databaseTypesApi.pdkHash(pdkHash)
       const id = this.id || this.params.id
-      // this.pdkOptions = data || {}
 
       if (this.params.pdkOptions) {
         this.pdkOptions = this.params.pdkOptions
       } else {
-        this.pdkOptions = await databaseTypesApi.pdkHash(pdkHash)
+        this.pdkOptions = await fetchDatabaseTypeByPdkHash(pdkHash)
         this.params.name = this.pdkOptions.name
       }
 

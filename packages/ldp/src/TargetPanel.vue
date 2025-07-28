@@ -1,7 +1,7 @@
 <script lang="tsx">
 import {
-  apiServerApi,
   fetchApiModules,
+  fetchApiServers,
   fetchApps,
   fetchConnections,
   measurementApi,
@@ -178,7 +178,6 @@ export default {
     DatabaseIcon,
     TaskList,
     IconButton,
-    VIcon,
     VEmpty,
   },
 
@@ -894,7 +893,7 @@ export default {
           this.$t('packages_business_data_server_list_huoqufuwuyu'),
         )
       }
-      const data = await apiServerApi.get().catch(() => {
+      const data = await fetchApiServers().catch(() => {
         showError()
       })
       this.apiServerHost = data?.items?.[0]?.clientURI || ''

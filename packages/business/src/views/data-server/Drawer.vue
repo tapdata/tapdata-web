@@ -2,7 +2,7 @@
 import { EditPen, InfoFilled } from '@element-plus/icons-vue'
 import {
   createApiModule,
-  databaseTypesApi,
+  fetchDatabaseTypes,
   fetchApiServerToken,
   listAllConnections,
   metadataInstancesApi,
@@ -168,7 +168,7 @@ const tabs = ref()
 
 // Regex validation patterns
 const PARAM_PATTERN = /^[a-z$_\u4E00-\u9FA5][\w$\u4E00-\u9FA5]*$/i
-const PATH_PATTERN = /^[a-z$_\u4E00-\u9FA5][\w\u4E00-\u9FA5$]*$/i
+const PATH_PATTERN = /^[\w$-]+$/
 
 // Validation rules
 const validateParams = (rule: any, value: string, callback: Function) => {
@@ -422,7 +422,7 @@ const getDefaultParams = (apiType: string) => {
 
 const getDatabaseTypes = async () => {
   databaseTypes.value = null
-  const data = await databaseTypesApi.get().catch(() => {
+  const data = await fetchDatabaseTypes().catch(() => {
     databaseTypes.value = []
     return []
   })

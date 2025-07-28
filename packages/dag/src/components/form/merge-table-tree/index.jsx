@@ -39,9 +39,9 @@ export const MergeTableTree = observer(
         const path = pathArr.join('.children.')
         currentPath.value = path
 
-        form.setFieldState(`mergeProperties.${path}.arrayKeys`, {
-          display: 'hidden',
-        })
+        // form.setFieldState(`mergeProperties.${path}.arrayKeys`, {
+        //   display: 'hidden',
+        // })
 
         if (pathArr.length === 1) {
           form.setFieldState(`mergeProperties.${path}.targetPath`, {
@@ -222,6 +222,7 @@ export const MergeTableTree = observer(
         metadataInstancesApi
           .getMergerNodeParentFields(route.params.id, selfId)
           .then((fields) => {
+            fields.sort((a, b) => a.field_name.localeCompare(b.field_name))
             form.setFieldState(
               `*(mergeProperties.${selfPath}.*(joinKeys.*.target))`,
               {
@@ -275,7 +276,7 @@ export const MergeTableTree = observer(
             .take()
 
           if (field) {
-            field.setDisplay(keysValue.length ? 'hidden' : 'visible')
+            // field.setDisplay(keysValue.length ? 'hidden' : 'visible')
             field.setComponentProps({
               onChange: () => {
                 updateWarningState(selfId, selfPath)
@@ -294,8 +295,6 @@ export const MergeTableTree = observer(
 
             // 初始化警告状态
             updateWarningState(selfId, selfPath)
-          } else {
-            console.log('没有arrayKeys')
           }
         })
 

@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import {
-  apiServerApi,
   batchUpdateApiModules,
   batchUpdateApiModuleTags,
-  databaseTypesApi,
   deleteApiModule,
   exportApiDocumentation,
   exportApiModules,
   fetchApiModules,
+  fetchApiServers,
   fetchApps,
+  fetchDatabaseTypes,
   metadataInstancesApi,
   updateApiModule,
   useRequest,
@@ -19,9 +19,9 @@ import {
   ExportOutlined,
   ImportOutlined,
 } from '@tap/component/src/icon'
+import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 
-import { ElInput, ElMessage, ElMessageBox } from 'element-plus'
 import { escapeRegExp } from 'lodash-es'
 import {
   computed,
@@ -39,8 +39,8 @@ import TablePage from '../../components/TablePage.vue'
 import Upload from '../../components/UploadDialog.vue'
 import Delete from '../api-application/Delete.vue'
 import Editor from '../api-application/Editor.vue'
-import DownloadSdkDialog from './DownloadSdkDialog.vue'
 import Drawer from './Drawer.vue'
+import type { InputInstance } from 'element-plus'
 
 interface Props {
   showFilter?: boolean
@@ -76,11 +76,10 @@ const route = useRoute()
 const { t } = useI18n()
 
 // Refs
-const downloadSdkDialogVisible = ref(false)
 const table = ref<InstanceType<typeof TablePage>>()
 const drawer = ref<InstanceType<typeof Drawer>>()
 const upload = ref<InstanceType<typeof Upload>>()
-const searchInput = ref<InstanceType<typeof ElInput>>()
+const searchInput = ref<InputInstance>()
 const showAppList = ref(true)
 const dragState = shallowRef<any>({})
 const appEditor = ref<InstanceType<typeof Editor>>()
@@ -209,7 +208,7 @@ const getFilterItems = () => {
       key: 'type', //对象分类
       type: 'select-inner',
       items: async () => {
-        let data = await databaseTypesApi.get()
+        let data = await fetchDatabaseTypes()
         data = data || []
         let databaseTypes: any[] = []
         databaseTypes =
@@ -312,7 +311,7 @@ const getApiServerHost = async () => {
   const showError = () => {
     ElMessage.error(t('packages_business_data_server_list_huoqufuwuyu'))
   }
-  const data = await apiServerApi.get().catch(() => {
+  const data = await fetchApiServers().catch(() => {
     showError()
   })
   apiServerHost.value = (data as any)?.items?.[0]?.clientURI || ''
@@ -327,7 +326,7 @@ const handleSelectionChange = (val: any[]) => {
 }
 
 const removeServer = async (row: any) => {
-  const flag = await ElMessageBox.confirm(
+  const flag = await Modal.confirm(
     t('packages_business_data_server_list_querenshanchufu'),
   )
   if (flag) {
@@ -341,7 +340,7 @@ const changeStatus = async (row: any) => {
   if (row.status === 'active') {
     msg = t('packages_business_data_server_list_quedingchexiaogai')
   }
-  const flag = await ElMessageBox.confirm(msg)
+  const flag = await Modal.confirm(msg)
   if (flag) {
     await updateApiModule({
       id: row.id,
@@ -400,16 +399,8 @@ const batchPublish = async () => {
   fetch()
 }
 
-const doLayout = () => {
-  nextTick(() => {
-    table.value?.doLayout()
-  })
-}
-
-// Additional variables and methods for template
 const showSearch = ref(false)
 const filterText = ref('')
-const authority = ref('')
 
 const openSearch = () => {
   showSearch.value = !showSearch.value
@@ -813,7 +804,7 @@ defineExpose({
               text
               type="primary"
               @click="changeStatus(row)"
-              >{{ $t('public_button_revoke') }}</ElButton
+              >{{ $t('public_button_unpublish') }}</ElButton
             >
             <ElDivider class="mx-1" direction="vertical" />
             <ElButton text type="primary" @click="output(row)">{{
@@ -837,8 +828,6 @@ defineExpose({
     />
     <!-- 导入 -->
     <Upload ref="upload" type="Modules" :show-tag="false" @success="fetch(1)" />
-
-    <!-- <DownloadSdkDialog v-model="downloadSdkDialogVisible" /> -->
   </PageContainer>
 </template>
 
