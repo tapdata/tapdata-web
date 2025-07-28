@@ -497,4 +497,5 @@ export default {
   public_time_precision_round: 'Round',
   public_time_precision_truncate: 'Truncate',
   public_button_unpublish: 'Unpublish',
+  public_system: 'System',
 }

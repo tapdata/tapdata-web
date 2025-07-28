@@ -488,4 +488,5 @@ export default {
   public_time_precision_round: '四舍五入',
   public_time_precision_truncate: '截断',
   public_button_unpublish: '撤销',
+  public_system: '系统',
 }

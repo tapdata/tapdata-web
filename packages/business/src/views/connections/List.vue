@@ -799,6 +799,14 @@ onUnmounted(() => {
                 {{ row.name }}
               </ElLink>
             </div>
+            <el-tag
+              v-if="row.isInit"
+              type="info"
+              size="small"
+              disable-transitions
+              class="is-code fw-sub border-0 px-1 zoom-xs"
+              ><span class="text-caption">{{ $t('public_system') }}</span>
+            </el-tag>
             <div
               v-if="row.listtags"
               class="justify-content-start ellipsis flex flex-wrap align-center gap-1"
