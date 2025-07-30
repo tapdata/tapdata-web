@@ -631,6 +631,14 @@ const save = async (type?: boolean) => {
     emit('update:loading', true)
 
     try {
+      //@ts-ignore
+      const selectedFields = form.value.fields.map(selectedField => {
+        const currentField = allFields.value.find(field => field.id === selectedField.id)
+        return {
+          ...selectedField,
+          field_alias: currentField?.field_alias || selectedField.field_alias
+        }
+      })
       const formData: FormData = {
         id,
         status: basePath && basePath !== '' ? 'pending' : status,
@@ -668,7 +676,7 @@ const save = async (type?: boolean) => {
             params,
             where,
             sort,
-            fields: fields.filter((f: any) => !!f),
+            fields: selectedFields.filter((f: any) => !!f),
             path,
           },
         ],
@@ -676,7 +684,7 @@ const save = async (type?: boolean) => {
 
       if (!type && connectionId && tableName) {
         await loadAllFields()
-        formData.fields = allFields.value
+        formData.fields = selectedFields.filter((f: any) => !!f)
       }
 
       const func = id ? updateApiModule : createApiModule
@@ -686,6 +694,15 @@ const save = async (type?: boolean) => {
       data.source = {
         database_type: connectionType,
         name: connectionName,
+      }
+      if (data.fields) {
+        data.fields = data.fields.map(field => {
+          const updatedField = selectedFields.find(sf => sf.id === field.id)
+          return {
+            ...field,
+            field_alias: updatedField?.field_alias || field.field_alias || ''
+          }
+        })
       }
       formatData(data)
       emit('save', data)
@@ -702,15 +719,19 @@ const edit = () => {
   isEdit.value = true
   initialFormData = cloneDeep(form.value)
   nextTick(() => {
-    data.value.fields.forEach((f: any) => {
-      const field = allFields.value.find((it: any) => it.id === f.id)
-      if (field) {
-        fieldTable.value?.toggleRowSelection(field)
-      } else {
-        console.log('field not found', f.field_name, f)
-      }
-    })
-  })
+    if (data.value.fields) {
+      data.value.fields.forEach((f: any) => {
+        //@ts-ignore
+        const field = allFields.value.find((it: any) => it.id === f.id)
+        if (field) {
+          field.field_alias = f.field_alias || field.field_alias || field.field_name
+          fieldTable.value?.toggleRowSelection(field)
+        } else {
+          console.log('field not found', f.field_name, f)
+        }
+      })
+    }
+  });
 }
 
 // Watch effects
@@ -772,7 +793,27 @@ const tableChanged = () => {
 }
 
 const fieldsChanged = (val: any[]) => {
-  form.value.fields = val
+  form.value.fields = val.map(field => ({
+    ...field,
+    field_alias: field.field_alias || field.field_name // 如果没有别名，使用字段名
+  }))
+}
+
+const onFieldAliasChange = (field: any) => {
+  const formField = form.value.fields.find(f => f.id === field.id)
+  if (formField) {
+    formField.field_alias = field.field_alias
+  }
+  const allField = allFields.value.find(f => f.id === field.id)
+  if (allField) {
+    allField.field_alias = field.field_alias
+  }
+  if (data.value.fields) {
+    const dataField = data.value.fields.find(f => f.id === field.id)
+    if (dataField) {
+      dataField.field_alias = field.field_alias
+    }
+  }
 }
 
 const addItem = (key: 'params' | 'where' | 'sort') => {
@@ -1752,6 +1793,21 @@ const openEdit = () => {
               prop="field_name"
               min-width="150"
             />
+            <ElTableColumn
+                :label="$t('alias_name')"
+                prop="field_alias"
+                min-width="150"
+            >
+              <template #default="{ row, $index }">
+                <ElInput
+                    v-if="isEdit"
+                    v-model="row.field_alias"
+                    size="small"
+                    @change="onFieldAliasChange(row)"
+                />
+                <span v-else>{{ row.field_alias }}</span>
+              </template>
+            </ElTableColumn>
             <ElTableColumn
               :label="$t('public_type')"
               prop="originalDataType"
