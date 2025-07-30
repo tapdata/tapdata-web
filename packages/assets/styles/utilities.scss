@@ -2669,7 +2669,7 @@
 }
 
 .text-secondary {
-  color: #6c757d !important;
+  color: var(--el-text-color-secondary) !important;
 }
 
 .text-success {

@@ -2025,4 +2025,8 @@ export default {
   account_accessCode_tip:
     '刷新访问码将导致当前访问码失效，系统将生成新的访问码。<b class="color-warning">您需要将新的访问码更新到引擎的配置文件后，重新启动引擎，否则引擎可能会无法正常工作。请谨慎操作！</b>',
   account_accessCode_success: '刷新访问码成功',
+  setting_license_remainingDaysThreshold: '剩余天数 <=',
+  setting_license_rule: 'License 告警规则',
+  setting_license_alarm_template: '告警模板',
+  setting_license_alarm_template_custom: '自定义告警模板',
 }

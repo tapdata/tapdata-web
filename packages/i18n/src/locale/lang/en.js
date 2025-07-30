@@ -498,4 +498,7 @@ export default {
   public_time_precision_truncate: 'Truncate',
   public_button_unpublish: 'Unpublish',
   public_system: 'System',
+  public_rule_add: 'Add Rule',
+  public_remaining_days: 'Remaining Days',
+  public_remaining_days_threshold: 'Remaining Days Threshold',
 }

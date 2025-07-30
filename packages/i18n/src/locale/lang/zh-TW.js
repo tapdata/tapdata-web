@@ -488,4 +488,7 @@ export default {
   public_time_precision_truncate: '截斷',
   public_button_unpublish: '撤銷',
   public_system: '系統',
+  public_rule_add: '添加規則',
+  public_remaining_days: '剩余天数',
+  public_remaining_days_threshold: '剩余天数阈值',
 }
