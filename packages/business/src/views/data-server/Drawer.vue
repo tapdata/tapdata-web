@@ -637,7 +637,7 @@ const save = async (type?: boolean) => {
         const currentField = allFields.value.find(field => field.id === selectedField.id)
         return {
           ...selectedField,
-          field_alias: currentField?.field_alias || selectedField.field_alias
+          field_alias: currentField?.field_alias || selectedField.field_alias || ''
         }
       })
       const formData: FormData = {
@@ -725,7 +725,7 @@ const edit = () => {
         //@ts-ignore
         const field = allFields.value.find((it: any) => it.id === f.id)
         if (field) {
-          field.field_alias = f.field_alias || field.field_alias || field.field_name
+          field.field_alias = f.field_alias || field.field_alias || ''
           fieldTable.value?.toggleRowSelection(field)
         } else {
           console.log('field not found', f.field_name, f)
@@ -796,7 +796,7 @@ const tableChanged = () => {
 const fieldsChanged = (val: any[]) => {
   form.value.fields = val.map(field => ({
     ...field,
-    field_alias: field.field_alias || field.field_name // 如果没有别名，使用字段名
+    field_alias: field.field_alias || ''
   }))
 }
 
