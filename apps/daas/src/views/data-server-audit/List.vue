@@ -19,6 +19,7 @@ export default {
     return {
       searchParams: {
         keyword: '',
+        clientName: '',
         method: '',
         code: '',
         start: '',
@@ -65,7 +66,7 @@ export default {
     // 获取数据
     getData({ page }) {
       const { current, size } = page
-      const { method, code, start, end, keyword } = this.searchParams
+      const { method, code, start, end, clientName, keyword } = this.searchParams
       const where = {}
       if (method) {
         where.method = method
@@ -78,6 +79,9 @@ export default {
       }
       if (end) {
         where.end = end
+      }
+      if (clientName) {
+        where.clientName = clientName
       }
       if (keyword && keyword.trim()) {
         const filterObj = { like: escapeRegExp(keyword), options: 'i' }
@@ -157,6 +161,11 @@ export default {
           endPlaceholder: this.$t('apiaudit_interview_time_end'),
         },
         {
+          placeholder: this.$t('apiaudit_client_name_placeholder'),
+          key: 'clientName',
+          type: 'input',
+        },
+        {
           placeholder: this.$t('apiaudit_placeholder'),
           key: 'keyword',
           type: 'input',
@@ -186,7 +195,7 @@ export default {
           />
         </div>
       </template>
-      <el-table-column prop="id" label="API ID" :show-overflow-tooltip="true" />
+      <el-table-column prop="apiId" label="API ID" :show-overflow-tooltip="true" />
       <el-table-column prop="name" :label="$t('apiaudit_name')" />
       <el-table-column
         prop="method"
