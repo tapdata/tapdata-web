@@ -181,6 +181,11 @@ export default {
           endPlaceholder: this.$t('apiaudit_interview_time_end'),
         },
         {
+          placeholder: this.$t('apiaudit_client_name_placeholder'),
+          key: 'clientName',
+          type: 'input',
+        },
+        {
           placeholder: this.$t('apiaudit_placeholder'),
           key: 'keyword',
           type: 'input',
@@ -210,6 +215,7 @@ export default {
           />
         </div>
       </template>
+      <el-table-column prop="apiId" label="API ID" :show-overflow-tooltip="true" />
       <el-table-column prop="name" :label="$t('apiaudit_name')" width="220">
         <template #default="{ row }">
           <div>{{ row.name }}</div>
