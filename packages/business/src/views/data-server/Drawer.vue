@@ -1518,7 +1518,7 @@ const openEdit = () => {
           <ElTableColumn
             :label="$t('packages_business_data_server_drawer_canshumingcheng')"
             prop="name"
-            min-width="120"
+            min-width="80"
           >
             <template #default="{ row, $index }">
               <div
@@ -1537,11 +1537,10 @@ const openEdit = () => {
               <div v-else>{{ row.name }}</div>
             </template>
           </ElTableColumn>
-          <ElTableColumn :label="$t('public_type')" prop="type">
+          <ElTableColumn :label="$t('public_type')" prop="type" min-width="80">
             <template #default="{ row, $index }">
               <div
                 v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'"
-                min-width="60"
               >
                 <ElSelect v-model="form.params[$index].type">
                   <ElOption
@@ -1792,18 +1791,17 @@ const openEdit = () => {
             <ElTableColumn
               :label="$t('public_name')"
               prop="field_name"
-              min-width="150"
+              min-width="100"
             />
             <ElTableColumn
                 :label="$t('alias_name')"
                 prop="field_alias"
-                min-width="150"
+                min-width="120"
             >
               <template #default="{ row, $index }">
                 <ElInput
                     v-if="isEdit"
                     v-model="row.field_alias"
-                    size="small"
                     @change="onFieldAliasChange(row)"
                 />
                 <span v-else>{{ row.field_alias }}</span>
