@@ -289,7 +289,7 @@ export default {
   // api審計
   apiaudit_name: 'API名稱',
   apiaudit_access_type: '訪問類型',
-  apiaudit_visitor: '訪問人員',
+  apiaudit_visitor: '客戶端名稱',
   apiaudit_ip: '訪問人員IP',
   apiaudit_interview_time: '訪問時間',
   apiaudit_interview_time_start: '訪問開始時間',
@@ -305,6 +305,7 @@ export default {
   apiaudit_average_response_time: '平均響應時長',
   apiaudit_success: '成功',
   apiaudit_placeholder: '請輸入名稱/ID',
+  apiaudit_client_name_placeholder: '請輸入客戶端名稱',
   // 連接
   connection_list_form_database_type: '數據庫類型',
   connection_list_name: '連接名',

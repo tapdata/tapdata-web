@@ -288,7 +288,7 @@ export default {
   // 服务审计
   apiaudit_name: 'API名称',
   apiaudit_access_type: '访问类型',
-  apiaudit_visitor: '访问人员',
+  apiaudit_visitor: '客户端名称',
   apiaudit_ip: '访问人员IP',
   apiaudit_interview_time: '访问时间',
   apiaudit_interview_time_start: '访问开始时间',
@@ -304,6 +304,7 @@ export default {
   apiaudit_average_response_time: '平均响应时长',
   apiaudit_success: '成功',
   apiaudit_placeholder: '请输入名称/ID',
+  apiaudit_client_name_placeholder: '请输入客户端名称',
   // 连接
   connection_list_form_database_type: '数据库类型',
   connection_list_name: '连接名',
