@@ -515,6 +515,7 @@ const getFields = async () => {
         ...it,
         id: it.id,
         field_name: it.field_name,
+        field_alias: it.field_alias,
         originalDataType: it.data_type,
         comment: it.comment,
       })) || []
@@ -1005,14 +1006,19 @@ const loadAllFields = async () => {
   const data = await metadataInstancesApi.get({
     filter: JSON.stringify(filter),
   })
+  let allFieldsOld = allFields.value;
   allFields.value =
-    data?.items?.[0]?.fields?.map((it: any) => ({
-      ...it,
-      id: it.id,
-      field_name: it.field_name,
-      originalDataType: it.data_type,
-      comment: '',
-    })) || []
+    data?.items?.[0]?.fields?.map((it: any) => {
+      const fItem = allFieldsOld.find((f: any) => f.id === it.id)
+      return {
+        ...it,
+        id: it.id,
+        field_name: it.field_name,
+        field_alias: it.field_alias || fItem.field_alias || '',
+        originalDataType: it.data_type,
+        comment: '',
+      }
+    }) || []
 }
 
 const handleBeforeClose = async (done: () => void) => {
