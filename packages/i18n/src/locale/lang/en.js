@@ -501,4 +501,5 @@ export default {
   public_rule_add: 'Add Rule',
   public_remaining_days: 'Remaining Days',
   public_remaining_days_threshold: 'Remaining Days Threshold',
+  public_api_group: 'API Group',
 }
