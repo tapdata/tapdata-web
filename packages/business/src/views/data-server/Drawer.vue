@@ -514,6 +514,7 @@ const getFields = async () => {
         ...it,
         id: it.id,
         field_name: it.field_name,
+        field_alias: it.field_alias,
         originalDataType: it.data_type,
         comment: it.comment,
       })) || []
@@ -631,14 +632,6 @@ const save = async (type?: boolean) => {
     emit('update:loading', true)
 
     try {
-      //@ts-ignore
-      const selectedFields = form.value.fields.map(selectedField => {
-        const currentField = allFields.value.find(field => field.id === selectedField.id)
-        return {
-          ...selectedField,
-          field_alias: currentField?.field_alias || selectedField.field_alias || ''
-        }
-      })
       const formData: FormData = {
         id,
         status: basePath && basePath !== '' ? 'pending' : status,
@@ -676,7 +669,7 @@ const save = async (type?: boolean) => {
             params,
             where,
             sort,
-            fields: selectedFields.filter((f: any) => !!f),
+            fields: form.value.fields.filter((f: any) => !!f),
             path,
           },
         ],
@@ -684,7 +677,7 @@ const save = async (type?: boolean) => {
 
       if (!type && connectionId && tableName) {
         await loadAllFields()
-        formData.fields = selectedFields.filter((f: any) => !!f)
+        formData.fields = allFields.value
       }
 
       const func = id ? updateApiModule : createApiModule
@@ -697,7 +690,7 @@ const save = async (type?: boolean) => {
       }
       if (data.fields) {
         data.fields = data.fields.map(field => {
-          const updatedField = selectedFields.find(sf => sf.id === field.id)
+          const updatedField = form.value.fields.find(sf => sf.id === field.id)
           return {
             ...field,
             field_alias: updatedField?.field_alias || field.field_alias || ''
@@ -1028,14 +1021,19 @@ const loadAllFields = async () => {
   const data = await metadataInstancesApi.get({
     filter: JSON.stringify(filter),
   })
+  let allFieldsOld = allFields.value;
   allFields.value =
-    data?.items?.[0]?.fields?.map((it: any) => ({
-      ...it,
-      id: it.id,
-      field_name: it.field_name,
-      originalDataType: it.data_type,
-      comment: '',
-    })) || []
+    data?.items?.[0]?.fields?.map((it: any) => {
+      const fItem = allFieldsOld.find((f: any) => f.id === it.id)
+      return {
+        ...it,
+        id: it.id,
+        field_name: it.field_name,
+        field_alias: it.field_alias || fItem.field_alias || '',
+        originalDataType: it.data_type,
+        comment: '',
+      }
+    }) || []
 }
 
 const handleBeforeClose = async (done: () => void) => {
