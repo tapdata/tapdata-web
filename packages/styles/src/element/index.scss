@@ -383,7 +383,7 @@
   }
 
   > .el-drawer__header {
-    padding: var(--el-drawer-padding-primary) !important;
+    padding: var(--el-drawer-padding-primary);
     margin-bottom: 0;
     color: var(--el-text-color-primary);
     // font-size: 18px;

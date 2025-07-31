@@ -1006,7 +1006,7 @@ const loadAllFields = async () => {
   const data = await metadataInstancesApi.get({
     filter: JSON.stringify(filter),
   })
-  let allFieldsOld = allFields.value;
+  const allFieldsOld = allFields.value
   allFields.value =
     data?.items?.[0]?.fields?.map((it: any) => {
       const fItem = allFieldsOld.find((f: any) => f.id === it.id)
@@ -1058,6 +1058,7 @@ const openEdit = () => {
     :title="$t('packages_business_data_server_drawer_fuwuxiangqing')"
     body-class="pt-0"
     class="overflow-hidden"
+    header-class="pb-0"
     width="850px"
     :before-close="handleBeforeClose"
     @visible="$emit('visible', $event)"
@@ -1097,15 +1098,24 @@ const openEdit = () => {
           class="data-server__tabs flex-1"
           @tab-change="tabChanged"
         >
-          <ElTabPane
-            :label="$t('packages_business_data_server_drawer_peizhi')"
-            name="form"
-          />
+          <ElTabPane name="form">
+            <template #label>
+              <span>{{
+                $t('packages_business_data_server_drawer_peizhi')
+              }}</span>
+            </template>
+          </ElTabPane>
           <ElTabPane
             v-if="data.status === 'active'"
             :label="$t('packages_business_data_server_drawer_tiaoshi')"
             name="debug"
-          />
+          >
+            <template #label>
+              <span>{{
+                $t('packages_business_data_server_drawer_tiaoshi')
+              }}</span>
+            </template>
+          </ElTabPane>
         </ElTabs>
       </div>
 
