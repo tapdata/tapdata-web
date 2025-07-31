@@ -98,6 +98,7 @@
 import { IconButton } from '@tap/component'
 import { SceneDialog, EventEmitter, UpgradeFee, UpgradeCharges } from '@tap/business'
 import { connectionsApi, lineageApi, metadataDefinitionsApi, ldpApi } from '@tap/api'
+import Cookie from '@tap/shared/src/cookie'
 
 import SourceItem from './Source'
 import TargetItem from './Target'
@@ -311,8 +312,12 @@ export default {
         .then(data => {
           let items = data?.items || []
           let treeData = this.formatCatalog(items)
+          const username = Cookie.get('username')
+          const email = Cookie.get('email')
           treeData?.forEach(item => {
-            this.$set(this.directoryMap, item.item_type[0], item)
+            if (item.createUser === username || item.createUser === email) {
+              this.$set(this.directoryMap, item.item_type[0], item)
+            }
           })
         })
         .finally(() => {
