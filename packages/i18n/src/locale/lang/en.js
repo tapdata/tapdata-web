@@ -1,7 +1,7 @@
 export default {
   // commonly used
   public_name: 'Name',
-  alias_name: 'Alias Name',
+  public_alias: 'Alias',
   public_index: 'Index',
   public_type: 'Type',
   public_title: 'Title',

@@ -1,7 +1,7 @@
 export default {
   // 常用
   public_name: '名稱',
-  alias_name: '別名',
+  public_alias: '別名',
   public_index: '索引',
   public_type: '類型',
   public_title: '標題',

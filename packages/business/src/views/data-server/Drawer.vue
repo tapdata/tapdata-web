@@ -2,8 +2,8 @@
 import { EditPen, InfoFilled } from '@element-plus/icons-vue'
 import {
   createApiModule,
-  fetchDatabaseTypes,
   fetchApiServerToken,
+  fetchDatabaseTypes,
   listAllConnections,
   metadataInstancesApi,
   roleApi,
@@ -606,7 +606,6 @@ const save = async (type?: boolean) => {
       params,
       where,
       sort,
-      fields,
       method,
       path,
       status,
@@ -621,6 +620,8 @@ const save = async (type?: boolean) => {
       limit,
     } = form.value
 
+    const fields = form.value.fields.filter((f: any) => !!f)
+
     if (params.some((it: any) => !it.name.trim())) {
       ElMessage.error(
         i18n.t('packages_business_data_server_drawer_qingshurucanshu'),
@@ -632,14 +633,6 @@ const save = async (type?: boolean) => {
     emit('update:loading', true)
 
     try {
-      //@ts-ignore
-      const selectedFields = form.value.fields.map(selectedField => {
-        const currentField = allFields.value.find(field => field.id === selectedField.id)
-        return {
-          ...selectedField,
-          field_alias: currentField?.field_alias || selectedField.field_alias || ''
-        }
-      })
       const formData: FormData = {
         id,
         status: basePath && basePath !== '' ? 'pending' : status,
@@ -677,7 +670,7 @@ const save = async (type?: boolean) => {
             params,
             where,
             sort,
-            fields: selectedFields.filter((f: any) => !!f),
+            fields,
             path,
           },
         ],
@@ -685,7 +678,18 @@ const save = async (type?: boolean) => {
 
       if (!type && connectionId && tableName) {
         await loadAllFields()
-        formData.fields = selectedFields.filter((f: any) => !!f)
+
+        const map = fields.reduce((acc: any, field: any) => {
+          acc[field.id] = field
+          return acc
+        }, {})
+
+        formData.fields = allFields.value.map((f: any) => {
+          return {
+            ...f,
+            field_alias: map[f.id]?.field_alias || '',
+          }
+        })
       }
 
       const func = id ? updateApiModule : createApiModule
@@ -696,15 +700,7 @@ const save = async (type?: boolean) => {
         database_type: connectionType,
         name: connectionName,
       }
-      if (data.fields) {
-        data.fields = data.fields.map(field => {
-          const updatedField = selectedFields.find(sf => sf.id === field.id)
-          return {
-            ...field,
-            field_alias: updatedField?.field_alias || field.field_alias || ''
-          }
-        })
-      }
+
       formatData(data)
       emit('save', data)
       isEdit.value = false
@@ -723,16 +719,16 @@ const edit = () => {
     if (data.value.fields) {
       data.value.fields.forEach((f: any) => {
         //@ts-ignore
-        const field = allFields.value.find((it: any) => it.id === f.id)
+        const field = allFields.value.find((it: any) => it.id === f.id) as any
         if (field) {
-          field.field_alias = f.field_alias || field.field_alias || ''
+          field.field_alias = f.field_alias || ''
           fieldTable.value?.toggleRowSelection(field)
         } else {
           console.log('field not found', f.field_name, f)
         }
       })
     }
-  });
+  })
 }
 
 // Watch effects
@@ -794,27 +790,7 @@ const tableChanged = () => {
 }
 
 const fieldsChanged = (val: any[]) => {
-  form.value.fields = val.map(field => ({
-    ...field,
-    field_alias: field.field_alias || ''
-  }))
-}
-
-const onFieldAliasChange = (field: any) => {
-  const formField = form.value.fields.find(f => f.id === field.id)
-  if (formField) {
-    formField.field_alias = field.field_alias
-  }
-  const allField = allFields.value.find(f => f.id === field.id)
-  if (allField) {
-    allField.field_alias = field.field_alias
-  }
-  if (data.value.fields) {
-    const dataField = data.value.fields.find(f => f.id === field.id)
-    if (dataField) {
-      dataField.field_alias = field.field_alias
-    }
-  }
+  form.value.fields = val
 }
 
 const addItem = (key: 'params' | 'where' | 'sort') => {
@@ -1675,11 +1651,14 @@ const openEdit = () => {
                 />
               </ElSelect>
               <ElSelect v-model="form.where[index].condition" class="mr-4">
-                <template v-for="item in conditionOptions">
+                <template v-for="condition in conditionOptions">
                   <ElOption
-                    v-if="item !== 'null' || index === form.where.length - 1"
-                    :value="item"
-                    :label="item"
+                    v-if="
+                      condition !== 'null' || index === form.where.length - 1
+                    "
+                    :key="condition"
+                    :value="condition"
+                    :label="condition"
                   />
                 </template>
               </ElSelect>
@@ -1794,16 +1773,12 @@ const openEdit = () => {
               min-width="100"
             />
             <ElTableColumn
-                :label="$t('alias_name')"
-                prop="field_alias"
-                min-width="120"
+              :label="$t('public_alias')"
+              prop="field_alias"
+              min-width="120"
             >
-              <template #default="{ row, $index }">
-                <ElInput
-                    v-if="isEdit"
-                    v-model="row.field_alias"
-                    @change="onFieldAliasChange(row)"
-                />
+              <template #default="{ row }">
+                <ElInput v-if="isEdit" v-model="row.field_alias" />
                 <span v-else>{{ row.field_alias }}</span>
               </template>
             </ElTableColumn>
@@ -1891,9 +1866,12 @@ const openEdit = () => {
       <ElButton v-if="data.id" @click="isEdit = false">{{
         $t('public_button_cancel')
       }}</ElButton>
-      <ElButton type="primary" @click="save()">{{
-        $t('public_button_save')
-      }}</ElButton>
+      <ElButton
+        :disabled="!form.fields.length"
+        type="primary"
+        @click="save()"
+        >{{ $t('public_button_save') }}</ElButton
+      >
     </template>
   </component>
 </template>
