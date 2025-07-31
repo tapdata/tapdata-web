@@ -264,9 +264,13 @@ export default {
     priceLabel() {
       const item = this.priceMap[this.current.priceId]
 
-      if (!item) return
+      if (!item || !item.currencyOption) return
 
-      return this.formatAmount(item.price)
+      const currencyItem = item.currencyOption.find(it => it.currency === this.currencyType)
+
+      if (!currencyItem) return
+
+      return this.formatAmount(currencyItem.amount)
     },
 
     periodLabel() {
