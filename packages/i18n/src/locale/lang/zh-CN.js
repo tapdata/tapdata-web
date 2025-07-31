@@ -492,4 +492,5 @@ export default {
   public_rule_add: '添加规则',
   public_remaining_days: '剩余天数',
   public_remaining_days_threshold: '剩余天数阈值',
+  public_api_group: 'API 分组',
 }
