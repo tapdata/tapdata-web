@@ -2,8 +2,8 @@
 import { EditPen, InfoFilled } from '@element-plus/icons-vue'
 import {
   createApiModule,
-  fetchDatabaseTypes,
   fetchApiServerToken,
+  fetchDatabaseTypes,
   listAllConnections,
   metadataInstancesApi,
   roleApi,
@@ -515,6 +515,7 @@ const getFields = async () => {
         ...it,
         id: it.id,
         field_name: it.field_name,
+        field_alias: it.field_alias,
         originalDataType: it.data_type,
         comment: it.comment,
       })) || []
@@ -606,7 +607,6 @@ const save = async (type?: boolean) => {
       params,
       where,
       sort,
-      fields,
       method,
       path,
       status,
@@ -620,6 +620,8 @@ const save = async (type?: boolean) => {
       appValue,
       limit,
     } = form.value
+
+    const fields = form.value.fields.filter((f: any) => !!f)
 
     if (params.some((it: any) => !it.name.trim())) {
       ElMessage.error(
@@ -669,7 +671,7 @@ const save = async (type?: boolean) => {
             params,
             where,
             sort,
-            fields: fields.filter((f: any) => !!f),
+            fields,
             path,
           },
         ],
@@ -677,7 +679,18 @@ const save = async (type?: boolean) => {
 
       if (!type && connectionId && tableName) {
         await loadAllFields()
-        formData.fields = allFields.value
+
+        const map = fields.reduce((acc: any, field: any) => {
+          acc[field.id] = field
+          return acc
+        }, {})
+
+        formData.fields = allFields.value.map((f: any) => {
+          return {
+            ...f,
+            field_alias: map[f.id]?.field_alias || '',
+          }
+        })
       }
 
       const func = id ? updateApiModule : createApiModule
@@ -688,6 +701,7 @@ const save = async (type?: boolean) => {
         database_type: connectionType,
         name: connectionName,
       }
+
       formatData(data)
       emit('save', data)
       isEdit.value = false
@@ -703,14 +717,18 @@ const edit = () => {
   isEdit.value = true
   initialFormData = cloneDeep(form.value)
   nextTick(() => {
-    data.value.fields.forEach((f: any) => {
-      const field = allFields.value.find((it: any) => it.id === f.id)
-      if (field) {
-        fieldTable.value?.toggleRowSelection(field)
-      } else {
-        console.log('field not found', f.field_name, f)
-      }
-    })
+    if (data.value.fields) {
+      data.value.fields.forEach((f: any) => {
+        //@ts-ignore
+        const field = allFields.value.find((it: any) => it.id === f.id) as any
+        if (field) {
+          field.field_alias = f.field_alias || ''
+          fieldTable.value?.toggleRowSelection(field)
+        } else {
+          console.log('field not found', f.field_name, f)
+        }
+      })
+    }
   })
 }
 
@@ -988,14 +1006,19 @@ const loadAllFields = async () => {
   const data = await metadataInstancesApi.get({
     filter: JSON.stringify(filter),
   })
+  let allFieldsOld = allFields.value;
   allFields.value =
-    data?.items?.[0]?.fields?.map((it: any) => ({
-      ...it,
-      id: it.id,
-      field_name: it.field_name,
-      originalDataType: it.data_type,
-      comment: '',
-    })) || []
+    data?.items?.[0]?.fields?.map((it: any) => {
+      const fItem = allFieldsOld.find((f: any) => f.id === it.id)
+      return {
+        ...it,
+        id: it.id,
+        field_name: it.field_name,
+        field_alias: it.field_alias || fItem.field_alias || '',
+        originalDataType: it.data_type,
+        comment: '',
+      }
+    }) || []
 }
 
 const handleBeforeClose = async (done: () => void) => {
@@ -1477,7 +1500,7 @@ const openEdit = () => {
           <ElTableColumn
             :label="$t('packages_business_data_server_drawer_canshumingcheng')"
             prop="name"
-            min-width="120"
+            min-width="80"
           >
             <template #default="{ row, $index }">
               <div
@@ -1496,11 +1519,10 @@ const openEdit = () => {
               <div v-else>{{ row.name }}</div>
             </template>
           </ElTableColumn>
-          <ElTableColumn :label="$t('public_type')" prop="type">
+          <ElTableColumn :label="$t('public_type')" prop="type" min-width="80">
             <template #default="{ row, $index }">
               <div
                 v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'"
-                min-width="60"
               >
                 <ElSelect v-model="form.params[$index].type">
                   <ElOption
@@ -1635,11 +1657,14 @@ const openEdit = () => {
                 />
               </ElSelect>
               <ElSelect v-model="form.where[index].condition" class="mr-4">
-                <template v-for="item in conditionOptions">
+                <template v-for="condition in conditionOptions">
                   <ElOption
-                    v-if="item !== 'null' || index === form.where.length - 1"
-                    :value="item"
-                    :label="item"
+                    v-if="
+                      condition !== 'null' || index === form.where.length - 1
+                    "
+                    :key="condition"
+                    :value="condition"
+                    :label="condition"
                   />
                 </template>
               </ElSelect>
@@ -1751,8 +1776,18 @@ const openEdit = () => {
             <ElTableColumn
               :label="$t('public_name')"
               prop="field_name"
-              min-width="150"
+              min-width="100"
             />
+            <ElTableColumn
+              :label="$t('public_alias')"
+              prop="field_alias"
+              min-width="120"
+            >
+              <template #default="{ row }">
+                <ElInput v-if="isEdit" v-model="row.field_alias" />
+                <span v-else>{{ row.field_alias }}</span>
+              </template>
+            </ElTableColumn>
             <ElTableColumn
               :label="$t('public_type')"
               prop="originalDataType"
@@ -1837,9 +1872,12 @@ const openEdit = () => {
       <ElButton v-if="data.id" @click="isEdit = false">{{
         $t('public_button_cancel')
       }}</ElButton>
-      <ElButton type="primary" @click="save()">{{
-        $t('public_button_save')
-      }}</ElButton>
+      <ElButton
+        :disabled="!form.fields.length"
+        type="primary"
+        @click="save()"
+        >{{ $t('public_button_save') }}</ElButton
+      >
     </template>
   </component>
 </template>
