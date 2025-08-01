@@ -85,6 +85,7 @@ declare module 'vue' {
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElTree: typeof import('element-plus/es')['ElTree']
     ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
+    ElTreeV2: typeof import('element-plus/es')['ElTreeV2']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     'IFluent:folderLink16Regular': typeof import('~icons/fluent/folder-link16-regular')['default']
     'ILucide:calendar': typeof import('~icons/lucide/calendar')['default']
