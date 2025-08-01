@@ -14,6 +14,7 @@ import {
 } from '@tap/api'
 import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import Drawer from '@tap/component/src/Drawer.vue'
+import { EditOutlined } from '@tap/component/src/icon'
 import { Modal } from '@tap/component/src/modal'
 
 import i18n from '@tap/i18n'
@@ -298,26 +299,48 @@ const customizePath = computed(() => {
 
 const urlList = computed(() => {
   const baseUrl = props.host + customizePath.value
-
+  const setting = form.value.pathSetting ? form.value.pathSetting : []
+  const settingMapping = {}
+  //@ts-ignore
+  setting.forEach((item) => {
+    //@ts-ignore
+    settingMapping[item.type] = {
+      method: item.method,
+      url: baseUrl + (!item.path?.startsWith('/') ? '/' : ''),
+      last: item.path,
+      canEdit: true,
+      type: item.type,
+    }
+  })
   return [
-    {
+    //@ts-ignore
+    settingMapping.DEFAULT_POST || {
       method: 'POST',
-      url: `${baseUrl}/find`,
+      url: `${baseUrl}/`,
+      last: `find`,
+      canEdit: true,
+      type: 'DEFAULT_POST',
     },
-    {
+    //@ts-ignore
+    settingMapping.DEFAULT_GET || {
       method: 'GET',
       url: String(baseUrl),
+      last: ``,
+      canEdit: true,
+      type: 'DEFAULT_GET',
     },
     {
       method: 'TOKEN',
       url: `${location.origin + location.pathname}oauth/token`,
+      last: ``,
+      canEdit: false,
     },
   ]
 })
 
 const urlsMap = computed(() => {
   return urlList.value.reduce((acc: Record<string, string>, item) => {
-    acc[item.method] = item.url
+    acc[item.method] = item.url + (item.last || '')
     return acc
   }, {})
 })
@@ -345,6 +368,7 @@ const formatData = (formData: FormData = {}) => {
     appLabel: _appLabel,
     appValue: _appValue,
     limit = 0,
+    pathSetting,
   } = formData
 
   const appData = listtags?.[0] || {}
@@ -381,6 +405,7 @@ const formatData = (formData: FormData = {}) => {
     appValue,
     appLabel,
     limit,
+    pathSetting,
   }
   form.value = cloneDeep(data.value)
 
@@ -634,6 +659,18 @@ const save = async (type?: boolean) => {
     emit('update:loading', true)
 
     try {
+      //@ts-ignore
+      const pathSettingList: any[] = []
+      //@ts-ignore
+      urlList.value.forEach((item) => {
+        if (item.type && item.canEdit) {
+          pathSettingList.push({
+            type: item.type,
+            path: item.last,
+            method: item.method,
+          })
+        }
+      })
       const formData: FormData = {
         id,
         status: basePath && basePath !== '' ? 'pending' : status,
@@ -675,6 +712,7 @@ const save = async (type?: boolean) => {
             path,
           },
         ],
+        pathSetting: pathSettingList,
       }
 
       if (!type && connectionId && tableName) {
@@ -1047,6 +1085,39 @@ const openEdit = () => {
   nextTick(() => {
     handleFieldsSelection()
   })
+}
+
+/**自定义URL后缀*/
+const editingIndex = ref(-1)
+const editingValue = ref('')
+const editInput = ref<InstanceType<typeof ElInput>[]>([])
+const startEdit = (index: number, currentValue: string) => {
+  if (!urlList.value[index].canEdit || !isEdit.value) return
+  if (editingIndex.value === index) return
+  editingIndex.value = index
+  editingValue.value = currentValue || ''
+  const currentUrl = urlList.value[index].url
+  if (!currentUrl.endsWith('/')) {
+    urlList.value[index].url = `${currentUrl}/`
+  }
+  nextTick(() => {
+    editInput.value?.[0]?.focus()
+    editInput.value?.[0]?.select()
+  })
+}
+
+const saveEdit = (index: number) => {
+  if (editingIndex.value === index) {
+    const trimmedValue = editingValue.value.trim()
+    if (!trimmedValue) {
+      urlList.value[index].url = urlList.value[index].url.replace(/\/$/, '')
+      urlList.value[index].last = ''
+    } else {
+      urlList.value[index].last = trimmedValue.replace(/^\//, '')
+    }
+    editingIndex.value = -1
+    editingValue.value = ''
+  }
 }
 </script>
 
@@ -1469,7 +1540,7 @@ const openEdit = () => {
           </div>
           <ul class="data-server-path flex flex-column gap-2">
             <li
-              v-for="item in urlList"
+              v-for="(item, index) in urlList"
               :key="item.method"
               class="data-server-path__item bg-subtle rounded-4 pl-1 py-1"
             >
@@ -1479,8 +1550,48 @@ const openEdit = () => {
               >
                 {{ item.method }}
               </div>
-              <div class="data-server-path__value line-height">
-                {{ item.url }}
+              <div v-if="!isEdit" class="data-server-path__value line-height">
+                {{ item.url + item.last }}
+              </div>
+              <div
+                v-else
+                class="data-server-path__value line-height flex-1 flex align-items-center"
+              >
+                <span>{{ item.url }}</span>
+                <template v-if="editingIndex === index">
+                  <ElInput
+                    ref="editInput"
+                    v-model="editingValue"
+                    size="small"
+                    class="ml-1 fs-7"
+                    style="width: 160px"
+                    :maxlength="20"
+                    @blur="saveEdit(index)"
+                    @keyup.enter="saveEdit(index)"
+                  />
+                </template>
+                <template v-else>
+                  <span
+                    :class="{
+                      'cursor-pointer': item.canEdit,
+                    }"
+                    @click="item.canEdit && startEdit(index, item.last)"
+                  >
+                    {{ item.last || '' }}
+                  </span>
+                  <el-button
+                    v-if="item.canEdit"
+                    text
+                    size="small"
+                    class="ml-1"
+                    type="primary"
+                    @click="startEdit(index, item.last)"
+                  >
+                    <template #icon>
+                      <EditOutlined />
+                    </template>
+                  </el-button>
+                </template>
               </div>
             </li>
           </ul>
@@ -2023,5 +2134,9 @@ const openEdit = () => {
     border: none;
     background: transparent;
   }
+}
+
+.data-server-path__value {
+  letter-spacing: 0.1px;
 }
 </style>
