@@ -162,9 +162,7 @@ export default {
     <template #title>
       <div class="flex align-center gap-2">
         <span>{{ $t('role_list_setting_api') }}</span>
-        <span class="font-color-light bg-color-main rounded-4 p-1 fs-8">{{
-          roleName
-        }}</span>
+        <el-tag type="primary" size="small">{{ roleName }}</el-tag>
       </div>
     </template>
     <div>
