@@ -47,7 +47,7 @@
           </ElSwitch>
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('public_operation')" width="310">
+      <ElTableColumn :label="$t('public_operation')" width="340">
         <template slot-scope="scope">
           <ElButton
             type="text"
@@ -56,6 +56,15 @@
             @click="handleSettingPermissions(scope.row.id, scope.row.name)"
           >
             {{ $t('role_list_setting_permissions') }}
+          </ElButton>
+          <ElDivider direction="vertical"></ElDivider>
+          <ElButton
+            type="text"
+            v-readonlybtn="'role_edition'"
+            :disabled="$disabledByPermission('role_edition_all_data', scope.row.user_id)"
+            @click="handleSettingApi(scope.row.id, scope.row.name)"
+          >
+            {{ $t('role_list_setting_api') }}
           </ElButton>
           <ElDivider direction="vertical"></ElDivider>
           <ElButton
@@ -149,6 +158,8 @@
         <ElButton size="mini" type="primary" @click="saveUser">{{ $t('public_button_confirm') }}</ElButton>
       </span>
     </ElDialog>
+
+    <ApiAccessDialog ref="apiAccessDialog" />
   </section>
 </template>
 
@@ -157,11 +168,13 @@ import { escapeRegExp } from 'lodash'
 import { roleApi, usersApi, roleMappingsApi, permissionsApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'
+import ApiAccessDialog from './ApiAccessDialog.vue'
 
 export default {
   components: {
     TablePage,
-    FilterBar
+    FilterBar,
+    ApiAccessDialog
   },
   data() {
     return {
@@ -263,6 +276,10 @@ export default {
     // 设置权限
     handleSettingPermissions(id, name) {
       this.$router.push({ name: 'role', query: { id: id, name: name } })
+    },
+    // 设置API访问
+    handleSettingApi(id, name) {
+      this.$refs.apiAccessDialog.open(id, name)
     },
 
     // 确认删除角色
