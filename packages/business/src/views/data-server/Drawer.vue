@@ -298,26 +298,48 @@ const customizePath = computed(() => {
 
 const urlList = computed(() => {
   const baseUrl = props.host + customizePath.value
-
+  const setting = form.value.pathSetting ? form.value.pathSetting : []
+  const settingMapping = {}
+  //@ts-ignore
+  setting.forEach((item) => {
+    //@ts-ignore
+    settingMapping[item.type] = {
+      method: item.method,
+      url: baseUrl + (item.path && item.path !== "" && !item.path.startsWith("/") ? "/" : ""),
+      last: item.path,
+      canEdit: true,
+      type: item.type,
+    }
+  });
   return [
-    {
+    //@ts-ignore
+    settingMapping['DEFAULT_POST'] || {
       method: 'POST',
-      url: `${baseUrl}/find`,
+      url: `${baseUrl}/`,
+      last: `find`,
+      canEdit: true,
+      type: 'DEFAULT_POST',
     },
-    {
+    //@ts-ignore
+    settingMapping['DEFAULT_GET'] || {
       method: 'GET',
       url: String(baseUrl),
+      last: ``,
+      canEdit: true,
+      type: 'DEFAULT_GET',
     },
     {
       method: 'TOKEN',
       url: `${location.origin + location.pathname}oauth/token`,
+      last: ``,
+      canEdit: false,
     },
   ]
 })
 
 const urlsMap = computed(() => {
   return urlList.value.reduce((acc: Record<string, string>, item) => {
-    acc[item.method] = item.url
+    acc[item.method] = item.url + (item.last || "")
     return acc
   }, {})
 })
@@ -345,6 +367,7 @@ const formatData = (formData: FormData = {}) => {
     appLabel: _appLabel,
     appValue: _appValue,
     limit = 0,
+    pathSetting,
   } = formData
 
   const appData = listtags?.[0] || {}
@@ -381,6 +404,7 @@ const formatData = (formData: FormData = {}) => {
     appValue,
     appLabel,
     limit,
+    pathSetting: pathSetting,
   }
   form.value = cloneDeep(data.value)
 
@@ -634,6 +658,18 @@ const save = async (type?: boolean) => {
     emit('update:loading', true)
 
     try {
+      //@ts-ignore
+      const pathSettingList: any[] = []
+      //@ts-ignore
+      urlList.value.forEach((item) => {
+        if (item.type && item.canEdit) {
+          pathSettingList.push({
+            type: item.type,
+            path: item.last,
+            method: item.method,
+          })
+        }
+      })
       const formData: FormData = {
         id,
         status: basePath && basePath !== '' ? 'pending' : status,
@@ -675,6 +711,7 @@ const save = async (type?: boolean) => {
             path,
           },
         ],
+        pathSetting: pathSettingList,
       }
 
       if (!type && connectionId && tableName) {
@@ -1046,6 +1083,64 @@ const openEdit = () => {
   isEdit.value = true
   nextTick(() => {
     handleFieldsSelection()
+  })
+}
+
+/**自定义URL后缀*/
+const editingIndex = ref(-1)
+const editingValue = ref('')
+const editInput = ref(null)
+const startEdit = (index, currentValue) => {
+  if (!urlList.value[index].canEdit || !isEdit.value) return
+  if (editingIndex.value === index) return
+  editingIndex.value = index
+  editingValue.value = currentValue || ''
+  const currentUrl = urlList.value[index].url
+  if (!currentUrl.endsWith('/')) {
+    urlList.value[index].url = currentUrl + '/'
+  }
+  nextTick(() => {
+    editInput.value?.focus()
+    editInput.value?.select()
+    adjustInputWidth()
+  })
+}
+
+const saveEdit = (index) => {
+  if (editingIndex.value === index) {
+    const trimmedValue = editingValue.value.trim()
+    if (!trimmedValue) {
+      const currentUrl = urlList.value[index].url
+      if (currentUrl.endsWith('/')) {
+        urlList.value[index].url = currentUrl.slice(0, -1)
+      }
+      urlList.value[index].last = ''
+    } else {
+      urlList.value[index].last = trimmedValue.startsWith('/')
+        ? trimmedValue.slice(1)
+        : trimmedValue
+    }
+    editingIndex.value = -1
+    editingValue.value = ''
+  }
+}
+const adjustInputWidth = () => {
+  nextTick(() => {
+    if (editInput.value) {
+      const input = editInput.value.$el.querySelector('input')
+      if (input) {
+        const canvas = document.createElement('canvas')
+        const context = canvas.getContext('2d')
+        const computedStyle = window.getComputedStyle(input)
+        context.font = `${computedStyle.fontSize} ${computedStyle.fontFamily}`
+        const textWidth = context.measureText(editingValue.value || '').width
+        const minWidth = 80
+        const maxWidth = 200
+        const padding = 16
+        const newWidth = Math.max(minWidth, Math.min(maxWidth, textWidth + padding))
+        input.style.width = `${newWidth}px`
+      }
+    }
   })
 }
 </script>
@@ -1469,7 +1564,7 @@ const openEdit = () => {
           </div>
           <ul class="data-server-path flex flex-column gap-2">
             <li
-              v-for="item in urlList"
+              v-for="(item, index) in urlList"
               :key="item.method"
               class="data-server-path__item bg-subtle rounded-4 pl-1 py-1"
             >
@@ -1479,8 +1574,39 @@ const openEdit = () => {
               >
                 {{ item.method }}
               </div>
-              <div class="data-server-path__value line-height">
-                {{ item.url }}
+              <div v-if="!isEdit"  class="data-server-path__value line-height">
+                {{ item.url + item.last}}
+              </div>
+              <div v-else class="data-server-path__value line-height flex-1 flex align-items-center">
+                  <span>{{ item.url }}</span>
+                  <template v-if="editingIndex === index">
+                    <ElInput
+                        v-model="editingValue"
+                        size="small"
+                        :maxlength="20"
+                        class="inline-edit-input"
+                        @blur="saveEdit(index)"
+                        @keyup.enter="saveEdit(index)"
+                        @input="adjustInputWidth"
+                        ref="editInput"
+                    />
+                  </template>
+                  <template v-else>
+                    <span
+                        :class="{ 'cursor-pointer': item.canEdit && isEdit, 'editable-suffix': item.canEdit && isEdit }"
+                        @click="item.canEdit && isEdit && startEdit(index, item.last)"
+                    >
+                      {{ item.last || '' }}
+                    </span>
+                  <el-icon
+                      v-if="item.canEdit && isEdit"
+                      class="ml-1 cursor-pointer color-primary edit-icon"
+                      size="14"
+                      @click="startEdit(index, item.last)"
+                  >
+                    <EditPen />
+                  </el-icon>
+                </template>
               </div>
             </li>
           </ul>
@@ -2022,6 +2148,65 @@ const openEdit = () => {
   :deep(.el-input__inner) {
     border: none;
     background: transparent;
+  }
+}
+
+.data-server-path__value {
+  font-size: 14px;
+  font-style: normal;
+  -webkit-font-smoothing: unset;
+  font-family: PingFangSC-Regular, PingFang SC;
+
+  .inline-edit-input {
+    width: auto;
+    margin: 0;
+    border: none;
+    padding: 0;
+    font-size: 14px;
+    font-style: normal;
+    transition: all 0.8s ease;
+
+    :deep(.el-input__wrapper) {
+      border: none;
+      box-shadow: none;
+      padding: 0;
+
+      &.is-focus {
+        box-shadow: none;
+        padding-left: 5px;
+      }
+    }
+
+    :deep(.el-input__inner) {
+      font-size: 14px;
+      font-style: normal;
+      height: auto;
+      padding: 0;
+      border: none;
+      outline: none;
+      transition: all 0.8s ease;
+
+
+      &:focus {
+        border: none;
+        outline: none;
+        padding-left: 5px;
+      }
+
+    }
+  }
+
+  .editable-suffix {
+    padding: 0;
+    border-radius: 2px;
+    transition: background-color 0.2s;
+
+  }
+
+  .edit-icon {
+    opacity: 1;
+    transition: opacity 0.2s;
+    color: var(--el-color-primary);
   }
 }
 </style>
