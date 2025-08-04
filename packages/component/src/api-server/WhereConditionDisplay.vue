@@ -1,6 +1,7 @@
 <template>
   <div class="where-condition-display">
     <span
+      :html="token.text.replace('/\s/g', '&nbsp;')"
       v-for="(token, index) in tokens"
       :key="index"
       :class="token.class"
@@ -83,10 +84,12 @@ const tokens = computed(() => {
   background-color: #f8f9fa;
   border-radius: 4px;
   border: 1px solid #e9ecef;
+  word-wrap: break-word;
 }
 
 .condition-token {
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-all;
 }
 
 /* 括号颜色 */
