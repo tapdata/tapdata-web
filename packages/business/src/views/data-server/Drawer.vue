@@ -1121,17 +1121,6 @@ const saveEdit = (index: number) => {
     editingValue.value = ''
   }
 }
-
-const getSplitChars = (str: string, count: number) => {
-  let chs = "";
-  if (count <= 0) {
-    return "";
-  }
-  for (let index = 0; index < count; index++) {
-    chs += str;
-  }
-  return chs;
-}
 </script>
 
 <template>
