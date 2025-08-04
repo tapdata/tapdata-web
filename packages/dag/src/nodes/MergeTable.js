@@ -320,6 +320,9 @@ export class MergeTable extends NodeType {
                               'x-decorator': 'FormItem',
                               'x-decorator-props': {
                                 layout: 'horizontal',
+                                tooltip: i18n.t(
+                                  'packages_dag_ignoreUpdateEvent_tips',
+                                ),
                               },
                               'x-component': 'Switch',
                             },

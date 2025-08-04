@@ -1094,4 +1094,6 @@ export default {
   packages_dag_syncForeignKeyEnable: 'Sync Foreign Key',
   packages_dag_check_no_pk_table: 'Check No Primary Key Table',
   packages_dag_ignoreUpdateEvent: 'Ignore Update Event',
+  packages_dag_ignoreUpdateEvent_tips:
+    'When enabled, the system will automatically ignore child table update events, which is suitable for scenarios where child table updates do not affect the majority of data in the main table.',
 }

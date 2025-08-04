@@ -931,4 +931,6 @@ export default {
   packages_dag_syncForeignKeyEnable: '同步外鍵',
   packages_dag_check_no_pk_table: '校驗無主鍵表',
   packages_dag_ignoreUpdateEvent: '忽略更新事件',
+  packages_dag_ignoreUpdateEvent_tips:
+    '開啓後將自動忽略子表更新事件，適用於無需關注子表變化，且子表更新會對主表大部分數據產生影響的場景',
 }
