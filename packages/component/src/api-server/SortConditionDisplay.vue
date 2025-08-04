@@ -35,7 +35,7 @@ const props = defineProps({
   background-color: #f8f9fa;
   border-radius: 4px;
   border: 1px solid #e9ecef;
-  white-space: nowrap;
+  word-wrap: break-word;
 }
 
 .bracket {
