@@ -31,6 +31,7 @@ import {
   type Component,
 } from 'vue'
 import ListSelect from '../api-application/ListSelect.vue'
+import MqlEditor from './MqlEditor.vue'
 import getTemplate from './template'
 
 // API Response Types
@@ -1814,6 +1815,8 @@ const saveEdit = (index: number) => {
               <span>{{ item.condition }}</span>
             </li>
           </ul>
+
+          <MqlEditor />
 
           <!-- 排列条件 -->
           <div class="data-server-panel__title mt-4 mb-3">
