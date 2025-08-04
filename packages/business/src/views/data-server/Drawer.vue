@@ -107,7 +107,7 @@ interface Field {
 const isHa = import.meta.env.MODE === 'ha'
 const typeOptions = ['number', 'string', 'boolean', 'date', 'datetime', 'time']
 const operatorOptions = ['>', '==', '<', '>=', '<=', '!=', 'like']
-const conditionOptions = ['null', 'and', 'or']
+const conditionOptions = ['and', 'or']
 const apiTypeMap = {
   defaultApi: i18n.t('packages_business_data_server_drawer_morenchaxun'),
   customerQuery: i18n.t('packages_business_data_server_drawer_zidingyichaxun'),
@@ -848,7 +848,7 @@ const addItem = (key: 'params' | 'where' | 'sort') => {
   if (key === 'where') {
     const list = form.value.where
     const lastItem = list.at(-1)
-    if (list.length && lastItem.condition === 'null') {
+    if (list.length) {
       lastItem.condition = 'and'
     }
   }
