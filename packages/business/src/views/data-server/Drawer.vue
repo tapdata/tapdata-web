@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { EditPen, InfoFilled } from '@element-plus/icons-vue'
+import WhereConditionDisplay from '@tap/component/src/api-server/WhereConditionDisplay.vue'
+import SortConditionDisplay from '@tap/component/src/api-server/SortConditionDisplay.vue'
 import {
   createApiModule,
   fetchApiServerToken,
@@ -1119,6 +1121,17 @@ const saveEdit = (index: number) => {
     editingValue.value = ''
   }
 }
+
+const getSplitChars = (str: string, count: number) => {
+  let chs = "";
+  if (count <= 0) {
+    return "";
+  }
+  for (let index = 0; index < count; index++) {
+    chs += str;
+  }
+  return chs;
+}
 </script>
 
 <template>
@@ -1802,18 +1815,10 @@ const saveEdit = (index: number) => {
               </el-button>
             </li>
           </ul>
-          <ul v-else class="flex flex-column gap-2">
-            <li
-              v-for="(item, index) in data.where"
-              :key="index"
-              class="flex align-items-center"
-            >
-              <span class="mr-4">{{ item.fieldName }}</span>
-              <span class="mr-4">{{ item.operator }}</span>
-              <span class="mr-4">{{ item.parameter }}</span>
-              <span>{{ item.condition }}</span>
-            </li>
-          </ul>
+          <WhereConditionDisplay
+              v-else
+              :conditions="data.where"
+          />
 
           <!-- 排列条件 -->
           <div class="data-server-panel__title mt-4 mb-3">
@@ -1865,16 +1870,7 @@ const saveEdit = (index: number) => {
               </el-button>
             </li>
           </ul>
-          <ul v-else class="flex flex-column gap-2">
-            <li
-              v-for="(item, index) in data.sort"
-              :key="index"
-              class="flex align-items-center"
-            >
-              <span class="mr-4">{{ item.fieldName }}</span>
-              <span>{{ item.type }}</span>
-            </li>
-          </ul>
+          <SortConditionDisplay v-else :orders="data.sort"/>
         </template>
 
         <!-- 输出结果 -->
