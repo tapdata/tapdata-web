@@ -158,6 +158,7 @@ const roles = ref([])
 const workerStatus = ref('')
 const intervalId = ref(0)
 const allFields = ref([])
+const tempFields = ref<Field[]>([])
 const fieldLoading = ref(false)
 const databaseTypes = ref<string[] | null>(null)
 const connectionOptions = ref<any[] | null>(null)
@@ -631,9 +632,6 @@ const save = async (type?: boolean) => {
       basePath,
       connectionId,
       tableName,
-      params,
-      where,
-      sort,
       method,
       path,
       status,
@@ -647,7 +645,9 @@ const save = async (type?: boolean) => {
       appValue,
       limit,
     } = form.value
-
+    const params = form.value?.params?.filter((t: any) => t.name)
+    const sort = form.value?.sort?.filter((t: any) => t.fieldName)
+    const where = form.value?.where?.filter((t: any) => t.fieldName && t.parameter)
     const fields = form.value.fields.filter((f: any) => !!f)
 
     if (params.some((it: any) => !it.name.trim())) {
@@ -856,7 +856,15 @@ const addItem = (key: 'params' | 'where' | 'sort') => {
 }
 
 const removeItem = (key: 'params' | 'where' | 'sort', index: number) => {
+  const removed = form.value[key][index]
   form.value[key].splice(index, 1)
+  if ('sort' === key && removed && !tempFields.value.find(f => f.field_name === removed.fieldName)) {
+    tempFields.value.splice(0, 0, {
+      field_name: removed.fieldName,
+      id: removed.id,
+      data_type: removed.data_type,
+    })
+  }
 }
 
 const debugDisabled = computed(() => {
@@ -1121,6 +1129,18 @@ const saveEdit = (index: number) => {
     editingValue.value = ''
   }
 }
+
+watch(allFields, (newVal) => {
+  tempFields.value = newVal.filter(field => !form.value?.sort?.some(sortField => sortField.fieldName === field.field_name))
+}, { immediate: true })
+
+
+function onFieldSelected(field: Field) {
+  tempFields.value = allFields.value
+      .filter(f => !form.value?.sort?.some(sortField => sortField.fieldName === f.field_name))
+      .filter(f => f.field_name !== field.field_name)
+}
+
 </script>
 
 <template>
@@ -1816,7 +1836,7 @@ const saveEdit = (index: number) => {
                 $t('packages_business_data_server_drawer_pailietiaojian')
               }}</span>
               <el-button
-                v-if="isEdit"
+                v-if="isEdit && tempFields.length > 0"
                 text
                 size="small"
                 type="primary"
@@ -1837,10 +1857,12 @@ const saveEdit = (index: number) => {
             >
               <ElSelect v-model="form.sort[index].fieldName" class="mr-4">
                 <ElOption
-                  v-for="opt in allFields"
+                  :selectable="tempFields.length <= 0"
+                  v-for="opt in tempFields"
                   :key="opt.id"
                   :value="opt.field_name"
                   :label="opt.field_name"
+                  @click="onFieldSelected(opt)"
                 />
               </ElSelect>
               <ElSelect v-model="form.sort[index].type" class="mr-4">
