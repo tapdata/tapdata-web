@@ -232,7 +232,7 @@ const registerMongoCompletion = () => {
               label: field,
               kind: monaco.languages.CompletionItemKind.Field,
               detail: `字段: ${field}`,
-              insertText: field,
+              insertText: isInQuotes ? field : `"${field}"`,
               range,
               sortText: `1${field}`,
             })),
@@ -281,7 +281,7 @@ const registerMongoCompletion = () => {
                 }
               } else {
                 // 不在 {{}} 内部，需要完整的 {{variable}}
-                insertText = `{{${variable}}}`
+                insertText = `"{{${variable}}}"`
               }
 
               return {

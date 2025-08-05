@@ -11,7 +11,6 @@ import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 self.MonacoEnvironment = {
   getWorker(_, label) {
-    console.log('label', label)
     if (label === 'json') {
       return new jsonWorker()
     }

@@ -503,4 +503,8 @@ export default {
   public_remaining_days: 'Remaining Days',
   public_remaining_days_threshold: 'Remaining Days Threshold',
   public_api_group: 'API Group',
+  public_form_mode: 'Form Mode',
+  public_json_mode: 'JSON Mode',
+  public_format: 'Format',
+  public_add_condition: 'Add Condition',
 }

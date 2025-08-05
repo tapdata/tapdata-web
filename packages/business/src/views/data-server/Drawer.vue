@@ -370,6 +370,7 @@ const formatData = (formData: FormData = {}) => {
     appLabel: _appLabel,
     appValue: _appValue,
     limit = 0,
+    fullCustomQuery = false,
     pathSetting,
   } = formData
 
@@ -408,6 +409,7 @@ const formatData = (formData: FormData = {}) => {
     appLabel,
     limit,
     pathSetting,
+    fullCustomQuery,
   }
   form.value = cloneDeep(data.value)
 
@@ -1734,83 +1736,117 @@ const handleFormat = () => {
           "
         >
           <!-- 筛选条件 -->
-          <div class="data-server-panel__title mt-4 mb-3 align-items-center">
+          <div
+            class="data-server-panel__title mt-4 mb-3 align-items-center justify-content-start gap-2"
+          >
             <span>{{
               $t('packages_business_data_server_drawer_shaixuantiaojian')
             }}</span>
+
+            <el-segmented
+              v-model="form.fullCustomQuery"
+              size="small"
+              class="fs-8"
+              :options="[
+                {
+                  label: $t('public_form_mode'),
+                  value: false,
+                },
+                {
+                  label: $t('public_json_mode'),
+                  value: true,
+                },
+              ]"
+            />
+
             <el-button
-              v-if="isEdit"
+              v-if="form.fullCustomQuery"
               text
               size="small"
-              type="primary"
-              class="ml-1"
-              @click="addItem('where')"
+              class="ml-auto"
+              @click="handleFormat"
             >
-              <template #icon>
-                <el-icon-circle-plus />
-              </template>
-            </el-button>
-
-            <el-button text class="ml-auto" @click="handleFormat">
               <el-icon class="mr-1"><i-mingcute:brush-line /></el-icon>
-              格式化</el-button
+              {{ $t('public_format') }}
+            </el-button>
             >
           </div>
-          <ul v-if="isEdit" class="flex flex-column gap-2">
-            <li
-              v-for="(item, index) in form.where"
-              :key="index"
-              class="flex align-items-center"
-            >
-              <ElSelect v-model="form.where[index].fieldName" class="mr-4">
-                <ElOption
-                  v-for="opt in allFields"
-                  :key="opt.id"
-                  :value="opt.field_name"
-                  :label="opt.field_name"
-                />
-              </ElSelect>
-              <ElSelect v-model="form.where[index].operator" class="mr-4">
-                <ElOption
-                  v-for="item in operatorOptions"
-                  :key="item"
-                  :value="item"
-                  :label="item"
-                />
-              </ElSelect>
-              <ElSelect v-model="form.where[index].parameter" class="mr-4">
-                <ElOption
-                  v-for="opt in parameterOptions"
-                  :key="opt.name"
-                  :value="opt.name"
-                  :label="opt.name"
-                />
-              </ElSelect>
-              <ElSelect v-model="form.where[index].condition" class="mr-4">
-                <template v-for="condition in conditionOptions">
-                  <ElOption
-                    v-if="
-                      condition !== 'null' || index === form.where.length - 1
-                    "
-                    :key="condition"
-                    :value="condition"
-                    :label="condition"
-                  />
-                </template>
-              </ElSelect>
-
-              <el-button
-                text
-                size="small"
-                class="flex-shrink-0"
-                @click="removeItem('where', index)"
+          <template v-if="isEdit">
+            <ul v-if="!form.fullCustomQuery" class="flex flex-column gap-2">
+              <li
+                v-for="(item, index) in form.where"
+                :key="index"
+                class="flex align-items-center"
               >
-                <template #icon>
-                  <el-icon-remove />
-                </template>
-              </el-button>
-            </li>
-          </ul>
+                <ElSelect v-model="form.where[index].fieldName" class="mr-4">
+                  <ElOption
+                    v-for="opt in allFields"
+                    :key="opt.id"
+                    :value="opt.field_name"
+                    :label="opt.field_name"
+                  />
+                </ElSelect>
+                <ElSelect v-model="form.where[index].operator" class="mr-4">
+                  <ElOption
+                    v-for="item in operatorOptions"
+                    :key="item"
+                    :value="item"
+                    :label="item"
+                  />
+                </ElSelect>
+                <ElSelect v-model="form.where[index].parameter" class="mr-4">
+                  <ElOption
+                    v-for="opt in parameterOptions"
+                    :key="opt.name"
+                    :value="opt.name"
+                    :label="opt.name"
+                  />
+                </ElSelect>
+                <ElSelect v-model="form.where[index].condition" class="mr-4">
+                  <template v-for="condition in conditionOptions">
+                    <ElOption
+                      v-if="
+                        condition !== 'null' || index === form.where.length - 1
+                      "
+                      :key="condition"
+                      :value="condition"
+                      :label="condition"
+                    />
+                  </template>
+                </ElSelect>
+
+                <el-button
+                  text
+                  size="small"
+                  class="flex-shrink-0"
+                  @click="removeItem('where', index)"
+                >
+                  <template #icon>
+                    <el-icon-remove />
+                  </template>
+                </el-button>
+              </li>
+              <div>
+                <el-button
+                  class="w-100 border-dashed"
+                  size="small"
+                  @click="addItem('where')"
+                >
+                  <template #icon>
+                    <i-mingcute:add-line />
+                  </template>
+                  {{ $t('public_add_condition') }}
+                </el-button>
+              </div>
+            </ul>
+            <MqlEditor
+              v-else
+              ref="mqlEditor"
+              :fields="['page', 'limit']"
+              :variables="['var1']"
+            />
+          </template>
+
           <ul v-else class="flex flex-column gap-2">
             <li
               v-for="(item, index) in data.where"
@@ -1823,12 +1859,6 @@ const handleFormat = () => {
               <span>{{ item.condition }}</span>
             </li>
           </ul>
-
-          <MqlEditor
-            ref="mqlEditor"
-            :fields="['page', 'limit']"
-            :variables="['var1']"
-          />
 
           <!-- 排列条件 -->
           <div class="data-server-panel__title mt-4 mb-3">
