@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { EditPen, InfoFilled } from '@element-plus/icons-vue'
-import WhereConditionDisplay from '@tap/component/src/api-server/WhereConditionDisplay.vue'
-import SortConditionDisplay from '@tap/component/src/api-server/SortConditionDisplay.vue'
 import {
   createApiModule,
   fetchApiServerToken,
@@ -14,6 +12,8 @@ import {
   updateApiModuleTags,
   workerApi,
 } from '@tap/api'
+import SortConditionDisplay from '@tap/component/src/api-server/SortConditionDisplay.vue'
+import WhereConditionDisplay from '@tap/component/src/api-server/WhereConditionDisplay.vue'
 import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import Drawer from '@tap/component/src/Drawer.vue'
 import { EditOutlined } from '@tap/component/src/icon'
@@ -647,7 +647,9 @@ const save = async (type?: boolean) => {
     } = form.value
     const params = form.value?.params?.filter((t: any) => t.name)
     const sort = form.value?.sort?.filter((t: any) => t.fieldName)
-    const where = form.value?.where?.filter((t: any) => t.fieldName && t.parameter)
+    const where = form.value?.where?.filter(
+      (t: any) => t.fieldName && t.parameter,
+    )
     const fields = form.value.fields.filter((f: any) => !!f)
 
     if (params.some((it: any) => !it.name.trim())) {
@@ -858,7 +860,12 @@ const addItem = (key: 'params' | 'where' | 'sort') => {
 const removeItem = (key: 'params' | 'where' | 'sort', index: number) => {
   const removed = form.value[key][index]
   form.value[key].splice(index, 1)
-  if ('sort' === key && removed && !tempFields.value.find(f => f.field_name === removed.fieldName)) {
+  if (
+    'sort' === key &&
+    removed.fieldName &&
+    removed &&
+    !tempFields.value.find((f) => f.field_name === removed.fieldName)
+  ) {
     tempFields.value.splice(0, 0, {
       field_name: removed.fieldName,
       id: removed.id,
@@ -1130,17 +1137,29 @@ const saveEdit = (index: number) => {
   }
 }
 
-watch(allFields, (newVal) => {
-  tempFields.value = newVal.filter(field => !form.value?.sort?.some(sortField => sortField.fieldName === field.field_name))
-}, { immediate: true })
-
+watch(
+  allFields,
+  (newVal) => {
+    tempFields.value = newVal.filter(
+      (field) =>
+        !form.value?.sort?.some(
+          (sortField) => sortField.fieldName === field.field_name,
+        ),
+    )
+  },
+  { immediate: true },
+)
 
 function onFieldSelected(field: Field) {
   tempFields.value = allFields.value
-      .filter(f => !form.value?.sort?.some(sortField => sortField.fieldName === f.field_name))
-      .filter(f => f.field_name !== field.field_name)
+    .filter(
+      (f) =>
+        !form.value?.sort?.some(
+          (sortField) => sortField.fieldName === f.field_name,
+        ),
+    )
+    .filter((f) => f.field_name !== field.field_name)
 }
-
 </script>
 
 <template>
@@ -1824,10 +1843,7 @@ function onFieldSelected(field: Field) {
               </el-button>
             </li>
           </ul>
-          <WhereConditionDisplay
-              v-else
-              :conditions="data.where"
-          />
+          <WhereConditionDisplay v-else :conditions="data.where" />
 
           <!-- 排列条件 -->
           <div class="data-server-panel__title mt-4 mb-3">
@@ -1857,9 +1873,9 @@ function onFieldSelected(field: Field) {
             >
               <ElSelect v-model="form.sort[index].fieldName" class="mr-4">
                 <ElOption
-                  :selectable="tempFields.length <= 0"
                   v-for="opt in tempFields"
                   :key="opt.id"
+                  :selectable="tempFields.length <= 0"
                   :value="opt.field_name"
                   :label="opt.field_name"
                   @click="onFieldSelected(opt)"
@@ -1881,7 +1897,7 @@ function onFieldSelected(field: Field) {
               </el-button>
             </li>
           </ul>
-          <SortConditionDisplay v-else :orders="data.sort"/>
+          <SortConditionDisplay v-else :orders="data.sort" />
         </template>
 
         <!-- 输出结果 -->

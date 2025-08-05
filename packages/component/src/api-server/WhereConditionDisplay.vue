@@ -1,44 +1,28 @@
-<template>
-  <div class="where-condition-display">
-    <span
-       v-if="conditions.length > 0"
-      :html="token.text.replace('/\s/g', '&nbsp;')"
-      v-for="(token, index) in tokens"
-      :key="index"
-      :class="token.class"
-      class="condition-token"
-    >
-      {{token.text}}
-    </span>
-    <span v-else class="condition-token empty-class">-</span>
-  </div>
-</template>
-
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 
 const props = defineProps({
   conditions: {
     type: Array,
-    default: () => []
-  }
+    default: () => [],
+  },
 })
 
 const bracketColors = [
   'bracket-color-1', // 蓝色
-  'bracket-color-2', // 紫色  
+  'bracket-color-2', // 紫色
   'bracket-color-3', // 橙色
   'bracket-color-4', // 绿色
-  'bracket-color-5'  // 红色
+  'bracket-color-5', // 红色
 ]
 
 const tokens = computed(() => {
   if (!props.conditions?.length) return []
-  
+
   const result = []
   const bracketStack = []
   let currentLevel = 0
-  
+
   props.conditions.forEach((item, index) => {
     if (index === 0) {
       const openCount = props.conditions.length - 1
@@ -48,44 +32,69 @@ const tokens = computed(() => {
         bracketStack.push(colorClass)
       }
     }
-    
-    result.push({ text: '(', class: bracketColors[currentLevel % bracketColors.length] })
-    result.push({ text: item.fieldName, class: 'field-name' })
-    result.push({ text: ' ', class: '' })
-    result.push({ text: item.operator, class: 'operator' })
-    result.push({ text: ' ', class: '' })
-    result.push({ text: `{{${item.parameter}}}`, class: 'parameter' })
-    result.push({ text: ')', class: bracketColors[currentLevel % bracketColors.length] })
-    
+
+    result.push(
+      {
+        text: '(',
+        class: bracketColors[currentLevel % bracketColors.length],
+      },
+      { text: item.fieldName, class: 'field-name' },
+      { text: ' ', class: '' },
+      { text: item.operator, class: 'operator' },
+      { text: ' ', class: '' },
+      { text: `{{${item.parameter}}}`, class: 'parameter' },
+      {
+        text: ')',
+        class: bracketColors[currentLevel % bracketColors.length],
+      },
+    )
+
     if (index < props.conditions.length - 1) {
       if (index > 0) {
-        result.push({text: ')', class: bracketStack.pop() || bracketColors[0]})
+        result.push({
+          text: ')',
+          class: bracketStack.pop() || bracketColors[0],
+        })
       }
-      result.push({ text: ' ', class: '' })
-      result.push({ text: item.condition, class: 'condition' })
-      result.push({ text: ' ', class: '' })
+      result.push(
+        { text: ' ', class: '' },
+        { text: item.condition, class: 'condition' },
+        { text: ' ', class: '' },
+      )
     } else {
       while (bracketStack.length > 0) {
         result.push({ text: ')', class: bracketStack.pop() })
       }
     }
-    
+
     currentLevel++
   })
-  
+
   return result
 })
 </script>
 
+<template>
+  <div class="where-condition-display bg-light border rounded-xl">
+    <span
+      v-for="(token, index) in tokens"
+      :key="index"
+      :html="token.text.replace('/\s/g', '&nbsp;')"
+      :class="token.class"
+      class="condition-token"
+    >
+      {{ token.text }}
+    </span>
+    <span v-if="!tokens.length" class="condition-token empty-class">-</span>
+  </div>
+</template>
+
 <style scoped>
 .where-condition-display {
-  font-family: 'Courier New', monospace;
+  font-family: var(--code-font-family);
   font-size: 14px;
   line-height: 1.5;
   padding: 8px 12px;
-  background-color: #f8f9fa;
-  border-radius: 4px;
-  border: 1px solid #e9ecef;
   word-wrap: break-word;
 }
 
