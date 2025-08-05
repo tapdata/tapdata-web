@@ -1666,18 +1666,6 @@ function onFieldSelected(field: Field) {
             <span>{{
               $t('packages_business_data_server_drawer_shurucanshu')
             }}</span>
-            <el-button
-              v-if="isEdit && form.apiType === 'customerQuery'"
-              text
-              size="small"
-              type="primary"
-              class="ml-1"
-              @click="addItem('params')"
-            >
-              <template #icon>
-                <el-icon-circle-plus />
-              </template>
-            </el-button>
           </div>
         </div>
         <ElTable class="flex-1" :data="form.params">
@@ -1784,6 +1772,18 @@ function onFieldSelected(field: Field) {
             </template>
           </ElTableColumn>
         </ElTable>
+        <div v-if="isEdit && form.apiType === 'customerQuery'" class="mt-2">
+          <el-button
+            class="w-100 border-dashed"
+            size="small"
+            @click="addItem('params')"
+          >
+            <template #icon>
+              <i-mingcute:add-line />
+            </template>
+            {{ $t('public_add_parameter') }}
+          </el-button>
+        </div>
 
         <template
           v-if="

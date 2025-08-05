@@ -507,4 +507,5 @@ export default {
   public_json_mode: 'JSON Mode',
   public_format: 'Format',
   public_add_condition: 'Add Condition',
+  public_add_parameter: 'Add Parameter',
 }

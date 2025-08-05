@@ -497,4 +497,5 @@ export default {
   public_json_mode: 'JSON 模式',
   public_format: '格式化',
   public_add_condition: '添加條件',
+  public_add_parameter: '添加參數',
 }
