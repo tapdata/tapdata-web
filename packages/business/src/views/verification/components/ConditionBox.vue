@@ -538,6 +538,7 @@ const getMatchNodeList = () => {
       objectNames,
       tableName: targetNode.tableName,
       tableNameRelation,
+      noPKVirtualFieldName: targetNode.noPKVirtualFieldName || '_no_pk_hash',
     }
   })
 }
@@ -621,11 +622,13 @@ const autoAddTable = async () => {
   const connectionSet = new Set()
   const tableNames = []
   const matchNodeList = getMatchNodeList()
+  const noPKVirtualFieldName = new Set()
 
   matchNodeList.forEach((m: any) => {
     connectionSet.add(m.sourceConnectionId)
     connectionSet.add(m.targetConnectionId)
     tableNames.push(...m.tableNames, ...m.objectNames)
+    noPKVirtualFieldName.add(m.noPKVirtualFieldName)
   })
 
   const connectionIds = [...connectionSet]
@@ -699,7 +702,7 @@ const autoAddTable = async () => {
 
           const updateList = cloneDeep(
             updateConditionFieldMap[tableNameRelation[ge]] || [],
-          ).filter((t: string) => t !== '_no_pk_hash')
+          ).filter((t: string) => !noPKVirtualFieldName.has(t))
           const findTable = data.find(
             (t: any) =>
               t.source.id === sourceConnectionId && t.original_name === ge,
@@ -2134,14 +2137,14 @@ watch(conditionList, () => {
 
       <div
         v-if="conditionList.length === 0"
-        class="bg-gray-50 p-4 rounded-xl flex flex-column justify-center align-center gap-2"
+        class="bg-gray-50 p-6 rounded-xl flex flex-column justify-center align-center gap-2"
       >
         <div class="flex rounded-pill bg-gray-100 p-3">
           <VIcon :size="24" color="#9ca3af">database</VIcon>
         </div>
 
         <template v-if="formData.taskMode === 'pipeline'">
-          <div class="text-center font-color-light">
+          <div class="text-center font-color-light mb-2">
             {{
               taskId
                 ? $t('packages_business_verification_empty_add_table')

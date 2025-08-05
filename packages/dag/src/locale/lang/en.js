@@ -992,6 +992,7 @@ export default {
   packages_dag_noPkSyncMode: 'No Primary Key Table Sync Mode',
   packages_dag_noPkSyncMode_ADD_HASH: 'Add Hash Column',
   packages_dag_noPkSyncMode_ALL_COLUMNS: 'Full Column Index',
+  packages_dag_noPKVirtualFieldName: 'Hash Column Name',
   packages_dag_stream_offset: 'Stream Offset',
   packages_dag_join_keys_empty:
     'Association conditions for {tableName} cannot be empty',
@@ -1081,6 +1082,9 @@ export default {
   packages_dag_inspect_operation_user: 'Operation User',
   packages_dag_task_inspect_difference_alarm:
     'Task Inspection Difference Alarm',
+  packages_dag_task_retry_alert: 'Task Retry Alert',
+  packages_dag_task_retry_alert_desc:
+    'Alert when consecutive retries exceed {count}',
   packages_dag_task_inspect_enable_fail_1:
     'Data validation enable failed: Only one source node and one target node are supported.',
   packages_dag_task_inspect_enable_fail_2:
@@ -1088,4 +1092,5 @@ export default {
   packages_dag_table_selector_all_tables_selected:
     'You have selected all tables',
   packages_dag_syncForeignKeyEnable: 'Sync Foreign Key',
+  packages_dag_check_no_pk_table: 'Check No Primary Key Table',
 }

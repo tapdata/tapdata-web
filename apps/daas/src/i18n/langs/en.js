@@ -2135,4 +2135,8 @@ export default {
   account_accessCode_tip:
     'Refreshing the access code will invalidate the current code, and the system will generate a new one.<b class="color-warning">Update the access code in the engine\'s configuration file and restart it to ensure proper functioning. Handle with care.</b>',
   account_accessCode_success: 'Access code refreshed successfully',
+  setting_license_remainingDaysThreshold: 'Remaining Days <=',
+  setting_license_rule: 'License Alert Rule',
+  setting_license_alarm_template: 'Alert Template',
+  setting_license_alarm_template_custom: 'Custom Alert Template',
 }

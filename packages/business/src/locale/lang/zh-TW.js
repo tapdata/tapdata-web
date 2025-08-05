@@ -510,6 +510,7 @@ export default {
   packages_business_verification_frequency: '校驗頻次',
   packages_business_verification_startTime: '開始時間',
   packages_business_verification_LastTime: '結束時間',
+  packages_business_verification_startAndStopTime: '起止時間',
   packages_business_verification_verifyInterval: '校驗間隔',
   packages_business_verification_inconsistentCount: '錯誤數據保存條數',
   packages_business_verification_table: '待校驗表',

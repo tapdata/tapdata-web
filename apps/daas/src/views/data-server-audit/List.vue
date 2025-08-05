@@ -1,8 +1,13 @@
 <script>
 import { CircleCloseFilled, SuccessFilled } from '@element-plus/icons-vue'
-import { apiCallsApi } from '@tap/api'
-import TablePage from '@tap/business/src/components/TablePage.vue'
+import {
+  fetchAllMethods,
+  fetchAllResponseCodes,
+  fetchApiCalls,
+  fetchApiClients,
+} from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
+import TablePage from '@tap/business/src/components/TablePage.vue'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
@@ -94,22 +99,18 @@ export default {
         skip: (current - 1) * size,
         where,
       }
-      return apiCallsApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          return {
-            total: data?.total || 0,
-            data:
-              data?.items.map((item) => {
-                item.createTimeFmt = item.createTime
-                  ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-                  : '-'
-                return item
-              }) || [],
-          }
-        })
+      return fetchApiCalls(filter).then((data) => {
+        return {
+          total: data?.total || 0,
+          data:
+            data?.items.map((item) => {
+              item.createTimeFmt = item.createTime
+                ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+                : '-'
+              return item
+            }) || [],
+        }
+      })
     },
 
     // 表格排序
@@ -124,7 +125,7 @@ export default {
           key: 'method',
           type: 'select-inner',
           items: async () => {
-            let data = await apiCallsApi.getAllMethod()
+            let data = await fetchAllMethods()
             data = data || []
             return data.map((item) => {
               return {
@@ -140,7 +141,7 @@ export default {
           key: 'code',
           type: 'select-inner',
           items: async () => {
-            let data = await apiCallsApi.getAllResponseCode()
+            let data = await fetchAllResponseCodes()
             data = data || []
             return data.map((item) => {
               return {
@@ -153,6 +154,25 @@ export default {
             })
           },
           selectedWidth: '200px',
+        },
+        {
+          label: this.$t('api_monitor_total_clientName'),
+          key: 'clientId',
+          type: 'select-inner',
+          items: async () => {
+            const res = await fetchApiClients({
+              limit: 1000,
+            })
+
+            return (
+              res.items?.map((item) => {
+                return {
+                  label: item.clientName,
+                  value: item.clientId,
+                }
+              }) || []
+            )
+          },
         },
         {
           key: 'start,end',
@@ -196,7 +216,16 @@ export default {
         </div>
       </template>
       <el-table-column prop="apiId" label="API ID" :show-overflow-tooltip="true" />
-      <el-table-column prop="name" :label="$t('apiaudit_name')" />
+      <el-table-column prop="name" :label="$t('apiaudit_name')" width="220">
+        <template #default="{ row }">
+          <div>{{ row.name }}</div>
+          <el-tag class="is-code" size="small" type="info" disable-transitions>
+            <span class="text-caption">
+              {{ row.apiId }}
+            </span>
+          </el-tag>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="method"
         width="100"
@@ -211,13 +240,17 @@ export default {
           >
         </template>
       </el-table-column>
-      <el-table-column prop="clientName" :label="$t('apiaudit_visitor')" />
-      <el-table-column prop="userIp" :label="$t('apiaudit_ip')" />
+      <el-table-column
+        prop="clientName"
+        width="160"
+        :label="$t('apiaudit_visitor')"
+      />
+      <el-table-column prop="userIp" width="120" :label="$t('apiaudit_ip')" />
       <el-table-column
         :label="$t('apiaudit_interview_time')"
         :show-overflow-tooltip="true"
         prop="createTime"
-        width="160"
+        width="170"
         sortable="createTime"
       >
         <template #default="{ row }">
@@ -226,7 +259,7 @@ export default {
       </el-table-column>
       <el-table-column
         prop="code"
-        width="80"
+        width="100"
         :label="$t('apiaudit_visit_result')"
         :show-overflow-tooltip="true"
       >

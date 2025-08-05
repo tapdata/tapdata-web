@@ -1,6 +1,7 @@
 export default {
   // 常用
   public_name: '名稱',
+  public_alias: '別名',
   public_index: '索引',
   public_type: '類型',
   public_title: '標題',
@@ -487,4 +488,9 @@ export default {
   public_time_precision_round: '四舍五入',
   public_time_precision_truncate: '截斷',
   public_button_unpublish: '撤銷',
+  public_system: '系統',
+  public_rule_add: '添加規則',
+  public_remaining_days: '剩余天数',
+  public_remaining_days_threshold: '剩余天数阈值',
+  public_api_group: 'API 分組',
 }

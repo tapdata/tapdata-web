@@ -2,7 +2,7 @@
 import { Chart } from '@tap/component/src/chart'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import { formatTime } from '@/utils/util'
-import { apiMonitorApi } from '@tap/api'
+import { fetchApiDetail } from '@tap/api'
 import Time from '@tap/shared/src/time'
 import { calcUnit } from '@tap/shared'
 import { formatMs } from './utils'
@@ -151,8 +151,7 @@ export default {
       if (!hiddenLoading) {
         this.loadingDetail = true
       }
-      apiMonitorApi
-        .apiDetail(data)
+      fetchApiDetail(data)
         .then((data) => {
           //处理数据
           this.detail = data

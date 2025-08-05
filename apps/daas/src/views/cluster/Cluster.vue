@@ -916,12 +916,27 @@ const handleTabChange = (tab: string) => {
       class="position-sticky top-0 z-10 bg-white"
       @tab-change="handleTabChange"
     >
-      <el-tab-pane :label="$t('daas_cluster_cluster_view')" name="cluster" />
-      <el-tab-pane
-        :label="$t('daas_cluster_component_view')"
-        name="component"
-      />
-      <el-tab-pane :label="$t('public_log_mining_monitor')" name="logMining" />
+      <el-tab-pane name="cluster">
+        <template #label>
+          <span>
+            {{ $t('daas_cluster_cluster_view') }}
+          </span>
+        </template>
+      </el-tab-pane>
+      <el-tab-pane name="component">
+        <template #label>
+          <span>
+            {{ $t('daas_cluster_component_view') }}
+          </span>
+        </template>
+      </el-tab-pane>
+      <el-tab-pane name="logMining">
+        <template #label>
+          <span>
+            {{ $t('public_log_mining_monitor') }}
+          </span>
+        </template>
+      </el-tab-pane>
     </el-tabs>
 
     <section class="clusterManagement-container">

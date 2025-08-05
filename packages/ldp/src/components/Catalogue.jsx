@@ -6,7 +6,7 @@ import { makeDragNodeImage } from '@tap/business/src/shared'
 import TablePreview from '../TablePreview'
 import ClassificationTree from './ClassificationTree'
 import resize from '@tap/component/src/directives/resize'
-import { apiServerApi, fetchApiModule } from '@tap/api'
+import { fetchApiServers, fetchApiModule } from '@tap/api'
 import { useRoute } from 'vue-router'
 import './index.scss'
 
@@ -85,7 +85,7 @@ export default defineComponent({
       const showError = () => {
         ElMessage.error(this.$t('packages_business_data_server_list_huoqufuwuyu'))
       }
-      const data = await apiServerApi.get().catch(() => {
+      const data = await fetchApiServers().catch(() => {
         showError()
       })
       apiServerHost.value = data?.items?.[0]?.clientURI || ''

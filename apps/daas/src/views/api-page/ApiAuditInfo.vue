@@ -1,8 +1,8 @@
 <script>
-import { formatMs } from '@/utils/util'
-import dayjs from 'dayjs'
-import { apiCallsApi } from '@tap/api'
+import { fetchApiCall } from '@tap/api'
 import { calcUnit } from '@tap/shared'
+import dayjs from 'dayjs'
+import { formatMs } from '@/utils/util'
 
 export default {
   name: 'ApiAudit',
@@ -36,17 +36,18 @@ export default {
   methods: {
     // 获取数据
     getData() {
-      let id = this.$route.params?.id
+      const id = this.$route.params?.id
       this.loading = true
-      apiCallsApi
-        .get([id])
+      fetchApiCall(id)
         .then((data) => {
           if (data) {
             this.auditData = data
-            this.auditData.createAt = data['createAt'] ? dayjs(data['createAt']).format('YYYY-MM-DD HH:mm:ss') : '-'
+            this.auditData.createAt = data.createAt
+              ? dayjs(data.createAt).format('YYYY-MM-DD HH:mm:ss')
+              : '-'
 
             this.list.forEach((item) => {
-              for (let el in data) {
+              for (const el of Object.keys(data)) {
                 if (item.key === el) {
                   item.value = data[el]
                 }
@@ -60,22 +61,22 @@ export default {
     },
     formatDuring(mss) {
       let time = ''
-      let minutes = parseInt((mss % (1000 * 60 * 60)) / (1000 * 60))
-      let seconds = (mss % (1000 * 60)) / 1000
+      const minutes = Number.parseInt((mss % (1000 * 60 * 60)) / (1000 * 60))
+      const seconds = (mss % (1000 * 60)) / 1000
       if (minutes > 1) {
-        time = minutes.toFixed(2) + 'min'
+        time = `${minutes.toFixed(2)}min`
       } else if (minutes < 1 && seconds > 1) {
-        time = seconds.toFixed(2) + 's'
+        time = `${seconds.toFixed(2)}s`
       } else if (minutes < 1 && seconds < 1 && mss > 0) {
-        time = mss + 'ms'
+        time = `${mss}ms`
       }
       return time
     },
     formatMs(ms) {
       return formatMs(ms)
     },
-    calcUnit() {
-      return calcUnit(...arguments)
+    calcUnit(...args) {
+      return calcUnit(...args)
     },
   },
 }
@@ -87,10 +88,12 @@ export default {
       <div class="title fs-7 fw-sub font-color-dark">
         {{ $t('apiaudit_log_info') }}
       </div>
-      <ElRow class="pt-4" v-if="auditData">
+      <ElRow v-if="auditData" class="pt-4">
         <ElCol class="font-color-normal pb-4" :span="12">
           <span class="font-text"> API ID:</span>
-          <span class="fw-sub">{{ auditData.apiId ? auditData.apiId : '-' }}</span></ElCol
+          <span class="fw-sub">{{
+            auditData.apiId ? auditData.apiId : '-'
+          }}</span></ElCol
         >
         <ElCol class="font-color-normal pb-4" :span="12"
           ><span class="font-text">{{ $t('apiaudit_name') }}:</span>
@@ -116,22 +119,25 @@ export default {
           <div class="w-100 text-center">
             <div class="fs-8 font-color-normal">{{ item.label }}</div>
             <div
+              v-if="
+                item.value > 0 &&
+                ['latency', 'averResponseTime'].includes(item.key)
+              "
               class="link-primary pt-4 din-font details-box-item-num"
-              v-if="item.value > 0 && ['latency', 'averResponseTime'].includes(item.key)"
             >
               {{ formatDuring(item.value) }}
             </div>
             <div
-              class="link-primary pt-4 din-font details-box-item-num"
               v-else-if="item.value > 0 && ['speed'].includes(item.key)"
+              class="link-primary pt-4 din-font details-box-item-num"
             >
-              {{ item.value ? calcUnit(item.value, 'b') + '/S' : '0 M/S' }}
+              {{ item.value ? `${calcUnit(item.value, 'b')}/S` : '0 M/S' }}
             </div>
             <div v-else class="link-primary pt-4 din-font details-box-item-num">
               {{ item.value }}
             </div>
           </div>
-          <div class="line" v-if="item.key !== 'averResponseTime'"></div>
+          <div v-if="item.key !== 'averResponseTime'" class="line" />
         </li>
       </ul>
     </div>
@@ -140,7 +146,7 @@ export default {
       <div class="title fs-7 fw-sub font-color-dark">
         {{ $t('apiaudit_parameter') }}
       </div>
-      <div class="pt-4 editor-box" v-if="auditData">
+      <div v-if="auditData" class="pt-4 editor-box">
         <pre class="editor-pre">{{ auditData.body ?  auditData.body : (auditData.query ? auditData.query : auditData.reqParams )  }}</pre>
       </div>
     </div>

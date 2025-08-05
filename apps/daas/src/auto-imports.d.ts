@@ -6,12 +6,14 @@
 // biome-ignore lint: disable
 export {}
 declare global {
+  const ElDivider: typeof import('element-plus/es')['ElDivider']
   const ElIcon: typeof import('element-plus/es')['ElIcon']
   const ElIconCircleCloseFilled: typeof import('@element-plus/icons-vue')['CircleCloseFilled']
   const ElIconCopyDocument: typeof import('@element-plus/icons-vue')['CopyDocument']
   const ElIconRefresh: typeof import('@element-plus/icons-vue')['Refresh']
   const ElIconSearch: typeof import('@element-plus/icons-vue')['Search']
   const ElInput: typeof import('element-plus/es')['ElInput']
+  const ElInputNumber: typeof import('element-plus/es')['ElInputNumber']
   const ElLoading: typeof import('element-plus/es')['ElLoading']
   const ElMessage: typeof import('element-plus/es')['ElMessage']
   const ElMessageBox: typeof import('element-plus/es')['ElMessageBox']

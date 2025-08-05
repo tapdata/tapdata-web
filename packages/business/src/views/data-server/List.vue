@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import {
-  apiServerApi,
   batchUpdateApiModules,
   batchUpdateApiModuleTags,
-  databaseTypesApi,
   deleteApiModule,
   exportApiDocumentation,
   exportApiModules,
   fetchApiModules,
+  fetchApiServers,
   fetchApps,
+  fetchDatabaseTypes,
   metadataInstancesApi,
   updateApiModule,
   useRequest,
@@ -39,7 +39,6 @@ import TablePage from '../../components/TablePage.vue'
 import Upload from '../../components/UploadDialog.vue'
 import Delete from '../api-application/Delete.vue'
 import Editor from '../api-application/Editor.vue'
-import DownloadSdkDialog from './DownloadSdkDialog.vue'
 import Drawer from './Drawer.vue'
 import type { InputInstance } from 'element-plus'
 
@@ -209,7 +208,7 @@ const getFilterItems = () => {
       key: 'type', //对象分类
       type: 'select-inner',
       items: async () => {
-        let data = await databaseTypesApi.get()
+        let data = await fetchDatabaseTypes()
         data = data || []
         let databaseTypes: any[] = []
         databaseTypes =
@@ -312,7 +311,7 @@ const getApiServerHost = async () => {
   const showError = () => {
     ElMessage.error(t('packages_business_data_server_list_huoqufuwuyu'))
   }
-  const data = await apiServerApi.get().catch(() => {
+  const data = await fetchApiServers().catch(() => {
     showError()
   })
   apiServerHost.value = (data as any)?.items?.[0]?.clientURI || ''
@@ -400,16 +399,8 @@ const batchPublish = async () => {
   fetch()
 }
 
-const doLayout = () => {
-  nextTick(() => {
-    table.value?.doLayout()
-  })
-}
-
-// Additional variables and methods for template
 const showSearch = ref(false)
 const filterText = ref('')
-const authority = ref('')
 
 const openSearch = () => {
   showSearch.value = !showSearch.value
@@ -528,12 +519,6 @@ defineExpose({
         </template>
         <span> {{ $t('packages_business_button_bulk_import') }}</span>
       </ElButton>
-      <!-- <el-button @click="downloadSdkDialogVisible = true">
-        <template #icon>
-          <i-lucide:download />
-        </template>
-        {{ $t('public_download_sdk') }}
-      </el-button> -->
       <ElButton
         class="btn btn-create"
         type="primary"
@@ -564,7 +549,7 @@ defineExpose({
             </template>
           </el-button>
           <div class="fs-6 flex-1">
-            <span>{{ $t('public_application') }}</span>
+            <span>{{ $t('public_api_group') }}</span>
           </div>
           <el-button
             text
@@ -843,8 +828,6 @@ defineExpose({
     />
     <!-- 导入 -->
     <Upload ref="upload" type="Modules" :show-tag="false" @success="fetch(1)" />
-
-    <!-- <DownloadSdkDialog v-model="downloadSdkDialogVisible" /> -->
   </PageContainer>
 </template>
 

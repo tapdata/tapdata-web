@@ -2010,4 +2010,8 @@ export default {
   account_accessCode_tip:
     '刷新訪問碼將導致當前訪問碼失效，系統將生成新的訪問碼。<b class="color-warning">您需要將新的訪問碼更新到引擎的配置文件後，重新啓動引擎，否則引擎可能會無法正常工作。請謹慎操作！</b>',
   account_accessCode_success: '刷新訪問碼成功',
+  setting_license_remainingDaysThreshold: '剩余天数 <=',
+  setting_license_rule: 'License 告警規則',
+  setting_license_alarm_template: '告警模板',
+  setting_license_alarm_template_custom: '自定義告警模板',
 }

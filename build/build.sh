@@ -2,7 +2,7 @@
 
 base=$(cd `dirname $0`/.. && pwd)
 app='daas'
-mode='production'
+mode=''
 dist=$base/dist
 
 usage() {
@@ -22,7 +22,14 @@ done
 
 sed -i.bak "s|DAAS_BUILD_NUMBER|$DAAS_BUILD_NUMBER|g" $base/apps/$app/.env
 
-echo "pnpm build:$app --dest $dist --mode $mode"
+# 构建命令参数
+build_cmd="pnpm build:$app"
+if [ -n "$mode" ]; then
+  build_cmd="$build_cmd --mode $mode"
+fi
+build_cmd="$build_cmd -- --env $env"
+
+echo "$build_cmd"
 
 npm i -g corepack@latest
 
@@ -34,4 +41,4 @@ echo "node version: $(node --version)
 corepack version: $(corepack --version)
 pnpm version: $(pnpm --version)"
 
-pnpm build:$app --mode $mode -- --env $env
+eval $build_cmd

@@ -16,15 +16,18 @@ import {
   TiptapEditor,
   Underline,
 } from '@tap/component/src/tiptap-editor'
-import i18n from '@tap/i18n'
+import { useI18n } from '@tap/i18n'
 import juice from 'juice/client'
 import { computed, reactive, ref } from 'vue'
 
 import type { ElInput } from 'element-plus'
 
-const props = defineProps<{
+defineProps<{
   keyMapping: Record<string, string>
+  hideMenu?: boolean
 }>()
+
+const { t } = useI18n()
 
 const editor = ref<InstanceType<typeof TiptapEditor>>()
 const titleInput = ref<InstanceType<typeof ElInput>>()
@@ -42,204 +45,238 @@ const variablesMap = reactive({
   TASK_STATUS_ERROR: [
     {
       name: 'taskName',
-      label: i18n.t('public_task_name'),
+      label: t('public_task_name'),
       icon: IconLucideFileText,
     },
     {
       name: 'errorTime',
-      label: i18n.t('public_error_time'),
+      label: t('public_error_time'),
       icon: IconLucideClock,
     },
     {
       name: 'errorLog',
-      label: i18n.t('public_error_log'),
+      label: t('public_error_log'),
       icon: IconLucideTriangleAlert,
     },
   ],
   TASK_INSPECT_ERROR: [
     {
       name: 'taskName',
-      label: i18n.t('public_task_name'),
+      label: t('public_task_name'),
       icon: IconLucideFileText,
     },
   ],
   TASK_FULL_COMPLETE: [
     {
       name: 'taskName',
-      label: i18n.t('public_task_name'),
+      label: t('public_task_name'),
       icon: IconLucideFileText,
     },
     {
       name: 'completeTime',
-      label: i18n.t('public_complete_time'),
+      label: t('public_complete_time'),
       icon: IconLucideClock,
     },
   ],
   TASK_INCREMENT_START: [
     {
       name: 'taskName',
-      label: i18n.t('public_task_name'),
+      label: t('public_task_name'),
       icon: IconLucideFileText,
     },
     {
       name: 'cdcTime',
-      label: i18n.t('public_cdc_time'),
+      label: t('public_cdc_time'),
       icon: IconLucideClock,
     },
   ],
   TASK_STATUS_STOP: [
     {
       name: 'taskName',
-      label: i18n.t('public_task_name'),
+      label: t('public_task_name'),
       icon: IconLucideFileText,
     },
     {
       name: 'stopTime',
-      label: i18n.t('public_stop_time'),
+      label: t('public_stop_time'),
       icon: IconLucideClock,
     },
   ],
   TASK_INCREMENT_DELAY: [
     {
       name: 'taskName',
-      label: i18n.t('public_task_name'),
+      label: t('public_task_name'),
       icon: IconLucideFileText,
     },
     {
       name: 'delayTime',
-      label: i18n.t('public_delay_time'),
+      label: t('public_delay_time'),
       icon: IconLucideClock,
     },
   ],
   DATANODE_CANNOT_CONNECT: [
     {
       name: 'taskName',
-      label: i18n.t('public_task_name'),
+      label: t('public_task_name'),
       icon: IconLucideFileText,
     },
   ],
   DATANODE_HTTP_CONNECT_CONSUME: [
     {
       name: 'taskName',
-      label: i18n.t('public_task_name'),
+      label: t('public_task_name'),
       icon: IconLucideFileText,
     },
   ],
   DATANODE_TCP_CONNECT_CONSUME: [
     {
       name: 'taskName',
-      label: i18n.t('public_task_name'),
+      label: t('public_task_name'),
       icon: IconLucideFileText,
     },
   ],
   DATANODE_AVERAGE_HANDLE_CONSUME: [
     {
       name: 'taskName',
-      label: i18n.t('public_task_name'),
+      label: t('public_task_name'),
       icon: IconLucideFileText,
     },
     {
       name: 'nodeName',
-      label: i18n.t('public_node_name'),
+      label: t('public_node_name'),
       icon: IconLucideFileText,
     },
     {
       name: 'costTime',
-      label: i18n.t('public_current_cost_time'),
+      label: t('public_current_cost_time'),
       icon: IconLucideClock,
     },
     {
       name: 'threshold',
-      label: i18n.t('public_threshold'),
+      label: t('public_threshold'),
       icon: IconLucideClock,
     },
     {
       name: 'occurredTime',
-      label: i18n.t('public_occurred_time'),
+      label: t('public_occurred_time'),
       icon: IconLucideClock,
     },
   ],
   PROCESSNODE_AVERAGE_HANDLE_CONSUME: [
     {
       name: 'taskName',
-      label: i18n.t('public_task_name'),
+      label: t('public_task_name'),
       icon: IconLucideFileText,
     },
     {
       name: 'nodeName',
-      label: i18n.t('public_node_name'),
+      label: t('public_node_name'),
       icon: IconLucideFileText,
     },
     {
       name: 'costTime',
-      label: i18n.t('public_current_cost_time'),
+      label: t('public_current_cost_time'),
       icon: IconLucideClock,
     },
     {
       name: 'threshold',
-      label: i18n.t('public_threshold'),
+      label: t('public_threshold'),
       icon: IconLucideClock,
     },
     {
       name: 'occurredTime',
-      label: i18n.t('public_occurred_time'),
+      label: t('public_occurred_time'),
       icon: IconLucideClock,
     },
   ],
   INSPECT_TASK_ERROR: [
     {
       name: 'taskName',
-      label: i18n.t('public_task_name'),
+      label: t('public_task_name'),
       icon: IconLucideFileText,
     },
     {
       name: 'errorTime',
-      label: i18n.t('public_error_time'),
+      label: t('public_error_time'),
       icon: IconLucideClock,
     },
   ],
   INSPECT_COUNT_ERROR: [
     {
       name: 'taskName',
-      label: i18n.t('public_task_name'),
+      label: t('public_task_name'),
       icon: IconLucideFileText,
     },
     {
       name: 'count',
-      label: i18n.t('public_difference_line_count'),
+      label: t('public_difference_line_count'),
       icon: IconLucideHash,
     },
   ],
   INSPECT_VALUE_ERROR: [
     {
       name: 'taskName',
-      label: i18n.t('public_task_name'),
+      label: t('public_task_name'),
       icon: IconLucideFileText,
     },
     {
       name: 'count',
-      label: i18n.t('public_difference_line_count'),
+      label: t('public_difference_line_count'),
       icon: IconLucideHash,
     },
   ],
   SYSTEM_FLOW_EGINGE_DOWN: [
     {
       name: 'taskName',
-      label: i18n.t('public_task_name'),
+      label: t('public_task_name'),
       icon: IconLucideFileText,
     },
   ],
   SYSTEM_FLOW_EGINGE_UP: [
     {
       name: 'taskName',
-      label: i18n.t('public_task_name'),
+      label: t('public_task_name'),
       icon: IconLucideFileText,
     },
   ],
   TASK_INSPECT_DIFFERENCE: [
     {
       name: 'taskName',
-      label: i18n.t('public_task_name'),
+      label: t('public_task_name'),
+      icon: IconLucideFileText,
+    },
+  ],
+  TASK_RETRY_WARN: [
+    {
+      name: 'taskName',
+      label: t('public_task_name'),
+      icon: IconLucideFileText,
+    },
+    {
+      name: 'retryTimes',
+      label: t('public_retry_times'),
+      icon: IconLucideClock,
+    },
+    {
+      name: 'retryThreshold',
+      label: t('public_retry_threshold'),
+      icon: IconLucideHash,
+    },
+  ],
+  license_alarm_template: [
+    {
+      name: 'level',
+      label: t('packages_dag_components_alert_gaojingjibie'),
+      icon: IconLucideFileText,
+    },
+    {
+      name: 'remainingDays',
+      label: t('public_remaining_days'),
+      icon: IconLucideFileText,
+    },
+    {
+      name: 'remainingDaysThreshold',
+      label: t('public_remaining_days_threshold'),
       icon: IconLucideFileText,
     },
   ],
@@ -466,7 +503,7 @@ defineExpose({
     class="mail-template-dialog p-0"
   >
     <div class="border-top border-bottom flex flex-1 min-h-0">
-      <div class="flex flex-column">
+      <div v-if="!hideMenu" class="flex flex-column">
         <el-scrollbar class="bg-light">
           <div class="p-3 pl-4">
             <div class="font-color-light mb-3 px-2">
@@ -521,7 +558,7 @@ defineExpose({
               <span
                 v-for="variable in availableVariables"
                 :key="variable.name"
-                class="variable-chip rounded-lg border px-3 py-2 flex align-center gap-3 hover:bg-light cursor-pointer"
+                class="variable-chip rounded-xl border px-3 py-2 flex align-center gap-3 hover:bg-light cursor-pointer"
                 @mousedown="insertVariable(variable.name)"
               >
                 <el-icon :size="18">

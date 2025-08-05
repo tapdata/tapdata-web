@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { EditPen, InfoFilled } from '@element-plus/icons-vue'
+import WhereConditionDisplay from '@tap/component/src/api-server/WhereConditionDisplay.vue'
+import SortConditionDisplay from '@tap/component/src/api-server/SortConditionDisplay.vue'
 import {
   createApiModule,
-  databaseTypesApi,
   fetchApiServerToken,
+  fetchDatabaseTypes,
   listAllConnections,
   metadataInstancesApi,
   roleApi,
@@ -14,6 +16,7 @@ import {
 } from '@tap/api'
 import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import Drawer from '@tap/component/src/Drawer.vue'
+import { EditOutlined } from '@tap/component/src/icon'
 import { Modal } from '@tap/component/src/modal'
 
 import i18n from '@tap/i18n'
@@ -101,9 +104,10 @@ interface Field {
 }
 
 // Constants
+const isHa = import.meta.env.MODE === 'ha'
 const typeOptions = ['number', 'string', 'boolean', 'date', 'datetime', 'time']
 const operatorOptions = ['>', '==', '<', '>=', '<=', '!=', 'like']
-const conditionOptions = ['null', 'and', 'or']
+const conditionOptions = ['and', 'or']
 const apiTypeMap = {
   defaultApi: i18n.t('packages_business_data_server_drawer_morenchaxun'),
   customerQuery: i18n.t('packages_business_data_server_drawer_zidingyichaxun'),
@@ -154,6 +158,7 @@ const roles = ref([])
 const workerStatus = ref('')
 const intervalId = ref(0)
 const allFields = ref([])
+const tempFields = ref<Field[]>([])
 const fieldLoading = ref(false)
 const databaseTypes = ref<string[] | null>(null)
 const connectionOptions = ref<any[] | null>(null)
@@ -297,26 +302,48 @@ const customizePath = computed(() => {
 
 const urlList = computed(() => {
   const baseUrl = props.host + customizePath.value
-
+  const setting = form.value.pathSetting ? form.value.pathSetting : []
+  const settingMapping = {}
+  //@ts-ignore
+  setting.forEach((item) => {
+    //@ts-ignore
+    settingMapping[item.type] = {
+      method: item.method,
+      url: baseUrl + (!item.path?.startsWith('/') ? '/' : ''),
+      last: item.path,
+      canEdit: true,
+      type: item.type,
+    }
+  })
   return [
-    {
+    //@ts-ignore
+    settingMapping.DEFAULT_POST || {
       method: 'POST',
-      url: `${baseUrl}/find`,
+      url: `${baseUrl}/`,
+      last: `find`,
+      canEdit: true,
+      type: 'DEFAULT_POST',
     },
-    {
+    //@ts-ignore
+    settingMapping.DEFAULT_GET || {
       method: 'GET',
       url: String(baseUrl),
+      last: ``,
+      canEdit: true,
+      type: 'DEFAULT_GET',
     },
     {
       method: 'TOKEN',
       url: `${location.origin + location.pathname}oauth/token`,
+      last: ``,
+      canEdit: false,
     },
   ]
 })
 
 const urlsMap = computed(() => {
   return urlList.value.reduce((acc: Record<string, string>, item) => {
-    acc[item.method] = item.url
+    acc[item.method] = item.url + (item.last || '')
     return acc
   }, {})
 })
@@ -344,6 +371,7 @@ const formatData = (formData: FormData = {}) => {
     appLabel: _appLabel,
     appValue: _appValue,
     limit = 0,
+    pathSetting,
   } = formData
 
   const appData = listtags?.[0] || {}
@@ -380,6 +408,7 @@ const formatData = (formData: FormData = {}) => {
     appValue,
     appLabel,
     limit,
+    pathSetting,
   }
   form.value = cloneDeep(data.value)
 
@@ -421,7 +450,7 @@ const getDefaultParams = (apiType: string) => {
 
 const getDatabaseTypes = async () => {
   databaseTypes.value = null
-  const data = await databaseTypesApi.get().catch(() => {
+  const data = await fetchDatabaseTypes().catch(() => {
     databaseTypes.value = []
     return []
   })
@@ -514,6 +543,7 @@ const getFields = async () => {
         ...it,
         id: it.id,
         field_name: it.field_name,
+        field_alias: it.field_alias,
         originalDataType: it.data_type,
         comment: it.comment,
       })) || []
@@ -602,10 +632,6 @@ const save = async (type?: boolean) => {
       basePath,
       connectionId,
       tableName,
-      params,
-      where,
-      sort,
-      fields,
       method,
       path,
       status,
@@ -619,6 +645,10 @@ const save = async (type?: boolean) => {
       appValue,
       limit,
     } = form.value
+    const params = form.value?.params?.filter((t: any) => t.name)
+    const sort = form.value?.sort?.filter((t: any) => t.fieldName)
+    const where = form.value?.where?.filter((t: any) => t.fieldName && t.parameter)
+    const fields = form.value.fields.filter((f: any) => !!f)
 
     if (params.some((it: any) => !it.name.trim())) {
       ElMessage.error(
@@ -631,6 +661,18 @@ const save = async (type?: boolean) => {
     emit('update:loading', true)
 
     try {
+      //@ts-ignore
+      const pathSettingList: any[] = []
+      //@ts-ignore
+      urlList.value.forEach((item) => {
+        if (item.type && item.canEdit) {
+          pathSettingList.push({
+            type: item.type,
+            path: item.last,
+            method: item.method,
+          })
+        }
+      })
       const formData: FormData = {
         id,
         status: basePath && basePath !== '' ? 'pending' : status,
@@ -668,15 +710,27 @@ const save = async (type?: boolean) => {
             params,
             where,
             sort,
-            fields: fields.filter((f: any) => !!f),
+            fields,
             path,
           },
         ],
+        pathSetting: pathSettingList,
       }
 
       if (!type && connectionId && tableName) {
         await loadAllFields()
-        formData.fields = allFields.value
+
+        const map = fields.reduce((acc: any, field: any) => {
+          acc[field.id] = field
+          return acc
+        }, {})
+
+        formData.fields = allFields.value.map((f: any) => {
+          return {
+            ...f,
+            field_alias: map[f.id]?.field_alias || '',
+          }
+        })
       }
 
       const func = id ? updateApiModule : createApiModule
@@ -687,6 +741,7 @@ const save = async (type?: boolean) => {
         database_type: connectionType,
         name: connectionName,
       }
+
       formatData(data)
       emit('save', data)
       isEdit.value = false
@@ -702,14 +757,18 @@ const edit = () => {
   isEdit.value = true
   initialFormData = cloneDeep(form.value)
   nextTick(() => {
-    data.value.fields.forEach((f: any) => {
-      const field = allFields.value.find((it: any) => it.id === f.id)
-      if (field) {
-        fieldTable.value?.toggleRowSelection(field)
-      } else {
-        console.log('field not found', f.field_name, f)
-      }
-    })
+    if (data.value.fields) {
+      data.value.fields.forEach((f: any) => {
+        //@ts-ignore
+        const field = allFields.value.find((it: any) => it.id === f.id) as any
+        if (field) {
+          field.field_alias = f.field_alias || ''
+          fieldTable.value?.toggleRowSelection(field)
+        } else {
+          console.log('field not found', f.field_name, f)
+        }
+      })
+    }
   })
 }
 
@@ -789,7 +848,7 @@ const addItem = (key: 'params' | 'where' | 'sort') => {
   if (key === 'where') {
     const list = form.value.where
     const lastItem = list.at(-1)
-    if (list.length && lastItem.condition === 'null') {
+    if (list.length) {
       lastItem.condition = 'and'
     }
   }
@@ -797,7 +856,15 @@ const addItem = (key: 'params' | 'where' | 'sort') => {
 }
 
 const removeItem = (key: 'params' | 'where' | 'sort', index: number) => {
+  const removed = form.value[key][index]
   form.value[key].splice(index, 1)
+  if ('sort' === key && removed && !tempFields.value.find(f => f.field_name === removed.fieldName)) {
+    tempFields.value.splice(0, 0, {
+      field_name: removed.fieldName,
+      id: removed.id,
+      data_type: removed.data_type,
+    })
+  }
 }
 
 const debugDisabled = computed(() => {
@@ -987,14 +1054,19 @@ const loadAllFields = async () => {
   const data = await metadataInstancesApi.get({
     filter: JSON.stringify(filter),
   })
+  const allFieldsOld = allFields.value
   allFields.value =
-    data?.items?.[0]?.fields?.map((it: any) => ({
-      ...it,
-      id: it.id,
-      field_name: it.field_name,
-      originalDataType: it.data_type,
-      comment: '',
-    })) || []
+    data?.items?.[0]?.fields?.map((it: any) => {
+      const fItem = allFieldsOld.find((f: any) => f.id === it.id)
+      return {
+        ...it,
+        id: it.id,
+        field_name: it.field_name,
+        field_alias: it.field_alias || fItem.field_alias || '',
+        originalDataType: it.data_type,
+        comment: '',
+      }
+    }) || []
 }
 
 const handleBeforeClose = async (done: () => void) => {
@@ -1024,6 +1096,51 @@ const openEdit = () => {
     handleFieldsSelection()
   })
 }
+
+/**自定义URL后缀*/
+const editingIndex = ref(-1)
+const editingValue = ref('')
+const editInput = ref<InstanceType<typeof ElInput>[]>([])
+const startEdit = (index: number, currentValue: string) => {
+  if (!urlList.value[index].canEdit || !isEdit.value) return
+  if (editingIndex.value === index) return
+  editingIndex.value = index
+  editingValue.value = currentValue || ''
+  const currentUrl = urlList.value[index].url
+  if (!currentUrl.endsWith('/')) {
+    urlList.value[index].url = `${currentUrl}/`
+  }
+  nextTick(() => {
+    editInput.value?.[0]?.focus()
+    editInput.value?.[0]?.select()
+  })
+}
+
+const saveEdit = (index: number) => {
+  if (editingIndex.value === index) {
+    const trimmedValue = editingValue.value.trim()
+    if (!trimmedValue) {
+      urlList.value[index].url = urlList.value[index].url.replace(/\/$/, '')
+      urlList.value[index].last = ''
+    } else {
+      urlList.value[index].last = trimmedValue.replace(/^\//, '')
+    }
+    editingIndex.value = -1
+    editingValue.value = ''
+  }
+}
+
+watch(allFields, (newVal) => {
+  tempFields.value = newVal.filter(field => !form.value?.sort?.some(sortField => sortField.fieldName === field.field_name))
+}, { immediate: true })
+
+
+function onFieldSelected(field: Field) {
+  tempFields.value = allFields.value
+      .filter(f => !form.value?.sort?.some(sortField => sortField.fieldName === f.field_name))
+      .filter(f => f.field_name !== field.field_name)
+}
+
 </script>
 
 <template>
@@ -1034,6 +1151,7 @@ const openEdit = () => {
     :title="$t('packages_business_data_server_drawer_fuwuxiangqing')"
     body-class="pt-0"
     class="overflow-hidden"
+    header-class="pb-0"
     width="850px"
     :before-close="handleBeforeClose"
     @visible="$emit('visible', $event)"
@@ -1073,15 +1191,24 @@ const openEdit = () => {
           class="data-server__tabs flex-1"
           @tab-change="tabChanged"
         >
-          <ElTabPane
-            :label="$t('packages_business_data_server_drawer_peizhi')"
-            name="form"
-          />
+          <ElTabPane name="form">
+            <template #label>
+              <span>{{
+                $t('packages_business_data_server_drawer_peizhi')
+              }}</span>
+            </template>
+          </ElTabPane>
           <ElTabPane
             v-if="data.status === 'active'"
             :label="$t('packages_business_data_server_drawer_tiaoshi')"
             name="debug"
-          />
+          >
+            <template #label>
+              <span>{{
+                $t('packages_business_data_server_drawer_tiaoshi')
+              }}</span>
+            </template>
+          </ElTabPane>
         </ElTabs>
       </div>
 
@@ -1395,7 +1522,7 @@ const openEdit = () => {
               >
                 <ElInput v-model="form.basePath" :disabled="!isEdit" />
               </ElFormItem>
-              <ElFormItem class="flex-1" prop="limit">
+              <ElFormItem v-if="isHa" class="flex-1" prop="limit">
                 <template #label>
                   <el-text>
                     <span>{{
@@ -1435,7 +1562,7 @@ const openEdit = () => {
           </div>
           <ul class="data-server-path flex flex-column gap-2">
             <li
-              v-for="item in urlList"
+              v-for="(item, index) in urlList"
               :key="item.method"
               class="data-server-path__item bg-subtle rounded-4 pl-1 py-1"
             >
@@ -1445,8 +1572,48 @@ const openEdit = () => {
               >
                 {{ item.method }}
               </div>
-              <div class="data-server-path__value line-height">
-                {{ item.url }}
+              <div v-if="!isEdit" class="data-server-path__value line-height">
+                {{ item.url + item.last }}
+              </div>
+              <div
+                v-else
+                class="data-server-path__value line-height flex-1 flex align-items-center"
+              >
+                <span>{{ item.url }}</span>
+                <template v-if="editingIndex === index">
+                  <ElInput
+                    ref="editInput"
+                    v-model="editingValue"
+                    size="small"
+                    class="ml-1 fs-7"
+                    style="width: 160px"
+                    :maxlength="20"
+                    @blur="saveEdit(index)"
+                    @keyup.enter="saveEdit(index)"
+                  />
+                </template>
+                <template v-else>
+                  <span
+                    :class="{
+                      'cursor-pointer': item.canEdit,
+                    }"
+                    @click="item.canEdit && startEdit(index, item.last)"
+                  >
+                    {{ item.last || '' }}
+                  </span>
+                  <el-button
+                    v-if="item.canEdit"
+                    text
+                    size="small"
+                    class="ml-1"
+                    type="primary"
+                    @click="startEdit(index, item.last)"
+                  >
+                    <template #icon>
+                      <EditOutlined />
+                    </template>
+                  </el-button>
+                </template>
               </div>
             </li>
           </ul>
@@ -1476,7 +1643,7 @@ const openEdit = () => {
           <ElTableColumn
             :label="$t('packages_business_data_server_drawer_canshumingcheng')"
             prop="name"
-            min-width="120"
+            min-width="80"
           >
             <template #default="{ row, $index }">
               <div
@@ -1495,11 +1662,10 @@ const openEdit = () => {
               <div v-else>{{ row.name }}</div>
             </template>
           </ElTableColumn>
-          <ElTableColumn :label="$t('public_type')" prop="type">
+          <ElTableColumn :label="$t('public_type')" prop="type" min-width="80">
             <template #default="{ row, $index }">
               <div
                 v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'"
-                min-width="60"
               >
                 <ElSelect v-model="form.params[$index].type">
                   <ElOption
@@ -1634,11 +1800,14 @@ const openEdit = () => {
                 />
               </ElSelect>
               <ElSelect v-model="form.where[index].condition" class="mr-4">
-                <template v-for="item in conditionOptions">
+                <template v-for="condition in conditionOptions">
                   <ElOption
-                    v-if="item !== 'null' || index === form.where.length - 1"
-                    :value="item"
-                    :label="item"
+                    v-if="
+                      condition !== 'null' || index === form.where.length - 1
+                    "
+                    :key="condition"
+                    :value="condition"
+                    :label="condition"
                   />
                 </template>
               </ElSelect>
@@ -1655,18 +1824,10 @@ const openEdit = () => {
               </el-button>
             </li>
           </ul>
-          <ul v-else class="flex flex-column gap-2">
-            <li
-              v-for="(item, index) in data.where"
-              :key="index"
-              class="flex align-items-center"
-            >
-              <span class="mr-4">{{ item.fieldName }}</span>
-              <span class="mr-4">{{ item.operator }}</span>
-              <span class="mr-4">{{ item.parameter }}</span>
-              <span>{{ item.condition }}</span>
-            </li>
-          </ul>
+          <WhereConditionDisplay
+              v-else
+              :conditions="data.where"
+          />
 
           <!-- 排列条件 -->
           <div class="data-server-panel__title mt-4 mb-3">
@@ -1675,7 +1836,7 @@ const openEdit = () => {
                 $t('packages_business_data_server_drawer_pailietiaojian')
               }}</span>
               <el-button
-                v-if="isEdit"
+                v-if="isEdit && tempFields.length > 0"
                 text
                 size="small"
                 type="primary"
@@ -1696,10 +1857,12 @@ const openEdit = () => {
             >
               <ElSelect v-model="form.sort[index].fieldName" class="mr-4">
                 <ElOption
-                  v-for="opt in allFields"
+                  :selectable="tempFields.length <= 0"
+                  v-for="opt in tempFields"
                   :key="opt.id"
                   :value="opt.field_name"
                   :label="opt.field_name"
+                  @click="onFieldSelected(opt)"
                 />
               </ElSelect>
               <ElSelect v-model="form.sort[index].type" class="mr-4">
@@ -1718,16 +1881,7 @@ const openEdit = () => {
               </el-button>
             </li>
           </ul>
-          <ul v-else class="flex flex-column gap-2">
-            <li
-              v-for="(item, index) in data.sort"
-              :key="index"
-              class="flex align-items-center"
-            >
-              <span class="mr-4">{{ item.fieldName }}</span>
-              <span>{{ item.type }}</span>
-            </li>
-          </ul>
+          <SortConditionDisplay v-else :orders="data.sort"/>
         </template>
 
         <!-- 输出结果 -->
@@ -1750,8 +1904,18 @@ const openEdit = () => {
             <ElTableColumn
               :label="$t('public_name')"
               prop="field_name"
-              min-width="150"
+              min-width="100"
             />
+            <ElTableColumn
+              :label="$t('public_alias')"
+              prop="field_alias"
+              min-width="120"
+            >
+              <template #default="{ row }">
+                <ElInput v-if="isEdit" v-model="row.field_alias" />
+                <span v-else>{{ row.field_alias }}</span>
+              </template>
+            </ElTableColumn>
             <ElTableColumn
               :label="$t('public_type')"
               prop="originalDataType"
@@ -1836,9 +2000,12 @@ const openEdit = () => {
       <ElButton v-if="data.id" @click="isEdit = false">{{
         $t('public_button_cancel')
       }}</ElButton>
-      <ElButton type="primary" @click="save()">{{
-        $t('public_button_save')
-      }}</ElButton>
+      <ElButton
+        :disabled="!form.fields.length"
+        type="primary"
+        @click="save()"
+        >{{ $t('public_button_save') }}</ElButton
+      >
     </template>
   </component>
 </template>
@@ -1974,5 +2141,9 @@ const openEdit = () => {
     border: none;
     background: transparent;
   }
+}
+
+.data-server-path__value {
+  letter-spacing: 0.1px;
 }
 </style>

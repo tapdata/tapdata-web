@@ -1,5 +1,5 @@
 <script>
-import { databaseTypesApi } from '@tap/api'
+import { fetchDatabases, fetchDatabaseTypes } from '@tap/api'
 import { getConnectorImage, getIcon } from '@tap/assets'
 import { VEmpty } from '@tap/component/src/base/v-empty'
 import { IconButton } from '@tap/component/src/icon-button'
@@ -433,7 +433,7 @@ export default {
           {
             key: 'apiApp',
             icon: 'mini-app',
-            name: this.$t('packages_business_api_application'),
+            name: this.$t('public_api_group'),
             md: this.$t('packages_business_api_application_md'),
           },
         ],
@@ -709,9 +709,7 @@ export default {
         order: 'name ASC',
       }
       if (!noLoading) this.loading = true
-      const res = await databaseTypesApi.getDatabases({
-        filter: JSON.stringify(params),
-      })
+      const res = await fetchDatabases(params)
       const data =
         this.selectorType !== 'source_and_target'
           ? res?.filter(
@@ -787,12 +785,10 @@ export default {
 
     async getPdkById(id) {
       this.loading = true
-      const data = await databaseTypesApi.get({
-        filter: JSON.stringify({
-          where: {
-            pdkId: id,
-          },
-        }),
+      const data = await fetchDatabaseTypes({
+        where: {
+          pdkId: id,
+        },
       })
       this.loading = false
       return data?.[0]
@@ -1097,7 +1093,7 @@ export default {
 </template>
 
 <style lang="scss">
-.ldp-connection-dialog {
+.ldp-connection-dialog.el-dialog {
   margin-top: 32px !important;
   margin-bottom: 32px !important;
   height: calc(100% - 64px);

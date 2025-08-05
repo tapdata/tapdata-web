@@ -7,7 +7,7 @@ import i18n from '@tap/i18n'
 
 export default {
   name: 'ServeForm',
-  components: { GitBook, SchemaToForm },
+  components: { SchemaToForm },
   directives: {
     resize,
   },
@@ -25,11 +25,26 @@ export default {
       schemaData: null,
       submitBtnLoading: false,
       saveAndMoreLoading: false,
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
     }
   },
   computed: {
     schemaFormInstance() {
       return this.$refs.schemaToForm.getForm?.()
+    },
+    apiSrc() {
+      let domain
+
+      if (this.isDaas) {
+        domain = this.$i18n.locale === 'en' ? '/docs/en/' : '/docs/'
+      } else {
+        domain =
+          !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en'
+            ? 'https://docs.tapdata.io/'
+            : 'https://docs.tapdata.net/'
+      }
+
+      return `${domain}user-guide/data-service/create-api-service?from=cloud`
     },
   },
   mounted() {
@@ -116,21 +131,14 @@ export default {
         >
       </div>
     </div>
-    <GitBook
-      v-resize.left="{
-        minWidth: 350,
-      }"
-      :value="params.md"
-      class="git-book overflow-auto"
-    />
+    <div class="flex-1 border-start">
+      <iframe :src="apiSrc" class="w-100 h-100 block" />
+    </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .footer-operation {
   border-top: 1px solid #e1e3e9;
-}
-.git-book {
-  width: 400px;
 }
 </style>

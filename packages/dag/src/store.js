@@ -1,7 +1,7 @@
 import { setValidateLanguage } from '@formily/core'
 import { Path } from '@formily/path'
 import { observable } from '@formily/reactive'
-import { customNodeApi, isCancel, taskApi } from '@tap/api'
+import { fetchCustomNodes, isCancel, taskApi } from '@tap/api'
 import { Modal } from '@tap/component/src/modal'
 import i18n from '@tap/i18n'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
@@ -334,7 +334,9 @@ const actions = {
   },
 
   async loadCustomNode({ commit }) {
-    const { items } = await customNodeApi.get()
+    const { items } = await fetchCustomNodes({
+      limit: 1000,
+    })
     const insArr = []
 
     commit(
@@ -741,7 +743,7 @@ const mutations = {
     if (data?.setStateDirty === true) {
       state.stateIsDirty = true
     }
-    state.dag.nodes.splice(0, state.dag.nodes.length)
+    state.dag.nodes.splice(0)
     state.NodeMap = {}
   },
 

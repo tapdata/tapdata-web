@@ -1,6 +1,7 @@
 export default {
   // commonly used
   public_name: 'Name',
+  public_alias: 'Alias',
   public_index: 'Index',
   public_type: 'Type',
   public_title: 'Title',
@@ -24,8 +25,8 @@ export default {
   public_database: 'Database',
   public_file: 'File',
   public_schema: 'Schema',
-  public_basic_settings: 'Basic Settings',
-  public_advanced_settings: 'Advanced Settings',
+  public_basic_settings: 'General',
+  public_advanced_settings: 'Advanced',
   public_ssl_settings: 'SSL Settings',
   public_ssh_settings: 'SSH Settings',
   public_recommend: 'Recommend',
@@ -497,4 +498,9 @@ export default {
   public_time_precision_round: 'Round',
   public_time_precision_truncate: 'Truncate',
   public_button_unpublish: 'Unpublish',
+  public_system: 'System',
+  public_rule_add: 'Add Rule',
+  public_remaining_days: 'Remaining Days',
+  public_remaining_days_threshold: 'Remaining Days Threshold',
+  public_api_group: 'API Group',
 }

@@ -228,17 +228,12 @@ export default {
         .then((data) => {
           const items = data?.items || []
           const treeData = this.formatCatalog(items)
-          console.log('treeData', treeData)
           const username = Cookie.get('username')
           const email = Cookie.get('email')
           treeData?.forEach((item) => {
             if (item.createUser === username || item.createUser === email) {
               this.directoryMap[item.item_type[0]] = item
             }
-
-            // if (item.item_type[0] === 'fdm') {
-            //   console.log('item', item)
-            // }
           })
         })
         .finally(() => {

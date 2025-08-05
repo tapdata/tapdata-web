@@ -1,5 +1,10 @@
 <script>
-import { apiMonitorApi } from '@tap/api'
+import {
+  fetchApiClientNames,
+  fetchApiList,
+  fetchApiMonitorPreview,
+  fetchApiRankLists,
+} from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { dayjs } from '@tap/business/src/shared/dayjs'
 import { VTable } from '@tap/component/src/base/v-table'
@@ -133,8 +138,7 @@ export default {
     //获取统计数据
     getPreview() {
       this.loadingTotal = !this.silenceLoading
-      return apiMonitorApi
-        .preview()
+      return fetchApiMonitorPreview()
         .then((data) => {
           data.lastUpdAt = data.lastUpdAt
             ? dayjs(data.lastUpdAt).format('YYYY-MM-DD HH:mm:ss')
@@ -147,17 +151,11 @@ export default {
     },
     //获取所有客户端
     getClientName() {
-      return apiMonitorApi.apiClientName().then((data) => {
-        //重组数据
-        if (data?.length > 0) {
-          for (const datum of data) {
-            const obj = {
-              label: datum.name,
-              value: datum.id,
-            }
-            this.clientNameList.push(obj)
-          }
-        }
+      return fetchApiClientNames().then((data) => {
+        this.clientNameList = data.map((item) => ({
+          label: item.name,
+          value: item.id,
+        }))
         this.getFilterItems()
       })
     },
@@ -211,10 +209,7 @@ export default {
         skip: size * (failRateCurrent - 1),
       }
       this.loadingFailRateList = !this.silenceLoading
-      return apiMonitorApi
-        .rankLists({
-          filter: JSON.stringify(filter),
-        })
+      return fetchApiRankLists(filter)
         .then((data) => {
           const items = data?.items?.map((item) => {
             const abj = {}
@@ -249,10 +244,7 @@ export default {
         skip: size * (consumingTimeCurrent - 1),
       }
       this.loadingTimeList = !this.silenceLoading
-      return apiMonitorApi
-        .rankLists({
-          filter: JSON.stringify(filter),
-        })
+      return fetchApiRankLists(filter)
         .then((data) => {
           //map
           const items = data?.items?.map((item) => {
@@ -298,10 +290,7 @@ export default {
         where,
       }
       this.loadingApiList = !this.silenceLoading
-      return apiMonitorApi
-        .apiList({
-          filter: JSON.stringify(filter),
-        })
+      return fetchApiList(filter)
         .then((data) => {
           this.apiList = data.items
           this.page.apiListTotal = data.total
