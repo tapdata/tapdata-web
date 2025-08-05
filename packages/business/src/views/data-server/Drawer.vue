@@ -12,6 +12,8 @@ import {
   updateApiModuleTags,
   workerApi,
 } from '@tap/api'
+import SortConditionDisplay from '@tap/component/src/api-server/SortConditionDisplay.vue'
+import WhereConditionDisplay from '@tap/component/src/api-server/WhereConditionDisplay.vue'
 import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import Drawer from '@tap/component/src/Drawer.vue'
 import { EditOutlined } from '@tap/component/src/icon'
@@ -105,7 +107,7 @@ interface Field {
 const isHa = import.meta.env.MODE === 'ha'
 const typeOptions = ['number', 'string', 'boolean', 'date', 'datetime', 'time']
 const operatorOptions = ['>', '==', '<', '>=', '<=', '!=', 'like']
-const conditionOptions = ['null', 'and', 'or']
+const conditionOptions = ['and', 'or']
 const apiTypeMap = {
   defaultApi: i18n.t('packages_business_data_server_drawer_morenchaxun'),
   customerQuery: i18n.t('packages_business_data_server_drawer_zidingyichaxun'),
@@ -156,6 +158,7 @@ const roles = ref([])
 const workerStatus = ref('')
 const intervalId = ref(0)
 const allFields = ref([])
+const tempFields = ref<Field[]>([])
 const fieldLoading = ref(false)
 const databaseTypes = ref<string[] | null>(null)
 const connectionOptions = ref<any[] | null>(null)
@@ -629,9 +632,6 @@ const save = async (type?: boolean) => {
       basePath,
       connectionId,
       tableName,
-      params,
-      where,
-      sort,
       method,
       path,
       status,
@@ -645,7 +645,11 @@ const save = async (type?: boolean) => {
       appValue,
       limit,
     } = form.value
-
+    const params = form.value?.params?.filter((t: any) => t.name)
+    const sort = form.value?.sort?.filter((t: any) => t.fieldName)
+    const where = form.value?.where?.filter(
+      (t: any) => t.fieldName && t.parameter,
+    )
     const fields = form.value.fields.filter((f: any) => !!f)
 
     if (params.some((it: any) => !it.name.trim())) {
@@ -846,7 +850,7 @@ const addItem = (key: 'params' | 'where' | 'sort') => {
   if (key === 'where') {
     const list = form.value.where
     const lastItem = list.at(-1)
-    if (list.length && lastItem.condition === 'null') {
+    if (list.length) {
       lastItem.condition = 'and'
     }
   }
@@ -854,7 +858,20 @@ const addItem = (key: 'params' | 'where' | 'sort') => {
 }
 
 const removeItem = (key: 'params' | 'where' | 'sort', index: number) => {
+  const removed = form.value[key][index]
   form.value[key].splice(index, 1)
+  if (
+    'sort' === key &&
+    removed.fieldName &&
+    removed &&
+    !tempFields.value.find((f) => f.field_name === removed.fieldName)
+  ) {
+    tempFields.value.splice(0, 0, {
+      field_name: removed.fieldName,
+      id: removed.id,
+      data_type: removed.data_type,
+    })
+  }
 }
 
 const debugDisabled = computed(() => {
@@ -1118,6 +1135,30 @@ const saveEdit = (index: number) => {
     editingIndex.value = -1
     editingValue.value = ''
   }
+}
+
+watch(
+  allFields,
+  (newVal) => {
+    tempFields.value = newVal.filter(
+      (field) =>
+        !form.value?.sort?.some(
+          (sortField) => sortField.fieldName === field.field_name,
+        ),
+    )
+  },
+  { immediate: true },
+)
+
+function onFieldSelected(field: Field) {
+  tempFields.value = allFields.value
+    .filter(
+      (f) =>
+        !form.value?.sort?.some(
+          (sortField) => sortField.fieldName === f.field_name,
+        ),
+    )
+    .filter((f) => f.field_name !== field.field_name)
 }
 </script>
 
@@ -1802,18 +1843,7 @@ const saveEdit = (index: number) => {
               </el-button>
             </li>
           </ul>
-          <ul v-else class="flex flex-column gap-2">
-            <li
-              v-for="(item, index) in data.where"
-              :key="index"
-              class="flex align-items-center"
-            >
-              <span class="mr-4">{{ item.fieldName }}</span>
-              <span class="mr-4">{{ item.operator }}</span>
-              <span class="mr-4">{{ item.parameter }}</span>
-              <span>{{ item.condition }}</span>
-            </li>
-          </ul>
+          <WhereConditionDisplay v-else :conditions="data.where" />
 
           <!-- 排列条件 -->
           <div class="data-server-panel__title mt-4 mb-3">
@@ -1822,7 +1852,7 @@ const saveEdit = (index: number) => {
                 $t('packages_business_data_server_drawer_pailietiaojian')
               }}</span>
               <el-button
-                v-if="isEdit"
+                v-if="isEdit && tempFields.length > 0"
                 text
                 size="small"
                 type="primary"
@@ -1843,10 +1873,12 @@ const saveEdit = (index: number) => {
             >
               <ElSelect v-model="form.sort[index].fieldName" class="mr-4">
                 <ElOption
-                  v-for="opt in allFields"
+                  v-for="opt in tempFields"
                   :key="opt.id"
+                  :selectable="tempFields.length <= 0"
                   :value="opt.field_name"
                   :label="opt.field_name"
+                  @click="onFieldSelected(opt)"
                 />
               </ElSelect>
               <ElSelect v-model="form.sort[index].type" class="mr-4">
@@ -1865,16 +1897,7 @@ const saveEdit = (index: number) => {
               </el-button>
             </li>
           </ul>
-          <ul v-else class="flex flex-column gap-2">
-            <li
-              v-for="(item, index) in data.sort"
-              :key="index"
-              class="flex align-items-center"
-            >
-              <span class="mr-4">{{ item.fieldName }}</span>
-              <span>{{ item.type }}</span>
-            </li>
-          </ul>
+          <SortConditionDisplay v-else :orders="data.sort" />
         </template>
 
         <!-- 输出结果 -->
