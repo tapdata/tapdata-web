@@ -4,10 +4,6 @@ import { onBeforeUnmount, ref, watch } from 'vue'
 import MonacoEditor from './MonacoEditor.vue'
 
 const props = defineProps({
-  value: {
-    type: String,
-    default: '',
-  },
   height: {
     type: Number,
     default: 200,
@@ -32,7 +28,10 @@ const props = defineProps({
 
 const emit = defineEmits(['change', 'validationChange'])
 
-const editorValue = ref(props.value)
+const editorValue = defineModel('modelValue', {
+  type: String,
+  default: '',
+})
 const monacoEditorRef = ref(null)
 
 const mongoOperators = [
@@ -224,17 +223,19 @@ const registerMongoCompletion = () => {
 
       if (props.fields && props.fields.length > 0) {
         const matchingFields = props.fields.filter((field) =>
-          field.toLowerCase().startsWith(word.word.toLowerCase()),
+          field.field_name.toLowerCase().startsWith(word.word.toLowerCase()),
         )
         if (matchingFields.length > 0) {
           suggestions.push(
             ...matchingFields.map((field) => ({
-              label: field,
+              label: field.field_name,
               kind: monaco.languages.CompletionItemKind.Field,
-              detail: `字段: ${field}`,
-              insertText: isInQuotes ? field : `"${field}"`,
+              detail: field.data_type,
+              insertText: isInQuotes
+                ? field.field_name
+                : `"${field.field_name}"`,
               range,
-              sortText: `1${field}`,
+              sortText: `1${field.field_name}`,
             })),
           )
         }
@@ -242,8 +243,10 @@ const registerMongoCompletion = () => {
 
       if (props.variables && props.variables.length > 0 && word.word) {
         const matchingVariables = props.variables.filter((variable) =>
-          variable.toLowerCase().startsWith(word.word.toLowerCase()),
+          variable.name.toLowerCase().startsWith(word.word.toLowerCase()),
         )
+
+        console.info('🔍 Matching variables:', matchingVariables)
 
         if (matchingVariables.length > 0) {
           // 分析上下文：检查是否在 {{}} 内部
@@ -271,7 +274,9 @@ const registerMongoCompletion = () => {
 
               if (isInsideBraces) {
                 // 在 {{}} 内部，只需要变量名，可能需要 }}
-                insertText = hasClosingBraces ? variable : `${variable}}}`
+                insertText = hasClosingBraces
+                  ? variable.name
+                  : `${variable.name}}}`
                 // 替换从 {{ 后面到当前位置
                 replaceRange = {
                   startLineNumber: position.lineNumber,
@@ -281,16 +286,18 @@ const registerMongoCompletion = () => {
                 }
               } else {
                 // 不在 {{}} 内部，需要完整的 {{variable}}
-                insertText = `"{{${variable}}}"`
+                insertText = isInQuotes
+                  ? `{{${variable.name}}}`
+                  : `"{{${variable.name}}}"`
               }
 
               return {
-                label: `{{${variable}}}`,
+                label: `{{${variable.name}}}`,
                 kind: monaco.languages.CompletionItemKind.Variable,
-                detail: `参数: ${variable}`,
+                detail: variable.type,
                 insertText,
                 range: replaceRange,
-                sortText: `0${variable}`,
+                sortText: `0${variable.name}`,
               }
             }),
           )
@@ -435,14 +442,14 @@ const getErrorColumn = (errorMessage) => {
 
 const validationError = ref(null)
 
-watch(
-  () => props.value,
-  (newVal) => {
-    if (newVal !== editorValue.value) {
-      editorValue.value = newVal
-    }
-  },
-)
+// watch(
+//   () => props.value,
+//   (newVal) => {
+//     if (newVal !== editorValue.value) {
+//       editorValue.value = newVal
+//     }
+//   },
+// )
 
 const handleChange = (val) => {
   const validation = validateJSON(val)
@@ -454,19 +461,6 @@ const handleChange = (val) => {
     error: validation.error,
     value: val,
   })
-}
-
-const parseJSON5 = (text) => {
-  const withoutComments = text
-    .replaceAll(/\/\*[\s\S]*?\*\//g, '') // 移除多行注释
-    .replaceAll(/\/\/.*$/gm, '') // 移除单行注释
-
-  try {
-    const func = new Function(`return (${withoutComments})`)
-    return func()
-  } catch (error) {
-    throw new Error(`JSON5 parse error: ${error.message}`)
-  }
 }
 
 const formatCode = () => {
@@ -510,21 +504,6 @@ defineExpose({
           wordBasedSuggestions: 'off', // 禁用基于单词的建议
           acceptSuggestionOnEnter: 'on',
           tabCompletion: 'on',
-          suggest: {
-            showKeywords: false, // 禁用JS关键字
-            showSnippets: false, // 禁用代码片段
-            showColors: false,
-            showFiles: false,
-            showReferences: false,
-            showFolders: false,
-            showTypeParameters: false,
-            showIssues: false,
-            showUsers: false,
-            showWords: false, // 禁用基于单词的建议
-            maxVisibleSuggestions: 10,
-            insertMode: 'replace',
-          },
-          // 修复浮框被截断问题
           fixedOverflowWidgets: true,
           formatOnPaste: false,
           formatOnType: false,

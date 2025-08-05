@@ -8,7 +8,7 @@ defineProps({
 </script>
 
 <template>
-  <div class="sort-condition-display bg-light border rounded-xl">
+  <div class="sort-condition-display bg-light rounded-xl">
     <span class="bracket" :class="orders.length > 0 ? '' : 'empty-class'">{{
       orders.length > 0 ? '(' : '-'
     }}</span>
