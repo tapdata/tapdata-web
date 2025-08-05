@@ -20,6 +20,14 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  fields: {
+    type: Array,
+    default: () => [],
+  },
+  variables: {
+    type: Array,
+    default: () => [],
+  },
 })
 
 const emit = defineEmits(['change', 'validationChange'])
@@ -27,7 +35,6 @@ const emit = defineEmits(['change', 'validationChange'])
 const editorValue = ref(props.value)
 const monacoEditorRef = ref(null)
 
-// MongoDB operators with descriptions
 const mongoOperators = [
   // Comparison operators
   {
@@ -148,41 +155,19 @@ const mongoOperators = [
     kind: monaco.languages.CompletionItemKind.Operator,
     detail: 'Performs a modulo operation on the value of a field.',
   },
-  {
-    label: '$slice',
-    kind: monaco.languages.CompletionItemKind.Operator,
-    detail: 'Limits the number of elements projected from an array.',
-  },
-  {
-    label: '$push',
-    kind: monaco.languages.CompletionItemKind.Operator,
-    detail: 'Adds an item to an array.',
-  },
-  {
-    label: '$pull',
-    kind: monaco.languages.CompletionItemKind.Operator,
-    detail: 'Removes all array elements that match a specified query.',
-  },
-  {
-    label: '$set',
-    kind: monaco.languages.CompletionItemKind.Operator,
-    detail: 'Sets the value of a field in a document.',
-  },
-  {
-    label: '$unset',
-    kind: monaco.languages.CompletionItemKind.Operator,
-    detail: 'Removes the specified field from a document.',
-  },
 ]
 
-// 强制注册 MongoDB 自动补全（每次都重新注册以确保生效）
 const registerMongoCompletion = () => {
-  return monaco.languages.registerCompletionItemProvider('javascript', {
-    triggerCharacters: ['$', ' ', '\n'],
+  return monaco.languages.registerCompletionItemProvider('json', {
+    triggerCharacters: ['$', '"', "'", '{'],
     provideCompletionItems: (model, position) => {
-      console.info('MongoDB completion triggered') // 调试信息
-
       const word = model.getWordUntilPosition(position)
+      const lineContent = model.getLineContent(position.lineNumber)
+      const textBeforeCursor = lineContent.slice(
+        0,
+        Math.max(0, position.column - 1),
+      )
+
       const range = {
         startLineNumber: position.lineNumber,
         endLineNumber: position.lineNumber,
@@ -190,62 +175,240 @@ const registerMongoCompletion = () => {
         endColumn: word.endColumn,
       }
 
-      // MongoDB 操作符建议
-      const suggestions = mongoOperators.map((op) => ({
-        label: op.label,
-        kind: op.kind,
-        detail: op.detail,
-        insertText: op.label,
-        range,
-        sortText: `0${op.label}`, // 确保排在前面
-      }))
+      const suggestions = []
 
-      console.info('Providing suggestions:', suggestions.length) // 调试信息
-      return { suggestions }
+      if (lineContent?.trim() === '{}') return { suggestions }
+
+      // 检查是否已经在引号内
+      const beforeCursor = textBeforeCursor
+      const lastQuoteIndex = Math.max(
+        beforeCursor.lastIndexOf('"'),
+        beforeCursor.lastIndexOf("'"),
+      )
+      const isInQuotes =
+        lastQuoteIndex > -1 &&
+        !beforeCursor.slice(lastQuoteIndex + 1).includes('"') &&
+        !beforeCursor.slice(lastQuoteIndex + 1).includes("'")
+
+      const matchingOperators = mongoOperators.filter((op) =>
+        op.label.toLowerCase().startsWith(word.word.toLowerCase()),
+      )
+
+      let replaceRange = range
+      if (word.word.startsWith('$')) {
+        replaceRange = {
+          startLineNumber: position.lineNumber,
+          endLineNumber: position.lineNumber,
+          startColumn: word.startColumn,
+          endColumn: word.endColumn,
+        }
+      } else if (textBeforeCursor.endsWith('$')) {
+        replaceRange = {
+          startLineNumber: position.lineNumber,
+          endLineNumber: position.lineNumber,
+          startColumn: position.column - 1,
+          endColumn: position.column,
+        }
+      }
+
+      suggestions.push(
+        ...matchingOperators.map((op) => ({
+          label: op.label,
+          kind: op.kind,
+          detail: op.detail,
+          insertText: isInQuotes ? op.label : `"${op.label}"`,
+          range: replaceRange,
+          sortText: `2${op.label}`,
+        })),
+      )
+
+      if (props.fields && props.fields.length > 0) {
+        const matchingFields = props.fields.filter((field) =>
+          field.toLowerCase().startsWith(word.word.toLowerCase()),
+        )
+        if (matchingFields.length > 0) {
+          suggestions.push(
+            ...matchingFields.map((field) => ({
+              label: field,
+              kind: monaco.languages.CompletionItemKind.Field,
+              detail: `字段: ${field}`,
+              insertText: field,
+              range,
+              sortText: `1${field}`,
+            })),
+          )
+        }
+      }
+
+      if (props.variables && props.variables.length > 0 && word.word) {
+        const matchingVariables = props.variables.filter((variable) =>
+          variable.toLowerCase().startsWith(word.word.toLowerCase()),
+        )
+
+        if (matchingVariables.length > 0) {
+          // 分析上下文：检查是否在 {{}} 内部
+          const openBraceIndex = textBeforeCursor.lastIndexOf('{{')
+          const closeBraceIndex = textBeforeCursor.lastIndexOf('}}')
+          const isInsideBraces =
+            openBraceIndex > closeBraceIndex && openBraceIndex !== -1
+
+          // 检查光标后是否有 }}
+          const textAfterCursor = lineContent.slice(position.column - 1)
+          const hasClosingBraces = textAfterCursor.startsWith('}}')
+
+          console.info('🔍 Variable completion context:', {
+            isInsideBraces,
+            hasClosingBraces,
+            openBraceIndex,
+            closeBraceIndex,
+            word: word.word,
+          })
+
+          suggestions.push(
+            ...matchingVariables.map((variable) => {
+              let insertText
+              let replaceRange = range
+
+              if (isInsideBraces) {
+                // 在 {{}} 内部，只需要变量名，可能需要 }}
+                insertText = hasClosingBraces ? variable : `${variable}}}`
+                // 替换从 {{ 后面到当前位置
+                replaceRange = {
+                  startLineNumber: position.lineNumber,
+                  endLineNumber: position.lineNumber,
+                  startColumn: openBraceIndex + 3, // +3 = +1(Monaco 1-based) +2(skip {{)
+                  endColumn: position.column,
+                }
+              } else {
+                // 不在 {{}} 内部，需要完整的 {{variable}}
+                insertText = `{{${variable}}}`
+              }
+
+              return {
+                label: `{{${variable}}}`,
+                kind: monaco.languages.CompletionItemKind.Variable,
+                detail: `参数: ${variable}`,
+                insertText,
+                range: replaceRange,
+                sortText: `0${variable}`,
+              }
+            }),
+          )
+        }
+      }
+
+      return {
+        suggestions,
+        incomplete: false, // 告诉Monaco这是完整的列表，不需要其他提供器
+        dispose: () => {}, // 添加dispose方法
+      }
     },
   })
 }
 
 // 注册自动补全
 let completionDisposable = null
+
 if (typeof monaco !== 'undefined') {
   completionDisposable = registerMongoCompletion()
 }
 
+// 获取字符在文本中的行号
+const getLineNumber = (text, index) => {
+  return text.slice(0, Math.max(0, index)).split('\n').length
+}
+
+// JSON5 语法验证函数（简化版，不支持注释）
+const validateJSON5Syntax = (jsonString) => {
+  console.info('🔍 validateJSON5Syntax called')
+  const stack = []
+  const pairs = { '{': '}', '[': ']' }
+  let inString = false
+  let stringChar = null
+  let escaped = false
+
+  for (let i = 0; i < jsonString.length; i++) {
+    const char = jsonString[i]
+
+    // 处理转义字符
+    if (escaped) {
+      escaped = false
+      continue
+    }
+
+    if (char === '\\' && inString) {
+      escaped = true
+      continue
+    }
+
+    // 处理字符串
+    if ((char === '"' || char === "'") && !inString) {
+      inString = true
+      stringChar = char
+      continue
+    }
+
+    if (char === stringChar && inString) {
+      inString = false
+      stringChar = null
+      continue
+    }
+
+    // 如果在字符串中，跳过括号检查
+    if (inString) {
+      continue
+    }
+
+    // 括号匹配检查
+    if (char in pairs) {
+      stack.push({ char, line: getLineNumber(jsonString, i) })
+    } else if (Object.values(pairs).includes(char)) {
+      const last = stack.pop()
+      if (!last || pairs[last.char] !== char) {
+        throw new Error(
+          `Unmatched bracket '${char}' at line ${getLineNumber(jsonString, i)}`,
+        )
+      }
+    } else {
+      // 检查无效字符（允许JSON5常用字符）
+      const validChars = /^[a-z0-9\s{}[\]:,".'$\-+*/\\=<>!&|()@#%^~`?;]$/i
+      if (!validChars.test(char)) {
+        throw new Error(
+          `Invalid character '${char}' at line ${getLineNumber(jsonString, i)}`,
+        )
+      }
+    }
+  }
+
+  // 检查未闭合的括号
+  if (stack.length > 0) {
+    const unclosed = stack.at(-1)
+    throw new Error(
+      `Unclosed bracket '${unclosed.char}' at line ${unclosed.line}`,
+    )
+  }
+
+  // 检查未闭合的字符串
+  if (inString) {
+    throw new Error(`Unclosed string starting with '${stringChar}'`)
+  }
+
+  return { isValid: true, error: null }
+}
+
 // JSON/JavaScript validation function (supports JSON5-like syntax)
 const validateJSON = (jsonString) => {
+  console.info('🔍 validateJSON called')
   if (!jsonString.trim()) {
     return { isValid: true, error: null }
   }
 
   try {
-    // 首先尝试标准 JSON 解析
     JSON.parse(jsonString)
     return { isValid: true, error: null }
   } catch {
-    // 如果标准 JSON 解析失败，尝试简单的语法检查
-    // 这里可以添加更宽松的验证逻辑，支持 JSON5 特性
     try {
-      // 简单的括号匹配检查
-      const stack = []
-      const pairs = { '{': '}', '[': ']', '(': ')' }
-
-      for (const char of jsonString) {
-        if (char in pairs) {
-          stack.push(char)
-        } else if (Object.values(pairs).includes(char)) {
-          const last = stack.pop()
-          if (!last || pairs[last] !== char) {
-            throw new Error(`Unmatched bracket: ${char}`)
-          }
-        }
-      }
-
-      if (stack.length > 0) {
-        throw new Error(`Unclosed bracket: ${stack.at(-1)}`)
-      }
-
-      return { isValid: true, error: null }
+      return validateJSON5Syntax(jsonString)
     } catch (syntaxError) {
       return {
         isValid: false,
@@ -265,13 +428,11 @@ const getErrorLine = (errorMessage) => {
   return lineMatch ? Number.parseInt(lineMatch[1]) : 1
 }
 
-// Extract column number from JSON parse error message
 const getErrorColumn = (errorMessage) => {
   const columnMatch = errorMessage.match(/column (\d+)/i)
   return columnMatch ? Number.parseInt(columnMatch[1]) : 1
 }
 
-// Validation state
 const validationError = ref(null)
 
 watch(
@@ -284,7 +445,6 @@ watch(
 )
 
 const handleChange = (val) => {
-  // Validate JSON format
   const validation = validateJSON(val)
   validationError.value = validation.error
 
@@ -296,21 +456,31 @@ const handleChange = (val) => {
   })
 }
 
-// 格式化代码
-const formatCode = async () => {
-  if (monacoEditorRef.value) {
-    await monacoEditorRef.value.format()
+const parseJSON5 = (text) => {
+  const withoutComments = text
+    .replaceAll(/\/\*[\s\S]*?\*\//g, '') // 移除多行注释
+    .replaceAll(/\/\/.*$/gm, '') // 移除单行注释
+
+  try {
+    const func = new Function(`return (${withoutComments})`)
+    return func()
+  } catch (error) {
+    throw new Error(`JSON5 parse error: ${error.message}`)
   }
 }
 
-// 清理资源
+const formatCode = () => {
+  if (monacoEditorRef.value) {
+    monacoEditorRef.value.format()
+  }
+}
+
 onBeforeUnmount(() => {
   if (completionDisposable) {
     completionDisposable.dispose()
   }
 })
 
-// 暴露方法给父组件
 defineExpose({
   format: formatCode,
   getEditor: () => monacoEditorRef.value?.getEditor(),
@@ -318,44 +488,31 @@ defineExpose({
 </script>
 
 <template>
-  <div class="mql-editor" :class="{ 'has-error': validationError }">
-    <div class="editor-header">
-      <div class="editor-actions">
-        <button
-          type="button"
-          class="format-btn"
-          :disabled="disabled"
-          title="格式化代码 (Shift+Alt+F)"
-          @click="formatCode"
-        >
-          <i class="el-icon-magic-stick" />
-          格式化
-        </button>
-      </div>
-    </div>
+  <div
+    class="mql-editor border rounded-xl overflow-hidden"
+    :class="{ 'has-error': validationError }"
+  >
     <div class="editor-container" :style="{ height: `${height}px` }">
       <MonacoEditor
         ref="monacoEditorRef"
         v-model="editorValue"
         :options="{
-          language: 'javascript',
-          theme: 'vs',
+          language: 'json',
           automaticLayout: true,
           minimap: { enabled: false },
           scrollBeyondLastLine: false,
           readOnly: disabled,
+          lineNumbers: 'on',
+          lineNumbersMinChars: 3, // 设置行号最小字符数，减少宽度
+          glyphMargin: false, // 禁用字形边距以节省空间
           suggestOnTriggerCharacters: true,
-          quickSuggestions: {
-            other: true,
-            comments: false,
-            strings: true,
-          },
-          wordBasedSuggestions: 'allDocuments',
+          quickSuggestions: true, // 启用快速建议来测试
+          wordBasedSuggestions: 'off', // 禁用基于单词的建议
           acceptSuggestionOnEnter: 'on',
           tabCompletion: 'on',
           suggest: {
-            showKeywords: true,
-            showSnippets: true,
+            showKeywords: false, // 禁用JS关键字
+            showSnippets: false, // 禁用代码片段
             showColors: false,
             showFiles: false,
             showReferences: false,
@@ -363,8 +520,12 @@ defineExpose({
             showTypeParameters: false,
             showIssues: false,
             showUsers: false,
-            showWords: true,
+            showWords: false, // 禁用基于单词的建议
+            maxVisibleSuggestions: 10,
+            insertMode: 'replace',
           },
+          // 修复浮框被截断问题
+          fixedOverflowWidgets: true,
           formatOnPaste: false,
           formatOnType: false,
           ...options,
@@ -381,8 +542,7 @@ defineExpose({
 
 <style lang="scss" scoped>
 .mql-editor {
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
+  position: relative;
 
   .editor-header {
     padding: 8px 12px;
@@ -428,6 +588,8 @@ defineExpose({
 
   .editor-container {
     border-radius: 0;
+    position: relative;
+    overflow: visible;
   }
 
   .validation-error {
@@ -449,5 +611,42 @@ defineExpose({
   &.has-error {
     border-color: #f56c6c;
   }
+}
+
+// 全局样式，控制Monaco编辑器行号宽度
+:deep(.monaco-editor .margin) {
+  width: 50px !important; // 设置行号区域宽度为50px
+}
+
+:deep(.monaco-editor .line-numbers) {
+  width: 50px !important; // 设置行号宽度为50px
+  text-align: center; // 行号居中显示
+  font-size: 12px; // 调整行号字体大小
+}
+
+:deep(.monaco-editor .margin-view-overlays) {
+  width: 50px !important; // 设置边距覆盖层宽度
+}
+
+// 去掉选中行的边框
+:deep(.monaco-editor .current-line) {
+  border: none !important; // 移除当前行边框
+  box-shadow: none !important; // 移除阴影
+}
+
+:deep(.monaco-editor .view-line) {
+  border: none !important; // 移除所有行的边框
+}
+
+// 去掉当前行高亮的边框装饰
+:deep(.monaco-editor .current-line-exact) {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+// 去掉行高亮的装饰器
+:deep(.monaco-editor .view-overlays .current-line) {
+  border: none !important;
+  box-shadow: none !important;
 }
 </style>

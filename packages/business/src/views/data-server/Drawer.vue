@@ -162,6 +162,7 @@ const databaseTypes = ref<string[] | null>(null)
 const connectionOptions = ref<any[] | null>(null)
 const tableOptions = ref<any[]>([])
 const templates = ref<Record<string, string>>({})
+const mqlEditor = ref<any>(null)
 
 // Template refs
 const form_ref = ref()
@@ -377,7 +378,7 @@ const formatData = (formData: FormData = {}) => {
   const appLabel =
     apiApplication?.value?.value || _appLabel || appData.value || ''
 
-  const apiType = formData?.apiType || 'defaultApi'
+  const apiType = formData?.apiType || 'customerQuery'
   const fields = formData.paths?.[0]?.fields || []
 
   data.value = {
@@ -1120,6 +1121,10 @@ const saveEdit = (index: number) => {
     editingValue.value = ''
   }
 }
+
+const handleFormat = () => {
+  mqlEditor.value?.format()
+}
 </script>
 
 <template>
@@ -1729,24 +1734,27 @@ const saveEdit = (index: number) => {
           "
         >
           <!-- 筛选条件 -->
-          <div class="data-server-panel__title mt-4 mb-3">
-            <div class="flex align-items-center">
-              <span>{{
-                $t('packages_business_data_server_drawer_shaixuantiaojian')
-              }}</span>
-              <el-button
-                v-if="isEdit"
-                text
-                size="small"
-                type="primary"
-                class="ml-1"
-                @click="addItem('where')"
-              >
-                <template #icon>
-                  <el-icon-circle-plus />
-                </template>
-              </el-button>
-            </div>
+          <div class="data-server-panel__title mt-4 mb-3 align-items-center">
+            <span>{{
+              $t('packages_business_data_server_drawer_shaixuantiaojian')
+            }}</span>
+            <el-button
+              v-if="isEdit"
+              text
+              size="small"
+              type="primary"
+              class="ml-1"
+              @click="addItem('where')"
+            >
+              <template #icon>
+                <el-icon-circle-plus />
+              </template>
+            </el-button>
+
+            <el-button text class="ml-auto" @click="handleFormat">
+              <el-icon class="mr-1"><i-mingcute:brush-line /></el-icon>
+              格式化</el-button
+            >
           </div>
           <ul v-if="isEdit" class="flex flex-column gap-2">
             <li
@@ -1816,7 +1824,11 @@ const saveEdit = (index: number) => {
             </li>
           </ul>
 
-          <MqlEditor />
+          <MqlEditor
+            ref="mqlEditor"
+            :fields="['page', 'limit']"
+            :variables="['var1']"
+          />
 
           <!-- 排列条件 -->
           <div class="data-server-panel__title mt-4 mb-3">

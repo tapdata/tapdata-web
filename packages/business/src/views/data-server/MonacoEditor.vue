@@ -11,6 +11,7 @@ import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 self.MonacoEnvironment = {
   getWorker(_, label) {
+    console.log('label', label)
     if (label === 'json') {
       return new jsonWorker()
     }
@@ -95,7 +96,7 @@ const defaultOptions = {
   automaticLayout: true,
   minimap: { enabled: false },
   scrollBeyondLastLine: false,
-  fontSize: 14,
+  fontSize: 12,
   lineNumbers: 'on',
   roundedSelection: false,
   scrollbar: {
@@ -119,7 +120,7 @@ onMounted(async () => {
 
   // 配置 TypeScript/JavaScript 编译器选项，禁用不需要的诊断
   monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
-    noSemanticValidation: false,
+    noSemanticValidation: false, // 恢复语义验证，但会在后面过滤
     noSyntaxValidation: false,
     noSuggestionDiagnostics: true,
     diagnosticCodesToIgnore: [
@@ -154,114 +155,13 @@ onMounted(async () => {
   // 配置 JavaScript 格式化选项
   monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true)
 
-  // 注册自定义语言模式用于 MongoDB 查询
-  if (
-    !monaco.languages.getLanguages().some((lang) => lang.id === 'mongodb-query')
-  ) {
-    monaco.languages.register({ id: 'mongodb-query' })
-
-    // 设置语言配置
-    monaco.languages.setLanguageConfiguration('mongodb-query', {
-      brackets: [
-        ['{', '}'],
-        ['[', ']'],
-        ['(', ')'],
-      ],
-      autoClosingPairs: [
-        { open: '{', close: '}' },
-        { open: '[', close: ']' },
-        { open: '(', close: ')' },
-        { open: '"', close: '"' },
-        { open: "'", close: "'" },
-      ],
-      surroundingPairs: [
-        { open: '{', close: '}' },
-        { open: '[', close: ']' },
-        { open: '(', close: ')' },
-        { open: '"', close: '"' },
-        { open: "'", close: "'" },
-      ],
-    })
-
-    // 设置语法高亮
-    monaco.languages.setMonarchTokensProvider('mongodb-query', {
-      keywords: [
-        '$eq',
-        '$gt',
-        '$gte',
-        '$in',
-        '$lt',
-        '$lte',
-        '$ne',
-        '$nin',
-        '$and',
-        '$not',
-        '$nor',
-        '$or',
-        '$exists',
-        '$type',
-        '$regex',
-        '$text',
-        '$search',
-        '$all',
-        '$elemMatch',
-        '$size',
-        '$where',
-        '$mod',
-        '$slice',
-        '$push',
-        '$pull',
-        '$set',
-        '$unset',
-        'true',
-        'false',
-        'null',
-      ],
-      tokenizer: {
-        root: [
-          [/\$[a-z_]\w*/i, 'keyword'],
-          [/"[^"]*"/, 'string'],
-          [/'[^']*'/, 'string'],
-          [/\d+(\.\d+)?/, 'number'],
-          [/true|false|null/, 'keyword'],
-          [/[{}[\]()]/, 'delimiter'],
-          [/[:,]/, 'delimiter'],
-          [/[a-z_]\w*/i, 'identifier'],
-          [/\s+/, 'white'],
-        ],
-      },
-    })
-
-    // 更新语言配置，添加单词模式
-    monaco.languages.setLanguageConfiguration('mongodb-query', {
-      brackets: [
-        ['{', '}'],
-        ['[', ']'],
-        ['(', ')'],
-      ],
-      autoClosingPairs: [
-        { open: '{', close: '}' },
-        { open: '[', close: ']' },
-        { open: '(', close: ')' },
-        { open: '"', close: '"' },
-        { open: "'", close: "'" },
-      ],
-      surroundingPairs: [
-        { open: '{', close: '}' },
-        { open: '[', close: ']' },
-        { open: '(', close: ')' },
-        { open: '"', close: '"' },
-        { open: "'", close: "'" },
-      ],
-      wordPattern: /(-?\d*\.\d\w*)|([^`~!@#%^&*()\-=+[{\]}\\|;:'",.<>/?\s]+)/g,
-    })
-  }
+  // 语言配置现在在 MqlEditor.vue 中统一管理
 
   // 合并配置选项
   const editorOptions = {
     ...defaultOptions,
     ...props.options,
-    language: props.language,
+    // language: props.language,
     theme: props.theme,
     value: props.modelValue,
   }
@@ -269,17 +169,16 @@ onMounted(async () => {
   // 创建编辑器实例
   editor = monaco.editor.create(editorContainer.value, editorOptions)
 
-  // 添加格式化快捷键 (Shift+Alt+F)
-  editor.addCommand(
-    monaco.KeyMod.Shift | monaco.KeyMod.Alt | monaco.KeyCode.KeyF,
-    () => {
-      formatCode()
-    },
-  )
-
   // 添加测试快捷键 (Ctrl+T) 来手动触发补全
   editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyT, () => {
+    console.info('🎯 Manually triggering completion...')
     editor.trigger('test', 'editor.action.triggerSuggest', {})
+  })
+
+  // 添加 Ctrl+Space 快捷键来触发补全
+  editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Space, () => {
+    console.info('🎯 Ctrl+Space triggered completion...')
+    editor.trigger('manual', 'editor.action.triggerSuggest', {})
   })
 
   // 监听内容变化
