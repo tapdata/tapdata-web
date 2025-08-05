@@ -413,18 +413,14 @@ const validateJSON = (jsonString) => {
   try {
     JSON.parse(jsonString)
     return { isValid: true, error: null }
-  } catch {
-    try {
-      return validateJSON5Syntax(jsonString)
-    } catch (syntaxError) {
-      return {
-        isValid: false,
-        error: {
-          message: syntaxError.message,
-          line: getErrorLine(syntaxError.message),
-          column: getErrorColumn(syntaxError.message),
-        },
-      }
+  } catch (syntaxError) {
+    return {
+      isValid: false,
+      error: {
+        message: syntaxError.message,
+        line: getErrorLine(syntaxError.message),
+        column: getErrorColumn(syntaxError.message),
+      },
     }
   }
 }
