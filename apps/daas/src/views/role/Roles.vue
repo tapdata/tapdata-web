@@ -4,12 +4,14 @@ import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import { escapeRegExp } from 'lodash-es'
+import ApiAccessDialog from './ApiAccessDialog.vue'
 
 export default {
   components: {
     PageContainer,
     TablePage,
     FilterBar,
+    ApiAccessDialog,
   },
   data() {
     return {
@@ -112,7 +114,10 @@ export default {
     handleSettingPermissions(id, name) {
       this.$router.push({ name: 'role', query: { id, name } })
     },
-
+    // 设置API访问
+    handleSettingApi(id, name) {
+      this.$refs.apiAccessDialog.open(id, name)
+    },
     // 确认删除角色
     handleDelete(item) {
       this.$confirm(this.$t('role_list_delete_remind', [item.name])).then(
@@ -352,6 +357,17 @@ export default {
           <ElDivider class="mx-1" direction="vertical" />
           <ElButton
             v-readonlybtn="'role_edition'"
+            type="text"
+            :disabled="
+              $disabledByPermission('role_edition_all_data', scope.row.user_id)
+            "
+            @click="handleSettingApi(scope.row.id, scope.row.name)"
+          >
+            {{ $t('role_list_setting_api') }}
+          </ElButton>
+          <ElDivider class="mx-1" direction="vertical" />
+          <ElButton
+            v-readonlybtn="'role_edition'"
             text
             type="primary"
             :disabled="
@@ -495,6 +511,7 @@ export default {
         </span>
       </template>
     </ElDialog>
+    <ApiAccessDialog ref="apiAccessDialog" />
   </PageContainer>
 </template>
 
