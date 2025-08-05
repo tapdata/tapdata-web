@@ -1,14 +1,16 @@
 <template>
   <div class="where-condition-display">
     <span
+       v-if="conditions.length > 0"
       :html="token.text.replace('/\s/g', '&nbsp;')"
       v-for="(token, index) in tokens"
       :key="index"
       :class="token.class"
       class="condition-token"
     >
-      {{ token.text }}
+      {{token.text}}
     </span>
+    <span v-else class="condition-token empty-class">-</span>
   </div>
 </template>
 
@@ -138,5 +140,14 @@ const tokens = computed(() => {
   color: #17a2b8;
   font-weight: bold;
   text-transform: uppercase;
+}
+.empty-class {
+  color: #6c757d;
+  font-weight: bold;
+  text-transform: uppercase;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 </style>
