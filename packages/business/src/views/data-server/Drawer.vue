@@ -110,7 +110,6 @@ const apiTypeMap = {
   defaultApi: t('packages_business_data_server_drawer_morenchaxun'),
   customerQuery: t('packages_business_data_server_drawer_zidingyichaxun'),
 }
-let originalFormData: any
 
 interface Props {
   host?: string
@@ -191,6 +190,7 @@ const form = ref<any>(getInitData())
 const visible = ref(false)
 const loading = ref(false)
 const data = ref<any>({})
+let initialFormData = {}
 const tab = ref('form')
 const isEdit = ref(false)
 const debugParams = ref<any>(null)
@@ -404,6 +404,7 @@ const genFormData = (formData: any = {}): Record<string, any> => {
   const {
     id,
     name,
+    status = 'generating',
     description,
     connectionType,
     connectionName,
@@ -595,8 +596,8 @@ const getAPIServerToken = async (callback?: (token: string) => void) => {
 }
 
 // Methods
-const open = async (formData?: any) => {
-  originalFormData = formData ? cloneDeep(formData) : {}
+const open = (formData?: any) => {
+  const originalFormData = formData ? cloneDeep(formData) : {}
 
   tab.value = 'form'
   visible.value = true
@@ -661,6 +662,16 @@ const save = async (type?: boolean) => {
       path,
       acl,
     } = form.value
+
+    if (fullCustomQuery) {
+      const validation = mqlEditor.value?.validateJSON(customWhere)
+      if (!validation.isValid) {
+        ElMessage.error(
+          `${t('public_json_format_error')}: ${validation.error.message}`,
+        )
+        return
+      }
+    }
 
     const params = form.value?.params?.filter((t: any) => t.name)
     const sort = form.value?.sort?.filter((t: any) => t.fieldName)
@@ -761,8 +772,6 @@ const save = async (type?: boolean) => {
         name: connectionName,
       }
 
-      originalFormData = data
-
       formatData(data)
       emit('save', data)
       isEdit.value = false
@@ -776,9 +785,10 @@ const save = async (type?: boolean) => {
 const edit = () => {
   form.value.status = 'pending'
   isEdit.value = true
+  initialFormData = cloneDeep(form.value)
+
   nextTick(() => {
     form.value.fields?.forEach((f: any) => {
-      //@ts-ignore
       const field = allFields.value.find((it: any) => it.id === f.id) as any
       if (field) {
         field.field_alias = f.field_alias || ''
@@ -792,7 +802,7 @@ const edit = () => {
 
 const handleCancel = () => {
   isEdit.value = false
-  form.value = genFormData(originalFormData)
+  form.value = initialFormData
 }
 
 // Watch effects
@@ -1099,15 +1109,11 @@ const loadAllFields = async () => {
 
 const handleBeforeClose = async (done: () => void) => {
   if (isEdit.value) {
-    const original = genFormData(originalFormData)
-    console.log('original', original)
-    console.log('form.value', form.value)
     const hasChanges = Object.keys(form.value).some((key) => {
       if (['status', 'path'].includes(key)) {
         return false
       }
-
-      return !isEqual(original[key], form.value[key])
+      return !isEqual(initialFormData[key], form.value[key])
     })
 
     if (hasChanges) {

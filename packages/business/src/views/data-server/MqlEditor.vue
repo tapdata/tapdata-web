@@ -320,92 +320,7 @@ if (typeof monaco !== 'undefined') {
   completionDisposable = registerMongoCompletion()
 }
 
-// 获取字符在文本中的行号
-const getLineNumber = (text, index) => {
-  return text.slice(0, Math.max(0, index)).split('\n').length
-}
-
-// JSON5 语法验证函数（简化版，不支持注释）
-const validateJSON5Syntax = (jsonString) => {
-  console.info('🔍 validateJSON5Syntax called')
-  const stack = []
-  const pairs = { '{': '}', '[': ']' }
-  let inString = false
-  let stringChar = null
-  let escaped = false
-
-  for (let i = 0; i < jsonString.length; i++) {
-    const char = jsonString[i]
-
-    // 处理转义字符
-    if (escaped) {
-      escaped = false
-      continue
-    }
-
-    if (char === '\\' && inString) {
-      escaped = true
-      continue
-    }
-
-    // 处理字符串
-    if ((char === '"' || char === "'") && !inString) {
-      inString = true
-      stringChar = char
-      continue
-    }
-
-    if (char === stringChar && inString) {
-      inString = false
-      stringChar = null
-      continue
-    }
-
-    // 如果在字符串中，跳过括号检查
-    if (inString) {
-      continue
-    }
-
-    // 括号匹配检查
-    if (char in pairs) {
-      stack.push({ char, line: getLineNumber(jsonString, i) })
-    } else if (Object.values(pairs).includes(char)) {
-      const last = stack.pop()
-      if (!last || pairs[last.char] !== char) {
-        throw new Error(
-          `Unmatched bracket '${char}' at line ${getLineNumber(jsonString, i)}`,
-        )
-      }
-    } else {
-      // 检查无效字符（允许JSON5常用字符）
-      const validChars = /^[a-z0-9\s{}[\]:,".'$\-+*/\\=<>!&|()@#%^~`?;]$/i
-      if (!validChars.test(char)) {
-        throw new Error(
-          `Invalid character '${char}' at line ${getLineNumber(jsonString, i)}`,
-        )
-      }
-    }
-  }
-
-  // 检查未闭合的括号
-  if (stack.length > 0) {
-    const unclosed = stack.at(-1)
-    throw new Error(
-      `Unclosed bracket '${unclosed.char}' at line ${unclosed.line}`,
-    )
-  }
-
-  // 检查未闭合的字符串
-  if (inString) {
-    throw new Error(`Unclosed string starting with '${stringChar}'`)
-  }
-
-  return { isValid: true, error: null }
-}
-
-// JSON/JavaScript validation function (supports JSON5-like syntax)
 const validateJSON = (jsonString) => {
-  console.info('🔍 validateJSON called')
   if (!jsonString.trim()) {
     return { isValid: true, error: null }
   }
@@ -438,15 +353,6 @@ const getErrorColumn = (errorMessage) => {
 
 const validationError = ref(null)
 
-// watch(
-//   () => props.value,
-//   (newVal) => {
-//     if (newVal !== editorValue.value) {
-//       editorValue.value = newVal
-//     }
-//   },
-// )
-
 const handleChange = (val) => {
   const validation = validateJSON(val)
   validationError.value = validation.error
@@ -474,6 +380,7 @@ onBeforeUnmount(() => {
 defineExpose({
   format: formatCode,
   getEditor: () => monacoEditorRef.value?.getEditor(),
+  validateJSON,
 })
 </script>
 
@@ -510,7 +417,10 @@ defineExpose({
     </div>
     <div v-if="validationError" class="validation-error">
       <i class="el-icon-warning-outline" />
-      <span>格式错误: {{ validationError.message }}</span>
+      <span
+        >{{ $t('public_json_format_error') }}:
+        {{ validationError.message }}</span
+      >
     </div>
   </div>
 </template>

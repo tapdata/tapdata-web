@@ -498,4 +498,5 @@ export default {
   public_format: '格式化',
   public_add_condition: '添加條件',
   public_add_parameter: '添加參數',
+  public_json_format_error: 'JSON 格式錯誤',
 }

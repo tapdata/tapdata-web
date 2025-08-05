@@ -508,4 +508,5 @@ export default {
   public_format: 'Format',
   public_add_condition: 'Add Condition',
   public_add_parameter: 'Add Parameter',
+  public_json_format_error: 'JSON Format Error',
 }
