@@ -1,6 +1,6 @@
 <template>
   <div class="sort-condition-display">
-    <span class="bracket">(</span>
+    <span class="bracket" :class="orders.length > 0 ? '' : 'empty-class'">{{ orders.length > 0 ? '(' : '-' }}</span>
     <span
         v-for="(order, index) in orders"
         :key="index"
@@ -13,7 +13,7 @@
       <span class="bracket">]</span>
       <span v-if="index < orders.length - 1" class="separator">, </span>
     </span>
-    <span class="bracket">)</span>
+    <span class="bracket" :class="orders.length > 0 ? '' : 'empty-class'">{{ orders.length > 0 ? ')' : '' }}</span>
   </div>
 </template>
 
@@ -67,5 +67,14 @@ const props = defineProps({
 
 .sort-item {
   display: inline;
+}
+.empty-class {
+  color: #6c757d;
+  font-weight: bold;
+  text-transform: uppercase;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 </style>
