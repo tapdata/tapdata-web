@@ -512,4 +512,6 @@ export default {
   public_data_source: 'Data Source',
   public_asc: 'ASC',
   public_desc: 'DESC',
+  public_select_field: 'Select Field',
+  public_select_parameter: 'Select Parameter',
 }

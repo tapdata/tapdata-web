@@ -503,4 +503,6 @@ export default {
   public_data_source: '数据来源',
   public_asc: '升序',
   public_desc: '降序',
+  public_select_field: '选择字段',
+  public_select_parameter: '选择参数',
 }

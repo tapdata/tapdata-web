@@ -220,10 +220,11 @@ const allFields = ref([])
 const tempFields = ref<Field[]>([])
 const fieldLoading = ref(false)
 const databaseTypes = ref<any[] | null>(null)
-const connectionOptions = ref<any[] | null>(null)
-const tableOptions = ref<any[]>([])
 const templates = ref<Record<string, string>>({})
 const mqlEditor = ref<any>(null)
+const containerRef = ref<HTMLElement | null>(null)
+const paramsTableRef = ref<InstanceType<typeof ElTable>>()
+const parameterSelectRef = ref<InstanceType<typeof ElSelect>[]>([])
 
 // Template refs
 const form_ref = ref()
@@ -689,15 +690,13 @@ const open = (formData?: any) => {
 
   if (!originalFormData.id) {
     form.value = getInitData()
+    form_ref.value?.resetFields()
+
     edit()
   } else {
     formatData(originalFormData)
 
     const { connectionId, tableName } = originalFormData
-
-    // if (connectionId) {
-    //   getTableOptions(connectionId)
-    // }
 
     if (connectionId && tableName) {
       getFields()
@@ -706,12 +705,10 @@ const open = (formData?: any) => {
 
   getDatabaseTypes()
 
-  if (form_ref.value) {
-    nextTick(() => {
-      form_ref.value.clearValidate()
-      form_ref.value.$el.scrollTop = 0
-    })
-  }
+  nextTick(() => {
+    // form_ref.value?.clearValidate()
+    containerRef.value?.parentElement?.scrollTo({ top: 0 })
+  })
 }
 
 const save = async (type?: boolean) => {
@@ -905,7 +902,7 @@ const tabChanged = (tab: string) => {
   }
 }
 
-const apiTypeChanged = () => {
+const handleChangeApiType = () => {
   form.value.params = getDefaultParams(form.value.apiType)
 }
 
@@ -938,6 +935,7 @@ const addItem = (key: 'params' | 'where' | 'sort') => {
       lastItem.condition = 'and'
     }
   }
+
   form.value[key].push(cloneDeep(map[key]))
 }
 
@@ -956,6 +954,23 @@ const removeItem = (key: 'params' | 'where' | 'sort', index: number) => {
       data_type: removed.data_type,
     })
   }
+}
+
+const handleAddParameter = (index: number) => {
+  addItem('params')
+
+  nextTick(() => {
+    const input = paramsTableRef.value?.$el.querySelector(
+      `tbody tr:nth-child(${form.value.params.length}) td:first-child input`,
+    )
+    if (input) {
+      parameterSelectRef.value?.[index]?.blur()
+      nextTick(() => {
+        input.focus()
+        input.scrollIntoView({ behavior: 'smooth' })
+      })
+    }
+  })
 }
 
 const debugDisabled = computed(() => {
@@ -1278,7 +1293,7 @@ function onFieldSelected(field: Field) {
       </div>
     </template>
 
-    <div class="flex flex-column">
+    <div ref="containerRef" class="flex flex-column">
       <!-- 顶部 标题 Tab -->
       <div
         v-if="!inDialog"
@@ -1674,10 +1689,11 @@ function onFieldSelected(field: Field) {
             v-model="form.apiType"
             :options="apiTypeOptions"
             :disabled="!isEdit"
+            @change="handleChangeApiType"
           />
         </div>
 
-        <ElTable class="flex-1" :data="form.params">
+        <ElTable ref="paramsTableRef" class="flex-1" :data="form.params">
           <ElTableColumn
             :label="$t('packages_business_data_server_drawer_canshumingcheng')"
             prop="name"
@@ -1841,7 +1857,11 @@ function onFieldSelected(field: Field) {
                 :key="index"
                 class="flex align-items-center"
               >
-                <ElSelect v-model="item.fieldName" class="mr-4">
+                <ElSelect
+                  v-model="item.fieldName"
+                  class="mr-4"
+                  :placeholder="$t('public_select_field')"
+                >
                   <ElOption
                     v-for="opt in allFields"
                     :key="opt.id"
@@ -1857,13 +1877,35 @@ function onFieldSelected(field: Field) {
                     :label="op"
                   />
                 </ElSelect>
-                <ElSelect v-model="item.parameter" class="mr-4">
+                <ElSelect
+                  ref="parameterSelectRef"
+                  v-model="item.parameter"
+                  class="mr-4"
+                  :placeholder="$t('public_select_parameter')"
+                >
                   <ElOption
                     v-for="opt in parameterOptions"
                     :key="opt.name"
                     :value="opt.name"
                     :label="opt.name"
                   />
+                  <template #empty>
+                    <div>
+                      <el-empty class="p-0" :image-size="32">
+                        <template #description>
+                          <el-button
+                            size="small"
+                            @click="handleAddParameter(index)"
+                          >
+                            <template #icon>
+                              <i-mingcute:add-line />
+                            </template>
+                            {{ $t('public_add_parameter') }}
+                          </el-button>
+                        </template>
+                      </el-empty>
+                    </div>
+                  </template>
                 </ElSelect>
                 <ElSelect v-model="item.condition" class="mr-4">
                   <template v-for="condition in conditionOptions">
@@ -1936,7 +1978,11 @@ function onFieldSelected(field: Field) {
               :key="index"
               class="flex align-items-center gap-4"
             >
-              <ElSelect v-model="item.fieldName" class="flex-1">
+              <ElSelect
+                v-model="item.fieldName"
+                class="flex-1"
+                :placeholder="$t('public_select_field')"
+              >
                 <ElOption
                   v-for="opt in tempFields"
                   :key="opt.id"
