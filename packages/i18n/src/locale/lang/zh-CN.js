@@ -494,4 +494,13 @@ export default {
   public_remaining_days: '剩余天数',
   public_remaining_days_threshold: '剩余天数阈值',
   public_api_group: 'API 分组',
+  public_form_mode: '表单模式',
+  public_json_mode: 'JSON 模式',
+  public_format: '格式化',
+  public_add_condition: '添加条件',
+  public_add_parameter: '添加参数',
+  public_json_format_error: 'JSON 格式错误',
+  public_data_source: '数据来源',
+  public_asc: '升序',
+  public_desc: '降序',
 }

@@ -107,6 +107,7 @@ declare module 'vue' {
     ILucideTrash2: typeof import('~icons/lucide/trash2')['default']
     'IMingcute:addLine': typeof import('~icons/mingcute/add-line')['default']
     'IMingcute:arrowRightLine': typeof import('~icons/mingcute/arrow-right-line')['default']
+    'IMingcute:brushLine': typeof import('~icons/mingcute/brush-line')['default']
     'IMingcute:checkLine': typeof import('~icons/mingcute/check-line')['default']
     'IMingcute:closeLine': typeof import('~icons/mingcute/close-line')['default']
     'IMingcute:download2Line': typeof import('~icons/mingcute/download2-line')['default']

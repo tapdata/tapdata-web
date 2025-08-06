@@ -75,7 +75,7 @@ const tokens = computed(() => {
 </script>
 
 <template>
-  <div class="where-condition-display bg-light border rounded-xl">
+  <div class="where-condition-display bg-light rounded-xl">
     <span
       v-for="(token, index) in tokens"
       :key="index"
