@@ -1,40 +1,39 @@
-<template>
-  <div class="sort-condition-display">
-    <span class="bracket" :class="orders.length > 0 ? '' : 'empty-class'">{{ orders.length > 0 ? '(' : '-' }}</span>
-    <span
-        v-for="(order, index) in orders"
-        :key="index"
-        class="sort-item"
-    >
-      <span class="bracket">[</span>
-      <span class="field-name">{{ order.fieldName }}</span>
-      <span class="separator">, </span>
-      <span class="sort-type" :class="`sort-${order.type}`">{{ order.type }}</span>
-      <span class="bracket">]</span>
-      <span v-if="index < orders.length - 1" class="separator">, </span>
-    </span>
-    <span class="bracket" :class="orders.length > 0 ? '' : 'empty-class'">{{ orders.length > 0 ? ')' : '' }}</span>
-  </div>
-</template>
-
-<script setup>
-const props = defineProps({
+<script setup lang="ts">
+defineProps({
   orders: {
     type: Array,
-    default: () => []
-  }
+    default: () => [],
+  },
 })
 </script>
 
+<template>
+  <div class="sort-condition-display bg-light rounded-xl">
+    <span class="bracket" :class="orders.length > 0 ? '' : 'empty-class'">{{
+      orders.length > 0 ? '(' : '-'
+    }}</span>
+    <span v-for="(order, index) in orders" :key="index" class="sort-item">
+      <span class="bracket">[</span>
+      <span class="field-name">{{ order.fieldName }}</span>
+      <span class="separator">, </span>
+      <span class="sort-type" :class="`sort-${order.type}`">{{
+        order.type
+      }}</span>
+      <span class="bracket">]</span>
+      <span v-if="index < orders.length - 1" class="separator">, </span>
+    </span>
+    <span class="bracket" :class="orders.length > 0 ? '' : 'empty-class'">{{
+      orders.length > 0 ? ')' : ''
+    }}</span>
+  </div>
+</template>
+
 <style scoped>
 .sort-condition-display {
-  font-family: 'Courier New', monospace;
+  font-family: var(--code-font-family);
   font-size: 14px;
   line-height: 1.5;
   padding: 8px 12px;
-  background-color: #f8f9fa;
-  border-radius: 4px;
-  border: 1px solid #e9ecef;
   word-wrap: break-word;
 }
 
