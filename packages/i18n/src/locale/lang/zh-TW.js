@@ -499,4 +499,7 @@ export default {
   public_add_condition: '添加條件',
   public_add_parameter: '添加參數',
   public_json_format_error: 'JSON 格式錯誤',
+  public_data_source: '數據來源',
+  public_asc: '升序',
+  public_desc: '降序',
 }

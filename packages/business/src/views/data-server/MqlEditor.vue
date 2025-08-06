@@ -85,11 +85,6 @@ const mongoOperators = [
     detail: 'Joins query clauses with a logical AND.',
   },
   {
-    label: '$not',
-    kind: monaco.languages.CompletionItemKind.Operator,
-    detail: 'Inverts the effect of a query expression.',
-  },
-  {
     label: '$nor',
     kind: monaco.languages.CompletionItemKind.Operator,
     detail: 'Joins query clauses with a logical NOR.',
@@ -118,16 +113,6 @@ const mongoOperators = [
     kind: monaco.languages.CompletionItemKind.Operator,
     detail:
       'Selects documents where values match a specified regular expression.',
-  },
-  {
-    label: '$text',
-    kind: monaco.languages.CompletionItemKind.Operator,
-    detail: 'Performs text search.',
-  },
-  {
-    label: '$where',
-    kind: monaco.languages.CompletionItemKind.Operator,
-    detail: 'Matches documents that satisfy a JavaScript expression.',
   },
 
   // Array operators
@@ -326,7 +311,17 @@ const validateJSON = (jsonString) => {
   }
 
   try {
-    JSON.parse(jsonString)
+    const parsed = JSON.parse(jsonString)
+    if (typeof parsed !== 'object' || parsed === null) {
+      return {
+        isValid: false,
+        error: {
+          message: 'JSON must be an object or array',
+          line: 1,
+          column: 1,
+        },
+      }
+    }
     return { isValid: true, error: null }
   } catch (syntaxError) {
     return {

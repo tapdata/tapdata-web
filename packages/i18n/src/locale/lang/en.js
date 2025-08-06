@@ -509,4 +509,7 @@ export default {
   public_add_condition: 'Add Condition',
   public_add_parameter: 'Add Parameter',
   public_json_format_error: 'JSON Format Error',
+  public_data_source: 'Data Source',
+  public_asc: 'ASC',
+  public_desc: 'DESC',
 }

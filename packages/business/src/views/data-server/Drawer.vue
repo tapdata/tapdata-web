@@ -3,8 +3,8 @@ import { EditPen, InfoFilled } from '@element-plus/icons-vue'
 import {
   createApiModule,
   fetchApiServerToken,
+  fetchConnections,
   fetchDatabaseTypes,
-  listAllConnections,
   metadataInstancesApi,
   roleApi,
   updateApiModule,
@@ -19,11 +19,12 @@ import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import Drawer from '@tap/component/src/Drawer.vue'
 import { EditOutlined } from '@tap/component/src/icon'
 import { Modal } from '@tap/component/src/modal'
+import InfiniteSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 
 import { useI18n } from '@tap/i18n'
 import { uid } from '@tap/shared'
 import axios from 'axios'
-import { cloneDeep, isEqual } from 'lodash-es'
+import { cloneDeep, isEqual, merge } from 'lodash-es'
 import {
   computed,
   inject,
@@ -33,6 +34,7 @@ import {
   watch,
   type Component,
 } from 'vue'
+import { DatabaseIcon } from '../../components/DatabaseIcon'
 import ListSelect from '../api-application/ListSelect.vue'
 import MqlEditor from './MqlEditor.vue'
 import getTemplate from './template'
@@ -110,6 +112,16 @@ const apiTypeMap = {
   defaultApi: t('packages_business_data_server_drawer_morenchaxun'),
   customerQuery: t('packages_business_data_server_drawer_zidingyichaxun'),
 }
+const apiTypeOptions = [
+  {
+    label: t('packages_business_data_server_drawer_morenchaxun'),
+    value: 'defaultApi',
+  },
+  {
+    label: t('packages_business_data_server_drawer_zidingyichaxun'),
+    value: 'customerQuery',
+  },
+]
 
 interface Props {
   host?: string
@@ -173,6 +185,9 @@ const getInitData = () => {
     appLabel: '',
     limit: 0,
     pathSetting: [],
+    connectionType: '',
+    connectionId: '',
+    tableName: '',
 
     // paths
     fields: [],
@@ -204,7 +219,7 @@ const intervalId = ref(0)
 const allFields = ref([])
 const tempFields = ref<Field[]>([])
 const fieldLoading = ref(false)
-const databaseTypes = ref<string[] | null>(null)
+const databaseTypes = ref<any[] | null>(null)
 const connectionOptions = ref<any[] | null>(null)
 const tableOptions = ref<any[]>([])
 const templates = ref<Record<string, string>>({})
@@ -256,28 +271,28 @@ const rules = {
     {
       required: true,
       message: t('packages_business_data_server_drawer_selectPermissions'),
-      trigger: 'blur',
+      trigger: 'change',
     },
   ],
   connectionType: [
     {
       required: true,
       message: t('packages_business_data_server_drawer_qingxuanzelianjie'),
-      trigger: 'blur',
+      trigger: 'change',
     },
   ],
   connectionId: [
     {
       required: true,
       message: t('public_input_placeholder') + t('public_connection'),
-      trigger: 'blur',
+      trigger: 'change',
     },
   ],
   tableName: [
     {
       required: true,
       message: t('packages_business_data_server_drawer_qingxuanzeduixiang'),
-      trigger: 'blur',
+      trigger: 'change',
     },
   ],
   param: [
@@ -396,7 +411,7 @@ const genFormData = (formData: any = {}): Record<string, any> => {
     formData.apiType === 'customerApi'
       ? 'customerQuery'
       : formData.apiType || 'defaultApi'
-  const pathConfig = cloneDeep(formData?.paths?.[0] || {})
+  const pathConfig = formData?.paths?.[0] || {}
   const params =
     pathConfig.params?.filter((t: any) => t.name !== 'sort') ||
     getDefaultParams(formData.apiType)
@@ -454,7 +469,7 @@ const genFormData = (formData: any = {}): Record<string, any> => {
     appValue,
     appLabel,
     limit,
-    pathSetting: cloneDeep(pathSetting),
+    pathSetting,
 
     // paths
     method,
@@ -479,32 +494,38 @@ const formatData = (formData: any = {}) => {
   }
 }
 
+const fieldTableData = computed(() => {
+  return isEdit.value ? allFields.value : form.value.fields
+})
+
+const AllowedTypes = [
+  'Doris',
+  'MongoDB',
+  'Mysql',
+  'Oracle',
+  'PostgreSQL',
+  'SQL Server',
+  'Tidb',
+]
+
 const getDatabaseTypes = async () => {
-  databaseTypes.value = null
   const data = await fetchDatabaseTypes().catch(() => {
-    databaseTypes.value = []
     return []
   })
 
   databaseTypes.value =
     data
-      .filter((it: any) =>
-        [
-          'mysql',
-          'sqlserver',
-          'oracle',
-          'mongodb',
-          'postgres',
-          'tidb',
-          'doris',
-        ].includes(it.pdkId),
-      )
-      .map((it: any) => it.name) || []
-  await getConnectionOptions()
+      .filter((it: any) => AllowedTypes.includes(it.name))
+      .map((it: any) => {
+        return {
+          name: it.name,
+          pdkHash: it.pdkHash,
+        }
+      }) || []
 }
 
-const getConnectionOptions = async () => {
-  const filter = {
+const getConnectionOptions = async (filter: any) => {
+  const _filter = {
     fields: {
       id: true,
       name: true,
@@ -517,7 +538,7 @@ const getConnectionOptions = async () => {
       database_type: form.value.connectionType
         ? form.value.connectionType
         : {
-            in: databaseTypes.value,
+            in: AllowedTypes,
           },
       connection_type:
         import.meta.env.VUE_APP_MODE !== 'msa'
@@ -528,29 +549,87 @@ const getConnectionOptions = async () => {
     },
   }
 
-  connectionOptions.value = null
-  const data = await listAllConnections(filter).catch(() => {
-    connectionOptions.value = []
-    return []
-  })
+  const result = await fetchConnections(merge(filter, _filter))
 
-  connectionOptions.value =
-    data.map((it: any) => ({
+  return {
+    items: result.items.map((it: any) => ({
       name: it.name,
       type: it.database_type,
       id: it.id,
-    })) || []
+    })),
+    total: result.total,
+  }
 }
 
-const getTableOptions = async (id: string) => {
-  tableOptions.value = []
-  const data = await metadataInstancesApi
-    .getTablesValue({ connectionId: id })
-    .catch(() => {
-      tableOptions.value = []
-      return []
-    })
-  tableOptions.value = data || []
+const handleChangeConnectionType = () => {
+  form.value.connectionName = ''
+  form.value.connectionId = ''
+  form.value.tableName = ''
+  form.value.fields = []
+  allFields.value = []
+
+  setTimeout(() => {
+    form_ref.value?.clearValidate('connectionType')
+    form_ref.value?.clearValidate('connectionId')
+    form_ref.value?.clearValidate('tableName')
+  }, 100)
+}
+
+const handleChangeConnection = (connection: any) => {
+  form.value.connectionType = connection.type
+  form.value.connectionId = connection.id
+  form.value.connectionName = connection.name
+  form.value.tableName = ''
+  form.value.fields = []
+  allFields.value = []
+
+  form_ref.value?.clearValidate('connectionType')
+  form_ref.value?.clearValidate('connectionId')
+  form_ref.value?.clearValidate('tableName')
+}
+
+const getTableOptions = async (filter: any) => {
+  const { connectionId } = filter
+  if (!connectionId) {
+    return { items: [], total: 0 }
+  }
+
+  const newFilter = merge(filter, {
+    fields: {
+      original_name: true,
+    },
+    order: ['original_name ASC'],
+    where: {
+      meta_type: {
+        in: ['collection', 'table', 'view'], //,
+      },
+      is_deleted: false,
+      sourceType: 'SOURCE',
+      'source.id': connectionId,
+    },
+  })
+
+  if (newFilter.where?.name) {
+    newFilter.where.original_name = filter.where?.name
+    delete newFilter.where.value
+  } else {
+    newFilter.where.original_name = {
+      // regexp: '^[^\\s]+$'
+      neq: '',
+    }
+  }
+
+  const data = await metadataInstancesApi.get({
+    filter: JSON.stringify(newFilter),
+  })
+
+  return {
+    items: data.items.map((it: any) => ({
+      name: it.original_name,
+      ...it,
+    })),
+    total: data.total,
+  }
 }
 
 const getFields = async () => {
@@ -616,9 +695,10 @@ const open = (formData?: any) => {
 
     const { connectionId, tableName } = originalFormData
 
-    if (connectionId) {
-      getTableOptions(connectionId)
-    }
+    // if (connectionId) {
+    //   getTableOptions(connectionId)
+    // }
+
     if (connectionId && tableName) {
       getFields()
     }
@@ -689,10 +769,8 @@ const save = async (type?: boolean) => {
     emit('update:loading', true)
 
     try {
-      //@ts-ignore
       const pathSettingList: any[] = []
-      //@ts-ignore
-      urlList.value.forEach((item) => {
+      urlList.value.forEach((item: any) => {
         if (item.type && item.canEdit) {
           pathSettingList.push({
             type: item.type,
@@ -748,14 +826,14 @@ const save = async (type?: boolean) => {
       }
 
       if (!type && connectionId && tableName) {
-        await loadAllFields()
+        const fieldList = await getAllFields()
 
         const map = fields.reduce((acc: any, field: any) => {
           acc[field.id] = field
           return acc
         }, {})
 
-        formData.fields = allFields.value.map((f: any) => {
+        formData.fields = fieldList.map((f: any) => {
           return {
             ...f,
             field_alias: map[f.id]?.field_alias || '',
@@ -831,32 +909,7 @@ const apiTypeChanged = () => {
   form.value.params = getDefaultParams(form.value.apiType)
 }
 
-const connectionTypeChanged = () => {
-  getConnectionOptions()
-  form.value.connectionName = ''
-  form.value.tableName = ''
-  form.value.fields = []
-  allFields.value = []
-  form_ref.value?.clearValidate('connectionType')
-}
-
-const connectionNameChanged = () => {
-  // 选择连接名时自动填充连接类型
-  const connection = connectionOptions.value?.find(
-    (it) => it.name === form.value.connectionName,
-  )
-  if (connection) {
-    form.value.connectionType = connection.type
-    form.value.connectionId = connection.id
-    form.value.tableName = ''
-    form.value.fields = []
-    allFields.value = []
-    getTableOptions(connection.id)
-    form_ref.value?.clearValidate('connectionId')
-  }
-}
-
-const tableChanged = () => {
+const handleChangeTable = () => {
   form.value.fields = []
   allFields.value = []
   getFields()
@@ -1080,7 +1133,7 @@ const getRoles = async () => {
   roles.value = data?.items || []
 }
 
-const loadAllFields = async () => {
+const getAllFields = async () => {
   const filter = {
     where: {
       'source.id': form.value.connectionId,
@@ -1093,7 +1146,7 @@ const loadAllFields = async () => {
     filter: JSON.stringify(filter),
   })
   const allFieldsOld = allFields.value
-  allFields.value =
+  return (
     data?.items?.[0]?.fields?.map((it: any) => {
       const fItem = allFieldsOld.find((f: any) => f.id === it.id)
       return {
@@ -1105,6 +1158,7 @@ const loadAllFields = async () => {
         comment: '',
       }
     }) || []
+  )
 }
 
 const handleBeforeClose = async (done: () => void) => {
@@ -1264,6 +1318,7 @@ function onFieldSelected(field: Field) {
         hide-required-asterisk
         class="data-server__form overflow-auto flex-1"
         label-position="top"
+        scroll-to-error
         :model="form"
         :rules="rules"
       >
@@ -1283,28 +1338,12 @@ function onFieldSelected(field: Field) {
                   $t('daas_data_server_list_fuwumingcheng')
                 "
               />
-              <!-- <div v-else class="fw-sub fs-7 font-color-normal">
-                {{ data.name }}
-              </div> -->
             </ElFormItem>
-            <!-- <template v-if="tab === 'form' && data.status !== 'active'">
-              <div v-if="isEdit" class="ml-4">
-                <ElButton v-if="data.id" @click="isEdit = false">{{
-                  $t('public_button_cancel')
-                }}</ElButton>
-                <ElButton type="primary" @click="save()">{{
-                  $t('public_button_save')
-                }}</ElButton>
-              </div>
-              <ElButton v-else class="ml-4" type="primary" @click="edit">{{
-                $t('public_button_edit')
-              }}</ElButton>
-            </template> -->
           </div>
           <div class="flex-1 mt-3 mb-3">
             <ElFormItem
               class="flex-1 form-item-name"
-              prop="name"
+              prop="description"
               :label="$t('public_description')"
             >
               <ElInput
@@ -1355,6 +1394,7 @@ function onFieldSelected(field: Field) {
             </ElFormItem>
           </div>
         </template>
+
         <template v-else>
           <div class="flex gap-4">
             <ElFormItem
@@ -1418,125 +1458,89 @@ function onFieldSelected(field: Field) {
           </ElFormItem>
         </template>
 
-        <!-- 基础信息 -->
-        <ul
-          v-if="tab === 'form'"
-          class="flex flex-wrap bg-subtle p-2 rounded-lg"
-        >
-          <li class="data-server-form-base__item">
-            <ElFormItem
-              :label="$t('packages_business_data_server_drawer_caozuoleixing')"
-              label-width="86px"
+        <div class="fs-7 data-server-panel__title mt-4 mb-3">
+          {{ $t('public_data_source') }}
+        </div>
+
+        <div class="flex gap-4">
+          <ElFormItem
+            style="flex: 0.5"
+            :label="$t('public_connection_type')"
+            prop="connectionType"
+          >
+            <ElSelect
+              v-model="form.connectionType"
+              class="w-100"
+              filterable
+              :disabled="!isEdit"
+              :loading="!databaseTypes"
+              @change="handleChangeConnectionType"
             >
-              <div class="text">{{ $t('public_button_inquire') }}</div>
-            </ElFormItem>
-          </li>
-          <li class="data-server-form-base__item">
-            <ElFormItem
-              :label="$t('packages_business_data_server_drawer_fabujiedian')"
-              label-width="86px"
-            >
-              <div class="text">{{ $t('public_select_option_all') }}</div>
-            </ElFormItem>
-          </li>
-          <li class="data-server-form-base__item">
-            <ElFormItem
-              :label="$t('packages_business_data_server_drawer_jiekouleixing')"
-              label-width="86px"
-            >
-              <ElSelect
-                v-if="isEdit"
-                v-model="form.apiType"
-                class="w-100"
-                @change="apiTypeChanged"
+              <ElOption
+                v-for="item in databaseTypes"
+                :key="item"
+                :value="item.name"
+                :label="item.name"
               >
-                <ElOption
-                  v-for="(label, value) in apiTypeMap"
-                  :key="value"
-                  :value="value"
-                  :label="label"
-                />
-              </ElSelect>
-              <div v-else class="text">{{ apiTypeMap[form.apiType] }}</div>
-            </ElFormItem>
-          </li>
-          <li class="data-server-form-base__item">
-            <ElFormItem
-              :label="$t('public_connection_type')"
-              label-width="86px"
-              prop="connectionType"
+                <div class="flex align-items-center gap-2">
+                  <DatabaseIcon :pdk-hash="item.pdkHash" :size="16" />
+                  <span>{{ item.name }}</span>
+                </div>
+              </ElOption>
+            </ElSelect>
+          </ElFormItem>
+          <ElFormItem
+            class="flex-1"
+            :label="$t('public_connection_name')"
+            prop="connectionId"
+          >
+            <InfiniteSelect
+              v-model="form.connectionId"
+              :disabled="!isEdit"
+              :method="getConnectionOptions"
+              :params="{
+                connectionType: form.connectionType,
+              }"
+              :current-label="form.connectionName"
+              lazy
+              item-query="name"
+              item-value="id"
+              item-label="name"
+              filterable
+              @option-select="handleChangeConnection"
+            />
+          </ElFormItem>
+          <ElFormItem
+            class="flex-1"
+            :label="$t('public_table_name')"
+            prop="tableName"
+          >
+            <InfiniteSelect
+              v-model="form.tableName"
+              :disabled="!isEdit"
+              :method="getTableOptions"
+              :params="{
+                connectionId: form.connectionId,
+              }"
+              item-type="string"
+              item-query="name"
+              item-value="name"
+              item-label="name"
+              filterable
+              @option-select="handleChangeTable"
             >
-              <ElSelect
-                v-if="isEdit"
-                v-model="form.connectionType"
-                class="w-100"
-                filterable
-                :loading="!databaseTypes"
-                @change="connectionTypeChanged"
-              >
-                <ElOption
-                  v-for="item in databaseTypes"
-                  :key="item"
-                  :value="item"
-                  :label="item"
-                />
-              </ElSelect>
-              <div v-else class="text">{{ form.connectionType }}</div>
-            </ElFormItem>
-          </li>
-          <li class="data-server-form-base__item">
-            <ElFormItem
-              :label="$t('public_connection_name')"
-              label-width="86px"
-              prop="connectionId"
-            >
-              <ElSelect
-                v-if="isEdit"
-                v-model="form.connectionName"
-                class="w-100"
-                filterable
-                :loading="!connectionOptions"
-                @change="connectionNameChanged"
-              >
-                <ElOption
-                  v-for="item in connectionOptions"
-                  :key="item.id"
-                  :value="item.name"
-                  :label="item.name"
-                />
-              </ElSelect>
-              <div v-else class="text">{{ form.connectionName }}</div>
-            </ElFormItem>
-          </li>
-          <li class="data-server-form-base__item">
-            <ElFormItem
-              :label="$t('object_list_name')"
-              label-width="86px"
-              prop="tableName"
-            >
-              <ElSelect
-                v-if="isEdit"
-                v-model="form.tableName"
-                class="w-100"
-                filterable
-                :loading="!tableOptions"
-                @change="tableChanged"
-              >
-                <ElOption
-                  v-for="item in tableOptions"
-                  :key="item.tableName"
-                  :value="item.tableName"
-                >
-                  <span>{{ item.tableName }}</span>
-                  <span v-if="item.tableComment" class="font-color-sslight">{{
-                    `(${item.tableComment})`
+              <template #option="{ item }">
+                <div class="flex align-items-center gap-2">
+                  <span>{{ item.name }}</span>
+                  <span v-if="item.comment" class="font-color-sslight">{{
+                    `(${item.comment})`
                   }}</span>
-                </ElOption>
-              </ElSelect>
-              <div v-else class="text">{{ form.tableName }}</div>
-            </ElFormItem>
-          </li>
-        </ul>
+                </div>
+              </template>
+            </InfiniteSelect>
+          </ElFormItem>
+        </div>
+
         <template v-if="tab === 'form'">
           <!-- 访问路径设置-->
           <section v-if="isEdit">
@@ -1546,7 +1550,7 @@ function onFieldSelected(field: Field) {
 
             <div class="flex gap-4">
               <ElFormItem
-                class="flex-1"
+                style="flex: 0.5"
                 :label="$t('public_version')"
                 prop="apiVersion"
                 :rules="rules.apiVersion"
@@ -1554,14 +1558,12 @@ function onFieldSelected(field: Field) {
                 <ElInput v-model="form.apiVersion" :disabled="!isEdit" />
               </ElFormItem>
               <ElFormItem
-                class="flex-1"
+                style="flex: 0.5"
                 :label="$t('packages_business_data_server_drawer_prefix')"
                 prop="prefix"
               >
                 <ElInput v-model="form.prefix" :disabled="!isEdit" />
               </ElFormItem>
-            </div>
-            <div class="flex gap-4">
               <ElFormItem
                 class="flex-1"
                 :label="$t('packages_business_data_server_drawer_base_path')"
@@ -1569,29 +1571,27 @@ function onFieldSelected(field: Field) {
               >
                 <ElInput v-model="form.basePath" :disabled="!isEdit" />
               </ElFormItem>
-              <ElFormItem v-if="isHa" class="flex-1" prop="limit">
-                <template #label>
-                  <el-text>
-                    <span>{{
-                      $t('packages_business_request_speed_limit')
-                    }}</span>
-                    <el-tooltip
-                      :content="$t('packages_business_request_speed_limit_tip')"
-                      placement="top"
-                      ><el-icon color="#909399" class="ml-1"
-                        ><InfoFilled
-                      /></el-icon>
-                    </el-tooltip>
-                  </el-text>
-                </template>
-                <el-input-number
-                  v-model="form.limit"
-                  :min="0"
-                  :disabled="!isEdit"
-                  :controls="false"
-                />
-              </ElFormItem>
             </div>
+            <ElFormItem v-if="isHa" class="flex-1" prop="limit">
+              <template #label>
+                <el-text>
+                  <span>{{ $t('packages_business_request_speed_limit') }}</span>
+                  <el-tooltip
+                    :content="$t('packages_business_request_speed_limit_tip')"
+                    placement="top"
+                    ><el-icon color="#909399" class="ml-1"
+                      ><InfoFilled
+                    /></el-icon>
+                  </el-tooltip>
+                </el-text>
+              </template>
+              <el-input-number
+                v-model="form.limit"
+                :min="0"
+                :disabled="!isEdit"
+                :controls="false"
+              />
+            </ElFormItem>
           </section>
           <!--服务访问 -->
           <div
@@ -1607,16 +1607,14 @@ function onFieldSelected(field: Field) {
               }}
             </el-tag>
           </div>
-          <ul class="data-server-path flex flex-column gap-2">
+          <ul class="data-server-path flex flex-column gap-3 pb-3">
             <li
               v-for="(item, index) in urlList"
               :key="item.method"
-              class="data-server-path__item bg-subtle rounded-4 pl-1 py-1"
+              class="data-server-path__item rounded-lg px-2 py-2"
+              :class="`method-item-${item.method.toLowerCase()}`"
             >
-              <div
-                class="data-server-path__method rounded-4 mr-4"
-                :class="`method--${item.method}`"
-              >
+              <div class="data-server-path__method fs-8 mr-4">
                 {{ item.method }}
               </div>
               <div v-if="!isEdit" class="data-server-path__value line-height">
@@ -1653,7 +1651,6 @@ function onFieldSelected(field: Field) {
                     text
                     size="small"
                     class="ml-1"
-                    type="primary"
                     @click="startEdit(index, item.last)"
                   >
                     <template #icon>
@@ -1667,13 +1664,19 @@ function onFieldSelected(field: Field) {
         </template>
 
         <!-- 輸入参数 -->
-        <div class="data-server-panel__title mt-4 mb-3">
-          <div class="flex align-items-center">
-            <span>{{
-              $t('packages_business_data_server_drawer_shurucanshu')
-            }}</span>
-          </div>
+        <div
+          class="data-server-panel__title mt-4 mb-3 justify-content-start gap-3"
+        >
+          <span>{{
+            $t('packages_business_data_server_drawer_shurucanshu')
+          }}</span>
+          <el-segmented
+            v-model="form.apiType"
+            :options="apiTypeOptions"
+            :disabled="!isEdit"
+          />
         </div>
+
         <ElTable class="flex-1" :data="form.params">
           <ElTableColumn
             :label="$t('packages_business_data_server_drawer_canshumingcheng')"
@@ -1778,6 +1781,7 @@ function onFieldSelected(field: Field) {
             </template>
           </ElTableColumn>
         </ElTable>
+
         <div v-if="isEdit && form.apiType === 'customerQuery'" class="mt-2">
           <el-button
             class="w-100 border-dashed"
@@ -1798,40 +1802,37 @@ function onFieldSelected(field: Field) {
         >
           <!-- 筛选条件 -->
           <div
-            class="data-server-panel__title mt-4 mb-3 align-items-center justify-content-start gap-2"
+            class="data-server-panel__title mt-7 mb-3 align-items-center justify-content-start gap-3"
           >
             <span>{{
               $t('packages_business_data_server_drawer_shaixuantiaojian')
             }}</span>
 
-            <template v-if="isEdit">
-              <el-segmented
-                v-model="form.fullCustomQuery"
-                size="small"
-                class="fs-8"
-                :options="[
-                  {
-                    label: $t('public_form_mode'),
-                    value: false,
-                  },
-                  {
-                    label: $t('public_json_mode'),
-                    value: true,
-                  },
-                ]"
-              />
+            <el-segmented
+              v-model="form.fullCustomQuery"
+              :disabled="!isEdit"
+              :options="[
+                {
+                  label: $t('public_form_mode'),
+                  value: false,
+                },
+                {
+                  label: $t('public_json_mode'),
+                  value: true,
+                },
+              ]"
+            />
 
-              <el-button
-                v-if="form.fullCustomQuery"
-                text
-                size="small"
-                class="ml-auto"
-                @click="handleFormat"
-              >
-                <el-icon class="mr-1"><i-mingcute:brush-line /></el-icon>
-                {{ $t('public_format') }}
-              </el-button>
-            </template>
+            <el-button
+              v-if="form.fullCustomQuery && isEdit"
+              text
+              size="small"
+              class="ml-auto"
+              @click="handleFormat"
+            >
+              <el-icon class="mr-1"><i-mingcute:brush-line /></el-icon>
+              {{ $t('public_format') }}
+            </el-button>
           </div>
           <template v-if="isEdit">
             <ul v-if="!form.fullCustomQuery" class="flex flex-column gap-2">
@@ -1840,7 +1841,7 @@ function onFieldSelected(field: Field) {
                 :key="index"
                 class="flex align-items-center"
               >
-                <ElSelect v-model="form.where[index].fieldName" class="mr-4">
+                <ElSelect v-model="item.fieldName" class="mr-4">
                   <ElOption
                     v-for="opt in allFields"
                     :key="opt.id"
@@ -1848,15 +1849,15 @@ function onFieldSelected(field: Field) {
                     :label="opt.field_name"
                   />
                 </ElSelect>
-                <ElSelect v-model="form.where[index].operator" class="mr-4">
+                <ElSelect v-model="item.operator" class="mr-4">
                   <ElOption
-                    v-for="item in operatorOptions"
-                    :key="item"
-                    :value="item"
-                    :label="item"
+                    v-for="op in operatorOptions"
+                    :key="op"
+                    :value="op"
+                    :label="op"
                   />
                 </ElSelect>
-                <ElSelect v-model="form.where[index].parameter" class="mr-4">
+                <ElSelect v-model="item.parameter" class="mr-4">
                   <ElOption
                     v-for="opt in parameterOptions"
                     :key="opt.name"
@@ -1864,7 +1865,7 @@ function onFieldSelected(field: Field) {
                     :label="opt.name"
                   />
                 </ElSelect>
-                <ElSelect v-model="form.where[index].condition" class="mr-4">
+                <ElSelect v-model="item.condition" class="mr-4">
                   <template v-for="condition in conditionOptions">
                     <ElOption
                       v-if="
@@ -1922,7 +1923,7 @@ function onFieldSelected(field: Field) {
           </template>
 
           <!-- 排列条件 -->
-          <div class="data-server-panel__title mt-4 mb-3">
+          <div class="data-server-panel__title mt-7 mb-3">
             <div class="flex align-items-center">
               <span>{{
                 $t('packages_business_data_server_drawer_pailietiaojian')
@@ -1933,9 +1934,9 @@ function onFieldSelected(field: Field) {
             <li
               v-for="(item, index) in form.sort"
               :key="index"
-              class="flex align-items-center"
+              class="flex align-items-center gap-4"
             >
-              <ElSelect v-model="item.fieldName" class="mr-4">
+              <ElSelect v-model="item.fieldName" class="flex-1">
                 <ElOption
                   v-for="opt in tempFields"
                   :key="opt.id"
@@ -1945,10 +1946,16 @@ function onFieldSelected(field: Field) {
                   @click="onFieldSelected(opt)"
                 />
               </ElSelect>
-              <ElSelect v-model="item.type" class="mr-4">
-                <ElOption value="asc" label="ASC" />
-                <ElOption value="desc" label="DESC" />
-              </ElSelect>
+
+              <el-segmented
+                v-model="item.type"
+                style="flex: 0.5"
+                :options="[
+                  { label: $t('public_asc'), value: 'asc' },
+                  { label: $t('public_desc'), value: 'desc' },
+                ]"
+              />
+
               <el-button
                 class="flex-shrink-0"
                 text
@@ -1960,7 +1967,7 @@ function onFieldSelected(field: Field) {
                 </template>
               </el-button>
             </li>
-            <li v-if="tempFields.length > 0">
+            <li>
               <el-button
                 class="w-100 border-dashed"
                 size="small"
@@ -1978,12 +1985,12 @@ function onFieldSelected(field: Field) {
 
         <!-- 输出结果 -->
         <template v-if="tab === 'form'">
-          <div class="data-server-panel__title mt-4 mb-3">
+          <div class="data-server-panel__title mt-7 mb-3">
             {{ $t('packages_business_data_server_drawer_shuchujieguo') }}
           </div>
           <ElTable
             ref="fieldTable"
-            :data="isEdit ? allFields : form.fields"
+            :data="fieldTableData"
             :loading="fieldLoading"
             @selection-change="fieldsChanged"
           >
@@ -2047,6 +2054,7 @@ function onFieldSelected(field: Field) {
             </ElButton>
           </div>
         </template>
+
         <template v-if="tab === 'debug'">
           <div class="data-server-panel__title mt-4 mb-3">
             {{ $t('packages_business_data_server_drawer_fanhuijieguo') }}
@@ -2187,31 +2195,46 @@ function onFieldSelected(field: Field) {
   display: flex;
   align-items: center;
   padding: 8px 0;
-  font-family:
-    PingFangSC-Regular,
-    PingFang SC;
+}
+
+.method-item-post {
+  color: oklch(44.8% 0.119 151.328);
+  border: 1px solid oklch(92.5% 0.084 155.995);
+  background-color: oklch(98.2% 0.018 155.826);
+
+  .data-server-path__method {
+    background-color: oklch(62.7% 0.194 149.214);
+  }
+}
+
+.method-item-get {
+  color: oklch(42.4% 0.199 265.638);
+  border: 1px solid oklch(88.2% 0.059 254.128);
+  background: oklch(97% 0.014 254.604);
+
+  .data-server-path__method {
+    background-color: oklch(54.6% 0.245 262.881);
+  }
+}
+
+.method-item-token {
+  color: oklch(47% 0.157 37.304);
+  border: 1px solid oklch(90.1% 0.076 70.697);
+  background: oklch(98% 0.016 73.684);
+
+  .data-server-path__method {
+    background-color: oklch(64.6% 0.222 41.116);
+  }
 }
 
 .data-server-path__method {
   margin-right: 40px;
-  width: 62px;
-  height: 28px;
-  line-height: 28px;
+  width: 60px;
+  line-height: 22px;
   text-align: center;
-  border-radius: 2px;
-  color: var(--text-white);
-
-  &.method--POST {
-    background: #478c6c;
-  }
-
-  &.method--GET {
-    background: #09819c;
-  }
-
-  &.method--TOKEN {
-    background: #f2994b;
-  }
+  border-radius: 6px;
+  font-weight: 500;
+  color: #fff;
 }
 
 .data-server-debug__url {
