@@ -312,13 +312,20 @@ export default {
         .then(data => {
           let items = data?.items || []
           let treeData = this.formatCatalog(items)
-          const username = Cookie.get('username')
-          const email = Cookie.get('email')
-          treeData?.forEach(item => {
-            if (item.createUser === username || item.createUser === email) {
+
+          if (this.isDaas) {
+            const username = Cookie.get('username')
+            const email = Cookie.get('email')
+            treeData?.forEach(item => {
+              if (item.createUser === username || item.createUser === email) {
+                this.$set(this.directoryMap, item.item_type[0], item)
+              }
+            })
+          } else {
+            treeData?.forEach(item => {
               this.$set(this.directoryMap, item.item_type[0], item)
-            }
-          })
+            })
+          }
         })
         .finally(() => {
           this.loadingDirectory = false
