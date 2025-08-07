@@ -54,7 +54,7 @@
                       <span :class="['ml-1']">{{ detail.value }}</span>
                     </div>
                   </div>
-                  <div style="height: 80px; width: 80px">
+                  <div style="height: 180px; width: 180px">
                     <Chart ref="lineChart" type="pie" :extend="getPieOption(index)"></Chart>
                   </div>
                 </div>
