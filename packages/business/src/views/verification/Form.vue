@@ -252,17 +252,6 @@
                 </ElSelect>
               </ElFormItem>
 
-              <ElFormItem v-if="!isCountOrHash" class="form-item">
-                <template #label>
-                  <span>{{ $t('packages_business_ignoreTimePrecision') }}</span>
-                  <el-tooltip effect="dark" placement="top" :content="$t('packages_business_ignoreTimePrecision_tip')">
-                    <i class="el-tooltip el-icon-info" style="color: #909399; font-size: 14px"></i>
-                  </el-tooltip>
-                  <span>:</span>
-                </template>
-                <ElSwitch v-model="form.ignoreTimePrecision"></ElSwitch>
-              </ElFormItem>
-
               <template v-if="form.inspectMethod === 'cdcCount'">
                 <ElFormItem class="setting-item">
                   <label class="item-label">{{ $t('packages_business_verification_create_window_duration') }}</label>
