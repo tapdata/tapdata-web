@@ -27,10 +27,6 @@ export const MergeTableTree = observer(
         const path = pathArr.join('.children.')
         currentPath.value = path
 
-        form.setFieldState(`mergeProperties.${path}.arrayKeys`, {
-          display: 'hidden'
-        })
-
         if (pathArr.length === 1) {
           form.setFieldState(`mergeProperties.${path}.targetPath`, {
             display: 'hidden'
@@ -234,20 +230,22 @@ export const MergeTableTree = observer(
 
           // 监听 arrayKeys 的变化
           const field = form.query(`mergeProperties.${selfPath}.arrayKeys`).take()
-          field.setDisplay(keysValue.length ? 'hidden' : 'visible')
-          field.setComponentProps({
-            onChange: () => {
-              updateWarningState(selfId, selfPath)
+
+          if (field) {
+            field.setComponentProps({
+              onChange: () => {
+                updateWarningState(selfId, selfPath)
+              }
+            })
+
+            const arrayKeysValue = form.getValuesIn(`mergeProperties.${selfPath}.arrayKeys`)
+            if (!arrayKeysValue?.length) {
+              form.setValuesIn(`mergeProperties.${selfPath}.arrayKeys`, keysValue)
             }
-          })
 
-          const arrayKeysValue = form.getValuesIn(`mergeProperties.${selfPath}.arrayKeys`)
-          if (!arrayKeysValue?.length) {
-            form.setValuesIn(`mergeProperties.${selfPath}.arrayKeys`, keysValue)
+            // 初始化警告状态
+            updateWarningState(selfId, selfPath)
           }
-
-          // 初始化警告状态
-          updateWarningState(selfId, selfPath)
         })
 
         if (pathArr.length < 2) return
