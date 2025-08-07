@@ -32,7 +32,7 @@
     </ElRow>
 
     <ElRow type="flex" :gutter="16" class="min-h-0">
-      <ElCol :span="18">
+      <ElCol :span="24">
         <!--概览	-->
         <div class="bg-white rounded-xl p-4 shadow-sm">
           <div class="main-title mb-4">{{ $t('workbench_overview') }}</div>
@@ -63,7 +63,7 @@
           </div>
         </div>
       </ElCol>
-      <ElCol :span="6">
+      <!-- <ElCol :span="6">
         <div class="bg-white rounded-xl p-4 shadow-sm mh-100 flex flex-column">
           <div class="aside-title mb-4">{{ $t('workbench_notice') }}</div>
           <div class="notice-list flex-grow-1 min-h-0 overflow-y-auto">
@@ -89,7 +89,7 @@
             </ul>
           </div>
         </div>
-      </ElCol>
+      </ElCol> -->
     </ElRow>
 
     <!-- 版本升级弹窗-->
