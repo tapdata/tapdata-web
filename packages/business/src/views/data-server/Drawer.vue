@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { EditPen, InfoFilled } from '@element-plus/icons-vue'
-import WhereConditionDisplay from '@tap/component/src/api-server/WhereConditionDisplay.vue'
-import SortConditionDisplay from '@tap/component/src/api-server/SortConditionDisplay.vue'
 import {
   createApiModule,
   fetchApiServerToken,
