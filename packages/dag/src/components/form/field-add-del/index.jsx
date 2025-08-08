@@ -157,7 +157,7 @@ export const FieldAddDel = connect(
                   draggable
                   allow-drag={this.checkAllowDrag}
                   allow-drop={this.checkAllowDrop}
-                  vOn:node-drop={this.handleSaveDrop}
+                  onNodeDrop={this.handleSaveDrop}
                   default-expand-all={true}
                   expand-on-click-node={false}
                   class="field-processor-tree"

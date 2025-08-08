@@ -18,6 +18,9 @@ catalogs:
     '@figmania/webcomponent':
       specifier: ^2.3.12
       version: 2.4.0
+    '@formily/element-plus':
+      specifier: ^1.1.0
+      version: 1.1.0
     '@iconify-json/lucide':
       specifier: ^1.2.45
       version: 1.2.54
@@ -1083,6 +1086,9 @@ importers:
       '@formily/core':
         specifier: ^2.3.0
         version: 2.3.7
+      '@formily/element-plus':
+        specifier: 'catalog:'
+        version: 1.1.0(patch_hash=b1e72365abdc6112dde3a107e094ffbc07b8d534caf03a0500bdd8c6c4c380f6)(typescript@5.8.3)(vue@3.5.17(typescript@5.8.3))
       '@formily/json-schema':
         specifier: ^2.3.0
         version: 2.3.7(typescript@5.8.3)
