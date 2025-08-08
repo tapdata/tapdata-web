@@ -2,7 +2,6 @@ import { createForm } from '@formily/core'
 import { observe } from '@formily/reactive'
 import { Form, FormLayout, SchemaField } from '@tap/form'
 import { cancelIdle, requestIdle } from '@tap/shared'
-import { ElConfigProvider, ElEmpty as Empty } from 'element-plus'
 import {
   computed,
   defineComponent,
@@ -132,7 +131,7 @@ export const SettingsForm = defineComponent({
         }
         return (
           <div class={`${prefix}-empty`}>
-            <Empty />
+            <ElEmpty />
           </div>
         )
       }
