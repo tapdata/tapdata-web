@@ -34,4 +34,4 @@ echo "node version: $(node --version)
 corepack version: $(corepack --version)
 pnpm version: $(pnpm --version)"
 
-pnpm build:$app --mode $mode -- --env $env
+NODE_OPTIONS="--max-old-space-size=4096" pnpm build:$app --mode $mode -- --env $env
