@@ -314,6 +314,18 @@ export class MergeTable extends NodeType {
                                   '{{(val) => { changeEnableUpdateJoinKeyValue(val, $self) }}}',
                               },
                             },
+                            ignoreUpdateEvent: {
+                              type: 'boolean',
+                              title: i18n.t('packages_dag_ignoreUpdateEvent'),
+                              'x-decorator': 'FormItem',
+                              'x-decorator-props': {
+                                layout: 'horizontal',
+                                tooltip: i18n.t(
+                                  'packages_dag_ignoreUpdateEvent_tips',
+                                ),
+                              },
+                              'x-component': 'Switch',
+                            },
                           },
                         },
                       },

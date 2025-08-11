@@ -1,7 +1,6 @@
-export * from './reactive'
 import { isStr } from '@tap/shared'
-import { cloneVNode, CSSProperties } from 'vue'
-import { useAttrs } from 'vue'
+import { cloneVNode, useAttrs, type CSSProperties } from 'vue'
+export * from './reactive'
 
 /**
  * 复制一个现有VNode对象
@@ -14,7 +13,7 @@ export const cloneElement = cloneVNode
 const css2obj = (css: string) => {
   const r = /(?<=^|;)\s*([^:]+)\s*:\s*([^;]+)\s*/g,
     o = {}
-  css.replace(r, (m, p, v) => (o[p] = v))
+  css.replaceAll(r, (m, p, v) => (o[p] = v))
   return o
 }
 

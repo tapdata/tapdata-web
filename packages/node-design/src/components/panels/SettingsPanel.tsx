@@ -1,29 +1,34 @@
 import { observer } from '@formily/reactive-vue'
-import { TextWidget } from '../widgets'
-import { useCurrentNode, usePrefix, useWorkbench } from '../../hooks'
-import { defineComponent, ref, watchEffect } from 'vue'
 import { requestIdle } from '@tap/shared'
+import { defineComponent, ref, watchEffect } from 'vue'
+import { usePrefix, useWorkbench } from '../../hooks'
+import { IconWidget, TextWidget } from '../widgets'
+
+export interface ISettingPanelProps {
+  title?: any
+  extra?: any
+}
 
 export const SettingsPanel = observer(
   defineComponent({
     props: ['title', 'extra'],
     setup(props, { slots }) {
-      // const prefixRef = usePrefix('settings-panel')
-      const prefix = usePrefix('settings-panel')
+      const prefixRef = usePrefix('settings-panel')
       const workbenchRef = useWorkbench()
       const innerVisible = ref(true)
       const pinning = ref(false)
       const visible = ref(true)
 
       watchEffect(() => {
-        if (visible.value || workbenchRef.value.type === 'DESIGNABLE') {
-          if (!innerVisible.value) {
-            requestIdle(() => {
-              requestAnimationFrame(() => {
-                innerVisible.value = true
-              })
+        if (
+          (visible.value || workbenchRef.value.type === 'DESIGNABLE') &&
+          !innerVisible.value
+        ) {
+          requestIdle(() => {
+            requestAnimationFrame(() => {
+              innerVisible.value = true
             })
-          }
+          })
         }
       })
 
@@ -33,10 +38,10 @@ export const SettingsPanel = observer(
           return null
         }
         if (!visible.value) {
-          if (innerVisible.value) innerVisible.value = false
+          if (innerVisible) innerVisible.value = false
           return (
             <div
-              class={prefixRef.value + '-opener'}
+              class={`${prefixRef.value}-opener`}
               onClick={() => {
                 visible.value = true
               }}
@@ -47,16 +52,47 @@ export const SettingsPanel = observer(
         }
 
         return (
-          <div class={prefix}>
-            <div class={prefix + '-header'}>
-              <div class={prefix + '-header-title'}>
+          <div class={[prefixRef.value, { pinning: pinning.value }]}>
+            <div class={`${prefixRef.value}-header`}>
+              <div class={`${prefixRef.value}-header-title`}>
                 <TextWidget>{props.title}</TextWidget>
               </div>
-              <div class={prefix + '-header-actions'}>
-                <div class={prefix + '-header-extra'}>{slots.extra?.()}</div>
+              <div class={`${prefixRef.value}-header-actions`}>
+                <div class={`${prefixRef.value}-header-extra`}>
+                  {props.extra}
+                </div>
+                {!pinning.value && (
+                  <IconWidget
+                    infer="PushPinOutlined"
+                    key={`${prefixRef.value}-header-pin`}
+                    class={`${prefixRef.value}-header-pin`}
+                    onClick={() => {
+                      pinning.value = !pinning.value
+                    }}
+                  />
+                )}
+                {pinning.value && (
+                  <IconWidget
+                    infer="PushPinFilled"
+                    key={`${prefixRef.value}-pin-filled`}
+                    class={`${prefixRef.value}-pin-filled`}
+                    onClick={() => {
+                      pinning.value = !pinning.value
+                    }}
+                  />
+                )}
+                <IconWidget
+                  infer="Close"
+                  class={`${prefixRef.value}-header-close`}
+                  onClick={() => {
+                    visible.value = false
+                  }}
+                />
               </div>
             </div>
-            <div class={prefix + '-body'}>{innerVisible.value && slots.default?.()}</div>
+            <div class={`${prefixRef.value}-body`}>
+              {innerVisible.value && slots.default?.()}
+            </div>
           </div>
         )
       }

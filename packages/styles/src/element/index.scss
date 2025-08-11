@@ -77,7 +77,6 @@
       --el-checkbox-input-height: 16px;
       .el-checkbox__inner::after {
         height: 8px;
-        left: 5px;
       }
       .el-checkbox__input.is-indeterminate .el-checkbox__inner::before {
         top: 6px;
@@ -384,7 +383,7 @@
   }
 
   > .el-drawer__header {
-    padding: var(--el-drawer-padding-primary) !important;
+    padding: var(--el-drawer-padding-primary);
     margin-bottom: 0;
     color: var(--el-text-color-primary);
     // font-size: 18px;
@@ -789,11 +788,17 @@
   --el-segmented-color: var(--el-text-color-secondary);
   --el-segmented-item-selected-color: var(--el-text-color-primary);
   --el-segmented-item-selected-bg-color: #fff;
+  --el-segmented-item-selected-disabled-bg-color: #fff;
+  --el-segmented-item-disabled-color: var(--el-text-color-disabled);
 
   .el-segmented__item-selected {
     box-shadow:
       0 1px 3px 0 rgba(0, 0, 0, 0.1),
       0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .el-segmented__item.is-selected.is-disabled {
+    color: var(--el-segmented-item-disabled-color);
   }
 }
 

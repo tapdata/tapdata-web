@@ -24,6 +24,7 @@ import type { ElInput } from 'element-plus'
 
 defineProps<{
   keyMapping: Record<string, string>
+  hideMenu?: boolean
 }>()
 
 const { t } = useI18n()
@@ -262,6 +263,23 @@ const variablesMap = reactive({
       icon: IconLucideHash,
     },
   ],
+  license_alarm_template: [
+    {
+      name: 'level',
+      label: t('packages_dag_components_alert_gaojingjibie'),
+      icon: IconLucideFileText,
+    },
+    {
+      name: 'remainingDays',
+      label: t('public_remaining_days'),
+      icon: IconLucideFileText,
+    },
+    {
+      name: 'remainingDaysThreshold',
+      label: t('public_remaining_days_threshold'),
+      icon: IconLucideFileText,
+    },
+  ],
 })
 
 const availableVariables = computed(() => {
@@ -485,7 +503,7 @@ defineExpose({
     class="mail-template-dialog p-0"
   >
     <div class="border-top border-bottom flex flex-1 min-h-0">
-      <div class="flex flex-column">
+      <div v-if="!hideMenu" class="flex flex-column">
         <el-scrollbar class="bg-light">
           <div class="p-3 pl-4">
             <div class="font-color-light mb-3 px-2">

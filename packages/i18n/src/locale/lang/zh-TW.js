@@ -1,6 +1,7 @@
 export default {
   // 常用
   public_name: '名稱',
+  public_alias: '別名',
   public_index: '索引',
   public_type: '類型',
   public_title: '標題',
@@ -487,4 +488,20 @@ export default {
   public_time_precision_round: '四舍五入',
   public_time_precision_truncate: '截斷',
   public_button_unpublish: '撤銷',
+  public_system: '系統',
+  public_rule_add: '添加規則',
+  public_remaining_days: '剩余天数',
+  public_remaining_days_threshold: '剩余天数阈值',
+  public_api_group: 'API 分組',
+  public_form_mode: '表單模式',
+  public_json_mode: 'JSON 模式',
+  public_format: '格式化',
+  public_add_condition: '添加條件',
+  public_add_parameter: '添加參數',
+  public_json_format_error: 'JSON 格式錯誤',
+  public_data_source: '數據來源',
+  public_asc: '升序',
+  public_desc: '降序',
+  public_select_field: '選擇字段',
+  public_select_parameter: '選擇參數',
 }

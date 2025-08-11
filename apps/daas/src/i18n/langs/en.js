@@ -296,7 +296,7 @@ export default {
   // server audit 服务审计
   apiaudit_name: 'API name',
   apiaudit_access_type: 'Access Type',
-  apiaudit_visitor: 'Visitor',
+  apiaudit_visitor: 'Client Name',
   apiaudit_ip: 'Visitor IP',
   apiaudit_interview_time: 'Access Time',
   apiaudit_interview_time_start: 'Access start time',
@@ -312,6 +312,7 @@ export default {
   apiaudit_average_response_time: 'Average response time',
   apiaudit_success: 'success',
   apiaudit_placeholder: 'Please enter name/ID',
+  apiaudit_client_name_placeholder: 'Please enter client name',
   // 连接
   connection_list_form_database_type: 'Database type',
   connection_list_name: 'Connection name',
@@ -832,8 +833,12 @@ export default {
   role_list_edit: 'Edit roles',
   role_list_default_role: 'Default role',
   role_list_setting_permissions: 'Set Permissions',
+  role_list_setting_api: 'Set API access',
   role_list_delete_remind: 'Confirm to delete role {0}',
   role_list_delete_success: 'Delete the role successfully',
+  role_list_setting_api_selected: 'Selected {0} APIs',
+  role_list_setting_api_empty_confirm: 'Are you sure you want to cancel all API access settings?',
+  role_list_setting_select_api: 'Please select API',
   role_form_yes: 'Yes',
   role_form_no: 'No',
   role_form_selectUser: 'Please select a user name',
@@ -2134,4 +2139,8 @@ export default {
   account_accessCode_tip:
     'Refreshing the access code will invalidate the current code, and the system will generate a new one.<b class="color-warning">Update the access code in the engine\'s configuration file and restart it to ensure proper functioning. Handle with care.</b>',
   account_accessCode_success: 'Access code refreshed successfully',
+  setting_license_remainingDaysThreshold: 'Remaining Days <=',
+  setting_license_rule: 'License Alert Rule',
+  setting_license_alarm_template: 'Alert Template',
+  setting_license_alarm_template_custom: 'Custom Alert Template',
 }

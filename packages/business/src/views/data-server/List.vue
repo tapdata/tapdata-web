@@ -549,7 +549,7 @@ defineExpose({
             </template>
           </el-button>
           <div class="fs-6 flex-1">
-            <span>{{ $t('public_application') }}</span>
+            <span>{{ $t('public_api_group') }}</span>
           </div>
           <el-button
             text

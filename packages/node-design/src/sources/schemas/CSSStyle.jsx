@@ -35,16 +35,16 @@ export const CSSStyle = {
     // 'style.border': {
     //   'x-component': 'BorderStyleSetter'
     // },
-    'style.opacity': {
-      'x-decorator': 'FormItem',
-      'x-component': 'Slider',
-      default: 1,
-      'x-component-props': {
-        defaultValue: 1,
-        min: 0,
-        max: 1,
-        step: 0.01,
-      },
-    },
+    // 'style.opacity': {
+    //   'x-decorator': 'FormItem',
+    //   'x-component': 'Slider',
+    //   default: 1,
+    //   'x-component-props': {
+    //     defaultValue: 1,
+    //     min: 0,
+    //     max: 1,
+    //     step: 0.01,
+    //   },
+    // },
   },
 }

@@ -433,7 +433,7 @@ export default {
           {
             key: 'apiApp',
             icon: 'mini-app',
-            name: this.$t('packages_business_api_application'),
+            name: this.$t('public_api_group'),
             md: this.$t('packages_business_api_application_md'),
           },
         ],

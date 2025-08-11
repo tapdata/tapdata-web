@@ -164,7 +164,7 @@ const agentName = ref('')
 const currentNde = ref({})
 const delData = ref('')
 const processIdData = ref([])
-const searchParams = reactive<SearchParams>({
+const searchParams = ref<SearchParams>({
   keyword: '',
 })
 const accessToken = ref('')
@@ -232,7 +232,7 @@ const DataSourceMap = {
 watch(
   () => route.query,
   () => {
-    searchParams.keyword = route.query.keyword as string
+    searchParams.value.keyword = route.query.keyword as string
     getDataApi()
   },
 )
@@ -447,18 +447,18 @@ const getAllBindWorker = async () => {
 
 const getDataApi = async (noFilter?: boolean) => {
   const params: any = { index: 1 }
-  if (searchParams.keyword) {
+  if (searchParams.value.keyword) {
     params.filter = JSON.stringify({
       where: {
         or: [
           {
             agentName: {
-              like: searchParams.keyword,
+              like: searchParams.value.keyword,
             },
           },
           {
             'systemInfo.hostname': {
-              like: searchParams.keyword,
+              like: searchParams.value.keyword,
             },
           },
         ],

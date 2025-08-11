@@ -1,6 +1,7 @@
 export default {
   // commonly used
   public_name: 'Name',
+  public_alias: 'Alias',
   public_index: 'Index',
   public_type: 'Type',
   public_title: 'Title',
@@ -497,4 +498,20 @@ export default {
   public_time_precision_round: 'Round',
   public_time_precision_truncate: 'Truncate',
   public_button_unpublish: 'Unpublish',
+  public_system: 'System',
+  public_rule_add: 'Add Rule',
+  public_remaining_days: 'Remaining Days',
+  public_remaining_days_threshold: 'Remaining Days Threshold',
+  public_api_group: 'API Group',
+  public_form_mode: 'Form Mode',
+  public_json_mode: 'JSON Mode',
+  public_format: 'Format',
+  public_add_condition: 'Add Condition',
+  public_add_parameter: 'Add Parameter',
+  public_json_format_error: 'JSON Format Error',
+  public_data_source: 'Data Source',
+  public_asc: 'ASC',
+  public_desc: 'DESC',
+  public_select_field: 'Select Field',
+  public_select_parameter: 'Select Parameter',
 }

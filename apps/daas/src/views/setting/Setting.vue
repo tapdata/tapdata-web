@@ -7,8 +7,10 @@ import {
   usersApi,
 } from '@tap/api'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
-
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
+
+import EmailTemplateDialog from '@tap/business/src/views/setting/EmailTemplateDialog.vue'
+import { AdminOutlined } from '@tap/component/src/icon'
 import { TextFileReader } from '@tap/form/src/components/text-file-reader'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 import Cookie from '@tap/shared/src/cookie'
@@ -18,7 +20,12 @@ import i18n from '@/i18n'
 
 export default {
   name: 'Setting',
-  components: { TextFileReader, PageContainer },
+  components: {
+    TextFileReader,
+    PageContainer,
+    EmailTemplateDialog,
+    AdminOutlined,
+  },
   data() {
     return {
       title: import.meta.env.VUE_APP_PAGE_TITLE,
@@ -295,6 +302,32 @@ export default {
     handleChangeName(target, name) {
       target.fileName = name
     },
+
+    addRule(target) {
+      target.value.push({
+        remainingDaysThreshold: 0,
+        level: 'warning',
+      })
+    },
+
+    removeRule(target, index) {
+      target.value.splice(index, 1)
+    },
+
+    showCustomMailTemplate(target) {
+      this.$refs.emailTemplateDialog?.[0]?.open([
+        {
+          key: 'license_alarm_template',
+          emailAlarmTitle: target.value.emailAlarmTitle,
+          emailAlarmContent: target.value.emailAlarmContent,
+        },
+      ])
+    },
+
+    handleSaveMailTemplate(target, rulesList) {
+      target.value.emailAlarmTitle = rulesList[0].emailAlarmTitle
+      target.value.emailAlarmContent = rulesList[0].emailAlarmContent
+    },
   },
 }
 </script>
@@ -338,25 +371,6 @@ export default {
               :key="childIndex"
               class="box"
             >
-              <div v-if="item.category === 'license'">
-                <div
-                  v-for="(licenseItem, licenseIndex) in item.liceseItems"
-                  :key="licenseIndex"
-                  class="license"
-                >
-                  <div>
-                    {{ $t('setting_nameserver') }}:
-                    {{ licenseItem.hostname }}
-                  </div>
-                </div>
-                <el-button @click="importlicense(licenseItem)">{{
-                  $t('setting_import')
-                }}</el-button>
-                <el-button @click="hrefApply(licenseItem)">{{
-                  $t('setting_apply')
-                }}</el-button>
-              </div>
-
               <el-row v-if="activePanel === childItem.category">
                 <el-col :span="24">
                   <el-form-item
@@ -366,15 +380,13 @@ export default {
                     "
                   >
                     <template #label>
-                      <span
-                        >{{
-                          $t(
-                            `setting_${(childItem.key_label || '')
-                              .split(' ')
-                              .join('_')}`,
-                          ) || childItem.key_label
-                        }}:</span
-                      >
+                      <span>{{
+                        $t(
+                          `setting_${(childItem.key_label || '')
+                            .split(' ')
+                            .join('_')}`,
+                        ) || childItem.key_label
+                      }}</span>
                       <el-tooltip
                         v-if="
                           childItem.documentation &&
@@ -400,6 +412,74 @@ export default {
                       @change="handleChangeCert(childItem, $event)"
                       @update:file-name="handleChangeName(childItem, $event)"
                     />
+
+                    <template v-if="childItem.key === 'license_rule'">
+                      <div
+                        class="flex flex-column gap-2 w-100 align-items-start"
+                      >
+                        <div
+                          v-for="(ruleItem, i) in childItem.value"
+                          :key="i"
+                          class="flex align-center gap-4"
+                        >
+                          <span class="text-secondary">{{
+                            $t('setting_license_remainingDaysThreshold')
+                          }}</span>
+                          <el-input-number
+                            v-model="ruleItem.remainingDaysThreshold"
+                            :min="0"
+                            :controls="false"
+                            style="width: 100px"
+                          />
+
+                          <span class="text-secondary">{{
+                            $t('packages_dag_components_alert_gaojingjibie')
+                          }}</span>
+                          <el-input
+                            v-model="ruleItem.level"
+                            style="width: 200px"
+                            :placeholder="
+                              $t('packages_dag_components_alert_gaojingjibie')
+                            "
+                          />
+
+                          <el-button
+                            text
+                            size="small"
+                            @click="removeRule(childItem, i)"
+                          >
+                            <template #icon>
+                              <i-mingcute:close-line />
+                            </template>
+                          </el-button>
+                        </div>
+
+                        <el-button @click="addRule(childItem)">
+                          <template #icon>
+                            <i-mingcute:add-line />
+                          </template>
+                          {{ $t('public_rule_add') }}
+                        </el-button>
+                      </div>
+                    </template>
+
+                    <template
+                      v-else-if="childItem.key === 'license_alarm_template'"
+                    >
+                      <el-button @click="showCustomMailTemplate(childItem)">
+                        <template #icon>
+                          <AdminOutlined />
+                        </template>
+                        {{ $t('setting_license_alarm_template_custom') }}
+                      </el-button>
+
+                      <EmailTemplateDialog
+                        ref="emailTemplateDialog"
+                        hide-menu
+                        @save="handleSaveMailTemplate(childItem, $event)"
+                      />
+                    </template>
+
                     <ElInputNumber
                       v-else-if="'min' in childItem || 'max' in childItem"
                       v-model="childItem.value"
