@@ -2,6 +2,9 @@
 import * as monaco from 'monaco-editor'
 import { onBeforeUnmount, ref, watch } from 'vue'
 import MonacoEditor from './MonacoEditor.vue'
+import {useI18n} from '@tap/i18n'
+
+const {t} = useI18n()
 
 const props = defineProps({
   height: {
@@ -39,105 +42,102 @@ const mongoOperators = [
   {
     label: '$eq',
     kind: monaco.languages.CompletionItemKind.Operator,
-    detail: 'Matches values that are equal to a specified value.',
+    detail: t('packages_business_mongo_operator_eq'),
   },
   {
     label: '$gt',
     kind: monaco.languages.CompletionItemKind.Operator,
-    detail: 'Matches values that are greater than a specified value.',
+    detail: t('packages_business_mongo_operator_gt'),
   },
   {
     label: '$gte',
     kind: monaco.languages.CompletionItemKind.Operator,
-    detail:
-      'Matches values that are greater than or equal to a specified value.',
+    detail: t('packages_business_mongo_operator_gte'),
   },
   {
     label: '$in',
     kind: monaco.languages.CompletionItemKind.Operator,
-    detail: 'Matches any of the values specified in an array.',
+    detail: t('packages_business_mongo_operator_in'),
   },
   {
     label: '$lt',
     kind: monaco.languages.CompletionItemKind.Operator,
-    detail: 'Matches values that are less than a specified value.',
+    detail: t('packages_business_mongo_operator_lt'),
   },
   {
     label: '$lte',
     kind: monaco.languages.CompletionItemKind.Operator,
-    detail: 'Matches values that are less than or equal to a specified value.',
+    detail: t('packages_business_mongo_operator_lte'),
   },
   {
     label: '$ne',
     kind: monaco.languages.CompletionItemKind.Operator,
-    detail: 'Matches all values that are not equal to a specified value.',
+    detail: t('packages_business_mongo_operator_ne'),
   },
   {
     label: '$nin',
     kind: monaco.languages.CompletionItemKind.Operator,
-    detail: 'Matches none of the values specified in an array.',
+    detail: t('packages_business_mongo_operator_nin'),
   },
 
   // Logical operators
   {
     label: '$and',
     kind: monaco.languages.CompletionItemKind.Operator,
-    detail: 'Joins query clauses with a logical AND.',
+    detail: t('packages_business_mongo_operator_and'),
   },
   {
     label: '$nor',
     kind: monaco.languages.CompletionItemKind.Operator,
-    detail: 'Joins query clauses with a logical NOR.',
+    detail: t('packages_business_mongo_operator_nor'),
   },
   {
     label: '$or',
     kind: monaco.languages.CompletionItemKind.Operator,
-    detail: 'Joins query clauses with a logical OR.',
+    detail: t('packages_business_mongo_operator_or'),
   },
 
   // Element operators
   {
     label: '$exists',
     kind: monaco.languages.CompletionItemKind.Operator,
-    detail: 'Matches documents that have the specified field.',
+    detail: t('packages_business_mongo_operator_exists'),
   },
   {
     label: '$type',
     kind: monaco.languages.CompletionItemKind.Operator,
-    detail: 'Selects documents if a field is of the specified type.',
+    detail: t('packages_business_mongo_operator_type'),
   },
 
   // Evaluation operators
   {
     label: '$regex',
     kind: monaco.languages.CompletionItemKind.Operator,
-    detail:
-      'Selects documents where values match a specified regular expression.',
+    detail: t('packages_business_mongo_operator_regex'),
   },
 
   // Array operators
   {
     label: '$all',
     kind: monaco.languages.CompletionItemKind.Operator,
-    detail: 'Matches arrays that contain all elements specified in the query.',
+    detail: t('packages_business_mongo_operator_all'),
   },
   {
     label: '$elemMatch',
     kind: monaco.languages.CompletionItemKind.Operator,
-    detail:
-      'Selects documents if element in the array field matches all the specified conditions.',
+    detail: t('packages_business_mongo_operator_elemMatch'),
   },
   {
     label: '$size',
     kind: monaco.languages.CompletionItemKind.Operator,
-    detail: 'Selects documents if the array field is a specified size.',
+    detail: t('packages_business_mongo_operator_size'),
   },
 
   // Additional common operators
   {
     label: '$mod',
     kind: monaco.languages.CompletionItemKind.Operator,
-    detail: 'Performs a modulo operation on the value of a field.',
+    detail: t('packages_business_mongo_operator_mod'),
   },
 ]
 

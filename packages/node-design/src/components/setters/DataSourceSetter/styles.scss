@@ -19,6 +19,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex: 1;
+    gap: 0.5rem;
+    padding-right: 1rem;
 
     &-icon {
       transition: all 0.15s ease-in-out;
@@ -34,7 +37,8 @@
     display: flex;
     justify-content: space-around;
     border: 1px solid $--border-color-base;
-    border-radius: 3px;
+    border-radius: 12px;
+    overflow: hidden;
 
     .ant-tree-treenode {
       padding-right: 10px;

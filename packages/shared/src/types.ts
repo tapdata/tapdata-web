@@ -27,3 +27,5 @@ export const isObj = (val: unknown): boolean => typeof val === 'object'
 export const isRegExp = isType('RegExp')
 export const isValid = (val: unknown): boolean =>
   val !== null && val !== undefined
+export const isValidNumber = (val: any): val is number =>
+  !isNaN(val) && isNum(val)

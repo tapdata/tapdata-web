@@ -1842,7 +1842,6 @@ function onFieldSelected(field: Field) {
             <el-button
               v-if="form.fullCustomQuery && isEdit"
               text
-              size="small"
               class="ml-auto"
               @click="handleFormat"
             >

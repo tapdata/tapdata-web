@@ -1083,6 +1083,9 @@ importers:
       '@formily/core':
         specifier: ^2.3.0
         version: 2.3.7
+      '@formily/element-plus':
+        specifier: ^1.1.0
+        version: 1.1.0(patch_hash=b1e72365abdc6112dde3a107e094ffbc07b8d534caf03a0500bdd8c6c4c380f6)(typescript@5.8.3)(vue@3.5.17(typescript@5.8.3))
       '@formily/json-schema':
         specifier: ^2.3.0
         version: 2.3.7(typescript@5.8.3)
@@ -3268,11 +3271,6 @@ packages:
 
   electron-to-chromium@1.5.179:
     resolution: {integrity: sha512-UWKi/EbBopgfFsc5k61wFpV7WrnnSlSzW/e2XcBmS6qKYTivZlLtoll5/rdqRTxGglGHkmkW0j0pFNJG10EUIQ==}
-
-  element-plus@2.10.2:
-    resolution: {integrity: sha512-p2KiAa0jEGXrzdlTAfpiS7HQFAhla4gvx6H7RuDf+OO0uC3DGpolxvdHjFR8gt7+vaWyxQNcHa1sAdBkmjqlgA==}
-    peerDependencies:
-      vue: ^3.4.29
 
   element-plus@2.10.4:
     resolution: {integrity: sha512-UD4elWHrCnp1xlPhbXmVcaKFLCRaRAY6WWRwemGfGW3ceIjXm9fSYc9RNH3AiOEA6Ds1p9ZvhCs76CR9J8Vd+A==}
@@ -6501,7 +6499,7 @@ snapshots:
       '@formily/reactive-vue': 2.3.7(vue@3.5.17(typescript@5.8.3))
       '@formily/shared': 2.3.7
       '@formily/vue': 2.3.7(typescript@5.8.3)(vue@3.5.17(typescript@5.8.3))
-      element-plus: 2.10.2(vue@3.5.17(typescript@5.8.3))
+      element-plus: 2.10.4(vue@3.5.17(typescript@5.8.3))
       resize-observer-polyfill: 1.5.1
       vue: 3.5.17(typescript@5.8.3)
       vue-slicksort: 1.2.0(vue@3.5.17(typescript@5.8.3))
@@ -8195,27 +8193,6 @@ snapshots:
   ee-first@1.1.1: {}
 
   electron-to-chromium@1.5.179: {}
-
-  element-plus@2.10.2(vue@3.5.17(typescript@5.8.3)):
-    dependencies:
-      '@ctrl/tinycolor': 3.6.1
-      '@element-plus/icons-vue': 2.3.1(vue@3.5.17(typescript@5.8.3))
-      '@floating-ui/dom': 1.7.2
-      '@popperjs/core': '@sxzz/popperjs-es@2.11.7'
-      '@types/lodash': 4.17.20
-      '@types/lodash-es': 4.17.12
-      '@vueuse/core': 9.13.0(vue@3.5.17(typescript@5.8.3))
-      async-validator: 4.2.5
-      dayjs: 1.11.13
-      escape-html: 1.0.3
-      lodash: 4.17.21
-      lodash-es: 4.17.21
-      lodash-unified: 1.0.3(@types/lodash-es@4.17.12)(lodash-es@4.17.21)(lodash@4.17.21)
-      memoize-one: 6.0.0
-      normalize-wheel-es: 1.2.0
-      vue: 3.5.17(typescript@5.8.3)
-    transitivePeerDependencies:
-      - '@vue/composition-api'
 
   element-plus@2.10.4(vue@3.5.17(typescript@5.8.3)):
     dependencies:

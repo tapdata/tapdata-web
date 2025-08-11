@@ -41,6 +41,7 @@ export default {
       }
       const { items: apis } = await fetchApiModules({
         limit: 1000000,
+        order: 'createAt DESC',
       }).finally(() => {
         this.apiLoading = false
       })
