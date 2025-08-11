@@ -1,5 +1,5 @@
 #!/bin/bash
-
+export NODE_OPTIONS="--max-old-space-size=4096"
 base=$(cd `dirname $0`/.. && pwd)
 app='daas'
 mode='production'
@@ -34,4 +34,4 @@ echo "node version: $(node --version)
 corepack version: $(corepack --version)
 pnpm version: $(pnpm --version)"
 
-NODE_OPTIONS="--max-old-space-size=4096" pnpm build:$app --mode $mode -- --env $env
+pnpm build:$app --mode $mode -- --env $env
