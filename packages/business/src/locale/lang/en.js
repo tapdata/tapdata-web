@@ -1083,17 +1083,17 @@ export default {
     'The task has been created, but since your table does not have a primary key, you need to enter the task editor to manually set the update condition field. Click to view the task.',
   packages_business_fdm_create_task_dialog_desc_prefix: `${import.meta.env.VUE_APP_PAGE_TITLE}  will automatically create a cloning pipeline task, which will automatically copy the structure and data of the selected`,
   packages_business_fdm_create_task_dialog_desc_suffix:
-    'to the Cache layer of the data platform and keep the source database and Cache layer data in real-time synchronization and automatic validation. In most cases, the structure changes (DDL) of the source database will also be copied to the Cache layer. You can monitor the running status of the pipeline task by clicking the ICON on the right side of the database name in the Cache layer. You can also choose to modify the physical table name prefix in the Cache layer now.',
+    'to the Foundational Data Model layer of the data platform and keep the source database and Foundational Data Model layer data in real-time synchronization and automatic validation. In most cases, the structure changes (DDL) of the source database will also be copied to the Foundational Data Model layer. You can monitor the running status of the pipeline task by clicking the ICON on the right side of the database name in the Foundational Data Model layer. You can also choose to modify the physical table name prefix in the Foundational Data Model layer now.',
   packages_business_mdm_create_task_dialog_desc_prefix:
     "This will create a processing model on the Data Platform's Curated layer. Common scenarios for creating a processing model include the following:",
   packages_business_fdm_create_task_dialog_desc_li1:
-    'Need to do some transformation, enhancement, calculation field processing, etc. on the data of the Cache layer.',
+    'Need to do some transformation, enhancement, calculation field processing, etc. on the data of the Foundational Data Model layer.',
   packages_business_fdm_create_task_dialog_desc_li2:
-    'Need to merge the structures of several Cache layers into one wide table.',
+    'Need to merge the structures of several Foundational Data Model layers into one wide table.',
   packages_business_fdm_create_task_dialog_desc_li3:
-    'Need to merge the data of tables from multiple Cache layers to construct a merged table.',
+    'Need to merge the data of tables from multiple Foundational Data Model layers to construct a merged table.',
   packages_business_mdm_create_task_dialog_desc_suffix:
-    'Note: You can directly publish API or do data replication tasks to the target end at the Cache layer. If it is for these two reasons, you do not need to create a processing layer model.',
+    'Note: You can directly publish API or do data replication tasks to the target end at the Foundational Data Model layer. If it is for these two reasons, you do not need to create a processing layer model.',
   packages_business_mdm_create_task_dialog_desc_table_name:
     'Please enter the table name to be newly constructed in the Curated layer. If the table name already exists, the existing data will be overwritten by default.',
   packages_business_save_and_run_now: 'Save and Run',
@@ -1123,7 +1123,7 @@ export default {
   packages_business_data_console_mode_service_tooltip_1:
     'All Features Of Data Integration',
   packages_business_data_console_mode_service_tooltip_2:
-    'Data Cache Layer In Platform',
+    'Data Foundational Data Model layer In Platform',
   packages_business_data_console_mode_service_tooltip_3:
     'Support Multiple Service Publish',
   packages_business_data_console_fdm_mdm_storage: 'Data Center Storage',
@@ -1622,22 +1622,39 @@ export default {
   packages_business_data_source_monitor: 'Connection Monitor',
 
   // MongoDB operators
-  packages_business_mongo_operator_eq: 'Matches values that are equal to a specified value.',
-  packages_business_mongo_operator_gt: 'Matches values that are greater than a specified value.',
-  packages_business_mongo_operator_gte: 'Matches values that are greater than or equal to a specified value.',
-  packages_business_mongo_operator_in: 'Matches any of the values specified in an array.',
-  packages_business_mongo_operator_lt: 'Matches values that are less than a specified value.',
-  packages_business_mongo_operator_lte: 'Matches values that are less than or equal to a specified value.',
-  packages_business_mongo_operator_ne: 'Matches all values that are not equal to a specified value.',
-  packages_business_mongo_operator_nin: 'Matches none of the values specified in an array.',
-  packages_business_mongo_operator_and: 'Joins query clauses with a logical AND.',
-  packages_business_mongo_operator_nor: 'Joins query clauses with a logical NOR.',
+  packages_business_mongo_operator_eq:
+    'Matches values that are equal to a specified value.',
+  packages_business_mongo_operator_gt:
+    'Matches values that are greater than a specified value.',
+  packages_business_mongo_operator_gte:
+    'Matches values that are greater than or equal to a specified value.',
+  packages_business_mongo_operator_in:
+    'Matches any of the values specified in an array.',
+  packages_business_mongo_operator_lt:
+    'Matches values that are less than a specified value.',
+  packages_business_mongo_operator_lte:
+    'Matches values that are less than or equal to a specified value.',
+  packages_business_mongo_operator_ne:
+    'Matches all values that are not equal to a specified value.',
+  packages_business_mongo_operator_nin:
+    'Matches none of the values specified in an array.',
+  packages_business_mongo_operator_and:
+    'Joins query clauses with a logical AND.',
+  packages_business_mongo_operator_nor:
+    'Joins query clauses with a logical NOR.',
   packages_business_mongo_operator_or: 'Joins query clauses with a logical OR.',
-  packages_business_mongo_operator_exists: 'Matches documents that have the specified field.',
-  packages_business_mongo_operator_type: 'Selects documents if a field is of the specified type.',
-  packages_business_mongo_operator_regex: 'Selects documents where values match a specified regular expression.',
-  packages_business_mongo_operator_all: 'Matches arrays that contain all elements specified in the query.',
-  packages_business_mongo_operator_elemMatch: 'Selects documents if element in the array field matches all the specified conditions.',
-  packages_business_mongo_operator_size: 'Selects documents if the array field is a specified size.',
-  packages_business_mongo_operator_mod: 'Performs a modulo operation on the value of a field.',
+  packages_business_mongo_operator_exists:
+    'Matches documents that have the specified field.',
+  packages_business_mongo_operator_type:
+    'Selects documents if a field is of the specified type.',
+  packages_business_mongo_operator_regex:
+    'Selects documents where values match a specified regular expression.',
+  packages_business_mongo_operator_all:
+    'Matches arrays that contain all elements specified in the query.',
+  packages_business_mongo_operator_elemMatch:
+    'Selects documents if element in the array field matches all the specified conditions.',
+  packages_business_mongo_operator_size:
+    'Selects documents if the array field is a specified size.',
+  packages_business_mongo_operator_mod:
+    'Performs a modulo operation on the value of a field.',
 }
