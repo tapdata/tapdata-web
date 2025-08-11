@@ -1755,7 +1755,7 @@ export default {
     'Tapdata uses MongoDB Atlas, a managed MongoDB service provided by MongoDB Inc. for secure data storage. When you select an instance below, Tapdata will automatically create a MongoDB Atlas Cluster on your behalf. This cluster is exclusively for you and no one except for you and Tapdata can access it.<br/>Note Free Trial users will use a separate MongoDB Cluster that is managed by Tapdata.',
   dfs_subscribe_storage_deploy_region: 'Please select the MongoDB Atlas region you want to deploy',
   dfs_subscribe_storage_specification: 'Please select the specification of MongoDB Atlas Cluster',
-  dfs_offline_deployment: 'Offline Deployment',
+  dfs_offline_deployment: 'On-Prem Version',
   dfs_offline_deployment_get: 'Get Offline Version',
   dfs_offline_deployment_tip:
     'Due to the use of MongoDB Atlas for the online version, this product is not available in China, so only the offline version is provided domestically.',

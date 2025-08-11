@@ -223,7 +223,7 @@ export default {
       window.open(
         this.isDomesticStation
           ? 'https://tapdata.net/tapdata-on-prem/demo.html'
-          : 'https://tapdata.mike-x.com/lV5o0?m=QkkvTrNtVq6jvQpX',
+          : 'https://airtable.com/appQphsctyuno31QD/pagUAvnEKRndd4JXX/form',
         '_blank'
       )
     }
