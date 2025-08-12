@@ -23,10 +23,6 @@ sed -i.bak "s|DAAS_BUILD_NUMBER|$DAAS_BUILD_NUMBER|g" $base/apps/$app/.env
 
 # 构建命令参数
 build_cmd="pnpm build:$app"
-if [ -n "$mode" ]; then
-  build_cmd="$build_cmd --mode $mode"
-fi
-build_cmd="$build_cmd -- --env $env"
 
 echo "$build_cmd"
 
@@ -39,7 +35,6 @@ pnpm i
 echo "node version: $(node --version)
 corepack version: $(corepack --version)
 pnpm version: $(pnpm --version)
-NODE_OPTIONS: $NODE_OPTIONS
 Heap Statistics: $(node -e 'console.log(v8.getHeapStatistics())')"
 
 eval $build_cmd
