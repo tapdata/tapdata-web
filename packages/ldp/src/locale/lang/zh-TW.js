@@ -7,8 +7,10 @@ export default {
   packages_ldp_table_comment: '表註釋',
   packages_ldp_src_dashboard_anEsctui: '按Esc退出溯源場景',
   packages_ldp_src_tablepreview_querenshanchu: '確認刪除？ ',
-  packages_ldp_src_tablepreview_gaibiaojianghuicong: '該表將會從數據庫裡刪除，操作後不可恢復',
-  packages_ldp_src_tablepreview_jiancedaoyouren: '檢測到有任務正在使用 {val1}，請刪除所有相關任務後重試',
+  packages_ldp_src_tablepreview_gaibiaojianghuicong:
+    '該表將會從數據庫裡刪除，操作後不可恢復',
+  packages_ldp_src_tablepreview_jiancedaoyouren:
+    '檢測到有任務正在使用 {val1}，請刪除所有相關任務後重試',
   packages_ldp_src_target_muqianzhichide: '目前支持的類型',
   packages_ldp_upgrade_storage: '升級存儲',
   packages_ldp_data_hub_intro_title: '甚麼是實時數據平台',
@@ -25,9 +27,11 @@ export default {
   packages_ldp_data_hub_intro_scene_api_sub: '數據庫到API',
   packages_ldp_data_hub_intro_how_do: '實時數據平台是如何工作的?',
   packages_ldp_data_hub_intro_how_do_step1: '配置數據中心存儲',
-  packages_ldp_data_hub_intro_how_do_step1_sub: '首先，在雲端配置一個數據存儲，Tapdata 使用 MongoDB Atlas。',
+  packages_ldp_data_hub_intro_how_do_step1_sub:
+    '首先，在雲端配置一個數據存儲，Tapdata 使用 MongoDB Atlas。',
   packages_ldp_data_hub_intro_how_do_step2: '同步數據並合併',
-  packages_ldp_data_hub_intro_how_do_step2_sub: '使用 Tapdata 的複製和轉換功能，將數據從您的數據源同步到數據中心。',
+  packages_ldp_data_hub_intro_how_do_step2_sub:
+    '使用 Tapdata 的複製和轉換功能，將數據從您的數據源同步到數據中心。',
   packages_ldp_data_hub_intro_how_do_step3: '發布API或發送到儀表板',
   packages_ldp_data_hub_intro_how_do_step3_sub: '發布API或發送到儀表板',
   packages_ldp_data_hub_subscribe: '訂閱存儲',
@@ -45,5 +49,9 @@ export default {
   packages_ldp_book_demo: '預約演示',
   packages_ldp_mdm_create_method: '創建方式',
   packages_ldp_mdm_create_method_transformation: '使用數據轉換任務',
-  packages_ldp_mdm_create_method_materialized: '使用建模向導'
+  packages_ldp_mdm_create_method_materialized: '使用建模向導',
+  packages_ldp_fdm_create_task_has_synced:
+    '您已經複製過部分表，但您也可以繼續選擇表，新選擇表將追加到原表列表中',
+  packages_ldp_fdm_create_task_has_expression:
+    '您已經選擇了按正則表達式匹配表，無法繼續選擇表，請在通過數據複製功能繼續複製表',
 }
