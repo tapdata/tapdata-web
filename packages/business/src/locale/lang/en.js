@@ -1657,4 +1657,5 @@ export default {
     'Selects documents if the array field is a specified size.',
   packages_business_mongo_operator_mod:
     'Performs a modulo operation on the value of a field.',
+  packages_business_edit_task_info: 'Edit Task Information',
 }
