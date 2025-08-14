@@ -1461,7 +1461,9 @@ export default {
   packages_business_mongo_operator_type: '如果字段是指定类型，则选择文档',
   packages_business_mongo_operator_regex: '选择值匹配指定正则表达式的文档',
   packages_business_mongo_operator_all: '匹配包含查询中指定的所有元素的数组',
-  packages_business_mongo_operator_elemMatch: '如果数组字段中的元素匹配所有指定条件，则选择文档',
+  packages_business_mongo_operator_elemMatch:
+    '如果数组字段中的元素匹配所有指定条件，则选择文档',
   packages_business_mongo_operator_size: '如果数组字段是指定大小，则选择文档',
   packages_business_mongo_operator_mod: '对字段值执行模运算',
+  packages_business_edit_task_info: '编辑任务信息',
 }

@@ -1451,7 +1451,9 @@ export default {
   packages_business_mongo_operator_type: '如果字段是指定類型，則選擇文檔',
   packages_business_mongo_operator_regex: '選擇值匹配指定正則表達式的文檔',
   packages_business_mongo_operator_all: '匹配包含查詢中指定的所有元素的數組',
-  packages_business_mongo_operator_elemMatch: '如果數組字段中的元素匹配所有指定條件，則選擇文檔',
+  packages_business_mongo_operator_elemMatch:
+    '如果數組字段中的元素匹配所有指定條件，則選擇文檔',
   packages_business_mongo_operator_size: '如果數組字段是指定大小，則選擇文檔',
   packages_business_mongo_operator_mod: '對字段值執行模運算',
+  packages_business_edit_task_info: '編輯任務信息',
 }
