@@ -64,9 +64,7 @@ export async function fetchApiServerToken() {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
   })
-  const token = result?.data?.access_token || ''
-
-  return token
+  return result?.data || {};
 }
 
 export function fetchApisByClient(clientId: string) {
