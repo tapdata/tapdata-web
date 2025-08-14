@@ -1,6 +1,7 @@
 import { requestClient, type Filter, type PageFetchResult } from '../request'
 
 const BASE_URL = '/api/ApiCalls'
+const DEBUG_BASE_URL = '/api/debug';
 
 export interface ApiCall {
   id: string
@@ -46,4 +47,8 @@ export function fetchApiCall(id: string) {
  */
 export function fetchApiClientNames() {
   return requestClient.get(`${BASE_URL}/findClients`)
+}
+
+export function debug(data: Record<string, any>) {
+  return requestClient.post(`${DEBUG_BASE_URL}`, data)
 }
