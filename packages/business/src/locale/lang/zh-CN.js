@@ -847,7 +847,6 @@ export default {
   packages_business_connections_databaseform_kaiqixintiaobiao: '开启心跳表',
   packages_business_connections_databaseform_jiaobentiaoshi: '脚本调试',
   // api服务管理
-  packages_business_data_server_drawer_filter: '无效的Json参数值, 请将filter作为json对象输入',
   packages_business_data_server_drawer_qingshurucanshu: '请输入参数名称',
   packages_business_data_server_drawer_paixu: '排序',
   packages_business_data_server_drawer_meigefenyefan: '每个分页返回的记录数',

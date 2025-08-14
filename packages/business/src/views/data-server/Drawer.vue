@@ -11,7 +11,6 @@ import {
   updateApiModulePermissions,
   updateApiModuleTags,
   workerApi,
-  debug
 } from '@tap/api'
 import SortConditionDisplay from '@tap/component/src/api-server/SortConditionDisplay.vue'
 import WhereConditionDisplay from '@tap/component/src/api-server/WhereConditionDisplay.vue'
@@ -213,7 +212,7 @@ const debugParams = ref<any>(null)
 const debugMethod = ref('GET')
 const debugResult = ref('')
 const templateType = ref('java')
-const token = ref<Record<string, any>>({})
+const token = ref('')
 const roles = ref([])
 const workerStatus = ref('')
 const intervalId = ref(0)
@@ -490,14 +489,10 @@ const formatData = (formData: any = {}) => {
   form.value = genFormData(formData)
 
   if (form.value.status === 'active') {
-    reflshToken()
+    getAPIServerToken((token: string) => {
+      templates.value = getTemplate(props.host + form.value.path, token)
+    })
   }
-}
-
-const reflshToken = () => {
-  getAPIServerToken((token: Record<string, any>) => {
-    templates.value = getTemplate(props.host + form.value.path, token)
-  })
 }
 
 const fieldTableData = computed(() => {
@@ -675,7 +670,7 @@ const getFields = async () => {
   }
 }
 
-const getAPIServerToken = async (callback?: (token: Record<string, any>) => void) => {
+const getAPIServerToken = async (callback?: (token: string) => void) => {
   token.value = await fetchApiServerToken()
   callback?.(token.value)
 }
@@ -983,61 +978,39 @@ const debugDisabled = computed(() => {
 })
 
 const debugData = async () => {
+  const http = axios.create()
   let params = debugParams.value
   const method = debugMethod.value
   if (method === 'TOKEN') {
-    reflshToken();
-    debugResult.value = JSON.stringify(token.value, null, 2);
-    return;
-  }
-  const hostPath = urlsMap.value[debugMethod.value]?.replace(/\/$/, '') || '';
-  const url = `${hostPath}?access_token=${token.value.access_token}`;
-  const queryBody = {
-    apiId: form.value.id,
-    url: null,
-    method: method,
-    headers: {"Content-Type": "application/json"},
-    body: null,
-    params: null,
-  };
-
-  if (params) {
-    //@ts-ignore
-    let filterInfo = {};
+    debugResult.value = JSON.stringify(
+      {
+        access_token: token.value,
+        expires_in: 1209599,
+        scope: 'admin',
+        token_type: 'Bearer',
+      },
+      null,
+      2,
+    )
+  } else {
+    const url = `${urlsMap.value[debugMethod.value]}?access_token=${token.value}`
+    if (params) {
+      const newParams: Record<string, any> = {}
+      Object.keys(params).forEach((key) => {
+        const value = params[key]
+        if (value) {
+          newParams[key] = value
+        }
+      })
+      params = method === 'GET' ? { params: newParams } : newParams
+    }
     try {
-      filterInfo = params.filter ? JSON.parse(params.filter) : {};
-    } catch (error) {
-      ElMessage.error(t('packages_business_data_server_drawer_filter'))
-      return
+      const result = await http[method.toLowerCase()](url, params)
+      debugResult.value = JSON.stringify(result?.data, null, 2)
+    } catch (error: any) {
+      const result = error?.response?.data
+      debugResult.value = result ? JSON.stringify(result, null, 2) : ''
     }
-    switch (method) {
-      case 'GET':
-        let paramsStr = "";
-        Object.keys(params).forEach((key) => {
-          paramsStr = `${paramsStr}&${key}=${encodeURIComponent(params[key])}`
-        })
-        //@ts-ignore
-        queryBody.url = `${url}${paramsStr}`
-        queryBody.params = params;
-        break;
-      case 'POST':
-        //@ts-ignore
-        filterInfo.limit = params?.limit || 20;
-        //@ts-ignore
-        filterInfo.page = params?.page || 1;
-        //@ts-ignore
-        queryBody.body = filterInfo;
-        //@ts-ignore
-        queryBody.url = url;
-        break;
-    }
-  }
-  try {
-    const debugInfo = await debug(queryBody);
-    debugResult.value = debugInfo ? JSON.stringify(debugInfo, null, 2) : '';
-  } catch (error: any) {
-    const result = error?.response?.data
-    debugResult.value = result ? JSON.stringify(result, null, 2) : ''
   }
 }
 

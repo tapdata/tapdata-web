@@ -936,7 +936,6 @@ export default {
     'Enable heartbeat table',
   packages_business_connections_databaseform_jiaobentiaoshi: 'Script Debugging',
   // api服务管理
-  packages_business_data_server_drawer_filter: 'Invalid json Parameter value, input filter as json object, please',
   packages_business_data_server_drawer_qingshurucanshu:
     'Please enter parameter name',
   packages_business_data_server_drawer_paixu: 'Sort',
