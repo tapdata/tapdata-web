@@ -1446,6 +1446,12 @@ export default {
   packages_business_data_source_monitor: '数据源监控',
 
   // MongoDB 操作符
+  package_business_mongodb_query_operators: 'MongoDB 查询操作符',
+  package_business_operators_search: '搜索操作符',
+  packages_business_comparison: '比较',
+  packages_business_logical: '逻辑',
+  packages_business_element: '元素',
+  packages_business_evaluation: '表达式',
   packages_business_mongo_operator_eq: '匹配等于指定值的值',
   packages_business_mongo_operator_gt: '匹配大于指定值的值',
   packages_business_mongo_operator_gte: '匹配大于或等于指定值的值',
@@ -1461,7 +1467,8 @@ export default {
   packages_business_mongo_operator_type: '如果字段是指定类型，则选择文档',
   packages_business_mongo_operator_regex: '选择值匹配指定正则表达式的文档',
   packages_business_mongo_operator_all: '匹配包含查询中指定的所有元素的数组',
-  packages_business_mongo_operator_elemMatch: '如果数组字段中的元素匹配所有指定条件，则选择文档',
+  packages_business_mongo_operator_elemMatch:
+    '匹配数组中至少有一个元素满足所有给定条件',
   packages_business_mongo_operator_size: '如果数组字段是指定大小，则选择文档',
-  packages_business_mongo_operator_mod: '对字段值执行模运算',
+  packages_business_mongo_operator_mod: '对字段值做取模匹配 [除数, 余数]',
 }

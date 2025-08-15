@@ -35,6 +35,7 @@ import {
   type Component,
 } from 'vue'
 import { DatabaseIcon } from '../../components/DatabaseIcon'
+import MqlHelpDialog from '../../components/MqlHelpDialog.vue'
 import ListSelect from '../api-application/ListSelect.vue'
 import MqlEditor from './MqlEditor.vue'
 import getTemplate from './template'
@@ -225,6 +226,7 @@ const mqlEditor = ref<any>(null)
 const containerRef = ref<HTMLElement | null>(null)
 const paramsTableRef = ref<InstanceType<typeof ElTable>>()
 const parameterSelectRef = ref<InstanceType<typeof ElSelect>[]>([])
+const helpVisible = ref(false)
 
 // Template refs
 const form_ref = ref()
@@ -1258,6 +1260,10 @@ function onFieldSelected(field: Field) {
     )
     .filter((f) => f.field_name !== field.field_name)
 }
+
+function openHelp() {
+  helpVisible.value = true
+}
 </script>
 
 <template>
@@ -1820,6 +1826,7 @@ function onFieldSelected(field: Field) {
           <!-- 筛选条件 -->
           <div
             class="data-server-panel__title mt-7 mb-3 align-items-center justify-content-start gap-3"
+            style="--btn-space: 0"
           >
             <span>{{
               $t('packages_business_data_server_drawer_shaixuantiaojian')
@@ -1840,14 +1847,19 @@ function onFieldSelected(field: Field) {
               ]"
             />
 
+            <div class="flex-1" />
+
             <el-button
               v-if="form.fullCustomQuery && isEdit"
               text
-              class="ml-auto"
               @click="handleFormat"
             >
               <el-icon class="mr-1"><i-mingcute:brush-line /></el-icon>
               {{ $t('public_format') }}
+            </el-button>
+            <el-button v-if="form.fullCustomQuery" text @click="openHelp">
+              <el-icon class="mr-1"><i-mingcute:question-line /></el-icon>
+              {{ $t('public_button_help') }}
             </el-button>
           </div>
           <template v-if="isEdit">
@@ -2153,6 +2165,8 @@ function onFieldSelected(field: Field) {
         >{{ $t('public_button_save') }}</ElButton
       >
     </template>
+
+    <MqlHelpDialog v-model="helpVisible" />
   </component>
 </template>
 
