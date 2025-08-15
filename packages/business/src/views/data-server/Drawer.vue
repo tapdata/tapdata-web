@@ -24,7 +24,7 @@ import InfiniteSelect from '@tap/form/src/components/infinite-select/InfiniteSel
 import { useI18n } from '@tap/i18n'
 import { uid } from '@tap/shared'
 import axios from 'axios'
-import { cloneDeep, isEqual, merge } from 'lodash-es'
+import { cloneDeep, isEmpty, isEqual, merge } from 'lodash-es'
 import {
   computed,
   inject,
@@ -677,8 +677,6 @@ const getAPIServerToken = async (callback?: (token: string) => void) => {
 
 // Methods
 const open = (formData?: any) => {
-  const originalFormData = formData ? cloneDeep(formData) : {}
-
   tab.value = 'form'
   visible.value = true
   isEdit.value = false
@@ -688,25 +686,28 @@ const open = (formData?: any) => {
   allFields.value = []
   workerStatus.value = ''
 
-  if (!originalFormData.id) {
+  if (isEmpty(formData)) {
     form.value = getInitData()
     form_ref.value?.resetFields()
 
     edit()
   } else {
-    formatData(originalFormData)
+    formatData(Object.assign(getInitData(), cloneDeep(formData)))
 
-    const { connectionId, tableName } = originalFormData
+    const { connectionId, tableName } = formData
 
     if (connectionId && tableName) {
       getFields()
+    }
+
+    if (!formData.id) {
+      edit()
     }
   }
 
   getDatabaseTypes()
 
   nextTick(() => {
-    // form_ref.value?.clearValidate()
     containerRef.value?.parentElement?.scrollTo({ top: 0 })
   })
 }
