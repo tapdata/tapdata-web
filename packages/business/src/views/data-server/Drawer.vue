@@ -829,6 +829,7 @@ const save = async (type?: boolean) => {
         const fieldList = await getAllFields()
 
         const map = fields.reduce((acc: any, field: any) => {
+          field.field_alias = field.field_alias?.trim() || ''
           acc[field.id] = field
           return acc
         }, {})
@@ -836,7 +837,7 @@ const save = async (type?: boolean) => {
         formData.fields = fieldList.map((f: any) => {
           return {
             ...f,
-            field_alias: map[f.id]?.field_alias || '',
+            field_alias: map[f.id]?.field_alias
           }
         })
       }
@@ -917,6 +918,7 @@ const handleChangeTable = () => {
 }
 
 const fieldsChanged = (val: any[]) => {
+  if (!isEdit.value) return
   form.value.fields = val
 }
 
@@ -2159,6 +2161,7 @@ function openHelp() {
         $t('public_button_cancel')
       }}</ElButton>
       <ElButton
+        :loading="loading"
         :disabled="!form.fields.length"
         type="primary"
         @click="save()"
