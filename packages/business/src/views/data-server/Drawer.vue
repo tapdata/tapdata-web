@@ -1328,38 +1328,6 @@ function buildTree(data: Array<Record<string, any>>) {
   })
   return root;
 }
-// 更新父节点选中状态
-// function updateParent(row: Record<string, any>) {
-//   let p = row.parent
-//   while (p) {
-//     const childrenSelected = p.children.filter((c: Record<string, any>) => selectedIds.value.has(c.id))
-//     if (childrenSelected.length === p.children.length) {
-//       selectedIds.value.add(p.id)
-//       p.indeterminate = false
-//       p.checked = true
-//     } else if (childrenSelected.length > 0) {
-//       selectedIds.value.delete(p.id)
-//       p.indeterminate = true
-//       p.checked = true
-//     } else {
-//       selectedIds.value.delete(p.id)
-//       p.indeterminate = false
-//       p.checked = false
-//     }
-//     p = p.parent
-//   }
-// }
-// 更新子节点选中状态
-// function updateChildren(row: Record<string, any>, checked: boolean) {
-//   row.children.forEach((c: Record<string, any>) => {
-//     if (checked) selectedIds.value.add(c.id)
-//     else selectedIds.value.delete(c.id)
-//     c.indeterminate = false
-//     if (c.children?.length) updateChildren(c, checked)
-//   })
-//   //updateParent(row);
-// }
-// 勾选回调
 function onSelectionChange(selection: Array<Record<string, any>>) {
   selectedIds.value.clear()
   selection.forEach(row => {
@@ -1386,7 +1354,7 @@ function onSelectionChange(selection: Array<Record<string, any>>) {
     walk(rootNode)
   })
 }
-// 暴露 selectedFields
+
 function emitSelectedFields() {
   const selectedFields: Array<Record<string, any>> = []
   const walk = (nodes: Array<Record<string, any>>) => {
@@ -2263,49 +2231,6 @@ function hasChildren(node) {
             />
           </ElTable>
         </template>
-        <!--        <template v-if="tab === 'form'">-->
-        <!--          <div class="data-server-panel__title mt-7 mb-3">-->
-        <!--            {{ $t('packages_business_data_server_drawer_shuchujieguo') }}-->
-        <!--          </div>-->
-        <!--          <ElTable-->
-        <!--            ref="fieldTable"-->
-        <!--            :data="fieldTableData"-->
-        <!--            :loading="fieldLoading"-->
-        <!--            @selection-change="fieldsChanged"-->
-        <!--          >-->
-        <!--            <ElTableColumn-->
-        <!--              v-if="isEdit"-->
-        <!--              type="selection"-->
-        <!--              width="32"-->
-        <!--              align="center"-->
-        <!--            />-->
-        <!--            <ElTableColumn-->
-        <!--              :label="$t('public_name')"-->
-        <!--              prop="field_name"-->
-        <!--              min-width="100"-->
-        <!--            />-->
-        <!--            <ElTableColumn-->
-        <!--              :label="$t('public_alias')"-->
-        <!--              prop="field_alias"-->
-        <!--              min-width="120"-->
-        <!--            >-->
-        <!--              <template #default="{ row }">-->
-        <!--                <ElInput v-if="isEdit" v-model="row.field_alias" />-->
-        <!--                <span v-else>{{ row.field_alias }}</span>-->
-        <!--              </template>-->
-        <!--            </ElTableColumn>-->
-        <!--            <ElTableColumn-->
-        <!--              :label="$t('public_type')"-->
-        <!--              prop="originalDataType"-->
-        <!--              min-width="100"-->
-        <!--            />-->
-        <!--            <ElTableColumn-->
-        <!--              :label="$t('public_description')"-->
-        <!--              prop="comment"-->
-        <!--              min-width="150"-->
-        <!--            />-->
-        <!--          </ElTable>-->
-        <!--        </template>-->
 
         <!-- {{$t('packages_business_data_server_drawer_diaoyongfangshi')}} -->
         <template v-if="tab === 'debug'">
