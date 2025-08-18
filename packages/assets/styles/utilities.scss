@@ -2784,6 +2784,10 @@
   background: #f6f8fa !important;
 }
 
+.bg-muted {
+  background-color: oklch(0.97 0 0);
+}
+
 .user-select-all {
   -webkit-user-select: all !important;
   -moz-user-select: all !important;
