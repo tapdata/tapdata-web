@@ -447,7 +447,7 @@ export default {
   public_search_api: 'Search API',
   public_quick_fill: 'Quick Fill',
   public_last_version: 'Last Version',
-  public_example: 'For example',
+  public_example: 'Example',
   public_placeholder_sdk_name: 'Please enter SDK name',
   public_placeholder_package_name: 'Please enter package name',
   public_placeholder_version: 'Please enter version',
@@ -514,4 +514,5 @@ export default {
   public_desc: 'DESC',
   public_select_field: 'Select Field',
   public_select_parameter: 'Select Parameter',
+  public_others: 'Others',
 }
