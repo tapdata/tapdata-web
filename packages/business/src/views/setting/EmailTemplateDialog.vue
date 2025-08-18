@@ -19,6 +19,7 @@ import {
 import { useI18n } from '@tap/i18n'
 import juice from 'juice/client'
 import { computed, reactive, ref } from 'vue'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 
 import type { ElInput } from 'element-plus'
 
@@ -518,9 +519,11 @@ defineExpose({
                 :class="{ active: activeType === item.key }"
                 @click="handleSelectType(item)"
               >
-                <span class="menu-list-item-title">{{
-                  keyMapping[item.key]
-                }}</span>
+                <OverflowTooltip
+                  placement="top"
+                  class="menu-list-item-title"
+                  :text="keyMapping[item.key]"
+                />
               </div>
             </div>
           </div>
