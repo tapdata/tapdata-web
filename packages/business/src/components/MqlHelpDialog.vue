@@ -30,49 +30,91 @@ const groups = ref<Group[]>([
       {
         name: '$eq',
         descKey: 'packages_business_mongo_operator_eq',
-        example: `{"price": {"$eq": 10}} // price 等于 10`,
+        example: `{"price": {"$eq": 10}} // ${t(
+          'packages_business_example_eq',
+          {
+            a: 'price',
+            b: 10,
+          },
+        )}`,
         related: ['$ne', '$in'],
       },
       {
         name: '$ne',
         descKey: 'packages_business_mongo_operator_ne',
-        example: `{"status": {"$ne": "archived"}} // status 不等于 archived`,
+        example: `{"status": {"$ne": "archived"}} // ${t(
+          'packages_business_example_ne',
+          {
+            a: 'status',
+            b: 'archived',
+          },
+        )}`,
         related: ['$eq'],
       },
       {
         name: '$gt',
         descKey: 'packages_business_mongo_operator_gt',
-        example: `{"age": {"$gt": 18}} // age 大于 18`,
+        example: `{"age": {"$gt": 18}} // ${t('packages_business_example_gt', {
+          a: 'age',
+          b: 18,
+        })}`,
         related: ['$gte', '$lt'],
       },
       {
         name: '$gte',
         descKey: 'packages_business_mongo_operator_gte',
-        example: `{"score": {"$gte": 90}} // score 大于等于 90`,
+        example: `{"score": {"$gte": 90}} // ${t(
+          'packages_business_example_gte',
+          {
+            a: 'score',
+            b: 90,
+          },
+        )}`,
         related: ['$gt', '$lte'],
       },
       {
         name: '$lt',
         descKey: 'packages_business_mongo_operator_lt',
-        example: `{"age": {"$lt": 65}} // age 小于 65`,
+        example: `{"age": {"$lt": 65}} // ${t('packages_business_example_lt', {
+          a: 'age',
+          b: 65,
+        })}`,
         related: ['$lte', '$gt'],
       },
       {
         name: '$lte',
         descKey: 'packages_business_mongo_operator_lte',
-        example: `{"price": {"$lte": 100}} // price 小于等于 100`,
+        example: `{"price": {"$lte": 100}} // ${t(
+          'packages_business_example_lte',
+          {
+            a: 'price',
+            b: 100,
+          },
+        )}`,
         related: ['$lt', '$gte'],
       },
       {
         name: '$in',
         descKey: 'packages_business_mongo_operator_in',
-        example: `{"category": {"$in": ["A", "B", "C"]}} // category 在 A, B, C 中`,
+        example: `{"category": {"$in": ["A", "B", "C"]}} // ${t(
+          'packages_business_example_in',
+          {
+            a: 'category',
+            b: 'A, B, C',
+          },
+        )}`,
         related: ['$nin', '$eq'],
       },
       {
         name: '$nin',
         descKey: 'packages_business_mongo_operator_nin',
-        example: `{"category": {"$nin": ["A", "B"]}} // category 不在 A, B 中`,
+        example: `{"category": {"$nin": ["A", "B"]}} // ${t(
+          'packages_business_example_nin',
+          {
+            a: 'category',
+            b: 'A, B',
+          },
+        )}`,
         related: ['$in'],
       },
     ],
@@ -108,12 +150,16 @@ const groups = ref<Group[]>([
       {
         name: '$exists',
         descKey: 'packages_business_mongo_operator_exists',
-        example: `{"deletedAt": {"$exists": false}} // 字段不存在`,
+        example: `{"deletedAt": {"$exists": false}} // ${t(
+          'packages_business_example_exists',
+        )}`,
       },
       {
         name: '$type',
         descKey: 'packages_business_mongo_operator_type',
-        example: `{"age": {"$type": "int"}} // 也可用数字代号，如 16 表示 int`,
+        example: `{"age": {"$type": "int"}} // ${t(
+          'packages_business_example_type',
+        )}`,
       },
     ],
   },
@@ -124,7 +170,9 @@ const groups = ref<Group[]>([
       {
         name: '$regex',
         descKey: 'packages_business_mongo_operator_regex',
-        example: `{"name": {"$regex": "^A", "$options": "i"}} // 以 A 开头，忽略大小写`,
+        example: `{"name": {"$regex": "^A", "$options": "i"}} // ${t(
+          'packages_business_example_regex',
+        )}`,
       },
     ],
   },
@@ -146,7 +194,13 @@ const groups = ref<Group[]>([
       {
         name: '$size',
         descKey: 'packages_business_mongo_operator_size',
-        example: `{"tags": {"$size": 3}} // tags 数组长度为 3`,
+        example: `{"tags": {"$size": 3}} // ${t(
+          'packages_business_example_size',
+          {
+            a: 'tags',
+            b: 3,
+          },
+        )}`,
       },
     ],
   },
@@ -157,7 +211,13 @@ const groups = ref<Group[]>([
       {
         name: '$mod',
         descKey: 'packages_business_mongo_operator_mod',
-        example: `{"qty": {"$mod": [5, 0]}} // qty 能被 5 整除`,
+        example: `{"qty": {"$mod": [5, 0]}} // ${t(
+          'packages_business_example_mod',
+          {
+            a: 'qty',
+            b: 5,
+          },
+        )}`,
       },
     ],
   },
@@ -201,7 +261,7 @@ defineExpose({ open, close })
   <ElDialog
     append-to-body
     :close-on-click-modal="false"
-    width="720px"
+    width="45vw"
     top="6vh"
     :title="$t('package_business_mongodb_query_operators')"
     class="px-0"
