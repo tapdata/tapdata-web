@@ -528,4 +528,5 @@ export default {
   public_matched_items: '匹配项 ({val})',
   public_replace_result: '替换结果',
   public_no_matched_items: '无匹配项',
+  public_select_encryption_rule: '选择加密规则',
 }
