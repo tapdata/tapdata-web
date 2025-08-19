@@ -1665,4 +1665,17 @@ export default {
     'Selects documents if the array field is a specified size.',
   packages_business_mongo_operator_mod:
     'Performs a modulo match on a field value [divisor, remainder].',
+  packages_business_example_eq: '{a} equals {b}',
+  packages_business_example_ne: '{a} not equals {b}',
+  packages_business_example_gt: '{a} greater than {b}',
+  packages_business_example_gte: '{a} greater than or equal to {b}',
+  packages_business_example_lt: '{a} less than {b}',
+  packages_business_example_lte: '{a} less than or equal to {b}',
+  packages_business_example_in: '{a} in {b}',
+  packages_business_example_nin: '{a} not in {b}',
+  packages_business_example_exists: 'field does not exist',
+  packages_business_example_type:
+    'Can also use numeric codes, such as 16 for int',
+  packages_business_example_regex: 'Starts with A, ignoring case',
+  packages_business_example_size: '{a} array size is {b}',
 }
