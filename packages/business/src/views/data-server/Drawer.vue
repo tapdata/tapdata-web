@@ -2,16 +2,17 @@
 import { EditPen, InfoFilled } from '@element-plus/icons-vue'
 import {
   createApiModule,
+  debug,
   fetchApiServerToken,
   fetchConnections,
   fetchDatabaseTypes,
+  fetchEncryptionList,
   metadataInstancesApi,
   roleApi,
   updateApiModule,
   updateApiModulePermissions,
   updateApiModuleTags,
   workerApi,
-  debug
 } from '@tap/api'
 import SortConditionDisplay from '@tap/component/src/api-server/SortConditionDisplay.vue'
 import WhereConditionDisplay from '@tap/component/src/api-server/WhereConditionDisplay.vue'
@@ -24,7 +25,6 @@ import InfiniteSelect from '@tap/form/src/components/infinite-select/InfiniteSel
 
 import { useI18n } from '@tap/i18n'
 import { uid } from '@tap/shared'
-import axios from 'axios'
 import { cloneDeep, isEqual, merge } from 'lodash-es'
 import {
   computed,
@@ -138,10 +138,16 @@ const props = withDefaults(defineProps<Props>(), {
   inDialog: false,
   disableApp: false,
   readonly: false,
-  isEdit: Boolean
+  isEdit: Boolean,
 })
 
-const emit = defineEmits(['visible', 'update:loading', 'save', 'update', 'update:selectedFields'])
+const emit = defineEmits([
+  'visible',
+  'update:loading',
+  'save',
+  'update',
+  'update:selectedFields',
+])
 
 const apiApplication = inject('apiApplication', null)
 
@@ -203,6 +209,7 @@ const getInitData = () => {
 
 // Refs
 const form = ref<any>(getInitData())
+const encryptions = ref<any[]>([])
 
 const visible = ref(false)
 const loading = ref(false)
@@ -228,7 +235,9 @@ const containerRef = ref<HTMLElement | null>(null)
 const paramsTableRef = ref<InstanceType<typeof ElTable>>()
 const parameterSelectRef = ref<InstanceType<typeof ElSelect>[]>([])
 // 树数据和选中状态
-const treeData = computed(() => buildTree(isEdit.value ? allFields.value : form.value.fields || []))
+const treeData = computed(() =>
+  buildTree(isEdit.value ? allFields.value : form.value.fields || []),
+)
 const selectedIds = ref(new Set())
 
 // Template refs
@@ -675,9 +684,18 @@ const getFields = async () => {
   }
 }
 
-const getAPIServerToken = async (callback?: (token: Record<string, any>) => void) => {
+const getAPIServerToken = async (
+  callback?: (token: Record<string, any>) => void,
+) => {
   token.value = await fetchApiServerToken()
   callback?.(token.value)
+}
+
+const getEncryptions = async () => {
+  const { items } = await fetchEncryptionList({
+    limit: 10000,
+  })
+  encryptions.value = items
 }
 
 // Methods
@@ -709,6 +727,7 @@ const open = (formData?: any) => {
   }
 
   getDatabaseTypes()
+  getEncryptions()
 
   nextTick(() => {
     // form_ref.value?.clearValidate()
@@ -718,7 +737,7 @@ const open = (formData?: any) => {
 
 const save = async (type?: boolean) => {
   const valid = await form_ref.value?.validate()
-  emitSelectedFields();
+  emitSelectedFields()
   if (valid) {
     const {
       id,
@@ -869,7 +888,10 @@ const edit = () => {
   initialFormData = cloneDeep(form.value)
 
   nextTick(() => {
-    const findFieldRecursive = (nodes: any[], fieldName: string): any | null => {
+    const findFieldRecursive = (
+      nodes: any[],
+      fieldName: string,
+    ): any | null => {
       for (const node of nodes) {
         if (node.id === fieldName) {
           return node
@@ -886,6 +908,7 @@ const edit = () => {
       const field = findFieldRecursive(treeData.value, f.field_name)
       if (field) {
         field.field_alias = f.field_alias || ''
+        field.textEncryptionRuleIds = f.textEncryptionRuleIds || []
         fieldTable.value?.toggleRowSelection(field, true)
       } else {
         console.log('field not found', f.field_name, f)
@@ -993,58 +1016,58 @@ const debugDisabled = computed(() => {
 })
 
 const debugData = async () => {
-  let params = debugParams.value
+  const params = debugParams.value
   const method = debugMethod.value
   if (method === 'TOKEN') {
-    reflshToken();
-    debugResult.value = JSON.stringify(token.value, null, 2);
-    return;
+    reflshToken()
+    debugResult.value = JSON.stringify(token.value, null, 2)
+    return
   }
-  const hostPath = urlsMap.value[debugMethod.value]?.replace(/\/$/, '') || '';
-  const url = `${hostPath}?access_token=${token.value.access_token}`;
+  const hostPath = urlsMap.value[debugMethod.value]?.replace(/\/$/, '') || ''
+  const url = `${hostPath}?access_token=${token.value.access_token}`
   const queryBody = {
     apiId: form.value.id,
     url: null,
-    method: method,
-    headers: {"Content-Type": "application/json"},
+    method,
+    headers: { 'Content-Type': 'application/json' },
     body: null,
     params: null,
-  };
+  }
 
   if (params) {
     //@ts-ignore
-    let filterInfo = {};
+    let filterInfo = {}
     try {
-      filterInfo = params.filter ? JSON.parse(params.filter) : {};
-    } catch (error) {
+      filterInfo = params.filter ? JSON.parse(params.filter) : {}
+    } catch {
       ElMessage.error(t('packages_business_data_server_drawer_filter'))
       return
     }
     switch (method) {
       case 'GET':
-        let paramsStr = "";
+        let paramsStr = ''
         Object.keys(params).forEach((key) => {
           paramsStr = `${paramsStr}&${key}=${encodeURIComponent(params[key])}`
         })
         //@ts-ignore
         queryBody.url = `${url}${paramsStr}`
-        queryBody.params = params;
-        break;
+        queryBody.params = params
+        break
       case 'POST':
         //@ts-ignore
-        filterInfo.limit = params?.limit || 20;
+        filterInfo.limit = params?.limit || 20
         //@ts-ignore
-        filterInfo.page = params?.page || 1;
+        filterInfo.page = params?.page || 1
         //@ts-ignore
-        queryBody.body = filterInfo;
+        queryBody.body = filterInfo
         //@ts-ignore
-        queryBody.url = url;
-        break;
+        queryBody.url = url
+        break
     }
   }
   try {
-    const debugInfo = await debug(queryBody);
-    debugResult.value = debugInfo ? JSON.stringify(debugInfo, null, 2) : '';
+    const debugInfo = await debug(queryBody)
+    debugResult.value = debugInfo ? JSON.stringify(debugInfo, null, 2) : ''
   } catch (error: any) {
     const result = error?.response?.data
     debugResult.value = result ? JSON.stringify(result, null, 2) : ''
@@ -1297,47 +1320,68 @@ function onFieldSelected(field: Field) {
 
 // 递归构建树结构
 function buildTree(data: Array<Record<string, any>>) {
-  const root: Array<Record<string, any>> = [];
-  const map: Record<string, any> = {};
-  let parent: Record<string, any> = {};
-  data.forEach(item => {
-    const parts = item.field_name.split('.');
-    let current = root;
+  const root: Array<Record<string, any>> = []
+  const map: Record<string, any> = {}
+  let parent: Record<string, any> = {}
+  data.forEach((item) => {
+    const parts = item.field_name.split('.')
+    let current = root
     parts.forEach((part: string, index: number) => {
-      const path = parts.slice(0, index + 1).join('.');
-      let node = map[path];
+      const path = parts.slice(0, index + 1).join('.')
+      let node = map[path]
       const parentField = data.find((it: any) => it.field_name === path) as any
       if (!node) {
         node = {
           id: path,
           field_name: part,
-          fieldInfo: index === parts.length - 1 ? item : (parentField || {}),
-          field_alias: index === parts.length - 1 ? item.field_alias : (parentField ? parentField.field_alias : ''),
-          originalDataType: index === parts.length - 1 ? item.originalDataType : (parentField ? parentField.originalDataType : 'OBJECT'),
-          comment: index === parts.length - 1 ? item.comment : (parentField ? parentField.comment : ''),
+          fieldInfo: index === parts.length - 1 ? item : parentField || {},
+          field_alias:
+            index === parts.length - 1
+              ? item.field_alias
+              : parentField
+                ? parentField.field_alias
+                : '',
+          originalDataType:
+            index === parts.length - 1
+              ? item.originalDataType
+              : parentField
+                ? parentField.originalDataType
+                : 'OBJECT',
+          comment:
+            index === parts.length - 1
+              ? item.comment
+              : parentField
+                ? parentField.comment
+                : '',
+          textEncryptionRuleIds:
+            index === parts.length - 1
+              ? item.textEncryptionRuleIds
+              : parentField?.textEncryptionRuleIds,
           children: [],
-          parent: parent,
-          indeterminate: false
+          parent,
+          indeterminate: false,
         }
-        map[path] = node;
-        current.push(node);
+        map[path] = node
+        current.push(node)
       }
-      parent = node;
-      current = node.children;
+      parent = node
+      current = node.children
     })
   })
-  return root;
+  return root
 }
 function onSelectionChange(selection: Array<Record<string, any>>) {
   selectedIds.value.clear()
-  selection.forEach(row => {
+  selection.forEach((row) => {
     selectedIds.value.add(row.id)
-  });
+  })
   // 更新父节点 indeterminate
-  treeData.value.forEach(rootNode => {
+  treeData.value.forEach((rootNode) => {
     const walk = (node: Record<string, any>) => {
       if (node.children?.length) {
-        const childrenSelected = node.children.filter((c: Record<string, any>) => selectedIds.value.has(c.id))
+        const childrenSelected = node.children.filter(
+          (c: Record<string, any>) => selectedIds.value.has(c.id),
+        )
         if (childrenSelected.length === node.children.length) {
           selectedIds.value.add(node.id)
           node.indeterminate = false
@@ -1361,32 +1405,35 @@ function emitSelectedFields() {
     nodes.forEach((node: Record<string, any>) => {
       if (hasChildren(node)) {
         node.fieldInfo.field_alias = node.field_alias
-        selectedFields.push(node.fieldInfo || {
-          field_name: node.id,
-          field_alias: node.field_alias || ''
-        })
+        node.fieldInfo.textEncryptionRuleIds = node.textEncryptionRuleIds
+        selectedFields.push(
+          node.fieldInfo || {
+            field_name: node.id,
+            field_alias: node.field_alias || '',
+            textEncryptionRuleIds: node.textEncryptionRuleIds || [],
+          },
+        )
       }
       if (node.children?.length) walk(node.children)
     })
   }
   walk(treeData.value)
   console.log(`selectedFields: ${JSON.stringify(selectedFields)}`)
-  form.value.fields = selectedFields;
+  form.value.fields = selectedFields
   //emit('update:selectedFields', selectedFields)
 }
 
 function hasChildren(node) {
   const walk = (node) => {
-    if (selectedIds.value.has(node.id)) return true;
+    if (selectedIds.value.has(node.id)) return true
     if (node.children) {
-      for (let child of node.children) {
-        if (walk(child)) return true;
+      for (const child of node.children) {
+        if (walk(child)) return true
       }
     }
   }
-  return walk(node);
+  return walk(node)
 }
-
 </script>
 
 <template>
@@ -2165,14 +2212,13 @@ function hasChildren(node) {
           </div>
           <ElTable
             ref="fieldTable"
+            v-model:selection="selectedIds"
             :data="treeData"
             :loading="fieldLoading"
             row-key="id"
             :tree-props="{ children: 'children' }"
             class="custom-tree-table"
             @selection-change="onSelectionChange"
-            default-expand-all:="false"
-            v-model:selection="selectedIds"
           >
             <ElTableColumn
               v-if="isEdit"
@@ -2185,15 +2231,15 @@ function hasChildren(node) {
             <ElTableColumn
               :label="$t('public_name')"
               prop="field_name"
-              min-width="130"
+              min-width="100"
               show-overflow-tooltip
             />
             <!-- 字段别名 -->
             <ElTableColumn
+              v-show-overflow-tooltip="!isEdit"
               :label="$t('public_alias')"
               prop="field_alias"
               min-width="80"
-              v-show-overflow-tooltip="!isEdit"
             >
               <template #default="{ row }">
                 <ElTooltip
@@ -2212,6 +2258,25 @@ function hasChildren(node) {
                     overflow: hidden;
                     white-space: nowrap;
                   "
+                />
+              </template>
+            </ElTableColumn>
+            <ElTableColumn
+              :label="$t('public_data_encryption')"
+              min-width="100"
+            >
+              <template #default="{ row }">
+                <el-select-v2
+                  v-if="isEdit || row.textEncryptionRuleIds?.length"
+                  v-model="row.textEncryptionRuleIds"
+                  :placeholder="$t('public_select_encryption_rule')"
+                  :disabled="!isEdit"
+                  multiple
+                  :options="encryptions"
+                  :props="{
+                    label: 'name',
+                    value: 'id',
+                  }"
                 />
               </template>
             </ElTableColumn>
@@ -2481,7 +2546,7 @@ function hasChildren(node) {
   border-right: none;
 }
 .el-checkbox__input.is-indeterminate .el-checkbox__inner {
-  background-color: #409EFF;
-  border-color: #409EFF;
+  background-color: #409eff;
+  border-color: #409eff;
 }
 </style>

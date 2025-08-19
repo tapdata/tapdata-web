@@ -528,4 +528,5 @@ export default {
   public_matched_items: 'Matched Items ({val})',
   public_replace_result: 'Replace Result',
   public_no_matched_items: 'No Matched Items',
+  public_select_encryption_rule: 'Select Encryption Rule',
 }
