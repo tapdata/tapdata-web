@@ -1320,6 +1320,8 @@ export default {
   packages_business_connections_test_xiazaijindu: '下载进度',
   packages_business_connections_test_xiazaishibai: '下载失败',
   packages_business_relmig_import: 'MongoDB Relmig 导入',
+  packages_business_api_import: 'API 导入',
+  packages_business_functions_import: '函数导入',
   packages_business_relmig_import_desc: `这个功能旨在无缝导入 MongoDB 关系迁移器导出的 relmig 项目文件到 ${import.meta.env.VUE_APP_PAGE_TITLE}。在 relmig 文件被导入后， ${import.meta.env.VUE_APP_PAGE_TITLE} 将自动创建一个任务来执行源数据库的实时数据同步，并将其转换为 MongoDB 数据库中的 JSON 数据格式。`,
   packages_business_relmig_upload: '上传 relmig 文件',
   packages_business__relmig_import_connection_tip:
