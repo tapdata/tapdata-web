@@ -165,7 +165,7 @@ export default {
       // let title = this.$route.params.id ? '是否放弃修改内容？' : '是否放弃创建该连接？'
 
       this.$confirm(msg, {
-        confirmButtonText: this.$t('packages_business_connection_form_give_up'),
+        confirmButtonText: this.$t('public_button_confirm'),
         cancelButtonText: this.$t('public_button_cancel'),
       }).then((resFlag) => {
         if (!resFlag) {
