@@ -29,7 +29,7 @@ export const FieldValue = connect(
           searchFiledName: '',
           scriptDialog: {
             open: false,
-            script: '//Enter you code at here',
+            script: '//Enter your code here',
             fieldName: '',
             fn() {},
           },
