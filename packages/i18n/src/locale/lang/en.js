@@ -530,4 +530,8 @@ export default {
   public_replace_result: 'Replace Result',
   public_no_matched_items: 'No Matched Items',
   public_select_encryption_rule: 'Select Encryption Rule',
+  public_clear_alias_confirm: 'Are you sure to clear all field aliases?',
+  public_selected_fields: 'Selected {val} fields',
+  public_quick_convert_alias: 'Convert Alias',
+  public_clear_alias: 'Clear Alias',
 }
