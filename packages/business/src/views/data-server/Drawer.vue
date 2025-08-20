@@ -220,6 +220,7 @@ const isEdit = ref(false)
 const debugParams = ref<any>(null)
 const debugMethod = ref('GET')
 const debugResult = ref('')
+const debugHttpInfo = ref({})
 const templateType = ref('java')
 const token = ref<Record<string, any>>({})
 const roles = ref([])
@@ -708,6 +709,7 @@ const open = (formData?: any) => {
   debugParams.value = null
   debugMethod.value = 'GET'
   debugResult.value = ''
+  debugHttpInfo.value = {}
   allFields.value = []
   workerStatus.value = ''
 
@@ -1021,6 +1023,9 @@ const debugData = async () => {
   if (method === 'TOKEN') {
     reflshToken()
     debugResult.value = JSON.stringify(token.value, null, 2)
+    debugHttpInfo.value = {
+      httpCode: 200
+    }
     return
   }
   const hostPath = urlsMap.value[debugMethod.value]?.replace(/\/$/, '') || ''
@@ -1067,10 +1072,17 @@ const debugData = async () => {
   }
   try {
     const debugInfo = await debug(queryBody)
+    debugHttpInfo.value = {
+      httpCode: debugInfo.httpCode
+    }
+    delete debugInfo.httpCode
     debugResult.value = debugInfo ? JSON.stringify(debugInfo, null, 2) : ''
   } catch (error: any) {
     const result = error?.response?.data
     debugResult.value = result ? JSON.stringify(result, null, 2) : ''
+    debugHttpInfo.value = {
+      httpCode: result?.code || result?.httpCode
+    }
   }
 }
 
@@ -2327,6 +2339,11 @@ function hasChildren(node) {
         <template v-if="tab === 'debug'">
           <div class="data-server-panel__title mt-4 mb-3">
             {{ $t('packages_business_data_server_drawer_fanhuijieguo') }}
+            <el-tag
+                v-if="debugHttpInfo.httpCode"
+                style="margin-left: .5rem"
+                :type="debugHttpInfo.httpCode && debugHttpInfo.httpCode >= 200 && debugHttpInfo.httpCode < 300 ? 'success' : 'warning'"
+                size="small">{{debugHttpInfo.httpCode}}</el-tag>
           </div>
           <VCodeEditor
             class="rounded-lg"
@@ -2431,7 +2448,7 @@ function hasChildren(node) {
 
 .data-server-panel__title {
   display: flex;
-  justify-content: space-between;
+  justify-content: start;
   align-items: center;
   margin-top: 32px;
   margin-bottom: 16px;
