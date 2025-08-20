@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import {
-  createEncryption,
   deleteEncryption,
   fetchEncryptionList,
-  updateEncryption,
   type Encryption,
   type Filter,
 } from '@tap/api'
+import { FilterBar } from '@tap/component/src/filter-bar'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
-import { ro } from 'element-plus/es/locales.mjs'
-import { ref, shallowRef, useTemplateRef } from 'vue'
+import { ref, shallowRef, useTemplateRef, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
 import TablePage from '../../components/TablePage.vue'
 import { dayjs } from '../../shared/dayjs'
@@ -18,6 +17,7 @@ import RuleDialog from './RuleDialog.vue'
 import TestDialog from './TestDialog.vue'
 
 const { t } = useI18n()
+const route = useRoute()
 
 const tableRef = useTemplateRef<InstanceType<typeof TablePage>>('tableRef')
 const searchParams = ref({
@@ -26,6 +26,20 @@ const searchParams = ref({
 const dialogOpen = ref(false)
 const testDialogOpen = ref(false)
 const editingRule = shallowRef<Encryption>()
+const filterItems = ref([
+  {
+    placeholder: t('public_rule_name'),
+    key: 'keyword',
+    type: 'input',
+  },
+])
+
+watch(
+  () => route.query,
+  () => {
+    fetchData(1)
+  },
+)
 
 const getData = async ({
   page,
@@ -42,8 +56,7 @@ const getData = async ({
 
   if (keyword) {
     filter.where = {
-      like: keyword,
-      options: 'i',
+      name: { like: keyword, options: 'i' },
     }
   }
 
@@ -102,6 +115,13 @@ const fetchData = (page: number) => {
       row-key="id"
       :remote-method="getData"
     >
+      <template #search>
+        <FilterBar
+          v-model:value="searchParams"
+          :items="filterItems"
+          @fetch="fetchData(1)"
+        />
+      </template>
       <ElTableColumn :label="$t('public_rule_name')" prop="name">
         <template #default="{ row }">
           <div class="flex align-center gap-2">
