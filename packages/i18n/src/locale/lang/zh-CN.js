@@ -508,4 +508,7 @@ export default {
   public_others: '其他',
   public_queue_capacity: '缓存队列大小',
   public_queue_capacity_tip: '设置过大可能导致待校验任务堆积，占用过多内存',
+  public_queue_capacity_auto_tip: '基于采样频率计算',
+  public_auto: '自动',
+  public_custom: '自定义',
 }

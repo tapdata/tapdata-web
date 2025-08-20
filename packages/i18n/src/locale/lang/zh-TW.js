@@ -507,4 +507,7 @@ export default {
   public_others: '其他',
   public_queue_capacity: '緩存隊列大小',
   public_queue_capacity_tip: '設置過大可能導致待校驗任務堆積，占用过多内存',
+  public_queue_capacity_auto_tip: '基於采樣頻率計算',
+  public_auto: '自動',
+  public_custom: '自定義',
 }

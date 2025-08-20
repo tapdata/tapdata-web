@@ -62,7 +62,6 @@ export async function getTaskInspectConfig(taskId: string) {
       mode: 'CLOSE',
       timeCheckMode: 'NORMAL',
       checkNoPkTable: false,
-      queueCapacity: 1000,
       custom: {
         cdc: {
           enable: true,

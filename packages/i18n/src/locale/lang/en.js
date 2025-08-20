@@ -518,4 +518,7 @@ export default {
   public_queue_capacity: 'Queue Capacity',
   public_queue_capacity_tip:
     'Setting a large capacity may cause pending validation tasks to pile up and consume excessive memory.',
+  public_queue_capacity_auto_tip: 'Based on sampling frequency calculation',
+  public_auto: 'Auto',
+  public_custom: 'Custom',
 }

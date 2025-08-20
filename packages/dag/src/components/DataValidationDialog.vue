@@ -37,9 +37,9 @@ const timeCheckModeOptions = [
 const config = reactive<Partial<TaskInspectConfig>>({
   checkNoPkTable: false,
   timeCheckMode: 'NORMAL',
-  queueCapacity: 1000,
 })
 const dialogRef = ref<InstanceType<typeof ElDialog> | null>(null)
+const queueCapacityType = ref<'auto' | 'custom'>('auto')
 
 async function initFormData() {
   loading.value = true
@@ -54,7 +54,8 @@ async function initFormData() {
 
     config.timeCheckMode = res.timeCheckMode
     config.checkNoPkTable = res.checkNoPkTable
-    config.queueCapacity = res.queueCapacity
+    config.queueCapacity = res.queueCapacity ?? 1000
+    queueCapacityType.value = 'queueCapacity' in res ? 'custom' : 'auto'
   } catch (error) {
     console.error('Failed to load validation settings:', error)
   } finally {
@@ -88,6 +89,10 @@ async function handleSave() {
       },
       recover: { enable: recoverEnabled.value },
     },
+  }
+
+  if (queueCapacityType.value === 'auto') {
+    delete settings.queueCapacity
   }
 
   saving.value = true
@@ -260,17 +265,36 @@ defineExpose({
             <div class="flex-1">
               <label class="fw-sub flex align-center gap-1"
                 >{{ t('public_queue_capacity') }}
+              </label>
+            </div>
+
+            <el-radio-group v-model="queueCapacityType">
+              <el-radio value="auto">
+                <span class="align-middle mr-1">{{ $t('public_auto') }}</span>
+                <el-tooltip
+                  :content="t('public_queue_capacity_auto_tip')"
+                  placement="top"
+                >
+                  <el-icon class="align-middle">
+                    <i-lucide:info /> </el-icon></el-tooltip
+              ></el-radio>
+              <el-radio value="custom">
+                <span class="align-middle mr-1">{{ $t('public_custom') }}</span>
                 <el-tooltip
                   :content="t('public_queue_capacity_tip')"
                   placement="top"
                 >
-                  <el-icon size="16"><i-lucide:info /></el-icon>
-                </el-tooltip>
-              </label>
-            </div>
+                  <el-icon class="align-middle"
+                    ><i-lucide:info
+                  /></el-icon> </el-tooltip
+              ></el-radio>
+            </el-radio-group>
+          </div>
 
+          <div v-if="queueCapacityType === 'custom'" class="text-end">
             <el-input-number
               v-model="config.queueCapacity"
+              class="ml-auto"
               :min="1"
               controls-position="right"
             />
@@ -342,63 +366,10 @@ defineExpose({
   }
 }
 
-.dialog-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #f0f0f0;
-
-  .dialog-title {
-    font-size: 18px;
-    font-weight: 500;
-    color: #1f2329;
-  }
-
-  .close-button {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px;
-
-    &:hover {
-      opacity: 0.8;
-    }
-  }
-}
-
-.validation-container {
-  padding: 24px;
-}
-
 .validation-header {
   display: flex;
   align-items: center;
   margin-bottom: 4px;
-
-  .switch-container {
-    :deep(.el-switch__core) {
-      height: 24px;
-      border-radius: 12px;
-      width: 50px !important;
-
-      &::after {
-        height: 20px;
-        width: 20px;
-        top: 1px;
-      }
-    }
-
-    :deep(.el-switch.is-checked .el-switch__core::after) {
-      margin-left: -21px;
-    }
-  }
-}
-
-.validation-content {
 }
 
 .validation-option {
@@ -406,41 +377,7 @@ defineExpose({
     --el-checkbox-input-width: 16px;
     --el-checkbox-input-height: 16px;
     :deep(.el-checkbox__inner::after) {
-      width: 4px;
       height: 8px;
-      left: 4px;
-    }
-  }
-
-  .custom-radio {
-    display: flex;
-    align-items: center;
-
-    :deep(.el-radio__input) {
-      .el-radio__inner {
-        width: 20px;
-        height: 20px;
-        border-color: #d9d9d9;
-
-        &::after {
-          width: 10px;
-          height: 10px;
-          background-color: #5764f6;
-        }
-      }
-
-      &.is-checked {
-        .el-radio__inner {
-          border-color: #5764f6;
-          background: #ffffff;
-        }
-      }
-    }
-
-    .radio-label {
-      font-size: 15px;
-      color: #1f2329;
-      margin-left: 4px;
     }
   }
 }
