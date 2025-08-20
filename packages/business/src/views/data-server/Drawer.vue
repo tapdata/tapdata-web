@@ -25,7 +25,8 @@ import InfiniteSelect from '@tap/form/src/components/infinite-select/InfiniteSel
 
 import { useI18n } from '@tap/i18n'
 import { uid } from '@tap/shared'
-import { cloneDeep, isEqual, merge } from 'lodash-es'
+import axios from 'axios'
+import { cloneDeep, isEmpty, isEqual, merge } from 'lodash-es'
 import {
   computed,
   inject,
@@ -36,6 +37,7 @@ import {
   type Component,
 } from 'vue'
 import { DatabaseIcon } from '../../components/DatabaseIcon'
+import MqlHelpDialog from '../../components/MqlHelpDialog.vue'
 import ListSelect from '../api-application/ListSelect.vue'
 import MqlEditor from './MqlEditor.vue'
 import getTemplate from './template'
@@ -240,6 +242,7 @@ const treeData = computed(() =>
   buildTree(isEdit.value ? allFields.value : form.value.fields || []),
 )
 const selectedIds = ref(new Set())
+const helpVisible = ref(false)
 
 // Template refs
 const form_ref = ref()
@@ -701,8 +704,6 @@ const getEncryptions = async () => {
 
 // Methods
 const open = (formData?: any) => {
-  const originalFormData = formData ? cloneDeep(formData) : {}
-
   tab.value = 'form'
   visible.value = true
   isEdit.value = false
@@ -713,18 +714,22 @@ const open = (formData?: any) => {
   allFields.value = []
   workerStatus.value = ''
 
-  if (!originalFormData.id) {
+  if (isEmpty(formData)) {
     form.value = getInitData()
     form_ref.value?.resetFields()
 
     edit()
   } else {
-    formatData(originalFormData)
+    formatData(Object.assign(getInitData(), cloneDeep(formData)))
 
-    const { connectionId, tableName } = originalFormData
+    const { connectionId, tableName } = formData
 
     if (connectionId && tableName) {
       getFields()
+    }
+
+    if (!formData.id) {
+      edit()
     }
   }
 
@@ -732,7 +737,6 @@ const open = (formData?: any) => {
   getEncryptions()
 
   nextTick(() => {
-    // form_ref.value?.clearValidate()
     containerRef.value?.parentElement?.scrollTo({ top: 0 })
   })
 }
@@ -853,6 +857,7 @@ const save = async (type?: boolean) => {
         const fieldList = await getAllFields()
 
         const map = fields.reduce((acc: any, field: any) => {
+          field.field_alias = field.field_alias?.trim() || ''
           acc[field.id] = field
           return acc
         }, {})
@@ -860,7 +865,7 @@ const save = async (type?: boolean) => {
         formData.fields = fieldList.map((f: any) => {
           return {
             ...f,
-            field_alias: map[f.id]?.field_alias || '',
+            field_alias: map[f.id]?.field_alias,
           }
         })
       }
@@ -1024,7 +1029,7 @@ const debugData = async () => {
     reflshToken()
     debugResult.value = JSON.stringify(token.value, null, 2)
     debugHttpInfo.value = {
-      httpCode: 200
+      httpCode: 200,
     }
     return
   }
@@ -1073,7 +1078,7 @@ const debugData = async () => {
   try {
     const debugInfo = await debug(queryBody)
     debugHttpInfo.value = {
-      httpCode: debugInfo.httpCode
+      httpCode: debugInfo.httpCode,
     }
     delete debugInfo.httpCode
     debugResult.value = debugInfo ? JSON.stringify(debugInfo, null, 2) : ''
@@ -1081,7 +1086,7 @@ const debugData = async () => {
     const result = error?.response?.data
     debugResult.value = result ? JSON.stringify(result, null, 2) : ''
     debugHttpInfo.value = {
-      httpCode: result?.code || result?.httpCode
+      httpCode: result?.code || result?.httpCode,
     }
   }
 }
@@ -1445,6 +1450,10 @@ function hasChildren(node) {
     }
   }
   return walk(node)
+}
+
+function openHelp() {
+  helpVisible.value = true
 }
 </script>
 
@@ -2008,6 +2017,7 @@ function hasChildren(node) {
           <!-- 筛选条件 -->
           <div
             class="data-server-panel__title mt-7 mb-3 align-items-center justify-content-start gap-3"
+            style="--btn-space: 0"
           >
             <span>{{
               $t('packages_business_data_server_drawer_shaixuantiaojian')
@@ -2028,14 +2038,19 @@ function hasChildren(node) {
               ]"
             />
 
+            <div class="flex-1" />
+
             <el-button
               v-if="form.fullCustomQuery && isEdit"
               text
-              class="ml-auto"
               @click="handleFormat"
             >
               <el-icon class="mr-1"><i-mingcute:brush-line /></el-icon>
               {{ $t('public_format') }}
+            </el-button>
+            <el-button v-if="form.fullCustomQuery" text @click="openHelp">
+              <el-icon class="mr-1"><i-mingcute:question-line /></el-icon>
+              {{ $t('public_button_help') }}
             </el-button>
           </div>
           <template v-if="isEdit">
@@ -2340,10 +2355,18 @@ function hasChildren(node) {
           <div class="data-server-panel__title mt-4 mb-3">
             {{ $t('packages_business_data_server_drawer_fanhuijieguo') }}
             <el-tag
-                v-if="debugHttpInfo.httpCode"
-                style="margin-left: .5rem"
-                :type="debugHttpInfo.httpCode && debugHttpInfo.httpCode >= 200 && debugHttpInfo.httpCode < 300 ? 'success' : 'warning'"
-                size="small">{{debugHttpInfo.httpCode}}</el-tag>
+              v-if="debugHttpInfo.httpCode"
+              style="margin-left: 0.5rem"
+              :type="
+                debugHttpInfo.httpCode &&
+                debugHttpInfo.httpCode >= 200 &&
+                debugHttpInfo.httpCode < 300
+                  ? 'success'
+                  : 'warning'
+              "
+              size="small"
+              >{{ debugHttpInfo.httpCode }}</el-tag
+            >
           </div>
           <VCodeEditor
             class="rounded-lg"
@@ -2387,12 +2410,15 @@ function hasChildren(node) {
         $t('public_button_cancel')
       }}</ElButton>
       <ElButton
+        :loading="loading"
         :disabled="!form.fields.length"
         type="primary"
         @click="save()"
         >{{ $t('public_button_save') }}</ElButton
       >
     </template>
+
+    <MqlHelpDialog v-model="helpVisible" />
   </component>
 </template>
 

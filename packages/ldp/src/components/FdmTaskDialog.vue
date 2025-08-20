@@ -616,7 +616,7 @@ defineExpose({
       </template>
     </ElForm>
     <el-alert
-      v-if="syncedAlertTitle"
+      v-if="!taskDialogConfig.tableName && syncedAlertTitle"
       class="mt-4"
       :closable="false"
       :title="syncedAlertTitle"
