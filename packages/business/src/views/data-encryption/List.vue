@@ -56,7 +56,7 @@ const getData = async ({
 
   if (keyword) {
     filter.where = {
-      name: { like: keyword, options: 'i' },
+      name: keyword,
     }
   }
 
