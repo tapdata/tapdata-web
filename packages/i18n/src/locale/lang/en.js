@@ -515,4 +515,7 @@ export default {
   public_select_field: 'Select Field',
   public_select_parameter: 'Select Parameter',
   public_others: 'Others',
+  public_queue_capacity: 'Queue Capacity',
+  public_queue_capacity_tip:
+    'Setting a large capacity may cause pending validation tasks to pile up and consume excessive memory.',
 }

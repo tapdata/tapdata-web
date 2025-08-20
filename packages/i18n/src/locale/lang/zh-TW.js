@@ -505,4 +505,6 @@ export default {
   public_select_field: '選擇字段',
   public_select_parameter: '選擇參數',
   public_others: '其他',
+  public_queue_capacity: '緩存隊列大小',
+  public_queue_capacity_tip: '設置過大可能導致待校驗任務堆積，占用过多内存',
 }

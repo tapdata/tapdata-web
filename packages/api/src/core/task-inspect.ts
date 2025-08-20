@@ -32,6 +32,7 @@ export interface TaskInspectOperation {
 export interface TaskInspectConfig {
   timeCheckMode: 'NORMAL' | 'ROUND' | 'TRUNCATE'
   checkNoPkTable: boolean
+  queueCapacity: number
   custom: {
     cdc: {
       enable: boolean
@@ -61,6 +62,7 @@ export async function getTaskInspectConfig(taskId: string) {
       mode: 'CLOSE',
       timeCheckMode: 'NORMAL',
       checkNoPkTable: false,
+      queueCapacity: 1000,
       custom: {
         cdc: {
           enable: true,

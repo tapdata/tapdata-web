@@ -37,6 +37,7 @@ const timeCheckModeOptions = [
 const config = reactive<Partial<TaskInspectConfig>>({
   checkNoPkTable: false,
   timeCheckMode: 'NORMAL',
+  queueCapacity: 1000,
 })
 const dialogRef = ref<InstanceType<typeof ElDialog> | null>(null)
 
@@ -53,6 +54,7 @@ async function initFormData() {
 
     config.timeCheckMode = res.timeCheckMode
     config.checkNoPkTable = res.checkNoPkTable
+    config.queueCapacity = res.queueCapacity
   } catch (error) {
     console.error('Failed to load validation settings:', error)
   } finally {
@@ -61,7 +63,7 @@ async function initFormData() {
 }
 
 function handleClose() {
-  dialogRef.value.handleClose()
+  dialogRef.value!.handleClose()
 }
 
 async function handleSave() {
@@ -69,10 +71,9 @@ async function handleSave() {
     return
   }
 
-  const settings: TaskInspectConfig = {
+  const settings: Partial<TaskInspectConfig> = {
     mode: validationEnabled.value ? 'CUSTOM' : 'CLOSE',
-    timeCheckMode: config.timeCheckMode!,
-    checkNoPkTable: config.checkNoPkTable!,
+    ...config,
     custom: {
       cdc: {
         enable: cdcEnabled.value,
@@ -246,14 +247,32 @@ defineExpose({
         <div class="flex flex-column gap-4">
           <div class="flex align-center">
             <div class="flex-1">
-              <label class="fw-sub cursor-pointer" for="recover-switch">{{
-                t('public_time_precision')
-              }}</label>
+              <label class="fw-sub">{{ t('public_time_precision') }}</label>
             </div>
 
             <el-segmented
               v-model="config.timeCheckMode"
               :options="timeCheckModeOptions"
+            />
+          </div>
+
+          <div class="flex align-center">
+            <div class="flex-1">
+              <label class="fw-sub flex align-center gap-1"
+                >{{ t('public_queue_capacity') }}
+                <el-tooltip
+                  :content="t('public_queue_capacity_tip')"
+                  placement="top"
+                >
+                  <el-icon size="16"><i-lucide:info /></el-icon>
+                </el-tooltip>
+              </label>
+            </div>
+
+            <el-input-number
+              v-model="config.queueCapacity"
+              :min="1"
+              controls-position="right"
             />
           </div>
 
