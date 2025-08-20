@@ -1678,4 +1678,5 @@ export default {
     'Can also use numeric codes, such as 16 for int',
   packages_business_example_regex: 'Starts with A, ignoring case',
   packages_business_example_size: '{a} array size is {b}',
+  packages_business_edit_task_info: 'Edit Task Information',
 }

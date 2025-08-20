@@ -1486,4 +1486,5 @@ export default {
   packages_business_example_regex: '以 A 开头，忽略大小写',
   packages_business_example_size: '{a} 数组长度为 {b}',
   packages_business_example_mod: '{a} 能被 {b} 整除',
+  packages_business_edit_task_info: '编辑任务信息',
 }

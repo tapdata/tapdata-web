@@ -1475,4 +1475,5 @@ export default {
   packages_business_example_type: '也可用數字代號，如 16 表示 int',
   packages_business_example_regex: '以 A 開頭，忽略大小寫',
   packages_business_example_size: '{a} 數組長度為 {b}',
+  packages_business_edit_task_info: '編輯任務信息',
 }
