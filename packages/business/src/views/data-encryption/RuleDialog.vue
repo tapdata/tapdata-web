@@ -140,6 +140,8 @@ const handleSave = async () => {
     v-model="visible"
     :title="title"
     width="600px"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
     @open="handleOpen"
     @closed="handleClosed"
   >

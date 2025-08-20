@@ -9,6 +9,7 @@ import {
 } from '@tap/api'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
+import { ro } from 'element-plus/es/locales.mjs'
 import { ref, shallowRef, useTemplateRef } from 'vue'
 import PageContainer from '../../components/PageContainer.vue'
 import TablePage from '../../components/TablePage.vue'
@@ -56,6 +57,7 @@ const getData = async ({
     total: res.total,
   }
 }
+
 const handleCreateRule = () => {
   editingRule.value = undefined
   dialogOpen.value = true
@@ -77,12 +79,12 @@ const handleDelete = async (row: Encryption) => {
   )
   if (!res) return
 
-  await deleteEncryption(row.id)
+  await deleteEncryption(row.id!)
   fetchData(1)
 }
 
-const fetchData = (...args: any[]) => {
-  tableRef.value?.fetch(...args)
+const fetchData = (page: number) => {
+  tableRef.value?.fetch(page)
 }
 </script>
 
@@ -100,17 +102,45 @@ const fetchData = (...args: any[]) => {
       row-key="id"
       :remote-method="getData"
     >
-      <ElTableColumn :label="$t('public_rule_name')" prop="name" />
-      <ElTableColumn :label="$t('public_rule_content')" prop="regex">
+      <ElTableColumn :label="$t('public_rule_name')" prop="name">
         <template #default="{ row }">
           <div class="flex align-center gap-2">
-            <el-tag type="info" size="small" class="is-code">
-              {{ row.regex }}
+            {{ row.name }}
+            <el-tag
+              v-if="row.type === 999"
+              class="zoom-xs border-0"
+              disable-transitions
+              type="primary"
+              size="small"
+            >
+              {{ $t('public_system') }}
             </el-tag>
           </div>
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('public_replace_char')" prop="outputChar" />
+      <ElTableColumn :label="$t('public_rule_content')" prop="regex">
+        <template #default="{ row }">
+          <span
+            class="rounded-lg px-2 py-0.5 inline-block lh-5 font-mono break-all"
+            style="background-color: rgba(129, 139, 152, 0.12)"
+          >
+            {{ row.regex }}
+          </span>
+        </template>
+      </ElTableColumn>
+      <ElTableColumn :label="$t('public_replace_char')" prop="outputChar">
+        <template #default="{ row }">
+          <span
+            class="rounded-lg px-2 py-0.5 inline-block lh-5 break-all"
+            style="
+              color: var(--el-color-success);
+              background-color: var(--el-color-success-light-9);
+            "
+          >
+            {{ row.outputChar }}
+          </span>
+        </template>
+      </ElTableColumn>
       <ElTableColumn :label="$t('public_description')" prop="description" />
       <ElTableColumn
         :label="$t('public_update_time')"

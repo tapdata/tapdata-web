@@ -9,7 +9,7 @@ export interface Encryption {
   outputChar: string
   description?: string
   createdAt?: string
-  updatedAt?: string
+  last_updated?: string
 }
 
 export function fetchEncryptionList(filter?: Filter) {
