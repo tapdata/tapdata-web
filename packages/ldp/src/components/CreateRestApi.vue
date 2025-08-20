@@ -27,17 +27,12 @@ export default {
   },
   methods: {
     open() {
-      const basePath =
-        Math.floor(Math.random() * 26 + 10).toString(36) + generateId(10) // 首位要求小写字母
       const formData = {
         status: 'pending',
-        basePath,
-        path: `/api/${basePath}`,
         connectionName: this.params.from.name,
         connectionType: this.params.from.database_type,
         connectionId: this.params.from.id,
         tableName: this.params.tableName,
-        pathAccessMethod: this.data?.pathAccessMethod || 'default',
         appValue: this.params.to?.id || '',
         appLabel: this.params.to?.value || '',
       }

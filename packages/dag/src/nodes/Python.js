@@ -101,14 +101,14 @@ context = {
   "global": {}  #A state storage container on the node dimension within the task cycle
 }
 """
-# Enter you code at here\nreturn record;`,
+# Enter your code here\nreturn record;`,
                 'x-component': 'PythonProcessor',
                 'x-component-props': {
                   height: 500,
                   options: { showPrintMargin: false, wrap: false },
                   includeBeforeAndAfter: true,
                   before: `import json, random, time, datetime, uuid, types, yaml\nimport urllib, urllib2, requests\nimport math, hashlib, base64\ndef process(record, context):`,
-                  beforeRegexp: '^[^]*def\\s+process\\s*\\(record\\,\\s+context\\)\\:',
+                  beforeRegexp: String.raw`^[^]*def\s+process\s*\(record\,\s+context\)\:`,
                   param: 'tapTable',
                   handleAddCompleter: '{{addDeclaredCompleterForSync}}',
                 },

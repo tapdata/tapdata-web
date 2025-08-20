@@ -60,15 +60,18 @@ export default {
         ],
       },
       uploading: false,
+      titleMap: {
+        Modules: 'packages_business_api_import',
+        Inspect: 'packages_business_modules_dialog_import_title',
+        dataflow: 'packages_business_modules_dialog_import_title',
+        relmig: 'packages_business_relmig_import',
+        Javascript_functions: 'packages_business_functions_import',
+      },
     }
   },
   computed: {
     title() {
-      return this.$t(
-        this.isRelmig
-          ? 'packages_business_relmig_import'
-          : 'packages_business_modules_dialog_import_title',
-      )
+      return this.$t(this.titleMap[this.type || 'dataflow'])
     },
     uploadText() {
       return this.$t(

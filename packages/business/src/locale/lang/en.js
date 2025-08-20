@@ -1481,6 +1481,8 @@ export default {
   packages_business_connections_test_xiazaijindu: 'Download Progress',
   packages_business_connections_test_xiazaishibai: 'Download Failed',
   packages_business_relmig_import: 'MongoDB Relmig Import',
+  packages_business_api_import: 'API Import',
+  packages_business_functions_import: 'Functions Import',
   packages_business_relmig_import_desc: `This feature is designed to seamlessly import MongoDB Relational Migrator-exportd relmig project files into ${import.meta.env.VUE_APP_PAGE_TITLE}. After the relmig file is imported, ${import.meta.env.VUE_APP_PAGE_TITLE} will automatically create a task to  perform real time data synchronization from source database and transform into JSON data format in MongoDB database.`,
   packages_business_relmig_upload: 'Upload relmig file',
   packages_business__relmig_import_connection_tip:
@@ -1622,6 +1624,12 @@ export default {
   packages_business_data_source_monitor: 'Connection Monitor',
 
   // MongoDB operators
+  package_business_mongodb_query_operators: 'MongoDB Query Operators',
+  package_business_operators_search: 'Search operators',
+  packages_business_comparison: 'Comparison',
+  packages_business_logical: 'Logical',
+  packages_business_element: 'Element',
+  packages_business_evaluation: 'Evaluation',
   packages_business_mongo_operator_eq:
     'Matches values that are equal to a specified value.',
   packages_business_mongo_operator_gt:
@@ -1652,10 +1660,23 @@ export default {
   packages_business_mongo_operator_all:
     'Matches arrays that contain all elements specified in the query.',
   packages_business_mongo_operator_elemMatch:
-    'Selects documents if element in the array field matches all the specified conditions.',
+    'Matches arrays that contain at least one element satisfying all specified conditions.',
   packages_business_mongo_operator_size:
     'Selects documents if the array field is a specified size.',
   packages_business_mongo_operator_mod:
-    'Performs a modulo operation on the value of a field.',
+    'Performs a modulo match on a field value [divisor, remainder].',
+  packages_business_example_eq: '{a} equals {b}',
+  packages_business_example_ne: '{a} not equals {b}',
+  packages_business_example_gt: '{a} greater than {b}',
+  packages_business_example_gte: '{a} greater than or equal to {b}',
+  packages_business_example_lt: '{a} less than {b}',
+  packages_business_example_lte: '{a} less than or equal to {b}',
+  packages_business_example_in: '{a} in {b}',
+  packages_business_example_nin: '{a} not in {b}',
+  packages_business_example_exists: 'field does not exist',
+  packages_business_example_type:
+    'Can also use numeric codes, such as 16 for int',
+  packages_business_example_regex: 'Starts with A, ignoring case',
+  packages_business_example_size: '{a} array size is {b}',
   packages_business_edit_task_info: 'Edit Task Information',
 }
