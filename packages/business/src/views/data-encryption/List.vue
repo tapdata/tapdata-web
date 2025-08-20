@@ -8,7 +8,7 @@ import {
 import { FilterBar } from '@tap/component/src/filter-bar'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
-import { ref, shallowRef, useTemplateRef, watch } from 'vue'
+import { onBeforeMount, ref, shallowRef, useTemplateRef, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
 import TablePage from '../../components/TablePage.vue'
@@ -20,7 +20,7 @@ const { t } = useI18n()
 const route = useRoute()
 
 const tableRef = useTemplateRef<InstanceType<typeof TablePage>>('tableRef')
-const searchParams = ref({
+const searchParams = ref<Record<string, string>>({
   keyword: '',
 })
 const dialogOpen = ref(false)
@@ -99,6 +99,14 @@ const handleDelete = async (row: Encryption) => {
 const fetchData = (page: number) => {
   tableRef.value?.fetch(page)
 }
+
+onBeforeMount(() => {
+  Object.keys(searchParams.value).forEach((key) => {
+    if (key in route.query) {
+      searchParams.value[key] = route.query[key] as string
+    }
+  })
+})
 </script>
 
 <template>
