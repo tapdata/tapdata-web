@@ -122,10 +122,10 @@ const fetchData = (...args: any[]) => {
           <ElButton text type="primary" @click="handleTest(row)">
             {{ $t('public_test') }}
           </ElButton>
-          <ElButton text type="primary" @click="handleEdit(row)">
+          <ElButton text type="primary" v-if="row.type !== 999" @click="handleEdit(row)">
             {{ $t('public_button_edit') }}
           </ElButton>
-          <ElButton text type="danger" @click="handleDelete(row)">
+          <ElButton text type="danger" v-if="row.type !== 999" @click="handleDelete(row)">
             {{ $t('public_button_delete') }}
           </ElButton>
         </template>
