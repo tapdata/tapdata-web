@@ -1223,6 +1223,7 @@ export default {
                       size="small"
                       text
                       class="edit-info-btn"
+                      style="--el-button-text-color: var(--icon-n1)"
                       @click.stop="handleEditInfo(row)"
                     >
                       <template #icon>
@@ -1231,25 +1232,23 @@ export default {
                     </el-button>
                   </template>
                   <template #default>
-                    <div class="">
-                      <div class="mb-2 flex align-center gap-1 text-caption">
-                        {{ row.name }}
-                        <!-- {{ $t('packages_dag_task_stetting_desc') }} -->
-                        <el-button
-                          size="small"
-                          text
-                          @click="handleEditInfo(row)"
-                        >
-                          <template #icon>
-                            <el-icon><i-lucide:file-pen /></el-icon>
-                          </template>
-                        </el-button>
-                      </div>
-                      <div
-                        class="bg-gray-50 rounded-lg p-2 border border-gray-100"
+                    <div class="mb-2 flex align-center gap-1">
+                      {{ row.name }}
+                      <el-button
+                        class="flex-shrink-0"
+                        size="small"
+                        text
+                        @click="handleEditInfo(row)"
                       >
-                        <div>{{ row.desc }}</div>
-                      </div>
+                        <template #icon>
+                          <el-icon><i-lucide:file-pen /></el-icon>
+                        </template>
+                      </el-button>
+                    </div>
+                    <div
+                      class="bg-gray-50 rounded-lg p-2 border border-gray-100"
+                    >
+                      <div>{{ row.desc }}</div>
                     </div>
                   </template>
                 </el-popover>
