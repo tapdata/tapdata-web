@@ -465,6 +465,7 @@ export default {
   setting_Default_Limit: 'The number of rows returned by the default query',
   setting_Max_Limit: 'Maximum number of rows returned by the query',
   setting_Desensitize_API_request_parameters: 'Desensitize API request parameters',
+  'setting_Timeout_period_for_API_access_to_the_database_(millisecond)': 'The timeout period for API access to the database (millisecond)',
   setting_Send_batch_size: 'Number of packed data',
   setting_hint_Send_batch_size: 'Number of packed data',
   setting_Mongodb_target_create_date:

@@ -449,6 +449,7 @@ export default {
   setting_Default_Limit: '默認查詢返回行數',
   setting_Max_Limit: '最大查詢返回行數',
   setting_Desensitize_API_request_parameters: 'API請求參數脫敏',
+  'setting_Timeout_period_for_API_access_to_the_database_(millisecond)': 'API訪問資料庫的超時時間（毫秒）',
   setting_Send_batch_size: '打包數據條數',
   setting_hint_Send_batch_size: '打包數據條數',
   setting_Mongodb_target_create_date: '是否在目標端數據集添加創建時間',
