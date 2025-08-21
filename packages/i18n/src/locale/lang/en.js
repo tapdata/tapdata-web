@@ -506,6 +506,7 @@ export default {
   public_form_mode: 'Form Mode',
   public_json_mode: 'JSON Mode',
   public_format: 'Format',
+  public_format_compress: 'compress',
   public_add_condition: 'Add Condition',
   public_add_parameter: 'Add Parameter',
   public_json_format_error: 'JSON Format Error',
