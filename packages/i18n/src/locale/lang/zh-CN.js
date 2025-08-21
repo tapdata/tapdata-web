@@ -497,6 +497,7 @@ export default {
   public_form_mode: '表单模式',
   public_json_mode: 'JSON 模式',
   public_format: '格式化',
+  public_format_compress: '压缩',
   public_add_condition: '添加条件',
   public_add_parameter: '添加参数',
   public_json_format_error: 'JSON 格式错误',
