@@ -196,7 +196,7 @@ const handleSave = async () => {
           <el-input
             v-model="testText"
             type="textarea"
-            :autosize="{ minRows: 2 }"
+            :autosize="{ minRows: 2, maxRows: 6 }"
             :placeholder="$t('public_test_text_placeholder')"
           />
         </el-form-item>
@@ -217,7 +217,7 @@ const handleSave = async () => {
             "
           >
             <div
-              class="w-100 bg-muted rounded-xl p-3 lh-5 overflow-y-auto"
+              class="w-100 bg-muted rounded-xl p-2 lh-5 overflow-y-auto"
               style="max-height: 200px"
             >
               <div
@@ -243,7 +243,10 @@ const handleSave = async () => {
             label-position="top"
             :label="$t('public_replace_result')"
           >
-            <div class="w-100 bg-muted rounded-xl p-3 lh-5">
+            <div
+              class="w-100 bg-muted rounded-xl p-2 lh-5 text-prewrap overflow-auto"
+              style="max-height: 200px"
+            >
               {{ testResult.result }}
             </div>
           </el-form-item>
