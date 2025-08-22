@@ -235,6 +235,11 @@ const isRightCheckAll = computed(() => {
     : false
 })
 
+const emitChange = () => {
+  emit('change', selected.value.tables)
+  emit('update:value', selected.value.tables)
+}
+
 const add = () => {
   if (isOpenClipMode.value || props.disabled) return
 
@@ -244,7 +249,7 @@ const add = () => {
 
   table.value.checked = []
   table.value.isCheckAll = false
-  emit('change', selected.value.tables)
+  emitChange()
 }
 
 const remove = () => {
@@ -256,7 +261,7 @@ const remove = () => {
 
   selected.value.checked = []
   selected.value.isCheckAll = false
-  emit('change', selected.value.tables)
+  emitChange()
 }
 
 const changeSeletedMode = () => {
@@ -298,7 +303,7 @@ const submitClipboard = () => {
     new Set(selected.value.tables.concat(clipboardTables.value)),
   )
   isOpenClipMode.value = false
-  emit('change', selected.value.tables)
+  emitChange()
 }
 
 const autofix = () => {
@@ -311,7 +316,7 @@ const autofix = () => {
     selected.value.tables = selected.value.tables.filter(
       (t) => !errorTables.value[t],
     )
-    emit('change', selected.value.tables)
+    emitChange()
   }
 }
 

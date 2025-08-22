@@ -1,10 +1,11 @@
-import { defineComponent, reactive, watch, ref, computed } from 'vue'
 import { observer } from '@formily/reactive-vue'
-import { useForm, useField } from '@tap/form'
+import { connect, mapProps } from '@formily/vue'
 import { taskApi } from '@tap/api'
 import { dayjs } from '@tap/business/src/shared/dayjs'
+import { DownBoldOutlined } from '@tap/component/src/DownBoldOutlined'
+import { useField, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
-import { connect, mapProps } from '@formily/vue'
+import { computed, defineComponent, reactive, ref, watch } from 'vue'
 
 export const RelativeTimePicker = connect(
   observer(
@@ -19,7 +20,9 @@ export const RelativeTimePicker = connect(
       setup(props) {
         const formRef = useForm()
         const fieldRef = useField()
-        const recordField = formRef.value.query(`conditions.${fieldRef.value.index}`).take()
+        const recordField = formRef.value
+          .query(`conditions.${fieldRef.value.index}`)
+          .take()
         const record = recordField.value
 
         if (!('number' in record)) {
@@ -42,7 +45,7 @@ export const RelativeTimePicker = connect(
           try {
             const date = await taskApi.getCurrentEngineTime()
             engineDate.value = dayjs(date)
-          } catch (e) {
+          } catch {
             engineDate.value = dayjs()
           }
         }
@@ -57,7 +60,7 @@ export const RelativeTimePicker = connect(
           if (state.form !== 'BEFORE') return ''
           let start = dayjs(currentDate.value)
           let end = dayjs(currentDate.value)
-          let year = currentDate.value.getFullYear()
+          const year = currentDate.value.getFullYear()
           switch (state.unit) {
             case 'HOUR':
               start = end.subtract(state.number, 'hour') // 昨天
@@ -103,16 +106,28 @@ export const RelativeTimePicker = connect(
         }, {})
 
         const MAP = {
-          HOUR: { l: i18n.t('public_last_hour'), c: i18n.t('public_this_hour') },
+          HOUR: {
+            l: i18n.t('public_last_hour'),
+            c: i18n.t('public_this_hour'),
+          },
           DAY: { l: i18n.t('public_yesterday'), c: i18n.t('public_today') },
-          WEEK: { l: i18n.t('public_last_week'), c: i18n.t('public_this_week') },
-          MONTH: { l: i18n.t('public_last_month'), c: i18n.t('public_this_month') },
-          YEAR: { l: i18n.t('public_last_year'), c: i18n.t('public_this_year') },
+          WEEK: {
+            l: i18n.t('public_last_week'),
+            c: i18n.t('public_this_week'),
+          },
+          MONTH: {
+            l: i18n.t('public_last_month'),
+            c: i18n.t('public_this_month'),
+          },
+          YEAR: {
+            l: i18n.t('public_last_year'),
+            c: i18n.t('public_this_year'),
+          },
         }
 
         const getCurrentTip = (unit) => {
-          let current = dayjs(currentDate.value)
-          let year = current.year()
+          const current = dayjs(currentDate.value)
+          const year = current.year()
           let str, s, e, formatStr
           switch (unit) {
             case 'HOUR':
@@ -139,27 +154,43 @@ export const RelativeTimePicker = connect(
           return i18n.t('public_date_current_prefix') + str
         }
 
-        // FIXME 升级到vue3后， 这里要用children的方式传递具名slot
-        return () => {
-          const genLabel = () => {
-            let label
-            if (state.form === 'CURRENT') {
-              label = MAP[state.unit]?.c
-            }
-            if (state.form === 'BEFORE') {
-              if (state.number === 1) {
-                label = MAP[state.unit]?.l
-              }
-              label = `${i18n.t('public_date_past_val')} ${state.number} ${unitMap[state.unit]}`
-            }
-            return label || i18n.t('public_select_placeholder')
+        const genLabel = () => {
+          let label
+          if (state.form === 'CURRENT') {
+            label = MAP[state.unit]?.c
           }
+          if (state.form === 'BEFORE') {
+            if (state.number === 1) {
+              label = MAP[state.unit]?.l
+            }
+            label = `${i18n.t('public_date_past_val')} ${state.number} ${unitMap[state.unit]}`
+          }
+          return label || i18n.t('public_select_placeholder')
+        }
+
+        return () => {
           return (
-            <el-popover disabled={props.disabled} placement="bottom" trigger="click" width="240" popper-class="pt-0">
+            <el-popover
+              disabled={props.disabled}
+              placement="bottom"
+              trigger="click"
+              width="240"
+              popper-class="pt-0"
+            >
               {{
                 reference: () => (
-                  <ElButton class="py-2 align-self-start" disabled={props.disabled}>
-                    {genLabel()} <i class="el-icon-arrow-down el-icon--right"></i>
+                  <ElButton
+                    class="py-2 px-3 align-self-start"
+                    disabled={props.disabled}
+                  >
+                    {genLabel()}
+                    <el-icon
+                      size="12"
+                      class="ml-1"
+                      style="color: var(--icon-n2)"
+                    >
+                      <DownBoldOutlined />
+                    </el-icon>
                   </ElButton>
                 ),
                 default: () => (
@@ -170,26 +201,23 @@ export const RelativeTimePicker = connect(
                         state.form = val
                       }}
                     >
-                      <ElTabPane label={i18n.t('public_date_past')} name="BEFORE">
+                      <ElTabPane
+                        label={i18n.t('public_date_past')}
+                        name="BEFORE"
+                      >
                         <div class="flex gap-3">
                           <ElInputNumber
                             min={1}
                             class="flex-1"
                             controls-position="right"
-                            modelValue={state.number}
-                            onInput={(val) => {
-                              state.number = val
-                            }}
+                            v-model={state.number}
                           ></ElInputNumber>
-                          <ElSelect
-                            class="flex-1"
-                            modelValue={state.unit}
-                            onInput={(val) => {
-                              state.unit = val
-                            }}
-                          >
+                          <ElSelect class="flex-1" v-model={state.unit}>
                             {unitOptions.map((option) => (
-                              <ElOption label={option.label} value={option.value}></ElOption>
+                              <ElOption
+                                label={option.label}
+                                value={option.value}
+                              ></ElOption>
                             ))}
                           </ElSelect>
                         </div>
@@ -198,13 +226,22 @@ export const RelativeTimePicker = connect(
                           <span class="lh-base">{preview.value}</span>
                         </div>
                       </ElTabPane>
-                      <ElTabPane label={i18n.t('public_date_current')} name="CURRENT">
+                      <ElTabPane
+                        label={i18n.t('public_date_current')}
+                        name="CURRENT"
+                      >
                         <div class="flex flex-wrap gap-3">
                           {unitOptions.slice(1).map((option) => (
-                            <ElTooltip open-delay={500} placement="bottom" content={getCurrentTip(option.value)}>
+                            <ElTooltip
+                              open-delay={500}
+                              placement="bottom"
+                              content={getCurrentTip(option.value)}
+                            >
                               <ElButton
                                 class="rounded-pill m-0 min-w-0"
-                                type={state.unit === option.value ? 'primary' : ''}
+                                type={
+                                  state.unit === option.value ? 'primary' : ''
+                                }
                                 onClick={() => {
                                   state.unit = option.value
                                 }}

@@ -433,7 +433,7 @@ export default {
           {
             key: 'apiApp',
             icon: 'mini-app',
-            name: this.$t('packages_business_api_application'),
+            name: this.$t('public_api_group'),
             md: this.$t('packages_business_api_application_md'),
           },
         ],
@@ -1093,7 +1093,7 @@ export default {
 </template>
 
 <style lang="scss">
-.ldp-connection-dialog {
+.ldp-connection-dialog.el-dialog {
   margin-top: 32px !important;
   margin-bottom: 32px !important;
   height: calc(100% - 64px);

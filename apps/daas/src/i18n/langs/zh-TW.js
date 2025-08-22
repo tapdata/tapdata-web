@@ -289,7 +289,7 @@ export default {
   // api審計
   apiaudit_name: 'API名稱',
   apiaudit_access_type: '訪問類型',
-  apiaudit_visitor: '訪問人員',
+  apiaudit_visitor: '客戶端名稱',
   apiaudit_ip: '訪問人員IP',
   apiaudit_interview_time: '訪問時間',
   apiaudit_interview_time_start: '訪問開始時間',
@@ -305,6 +305,7 @@ export default {
   apiaudit_average_response_time: '平均響應時長',
   apiaudit_success: '成功',
   apiaudit_placeholder: '請輸入名稱/ID',
+  apiaudit_client_name_placeholder: '請輸入客戶端名稱',
   // 連接
   connection_list_form_database_type: '數據庫類型',
   connection_list_name: '連接名',
@@ -774,8 +775,12 @@ export default {
   role_list_edit: '編輯角色',
   role_list_default_role: '默認角色',
   role_list_setting_permissions: '設置權限',
+  role_list_setting_api: '設置API訪問',
   role_list_delete_remind: '確認刪除角色 {0}',
   role_list_delete_success: '刪除角色成功',
+  role_list_setting_api_selected: '已選 {0} 個 API',
+  role_list_setting_api_empty_confirm: '確定要取消所有 API 的訪問設置嗎？',
+  role_list_setting_select_api: '請選擇 API',
   role_form_yes: '是',
   role_form_no: '否',
   role_form_selectUser: '請選擇用戶名',
@@ -2009,4 +2014,8 @@ export default {
   account_accessCode_tip:
     '刷新訪問碼將導致當前訪問碼失效，系統將生成新的訪問碼。<b class="color-warning">您需要將新的訪問碼更新到引擎的配置文件後，重新啓動引擎，否則引擎可能會無法正常工作。請謹慎操作！</b>',
   account_accessCode_success: '刷新訪問碼成功',
+  setting_license_remainingDaysThreshold: '剩余天数 <=',
+  setting_license_rule: 'License 告警規則',
+  setting_license_alarm_template: '告警模板',
+  setting_license_alarm_template_custom: '自定義告警模板',
 }

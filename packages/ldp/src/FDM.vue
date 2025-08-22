@@ -26,11 +26,13 @@ import {
   nextTick,
   onBeforeUnmount,
   onMounted,
+  provide,
   ref,
   useTemplateRef,
   watch,
 } from 'vue'
 import { useRouter } from 'vue-router'
+import FdmTaskDialog from './components/FdmTaskDialog.vue'
 
 // Props
 interface Props {
@@ -70,19 +72,12 @@ const search = ref()
 const form = ref()
 
 // Reactive data
-const fixedPrefix = ref('FDM_')
-const maxPrefixLength = ref(10)
-const keyword = ref('')
-const taskType = ref('')
-const creating = ref(false)
 const expandedKeys = ref<string[]>([])
 const searchIng = ref(false)
 const searchValue = ref('')
 const enableSearch = ref(false)
 const filterTreeData = ref<any[]>([])
-const checkCanStartIng = ref(false)
 const startedTags = ref<string[]>([])
-const prefixMap = ref<Record<string, string>>({})
 const autoUpdateObjectsTimer = ref<number>()
 const cancelSource = ref<any>()
 const debouncedSearch = ref<any>()
@@ -90,23 +85,6 @@ const draggingNode = ref<any>()
 const draggingNodeImage = ref<any>()
 const tag2Task = ref<Record<string, any>>({})
 const searchExpandedKeys = ref<string[]>([])
-
-// Task dialog config
-const taskDialogConfig = ref({
-  from: null as any,
-  to: null as any,
-  visible: false,
-  prefix: '',
-  tableName: null as string | null,
-  canStart: false,
-  notSupportedCDC: false,
-  task: {
-    type: 'initial_sync+cdc',
-    crontabExpressionFlag: false,
-    crontabExpression: '',
-    crontabExpressionType: 'once',
-  },
-})
 
 // Dialog config
 const dialogConfig = ref({
@@ -138,8 +116,8 @@ const allowDrop = computed(() => {
   return (
     !props.fdmNotExist &&
     props.dragState.isDragging &&
-    props.dragState.from === 'SOURCE' &&
-    props.dragState.draggingObjects[0]?.data.LDP_TYPE === 'table'
+    props.dragState.from === 'SOURCE'
+    // props.dragState.draggingObjects[0]?.data.LDP_TYPE === 'table'
   )
 })
 
@@ -256,14 +234,6 @@ async function updateObject(id: string) {
     node.loadTime = Date.now()
     const objects = await loadObjects(node.data)
     tree.value?.updateKeyChildren(id, objects)
-  }
-}
-
-function openRoute(route: any, newTab = true) {
-  if (newTab) {
-    window.open(router.resolve(route).href)
-  } else {
-    router.push(route)
   }
 }
 
@@ -408,122 +378,6 @@ function renderContent(h: any, { node, data }: { node: any; data: any }) {
   )
 }
 
-function showTaskDialog() {
-  const connectionId = taskDialogConfig.value.from?.id
-
-  taskDialogConfig.value.prefix = getSmartPrefix(
-    taskDialogConfig.value.from.name,
-  )
-  taskDialogConfig.value.visible = true
-  form.value?.resetFields()
-
-  // 读取缓存
-  if (prefixMap.value[connectionId]) {
-    taskDialogConfig.value.prefix = prefixMap.value[connectionId]
-  }
-
-  taskDialogConfig.value.task.crontabExpressionFlag = false
-  taskDialogConfig.value.task.crontabExpression = ''
-
-  const capbilitiesMap = taskDialogConfig.value.from.capabilities.reduce(
-    (map: any, item: any) => {
-      map[item.id] = true
-      return map
-    },
-    {},
-  )
-
-  if (
-    !capbilitiesMap.stream_read_function &&
-    !capbilitiesMap.raw_data_callback_filter_function &&
-    !capbilitiesMap.raw_data_callback_filter_function_v2 &&
-    (!capbilitiesMap.query_by_advance_filter_function ||
-      !capbilitiesMap.batch_read_function)
-  ) {
-    taskDialogConfig.value.notSupportedCDC = true
-    taskDialogConfig.value.task.type = 'initial_sync'
-  } else {
-    taskDialogConfig.value.notSupportedCDC = false
-  }
-
-  checkCanStart()
-}
-
-async function checkCanStart() {
-  taskDialogConfig.value.canStart = false
-  checkCanStartIng.value = true
-  const tag = treeData.value.find(
-    (item: any) => item.linkId === taskDialogConfig.value.from.id,
-  )
-  const task = tag2Task.value[tag?.id]
-
-  if (task) {
-    taskDialogConfig.value.task.type = task.type
-    taskDialogConfig.value.task.crontabExpressionFlag =
-      task.crontabExpressionFlag
-    taskDialogConfig.value.task.crontabExpression = task.crontabExpression
-    taskDialogConfig.value.canStart = await ldpApi.checkCanStartByTag(tag.id)
-  } else {
-    taskDialogConfig.value.canStart = true
-  }
-
-  checkCanStartIng.value = false
-}
-
-async function taskDialogSubmit(start: boolean) {
-  form.value?.validate(async (valid: boolean) => {
-    if (!valid) return
-
-    const {
-      tableName,
-      from = {},
-      task: settings,
-      prefix,
-    } = taskDialogConfig.value
-    const task = Object.assign(makeMigrateTask(from, tableName), settings)
-    // 缓存表名前缀
-    prefixMap.value[from.id] = prefix
-
-    creating.value = true
-    try {
-      const result = await ldpApi.createFDMTask(task, {
-        silenceMessage: true,
-        params: { start },
-      })
-      taskDialogConfig.value.visible = false
-      ElMessage.success({
-        message: h(
-          'span',
-          {
-            class: 'color-primary fs-7 clickable',
-            onClick: () => {
-              handleClickName(result)
-            },
-          },
-          t('packages_business_task_created_success'),
-        ),
-      })
-    } catch (error: any) {
-      console.log(error)
-      let msg
-
-      if (error?.data?.code === 'Task.ListWarnMessage' && error.data.data) {
-        const keys = Object.keys(error.data.data)
-        msg = error.data.data[keys[0]]?.[0]?.msg
-      }
-
-      ElMessage.error(
-        msg || error?.data?.message || t('public_message_save_fail'),
-      )
-    }
-
-    await loadFDMDirectory()
-    setNodeExpand()
-
-    creating.value = false
-  })
-}
-
 async function loadFDMDirectory() {
   const { items } = await metadataDefinitionsApi.get({
     filter: JSON.stringify({
@@ -585,14 +439,10 @@ function handleDrop(ev: DragEvent) {
   const object = draggingObjects[0]
 
   if (object.data.type === 'connection') {
-    taskDialogConfig.value.from = object.data
-    taskDialogConfig.value.tableName = null
+    fdmTaskDialog.value?.open(object.data, null)
   } else if (object.data.type === 'table') {
-    taskDialogConfig.value.from = object.parent.data
-    taskDialogConfig.value.tableName = object.data.name
+    fdmTaskDialog.value?.open(object.parent.data, object.data.name)
   }
-
-  showTaskDialog()
 }
 
 function removeDropEffect(
@@ -617,131 +467,6 @@ function findParentByClassName(
     parent = parent.parentNode as Element
   }
   return parent
-}
-
-function makeMigrateTask(from: any, tableName: string) {
-  const source = getSourceNode(from, tableName)
-  const target = getDatabaseNode(props.fdmConnection)
-  const tableReNameNode = getTableReNameNode()
-
-  target.dmlPolicy = useDmlPolicy(props.fdmConnection)
-
-  return {
-    ...TASK_SETTINGS,
-    syncType: 'migrate',
-    name: getTaskName(from),
-    dag: {
-      edges: [
-        { source: source.id, target: tableReNameNode.id },
-        { source: tableReNameNode.id, target: target.id },
-      ],
-      nodes: [source, tableReNameNode, target],
-    },
-  }
-}
-
-function getSourceNode(from: any, tableName: string) {
-  const source = getDatabaseNode(from)
-
-  Object.assign(
-    source,
-    tableName
-      ? {
-          migrateTableSelectType: 'custom',
-          tableNames: [tableName],
-        }
-      : {
-          migrateTableSelectType: 'expression',
-          tableExpression: '.*',
-        },
-  )
-
-  return source
-}
-
-function getTaskName(from: any) {
-  return `${from.name}_Clone_To_FDM_${generateId(6)}`
-}
-
-function getDatabaseNode(db: any) {
-  return {
-    id: uuid(),
-    type: 'database',
-    name: db.name,
-    connectionId: db.id,
-    databaseType: db.database_type,
-    attrs: {
-      connectionName: db.name,
-      connectionType: db.connection_type,
-      accessNodeProcessId: db.accessNodeProcessId,
-      pdkType: db.pdkType,
-      pdkHash: db.pdkHash,
-      capabilities: db.capabilities || [],
-    },
-  }
-}
-
-const useDmlPolicy = (db: any) => {
-  const capabilities = db.capabilities || []
-  let insertPolicy
-  let updatePolicy
-  let deletePolicy
-
-  const dmlPolicy = {
-    insertPolicy: 'update_on_exists',
-    updatePolicy: 'ignore_on_nonexists',
-    deletePolicy: 'ignore_on_nonexists',
-  }
-
-  const enumMap = {
-    insertPolicy: ['update_on_exists', 'ignore_on_exists', 'just_insert'],
-    updatePolicy: [
-      'ignore_on_nonexists',
-      'insert_on_nonexists',
-      'log_on_nonexists',
-    ],
-    deletePolicy: ['ignore_on_nonexists', 'log_on_nonexists'],
-  }
-
-  if (capabilities) {
-    insertPolicy = capabilities.find(
-      ({ id }: any) => id === 'dml_insert_policy',
-    )
-    updatePolicy = capabilities.find(
-      ({ id }: any) => id === 'dml_update_policy',
-    )
-    deletePolicy = capabilities.find(
-      ({ id }: any) => id === 'dml_delete_policy',
-    )
-  }
-
-  const func = (policy: any, policyField: string) => {
-    if (policy && policy.alternatives?.length) {
-      const values = enumMap[policyField as keyof typeof enumMap]
-      const alternative = policy.alternatives.find((key) =>
-        values.includes(key),
-      )
-
-      if (alternative) {
-        dmlPolicy[policyField as keyof typeof dmlPolicy] = alternative
-      }
-    }
-  }
-
-  func(insertPolicy, 'insertPolicy')
-  func(updatePolicy, 'updatePolicy')
-  func(deletePolicy, 'deletePolicy')
-
-  return dmlPolicy
-}
-
-function getTableReNameNode() {
-  return {
-    id: uuid(),
-    type: 'table_rename_processor',
-    name: t('packages_business_swimlane_fdm_biaobianji'),
-    prefix: `${fixedPrefix.value}${taskDialogConfig.value.prefix}_`,
-  }
 }
 
 async function handleNodeExpand(data: any, node: any, forceLoad?: boolean) {
@@ -789,9 +514,9 @@ function handleDragEnd() {
   emit('node-drag-end')
 }
 
-function setNodeExpand() {
+function setNodeExpand(connectionId: string) {
   const target = treeData.value.find(
-    (item: any) => item.linkId === taskDialogConfig.value.from.id,
+    (item: any) => item.linkId === connectionId,
   )
   if (target) {
     const node = tree.value?.getNode(target.id)
@@ -818,16 +543,6 @@ function setExpand(id: string, isExpand: boolean) {
   if (!isExpand) {
     if (~i) expandedKeys.value.splice(i, 1)
   } else if (!~i) expandedKeys.value.push(id)
-}
-
-function getSmartPrefix(connectionName: string) {
-  connectionName = connectionName
-    .replaceAll(/[\u4E00-\u9FA5\s]+/g, '')
-    .replace(/^[-_]+/, '')
-  const planA = connectionName.split('_').shift() || ''
-  const planB = connectionName.split('-').shift() || ''
-
-  return (planA.length < planB.length ? planA : planB).slice(0, 5)
 }
 
 function handleMoreCommand(command: string, data: any) {
@@ -926,6 +641,38 @@ async function dialogSubmit() {
   }
 }
 
+function findSourceAndSinkNodes({ nodes, edges }) {
+  const allNodes = new Set(nodes.map((node) => node.id))
+  const hasIncoming = new Set()
+  const hasOutgoing = new Set()
+
+  // 遍历边，标记有入边和出边的节点
+  edges.forEach((edge) => {
+    hasOutgoing.add(edge.source)
+    hasIncoming.add(edge.target)
+  })
+
+  // 源节点：没有入边的节点
+  const sourceNode = nodes.find(
+    (node) =>
+      !hasIncoming.has(node.id) &&
+      (node.type === 'table' || node.type === 'database'),
+  )
+
+  // 目标节点：没有出边的节点
+  const targetNode = nodes.find(
+    (node) =>
+      !hasOutgoing.has(node.id) &&
+      (node.type === 'table' || node.type === 'database'),
+  )
+
+  const renameNode = nodes.find(
+    (node) => node.type === 'table_rename_processor',
+  )
+
+  return { sourceNode, targetNode, renameNode }
+}
+
 async function loadTask() {
   if (!treeData.value.length) return
 
@@ -933,7 +680,7 @@ async function loadTask() {
     treeData.value.map((item: any) => item.id).join(','),
   )
   const newMap: Record<string, any> = {}
-  for (const tagId in map) {
+  for (const tagId of Object.keys(map)) {
     let task = map[tagId].find(
       (task: any) =>
         !['deleting', 'delete_failed'].includes(task.status) &&
@@ -942,6 +689,10 @@ async function loadTask() {
     )
     if (task) {
       task = makeStatusAndDisabled(task)
+      const { sourceNode, targetNode, renameNode } = findSourceAndSinkNodes(
+        task.dag,
+      )
+
       newMap[tagId] = {
         id: task.id,
         name: task.name,
@@ -950,6 +701,9 @@ async function loadTask() {
         crontabExpression: task.crontabExpression,
         status: task.status,
         disabledData: task.disabledData,
+        sourceNode,
+        targetNode,
+        renameNode,
       }
     }
   }
@@ -1020,17 +774,6 @@ async function searchByKeywordList(val: any[] = []) {
   searchExpandedKeys.value = searchExpandedKeys
 }
 
-function handleChangeCronType(val: string) {
-  if (val === 'once') {
-    taskDialogConfig.value.task.crontabExpressionFlag = false
-  } else {
-    taskDialogConfig.value.task.crontabExpressionFlag = true
-    if (val !== 'custom') {
-      taskDialogConfig.value.task.crontabExpression = val
-    }
-  }
-}
-
 // Common mixin methods
 function toggleEnableSearch() {
   if (enableSearch.value) {
@@ -1052,28 +795,6 @@ function handleSearch(val: string) {
   }
   searchIng.value = true
   debouncedSearch.value(val)
-}
-
-function handleClickName(task: any) {
-  if (!task?.id) return
-
-  let routeName
-
-  if (!['edit', 'wait_start'].includes(task.status)) {
-    routeName = task.syncType === 'migrate' ? 'MigrationMonitor' : 'TaskMonitor'
-  } else {
-    routeName = task.syncType === 'migrate' ? 'MigrateEditor' : 'DataflowEditor'
-  }
-
-  openRoute({
-    name: routeName,
-    query: {
-      tour: false, // TODO: get from store
-    },
-    params: {
-      id: task.id,
-    },
-  })
 }
 
 function loadObjects(
@@ -1171,6 +892,13 @@ watch(
   },
 )
 
+const fdmTaskDialog = ref<InstanceType<typeof FdmTaskDialog>>()
+
+async function handleTaskSuccess(connectionId: string, task: any) {
+  await loadFDMDirectory()
+  setNodeExpand(connectionId)
+}
+
 // Lifecycle
 onMounted(() => {
   if (!props.loadingDirectory) {
@@ -1196,6 +924,9 @@ defineExpose({
   handleFindTreeDom,
   searchByKeywordList,
 })
+
+provide('tag2Task', tag2Task)
+provide('treeData', treeData)
 </script>
 
 <template>
@@ -1386,128 +1117,6 @@ defineExpose({
         {{ t('packages_ldp_connection_expired') }}
       </div>
     </div>
-    <ElDialog v-model="taskDialogConfig.visible" :close-on-click-modal="false">
-      <template #header>
-        <span class="font-color-dark fs-6 fw-sub">{{
-          $t('packages_business_create_clone_task')
-        }}</span>
-      </template>
-      <ElForm
-        ref="form"
-        :model="taskDialogConfig"
-        label-width="180px"
-        :rules="formRules"
-        @submit.prevent
-      >
-        <div class="pipeline-desc p-4 mb-4 text-preline rounded-4">
-          <span>{{
-            $t('packages_business_fdm_create_task_dialog_desc_prefix')
-          }}</span
-          ><span
-            v-if="taskDialogConfig.from"
-            class="inline-flex align-center px-1 font-color-dark fw-sub align-top"
-            ><DatabaseIcon
-              :key="taskDialogConfig.from.pdkHash"
-              :item="taskDialogConfig.from"
-              :size="20"
-              class="mr-1"
-            />
-            <span>{{ taskDialogConfig.from.name }}</span> </span
-          ><span
-            v-if="taskDialogConfig.tableName"
-            class="inline-flex font-color-dark fw-sub"
-            >/<span class="px-1">{{ taskDialogConfig.tableName }}</span> </span
-          ><span>{{
-            $t('packages_business_fdm_create_task_dialog_desc_suffix')
-          }}</span>
-        </div>
-
-        <ElFormItem :label="$t('packages_business_table_prefix')" prop="prefix">
-          <ElInput
-            v-model="taskDialogConfig.prefix"
-            :maxlength="maxPrefixLength"
-            class="inline-flex inline-flex-input"
-          >
-            <template #prepend>{{ fixedPrefix }}</template>
-            <template #append>
-              <span
-                v-if="taskDialogConfig.tableName"
-                :title="taskDialogConfig.tableName"
-              >
-                _{{ taskDialogConfig.tableName }}
-              </span>
-              <span v-else> _&lt;original_table_name&gt; </span>
-            </template>
-          </ElInput>
-        </ElFormItem>
-
-        <ElFormItem
-          :label="$t('packages_dag_task_setting_sync_type')"
-          prop="task.type"
-        >
-          <ElRadioGroup v-model="taskDialogConfig.task.type">
-            <ElTooltip
-              :disabled="!taskDialogConfig.notSupportedCDC"
-              :content="$t('packages_ldp_not_support_increments')"
-            >
-              <ElRadio
-                label="initial_sync+cdc"
-                :disabled="taskDialogConfig.notSupportedCDC"
-              >
-                {{ $t('packages_dag_task_setting_initial_sync_cdc') }}
-              </ElRadio>
-            </ElTooltip>
-
-            <ElRadio label="initial_sync">
-              {{ $t('public_task_type_initial_sync') }}
-            </ElRadio>
-          </ElRadioGroup>
-        </ElFormItem>
-        <div
-          v-if="taskDialogConfig.task.type === 'initial_sync'"
-          class="flex align-center gap-3"
-        >
-          <ElFormItem
-            class="w-100"
-            :label="$t('packages_dag_task_setting_crontabExpressionFlag')"
-            prop="task.crontabExpressionType"
-          >
-            <ElSelect
-              v-model="taskDialogConfig.task.crontabExpressionType"
-              class="flex-1"
-              @change="handleChangeCronType"
-            >
-              <ElOption v-for="(opt, i) in cronOptions" v-bind="opt" :key="i" />
-            </ElSelect>
-          </ElFormItem>
-          <ElFormItem
-            v-if="taskDialogConfig.task.crontabExpressionType === 'custom'"
-            prop="task.crontabExpression"
-            label-width="0"
-          >
-            <ElInput v-model="taskDialogConfig.task.crontabExpression" />
-          </ElFormItem>
-        </div>
-      </ElForm>
-      <template #footer>
-        <span class="dialog-footer">
-          <ElButton @click="taskDialogConfig.visible = false">{{
-            $t('public_button_cancel')
-          }}</ElButton>
-          <ElButton :loading="creating" @click="taskDialogSubmit(false)">{{
-            $t('packages_business_save_only')
-          }}</ElButton>
-          <ElButton
-            :loading="creating || checkCanStartIng"
-            :disabled="!taskDialogConfig.canStart"
-            type="primary"
-            @click="taskDialogSubmit(true)"
-          >
-            {{ $t('packages_business_save_and_run_now') }}
-          </ElButton>
-        </span>
-      </template>
-    </ElDialog>
     <ElDialog
       v-model="dialogConfig.visible"
       width="30%"
@@ -1568,6 +1177,12 @@ defineExpose({
         </span>
       </template>
     </ElDialog>
+
+    <FdmTaskDialog
+      ref="fdmTaskDialog"
+      :fdm-connection="fdmConnection"
+      @success="handleTaskSuccess"
+    />
   </div>
 </template>
 

@@ -92,7 +92,7 @@ export default {
         <ElCol class="font-color-normal pb-4" :span="12">
           <span class="font-text"> API ID:</span>
           <span class="fw-sub">{{
-            auditData.id ? auditData.id : '-'
+            auditData.apiId ? auditData.apiId : '-'
           }}</span></ElCol
         >
         <ElCol class="font-color-normal pb-4" :span="12"
@@ -147,7 +147,7 @@ export default {
         {{ $t('apiaudit_parameter') }}
       </div>
       <div v-if="auditData" class="pt-4 editor-box">
-        <pre class="editor-pre">{{ auditData.reqParams }}</pre>
+        <pre class="editor-pre">{{ auditData.body ?  auditData.body : (auditData.query ? auditData.query : auditData.reqParams )  }}</pre>
       </div>
     </div>
   </section>

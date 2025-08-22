@@ -48,11 +48,6 @@ export function updateApiClient(client: any) {
 }
 
 export async function fetchApiServerToken() {
-  const apiToken = localStorage.getItem('__api_server_token') || ''
-  if (apiToken) {
-    return apiToken
-  }
-
   const clientInfo: any = await requestClient.get(BASE_URL, {
     params: {
       filter: JSON.stringify({
@@ -70,8 +65,6 @@ export async function fetchApiServerToken() {
     },
   })
   const token = result?.data?.access_token || ''
-
-  localStorage.setItem('__api_server_token', token)
 
   return token
 }

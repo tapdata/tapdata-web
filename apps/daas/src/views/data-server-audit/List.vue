@@ -1,6 +1,11 @@
 <script>
 import { CircleCloseFilled, SuccessFilled } from '@element-plus/icons-vue'
-import { fetchAllMethods, fetchAllResponseCodes, fetchApiCalls } from '@tap/api'
+import {
+  fetchAllMethods,
+  fetchAllResponseCodes,
+  fetchApiCalls,
+  fetchApiClients,
+} from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
 import { FilterBar } from '@tap/component/src/filter-bar'
@@ -19,6 +24,7 @@ export default {
     return {
       searchParams: {
         keyword: '',
+        clientName: '',
         method: '',
         code: '',
         start: '',
@@ -65,7 +71,7 @@ export default {
     // 获取数据
     getData({ page }) {
       const { current, size } = page
-      const { method, code, start, end, keyword } = this.searchParams
+      const { method, code, start, end, clientId, keyword } = this.searchParams
       const where = {}
       if (method) {
         where.method = method
@@ -78,6 +84,9 @@ export default {
       }
       if (end) {
         where.end = end
+      }
+      if (clientId) {
+        where.clientId = clientId
       }
       if (keyword && keyword.trim()) {
         const filterObj = { like: escapeRegExp(keyword), options: 'i' }
@@ -147,6 +156,25 @@ export default {
           selectedWidth: '200px',
         },
         {
+          label: this.$t('api_monitor_total_clientName'),
+          key: 'clientId',
+          type: 'select-inner',
+          items: async () => {
+            const res = await fetchApiClients({
+              limit: 1000,
+            })
+
+            return (
+              res.items?.map((item) => {
+                return {
+                  label: item.clientName,
+                  value: item.clientId,
+                }
+              }) || []
+            )
+          },
+        },
+        {
           key: 'start,end',
           type: 'datetimerange',
           startPlaceholder: this.$t('apiaudit_interview_time_start'),
@@ -182,8 +210,16 @@ export default {
           />
         </div>
       </template>
-      <el-table-column prop="id" label="API ID" :show-overflow-tooltip="true" />
-      <el-table-column prop="name" :label="$t('apiaudit_name')" />
+      <el-table-column prop="name" :label="$t('apiaudit_name')" width="220">
+        <template #default="{ row }">
+          <div>{{ row.name }}</div>
+          <el-tag class="is-code" size="small" type="info" disable-transitions>
+            <span class="text-caption">
+              {{ row.apiId }}
+            </span>
+          </el-tag>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="method"
         width="100"
@@ -198,13 +234,17 @@ export default {
           >
         </template>
       </el-table-column>
-      <el-table-column prop="clientName" :label="$t('apiaudit_visitor')" />
-      <el-table-column prop="userIp" :label="$t('apiaudit_ip')" />
+      <el-table-column
+        prop="clientName"
+        width="160"
+        :label="$t('apiaudit_visitor')"
+      />
+      <el-table-column prop="userIp" width="120" :label="$t('apiaudit_ip')" />
       <el-table-column
         :label="$t('apiaudit_interview_time')"
         :show-overflow-tooltip="true"
         prop="createTime"
-        width="160"
+        width="170"
         sortable="createTime"
       >
         <template #default="{ row }">
@@ -213,7 +253,7 @@ export default {
       </el-table-column>
       <el-table-column
         prop="code"
-        width="80"
+        width="100"
         :label="$t('apiaudit_visit_result')"
         :show-overflow-tooltip="true"
       >
