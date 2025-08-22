@@ -1455,6 +1455,36 @@ function hasChildren(node) {
 function openHelp() {
   helpVisible.value = true
 }
+
+const formatHander = {
+  upperCase: (value: string) => value.toUpperCase(),
+  lowerCase: (value: string) => value.toLowerCase(),
+  snakeToCamel: (value: string) =>
+    value.replaceAll(/_([a-z])/g, (_, letter) => letter.toUpperCase()),
+  camelToSnake: (value: string) =>
+    value.replaceAll(/([A-Z])/g, '_$1').toLowerCase(),
+}
+
+function handleAliasConversion(command: keyof typeof formatHander) {
+  const format = formatHander[command]
+  const selectedFields = fieldTable.value.getSelectionRows()
+
+  if (!selectedFields.length) return
+
+  selectedFields.forEach((field: any) => {
+    const alias = format(field.field_name)
+
+    field.field_alias = alias !== field.field_name ? alias : ''
+  })
+}
+
+function handleClearAlias() {
+  const selectedFields = fieldTable.value.getSelectionRows()
+  if (!selectedFields.length) return
+  selectedFields.forEach((field: any) => {
+    field.field_alias = ''
+  })
+}
 </script>
 
 <template>
@@ -2234,9 +2264,52 @@ function openHelp() {
 
         <!-- 输出结果 -->
         <template v-if="tab === 'form'">
-          <div class="data-server-panel__title mt-7 mb-3">
-            {{ $t('packages_business_data_server_drawer_shuchujieguo') }}
+          <div class="data-server-panel__title mt-7 mb-3 gap-2">
+            <span>{{
+              $t('packages_business_data_server_drawer_shuchujieguo')
+            }}</span>
+            <el-tag v-if="isEdit && selectedIds.size" type="info" size="small">
+              {{ $t('public_selected_fields', { val: selectedIds.size }) }}
+            </el-tag>
+            <div class="flex-1" />
+            <template v-if="isEdit && selectedIds.size">
+              <el-dropdown placement="bottom" @command="handleAliasConversion">
+                <el-button text>
+                  <el-icon class="mr-1"><i-lucide:wand-sparkles /></el-icon>
+                  {{ $t('public_quick_convert_alias') }}
+                </el-button>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item command="upperCase">{{
+                      $t('packages_form_field_processor_index_daxie')
+                    }}</el-dropdown-item>
+                    <el-dropdown-item command="lowerCase">{{
+                      $t('packages_form_field_processor_index_xiaoxie')
+                    }}</el-dropdown-item>
+                    <el-dropdown-item command="snakeToCamel">{{
+                      $t('packages_form_field_processor_index_snake_to_camel')
+                    }}</el-dropdown-item>
+                    <el-dropdown-item command="camelToSnake">{{
+                      $t('packages_form_field_processor_index_camel_to_snake')
+                    }}</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+              <el-popconfirm
+                :width="240"
+                :title="$t('public_clear_alias_confirm')"
+                @confirm="handleClearAlias"
+              >
+                <template #reference>
+                  <el-button text type="danger">
+                    <el-icon class="mr-1"><i-mingcute:close-line /></el-icon>
+                    {{ $t('public_clear_alias') }}
+                  </el-button>
+                </template>
+              </el-popconfirm>
+            </template>
           </div>
+
           <ElTable
             ref="fieldTable"
             v-model:selection="selectedIds"

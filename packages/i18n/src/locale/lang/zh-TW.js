@@ -521,4 +521,8 @@ export default {
   public_replace_result: '替換結果',
   public_no_matched_items: '無匹配項',
   public_select_encryption_rule: '選擇加密規則',
+  public_clear_alias_confirm: '確定清空所有字段別名嗎?',
+  public_selected_fields: '已選擇 {val} 個字段',
+  public_quick_convert_alias: '快速轉換別名',
+  public_clear_alias: '清空別名',
 }
