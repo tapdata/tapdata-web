@@ -506,7 +506,7 @@ export default {
   public_desc: '降序',
   public_select_field: '选择字段',
   public_select_parameter: '选择参数',
-  public_data_encryption: '数据加密',
+  public_data_encryption: '数据脱敏',
   public_create_rule: '创建规则',
   public_edit_rule: '编辑规则',
   public_rule_name: '规则名称',
