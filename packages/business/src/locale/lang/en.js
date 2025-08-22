@@ -1623,6 +1623,12 @@ export default {
   packages_business_data_source_monitor: 'Connection Monitor',
 
   // MongoDB operators
+  package_business_mongodb_query_operators: 'MongoDB Query Operators',
+  package_business_operators_search: 'Search operators',
+  packages_business_comparison: 'Comparison',
+  packages_business_logical: 'Logical',
+  packages_business_element: 'Element',
+  packages_business_evaluation: 'Evaluation',
   packages_business_mongo_operator_eq:
     'Matches values that are equal to a specified value.',
   packages_business_mongo_operator_gt:
@@ -1653,9 +1659,9 @@ export default {
   packages_business_mongo_operator_all:
     'Matches arrays that contain all elements specified in the query.',
   packages_business_mongo_operator_elemMatch:
-    'Selects documents if element in the array field matches all the specified conditions.',
+    'Matches arrays that contain at least one element satisfying all specified conditions.',
   packages_business_mongo_operator_size:
     'Selects documents if the array field is a specified size.',
   packages_business_mongo_operator_mod:
-    'Performs a modulo operation on the value of a field.',
+    'Performs a modulo match on a field value [divisor, remainder].',
 }

@@ -25,7 +25,7 @@ import InfiniteSelect from '@tap/form/src/components/infinite-select/InfiniteSel
 
 import { useI18n } from '@tap/i18n'
 import { uid } from '@tap/shared'
-import { cloneDeep, isEqual, merge } from 'lodash-es'
+import { cloneDeep, isEmpty, isEqual, merge } from 'lodash-es'
 import {
   computed,
   inject,
@@ -36,6 +36,7 @@ import {
   type Component,
 } from 'vue'
 import { DatabaseIcon } from '../../components/DatabaseIcon'
+import MqlHelpDialog from '../../components/MqlHelpDialog.vue'
 import ListSelect from '../api-application/ListSelect.vue'
 import MqlEditor from './MqlEditor.vue'
 import getTemplate from './template'
@@ -235,6 +236,7 @@ const mqlEditor = ref<any>(null)
 const containerRef = ref<HTMLElement | null>(null)
 const paramsTableRef = ref<InstanceType<typeof ElTable>>()
 const parameterSelectRef = ref<InstanceType<typeof ElSelect>[]>([])
+const helpVisible = ref(false)
 // 树数据和选中状态
 const treeData = computed(() =>
   buildTree(isEdit.value ? allFields.value : form.value.fields || []),
@@ -701,8 +703,6 @@ const getEncryptions = async () => {
 
 // Methods
 const open = (formData?: any) => {
-  const originalFormData = formData ? cloneDeep(formData) : {}
-
   tab.value = 'form'
   visible.value = true
   isEdit.value = false
@@ -713,18 +713,22 @@ const open = (formData?: any) => {
   allFields.value = []
   workerStatus.value = ''
 
-  if (!originalFormData.id) {
+  if (isEmpty(formData)) {
     form.value = getInitData()
     form_ref.value?.resetFields()
 
     edit()
   } else {
-    formatData(originalFormData)
+    formatData(Object.assign(getInitData(), cloneDeep(formData)))
 
-    const { connectionId, tableName } = originalFormData
+    const { connectionId, tableName } = formData
 
     if (connectionId && tableName) {
       getFields()
+    }
+
+    if (!formData.id) {
+      edit()
     }
   }
 
@@ -732,7 +736,6 @@ const open = (formData?: any) => {
   getEncryptions()
 
   nextTick(() => {
-    // form_ref.value?.clearValidate()
     containerRef.value?.parentElement?.scrollTo({ top: 0 })
   })
 }
@@ -853,6 +856,7 @@ const save = async (type?: boolean) => {
         const fieldList = await getAllFields()
 
         const map = fields.reduce((acc: any, field: any) => {
+          field.field_alias = field.field_alias?.trim() || ''
           acc[field.id] = field
           return acc
         }, {})
@@ -860,7 +864,7 @@ const save = async (type?: boolean) => {
         formData.fields = fieldList.map((f: any) => {
           return {
             ...f,
-            field_alias: map[f.id]?.field_alias || '',
+            field_alias: map[f.id]?.field_alias
           }
         })
       }
@@ -955,6 +959,11 @@ const handleChangeTable = () => {
   allFields.value = []
   getFields()
   form_ref.value?.clearValidate('tableName')
+}
+
+const fieldsChanged = (val: any[]) => {
+  if (!isEdit.value) return
+  form.value.fields = val
 }
 
 const addItem = (key: 'params' | 'where' | 'sort') => {
@@ -1328,6 +1337,10 @@ function onFieldSelected(field: Field) {
         ),
     )
     .filter((f) => f.field_name !== field.field_name)
+}
+
+function openHelp() {
+  helpVisible.value = true
 }
 
 // 递归构建树结构
@@ -2008,6 +2021,7 @@ function hasChildren(node) {
           <!-- 筛选条件 -->
           <div
             class="data-server-panel__title mt-7 mb-3 align-items-center justify-content-start gap-3"
+            style="--btn-space: 0"
           >
             <span>{{
               $t('packages_business_data_server_drawer_shaixuantiaojian')
@@ -2028,14 +2042,19 @@ function hasChildren(node) {
               ]"
             />
 
+            <div class="flex-1" />
+
             <el-button
               v-if="form.fullCustomQuery && isEdit"
               text
-              class="ml-auto"
               @click="handleFormat"
             >
               <el-icon class="mr-1"><i-mingcute:brush-line /></el-icon>
               {{ $t('public_format') }}
+            </el-button>
+            <el-button v-if="form.fullCustomQuery" text @click="openHelp">
+              <el-icon class="mr-1"><i-mingcute:question-line /></el-icon>
+              {{ $t('public_button_help') }}
             </el-button>
           </div>
           <template v-if="isEdit">
@@ -2387,12 +2406,15 @@ function hasChildren(node) {
         $t('public_button_cancel')
       }}</ElButton>
       <ElButton
+        :loading="loading"
         :disabled="!form.fields.length"
         type="primary"
         @click="save()"
         >{{ $t('public_button_save') }}</ElButton
       >
     </template>
+
+    <MqlHelpDialog v-model="helpVisible" />
   </component>
 </template>
 
