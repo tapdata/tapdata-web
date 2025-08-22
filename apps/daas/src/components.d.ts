@@ -115,6 +115,7 @@ declare module 'vue' {
     'IMingcute:externalLinkLine': typeof import('~icons/mingcute/external-link-line')['default']
     'IMingcute:loadingLine': typeof import('~icons/mingcute/loading-line')['default']
     'IMingcute:more1Fill': typeof import('~icons/mingcute/more1-fill')['default']
+    'IMingcute:playLine': typeof import('~icons/mingcute/play-line')['default']
     'IMingcute:questionLine': typeof import('~icons/mingcute/question-line')['default']
     'IMingcute:rightLine': typeof import('~icons/mingcute/right-line')['default']
     'IMingcute:searchLine': typeof import('~icons/mingcute/search-line')['default']
