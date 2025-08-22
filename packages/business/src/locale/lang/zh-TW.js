@@ -843,6 +843,7 @@ export default {
   packages_business_connections_databaseform_kaiqixintiaobiao: '開啟心跳表',
   packages_business_connections_databaseform_jiaobentiaoshi: '腳本調試',
   // api服务管理
+  packages_business_data_server_drawer_filter: '無效的Json參數值，請將filter作為json對象輸入',
   packages_business_data_server_drawer_qingshurucanshu: '請輸入參數名稱',
   packages_business_data_server_drawer_paixu: '排序',
   packages_business_data_server_drawer_meigefenyefan: '每個分頁返回的記錄數',

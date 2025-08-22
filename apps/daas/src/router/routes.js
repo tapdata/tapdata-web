@@ -70,6 +70,10 @@ const ExternalStorageList = () =>
 const AlarmNotification = () =>
   import('@tap/business/src/views/setting/AlarmNotification.vue')
 
+// 数据加密
+const DataEncryptionList = () =>
+  import('@tap/business/src/views/data-encryption/List.vue')
+
 export const routes = [
   {
     path: '/login',
@@ -828,6 +832,15 @@ export const routes = [
           hideTitle: true,
           icon: 'data-server',
           code: 'v2_data-console',
+        },
+      },
+      {
+        path: '/data-encryption',
+        name: 'dataEncryption',
+        component: DataEncryptionList,
+        meta: {
+          title: 'public_data_encryption',
+          // code: 'v2_data-encryption',
         },
       },
     ],

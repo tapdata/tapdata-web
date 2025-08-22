@@ -449,6 +449,8 @@ export default {
   setting_ApiServer: 'API分发设置',
   setting_Default_Limit: '默认查询返回行数',
   setting_Max_Limit: '最大查询返回行数',
+  setting_Desensitize_API_request_parameters: 'API请求参数脱敏',
+  'setting_Timeout_period_for_API_access_to_the_database_(millisecond)': 'API访问数据库的超时时间（毫秒）',
   setting_Send_batch_size: '打包数据条数',
   setting_hint_Send_batch_size: '打包数据条数',
   setting_Mongodb_target_create_date: '是否在目标端数据集添加创建时间',
