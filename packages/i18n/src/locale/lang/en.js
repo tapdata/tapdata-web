@@ -516,7 +516,7 @@ export default {
   public_select_field: 'Select Field',
   public_select_parameter: 'Select Parameter',
   public_others: 'Others',
-  public_data_encryption: 'Data Encryption',
+  public_data_encryption: 'Data Desensitization',
   public_create_rule: 'Create Rule',
   public_edit_rule: 'Edit Rule',
   public_rule_name: 'Rule Name',
