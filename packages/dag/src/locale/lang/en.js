@@ -1111,4 +1111,20 @@ export default {
   packages_dag_compare_done_modify: '{type} Modified',
   packages_dag_compare_done_add: '{type} Added',
   packages_dag_compare_done_delete: '{type} Deleted',
+  packages_dag_compare_result: 'Schema Comparison Result',
+  packages_dag_compare_result_desc:
+    'Comparison of inferred results with target schema',
+  packages_dag_compare_result_compare_target: 'Compare Target Schema',
+  packages_dag_compare_result_running: 'Comparing',
+  packages_dag_compare_result_recompare: 'Recompare',
+  packages_dag_compare_result_apply_all: 'Apply All',
+  packages_dag_compare_result_undo_all: 'Undo All',
+  packages_dag_compare_result_search_field: 'Field Name or Type',
+  packages_dag_compare_result_apply_table: 'Apply Current Table',
+  packages_dag_compare_result_undo_table: 'Undo Current Table',
+  packages_dag_compare_result_no_match_field: 'No Matching Field Found',
+  packages_dag_compare_result_done: 'Schema Comparison Completed',
+  packages_dag_compare_result_error:
+    'Schema Comparison Failed, Please Try Again Later',
+  packages_dag_compare_result_no_diff: 'No Difference Found',
 }

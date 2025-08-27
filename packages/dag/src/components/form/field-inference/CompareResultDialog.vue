@@ -7,6 +7,7 @@ import {
   useRequest,
   type ItemDifferenceFieldList,
 } from '@tap/api'
+import { dayjs } from '@tap/business/src/shared/dayjs'
 
 import { CloseIcon } from '@tap/component/src/CloseIcon'
 import { getFieldIcon } from '@tap/form/src/components/field-select/FieldSelect'
@@ -15,6 +16,7 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 
 const visible = defineModel<boolean>()
+const emit = defineEmits(['loadSchema'])
 
 const props = defineProps({
   nodeId: {
@@ -37,10 +39,12 @@ const { t } = useI18n()
 const store = useStore()
 const taskId = store.state.dataflow.taskId
 const compareStatus = ref<string | null>(null)
+const finishTime = ref<string>()
 const tableList = ref<TableItem[]>([])
 const fieldList = ref<TableItem['fields']>([])
 const selectedTable = ref<TableItem | null>(null)
 const searchKeyword = ref('')
+const hasManual = ref(false)
 const typeMap = {
   Different: {
     text: t('packages_dag_compare_different'),
@@ -97,6 +101,10 @@ const {
 
     if (compareStatus.value !== 'running') {
       cancelFetchCompareResult()
+
+      if (compareStatus.value === 'done') {
+        finishTime.value = dayjs(res.finishTime).fromNow()
+      }
     } else {
       return
     }
@@ -172,6 +180,7 @@ const {
 )
 
 const onOpen = () => {
+  hasManual.value = false
   fetchCompareResult()
 }
 
@@ -180,12 +189,14 @@ const handleSelectTable = (item: TableItem) => {
 }
 
 const saveApply = async (isAll: boolean, data?: any) => {
+  hasManual.value = true
   await saveCompareApply(isAll, props.nodeId, data)
   fetchCompareResult()
   ElMessage.success(t('public_message_operation_success'))
 }
 
 const deleteApply = async (isAll: boolean, data?: any) => {
+  hasManual.value = true
   await deleteCompareApply(isAll, props.nodeId, data)
   fetchCompareResult()
   ElMessage.success(t('public_message_operation_success'))
@@ -248,10 +259,10 @@ const handleCompareTargetModel = async () => {
     (newVal) => {
       if (newVal === 'done') {
         unwatch()
-        ElMessage.success('模型对比完成')
+        ElMessage.success(t('packages_dag_compare_result_done'))
       } else if (newVal === 'error' || newVal === 'timeOut') {
         unwatch()
-        ElMessage.error('模型对比失败,请稍后重试')
+        ElMessage.error(t('packages_dag_compare_result_error'))
       }
     },
     {
@@ -280,6 +291,12 @@ const clearSearch = () => {
   searchKeyword.value = ''
 }
 
+const onClose = () => {
+  if (hasManual.value) {
+    emit('loadSchema')
+  }
+}
+
 onBeforeUnmount(() => {
   unwatch?.()
 })
@@ -292,6 +309,7 @@ onBeforeUnmount(() => {
     class="p-0 overflow-hidden compare-result-dialog"
     :show-close="false"
     @open="onOpen"
+    @close="onClose"
   >
     <template #header="{ titleClass }">
       <div class="pt-5 px-6">
@@ -304,16 +322,28 @@ onBeforeUnmount(() => {
             /></el-icon>
           </div>
           <div>
-            <div :class="titleClass">模型差异对比</div>
-            <div class="text-caption fs-8 lh-sm">推演结果与目标模型对比</div>
+            <div :class="titleClass">
+              {{ t('packages_dag_compare_result') }}
+            </div>
+            <div class="text-caption fs-8 lh-sm">
+              {{ t('packages_dag_compare_result_desc') }}
+              <template v-if="finishTime">
+                <el-divider direction="vertical" class="mx-1" />
+                {{ finishTime }}
+              </template>
+            </div>
           </div>
           <div class="flex-1" />
-          <template v-if="compareStatus">
+          <template v-if="compareStatus && tableList.length">
             <el-button :loading="isLoading" @click="handleCompareTargetModel">
               <template #icon>
                 <el-icon><i-lucide:refresh-cw /></el-icon>
               </template>
-              {{ compareStatus === 'running' ? '正在对比' : '重新对比' }}
+              {{
+                compareStatus === 'running'
+                  ? t('packages_dag_compare_result_running')
+                  : t('packages_dag_compare_result_recompare')
+              }}
             </el-button>
             <el-button
               :disabled="isLoading"
@@ -321,12 +351,12 @@ onBeforeUnmount(() => {
               @click="handleApplyAll"
             >
               <el-icon class="mr-1"><i-lucide:check-check /></el-icon>
-              全部应用
+              {{ t('packages_dag_compare_result_apply_all') }}
             </el-button>
             <el-button :disabled="isLoading" @click="handleUndoAll">
               <el-icon class="mr-1"><i-lucide:undo /></el-icon>
-              全部撤销</el-button
-            >
+              {{ t('packages_dag_compare_result_undo_all') }}
+            </el-button>
             <el-divider class="mx-3" direction="vertical" />
           </template>
           <el-button
@@ -342,7 +372,9 @@ onBeforeUnmount(() => {
     <div class="border-top">
       <div class="flex" style="max-height: 60vh; min-height: 200px">
         <el-empty
-          v-if="!compareStatus || !tableList.length"
+          v-if="
+            !compareStatus || (!tableList.length && compareStatus !== 'done')
+          "
           :image-size="48"
           class="mx-auto"
         >
@@ -355,10 +387,26 @@ onBeforeUnmount(() => {
               <template #icon>
                 <el-icon><i-lucide:git-compare-arrows /></el-icon>
               </template>
-              {{ compareStatus === 'running' ? '正在对比' : '对比目标模型' }}
+              {{
+                compareStatus === 'running'
+                  ? t('packages_dag_compare_result_running')
+                  : t('packages_dag_compare_result_compare_target')
+              }}
             </el-button>
           </template>
         </el-empty>
+
+        <el-result
+          v-else-if="compareStatus === 'done' && !tableList.length"
+          icon="success"
+          title="模型对比无差异"
+        >
+          <template #extra>
+            <el-button type="primary" @click="handleCompareTargetModel">
+              {{ t('packages_dag_compare_result_recompare') }}
+            </el-button>
+          </template>
+        </el-result>
 
         <template v-else>
           <div style="width: 320px" class="bg-white p-3 overflow-y-auto">
@@ -449,7 +497,7 @@ onBeforeUnmount(() => {
               <el-divider direction="vertical" class="mx-3" />
               <el-input
                 v-model="searchKeyword"
-                placeholder="搜索字段名称或类型"
+                :placeholder="t('packages_dag_compare_result_search_field')"
                 clearable
                 class="flex-shrink-0 mr-3"
                 style="width: 200px"
@@ -460,8 +508,18 @@ onBeforeUnmount(() => {
                 </template>
               </el-input>
               <div class="flex-1" />
-              <el-button @click="handleApplyTable">应用当前表</el-button>
-              <el-button @click="handleUndoTable">撤销当前表</el-button>
+              <el-button circle class="rounded-lg" @click="handleApplyTable">
+                <template #icon>
+                  <el-icon><i-lucide:check-check /></el-icon>
+                </template>
+                <!-- {{ t('packages_dag_compare_result_apply_table') }} -->
+              </el-button>
+              <el-button circle class="rounded-lg" @click="handleUndoTable">
+                <template #icon>
+                  <el-icon><i-lucide:undo /></el-icon>
+                </template>
+                <!-- {{ t('packages_dag_compare_result_undo_table') }} -->
+              </el-button>
             </div>
             <div v-if="selectedTable" class="flex flex-column gap-3 p-3">
               <div
@@ -469,7 +527,7 @@ onBeforeUnmount(() => {
                 class="text-center py-8 text-placeholder"
               >
                 <el-icon size="48" class="mb-2"><i-lucide:search-x /></el-icon>
-                <div>未找到匹配的字段</div>
+                <div>{{ t('packages_dag_compare_result_no_match_field') }}</div>
               </div>
 
               <div

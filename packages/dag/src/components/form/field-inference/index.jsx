@@ -38,6 +38,10 @@ export const fieldInference = connect(
         dialogOpen.value = true
       }
 
+      const handleLoadSchema = () => {
+        fieldMapping.value.loadData()
+      }
+
       return () => {
         const label = (
           <div class="inline-flex align-center position-absolute w-100 gap-2">
@@ -96,7 +100,11 @@ export const fieldInference = connect(
               />
             </FormItem.BaseItem>
 
-            <CompareResultDialog v-model={dialogOpen.value} nodeId={nodeId} />
+            <CompareResultDialog
+              v-model={dialogOpen.value}
+              nodeId={nodeId}
+              onLoadSchema={handleLoadSchema}
+            />
           </div>
         )
       }
