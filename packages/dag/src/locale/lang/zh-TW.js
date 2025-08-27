@@ -933,4 +933,19 @@ export default {
   packages_dag_ignoreUpdateEvent: '忽略更新事件',
   packages_dag_ignoreUpdateEvent_tips:
     '開啓後將自動忽略子表更新事件，適用於無需關注子表變化，且子表更新會對主表大部分數據產生影響的場景',
+  packages_dag_applyCompareRule: '啟用模型對比規則',
+  packages_dag_applyCompareRule_tip:
+    '開啓後，模型對比產生的差異將根據已選規則自動處理',
+  packages_dag_applyCompareRules_Missing: '刪除缺失字段',
+  packages_dag_applyCompareRules_Additional: '添加額外字段',
+  packages_dag_applyCompareRules_Different: '更新字段類型',
+  packages_dag_applyCompareRules_CannotWrite: '刪除只寫字段',
+  packages_dag_view_compare_result: '查看對比結果',
+  packages_dag_compare_different: '差異',
+  packages_dag_compare_additional: '新增',
+  packages_dag_compare_missing: '缺失',
+  packages_dag_compare_cannot_write: '只寫',
+  packages_dag_compare_done_modify: '已{type}修改',
+  packages_dag_compare_done_add: '已{type}添加',
+  packages_dag_compare_done_delete: '已{type}刪除',
 }

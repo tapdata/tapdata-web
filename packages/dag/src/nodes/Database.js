@@ -393,6 +393,59 @@ export class Database extends NodeType {
                     type: 'void',
                     'x-component': 'fieldInference',
                   },
+                  applyCompareRule: {
+                    type: 'boolean',
+                    title: i18n.t('packages_dag_applyCompareRule'),
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      layout: 'horizontal',
+                    },
+                    'x-component': 'Switch',
+                  },
+                  applyCompareRules: {
+                    type: 'array',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Checkbox.Group',
+                    default: [
+                      'Missing',
+                      'Additional',
+                      'Different',
+                      'CannotWrite',
+                    ],
+                    enum: [
+                      {
+                        label: i18n.t('packages_dag_applyCompareRules_Missing'),
+                        value: 'Missing',
+                      },
+                      {
+                        label: i18n.t(
+                          'packages_dag_applyCompareRules_Additional',
+                        ),
+                        value: 'Additional',
+                      },
+                      {
+                        label: i18n.t(
+                          'packages_dag_applyCompareRules_Different',
+                        ),
+                        value: 'Different',
+                      },
+                      {
+                        label: i18n.t(
+                          'packages_dag_applyCompareRules_CannotWrite',
+                        ),
+                        value: 'CannotWrite',
+                      },
+                    ],
+                    'x-editable': true,
+                    'x-reactions': {
+                      dependencies: ['.applyCompareRule'],
+                      fulfill: {
+                        state: {
+                          display: '{{$deps[0] ? "visible":"hidden"}}',
+                        },
+                      },
+                    },
+                  },
                   uniqueIndexEnable: {
                     type: 'boolean',
                     title: i18n.t('packages_dag_migration_uniqueIndexEnable'),

@@ -515,4 +515,7 @@ export default {
   public_select_field: 'Select Field',
   public_select_parameter: 'Select Parameter',
   public_others: 'Others',
+  public_add: 'Add',
+  public_automatically: 'Automatically',
+  public_manually: 'Manually',
 }

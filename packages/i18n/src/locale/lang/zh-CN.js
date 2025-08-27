@@ -506,4 +506,7 @@ export default {
   public_select_field: '选择字段',
   public_select_parameter: '选择参数',
   public_others: '其他',
+  public_add: '添加',
+  public_automatically: '自动',
+  public_manually: '手动',
 }
