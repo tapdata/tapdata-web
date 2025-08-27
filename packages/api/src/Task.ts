@@ -1,6 +1,6 @@
-import Http from './Http'
 import { isPlainObj } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
+import Http from './Http'
 
 export default class Task extends Http {
   constructor() {
@@ -16,10 +16,13 @@ export default class Task extends Http {
       } else if (typeof filter === 'string') {
         queryStr = filter
       }
-      const qs = queryStr ? '?filter=' + encodeURIComponent(queryStr) : ''
-      return this.axios.get(this.url + '/' + params.join('/') + qs)
+      const qs = queryStr ? `?filter=${encodeURIComponent(queryStr)}` : ''
+      return this.axios.get(`${this.url}/${params.join('/')}${qs}`)
     } else if (typeof params === 'string') {
-      return this.axios.get(this.url + '/' + params, { params: filter, headers })
+      return this.axios.get(`${this.url}/${params}`, {
+        params: filter,
+        headers,
+      })
     }
     params = params || {}
     return this.axios.get(this.url, { params })
@@ -31,20 +34,26 @@ export default class Task extends Http {
    * @returns {*}
    */
   copy(id) {
-    return this.axios.put(this.url + `/copy/${id}`)
+    return this.axios.put(`${this.url}/copy/${id}`)
   }
 
   pause(id) {
-    return this.axios.put(this.url + `/pause/${id}`)
+    return this.axios.put(`${this.url}/pause/${id}`)
   }
   batchDelete(ids) {
-    return this.axios.delete(this.url + `/batchDelete?taskIds=` + ids.join('&taskIds='))
+    return this.axios.delete(
+      `${this.url}/batchDelete?taskIds=${ids.join('&taskIds=')}`,
+    )
   }
   batchRenew(ids) {
-    return this.axios.patch(this.url + `/batchRenew?taskIds=` + ids.join('&taskIds='))
+    return this.axios.patch(
+      `${this.url}/batchRenew?taskIds=${ids.join('&taskIds=')}`,
+    )
   }
   batchStop(ids) {
-    return this.axios.put(this.url + `/batchStop?taskIds=` + ids.join('&taskIds='))
+    return this.axios.put(
+      `${this.url}/batchStop?taskIds=${ids.join('&taskIds=')}`,
+    )
   }
 
   patchId(id, params) {
@@ -52,90 +61,108 @@ export default class Task extends Http {
   }
 
   findTaskDetailById(id) {
-    return this.axios.get(this.url + '/findTaskDetailById/' + id)
+    return this.axios.get(`${this.url}/findTaskDetailById/${id}`)
   }
   tranModelVersionControl(params) {
-    return this.axios.post(this.url + '/tranModelVersionControl', params)
+    return this.axios.post(`${this.url}/tranModelVersionControl`, params)
   }
   getId(id, params, filter) {
     if (Array.isArray(params)) {
       filter = typeof filter === 'object' ? JSON.stringify(filter) : filter
-      const qs = filter ? '?filter=' + encodeURIComponent(filter) : ''
-      return this.axios.get(this.url + '/' + id + params.join('/') + qs)
+      const qs = filter ? `?filter=${encodeURIComponent(filter)}` : ''
+      return this.axios.get(`${this.url}/${id}${params.join('/')}${qs}`)
     }
     params = params || {}
-    return this.axios.get(this.url + '/' + id, { params })
+    return this.axios.get(`${this.url}/${id}`, { params })
   }
   edit(params) {
-    return this.axios.patch(this.url + '/confirm/' + params.id, params)
+    return this.axios.patch(`${this.url}/confirm/${params.id}`, params)
   }
 
   export(ids) {
-    const href = this.url + `/batch/load?taskId=${ids.join('&taskId=')}&access_token=${Cookie.get('access_token')}`
+    const href = `${
+      this.url
+    }/batch/load?taskId=${ids.join('&taskId=')}&access_token=${Cookie.get('access_token')}`
     window.open(href)
   }
   checkRun(id) {
-    return this.axios.get(this.url + '/checkRun/' + id)
+    return this.axios.get(`${this.url}/checkRun/${id}`)
   }
 
   batchUpdateListtags(params) {
     return this.axios.patch(`${this.url}/batchUpdateListtags`, params)
   }
   save(params, config) {
-    return this.axios.patch(this.url + '/confirm/' + (params.id || ''), params, config)
+    return this.axios.patch(
+      `${this.url}/confirm${params.id ? `/${params.id}` : ''}`,
+      params,
+      config,
+    )
   }
 
   saveAndStart(params, config) {
-    return this.axios.patch(this.url + '/confirmStart/' + (params.id || ''), params, config)
+    return this.axios.patch(
+      `${this.url}/confirmStart/${params.id || ''}`,
+      params,
+      config,
+    )
   }
 
   getMetadata(params) {
-    return this.axios.post(this.url + '/metadata', params)
+    return this.axios.post(`${this.url}/metadata`, params)
   }
 
   start(id, config) {
-    return this.axios.put(this.url + `/start/${id}`, null, config)
+    return this.axios.put(`${this.url}/start/${id}`, null, config)
   }
 
   batchStart(taskIds, config) {
-    return this.axios.put(this.url + `/batchStart?taskIds=` + taskIds.join('&taskIds='), null, config)
+    return this.axios.put(
+      `${this.url}/batchStart?taskIds=${taskIds.join('&taskIds=')}`,
+      null,
+      config,
+    )
     //return this.axios.put(this.url + `/batchStart`, qs.stringify({ taskIds }))
   }
 
   stop(id) {
-    return this.axios.put(this.url + `/stop/${id}`)
+    return this.axios.put(`${this.url}/stop/${id}`)
   }
 
   forceStop(id) {
-    return this.axios.put(this.url + `/stop/${id}?force=true`)
+    return this.axios.put(`${this.url}/stop/${id}?force=true`)
   }
 
   reset(id) {
-    return this.axios.put(this.url + `/renew/${id}`)
+    return this.axios.put(`${this.url}/renew/${id}`)
   }
 
   chart(id) {
     if (id) {
       return this.axios.get(`${this.url}/chart?user_id=${id}`)
     } else {
-      return this.axios.get(this.url + '/chart')
+      return this.axios.get(`${this.url}/chart`)
     }
   }
 
   checkName(params = {}) {
-    return this.axios.post(this.url + '/checkName', params)
+    return this.axios.post(`${this.url}/checkName`, params)
   }
   getNodeTableInfo(params = {}) {
     const config = { params }
     if (isPlainObj(params)) {
       Object.assign(config, params)
     }
-    return this.axios.get(this.url + '/getNodeTableInfo', config)
+    return this.axios.get(`${this.url}/getNodeTableInfo`, config)
   }
 
   //表的状态
   tableStatus(connectionId, tableName) {
-    return this.axios.get(this.url + '/table/status?connectionId=' + connectionId + '&tableName=' + tableName)
+    return this.axios.get(
+      `${this.url}/table/status?connectionId=${connectionId}&tableName=${
+        tableName
+      }`,
+    )
   }
 
   getConsole(params) {
@@ -160,32 +187,37 @@ export default class Task extends Http {
   }
 
   records(id, params) {
-    return this.axios.get(this.url + `/records/${id}`, { params })
+    return this.axios.get(`${this.url}/records/${id}`, { params })
   }
 
   autoInspectResultsGroupByTable(params) {
-    return this.axios.post(this.url + `/auto-inspect-results-group-by-table`, params)
+    return this.axios.post(
+      `${this.url}/auto-inspect-results-group-by-table`,
+      params,
+    )
   }
 
   autoInspectResults(taskId, params) {
-    return this.axios.get(this.url + `/${taskId}/auto-inspect-results`, { params })
+    return this.axios.get(`${this.url}/${taskId}/auto-inspect-results`, {
+      params,
+    })
   }
 
   autoInspectTotals(params) {
-    return this.axios.post(this.url + `/auto-inspect-totals`, params)
+    return this.axios.post(`${this.url}/auto-inspect-totals`, params)
   }
 
   getStats() {
-    return this.axios.get(this.url + `/stats`)
+    return this.axios.get(`${this.url}/stats`)
   }
 
   //再次校验
   autoInspectAgain(taskId, params) {
-    return this.axios.post(this.url + `/${taskId}/auto-inspect-again`, params)
+    return this.axios.post(`${this.url}/${taskId}/auto-inspect-again`, params)
   }
 
   putLogSetting(taskId, params) {
-    return this.axios.put(this.url + `/logSetting/${taskId}`, params)
+    return this.axios.put(`${this.url}/logSetting/${taskId}`, params)
   }
 
   taskConsoleRelations(params) {
@@ -193,7 +225,9 @@ export default class Task extends Http {
   }
 
   rename(taskId, newName) {
-    return this.axios.patch(`${this.url}/rename/${taskId}?newName=${encodeURIComponent(newName)}`)
+    return this.axios.patch(
+      `${this.url}/rename/${taskId}?newName=${encodeURIComponent(newName)}`,
+    )
   }
 
   getTaskByConnection(params) {
@@ -222,7 +256,7 @@ export default class Task extends Http {
   getTimeRange(data, params) {
     return this.axios.get(`${this.url}/calculatedTimeRange`, {
       data: JSON.stringify(data),
-      params
+      params,
     })
   }
 
@@ -237,13 +271,13 @@ export default class Task extends Http {
   downloadAnalyze(taskId, params) {
     return this.axios.post(`${this.url}/analyze/${taskId}`, null, {
       ...params,
-      responseType: 'blob'
+      responseType: 'blob',
     })
   }
 
   refreshSchema(taskId, params) {
     return this.axios.put(`${this.url}/${taskId}/re-schemas`, null, {
-      params
+      params,
     })
   }
 }
