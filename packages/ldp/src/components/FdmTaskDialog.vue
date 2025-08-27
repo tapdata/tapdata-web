@@ -380,7 +380,10 @@ function taskDialogSubmit(start: boolean) {
   form.value?.validate(async (valid: boolean) => {
     if (!valid) return
 
-    if (!taskDialogConfig.value.tableNames.length) {
+    if (
+      !taskDialogConfig.value.tableNames.length &&
+      !taskDialogConfig.value.tableName
+    ) {
       ElMessage.error(t('packages_dag_select_table_tips'))
       return
     }
