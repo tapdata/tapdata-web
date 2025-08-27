@@ -95,7 +95,7 @@ export default class Task extends Http {
   }
   save(params, config) {
     return this.axios.patch(
-      `${this.url}/confirm/${params.id || ''}`,
+      `${this.url}/confirm${params.id ? `/${params.id}` : ''}`,
       params,
       config,
     )
