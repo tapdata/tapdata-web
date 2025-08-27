@@ -7,6 +7,7 @@ import {
   taskApi,
 } from '@tap/api'
 import { DatabaseIcon } from '@tap/business/src/components/DatabaseIcon'
+import { showErrorMessage } from '@tap/business/src/components/error-message'
 import {
   makeDragNodeImage,
   makeStatusAndDisabled,
@@ -420,7 +421,6 @@ function taskDialogSubmit(start: boolean) {
         ),
       })
     } catch (error: any) {
-      console.log(error)
       let msg
 
       if (error?.data?.code === 'Task.ListWarnMessage' && error.data.data) {
@@ -428,9 +428,10 @@ function taskDialogSubmit(start: boolean) {
         msg = error.data.data[keys[0]]?.[0]?.msg
       }
 
-      ElMessage.error(
-        msg || error?.data?.message || t('public_message_save_fail'),
-      )
+      showErrorMessage({
+        msg: msg || error?.data?.message || t('public_message_save_fail'),
+        stack: error?.data?.stack,
+      })
     }
 
     creating.value = false
