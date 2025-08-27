@@ -242,13 +242,12 @@ const handleCreate = async () => {
       requestAddress: location.origin,
     })
 
-    ElMessage.success(t('创建成功'))
+    ElMessage.success(t('public_message_create_success'))
     emit('success', form)
     handleClose()
     resetForm()
   } catch (error) {
     console.error('Create SDK failed:', error)
-    ElMessage.error(t('public_message_create_failed'))
   } finally {
     submitting.value = false
   }

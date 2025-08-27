@@ -153,6 +153,7 @@ export default {
   public_message_deleting: '删除中',
   public_message_operation_success: '操作成功',
   public_message_operation_failed: '操作失败',
+  public_message_create_success: '创建成功',
   public_message_request_error: '请求数据失败',
   public_message_loading: '正在加载',
   public_message_400: '请求错误，请检查您的输入并重试',

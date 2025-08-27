@@ -153,6 +153,7 @@ export default {
   public_message_deleting: 'Deleting',
   public_message_operation_success: 'Operation Succeeded',
   public_message_operation_failed: 'Operation Failed',
+  public_message_create_success: 'Create Successful',
   public_message_request_error: 'Failed to request data',
   public_message_loading: 'Loading',
   public_message_401: 'Login expired, Please login again',
