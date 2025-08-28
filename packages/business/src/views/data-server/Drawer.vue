@@ -1065,7 +1065,7 @@ const debugData = async () => {
         break
       case 'POST':
         Object.keys(params).forEach((key) => {
-          filterInfo[key] = params[key]
+          filterInfo[key] = parseValue(key, params[key])
         })
         //@ts-ignore
         filterInfo.limit = params?.limit || 20
@@ -1091,6 +1091,28 @@ const debugData = async () => {
     debugHttpInfo.value = {
       httpCode: result?.code || result?.httpCode,
     }
+  }
+}
+
+const parseValue = (key, value, defaultVal) => {
+  let type = '';
+  for (let i = 0; i < form.value.params.length; i++) {
+    const item = form.value.params[i]
+    if (item.name === key) {
+      type = item.type
+      break;
+    }
+  }
+  if (!type) {
+    return defaultVal
+  }
+  switch (type) {
+    case 'number':
+      return Number(value || defaultVal)
+    case 'boolean':
+      return value != undefined && null != value && (value === 'true' || value === true || value === '1' || value === 1)
+    default:
+      return value || defaultVal;
   }
 }
 
