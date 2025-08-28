@@ -1,5 +1,5 @@
 import { getMetadataInstancesCompareResult, useRequest } from '@tap/api'
-import { FormItem, useForm } from '@tap/form'
+import { FormItem, computed as reactiveComputed, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import { computed, defineComponent, ref } from 'vue'
 import { connect, mapProps } from '../../../../../form'
@@ -19,6 +19,13 @@ export const fieldInference = connect(
         return (
           form.values.fieldChangeRules?.filter((t) => t.scope === 'Node')
             .length || 0
+        )
+      })
+
+      const showCompareResult = reactiveComputed(() => {
+        return (
+          form.values.existDataProcessMode !== 'dropTable' &&
+          !form.values.attrs.connectionTags?.includes('schema-free')
         )
       })
 
@@ -42,8 +49,8 @@ export const fieldInference = connect(
         fieldMapping.value.loadData()
       }
 
-      return () => {
-        const label = (
+      const renderLabel = () => {
+        return (
           <div class="inline-flex align-center position-absolute w-100 gap-2">
             <span>{i18n.t('packages_dag_nodes_database_tuiyanjieguo')}</span>
 
@@ -63,15 +70,17 @@ export const fieldInference = connect(
 
             <div class="flex-1"></div>
 
-            <ElButton
-              type="primary"
-              text
-              tag="a"
-              onClick={openCompareResult}
-              disabled={props.disabled}
-            >
-              {i18n.t('packages_dag_view_compare_result')}
-            </ElButton>
+            {showCompareResult.value && (
+              <ElButton
+                type="primary"
+                text
+                tag="a"
+                onClick={openCompareResult}
+                disabled={props.disabled}
+              >
+                {i18n.t('packages_dag_view_compare_result')}
+              </ElButton>
+            )}
 
             <ElButton
               class="ml-auto"
@@ -88,10 +97,12 @@ export const fieldInference = connect(
             </ElButton>
           </div>
         )
+      }
 
+      return () => {
         return (
           <div>
-            <FormItem.BaseItem label={label}>
+            <FormItem.BaseItem label={renderLabel()}>
               <Main
                 ref={fieldMapping}
                 form={form}

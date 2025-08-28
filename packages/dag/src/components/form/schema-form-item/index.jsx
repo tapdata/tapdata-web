@@ -1,7 +1,7 @@
 import { observer } from '@formily/reactive-vue'
 import { connect, mapProps } from '@formily/vue'
 import { taskApi } from '@tap/api'
-import { FormItem, useForm } from '@tap/form'
+import { FormItem, computed as reactiveComputed, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import { computed, defineComponent, nextTick, ref } from 'vue'
 import { useStore } from 'vuex'
@@ -22,6 +22,13 @@ export const SchemaFormItem = connect(
         const loading = ref(false)
         const isLoading = computed(() => {
           return loading.value || store.state?.dataflow?.transformLoading
+        })
+
+        const showCompareResult = reactiveComputed(() => {
+          return (
+            form.values.existDataProcessMode !== 'dropTable' &&
+            !form.values.attrs.connectionTags?.includes('schema-free')
+          )
         })
 
         const loadSchema = async () => {
@@ -50,38 +57,38 @@ export const SchemaFormItem = connect(
           dialogOpen.value = true
         }
 
-        return () => {
-          const label = (
-            <div class="inline-flex align-center">
-              <span class="mr-2">{attrs.title}</span>
-              {showBtn.value && (
-                <>
-                  <el-button
-                    onClick={loadSchema}
-                    text
-                    type="primary"
-                    loading={isLoading.value}
-                    tag="a"
-                  >
-                    {i18n.t('public_button_reload')}
-                  </el-button>
-                  <el-divider direction="vertical" class="mx-1" />
+        const renderLabel = () => (
+          <div class="inline-flex align-center">
+            <span class="mr-2">{attrs.title}</span>
+            {showBtn.value && (
+              <>
+                <el-button
+                  onClick={loadSchema}
+                  text
+                  type="primary"
+                  loading={isLoading.value}
+                  tag="a"
+                >
+                  {i18n.t('public_button_reload')}
+                </el-button>
+                {showCompareResult.value && (
                   <ElButton
                     type="primary"
                     text
                     tag="a"
                     onClick={openCompareResult}
-                    disabled={props.disabled}
                   >
                     {i18n.t('packages_dag_view_compare_result')}
                   </ElButton>
-                </>
-              )}
-            </div>
-          )
+                )}
+              </>
+            )}
+          </div>
+        )
 
+        return () => {
           return (
-            <FormItem.BaseItem label={label} attrs={attrs}>
+            <FormItem.BaseItem label={renderLabel()} attrs={attrs}>
               {slots.default?.()}
               <CompareResultDialog
                 v-model={dialogOpen.value}

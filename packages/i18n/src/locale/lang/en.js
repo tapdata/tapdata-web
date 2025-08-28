@@ -518,4 +518,5 @@ export default {
   public_add: 'Add',
   public_automatically: 'Automatically',
   public_manually: 'Manually',
+  public_data_table: 'Table',
 }

@@ -509,4 +509,5 @@ export default {
   public_add: '添加',
   public_automatically: '自动',
   public_manually: '手动',
+  public_data_table: '数据表',
 }

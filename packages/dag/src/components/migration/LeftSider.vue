@@ -315,6 +315,7 @@ export default {
         pdkHash: item.pdkHash,
         capabilities: item.capabilities || [],
         db_version: item.db_version,
+        connectionTags: item.definitionTags,
       }
 
       if (pdkProperties) {

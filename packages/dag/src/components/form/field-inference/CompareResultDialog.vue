@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   deleteCompareApply,
+  deleteInvalidCompareApply,
   getMetadataInstancesCompareResult,
   getTargetSchemaDetection,
   saveCompareApply,
@@ -12,6 +13,7 @@ import { dayjs } from '@tap/business/src/shared/dayjs'
 import { CloseIcon } from '@tap/component/src/CloseIcon'
 import { getFieldIcon } from '@tap/form/src/components/field-select/FieldSelect'
 import { useI18n } from '@tap/i18n'
+import { template } from 'lodash-es'
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 
@@ -41,10 +43,16 @@ const taskId = store.state.dataflow.taskId
 const compareStatus = ref<string | null>(null)
 const finishTime = ref<string>()
 const tableList = ref<TableItem[]>([])
+const tableTotal = ref<number>(0)
 const fieldList = ref<TableItem['fields']>([])
 const selectedTable = ref<TableItem | null>(null)
 const searchKeyword = ref('')
+const tableSearchKeyword = ref('')
 const hasManual = ref(false)
+const invalidApplyNum = ref<number>(0)
+const pageSize = ref<number>(10)
+const currentPage = ref<number>(1)
+
 const typeMap = {
   Different: {
     text: t('packages_dag_compare_different'),
@@ -76,6 +84,10 @@ const isLoading = computed(() => {
   return compareResultLoading.value || compareStatus.value === 'running'
 })
 
+const totalPage = computed(() => {
+  return Math.ceil(tableTotal.value / pageSize.value)
+})
+
 const {
   loading: compareResultLoading,
   run: fetchCompareResult,
@@ -87,17 +99,20 @@ const {
     const res = await getMetadataInstancesCompareResult({
       nodeId: props.nodeId,
       taskId,
-      page: 1,
-      pageSize: 10,
+      page: currentPage.value,
+      pageSize: pageSize.value,
+      tableFilter: tableSearchKeyword.value,
     })
 
     if (!res) {
+      invalidApplyNum.value = 0
       compareStatus.value = null
       cancelFetchCompareResult()
       return
     }
 
     compareStatus.value = res.status
+    invalidApplyNum.value = res.invalidApplyDtos?.length || 0
 
     if (compareStatus.value !== 'running') {
       cancelFetchCompareResult()
@@ -109,6 +124,7 @@ const {
       return
     }
 
+    tableTotal.value = res.compareDtos.total
     tableList.value = res.compareDtos.items.map((item): TableItem => {
       const totalMap = {
         Different: 0,
@@ -167,7 +183,7 @@ const {
         selectedTable.value =
           tableList.value.find(
             (item) => item.tableName === selectedTable.value?.tableName,
-          ) || null
+          ) || selectedTable.value
       }
     } else {
       selectedTable.value = null
@@ -176,11 +192,13 @@ const {
   {
     manual: true,
     pollingInterval: 3000,
+    debounceInterval: 200,
   },
 )
 
 const onOpen = () => {
   hasManual.value = false
+  // currentPage.value = 1
   fetchCompareResult()
 }
 
@@ -286,15 +304,16 @@ const filteredFields = computed(() => {
   )
 })
 
-// 清空搜索
-const clearSearch = () => {
-  searchKeyword.value = ''
-}
-
 const onClose = () => {
   if (hasManual.value) {
     emit('loadSchema')
   }
+}
+
+const handleClearInvalidApply = async () => {
+  await deleteInvalidCompareApply(props.nodeId)
+  fetchCompareResult()
+  ElMessage.success(t('public_message_operation_success'))
 }
 
 onBeforeUnmount(() => {
@@ -334,7 +353,7 @@ onBeforeUnmount(() => {
             </div>
           </div>
           <div class="flex-1" />
-          <template v-if="compareStatus && tableList.length">
+          <template v-if="compareStatus && tableTotal > 0">
             <el-button :loading="isLoading" @click="handleCompareTargetModel">
               <template #icon>
                 <el-icon><i-lucide:refresh-cw /></el-icon>
@@ -350,12 +369,43 @@ onBeforeUnmount(() => {
               type="primary"
               @click="handleApplyAll"
             >
-              <el-icon class="mr-1"><i-lucide:check-check /></el-icon>
+              <template #icon>
+                <el-icon><i-lucide:check-check /></el-icon>
+              </template>
               {{ t('packages_dag_compare_result_apply_all') }}
             </el-button>
             <el-button :disabled="isLoading" @click="handleUndoAll">
-              <el-icon class="mr-1"><i-lucide:undo /></el-icon>
+              <template #icon>
+                <el-icon><i-lucide:undo /></el-icon>
+              </template>
               {{ t('packages_dag_compare_result_undo_all') }}
+            </el-button>
+            <el-button
+              v-if="invalidApplyNum > 0"
+              :disabled="isLoading"
+              @click="handleClearInvalidApply"
+            >
+              <template #icon>
+                <el-icon><i-lucide:trash-2 /></el-icon>
+              </template>
+              {{
+                t('packages_dag_compare_result_clear_invalid_apply', {
+                  num: invalidApplyNum,
+                })
+              }}
+            </el-button>
+            <el-divider class="mx-3" direction="vertical" />
+          </template>
+          <template v-else-if="invalidApplyNum > 0">
+            <el-button :disabled="isLoading" @click="handleClearInvalidApply">
+              <template #icon>
+                <el-icon><i-lucide:trash-2 /></el-icon>
+              </template>
+              {{
+                t('packages_dag_compare_result_clear_invalid_apply', {
+                  num: invalidApplyNum,
+                })
+              }}
             </el-button>
             <el-divider class="mx-3" direction="vertical" />
           </template>
@@ -372,9 +422,7 @@ onBeforeUnmount(() => {
     <div class="border-top">
       <div class="flex" style="max-height: 60vh; min-height: 200px">
         <el-empty
-          v-if="
-            !compareStatus || (!tableList.length && compareStatus !== 'done')
-          "
+          v-if="!compareStatus || (!tableTotal && compareStatus !== 'done')"
           :image-size="48"
           class="mx-auto"
         >
@@ -397,7 +445,7 @@ onBeforeUnmount(() => {
         </el-empty>
 
         <el-result
-          v-else-if="compareStatus === 'done' && !tableList.length"
+          v-else-if="compareStatus === 'done' && !tableTotal"
           class="mx-auto"
           icon="success"
           :title="t('packages_dag_compare_result_no_diff')"
@@ -413,12 +461,37 @@ onBeforeUnmount(() => {
         </el-result>
 
         <template v-else>
-          <div style="width: 320px" class="bg-white p-3 overflow-y-auto">
-            <div class="flex flex-column gap-3">
+          <div
+            style="width: 320px"
+            class="bg-white overflow-y-auto flex flex-column"
+          >
+            <div class="flex align-center p-3 border-bottom">
+              <span class="font-color-dark fw-sub mr-1">{{
+                $t('public_data_table')
+              }}</span>
+              <span class="font-color-sslight fs-8">({{ tableTotal }})</span>
+              <template v-if="tableTotal > 8">
+                <el-divider class="mx-3" direction="vertical" />
+                <el-input
+                  v-model="tableSearchKeyword"
+                  :placeholder="
+                    t('packages_form_table_rename_index_sousuobiaoming')
+                  "
+                  class="flex-1"
+                  clearable
+                  @input="fetchCompareResult()"
+                >
+                  <template #prefix>
+                    <el-icon><i-lucide:search /></el-icon>
+                  </template>
+                </el-input>
+              </template>
+            </div>
+            <div class="flex flex-column gap-1 p-2 overflow-y-auto">
               <div
                 v-for="item in tableList"
                 :key="item.tableName"
-                class="flex align-center gap-2 rounded-xl p-2 list-item-hover cursor-pointer table-item"
+                class="flex align-center gap-2 rounded-xl px-2 py-1 list-item-hover cursor-pointer table-item"
                 :class="{
                   'is-active': selectedTable?.tableName === item.tableName,
                 }"
@@ -480,6 +553,18 @@ onBeforeUnmount(() => {
                 </div>
               </div>
             </div>
+            <el-pagination
+              v-model:current-page="currentPage"
+              hide-on-single-page
+              class="table-pagination justify-center border-top py-2"
+              layout="prev, jumper, slot, next"
+              :total="tableTotal"
+              :page-size="pageSize"
+              @change="fetchCompareResult()"
+            >
+              <span class="mx-3">/</span>
+              <span class="mr-2">{{ totalPage }}</span>
+            </el-pagination>
           </div>
           <div class="flex-1 bg-light border-start min-w-0 flex flex-column">
             <div v-if="selectedTable" class="flex align-center p-3">
@@ -505,7 +590,6 @@ onBeforeUnmount(() => {
                 clearable
                 class="flex-shrink-0 mr-3"
                 style="width: 200px"
-                @clear="clearSearch"
               >
                 <template #prefix>
                   <el-icon><i-lucide:search /></el-icon>
@@ -655,7 +739,7 @@ onBeforeUnmount(() => {
 .table-item {
   &.is-active {
     .table-item-icon {
-      background-color: white;
+      background-color: var(--el-color-primary-light-8);
       .el-icon {
         color: var(--el-color-primary);
       }
@@ -683,5 +767,13 @@ onBeforeUnmount(() => {
 
 .compare-result-dialog {
   max-height: 80vh;
+}
+
+.table-pagination {
+  --el-pagination-item-gap: 8px;
+  :deep(.el-pagination__goto),
+  :deep(.el-pagination__classifier) {
+    display: none;
+  }
 }
 </style>

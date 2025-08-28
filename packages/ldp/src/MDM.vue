@@ -418,7 +418,7 @@ export default {
       }
     },
 
-    getTableNode(db = {}, tableName) {
+    getTableNode(db: any = {}, tableName: string) {
       return {
         id: uuid(),
         type: 'table',
@@ -434,6 +434,8 @@ export default {
           pdkHash: db.pdkHash,
           capabilities: db.capabilities || [],
           hasCreated: false,
+          db_version: db.db_version,
+          connectionTags: db.definitionTags,
         },
       }
     },

@@ -469,7 +469,8 @@ export class Database extends NodeType {
                       dependencies: ['.existDataProcessMode'],
                       fulfill: {
                         state: {
-                          visible: '{{$deps[0] !== "dropTable"}}',
+                          visible:
+                            '{{$deps[0] !== "dropTable" && (!$values.attrs.connectionTags || !$values.attrs.connectionTags.includes("schema-free"))}}',
                         },
                       },
                     },

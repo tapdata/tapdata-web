@@ -258,6 +258,8 @@ function getDatabaseNode(db: any) {
       pdkType: db.pdkType,
       pdkHash: db.pdkHash,
       capabilities: db.capabilities || [],
+      db_version: db.db_version,
+      connectionTags: db.definitionTags,
     },
   }
 }

@@ -339,3 +339,9 @@ export function deleteCompareApply(all: boolean, nodeId: string, data?: any) {
     { data },
   )
 }
+
+export function deleteInvalidCompareApply(nodeId: string) {
+  return requestClient.delete(
+    `${BASE_URL}/deleteMetadataInstancesCompareApply?all=true&invalid=true&nodeId=${nodeId}`,
+  )
+}
