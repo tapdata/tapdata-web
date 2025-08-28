@@ -63,24 +63,28 @@ const typeMap = {
     type: 'warning',
     doneText: 'packages_dag_compare_done_modify',
     btnText: t('public_button_revise'),
+    numKey: 'differentNum',
   },
   Additional: {
     text: t('packages_dag_compare_additional'),
-    type: 'success',
+    type: 'warning',
     doneText: 'packages_dag_compare_done_add',
     btnText: t('public_add'),
+    numKey: 'additionalNum',
   },
   Missing: {
     text: t('packages_dag_compare_missing'),
     type: 'danger',
     doneText: 'packages_dag_compare_done_delete',
     btnText: t('public_button_delete'),
+    numKey: 'missingNum',
   },
   CannotWrite: {
     text: t('packages_dag_compare_cannot_write'),
     type: 'danger',
     doneText: 'packages_dag_compare_done_delete',
     btnText: t('public_button_delete'),
+    numKey: 'cannotWriteNum',
   },
 }
 
@@ -518,42 +522,17 @@ onBeforeUnmount(() => {
                     >
                   </div>
                   <div class="flex gap-1 flex-wrap mt-1">
-                    <el-tag
-                      v-if="item.missingNum > 0"
-                      type="danger"
-                      size="small"
-                      class="px-1"
-                    >
-                      {{ t('packages_dag_compare_missing')
-                      }}{{ item.missingNum }}
-                    </el-tag>
-                    <el-tag
-                      v-if="item.additionalNum > 0"
-                      type="success"
-                      size="small"
-                      class="px-1"
-                    >
-                      {{ t('packages_dag_compare_additional')
-                      }}{{ item.additionalNum }}
-                    </el-tag>
-                    <el-tag
-                      v-if="item.differentNum > 0"
-                      type="warning"
-                      size="small"
-                      class="px-1"
-                    >
-                      {{ t('packages_dag_compare_different')
-                      }}{{ item.differentNum }}
-                    </el-tag>
-                    <el-tag
-                      v-if="item.cannotWriteNum > 0"
-                      type="danger"
-                      size="small"
-                      class="px-1"
-                    >
-                      {{ t('packages_dag_compare_cannot_write')
-                      }}{{ item.cannotWriteNum }}
-                    </el-tag>
+                    <template v-for="(v, key) in typeMap" :key="key">
+                      <el-tag
+                        v-if="item[v.numKey] > 0"
+                        :type="v.type"
+                        size="small"
+                        class="px-1"
+                      >
+                        {{ t(v.text)
+                        }}<span class="ml-0.5">{{ item[v.numKey] }}</span>
+                      </el-tag>
+                    </template>
                   </div>
                 </div>
               </div>
@@ -589,43 +568,20 @@ onBeforeUnmount(() => {
                 >
                 <template v-if="singleTable">
                   <el-divider direction="vertical" class="mx-3" />
-                  <div class="flex gap-1 flex-wrap">
-                    <el-tag
-                      v-if="selectedTable.missingNum > 0"
-                      type="danger"
-                      size="small"
-                      class="px-1"
-                    >
-                      {{ t('packages_dag_compare_missing')
-                      }}{{ selectedTable.missingNum }}
-                    </el-tag>
-                    <el-tag
-                      v-if="selectedTable.additionalNum > 0"
-                      type="success"
-                      size="small"
-                      class="px-1"
-                    >
-                      {{ t('packages_dag_compare_additional')
-                      }}{{ selectedTable.additionalNum }}
-                    </el-tag>
-                    <el-tag
-                      v-if="selectedTable.differentNum > 0"
-                      type="warning"
-                      size="small"
-                      class="px-1"
-                    >
-                      {{ t('packages_dag_compare_different')
-                      }}{{ selectedTable.differentNum }}
-                    </el-tag>
-                    <el-tag
-                      v-if="selectedTable.cannotWriteNum > 0"
-                      type="danger"
-                      size="small"
-                      class="px-1"
-                    >
-                      {{ t('packages_dag_compare_cannot_write')
-                      }}{{ selectedTable.cannotWriteNum }}
-                    </el-tag>
+                  <div class="flex gap-2 flex-wrap">
+                    <template v-for="(v, key) in typeMap" :key="key">
+                      <el-tag
+                        v-if="selectedTable[v.numKey] > 0"
+                        :type="v.type"
+                        size="small"
+                        class="px-1"
+                      >
+                        {{ t(v.text)
+                        }}<span class="ml-0.5">{{
+                          selectedTable[v.numKey]
+                        }}</span>
+                      </el-tag>
+                    </template>
                   </div>
                 </template>
               </div>
