@@ -25,6 +25,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  singleTable: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 type TableItem = {
@@ -462,6 +466,7 @@ onBeforeUnmount(() => {
 
         <template v-else>
           <div
+            v-if="!singleTable"
             style="width: 320px"
             class="bg-white overflow-y-auto flex flex-column"
           >
@@ -582,6 +587,47 @@ onBeforeUnmount(() => {
                 <span class="ml-1 font-color-sslight fs-8"
                   >({{ selectedTable.fields.length }})</span
                 >
+                <template v-if="singleTable">
+                  <el-divider direction="vertical" class="mx-3" />
+                  <div class="flex gap-1 flex-wrap">
+                    <el-tag
+                      v-if="selectedTable.missingNum > 0"
+                      type="danger"
+                      size="small"
+                      class="px-1"
+                    >
+                      {{ t('packages_dag_compare_missing')
+                      }}{{ selectedTable.missingNum }}
+                    </el-tag>
+                    <el-tag
+                      v-if="selectedTable.additionalNum > 0"
+                      type="success"
+                      size="small"
+                      class="px-1"
+                    >
+                      {{ t('packages_dag_compare_additional')
+                      }}{{ selectedTable.additionalNum }}
+                    </el-tag>
+                    <el-tag
+                      v-if="selectedTable.differentNum > 0"
+                      type="warning"
+                      size="small"
+                      class="px-1"
+                    >
+                      {{ t('packages_dag_compare_different')
+                      }}{{ selectedTable.differentNum }}
+                    </el-tag>
+                    <el-tag
+                      v-if="selectedTable.cannotWriteNum > 0"
+                      type="danger"
+                      size="small"
+                      class="px-1"
+                    >
+                      {{ t('packages_dag_compare_cannot_write')
+                      }}{{ selectedTable.cannotWriteNum }}
+                    </el-tag>
+                  </div>
+                </template>
               </div>
               <el-divider direction="vertical" class="mx-3" />
               <el-input

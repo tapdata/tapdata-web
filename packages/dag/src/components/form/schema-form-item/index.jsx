@@ -94,6 +94,7 @@ export const SchemaFormItem = connect(
                 v-model={dialogOpen.value}
                 nodeId={activeNodeId}
                 onLoadSchema={loadSchema}
+                single-table
               />
             </FormItem.BaseItem>
           )
