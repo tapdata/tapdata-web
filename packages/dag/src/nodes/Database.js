@@ -1088,7 +1088,6 @@ export class Database extends NodeType {
                         },
                       },
                       dmlPolicy: {
-                        required: true,
                         title: i18n.t(
                           'packages_dag_nodes_database_shujuxieruce',
                         ),
@@ -1267,6 +1266,17 @@ export class Database extends NodeType {
                             },
                           },
                         },
+                      },
+                      writeWithGroupByTableEnable: {
+                        title: i18n.t(
+                          'packages_dag_writeWithGroupByTableEnable',
+                        ),
+                        type: 'boolean',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal',
+                        },
+                        'x-component': 'Switch',
                       },
                       noPkSyncMode: {
                         type: 'string',

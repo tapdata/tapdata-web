@@ -79,7 +79,8 @@ export class StandardJs extends NodeType {
                 title: i18n.t('packages_dag_nodes_javascript_jiaoben'),
                 type: 'string',
                 required: true,
-                default: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}',
+                default:
+                  'function process(record){\n\n\t// Enter your code here\n\treturn record;\n}',
                 'x-component': 'JsProcessor',
                 'x-component-props': {
                   isStandard: true,
@@ -87,7 +88,7 @@ export class StandardJs extends NodeType {
                   options: { showPrintMargin: false, wrap: false },
                   includeBeforeAndAfter: true,
                   before: 'function process(record){',
-                  beforeRegexp: '^[^]*function\\s+process\\s*\\(record\\)\\{',
+                  beforeRegexp: String.raw`^[^]*function\s+process\s*\(record\)\{`,
                   afterRegexp: '}[^}]*$',
                   after: '}',
                   param: 'tapTable',

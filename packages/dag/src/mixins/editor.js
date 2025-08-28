@@ -14,7 +14,7 @@ import i18n from '@tap/i18n'
 import { setPageTitle } from '@tap/shared'
 import dagre from 'dagre'
 import dayjs from 'dayjs'
-import { merge } from 'lodash-es'
+import { isEmpty, merge } from 'lodash-es'
 import Mousetrap from 'mousetrap'
 import { h, markRaw } from 'vue'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
@@ -1820,7 +1820,7 @@ export default {
       }
     },
 
-    async validateMigrateUnion() {
+    validateMigrateUnion() {
       if (this.dataflow.syncType !== 'migrate') return
 
       const nodes = this.allNodes.filter(
@@ -1830,7 +1830,7 @@ export default {
       if (nodes.length > 1) return i18n.t('packages_dag_migrate_union_multiple')
     },
 
-    async validateMergeTableProcessor() {
+    validateMergeTableProcessor() {
       if (this.dataflow.syncType === 'migrate') return
 
       const nodes = this.allNodes.filter(
@@ -1908,6 +1908,72 @@ export default {
       }
     },
 
+    validateDmlPolicy() {
+      if (this.dataflow.syncType !== 'migrate') return
+
+      const target = this.allNodes.find(
+        (node) => node.type === 'database' && !node.$outputs.length,
+      )
+
+      if (target && isEmpty(target.dmlPolicy)) {
+        const capabilities = target.attrs.capabilities
+        const insertPolicy = capabilities?.find(
+          ({ id }) => id === 'dml_insert_policy',
+        )
+        const updatePolicy = capabilities?.find(
+          ({ id }) => id === 'dml_update_policy',
+        )
+        const deletePolicy = capabilities?.find(
+          ({ id }) => id === 'dml_delete_policy',
+        )
+
+        const insertOptions = [
+          'update_on_exists',
+          'ignore_on_exists',
+          'just_insert',
+        ]
+        const updateOptions = [
+          'ignore_on_nonexists',
+          'insert_on_nonexists',
+          'log_on_nonexists',
+        ]
+        const deleteOptions = ['ignore_on_nonexists', 'log_on_nonexists']
+        const dmlPolicy = {}
+
+        if (insertPolicy?.alternatives?.length) {
+          dmlPolicy.insertPolicy = insertOptions[0]
+          const alternatives = insertPolicy.alternatives.filter((key) =>
+            insertOptions.includes(key),
+          )
+          if (alternatives.length === 1) {
+            dmlPolicy.insertPolicy = alternatives[0]
+          }
+        }
+
+        if (updatePolicy?.alternatives?.length) {
+          dmlPolicy.updatePolicy = updateOptions[0]
+          const alternatives = updatePolicy.alternatives.filter((key) =>
+            updateOptions.includes(key),
+          )
+          if (alternatives.length === 1) {
+            dmlPolicy.updatePolicy = alternatives[0]
+          }
+        }
+
+        if (deletePolicy?.alternatives?.length) {
+          dmlPolicy.deletePolicy = deleteOptions[0]
+          const alternatives = deletePolicy.alternatives.filter((key) =>
+            deleteOptions.includes(key),
+          )
+          if (alternatives.length === 1) {
+            dmlPolicy.deletePolicy = alternatives[0]
+          }
+        }
+
+        target.dmlPolicy = dmlPolicy
+      }
+    },
+
     async eachValidate(...fns) {
       for (const fn of fns) {
         let result = fn()
@@ -1946,6 +2012,7 @@ export default {
         this.validateTableRename,
         this.validateMigrateUnion,
         this.validateMergeTableProcessor,
+        this.validateDmlPolicy,
       )
     },
 

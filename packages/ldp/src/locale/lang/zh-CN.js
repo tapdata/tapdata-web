@@ -7,8 +7,10 @@ export default {
   packages_ldp_table_comment: '表注释',
   packages_ldp_src_dashboard_anEsctui: '按Esc退出溯源场景',
   packages_ldp_src_tablepreview_querenshanchu: '确认删除？',
-  packages_ldp_src_tablepreview_gaibiaojianghuicong: '该表将会从数据库里删除，操作后不可恢复',
-  packages_ldp_src_tablepreview_jiancedaoyouren: '检测到有任务正在使用 {val1}，请删除所有相关任务后重试',
+  packages_ldp_src_tablepreview_gaibiaojianghuicong:
+    '该表将会从数据库里删除，操作后不可恢复',
+  packages_ldp_src_tablepreview_jiancedaoyouren:
+    '检测到有任务正在使用 {val1}，请删除所有相关任务后重试',
   packages_ldp_src_target_muqianzhichide: '目前支持的类型',
   packages_ldp_upgrade_storage: '升级存储',
   packages_ldp_data_hub_intro_title: '什么是实时数据平台?',
@@ -25,9 +27,11 @@ export default {
   packages_ldp_data_hub_intro_scene_api_sub: '数据库到API',
   packages_ldp_data_hub_intro_how_do: '实时数据平台是如何工作的?',
   packages_ldp_data_hub_intro_how_do_step1: '配置数据中心存储',
-  packages_ldp_data_hub_intro_how_do_step1_sub: '首先,配置一个数据存储, 我们建议使用MongoDB or TiDB 集群',
+  packages_ldp_data_hub_intro_how_do_step1_sub:
+    '首先,配置一个数据存储, 我们建议使用MongoDB or TiDB 集群',
   packages_ldp_data_hub_intro_how_do_step2: '同步数据并合并',
-  packages_ldp_data_hub_intro_how_do_step2_sub: '使用 Tapdata 的复制和转换功能，将数据从您的数据源同步到数据中心。',
+  packages_ldp_data_hub_intro_how_do_step2_sub:
+    '使用 Tapdata 的复制和转换功能，将数据从您的数据源同步到数据中心。',
   packages_ldp_data_hub_intro_how_do_step3: '发布API或发送到仪表板',
   packages_ldp_data_hub_intro_how_do_step3_sub: '发布API或发送到仪表板',
   packages_ldp_data_hub_subscribe: '订阅存储',
@@ -45,5 +49,9 @@ export default {
   packages_ldp_book_demo: '预约演示',
   packages_ldp_mdm_create_method: '创建方式',
   packages_ldp_mdm_create_method_transformation: '使用数据转换任务',
-  packages_ldp_mdm_create_method_materialized: '使用建模向导'
+  packages_ldp_mdm_create_method_materialized: '使用建模向导',
+  packages_ldp_fdm_create_task_has_synced:
+    '您已经复制过部分表，但您也可以继续选择表，新选择表将追加到原表列表中',
+  packages_ldp_fdm_create_task_has_expression:
+    '您已经选择了按正则表达式匹配表，无法继续选择表，请在通过数据复制功能继续复制表',
 }

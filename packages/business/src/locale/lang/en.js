@@ -936,6 +936,7 @@ export default {
     'Enable heartbeat table',
   packages_business_connections_databaseform_jiaobentiaoshi: 'Script Debugging',
   // api服务管理
+  packages_business_data_server_drawer_filter: 'Invalid json Parameter value, input filter as json object, please',
   packages_business_data_server_drawer_qingshurucanshu:
     'Please enter parameter name',
   packages_business_data_server_drawer_paixu: 'Sort',
@@ -1481,6 +1482,8 @@ export default {
   packages_business_connections_test_xiazaijindu: 'Download Progress',
   packages_business_connections_test_xiazaishibai: 'Download Failed',
   packages_business_relmig_import: 'MongoDB Relmig Import',
+  packages_business_api_import: 'API Import',
+  packages_business_functions_import: 'Functions Import',
   packages_business_relmig_import_desc: `This feature is designed to seamlessly import MongoDB Relational Migrator-exportd relmig project files into ${import.meta.env.VUE_APP_PAGE_TITLE}. After the relmig file is imported, ${import.meta.env.VUE_APP_PAGE_TITLE} will automatically create a task to  perform real time data synchronization from source database and transform into JSON data format in MongoDB database.`,
   packages_business_relmig_upload: 'Upload relmig file',
   packages_business__relmig_import_connection_tip:
@@ -1663,4 +1666,18 @@ export default {
     'Selects documents if the array field is a specified size.',
   packages_business_mongo_operator_mod:
     'Performs a modulo match on a field value [divisor, remainder].',
+  packages_business_example_eq: '{a} equals {b}',
+  packages_business_example_ne: '{a} not equals {b}',
+  packages_business_example_gt: '{a} greater than {b}',
+  packages_business_example_gte: '{a} greater than or equal to {b}',
+  packages_business_example_lt: '{a} less than {b}',
+  packages_business_example_lte: '{a} less than or equal to {b}',
+  packages_business_example_in: '{a} in {b}',
+  packages_business_example_nin: '{a} not in {b}',
+  packages_business_example_exists: 'field does not exist',
+  packages_business_example_type:
+    'Can also use numeric codes, such as 16 for int',
+  packages_business_example_regex: 'Starts with A, ignoring case',
+  packages_business_example_size: '{a} array size is {b}',
+  packages_business_edit_task_info: 'Edit Task Information',
 }
