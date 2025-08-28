@@ -2656,16 +2656,4 @@ function handleClearAlias() {
     border-radius: var(--el-border-radius-large);
   }
 }
-
-.custom-tree-table >>> .el-table__row td {
-  border-right: none;
-  text-align: left;
-}
-.custom-tree-table >>> .el-table__body-wrapper {
-  border-right: none;
-}
-.el-checkbox__input.is-indeterminate .el-checkbox__inner {
-  background-color: #409eff;
-  border-color: #409eff;
-}
 </style>
