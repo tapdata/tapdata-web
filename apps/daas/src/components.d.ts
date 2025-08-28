@@ -94,6 +94,7 @@ declare module 'vue' {
     'ILucide:gitCompareArrows': typeof import('~icons/lucide/git-compare-arrows')['default']
     'ILucide:hardDrive': typeof import('~icons/lucide/hard-drive')['default']
     'ILucide:hardDriveDownload': typeof import('~icons/lucide/hard-drive-download')['default']
+    'ILucide:info': typeof import('~icons/lucide/info')['default']
     'ILucide:loader': typeof import('~icons/lucide/loader')['default']
     'ILucide:monitorDown': typeof import('~icons/lucide/monitor-down')['default']
     'ILucide:package': typeof import('~icons/lucide/package')['default']

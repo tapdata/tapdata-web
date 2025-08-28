@@ -32,6 +32,7 @@ export interface TaskInspectOperation {
 export interface TaskInspectConfig {
   timeCheckMode: 'NORMAL' | 'ROUND' | 'TRUNCATE'
   checkNoPkTable: boolean
+  queueCapacity: number
   custom: {
     cdc: {
       enable: boolean
