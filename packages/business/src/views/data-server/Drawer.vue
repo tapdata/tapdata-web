@@ -2,9 +2,11 @@
 import { EditPen, InfoFilled } from '@element-plus/icons-vue'
 import {
   createApiModule,
+  debug,
   fetchApiServerToken,
   fetchConnections,
   fetchDatabaseTypes,
+  fetchEncryptionList,
   metadataInstancesApi,
   roleApi,
   updateApiModule,
@@ -138,9 +140,16 @@ const props = withDefaults(defineProps<Props>(), {
   inDialog: false,
   disableApp: false,
   readonly: false,
+  isEdit: Boolean,
 })
 
-const emit = defineEmits(['visible', 'update:loading', 'save', 'update'])
+const emit = defineEmits([
+  'visible',
+  'update:loading',
+  'save',
+  'update',
+  'update:selectedFields',
+])
 
 const apiApplication = inject('apiApplication', null)
 
@@ -202,6 +211,7 @@ const getInitData = () => {
 
 // Refs
 const form = ref<any>(getInitData())
+const encryptions = ref<any[]>([])
 
 const visible = ref(false)
 const loading = ref(false)
@@ -212,8 +222,9 @@ const isEdit = ref(false)
 const debugParams = ref<any>(null)
 const debugMethod = ref('GET')
 const debugResult = ref('')
+const debugHttpInfo = ref({})
 const templateType = ref('java')
-const token = ref('')
+const token = ref<Record<string, any>>({})
 const roles = ref([])
 const workerStatus = ref('')
 const intervalId = ref(0)
@@ -226,6 +237,11 @@ const mqlEditor = ref<any>(null)
 const containerRef = ref<HTMLElement | null>(null)
 const paramsTableRef = ref<InstanceType<typeof ElTable>>()
 const parameterSelectRef = ref<InstanceType<typeof ElSelect>[]>([])
+// 树数据和选中状态
+const treeData = computed(() =>
+  buildTree(isEdit.value ? allFields.value : form.value.fields || []),
+)
+const selectedIds = ref(new Set())
 const helpVisible = ref(false)
 
 // Template refs
@@ -491,15 +507,15 @@ const formatData = (formData: any = {}) => {
   form.value = genFormData(formData)
 
   if (form.value.status === 'active') {
-    getAPIServerToken((token: string) => {
-      templates.value = getTemplate(props.host + form.value.path, token)
-    })
+    reflshToken()
   }
 }
 
-const fieldTableData = computed(() => {
-  return isEdit.value ? allFields.value : form.value.fields
-})
+const reflshToken = () => {
+  getAPIServerToken((token: Record<string, any>) => {
+    templates.value = getTemplate(props.host + form.value.path, token)
+  })
+}
 
 const AllowedTypes = [
   'Doris',
@@ -672,9 +688,18 @@ const getFields = async () => {
   }
 }
 
-const getAPIServerToken = async (callback?: (token: string) => void) => {
+const getAPIServerToken = async (
+  callback?: (token: Record<string, any>) => void,
+) => {
   token.value = await fetchApiServerToken()
   callback?.(token.value)
+}
+
+const getEncryptions = async () => {
+  const { items } = await fetchEncryptionList({
+    limit: 10000,
+  })
+  encryptions.value = items
 }
 
 // Methods
@@ -685,6 +710,7 @@ const open = (formData?: any) => {
   debugParams.value = null
   debugMethod.value = 'GET'
   debugResult.value = ''
+  debugHttpInfo.value = {}
   allFields.value = []
   workerStatus.value = ''
 
@@ -708,6 +734,7 @@ const open = (formData?: any) => {
   }
 
   getDatabaseTypes()
+  getEncryptions()
 
   nextTick(() => {
     containerRef.value?.parentElement?.scrollTo({ top: 0 })
@@ -716,6 +743,7 @@ const open = (formData?: any) => {
 
 const save = async (type?: boolean) => {
   const valid = await form_ref.value?.validate()
+  emitSelectedFields()
   if (valid) {
     const {
       id,
@@ -837,7 +865,7 @@ const save = async (type?: boolean) => {
         formData.fields = fieldList.map((f: any) => {
           return {
             ...f,
-            field_alias: map[f.id]?.field_alias
+            field_alias: map[f.id]?.field_alias,
           }
         })
       }
@@ -867,11 +895,28 @@ const edit = () => {
   initialFormData = cloneDeep(form.value)
 
   nextTick(() => {
+    const findFieldRecursive = (
+      nodes: any[],
+      fieldName: string,
+    ): any | null => {
+      for (const node of nodes) {
+        if (node.id === fieldName) {
+          return node
+        }
+        if (node.children && node.children.length) {
+          const found = findFieldRecursive(node.children, fieldName)
+          if (found) return found
+        }
+      }
+      return null
+    }
+
     form.value.fields?.forEach((f: any) => {
-      const field = allFields.value.find((it: any) => it.id === f.id) as any
+      const field = findFieldRecursive(treeData.value, f.field_name)
       if (field) {
         field.field_alias = f.field_alias || ''
-        fieldTable.value?.toggleRowSelection(field)
+        field.textEncryptionRuleIds = f.textEncryptionRuleIds || []
+        fieldTable.value?.toggleRowSelection(field, true)
       } else {
         console.log('field not found', f.field_name, f)
       }
@@ -915,11 +960,6 @@ const handleChangeTable = () => {
   allFields.value = []
   getFields()
   form_ref.value?.clearValidate('tableName')
-}
-
-const fieldsChanged = (val: any[]) => {
-  if (!isEdit.value) return
-  form.value.fields = val
 }
 
 const addItem = (key: 'params' | 'where' | 'sort') => {
@@ -983,39 +1023,96 @@ const debugDisabled = computed(() => {
 })
 
 const debugData = async () => {
-  const http = axios.create()
-  let params = debugParams.value
+  const params = debugParams.value
   const method = debugMethod.value
   if (method === 'TOKEN') {
-    debugResult.value = JSON.stringify(
-      {
-        access_token: token.value,
-        expires_in: 1209599,
-        scope: 'admin',
-        token_type: 'Bearer',
-      },
-      null,
-      2,
-    )
-  } else {
-    const url = `${urlsMap.value[debugMethod.value]}?access_token=${token.value}`
-    if (params) {
-      const newParams: Record<string, any> = {}
-      Object.keys(params).forEach((key) => {
-        const value = params[key]
-        if (value) {
-          newParams[key] = value
-        }
-      })
-      params = method === 'GET' ? { params: newParams } : newParams
+    reflshToken()
+    debugResult.value = JSON.stringify(token.value, null, 2)
+    debugHttpInfo.value = {
+      httpCode: 200,
     }
+    return
+  }
+  const hostPath = urlsMap.value[debugMethod.value]?.replace(/\/$/, '') || ''
+  const url = `${hostPath}?access_token=${token.value.access_token}`
+  const queryBody = {
+    apiId: form.value.id,
+    url: null,
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    body: null,
+    params: null,
+  }
+
+  if (params) {
+    //@ts-ignore
+    let filterInfo = {}
     try {
-      const result = await http[method.toLowerCase()](url, params)
-      debugResult.value = JSON.stringify(result?.data, null, 2)
-    } catch (error: any) {
-      const result = error?.response?.data
-      debugResult.value = result ? JSON.stringify(result, null, 2) : ''
+      filterInfo = params.filter ? JSON.parse(params.filter) : {}
+    } catch {
+      ElMessage.error(t('packages_business_data_server_drawer_filter'))
+      return
     }
+    switch (method) {
+      case 'GET':
+        let paramsStr = ''
+        Object.keys(params).forEach((key) => {
+          paramsStr = `${paramsStr}&${key}=${encodeURIComponent(params[key])}`
+        })
+        //@ts-ignore
+        queryBody.url = `${url}${paramsStr}`
+        queryBody.params = params
+        break
+      case 'POST':
+        Object.keys(params).forEach((key) => {
+          filterInfo[key] = parseValue(key, params[key])
+        })
+        //@ts-ignore
+        filterInfo.limit = params?.limit || 20
+        //@ts-ignore
+        filterInfo.page = params?.page || 1
+        //@ts-ignore
+        queryBody.body = filterInfo
+        //@ts-ignore
+        queryBody.url = url
+        break
+    }
+  }
+  try {
+    const debugInfo = await debug(queryBody)
+    debugHttpInfo.value = {
+      httpCode: debugInfo.httpCode,
+    }
+    delete debugInfo.httpCode
+    debugResult.value = debugInfo ? JSON.stringify(debugInfo, null, 2) : ''
+  } catch (error: any) {
+    const result = error?.response?.data
+    debugResult.value = result ? JSON.stringify(result, null, 2) : ''
+    debugHttpInfo.value = {
+      httpCode: result?.code || result?.httpCode,
+    }
+  }
+}
+
+const parseValue = (key, value, defaultVal) => {
+  let type = '';
+  for (let i = 0; i < form.value.params.length; i++) {
+    const item = form.value.params[i]
+    if (item.name === key) {
+      type = item.type
+      break;
+    }
+  }
+  if (!type) {
+    return defaultVal
+  }
+  switch (type) {
+    case 'number':
+      return Number(value || defaultVal)
+    case 'boolean':
+      return value != undefined && null != value && (value === 'true' || value === true || value === '1' || value === 1)
+    default:
+      return value || defaultVal;
   }
 }
 
@@ -1263,8 +1360,155 @@ function onFieldSelected(field: Field) {
     .filter((f) => f.field_name !== field.field_name)
 }
 
+// 递归构建树结构
+function buildTree(data: Array<Record<string, any>>) {
+  const root: Array<Record<string, any>> = []
+  const map: Record<string, any> = {}
+  let parent: Record<string, any> = {}
+  data.forEach((item) => {
+    const parts = item.field_name.split('.')
+    let current = root
+    parts.forEach((part: string, index: number) => {
+      const path = parts.slice(0, index + 1).join('.')
+      let node = map[path]
+      const parentField = data.find((it: any) => it.field_name === path) as any
+      if (!node) {
+        node = {
+          id: path,
+          field_name: part,
+          fieldInfo: index === parts.length - 1 ? item : parentField || {},
+          field_alias:
+            index === parts.length - 1
+              ? item.field_alias
+              : parentField
+                ? parentField.field_alias
+                : '',
+          originalDataType:
+            index === parts.length - 1
+              ? item.originalDataType
+              : parentField
+                ? parentField.originalDataType
+                : 'OBJECT',
+          comment:
+            index === parts.length - 1
+              ? item.comment
+              : parentField
+                ? parentField.comment
+                : '',
+          textEncryptionRuleIds:
+            index === parts.length - 1
+              ? item.textEncryptionRuleIds
+              : parentField?.textEncryptionRuleIds,
+          children: [],
+          parent,
+          indeterminate: false,
+        }
+        map[path] = node
+        current.push(node)
+      }
+      parent = node
+      current = node.children
+    })
+  })
+  return root
+}
+function onSelectionChange(selection: Array<Record<string, any>>) {
+  selectedIds.value.clear()
+  selection.forEach((row) => {
+    selectedIds.value.add(row.id)
+  })
+  // 更新父节点 indeterminate
+  treeData.value.forEach((rootNode) => {
+    const walk = (node: Record<string, any>) => {
+      if (node.children?.length) {
+        const childrenSelected = node.children.filter(
+          (c: Record<string, any>) => selectedIds.value.has(c.id),
+        )
+        if (childrenSelected.length === node.children.length) {
+          selectedIds.value.add(node.id)
+          node.indeterminate = false
+        } else if (childrenSelected.length > 0) {
+          selectedIds.value.delete(node.id)
+          node.indeterminate = true
+        } else {
+          selectedIds.value.delete(node.id)
+          node.indeterminate = false
+        }
+        node.children.forEach(walk)
+      }
+    }
+    walk(rootNode)
+  })
+}
+
+function emitSelectedFields() {
+  const selectedFields: Array<Record<string, any>> = []
+  const walk = (nodes: Array<Record<string, any>>) => {
+    nodes.forEach((node: Record<string, any>) => {
+      if (hasChildren(node)) {
+        node.fieldInfo.field_alias = node.field_alias
+        node.fieldInfo.textEncryptionRuleIds = node.textEncryptionRuleIds
+        selectedFields.push(
+          node.fieldInfo || {
+            field_name: node.id,
+            field_alias: node.field_alias || '',
+            textEncryptionRuleIds: node.textEncryptionRuleIds || [],
+          },
+        )
+      }
+      if (node.children?.length) walk(node.children)
+    })
+  }
+  walk(treeData.value)
+  console.log(`selectedFields: ${JSON.stringify(selectedFields)}`)
+  form.value.fields = selectedFields
+  //emit('update:selectedFields', selectedFields)
+}
+
+function hasChildren(node) {
+  const walk = (node) => {
+    if (selectedIds.value.has(node.id)) return true
+    if (node.children) {
+      for (const child of node.children) {
+        if (walk(child)) return true
+      }
+    }
+  }
+  return walk(node)
+}
+
 function openHelp() {
   helpVisible.value = true
+}
+
+const formatHander = {
+  upperCase: (value: string) => value.toUpperCase(),
+  lowerCase: (value: string) => value.toLowerCase(),
+  snakeToCamel: (value: string) =>
+    value.replaceAll(/_([a-z])/g, (_, letter) => letter.toUpperCase()),
+  camelToSnake: (value: string) =>
+    value.replaceAll(/([A-Z])/g, '_$1').toLowerCase(),
+}
+
+function handleAliasConversion(command: keyof typeof formatHander) {
+  const format = formatHander[command]
+  const selectedFields = fieldTable.value.getSelectionRows()
+
+  if (!selectedFields.length) return
+
+  selectedFields.forEach((field: any) => {
+    const alias = format(field.field_name)
+
+    field.field_alias = alias !== field.field_name ? alias : ''
+  })
+}
+
+function handleClearAlias() {
+  const selectedFields = fieldTable.value.getSelectionRows()
+  if (!selectedFields.length) return
+  selectedFields.forEach((field: any) => {
+    field.field_alias = ''
+  })
 }
 </script>
 
@@ -2045,45 +2289,135 @@ function openHelp() {
 
         <!-- 输出结果 -->
         <template v-if="tab === 'form'">
-          <div class="data-server-panel__title mt-7 mb-3">
-            {{ $t('packages_business_data_server_drawer_shuchujieguo') }}
+          <div class="data-server-panel__title mt-7 mb-3 gap-2">
+            <span>{{
+              $t('packages_business_data_server_drawer_shuchujieguo')
+            }}</span>
+            <el-tag v-if="isEdit && selectedIds.size" type="info" size="small">
+              {{ $t('public_selected_fields', { val: selectedIds.size }) }}
+            </el-tag>
+            <div class="flex-1" />
+            <template v-if="isEdit && selectedIds.size">
+              <el-dropdown placement="bottom" @command="handleAliasConversion">
+                <el-button text>
+                  <el-icon class="mr-1"><i-lucide:wand-sparkles /></el-icon>
+                  {{ $t('public_quick_convert_alias') }}
+                </el-button>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item command="upperCase">{{
+                      $t('packages_form_field_processor_index_daxie')
+                    }}</el-dropdown-item>
+                    <el-dropdown-item command="lowerCase">{{
+                      $t('packages_form_field_processor_index_xiaoxie')
+                    }}</el-dropdown-item>
+                    <el-dropdown-item command="snakeToCamel">{{
+                      $t('packages_form_field_processor_index_snake_to_camel')
+                    }}</el-dropdown-item>
+                    <el-dropdown-item command="camelToSnake">{{
+                      $t('packages_form_field_processor_index_camel_to_snake')
+                    }}</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+              <el-popconfirm
+                :width="240"
+                :title="$t('public_clear_alias_confirm')"
+                @confirm="handleClearAlias"
+              >
+                <template #reference>
+                  <el-button text type="danger">
+                    <el-icon class="mr-1"><i-mingcute:close-line /></el-icon>
+                    {{ $t('public_clear_alias') }}
+                  </el-button>
+                </template>
+              </el-popconfirm>
+            </template>
           </div>
+
           <ElTable
             ref="fieldTable"
-            :data="fieldTableData"
+            v-model:selection="selectedIds"
+            :data="treeData"
             :loading="fieldLoading"
-            @selection-change="fieldsChanged"
+            row-key="id"
+            :tree-props="{ children: 'children' }"
+            class="custom-tree-table"
+            @selection-change="onSelectionChange"
           >
             <ElTableColumn
               v-if="isEdit"
               type="selection"
               width="32"
               align="center"
+              show-overflow-tooltip
             />
+            <!-- 字段名 -->
             <ElTableColumn
               :label="$t('public_name')"
               prop="field_name"
               min-width="100"
+              show-overflow-tooltip
             />
+            <!-- 字段别名 -->
             <ElTableColumn
+              v-show-overflow-tooltip="!isEdit"
               :label="$t('public_alias')"
               prop="field_alias"
-              min-width="120"
+              min-width="80"
             >
               <template #default="{ row }">
-                <ElInput v-if="isEdit" v-model="row.field_alias" />
-                <span v-else>{{ row.field_alias }}</span>
+                <ElTooltip
+                  v-if="!isEdit"
+                  :content="row.field_alias"
+                  effect="dark"
+                >
+                  <span>{{ row.field_alias }}</span>
+                </ElTooltip>
+                <ElInput
+                  v-else
+                  v-model="row.field_alias"
+                  style="
+                    width: 100%;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    white-space: nowrap;
+                  "
+                />
               </template>
             </ElTableColumn>
             <ElTableColumn
+              :label="$t('public_data_encryption')"
+              min-width="100"
+            >
+              <template #default="{ row }">
+                <el-select-v2
+                  v-if="isEdit || row.textEncryptionRuleIds?.length"
+                  v-model="row.textEncryptionRuleIds"
+                  :placeholder="$t('public_select_encryption_rule')"
+                  :disabled="!isEdit"
+                  multiple
+                  :options="encryptions"
+                  :props="{
+                    label: 'name',
+                    value: 'id',
+                  }"
+                />
+              </template>
+            </ElTableColumn>
+            <!-- 类型 -->
+            <ElTableColumn
               :label="$t('public_type')"
               prop="originalDataType"
-              min-width="100"
+              min-width="80"
+              show-overflow-tooltip
             />
+            <!-- 描述 -->
             <ElTableColumn
               :label="$t('public_description')"
               prop="comment"
-              min-width="150"
+              min-width="50"
+              show-overflow-tooltip
             />
           </ElTable>
         </template>
@@ -2118,6 +2452,19 @@ function openHelp() {
         <template v-if="tab === 'debug'">
           <div class="data-server-panel__title mt-4 mb-3">
             {{ $t('packages_business_data_server_drawer_fanhuijieguo') }}
+            <el-tag
+              v-if="debugHttpInfo.httpCode"
+              style="margin-left: 0.5rem"
+              :type="
+                debugHttpInfo.httpCode &&
+                debugHttpInfo.httpCode >= 200 &&
+                debugHttpInfo.httpCode < 300
+                  ? 'success'
+                  : 'warning'
+              "
+              size="small"
+              >{{ debugHttpInfo.httpCode }}</el-tag
+            >
           </div>
           <VCodeEditor
             class="rounded-lg"
@@ -2225,7 +2572,7 @@ function openHelp() {
 
 .data-server-panel__title {
   display: flex;
-  justify-content: space-between;
+  justify-content: start;
   align-items: center;
   margin-top: 32px;
   margin-bottom: 16px;

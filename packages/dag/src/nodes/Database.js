@@ -1329,6 +1329,17 @@ export class Database extends NodeType {
                           },
                         },
                       },
+                      writeWithGroupByTableEnable: {
+                        title: i18n.t(
+                          'packages_dag_writeWithGroupByTableEnable',
+                        ),
+                        type: 'boolean',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal',
+                        },
+                        'x-component': 'Switch',
+                      },
                       noPkSyncMode: {
                         type: 'string',
                         title: i18n.t('packages_dag_noPkSyncMode'),

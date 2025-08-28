@@ -945,6 +945,7 @@ export default {
   packages_dag_table_selector_all_tables_selected: '您已选择所有表进行复制',
   packages_dag_syncForeignKeyEnable: '同步外键',
   packages_dag_check_no_pk_table: '校验无主键表',
+  packages_dag_writeWithGroupByTableEnable: '按表分组写入',
   packages_dag_ignoreUpdateEvent: '忽略更新事件',
   packages_dag_ignoreUpdateEvent_tips:
     '开启后将自动忽略子表更新事件，适用于无需关注子表变化，且子表更新会对主表大部分数据产生影响的场景',
