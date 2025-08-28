@@ -955,7 +955,7 @@ export default {
   packages_dag_applyCompareRules_Additional: '添加额外字段',
   packages_dag_applyCompareRules_Different: '更新字段类型',
   packages_dag_applyCompareRules_CannotWrite: '删除不可写字段',
-  packages_dag_view_compare_result: '查看对比结果',
+  packages_dag_view_compare_result: '查看模型对比结果',
   packages_dag_compare_different: '差异',
   packages_dag_compare_additional: '新增',
   packages_dag_compare_missing: '缺失',

@@ -940,7 +940,7 @@ export default {
   packages_dag_applyCompareRules_Additional: '添加額外字段',
   packages_dag_applyCompareRules_Different: '更新字段類型',
   packages_dag_applyCompareRules_CannotWrite: '刪除只寫字段',
-  packages_dag_view_compare_result: '查看對比結果',
+  packages_dag_view_compare_result: '查看模型對比結果',
   packages_dag_compare_different: '差異',
   packages_dag_compare_additional: '新增',
   packages_dag_compare_missing: '缺失',

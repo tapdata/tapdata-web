@@ -398,11 +398,15 @@ onBeforeUnmount(() => {
 
         <el-result
           v-else-if="compareStatus === 'done' && !tableList.length"
+          class="mx-auto"
           icon="success"
-          title="模型对比无差异"
+          :title="t('packages_dag_compare_result_no_diff')"
         >
           <template #extra>
             <el-button type="primary" @click="handleCompareTargetModel">
+              <template #icon>
+                <el-icon><i-lucide:refresh-cw /></el-icon>
+              </template>
               {{ t('packages_dag_compare_result_recompare') }}
             </el-button>
           </template>
@@ -477,8 +481,8 @@ onBeforeUnmount(() => {
               </div>
             </div>
           </div>
-          <div class="flex-1 bg-light border-start min-w-0">
-            <div v-if="selectedTable" class="flex align-center p-3 pb-0">
+          <div class="flex-1 bg-light border-start min-w-0 flex flex-column">
+            <div v-if="selectedTable" class="flex align-center p-3">
               <div class="flex align-center min-w-0">
                 <div
                   class="mr-2 p-1.5 bg-gray-100 rounded-lg flex align-center justify-center table-item-icon"
@@ -508,20 +512,44 @@ onBeforeUnmount(() => {
                 </template>
               </el-input>
               <div class="flex-1" />
-              <el-button circle class="rounded-lg" @click="handleApplyTable">
-                <template #icon>
-                  <el-icon><i-lucide:check-check /></el-icon>
-                </template>
-                <!-- {{ t('packages_dag_compare_result_apply_table') }} -->
-              </el-button>
-              <el-button circle class="rounded-lg" @click="handleUndoTable">
-                <template #icon>
-                  <el-icon><i-lucide:undo /></el-icon>
-                </template>
-                <!-- {{ t('packages_dag_compare_result_undo_table') }} -->
-              </el-button>
+              <el-tooltip
+                :content="t('packages_dag_compare_result_apply_table')"
+                placement="top"
+              >
+                <el-button
+                  :disabled="isLoading"
+                  circle
+                  class="rounded-lg"
+                  @click="handleApplyTable"
+                >
+                  <template #icon>
+                    <el-icon><i-lucide:check-check /></el-icon>
+                  </template>
+                  <!-- {{ t('packages_dag_compare_result_apply_table') }} -->
+                </el-button>
+              </el-tooltip>
+
+              <el-tooltip
+                :content="t('packages_dag_compare_result_undo_table')"
+                placement="top"
+              >
+                <el-button
+                  :disabled="isLoading"
+                  circle
+                  class="rounded-lg"
+                  @click="handleUndoTable"
+                >
+                  <template #icon>
+                    <el-icon><i-lucide:undo /></el-icon>
+                  </template>
+                  <!-- {{ t('packages_dag_compare_result_undo_table') }} -->
+                </el-button>
+              </el-tooltip>
             </div>
-            <div v-if="selectedTable" class="flex flex-column gap-3 p-3">
+            <div
+              v-if="selectedTable"
+              class="flex flex-column gap-3 p-3 pt-0 overflow-y-auto"
+            >
               <div
                 v-if="searchKeyword.trim() && filteredFields.length === 0"
                 class="text-center py-8 text-placeholder"
@@ -577,6 +605,7 @@ onBeforeUnmount(() => {
                     "
                     text
                     class="field-item-btn"
+                    :disabled="isLoading"
                     @click="handleApply(field)"
                     >{{
                       typeMap[field.type as keyof typeof typeMap].btnText
@@ -607,6 +636,7 @@ onBeforeUnmount(() => {
                     class="field-item-btn"
                     type="primary"
                     text
+                    :disabled="isLoading"
                     @click="handleUndo(field)"
                   >
                     {{ $t('public_button_revoke') }}

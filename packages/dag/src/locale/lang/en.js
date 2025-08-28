@@ -1103,7 +1103,7 @@ export default {
   packages_dag_applyCompareRules_Additional: 'Add Additional Fields',
   packages_dag_applyCompareRules_Different: 'Update Field Type',
   packages_dag_applyCompareRules_CannotWrite: 'Delete Read-Only Fields',
-  packages_dag_view_compare_result: 'View Comparison Result',
+  packages_dag_view_compare_result: 'View Schema Comparison Result',
   packages_dag_compare_different: 'Different',
   packages_dag_compare_additional: 'Additional',
   packages_dag_compare_missing: 'Missing',
