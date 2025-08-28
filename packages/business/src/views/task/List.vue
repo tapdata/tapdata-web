@@ -18,6 +18,7 @@ import UpgradeFee from '../../components/UpgradeFee.vue'
 import Upload from '../../components/UploadDialog.vue'
 import syncTaskAgent from '../../mixins/syncTaskAgent'
 import { makeStatusAndDisabled, MILESTONE_TYPE, STATUS_MAP } from '../../shared'
+import EditInfoDialog from './EditInfoDialog.vue'
 import SkipError from './SkipError'
 
 export default {
@@ -36,6 +37,7 @@ export default {
     UpgradeCharges,
     UpgradeFee,
     SyncStatus,
+    EditInfoDialog,
   },
 
   mixins: [syncTaskAgent],
@@ -1004,6 +1006,10 @@ export default {
       // this.searchParams.id = this.pipeline ? this.pipeline.taskIds : undefined
       this.table.fetch(1)
     },
+
+    handleEditInfo(row) {
+      this.$refs.editInfoDialog.open(row)
+    },
   },
 }
 </script>
@@ -1174,19 +1180,81 @@ export default {
       >
         <template #default="{ row }">
           <div class="dataflow-name flex flex-wrap">
-            <span v-if="handleClickNameDisabled(row)" class="mr-1">{{
+            <!-- <span v-if="handleClickNameDisabled(row)" class="mr-1">{{
               row.name
-            }}</span>
+            }}</span> -->
             <ElLink
-              v-else
               role="ellipsis"
               type="primary"
               underline="never"
-              class="justify-content-start ellipsis block mr-1"
+              class="justify-content-start ellipsis block mr-1 position-relative min-w-0 task-name-link"
               :class="['name', { 'has-children': row.hasChildren }]"
               @click.stop="handleClickName(row)"
-              >{{ row.name }}</ElLink
             >
+              <span class="inline-flex min-w-0">
+                <span class="ellipsis">{{ row.name }}</span>
+                <el-tooltip
+                  v-if="!row.desc"
+                  placement="top"
+                  :hide-after="0"
+                  :content="$t('packages_business_edit_task_info')"
+                >
+                  <el-button
+                    size="small"
+                    text
+                    class="edit-info-btn"
+                    @click.stop="handleEditInfo(row)"
+                  >
+                    <template #icon>
+                      <el-icon><i-lucide:file-pen /></el-icon>
+                    </template>
+                  </el-button>
+                </el-tooltip>
+                <el-popover
+                  v-else
+                  :teleported="true"
+                  placement="top"
+                  :content="row.desc"
+                  :hide-after="0"
+                  popper-style="width: auto;max-width: 448px"
+                >
+                  <template #reference>
+                    <el-button
+                      size="small"
+                      text
+                      class="edit-info-btn"
+                      style="--el-button-text-color: var(--icon-n1)"
+                      @click.stop="handleEditInfo(row)"
+                    >
+                      <template #icon>
+                        <el-icon><i-lucide:file-text /></el-icon>
+                      </template>
+                    </el-button>
+                  </template>
+                  <template #default>
+                    <div class="mb-2 flex align-center gap-1">
+                      {{ row.name }}
+                      <el-button
+                        class="flex-shrink-0"
+                        size="small"
+                        text
+                        @click="handleEditInfo(row)"
+                      >
+                        <template #icon>
+                          <el-icon><i-lucide:file-pen /></el-icon>
+                        </template>
+                      </el-button>
+                    </div>
+                    <div
+                      class="bg-gray-50 rounded-lg p-2 border border-gray-100"
+                    >
+                      <div>{{ row.desc }}</div>
+                    </div>
+                  </template>
+                </el-popover>
+              </span>
+            </ElLink>
+
             <span
               v-if="row.listtags"
               class="justify-content-start ellipsis flex flex-wrap align-center gap-1"
@@ -1492,6 +1560,7 @@ export default {
       "
       :go-page="upgradeFeeGoPage"
     />
+    <EditInfoDialog ref="editInfoDialog" @success="table.fetch()" />
   </section>
 </template>
 
@@ -1550,6 +1619,7 @@ export default {
     }
 
     .dataflow-name {
+      line-height: 24px;
       .tag {
         padding: 0 4px;
         font-style: normal;
@@ -1587,6 +1657,26 @@ export default {
       padding: 10px;
       background-color: #f8f9fa;
     }
+  }
+
+  .task-name-link :deep(.el-link__inner) {
+    width: 100%;
+  }
+
+  .el-button.el-button.edit-info-btn {
+    --el-button-text-color: var(--icon-n3);
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    right: -24px;
+    top: 0;
+  }
+
+  .hover-row .el-button.el-button.edit-info-btn,
+  .el-button.el-button.edit-info-btn[aria-describedby] {
+    opacity: 1;
+    pointer-events: auto;
+    position: static;
   }
 }
 </style>

@@ -847,6 +847,7 @@ export default {
   packages_business_connections_databaseform_kaiqixintiaobiao: '开启心跳表',
   packages_business_connections_databaseform_jiaobentiaoshi: '脚本调试',
   // api服务管理
+  packages_business_data_server_drawer_filter: '无效的Json参数值, 请将filter作为json对象输入',
   packages_business_data_server_drawer_qingshurucanshu: '请输入参数名称',
   packages_business_data_server_drawer_paixu: '排序',
   packages_business_data_server_drawer_meigefenyefan: '每个分页返回的记录数',
@@ -1486,4 +1487,5 @@ export default {
   packages_business_example_regex: '以 A 开头，忽略大小写',
   packages_business_example_size: '{a} 数组长度为 {b}',
   packages_business_example_mod: '{a} 能被 {b} 整除',
+  packages_business_edit_task_info: '编辑任务信息',
 }
