@@ -1068,6 +1068,9 @@ const debugData = async () => {
         queryBody.params = params
         break
       case 'POST':
+        Object.keys(params).forEach((key) => {
+          filterInfo[key] = params[key]
+        })
         //@ts-ignore
         filterInfo.limit = params?.limit || 20
         //@ts-ignore
