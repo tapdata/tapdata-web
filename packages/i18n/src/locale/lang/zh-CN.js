@@ -536,4 +536,9 @@ export default {
   public_selected_fields: '已选择 {val} 个字段',
   public_quick_convert_alias: '快速转换别名',
   public_clear_alias: '清空别名',
+  public_queue_capacity: '缓存队列大小',
+  public_queue_capacity_tip: '设置过大可能导致待校验任务堆积，占用过多内存',
+  public_queue_capacity_auto_tip: '基于采样频率计算',
+  public_auto: '自动',
+  public_custom: '自定义',
 }
