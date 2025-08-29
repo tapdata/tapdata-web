@@ -26,6 +26,7 @@ export const SchemaFormItem = connect(
 
         const showCompareResult = reactiveComputed(() => {
           return (
+            form.values.$inputs.length > 0 &&
             form.values.existDataProcessMode !== 'dropTable' &&
             !form.values.attrs.connectionTags?.includes('schema-free')
           )
