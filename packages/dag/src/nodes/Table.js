@@ -452,9 +452,6 @@ export class Table extends NodeType {
                       },
                     ],
                     'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      wrapperWidth: 300,
-                    },
                     'x-component': 'Select',
                     'x-reactions': {
                       fulfill: {
@@ -462,11 +459,92 @@ export class Table extends NodeType {
                         state: {
                           description: `{{$settings.type === "cdc" ? '${i18n.t(
                             'packages_dag_nodes_database_setting_cdc_changjing_desc',
-                          )}':$self.value === 'dropTable' ? '${i18n.t('packages_dag_existDataProcessMode_desc')}':''}}`,
+                          )}':''}}`,
                         },
                         schema: {
                           // 根据capabilities列表如果不存在{"id" : "clear_table_function"}属性，表示不支持“运行前删除已存在数据”，⚠️👇表达式依赖enum的顺序
                           'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.find(item => item.id ==='drop_table_function') && options.push($self.dataSource[1]),$values.attrs.capabilities.find(item => item.id ==='clear_table_function') && options.push($self.dataSource[2]),options}}`,
+                        },
+                      },
+                    },
+                  },
+                  dropTableAlert: {
+                    type: 'void',
+                    'x-component': 'Alert',
+                    'x-component-props': {
+                      class: 'mb-2 lh-base',
+                      title: i18n.t('packages_dag_existDataProcessMode_desc'),
+                      type: 'warning',
+                      showIcon: true,
+                      closable: false,
+                    },
+                    'x-reactions': {
+                      dependencies: ['.existDataProcessMode'],
+                      fulfill: {
+                        state: {
+                          visible: '{{$deps[0] === "dropTable"}}',
+                        },
+                      },
+                    },
+                  },
+                  applyCompareRule: {
+                    type: 'boolean',
+                    title: i18n.t('packages_dag_applyCompareRule'),
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      layout: 'horizontal',
+                    },
+                    'x-component': 'Switch',
+                    'x-reactions': {
+                      dependencies: ['.existDataProcessMode'],
+                      fulfill: {
+                        state: {
+                          visible:
+                            '{{$deps[0] !== "dropTable" && (!$values.attrs.connectionTags || !$values.attrs.connectionTags.includes("schema-free"))}}',
+                        },
+                      },
+                    },
+                  },
+                  applyCompareRules: {
+                    type: 'array',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Checkbox.Group',
+                    default: [
+                      'Missing',
+                      'Additional',
+                      'Different',
+                      'CannotWrite',
+                    ],
+                    enum: [
+                      {
+                        label: i18n.t('packages_dag_applyCompareRules_Missing'),
+                        value: 'Missing',
+                      },
+                      {
+                        label: i18n.t(
+                          'packages_dag_applyCompareRules_Additional',
+                        ),
+                        value: 'Additional',
+                      },
+                      {
+                        label: i18n.t(
+                          'packages_dag_applyCompareRules_Different',
+                        ),
+                        value: 'Different',
+                      },
+                      {
+                        label: i18n.t(
+                          'packages_dag_applyCompareRules_CannotWrite',
+                        ),
+                        value: 'CannotWrite',
+                      },
+                    ],
+                    'x-editable': true,
+                    'x-reactions': {
+                      dependencies: ['.applyCompareRule'],
+                      fulfill: {
+                        state: {
+                          display: '{{$deps[0] ? "visible":"hidden"}}',
                         },
                       },
                     },

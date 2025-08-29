@@ -538,6 +538,7 @@ export default {
         capabilities: connection.capabilities || [],
         db_version: connection.db_version,
         hasCreated: false,
+        connectionTags: connection.definitionTags,
       }
 
       if (pdkProperties) {

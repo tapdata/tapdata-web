@@ -380,3 +380,21 @@ export const mapFieldsData = (data: any) => {
     fields: newFields,
   }
 }
+
+const TYPE_ICON = {
+  '1': 'calendar',
+  '3': 'type-boolean',
+  '5': 'calendar',
+  '6': 'calendar',
+  '8': 'type-number',
+  '10': 'type-string',
+  '9': 'calendar',
+  '11': 'calendar',
+}
+
+export const getFieldIcon = (tapType: string) => {
+  const match = tapType.match(/"type"\s*:\s*(\d+)/)
+  const value = match?.[1]
+
+  return TYPE_ICON[value as keyof typeof TYPE_ICON] || 'type-unknown'
+}

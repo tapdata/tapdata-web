@@ -841,6 +841,7 @@ export default {
           const pdkType = form.getValuesIn('attrs.pdkType')
           const pdkHash = form.getValuesIn('attrs.pdkHash')
           const db_version = form.getValuesIn('attrs.db_version')
+          const connectionTags = form.getValuesIn('attrs.connectionTags')
 
           pdkType !== connection.pdkType &&
             form.setValuesIn('attrs.pdkType', connection.pdkType)
@@ -866,6 +867,9 @@ export default {
             form.setValuesIn('attrs.db_version', connection.db_version)
           !isEqual(capabilities, connection.capabilities) &&
             form.setValuesIn('attrs.capabilities', connection.capabilities)
+
+          !isEqual(connectionTags, connection.definitionTags) &&
+            form.setValuesIn('attrs.connectionTags', connection.definitionTags)
         },
 
         getPdkProperties: (node) => {
