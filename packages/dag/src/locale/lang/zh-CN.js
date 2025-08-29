@@ -978,5 +978,5 @@ export default {
   packages_dag_compare_result_done: '模型对比完成',
   packages_dag_compare_result_error: '模型对比失败,请稍后重试',
   packages_dag_compare_result_no_diff: '模型对比无差异',
-  packages_dag_compare_result_clear_invalid_apply: '清除{num}条无效配置',
+  packages_dag_compare_result_clear_invalid_apply: '清除 {num} 条无效配置',
 }

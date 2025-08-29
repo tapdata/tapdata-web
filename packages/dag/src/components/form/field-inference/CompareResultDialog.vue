@@ -13,7 +13,6 @@ import { dayjs } from '@tap/business/src/shared/dayjs'
 import { CloseIcon } from '@tap/component/src/CloseIcon'
 import { getFieldIcon } from '@tap/form/src/components/field-select/FieldSelect'
 import { useI18n } from '@tap/i18n'
-import { template } from 'lodash-es'
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 
@@ -48,7 +47,6 @@ const compareStatus = ref<string | null>(null)
 const finishTime = ref<string>()
 const tableList = ref<TableItem[]>([])
 const tableTotal = ref<number>(0)
-const fieldList = ref<TableItem['fields']>([])
 const selectedTable = ref<TableItem | null>(null)
 const searchKeyword = ref('')
 const tableSearchKeyword = ref('')
@@ -67,7 +65,7 @@ const typeMap = {
   },
   Additional: {
     text: t('packages_dag_compare_additional'),
-    type: 'warning',
+    type: 'primary',
     doneText: 'packages_dag_compare_done_add',
     btnText: t('public_add'),
     numKey: 'additionalNum',
@@ -147,15 +145,18 @@ const {
 
         let fieldType
         let isPrimaryKey
+        let isNullable
         let icon
 
         if (field.sourceField) {
           fieldType = field.sourceField.data_type
           isPrimaryKey = field.sourceField.primary_key_position > 0
+          isNullable = field.sourceField.is_nullable
           icon = getFieldIcon(field.sourceField.tapType)
         } else {
           fieldType = field.targetField.data_type
           isPrimaryKey = field.targetField.primary_key_position > 0
+          isNullable = field.targetField.is_nullable
           icon = getFieldIcon(field.targetField.tapType)
         }
 
@@ -170,6 +171,7 @@ const {
           fieldType,
           icon,
           isPrimaryKey,
+          isNullable,
         })
       })
 
@@ -529,7 +531,7 @@ onBeforeUnmount(() => {
                         size="small"
                         class="px-1"
                       >
-                        {{ t(v.text)
+                        {{ v.text
                         }}<span class="ml-0.5">{{ item[v.numKey] }}</span>
                       </el-tag>
                     </template>
@@ -654,6 +656,12 @@ onBeforeUnmount(() => {
               >
                 <VIcon style="color: var(--icon-n2)">{{ field.icon }}</VIcon>
                 <div>{{ field.fieldName }}</div>
+                <VIcon v-if="field.isPrimaryKey" size="12" class="text-warning">
+                  key
+                </VIcon>
+                <el-tag v-if="!field.isNullable" size="small" class="is-code">{{
+                  $t('packages_dag_meta_table_not_null')
+                }}</el-tag>
                 <div
                   v-if="field.type !== 'Different'"
                   class="fs-8 font-mono border rounded-lg px-1.5 lh-5"

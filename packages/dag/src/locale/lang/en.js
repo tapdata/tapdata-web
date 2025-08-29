@@ -1128,4 +1128,5 @@ export default {
   packages_dag_compare_result_error:
     'Schema Comparison Failed, Please Try Again Later',
   packages_dag_compare_result_no_diff: 'No Difference Found',
+  packages_dag_compare_result_clear_invalid_apply: 'Clear Invalid ({num})',
 }
