@@ -3,6 +3,7 @@ import {
   deleteSdkVersion,
   fetchApiClients,
   fetchApiModules,
+  fetchApiServers,
   fetchSdk,
   fetchSdkVersionApiList,
   fetchSdkVersions,
@@ -14,7 +15,7 @@ import { RightBoldOutlined } from '@tap/component/src/RightBoldOutlined'
 import { useI18n } from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
 import { debounce } from 'lodash-es'
-import { computed, nextTick, ref, toRefs, watch } from 'vue'
+import { computed, nextTick, onBeforeMount, ref, toRefs, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
 import { dayjs } from '../../shared/dayjs'
@@ -35,6 +36,7 @@ const apiDrawer = ref<any>(null)
 const sdkDialog = ref<any>(null)
 const hasGenerating = ref(false)
 const selectedVersion = ref<any>()
+const apiServerHost = ref('')
 
 const mapApi = (item: any) => {
   const pathJoin: string[] = []
@@ -240,6 +242,23 @@ const onSuccess = () => {
   runFetchSdkVersions()
   runFetchSdk()
 }
+
+const getApiServerHost = async () => {
+  const showError = () => {
+    ElMessage.error(t('packages_business_data_server_list_huoqufuwuyu'))
+  }
+  const data = await fetchApiServers().catch(() => {
+    showError()
+  })
+  apiServerHost.value = (data as any)?.items?.[0]?.clientURI || ''
+  if (!apiServerHost.value) {
+    showError()
+  }
+}
+
+onBeforeMount(() => {
+  getApiServerHost()
+})
 </script>
 
 <template>
@@ -544,7 +563,7 @@ const onSuccess = () => {
           </div>
         </div>
 
-        <ApiDrawer ref="apiDrawer" readonly />
+        <ApiDrawer ref="apiDrawer" readonly :host="apiServerHost" />
       </div>
     </div>
 

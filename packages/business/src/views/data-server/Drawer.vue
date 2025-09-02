@@ -1496,7 +1496,7 @@ function handleClearAlias() {
     v-model="visible"
     v-loading="loading"
     :title="$t('packages_business_data_server_drawer_fuwuxiangqing')"
-    body-class="pt-0"
+    :body-class="readonly ? '' : 'pt-0'"
     class="overflow-hidden"
     header-class="pb-0"
     width="850px"
