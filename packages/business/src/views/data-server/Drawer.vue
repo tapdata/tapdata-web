@@ -2487,7 +2487,7 @@ function handleClearAlias() {
       }}</ElButton>
       <ElButton
         :loading="loading"
-        :disabled="!form.fields.length"
+        :disabled="!selectedIds.size"
         type="primary"
         @click="save()"
         >{{ $t('public_button_save') }}</ElButton
