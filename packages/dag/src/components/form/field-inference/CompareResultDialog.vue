@@ -9,15 +9,16 @@ import {
   type ItemDifferenceFieldList,
 } from '@tap/api'
 import { dayjs } from '@tap/business/src/shared/dayjs'
-
 import { CloseIcon } from '@tap/component/src/CloseIcon'
+
+import { FilterOutlined } from '@tap/component/src/icon'
 import { getFieldIcon } from '@tap/form/src/components/field-select/FieldSelect'
 import { useI18n } from '@tap/i18n'
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch, type PropType } from 'vue'
 import { useStore } from 'vuex'
 
 const visible = defineModel<boolean>()
-const emit = defineEmits(['loadSchema'])
+const emit = defineEmits(['loadSchema', 'changeRules', 'close'])
 
 const props = defineProps({
   nodeId: {
@@ -27,6 +28,10 @@ const props = defineProps({
   singleTable: {
     type: Boolean,
     default: false,
+  },
+  rules: {
+    type: Array as PropType<string[]>,
+    default: () => [],
   },
 })
 
@@ -54,6 +59,8 @@ const hasManual = ref(false)
 const invalidApplyNum = ref<number>(0)
 const pageSize = ref<number>(10)
 const currentPage = ref<number>(1)
+const applyCompareRules = ref<string[]>(props.rules)
+const filterType = ref(['Different', 'Missing', 'CannotWrite'])
 
 const typeMap = {
   Different: {
@@ -62,13 +69,6 @@ const typeMap = {
     doneText: 'packages_dag_compare_done_modify',
     btnText: t('public_button_revise'),
     numKey: 'differentNum',
-  },
-  Additional: {
-    text: t('packages_dag_compare_additional'),
-    type: 'primary',
-    doneText: 'packages_dag_compare_done_add',
-    btnText: t('public_add'),
-    numKey: 'additionalNum',
   },
   Missing: {
     text: t('packages_dag_compare_missing'),
@@ -86,12 +86,58 @@ const typeMap = {
   },
 }
 
+const ruleOptions = [
+  {
+    label: t('packages_dag_applyCompareRules_Missing'),
+    value: 'Missing',
+  },
+  {
+    label: t('packages_dag_applyCompareRules_Different'),
+    value: 'Different',
+  },
+  {
+    label: t('packages_dag_applyCompareRules_CannotWrite'),
+    value: 'CannotWrite',
+  },
+]
+
+const filterOptions = ref([
+  {
+    label: t('packages_dag_compare_different'),
+    value: 'Different',
+  },
+  {
+    label: t('packages_dag_compare_missing'),
+    value: 'Missing',
+  },
+  {
+    label: t('packages_dag_compare_cannot_write'),
+    value: 'CannotWrite',
+  },
+  {
+    label: t('packages_dag_compare_missing_source'),
+    value: 'Additional',
+  },
+  {
+    label: t('packages_dag_compare_precision'),
+    value: 'Precision',
+  },
+])
+
+const totalMap = ref<Record<string, number>>({})
+
 const isLoading = computed(() => {
   return compareResultLoading.value || compareStatus.value === 'running'
 })
 
 const totalPage = computed(() => {
   return Math.ceil(tableTotal.value / pageSize.value)
+})
+
+const differentTotal = computed(() => {
+  return filterOptions.value.reduce((acc, item) => {
+    return acc + (totalMap.value?.[item.value] || 0)
+  }, 0)
 })
 
 const {
@@ -101,18 +147,24 @@ const {
   refresh: refreshCompareResult,
   cancel: cancelFetchCompareResult,
 } = useRequest(
-  async () => {
+  async (page?: number) => {
+    if (page) {
+      currentPage.value = page
+    }
+
     const res = await getMetadataInstancesCompareResult({
       nodeId: props.nodeId,
       taskId,
       page: currentPage.value,
       pageSize: pageSize.value,
       tableFilter: tableSearchKeyword.value,
+      types: filterType.value,
     })
 
     if (!res) {
       invalidApplyNum.value = 0
       compareStatus.value = null
+      totalMap.value = {}
       cancelFetchCompareResult()
       return
     }
@@ -130,6 +182,7 @@ const {
       return
     }
 
+    totalMap.value = res.differentFieldNumberMap || {}
     tableTotal.value = res.compareDtos.total
     tableList.value = res.compareDtos.items.map((item): TableItem => {
       const totalMap = {
@@ -164,10 +217,12 @@ const {
           applyType: field.applyType,
           fieldName: field.columnName,
           type: field.type,
-          targetFieldType:
-            field.type === 'Different'
-              ? field.targetField.data_type
-              : undefined,
+          targetFieldType: field.targetField?.data_type,
+          sourceFieldType: field.sourceField?.data_type,
+          sourceFieldTypeDisplay: compareFieldTypes(
+            field.sourceField?.data_type,
+            field.targetField?.data_type,
+          ),
           fieldType,
           icon,
           isPrimaryKey,
@@ -198,6 +253,8 @@ const {
     } else {
       selectedTable.value = null
     }
+
+    return true
   },
   {
     manual: true,
@@ -243,6 +300,7 @@ const handleApplyTable = () => {
   saveApply(false, [
     {
       qualifiedName: selectedTable.value?.qualifiedName,
+      fieldNames: filteredFields.value.map((field) => field.fieldName),
     },
   ])
 }
@@ -264,6 +322,7 @@ const handleUndoTable = () => {
   deleteApply(false, [
     {
       qualifiedName: selectedTable.value?.qualifiedName,
+      fieldNames: filteredFields.value.map((field) => field.fieldName),
     },
   ])
 }
@@ -310,20 +369,103 @@ const filteredFields = computed(() => {
     (field) =>
       field.fieldName?.toLowerCase().includes(keyword) ||
       field.fieldType?.toLowerCase().includes(keyword) ||
+      field.sourceFieldType?.toLowerCase().includes(keyword) ||
       field.targetFieldType?.toLowerCase().includes(keyword),
   )
 })
+
+const taskSaving = computed(() => {
+  return store.state.dataflow.taskSaving
+})
+
+// 比较字段类型并返回带有红色高亮的 HTML 字符串
+const compareFieldTypes = (sourceType: string, targetType: string): string => {
+  if (!sourceType || !targetType) {
+    return sourceType || targetType || ''
+  }
+
+  // 如果类型完全相同，直接返回
+  if (sourceType === targetType) {
+    return sourceType
+  }
+
+  // 尝试解析类型和精度
+  const sourceMatch = sourceType.match(/^(.+?)(?:\(([^)]+)\))?$/)
+  const targetMatch = targetType.match(/^(.+?)(?:\(([^)]+)\))?$/)
+
+  if (!sourceMatch || !targetMatch) {
+    // 无法解析，整个源类型用红色包裹
+    return `<span class="color-danger">${sourceType}</span>`
+  }
+
+  const [, sourceBaseType, sourcePrecision] = sourceMatch
+  const [, targetBaseType, targetPrecision] = targetMatch
+
+  // 如果基础类型不同，整个源类型用红色包裹
+  if (sourceBaseType !== targetBaseType) {
+    return `<span class="color-danger">${sourceType}</span>`
+  }
+
+  // 如果基础类型相同但精度不同，只高亮精度部分
+  if (
+    sourcePrecision &&
+    targetPrecision &&
+    sourcePrecision !== targetPrecision
+  ) {
+    const precisionIndex = sourceType.indexOf(`(${sourcePrecision})`)
+    if (precisionIndex !== -1) {
+      const beforePrecision = sourceType.slice(0, precisionIndex)
+      const afterPrecision = sourceType.slice(
+        precisionIndex + sourcePrecision.length + 2,
+      )
+      return `${beforePrecision}(<span class="color-danger">${sourcePrecision}</span>)${afterPrecision}`
+    }
+  }
+
+  // 其他情况，整个源类型用红色包裹
+  return `<span class="color-danger">${sourceType}</span>`
+}
 
 const onClose = () => {
   if (hasManual.value) {
     emit('loadSchema')
   }
+  cancelFetchCompareResult?.()
+  emit('close')
 }
 
 const handleClearInvalidApply = async () => {
   await deleteInvalidCompareApply(props.nodeId)
   fetchCompareResult()
   ElMessage.success(t('public_message_operation_success'))
+}
+
+const applyAfterLoading = ref(false)
+
+const handleApplyCompareRulesChange = async (value: string[]) => {
+  applyAfterLoading.value = true
+  emit('changeRules', value)
+
+  await afterTaskSaved()
+
+  fetchCompareResult()
+
+  applyAfterLoading.value = false
+}
+
+const afterTaskSaved = () => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      if (taskSaving.value) {
+        const unwatch = watch(taskSaving, () => {
+          unwatch()
+          resolve(true)
+        })
+      } else {
+        resolve(true)
+      }
+    }, 300)
+  })
 }
 
 onBeforeUnmount(() => {
@@ -350,7 +492,7 @@ onBeforeUnmount(() => {
               ><i-lucide:git-compare-arrows
             /></el-icon>
           </div>
-          <div>
+          <div class="mr-2">
             <div :class="titleClass">
               {{ t('packages_dag_compare_result') }}
             </div>
@@ -363,18 +505,18 @@ onBeforeUnmount(() => {
             </div>
           </div>
           <div class="flex-1" />
-          <template v-if="compareStatus && tableTotal > 0">
-            <el-button :loading="isLoading" @click="handleCompareTargetModel">
-              <template #icon>
-                <el-icon><i-lucide:refresh-cw /></el-icon>
-              </template>
-              {{
-                compareStatus === 'running'
-                  ? t('packages_dag_compare_result_running')
-                  : t('packages_dag_compare_result_recompare')
-              }}
-            </el-button>
-            <el-button
+          <!-- <template v-if="compareStatus && tableTotal > 0"> -->
+          <el-button :loading="isLoading" @click="handleCompareTargetModel">
+            <template #icon>
+              <el-icon><i-lucide:refresh-cw /></el-icon>
+            </template>
+            {{
+              compareStatus === 'running'
+                ? t('packages_dag_compare_result_running')
+                : t('packages_dag_compare_result_recompare')
+            }}
+          </el-button>
+          <!-- <el-button
               :disabled="isLoading"
               type="primary"
               @click="handleApplyAll"
@@ -389,36 +531,56 @@ onBeforeUnmount(() => {
                 <el-icon><i-lucide:undo /></el-icon>
               </template>
               {{ t('packages_dag_compare_result_undo_all') }}
-            </el-button>
-            <el-button
-              v-if="invalidApplyNum > 0"
-              :disabled="isLoading"
-              @click="handleClearInvalidApply"
+            </el-button> -->
+          <el-button
+            v-if="invalidApplyNum > 0"
+            :disabled="isLoading"
+            @click="handleClearInvalidApply"
+          >
+            <template #icon>
+              <el-icon><i-lucide:trash-2 /></el-icon>
+            </template>
+            {{
+              t('packages_dag_compare_result_clear_invalid_apply', {
+                num: invalidApplyNum,
+              })
+            }}
+          </el-button>
+          <el-select
+            v-model="filterType"
+            class="w-auto ml-3"
+            multiple
+            placeholder=""
+            @change="fetchCompareResult(1)"
+          >
+            <el-option
+              v-for="item in filterOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
             >
-              <template #icon>
-                <el-icon><i-lucide:trash-2 /></el-icon>
-              </template>
-              {{
-                t('packages_dag_compare_result_clear_invalid_apply', {
-                  num: invalidApplyNum,
-                })
-              }}
-            </el-button>
-            <el-divider class="mx-3" direction="vertical" />
-          </template>
-          <template v-else-if="invalidApplyNum > 0">
-            <el-button :disabled="isLoading" @click="handleClearInvalidApply">
-              <template #icon>
-                <el-icon><i-lucide:trash-2 /></el-icon>
-              </template>
-              {{
-                t('packages_dag_compare_result_clear_invalid_apply', {
-                  num: invalidApplyNum,
-                })
-              }}
-            </el-button>
-            <el-divider class="mx-3" direction="vertical" />
-          </template>
+              {{ item.label }} ({{ totalMap[item.value] || 0 }})
+            </el-option>
+
+            <template #tag="{ data, deleteTag }">
+              <el-icon color="var(--icon-n1)" class="mx-1">
+                <FilterOutlined />
+              </el-icon>
+              <span v-if="!data.length" class="text-caption">{{
+                t('packages_dag_compare_result_detail_all')
+              }}</span>
+              <el-tag
+                v-for="item in data"
+                :key="item.value"
+                :type="typeMap[item.value]?.type || 'info'"
+                closable
+                @close="deleteTag($event, item)"
+              >
+                {{ item.currentLabel }}
+              </el-tag>
+            </template>
+          </el-select>
+          <el-divider class="mx-3" direction="vertical" />
           <el-button
             text
             size="small"
@@ -430,6 +592,33 @@ onBeforeUnmount(() => {
     </template>
 
     <div class="border-top">
+      <div class="p-3 px-6 flex align-center flex-wrap">
+        <div
+          class="p-1.5 bg-gray-100 rounded-lg flex align-center justify-center mr-2"
+        >
+          <el-icon size="16" color="var(--icon-n1)"
+            ><i-lucide:settings
+          /></el-icon>
+        </div>
+        <div class="fw-sub">
+          {{ t('packages_dag_compare_result_auto_process') }}
+        </div>
+        <el-checkbox-group
+          v-model="applyCompareRules"
+          class="ml-4"
+          @change="handleApplyCompareRulesChange"
+        >
+          <el-checkbox
+            v-for="item in ruleOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-checkbox-group>
+      </div>
+    </div>
+
+    <div v-loading="applyAfterLoading" class="border-top">
       <div class="flex" style="max-height: 60vh; min-height: 200px">
         <el-empty
           v-if="!compareStatus || (!tableTotal && compareStatus !== 'done')"
@@ -455,7 +644,7 @@ onBeforeUnmount(() => {
         </el-empty>
 
         <el-result
-          v-else-if="compareStatus === 'done' && !tableTotal"
+          v-else-if="compareStatus === 'done' && !differentTotal"
           class="mx-auto"
           icon="success"
           :title="t('packages_dag_compare_result_no_diff')"
@@ -481,22 +670,20 @@ onBeforeUnmount(() => {
                 $t('public_data_table')
               }}</span>
               <span class="font-color-sslight fs-8">({{ tableTotal }})</span>
-              <template v-if="tableTotal > 8">
-                <el-divider class="mx-3" direction="vertical" />
-                <el-input
-                  v-model="tableSearchKeyword"
-                  :placeholder="
-                    t('packages_form_table_rename_index_sousuobiaoming')
-                  "
-                  class="flex-1"
-                  clearable
-                  @input="fetchCompareResult()"
-                >
-                  <template #prefix>
-                    <el-icon><i-lucide:search /></el-icon>
-                  </template>
-                </el-input>
-              </template>
+              <el-divider class="mx-3" direction="vertical" />
+              <el-input
+                v-model="tableSearchKeyword"
+                :placeholder="
+                  t('packages_form_table_rename_index_sousuobiaoming')
+                "
+                class="flex-1"
+                clearable
+                @input="fetchCompareResult(1)"
+              >
+                <template #prefix>
+                  <el-icon><i-lucide:search /></el-icon>
+                </template>
+              </el-input>
             </div>
             <div class="flex flex-column gap-1 p-2 overflow-y-auto">
               <div
@@ -523,7 +710,7 @@ onBeforeUnmount(() => {
                       >({{ item.fields.length }})</span
                     >
                   </div>
-                  <div class="flex gap-1 flex-wrap mt-1">
+                  <div class="flex gap-1 flex-wrap mt-1 table-item-tags">
                     <template v-for="(v, key) in typeMap" :key="key">
                       <el-tag
                         v-if="item[v.numKey] > 0"
@@ -599,143 +786,203 @@ onBeforeUnmount(() => {
                   <el-icon><i-lucide:search /></el-icon>
                 </template>
               </el-input>
-              <div class="flex-1" />
-              <el-tooltip
-                :content="t('packages_dag_compare_result_apply_table')"
-                placement="top"
-              >
-                <el-button
-                  :disabled="isLoading"
-                  circle
-                  class="rounded-lg"
-                  @click="handleApplyTable"
-                >
-                  <template #icon>
-                    <el-icon><i-lucide:check-check /></el-icon>
-                  </template>
-                  <!-- {{ t('packages_dag_compare_result_apply_table') }} -->
-                </el-button>
-              </el-tooltip>
-
-              <el-tooltip
-                :content="t('packages_dag_compare_result_undo_table')"
-                placement="top"
-              >
-                <el-button
-                  :disabled="isLoading"
-                  circle
-                  class="rounded-lg"
-                  @click="handleUndoTable"
-                >
-                  <template #icon>
-                    <el-icon><i-lucide:undo /></el-icon>
-                  </template>
-                  <!-- {{ t('packages_dag_compare_result_undo_table') }} -->
-                </el-button>
-              </el-tooltip>
             </div>
-            <div
-              v-if="selectedTable"
-              class="flex flex-column gap-3 p-3 pt-0 overflow-y-auto"
-            >
+            <div v-if="selectedTable" class="p-3 pt-0 min-h-0">
               <div
-                v-if="searchKeyword.trim() && filteredFields.length === 0"
-                class="text-center py-8 text-placeholder"
+                class="bg-white rounded-xl p-2 shadow-sm field-list h-100 overflow-y-auto"
               >
-                <el-icon size="48" class="mb-2"><i-lucide:search-x /></el-icon>
-                <div>{{ t('packages_dag_compare_result_no_match_field') }}</div>
-              </div>
+                <div
+                  class="flex rounded-lg mb-2 field-list-header lh-5 fw-sub text-caption position-sticky top-0 z-10"
+                >
+                  <div class="px-2 py-1 flex-1 flex align-center">
+                    {{ t('packages_dag_compare_result_display_field') }}
+                    <div class="flex-1" />
+                    <el-tooltip
+                      :content="t('packages_dag_compare_result_apply_table')"
+                      placement="top"
+                    >
+                      <el-button
+                        type="primary"
+                        :disabled="isLoading || !filteredFields.length"
+                        text
+                        @click="handleApplyTable"
+                      >
+                        <template #icon>
+                          <el-icon><i-lucide:check-check /></el-icon>
+                        </template>
+                      </el-button>
+                    </el-tooltip>
 
-              <div
-                v-for="field in filteredFields"
-                :key="field.fieldName"
-                class="flex align-center gap-2 bg-white rounded-xl px-2 py-1 border border-gray-200 field-item"
-                :class="{
-                  'field-item-danger': field.type === 'CannotWrite',
-                }"
-              >
-                <VIcon style="color: var(--icon-n2)">{{ field.icon }}</VIcon>
-                <div>{{ field.fieldName }}</div>
-                <VIcon v-if="field.isPrimaryKey" size="12" class="text-warning">
-                  key
-                </VIcon>
-                <el-tag v-if="!field.isNullable" size="small" class="is-code">{{
-                  $t('packages_dag_meta_table_not_null')
-                }}</el-tag>
-                <div
-                  v-if="field.type !== 'Different'"
-                  class="fs-8 font-mono border rounded-lg px-1.5 lh-5"
-                >
-                  {{ field.fieldType }}
+                    <el-tooltip
+                      :content="t('packages_dag_compare_result_undo_table')"
+                      placement="top"
+                    >
+                      <el-button
+                        type="primary"
+                        text
+                        :disabled="isLoading || !filteredFields.length"
+                        @click="handleUndoTable"
+                      >
+                        <template #icon>
+                          <el-icon><i-lucide:undo /></el-icon>
+                        </template>
+                      </el-button>
+                    </el-tooltip>
+                  </div>
+                  <div class="p-2 flex-1">
+                    {{ t('packages_dag_compare_result_database_field') }}
+                  </div>
                 </div>
-                <template v-else>
-                  <div
-                    class="fs-8 font-mono border rounded-lg px-1.5 lh-5 text-decoration-line-through text-caption"
-                  >
-                    {{ field.fieldType }}
-                  </div>
-                  <el-icon size="12"><i-mingcute:arrow-right-line /></el-icon>
-                  <div class="fs-8 font-mono border rounded-lg px-1.5 lh-5">
-                    {{ field.targetFieldType }}
-                  </div>
-                </template>
-                <el-tag
-                  :type="
-                    typeMap[field.type as keyof typeof typeMap].type as any
-                  "
-                  size="small"
-                  class="px-1"
-                  >{{
-                    typeMap[field.type as keyof typeof typeMap].text
-                  }}</el-tag
-                >
-                <div class="flex-1" />
-                <template v-if="!field.applyType">
-                  <el-button
-                    :type="
-                      field.type === 'Missing' || field.type === 'CannotWrite'
-                        ? 'danger'
-                        : 'primary'
-                    "
-                    text
-                    class="field-item-btn"
-                    :disabled="isLoading"
-                    @click="handleApply(field)"
-                    >{{
-                      typeMap[field.type as keyof typeof typeMap].btnText
-                    }}</el-button
-                  >
-                </template>
                 <div
-                  v-else-if="field.applyType === 'auto'"
-                  class="flex align-center gap-1 color-success fs-8"
+                  v-for="field in filteredFields"
+                  :key="field.fieldName"
+                  class="flex align-center bg-white rounded-lg lh-5 field-item"
+                  :class="{
+                    'field-item-danger': field.type === 'CannotWrite',
+                  }"
                 >
-                  <el-icon><i-mingcute:check-line /></el-icon>
-                  {{
-                    t(typeMap[field.type].doneText, {
-                      type: t('public_automatically'),
-                    })
-                  }}
-                </div>
-                <template v-else-if="field.applyType === 'manual'">
-                  <div class="flex align-center gap-1 color-success fs-8">
-                    <el-icon><i-mingcute:check-line /></el-icon>
-                    {{
-                      t(typeMap[field.type].doneText, {
-                        type: t('public_manually'),
-                      })
-                    }}
+                  <div class="p-2 flex align-center flex-1 min-w-0">
+                    <el-tag
+                      v-if="!field.sourceFieldType"
+                      type="info"
+                      size="small"
+                      class="px-1"
+                      >{{ $t('packages_dag_compare_missing_source') }}</el-tag
+                    >
+                    <div v-else class="flex flex-column gap-1">
+                      <span
+                        :class="{
+                          'text-decoration-line-through text-caption':
+                            field.applyType &&
+                            (field.type === 'Missing' ||
+                              field.type === 'CannotWrite'),
+                        }"
+                        >{{ field.fieldName }}</span
+                      >
+                      <div class="flex align-center">
+                        <el-tag disable-transitions size="small" class="is-code"
+                          ><span
+                            class="font-mono"
+                            :class="{
+                              'text-decoration-line-through text-caption':
+                                field.applyType,
+                            }"
+                            v-html="field.sourceFieldTypeDisplay"
+                        /></el-tag>
+                        <div
+                          v-if="field.applyType === 'auto'"
+                          class="flex align-center gap-1 color-success fs-8 ml-1"
+                        >
+                          <el-icon><i-mingcute:check-line /></el-icon>
+                          {{
+                            t(
+                              typeMap[
+                                field.type === 'Precision'
+                                  ? 'Different'
+                                  : field.type
+                              ].doneText,
+                              {
+                                type: t('public_automatically'),
+                              },
+                            )
+                          }}
+                        </div>
+                        <div
+                          v-else-if="field.applyType === 'manual'"
+                          class="flex align-center gap-1 color-success fs-8 ml-1"
+                        >
+                          <el-icon><i-mingcute:check-line /></el-icon>
+                          {{
+                            t(
+                              typeMap[
+                                field.type === 'Precision'
+                                  ? 'Different'
+                                  : field.type
+                              ].doneText,
+                              {
+                                type: t('public_manually'),
+                              },
+                            )
+                          }}
+                        </div>
+                      </div>
+                    </div>
+                    <template v-if="!field.applyType">
+                      <el-button
+                        v-if="
+                          field.type === 'Different' ||
+                          field.type === 'Precision'
+                        "
+                        class="field-item-btn ml-auto"
+                        type="primary"
+                        text
+                        size="small"
+                        :disabled="isLoading"
+                        @click="handleApply(field)"
+                      >
+                        <template #icon>
+                          <el-icon><i-lucide:chevrons-left /></el-icon>
+                        </template>
+                      </el-button>
+                      <el-button
+                        v-else-if="
+                          field.type === 'CannotWrite' ||
+                          field.type === 'Missing'
+                        "
+                        class="field-item-btn ml-auto"
+                        type="primary"
+                        text
+                        size="small"
+                        :disabled="isLoading"
+                        @click="handleApply(field)"
+                      >
+                        <template #icon>
+                          <el-icon><i-lucide:trash-2 /></el-icon>
+                        </template>
+                      </el-button>
+                    </template>
+
+                    <el-button
+                      v-else-if="field.applyType === 'manual'"
+                      class="field-item-btn ml-auto"
+                      type="primary"
+                      text
+                      size="small"
+                      :disabled="isLoading"
+                      @click="handleUndo(field)"
+                    >
+                      <template #icon>
+                        <el-icon><i-lucide:undo /></el-icon>
+                      </template>
+                    </el-button>
                   </div>
-                  <el-button
-                    class="field-item-btn"
-                    type="primary"
-                    text
-                    :disabled="isLoading"
-                    @click="handleUndo(field)"
-                  >
-                    {{ $t('public_button_revoke') }}
-                  </el-button>
-                </template>
+                  <div class="p-2 flex align-center flex-1 min-w-0">
+                    <el-tag
+                      v-if="!field.targetFieldType"
+                      type="danger"
+                      size="small"
+                      class="px-1"
+                      >{{ $t('packages_dag_compare_missing') }}</el-tag
+                    >
+                    <div v-else>
+                      <div class="mb-1 flex align-center gap-1">
+                        <span>{{ field.fieldName }}</span>
+                        <el-tag
+                          v-if="field.type === 'CannotWrite'"
+                          type="danger"
+                          size="small"
+                          class="px-1"
+                          >{{ $t('packages_dag_compare_cannot_write') }}</el-tag
+                        >
+                      </div>
+                      <el-tag disable-transitions size="small" class="is-code"
+                        ><span class="font-mono">{{
+                          field.targetFieldType
+                        }}</span></el-tag
+                      >
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -755,9 +1002,14 @@ onBeforeUnmount(() => {
       }
     }
   }
+
+  .table-item-tags:empty {
+    display: none !important;
+  }
 }
 
 .field-item {
+  // height: 36px;
   &:hover {
     background-color: var(--el-fill-color-light) !important;
     .field-item-btn {
@@ -775,6 +1027,11 @@ onBeforeUnmount(() => {
   border-color: var(--el-color-danger-light-8) !important;
 }
 
+.field-item-success {
+  background-color: var(--el-color-success-light-9) !important;
+  border-color: var(--el-color-success-light-8) !important;
+}
+
 .compare-result-dialog {
   max-height: 80vh;
 }
@@ -785,5 +1042,13 @@ onBeforeUnmount(() => {
   :deep(.el-pagination__classifier) {
     display: none;
   }
+}
+
+.field-list-header {
+  background-color: #f4f4f5;
+  box-shadow:
+    rgba(0, 0, 0, 0.02) 0px 0px 5px 0px,
+    rgba(0, 0, 0, 0.06) 0px 2px 10px 0px,
+    rgba(0, 0, 0, 0.3) 0px 0px 1px 0px;
 }
 </style>

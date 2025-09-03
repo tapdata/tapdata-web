@@ -345,3 +345,23 @@ export function deleteInvalidCompareApply(nodeId: string) {
     `${BASE_URL}/deleteMetadataInstancesCompareApply?all=true&invalid=true&nodeId=${nodeId}`,
   )
 }
+
+export interface CompareResultStatistics {
+  finishTime: string
+  targetSchemaLoadTime: string
+  differentFieldNumberMap: {
+    CannotWrite: 0
+    Missing: 0
+    CannotWriteApply: 0
+    MissingApply: 0
+    DifferentApply: 0
+    Different: 0
+  }
+}
+
+export function getCompareResultStatistics(params: any) {
+  return requestClient.get<CompareResultStatistics>(
+    `${BASE_URL}/compareAndGetMetadataInstancesCompareResult`,
+    { params },
+  )
+}

@@ -21,6 +21,7 @@ const CompareSchema = defineComponent({
     const taskId = store.state.dataflow.taskId
     const dialogOpen = ref(false)
     const compareResultStatistics = ref<CompareResultStatistics | null>(null)
+    const singleTable = form.values.type === 'table'
 
     const applyCompareRule = form.values.applyCompareRule
     const applyCompareRules = applyCompareRule
@@ -196,7 +197,7 @@ const CompareSchema = defineComponent({
                   class="ml-auto"
                   onClick={openCompareResult}
                 >
-                  查看
+                  {t('public_button_check')}
                 </el-button>
               </div>
             ),
@@ -304,9 +305,11 @@ const CompareSchema = defineComponent({
             <CompareResultDialog
               v-model={dialogOpen.value}
               nodeId={nodeId}
+              singleTable={singleTable}
               rules={applyCompareRules}
               onLoadSchema={handleLoadSchema}
               onChangeRules={handleChangeRules}
+              onClose={fetchCompareResultStatistics}
             />
           </div>
         )

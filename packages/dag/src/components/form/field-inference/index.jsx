@@ -70,7 +70,7 @@ export const fieldInference = connect(
 
             <div class="flex-1"></div>
 
-            {showCompareResult.value && (
+            {/* {showCompareResult.value && (
               <ElButton
                 type="primary"
                 text
@@ -80,7 +80,7 @@ export const fieldInference = connect(
               >
                 {i18n.t('packages_dag_view_compare_result')}
               </ElButton>
-            )}
+            )} */}
 
             <ElButton
               class="ml-auto"

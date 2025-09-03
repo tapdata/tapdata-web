@@ -1,11 +1,15 @@
 import { observer } from '@formily/reactive-vue'
 import { connect, mapProps } from '@formily/vue'
 import { taskApi } from '@tap/api'
-import { FormItem, computed as reactiveComputed, useForm } from '@tap/form'
+import {
+  FormItem,
+  computed as reactiveComputed,
+  useField,
+  useForm,
+} from '@tap/form'
 import i18n from '@tap/i18n'
 import { computed, defineComponent, nextTick, ref } from 'vue'
 import { useStore } from 'vuex'
-import CompareResultDialog from '../field-inference/CompareResultDialog.vue'
 
 export const SchemaFormItem = connect(
   observer(
@@ -19,17 +23,10 @@ export const SchemaFormItem = connect(
         const { taskId, activeNodeId } = store.state?.dataflow || {}
         const formRef = useForm()
         const form = formRef.value
+        const field = useField()
         const loading = ref(false)
         const isLoading = computed(() => {
           return loading.value || store.state?.dataflow?.transformLoading
-        })
-
-        const showCompareResult = reactiveComputed(() => {
-          return (
-            form.values.$inputs.length > 0 &&
-            form.values.existDataProcessMode !== 'dropTable' &&
-            !form.values.attrs.connectionTags?.includes('schema-free')
-          )
         })
 
         const loadSchema = async () => {
@@ -52,15 +49,9 @@ export const SchemaFormItem = connect(
           )
         })
 
-        const dialogOpen = ref(false)
-
-        const openCompareResult = () => {
-          dialogOpen.value = true
-        }
-
         const renderLabel = () => (
           <div class="inline-flex align-center">
-            <span class="mr-2">{attrs.title}</span>
+            <span class="mr-2">{field.value.title}</span>
             {showBtn.value && (
               <>
                 <el-button
@@ -72,16 +63,6 @@ export const SchemaFormItem = connect(
                 >
                   {i18n.t('public_button_reload')}
                 </el-button>
-                {showCompareResult.value && (
-                  <ElButton
-                    type="primary"
-                    text
-                    tag="a"
-                    onClick={openCompareResult}
-                  >
-                    {i18n.t('packages_dag_view_compare_result')}
-                  </ElButton>
-                )}
               </>
             )}
           </div>
@@ -91,12 +72,6 @@ export const SchemaFormItem = connect(
           return (
             <FormItem.BaseItem label={renderLabel()} attrs={attrs}>
               {slots.default?.()}
-              <CompareResultDialog
-                v-model={dialogOpen.value}
-                nodeId={activeNodeId}
-                onLoadSchema={loadSchema}
-                single-table
-              />
             </FormItem.BaseItem>
           )
         }

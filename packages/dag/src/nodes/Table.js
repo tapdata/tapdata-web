@@ -137,6 +137,20 @@ export class Table extends NodeType {
                 },
               },
 
+              compareSchema: {
+                type: 'void',
+                'x-component': 'CompareSchema',
+                'x-reactions': {
+                  dependencies: ['.existDataProcessMode'],
+                  fulfill: {
+                    state: {
+                      visible:
+                        '{{$deps[0] !== "dropTable" && (!$values.attrs.connectionTags || !$values.attrs.connectionTags.includes("schema-free"))}}',
+                    },
+                  },
+                },
+              },
+
               tableNameSpace: {
                 type: 'void',
                 'x-component': 'Space',
@@ -163,7 +177,6 @@ export class Table extends NodeType {
                       asterisk: true,
                       feedbackLayout: 'none',
                       connectionId: '{{$values.connectionId}}',
-                      title: i18n.t('packages_dag_dag_table'),
                       target: 'tableName',
                       class: 'flex-1',
                     },
@@ -1747,13 +1760,6 @@ export class Table extends NodeType {
                     'x-component-props': {
                       title: i18n.t('packages_dag_nodes_database_ddLshijian'),
                       tooltip: i18n.t('packages_dag_ddl_events_collapse_tip'),
-                    },
-                    'x-reactions': {
-                      fulfill: {
-                        state: {
-                          display: `{{findParentNodes($values.id).filter(parent => (parent.type === 'database' || parent.type === 'table') && parent.ddlConfiguration === 'SYNCHRONIZATION' ).length > 0 ? "visible":"hidden"}}`,
-                        },
-                      },
                     },
                     'x-reactions': {
                       fulfill: {

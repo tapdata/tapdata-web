@@ -89,6 +89,7 @@ declare module 'vue' {
     'ILucide:alertCircle': typeof import('~icons/lucide/alert-circle')['default']
     'ILucide:calendar': typeof import('~icons/lucide/calendar')['default']
     'ILucide:checkCheck': typeof import('~icons/lucide/check-check')['default']
+    'ILucide:chevronsLeft': typeof import('~icons/lucide/chevrons-left')['default']
     'ILucide:clock': typeof import('~icons/lucide/clock')['default']
     'ILucide:cloudUpload': typeof import('~icons/lucide/cloud-upload')['default']
     'ILucide:filePen': typeof import('~icons/lucide/file-pen')['default']
