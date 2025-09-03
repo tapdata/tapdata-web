@@ -960,7 +960,7 @@ export default {
   packages_dag_compare_different: '类型差异',
   packages_dag_compare_missing: '字段缺失',
   packages_dag_compare_missing_source: '字段未定义',
-  packages_dag_compare_precision: '精度差异',
+  packages_dag_compare_precision: '类型差异(一般)',
   packages_dag_compare_cannot_write: '字段只读',
   packages_dag_compare_done_modify: '已{type}修改',
   packages_dag_compare_done_add: '已{type}添加',

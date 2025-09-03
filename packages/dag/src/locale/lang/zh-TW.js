@@ -945,7 +945,7 @@ export default {
   packages_dag_compare_different: '類型差異',
   packages_dag_compare_missing: '字段缺失',
   packages_dag_compare_missing_source: '字段未定義',
-  packages_dag_compare_precision: '精度差異',
+  packages_dag_compare_precision: '類型差異(一般)',
   packages_dag_compare_cannot_write: '字段只讀',
   packages_dag_compare_done_modify: '已{type}修改',
   packages_dag_compare_done_add: '已{type}添加',

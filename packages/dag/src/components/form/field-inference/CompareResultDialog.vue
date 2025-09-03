@@ -194,7 +194,7 @@ const {
       const fields: TableItem['fields'] = []
 
       item.differenceFieldList.forEach((field) => {
-        totalMap[field.type as keyof typeof totalMap]++
+        if (!field.applyType) totalMap[field.type as keyof typeof totalMap]++
 
         let fieldType
         let isPrimaryKey

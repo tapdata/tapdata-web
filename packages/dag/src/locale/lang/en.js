@@ -1108,7 +1108,7 @@ export default {
   packages_dag_compare_different: 'Type Different',
   packages_dag_compare_missing: 'Missing',
   packages_dag_compare_missing_source: 'Not Defined',
-  packages_dag_compare_precision: 'Precision Different',
+  packages_dag_compare_precision: 'Type Different (General)',
   packages_dag_compare_cannot_write: 'Read-Only',
   packages_dag_compare_done_modify: '{type} Modified',
   packages_dag_compare_done_add: '{type} Added',
