@@ -59,7 +59,7 @@ export const HighlightCode = defineComponent({
         >
           {props.copy && (
             <ElTooltip
-              ref="tooltipRef"
+              ref={tooltipRef}
               transition="tooltip-fade-in"
               placement="top"
               content={contentRef.value}

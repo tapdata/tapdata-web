@@ -1,75 +1,13 @@
-<template>
-  <Designer class="node-design">
-    <StudioPanel>
-      <CompositePanel>
-        <CompositePanel.Item title="panels.Component" icon="Component">
-          <ResourceWidget title="sources.Inputs" :sources="sources"></ResourceWidget>
-          <ResourceWidget title="sources.Business" :sources="businessSources"></ResourceWidget>
-        </CompositePanel.Item>
-      </CompositePanel>
-      <Workspace id="form">
-        <WorkspacePanel>
-          <ViewportPanel :style="{ height: '100%' }">
-            <ViewPanel type="DESIGNABLE">
-              <ComponentTreeWidget :components="components"></ComponentTreeWidget>
-            </ViewPanel>
-            <ViewPanel type="JSONTREE" :scrollable="false">
-              <template #default="{ tree, onChange }">
-                <SchemaEditorWidget :tree="tree" :onChange="onChange" />
-              </template>
-            </ViewPanel>
-            <ViewPanel type="CODE" :scrollable="false">
-              <template #default="{ customNode, tree, onChange }">
-                <CodeEditorWidget :customNode="customNode" :tree="tree" :onChange="onChange" />
-              </template>
-            </ViewPanel>
-            <ViewPanel type="PREVIEW" :scrollable="false">
-              <template #default="{ tree, onChange }">
-                <PreviewWidget :tree="tree" :onChange="onChange" />
-              </template>
-            </ViewPanel>
-          </ViewportPanel>
-        </WorkspacePanel>
-      </Workspace>
-      <SettingsPanel title="panels.PropertySettings">
-        <SettingsForm :components="settingsFormComponents"></SettingsForm>
-      </SettingsPanel>
-    </StudioPanel>
-  </Designer>
-</template>
-
 <script>
-import {
-  Designer,
-  StudioPanel,
-  Workspace,
-  SettingsPanel,
-  ComponentTreeWidget,
-  ResourceWidget,
-  SchemaEditorWidget,
-  CodeEditorWidget,
-  PreviewWidget,
-  WorkspacePanel,
-  ViewportPanel,
-  ViewPanel,
-  CompositePanel,
-} from './components'
-import { GlobalRegistry } from './core'
-import * as icons from './icons'
-import './theme.scss'
-import './locales'
-import { Input, Field, Select, Form, FormLayout, InputNumber, Checkbox, Radio, FieldSelect } from './sources'
 import { Slider } from '@tap/form'
+import { markRaw } from 'vue'
 import {
-  SettingsForm,
-  SizeInput,
-  // ColorInput,
-  // ImageInput,
-  // BackgroundImageInput,
-  // PositionInput,
-  // CornerInput,
-  // MonacoInput,
-  ValueInput,
+  CodeEditorWidget,
+  // DrawerSetter,
+  CollapseItem,
+  ComponentTreeWidget,
+  CompositePanel,
+  Designer,
   // BoxStyleSetter,
   // BorderStyleSetter,
   // BorderRadiusStyleSetter,
@@ -78,10 +16,40 @@ import {
   // FontStyleSetter,
   DisplayStyleSetter,
   FlexStyleSetter,
-  // DrawerSetter,
-  CollapseItem,
+  PreviewWidget,
+  ResourceWidget,
+  SchemaEditorWidget,
+  SettingsForm,
+  SettingsPanel,
+  SizeInput,
+  StudioPanel,
+  // ColorInput,
+  // ImageInput,
+  // BackgroundImageInput,
+  // PositionInput,
+  // CornerInput,
+  // MonacoInput,
+  ValueInput,
+  ViewPanel,
+  ViewportPanel,
+  Workspace,
+  WorkspacePanel,
 } from './components'
-import { markRaw } from 'vue'
+import { GlobalRegistry } from './core'
+import * as icons from './icons'
+import {
+  Checkbox,
+  Field,
+  FieldSelect,
+  Form,
+  FormLayout,
+  Input,
+  InputNumber,
+  Radio,
+  Select,
+} from './sources'
+import './locales'
+import './theme.scss'
 
 GlobalRegistry.registerDesignerIcons(icons)
 GlobalRegistry.registerDesignerLocales({
@@ -151,6 +119,50 @@ export default {
   },
 }
 </script>
+
+<template>
+  <Designer class="node-design">
+    <StudioPanel>
+      <CompositePanel>
+        <CompositePanel.Item title="panels.Component" icon="Component">
+          <ResourceWidget title="sources.Inputs" :sources="sources" />
+          <ResourceWidget title="sources.Business" :sources="businessSources" />
+        </CompositePanel.Item>
+      </CompositePanel>
+      <Workspace id="form">
+        <WorkspacePanel>
+          <ViewportPanel :style="{ height: '100%' }">
+            <ViewPanel type="DESIGNABLE">
+              <ComponentTreeWidget :components="components" />
+            </ViewPanel>
+            <ViewPanel type="JSONTREE" :scrollable="false">
+              <template #default="{ tree, onChange }">
+                <SchemaEditorWidget :tree="tree" :on-change="onChange" />
+              </template>
+            </ViewPanel>
+            <ViewPanel type="CODE" :scrollable="false">
+              <template #default="{ customNode, tree, onChange }">
+                <CodeEditorWidget
+                  :custom-node="customNode"
+                  :tree="tree"
+                  :on-change="onChange"
+                />
+              </template>
+            </ViewPanel>
+            <ViewPanel type="PREVIEW" :scrollable="false">
+              <template #default="{ tree, onChange }">
+                <PreviewWidget :tree="tree" :on-change="onChange" />
+              </template>
+            </ViewPanel>
+          </ViewportPanel>
+        </WorkspacePanel>
+      </Workspace>
+      <SettingsPanel title="panels.PropertySettings">
+        <SettingsForm :components="settingsFormComponents" />
+      </SettingsPanel>
+    </StudioPanel>
+  </Designer>
+</template>
 
 <style lang="scss" scoped>
 .main-panel-container {

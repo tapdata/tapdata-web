@@ -17,7 +17,7 @@ export * from './locales'
 export * from './number'
 export * from './shared-cache'
 export * from './time'
-
+export * from './globalThisPolyfill'
 export * from './directives'
 
 export * from './countUp'

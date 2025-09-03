@@ -20,6 +20,7 @@
     "dayjs": "catalog:",
     "juice": "catalog:",
     "lodash": "catalog:",
+    "monaco-editor": "^0.52.2",
     "qs": "catalog:",
     "tiny-emitter": "catalog:",
     "vue": "catalog:",

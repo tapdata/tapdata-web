@@ -3,9 +3,11 @@ import { fetchApiCall } from '@tap/api'
 import { calcUnit } from '@tap/shared'
 import dayjs from 'dayjs'
 import { formatMs } from '@/utils/util'
+import Highlight from "@tap/component/src/base/Highlight.jsx";
 
 export default {
   name: 'ApiAudit',
+  components: {Highlight},
   data() {
     return {
       auditData: null,
@@ -45,6 +47,18 @@ export default {
             this.auditData.createAt = data.createAt
               ? dayjs(data.createAt).format('YYYY-MM-DD HH:mm:ss')
               : '-'
+            const jsonData = this.auditData.body ? this.auditData.body : (this.auditData.query ? this.auditData.query : this.auditData.reqParams)
+            this.auditData.jsonParam = {
+              "validation": false,
+              "json": jsonData,
+              "fullCustomQuery": true
+            }
+            try {
+              this.auditData.jsonParam.json = jsonData;
+              this.auditData.jsonParam.validation = true
+            } catch (e) {
+              console.log(`parseJsonData error: ${e}`)
+            }
 
             this.list.forEach((item) => {
               for (const el of Object.keys(data)) {
@@ -78,6 +92,26 @@ export default {
     calcUnit(...args) {
       return calcUnit(...args)
     },
+    handleFormat() {
+      this.handleJsonTransformation(2);
+    },
+    handleCompress() {
+      this.handleJsonTransformation(null);
+    },
+    handleJsonTransformation(indent) {
+      try {
+        const jsonString = this.auditData?.jsonParam?.json;
+        if (!jsonString) return;
+        const isCurrentlyFormatted = this.auditData.jsonParam.fullCustomQuery === false;
+        const isTargetFormat = indent !== null;
+        if (isTargetFormat === isCurrentlyFormatted) return;
+        const parsedJson = JSON.parse(jsonString);
+        this.auditData.jsonParam.json = JSON.stringify(parsedJson, null, indent);
+        this.auditData.jsonParam.fullCustomQuery = !isTargetFormat;
+      } catch (error) {
+        console.error('JSON处理失败:', error);
+      }
+    }
   },
 }
 </script>
@@ -92,7 +126,7 @@ export default {
         <ElCol class="font-color-normal pb-4" :span="12">
           <span class="font-text"> API ID:</span>
           <span class="fw-sub">{{
-            auditData.id ? auditData.id : '-'
+            auditData.apiId ? auditData.apiId : '-'
           }}</span></ElCol
         >
         <ElCol class="font-color-normal pb-4" :span="12"
@@ -142,12 +176,34 @@ export default {
       </ul>
     </div>
 
-    <div class="details-box flex-1 bg-white p-6 mt-6 rounded-2">
-      <div class="title fs-7 fw-sub font-color-dark">
+    <div class="details-box flex-1 bg-white mt-6 rounded-2">
+      <div class="title fs-7 fw-sub font-color-dark jc-between">
         {{ $t('apiaudit_parameter') }}
+        <el-button
+            v-if="auditData && auditData.jsonParam && auditData.jsonParam.fullCustomQuery"
+            text
+            @click="handleFormat"
+        >
+          <el-icon class="mr-1"><i-mingcute:brush-line /></el-icon>
+          {{ $t('public_format') }}
+        </el-button>
+        <el-button
+            v-else
+            text
+            @click="handleCompress"
+        >
+          <el-icon class="mr-1"><i-mingcute:download2Line /></el-icon>
+          {{ $t('public_format_compress') }}
+        </el-button>
       </div>
       <div v-if="auditData" class="pt-4 editor-box">
-        <pre class="editor-pre">{{ auditData.reqParams }}</pre>
+        <Highlight
+            v-if="auditData.jsonParam && auditData.jsonParam.validation"
+            class="custom-where-pre where-pre"
+            :code="auditData.jsonParam.json"
+            language="json"
+        />
+        <pre v-else class="editor-pre">{{ !auditData.jsonParam || !auditData.jsonParam.json ? '' : auditData.jsonParam.json }}</pre>
       </div>
     </div>
   </section>
@@ -173,12 +229,22 @@ export default {
     width: 80px;
   }
   .editor-pre {
-    height: 200px;
+    height: 250px;
     padding: 20px;
     margin: 0;
     color: var(--text-normal);
     background-color: var(--bg-disable);
     border-radius: 2px;
   }
+  .where-pre {
+    max-height: 14rem;
+    overflow: auto;
+  }
 }
+.jc-between {
+   display: flex;
+   align-items: center;
+   justify-items: center;
+   justify-content: space-between;
+ }
 </style>

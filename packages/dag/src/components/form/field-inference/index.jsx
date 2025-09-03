@@ -64,15 +64,11 @@ export const fieldInference = connect(
           </div>
         )
 
-        console.log(
-          'form.values.uniqueIndexEnable',
-          form.values.uniqueIndexEnable,
-        )
         return (
           <div>
             <FormItem.BaseItem label={label}>
               <Main
-                ref="fieldMapping"
+                ref={fieldMapping}
                 form={form}
                 attrs={attrs}
                 uniqueIndexEnable={form.values.uniqueIndexEnable}

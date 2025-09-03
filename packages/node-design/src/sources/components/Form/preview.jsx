@@ -11,7 +11,7 @@ import './styles.scss'
 export const Form = observer(
   defineComponent({
     setup: (props, { attrs, slots }) => {
-      const prefix = usePrefix('designable-form')
+      const prefixRef = usePrefix('designable-form')
       const form = computed(() =>
         createForm({
           designable: true,
@@ -19,7 +19,7 @@ export const Form = observer(
       )
 
       return () => (
-        <BaseForm {...attrs} class={prefix} form={form}>
+        <BaseForm {...attrs} class={prefixRef.value} form={form}>
           {slots.default?.()}
         </BaseForm>
       )

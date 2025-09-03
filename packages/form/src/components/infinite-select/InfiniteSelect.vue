@@ -69,7 +69,7 @@ const paramsSerializer = (params: {
 
   if (params.query) {
     filter.where = {
-      [props.itemValue || props.itemLabel]: {
+      [props.itemQuery ||props.itemValue || props.itemLabel]: {
         like: escapeRegExp(params.query),
         options: 'i',
       },

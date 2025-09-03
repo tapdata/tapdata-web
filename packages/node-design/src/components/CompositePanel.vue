@@ -1,46 +1,13 @@
-<template>
-  <div class="composite-panel flex">
-    <!--<div class="composite-panel-tabs border-end">
-          <div
-            v-for="(item, i) in tabItems"
-            :key="i"
-            class="composite-panel-tab p-3 flex justify-center align-center cursor-pointer"
-            :class="{ active: activeTab === i }"
-            tabindex="0"
-            aria-selected="true"
-            role="tab"
-            @click="handleActiveTab(i)"
-          >
-            <ElTooltip placement="right" :content="item.title" :open-delay="300">
-              <VIcon size="20">{{ item.name }}</VIcon>
-            </ElTooltip>
-          </div>
-        </div>-->
-    <div class="composite-panel-tabs-content h-100 border-end">
-      <div class="composite-panel-tabs-header px-2 flex justify-space-between align-center border-bottom">
-        <div class="composite-panel-tabs-header-title">
-          {{ tabItems[activeTab].title }}
-        </div>
-        <div class="composite-panel-tabs-header-actions"></div>
-      </div>
-      <div class="composite-panel-tabs-body">
-        <ResourceWidget title="sources.Inputs" :sources="sources"></ResourceWidget>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script>
-import { VIcon } from '@tap/component'
+import { Input, InputNumber, Select } from '../sources'
+import { ResourceWidget } from './widgets/ResourceWidget'
 import '@tap/assets/icons/svg/component.svg'
 import '@tap/assets/icons/svg/outline.svg'
 import '@tap/assets/icons/svg/history.svg'
-import { ResourceWidget } from './widgets/ResourceWidget'
-import { Input, Select, InputNumber } from '../sources'
 
 export default {
   name: 'CompositePanel',
-  components: { VIcon, ResourceWidget },
+  components: { ResourceWidget },
 
   data() {
     return {
@@ -71,9 +38,42 @@ export default {
 }
 </script>
 
+<template>
+  <div class="composite-panel flex">
+    <!--<div class="composite-panel-tabs border-end">
+          <div
+            v-for="(item, i) in tabItems"
+            :key="i"
+            class="composite-panel-tab p-3 flex justify-center align-center cursor-pointer"
+            :class="{ active: activeTab === i }"
+            tabindex="0"
+            aria-selected="true"
+            role="tab"
+            @click="handleActiveTab(i)"
+          >
+            <ElTooltip placement="right" :content="item.title" :open-delay="300">
+              <VIcon size="20">{{ item.name }}</VIcon>
+            </ElTooltip>
+          </div>
+        </div>-->
+    <div class="composite-panel-tabs-content h-100 border-end">
+      <div
+        class="composite-panel-tabs-header px-2 flex justify-space-between align-center border-bottom"
+      >
+        <div class="composite-panel-tabs-header-title">
+          {{ tabItems[activeTab].title }}
+        </div>
+        <div class="composite-panel-tabs-header-actions" />
+      </div>
+      <div class="composite-panel-tabs-body">
+        <ResourceWidget title="sources.Inputs" :sources="sources" />
+      </div>
+    </div>
+  </div>
+</template>
+
 <style lang="scss" scoped>
-.composite-panel{
-  
+.composite-panel {
   &-tabs-content {
     width: 300px;
   }

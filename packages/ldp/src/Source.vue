@@ -401,7 +401,6 @@ export default defineComponent({
     },
 
     handleDragStart(draggingNode, ev) {
-      console.log('node-drag-start', draggingNode, ev)
       this.draggingNode = draggingNode
       this.draggingNodeImage = makeDragNodeImage(
         ev.currentTarget.querySelector('.tree-item-icon'),
@@ -554,7 +553,7 @@ export default defineComponent({
       </div>
       <div
         v-if="!showParentLineage"
-        class="flex-fill min-h-0 pl-1 py-1"
+        class="flex-fill min-h-0 p-1"
         v-loading="loading || searchIng"
         ref="treeContainer"
       >
@@ -572,7 +571,7 @@ export default defineComponent({
           :default-expanded-keys="searchExpandedKeys"
           :data="filterTreeData"
           :expand-on-click-node="false"
-          :allow-drag="(node) => node.data.isObject"
+          allow-drag
           :allow-drop="() => false"
           @node-drag-start="handleDragStart"
           @node-drag-end="handleDragEnd"
@@ -630,7 +629,7 @@ export default defineComponent({
             :filter-node-method="filterNode"
             :render-after-expand="false"
             :expand-on-click-node="false"
-            :allow-drag="(node) => node.data.isObject"
+            allow-drag
             :allow-drop="() => false"
             @node-expand="handleNodeExpand"
             @node-collapse="handeNodeCollapse"

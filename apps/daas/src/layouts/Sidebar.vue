@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from '@tap/i18n'
-import { computed, inject, onMounted, ref, watch, type Ref } from 'vue'
+import { computed, inject, onMounted, ref, type Ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { MENU as menuSetting } from '@/router/menu'
@@ -146,7 +146,12 @@ onMounted(() => {
         @select="menuHandler"
       >
         <template v-for="menu in menusGroup.top" :key="menu.name">
-          <ElSubMenu v-if="menu.children && !menu.hidden" :index="menu.name">
+          <ElSubMenu
+            v-if="menu.children && !menu.hidden"
+            :index="menu.name"
+            expand-open-icon="i"
+            expand-close-icon="i"
+          >
             <template #title>
               <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
               <span class="ml-4 title">{{ menu.label }}</span>
@@ -176,7 +181,12 @@ onMounted(() => {
         </template>
         <div class="flex-grow-1 border-bottom" />
         <template v-for="menu in menusGroup.bottom" :key="menu.name">
-          <ElSubMenu v-if="menu.children && !menu.hidden" :index="menu.name">
+          <ElSubMenu
+            v-if="menu.children && !menu.hidden"
+            :index="menu.name"
+            expand-open-icon="i"
+            expand-close-icon="i"
+          >
             <template #title>
               <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
               <span class="ml-4 title">{{ menu.label }}</span>

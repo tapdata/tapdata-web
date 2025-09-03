@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  batchUpdateConnectionTags,
   checkConnectionTask,
   copyConnection,
   deleteConnection,
@@ -94,6 +95,7 @@ const filterItems = ref([])
 const dialogDatabaseTypeVisible = ref(false)
 const multipleSelection = ref([])
 const order = ref('last_updated DESC')
+const spacer = h(ElDivider, { direction: 'vertical', class: 'mx-1' })
 
 const databaseStatusOptions = [
   {
@@ -797,6 +799,14 @@ onUnmounted(() => {
                 {{ row.name }}
               </ElLink>
             </div>
+            <el-tag
+              v-if="row.isInit"
+              type="info"
+              size="small"
+              disable-transitions
+              class="is-code fw-sub border-0 px-1 zoom-xs"
+              ><span class="text-caption">{{ $t('public_system') }}</span>
+            </el-tag>
             <div
               v-if="row.listtags"
               class="justify-content-start ellipsis flex flex-wrap align-center gap-1"
@@ -901,86 +911,79 @@ onUnmounted(() => {
           </div>
         </template>
         <template #default="scope">
-          <ElButton
-            data-testid="test-connection"
-            text
-            type="primary"
-            @click="testConnection(scope.row)"
-            >{{ $t('public_connection_button_test') }}
-          </ElButton>
-          <ElDivider class="mx-1" direction="vertical" />
-          <ElTooltip
-            :disabled="!isFileSource(scope.row)"
-            :content="$t('packages_business_connections_list_wenjianleixingde')"
-            placement="top"
-          >
-            <span>
-              <ElButton
-                text
-                type="primary"
-                data-testid="load-schema"
-                :disabled="
-                  isFileSource(scope.row) || scope.row.disabledLoadSchema
-                "
-                @click="handleLoadSchema(scope.row)"
-                >{{ $t('public_connection_button_load_schema') }}
-              </ElButton>
-            </span>
-          </ElTooltip>
-          <ElDivider class="mx-1" direction="vertical" />
-          <ElButton
-            v-if="havePermission(scope.row.permissionActions, 'Edit')"
-            v-readonlybtn="'datasource_edition'"
-            text
-            type="primary"
-            data-testid="edit-connection"
-            :disabled="
-              $disabledByPermission(
-                'datasource_edition_all_data',
-                scope.row.user_id,
-              ) || scope.row.agentType === 'Cloud'
-            "
-            @click="edit(scope.row.id, scope.row)"
-            >{{ $t('public_button_edit') }}
-          </ElButton>
-          <ElDivider
-            v-if="havePermission(scope.row.permissionActions, 'Edit')"
-            v-readonlybtn="'datasource_edition'"
-            class="mx-1"
-            direction="vertical"
-          />
-          <ElButton
-            v-if="buttonShowMap.copy"
-            v-readonlybtn="'datasource_creation'"
-            text
-            type="primary"
-            data-testid="copy-connection"
-            :loading="scope.row.copyLoading"
-            :disabled="scope.row.agentType === 'Cloud'"
-            @click="copy(scope.row)"
-            >{{ $t('public_button_copy') }}
-          </ElButton>
-          <ElDivider
-            v-if="buttonShowMap.copy"
-            v-readonlybtn="'datasource_creation'"
-            class="mx-1"
-            direction="vertical"
-          />
-          <ElButton
-            v-if="havePermission(scope.row.permissionActions, 'Delete')"
-            v-readonlybtn="'datasource_delete'"
-            text
-            type="primary"
-            data-testid="delete-connection"
-            :disabled="
-              $disabledByPermission(
-                'datasource_delete_all_data',
-                scope.row.user_id,
-              ) || scope.row.agentType === 'Cloud'
-            "
-            @click="remove(scope.row)"
-            >{{ $t('public_button_delete') }}
-          </ElButton>
+          <el-space :spacer="spacer" :size="0">
+            <ElButton
+              data-testid="test-connection"
+              text
+              type="primary"
+              @click="testConnection(scope.row)"
+              >{{ $t('public_connection_button_test') }}
+            </ElButton>
+            <ElTooltip
+              :disabled="!isFileSource(scope.row)"
+              :content="
+                $t('packages_business_connections_list_wenjianleixingde')
+              "
+              placement="top"
+            >
+              <span>
+                <ElButton
+                  text
+                  type="primary"
+                  data-testid="load-schema"
+                  :disabled="
+                    isFileSource(scope.row) || scope.row.disabledLoadSchema
+                  "
+                  @click="handleLoadSchema(scope.row)"
+                  >{{ $t('public_connection_button_load_schema') }}
+                </ElButton>
+              </span>
+            </ElTooltip>
+            <ElButton
+              v-if="havePermission(scope.row.permissionActions, 'Edit')"
+              v-readonlybtn="'datasource_edition'"
+              text
+              type="primary"
+              data-testid="edit-connection"
+              :disabled="
+                $disabledByPermission(
+                  'datasource_edition_all_data',
+                  scope.row.user_id,
+                ) || scope.row.agentType === 'Cloud'
+              "
+              @click="edit(scope.row.id, scope.row)"
+              >{{ $t('public_button_edit') }}
+            </ElButton>
+            <ElButton
+              v-if="buttonShowMap.copy"
+              v-readonlybtn="'datasource_creation'"
+              text
+              type="primary"
+              data-testid="copy-connection"
+              :loading="scope.row.copyLoading"
+              :disabled="scope.row.agentType === 'Cloud'"
+              @click="copy(scope.row)"
+              >{{ $t('public_button_copy') }}
+            </ElButton>
+            <ElButton
+              v-if="
+                havePermission(scope.row.permissionActions, 'Delete') &&
+                !scope.row.isInit
+              "
+              v-readonlybtn="'datasource_delete'"
+              text
+              type="primary"
+              data-testid="delete-connection"
+              :disabled="
+                $disabledByPermission(
+                  'datasource_delete_all_data',
+                  scope.row.user_id,
+                ) || scope.row.agentType === 'Cloud'
+              "
+              @click="remove(scope.row)"
+              >{{ $t('public_button_delete') }}
+            </ElButton>
+          </el-space>
         </template>
       </ElTableColumn>
     </TablePage>

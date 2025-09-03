@@ -99,7 +99,7 @@ export default {
       } catch (error) {
         this.loading = false
         this.form.password = oldPassword
-        this.errorMessage = error?.data?.message
+        this.errorMessage = error?.data?.message || error?.message
       }
     },
     // 注册账号
@@ -163,7 +163,8 @@ export default {
             {{ $t('app_signIn_keepSignIn') }}
           </el-checkbox>
           <ElButton
-            class="btn-sign-in"
+            id="login-button"
+            class="mt-12 w-100"
             size="large"
             type="primary"
             :loading="loading"
@@ -252,11 +253,6 @@ export default {
       margin-top: 15px;
       font-size: 14px;
       color: rgba(153, 153, 153, 1);
-    }
-    .btn-sign-in {
-      display: block;
-      width: 100%;
-      margin-top: 50px;
     }
 
     :deep(.el-checkbox__label) {

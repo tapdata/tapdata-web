@@ -288,7 +288,7 @@ export default {
   // 服务审计
   apiaudit_name: 'API名称',
   apiaudit_access_type: '访问类型',
-  apiaudit_visitor: '访问人员',
+  apiaudit_visitor: '客户端名称',
   apiaudit_ip: '访问人员IP',
   apiaudit_interview_time: '访问时间',
   apiaudit_interview_time_start: '访问开始时间',
@@ -304,6 +304,7 @@ export default {
   apiaudit_average_response_time: '平均响应时长',
   apiaudit_success: '成功',
   apiaudit_placeholder: '请输入名称/ID',
+  apiaudit_client_name_placeholder: '请输入客户端名称',
   // 连接
   connection_list_form_database_type: '数据库类型',
   connection_list_name: '连接名',
@@ -448,6 +449,8 @@ export default {
   setting_ApiServer: 'API分发设置',
   setting_Default_Limit: '默认查询返回行数',
   setting_Max_Limit: '最大查询返回行数',
+  setting_Desensitize_API_request_parameters: 'API请求参数脱敏',
+  'setting_Timeout_period_for_API_access_to_the_database_(millisecond)': 'API访问数据库的超时时间（毫秒）',
   setting_Send_batch_size: '打包数据条数',
   setting_hint_Send_batch_size: '打包数据条数',
   setting_Mongodb_target_create_date: '是否在目标端数据集添加创建时间',
@@ -778,8 +781,12 @@ export default {
   role_list_edit: '编辑角色',
   role_list_default_role: '默认角色',
   role_list_setting_permissions: '设置权限',
+  role_list_setting_api: '设置API访问',
   role_list_delete_remind: '确认删除角色 {0}',
   role_list_delete_success: '删除角色成功',
+  role_list_setting_api_selected: '已选 {0} 个 API',
+  role_list_setting_select_api: '请选择 API',
+  role_list_setting_api_empty_confirm: '确定要取消所有 API 的访问设置吗？',
   role_form_yes: '是',
   role_form_no: '否',
   role_form_selectUser: '请选择用户名',
@@ -2025,4 +2032,8 @@ export default {
   account_accessCode_tip:
     '刷新访问码将导致当前访问码失效，系统将生成新的访问码。<b class="color-warning">您需要将新的访问码更新到引擎的配置文件后，重新启动引擎，否则引擎可能会无法正常工作。请谨慎操作！</b>',
   account_accessCode_success: '刷新访问码成功',
+  setting_license_remainingDaysThreshold: '剩余天数 <=',
+  setting_license_rule: 'License 告警规则',
+  setting_license_alarm_template: '告警模板',
+  setting_license_alarm_template_custom: '自定义告警模板',
 }
