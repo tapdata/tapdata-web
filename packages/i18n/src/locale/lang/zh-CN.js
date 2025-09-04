@@ -541,4 +541,15 @@ export default {
   public_queue_capacity_auto_tip: '基于采样频率计算',
   public_auto: '自动',
   public_custom: '自定义',
+  public_tag_name: '标签名称',
+  public_tag_priority: '优先级设置',
+  public_tag_priority_desc:
+    '选择标签优先级，数字越小优先级越高，批量启动时会按优先级顺序执行',
+  public_priority_highest: '最高',
+  public_priority_high: '高',
+  public_priority_medium_high: '中高',
+  public_priority_medium: '中',
+  public_priority_low: '低',
+  public_priority_lowest: '最低',
+  public_tag_priority_tip: '任务批量启动时{val}优先级执行',
 }

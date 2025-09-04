@@ -16,13 +16,15 @@ export default {
   packages_component_classification_creatUserGroup: '創建用戶組',
   packages_component_classification_creatDataClassification: '創建數據分類',
   packages_component_classification_nameExist: '標籤名稱已存在',
-  packages_component_classification_addNode: '新增同級標籤',
-  packages_component_classification_addChildernNode: '新增子標籤',
+  packages_component_classification_addNode: '新建標籤',
+  packages_component_classification_addChildernNode: '新建子標籤',
   packages_component_classification_nodeName: '請輸入標籤名稱',
-  packages_component_classification_deteleMessage: '此操作會將該標籤下存在的子標籤都刪除，是否刪除',
+  packages_component_classification_deteleMessage:
+    '此操作會將該標籤下存在的子標籤都刪除，是否刪除',
   packages_component_formBuilder_file_placeholder: '請選擇文件',
   packages_component_formBuilder_file_button: '選擇文件',
-  packages_component_src_discoveryclassification_qingshurumulu: '請輸入目錄描述',
+  packages_component_src_discoveryclassification_qingshurumulu:
+    '請輸入目錄描述',
   packages_component_src_discoveryclassification_mulumiaoshu: '目錄描述',
   packages_component_src_discoveryclassification_ziyuanmulu: '資源目錄',
   packages_component_src_discoveryclassification_mulufenlei: '目錄分類',
@@ -31,14 +33,18 @@ export default {
   packages_component_filter_bar_datetimerange_jieshushijian: '結束時間',
   packages_component_filter_bar_datetimerange_kaishishijian: '開始時間',
   packages_component_filter_bar_datetimerange_zhi: '至',
-  packages_component_form_builder_file_shangchuanwenjianda: '上傳文件大小不能超過 {val1}KB',
-  packages_component_src_inlineinput_zifuchangduxian: '字符長度限制{val1}-{val2}個字符',
+  packages_component_form_builder_file_shangchuanwenjianda:
+    '上傳文件大小不能超過 {val1}KB',
+  packages_component_src_inlineinput_zifuchangduxian:
+    '字符長度限制{val1}-{val2}個字符',
   packages_component_src_selectlist_meiyougengduoshu: '沒有更多數據',
   packages_component_src_classification_chuangjianfenlei: '新建標籤',
-  packages_component_src_discoveryclassification_morenmuluji: '默認目錄（技術）',
+  packages_component_src_discoveryclassification_morenmuluji:
+    '默認目錄（技術）',
 
   packages_component_src_upgradefee_dingyuezhuanyeban: '專業版',
-  packages_component_src_upgradefee_gaojishouhouzhi: ' 高級售後支持，提供服務SLA',
+  packages_component_src_upgradefee_gaojishouhouzhi:
+    ' 高級售後支持，提供服務SLA',
   packages_component_src_upgradefee_shujuchulixing: ' 處理性能：高',
   packages_component_src_upgradefee_desc_1: '包含免費版的全部能力，加上...',
   packages_component_src_upgradefee_renwushukegen: '任務數量: 無限制',
@@ -58,5 +64,5 @@ export default {
   packages_component_src_selectlist_qingchuyixuan: '清除已選',
   packages_component_src_selectlist_xiang: '項',
   packages_component_src_selectlist_yixuanze: '已選擇',
-  packages_component_data_already_exists: '數據已存在'
+  packages_component_data_already_exists: '數據已存在',
 }
