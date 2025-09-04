@@ -584,22 +584,45 @@ watch(filterText, (val) => {
 
 // Lifecycle
 onMounted(() => {
-  getData()
   // 是否默认打开/是否有选择tag
+  let flag = false
+  let tags: string[] = []
   switch (props.viewPage) {
     case 'connections':
-      isExpand.value = connections.value?.panelFlag
+      flag = connections.value?.panelFlag
+      tags = connections.value?.classification
+
       break
     case 'migrate':
-      isExpand.value = migrate.value?.panelFlag
+      flag = migrate.value?.panelFlag
+      tags = migrate.value?.classification
       break
     case 'sync':
-      isExpand.value = sync.value?.panelFlag
+      flag = sync.value?.panelFlag
+      tags = sync.value?.classification
+
       break
     case 'inspect':
-      isExpand.value = inspect.value?.panelFlag
+      flag = inspect.value?.panelFlag
+      tags = inspect.value?.classification
       break
   }
+
+  isExpand.value = flag
+
+  getData((data) => {
+    if (flag) {
+      nextTick(() => {
+        const map = data.reduce<Record<string, any>>((acc, item) => {
+          acc[String(item.id)] = item
+          return acc
+        }, {})
+        tags = tags.filter((tag) => map[String(tag)])
+        tree.value?.setCheckedKeys(tags)
+        emitCheckedNodes()
+      })
+    }
+  })
 })
 
 // Expose methods
@@ -655,7 +678,7 @@ defineExpose({
         check-strictly
         class="classification-tree bg-transparent"
         node-key="id"
-        highlight-current
+        show-checkbox
         v-bind="props.treeProps"
         :props="treeProps"
         :expand-on-click-node="false"
@@ -979,9 +1002,18 @@ defineExpose({
 
   :deep(.classification-tree) {
     --el-tree-node-hover-bg-color: var(--fill-hover);
+
+    .el-tree-node {
+      margin-top: 1px;
+    }
+
     .el-tree-node__content {
       height: 32px;
       overflow: hidden;
+    }
+
+    .el-tree-node.is-checked > .el-tree-node__content {
+      background-color: var(--el-color-primary-light-9);
     }
   }
 
