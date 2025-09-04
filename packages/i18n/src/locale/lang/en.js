@@ -552,4 +552,15 @@ export default {
   public_queue_capacity_auto_tip: 'Based on sampling frequency calculation',
   public_auto: 'Auto',
   public_custom: 'Custom',
+  public_tag_name: 'Tag Name',
+  public_tag_priority: 'Priority Setting',
+  public_tag_priority_desc:
+    'Select label priority. Smaller numbers mean higher priority. Batch tasks run in priority order.',
+  public_priority_highest: 'Highest',
+  public_priority_high: 'High',
+  public_priority_medium_high: 'Medium High',
+  public_priority_medium: 'Medium',
+  public_priority_low: 'Low',
+  public_priority_lowest: 'Lowest',
+  public_tag_priority_tip: 'Task batch start runs in {val} priority.',
 }

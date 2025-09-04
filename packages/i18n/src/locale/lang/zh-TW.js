@@ -540,4 +540,15 @@ export default {
   public_queue_capacity_auto_tip: '基於采樣頻率計算',
   public_auto: '自動',
   public_custom: '自定義',
+  public_tag_name: '標籤名稱',
+  public_tag_priority: '優先級設置',
+  public_tag_priority_desc:
+    '選擇標籤優先級，數字越小優先級越高，批量啟動時會按優先級順序執行',
+  public_priority_highest: '最高',
+  public_priority_high: '高',
+  public_priority_medium_high: '中高',
+  public_priority_medium: '中',
+  public_priority_low: '低',
+  public_priority_lowest: '最低',
+  public_tag_priority_tip: '任務批量啟動時{val}優先級執行',
 }

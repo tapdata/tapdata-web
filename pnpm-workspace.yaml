@@ -25,11 +25,12 @@ catalog:
   "@formily/reactive-vue": ^2.3.0
   "@formily/shared": ^2.3.0
   "@formily/vue": ^2.3.0
+  "@iconify-json/fluent": ^1.2.26
   "@iconify-json/lucide": ^1.2.45
   "@iconify-json/mingcute": ^1.2.3
   "@rushstack/eslint-patch": ^1.8.0
-  "@sxzz/eslint-config": ^6.1.1
-  "@sxzz/prettier-config": ^2.2.1
+  "@sxzz/eslint-config": ^7.1.4
+  "@sxzz/prettier-config": ^2.2.4
   "@tiptap/core": ^2.12.0
   "@tiptap/extension-bold": ^2.12.0
   "@tiptap/extension-character-count": ^2.12.0
@@ -87,6 +88,7 @@ catalog:
   lodash-es: ^4.17.21
   markdown-it: ^13.0.1
   mockjs: ^1.1.0
+  monaco-editor: ^0.52.2
   mousetrap: ^1.6.5
   npm-run-all2: ^6.2.0
   prettier: ^3.5.3

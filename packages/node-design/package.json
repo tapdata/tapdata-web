@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@formily/core": "catalog:",
-    "@formily/element-plus": "^1.1.0",
+    "@formily/element-plus": "catalog:",
     "@formily/json-schema": "catalog:",
     "@formily/path": "catalog:",
     "@formily/reactive": "catalog:",

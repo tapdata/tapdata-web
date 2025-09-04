@@ -102,6 +102,7 @@ declare module 'vue' {
     'ILucide:server': typeof import('~icons/lucide/server')['default']
     'ILucide:settings': typeof import('~icons/lucide/settings')['default']
     'ILucide:squarePlus': typeof import('~icons/lucide/square-plus')['default']
+    'ILucide:tag': typeof import('~icons/lucide/tag')['default']
     'ILucide:trash2': typeof import('~icons/lucide/trash2')['default']
     'ILucide:wandSparkles': typeof import('~icons/lucide/wand-sparkles')['default']
     ILucideCalendarDays: typeof import('~icons/lucide/calendar-days')['default']
