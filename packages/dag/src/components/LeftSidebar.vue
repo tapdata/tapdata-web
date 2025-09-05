@@ -992,14 +992,11 @@ $hoverBg: #eef3ff;
 .layout-sidebar.--left {
   overflow: visible;
   $headerH: 40px;
+  --header-bg: #f6f8fa;
 
   :deep(.db-list-container) {
     --el-collapse-border-color: #dee2e6 !important;
     max-height: 50%;
-
-    // .el-collapse-item__header {
-    //   border-bottom: 1px solid #dee2e6 !important;
-    // }
 
     .el-collapse-item:last-child {
       margin-bottom: -1px;
@@ -1058,6 +1055,7 @@ $hoverBg: #eef3ff;
     font-size: 14px;
     font-weight: 500;
     border-bottom: 1px solid transparent;
+    background-color: var(--header-bg);
     .tb-header-icon {
       flex-shrink: 0;
       width: 20px;
@@ -1140,6 +1138,7 @@ $hoverBg: #eef3ff;
   }
 
   :deep(.el-collapse) {
+    --el-collapse-header-bg-color: var(--header-bg);
     border-top: 0;
     .el-collapse-item {
       &.is-active [role='tab'] {
@@ -1153,10 +1152,6 @@ $hoverBg: #eef3ff;
         height: $headerH;
         font-size: 14px;
         border-bottom: 1px solid #dee2e6 !important;
-
-        &:hover {
-          background-color: rgba(47, 46, 63, 0.05);
-        }
       }
 
       &__content {

@@ -631,6 +631,7 @@ $hoverBg: #eef3ff;
   overflow: visible;
   will-change: width;
   $headerH: 40px;
+  --header-bg: #f6f8fa;
 
   .connection-tabs {
     position: relative;
@@ -791,50 +792,45 @@ $hoverBg: #eef3ff;
     border-radius: 100%;
   }
 
-  :deep(*) {
-    .el-collapse {
-      border-top: 0;
+  :deep(.el-collapse) {
+    --el-collapse-header-bg-color: var(--header-bg);
+    border-top: 0;
 
-      &.processor-collapse {
-        max-height: 30%;
-      }
+    &.processor-collapse {
+      max-height: 30%;
+    }
 
-      &.collapse-fill {
-        .el-collapse-item:first-child:last-child {
+    &.collapse-fill {
+      .el-collapse-item:first-child:last-child {
+        height: 100%;
+
+        .el-collapse-item__wrap {
+          height: calc(100% - #{$headerH - 1});
+          border-bottom: none;
+        }
+
+        .el-collapse-item__content {
           height: 100%;
-
-          .el-collapse-item__wrap {
-            height: calc(100% - #{$headerH - 1});
-            border-bottom: none;
-          }
-
-          .el-collapse-item__content {
-            height: 100%;
-          }
         }
       }
+    }
 
-      &-item {
-        &.is-active [role='tab'] {
-          position: sticky;
-          top: 0;
-          z-index: 1;
-        }
+    .el-collapse-item {
+      &.is-active [role='tab'] {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+      }
 
-        &__header {
-          position: relative;
-          height: $headerH;
-          font-size: 14px;
-          border-bottom: 1px solid #dee2e6 !important;
+      &__header {
+        position: relative;
+        height: $headerH;
+        font-size: 14px;
+        border-bottom: 1px solid #dee2e6 !important;
+      }
 
-          &:hover {
-            background-color: rgba(47, 46, 63, 0.05);
-          }
-        }
-
-        &__content {
-          padding: 0;
-        }
+      &__content {
+        padding: 0;
       }
     }
   }
