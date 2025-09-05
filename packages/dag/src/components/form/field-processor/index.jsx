@@ -1,8 +1,8 @@
 import { observer } from '@formily/reactive-vue'
 import { metadataInstancesApi, taskApi } from '@tap/api'
-import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { VEmpty } from '@tap/component/src/base/v-empty'
 import { VirtualList } from '@tap/component/src/base/virtual-list'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import {
   connect,
   FormGrid,
