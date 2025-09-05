@@ -1,13 +1,11 @@
 <script>
 import { CancelToken, fetchConnections, fetchDatabaseTypes } from '@tap/api'
-import { getIcon } from '@tap/assets/icons'
 import SceneDialog from '@tap/business/src/components/create-connection/SceneDialog.vue'
 import { VEmpty } from '@tap/component/src/base/v-empty'
 import { mouseDrag } from '@tap/component/src/directives/mousedrag'
 import resize from '@tap/component/src/directives/resize'
 import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { getInitialValuesInBySchema } from '@tap/form/src/shared/validate'
-import { getScrollBarWidth } from 'element-plus/es/utils/dom/scroll'
 import { debounce, escapeRegExp } from 'lodash-es'
 import { markRaw } from 'vue'
 import { mapGetters } from 'vuex'
@@ -73,11 +71,6 @@ export default {
 
     disabledDBMore() {
       return this.dbLoading || this.noDBMore || this.dbLoadingMore
-    },
-
-    scrollbarWrapStyle() {
-      const gutter = getScrollBarWidth()
-      return `height: calc(100% + ${gutter}px);`
     },
   },
   async created() {
@@ -419,6 +412,7 @@ export default {
         <ElCollapseItem name="db">
           <template #title>
             <div class="flex align-center flex-1 overflow-hidden">
+              <el-icon class="mr-2"><i-lucide:database /></el-icon>
               <span
                 class="flex-1 user-select-none text-truncate flex align-center"
               >
@@ -455,7 +449,7 @@ export default {
             </div>
           </template>
           <div class="flex flex-column h-100">
-            <div v-show="showDBInput" class="p-2">
+            <div v-show="showDBInput" class="p-2 pb-0">
               <ElInput
                 id="connection-search-input"
                 ref="dbInput"
@@ -480,7 +474,6 @@ export default {
               class="flex-1"
               tag="div"
               wrap-class="db-list"
-              :wrap-style="scrollbarWrapStyle"
             >
               <ElSkeleton
                 :loading="dbLoading"
@@ -500,7 +493,7 @@ export default {
                 <div
                   v-infinite-scroll="loadMoreDB"
                   :infinite-scroll-disabled="disabledDBMore"
-                  class="px-2 pb-2"
+                  class="p-2"
                 >
                   <div
                     v-for="db in dbList"
@@ -535,7 +528,7 @@ export default {
                         <ConnectionType :type="db.connection_type" />
                       </div>
                       <OverflowTooltip
-                        class="w-100 text-truncate"
+                        class="w-100 text-truncate fs-8"
                         placement="right"
                         :disabled="dragStarting"
                         :text="db.connectionUrl"
@@ -567,16 +560,12 @@ export default {
       <ElCollapseItem name="process">
         <template #title>
           <div class="flex align-center flex-1 user-select-none">
+            <VIcon size="16" class="mr-2">custom-node</VIcon>
             <!--处理节点-->
             {{ $t('public_node_processor') }}
           </div>
         </template>
-        <ElScrollbar
-          ref="processorList"
-          tag="div"
-          wrap-class="px-3 pb-3"
-          :wrap-style="scrollbarWrapStyle"
-        >
+        <ElScrollbar ref="processorList" tag="div" wrap-class="p-2">
           <div
             v-for="(n, ni) in processorNodeTypes"
             :key="ni"
@@ -640,7 +629,7 @@ $hoverBg: #eef3ff;
 .layout-sidebar.--left {
   overflow: visible;
   will-change: width;
-  $headerH: 34px;
+  $headerH: 40px;
 
   .connection-tabs {
     position: relative;
@@ -747,15 +736,16 @@ $hoverBg: #eef3ff;
     .node-item {
       height: 42px;
       margin-bottom: 4px;
-      font-size: var(--font-base-title);
+      font-size: 13px;
       line-height: normal;
 
       &.active {
-        background-color: #eef3ff;
+        background-color: var(--primary-hover-light);
+        color: var(--el-color-primary);
       }
 
       &:not(.active):hover {
-        background-color: #edf1f9;
+        background-color: rgba(47, 46, 63, 0.05);
       }
 
       .el-image {
@@ -766,7 +756,6 @@ $hoverBg: #eef3ff;
 
       &-icon {
         padding: 4px;
-        border: 1px solid #f2f2f2;
         border-radius: 50%;
       }
 
@@ -774,12 +763,11 @@ $hoverBg: #eef3ff;
         overflow: hidden;
 
         > :not(:last-child) {
-          margin-bottom: 4px;
           font-size: var(--font-base-title);
         }
 
         > :last-child {
-          color: rgb(83 95 114 / 70%);
+          color: rgba(0, 0, 0, 0.3);
         }
       }
 
@@ -840,6 +828,7 @@ $hoverBg: #eef3ff;
           position: relative;
           height: $headerH;
           font-size: 14px;
+          border-bottom: 1px solid #dee2e6 !important;
 
           &:hover {
             background-color: rgba(47, 46, 63, 0.05);
