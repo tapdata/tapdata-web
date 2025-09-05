@@ -762,10 +762,6 @@ $hoverBg: #eef3ff;
       &-content {
         overflow: hidden;
 
-        > :not(:last-child) {
-          font-size: var(--font-base-title);
-        }
-
         > :last-child {
           color: rgba(0, 0, 0, 0.3);
         }
