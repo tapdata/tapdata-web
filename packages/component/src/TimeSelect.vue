@@ -3,7 +3,6 @@ import i18n from '@tap/i18n'
 import Time from '@tap/shared/src/time'
 
 import dayjs from 'dayjs'
-import { $emit, $off, $on, $once } from '../utils/gogocodeTransfer'
 import { IconButton } from './icon-button'
 
 export default {
@@ -57,29 +56,13 @@ export default {
       default: () => [Time.now() - 5 * 60 * 1000, Time.now()],
     },
   },
-  emits: ['change', 'setMinAndMaxTime', 'update:value', , , 'update:value'],
+  emits: ['change', 'setMinAndMaxTime', 'update:value', 'update:value'],
   data() {
     return {
       period: '',
       time: [],
       items: [],
       isTime: false,
-      pickerOptions: {
-        disabledDate: (time) => {
-          const [start, end] = this.getRangeTime()
-          const d = new Date(time).getTime()
-          const pickDate = dayjs(time).format(this.timeFormat.date)
-          const startDate = dayjs(start).format(this.timeFormat.date)
-          const startTime = dayjs(start).format(this.timeFormat.time)
-          const startStamp = new Date(start).getTime()
-          const endStamp = new Date(end).getTime()
-          if (pickDate === startDate && startTime !== this.timeFormat.endTime) {
-            return false
-          }
-          return d < startStamp || d >= endStamp
-        },
-        onPick: this.handleTimeRangeDisabled,
-      },
       timeFormat: {
         date: 'YYYY-MM-DD',
         time: 'HH:mm:ss',
@@ -108,38 +91,38 @@ export default {
   mounted() {
     this.items = JSON.parse(JSON.stringify(this.options))
     this.setPeriod(this.value || this.items[0]?.value)
-    $once(this, 'setMinAndMaxTime', () => {
-      const picker = this.$refs.datetime?.picker
-      const [startTime, endTime] = this.getRangeTime()
-      picker.minDate = new Date(startTime)
-      picker.maxDate = new Date(endTime)
-      const minDate = this.formatTime(startTime, this.timeFormat.date)
-      const maxDate = this.formatTime(endTime, this.timeFormat.date)
-      this.handleTimeRangeDisabled({
-        minDate,
-        maxDate,
-      })
-    })
   },
   methods: {
+    checkDisabledDate(time) {
+      const [start, end] = this.getRangeTime()
+      const d = new Date(time).getTime()
+      const pickDate = dayjs(time).format(this.timeFormat.date)
+      const startDate = dayjs(start).format(this.timeFormat.date)
+      const startTime = dayjs(start).format(this.timeFormat.time)
+      const startStamp = new Date(start).getTime()
+      const endStamp = new Date(end).getTime()
+      if (pickDate === startDate && startTime !== this.timeFormat.endTime) {
+        return false
+      }
+      return d < startStamp || d >= endStamp
+    },
     changeFnc(value) {
       const findOne = this.items.find((t) => t.value === value)
       if (findOne?.type === 'custom') {
-        this.openPicker()
+        this.$nextTick(() => {
+          this.openPicker()
+        })
         return
       }
       this.isTime = !!findOne?.isTime
-      $emit(this, 'change', findOne.value, this.isTime, findOne)
+      this.$emit('change', findOne.value, this.isTime, findOne)
     },
 
     openPicker() {
       if (this.isTime && this.period && this.period !== 'custom') {
-        this.time = this.period.split(',')
+        this.time = this.period.split(',').map((t) => Number(t))
       }
-      this.$refs.datetime.focus()
-      this.$nextTick(() => {
-        $emit(this, 'setMinAndMaxTime')
-      })
+      this.$refs.datetime.handleOpen()
     },
 
     changeTime(result) {
@@ -153,9 +136,10 @@ export default {
         val[1] = end
       }
 
-      const { rangeSeparator, formatToString } = this.$refs.datetime
-
-      const label = formatToString(val)?.join?.(` ${rangeSeparator} `) || ''
+      const label =
+        val[0] || val[1]
+          ? `${val[0] ? dayjs(val[0]).format('YYYY-MM-DD HH:mm:ss') : '-'} ${this.$t('packages_dag_components_timeselect_zhi')} ${val[1] ? dayjs(val[1]).format('YYYY-MM-DD HH:mm:ss') : '-'}`
+          : ''
       const valJoin = val?.map((t) => new Date(t).getTime()).join()
       if (!valJoin) {
         return
@@ -171,8 +155,7 @@ export default {
         this.isTime = true
       }
       this.period = valJoin
-      $emit(
-        this,
+      this.$emit(
         'change',
         valJoin,
         true,
@@ -191,14 +174,6 @@ export default {
         this.changeTime(this.range)
       }
       this.time = []
-    },
-
-    openSelect() {
-      if (this.isTime) {
-        this.$refs.datetime.focus()
-      } else {
-        this.$refs.select?.$el?.click()
-      }
     },
 
     handleTimeRangeDisabled({ minDate, maxDate }) {
@@ -280,10 +255,7 @@ export default {
 
 <template>
   <div class="time-select__picker flex align-center">
-    <div
-      class="w-100 picker__item inline-flex align-items-center"
-      @click="openSelect"
-    >
+    <div class="w-100 picker__item inline-flex align-items-center">
       <div class="time-select__title">{{ title }}</div>
       <ElSelect
         ref="select"
@@ -306,13 +278,14 @@ export default {
       >timer</IconButton
     >
     <ElDatePicker
+      v-if="range[0]"
       ref="datetime"
       v-model="time"
-      :picker-options="pickerOptions"
       type="datetimerange"
       :range-separator="$t('packages_dag_components_timeselect_zhi')"
       :start-placeholder="$t('packages_dag_components_timeselect_kaishiriqi')"
       :end-placeholder="$t('packages_dag_components_timeselect_jieshuriqi')"
+      :disabled-date="checkDisabledDate"
       format="YYYY-MM-DD HH:mm:ss"
       value-format="x"
       class="el-date-picker position-absolute overflow-hidden p-0 m-0"
