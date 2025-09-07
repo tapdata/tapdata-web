@@ -1,28 +1,7 @@
-<template>
-  <div class="event-chart">
-    <ElRadioGroup v-if="showAll" v-model="dataType" class="event-chart__radio" @change="loadBarData">
-      <ElRadioButton :label="0">{{ $t('packages_dag_components_eventchart_renwuyunxinglei') }}</ElRadioButton>
-      <ElRadioButton :label="1">{{ $t('packages_dag_components_eventchart_suoxuanzhouqilei') }}</ElRadioButton>
-    </ElRadioGroup>
-    <div v-if="total" class="total-line flex align-items-center">
-      <ElTooltip transition="tooltip-fade-in" :content="total.input.toLocaleString()">
-        <span class="font-color-normal fw-bold fs-3 din-font">{{ calcUnit(total.input) }}</span>
-      </ElTooltip>
-      <span class="ml-2">{{ $t('public_event_total_input') }}</span>
-      <ElDivider direction="vertical" class="divider mx-4"></ElDivider>
-      <ElTooltip transition="tooltip-fade-in" :content="total.output.toLocaleString()">
-        <span class="font-color-normal fw-bold fs-3 din-font">{{ calcUnit(total.output) }}</span>
-      </ElTooltip>
-      <span class="ml-2">{{ $t('public_event_total_output') }}</span>
-    </div>
-    <Chart :extend="options" :style="{ height }"></Chart>
-  </div>
-</template>
-
 <script>
-import i18n from '@tap/i18n'
-
 import { Chart } from '@tap/component'
+
+import i18n from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
 
 export default {
@@ -35,7 +14,10 @@ export default {
     },
     yData: {
       type: Array,
-      default: () => [i18n.t('public_event_total_input'), i18n.t('public_event_total_output')],
+      default: () => [
+        i18n.t('public_event_total_input'),
+        i18n.t('public_event_total_output'),
+      ],
     },
     height: {
       type: String,
@@ -136,18 +118,18 @@ export default {
 
     loadBarData() {
       const { input, output } = this.samples?.[this.dataType] || {}
-      if (!(input && output)) {
+      if (!input || !output) {
         return
       }
-      let inData = {}
-      let outData = {}
-      for (let key in input) {
+      const inData = {}
+      const outData = {}
+      for (const key of Object.keys(input)) {
         inData[key.toLowerCase()] = input[key]
         outData[key.toLowerCase()] = output[key]
       }
       this.total.input = eval(Object.values(inData).join('+'))
       this.total.output = eval(Object.values(outData).join('+'))
-      let arr = [
+      const arr = [
         {
           label: i18n.t('public_event_insert'),
           key: 'InsertTotal',
@@ -174,7 +156,7 @@ export default {
           color: '#00A1F1',
         },
       ]
-      let series = arr.map((t) => {
+      const series = arr.map((t) => {
         const k = t.key.toLowerCase()
         return {
           type: 'bar',
@@ -188,12 +170,53 @@ export default {
       this.options.series = series
     },
 
-    calcUnit() {
-      return calcUnit(...arguments)
+    calcUnit(...args) {
+      return calcUnit(...args)
     },
   },
 }
 </script>
+
+<template>
+  <div class="event-chart">
+    <ElRadioGroup
+      v-if="showAll"
+      v-model="dataType"
+      class="event-chart__radio"
+      size="small"
+      @change="loadBarData"
+    >
+      <ElRadioButton :label="0">{{
+        $t('packages_dag_components_eventchart_renwuyunxinglei')
+      }}</ElRadioButton>
+      <ElRadioButton :label="1">{{
+        $t('packages_dag_components_eventchart_suoxuanzhouqilei')
+      }}</ElRadioButton>
+    </ElRadioGroup>
+    <div v-if="total" class="total-line flex align-items-center">
+      <ElTooltip
+        transition="tooltip-fade-in"
+        :content="total.input.toLocaleString()"
+      >
+        <span class="font-color-normal fw-bold fs-3 din-font">{{
+          calcUnit(total.input)
+        }}</span>
+      </ElTooltip>
+      <span class="ml-2">{{ $t('public_event_total_input') }}</span>
+      <ElDivider direction="vertical" class="divider mx-4" />
+      <ElTooltip
+        transition="tooltip-fade-in"
+        :content="total.output.toLocaleString()"
+      >
+        <span class="font-color-normal fw-bold fs-3 din-font">{{
+          calcUnit(total.output)
+        }}</span>
+      </ElTooltip>
+      <span class="ml-2">{{ $t('public_event_total_output') }}</span>
+    </div>
+    <Chart :extend="options" :style="{ height }" />
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .total-line {

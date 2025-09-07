@@ -22,7 +22,7 @@ import Time from '@tap/shared/src/time'
 import dagre from 'dagre'
 import { debounce } from 'lodash-es'
 import { mapMutations, mapState } from 'vuex'
-import { $emit, $off, $on, $once } from '../utils/gogocodeTransfer'
+import { $off, $on } from '../utils/gogocodeTransfer'
 
 import { MoveNodeCommand } from './command'
 import MaterializedView from './components/materialized-view/MaterializedView.vue'
@@ -354,9 +354,9 @@ export default {
 
       await this.validateAllNodes()
 
-      const sourceMap = {},
-        targetMap = {},
-        edges = this.allEdges
+      const sourceMap = {}
+      const targetMap = {}
+      const edges = this.allEdges
       edges.forEach((item) => {
         const _source = sourceMap[item.source]
         const _target = targetMap[item.target]
@@ -1030,7 +1030,7 @@ export default {
     },
 
     handleChangeTimeSelect(val, isTime, source) {
-      this.quotaTimeType = source?.type ?? val
+      this.quotaTimeType = isTime ? 'custom' : (source?.type ?? val)
       this.quotaTime = isTime
         ? val?.split(',')?.map((t) => Number(t))
         : this.getTimeRange(val)

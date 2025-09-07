@@ -679,10 +679,10 @@ export default {
       </div>
     </div>
     <template v-else>
-      <div class="flex justify-content-between">
+      <div class="flex justify-content-between gap-6">
         <div
           v-loading="loading"
-          class="chart-box rounded-2"
+          class="chart-box rounded-xl"
           :class="{ 'w-100': chartBoxWidth100 }"
         >
           <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
@@ -695,7 +695,7 @@ export default {
         <div
           v-if="isSource"
           v-loading="loading"
-          class="chart-box rounded-2 flex flex-column"
+          class="chart-box rounded-xl flex flex-column"
         >
           <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
             {{ $t('packages_dag_components_nodedetaildialog_tongbuzhuangtai') }}
@@ -793,7 +793,7 @@ export default {
           v-else-if="isTarget"
           v-loading="loading"
           :class="{ 'w-100': !isSource && !isTarget }"
-          class="chart-box rounded-2 flex flex-column"
+          class="chart-box rounded-xl flex flex-column"
         >
           <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
             {{ $t('packages_dag_components_nodedetaildialog_tongbuzhuangtai') }}
@@ -825,8 +825,8 @@ export default {
       <div class="my-4">
         {{ $t('packages_dag_components_nodedetaildialog_xingnengzhibiao') }}
       </div>
-      <div class="flex justify-content-between">
-        <div v-loading="loading" class="chart-box rounded-2">
+      <div class="flex justify-content-between gap-6">
+        <div v-loading="loading" class="chart-box rounded-xl">
           <div
             class="flex justify-content-between align-items-center chart-box__title px-4"
           >
@@ -846,7 +846,11 @@ export default {
                 <VIcon class="color-primary">info</VIcon>
               </ElTooltip>
             </div>
-            <ElRadioGroup v-model="qpsChartsType" class="chart__radio">
+            <ElRadioGroup
+              v-model="qpsChartsType"
+              class="chart__radio"
+              size="small"
+            >
               <ElRadioButton label="count">count</ElRadioButton>
               <ElRadioButton label="size">size</ElRadioButton>
             </ElRadioGroup>
@@ -862,7 +866,7 @@ export default {
             />
           </div>
         </div>
-        <div v-loading="loading" class="chart-box rounded-2">
+        <div v-loading="loading" class="chart-box rounded-xl">
           <div
             class="chart-box__title py-2 px-4 fw-bold font-color-normal flex align-items-center"
           >
@@ -952,24 +956,30 @@ export default {
 }
 
 .chart-box {
-  width: 48%;
+  flex: 1;
   height: 286px;
   border: 1px solid #c9cdd4;
+  position: relative;
   &.disabled {
     border: none;
   }
 }
 .chart-box__title {
   //color: #333c4a;
-  height: 38px;
-  background: #fafafa;
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
+  height: 40px;
+  display: flex;
+  align-items: center;
 }
 .line-chart {
   height: 200px;
 }
 .event-chart {
+  :deep(.event-chart__radio) {
+    position: absolute;
+    top: 8px;
+    right: 16px;
+    margin: 0;
+  }
   :deep(.chart__radio) {
     .el-radio-button--mini .el-radio-button__inner {
       padding: 4px 8px;
