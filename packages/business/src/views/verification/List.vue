@@ -442,8 +442,6 @@ const handleDelete = () => {
 }
 
 const fetchTaskOptions = async () => {
-  if (taskOptions.value.length) return
-
   taskOptionsLoading.value = true
 
   const data = await inspectApi.getTaskList()
@@ -453,16 +451,15 @@ const fetchTaskOptions = async () => {
 }
 
 const startImport = async () => {
-  console.log('startImport')
   const formData = new FormData()
-  formData.append('file', importForm.value.fileList[0].raw)
+  formData.append('file', importForm.value.fileList[0].raw!)
   formData.append('taskId', importForm.value.taskId)
 
   importLoading.value = true
 
-  const res = await inspectApi.import(formData)
-
-  importLoading.value = false
+  await inspectApi.import(formData).finally(() => {
+    importLoading.value = false
+  })
 
   ElMessage.success(t('public_message_operation_success'))
 
@@ -571,6 +568,7 @@ onUnmounted(() => {
       v-model="importDialogVisible"
       :title="$t('public_task_import')"
       width="600px"
+      @open="fetchTaskOptions"
       @closed="onImportDialogClosed"
     >
       <el-upload
@@ -638,7 +636,6 @@ onUnmounted(() => {
               :loading="taskOptionsLoading"
               :options="taskOptions"
               :props="{ label: 'name', value: 'id' }"
-              @visible-change="fetchTaskOptions"
             />
           </el-form-item>
         </el-form>
