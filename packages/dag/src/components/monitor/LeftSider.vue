@@ -1,412 +1,29 @@
-<template>
-  <aside class="layout-sidebar --left border-end flex-column flex-shrink-0">
-    <div class="flex flex-column flex-1 min-h-0 overflow-y-auto">
-      <div class="info-box flex justify-content-between align-items-center flex-wrap">
-        <TimeSelect
-          :options="timeOptions"
-          :range="$attrs.range"
-          ref="timeSelect"
-          class="mb-1 w-100"
-          @change="changeTimeSelect"
-        ></TimeSelect>
-        <Frequency :range="$attrs.range" class="flex-1" @change="changeFrequency"></Frequency>
-        <ElTooltip transition="tooltip-fade-in" :content="$t('public_button_refresh')">
-          <IconButton class="color-primary" @click="$emit('load-data')"> refresh</IconButton>
-        </ElTooltip>
-      </div>
-      <div v-if="dataflow.type !== 'cdc'" class="info-box sync-info">
-        <div class="flex justify-content-between mb-2">
-          <span class="fw-sub fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_tongbuxinxi') }}</span>
-          <ElTooltip
-            v-if="showToInitialList"
-            transition="tooltip-fade-in"
-            :content="$t('packages_dag_monitor_leftsider_liebiao')"
-          >
-            <VIcon @click.stop="toInitialList">menu-left</VIcon>
-          </ElTooltip>
-        </div>
-        <template v-if="dataflow.type !== 'cdc'">
-          <div class="mb-2 flex justify-content-between">
-            <span class="sync-info-item__title">{{
-              $t('packages_dag_components_nodedetaildialog_quanliangkaishishi')
-            }}</span>
-            <span>{{ initialData.snapshotStartAt || '-' }}</span>
-          </div>
-          <div v-if="initialData.snapshotDoneAt" class="mb-2 flex justify-content-between">
-            <span class="sync-info-item__title">{{ $t('packages_dag_monitor_leftsider_quanliangwanchengshi') }}</span>
-            <span>{{ initialData.snapshotDoneAt }}</span>
-          </div>
-          <div v-else class="mb-2 flex justify-content-between">
-            <span class="sync-info-item__title">{{ $t('packages_dag_monitor_leftsider_yujiquanliangwan') }}</span>
-            <span v-if="isFileSource" class="flex-1 text-end">{{
-              $t('packages_dag_components_node_zanbuzhichi')
-            }}</span>
-            <span v-else-if="initialData.finishDuration < 0">{{ $t('packages_business_task_info_calculating') }}</span>
-            <ElTooltip
-              v-else
-              transition="tooltip-fade-in"
-              :content="initialData.finishDuration.toLocaleString() + 'ms'"
-            >
-              <span>{{ calcTimeUnit(initialData.finishDuration, 2, { autoHideMs: true }) }}</span>
-            </ElTooltip>
-          </div>
-          <div class="mb-2 flex align-items-center justify-content-between">
-            <span class="mr-2 sync-info-item__title">{{ $t('public_task_full_sync_progress') }}</span>
-            <span v-if="isFileSource" class="flex-1 text-end">{{
-              $t('packages_dag_components_node_zanbuzhichi')
-            }}</span>
-            <ElTooltip v-else placement="bottom">
-              <div class="inline-flex">
-                <ElProgress
-                  class="flex-1 my-2"
-                  :show-text="false"
-                  style="width: 150px"
-                  :percentage="totalDataPercentage"
-                />
-                <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
-              </div>
-              <template v-slot:content>
-                <div class="fs-8">
-                  <div>
-                    <span>{{ $t('packages_dag_monitor_leftsider_quanliangwanchenghao') }}:</span>
-                    <span class="ml-2">{{ calcTimeUnit(totalData.snapshotDoneCost) }}</span>
-                  </div>
-                  <div>
-                    <span>{{ $t('packages_dag_monitor_leftsider_pingjunQps') }}:</span>
-                    <span class="ml-2">{{ totalData.outputQpsAvg }}</span>
-                  </div>
-                  <div>
-                    <span>{{ $t('packages_dag_monitor_leftsider_zuidaQps') }}:</span>
-                    <span class="ml-2">{{ totalData.outputQpsMax }}</span>
-                  </div>
-                </div>
-              </template>
-            </ElTooltip>
-          </div>
-          <div
-            v-if="dataflow.syncType === 'migrate' && totalData.currentSnapshotTableRowTotal && !ifEnableConcurrentRead"
-            class="mb-4 flex align-items-center"
-          >
-            <span class="mr-2 sync-info-item__title">{{
-              $t('packages_dag_components_nodedetaildialog_dangqianbiaotongbu')
-            }}</span>
-            <ElProgress class="flex-1 my-2" :show-text="false" :percentage="currentTotalDataPercentage" />
-            <span class="ml-2">{{
-              (totalData.currentSnapshotTableInsertRowTotal || 0) + '/' + (totalData.currentSnapshotTableRowTotal || 0)
-            }}</span>
-          </div>
-        </template>
-        <template v-if="dataflow.type !== 'initial_sync'">
-          <div v-if="initialData.snapshotDoneAt" class="mb-2 flex justify-content-between">
-            <span>{{ $t('packages_dag_monitor_leftsider_zuidazengliangyan') }}</span>
-            <span>{{ getReplicateLag(initialData.replicateLag, $t('public_event_cdc_placeholder')) }}</span>
-          </div>
-        </template>
-      </div>
-      <div
-        v-if="dataflow.syncType === 'migrate' && dataflow.isAutoInspect && dataflow.canOpenInspect && verifyTotals"
-        class="info-box"
-      >
-        <div class="flex justify-content-between mb-2">
-          <span class="fw-sub fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_renwujiaoyan') }}</span>
-          <ElTooltip
-            v-if="verifyTotals.diffTables"
-            transition="tooltip-fade-in"
-            :content="$t('packages_dag_monitor_leftsider_chayixiangqing')"
-          >
-            <VIcon @click.stop="$emit('verifyDetails')">menu-left</VIcon>
-          </ElTooltip>
-        </div>
-        <div class="flex justify-content-between mb-2">
-          <span>{{ $t('packages_dag_monitor_leftsider_chayizongxingshu') }}</span>
-          <span :class="{ 'color-danger': verifyTotals.diffRecords }">{{ verifyTotals.diffRecords }}</span>
-        </div>
-        <div class="flex justify-content-between mb-2">
-          <span>{{ $t('packages_dag_monitor_leftsider_jiaoyanbuyizhi') }}</span>
-          <span v-if="verifyTotals.diffTables">
-            <span :class="{ 'color-danger': verifyTotals.diffTables }">{{ verifyTotals.diffTables }}</span>
-            <span>/</span>
-            <span>{{ verifyTotals.totals }}</span>
-          </span>
-          <span v-else>0</span>
-        </div>
-        <div class="flex justify-content-between">
-          <span class="mr-2">{{ $t('packages_dag_monitor_leftsider_buzhichijiaoyan') }}</span>
-          <span v-if="verifyTotals.ignore">
-            <span :class="{ 'color-danger': verifyTotals.ignore }">{{ verifyTotals.ignore }}</span>
-            <span>/</span>
-            <span>{{ verifyTotals.totals }}</span>
-          </span>
-          <span v-else>0</span>
-        </div>
-      </div>
-
-      <div
-        v-if="['SharedMiningMonitor', 'SharedCacheMonitor'].includes($route.name) && infoList.length > 0"
-        class="info-box"
-      >
-        <div class="flex justify-content-between mb-2">
-          <span class="fw-bold fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_jibenxinxi') }}</span>
-        </div>
-        <div
-          v-for="(item, index) in infoList"
-          :key="index"
-          class="mb-2"
-          :class="[item.block ? 'block' : 'flex justify-content-between', item.class]"
-        >
-          <div class="font-color-light">{{ item.label }}:</div>
-          <div class="font-color-dark">{{ item.value || '-' }}</div>
-        </div>
-      </div>
-
-      <div class="info-box">
-        <div class="flex justify-content-between mb-2">
-          <span class="fs-7 fw-sub font-color-normal">{{
-            $t('packages_dag_components_nodedetaildialog_xingnengzhibiao')
-          }}</span>
-          <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_zoom_in')">
-            <VIcon @click.stop="toFullscreen">enlarge</VIcon>
-          </ElTooltip>
-        </div>
-        <div class="line-chart__box mb-2">
-          <div class="flex justify-content-between">
-            <ElTooltip
-              transition="tooltip-fade-in"
-              placement="top"
-              :content="
-                qpsChartsType === 'count'
-                  ? $t('packages_dag_monitor_leftsider_qpSshizhi')
-                  : $t('packages_dag_monitor_leftsider_qpSshizhi2')
-              "
-            >
-              <span class="inline-flex align-items-center">
-                <span class="mr-2 font-color-dark fw-sub">QPS(Q/S)</span>
-                <VIcon size="16" class="color-primary">info</VIcon>
-              </span>
-            </ElTooltip>
-            <ElRadioGroup v-model="qpsChartsType" class="chart__radio">
-              <ElRadioButton label="count">count</ElRadioButton>
-              <ElRadioButton label="size">size</ElRadioButton>
-            </ElRadioGroup>
-          </div>
-
-          <LineChart
-            :data="qpsMap[qpsChartsType]"
-            :color="['#26CF6C', '#2C65FF']"
-            :time-format="timeFormat"
-            :labelUnitType="qpsChartsType === 'size' ? 'byte' : ''"
-            auto-scale
-            class="line-chart"
-          ></LineChart>
-        </div>
-        <div class="line-chart__box mb-2">
-          <div class="flex align-center gap-2">
-            <ElTooltip
-              transition="tooltip-fade-in"
-              placement="top"
-              :content="$t('packages_dag_monitor_leftsider_shijiancongyuanku')"
-            >
-              <span class="inline-flex align-items-center">
-                <span class="mr-2 font-color-dark fw-sub">{{ $t('public_event_incremental_delay') }}</span>
-                <VIcon size="16" class="color-primary">info</VIcon>
-              </span>
-            </ElTooltip>
-            <ElTooltip
-              v-if="dataflow.timeDifference > 0"
-              key="retrying"
-              placement="top"
-              :content="$t('packages_dag_monitor_timeDifference', { val: calcTimeUnit(dataflow.timeDifference) })"
-            >
-              <VIcon size="16" class="color-warning">warning</VIcon>
-            </ElTooltip>
-          </div>
-
-          <LineChart
-            :data="replicateLagData"
-            :color="['#2C65FF']"
-            :time-format="timeFormat"
-            time-value
-            class="line-chart"
-          ></LineChart>
-        </div>
-        <!--指标不准确，暂时隐藏-->
-        <!--<div class="line-chart__box mb-2">
-                <ElTooltip
-                  transition="tooltip-fade-in"
-                  placement="top"
-                  :content="$t('packages_dag_monitor_leftsider_renwuchuliwan')"
-                >
-                  <span>
-                    <span class="mr-2 font-color-dark fw-sub">{{ $t('packages_dag_monitor_leftsider_chulihaoshim') }}</span>
-                    <VIcon size="14" class="color-primary">info</VIcon>
-                  </span>
-                </ElTooltip>
-                <LineChart
-                  :data="delayData"
-                  :color="['#2C65FF']"
-                  :time-format="timeFormat"
-                  time-value
-                  class="line-chart"
-                ></LineChart>
-              </div>-->
-      </div>
-      <div v-if="!hideTotalData" class="info-box py-2 px-4">
-        <div class="flex justify-content-between mb-2">
-          <span class="fw-sub fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_renwushijiantong') }}</span>
-        </div>
-        <div v-loading="!eventDataAll" class="flex">
-          <div v-if="eventDataAll" class="w-50 pr-4">
-            <div>{{ $t('public_event_total_input') }}</div>
-            <ElTooltip
-              transition="tooltip-fade-in"
-              placement="top"
-              :content="eventDataAll.inputTotals.toLocaleString()"
-              class="mt-1 mb-2 font-color-normal fw-sub fs-3 din-font"
-            >
-              <div>{{ eventDataAll.inputTotalsLabel }}</div>
-            </ElTooltip>
-            <div class="mb-2">
-              <span>{{ $t('packages_dag_monitor_leftsider_charu') }}</span>
-              <span>{{ eventDataAll.inputInsertTotal.toLocaleString() }}</span>
-            </div>
-            <div class="mb-2">
-              <span>{{ $t('packages_dag_monitor_leftsider_gengxin') }}</span>
-              <span>{{ eventDataAll.inputUpdateTotal.toLocaleString() }}</span>
-            </div>
-            <div class="mb-2">
-              <span>{{ $t('packages_dag_monitor_leftsider_shanchu') }}</span>
-              <span>{{ eventDataAll.inputDeleteTotal.toLocaleString() }}</span>
-            </div>
-            <div>
-              <span>DDL：</span>
-              <span>{{ eventDataAll.inputDdlTotal.toLocaleString() }}</span>
-            </div>
-          </div>
-
-          <div v-if="eventDataAll" class="output-item flex w-50">
-            <div class="output-item__divider"></div>
-            <div class="ml-4">
-              <div>{{ $t('public_event_total_output') }}</div>
-              <ElTooltip
-                transition="tooltip-fade-in"
-                placement="top"
-                :content="eventDataAll.outputTotals.toLocaleString()"
-                class="mt-1 mb-2 font-color-normal fw-sub fs-3 din-font"
-              >
-                <div>
-                  {{ eventDataAll.outputTotalsLabel }}
-                </div>
-              </ElTooltip>
-              <div class="mb-2">
-                <span>{{ $t('packages_dag_monitor_leftsider_charu') }}</span>
-                <span>{{ eventDataAll.outputInsertTotal.toLocaleString() }}</span>
-              </div>
-              <div class="mb-2">
-                <span>{{ $t('packages_dag_monitor_leftsider_gengxin') }}</span>
-                <span>{{ eventDataAll.outputUpdateTotal.toLocaleString() }}</span>
-              </div>
-              <div class="mb-2">
-                <span>{{ $t('packages_dag_monitor_leftsider_shanchu') }}</span>
-                <span>{{ eventDataAll.outputDeleteTotal.toLocaleString() }}</span>
-              </div>
-              <div>
-                <span>DDL：</span>
-                <span>{{ eventDataAll.outputDdlTotal.toLocaleString() }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="py-2 px-4">
-        <div class="flex justify-content-between mb-2">
-          <span class="fw-sub fs-7 font-color-normal">{{ $t('packages_dag_monitor_leftsider_tiaoshixinxi') }}</span>
-        </div>
-        <div class="mb-2 flex justify-content-between">
-          <span>{{ $t('public_task_heartbeat_time') }}:</span>
-          <span>{{ heartbeatTime }}</span>
-        </div>
-      </div>
-    </div>
-
-    <ElDialog
-      :title="$t('packages_dag_components_nodedetaildialog_xingnengzhibiao')"
-      width="774px"
-      v-model="lineChartDialog"
-      :close-on-click-modal="false"
-      :modal-append-to-body="false"
-    >
-      <div class="line-chart__box mb-2">
-        <div class="flex justify-content-between">
-          <ElTooltip
-            transition="tooltip-fade-in"
-            placement="top"
-            :content="
-              qpsChartsType === 'count'
-                ? $t('packages_dag_monitor_leftsider_qpSshizhi')
-                : $t('packages_dag_monitor_leftsider_qpSshizhi2')
-            "
-          >
-            <span class="inline-flex align-items-center">
-              <span class="mr-2 font-color-dark fw-sub">QPS(Q/S)</span>
-              <VIcon size="16" class="color-primary">info</VIcon>
-            </span>
-          </ElTooltip>
-          <ElRadioGroup v-model="qpsChartsType" class="chart__radio">
-            <ElRadioButton label="count">count</ElRadioButton>
-            <ElRadioButton label="size">size</ElRadioButton>
-          </ElRadioGroup>
-        </div>
-      </div>
-
-      <LineChart
-        :data="qpsMap[qpsChartsType]"
-        :color="['#26CF6C', '#2C65FF']"
-        :time-format="timeFormat"
-        :labelUnitType="qpsChartsType === 'size' ? 'byte' : ''"
-        style="height: 200px"
-      ></LineChart>
-      <LineChart
-        :data="replicateLagData"
-        :title="$t('public_event_incremental_delay')"
-        :color="['#2C65FF']"
-        :time-format="timeFormat"
-        time-value
-        class="mt-8"
-        style="height: 200px"
-      ></LineChart>
-      <LineChart
-        :data="delayData"
-        :title="$t('packages_dag_monitor_leftsider_chulihaoshim')"
-        :color="['#2C65FF']"
-        :time-format="timeFormat"
-        time-value
-        class="mt-8"
-        style="height: 200px"
-      ></LineChart>
-    </ElDialog>
-
-    <InitialList v-model:value="initialListDialog" :dataflow="dataflow" ref="initialList"></InitialList>
-  </aside>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import { mapGetters } from 'vuex'
-import { cloneDeep } from 'lodash-es'
+import { externalStorageApi, logcollectorApi, sharedCacheApi } from '@tap/api'
+import { EXTERNAL_STORAGE_TYPE_MAP } from '@tap/business'
+import { IconButton, TimeSelect, VIcon } from '@tap/component'
 
 import i18n from '@tap/i18n'
-import LineChart from './components/LineChart'
-import { VIcon, TimeSelect, IconButton } from '@tap/component'
-import Frequency from './components/Frequency'
-import InitialList from './components/InitialList'
-import dayjs from 'dayjs'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
-import { logcollectorApi, sharedCacheApi, externalStorageApi } from '@tap/api'
-import { EXTERNAL_STORAGE_TYPE_MAP } from '@tap/business'
+import dayjs from 'dayjs'
+import { cloneDeep } from 'lodash-es'
+import { mapGetters } from 'vuex'
+import { $emit } from '../../../utils/gogocodeTransfer'
+import Frequency from './components/Frequency'
+import InitialList from './components/InitialList'
+import LineChart from './components/LineChart'
 
 export default {
   name: 'LeftSider',
+  components: {
+    LineChart,
+    TimeSelect,
+    Frequency,
+    VIcon,
+    InitialList,
+    IconButton,
+  },
   props: {
     dataflow: Object,
     quota: Object,
@@ -423,14 +40,6 @@ export default {
     },
     timeFormat: String,
     ifEnableConcurrentRead: Boolean,
-  },
-  components: {
-    LineChart,
-    TimeSelect,
-    Frequency,
-    VIcon,
-    InitialList,
-    IconButton,
   },
   data() {
     return {
@@ -474,12 +83,15 @@ export default {
       const snapshotDoneAt = milestone.SNAPSHOT?.end
       let markLineTime = 0
       time.forEach((el) => {
-        if (Math.abs(el - snapshotDoneAt) < 2000 && Math.abs(el - snapshotDoneAt) < Math.abs(el - markLineTime)) {
+        if (
+          Math.abs(el - snapshotDoneAt) < 2000 &&
+          Math.abs(el - snapshotDoneAt) < Math.abs(el - markLineTime)
+        ) {
           markLineTime = el
         }
       })
 
-      let opt = {
+      const opt = {
         x: time,
         name: [i18n.t('public_time_input'), i18n.t('public_time_output')],
         // value: [inputQps, outputQps],
@@ -493,7 +105,7 @@ export default {
             symbol: 'none',
             data: [
               {
-                xAxis: markLineTime + '',
+                xAxis: String(markLineTime),
                 lineStyle: {
                   color: '#000',
                 },
@@ -543,36 +155,51 @@ export default {
       }
 
       const { replicateLag = [] } = data
-      const open = this.dataflow.alarmSettings?.find((t) => t.key === 'TASK_INCREMENT_DELAY')?.open
-      const delay = open ? this.dataflow.alarmRules?.find((t) => t.key === 'TASK_INCREMENT_DELAY')?.ms || 0 : 60 * 1000
+      const open = this.dataflow.alarmSettings?.find(
+        (t) => t.key === 'TASK_INCREMENT_DELAY',
+      )?.open
+      const delay = open
+        ? this.dataflow.alarmRules?.find(
+            (t) => t.key === 'TASK_INCREMENT_DELAY',
+          )?.ms || 0
+        : 60 * 1000
       const max = Math.max(...replicateLag)
       return {
         x: time,
         value: replicateLag,
-        yAxisMax: Math.max(delay, max)
+        yAxisMax: Math.max(delay, max),
       }
     },
 
     // 全量信息
     initialData() {
       const data = this.quota.samples?.totalData?.[0] || {}
-      const { snapshotRowTotal = 0, snapshotInsertRowTotal = 0, replicateLag, lastFiveMinutesQps, } = data
+      const {
+        snapshotRowTotal = 0,
+        snapshotInsertRowTotal = 0,
+        replicateLag,
+        lastFiveMinutesQps,
+      } = data
       let time
       if (!snapshotInsertRowTotal || !snapshotRowTotal || !lastFiveMinutesQps) {
         time = 0
       } else {
-        time = ((snapshotRowTotal - snapshotInsertRowTotal) / lastFiveMinutesQps) * 1000
+        time =
+          ((snapshotRowTotal - snapshotInsertRowTotal) / lastFiveMinutesQps) *
+          1000
       }
       const milestone = this.dataflow.attrs?.milestone || {}
       const snapshotStartAt = milestone.SNAPSHOT?.begin
         ? dayjs(milestone.SNAPSHOT?.begin).format('YYYY-MM-DD HH:mm:ss')
         : ''
-      const snapshotDoneAt = milestone.SNAPSHOT?.end ? dayjs(milestone.SNAPSHOT?.end).format('YYYY-MM-DD HH:mm:ss') : ''
+      const snapshotDoneAt = milestone.SNAPSHOT?.end
+        ? dayjs(milestone.SNAPSHOT?.end).format('YYYY-MM-DD HH:mm:ss')
+        : ''
 
       return {
         snapshotStartAt,
         snapshotDoneAt,
-        replicateLag: replicateLag,
+        replicateLag,
         finishDuration: time,
       }
     },
@@ -611,12 +238,18 @@ export default {
     },
 
     currentTotalDataPercentage() {
-      const { currentSnapshotTableInsertRowTotal, currentSnapshotTableRowTotal } = this.totalData
+      const {
+        currentSnapshotTableInsertRowTotal,
+        currentSnapshotTableRowTotal,
+      } = this.totalData
       if (!currentSnapshotTableRowTotal) return 0
       if (currentSnapshotTableInsertRowTotal > currentSnapshotTableRowTotal) {
         return 100
       }
-      return (currentSnapshotTableInsertRowTotal / currentSnapshotTableRowTotal) * 100
+      return (
+        (currentSnapshotTableInsertRowTotal / currentSnapshotTableRowTotal) *
+        100
+      )
     },
 
     initialList() {
@@ -631,7 +264,9 @@ export default {
 
     heartbeatTime() {
       const { pingTime, status } = this.dataflow
-      return status === 'running' && pingTime ? dayjs(Time.now()).to(dayjs(pingTime)) : '-'
+      return status === 'running' && pingTime
+        ? dayjs(Time.now()).to(dayjs(pingTime))
+        : '-'
     },
 
     isFileSource() {
@@ -651,7 +286,10 @@ export default {
 
     // 进入增量阶段
     startingIncremental() {
-      return this.dataflow.type !== 'initial_sync' && !!this.initialData.snapshotDoneAt
+      return (
+        this.dataflow.type !== 'initial_sync' &&
+        !!this.initialData.snapshotDoneAt
+      )
     },
 
     timeOptions() {
@@ -695,7 +333,7 @@ export default {
     },
   },
   watch: {
-    'dataflow.syncType'(v) {
+    'dataflow.syncType': function (v) {
       v && this.getBasicInformation()
     },
   },
@@ -704,7 +342,7 @@ export default {
   },
   methods: {
     changeTimeSelect(val, isTime, source) {
-      $emit(this, 'changeTimeSelect', val, isTime, source)
+      this.$emit('changeTimeSelect', val, isTime, source)
       this.timeSelectLabel = this.$refs.timeSelect?.getPeriod()?.label
     },
 
@@ -721,8 +359,14 @@ export default {
     },
 
     getInputOutput(data) {
-      let result = {}
-      const inputArr = ['inputInsertTotal', 'inputUpdateTotal', 'inputDeleteTotal', 'inputDdlTotal', 'inputOthersTotal']
+      const result = {}
+      const inputArr = [
+        'inputInsertTotal',
+        'inputUpdateTotal',
+        'inputDeleteTotal',
+        'inputDdlTotal',
+        'inputOthersTotal',
+      ]
       const outputArr = [
         'outputInsertTotal',
         'outputUpdateTotal',
@@ -741,10 +385,14 @@ export default {
       }, 0)
       const limit = 1000000000
       result.inputTotalsLabel =
-        result.inputTotals >= limit ? calcUnit(result.inputTotals) : result.inputTotals.toLocaleString()
+        result.inputTotals >= limit
+          ? calcUnit(result.inputTotals)
+          : result.inputTotals.toLocaleString()
 
       result.outputTotalsLabel =
-        result.outputTotals >= limit ? calcUnit(result.outputTotals) : result.outputTotals.toLocaleString()
+        result.outputTotals >= limit
+          ? calcUnit(result.outputTotals)
+          : result.outputTotals.toLocaleString()
       return result
     },
 
@@ -757,7 +405,7 @@ export default {
         ? calcTimeUnit(val, 2, {
             autoHideMs: true,
           })
-        : placeholder ?? i18n.t('public_data_no_data')
+        : (placeholder ?? i18n.t('public_data_no_data'))
     },
 
     getCollectorData() {
@@ -766,16 +414,18 @@ export default {
         let uriInfo = externalStorage.uri
         if (externalStorage.type === 'mongodb') {
           const regResult =
-            /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
+            /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/.exec(
               externalStorage.uri,
             )
           const { username, host, database, query } = regResult.groups
-          uriInfo = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`
+          uriInfo = `mongodb://${username}:***@${host}/${database}${query ? `/${query}` : ''}`
         }
         if (!externalStorage.name) {
           this.infoList = [
             {
-              label: this.$t('packages_business_relation_details_rizhiwajueshi'),
+              label: this.$t(
+                'packages_business_relation_details_rizhiwajueshi',
+              ),
               value: this.formatTime(logTime),
             },
           ]
@@ -856,6 +506,509 @@ export default {
   emits: ['load-data', 'verifyDetails', 'changeTimeSelect', 'changeFrequency'],
 }
 </script>
+
+<template>
+  <aside class="layout-sidebar --left border-end flex-column flex-shrink-0">
+    <div class="flex flex-column flex-1 min-h-0 overflow-y-auto">
+      <div
+        class="info-box flex justify-content-between align-items-center flex-wrap"
+      >
+        <TimeSelect
+          ref="timeSelect"
+          :options="timeOptions"
+          :range="$attrs.range"
+          class="mb-1 w-100"
+          @change="changeTimeSelect"
+        />
+        <Frequency
+          :range="$attrs.range"
+          class="flex-1"
+          @change="changeFrequency"
+        />
+        <ElTooltip
+          transition="tooltip-fade-in"
+          :content="$t('public_button_refresh')"
+        >
+          <IconButton class="color-primary" @click="$emit('load-data')">
+            refresh</IconButton
+          >
+        </ElTooltip>
+      </div>
+      <div v-if="dataflow.type !== 'cdc'" class="info-box sync-info">
+        <div class="flex justify-content-between mb-2">
+          <span class="fw-sub fs-7 font-color-normal">{{
+            $t('packages_dag_monitor_leftsider_tongbuxinxi')
+          }}</span>
+          <ElTooltip
+            v-if="showToInitialList"
+            transition="tooltip-fade-in"
+            :content="$t('packages_dag_monitor_leftsider_liebiao')"
+          >
+            <VIcon @click.stop="toInitialList">menu-left</VIcon>
+          </ElTooltip>
+        </div>
+        <template v-if="dataflow.type !== 'cdc'">
+          <div class="mb-2 flex justify-content-between">
+            <span class="sync-info-item__title">{{
+              $t('packages_dag_components_nodedetaildialog_quanliangkaishishi')
+            }}</span>
+            <span>{{ initialData.snapshotStartAt || '-' }}</span>
+          </div>
+          <div
+            v-if="initialData.snapshotDoneAt"
+            class="mb-2 flex justify-content-between"
+          >
+            <span class="sync-info-item__title">{{
+              $t('packages_dag_monitor_leftsider_quanliangwanchengshi')
+            }}</span>
+            <span>{{ initialData.snapshotDoneAt }}</span>
+          </div>
+          <div v-else class="mb-2 flex justify-content-between">
+            <span class="sync-info-item__title">{{
+              $t('packages_dag_monitor_leftsider_yujiquanliangwan')
+            }}</span>
+            <span v-if="isFileSource" class="flex-1 text-end">{{
+              $t('packages_dag_components_node_zanbuzhichi')
+            }}</span>
+            <span v-else-if="initialData.finishDuration < 0">{{
+              $t('packages_business_task_info_calculating')
+            }}</span>
+            <ElTooltip
+              v-else
+              transition="tooltip-fade-in"
+              :content="`${initialData.finishDuration.toLocaleString()}ms`"
+            >
+              <span>{{
+                calcTimeUnit(initialData.finishDuration, 2, {
+                  autoHideMs: true,
+                })
+              }}</span>
+            </ElTooltip>
+          </div>
+          <div class="mb-2 flex align-items-center justify-content-between">
+            <span class="mr-2 sync-info-item__title">{{
+              $t('public_task_full_sync_progress')
+            }}</span>
+            <span v-if="isFileSource" class="flex-1 text-end">{{
+              $t('packages_dag_components_node_zanbuzhichi')
+            }}</span>
+            <ElTooltip v-else placement="bottom">
+              <div class="inline-flex">
+                <ElProgress
+                  class="flex-1 my-2"
+                  :show-text="false"
+                  style="width: 150px"
+                  :percentage="totalDataPercentage"
+                />
+                <span class="ml-2">{{
+                  `${totalData.snapshotTableTotal}/${totalData.tableTotal}`
+                }}</span>
+              </div>
+              <template #content>
+                <div class="fs-8">
+                  <div>
+                    <span
+                      >{{
+                        $t(
+                          'packages_dag_monitor_leftsider_quanliangwanchenghao',
+                        )
+                      }}:</span
+                    >
+                    <span class="ml-2">{{
+                      calcTimeUnit(totalData.snapshotDoneCost)
+                    }}</span>
+                  </div>
+                  <div>
+                    <span
+                      >{{
+                        $t('packages_dag_monitor_leftsider_pingjunQps')
+                      }}:</span
+                    >
+                    <span class="ml-2">{{ totalData.outputQpsAvg }}</span>
+                  </div>
+                  <div>
+                    <span
+                      >{{
+                        $t('packages_dag_monitor_leftsider_zuidaQps')
+                      }}:</span
+                    >
+                    <span class="ml-2">{{ totalData.outputQpsMax }}</span>
+                  </div>
+                </div>
+              </template>
+            </ElTooltip>
+          </div>
+          <div
+            v-if="
+              dataflow.syncType === 'migrate' &&
+              totalData.currentSnapshotTableRowTotal &&
+              !ifEnableConcurrentRead
+            "
+            class="mb-4 flex align-items-center"
+          >
+            <span class="mr-2 sync-info-item__title">{{
+              $t('packages_dag_components_nodedetaildialog_dangqianbiaotongbu')
+            }}</span>
+            <ElProgress
+              class="flex-1 my-2"
+              :show-text="false"
+              :percentage="currentTotalDataPercentage"
+            />
+            <span class="ml-2">{{
+              `${totalData.currentSnapshotTableInsertRowTotal || 0}/${totalData.currentSnapshotTableRowTotal || 0}`
+            }}</span>
+          </div>
+        </template>
+        <template v-if="dataflow.type !== 'initial_sync'">
+          <div
+            v-if="initialData.snapshotDoneAt"
+            class="mb-2 flex justify-content-between"
+          >
+            <span>{{
+              $t('packages_dag_monitor_leftsider_zuidazengliangyan')
+            }}</span>
+            <span>{{
+              getReplicateLag(
+                initialData.replicateLag,
+                $t('public_event_cdc_placeholder'),
+              )
+            }}</span>
+          </div>
+        </template>
+      </div>
+      <div
+        v-if="
+          dataflow.syncType === 'migrate' &&
+          dataflow.isAutoInspect &&
+          dataflow.canOpenInspect &&
+          verifyTotals
+        "
+        class="info-box"
+      >
+        <div class="flex justify-content-between mb-2">
+          <span class="fw-sub fs-7 font-color-normal">{{
+            $t('packages_dag_monitor_leftsider_renwujiaoyan')
+          }}</span>
+          <ElTooltip
+            v-if="verifyTotals.diffTables"
+            transition="tooltip-fade-in"
+            :content="$t('packages_dag_monitor_leftsider_chayixiangqing')"
+          >
+            <VIcon @click.stop="$emit('verifyDetails')">menu-left</VIcon>
+          </ElTooltip>
+        </div>
+        <div class="flex justify-content-between mb-2">
+          <span>{{
+            $t('packages_dag_monitor_leftsider_chayizongxingshu')
+          }}</span>
+          <span :class="{ 'color-danger': verifyTotals.diffRecords }">{{
+            verifyTotals.diffRecords
+          }}</span>
+        </div>
+        <div class="flex justify-content-between mb-2">
+          <span>{{ $t('packages_dag_monitor_leftsider_jiaoyanbuyizhi') }}</span>
+          <span v-if="verifyTotals.diffTables">
+            <span :class="{ 'color-danger': verifyTotals.diffTables }">{{
+              verifyTotals.diffTables
+            }}</span>
+            <span>/</span>
+            <span>{{ verifyTotals.totals }}</span>
+          </span>
+          <span v-else>0</span>
+        </div>
+        <div class="flex justify-content-between">
+          <span class="mr-2">{{
+            $t('packages_dag_monitor_leftsider_buzhichijiaoyan')
+          }}</span>
+          <span v-if="verifyTotals.ignore">
+            <span :class="{ 'color-danger': verifyTotals.ignore }">{{
+              verifyTotals.ignore
+            }}</span>
+            <span>/</span>
+            <span>{{ verifyTotals.totals }}</span>
+          </span>
+          <span v-else>0</span>
+        </div>
+      </div>
+
+      <div
+        v-if="
+          ['SharedMiningMonitor', 'SharedCacheMonitor'].includes($route.name) &&
+          infoList.length > 0
+        "
+        class="info-box"
+      >
+        <div class="flex justify-content-between mb-2">
+          <span class="fw-bold fs-7 font-color-normal">{{
+            $t('packages_dag_monitor_leftsider_jibenxinxi')
+          }}</span>
+        </div>
+        <div
+          v-for="(item, index) in infoList"
+          :key="index"
+          class="mb-2"
+          :class="[
+            item.block ? 'block' : 'flex justify-content-between',
+            item.class,
+          ]"
+        >
+          <div class="font-color-light">{{ item.label }}:</div>
+          <div class="font-color-dark">{{ item.value || '-' }}</div>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <div class="flex justify-content-between mb-2">
+          <span class="fs-7 fw-sub font-color-normal">{{
+            $t('packages_dag_components_nodedetaildialog_xingnengzhibiao')
+          }}</span>
+          <ElTooltip
+            transition="tooltip-fade-in"
+            :content="$t('packages_dag_button_zoom_in')"
+          >
+            <VIcon @click.stop="toFullscreen">enlarge</VIcon>
+          </ElTooltip>
+        </div>
+        <div class="line-chart__box mb-2">
+          <div class="flex justify-content-between">
+            <ElTooltip
+              transition="tooltip-fade-in"
+              placement="top"
+              :content="
+                qpsChartsType === 'count'
+                  ? $t('packages_dag_monitor_leftsider_qpSshizhi')
+                  : $t('packages_dag_monitor_leftsider_qpSshizhi2')
+              "
+            >
+              <span class="inline-flex align-items-center">
+                <span class="mr-2 font-color-dark fw-sub">QPS(Q/S)</span>
+                <VIcon size="16" class="color-primary">info</VIcon>
+              </span>
+            </ElTooltip>
+            <ElRadioGroup v-model="qpsChartsType" class="chart__radio">
+              <ElRadioButton label="count">count</ElRadioButton>
+              <ElRadioButton label="size">size</ElRadioButton>
+            </ElRadioGroup>
+          </div>
+
+          <LineChart
+            :data="qpsMap[qpsChartsType]"
+            :color="['#26CF6C', '#2C65FF']"
+            :time-format="timeFormat"
+            :label-unit-type="qpsChartsType === 'size' ? 'byte' : ''"
+            auto-scale
+            class="line-chart"
+          />
+        </div>
+        <div class="line-chart__box mb-2">
+          <div class="flex align-center gap-2">
+            <ElTooltip
+              transition="tooltip-fade-in"
+              placement="top"
+              :content="$t('packages_dag_monitor_leftsider_shijiancongyuanku')"
+            >
+              <span class="inline-flex align-items-center">
+                <span class="mr-2 font-color-dark fw-sub">{{
+                  $t('public_event_incremental_delay')
+                }}</span>
+                <VIcon size="16" class="color-primary">info</VIcon>
+              </span>
+            </ElTooltip>
+            <ElTooltip
+              v-if="dataflow.timeDifference > 0"
+              key="retrying"
+              placement="top"
+              :content="
+                $t('packages_dag_monitor_timeDifference', {
+                  val: calcTimeUnit(dataflow.timeDifference),
+                })
+              "
+            >
+              <VIcon size="16" class="color-warning">warning</VIcon>
+            </ElTooltip>
+          </div>
+
+          <LineChart
+            :data="replicateLagData"
+            :color="['#2C65FF']"
+            :time-format="timeFormat"
+            time-value
+            class="line-chart"
+          />
+        </div>
+        <!--指标不准确，暂时隐藏-->
+        <!--<div class="line-chart__box mb-2">
+                <ElTooltip
+                  transition="tooltip-fade-in"
+                  placement="top"
+                  :content="$t('packages_dag_monitor_leftsider_renwuchuliwan')"
+                >
+                  <span>
+                    <span class="mr-2 font-color-dark fw-sub">{{ $t('packages_dag_monitor_leftsider_chulihaoshim') }}</span>
+                    <VIcon size="14" class="color-primary">info</VIcon>
+                  </span>
+                </ElTooltip>
+                <LineChart
+                  :data="delayData"
+                  :color="['#2C65FF']"
+                  :time-format="timeFormat"
+                  time-value
+                  class="line-chart"
+                ></LineChart>
+              </div>-->
+      </div>
+      <div v-if="!hideTotalData" class="info-box py-2 px-4">
+        <div class="flex justify-content-between mb-2">
+          <span class="fw-sub fs-7 font-color-normal">{{
+            $t('packages_dag_monitor_leftsider_renwushijiantong')
+          }}</span>
+        </div>
+        <div v-loading="!eventDataAll" class="flex">
+          <div v-if="eventDataAll" class="w-50 pr-4">
+            <div>{{ $t('public_event_total_input') }}</div>
+            <ElTooltip
+              transition="tooltip-fade-in"
+              placement="top"
+              :content="eventDataAll.inputTotals.toLocaleString()"
+              class="mt-1 mb-2 font-color-normal fw-sub fs-3 din-font"
+            >
+              <div>{{ eventDataAll.inputTotalsLabel }}</div>
+            </ElTooltip>
+            <div class="mb-2">
+              <span>{{ $t('packages_dag_monitor_leftsider_charu') }}</span>
+              <span>{{ eventDataAll.inputInsertTotal.toLocaleString() }}</span>
+            </div>
+            <div class="mb-2">
+              <span>{{ $t('packages_dag_monitor_leftsider_gengxin') }}</span>
+              <span>{{ eventDataAll.inputUpdateTotal.toLocaleString() }}</span>
+            </div>
+            <div class="mb-2">
+              <span>{{ $t('packages_dag_monitor_leftsider_shanchu') }}</span>
+              <span>{{ eventDataAll.inputDeleteTotal.toLocaleString() }}</span>
+            </div>
+            <div>
+              <span>DDL：</span>
+              <span>{{ eventDataAll.inputDdlTotal.toLocaleString() }}</span>
+            </div>
+          </div>
+
+          <div v-if="eventDataAll" class="output-item flex w-50">
+            <div class="output-item__divider" />
+            <div class="ml-4">
+              <div>{{ $t('public_event_total_output') }}</div>
+              <ElTooltip
+                transition="tooltip-fade-in"
+                placement="top"
+                :content="eventDataAll.outputTotals.toLocaleString()"
+                class="mt-1 mb-2 font-color-normal fw-sub fs-3 din-font"
+              >
+                <div>
+                  {{ eventDataAll.outputTotalsLabel }}
+                </div>
+              </ElTooltip>
+              <div class="mb-2">
+                <span>{{ $t('packages_dag_monitor_leftsider_charu') }}</span>
+                <span>{{
+                  eventDataAll.outputInsertTotal.toLocaleString()
+                }}</span>
+              </div>
+              <div class="mb-2">
+                <span>{{ $t('packages_dag_monitor_leftsider_gengxin') }}</span>
+                <span>{{
+                  eventDataAll.outputUpdateTotal.toLocaleString()
+                }}</span>
+              </div>
+              <div class="mb-2">
+                <span>{{ $t('packages_dag_monitor_leftsider_shanchu') }}</span>
+                <span>{{
+                  eventDataAll.outputDeleteTotal.toLocaleString()
+                }}</span>
+              </div>
+              <div>
+                <span>DDL：</span>
+                <span>{{ eventDataAll.outputDdlTotal.toLocaleString() }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="py-2 px-4">
+        <div class="flex justify-content-between mb-2">
+          <span class="fw-sub fs-7 font-color-normal">{{
+            $t('packages_dag_monitor_leftsider_tiaoshixinxi')
+          }}</span>
+        </div>
+        <div class="mb-2 flex justify-content-between">
+          <span>{{ $t('public_task_heartbeat_time') }}:</span>
+          <span>{{ heartbeatTime }}</span>
+        </div>
+      </div>
+    </div>
+
+    <ElDialog
+      v-model="lineChartDialog"
+      :title="$t('packages_dag_components_nodedetaildialog_xingnengzhibiao')"
+      width="774px"
+      :close-on-click-modal="false"
+      :modal-append-to-body="false"
+    >
+      <div class="line-chart__box mb-2">
+        <div class="flex justify-content-between">
+          <ElTooltip
+            transition="tooltip-fade-in"
+            placement="top"
+            :content="
+              qpsChartsType === 'count'
+                ? $t('packages_dag_monitor_leftsider_qpSshizhi')
+                : $t('packages_dag_monitor_leftsider_qpSshizhi2')
+            "
+          >
+            <span class="inline-flex align-items-center">
+              <span class="mr-2 font-color-dark fw-sub">QPS(Q/S)</span>
+              <VIcon size="16" class="color-primary">info</VIcon>
+            </span>
+          </ElTooltip>
+          <ElRadioGroup v-model="qpsChartsType" class="chart__radio">
+            <ElRadioButton label="count">count</ElRadioButton>
+            <ElRadioButton label="size">size</ElRadioButton>
+          </ElRadioGroup>
+        </div>
+      </div>
+
+      <LineChart
+        :data="qpsMap[qpsChartsType]"
+        :color="['#26CF6C', '#2C65FF']"
+        :time-format="timeFormat"
+        :label-unit-type="qpsChartsType === 'size' ? 'byte' : ''"
+        style="height: 200px"
+      />
+      <LineChart
+        :data="replicateLagData"
+        :title="$t('public_event_incremental_delay')"
+        :color="['#2C65FF']"
+        :time-format="timeFormat"
+        time-value
+        class="mt-8"
+        style="height: 200px"
+      />
+      <LineChart
+        :data="delayData"
+        :title="$t('packages_dag_monitor_leftsider_chulihaoshim')"
+        :color="['#2C65FF']"
+        :time-format="timeFormat"
+        time-value
+        class="mt-8"
+        style="height: 200px"
+      />
+    </ElDialog>
+
+    <InitialList
+      ref="initialList"
+      v-model:value="initialListDialog"
+      :dataflow="dataflow"
+    />
+  </aside>
+</template>
 
 <style lang="scss" scoped>
 :deep(.el-dialog) {

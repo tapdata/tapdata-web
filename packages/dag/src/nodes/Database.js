@@ -169,9 +169,6 @@ export class Database extends NodeType {
                           asterisk: true,
                           feedbackLayout: 'none',
                           connectionId: '{{$values.connectionId}}',
-                          title: i18n.t(
-                            'packages_dag_nodes_database_xuanzebiao',
-                          ),
                           target: '',
                         },
                         'x-component': 'Radio.Group',
@@ -389,6 +386,20 @@ export class Database extends NodeType {
                   },
                 },
                 properties: {
+                  compareSchema: {
+                    type: 'void',
+                    'x-component': 'CompareSchema',
+                    'x-reactions': {
+                      dependencies: ['.existDataProcessMode'],
+                      fulfill: {
+                        state: {
+                          visible:
+                            '{{$deps[0] !== "dropTable" && (!$values.attrs.connectionTags || !$values.attrs.connectionTags.includes("schema-free"))}}',
+                        },
+                      },
+                    },
+                  },
+
                   fieldMapping: {
                     type: 'void',
                     'x-component': 'fieldInference',

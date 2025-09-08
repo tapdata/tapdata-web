@@ -541,6 +541,10 @@ export default {
   public_queue_capacity_auto_tip: '基于采样频率计算',
   public_auto: '自动',
   public_custom: '自定义',
+  public_add: '添加',
+  public_automatically: '自动',
+  public_manually: '手动',
+  public_data_table: '数据表',
   public_tag_name: '标签名称',
   public_tag_priority: '优先级设置',
   public_tag_priority_desc:

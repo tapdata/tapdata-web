@@ -137,6 +137,20 @@ export class Table extends NodeType {
                 },
               },
 
+              compareSchema: {
+                type: 'void',
+                'x-component': 'CompareSchema',
+                'x-reactions': {
+                  dependencies: ['.existDataProcessMode'],
+                  fulfill: {
+                    state: {
+                      visible:
+                        '{{$deps[0] !== "dropTable" && (!$values.attrs.connectionTags || !$values.attrs.connectionTags.includes("schema-free"))}}',
+                    },
+                  },
+                },
+              },
+
               tableNameSpace: {
                 type: 'void',
                 'x-component': 'Space',
@@ -163,7 +177,6 @@ export class Table extends NodeType {
                       asterisk: true,
                       feedbackLayout: 'none',
                       connectionId: '{{$values.connectionId}}',
-                      title: i18n.t('packages_dag_dag_table'),
                       target: 'tableName',
                       class: 'flex-1',
                     },
@@ -452,9 +465,6 @@ export class Table extends NodeType {
                       },
                     ],
                     'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      wrapperWidth: 300,
-                    },
                     'x-component': 'Select',
                     'x-reactions': {
                       fulfill: {
@@ -462,11 +472,30 @@ export class Table extends NodeType {
                         state: {
                           description: `{{$settings.type === "cdc" ? '${i18n.t(
                             'packages_dag_nodes_database_setting_cdc_changjing_desc',
-                          )}':$self.value === 'dropTable' ? '${i18n.t('packages_dag_existDataProcessMode_desc')}':''}}`,
+                          )}':''}}`,
                         },
                         schema: {
                           // 根据capabilities列表如果不存在{"id" : "clear_table_function"}属性，表示不支持“运行前删除已存在数据”，⚠️👇表达式依赖enum的顺序
                           'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.find(item => item.id ==='drop_table_function') && options.push($self.dataSource[1]),$values.attrs.capabilities.find(item => item.id ==='clear_table_function') && options.push($self.dataSource[2]),options}}`,
+                        },
+                      },
+                    },
+                  },
+                  dropTableAlert: {
+                    type: 'void',
+                    'x-component': 'Alert',
+                    'x-component-props': {
+                      class: 'mb-2 lh-base',
+                      title: i18n.t('packages_dag_existDataProcessMode_desc'),
+                      type: 'warning',
+                      showIcon: true,
+                      closable: false,
+                    },
+                    'x-reactions': {
+                      dependencies: ['.existDataProcessMode'],
+                      fulfill: {
+                        state: {
+                          visible: '{{$deps[0] === "dropTable"}}',
                         },
                       },
                     },
@@ -1669,13 +1698,6 @@ export class Table extends NodeType {
                     'x-component-props': {
                       title: i18n.t('packages_dag_nodes_database_ddLshijian'),
                       tooltip: i18n.t('packages_dag_ddl_events_collapse_tip'),
-                    },
-                    'x-reactions': {
-                      fulfill: {
-                        state: {
-                          display: `{{findParentNodes($values.id).filter(parent => (parent.type === 'database' || parent.type === 'table') && parent.ddlConfiguration === 'SYNCHRONIZATION' ).length > 0 ? "visible":"hidden"}}`,
-                        },
-                      },
                     },
                     'x-reactions': {
                       fulfill: {

@@ -552,6 +552,10 @@ export default {
   public_queue_capacity_auto_tip: 'Based on sampling frequency calculation',
   public_auto: 'Auto',
   public_custom: 'Custom',
+  public_add: 'Add',
+  public_automatically: 'Automatically',
+  public_manually: 'Manually',
+  public_data_table: 'Table',
   public_tag_name: 'Tag Name',
   public_tag_priority: 'Priority Setting',
   public_tag_priority_desc:
