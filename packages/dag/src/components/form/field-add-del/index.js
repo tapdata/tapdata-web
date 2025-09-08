@@ -125,7 +125,7 @@ export const FieldAddDel = connect(
                   <VIcon
                     class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
                     size="12"
-                    disabled={fields.length === 0 || this.disabled}
+                    disabled={this.disabled}
                     onClick={() => this.handleCreate()}
                   >
                     add
