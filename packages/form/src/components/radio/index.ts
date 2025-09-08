@@ -7,6 +7,7 @@ import {
 import { connect, mapProps, mapReadPretty } from '@formily/vue'
 import { ElRadio, ElRadioButton, ElRadioGroup } from 'element-plus'
 import { defineComponent, h, type PropType } from 'vue'
+import 'element-plus/es/components/radio/style/css'
 
 export type ElRadioProps = typeof ElRadio
 export type RadioGroupProps = typeof ElRadioGroup & {
