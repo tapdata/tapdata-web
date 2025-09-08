@@ -909,7 +909,12 @@ const handleChangeTable = (
     return
   }
 
-  if (matchNode.target === item[type].nodeId) {
+  const temp = {
+    source: 'target',
+    target: 'source',
+  }
+
+  if (matchNode[temp[type]] === item[type].nodeId) {
     matchNode = getReverseNodeInfo(matchNode)
   }
   const {
@@ -934,11 +939,11 @@ const handleChangeTable = (
     item.target.databaseType = targetDatabaseType
     return
   }
-  // 自动填充目标连接和表
-  item.source.databaseType = sourceDatabaseType
 
+  item.source.databaseType = sourceDatabaseType
   item.target.nodeId = target
   item.target.nodeName = targetName
+  item.target.databaseType = targetDatabaseType
   item.target.connectionId = targetConnectionId
   item.target.connectionName = targetConnectionName
   item.target.currentLabel = `${targetName} / ${targetConnectionName}`
