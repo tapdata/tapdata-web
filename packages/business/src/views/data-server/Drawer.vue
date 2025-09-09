@@ -108,7 +108,16 @@ const { t } = useI18n()
 
 // Constants
 const isHa = import.meta.env.MODE === 'ha'
-const typeOptions = ['number', 'string', 'boolean', 'date', 'datetime', 'time', 'array']
+const baseType = [
+  {value: 'number', label: 'number'},
+  {value: 'string', label: 'string'},
+  {value: 'boolean', label: 'boolean'},
+  {value: 'date', label: 'date'},
+  {value: 'datetime', label: 'datetime'},
+  {value: 'time', label: 'time'},
+]
+const typeOptions = [... baseType, {value: 'array', label: 'array', children: baseType }];
+
 const operatorOptions = ['>', '==', '<', '>=', '<=', '!=', 'like']
 const conditionOptions = ['and', 'or']
 const apiTypeMap = {
@@ -432,7 +441,15 @@ const genFormData = (formData: any = {}): Record<string, any> => {
       : formData.apiType || 'defaultApi'
   const pathConfig = formData?.paths?.[0] || {}
   const params =
-    pathConfig.params?.filter((t: any) => t.name !== 'sort') ||
+    pathConfig.params?.filter((t: any) => t.name !== 'sort').map((t: any) => {
+      return {
+        name: t.name,
+        type: t.type.split(': '),
+        defaultvalue: t.defaultvalue,
+        description: t.description,
+        required: t.required,
+      }
+    }) ||
     getDefaultParams(formData.apiType)
 
   const {
@@ -781,7 +798,15 @@ const save = async (type?: boolean) => {
       }
     }
 
-    const params = form.value?.params?.filter((t: any) => t.name)
+    const params = form.value?.params?.filter((t: any) => t.name).map((t: any) => {
+      return {
+        name: t.name,
+        type: Array.isArray(t.type) ? t.type.join(': ') : t.type,
+        defaultvalue: t.defaultvalue,
+        description: t.description,
+        required: t.required,
+      }
+    })
     const sort = form.value?.sort?.filter((t: any) => t.fieldName)
     const where = form.value?.where?.filter(
       (t: any) => t.fieldName && t.parameter,
@@ -1969,21 +1994,14 @@ function handleClearAlias() {
               <div v-else>{{ row.name }}</div>
             </template>
           </ElTableColumn>
-          <ElTableColumn :label="$t('public_type')" prop="type" min-width="65">
+          <ElTableColumn :label="$t('public_type')" prop="type" min-width="90">
             <template #default="{ row, $index }">
               <div
                 v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'"
               >
-                <ElSelect v-model="form.params[$index].type">
-                  <ElOption
-                    v-for="type in typeOptions"
-                    :key="type"
-                    :value="type"
-                    :label="type"
-                  />
-                </ElSelect>
+                <el-cascader v-model="form.params[$index].type" :options="typeOptions" separator=": "/>
               </div>
-              <div v-else>{{ row.type }}</div>
+              <div v-else>{{ row.type.join(': ') }}</div>
             </template>
           </ElTableColumn>
           <ElTableColumn
