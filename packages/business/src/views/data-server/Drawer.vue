@@ -1830,7 +1830,7 @@ provide('encryptions', encryptions)
               <div v-else>{{ row.name }}</div>
             </template>
           </ElTableColumn>
-          <ElTableColumn :label="$t('public_type')" prop="type" min-width="80">
+          <ElTableColumn :label="$t('public_type')" prop="type" min-width="65">
             <template #default="{ row, $index }">
               <div
                 v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'"
@@ -1851,13 +1851,35 @@ provide('encryptions', encryptions)
             v-if="tab === 'form'"
             :label="$t('public_data_default')"
             prop="defaultvalue"
-            min-width="60"
+            min-width="100"
           >
             <template #default="{ row, $index }">
               <div v-if="isEdit && row.defaultvalue !== undefined">
                 <ElInput v-model="form.params[$index].defaultvalue" />
               </div>
               <div v-else>{{ row.defaultvalue }}</div>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn
+              :label="$t('packages_business_data_server_drawer_required')"
+              prop="required"
+              min-width="40"
+          >
+            <template #default="{ row, $index }">
+              <div
+                  v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'"
+              >
+                <ElFormItem
+                    :prop="`params.${$index}.required`"
+                    :error="!form.params[$index].required ? 'true' : ''"
+                    :show-message="false"
+                    :rules="rules.param"
+                    class="mb-0"
+                >
+                  <ElSwitch v-model="form.params[$index].required" />
+                </ElFormItem>
+              </div>
+              <div v-else>{{ row.required ? $t('packages_business_data_server_drawer_required_true') : $t('packages_business_data_server_drawer_required_false') }}</div>
             </template>
           </ElTableColumn>
           <ElTableColumn
