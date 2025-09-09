@@ -111,7 +111,7 @@ const { t } = useI18n()
 
 // Constants
 const isHa = import.meta.env.MODE === 'ha'
-const typeOptions = ['number', 'string', 'boolean', 'date', 'datetime', 'time']
+const typeOptions = ['number', 'string', 'boolean', 'date', 'datetime', 'time', 'array']
 const operatorOptions = ['>', '==', '<', '>=', '<=', '!=', 'like']
 const conditionOptions = ['and', 'or']
 const apiTypeMap = {
