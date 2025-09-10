@@ -847,7 +847,8 @@ export default {
   packages_business_connections_databaseform_kaiqixintiaobiao: '开启心跳表',
   packages_business_connections_databaseform_jiaobentiaoshi: '脚本调试',
   // api服务管理
-  packages_business_data_server_drawer_filter: '无效的Json参数值, 请将filter作为json对象输入',
+  packages_business_data_server_drawer_filter:
+    '无效的Json参数值, 请将filter作为json对象输入',
   packages_business_data_server_drawer_qingshurucanshu: '请输入参数名称',
   packages_business_data_server_drawer_paixu: '排序',
   packages_business_data_server_drawer_meigefenyefan: '每个分页返回的记录数',
@@ -1488,4 +1489,6 @@ export default {
   packages_business_example_size: '{a} 数组长度为 {b}',
   packages_business_example_mod: '{a} 能被 {b} 整除',
   packages_business_edit_task_info: '编辑任务信息',
+  packages_business_monitor_cron: '监控周期',
+  packages_business_monitor_cron_tip: `语法: 秒 * 分钟 * 小时 * 日 * 月 * 星期 ? 年 *\n举例：0 */1 * * * ? 每分钟运行一次 0 0 2 * * ? 每天2点运行`,
 }

@@ -936,7 +936,8 @@ export default {
     'Enable heartbeat table',
   packages_business_connections_databaseform_jiaobentiaoshi: 'Script Debugging',
   // api服务管理
-  packages_business_data_server_drawer_filter: 'Invalid json Parameter value, input filter as json object, please',
+  packages_business_data_server_drawer_filter:
+    'Invalid json Parameter value, input filter as json object, please',
   packages_business_data_server_drawer_qingshurucanshu:
     'Please enter parameter name',
   packages_business_data_server_drawer_paixu: 'Sort',
@@ -1680,4 +1681,6 @@ export default {
   packages_business_example_regex: 'Starts with A, ignoring case',
   packages_business_example_size: '{a} array size is {b}',
   packages_business_edit_task_info: 'Edit Task Information',
+  packages_business_monitor_cron: 'Monitor Period',
+  packages_business_monitor_cron_tip: `Syntax: seconds * minutes * hours * days * months * weeks ? years *\nExample: 0 */1 * * * ? Run every minute 0 0 2 * * ? Run every day at 2am`,
 }

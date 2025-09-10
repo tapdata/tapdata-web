@@ -843,7 +843,8 @@ export default {
   packages_business_connections_databaseform_kaiqixintiaobiao: '開啟心跳表',
   packages_business_connections_databaseform_jiaobentiaoshi: '腳本調試',
   // api服务管理
-  packages_business_data_server_drawer_filter: '無效的Json參數值，請將filter作為json對象輸入',
+  packages_business_data_server_drawer_filter:
+    '無效的Json參數值，請將filter作為json對象輸入',
   packages_business_data_server_drawer_qingshurucanshu: '請輸入參數名稱',
   packages_business_data_server_drawer_paixu: '排序',
   packages_business_data_server_drawer_meigefenyefan: '每個分頁返回的記錄數',
@@ -1477,4 +1478,6 @@ export default {
   packages_business_example_regex: '以 A 開頭，忽略大小寫',
   packages_business_example_size: '{a} 數組長度為 {b}',
   packages_business_edit_task_info: '編輯任務信息',
+  packages_business_monitor_cron: '監控周期',
+  packages_business_monitor_cron_tip: `語法: 秒 * 分鐘 * 小時 * 日 * 月 * 星期 ? 年 *\n舉例：0 */1 * * * ? 每分鐘運行一次 0 0 2 * * ? 每天2點運行`,
 }
