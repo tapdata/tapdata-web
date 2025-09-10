@@ -37,7 +37,6 @@ interface Props {
   selectedWorker?: string
   height?: string | number
   colors?: string[]
-  granularity?: number // 查询粒度：0-分钟，1-小时，2-天，3-周，4-月
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -45,7 +44,6 @@ const props = withDefaults(defineProps<Props>(), {
   selectedWorker: '',
   height: '300px',
   colors: undefined,
-  granularity: 0,
 })
 
 const chartRef = ref()

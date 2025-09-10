@@ -28,12 +28,12 @@ interface WorkerData {
   sort: number
 }
 
-interface ApiCallStats {
-  apiPath: string
-  callCount: number
-  failureCount: number
-  failureRate: number
-}
+// interface ApiCallStats {
+//   apiPath: string
+//   callCount: number
+//   failureCount: number
+//   failureRate: number
+// }
 
 // Props
 interface Props {
@@ -48,8 +48,23 @@ const props = withDefaults(defineProps<Props>(), {
   workerData: () => [],
 })
 
+const getGranularity = () => {
+  if (time.value <= 60) {
+    return 0
+  } else if (time.value <= 1440) {
+    return 1
+  } else if (time.value <= 10080) {
+    return 2
+  } else if (time.value <= 43200) {
+    return 2
+  } else {
+    return 4
+  }
+}
+
 const serverDetails = ref()
 const time = ref(10)
+const granularity = ref(getGranularity())
 const timeList = ref([
   { label: '最近10分钟', value: 10 },
   { label: '最近30分钟', value: 30 },
@@ -99,7 +114,7 @@ const { run: runFetchWorkerCall, data: rpsData } = useRequest(
     const data = await fetchWorkerCall({
       processId: props.server.processId,
       ...getTimeRange(),
-      granularity: getGranularity(),
+      granularity: granularity.value,
       type: 0,
     })
 
@@ -119,7 +134,7 @@ const { run: runFetchWorkerCallErrorRate, data: errorRateData } = useRequest(
     const data = await fetchWorkerCall({
       processId: props.server.processId,
       ...getTimeRange(),
-      granularity: getGranularity(),
+      granularity: granularity.value,
       type: 2,
     })
 
@@ -140,14 +155,14 @@ const { run: runFetchWorkerCallResponseTime, data: responseTimeData } =
       const data = await fetchWorkerCall({
         processId: props.server.processId,
         ...getTimeRange(),
-        granularity: getGranularity(),
+        granularity: granularity.value,
         type: 1,
       })
 
       data.workerMetrics = data.workerMetrics.filter((item) =>
         Boolean(item.workerName),
       )
-      console.log(data.workerMetrics)
+      // console.log(data.workerMetrics)
       return data.workerMetrics
     },
     {
@@ -188,7 +203,7 @@ const selectedWorkerId = ref<string>('')
 
 const apiList = computed(() => {
   return (
-    apiCallsData.value.find((item) => item.workerName === selectedWorker.value)
+    apiCallsData.value?.find((item) => item.workerName === selectedWorker.value)
       ?.workerMetric || []
   )
 })
@@ -218,8 +233,7 @@ const rpsChartData = computed(() => {
 
   // Format time labels for category axis
   const formattedTimeLabels = displayTimePoints.map((timestamp) => {
-    const date = new Date(timestamp)
-    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
+    return formatTimeLabel(timestamp, granularity.value)
   })
 
   // Create a map for quick time lookup
@@ -244,7 +258,7 @@ const rpsChartData = computed(() => {
       if (timeIndex !== undefined && index < workerRps.length) {
         const rpsValue = workerRps[index]
         alignedData[timeIndex] =
-          rpsValue === null ? null : +rpsValue.toFixed(2) || 0
+          rpsValue === null ? null : +(rpsValue?.toFixed(2) || 0)
       }
     })
 
@@ -285,8 +299,7 @@ const errorRateChartData = computed(() => {
 
   // Format time labels for category axis
   const formattedTimeLabels = displayTimePoints.map((timestamp) => {
-    const date = new Date(timestamp)
-    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
+    return formatTimeLabel(timestamp, granularity.value)
   })
 
   // Create a map for quick time lookup
@@ -311,7 +324,7 @@ const errorRateChartData = computed(() => {
       if (timeIndex !== undefined && index < workerErrorRate.length) {
         const errorRateValue = workerErrorRate[index]
         alignedData[timeIndex] =
-          errorRateValue === null ? null : +errorRateValue.toFixed(2) || 0
+          errorRateValue === null ? null : +(errorRateValue?.toFixed(2) || 0)
       }
     })
 
@@ -358,8 +371,7 @@ const responseTimeChartData = computed(() => {
 
   // Format time labels for category axis
   const formattedTimeLabels = displayTimePoints.map((timestamp) => {
-    const date = new Date(timestamp)
-    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
+    return formatTimeLabel(timestamp, granularity.value)
   })
 
   // Create a map for quick time lookup
@@ -399,15 +411,15 @@ const responseTimeChartData = computed(() => {
     if (timeIndex !== undefined) {
       if (index < p50Data.length) {
         series[0].data[timeIndex] =
-          p50Data[index] === null ? null : +p50Data[index].toFixed(2) || 0
+          p50Data[index] === null ? null : +(p50Data[index]?.toFixed(2) || 0)
       }
       if (index < p95Data.length) {
         series[1].data[timeIndex] =
-          p95Data[index] === null ? null : +p95Data[index].toFixed(2) || 0
+          p95Data[index] === null ? null : +(p95Data[index]?.toFixed(2) || 0)
       }
       if (index < p99Data.length) {
         series[2].data[timeIndex] =
-          p99Data[index] === null ? null : +p99Data[index].toFixed(2) || 0
+          p99Data[index] === null ? null : +(p99Data[index]?.toFixed(2) || 0)
       }
     }
   })
@@ -429,9 +441,15 @@ const handleClose = () => {
   cancelFetchData()
 }
 
-const selectWorker = (worker: WorkerData) => {
-  selectedWorker.value = worker.name
-  selectedWorkerId.value = worker.oid
+const selectWorker = (worker: WorkerData | string) => {
+  if (typeof worker === 'string') {
+    selectedWorker.value = worker
+    const workerData = workerData.value.find((w) => w.name === worker)
+    selectedWorkerId.value = workerData?.oid || ''
+  } else {
+    selectedWorker.value = worker.name
+    selectedWorkerId.value = worker.oid
+  }
 }
 
 // Auto-select first worker when data is loaded
@@ -462,33 +480,34 @@ const apiStatsColumns = computed(() => [
 ])
 
 const handleTimeChange = () => {
+  granularity.value = getGranularity()
   runFetchData()
-}
-
-// 时间跨度 ≤ 1小时：推荐granularity = 0（分钟），每分钟一个数据点。
-// 1小时 < 时间跨度 ≤ 1天：推荐granularity = 1（小时），每小时一个数据点。
-// 1天 < 时间跨度 ≤ 7天：推荐granularity = 2（天），每天一个数据点。
-// 7天 < 时间跨度 ≤ 1个月：推荐granularity = 2（天），每天一个数据点。
-// 时间跨度 > 1个月：推荐granularity = 4（月），每月一个数据点。
-
-const getGranularity = () => {
-  if (time.value <= 60) {
-    return 0
-  } else if (time.value <= 1440) {
-    return 1
-  } else if (time.value <= 10080) {
-    return 2
-  } else if (time.value <= 43200) {
-    return 2
-  } else {
-    return 4
-  }
 }
 
 const getTimeRange = () => {
   return {
     from: Date.now() - time.value * 60 * 1000,
     to: Date.now() - 60 * 1000,
+  }
+}
+
+// Format time labels based on granularity
+const formatTimeLabel = (timestamp: number, granularity: number): string => {
+  const date = new Date(timestamp)
+
+  switch (granularity) {
+    case 0: // 分钟
+      return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
+    case 1: // 小时
+      return `${date.getHours().toString().padStart(2, '0')}:00`
+    case 2: // 天
+      return `${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+    case 3: // 周
+      return `${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+    case 4: // 月
+      return `${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+    default:
+      return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
   }
 }
 </script>
@@ -573,6 +592,7 @@ const getTimeRange = () => {
                 :chart-data="rpsChartData"
                 :selected-worker="selectedWorker"
                 :height="280"
+                :granularity="granularity"
                 @worker-select="selectWorker"
               />
             </div>
@@ -615,12 +635,8 @@ const getTimeRange = () => {
               <VTable
                 :data="apiList"
                 :columns="apiStatsColumns"
-                hide-on-single-page
+                :has-pagination="false"
               >
-                <template #empty>
-                  <el-empty image-size="100" class="py-4" />
-                </template>
-
                 <template #errorCount="{ row }">
                   <span
                     :class="
