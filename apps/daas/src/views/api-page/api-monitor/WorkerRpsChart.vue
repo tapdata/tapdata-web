@@ -132,7 +132,9 @@ const chartOptions = computed(() => {
         name: worker.name,
         type: 'line',
         data: worker.data,
+        connectNulls: true,
         // smooth: true,
+        // symbolSize: 2,
         lineStyle: {
           width: 2,
         },

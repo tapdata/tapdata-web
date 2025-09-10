@@ -19,7 +19,7 @@ import { calcTimeUnit, calcUnit } from '@tap/shared'
 import { escapeRegExp } from 'lodash-es'
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import Detail from './Detail'
+import Detail from './Detail.vue'
 import ServerDetails from './ServerDetails.vue'
 
 import type { TableInstance } from 'element-plus'

@@ -7,6 +7,7 @@ import {
   type WorkerCallData,
 } from '@tap/api'
 import { VTable } from '@tap/component/src/base/v-table'
+import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 // @ts-ignore
 import { calcUnit } from '@tap/shared'
 import { computed, ref, watch } from 'vue'
@@ -48,6 +49,15 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const serverDetails = ref()
+const time = ref(10)
+const timeList = ref([
+  { label: '最近10分钟', value: 10 },
+  { label: '最近30分钟', value: 30 },
+  { label: '最近1小时', value: 60 },
+  { label: '最近1天', value: 1440 },
+  { label: '最近1周', value: 10080 },
+  { label: '最近1个月', value: 43200 },
+])
 
 const {
   run: runFetchApiServerWorker,
@@ -88,7 +98,8 @@ const { run: runFetchWorkerCall, data: rpsData } = useRequest(
   async () => {
     const data = await fetchWorkerCall({
       processId: props.server.processId,
-      // from: 1757383200000,
+      ...getTimeRange(),
+      granularity: getGranularity(),
       type: 0,
     })
 
@@ -107,7 +118,8 @@ const { run: runFetchWorkerCallErrorRate, data: errorRateData } = useRequest(
   async () => {
     const data = await fetchWorkerCall({
       processId: props.server.processId,
-      // from: 1757383200000,
+      ...getTimeRange(),
+      granularity: getGranularity(),
       type: 2,
     })
 
@@ -127,7 +139,8 @@ const { run: runFetchWorkerCallResponseTime, data: responseTimeData } =
     async () => {
       const data = await fetchWorkerCall({
         processId: props.server.processId,
-        // from: 1757383200000,
+        ...getTimeRange(),
+        granularity: getGranularity(),
         type: 1,
       })
 
@@ -201,9 +214,7 @@ const rpsChartData = computed(() => {
   }
 
   // Sort time points and limit by granularity (default 5 points for minutes)
-  const sortedTimePoints = Array.from(allTimePoints).sort((a, b) => a - b)
-  const maxPoints = 5 // Default granularity for minutes
-  const displayTimePoints = sortedTimePoints.slice(-maxPoints)
+  const displayTimePoints = Array.from(allTimePoints).sort((a, b) => a - b)
 
   // Format time labels for category axis
   const formattedTimeLabels = displayTimePoints.map((timestamp) => {
@@ -233,7 +244,7 @@ const rpsChartData = computed(() => {
       if (timeIndex !== undefined && index < workerRps.length) {
         const rpsValue = workerRps[index]
         alignedData[timeIndex] =
-          rpsValue === null ? 0 : Number(rpsValue.toFixed(2)) || 0
+          rpsValue === null ? null : +rpsValue.toFixed(2) || 0
       }
     })
 
@@ -270,9 +281,7 @@ const errorRateChartData = computed(() => {
   }
 
   // Sort time points and limit by granularity
-  const sortedTimePoints = Array.from(allTimePoints).sort((a, b) => a - b)
-  const maxPoints = 5
-  const displayTimePoints = sortedTimePoints.slice(-maxPoints)
+  const displayTimePoints = Array.from(allTimePoints).sort((a, b) => a - b)
 
   // Format time labels for category axis
   const formattedTimeLabels = displayTimePoints.map((timestamp) => {
@@ -302,7 +311,7 @@ const errorRateChartData = computed(() => {
       if (timeIndex !== undefined && index < workerErrorRate.length) {
         const errorRateValue = workerErrorRate[index]
         alignedData[timeIndex] =
-          errorRateValue === null ? 0 : Number(errorRateValue.toFixed(2)) || 0
+          errorRateValue === null ? null : +errorRateValue.toFixed(2) || 0
       }
     })
 
@@ -343,11 +352,9 @@ const responseTimeChartData = computed(() => {
   const p99Data = selectedWorkerData.workerMetric.p99 || []
 
   // Sort time points and limit by granularity
-  const sortedTimePoints = Array.from(workerTime).sort(
+  const displayTimePoints = Array.from(workerTime).sort(
     (a: number, b: number) => a - b,
   )
-  const maxPoints = 5
-  const displayTimePoints = sortedTimePoints.slice(-maxPoints)
 
   // Format time labels for category axis
   const formattedTimeLabels = displayTimePoints.map((timestamp) => {
@@ -392,15 +399,15 @@ const responseTimeChartData = computed(() => {
     if (timeIndex !== undefined) {
       if (index < p50Data.length) {
         series[0].data[timeIndex] =
-          p50Data[index] === null ? 0 : Number(p50Data[index].toFixed(2)) || 0
+          p50Data[index] === null ? null : +p50Data[index].toFixed(2) || 0
       }
       if (index < p95Data.length) {
         series[1].data[timeIndex] =
-          p95Data[index] === null ? 0 : Number(p95Data[index].toFixed(2)) || 0
+          p95Data[index] === null ? null : +p95Data[index].toFixed(2) || 0
       }
       if (index < p99Data.length) {
         series[2].data[timeIndex] =
-          p99Data[index] === null ? 0 : Number(p99Data[index].toFixed(2)) || 0
+          p99Data[index] === null ? null : +p99Data[index].toFixed(2) || 0
       }
     }
   })
@@ -453,6 +460,37 @@ const apiStatsColumns = computed(() => [
     prop: 'errorCount',
   },
 ])
+
+const handleTimeChange = () => {
+  runFetchData()
+}
+
+// 时间跨度 ≤ 1小时：推荐granularity = 0（分钟），每分钟一个数据点。
+// 1小时 < 时间跨度 ≤ 1天：推荐granularity = 1（小时），每小时一个数据点。
+// 1天 < 时间跨度 ≤ 7天：推荐granularity = 2（天），每天一个数据点。
+// 7天 < 时间跨度 ≤ 1个月：推荐granularity = 2（天），每天一个数据点。
+// 时间跨度 > 1个月：推荐granularity = 4（月），每月一个数据点。
+
+const getGranularity = () => {
+  if (time.value <= 60) {
+    return 0
+  } else if (time.value <= 1440) {
+    return 1
+  } else if (time.value <= 10080) {
+    return 2
+  } else if (time.value <= 43200) {
+    return 2
+  } else {
+    return 4
+  }
+}
+
+const getTimeRange = () => {
+  return {
+    from: Date.now() - time.value * 60 * 1000,
+    to: Date.now() - 60 * 1000,
+  }
+}
 </script>
 
 <template>
@@ -464,6 +502,18 @@ const apiStatsColumns = computed(() => [
     @open="handleOpen"
     @close="handleClose"
   >
+    <template #header="{ titleClass }">
+      <div class="flex align-center gap-2">
+        <span :class="titleClass">{{ server.name }} - 服务器详细监控信息</span>
+        <el-divider direction="vertical" />
+        <SelectList
+          v-model="time"
+          :items="timeList"
+          :label="$t('api_monitor_detail_monitoring_period')"
+          @change="handleTimeChange"
+        />
+      </div>
+    </template>
     <div class="server-details-container">
       <!-- Worker List Section -->
       <section class="worker-list-section mb-3">
