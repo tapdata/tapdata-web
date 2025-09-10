@@ -8,7 +8,6 @@ import {
 } from '@tap/api'
 import { VTable } from '@tap/component/src/base/v-table'
 // @ts-ignore
-import { Chart } from '@tap/component/src/chart'
 import { calcUnit } from '@tap/shared'
 import { computed, ref, watch } from 'vue'
 import WorkerRpsChart from './WorkerRpsChart.vue'
@@ -50,7 +49,11 @@ const props = withDefaults(defineProps<Props>(), {
 
 const serverDetails = ref()
 
-const { run: runFetchApiServerWorker, data: workerData } = useRequest(
+const {
+  run: runFetchApiServerWorker,
+  cancel: cancelFetchApiServerWorker,
+  data: workerData,
+} = useRequest(
   async () => {
     const data = await fetchApiServerWorker(props.server.processId)
     const { workers, ...rest } = data
@@ -81,15 +84,11 @@ const { run: runFetchApiServerWorker, data: workerData } = useRequest(
   },
 )
 
-const {
-  run: runFetchWorkerCall,
-  data: rpsData,
-  loading: loadingWorkerCallData,
-} = useRequest(
+const { run: runFetchWorkerCall, data: rpsData } = useRequest(
   async () => {
     const data = await fetchWorkerCall({
       processId: props.server.processId,
-      from: 1757383200000,
+      // from: 1757383200000,
       type: 0,
     })
 
@@ -104,15 +103,11 @@ const {
   },
 )
 
-const {
-  run: runFetchWorkerCallErrorRate,
-  data: errorRateData,
-  loading: loadingWorkerCallErrorRateData,
-} = useRequest(
+const { run: runFetchWorkerCallErrorRate, data: errorRateData } = useRequest(
   async () => {
     const data = await fetchWorkerCall({
       processId: props.server.processId,
-      from: 1757383200000,
+      // from: 1757383200000,
       type: 2,
     })
 
@@ -124,39 +119,31 @@ const {
   {
     manual: true,
     initialData: [] as WorkerCallData['workerMetrics'],
-    // pollingInterval: 60000,
   },
 )
 
-const {
-  run: runFetchWorkerCallResponseTime,
-  data: responseTimeData,
-  loading: loadingWorkerCallResponseTimeData,
-} = useRequest(
-  async () => {
-    const data = await fetchWorkerCall({
-      processId: props.server.processId,
-      // from: 1757383200000,
-      type: 1,
-    })
+const { run: runFetchWorkerCallResponseTime, data: responseTimeData } =
+  useRequest(
+    async () => {
+      const data = await fetchWorkerCall({
+        processId: props.server.processId,
+        // from: 1757383200000,
+        type: 1,
+      })
 
-    data.workerMetrics = data.workerMetrics.filter((item) =>
-      Boolean(item.workerName),
-    )
-    return data
-  },
-  {
-    manual: true,
-    initialData: [],
-    // pollingInterval: 60000,
-  },
-)
+      data.workerMetrics = data.workerMetrics.filter((item) =>
+        Boolean(item.workerName),
+      )
+      console.log(data.workerMetrics)
+      return data.workerMetrics
+    },
+    {
+      manual: true,
+      initialData: [],
+    },
+  )
 
-const {
-  run: runFetchWorkerCallApiCalls,
-  data: apiCallsData,
-  loading: loadingWorkerCallApiCallsData,
-} = useRequest(
+const { run: runFetchWorkerCallApiCalls, data: apiCallsData } = useRequest(
   async () => {
     const data = await fetchWorkerCallApiCalls(props.server.processId)
     return data.workerMetrics
@@ -164,11 +151,10 @@ const {
   {
     manual: true,
     initialData: [],
-    // pollingInterval: 10000,
   },
 )
 
-const { run: runFetchData } = useRequest(
+const { run: runFetchData, cancel: cancelFetchData } = useRequest(
   () => {
     return Promise.all([
       runFetchWorkerCall(),
@@ -183,44 +169,246 @@ const { run: runFetchData } = useRequest(
   },
 )
 
-// Emits
-const emit = defineEmits<{
-  close: []
-}>()
-
 // Reactive data
 const selectedWorker = ref<string>('')
 const selectedWorkerId = ref<string>('')
 
-// Computed
-const workerList = computed(() => {
-  return props.workerData.map((worker) => ({
-    ...worker,
-    statusText: worker.workerStatus === 'listening' ? 'listening' : 'stopped',
-    statusClass:
-      worker.workerStatus === 'listening'
-        ? 'status-listening'
-        : 'status-stopped',
-  }))
-})
-
-const apiCallStats = computed<ApiCallStats[]>(() => {
-  // Mock data for now - will be replaced with real API calls
-  return [
-    {
-      apiPath: '/api/users',
-      callCount: 1245,
-      failureCount: 23,
-      failureRate: 1.85,
-    },
-  ]
-})
-
 const apiList = computed(() => {
   return (
-    apiCallsData.value.find((item) => item.workOid === selectedWorkerId.value)
+    apiCallsData.value.find((item) => item.workerName === selectedWorker.value)
       ?.workerMetric || []
   )
+})
+
+// Convert RPS data to chartData format
+const rpsChartData = computed(() => {
+  if (!rpsData.value || rpsData.value.length === 0) {
+    return { x: [], series: [] }
+  }
+
+  // Collect all unique time points from all workers
+  const allTimePoints = new Set<number>()
+  rpsData.value.forEach((worker) => {
+    if (worker.workerMetric?.time) {
+      worker.workerMetric.time.forEach((timestamp) => {
+        allTimePoints.add(timestamp)
+      })
+    }
+  })
+
+  if (allTimePoints.size === 0) {
+    return { x: [], series: [] }
+  }
+
+  // Sort time points and limit by granularity (default 5 points for minutes)
+  const sortedTimePoints = Array.from(allTimePoints).sort((a, b) => a - b)
+  const maxPoints = 5 // Default granularity for minutes
+  const displayTimePoints = sortedTimePoints.slice(-maxPoints)
+
+  // Format time labels for category axis
+  const formattedTimeLabels = displayTimePoints.map((timestamp) => {
+    const date = new Date(timestamp)
+    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
+  })
+
+  // Create a map for quick time lookup
+  const timeIndexMap = new Map<number, number>()
+  displayTimePoints.forEach((timestamp, index) => {
+    timeIndexMap.set(timestamp, index)
+  })
+
+  // Process all workers' data with aligned time points
+  const series = rpsData.value.map((worker) => {
+    const workerTime = worker.workerMetric?.time || []
+    const workerRps = worker.workerMetric?.rps || []
+
+    // Create aligned data array for category axis
+    const alignedData: (number | null)[] = Array.from(
+      { length: displayTimePoints.length },
+      () => null,
+    )
+
+    workerTime.forEach((timestamp, index) => {
+      const timeIndex = timeIndexMap.get(timestamp)
+      if (timeIndex !== undefined && index < workerRps.length) {
+        const rpsValue = workerRps[index]
+        alignedData[timeIndex] =
+          rpsValue === null ? 0 : Number(rpsValue.toFixed(2)) || 0
+      }
+    })
+
+    return {
+      name: worker.workerName,
+      data: alignedData,
+    }
+  })
+
+  return {
+    x: formattedTimeLabels,
+    series,
+  }
+})
+
+// Convert Error Rate data to chartData format
+const errorRateChartData = computed(() => {
+  if (!errorRateData.value || errorRateData.value.length === 0) {
+    return { x: [], series: [] }
+  }
+
+  // Collect all unique time points from all workers
+  const allTimePoints = new Set<number>()
+  errorRateData.value.forEach((worker) => {
+    if (worker.workerMetric?.time) {
+      worker.workerMetric.time.forEach((timestamp) => {
+        allTimePoints.add(timestamp)
+      })
+    }
+  })
+
+  if (allTimePoints.size === 0) {
+    return { x: [], series: [] }
+  }
+
+  // Sort time points and limit by granularity
+  const sortedTimePoints = Array.from(allTimePoints).sort((a, b) => a - b)
+  const maxPoints = 5
+  const displayTimePoints = sortedTimePoints.slice(-maxPoints)
+
+  // Format time labels for category axis
+  const formattedTimeLabels = displayTimePoints.map((timestamp) => {
+    const date = new Date(timestamp)
+    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
+  })
+
+  // Create a map for quick time lookup
+  const timeIndexMap = new Map<number, number>()
+  displayTimePoints.forEach((timestamp, index) => {
+    timeIndexMap.set(timestamp, index)
+  })
+
+  // Process all workers' data with aligned time points
+  const series = errorRateData.value.map((worker) => {
+    const workerTime = worker.workerMetric?.time || []
+    const workerErrorRate = worker.workerMetric?.errorRate || [] // Note: errorRate instead of rps
+
+    // Create aligned data array for category axis
+    const alignedData: (number | null)[] = Array.from(
+      { length: displayTimePoints.length },
+      () => null,
+    )
+
+    workerTime.forEach((timestamp, index) => {
+      const timeIndex = timeIndexMap.get(timestamp)
+      if (timeIndex !== undefined && index < workerErrorRate.length) {
+        const errorRateValue = workerErrorRate[index]
+        alignedData[timeIndex] =
+          errorRateValue === null ? 0 : Number(errorRateValue.toFixed(2)) || 0
+      }
+    })
+
+    return {
+      name: worker.workerName,
+      data: alignedData,
+    }
+  })
+
+  return {
+    x: formattedTimeLabels,
+    series,
+  }
+})
+
+// Convert Response Time data to chartData format (special handling for selected worker only)
+const responseTimeChartData = computed(() => {
+  if (
+    !responseTimeData.value ||
+    responseTimeData.value.length === 0 ||
+    !selectedWorker.value
+  ) {
+    return { x: [], series: [] }
+  }
+
+  // Find the selected worker's data
+  const selectedWorkerData = responseTimeData.value.find(
+    (worker) => worker.workerName === selectedWorker.value,
+  )
+
+  if (!selectedWorkerData?.workerMetric?.time) {
+    return { x: [], series: [] }
+  }
+
+  const workerTime = selectedWorkerData.workerMetric.time
+  const p50Data = selectedWorkerData.workerMetric.p50 || []
+  const p95Data = selectedWorkerData.workerMetric.p95 || []
+  const p99Data = selectedWorkerData.workerMetric.p99 || []
+
+  // Sort time points and limit by granularity
+  const sortedTimePoints = Array.from(workerTime).sort(
+    (a: number, b: number) => a - b,
+  )
+  const maxPoints = 5
+  const displayTimePoints = sortedTimePoints.slice(-maxPoints)
+
+  // Format time labels for category axis
+  const formattedTimeLabels = displayTimePoints.map((timestamp) => {
+    const date = new Date(timestamp)
+    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
+  })
+
+  // Create a map for quick time lookup
+  const timeIndexMap = new Map<number, number>()
+  displayTimePoints.forEach((timestamp, index) => {
+    timeIndexMap.set(timestamp, index)
+  })
+
+  // Process percentile data for the selected worker
+  const series = [
+    {
+      name: 'P50',
+      data: Array.from({ length: displayTimePoints.length }, () => null) as (
+        | number
+        | null
+      )[],
+    },
+    {
+      name: 'P95',
+      data: Array.from({ length: displayTimePoints.length }, () => null) as (
+        | number
+        | null
+      )[],
+    },
+    {
+      name: 'P99',
+      data: Array.from({ length: displayTimePoints.length }, () => null) as (
+        | number
+        | null
+      )[],
+    },
+  ]
+
+  // Fill data for each percentile
+  workerTime.forEach((timestamp, index) => {
+    const timeIndex = timeIndexMap.get(timestamp)
+    if (timeIndex !== undefined) {
+      if (index < p50Data.length) {
+        series[0].data[timeIndex] =
+          p50Data[index] === null ? 0 : Number(p50Data[index].toFixed(2)) || 0
+      }
+      if (index < p95Data.length) {
+        series[1].data[timeIndex] =
+          p95Data[index] === null ? 0 : Number(p95Data[index].toFixed(2)) || 0
+      }
+      if (index < p99Data.length) {
+        series[2].data[timeIndex] =
+          p99Data[index] === null ? 0 : Number(p99Data[index].toFixed(2)) || 0
+      }
+    }
+  })
+
+  return {
+    x: formattedTimeLabels,
+    series,
+  }
 })
 
 // Methods
@@ -230,7 +418,8 @@ const handleOpen = () => {
 }
 
 const handleClose = () => {
-  emit('close')
+  cancelFetchApiServerWorker()
+  cancelFetchData()
 }
 
 const selectWorker = (worker: WorkerData) => {
@@ -249,77 +438,6 @@ watch(
   { immediate: true },
 )
 
-const getLatencyChartOption = () => {
-  return {
-    title: {
-      text: '请求延时分位数 (毫秒)',
-      left: 'center',
-      textStyle: {
-        fontSize: 14,
-        fontWeight: 500,
-      },
-    },
-    legend: {
-      data: ['P50', 'P95', 'P99'],
-      top: 30,
-    },
-    xAxis: {
-      type: 'category',
-      data: [],
-    },
-    yAxis: {
-      type: 'value',
-    },
-    series: [
-      {
-        name: 'P50',
-        data: [],
-        type: 'line',
-        smooth: true,
-      },
-      {
-        name: 'P95',
-        data: [],
-        type: 'line',
-        smooth: true,
-      },
-      {
-        name: 'P99',
-        data: [],
-        type: 'line',
-        smooth: true,
-      },
-    ],
-  }
-}
-
-const getErrorRateChartOption = () => {
-  return {
-    title: {
-      text: '错误率统计 (%)',
-      left: 'center',
-      textStyle: {
-        fontSize: 14,
-        fontWeight: 500,
-      },
-    },
-    xAxis: {
-      type: 'category',
-      data: [],
-    },
-    yAxis: {
-      type: 'value',
-    },
-    series: [
-      {
-        data: [],
-        type: 'line',
-        smooth: true,
-      },
-    ],
-  }
-}
-
 const apiStatsColumns = computed(() => [
   {
     label: 'API名称',
@@ -331,19 +449,14 @@ const apiStatsColumns = computed(() => [
   },
   {
     label: '失败次数',
+    slotName: 'errorCount',
     prop: 'errorCount',
   },
 ])
-
-// Helper function to get failure rate with proper typing
-const getFailureRate = (row: any): number => {
-  return row?.failureRate || 0
-}
 </script>
 
 <template>
   <el-dialog
-    v-model="visible"
     :title="`${server.name} - 服务器详细监控信息`"
     width="90%"
     :close-on-click-modal="false"
@@ -400,52 +513,77 @@ const getFailureRate = (row: any): number => {
         </el-scrollbar>
       </section>
 
-      <!-- Charts Grid -->
-      <div class="charts-grid">
-        <!-- RPS Monitoring Chart -->
-        <section class="chart-section rounded-xl">
-          <div class="chart-container">
-            <h4 class="chart-title mb-4">RPS监控</h4>
-            <WorkerRpsChart
-              :worker-metrics="rpsData"
-              :selected-worker="selectedWorker"
-              :height="280"
-              @worker-select="selectWorker"
-            />
-          </div>
-        </section>
+      <div class="bg-light rounded-xl p-4">
+        <div class="charts-grid">
+          <!-- RPS Monitoring Chart -->
+          <section class="chart-section rounded-xl">
+            <div class="chart-container">
+              <h4 class="chart-title mb-4">RPS监控</h4>
+              <WorkerRpsChart
+                :chart-data="rpsChartData"
+                :selected-worker="selectedWorker"
+                :height="280"
+                @worker-select="selectWorker"
+              />
+            </div>
+          </section>
 
-        <!-- Request Latency Chart -->
-        <section class="chart-section rounded-xl">
-          <div class="chart-container">
-            <Chart type="line" :extend="getLatencyChartOption()" />
-          </div>
-        </section>
+          <!-- Error Rate Chart -->
+          <section class="chart-section rounded-xl">
+            <div class="chart-container">
+              <h4 class="chart-title mb-4">错误率统计</h4>
+              <WorkerRpsChart
+                :chart-data="errorRateChartData"
+                :selected-worker="selectedWorker"
+                :height="280"
+                @worker-select="selectWorker"
+              />
+            </div>
+          </section>
 
-        <!-- Error Rate Chart -->
-        <section class="chart-section rounded-xl">
-          <div class="chart-container">
-            <h4 class="chart-title mb-4">错误率统计</h4>
-            <WorkerRpsChart
-              :worker-metrics="errorRateData"
-              :selected-worker="selectedWorker"
-              :height="280"
-              @worker-select="selectWorker"
-            />
-          </div>
-        </section>
+          <!-- Request Latency Chart -->
+          <section class="chart-section rounded-xl">
+            <div class="chart-container">
+              <h4 class="chart-title mb-4">
+                {{ selectedWorker }} - 请求延时分位数
+              </h4>
+              <WorkerRpsChart
+                :chart-data="responseTimeChartData"
+                :selected-worker="selectedWorker"
+                :height="280"
+                @worker-select="selectWorker"
+              />
+            </div>
+          </section>
 
-        <!-- API Call Statistics Table -->
-        <section class="chart-section rounded-xl">
-          <div class="chart-container">
-            <h4 class="chart-title mb-4">API调用统计</h4>
-            <VTable
-              :data="apiList"
-              :columns="apiStatsColumns"
-              :has-pagination="false"
-            />
-          </div>
-        </section>
+          <!-- API Call Statistics Table -->
+          <section class="chart-section rounded-xl">
+            <div class="chart-container">
+              <h4 class="chart-title mb-4">
+                {{ selectedWorker }} - API调用统计
+              </h4>
+              <VTable
+                :data="apiList"
+                :columns="apiStatsColumns"
+                hide-on-single-page
+              >
+                <template #empty>
+                  <el-empty image-size="100" class="py-4" />
+                </template>
+
+                <template #errorCount="{ row }">
+                  <span
+                    :class="
+                      row.errorCount > 0 ? 'color-danger' : 'text-gray-500'
+                    "
+                  >
+                    {{ row.errorCount }}
+                  </span>
+                </template>
+              </VTable>
+            </div>
+          </section>
+        </div>
       </div>
     </div>
 
@@ -535,12 +673,12 @@ const getFailureRate = (row: any): number => {
 .charts-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
   gap: 20px;
 
   .chart-section {
     background: white;
-    border: 1px solid var(--el-border-color);
+    // border: 1px solid var(--el-border-color-lighter);
+    border: 1px solid var(--el-border-color-extra-light);
     border-radius: 8px;
     padding: 16px;
 

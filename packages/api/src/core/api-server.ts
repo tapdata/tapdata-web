@@ -122,7 +122,11 @@ export interface WorkerCallData {
   [property: string]: any
 }
 export interface WorkerMetric {
-  rps: Array<number | null>
+  rps?: Array<number | null>
+  errorRate?: Array<number | null>
+  p50?: Array<number | null>
+  p95?: Array<number | null>
+  p99?: Array<number | null>
   time: number[]
   [property: string]: any
 }

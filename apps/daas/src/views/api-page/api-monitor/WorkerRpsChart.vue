@@ -10,7 +10,7 @@ import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import VChart from 'vue-echarts'
-import type { WorkerCallData } from '@tap/api'
+// import type { WorkerCallData } from '@tap/api'
 
 // Register ECharts components
 use([
@@ -22,9 +22,18 @@ use([
   //   LegendComponent,
 ])
 
+// Chart data interface
+interface ChartData {
+  x: string[]
+  series: {
+    name: string
+    data: (number | null)[]
+  }[]
+}
+
 // Props interface
 interface Props {
-  workerMetrics?: WorkerCallData['workerMetrics']
+  chartData?: ChartData
   selectedWorker?: string
   height?: string | number
   colors?: string[]
@@ -32,7 +41,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  workerMetrics: undefined,
+  chartData: undefined,
   selectedWorker: '',
   height: '300px',
   colors: undefined,
@@ -46,109 +55,9 @@ const emit = defineEmits<{
   workerSelect: [workerName: string]
 }>()
 
-// Get display point count based on granularity
-const getDisplayPointCount = (granularity: number): number => {
-  // 默认显示过去5分钟的数据点
-  const basePoints = 5
-
-  switch (granularity) {
-    case 0: // 分钟
-      return basePoints // 5个点
-    case 1: // 小时
-      return 12 // 12个点（每小时一个点，过去12小时）
-    case 2: // 天
-      return 7 // 7个点（每天一个点，过去7天）
-    case 3: // 周
-      return 4 // 4个点（每周一个点，过去4周）
-    case 4: // 月
-      return 6 // 6个点（每月一个点，过去6个月）
-    default:
-      return basePoints
-  }
-}
-
-// Computed chart data
+// Use the chart data directly from props
 const chartData = computed(() => {
-  // 即使没有数据也返回空结构，不显示"暂无数据"
-  if (!props.workerMetrics) {
-    return {
-      x: [],
-      series: [],
-    }
-  }
-
-  // 如果 workerMetrics 为空数组，返回空结构但保持图表显示
-  if (props.workerMetrics.length === 0) {
-    return {
-      x: [],
-      series: [],
-    }
-  }
-
-  // Collect all unique time points from all workers
-  const allTimePoints = new Set<number>()
-  props.workerMetrics.forEach((worker) => {
-    if (worker.workerMetric?.time) {
-      worker.workerMetric.time.forEach((timestamp) => {
-        allTimePoints.add(timestamp)
-      })
-    }
-  })
-
-  if (allTimePoints.size === 0) {
-    return {
-      x: [],
-      series: [],
-    }
-  }
-
-  // Sort time points and limit by granularity
-  const sortedTimePoints = Array.from(allTimePoints).sort((a, b) => a - b)
-  const maxPoints = getDisplayPointCount(props.granularity)
-  const displayTimePoints = sortedTimePoints.slice(-maxPoints) // 取最新的N个点
-
-  // Format time labels for category axis
-  const formattedTimeLabels = displayTimePoints.map((timestamp) => {
-    const date = new Date(timestamp)
-    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
-  })
-
-  // Create a map for quick time lookup
-  const timeIndexMap = new Map<number, number>()
-  displayTimePoints.forEach((timestamp, index) => {
-    timeIndexMap.set(timestamp, index)
-  })
-
-  // Process all workers' data with aligned time points
-  const series = props.workerMetrics.map((worker) => {
-    const workerTime = worker.workerMetric?.time || []
-    const workerRps = worker.workerMetric?.rps || []
-
-    // Create aligned data array for category axis
-    const alignedData: (number | null)[] = Array.from(
-      { length: displayTimePoints.length },
-      () => null,
-    )
-
-    workerTime.forEach((timestamp, index) => {
-      const timeIndex = timeIndexMap.get(timestamp)
-      if (timeIndex !== undefined && index < workerRps.length) {
-        const rpsValue = workerRps[index]
-        alignedData[timeIndex] =
-          rpsValue === null ? 0 : Number(rpsValue.toFixed(2)) || 0
-      }
-    })
-
-    return {
-      name: worker.workerName,
-      data: alignedData,
-    }
-  })
-
-  return {
-    x: formattedTimeLabels,
-    series,
-  }
+  return props.chartData || { x: [], series: [] }
 })
 
 // Chart options
@@ -223,9 +132,7 @@ const chartOptions = computed(() => {
         name: worker.name,
         type: 'line',
         data: worker.data,
-        smooth: true,
-        symbol: 'circle',
-        symbolSize: 4,
+        // smooth: true,
         lineStyle: {
           width: 2,
         },
@@ -274,7 +181,7 @@ const handleChartClick = (params: any) => {
 
 // Watch for data changes to trigger chart updates
 watch(
-  () => props.workerMetrics,
+  () => props.chartData,
   () => {
     nextTick(() => {
       if (chartRef.value) {
