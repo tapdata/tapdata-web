@@ -811,3 +811,8 @@
 .el-notification.el-notification {
   --el-notification-radius: var(--el-border-radius-large);
 }
+
+// Result
+.el-result__icon svg {
+  vertical-align: top;
+}

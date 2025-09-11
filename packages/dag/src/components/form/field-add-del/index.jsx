@@ -1,7 +1,6 @@
 import { observer } from '@formily/reactive-vue'
 import { metadataInstancesApi } from '@tap/api'
 
-import { IconButton } from '@tap/component/src/icon-button'
 import { connect, mapProps, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import { cloneDeep } from 'lodash-es'
@@ -126,7 +125,7 @@ export const FieldAddDel = connect(
                 <span class="flex align-center gap-2 px-2">
                   <IconButton
                     sm
-                    disabled={fields.length === 0 || this.disabled}
+                    disabled={this.disabled}
                     onClick={() => this.handleCreate()}
                   >
                     add
