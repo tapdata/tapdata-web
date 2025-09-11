@@ -1862,7 +1862,7 @@ provide('encryptions', encryptions)
               >
                 <el-cascader v-model="form.params[$index].type" :options="typeOptions" separator=": "/>
               </div>
-              <div v-else>{{ row.type.join(': ') }}</div>
+              <div v-else>{{ Array.isArray(row.type) ? row.type.join(': ') : row.type }}</div>
             </template>
           </ElTableColumn>
           <ElTableColumn
