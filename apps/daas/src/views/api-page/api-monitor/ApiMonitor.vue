@@ -520,7 +520,7 @@ onUnmounted(() => {
                   placement="bottom"
                 >
                   <span>{{
-                    calcUnit(previewData.warningVisitTotalCount || 0, 2)
+                    calcUnit(previewData.warningVisitTotalCount || 0)
                   }}</span>
                 </el-tooltip>
               </div>
@@ -539,9 +539,7 @@ onUnmounted(() => {
                   :content="`${previewData.visitTotalCount}`"
                   placement="bottom"
                 >
-                  <span>{{
-                    calcUnit(previewData.visitTotalCount || 0, 2)
-                  }}</span>
+                  <span>{{ calcUnit(previewData.visitTotalCount || 0) }}</span>
                 </el-tooltip>
               </div>
             </div>
@@ -559,7 +557,7 @@ onUnmounted(() => {
                 placement="bottom"
               >
                 <div class="api-monitor-total__text din-font">
-                  {{ calcUnit(previewData.visitTotalLine || 0, 2) }}
+                  {{ calcUnit(previewData.visitTotalLine || 0) }}
                 </div>
               </el-tooltip>
             </div>
