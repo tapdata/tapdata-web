@@ -8,6 +8,7 @@ import {
 } from '@tap/api'
 import { VTable } from '@tap/component/src/base/v-table'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
+import { useI18n } from '@tap/i18n'
 // @ts-ignore
 import { calcUnit } from '@tap/shared'
 import { computed, nextTick, ref } from 'vue'
@@ -48,6 +49,8 @@ const props = withDefaults(defineProps<Props>(), {
   workerData: () => [],
 })
 
+const { t } = useI18n()
+
 const getGranularity = () => {
   if (time.value <= 60) {
     return 0
@@ -66,12 +69,12 @@ const serverDetails = ref()
 const time = ref(10)
 const granularity = ref(getGranularity())
 const timeList = ref([
-  { label: '最近10分钟', value: 10 },
-  { label: '最近30分钟', value: 30 },
-  { label: '最近1小时', value: 60 },
-  { label: '最近1天', value: 1440 },
-  { label: '最近1周', value: 10080 },
-  { label: '最近1个月', value: 43200 },
+  { label: t('api_monitor_server_recent_10_minutes'), value: 10 },
+  { label: t('api_monitor_server_recent_30_minutes'), value: 30 },
+  { label: t('api_monitor_server_recent_1_hour'), value: 60 },
+  { label: t('api_monitor_server_recent_1_day'), value: 1440 },
+  { label: t('api_monitor_server_recent_1_week'), value: 10080 },
+  { label: t('api_monitor_server_recent_1_month'), value: 43200 },
 ])
 
 const {
@@ -497,15 +500,15 @@ const selectWorker = (worker: string, event: MouseEvent) => {
 
 const apiStatsColumns = computed(() => [
   {
-    label: 'API名称',
+    label: t('api_monitor_server_api_name'),
     prop: 'apiName',
   },
   {
-    label: '调用次数',
+    label: t('api_monitor_server_call_count'),
     prop: 'count',
   },
   {
-    label: '失败次数',
+    label: t('api_monitor_server_failure_count'),
     slotName: 'errorCount',
     prop: 'errorCount',
   },
@@ -590,7 +593,6 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
 
 <template>
   <el-dialog
-    :title="`${server.name} - 服务器详细监控信息`"
     width="90%"
     top="6vh"
     :close-on-click-modal="false"
@@ -600,7 +602,7 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
   >
     <template #header="{ titleClass }">
       <div class="flex align-center gap-2">
-        <span :class="titleClass">{{ server.name }} - 服务器详细监控信息</span>
+        <span :class="titleClass">{{ server.name }}</span>
         <el-divider direction="vertical" />
         <SelectList
           v-model="time"
@@ -656,7 +658,9 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
                   <el-icon size="12" class="color-primary"
                     ><i-lucide:memory-stick
                   /></el-icon>
-                  <span class="metric-label text-gray-500">内存:</span>
+                  <span class="metric-label text-gray-500"
+                    >{{ $t('api_monitor_memory') }}:</span
+                  >
                   <span class="metric-value">{{
                     worker.metricValues.heapMemoryUsage
                   }}</span>
@@ -672,7 +676,9 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
           <!-- RPS Monitoring Chart -->
           <section class="chart-section rounded-xl">
             <div class="chart-container">
-              <h4 class="chart-title mb-4">RPS监控</h4>
+              <h4 class="chart-title mb-4">
+                {{ $t('api_monitor_server_rps_title') }}
+              </h4>
               <WorkerRpsChart
                 :chart-data="rpsChartData"
                 :selected-worker="selectedWorker"
@@ -685,7 +691,9 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
           <!-- Error Rate Chart -->
           <section class="chart-section rounded-xl">
             <div class="chart-container">
-              <h4 class="chart-title mb-4">错误率统计</h4>
+              <h4 class="chart-title mb-4">
+                {{ $t('api_monitor_server_error_rate_title') }}
+              </h4>
               <WorkerRpsChart
                 :chart-data="errorRateChartData"
                 :selected-worker="selectedWorker"
@@ -698,7 +706,8 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
           <section class="chart-section rounded-xl">
             <div class="chart-container">
               <h4 class="chart-title mb-4">
-                {{ selectedWorker }} - 请求延时分位数
+                {{ selectedWorker }} -
+                {{ $t('api_monitor_server_response_time_title') }}
               </h4>
               <WorkerRpsChart
                 :chart-data="responseTimeChartData"
@@ -713,7 +722,8 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
           <section class="chart-section rounded-xl">
             <div class="chart-container">
               <h4 class="chart-title mb-4">
-                {{ selectedWorker }} - API调用统计
+                {{ selectedWorker }} -
+                {{ $t('api_monitor_server_api_calls_title') }}
               </h4>
               <VTable
                 :data="apiList"

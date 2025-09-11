@@ -464,8 +464,10 @@ export default {
   setting_ApiServer: 'API Distribution Settings',
   setting_Default_Limit: 'The number of rows returned by the default query',
   setting_Max_Limit: 'Maximum number of rows returned by the query',
-  setting_Desensitize_API_request_parameters: 'Desensitize API request parameters',
-  'setting_Timeout_period_for_API_access_to_the_database_(millisecond)': 'The timeout period for API access to the database (millisecond)',
+  setting_Desensitize_API_request_parameters:
+    'Desensitize API request parameters',
+  'setting_Timeout_period_for_API_access_to_the_database_(millisecond)':
+    'The timeout period for API access to the database (millisecond)',
   setting_Send_batch_size: 'Number of packed data',
   setting_hint_Send_batch_size: 'Number of packed data',
   setting_Mongodb_target_create_date:
@@ -839,7 +841,8 @@ export default {
   role_list_delete_remind: 'Confirm to delete role {0}',
   role_list_delete_success: 'Delete the role successfully',
   role_list_setting_api_selected: 'Selected {0} APIs',
-  role_list_setting_api_empty_confirm: 'Are you sure you want to cancel all API access settings?',
+  role_list_setting_api_empty_confirm:
+    'Are you sure you want to cancel all API access settings?',
   role_list_setting_select_api: 'Please select API',
   role_form_yes: 'Yes',
   role_form_no: 'No',
@@ -2145,4 +2148,20 @@ export default {
   setting_license_rule: 'License Alert Rule',
   setting_license_alarm_template: 'Alert Template',
   setting_license_alarm_template_custom: 'Custom Alert Template',
+  api_monitor_server_title: 'API Server Monitoring',
+  api_monitor_server_detail_title: 'Server Detailed Monitoring Information',
+  api_monitor_server_rps_title: 'RPS Statistics',
+  api_monitor_server_error_rate_title: 'Error Rate Statistics',
+  api_monitor_server_response_time_title: 'Request Latency Percentiles',
+  api_monitor_server_api_calls_title: 'API Call Statistics',
+  api_monitor_server_api_name: 'API Name',
+  api_monitor_server_call_count: 'Call Count',
+  api_monitor_server_failure_count: 'Failure Count',
+  api_monitor_server_recent_10_minutes: 'Last 10 Minutes',
+  api_monitor_server_recent_30_minutes: 'Last 30 Minutes',
+  api_monitor_server_recent_1_hour: 'Last 1 Hour',
+  api_monitor_server_recent_1_day: 'Last 1 Day',
+  api_monitor_server_recent_1_week: 'Last 1 Week',
+  api_monitor_server_recent_1_month: 'Last 1 Month',
+  api_monitor_memory: 'MEM',
 }

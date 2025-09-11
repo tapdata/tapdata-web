@@ -520,7 +520,7 @@ onUnmounted(() => {
                   placement="bottom"
                 >
                   <span>{{
-                    calcUnit(previewData.warningVisitTotalCount || 0, 2)
+                    calcUnit(previewData.warningVisitTotalCount || 0)
                   }}</span>
                 </el-tooltip>
               </div>
@@ -539,9 +539,7 @@ onUnmounted(() => {
                   :content="`${previewData.visitTotalCount}`"
                   placement="bottom"
                 >
-                  <span>{{
-                    calcUnit(previewData.visitTotalCount || 0, 2)
-                  }}</span>
+                  <span>{{ calcUnit(previewData.visitTotalCount || 0) }}</span>
                 </el-tooltip>
               </div>
             </div>
@@ -559,7 +557,7 @@ onUnmounted(() => {
                 placement="bottom"
               >
                 <div class="api-monitor-total__text din-font">
-                  {{ calcUnit(previewData.visitTotalLine || 0, 2) }}
+                  {{ calcUnit(previewData.visitTotalLine || 0) }}
                 </div>
               </el-tooltip>
             </div>
@@ -581,7 +579,7 @@ onUnmounted(() => {
             <el-icon size="16" class="color-primary"
               ><i-lucide:server
             /></el-icon>
-            API服务器监控
+            {{ $t('api_monitor_server_title') }}
           </div>
           <div class="p-5 pt-0 flex">
             <div
@@ -613,7 +611,9 @@ onUnmounted(() => {
                   <el-icon class="color-primary"
                     ><i-lucide:memory-stick
                   /></el-icon>
-                  <span class="text-gray-600">MEM</span>
+                  <span class="text-gray-600">{{
+                    $t('api_monitor_memory')
+                  }}</span>
                   <span class="fw-sub ml-auto">{{
                     item.metricValues.heapMemoryUsage
                   }}</span>
