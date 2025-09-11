@@ -2,7 +2,7 @@
 import { LineChart } from 'echarts/charts'
 import {
   GridComponent,
-  //   LegendComponent,
+  LegendComponent,
   TitleComponent,
   TooltipComponent,
 } from 'echarts/components'
@@ -19,7 +19,7 @@ use([
   TitleComponent,
   TooltipComponent,
   GridComponent,
-  //   LegendComponent,
+  LegendComponent,
 ])
 
 // Chart data interface
@@ -37,6 +37,7 @@ interface Props {
   selectedWorker?: string
   height?: string | number
   colors?: string[]
+  legend?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -44,6 +45,7 @@ const props = withDefaults(defineProps<Props>(), {
   selectedWorker: '',
   height: '300px',
   colors: undefined,
+  legend: false,
 })
 
 const chartRef = ref()
@@ -62,8 +64,9 @@ const chartData = computed(() => {
 const chartOptions = computed(() => {
   const baseOptions = {
     legend: {
-      show: false,
-      bottom: 0,
+      show: props.legend,
+      top: 0,
+      left: 0,
       type: 'scroll',
       pageIconColor: '#409EFF',
       pageIconInactiveColor: '#ccc',
@@ -78,13 +81,22 @@ const chartOptions = computed(() => {
       extraCssText:
         'box-shadow: 0px 4px 16px 4px rgba(31,35,41,0.03),0px 4px 8px 0px rgba(31,35,41,0.02),0px 2px 4px -4px rgba(31,35,41,0.02);',
     },
-    grid: {
-      left: 20,
-      right: 20,
-      bottom: 0,
-      top: 10,
-      containLabel: true,
-    },
+
+    grid: [
+      {
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        outerBounds: {
+          left: 0,
+          top: props.legend ? 28 : 0,
+          right: 0,
+          bottom: 0,
+        },
+        outerBoundsMode: 'auto',
+      },
+    ],
     xAxis: {
       type: 'category',
       boundaryGap: false,

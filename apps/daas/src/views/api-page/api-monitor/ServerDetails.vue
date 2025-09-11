@@ -516,6 +516,7 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
   <el-dialog
     :title="`${server.name} - 服务器详细监控信息`"
     width="90%"
+    top="6vh"
     :close-on-click-modal="false"
     :close-on-press-escape="true"
     @open="handleOpen"
@@ -621,6 +622,7 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
                 :chart-data="responseTimeChartData"
                 :selected-worker="selectedWorker"
                 :height="280"
+                legend
                 @worker-select="selectWorker"
               />
             </div>
@@ -637,6 +639,9 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
                 :columns="apiStatsColumns"
                 :has-pagination="false"
               >
+                <template #empty>
+                  <el-empty image-size="100" class="py-4" />
+                </template>
                 <template #errorCount="{ row }">
                   <span
                     :class="
