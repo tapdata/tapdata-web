@@ -185,7 +185,13 @@ const { run: runFetchWorkerCallResponseTime, data: responseTimeData } =
 const { run: runFetchWorkerCallApiCalls, data: apiCallsData } = useRequest(
   async () => {
     const data = await fetchWorkerCallApiCalls(props.server.processId)
-    return data.workerMetrics
+    return data.workerMetrics.map((item) => {
+      item.workerMetric.map((item) => {
+        item.failureRate = `${+((item.errorCount / item.count) * 100).toFixed(2)}%`
+        return item
+      })
+      return item
+    })
   },
   {
     manual: true,
@@ -512,6 +518,10 @@ const apiStatsColumns = computed(() => [
     slotName: 'errorCount',
     prop: 'errorCount',
   },
+  {
+    label: t('api_monitor_server_failure_rate'),
+    prop: 'failureRate',
+  },
 ])
 
 const handleTimeChange = () => {
@@ -521,13 +531,27 @@ const handleTimeChange = () => {
 
 // Handle mouse wheel scroll for horizontal scrolling
 const handleWheelScroll = (event: WheelEvent) => {
-  event.preventDefault()
-
   if (workerScrollbar.value) {
     const scrollbar = workerScrollbar.value
     const scrollContainer = scrollbar.$el.querySelector('.el-scrollbar__wrap')
 
     if (scrollContainer) {
+      // 检查是否是原生横向滚动
+      // 只有当 deltaX 明显大于 deltaY 时才认为是横向滚动
+      // 或者明确按住了 Shift 键
+      const isHorizontalScroll =
+        event.shiftKey ||
+        (Math.abs(event.deltaX) > Math.abs(event.deltaY) &&
+          Math.abs(event.deltaX) > 0)
+
+      if (isHorizontalScroll) {
+        // 原生横向滚动，保持默认行为
+        return
+      }
+
+      // 垂直滚动转换为横向滚动
+      event.preventDefault()
+
       // 获取当前滚动位置
       const currentScrollLeft = scrollContainer.scrollLeft
       // 计算滚动距离（可以根据需要调整滚动速度）
@@ -676,8 +700,13 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
           <!-- RPS Monitoring Chart -->
           <section class="chart-section rounded-xl">
             <div class="chart-container">
-              <h4 class="chart-title mb-4">
-                {{ $t('api_monitor_server_rps_title') }}
+              <h4 class="chart-title mb-4 fs-6 flex align-center gap-2">
+                <el-icon size="20" class="color-primary">
+                  <i-lucide:activity />
+                </el-icon>
+                {{ $t('api_monitor_server_rps_title') }} ({{
+                  $t('api_monitor_server_rps_title_unit')
+                }})
               </h4>
               <WorkerRpsChart
                 :chart-data="rpsChartData"
@@ -691,8 +720,11 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
           <!-- Error Rate Chart -->
           <section class="chart-section rounded-xl">
             <div class="chart-container">
-              <h4 class="chart-title mb-4">
-                {{ $t('api_monitor_server_error_rate_title') }}
+              <h4 class="chart-title mb-4 fs-6 flex align-center gap-2">
+                <el-icon size="20" class="color-primary">
+                  <i-lucide:clock />
+                </el-icon>
+                {{ $t('api_monitor_server_error_rate_title') }} (%)
               </h4>
               <WorkerRpsChart
                 :chart-data="errorRateChartData"
@@ -705,9 +737,14 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
           <!-- Request Latency Chart -->
           <section class="chart-section rounded-xl">
             <div class="chart-container">
-              <h4 class="chart-title mb-4">
+              <h4 class="chart-title mb-4 fs-6 flex align-center gap-2">
+                <el-icon size="20" class="color-primary">
+                  <i-lucide:triangle-alert />
+                </el-icon>
                 {{ selectedWorker }} -
-                {{ $t('api_monitor_server_response_time_title') }}
+                {{ $t('api_monitor_server_response_time_title') }} ({{
+                  $t('public_unit_ms')
+                }})
               </h4>
               <WorkerRpsChart
                 :chart-data="responseTimeChartData"
@@ -721,7 +758,10 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
           <!-- API Call Statistics Table -->
           <section class="chart-section rounded-xl">
             <div class="chart-container">
-              <h4 class="chart-title mb-4">
+              <h4 class="chart-title mb-4 fs-6 flex align-center gap-2">
+                <el-icon size="20" class="color-primary">
+                  <i-lucide:chart-column />
+                </el-icon>
                 {{ selectedWorker }} -
                 {{ $t('api_monitor_server_api_calls_title') }}
               </h4>

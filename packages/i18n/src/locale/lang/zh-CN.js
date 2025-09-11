@@ -545,4 +545,5 @@ export default {
   public_automatically: '自动',
   public_manually: '手动',
   public_data_table: '数据表',
+  public_unit_ms: '毫秒',
 }
