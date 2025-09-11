@@ -579,7 +579,7 @@ onUnmounted(() => {
             <el-icon size="16" class="color-primary"
               ><i-lucide:server
             /></el-icon>
-            API服务器监控
+            {{ $t('api_monitor_server_title') }}
           </div>
           <div class="p-5 pt-0 flex">
             <div
@@ -611,7 +611,9 @@ onUnmounted(() => {
                   <el-icon class="color-primary"
                     ><i-lucide:memory-stick
                   /></el-icon>
-                  <span class="text-gray-600">MEM</span>
+                  <span class="text-gray-600">{{
+                    $t('api_monitor_memory')
+                  }}</span>
                   <span class="fw-sub ml-auto">{{
                     item.metricValues.heapMemoryUsage
                   }}</span>

@@ -556,4 +556,5 @@ export default {
   public_automatically: 'Automatically',
   public_manually: 'Manually',
   public_data_table: 'Table',
+  public_unit_ms: 'ms',
 }
