@@ -10,7 +10,7 @@ import { VTable } from '@tap/component/src/base/v-table'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 // @ts-ignore
 import { calcUnit } from '@tap/shared'
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import WorkerRpsChart from './WorkerRpsChart.vue'
 
 // Types
@@ -84,6 +84,14 @@ const {
     const { workers, ...rest } = data
 
     serverDetails.value = rest
+
+    if (workers && workers.length > 0 && !selectedWorker.value) {
+      selectedWorker.value = workers[0]?.name || ''
+    }
+
+    setTimeout(() => {
+      triggerScrollCheck()
+    }, 0)
 
     return workers.map((worker) => ({
       ...worker,
@@ -200,6 +208,8 @@ const { run: runFetchData, cancel: cancelFetchData } = useRequest(
 // Reactive data
 const selectedWorker = ref<string>('')
 const selectedWorkerId = ref<string>('')
+const workerScrollbar = ref()
+const workerCardsContainer = ref()
 
 const apiList = computed(() => {
   return (
@@ -436,32 +446,54 @@ const handleOpen = () => {
   runFetchData()
 }
 
+const triggerScrollCheck = () => {
+  nextTick(() => {
+    handleScroll()
+  })
+}
+
 const handleClose = () => {
   cancelFetchApiServerWorker()
   cancelFetchData()
 }
 
-const selectWorker = (worker: WorkerData | string) => {
-  if (typeof worker === 'string') {
-    selectedWorker.value = worker
-    const workerData = workerData.value.find((w) => w.name === worker)
-    selectedWorkerId.value = workerData?.oid || ''
-  } else {
-    selectedWorker.value = worker.name
-    selectedWorkerId.value = worker.oid
+const selectWorker = (worker: string, event: MouseEvent) => {
+  selectedWorker.value = worker
+
+  // 让点击的worker卡片在滚动容器中可见
+  if (workerScrollbar.value && event.currentTarget) {
+    const scrollContainer = workerScrollbar.value.$el.querySelector(
+      '.el-scrollbar__wrap',
+    )
+    const targetElement = event.currentTarget as HTMLElement
+
+    if (scrollContainer && targetElement) {
+      const containerRect = scrollContainer.getBoundingClientRect()
+      const targetRect = targetElement.getBoundingClientRect()
+
+      // 计算目标元素相对于容器的位置
+      const targetLeft =
+        targetRect.left - containerRect.left + scrollContainer.scrollLeft
+      const targetRight = targetLeft + targetRect.width
+      const containerWidth = containerRect.width
+
+      // 如果目标元素不在可见区域内，则滚动到合适位置
+      if (targetLeft < scrollContainer.scrollLeft) {
+        // 目标元素在左侧，滚动到左侧
+        scrollContainer.scrollTo({
+          left: targetLeft - 24, // 留一些边距
+          behavior: 'smooth',
+        })
+      } else if (targetRight > scrollContainer.scrollLeft + containerWidth) {
+        // 目标元素在右侧，滚动到右侧
+        scrollContainer.scrollTo({
+          left: targetRight - containerWidth + 24, // 留一些边距
+          behavior: 'smooth',
+        })
+      }
+    }
   }
 }
-
-// Auto-select first worker when data is loaded
-watch(
-  () => workerData.value,
-  (newWorkerData) => {
-    if (newWorkerData && newWorkerData.length > 0 && !selectedWorker.value) {
-      selectedWorker.value = newWorkerData[0].name
-    }
-  },
-  { immediate: true },
-)
 
 const apiStatsColumns = computed(() => [
   {
@@ -482,6 +514,50 @@ const apiStatsColumns = computed(() => [
 const handleTimeChange = () => {
   granularity.value = getGranularity()
   runFetchData()
+}
+
+// Handle mouse wheel scroll for horizontal scrolling
+const handleWheelScroll = (event: WheelEvent) => {
+  event.preventDefault()
+
+  if (workerScrollbar.value) {
+    const scrollbar = workerScrollbar.value
+    const scrollContainer = scrollbar.$el.querySelector('.el-scrollbar__wrap')
+
+    if (scrollContainer) {
+      // 获取当前滚动位置
+      const currentScrollLeft = scrollContainer.scrollLeft
+      // 计算滚动距离（可以根据需要调整滚动速度）
+      const scrollDelta = event.deltaY
+
+      // 执行横向滚动
+      scrollContainer.scrollTo({
+        left: currentScrollLeft + scrollDelta,
+      })
+    }
+  }
+}
+
+const handleScroll = () => {
+  if (workerScrollbar.value) {
+    const scrollbar = workerScrollbar.value
+    const scrollContainer = scrollbar.$el.querySelector('.el-scrollbar__wrap')
+
+    if (scrollContainer) {
+      const currentScrollLeft = scrollContainer.scrollLeft
+      if (currentScrollLeft > 0) {
+        scrollbar.$el.classList.add('ring-left')
+      } else {
+        scrollbar.$el.classList.remove('ring-left')
+      }
+      const containerWidth = scrollContainer.clientWidth
+      if (currentScrollLeft + containerWidth < scrollContainer.scrollWidth) {
+        scrollbar.$el.classList.add('ring-right')
+      } else {
+        scrollbar.$el.classList.remove('ring-right')
+      }
+    }
+  }
 }
 
 const getTimeRange = () => {
@@ -537,8 +613,16 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
     <div class="server-details-container">
       <!-- Worker List Section -->
       <section class="worker-list-section mb-3">
-        <el-scrollbar>
-          <div class="worker-cards flex align-center gap-4 pb-3">
+        <el-scrollbar
+          ref="workerScrollbar"
+          class="worker-scrollbar"
+          @wheel="handleWheelScroll"
+          @scroll="handleScroll"
+        >
+          <div
+            ref="workerCardsContainer"
+            class="worker-cards flex align-center gap-4 py-3"
+          >
             <div
               v-for="worker in workerData"
               :key="worker.oid"
@@ -547,7 +631,7 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
                 active: worker.name && selectedWorker === worker.name,
                 'is-disabled': !worker.name,
               }"
-              @click="worker.name && selectWorker(worker)"
+              @click="worker.name && selectWorker(worker.name, $event)"
             >
               <div class="worker-header flex align-center gap-2 mb-3">
                 <div
@@ -594,7 +678,6 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
                 :selected-worker="selectedWorker"
                 :height="280"
                 :granularity="granularity"
-                @worker-select="selectWorker"
               />
             </div>
           </section>
@@ -607,7 +690,6 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
                 :chart-data="errorRateChartData"
                 :selected-worker="selectedWorker"
                 :height="280"
-                @worker-select="selectWorker"
               />
             </div>
           </section>
@@ -623,7 +705,6 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
                 :selected-worker="selectedWorker"
                 :height="280"
                 legend
-                @worker-select="selectWorker"
               />
             </div>
           </section>
@@ -640,15 +721,17 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
                 :has-pagination="false"
               >
                 <template #empty>
-                  <el-empty image-size="100" class="py-4" />
+                  <el-empty :image-size="100" class="py-4" />
                 </template>
                 <template #errorCount="{ row }">
                   <span
                     :class="
-                      row.errorCount > 0 ? 'color-danger' : 'text-gray-500'
+                      (row as any).errorCount > 0
+                        ? 'color-danger'
+                        : 'text-gray-500'
                     "
                   >
-                    {{ row.errorCount }}
+                    {{ (row as any).errorCount }}
                   </span>
                 </template>
               </VTable>
@@ -782,22 +865,34 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
   }
 }
 
-// Responsive design
-@media (max-width: 1200px) {
-  .charts-grid {
-    grid-template-columns: 1fr;
-    grid-template-rows: repeat(4, 1fr);
-    height: auto;
+.worker-scrollbar {
+  &::before,
+  &::after {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 32px;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.3s;
+    content: '';
+    pointer-events: none;
   }
-}
-
-@media (max-width: 768px) {
-  .worker-cards {
-    flex-direction: column;
+  &::before {
+    left: 0;
+    box-shadow: inset 10px 0 8px -8px rgba(0, 0, 0, 0.08);
+  }
+  &::after {
+    right: 0;
+    box-shadow: inset -10px 0 8px -8px rgba(0, 0, 0, 0.08);
   }
 
-  .worker-card {
-    min-width: auto;
+  &.ring-left::before {
+    opacity: 1;
+  }
+
+  &.ring-right::after {
+    opacity: 1;
   }
 }
 </style>

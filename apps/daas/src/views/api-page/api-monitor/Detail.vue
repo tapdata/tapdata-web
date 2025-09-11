@@ -141,15 +141,14 @@ export default {
   },
   methods: {
     getTimeRange() {
+      const minute = this.searchParams.guanluary || 5
       return {
-        from: Date.now() - this.searchParams.guanluary * 60 * 1000,
+        from: Date.now() - minute * 60 * 1000,
         to: Date.now() - 60 * 1000,
-        // from: 1756656000000,
-        // end: 1757001600000,
       }
     },
-    calcUnit() {
-      return calcUnit(...arguments)
+    calcUnit(...args) {
+      return calcUnit(...args)
     },
     formatMs(time) {
       if (time === 0 || !time) return 0
