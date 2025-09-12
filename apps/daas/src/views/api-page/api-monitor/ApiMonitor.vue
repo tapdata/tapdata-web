@@ -166,6 +166,8 @@ const columns = computed<Column[]>(() => [
   {
     label: t('api_monitor_total_columns_failed'),
     slotName: 'failed',
+    prop: 'failed',
+    sortable: 'custom',
   },
 ])
 
@@ -177,6 +179,8 @@ const columnsRT = computed<Column[]>(() => [
   {
     label: t('api_monitor_total_rTime'),
     slotName: 'failed',
+    prop: 'failed',
+    sortable: 'custom',
   },
 ])
 
@@ -317,6 +321,16 @@ const handleFDOrder = () => {
   remoteFailedMethod()
 }
 
+const handleFailRateOrder = ({ order }: { order: string }) => {
+  page.failRateOrder = order === 'ascending' ? 'ASC' : 'DESC'
+  remoteFailedMethod()
+}
+
+const handleConsumingTimeOrder = ({ order }: { order: string }) => {
+  page.consumingTimeOrder = order === 'ascending' ? 'ASC' : 'DESC'
+  consumingMethod()
+}
+
 // 响应时间排行榜
 const consumingMethod = () => {
   const { consumingTimeCurrent, size, consumingTimeOrder } = page
@@ -346,13 +360,6 @@ const consumingMethod = () => {
     .finally(() => {
       loadingTimeList.value = false
     })
-}
-
-// 响应时间时间排序
-const handleCTOrder = () => {
-  const time = JSON.parse(JSON.stringify(page.consumingTimeOrder))
-  page.consumingTimeOrder = time === 'DESC' ? 'ASC' : 'DESC'
-  consumingMethod()
 }
 
 // 获取api列表数据
@@ -622,9 +629,9 @@ onUnmounted(() => {
         </div>
 
         <!--api 排行榜 -->
-        <section class="flex flex-direction mb-5 api-monitor__min__height">
+        <section class="flex flex-direction mb-5">
           <section
-            class="rounded-xl bg-white mb-5 api-monitor-card h-100"
+            class="rounded-xl bg-white api-monitor-card"
             style="width: 380px"
           >
             <div class="p-5 fw-sub flex align-center gap-2 pb-3">
@@ -714,93 +721,69 @@ onUnmounted(() => {
             </div>
           </section>
           <div
-            class="flex flex-column flex-1 bg-white api-monitor-table api-monitor-card overflow-hidden ml-5 mr-5 px-5 pt-5 rounded-xl"
+            class="flex flex-column flex-1 bg-white api-monitor-table api-monitor-card overflow-hidden ml-5 mr-5 rounded-xl"
           >
-            <div class="api-monitor-chart__text mb-2">
+            <div class="api-monitor-chart__text p-5 pb-2 lh-5">
               {{ t('api_monitor_total_FailRate') }}
-              <span
-                class="api-monitor-triangle-bg position-relative ml-2"
-                @click="handleFDOrder()"
-              >
-                <span
-                  class="api-monitor-triangle position-absolute"
-                  :class="{
-                    'triangle-active': page.failRateOrder === 'ASC',
-                  }"
-                />
-                <span
-                  class="api-monitor-triangle-top position-absolute"
-                  :class="{ 'active-top': page.failRateOrder === 'DESC' }"
-                />
-              </span>
             </div>
-            <VTable
-              v-loading="loadingFailRateList"
-              height="100%"
-              :has-pagination="false"
-              :data="failRateList"
-              :columns="columns"
-            >
-              <template #failed="{ row }">
-                <span> {{ Math.round(row.failed * 100) }}</span>
-              </template>
-            </VTable>
-            <el-pagination
-              v-model:current-page="page.failRateCurrent"
-              class="my-2 flex-wrap"
-              layout="->, total, prev,pager, next"
-              :page-size="5"
-              :pager-count="5"
-              :total="page.failRateTotal"
-              @current-change="remoteFailedMethod"
-            />
+            <div class="px-4 flex flex-column flex-1">
+              <VTable
+                v-loading="loadingFailRateList"
+                class="h-auto"
+                :has-pagination="false"
+                :data="failRateList"
+                :columns="columns"
+                :default-sort="{ prop: 'failed', order: 'descending' }"
+                @sort-change="handleFailRateOrder"
+              >
+                <template #failed="{ row }">
+                  <span> {{ Math.round(row.failed * 100) }}</span>
+                </template>
+              </VTable>
+              <el-pagination
+                v-model:current-page="page.failRateCurrent"
+                class="my-3 flex-wrap"
+                layout="->, total, prev,pager, next"
+                :page-size="5"
+                :pager-count="5"
+                :total="page.failRateTotal"
+                @current-change="remoteFailedMethod"
+              />
+            </div>
           </div>
           <div
-            class="flex flex-column flex-1 bg-white api-monitor-card overflow-hidden px-5 pt-5 rounded-xl"
+            class="flex flex-column flex-1 bg-white api-monitor-card overflow-hidden rounded-xl"
           >
-            <div class="api-monitor-chart__text mb-2">
+            <div class="api-monitor-chart__text p-5 pb-2 lh-5">
               {{ t('api_monitor_total_consumingTime') }}
-              <span
-                class="api-monitor-triangle-bg position-relative ml-2"
-                @click="handleCTOrder()"
-              >
-                <span
-                  class="api-monitor-triangle position-absolute"
-                  :class="{
-                    'triangle-active': page.consumingTimeOrder === 'ASC',
-                  }"
-                />
-                <span
-                  class="api-monitor-triangle-top position-absolute"
-                  :class="{
-                    'active-top': page.consumingTimeOrder === 'DESC',
-                  }"
-                />
-              </span>
             </div>
-            <VTable
-              v-loading="loadingTimeList"
-              height="100%"
-              background
-              :has-pagination="false"
-              :data="consumingTimeList"
-              :columns="columnsRT"
-            >
-              <template #failed="{ row }: { row: FailRateItem }">
-                <span>
-                  {{ formatMs(row.failed) }}
-                </span>
-              </template>
-            </VTable>
-            <el-pagination
-              v-model:current-page="page.consumingTimeCurrent"
-              class="my-2 flex-wrap"
-              layout="->, total, prev,pager, next"
-              :pager-count="5"
-              :page-size="5"
-              :total="page.consumingTimeTotal"
-              @current-change="consumingMethod"
-            />
+            <div class="px-4 flex flex-column flex-1">
+              <VTable
+                v-loading="loadingTimeList"
+                background
+                class="h-auto"
+                :has-pagination="false"
+                :data="consumingTimeList"
+                :columns="columnsRT"
+                :default-sort="{ prop: 'failed', order: 'descending' }"
+                @sort-change="handleConsumingTimeOrder"
+              >
+                <template #failed="{ row }: { row: FailRateItem }">
+                  <span>
+                    {{ formatMs(row.failed) }}
+                  </span>
+                </template>
+              </VTable>
+              <el-pagination
+                v-model:current-page="page.consumingTimeCurrent"
+                class="my-3 flex-wrap"
+                layout="->, total, prev,pager, next"
+                :pager-count="5"
+                :page-size="5"
+                :total="page.consumingTimeTotal"
+                @current-change="consumingMethod"
+              />
+            </div>
           </div>
         </section>
         <!--api list -->
@@ -863,7 +846,7 @@ onUnmounted(() => {
           </el-table>
           <el-pagination
             v-model:current-page="page.apiListCurrent"
-            class="my-2"
+            class="my-3"
             layout="->, total, prev, pager, next, jumper"
             :page-size="5"
             :total="page.apiListTotal"
@@ -924,44 +907,6 @@ onUnmounted(() => {
   .circle-waring {
     width: 4px;
     border-radius: 80px;
-  }
-  //排序样式
-  .api-monitor-triangle-bg {
-    width: 20px;
-    height: 20px;
-    top: 5px;
-    display: inline-block;
-    text-align: center;
-    border-radius: 2px;
-    cursor: pointer;
-    &:hover {
-      background: #eef3ff;
-    }
-  }
-  .api-monitor-triangle {
-    display: inline-block;
-    width: 0;
-    height: 0;
-    left: 6px;
-    top: 11px;
-    border: 4px solid transparent;
-    border-top-color: var(--icon-n2);
-  }
-  .triangle-active {
-    border-top-color: var(--color-primary);
-  }
-  .api-monitor-triangle-top {
-    display: inline-block;
-    width: 0;
-    height: 0;
-    left: 6px;
-    top: 0;
-    border: 4px solid transparent;
-    border-bottom-color: var(--icon-n2);
-    cursor: pointer;
-  }
-  .active-top {
-    border-bottom-color: var(--color-primary);
   }
 }
 
