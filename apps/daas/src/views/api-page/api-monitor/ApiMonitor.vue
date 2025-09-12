@@ -641,7 +641,6 @@ onUnmounted(() => {
                 v-for="item in apiServerList"
                 :key="item.processId"
                 class="border rounded-xl p-3 cursor-pointer server-item position-relative flex align-center"
-                :class="{ 'border-warning': item.pingWarning }"
                 @click="handleServerClick(item)"
               >
                 <div class="flex-1">
