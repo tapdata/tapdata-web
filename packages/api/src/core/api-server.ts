@@ -69,8 +69,9 @@ export function fetchApiServerWorker(processId: string) {
 
 export interface ApiServerCpuMem {
   processId: string
-  workerPid: number
+  pid: number
   name: string
+  pingTime: number
   workerProcessStartTime: number
   status: string
   metricValues: {

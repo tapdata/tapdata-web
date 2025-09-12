@@ -1135,6 +1135,11 @@
   margin-bottom: 0 !important;
 }
 
+.my-0\.5 {
+  margin-top: 0.125rem !important;
+  margin-bottom: 0.125rem !important;
+}
+
 .my-1 {
   margin-top: 0.25rem !important;
   margin-bottom: 0.25rem !important;
@@ -12701,6 +12706,10 @@
 
 .bg-green-500 {
   background-color: oklch(72.3% 0.219 149.579);
+}
+
+.bg-yellow-500 {
+  background-color: oklch(79.5% 0.184 86.047);
 }
 
 .bg-red-500 {

@@ -13,7 +13,6 @@ import { dayjs } from '@tap/business/src/shared/dayjs'
 import { VTable } from '@tap/component/src/base/v-table'
 import { Chart } from '@tap/component/src/chart'
 import { FilterBar } from '@tap/component/src/filter-bar'
-import { RightBoldOutlined } from '@tap/component/src/RightBoldOutlined'
 import { useI18n } from '@tap/i18n'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
 import { escapeRegExp } from 'lodash-es'
@@ -269,14 +268,12 @@ const getPieOption = () => {
       {
         type: 'pie',
         data,
-        radius: ['40%', '60%'],
+        radius: ['60%', '90%'],
         label: {
-          overflow: 'break',
-          fontSize: 10,
+          show: false,
         },
         labelLine: {
-          length: 10, // 缩短引导线长度
-          length2: 10, // 控制引导线第二段长度
+          show: false,
         },
       },
     ],
@@ -441,6 +438,10 @@ const { data: apiServerList, loading: loadingApiServerList } = useRequest(
     return data.map((item) => {
       return {
         ...item,
+        pingWarning:
+          Date.now() - item.pingTime > 10000
+            ? dayjs(item.pingTime).fromNow(true)
+            : '',
         metricValues: item.metricValues
           ? {
               cpuUsage: item.metricValues.cpuUsage
@@ -462,7 +463,7 @@ const { data: apiServerList, loading: loadingApiServerList } = useRequest(
   },
 )
 
-const handleServerClick = (item: ApiServerCpuMem) => {
+const handleServerClick = (item: Partial<ApiServerCpuMem>) => {
   serverDetails.value = item
   serverDetailsVisible.value = true
 }
@@ -484,194 +485,236 @@ onUnmounted(() => {
   <PageContainer mode="blank" hide-header>
     <section class="api-monitor-wrap isCardBox">
       <main class="api-monitor-main">
-        <section
-          v-loading="loadingTotal"
-          class="bg-white api-monitor-card rounded-xl mb-5"
-        >
-          <div class="p-6">
-            <span class="fs-6">{{ t(route.meta.title as string) }}</span
-            ><span class="fs-7 ml-3 font-color-sslight">
-              {{ t('public_data_update_time') }}:
-              {{ previewData.lastUpdAt }}</span
-            >
-          </div>
-
-          <div class="flex">
-            <div class="flex-1 text-center">
-              <header class="api-monitor-total__tittle">
-                {{ t('api_monitor_total_totalCount') }}
-              </header>
-              <div class="api-monitor-total__text din-font">
-                {{ previewData.totalCount || 0 }}
-              </div>
-            </div>
-            <div class="flex-1 text-center">
-              <header class="api-monitor-total__tittle">
-                {{ t('api_monitor_total_warningVisitCount') }}
-              </header>
-              <div class="api-monitor-total__text din-font">
-                <el-tooltip
-                  :open-delay="400"
-                  :disabled="
-                    !previewData.warningVisitTotalCount ||
-                    previewData.warningVisitTotalCount < 1000
-                  "
-                  :content="`${previewData.warningVisitTotalCount}`"
-                  placement="bottom"
-                >
-                  <span>{{
-                    calcUnit(previewData.warningVisitTotalCount || 0)
-                  }}</span>
-                </el-tooltip>
-              </div>
-            </div>
-            <div class="flex-1 text-center">
-              <header class="api-monitor-total__tittle">
-                {{ t('api_monitor_total_warningApiCount') }}
-              </header>
-              <div class="api-monitor-total__text din-font">
-                <el-tooltip
-                  :open-delay="400"
-                  :disabled="
-                    !previewData.visitTotalCount ||
-                    previewData.visitTotalCount < 1000
-                  "
-                  :content="`${previewData.visitTotalCount}`"
-                  placement="bottom"
-                >
-                  <span>{{ calcUnit(previewData.visitTotalCount || 0) }}</span>
-                </el-tooltip>
-              </div>
-            </div>
-            <div class="flex-1 text-center">
-              <header class="api-monitor-total__tittle">
-                {{ t('api_monitor_total_visitTotalLine') }}
-              </header>
-              <el-tooltip
-                :open-delay="400"
-                :disabled="
-                  !previewData.visitTotalLine ||
-                  previewData.visitTotalLine < 1000
-                "
-                :content="`${previewData.visitTotalLine}`"
-                placement="bottom"
+        <div class="flex gap-5 mb-5">
+          <section
+            v-loading="loadingTotal"
+            class="bg-white api-monitor-card rounded-xl flex-1"
+          >
+            <div class="p-6">
+              <span class="fs-6">{{ t(route.meta.title as string) }}</span
+              ><span class="fs-7 ml-3 font-color-sslight">
+                {{ t('public_data_update_time') }}:
+                {{ previewData.lastUpdAt }}</span
               >
-                <div class="api-monitor-total__text din-font">
-                  {{ calcUnit(previewData.visitTotalLine || 0) }}
-                </div>
-              </el-tooltip>
             </div>
-            <div class="flex-1 text-center">
-              <header class="api-monitor-total__tittle">
-                {{ t('api_monitor_total_transmitTotal') }}
-              </header>
-              <div class="api-monitor-total__text din-font">
-                {{ calcUnit(previewData.transmitTotal, 'b') || 0 }}
-              </div>
-            </div>
-          </div>
-        </section>
-        <section
-          v-loading="loadingApiServerList"
-          class="rounded-xl bg-white mb-5 api-monitor-card"
-        >
-          <div class="p-5 fw-sub flex align-center gap-2">
-            <el-icon size="16" class="color-primary"
-              ><i-lucide:server
-            /></el-icon>
-            {{ $t('api_monitor_server_title') }}
-          </div>
-          <div class="p-5 pt-0 flex">
-            <div
-              v-for="item in apiServerList"
-              :key="item.processId"
-              class="border rounded-xl p-3 cursor-pointer server-item"
-              @click="handleServerClick(item)"
-            >
-              <div class="flex align-center gap-2 mb-4">
-                <div
-                  class="rounded-pill w-2 h-2"
-                  :class="`${item.status !== 'running' ? 'bg-red-500' : 'bg-green-500'}`"
-                />
-                <span>{{ item.name }}</span>
 
-                <el-icon color="var(--icon-n1)" class="ml-auto">
-                  <RightBoldOutlined />
-                </el-icon>
+            <div class="flex">
+              <div class="flex-1 text-center">
+                <header class="api-monitor-total__tittle">
+                  {{ t('api_monitor_total_totalCount') }}
+                </header>
+                <div class="api-monitor-total__text din-font">
+                  {{ previewData.totalCount || 0 }}
+                </div>
               </div>
-              <div class="flex flex-column gap-3">
-                <div class="flex align-center gap-2">
-                  <el-icon class="color-primary"><i-lucide:cpu /></el-icon>
-                  <span class="text-gray-600">CPU</span>
-                  <span class="fw-sub ml-auto">{{
-                    item.metricValues.cpuUsage
-                  }}</span>
+              <div class="flex-1 text-center">
+                <header class="api-monitor-total__tittle">
+                  {{ t('api_monitor_total_warningVisitCount') }}
+                </header>
+                <div class="api-monitor-total__text din-font">
+                  <el-tooltip
+                    :open-delay="400"
+                    :disabled="
+                      !previewData.warningVisitTotalCount ||
+                      previewData.warningVisitTotalCount < 1000
+                    "
+                    :content="`${previewData.warningVisitTotalCount}`"
+                    placement="bottom"
+                  >
+                    <span>{{
+                      calcUnit(previewData.warningVisitTotalCount || 0)
+                    }}</span>
+                  </el-tooltip>
                 </div>
-                <div class="flex align-center gap-2">
-                  <el-icon class="color-primary"
-                    ><i-lucide:memory-stick
-                  /></el-icon>
-                  <span class="text-gray-600">{{
-                    $t('api_monitor_memory')
-                  }}</span>
-                  <span class="fw-sub ml-auto">{{
-                    item.metricValues.heapMemoryUsage
-                  }}</span>
+              </div>
+              <div class="flex-1 text-center">
+                <header class="api-monitor-total__tittle">
+                  {{ t('api_monitor_total_warningApiCount') }}
+                </header>
+                <div class="api-monitor-total__text din-font">
+                  <el-tooltip
+                    :open-delay="400"
+                    :disabled="
+                      !previewData.visitTotalCount ||
+                      previewData.visitTotalCount < 1000
+                    "
+                    :content="`${previewData.visitTotalCount}`"
+                    placement="bottom"
+                  >
+                    <span>{{
+                      calcUnit(previewData.visitTotalCount || 0)
+                    }}</span>
+                  </el-tooltip>
                 </div>
-                <div class="flex align-center gap-2 fs-8">
-                  <span class="text-gray-500">PID</span>
-                  <span class="font-mono ml-auto text-gray-700">{{
-                    item.workerPid
-                  }}</span>
+              </div>
+              <div class="flex-1 text-center">
+                <header class="api-monitor-total__tittle">
+                  {{ t('api_monitor_total_visitTotalLine') }}
+                </header>
+                <el-tooltip
+                  :open-delay="400"
+                  :disabled="
+                    !previewData.visitTotalLine ||
+                    previewData.visitTotalLine < 1000
+                  "
+                  :content="`${previewData.visitTotalLine}`"
+                  placement="bottom"
+                >
+                  <div class="api-monitor-total__text din-font">
+                    {{ calcUnit(previewData.visitTotalLine || 0) }}
+                  </div>
+                </el-tooltip>
+              </div>
+              <div class="flex-1 text-center">
+                <header class="api-monitor-total__tittle">
+                  {{ t('api_monitor_total_transmitTotal') }}
+                </header>
+                <div class="api-monitor-total__text din-font">
+                  {{ calcUnit(previewData.transmitTotal, 'b') || 0 }}
                 </div>
               </div>
             </div>
-          </div>
-        </section>
-        <!--api 排行榜 -->
-        <section
-          class="flex flex-direction api-monitor-card mb-5 api-monitor__min__height"
-        >
+          </section>
           <div
             v-loading="loadingTotal"
-            class="flex flex-column api-monitor-chart api-monitor-card bg-white overflow-hidden pt-5 rounded-xl"
+            class="flex flex-column api-monitor-card bg-white overflow-hidden pt-5 rounded-xl"
           >
             <div class="api-monitor-chart__text mb-2 pl-5">
               {{ t('api_monitor_total_warningCount') }}
             </div>
-            <Chart type="pie" :extend="getPieOption()" />
-            <div class="flex ml-8 mb-8 mt-5 lh-sm">
-              <div>
-                <div class="mb-2">
-                  <i class="circle-total mr-3 align-middle" /><span
-                    class="mr-8 align-middle"
-                    >{{ t('api_monitor_total_successCount') }}</span
-                  >
+            <div class="flex align-center flex-1 p-3">
+              <Chart style="width: 140px" type="pie" :extend="getPieOption()" />
+              <div class="flex flex-column gap-2 pr-2">
+                <div class="flex">
+                  <div
+                    class="tooltip-bar my-0.5 ml-0.5 mr-2 rounded-pill"
+                    style="width: 4px; background: #8fd8c0"
+                  />
+                  <div>
+                    <div class="text-gray-500 lh-5">
+                      {{ t('api_monitor_total_successCount') }}
+                    </div>
+                    <div class="fs-6 fw-sub lh-6">
+                      {{
+                        (previewData.totalCount || 0) -
+                        (previewData.warningApiCount || 0)
+                      }}
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <i
-                    class="circle-waring mr-3 align-middle"
-                    style="background: #f7d762"
-                  /><span class="mr-6 align-middle">{{
-                    t('api_monitor_total_warningCount')
-                  }}</span>
-                </div>
-              </div>
-              <div>
-                <div class="mb-2">
-                  <span class="align-middle">{{
-                    (previewData.totalCount || 0) -
-                    (previewData.warningApiCount || 0)
-                  }}</span>
-                </div>
-                <div>
-                  <span class="align-middle">{{
-                    previewData.warningApiCount
-                  }}</span>
+                <div class="flex">
+                  <div
+                    class="tooltip-bar my-0.5 ml-0.5 mr-2 rounded-pill"
+                    style="width: 4px; background: #f7d762"
+                  />
+                  <div>
+                    <div class="text-gray-500 lh-5">
+                      {{ t('api_monitor_total_warningCount') }}
+                    </div>
+                    <div class="fs-6 fw-sub lh-6">
+                      {{ previewData.warningApiCount }}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+
+        <!--api 排行榜 -->
+        <section class="flex flex-direction mb-5 api-monitor__min__height">
+          <section
+            class="rounded-xl bg-white mb-5 api-monitor-card h-100"
+            style="width: 380px"
+          >
+            <div class="p-5 fw-sub flex align-center gap-2 pb-3">
+              <el-icon size="16" class="color-primary"
+                ><i-lucide:server
+              /></el-icon>
+              {{ $t('api_monitor_server_title') }}
+            </div>
+            <div
+              v-loading="loadingApiServerList"
+              class="p-5 pt-0 flex flex-column gap-3"
+            >
+              <div
+                v-for="item in apiServerList"
+                :key="item.processId"
+                class="border rounded-xl p-3 cursor-pointer server-item position-relative flex align-center"
+                :class="{ 'border-warning': item.pingWarning }"
+                @click="handleServerClick(item)"
+              >
+                <div class="flex-1">
+                  <div class="flex align-center gap-2 mb-2 flex-wrap">
+                    <el-tooltip
+                      v-if="item.pingWarning"
+                      :content="
+                        $t('api_monitor_server_ping_warning', {
+                          val: item.pingWarning,
+                        })
+                      "
+                      placement="bottom"
+                    >
+                      <el-icon class="color-warning"
+                        ><i-lucide:triangle-alert
+                      /></el-icon>
+                      <!-- <div class="rounded-pill w-2 h-2 bg-yellow-500" /> -->
+                    </el-tooltip>
+
+                    <div
+                      v-else
+                      class="rounded-pill w-2 h-2"
+                      :class="`${item.status !== 'running' ? 'bg-red-500' : 'bg-green-500'}`"
+                    />
+                    <span>{{ item.name }}</span>
+                    <span
+                      v-if="item.pid"
+                      class="font-mono text-gray-700 lh-4 border rounded-4 px-1.5 fs-8"
+                      >{{ item.pid }}</span
+                    >
+                  </div>
+                  <div class="flex gap-3">
+                    <div class="flex align-center gap-2">
+                      <el-icon class="color-primary"><i-lucide:cpu /></el-icon>
+                      <span class="text-gray-600">CPU</span>
+                      <span class="fw-sub ml-auto">{{
+                        item.metricValues.cpuUsage
+                      }}</span>
+                    </div>
+                    <div class="flex align-center gap-2">
+                      <el-icon class="color-primary"
+                        ><i-lucide:memory-stick
+                      /></el-icon>
+                      <span class="text-gray-600">{{
+                        $t('api_monitor_memory')
+                      }}</span>
+                      <span class="fw-sub ml-auto">{{
+                        item.metricValues.heapMemoryUsage
+                      }}</span>
+                    </div>
+                  </div>
+                </div>
+                <el-icon color="var(--icon-n2)" class="">
+                  <!-- <RightBoldOutlined /> -->
+                  <i-lucide:chevron-right />
+                </el-icon>
+                <!-- <div class="flex align-center gap-2 fs-8">
+                  <span class="text-gray-500">PID</span>
+                  <span class="font-mono ml-auto text-gray-700">{{
+                    item.workerPid || '666666'
+                  }}</span>
+                </div> -->
+              </div>
+              <!-- <el-table :data="apiServerList">
+                <el-table-column prop="name" label="服务名称" />
+                <el-table-column prop="metricValues.cpuUsage" label="% CPU" />
+                <el-table-column
+                  prop="metricValues.heapMemoryUsage"
+                  label="内存"
+                />
+              </el-table> -->
+            </div>
+          </section>
           <div
             class="flex flex-column flex-1 bg-white api-monitor-table api-monitor-card overflow-hidden ml-5 mr-5 pl-5 pt-5 rounded-xl"
           >
@@ -859,8 +902,8 @@ onUnmounted(() => {
     height: 30px;
   }
   .api-monitor-total__text {
-    font-size: 46px;
-    line-height: 92px;
+    font-size: 36px;
+    line-height: 72px;
     font-weight: 500;
     color: var(--color-primary);
   }
@@ -878,18 +921,12 @@ onUnmounted(() => {
   }
   //图表样式
   .circle-total {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #8fd8c0;
-    display: inline-block;
+    width: 4px;
+    border-radius: 80px;
   }
   .circle-waring {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--color-primary);
-    display: inline-block;
+    width: 4px;
+    border-radius: 80px;
   }
   //排序样式
   .api-monitor-triangle-bg {
@@ -933,7 +970,7 @@ onUnmounted(() => {
 
 .server-item {
   min-width: 300px;
-  &:hover {
+  &:hover:not(.border-warning) {
     border: 1px solid var(--el-color-primary) !important;
   }
 }

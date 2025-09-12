@@ -111,6 +111,7 @@ declare module 'vue' {
     'ILucide:monitorDown': typeof import('~icons/lucide/monitor-down')['default']
     'ILucide:package': typeof import('~icons/lucide/package')['default']
     'ILucide:refreshCw': typeof import('~icons/lucide/refresh-cw')['default']
+    'ILucide:rightBoldOutlined': typeof import('~icons/lucide/right-bold-outlined')['default']
     'ILucide:rocket': typeof import('~icons/lucide/rocket')['default']
     'ILucide:search': typeof import('~icons/lucide/search')['default']
     'ILucide:searchX': typeof import('~icons/lucide/search-x')['default']
