@@ -6,10 +6,10 @@ import {
   useRequest,
   type WorkerCallData,
 } from '@tap/api'
+import { dayjs } from '@tap/business/src/shared/dayjs'
 import { VTable } from '@tap/component/src/base/v-table'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import { useI18n } from '@tap/i18n'
-// @ts-ignore
 import { calcUnit } from '@tap/shared'
 import { computed, nextTick, ref } from 'vue'
 import WorkerRpsChart from './WorkerRpsChart.vue'
@@ -98,6 +98,10 @@ const {
 
     return workers.map((worker) => ({
       ...worker,
+      pingWarning:
+        Date.now() - worker.pingTime > 10000
+          ? dayjs(worker.pingTime).fromNow(true)
+          : '',
       metricValues: worker.metricValues
         ? {
             cpuUsage:
@@ -664,11 +668,30 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
               @click="worker.name && selectWorker(worker.name, $event)"
             >
               <div class="worker-header flex align-center gap-2 mb-3">
+                <el-tooltip
+                  v-if="worker.pingWarning"
+                  :content="
+                    $t('api_monitor_server_ping_warning', {
+                      val: worker.pingWarning,
+                    })
+                  "
+                  placement="bottom"
+                >
+                  <el-icon class="color-warning"
+                    ><i-lucide:triangle-alert
+                  /></el-icon>
+                </el-tooltip>
                 <div
+                  v-else
                   class="rounded-pill w-2 h-2"
                   :class="`${worker.workerStatus !== 'listening' ? 'bg-red-500' : 'bg-green-500'}`"
                 />
                 <span class="worker-name">{{ worker.name || '-' }}</span>
+                <span
+                  v-if="worker.pid"
+                  class="font-mono text-gray-700 lh-4 border rounded-4 px-1.5 fs-8"
+                  >{{ worker.pid }}</span
+                >
               </div>
               <div
                 class="worker-metrics flex align-center gap-4 justify-between"

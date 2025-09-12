@@ -658,7 +658,6 @@ onUnmounted(() => {
                       <el-icon class="color-warning"
                         ><i-lucide:triangle-alert
                       /></el-icon>
-                      <!-- <div class="rounded-pill w-2 h-2 bg-yellow-500" /> -->
                     </el-tooltip>
 
                     <div
@@ -716,7 +715,7 @@ onUnmounted(() => {
             </div>
           </section>
           <div
-            class="flex flex-column flex-1 bg-white api-monitor-table api-monitor-card overflow-hidden ml-5 mr-5 pl-5 pt-5 rounded-xl"
+            class="flex flex-column flex-1 bg-white api-monitor-table api-monitor-card overflow-hidden ml-5 mr-5 px-5 pt-5 rounded-xl"
           >
             <div class="api-monitor-chart__text mb-2">
               {{ t('api_monitor_total_FailRate') }}
@@ -749,16 +748,16 @@ onUnmounted(() => {
             </VTable>
             <el-pagination
               v-model:current-page="page.failRateCurrent"
-              class="mb-5 mt-3 mr-3"
-              layout="->,total, prev,pager, next"
-              background
+              class="my-2 flex-wrap"
+              layout="->, total, prev,pager, next"
               :page-size="5"
+              :pager-count="5"
               :total="page.failRateTotal"
               @current-change="remoteFailedMethod"
             />
           </div>
           <div
-            class="flex flex-column flex-1 bg-white api-monitor-card overflow-hidden pl-5 pt-5 rounded-xl"
+            class="flex flex-column flex-1 bg-white api-monitor-card overflow-hidden px-5 pt-5 rounded-xl"
           >
             <div class="api-monitor-chart__text mb-2">
               {{ t('api_monitor_total_consumingTime') }}
@@ -796,9 +795,9 @@ onUnmounted(() => {
             </VTable>
             <el-pagination
               v-model:current-page="page.consumingTimeCurrent"
-              class="mb-5 mt-3 mr-3"
-              layout="->,total, prev,pager, next"
-              background
+              class="my-2 flex-wrap"
+              layout="->, total, prev,pager, next"
+              :pager-count="5"
               :page-size="5"
               :total="page.consumingTimeTotal"
               @current-change="consumingMethod"
@@ -807,7 +806,7 @@ onUnmounted(() => {
         </section>
         <!--api list -->
         <section
-          class="flex flex-column bg-white api-monitor-card api-monitor-list__min__height pl-5 pt-5 rounded-xl"
+          class="flex flex-column bg-white api-monitor-card api-monitor-list__min__height px-5 pt-5 rounded-xl"
         >
           <header class="api-monitor-chart__text mb-2">
             {{ t('api_monitor_total_api_list') }}
@@ -865,9 +864,8 @@ onUnmounted(() => {
           </el-table>
           <el-pagination
             v-model:current-page="page.apiListCurrent"
-            class="mb-5 mt-5 mr-2"
+            class="my-2"
             layout="->, total, prev, pager, next, jumper"
-            background
             :page-size="5"
             :total="page.apiListTotal"
             @current-change="getApiList"
