@@ -39,6 +39,8 @@ interface Props {
   height?: string | number
   colors?: string[]
   legend?: boolean
+  yAxisFormatter?: string | ((value: number) => string)
+  tooltipValueFormatter?: string | ((value: number) => string)
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -77,6 +79,8 @@ const chartOptions = computed(() => {
     },
     tooltip: {
       trigger: 'axis',
+      valueFormatter: props.tooltipValueFormatter,
+      confine: true,
       borderRadius: 12,
       borderColor: '#dee0e3',
       extraCssText:
@@ -130,6 +134,7 @@ const chartOptions = computed(() => {
       axisLabel: {
         color: '#666',
         fontSize: 12,
+        formatter: props.yAxisFormatter,
       },
       splitLine: {
         lineStyle: {

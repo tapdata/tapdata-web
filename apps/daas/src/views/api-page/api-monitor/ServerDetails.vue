@@ -102,21 +102,22 @@ const {
         Date.now() - worker.pingTime > 10000
           ? dayjs(worker.pingTime).fromNow(true)
           : '',
-      metricValues: worker.metricValues
-        ? {
-            cpuUsage:
-              worker.metricValues.cpuUsage != null
-                ? `${Number(worker.metricValues.cpuUsage.toFixed(2))}%`
-                : '--',
-            heapMemoryUsage:
-              worker.metricValues.heapMemoryUsage != null
-                ? calcUnit(worker.metricValues.heapMemoryUsage, 'b')
-                : '--',
-          }
-        : {
-            cpuUsage: '--',
-            heapMemoryUsage: '--',
-          },
+      metricValues:
+        worker.metricValues && worker.workerStatus === 'listening'
+          ? {
+              cpuUsage:
+                worker.metricValues.cpuUsage != null
+                  ? `${Number(worker.metricValues.cpuUsage.toFixed(2))}%`
+                  : '--',
+              heapMemoryUsage:
+                worker.metricValues.heapMemoryUsage != null
+                  ? calcUnit(worker.metricValues.heapMemoryUsage, 'b')
+                  : '--',
+            }
+          : {
+              cpuUsage: '--',
+              heapMemoryUsage: '--',
+            },
     }))
   },
   {
@@ -621,6 +622,14 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
       return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
   }
 }
+
+const percentFormatter = (value: number) => {
+  return value != null ? `${value}%` : '-'
+}
+
+const msFormatter = (value: number) => {
+  return value != null ? `${value}ms` : '-'
+}
 </script>
 
 <template>
@@ -688,7 +697,7 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
                 />
                 <span class="worker-name">{{ worker.name || '-' }}</span>
                 <span
-                  v-if="worker.pid"
+                  v-if="worker.pid && worker.workerStatus === 'listening'"
                   class="font-mono text-gray-700 lh-4 border rounded-4 px-1.5 fs-8"
                   >{{ worker.pid }}</span
                 >
@@ -757,6 +766,8 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
                 :chart-data="errorRateChartData"
                 :selected-worker="selectedWorker"
                 :height="280"
+                y-axis-formatter="{value}%"
+                :tooltip-value-formatter="percentFormatter"
               />
             </div>
           </section>
@@ -777,6 +788,8 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
                 :chart-data="responseTimeChartData"
                 :selected-worker="selectedWorker"
                 :height="280"
+                :tooltip-value-formatter="msFormatter"
+                y-axis-formatter="{value}ms"
                 legend
               />
             </div>
