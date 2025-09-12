@@ -2,7 +2,6 @@
 import {
   deleteSdkVersion,
   fetchApiClients,
-  fetchApiModules,
   fetchApiServers,
   fetchSdk,
   fetchSdkVersionApiList,
@@ -11,11 +10,10 @@ import {
   type ApiClientVo,
 } from '@tap/api'
 import { Modal } from '@tap/component/src/modal'
-import { RightBoldOutlined } from '@tap/component/src/RightBoldOutlined'
 import { useI18n } from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
 import { debounce } from 'lodash-es'
-import { computed, nextTick, onBeforeMount, ref, toRefs, watch } from 'vue'
+import { computed, nextTick, onBeforeMount, ref, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
 import { dayjs } from '../../shared/dayjs'
@@ -524,24 +522,23 @@ onBeforeMount(() => {
                 <el-table-column
                   :label="$t('public_connection_type')"
                   prop="connectionType"
-                  :min-width="120"
+                  :min-width="80"
                 />
                 <el-table-column
                   :label="$t('public_connection_name')"
                   prop="connectionName"
-                  :min-width="200"
                 />
                 <el-table-column
                   :label="
                     $t('packages_business_data_server_list_guanlianduixiang')
                   "
                   prop="tableName"
-                  :min-width="180"
+                  :min-width="100"
                 />
                 <el-table-column
                   :label="$t('daas_data_server_drawer_path')"
                   prop="baseUrl"
-                  :min-width="130"
+                  :min-width="100"
                 >
                   <template #default="{ row }">
                     <el-tag type="info" class="is-code" disable-transitions>{{
