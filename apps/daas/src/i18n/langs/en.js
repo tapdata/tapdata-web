@@ -2166,4 +2166,6 @@ export default {
   api_monitor_server_recent_1_week: 'Last 1 Week',
   api_monitor_server_recent_1_month: 'Last 1 Month',
   api_monitor_memory: 'MEM',
+  api_monitor_server_ping_warning:
+    'Server response has not been updated for {val}',
 }

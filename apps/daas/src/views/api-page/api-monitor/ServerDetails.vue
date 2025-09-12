@@ -100,12 +100,14 @@ const {
       ...worker,
       metricValues: worker.metricValues
         ? {
-            cpuUsage: worker.metricValues.cpuUsage
-              ? `${Number(worker.metricValues.cpuUsage.toFixed(2))}%`
-              : '--',
-            heapMemoryUsage: worker.metricValues.heapMemoryUsage
-              ? calcUnit(worker.metricValues.heapMemoryUsage, 'b')
-              : '--',
+            cpuUsage:
+              worker.metricValues.cpuUsage != null
+                ? `${Number(worker.metricValues.cpuUsage.toFixed(2))}%`
+                : '--',
+            heapMemoryUsage:
+              worker.metricValues.heapMemoryUsage != null
+                ? calcUnit(worker.metricValues.heapMemoryUsage, 'b')
+                : '--',
           }
         : {
             cpuUsage: '--',
@@ -216,7 +218,6 @@ const { run: runFetchData, cancel: cancelFetchData } = useRequest(
 
 // Reactive data
 const selectedWorker = ref<string>('')
-const selectedWorkerId = ref<string>('')
 const workerScrollbar = ref()
 const workerCardsContainer = ref()
 
@@ -451,6 +452,7 @@ const responseTimeChartData = computed(() => {
 
 // Methods
 const handleOpen = () => {
+  selectedWorker.value = ''
   runFetchApiServerWorker()
   runFetchData()
 }
@@ -638,7 +640,7 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
     </template>
     <div class="server-details-container">
       <!-- Worker List Section -->
-      <section class="worker-list-section mb-3">
+      <section class="worker-list-section mb-2">
         <el-scrollbar
           ref="workerScrollbar"
           class="worker-scrollbar"

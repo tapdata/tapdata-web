@@ -2056,4 +2056,5 @@ export default {
   api_monitor_server_recent_1_week: '最近1周',
   api_monitor_server_recent_1_month: '最近1个月',
   api_monitor_memory: '内存',
+  api_monitor_server_ping_warning: '服务器响应已 {val} 未更新',
 }
