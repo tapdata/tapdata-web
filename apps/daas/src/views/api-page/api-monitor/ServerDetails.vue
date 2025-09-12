@@ -415,6 +415,7 @@ const responseTimeChartData = computed(() => {
         | number
         | null
       )[],
+      color: '#FF9800',
     },
     {
       name: 'P99',
@@ -422,6 +423,7 @@ const responseTimeChartData = computed(() => {
         | number
         | null
       )[],
+      color: '#F44336',
     },
   ]
 
@@ -792,19 +794,10 @@ const formatTimeLabel = (timestamp: number, granularity: number): string => {
         </div>
       </div>
     </div>
-
-    <!-- <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="handleClose">关闭</el-button>
-      </div>
-    </template> -->
   </el-dialog>
 </template>
 
 <style lang="scss" scoped>
-.server-details-container {
-}
-
 .section-title {
   font-size: 16px;
   font-weight: 600;

@@ -28,6 +28,7 @@ interface ChartData {
   series: {
     name: string
     data: (number | null)[]
+    color?: string
   }[]
 }
 
@@ -142,6 +143,7 @@ const chartOptions = computed(() => {
         name: worker.name,
         type: 'line',
         data: worker.data,
+        color: worker.color,
         connectNulls: true,
         // smooth: true,
         // symbolSize: 2,
