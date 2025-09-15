@@ -136,9 +136,11 @@ const { run: runFetchWorkerCall, data: rpsData } = useRequest(
       type: 0,
     })
 
-    data.workerMetrics = data.workerMetrics.filter((item) =>
-      Boolean(item.workerName),
-    )
+    data.workerMetrics = data.workerMetrics
+      .filter((item) => Boolean(item.workerName))
+      .sort((a, b) =>
+        a.workerName.localeCompare(b.workerName, undefined, { numeric: true }),
+      )
     return data.workerMetrics
   },
   {
@@ -156,9 +158,11 @@ const { run: runFetchWorkerCallErrorRate, data: errorRateData } = useRequest(
       type: 2,
     })
 
-    data.workerMetrics = data.workerMetrics.filter((item) =>
-      Boolean(item.workerName),
-    )
+    data.workerMetrics = data.workerMetrics
+      .filter((item) => Boolean(item.workerName))
+      .sort((a, b) =>
+        a.workerName.localeCompare(b.workerName, undefined, { numeric: true }),
+      )
     return data.workerMetrics
   },
   {
