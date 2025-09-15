@@ -22,10 +22,9 @@ import Drawer from '@tap/component/src/Drawer.vue'
 import { EditOutlined } from '@tap/component/src/icon'
 import { Modal } from '@tap/component/src/modal'
 import InfiniteSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
-
 import { useI18n } from '@tap/i18n'
+
 import { uid } from '@tap/shared'
-import axios from 'axios'
 import { cloneDeep, isEmpty, isEqual, merge } from 'lodash-es'
 import {
   computed,
@@ -39,6 +38,7 @@ import {
 import { DatabaseIcon } from '../../components/DatabaseIcon'
 import MqlHelpDialog from '../../components/MqlHelpDialog.vue'
 import ListSelect from '../api-application/ListSelect.vue'
+import FieldsTree from './FieldsTree.vue'
 import MqlEditor from './MqlEditor.vue'
 import getTemplate from './template'
 
@@ -277,6 +277,8 @@ const validatePrefix = (rule: any, value: string, callback: Function) => {
     callback(t('packages_business_data_server_drawer_validate'))
   }
 }
+
+console.log('allFields', allFields)
 
 const rules = {
   name: [
@@ -667,14 +669,22 @@ const getFields = async () => {
       filter: JSON.stringify(filter),
     })
 
+    const aliasMap = form.value.fields?.reduce((acc: any, it: any) => {
+      if (it.field_alias) {
+        acc[it.field_name] = it.field_alias
+      }
+      return acc
+    }, {})
+
     allFields.value =
       data.items?.[0]?.fields?.map((it: any) => ({
         ...it,
         id: it.id,
         field_name: it.field_name,
-        field_alias: it.field_alias,
+        field_alias: aliasMap[it.field_name],
         originalDataType: it.data_type,
         comment: it.comment,
+        dataType: it.data_type.replace(/\(.+\)/, ''),
       })) || []
 
     if (!form.value.id) {
@@ -1100,7 +1110,7 @@ const parseValue = (key, value, defaultVal) => {
     const item = form.value.params[i]
     if (item.name === key) {
       type = item.type
-      break;
+      break
     }
   }
   if (!type) {
@@ -1110,9 +1120,13 @@ const parseValue = (key, value, defaultVal) => {
     case 'number':
       return Number(value || defaultVal)
     case 'boolean':
-      return value != undefined && null != value && (value === 'true' || value === true || value === '1' || value === 1)
+      return (
+        value != undefined &&
+        null != value &&
+        (value === 'true' || value === true || value === '1' || value === 1)
+      )
     default:
-      return value || defaultVal;
+      return value || defaultVal
   }
 }
 
@@ -2334,6 +2348,8 @@ function handleClearAlias() {
               </el-popconfirm>
             </template>
           </div>
+
+          <FieldsTree :fields="allFields" />
 
           <ElTable
             ref="fieldTable"
