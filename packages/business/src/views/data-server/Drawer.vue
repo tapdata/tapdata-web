@@ -121,7 +121,7 @@ const baseType = [
 ]
 const typeOptions = [... baseType, {value: 'array', label: 'array', children: baseType }];
 
-const operatorOptions = ['>', '==', '<', '>=', '<=', '!=', 'like']
+const operatorOptions = ['>', '==', '<', '>=', '<=', '!=', 'like', 'in']
 const conditionOptions = ['and', 'or']
 const apiTypeMap = {
   defaultApi: t('packages_business_data_server_drawer_morenchaxun'),
