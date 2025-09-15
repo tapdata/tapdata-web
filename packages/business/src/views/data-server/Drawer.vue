@@ -1088,7 +1088,9 @@ const debugData = async () => {
       case 'GET':
         let paramsStr = ''
         Object.keys(params).forEach((key) => {
-          paramsStr = `${paramsStr}&${key}=${encodeURIComponent(params[key])}`
+          if (params[key] != undefined && null !== params[key] && '' !== ('' + params[key])) {
+            paramsStr = `${paramsStr}&${key}=${encodeURIComponent(params[key])}`
+          }
         })
         //@ts-ignore
         queryBody.url = `${url}${paramsStr}`
@@ -1126,6 +1128,9 @@ const debugData = async () => {
 }
 
 const parseValue = (key, value, defaultVal) => {
+  if (value === undefined || null == value || '' === (''+ value)) {
+    return defaultVal || null;
+  }
   let type = ''
   for (let i = 0; i < form.value.params.length; i++) {
     const item = form.value.params[i]
