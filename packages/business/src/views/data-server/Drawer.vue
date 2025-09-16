@@ -1252,6 +1252,7 @@ const handleBeforeClose = async (done: () => void) => {
       isConfirm && done()
     } else {
       done()
+      isEdit.value = false
     }
   } else {
     done()
