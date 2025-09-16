@@ -1,8 +1,18 @@
 <script setup lang="ts">
-import { inject, nextTick, ref, shallowRef, useTemplateRef, watch } from 'vue'
+import {
+  inject,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  ref,
+  shallowRef,
+  useTemplateRef,
+  watch,
+  type Ref,
+} from 'vue'
 import FieldTreeNode from './FieldTreeNode.vue'
 import { filterNode, makeTree } from './shared'
-import type { ElTree } from 'element-plus'
+import type { ElScrollbar, ElTree } from 'element-plus'
 
 interface Props {
   fields: any[]
@@ -10,10 +20,40 @@ interface Props {
 }
 
 const treeRef = useTemplateRef<InstanceType<typeof ElTree>>('treeRef')
+const scrollbarRef =
+  useTemplateRef<InstanceType<typeof ElScrollbar>>('scrollbarRef')
 const treeData = ref<any[]>([])
 const search = ref('')
 
 const currentRef = ref()
+// 兜底锚点元素，避免字段取消选中时，popover 位置漂移
+let currentTriggerEl: HTMLElement | null = null
+let lastTriggerRect: DOMRect | null = null
+let fallbackAnchorEl: HTMLDivElement | null = null
+
+const ensureFallbackAnchor = () => {
+  if (!fallbackAnchorEl) {
+    const el = document.createElement('div')
+    el.style.position = 'fixed'
+    el.style.width = '0px'
+    el.style.height = '0px'
+    el.style.pointerEvents = 'none'
+    el.style.zIndex = '-1'
+    document.body.append(el)
+    fallbackAnchorEl = el
+  }
+}
+
+const moveFallbackToRect = (rect: DOMRect | null) => {
+  if (!rect) return
+  ensureFallbackAnchor()
+  if (fallbackAnchorEl) {
+    fallbackAnchorEl.style.left = `${Math.max(0, rect.left)}px`
+    fallbackAnchorEl.style.top = `${Math.max(0, rect.top)}px`
+    fallbackAnchorEl.style.width = `${rect.width}px`
+    fallbackAnchorEl.style.height = `${rect.height}px`
+  }
+}
 const currentFieldId = ref()
 const currentEncryptionIds = ref<string[]>([])
 const currentField = shallowRef<any>()
@@ -22,7 +62,7 @@ const popoverVisible = ref(false)
 
 const props = defineProps<Props>()
 
-const encryptions = inject('encryptions') as any[]
+const encryptions = inject<Ref<any[]>>('encryptions', ref([]))
 
 const emit = defineEmits<{
   check: [keys: string[]]
@@ -48,41 +88,56 @@ watch(
   },
 )
 
+const setCurrent = (refEl: HTMLElement, field: any) => {
+  currentTriggerEl = refEl
+  lastTriggerRect = refEl.getBoundingClientRect()
+  currentRef.value = refEl
+  currentFieldId.value = field.id
+  currentEncryptionIds.value = field.textEncryptionRuleIds || []
+  currentField.value = field
+}
+
+const openPopover = async () => {
+  await nextTick()
+  setTimeout(() => {
+    popoverVisible.value = true
+  }, 50)
+}
+
+const closePopover = async () => {
+  currentRef.value = null
+
+  await nextTick()
+
+  setTimeout(() => {
+    popoverVisible.value = false
+  }, 50)
+}
+
 const handleOpenEncryption = async (encryptionRef: HTMLElement, data: any) => {
   if (!popoverVisible.value) {
-    currentRef.value = encryptionRef
-    currentFieldId.value = data.id
-    currentEncryptionIds.value = data.textEncryptionRuleIds || []
-    currentField.value = data
-
-    await nextTick()
-
-    setTimeout(() => {
-      popoverVisible.value = true
-    }, 50)
+    setCurrent(encryptionRef, data)
+    await openPopover()
   } else if (data.id === currentFieldId.value) {
-    currentFieldId.value = null
-    currentRef.value = null
-    currentEncryptionIds.value = []
-    currentField.value = null
-    await nextTick()
-
-    setTimeout(() => {
-      popoverVisible.value = false
-    }, 50)
+    await closePopover()
   } else {
     popoverVisible.value = false
-
     await nextTick()
-
     setTimeout(() => {
-      currentFieldId.value = data.id
-      currentEncryptionIds.value = data.textEncryptionRuleIds || []
-      currentField.value = data
-      currentRef.value = encryptionRef
+      setCurrent(encryptionRef, data)
       popoverVisible.value = true
     }, 50)
   }
+}
+
+const handleGlobalKeydown = (e: KeyboardEvent) => {
+  if (e.key !== 'Escape' && e.key !== 'Esc') return
+  if (!popoverVisible.value) return
+
+  e.preventDefault()
+  e.stopPropagation()
+  e.stopImmediatePropagation?.()
+  closePopover()
 }
 
 const handleRemoveEncryption = (data: any, i: number) => {
@@ -117,18 +172,77 @@ const getCheckedFields = (needMap?: boolean) => {
 
   return needMap
     ? fields?.map((field) => {
-        return {
-          ...field,
-          label: undefined,
-          dataType: undefined,
-          children: undefined,
-        }
+        const newField = { ...field }
+
+        delete newField.name
+        delete newField.label
+        delete newField.dataType
+        delete newField.children
+
+        return newField
       })
     : fields
 }
 
-const handleCheck = () => {
+const handleCheck = (data: any) => {
+  if (popoverVisible.value) {
+    const node = treeRef.value?.getNode(data.field_name)
+    if (!node || (!node.checked && !node.indeterminate)) {
+      if (currentTriggerEl && currentTriggerEl.isConnected) {
+        lastTriggerRect = currentTriggerEl.getBoundingClientRect()
+      }
+      moveFallbackToRect(lastTriggerRect)
+      currentRef.value = fallbackAnchorEl
+      popoverVisible.value = false
+    }
+  }
   emit('check', (treeRef.value?.getCheckedKeys(true) || []) as string[])
+}
+
+const onPopoverBeforeEnter = () => {
+  const scrollToFirstSelectedInPopover = () => {
+    const scrollbar = scrollbarRef.value
+    const wrap = scrollbar?.wrapRef as HTMLElement | undefined
+    if (!wrap) return
+    const selectedId = (encryptions.value || []).find((e: any) =>
+      (currentEncryptionIds.value || []).includes(e?.id),
+    )?.id
+
+    scrollbarRef.value?.update()
+
+    if (!selectedId) {
+      scrollbar?.setScrollTop?.(0)
+      wrap.scrollTop = 0
+      scrollbar?.handleScroll?.()
+      return
+    }
+
+    const target = wrap.querySelector(
+      `[data-encryption-id="${selectedId}"]`,
+    ) as HTMLElement | null
+    const top = target ? Math.max(0, target.offsetTop - 4) : 0
+    wrap.scrollTop = top
+    scrollbar?.handleScroll?.()
+  }
+
+  nextTick(scrollToFirstSelectedInPopover)
+}
+
+const onPopoverLeave = async () => {
+  if (popoverVisible.value) {
+    await closePopover()
+  }
+
+  currentFieldId.value = null
+  currentEncryptionIds.value = []
+  currentField.value = null
+  currentRef.value = null
+  currentTriggerEl = null
+  lastTriggerRect = null
+  if (fallbackAnchorEl) {
+    fallbackAnchorEl.remove()
+    fallbackAnchorEl = null
+  }
 }
 
 const setCheckedFields = (fields: any[]) => {
@@ -153,6 +267,19 @@ const selectAll = () => {
   treeRef.value?.setCheckedKeys(['root'])
   emit('check', (treeRef.value?.getCheckedKeys(true) || []) as string[])
 }
+
+onMounted(() => {
+  window.addEventListener('keydown', handleGlobalKeydown, {
+    capture: true,
+  })
+})
+
+onUnmounted(() => {
+  onPopoverLeave()
+  window.removeEventListener('keydown', handleGlobalKeydown, {
+    capture: true,
+  } as any)
+})
 
 defineExpose({
   selectAll,
@@ -209,12 +336,15 @@ defineExpose({
       placement="bottom-end"
       :hide-after="0"
       virtual-triggering
+      @before-enter="onPopoverBeforeEnter"
+      @after-leave="onPopoverLeave"
     >
-      <el-scrollbar>
+      <el-scrollbar ref="scrollbarRef">
         <div class="flex flex-column gap-1 p-1" style="max-height: 300px">
           <div
             v-for="encryption in encryptions"
             :key="encryption.id"
+            :data-encryption-id="encryption.id"
             class="lh-5 px-3 py-1.5 rounded-lg cursor-pointer list-item flex align-center justify-content-between gap-1"
             :class="{
               'is-selected': currentEncryptionIds.includes(encryption.id!),
