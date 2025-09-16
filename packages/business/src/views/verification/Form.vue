@@ -268,6 +268,7 @@ const typTipMap = ref({
   row_count: t('packages_business_verification_fastCountTip'),
   field: t('packages_business_verification_contentVerifyTip'),
   jointField: t('packages_business_verification_jointFieldTip'),
+  hash: t('packages_business_verification_hashVerifyTip'),
 })
 const jointErrorMessage = ref('')
 const errorMessageLevel = ref('')

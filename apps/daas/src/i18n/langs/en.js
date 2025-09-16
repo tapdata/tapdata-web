@@ -228,8 +228,8 @@ export default {
   application_show_menu: 'Show to the menu',
   application_true: 'Yes',
   application_false: 'No',
-  application_create: 'Create a client',
-  //api 监控
+  application_create: 'Create Client',
+  application_edit: 'Edit client',
   api_monitor_total_totalCount: 'Total number of APIs',
   api_monitor_total_warningApiCount: 'Total API Access',
   api_monitor_total_warningVisitCount: 'Total API Access Warning',
@@ -261,8 +261,9 @@ export default {
   api_monitor_detail_Monitoring_conditions: 'Monitoring conditions',
   // api server api浏览
   api_server_user: 'User',
-  api_server_create: 'New server',
-  api_server_create_server: 'Create API',
+  api_server_create: 'Create Server',
+  api_server_create_server: 'Create Server',
+  api_server_edit: 'Edit Server',
   api_server_process_id: 'API server unique ID',
   api_server_client_name: 'API server name',
   api_server_client_uri: 'API server access address',
@@ -335,7 +336,7 @@ export default {
   migrate_select_connection_tip:
     "If you haven't added a data source, please click the Add Data Source button to add it. In order to facilitate your testing, we recommend that the number of data sources should be at least 2",
   // Function management
-  function_button_import_jar: 'Import',
+  function_button_import_jar: 'Import Jar',
   function_details: 'Function details',
   function_tips_name_repeat: 'Method name repeat',
   function_type_label: 'Function type',
@@ -464,8 +465,10 @@ export default {
   setting_ApiServer: 'API Distribution Settings',
   setting_Default_Limit: 'The number of rows returned by the default query',
   setting_Max_Limit: 'Maximum number of rows returned by the query',
-  setting_Desensitize_API_request_parameters: 'Desensitize API request parameters',
-  'setting_Timeout_period_for_API_access_to_the_database_(millisecond)': 'The timeout period for API access to the database (millisecond)',
+  setting_Desensitize_API_request_parameters:
+    'Desensitize API request parameters',
+  'setting_Timeout_period_for_API_access_to_the_database_(millisecond)':
+    'The timeout period for API access to the database (millisecond)',
   setting_Send_batch_size: 'Number of packed data',
   setting_hint_Send_batch_size: 'Number of packed data',
   setting_Mongodb_target_create_date:
@@ -839,7 +842,8 @@ export default {
   role_list_delete_remind: 'Confirm to delete role {0}',
   role_list_delete_success: 'Delete the role successfully',
   role_list_setting_api_selected: 'Selected {0} APIs',
-  role_list_setting_api_empty_confirm: 'Are you sure you want to cancel all API access settings?',
+  role_list_setting_api_empty_confirm:
+    'Are you sure you want to cancel all API access settings?',
   role_list_setting_select_api: 'Please select API',
   role_form_yes: 'Yes',
   role_form_no: 'No',
