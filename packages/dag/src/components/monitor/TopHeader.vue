@@ -1,5 +1,4 @@
 <script>
-import { taskApi } from '@tap/api'
 import editSvg from '@tap/assets/images/edit-fill.svg'
 import { TaskStatus } from '@tap/business'
 
@@ -10,7 +9,7 @@ import focusSelect from '@tap/component/src/directives/focusSelect'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
 import { mapGetters, mapMutations, mapState } from 'vuex'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+import { $emit } from '../../../utils/gogocodeTransfer'
 import DataCaptureDebug from '../DataCaptureDebug.vue'
 import DataValidationDialog from '../DataValidationDialog.vue'
 
@@ -219,7 +218,6 @@ export default {
             v-model:value="name"
             class="overflow-hidden"
             :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
-            :input-min-width="32"
             :maxlength="200"
             @change="onNameInputChange"
           />

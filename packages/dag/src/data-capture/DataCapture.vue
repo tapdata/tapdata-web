@@ -578,7 +578,6 @@ export default defineComponent({
             v-model="name"
             class="overflow-hidden"
             :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
-            :input-min-width="32"
             :maxlength="200"
             @change="onNameInputChange"
           />
