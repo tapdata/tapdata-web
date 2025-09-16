@@ -565,6 +565,12 @@ export default {
         },
       })
     },
+
+    onClickServer() {
+      this.$router.push({
+        name: 'clusterManagement',
+      })
+    },
   },
 }
 </script>
@@ -847,7 +853,10 @@ export default {
                       :span="12"
                       class="server-list pt-3"
                     >
-                      <div class="server-list-box rounded-lg py-2">
+                      <div
+                        class="server-list-box rounded-xl py-2 cursor-pointer"
+                        @click="onClickServer"
+                      >
                         <img
                           src="../../assets/static/serve.svg"
                           class="rounded-4"
@@ -1066,6 +1075,7 @@ export default {
           padding: 5px 10px;
           border: 1px solid #d9d9d9;
           border-radius: 3px;
+          transition: border-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
           img {
             width: 43px;
             height: 43px;
@@ -1075,6 +1085,10 @@ export default {
               color: var(--text-dark);
               font-weight: 500;
             }
+          }
+
+          &:hover {
+            border-color: var(--color-primary) !important;
           }
         }
       }
