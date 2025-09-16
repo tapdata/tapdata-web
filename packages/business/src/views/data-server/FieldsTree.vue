@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import { fetchEncryptionList, useRequest } from '@tap/api'
-import { useI18n } from '@tap/i18n'
-import { computed, nextTick, ref, shallowRef, useTemplateRef, watch } from 'vue'
+import { inject, nextTick, ref, shallowRef, useTemplateRef, watch } from 'vue'
 import FieldTreeNode from './FieldTreeNode.vue'
+import { filterNode, makeTree } from './shared'
 import type { ElTree } from 'element-plus'
 
 interface Props {
   fields: any[]
+  readonly?: boolean
 }
 
-const { t } = useI18n()
-
 const treeRef = useTemplateRef<InstanceType<typeof ElTree>>('treeRef')
-const treeData = ref([])
+const treeData = ref<any[]>([])
+const search = ref('')
 
 const currentRef = ref()
 const currentFieldId = ref()
@@ -23,60 +22,26 @@ const popoverVisible = ref(false)
 
 const props = defineProps<Props>()
 
-const makeTree = (data) => {
-  const root = { children: [] }
+const encryptions = inject('encryptions') as any[]
 
-  for (const item of data) {
-    const { field_name, field_alias } = item
-    let parent = root
-    const fields = field_name.split('.')
-
-    for (let i = 0; i < fields.length; i++) {
-      const name = fields[i]
-      let child = parent.children.find((c) => c.name === name)
-
-      if (!child) {
-        child = { label: field_alias || name, name, children: [] }
-        parent.children.push(child)
-      }
-
-      parent = child
-
-      if (i === fields.length - 1) {
-        Object.assign(parent, item, {
-          label: field_alias || name,
-          name,
-        })
-      }
-    }
-  }
-
-  return root.children
-}
-
-const { data: encryptions } = useRequest(
-  async () => {
-    const { items } = await fetchEncryptionList({
-      limit: 10000,
-    })
-    return items
-  },
-  {
-    initialData: [],
-  },
-)
-
-const encryptionsMap = computed(() => {
-  return encryptions.value!.reduce((acc: Record<string, string>, item) => {
-    acc[item.id!] = item.name
-    return acc
-  }, {})
-})
+const emit = defineEmits<{
+  check: [keys: string[]]
+}>()
 
 watch(
   () => props.fields,
   (newVal) => {
-    treeData.value = makeTree(newVal)
+    const children = makeTree(newVal)
+    treeData.value = children.length
+      ? [
+          {
+            field_name: 'root',
+            id: 'root',
+            isRoot: true,
+            children,
+          },
+        ]
+      : []
   },
   {
     immediate: true,
@@ -127,8 +92,9 @@ const handleRemoveEncryption = (data: any, i: number) => {
   }
 }
 
-const handleCheck = (data: any) => {
-  console.log('handleCheck', treeRef.value?.getCheckedNodes(false, true))
+// 处理搜索
+const handleSearch = (value: string) => {
+  treeRef.value?.filter(value)
 }
 
 const handleSelectEncryption = (encryption: string) => {
@@ -142,38 +108,92 @@ const handleSelectEncryption = (encryption: string) => {
 
   currentField.value.textEncryptionRuleIds = currentEncryptionIds.value
 }
+
+const getCheckedFields = (needMap?: boolean) => {
+  const fields = treeRef.value?.getCheckedNodes(false, true)
+  const rootIndex = fields!.findIndex((f) => f.id === 'root')
+
+  rootIndex !== -1 && fields!.splice(rootIndex, 1)
+
+  return needMap
+    ? fields?.map((field) => {
+        return {
+          ...field,
+          label: undefined,
+          dataType: undefined,
+          children: undefined,
+        }
+      })
+    : fields
+}
+
+const handleCheck = () => {
+  emit('check', (treeRef.value?.getCheckedKeys(true) || []) as string[])
+}
+
+const setCheckedFields = (fields: any[]) => {
+  const flatFields: string[] = []
+
+  fields.forEach((f) => {
+    if (f.data_type !== 'DOCUMENT' && f.data_type !== 'ARRAY') {
+      flatFields.push(f.field_name)
+    } else {
+      const node = treeRef.value?.getNode(f.field_name)
+
+      if (!node?.childNodes?.length) flatFields.push(f.field_name)
+    }
+  })
+
+  treeRef.value?.setCheckedKeys(flatFields)
+
+  emit('check', flatFields)
+}
+
+const selectAll = () => {
+  treeRef.value?.setCheckedKeys(['root'])
+  emit('check', (treeRef.value?.getCheckedKeys(true) || []) as string[])
+}
+
+defineExpose({
+  selectAll,
+  setCheckedFields,
+  getCheckedFields,
+})
 </script>
 
 <template>
   <div>
     <el-input
       v-model="search"
-      placeholder="搜索字段名称"
+      :placeholder="$t('public_search_field_name')"
       clearable
       class="mb-2"
+      @input="handleSearch"
     >
       <template #prefix>
         <el-icon><i-mingcute:search-line /></el-icon>
       </template>
     </el-input>
-    <div class="flex align-center gap-1 justify-content-between lh-5">
-      <el-checkbox>
-        <span class="fw-sub">全选</span>
-        <span class="text-gray-500">(共{{ treeData.length }}个字段)</span>
-      </el-checkbox>
-    </div>
     <el-tree
       ref="treeRef"
       class="fields-tree"
       :data="treeData"
-      show-checkbox
+      :show-checkbox="!readonly"
+      node-key="field_name"
+      :default-expanded-keys="['root']"
+      :default-checked-keys="[]"
+      :filter-node-method="filterNode"
       @check="handleCheck"
     >
       <template #default="{ node, data }">
+        <span v-if="data.isRoot">{{
+          $t('packages_component_dataFlow_selectAll')
+        }}</span>
         <FieldTreeNode
+          v-else
           :node="node"
           :data="data"
-          :encryptions-map="encryptionsMap"
+          :readonly="readonly"
           @open-encryption="handleOpenEncryption"
           @remove-encryption="handleRemoveEncryption"
         />
@@ -185,7 +205,7 @@ const handleSelectEncryption = (encryption: string) => {
       :virtual-ref="currentRef"
       trigger="click"
       popper-class="p-0 w-auto"
-      popper-style="min-width: 200px; max-width: 400px;"
+      popper-style="min-width: 200px; max-width: 600px;"
       placement="bottom-end"
       :hide-after="0"
       virtual-triggering
