@@ -172,12 +172,14 @@ const getCheckedFields = (needMap?: boolean) => {
 
   return needMap
     ? fields?.map((field) => {
-        return {
-          ...field,
-          label: undefined,
-          dataType: undefined,
-          children: undefined,
-        }
+        const newField = { ...field }
+
+        delete newField.name
+        delete newField.label
+        delete newField.dataType
+        delete newField.children
+
+        return newField
       })
     : fields
 }

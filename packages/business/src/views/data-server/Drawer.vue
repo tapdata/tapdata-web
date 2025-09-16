@@ -219,7 +219,7 @@ const encryptions = ref<any[]>([])
 const visible = ref(false)
 const loading = ref(false)
 const data = ref<any>({})
-let initialFormData = {}
+let initialFormData: Record<string, any> = {}
 const tab = ref('form')
 const isEdit = ref(false)
 const debugParams = ref<any>(null)
@@ -912,6 +912,8 @@ const edit = () => {
       if (fieldsMap[f.field_name]) {
         f.field_alias = fieldsMap[f.field_name].field_alias
         f.textEncryptionRuleIds = fieldsMap[f.field_name].textEncryptionRuleIds
+      } else {
+        f.field_alias = ''
       }
       return f
     })
@@ -1239,11 +1241,15 @@ const getAllFields = async () => {
 
 const handleBeforeClose = async (done: () => void) => {
   if (isEdit.value) {
-    const hasChanges = Object.keys(form.value).some((key) => {
+    const formValue = {
+      ...form.value,
+      fields: fieldsTreeRef.value?.getCheckedFields(true),
+    }
+    const hasChanges = Object.keys(formValue).some((key) => {
       if (['status', 'path'].includes(key)) {
         return false
       }
-      return !isEqual(initialFormData[key], form.value[key])
+      return !isEqual(initialFormData[key], formValue[key])
     })
 
     if (hasChanges) {
@@ -1390,7 +1396,7 @@ provide('encryptions', encryptions)
           :class="{
             invisible: !(tab === 'form' && form.status !== 'active' && !isEdit),
           }"
-          :loading="fieldLoading"
+          :disabled="fieldLoading"
           @click="edit"
         >
           <el-icon class="mr-1">
