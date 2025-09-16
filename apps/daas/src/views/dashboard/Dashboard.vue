@@ -269,15 +269,14 @@ export default {
 
     // 任务概览跳转页面
     handleTask(item) {
-      if (item.key === 'copy_total') {
-        this.$router.push({
-          name: 'migrate',
-        })
-      } else if (item.key === 'sync_total') {
-        this.$router.push({
-          name: 'dataflowList',
-        })
+      const map = {
+        copy_total: 'migrate',
+        sync_total: 'dataflowList',
+        valid_total: 'dataVerificationList',
       }
+      this.$router.push({
+        name: map[item.key],
+      })
     },
     handleStatus(status) {
       this.$router.push({
@@ -600,9 +599,7 @@ export default {
                       'text-center',
                       'din-font',
                       {
-                        'cursor-pointer':
-                          item.key === 'copy_total' ||
-                          item.key === 'sync_total',
+                        'cursor-pointer': item.key !== 'all_total',
                       },
                     ]"
                     @click="handleTask(item)"
