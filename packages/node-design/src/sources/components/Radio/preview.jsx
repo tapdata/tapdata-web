@@ -1,5 +1,5 @@
 import { Radio as FormRadio } from '@tap/form'
-import { createBehavior, createResource } from '../../../core'
+import { createBehavior, createResource, getBrowserLanguage } from '../../../core'
 import { createFieldSchema } from '../Field'
 import { AllSchemas } from '../../schemas'
 import { AllLocales } from '../../locales'
@@ -23,12 +23,12 @@ Radio.Resource = createResource({
       componentName: 'Field',
       props: {
         type: 'string | number',
-        title: 'Radio Group',
+        title: AllLocales.RadioGroup[getBrowserLanguage()]?.title || AllLocales.RadioGroup['en-US'].title,
         'x-decorator': 'FormItem',
         'x-component': 'Radio.Group',
         enum: [
-          { label: '选项1', value: 1 },
-          { label: '选项2', value: 2 },
+          { label: 'Option 1', value: 1 },
+          { label: 'Option 2', value: 2 },
         ],
       },
     },
