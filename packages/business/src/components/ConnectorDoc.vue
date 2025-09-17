@@ -155,7 +155,10 @@ export default {
   computed: {
     docUrl() {
       const map = pdkDocMap // config.json 维护目前意义不大，每次还是得重新打包
-      return map[pdkNameDictionary[this.pdkId] || this.pdkId]
+      const url = map[pdkNameDictionary[this.pdkId] || this.pdkId]
+      return !this.isDaas && (!this.$store.getters.isDomesticStation || this.$i18n.locale === 'en')
+        ? url.replace('prerequisites/', 'connectors/')
+        : url
     },
     src() {
       let domain

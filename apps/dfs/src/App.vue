@@ -70,19 +70,19 @@ export default {
     },
 
     initMenuTour() {
-      const domain =
-        !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en'
-          ? 'https://docs.tapdata.io/'
-          : 'https://docs.tapdata.net/'
+      let url
+      if (!this.$store.getters.isDomesticStation || this.$i18n.locale === 'en') {
+        url = 'https://docs.tapdata.io/getting-started/install-and-setup/install-tapdata-agent'
+      } else {
+        url = 'https://docs.tapdata.net/installation/install-tapdata-agent/agent-on-selfhosted'
+      }
 
       const steps = [
         {
           element: '#menu-Instance',
           popover: {
             showButtons: ['next', 'previous'],
-            description: `${this.$t(
-              'menu_tour_instance'
-            )}，<a href="${domain}quick-start/install/install-tapdata-agent/" target="_blank">${this.$t(
+            description: `${this.$t('menu_tour_instance')}，<a href="${url}" target="_blank">${this.$t(
               'menu_tour_instance_link'
             )}</a>`
           }

@@ -78,9 +78,12 @@ export default {
       this.buried('openDeploymentTutorial', {
         downLoadType: this.downLoadType
       })
-      let href = `https://docs.tapdata.${
-        !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en' ? 'io' : 'net'
-      }/quick-start/install/install-tapdata-agent/`
+      let href
+      if (!this.$store.getters.isDomesticStation || this.$i18n.locale === 'en') {
+        href = 'https://docs.tapdata.io/getting-started/install-and-setup/install-tapdata-agent'
+      } else {
+        href = 'https://docs.tapdata.net/installation/install-tapdata-agent/agent-on-selfhosted'
+      }
       window.open(href, '_blank')
     },
     handleComplete() {
