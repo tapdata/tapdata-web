@@ -545,4 +545,8 @@ export default {
   public_automatically: '自动',
   public_manually: '手动',
   public_data_table: '数据表',
+  public_new_user_group: '新建用户组',
+  public_new_sub_group: '新建子组',
+  public_please_input_user_group_name: '请输入用户组名称',
+  public_set_new_password: '设置新密码',
 }

@@ -544,4 +544,8 @@ export default {
   public_automatically: '自動',
   public_manually: '手動',
   public_data_table: '數據表',
+  public_new_user_group: '新建用戶組',
+  public_new_sub_group: '新建子組',
+  public_please_input_user_group_name: '請輸入用戶組名稱',
+  public_set_new_password: '設置新密碼',
 }

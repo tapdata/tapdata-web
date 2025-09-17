@@ -20,6 +20,7 @@ export default {
   packages_component_classification_addChildernNode: '新增子標籤',
   packages_component_classification_nodeName: '請輸入標籤名稱',
   packages_component_classification_deteleMessage: '此操作會將該標籤下存在的子標籤都刪除，是否刪除',
+  packages_component_classification_deteleMessage_user: '此操作會將用戶組「{val}」及其下的所有子用戶組刪除，是否刪除',
   packages_component_formBuilder_file_placeholder: '請選擇文件',
   packages_component_formBuilder_file_button: '選擇文件',
   packages_component_src_discoveryclassification_qingshurumulu: '請輸入目錄描述',

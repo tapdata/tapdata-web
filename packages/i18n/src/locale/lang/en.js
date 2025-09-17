@@ -556,4 +556,8 @@ export default {
   public_automatically: 'Automatically',
   public_manually: 'Manually',
   public_data_table: 'Table',
+  public_new_user_group: 'Create User Group',
+  public_new_sub_group: 'Create Sub Group',
+  public_please_input_user_group_name: 'Please enter user group name',
+  public_set_new_password: 'Set New Password',
 }

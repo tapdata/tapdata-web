@@ -650,7 +650,7 @@ export default {
   user_status_notVerified: '未驗證',
   user_status_notActivated: '未激活',
   user_status_activated: '已激活',
-  user_status_rejected: '已拒絕',
+  user_status_rejected: '已凍結',
   user_form_role: '關聯角色',
   user_form_email: '郵箱',
   user_form_email_must_valid: '請輸入有效郵箱地址',

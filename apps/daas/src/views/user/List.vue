@@ -405,10 +405,11 @@ export default {
         emailVerified: true,
         account_status: 1,
       }
-      this.createFormConfig.items.find((item) => item.field === 'email').show =
-        true
+      this.createFormConfig.items.find((item) => item.field === 'email').show = true
       this.$nextTick(() => {
-        this.$refs.form.clearValidate()
+        setTimeout(() => {
+          this.$refs.form.clearValidate()
+        }, 50)
       })
     },
     // 编辑用户
@@ -425,7 +426,7 @@ export default {
         password: '',
         roleusers: item.roleusers,
         status: item.status ? item.status : '',
-        accesscode: item.accesscode,
+        accesscode: item.accessCode,
         emailVerified: item.emailVerified,
         account_status: item.account_status,
       }
@@ -979,7 +980,7 @@ export default {
 
           <!-- 邮箱 -->
           <el-form-item
-            :label="$t('user_form_email')"
+            :label="$t('public_email')"
             prop="email"
             required
             class="flex-1"
@@ -989,13 +990,13 @@ export default {
               v-model="createForm.email"
               type="email"
             />
-            <span v-else>{{ createForm.email }}</span>
+            <span class="border rounded-lg w-100 px-2 bg-light" style="line-height: 30px;" v-else>{{ createForm.email }}</span>
           </el-form-item>
         </div>
 
         <!-- 密码 -->
         <el-form-item
-          :label="$t('public_connection_form_password')"
+          :label="$t(createForm.id ? 'public_set_new_password' : 'public_connection_form_password')"
           prop="password"
         >
           <el-input
@@ -1032,11 +1033,12 @@ export default {
 
         <el-form-item :label="$t('user_form_activation_code')">
           <div class="flex w-100 align-center gap-3">
-            <el-input
+            <!-- <el-input
               readonly
               class="flex-1"
               :model-value="createForm.accesscode || '-'"
-            />
+            /> -->
+            <span class="border rounded-lg w-100 px-2 bg-light" style="line-height: 30px;">{{ createForm.accesscode || '-' }}</span>
             <el-button text type="primary" @click="resetAccesCode">{{
               $t('public_button_reset')
             }}</el-button>

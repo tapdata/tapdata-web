@@ -51,15 +51,20 @@ export default {
       parent_id: '',
 
       showSearch: false,
+      expandedKeys: [],
     }
   },
   computed: {
     ...mapState('classification', ['connections', 'migrate', 'sync', 'inspect']),
 
+    isUser() {
+      return this.types[0] === 'user'
+    },
+
     comTitle() {
       return (
         this.title ||
-        (this.types[0] === 'user' ? this.$t('packages_component_classification_userTitle') : this.$t('public_tags'))
+        (this.isUser ? this.$t('packages_component_classification_userTitle') : this.$t('public_tags'))
       )
     },
 
@@ -257,7 +262,7 @@ export default {
           this.showDialog(node, command)
           break
         case 'delete':
-          this.deleteNode(node.key)
+          this.deleteNode(node)
       }
     },
     showDialog(node, dialogType) {
@@ -276,8 +281,8 @@ export default {
         title:
           type === 'add'
             ? node
-              ? this.$t('packages_component_classification_addChildernNode')
-              : this.$t('packages_component_classification_addNode')
+              ? this.$t(this.isUser ? 'public_new_sub_group' : 'packages_component_classification_addChildernNode')
+              : this.$t(this.isUser ? 'public_new_user_group' : 'packages_component_classification_addNode')
             : this.$t('public_button_edit'),
       }
     },
@@ -299,7 +304,7 @@ export default {
         return
       }
 
-      if (this.types[0] === 'user') {
+      if (this.isUser) {
         let nameExist = await this.checkName(value)
         if (nameExist) {
           return this.$message.error(this.$t('packages_component_classification_nameExist'))
@@ -345,36 +350,45 @@ export default {
         })
       }
     },
-    deleteNode(id) {
-      let that = this
-      this.$confirm(this.$t('packages_component_classification_deteleMessage'), {
+    async deleteNode(node) {
+      const id = node.key
+      const resFlag = await this.$confirm(this.$t(this.isUser ? 'packages_component_classification_deteleMessage_user' : 'packages_component_classification_deteleMessage', { val: node.label }), {
         confirmButtonText: this.$t('public_button_delete'),
-      }).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        if (that.types[0] === 'user') {
-          let params = {
-            id: id,
-            headers: {
-              gid: id,
-            },
-          }
-          userGroupsApi.delete(params).then(() => {
-            let self = this
-            self.getData()
-          })
-        } else {
-          metadataDefinitionsApi.delete(id).then(() => {
-            let self = this
-            self.getData()
-          })
-        }
       })
+
+      if (!resFlag) {
+        return
+      }
+      if (this.isUser) {
+        let params = {
+          id: id,
+          headers: {
+            gid: id,
+          },
+        }
+        await userGroupsApi.delete(params)
+      } else {
+        await metadataDefinitionsApi.delete(id)
+      }
+
+      this.getData()
+    
+      let checkedNodes = this.$refs.tree.getCheckedKeys() || []
+
+      if (checkedNodes.includes(id)) {
+        checkedNodes = checkedNodes.filter((item) => item !== id)
+        this.$emit('nodeChecked', checkedNodes)
+        this.setTag({
+          value: checkedNodes,
+          type: this.viewPage,
+        })
+      }
+
+      this.expandedKeys = this.expandedKeys.filter((item) => item !== id)
     },
     checkName(value) {
       return new Promise((resolve) => {
-        if (this.types[0] === 'user') {
+        if (this.isUser) {
           this.getDataAll((items) => {
             resolve(items.find((it) => it.name === value))
           })
@@ -475,6 +489,14 @@ export default {
         })
       }
     },
+
+    handleNodeExpand(data, node) {
+      this.expandedKeys.push(data.id)
+    },
+
+    handleNodeCollapse(data, node) {
+      this.expandedKeys = this.expandedKeys.filter((item) => item !== data.id)
+    },
   },
 }
 </script>
@@ -529,8 +551,11 @@ export default {
         :indent="8"
         :check-on-click-node="false"
         :check-on-click-leaf="false"
+        :default-expanded-keys="expandedKeys"
         @node-click="nodeClickHandler"
         @check="checkHandler"
+        @node-expand="handleNodeExpand"
+        @node-collapse="handleNodeCollapse"
       >
         <template v-slot="{ node, data }">
           <slot name="node" :node="node" :data="data">
@@ -556,7 +581,7 @@ export default {
                 <template #dropdown>
                   <ElDropdownMenu>
                     <ElDropdownItem command="add">
-                      {{ $t('packages_component_classification_addChildernNode') }}
+                      {{ $t(isUser ? 'public_new_sub_group' : 'packages_component_classification_addChildernNode') }}
                     </ElDropdownItem>
                     <ElDropdownItem command="edit">{{ $t('public_button_edit') }}</ElDropdownItem>
                     <ElDropdownItem command="delete">{{ $t('public_button_delete') }}</ElDropdownItem>
@@ -578,7 +603,7 @@ export default {
           <template #icon>
             <i-mingcute:add-line />
           </template>
-          {{ $t('packages_component_src_classification_chuangjianfenlei') }}</ElButton
+          {{ $t(isUser ? 'public_new_user_group' : 'packages_component_src_classification_chuangjianfenlei') }}</ElButton
         >
       </div>
 
@@ -588,7 +613,7 @@ export default {
       </template>
       <ElInput
         v-model="dialogConfig.label"
-        :placeholder="$t('packages_component_classification_nodeName')"
+        :placeholder="$t(isUser ? 'public_please_input_user_group_name' : 'packages_component_classification_nodeName')"
         maxlength="50"
         show-word-limit
       />

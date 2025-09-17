@@ -653,7 +653,7 @@ export default {
   user_status_notVerified: '未验证',
   user_status_notActivated: '未激活',
   user_status_activated: '已激活',
-  user_status_rejected: '已拒绝',
+  user_status_rejected: '已冻结',
   user_form_role: '关联角色',
   user_form_email: '邮箱',
   user_form_email_must_valid: '请输入有效邮箱地址',
