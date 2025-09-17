@@ -142,7 +142,7 @@ const editAgentForm = ref()
 // State
 const hideDownload = ref(import.meta.env.VUE_APP_HIDE_CLUSTER_DOWNLOAD)
 const waterfallData = ref([])
-const currentData = ref(null)
+const currentData = ref<ClusterData | null>(null)
 const dialogForm = ref(false)
 const activeIndex = ref('1')
 const serveStatus = ref('')
@@ -277,7 +277,7 @@ const submitForm = async () => {
         arguments: string
         id?: string
       } = {
-        uuid: currentData.value.uuid,
+        uuid: currentData.value?.uuid!,
         name: getFrom.name,
         command: getFrom.command,
         arguments: getFrom.arguments ? getFrom.arguments : '',
@@ -292,13 +292,13 @@ const submitForm = async () => {
         }
         dialogForm.value = false
         await getDataApi()
-        // Show success message
+        ElMessage.success(t('public_message_save_ok'))
       } finally {
         dialogForm.value = false
       }
     }
   } else {
-    // Show error message
+    ElMessage.error(t('cluster_startup_after_add'))
   }
 }
 
@@ -351,49 +351,49 @@ const downConnectorsFn = (item: any) => {
   })
 }
 
-const startFn = (item: any, status: string, server: string) => {
+const startFn = async (item: any, status: string, server: string) => {
   if (status === 'stopped') {
     const data = {
       uuid: item.uuid,
       server,
       operation: 'start',
     }
-    // Show confirmation dialog
-    operationFn(data)
+    const confirmed = await Modal.confirm(t('cluster_confirm_text') + t('cluster_startServer') + '?')
+    confirmed && operationFn(data)  
   }
 }
 
-const closeFn = (item: any, status: string, server: string) => {
+const closeFn = async (item: any, status: string, server: string) => {
   if (status === 'running') {
     const data = {
       uuid: item.uuid,
       server,
       operation: 'stop',
     }
-    // Show confirmation dialog
-    operationFn(data)
+    const confirmed = await Modal.confirm(t('cluster_confirm_text') + t('cluster_closeSever') + '?')
+    confirmed && operationFn(data)
   }
 }
 
-const restartFn = (item: any, status: string, server: string) => {
+const restartFn = async (item: any, status: string, server: string) => {
   if (status === 'running') {
     const data = {
       uuid: item.uuid,
       server,
       operation: 'restart',
     }
-    // Show confirmation dialog
-    operationFn(data)
+    const confirmed =await Modal.confirm(t('cluster_confirm_text') + t('cluster_restartServer') + '?')
+    confirmed && operationFn(data)
   }
 }
 
-const unbind = (item: any, status: string) => {
+const unbind = async (item: any, status: string) => {
   if (status === 'stopped') {
-    // Show confirmation dialog
     const { process_id } = item.systemInfo || {}
-    unbindByProcessId(process_id).then(() => {
+    const confirmed = await Modal.confirm(t('cluster_confirm_text') + t('cluster_unbind_server') + '?')
+
+    confirmed && unbindByProcessId(process_id).then(() => {
       init()
-      // Show success/error message
     })
   }
 }
@@ -423,6 +423,7 @@ const getVersion = (datas: any[]) => {
 const operationFn = async (data: any) => {
   await updateClusterStatus(data)
   await getDataApi()
+  ElMessage.success(t('cluster_operation_success'))
 }
 
 const getUsageRate = (processId: string[]) => {
@@ -869,15 +870,11 @@ const handleTreeDrop = async (ev: DragEvent, data: any) => {
 
   if (list.length) {
     await Promise.all(list)
-    // Show success message
+    ElMessage.success(t('public_message_operation_success'))
     await onSavedTag()
   } else {
-    // Show info message
+    ElMessage.info(t('packages_component_data_already_exists'))
   }
-}
-
-function handleLogMiningDetail(item: LogMiningMonitor) {
-  // 这里可以实现详情弹窗或跳转
 }
 
 const fetchLogMiningData = async () => {
@@ -898,7 +895,7 @@ const fetchLogMiningData = async () => {
   })
 }
 
-const handleTabChange = (tab: string) => {
+const handleTabChange = (tab: any) => {
   if (tab === 'logMining') {
     fetchLogMiningData()
   }
@@ -1789,10 +1786,14 @@ const handleTabChange = (tab: string) => {
                 v-model="agentName"
                 show-word-limit
                 :placeholder="$t('cluster_placeholder_mon_server')"
-              />
-              <ElButton text type="primary" @click="editNameRest">{{
+              >
+              <template #suffix >
+                <ElButton v-if="agentName !== currentNde.hostname" text type="primary" @click="editNameRest">{{
                 $t('public_button_reduction')
               }}</ElButton>
+              </template>
+            </el-input>
+              
             </div>
           </el-form-item>
           <el-form-item :label="$t('cluster_ip_display')" prop="command">

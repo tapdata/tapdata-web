@@ -2039,4 +2039,5 @@ export default {
   setting_license_rule: 'License 告警规则',
   setting_license_alarm_template: '告警模板',
   setting_license_alarm_template_custom: '自定义告警模板',
+  cluster_operation_success: '操作指令已发送，请稍后刷新查看结果',
 }
