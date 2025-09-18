@@ -259,6 +259,14 @@ export default {
   public_target_database: 'Target Database',
   public_source_connection: 'Source Connection',
   public_target_connection: 'Target Connection',
+  //Api server
+  public_api_name: 'API Name',
+  public_api_server_name: 'API Server Name',
+  public_api_worker_name: 'API Server Worker Name',
+  public_api_threshold: 'Threshold',
+  public_api_threshold_unit: 'Unit',
+  public_api_threshold_equalsFlag: 'equals char',
+  public_api_minute: 'Monitoring Period',
   // Task
   public_task: 'Task',
   public_task_name: 'Task Name',

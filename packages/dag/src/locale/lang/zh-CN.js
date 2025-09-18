@@ -1000,4 +1000,12 @@ export default {
   packages_dag_compare_result_auto_process: '自动处理差异',
   packages_dag_compare_result_display_field: '显示字段',
   packages_dag_compare_result_database_field: '数据库字段',
+  //Api server
+  public_api_name: 'API 名称',
+  public_api_server_name: 'API服务名称',
+  public_api_worker_name: 'API服务工作进程',
+  public_api_threshold: '阈值',
+  public_api_threshold_unit: '单位',
+  public_api_threshold_equalsFlag: '对比符号',
+  public_api_minute: '持续时间',
 }
