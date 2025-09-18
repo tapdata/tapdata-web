@@ -257,6 +257,17 @@ export default {
   public_target_database: '目标数据库',
   public_source_connection: '源连接',
   public_target_connection: '目标连接',
+
+  //Api server
+  public_api_name: 'API 名称',
+  public_api_server_name: 'API服务名称',
+  public_api_worker_name: 'API服务工作进程',
+  public_api_threshold: '阈值',
+  public_api_threshold_unit: '单位',
+  public_api_threshold_equalsFlag: '对比符号',
+  public_api_minute: '持续时间',
+  public_api_alarmDate: '告警时间',
+
   // 任务
   public_task: '任务',
   public_task_name: '任务名称',

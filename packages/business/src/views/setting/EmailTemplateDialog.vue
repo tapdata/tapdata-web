@@ -25,7 +25,8 @@ import type { ElInput } from 'element-plus'
 
 defineProps<{
   keyMapping: Record<string, string>
-  hideMenu?: boolean
+  hideMenu?: boolean,
+  variablesMapping: Record<string, Array>
 }>()
 
 const { t } = useI18n()
@@ -40,6 +41,7 @@ const rulesList = ref([])
 const form = ref({
   emailAlarmTitle: '',
   emailAlarmContent: '',
+  variables: null
 })
 
 const variablesMap = reactive({
@@ -283,9 +285,38 @@ const variablesMap = reactive({
   ],
 })
 
-const availableVariables = computed(() => {
-  return variablesMap[activeType.value]
-})
+const analyseVariables = (variables) => {
+  if (!variables || !Array.isArray(variables) || variables.length <= 0) {
+    return variablesMap[activeType.value];
+  }
+  return variables.map((item) => {
+    return {
+      name: item.name,
+      label: filterLabel(item.name, item.label),
+      icon: filterIcon(item.icon),
+    }
+  });
+}
+
+const filterLabel = (name, labelType) => {
+  if (!labelType) {
+    return name;
+  }
+  return t(''+labelType);
+}
+
+const filterIcon = (name, iconType) => {
+  if (!iconType) {
+    return IconLucideFileText;
+  }
+  switch (iconType) {
+    case 'IconLucideFileText': return IconLucideFileText;
+    case 'IconLucideClock': return IconLucideClock;
+    case 'IconLucideHash': return IconLucideHash;
+    case 'IconLucideTriangleAlert': return IconLucideTriangleAlert;
+    default: return IconLucideFileText;
+  }
+}
 
 const extensions = [
   FontSize,
@@ -559,7 +590,7 @@ defineExpose({
             </template>
             <div class="variables flex flex-wrap gap-3">
               <span
-                v-for="variable in availableVariables"
+                v-for="variable in analyseVariables(variablesMapping[activeType])"
                 :key="variable.name"
                 class="variable-chip rounded-xl border px-3 py-2 flex align-center gap-3 hover:bg-light cursor-pointer"
                 @mousedown="insertVariable(variable.name)"
