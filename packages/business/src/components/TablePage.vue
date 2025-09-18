@@ -139,6 +139,7 @@ export default defineComponent({
     'sortChange',
     'classifySubmit',
     'update:drag-state',
+    'setUserGroupData',
   ],
   setup(props, { emit }) {
     const isUnmounted = ref(false)
@@ -417,6 +418,7 @@ export default defineComponent({
           @node-checked="nodeChecked"
           @update:visible="classificationVisible = $event"
           @drop-in-tag="fetch(1)"
+          @set-user-group-data="$emit('setUserGroupData', $event)"
         >
           <template #node>
             <slot name="tagNode" />

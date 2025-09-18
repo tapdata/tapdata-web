@@ -560,4 +560,5 @@ export default {
   public_new_sub_group: 'Create Sub Group',
   public_please_input_user_group_name: 'Please enter user group name',
   public_set_new_password: 'Set New Password',
+  public_set_user_group: 'Set User Group',
 }

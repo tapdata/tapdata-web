@@ -1,5 +1,10 @@
 <script>
-import { roleApi, roleMappingsApi, usersApi } from '@tap/api'
+import {
+  batchUpdateUserListtags,
+  roleApi,
+  roleMappingsApi,
+  usersApi,
+} from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 
 import TablePage from '@tap/business/src/components/TablePage.vue'
@@ -54,6 +59,7 @@ export default {
         roleusers: [],
         status: 'activated',
         accesscode: '',
+        groups: [],
       },
       createFormConfig: {
         form: {
@@ -184,6 +190,12 @@ export default {
             {
               required: true,
               message: this.$t('app_signIn_email_placeholder'),
+              trigger: 'blur',
+            },
+            {
+              type: 'email',
+              message: this.$t('user_form_email_must_valid'),
+              trigger: ['blur', 'change'],
             },
           ],
         },
@@ -192,6 +204,11 @@ export default {
       count2: 0,
       userRole: [],
       roleList: [],
+      userGroupData: [],
+      treeProps: {
+        key: 'id',
+        label: 'value',
+      },
     }
   },
   computed: {
@@ -262,26 +279,39 @@ export default {
         .get({
           filter: JSON.stringify(filter),
         })
-        .then((data) => {
-          const list = data?.items || []
+        .then(({ items = [] }) => {
+          const data = items.map((item) => {
+            if (!item.emailVerified) {
+              item.status = 'notVerified'
+            } else if (item.account_status === 1) {
+              item.status = 'activated'
+            } else {
+              item.status = 'notActivated'
+            }
+            if (item.account_status === 0) {
+              item.status = 'rejected'
+            }
+            item.lastUpdatedFmt = item.last_updated
+              ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+              : ''
+            return item
+          })
+          // 有选中行，列表刷新后无法更新行数据，比如状态
+          if (this.multipleSelection.length && data.length) {
+            const tempMap = data.reduce((map, item) => {
+              map[item.id] = item
+              return map
+            }, {})
+            this.multipleSelection.forEach((item, i) => {
+              const temp = tempMap[item.id]
+              if (temp) {
+                this.multipleSelection[i] = temp
+              }
+            })
+          }
           return {
             total: data?.total,
-            data: list.map((item) => {
-              if (!item.emailVerified) {
-                item.status = 'notVerified'
-              } else if (item.account_status === 1) {
-                item.status = 'activated'
-              } else {
-                item.status = 'notActivated'
-              }
-              if (item.account_status === 0) {
-                item.status = 'rejected'
-              }
-              item.lastUpdatedFmt = item.last_updated
-                ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
-                : ''
-              return item
-            }),
+            data,
           }
         })
     },
@@ -359,18 +389,20 @@ export default {
       return tagList
     },
     // 分类设置保存
-    handleOperationClassify(listtags) {
-      const ids = this.multipleSelection.map((item) => {
-        return item.id
-      })
-      const where = {
-        id: {
-          inq: ids,
-        },
+    async handleOperationClassify(listtags) {
+      const attributes = {
+        id: this.multipleSelection.map((item) => {
+          return item.id
+        }),
+        listtags,
       }
-      usersApi.update(where, { listTags: listtags }).then(() => {
+      try {
+        await batchUpdateUserListtags(attributes)
         this.table.fetch()
-      })
+        this.$message.success(this.$t('public_message_save_ok'))
+      } catch (error) {
+        console.error(error)
+      }
     },
     // 获取角色关联的用户的数据
     getMappingModel(id) {
@@ -404,8 +436,10 @@ export default {
         accesscode: '',
         emailVerified: true,
         account_status: 1,
+        groups: [],
       }
-      this.createFormConfig.items.find((item) => item.field === 'email').show = true
+      this.createFormConfig.items.find((item) => item.field === 'email').show =
+        true
       this.$nextTick(() => {
         setTimeout(() => {
           this.$refs.form.clearValidate()
@@ -429,6 +463,7 @@ export default {
         accesscode: item.accessCode,
         emailVerified: item.emailVerified,
         account_status: item.account_status,
+        groups: item.listtags?.map((item) => item.id),
       }
       this.$nextTick(() => {
         this.$refs.form.clearValidate()
@@ -437,7 +472,7 @@ export default {
     },
     // 保存用户表单
     createNewUser() {
-      this.$refs.form.validate((valid) => {
+      this.$refs.form.validate(async (valid) => {
         if (this.createForm.id) {
           this.$refs.form.clearValidate('password')
         }
@@ -469,17 +504,31 @@ export default {
               params.account_status = 0
               break
           }
-          // delete params.status;
-          usersApi[this.createForm.id ? 'patch' : 'post'](params)
-            .then((data) => {
-              if (data) {
-                this.$message.success(this.$t('public_message_save_ok'))
-                this.table.fetch()
-              }
-            })
-            .finally(() => {
-              this.createDialogVisible = false
-            })
+
+          const listtags = this.$refs.userGroupTree
+            ?.getCheckedNodes()
+            .map((item) => ({
+              id: item.id,
+              value: item.value,
+            }))
+          params.listtags = listtags
+
+          const data = await usersApi[this.createForm.id ? 'patch' : 'post'](
+            params,
+          ).finally(() => {
+            this.createDialogVisible = false
+          })
+
+          if (data) {
+            if (!this.createForm.id && listtags.length) {
+              await batchUpdateUserListtags({
+                id: [data.id],
+                listtags,
+              })
+            }
+            this.$message.success(this.$t('public_message_save_ok'))
+            this.table.fetch()
+          }
         }
       })
     },
@@ -650,6 +699,9 @@ export default {
         },
       ]
     },
+    handleUserGroupData(data) {
+      this.userGroupData = data
+    },
   },
 }
 </script>
@@ -682,6 +734,7 @@ export default {
       @selection-change="handleSelectionChange"
       @classify-submit="handleOperationClassify"
       @sort-change="handleSortTable"
+      @set-user-group-data="handleUserGroupData"
     >
       <template #nav="{ openClassify, classificationVisible }">
         <div class="tapNav position-relative">
@@ -755,7 +808,7 @@ export default {
           class="btn"
           @click="$refs.table.showClassify(handleSelectTag())"
         >
-          <span> {{ $t('public_button_bulk_tag') }}</span>
+          <span> {{ $t('public_set_user_group') }}</span>
         </el-button>
         <el-dropdown
           v-readonlybtn="'user_edition'"
@@ -799,11 +852,25 @@ export default {
         prop="username"
         sortable="username"
       >
-        <template #default="scope">
+        <template #default="{ row }">
           <div class="metadata-name">
-            <p>{{ scope.row.username }}</p>
-            <div class="ellipsis font-color-light">
-              {{ scope.row.email }}
+            <div class="flex align-center gap-1 flex-wrap">
+              <span>{{ row.username }}</span>
+              <span
+                v-if="row.listtags"
+                class="justify-content-start ellipsis flex flex-wrap align-center gap-1"
+              >
+                <span
+                  v-for="item in row.listtags"
+                  :key="item.id"
+                  class="tag ellipsis"
+                  :title="item.value"
+                  >{{ item.value }}</span
+                >
+              </span>
+            </div>
+            <div class="ellipsis font-color-sslight">
+              {{ row.email }}
             </div>
           </div>
         </template>
@@ -980,6 +1047,7 @@ export default {
 
           <!-- 邮箱 -->
           <el-form-item
+            v-if="!createForm.id"
             :label="$t('public_email')"
             prop="email"
             required
@@ -990,13 +1058,36 @@ export default {
               v-model="createForm.email"
               type="email"
             />
-            <span class="border rounded-lg w-100 px-2 bg-light" style="line-height: 30px;" v-else>{{ createForm.email }}</span>
+            <span
+              v-else
+              class="border rounded-lg w-100 px-2 bg-light"
+              style="line-height: 30px"
+              >{{ createForm.email }}</span
+            >
+          </el-form-item>
+          <el-form-item
+            v-else
+            key="readyonly-email"
+            :label="$t('public_email')"
+            class="flex-1"
+          >
+            <span
+              class="border rounded-lg w-100 px-2 bg-light"
+              style="line-height: 30px"
+              >{{ createForm.email }}</span
+            >
           </el-form-item>
         </div>
 
         <!-- 密码 -->
         <el-form-item
-          :label="$t(createForm.id ? 'public_set_new_password' : 'public_connection_form_password')"
+          :label="
+            $t(
+              createForm.id
+                ? 'public_set_new_password'
+                : 'public_connection_form_password',
+            )
+          "
           prop="password"
         >
           <el-input
@@ -1019,6 +1110,25 @@ export default {
           </el-select>
         </el-form-item>
 
+        <el-form-item
+          :label="$t('packages_component_classification_userTitle')"
+          required
+        >
+          <el-tree-select
+            ref="userGroupTree"
+            v-model="createForm.groups"
+            :props="treeProps"
+            :data="userGroupData"
+            :render-after-expand="false"
+            node-key="id"
+            multiple
+            default-expand-all
+            show-checkbox
+            check-strictly
+            check-on-click-node
+          />
+        </el-form-item>
+
         <!-- 状态 -->
         <el-form-item :label="$t('user_form_status')" prop="status" required>
           <el-select v-model="createForm.status">
@@ -1038,7 +1148,11 @@ export default {
               class="flex-1"
               :model-value="createForm.accesscode || '-'"
             /> -->
-            <span class="border rounded-lg w-100 px-2 bg-light" style="line-height: 30px;">{{ createForm.accesscode || '-' }}</span>
+            <span
+              class="border rounded-lg w-100 px-2 bg-light"
+              style="line-height: 30px"
+              >{{ createForm.accesscode || '-' }}</span
+            >
             <el-button text type="primary" @click="resetAccesCode">{{
               $t('public_button_reset')
             }}</el-button>
@@ -1080,6 +1194,17 @@ export default {
   :deep(.classification) {
     margin-top: 0 !important;
   }
+}
+
+.tag {
+  padding: 0 4px;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 20px;
+  color: var(--color-tag);
+  border: 1px solid var(--bg-tag);
+  border-radius: 6px;
 }
 
 .user-list-wrap {

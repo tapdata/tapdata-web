@@ -25,6 +25,11 @@ export default {
       tagList: [],
     }
   },
+  computed: {
+    isUser() {
+      return this.types[0] === 'user'
+    },
+  },
   methods: {
     show(tagList) {
       this.dialogVisible = true
@@ -41,7 +46,7 @@ export default {
         where,
       }
 
-      if (this.types[0] === 'user') {
+      if (this.isUser) {
         userGroupsApi
           .get({
             filter: JSON.stringify({
@@ -111,19 +116,16 @@ export default {
       this.dialogVisible = false
     },
     handleCheckChange(data) {
-      this.tagList = this.tagList || []
-      if (this.tagList.length > 0) {
-        this.tagList.map((k, index) => {
-          if (k.id === data.id) {
-            this.tagList.splice(index, 1)
-          }
+      const index = this.tagList.findIndex((k) => k.id === data.id)
+
+      if (index === -1) {
+        this.tagList.push({
+          id: data.id,
+          value: data.value,
         })
+      } else {
+        this.tagList.splice(index, 1)
       }
-      let node = {
-        id: data.id,
-        value: data.value,
-      }
-      this.tagList.push(node)
     },
     handleCloseTag(data) {
       let checkList = this.$refs.tree.getCheckedKeys()
@@ -157,18 +159,19 @@ export default {
 
 <template>
   <el-dialog
-    :title="$t('packages_business_dataFlow_batchSortOperation')"
+    :title="isUser ? $t('public_set_user_group') : $t('packages_business_dataFlow_batchSortOperation')"
     :model-value="dialogVisible"
     width="600px"
     class="SelectClassify-dialog"
     :before-close="handleClose"
     :close-on-click-modal="false"
   >
-    <div>
+    <div class="flex flex-wrap gap-2 mb-3 rounded-xl p-3 bg-light">
+      <span v-if="!tagList.length" class="text-caption lh-6">{{ $t('public_select_placeholder') }}</span>
       <el-tag
+        v-for="item in tagList"
         :key="item.value"
         class="SelectClassify-tag"
-        v-for="item in tagList"
         closable
         @close="handleCloseTag(item)"
         >{{ item.value }}</el-tag
@@ -186,12 +189,10 @@ export default {
       @node-click="handleCheckChange"
     >
       <template #default="{ data }">
-        <span class="custom-tree-node">
-          <span>
-            <VIcon size="12" class="color-primary mr-1">folder-fill</VIcon>
-            <span class="table-label">{{ data.value }}</span>
-          </span>
-        </span>
+        <div class="flex align-center gap-1">
+          <VIcon size="16" class="color-primary">folder-fill</VIcon>
+          <span class="table-label">{{ data.value }}</span>
+        </div>
       </template>
     </el-tree>
     <template #footer>
@@ -216,19 +217,6 @@ export default {
 .SelectClassify-tree {
   max-height: 500px;
   overflow-y: auto;
-  .el-dialog__body {
-    padding: 0 0 0 20px;
-  }
-}
-.SelectClassify-tag {
-  margin-right: 5px;
-  margin-top: 5px;
-  margin-bottom: 10px;
-}
-</style>
-
-<style lang="scss">
-.SelectClassify-dialog {
   .el-dialog__body {
     padding: 0 0 0 20px;
   }

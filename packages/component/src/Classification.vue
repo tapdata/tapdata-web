@@ -33,7 +33,6 @@ export default {
       treeData: [],
       default_expanded: false,
       props: {
-        key: 'id',
         label: 'value',
       },
       isActive: true,
@@ -121,25 +120,42 @@ export default {
     },
     checkHandler(data, { checkedKeys }) {
       let checked = checkedKeys.includes(data.id)
-      let setChecked = (arr) => {
-        if (arr && arr.length) {
+      
+      let getChildrenKeys = (arr) => {
+        let keys = []
+        if (arr?.length) {
           arr.forEach((node) => {
-            this.$refs.tree.setChecked(node, checked, true)
-            setChecked(node.children)
+            keys.push(node.id)
+            keys.push(...getChildrenKeys(node.children))
           })
         }
+        return keys
       }
-      setChecked(data.children)
+      
+      if (data.children?.length) {
+        const childrenKeys = getChildrenKeys(data.children)
+        if (checked) {
+          checkedKeys.push(...childrenKeys)
+        } else {
+          checkedKeys = checkedKeys.filter((key) => !childrenKeys.includes(key))
+        }
+      }
+
+      this.$refs.tree?.setCheckedKeys(checkedKeys, false)
       this.emitCheckedNodes()
     },
     nodeClickHandler(data, node) {
       let checkedNodes = this.$refs.tree.getCheckedKeys() || []
+      const index = checkedNodes.indexOf(data.id)
 
-      if (checkedNodes.includes(data.id)) {
-        this.$refs.tree?.setChecked(data.id, false)
+      if (index !== -1) {
+        checkedNodes.splice(index, 1)
       } else {
-        this.$refs.tree?.setCheckedKeys([data.id], true)
+        checkedNodes.push(data.id)
       }
+
+      // setChecked 不缓存，setCheckedKeys 缓存，采用缓存的方式
+      this.$refs.tree?.setCheckedKeys(checkedNodes, false)
 
       this.emitCheckedNodes()
     },
@@ -175,6 +191,7 @@ export default {
               }))
             }
             this.treeData = this.formatData(treeData)
+            this.$emit('setUserGroupData', this.treeData)
 
             cb && cb(treeData)
           })
@@ -584,7 +601,7 @@ export default {
                       {{ $t(isUser ? 'public_new_sub_group' : 'packages_component_classification_addChildernNode') }}
                     </ElDropdownItem>
                     <ElDropdownItem command="edit">{{ $t('public_button_edit') }}</ElDropdownItem>
-                    <ElDropdownItem command="delete">{{ $t('public_button_delete') }}</ElDropdownItem>
+                    <ElDropdownItem class="is-danger" command="delete">{{ $t('public_button_delete') }}</ElDropdownItem>
                   </ElDropdownMenu>
                 </template>
               </ElDropdown>

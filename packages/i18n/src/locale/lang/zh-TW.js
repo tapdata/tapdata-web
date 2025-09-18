@@ -548,4 +548,5 @@ export default {
   public_new_sub_group: '新建子組',
   public_please_input_user_group_name: '請輸入用戶組名稱',
   public_set_new_password: '設置新密碼',
+  public_set_user_group: '設置用戶組',
 }
