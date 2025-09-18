@@ -292,7 +292,7 @@ const analyseVariables = (variables) => {
   return variables.map((item) => {
     return {
       name: item.name,
-      label: filterLabel(item.label),
+      label: filterLabel(item.name, item.label),
       icon: filterIcon(item.icon),
     }
   });
@@ -302,7 +302,7 @@ const filterLabel = (name, labelType) => {
   if (!labelType) {
     return name;
   }
-  return t(labelType);
+  return t(''+labelType);
 }
 
 const filterIcon = (name, iconType) => {
