@@ -190,7 +190,7 @@ export default {
     >
       <template #default="{ data }">
         <div class="flex align-center gap-1">
-          <VIcon size="16" class="color-primary">folder-fill</VIcon>
+          <VIcon size="14" class="color-primary">folder-close</VIcon>
           <span class="table-label">{{ data.value }}</span>
         </div>
       </template>

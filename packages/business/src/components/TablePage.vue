@@ -3,7 +3,6 @@ import Classification from '@tap/component/src/Classification.vue'
 import { off, on } from '@tap/shared'
 import {
   defineComponent,
-  nextTick,
   onMounted,
   onUnmounted,
   ref,
@@ -132,7 +131,6 @@ export default defineComponent({
       type: Object as PropType<Sort>,
     },
     draggable: Boolean,
-    treeProps: Object,
   },
   emits: [
     'selectionChange',
@@ -414,7 +412,6 @@ export default defineComponent({
           :title="classify.title"
           :kai-title="classify.title"
           :drag-state="dragState"
-          :tree-props="treeProps"
           @node-checked="nodeChecked"
           @update:visible="classificationVisible = $event"
           @drop-in-tag="fetch(1)"
