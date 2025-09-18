@@ -730,6 +730,7 @@ export default {
         types: ['user'],
         hideIcon: true,
       }"
+      name-key="username"
       :remote-method="getData"
       @selection-change="handleSelectionChange"
       @classify-submit="handleOperationClassify"

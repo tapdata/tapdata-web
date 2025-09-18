@@ -453,9 +453,9 @@ const deleteNode = async (node: Node) => {
       isUser.value
         ? 'packages_component_classification_deteleMessage_user'
         : 'packages_component_classification_deteleMessage',
-        {
-          val: node.label,
-        }
+      {
+        val: node.label,
+      },
     ),
     {
       confirmButtonText: $t('public_button_delete'),
@@ -563,17 +563,22 @@ const handleTreeDrop = async (ev: DragEvent, data: TreeNode) => {
     .map((item) => item.id)
 
   let tableName
-  switch (props.viewPage) {
-    case 'connections':
-      tableName = 'Connections'
-      break
-    case 'migrate':
-    case 'sync':
-      tableName = 'Task'
-      break
-    case 'inspect':
-      tableName = 'Inspect'
-      break
+
+  if (isUser.value) {
+    tableName = 'User'
+  } else {
+    switch (props.viewPage) {
+      case 'connections':
+        tableName = 'Connections'
+        break
+      case 'migrate':
+      case 'sync':
+        tableName = 'Task'
+        break
+      case 'inspect':
+        tableName = 'Inspect'
+        break
+    }
   }
 
   if (!tableName) {

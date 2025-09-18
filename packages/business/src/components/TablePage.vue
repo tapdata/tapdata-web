@@ -117,6 +117,10 @@ export default defineComponent({
     rowKey: {
       type: [String, Function] as PropType<string | ((row: any) => string)>,
     },
+    nameKey: {
+      type: String,
+      default: 'name',
+    },
     spanMethod: {
       type: Function as PropType<
         (data: {
@@ -263,7 +267,7 @@ export default defineComponent({
     }
 
     const handleDragStart = (row: any, column: any, ev: DragEvent) => {
-      if (!row.id || !row.name) return false
+      if (!row.id || !row[props.nameKey]) return false
 
       dragState.value.isDragging = true
       const selection = multipleSelection.value
@@ -279,7 +283,7 @@ export default defineComponent({
       const target = ev.currentTarget as HTMLElement
       draggingNodeImage.value = makeDragNodeImage(
         target.querySelector('.tree-item-icon'),
-        row.name,
+        row[props.nameKey],
         dragState.value.draggingObjects.length,
       )
       ev.dataTransfer?.setDragImage(draggingNodeImage.value, 0, 0)
