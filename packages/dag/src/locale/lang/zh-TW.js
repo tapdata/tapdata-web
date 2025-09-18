@@ -992,4 +992,5 @@ export default {
   public_api_threshold_unit: '單位',
   public_api_threshold_equalsFlag: '對比符號',
   public_api_minute: '持續時間',
+  public_api_alarmDate: '告警時間',
 }
