@@ -556,4 +556,9 @@ export default {
   public_priority_low: '低',
   public_priority_lowest: '最低',
   public_tag_priority_tip: '任务批量启动时{val}优先级执行',
+  public_new_user_group: '新建用户组',
+  public_new_sub_group: '新建子组',
+  public_please_input_user_group_name: '请输入用户组名称',
+  public_set_new_password: '设置新密码',
+  public_set_user_group: '设置用户组',
 }

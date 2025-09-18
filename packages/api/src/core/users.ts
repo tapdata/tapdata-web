@@ -141,3 +141,8 @@ export function countUsers(params: any) {
 export function patchUser(params: any, config?: any) {
   return requestClient.patch(BASE_URL, params, config)
 }
+
+
+export function batchUpdateUserListtags(params: any) {
+  return requestClient.patch(`${BASE_URL}/batchUpdateListtags`, params)
+}

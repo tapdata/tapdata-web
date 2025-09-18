@@ -20,7 +20,8 @@ export default {
   packages_component_classification_addChildernNode: '新建子标签',
   packages_component_classification_nodeName: '请输入标签名称',
   packages_component_classification_deteleMessage:
-    '此操作会将该标签下存在的子标签都删除，是否删除',
+    '此操作会将该标签下存在的子标签都删除，是否确认删除？',
+  packages_component_classification_deteleMessage_user: '此操作会将用户组「{val}」及其下的所有子用户组删除，是否确认删除？',
   packages_component_formBuilder_file_placeholder: '请选择文件',
   packages_component_formBuilder_file_button: '选择文件',
   packages_component_src_discoveryclassification_qingshurumulu:

@@ -567,4 +567,9 @@ export default {
   public_priority_low: 'Low',
   public_priority_lowest: 'Lowest',
   public_tag_priority_tip: 'Task batch start runs in {val} priority.',
+  public_new_user_group: 'Create User Group',
+  public_new_sub_group: 'Create Sub Group',
+  public_please_input_user_group_name: 'Please enter user group name',
+  public_set_new_password: 'Set New Password',
+  public_set_user_group: 'Set User Group',
 }

@@ -3,7 +3,6 @@ import Classification from '@tap/component/src/Classification.vue'
 import { off, on } from '@tap/shared'
 import {
   defineComponent,
-  nextTick,
   onMounted,
   onUnmounted,
   ref,
@@ -132,13 +131,13 @@ export default defineComponent({
       type: Object as PropType<Sort>,
     },
     draggable: Boolean,
-    treeProps: Object,
   },
   emits: [
     'selectionChange',
     'sortChange',
     'classifySubmit',
     'update:drag-state',
+    'setUserGroupData',
   ],
   setup(props, { emit }) {
     const isUnmounted = ref(false)
@@ -413,10 +412,10 @@ export default defineComponent({
           :title="classify.title"
           :kai-title="classify.title"
           :drag-state="dragState"
-          :tree-props="treeProps"
           @node-checked="nodeChecked"
           @update:visible="classificationVisible = $event"
           @drop-in-tag="fetch(1)"
+          @set-user-group-data="$emit('setUserGroupData', $event)"
         >
           <template #node>
             <slot name="tagNode" />

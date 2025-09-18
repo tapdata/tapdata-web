@@ -1,5 +1,5 @@
 import { Select as FormSelect } from '@tap/form'
-import { createBehavior, createResource } from '../../../core'
+import { createBehavior, createResource, getBrowserLanguage } from '../../../core'
 import { createFieldSchema } from '../Field'
 import { AllSchemas } from '../../schemas'
 import { AllLocales } from '../../locales'
@@ -22,7 +22,7 @@ Select.Resource = createResource({
     {
       componentName: 'Field',
       props: {
-        title: 'Select',
+        title: AllLocales.Select[getBrowserLanguage()]?.title || AllLocales.Select['en-US'].title,
         'x-decorator': 'FormItem',
         'x-component': 'Select',
       },

@@ -539,6 +539,8 @@ export default {
     '表全字段值校驗會對源表和目標表的全部字段進行逐行校驗，能查出所有字段的差異，但是速度慢。此操作同時會對源和目標庫發起查詢，可能會對數據庫造成讀取壓力。',
   packages_business_verification_jointFieldTip:
     '關聯字段值校驗只對源表和目標表的關聯字段的值進行比對校驗，速度快於全表字段值校驗模式。此操作同時會對源和目標庫發起查詢，可能會對數據庫造成讀取壓力。',
+  packages_business_verification_hashVerifyTip:
+    '全表 hash 校驗會對源表和目標表逐行生成並比對 hash 值，可快速判斷是否存在差異，但無法展示具體字段內容。此操作可能對數據庫造成讀取壓力。',
   packages_business_verification_waiting: '待校驗',
   packages_business_verification_scheduling: '校驗啟動中',
   packages_business_verification_error: '校驗失敗',
@@ -843,7 +845,8 @@ export default {
   packages_business_connections_databaseform_kaiqixintiaobiao: '開啟心跳表',
   packages_business_connections_databaseform_jiaobentiaoshi: '腳本調試',
   // api服务管理
-  packages_business_data_server_drawer_filter: '無效的Json參數值，請將filter作為json對象輸入',
+  packages_business_data_server_drawer_filter:
+    '無效的Json參數值，請將filter作為json對象輸入',
   packages_business_data_server_drawer_qingshurucanshu: '請輸入參數名稱',
   packages_business_data_server_drawer_paixu: '排序',
   packages_business_data_server_drawer_meigefenyefan: '每個分頁返回的記錄數',

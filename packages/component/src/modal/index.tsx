@@ -68,7 +68,7 @@ const renderContent = (options: ExtendedMessageBoxOptions) => {
 
 // Define the function parameter types
 type ModalTitle = string | VNode | (() => VNode) | ElMessageBoxOptions
-type ModalMessage = string | VNode | undefined
+type ModalMessage = string | VNode | undefined | ElMessageBoxOptions
 
 const createModal = (type: string) => {
   return (

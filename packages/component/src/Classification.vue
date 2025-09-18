@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { metadataDefinitionsApi, userGroupsApi } from '@tap/api'
 import { useI18n } from '@tap/i18n'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import VIcon from './base/VIcon.vue'
+import { Modal } from './modal'
+import type { RenderContentContext, TreeInstance, TreeKey } from 'element-plus'
+
+type Node = RenderContentContext['node']
 
 // Types
 interface TreeNode {
@@ -42,7 +46,6 @@ interface Props {
   title?: string
   viewPage?: string
   dragState?: DragState
-  treeProps?: any
 }
 
 // Props
@@ -52,14 +55,14 @@ const props = withDefaults(defineProps<Props>(), {
   title: '',
   viewPage: '',
   dragState: () => ({ isDragging: false, draggingObjects: [] }),
-  treeProps: () => ({}),
 })
 
 // Emits
 const emit = defineEmits<{
   'update:visible': [value: boolean]
-  nodeChecked: [checkedNodes: string[]]
+  nodeChecked: [checkedNodes: TreeKey[]]
   dropInTag: []
+  setUserGroupData: [data: TreeNode[]]
 }>()
 
 // Store
@@ -69,14 +72,14 @@ const store = useStore()
 const { t: $t } = useI18n()
 
 // Refs
-const tree = ref()
+const tree = ref<TreeInstance>()
 const searchInput = ref()
 
 // Reactive data
 const filterText = ref('')
 const treeData = ref<TreeNode[]>([])
 const showSearch = ref(false)
-
+const expandedKeys = ref<string[]>([])
 const dialogConfig = ref<DialogConfig>({
   type: 'add',
   id: '',
@@ -132,6 +135,7 @@ const sync = computed(() => store.state.classification?.sync)
 const inspect = computed(() => store.state.classification?.inspect)
 
 const type = computed(() => props.types[0])
+const isUser = computed(() => type.value === 'user')
 
 const comTitle = computed(() => {
   return (
@@ -176,35 +180,54 @@ const checkHandler = (
   { checkedKeys }: { checkedKeys: string[] },
 ) => {
   const checked = checkedKeys.includes(data.id)
-  const setChecked = (arr: TreeNode[]) => {
-    if (arr && arr.length) {
+
+  const getChildrenKeys = (arr: TreeNode[]) => {
+    const keys: string[] = []
+    if (arr?.length) {
       arr.forEach((node) => {
-        tree.value.setChecked(node, checked, true)
-        setChecked(node.children || [])
+        keys.push(node.id)
+        keys.push(...getChildrenKeys(node.children!))
       })
     }
+    return keys
   }
-  setChecked(data.children || [])
+
+  if (data.children?.length) {
+    const childrenKeys = getChildrenKeys(data.children)
+    if (checked) {
+      checkedKeys.push(...childrenKeys)
+    } else {
+      checkedKeys = checkedKeys.filter(
+        (key: string) => !childrenKeys.includes(key),
+      )
+    }
+  }
+
+  tree.value?.setCheckedKeys(checkedKeys, false)
   emitCheckedNodes()
 }
 
 const nodeClickHandler = (data: TreeNode) => {
-  const checkedNodes = tree.value.getCheckedKeys() || []
+  const checkedNodes = tree.value?.getCheckedKeys() || []
+  const index = checkedNodes.indexOf(data.id)
 
-  if (checkedNodes.includes(data.id)) {
-    tree.value?.setChecked(data.id, false)
+  if (index !== -1) {
+    checkedNodes.splice(index, 1)
   } else {
-    tree.value?.setCheckedKeys([data.id], true)
+    checkedNodes.push(data.id)
   }
+
+  // setChecked 不缓存，setCheckedKeys 缓存，采用缓存的方式
+  tree.value?.setCheckedKeys(checkedNodes, false)
 
   emitCheckedNodes()
 }
 
 const emitCheckedNodes = () => {
-  const checkedNodes = tree.value.getCheckedKeys() || []
+  const checkedNodes = tree.value?.getCheckedKeys() || []
   emit('nodeChecked', checkedNodes)
   setTag({
-    value: checkedNodes,
+    value: checkedNodes as string[],
     type: props.viewPage || '',
   })
 }
@@ -233,7 +256,7 @@ const getData = (cb?: (data: TreeNode[]) => void) => {
           }))
         }
         treeData.value = formatData(localTreeData)
-
+        emit('setUserGroupData', treeData.value)
         cb && cb(localTreeData)
       })
   } else {
@@ -310,13 +333,6 @@ const filterNode = (value: string, data: TreeNode) => {
   return data.value.includes(value)
 }
 
-const handleDefault_expanded = () => {
-  const treeList = treeData.value
-  for (const node of treeList) {
-    tree.value.store.nodesMap[node.id].expanded = false
-  }
-}
-
 const handleRowCommand = (command: string, node: any) => {
   switch (command) {
     case 'add':
@@ -324,7 +340,7 @@ const handleRowCommand = (command: string, node: any) => {
       showDialog(node, command)
       break
     case 'delete':
-      deleteNode(node.key)
+      deleteNode(node)
   }
 }
 
@@ -344,8 +360,16 @@ const showDialog = (node?: any, dialogType?: string) => {
     title:
       type === 'add'
         ? node
-          ? $t('packages_component_classification_addChildernNode')
-          : $t('packages_component_classification_addNode')
+          ? $t(
+              isUser.value
+                ? 'public_new_sub_group'
+                : 'packages_component_classification_addChildernNode',
+            )
+          : $t(
+              isUser.value
+                ? 'public_new_user_group'
+                : 'packages_component_classification_addNode',
+            )
         : $t('public_button_edit'),
     priority: node?.data?.priority,
   }
@@ -422,34 +446,52 @@ const dialogSubmit = async () => {
   }
 }
 
-const deleteNode = (id: string) => {
-  ElMessageBox.confirm($t('packages_component_classification_deteleMessage'), {
-    confirmButtonText: $t('public_button_delete'),
-  }).then((resFlag) => {
-    if (!resFlag) {
-      return
+const deleteNode = async (node: Node) => {
+  const id = node.key
+  const resFlag = await Modal.confirm(
+    $t(
+      isUser.value
+        ? 'packages_component_classification_deteleMessage_user'
+        : 'packages_component_classification_deteleMessage',
+        {
+          val: node.label,
+        }
+    ),
+    {
+      confirmButtonText: $t('public_button_delete'),
+    },
+  )
+  if (!resFlag) return
+  if (isUser.value) {
+    const params = {
+      id,
+      headers: {
+        gid: id,
+      },
     }
-    if (props.types[0] === 'user') {
-      const params = {
-        id,
-        headers: {
-          gid: id,
-        },
-      }
-      userGroupsApi.delete(params).then(() => {
-        getData()
-      })
-    } else {
-      metadataDefinitionsApi.delete(id).then(() => {
-        getData()
-      })
-    }
-  })
+    await userGroupsApi.delete(params)
+  } else {
+    await metadataDefinitionsApi.delete(id)
+  }
+  getData()
+
+  let checkedNodes = tree.value?.getCheckedKeys() || []
+
+  if (checkedNodes.includes(id as TreeKey)) {
+    checkedNodes = checkedNodes.filter((item) => item !== id)
+    emit('nodeChecked', checkedNodes)
+    setTag({
+      value: checkedNodes,
+      type: props.viewPage,
+    })
+  }
+
+  expandedKeys.value = expandedKeys.value.filter((item) => item !== id)
 }
 
 const checkName = (value: string): Promise<any> => {
   return new Promise((resolve) => {
-    if (props.types[0] === 'user') {
+    if (isUser.value) {
       getDataAll((items) => {
         resolve(items.find((it) => it.name === value))
       })
@@ -567,6 +609,14 @@ const openSearch = () => {
   }
 }
 
+const handleNodeExpand = (data, node) => {
+  expandedKeys.value.push(data.id)
+}
+
+const handleNodeCollapse = (data, node) => {
+  expandedKeys.value = expandedKeys.value.filter((item) => item !== data.id)
+}
+
 // Watchers
 watch(
   () => props.types,
@@ -631,7 +681,6 @@ defineExpose({
   getData,
   toggle,
   emitCheckedNodes,
-  handleDefault_expanded,
 })
 </script>
 
@@ -679,7 +728,6 @@ defineExpose({
         class="classification-tree bg-transparent"
         node-key="id"
         show-checkbox
-        v-bind="props.treeProps"
         :props="treeProps"
         :expand-on-click-node="false"
         :data="treeData"
@@ -688,8 +736,11 @@ defineExpose({
         :indent="8"
         :check-on-click-node="false"
         :check-on-click-leaf="false"
+        :default-expanded-keys="expandedKeys"
         @node-click="nodeClickHandler"
         @check="checkHandler"
+        @node-expand="handleNodeExpand"
+        @node-collapse="handleNodeCollapse"
       >
         <template #default="{ node, data }">
           <slot name="node" :node="node" :data="data">
@@ -740,13 +791,17 @@ defineExpose({
                   <ElDropdownMenu>
                     <ElDropdownItem command="add">
                       {{
-                        $t('packages_component_classification_addChildernNode')
+                        $t(
+                          isUser
+                            ? 'public_new_sub_group'
+                            : 'packages_component_classification_addChildernNode',
+                        )
                       }}
                     </ElDropdownItem>
                     <ElDropdownItem command="edit">{{
                       $t('public_button_edit')
                     }}</ElDropdownItem>
-                    <ElDropdownItem command="delete">{{
+                    <ElDropdownItem class="is-danger" command="delete">{{
                       $t('public_button_delete')
                     }}</ElDropdownItem>
                   </ElDropdownMenu>
@@ -771,7 +826,11 @@ defineExpose({
           <i-mingcute:add-line />
         </template>
         {{
-          $t('packages_component_src_classification_chuangjianfenlei')
+          $t(
+            isUser
+              ? 'public_new_user_group'
+              : 'packages_component_src_classification_chuangjianfenlei',
+          )
         }}</ElButton
       >
     </div>
@@ -786,10 +845,16 @@ defineExpose({
       </template>
 
       <el-form label-position="top">
-        <el-form-item :label="$t('public_tag_name')">
+        <el-form-item :label="$t('public_name')">
           <ElInput
             v-model="dialogConfig.label"
-            :placeholder="$t('packages_component_classification_nodeName')"
+            :placeholder="
+              $t(
+                isUser
+                  ? 'public_please_input_user_group_name'
+                  : 'packages_component_classification_nodeName',
+              )
+            "
             maxlength="50"
             show-word-limit
           />

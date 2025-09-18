@@ -593,6 +593,8 @@ export default {
     'Table full-field validation checks all fields of the source and target tables row by row, identifying differences in all fields but with a slower speed. This operation simultaneously queries both the source and target databases, potentially causing read pressure on the databases.',
   packages_business_verification_jointFieldTip:
     'Associative field value validation compares only the values of associated fields in the source and target tables, providing faster results compared to full-field validation. This operation simultaneously queries both the source and target databases, potentially causing read pressure on the databases.',
+  packages_business_verification_hashVerifyTip:
+    'Table hash verification generates and compares hash values for each row in the source and target tables. It quickly detects differences but cannot show specific field details. This operation may put read pressure on the database.',
   packages_business_verification_waiting: 'To be verified',
   packages_business_verification_scheduling: 'Scheduling',
   packages_business_verification_error: 'Error',
@@ -936,7 +938,8 @@ export default {
     'Enable heartbeat table',
   packages_business_connections_databaseform_jiaobentiaoshi: 'Script Debugging',
   // api服务管理
-  packages_business_data_server_drawer_filter: 'Invalid json Parameter value, input filter as json object, please',
+  packages_business_data_server_drawer_filter:
+    'Invalid json Parameter value, input filter as json object, please',
   packages_business_data_server_drawer_qingshurucanshu:
     'Please enter parameter name',
   packages_business_data_server_drawer_paixu: 'Sort',

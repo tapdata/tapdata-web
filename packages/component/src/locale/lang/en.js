@@ -22,6 +22,7 @@ export default {
   packages_component_classification_nodeName: 'Please enter tag name',
   packages_component_classification_deteleMessage:
     'This operation will remove all sub-categories currently present in this category. Are you sure you want to proceed with the deletion?',
+  packages_component_classification_deteleMessage_user: 'This action will delete the user group "{val}" and all of its subgroups. Are you sure you want to proceed?',
   packages_component_formBuilder_file_placeholder: 'Please select a file',
   packages_component_formBuilder_file_button: 'Select',
   packages_component_src_discoveryclassification_qingshurumulu:

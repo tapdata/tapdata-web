@@ -225,6 +225,7 @@ export default {
   application_true: '是',
   application_false: '否',
   application_create: '创建客户端',
+  application_edit: '编辑客户端',
   //api 监控
   api_monitor_total_totalCount: 'API总数',
   api_monitor_total_warningApiCount: 'API访问总数',
@@ -257,8 +258,9 @@ export default {
   api_monitor_detail_Monitoring_conditions: '监控条件',
   // api服务器
   api_server_user: '用户',
-  api_server_create: '新建服务端',
+  api_server_create: '创建服务器',
   api_server_create_server: '创建服务器',
+  api_server_edit: '编辑服务器',
   api_server_process_id: 'API 服务器唯一标识',
   api_server_client_name: ' API 服务器名称',
   api_server_client_uri: 'API 服务器访问地址',
@@ -450,7 +452,8 @@ export default {
   setting_Default_Limit: '默认查询返回行数',
   setting_Max_Limit: '最大查询返回行数',
   setting_Desensitize_API_request_parameters: 'API请求参数脱敏',
-  'setting_Timeout_period_for_API_access_to_the_database_(millisecond)': 'API访问数据库的超时时间（毫秒）',
+  'setting_Timeout_period_for_API_access_to_the_database_(millisecond)':
+    'API访问数据库的超时时间（毫秒）',
   setting_Send_batch_size: '打包数据条数',
   setting_hint_Send_batch_size: '打包数据条数',
   setting_Mongodb_target_create_date: '是否在目标端数据集添加创建时间',
@@ -650,7 +653,7 @@ export default {
   user_status_notVerified: '未验证',
   user_status_notActivated: '未激活',
   user_status_activated: '已激活',
-  user_status_rejected: '已拒绝',
+  user_status_rejected: '已冻结',
   user_form_role: '关联角色',
   user_form_email: '邮箱',
   user_form_email_must_valid: '请输入有效邮箱地址',
@@ -2036,4 +2039,5 @@ export default {
   setting_license_rule: 'License 告警规则',
   setting_license_alarm_template: '告警模板',
   setting_license_alarm_template_custom: '自定义告警模板',
+  cluster_operation_success: '操作指令已发送，请稍后刷新查看结果',
 }
