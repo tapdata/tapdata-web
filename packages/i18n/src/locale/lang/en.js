@@ -267,6 +267,7 @@ export default {
   public_api_threshold_unit: 'Unit',
   public_api_threshold_equalsFlag: 'equals char',
   public_api_minute: 'Monitoring Period',
+  public_api_alarmDate: 'Alarm Date',
   // Task
   public_task: 'Task',
   public_task_name: 'Task Name',

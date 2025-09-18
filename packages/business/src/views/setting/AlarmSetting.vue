@@ -712,6 +712,7 @@ onMounted(async () => {
                 :controls="false"
                 :precision="0"
                 :min="1"
+                :max="30"
                 style="width: 100px"
               />
               <span class="ml-2 mr-2" v-if="scope.row.key !== 'API_SERVER_API_RESPONSE_SIZE_ALTER'"> {{ $t('public_time_m') }}</span>

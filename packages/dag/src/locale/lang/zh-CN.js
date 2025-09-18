@@ -1008,4 +1008,5 @@ export default {
   public_api_threshold_unit: '单位',
   public_api_threshold_equalsFlag: '对比符号',
   public_api_minute: '持续时间',
+  public_api_alarmDate: '告警时间',
 }
