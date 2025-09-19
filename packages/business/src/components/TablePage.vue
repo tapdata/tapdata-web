@@ -3,7 +3,6 @@ import Classification from '@tap/component/src/Classification.vue'
 import { off, on } from '@tap/shared'
 import {
   defineComponent,
-  nextTick,
   onMounted,
   onUnmounted,
   ref,
@@ -118,6 +117,10 @@ export default defineComponent({
     rowKey: {
       type: [String, Function] as PropType<string | ((row: any) => string)>,
     },
+    nameKey: {
+      type: String,
+      default: 'name',
+    },
     spanMethod: {
       type: Function as PropType<
         (data: {
@@ -132,13 +135,13 @@ export default defineComponent({
       type: Object as PropType<Sort>,
     },
     draggable: Boolean,
-    treeProps: Object,
   },
   emits: [
     'selectionChange',
     'sortChange',
     'classifySubmit',
     'update:drag-state',
+    'setUserGroupData',
   ],
   setup(props, { emit }) {
     const isUnmounted = ref(false)
@@ -264,7 +267,7 @@ export default defineComponent({
     }
 
     const handleDragStart = (row: any, column: any, ev: DragEvent) => {
-      if (!row.id || !row.name) return false
+      if (!row.id || !row[props.nameKey]) return false
 
       dragState.value.isDragging = true
       const selection = multipleSelection.value
@@ -280,7 +283,7 @@ export default defineComponent({
       const target = ev.currentTarget as HTMLElement
       draggingNodeImage.value = makeDragNodeImage(
         target.querySelector('.tree-item-icon'),
-        row.name,
+        row[props.nameKey],
         dragState.value.draggingObjects.length,
       )
       ev.dataTransfer?.setDragImage(draggingNodeImage.value, 0, 0)
@@ -413,10 +416,10 @@ export default defineComponent({
           :title="classify.title"
           :kai-title="classify.title"
           :drag-state="dragState"
-          :tree-props="treeProps"
           @node-checked="nodeChecked"
           @update:visible="classificationVisible = $event"
           @drop-in-tag="fetch(1)"
+          @set-user-group-data="$emit('setUserGroupData', $event)"
         >
           <template #node>
             <slot name="tagNode" />

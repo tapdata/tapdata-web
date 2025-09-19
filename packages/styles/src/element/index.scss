@@ -205,8 +205,9 @@
 
 // Tooltip
 .el-popper.el-popper[role='tooltip']:not(.el-popover):not(.el-select__popper) {
-  max-width: 400px;
   --el-popper-border-radius: var(--el-border-radius-base);
+  max-width: 400px;
+  word-break: break-word;
 }
 
 // Select

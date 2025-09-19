@@ -65,16 +65,20 @@ export default {
             </ElFormItem>
           </template>
           <ElFormItem :label="`${$t('public_description')}:`">
-            <span class="details-value">{{ details.describe }}</span>
+            <span class="details-value">{{ details.describe || '--' }}</span>
           </ElFormItem>
           <ElFormItem :label="`${$t('function_format')}:`">
             <span class="details-value">{{ details.format }}</span>
           </ElFormItem>
           <ElFormItem :label="`${$t('function_parameters_describe_label')}:`">
-            <span class="details-value">{{ details.parameters_desc }}</span>
+            <span class="details-value">{{
+              details.parameters_desc || '--'
+            }}</span>
           </ElFormItem>
           <ElFormItem :label="`${$t('function_return_value_label')}:`">
-            <span class="details-value">{{ details.return_value }}</span>
+            <span class="details-value">{{
+              details.return_value || '--'
+            }}</span>
           </ElFormItem>
         </ElForm>
         <div v-if="details.type === 'custom'" class="mb-4">

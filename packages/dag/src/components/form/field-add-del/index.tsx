@@ -1,6 +1,6 @@
 import { observer } from '@formily/reactive-vue'
 import { metadataInstancesApi } from '@tap/api'
-
+import { IconButton } from '@tap/component/src/icon-button'
 import { connect, mapProps, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import { cloneDeep } from 'lodash-es'

@@ -269,15 +269,14 @@ export default {
 
     // 任务概览跳转页面
     handleTask(item) {
-      if (item.key === 'copy_total') {
-        this.$router.push({
-          name: 'migrate',
-        })
-      } else if (item.key === 'sync_total') {
-        this.$router.push({
-          name: 'dataflowList',
-        })
+      const map = {
+        copy_total: 'migrate',
+        sync_total: 'dataflowList',
+        valid_total: 'dataVerificationList',
       }
+      this.$router.push({
+        name: map[item.key],
+      })
     },
     handleStatus(status) {
       this.$router.push({
@@ -566,6 +565,12 @@ export default {
         },
       })
     },
+
+    onClickServer() {
+      this.$router.push({
+        name: 'clusterManagement',
+      })
+    },
   },
 }
 </script>
@@ -600,9 +605,7 @@ export default {
                       'text-center',
                       'din-font',
                       {
-                        'cursor-pointer':
-                          item.key === 'copy_total' ||
-                          item.key === 'sync_total',
+                        'cursor-pointer': item.key !== 'all_total',
                       },
                     ]"
                     @click="handleTask(item)"
@@ -850,7 +853,10 @@ export default {
                       :span="12"
                       class="server-list pt-3"
                     >
-                      <div class="server-list-box rounded-lg py-2">
+                      <div
+                        class="server-list-box rounded-xl py-2 cursor-pointer"
+                        @click="onClickServer"
+                      >
                         <img
                           src="../../assets/static/serve.svg"
                           class="rounded-4"
@@ -1069,6 +1075,7 @@ export default {
           padding: 5px 10px;
           border: 1px solid #d9d9d9;
           border-radius: 3px;
+          transition: border-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
           img {
             width: 43px;
             height: 43px;
@@ -1078,6 +1085,10 @@ export default {
               color: var(--text-dark);
               font-weight: 500;
             }
+          }
+
+          &:hover {
+            border-color: var(--color-primary) !important;
           }
         }
       }

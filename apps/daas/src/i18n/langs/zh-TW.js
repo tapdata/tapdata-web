@@ -225,6 +225,7 @@ export default {
   application_true: '是',
   application_false: '否',
   application_create: '創建客戶端',
+  application_edit: '編輯客戶端',
   //api 监控
   api_monitor_total_totalCount: 'API總數',
   api_monitor_total_warningApiCount: 'API訪問總數',
@@ -257,8 +258,9 @@ export default {
   api_monitor_detail_Monitoring_conditions: '監控條件',
   // api服務器
   api_server_user: '用戶',
-  api_server_create: '新建服務端',
+  api_server_create: '創建服務端',
   api_server_create_server: '創建服務器',
+  api_server_edit: '編輯服務器',
   api_server_process_id: 'API 服務器唯一標識',
   api_server_client_name: ' API 服務器名稱',
   api_server_client_uri: 'API 服務器訪問地址',
@@ -648,7 +650,7 @@ export default {
   user_status_notVerified: '未驗證',
   user_status_notActivated: '未激活',
   user_status_activated: '已激活',
-  user_status_rejected: '已拒絕',
+  user_status_rejected: '已凍結',
   user_form_role: '關聯角色',
   user_form_email: '郵箱',
   user_form_email_must_valid: '請輸入有效郵箱地址',
@@ -2040,4 +2042,5 @@ export default {
   api_monitor_server_recent_1_month: '最近1個月',
   api_monitor_memory: '內存',
   api_monitor_server_ping_warning: '服務器響應已 {val} 未更新',
+  cluster_operation_success: '操作指令已發送，請稍後刷新查看結果',
 }

@@ -340,9 +340,7 @@ export default {
       width="600px"
       class="create-dialog"
       :title="
-        createForm.id
-          ? $t('public_button_edit')
-          : $t('api_server_create_server')
+        createForm.id ? $t('api_server_edit') : $t('api_server_create_server')
       "
       :close-on-click-modal="false"
     >

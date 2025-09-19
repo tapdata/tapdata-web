@@ -112,7 +112,7 @@ export default {
     height: 28px;
     font-size: 14px;
     border: 1px solid transparent;
-    border-radius: 4px;
+    border-radius: var(--el-border-radius-base);
     transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
     &:hover,
     &:focus-within {
