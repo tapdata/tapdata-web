@@ -873,7 +873,7 @@ defineExpose({
             </div>
           </template>
 
-          <div class="grid grid-cols-3 gap-4 w-100">
+          <div class="grid grid-cols-3 gap-4 w-100 mt-2">
             <button
               v-for="item in priorityOptions"
               :key="item.value"
