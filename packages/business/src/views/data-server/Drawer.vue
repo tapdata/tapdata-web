@@ -111,8 +111,17 @@ const { t } = useI18n()
 
 // Constants
 const isHa = import.meta.env.MODE === 'ha'
-const typeOptions = ['number', 'string', 'boolean', 'date', 'datetime', 'time']
-const operatorOptions = ['>', '==', '<', '>=', '<=', '!=', 'like']
+const baseType = [
+  {value: 'number', label: 'number'},
+  {value: 'string', label: 'string'},
+  {value: 'boolean', label: 'boolean'},
+  {value: 'date', label: 'date'},
+  {value: 'datetime', label: 'datetime'},
+  {value: 'time', label: 'time'},
+]
+const typeOptions = [... baseType, {value: 'array', label: 'array', children: baseType }];
+
+const operatorOptions = ['>', '==', '<', '>=', '<=', '!=', 'like', 'in']
 const conditionOptions = ['and', 'or']
 const apiTypeMap = {
   defaultApi: t('packages_business_data_server_drawer_morenchaxun'),
@@ -163,14 +172,14 @@ const getDefaultParams = (apiType: string) => {
       type: 'number',
       defaultvalue: '1',
       description: t('packages_business_data_server_drawer_fenyebianhao'),
-      required: true,
+      required: false,
     },
     {
       name: 'limit',
       type: 'number',
       defaultvalue: '20',
       description: t('packages_business_data_server_drawer_meigefenyefan'),
-      required: true,
+      required: false,
     },
   ]
   if (apiType === 'defaultApi') {
@@ -439,7 +448,15 @@ const genFormData = (formData: any = {}): Record<string, any> => {
       : formData.apiType || 'defaultApi'
   const pathConfig = formData?.paths?.[0] || {}
   const params =
-    pathConfig.params?.filter((t: any) => t.name !== 'sort') ||
+    pathConfig.params?.filter((t: any) => t.name !== 'sort').map((t: any) => {
+      return {
+        name: t.name,
+        type: t.type.split(': '),
+        defaultvalue: t.defaultvalue,
+        description: t.description,
+        required: t.required,
+      }
+    }) ||
     getDefaultParams(formData.apiType)
 
   const {
@@ -780,7 +797,15 @@ const save = async (type?: boolean) => {
       }
     }
 
-    const params = form.value?.params?.filter((t: any) => t.name)
+    const params = form.value?.params?.filter((t: any) => t.name).map((t: any) => {
+      return {
+        name: t.name,
+        type: Array.isArray(t.type) ? t.type.join(': ') : t.type,
+        defaultvalue: t.defaultvalue,
+        description: t.description,
+        required: t.required,
+      }
+    })
     const sort = form.value?.sort?.filter((t: any) => t.fieldName)
     const where = form.value?.where?.filter(
       (t: any) => t.fieldName && t.parameter,
@@ -1063,7 +1088,9 @@ const debugData = async () => {
       case 'GET':
         let paramsStr = ''
         Object.keys(params).forEach((key) => {
-          paramsStr = `${paramsStr}&${key}=${encodeURIComponent(params[key])}`
+          if (params[key] != undefined && null !== params[key] && '' !== ('' + params[key])) {
+            paramsStr = `${paramsStr}&${key}=${encodeURIComponent(params[key])}`
+          }
         })
         //@ts-ignore
         queryBody.url = `${url}${paramsStr}`
@@ -1101,6 +1128,9 @@ const debugData = async () => {
 }
 
 const parseValue = (key, value, defaultVal) => {
+  if (value === undefined || null == value || '' === (''+ value)) {
+    return defaultVal || null;
+  }
   let type = ''
   for (let i = 0; i < form.value.params.length; i++) {
     const item = form.value.params[i]
@@ -1830,34 +1860,49 @@ provide('encryptions', encryptions)
               <div v-else>{{ row.name }}</div>
             </template>
           </ElTableColumn>
-          <ElTableColumn :label="$t('public_type')" prop="type" min-width="80">
+          <ElTableColumn :label="$t('public_type')" prop="type" min-width="90">
             <template #default="{ row, $index }">
               <div
                 v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'"
               >
-                <ElSelect v-model="form.params[$index].type">
-                  <ElOption
-                    v-for="type in typeOptions"
-                    :key="type"
-                    :value="type"
-                    :label="type"
-                  />
-                </ElSelect>
+                <el-cascader v-model="form.params[$index].type" :options="typeOptions" separator=": "/>
               </div>
-              <div v-else>{{ row.type }}</div>
+              <div v-else>{{ Array.isArray(row.type) ? row.type.join(': ') : row.type }}</div>
             </template>
           </ElTableColumn>
           <ElTableColumn
             v-if="tab === 'form'"
             :label="$t('public_data_default')"
             prop="defaultvalue"
-            min-width="60"
+            min-width="100"
           >
             <template #default="{ row, $index }">
               <div v-if="isEdit && row.defaultvalue !== undefined">
                 <ElInput v-model="form.params[$index].defaultvalue" />
               </div>
               <div v-else>{{ row.defaultvalue }}</div>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn
+              :label="$t('packages_business_data_server_drawer_required')"
+              prop="required"
+              min-width="40"
+          >
+            <template #default="{ row, $index }">
+              <div
+                  v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'"
+              >
+                <ElFormItem
+                    :prop="`params.${$index}.required`"
+                    :error="!form.params[$index].required ? 'true' : ''"
+                    :show-message="false"
+                    :rules="rules.param"
+                    class="mb-0"
+                >
+                  <ElSwitch v-model="form.params[$index].required" />
+                </ElFormItem>
+              </div>
+              <div v-else>{{ row.required ? $t('packages_business_data_server_drawer_required_true') : $t('packages_business_data_server_drawer_required_false') }}</div>
             </template>
           </ElTableColumn>
           <ElTableColumn
