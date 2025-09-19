@@ -993,4 +993,6 @@ export default {
   public_api_threshold_equalsFlag: '對比符號',
   public_api_minute: '持續時間',
   public_api_alarmDate: '告警時間',
+  packages_dag_drop_table_enabled_confirm:
+    '您已選擇清空目標表數據，是否確認繼續？',
 }
