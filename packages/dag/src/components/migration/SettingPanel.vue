@@ -833,7 +833,7 @@ const schema = {
                             type: 'datetime',
                             align: 'right',
                             format: 'YYYY-MM-DD HH:mm:ss',
-                            valueFormat: 'timestamp',
+                            valueFormat: 'x',
                           },
                           'x-reactions': {
                             dependencies: ['planStartDateFlag'],

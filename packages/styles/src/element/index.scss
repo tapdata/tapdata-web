@@ -719,8 +719,16 @@
 
 //.el-picker-panel
 .el-picker-panel.el-picker-panel {
-  overflow: hidden;
+  // overflow: hidden;
   border-radius: var(--el-popper-border-radius);
+  .el-picker-panel__footer {
+    border-bottom-left-radius: var(--el-popper-border-radius);
+    border-bottom-right-radius: var(--el-popper-border-radius);
+  }
+
+  .el-time-panel {
+    border-radius: var(--el-popper-border-radius);
+  }
 }
 
 // Input
