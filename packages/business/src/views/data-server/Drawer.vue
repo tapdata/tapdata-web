@@ -172,14 +172,14 @@ const getDefaultParams = (apiType: string) => {
       type: 'number',
       defaultvalue: '1',
       description: t('packages_business_data_server_drawer_fenyebianhao'),
-      required: true,
+      required: false,
     },
     {
       name: 'limit',
       type: 'number',
       defaultvalue: '20',
       description: t('packages_business_data_server_drawer_meigefenyefan'),
-      required: true,
+      required: false,
     },
   ]
   if (apiType === 'defaultApi') {
