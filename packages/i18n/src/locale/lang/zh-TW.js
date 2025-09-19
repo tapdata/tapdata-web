@@ -544,6 +544,7 @@ export default {
   public_automatically: '自動',
   public_manually: '手動',
   public_data_table: '數據表',
+  public_unit_ms: '毫秒',
   public_tag_name: '標籤名稱',
   public_tag_priority: '優先級設置',
   public_tag_priority_desc:

@@ -5,18 +5,18 @@
  * @fix Number 四舍五入的小数位，负数则表示不做舍入，将等价换算（携带单位）
  * @sp Array 被除数，数组内可以多个被除数，比如[60, 60, 24, 30]
  * @return string
- * */
-export function calcUnit(val, type, fix = 1, sp = [1000]) {
+ */
+export function calcUnit(val: any, type?: any, fix = 1, sp = [1000]) {
   if ([undefined, null, ''].includes(val)) {
     return ''
   }
   let list
   // 接收传递的单位数组
-  if (type instanceof Array) {
+  if (Array.isArray(type)) {
     list = type
   } else {
     // 内置单位数组
-    switch ((type + '').toLowerCase()) {
+    switch (String(type).toLowerCase()) {
       // 内存
       case '1':
       case 'b':
@@ -40,11 +40,11 @@ export function calcUnit(val, type, fix = 1, sp = [1000]) {
 
   let num = val
   let util = ''
-  let res = []
-  const f = Math.pow(10, fix)
-  for (let i = 0; i < list.length; i++) {
-    util = list[i]
-    let m = num / (sp[i] ?? sp[0])
+  const res = []
+  const f = 10 ** fix
+  for (const [i, element] of list.entries()) {
+    util = element
+    const m = num / (sp[i] ?? sp[0])
     if (m < 1) {
       if (fix < 0) {
         res.unshift(num + util)
@@ -71,9 +71,9 @@ export function calcUnit(val, type, fix = 1, sp = [1000]) {
  * @options.separator String 分割符
  * @options.autoHideMs Boolean > 10s 自动隐藏ms
  * @return string
- * */
+ */
 export function calcTimeUnit(val, fix = 2, op) {
-  let options = Object.assign(
+  const options = Object.assign(
     {
       separator: ' ',
       autoHideMs: false,
@@ -120,7 +120,7 @@ export function calcTimeUnit(val, fix = 2, op) {
   if (typeof val !== 'number' || val === 0) {
     return '0'
   } else if (val > 0 && val < 1) {
-    const p = Math.pow(10, options.digits)
+    const p = 10 ** options.digits
     return prefix + Math.ceil(val * p) / p + units[0].unit
   }
   const ts = Math.floor(val)
@@ -130,7 +130,7 @@ export function calcTimeUnit(val, fix = 2, op) {
       value: tmpTs % units[i].interval,
       util: units[i].unit,
     })
-    tmpTs = parseInt(tmpTs / units[i].interval)
+    tmpTs = Number.parseInt(tmpTs / units[i].interval)
   }
   const findMsIndex = results.findIndex((t) => t.util === 'ms')
   if (findMsIndex >= 1) {

@@ -545,6 +545,7 @@ export default {
   public_automatically: '自动',
   public_manually: '手动',
   public_data_table: '数据表',
+  public_unit_ms: '毫秒',
   public_tag_name: '标签名称',
   public_tag_priority: '优先级设置',
   public_tag_priority_desc:

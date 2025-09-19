@@ -556,6 +556,7 @@ export default {
   public_automatically: 'Automatically',
   public_manually: 'Manually',
   public_data_table: 'Table',
+  public_unit_ms: 'ms',
   public_tag_name: 'Tag Name',
   public_tag_priority: 'Priority Setting',
   public_tag_priority_desc:
