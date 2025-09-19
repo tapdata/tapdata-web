@@ -562,4 +562,5 @@ export default {
   public_please_input_user_group_name: '请输入用户组名称',
   public_set_new_password: '设置新密码',
   public_set_user_group: '设置用户组',
+  public_unencrypted: '未加密',
 }
