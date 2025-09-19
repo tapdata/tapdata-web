@@ -1147,7 +1147,7 @@ provide('ConnectorMap', ConnectorMap)
                   $t('packages_business_verification_form_jiaoyankaishishi')
                 "
                 format="YYYY-MM-DD HH:mm:ss"
-                value-format="YYYY-MM-DD HH:mm:ss"
+                value-format="x"
               />
             </ElFormItem>
             <ElFormItem v-if="form.mode === 'manual'" class="setting-item">
@@ -1162,7 +1162,7 @@ provide('ConnectorMap', ConnectorMap)
                   $t('packages_business_verification_form_jiaoyanjieshushi')
                 "
                 format="YYYY-MM-DD HH:mm:ss"
-                value-format="YYYY-MM-DD HH:mm:ss"
+                value-format="x"
               />
             </ElFormItem>
           </template>

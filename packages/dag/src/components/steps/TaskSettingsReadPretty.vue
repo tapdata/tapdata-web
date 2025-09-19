@@ -1,5 +1,5 @@
 <script>
-import { createForm, onFieldValueChange } from '@formily/core'
+import { createForm } from '@formily/core'
 import { action } from '@formily/reactive'
 import { getAlarmChannels, taskApi } from '@tap/api'
 import i18n from '@tap/i18n'
@@ -1032,7 +1032,7 @@ export default defineComponent({
                     type: 'datetime',
                     align: 'right',
                     format: 'YYYY-MM-DD HH:mm:ss',
-                    valueFormat: 'timestamp',
+                    valueFormat: 'x',
                   },
                   'x-reactions': {
                     dependencies: ['planStartDateFlag'],
