@@ -248,12 +248,12 @@ export default {
         this.$refs?.form?.clearValidate()
 
         if (this.form.type === 'mongodb') {
-          this.$refs.schemaToForm?.getForm().setValues(this.form)
+          this.$refs.schemaToForm?.getForm().setValues(this.form, 'overwrite')
         }
       })
     },
     submit() {
-      this.$refs.form.validate(async (valid) => {
+      this.$refs.form.validate((valid) => {
         if (valid) {
           const main = async () => {
             const formValues = this.$refs.schemaToForm?.getFormValues?.() || {}
@@ -292,7 +292,7 @@ export default {
           }
           if (this.$refs.schemaToForm) {
             const schemaFormInstance = this.$refs.schemaToForm?.getForm?.()
-            schemaFormInstance?.validate().then(async () => {
+            schemaFormInstance?.validate().then(() => {
               main()
             })
           } else {
@@ -401,32 +401,23 @@ export default {
 
           this.loading = true
           const { id, name, type, uri, defaultStorage } = this.form
-          const params = Object.assign(
-            {
-              id,
-              name,
-              type,
-              uri,
-              defaultStorage,
-            },
-            formValues,
-          )
-          const result = { id }
-          for (const key in params) {
-            if (params[key] !== this.dialogForm[key]) {
-              result[key] = params[key]
-            }
+          const params = {
+            ...formValues,
+            id,
+            name,
+            type,
+            uri,
+            defaultStorage,
           }
-
-          this.startTest(result)
+          this.startTest(params)
         }
       })
     },
 
     startTest(data = {}) {
       const loading = this.$loading()
+      this.model = data
       this.checkAgent(() => {
-        Object.assign(this.model, data)
         this.$refs.test.start(false)
       })
         .catch(() => {
