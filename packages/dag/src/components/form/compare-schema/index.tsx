@@ -40,7 +40,8 @@ const CompareSchema = defineComponent({
       compareResultStatistics.value = res
     }
 
-    fetchCompareResultStatistics()
+    // FIXME: ha模式下，后端没有对比结果统计接口，这里暂时屏蔽
+    import.meta.env.MODE !== 'ha' && fetchCompareResultStatistics()
 
     const openCompareResult = () => {
       dialogOpen.value = true
