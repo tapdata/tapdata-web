@@ -665,9 +665,6 @@ defineExpose({
         v-model:drag-state="dragState"
         row-key="id"
         :draggable="showAppList && !inAppList"
-        :tree-props="{
-          showCheckbox: false,
-        }"
         :remote-method="getData"
         @selection-change="handleSelectionChange"
       >

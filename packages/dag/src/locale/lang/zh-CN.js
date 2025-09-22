@@ -1009,4 +1009,6 @@ export default {
   public_api_threshold_equalsFlag: '对比符号',
   public_api_minute: '持续时间',
   public_api_alarmDate: '告警时间',
+  packages_dag_drop_table_enabled_confirm:
+    '您已选择清空目标表数据，是否确认继续？',
 }

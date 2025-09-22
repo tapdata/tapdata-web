@@ -1,5 +1,5 @@
 import { InputNumber as FormInputNumber } from '@tap/form'
-import { createBehavior, createResource } from '../../../core'
+import { createBehavior, createResource, getBrowserLanguage } from '../../../core'
 import { createFieldSchema } from '../Field'
 import { AllSchemas } from '../../schemas'
 import { AllLocales } from '../../locales'
@@ -23,7 +23,7 @@ InputNumber.Resource = createResource({
       componentName: 'Field',
       props: {
         type: 'number',
-        title: 'InputNumber',
+        title: AllLocales.InputNumber[getBrowserLanguage()]?.title || AllLocales.InputNumber['en-US'].title,
         'x-decorator': 'FormItem',
         'x-component': 'InputNumber',
       },

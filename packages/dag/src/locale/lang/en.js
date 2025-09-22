@@ -1157,4 +1157,6 @@ export default {
   public_api_threshold_equalsFlag: 'equals char',
   public_api_minute: 'Monitoring Period',
   public_api_alarmDate: 'Alarm Date',
+  packages_dag_drop_table_enabled_confirm:
+    'Confirm clearing target table data?',
 }

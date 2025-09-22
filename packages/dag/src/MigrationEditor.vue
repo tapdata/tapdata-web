@@ -346,6 +346,14 @@ export default {
         return
       }
 
+      if (needStart) {
+        const validateDropTableEnabled = await this.validateDropTableEnabled()
+        if (!validateDropTableEnabled) {
+          this.isSaving = false
+          return
+        }
+      }
+
       if (!this.dataflow.id) {
         return this.saveAsNewDataflow()
       }

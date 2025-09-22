@@ -141,11 +141,11 @@ export class Table extends NodeType {
                 type: 'void',
                 'x-component': 'CompareSchema',
                 'x-reactions': {
-                  dependencies: ['.existDataProcessMode'],
+                  dependencies: ['.existDataProcessMode', '$outputs'],
                   fulfill: {
                     state: {
                       visible:
-                        '{{$deps[0] !== "dropTable" && (!$values.attrs.connectionTags || !$values.attrs.connectionTags.includes("schema-free"))}}',
+                        '{{!$form.disabled && !$deps[1].length && $deps[1].length === 0 && $deps[0] !== "dropTable" && !!$values.attrs.connectionTags && !$values.attrs.connectionTags.includes("schema-free")}}',
                     },
                   },
                 },

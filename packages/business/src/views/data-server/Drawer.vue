@@ -1891,6 +1891,7 @@ provide('encryptions', encryptions)
             :label="$t('public_data_default')"
             prop="defaultvalue"
             min-width="100"
+            min-width="100"
           >
             <template #default="{ row, $index }">
               <div v-if="isEdit && row.defaultvalue !== undefined">

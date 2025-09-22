@@ -361,6 +361,15 @@ export default {
           silenceMessage: true,
         })
         this.reformDataflow(result)
+
+        if (needStart) {
+          const validateDropTableEnabled = await this.validateDropTableEnabled()
+          if (!validateDropTableEnabled) {
+            this.isSaving = false
+            return
+          }
+        }
+
         !needStart && this.$message.success(this.$t('public_message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false

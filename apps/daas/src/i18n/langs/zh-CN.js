@@ -225,6 +225,7 @@ export default {
   application_true: '是',
   application_false: '否',
   application_create: '创建客户端',
+  application_edit: '编辑客户端',
   //api 监控
   api_monitor_total_totalCount: 'API总数',
   api_monitor_total_warningApiCount: 'API访问总数',
@@ -257,8 +258,9 @@ export default {
   api_monitor_detail_Monitoring_conditions: '监控条件',
   // api服务器
   api_server_user: '用户',
-  api_server_create: '新建服务端',
+  api_server_create: '创建服务器',
   api_server_create_server: '创建服务器',
+  api_server_edit: '编辑服务器',
   api_server_process_id: 'API 服务器唯一标识',
   api_server_client_name: ' API 服务器名称',
   api_server_client_uri: 'API 服务器访问地址',
@@ -651,7 +653,7 @@ export default {
   user_status_notVerified: '未验证',
   user_status_notActivated: '未激活',
   user_status_activated: '已激活',
-  user_status_rejected: '已拒绝',
+  user_status_rejected: '已冻结',
   user_form_role: '关联角色',
   user_form_email: '邮箱',
   user_form_email_must_valid: '请输入有效邮箱地址',
@@ -2057,4 +2059,5 @@ export default {
   api_monitor_server_recent_1_month: '最近1个月',
   api_monitor_memory: '内存',
   api_monitor_server_ping_warning: '服务器响应已 {val} 未更新',
+  cluster_operation_success: '操作指令已发送，请稍后刷新查看结果',
 }

@@ -525,6 +525,10 @@
   border-left: 0 !important;
 }
 
+.border-gray-200 {
+  border-color: oklch(92.8% 0.006 264.531) !important;
+}
+
 .border-primary {
   border-color: var(--el-color-primary) !important;
 }
@@ -605,6 +609,10 @@
   width: 1rem !important;
 }
 
+.w-5 {
+  width: 1.25rem !important;
+}
+
 .w-25 {
   width: 25% !important;
 }
@@ -663,6 +671,10 @@
 
 .h-4 {
   height: 1rem !important;
+}
+
+.h-5 {
+  height: 1.25rem !important;
 }
 
 .h-5 {
@@ -12560,11 +12572,6 @@
   color: var(--icon-n2) !important;
 }
 
-// TODO: 将来使用Tailwind CSS 或者 Windi CSS 替换
-.border-gray-200 {
-  border-color: rgb(243, 243, 243) !important;
-}
-
 .bg-secondary-100 {
   background-color: #f1f2f4;
 }
@@ -12725,6 +12732,10 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .col-start-1 {
   grid-column-start: 1;
 }
@@ -12761,4 +12772,13 @@
 
 .border-dashed {
   border-style: dashed;
+}
+
+.text-gray-600 {
+  color: oklch(44.6% 0.03 256.802);
+}
+
+.text-xs {
+  font-size: 0.75rem;
+  line-height: calc(1 / 0.75);
 }

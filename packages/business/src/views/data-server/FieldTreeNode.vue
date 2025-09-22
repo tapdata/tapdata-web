@@ -55,8 +55,8 @@ const handleRemoveEncryption = (i: number) => {
       <TextEditable
         v-model:value="data.label"
         hidden-icon
-        :max-width="300"
         :min-width="4"
+        :maxlength="48"
         @click.stop
         @update:value="handleChangeAlias"
         @change="handleChange"

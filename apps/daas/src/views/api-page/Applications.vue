@@ -318,7 +318,7 @@ export default {
       v-model="createDialogVisible"
       width="600px"
       class="create-dialog"
-      :title="$t('application_create')"
+      :title="createForm.id ? $t('application_edit') : $t('application_create')"
       :close-on-click-modal="false"
     >
       <ElForm
