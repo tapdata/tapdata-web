@@ -574,4 +574,7 @@ export default {
   public_set_new_password: '设置新密码',
   public_set_user_group: '设置用户组',
   public_unencrypted: '未加密',
+  public_connectionName: '连接名称',
+  public_warningTime: '告警时间',
+  public_warningLog: '告警日志',
 }

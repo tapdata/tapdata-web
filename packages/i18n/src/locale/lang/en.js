@@ -583,4 +583,7 @@ export default {
   public_set_new_password: 'Set New Password',
   public_set_user_group: 'Set User Group',
   public_unencrypted: 'Unencrypted',
+  public_connectionName: 'Connection Name',
+  public_warningTime: 'Warning Time',
+  public_warningLog: 'Warning Log',
 }

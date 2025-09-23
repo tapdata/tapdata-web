@@ -31,7 +31,7 @@ interface AlarmRule {
   open: boolean
   notify: string[]
   interval: number
-  unit: string,
+  unit: string
   type: string
 }
 
@@ -167,27 +167,66 @@ const keyMapping = reactive({
   ),
   TASK_INSPECT_DIFFERENCE: t('packages_dag_task_inspect_difference_alarm'),
   TASK_RETRY_WARN: t('packages_dag_task_retry_alert'),
-  API_SERVER_WORKER_DELAY_P50_WARN: t('packages_business_setting_alarmnotification_api_server_worker_delay_p50_warn'),
-  API_SERVER_WORKER_DELAY_P95_WARN: t('packages_business_setting_alarmnotification_api_server_worker_delay_p95_warn'),
-  API_SERVER_WORKER_DELAY_P99_WARN: t('packages_business_setting_alarmnotification_api_server_worker_delay_p99_warn'),
-  API_SERVER_WORKER_ERROR_RATE_WARN: t('packages_business_setting_alarmnotification_api_server_worker_error_rate_warn'),
-  API_SERVER_WORKER_ERROR_RATE_ALTER: t('packages_business_setting_alarmnotification_api_server_worker_error_rate_alter'),
-  API_SERVER_API_DELAY_AVG_WARN: t('packages_business_setting_alarmnotification_api_server_api_delay_avg_warn'),
-  API_SERVER_API_DELAY_P95_ALTER: t('packages_business_setting_alarmnotification_api_server_api_delay_p95_alter'),
-  API_SERVER_API_DELAY_P99_ALTER: t('packages_business_setting_alarmnotification_api_server_api_delay_p99_alter'),
-  API_SERVER_API_ERROR_RATE_ALTER: t('packages_business_setting_alarmnotification_api_server_api_error_rate_alter'),
-  API_SERVER_ALL_API_ERROR_RATE_ALTER: t('packages_business_setting_alarmnotification_api_server_all_api_error_rate_alter'),
-  API_SERVER_API_RESPONSE_SIZE_ALTER: t('packages_business_setting_alarmnotification_api_server_api_response_size_alter'),
-  API_SERVER_CPU_USAGE_WARN: t('packages_business_setting_alarmnotification_api_server_cpu_usage_warn'),
-  API_SERVER_CPU_USAGE_ALTER: t('packages_business_setting_alarmnotification_api_server_cpu_usage_alter'),
-  API_SERVER_MEMORY_USAGE_WARN: t('packages_business_setting_alarmnotification_api_server_memory_usage_warn'),
-  API_SERVER_MEMORY_USAGE_ALTER: t('packages_business_setting_alarmnotification_api_server_memory_usage_alter'),
-  API_SERVER_WORKER_CPU_USAGE_WARN: t('packages_business_setting_alarmnotification_api_server_worker_cpu_usage_warn'),
-  API_SERVER_WORKER_CPU_USAGE_ALTER: t('packages_business_setting_alarmnotification_api_server_worker_cpu_usage_alter'),
-  API_SERVER_WORKER_MEMORY_USAGE_WARN: t('packages_business_setting_alarmnotification_api_server_worker_memory_usage_warn'),
-  API_SERVER_WORKER_MEMORY_USAGE_ALTER: t('packages_business_setting_alarmnotification_api_server_worker_memory_usage_alter'),
+  API_SERVER_WORKER_DELAY_P50_WARN: t(
+    'packages_business_setting_alarmnotification_api_server_worker_delay_p50_warn',
+  ),
+  API_SERVER_WORKER_DELAY_P95_WARN: t(
+    'packages_business_setting_alarmnotification_api_server_worker_delay_p95_warn',
+  ),
+  API_SERVER_WORKER_DELAY_P99_WARN: t(
+    'packages_business_setting_alarmnotification_api_server_worker_delay_p99_warn',
+  ),
+  API_SERVER_WORKER_ERROR_RATE_WARN: t(
+    'packages_business_setting_alarmnotification_api_server_worker_error_rate_warn',
+  ),
+  API_SERVER_WORKER_ERROR_RATE_ALTER: t(
+    'packages_business_setting_alarmnotification_api_server_worker_error_rate_alter',
+  ),
+  API_SERVER_API_DELAY_AVG_WARN: t(
+    'packages_business_setting_alarmnotification_api_server_api_delay_avg_warn',
+  ),
+  API_SERVER_API_DELAY_P95_ALTER: t(
+    'packages_business_setting_alarmnotification_api_server_api_delay_p95_alter',
+  ),
+  API_SERVER_API_DELAY_P99_ALTER: t(
+    'packages_business_setting_alarmnotification_api_server_api_delay_p99_alter',
+  ),
+  API_SERVER_API_ERROR_RATE_ALTER: t(
+    'packages_business_setting_alarmnotification_api_server_api_error_rate_alter',
+  ),
+  API_SERVER_ALL_API_ERROR_RATE_ALTER: t(
+    'packages_business_setting_alarmnotification_api_server_all_api_error_rate_alter',
+  ),
+  API_SERVER_API_RESPONSE_SIZE_ALTER: t(
+    'packages_business_setting_alarmnotification_api_server_api_response_size_alter',
+  ),
+  API_SERVER_CPU_USAGE_WARN: t(
+    'packages_business_setting_alarmnotification_api_server_cpu_usage_warn',
+  ),
+  API_SERVER_CPU_USAGE_ALTER: t(
+    'packages_business_setting_alarmnotification_api_server_cpu_usage_alter',
+  ),
+  API_SERVER_MEMORY_USAGE_WARN: t(
+    'packages_business_setting_alarmnotification_api_server_memory_usage_warn',
+  ),
+  API_SERVER_MEMORY_USAGE_ALTER: t(
+    'packages_business_setting_alarmnotification_api_server_memory_usage_alter',
+  ),
+  API_SERVER_WORKER_CPU_USAGE_WARN: t(
+    'packages_business_setting_alarmnotification_api_server_worker_cpu_usage_warn',
+  ),
+  API_SERVER_WORKER_CPU_USAGE_ALTER: t(
+    'packages_business_setting_alarmnotification_api_server_worker_cpu_usage_alter',
+  ),
+  API_SERVER_WORKER_MEMORY_USAGE_WARN: t(
+    'packages_business_setting_alarmnotification_api_server_worker_memory_usage_warn',
+  ),
+  API_SERVER_WORKER_MEMORY_USAGE_ALTER: t(
+    'packages_business_setting_alarmnotification_api_server_worker_memory_usage_alter',
+  ),
+  DATASOURCE_MONITOR_ALTER: t('packages_business_datasource_monitor_alter'),
 })
-const variables = ref([]);
+const variables = ref([])
 
 const alarmRulesColumns = ref([
   {
@@ -269,7 +308,7 @@ const remoteMethod = async (type?: string) => {
     tableData.value = tableData.value.filter(
       (item: AlarmRule) => item.key !== 'SYSTEM_FLOW_EGINGE_DOWN',
     )
-    initVariables();
+    initVariables()
   } catch (error) {
     console.error('Failed to load alarm settings:', error)
   }
@@ -296,7 +335,7 @@ const showAlarmRlues = () => {
 }
 
 const showAlarmRecipient = () => {
-  initVariables();
+  initVariables()
   alarmRecipientVisible.value = true
   loadAlarmRecipient()
 }
@@ -310,19 +349,19 @@ const getAlarmData = async () => {
       item.ms = getSecond(item.ms)
       return item
     })
-    initVariables();
+    initVariables()
   } catch (error) {
     console.error('Failed to load alarm rules:', error)
   }
 }
 
 const initVariables = () => {
-  let mapping = {};
+  const mapping = {}
   tableData.value.forEach((item: AlarmRule) => {
     mapping[item.key] = item.variables
   })
-  variables.value = mapping;
-  console.log('aaa variables: ' + JSON.stringify(variables.value))
+  variables.value = mapping
+  console.log(`aaa variables: ${JSON.stringify(variables.value)}`)
 }
 
 const loadAlarmRecipient = async () => {
@@ -707,7 +746,7 @@ onMounted(async () => {
             </i18n-t>
             <template v-else>
               <el-input-number
-                  v-if="scope.row.key !== 'API_SERVER_API_RESPONSE_SIZE_ALTER'"
+                v-if="scope.row.key !== 'API_SERVER_API_RESPONSE_SIZE_ALTER'"
                 v-model="scope.row.point"
                 :controls="false"
                 :precision="0"
@@ -715,7 +754,12 @@ onMounted(async () => {
                 :max="30"
                 style="width: 100px"
               />
-              <span class="ml-2 mr-2" v-if="scope.row.key !== 'API_SERVER_API_RESPONSE_SIZE_ALTER'"> {{ $t('public_time_m') }}</span>
+              <span
+                v-if="scope.row.key !== 'API_SERVER_API_RESPONSE_SIZE_ALTER'"
+                class="ml-2 mr-2"
+              >
+                {{ $t('public_time_m') }}</span
+              >
               <el-select
                 v-model="scope.row.equalsFlag"
                 style="width: 100px"
@@ -725,7 +769,7 @@ onMounted(async () => {
                 <el-option label="<=" :value="-1" />
               </el-select>
               <el-input-number
-                  v-if="scope.row.value"
+                v-if="scope.row.value"
                 v-model="scope.row.value"
                 :controls="false"
                 :precision="0"
@@ -733,7 +777,7 @@ onMounted(async () => {
                 style="width: 80px"
               />
               <el-input-number
-                  v-else
+                v-else
                 v-model="scope.row.ms"
                 :controls="false"
                 :precision="0"
@@ -741,7 +785,8 @@ onMounted(async () => {
                 style="width: 80px"
               />
               <span class="ml-2">{{
-                  (scope.row.unit || 's') + $t('packages_business_setting_alarmnotification_msshigaojing')
+                (scope.row.unit || 's') +
+                $t('packages_business_setting_alarmnotification_msshigaojing')
               }}</span>
             </template>
           </template>
