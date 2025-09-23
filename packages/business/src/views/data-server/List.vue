@@ -22,7 +22,8 @@ import {
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 
-import { escapeRegExp } from 'lodash-es'
+import { uid } from '@tap/shared'
+import {cloneDeep, escapeRegExp} from 'lodash-es'
 import {
   computed,
   nextTick,
@@ -362,8 +363,17 @@ const output = (row: any) => {
   )
 }
 
-const showDrawer = (item?: any) => {
-  drawer.value?.open(item)
+const showDrawer = (item?: any, copy?: boolean) => {
+  if (copy) {
+    let newPath = uid(11, 'a');
+    drawer.value?.open(Object.assign(cloneDeep(item || {}), {
+      id: null,
+      name: item.name + '_copy_' + newPath,
+      basePath: newPath
+    }), true)
+  } else {
+    drawer.value?.open(item)
+  }
 }
 
 const fetch = (...args: any[]) => {
@@ -808,6 +818,12 @@ defineExpose({
               $t('public_button_export')
             }}</ElButton>
             <ElDivider class="mx-1" direction="vertical" />
+            <ElButton
+                text
+                type="primary"
+                @click="showDrawer(row, true)"
+            >{{ $t('public_button_copy') }}</ElButton
+            >
             <ElButton text type="primary" @click="removeServer(row)">{{
               $t('public_button_delete')
             }}</ElButton>
