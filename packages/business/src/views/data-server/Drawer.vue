@@ -719,7 +719,7 @@ const getEncryptions = async () => {
 }
 
 // Methods
-const open = (formData?: any) => {
+const open = (formData?: any, copy?: boolean) => {
   tab.value = 'form'
   visible.value = true
   isEdit.value = false
@@ -740,12 +740,14 @@ const open = (formData?: any) => {
 
     const { connectionId, tableName } = formData
 
-    if (connectionId && tableName) {
+    if (copy) {
+      allFields.value = formData?.fields || []
+    } else if (connectionId && tableName) {
       getFields()
     }
 
     if (!formData.id) {
-      edit()
+      edit(copy)
     }
   }
 
@@ -919,10 +921,10 @@ const save = async (type?: boolean) => {
   }
 }
 
-const edit = () => {
+const edit = (copy?: boolean) => {
   form.value.status = 'pending'
 
-  if (form.value.id) {
+  if (form.value.id || copy) {
     const checkedFields = form.value.fields || []
     const fieldsMap = checkedFields.reduce((acc: any, it: any) => {
       if (it.field_alias || it.textEncryptionRuleIds?.length) {
