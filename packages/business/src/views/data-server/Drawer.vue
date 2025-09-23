@@ -1108,12 +1108,14 @@ const debugData = async () => {
         break
       case 'POST':
         Object.keys(params).forEach((key) => {
-          filterInfo[key] = parseValue(key, params[key])
+          if (params[key] !== undefined && null != params[key]) {
+            filterInfo[key] = parseValue(key, params[key])
+          }
         })
         //@ts-ignore
-        filterInfo.limit = params?.limit || 20
+        filterInfo.limit = Number(params?.limit || 20)
         //@ts-ignore
-        filterInfo.page = params?.page || 1
+        filterInfo.page = Number(params?.page || 1)
         //@ts-ignore
         queryBody.body = filterInfo
         //@ts-ignore
