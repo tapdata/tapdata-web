@@ -205,8 +205,9 @@
 
 // Tooltip
 .el-popper.el-popper[role='tooltip']:not(.el-popover):not(.el-select__popper) {
-  max-width: 400px;
   --el-popper-border-radius: var(--el-border-radius-base);
+  max-width: 400px;
+  word-break: break-word;
 }
 
 // Select
@@ -718,8 +719,16 @@
 
 //.el-picker-panel
 .el-picker-panel.el-picker-panel {
-  overflow: hidden;
+  // overflow: hidden;
   border-radius: var(--el-popper-border-radius);
+  .el-picker-panel__footer {
+    border-bottom-left-radius: var(--el-popper-border-radius);
+    border-bottom-right-radius: var(--el-popper-border-radius);
+  }
+
+  .el-time-panel {
+    border-radius: var(--el-popper-border-radius);
+  }
 }
 
 // Input

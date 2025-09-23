@@ -983,4 +983,16 @@ export default {
   packages_dag_compare_result_auto_process: '自動處理差異',
   packages_dag_compare_result_display_field: '顯示字段',
   packages_dag_compare_result_database_field: '資料庫字段',
+
+  //Api server
+  public_api_name: 'API名稱',
+  public_api_server_name: 'API服務名稱',
+  public_api_worker_name: 'API服務工作行程',
+  public_api_threshold: '閾值',
+  public_api_threshold_unit: '單位',
+  public_api_threshold_equalsFlag: '對比符號',
+  public_api_minute: '持續時間',
+  public_api_alarmDate: '告警時間',
+  packages_dag_drop_table_enabled_confirm:
+    '您已選擇清空目標表數據，是否確認繼續？',
 }

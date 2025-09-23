@@ -22,23 +22,26 @@ import Drawer from '@tap/component/src/Drawer.vue'
 import { EditOutlined } from '@tap/component/src/icon'
 import { Modal } from '@tap/component/src/modal'
 import InfiniteSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
-
 import { useI18n } from '@tap/i18n'
+
 import { uid } from '@tap/shared'
-import axios from 'axios'
 import { cloneDeep, isEmpty, isEqual, merge } from 'lodash-es'
 import {
   computed,
   inject,
   nextTick,
   onMounted,
+  provide,
   ref,
+  useTemplateRef,
   watch,
   type Component,
 } from 'vue'
 import { DatabaseIcon } from '../../components/DatabaseIcon'
 import MqlHelpDialog from '../../components/MqlHelpDialog.vue'
 import ListSelect from '../api-application/ListSelect.vue'
+import FieldsTree from './FieldsTree.vue'
+import FieldsTreePreview from './FieldsTreePreview.vue'
 import MqlEditor from './MqlEditor.vue'
 import getTemplate from './template'
 
@@ -108,8 +111,17 @@ const { t } = useI18n()
 
 // Constants
 const isHa = import.meta.env.MODE === 'ha'
-const typeOptions = ['number', 'string', 'boolean', 'date', 'datetime', 'time']
-const operatorOptions = ['>', '==', '<', '>=', '<=', '!=', 'like']
+const baseType = [
+  {value: 'number', label: 'number'},
+  {value: 'string', label: 'string'},
+  {value: 'boolean', label: 'boolean'},
+  {value: 'date', label: 'date'},
+  {value: 'datetime', label: 'datetime'},
+  {value: 'time', label: 'time'},
+]
+const typeOptions = [... baseType, {value: 'array', label: 'array', children: baseType }];
+
+const operatorOptions = ['>', '==', '<', '>=', '<=', '!=', 'like', 'in']
 const conditionOptions = ['and', 'or']
 const apiTypeMap = {
   defaultApi: t('packages_business_data_server_drawer_morenchaxun'),
@@ -160,14 +172,14 @@ const getDefaultParams = (apiType: string) => {
       type: 'number',
       defaultvalue: '1',
       description: t('packages_business_data_server_drawer_fenyebianhao'),
-      required: true,
+      required: false,
     },
     {
       name: 'limit',
       type: 'number',
       defaultvalue: '20',
       description: t('packages_business_data_server_drawer_meigefenyefan'),
-      required: true,
+      required: false,
     },
   ]
   if (apiType === 'defaultApi') {
@@ -216,7 +228,7 @@ const encryptions = ref<any[]>([])
 const visible = ref(false)
 const loading = ref(false)
 const data = ref<any>({})
-let initialFormData = {}
+let initialFormData: Record<string, any> = {}
 const tab = ref('form')
 const isEdit = ref(false)
 const debugParams = ref<any>(null)
@@ -228,7 +240,7 @@ const token = ref<Record<string, any>>({})
 const roles = ref([])
 const workerStatus = ref('')
 const intervalId = ref(0)
-const allFields = ref([])
+const allFields = ref<any[]>([])
 const tempFields = ref<Field[]>([])
 const fieldLoading = ref(false)
 const databaseTypes = ref<any[] | null>(null)
@@ -237,16 +249,13 @@ const mqlEditor = ref<any>(null)
 const containerRef = ref<HTMLElement | null>(null)
 const paramsTableRef = ref<InstanceType<typeof ElTable>>()
 const parameterSelectRef = ref<InstanceType<typeof ElSelect>[]>([])
-// 树数据和选中状态
-const treeData = computed(() =>
-  buildTree(isEdit.value ? allFields.value : form.value.fields || []),
-)
-const selectedIds = ref(new Set())
+const fieldsTreeRef =
+  useTemplateRef<InstanceType<typeof FieldsTree>>('fieldsTreeRef')
+const selectedFieldSize = ref(0)
 const helpVisible = ref(false)
 
 // Template refs
 const form_ref = ref()
-const fieldTable = ref()
 const tabs = ref()
 
 // Regex validation patterns
@@ -425,6 +434,13 @@ const urlsMap = computed(() => {
   }, {})
 })
 
+const encryptionsMap = computed(() => {
+  return encryptions.value!.reduce((acc: Record<string, string>, item) => {
+    acc[item.id!] = item.name
+    return acc
+  }, {})
+})
+
 const genFormData = (formData: any = {}): Record<string, any> => {
   const apiType =
     formData.apiType === 'customerApi'
@@ -432,7 +448,15 @@ const genFormData = (formData: any = {}): Record<string, any> => {
       : formData.apiType || 'defaultApi'
   const pathConfig = formData?.paths?.[0] || {}
   const params =
-    pathConfig.params?.filter((t: any) => t.name !== 'sort') ||
+    pathConfig.params?.filter((t: any) => t.name !== 'sort').map((t: any) => {
+      return {
+        name: t.name,
+        type: t.type.split(': '),
+        defaultvalue: t.defaultvalue,
+        description: t.description,
+        required: t.required,
+      }
+    }) ||
     getDefaultParams(formData.apiType)
 
   const {
@@ -652,6 +676,7 @@ const getTableOptions = async (filter: any) => {
 }
 
 const getFields = async () => {
+  selectedFieldSize.value = 0
   fieldLoading.value = true
   const filter = {
     where: {
@@ -667,20 +692,11 @@ const getFields = async () => {
       filter: JSON.stringify(filter),
     })
 
-    allFields.value =
-      data.items?.[0]?.fields?.map((it: any) => ({
-        ...it,
-        id: it.id,
-        field_name: it.field_name,
-        field_alias: it.field_alias,
-        originalDataType: it.data_type,
-        comment: it.comment,
-      })) || []
+    allFields.value = data.items?.[0]?.fields || []
 
-    if (!form.value.id) {
-      form.value.fields = cloneDeep(allFields.value)
+    if (!form.value.id || !form.value.fields?.length) {
       nextTick(() => {
-        fieldTable.value?.toggleAllSelection()
+        fieldsTreeRef.value?.selectAll()
       })
     }
   } finally {
@@ -703,7 +719,7 @@ const getEncryptions = async () => {
 }
 
 // Methods
-const open = (formData?: any) => {
+const open = (formData?: any, copy?: boolean) => {
   tab.value = 'form'
   visible.value = true
   isEdit.value = false
@@ -724,12 +740,14 @@ const open = (formData?: any) => {
 
     const { connectionId, tableName } = formData
 
-    if (connectionId && tableName) {
+    if (copy) {
+      allFields.value = formData?.fields || []
+    } else if (connectionId && tableName) {
       getFields()
     }
 
     if (!formData.id) {
-      edit()
+      edit(copy)
     }
   }
 
@@ -743,7 +761,7 @@ const open = (formData?: any) => {
 
 const save = async (type?: boolean) => {
   const valid = await form_ref.value?.validate()
-  emitSelectedFields()
+
   if (valid) {
     const {
       id,
@@ -781,15 +799,29 @@ const save = async (type?: boolean) => {
       }
     }
 
-    const params = form.value?.params?.filter((t: any) => t.name)
+    const params = form.value?.params?.filter((t: any) => t.name).map((t: any) => {
+      return {
+        name: t.name,
+        type: Array.isArray(t.type) ? t.type.join(': ') : t.type,
+        defaultvalue: t.defaultvalue,
+        description: t.description,
+        required: t.required,
+      }
+    })
     const sort = form.value?.sort?.filter((t: any) => t.fieldName)
     const where = form.value?.where?.filter(
       (t: any) => t.fieldName && t.parameter,
     )
-    const fields = form.value.fields.filter((f: any) => !!f)
+    const fields = fieldsTreeRef.value?.getCheckedFields(true)
 
     if (params.some((it: any) => !it.name.trim())) {
       ElMessage.error(t('packages_business_data_server_drawer_qingshurucanshu'))
+      return
+    }
+
+    if (!fields?.length) {
+      ElMessage.error(t('packages_business_please_select_field'))
+      fieldsTreeRef.value?.$el.scrollIntoView({ behavior: 'smooth' })
       return
     }
 
@@ -889,44 +921,45 @@ const save = async (type?: boolean) => {
   }
 }
 
-const edit = () => {
+const edit = (copy?: boolean) => {
   form.value.status = 'pending'
+
+  if (form.value.id || copy) {
+    const checkedFields = form.value.fields || []
+    const fieldsMap = checkedFields.reduce((acc: any, it: any) => {
+      if (it.field_alias || it.textEncryptionRuleIds?.length) {
+        acc[it.field_name] = {
+          field_alias: it.field_alias,
+          textEncryptionRuleIds: it.textEncryptionRuleIds,
+        }
+      }
+      return acc
+    }, {})
+    allFields.value = allFields.value.map((f: any) => {
+      if (fieldsMap[f.field_name]) {
+        f.field_alias = fieldsMap[f.field_name].field_alias
+        f.textEncryptionRuleIds = fieldsMap[f.field_name].textEncryptionRuleIds
+      } else {
+        f.field_alias = ''
+      }
+      return f
+    })
+
+    setTimeout(() => {
+      nextTick(() => {
+        fieldsTreeRef.value?.setCheckedFields(checkedFields)
+      })
+    }, 0)
+  }
+
   isEdit.value = true
   initialFormData = cloneDeep(form.value)
-
-  nextTick(() => {
-    const findFieldRecursive = (
-      nodes: any[],
-      fieldName: string,
-    ): any | null => {
-      for (const node of nodes) {
-        if (node.id === fieldName) {
-          return node
-        }
-        if (node.children && node.children.length) {
-          const found = findFieldRecursive(node.children, fieldName)
-          if (found) return found
-        }
-      }
-      return null
-    }
-
-    form.value.fields?.forEach((f: any) => {
-      const field = findFieldRecursive(treeData.value, f.field_name)
-      if (field) {
-        field.field_alias = f.field_alias || ''
-        field.textEncryptionRuleIds = f.textEncryptionRuleIds || []
-        fieldTable.value?.toggleRowSelection(field, true)
-      } else {
-        console.log('field not found', f.field_name, f)
-      }
-    })
-  })
 }
 
 const handleCancel = () => {
   isEdit.value = false
   form.value = initialFormData
+  getFields()
 }
 
 // Watch effects
@@ -1057,7 +1090,9 @@ const debugData = async () => {
       case 'GET':
         let paramsStr = ''
         Object.keys(params).forEach((key) => {
-          paramsStr = `${paramsStr}&${key}=${encodeURIComponent(params[key])}`
+          if (params[key] != undefined && null !== params[key] && '' !== ('' + params[key])) {
+            paramsStr = `${paramsStr}&${key}=${encodeURIComponent(params[key])}`
+          }
         })
         //@ts-ignore
         queryBody.url = `${url}${paramsStr}`
@@ -1065,12 +1100,14 @@ const debugData = async () => {
         break
       case 'POST':
         Object.keys(params).forEach((key) => {
-          filterInfo[key] = parseValue(key, params[key])
+          if (params[key] !== undefined && null != params[key]) {
+            filterInfo[key] = parseValue(key, params[key])
+          }
         })
         //@ts-ignore
-        filterInfo.limit = params?.limit || 20
+        filterInfo.limit = Number(params?.limit || 20)
         //@ts-ignore
-        filterInfo.page = params?.page || 1
+        filterInfo.page = Number(params?.page || 1)
         //@ts-ignore
         queryBody.body = filterInfo
         //@ts-ignore
@@ -1094,25 +1131,46 @@ const debugData = async () => {
   }
 }
 
-const parseValue = (key, value, defaultVal) => {
-  let type = '';
-  for (let i = 0; i < form.value.params.length; i++) {
-    const item = form.value.params[i]
+const getParamType = (key) => {
+  for (const element of form.value.params) {
+    const item = element
     if (item.name === key) {
-      type = item.type
-      break;
+      if (Array.isArray(item.type)) {
+        return  item.type.join(': ')
+      } else {
+        return  item.type
+      }
     }
   }
+  return 'string';
+}
+
+const parseValue = (key, value, defaultVal) => {
+  if (value === undefined || null == value || '' === (''+ value)) {
+    return defaultVal || null;
+  }
+  let type = getParamType(key);
   if (!type) {
     return defaultVal
+  }
+  if (type.indexOf('array') !== -1) {
+    try {
+      return JSON.parse(value)
+    } catch (e) {
+      return value
+    }
   }
   switch (type) {
     case 'number':
       return Number(value || defaultVal)
     case 'boolean':
-      return value != undefined && null != value && (value === 'true' || value === true || value === '1' || value === 1)
+      return (
+        value != undefined &&
+        null != value &&
+        (value === 'true' || value === true || value === '1' || value === 1)
+      )
     default:
-      return value || defaultVal;
+      return value || defaultVal
   }
 }
 
@@ -1157,54 +1215,6 @@ defineExpose({
   edit,
 })
 
-// Add event handlers
-const handleChangePermissionsAndSave = async () => {
-  if (isEdit.value) return
-  const valid = await form_ref.value?.validate()
-  if (!valid) return
-
-  const {
-    id,
-    apiType,
-    params,
-    where,
-    sort,
-    fields,
-    method,
-    path,
-    acl,
-    appLabel,
-    appValue,
-  } = form.value
-
-  const formData = {
-    id,
-    listtags: [
-      {
-        id: appValue,
-        value: appLabel,
-      },
-    ],
-    paths: [
-      {
-        name: apiType === 'customerQuery' ? 'customerQuery' : 'findPage',
-        result: 'Page<Document>',
-        type: apiType === 'customerQuery' ? 'customerQuery' : 'preset',
-        acl,
-        method,
-        params,
-        where,
-        sort,
-        fields,
-        path,
-      },
-    ],
-  }
-
-  await updateApiModule(formData)
-  ElMessage.success(t('public_message_operation_success'))
-}
-
 const handleUpdateRole = async () => {
   if (!form.value.id) return
 
@@ -1234,7 +1244,6 @@ const handleUpdateApp = async () => {
   ElMessage.success(t('public_message_operation_success'))
 }
 
-// Add after the watch effects
 onMounted(() => {
   getRoles()
 })
@@ -1280,11 +1289,15 @@ const getAllFields = async () => {
 
 const handleBeforeClose = async (done: () => void) => {
   if (isEdit.value) {
-    const hasChanges = Object.keys(form.value).some((key) => {
+    const formValue = {
+      ...form.value,
+      fields: fieldsTreeRef.value?.getCheckedFields(true),
+    }
+    const hasChanges = Object.keys(formValue).some((key) => {
       if (['status', 'path'].includes(key)) {
         return false
       }
-      return !isEqual(initialFormData[key], form.value[key])
+      return !isEqual(initialFormData[key], formValue[key])
     })
 
     if (hasChanges) {
@@ -1293,6 +1306,7 @@ const handleBeforeClose = async (done: () => void) => {
       isConfirm && done()
     } else {
       done()
+      isEdit.value = false
     }
   } else {
     done()
@@ -1360,123 +1374,6 @@ function onFieldSelected(field: Field) {
     .filter((f) => f.field_name !== field.field_name)
 }
 
-// 递归构建树结构
-function buildTree(data: Array<Record<string, any>>) {
-  const root: Array<Record<string, any>> = []
-  const map: Record<string, any> = {}
-  let parent: Record<string, any> = {}
-  data.forEach((item) => {
-    const parts = item.field_name.split('.')
-    let current = root
-    parts.forEach((part: string, index: number) => {
-      const path = parts.slice(0, index + 1).join('.')
-      let node = map[path]
-      const parentField = data.find((it: any) => it.field_name === path) as any
-      if (!node) {
-        node = {
-          id: path,
-          field_name: part,
-          fieldInfo: index === parts.length - 1 ? item : parentField || {},
-          field_alias:
-            index === parts.length - 1
-              ? item.field_alias
-              : parentField
-                ? parentField.field_alias
-                : '',
-          originalDataType:
-            index === parts.length - 1
-              ? item.originalDataType
-              : parentField
-                ? parentField.originalDataType
-                : 'OBJECT',
-          comment:
-            index === parts.length - 1
-              ? item.comment
-              : parentField
-                ? parentField.comment
-                : '',
-          textEncryptionRuleIds:
-            index === parts.length - 1
-              ? item.textEncryptionRuleIds
-              : parentField?.textEncryptionRuleIds,
-          children: [],
-          parent,
-          indeterminate: false,
-        }
-        map[path] = node
-        current.push(node)
-      }
-      parent = node
-      current = node.children
-    })
-  })
-  return root
-}
-function onSelectionChange(selection: Array<Record<string, any>>) {
-  selectedIds.value.clear()
-  selection.forEach((row) => {
-    selectedIds.value.add(row.id)
-  })
-  // 更新父节点 indeterminate
-  treeData.value.forEach((rootNode) => {
-    const walk = (node: Record<string, any>) => {
-      if (node.children?.length) {
-        const childrenSelected = node.children.filter(
-          (c: Record<string, any>) => selectedIds.value.has(c.id),
-        )
-        if (childrenSelected.length === node.children.length) {
-          selectedIds.value.add(node.id)
-          node.indeterminate = false
-        } else if (childrenSelected.length > 0) {
-          selectedIds.value.delete(node.id)
-          node.indeterminate = true
-        } else {
-          selectedIds.value.delete(node.id)
-          node.indeterminate = false
-        }
-        node.children.forEach(walk)
-      }
-    }
-    walk(rootNode)
-  })
-}
-
-function emitSelectedFields() {
-  const selectedFields: Array<Record<string, any>> = []
-  const walk = (nodes: Array<Record<string, any>>) => {
-    nodes.forEach((node: Record<string, any>) => {
-      if (hasChildren(node)) {
-        node.fieldInfo.field_alias = node.field_alias
-        node.fieldInfo.textEncryptionRuleIds = node.textEncryptionRuleIds
-        selectedFields.push(
-          node.fieldInfo || {
-            field_name: node.id,
-            field_alias: node.field_alias || '',
-            textEncryptionRuleIds: node.textEncryptionRuleIds || [],
-          },
-        )
-      }
-      if (node.children?.length) walk(node.children)
-    })
-  }
-  walk(treeData.value)
-  console.log(`selectedFields: ${JSON.stringify(selectedFields)}`)
-  form.value.fields = selectedFields
-  //emit('update:selectedFields', selectedFields)
-}
-
-function hasChildren(node) {
-  const walk = (node) => {
-    if (selectedIds.value.has(node.id)) return true
-    if (node.children) {
-      for (const child of node.children) {
-        if (walk(child)) return true
-      }
-    }
-  }
-  return walk(node)
-}
-
 function openHelp() {
   helpVisible.value = true
 }
@@ -1492,24 +1389,35 @@ const formatHander = {
 
 function handleAliasConversion(command: keyof typeof formatHander) {
   const format = formatHander[command]
-  const selectedFields = fieldTable.value.getSelectionRows()
+  const selectedFields = fieldsTreeRef.value?.getCheckedFields()
 
-  if (!selectedFields.length) return
+  if (!selectedFields?.length) return
 
   selectedFields.forEach((field: any) => {
-    const alias = format(field.field_name)
+    const alias = format(field.name)
 
-    field.field_alias = alias !== field.field_name ? alias : ''
+    field.field_alias = alias !== field.name ? alias : ''
+    field.label = alias
   })
 }
 
 function handleClearAlias() {
-  const selectedFields = fieldTable.value.getSelectionRows()
-  if (!selectedFields.length) return
+  const selectedFields = fieldsTreeRef.value?.getCheckedFields()
+
+  if (!selectedFields?.length) return
+
   selectedFields.forEach((field: any) => {
     field.field_alias = ''
+    field.label = field.name
   })
 }
+
+function onFieldsTreeCheck(keys: string[]) {
+  selectedFieldSize.value = keys.length
+}
+
+provide('encryptionsMap', encryptionsMap)
+provide('encryptions', encryptions)
 </script>
 
 <template>
@@ -1536,6 +1444,7 @@ function handleClearAlias() {
           :class="{
             invisible: !(tab === 'form' && form.status !== 'active' && !isEdit),
           }"
+          :disabled="fieldLoading"
           @click="edit"
         >
           <el-icon class="mr-1">
@@ -1584,7 +1493,7 @@ function handleClearAlias() {
       <ElForm
         ref="form_ref"
         hide-required-asterisk
-        class="data-server__form overflow-auto flex-1"
+        class="data-server__form flex-1"
         label-position="top"
         scroll-to-error
         :model="form"
@@ -1969,34 +1878,49 @@ function handleClearAlias() {
               <div v-else>{{ row.name }}</div>
             </template>
           </ElTableColumn>
-          <ElTableColumn :label="$t('public_type')" prop="type" min-width="80">
+          <ElTableColumn :label="$t('public_type')" prop="type" min-width="90">
             <template #default="{ row, $index }">
               <div
                 v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'"
               >
-                <ElSelect v-model="form.params[$index].type">
-                  <ElOption
-                    v-for="type in typeOptions"
-                    :key="type"
-                    :value="type"
-                    :label="type"
-                  />
-                </ElSelect>
+                <el-cascader v-model="form.params[$index].type" :options="typeOptions" separator=": "/>
               </div>
-              <div v-else>{{ row.type }}</div>
+              <div v-else>{{ Array.isArray(row.type) ? row.type.join(': ') : row.type }}</div>
             </template>
           </ElTableColumn>
           <ElTableColumn
             v-if="tab === 'form'"
             :label="$t('public_data_default')"
             prop="defaultvalue"
-            min-width="60"
+            min-width="100"
           >
             <template #default="{ row, $index }">
               <div v-if="isEdit && row.defaultvalue !== undefined">
                 <ElInput v-model="form.params[$index].defaultvalue" />
               </div>
               <div v-else>{{ row.defaultvalue }}</div>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn
+              :label="$t('packages_business_data_server_drawer_required')"
+              prop="required"
+              min-width="40"
+          >
+            <template #default="{ row, $index }">
+              <div
+                  v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'"
+              >
+                <ElFormItem
+                    :prop="`params.${$index}.required`"
+                    :error="!form.params[$index].required ? 'true' : ''"
+                    :show-message="false"
+                    :rules="rules.param"
+                    class="mb-0"
+                >
+                  <ElSwitch v-model="form.params[$index].required" />
+                </ElFormItem>
+              </div>
+              <div v-else>{{ row.required ? $t('packages_business_data_server_drawer_required_true') : $t('packages_business_data_server_drawer_required_false') }}</div>
             </template>
           </ElTableColumn>
           <ElTableColumn
@@ -2293,11 +2217,11 @@ function handleClearAlias() {
             <span>{{
               $t('packages_business_data_server_drawer_shuchujieguo')
             }}</span>
-            <el-tag v-if="isEdit && selectedIds.size" type="info" size="small">
-              {{ $t('public_selected_fields', { val: selectedIds.size }) }}
+            <el-tag v-if="isEdit && selectedFieldSize" type="info" size="small">
+              {{ $t('public_selected_fields', { val: selectedFieldSize }) }}
             </el-tag>
             <div class="flex-1" />
-            <template v-if="isEdit && selectedIds.size">
+            <template v-if="isEdit && selectedFieldSize">
               <el-dropdown placement="bottom" @command="handleAliasConversion">
                 <el-button text>
                   <el-icon class="mr-1"><i-lucide:wand-sparkles /></el-icon>
@@ -2335,94 +2259,15 @@ function handleClearAlias() {
             </template>
           </div>
 
-          <ElTable
-            ref="fieldTable"
-            v-model:selection="selectedIds"
-            :data="treeData"
-            :loading="fieldLoading"
-            row-key="id"
-            :tree-props="{ children: 'children' }"
-            class="custom-tree-table"
-            @selection-change="onSelectionChange"
-          >
-            <ElTableColumn
-              v-if="isEdit"
-              type="selection"
-              width="32"
-              align="center"
-              show-overflow-tooltip
-            />
-            <!-- 字段名 -->
-            <ElTableColumn
-              :label="$t('public_name')"
-              prop="field_name"
-              min-width="100"
-              show-overflow-tooltip
-            />
-            <!-- 字段别名 -->
-            <ElTableColumn
-              v-show-overflow-tooltip="!isEdit"
-              :label="$t('public_alias')"
-              prop="field_alias"
-              min-width="80"
-            >
-              <template #default="{ row }">
-                <ElTooltip
-                  v-if="!isEdit"
-                  :content="row.field_alias"
-                  effect="dark"
-                >
-                  <span>{{ row.field_alias }}</span>
-                </ElTooltip>
-                <ElInput
-                  v-else
-                  v-model="row.field_alias"
-                  style="
-                    width: 100%;
-                    text-overflow: ellipsis;
-                    overflow: hidden;
-                    white-space: nowrap;
-                  "
-                />
-              </template>
-            </ElTableColumn>
-            <ElTableColumn
-              :label="$t('public_data_encryption')"
-              min-width="100"
-            >
-              <template #default="{ row }">
-                <el-select-v2
-                  v-if="isEdit || row.textEncryptionRuleIds?.length"
-                  v-model="row.textEncryptionRuleIds"
-                  :placeholder="$t('public_select_encryption_rule')"
-                  :disabled="!isEdit"
-                  multiple
-                  :options="encryptions"
-                  :props="{
-                    label: 'name',
-                    value: 'id',
-                  }"
-                />
-              </template>
-            </ElTableColumn>
-            <!-- 类型 -->
-            <ElTableColumn
-              :label="$t('public_type')"
-              prop="originalDataType"
-              min-width="80"
-              show-overflow-tooltip
-            />
-            <!-- 描述 -->
-            <ElTableColumn
-              :label="$t('public_description')"
-              prop="comment"
-              min-width="50"
-              show-overflow-tooltip
-            />
-          </ElTable>
+          <FieldsTree
+            v-if="isEdit"
+            ref="fieldsTreeRef"
+            :fields="allFields"
+            @check="onFieldsTreeCheck"
+          />
+          <FieldsTreePreview v-else :fields="form.fields" />
         </template>
 
-        <!-- {{$t('packages_business_data_server_drawer_diaoyongfangshi')}} -->
         <template v-if="tab === 'debug'">
           <div class="data-server-panel__title mt-4 mb-3">
             {{ $t('packages_business_data_server_drawer_diaoyongfangshi') }}
@@ -2507,13 +2352,9 @@ function handleClearAlias() {
       <ElButton v-if="form.id" @click="handleCancel">{{
         $t('public_button_cancel')
       }}</ElButton>
-      <ElButton
-        :loading="loading"
-        :disabled="!selectedIds.size"
-        type="primary"
-        @click="save()"
-        >{{ $t('public_button_save') }}</ElButton
-      >
+      <ElButton :loading="loading" type="primary" @click="save()">{{
+        $t('public_button_save')
+      }}</ElButton>
     </template>
 
     <MqlHelpDialog v-model="helpVisible" />

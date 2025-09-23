@@ -539,6 +539,8 @@ export default {
     '表全字段值校驗會對源表和目標表的全部字段進行逐行校驗，能查出所有字段的差異，但是速度慢。此操作同時會對源和目標庫發起查詢，可能會對數據庫造成讀取壓力。',
   packages_business_verification_jointFieldTip:
     '關聯字段值校驗只對源表和目標表的關聯字段的值進行比對校驗，速度快於全表字段值校驗模式。此操作同時會對源和目標庫發起查詢，可能會對數據庫造成讀取壓力。',
+  packages_business_verification_hashVerifyTip:
+    '全表 hash 校驗會對源表和目標表逐行生成並比對 hash 值，可快速判斷是否存在差異，但無法展示具體字段內容。此操作可能對數據庫造成讀取壓力。',
   packages_business_verification_waiting: '待校驗',
   packages_business_verification_scheduling: '校驗啟動中',
   packages_business_verification_error: '校驗失敗',
@@ -672,8 +674,46 @@ export default {
   packages_business_setting_alarmnotification_dangrenwuyudao:
     '當任務遇到錯誤時',
   packages_business_setting_alarmnotification_dangrenwustop: 'Agent服務停止時',
+  packages_business_setting_alarmnotification_api_server_worker_delay_p50_warn:
+    '當APIServer工作行程每分鐘請求延時P50超過閾值時',
+  packages_business_setting_alarmnotification_api_server_worker_delay_p95_warn:
+    '當APIServer工作行程每分鐘請求延時P95超過閾值時',
+  packages_business_setting_alarmnotification_api_server_worker_delay_p99_warn:
+    '當APIServer工作行程每分鐘請求延時P99超過閾值時',
+  packages_business_setting_alarmnotification_api_server_worker_error_rate_warn:
+    '當APIServer工作行程每分鐘請求錯誤率超過告警閾值時',
+  packages_business_setting_alarmnotification_api_server_worker_error_rate_alter:
+    '當APIServer工作行程每分鐘請求錯誤率超過通知閾值時',
+  packages_business_setting_alarmnotification_api_server_api_delay_avg_warn:
+    '當任一API每分鐘請求的平均延時超過閾值時',
+  packages_business_setting_alarmnotification_api_server_api_delay_p95_alter:
+    '當任一API每分鐘請求延時P95超過閾值時',
+  packages_business_setting_alarmnotification_api_server_api_delay_p99_alter:
+    '當任一API每分鐘請求延時P99超過閾值時',
+  packages_business_setting_alarmnotification_api_server_api_error_rate_alter:
+    '當任一API每分鐘請求錯誤率超過閾值時',
+  packages_business_setting_alarmnotification_api_server_all_api_error_rate_alter:
+    '當所有API每分鐘請求錯誤率超過閾值時',
+  packages_business_setting_alarmnotification_api_server_api_response_size_alter:
+    '當任一API請求響應大小超過閾值時',
+  packages_business_setting_alarmnotification_api_server_cpu_usage_warn:
+    '當任一API Server CPU使用率超過告警閾值時',
+  packages_business_setting_alarmnotification_api_server_cpu_usage_alter:
+    '當任一API Server CPU使用率超過通知閾值時',
+  packages_business_setting_alarmnotification_api_server_memory_usage_warn:
+    '當任一API Server記憶體使用量超過告警閾值時',
+  packages_business_setting_alarmnotification_api_server_memory_usage_alter:
+    '當任一API Server記憶體使用量超過通知閾值時',
+  packages_business_setting_alarmnotification_api_server_worker_cpu_usage_warn:
+    '當任一API Server的工作行程CPU使用率超過告警閾值時',
+  packages_business_setting_alarmnotification_api_server_worker_cpu_usage_alter:
+    '當任一API Server的工作行程CPU使用率超過通知閾值時',
+  packages_business_setting_alarmnotification_api_server_worker_memory_usage_warn:
+    '當任一API Server的工作行程記憶體使用量超過告警閾值時',
+  packages_business_setting_alarmnotification_api_server_worker_memory_usage_alter:
+    '當任一API Server的工作行程記憶體使用量超過通知閾值時',
   packages_business_setting_alarmnotification_dangrenwuuP: 'Agent服务啓動時',
-  packages_business_setting_alarmnotification_msshigaojing: 's 時告警',
+  packages_business_setting_alarmnotification_msshigaojing: ' 時告警',
   packages_business_setting_alarmnotification_lianxu: '連續',
   packages_business_setting_alarmnotification_cichugaojinggui:
     '此處告警規則設置為系統全局告警規則設置，任務運行監控頁面的告警規則設置優先級高於系統全局設置',
@@ -866,6 +906,9 @@ export default {
   packages_business_data_server_drawer_shaixuantiaojian: '篩選條件',
   packages_business_data_server_drawer_canshuzhi: '參數值',
   packages_business_data_server_drawer_canshumingcheng: '參數名稱',
+  packages_business_data_server_drawer_required: '约束',
+  packages_business_data_server_drawer_required_true: '必填',
+  packages_business_data_server_drawer_required_false: '非必填',
   packages_business_data_server_drawer_shurucanshu: '請求參數',
   packages_business_data_server_drawer_jiekouleixing: '接口類型',
   packages_business_data_server_drawer_fabujiedian: '發布節點',
@@ -1480,4 +1523,5 @@ export default {
   packages_business_edit_task_info: '編輯任務信息',
   packages_business_monitor_cron: '監控周期',
   packages_business_monitor_cron_tip: `語法: 秒 * 分鐘 * 小時 * 日 * 月 * 星期 ? 年 *\n舉例：0 */1 * * * ? 每分鐘運行一次 0 0 2 * * ? 每天2點運行`,
+  packages_business_datasource_monitor_alter: '數據源監控告警',
 }

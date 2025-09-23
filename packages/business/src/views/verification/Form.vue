@@ -268,6 +268,7 @@ const typTipMap = ref({
   row_count: t('packages_business_verification_fastCountTip'),
   field: t('packages_business_verification_contentVerifyTip'),
   jointField: t('packages_business_verification_jointFieldTip'),
+  hash: t('packages_business_verification_hashVerifyTip'),
 })
 const jointErrorMessage = ref('')
 const errorMessageLevel = ref('')
@@ -1146,7 +1147,7 @@ provide('ConnectorMap', ConnectorMap)
                   $t('packages_business_verification_form_jiaoyankaishishi')
                 "
                 format="YYYY-MM-DD HH:mm:ss"
-                value-format="YYYY-MM-DD HH:mm:ss"
+                value-format="x"
               />
             </ElFormItem>
             <ElFormItem v-if="form.mode === 'manual'" class="setting-item">
@@ -1161,7 +1162,7 @@ provide('ConnectorMap', ConnectorMap)
                   $t('packages_business_verification_form_jiaoyanjieshushi')
                 "
                 format="YYYY-MM-DD HH:mm:ss"
-                value-format="YYYY-MM-DD HH:mm:ss"
+                value-format="x"
               />
             </ElFormItem>
           </template>

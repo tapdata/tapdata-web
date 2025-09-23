@@ -1,5 +1,5 @@
 import { Input as FormInput } from '@tap/form'
-import { createBehavior, createResource } from '../../../core'
+import { createBehavior, createResource, getBrowserLanguage } from '../../../core'
 import { createFieldSchema } from '../Field'
 import { AllSchemas } from '../../schemas'
 import { AllLocales } from '../../locales'
@@ -35,7 +35,7 @@ Input.Resource = createResource(
         componentName: 'Field',
         props: {
           type: 'string',
-          title: 'Input',
+          title: AllLocales.Input[getBrowserLanguage()]?.title || AllLocales.Input['en-US'].title,
           'x-decorator': 'FormItem',
           'x-component': 'Input',
         },
@@ -49,7 +49,7 @@ Input.Resource = createResource(
         componentName: 'Field',
         props: {
           type: 'string',
-          title: 'TextArea',
+          title: AllLocales.TextArea[getBrowserLanguage()]?.title || AllLocales.TextArea['en-US'].title,
           'x-decorator': 'FormItem',
           'x-component': 'Input.TextArea',
         },

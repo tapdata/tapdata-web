@@ -6,7 +6,14 @@ import { calcTimeUnit, calcUnit } from '@tap/shared'
 
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { computed, defineComponent, onMounted, ref, watch } from 'vue'
+import {
+  computed,
+  defineComponent,
+  onMounted,
+  ref,
+  useTemplateRef,
+  watch,
+} from 'vue'
 import DFNode from '../DFNode'
 import 'dayjs/locale/zh-cn'
 
@@ -63,8 +70,9 @@ export default defineComponent({
     },
   },
 
-  setup(props, { attrs, emit, refs }) {
+  setup(props, { attrs, emit }) {
     const dfNode = ref(null)
+    const popoverRef = useTemplateRef('popover')
     const completeTime = computed(() => {
       const totalData = props.quota.samples?.totalData?.[0] || {}
       const { snapshotInsertRowTotal, snapshotRowTotal } = props.sample
@@ -466,7 +474,7 @@ export default defineComponent({
           }}
           onDragStop={(...args) => {
             ifDragStart.value = false
-            refs.popover?.updatePopper?.() // 更新popover位置
+            popoverRef.value?.updatePopper?.() // 更新popover位置
             emit('drag-stop', ...args)
           }}
         >

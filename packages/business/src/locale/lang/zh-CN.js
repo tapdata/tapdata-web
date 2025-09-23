@@ -541,6 +541,8 @@ export default {
     '表全字段值校验会对源表和目标表的全部字段进行逐行校验，能查出所有字段的差异，但是速度慢。此操作同时会对源和目标库发起查询，可能会对数据库造成读取压力。',
   packages_business_verification_jointFieldTip:
     '关联字段值校验只对源表和目标表的关联字段的值进行比对校验，速度快于全表字段值校验模式。此操作同时会对源和目标库发起查询，可能会对数据库造成读取压力。',
+  packages_business_verification_hashVerifyTip:
+    '全表 hash 校验会对源表和目标表逐行生成并比对 hash 值，可快速判断是否存在差异，但无法展示具体字段内容。此操作可能对数据库造成读取压力。',
   packages_business_verification_waiting: '待校验',
   packages_business_verification_scheduling: '校验启动中',
   packages_business_verification_error: '校验失败',
@@ -673,7 +675,45 @@ export default {
     '当任务遇到错误时',
   packages_business_setting_alarmnotification_dangrenwustop: 'Agent服务停止时',
   packages_business_setting_alarmnotification_dangrenwuuP: 'Agent服务启动时',
-  packages_business_setting_alarmnotification_msshigaojing: 's 时告警',
+  packages_business_setting_alarmnotification_api_server_worker_delay_p50_warn:
+    '当APIServer工作进程每分钟请求延时P50超过阈值时',
+  packages_business_setting_alarmnotification_api_server_worker_delay_p95_warn:
+    '当APIServer工作进程每分钟请求延时P95超过阈值时',
+  packages_business_setting_alarmnotification_api_server_worker_delay_p99_warn:
+    '当APIServer工作进程每分钟请求延时P99超过阈值时',
+  packages_business_setting_alarmnotification_api_server_worker_error_rate_warn:
+    '当APIServer工作进程每分钟请求错误率超过告警阈值时',
+  packages_business_setting_alarmnotification_api_server_worker_error_rate_alter:
+    '当APIServer工作进程每分钟请求错误率超过通知阈值时',
+  packages_business_setting_alarmnotification_api_server_api_delay_avg_warn:
+    '当任一API每分钟请求的平均延时超过阈值时',
+  packages_business_setting_alarmnotification_api_server_api_delay_p95_alter:
+    '当任一API每分钟请求延时P95超过阈值时',
+  packages_business_setting_alarmnotification_api_server_api_delay_p99_alter:
+    '当任一API每分钟请求延时P99超过阈值时',
+  packages_business_setting_alarmnotification_api_server_api_error_rate_alter:
+    '当任一API每分钟请求错误率超过阈值时',
+  packages_business_setting_alarmnotification_api_server_all_api_error_rate_alter:
+    '当所有API每分钟请求错误率超过阈值时',
+  packages_business_setting_alarmnotification_api_server_api_response_size_alter:
+    '当任一API请求响应大小超过阈值时',
+  packages_business_setting_alarmnotification_api_server_cpu_usage_warn:
+    '当任一API Server CPU使用率超过告警阈值时',
+  packages_business_setting_alarmnotification_api_server_cpu_usage_alter:
+    '当任一API Server CPU使用率超过通知阈值时',
+  packages_business_setting_alarmnotification_api_server_memory_usage_warn:
+    '当任一API Server 内存使用量超过告警阈值时',
+  packages_business_setting_alarmnotification_api_server_memory_usage_alter:
+    '当任一API Server 内存使用量超过通知阈值时',
+  packages_business_setting_alarmnotification_api_server_worker_cpu_usage_warn:
+    '当任一API Server的工作进程CPU使用率超过告警阈值时',
+  packages_business_setting_alarmnotification_api_server_worker_cpu_usage_alter:
+    '当任一API Server的工作进程CPU使用率超过通知阈值时',
+  packages_business_setting_alarmnotification_api_server_worker_memory_usage_warn:
+    '当任一API Server的工作进程内存使用量超过告警阈值时',
+  packages_business_setting_alarmnotification_api_server_worker_memory_usage_alter:
+    '当任一API Server的工作进程内存使用量超过通知阈值时',
+  packages_business_setting_alarmnotification_msshigaojing: ' 时告警',
   packages_business_setting_alarmnotification_lianxu: '连续',
   packages_business_setting_alarmnotification_cichugaojinggui:
     '此处告警规则设置为系统全局告警规则设置，任务运行监控页面的告警规则设置优先级高于系统全局设置',
@@ -869,6 +909,9 @@ export default {
   packages_business_data_server_drawer_shaixuantiaojian: '筛选条件',
   packages_business_data_server_drawer_canshuzhi: '参数值',
   packages_business_data_server_drawer_canshumingcheng: '参数名称',
+  packages_business_data_server_drawer_required: '约束',
+  packages_business_data_server_drawer_required_true: '必填',
+  packages_business_data_server_drawer_required_false: '非必填',
   packages_business_data_server_drawer_shurucanshu: '请求参数',
   packages_business_data_server_drawer_quanxianfanwei: '权限范围',
   packages_business_data_server_drawer_jiekouleixing: '接口类型',
@@ -1491,4 +1534,5 @@ export default {
   packages_business_edit_task_info: '编辑任务信息',
   packages_business_monitor_cron: '监控周期',
   packages_business_monitor_cron_tip: `语法: 秒 * 分钟 * 小时 * 日 * 月 * 星期 ? 年 *\n举例：0 */1 * * * ? 每分钟运行一次 0 0 2 * * ? 每天2点运行`,
+  packages_business_datasource_monitor_alter: '数据源监控告警',
 }

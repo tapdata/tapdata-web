@@ -390,11 +390,15 @@ export class Database extends NodeType {
                     type: 'void',
                     'x-component': 'CompareSchema',
                     'x-reactions': {
-                      dependencies: ['.existDataProcessMode'],
+                      dependencies: [
+                        '.existDataProcessMode',
+                        '$outputs',
+                        '$inputs',
+                      ],
                       fulfill: {
                         state: {
                           visible:
-                            '{{$deps[0] !== "dropTable" && (!$values.attrs.connectionTags || !$values.attrs.connectionTags.includes("schema-free"))}}',
+                            '{{!$form.disabled && !$deps[1].length && $deps[2].length > 0 && $deps[1].length === 0 && $deps[0] !== "dropTable" && !!$values.attrs.connectionTags && !$values.attrs.connectionTags.includes("schema-free")}}',
                         },
                       },
                     },

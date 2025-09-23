@@ -1,33 +1,13 @@
 <script>
-import {
-  createEffectHook,
-  createForm,
-  onFieldValueChange,
-  onFormValuesChange,
-} from '@formily/core'
-import {
-  action,
-  autorun,
-  isObservable,
-  observable,
-  observe,
-  raw,
-  untracked,
-} from '@formily/reactive'
+import { createEffectHook, createForm, onFieldValueChange } from '@formily/core'
+import { action } from '@formily/reactive'
 import { findAccessNodeInfo, getAlarmChannels, taskApi } from '@tap/api'
 import { showErrorMessage, UpgradeCharges, UpgradeFee } from '@tap/business'
 import i18n from '@tap/i18n'
 import axios from 'axios'
 import { ElMessageBox, ElMessage as Message } from 'element-plus'
-import { debounce, merge } from 'lodash-es'
-import {
-  computed,
-  defineComponent,
-  inject,
-  nextTick,
-  onBeforeUnmount,
-  ref,
-} from 'vue'
+import { debounce } from 'lodash-es'
+import { computed, defineComponent, inject, onBeforeUnmount, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import SchemaForm from '../SchemaForm.vue'
@@ -1264,7 +1244,7 @@ export default defineComponent({
                     type: 'datetime',
                     align: 'right',
                     format: 'YYYY-MM-DD HH:mm:ss',
-                    valueFormat: 'timestamp',
+                    valueFormat: 'x',
                   },
                   'x-reactions': {
                     dependencies: ['.planStartDateFlag'],

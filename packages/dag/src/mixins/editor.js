@@ -8,15 +8,14 @@ import {
 import { showErrorMessage } from '@tap/business/src/components/error-message'
 import { makeStatusAndDisabled } from '@tap/business/src/shared/task'
 import resize from '@tap/component/src/directives/resize'
-import { computed as reactiveComputed } from '@tap/form/src/shared/reactive'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 import i18n from '@tap/i18n'
 import { setPageTitle } from '@tap/shared'
 import dagre from 'dagre'
 import dayjs from 'dayjs'
-import { isEmpty, merge } from 'lodash-es'
+import { isEmpty } from 'lodash-es'
 import Mousetrap from 'mousetrap'
-import { h, markRaw } from 'vue'
+import { h } from 'vue'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import {
   AddConnectionCommand,
@@ -535,10 +534,10 @@ export default {
       param.el.style.top = `${pos[1]}px`
       this.jsPlumbIns.revalidate(param.el) // 重绘
 
-      let t = pos[1],
-        b = pos[1] + nh,
-        l = pos[0],
-        r = pos[0] + nw
+      let t = pos[1]
+      let b = pos[1] + nh
+      let l = pos[0]
+      let r = pos[0] + nw
       verArr.forEach((y) => {
         t = Math.min(y + nh, t)
         b = Math.max(y, b)
@@ -551,8 +550,8 @@ export default {
       // 组装导航线
       const lines = []
       if (t < pos[1]) {
-        const top = `${t}px`,
-          height = `${pos[1] - t}px`
+        const top = `${t}px`
+        const height = `${pos[1] - t}px`
         lines.push(
           {
             top,
@@ -567,8 +566,8 @@ export default {
         )
       }
       if (b > pos[1] + nh) {
-        const top = `${pos[1] + nh}px`,
-          height = `${b - pos[1] - nh}px`
+        const top = `${pos[1] + nh}px`
+        const height = `${b - pos[1] - nh}px`
         lines.push(
           {
             top,
@@ -584,8 +583,8 @@ export default {
       }
 
       if (l < pos[0]) {
-        const left = `${l}px`,
-          width = `${pos[0] - l}px`
+        const left = `${l}px`
+        const width = `${pos[0] - l}px`
         lines.push(
           {
             top: `${pos[1]}px`,
@@ -601,8 +600,8 @@ export default {
       }
 
       if (r > pos[0] + nw) {
-        const left = `${pos[0] + nw}px`,
-          width = `${r - pos[0] - nw}px`
+        const left = `${pos[0] + nw}px`
+        const width = `${r - pos[0] - nw}px`
         lines.push(
           {
             top: `${pos[1]}px`,
@@ -1974,6 +1973,20 @@ export default {
       }
     },
 
+    async validateDropTableEnabled() {
+      if (
+        this.allNodes.some(
+          (node) =>
+            node.existDataProcessMode === 'dropTable' && !node.$outputs.length,
+        )
+      ) {
+        return await this.$confirm(
+          i18n.t('packages_dag_drop_table_enabled_confirm'),
+          i18n.t('packages_dag_existDataProcessMode_desc'),
+        )
+      }
+    },
+
     async eachValidate(...fns) {
       for (const fn of fns) {
         let result = fn()
@@ -2084,10 +2097,10 @@ export default {
         el.style.left = `${Number.parseInt(el.style.left) + diffPos.x * this.scale}px`
         el.style.top = `${Number.parseInt(el.style.top) + diffPos.y * this.scale}px`
 
-        let t = pos[1],
-          b = pos[1] + nh,
-          l = pos[0],
-          r = pos[0] + nw
+        let t = pos[1]
+        let b = pos[1] + nh
+        let l = pos[0]
+        let r = pos[0] + nw
         verArr.forEach((y) => {
           t = Math.min(y + nh, t)
           b = Math.max(y, b)
@@ -2099,8 +2112,8 @@ export default {
 
         // 组装导航线
         if (t < pos[1]) {
-          const top = `${t}px`,
-            height = `${pos[1] - t}px`
+          const top = `${t}px`
+          const height = `${pos[1] - t}px`
           lines.push(
             {
               top,
@@ -2115,8 +2128,8 @@ export default {
           )
         }
         if (b > pos[1] + nh) {
-          const top = `${pos[1] + nh}px`,
-            height = `${b - pos[1] - nh}px`
+          const top = `${pos[1] + nh}px`
+          const height = `${b - pos[1] - nh}px`
           lines.push(
             {
               top,
@@ -2132,8 +2145,8 @@ export default {
         }
 
         if (l < pos[0]) {
-          const left = `${l}px`,
-            width = `${pos[0] - l}px`
+          const left = `${l}px`
+          const width = `${pos[0] - l}px`
           lines.push(
             {
               top: `${pos[1]}px`,
@@ -2149,8 +2162,8 @@ export default {
         }
 
         if (r > pos[0] + nw) {
-          const left = `${pos[0] + nw}px`,
-            width = `${r - pos[0] - nw}px`
+          const left = `${pos[0] + nw}px`
+          const width = `${r - pos[0] - nw}px`
           lines.push(
             {
               top: `${pos[1]}px`,

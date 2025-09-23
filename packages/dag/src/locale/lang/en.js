@@ -927,8 +927,6 @@ export default {
     'When enabled, the generated table names will have a date suffix corresponding to the runtime of the task',
   packages_dag_table_rename_multiple:
     'In the task, only one table editing node is allowed',
-  packages_dag_table_rename_multiple:
-    'In the task, only one table editing node is allowed',
   packages_dag_migrate_union: 'Union',
   packages_dag_merged_tableName: 'Merged Table Name',
   packages_dag_merged_tableName_ph: 'Please enter the merged table name',
@@ -1150,4 +1148,15 @@ export default {
   packages_dag_compare_result_auto_process: 'Auto Process Differences',
   packages_dag_compare_result_display_field: 'Display Field',
   packages_dag_compare_result_database_field: 'Database Field',
+  //Api server
+  public_api_name: 'API Name',
+  public_api_server_name: 'API Server Name',
+  public_api_worker_name: 'API Server Worker Name',
+  public_api_threshold: 'Threshold',
+  public_api_threshold_unit: 'Unit',
+  public_api_threshold_equalsFlag: 'equals char',
+  public_api_minute: 'Monitoring Period',
+  public_api_alarmDate: 'Alarm Date',
+  packages_dag_drop_table_enabled_confirm:
+    'Confirm clearing target table data?',
 }

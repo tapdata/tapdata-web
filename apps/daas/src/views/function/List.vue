@@ -3,18 +3,33 @@ import { javascriptFunctionsApi } from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
 import Upload from '@tap/business/src/components/UploadDialog.vue'
+import FilterBar from '@tap/component/src/filter-bar/Main.vue'
 import dayjs from 'dayjs'
+import { escapeRegExp } from 'lodash-es'
 
 export default {
   components: {
     PageContainer,
     TablePage,
     Upload,
+    FilterBar,
   },
   data() {
     return {
+      filterItems: [
+        {
+          key: 'type',
+          slotName: 'type',
+        },
+        {
+          placeholder: this.$t('function_name_placeholder'),
+          key: 'keyword',
+          type: 'input',
+        },
+      ],
       searchParams: {
-        type: '',
+        type: undefined,
+        keyword: '',
       },
       typeMapping: {
         custom: this.$t('function_type_option_custom'),
@@ -24,7 +39,7 @@ export default {
       typeOptions: [
         {
           label: this.$t('public_all'),
-          value: '',
+          value: undefined,
         },
         {
           label: this.$t('function_type_option_custom'),
@@ -48,15 +63,27 @@ export default {
       return this.$refs.table
     },
   },
+  watch: {
+    '$route.query': function () {
+      this.searchParams = this.$route.query
+      this.table.fetch(1)
+    },
+  },
+  created() {
+    this.searchParams = Object.assign(this.searchParams, this.$route.query)
+  },
   methods: {
     // 获取列表数据
     getData({ page }) {
-      const { type } = this.searchParams
+      const { type, keyword } = this.searchParams
       const { current, size } = page
       const where = {
         category: null,
       }
       type && (where.type = type)
+      if (keyword) {
+        where.function_name = { like: escapeRegExp(keyword), options: 'i' }
+      }
       const filter = {
         where,
         order: this.order,
@@ -178,14 +205,19 @@ export default {
       @selection-change="handleSelectionChange"
     >
       <template #search>
-        <el-segmented
-          v-model="searchParams.type"
-          :options="typeOptions"
-          @change="table.fetch(1)"
-        />
-        <ElButton plain class="btn-refresh" @click="table.fetch()">
-          <el-icon><el-icon-refresh /></el-icon>
-        </ElButton>
+        <FilterBar
+          v-model:value="searchParams"
+          :items="filterItems"
+          @fetch="table.fetch(1)"
+        >
+          <template #type="{ onChange, item }">
+            <el-segmented
+              v-model="item.value"
+              :options="typeOptions"
+              @change="onChange(item, 'change')"
+            />
+          </template>
+        </FilterBar>
       </template>
       <el-table-column
         reserve-selection
