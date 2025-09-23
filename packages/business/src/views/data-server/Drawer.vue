@@ -1141,20 +1141,34 @@ const debugData = async () => {
   }
 }
 
+const getParamType = (key) => {
+  for (const element of form.value.params) {
+    const item = element
+    if (item.name === key) {
+      if (Array.isArray(item.type)) {
+        return  item.type.join(': ')
+      } else {
+        return  item.type
+      }
+    }
+  }
+  return 'string';
+}
+
 const parseValue = (key, value, defaultVal) => {
   if (value === undefined || null == value || '' === String(value)) {
     return defaultVal || null
   }
-  let type = ''
-  for (let i = 0; i < form.value.params.length; i++) {
-    const item = form.value.params[i]
-    if (item.name === key) {
-      type = item.type
-      break
-    }
-  }
+  let type = getParamType(key);
   if (!type) {
     return defaultVal
+  }
+  if (type.indexOf('array') !== -1) {
+    try {
+      return JSON.parse(value)
+    } catch (e) {
+      return value
+    }
   }
   switch (type) {
     case 'number':
