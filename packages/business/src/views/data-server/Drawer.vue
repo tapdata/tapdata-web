@@ -542,24 +542,27 @@ const reflshToken = () => {
 }
 
 const AllowedTypes = [
-  'Doris',
-  'MongoDB',
-  'Mysql',
-  'Oracle',
-  'PostgreSQL',
-  'SQL Server',
-  'Tidb',
+  'doris',
+  'mongodb',
+  'mysql',
+  'oracle',
+  'postgres',
+  'sqlserver',
+  'tidb',
 ]
 
 const getDatabaseTypes = async () => {
-  const data = await fetchDatabaseTypes().catch(() => {
+  const data = await fetchDatabaseTypes({
+    where: {
+      pdkId: {
+        in: AllowedTypes,
+      },
+    }
+  }).catch(() => {
     return []
   })
 
-  databaseTypes.value =
-    data
-      .filter((it: any) => AllowedTypes.includes(it.name))
-      .map((it: any) => {
+  databaseTypes.value = data.map((it: any) => {
         return {
           name: it.name,
           pdkHash: it.pdkHash,
@@ -729,6 +732,7 @@ const open = (formData?: any, copy?: boolean) => {
   debugHttpInfo.value = {}
   allFields.value = []
   workerStatus.value = ''
+  selectedFieldSize.value = 0
 
   if (isEmpty(formData)) {
     form.value = getInitData()
@@ -1668,7 +1672,7 @@ provide('encryptions', encryptions)
           </ElFormItem>
           <ElFormItem
             class="flex-1"
-            :label="$t('public_connection_name')"
+            :label="$t('public_connection')"
             prop="connectionId"
           >
             <InfiniteSelect
