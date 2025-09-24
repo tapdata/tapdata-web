@@ -740,7 +740,7 @@ const open = (formData?: any, copy?: boolean) => {
 
     edit()
   } else {
-    formatData(Object.assign(getInitData(), cloneDeep(formData)))
+    formatData(cloneDeep(formData))
 
     const { connectionId, tableName } = formData
 
