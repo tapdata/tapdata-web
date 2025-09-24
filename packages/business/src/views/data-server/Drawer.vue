@@ -126,10 +126,6 @@ const typeOptions = [
 
 const operatorOptions = ['>', '==', '<', '>=', '<=', '!=', 'like', 'in']
 const conditionOptions = ['and', 'or']
-const apiTypeMap = {
-  defaultApi: t('packages_business_data_server_drawer_morenchaxun'),
-  customerQuery: t('packages_business_data_server_drawer_zidingyichaxun'),
-}
 const apiTypeOptions = [
   {
     label: t('packages_business_data_server_drawer_morenchaxun'),
@@ -546,24 +542,27 @@ const reflshToken = () => {
 }
 
 const AllowedTypes = [
-  'Doris',
-  'MongoDB',
-  'Mysql',
-  'Oracle',
-  'PostgreSQL',
-  'SQL Server',
-  'Tidb',
+  'doris',
+  'mongodb',
+  'mysql',
+  'oracle',
+  'postgres',
+  'sqlserver',
+  'tidb',
 ]
 
 const getDatabaseTypes = async () => {
-  const data = await fetchDatabaseTypes().catch(() => {
+  const data = await fetchDatabaseTypes({
+    where: {
+      pdkId: {
+        in: AllowedTypes,
+      },
+    }
+  }).catch(() => {
     return []
   })
 
-  databaseTypes.value =
-    data
-      .filter((it: any) => AllowedTypes.includes(it.name))
-      .map((it: any) => {
+  databaseTypes.value = data.map((it: any) => {
         return {
           name: it.name,
           pdkHash: it.pdkHash,
@@ -733,6 +732,7 @@ const open = (formData?: any, copy?: boolean) => {
   debugHttpInfo.value = {}
   allFields.value = []
   workerStatus.value = ''
+  selectedFieldSize.value = 0
 
   if (isEmpty(formData)) {
     form.value = getInitData()
@@ -976,7 +976,7 @@ watch(visible, (v) => {
 })
 
 // Event handlers
-const tabChanged = (tab: string) => {
+const tabChanged = (tab: string | number) => {
   if (tab === 'debug') {
     isEdit.value = false
     const newDebugParams: Record<string, any> = {}
@@ -1156,8 +1156,8 @@ const getParamType = (key) => {
 }
 
 const parseValue = (key, value, defaultVal) => {
-  if (value === undefined || null == value || '' === String(value)) {
-    return defaultVal || null
+  if (value === undefined || null == value || '' === (''+ value)) {
+    return defaultVal || null;
   }
   let type = getParamType(key);
   if (!type) {
@@ -1678,7 +1678,7 @@ provide('encryptions', encryptions)
           </ElFormItem>
           <ElFormItem
             class="flex-1"
-            :label="$t('public_connection_name')"
+            :label="$t('public_connection')"
             prop="connectionId"
           >
             <InfiniteSelect
@@ -1912,7 +1912,11 @@ provide('encryptions', encryptions)
           >
             <template #default="{ row, $index }">
               <div v-if="isEdit && row.defaultvalue !== undefined">
-                <ElInput v-model="form.params[$index].defaultvalue" />
+                <ElInput
+                 v-model="form.params[$index].defaultvalue" 
+                 :type="row.type === 'object' || (Array.isArray(row.type) && row.type.length > 1) ? 'textarea' : 'input'" 
+                 :autosize="{ minRows: 2 }" 
+                />
               </div>
               <div v-else>{{ row.defaultvalue }}</div>
             </template>
@@ -1920,7 +1924,8 @@ provide('encryptions', encryptions)
           <ElTableColumn
             :label="$t('packages_business_data_server_drawer_required')"
             prop="required"
-            min-width="40"
+            min-width="60"
+            align="center"
           >
             <template #default="{ row, $index }">
               <div
@@ -1954,7 +1959,7 @@ provide('encryptions', encryptions)
               <div
                 v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'"
               >
-                <ElInput v-model="form.params[$index].description" />
+                <ElInput v-model="form.params[$index].description" type="textarea" autosize />
               </div>
               <div v-else>{{ row.description }}</div>
             </template>

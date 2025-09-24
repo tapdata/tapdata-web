@@ -80,7 +80,7 @@ export const MENU = [
         parent: 'sharedMining',
       },
       { name: 'HeartbeatTableList', code: '', parent: 'heartbeatTable' },
-      { name: 'dataEncryption', },
+      { name: 'dataEncryption' },
     ],
   },
   {
@@ -132,7 +132,7 @@ export const SettingList = [
   },
   {
     icon: 'alert-filled',
-    name: 'daas_setting_settingcenter_gaojingshezhi',
+    name: 'packages_dag_migration_configpanel_gaojingshezhi',
     key: 'alarmSetting',
     size: 20,
   },

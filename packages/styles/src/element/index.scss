@@ -699,6 +699,16 @@
     --el-tag-bg-color: rgba(129, 139, 152, 0.12);
     --el-tag-border-color: transparent;
   }
+
+  &.is-wrap {
+    height: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+    line-height: 16px;
+    padding-block: 4px;
+    padding-inline: 8px;
+    border: 0;
+  }
 }
 
 // InputNumber

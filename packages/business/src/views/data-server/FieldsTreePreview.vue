@@ -68,7 +68,7 @@ const handleSearch = (value: string) => {
       :height="treeHeight"
     >
       <template #default="{ data }">
-        <div class="flex align-center gap-2 min-w-0 flex-1">
+        <div class="flex align-center gap-2 min-w-0 flex-1 pr-2">
           <span>{{ data.label }}</span>
           <span v-if="data.name !== data.label" class="text-gray-500"
             >({{ data.name }})</span

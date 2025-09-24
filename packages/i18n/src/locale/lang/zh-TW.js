@@ -572,4 +572,7 @@ export default {
   public_set_new_password: '設置新密碼',
   public_set_user_group: '設置用戶組',
   public_unencrypted: '未加密',
+  public_connectionName: '連接名稱',
+  public_warningTime: '告警時間',
+  public_warningLog: '告警日誌',
 }

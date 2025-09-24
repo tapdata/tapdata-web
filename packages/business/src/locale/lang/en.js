@@ -748,25 +748,44 @@ export default {
     'When the task encounters an error',
   packages_business_setting_alarmnotification_dangrenwustop:
     'When the Agent service stops',
-  packages_business_setting_alarmnotification_api_server_worker_delay_p50_warn:'When APIServer worker P50 per minute exceeding threshold',
-  packages_business_setting_alarmnotification_api_server_worker_delay_p95_warn:'When APIServer worker P95 per minute exceeding threshold',
-  packages_business_setting_alarmnotification_api_server_worker_delay_p99_warn:'When APIServer worker P99 per minute exceeding threshold',
-  packages_business_setting_alarmnotification_api_server_worker_error_rate_warn:'When error rate of API Server worker requests per minute exceeds alarm threshold',
-  packages_business_setting_alarmnotification_api_server_worker_error_rate_alter:'When the error rate of API Server worker process requests per minute exceeds the notification threshold',
-  packages_business_setting_alarmnotification_api_server_api_delay_avg_warn:'When the average latency of any API request per minute exceeds the threshold',
-  packages_business_setting_alarmnotification_api_server_api_delay_p95_alter:'When the request delay P95 per minute for any API exceeds the threshold',
-  packages_business_setting_alarmnotification_api_server_api_delay_p99_alter:'When the request delay P99 per minute for any API exceeds the threshold',
-  packages_business_setting_alarmnotification_api_server_api_error_rate_alter:'When the error rate of any API request per minute exceeds the threshold',
-  packages_business_setting_alarmnotification_api_server_all_api_error_rate_alter:'When the error rate of all API requests per minute exceeds the threshold',
-  packages_business_setting_alarmnotification_api_server_api_response_size_alter:'When the response size of any API request exceeds the threshold',
-  packages_business_setting_alarmnotification_api_server_cpu_usage_warn:'When the CPU usage of any API Server exceeds the alarm threshold',
-  packages_business_setting_alarmnotification_api_server_cpu_usage_alter:'When the CPU usage of any API Server exceeds the notification threshold',
-  packages_business_setting_alarmnotification_api_server_memory_usage_warn:'When the memory usage of any API Server exceeds the alarm threshold',
-  packages_business_setting_alarmnotification_api_server_memory_usage_alter:'When the memory usage of any API Server exceeds the notification threshold',
-  packages_business_setting_alarmnotification_api_server_worker_cpu_usage_warn:'When the CPU usage of any API Server\'s worker process exceeds the alarm threshold',
-  packages_business_setting_alarmnotification_api_server_worker_cpu_usage_alter:'When the CPU usage of any API Server\'s worker process exceeds the notification threshold',
-  packages_business_setting_alarmnotification_api_server_worker_memory_usage_warn:'When the memory usage of any API Server\'s worker process exceeds the alarm threshold',
-  packages_business_setting_alarmnotification_api_server_worker_memory_usage_alter:'When the memory usage of any API Server\'s worker process exceeds the notification threshold',
+  packages_business_setting_alarmnotification_api_server_worker_delay_p50_warn:
+    'When APIServer worker P50 per minute exceeding threshold',
+  packages_business_setting_alarmnotification_api_server_worker_delay_p95_warn:
+    'When APIServer worker P95 per minute exceeding threshold',
+  packages_business_setting_alarmnotification_api_server_worker_delay_p99_warn:
+    'When APIServer worker P99 per minute exceeding threshold',
+  packages_business_setting_alarmnotification_api_server_worker_error_rate_warn:
+    'When error rate of API Server worker requests per minute exceeds alarm threshold',
+  packages_business_setting_alarmnotification_api_server_worker_error_rate_alter:
+    'When the error rate of API Server worker process requests per minute exceeds the notification threshold',
+  packages_business_setting_alarmnotification_api_server_api_delay_avg_warn:
+    'When the average latency of any API request per minute exceeds the threshold',
+  packages_business_setting_alarmnotification_api_server_api_delay_p95_alter:
+    'When the request delay P95 per minute for any API exceeds the threshold',
+  packages_business_setting_alarmnotification_api_server_api_delay_p99_alter:
+    'When the request delay P99 per minute for any API exceeds the threshold',
+  packages_business_setting_alarmnotification_api_server_api_error_rate_alter:
+    'When the error rate of any API request per minute exceeds the threshold',
+  packages_business_setting_alarmnotification_api_server_all_api_error_rate_alter:
+    'When the error rate of all API requests per minute exceeds the threshold',
+  packages_business_setting_alarmnotification_api_server_api_response_size_alter:
+    'When the response size of any API request exceeds the threshold',
+  packages_business_setting_alarmnotification_api_server_cpu_usage_warn:
+    'When the CPU usage of any API Server exceeds the alarm threshold',
+  packages_business_setting_alarmnotification_api_server_cpu_usage_alter:
+    'When the CPU usage of any API Server exceeds the notification threshold',
+  packages_business_setting_alarmnotification_api_server_memory_usage_warn:
+    'When the memory usage of any API Server exceeds the alarm threshold',
+  packages_business_setting_alarmnotification_api_server_memory_usage_alter:
+    'When the memory usage of any API Server exceeds the notification threshold',
+  packages_business_setting_alarmnotification_api_server_worker_cpu_usage_warn:
+    "When the CPU usage of any API Server's worker process exceeds the alarm threshold",
+  packages_business_setting_alarmnotification_api_server_worker_cpu_usage_alter:
+    "When the CPU usage of any API Server's worker process exceeds the notification threshold",
+  packages_business_setting_alarmnotification_api_server_worker_memory_usage_warn:
+    "When the memory usage of any API Server's worker process exceeds the alarm threshold",
+  packages_business_setting_alarmnotification_api_server_worker_memory_usage_alter:
+    "When the memory usage of any API Server's worker process exceeds the notification threshold",
   packages_business_setting_alarmnotification_dangrenwuuP:
     'When the Agent service start',
   packages_business_setting_alarmnotification_msshigaojing: ' alert',
@@ -987,8 +1006,8 @@ export default {
   packages_business_data_server_drawer_canshuzhi: 'parameter value',
   packages_business_data_server_drawer_canshumingcheng: 'Parameter Name',
   packages_business_data_server_drawer_required: 'Constraint',
-  packages_business_data_server_drawer_required_true: 'Required',
-  packages_business_data_server_drawer_required_false: 'Not Required',
+  packages_business_data_server_drawer_required_true: 'required',
+  packages_business_data_server_drawer_required_false: 'optional',
   packages_business_data_server_drawer_shurucanshu: 'Request Parameter',
   packages_business_data_server_drawer_jiekouleixing: 'Interface Type',
   packages_business_data_server_drawer_fabujiedian: 'Publishing Node',
@@ -1705,4 +1724,5 @@ export default {
   packages_business_example_regex: 'Starts with A, ignoring case',
   packages_business_example_size: '{a} array size is {b}',
   packages_business_edit_task_info: 'Edit Task Information',
+  packages_business_datasource_monitor_alter: 'Data Source Monitor Alert',
 }

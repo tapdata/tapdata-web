@@ -675,25 +675,44 @@ export default {
     '当任务遇到错误时',
   packages_business_setting_alarmnotification_dangrenwustop: 'Agent服务停止时',
   packages_business_setting_alarmnotification_dangrenwuuP: 'Agent服务启动时',
-  packages_business_setting_alarmnotification_api_server_worker_delay_p50_warn:'当APIServer工作进程每分钟请求延时P50超过阈值时',
-  packages_business_setting_alarmnotification_api_server_worker_delay_p95_warn:'当APIServer工作进程每分钟请求延时P95超过阈值时',
-  packages_business_setting_alarmnotification_api_server_worker_delay_p99_warn:'当APIServer工作进程每分钟请求延时P99超过阈值时',
-  packages_business_setting_alarmnotification_api_server_worker_error_rate_warn:'当APIServer工作进程每分钟请求错误率超过告警阈值时',
-  packages_business_setting_alarmnotification_api_server_worker_error_rate_alter:'当APIServer工作进程每分钟请求错误率超过通知阈值时',
-  packages_business_setting_alarmnotification_api_server_api_delay_avg_warn:'当任一API每分钟请求的平均延时超过阈值时',
-  packages_business_setting_alarmnotification_api_server_api_delay_p95_alter:'当任一API每分钟请求延时P95超过阈值时',
-  packages_business_setting_alarmnotification_api_server_api_delay_p99_alter:'当任一API每分钟请求延时P99超过阈值时',
-  packages_business_setting_alarmnotification_api_server_api_error_rate_alter:'当任一API每分钟请求错误率超过阈值时',
-  packages_business_setting_alarmnotification_api_server_all_api_error_rate_alter:'当所有API每分钟请求错误率超过阈值时',
-  packages_business_setting_alarmnotification_api_server_api_response_size_alter:'当任一API请求响应大小超过阈值时',
-  packages_business_setting_alarmnotification_api_server_cpu_usage_warn:'当任一API Server CPU使用率超过告警阈值时',
-  packages_business_setting_alarmnotification_api_server_cpu_usage_alter:'当任一API Server CPU使用率超过通知阈值时',
-  packages_business_setting_alarmnotification_api_server_memory_usage_warn:'当任一API Server 内存使用量超过告警阈值时',
-  packages_business_setting_alarmnotification_api_server_memory_usage_alter:'当任一API Server 内存使用量超过通知阈值时',
-  packages_business_setting_alarmnotification_api_server_worker_cpu_usage_warn:'当任一API Server的工作进程CPU使用率超过告警阈值时',
-  packages_business_setting_alarmnotification_api_server_worker_cpu_usage_alter:'当任一API Server的工作进程CPU使用率超过通知阈值时',
-  packages_business_setting_alarmnotification_api_server_worker_memory_usage_warn:'当任一API Server的工作进程内存使用量超过告警阈值时',
-  packages_business_setting_alarmnotification_api_server_worker_memory_usage_alter:'当任一API Server的工作进程内存使用量超过通知阈值时',
+  packages_business_setting_alarmnotification_api_server_worker_delay_p50_warn:
+    '当APIServer工作进程每分钟请求延时P50超过阈值时',
+  packages_business_setting_alarmnotification_api_server_worker_delay_p95_warn:
+    '当APIServer工作进程每分钟请求延时P95超过阈值时',
+  packages_business_setting_alarmnotification_api_server_worker_delay_p99_warn:
+    '当APIServer工作进程每分钟请求延时P99超过阈值时',
+  packages_business_setting_alarmnotification_api_server_worker_error_rate_warn:
+    '当APIServer工作进程每分钟请求错误率超过告警阈值时',
+  packages_business_setting_alarmnotification_api_server_worker_error_rate_alter:
+    '当APIServer工作进程每分钟请求错误率超过通知阈值时',
+  packages_business_setting_alarmnotification_api_server_api_delay_avg_warn:
+    '当任一API每分钟请求的平均延时超过阈值时',
+  packages_business_setting_alarmnotification_api_server_api_delay_p95_alter:
+    '当任一API每分钟请求延时P95超过阈值时',
+  packages_business_setting_alarmnotification_api_server_api_delay_p99_alter:
+    '当任一API每分钟请求延时P99超过阈值时',
+  packages_business_setting_alarmnotification_api_server_api_error_rate_alter:
+    '当任一API每分钟请求错误率超过阈值时',
+  packages_business_setting_alarmnotification_api_server_all_api_error_rate_alter:
+    '当所有API每分钟请求错误率超过阈值时',
+  packages_business_setting_alarmnotification_api_server_api_response_size_alter:
+    '当任一API请求响应大小超过阈值时',
+  packages_business_setting_alarmnotification_api_server_cpu_usage_warn:
+    '当任一API Server CPU使用率超过告警阈值时',
+  packages_business_setting_alarmnotification_api_server_cpu_usage_alter:
+    '当任一API Server CPU使用率超过通知阈值时',
+  packages_business_setting_alarmnotification_api_server_memory_usage_warn:
+    '当任一API Server 内存使用量超过告警阈值时',
+  packages_business_setting_alarmnotification_api_server_memory_usage_alter:
+    '当任一API Server 内存使用量超过通知阈值时',
+  packages_business_setting_alarmnotification_api_server_worker_cpu_usage_warn:
+    '当任一API Server的工作进程CPU使用率超过告警阈值时',
+  packages_business_setting_alarmnotification_api_server_worker_cpu_usage_alter:
+    '当任一API Server的工作进程CPU使用率超过通知阈值时',
+  packages_business_setting_alarmnotification_api_server_worker_memory_usage_warn:
+    '当任一API Server的工作进程内存使用量超过告警阈值时',
+  packages_business_setting_alarmnotification_api_server_worker_memory_usage_alter:
+    '当任一API Server的工作进程内存使用量超过通知阈值时',
   packages_business_setting_alarmnotification_msshigaojing: ' 时告警',
   packages_business_setting_alarmnotification_lianxu: '连续',
   packages_business_setting_alarmnotification_cichugaojinggui:
@@ -1513,4 +1532,5 @@ export default {
   packages_business_example_size: '{a} 数组长度为 {b}',
   packages_business_example_mod: '{a} 能被 {b} 整除',
   packages_business_edit_task_info: '编辑任务信息',
+  packages_business_datasource_monitor_alter: '数据源监控告警',
 }

@@ -888,7 +888,7 @@ export const routes = [
         name: 'alarmSetting',
         component: AlarmSetting,
         meta: {
-          title: 'packages_business_setting_alarmnotification_renwugaojingshe',
+          title: 'packages_dag_migration_configpanel_gaojingshezhi',
           code: 'v2_alarm_settings_menu',
           isNotAside: true,
         },
