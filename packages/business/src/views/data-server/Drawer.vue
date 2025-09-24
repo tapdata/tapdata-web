@@ -112,8 +112,12 @@ const { t } = useI18n()
 // Constants
 const isHa = import.meta.env.MODE === 'ha'
 const baseType = [
-  {value: 'number', label: 'number'},
-  {value: 'string', label: 'string'},
+  {
+    value: 'number', label: 'number'
+  },
+  {
+    value: 'string', label: 'string'
+  },
   {value: 'boolean', label: 'boolean'},
   {value: 'date', label: 'date'},
   {value: 'datetime', label: 'datetime'},
@@ -123,10 +127,6 @@ const typeOptions = [... baseType, {value: 'array', label: 'array', children: ba
 
 const operatorOptions = ['>', '==', '<', '>=', '<=', '!=', 'like', 'in']
 const conditionOptions = ['and', 'or']
-const apiTypeMap = {
-  defaultApi: t('packages_business_data_server_drawer_morenchaxun'),
-  customerQuery: t('packages_business_data_server_drawer_zidingyichaxun'),
-}
 const apiTypeOptions = [
   {
     label: t('packages_business_data_server_drawer_morenchaxun'),
@@ -974,7 +974,7 @@ watch(visible, (v) => {
 })
 
 // Event handlers
-const tabChanged = (tab: string) => {
+const tabChanged = (tab: string | number) => {
   if (tab === 'debug') {
     isEdit.value = false
     const newDebugParams: Record<string, any> = {}
@@ -1900,15 +1900,20 @@ provide('encryptions', encryptions)
           >
             <template #default="{ row, $index }">
               <div v-if="isEdit && row.defaultvalue !== undefined">
-                <ElInput v-model="form.params[$index].defaultvalue" />
+                <ElInput
+                 v-model="form.params[$index].defaultvalue" 
+                 :type="row.type === 'object' || (Array.isArray(row.type) && row.type.length > 1) ? 'textarea' : 'input'" 
+                 :autosize="{ minRows: 2 }" 
+                />
               </div>
               <div v-else>{{ row.defaultvalue }}</div>
             </template>
           </ElTableColumn>
           <ElTableColumn
-              :label="$t('packages_business_data_server_drawer_required')"
-              prop="required"
-              min-width="40"
+            :label="$t('packages_business_data_server_drawer_required')"
+            prop="required"
+            min-width="60"
+            align="center"
           >
             <template #default="{ row, $index }">
               <div
@@ -1936,7 +1941,7 @@ provide('encryptions', encryptions)
               <div
                 v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'"
               >
-                <ElInput v-model="form.params[$index].description" />
+                <ElInput v-model="form.params[$index].description" type="textarea" autosize />
               </div>
               <div v-else>{{ row.description }}</div>
             </template>
