@@ -109,8 +109,8 @@ export default {
           break
       }
       const name = [
-        `${i18n.t('public_time_input')} (avg/${unit})`,
-        `${i18n.t('public_time_output')} (avg/${unit})`,
+        i18n.t('public_time_avg_input', { unit }),
+        i18n.t('public_time_avg_output', { unit }),
       ]
 
       if (interval > 5000) {
@@ -123,8 +123,8 @@ export default {
           data.maxOutputSizeQps?.map(Math.abs),
         )
         name.push(
-          i18n.t('public_time_max_input'),
-          i18n.t('public_time_max_output'),
+          i18n.t('public_time_max_input', { unit }),
+          i18n.t('public_time_max_output', { unit }),
         )
       }
 
@@ -829,7 +829,7 @@ export default {
 
           <LineChart
             :data="qpsMap[qpsChartsType]"
-            :color="['#26CF6C', '#2C65FF']"
+            :color="['#26CF6C', '#2C65FF', '#b6d634', '#5070dd']"
             :time-format="timeFormat"
             :label-unit-type="qpsChartsType === 'size' ? 'byte' : ''"
             auto-scale
