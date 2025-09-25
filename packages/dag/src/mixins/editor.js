@@ -1985,6 +1985,7 @@ export default {
           i18n.t('packages_dag_existDataProcessMode_desc'),
         )
       }
+      return true
     },
 
     async eachValidate(...fns) {
