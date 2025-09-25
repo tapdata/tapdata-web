@@ -1,23 +1,18 @@
-<template>
-  <VChart ref="chart" :option="chartOption" :autoresize="autoresize" class="type-chart-container" />
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
+import { delayTrigger } from '@tap/shared'
+import { BarChart, LineChart, PieChart } from 'echarts/charts'
+import {
+  DataZoomComponent,
+  GridComponent,
+  LegendComponent,
+  MarkLineComponent,
+  TitleComponent,
+  ToolboxComponent,
+  TooltipComponent,
+} from 'echarts/components'
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
-import { PieChart, BarChart, LineChart } from 'echarts/charts'
-import {
-  TitleComponent,
-  TooltipComponent,
-  ToolboxComponent,
-  LegendComponent,
-  GridComponent,
-  DataZoomComponent,
-  MarkLineComponent,
-} from 'echarts/components'
 import VChart from 'vue-echarts'
-import { delayTrigger } from '@tap/shared'
 
 use([
   CanvasRenderer,
@@ -106,7 +101,7 @@ export default {
     init() {
       const { events, extend, chart } = this
       if (events.length) {
-        let getDom = chart?.chart
+        const getDom = chart?.chart
         events.forEach((t) => {
           getDom.on(t.name, t.method)
         })
@@ -120,12 +115,12 @@ export default {
       if (!this.type) {
         return
       }
-      let obj = this[this.type]?.()
+      const obj = this[this.type]?.()
       const { options } = this
       if (options) {
-        for (let key in options) {
+        for (const key of Object.keys(options)) {
           // 对象默认合并，其他都是覆盖
-          if (options[key] instanceof Array) {
+          if (Array.isArray(options[key])) {
             if (typeof options[key][0] !== 'object') {
               obj[key] = options[key]
             }
@@ -134,12 +129,10 @@ export default {
                 // 覆盖
                 if (el.cover) {
                   obj[key][i] = el
+                } else if (obj[key]) {
+                  obj[key][i] = Object.assign({}, obj[key][i] || {}, el || {})
                 } else {
-                  if (obj[key]) {
-                    obj[key][i] = Object.assign({}, obj[key][i] || {}, el || {})
-                  } else {
-                    obj[key] = options[key]
-                  }
+                  obj[key] = options[key]
                 }
               } else {
                 obj[key][i] = el
@@ -163,7 +156,7 @@ export default {
     bar() {
       // 需要传入 [{ value: 1, name: 'A', color: 'red' },{ value: 2, name: 'B', color: 'blue' }...] 单系列
       // 需要传入 { x: [], y: [[], []] }，y数组支持多系列
-      let obj = {
+      const obj = {
         tooltip: {
           trigger: 'axis',
           axisPointer: {
@@ -239,8 +232,8 @@ export default {
         ],
       }
       const { data, options } = this
-      if (data instanceof Array) {
-        let color = data.map((t) => t.color)
+      if (Array.isArray(data)) {
+        const color = data.map((t) => t.color)
         obj.xAxis.data = data.map((t) => t.name)
         obj.series[0].data = data.map((t) => t.value)
         if (color.length) {
@@ -249,45 +242,49 @@ export default {
       } else {
         // 需要传入 { x: [], y: [[], []] }，y数组支持多系列
         obj.xAxis.data = data.x
-        let series = []
+        const series = []
         data.y.forEach((el) => {
           series.push(Object.assign(this.getBarSeriesItem(), { data: el }))
         })
         obj.series = series
       }
-      if (options) {
-        if (options.series) {
-          options.series.forEach((el, i) => {
-            Object.assign(obj.series[i], el)
-            if (el.labelFormat === 'KMT') {
-              const { valueToFixed } = this
-              obj.series[i].itemStyle = {
-                normal: {
-                  label: {
-                    show: true,
-                    position: 'top',
-                    distance: 10,
-                    formatter: function (value) {
-                      if (value.data / (1000 * 1000 * 1000) > 1) {
-                        return valueToFixed(value.data / (1000 * 1000 * 1000), el.fixed) + ' T'
-                      } else if (value.data / (1000 * 1000) > 1) {
-                        return valueToFixed(value.data / (1000 * 1000), el.fixed) + ' M'
-                      } else if (value.data / 1000 > 1) {
-                        return valueToFixed(value.data / 1000, el.fixed) + ' K'
-                      }
-                    },
+      if (options && options.series) {
+        options.series.forEach((el, i) => {
+          Object.assign(obj.series[i], el)
+          if (el.labelFormat === 'KMT') {
+            const { valueToFixed } = this
+            obj.series[i].itemStyle = {
+              normal: {
+                label: {
+                  show: true,
+                  position: 'top',
+                  distance: 10,
+                  formatter(value) {
+                    if (value.data / (1000 * 1000 * 1000) > 1) {
+                      return `${valueToFixed(
+                        value.data / (1000 * 1000 * 1000),
+                        el.fixed,
+                      )} T`
+                    } else if (value.data / (1000 * 1000) > 1) {
+                      return `${valueToFixed(
+                        value.data / (1000 * 1000),
+                        el.fixed,
+                      )} M`
+                    } else if (value.data / 1000 > 1) {
+                      return `${valueToFixed(value.data / 1000, el.fixed)} K`
+                    }
                   },
                 },
-              }
+              },
             }
-          })
-        }
+          }
+        })
       }
       return obj
     },
     line() {
       // 需要传入 { x: [], y: [[], []] }，y数组支持多系列
-      let obj = {
+      const obj = {
         xAxis: {
           boundaryGap: false,
           data: [],
@@ -325,8 +322,8 @@ export default {
       }
       const { data } = this
       obj.xAxis.data = data.x || []
-      let series = []
-      if (data.y && data.y[0] instanceof Array) {
+      const series = []
+      if (data.y && Array.isArray(data.y[0])) {
         data.y.forEach((el) => {
           series.push(Object.assign(this.getLineSeriesItem(), { data: el }))
         })
@@ -340,7 +337,7 @@ export default {
     pie() {
       // 需要传入 [{ value: 1, name: 'A', color: 'red' },{ value: 2, name: 'B', color: 'blue' }...]
       // 环形图只需在options中设置radius: true
-      let series = this.data.map((el) => {
+      const series = this.data.map((el) => {
         if (el.color) {
           if (!el.itemStyle) {
             el.itemStyle = {}
@@ -349,7 +346,7 @@ export default {
         }
         return el
       })
-      let obj = {
+      const obj = {
         tooltip: {
           trigger: 'item',
         },
@@ -369,7 +366,8 @@ export default {
       const { options } = this
       if (options) {
         if (options.radius) {
-          obj.series[0].radius = options.radius?.length === 2 ? options.radius : ['65%', '90%']
+          obj.series[0].radius =
+            options.radius?.length === 2 ? options.radius : ['65%', '90%']
         }
         if (options.center) {
           obj.series[0].center = options.center
@@ -379,29 +377,25 @@ export default {
     },
     getBarSeriesItem() {
       const { options } = this
-      let item = {
+      const item = {
         type: 'bar',
         data: [],
         colorBy: 'value',
       }
-      if (options) {
-        if (options.barWidth) {
-          item.barWidth = options.barWidth
-        }
+      if (options && options.barWidth) {
+        item.barWidth = options.barWidth
       }
       return item
     },
     getLineSeriesItem() {
       const { options } = this
-      let item = {
+      const item = {
         type: 'line',
         smooth: true,
         data: [],
       }
-      if (options) {
-        if (options.smooth) {
-          item.smooth = options.smooth
-        }
+      if (options && options.smooth) {
+        item.smooth = options.smooth
       }
       return item
     },
@@ -430,6 +424,15 @@ export default {
   },
 }
 </script>
+
+<template>
+  <VChart
+    ref="chart"
+    :option="chartOption"
+    :autoresize="autoresize"
+    class="type-chart-container"
+  />
+</template>
 
 <style lang="scss" scoped>
 .type-chart-container {
