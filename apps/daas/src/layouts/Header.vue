@@ -7,6 +7,7 @@ import {
   logout,
 } from '@tap/api'
 import { Modal } from '@tap/component/src/modal'
+import { ThemeToggle } from '@tap/component/src/theme-toggle'
 import { useI18n } from '@tap/i18n'
 import {
   getCurrentLanguage,
@@ -14,8 +15,8 @@ import {
   setCurrentLanguage,
 } from '@tap/i18n/src/shared/util'
 import Cookie from '@tap/shared/src/cookie'
-import { getSettingByKey } from '@tap/shared/src/settings'
 
+import { getSettingByKey } from '@tap/shared/src/settings'
 import Time from '@tap/shared/src/time'
 import dayjs from 'dayjs'
 import { computed, inject, onMounted, ref } from 'vue'
@@ -351,6 +352,7 @@ defineExpose({
           </ElDropdownMenu>
         </template>
       </ElDropdown>
+      <ThemeToggle />
       <ElDivider direction="vertical" class="divider mx-0" />
       <ElDropdown
         class="menu-user btn"
