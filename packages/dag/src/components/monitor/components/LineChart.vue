@@ -214,7 +214,7 @@ export default {
                 }
               }
 
-              result += `<div class="flex justify-content-between"><div>${markerStr}${seriesName}</div><div class="din-font">${val}</div></div>`
+              result += `<div class="flex justify-content-between gap-4"><div>${markerStr}${seriesName}</div><div class="din-font">${val}</div></div>`
             })
             return result
           },
