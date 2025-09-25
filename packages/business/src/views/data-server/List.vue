@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { DatabaseIcon } from '../../components/DatabaseIcon'
 import {
   batchUpdateApiModules,
   batchUpdateApiModuleTags,
@@ -23,7 +24,7 @@ import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 
 import { uid } from '@tap/shared'
-import {cloneDeep, escapeRegExp} from 'lodash-es'
+import { cloneDeep, escapeRegExp } from 'lodash-es'
 import {
   computed,
   nextTick,
@@ -365,12 +366,15 @@ const output = (row: any) => {
 
 const showDrawer = (item?: any, copy?: boolean) => {
   if (copy) {
-    let newPath = uid(11, 'a');
-    drawer.value?.open(Object.assign(cloneDeep(item || {}), {
-      id: null,
-      name: item.name + '_copy_' + newPath,
-      basePath: newPath
-    }), true)
+    const newPath = uid(11, 'a')
+    drawer.value?.open(
+      Object.assign(cloneDeep(item || {}), {
+        id: null,
+        name: `${item.name}_copy_${newPath}`,
+        basePath: newPath,
+      }),
+      true,
+    )
   } else {
     drawer.value?.open(item)
   }
@@ -749,7 +753,7 @@ defineExpose({
         <el-table-column
           :label="$t('packages_business_data_server_list_fuwuzhuangtai')"
           prop="statusFmt"
-          :min-width="106"
+          :min-width="110"
         >
           <template #default="{ row }">
             <span class="status-block" :class="`status-${row.status}`">{{
@@ -765,27 +769,33 @@ defineExpose({
             :min-width="140"
           />
           <el-table-column
-            :label="$t('public_connection_type')"
-            prop="connectionType"
-            :min-width="120"
-          />
-          <el-table-column
-            :label="$t('public_connection_name')"
+            :label="$t('public_connection')"
             prop="connectionName"
             :min-width="200"
-          />
+          >
+            <template #default="{ row }">
+              <div class="flex align-items-center gap-1">
+                  <DatabaseIcon v-if="row.source?.pdkHash" :pdk-hash="row.source.pdkHash" :size="16" />
+                  <span>{{ row.connectionName }}</span>
+                </div>
+            </template>
+          </el-table-column>
           <el-table-column
-            :label="$t('packages_business_data_server_list_guanlianduixiang')"
+            :label="$t('public_table_name')"
             prop="tableName"
             :min-width="180"
           />
           <el-table-column
             :label="$t('daas_data_server_drawer_path')"
             prop="_path"
-            :min-width="130"
+            :min-width="145"
           >
             <template #default="{ row }">
-              <el-tag type="info" class="is-code">
+              <el-tag
+                type="info"
+                class="is-code is-wrap px-1.5 font-mono"
+                disable-transitions
+              >
                 {{ row._path }}
               </el-tag>
             </template>
@@ -818,12 +828,10 @@ defineExpose({
               $t('public_button_export')
             }}</ElButton>
             <ElDivider class="mx-1" direction="vertical" />
-            <ElButton
-                text
-                type="primary"
-                @click="showDrawer(row, true)"
-            >{{ $t('public_button_copy') }}</ElButton
-            >
+            <ElButton text type="primary" @click="showDrawer(row, true)">{{
+              $t('public_button_copy')
+            }}</ElButton>
+            <ElDivider class="mx-1" direction="vertical" />
             <ElButton text type="primary" @click="removeServer(row)">{{
               $t('public_button_delete')
             }}</ElButton>

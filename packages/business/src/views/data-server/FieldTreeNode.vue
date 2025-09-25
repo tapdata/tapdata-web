@@ -45,7 +45,7 @@ const handleRemoveEncryption = (i: number) => {
 </script>
 
 <template>
-  <div class="flex flex-1 align-center gap-2 field-node min-w-0">
+  <div class="flex flex-1 align-center gap-2 field-node min-w-0 pr-2">
     <span
       v-if="(!node.checked && !node.indeterminate) || readonly"
       class="px-1 py-0.5 node-name"

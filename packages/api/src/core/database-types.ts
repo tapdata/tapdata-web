@@ -9,22 +9,37 @@ export function fetchDatabaseTypeByPdkHash(pdkHash: string) {
   return requestClient.get(`${BASE_URL}/pdkHash/${pdkHash}`)
 }
 
+const renamedData: Record<string, string> = {
+  'Mysql': 'MySQL',
+  'HuaWei\'Cloud GaussDB': 'Huawei Cloud GaussDB',
+}
+
 /**
  * 获取数据库列表 - 用于连接器选择
  */
-export function fetchDatabases(filter?: Filter) {
-  return requestClient.get(`${BASE_URL}/getDatabases`, {
+export async function fetchDatabases(filter?: Filter) {
+  const data = await requestClient.get(`${BASE_URL}/getDatabases`, {
     params: {
       filter: filter ? JSON.stringify(filter) : undefined,
     },
   })
+
+  return data?.map((it: any) => {
+    it.name = renamedData[it.name] || it.name
+    return it
+  })
 }
 
-// Base Http methods that are used in the codebase
-export function fetchDatabaseTypes(filter?: Filter) {
-  return requestClient.get(BASE_URL, {
+export async function fetchDatabaseTypes(filter?: Filter) {
+  const data = await requestClient.get(BASE_URL, {
     params: {
       filter: filter ? JSON.stringify(filter) : undefined,
     },
+  })
+  
+
+  return data?.map((it: any) => {
+    it.name = renamedData[it.name] || it.name
+    return it
   })
 }
