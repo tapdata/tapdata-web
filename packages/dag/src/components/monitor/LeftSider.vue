@@ -807,15 +807,31 @@ export default {
         </div>
         <div class="line-chart__box mb-2">
           <div class="flex justify-content-between">
-            <ElTooltip
-              transition="tooltip-fade-in"
-              placement="top"
-              :content="
-                qpsChartsType === 'count'
-                  ? $t('packages_dag_monitor_leftsider_qpSshizhi')
-                  : $t('packages_dag_monitor_leftsider_qpSshizhi2')
-              "
-            >
+            <ElTooltip transition="tooltip-fade-in" placement="top">
+              <template #content>
+                <div>
+                  <div>
+                    {{
+                      $t(
+                        qpsChartsType === 'count'
+                          ? 'packages_dag_monitor_leftsider_qpSshizhi'
+                          : 'packages_dag_monitor_leftsider_qpSshizhi2',
+                      )
+                    }}
+                  </div>
+                  <ul class="mt-1 ml-4 lh-base" style="color: #d0d3d6">
+                    <li class="list-disc">
+                      {{ $t('packages_dag_qpSshizhi_tip') }}
+                    </li>
+                    <li class="list-disc">
+                      {{ $t('packages_dag_qpSshizhi2_tip') }}
+                    </li>
+                    <li class="list-disc">
+                      {{ $t('packages_dag_qpSshizhi3_tip') }}
+                    </li>
+                  </ul>
+                </div>
+              </template>
               <span class="inline-flex align-items-center">
                 <span class="mr-2 font-color-dark fw-sub">QPS(Q/S)</span>
                 <VIcon size="16" class="color-primary">info</VIcon>

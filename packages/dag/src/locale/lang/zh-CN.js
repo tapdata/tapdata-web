@@ -1011,4 +1011,10 @@ export default {
   public_api_alarmDate: '告警时间',
   packages_dag_drop_table_enabled_confirm:
     '您已选择清空目标表数据，是否确认继续？',
+  packages_dag_qpSshizhi_tip:
+    '查询范围小于1小时，取每五秒的数据点计算平均的QPS值',
+  packages_dag_qpSshizhi2_tip:
+    '查询范围大于等于1小时小于24小时，取每分钟的数据点计算平均和最大的QPS值',
+  packages_dag_qpSshizhi3_tip:
+    '查询范围大于等于24小时小于30天，取每小时的数据点计算平均和最大的QPS值',
 }
