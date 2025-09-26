@@ -1099,7 +1099,7 @@ const debugData = async () => {
       case 'GET':
         let paramsStr = ''
         Object.keys(params).forEach((key) => {
-          if (params[key] != undefined && null !== params[key] && '' !== ('' + params[key])) {
+          if (params[key]) {
             paramsStr = `${paramsStr}&${key}=${encodeURIComponent(params[key])}`
           }
         })
@@ -1109,7 +1109,7 @@ const debugData = async () => {
         break
       case 'POST':
         Object.keys(params).forEach((key) => {
-          if (params[key] !== undefined && null != params[key]) {
+          if (params[key]) {
             filterInfo[key] = parseValue(key, params[key])
           }
         })
