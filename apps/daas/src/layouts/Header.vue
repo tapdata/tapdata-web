@@ -343,11 +343,9 @@ defineExpose({
               v-for="(value, key) in languages"
               :key="key"
               :command="key"
+              :class="{ 'is-active': currentLang === key }"
             >
-              <span v-if="currentLang === key" class="color-primary">{{
-                value
-              }}</span>
-              <span v-else>{{ value }}</span>
+              <span>{{ value }}</span>
             </ElDropdownItem>
           </ElDropdownMenu>
         </template>

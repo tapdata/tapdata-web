@@ -1,7 +1,7 @@
 // Menu
-.el-menu {
-  --el-menu-text-color: var(--el-text-color-title);
-}
+// .el-menu {
+//   --el-menu-text-color: var(--el-text-color-title);
+// }
 .el-sub-menu {
   .el-sub-menu__icon-arrow.el-sub-menu__icon-arrow {
     display: block;
@@ -194,7 +194,7 @@
 .el-popper.el-popper {
   --el-popper-border-radius: var(--el-border-radius-large) !important;
   &.is-dark {
-    --el-text-color-primary: #303133;
+    // --el-text-color-primary: #303133;
   }
 }
 
@@ -285,6 +285,11 @@
 .el-dropdown-menu__item.is-danger {
   --el-dropdown-menuItem-hover-fill: var(--el-color-danger-light-9);
   --el-dropdown-menuItem-hover-color: var(--el-color-danger);
+}
+
+.el-dropdown-menu__item.is-active {
+  background-color: var(--el-dropdown-menuItem-hover-fill);
+  color: var(--el-dropdown-menuItem-hover-color);
 }
 
 // Tree
@@ -538,7 +543,7 @@
     --el-border-radius-base: 6px;
     --el-fill-color-light: rgba(31, 35, 41, 0.1);
     --el-fill-color: rgba(31, 35, 41, 0.1);
-    --el-button-text-color: var(--el-text-color-title);
+    --el-button-text-color: var(--el-text-color-primary);
 
     &.el-button--primary {
       --el-fill-color-light: rgba(var(--primary-raw), 0.1);
@@ -806,8 +811,8 @@
   --el-segmented-padding: 3px;
   --el-segmented-color: var(--el-text-color-secondary);
   --el-segmented-item-selected-color: var(--el-text-color-primary);
-  --el-segmented-item-selected-bg-color: #fff;
-  --el-segmented-item-selected-disabled-bg-color: #fff;
+  --el-segmented-item-selected-bg-color: var(--el-bg-color);
+  --el-segmented-item-selected-disabled-bg-color: var(--el-bg-color);
   --el-segmented-item-disabled-color: var(--el-text-color-disabled);
 
   .el-segmented__item-selected {

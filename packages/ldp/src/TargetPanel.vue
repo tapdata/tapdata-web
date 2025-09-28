@@ -1011,8 +1011,8 @@ export default {
     },
 
     getConfirmMessage(operateStr, isBulk, name) {
-      let title = `${operateStr}_confirm_title`,
-        message = `${operateStr}_confirm_message`
+      let title = `${operateStr}_confirm_title`
+      let message = `${operateStr}_confirm_message`
       if (isBulk) {
         title = `bulk_${title}`
         message = `bulk_${message}`
@@ -1398,7 +1398,7 @@ export default {
 
 <style lang="scss" scoped>
 .wrap__item {
-  border: 1px solid #e1e3e9;
+  border: 1px solid var(--border-color);
 
   &:hover {
     //background-color: #f2f3f5;

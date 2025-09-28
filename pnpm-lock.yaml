@@ -807,6 +807,9 @@ importers:
       '@tiptap/vue-3':
         specifier: 'catalog:'
         version: 2.24.0(@tiptap/core@2.24.0(@tiptap/pm@2.24.0))(@tiptap/pm@2.24.0)(vue@3.5.17(typescript@5.8.3))
+      '@vueuse/core':
+        specifier: 'catalog:'
+        version: 10.11.1(vue@3.5.17(typescript@5.8.3))
       ace-builds:
         specifier: 'catalog:'
         version: 1.43.1

@@ -482,7 +482,7 @@
 }
 
 .border {
-  border: 1px solid #dee2e6 !important;
+  border: 1px solid var(--border-color) !important;
 }
 
 .border-0 {
@@ -490,7 +490,7 @@
 }
 
 .border-top {
-  border-top: 1px solid #dee2e6 !important;
+  border-top: 1px solid var(--border-color) !important;
 }
 
 .border-top-0 {
@@ -498,7 +498,7 @@
 }
 
 .border-end {
-  border-right: 1px solid #dee2e6 !important;
+  border-right: 1px solid var(--border-color) !important;
 }
 
 .border-end-0 {
@@ -506,11 +506,11 @@
 }
 
 .border-bottom {
-  border-bottom: 1px solid #dee2e6 !important;
+  border-bottom: 1px solid var(--border-color) !important;
 }
 
 .border-left {
-  border-left: 1px solid #dee2e6 !important;
+  border-left: 1px solid var(--border-color) !important;
 }
 
 .border-bottom-0 {
@@ -518,7 +518,7 @@
 }
 
 .border-start {
-  border-left: 1px solid #dee2e6 !important;
+  border-left: 1px solid var(--border-color) !important;
 }
 
 .border-start-0 {
@@ -2835,7 +2835,7 @@
 }
 
 .bg-light {
-  background-color: #f8f9fa !important;
+  background-color: var(--bg-light) !important;
 }
 
 .bg-slight {
@@ -12781,4 +12781,8 @@
 .text-xs {
   font-size: 0.75rem;
   line-height: calc(1 / 0.75);
+}
+
+.bg-card {
+  background-color: var(--card);
 }

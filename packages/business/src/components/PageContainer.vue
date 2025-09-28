@@ -32,7 +32,7 @@ const containerClass = computed(() => {
   if (props.mode === 'blank') return props.containerClass || ''
 
   const baseClasses = {
-    default: 'bg-white rounded-xl shadow-sm',
+    default: 'bg-card rounded-xl shadow-sm',
     plain: 'bg-transparent',
   }
   const base = baseClasses[props.mode] || baseClasses.default
@@ -100,7 +100,7 @@ const handleBack = () => {
       :class="headerClass"
       :style="ui.header"
     >
-      <div class="flex align-items-center bg-white rounded-lg">
+      <div class="flex align-items-center rounded-lg">
         <el-button v-if="showBackBtn" text class="mr-1" @click="handleBack">
           <template #icon>
             <VIcon>left</VIcon>

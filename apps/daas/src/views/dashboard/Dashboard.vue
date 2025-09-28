@@ -1012,8 +1012,8 @@ export default {
         height: 100%;
         padding: 16px;
         border-radius: 12px;
-        background-color: var(--color-white);
-        box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+        background-color: var(--card);
+        box-shadow: var(--el-box-shadow-lighter);
       }
       .dashboard-label {
         height: 48px;
@@ -1026,7 +1026,7 @@ export default {
         height: 100%;
         overflow: hidden;
         box-sizing: border-box;
-        background-color: var(--color-white);
+        background-color: var(--card);
         border-radius: 12px;
         box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.1);
         .charts-list-text {
@@ -1073,7 +1073,7 @@ export default {
           display: flex;
           flex: 1;
           padding: 5px 10px;
-          border: 1px solid #d9d9d9;
+          border: 1px solid var(--el-border-color);
           border-radius: 3px;
           transition: border-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
           img {
@@ -1082,7 +1082,7 @@ export default {
           }
           .server-main {
             .title {
-              color: var(--text-dark);
+              color: var(--el-text-color-primary);
               font-weight: 500;
             }
           }
@@ -1101,7 +1101,7 @@ export default {
           li {
             display: inline-block;
             padding-right: 10px;
-            color: var(--text-dark);
+            color: var(--el-text-color-primary);
             font-weight: 600;
             span {
               padding-right: 5px;
