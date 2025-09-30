@@ -1283,16 +1283,15 @@ const schema = {
                   interval: 300,
                   unit: 'SECOND',
                 },
-                // HA 分支暂时隐藏
-                // {
-                //   type: 'TASK',
-                //   open: isDaas,
-                //   key: 'TASK_RETRY_WARN',
-                //   sort: 4,
-                //   notify: ['SYSTEM', 'EMAIL'],
-                //   interval: 30,
-                //   unit: 'SECOND',
-                // },
+                {
+                  type: 'TASK',
+                  open: isDaas,
+                  key: 'TASK_RETRY_WARN',
+                  sort: 4,
+                  notify: ['SYSTEM', 'EMAIL'],
+                  interval: 30,
+                  unit: 'SECOND',
+                },
               ],
             },
             alarmRules: {
@@ -1304,14 +1303,13 @@ const schema = {
                   equalsFlag: 1,
                   ms: 60000,
                 },
-                // HA 分支暂时隐藏
-                // {
-                //   key: 'TASK_RETRY_WARN',
-                //   point: 12,
-                //   equalsFlag: 0,
-                //   ms: 1000,
-                //   times: 10,
-                // },
+                {
+                  key: 'TASK_RETRY_WARN',
+                  point: 12,
+                  equalsFlag: 0,
+                  ms: 1000,
+                  times: 10,
+                },
               ],
             },
             'alarmSettings.0': {
