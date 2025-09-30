@@ -96,6 +96,7 @@ declare module 'vue' {
     'ILucide:checkCheck': typeof import('~icons/lucide/check-check')['default']
     'ILucide:chevronRight': typeof import('~icons/lucide/chevron-right')['default']
     'ILucide:chevronsLeft': typeof import('~icons/lucide/chevrons-left')['default']
+    'ILucide:chevronsRight': typeof import('~icons/lucide/chevrons-right')['default']
     'ILucide:clock': typeof import('~icons/lucide/clock')['default']
     'ILucide:cloudUpload': typeof import('~icons/lucide/cloud-upload')['default']
     'ILucide:cpu': typeof import('~icons/lucide/cpu')['default']
