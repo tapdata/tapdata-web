@@ -1607,7 +1607,7 @@ export default {
 <template>
   <div v-loading="loadingFrom" class="connection-from">
     <div class="connection-from-body gap-4">
-      <main class="connection-from-main bg-white rounded-xl overflow-hidden">
+      <main class="connection-from-main bg-card rounded-xl overflow-hidden">
         <div class="connection-from-title p-4">
           <div class="flex align-center gap-2">
             <slot name="title-prefix">

@@ -381,6 +381,9 @@ defineExpose({
 
 <style lang="scss" scoped>
 .layout-header {
+  :deep(.el-button) {
+    outline: none;
+  }
   :deep(.el-button .el-icon:only-child) {
     color: var(--icon-n1);
   }

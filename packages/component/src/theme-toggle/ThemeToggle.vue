@@ -1,15 +1,27 @@
 <script setup lang="ts">
 import { useColorMode } from '@vueuse/core'
+import { watchEffect } from 'vue'
 
-const theme = useColorMode({
+const { store: theme, system } = useColorMode({
   emitAuto: true,
 })
-
-console.log(theme.value)
 
 const changeTheme = (mode: 'light' | 'dark' | 'auto') => {
   theme.value = mode
 }
+
+const updateDocsTheme = () => {
+  localStorage.theme = theme.value === 'auto' ? system.value : theme.value
+}
+
+watchEffect(() => {
+  const result = theme.value === 'auto' ? system.value : theme.value
+  localStorage.theme = result
+
+  setTimeout(() => {
+    localStorage.theme = result
+  }, 0)
+})
 </script>
 
 <template>

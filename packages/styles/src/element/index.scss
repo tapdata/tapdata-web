@@ -378,6 +378,31 @@
     width: 100%;
   }
 }
+.dialog-fade-enter-active,
+.dialog-fade-leave-active,
+.el-overlay-dialog {
+  animation: none !important;
+}
+
+.dialog-fade-enter-active,
+.dialog-fade-leave-active,
+.dialog-fade-enter-active .el-dialog,
+.dialog-fade-leave-active .el-dialog {
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1) !important;
+}
+
+.dialog-fade-enter-from,
+.dialog-fade-leave-to {
+  opacity: 1;
+  background-color: transparent;
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1) !important;
+}
+
+.dialog-fade-enter-from .el-dialog,
+.dialog-fade-leave-to .el-dialog {
+  opacity: 0;
+  transform: translate3d(0, -20px, 0);
+}
 
 // Drawer
 .el-drawer.el-drawer {
@@ -511,6 +536,25 @@
       justify-content: flex-end;
     }
   }
+}
+.el-overlay-message-box {
+  animation: none !important;
+  .el-message-box {
+    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1) !important;
+  }
+}
+.is-message-box {
+  opacity: 1 !important;
+  transition: background 0.3s cubic-bezier(0.645, 0.045, 0.355, 1) !important;
+}
+.is-message-box.fade-in-linear-enter-from,
+.is-message-box.fade-in-linear-leave-to {
+  background-color: transparent !important;
+}
+.is-message-box.fade-in-linear-enter-from .el-message-box,
+.is-message-box.fade-in-linear-leave-to .el-message-box {
+  opacity: 0;
+  transform: translate3d(0, -20px, 0);
 }
 // Button
 .el-button.el-button {
@@ -757,7 +801,7 @@
   }
 
   .el-input__count-inner {
-    --el-fill-color-blank: #eff0f1;
+    --el-fill-color-blank: var(--N200);
     color: var(--el-text-color-caption);
     border-radius: var(--el-border-radius-small);
     line-height: 20px !important;
@@ -767,7 +811,8 @@
 
 // Textarea
 .el-textarea.el-textarea .el-input__count {
-  --el-fill-color-blank: #eff0f1;
+  --el-fill-color-blank: var(--N200);
+  bottom: 6px;
   color: var(--el-text-color-caption);
   border-radius: var(--el-border-radius-small);
   line-height: 20px !important;

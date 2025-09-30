@@ -24,6 +24,26 @@
   --color-secondary: #ff7d00;
   --color-submenu: #f1f2f4;
 
+  --color-green-50: oklch(98.2% 0.018 155.826);
+  --color-green-200: oklch(92.5% 0.084 155.995);
+  --color-green-300: oklch(87.1% 0.15 154.449);
+  --color-green-600: oklch(62.7% 0.194 149.214);
+  --color-green-800: oklch(44.8% 0.119 151.328);
+  --color-green-950: oklch(26.6% 0.065 152.934);
+  --color-blue-50: oklch(97% 0.014 254.604);
+  --color-blue-200: oklch(88.2% 0.059 254.128);
+  --color-blue-300: oklch(80.9% 0.105 251.813);
+  --color-blue-600: oklch(54.6% 0.245 262.881);
+  --color-blue-800: oklch(42.4% 0.199 265.638);
+  --color-blue-950: oklch(28.2% 0.091 267.935);
+  --color-orange-50: oklch(98% 0.016 73.684);
+  --color-orange-200: oklch(90.1% 0.076 70.697);
+  --color-orange-300: oklch(83.7% 0.128 66.29);
+  --color-orange-600: oklch(64.6% 0.222 41.116);
+  --color-orange-800: oklch(47% 0.157 37.304);
+  --color-orange-950: oklch(26.6% 0.079 36.259);
+
+
   --text-dark: #1d2129;
   --text-normal: #333c4a;
   --text-light: #535f72;
@@ -48,6 +68,7 @@
   --border-aside: #e1e3e9;
   --border-sslight: #cdd0d6;
   --border-color: #dee2e6;
+  --N200: #eff0f1;
 }
 
 :root {

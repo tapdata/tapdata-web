@@ -902,7 +902,7 @@ export default {
         <div class="scene-name-list overflow-y-auto">
           <div
             v-if="lockedTypes.length"
-            class="scene-name-item px-4 rounded-4 user-select-none ellipsis cursor-pointer flex align-center"
+            class="scene-name-item px-4 rounded-lg user-select-none ellipsis cursor-pointer flex align-center"
             :class="{ active: currentScene === 'locked' && !search }"
             @click="
               handleSelectScene({
@@ -916,7 +916,7 @@ export default {
 
           <template v-if="isCommunity">
             <div
-              class="scene-name-item px-4 rounded-4 user-select-none ellipsis cursor-pointer flex align-center"
+              class="scene-name-item px-4 rounded-lg user-select-none ellipsis cursor-pointer flex align-center"
               @click="openGithub"
             >
               <VIcon size="16" class="mr-1">github</VIcon>
@@ -932,7 +932,7 @@ export default {
           <div
             v-for="(item, i) in options"
             :key="i"
-            class="scene-name-item px-4 rounded-4 user-select-none ellipsis cursor-pointer"
+            class="scene-name-item px-4 rounded-lg user-select-none ellipsis cursor-pointer"
             :class="{
               active:
                 (currentScene === item.key || currentScene === item.name) &&
@@ -947,7 +947,7 @@ export default {
       <div
         ref="connectorContainer"
         v-loading="loading"
-        class="flex-1 bg-light p-4 overflow-y-auto"
+        class="flex-1 bg-light dark:bg-card p-4 overflow-y-auto"
       >
         <div
           v-if="specialScene[currentScene]"
@@ -956,7 +956,7 @@ export default {
           <div
             v-for="item in specialScene[currentScene]"
             :key="item.key"
-            class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
+            class="connector-item rounded-lg p-3 overflow-hidden bg-card dark:bg-white/10 clickable"
             @click="handleSelectSpecial(item)"
           >
             <div class="flex gap-3">
@@ -1009,7 +1009,7 @@ export default {
           <div
             v-for="item in sceneDatabases"
             :key="item.type"
-            class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
+            class="connector-item rounded-lg p-3 overflow-hidden bg-card dark:bg-white/10 clickable"
             :class="{ active: item.pdkId === selected.pdkId }"
             @click="handleSelect(item)"
           >
@@ -1159,12 +1159,12 @@ export default {
     transition: background 0.2s;
 
     &:hover {
-      background-color: rgba(31, 35, 41, 0.08);
+      background-color: var(--fill-hover);
     }
 
     &.active {
-      color: var(--color-primary);
-      background-color: #f0f4ff;
+      color: var(--el-menu-active-color);
+      background-color: var(--primary-hover-light);
     }
   }
 

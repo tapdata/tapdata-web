@@ -268,6 +268,11 @@ const getPieOption = () => {
   ]
   chartData.value = data
   return {
+    backgroundColor: 'transparent',
+    tooltip: {
+      confine: true,
+      borderRadius: 12,
+    },
     series: [
       {
         type: 'pie',
@@ -495,7 +500,7 @@ onUnmounted(() => {
         <div class="flex gap-5 mb-5">
           <section
             v-loading="loadingTotal"
-            class="bg-white api-monitor-card rounded-xl flex-1"
+            class="bg-card api-monitor-card rounded-xl flex-1"
           >
             <div class="p-6">
               <span class="fs-6">{{ t(route.meta.title as string) }}</span
@@ -584,7 +589,7 @@ onUnmounted(() => {
           </section>
           <div
             v-loading="loadingTotal"
-            class="flex flex-column api-monitor-card bg-white overflow-hidden pt-5 rounded-xl"
+            class="flex flex-column api-monitor-card bg-card overflow-hidden pt-5 rounded-xl"
           >
             <div class="api-monitor-chart__text mb-2 pl-5">
               {{ t('api_monitor_total_warningCount') }}
@@ -598,7 +603,7 @@ onUnmounted(() => {
                     style="width: 4px; background: #8fd8c0"
                   />
                   <div>
-                    <div class="text-gray-500 lh-5">
+                    <div class="font-color-sslight lh-5">
                       {{ t('api_monitor_total_successCount') }}
                     </div>
                     <div class="fs-6 fw-sub lh-6">
@@ -615,7 +620,7 @@ onUnmounted(() => {
                     style="width: 4px; background: #f7d762"
                   />
                   <div>
-                    <div class="text-gray-500 lh-5">
+                    <div class="font-color-sslight lh-5">
                       {{ t('api_monitor_total_warningCount') }}
                     </div>
                     <div class="fs-6 fw-sub lh-6">
@@ -631,7 +636,7 @@ onUnmounted(() => {
         <!--api 排行榜 -->
         <section class="flex flex-direction mb-5">
           <section
-            class="rounded-xl bg-white api-monitor-card"
+            class="rounded-xl bg-card api-monitor-card"
             style="width: 380px"
           >
             <div class="p-5 fw-sub flex align-center gap-2 pb-3">
@@ -674,7 +679,7 @@ onUnmounted(() => {
                     <span>{{ item.name }}</span>
                     <span
                       v-if="item.pid"
-                      class="font-mono text-gray-700 lh-4 border rounded-4 px-1.5 fs-8"
+                      class="font-mono font-color-light lh-4 border rounded-4 px-1.5 fs-8"
                       >{{ item.pid }}</span
                     >
                   </div>
@@ -690,7 +695,7 @@ onUnmounted(() => {
                       <el-icon class="color-primary"
                         ><i-lucide:memory-stick
                       /></el-icon>
-                      <span class="text-gray-600">{{
+                      <span class="font-color-sslight">{{
                         $t('api_monitor_memory')
                       }}</span>
                       <span class="fw-sub ml-auto">{{
@@ -721,7 +726,7 @@ onUnmounted(() => {
             </div>
           </section>
           <div
-            class="flex flex-column flex-1 bg-white api-monitor-table api-monitor-card overflow-hidden ml-5 mr-5 rounded-xl"
+            class="flex flex-column flex-1 bg-card api-monitor-table api-monitor-card overflow-hidden ml-5 mr-5 rounded-xl"
           >
             <div class="api-monitor-chart__text p-5 pb-2 lh-5">
               {{ t('api_monitor_total_FailRate') }}
@@ -752,7 +757,7 @@ onUnmounted(() => {
             </div>
           </div>
           <div
-            class="flex flex-column flex-1 bg-white api-monitor-card overflow-hidden rounded-xl"
+            class="flex flex-column flex-1 bg-card api-monitor-card overflow-hidden rounded-xl"
           >
             <div class="api-monitor-chart__text p-5 pb-2 lh-5">
               {{ t('api_monitor_total_consumingTime') }}
@@ -788,7 +793,7 @@ onUnmounted(() => {
         </section>
         <!--api list -->
         <section
-          class="flex flex-column bg-white api-monitor-card api-monitor-list__min__height px-5 pt-5 rounded-xl"
+          class="flex flex-column bg-card api-monitor-card api-monitor-list__min__height px-5 pt-5 rounded-xl"
         >
           <header class="api-monitor-chart__text mb-2">
             {{ t('api_monitor_total_api_list') }}

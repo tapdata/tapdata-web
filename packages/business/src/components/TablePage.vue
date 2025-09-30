@@ -501,10 +501,9 @@ export default defineComponent({
             </el-table-column>
             <slot />
             <template #empty>
-              <div class="empty">
-                <VIcon size="140">no-data-color</VIcon>
+              <el-empty image-size="100">
                 <slot name="noDataText" />
-              </div>
+              </el-empty>
             </template>
           </el-table>
           <div class="table-footer">

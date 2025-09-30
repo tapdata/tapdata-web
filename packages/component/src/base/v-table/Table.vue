@@ -68,6 +68,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    isPage: {
+      type: Boolean,
+      default: false,
+    },
     remoteMethod: Function,
     pageOptions: {
       type: Object,
@@ -148,7 +152,7 @@ export default {
       }
       this.page.current = pageNum || this.page.current
       if (!this.remoteMethod) {
-        if (this.$attrs.isPage) {
+        if (this.isPage) {
           this.page.total = this.data.length
           const { current, size } = this.page
           this.list = this.data.slice((current - 1) * size, current * size)
