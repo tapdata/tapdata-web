@@ -163,7 +163,7 @@ const emit = defineEmits([
 ])
 
 const apiApplication = inject('apiApplication', null)
-
+const systemParamNames = ['page','limit','fields','filter'];
 const getDefaultParams = (apiType: string) => {
   const params = [
     {
@@ -171,6 +171,7 @@ const getDefaultParams = (apiType: string) => {
       type: 'number',
       defaultvalue: '1',
       description: t('packages_business_data_server_drawer_fenyebianhao'),
+      systemParam: true,
       required: false,
     },
     {
@@ -178,6 +179,7 @@ const getDefaultParams = (apiType: string) => {
       type: 'number',
       defaultvalue: '20',
       description: t('packages_business_data_server_drawer_meigefenyefan'),
+      systemParam: true,
       required: false,
     },
   ]
@@ -187,6 +189,16 @@ const getDefaultParams = (apiType: string) => {
       type: 'object',
       defaultvalue: '',
       description: t('public_data_filter_condition'),
+      systemParam: true,
+      required: false,
+    })
+  } else if (apiType === 'customerQuery') {
+    params.push({
+      name: 'fields',
+      type: ['array', 'string'],
+      defaultvalue: '',
+      description: t('public_data_fields_condition'),
+      systemParam: true,
       required: false,
     })
   }
@@ -457,7 +469,16 @@ const genFormData = (formData: any = {}): Record<string, any> => {
           description: t.description,
           required: t.required,
         }
-      }) || getDefaultParams(formData.apiType)
+      }) || getDefaultParams(formData.apiType);
+  if (apiType === 'customerQuery' && params.map((t: any) => t.name).indexOf('fields') === -1) {
+    params.splice(2, 0, {
+      name: 'fields',
+      type: ['array', 'string'],
+      defaultvalue: '',
+      description: t('public_data_fields_condition'),
+      required: false,
+    })
+  }
 
   const {
     id,
@@ -1114,6 +1135,7 @@ const debugData = async () => {
         filterInfo.limit = Number(params?.limit || 20)
         //@ts-ignore
         filterInfo.page = Number(params?.page || 1)
+        filterInfo.fields = params.fields ? JSON.parse(params.fields) : []
         //@ts-ignore
         queryBody.body = filterInfo
         //@ts-ignore
@@ -1420,6 +1442,29 @@ function handleClearAlias() {
 
 function onFieldsTreeCheck(keys: string[]) {
   selectedFieldSize.value = keys.length
+}
+
+function editable(item: any, fromVal: any, isEdit) {
+  if (fromVal.apiType === 'customerQuery') {
+    return isEdit && (item.name ? ['page', 'limit', 'fields'].indexOf(item.name ) === -1 : true);
+  } else if (fromVal.apiType === 'defaultApi') {
+    return isEdit && (item.name ? ['page', 'limit', 'filter'].indexOf(item.name ) === -1 : true);
+  }
+  return false;
+}
+
+function changeable(item: any, fromVal: any) {
+  console.log(`${JSON.stringify(item)}, ${JSON.stringify(fromVal.apiType)}`)
+  if (fromVal.apiType === 'customerQuery') {
+    return item.name ? ['page', 'limit', 'fields'].indexOf(item.name ) === -1 : true;
+  } else if (fromVal.apiType === 'defaultApi') {
+    return item.name ? ['page', 'limit', 'filter'].indexOf(item.name ) === -1 : true;
+  }
+  return true;
+}
+
+function inputable(item: any) {
+  this.isEdit.value;
 }
 
 provide('encryptionsMap', encryptionsMap)
@@ -1869,7 +1914,7 @@ provide('encryptions', encryptions)
           >
             <template #default="{ row, $index }">
               <div
-                v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'"
+                v-if="editable(row, form, isEdit)"
               >
                 <ElFormItem
                   :prop="`params.${$index}.name`"
@@ -1887,7 +1932,7 @@ provide('encryptions', encryptions)
           <ElTableColumn :label="$t('public_type')" prop="type" min-width="90">
             <template #default="{ row, $index }">
               <div
-                v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'"
+                v-if="editable(row, form, isEdit)"
               >
                 <el-cascader
                   v-model="form.params[$index].type"
@@ -1925,7 +1970,7 @@ provide('encryptions', encryptions)
           >
             <template #default="{ row, $index }">
               <div
-                v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'"
+                v-if="editable(row, form, isEdit)"
               >
                 <ElFormItem
                   :prop="`params.${$index}.required`"
@@ -1953,7 +1998,7 @@ provide('encryptions', encryptions)
           >
             <template #default="{ row, $index }">
               <div
-                v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'"
+                v-if="editable(row, form, isEdit)"
               >
                 <ElInput v-model="form.params[$index].description" type="textarea" autosize />
               </div>
@@ -1983,7 +2028,7 @@ provide('encryptions', encryptions)
           >
             <template #default="{ $index }">
               <el-button
-                v-if="$index > 1"
+                v-if="changeable(form.params[$index], form)"
                 text
                 size="small"
                 @click="removeItem('params', $index)"
