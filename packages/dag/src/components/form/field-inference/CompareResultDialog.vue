@@ -86,21 +86,6 @@ const typeMap = {
   },
 }
 
-const ruleOptions = [
-  {
-    label: t('packages_dag_applyCompareRules_Missing'),
-    value: 'Missing',
-  },
-  {
-    label: t('packages_dag_applyCompareRules_Different'),
-    value: 'Different',
-  },
-  {
-    label: t('packages_dag_applyCompareRules_CannotWrite'),
-    value: 'CannotWrite',
-  },
-]
-
 const filterOptions = ref([
   {
     label: t('packages_dag_compare_different'),
@@ -123,6 +108,10 @@ const filterOptions = ref([
     value: 'Precision',
   },
 ])
+
+const ruleOptions = filterOptions.value.filter((item) => {
+  return item.value !== 'Additional'
+})
 
 const totalMap = ref<Record<string, number>>({})
 
@@ -613,7 +602,23 @@ onBeforeUnmount(() => {
             :key="item.value"
             :label="item.label"
             :value="item.value"
-          />
+          >
+            <el-tag
+              disable-transitions
+              :type="typeMap[item.value]?.type || 'info'"
+              class="px-1.5"
+            >
+              <span class="flex align-center">
+                {{ item.label }}
+                <el-icon><i-lucide:chevrons-right /></el-icon>
+                {{
+                  item.value === 'Different' || item.value === 'Precision'
+                    ? $t('public_button_update')
+                    : $t('public_button_delete')
+                }}
+              </span>
+            </el-tag>
+          </el-checkbox>
         </el-checkbox-group>
       </div>
     </div>
