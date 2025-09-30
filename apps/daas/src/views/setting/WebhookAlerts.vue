@@ -224,7 +224,8 @@ const loadData = async () => {
 
 const loadEventType = async () => {
   const data = await findAlarm()
-  eventData.value[0].children = data.map((item: any) => ({
+  eventData.value[0].children = data.filter((item: any) => item.type !== 'API_SERVER')
+      .map((item: any) => ({
     label: keyMap[item.key],
     value: item.key,
   }))
