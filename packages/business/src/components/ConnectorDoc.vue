@@ -2,8 +2,7 @@
 import { pdkApi } from '@tap/api'
 import GitBook from '@tap/component/src/GitBook.vue'
 import { useI18n } from '@tap/i18n'
-import { useDark } from '@vueuse/core'
-import { computed, onMounted, ref, watchEffect } from 'vue'
+import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 
 const pdkDocMap = {
@@ -147,7 +146,6 @@ const props = defineProps<Props>()
 
 const { locale } = useI18n()
 const store = useStore()
-const isDark = useDark()
 const isDaas = ref(import.meta.env.VUE_APP_PLATFORM === 'DAAS')
 const doc = ref('')
 const iframe = ref<HTMLIFrameElement>()
@@ -190,35 +188,11 @@ const getPdkDoc = () => {
 if (!showIframe.value) {
   getPdkDoc()
 }
-
-onMounted(() => {
-  // iframe ref is available after mount
-})
-
-const setIFrameTheme = () => {
-  // if (iframe.value?.contentDocument?.documentElement) {
-  //   if (isDark.value) {
-  //     iframe.value.contentDocument.documentElement.dataset.theme = 'dark'
-  //   } else {
-  //     iframe.value.contentDocument.documentElement.dataset.theme = 'light'
-  //   }
-  // }
-}
-
-watchEffect(() => {
-  setIFrameTheme()
-})
 </script>
 
 <template>
   <div class="h-100">
     <GitBook v-if="!showIframe" class="bg-white border-0" :value="doc" />
-    <iframe
-      v-else
-      ref="iframe"
-      :src="src"
-      class="w-100 h-100 block"
-      @load="setIFrameTheme"
-    />
+    <iframe v-else ref="iframe" :src="src" class="w-100 h-100 block" />
   </div>
 </template>

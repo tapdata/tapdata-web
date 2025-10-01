@@ -1246,7 +1246,7 @@ export default {
                       </el-button>
                     </div>
                     <div
-                      class="bg-gray-50 rounded-lg p-2 border border-gray-100"
+                      class="bg-gray-50 dark:bg-card rounded-lg p-2 border border-gray-100"
                     >
                       <div>{{ row.desc }}</div>
                     </div>
