@@ -507,7 +507,7 @@ export default {
   border-top: none;
 }
 .mode-card-container {
-  background-color: #f5f7fa;
+  background-color: var(--bg-light);
 }
 .mode-card {
   transition: box-shadow 0.15s linear 0s;

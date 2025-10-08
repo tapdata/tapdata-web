@@ -24,13 +24,13 @@ $namespace: 'el';
     border: $--border-width-base dashed $--border-color-base;
 
     &:hover {
-      background-color: $--color-white;
+      background-color: var(--el-bg-color-overlay);
       border-color: $--border-color-hover;
     }
 
     &:active,
     &:focus {
-      background-color: $--color-white;
+      background-color: var(--el-bg-color-overlay);
       border-color: $--color-primary;
     }
   }

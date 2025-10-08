@@ -23,6 +23,7 @@ import i18n from './i18n'
 import router from './router'
 
 import 'virtual:svg-icons-register'
+// import 'element-plus/theme-chalk/dark/css-vars.css'
 import '@tap/styles'
 import '@/styles/app.scss'
 

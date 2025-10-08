@@ -7,6 +7,7 @@ import {
 } from '@tap/api'
 import Cookie from '@tap/shared/src/cookie'
 import { getSettingByKey } from '@tap/shared/src/settings'
+import { useDark } from '@vueuse/core'
 import cryptoJS from 'crypto-js'
 import { configUser } from '@/utils/util'
 import LoginPage from './LoginPage.vue'
@@ -29,6 +30,7 @@ export default {
     }
   },
   created() {
+    useDark()
     this.loadAdEnable()
     if (this.$route.query) {
       this.form.email = this.$route.query.email

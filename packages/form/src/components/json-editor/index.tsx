@@ -53,6 +53,7 @@ export const JsonEditor = defineComponent({
           height={props.height}
           onBlur={onBlur}
           options={options}
+          auto-dark
           {...attrs}
         />
       )

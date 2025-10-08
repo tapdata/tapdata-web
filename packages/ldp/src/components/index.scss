@@ -46,10 +46,10 @@
   flex: 1;
   border-bottom: none;
   border-radius: 3px;
-  background-color: var(--color-white);
+  background-color: var(--color-card);
   overflow: auto;
   .el-table__fixed-body-wrapper {
-    background-color: var(--color-white);
+    background-color: var(--color-card);
   }
   .el-table__fixed {
     height: auto !important; //设置高优先，以覆盖内联样式

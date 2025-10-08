@@ -71,6 +71,10 @@ export default {
       width: 100%;
       height: 100%;
     }
+    &:where(html.dark *) {
+      filter: brightness(0.8) contrast(0.9) sepia(0.1) hue-rotate(10deg);
+      opacity: 0.9;
+    }
   }
 
   .page-main {
@@ -78,7 +82,7 @@ export default {
     flex: 1;
     justify-content: center;
     align-items: center;
-    background-color: var(--color-white);
+    background-color: var(--el-bg-color);
     .page-main-box {
       display: flex;
       flex-direction: column;

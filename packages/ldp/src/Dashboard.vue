@@ -628,7 +628,7 @@ export default {
       class="swim-lane flex flex-column h-100 position-relative overflow-hidden"
     >
       <div
-        class="list flex flex-fill overflow-hidden bg-white border rounded-xl"
+        class="list flex flex-fill overflow-hidden bg-card border rounded-xl"
       >
         <div v-if="currentView === 'catalog'" class="px-5 pb-5 w-100">
           <Catalogue @create-single-task="hanldeCreateSingleTask" />
@@ -714,21 +714,22 @@ export default {
   :deep(.list__title) {
     height: 48px;
     min-height: 48px;
-    background: #f3f7fa;
+    color: var(--text-dark);
+    background: var(--ldp-header);
   }
 
   :deep(.list__title__source) {
     color: var(--color-primary);
-    background: #e8f3ff;
+    background: var(--ldp-source);
   }
 
   :deep(.list__title__target) {
     color: #009a29;
-    background: #e8ffea;
+    background: var(--ldp-target);
   }
 
   :deep(.list__item) {
-    border-left: 1px solid #e1e3e9;
+    border-left: 1px solid var(--border-color);
     &:first-child {
       border-left: none;
     }

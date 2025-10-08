@@ -1,8 +1,9 @@
-<script>
+<script setup lang="ts">
+import { useDark } from '@vueuse/core'
 import ace from 'ace-builds'
 import workerJavascriptUrl from 'ace-builds/src-noconflict/worker-javascript?url'
 import workerJsonUrl from 'ace-builds/src-noconflict/worker-json?url'
-
+import { onMounted, ref, watch, watchEffect } from 'vue'
 import 'ace-builds/src-noconflict/ext-searchbox'
 import 'ace-builds/src-noconflict/mode-java'
 import 'ace-builds/src-noconflict/mode-javascript'
@@ -22,96 +23,137 @@ import 'ace-builds/src-noconflict/ext-beautify'
 const WORKER = {
   javascript: workerJavascriptUrl,
   json: workerJsonUrl,
+} as const
+
+const ACTION_EVENTS = [
+  'change',
+  'blur',
+  'focus',
+  'copy',
+  'paste',
+  'input',
+] as const
+
+interface Props {
+  value: any
+  lang?: string
+  theme?: string
+  height?: string | number
+  width?: string | number
+  options?: any
+  autoDark?: boolean
 }
 
-const ACTION_EVENTS = ['change', 'blur', 'focus', 'copy', 'paste', 'input']
+const props = withDefaults(defineProps<Props>(), {
+  theme: 'one_dark',
+})
 
-export default {
-  name: 'VCodeEditor',
-  props: {
-    value: {
-      required: true,
-    },
-    lang: String,
-    theme: {
-      type: String,
-      default: 'one_dark',
-    },
-    height: [String, Number],
-    width: [String, Number],
-    options: Object,
-  },
-  emits: ['init', 'initOptions', 'update:value', ...ACTION_EVENTS],
-  data() {
-    return {
-      editor: null,
-      contentBackup: '',
+const emit = defineEmits<{
+  init: [editor: any, tools: any, beautify: any]
+  initOptions: [editor: any, tools: any, beautify: any]
+  'update:value': [value: string]
+  change: [value: string, event: any, editor: any]
+  blur: [value: string, event: any, editor: any]
+  focus: [value: string, event: any, editor: any]
+  copy: [value: string, event: any, editor: any]
+  paste: [value: string, event: any, editor: any]
+  input: [value: string, event: any, editor: any]
+}>()
+
+const editor = ref<any>(null)
+const contentBackup = ref('')
+const isDark = useDark()
+
+watch(
+  () => props.value,
+  (val) => {
+    if (typeof val === 'object') {
+      val = JSON.stringify(val)
+    }
+    if (contentBackup.value !== val && editor.value) {
+      editor.value.setValue(val, 1)
     }
   },
-  watch: {
-    value(val) {
-      if (typeof val === 'object') {
-        val = JSON.stringify(val)
-      }
-      if (this.contentBackup !== val) this.editor.setValue(val, 1)
-    },
-  },
-  mounted() {
-    const lang = this.lang || 'text'
-    const theme = this.theme
-    const editor = (this.editor = ace.edit(this.$el.firstElementChild))
+)
 
-    // ace.config.setModuleUrl('ace/ext/searchbox', extSearchboxUrl)
-    // ace.config.setModuleUrl(`ace/mode/${lang}`, MAP[lang]?.[0])
-    // ace.config.setModuleUrl(`ace/snippets/${lang}`, MAP[lang]?.[1])
-    WORKER[lang] &&
-      ace.config.setModuleUrl(`ace/mode/${lang}_worker`, WORKER[lang])
+watchEffect(() => {
+  const theme = props.autoDark
+    ? isDark.value
+      ? 'one_dark'
+      : 'chrome'
+    : props.theme
+  if (editor.value) {
+    console.log('watchEffect-do', theme)
+    editor.value.setTheme(`ace/theme/${theme}`)
+  }
+  console.log('watchEffect')
+})
 
-    const reqHandler = ace.require
-    const tools = reqHandler('ace/ext/language_tools')
-    const beautify = reqHandler('ace/ext/beautify') // get reference to extension
-
-    this.$emit('init', editor, tools, beautify)
-
-    editor.$blockScrolling = Infinity
-    const session = editor.getSession()
-    theme && editor.setTheme(`ace/theme/${theme}`)
-    session.setMode(`ace/mode/${lang}`)
-    session.setTabSize(2)
-
-    const val =
-      typeof this.value === 'object'
-        ? JSON.stringify(this.value, null, 2)
-        : this.value
-    editor.setValue(val || '', 1)
-
-    if (this.options) {
-      session.setUseWrapMode(this.options.useWrapMode) // 自动换行
-      editor.setOptions(this.options)
-      this.$emit('initOptions', editor, tools, beautify)
-    }
-
-    editor.on('change', () => {
-      const content = editor.getValue()
-      this.$emit('update:value', content)
-      this.contentBackup = content
-    })
-
-    ACTION_EVENTS.forEach((ev) => {
-      editor.on(ev, (event, editor) => {
-        this.$emit(ev, editor.getValue(), event, editor)
-      })
-    })
-  },
-  methods: {
-    px(n) {
-      if (/^\d*$/.test(n)) {
-        return `${n}px`
-      }
-      return n
-    },
-  },
+const px = (n: string | number): string => {
+  if (/^\d*$/.test(String(n))) {
+    return `${n}px`
+  }
+  return String(n)
 }
+
+onMounted(() => {
+  const lang = props.lang || 'text'
+  let theme = props.theme
+  if (props.autoDark && isDark.value) {
+    theme = 'one_dark'
+  }
+  const editorElement = document.querySelector(
+    '.ace-editor-container',
+  ) as HTMLElement
+  const aceEditor = ace.edit(editorElement)
+  editor.value = aceEditor
+
+  // ace.config.setModuleUrl('ace/ext/searchbox', extSearchboxUrl)
+  // ace.config.setModuleUrl(`ace/mode/${lang}`, MAP[lang]?.[0])
+  // ace.config.setModuleUrl(`ace/snippets/${lang}`, MAP[lang]?.[1])
+  WORKER[lang as keyof typeof WORKER] &&
+    ace.config.setModuleUrl(
+      `ace/mode/${lang}_worker`,
+      WORKER[lang as keyof typeof WORKER],
+    )
+
+  const reqHandler = ace.require
+  const tools = reqHandler('ace/ext/language_tools')
+  const beautify = reqHandler('ace/ext/beautify') // get reference to extension
+
+  emit('init', aceEditor, tools, beautify)
+
+  // @ts-ignore - $blockScrolling is a legacy property
+  aceEditor.$blockScrolling = Infinity
+  const session = aceEditor.getSession()
+  // theme && aceEditor.setTheme(`ace/theme/${theme}`)
+  session.setMode(`ace/mode/${lang}`)
+  session.setTabSize(2)
+
+  const val =
+    typeof props.value === 'object'
+      ? JSON.stringify(props.value, null, 2)
+      : props.value
+  aceEditor.setValue(val || '', 1)
+
+  if (props.options) {
+    session.setUseWrapMode(props.options.useWrapMode) // 自动换行
+    aceEditor.setOptions(props.options)
+    emit('initOptions', aceEditor, tools, beautify)
+  }
+
+  aceEditor.on('change', () => {
+    const content = aceEditor.getValue()
+    emit('update:value', content)
+    contentBackup.value = content
+  })
+
+  ACTION_EVENTS.forEach((ev) => {
+    aceEditor.on(ev, (event: any) => {
+      emit(ev as any, aceEditor.getValue(), event, aceEditor)
+    })
+  })
+})
 </script>
 
 <template>
@@ -125,6 +167,7 @@ export default {
     }"
   >
     <div
+      class="ace-editor-container"
       :style="{
         height: '100%',
         width: '100%',

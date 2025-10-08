@@ -137,6 +137,11 @@ const apiTypeOptions = [
     value: 'customerQuery',
   },
 ]
+const methodColorMap = {
+  GET: 'blue',
+  POST: 'green',
+  TOKEN: 'orange',
+}
 
 interface Props {
   host?: string
@@ -386,7 +391,7 @@ const customizePath = computed(() => {
   return `/api/${arr.join('/')}`
 })
 
-const urlList = computed(() => {
+const urlList = computed<{ method: keyof typeof methodColorMap, url: string, last: string, canEdit: boolean, type: string }[]>(() => {
   const baseUrl = props.host + customizePath.value
   const setting = form.value.pathSetting ? form.value.pathSetting : []
   const settingMapping = {}
@@ -1420,6 +1425,11 @@ function onFieldsTreeCheck(keys: string[]) {
   selectedFieldSize.value = keys.length
 }
 
+const getMethodClass = (method: keyof typeof methodColorMap) => {
+  const color = methodColorMap[method]
+  return `bg-${color}-50 text-${color}-800 border-${color}-200 dark:bg-${color}-950 dark:text-${color}-300 dark:border-${color}-800`
+}
+
 provide('encryptionsMap', encryptionsMap)
 provide('encryptions', encryptions)
 </script>
@@ -1463,7 +1473,7 @@ provide('encryptions', encryptions)
       <!-- 顶部 标题 Tab -->
       <div
         v-if="!inDialog"
-        class="flex position-sticky top-0 bg-white z-10"
+        class="flex position-sticky top-0 bg-white dark:bg-transparent dark:backdrop-blur-md z-10"
         style="line-height: 48px"
       >
         <ElTabs
@@ -1792,10 +1802,10 @@ provide('encryptions', encryptions)
             <li
               v-for="(item, index) in urlList"
               :key="item.method"
-              class="data-server-path__item rounded-lg px-2 py-2"
-              :class="`method-item-${item.method.toLowerCase()}`"
+              class="data-server-path__item rounded-lg px-2 py-2 border"
+              :class="getMethodClass(item.method)"
             >
-              <div class="data-server-path__method fs-8 mr-4">
+              <div class="data-server-path__method fs-8 mr-4" :class="`bg-${methodColorMap[item.method]}-600`">
                 {{ item.method }}
               </div>
               <div v-if="!isEdit" class="data-server-path__value line-height">

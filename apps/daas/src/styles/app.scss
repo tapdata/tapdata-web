@@ -243,8 +243,8 @@
 }
 
 .error-stack-pre-wrap {
-  background: #fff2f0;
-  border: 1px solid #ffccc7;
+  background: var(--el-color-danger-light-9);
+  border: 1px solid var(--el-color-danger-light-8);
 
   .error-stack-actions {
     display: none;

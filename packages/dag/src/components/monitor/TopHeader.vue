@@ -591,7 +591,7 @@ $sidebarBg: #fff;
     cursor: pointer;
 
     &:hover {
-      background-color: #edf1f9;
+      background-color: var(--el-fill-color-light);
     }
   }
 

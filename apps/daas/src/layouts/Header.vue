@@ -7,6 +7,7 @@ import {
   logout,
 } from '@tap/api'
 import { Modal } from '@tap/component/src/modal'
+import { ThemeToggle } from '@tap/component/src/theme-toggle'
 import { useI18n } from '@tap/i18n'
 import {
   getCurrentLanguage,
@@ -14,8 +15,8 @@ import {
   setCurrentLanguage,
 } from '@tap/i18n/src/shared/util'
 import Cookie from '@tap/shared/src/cookie'
-import { getSettingByKey } from '@tap/shared/src/settings'
 
+import { getSettingByKey } from '@tap/shared/src/settings'
 import Time from '@tap/shared/src/time'
 import dayjs from 'dayjs'
 import { computed, inject, onMounted, ref } from 'vue'
@@ -342,15 +343,14 @@ defineExpose({
               v-for="(value, key) in languages"
               :key="key"
               :command="key"
+              :class="{ 'is-active': currentLang === key }"
             >
-              <span v-if="currentLang === key" class="color-primary">{{
-                value
-              }}</span>
-              <span v-else>{{ value }}</span>
+              <span>{{ value }}</span>
             </ElDropdownItem>
           </ElDropdownMenu>
         </template>
       </ElDropdown>
+      <ThemeToggle />
       <ElDivider direction="vertical" class="divider mx-0" />
       <ElDropdown
         class="menu-user btn"
@@ -381,6 +381,9 @@ defineExpose({
 
 <style lang="scss" scoped>
 .layout-header {
+  :deep(.el-button) {
+    outline: none !important;
+  }
   :deep(.el-button .el-icon:only-child) {
     color: var(--icon-n1);
   }

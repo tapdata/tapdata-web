@@ -1,5 +1,5 @@
 <script>
-import { createForm, onFieldValueChange } from '@formily/core'
+import { createForm } from '@formily/core'
 import { observable } from '@formily/reactive'
 import {
   externalStorageApi,
@@ -44,7 +44,6 @@ import Frequency from './components/monitor/components/Frequency'
 import InitialList from './components/monitor/components/InitialList.vue'
 import LineChart from './components/monitor/components/LineChart.vue'
 import NodeDetailDialog from './components/monitor/components/NodeDetailDialog'
-import LeftSider from './components/monitor/LeftSider'
 import Node from './components/monitor/Node'
 import TopHeader from './components/monitor/TopHeader'
 import { getTimeGranularity, TIME_FORMAT_MAP } from './components/monitor/util'
@@ -834,9 +833,9 @@ export default {
 
       await this.validateAllNodes()
 
-      const sourceMap = {},
-        targetMap = {},
-        edges = this.allEdges
+      const sourceMap = {}
+      const targetMap = {}
+      const edges = this.allEdges
       edges.forEach((item) => {
         const _source = sourceMap[item.source]
         const _target = targetMap[item.target]
@@ -2500,7 +2499,7 @@ $sidebarW: 356px;
 $hoverBg: #e1e1e1;
 $radius: 3px;
 $baseHeight: 26px;
-$sidebarBg: #fff;
+$sidebarBg: var(--el-bg-color);
 
 .layout-sidebar {
   position: relative;

@@ -1,6 +1,5 @@
 <script>
 import { getConnectionNoSchema, proxyApi, taskApi } from '@tap/api'
-
 import SkipError from '@tap/business/src/views/task/SkipError.vue'
 import { VEmpty } from '@tap/component/src/base/v-empty'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
@@ -8,6 +7,7 @@ import { showMessage } from '@tap/component/src/mixins/showMessage'
 import { titleChange } from '@tap/component/src/mixins/titleChange'
 import i18n from '@tap/i18n'
 import { uuid } from '@tap/shared'
+import { useDark } from '@vueuse/core'
 import dagre from 'dagre'
 import { merge } from 'lodash-es'
 import { getCurrentInstance, nextTick, provide, ref, shallowRef } from 'vue'
@@ -52,6 +52,8 @@ export default {
   inject: ['buried'],
 
   setup() {
+    const isDark = useDark()
+
     const previewData = shallowRef(null)
     const previewLoading = ref(false)
 
@@ -935,7 +937,7 @@ $sidebarW: 260px;
 $hoverBg: #e1e1e1;
 $radius: 3px;
 $baseHeight: 26px;
-$sidebarBg: #fff;
+$sidebarBg: var(--el-bg-color);
 
 .layout-sidebar {
   position: relative;
@@ -960,7 +962,7 @@ $sidebarBg: #fff;
 }
 .layout-content {
   position: relative;
-  background-color: #f9f9f9;
+  background-color: var(--el-bg-color);
 
   :deep(.connection-highlight),
   :deep(.connection-selected) {

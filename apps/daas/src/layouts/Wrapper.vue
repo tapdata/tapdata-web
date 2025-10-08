@@ -43,9 +43,7 @@ const IS_IFRAME = ref(Boolean(sessionStorage.getItem('IS_IFRAME') === 'true'))
       inset: 0;
       background-image: linear-gradient(
         to right bottom,
-        rgb(248, 250, 252),
-        rgb(241, 245, 249),
-        rgb(239, 246, 255)
+        var(--layout-gradient-stops)
       );
     }
 
@@ -68,8 +66,7 @@ const IS_IFRAME = ref(Boolean(sessionStorage.getItem('IS_IFRAME') === 'true'))
       right: -6rem;
       background-image: linear-gradient(
         to right bottom,
-        rgba(219, 234, 254, 0.3),
-        rgba(199, 210, 254, 0.3)
+        var(--layout-tr-gradient-stops)
       );
     }
 
@@ -78,8 +75,7 @@ const IS_IFRAME = ref(Boolean(sessionStorage.getItem('IS_IFRAME') === 'true'))
       bottom: -8rem;
       background-image: linear-gradient(
         to right top,
-        rgba(219, 234, 254, 0.2),
-        rgba(243, 232, 255, 0.2)
+        var(--layout-bl-gradient-stops)
       );
     }
   }
@@ -111,6 +107,8 @@ const IS_IFRAME = ref(Boolean(sessionStorage.getItem('IS_IFRAME') === 'true'))
     --el-menu-item-height: 40px;
     --el-menu-sub-item-height: 40px;
     --el-menu-hover-bg-color: var(--fill-hover);
+    // --el-menu-text-color: #d4d4d4;
+    --el-menu-text-color: var(--layout-menu-text-color);
 
     display: flex;
     flex-direction: column;
@@ -134,6 +132,11 @@ const IS_IFRAME = ref(Boolean(sessionStorage.getItem('IS_IFRAME') === 'true'))
     .el-sub-menu__title + .el-menu {
       margin-top: 8px;
       padding-inline-start: 10px;
+    }
+
+    .el-menu-item.is-active,
+    .el-menu-item:hover {
+      --el-menu-text-color: var(--el-text-color-primary);
     }
   }
 }

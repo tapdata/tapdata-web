@@ -2,13 +2,13 @@
 import { fetchApiCall } from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 
+import { HighlightCode } from '@tap/form/src/components/highlight-code'
 import { calcUnit } from '@tap/shared'
 import dayjs from 'dayjs'
 import { formatMs } from '@/utils/util'
-import Highlight from "@tap/component/src/base/Highlight.jsx";
 
 export default {
-  components: {Highlight, PageContainer },
+  components: { HighlightCode, PageContainer },
   data() {
     return {
       auditData: null,
@@ -48,17 +48,21 @@ export default {
             this.auditData.createAt = data.createAt
               ? dayjs(data.createAt).format('YYYY-MM-DD HH:mm:ss')
               : '-'
-            const jsonData = this.auditData.body ? this.auditData.body : (this.auditData.query ? this.auditData.query : this.auditData.reqParams)
+            const jsonData = this.auditData.body
+              ? this.auditData.body
+              : this.auditData.query
+                ? this.auditData.query
+                : this.auditData.reqParams
             this.auditData.jsonParam = {
-              "validation": false,
-              "json": jsonData,
-              "fullCustomQuery": true
+              validation: false,
+              json: jsonData,
+              fullCustomQuery: true,
             }
             try {
-              this.auditData.jsonParam.json = jsonData;
+              this.auditData.jsonParam.json = jsonData
               this.auditData.jsonParam.validation = true
-            } catch (e) {
-              console.log(`parseJsonData error: ${e}`)
+            } catch (error) {
+              console.log(`parseJsonData error: ${error}`)
             }
 
             this.list.forEach((item) => {
@@ -94,33 +98,34 @@ export default {
       return calcUnit(...args)
     },
     handleFormat() {
-      this.handleJsonTransformation(2);
+      this.handleJsonTransformation(2)
     },
     handleCompress() {
-      this.handleJsonTransformation(null);
+      this.handleJsonTransformation(null)
     },
     handleJsonTransformation(indent) {
       try {
-        const jsonString = this.auditData?.jsonParam?.json;
-        if (!jsonString) return;
-        const isCurrentlyFormatted = this.auditData.jsonParam.fullCustomQuery === false;
-        const isTargetFormat = indent !== null;
-        if (isTargetFormat === isCurrentlyFormatted) return;
-        const parsedJson = JSON.parse(jsonString);
-        this.auditData.jsonParam.json = JSON.stringify(parsedJson, null, indent);
-        this.auditData.jsonParam.fullCustomQuery = !isTargetFormat;
+        const jsonString = this.auditData?.jsonParam?.json
+        if (!jsonString) return
+        const isCurrentlyFormatted =
+          this.auditData.jsonParam.fullCustomQuery === false
+        const isTargetFormat = indent !== null
+        if (isTargetFormat === isCurrentlyFormatted) return
+        const parsedJson = JSON.parse(jsonString)
+        this.auditData.jsonParam.json = JSON.stringify(parsedJson, null, indent)
+        this.auditData.jsonParam.fullCustomQuery = !isTargetFormat
       } catch (error) {
-        console.error('JSON处理失败:', error);
+        console.error('JSON处理失败:', error)
       }
-    }
+    },
   },
 }
 </script>
 
 <template>
-  <PageContainer mode="auto">
-    <section v-loading="loading" class="apiaudit-info-wrap">
-      <div class="details-box bg-white rounded-2">
+  <PageContainer v-loading="loading" mode="auto">
+    <section class="apiaudit-info-wrap">
+      <div class="details-box">
         <div class="title fs-7 fw-sub font-color-dark">
           {{ $t('apiaudit_log_info') }}
         </div>
@@ -149,7 +154,7 @@ export default {
           >
         </ElRow>
       </div>
-      <div class="details-box bg-white py-6 mt-6 rounded-2">
+      <div class="details-box py-6 mt-6 rounded-2">
         <ul class="flex flex-row justify-content-center">
           <li
             v-for="item in list"
@@ -163,19 +168,19 @@ export default {
                   item.value > 0 &&
                   ['latency', 'averResponseTime'].includes(item.key)
                 "
-                class="link-primary pt-4 din-font details-box-item-num"
+                class="color-primary pt-4 din-font details-box-item-num"
               >
                 {{ formatDuring(item.value) }}
               </div>
               <div
                 v-else-if="item.value > 0 && ['speed'].includes(item.key)"
-                class="link-primary pt-4 din-font details-box-item-num"
+                class="color-primary pt-4 din-font details-box-item-num"
               >
                 {{ item.value ? `${calcUnit(item.value, 'b')}/S` : '0 M/S' }}
               </div>
               <div
                 v-else
-                class="link-primary pt-4 din-font details-box-item-num"
+                class="color-primary pt-4 din-font details-box-item-num"
               >
                 {{ item.value }}
               </div>
@@ -185,34 +190,39 @@ export default {
         </ul>
       </div>
 
-      <div class="details-box flex-1 bg-white mt-6 rounded-2">
+      <div class="details-box flex-1 mt-6 rounded-2">
         <div class="title fs-7 fw-sub font-color-dark jc-between">
           {{ $t('apiaudit_parameter') }}
           <el-button
-              v-if="auditData && auditData.jsonParam && auditData.jsonParam.fullCustomQuery"
-              text
-              @click="handleFormat"
+            v-if="
+              auditData &&
+              auditData.jsonParam &&
+              auditData.jsonParam.fullCustomQuery
+            "
+            text
+            @click="handleFormat"
           >
             <el-icon class="mr-1"><i-mingcute:brush-line /></el-icon>
             {{ $t('public_format') }}
           </el-button>
-          <el-button
-              v-else
-              text
-              @click="handleCompress"
-          >
+          <el-button v-else text @click="handleCompress">
             <el-icon class="mr-1"><i-mingcute:download2Line /></el-icon>
             {{ $t('public_format_compress') }}
           </el-button>
         </div>
         <div v-if="auditData" class="pt-4 editor-box">
-          <Highlight
-              v-if="auditData.jsonParam && auditData.jsonParam.validation"
-              class="custom-where-pre where-pre"
-              :code="auditData.jsonParam.json"
-              language="json"
+          <HighlightCode
+            v-if="auditData.jsonParam && auditData.jsonParam.validation"
+            class="custom-where-pre where-pre rounded-xl"
+            :code="auditData.jsonParam.json"
+            language="json"
+            copy
           />
-          <pre v-else class="editor-pre">{{ !auditData.jsonParam || !auditData.jsonParam.json ? '' : auditData.jsonParam.json }}</pre>
+          <pre v-else class="editor-pre">{{
+            !auditData.jsonParam || !auditData.jsonParam.json
+              ? ''
+              : auditData.jsonParam.json
+          }}</pre>
         </div>
       </div>
     </section>

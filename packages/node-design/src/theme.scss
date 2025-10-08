@@ -53,7 +53,7 @@
   --dn-mobile-simulator-body-bg-color: var(--dn-white);
   --dn-mobile-simulator-border-color: var(--dn-gray-dark);
   --dn-responsive-simulator-bg-color: var(--dn-white);
-  --dn-pc-simulator-bg-color: var(--dn-white);
+  --dn-pc-simulator-bg-color: var(--el-bg-color-overlay);
 
   --dn-aux-selector-btn-color: var(--dn-white);
   --dn-aux-selector-btn-bg-color: var(--dn-brand-color);
@@ -66,15 +66,15 @@
   --dn-aux-selector-btn-active-border-color: var(--dn-brand-hovering);
 
   --dn-panel-border-color: var(--dn-white-gray);
-  --dn-panel-active-bg-color: var(--dn-white-gray-light);
-  --dn-resource-content-bg-color: var(--dn-white);
+  --dn-panel-active-bg-color: var(--bg-light);
+  --dn-resource-content-bg-color: var(--el-bg-color);
 
-  --dn-composite-panel-tabs-bg-color: var(--dn-white);
-  --dn-composite-panel-tabs-active-bg-color: var(--dn-white);
+  --dn-composite-panel-tabs-bg-color: var(--el-bg-color);
+  --dn-composite-panel-tabs-active-bg-color: var(--el-bg-color);
   --dn-composite-panel-highlight-bg-color: var(--dn-white-gray-light);
   --dn-composite-panel-tabs-color: var(--dn-gray-lighter);
   --dn-composite-panel-tabs-hover-color: var(--dn-brand-color);
-  --dn-composite-panel-tabs-content-bg-color: var(--dn-white);
+  --dn-composite-panel-tabs-content-bg-color: var(--el-bg-color);
   --dn-composite-panel-tabs-header-color: var(--dn-gray-lighter);
 
   --dn-collapse-header-color: var(--dn-gray);
@@ -84,12 +84,12 @@
   --dn-resource-item-hover-color: var(--dn-brand-color);
 
   --dn-main-panel-header-bg-color: var(--dn-white);
-  --dn-workspace-panel-bg-color: var(--dn-white-gray-light);
+  --dn-workspace-panel-bg-color: var(--bg-light);
 
   --dn-scrollbar-color: var(--dn-white-gray);
   --dn-scrollbar-hover-color: var(--white-dn-gray-lighter);
 
-  --dn-empty-bg-color: var(--dn-white);
+  --dn-empty-bg-color: var(--card);
 
   --dn-droppable-bg-color: var(--dn-white-gray-lighter);
   --dn-droppable-border-color: var(--dn-white-gray-dark);

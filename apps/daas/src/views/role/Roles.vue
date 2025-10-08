@@ -107,7 +107,7 @@ export default {
             this.permissions = data
           }
         })
-        this.table.fetch()
+        // this.table.fetch()
       }
     },
     // 设置权限
