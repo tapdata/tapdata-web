@@ -6,7 +6,7 @@ const btnRef = useTemplateRef('btnRef')
 const { store, state, system } = useColorMode({
   emitAuto: true,
 })
-const theme = ref(store.value)
+const theme = ref(state.value)
 
 const changeTheme = (mode: 'light' | 'dark' | 'auto') => {
   const newTheme = mode === 'auto' ? system.value : mode
