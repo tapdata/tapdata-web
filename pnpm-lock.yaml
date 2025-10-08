@@ -1128,6 +1128,9 @@ importers:
       '@tap/shared':
         specifier: workspace:*
         version: link:../shared
+      '@vueuse/core':
+        specifier: 'catalog:'
+        version: 10.11.1(vue@3.5.17(typescript@5.8.3))
       core-js:
         specifier: 'catalog:'
         version: 3.43.0
