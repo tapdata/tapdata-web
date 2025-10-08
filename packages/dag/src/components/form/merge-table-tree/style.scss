@@ -15,7 +15,7 @@
       &__content {
         height: 30px;
         &:hover {
-          background-color: rgba(47, 46, 63, 0.05);
+          background-color: var(--el-fill-color-light);
         }
 
         .el-tree-node__expand-icon {
@@ -35,11 +35,11 @@
       }
 
       &.is-current > .el-tree-node__content {
-        background-color: #eef3ff;
+        background-color: var(--primary-hover-light);
       }
 
       &.is-drop-inner > .el-tree-node__content {
-        background-color: #d0deff;
+        background-color: var(--el-color-primary-light-8);
       }
       //rgba(47, 46, 63, 0.05)
     }

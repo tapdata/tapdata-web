@@ -460,7 +460,7 @@ export default {
       border-style: solid;
       border-color: inherit;
       border-radius: 50%;
-      background: #fff;
+      background: var(--el-bg-color);
       width: 12px;
       height: 12px;
     }

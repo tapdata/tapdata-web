@@ -71,7 +71,7 @@ defineExpose({
       "
     >
       <div
-        class="w-100 bg-muted rounded-xl p-2 lh-5 overflow-y-auto"
+        class="w-100 bg-muted dark:bg-white/15 rounded-xl p-2 lh-5 overflow-y-auto"
         style="max-height: 200px"
       >
         <div v-if="testResult.matches.length" class="flex flex-column gap-2">
@@ -92,7 +92,7 @@ defineExpose({
     </el-form-item>
     <el-form-item label-position="top" :label="$t('public_replace_result')">
       <div
-        class="w-100 bg-muted rounded-xl p-2 lh-5 text-prewrap overflow-auto"
+        class="w-100 bg-muted dark:bg-white/15 rounded-xl p-2 lh-5 text-prewrap overflow-auto"
         style="max-height: 200px"
       >
         {{ testResult.result }}

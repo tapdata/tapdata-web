@@ -32,7 +32,7 @@ const handleClosed = () => {
   >
     <div
       v-if="rule"
-      class="grid grid-cols-2 gap-4 bg-muted rounded-xl p-3 mb-4"
+      class="grid grid-cols-2 gap-4 bg-muted dark:bg-white/15 rounded-xl p-3 mb-4"
     >
       <div>
         <div class="fw-sub text-caption mb-1">{{ $t('public_regex') }}</div>

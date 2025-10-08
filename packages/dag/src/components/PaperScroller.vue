@@ -769,7 +769,7 @@ export default {
   >
     <div
       ref="scrollerBg"
-      class="paper-scroller-background"
+      class="paper-scroller-background dark:bg-card"
       :style="scrollerBgStyle"
     >
       <div ref="paper" class="paper" :style="paperStyle">

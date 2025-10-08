@@ -197,7 +197,9 @@ export default {
     content-class="flex-1 gap-6 min-h-0 overflow-auto px-6 position-relative"
   >
     <div v-loading="loading" class="system-notification">
-      <div class="position-sticky top-0 z-10 bg-white">
+      <div
+        class="position-sticky top-0 z-10 bg-white dark:bg-transparent dark:backdrop-blur-md"
+      >
         <el-tabs v-model="activeName" @tab-change="handleClick">
           <el-tab-pane
             :label="$t('packages_business_notify_user_all_notice')"
@@ -272,7 +274,7 @@ export default {
 
       <el-pagination
         v-model:current-page="currentPage"
-        class="position-sticky py-6 bottom-0 bg-white z-10"
+        class="position-sticky py-6 bottom-0 z-10 bg-white dark:bg-transparent dark:backdrop-blur-md"
         background
         layout="->,total,prev, pager, next,sizes"
         :page-sizes="[20, 30, 50, 100]"
@@ -331,8 +333,7 @@ $unreadColor: #ee5353;
   }
   .list-item {
     position: relative;
-    background-color: var(--color-white);
-    border-bottom: 1px solid var(--bg-disable);
+    border-bottom: 1px solid var(--border-light);
     .list-item-content {
       position: relative;
       min-height: 50px;
@@ -358,7 +359,7 @@ $unreadColor: #ee5353;
       font-size: var(--font-base-title);
     }
     &:hover {
-      background: var(--bg-normal);
+      background: var(--fill-hover);
     }
   }
 }

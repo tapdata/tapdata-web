@@ -27,7 +27,7 @@ html.dark {
   --fill-hover: var(--el-fill-color-lighter);
   --primary-hover-light: var(--el-fill-color-light);
   --border-color: var(--el-border-color);
-
+  --info-fill: var(--el-color-primary-light-9);
   --ldp-source: #001731;
   --ldp-target: #052814;
   --ldp-header: #202529;
@@ -162,7 +162,7 @@ html.dark .el-dropdown__popper {
   --el-dropdown-menuItem-hover-color: var(--el-text-color-primary);
 }
 html.dark .el-dialog {
-  --el-bg-color: var(--white5);
+  --el-dialog-bg-color: var(--white5);
   backdrop-filter: blur(40px);
   border: 1px solid #ffffff1a;
 }
