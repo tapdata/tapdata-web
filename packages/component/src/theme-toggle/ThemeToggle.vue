@@ -62,9 +62,11 @@ const changeTheme = (mode: 'light' | 'dark' | 'auto') => {
 watch(state, (newVal) => {
   localStorage.theme = newVal
   nextTick(() => {
-    theme.value = newVal
-    // docs 更新延迟，避免 docs localStorage.theme 重置
-    localStorage.theme = newVal
+    setTimeout(() => {
+      theme.value = newVal
+      // docs 更新延迟，避免 docs localStorage.theme 重置
+      localStorage.theme = newVal
+    }, 0)
   })
 })
 </script>
