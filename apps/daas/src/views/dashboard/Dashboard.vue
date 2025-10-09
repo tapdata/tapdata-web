@@ -796,7 +796,7 @@ export default {
             <!-- 服务器进程 -->
             <div
               v-readonlybtn="'v2_cluster-management_menu'"
-              class="dashboard-row dashboard-col col shadow-sm"
+              class="dashboard-row dashboard-col col"
             >
               <div class="dashboard-col">
                 <div class="dashboard-col-box">
@@ -925,8 +925,6 @@ export default {
 
 <style lang="scss" scoped>
 .dashboard-wrap {
-  overflow-y: auto;
-
   .job-list {
     display: inline-flex;
     flex-direction: column;
@@ -970,7 +968,7 @@ export default {
         padding: 16px;
         border-radius: 12px;
         background-color: var(--card);
-        box-shadow: var(--el-box-shadow-lighter);
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
       }
       .dashboard-label {
         height: 48px;
@@ -985,7 +983,7 @@ export default {
         box-sizing: border-box;
         background-color: var(--card);
         border-radius: 12px;
-        box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
         .charts-list-text {
           width: 50%;
           padding: 16px;

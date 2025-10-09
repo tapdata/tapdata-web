@@ -29,7 +29,7 @@ const props = defineProps({
 })
 
 const containerClass = computed(() => {
-  if (props.mode === 'blank') return props.containerClass || ''
+  if (props.mode === 'blank') return `pr-4 pb-4 ${props.containerClass}`
 
   const baseClasses = {
     default: 'bg-card rounded-xl shadow-sm',
@@ -43,7 +43,7 @@ const containerClass = computed(() => {
   }
   const paddingClass = paddingClasses[props.mode] ?? paddingClasses.default
 
-  return props.containerClass || `${base} ${paddingClass}`
+  return `flex-1 min-h-0 mr-4 mb-4 ${props.containerClass || `${base} ${paddingClass}`}`
 })
 
 const headerClass = computed(() => {
@@ -60,7 +60,7 @@ const contentClass = computed(() => {
   const modeClasses = {
     table: 'flex-1 min-h-0',
     full: 'flex-1 min-h-0 overflow-auto',
-    blank: 'flex-1 min-h-0 overflow-auto',
+    blank: 'flex-1 min-h-0',
     auto: 'flex-1 min-h-0 overflow-auto px-6 pb-5',
   }
 
@@ -90,7 +90,7 @@ const handleBack = () => {
 
 <template>
   <div
-    class="flex flex-column h-100 page-container overflow-hidden"
+    class="flex flex-column page-container"
     :class="containerClass"
     :style="ui.container"
   >

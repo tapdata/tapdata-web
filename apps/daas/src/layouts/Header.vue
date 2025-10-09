@@ -242,6 +242,7 @@ defineExpose({
 </script>
 
 <template>
+  <header style="height: 64px; flex: 0 0 auto" />
   <ElHeader
     v-if="!IS_IFRAME"
     class="flex align-center gap-4 layout-header"
@@ -351,7 +352,7 @@ defineExpose({
         </template>
       </ElDropdown>
       <ThemeToggle />
-      <ElDivider direction="vertical" class="divider mx-0" />
+      <ElDivider direction="vertical" class="mx-0 fs-5" />
       <ElDropdown
         class="menu-user btn"
         placement="bottom"
@@ -381,16 +382,18 @@ defineExpose({
 
 <style lang="scss" scoped>
 .layout-header {
+  position: fixed;
+  inset-inline-start: 0;
+  inset-block-start: 0;
+  width: 100%;
+  backdrop-filter: blur(12px);
+  z-index: 100;
   :deep(.el-button) {
     outline: none !important;
   }
   :deep(.el-button .el-icon:only-child) {
     color: var(--icon-n1);
   }
-}
-.divider {
-  height: 1.8em;
-  border-color: rgba(60, 60, 67, 0.12);
 }
 
 .logo {

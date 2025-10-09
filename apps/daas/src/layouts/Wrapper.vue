@@ -7,7 +7,7 @@ const IS_IFRAME = ref(Boolean(sessionStorage.getItem('IS_IFRAME') === 'true'))
 </script>
 
 <template>
-  <el-container direction="vertical" class="layout">
+  <el-container class="layout">
     <div class="layout-bg">
       <div class="layout-bg-main" />
       <div
@@ -19,13 +19,11 @@ const IS_IFRAME = ref(Boolean(sessionStorage.getItem('IS_IFRAME') === 'true'))
       <div class="layout-bg-layer layout-bg-tr" />
       <div class="layout-bg-layer layout-bg-bl" />
     </div>
-    <Header v-if="!IS_IFRAME" />
-    <ElContainer class="layout-content position-relative">
-      <slot name="sidebar" />
-      <ElMain class="layout-main">
-        <slot name="content" />
-      </ElMain>
-    </ElContainer>
+    <slot name="sidebar" />
+    <el-container direction="vertical" class="layout-content position-relative">
+      <Header v-if="!IS_IFRAME" />
+      <slot name="content" />
+    </el-container>
   </el-container>
 </template>
 
@@ -83,14 +81,6 @@ const IS_IFRAME = ref(Boolean(sessionStorage.getItem('IS_IFRAME') === 'true'))
   .layout-content {
     flex-grow: 1;
     min-height: 0;
-  }
-
-  .layout-main {
-    --el-main-padding: 0;
-    margin-right: 1rem;
-    margin-bottom: 1rem;
-    min-width: 0;
-    overflow: unset; // 避免box-shadow被截断
   }
 
   :deep(.layout-side-scrollbar) {

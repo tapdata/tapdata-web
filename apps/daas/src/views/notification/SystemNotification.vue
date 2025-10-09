@@ -313,6 +313,7 @@ export default {
 <template>
   <PageContainer
     mode="auto"
+    container-class="bg-card rounded-xl shadow-sm gap-1"
     content-class="flex-1 gap-6 min-h-0 overflow-auto px-6 position-relative"
   >
     <div v-loading="loading" class="system-notification">
@@ -320,8 +321,16 @@ export default {
         class="position-sticky top-0 z-10 bg-white dark:bg-transparent dark:backdrop-blur-md"
       >
         <el-tabs v-model="activeName" @tab-change="handleClick">
-          <el-tab-pane :label="$t('notify_user_all_notice')" name="first" />
-          <el-tab-pane :label="$t('notify_unread_notice')" name="second" />
+          <el-tab-pane name="first">
+            <template #label>
+              <span>{{ $t('notify_user_all_notice') }}</span>
+            </template>
+            </el-tab-pane>
+          <el-tab-pane name="second">
+            <template #label>
+              <span>{{ $t('notify_unread_notice') }}</span>
+            </template>
+            </el-tab-pane>
         </el-tabs>
         <div class="position-absolute top-0 end-0 z-10">
           <ElButton type="primary" @click="handlePageRead()">{{

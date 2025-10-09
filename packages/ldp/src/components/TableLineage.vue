@@ -461,6 +461,7 @@ export default {
 
     <div
       class="paper-toolbar position-absolute flex gap-1 bg-white p-1 rounded-lg shadow-sm"
+      style="--btn-space: 0"
     >
       <IconButton click-and-rotate @click="handleRefresh">refresh</IconButton>
       <ElTooltip
