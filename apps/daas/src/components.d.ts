@@ -121,6 +121,7 @@ declare module 'vue' {
     'ILucide:trash2': typeof import('~icons/lucide/trash2')['default']
     'ILucide:triangleAlert': typeof import('~icons/lucide/triangle-alert')['default']
     'ILucide:undo': typeof import('~icons/lucide/undo')['default']
+    'ILucide:userRound': typeof import('~icons/lucide/user-round')['default']
     'ILucide:wandSparkles': typeof import('~icons/lucide/wand-sparkles')['default']
     ILucideCalendarDays: typeof import('~icons/lucide/calendar-days')['default']
     ILucideMonitor: typeof import('~icons/lucide/monitor')['default']

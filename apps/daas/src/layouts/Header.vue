@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { User, WarningFilled } from '@element-plus/icons-vue'
+import { WarningFilled } from '@element-plus/icons-vue'
 import {
   fetchAppVersion,
   fetchTimestamp,
@@ -360,7 +360,7 @@ defineExpose({
         @command="command"
       >
         <el-button text size="large" style="line-height: 28px">
-          <el-icon size="20"><User /></el-icon>
+          <el-icon size="18"><i-lucide:user-round /></el-icon>
           <span>{{ userName }}</span>
         </el-button>
         <template #dropdown>
