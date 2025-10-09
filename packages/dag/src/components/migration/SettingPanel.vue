@@ -1724,94 +1724,94 @@ const schema = {
               },
             },
 
-            // 'alarmSettings.5': {
-            //   type: 'object',
-            //   title: t('packages_dag_task_retry_alert'),
-            //   'x-decorator': 'FormItem',
-            //   'x-component': 'div',
-            //   'x-component-props': {
-            //     class: 'flex align-center',
-            //   },
-            //   properties: {
-            //     open: {
-            //       type: 'boolean',
-            //       default: true,
-            //       'x-editable': true,
-            //       'x-component': 'Switch',
-            //       'x-component-props': {
-            //         onChange: `{{val=>(val && !$values.alarmSettings[5].notify.length && ($values.alarmSettings[5].notify=["SYSTEM"]))}}`,
-            //       },
-            //       'x-reactions': {
-            //         target: 'alarmRules.0.*',
-            //         fulfill: {
-            //           state: {
-            //             disabled: `{{!$self.value}}`,
-            //           },
-            //         },
-            //       },
-            //     },
-            //     divider: {
-            //       type: 'void',
-            //       'x-component': 'Divider',
-            //       'x-component-props': {
-            //         direction: 'vertical',
-            //         class: 'mx-4',
-            //       },
-            //       'x-reactions': {
-            //         dependencies: ['.open'],
-            //         fulfill: {
-            //           state: {
-            //             display: `{{$deps[0] ? 'visible' : 'hidden'}}`,
-            //           },
-            //         },
-            //       },
-            //     },
-            //     notify: {
-            //       type: 'array',
-            //       'x-component': 'Checkbox.Group',
-            //       'x-component-props': {
-            //         onChange: `{{val=>(!val.length && ($values.alarmSettings[5].open=false))}}`,
-            //       },
-            //       default: ['SYSTEM', 'EMAIL'],
-            //       enum: '{{$alarmChannels}}',
-            //       'x-editable': true,
-            //       'x-reactions': {
-            //         dependencies: ['.open'],
-            //         fulfill: {
-            //           state: {
-            //             display: `{{$deps[0] ? 'visible' : 'hidden'}}`,
-            //           },
-            //         },
-            //       },
-            //     },
-            //   },
-            // },
-            // 'alarmRules.1': {
-            //   type: 'object',
-            //   'x-component': 'Space',
-            //   'x-component-props': {
-            //     class: 'mb-2',
-            //   },
-            //   'x-reactions': {
-            //     dependencies: ['alarmSettings.5.open'],
-            //     fulfill: {
-            //       state: {
-            //         display: `{{$deps[0] ? 'visible' : 'hidden'}}`,
-            //       },
-            //     },
-            //   },
-            //   properties: {
-            //     times: {
-            //       type: 'number',
-            //       'x-component': RenderI18nT,
-            //       'x-component-props': {
-            //         keypath: 'packages_dag_task_retry_alert_desc',
-            //         tag: 'div',
-            //         class: 'flex align-center gap-2',
-            //       },
-            //     },
-            //   },
-            // },
+            'alarmSettings.5': {
+              type: 'object',
+              title: t('packages_dag_task_retry_alert'),
+              'x-decorator': 'FormItem',
+              'x-component': 'div',
+              'x-component-props': {
+                class: 'flex align-center',
+              },
+              properties: {
+                open: {
+                  type: 'boolean',
+                  default: true,
+                  'x-editable': true,
+                  'x-component': 'Switch',
+                  'x-component-props': {
+                    onChange: `{{val=>(val && !$values.alarmSettings[5].notify.length && ($values.alarmSettings[5].notify=["SYSTEM"]))}}`,
+                  },
+                  'x-reactions': {
+                    target: 'alarmRules.0.*',
+                    fulfill: {
+                      state: {
+                        disabled: `{{!$self.value}}`,
+                      },
+                    },
+                  },
+                },
+                divider: {
+                  type: 'void',
+                  'x-component': 'Divider',
+                  'x-component-props': {
+                    direction: 'vertical',
+                    class: 'mx-4',
+                  },
+                  'x-reactions': {
+                    dependencies: ['.open'],
+                    fulfill: {
+                      state: {
+                        display: `{{$deps[0] ? 'visible' : 'hidden'}}`,
+                      },
+                    },
+                  },
+                },
+                notify: {
+                  type: 'array',
+                  'x-component': 'Checkbox.Group',
+                  'x-component-props': {
+                    onChange: `{{val=>(!val.length && ($values.alarmSettings[5].open=false))}}`,
+                  },
+                  default: ['SYSTEM', 'EMAIL'],
+                  enum: '{{$alarmChannels}}',
+                  'x-editable': true,
+                  'x-reactions': {
+                    dependencies: ['.open'],
+                    fulfill: {
+                      state: {
+                        display: `{{$deps[0] ? 'visible' : 'hidden'}}`,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            'alarmRules.1': {
+              type: 'object',
+              'x-component': 'Space',
+              'x-component-props': {
+                class: 'mb-2',
+              },
+              'x-reactions': {
+                dependencies: ['alarmSettings.5.open'],
+                fulfill: {
+                  state: {
+                    display: `{{$deps[0] ? 'visible' : 'hidden'}}`,
+                  },
+                },
+              },
+              properties: {
+                times: {
+                  type: 'number',
+                  'x-component': RenderI18nT,
+                  'x-component-props': {
+                    keypath: 'packages_dag_task_retry_alert_desc',
+                    tag: 'div',
+                    class: 'flex align-center gap-2',
+                  },
+                },
+              },
+            },
 
             emailReceivers: {
               title: t('packages_dag_email_receivers'),
