@@ -567,6 +567,9 @@ importers:
       '@tap/styles':
         specifier: workspace:*
         version: link:../../packages/styles
+      '@vueuse/core':
+        specifier: 'catalog:'
+        version: 10.11.1(vue@3.5.17(typescript@5.8.3))
       axios:
         specifier: 'catalog:'
         version: 1.10.0
