@@ -12819,6 +12819,10 @@
   background-color: var(--white15) !important;
 }
 
+.dark\:bg-overlay:where(.dark, .dark *) {
+  background-color: var(--el-bg-color-overlay) !important;
+}
+
 .backdrop-blur-md,
 .dark\:backdrop-blur-md:where(.dark, .dark *) {
   backdrop-filter: blur(12px) !important;
@@ -12919,7 +12923,6 @@
 .text-orange-800 {
   color: var(--color-orange-800);
 }
-
 
 .dark\:text-green-300:where(.dark, .dark *) {
   color: var(--color-green-300);

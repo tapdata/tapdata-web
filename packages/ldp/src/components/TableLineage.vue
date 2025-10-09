@@ -406,12 +406,13 @@ export default {
     },
 
     toggleFullscreen() {
-      this.fullscreenDisabled = true
+      // this.fullscreenDisabled = true
       this.isFullscreen = !this.isFullscreen
       // 加速关闭 tooltip
-      this.$refs.fullscreenTooltip.setExpectedState(false)
-      this.$refs.fullscreenTooltip.handleClosePopper()
+      // this.$refs.fullscreenTooltip.setExpectedState(false)
+      // this.$refs.fullscreenTooltip.handleClosePopper()
       setTimeout(() => {
+        this.$refs.paperScroller.initVisibleArea(true)
         this.handleCenterContent()
         this.$nextTick(() => {
           this.fullscreenDisabled = false
@@ -460,7 +461,7 @@ export default {
     </PaperScroller>
 
     <div
-      class="paper-toolbar position-absolute flex gap-1 bg-white p-1 rounded-lg shadow-sm"
+      class="paper-toolbar position-absolute flex gap-1 bg-white dark:bg-overlay p-1 rounded-lg shadow-sm"
       style="--btn-space: 0"
     >
       <IconButton click-and-rotate @click="handleRefresh">refresh</IconButton>

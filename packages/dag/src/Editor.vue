@@ -52,7 +52,7 @@ export default {
   inject: ['buried'],
 
   setup() {
-    const isDark = useDark()
+    useDark()
 
     const previewData = shallowRef(null)
     const previewLoading = ref(false)

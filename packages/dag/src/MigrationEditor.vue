@@ -1,6 +1,5 @@
 <script>
 import { getConnectionNoSchema, taskApi } from '@tap/api'
-
 import SkipError from '@tap/business/src/views/task/SkipError.vue'
 import { VEmpty } from '@tap/component/src/base/v-empty'
 import { VExpandXTransition } from '@tap/component/src/base/v-expand-x-transition'
@@ -10,6 +9,7 @@ import { showMessage } from '@tap/component/src/mixins/showMessage'
 import { titleChange } from '@tap/component/src/mixins/titleChange'
 import i18n from '@tap/i18n'
 import { uuid } from '@tap/shared'
+import { useDark } from '@vueuse/core'
 import { merge } from 'lodash-es'
 import DFNode from './components/DFNode.vue'
 import ConfigPanel from './components/migration/ConfigPanel.vue'
@@ -92,6 +92,10 @@ export default {
     'dataflow.id': function () {
       this.getTaskPermissions()
     },
+  },
+
+  created() {
+    useDark()
   },
 
   async mounted() {
