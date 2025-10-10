@@ -18,7 +18,12 @@ import { computed, onBeforeUnmount, ref, watch, type PropType } from 'vue'
 import { useStore } from 'vuex'
 
 const visible = defineModel<boolean>()
-const emit = defineEmits(['loadSchema', 'changeRules', 'close'])
+const emit = defineEmits([
+  'loadSchema',
+  'changeRules',
+  'close',
+  'update:ignoreCase',
+])
 
 const props = defineProps({
   nodeId: {
@@ -33,6 +38,10 @@ const props = defineProps({
     type: Array as PropType<string[]>,
     default: () => [],
   },
+  ignoreCase: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 type TableItem = {
@@ -43,6 +52,7 @@ type TableItem = {
   additionalNum: number
   missingNum: number
   cannotWriteNum: number
+  precisionNum: number
 }
 
 const { t } = useI18n()
@@ -61,7 +71,7 @@ const pageSize = ref<number>(10)
 const currentPage = ref<number>(1)
 const applyCompareRules = ref<string[]>(props.rules)
 const filterType = ref(['Different', 'Missing', 'CannotWrite'])
-
+const ignoreCase = ref(props.ignoreCase)
 const typeMap = {
   Different: {
     text: t('packages_dag_compare_different'),
@@ -83,6 +93,13 @@ const typeMap = {
     doneText: 'packages_dag_compare_done_delete',
     btnText: t('public_button_delete'),
     numKey: 'cannotWriteNum',
+  },
+  Precision: {
+    text: t('packages_dag_compare_precision'),
+    type: 'info',
+    doneText: 'packages_dag_compare_done_modify',
+    btnText: t('public_button_update'),
+    numKey: 'precisionNum',
   },
 }
 
@@ -179,6 +196,7 @@ const {
         Additional: 0,
         Missing: 0,
         CannotWrite: 0,
+        Precision: 0,
       }
       const fields: TableItem['fields'] = []
 
@@ -227,6 +245,7 @@ const {
         additionalNum: totalMap.Additional,
         missingNum: totalMap.Missing,
         cannotWriteNum: totalMap.CannotWrite,
+        precisionNum: totalMap.Precision,
       }
     })
 
@@ -442,6 +461,17 @@ const handleApplyCompareRulesChange = async (value: string[]) => {
   applyAfterLoading.value = false
 }
 
+const handleIgnoreCaseChange = async (value: string | number | boolean) => {
+  applyAfterLoading.value = true
+  emit('update:ignoreCase', value)
+
+  await afterTaskSaved()
+
+  fetchCompareResult()
+
+  applyAfterLoading.value = false
+}
+
 const afterTaskSaved = () => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -620,6 +650,11 @@ onBeforeUnmount(() => {
             </el-tag>
           </el-checkbox>
         </el-checkbox-group>
+        <el-divider direction="vertical" class="mx-3" />
+        <div class="fw-sub mr-4">
+          {{ $t('packages_dag_compareIgnoreCase') }}
+        </div>
+        <el-switch v-model="ignoreCase" @change="handleIgnoreCaseChange" />
       </div>
     </div>
 

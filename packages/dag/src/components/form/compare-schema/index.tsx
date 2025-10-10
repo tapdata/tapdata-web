@@ -27,6 +27,7 @@ const CompareSchema = defineComponent({
     const applyCompareRules = applyCompareRule
       ? form.values.applyCompareRules
       : []
+    const ignoreCase = ref(form.values.compareIgnoreCase)
 
     const taskSaving = computed(() => {
       return store.state.dataflow.taskSaving
@@ -206,6 +207,11 @@ const CompareSchema = defineComponent({
       )
     }
 
+    const handleIgnoreCaseChange = (value: boolean) => {
+      ignoreCase.value = value
+      form.setValuesIn('compareIgnoreCase', value)
+    }
+
     return () => {
       return (
         compareResultStatistics.value && (
@@ -307,9 +313,11 @@ const CompareSchema = defineComponent({
               nodeId={nodeId}
               singleTable={singleTable}
               rules={applyCompareRules}
+              ignoreCase={ignoreCase}
               onLoadSchema={handleLoadSchema}
               onChangeRules={handleChangeRules}
               onClose={fetchCompareResultStatistics}
+              onUpdate:ignoreCase={handleIgnoreCaseChange}
             />
           </div>
         )

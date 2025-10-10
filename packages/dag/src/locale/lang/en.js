@@ -1159,4 +1159,5 @@ export default {
   public_api_alarmDate: 'Alarm Date',
   packages_dag_drop_table_enabled_confirm:
     'Confirm clearing target table data?',
+  packages_dag_compareIgnoreCase: 'Ignore Case',
 }

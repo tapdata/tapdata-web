@@ -1011,4 +1011,5 @@ export default {
   public_api_alarmDate: '告警时间',
   packages_dag_drop_table_enabled_confirm:
     '您已选择清空目标表数据，是否确认继续？',
+  packages_dag_compareIgnoreCase: '忽略大小写',
 }
