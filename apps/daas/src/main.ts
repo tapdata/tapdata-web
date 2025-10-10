@@ -39,6 +39,10 @@ window._TAPDATA_OPTIONS_ = {
     `./assets/images/${import.meta.env.VUE_APP_LOGIN_IMG}`,
     import.meta.url,
   ).href,
+  loginDarkUrl: new URL(
+    `./assets/images/${import.meta.env.VUE_APP_LOGIN_DARK_IMG}`,
+    import.meta.url,
+  ).href,
   loadingImg: new URL(
     `./assets/icons/${import.meta.env.VUE_APP_LOADING_IMG}`,
     import.meta.url,

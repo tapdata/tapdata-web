@@ -27,6 +27,7 @@ html.dark {
   --fill-hover: var(--el-fill-color-lighter);
   --primary-hover-light: var(--el-fill-color-light);
   --border-color: var(--el-border-color);
+  --border-light: var(--white10);
   --info-fill: var(--el-color-primary-light-9);
   --ldp-source: #001731;
   --ldp-target: #052814;
@@ -61,13 +62,27 @@ html.dark {
 }
 html.dark {
   color-scheme: dark;
-  --el-color-primary: #3b47e5;
-  --el-color-primary-light-3: rgb(47.3, 55.7, 166.3);
+  --color-primary: #3370eb;
+  --el-color-primary: #3370eb;
+  --el-color-primary: #3370eb;
+  --el-color-primary-light-3: rgb(41.7, 84.4, 170.5);
+  --el-color-primary-light-5: rgb(35.5, 66, 127.5);
+  --el-color-primary-light-7: rgb(29.3, 47.6, 84.5);
+  --el-color-primary-light-8: rgb(26.2, 38.4, 63);
+  --el-color-primary-light-9: rgb(23.1, 29.2, 41.5);
+  --el-color-primary-dark-2: rgb(91.8, 140.6, 239);
+  /* --el-color-primary-light-3: rgb(112.2, 154.9, 241);
+  --el-color-primary-light-5: rgb(153, 183.5, 245);
+  --el-color-primary-light-7: rgb(193.8, 212.1, 249);
+  --el-color-primary-light-8: rgb(214.2, 226.4, 251);
+  --el-color-primary-light-9: rgb(234.6, 240.7, 253);
+  --el-color-primary-dark-2: rgb(40.8, 89.6, 188); */
+  /* --el-color-primary-light-3: rgb(47.3, 55.7, 166.3);
   --el-color-primary-light-5: rgb(39.5, 45.5, 124.5);
   --el-color-primary-light-7: rgb(31.7, 35.3, 82.7);
   --el-color-primary-light-8: rgb(27.8, 30.2, 61.8);
   --el-color-primary-light-9: rgb(23.9, 25.1, 40.9);
-  --el-color-primary-dark-2: rgb(98.2, 107.8, 234.2);
+  --el-color-primary-dark-2: rgb(98.2, 107.8, 234.2); */
   --el-color-success: #67c23a;
   --el-color-success-light-3: rgb(78.1, 141.8, 46.6);
   --el-color-success-light-5: rgb(61.5, 107, 39);

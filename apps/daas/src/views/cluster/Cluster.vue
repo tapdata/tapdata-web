@@ -1400,7 +1400,7 @@ const handleTabChange = (tab: any) => {
                     </div>
                     {{ $t('cluster_cpu_usage') }}
                   </div>
-                  <div class="line" />
+                  <div class="line dark:bg-white/15" />
                   <div class="usageRate">
                     <div class="fs-5 pb-1 fw-bolder">
                       {{ item.metricValues.HeapMemoryUsage }}

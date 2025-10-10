@@ -227,7 +227,7 @@ export default {
     form {
       border-radius: 4px;
       overflow: hidden;
-      border: 1px solid #dedee4;
+      border: 1px solid var(--el-border-color);
       .input {
         display: block;
         padding-left: 15px;
@@ -242,7 +242,7 @@ export default {
         font-size: 14px;
         font-family: inherit;
         &:last-child {
-          border-top: 1px solid #dedee4;
+          border-top: 1px solid var(--el-border-color);
         }
         &::placeholder {
           font-weight: 400;
