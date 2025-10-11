@@ -903,6 +903,40 @@ export default {
               },
             }
           : undefined,
+        monitorSpace: this.pdkOptions.properties?.monitorAPI
+          ? {
+              type: 'void',
+              'x-component': 'Space',
+              'x-component-props': {
+                class: 'w-100 align-items-start',
+              },
+              properties: {
+                dataSourceMonitor: {
+                  title: this.$t('packages_business_data_source_monitor'),
+                  type: 'boolean',
+                  default: false,
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Switch',
+                },
+                monitorCron: {
+                  title: this.$t('packages_business_monitor_cron'),
+                  type: 'string',
+                  // default: '0 */10 * * * ?',
+                  'x-decorator': 'FormItem',
+                  description: this.$t('packages_business_monitor_cron_tip'),
+                  'x-component': 'Input',
+                  'x-reactions': {
+                    dependencies: ['.dataSourceMonitor'],
+                    fulfill: {
+                      state: {
+                        visible: '{{$deps[0]}}',
+                      },
+                    },
+                  },
+                },
+              },
+            }
+          : undefined,
       })
 
       if (this.isDaas) {
