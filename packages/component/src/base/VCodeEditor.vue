@@ -3,7 +3,7 @@ import { useDark } from '@vueuse/core'
 import ace from 'ace-builds'
 import workerJavascriptUrl from 'ace-builds/src-noconflict/worker-javascript?url'
 import workerJsonUrl from 'ace-builds/src-noconflict/worker-json?url'
-import { onMounted, ref, watch, watchEffect } from 'vue'
+import { onMounted, ref, useTemplateRef, watch, watchEffect } from 'vue'
 import 'ace-builds/src-noconflict/ext-searchbox'
 import 'ace-builds/src-noconflict/mode-java'
 import 'ace-builds/src-noconflict/mode-javascript'
@@ -63,6 +63,7 @@ const emit = defineEmits<{
 const editor = ref<any>(null)
 const contentBackup = ref('')
 const isDark = useDark()
+const editorElementRef = useTemplateRef<HTMLElement>('editorElement')
 
 watch(
   () => props.value,
@@ -83,10 +84,8 @@ watchEffect(() => {
       : 'chrome'
     : props.theme
   if (editor.value) {
-    console.log('watchEffect-do', theme)
     editor.value.setTheme(`ace/theme/${theme}`)
   }
-  console.log('watchEffect')
 })
 
 const px = (n: string | number): string => {
@@ -102,10 +101,7 @@ onMounted(() => {
   if (props.autoDark && isDark.value) {
     theme = 'one_dark'
   }
-  const editorElement = document.querySelector(
-    '.ace-editor-container',
-  ) as HTMLElement
-  const aceEditor = ace.edit(editorElement)
+  const aceEditor = ace.edit(editorElementRef.value)
   editor.value = aceEditor
 
   // ace.config.setModuleUrl('ace/ext/searchbox', extSearchboxUrl)
@@ -126,7 +122,7 @@ onMounted(() => {
   // @ts-ignore - $blockScrolling is a legacy property
   aceEditor.$blockScrolling = Infinity
   const session = aceEditor.getSession()
-  // theme && aceEditor.setTheme(`ace/theme/${theme}`)
+  theme && aceEditor.setTheme(`ace/theme/${theme}`)
   session.setMode(`ace/mode/${lang}`)
   session.setTabSize(2)
 
@@ -134,6 +130,7 @@ onMounted(() => {
     typeof props.value === 'object'
       ? JSON.stringify(props.value, null, 2)
       : props.value
+
   aceEditor.setValue(val || '', 1)
 
   if (props.options) {
@@ -167,7 +164,7 @@ onMounted(() => {
     }"
   >
     <div
-      class="ace-editor-container"
+      ref="editorElement"
       :style="{
         height: '100%',
         width: '100%',

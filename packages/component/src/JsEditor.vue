@@ -1,20 +1,7 @@
-<template>
-  <VCodeEditor
-    v-bind="$attrs"
-    :value="value"
-    :theme="theme"
-    :lang="lang"
-    :width="width"
-    :height="height - 24"
-    :options="_options"
-    @initOptions="init"
-  ></VCodeEditor>
-</template>
-
 <script>
-import VCodeEditor from './base/VCodeEditor'
 import { functionApi, sharedCacheApi } from '@tap/api'
 import { getCode } from '@tap/shared'
+import VCodeEditor from './base/VCodeEditor.vue'
 
 export default {
   name: 'JsEditor',
@@ -58,7 +45,7 @@ export default {
   methods: {
     px(n) {
       if (/^\d*$/.test(n)) {
-        return n + 'px'
+        return `${n}px`
       }
       return n
     },
@@ -68,7 +55,7 @@ export default {
     init(editor, tools, beautify) {
       this.editor = editor
       this.beautify = beautify
-      let typeMapping = {
+      const typeMapping = {
         custom: this.$t('packages_component_function_type_option_custom'),
         jar: this.$t('packages_component_function_type_option_jar'),
         system: this.$t('packages_component_function_type_option_system'),
@@ -82,10 +69,11 @@ export default {
         }
       }
       const formatFunction = (item) => {
-        let methodName = item.methodName || item.function_name || item.className
+        const methodName =
+          item.methodName || item.function_name || item.className
         return {
           caption: methodName,
-          snippet: methodName + '(${1})',
+          snippet: `${methodName}(\${1})`,
           meta: typeMapping[item.type],
           type: 'snippet',
           format: item.format,
@@ -102,17 +90,19 @@ export default {
           }),
         }),
       ]).then(([cacheData, functionData]) => {
-        let cacheItems = cacheData?.items || []
-        let functionItems = functionData?.items || []
-        let items = cacheItems.map(formatCache).concat(functionItems.map(formatFunction))
+        const cacheItems = cacheData?.items || []
+        const functionItems = functionData?.items || []
+        const items = cacheItems
+          .map(formatCache)
+          .concat(functionItems.map(formatFunction))
         items.sort((a, b) => {
-          let scoreMap = {
+          const scoreMap = {
             custom: 0,
             jar: 1,
             system: 2,
           }
-          let aName = a.caption?.toLowerCase()
-          let bName = b.caption?.toLowerCase()
+          const aName = a.caption?.toLowerCase()
+          const bName = b.caption?.toLowerCase()
           if (a.originType && b.originType && a.originType !== b.originType) {
             return scoreMap[a.originType] - scoreMap[b.originType]
           } else {
@@ -125,7 +115,8 @@ export default {
             return 0
           }
         })
-        const idx = editor.completers?.findIndex((item) => item.id === 'function') || -1
+        const idx =
+          editor.completers?.findIndex((item) => item.id === 'function') || -1
 
         if (~idx) editor.completers.splice(idx, 1)
 
@@ -144,16 +135,16 @@ export default {
               )
             }
           },
-          getDocTooltip: function (item) {
+          getDocTooltip(item) {
             if (item.type == 'snippet') {
-              let type = `<div class="code-editor-snippet-tips__type">${item.meta}</div>`
-              let title = `<span class="panel-title">${item.originType ? 'function' : 'Cache name'}</span>`
-              let body = item.parametersDesc
+              const type = `<div class="code-editor-snippet-tips__type">${item.meta}</div>`
+              const title = `<span class="panel-title">${item.originType ? 'function' : 'Cache name'}</span>`
+              const body = item.parametersDesc
                 ? `<pre class="code-editor-snippet-tips__body"><div class="panel-title">parameters description</div>${item.parametersDesc}</pre>`
                 : item.originType
-                ? `<pre class="code-editor-snippet-tips__body">${item.format || item.caption}</pre>`
-                : `<pre class="code-editor-snippet-tips__body">${item.snippet}</pre>`
-              let footer = item.returnDesc
+                  ? `<pre class="code-editor-snippet-tips__body">${item.format || item.caption}</pre>`
+                  : `<pre class="code-editor-snippet-tips__body">${item.snippet}</pre>`
+              const footer = item.returnDesc
                 ? `<pre class="code-editor-snippet-tips__footer"><div class="panel-title">return description</div>${item.returnDesc}</pre>`
                 : ''
               item.docHTML = `<div class="code-editor-snippet-tips">${type}<div class="code-editor-snippet-tips__header">${title}${
@@ -168,6 +159,19 @@ export default {
   // emits: ['update:value'],
 }
 </script>
+
+<template>
+  <VCodeEditor
+    v-bind="$attrs"
+    :value="value"
+    :theme="theme"
+    :lang="lang"
+    :width="width"
+    :height="height - 24"
+    :options="_options"
+    @init-options="init"
+  />
+</template>
 
 <style lang="scss">
 .ace_tooltip.ace_doc-tooltip {
