@@ -1307,7 +1307,7 @@ const getAllFields = async () => {
         ...it,
         id: it.id,
         field_name: it.field_name,
-        field_alias: it.field_alias || fItem.field_alias || '',
+        field_alias: it?.field_alias || fItem?.field_alias || '',
         originalDataType: it.data_type,
         comment: '',
       }
