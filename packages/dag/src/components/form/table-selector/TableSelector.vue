@@ -747,7 +747,7 @@ getTables()
   padding: 0 16px;
   display: flex;
   align-items: center;
-  background: #f7f8fa;
+  background: var(--bg-disable);
   height: 40px;
   color: var(--text-normal);
   font-size: 14px;

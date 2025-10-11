@@ -369,7 +369,7 @@ export default {
 }
 .field-inference__nav {
   width: 210px;
-  border-right: 1px solid #f2f2f2;
+  border-right: 1px solid var(--el-border-color);
 }
 .field-inference__content {
   width: 0;
@@ -377,7 +377,8 @@ export default {
 .nav-list {
   overflow: hidden auto;
   li {
-    background-color: var(--color-white);
+    background-color: var(--card);
+    color: var(--el-text-color-regular);
     border-bottom: 1px solid var(--border-light);
     border-left: 2px solid transparent;
     &:hover,

@@ -34,6 +34,7 @@ html.dark {
   --ldp-header: #202529;
 
   --bg-light: #121212;
+  --bg-normal: var(--N100);
   --bg-disable: var(--N100);
 
   .layout-bg {
