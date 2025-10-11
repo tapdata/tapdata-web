@@ -1641,7 +1641,7 @@ export default {
 </script>
 
 <template>
-  <PageContainer mode="blank" container-class="min-h-0" hide-header>
+  <PageContainer mode="blank" container-class="min-h-0 flex-1" hide-header>
     <div v-loading="loadingFrom" class="connection-from">
       <div class="connection-from-body gap-4">
         <main class="connection-from-main bg-card rounded-xl overflow-hidden">

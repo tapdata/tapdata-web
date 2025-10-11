@@ -169,6 +169,7 @@ export default {
     :width="width"
     :height="height - 24"
     :options="_options"
+    auto-dark
     @init-options="init"
   />
 </template>

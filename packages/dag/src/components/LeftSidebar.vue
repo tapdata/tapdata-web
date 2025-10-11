@@ -1101,6 +1101,12 @@ $hoverBg: var(--primary-hover-light);
         > :last-child {
           color: rgba(0, 0, 0, 0.3);
         }
+
+        &:where(html.dark *) {
+          > :last-child {
+            color: rgba(255, 255, 255, 0.3);
+          }
+        }
       }
 
       &:last-child {
