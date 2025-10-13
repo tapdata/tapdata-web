@@ -58,6 +58,8 @@ export default {
 
     qpsMap() {
       const data = this.quota.samples?.lineChartData?.[0]
+      const { interval } = this.quota
+      console.log('quota.interval', this.quota.interval)
       if (!data) {
         return {
           x: [],
@@ -71,13 +73,10 @@ export default {
         }
       }
       const { time = [] } = this.quota
-      // const { inputQps = [], outputQps = [], inputSizeQps = [], outputSizeQps = [] } = data
-      // const
-      // this.labelUnitType = data.inputSizeQps ? 'byte' : ''
-      const inputQps = data.inputQps?.map((t) => Math.abs(t))
-      const outputQps = data.outputQps?.map((t) => Math.abs(t))
-      const inputSizeQps = data.inputSizeQps?.map((t) => Math.abs(t))
-      const outputSizeQps = data.outputSizeQps?.map((t) => Math.abs(t))
+      const inputQps = data.inputQps?.map(Math.abs)
+      const outputQps = data.outputQps?.map(Math.abs)
+      const inputSizeQps = data.inputSizeQps?.map(Math.abs)
+      const outputSizeQps = data.outputSizeQps?.map(Math.abs)
       // 计算距离增量时间点，最近的时间点
       const milestone = this.dataflow.attrs?.milestone || {}
       const snapshotDoneAt = milestone.SNAPSHOT?.end
@@ -91,10 +90,47 @@ export default {
         }
       })
 
+      const countValues = [inputQps, outputQps]
+      const sizeValues = [inputSizeQps, outputSizeQps]
+      let unit = '5s'
+
+      switch (interval) {
+        case 5000:
+          unit = '5s'
+          break
+        case 60000:
+          unit = 'm'
+          break
+        case 3600000:
+          unit = 'hr'
+          break
+        case 86400000:
+          unit = 'd'
+          break
+      }
+      const name = [
+        i18n.t('public_time_avg_input', { unit }),
+        i18n.t('public_time_avg_output', { unit }),
+      ]
+
+      if (interval > 5000) {
+        countValues.push(
+          data.maxInputQps?.map(Math.abs),
+          data.maxOutputQps?.map(Math.abs),
+        )
+        sizeValues.push(
+          data.maxInputSizeQps?.map(Math.abs),
+          data.maxOutputSizeQps?.map(Math.abs),
+        )
+        name.push(
+          i18n.t('public_time_max_input', { unit }),
+          i18n.t('public_time_max_output', { unit }),
+        )
+      }
+
       const opt = {
         x: time,
-        name: [i18n.t('public_time_input'), i18n.t('public_time_output')],
-        // value: [inputQps, outputQps],
+        name,
         value: [],
         zoomValue: 10,
       }
@@ -120,10 +156,10 @@ export default {
 
       return {
         count: Object.assign(cloneDeep(opt), {
-          value: [inputQps, outputQps],
+          value: countValues,
         }),
         size: Object.assign(cloneDeep(opt), {
-          value: [inputSizeQps, outputSizeQps],
+          value: sizeValues,
         }),
       }
     },
@@ -771,15 +807,31 @@ export default {
         </div>
         <div class="line-chart__box mb-2">
           <div class="flex justify-content-between">
-            <ElTooltip
-              transition="tooltip-fade-in"
-              placement="top"
-              :content="
-                qpsChartsType === 'count'
-                  ? $t('packages_dag_monitor_leftsider_qpSshizhi')
-                  : $t('packages_dag_monitor_leftsider_qpSshizhi2')
-              "
-            >
+            <ElTooltip transition="tooltip-fade-in" placement="top">
+              <template #content>
+                <div>
+                  <div>
+                    {{
+                      $t(
+                        qpsChartsType === 'count'
+                          ? 'packages_dag_monitor_leftsider_qpSshizhi'
+                          : 'packages_dag_monitor_leftsider_qpSshizhi2',
+                      )
+                    }}
+                  </div>
+                  <ul class="mt-1 ml-4 lh-base" style="color: #d0d3d6">
+                    <li class="list-disc">
+                      {{ $t('packages_dag_qpSshizhi_tip') }}
+                    </li>
+                    <li class="list-disc">
+                      {{ $t('packages_dag_qpSshizhi2_tip') }}
+                    </li>
+                    <li class="list-disc">
+                      {{ $t('packages_dag_qpSshizhi3_tip') }}
+                    </li>
+                  </ul>
+                </div>
+              </template>
               <span class="inline-flex align-items-center">
                 <span class="mr-2 font-color-dark fw-sub">QPS(Q/S)</span>
                 <VIcon size="16" class="color-primary">info</VIcon>
@@ -793,7 +845,7 @@ export default {
 
           <LineChart
             :data="qpsMap[qpsChartsType]"
-            :color="['#26CF6C', '#2C65FF']"
+            :color="['#26CF6C', '#2C65FF', '#b6d634', '#5070dd']"
             :time-format="timeFormat"
             :label-unit-type="qpsChartsType === 'size' ? 'byte' : ''"
             auto-scale
