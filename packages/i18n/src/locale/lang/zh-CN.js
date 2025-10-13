@@ -582,4 +582,5 @@ export default {
   public_connectionName: '连接名称',
   public_warningTime: '告警时间',
   public_warningLog: '告警日志',
+  public_updated_from_now: '更新于 {time}',
 }

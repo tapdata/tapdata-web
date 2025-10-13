@@ -51,6 +51,81 @@ export default {
       },
       infoList: [],
       qpsChartsType: 'count',
+      cpuUsageOptions: {
+        tooltip: {
+          formatter: (params) => {
+            const [cpu, mem] = params
+            let result = dayjs(Number(cpu.axisValue)).format(
+              'YYYY-MM-DD HH:mm:ss',
+            )
+
+            result += `<div class="flex justify-content-between gap-4"><div>${cpu.marker}${cpu.seriesName}</div><div class="din-font">${Number(cpu.data.toFixed(2))}%</div></div>`
+            result += `<div class="flex justify-content-between gap-4"><div>${mem.marker}${mem.seriesName}</div><div class="din-font">${calcUnit(mem.data, 'byte')}</div></div>`
+
+            return result
+          },
+        },
+        yAxis: [
+          {
+            name: 'CPU',
+            nameTextStyle: {
+              color: '#535F72',
+            },
+            axisLine: {
+              show: true,
+              lineStyle: {
+                color: '#E9E9E9',
+              },
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {
+                type: 'dashed',
+              },
+            },
+            axisLabel: {
+              show: true,
+              color: '#535F72',
+              formatter: (val) => {
+                return `${val}%`
+              },
+            },
+          },
+          {
+            name: 'MEM',
+            nameTextStyle: {
+              color: '#535F72',
+            },
+            axisLine: {
+              show: true,
+              lineStyle: {
+                color: '#E9E9E9',
+              },
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {
+                type: 'dashed',
+              },
+            },
+            axisLabel: {
+              show: true,
+              color: '#535F72',
+              formatter: (val) => {
+                return calcUnit(val, 'byte')
+              },
+            },
+          },
+        ],
+        series: [
+          {
+            yAxisIndex: 0,
+          },
+          {
+            yAxisIndex: 1,
+          },
+        ],
+      },
     }
   },
   computed: {
@@ -59,7 +134,7 @@ export default {
     qpsMap() {
       const data = this.quota.samples?.lineChartData?.[0]
       const { interval } = this.quota
-      console.log('quota.interval', this.quota.interval)
+
       if (!data) {
         return {
           x: [],
@@ -204,6 +279,25 @@ export default {
         x: time,
         value: replicateLag,
         yAxisMax: Math.max(delay, max),
+      }
+    },
+
+    cpuUsageData() {
+      const data = this.quota.samples?.lineChartData?.[0]
+      const { time = [] } = this.quota
+      if (!data) {
+        return {
+          x: [],
+          value: [],
+        }
+      }
+
+      const { cpuUsage = [], memoryUsage = [] } = data
+
+      return {
+        x: time,
+        name: ['CPU', 'MEM'],
+        value: [cpuUsage, memoryUsage],
       }
     },
 
@@ -837,10 +931,10 @@ export default {
                 <VIcon size="16" class="color-primary">info</VIcon>
               </span>
             </ElTooltip>
-            <ElRadioGroup v-model="qpsChartsType" class="chart__radio">
-              <ElRadioButton label="count">count</ElRadioButton>
-              <ElRadioButton label="size">size</ElRadioButton>
-            </ElRadioGroup>
+            <el-segmented
+              v-model="qpsChartsType"
+              :options="['count', 'size']"
+            />
           </div>
 
           <LineChart
@@ -984,13 +1078,33 @@ export default {
           </div>
         </div>
       </div>
+      <div class="py-2 px-4 info-box">
+        <div class="line-chart__box mb-2">
+          <div class="flex align-center gap-2">
+            <span class="inline-flex align-items-center">
+              <span class="mr-2 font-color-normarl fw-sub">{{
+                $t('packages_dag_task_resource_usage')
+              }}</span>
+            </span>
+          </div>
+
+          <LineChart
+            :data="cpuUsageData"
+            :options="cpuUsageOptions"
+            :color="['#2C65FF', '#b6d634']"
+            :name="['CPU', 'MEM']"
+            :time-format="timeFormat"
+            class="line-chart"
+          />
+        </div>
+      </div>
       <div class="py-2 px-4">
         <div class="flex justify-content-between mb-2">
           <span class="fw-sub fs-7 font-color-normal">{{
             $t('packages_dag_monitor_leftsider_tiaoshixinxi')
           }}</span>
         </div>
-        <div class="mb-2 flex justify-content-between">
+        <div class="flex justify-content-between">
           <span>{{ $t('public_task_heartbeat_time') }}:</span>
           <span>{{ heartbeatTime }}</span>
         </div>

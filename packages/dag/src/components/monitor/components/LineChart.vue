@@ -110,7 +110,20 @@ export default {
         series.push(this.getSeriesItem(value || []))
       }
       const options = this.getOptions()
-      options.series = series
+
+      if (options.series.length) {
+        options.series = series.map((t, i) => {
+          return options.series[i]
+            ? {
+                ...t,
+                ...options.series[i],
+              }
+            : t
+        })
+      } else {
+        options.series = series
+      }
+
       const seriesNoData = series.every(
         (t) => !t.data.filter((d) => !!d).length,
       )
@@ -301,10 +314,9 @@ export default {
       const op = this.options
       if (op) {
         for (const key of Object.keys(op)) {
-          if (key === 'series') {
-            result[key].forEach((el, index) => {
-              Object.assign(el, op[key][index])
-            })
+          const item = op[key]
+          if (Array.isArray(item) !== Array.isArray(result[key])) {
+            result[key] = item
           } else {
             Object.assign(result[key], op[key])
           }
