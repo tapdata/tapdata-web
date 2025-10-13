@@ -2,6 +2,7 @@ import Highlight from '@tap/component/src/base/Highlight'
 import { IconButton } from '@tap/component/src/icon-button'
 import i18n from '@tap/i18n'
 import { copyToClipboard } from '@tap/shared'
+import { useDark } from '@vueuse/core'
 import { defineComponent, nextTick, ref } from 'vue'
 import 'highlight.js/styles/atom-one-light.min.css'
 import './style.scss'
@@ -33,6 +34,7 @@ export const HighlightCode = defineComponent({
   },
   setup(props) {
     const tooltipRef = ref(null)
+    const isDark = useDark()
     const copy = async () => {
       await copyToClipboard(props.code)
       contentRef.value = props.finishTooltip
@@ -53,7 +55,7 @@ export const HighlightCode = defineComponent({
     return () => {
       return (
         <Highlight
-          class={`hljs-pre position-relative theme-${props.theme}`}
+          class={`hljs-pre position-relative theme-${isDark.value ? 'atom-one-dark' : 'atom-one-light'}`}
           language={props.language}
           code={props.code}
         >
@@ -67,7 +69,7 @@ export const HighlightCode = defineComponent({
               <IconButton
                 onClick={copy}
                 onMouseleave={onMouseleave}
-                class="hljs-copy-btn position-absolute border bg-white"
+                class="hljs-copy-btn position-absolute"
               >
                 copy
               </IconButton>

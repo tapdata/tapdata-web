@@ -509,7 +509,9 @@ export const JsProcessor = observer(
           <div class="position-absolute flex justify-content-between w-100">
             <div class="flex align-center">
               <span class="formily-element-plus-form-item-asterisk">*</span>
-              <span class="mr-1">{i18n.t('packages_form_js_processor_index_jiaoben')}</span>
+              <span class="mr-1">
+                {i18n.t('packages_form_js_processor_index_jiaoben')}
+              </span>
               <ElTooltip content={tooltip} placement="top">
                 <VIcon size="14" class="color-primary">
                   info

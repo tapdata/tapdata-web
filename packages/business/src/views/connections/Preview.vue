@@ -277,9 +277,9 @@ function sortSchemaKeysByIndex<
 }
 
 const initMonitorApi = async () => {
-  const { monitorAPI } = connection.value
+  const { monitorAPI, dataSourceMonitor } = connection.value
 
-  if (monitorAPI) {
+  if (monitorAPI && dataSourceMonitor) {
     const result =
       MonitorApiSchemaMap[connection.value.pdkHash] ||
       (await loadMonitorApiSchema())

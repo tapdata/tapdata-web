@@ -185,7 +185,9 @@ export default {
           </ul>
         </section>
       </div>
-      <div class="position-sticky py-6 bottom-0 border-top bg-white z-10">
+      <div
+        class="position-sticky py-6 bottom-0 border-top bg-white z-10 dark:bg-transparent dark:backdrop-blur-md"
+      >
         <ElButton
           class="btn"
           type="primary"

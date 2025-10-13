@@ -218,7 +218,7 @@ export default {
 
 <template>
   <div
-    class="position-absolute table-node border rounded-lg bg-white overflow-hidden"
+    class="position-absolute table-node border rounded-lg bg-white dark:bg-overlay overflow-hidden"
     :style="nodeStyle"
   >
     <div class="px-3 py-2" @click="mouseClick">

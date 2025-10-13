@@ -526,7 +526,9 @@ export default {
         </div>
       </div>
 
-      <div class="footer position-sticky py-6 bottom-0 bg-white z-10">
+      <div
+        class="footer border-top position-sticky py-6 bottom-0 bg-white z-10 dark:bg-transparent dark:backdrop-blur-md"
+      >
         <el-button
           v-if="email === 'admin@admin.com'"
           type="primary"
@@ -690,7 +692,7 @@ export default {
 .e-form {
   display: flex;
   flex-direction: column;
-  background-color: #fff;
+  // background-color: var(--card);
   box-sizing: border-box;
 
   .item {
@@ -727,7 +729,6 @@ export default {
   .footer {
     flex: 0 0 auto;
     width: 100%;
-    border-top: 1px solid var(--border-light);
   }
 }
 .dialog-email-template {

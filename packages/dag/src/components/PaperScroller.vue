@@ -102,12 +102,16 @@ export default {
       const girdSize = scale * 10
       const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="v-4" width="100%" height="100%"><defs id="v-3"><pattern id="pattern_0" patternUnits="userSpaceOnUse" x="0" y="0" width="${girdSize}" height="${girdSize}"><rect id="v-5" width="${scale}" height="${scale}" fill="rgb(170 170 170 / 80%)"/></pattern></defs><rect id="v-7" width="100%" height="100%" fill="url(#pattern_0)"/></svg>`
       return {
-        width: `${
-          Number.parseInt(paper.left) * 2 + Number.parseInt(paper.width) * scale
-        }px`,
-        height: `${
-          Number.parseInt(paper.top) * 2 + Number.parseInt(paper.height) * scale
-        }px`,
+        width: `${Math.max(
+          this.windowArea.width,
+          Number.parseInt(paper.left) * 2 +
+            Number.parseInt(paper.width) * scale,
+        )}px`,
+        height: `${Math.max(
+          this.windowArea.height,
+          Number.parseInt(paper.top) * 2 +
+            Number.parseInt(paper.height) * scale,
+        )}px`,
         backgroundImage: `url("data:image/svg+xml;base64,${window.btoa(svgStr)}")`,
       }
     },
@@ -809,6 +813,9 @@ export default {
   .paper-scroller-background {
     position: relative;
     background-color: rgba(245, 248, 254, 1);
+    &:where(html.dark *) {
+      background-color: var(--el-fill-color);
+    }
     .paper {
       position: absolute;
       transform-origin: 0 0;

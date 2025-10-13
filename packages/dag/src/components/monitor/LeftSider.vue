@@ -1124,7 +1124,7 @@ export default {
 
 .info-box {
   padding: 8px 16px;
-  border-bottom: 1px solid #f2f2f2;
+  border-bottom: 1px solid var(--el-border-color);
 }
 
 .task-info__row {
@@ -1135,7 +1135,7 @@ export default {
 
 .output-item__divider {
   margin-top: 40px;
-  border-right: 1px solid #f2f2f2;
+  border-right: 1px solid var(--el-border-color);
   height: calc(100% - 40px);
 }
 

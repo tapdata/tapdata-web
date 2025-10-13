@@ -1308,7 +1308,7 @@ export default {
 
 <style lang="scss" scoped>
 .wrap__item {
-  border: 1px solid #e1e3e9;
+  border: 1px solid var(--border-color);
   &:hover {
     //background-color: #f2f3f5;
   }
@@ -1345,6 +1345,6 @@ export default {
   }
 }
 .item__header {
-  border-bottom: 1px solid #e1e3e9;
+  border-bottom: 1px solid var(--border-color);
 }
 </style>

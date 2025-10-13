@@ -3,7 +3,6 @@ import { OverflowTooltip } from '@tap/component'
 import i18n from '@tap/i18n'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import { mapGetters } from 'vuex'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 import { NodeIcon } from '../DatabaseIcon'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
@@ -131,11 +130,11 @@ export default {
   border-radius: 6px;
   cursor: pointer;
   &:hover {
-    background-color: #f2f3f5;
+    background-color: var(--primary-hover-light);
   }
 
   &.active {
-    background-color: #d0deff;
+    background-color: var(--primary-hover-light);
   }
 }
 </style>

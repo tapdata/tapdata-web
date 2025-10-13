@@ -376,14 +376,7 @@ const showDialog = (node?: any, dialogType?: string) => {
 }
 
 const hideDialog = () => {
-  dialogConfig.value = {
-    type: 'add',
-    id: '',
-    gid: '',
-    label: '',
-    title: '',
-    visible: false,
-  }
+  dialogConfig.value.visible = false
 }
 
 const dialogSubmit = async () => {

@@ -7,7 +7,7 @@ const IS_IFRAME = ref(Boolean(sessionStorage.getItem('IS_IFRAME') === 'true'))
 </script>
 
 <template>
-  <el-container direction="vertical" class="layout">
+  <el-container class="layout">
     <div class="layout-bg">
       <div class="layout-bg-main" />
       <div
@@ -19,13 +19,11 @@ const IS_IFRAME = ref(Boolean(sessionStorage.getItem('IS_IFRAME') === 'true'))
       <div class="layout-bg-layer layout-bg-tr" />
       <div class="layout-bg-layer layout-bg-bl" />
     </div>
-    <Header v-if="!IS_IFRAME" />
-    <ElContainer class="layout-content position-relative">
-      <slot name="sidebar" />
-      <ElMain class="layout-main">
-        <slot name="content" />
-      </ElMain>
-    </ElContainer>
+    <slot name="sidebar" />
+    <el-container direction="vertical" class="layout-content position-relative">
+      <Header v-if="!IS_IFRAME" />
+      <slot name="content" />
+    </el-container>
   </el-container>
 </template>
 
@@ -43,9 +41,7 @@ const IS_IFRAME = ref(Boolean(sessionStorage.getItem('IS_IFRAME') === 'true'))
       inset: 0;
       background-image: linear-gradient(
         to right bottom,
-        rgb(248, 250, 252),
-        rgb(241, 245, 249),
-        rgb(239, 246, 255)
+        var(--layout-gradient-stops)
       );
     }
 
@@ -68,8 +64,7 @@ const IS_IFRAME = ref(Boolean(sessionStorage.getItem('IS_IFRAME') === 'true'))
       right: -6rem;
       background-image: linear-gradient(
         to right bottom,
-        rgba(219, 234, 254, 0.3),
-        rgba(199, 210, 254, 0.3)
+        var(--layout-tr-gradient-stops)
       );
     }
 
@@ -78,8 +73,7 @@ const IS_IFRAME = ref(Boolean(sessionStorage.getItem('IS_IFRAME') === 'true'))
       bottom: -8rem;
       background-image: linear-gradient(
         to right top,
-        rgba(219, 234, 254, 0.2),
-        rgba(243, 232, 255, 0.2)
+        var(--layout-bl-gradient-stops)
       );
     }
   }
@@ -87,14 +81,6 @@ const IS_IFRAME = ref(Boolean(sessionStorage.getItem('IS_IFRAME') === 'true'))
   .layout-content {
     flex-grow: 1;
     min-height: 0;
-  }
-
-  .layout-main {
-    --el-main-padding: 0;
-    margin-right: 1rem;
-    margin-bottom: 1rem;
-    min-width: 0;
-    overflow: unset; // 避免box-shadow被截断
   }
 
   :deep(.layout-side-scrollbar) {
@@ -111,6 +97,8 @@ const IS_IFRAME = ref(Boolean(sessionStorage.getItem('IS_IFRAME') === 'true'))
     --el-menu-item-height: 40px;
     --el-menu-sub-item-height: 40px;
     --el-menu-hover-bg-color: var(--fill-hover);
+    // --el-menu-text-color: #d4d4d4;
+    --el-menu-text-color: var(--layout-menu-text-color);
 
     display: flex;
     flex-direction: column;
@@ -134,6 +122,11 @@ const IS_IFRAME = ref(Boolean(sessionStorage.getItem('IS_IFRAME') === 'true'))
     .el-sub-menu__title + .el-menu {
       margin-top: 8px;
       padding-inline-start: 10px;
+    }
+
+    .el-menu-item.is-active,
+    .el-menu-item:hover {
+      --el-menu-text-color: var(--el-text-color-primary);
     }
   }
 }

@@ -1521,5 +1521,7 @@ export default {
   packages_business_example_regex: '以 A 開頭，忽略大小寫',
   packages_business_example_size: '{a} 數組長度為 {b}',
   packages_business_edit_task_info: '編輯任務信息',
+  packages_business_monitor_cron: '監控周期',
+  packages_business_monitor_cron_tip: `語法: 秒 * 分鐘 * 小時 * 日 * 月 * 星期 ? 年 *\n舉例：0 */1 * * * ? 每分鐘運行一次 0 0 2 * * ? 每天2點運行`,
   packages_business_datasource_monitor_alter: '數據源監控告警',
 }

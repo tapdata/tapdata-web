@@ -315,7 +315,7 @@ onBeforeMount(() => {
 
     <div class="flex w-100 h-100 gap-4">
       <div
-        class="py-0 bg-light rounded-xl flex flex-column h-100"
+        class="py-0 bg-light dark:bg-white/5 rounded-xl flex flex-column h-100"
         style="width: 240px"
       >
         <div
@@ -377,7 +377,7 @@ onBeforeMount(() => {
               :key="version.id"
               class="list-item-hover rounded-lg p-2 flex align-center gap-2 cursor-pointer font-color-light position-relative"
               :class="{
-                'bg-white shadow-sm font-color-dark':
+                'bg-card shadow-sm font-color-dark':
                   version.id === selectedVersion.id,
               }"
               @click="handleVersionSelect(version)"
@@ -429,7 +429,7 @@ onBeforeMount(() => {
       </div>
 
       <div class="flex-1 flex flex-column gap-4">
-        <div class="bg-light rounded-xl">
+        <div class="bg-light dark:bg-white/5 rounded-xl">
           <div class="px-4 py-2 fs-6 lh-8">{{ $t('public_version_info') }}</div>
           <div class="px-2 pb-2">
             <div
@@ -500,11 +500,11 @@ onBeforeMount(() => {
           </div>
         </div>
 
-        <div class="bg-light rounded-xl min-h-0 flex flex-column">
+        <div class="bg-light dark:bg-white/5 rounded-xl min-h-0 flex flex-column">
           <div class="px-4 py-2 fs-6 lh-8">{{ $t('public_api_list') }}</div>
           <div class="px-2 pb-2 flex-1 min-h-0">
             <div
-              class="bg-white rounded-xl p-2 h-100"
+              class="bg-card rounded-xl p-2 h-100"
               style="border: 1px solid #f2f4f7"
             >
               <el-table

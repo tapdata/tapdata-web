@@ -296,7 +296,7 @@ export default {
   z-index: 10;
   height: 40vh;
   overflow: auto;
-  background-color: #fff;
+  background-color: var(--el-bg-color);
   //transition: height 0.24s;
   will-change: height;
 
@@ -315,7 +315,7 @@ export default {
 
     &:hover,
     &.active {
-      background-color: rgba(229, 236, 255, 0.3);
+      background-color: var(--el-fill-color-light);
     }
   }
 

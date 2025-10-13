@@ -64,6 +64,7 @@ export default {
     return (
       <pre>
         <code class={this.className} v-html={this.highlighted}></code>
+        {this.$slots.default?.()}
       </pre>
     )
 

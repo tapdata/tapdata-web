@@ -23,6 +23,7 @@ import i18n from './i18n'
 import router from './router'
 
 import 'virtual:svg-icons-register'
+// import 'element-plus/theme-chalk/dark/css-vars.css'
 import '@tap/styles'
 import '@/styles/app.scss'
 
@@ -36,6 +37,10 @@ window._TAPDATA_OPTIONS_ = {
   ).href,
   loginUrl: new URL(
     `./assets/images/${import.meta.env.VUE_APP_LOGIN_IMG}`,
+    import.meta.url,
+  ).href,
+  loginDarkUrl: new URL(
+    `./assets/images/${import.meta.env.VUE_APP_LOGIN_DARK_IMG}`,
     import.meta.url,
   ).href,
   loadingImg: new URL(

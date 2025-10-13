@@ -277,7 +277,5 @@ onUnmounted(() => {
 .worker-rps-chart {
   width: 100%;
   position: relative;
-  background: #fff;
-  border-radius: 8px;
 }
 </style>

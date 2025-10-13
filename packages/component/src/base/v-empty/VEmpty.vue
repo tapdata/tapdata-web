@@ -46,7 +46,7 @@ export default {
   font-size: 13px;
   line-height: 1.5715;
   text-align: center;
-  color: rgba(0, 0, 0, 0.25);
+  color: var(--el-text-color-placeholder);
   &.empty-small {
     margin: 8px 0;
     font-size: 12px;

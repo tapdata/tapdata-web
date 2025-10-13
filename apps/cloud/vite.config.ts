@@ -88,7 +88,8 @@ export default defineConfig(({ mode }) => {
           }),
           ElementPlusResolver(/* { importStyle: 'sass' } */),
         ],
-        dts: 'src/auto-imports.d.ts',
+        dts: '../../packages/types/src/cloud-auto-imports.d.ts',
+        // dts: 'src/auto-imports.d.ts',
         include: [/\.vue$/, /\.vue\?vue/, /\.[tj]sx$/],
       }),
 
@@ -99,7 +100,8 @@ export default defineConfig(({ mode }) => {
           }),
           ElementPlusResolver(/* { importStyle: 'sass' } */),
         ],
-        dts: 'src/components.d.ts',
+        dts: '../../packages/types/src/cloud-components.d.ts',
+        // dts: 'src/components.d.ts',
         include: [/\.vue$/, /\.vue\?vue/, /\.[tj]sx$/],
       }),
 

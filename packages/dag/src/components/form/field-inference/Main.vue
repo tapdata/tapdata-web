@@ -6,7 +6,7 @@ import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 import { FieldSelect, mapFieldsData } from '@tap/form'
 import i18n from '@tap/i18n'
 import { cloneDeep, debounce } from 'lodash-es'
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 
 import { getCanUseDataTypes, getMatchedDataTypeLevel } from '../../../util'
 import Dialog from './Dialog.vue'
@@ -309,9 +309,9 @@ export default {
 
 <template>
   <div class="field-inference">
-    <div class="field-inference__main flex">
-      <div class="field-inference__nav flex flex-column m-3 bg-white rounded-4">
-        <div class="nav-filter__list flex text-center lh-1 p-2">
+    <div class="field-inference__main rounded-xl bg-light flex">
+      <div class="field-inference__nav flex flex-column">
+        <div class="p-2 flex flex-column gap-3">
           <ElSelect v-model="activeClassification" @change="loadData">
             <ElOption
               v-for="(item, index) in tableClassification"
@@ -329,39 +329,44 @@ export default {
             </ElOption>
           </ElSelect>
         </div>
-        <ElInput
-          v-model="searchTable"
-          :placeholder="
-            $t('packages_form_field_mapping_list_qingshurubiaoming')
-          "
-          clearable
-          class="p-2"
-          @input="handleSearchTable"
-        >
-          <template #suffix>
-            <ElIcon><ElIconSearch /></ElIcon>
-          </template>
-        </ElInput>
+
         <div
           v-loading="navLoading"
-          class="nav-list flex-fill font-color-normal"
+          class="flex-1 flex-fill flex flex-column min-h-0 bg-card"
         >
-          <ul v-if="navList.length">
-            <li
-              v-for="(item, index) in navList"
-              :key="index"
-              :class="{ active: position === index }"
-              class="flex align-items-center justify-content-between"
-              @click="handleSelect(index)"
+          <div class="p-2">
+            <ElInput
+              v-model="searchTable"
+              :placeholder="
+                $t('packages_form_field_mapping_list_qingshurubiaoming')
+              "
+              clearable
+              @input="handleSearchTable"
             >
-              <div class="task-form-text-box pl-2 inline-block flex-1 min-w-0">
-                <OverflowTooltip
-                  class="w-100 text-truncate target"
-                  :text="item.name"
-                  placement="right"
-                />
-              </div>
-              <!--<ElTooltip
+              <template #prefix>
+                <ElIcon><ElIconSearch /></ElIcon>
+              </template>
+            </ElInput>
+          </div>
+          <div class="nav-list flex-fill font-color-normal">
+            <ul v-if="navList.length">
+              <li
+                v-for="(item, index) in navList"
+                :key="index"
+                :class="{ active: position === index }"
+                class="flex align-items-center justify-content-between"
+                @click="handleSelect(index)"
+              >
+                <div
+                  class="task-form-text-box pl-2 inline-block flex-1 min-w-0"
+                >
+                  <OverflowTooltip
+                    class="w-100 text-truncate target"
+                    :text="item.name"
+                    placement="right"
+                  />
+                </div>
+                <!--<ElTooltip
                       v-if="item.matchedDataTypeLevel === 'error'"
                       placement="top"
                       transition="tooltip-fade-in"
@@ -370,23 +375,25 @@ export default {
                     >
                       <VIcon size="16" class="color-warning">warning</VIcon>
                     </ElTooltip>-->
-            </li>
-          </ul>
-          <div
-            v-else
-            class="task-form-left__ul flex flex-column align-items-center"
-          >
-            <div class="table__empty_img" style="margin-top: 22%">
-              <img style="" :src="noData" />
+              </li>
+            </ul>
+            <div
+              v-else
+              class="task-form-left__ul flex flex-column align-items-center"
+            >
+              <div class="table__empty_img" style="margin-top: 22%">
+                <img style="" :src="noData" />
+              </div>
+              <div class="noData">{{ $t('public_data_no_data') }}</div>
             </div>
-            <div class="noData">{{ $t('public_data_no_data') }}</div>
           </div>
         </div>
+
         <ElPagination
           v-model:current-page="page.current"
           v-model:page-size="page.size"
           small
-          class="flex mt-3 p-0 din-font mx-auto"
+          class="flex py-1 mx-auto"
           layout="total, prev, slot, next"
           :total="page.total"
           :pager-count="5"
@@ -433,7 +440,9 @@ export default {
             @remove-tag="handleRemoveTag"
           />
         </div>
-        <div class="flex-fill flex flex-column bg-white mt-4 rounded-4">
+        <div
+          class="flex-fill flex flex-column bg-card mt-4 rounded-xl overflow-hidden"
+        >
           <div class="flex align-items-center p-2 font-color-dark">
             <ElInput
               v-model="searchField"
@@ -443,7 +452,7 @@ export default {
               clearable
               @input="handleSearchField"
             >
-              <template #suffix>
+              <template #prefix>
                 <ElIcon><ElIconSearch /></ElIcon>
               </template>
             </ElInput>
@@ -483,24 +492,22 @@ export default {
 }
 .field-inference__main {
   height: 60vh;
-  border: 1px solid #f2f2f2;
-  border-radius: 4px;
-  background-color: rgb(241, 242, 244);
+  border: 1px solid var(--el-border-color);
 }
 .field-inference__nav {
   width: 210px;
-  border: 1px solid #e5e6eb;
 }
 .field-inference__content {
   width: 0;
-  border-left: 1px solid #e5e6eb;
+  border-left: 1px solid var(--el-border-color);
 }
 .nav-list {
   overflow: hidden auto;
   li {
-    background-color: #fff;
+    color: var(--el-text-color-regular);
+    background-color: var(--card);
     box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
-    border-bottom: 1px solid #e4e7ed;
+    border-bottom: 1px solid var(--border-light);
     border-left: 2px solid transparent;
     &:hover,
     &.active {
@@ -543,9 +550,6 @@ export default {
 }
 .content__list {
   height: 0;
-  :deep(.el-table th.el-table__cell) {
-    background-color: #ebeef5;
-  }
 }
 .page__current {
   width: 22px;

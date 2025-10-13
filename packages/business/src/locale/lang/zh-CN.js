@@ -1532,5 +1532,7 @@ export default {
   packages_business_example_size: '{a} 数组长度为 {b}',
   packages_business_example_mod: '{a} 能被 {b} 整除',
   packages_business_edit_task_info: '编辑任务信息',
+  packages_business_monitor_cron: '监控周期',
+  packages_business_monitor_cron_tip: `语法: 秒 * 分钟 * 小时 * 日 * 月 * 星期 ? 年 *\n举例：0 */1 * * * ? 每分钟运行一次 0 0 2 * * ? 每天2点运行`,
   packages_business_datasource_monitor_alter: '数据源监控告警',
 }

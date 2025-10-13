@@ -854,7 +854,7 @@ export default {
           >
             <ElSkeleton
               v-show="tbLoading"
-              class="skeleton-wrap position-sticky top-0 w-100 bg-white"
+              class="skeleton-wrap position-sticky top-0 w-100"
               :loading="tbLoading"
               animated
             >
@@ -868,6 +868,7 @@ export default {
               v-infinite-scroll="loadMoreTable"
               :infinite-scroll-disabled="disabled"
               class="p-2"
+              :class="{ 'opacity-0': tbLoading }"
             >
               <div
                 v-for="tb in tbList"
@@ -980,7 +981,7 @@ export default {
 
 <style lang="scss" scoped>
 $itemH: 30px;
-$hoverBg: #eef3ff;
+$hoverBg: var(--primary-hover-light);
 
 .drag-node {
   position: fixed !important;
@@ -992,10 +993,10 @@ $hoverBg: #eef3ff;
 .layout-sidebar.--left {
   overflow: visible;
   $headerH: 40px;
-  --header-bg: #f6f8fa;
+  --header-bg: var(--N100);
 
   :deep(.db-list-container) {
-    --el-collapse-border-color: #dee2e6 !important;
+    --el-collapse-border-color: var(--border-color) !important;
     max-height: 50%;
 
     .el-collapse-item:last-child {
@@ -1075,7 +1076,7 @@ $hoverBg: #eef3ff;
       }
 
       &:not(.active):hover {
-        background-color: rgba(47, 46, 63, 0.05);
+        background-color: var(--primary-hover-light);
       }
 
       .el-image {
@@ -1099,6 +1100,12 @@ $hoverBg: #eef3ff;
         overflow: hidden;
         > :last-child {
           color: rgba(0, 0, 0, 0.3);
+        }
+
+        &:where(html.dark *) {
+          > :last-child {
+            color: rgba(255, 255, 255, 0.3);
+          }
         }
       }
 
@@ -1151,7 +1158,7 @@ $hoverBg: #eef3ff;
         position: relative;
         height: $headerH;
         font-size: 14px;
-        border-bottom: 1px solid #dee2e6 !important;
+        border-bottom: 1px solid var(--border-color) !important;
       }
 
       &__content {

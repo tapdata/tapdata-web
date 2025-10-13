@@ -708,7 +708,7 @@ export default {
 
 <template>
   <PageContainer
-    container-class="flex flex-column h-100 overflow-hidden bg-white rounded-xl shadow-sm px-6 py-5 gap-1"
+    container-class="flex flex-column h-100 overflow-hidden bg-card rounded-xl shadow-sm px-6 py-5 gap-1"
   >
     <template #actions>
       <el-button

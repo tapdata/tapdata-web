@@ -598,7 +598,6 @@ defineExpose({
       max-height="500"
       class="test-block"
       :row-style="rowStyleHandler"
-      element-loading-background="#fff"
     >
       <el-table-column
         prop="show_msg"
@@ -846,10 +845,6 @@ defineExpose({
     margin-bottom: 10px;
   }
 
-  .el-dialog__body {
-    padding: 0 20px 20px;
-  }
-
   .test-block {
     th,
     tr {
@@ -860,7 +855,7 @@ defineExpose({
 
     td,
     th.is-leaf {
-      border-bottom: 1px solid #ebeef5;
+      border-bottom: var(--el-table-border);
     }
 
     .information {

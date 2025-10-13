@@ -840,8 +840,8 @@ export default {
     },
 
     getConfirmMessage(operateStr, isBulk, name) {
-      let title = `${operateStr}_confirm_title`,
-        message = `${operateStr}_confirm_message`
+      let title = `${operateStr}_confirm_title`
+      let message = `${operateStr}_confirm_message`
       if (isBulk) {
         title = `bulk_${title}`
         message = `bulk_${message}`
@@ -1246,7 +1246,7 @@ export default {
                       </el-button>
                     </div>
                     <div
-                      class="bg-gray-50 rounded-lg p-2 border border-gray-100"
+                      class="bg-gray-50 dark:bg-card rounded-lg p-2 border border-gray-100"
                     >
                       <div>{{ row.desc }}</div>
                     </div>
@@ -1567,8 +1567,6 @@ export default {
 <style lang="scss" scoped>
 .data-flow-wrap {
   height: 100%;
-  //padding: 0 24px 24px 0;
-  background: #fff;
 
   .btn-refresh {
     padding: 0;

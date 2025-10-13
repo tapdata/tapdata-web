@@ -23,6 +23,7 @@
     "@tap/form": "workspace:*",
     "@tap/i18n": "workspace:*",
     "@tap/shared": "workspace:*",
+    "@vueuse/core": "catalog:",
     "core-js": "catalog:",
     "resize-observer-polyfill": "catalog:",
     "tiny-emitter": "catalog:",

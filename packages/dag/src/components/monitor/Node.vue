@@ -566,11 +566,11 @@ export default defineComponent({
   z-index: -2;
   top: 100%;
   left: 50%;
-  background-color: #fff;
+  background-color: var(--el-bg-color);
   transform: translateX(-50%);
 
   &-content {
-    background-color: #f5f8fe;
+    background-color: var(--el-fill-color-light);
   }
 
   &-footer {
@@ -610,8 +610,8 @@ export default defineComponent({
   align-items: center;
   width: 24px;
   height: 24px;
-  color: #4e5969;
-  background: #fff;
+  color: var(--icon-n1);
+  background: transparent;
   outline: none;
   border: 1px solid transparent;
   border-radius: 4px;
@@ -670,7 +670,7 @@ export default defineComponent({
 .el-popover.el-popper.node-statistic-popover {
   $bg: rgba(54, 66, 82, 0.9);
   background: $bg;
-  border: 1px solid #f2f2f2;
+  border: 1px solid var(--el-border-color);
 
   .el-popper__arrow {
     width: 0;

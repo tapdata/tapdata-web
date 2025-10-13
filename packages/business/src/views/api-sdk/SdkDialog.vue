@@ -431,7 +431,7 @@ defineExpose({
           </div>
         </template>
         <div
-          class="flex bg-light rounded-xl overflow-hidden w-100 lh-base"
+          class="flex bg-light dark:bg-white/5 rounded-xl overflow-hidden w-100 lh-base"
           style="max-height: 400px"
         >
           <div style="width: 200px" class="flex-shrink-0">
@@ -458,7 +458,7 @@ defineExpose({
           </div>
           <div class="p-2 flex-1 min-w-0 flex flex-column">
             <div
-              class="bg-white rounded-xl min-h-0 flex flex-column"
+              class="bg-card rounded-xl min-h-0 flex flex-column"
               style="border: 1px solid #f2f4f7"
             >
               <div class="p-2">

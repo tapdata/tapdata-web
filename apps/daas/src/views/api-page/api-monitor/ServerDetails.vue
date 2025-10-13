@@ -525,11 +525,13 @@ const apiStatsColumns = computed(() => [
   {
     label: t('api_monitor_server_call_count'),
     prop: 'count',
+    sortable: true,
   },
   {
     label: t('api_monitor_server_failure_count'),
     slotName: 'errorCount',
     prop: 'errorCount',
+    sortable: true,
   },
   {
     label: t('api_monitor_server_failure_rate'),
@@ -702,7 +704,7 @@ const msFormatter = (value: number) => {
                 <span class="worker-name">{{ worker.name || '-' }}</span>
                 <span
                   v-if="worker.pid && worker.workerStatus === 'listening'"
-                  class="font-mono text-gray-700 lh-4 border rounded-4 px-1.5 fs-8"
+                  class="font-mono font-color-light lh-4 border rounded-4 px-1.5 fs-8"
                   >{{ worker.pid }}</span
                 >
               </div>
@@ -713,7 +715,7 @@ const msFormatter = (value: number) => {
                   <el-icon size="12" class="color-primary"
                     ><i-lucide:cpu
                   /></el-icon>
-                  <span class="metric-label text-gray-500"> CPU:</span>
+                  <span class="metric-label font-color-sslight"> CPU:</span>
                   <span class="metric-value">{{
                     worker.metricValues.cpuUsage
                   }}</span>
@@ -722,7 +724,7 @@ const msFormatter = (value: number) => {
                   <el-icon size="12" class="color-primary"
                     ><i-lucide:memory-stick
                   /></el-icon>
-                  <span class="metric-label text-gray-500"
+                  <span class="metric-label font-color-sslight"
                     >{{ $t('api_monitor_memory') }}:</span
                   >
                   <span class="metric-value">{{
@@ -735,10 +737,10 @@ const msFormatter = (value: number) => {
         </el-scrollbar>
       </section>
 
-      <div class="bg-light rounded-xl p-4">
+      <div class="bg-light dark:bg-card rounded-xl p-4">
         <div class="charts-grid">
           <!-- RPS Monitoring Chart -->
-          <section class="chart-section rounded-xl">
+          <section class="chart-section bg-card rounded-xl">
             <div class="chart-container">
               <h4 class="chart-title mb-4 fs-6 flex align-center gap-2">
                 <el-icon size="20" class="color-primary">
@@ -758,7 +760,7 @@ const msFormatter = (value: number) => {
           </section>
 
           <!-- Error Rate Chart -->
-          <section class="chart-section rounded-xl">
+          <section class="chart-section bg-card rounded-xl">
             <div class="chart-container">
               <h4 class="chart-title mb-4 fs-6 flex align-center gap-2">
                 <el-icon size="20" class="color-primary">
@@ -777,7 +779,7 @@ const msFormatter = (value: number) => {
           </section>
 
           <!-- Request Latency Chart -->
-          <section class="chart-section rounded-xl">
+          <section class="chart-section bg-card rounded-xl">
             <div class="chart-container">
               <h4 class="chart-title mb-4 fs-6 flex align-center gap-2">
                 <el-icon size="20" class="color-primary">
@@ -800,7 +802,7 @@ const msFormatter = (value: number) => {
           </section>
 
           <!-- API Call Statistics Table -->
-          <section class="chart-section rounded-xl">
+          <section class="chart-section bg-card rounded-xl">
             <div class="chart-container">
               <h4 class="chart-title mb-4 fs-6 flex align-center gap-2">
                 <el-icon size="20" class="color-primary">
@@ -812,7 +814,14 @@ const msFormatter = (value: number) => {
               <VTable
                 :data="apiList"
                 :columns="apiStatsColumns"
-                :has-pagination="false"
+                has-pagination
+                :page-options="{
+                  pageSize: 5,
+                  background: false,
+                  size: 'small',
+                }"
+                :default-sort="{ prop: 'errorCount', order: 'descending' }"
+                is-page
               >
                 <template #empty>
                   <el-empty :image-size="100" class="py-4" />
@@ -822,7 +831,7 @@ const msFormatter = (value: number) => {
                     :class="
                       (row as any).errorCount > 0
                         ? 'color-danger'
-                        : 'text-gray-500'
+                        : 'font-color-sslight'
                     "
                   >
                     {{ (row as any).errorCount }}
@@ -915,7 +924,6 @@ const msFormatter = (value: number) => {
   gap: 20px;
 
   .chart-section {
-    background: white;
     // border: 1px solid var(--el-border-color-lighter);
     border: 1px solid var(--el-border-color-extra-light);
     border-radius: 8px;

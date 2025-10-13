@@ -360,7 +360,7 @@ export const SchemaPreview = defineComponent({
           ]}
         >
           {isTreeView.value ? (
-            <div class="schema-card rounded-lg inline-block overflow-hidden shadow-sm">
+            <div class="schema-card rounded-lg inline-block overflow-hidden shadow-sm border border-light">
               <div class="schema-card-header border-bottom px-3 py-2 fs-7 lh-base text-center">
                 {tableName.value}
               </div>

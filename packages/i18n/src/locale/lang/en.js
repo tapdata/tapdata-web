@@ -140,6 +140,7 @@ export default {
   public_button_obtain: 'Obtain',
   public_button_help: 'Help',
   public_button_understand: 'Finish',
+  public_button_update: 'Update',
   // information
   public_message_title_prompt: 'Prompt',
   public_message_delete_confirm: 'Delete',
