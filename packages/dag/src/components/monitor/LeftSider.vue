@@ -68,6 +68,7 @@ export default {
         yAxis: [
           {
             name: 'CPU',
+            max: 'dataMax',
             nameTextStyle: {
               color: '#535F72',
             },
@@ -78,21 +79,21 @@ export default {
               },
             },
             splitLine: {
-              show: true,
-              lineStyle: {
-                type: 'dashed',
-              },
+              show: false,
             },
             axisLabel: {
               show: true,
               color: '#535F72',
+              hideOverlap: true,
+              showMaxLabel: true,
               formatter: (val) => {
-                return `${val}%`
+                return `${Math.round(val)}%`
               },
             },
           },
           {
             name: 'MEM',
+            max: 'dataMax',
             nameTextStyle: {
               color: '#535F72',
             },
@@ -103,14 +104,13 @@ export default {
               },
             },
             splitLine: {
-              show: true,
-              lineStyle: {
-                type: 'dashed',
-              },
+              show: false,
             },
             axisLabel: {
               show: true,
               color: '#535F72',
+              hideOverlap: true,
+              showMaxLabel: true,
               formatter: (val) => {
                 return calcUnit(val, 'byte')
               },

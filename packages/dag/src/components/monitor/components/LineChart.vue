@@ -185,8 +185,6 @@ export default {
           },
           options,
         )
-
-        console.log(this.extend)
       }
     },
     getOptions() {
@@ -305,7 +303,7 @@ export default {
                   })
                 : calcUnit(val, this.labelUnitType)
             },
-            // showMaxLabel: false,
+            showMaxLabel: true,
             showMinLabel: canScale ? true : null,
           },
         },
