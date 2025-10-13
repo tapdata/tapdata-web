@@ -151,7 +151,7 @@ export default {
 
   mounted() {
     this.$nextTick(() => {
-      this.jsPlumbIns.setContainer(this.$el)
+      this.jsPlumbIns.setContainer(this.$refs.swimLaneContainer)
       window.addEventListener('keydown', this.handleListenerEsc)
     })
   },
@@ -625,6 +625,7 @@ export default {
       >
     </template>
     <div
+      ref="swimLaneContainer"
       class="swim-lane flex flex-column h-100 position-relative overflow-hidden"
     >
       <div
