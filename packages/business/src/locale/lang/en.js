@@ -1641,7 +1641,7 @@ export default {
 </ul>
 <p>Useful when syncing high-precision fields to lower-precision ones.</p>
 <p>If precision is the same but storage differs (e.g., Sybase ≈ 3.33ms), extra digits will be ignored.</p>`,
-  packages_business_checkTableThreadNum: 'Thread Validation',
+  packages_business_checkTableThreadNum: 'Thread Count',
   packages_business_checkTableThreadNum_tip:
     'Number of threads to use. Default is 10. Can be increased if system resources permit.',
   packages_business_verification_empty_add_table:
