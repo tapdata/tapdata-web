@@ -1001,4 +1001,5 @@ export default {
     '查詢範圍大於等於1小時小於24小時，取每分鐘的數據點計算平均和最大的QPS值',
   packages_dag_qpSshizhi3_tip:
     '查詢範圍大於等於24小時小於30天，取每小時的數據點計算平均和最大的QPS值',
+  packages_dag_task_resource_usage: '任務資源占用',
 }

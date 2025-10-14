@@ -707,6 +707,8 @@ export default {
             'inputSizeQps',
             'outputSizeQps',
             'qpsType',
+            'cpuUsage',
+            'memoryUsage',
           ],
           type: 'continuous', // 连续数据
         },

@@ -4,8 +4,9 @@ import { DownBoldOutlined } from '@tap/component/src/DownBoldOutlined'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import FilterBar from '@tap/component/src/filter-bar/Main.vue'
 import i18n from '@tap/i18n'
+import { calcUnit } from '@tap/shared'
 import dayjs from 'dayjs'
-import { escapeRegExp, uniqBy } from 'lodash-es'
+import { escapeRegExp, isNumber, uniqBy } from 'lodash-es'
 
 import { h } from 'vue'
 import { DatabaseIcon } from '../../components/DatabaseIcon'
@@ -244,6 +245,7 @@ export default {
         syncStatus: true,
         restartFlag: true,
         attrs: true,
+        metricInfo: true,
       }
       const where = {
         syncType,
@@ -304,6 +306,25 @@ export default {
               errorTaskIds.push(item.id)
             } else if (this.taskErrorCause[item.id]) {
               delete this.taskErrorCause
+            }
+
+            if (item.metricInfo) {
+              const day = dayjs(item.metricInfo.lastUpdateTime)
+              item.metricInfo.cpuUsage = isNumber(item.metricInfo.cpuUsage)
+                ? `${Number(item.metricInfo.cpuUsage.toFixed(2))}%`
+                : '--'
+              item.metricInfo.memoryUsage = isNumber(
+                item.metricInfo.memoryUsage,
+              )
+                ? calcUnit(item.metricInfo.memoryUsage, 'b', 2)
+                : '--'
+              item.metricInfo.lastUpdateTime = this.$t(
+                'public_updated_from_now',
+                {
+                  time: day.fromNow(),
+                },
+              )
+              item.metricInfo.hasWarning = Date.now() - day.valueOf() > 60000
             }
             return item
           })
@@ -1268,7 +1289,7 @@ export default {
               >
             </span>
           </div>
-          <div class="fs-8 font-color-sslight lh-base">
+          <div class="fs-8 font-color-sslight lh-base flex align-center">
             <span class="align-middle">{{
               row.type ? taskType[row.type] : ''
             }}</span>
@@ -1278,6 +1299,22 @@ export default {
               class="align-middle ml-1"
               >dynamic-form-outline</VIcon
             >
+            <template v-if="row.status === 'running' && row.metricInfo">
+              <el-divider direction="vertical" />
+              <el-tooltip :content="row.metricInfo.lastUpdateTime">
+                <div class="flex align-center gap-1">
+                  <el-icon
+                    v-if="row.metricInfo.hasWarning"
+                    class="color-warning"
+                    ><i-lucide:triangle-alert
+                  /></el-icon>
+                  <span class="font-color-sslight">CPU:</span>
+                  <span class="fw-sub">{{ row.metricInfo.cpuUsage }}</span>
+                  <span class="font-color-sslight ml-2">MEM:</span>
+                  <span class="fw-sub">{{ row.metricInfo.memoryUsage }}</span>
+                </div>
+              </el-tooltip>
+            </template>
           </div>
         </template>
       </el-table-column>
