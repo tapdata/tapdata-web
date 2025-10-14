@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 // import * as monaco from 'monaco-editor'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'

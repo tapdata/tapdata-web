@@ -1,4 +1,3 @@
-import { isPlainObj } from '@tap/shared'
 import { requestClient, type PageFetchResult } from '../request'
 
 const BASE_URL = '/api/MetadataInstances'
@@ -89,17 +88,11 @@ export function getOriginalData(qualified_name: string, target?: string) {
   }
 }
 
-export function fetchMetadataInstances(params: any = {}, filter?: any) {
-  if (Array.isArray(params)) {
-    filter = typeof filter === 'object' ? JSON.stringify(filter) : filter
-    const qs = filter ? `?filter=${encodeURIComponent(filter)}` : ''
-    return requestClient.get(`${BASE_URL}/${params.join('/')}${qs}`)
-  }
-  const config = { params }
-  if (isPlainObj(filter)) {
-    Object.assign(config, filter)
-  }
-  return requestClient.get(BASE_URL, config)
+export function fetchMetadataInstances(filter?: object, config?: any) {
+  return requestClient.get(BASE_URL, {
+    params: { filter: filter ? JSON.stringify(filter) : undefined },
+    ...config,
+  })
 }
 
 export function getTables(connectionId: string) {
