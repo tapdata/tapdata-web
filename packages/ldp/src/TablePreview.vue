@@ -640,8 +640,8 @@ export default {
     },
 
     getConfirmMessage(operateStr, isBulk, name) {
-      let title = `${operateStr}_confirm_title`,
-        message = `${operateStr}_confirm_message`
+      let title = `${operateStr}_confirm_title`
+      let message = `${operateStr}_confirm_message`
       if (isBulk) {
         title = `bulk_${title}`
         message = `bulk_${message}`
@@ -945,7 +945,7 @@ export default {
               </span>
             </template>
             <div v-loading="loading" class="pt-4">
-              <section class="bg-white rounded-xl p-3 border border-gray-200">
+              <section class="bg-card rounded-xl p-3 border border-light">
                 <!--<div class="flex align-center">
                 <h3 class="fs-6">Table Summary</h3>
                 <ElLink class="ml-auto" type="primary">
@@ -1021,7 +1021,7 @@ export default {
                   </template>
                 </div>
               </section>
-              <section class="mt-4 bg-white overflow-hidden">
+              <section class="mt-4 overflow-hidden">
                 <el-tabs
                   v-model="activeNameItems"
                   class="tabs-fill tabs-as-card"
@@ -1081,6 +1081,7 @@ export default {
                           :height="360"
                           :value="sampleDataJson"
                           lang="json"
+                          auto-dark
                           :options="{
                             readOnly: true,
                             highlightActiveLine: false,
@@ -1411,23 +1412,23 @@ export default {
     font-weight: 500;
     font-size: 20px;
     line-height: 26px;
-    color: #1d2129;
+    color: var(--text-dark);
   }
 
   .table-dec-label {
     font-weight: 400;
-    color: #535f72;
+    color: var(--text-light);
   }
 
   .table-dec-txt {
     font-weight: 500;
-    color: #1d2129;
+    color: var(--text-dark);
   }
 
   .change-history {
     font-weight: 500;
     font-size: 18px;
-    color: #1d2129;
+    color: var(--text-dark);
   }
 
   .status {

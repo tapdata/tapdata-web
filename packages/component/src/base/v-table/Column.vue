@@ -43,11 +43,7 @@ export default {
 </script>
 
 <template>
-  <ElTableColumn
-    v-bind="item"
-    :key="item.prop"
-    :sortable="item.sortable ? 'custom' : false"
-  >
+  <ElTableColumn v-bind="item" :key="item.prop" :sortable="item.sortable">
     <!--  列表头  -->
     <template v-if="item.headerSlot" #header>
       <slot :name="item.headerSlot" />

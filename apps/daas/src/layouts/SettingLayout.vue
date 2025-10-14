@@ -40,7 +40,8 @@ const handleSelectMenu = (name: string) => {
 <template>
   <Wrapper>
     <template #sidebar>
-      <el-aside class="layout-side" width="220px">
+      <div style="flex: 0 0 220px" />
+      <el-aside class="layout-side position-fixed" width="220px" style="margin-top: 64px;">
         <el-menu
           unique-opened
           class="flex flex-column flex-1 gap-2 border-end-0"

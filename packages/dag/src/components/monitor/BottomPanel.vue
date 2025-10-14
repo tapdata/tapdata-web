@@ -269,7 +269,7 @@ $headerHeight: 40px;
   //min-height: 328px;
   //height: 100%;
   overflow: visible;
-  background-color: #fff;
+  background-color: var(--el-bg-color);
   //transition: height 0.24s;
   will-change: width;
   box-sizing: border-box;
@@ -399,7 +399,7 @@ $headerHeight: 40px;
     .node-list {
       position: sticky;
       left: 0;
-      background-color: #fff;
+      background-color: var(--el-bg-color);
       z-index: 11;
     }
   }

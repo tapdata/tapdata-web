@@ -505,7 +505,7 @@ onBeforeUnmount(() => {
       <div class="pt-5 px-6">
         <div class="flex align-center">
           <div
-            class="flex align-center justify-center p-1.5 bg-gray-100 rounded-lg mr-4"
+            class="flex align-center justify-center p-1.5 bg-gray-100 dark:bg-white/15 rounded-lg mr-4"
           >
             <el-icon size="24" color="var(--icon-n1)"
               ><i-lucide:git-compare-arrows
@@ -613,7 +613,7 @@ onBeforeUnmount(() => {
     <div class="border-top">
       <div class="p-3 px-6 flex align-center flex-wrap">
         <div
-          class="p-1.5 bg-gray-100 rounded-lg flex align-center justify-center mr-2"
+          class="p-1.5 bg-gray-100 dark:bg-white/15 rounded-lg flex align-center justify-center mr-2"
         >
           <el-icon size="16" color="var(--icon-n1)"
             ><i-lucide:settings
@@ -703,7 +703,7 @@ onBeforeUnmount(() => {
           <div
             v-if="!singleTable"
             style="width: 320px"
-            class="bg-white overflow-y-auto flex flex-column"
+            class="bg-card overflow-y-auto flex flex-column"
           >
             <div class="flex align-center p-3 border-bottom">
               <span class="font-color-dark fw-sub mr-1">{{
@@ -736,7 +736,7 @@ onBeforeUnmount(() => {
                 @click="handleSelectTable(item)"
               >
                 <div
-                  class="p-1.5 bg-gray-100 rounded-lg flex align-center justify-center table-item-icon"
+                  class="p-1.5 bg-gray-100 dark:bg-white/15 rounded-lg flex align-center justify-center table-item-icon"
                 >
                   <el-icon size="16" color="var(--icon-n1)"
                     ><i-lucide:table
@@ -829,7 +829,7 @@ onBeforeUnmount(() => {
             </div>
             <div v-if="selectedTable" class="p-3 pt-0 min-h-0">
               <div
-                class="bg-white rounded-xl p-2 shadow-sm field-list h-100 overflow-y-auto"
+                class="bg-card rounded-xl p-2 shadow-sm field-list h-100 overflow-y-auto"
               >
                 <div
                   class="flex rounded-lg mb-2 field-list-header lh-5 fw-sub text-caption position-sticky top-0 z-10"
@@ -876,7 +876,7 @@ onBeforeUnmount(() => {
                 <div
                   v-for="field in filteredFields"
                   :key="field.fieldName"
-                  class="flex align-center bg-white rounded-lg lh-5 field-item"
+                  class="flex align-center bg-card rounded-lg lh-5 field-item"
                   :class="{
                     'field-item-danger': field.type === 'CannotWrite',
                   }"

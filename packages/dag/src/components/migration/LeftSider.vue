@@ -631,7 +631,7 @@ $hoverBg: #eef3ff;
   overflow: visible;
   will-change: width;
   $headerH: 40px;
-  --header-bg: #f6f8fa;
+  --header-bg: var(--N100);
 
   .connection-tabs {
     position: relative;
@@ -677,6 +677,7 @@ $hoverBg: #eef3ff;
   }
 
   :deep(.db-list-container) {
+    --el-collapse-border-color: var(--border-color) !important;
     max-height: 50%;
 
     .el-collapse-item:last-child {
@@ -826,7 +827,7 @@ $hoverBg: #eef3ff;
         position: relative;
         height: $headerH;
         font-size: 14px;
-        border-bottom: 1px solid #dee2e6 !important;
+        border-bottom: 1px solid var(--border-color) !important;
       }
 
       &__content {

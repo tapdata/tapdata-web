@@ -44,6 +44,8 @@ export default {
           schemaUpdateHour,
           shareCDCExternalStorageId,
           heartbeatEnable,
+          dataSourceMonitor,
+          monitorCron,
         } = this.model
         this.schemaFormInstance.setValues({
           __TAPDATA: {
@@ -60,6 +62,8 @@ export default {
             shareCDCExternalStorageId,
             schemaUpdateHour,
             heartbeatEnable,
+            dataSourceMonitor,
+            monitorCron,
           },
           ...this.model?.config,
           id: this.model?.id,

@@ -115,7 +115,7 @@ export default {
   >
     <div v-loading="loading" class="user-notification">
       <div
-        class="search-bar flex gap-3 position-sticky top-0 bg-white z-10 pb-2"
+        class="search-bar flex gap-3 position-sticky top-0 bg-white z-10 pb-2 dark:bg-transparent dark:backdrop-blur-md"
       >
         <DatetimeRange
           v-model="search.range"
@@ -157,7 +157,7 @@ export default {
       <el-pagination
         v-model:page-size="page.size"
         v-model:current-page="page.index"
-        class="position-sticky py-6 bottom-0 bg-white z-10"
+        class="position-sticky py-6 bottom-0 z-10 bg-white dark:bg-transparent dark:backdrop-blur-md"
         background
         layout="->,total,prev, pager, next,sizes"
         :page-sizes="[20, 30, 50, 100]"

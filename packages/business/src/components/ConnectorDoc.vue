@@ -1,6 +1,9 @@
-<script>
+<script setup lang="ts">
 import { pdkApi } from '@tap/api'
 import GitBook from '@tap/component/src/GitBook.vue'
+import { useI18n } from '@tap/i18n'
+import { computed, ref } from 'vue'
+import { useStore } from 'vuex'
 
 const pdkDocMap = {
   'supported-databases': 'prerequisites/supported-databases',
@@ -62,6 +65,7 @@ const pdkDocMap = {
     'prerequisites/cloud-databases/tencentdb-for-mariadb',
   'tencentdb-for-mongodb':
     'prerequisites/cloud-databases/tencentdb-for-mongodb',
+  'tencentdb-for-mysql': 'prerequisites/cloud-databases/tencentdb-for-mysql',
   'tencentdb-for-pg': 'prerequisites/cloud-databases/tencentdb-for-pg',
   'tencentdb-for-sql-server':
     'prerequisites/cloud-databases/tencentdb-for-sql-server',
@@ -100,7 +104,7 @@ const pdkDocMap = {
   'mock-target': 'prerequisites/others/mock-target',
   dws: 'prerequisites/warehouses-and-lake/gaussdb',
   kafka_enhanced: 'prerequisites/mq-and-middleware/kafka-enhanced',
-}
+} as const
 
 // 维护一个DocMap还有一个NameDictionary的原因是，docMap从文档仓库直接复制过来，有些命名和pdkId不一致
 const pdkNameDictionary = {
@@ -131,70 +135,64 @@ const pdkNameDictionary = {
   'tencent-db-postgres': 'tencentdb-for-pg',
   'tencent-db-sqlserver': 'tencentdb-for-sql-server',
   mongodb3: 'mongodb-below34',
+} as const
+
+interface Props {
+  pdkId?: string
+  pdkHash?: string
 }
 
-export default {
-  name: 'ConnectorDoc',
+const props = defineProps<Props>()
 
-  components: {
-    GitBook,
-  },
+const { locale } = useI18n()
+const store = useStore()
+const isDaas = ref(import.meta.env.VUE_APP_PLATFORM === 'DAAS')
+const doc = ref('')
+const iframe = ref<HTMLIFrameElement>()
 
-  props: {
-    pdkId: String,
-    pdkHash: String,
-  },
+const docUrl = computed(() => {
+  const map = pdkDocMap
+  return map[
+    pdkNameDictionary[props.pdkId as keyof typeof pdkNameDictionary] ||
+      (props.pdkId as keyof typeof pdkDocMap)
+  ]
+})
 
-  data() {
-    return {
-      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
-      doc: '',
-    }
-  },
+const src = computed(() => {
+  let domain
 
-  computed: {
-    docUrl() {
-      const map = pdkDocMap // config.json 维护目前意义不大，每次还是得重新打包
-      return map[pdkNameDictionary[this.pdkId] || this.pdkId]
-    },
-    src() {
-      let domain
+  if (isDaas.value) {
+    domain = locale.value === 'en' ? '/docs/en/' : '/docs/'
+  } else {
+    domain =
+      !store.getters.isDomesticStation || locale.value === 'en'
+        ? 'https://docs.tapdata.io/'
+        : 'https://docs.tapdata.net/'
+  }
 
-      if (this.isDaas) {
-        domain = this.$i18n.locale === 'en' ? '/docs/en/' : '/docs/'
-      } else {
-        domain =
-          !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en'
-            ? 'https://docs.tapdata.io/'
-            : 'https://docs.tapdata.net/'
-      }
+  return `${domain + docUrl.value}?from=cloud`
+})
 
-      return `${domain + this.docUrl}?from=cloud`
-    },
-    showIframe() {
-      return !!this.docUrl
-    },
-  },
+const showIframe = computed(() => {
+  return !!docUrl.value
+})
 
-  created() {
-    if (!this.showIframe) {
-      this.getPdkDoc()
-    }
-  },
+const getPdkDoc = () => {
+  if (!props.pdkHash) return
+  pdkApi.doc(props.pdkHash).then((res) => {
+    doc.value = res?.data
+  })
+}
 
-  methods: {
-    getPdkDoc() {
-      pdkApi.doc(this.pdkHash).then((res) => {
-        this.doc = res?.data
-      })
-    },
-  },
+// Initialize doc if no iframe should be shown
+if (!showIframe.value) {
+  getPdkDoc()
 }
 </script>
 
 <template>
   <div class="h-100">
     <GitBook v-if="!showIframe" class="bg-white border-0" :value="doc" />
-    <iframe v-else :src="src" class="w-100 h-100 block" />
+    <iframe v-else ref="iframe" :src="src" class="w-100 h-100 block" />
   </div>
 </template>

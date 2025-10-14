@@ -220,7 +220,10 @@ defineExpose({
           </div>
         </div>
 
-        <div v-if="cdcEnabled" class="validation-frequency rounded-xl ml-6">
+        <div
+          v-if="cdcEnabled"
+          class="validation-frequency border rounded-xl ml-6"
+        >
           <div class="font-color-dark mb-4">
             {{ $t('packages_dag_validation_frequency') }}
           </div>
@@ -383,7 +386,7 @@ defineExpose({
 }
 
 .validation-frequency {
-  background-color: #f7f8fa;
+  background-color: var(--bg-disable);
   padding: 20px;
   border-radius: 8px;
 

@@ -707,6 +707,8 @@ export default {
             'inputSizeQps',
             'outputSizeQps',
             'qpsType',
+            'cpuUsage',
+            'memoryUsage',
           ],
           type: 'continuous', // 连续数据
         },
@@ -1439,7 +1441,7 @@ $sidebarW: 356px;
 $hoverBg: #e1e1e1;
 $radius: 3px;
 $baseHeight: 26px;
-$sidebarBg: #fff;
+$sidebarBg: var(--el-bg-color);
 
 .layout-sidebar {
   position: relative;

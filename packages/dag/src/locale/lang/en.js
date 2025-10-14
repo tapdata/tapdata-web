@@ -1160,4 +1160,10 @@ export default {
   packages_dag_drop_table_enabled_confirm:
     'Confirm clearing target table data?',
   packages_dag_compareIgnoreCase: 'Ignore Case',
+  packages_dag_qpSshizhi_tip: 'Query < 1h: avg QPS from 5s data points',
+  packages_dag_qpSshizhi2_tip:
+    '1h ≤ Query < 24h: avg & max QPS from 1m data points',
+  packages_dag_qpSshizhi3_tip:
+    '24h ≤ Query < 30d: avg & max QPS from 1h data points',
+  packages_dag_task_resource_usage: 'Task Resource Usage',
 }

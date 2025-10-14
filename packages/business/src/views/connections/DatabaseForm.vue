@@ -21,6 +21,7 @@ import ConnectorDoc from '../../components/ConnectorDoc.vue'
 import mixins from '../../components/create-connection/mixins'
 import SceneDialog from '../../components/create-connection/SceneDialog.vue'
 import { DatabaseIcon } from '../../components/DatabaseIcon'
+import PageContainer from '../../components/PageContainer.vue'
 import { ConnectionDebug } from './ConnectionDebug'
 import { JsDebug } from './JsDebug'
 import Test from './Test.vue'
@@ -38,6 +39,7 @@ export default {
     ConnectionDebug,
     UsedTaskDialog,
     JsDebug,
+    PageContainer,
   },
   directives: {
     resize,
@@ -901,6 +903,40 @@ export default {
               },
             }
           : undefined,
+        monitorSpace: this.pdkOptions.properties?.monitorAPI
+          ? {
+              type: 'void',
+              'x-component': 'Space',
+              'x-component-props': {
+                class: 'w-100 align-items-start',
+              },
+              properties: {
+                dataSourceMonitor: {
+                  title: this.$t('packages_business_data_source_monitor'),
+                  type: 'boolean',
+                  default: false,
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Switch',
+                },
+                monitorCron: {
+                  title: this.$t('packages_business_monitor_cron'),
+                  type: 'string',
+                  // default: '0 */10 * * * ?',
+                  'x-decorator': 'FormItem',
+                  description: this.$t('packages_business_monitor_cron_tip'),
+                  'x-component': 'Input',
+                  'x-reactions': {
+                    dependencies: ['.dataSourceMonitor'],
+                    fulfill: {
+                      state: {
+                        visible: '{{$deps[0]}}',
+                      },
+                    },
+                  },
+                },
+              },
+            }
+          : undefined,
       })
 
       if (this.isDaas) {
@@ -1605,222 +1641,228 @@ export default {
 </script>
 
 <template>
-  <div v-loading="loadingFrom" class="connection-from">
-    <div class="connection-from-body gap-4">
-      <main class="connection-from-main bg-white rounded-xl overflow-hidden">
-        <div class="connection-from-title p-4">
-          <div class="flex align-center gap-2">
-            <slot name="title-prefix">
-              <el-button
-                text
-                @click="
-                  $router.push({
-                    name: 'connectionsList',
-                  })
-                "
-              >
-                <template #icon>
-                  <VIcon>left</VIcon>
+  <PageContainer mode="blank" container-class="min-h-0 flex-1" hide-header>
+    <div v-loading="loadingFrom" class="connection-from">
+      <div class="connection-from-body gap-4">
+        <main class="connection-from-main bg-card rounded-xl overflow-hidden">
+          <div class="connection-from-title p-4">
+            <div class="flex align-center gap-2">
+              <slot name="title-prefix">
+                <el-button
+                  text
+                  @click="
+                    $router.push({
+                      name: 'connectionsList',
+                    })
+                  "
+                >
+                  <template #icon>
+                    <VIcon>left</VIcon>
+                  </template>
+                </el-button>
+              </slot>
+              <span class="flex-1">{{
+                $route.params.id
+                  ? $t('packages_business_connection_form_edit_connection')
+                  : $t('public_connection_button_create')
+              }}</span>
+              <div class="flex align-center overflow-hidden gap-2">
+                <DatabaseIcon
+                  class="flex-shrink-0"
+                  :item="$route.query"
+                  :size="20"
+                />
+                <template v-if="!$route.params.id">
+                  <span
+                    class="ml-auto font-color-light fw-normal fs-7 ellipsis"
+                    >{{ pdkOptions.name }}</span
+                  >
+                  <el-button
+                    v-if="!$route.params.id"
+                    text
+                    type="primary"
+                    @click="dialogDatabaseTypeVisible = true"
+                  >
+                    {{ $t('packages_business_connection_form_change') }}
+                  </el-button>
                 </template>
-              </el-button>
-            </slot>
-            <span class="flex-1">{{
-              $route.params.id
-                ? $t('packages_business_connection_form_edit_connection')
-                : $t('public_connection_button_create')
-            }}</span>
-            <div class="flex align-center overflow-hidden gap-2">
-              <DatabaseIcon
-                class="flex-shrink-0"
-                :item="$route.query"
-                :size="20"
-              />
-              <template v-if="!$route.params.id">
-                <span
-                  class="ml-auto font-color-light fw-normal fs-7 ellipsis"
-                  >{{ pdkOptions.name }}</span
-                >
-                <el-button
-                  v-if="!$route.params.id"
-                  text
-                  type="primary"
-                  @click="dialogDatabaseTypeVisible = true"
-                >
-                  {{ $t('packages_business_connection_form_change') }}
-                </el-button>
-              </template>
-              <template v-else>
-                <span
-                  class="ml-auto font-color-light fw-normal fs-7 ellipsis"
-                  >{{ model.name }}</span
-                >
-                <el-button
-                  text
-                  type="primary"
-                  @click="dialogEditNameVisible = true"
-                >
-                  {{ $t('packages_business_connection_form_rename') }}
-                </el-button>
-              </template>
+                <template v-else>
+                  <span
+                    class="ml-auto font-color-light fw-normal fs-7 ellipsis"
+                    >{{ model.name }}</span
+                  >
+                  <el-button
+                    text
+                    type="primary"
+                    @click="dialogEditNameVisible = true"
+                  >
+                    {{ $t('packages_business_connection_form_rename') }}
+                  </el-button>
+                </template>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="form-wrap">
-          <div class="form px-4">
-            <div
-              v-if="!isDaas && showAgentIpAlert"
-              class="flex flex-column gap-2 mb-3 rounded-lg p-2 bg-color-primary-light-9"
-            >
-              <div class="flex align-items-start gap-1">
-                <div class="p-1">
-                  <VIcon class="color-primary" :size="22">info</VIcon>
+          <div class="form-wrap">
+            <div class="form px-4">
+              <div
+                v-if="!isDaas && showAgentIpAlert"
+                class="flex flex-column gap-2 mb-3 rounded-lg p-2 bg-color-primary-light-9"
+              >
+                <div class="flex align-items-start gap-1">
+                  <div class="p-1">
+                    <VIcon class="color-primary" :size="22">info</VIcon>
+                  </div>
+                  <div class="lh-base p-1 fw-sub fs-7">
+                    {{ $t('packages_business_agent_ip_tips_prefix') }}:
+                  </div>
                 </div>
-                <div class="lh-base p-1 fw-sub fs-7">
-                  {{ $t('packages_business_agent_ip_tips_prefix') }}:
-                </div>
+
+                <el-collapse
+                  value="1"
+                  class="rounded-lg overflow-hidden rounded-collapse"
+                >
+                  <el-collapse-item title="TapData IP addresses" name="1">
+                    <ul class="ml-6 font-color-dark">
+                      <li>34.92.78.86</li>
+                      <li>39.106.147.20</li>
+                      <li>47.242.39.227</li>
+                    </ul>
+                  </el-collapse-item>
+                </el-collapse>
               </div>
 
-              <el-collapse
-                value="1"
-                class="rounded-lg overflow-hidden rounded-collapse"
-              >
-                <el-collapse-item title="TapData IP addresses" name="1">
-                  <ul class="ml-6 font-color-dark">
-                    <li>34.92.78.86</li>
-                    <li>39.106.147.20</li>
-                    <li>47.242.39.227</li>
-                  </ul>
-                </el-collapse-item>
-              </el-collapse>
+              <SchemaToForm
+                ref="schemaToForm"
+                class="pdk-schema-form"
+                :schema="schemaData"
+                :scope="schemaScope"
+                layout="vertical"
+                label-width="100%"
+              />
+              <span class="status">
+                <span v-if="['invalid'].includes(status)" class="error">
+                  <VIcon>error</VIcon>
+                  <span>
+                    {{ $t('public_status_invalid') }}
+                  </span>
+                </span>
+                <span v-if="['ready'].includes(status)" class="success">
+                  <el-icon><SuccessFilled /></el-icon>
+                  <span>
+                    {{ $t('public_status_ready') }}
+                  </span>
+                </span>
+                <span v-if="['testing'].includes(status)" class="warning">
+                  <el-icon><el-icon-warning /></el-icon>
+                  <span>
+                    {{ $t('public_status_testing') }}
+                  </span>
+                </span>
+              </span>
             </div>
-
-            <SchemaToForm
-              ref="schemaToForm"
-              class="pdk-schema-form"
-              :schema="schemaData"
-              :scope="schemaScope"
-              layout="vertical"
-              label-width="100%"
-            />
-            <span class="status">
-              <span v-if="['invalid'].includes(status)" class="error">
-                <VIcon>error</VIcon>
-                <span>
-                  {{ $t('public_status_invalid') }}
-                </span>
-              </span>
-              <span v-if="['ready'].includes(status)" class="success">
-                <el-icon><SuccessFilled /></el-icon>
-                <span>
-                  {{ $t('public_status_ready') }}
-                </span>
-              </span>
-              <span v-if="['testing'].includes(status)" class="warning">
-                <el-icon><el-icon-warning /></el-icon>
-                <span>
-                  {{ $t('public_status_testing') }}
-                </span>
-              </span>
-            </span>
           </div>
-        </div>
-        <footer class="footer text-center border-top py-4">
-          <el-button @click="goBack()">{{
-            $t('public_button_back')
-          }}</el-button>
-          <el-button class="test" @click="startTest()">{{
-            $t('public_connection_button_test')
-          }}</el-button>
-          <el-button
-            v-if="['custom'].includes(pdkOptions.pdkId)"
-            class="test"
-            @click="handleDebug"
-            >{{
-              $t('packages_business_connections_databaseform_jiaobentiaoshi')
-            }}
-          </el-button>
-          <el-button type="primary" :loading="submitBtnLoading" @click="submit">
-            {{ $t('public_button_save') }}
-          </el-button>
-        </footer>
-      </main>
-      <div class="flex-1 overflow-x-hidden bg-white rounded-xl">
-        <ConnectorDoc
-          :pdk-hash="$route.query.pdkHash"
-          :pdk-id="$route.query.pdkId"
-        />
-      </div>
-    </div>
-    <Test ref="test" :connection="model" @return-test-data="returnTestData" />
-    <SceneDialog
-      v-model:visible="dialogDatabaseTypeVisible"
-      selector-type="source_and_target"
-      @selected="handleDatabaseType"
-    />
-    <el-dialog
-      v-model="dialogEditNameVisible"
-      :title="$t('packages_business_connection_rename')"
-      :close-on-click-modal="false"
-      width="30%"
-    >
-      <el-form
-        ref="renameForm"
-        :model="renameData"
-        :rules="renameRules"
-        @submit.prevent
-      >
-        <el-form-item prop="rename">
-          <el-input
-            v-model="renameData.rename"
-            maxlength="100"
-            show-word-limit
+          <footer class="footer text-center border-top py-4">
+            <el-button @click="goBack()">{{
+              $t('public_button_back')
+            }}</el-button>
+            <el-button class="test" @click="startTest()">{{
+              $t('public_connection_button_test')
+            }}</el-button>
+            <el-button
+              v-if="['custom'].includes(pdkOptions.pdkId)"
+              class="test"
+              @click="handleDebug"
+              >{{
+                $t('packages_business_connections_databaseform_jiaobentiaoshi')
+              }}
+            </el-button>
+            <el-button
+              type="primary"
+              :loading="submitBtnLoading"
+              @click="submit"
+            >
+              {{ $t('public_button_save') }}
+            </el-button>
+          </footer>
+        </main>
+        <div class="flex-1 overflow-x-hidden bg-white rounded-xl">
+          <ConnectorDoc
+            :pdk-hash="$route.query.pdkHash"
+            :pdk-id="$route.query.pdkId"
           />
-        </el-form-item>
-        <span
-          style="
-            color: #ccc;
-            margin-top: 5px;
-            font-size: 12px;
-            display: inline-block;
-          "
-          >{{
-            $t('packages_business_connections_databaseform_zhongyingkaitouge')
-          }}</span
+        </div>
+      </div>
+      <Test ref="test" :connection="model" @return-test-data="returnTestData" />
+      <SceneDialog
+        v-model:visible="dialogDatabaseTypeVisible"
+        selector-type="source_and_target"
+        @selected="handleDatabaseType"
+      />
+      <el-dialog
+        v-model="dialogEditNameVisible"
+        :title="$t('packages_business_connection_rename')"
+        :close-on-click-modal="false"
+        width="30%"
+      >
+        <el-form
+          ref="renameForm"
+          :model="renameData"
+          :rules="renameRules"
+          @submit.prevent
         >
-      </el-form>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="handleCancelRename">{{
-            $t('public_button_cancel')
-          }}</el-button>
-          <el-button
-            type="primary"
-            :loading="editBtnLoading"
-            @click="submitEdit()"
-            >{{ $t('public_button_confirm') }}</el-button
+          <el-form-item prop="rename">
+            <el-input
+              v-model="renameData.rename"
+              maxlength="100"
+              show-word-limit
+            />
+          </el-form-item>
+          <span
+            style="
+              color: #ccc;
+              margin-top: 5px;
+              font-size: 12px;
+              display: inline-block;
+            "
+            >{{
+              $t('packages_business_connections_databaseform_zhongyingkaitouge')
+            }}</span
           >
-        </span>
-      </template>
-    </el-dialog>
-    <ConnectionDebug
-      v-model:visible="showDebug"
-      :schema="schemaData"
-      :pdk-options="pdkOptions"
-      :get-form="getForm"
-    />
-    <JsDebug
-      v-model:visible="showJsDebug"
-      :schema="jsDebugSchemaData"
-      :pdk-options="pdkOptions"
-      :get-form="getForm"
-      :connection-id="connectionId"
-    />
-    <UsedTaskDialog
-      v-model:value="connectionLogCollectorTaskDialog"
-      :data="connectionLogCollectorTaskData"
-    />
-  </div>
+        </el-form>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="handleCancelRename">{{
+              $t('public_button_cancel')
+            }}</el-button>
+            <el-button
+              type="primary"
+              :loading="editBtnLoading"
+              @click="submitEdit()"
+              >{{ $t('public_button_confirm') }}</el-button
+            >
+          </span>
+        </template>
+      </el-dialog>
+      <ConnectionDebug
+        v-model:visible="showDebug"
+        :schema="schemaData"
+        :pdk-options="pdkOptions"
+        :get-form="getForm"
+      />
+      <JsDebug
+        v-model:visible="showJsDebug"
+        :schema="jsDebugSchemaData"
+        :pdk-options="pdkOptions"
+        :get-form="getForm"
+        :connection-id="connectionId"
+      />
+      <UsedTaskDialog
+        v-model:value="connectionLogCollectorTaskDialog"
+        :data="connectionLogCollectorTaskData"
+      />
+    </div>
+  </PageContainer>
 </template>
 
 <style lang="scss" scoped>

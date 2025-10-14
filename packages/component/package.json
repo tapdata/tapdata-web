@@ -32,6 +32,7 @@
     "@tiptap/pm": "catalog:",
     "@tiptap/starter-kit": "catalog:",
     "@tiptap/vue-3": "catalog:",
+    "@vueuse/core": "catalog:",
     "ace-builds": "catalog:",
     "core-js": "catalog:",
     "dayjs": "catalog:",

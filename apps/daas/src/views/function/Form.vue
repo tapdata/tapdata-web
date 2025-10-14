@@ -154,7 +154,7 @@ export default {
   >
     <section
       v-loading="loading"
-      class="custom-form-wrapper section-wrap bg-white flex-fill"
+      class="custom-form-wrapper section-wrap flex-fill"
     >
       <div class="section-wrap-box">
         <ElForm
@@ -241,7 +241,9 @@ export default {
           </ElFormItem>
         </ElForm>
       </div>
-      <div class="footer position-sticky py-6 bottom-0 bg-white">
+      <div
+        class="footer border-top position-sticky py-6 bottom-0 bg-white dark:bg-transparent dark:backdrop-blur-md"
+      >
         <ElButton class="btn" type="primary" @click="save">{{
           $t('public_button_save')
         }}</ElButton>
@@ -288,9 +290,5 @@ export default {
     flex: 1;
     overflow: auto;
   }
-}
-.footer {
-  background-color: var(--color-white);
-  border-top: 1px solid #f0f0f0;
 }
 </style>

@@ -592,4 +592,5 @@ export default {
   public_connectionName: 'Connection Name',
   public_warningTime: 'Warning Time',
   public_warningLog: 'Warning Log',
+  public_updated_from_now: 'Updated at {time}',
 }

@@ -11,7 +11,7 @@ import dayjs from 'dayjs'
 import { cloneDeep, debounce, escape, uniqBy } from 'lodash-es'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { mapGetters } from 'vuex'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+import { $emit } from '../../../utils/gogocodeTransfer'
 
 import NodeList from '../nodes/List'
 import Download from './Download'
@@ -1475,8 +1475,8 @@ Stack Trace: ${this.codeDialog.data.errorStack ? `\n${this.codeDialog.data.error
 
   :deep(.log-line) {
     padding: 8px 16px;
-    background-color: #fff;
-    border-bottom: 1px solid #ebeef5;
+    background-color: var(--el-bg-color);
+    border-bottom: 1px solid var(--el-border-color);
     width: 100%;
     font-family:
       'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;

@@ -501,10 +501,9 @@ export default defineComponent({
             </el-table-column>
             <slot />
             <template #empty>
-              <div class="empty">
-                <VIcon size="140">no-data-color</VIcon>
+              <el-empty image-size="100">
                 <slot name="noDataText" />
-              </div>
+              </el-empty>
             </template>
           </el-table>
           <div class="table-footer">
@@ -570,7 +569,6 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: var(--color-white);
   min-width: 720px;
   flex: 1;
   width: 100%;
@@ -627,7 +625,6 @@ export default defineComponent({
       flex: 1;
       width: 100%;
       border-radius: 4px;
-      background-color: var(--color-white);
     }
   }
 
@@ -656,7 +653,6 @@ export default defineComponent({
       border-bottom: none;
       border-radius: 3px;
       font-size: 14px;
-      background-color: var(--color-white);
       overflow: hidden;
       // .el-table__fixed-right {
       //   height: 100% !important; //设置高优先，以覆盖内联样式

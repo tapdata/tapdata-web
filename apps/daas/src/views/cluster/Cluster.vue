@@ -358,8 +358,10 @@ const startFn = async (item: any, status: string, server: string) => {
       server,
       operation: 'start',
     }
-    const confirmed = await Modal.confirm(t('cluster_confirm_text') + t('cluster_startServer') + '?')
-    confirmed && operationFn(data)  
+    const confirmed = await Modal.confirm(
+      `${t('cluster_confirm_text') + t('cluster_startServer')}?`,
+    )
+    confirmed && operationFn(data)
   }
 }
 
@@ -370,7 +372,9 @@ const closeFn = async (item: any, status: string, server: string) => {
       server,
       operation: 'stop',
     }
-    const confirmed = await Modal.confirm(t('cluster_confirm_text') + t('cluster_closeSever') + '?')
+    const confirmed = await Modal.confirm(
+      `${t('cluster_confirm_text') + t('cluster_closeSever')}?`,
+    )
     confirmed && operationFn(data)
   }
 }
@@ -382,7 +386,9 @@ const restartFn = async (item: any, status: string, server: string) => {
       server,
       operation: 'restart',
     }
-    const confirmed =await Modal.confirm(t('cluster_confirm_text') + t('cluster_restartServer') + '?')
+    const confirmed = await Modal.confirm(
+      `${t('cluster_confirm_text') + t('cluster_restartServer')}?`,
+    )
     confirmed && operationFn(data)
   }
 }
@@ -390,11 +396,14 @@ const restartFn = async (item: any, status: string, server: string) => {
 const unbind = async (item: any, status: string) => {
   if (status === 'stopped') {
     const { process_id } = item.systemInfo || {}
-    const confirmed = await Modal.confirm(t('cluster_confirm_text') + t('cluster_unbind_server') + '?')
+    const confirmed = await Modal.confirm(
+      `${t('cluster_confirm_text') + t('cluster_unbind_server')}?`,
+    )
 
-    confirmed && unbindByProcessId(process_id).then(() => {
-      init()
-    })
+    confirmed &&
+      unbindByProcessId(process_id).then(() => {
+        init()
+      })
   }
 }
 
@@ -905,12 +914,12 @@ const handleTabChange = (tab: any) => {
 <template>
   <PageContainer
     mode="auto"
-    container-class="bg-white rounded-xl shadow-sm gap-1"
+    container-class="bg-card rounded-xl shadow-sm gap-1"
     content-class="flex-1 min-h-0 overflow-auto px-6 pb-5 position-relative flex flex-column"
   >
     <el-tabs
       v-model="viewType"
-      class="position-sticky top-0 z-10 bg-white"
+      class="position-sticky top-0 z-10 bg-white dark:bg-transparent dark:backdrop-blur-md"
       @tab-change="handleTabChange"
     >
       <el-tab-pane name="cluster">
@@ -1293,7 +1302,7 @@ const handleTabChange = (tab: any) => {
               :md="12"
               :sm="24"
             >
-              <div class="grid-content list-box border rounded-xl">
+              <div class="grid-content list-box bg-card border rounded-xl">
                 <div class="list-box-header">
                   <div class="list-box-header-left">
                     <img
@@ -1391,7 +1400,7 @@ const handleTabChange = (tab: any) => {
                     </div>
                     {{ $t('cluster_cpu_usage') }}
                   </div>
-                  <div class="line" />
+                  <div class="line dark:bg-white/15" />
                   <div class="usageRate">
                     <div class="fs-5 pb-1 fw-bolder">
                       {{ item.metricValues.HeapMemoryUsage }}
@@ -1401,7 +1410,10 @@ const handleTabChange = (tab: any) => {
                 </div>
                 <!-- 监控数据 -->
                 <div class="list-box-footer">
-                  <el-row :gutter="16" class="list-box-footer-header">
+                  <el-row
+                    :gutter="16"
+                    class="list-box-footer-header dark:bg-white/10 rounded-lg"
+                  >
                     <el-col :span="6">
                       <span class="txt fw-sub">{{ $t('cluster_name') }}</span>
                     </el-col>
@@ -1787,13 +1799,16 @@ const handleTabChange = (tab: any) => {
                 show-word-limit
                 :placeholder="$t('cluster_placeholder_mon_server')"
               >
-              <template #suffix >
-                <ElButton v-if="agentName !== currentNde.hostname" text type="primary" @click="editNameRest">{{
-                $t('public_button_reduction')
-              }}</ElButton>
-              </template>
-            </el-input>
-              
+                <template #suffix>
+                  <ElButton
+                    v-if="agentName !== currentNde.hostname"
+                    text
+                    type="primary"
+                    @click="editNameRest"
+                    >{{ $t('public_button_reduction') }}</ElButton
+                  >
+                </template>
+              </el-input>
             </div>
           </el-form-item>
           <el-form-item :label="$t('cluster_ip_display')" prop="command">
@@ -2010,7 +2025,6 @@ const handleTabChange = (tab: any) => {
         box-sizing: border-box;
 
         .list-box {
-          background-color: var(--color-white);
           //height: 340px;
           .list-box-header {
             overflow: hidden;
@@ -2068,7 +2082,7 @@ const handleTabChange = (tab: any) => {
             justify-content: center;
             padding: 16px 0;
             text-align: center;
-            border-top: 1px solid var(--border-light);
+            border-top: 1px solid var(--el-border-color-lighter);
 
             .usageRate {
               width: 50%;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { User, WarningFilled } from '@element-plus/icons-vue'
+import { WarningFilled } from '@element-plus/icons-vue'
 import {
   fetchAppVersion,
   fetchTimestamp,
@@ -7,6 +7,7 @@ import {
   logout,
 } from '@tap/api'
 import { Modal } from '@tap/component/src/modal'
+import { ThemeToggle } from '@tap/component/src/theme-toggle'
 import { useI18n } from '@tap/i18n'
 import {
   getCurrentLanguage,
@@ -14,8 +15,8 @@ import {
   setCurrentLanguage,
 } from '@tap/i18n/src/shared/util'
 import Cookie from '@tap/shared/src/cookie'
-import { getSettingByKey } from '@tap/shared/src/settings'
 
+import { getSettingByKey } from '@tap/shared/src/settings'
 import Time from '@tap/shared/src/time'
 import dayjs from 'dayjs'
 import { computed, inject, onMounted, ref } from 'vue'
@@ -241,6 +242,7 @@ defineExpose({
 </script>
 
 <template>
+  <header style="height: 64px; flex: 0 0 auto" />
   <ElHeader
     v-if="!IS_IFRAME"
     class="flex align-center gap-4 layout-header"
@@ -342,16 +344,15 @@ defineExpose({
               v-for="(value, key) in languages"
               :key="key"
               :command="key"
+              :class="{ 'is-active': currentLang === key }"
             >
-              <span v-if="currentLang === key" class="color-primary">{{
-                value
-              }}</span>
-              <span v-else>{{ value }}</span>
+              <span>{{ value }}</span>
             </ElDropdownItem>
           </ElDropdownMenu>
         </template>
       </ElDropdown>
-      <ElDivider direction="vertical" class="divider mx-0" />
+      <ThemeToggle />
+      <ElDivider direction="vertical" class="mx-0 fs-5" />
       <ElDropdown
         class="menu-user btn"
         placement="bottom"
@@ -359,7 +360,7 @@ defineExpose({
         @command="command"
       >
         <el-button text size="large" style="line-height: 28px">
-          <el-icon size="20"><User /></el-icon>
+          <el-icon size="18"><i-lucide:user-round /></el-icon>
           <span>{{ userName }}</span>
         </el-button>
         <template #dropdown>
@@ -381,13 +382,18 @@ defineExpose({
 
 <style lang="scss" scoped>
 .layout-header {
+  position: fixed;
+  inset-inline-start: 0;
+  inset-block-start: 0;
+  width: 100%;
+  backdrop-filter: blur(12px);
+  z-index: 100;
+  :deep(.el-button) {
+    outline: none !important;
+  }
   :deep(.el-button .el-icon:only-child) {
     color: var(--icon-n1);
   }
-}
-.divider {
-  height: 1.8em;
-  border-color: rgba(60, 60, 67, 0.12);
 }
 
 .logo {

@@ -593,7 +593,7 @@ defineExpose({
             <div
               class="list-item-hover rounded-lg p-2 flex align-center gap-2 cursor-pointer font-color-light position-relative"
               :class="{
-                'bg-white shadow-sm font-color-dark': !searchParams.appId,
+                'bg-card shadow-sm font-color-dark': !searchParams.appId,
               }"
               @click="handleAppSelect()"
             >
@@ -611,7 +611,7 @@ defineExpose({
               :key="app.id"
               class="list-item-hover rounded-lg p-2 flex align-center gap-2 cursor-pointer font-color-light position-relative"
               :class="{
-                'bg-white shadow-sm font-color-dark':
+                'bg-card shadow-sm font-color-dark':
                   app.id === searchParams.appId,
               }"
               @click="handleAppSelect(app)"

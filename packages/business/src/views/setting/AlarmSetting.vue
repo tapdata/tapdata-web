@@ -692,7 +692,9 @@ onMounted(async () => {
           </ElFormItem>
         </ElForm>
       </section>
-      <div class="position-sticky py-6 bottom-0 bg-white z-10">
+      <div
+        class="position-sticky py-6 bottom-0 bg-white z-10 dark:bg-transparent dark:backdrop-blur-md"
+      >
         <el-button type="primary" @click="save()">{{
           $t('public_button_save')
         }}</el-button>

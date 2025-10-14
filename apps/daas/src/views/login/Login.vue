@@ -7,6 +7,7 @@ import {
 } from '@tap/api'
 import Cookie from '@tap/shared/src/cookie'
 import { getSettingByKey } from '@tap/shared/src/settings'
+import { useDark } from '@vueuse/core'
 import cryptoJS from 'crypto-js'
 import { configUser } from '@/utils/util'
 import LoginPage from './LoginPage.vue'
@@ -29,6 +30,7 @@ export default {
     }
   },
   created() {
+    useDark()
     this.loadAdEnable()
     if (this.$route.query) {
       this.form.email = this.$route.query.email
@@ -225,7 +227,7 @@ export default {
     form {
       border-radius: 4px;
       overflow: hidden;
-      border: 1px solid #dedee4;
+      border: 1px solid var(--el-border-color);
       .input {
         display: block;
         padding-left: 15px;
@@ -240,7 +242,7 @@ export default {
         font-size: 14px;
         font-family: inherit;
         &:last-child {
-          border-top: 1px solid #dedee4;
+          border-top: 1px solid var(--el-border-color);
         }
         &::placeholder {
           font-weight: 400;

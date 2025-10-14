@@ -1,5 +1,4 @@
 <script>
-import { EditPen } from '@element-plus/icons-vue'
 import { fileApi, javascriptFunctionsApi } from '@tap/api'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import Cookie from '@tap/shared/src/cookie'
@@ -380,7 +379,9 @@ export default {
         </ElTableColumn>
       </ElTable>
     </div>
-    <div class="footer position-sticky py-6 bottom-0 bg-white z-10">
+    <div
+      class="footer border-top position-sticky py-6 bottom-0 bg-white z-10 dark:bg-transparent dark:backdrop-blur-md"
+    >
       <ElButton type="primary" @click="save">{{
         $t('public_button_save')
       }}</ElButton>
@@ -488,7 +489,7 @@ export default {
     overflow: auto;
   }
   .footer {
-    border-top: 1px solid #f0f0f0;
+    // border-top: 1px solid #f0f0f0;
     box-shadow: 0px -1px 2px 0px #f6f6f6;
   }
 }
