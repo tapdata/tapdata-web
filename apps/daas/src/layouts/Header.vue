@@ -392,7 +392,7 @@ defineExpose({
 
 .logo {
   display: block;
-  width: 145px;
+  height: 32px;
   img {
     width: 100%;
     height: 100%;
