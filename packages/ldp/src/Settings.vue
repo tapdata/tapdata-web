@@ -256,10 +256,10 @@ export default {
     </template>
     <div>
       <div
-        class="flex gap-6 justify-content-center p-4 rounded-lg mode-card-container"
+        class="flex gap-6 justify-content-center p-4 rounded-xl mode-card-container"
       >
         <div
-          class="flex-1 rounded-xl bg-white border mode-card overflow-hidden clickable"
+          class="flex-1 rounded-xl bg-card border mode-card overflow-hidden clickable"
           :class="{ active: mode === 'integration' }"
           @click="handleSelectMode('integration')"
         >
@@ -292,7 +292,7 @@ export default {
           </div>
         </div>
         <div
-          class="flex-1 rounded-xl bg-white border mode-card overflow-hidden clickable"
+          class="flex-1 rounded-xl bg-card border mode-card overflow-hidden clickable"
           :class="{ active: mode === 'service' }"
           @click="handleSelectMode('service')"
         >
@@ -342,7 +342,7 @@ export default {
               <VIcon class="color-primary align-middle" size="16">info</VIcon>
             </ElTooltip>
           </div>
-          <div class="px-4 py-3 rounded-lg border">
+          <div class="px-4 py-3 rounded-xl border">
             <ElFormItem prop="fdmStorageConnectionId">
               <template #label>
                 <span class="inline-flex align-center">
@@ -355,7 +355,6 @@ export default {
               <ElRadioGroup
                 v-if="!isDaas"
                 v-model="form.fdmStorageCluster"
-                :disabled="disabled"
                 class="mb-2"
                 @change="handleChangeFDMStorage"
               >
@@ -373,7 +372,6 @@ export default {
               <ElSelect
                 v-if="form.fdmStorageCluster === 'self'"
                 v-model="form.fdmStorageConnectionId"
-                :disabled="disabled"
                 class="w-100"
               >
                 <ElOption
@@ -387,7 +385,7 @@ export default {
                 <div class="flex align-center gap-4">
                   <span
                     v-if="fdmConnection"
-                    class="preview-text inline-block rounded-4 bg-subtle ellipsis"
+                    class="preview-text inline-block rounded-lg bg-subtle ellipsis"
                     >{{ fdmConnection.name }}</span
                   >
                   <ElButton
@@ -414,7 +412,6 @@ export default {
                 v-if="!isDaas"
                 v-model="form.mdmStorageCluster"
                 class="mb-2"
-                :disabled="disabled"
                 @change="handleChangeMDMStorage"
               >
                 <ElRadio
@@ -431,7 +428,6 @@ export default {
               <ElSelect
                 v-if="form.mdmStorageCluster === 'self'"
                 v-model="form.mdmStorageConnectionId"
-                :disabled="disabled"
                 class="w-100"
               >
                 <ElOption
@@ -445,7 +441,7 @@ export default {
                 <div class="flex align-center gap-4">
                   <span
                     v-if="mdmConnection"
-                    class="preview-text inline-block rounded-4 bg-subtle ellipsis"
+                    class="preview-text inline-block rounded-lg bg-subtle ellipsis"
                     >{{ mdmConnection.name }}</span
                   >
                   <ElButton
@@ -460,7 +456,7 @@ export default {
               </template>
             </ElFormItem>
 
-            <div
+            <!-- <div
               v-if="isDaas"
               class="flex align-items-center font-color-sslight"
             >
@@ -468,7 +464,7 @@ export default {
               <span class="font-color-sslight">{{
                 $t('packages_business_data_console_setting_saved_tooltip')
               }}</span>
-            </div>
+            </div> -->
           </div>
         </template>
       </ElForm>
@@ -478,13 +474,9 @@ export default {
         <ElButton class="ml-4" @click="cancel">{{
           $t('public_button_cancel')
         }}</ElButton>
-        <ElButton
-          v-loading="loading"
-          type="primary"
-          :disabled="disabledBtn"
-          @click="submit"
-          >{{ $t('public_button_save') }}</ElButton
-        >
+        <ElButton v-loading="loading" type="primary" @click="submit">{{
+          $t('public_button_save')
+        }}</ElButton>
       </div>
     </template>
   </ElDialog>
@@ -515,6 +507,13 @@ export default {
     width: 100%;
     height: auto;
     background-color: #f6f8fa;
+
+    &:where(html.dark *) {
+      background-color: #07080d;
+      :deep(img) {
+        filter: invert(1) hue-rotate(180deg);
+      }
+    }
   }
 
   &-title {
@@ -523,8 +522,6 @@ export default {
 
   &.active {
     border-color: var(--color-primary) !important;
-    .mode-card-image {
-    }
   }
 
   &:hover {

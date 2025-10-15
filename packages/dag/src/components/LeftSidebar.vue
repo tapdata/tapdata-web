@@ -1000,7 +1000,7 @@ $hoverBg: var(--primary-hover-light);
     max-height: 50%;
 
     .el-collapse-item:last-child {
-      margin-bottom: -1px;
+      margin-bottom: 0;
     }
 
     .el-collapse-item__header {
@@ -1132,6 +1132,7 @@ $hoverBg: var(--primary-hover-light);
   }
 
   :deep(.el-collapse.collapse-fill) {
+    --el-collapse-header-height: $headerH;
     .el-collapse-item:first-child:last-child {
       height: 100%;
       .el-collapse-item__wrap {

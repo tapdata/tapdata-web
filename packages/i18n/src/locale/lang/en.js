@@ -188,6 +188,7 @@ export default {
   public_data_no_find_result: 'No matching results found',
   public_data_default: 'Defaults',
   public_data_filter_condition: 'Filter Condition',
+  public_data_fields_condition: 'Filter Fields',
   public_data_type: 'Data Type',
   // time
   public_time_ms: 'Milliseconds',
@@ -591,4 +592,6 @@ export default {
   public_connectionName: 'Connection Name',
   public_warningTime: 'Warning Time',
   public_warningLog: 'Warning Log',
+  public_updated_from_now: 'Updated at {time}',
+  public_crontabExpression: 'Cron Expression',
 }

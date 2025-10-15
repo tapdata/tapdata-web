@@ -3,10 +3,8 @@ import {
   CircleCheckFilled,
   CircleCloseFilled,
   Loading,
-  WarningFilled,
 } from '@element-plus/icons-vue'
 import dayjs from 'dayjs'
-import { h } from 'vue'
 import { ErrorMessage } from './error-message'
 
 export default {
@@ -87,7 +85,8 @@ export default {
       <ElButton
         v-if="
           data.loadFieldsStatus !== 'finished' &&
-          data.loadFieldsStatus !== 'loading'
+          data.loadFieldsStatus !== 'loading' &&
+          data.loadFieldErrMsg
         "
         text
         type="primary"
