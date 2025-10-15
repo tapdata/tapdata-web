@@ -259,7 +259,7 @@ export default {
         class="flex gap-6 justify-content-center p-4 rounded-xl mode-card-container"
       >
         <div
-          class="flex-1 rounded-xl bg-white border mode-card overflow-hidden clickable"
+          class="flex-1 rounded-xl bg-card border mode-card overflow-hidden clickable"
           :class="{ active: mode === 'integration' }"
           @click="handleSelectMode('integration')"
         >
@@ -292,7 +292,7 @@ export default {
           </div>
         </div>
         <div
-          class="flex-1 rounded-xl bg-white border mode-card overflow-hidden clickable"
+          class="flex-1 rounded-xl bg-card border mode-card overflow-hidden clickable"
           :class="{ active: mode === 'service' }"
           @click="handleSelectMode('service')"
         >
@@ -507,6 +507,13 @@ export default {
     width: 100%;
     height: auto;
     background-color: #f6f8fa;
+
+    &:where(html.dark *) {
+      background-color: #07080d;
+      :deep(img) {
+        filter: invert(1) hue-rotate(180deg);
+      }
+    }
   }
 
   &-title {
@@ -515,8 +522,6 @@ export default {
 
   &.active {
     border-color: var(--color-primary) !important;
-    .mode-card-image {
-    }
   }
 
   &:hover {
