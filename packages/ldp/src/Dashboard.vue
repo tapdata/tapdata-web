@@ -197,6 +197,9 @@ export default {
     handleSettingsSuccess(data) {
       this.mode = data.mode
       Object.assign(this.settings, data)
+
+      this.loadDirectory()
+      this.$refs.source[0].initTree()
     },
 
     handleSettingsInit(settings) {
