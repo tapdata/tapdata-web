@@ -138,7 +138,7 @@ export default {
             show-icon
             :closable="false"
           />
-          <form class="rounded-lg">
+          <form class="rounded-xl">
             <input
               v-model="form.email"
               class="input"
