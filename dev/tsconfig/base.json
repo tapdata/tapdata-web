@@ -34,7 +34,8 @@
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "skipLibCheck": true,
-    "preserveWatchOutput": true
+    "preserveWatchOutput": true,
+    "incremental": true
   },
   "exclude": ["**/node_modules/**", "**/dist/**", "**/.turbo/**"]
 }

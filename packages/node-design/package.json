@@ -1,6 +1,7 @@
 {
   "name": "@tap/node-design",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
   "keywords": [],
   "license": "ISC",
