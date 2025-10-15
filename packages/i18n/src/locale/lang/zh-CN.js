@@ -584,4 +584,5 @@ export default {
   public_warningTime: '告警时间',
   public_warningLog: '告警日志',
   public_updated_from_now: '更新于 {time}',
+  public_crontabExpression: 'Cron 表达式',
 }

@@ -593,4 +593,5 @@ export default {
   public_warningTime: 'Warning Time',
   public_warningLog: 'Warning Log',
   public_updated_from_now: 'Updated at {time}',
+  public_crontabExpression: 'Cron Expression',
 }

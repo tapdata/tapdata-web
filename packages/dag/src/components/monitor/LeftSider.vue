@@ -87,7 +87,7 @@ export default {
               hideOverlap: true,
               showMaxLabel: true,
               formatter: (val) => {
-                return `${Math.round(val)}%`
+                return `${Number(val.toFixed(2))}%`
               },
             },
           },
