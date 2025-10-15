@@ -1,4 +1,5 @@
 import i18n from '@tap/i18n'
+import { isPlainObject } from 'lodash-es'
 import {
   computed,
   defineComponent,
@@ -8,20 +9,22 @@ import {
   ref,
   watch,
 } from 'vue'
-import type { ElSelectV2 } from 'element-plus'
+import type { SelectV2Instance } from 'element-plus'
+import './style.scss'
 
 export const FieldSelect = defineComponent({
   props: {
     options: Array,
     enableTooltip: Boolean,
     modelValue: String,
+    loading: Boolean,
   },
   setup: (props, { attrs, slots }) => {
     const labelRef = ref<HTMLElement>()
     const showTooltip = ref(false)
     const isTextOverflow = ref(false)
     const tooltipContent = ref('')
-    const selectRef = ref<ElSelectV2>()
+    const selectRef = ref<SelectV2Instance>()
 
     const checkTextOverflow = (element: HTMLElement, text: string) => {
       if (!element || !text) return false
@@ -57,6 +60,9 @@ export const FieldSelect = defineComponent({
     }
 
     const getIcon = (tapType: string) => {
+      if (isPlainObject(tapType)) {
+        return TYPE_ICON[tapType.type] || 'type-unknown'
+      }
       const match = tapType.match(/"type"\s*:\s*(\d+)/)
       const value = match?.[1]
 
@@ -197,8 +203,34 @@ export const FieldSelect = defineComponent({
       }, 100)
     })
 
+    const children: Record<string, any> = {
+      header: slots.header,
+      default: ({ item: option }) => (
+        <div class="flex align-center gap-1">
+          {option.icon && (
+            <VIcon size="16" title={option.type}>
+              {option.icon}
+            </VIcon>
+          )}
+          {option[fieldNames.value.label]}
+          {renderIcon(option)}
+        </div>
+      ),
+    }
+
+    const renderLoading = () => {
+      return (
+        <el-icon class="el-select-loading__icon is-loading">
+          <ElIconLoading />
+        </el-icon>
+      )
+    }
+
     return () => {
       const newAttrs = { ...attrs }
+
+      children.prefix = props.loading ? renderLoading() : undefined
+
       if (
         (attrs['allow-create'] || attrs.allowCreate) &&
         !('defaultFirstOption' in attrs) &&
@@ -221,29 +253,20 @@ export const FieldSelect = defineComponent({
             {...newAttrs}
             props={fieldNames.value}
             fit-input-width={false}
+            class="field-select"
             popper-class="field-select-popper"
             fallback-placements={['bottom-start', 'bottom-end']}
             options={fieldOptions.value}
             dataSource={fieldOptions.value}
+            loading={props.loading}
             onMouseenter={onMouseEnter}
             onMouseleave={() => {
               showTooltip.value = false
             }}
           >
             {{
-              header: slots.header,
+              ...children,
               label: ({ label }) => <span ref={labelRef}>{label}</span>,
-              default: ({ item: option }) => (
-                <div class="flex align-center gap-1">
-                  {option.icon && (
-                    <VIcon size="16" title={option.type}>
-                      {option.icon}
-                    </VIcon>
-                  )}
-                  {option[fieldNames.value.label]}
-                  {renderIcon(option)}
-                </div>
-              ),
             }}
           </ElSelectV2>
         </ElTooltip>
@@ -253,24 +276,13 @@ export const FieldSelect = defineComponent({
           modelValue={props.modelValue}
           {...newAttrs}
           props={fieldNames.value}
+          loading={props.loading}
+          class="field-select"
           popper-class="field-select-popper"
           options={fieldOptions.value}
           dataSource={fieldOptions.value}
         >
-          {{
-            header: slots.header,
-            default: ({ item: option }) => (
-              <div class="flex align-center gap-1">
-                {option.icon && (
-                  <VIcon size="16" title={option.type}>
-                    {option.icon}
-                  </VIcon>
-                )}
-                {option[fieldNames.value.label]}
-                {renderIcon(option)}
-              </div>
-            ),
-          }}
+          {children}
         </ElSelectV2>
       )
     }

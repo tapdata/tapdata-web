@@ -1,0 +1,11 @@
+.field-select {
+ .el-select__prefix .el-select-loading__icon {
+    position: absolute;
+    right: 12px;
+    background-color: var(--el-fill-color-blank);
+    z-index: 2;
+ }
+ .el-select__prefix:has(.el-select-loading__icon) + .el-select__selection {
+    margin-left: -14px;
+ }
+}
