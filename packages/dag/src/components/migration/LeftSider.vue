@@ -681,7 +681,7 @@ $hoverBg: #eef3ff;
     max-height: 50%;
 
     .el-collapse-item:last-child {
-      margin-bottom: -2px;
+      margin-bottom: 0;
     }
   }
 
@@ -794,11 +794,17 @@ $hoverBg: #eef3ff;
   }
 
   :deep(.el-collapse) {
+    --el-collapse-header-height: $headerH;
     --el-collapse-header-bg-color: var(--header-bg);
     border-top: 0;
+    border-bottom: 0;
+
+    .el-collapse-item:last-child {
+      margin-bottom: 0;
+    }
 
     &.processor-collapse {
-      max-height: 30%;
+      max-height: 50%;
     }
 
     &.collapse-fill {
@@ -806,7 +812,7 @@ $hoverBg: #eef3ff;
         height: 100%;
 
         .el-collapse-item__wrap {
-          height: calc(100% - #{$headerH - 1});
+          height: calc(100% - #{$headerH});
           border-bottom: none;
         }
 
