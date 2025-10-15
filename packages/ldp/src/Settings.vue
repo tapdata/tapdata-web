@@ -355,7 +355,6 @@ export default {
               <ElRadioGroup
                 v-if="!isDaas"
                 v-model="form.fdmStorageCluster"
-                :disabled="disabled"
                 class="mb-2"
                 @change="handleChangeFDMStorage"
               >
@@ -373,7 +372,6 @@ export default {
               <ElSelect
                 v-if="form.fdmStorageCluster === 'self'"
                 v-model="form.fdmStorageConnectionId"
-                :disabled="disabled"
                 class="w-100"
               >
                 <ElOption
@@ -414,7 +412,6 @@ export default {
                 v-if="!isDaas"
                 v-model="form.mdmStorageCluster"
                 class="mb-2"
-                :disabled="disabled"
                 @change="handleChangeMDMStorage"
               >
                 <ElRadio
@@ -431,7 +428,6 @@ export default {
               <ElSelect
                 v-if="form.mdmStorageCluster === 'self'"
                 v-model="form.mdmStorageConnectionId"
-                :disabled="disabled"
                 class="w-100"
               >
                 <ElOption
@@ -481,7 +477,6 @@ export default {
         <ElButton
           v-loading="loading"
           type="primary"
-          :disabled="disabledBtn"
           @click="submit"
           >{{ $t('public_button_save') }}</ElButton
         >
