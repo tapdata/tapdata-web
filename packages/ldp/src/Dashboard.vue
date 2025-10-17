@@ -197,6 +197,9 @@ export default {
     handleSettingsSuccess(data) {
       this.mode = data.mode
       Object.assign(this.settings, data)
+
+      this.loadDirectory()
+      this.$refs.source[0].initTree()
     },
 
     handleSettingsInit(settings) {
@@ -750,9 +753,11 @@ export default {
     background-color: rgba(255, 255, 255, 0.4);
   }
 
+  :deep(.tree-wrap.is-drop) {
+    box-shadow: 0px 0px 0px 2px var(--color-primary) inset;
+  }
   :deep(.ldp-tree.is-drop),
   :deep(.is-drop .ldp-tree) {
-    box-shadow: 0px 0px 0px 2px var(--color-primary) inset;
     & + .drop-mask {
       display: none !important;
     }

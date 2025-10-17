@@ -188,6 +188,7 @@ export default {
   public_data_no_find_result: '没有查到符合条件的结果',
   public_data_default: '默认值',
   public_data_filter_condition: '过滤条件',
+  public_data_fields_condition: '过滤字段',
   public_data_type: '数据类型',
   // 时间
   public_time_ms: '毫秒',
@@ -582,4 +583,6 @@ export default {
   public_connectionName: '连接名称',
   public_warningTime: '告警时间',
   public_warningLog: '告警日志',
+  public_updated_from_now: '更新于 {time}',
+  public_crontabExpression: 'Cron 表达式',
 }

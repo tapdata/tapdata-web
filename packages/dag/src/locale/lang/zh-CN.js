@@ -1017,4 +1017,5 @@ export default {
     '查询范围大于等于1小时小于24小时，取每分钟的数据点计算平均和最大的QPS值',
   packages_dag_qpSshizhi3_tip:
     '查询范围大于等于24小时小于30天，取每小时的数据点计算平均和最大的QPS值',
+  packages_dag_task_resource_usage: '任务资源占用',
 }

@@ -1,89 +1,83 @@
-<script>
+<script setup lang="ts">
 import { fetchApps } from '@tap/api'
 import AsyncSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
+import { reactive, watch } from 'vue'
 
-export default {
-  name: 'ListSelect',
-  components: { AsyncSelect },
-  props: {
-    value: {
-      type: [String, Number],
-    },
-    label: {
-      type: String,
-    },
-    params: {
-      type: Object,
-      default: () => {
-        return {}
-      },
-    },
-    format: {
-      type: Function,
-    },
+interface Props {
+  value?: string | number
+  label?: string
+  params?: Record<string, any>
+  format?: (items: any[]) => any[]
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  params: () => ({}),
+})
+
+const emit = defineEmits<{
+  (e: 'change', value: string | number | undefined, opt: any): void
+  (e: 'update:label', label: string): void
+  (e: 'update:value', value: string | number | undefined): void
+}>()
+
+const form = reactive({
+  label: '',
+  value: '' as string | number | undefined,
+})
+
+watch(
+  () => props.value,
+  (v) => {
+    form.value = v
+    form.label = props.label || ''
   },
-  emits: ['change', 'update:label', 'update:value'],
-  data() {
+  { immediate: true },
+)
+
+const handleChange = (opt: any) => {
+  const { label } = opt
+  form.label = label
+  emit('update:value', form.value)
+  emit('update:label', form.label)
+  emit('change', form.value, opt)
+}
+
+const getData = async (filter: any = {}) => {
+  const { page, size } = filter
+  const params = {
+    where: {
+      item_type: 'app',
+    },
+    order: 'createTime DESC',
+    limit: size,
+    skip: (page - 1) * size,
+  }
+
+  const { label } = filter.where || {}
+  if (label) {
+    Object.assign(params.where, {
+      value: label,
+    })
+  }
+
+  const res = await fetchApps(Object.assign(params, props.params))
+
+  let items = res.items.map((t: any) => {
     return {
-      form: {
-        label: '',
-        value: '',
-      },
+      label: t.value,
+      value: t.id,
+      data: t,
     }
-  },
-  watch: {
-    value: {
-      handler(v) {
-        this.form.value = v
-        this.form.label = this.label
-      },
-      immediate: true,
-    },
-  },
-  methods: {
-    handleChange(opt) {
-      const { label } = opt
-      this.form.label = label
-      this.$emit('update:value', this.form.value)
-      this.$emit('update:label', this.form.label)
-      this.$emit('change', this.form.value, opt)
-    },
+  })
 
-    async getData(filter = {}) {
-      const { page, size } = filter
-      const params = {
-        where: {
-          item_type: 'app',
-        },
-        order: 'createTime DESC',
-        limit: size,
-        skip: (page - 1) * size,
-      }
+  if (props.format) {
+    items = props.format(items)
+  }
 
-      const { label } = filter.where || {}
-      if (label) {
-        Object.assign(params.where, {
-          value: label,
-        })
-      }
-
-      const res = await fetchApps(Object.assign(params, this.params))
-
-      res.items = res.items.map((t) => {
-        return {
-          label: t.value,
-          value: t.id,
-          data: t,
-        }
-      })
-
-      if (this.format) {
-        res.items = this.format(res.items)
-      }
-
-      return res
-    },
-  },
+  return {
+    ...res,
+    items,
+  }
 }
 </script>
 

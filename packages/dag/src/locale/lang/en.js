@@ -1164,4 +1164,5 @@ export default {
     '1h ≤ Query < 24h: avg & max QPS from 1m data points',
   packages_dag_qpSshizhi3_tip:
     '24h ≤ Query < 30d: avg & max QPS from 1h data points',
+  packages_dag_task_resource_usage: 'Task Resource Usage',
 }

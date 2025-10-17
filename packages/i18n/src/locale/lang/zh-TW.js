@@ -188,6 +188,7 @@ export default {
   public_data_no_find_result: '沒有查到符合條件的結果',
   public_data_default: '默認值',
   public_data_filter_condition: '過濾條件',
+  public_data_fields_condition: '過濾字段',
   public_data_type: '數據類型',
   // 時間
   public_time_ms: '毫秒',
@@ -580,4 +581,6 @@ export default {
   public_connectionName: '連接名稱',
   public_warningTime: '告警時間',
   public_warningLog: '告警日誌',
+  public_updated_from_now: '更新于 {time}',
+  public_crontabExpression: 'Cron 表達式',
 }
