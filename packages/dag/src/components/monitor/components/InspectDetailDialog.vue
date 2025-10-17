@@ -140,7 +140,7 @@ const loadLastOp = async () => {
 
   progress.value =
     data.totals > 0
-      ? Math.round((data.totals - data.unfinished) / data.totals)
+      ? Math.floor(((data.totals - data.unfinished) / data.totals) * 100)
       : 0
 
   lastOpTime.value = dayjs(data.created).fromNow()
