@@ -1,5 +1,5 @@
-import { useDesigner } from './useDesigner'
 import { computed } from 'vue'
+import { useDesigner } from './useDesigner'
 
 export const useCustomNode = () => {
   const designerRef = useDesigner()

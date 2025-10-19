@@ -280,8 +280,8 @@ export function calcRectByStartEndPoint(
   scrollX = 0,
   scrollY = 0,
 ) {
-  let drawStartX = 0,
-    drawStartY = 0
+  let drawStartX = 0
+  let drawStartY = 0
   if (
     endPoint.x + scrollX >= startPoint.x &&
     endPoint.y + scrollY >= startPoint.y
@@ -529,8 +529,8 @@ export function calcOffsetOfSnapLineSegmentToEdge(
     }
   }
   function calcMinDistanceValue(edges: number[], targetValue: number) {
-    let minDistance = Infinity,
-      minDistanceIndex = -1
+    let minDistance = Infinity
+    let minDistanceIndex = -1
     for (const [i, edge] of edges.entries()) {
       const distance = Math.abs(edge - targetValue)
       if (minDistance > distance) {

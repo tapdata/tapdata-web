@@ -1,5 +1,4 @@
 import { observer } from '@formily/reactive-vue'
-import Highlight from '@tap/component/src/base/Highlight'
 import { connect, useForm } from '@tap/form'
 import { defineComponent } from 'vue'
 

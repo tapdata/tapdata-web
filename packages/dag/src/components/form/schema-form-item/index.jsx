@@ -1,14 +1,9 @@
 import { observer } from '@formily/reactive-vue'
 import { connect, mapProps } from '@formily/vue'
-import { taskApi } from '@tap/api'
-import {
-  FormItem,
-  computed as reactiveComputed,
-  useField,
-  useForm,
-} from '@tap/form'
+import { refreshTaskSchema } from '@tap/api/src/core/task'
+import { useField, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
-import { computed, defineComponent, nextTick, ref } from 'vue'
+import { computed, defineComponent, ref } from 'vue'
 import { useStore } from 'vuex'
 
 export const SchemaFormItem = connect(
@@ -32,15 +27,13 @@ export const SchemaFormItem = connect(
         const loadSchema = async () => {
           loading.value = true
           store.commit('dataflow/setSchemaRefreshing', true)
-          await taskApi
-            .refreshSchema(taskId, {
-              nodeIds: activeNodeId,
-              keys: props.type === 'table' ? form.values.tableName : undefined,
-            })
-            .finally(() => {
-              loading.value = false
-              store.commit('dataflow/setSchemaRefreshing', false)
-            })
+          await refreshTaskSchema(taskId, {
+            nodeIds: activeNodeId,
+            keys: props.type === 'table' ? form.values.tableName : undefined,
+          }).finally(() => {
+            loading.value = false
+            store.commit('dataflow/setSchemaRefreshing', false)
+          })
         }
 
         const showBtn = computed(() => {

@@ -1,5 +1,11 @@
 <script>
-import { CancelToken, monitoringLogsApi, proxyApi, taskApi } from '@tap/api'
+import {
+  exportMonitoringLogs,
+  queryMonitoringLogs,
+} from '@tap/api/src/core/monitoring-logs'
+import { callProxy } from '@tap/api/src/core/proxy'
+import { downloadTaskAnalyze, putTaskLogSetting } from '@tap/api/src/core/task'
+import { CancelToken } from '@tap/api/src/request'
 import { IconButton, TimeSelect, VIcon } from '@tap/component'
 
 import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
@@ -414,8 +420,7 @@ export default {
       } else {
         this.loading = true
       }
-      monitoringLogsApi
-        .query(filter)
+      queryMonitoringLogs(filter)
         .then((data = {}) => {
           const items = this.getFormatRow(data.items?.reverse())
           this.oldPageObj.total = data.total || 0
@@ -466,7 +471,7 @@ export default {
         return
       }
 
-      monitoringLogsApi.query(filter).then((data = {}) => {
+      queryMonitoringLogs(filter).then((data = {}) => {
         const items = this.getFormatRow(data.items)
         this.newPageObj.total = data.total || 0
 
@@ -642,8 +647,7 @@ export default {
         taskRecordId,
       }
       this.downloadLoading = true
-      monitoringLogsApi
-        .export(filter)
+      exportMonitoringLogs(filter)
         .then((data) => {
           downloadBlob(data)
         })
@@ -687,8 +691,7 @@ export default {
         params.recordCeiling = form.recordCeiling
       }
       this.saveLoading = true
-      taskApi
-        .putLogSetting(this.dataflow.id, params)
+      putTaskLogSetting(this.dataflow.id, params)
         .then(() => {
           this.$message.success(this.$t('public_message_save_ok'))
           this.dialog = false
@@ -762,8 +765,7 @@ export default {
       this.codeDialog.data.message = item.message
       this.codeDialog.data.module = ''
 
-      proxyApi
-        .call(params)
+      callProxy(params)
         .then((data) => {
           Object.assign(this.codeDialog.data, data)
 
@@ -825,7 +827,7 @@ export default {
       this.analysisCancelSource = CancelToken.source()
       this.initSteps()
 
-      const blogData = await taskApi.downloadAnalyze(this.dataflow.id, {
+      const blogData = await downloadTaskAnalyze(this.dataflow.id, {
         cancelToken: this.analysisCancelSource.token,
       })
 

@@ -3,7 +3,6 @@ import { VIcon } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
 
 import i18n from '@/i18n'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
 
 export default {
   name: 'FastDownload',

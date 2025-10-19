@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { DatabaseIcon } from '../../components/DatabaseIcon'
+import { fetchApiServers } from '@tap/api/src/core/api-server'
+import { fetchApps } from '@tap/api/src/core/app'
+import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
+import { downloadMetadataInstance } from '@tap/api/src/core/metadata-instances'
 import {
   batchUpdateApiModules,
   batchUpdateApiModuleTags,
@@ -7,13 +10,9 @@ import {
   exportApiDocumentation,
   exportApiModules,
   fetchApiModules,
-  fetchApiServers,
-  fetchApps,
-  fetchDatabaseTypes,
-  metadataInstancesApi,
   updateApiModule,
-  useRequest,
-} from '@tap/api'
+} from '@tap/api/src/core/modules'
+import { useRequest } from '@tap/api/src/request'
 import FilterBar from '@tap/component/src/filter-bar/Main.vue'
 import {
   EditOutlined,
@@ -22,8 +21,8 @@ import {
 } from '@tap/component/src/icon'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
-
 import { uid } from '@tap/shared'
+
 import { cloneDeep, escapeRegExp } from 'lodash-es'
 import {
   computed,
@@ -36,6 +35,7 @@ import {
   watch,
 } from 'vue'
 import { useRoute } from 'vue-router'
+import { DatabaseIcon } from '../../components/DatabaseIcon'
 import PageContainer from '../../components/PageContainer.vue'
 import TablePage from '../../components/TablePage.vue'
 import Upload from '../../components/UploadDialog.vue'
@@ -354,7 +354,7 @@ const changeStatus = async (row: any) => {
 }
 
 const output = (row: any) => {
-  metadataInstancesApi.download(
+  downloadMetadataInstance(
     {
       _id: {
         in: [row.id],
@@ -775,9 +775,13 @@ defineExpose({
           >
             <template #default="{ row }">
               <div class="flex align-items-center gap-1">
-                  <DatabaseIcon v-if="row.source?.pdkHash" :pdk-hash="row.source.pdkHash" :size="16" />
-                  <span>{{ row.connectionName }}</span>
-                </div>
+                <DatabaseIcon
+                  v-if="row.source?.pdkHash"
+                  :pdk-hash="row.source.pdkHash"
+                  :size="16"
+                />
+                <span>{{ row.connectionName }}</span>
+              </div>
             </template>
           </el-table-column>
           <el-table-column

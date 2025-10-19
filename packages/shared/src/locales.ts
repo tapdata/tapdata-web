@@ -2,7 +2,7 @@ import { each } from './array'
 import { isPlainObj } from './types'
 
 export const lowerSnake = (str) => {
-  return String(str).replace(/\s+/g, '_').toLocaleLowerCase()
+  return String(str).replaceAll(/\s+/g, '_').toLocaleLowerCase()
 }
 
 export const mergeLocales = (target, source) => {
@@ -28,5 +28,5 @@ export const getBrowserLanguage = () => {
   if (!window.navigator) {
     return 'en'
   }
-  return window.navigator['browserlanguage'] || window.navigator?.language || 'en'
+  return window.navigator.browserlanguage || window.navigator?.language || 'en'
 }

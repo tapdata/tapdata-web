@@ -1,7 +1,6 @@
 <script>
-import { updateApiModule } from '@tap/api'
+import { updateApiModule } from '@tap/api/src/core/modules'
 import ApiForm from '@tap/business/src/views/data-server/Drawer.vue'
-import { generateId } from '@tap/shared'
 
 export default {
   name: 'CreateRestApi',

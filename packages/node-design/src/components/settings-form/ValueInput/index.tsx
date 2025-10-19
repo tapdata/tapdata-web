@@ -1,16 +1,21 @@
+import { VCodeEditor } from '@tap/component'
+import { Input, InputNumber } from '@tap/form'
+import {
+  ElButton as Button,
+  ElOption as Option,
+  ElPopover as Popover,
+  ElSelect as Select,
+} from 'element-plus'
+import { defineComponent } from 'vue'
+import { TextWidget } from '../../widgets'
 /*
  * 支持文本、数字、布尔、表达式
  * Todo: JSON、富文本，公式
  */
 import { createPolyInput } from '../PolyInput'
-import { ElButton as Button, ElPopover as Popover, ElSelect as Select, ElOption as Option } from 'element-plus'
-import { Input, InputNumber } from '@tap/form'
-import { TextWidget } from '../../widgets'
-import { defineComponent } from 'vue'
-import { VCodeEditor } from '@tap/component'
 
 const STARTTAG_REX =
-  /<([-A-Za-z0-9_]+)((?:\s+[a-zA-Z_:][-a-zA-Z0-9_:.]*(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)>/
+  /<([-\w]+)((?:\s+[a-z_:][-\w:.]*(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^>\s]+))?)*)\s*(\/?)>/i
 
 const EXPRESSION_REX = /^\{\{([\s\S]*)\}\}$/
 

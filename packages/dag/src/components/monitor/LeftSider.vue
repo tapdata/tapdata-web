@@ -1,5 +1,7 @@
 <script>
-import { externalStorageApi, logcollectorApi, sharedCacheApi } from '@tap/api'
+import { getExternalStorage } from '@tap/api/src/core/external-storage'
+import { getLogcollectorDetail } from '@tap/api/src/core/logcollector'
+import { findOneSharedCache } from '@tap/api/src/core/shared-cache'
 import { EXTERNAL_STORAGE_TYPE_MAP } from '@tap/business'
 import { IconButton, TimeSelect, VIcon } from '@tap/component'
 
@@ -539,7 +541,7 @@ export default {
     },
 
     getCollectorData() {
-      logcollectorApi.getDetail(this.dataflow.id).then((data) => {
+      getLogcollectorDetail(this.dataflow.id).then((data) => {
         const { externalStorage = {}, logTime, name } = data
         let uriInfo = externalStorage.uri
         if (externalStorage.type === 'mongodb') {
@@ -593,8 +595,8 @@ export default {
     },
 
     getSharedCacheData(id) {
-      sharedCacheApi.findOne(id).then((data) => {
-        externalStorageApi.get(data.externalStorageId).then((ext = {}) => {
+      findOneSharedCache(id).then((data) => {
+        getExternalStorage(data.externalStorageId).then((ext = {}) => {
           if (!ext.name) {
             this.infoList = []
             return

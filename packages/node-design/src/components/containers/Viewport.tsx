@@ -1,13 +1,5 @@
 import { requestIdle } from '@tap/shared'
-import {
-  computed,
-  defineComponent,
-  getCurrentInstance,
-  nextTick,
-  onBeforeUnmount,
-  onMounted,
-  ref,
-} from 'vue'
+import { defineComponent, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { usePrefix, useSelection, useTree, useViewport } from '../../hooks'
 import { useStyle } from '../../shared'
 import { AuxToolWidget, EmptyWidget } from '../widgets'

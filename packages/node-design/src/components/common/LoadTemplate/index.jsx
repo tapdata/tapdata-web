@@ -1,4 +1,3 @@
-import { NodeActionsWidget } from '../../widgets/NodeActionsWidget'
 import { defineComponent } from 'vue'
 
 export const LoadTemplate = defineComponent({

@@ -95,7 +95,9 @@ export class UnwindProcessor extends NodeType {
                 'x-component': 'Switch',
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
-                  tooltip: i18n.t('packages_dag_unwind_preserveNullAndEmptyArrays_tips'),
+                  tooltip: i18n.t(
+                    'packages_dag_unwind_preserveNullAndEmptyArrays_tips',
+                  ),
                 },
               },
               unwindModel: {

@@ -1,5 +1,6 @@
 <script>
-import { logcollectorApi, measurementApi } from '@tap/api'
+import { getLogcollectorDetail, getTableNames, getNewTableNames } from '@tap/api/src/core/logcollector'
+import { queryMeasurements } from '@tap/api/src/core/measurement'
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import { makeStatusAndDisabled } from '@tap/business/src/shared'
 import { VTable } from '@tap/component/src/base/v-table'
@@ -174,7 +175,7 @@ export default {
     },
 
     getData(id) {
-      logcollectorApi.getDetail(id).then((data) => {
+      getLogcollectorDetail(id).then((data) => {
         const detailData = data || {}
         detailData.taskList = detailData.taskList?.map(makeStatusAndDisabled)
         this.detailData = detailData
@@ -183,7 +184,7 @@ export default {
     },
     getTables(id) {
       this.tableDialogVisible = true
-      this.getTableNames(id)
+      getTableNames(id)
     },
     getMeasurement() {
       const params = {
@@ -227,7 +228,7 @@ export default {
       const diff = (end || Date.now()) - start
       params.samples[0].guanluary = this.getGuanluary(diff)
       const guanluaryFormat = this.getGuanluary(diff, true)
-      measurementApi.query(params).then((data) => {
+      queryMeasurements(params).then((data) => {
         const { samples } = data || {}
         samples.forEach((el) => {
           for (const key in el) {
@@ -363,8 +364,7 @@ export default {
         limit: this.pageSize,
         skip: (this.currentPage - 1) * this.pageSize,
       }
-      logcollectorApi
-        .newTableNames(this.detailData.id, callSubId, filter)
+      getNewTableNames(this.detailData.id, callSubId, filter)
         .then((data) => {
           this.tableNameList = data?.items || []
           this.tableNameTotal = data?.total || 0

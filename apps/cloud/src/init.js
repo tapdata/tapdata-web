@@ -1,6 +1,7 @@
-import { baseRequestClient, fetchTimestamp } from '@tap/api'
+import { fetchTimestamp } from '@tap/api/src/core/timestamp'
+import { baseRequestClient } from '@tap/api/src/request'
 import { WSClient } from '@tap/business/src/shared/ws-client'
-import { installElement, VButton, VIcon } from '@tap/component'
+import { installElement, VIcon } from '@tap/component'
 import Time from '@tap/shared/src/time'
 import { ElLoading } from 'element-plus'
 import { createApp } from 'vue'
@@ -13,7 +14,6 @@ import { errorConfirmFnc } from '@/util'
 import App from './App.vue'
 import { installDirectives } from './directive'
 import i18n from './i18n'
-import dayjs from './plugins/dayjs'
 import { startVersionPolling } from './plugins/version-polling'
 import 'github-markdown-css'
 import '@tap/styles'
@@ -32,8 +32,8 @@ export default ({ routes }) => {
     })
     startTimeOnPage(router)
 
-    var loc = window.location,
-      wsUrl = 'ws://'
+    const loc = window.location
+    let wsUrl = 'ws://'
     if (loc.protocol === 'https:') {
       wsUrl = 'wss://'
     }

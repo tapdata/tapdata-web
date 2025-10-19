@@ -1,10 +1,50 @@
+<script>
+import { VIcon } from '@tap/component'
+import dayjs from 'dayjs'
+
+export default {
+  name: 'CheckLicense',
+  components: { VIcon },
+  props: ['user', 'visible'],
+  emits: ['update:visible'],
+  data() {
+    return {
+      licenseCode: '',
+      current: [],
+    }
+  },
+  watch: {
+    visible(v) {
+      if (v) {
+        this.user.data = this.user?.data.map((item) => {
+          item.expiredTime = item.expiredTime
+            ? dayjs(item.expiredTime).format('YYYY-MM-DD HH:mm:ss')
+            : ''
+          return item
+        })
+      }
+    },
+  },
+  methods: {
+    goAliyun() {
+      window.open('https://market.console.aliyun.com/imageconsole/index.htm')
+    },
+    goLicense() {
+      this.$router.push({
+        name: 'aliyunMarketLicense',
+      })
+    },
+  },
+}
+</script>
+
 <template>
   <el-dialog
     :model-value="visible"
-    @input="$emit('update:visible', $event)"
     :close-on-click-modal="false"
     :show-close="false"
     width="550px"
+    @input="$emit('update:visible', $event)"
   >
     <section v-if="user">
       <main v-if="user.licenseType === 'checkCode'">
@@ -38,12 +78,15 @@
         </ul>
       </main>
     </section>
-    <template v-slot:footer>
+    <template #footer>
       <span v-if="user">
         <div v-if="user.licenseType === 'checkCode'">
-          <el-button class="mt-4" v-if="user.showNextProcessing" @click="$emit('update:visible', false)">{{
-            $t('dfs_aliyun_market_checklicnese_xiayiciyanqi')
-          }}</el-button>
+          <el-button
+            v-if="user.showNextProcessing"
+            class="mt-4"
+            @click="$emit('update:visible', false)"
+            >{{ $t('dfs_aliyun_market_checklicnese_xiayiciyanqi') }}</el-button
+          >
           <el-button class="mt-4" type="primary" @click="goAliyun()">{{
             $t('dfs_aliyun_market_checklicnese_yanchangshouquanma')
           }}</el-button>
@@ -57,44 +100,6 @@
     </template>
   </el-dialog>
 </template>
-
-<script>
-import dayjs from 'dayjs'
-import { VIcon } from '@tap/component'
-
-export default {
-  name: 'CheckLicense',
-  props: ['user', 'visible'],
-  components: { VIcon },
-  data() {
-    return {
-      licenseCode: '',
-      current: [],
-    }
-  },
-  watch: {
-    visible(v) {
-      if (v) {
-        this.user.data = this.user?.data.map((item) => {
-          item.expiredTime = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD HH:mm:ss') : ''
-          return item
-        })
-      }
-    },
-  },
-  methods: {
-    goAliyun() {
-      window.open('https://market.console.aliyun.com/imageconsole/index.htm')
-    },
-    goLicense() {
-      this.$router.push({
-        name: 'aliyunMarketLicense',
-      })
-    },
-  },
-  emits: ['update:visible'],
-}
-</script>
 
 <style lang="scss" scoped>
 .license-warp {

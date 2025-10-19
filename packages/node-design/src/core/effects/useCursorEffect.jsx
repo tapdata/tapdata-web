@@ -1,10 +1,16 @@
+import {
+  DragMoveEvent,
+  DragStartEvent,
+  DragStopEvent,
+  MouseMoveEvent,
+} from '../events'
 import { CursorStatus } from '../models'
-import { MouseMoveEvent, DragStartEvent, DragMoveEvent, DragStopEvent } from '../events'
 
 export const useCursorEffect = (engine) => {
   engine.subscribeTo(MouseMoveEvent, (event) => {
     engine.cursor.setStatus(
-      engine.cursor.status === CursorStatus.Dragging || engine.cursor.status === CursorStatus.DragStart
+      engine.cursor.status === CursorStatus.Dragging ||
+        engine.cursor.status === CursorStatus.DragStart
         ? engine.cursor.status
         : CursorStatus.Normal,
     )

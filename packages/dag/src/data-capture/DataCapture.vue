@@ -1,5 +1,7 @@
 <script>
-import { dataPermissionApi, proxyApi, taskApi } from '@tap/api'
+import { getDataActions } from '@tap/api/src/core/data-permission'
+import { callProxy } from '@tap/api/src/core/proxy'
+import { getTaskById } from '@tap/api/src/core/task'
 import { makeStatusAndDisabled, TaskStatus } from '@tap/business'
 import syncTaskAgent from '@tap/business/src/mixins/syncTaskAgent'
 import { TextEditable, VDivider, VEmpty, VIcon } from '@tap/component'
@@ -105,7 +107,7 @@ export default defineComponent({
     // Methods
 
     const loadData = async () => {
-      const res = await proxyApi.call({
+      const res = await callProxy({
         className: 'CatchDataService',
         method: 'getCatchData',
         // taskId
@@ -176,7 +178,7 @@ export default defineComponent({
       if (!isDaas) return
       const id = dataflow.value.id || route.params?.id
       if (!id) return
-      const data = await dataPermissionApi.dataActions({
+      const data = await getDataActions({
         dataType: 'Task',
         dataId: id,
       })
@@ -209,7 +211,7 @@ export default defineComponent({
     }
 
     const initData = async () => {
-      await proxyApi.call({
+      await callProxy({
         className: 'CatchDataService',
         method: 'openCatchData',
         args: [dataflow.value.id, null, 60],
@@ -257,7 +259,7 @@ export default defineComponent({
       if (!id) return
       startLoopTaskTimer = setTimeout(async () => {
         const { parent_task_sign } = route.query || {}
-        const data = await taskApi.get(id, {}, { parent_task_sign })
+        const data = await getTaskById(id, { parent_task_sign })
 
         if (data) {
           if (data.errorEvents?.length) {
@@ -309,7 +311,7 @@ export default defineComponent({
     const loadDataflow = async (id, params) => {
       try {
         const { parent_task_sign } = route.query || {}
-        const data = await taskApi.get(id, params, { parent_task_sign })
+        const data = await getTaskById(id, { ...params, parent_task_sign })
         if (!data) {
           ElMessage.error(i18n.t('packages_dag_mixins_editor_renwubucunzai'))
           handlePageReturn()

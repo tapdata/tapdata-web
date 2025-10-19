@@ -1,6 +1,5 @@
 import { transformComponent } from '@formily/element-plus/lib/__builtins__/shared'
 import { connect, mapProps } from '@formily/vue'
-import { set } from 'ace-builds-internal/config'
 // import { ElPopconfirm, ElSwitch } from 'element-plus'
 import { defineComponent, reactive } from 'vue'
 import './style.scss'

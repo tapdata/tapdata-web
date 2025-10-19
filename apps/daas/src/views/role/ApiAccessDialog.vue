@@ -1,5 +1,8 @@
 <script>
-import { fetchApiModules, updateApiModulePermissions } from '@tap/api'
+import {
+  fetchApiModules,
+  updateApiModulePermissions,
+} from '@tap/api/src/core/modules'
 import { isEqual } from 'lodash'
 
 export default {

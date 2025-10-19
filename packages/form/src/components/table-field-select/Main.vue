@@ -1,5 +1,5 @@
 <script>
-import { metadataInstancesApi } from '@tap/api'
+import { getNodeSchema } from '@tap/api/src/core/metadata-instances'
 import { cloneDeep, isEmpty } from 'lodash-es'
 
 export default {
@@ -52,7 +52,7 @@ export default {
     },
 
     async loadOptions() {
-      const data = await metadataInstancesApi.nodeSchema(this.nodeId)
+      const data = await getNodeSchema(this.nodeId)
       this.options = data[0].fields
         .map((item) => ({
           label: item.field_name,

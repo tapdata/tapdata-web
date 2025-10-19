@@ -1,6 +1,4 @@
-import { Editor } from '@tiptap/core'
 import Document from '@tiptap/extension-document'
-import StarterKit from '@tiptap/starter-kit'
 
 // 自定义 Document 节点，指定根节点为 <div>
 export const EmailDocument = Document.extend({

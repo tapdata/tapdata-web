@@ -17,17 +17,17 @@ export const loadScript = async (props: ILoadScriptProps) => {
     script.type = 'text/javascript'
     script.async = false
     script.src = path
-    script.onload = () => {
+    script.addEventListener('load', () => {
       const module = window[options.root]
-      window['define'] = define
+      window.define = define
       resolve(module)
       script.remove()
-    }
+    })
     script.onerror = (err) => {
       reject(err)
     }
-    const define = window['define']
-    window['define'] = undefined
-    document.body.appendChild(script)
+    const define = window.define
+    window.define = undefined
+    document.body.append(script)
   })
 }

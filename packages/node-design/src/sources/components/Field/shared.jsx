@@ -1,5 +1,5 @@
-import { AllSchemas } from '../../schemas'
 import { DataSourceSetter } from '../../../components'
+import { AllSchemas } from '../../schemas'
 
 export const createComponentSchema = (component, decorator) => {
   return {
@@ -130,7 +130,10 @@ export const createFieldSchema = (component, decorator = AllSchemas.FormItem, wi
   return base
 }
 
-export const createVoidFieldSchema = (component, decorator = AllSchemas.FormItem) => {
+export const createVoidFieldSchema = (
+  component,
+  decorator = AllSchemas.FormItem,
+) => {
   return {
     type: 'object',
     properties: {

@@ -1,6 +1,7 @@
 <script>
 import { observable } from '@formily/reactive'
-import { measurementApi, taskApi } from '@tap/api'
+import { batchMeasurements } from '@tap/api/src/core/measurement'
+import { getTaskRecords, resetTask, startTask } from '@tap/api/src/core/task'
 import {
   ALARM_LEVEL_SORT,
   SkipError,
@@ -286,7 +287,7 @@ export default {
       if (this.quotaTimeType === 'lastStart') {
         const { id: taskId } = this.dataflow || {}
         const filter = {}
-        await taskApi.records(taskId, filter).then((data) => {
+        await getTaskRecords(taskId, filter).then((data) => {
           const lastStartDate = data.items?.[0]?.startDate
           if (lastStartDate) {
             this.dataflow.lastStartDate = new Date(lastStartDate).getTime()
@@ -600,7 +601,7 @@ export default {
       this.isSaving = true
       try {
         this.wsAgentLive()
-        await taskApi.start(this.dataflow.id, {
+        await startTask(this.dataflow.id, {
           silenceMessage: true,
         })
         this.$message.success(this.$t('public_message_operation_success'))
@@ -828,8 +829,7 @@ export default {
         this.loadResetQuotaData()
         return
       }
-      measurementApi
-        .batch(this.getParams())
+      batchMeasurements(this.getParams())
         .then((data) => {
           const map = {
             verifyTotals: this.loadVerifyTotals,
@@ -1123,7 +1123,7 @@ export default {
           this.handleBottomPanel()
           this.toggleConsole(true)
           this.$refs.console?.startAuto('reset') // 信息输出自动加载
-          const data = await taskApi.reset(this.dataflow.id)
+          const data = await resetTask(this.dataflow.id)
           this.responseHandler(
             data,
             this.$t('public_message_operation_success'),

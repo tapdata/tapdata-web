@@ -1,6 +1,10 @@
+import { action, define, observable } from '@formily/reactive'
+import {
+  AddWorkspaceEvent,
+  RemoveWorkspaceEvent,
+  SwitchWorkspaceEvent,
+} from '../events'
 import { Workspace } from './Workspace'
-import { observable, define, action } from '@formily/reactive'
-import { AddWorkspaceEvent, RemoveWorkspaceEvent, SwitchWorkspaceEvent } from '../events'
 export class Workbench {
   workspaces
 
@@ -82,7 +86,7 @@ export class Workbench {
         if (this.workspaces.length && this.workspaces[findIndex]) {
           this.currentWorkspace = this.workspaces[findIndex]
         } else {
-          this.currentWorkspace = this.workspaces[this.workspaces.length - 1]
+          this.currentWorkspace = this.workspaces.at(-1)
         }
       }
       this.engine.dispatch(new RemoveWorkspaceEvent(findedWorkspace))

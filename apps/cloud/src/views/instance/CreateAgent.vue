@@ -2,12 +2,12 @@
 import { CURRENCY_MAP, CURRENCY_SYMBOL_MAP, TIME_MAP } from '@tap/business'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 
-import { IconButton, VTable } from '@tap/component'
+import { IconButton } from '@tap/component'
 import i18n from '@tap/i18n'
 import { isObj, isStr } from '@tap/shared'
 import { uniqBy } from 'lodash-es'
 
-import { AGENT_TYPE_MAP, getPaymentMethod, getSpec } from '../instance/utils'
+import { getPaymentMethod, getSpec } from '../instance/utils'
 
 export default {
   name: 'CreateAgent',
@@ -314,8 +314,8 @@ export default {
       )?.name
       this.currentSpecName = specificationLabel
       this.packageItems = this.allPackages
-        .filter(it => this.specification === it.specification)
-        .map(t => {
+        .filter((it) => this.specification === it.specification)
+        .map((t) => {
           return Object.assign(t, {
             desc: i18n.t('dfs_instance_create_bencidinggouzhi', {
               val1: specificationLabel,

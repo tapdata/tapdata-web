@@ -1,6 +1,8 @@
 <script>
 import { observable } from '@formily/reactive'
-import { fetchDatabaseTypes, measurementApi, taskApi } from '@tap/api'
+import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
+import { batchMeasurements } from '@tap/api/src/core/measurement'
+import { getTaskById, startTask } from '@tap/api/src/core/task'
 
 import { TASK_STATUS_MAP } from '@tap/business'
 import { VEmpty } from '@tap/component'
@@ -216,9 +218,9 @@ export default {
 
       await this.validateAllNodes()
 
-      const sourceMap = {},
-        targetMap = {},
-        edges = this.allEdges
+      const sourceMap = {}
+      const targetMap = {}
+      const edges = this.allEdges
       edges.forEach((item) => {
         const _source = sourceMap[item.source]
         const _target = targetMap[item.target]
@@ -448,7 +450,7 @@ export default {
     async handleStart() {
       this.isSaving = true
       try {
-        await taskApi.start(this.dataflow.id)
+        await startTask(this.dataflow.id)
         this.$message.success(this.$t('public_message_operation_success'))
         this.isSaving = false
       } catch (error) {
@@ -577,7 +579,7 @@ export default {
       if (!this.dataflow?.id) {
         return
       }
-      measurementApi.batch(this.getParams()).then((data) => {
+      batchMeasurements(this.getParams()).then((data) => {
         const map = {
           quota: this.loadQuotaData,
         }
@@ -744,7 +746,7 @@ export default {
       this.loading = true
       try {
         const { parent_task_sign } = this.$route.query || {}
-        const data = await taskApi.get(id, params, { parent_task_sign })
+        const data = await getTaskById(id, { ...params, parent_task_sign })
         if (!data) {
           this.$message.error(
             i18n.t('packages_dag_mixins_editor_renwubucunzai'),

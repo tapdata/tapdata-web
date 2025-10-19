@@ -48,7 +48,9 @@ export class JointCache extends NodeType {
               type: 'void',
               'x-component': 'ArrayTable.Column',
               'x-component-props': {
-                title: i18n.t('packages_dag_nodes_jointcache_huancunbiaozhujian'),
+                title: i18n.t(
+                  'packages_dag_nodes_jointcache_huancunbiaozhujian',
+                ),
                 align: 'center',
               },
               properties: {
@@ -62,7 +64,9 @@ export class JointCache extends NodeType {
               type: 'void',
               'x-component': 'ArrayTable.Column',
               'x-component-props': {
-                title: i18n.t('packages_dag_nodes_jointcache_yuanbiaoguanlianjian'),
+                title: i18n.t(
+                  'packages_dag_nodes_jointcache_yuanbiaoguanlianjian',
+                ),
                 align: 'center',
               },
               properties: {
@@ -109,7 +113,9 @@ export class JointCache extends NodeType {
         'x-component': 'Input',
         'x-component-props': {
           config: {
-            placeholder: i18n.t('packages_dag_nodes_jointcache_qingxuanzehuochuang'),
+            placeholder: i18n.t(
+              'packages_dag_nodes_jointcache_qingxuanzehuochuang',
+            ),
           },
         },
       },

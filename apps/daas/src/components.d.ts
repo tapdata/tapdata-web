@@ -144,7 +144,6 @@ declare module 'vue' {
     'IMingcute:searchLine': typeof import('~icons/mingcute/search-line')['default']
     'IMingcute:warningFill': typeof import('~icons/mingcute/warning-fill')['default']
     LockedDialog: typeof import('./components/LockedDialog.vue')['default']
-    Main: typeof import('./components/v-confirm/Main.vue')['default']
     MultiSelection: typeof import('./components/MultiSelection.vue')['default']
     QueryBuild: typeof import('./components/QueryBuild.vue')['default']
     QueryCond: typeof import('./components/QueryCond.vue')['default']

@@ -1,4 +1,3 @@
-import { InputNumber as _InputNumber } from '@formily/element-plus'
 import { defineComponent } from 'vue'
 
 export const InputNumber = defineComponent({

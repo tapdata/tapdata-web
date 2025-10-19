@@ -1,5 +1,5 @@
 <script>
-import { taskApi } from '@tap/api'
+import { getTaskRecords } from '@tap/api/src/core/task'
 
 import { TaskStatus } from '@tap/business'
 import { VTable } from '@tap/component'
@@ -98,7 +98,7 @@ export default {
         page: current,
         size,
       }
-      return taskApi.records(taskId, filter).then((data) => {
+      return getTaskRecords(taskId, filter).then((data) => {
         return {
           total: data.total,
           data: data.items || [],

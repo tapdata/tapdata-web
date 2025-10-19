@@ -1,5 +1,6 @@
 <script>
-import { CancelToken, lineageApi } from '@tap/api'
+import { findLineageByTable } from '@tap/api/src/core/lineage'
+import { CancelToken } from '@tap/api/src/request'
 import { makeStatusAndDisabled } from '@tap/business/src/shared'
 import { IconButton } from '@tap/component/src/icon-button'
 import PaperScroller from '@tap/dag/src/components/PaperScroller.vue'
@@ -162,7 +163,7 @@ export default {
       this.cancelSource?.cancel()
       this.cancelSource = CancelToken.source()
       try {
-        const result = await lineageApi.findByTable(
+        const result = await findLineageByTable(
           this.connectionId,
           this.tableName,
           {

@@ -1,39 +1,19 @@
-<template>
-  <div style="height: 270px">
-    <PaperScroller
-      ref="paperScroller"
-      :nav-lines="navLines"
-      @add-node="handleAddNodeToPos"
-      @mouse-select="handleMouseSelect"
-      @change-scale="handleChangeScale"
-    >
-      <DFNode
-        v-for="n in allNodes"
-        :key="n.id"
-        :node-id="n.id"
-        :id="NODE_PREFIX + n.id"
-        :js-plumb-ins="jsPlumbIns"
-      ></DFNode>
-    </PaperScroller>
-  </div>
-</template>
-
 <script>
-import { config, jsPlumb } from './instance'
-import PaperScroller from './components/PaperScroller'
 import DFNode from './components/DFNode'
+import PaperScroller from './components/PaperScroller'
 import { NODE_PREFIX } from './constants'
+import { config, jsPlumb } from './instance'
 import editor from './mixins/editor'
 import { allResourceIns } from './nodes/loader'
 
 export default {
   name: 'NodeViewer',
-  props: ['dag', 'id'],
   components: {
     PaperScroller,
     DFNode,
   },
   mixins: [editor],
+  props: ['dag', 'id'],
   data() {
     return {
       NODE_PREFIX,
@@ -42,16 +22,6 @@ export default {
       jsPlumbIns: jsPlumb.getInstance(config),
     }
   },
-  mounted() {
-    this.initNodeType()
-    this.jsPlumbIns.ready(async () => {
-      try {
-        await this.openDataflow()
-      } catch (error) {
-        console.error(error) // eslint-disable-line
-      }
-    })
-  },
   watch: {
     dag() {
       this.jsPlumbIns.reset()
@@ -59,6 +29,16 @@ export default {
       this.initNodeType()
       this.openDataflow()
     },
+  },
+  mounted() {
+    this.initNodeType()
+    this.jsPlumbIns.ready(async () => {
+      try {
+        await this.openDataflow()
+      } catch (error) {
+        console.error(error)
+      }
+    })
   },
   methods: {
     async openDataflow() {
@@ -81,3 +61,23 @@ export default {
   },
 }
 </script>
+
+<template>
+  <div style="height: 270px">
+    <PaperScroller
+      ref="paperScroller"
+      :nav-lines="navLines"
+      @add-node="handleAddNodeToPos"
+      @mouse-select="handleMouseSelect"
+      @change-scale="handleChangeScale"
+    >
+      <DFNode
+        v-for="n in allNodes"
+        :id="NODE_PREFIX + n.id"
+        :key="n.id"
+        :node-id="n.id"
+        :js-plumb-ins="jsPlumbIns"
+      />
+    </PaperScroller>
+  </div>
+</template>

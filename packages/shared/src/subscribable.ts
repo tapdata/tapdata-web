@@ -11,7 +11,7 @@ export class Subscribable {
     let interrupted = false
     for (const key in this.#subscribers) {
       if (isFn(this.#subscribers[key])) {
-        event['context'] = context
+        event.context = context
         if (this.#subscribers[key](event) === false) {
           interrupted = true
         }

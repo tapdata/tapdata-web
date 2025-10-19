@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import {
-  dataPermissionApi,
-  fetchDatabaseTypeByPdkHash,
   getHeartbeatTaskByConnectionId,
-  proxyApi,
   updateConnectionById,
-  usersApi,
-} from '@tap/api'
+} from '@tap/api/src/core/connections'
+import { getPermissions } from '@tap/api/src/core/data-permission'
+import { fetchDatabaseTypeByPdkHash } from '@tap/api/src/core/database-types'
+import { callProxy } from '@tap/api/src/core/proxy'
+import { countUsers } from '@tap/api/src/core/users'
 import Drawer from '@tap/component/src/Drawer.vue'
 import { Modal } from '@tap/component/src/modal'
 import i18n, { useI18n } from '@tap/i18n'
@@ -581,8 +581,8 @@ const loadPermissions = (id: string) => {
     dataType: 'Connections',
     dataId: id,
   }
-  dataPermissionApi.permissions(filter).then((data: any = []) => {
-    usersApi
+  getPermissions(filter).then((data: any = []) => {
+    countUsers
       .role({
         filter: JSON.stringify({
           limit: 1000,
@@ -619,7 +619,7 @@ const getDatabaseLogInfo = async (row: Connection = {} as Connection) => {
     args: [id],
   }
   try {
-    const data = await proxyApi.call(params)
+    const data = await callProxy(params)
     row.databaseLogInfo = data
     const findDatabaseLogInfo = list.value.find(
       (t) => t.items?.[0]?.key === 'databaseLogInfo',
@@ -672,7 +672,7 @@ const handleMonitorApiClick = async (item: any) => {
       args = args.map((t) => renderArgs(t, rootData))
     }
 
-    await proxyApi.call({
+    await callProxy({
       className: item.className,
       method: item.method,
       args,

@@ -5,10 +5,10 @@ export default class Measurement extends Http {
     super('/api/MonitoringLogs')
   }
   query(params) {
-    return this.axios.post(this.url + '/query', params)
+    return this.axios.post(`${this.url}/query`, params)
   }
   export(params) {
-    return this.axios.post(this.url + '/export', params, {
+    return this.axios.post(`${this.url}/export`, params, {
       responseType: 'blob',
     })
   }

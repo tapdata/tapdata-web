@@ -1,4 +1,7 @@
-import { discoveryApi } from '@tap/api'
+import {
+  fetchDiscoveryFilterList,
+  fetchDiscoveryList,
+} from '@tap/api/src/core/discovery'
 import { TablePage } from '@tap/business'
 import { FilterBar } from '@tap/component'
 import { defineComponent, nextTick, onMounted, reactive, ref, watch } from 'vue'
@@ -52,7 +55,7 @@ export default defineComponent({
       sourceType && (where.sourceType = sourceType)
       sourceCategory && (where.sourceCategory = sourceCategory)
       queryKey && (where.queryKey = queryKey)
-      return discoveryApi.list(where).then((res) => {
+      return fetchDiscoveryList(where).then((res) => {
         const { total, items } = res
         list.value = items || []
         //选中被绑定的资源
@@ -87,7 +90,7 @@ export default defineComponent({
         'sourceCategory',
         'sourceType',
       ]
-      discoveryApi.filterList(filterType).then((res) => {
+      fetchDiscoveryFilterList(filterType).then((res) => {
         const { objCategory, objType, sourceCategory, sourceType } = res
         data.filterItems = [
           {
@@ -181,7 +184,7 @@ export default defineComponent({
         tagBindingParams: data,
         tagIds: [props.parentNode?.id],
       }
-      discoveryApi[http](where)
+      fetchDiscoveryList(where)
         .then(() => {
           ElMessage.success(i18n.t('public_message_operation_success'))
         })

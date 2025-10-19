@@ -1,5 +1,6 @@
 <script>
-import { fetchApiCallPercentile, fetchApiDetail } from '@tap/api'
+import { fetchApiCallPercentile } from '@tap/api/src/core/api-calls'
+import { fetchApiDetail } from '@tap/api/src/core/api-monitor'
 import { Chart } from '@tap/component/src/chart'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import { calcUnit } from '@tap/shared'

@@ -7,13 +7,17 @@ export const DatabaseIcon = defineComponent({
     item: Object,
     node: Object,
     size: Number,
-    pdkHash: String
+    pdkHash: String,
   },
   setup(props, { attrs }) {
     const _attrs = { ...attrs }
 
     const src = computed(() => {
-      const pdkHash = props.pdkHash || props.item?.pdkHash || props.node?.pdkHash || props.node?.attrs?.pdkHash
+      const pdkHash =
+        props.pdkHash ||
+        props.item?.pdkHash ||
+        props.node?.pdkHash ||
+        props.node?.attrs?.pdkHash
       if (pdkHash) {
         return getConnectionIcon(pdkHash)
       }
@@ -24,8 +28,8 @@ export const DatabaseIcon = defineComponent({
 
     if (props.size) {
       style = {
-        width: props.size + 'px',
-        height: props.size + 'px',
+        width: `${props.size}px`,
+        height: `${props.size}px`,
       }
     }
 

@@ -1,3 +1,38 @@
+<script>
+import { $emit } from '../../../utils/gogocodeTransfer'
+export default {
+  props: {
+    value: {
+      type: [String],
+      required: true,
+    },
+    options: Array,
+    placeholder: String,
+  },
+  emits: ['remove-tag', 'change', 'update:value', 'focus'],
+  computed: {
+    values() {
+      const value = this.value
+      return value && value.length ? value.split(',') : []
+    },
+  },
+  methods: {
+    inputHandler(values) {
+      //过滤空字符串并去重，之后使用逗号分隔
+      $emit(
+        this,
+        'update:value',
+        Array.from(new Set(values.filter((v) => !!v.trim()))).join(','),
+      )
+    },
+
+    handleFocus() {
+      $emit(this, 'focus')
+    },
+  },
+}
+</script>
+
 <template>
   <div class="multi-selection-data-verify">
     <el-select
@@ -21,6 +56,7 @@
       >
         <span>{{ opt.field_name }}</span>
         <span
+          v-if="opt.primary_key_position > 0"
           style="
             margin-left: 5px;
             background: rgb(245, 108, 108);
@@ -33,44 +69,12 @@
             line-height: 22px;
             font-size: 12px;
           "
-          v-if="opt.primary_key_position > 0"
           >PK</span
         >
       </el-option>
     </el-select>
   </div>
 </template>
-
-<script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-export default {
-  props: {
-    value: {
-      type: [String],
-      required: true,
-    },
-    options: Array,
-    placeholder: String,
-  },
-  computed: {
-    values() {
-      let value = this.value
-      return value && value.length ? value.split(',') : []
-    },
-  },
-  methods: {
-    inputHandler(values) {
-      //过滤空字符串并去重，之后使用逗号分隔
-      $emit(this, 'update:value', Array.from(new Set(values.filter((v) => !!v.trim()))).join(','))
-    },
-
-    handleFocus() {
-      $emit(this, 'focus')
-    },
-  },
-  emits: ['remove-tag', 'change', 'update:value', 'focus'],
-}
-</script>
 
 <style lang="scss" scoped>
 .multi-selection-data-verify {

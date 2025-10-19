@@ -1,6 +1,6 @@
+import { defineComponent } from 'vue'
 import { useDesigner, usePrefix } from '../../../hooks'
 import { IconWidget } from '../IconWidget'
-import { defineComponent } from 'vue'
 
 export const TranslateHandler = defineComponent({
   props: ['node'],

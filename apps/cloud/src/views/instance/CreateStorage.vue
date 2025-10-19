@@ -1,8 +1,11 @@
 <script>
-import { fetchDatabaseTypes, liveDataPlatformApi } from '@tap/api'
+import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
+import {
+  findOneLiveDataPlatform,
+  updateLiveDataPlatform,
+} from '@tap/api/src/core/live-data-platform'
 import { CURRENCY_SYMBOL_MAP, PERIOD_MAP, SceneDialog } from '@tap/business'
 import { IconButton } from '@tap/component'
-import i18n from '@tap/i18n'
 
 export default {
   name: 'CreateAgent',
@@ -361,7 +364,7 @@ export default {
     },
 
     async handleSaveAtlas(connection) {
-      const ldp = await liveDataPlatformApi.findOne()
+      const ldp = await findOneLiveDataPlatform()
 
       Object.assign(ldp, {
         mode: 'service',
@@ -371,7 +374,7 @@ export default {
         mdmStorageConnectionId: connection.id,
       })
 
-      await liveDataPlatformApi.patch(ldp)
+      await updateLiveDataPlatform(ldp)
 
       this.$router.push({
         name: 'dataConsole',

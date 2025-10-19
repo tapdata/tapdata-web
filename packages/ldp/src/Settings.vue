@@ -1,5 +1,9 @@
 <script>
-import { fetchConnections, liveDataPlatformApi } from '@tap/api'
+import { fetchConnections } from '@tap/api/src/core/connections'
+import {
+  findOneLiveDataPlatform,
+  patchLiveDataPlatform,
+} from '@tap/api/src/core/live-data-platform'
 import dataIntegrationModeImg from '@tap/assets/images/swimlane/data-integration-mode.png'
 import dataServicePlatformModeImg from '@tap/assets/images/swimlane/data-service-platform-mode.png'
 import i18n from '@tap/i18n'
@@ -125,7 +129,7 @@ export default {
     },
 
     async getData() {
-      return liveDataPlatformApi.findOne().catch(() => {
+      return findOneLiveDataPlatform().catch(() => {
         return null
       })
     },
@@ -209,8 +213,7 @@ export default {
         const { mode, form, liveDataPlatformId } = this
         this.loading = true
 
-        liveDataPlatformApi
-          .patch({ id: liveDataPlatformId, mode, ...form })
+        patchLiveDataPlatform({ id: liveDataPlatformId, mode, ...form })
           .then(() => {
             const result = { mode, ...form }
             this.$message.success(this.$t('public_message_save_ok'))

@@ -1,5 +1,5 @@
 <script>
-import { fetchDatabaseTypeByPdkHash } from '@tap/api'
+import { fetchDatabaseTypeByPdkHash } from '@tap/api/src/core/database-types'
 
 import {
   errorFiledType,

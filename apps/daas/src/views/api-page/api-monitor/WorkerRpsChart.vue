@@ -10,7 +10,6 @@ import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import VChart from 'vue-echarts'
-// import type { WorkerCallData } from '@tap/api'
 
 // Register ECharts components
 use([

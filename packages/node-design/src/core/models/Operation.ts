@@ -1,9 +1,9 @@
-import { TreeNode } from './TreeNode'
-import { Selection } from './Selection'
-import { Hover } from './Hover'
 import { action, define, observable } from '@formily/reactive'
-import { Dragon } from './Dragon'
 import { each, isFn } from '@tap/shared'
+import { Dragon } from './Dragon'
+import { Hover } from './Hover'
+import { Selection } from './Selection'
+import { TreeNode } from './TreeNode'
 
 export class Operation {
   workspace
@@ -67,7 +67,8 @@ export class Operation {
         const transformed = node.designerProps.getDragNodes(node)
         return transformed ? buf.concat(transformed) : buf
       }
-      if (node.componentName === '$$ResourceNode$$') return buf.concat(node.children)
+      if (node.componentName === '$$ResourceNode$$')
+        return buf.concat(node.children)
       return buf.concat([node])
     }, [])
     this.outlineDragon.setDragNodes(dragNodes)
@@ -89,7 +90,8 @@ export class Operation {
         const transformed = node.designerProps.getDropNodes(cloned, parent)
         return transformed ? buf.concat(transformed) : buf
       }
-      if (node.componentName === '$$ResourceNode$$') return buf.concat(node.children)
+      if (node.componentName === '$$ResourceNode$$')
+        return buf.concat(node.children)
       return buf.concat([node])
     }, [])
   }
@@ -99,7 +101,10 @@ export class Operation {
   }
 
   getClosestPosition() {
-    return this.viewportDragon.closestDirection || this.outlineDragon.closestDirection
+    return (
+      this.viewportDragon.closestDirection ||
+      this.outlineDragon.closestDirection
+    )
   }
 
   setTouchNode(node) {
@@ -201,7 +206,10 @@ export class Operation {
       each(nodes, (node) => {
         const cloned = node.clone()
         if (!cloned) return
-        if (this.selection.has(node) && insertPoint.parent.allowAppend([cloned])) {
+        if (
+          this.selection.has(node) &&
+          insertPoint.parent.allowAppend([cloned])
+        ) {
           insertPoint.insertAfter(cloned)
           insertPoint = insertPoint.next
         } else if (this.selection.length === 1) {

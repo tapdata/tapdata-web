@@ -1,11 +1,11 @@
-import 'highlight.js/styles/atom-one-light.css'
 import hljs from 'highlight.js/lib/core'
+import http from 'highlight.js/lib/languages/http'
 import javascript from 'highlight.js/lib/languages/javascript'
 import json from 'highlight.js/lib/languages/json'
 import python from 'highlight.js/lib/languages/python'
-import http from 'highlight.js/lib/languages/http'
 import xml from 'highlight.js/lib/languages/xml'
 import { escape } from 'lodash-es'
+import 'highlight.js/styles/atom-one-light.css'
 hljs.registerLanguage('javascript', javascript)
 hljs.registerLanguage('json', json)
 hljs.registerLanguage('python', python)
@@ -18,7 +18,7 @@ function hasValueOrEmptyAttribute(value) {
 
 export default {
   props: ['language', 'code', 'autodetect'],
-  data: function () {
+  data() {
     return {
       detectedLanguage: '',
       unknownLanguage: false,
@@ -28,7 +28,7 @@ export default {
     className() {
       if (this.unknownLanguage) return ''
 
-      return 'hljs ' + this.detectedLanguage
+      return `hljs ${this.detectedLanguage}`
     },
     highlighted() {
       // no idea what language to use, return raw code

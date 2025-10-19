@@ -31,7 +31,7 @@ export default class Webhook extends Http {
 
   history(params) {
     return this.axios.get(`${this.url}/history/list`, {
-      params
+      params,
     })
   }
 

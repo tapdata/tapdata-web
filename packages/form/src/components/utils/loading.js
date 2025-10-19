@@ -2,7 +2,7 @@ import { ElLoading as Loading } from 'element-plus'
 
 export const loading = async (loadingText = 'Loading...', processor) => {
   let loadingInstance = null
-  let loading = setTimeout(() => {
+  const loading = setTimeout(() => {
     loadingInstance = Loading.service({
       text: loadingText,
       background: 'transparent',

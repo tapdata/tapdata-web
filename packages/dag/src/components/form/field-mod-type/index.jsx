@@ -1,5 +1,4 @@
 import { observer } from '@formily/reactive-vue'
-import { IconButton } from '@tap/component/src/icon-button'
 import { useField, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import { defineComponent, ref } from 'vue'

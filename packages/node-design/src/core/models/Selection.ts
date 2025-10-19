@@ -1,6 +1,6 @@
-import { observable, define, action } from '@formily/reactive'
+import { action, define, observable } from '@formily/reactive'
+import { isArr, isStr } from '@tap/shared'
 import { SelectNodeEvent, UnSelectNodeEvent } from '../events'
-import { isStr, isArr } from '@tap/shared'
 
 export class Selection {
   operation
@@ -72,14 +72,12 @@ export class Selection {
     this.batchSelect(ids, fromUser)
   }
 
-  // eslint-disable-next-line getter-return
   get first() {
     if (this.selected && this.selected.length) return this.selected[0]
   }
 
-  // eslint-disable-next-line getter-return
   get last() {
-    if (this.selected && this.selected.length) return this.selected[this.selected.length - 1]
+    if (this.selected && this.selected.length) return this.selected.at(-1)
   }
 
   get length() {
@@ -105,9 +103,14 @@ export class Selection {
       if (this.has(node)) {
         this.remove(node)
       } else {
-        const minDistanceNode = selectedNodes.reduce((minDistanceNode, item) => {
-          return item.distanceTo(node) < minDistanceNode.distanceTo(node) ? item : minDistanceNode
-        }, selectedNodes[0])
+        const minDistanceNode = selectedNodes.reduce(
+          (minDistanceNode, item) => {
+            return item.distanceTo(node) < minDistanceNode.distanceTo(node)
+              ? item
+              : minDistanceNode
+          },
+          selectedNodes[0],
+        )
         if (minDistanceNode) {
           const crossNodes = node.crossSiblings(minDistanceNode)
           crossNodes.forEach((node) => {

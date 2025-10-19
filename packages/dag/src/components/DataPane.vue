@@ -1,11 +1,3 @@
-<template>
-  <ElTable :data="tableData" stripe style="width: 100%" height="100%">
-    <ElTableColumn prop="date" :label="$t('packages_dag_components_datapane_riqi')" width="180"> </ElTableColumn>
-    <ElTableColumn prop="name" :label="$t('packages_dag_components_datapane_xingming')" width="180"> </ElTableColumn>
-    <ElTableColumn prop="address" :label="$t('packages_dag_components_datapane_dizhi')"> </ElTableColumn>
-  </ElTable>
-</template>
-
 <script>
 import i18n from '@tap/i18n'
 
@@ -54,3 +46,22 @@ export default {
   },
 }
 </script>
+
+<template>
+  <ElTable :data="tableData" stripe style="width: 100%" height="100%">
+    <ElTableColumn
+      prop="date"
+      :label="$t('packages_dag_components_datapane_riqi')"
+      width="180"
+    />
+    <ElTableColumn
+      prop="name"
+      :label="$t('packages_dag_components_datapane_xingming')"
+      width="180"
+    />
+    <ElTableColumn
+      prop="address"
+      :label="$t('packages_dag_components_datapane_dizhi')"
+    />
+  </ElTable>
+</template>

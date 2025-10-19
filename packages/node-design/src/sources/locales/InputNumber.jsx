@@ -10,7 +10,8 @@ export const InputNumber = {
         keyboard: '启用快捷键',
         parser: {
           title: '格式解析器',
-          tooltip: '指定从 格式转换器 里转换回数字的方式，和 格式转换器 搭配使用,格式：function(string): number',
+          tooltip:
+            '指定从 格式转换器 里转换回数字的方式，和 格式转换器 搭配使用,格式：function(string): number',
         },
         decimalSeparator: '小数点',
         precision: '数字精度',
@@ -45,7 +46,8 @@ export const InputNumber = {
         step: 'Step',
         stringMode: {
           title: 'String Format',
-          tooltip: 'Support high-precision decimals after opening. At the same time onChange will return string type',
+          tooltip:
+            'Support high-precision decimals after opening. At the same time onChange will return string type',
         },
       },
     },

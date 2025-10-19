@@ -3,26 +3,17 @@ import {
   fetchConnections,
   fetchDatabases,
   getConnectionNoSchema,
-} from '@tap/api'
+} from '@tap/api/src/core/connections'
 import { getConnectorImage } from '@tap/assets'
 import {
   CONNECTION_STATUS_MAP,
   ConnectorForm,
   DatabaseIcon,
-  verify,
 } from '@tap/business'
 import { VEmpty } from '@tap/component'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
-import {
-  computed,
-  defineComponent,
-  inject,
-  nextTick,
-  provide,
-  reactive,
-  ref,
-} from 'vue'
+import { computed, defineComponent, inject, nextTick, reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 
 export default defineComponent({

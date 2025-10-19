@@ -1,17 +1,7 @@
 import { observer } from '@formily/reactive-vue'
-import { metadataInstancesApi, taskApi } from '@tap/api'
-import { VEmpty } from '@tap/component/src/base/v-empty'
-import { VirtualList } from '@tap/component/src/base/virtual-list'
-import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
-import {
-  connect,
-  FormGrid,
-  FormItem,
-  FormLayout,
-  mapReadPretty,
-  PreviewText,
-  useForm,
-} from '@tap/form'
+import { resetTable } from '@tap/api/src/core/metadata-instances'
+import { getNodeTableInfo } from '@tap/api/src/core/task'
+import { connect, mapReadPretty, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
 
 import { debounce } from 'lodash-es'
@@ -150,8 +140,7 @@ export const FieldRenameProcessorPreview = defineComponent({
         pageSize: config.page.size,
       }
 
-      taskApi
-        .getNodeTableInfo(where)
+      getNodeTableInfo(where)
         .then((res) => {
           const { total, items = [] } = res
           list.value = items.map(updateDeletedNum)
@@ -772,8 +761,7 @@ export const FieldRenameProcessor = connect(
             pageSize: config.page.size,
           }
 
-          taskApi
-            .getNodeTableInfo(where)
+          getNodeTableInfo(where)
             .then((res) => {
               const { total, items = [] } = res
               list.value = items.map(updateDeletedNum)
@@ -975,15 +963,13 @@ export const FieldRenameProcessor = connect(
         const doOperationRest = () => {
           fieldsMapping = []
           Object.assign(fieldsOperation, defaultOperation)
-          metadataInstancesApi
-            .resetTable({
-              taskId: route.params.id,
-              nodeId: props.nodeId,
-            })
-            .then(() => {
-              resetParams()
-              loadData() //更新整个数据
-            })
+          resetTable({
+            taskId: route.params.id,
+            nodeId: props.nodeId,
+          }).then(() => {
+            resetParams()
+            loadData() //更新整个数据
+          })
         }
 
         //单个删除字段

@@ -1,5 +1,5 @@
 <script>
-import { taskApi } from '@tap/api'
+import { taskConsoleRelations } from '@tap/api/src/core/task'
 
 import NodeLog from '@tap/business/src/components/logs/NodeLog'
 import MilestoneList from '@tap/business/src/components/milestone/List'
@@ -133,7 +133,7 @@ export default {
       } else if (['sync'].includes(syncType)) {
         // filter.type = 'task_by_collector'
       }
-      taskApi.taskConsoleRelations(filter).then((data) => {
+      taskConsoleRelations(filter).then((data) => {
         this.relationCount = data?.length || 0
       })
     },

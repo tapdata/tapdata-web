@@ -1,30 +1,32 @@
 <script lang="tsx">
-import i18n from '@tap/i18n'
-import { VirtualTree } from '@tap/component/src/virtual-tree'
-import { metadataDefinitionsApi, userGroupsApi, discoveryApi, fetchConnections, metadataInstancesApi } from '@tap/api'
+import {
+  createMetadataDefinition,
+  deleteMetadataDefinition,
+  fetchMetadataDefinitions,
+  patchMetadataDefinition,
+} from '@tap/api/core/metadata-definitions'
+import {
+  createUserGroup,
+  deleteUserGroupById,
+  patchUserGroupById,
+} from '@tap/api/core/user-groups'
+import { fetchConnections } from '@tap/api/src/core/connections'
+import {
+  createDiscoveryTags,
+  getDiscoveryDirectoryData,
+} from '@tap/api/src/core/discovery'
+import { getTablesValue } from '@tap/api/src/core/metadata-instances'
 import { makeDragNodeImage } from '@tap/business/src/shared'
+import { VirtualTree } from '@tap/component/src/virtual-tree'
+import i18n from '@tap/i18n'
 
 export default {
   name: 'ClassificationTree',
-  props: {
-    types: {
-      type: Array,
-      default: () => {
-        return []
-      },
-    },
-    dragState: {
-      type: Object,
-      default: () => ({}),
-    },
-    showViewDetails: Boolean,
-    renderIcon: Function,
-  },
   components: {
     VirtualTree,
     NodeContent: (props) => {
       const { node, data, renderIcon } = props
-      let icon = renderIcon(data)
+      const icon = renderIcon(data)
 
       if (!data.parent_id || data.isLeaf === false) {
         node.isLeaf = false
@@ -58,7 +60,9 @@ export default {
                   class="color-primary mr-2"
                   onClick={(ev) => {
                     ev.stopPropagation()
-                    data.isRoot ? this.showDialog() : this.showDialog(node, 'add')
+                    data.isRoot
+                      ? this.showDialog()
+                      : this.showDialog(node, 'add')
                   }}
                 >
                   add
@@ -73,7 +77,9 @@ export default {
                   class="color-primary mr-2"
                   onClick={(ev) => {
                     ev.stopPropagation()
-                    data.isRoot ? this.showDialog() : this.showDialog(node, 'add')
+                    data.isRoot
+                      ? this.showDialog()
+                      : this.showDialog(node, 'add')
                   }}
                 >
                   add
@@ -100,8 +106,12 @@ export default {
                     ),
                     dropdown: () => (
                       <ElDropdownMenu>
-                        <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
-                        <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
+                        <ElDropdownItem command="edit">
+                          {this.$t('public_button_edit')}
+                        </ElDropdownItem>
+                        <ElDropdownItem command="delete">
+                          {this.$t('public_button_delete')}
+                        </ElDropdownItem>
                       </ElDropdownMenu>
                     ),
                   }}
@@ -127,6 +137,21 @@ export default {
       )
     },
   },
+  props: {
+    types: {
+      type: Array,
+      default: () => {
+        return []
+      },
+    },
+    dragState: {
+      type: Object,
+      default: () => ({}),
+    },
+    showViewDetails: Boolean,
+    renderIcon: Function,
+  },
+  emits: ['view-details', 'nodeChecked'],
   data() {
     return {
       isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
@@ -165,9 +190,6 @@ export default {
       },
     }
   },
-  mounted() {
-    this.getData()
-  },
   watch: {
     types(_new, _old) {
       if (_new.toString() !== _old.toString()) {
@@ -178,9 +200,12 @@ export default {
       this.$refs.tree.filter(val)
     },
   },
+  mounted() {
+    this.getData()
+  },
   methods: {
     renderContent(h, { node, data, store }) {
-      let icon = this.renderIcon(data)
+      const icon = this.renderIcon(data)
 
       if (!data.parent_id || data.isLeaf === false) {
         node.isLeaf = false
@@ -218,7 +243,9 @@ export default {
                   class="color-primary mr-2"
                   onClick={(ev) => {
                     ev.stopPropagation()
-                    data.isRoot ? this.showDialog() : this.showDialog(node, 'add')
+                    data.isRoot
+                      ? this.showDialog()
+                      : this.showDialog(node, 'add')
                   }}
                 >
                   add
@@ -233,7 +260,9 @@ export default {
                   class="color-primary mr-2"
                   onClick={(ev) => {
                     ev.stopPropagation()
-                    data.isRoot ? this.showDialog() : this.showDialog(node, 'add')
+                    data.isRoot
+                      ? this.showDialog()
+                      : this.showDialog(node, 'add')
                   }}
                 >
                   add
@@ -260,8 +289,12 @@ export default {
                     ),
                     dropdown: () => (
                       <ElDropdownMenu>
-                        <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
-                        <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
+                        <ElDropdownItem command="edit">
+                          {this.$t('public_button_edit')}
+                        </ElDropdownItem>
+                        <ElDropdownItem command="delete">
+                          {this.$t('public_button_delete')}
+                        </ElDropdownItem>
                       </ElDropdownMenu>
                     ),
                   }}
@@ -288,7 +321,7 @@ export default {
     },
 
     handleNodeClick(data, node) {
-      let { currentNode = {} } = this
+      const { currentNode = {} } = this
 
       if (data.id === currentNode.id) return
       if (!data.isObject) this.handleNodeExpand(data, node)
@@ -299,7 +332,7 @@ export default {
     },
 
     setCurrent(data, expand) {
-      let key = data.id
+      const key = data.id
       const node = this.$refs.tree.getNode(key)
       this.$refs.tree.setCurrentKey(key)
       this.handleNodeClick(data, node)
@@ -313,11 +346,11 @@ export default {
     },
 
     getData(cb) {
-      let where = {}
+      const where = {}
       where.item_type = {
         $nin: ['database', 'dataflow', 'api', 'default'],
       }
-      let filter = {
+      const filter = {
         where,
         fields: {
           /*id: 1,
@@ -332,10 +365,7 @@ export default {
         },
       }
       this.loadingTree = true
-      metadataDefinitionsApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
+      fetchMetadataDefinitions(filter)
         .then((data) => {
           const ORDER = {
             source: 1,
@@ -343,12 +373,12 @@ export default {
             mdm: 3,
             target: 4,
           }
-          let items = data?.items || []
-          let treeData = this.formatData(items)
+          const items = data?.items || []
+          const treeData = this.formatData(items)
 
           treeData.sort((a, b) => {
-            let aType = ORDER[a.item_type[0]] || 0
-            let bType = ORDER[b.item_type[0]] || 0
+            const aType = ORDER[a.item_type[0]] || 0
+            const bType = ORDER[b.item_type[0]] || 0
             return aType - bType
           })
 
@@ -365,7 +395,7 @@ export default {
         })
     },
     getDataAll(cb) {
-      metadataDefinitionsApi.get().then((data) => {
+      fetchMetadataDefinitions().then((data) => {
         cb && cb(data?.items || [])
       })
     },
@@ -376,7 +406,7 @@ export default {
         const nodes = []
         const setChildren = (nodes) => {
           return nodes.map((it) => {
-            let children = map[it.id]
+            const children = map[it.id]
             if (children) {
               it.children = setChildren(children)
             }
@@ -391,7 +421,7 @@ export default {
           const itemType = it.item_type[0]
           it.readOnly = itemType !== 'mdm' && itemType !== 'fdm'
           if (it.parent_id) {
-            let children = map[it.parent_id] || []
+            const children = map[it.parent_id] || []
             children.push(it)
             map[it.parent_id] = children
             it.name = it.value
@@ -410,7 +440,7 @@ export default {
     },
     filterNode(value, data) {
       if (!value) return true
-      return data.name.indexOf(value) !== -1
+      return data.name.includes(value)
     },
     handleRowCommand(command, node) {
       switch (command) {
@@ -423,19 +453,20 @@ export default {
       }
     },
     showDialog(node, dialogType) {
-      let type = dialogType || 'add'
+      const type = dialogType || 'add'
       let itemType = 'resource'
       if (node && node.data && node.data.item_type) {
         itemType = node.data.item_type?.join('')
       }
       this.dialogConfig = {
-        itemType: itemType,
+        itemType,
         visible: true,
         type,
         id: node ? node.key : '',
         gid: node?.data?.gid || '',
         label: type === 'edit' ? node.label : '',
-        isParent: (type === 'add' && !node) || (type === 'edit' && node?.level === 1),
+        isParent:
+          (type === 'add' && !node) || (type === 'edit' && node?.level === 1),
         desc: type === 'edit' ? node?.data?.desc : '',
         title:
           type === 'add'
@@ -451,35 +482,39 @@ export default {
       }
     },
     async dialogSubmit() {
-      let config = this.dialogConfig
-      let value = config.label
-      let id = config.id
-      let gid = config.gid
-      let itemType = [config.itemType]
-      let method = 'post'
+      const config = this.dialogConfig
+      const value = config.label
+      const id = config.id
+      const gid = config.gid
+      const itemType = [config.itemType]
+      let method = createUserGroup
 
       if (!value || value.trim() === '') {
-        this.$message.error(this.$t('packages_component_classification_nodeName'))
+        this.$message.error(
+          this.$t('packages_component_classification_nodeName'),
+        )
         return
       }
 
       if (this.types[0] === 'user') {
-        let nameExist = await this.checkName(value)
+        const nameExist = await this.checkName(value)
         if (nameExist) {
-          return this.$message.error(this.$t('packages_component_classification_nameExist'))
+          return this.$message.error(
+            this.$t('packages_component_classification_nameExist'),
+          )
         }
-        let params = {
+        const params = {
           name: value,
         }
         if (config.type === 'edit') {
-          method = 'patch'
+          method = patchUserGroupById
           params.id = id
         } else if (id) {
           params.parent_id = id
           params.parent_gid = gid
         }
-        userGroupsApi[method](params).then(() => {
-          let self = this
+        method(params).then(() => {
+          const self = this
           self.getData(() => {
             this.$nextTick(() => {
               this.emitCheckedNodes()
@@ -488,21 +523,22 @@ export default {
           self.hideDialog()
         })
       } else {
-        let params = {
+        const params = {
           item_type: itemType,
           desc: config.desc,
           value,
         }
+        method = createMetadataDefinition
         if (config.type === 'edit') {
-          method = 'changeById'
+          method = patchMetadataDefinition
           params.id = id
           delete params.item_type
         } else if (id) {
           params.parent_id = id
         }
-        metadataDefinitionsApi[method](params)
+        method(params)
           .then(() => {
-            let self = this
+            const self = this
             self.getData(() => {
               this.$nextTick(() => {
                 this.emitCheckedNodes()
@@ -510,33 +546,36 @@ export default {
             })
             self.hideDialog()
           })
-          .catch((err) => {
-            this.$message.error(err.message)
+          .catch((error) => {
+            this.$message.error(error.message)
           })
       }
     },
     deleteNode(id) {
-      let that = this
-      this.$confirm(this.$t('packages_component_classification_deteleMessage'), {
-        confirmButtonText: this.$t('public_button_delete'),
-      }).then((resFlag) => {
+      const that = this
+      this.$confirm(
+        this.$t('packages_component_classification_deteleMessage'),
+        {
+          confirmButtonText: this.$t('public_button_delete'),
+        },
+      ).then((resFlag) => {
         if (!resFlag) {
           return
         }
         if (that.types[0] === 'user') {
-          let params = {
-            id: id,
+          const params = {
+            id,
             headers: {
               gid: id,
             },
           }
-          userGroupsApi.delete(params).then(() => {
-            let self = this
+          deleteUserGroupById(params).then(() => {
+            const self = this
             self.getData()
           })
         } else {
-          metadataDefinitionsApi.delete(id).then(() => {
-            let self = this
+          deleteMetadataDefinition(id).then(() => {
+            const self = this
             //将当前选中的目录缓存
             this.$store.commit('catalogueKey', '')
             self.getData()
@@ -563,7 +602,9 @@ export default {
     },
 
     checkAllowDrop(draggingNode, dropNode, type) {
-      return type === 'inner' && !dropNode.data.readOnly && !dropNode.data.isObject
+      return (
+        type === 'inner' && !dropNode.data.readOnly && !dropNode.data.isObject
+      )
     },
 
     handleDragStart(draggingNode, ev) {
@@ -572,12 +613,12 @@ export default {
         ev.currentTarget.querySelector('.tree-item-icon'),
         draggingNode.data.name,
       )
-      let { dataTransfer } = ev
+      const { dataTransfer } = ev
       dataTransfer.setDragImage(this.draggingNodeImage, 0, 0)
     },
 
     handleDragEnd() {
-      document.body.removeChild(this.draggingNodeImage)
+      this.draggingNodeImage.remove()
       this.draggingNode = null
       this.draggingNodeImage = null
     },
@@ -585,21 +626,22 @@ export default {
     handleDrop(draggingNode, dropNode, dropType, ev) {
       console.log('handleDrop', ...arguments) // eslint-disable-line
       if (!draggingNode.data.isObject) {
-        metadataDefinitionsApi
-          .changeById({
-            id: draggingNode.data.id,
-            parent_id: dropNode.data.id || '',
-          })
+        patchMetadataDefinition({
+          id: draggingNode.data.id,
+          parent_id: dropNode.data.id || '',
+        })
           .then(() => {
             this.$message.success(i18n.t('public_message_operation_success'))
             draggingNode.data.parent_id = dropNode.data.id
             // this.getData()
           })
-          .catch((err) => {
-            this.$message.error(err.message)
+          .catch((error) => {
+            this.$message.error(error.message)
           })
       } else {
-        this.moveTag(draggingNode.data.parent_id, dropNode.data.id, [draggingNode.data])
+        this.moveTag(draggingNode.data.parent_id, dropNode.data.id, [
+          draggingNode.data,
+        ])
       }
     },
 
@@ -620,7 +662,10 @@ export default {
 
       if (data.readOnly || !this.dragState.isDragging) return
 
-      const dropNode = this.findParentNodeByClassName(ev.currentTarget, 'el-tree-node')
+      const dropNode = this.findParentNodeByClassName(
+        ev.currentTarget,
+        'el-tree-node',
+      )
       dropNode.classList.add('is-drop-inner')
     },
 
@@ -630,7 +675,10 @@ export default {
       if (data.readOnly) return
 
       if (!ev.currentTarget.contains(ev.relatedTarget)) {
-        const dropNode = this.findParentNodeByClassName(ev.currentTarget, 'el-tree-node')
+        const dropNode = this.findParentNodeByClassName(
+          ev.currentTarget,
+          'el-tree-node',
+        )
         dropNode.classList.remove('is-drop-inner')
       }
     },
@@ -639,7 +687,10 @@ export default {
       if (data.readOnly) return
 
       const { draggingObjects } = this.dragState
-      const dropNode = this.findParentNodeByClassName(ev.currentTarget, 'el-tree-node')
+      const dropNode = this.findParentNodeByClassName(
+        ev.currentTarget,
+        'el-tree-node',
+      )
 
       if (!draggingObjects?.length || !dropNode) return
 
@@ -653,20 +704,18 @@ export default {
     },
 
     bindTag(tag, objects) {
-      discoveryApi
-        .postTags({
-          tagBindingParams: objects.map((t) => {
-            return {
-              id: t.id,
-              objCategory: t.category,
-            }
-          }),
-          tagIds: [tag.id],
-        })
-        .then(() => {
-          this.getData()
-          this.$message.success(i18n.t('public_message_operation_success'))
-        })
+      createDiscoveryTags({
+        tagBindingParams: objects.map((t) => {
+          return {
+            id: t.id,
+            objCategory: t.category,
+          }
+        }),
+        tagIds: [tag.id],
+      }).then(() => {
+        this.getData()
+        this.$message.success(i18n.t('public_message_operation_success'))
+      })
     },
 
     async moveTag(from, to, objects) {
@@ -682,7 +731,7 @@ export default {
       tagBindingParams,
       tagIds: [from]
     })*/
-      await discoveryApi.postTags({
+      await createDiscoveryTags({
         tagBindingParams,
         tagIds: [to],
         oldTagIds: [from],
@@ -696,7 +745,9 @@ export default {
       if (node.level === 0) {
         return resolve([
           {
-            name: i18n.t('packages_business_components_classificationtree_suoyoumulu'),
+            name: i18n.t(
+              'packages_business_components_classificationtree_suoyoumulu',
+            ),
           },
         ])
       }
@@ -707,13 +758,14 @@ export default {
 
     async handleNodeExpand(data, node) {
       // 十秒内加载过资源，不再继续加载
-      if (data.isRoot || (node.loadTime && Date.now() - node.loadTime < 10000)) return
+      if (data.isRoot || (node.loadTime && Date.now() - node.loadTime < 10000))
+        return
 
       node.loadTime = Date.now()
 
-      let { LDP_TYPE } = data
+      const { LDP_TYPE } = data
       let objects
-      let itemType = LDP_TYPE === 'connection' ? LDP_TYPE : data.item_type[0]
+      const itemType = LDP_TYPE === 'connection' ? LDP_TYPE : data.item_type[0]
 
       switch (itemType) {
         case 'connection':
@@ -730,7 +782,9 @@ export default {
       }
 
       console.log('handleNodeExpand', objects, data, node) // eslint-disable-line
-      const childrenMap = data.children ? data.children.reduce((map, item) => ((map[item.id] = true), map), {}) : {}
+      const childrenMap = data.children
+        ? data.children.reduce((map, item) => ((map[item.id] = true), map), {})
+        : {}
       objects.forEach((item) => {
         if (childrenMap[item.id]) return
         item.parent_id = data.id
@@ -739,13 +793,13 @@ export default {
     },
 
     loadObjects(node) {
-      let where = {
+      const where = {
         page: 1,
         pageSize: 10000,
         tagId: node.id,
         range: 'current',
       }
-      return discoveryApi.discoveryList(where).then((res) => {
+      return getDiscoveryDirectoryData(where).then((res) => {
         return res.items.map((item) =>
           Object.assign(item, {
             isLeaf: true,
@@ -759,7 +813,7 @@ export default {
     },
 
     async getConnectionList(type) {
-      let filter = {
+      const filter = {
         limit: 999,
         where: {
           connection_type: {
@@ -774,7 +828,9 @@ export default {
         const disabled = status !== 'ready'
         return {
           ...t,
-          progress: !tableCount ? 0 : Math.round((loadCount / tableCount) * 10000) / 100,
+          progress: !tableCount
+            ? 0
+            : Math.round((loadCount / tableCount) * 10000) / 100,
           children: [],
           disabled,
           LDP_TYPE: 'connection',
@@ -786,7 +842,7 @@ export default {
     },
 
     async getTableList(id) {
-      const res = await metadataInstancesApi.getTablesValue({
+      const res = await getTablesValue({
         connectionId: id,
       })
       return res.map((t) => {
@@ -806,15 +862,14 @@ export default {
       console.log('handleCurrentChange', data, node) // eslint-disable-line
     },
   },
-  emits: ['view-details', 'nodeChecked'],
 }
 </script>
 
 <template>
   <div>
     <ElTree
-      class="ldp-tree"
       ref="tree"
+      class="ldp-tree"
       node-key="id"
       highlight-current
       :data="treeData"
@@ -826,7 +881,6 @@ export default {
       :expand-on-click-node="false"
       :allow-drag="checkAllowDrag"
       :allow-drop="checkAllowDrop"
-      :renderContent="renderContent"
       @node-click="handleNodeClick"
       @node-drag-start="handleDragStart"
       @node-drop="handleDrop"
@@ -836,44 +890,67 @@ export default {
         <NodeContent :renderIcon="renderIcon" :node="node" :data="data" />
       </template>-->
     </ElTree>
-    <ElDialog v-model="dialogConfig.visible" width="30%" :close-on-click-modal="false">
+    <ElDialog
+      v-model="dialogConfig.visible"
+      width="30%"
+      :close-on-click-modal="false"
+    >
       <template #header>
         <span style="font-size: 14px">{{ dialogConfig.title }}</span>
       </template>
       <ElForm ref="form" :model="dialogConfig" label-width="90px">
-        <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
+        <ElFormItem
+          :label="
+            $t('packages_component_src_discoveryclassification_mulumingcheng')
+          "
+        >
           <ElInput
             v-model="dialogConfig.label"
             :placeholder="$t('packages_component_classification_nodeName')"
             maxlength="50"
             show-word-limit
-          ></ElInput>
+          />
         </ElFormItem>
         <ElFormItem
-          :label="$t('packages_component_src_discoveryclassification_mulufenlei')"
           v-if="dialogConfig.isParent"
+          :label="
+            $t('packages_component_src_discoveryclassification_mulufenlei')
+          "
         >
-          <ElSelect v-model="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
+          <ElSelect
+            v-model="dialogConfig.itemType"
+            :disabled="dialogConfig.type === 'edit'"
+          >
             <el-option
-              :label="$t('packages_component_src_discoveryclassification_ziyuanmulu')"
+              :label="
+                $t('packages_component_src_discoveryclassification_ziyuanmulu')
+              "
               value="resource"
-            ></el-option>
+            />
             <!--            <el-option label="任务目录" value="task"></el-option>-->
           </ElSelect>
         </ElFormItem>
-        <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumiaoshu')">
+        <ElFormItem
+          :label="
+            $t('packages_component_src_discoveryclassification_mulumiaoshu')
+          "
+        >
           <ElInput
-            type="textarea"
             v-model="dialogConfig.desc"
-            :placeholder="$t('packages_component_src_discoveryclassification_qingshurumulu')"
+            type="textarea"
+            :placeholder="
+              $t('packages_component_src_discoveryclassification_qingshurumulu')
+            "
             maxlength="50"
             show-word-limit
-          ></ElInput>
+          />
         </ElFormItem>
       </ElForm>
-      <template v-slot:footer>
+      <template #footer>
         <span class="dialog-footer">
-          <ElButton @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton @click="hideDialog()">{{
+            $t('public_button_cancel')
+          }}</ElButton>
           <ElButton type="primary" @click="dialogSubmit()">
             {{ $t('public_button_confirm') }}
           </ElButton>

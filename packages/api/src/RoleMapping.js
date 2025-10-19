@@ -9,7 +9,7 @@ export default class RoleMappings extends Http {
     return this.axios.post(this.url, params)
   }
   saveAll(params) {
-    return this.axios.post(this.url + '/saveAll', params)
+    return this.axios.post(`${this.url}/saveAll`, params)
   }
 }
 export { RoleMappings }

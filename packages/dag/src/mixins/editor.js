@@ -1,10 +1,19 @@
 import { observable } from '@formily/reactive'
+import { getDataActions } from '@tap/api/src/core/data-permission'
+import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
+import { findOneSharedCache } from '@tap/api/src/core/shared-cache'
 import {
-  dataPermissionApi,
-  fetchDatabaseTypes,
-  sharedCacheApi,
-  taskApi,
-} from '@tap/api'
+  batchStartTasks,
+  fetchTasks,
+  forceStopTask,
+  getNodeTableInfo,
+  getTaskById,
+  renameTask,
+  resetTask,
+  saveAndStartTask,
+  saveTask,
+  stopTask,
+} from '@tap/api/src/core/task'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
 import { makeStatusAndDisabled } from '@tap/business/src/shared/task'
 import resize from '@tap/component/src/directives/resize'
@@ -242,7 +251,7 @@ export default {
     },
 
     async loadSharedCache(usedShareCache) {
-      const sharedCacheRes = await sharedCacheApi.get({
+      const sharedCacheRes = await findOneSharedCache({
         filter: JSON.stringify({
           limit: 1000,
           where: {
@@ -442,12 +451,10 @@ export default {
     },
 
     async makeTaskName(source) {
-      const taskNames = await taskApi.get({
-        filter: JSON.stringify({
-          limit: 9999,
-          fields: { name: 1 },
-          where: { name: { like: `^${source}\\d+$` } },
-        }),
+      const taskNames = await fetchTasks({
+        limit: 9999,
+        fields: { name: 1 },
+        where: { name: { like: `^${source}\\d+$` } },
       })
       let def = 1
       if (taskNames?.items.length) {
@@ -461,26 +468,6 @@ export default {
       }
       return `${source}${def}`
     },
-
-    // async makeTaskName(source) {
-    //   const taskNames = await taskApi.get({
-    //     filter: JSON.stringify({
-    //       fields: { name: 1 },
-    //       where: { name: { like: `^${source} +` } }
-    //     })
-    //   })
-    //   let def = 1
-    //   if (taskNames?.items.length) {
-    //     let arr = [0]
-    //     taskNames.items.forEach(item => {
-    //       const res = item.name.match(/\+(\d+)$/)
-    //       if (res && res[1]) arr.push(+res[1])
-    //     })
-    //     arr.sort()
-    //     def = arr.pop() + 1
-    //   }
-    //   return `${source} +${def}`
-    // },
 
     onNodeDragStart() {
       if (this.ifNodeDragStart) {
@@ -1078,7 +1065,7 @@ export default {
       let isOk = false
 
       try {
-        const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
+        const result = await (needStart ? saveAndStartTask : saveTask)(data)
         this.reformDataflow(result)
         !needStart && this.$message.success(this.$t('public_message_save_ok'))
         this.setEditVersion(result.editVersion)
@@ -1774,7 +1761,7 @@ export default {
 
           // 按表达式匹配表
           if (sourceNode.migrateTableSelectType === 'expression') {
-            const { items } = await taskApi.getNodeTableInfo({
+            const { items } = await getNodeTableInfo({
               taskId: this.dataflow.id,
               nodeId: node.id,
               page: 1,
@@ -2449,7 +2436,7 @@ export default {
       const oldName = this.dataflow.name
       this.nameHasUpdated = true
       this.dataflow.name = name
-      taskApi.rename(this.dataflow.id, name).then(
+      renameTask(this.dataflow.id, name).then(
         () => {
           this.$message.success(
             this.$t('packages_dag_message_task_rename_success'),
@@ -2515,7 +2502,7 @@ export default {
         }
         this.initWS()
         this.dataflow.disabledData.stop = true
-        await taskApi.stop(this.dataflow.id).catch((error) => {
+        await stopTask(this.dataflow.id).catch((error) => {
           this.handleError(
             error,
             this.$t('packages_dag_message_operation_error'),
@@ -2533,7 +2520,7 @@ export default {
         }
         this.initWS()
         this.dataflow.disabledData.stop = true
-        await taskApi.forceStop(this.dataflow.id)
+        await forceStopTask(this.dataflow.id)
         // this.startLoop(true)
       })
     },
@@ -2549,7 +2536,7 @@ export default {
           this.dataflow.disabledData.reset = true
           this.toggleConsole(true)
           this.$refs.console?.startAuto('reset') // 信息输出自动加载
-          const data = await taskApi.reset(this.dataflow.id)
+          const data = await resetTask(this.dataflow.id)
           this.responseHandler(
             data,
             this.$t('public_message_operation_success'),
@@ -2618,7 +2605,7 @@ export default {
       this.loading = true
       try {
         const { parent_task_sign } = this.$route.query || {}
-        const data = await taskApi.get(id, params, { parent_task_sign })
+        const data = await getTaskById(id, { ...params, parent_task_sign })
         if (!data) {
           this.$message.error(
             i18n.t('packages_dag_mixins_editor_renwubucunzai'),
@@ -2662,7 +2649,7 @@ export default {
       if (!id) return
       this.startLoopTaskTimer = setTimeout(async () => {
         const { parent_task_sign } = this.$route.query || {}
-        const data = await taskApi.get(id, {}, { parent_task_sign })
+        const data = await getTaskById(id, { parent_task_sign })
         if (this.destory) return
         if (data) {
           if (data.errorEvents?.length) {
@@ -2877,10 +2864,9 @@ export default {
 
     startTask() {
       const buriedCode = this.getIsDataflow() ? 'taskStart' : 'migrationStart'
-      taskApi
-        .batchStart([this.dataflow.id], {
-          silenceMessage: true,
-        })
+      batchStartTasks([this.dataflow.id], {
+        silenceMessage: true,
+      })
         .then(() => {
           this.buried(buriedCode, { result: true })
           this.gotoViewer()
@@ -2895,7 +2881,7 @@ export default {
       if (!this.isDaas) return
       const id = this.dataflow.id || this.$route.params?.id
       if (!id) return
-      const data = await dataPermissionApi.dataActions({
+      const data = await getDataActions({
         dataType: 'Task',
         dataId: id,
       })

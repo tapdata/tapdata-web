@@ -1,31 +1,14 @@
 import { observer } from '@formily/reactive-vue'
 import { SchemaExpressionScopeSymbol } from '@formily/vue'
-import { taskApi } from '@tap/api'
-import { IconButton } from '@tap/component/src/icon-button'
-import { VEmpty } from '@tap/component/src/base/v-empty'
-import {
-  connect,
-  FormGrid,
-  FormItem,
-  FormLayout,
-  mapReadPretty,
-  PreviewText,
-  useForm,
-} from '@tap/form'
+import { getNodeTableInfo } from '@tap/api/src/core/task'
+import { connect, mapReadPretty, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import { configProviderContextKey } from 'element-plus'
 import { debounce } from 'lodash-es'
-import {
-  computed,
-  defineComponent,
-  inject,
-  reactive,
-  ref,
-} from 'vue'
+import { computed, defineComponent, inject, reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 import { getTableRenameByConfig, ifTableNameConfigEmpty } from '../../../util'
-import List from './List.vue'
 import './style.scss'
 
 // 源节点改变，表编辑按照批量配置重新应用，重新应用的场景如下：
@@ -98,13 +81,12 @@ export const TableRenamePreview = defineComponent({
     const makeTable = (...args) => {
       if (form.values.$inputs?.length && taskId && form.values.id) {
         loading.value = true
-        taskApi
-          .getNodeTableInfo({
-            taskId,
-            nodeId: form.values.id,
-            page: 1,
-            pageSize: 10000,
-          })
+        getNodeTableInfo({
+          taskId,
+          nodeId: form.values.id,
+          page: 1,
+          pageSize: 10000,
+        })
           .then(({ items = [] }) => {
             prevMap = {}
             tableDataRef.value = items.map((item) => {
@@ -431,13 +413,12 @@ export const TableRename = connect(
         const makeTable = () => {
           if (form.values.$inputs?.length && taskId && form.values.id) {
             loading.value = true
-            taskApi
-              .getNodeTableInfo({
-                taskId,
-                nodeId: form.values.id,
-                page: 1,
-                pageSize: 10000,
-              })
+            getNodeTableInfo({
+              taskId,
+              nodeId: form.values.id,
+              page: 1,
+              pageSize: 10000,
+            })
               .then(({ items = [] }) => {
                 prevMap = {}
                 tableDataRef.value = items.map((item) => {

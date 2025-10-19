@@ -1,9 +1,8 @@
+import { observer } from '@formily/reactive-vue'
+import { useForm } from '@tap/form'
+
 import { defineComponent } from 'vue'
 import { useStore } from 'vuex'
-import { observer } from '@formily/reactive-vue'
-
-import StageButton from '@tap/business/src/components/StageButton'
-import { FormItem, useForm } from '@tap/form'
 
 import './style.scss'
 

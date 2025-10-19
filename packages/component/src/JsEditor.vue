@@ -1,5 +1,6 @@
 <script>
-import { functionApi, sharedCacheApi } from '@tap/api'
+import { fetchFunctions } from '@tap/api/src/core/function'
+import { fetchSharedCache } from '@tap/api/src/core/shared-cache'
 import { getCode } from '@tap/shared'
 import VCodeEditor from './base/VCodeEditor.vue'
 
@@ -83,11 +84,9 @@ export default {
         }
       }
       Promise.all([
-        sharedCacheApi.get(),
-        functionApi.get({
-          filter: JSON.stringify({
-            size: 0,
-          }),
+        fetchSharedCache(),
+        fetchFunctions({
+          size: 0,
         }),
       ]).then(([cacheData, functionData]) => {
         const cacheItems = cacheData?.items || []

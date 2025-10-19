@@ -4,11 +4,11 @@ export default class Worker extends Http {
     super('/api/Workers')
   }
   getAvailableAgent() {
-    return this.axios.get(this.url + '/availableAgent')
+    return this.axios.get(`${this.url}/availableAgent`)
   }
 
   taskUsedAgent(id) {
-    return this.axios.get(this.url + '/available/taskUsedAgent?taskId=' + id)
+    return this.axios.get(`${this.url}/available/taskUsedAgent?taskId=${id}`)
   }
 
   queryAllBindWorker() {
@@ -22,8 +22,8 @@ export default class Worker extends Http {
   getProcessInfo(processIds: string[]) {
     return this.axios.get(`${this.url}/getProcessInfo`, {
       params: {
-        process_id: JSON.stringify(processIds)
-      }
+        process_id: JSON.stringify(processIds),
+      },
     })
   }
 }

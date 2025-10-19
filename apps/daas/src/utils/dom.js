@@ -27,11 +27,11 @@ export function on(el, event, handler) {
     return
   }
   if (el.attachEvent) {
-    el.attachEvent('on' + event, handler)
+    el.attachEvent(`on${event}`, handler)
   } else if (el.addEventListener) {
     el.addEventListener(event, handler, false)
   } else {
-    el['on' + event] = handler
+    el[`on${event}`] = handler
   }
 }
 
@@ -40,11 +40,11 @@ export function off(el, event, handler) {
     return
   }
   if (el.detachEvent) {
-    el.detachEvent('on' + event, handler)
+    el.detachEvent(`on${event}`, handler)
   } else if (el.removeEventListener) {
     el.removeEventListener(event, handler, false)
   } else {
-    el['on' + event] = null
+    el[`on${event}`] = null
   }
 }
 
@@ -57,15 +57,15 @@ export function prependHtml(el, html) {
 }
 
 function insertHtml(el, html, func = 'appendChild') {
-  let div = document.createElement('div')
+  const div = document.createElement('div')
   div.innerHTML = html
-  let nodes = div.childNodes,
-    fragment = document.createDocumentFragment()
-  let _nodes = []
-  for (let node of nodes) {
-    let el = node.cloneNode(true)
+  const nodes = div.childNodes
+  let fragment = document.createDocumentFragment()
+  const _nodes = []
+  for (const node of nodes) {
+    const el = node.cloneNode(true)
     _nodes.push(el)
-    fragment.appendChild(el)
+    fragment.append(el)
   }
   el[func](fragment)
   fragment = null

@@ -1,9 +1,7 @@
 import { action } from '@formily/reactive'
-import {
-  fetchDatabaseTypeByPdkHash,
-  metadataInstancesApi,
-  taskApi,
-} from '@tap/api'
+import { fetchDatabaseTypeByPdkHash } from '@tap/api/src/core/database-types'
+import { getNodeSchemaPage } from '@tap/api/src/core/metadata-instances'
+import { refreshTaskSchema } from '@tap/api/src/core/task'
 import { IconButton } from '@tap/component/src/icon-button'
 import { mapFieldsData, useField, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
@@ -89,7 +87,7 @@ export const SchemaPreview = defineComponent({
       try {
         const {
           items: [schema = {}],
-        } = await metadataInstancesApi.nodeSchemaPage(params)
+        } = await getNodeSchemaPage(params)
 
         tableName.value =
           schema.name || form.values.tableName || form.values.name
@@ -289,14 +287,12 @@ export const SchemaPreview = defineComponent({
     const refreshSchema = async () => {
       if (refreshing.value) return
       refreshing.value = true
-      await taskApi
-        .refreshSchema(taskId, {
-          nodeIds: activeNodeId,
-          keys: form.values.tableName,
-        })
-        .finally(() => {
-          refreshing.value = false
-        })
+      await refreshTaskSchema(taskId, {
+        nodeIds: activeNodeId,
+        keys: form.values.tableName,
+      }).finally(() => {
+        refreshing.value = false
+      })
     }
 
     function remove(children, vm) {

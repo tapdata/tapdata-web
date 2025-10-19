@@ -1,13 +1,15 @@
 <script setup lang="ts">
+import { fetchApiClientNames } from '@tap/api/src/core/api-calls'
 import {
-  fetchApiClientNames,
   fetchApiList,
   fetchApiMonitorPreview,
   fetchApiRankLists,
+} from '@tap/api/src/core/api-monitor'
+import {
   fetchApiServerCpuMem,
-  useRequest,
   type ApiServerCpuMem,
-} from '@tap/api'
+} from '@tap/api/src/core/api-server'
+import { useRequest } from '@tap/api/src/request'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { dayjs } from '@tap/business/src/shared/dayjs'
 import { VTable } from '@tap/component/src/base/v-table'
@@ -136,7 +138,7 @@ const page = reactive<PageInfo>({
   apiListTotal: 0,
 })
 
-const searchParams = reactive<SearchParams>({
+const searchParams = ref<SearchParams>({
   keyword: '',
   clientName: '',
   status: '',
@@ -373,7 +375,7 @@ const getApiList = (pageNum?: number) => {
     page.apiListCurrent = pageNum
   }
   const { apiListCurrent } = page
-  const { keyword, status, clientName } = searchParams
+  const { keyword, status, clientName } = searchParams.value
 
   const where: any = {}
   if (keyword && keyword.trim()) {

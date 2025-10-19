@@ -1,33 +1,14 @@
 <script setup lang="ts">
-import {
-  CancelToken,
-  discoveryApi,
-  ldpApi,
-  metadataDefinitionsApi,
-  taskApi,
-} from '@tap/api'
+import { checkLDPCanStartByTag, createFDMTask } from '@tap/api/src/core/ldp'
+import { checkTaskName } from '@tap/api/src/core/task'
 import { DatabaseIcon } from '@tap/business/src/components/DatabaseIcon'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
-import {
-  makeDragNodeImage,
-  makeStatusAndDisabled,
-  TASK_SETTINGS,
-} from '@tap/business/src/shared'
+import { TASK_SETTINGS } from '@tap/business/src/shared'
 import TableSelector from '@tap/dag/src/components/form/table-selector/TableSelector.vue'
 import { validateCron } from '@tap/form/src/shared/validate'
 import { useI18n } from '@tap/i18n'
 import { generateId, uuid } from '@tap/shared'
-import {
-  computed,
-  h,
-  inject,
-  nextTick,
-  onBeforeUnmount,
-  onMounted,
-  ref,
-  useTemplateRef,
-  watch,
-} from 'vue'
+import { h, inject, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import type { FormInstance } from 'element-plus'
 
@@ -89,7 +70,7 @@ async function validateTaskName(rule: any, value: string, callback: any) {
     callback(new Error(t('packages_business_relation_list_qingshururenwu')))
   } else {
     try {
-      const isExist = await taskApi.checkName({
+      const isExist = await checkTaskName({
         name: value,
       })
       if (isExist) {
@@ -210,7 +191,7 @@ async function checkCanStart() {
         .replace(/_$/, '')
     }
 
-    taskDialogConfig.value.canStart = await ldpApi.checkCanStartByTag(tag.id)
+    taskDialogConfig.value.canStart = await checkLDPCanStartByTag(tag.id)
   } else {
     taskDialogConfig.value.canStart = true
     syncedAlertTitle.value = ''
@@ -403,7 +384,7 @@ function taskDialogSubmit(start: boolean) {
     creating.value = true
 
     try {
-      const result = await ldpApi.createFDMTask(task, {
+      const result = await createFDMTask(task, {
         silenceMessage: true,
         params: { start },
       })

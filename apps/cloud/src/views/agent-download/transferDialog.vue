@@ -1,13 +1,35 @@
+<script>
+import { $emit } from '../../../utils/gogocodeTransfer'
+export default {
+  name: 'TransferDialog',
+  inject: ['buried'],
+  props: {
+    visible: {
+      type: Boolean,
+    },
+    price: {
+      type: String,
+    },
+  },
+  emits: ['update:visible'],
+  methods: {
+    close() {
+      $emit(this, 'update:visible', false)
+    },
+  },
+}
+</script>
+
 <template>
   <el-dialog
     :model-value="visible"
-    @input="$emit('update:visible', $event)"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :append-to-body="true"
     :title="$t('dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu')"
     width="1000px"
     class="tap-dialog"
+    @input="$emit('update:visible', $event)"
   >
     <div class="transfer-info transfer-price mt-4 mb-4">
       {{ $t('dfs_agent_zhuanzhang_price') }}:
@@ -19,7 +41,9 @@
       </header>
       <ul class="transfer-ul">
         <li>
-          <span>{{ $t('dfs_agent_download_transferdialog_kaihumingcheng') }}</span
+          <span>{{
+            $t('dfs_agent_download_transferdialog_kaihumingcheng')
+          }}</span
           ><span class="font-color-dark fw-normal ml-1">{{
             $t('dfs_agent_download_transferdialog_shenzhentaiboshu')
           }}</span>
@@ -31,7 +55,9 @@
           }}</span>
         </li>
         <li>
-          <span>{{ $t('dfs_agent_download_transferdialog_huikuanzhanghao') }}</span
+          <span>{{
+            $t('dfs_agent_download_transferdialog_huikuanzhanghao')
+          }}</span
           ><span class="font-color-dark fw-normal ml-1">160313199</span>
         </li>
       </ul>
@@ -42,36 +68,16 @@
     <div class="primary">
       {{ $t('dfs_agent_download_transferdialog_reopen_tips') }}
     </div>
-    <template v-slot:footer>
+    <template #footer>
       <div>
         <el-button @click="close">{{ $t('public_button_cancel') }}</el-button>
-        <el-button type="primary" @click="close">{{ $t('public_button_confirm') }}</el-button>
+        <el-button type="primary" @click="close">{{
+          $t('public_button_confirm')
+        }}</el-button>
       </div>
     </template>
   </el-dialog>
 </template>
-
-<script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-export default {
-  name: 'transferDialog',
-  inject: ['buried'],
-  props: {
-    visible: {
-      type: Boolean,
-    },
-    price: {
-      type: String,
-    },
-  },
-  methods: {
-    close() {
-      $emit(this, 'update:visible', false)
-    },
-  },
-  emits: ['update:visible'],
-}
-</script>
 
 <style lang="scss" scoped>
 .transfer-info {

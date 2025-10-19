@@ -1,4 +1,4 @@
-import { observable, define, action } from '@formily/reactive'
+import { action, define, observable } from '@formily/reactive'
 import { KeyCode } from '@tap/shared'
 import { Shortcut } from './Shortcut'
 
@@ -44,7 +44,9 @@ export class Keyboard {
   }
 
   excludes(key) {
-    this.sequence = this.sequence.filter((code) => !Shortcut.matchCode(key, code))
+    this.sequence = this.sequence.filter(
+      (code) => !Shortcut.matchCode(key, code),
+    )
   }
 
   addKeyCode(key) {
@@ -65,10 +67,8 @@ export class Keyboard {
 
   handleModifiers(event) {
     Modifiers.forEach(([key, code]) => {
-      if (event[key]) {
-        if (!this.includes(code)) {
-          this.sequence = [code].concat(this.sequence)
-        }
+      if (event[key] && !this.includes(code)) {
+        this.sequence = [code].concat(this.sequence)
       }
     })
   }

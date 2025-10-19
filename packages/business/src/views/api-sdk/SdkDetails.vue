@@ -1,21 +1,18 @@
 <script setup lang="ts">
+import { fetchApiClients, type ApiClientVo } from '@tap/api/src/core/api-client'
+import { fetchApiServers } from '@tap/api/src/core/api-server'
 import {
   deleteSdkVersion,
-  fetchApiClients,
-  fetchApiModules,
-  fetchApiServers,
   fetchSdk,
   fetchSdkVersionApiList,
   fetchSdkVersions,
-  useRequest,
-  type ApiClientVo,
-} from '@tap/api'
+} from '@tap/api/src/core/sdk'
+import { useRequest } from '@tap/api/src/request'
 import { Modal } from '@tap/component/src/modal'
-import { RightBoldOutlined } from '@tap/component/src/RightBoldOutlined'
 import { useI18n } from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
 import { debounce } from 'lodash-es'
-import { computed, nextTick, onBeforeMount, ref, toRefs, watch } from 'vue'
+import { computed, nextTick, onBeforeMount, ref, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
 import { dayjs } from '../../shared/dayjs'
@@ -500,7 +497,9 @@ onBeforeMount(() => {
           </div>
         </div>
 
-        <div class="bg-light dark:bg-white/5 rounded-xl min-h-0 flex flex-column">
+        <div
+          class="bg-light dark:bg-white/5 rounded-xl min-h-0 flex flex-column"
+        >
           <div class="px-4 py-2 fs-6 lh-8">{{ $t('public_api_list') }}</div>
           <div class="px-2 pb-2 flex-1 min-h-0">
             <div

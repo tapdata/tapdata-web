@@ -1,16 +1,27 @@
-import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
-import { h as createElement, useForm, useField, useFieldSchema, RecursionField } from '@tap/form'
-import { observer } from '@formily/reactive-vue'
-import { FormBaseItem as FormItem } from '@tap/form'
-import { watch, defineComponent } from 'vue'
-import './style.scss'
 import { action } from '@formily/reactive'
+import { observer } from '@formily/reactive-vue'
+import {
+  h as createElement,
+  RecursionField,
+  useField,
+  useFieldSchema,
+  useForm,
+} from '@tap/form'
+import { defineComponent, watch } from 'vue'
+import './style.scss'
 
 export const JoinExpression = observer(
   defineComponent({
     name: 'JoinExpression',
 
-    props: ['fields', 'value', 'findNodeById', 'loadNodeFieldNamesById', 'leftNodeId', 'rightNodeId'],
+    props: [
+      'fields',
+      'value',
+      'findNodeById',
+      'loadNodeFieldNamesById',
+      'leftNodeId',
+      'rightNodeId',
+    ],
 
     setup(props) {
       const formRef = useForm()
@@ -21,17 +32,23 @@ export const JoinExpression = observer(
         let fieldNames = []
 
         if (id) {
-          formRef.value.setFieldState(`${fieldRef.value.address}.*.${target}`, (state) => {
-            state.loading = true
-          })
+          formRef.value.setFieldState(
+            `${fieldRef.value.address}.*.${target}`,
+            (state) => {
+              state.loading = true
+            },
+          )
 
           fieldNames = await props.loadNodeFieldNamesById(id)
         }
 
-        formRef.value.setFieldState(`${fieldRef.value.address}.*.${target}`, (state) => {
-          state.dataSource = fieldNames
-          state.loading = false
-        })
+        formRef.value.setFieldState(
+          `${fieldRef.value.address}.*.${target}`,
+          (state) => {
+            state.dataSource = fieldNames
+            state.loading = false
+          },
+        )
       }
 
       watch(
@@ -64,8 +81,12 @@ export const JoinExpression = observer(
         const form = formRef.value
         const schema = schemaRef.value
         const fieldArr = props.value
-        const leftTitle = form.getFieldState(`${fieldRef.value.address}.*.left`)?.title
-        const rightTitle = form.getFieldState(`${fieldRef.value.address}.*.right`)?.title
+        const leftTitle = form.getFieldState(
+          `${fieldRef.value.address}.*.left`,
+        )?.title
+        const rightTitle = form.getFieldState(
+          `${fieldRef.value.address}.*.right`,
+        )?.title
         const { leftNodeId, rightNodeId } = props
         const leftNodeName = props.findNodeById(leftNodeId)?.name
         const rightNodeName = props.findNodeById(rightNodeId)?.name
@@ -131,7 +152,11 @@ export const JoinExpression = observer(
                 </FormItem>
                 <div class="join-field  flex-1">{right}</div>
                 <FormItem>
-                  <ElButton class="ml-1 align-middle" text onClick={() => handleAdd()}>
+                  <ElButton
+                    class="ml-1 align-middle"
+                    text
+                    onClick={() => handleAdd()}
+                  >
                     {{
                       icon: () => <VIcon size={16}>plus</VIcon>,
                     }}
@@ -156,7 +181,12 @@ export const JoinExpression = observer(
           <div class="join-expression">
             <div class="join-name-wrap flex align-center">
               <div class="join-name flex text-nowrap flex-1">
-                {leftTitle}：<OverflowTooltip class="ml-1" placement="top" text={leftNodeName}></OverflowTooltip>
+                {leftTitle}：
+                <OverflowTooltip
+                  class="ml-1"
+                  placement="top"
+                  text={leftNodeName}
+                ></OverflowTooltip>
               </div>
               <div class="join-operator">
                 <ElButton text onClick={handleExchange} type="primary">
@@ -166,7 +196,12 @@ export const JoinExpression = observer(
                 </ElButton>
               </div>
               <div class="join-name flex text-nowrap flex-1">
-                {rightTitle}：<OverflowTooltip class="ml-1" placement="top" text={rightNodeName}></OverflowTooltip>
+                {rightTitle}：
+                <OverflowTooltip
+                  class="ml-1"
+                  placement="top"
+                  text={rightNodeName}
+                ></OverflowTooltip>
               </div>
             </div>
             {renderItems()}

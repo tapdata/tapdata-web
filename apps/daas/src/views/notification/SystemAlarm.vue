@@ -1,5 +1,5 @@
 <script>
-import { closeAlarms, listAlarms } from '@tap/api'
+import { closeAlarms, listAlarms } from '@tap/api/src/core/alarm'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
 import {

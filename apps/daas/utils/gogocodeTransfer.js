@@ -46,7 +46,7 @@ export function $off(instance, event, fn) {
     events[event] = undefined
     return vm
   }
-  events[event] = cbs.filter((cb) => !(cb === fn || cb.fn === fn))
+  events[event] = cbs.filter((cb) => cb !== fn && cb.fn !== fn)
   return vm
 }
 export function $emit(instance, event, ...args) {
@@ -73,8 +73,8 @@ export function plantRenderPara(params) {
           return { [pk]: Object.values(obj)[index] }
         })
   }
-  let result = {}
-  for (let key in params) {
+  const result = {}
+  for (const key in params) {
     if (transProps[key] == null) {
       if (typeof params[key] == 'object') {
         result[key] = obj2arr(params[key])
@@ -83,10 +83,10 @@ export function plantRenderPara(params) {
       }
     }
   }
-  for (let key in params) {
+  for (const key in params) {
     if (transProps[key] === '') {
       if (typeof params[key] == 'object') {
-        for (let k in params[key]) {
+        for (const k in params[key]) {
           result[k] = params[key][k]
         }
       } else {
@@ -94,10 +94,12 @@ export function plantRenderPara(params) {
       }
     }
   }
-  for (let key in params) {
+  for (const key in params) {
     if (transProps[key]) {
       result[transProps[key]] = result[transProps[key]] || []
-      result[transProps[key]] = result[transProps[key]].concat(obj2arr(params[key]))
+      result[transProps[key]] = result[transProps[key]].concat(
+        obj2arr(params[key]),
+      )
     }
   }
   return result

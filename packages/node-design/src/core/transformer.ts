@@ -41,11 +41,12 @@ export const transformToSchema = (node, options) => {
     }
     schema['x-designable-id'] = node.id
     if (schema.type === 'array') {
-      if (node.children[0]) {
-        if (node.children[0].componentName === realOptions.designableFieldName) {
-          schema.items = createSchema(node.children[0])
-          schema['x-index'] = 0
-        }
+      if (
+        node.children[0] &&
+        node.children[0].componentName === realOptions.designableFieldName
+      ) {
+        schema.items = createSchema(node.children[0])
+        schema['x-index'] = 0
       }
       node.children.slice(1).forEach((child, index) => {
         if (child.componentName !== realOptions.designableFieldName) return
@@ -83,11 +84,11 @@ export const transformToTreeNode = (formily = {}, options) => {
   }
   const schema = new Schema(formily.schema)
   const cleanProps = (props) => {
-    if (props['name'] === props['x-designable-id']) {
+    if (props.name === props['x-designable-id']) {
       delete props.name
     }
-    delete props['version']
-    delete props['_isJSONSchemaObject']
+    delete props.version
+    delete props._isJSONSchemaObject
     return props
   }
   const appendTreeNode = (parent, schema) => {

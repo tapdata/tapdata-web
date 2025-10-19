@@ -1,20 +1,20 @@
 import { action, define, observable, toJS } from '@formily/reactive'
-import { uid, isFn } from '@tap/shared'
+import { isFn, uid } from '@tap/shared'
 import {
-  InsertBeforeEvent,
-  InsertAfterEvent,
-  InsertChildrenEvent,
-  PrependNodeEvent,
   AppendNodeEvent,
-  WrapNodeEvent,
-  UpdateChildrenEvent,
-  RemoveNodeEvent,
-  UpdateNodePropsEvent,
   CloneNodeEvent,
   FromNodeEvent,
+  InsertAfterEvent,
+  InsertBeforeEvent,
+  InsertChildrenEvent,
+  PrependNodeEvent,
+  RemoveNodeEvent,
+  UpdateChildrenEvent,
+  UpdateNodePropsEvent,
+  WrapNodeEvent,
 } from '../events'
-import { GlobalRegistry } from '../registry'
 import { mergeLocales } from '../internals'
+import { GlobalRegistry } from '../registry'
 
 // 资源的节点Node
 const TreeNodes = new Map()
@@ -24,7 +24,9 @@ const CommonDesignerPropsMap = new Map()
 
 const removeNode = (node) => {
   if (node.parent) {
-    node.parent.children = node.parent.children.filter((child) => child !== node)
+    node.parent.children = node.parent.children.filter(
+      (child) => child !== node,
+    )
   }
 }
 
@@ -164,13 +166,11 @@ export class TreeNode {
   }
 
   get previous() {
-    // eslint-disable-next-line getter-return
     if (this.parent === this || !this.parent) return
     return this.parent.children[this.index - 1]
   }
 
   get next() {
-    // eslint-disable-next-line getter-return
     if (this.parent === this || !this.parent) return
     return this.parent.children[this.index + 1]
   }
@@ -202,7 +202,7 @@ export class TreeNode {
   }
 
   get lastChild() {
-    return this.children[this.children.length - 1]
+    return this.children.at(-1)
   }
 
   get firstChild() {
@@ -227,11 +227,13 @@ export class TreeNode {
 
   getParents(node) {
     const _node = node || this
-    return _node?.parent ? [_node.parent].concat(this.getParents(_node.parent)) : []
+    return _node?.parent
+      ? [_node.parent].concat(this.getParents(_node.parent))
+      : []
   }
 
   getParentByDepth(depth = 0) {
-    let parent = this.parent
+    const parent = this.parent
     if (parent?.depth === depth) {
       return parent
     } else {
@@ -389,7 +391,11 @@ export class TreeNode {
 
   contains(...nodes) {
     return nodes.every((node) => {
-      if (node === this || node?.parent === this || node?.getParentByDepth(this.depth) === this) {
+      if (
+        node === this ||
+        node?.parent === this ||
+        node?.getParentByDepth(this.depth) === this
+      ) {
         return true
       }
       return false

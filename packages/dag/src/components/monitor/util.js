@@ -1,5 +1,5 @@
 export function getPieOptions(data, op) {
-  let options = {
+  const options = {
     tooltip: {
       trigger: 'item',
       backgroundColor: '#364252',
@@ -58,7 +58,7 @@ export function getPieOptions(data, op) {
     ],
   }
   if (op) {
-    for (let key in op) {
+    for (const key in op) {
       if (key === 'series') {
         options[key].forEach((el, index) => {
           Object.assign(el, op[key][index])
@@ -79,7 +79,8 @@ export function getPieOptions(data, op) {
       }
     })
     options.legend.formatter = (name) => {
-      const count = options.series[0].data?.find((t) => t.name === name)?.value || 0
+      const count =
+        options.series[0].data?.find((t) => t.name === name)?.value || 0
       const arr = [`{orgname|${name}}`, `{count|${count.toLocaleString()}}`]
       return arr.join('')
     }

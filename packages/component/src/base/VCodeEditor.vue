@@ -160,7 +160,7 @@ onMounted(() => {
       width: width ? px(width) : '100%',
       padding: '12px 0',
       overflow: 'hidden',
-      background: '#282c34',
+      // background: '#282c34',
     }"
   >
     <div

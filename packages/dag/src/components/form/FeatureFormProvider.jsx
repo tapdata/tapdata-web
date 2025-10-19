@@ -1,11 +1,10 @@
 import { defineComponent } from 'vue'
-import { FormProvider } from '@formily/vue'
 import { useStore } from 'vuex'
 
 // 定义需要 feature 控制的配置路径及其对应的 feature code
 const FEATURE_CONTROLS = {
   fullBreakpointResume: 'resume',
-  shareCache: 'tabs.advancedTab.sourceCollapse.sharedCache'
+  shareCache: 'tabs.advancedTab.sourceCollapse.sharedCache',
 }
 
 export const FeatureFormProvider = defineComponent({
@@ -25,17 +24,19 @@ export const FeatureFormProvider = defineComponent({
         const isEnabled = hasFeature(feature)
 
         if (!isEnabled) {
-          props.form.setFieldState(path, state => {
+          props.form.setFieldState(path, (state) => {
             console.log('state', state)
             // 保存原有的 display 状态
             const originalDisplay = state.display
 
             // 设置一个观察函数来保持对原有 reactions 的响应
-            state.display = state => {
+            state.display = (state) => {
               // 如果功能被禁用，始终返回 hidden
               if (!isEnabled) return 'hidden'
               // 否则返回原有的 display 值（可能是字符串或函数）
-              return typeof originalDisplay === 'function' ? originalDisplay(state) : originalDisplay
+              return typeof originalDisplay === 'function'
+                ? originalDisplay(state)
+                : originalDisplay
             }
           })
         }
@@ -44,6 +45,8 @@ export const FeatureFormProvider = defineComponent({
 
     setupFeatureControls()
 
-    return () => <FormProvider form={props.form}>{slots.default?.()}</FormProvider>
-  }
+    return () => (
+      <FormProvider form={props.form}>{slots.default?.()}</FormProvider>
+    )
+  },
 })

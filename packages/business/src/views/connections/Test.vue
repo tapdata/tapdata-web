@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { proxyApi, updateConnectionById } from '@tap/api'
+import { updateConnectionById } from '@tap/api/src/core/connections'
+import { callProxy } from '@tap/api/src/core/proxy'
 import loadingImg from '@tap/assets/images/loading.gif'
 import i18n from '@tap/i18n'
 import { copyToClipboard, openUrl } from '@tap/shared'
@@ -373,19 +374,17 @@ const showError = async (row: any) => {
   errorDialog.value.isWarning = row.status === 'failed' && !row.required
 
   if (row.error_code) {
-    const data = (await proxyApi
-      .call({
-        className: 'ErrorCodeService',
-        method: 'getErrorCodeWithDynamic',
-        args: [
-          row.error_code,
-          (i18n as any).locale === 'en' ? 'en' : 'cn',
-          row.dynamicDescriptionParameters,
-        ],
-      })
-      .catch((error) => {
-        console.error(error)
-      })) as ErrorCodeResponse
+    const data = (await callProxy({
+      className: 'ErrorCodeService',
+      method: 'getErrorCodeWithDynamic',
+      args: [
+        row.error_code,
+        (i18n as any).locale === 'en' ? 'en' : 'cn',
+        row.dynamicDescriptionParameters,
+      ],
+    }).catch((error) => {
+      console.error(error)
+    })) as ErrorCodeResponse
 
     if (data) {
       errorDialog.value.title = data.fullErrorCode || data.errorCode || ''

@@ -1,12 +1,7 @@
-import { proxyApi } from '@tap/api'
-import { VEmpty } from '@tap/component/src/base/v-empty'
-import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
+import { commandProxy, getCallHistory } from '@tap/api/src/core/proxy'
 import resize from '@tap/component/src/directives/resize'
-import { Form } from '@tap/form/src/components/ElementPlus'
-import { HighlightCode } from '@tap/form/src/components/highlight-code'
 import { observer } from '@tap/form/src/FormilyReactiveVue'
 import { createForm } from '@tap/form/src/FormilyVue'
-import { SchemaField } from '@tap/form/src/shared/create'
 import i18n from '@tap/i18n'
 import { computed, defineComponent, reactive, ref, watch } from 'vue'
 
@@ -75,17 +70,16 @@ export const JsDebug = observer(
       const handleRun = async () => {
         const { pdkHash } = props.pdkOptions || {}
         running.value = true
-        proxyApi
-          .command({
-            pdkHash,
-            type: 'connection',
-            connectionConfig: connForm.values,
-            command: 'TryRun',
-            argMap: {
-              before: JSON.parse(inputRef.value),
-              logSize: 100,
-            },
-          })
+        commandProxy({
+          pdkHash,
+          type: 'connection',
+          connectionConfig: connForm.values,
+          command: 'TryRun',
+          argMap: {
+            before: JSON.parse(inputRef.value),
+            logSize: 100,
+          },
+        })
           .then((data = {}) => {
             outputRef.value = JSON.stringify(data.after, null, 2)
             logList.value = data.logs || []
@@ -97,11 +91,10 @@ export const JsDebug = observer(
 
       const handleGetParams = async () => {
         paramsLoading.value = true
-        proxyApi
-          .callHistory({
-            connectionId: `source#${props.connectionId}`,
-            dataSize: params.rows,
-          })
+        getCallHistory({
+          connectionId: `source#${props.connectionId}`,
+          dataSize: params.rows,
+        })
           .then((data) => {
             inputRef.value = JSON.stringify(data, null, 2)
           })

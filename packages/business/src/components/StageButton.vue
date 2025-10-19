@@ -1,9 +1,9 @@
 <script>
 import {
   getConnectionNoSchema,
-  metadataInstancesApi,
   updateConnectionById,
-} from '@tap/api'
+} from '@tap/api/src/core/connections'
+import { deleteLogicSchema } from '@tap/api/src/core/metadata-instances'
 import i18n from '@tap/i18n'
 
 import { mapActions } from 'vuex'
@@ -83,11 +83,9 @@ export default {
           this.progress = `${100}%`
           const { taskId, nodeId } = this
           if (!check && taskId && nodeId) {
-            metadataInstancesApi
-              .deleteLogicSchema(taskId, {
-                nodeId,
-              })
-              .then(this.updateDag)
+            deleteLogicSchema(taskId, {
+              nodeId,
+            }).then(this.updateDag)
           }
           !check && this.$emit('complete') // 防止跟父组件的加载重复
           this.loading = false

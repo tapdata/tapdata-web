@@ -102,7 +102,6 @@ declare module 'vue' {
     'IMingcute:searchLine': typeof import('~icons/mingcute/search-line')['default']
     'IMingcute:warningFill': typeof import('~icons/mingcute/warning-fill')['default']
     InlineInput: typeof import('./components/InlineInput.vue')['default']
-    Main: typeof import('./components/v-confirm/Main.vue')['default']
     MarketplaceGuide: typeof import('./components/MarketplaceGuide.vue')['default']
     Pay: typeof import('./components/guide/Pay.vue')['default']
     Renew: typeof import('./components/Renew.vue')['default']

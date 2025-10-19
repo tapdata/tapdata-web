@@ -1,7 +1,8 @@
-import { discoveryApi } from '@tap/api'
-import { OverflowTooltip } from '@tap/component/src/base/overflow-tooltip'
-import { VTable } from '@tap/component/src/base/v-table'
-import NodeViewer from '@tap/dag/src/nodeView.vue'
+import {
+  getApiOverview,
+  getStorageOverview,
+  getTaskOverview,
+} from '@tap/api/src/core/discovery'
 import dayjs from 'dayjs'
 import { computed, defineComponent, reactive, ref } from 'vue'
 import i18n from '@/i18n'
@@ -142,8 +143,7 @@ export const PreviewDrawer = defineComponent({
         switch (row.category || row.type) {
           case 'storage':
             data.loading = true
-            discoveryApi
-              .overViewStorage(row.id)
+            getStorageOverview(row.id)
               .then((res) => {
                 const newData = res
                 newData.fields = format(res.fields)
@@ -156,8 +156,7 @@ export const PreviewDrawer = defineComponent({
             break
           case 'api':
             data.loading = true
-            discoveryApi
-              .overViewApi(row.id)
+            getApiOverview(row.id)
               .then((res) => {
                 const newData = res
                 newData.fields = format(res.fields)
@@ -187,8 +186,7 @@ export const PreviewDrawer = defineComponent({
             break
           case 'job':
             data.loading = true
-            discoveryApi
-              .overViewTask(row.id)
+            getTaskOverview(row.id)
               .then((res) => {
                 const newData = res
                 //数据格式化

@@ -1,6 +1,6 @@
 import { observer } from '@formily/reactive-vue'
 import { connect, mapProps } from '@formily/vue'
-import { taskApi } from '@tap/api'
+import { getCurrentEngineTime } from '@tap/api/src/core/task'
 import { dayjs } from '@tap/business/src/shared/dayjs'
 import { DownBoldOutlined } from '@tap/component/src/DownBoldOutlined'
 import { useField, useForm } from '@tap/form'
@@ -41,7 +41,7 @@ const RelativeTimePickerComponent = defineComponent({
     const engineDate = ref(dayjs())
     const loadCurrentEngineTime = async () => {
       try {
-        const date = await taskApi.getCurrentEngineTime()
+        const date = await getCurrentEngineTime()
         engineDate.value = dayjs(date)
       } catch {
         engineDate.value = dayjs()

@@ -1,12 +1,12 @@
 <script>
-import { closeAlarms } from '@tap/api'
+import { closeAlarms } from '@tap/api/src/core/alarm'
 import { ALARM_LEVEL_MAP, ALARM_STATUS_MAP } from '@tap/business'
 
 import { OverflowTooltip, SelectList, VIcon, VTable } from '@tap/component'
 
 import i18n from '@tap/i18n'
 import { mapGetters } from 'vuex'
-import { $emit, $off, $on, $once } from '../../../../utils/gogocodeTransfer'
+import { $emit } from '../../../../utils/gogocodeTransfer'
 
 export default {
   name: 'Alert',

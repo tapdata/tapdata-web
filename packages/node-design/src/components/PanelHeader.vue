@@ -1,3 +1,12 @@
+<script>
+import { VIcon } from '@tap/component'
+
+export default {
+  name: 'PanelHeader',
+  components: { VIcon },
+}
+</script>
+
 <template>
   <div class="panel-header flex align-center border-bottom">
     <div class="panel-header-nav text-center">
@@ -15,12 +24,3 @@
     </div>
   </div>
 </template>
-
-<script>
-import { VIcon } from '@tap/component'
-
-export default {
-  name: 'PanelHeader',
-  components: { VIcon },
-}
-</script>

@@ -1,5 +1,5 @@
 <script>
-import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
+import { $emit } from '../../utils/gogocodeTransfer'
 import VIcon from '../base/VIcon'
 
 export default {

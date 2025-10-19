@@ -4,7 +4,7 @@ import {
   pageReadNotification,
   patchNotification,
   readAllNotifications,
-} from '@tap/api'
+} from '@tap/api/src/core/notification'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import PageContainer from '../../components/PageContainer.vue'
 import { ALARM_LEVEL_MAP } from '../../shared/const'

@@ -1,6 +1,6 @@
 <script>
 export default {
-  name: 'queryCond',
+  name: 'QueryCond',
   props: {
     primaryKeyOptions: {
       type: Array,
@@ -24,14 +24,21 @@ export default {
       },
     },
   },
+  emits: ['update:value', 'remove'],
+  data() {
+    return {
+      calculationList: ['=', '<>', '>', '<', '>=', '<=', 'like'],
+      color: 'level1',
+    }
+  },
   computed: {
     conditions() {
       return this.value.conditions
     },
     isDatetime() {
-      let field = this.fields.filter((v) => v.value === this.queryField)[0]
+      const field = this.fields.find((v) => v.value === this.queryField)
       if (field) {
-        let type = field.type
+        const type = field.type
 
         if (type === 'string' && field.format === 'date-time') {
           return true
@@ -40,15 +47,6 @@ export default {
       return false
     },
   },
-  data() {
-    return {
-      calculationList: ['=', '<>', '>', '<', '>=', '<=', 'like'],
-      color: 'level1',
-    }
-  },
-  mounted() {
-    this.color = 'level' + ((this.level % 7) + 1)
-  },
   watch: {
     value: {
       deep: true,
@@ -56,6 +54,9 @@ export default {
         this.$emit('update:value', this.value)
       },
     },
+  },
+  mounted() {
+    this.color = `level${(this.level % 7) + 1}`
   },
   methods: {
     handleCommand(command) {
@@ -70,7 +71,7 @@ export default {
       if (type === 'group') {
         child = {
           type: 'group',
-          operator: operator,
+          operator,
           conditions: [
             {
               type: 'condition',
@@ -83,7 +84,7 @@ export default {
       } else if (type === 'condition') {
         child = {
           type: 'condition',
-          operator: operator,
+          operator,
           field: '',
           command: '',
           value: '',
@@ -98,7 +99,6 @@ export default {
       if (this.value.conditions.length == 0) this.$emit('remove')
     },
   },
-  emits: ['update:value', 'remove'],
 }
 </script>
 
@@ -107,7 +107,10 @@ export default {
     <div v-for="(cond, idx) in value.conditions" :key="idx">
       <span
         v-if="
-          (cond.type == 'group' && cond.conditions.length > 0 && cond.operator && cond.operator.length > 0) ||
+          (cond.type == 'group' &&
+            cond.conditions.length > 0 &&
+            cond.operator &&
+            cond.operator.length > 0) ||
           (cond.type != 'group' && cond.operator && cond.operator.length > 0)
         "
         class="cond-operator"
@@ -115,43 +118,75 @@ export default {
       >
       <queryCond
         v-if="cond.type == 'group'"
-        :primaryKeyOptions="primaryKeyOptions"
-        :databaseType="databaseType"
         v-model:value="value.conditions[idx]"
+        :primary-key-options="primaryKeyOptions"
+        :database-type="databaseType"
         @remove="removeChild(idx)"
-      ></queryCond>
+      />
       <div v-if="cond.type != 'group'" class="item">
         <div class="field">
           <el-select v-model="cond.field" filterable placeholder="select field">
-            <el-option v-for="item in primaryKeyOptions" :key="item" :label="item" :value="item"></el-option>
+            <el-option
+              v-for="item in primaryKeyOptions"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
           </el-select>
         </div>
         <div class="field">
           <el-select v-model="cond.command" placeholder="select op">
-            <el-option v-for="item in calculationList" :label="item" :value="item" :key="item"></el-option>
+            <el-option
+              v-for="item in calculationList"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
           </el-select>
         </div>
 
         <div class="field">
-          <el-input placeholder="enter value" v-if="!cond.isDatetime" text v-model="cond.value"></el-input>
+          <el-input
+            v-if="!cond.isDatetime"
+            v-model="cond.value"
+            placeholder="enter value"
+            text
+          />
           <el-date-picker
             v-if="cond.isDatetime"
             v-model="cond.value"
             type="datetime"
             :placeholder="$t('daas_components_querycond_xuanzeriqishi')"
-          ></el-date-picker>
+          />
         </div>
 
         <div class="field">
           <div class="btn" style="width: 52px">
-            <span class="el-icon-close" @click="removeChild(idx)" style="width: 24px"></span>
+            <span
+              class="el-icon-close"
+              style="width: 24px"
+              @click="removeChild(idx)"
+            />
             <el-dropdown @command="handleCommand">
-              <span class="el-dropdown-link el-icon-plus"></span>
+              <span class="el-dropdown-link el-icon-plus" />
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item v-if="databaseType != 'mongodb'" command="and">+ and</el-dropdown-item>
-                  <el-dropdown-item v-if="databaseType != 'mongodb'" command="or">+ or</el-dropdown-item>
-                  <el-dropdown-item v-if="databaseType == 'mongodb'" command="cond"> + </el-dropdown-item>
+                  <el-dropdown-item
+                    v-if="databaseType != 'mongodb'"
+                    command="and"
+                    >+ and</el-dropdown-item
+                  >
+                  <el-dropdown-item
+                    v-if="databaseType != 'mongodb'"
+                    command="or"
+                    >+ or</el-dropdown-item
+                  >
+                  <el-dropdown-item
+                    v-if="databaseType == 'mongodb'"
+                    command="cond"
+                  >
+                    +
+                  </el-dropdown-item>
                   <el-dropdown-item command="andQ">+ and()</el-dropdown-item>
                   <el-dropdown-item command="orQ">+ or()</el-dropdown-item>
                 </el-dropdown-menu>

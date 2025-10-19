@@ -1,84 +1,9 @@
-<template>
-  <transition name="msgbox-fade">
-    <div v-show="visible" class="message-box__wrapper" tabindex="-1" role="dialog" aria-modal="true">
-      <div
-        :class="['message-box position-relative', customClass, center && 'el-message-box--center']"
-        :style="{ width: width }"
-      >
-        <div class="message-box__header position-relative">
-          <div class="message-box__title flex align-items-center">
-            <VIcon
-              v-if="icon && (haveTitleAndMessage || onlyTitle)"
-              :size="iconSize"
-              :color="iconColor"
-              :class="['v-icon', iconClass]"
-              >{{ icon }}</VIcon
-            >
-            <span v-if="title" :class="titleClass">{{ title }}</span>
-          </div>
-          <button
-            type="button"
-            class="message-box__headerbtn"
-            aria-label="Close"
-            v-if="showClose"
-            @click="handleAction(distinguishCancelAndClose ? 'close' : 'cancel')"
-            @keydown.enter="handleAction(distinguishCancelAndClose ? 'close' : 'cancel')"
-          >
-            <el-icon class="el-message-box__close"><el-icon-close /></el-icon>
-          </button>
-        </div>
-        <div class="message-box__body">
-          <div class="el-message-box__container">
-            <div class="el-message-box__message flex" v-if="message !== ''">
-              <VIcon
-                v-if="icon"
-                :size="iconSize"
-                :color="iconColor"
-                :class="['v-icon', 'flex-shrink-0', { invisible: !onlyMessage }, iconClass]"
-                >{{ icon }}</VIcon
-              >
-              <slot>
-                <div v-if="!dangerouslyUseHTMLString" :class="['message-box__content', messageClass]">
-                  {{ message }}
-                </div>
-                <div v-else v-html="message" :class="['message-box__content', messageClass]"></div>
-              </slot>
-            </div>
-          </div>
-        </div>
-        <div class="message-box__btns">
-          <el-button
-            :loading="cancelButtonLoading"
-            :class="[{ cancelButtonClasses }, 'message-button-cancel']"
-            v-if="showCancelButton"
-            @click="handleAction('cancel')"
-            @keydown.enter="handleAction('cancel')"
-          >
-            {{ cancelButtonText || cancelButtonTextDefault }}
-          </el-button>
-          <el-button
-            type="primary"
-            :loading="confirmButtonLoading"
-            ref="confirm"
-            :class="[confirmButtonClasses]"
-            v-show="showConfirmButton"
-            @click="handleAction('confirm')"
-            @keydown.enter="handleAction('confirm')"
-          >
-            {{ confirmButtonText || confirmButtonTextDefault }}
-          </el-button>
-        </div>
-      </div>
-    </div>
-  </transition>
-</template>
-
 <script>
-import { VIcon } from '@tap/component'
 import error from '@tap/assets/icons/svg/error.svg'
 import info from '@tap/assets/icons/svg/info.svg'
 import success from '@tap/assets/icons/svg/success.svg'
 import warning from '@tap/assets/icons/svg/warning.svg'
+import { VIcon } from '@tap/component'
 import i18n from '@/i18n'
 
 export default {
@@ -88,6 +13,7 @@ export default {
   props: {
     value: Boolean,
   },
+  emits: ['update:value'],
   data() {
     return {
       visible: false,
@@ -133,14 +59,14 @@ export default {
       return `el-button--primary ${this.confirmButtonClass}`
     },
     cancelButtonClasses() {
-      return `${this.cancelButtonClass}`
+      return String(this.cancelButtonClass)
     },
     onlyMessage() {
-      let { title, message } = this
+      const { title, message } = this
       return !title && message
     },
     haveTitleAndMessage() {
-      let { title, message } = this
+      const { title, message } = this
       return title && message
     },
   },
@@ -178,12 +104,112 @@ export default {
         this.iconClass = 'color-danger'
         return
       }
-      this.iconClass = 'color-' + type
+      this.iconClass = `color-${type}`
     },
   },
-  emits: ['update:value'],
 }
 </script>
+
+<template>
+  <transition name="msgbox-fade">
+    <div
+      v-show="visible"
+      class="message-box__wrapper"
+      tabindex="-1"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div
+        :class="[
+          'message-box position-relative',
+          customClass,
+          center && 'el-message-box--center',
+        ]"
+        :style="{ width }"
+      >
+        <div class="message-box__header position-relative">
+          <div class="message-box__title flex align-items-center">
+            <VIcon
+              v-if="icon && (haveTitleAndMessage || onlyTitle)"
+              :size="iconSize"
+              :color="iconColor"
+              :class="['v-icon', iconClass]"
+              >{{ icon }}</VIcon
+            >
+            <span v-if="title" :class="titleClass">{{ title }}</span>
+          </div>
+          <button
+            v-if="showClose"
+            type="button"
+            class="message-box__headerbtn"
+            aria-label="Close"
+            @click="
+              handleAction(distinguishCancelAndClose ? 'close' : 'cancel')
+            "
+            @keydown.enter="
+              handleAction(distinguishCancelAndClose ? 'close' : 'cancel')
+            "
+          >
+            <el-icon class="el-message-box__close"><el-icon-close /></el-icon>
+          </button>
+        </div>
+        <div class="message-box__body">
+          <div class="el-message-box__container">
+            <div v-if="message !== ''" class="el-message-box__message flex">
+              <VIcon
+                v-if="icon"
+                :size="iconSize"
+                :color="iconColor"
+                :class="[
+                  'v-icon',
+                  'flex-shrink-0',
+                  { invisible: !onlyMessage },
+                  iconClass,
+                ]"
+                >{{ icon }}</VIcon
+              >
+              <slot>
+                <div
+                  v-if="!dangerouslyUseHTMLString"
+                  :class="['message-box__content', messageClass]"
+                >
+                  {{ message }}
+                </div>
+                <div
+                  v-else
+                  :class="['message-box__content', messageClass]"
+                  v-html="message"
+                />
+              </slot>
+            </div>
+          </div>
+        </div>
+        <div class="message-box__btns">
+          <el-button
+            v-if="showCancelButton"
+            :loading="cancelButtonLoading"
+            :class="[{ cancelButtonClasses }, 'message-button-cancel']"
+            @click="handleAction('cancel')"
+            @keydown.enter="handleAction('cancel')"
+          >
+            {{ cancelButtonText || cancelButtonTextDefault }}
+          </el-button>
+          <el-button
+            v-show="showConfirmButton"
+            ref="confirm"
+            type="primary"
+            :loading="confirmButtonLoading"
+            :class="[confirmButtonClasses]"
+            @click="handleAction('confirm')"
+            @keydown.enter="handleAction('confirm')"
+          >
+            {{ confirmButtonText || confirmButtonTextDefault }}
+          </el-button>
+        </div>
+      </div>
+    </div>
+  </transition>
+</template>
 
 <style lang="scss" scoped>
 .message-box__wrapper {

@@ -1,162 +1,9 @@
-<template>
-  <ElContainer class="layout-wrap">
-    <!-- 头部导航 -->
-    <ElHeader class="layout-header dfs-header__body" :class="{ isMockUser: mockUserId }">
-      <ElLink class="logo" href="/">
-        <img src="./assets/image/logo.svg" alt="" />
-      </ElLink>
-      <div class="dfs-header__button button-bar pr-4 fs-7 flex gap-4 align-center">
-        <div class="menu-user rounded-4">
-          <div class="username flex align-items-center">
-            <img
-              v-if="user.avatar"
-              :src="user.avatar"
-              alt=""
-              class="mr-2"
-              style="width: 30px; height: 30px; border-radius: 50%"
-            />
-            <VIcon v-else class="mr-2" size="20">account</VIcon>
-            <span>{{ user.username || user.nickname || user.phone || user.email }}</span>
-          </div>
-        </div>
-      </div>
-    </ElHeader>
-    <ElContainer direction="vertical" class="layout-main position-relative">
-      <ElMain class="main rounded-lg">
-        <div class="g-panel-container flex-fill overflow-x-hidden flex flex-column">
-          <FilterBar
-            v-model="searchParams"
-            class="mb-3 flex flex-wrap align-center"
-            :items="filterItems"
-            :changeRoute="false"
-            @fetch="lazyLoadData(1)"
-          />
-
-          <ElTable
-            ref="table"
-            row-key="id"
-            :data="list"
-            height="100%"
-            v-loading="loading"
-            :default-sort="sort"
-            @sort-change="handleSortTable"
-          >
-            <el-table-column :label="$t('packages_business_connection_form_data_source')">
-              <template #default="{ row }">
-                {{ row.metadata.type }}
-                <ElTag class="ml-2" type="info">{{ row.metadata.qcType }}</ElTag>
-              </template>
-            </el-table-column>
-            <el-table-column
-              :label="$t('dfs_agent_download_subscriptionmodeldialog_zhuyaoshiyongchang')"
-              prop="summary"
-            >
-            </el-table-column>
-            <el-table-column :label="$t('packages_business_request_connector_use_time')">
-              <template #default="{ row }">
-                {{ dayMap[row.hoursOfAvailability] || row.hoursOfAvailability }}
-              </template>
-            </el-table-column>
-            <el-table-column :label="$t('dfs_apply_user')" prop="createUser"></el-table-column>
-            <el-table-column :label="$t('dfs_user_contactus_lianxifangshi')" prop="phone">
-              <template #default="{ row }">
-                {{ row.phone || row.email }}
-              </template>
-            </el-table-column>
-            <el-table-column :label="$t('dfs_apply_time')" prop="submitTime" sortable="custom"></el-table-column>
-            <el-table-column :label="$t('dfs_apply_auditor')" prop="reviewer"></el-table-column>
-            <el-table-column
-              :label="$t('dfs_apply_audit_time')"
-              prop="approvalTime"
-              sortable="custom"
-            ></el-table-column>
-            <el-table-column :label="$t('public_status')" prop="status" width="120">
-              <template #default="{ row }">
-                <ElTag v-if="statusMap[row.status]" :type="statusMap[row.status].type"
-                  >{{ statusMap[row.status].text }}
-                </ElTag>
-                <span v-else>{{ row.status }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column :label="$t('public_operation')" width="200">
-              <template #default="{ row }">
-                <div class="flex gap-2">
-                  <ElLink @click="handleApprove(row, $event)" :disabled="row.status !== 'PENDING'" type="primary"
-                    >{{ $t('dfs_apply_pass') }}
-                  </ElLink>
-                  <ElLink :disabled="row.status !== 'PENDING'" @click="handleReject(row, $event)" type="danger"
-                    >{{ $t('dfs_apply_reject') }}
-                  </ElLink>
-                  <ElLink @click="openRemark(row)" type="primary">{{ $t('dfs_apply_comment') }}</ElLink>
-                </div>
-              </template>
-            </el-table-column>
-
-            <template #empty>
-              <div v-if="searchParams.status === 'PENDING'" class="flex flex-column gap-3 lh-base">
-                👍 {{ $t('dfs_all_approvals_completed') }}
-                <ElLink @click="handleViewAll" type="primary">{{ $t('public_view_all') }}</ElLink>
-              </div>
-              <span v-else>{{ $t('public_data_no_data') }}</span>
-            </template>
-          </ElTable>
-          <el-pagination
-            background
-            class="table-page-pagination mt-3"
-            layout="->,total, sizes,  prev, pager, next, jumper"
-            v-model:current-page="page.current"
-            :page-sizes="[10, 20, 50, 100]"
-            v-model:page-size="page.size"
-            :total="page.total"
-            @size-change="getData(1)"
-            @current-change="getData"
-          >
-          </el-pagination>
-        </div>
-      </ElMain>
-    </ElContainer>
-
-    <ElDialog
-      :title="$t('dfs_apply_comment')"
-      :model-value="dialog.visible"
-      :close-on-click-modal="false"
-      @update:model-value="dialog.visible = $event"
-      @close="handleClose"
-      @closed="afterClose"
-      :append-to-body="true"
-      width="520px"
-    >
-      <el-timeline>
-        <el-timeline-item v-for="(item, i) in dialog.list" :key="i" :timestamp="item.datetime" placement="top">
-          <el-card shadow="hover">
-            <h4 class="text-prewrap">{{ item.remark }}</h4>
-            <p class="mt-3 font-color-sslight" style="font-size: 13px">{{ item.amUser }}</p>
-          </el-card>
-          <IconButton @click="handleDeleteComment(item, i)" class="timeline-btn position-absolute end-0" sm
-            >delete</IconButton
-          >
-        </el-timeline-item>
-      </el-timeline>
-      <div class="">
-        <ElInput v-model="dialog.remark" :placeholder="$t('dfs_apply_comment_placeholder')" type="textarea"></ElInput>
-      </div>
-
-      <template #footer>
-        <el-button @click="handleClose">{{ $t('public_button_cancel') }}</el-button>
-        <el-button type="primary" :loading="dialog.saving" @click="handleSubmit">{{
-          $t('public_button_submit')
-        }}</el-button>
-      </template>
-    </ElDialog>
-  </ElContainer>
-</template>
-
 <script>
 import { FilterBar, IconButton } from '@tap/component'
-import { mapGetters, mapState } from 'vuex'
 import dayjs from 'dayjs'
+import { debounce, escapeRegExp } from 'lodash-es'
+import { mapGetters, mapState } from 'vuex'
 import i18n from '@/i18n'
-import { escapeRegExp, debounce } from 'lodash-es'
 
 export default {
   name: 'RequestConnector',
@@ -219,7 +66,9 @@ export default {
           debounce: 0,
         },
         {
-          placeholder: i18n.t('dfs_apply_user') + '/' + i18n.t('dfs_user_contactus_lianxifangshi'),
+          placeholder: `${i18n.t('dfs_apply_user')}/${i18n.t(
+            'dfs_user_contactus_lianxifangshi',
+          )}`,
           key: 'createUser',
           type: 'input',
           width: '240px',
@@ -252,9 +101,9 @@ export default {
   },
   methods: {
     async getData(current = this.page.current) {
-      let { size } = this.page
+      const { size } = this.page
       let { createUser, status } = this.searchParams
-      let filter = {
+      const filter = {
         sort: [this.getOrder()],
         limit: size,
         skip: size * (current - 1),
@@ -281,13 +130,19 @@ export default {
       })
       this.loading = false
       this.list = result.items.map((item) => {
-        item.submitTime = item.submitTime ? dayjs(item.submitTime).format('YYYY-MM-DD HH:mm:ss') : '-'
-        item.approvalTime = item.approvalTime ? dayjs(item.approvalTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+        item.submitTime = item.submitTime
+          ? dayjs(item.submitTime).format('YYYY-MM-DD HH:mm:ss')
+          : '-'
+        item.approvalTime = item.approvalTime
+          ? dayjs(item.approvalTime).format('YYYY-MM-DD HH:mm:ss')
+          : '-'
         item.reviewer = item.reviewer || '-'
 
         if (item.returnVisits) {
           item.returnVisits.forEach((v) => {
-            v.datetime = v.datetime ? dayjs(v.datetime).format('YYYY-MM-DD HH:mm:ss') : '-'
+            v.datetime = v.datetime
+              ? dayjs(v.datetime).format('YYYY-MM-DD HH:mm:ss')
+              : '-'
           })
         }
 
@@ -369,7 +224,9 @@ export default {
     },
     async handleDeleteComment(item, index) {
       this.commentLoading = true
-      await this.$axios.delete(`api/tcm/feature/connector/${this.dialog.rowId}/${item.id}`)
+      await this.$axios.delete(
+        `api/tcm/feature/connector/${this.dialog.rowId}/${item.id}`,
+      )
       this.commentLoading = false
       this.$message.success(this.$t('public_status_deleted'))
       this.dialog.list.splice(index, 1)
@@ -380,6 +237,221 @@ export default {
   },
 }
 </script>
+
+<template>
+  <ElContainer class="layout-wrap">
+    <!-- 头部导航 -->
+    <ElHeader
+      class="layout-header dfs-header__body"
+      :class="{ isMockUser: mockUserId }"
+    >
+      <ElLink class="logo" href="/">
+        <img src="./assets/image/logo.svg" alt="" />
+      </ElLink>
+      <div
+        class="dfs-header__button button-bar pr-4 fs-7 flex gap-4 align-center"
+      >
+        <div class="menu-user rounded-4">
+          <div class="username flex align-items-center">
+            <img
+              v-if="user.avatar"
+              :src="user.avatar"
+              alt=""
+              class="mr-2"
+              style="width: 30px; height: 30px; border-radius: 50%"
+            />
+            <VIcon v-else class="mr-2" size="20">account</VIcon>
+            <span>{{
+              user.username || user.nickname || user.phone || user.email
+            }}</span>
+          </div>
+        </div>
+      </div>
+    </ElHeader>
+    <ElContainer direction="vertical" class="layout-main position-relative">
+      <ElMain class="main rounded-lg">
+        <div
+          class="g-panel-container flex-fill overflow-x-hidden flex flex-column"
+        >
+          <FilterBar
+            v-model="searchParams"
+            class="mb-3 flex flex-wrap align-center"
+            :items="filterItems"
+            :change-route="false"
+            @fetch="lazyLoadData(1)"
+          />
+
+          <ElTable
+            ref="table"
+            v-loading="loading"
+            row-key="id"
+            :data="list"
+            height="100%"
+            :default-sort="sort"
+            @sort-change="handleSortTable"
+          >
+            <el-table-column
+              :label="$t('packages_business_connection_form_data_source')"
+            >
+              <template #default="{ row }">
+                {{ row.metadata.type }}
+                <ElTag class="ml-2" type="info">{{
+                  row.metadata.qcType
+                }}</ElTag>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :label="
+                $t(
+                  'dfs_agent_download_subscriptionmodeldialog_zhuyaoshiyongchang',
+                )
+              "
+              prop="summary"
+            />
+            <el-table-column
+              :label="$t('packages_business_request_connector_use_time')"
+            >
+              <template #default="{ row }">
+                {{ dayMap[row.hoursOfAvailability] || row.hoursOfAvailability }}
+              </template>
+            </el-table-column>
+            <el-table-column :label="$t('dfs_apply_user')" prop="createUser" />
+            <el-table-column
+              :label="$t('dfs_user_contactus_lianxifangshi')"
+              prop="phone"
+            >
+              <template #default="{ row }">
+                {{ row.phone || row.email }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              :label="$t('dfs_apply_time')"
+              prop="submitTime"
+              sortable="custom"
+            />
+            <el-table-column :label="$t('dfs_apply_auditor')" prop="reviewer" />
+            <el-table-column
+              :label="$t('dfs_apply_audit_time')"
+              prop="approvalTime"
+              sortable="custom"
+            />
+            <el-table-column
+              :label="$t('public_status')"
+              prop="status"
+              width="120"
+            >
+              <template #default="{ row }">
+                <ElTag
+                  v-if="statusMap[row.status]"
+                  :type="statusMap[row.status].type"
+                  >{{ statusMap[row.status].text }}
+                </ElTag>
+                <span v-else>{{ row.status }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column :label="$t('public_operation')" width="200">
+              <template #default="{ row }">
+                <div class="flex gap-2">
+                  <ElLink
+                    :disabled="row.status !== 'PENDING'"
+                    type="primary"
+                    @click="handleApprove(row, $event)"
+                    >{{ $t('dfs_apply_pass') }}
+                  </ElLink>
+                  <ElLink
+                    :disabled="row.status !== 'PENDING'"
+                    type="danger"
+                    @click="handleReject(row, $event)"
+                    >{{ $t('dfs_apply_reject') }}
+                  </ElLink>
+                  <ElLink type="primary" @click="openRemark(row)">{{
+                    $t('dfs_apply_comment')
+                  }}</ElLink>
+                </div>
+              </template>
+            </el-table-column>
+
+            <template #empty>
+              <div
+                v-if="searchParams.status === 'PENDING'"
+                class="flex flex-column gap-3 lh-base"
+              >
+                👍 {{ $t('dfs_all_approvals_completed') }}
+                <ElLink type="primary" @click="handleViewAll">{{
+                  $t('public_view_all')
+                }}</ElLink>
+              </div>
+              <span v-else>{{ $t('public_data_no_data') }}</span>
+            </template>
+          </ElTable>
+          <el-pagination
+            v-model:current-page="page.current"
+            v-model:page-size="page.size"
+            background
+            class="table-page-pagination mt-3"
+            layout="->,total, sizes,  prev, pager, next, jumper"
+            :page-sizes="[10, 20, 50, 100]"
+            :total="page.total"
+            @size-change="getData(1)"
+            @current-change="getData"
+          />
+        </div>
+      </ElMain>
+    </ElContainer>
+
+    <ElDialog
+      :title="$t('dfs_apply_comment')"
+      :model-value="dialog.visible"
+      :close-on-click-modal="false"
+      :append-to-body="true"
+      width="520px"
+      @update:model-value="dialog.visible = $event"
+      @close="handleClose"
+      @closed="afterClose"
+    >
+      <el-timeline>
+        <el-timeline-item
+          v-for="(item, i) in dialog.list"
+          :key="i"
+          :timestamp="item.datetime"
+          placement="top"
+        >
+          <el-card shadow="hover">
+            <h4 class="text-prewrap">{{ item.remark }}</h4>
+            <p class="mt-3 font-color-sslight" style="font-size: 13px">
+              {{ item.amUser }}
+            </p>
+          </el-card>
+          <IconButton
+            class="timeline-btn position-absolute end-0"
+            sm
+            @click="handleDeleteComment(item, i)"
+            >delete</IconButton
+          >
+        </el-timeline-item>
+      </el-timeline>
+      <div class="">
+        <ElInput
+          v-model="dialog.remark"
+          :placeholder="$t('dfs_apply_comment_placeholder')"
+          type="textarea"
+        />
+      </div>
+
+      <template #footer>
+        <el-button @click="handleClose">{{
+          $t('public_button_cancel')
+        }}</el-button>
+        <el-button
+          type="primary"
+          :loading="dialog.saving"
+          @click="handleSubmit"
+          >{{ $t('public_button_submit') }}</el-button
+        >
+      </template>
+    </ElDialog>
+  </ElContainer>
+</template>
 
 <style lang="scss" scoped>
 .layout-menu {
@@ -489,6 +561,7 @@ export default {
   }
 }
 </style>
+
 <style lang="scss" scoped>
 .isMockUser {
   background: red !important;

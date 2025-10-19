@@ -6,7 +6,6 @@ import { GlobalRegistry } from '../../../core'
 import { usePrefix } from '../../../hooks'
 import { IconWidget, TextWidget } from '../../widgets'
 import { Header } from './Header'
-import { traverseTree } from './shared'
 import { Title } from './Title'
 import type { INodeItem, ITreeDataSource } from './types'
 
@@ -41,7 +40,7 @@ export const TreePanel = observer(
     },
     setup(props) {
       const prefixRef = usePrefix('data-source-setter')
-      
+
       return () => {
         const prefix = prefixRef.value
         return (

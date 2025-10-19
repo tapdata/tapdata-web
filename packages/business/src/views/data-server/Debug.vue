@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { debug, fetchApiServerToken, fetchWorkers } from '@tap/api'
+import { debug } from '@tap/api/src/core/api-calls'
+import { fetchApiServerToken } from '@tap/api/src/core/api-client'
+import { fetchWorkers } from '@tap/api/src/core/workers'
 import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import { useI18n } from '@tap/i18n'
 import {

@@ -1,5 +1,5 @@
 <script>
-import { inspectResultsApi } from '@tap/api'
+import { fetchInspectResults } from '@tap/api/src/core/inspect-results'
 import dayjs from 'dayjs'
 import { ErrorMessage } from '../../components/error-message'
 import PageContainer from '../../components/PageContainer.vue'
@@ -59,14 +59,11 @@ export default {
   methods: {
     getData() {
       this.loading = true
-      inspectResultsApi
-        .get({
-          filter: JSON.stringify({
-            where: {
-              id: this.$route.params.id,
-            },
-          }),
-        })
+      fetchInspectResults({
+        where: {
+          id: this.$route.params.id,
+        },
+      })
         .then((data) => {
           const result = data?.items?.[0]
           if (result) {

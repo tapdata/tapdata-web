@@ -1,7 +1,10 @@
-import { discoveryApi } from '@tap/api'
+import {
+  fetchDiscoveryFilterList,
+  fetchDiscoveryList,
+} from '@tap/api/src/core/discovery'
 import { TablePage } from '@tap/business'
 import { Drawer, FilterBar } from '@tap/component'
-import { computed, defineComponent, onMounted, reactive, ref, watch } from 'vue'
+import { defineComponent, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import i18n from '@/i18n'
 import DrawerContent from './PreviewDrawer'
@@ -56,7 +59,7 @@ export default defineComponent({
       sourceType && (where.sourceType = sourceType)
       sourceCategory && (where.sourceCategory = sourceCategory)
       queryKey && (where.queryKey = queryKey)
-      return discoveryApi.list(where).then((res) => {
+      return fetchDiscoveryList(where).then((res) => {
         const { total, items } = res
         return {
           total,
@@ -76,7 +79,7 @@ export default defineComponent({
         'sourceCategory',
         'sourceType',
       ]
-      discoveryApi.filterList(filterType).then((res) => {
+      fetchDiscoveryFilterList(filterType).then((res) => {
         const { objCategory, objType, sourceCategory, sourceType } = res
         data.filterItems = [
           {

@@ -1,6 +1,6 @@
 <script>
 import { VIcon } from '@tap/component'
-import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
+import { $emit } from '../../utils/gogocodeTransfer'
 export default {
   components: { VIcon },
   props: {

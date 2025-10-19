@@ -1,5 +1,10 @@
-import { observable, define, action } from '@formily/reactive'
-import { calcDistanceOfPointToRect, calcDistancePointToEdge, isNearAfter, isPointInRect } from '@tap/shared'
+import { action, define, observable } from '@formily/reactive'
+import {
+  calcDistanceOfPointToRect,
+  calcDistancePointToEdge,
+  isNearAfter,
+  isPointInRect,
+} from '@tap/shared'
 import { DragNodeEvent, DropNodeEvent } from '../events'
 
 export const ClosestPosition = {
@@ -69,7 +74,11 @@ export class Dragon {
     if (!closestRect) {
       return
     }
-    const isAfter = isNearAfter(point, closestRect, this.forceBlock ? false : isInline)
+    const isAfter = isNearAfter(
+      point,
+      closestRect,
+      this.forceBlock ? false : isInline,
+    )
     const getValidParent = (node) => {
       if (!node) return
       if (node.parent?.allowSibling(this.dragNodes)) return node.parent
@@ -105,12 +114,10 @@ export class Dragon {
             }
             return ClosestPosition.ForbidUpper
           }
+        } else if (isInline) {
+          return isAfter ? ClosestPosition.After : ClosestPosition.Before
         } else {
-          if (isInline) {
-            return isAfter ? ClosestPosition.After : ClosestPosition.Before
-          } else {
-            return isAfter ? ClosestPosition.Under : ClosestPosition.Upper
-          }
+          return isAfter ? ClosestPosition.Under : ClosestPosition.Upper
         }
       }
       if (closestNode.contains(...this.dragNodes)) {
@@ -136,7 +143,9 @@ export class Dragon {
             }
             return ClosestPosition.Before
           }
-          return isAfter ? ClosestPosition.ForbidAfter : ClosestPosition.ForbidBefore
+          return isAfter
+            ? ClosestPosition.ForbidAfter
+            : ClosestPosition.ForbidBefore
         } else {
           if (parentClosestNode) {
             if (isAfter) {
@@ -144,7 +153,9 @@ export class Dragon {
             }
             return ClosestPosition.Upper
           }
-          return isAfter ? ClosestPosition.ForbidUnder : ClosestPosition.ForbidUpper
+          return isAfter
+            ? ClosestPosition.ForbidUnder
+            : ClosestPosition.ForbidUpper
         }
       }
       if (isInline) {
@@ -173,7 +184,9 @@ export class Dragon {
         this.touchNode.eachChildren((node) => {
           const rect = this.viewport.getElementRectById(node.id)
           if (!rect) return
-          const distance = isPointInRect(point, rect, this.sensitive) ? 0 : calcDistanceOfPointToRect(point, rect)
+          const distance = isPointInRect(point, rect, this.sensitive)
+            ? 0
+            : calcDistanceOfPointToRect(point, rect)
           if (distance <= minDistance) {
             minDistance = distance
             minDistanceNode = node
@@ -199,7 +212,10 @@ export class Dragon {
     const closestDirection = this.closestDirection
     if (!closestNode || !closestDirection) return
     const closestRect = this.viewport.getValidNodeRect(closestNode)
-    if (closestDirection === ClosestPosition.InnerAfter || closestDirection === ClosestPosition.InnerBefore) {
+    if (
+      closestDirection === ClosestPosition.InnerAfter ||
+      closestDirection === ClosestPosition.InnerBefore
+    ) {
       return this.viewport.getChildrenRect(closestNode)
     } else {
       return closestRect
@@ -215,7 +231,10 @@ export class Dragon {
     const closestDirection = this.closestDirection
     if (!closestNode || !closestDirection) return
     const closestRect = this.viewport.getValidNodeOffsetRect(closestNode)
-    if (closestDirection === ClosestPosition.InnerAfter || closestDirection === ClosestPosition.InnerBefore) {
+    if (
+      closestDirection === ClosestPosition.InnerAfter ||
+      closestDirection === ClosestPosition.InnerBefore
+    ) {
       return this.viewport.getChildrenOffsetRect(closestNode)
     } else {
       return closestRect

@@ -1,8 +1,8 @@
 <script>
 import { createForm, onFormValuesChange } from '@formily/core'
 
-import { observer } from '@formily/reactive-vue'
-import { getAlarmChannels, taskApi } from '@tap/api'
+import { getAlarmChannels } from '@tap/api/src/core/alarm'
+import { updateTask } from '@tap/api/src/core/task'
 import i18n from '@tap/i18n'
 import { debounce } from 'lodash-es'
 import { mapGetters, mapState } from 'vuex'
@@ -88,7 +88,7 @@ export default {
         el.point = Math.max(Math.ceil(el.point * 12), 1)
         el.ms = Math.max(Math.ceil(el.ms * 1000), 1)
       })
-      taskApi.patch({
+      updateTask({
         id,
         alarmSettings,
         alarmRules,
@@ -118,7 +118,7 @@ export default {
         edges: allEdges,
         nodes: allNodesResult,
       }
-      taskApi.patch({
+      updateTask({
         id,
         dag,
         alarmSettings: settings.alarmSettings,

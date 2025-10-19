@@ -32,7 +32,10 @@ export const showMessage = {
     collapsableDetails({ description, node }) {
       if (!description) return ''
 
-      const errorDescription = description.length > 500 ? `${description.slice(0, 500)}...` : description
+      const errorDescription =
+        description.length > 500
+          ? `${description.slice(0, 500)}...`
+          : description
       const title = i18n.t('public_button_details')
       return `
 				<br>

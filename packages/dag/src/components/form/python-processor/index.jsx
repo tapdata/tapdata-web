@@ -1,23 +1,25 @@
 import { observe } from '@formily/reactive'
 import { observer } from '@formily/reactive-vue'
 import {
-  metadataInstancesApi,
-  monitoringLogsApi,
-  pythonFunctionsApi,
-  taskApi,
-} from '@tap/api'
-import { VEmpty } from '@tap/component/src/base/v-empty'
-import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
+  getNodeSchema,
+  getNodeSchemaPage,
+} from '@tap/api/src/core/metadata-instances'
+import { queryMonitoringLogs } from '@tap/api/src/core/monitoring-logs'
+import { exportPythonFunctions } from '@tap/api/src/core/python-functions'
+import {
+  getNodeTableInfo,
+  getRunJsResult,
+  testRunPythonRpc,
+} from '@tap/api/src/core/task'
 import resize from '@tap/component/src/directives/resize'
 
-import { FormItem, HighlightCode, PythonEditor, useForm } from '@tap/form'
+import { useForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import Time from '@tap/shared/src/time'
 import { groupBy } from 'lodash-es'
 import { defineComponent, onUnmounted, reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
-import { PythonDeclare } from '../python-declare'
 import './style.scss'
 
 export const PythonProcessor = observer(
@@ -54,13 +56,12 @@ export const PythonProcessor = observer(
       const loadTable = () => {
         if (!formRef.value.values.$inputs.length) return
         tableLoading.value = true
-        taskApi
-          .getNodeTableInfo({
-            taskId,
-            nodeId: form.values.id,
-            page: 1,
-            pageSize: 10000,
-          })
+        getNodeTableInfo({
+          taskId,
+          nodeId: form.values.id,
+          page: 1,
+          pageSize: 10000,
+        })
           .then(({ items = [] }) => {
             tableList.value = items.map((item) => ({
               label: item.previousTableName,
@@ -93,7 +94,7 @@ export const PythonProcessor = observer(
       const nodeId = form.values.id
 
       const queryLog = async () => {
-        const logData = await monitoringLogsApi.query({
+        const logData = await queryMonitoringLogs({
           taskId: store.state.dataflow.taskInfo.testTaskId,
           type: 'testRun',
           order: 'asc',
@@ -111,23 +112,17 @@ export const PythonProcessor = observer(
 
       const handleQuery = async () => {
         const lastVersion = version
-        const isOver = await taskApi
-          .getRunJsResult({
-            version,
-            taskId,
-            jsNodeId: nodeId,
-          })
-          .then((res) => {
-            // 版本号不一致
-            if (lastVersion !== version) return true
-            inputRef.value = res.before
-              ? JSON.stringify(res.before, null, 2)
-              : ''
-            outputRef.value = res.after
-              ? JSON.stringify(res.after, null, 2)
-              : ''
-            return res.over
-          })
+        const isOver = await getRunJsResult({
+          version,
+          taskId,
+          jsNodeId: nodeId,
+        }).then((res) => {
+          // 版本号不一致
+          if (lastVersion !== version) return true
+          inputRef.value = res.before ? JSON.stringify(res.before, null, 2) : ''
+          outputRef.value = res.after ? JSON.stringify(res.after, null, 2) : ''
+          return res.over
+        })
 
         if (isOver) running.value = false
 
@@ -211,7 +206,7 @@ export const PythonProcessor = observer(
 
         let before, after, logs, result
         try {
-          result = await taskApi.testRunPythonRpc({
+          result = await testRunPythonRpc({
             ...params,
             version,
             script: props.value,
@@ -256,7 +251,7 @@ export const PythonProcessor = observer(
       }
       const loadFunction = async () => {
         console.log('loadFunction')
-        const data = await pythonFunctionsApi.get({
+        const data = await exportPythonFunctions({
           filter: JSON.stringify({
             limit: 1000,
             where: {
@@ -347,7 +342,7 @@ export const PythonProcessor = observer(
         let fields = []
         if (!formRef.value.values.$inputs.length) return
         if (form.values.type.includes('migrate')) {
-          const result = await metadataInstancesApi.nodeSchemaPage({
+          const result = await getNodeSchemaPage({
             nodeId,
             fields: [
               'original_name',
@@ -361,7 +356,7 @@ export const PythonProcessor = observer(
           })
           fields = result.items[0]?.fields || []
         } else {
-          const data = await metadataInstancesApi.nodeSchema(nodeId)
+          const data = await getNodeSchema(nodeId)
           fields = data?.[0]?.fields || []
         }
 

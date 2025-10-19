@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { getMarkAttributes, type Editor } from '@tiptap/vue-3'
-import { computed, inject, nextTick, ref, unref, watch } from 'vue'
+import { computed, inject, nextTick, ref } from 'vue'
 import { FONT_SIZES } from '../extensions/FontSize'
-import CommandButton from './CommandButton.vue'
 
 import type { ElInputNumber } from 'element-plus'
 

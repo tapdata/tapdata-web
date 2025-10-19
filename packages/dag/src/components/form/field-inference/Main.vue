@@ -1,5 +1,6 @@
 <script>
-import { fetchDatabaseTypeByPdkHash, metadataInstancesApi } from '@tap/api'
+import { fetchDatabaseTypeByPdkHash } from '@tap/api/src/core/database-types'
+import { multiTransform } from '@tap/api/src/core/metadata-instances'
 import noData from '@tap/assets/images/noData.png'
 
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
@@ -294,7 +295,7 @@ export default {
         databaseType: database_type,
         fields,
       }
-      const data = (await metadataInstancesApi.multiTransform(params)) || {
+      const data = (await multiTransform(params)) || {
         fields: [],
       }
       return data.fields.length ? data.fields : fields

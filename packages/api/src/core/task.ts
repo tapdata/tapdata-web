@@ -1,5 +1,6 @@
 import { isPlainObj } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
+import qs from 'qs'
 import { requestClient } from '../request'
 
 const BASE_URL = '/api/Task'
@@ -37,24 +38,11 @@ export interface TaskChart {
   }
 }
 
-export function fetchTasks(params?: any, filter?: any, headers?: any) {
-  if (Array.isArray(params)) {
-    let queryStr = ''
-    if (typeof filter === 'object') {
-      queryStr = JSON.stringify(filter)
-    } else if (typeof filter === 'string') {
-      queryStr = filter
-    }
-    const qs = queryStr ? `?filter=${encodeURIComponent(queryStr)}` : ''
-    return requestClient.get(`${BASE_URL}/${params.join('/')}${qs}`)
-  } else if (typeof params === 'string') {
-    return requestClient.get(`${BASE_URL}/${params}`, {
-      params: filter,
-      headers,
-    })
-  }
-  params = params || {}
-  return requestClient.get(BASE_URL, { params })
+export function fetchTasks(filter?: any, config?: any) {
+  return requestClient.get(BASE_URL, {
+    params: { filter: filter ? JSON.stringify(filter) : undefined },
+    ...config,
+  })
 }
 
 export function copyTask(id: string) {
@@ -81,6 +69,10 @@ export function batchStopTasks(ids: string[]) {
   return requestClient.put(
     `${BASE_URL}/batchStop?taskIds=${ids.join('&taskIds=')}`,
   )
+}
+
+export function patchTask(params: any, config?: any) {
+  return requestClient.patch(BASE_URL, params, config)
 }
 
 export function patchTaskById(id: string, params: any) {
@@ -336,5 +328,15 @@ export function updateTask(where: any, attributes: any) {
   return requestClient.post(
     `${BASE_URL}/execute?where=${encodeURIComponent(queryStr)}`,
     attributes,
+  )
+}
+
+export function updateTaskInfo(taskId: string, newName: string, desc: string) {
+  return requestClient.patch(
+    `${BASE_URL}/updateInfo/${taskId}`,
+    qs.stringify({
+      newName,
+      desc,
+    }),
   )
 }

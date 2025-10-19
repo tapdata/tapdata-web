@@ -2,7 +2,7 @@ import { mapState } from 'vuex'
 
 export default {
   computed: {
-    ...mapState(['guide'])
+    ...mapState(['guide']),
   },
 
   async created() {
@@ -22,7 +22,7 @@ export default {
       }
     },
     async initGuide() {
-      let guide = await this.$axios.get('api/tcm/user_guide')
+      const guide = await this.$axios.get('api/tcm/user_guide')
 
       if (!guide) {
         await this.$axios.post('api/tcm/user_guide', this.guide)
@@ -30,10 +30,13 @@ export default {
         this.$store.commit('setGuide', guide)
       }
 
-      if (this.guide.installStep === -1 && this.guide.tour.status !== 'completed') {
+      if (
+        this.guide.installStep === -1 &&
+        this.guide.tour.status !== 'completed'
+      ) {
         this.initAgent()
         this.$router.replace({
-          name: 'Welcome'
+          name: 'Welcome',
         })
       }
     },
@@ -41,11 +44,11 @@ export default {
     async getFreeTier() {
       const [priceList] = await this.$axios.get('api/tcm/orders/paid/price', {
         params: {
-          productType: 'fullManagement'
-        }
+          productType: 'fullManagement',
+        },
       })
 
-      return priceList.paidPrice.find(item => item.price === 0)
+      return priceList.paidPrice.find((item) => item.price === 0)
     },
 
     async subscribe(freeTier) {
@@ -60,18 +63,18 @@ export default {
             productType: 'Engine',
             agentType: 'Cloud',
             provider: '',
-            region: ''
-          }
+            region: '',
+          },
         ],
-        email: this.$store.state.user.email
+        email: this.$store.state.user.email,
       })
       const guideData = {
         agentId: data?.subscribeItems?.[0].resourceId,
-        subscribeId: data?.subscribe
+        subscribeId: data?.subscribe,
       }
 
       this.$store.commit('setGuide', guideData)
       this.$axios.post('api/tcm/user_guide', guideData)
-    }
-  }
+    },
+  },
 }

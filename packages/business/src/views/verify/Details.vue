@@ -1,5 +1,9 @@
 <script>
-import { taskApi } from '@tap/api'
+import {
+  autoInspectAgain,
+  autoInspectResultsGroupByTable,
+  getAutoInspectResults,
+} from '@tap/api/src/core/task'
 import { VTable } from '@tap/component'
 import i18n from '@tap/i18n'
 import { delayTrigger } from '@tap/shared'
@@ -93,7 +97,7 @@ export default {
       const params = {
         tables,
       }
-      taskApi.autoInspectAgain(this.$route.params.id, params).then(() => {
+      autoInspectAgain(this.$route.params.id, params).then(() => {
         this.verifyLoading = true // 发起再次校验后 不能再校验
       })
     },
@@ -106,7 +110,7 @@ export default {
         skip: size * (current - 1),
         filter: this.keyword,
       }
-      return taskApi.autoInspectResultsGroupByTable(filter).then((data) => {
+      return autoInspectResultsGroupByTable(filter).then((data) => {
         const list =
           data.items?.map((t) => {
             t.counts = t.counts.toLocaleString()
@@ -155,10 +159,9 @@ export default {
       }
       this.detailLoading = true
       const startStamp = Time.now()
-      taskApi
-        .autoInspectResults(this.$route.params.id, {
-          filter: JSON.stringify(filter),
-        })
+      getAutoInspectResults(this.$route.params.id, {
+        filter: JSON.stringify(filter),
+      })
         .then((data) => {
           const result = []
           const items = data.items || []
@@ -214,7 +217,7 @@ export default {
         skip: 0,
         filter: this.keyword,
       }
-      taskApi.autoInspectResultsGroupByTable(filter).then((data) => {
+      autoInspectResultsGroupByTable(filter).then((data) => {
         this.checkProgress = data?.progress
         callback?.(
           ['Scheduling', 'Running'].includes(this.checkProgress?.status),

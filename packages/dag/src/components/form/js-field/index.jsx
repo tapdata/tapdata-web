@@ -1,7 +1,10 @@
 import { observer } from '@formily/reactive-vue'
-import { metadataInstancesApi, pdkApi } from '@tap/api'
-import GitBook from '@tap/component/src/GitBook.vue'
-import { FormItem, JsEditor, useField, useForm } from '@tap/form'
+import {
+  getNodeSchema,
+  getNodeSchemaPage,
+} from '@tap/api/src/core/metadata-instances'
+import { getPdkStatics } from '@tap/api/src/core/pdk'
+import { useField, useForm } from '@tap/form'
 
 import i18n from '@tap/i18n'
 import { defineComponent, ref } from 'vue'
@@ -95,7 +98,7 @@ export const JsField = observer(
         let fields = []
         if (!formRef.value.values.$inputs.length) return
         if (form.values.type.includes('migrate')) {
-          const result = await metadataInstancesApi.nodeSchemaPage({
+          const result = await getNodeSchemaPage({
             nodeId,
             fields: [
               'original_name',
@@ -109,7 +112,7 @@ export const JsField = observer(
           })
           fields = result.items[0]?.fields || []
         } else {
-          const data = await metadataInstancesApi.nodeSchema(nodeId)
+          const data = await getNodeSchema(nodeId)
           fields = data?.[0]?.fields || []
         }
 
@@ -135,8 +138,7 @@ export const JsField = observer(
       const mdContentRef = ref('')
       const getApi = () => {
         loadingApi.value = true
-        pdkApi
-          .getStatics(pdkHash, props.apiFileName)
+        getPdkStatics(pdkHash, props.apiFileName)
           .then((res) => {
             mdContentRef.value = res?.data
           })

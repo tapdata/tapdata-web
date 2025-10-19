@@ -2,7 +2,7 @@
 import { IconButton, VIcon } from '@tap/component'
 import i18n from '@/i18n'
 
-import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
+import { $emit } from '../../utils/gogocodeTransfer'
 
 export default {
   components: { VIcon, IconButton },

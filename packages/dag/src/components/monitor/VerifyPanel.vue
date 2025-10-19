@@ -1,5 +1,8 @@
 <script>
-import { taskApi } from '@tap/api'
+import {
+  autoInspectResultsGroupByTable,
+  getAutoInspectTotals,
+} from '@tap/api/src/core/task'
 import { Chart, VEmpty } from '@tap/component'
 
 import i18n from '@tap/i18n'
@@ -137,8 +140,7 @@ export default {
 
     loadData(loadMore = false) {
       const startStamp = Time.now()
-      taskApi
-        .autoInspectResultsGroupByTable(this.getFilter())
+      autoInspectResultsGroupByTable(this.getFilter())
         .then(({ total, items = [] }) => {
           this.total = total
           const lastId = this.list.at(-1)?.id || 0
@@ -176,15 +178,13 @@ export default {
     },
 
     loadTotals() {
-      taskApi
-        .autoInspectTotals({
-          id: this.dataflow.id,
-        })
-        .then((data) => {
-          const { diffTables = 0, ignore = 0, totals = 0 } = data
-          const passed = totals - ignore - diffTables
-          this.totalsData = { diffTables, ignore, passed }
-        })
+      getAutoInspectTotals({
+        id: this.dataflow.id,
+      }).then((data) => {
+        const { diffTables = 0, ignore = 0, totals = 0 } = data
+        const passed = totals - ignore - diffTables
+        this.totalsData = { diffTables, ignore, passed }
+      })
     },
 
     getPieOptions(data) {

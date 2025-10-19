@@ -1,4 +1,7 @@
-import { discoveryApi } from '@tap/api'
+import {
+  fetchDiscoveryFilterList,
+  getDiscoveryDirectoryData,
+} from '@tap/api/src/core/discovery'
 import { makeDragNodeImage } from '@tap/business'
 import { VIcon } from '@tap/component'
 import resize from '@tap/component/src/directives/resize'
@@ -48,7 +51,7 @@ export default defineComponent({
       }
       sourceType && (where.objType = sourceType)
       queryKey && (where.queryKey = queryKey)
-      return discoveryApi.discoveryList(where).then((res) => {
+      return getDiscoveryDirectoryData(where).then((res) => {
         const { total, items } = res
         return {
           total,
@@ -61,7 +64,7 @@ export default defineComponent({
     }
     const loadFilterList = () => {
       const filterType = ['objType']
-      discoveryApi.filterList(filterType).then((res) => {
+      fetchDiscoveryFilterList(filterType).then((res) => {
         const { objType } = res
         data.filterItems = [
           {

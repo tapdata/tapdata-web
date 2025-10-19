@@ -1,5 +1,5 @@
 <script>
-import { inspectResultsApi } from '@tap/api'
+import { fetchInspectResults } from '@tap/api/src/core/inspect-results'
 import { VIcon } from '@tap/component'
 import dayjs from 'dayjs'
 import PageContainer from '../../components/PageContainer.vue'
@@ -55,13 +55,9 @@ export default {
       if (filter?.where?.parentId?.eq === null) {
         delete filter.where.parentId
       }
-      return inspectResultsApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          return [{ count: data.total }, data.items]
-        })
+      return fetchInspectResults(filter).then((data) => {
+        return [{ count: data.total }, data.items]
+      })
     },
     search(pageNum, hideLoading = false) {
       if (!hideLoading) {

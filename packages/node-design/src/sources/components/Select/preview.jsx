@@ -1,8 +1,12 @@
 import { Select as FormSelect } from '@tap/form'
-import { createBehavior, createResource, getBrowserLanguage } from '../../../core'
-import { createFieldSchema } from '../Field'
-import { AllSchemas } from '../../schemas'
+import {
+  createBehavior,
+  createResource,
+  getBrowserLanguage,
+} from '../../../core'
 import { AllLocales } from '../../locales'
+import { AllSchemas } from '../../schemas'
+import { createFieldSchema } from '../Field'
 
 export const Select = FormSelect
 
@@ -22,7 +26,9 @@ Select.Resource = createResource({
     {
       componentName: 'Field',
       props: {
-        title: AllLocales.Select[getBrowserLanguage()]?.title || AllLocales.Select['en-US'].title,
+        title:
+          AllLocales.Select[getBrowserLanguage()]?.title ||
+          AllLocales.Select['en-US'].title,
         'x-decorator': 'FormItem',
         'x-component': 'Select',
       },

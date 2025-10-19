@@ -230,7 +230,7 @@ export default {
     font-weight: 400;
     font-size: 12px;
     line-height: 17px;
-    color: var(--text-light);;
+    color: var(--text-light);
   }
   .tip {
     font-style: normal;

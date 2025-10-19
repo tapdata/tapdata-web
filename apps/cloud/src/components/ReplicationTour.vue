@@ -1,32 +1,8 @@
-<template>
-  <ElDialog
-    v-model="visible"
-    width="812px"
-    :show-close="false"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-    :class="customClass"
-  >
-    <div class="text-center font-color-dark">
-      <VIcon size="64" class="color-success mt-3">check-circle-fill</VIcon>
-      <div class="mt-4 fs-5 color-primary">{{ $t('packages_dag_tour_task_success') }}</div>
-      <div class="mt-2">{{ $t('packages_dag_tour_task_success_desc') }}</div>
-    </div>
-
-    <template #footer>
-      <div class="text-center">
-        <el-button @click="cancel">{{ $t('public_button_close') }}</el-button>
-        <el-button @click="handleDone" type="primary">{{ $t('packages_dag_access_task_list') }}</el-button>
-      </div>
-    </template>
-  </ElDialog>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
+import { driver } from 'driver.js'
 import i18n from '@/i18n'
 
-import { driver } from 'driver.js'
+import { $emit } from '../../utils/gogocodeTransfer'
 
 export default {
   name: 'ReplicationTour',
@@ -34,6 +10,7 @@ export default {
     value: Boolean,
     finish: Boolean,
   },
+  emits: ['start', 'finish', 'update:value', 'finish', , 'update:value'],
   data() {
     return {
       visible: this.value,
@@ -112,13 +89,40 @@ export default {
     handleDone() {
       this.$emit('finish')
       this.$router.push({
-        name: 'migrateList'
+        name: 'migrateList',
       })
     },
   },
-  emits: ['start', 'finish', 'update:value', 'finish', , 'update:value'],
 }
 </script>
+
+<template>
+  <ElDialog
+    v-model="visible"
+    width="812px"
+    :show-close="false"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    :class="customClass"
+  >
+    <div class="text-center font-color-dark">
+      <VIcon size="64" class="color-success mt-3">check-circle-fill</VIcon>
+      <div class="mt-4 fs-5 color-primary">
+        {{ $t('packages_dag_tour_task_success') }}
+      </div>
+      <div class="mt-2">{{ $t('packages_dag_tour_task_success_desc') }}</div>
+    </div>
+
+    <template #footer>
+      <div class="text-center">
+        <el-button @click="cancel">{{ $t('public_button_close') }}</el-button>
+        <el-button type="primary" @click="handleDone">{{
+          $t('packages_dag_access_task_list')
+        }}</el-button>
+      </div>
+    </template>
+  </ElDialog>
+</template>
 
 <style lang="scss" scoped>
 .title-cover {

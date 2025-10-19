@@ -1,4 +1,4 @@
-import { observable, define, action } from '@formily/reactive'
+import { action, define, observable } from '@formily/reactive'
 import { HoverNodeEvent } from '../events'
 
 export class Hover {

@@ -1,13 +1,14 @@
 <script setup lang="ts">
+import { getAlarmChannels } from '@tap/api/src/core/alarm'
 import {
   fetchAlarmMails,
-  fetchAlarmRules,
-  findAlarm,
-  getAlarmChannels,
-  saveAlarm,
   saveAlarmMailConfig,
+} from '@tap/api/src/core/alarm-mail'
+import {
+  fetchAlarmRules,
   saveAlarmRules as saveAlarmRulesApi,
-} from '@tap/api'
+} from '@tap/api/src/core/alarm-rule'
+import { findAlarm, saveAlarm } from '@tap/api/src/core/settings'
 import { VTable } from '@tap/component/src/base/v-table'
 import {
   AdminOutlined,

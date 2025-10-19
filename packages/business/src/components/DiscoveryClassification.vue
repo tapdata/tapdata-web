@@ -1,99 +1,23 @@
-<template>
-  <div class="classification pt-3 h-100">
-    <div class="classification-header pl-0">
-      <!--<ElButton class="btn-addIcon"  text @click="showDialog()">
-            <VIcon size="12">add</VIcon>
-          </ElButton>
-          <div class="title">
-            <span>{{ $t('packages_component_src_discoveryclassification_suoyoumulu') }}</span>
-          </div>-->
-      <!-- v-if="searchFalg" -->
-      <div class="search-box">
-        <ElInput v-model="filterText">
-          <template v-slot:suffix>
-            <span class="el-input__icon h-100 ml-1">
-              <VIcon size="14">search</VIcon>
-            </span>
-          </template>
-        </ElInput>
-      </div>
-    </div>
-    <div class="tree-block pr-3 min-h-0" v-if="isExpand" v-loading="loadingTree">
-      <ElTree
-        class="classification-tree pb-0"
-        ref="tree"
-        node-key="id"
-        highlight-current
-        :data="treeData"
-        :props="props"
-        draggable
-        :default-expanded-keys="expandedKeys"
-        :filter-node-method="filterNode"
-        :render-content="renderContent"
-        :expand-on-click-node="false"
-        :allow-drag="checkAllowDrag"
-        :allow-drop="checkAllowDrop"
-        @node-click="nodeClickHandler"
-        @node-drag-start="handleDragStart"
-        @node-drop="handleDrop"
-      />
-      <!--<ElButton v-if="treeData && treeData.length === 0 && isExpand" text @click="showDialog()" class="create">
-            {{ $t('packages_component_classification_creatDataClassification') }}
-          </ElButton>-->
-    </div>
-    <ElDialog v-model="dialogConfig.visible" width="30%" :close-on-click-modal="false">
-      <template #header>
-        <span style="font-size: 14px">{{ dialogConfig.title }}</span>
-      </template>
-      <ElForm ref="form" :model="dialogConfig" label-width="80px">
-        <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
-          <ElInput
-            v-model="dialogConfig.label"
-            :placeholder="$t('packages_component_classification_nodeName')"
-            maxlength="50"
-            show-word-limit
-          ></ElInput>
-        </ElFormItem>
-        <ElFormItem
-          :label="$t('packages_component_src_discoveryclassification_mulufenlei')"
-          v-if="dialogConfig.isParent"
-        >
-          <ElSelect v-model="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
-            <el-option
-              :label="$t('packages_component_src_discoveryclassification_ziyuanmulu')"
-              value="resource"
-            ></el-option>
-            <!--            <el-option label="任务目录" value="task"></el-option>-->
-          </ElSelect>
-        </ElFormItem>
-        <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumiaoshu')">
-          <ElInput
-            type="textarea"
-            v-model="dialogConfig.desc"
-            :placeholder="$t('packages_component_src_discoveryclassification_qingshurumulu')"
-            maxlength="50"
-            show-word-limit
-          ></ElInput>
-        </ElFormItem>
-      </ElForm>
-      <template v-slot:footer>
-        <span class="dialog-footer">
-          <ElButton @click="hideDialog()">{{ $t('packages_component_button_cancel') }}</ElButton>
-          <ElButton type="primary" @click="dialogSubmit()">
-            {{ $t('packages_component_button_confirm') }}
-          </ElButton>
-        </span>
-      </template>
-    </ElDialog>
-  </div>
-</template>
+<script lang="tsx">
+import {
+  createMetadataDefinition,
+  deleteMetadataDefinition,
+  fetchMetadataDefinitions,
+  patchMetadataDefinition,
+} from '@tap/api/core/metadata-definitions'
+import {
+  createUserGroup,
+  deleteUserGroupById,
+  patchUserGroupById,
+} from '@tap/api/core/user-groups'
 
-<script lang="jsx">
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
-import i18n from '@tap/i18n'
-
+import {
+  createDiscoveryTags,
+  getDiscoveryDirectoryData,
+  updateDiscoveryTags,
+} from '@tap/api/src/core/discovery'
 import { VIcon } from '@tap/component'
-import { metadataDefinitionsApi, userGroupsApi, discoveryApi } from '@tap/api'
+import i18n from '@tap/i18n'
 import Cookie from '@tap/shared/src/cookie'
 
 import { makeDragNodeImage } from '../shared/classification'
@@ -112,6 +36,7 @@ export default {
       default: () => ({}),
     },
   },
+  emits: ['nodeChecked'],
   data() {
     return {
       searchFalg: false,
@@ -147,9 +72,6 @@ export default {
       },
     }
   },
-  mounted() {
-    this.getData()
-  },
   watch: {
     types(_new, _old) {
       if (_new.toString() !== _old.toString()) {
@@ -159,6 +81,9 @@ export default {
     filterText(val) {
       this.$refs.tree.filter(val)
     },
+  },
+  mounted() {
+    this.getData()
   },
   methods: {
     renderContent(h, { node, data, store }) {
@@ -192,10 +117,14 @@ export default {
             this.handleTreeDrop(ev, data, node)
           }}
         >
-          <div class="tree-item-icon flex align-center mr-2">{icon && <VIcon size="16">{icon}</VIcon>}</div>
+          <div class="tree-item-icon flex align-center mr-2">
+            {icon && <VIcon size="16">{icon}</VIcon>}
+          </div>
           <span class="table-label">
             {data.name}
-            {!data.isRoot && <span class="count-label mr-2 ml-2">({data.objCount})</span>}
+            {!data.isRoot && (
+              <span class="count-label mr-2 ml-2">({data.objCount})</span>
+            )}
           </span>
           {!data.readOnly && !data.isObject && (
             <span class="btn-menu">
@@ -230,8 +159,12 @@ export default {
                     ),
                     dropdown: () => (
                       <ElDropdownMenu>
-                        <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
-                        <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
+                        <ElDropdownItem command="edit">
+                          {this.$t('public_button_edit')}
+                        </ElDropdownItem>
+                        <ElDropdownItem command="delete">
+                          {this.$t('public_button_delete')}
+                        </ElDropdownItem>
                       </ElDropdownMenu>
                     ),
                   }}
@@ -244,7 +177,7 @@ export default {
     },
 
     nodeClickHandler(data) {
-      let { currentNode = {} } = this
+      const { currentNode = {} } = this
       if (data.id === currentNode.id || data.isObject) return
       this.currentNode = data
       this.emitCheckedNodes(data)
@@ -252,15 +185,15 @@ export default {
 
     emitCheckedNodes(node) {
       if (!node) return
-      $emit(this, 'nodeChecked', node)
+      this.$emit('nodeChecked', node)
     },
 
     getData(cb) {
-      let where = {}
+      const where = {}
       where.item_type = {
         $nin: ['database', 'dataflow', 'api', 'source', 'fdm', 'mdm', 'target'],
       }
-      let filter = {
+      const filter = {
         where,
         fields: {
           id: 1,
@@ -275,16 +208,15 @@ export default {
         },
       }
       this.loadingTree = true
-      metadataDefinitionsApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
+      fetchMetadataDefinitions(filter)
         .then((data) => {
-          let items = data?.items || []
-          let treeData = this.formatData(items)
+          const items = data?.items || []
+          const treeData = this.formatData(items)
           this.treeData = [
             {
-              name: i18n.t('packages_business_components_classificationtree_suoyoumulu'),
+              name: i18n.t(
+                'packages_business_components_classificationtree_suoyoumulu',
+              ),
               isRoot: true,
               readOnly: true,
               children: treeData,
@@ -293,7 +225,7 @@ export default {
           cb && cb(items)
           //默认选中第一个
           this.$nextTick(() => {
-            let key = treeData?.[0]?.id
+            const key = treeData?.[0]?.id
             this.expandedKeys = [key]
             this.$refs.tree.setCurrentKey(key)
             this.emitCheckedNodes(treeData?.[0])
@@ -304,7 +236,7 @@ export default {
         })
     },
     getDataAll(cb) {
-      metadataDefinitionsApi.get().then((data) => {
+      fetchMetadataDefinitions().then((data) => {
         cb && cb(data?.items || [])
       })
     },
@@ -312,21 +244,23 @@ export default {
     formatData(items) {
       const userId = Cookie.get('user_id')
       if (items && items.length) {
-        let map = {}
-        let nodes = []
+        const map = {}
+        const nodes = []
 
         //遍历第一次， 先把所有子类按照id分成若干数组
         items.forEach((it) => {
           it.name = it.value
           it.isLeaf = it.objCount === 0
           if (it.parent_id) {
-            let children = map[it.parent_id] || []
+            const children = map[it.parent_id] || []
             children.push(it)
             map[it.parent_id] = children
           } else {
             //默认目录国际化
-            if (it?.item_type && it?.item_type.findIndex((t) => t === 'default') > -1) {
-              it.name = i18n.t('packages_component_src_discoveryclassification_morenmuluji')
+            if (it?.item_type && it?.item_type.indexOf('default') > -1) {
+              it.name = i18n.t(
+                'packages_component_src_discoveryclassification_morenmuluji',
+              )
               if (it?.userName && it?.user_id !== userId) {
                 it.name += `| ${it.userName}`
               }
@@ -335,9 +269,9 @@ export default {
           }
         })
         //接着从没有子类的数据开始递归，将之前分好的数组分配给每一个类目
-        let checkChildren = (nodes) => {
+        const checkChildren = (nodes) => {
           return nodes.map((it) => {
-            let children = map[it.id]
+            const children = map[it.id]
             if (children) {
               it.children = checkChildren(children)
             }
@@ -349,7 +283,7 @@ export default {
     },
     filterNode(value, data) {
       if (!value) return true
-      return data.name.indexOf(value) !== -1
+      return data.name.includes(value)
     },
     handleRowCommand(command, node) {
       switch (command) {
@@ -362,19 +296,20 @@ export default {
       }
     },
     showDialog(node, dialogType) {
-      let type = dialogType || 'add'
+      const type = dialogType || 'add'
       let itemType = 'resource'
       if (node && node.data && node.data.item_type) {
         itemType = node.data.item_type?.join('')
       }
       this.dialogConfig = {
-        itemType: itemType,
+        itemType,
         visible: true,
         type,
         id: node ? node.key : '',
         gid: node?.data?.gid || '',
         label: type === 'edit' ? node.label : '',
-        isParent: (type === 'add' && !node) || (type === 'edit' && node?.level === 1),
+        isParent:
+          (type === 'add' && !node) || (type === 'edit' && node?.level === 1),
         desc: type === 'edit' ? node?.data?.desc : '',
         title:
           type === 'add'
@@ -390,35 +325,39 @@ export default {
       }
     },
     async dialogSubmit() {
-      let config = this.dialogConfig
-      let value = config.label
-      let id = config.id
-      let gid = config.gid
-      let itemType = [config.itemType]
-      let method = 'post'
+      const config = this.dialogConfig
+      const value = config.label
+      const id = config.id
+      const gid = config.gid
+      const itemType = [config.itemType]
+      let method = createUserGroup
 
       if (!value || value.trim() === '') {
-        this.$message.error(this.$t('packages_component_classification_nodeName'))
+        this.$message.error(
+          this.$t('packages_component_classification_nodeName'),
+        )
         return
       }
 
       if (this.types[0] === 'user') {
-        let nameExist = await this.checkName(value)
+        const nameExist = await this.checkName(value)
         if (nameExist) {
-          return this.$message.error(this.$t('packages_component_classification_nameExist'))
+          return this.$message.error(
+            this.$t('packages_component_classification_nameExist'),
+          )
         }
-        let params = {
+        const params = {
           name: value,
         }
         if (config.type === 'edit') {
-          method = 'patch'
+          method = patchUserGroupById
           params.id = id
         } else if (id) {
           params.parent_id = id
           params.parent_gid = gid
         }
-        userGroupsApi[method](params).then(() => {
-          let self = this
+        method(params).then(() => {
+          const self = this
           self.getData(() => {
             this.$nextTick(() => {
               this.emitCheckedNodes()
@@ -427,21 +366,22 @@ export default {
           self.hideDialog()
         })
       } else {
-        let params = {
+        const params = {
           item_type: itemType,
           desc: config.desc,
           value,
         }
+        method = createMetadataDefinition
         if (config.type === 'edit') {
-          method = 'changeById'
+          method = patchMetadataDefinition
           params.id = id
           delete params.item_type
         } else if (id) {
           params.parent_id = id
         }
-        metadataDefinitionsApi[method](params)
+        method(params)
           .then(() => {
-            let self = this
+            const self = this
             self.getData(() => {
               this.$nextTick(() => {
                 this.emitCheckedNodes()
@@ -449,34 +389,37 @@ export default {
             })
             self.hideDialog()
           })
-          .catch((err) => {
-            this.$message.error(err.message)
+          .catch((error) => {
+            this.$message.error(error.message)
           })
       }
     },
     deleteNode(id) {
-      let that = this
-      this.$confirm(this.$t('packages_component_classification_deteleMessage'), {
-        confirmButtonText: this.$t('public_button_delete'),
-        cancelButtonText: this.$t('public_button_cancel'),
-      }).then((resFlag) => {
+      const that = this
+      this.$confirm(
+        this.$t('packages_component_classification_deteleMessage'),
+        {
+          confirmButtonText: this.$t('public_button_delete'),
+          cancelButtonText: this.$t('public_button_cancel'),
+        },
+      ).then((resFlag) => {
         if (!resFlag) {
           return
         }
         if (that.types[0] === 'user') {
-          let params = {
-            id: id,
+          const params = {
+            id,
             headers: {
               gid: id,
             },
           }
-          userGroupsApi.delete(params).then(() => {
-            let self = this
+          deleteUserGroupById(params).then(() => {
+            const self = this
             self.getData()
           })
         } else {
-          metadataDefinitionsApi.delete(id).then(() => {
-            let self = this
+          deleteMetadataDefinition(id).then(() => {
+            const self = this
             //将当前选中的目录缓存
             this.$store.commit('catalogueKey', '')
             self.getData()
@@ -503,7 +446,9 @@ export default {
     },
 
     checkAllowDrop(draggingNode, dropNode, type) {
-      return type === 'inner' && !dropNode.data.readOnly && !dropNode.data.isObject
+      return (
+        type === 'inner' && !dropNode.data.readOnly && !dropNode.data.isObject
+      )
     },
 
     handleDragStart(draggingNode, ev) {
@@ -513,12 +458,12 @@ export default {
         [draggingNode],
         this.$el,
       )
-      let { dataTransfer } = ev
+      const { dataTransfer } = ev
       dataTransfer.setDragImage(this.draggingNodeImage, 0, 0)
     },
 
     handleDragEnd() {
-      this.$el.removeChild(this.draggingNodeImage)
+      this.draggingNodeImage.remove()
       this.draggingNode = null
       this.draggingNodeImage = null
     },
@@ -526,21 +471,22 @@ export default {
     handleDrop(draggingNode, dropNode, dropType, ev) {
       console.log('handleDrop', ...arguments) // eslint-disable-line
       if (!draggingNode.data.isObject) {
-        metadataDefinitionsApi
-          .changeById({
-            id: draggingNode.data.id,
-            parent_id: dropNode.data.id || '',
-          })
+        patchMetadataDefinitionById(draggingNode.data.id, {
+          id: draggingNode.data.id,
+          parent_id: dropNode.data.id || '',
+        })
           .then(() => {
             this.$message.success(i18n.t('public_message_operation_success'))
             draggingNode.data.parent_id = dropNode.data.id
             // this.getData()
           })
-          .catch((err) => {
-            this.$message.error(err.message)
+          .catch((error) => {
+            this.$message.error(error.message)
           })
       } else {
-        this.moveTag(draggingNode.data.parent_id, dropNode.data.id, [draggingNode.data])
+        this.moveTag(draggingNode.data.parent_id, dropNode.data.id, [
+          draggingNode.data,
+        ])
       }
     },
 
@@ -561,7 +507,10 @@ export default {
 
       if (data.readOnly || !this.dragState.isDragging) return
 
-      const dropNode = this.findParentNodeByClassName(ev.currentTarget, 'el-tree-node')
+      const dropNode = this.findParentNodeByClassName(
+        ev.currentTarget,
+        'el-tree-node',
+      )
       dropNode.classList.add('is-drop-inner')
     },
 
@@ -571,7 +520,10 @@ export default {
       if (data.readOnly) return
 
       if (!ev.currentTarget.contains(ev.relatedTarget)) {
-        const dropNode = this.findParentNodeByClassName(ev.currentTarget, 'el-tree-node')
+        const dropNode = this.findParentNodeByClassName(
+          ev.currentTarget,
+          'el-tree-node',
+        )
         dropNode.classList.remove('is-drop-inner')
       }
     },
@@ -580,7 +532,10 @@ export default {
       if (data.readOnly) return
 
       const { draggingObjects } = this.dragState
-      const dropNode = this.findParentNodeByClassName(ev.currentTarget, 'el-tree-node')
+      const dropNode = this.findParentNodeByClassName(
+        ev.currentTarget,
+        'el-tree-node',
+      )
 
       if (!draggingObjects?.length || !dropNode) return
 
@@ -594,20 +549,18 @@ export default {
     },
 
     bindTag(tag, objects) {
-      discoveryApi
-        .postTags({
-          tagBindingParams: objects.map((t) => {
-            return {
-              id: t.id,
-              objCategory: t.category,
-            }
-          }),
-          tagIds: [tag.id],
-        })
-        .then(() => {
-          this.getData()
-          this.$message.success(this.$t('public_message_operation_success'))
-        })
+      createDiscoveryTags({
+        tagBindingParams: objects.map((t) => {
+          return {
+            id: t.id,
+            objCategory: t.category,
+          }
+        }),
+        tagIds: [tag.id],
+      }).then(() => {
+        this.getData()
+        this.$message.success(this.$t('public_message_operation_success'))
+      })
     },
 
     async moveTag(from, to, objects) {
@@ -619,11 +572,11 @@ export default {
           objCategory: t.category,
         }
       })
-      await discoveryApi.patchTags({
+      await updateDiscoveryTags({
         tagBindingParams,
         tagIds: [from],
       })
-      await discoveryApi.postTags({
+      await createDiscoveryTags({
         tagBindingParams,
         tagIds: [to],
       })
@@ -632,11 +585,12 @@ export default {
     },
 
     loadNode(node, resolve) {
-      console.log('loadNode', node, node.level) // eslint-disable-line
       if (node.level === 0) {
         return resolve([
           {
-            name: i18n.t('packages_business_components_classificationtree_suoyoumulu'),
+            name: i18n.t(
+              'packages_business_components_classificationtree_suoyoumulu',
+            ),
           },
         ])
       }
@@ -647,12 +601,15 @@ export default {
 
     async handleNodeExpand(data, node, el) {
       // 十秒内加载过资源，不再继续加载
-      if (data.isRoot || (node.loadTime && Date.now() - node.loadTime < 10000)) return
+      if (data.isRoot || (node.loadTime && Date.now() - node.loadTime < 10000))
+        return
 
       node.loadTime = Date.now()
       const objects = await this.loadObjects(data)
       console.log('handleNodeExpand', objects, data, node) // eslint-disable-line
-      const childrenMap = data.children ? data.children.reduce((map, item) => ((map[item.id] = true), map), {}) : {}
+      const childrenMap = data.children
+        ? data.children.reduce((map, item) => ((map[item.id] = true), map), {})
+        : {}
       objects.forEach((item) => {
         if (childrenMap[item.id]) return
         item.parent_id = data.id
@@ -666,20 +623,136 @@ export default {
     },
 
     loadObjects(node) {
-      let where = {
+      const where = {
         page: 1,
         pageSize: 10000,
         tagId: node.id,
       }
-      return discoveryApi.discoveryList(where).then((res) => {
-        let { total, items } = res
+      return getDiscoveryDirectoryData(where).then((res) => {
+        const { total, items } = res
         return res.items
       })
     },
   },
-  emits: ['nodeChecked'],
 }
 </script>
+
+<template>
+  <div class="classification pt-3 h-100">
+    <div class="classification-header pl-0">
+      <!--<ElButton class="btn-addIcon"  text @click="showDialog()">
+            <VIcon size="12">add</VIcon>
+          </ElButton>
+          <div class="title">
+            <span>{{ $t('packages_component_src_discoveryclassification_suoyoumulu') }}</span>
+          </div>-->
+      <!-- v-if="searchFalg" -->
+      <div class="search-box">
+        <ElInput v-model="filterText">
+          <template #suffix>
+            <span class="el-input__icon h-100 ml-1">
+              <VIcon size="14">search</VIcon>
+            </span>
+          </template>
+        </ElInput>
+      </div>
+    </div>
+    <div
+      v-if="isExpand"
+      v-loading="loadingTree"
+      class="tree-block pr-3 min-h-0"
+    >
+      <ElTree
+        ref="tree"
+        class="classification-tree pb-0"
+        node-key="id"
+        highlight-current
+        :data="treeData"
+        :props="props"
+        draggable
+        :default-expanded-keys="expandedKeys"
+        :filter-node-method="filterNode"
+        :render-content="renderContent"
+        :expand-on-click-node="false"
+        :allow-drag="checkAllowDrag"
+        :allow-drop="checkAllowDrop"
+        @node-click="nodeClickHandler"
+        @node-drag-start="handleDragStart"
+        @node-drop="handleDrop"
+      />
+      <!--<ElButton v-if="treeData && treeData.length === 0 && isExpand" text @click="showDialog()" class="create">
+            {{ $t('packages_component_classification_creatDataClassification') }}
+          </ElButton>-->
+    </div>
+    <ElDialog
+      v-model="dialogConfig.visible"
+      width="30%"
+      :close-on-click-modal="false"
+    >
+      <template #header>
+        <span style="font-size: 14px">{{ dialogConfig.title }}</span>
+      </template>
+      <ElForm ref="form" :model="dialogConfig" label-width="80px">
+        <ElFormItem
+          :label="
+            $t('packages_component_src_discoveryclassification_mulumingcheng')
+          "
+        >
+          <ElInput
+            v-model="dialogConfig.label"
+            :placeholder="$t('packages_component_classification_nodeName')"
+            maxlength="50"
+            show-word-limit
+          />
+        </ElFormItem>
+        <ElFormItem
+          v-if="dialogConfig.isParent"
+          :label="
+            $t('packages_component_src_discoveryclassification_mulufenlei')
+          "
+        >
+          <ElSelect
+            v-model="dialogConfig.itemType"
+            :disabled="dialogConfig.type === 'edit'"
+          >
+            <el-option
+              :label="
+                $t('packages_component_src_discoveryclassification_ziyuanmulu')
+              "
+              value="resource"
+            />
+            <!--            <el-option label="任务目录" value="task"></el-option>-->
+          </ElSelect>
+        </ElFormItem>
+        <ElFormItem
+          :label="
+            $t('packages_component_src_discoveryclassification_mulumiaoshu')
+          "
+        >
+          <ElInput
+            v-model="dialogConfig.desc"
+            type="textarea"
+            :placeholder="
+              $t('packages_component_src_discoveryclassification_qingshurumulu')
+            "
+            maxlength="50"
+            show-word-limit
+          />
+        </ElFormItem>
+      </ElForm>
+      <template #footer>
+        <span class="dialog-footer">
+          <ElButton @click="hideDialog()">{{
+            $t('packages_component_button_cancel')
+          }}</ElButton>
+          <ElButton type="primary" @click="dialogSubmit()">
+            {{ $t('packages_component_button_confirm') }}
+          </ElButton>
+        </span>
+      </template>
+    </ElDialog>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 $nodeH: 28px;

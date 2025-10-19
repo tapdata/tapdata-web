@@ -5,9 +5,9 @@ import {
   getMetadataInstancesCompareResult,
   getTargetSchemaDetection,
   saveCompareApply,
-  useRequest,
   type ItemDifferenceFieldList,
-} from '@tap/api'
+} from '@tap/api/src/core/metadata-instances'
+import { useRequest } from '@tap/api/src/request'
 import { dayjs } from '@tap/business/src/shared/dayjs'
 import { CloseIcon } from '@tap/component/src/CloseIcon'
 

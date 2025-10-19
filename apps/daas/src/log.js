@@ -6,8 +6,8 @@
 let counter = 0
 export default function () {
   if (localStorage.getItem('tapdata_debug')) {
-    window['console'].groupCollapsed(++counter, ...arguments)
-    window['console'].trace()
-    window['console'].groupEnd()
+    window.console.groupCollapsed(++counter, ...arguments)
+    window.console.trace()
+    window.console.groupEnd()
   }
 }

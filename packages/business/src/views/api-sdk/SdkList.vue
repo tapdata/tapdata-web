@@ -1,17 +1,10 @@
 <script setup lang="ts">
-import { deleteSdk, fetchSdkList } from '@tap/api'
+import { deleteSdk, fetchSdkList } from '@tap/api/src/core/sdk'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import { useI18n } from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
 import { escapeRegExp } from 'lodash-es'
-import {
-  nextTick,
-  onBeforeUnmount,
-  reactive,
-  ref,
-  useTemplateRef,
-  watch,
-} from 'vue'
+import { onBeforeUnmount, reactive, ref, useTemplateRef, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import PageContainer from '../../components/PageContainer.vue'
 import TablePage from '../../components/TablePage.vue'

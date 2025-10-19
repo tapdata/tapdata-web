@@ -38,27 +38,25 @@ export interface ApiServerWorker {
   processId: string
   workerPid: number
   name: string
-  workers: Worker[]
+  workers: {
+    oid: string
+    name: string
+    id: number
+    pid: number
+    workerStatus: string
+    workerStartTime: number
+    metricValues: {
+      heapMemoryUsage: number
+      cpuUsage: number
+    }
+    sort: number
+  }[]
   workerProcessStartTime: number
   status: string
   metricValues: {
     heapMemoryUsage: number
     cpuUsage: number
   }
-}
-
-export interface Worker {
-  oid: string
-  name: string
-  id: number
-  pid: number
-  workerStatus: string
-  workerStartTime: number
-  metricValues: {
-    heapMemoryUsage: number
-    cpuUsage: number
-  }
-  sort: number
 }
 
 export function fetchApiServerWorker(processId: string) {

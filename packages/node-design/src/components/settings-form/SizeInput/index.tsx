@@ -27,7 +27,7 @@ const createUnitType = (type) => {
 }
 
 const createSpecialSizeOption = (type) => ({
-  type: type,
+  type,
   checker(value) {
     if (value === type) return true
     return false

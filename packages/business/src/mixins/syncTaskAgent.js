@@ -1,4 +1,4 @@
-import { fetchClusterStates } from '@tap/api'
+import { fetchClusterStates } from '@tap/api/src/core/cluster'
 
 export default {
   data() {

@@ -1,9 +1,9 @@
 import { FormLayout as BaseFormLayout } from '@tap/form'
-import { createBehavior, createResource } from '../../../core'
 import { withContainer } from '../../../components/common/Container'
-import { createVoidFieldSchema } from '../Field'
-import { AllSchemas } from '../../schemas'
+import { createBehavior, createResource } from '../../../core'
 import { AllLocales } from '../../locales'
+import { AllSchemas } from '../../schemas'
+import { createVoidFieldSchema } from '../Field'
 
 export const FormLayout = withContainer(BaseFormLayout)
 

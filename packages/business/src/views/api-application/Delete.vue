@@ -1,5 +1,6 @@
 <script>
-import { deleteApp, fetchApiModules, fetchApps, moveApp } from '@tap/api'
+import { deleteApp, fetchApps, moveApp } from '@tap/api/src/core/app'
+import { fetchApiModules } from '@tap/api/src/core/modules'
 import i18n from '@tap/i18n'
 import ListSelect from './ListSelect'
 
