@@ -1,4 +1,4 @@
-import { requestClient, type PageFetchResult } from '../request'
+import { requestClient, type Filter, type PageFetchResult } from '../request'
 
 const BASE_URL = '/api/task-inspect'
 
@@ -118,16 +118,12 @@ export function getTaskInspectResultsGroupByTable(inspectId: string) {
 
 export function getTaskInspectHistoriesResults(
   inspectId: string,
-  sourceTable: string,
+  filter: Filter,
 ) {
   return requestClient.get<PageFetchResult<DiffRow>>(
     `/api/task-inspect-histories/${inspectId}/results`,
     {
-      params: {
-        filter: JSON.stringify({
-          where: { sourceTable },
-        }),
-      },
+      params: { filter: filter ? JSON.stringify(filter) : undefined },
     },
   )
 }

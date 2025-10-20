@@ -1,10 +1,7 @@
 <script>
 import i18n from '@tap/i18n'
-import { $emit } from '../utils/gogocodeTransfer'
 
-import VIcon from './base/VIcon.vue'
 export default {
-  components: { VIcon },
   props: {
     value: [String, Number],
     type: String,
@@ -59,7 +56,7 @@ export default {
       if (this.inputValue === this.value) {
         return
       }
-      $emit(this, 'save', this.inputValue)
+      this.$emit('save', this.inputValue)
     },
     cancel() {
       this.editing = false

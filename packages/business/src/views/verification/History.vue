@@ -6,7 +6,7 @@ import { inspectMethod, statusMap } from './const'
 
 let timeout = null
 export default {
-  components: { VIcon, PageContainer },
+  components: { PageContainer },
   data() {
     return {
       loading: true,

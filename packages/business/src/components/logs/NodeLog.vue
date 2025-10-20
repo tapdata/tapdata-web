@@ -7,7 +7,6 @@ import { callProxy } from '@tap/api/src/core/proxy'
 import { downloadTaskAnalyze, putTaskLogSetting } from '@tap/api/src/core/task'
 import { CancelToken } from '@tap/api/src/request'
 import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
-import { IconButton } from '@tap/component/src/icon-button'
 
 import TimeSelect from '@tap/component/src/TimeSelect.vue'
 import i18n from '@tap/i18n'
@@ -25,17 +24,6 @@ import Download from './Download'
 export default {
   name: 'NodeLog',
   components: {
-    VIcon,
-    TimeSelect,
-    DynamicScroller,
-    DynamicScrollerItem,
-    VEmpty,
-    NodeList,
-  },
-
-  components: {
-    IconButton,
-    VIcon,
     TimeSelect,
     DynamicScroller,
     DynamicScrollerItem,

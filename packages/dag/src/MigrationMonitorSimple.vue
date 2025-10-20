@@ -14,9 +14,6 @@ import {
   EXTERNAL_STORAGE_TYPE_MAP,
   TASK_STATUS_MAP,
 } from '@tap/business/src/shared/const'
-import SharedCacheDetails from '@tap/business/src/views/shared-cache/Details'
-import SharedCacheEditor from '@tap/business/src/views/shared-cache/Editor'
-import SharedMiningEditor from '@tap/business/src/views/shared-mining/Editor'
 import SkipError from '@tap/business/src/views/task/SkipError.vue'
 import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
 import resize from '@tap/component/src/directives/resize'
@@ -34,8 +31,6 @@ import dayjs from 'dayjs'
 import { cloneDeep, debounce } from 'lodash-es'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import { MoveNodeCommand } from './command'
-import MaterializedView from './components/materialized-view/MaterializedView.vue'
-import ConfigPanel from './components/migration/ConfigPanel'
 import ConsolePanel from './components/migration/ConsolePanel'
 import BottomPanel from './components/monitor/BottomPanel'
 import AlarmStatistics from './components/monitor/components/AlarmStatistics'
@@ -47,7 +42,6 @@ import Node from './components/monitor/Node'
 import TopHeader from './components/monitor/TopHeader'
 import { getTimeGranularity, TIME_FORMAT_MAP } from './components/monitor/util'
 import PaperScroller from './components/PaperScroller'
-import SchemaForm from './components/SchemaForm.vue'
 import TaskReadPretty from './components/steps/TaskReadPretty.vue'
 import TaskSettingsReadPretty from './components/steps/TaskSettingsReadPretty.vue'
 import {
@@ -73,28 +67,21 @@ export default {
   components: {
     InitialList,
     TaskReadPretty,
-    SchemaForm,
     NodeLog,
     TimeSelect,
     IconButton,
     LineChart,
     SkipError,
-    MaterializedView,
     UpgradeFee,
     UpgradeCharges,
     AlarmStatistics,
     VEmpty,
-    ConfigPanel,
     BottomPanel,
     PaperScroller,
     TopHeader,
     Node,
-    VIcon,
     NodeDetailDialog,
     ConsolePanel,
-    SharedMiningEditor,
-    SharedCacheDetails,
-    SharedCacheEditor,
     Frequency,
     TaskSettingsReadPretty,
   },
