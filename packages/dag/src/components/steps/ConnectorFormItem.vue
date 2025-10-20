@@ -1,5 +1,6 @@
 <script>
-import { DatabaseIcon, SceneDialog } from '@tap/business'
+import SceneDialog from '@tap/business/src/components/create-connection/SceneDialog.vue'
+import { DatabaseIcon } from '@tap/business/src/components/DatabaseIcon'
 import { FormItem } from '@tap/form'
 
 export default {

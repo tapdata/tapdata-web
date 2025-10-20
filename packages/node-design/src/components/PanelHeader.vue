@@ -1,9 +1,6 @@
 <script>
-import { VIcon } from '@tap/component'
-
 export default {
   name: 'PanelHeader',
-  components: { VIcon },
 }
 </script>
 

@@ -1,6 +1,5 @@
 <script>
-import { AlarmNotification } from '@tap/business'
-import { VIcon } from '@tap/component'
+import AlarmNotification from '@tap/business/src/views/setting/AlarmNotification.vue'
 import { mapState } from 'vuex'
 import SystemAlarm from './SystemAlarm'
 import SystemNotification from './SystemNotification'
@@ -12,7 +11,6 @@ export default {
     UserNotification,
     SystemAlarm,
     AlarmNotification,
-    VIcon,
   },
   inject: ['lockedFeature', 'openLocked'],
   data() {

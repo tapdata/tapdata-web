@@ -1,5 +1,5 @@
 <script>
-import { Chart } from '@tap/component'
+import Chart from '@tap/component/src/chart/Chart.vue'
 
 import i18n from '@tap/i18n'
 import { calcUnit } from '@tap/shared'

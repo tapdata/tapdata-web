@@ -6,9 +6,10 @@ import {
 import { callProxy } from '@tap/api/src/core/proxy'
 import { downloadTaskAnalyze, putTaskLogSetting } from '@tap/api/src/core/task'
 import { CancelToken } from '@tap/api/src/request'
-import { IconButton, TimeSelect, VIcon } from '@tap/component'
-
 import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
+import { IconButton } from '@tap/component/src/icon-button'
+
+import TimeSelect from '@tap/component/src/TimeSelect.vue'
 import i18n from '@tap/i18n'
 import { copyToClipboard, CountUp, downloadBlob, openUrl } from '@tap/shared'
 import Time from '@tap/shared/src/time'
@@ -17,7 +18,6 @@ import dayjs from 'dayjs'
 import { cloneDeep, debounce, escape, uniqBy } from 'lodash-es'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { mapGetters } from 'vuex'
-import { $emit } from '../../../utils/gogocodeTransfer'
 
 import NodeList from '../nodes/List'
 import Download from './Download'
@@ -380,7 +380,7 @@ export default {
     },
 
     changeItem(val) {
-      $emit(this, 'update:nodeId', val)
+      this.$emit('update:nodeId', val)
       this.init()
     },
 
@@ -422,7 +422,7 @@ export default {
       }
       queryMonitoringLogs(filter)
         .then((data = {}) => {
-          const items = this.getFormatRow(data.items?.reverse())
+          const items = this.getFormatRow(data.items?.toReversed())
           this.oldPageObj.total = data.total || 0
           this.oldPageObj.page = filter.page
 

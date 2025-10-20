@@ -1,8 +1,8 @@
 <script>
 import { getTaskRecords } from '@tap/api/src/core/task'
 
-import { TaskStatus } from '@tap/business'
-import { VTable } from '@tap/component'
+import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
+import { VTable } from '@tap/component/src/base/v-table'
 import i18n from '@tap/i18n'
 import { openUrl } from '@tap/shared'
 import Time from '@tap/shared/src/time'

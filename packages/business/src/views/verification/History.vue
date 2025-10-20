@@ -1,6 +1,5 @@
 <script>
 import { fetchInspectResults } from '@tap/api/src/core/inspect-results'
-import { VIcon } from '@tap/component'
 import dayjs from 'dayjs'
 import PageContainer from '../../components/PageContainer.vue'
 import { inspectMethod, statusMap } from './const'

@@ -6,24 +6,25 @@ import { getLogcollectorDetail } from '@tap/api/src/core/logcollector'
 import { batchMeasurements } from '@tap/api/src/core/measurement'
 import { findOneSharedCache } from '@tap/api/src/core/shared-cache'
 import { getTaskRecords, resetTask, startTask } from '@tap/api/src/core/task'
+import NodeLog from '@tap/business/src/components/logs/NodeLog.vue'
+import UpgradeCharges from '@tap/business/src/components/UpgradeCharges.vue'
+import UpgradeFee from '@tap/business/src/components/UpgradeFee.vue'
 import {
   ALARM_LEVEL_SORT,
   EXTERNAL_STORAGE_TYPE_MAP,
-  SkipError,
   TASK_STATUS_MAP,
-  UpgradeCharges,
-  UpgradeFee,
-} from '@tap/business'
-import NodeLog from '@tap/business/src/components/logs/NodeLog.vue'
-
+} from '@tap/business/src/shared/const'
 import SharedCacheDetails from '@tap/business/src/views/shared-cache/Details'
 import SharedCacheEditor from '@tap/business/src/views/shared-cache/Editor'
 import SharedMiningEditor from '@tap/business/src/views/shared-mining/Editor'
-import { IconButton, TimeSelect, VEmpty, VIcon } from '@tap/component'
+import SkipError from '@tap/business/src/views/task/SkipError.vue'
+import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
 import resize from '@tap/component/src/directives/resize'
+import { IconButton } from '@tap/component/src/icon-button'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
 import { titleChange } from '@tap/component/src/mixins/titleChange'
+import TimeSelect from '@tap/component/src/TimeSelect.vue'
 import i18n from '@tap/i18n'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'

@@ -1,11 +1,11 @@
 <script>
 import editSvg from '@tap/assets/images/edit-fill.svg'
-import { TaskStatus } from '@tap/business'
-
+import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import syncTaskAgent from '@tap/business/src/mixins/syncTaskAgent'
-import { OverflowTooltip, TextEditable, VDivider, VIcon } from '@tap/component'
-
+import { TextEditable } from '@tap/component/src/base/text-editable'
+import VDivider from '@tap/component/src/base/VDivider.vue'
 import focusSelect from '@tap/component/src/directives/focusSelect'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
 import { mapGetters, mapMutations, mapState } from 'vuex'
@@ -18,7 +18,6 @@ export default {
   directives: { focusSelect },
   components: {
     DataCaptureDebug,
-    VIcon,
     TaskStatus,
     VDivider,
     OverflowTooltip,

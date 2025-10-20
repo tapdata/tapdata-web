@@ -4,7 +4,7 @@ import {
   autoInspectResultsGroupByTable,
   getAutoInspectResults,
 } from '@tap/api/src/core/task'
-import { VTable } from '@tap/component'
+import { VTable } from '@tap/component/src/base/v-table'
 import i18n from '@tap/i18n'
 import { delayTrigger } from '@tap/shared'
 import Time from '@tap/shared/src/time'
@@ -51,7 +51,8 @@ export default {
       showAdvancedVerification: false,
       row: null,
       detailLoading: false,
-      detailSvg: require('@tap/assets/images/detail-info.svg'),
+      detailSvg: new URL('@tap/assets/images/detail-info.svg', import.meta.url)
+        .href,
       timeout: null,
       verifyLoading: false,
       checkProgress: '',

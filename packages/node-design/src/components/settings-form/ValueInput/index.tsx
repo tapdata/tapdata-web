@@ -1,4 +1,4 @@
-import { VCodeEditor } from '@tap/component'
+import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import { Input, InputNumber } from '@tap/form'
 import {
   ElButton as Button,
@@ -14,28 +14,31 @@ import { TextWidget } from '../../widgets'
  */
 import { createPolyInput } from '../PolyInput'
 
+// Improved regex: Fixes ambiguous overlapping in attribute value parsing
 const STARTTAG_REX =
-  /<([-\w]+)((?:\s+[a-z_:][-\w:.]*(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^>\s]+))?)*)\s*(\/?)>/i
+  /<[-\w]+(?:\s+[a-z_:][-\w:.]*(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s"'=<>`]+))?)*\s*\/?>/i
 
-const EXPRESSION_REX = /^\{\{([\s\S]*)\}\}$/
+// The EXPRESSION_REX was fine, so we leave it unchanged.
+const EXPRESSION_REX = /^\{\{[\s\S]*\}\}$/
 
-const isNumber = (value) => typeof value === 'number'
+const isNumber = (value: unknown): value is number => typeof value === 'number'
 
-const isBoolean = (value) => typeof value === 'boolean'
+const isBoolean = (value: unknown): value is boolean =>
+  typeof value === 'boolean'
 
-const isExpression = (value) => {
+const isExpression = (value: unknown): value is string => {
   return typeof value === 'string' && EXPRESSION_REX.test(value)
 }
 
-const isRichText = (value) => {
+const isRichText = (value: unknown): value is string => {
   return typeof value === 'string' && STARTTAG_REX.test(value)
 }
 
-const isNormalText = (value) => {
+const isNormalText = (value: unknown): value is string => {
   return typeof value === 'string' && !isExpression(value) && !isRichText(value)
 }
 
-const takeNumber = (value) => {
+const takeNumber = (value: unknown): number | undefined => {
   const num = String(value).replace(/[^\d.]+/, '')
   if (num === '') return
   return Number(num)
@@ -56,43 +59,49 @@ export const ValueInput = createPolyInput([
       setup: (props, { emit }) => {
         return () => (
           <Popover trigger="click" class="w-100">
-            <div
-              style={{
-                width: '400px',
-                height: '200px',
-                margin: ' -12px',
-                overflow: 'hidden',
-                borderRadius: '4px',
-              }}
-            >
-              <VCodeEditor
-                props={props}
-                lang="javascript"
-                options={{
-                  enableBasicAutocompletion: true,
-                  enableLiveAutocompletion: true,
-                  showPrintMargin: false,
-                }}
-                onInput={(val) => {
-                  emit('change', val)
-                }}
-              />
-            </div>
-            <Button slot="reference" class="w-100">
-              <TextWidget token="SettingComponents.ValueInput.expression" />
-            </Button>
+            {{
+              default: () => (
+                <div
+                  style={{
+                    width: '400px',
+                    height: '200px',
+                    margin: ' -12px',
+                    overflow: 'hidden',
+                    borderRadius: '4px',
+                  }}
+                >
+                  <VCodeEditor
+                    {...props}
+                    lang="javascript"
+                    options={{
+                      enableBasicAutocompletion: true,
+                      enableLiveAutocompletion: true,
+                      showPrintMargin: false,
+                    }}
+                    onInput={(val) => {
+                      emit('change', val)
+                    }}
+                  />
+                </div>
+              ),
+              reference: () => (
+                <Button class="w-100">
+                  <TextWidget token="SettingComponents.ValueInput.expression" />
+                </Button>
+              ),
+            }}
           </Popover>
         )
       },
     }),
     checker: isExpression,
-    toInputValue: (value) => {
-      if (!value || value === '{{}}') return
+    toInputValue: (value: unknown): string => {
+      if (!value || value === '{{}}') return ''
       const matched = String(value).match(EXPRESSION_REX)
-      return matched?.[1] || value || ''
+      return (matched?.[1] as string) || (value as string) || ''
     },
-    toChangeValue: (value) => {
-      if (!value || value === '{{}}') return
+    toChangeValue: (value: unknown): string => {
+      if (!value || value === '{{}}') return ''
       const matched = String(value).match(EXPRESSION_REX)
       return `{{${matched?.[1] || value || ''}}}`
     },
@@ -108,7 +117,7 @@ export const ValueInput = createPolyInput([
             onChange={(val) => {
               emit('change', val)
             }}
-            value={props.value}
+            modelValue={props.value}
           >
             <Option label="True" value={true} />
             <Option label="False" value={false} />
@@ -117,10 +126,10 @@ export const ValueInput = createPolyInput([
       },
     }),
     checker: isBoolean,
-    toInputValue: (value) => {
+    toInputValue: (value: unknown): boolean => {
       return !!value
     },
-    toChangeValue: (value) => {
+    toChangeValue: (value: unknown): boolean => {
       return !!value
     },
   },

@@ -1,9 +1,8 @@
-<script lang="jsx">
-import { TaskStatus } from '@tap/business'
-import { IconButton, VIcon } from '@tap/component'
+<script lang="tsx">
+import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
+import { IconButton } from '@tap/component/src/icon-button'
 import i18n from '@tap/i18n'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
-
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import {
@@ -36,7 +35,6 @@ export default defineComponent({
   name: 'Node',
   components: {
     DFNode,
-    VIcon,
     TaskStatus,
   },
 

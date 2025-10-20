@@ -3,7 +3,8 @@ import {
   getStorageOverview,
   getTaskOverview,
 } from '@tap/api/src/core/discovery'
-import { OverflowTooltip, VTable } from '@tap/component'
+import { VTable } from '@tap/component/src/base/v-table'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import { NodeViewer } from '@tap/dag'
 import dayjs from 'dayjs'
 import { computed, defineComponent, reactive, ref } from 'vue'

@@ -2,18 +2,14 @@
 import { observable } from '@formily/reactive'
 import { batchMeasurements } from '@tap/api/src/core/measurement'
 import { getTaskRecords, resetTask, startTask } from '@tap/api/src/core/task'
-import {
-  ALARM_LEVEL_SORT,
-  SkipError,
-  TASK_STATUS_MAP,
-  UpgradeCharges,
-  UpgradeFee,
-} from '@tap/business'
+import UpgradeCharges from '@tap/business/src/components/UpgradeCharges.vue'
+import UpgradeFee from '@tap/business/src/components/UpgradeFee.vue'
+import { ALARM_LEVEL_SORT } from '@tap/business/src/shared/const'
 import SharedCacheDetails from '@tap/business/src/views/shared-cache/Details'
 import SharedCacheEditor from '@tap/business/src/views/shared-cache/Editor'
-
 import SharedMiningEditor from '@tap/business/src/views/shared-mining/Editor'
-import { VEmpty, VExpandXTransition, VIcon } from '@tap/component'
+import SkipError from '@tap/business/src/views/task/SkipError.vue'
+import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
 import resize from '@tap/component/src/directives/resize'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
@@ -62,7 +58,6 @@ export default {
     UpgradeFee,
     UpgradeCharges,
     AlarmStatistics,
-    VExpandXTransition,
     VEmpty,
     ConfigPanel,
     BottomPanel,

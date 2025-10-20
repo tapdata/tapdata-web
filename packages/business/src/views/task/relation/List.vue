@@ -1,6 +1,7 @@
 <script>
 import { getParentTaskSign, taskConsoleRelations } from '@tap/api/src/core/task'
-import { FilterBar, VTable } from '@tap/component'
+import { VTable } from '@tap/component/src/base/v-table'
+import { FilterBar } from '@tap/component/src/filter-bar'
 import i18n from '@tap/i18n'
 import { openUrl } from '@tap/shared'
 import { TaskStatus } from '../../../components'

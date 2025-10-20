@@ -3,11 +3,10 @@ import {
   autoInspectResultsGroupByTable,
   getAutoInspectTotals,
 } from '@tap/api/src/core/task'
-import { Chart, VEmpty } from '@tap/component'
-
+import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
+import Chart from '@tap/component/src/chart/Chart.vue'
 import i18n from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
-
 import Time from '@tap/shared/src/time'
 import { cloneDeep, debounce } from 'lodash-es'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'

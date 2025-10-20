@@ -2,8 +2,9 @@
 import { getExternalStorage } from '@tap/api/src/core/external-storage'
 import { getLogcollectorDetail } from '@tap/api/src/core/logcollector'
 import { findOneSharedCache } from '@tap/api/src/core/shared-cache'
-import { EXTERNAL_STORAGE_TYPE_MAP } from '@tap/business'
-import { IconButton, TimeSelect, VIcon } from '@tap/component'
+import { EXTERNAL_STORAGE_TYPE_MAP } from '@tap/business/src/shared/const'
+import { IconButton } from '@tap/component/src/icon-button'
+import TimeSelect from '@tap/component/src/TimeSelect.vue'
 
 import i18n from '@tap/i18n'
 import { calcTimeUnit, calcUnit } from '@tap/shared'

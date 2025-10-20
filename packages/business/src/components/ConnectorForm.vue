@@ -18,7 +18,7 @@ import {
   getProxyId,
   subscribeProxy,
 } from '@tap/api/src/core/proxy'
-import { SchemaToForm } from '@tap/form'
+import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
 import i18n from '@tap/i18n'
 import { submitForm, uuid } from '@tap/shared'
 import { isEmpty } from 'lodash-es'

@@ -9,7 +9,9 @@ import {
   saveAndStartTask,
   updateTask,
 } from '@tap/api/src/core/task'
-import { showErrorMessage, UpgradeCharges, UpgradeFee } from '@tap/business'
+import { showErrorMessage } from '@tap/business/src/components/error-message'
+import UpgradeCharges from '@tap/business/src/components/UpgradeCharges.vue'
+import UpgradeFee from '@tap/business/src/components/UpgradeFee.vue'
 import i18n from '@tap/i18n'
 import axios from 'axios'
 import { ElMessageBox, ElMessage as Message } from 'element-plus'

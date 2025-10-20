@@ -6,9 +6,8 @@ import {
   fetchTasks,
   updateTask,
 } from '@tap/api/src/core/task'
-import { makeStatusAndDisabled } from '@tap/business'
-import { VIcon } from '@tap/component'
-import { computed as reactiveComputed } from '@tap/form'
+import { makeStatusAndDisabled } from '@tap/business/src/shared'
+import { computed as reactiveComputed } from '@tap/form/src/shared/reactive'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
 import { getCurrentInstance, provide, ref } from 'vue'

@@ -1,6 +1,5 @@
 <script>
-import { ClipboardButton } from '@tap/form'
-import { $emit } from '../../utils/gogocodeTransfer'
+import { ClipboardButton } from '@tap/form/src/components/clipboard-button'
 export default {
   components: {
     ClipboardButton,
@@ -27,8 +26,7 @@ export default {
   methods: {
     inputHandler(values) {
       //过滤空字符串并去重，之后使用逗号分隔
-      $emit(
-        this,
+      this.$emit(
         'update:value',
         Array.from(new Set(values.filter((v) => !!v.trim()))).join(','),
       )

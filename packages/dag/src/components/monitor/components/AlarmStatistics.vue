@@ -1,5 +1,4 @@
 <script lang="tsx">
-import { VIcon } from '@tap/component'
 import i18n from '@tap/i18n'
 import { defineComponent } from 'vue'
 

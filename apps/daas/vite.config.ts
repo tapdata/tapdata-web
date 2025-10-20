@@ -171,6 +171,10 @@ export default defineConfig(() => {
                 id.includes('/qs/')
               )
                 return 'utils'
+
+              // monaco-editor ace editor
+              if (id.includes('monaco-editor') || id.includes('ace-editor'))
+                return 'editor'
               // 其它 node_modules 统一进 vendor，避免生成大量小碎片
               return 'vendor'
             }

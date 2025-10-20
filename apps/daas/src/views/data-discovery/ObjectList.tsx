@@ -1,24 +1,17 @@
 import {
-  fetchDiscoveryFilterList,
   fetchDiscoveryList,
+  getDiscoveryFilterList,
 } from '@tap/api/src/core/discovery'
-import { TablePage } from '@tap/business'
-import { Drawer, FilterBar } from '@tap/component'
+import TablePage from '@tap/business/src/components/TablePage.vue'
+import Drawer from '@tap/component/src/Drawer.vue'
+import { FilterBar } from '@tap/component/src/filter-bar'
 import { defineComponent, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import i18n from '@/i18n'
 import DrawerContent from './PreviewDrawer'
 import './index.scss'
 
-interface CustomContext extends SetupContext {
-  refs: {
-    table: InstanceType<typeof TablePage>
-    drawerContent: InstanceType<typeof DrawerContent>
-  }
-}
-
 export default defineComponent({
-  props: [''],
   setup() {
     const route = useRoute()
     const tableRef = ref()
@@ -79,7 +72,7 @@ export default defineComponent({
         'sourceCategory',
         'sourceType',
       ]
-      fetchDiscoveryFilterList(filterType).then((res) => {
+      getDiscoveryFilterList(filterType).then((res) => {
         const { objCategory, objType, sourceCategory, sourceType } = res
         data.filterItems = [
           {
@@ -152,14 +145,15 @@ export default defineComponent({
     watch(
       () => route.query,
       () => {
-        refs.table.fetch(1)
+        tableRef.value.fetch(1)
       },
     )
     onMounted(() => {
-      refs.table.fetch(1)
+      tableRef.value.fetch(1)
     })
     loadFilterList()
     return {
+      tableRef,
       data,
       list,
       loadData,

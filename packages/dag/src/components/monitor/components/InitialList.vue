@@ -1,7 +1,7 @@
 <script>
 import { getFullStatistics } from '@tap/api/src/core/measurement'
 
-import { VTable } from '@tap/component'
+import { VTable } from '@tap/component/src/base/v-table'
 import i18n from '@tap/i18n'
 import { debounce } from 'lodash-es'
 

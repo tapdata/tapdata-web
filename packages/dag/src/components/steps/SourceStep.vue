@@ -5,12 +5,10 @@ import {
   getConnectionNoSchema,
 } from '@tap/api/src/core/connections'
 import { getConnectorImage } from '@tap/assets'
-import {
-  CONNECTION_STATUS_MAP,
-  ConnectorForm,
-  DatabaseIcon,
-} from '@tap/business'
-import { VEmpty } from '@tap/component'
+import { ConnectorForm } from '@tap/business/src/components/ConnectorForm.vue'
+import { DatabaseIcon } from '@tap/business/src/components/DatabaseIcon'
+import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared/const'
+import { VEmpty } from '@tap/component/src/base/v-empty'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
 import { computed, defineComponent, inject, nextTick, reactive, ref } from 'vue'
@@ -25,7 +23,7 @@ export default defineComponent({
       default: 'source',
     },
   },
-  setup(props, { refs, emit }) {
+  setup(props, { emit }) {
     const store = useStore()
     const pdkHash = ref('')
     const pdkId = ref('')

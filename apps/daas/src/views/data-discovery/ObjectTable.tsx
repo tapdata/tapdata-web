@@ -1,25 +1,21 @@
 import {
-  fetchDiscoveryFilterList,
   fetchDiscoveryList,
+  getDiscoveryFilterList,
 } from '@tap/api/src/core/discovery'
-import { TablePage } from '@tap/business'
-import { FilterBar } from '@tap/component'
+import TablePage from '@tap/business/src/components/TablePage.vue'
+import { FilterBar } from '@tap/component/src/filter-bar'
 import { defineComponent, nextTick, onMounted, reactive, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import i18n from '@/i18n'
 import './index.scss'
 
-interface CustomContext extends SetupContext {
-  refs: {
-    multipleTable: InstanceType<typeof TablePage>
-  }
-}
-
 export default defineComponent({
   props: ['parentNode'],
-  setup(props, { root, emit, refs }) {
+  setup(props) {
+    const route = useRoute()
     const multipleTableRef = ref()
     const { category, type, sourceCategory, sourceType, queryKey } =
-      root.$route.query || {}
+      route.query || {}
     const list = ref([])
     const multipleSelection = ref([])
     const data = reactive({
@@ -90,7 +86,7 @@ export default defineComponent({
         'sourceCategory',
         'sourceType',
       ]
-      fetchDiscoveryFilterList(filterType).then((res) => {
+      getDiscoveryFilterList(filterType).then((res) => {
         const { objCategory, objType, sourceCategory, sourceType } = res
         data.filterItems = [
           {
@@ -194,7 +190,7 @@ export default defineComponent({
     }
     //监听路由变化 筛选条件变化
     watch(
-      () => root.$route.query,
+      () => route.query,
       (val) => {
         multipleTableRef.value.fetch(1)
       },

@@ -16,7 +16,6 @@ import {
   getDiscoveryDirectoryData,
   updateDiscoveryTags,
 } from '@tap/api/src/core/discovery'
-import { VIcon } from '@tap/component'
 import i18n from '@tap/i18n'
 import Cookie from '@tap/shared/src/cookie'
 

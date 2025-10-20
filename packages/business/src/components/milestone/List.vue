@@ -1,14 +1,10 @@
 <script>
 import { callProxy } from '@tap/api/src/core/proxy'
-import { VIcon, VTable } from '@tap/component'
-
+import { VTable } from '@tap/component/src/base/v-table'
 import i18n from '@tap/i18n'
 import { calcTimeUnit, copyToClipboard } from '@tap/shared'
 import Time from '@tap/shared/src/time'
-
 import dayjs from 'dayjs'
-import { $emit } from '../../../utils/gogocodeTransfer'
-
 import { ErrorMessage } from '../error-message'
 import NodeList from '../nodes/List'
 
@@ -466,7 +462,7 @@ export default {
   methods: {
     handleChange(val, node) {
       this.activeNode = val ? node : {}
-      $emit(this, 'update:nodeId', val)
+      this.$emit('update:nodeId', val)
     },
 
     handleError(row = {}) {

@@ -27,7 +27,7 @@ const createTypes = (types, exclude, include) => {
   })
 }
 
-export function createPolyInput(polyTypes = []) {
+export function createPolyInput(polyTypes: any[] = []) {
   return defineComponent({
     props: {
       value: {},

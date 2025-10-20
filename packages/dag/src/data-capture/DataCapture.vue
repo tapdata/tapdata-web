@@ -2,9 +2,12 @@
 import { getDataActions } from '@tap/api/src/core/data-permission'
 import { callProxy } from '@tap/api/src/core/proxy'
 import { getTaskById } from '@tap/api/src/core/task'
-import { makeStatusAndDisabled, TaskStatus } from '@tap/business'
+import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import syncTaskAgent from '@tap/business/src/mixins/syncTaskAgent'
-import { TextEditable, VDivider, VEmpty, VIcon } from '@tap/component'
+import { makeStatusAndDisabled } from '@tap/business/src/shared/task'
+import { TextEditable } from '@tap/component/src/base/text-editable'
+import { VEmpty } from '@tap/component/src/base/v-empty'
+import VDivider from '@tap/component/src/base/VDivider.vue'
 import i18n, { useI18n } from '@tap/i18n'
 import { copyToClipboard, setPageTitle } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
@@ -33,7 +36,6 @@ export default defineComponent({
     VDivider,
     VEmpty,
     CaptureItem,
-    VIcon,
     TaskStatus,
     TextEditable,
     DynamicScroller,

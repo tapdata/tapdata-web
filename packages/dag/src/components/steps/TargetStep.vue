@@ -1,9 +1,9 @@
 <script>
-import { ConnectorForm } from '@tap/business'
+import ConnectorForm from '@tap/business/src/components/ConnectorForm.vue'
 import ConnectorFormItem from './ConnectorFormItem.vue'
 
 export default {
-  name: 'SourceStep',
+  name: 'TargetStep',
   components: { ConnectorForm, ConnectorFormItem },
   data() {
     return {

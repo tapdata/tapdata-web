@@ -1,7 +1,6 @@
 <script>
-import { VirtualTransferPanel } from '@tap/component'
+import VirtualTransferPanel from '@tap/component/src/base/virtual-transfer/VirtualTransferPanel.vue'
 import { ElTransfer as Transfer } from 'element-plus'
-import { $emit } from '../../utils/gogocodeTransfer'
 
 export default {
   name: 'MqTransfer',
@@ -97,7 +96,7 @@ export default {
     onTargetCheckedChange(from, val, movedKeys) {
       this[`${from}Checked`] = val
       if (movedKeys === undefined) return
-      $emit(this, 'right-top-check-change', val, movedKeys)
+      this.$emit('right-top-check-change', val, movedKeys)
     },
 
     addToLeft(from = 'top') {
@@ -110,8 +109,8 @@ export default {
           currentValue.splice(index, 1)
         }
       })
-      $emit(this, `update:${valueKey}`, currentValue)
-      $emit(this, 'change', currentValue, 'left', currentChecked)
+      this.$emit(`update:${valueKey}`, currentValue)
+      this.$emit('change', currentValue, 'left', currentChecked)
     },
 
     addToRight(to = 'top') {
@@ -143,8 +142,8 @@ export default {
           ? itemsToBeMoved.concat(currentValue)
           : currentValue.concat(itemsToBeMoved)
 
-      $emit(this, `update:${valueKey}`, currentValue)
-      $emit(this, 'change', currentValue, `right-${to}`, this.leftChecked)
+      this.$emit(`update:${valueKey}`, currentValue)
+      this.$emit('change', currentValue, `right-${to}`, this.leftChecked)
     },
   },
 }
