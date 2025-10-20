@@ -13,7 +13,7 @@ import { dayjs } from '@tap/business/src/shared/dayjs'
 import { CloseIcon } from '@tap/component/src/CloseIcon'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
-import { ref } from 'vue'
+import { reactive, ref, useTemplateRef } from 'vue'
 import InspectRecordDialog from './InspectRecordDialog.vue'
 
 const props = defineProps({
@@ -36,7 +36,7 @@ const visible = defineModel<boolean>('modelValue', {
 })
 
 const { t } = useI18n()
-
+const diffListContainer = useTemplateRef<HTMLElement>('diffListContainer')
 const activeTab = ref('details')
 const inspectList = ref<InspectionRow[]>([])
 const rowDiffList = ref<DiffRow[]>([])
@@ -48,6 +48,11 @@ const showCheckProgress = ref(false)
 const showRecoverProgress = ref(false)
 const progress = ref(0)
 const lastOpTime = ref('')
+const pageState = reactive({
+  page: 1,
+  pageSize: 20,
+  total: 0,
+})
 
 function onClose(): void {
   resetData()
@@ -75,7 +80,7 @@ async function fetchDiffList(): Promise<void> {
         currentSelectedRow.value = inspectList.value[0]
       }
 
-      fetchTableDiff(currentSelectedRow.value!.sourceTable)
+      fetchTableDiff()
     }
   } catch (error) {
     console.error('Failed to fetch inspect list:', error)
@@ -84,16 +89,27 @@ async function fetchDiffList(): Promise<void> {
   }
 }
 
-async function fetchTableDiff(sourceTable: string): Promise<void> {
+async function fetchTableDiff(page?: number): Promise<void> {
   if (!props.inspectId) return
 
   loadingDetails.value = true
 
+  if (page) {
+    pageState.page = page
+  }
+
+  const filter = {
+    page: pageState.page,
+    limit: pageState.pageSize,
+    where: {
+      sourceTable: currentSelectedRow.value!.sourceTable,
+    },
+  }
+
   try {
-    const data = await getTaskInspectHistoriesResults(
-      props.inspectId,
-      sourceTable,
-    )
+    const data = await getTaskInspectHistoriesResults(props.inspectId, filter)
+
+    pageState.total = data?.total || 0
 
     rowDiffList.value = (data?.items || []).map((item: DiffRow) => {
       if (item.diffType === 'DIFF') {
@@ -214,7 +230,8 @@ const { run: startPolling, cancel: stopPolling } = useRequest(
 function handleRowClick(row: InspectionRow): void {
   if (currentSelectedRow.value === row) return
   currentSelectedRow.value = row
-  fetchTableDiff(row.sourceTable)
+  diffListContainer.value?.scrollTo({ top: 0 })
+  fetchTableDiff(1)
 }
 
 function onOpen(): void {
@@ -445,7 +462,7 @@ async function handleConfirmRecover(): Promise<void> {
               }}</span
             >
           </div>
-          <div class="overflow-y-auto p-4 min-height-0">
+          <div ref="diffListContainer" class="overflow-y-auto p-4 min-height-0">
             <div class="flex flex-column gap-4">
               <div
                 v-for="(row, index) in rowDiffList"
@@ -612,6 +629,18 @@ async function handleConfirmRecover(): Promise<void> {
                   </div>
                 </div>
               </div>
+            </div>
+            <div class="flex justify-center position-sticky bottom-0">
+              <el-pagination
+                v-model:current-page="pageState.page"
+                v-model:page-size="pageState.pageSize"
+                hide-on-single-page
+                class="backdrop-blur-md rounded-xl p-2 bg-white/15 shadow-sm mt-3"
+                background
+                layout="prev, pager, next"
+                :total="pageState.total"
+                @current-change="fetchTableDiff"
+              />
             </div>
           </div>
         </div>
