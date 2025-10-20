@@ -1,6 +1,5 @@
 import { AllSelection, TextSelection, type Transaction } from '@tiptap/pm/state'
 import { Extension } from '@tiptap/vue-3'
-import CommandButton from '../components/CommandButton.vue'
 
 import type { Command, Editor } from '@tiptap/vue-3'
 
@@ -175,7 +174,7 @@ const Indent = Extension.create<IndentOptions>({
                 return {}
               }
 
-              return { ['data-indent']: attributes.indent }
+              return { 'data-indent': attributes.indent }
             },
           },
         },

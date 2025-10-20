@@ -3,7 +3,7 @@ import CharacterCount from '@tiptap/extension-character-count'
 import TiptapPlaceholder from '@tiptap/extension-placeholder'
 import StarterKit from '@tiptap/starter-kit'
 import { EditorContent, useEditor } from '@tiptap/vue-3'
-import { onBeforeUnmount, ref, watch } from 'vue'
+import { onBeforeUnmount, watch } from 'vue'
 import Toolbar from './components/Toolbar.vue'
 
 import type { Extension } from '@tiptap/core'

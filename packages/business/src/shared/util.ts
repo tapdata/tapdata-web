@@ -1,12 +1,12 @@
 import i18n from '@tap/i18n'
 import Time from '@tap/shared/src/time'
-import { dayjs } from './dayjs'
 import { AGENT_SPEC_MAP } from './const'
+import { dayjs } from './dayjs'
 
 // 毫秒换算成时分秒
 export const formatMs = (msTime = 0, type = 'time') => {
-  let time = msTime / 1000
-  let arr = []
+  const time = msTime / 1000
+  const arr = []
   arr.push({
     label: i18n.t('public_time_d'),
     value: Math.floor(time / 60 / 60 / 24),
@@ -27,7 +27,7 @@ export const formatMs = (msTime = 0, type = 'time') => {
   if (type === 'time') {
     result = arr
       .slice(1)
-      .map((t) => (t.value + '').padStart(2, '0'))
+      .map((t) => String(t.value).padStart(2, '0'))
       .join(':')
     return result
   }
@@ -48,11 +48,11 @@ export function toThousandsUnit(val) {
     return '-'
   }
   if (val / (1000 * 1000 * 1000) > 1) {
-    return (val / (1000 * 1000 * 1000)).toFixed(1) + 'T'
+    return `${(val / (1000 * 1000 * 1000)).toFixed(1)}T`
   } else if (val / (1000 * 1000) > 1) {
-    return (val / (1000 * 1000)).toFixed(1) + 'M'
+    return `${(val / (1000 * 1000)).toFixed(1)}M`
   } else if (val / 1000 > 1) {
-    return (val / 1000).toFixed(1) + 'K'
+    return `${(val / 1000).toFixed(1)}K`
   } else {
     return val
   }
@@ -74,7 +74,7 @@ export function getPickerOptionsBeforeTime(val = Time.now(), nowTimestamp, cb) {
   if (val > now) {
     cb?.()
   }
-  let op = {
+  const op = {
     disabledDate: (time) => {
       return new Date(time).getTime() > now
     },
@@ -108,7 +108,8 @@ export function getPaymentMethod(item = {}, chargeProvider = '') {
   const s = isEn ? ' ' : ''
   const { type, periodUnit } = item
   const labelMap = {
-    recurring_day: i18n.t('dfs_instance_utils_lianxu') + s + i18n.t('public_time_every_day'),
+    recurring_day:
+      i18n.t('dfs_instance_utils_lianxu') + s + i18n.t('public_time_every_day'),
     recurring_month: i18n.t('dfs_instance_utils_baoyue'),
     recurring_year: i18n.t('dfs_instance_utils_baonian'),
   }

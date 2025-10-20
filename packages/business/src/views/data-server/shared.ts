@@ -1,4 +1,4 @@
-import { fetchMetadataInstances } from '@tap/api'
+import { fetchMetadataInstances } from '@tap/api/src/core/metadata-instances'
 import { uid } from '@tap/shared'
 import { merge } from 'lodash-es'
 import type { Ref } from 'vue'

@@ -3,15 +3,8 @@ import i18n from '@tap/i18n'
 import en from 'element-plus/dist/locale/en.mjs'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import zhTw from 'element-plus/dist/locale/zh-tw.mjs'
-import {
-  computed,
-  getCurrentInstance,
-  nextTick,
-  onMounted,
-  provide,
-  watch,
-} from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { computed, nextTick, onMounted, provide } from 'vue'
+import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import ReplicationTour from '@/components/ReplicationTour.vue'
 import axios from '@/plugins/axios'

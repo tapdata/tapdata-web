@@ -1,9 +1,7 @@
 <script>
-import {
-  getConnectionNoSchema,
-  lineageApi,
-  metadataDefinitionsApi,
-} from '@tap/api'
+import { fetchMetadataDefinitions } from '@tap/api/core/metadata-definitions'
+import { getConnectionNoSchema } from '@tap/api/src/core/connections'
+import { findLineageByTable } from '@tap/api/src/core/lineage'
 import SceneDialog from '@tap/business/src/components/create-connection/SceneDialog.vue'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import UpgradeCharges from '@tap/business/src/components/UpgradeCharges.vue'
@@ -224,10 +222,7 @@ export default {
         }*/
       }
       this.loadingDirectory = true
-      metadataDefinitionsApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
+      fetchMetadataDefinitions(filter)
         .then((data) => {
           const items = data?.items || []
           const treeData = this.formatCatalog(items)
@@ -336,9 +331,8 @@ export default {
     },
 
     handleFindParent(parentNode, tableInfo = {}, ldpType = 'mdm') {
-      lineageApi
-        .findByTable(tableInfo.connectionId, tableInfo.name)
-        .then((data) => {
+      findLineageByTable(tableInfo.connectionId, tableInfo.name).then(
+        (data) => {
           const { edges, nodes } = data.dag || {}
           this.nodes = nodes
           const otherLdpType = ldpType === 'mdm' ? 'fdm' : 'mdm'
@@ -378,7 +372,8 @@ export default {
 
           this.showParentLineage = true
           this.handleConnection()
-        })
+        },
+      )
     },
 
     async handleConnection() {

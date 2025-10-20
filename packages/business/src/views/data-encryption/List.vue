@@ -4,7 +4,7 @@ import {
   fetchEncryptionList,
   type Encryption,
   type Filter,
-} from '@tap/api'
+} from '@tap/api/src/core/encryption'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
@@ -180,10 +180,20 @@ onBeforeMount(() => {
           <ElButton text type="primary" @click="handleTest(row)">
             {{ $t('public_test') }}
           </ElButton>
-          <ElButton text type="primary" v-if="row.type !== 999" @click="handleEdit(row)">
+          <ElButton
+            v-if="row.type !== 999"
+            text
+            type="primary"
+            @click="handleEdit(row)"
+          >
             {{ $t('public_button_edit') }}
           </ElButton>
-          <ElButton text type="danger" v-if="row.type !== 999" @click="handleDelete(row)">
+          <ElButton
+            v-if="row.type !== 999"
+            text
+            type="danger"
+            @click="handleDelete(row)"
+          >
             {{ $t('public_button_delete') }}
           </ElButton>
         </template>

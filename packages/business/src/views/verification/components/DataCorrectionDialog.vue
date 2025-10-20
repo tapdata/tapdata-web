@@ -1,5 +1,5 @@
 <script>
-import { inspectApi } from '@tap/api'
+import { getVerifyInfo, startRecovery } from '@tap/api/src/core/inspects'
 import { calcTimeUnit } from '@tap/shared'
 import SyncStatus from '../../../components/SyncStatus'
 import TaskStatus from '../../../components/TaskStatus.vue'
@@ -77,7 +77,7 @@ export default {
   methods: {
     async onOpen() {
       this.loading = true
-      const result = await inspectApi.getVerifyInfo(this.inspectId)
+      const result = await getVerifyInfo(this.inspectId)
       this.loading = false
 
       result.status = result.flowStatus
@@ -87,7 +87,7 @@ export default {
       this.starting = true
 
       try {
-        await inspectApi.startRecovery(this.inspectId)
+        await startRecovery(this.inspectId)
 
         this.starting = false
         this.$message.success(

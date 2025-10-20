@@ -1,5 +1,8 @@
 <script>
-import { listNotifications, patchNotification } from '@tap/api'
+import {
+  listNotifications,
+  patchNotification,
+} from '@tap/api/src/core/notification'
 import { ALARM_LEVEL_MAP } from '@tap/business/src/shared/const'
 
 import { $emit } from '@tap/shared/src/event'

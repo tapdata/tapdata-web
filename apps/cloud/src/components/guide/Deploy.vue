@@ -1,12 +1,12 @@
 <script>
+import { VIcon } from '@tap/component'
 import { mapGetters } from 'vuex'
 import i18n from '@/i18n'
-import { VIcon } from '@tap/component'
 
 export default {
   name: 'Account',
-  inject: ['buried'],
   components: { VIcon },
+  inject: ['buried'],
   props: ['agentId'],
   data() {
     return {
@@ -38,18 +38,20 @@ export default {
   },
   methods: {
     getUrl() {
-      this.$axios.get('api/tcm/productRelease/deploy/' + this.agentId).then(async (data) => {
-        this.downloadUrl = data.downloadUrl || ''
-        this.token = data.token || ''
-        this.version = data.version || ''
-        let links = data.links || []
-        links.forEach((el) => {
-          this.links[el.os] = el.command
+      this.$axios
+        .get(`api/tcm/productRelease/deploy/${this.agentId}`)
+        .then(async (data) => {
+          this.downloadUrl = data.downloadUrl || ''
+          this.token = data.token || ''
+          this.version = data.version || ''
+          const links = data.links || []
+          links.forEach((el) => {
+            this.links[el.os] = el.command
+          })
+          this.$nextTick(() => {
+            this.downLoadType = 'linux'
+          })
         })
-        this.$nextTick(() => {
-          this.downLoadType = 'linux'
-        })
-      })
     },
     onCopy() {
       this.showTooltip = true
@@ -71,15 +73,19 @@ export default {
     },
     //windows 下载
     handleDownLoadApplication() {
-      window.location = location.origin + location.pathname + 'api/tcm/agent/' + this.agentId + '/config'
+      window.location = `${location.origin + location.pathname}api/tcm/agent/${
+        this.agentId
+      }/config`
       this.$emit('behavior', `download_yml`)
     },
     handleOpenDeployDocs() {
       this.buried('openDeploymentTutorial', {
         downLoadType: this.downLoadType,
       })
-      let href = `https://docs.tapdata.${
-        !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en' ? 'io' : 'net'
+      const href = `https://docs.tapdata.${
+        !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en'
+          ? 'io'
+          : 'net'
       }/quick-start/install/install-tapdata-agent/`
       window.open(href, '_blank')
     },
@@ -105,7 +111,9 @@ export default {
         >{{ $t('dfs_components_taskalarmtour_deployment_zixun') }}
       </el-link>
     </div>
-    <div class="fw-sub font-color-dark mt-4">1. {{ $t('dfs_select_server_type') }}</div>
+    <div class="fw-sub font-color-dark mt-4">
+      1. {{ $t('dfs_select_server_type') }}
+    </div>
     <ElRadioGroup v-model="downLoadType" class="flex gap-4 mt-4 mb-4">
       <ElRadio
         v-for="(item, index) in downType"
@@ -122,7 +130,9 @@ export default {
     </ElRadioGroup>
     <div class="fw-sub font-color-dark mt-4 flex align-center">
       2. {{ $t('agent_deploy_start_install') }}:
-      <ElLink @click="handleOpenDeployDocs" class="ml-1" type="primary">{{ $t('agent_deploy_tutorial') }}</ElLink>
+      <ElLink class="ml-1" type="primary" @click="handleOpenDeployDocs">{{
+        $t('agent_deploy_tutorial')
+      }}</ElLink>
     </div>
     <div v-if="downLoadType === 'windows'">
       <ul class="pt-5 ul-style">
@@ -132,14 +142,22 @@ export default {
             >{{ $t('agent_deploy_start_install_windows_first_download') }}
           </ElLink>
           {{ $t('dfs_agent_download_fastdownload_he') }}
-          <ElLink class="mx-1" type="primary" @click="handleDownLoadApplication">application.yml</ElLink>
+          <ElLink class="mx-1" type="primary" @click="handleDownLoadApplication"
+            >application.yml</ElLink
+          >
         </li>
-        <li class="mt-3">{{ $t('dfs_agent_download_fastdownload_jiangwenjianta') }}</li>
-        <li class="mt-3">{{ $t('dfs_agent_download_fastdownload_shuangjizhixingt') }}</li>
+        <li class="mt-3">
+          {{ $t('dfs_agent_download_fastdownload_jiangwenjianta') }}
+        </li>
+        <li class="mt-3">
+          {{ $t('dfs_agent_download_fastdownload_shuangjizhixingt') }}
+        </li>
       </ul>
     </div>
     <section v-else>
-      <div class="font-color-light fw-normal mt-4 mb-2">{{ textMap[downLoadType] }}</div>
+      <div class="font-color-light fw-normal mt-4 mb-2">
+        {{ textMap[downLoadType] }}
+      </div>
       <div class="my-2 mt-4 text-style">
         <ElTooltip
           placement="top"
@@ -149,10 +167,10 @@ export default {
           :visible="showTooltip"
         >
           <el-button
-            type="primary"
-            class="operaKey"
             v-clipboard:copy="links[downLoadType]"
             v-clipboard:success="onCopy"
+            type="primary"
+            class="operaKey"
             @mouseleave="showTooltip = false"
             @click="handleCopy"
           >
@@ -166,22 +184,39 @@ export default {
         :class="{ 'overflow-hidden': showAllCode }"
         @copy="handleCopy"
       >
-        <span class="link-line align-top" :class="{ 'hidden-all-code': showAllCode }">{{ links[downLoadType] }}</span>
+        <span
+          class="link-line align-top"
+          :class="{ 'hidden-all-code': showAllCode }"
+          >{{ links[downLoadType] }}</span
+        >
       </div>
     </section>
-    <div class="box-card rounded-lg mt-4 flex flex-column justify-content-center align-items-center">
+    <div
+      class="box-card rounded-lg mt-4 flex flex-column justify-content-center align-items-center"
+    >
       <template v-if="isCompleted">
-        <div class="dot-pulse mt-2 mb-6"></div>
+        <div class="dot-pulse mt-2 mb-6" />
         <!--检测提示-->
-        <div class="font-color-light">{{ $t('dfs_guide_index_zhengzaijianceyin') }}</div>
+        <div class="font-color-light">
+          {{ $t('dfs_guide_index_zhengzaijianceyin') }}
+        </div>
       </template>
       <template v-else>
         <!--等待部署-->
-        <div class="fs-5 font-color-dark mb-2">{{ $t('dfs_guide_index_dengdaibushu') }}</div>
+        <div class="fs-5 font-color-dark mb-2">
+          {{ $t('dfs_guide_index_dengdaibushu') }}
+        </div>
         <!--等待提示-->
-        <div class="font-color-light">{{ $t('dfs_guide_index_waiting_for_deployment_tip') }}</div>
+        <div class="font-color-light">
+          {{ $t('dfs_guide_index_waiting_for_deployment_tip') }}
+        </div>
 
-        <ElButton class="mt-4" plain size="default" type="primary" @click="handleComplete"
+        <ElButton
+          class="mt-4"
+          plain
+          size="default"
+          type="primary"
+          @click="handleComplete"
           >{{ $t('dfs_guide_index_development_complete') }}
         </ElButton>
       </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { fetchApps } from '@tap/api'
+import { fetchApps } from '@tap/api/src/core/app'
 import AsyncSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 import { reactive, watch } from 'vue'
 

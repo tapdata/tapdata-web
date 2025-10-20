@@ -6,7 +6,7 @@ export function getLicenseExpires() {
   return requestClient.get(`${BASE_URL}/expires`)
 }
 
-export function getLicenseSid(ids: any) {
+export function getLicenseSid(ids: string[]) {
   return requestClient.get(`${BASE_URL}/sid`, {
     params: {
       id: JSON.stringify(ids),
@@ -24,7 +24,7 @@ export function getPipelineDetails() {
 
 export function getLicenseFeatures() {
   return requestClient.get(`${BASE_URL}/features`).catch((error) => {
-    if (error.response?.status === 404 && import.meta.env.DEV) {
+    if (error.response.status === 404 && import.meta.env.DEV) {
       return Promise.resolve({
         licenseType: 'OP',
         features: [],
@@ -34,22 +34,10 @@ export function getLicenseFeatures() {
   })
 }
 
-// Base Http methods that are used in the codebase
-export function fetchLicenses(params?: any, filter?: any) {
-  if (Array.isArray(params)) {
-    let queryStr = ''
-    if (typeof filter === 'object') {
-      queryStr = JSON.stringify(filter)
-    } else if (typeof filter === 'string') {
-      queryStr = filter
-    }
-    const qs = queryStr ? `?filter=${encodeURIComponent(queryStr)}` : ''
-    return requestClient.get(`${BASE_URL}/${params.join('/')}${qs}`)
-  } else if (typeof params === 'string') {
-    return requestClient.get(`${BASE_URL}/${params}`, { params: filter })
-  }
-  params = params || {}
-  return requestClient.get(BASE_URL, { params })
+export function fetchLicenses(filter?: any) {
+  return requestClient.get(BASE_URL, {
+    params: { filter: filter ? JSON.stringify(filter) : undefined },
+  })
 }
 
 export function countLicenses(params: any) {

@@ -1,5 +1,18 @@
 <script setup lang="ts">
-import { metadataDefinitionsApi, userGroupsApi } from '@tap/api'
+import {
+  batchPushMetadataDefinitionListtags,
+  deleteMetadataDefinition,
+  fetchMetadataDefinitionChildAccount,
+  fetchMetadataDefinitionTags,
+  patchMetadataDefinition,
+} from '@tap/api/core/metadata-definitions'
+import {
+  createUserGroup,
+  deleteUserGroupById,
+  fetchUserGroups,
+  patchUserGroupById,
+} from '@tap/api/core/user-groups'
+
 import { useI18n } from '@tap/i18n'
 import { ElMessage } from 'element-plus'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
@@ -235,32 +248,28 @@ const emitCheckedNodes = () => {
 const getData = (cb?: (data: TreeNode[]) => void) => {
   const type = props.types[0]
   if (type === 'user') {
-    userGroupsApi
-      .get({
-        filter: JSON.stringify({
-          limit: 999,
-        }),
-      })
-      .then((data: any) => {
-        let localTreeData: TreeNode[] = []
-        const items = data?.items || []
-        if (items.length) {
-          localTreeData = items.map((item: any) => ({
-            value: item.name,
-            name: item.name,
-            id: item.id,
-            gid: item.gid,
-            parent_id: item.parent_id,
-            last_updated: item.last_updated,
-            user_id: item.user_id,
-          }))
-        }
-        treeData.value = formatData(localTreeData)
-        emit('setUserGroupData', treeData.value)
-        cb && cb(localTreeData)
-      })
+    fetchUserGroups({
+      limit: 999,
+    }).then((data: any) => {
+      let localTreeData: TreeNode[] = []
+      const items = data?.items || []
+      if (items.length) {
+        localTreeData = items.map((item: any) => ({
+          value: item.name,
+          name: item.name,
+          id: item.id,
+          gid: item.gid,
+          parent_id: item.parent_id,
+          last_updated: item.last_updated,
+          user_id: item.user_id,
+        }))
+      }
+      treeData.value = formatData(localTreeData)
+      emit('setUserGroupData', treeData.value)
+      cb && cb(localTreeData)
+    })
   } else {
-    metadataDefinitionsApi.getTags(type || props.viewPage).then((data: any) => {
+    fetchMetadataDefinitionTags(type || props.viewPage).then((data: any) => {
       const items = data?.items || []
       treeData.value = formatData(items)
       cb && cb(items)
@@ -270,29 +279,25 @@ const getData = (cb?: (data: TreeNode[]) => void) => {
 
 const getDataAll = (cb: (data: TreeNode[]) => void) => {
   if (props.types[0] === 'user') {
-    userGroupsApi
-      .get({
-        filter: JSON.stringify({
-          limit: 999,
-        }),
-      })
-      .then((data: any) => {
-        const items = data?.items || []
-        let localTreeData: TreeNode[] = []
-        if (items?.length) {
-          localTreeData = items.map((item: any) => ({
-            value: item.name,
-            id: item.id,
-            gid: item.gid,
-            parent_id: item.parent_id,
-            last_updated: item.last_updated,
-            user_id: item.user_id,
-          }))
-        }
-        cb(localTreeData)
-      })
+    fetchUserGroups({
+      limit: 999,
+    }).then((data: any) => {
+      const items = data?.items || []
+      let localTreeData: TreeNode[] = []
+      if (items?.length) {
+        localTreeData = items.map((item: any) => ({
+          value: item.name,
+          id: item.id,
+          gid: item.gid,
+          parent_id: item.parent_id,
+          last_updated: item.last_updated,
+          user_id: item.user_id,
+        }))
+      }
+      cb(localTreeData)
+    })
   } else {
-    metadataDefinitionsApi.childAccount().then((data: any) => {
+    fetchMetadataDefinitionChildAccount().then((data: any) => {
       cb(data?.items || [])
     })
   }
@@ -386,7 +391,7 @@ const dialogSubmit = async () => {
   const id = config.id
   const gid = config.gid
   const itemType = config.itemType
-  let method = 'post'
+  let method = createUserGroup
 
   if (!value || value.trim() === '') {
     ElMessage.error($t('packages_component_classification_nodeName'))
@@ -402,13 +407,13 @@ const dialogSubmit = async () => {
       name: value,
     }
     if (config.type === 'edit') {
-      method = 'patch'
+      method = patchUserGroupById
       params.id = id
     } else if (id) {
       params.parent_id = id
       params.parent_gid = gid
     }
-    ;(userGroupsApi as any)[method](params).then(() => {
+    method(params).then(() => {
       getData(() => {
         nextTick(() => {
           emitCheckedNodes()
@@ -422,13 +427,14 @@ const dialogSubmit = async () => {
       value,
       priority,
     }
+    method = createMetadataDefinition
     if (config.type === 'edit') {
-      method = 'changeById'
+      method = patchMetadataDefinition
       params.id = id
     } else if (id) {
       params.parent_id = id
     }
-    metadataDefinitionsApi[method](params).then(() => {
+    method(params).then(() => {
       getData(() => {
         nextTick(() => {
           emitCheckedNodes()
@@ -462,9 +468,9 @@ const deleteNode = async (node: Node) => {
         gid: id,
       },
     }
-    await userGroupsApi.delete(params)
+    await deleteUserGroupById(params)
   } else {
-    await metadataDefinitionsApi.delete(id)
+    await deleteMetadataDefinition(id)
   }
   getData()
 
@@ -580,7 +586,7 @@ const handleTreeDrop = async (ev: DragEvent, data: TreeNode) => {
   }
 
   if (id.length) {
-    await metadataDefinitionsApi.batchPushListtags(tableName, {
+    await batchPushMetadataDefinitionListtags(tableName, {
       id,
       listtags: [
         {

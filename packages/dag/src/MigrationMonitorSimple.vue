@@ -1,31 +1,30 @@
 <script>
 import { createForm } from '@formily/core'
 import { observable } from '@formily/reactive'
-import {
-  externalStorageApi,
-  logcollectorApi,
-  measurementApi,
-  sharedCacheApi,
-  taskApi,
-} from '@tap/api'
+import { getExternalStorage } from '@tap/api/src/core/external-storage'
+import { getLogcollectorDetail } from '@tap/api/src/core/logcollector'
+import { batchMeasurements } from '@tap/api/src/core/measurement'
+import { findOneSharedCache } from '@tap/api/src/core/shared-cache'
+import { getTaskRecords, resetTask, startTask } from '@tap/api/src/core/task'
+import NodeLog from '@tap/business/src/components/logs/NodeLog.vue'
+import UpgradeCharges from '@tap/business/src/components/UpgradeCharges.vue'
+import UpgradeFee from '@tap/business/src/components/UpgradeFee.vue'
 import {
   ALARM_LEVEL_SORT,
   EXTERNAL_STORAGE_TYPE_MAP,
-  SkipError,
   TASK_STATUS_MAP,
-  UpgradeCharges,
-  UpgradeFee,
-} from '@tap/business'
-import NodeLog from '@tap/business/src/components/logs/NodeLog.vue'
-
+} from '@tap/business/src/shared/const'
 import SharedCacheDetails from '@tap/business/src/views/shared-cache/Details'
 import SharedCacheEditor from '@tap/business/src/views/shared-cache/Editor'
 import SharedMiningEditor from '@tap/business/src/views/shared-mining/Editor'
-import { IconButton, TimeSelect, VEmpty, VIcon } from '@tap/component'
+import SkipError from '@tap/business/src/views/task/SkipError.vue'
+import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
 import resize from '@tap/component/src/directives/resize'
+import { IconButton } from '@tap/component/src/icon-button'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
 import { titleChange } from '@tap/component/src/mixins/titleChange'
+import TimeSelect from '@tap/component/src/TimeSelect.vue'
 import i18n from '@tap/i18n'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
 import Time from '@tap/shared/src/time'
@@ -744,7 +743,7 @@ export default {
       if (this.quotaTimeType === 'lastStart') {
         const { id: taskId } = this.dataflow || {}
         const filter = {}
-        await taskApi.records(taskId, filter).then((data) => {
+        await getTaskRecords(taskId, filter).then((data) => {
           const lastStartDate = data.items?.[0]?.startDate
           if (lastStartDate) {
             this.dataflow.lastStartDate = new Date(lastStartDate).getTime()
@@ -1063,7 +1062,7 @@ export default {
       this.isSaving = true
       try {
         this.wsAgentLive()
-        await taskApi.start(this.dataflow.id)
+        await startTask(this.dataflow.id)
         this.$message.success(this.$t('public_message_operation_success'))
         this.isSaving = false
         this.isReset = false
@@ -1285,8 +1284,7 @@ export default {
         this.loadResetQuotaData()
         return
       }
-      measurementApi
-        .batch(this.getParams())
+      batchMeasurements(this.getParams())
         .then((data) => {
           const map = {
             verifyTotals: this.loadVerifyTotals,
@@ -1624,7 +1622,7 @@ export default {
           this.handleBottomPanel()
           this.toggleConsole(true)
           this.$refs.console?.startAuto('reset') // 信息输出自动加载
-          const data = await taskApi.reset(this.dataflow.id)
+          const data = await resetTask(this.dataflow.id)
           this.responseHandler(
             data,
             this.$t('public_message_operation_success'),
@@ -1770,7 +1768,7 @@ export default {
     },
 
     getCollectorData() {
-      logcollectorApi.getDetail(this.dataflow.id).then((data) => {
+      getLogcollectorDetail(this.dataflow.id).then((data) => {
         const { externalStorage = {}, logTime, name } = data
         let uriInfo = externalStorage.uri
         if (externalStorage.type === 'mongodb') {
@@ -1824,8 +1822,8 @@ export default {
     },
 
     getSharedCacheData(id) {
-      sharedCacheApi.findOne(id).then((data) => {
-        externalStorageApi.get(data.externalStorageId).then((ext = {}) => {
+      findOneSharedCache(id).then((data) => {
+        getExternalStorage(data.externalStorageId).then((ext = {}) => {
           if (!ext.name) {
             this.infoList = []
             return

@@ -1,5 +1,5 @@
 <script>
-import { liveDataPlatformApi } from '@tap/api'
+import { findOneLiveDataPlatform } from '@tap/api/src/core/live-data-platform'
 import waitingImg from '@tap/assets/images/empty_waiting.png'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { Dashboard } from '@tap/ldp'
@@ -36,7 +36,7 @@ export default {
 
     this.loading = true
 
-    const setting = await liveDataPlatformApi.findOne()
+    const setting = await findOneLiveDataPlatform()
 
     if (
       setting?.fdmStorageCluster === 'self' &&

@@ -3,7 +3,6 @@ import { useForm } from '@tap/form'
 import { defineComponent, ref } from 'vue'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 import SchemaFieldList from './List.vue'
-import Main from './Main.vue'
 
 export const fieldList = observer(
   defineComponent({

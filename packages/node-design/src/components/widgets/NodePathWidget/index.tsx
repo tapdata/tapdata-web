@@ -1,10 +1,18 @@
-import { ElBreadcrumb as Breadcrumb, ElBreadcrumbItem as BreadcrumbItem } from 'element-plus'
-import { useCurrentNode, useSelection, usePrefix, useHover } from '../../../hooks'
+import { observer } from '@formily/reactive-vue'
+import {
+  ElBreadcrumb as Breadcrumb,
+  ElBreadcrumbItem as BreadcrumbItem,
+} from 'element-plus'
+import { defineComponent } from 'vue'
+import {
+  useCurrentNode,
+  useHover,
+  usePrefix,
+  useSelection,
+} from '../../../hooks'
 import { IconWidget } from '../IconWidget'
 import { NodeTitleWidget } from '../NodeTitleWidget'
-import { observer } from '@formily/reactive-vue'
 import './styles.scss'
-import { defineComponent } from 'vue'
 
 export const NodePathWidget = observer(
   defineComponent({
@@ -35,7 +43,9 @@ export const NodePathWidget = observer(
             {nodes.map((node, key) => {
               return (
                 <BreadcrumbItem key={key}>
-                  {key === 0 && <IconWidget infer="Position" style={{ marginRight: 3 }} />}
+                  {key === 0 && (
+                    <IconWidget infer="Position" style={{ marginRight: 3 }} />
+                  )}
                   <a
                     href=""
                     onMouseenter={() => {

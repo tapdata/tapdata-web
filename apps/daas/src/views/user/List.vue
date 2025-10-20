@@ -1,10 +1,12 @@
 <script>
+import { fetchRoleMappings } from '@tap/api/src/core/role-mappings'
+import { fetchRoles } from '@tap/api/src/core/roles'
 import {
   batchUpdateUserListtags,
-  roleApi,
-  roleMappingsApi,
-  usersApi,
-} from '@tap/api'
+  countUsers,
+  fetchUsers,
+  updateUserInfo,
+} from '@tap/api/src/core/users'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 
 import TablePage from '@tap/business/src/components/TablePage.vue'
@@ -275,59 +277,55 @@ export default {
       if (JSON.stringify(where) !== '{}') {
         filter.where = where
       }
-      return usersApi
-        .get({
-          filter: JSON.stringify(filter),
+      return fetchUsers(filter).then(({ items = [] }) => {
+        const data = items.map((item) => {
+          if (!item.emailVerified) {
+            item.status = 'notVerified'
+          } else if (item.account_status === 1) {
+            item.status = 'activated'
+          } else {
+            item.status = 'notActivated'
+          }
+          if (item.account_status === 0) {
+            item.status = 'rejected'
+          }
+          item.lastUpdatedFmt = item.last_updated
+            ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+            : ''
+          return item
         })
-        .then(({ items = [] }) => {
-          const data = items.map((item) => {
-            if (!item.emailVerified) {
-              item.status = 'notVerified'
-            } else if (item.account_status === 1) {
-              item.status = 'activated'
-            } else {
-              item.status = 'notActivated'
+        // 有选中行，列表刷新后无法更新行数据，比如状态
+        if (this.multipleSelection.length && data.length) {
+          const tempMap = data.reduce((map, item) => {
+            map[item.id] = item
+            return map
+          }, {})
+          this.multipleSelection.forEach((item, i) => {
+            const temp = tempMap[item.id]
+            if (temp) {
+              this.multipleSelection[i] = temp
             }
-            if (item.account_status === 0) {
-              item.status = 'rejected'
-            }
-            item.lastUpdatedFmt = item.last_updated
-              ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
-              : ''
-            return item
           })
-          // 有选中行，列表刷新后无法更新行数据，比如状态
-          if (this.multipleSelection.length && data.length) {
-            const tempMap = data.reduce((map, item) => {
-              map[item.id] = item
-              return map
-            }, {})
-            this.multipleSelection.forEach((item, i) => {
-              const temp = tempMap[item.id]
-              if (temp) {
-                this.multipleSelection[i] = temp
-              }
-            })
-          }
-          return {
-            total: data?.total,
-            data,
-          }
-        })
+        }
+        return {
+          total: data?.total,
+          data,
+        }
+      })
     },
     getCount() {
       Promise.all([
-        usersApi.count({
+        countUsers({
           where: JSON.stringify({
             where: { emailVerified: true, account_status: 2 },
           }),
         }),
-        usersApi.count({
+        countUsers({
           where: JSON.stringify({
             where: { emailVerified: false, account_status: { neq: 0 } },
           }),
         }),
-        usersApi.count({
+        countUsers({
           where: JSON.stringify({
             where: { account_status: 0 },
           }),
@@ -344,7 +342,7 @@ export default {
         limit: 500,
         skip: 0,
       }
-      roleApi.get({ filter: JSON.stringify(filter) }).then((data) => {
+      fetchRoles(filter).then((data) => {
         const items = data?.items || []
         this.roleList = items
         const options = []
@@ -411,15 +409,11 @@ export default {
           principalId: id,
         },
       }
-      roleMappingsApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          const items = data?.items || []
-          this.roleMappding = items
-          this.createForm.roleusers = items.map((item) => item.roleId)
-        })
+      fetchRoleMappings(filter).then((data) => {
+        const items = data?.items || []
+        this.roleMappding = items
+        this.createForm.roleusers = items.map((item) => item.roleId)
+      })
     },
     // 创建用户弹窗
     openCreateDialog() {
@@ -658,7 +652,7 @@ export default {
           params.emailVerified = true
           break
       }
-      usersApi.update(where, params).then(() => {
+      updateUserInfo(where, params).then(() => {
         this.table.fetch()
         this.$message.success(this.$t('public_message_operation_success'))
       })

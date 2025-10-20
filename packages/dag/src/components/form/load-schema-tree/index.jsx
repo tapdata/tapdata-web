@@ -1,10 +1,11 @@
 import { observer } from '@formily/reactive-vue'
+import { getConnectionNoSchema } from '@tap/api/src/core/connections'
 import {
-  getConnectionNoSchema,
-  metadataInstancesApi,
-  proxyApi,
-  taskApi,
-} from '@tap/api'
+  fetchMetadataInstances,
+  getNodeSchema,
+} from '@tap/api/src/core/metadata-instances'
+import { callProxy } from '@tap/api/src/core/proxy'
+import { getTaskById } from '@tap/api/src/core/task'
 import { useForm } from '@tap/form'
 import i18n from '@tap/i18n'
 
@@ -40,7 +41,7 @@ export const loadSchemaTree = observer(
       async function getTask() {
         const taskId = store.state.dataflow?.taskId
         const { parent_task_sign } = this.$route.query || {}
-        return await taskApi.get(taskId, {}, { parent_task_sign })
+        return await getTaskById(taskId, { parent_task_sign })
       }
 
       let timer
@@ -57,8 +58,7 @@ export const loadSchemaTree = observer(
             return
           }
         }
-        metadataInstancesApi
-          .nodeSchema(nodeId)
+        getNodeSchema(nodeId)
           .then((data) => {
             fieldList.value = data?.[0]?.fields || []
           })
@@ -86,8 +86,7 @@ export const loadSchemaTree = observer(
         form
           .validate()
           .then(() => {
-            proxyApi
-              .call(params)
+            callProxy(params)
               .then(() => {
                 const filter = {
                   where: {
@@ -114,8 +113,7 @@ export const loadSchemaTree = observer(
                     loadStatus.value = true
                     loading.value = false
                   } else {
-                    metadataInstancesApi
-                      .get({ filter: JSON.stringify(filter) })
+                    fetchMetadataInstances(filter)
                       .then((metaData) => {
                         const table = metaData.items?.[0]?.original_name
                         form.setValuesIn(tableNameField || 'tableName', '')

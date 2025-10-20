@@ -1,6 +1,6 @@
 <script>
 import i18n from '@/i18n'
-import { $emit, $off, $on, $once } from '../../../../utils/gogocodeTransfer'
+import { $emit } from '../../../../utils/gogocodeTransfer'
 
 import { getCodeOptions } from '../util'
 import VerificationCode from './VerificationCode'

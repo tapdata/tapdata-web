@@ -1,7 +1,6 @@
 import { observe } from '@formily/reactive'
 import { useForm } from '@tap/form'
 import { defineComponent, nextTick, onBeforeUnmount, ref, watch } from 'vue'
-import MigrateMetaPane from '../../migration/MigrateMetaPane.vue'
 
 export const SchemaPanel = defineComponent({
   props: ['formTab'],

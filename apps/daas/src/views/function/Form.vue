@@ -1,5 +1,5 @@
 <script>
-import { javascriptFunctionsApi } from '@tap/api'
+import { findOneFunction } from '@tap/api/src/core/function'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import JsEditor from '@tap/component/src/JsEditor.vue'
 import Cookie from '@tap/shared/src/cookie'
@@ -73,14 +73,13 @@ export default {
   methods: {
     getData(id) {
       this.loading = true
-      javascriptFunctionsApi
-        .findOne({
-          filter: JSON.stringify({
-            where: {
-              id,
-            },
-          }),
-        })
+      findOneFunction({
+        filter: JSON.stringify({
+          where: {
+            id,
+          },
+        }),
+      })
         .then((data) => {
           const details = data || {}
           // 处理老数据问题
@@ -107,7 +106,7 @@ export default {
             let params = {
               format,
             }
-            let method = 'post'
+            let method = createFunction
             const id = this.$route.params.id
             if (this.form.type === 'custom') {
               const obj = getScriptObj(this.form.script)
@@ -120,13 +119,13 @@ export default {
             }
             if (id) {
               params.id = id
-              method = 'patch'
+              method = patchFunction
             }
             if (!params.format) {
               params.format = `${params.function_name}(${params.parameters})`
             }
             this.loading = true
-            javascriptFunctionsApi[method](
+            method(
               Object.assign({}, this.form, params, {
                 last_updated: new Date(),
                 user_id: Cookie.get('user_id'),

@@ -1,17 +1,16 @@
 import { onFieldValueChange } from '@formily/core'
 import { observer } from '@formily/reactive-vue'
-import { RecursionField, SchemaExpressionScopeSymbol } from '@formily/vue'
-import { taskApi } from '@tap/api'
+import { SchemaExpressionScopeSymbol } from '@formily/vue'
+import { getNodeTableInfo } from '@tap/api/src/core/task'
 import {
   components,
   createSchemaField,
   FormDialog,
-  FormLayout,
   useForm,
   useFormLayout,
 } from '@tap/form'
 import i18n from '@tap/i18n'
-import { configProviderContextKey, ElConfigProvider } from 'element-plus'
+import { configProviderContextKey } from 'element-plus'
 import { defineComponent, inject, provide, ref } from 'vue'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 // import * as _components from '../index'
@@ -236,13 +235,12 @@ const SourceDatabaseNode = observer(
         const taskId = form.values.id
         if (taskId) {
           loading.value = true
-          taskApi
-            .getNodeTableInfo({
-              taskId,
-              nodeId: form.values.dag.nodes[1].id,
-              page: 1,
-              pageSize: 10000,
-            })
+          getNodeTableInfo({
+            taskId,
+            nodeId: form.values.dag.nodes[1].id,
+            page: 1,
+            pageSize: 10000,
+          })
             .then(({ items = [] }) => {
               const map = items.reduce((acc, item) => {
                 acc[item.previousTableName] = item.sinkObjectName

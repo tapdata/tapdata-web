@@ -1,10 +1,10 @@
 <script>
+import { fetchTimestamp } from '@tap/api/src/core/timestamp'
 import {
   checkLdapLoginEnable,
-  fetchTimestamp,
   getUserInfoByToken,
   login,
-} from '@tap/api'
+} from '@tap/api/src/core/users'
 import Cookie from '@tap/shared/src/cookie'
 import { getSettingByKey } from '@tap/shared/src/settings'
 import { useDark } from '@vueuse/core'

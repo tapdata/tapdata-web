@@ -1,8 +1,12 @@
 import { Radio as FormRadio } from '@tap/form'
-import { createBehavior, createResource, getBrowserLanguage } from '../../../core'
-import { createFieldSchema } from '../Field'
-import { AllSchemas } from '../../schemas'
+import {
+  createBehavior,
+  createResource,
+  getBrowserLanguage,
+} from '../../../core'
 import { AllLocales } from '../../locales'
+import { AllSchemas } from '../../schemas'
+import { createFieldSchema } from '../Field'
 
 export const Radio = FormRadio
 
@@ -23,7 +27,9 @@ Radio.Resource = createResource({
       componentName: 'Field',
       props: {
         type: 'string | number',
-        title: AllLocales.RadioGroup[getBrowserLanguage()]?.title || AllLocales.RadioGroup['en-US'].title,
+        title:
+          AllLocales.RadioGroup[getBrowserLanguage()]?.title ||
+          AllLocales.RadioGroup['en-US'].title,
         'x-decorator': 'FormItem',
         'x-component': 'Radio.Group',
         enum: [

@@ -1,5 +1,5 @@
 const getState = function () {
-  let state = JSON.parse(sessionStorage.getItem('classificationState'))
+  const state = JSON.parse(sessionStorage.getItem('classificationState'))
   return {
     connections: {
       panelFlag: state?.connections?.panelFlag || false,
@@ -47,7 +47,7 @@ const mutations = {
    * @param data
    */
   setTag(state, data) {
-    let type = data?.type || 'connections'
+    const type = data?.type || 'connections'
     state[type].classification = data.value
     sessionStorage.setItem('classificationState', JSON.stringify(state))
   },
@@ -58,7 +58,7 @@ const mutations = {
    * @param data
    */
   setPanelFlag(state, data) {
-    let type = data?.type || 'connections'
+    const type = data?.type || 'connections'
     state[type].panelFlag = data.panelFlag
     sessionStorage.setItem('classificationState', JSON.stringify(state))
   },

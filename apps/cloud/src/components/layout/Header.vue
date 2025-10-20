@@ -10,8 +10,6 @@ import slackImg from '@/assets/image/slack.svg'
 
 import NotificationPopover from '@/views/workbench/NotificationPopover.vue'
 
-import { daysdifference, extractTimeFromObjectId } from '../../util'
-
 export default {
   components: { VIcon, NotificationPopover },
   inject: ['buried'],

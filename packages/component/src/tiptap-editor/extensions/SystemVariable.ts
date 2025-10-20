@@ -1,4 +1,4 @@
-import { InputRule, Mark, mergeAttributes, Node } from '@tiptap/core'
+import { InputRule, mergeAttributes, Node } from '@tiptap/core'
 import { Plugin, PluginKey, TextSelection } from '@tiptap/pm/state'
 
 declare module '@tiptap/core' {

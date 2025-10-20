@@ -1,16 +1,3 @@
-<template>
-  <div :class="['etl-status-item', { 'inline-layout': inline }]">
-    <div v-for="(item, index) in comList" :key="index" class="etl-status-item__box">
-      <span
-        :class="['circle-icon', 'mr-2', !!item.type && `bg-color-${item.type}`]"
-        :style="{ 'background-color': colorMap[item.type] }"
-      ></span>
-      <span class="etl-status-item__text font-color-light">{{ item.text }}</span>
-      <span v-if="showCount" class="etl-status-item__count font-color-slight">{{ ': ' + (item.count || 0) }}</span>
-    </div>
-  </div>
-</template>
-
 <script>
 export default {
   name: 'StatusItem',
@@ -28,17 +15,7 @@ export default {
       default: false,
     },
   },
-  computed: {
-    showCount() {
-      return this.value.length > 1
-    },
-    comList() {
-      if (!this.showAll) {
-        return this.value.filter((t) => t.count > 0)
-      }
-      return this.value
-    },
-  },
+  emits: ['update:value'],
   data() {
     return {
       colorMap: {
@@ -55,9 +32,40 @@ export default {
       },
     }
   },
-  emits: ['update:value'],
+  computed: {
+    showCount() {
+      return this.value.length > 1
+    },
+    comList() {
+      if (!this.showAll) {
+        return this.value.filter((t) => t.count > 0)
+      }
+      return this.value
+    },
+  },
 }
 </script>
+
+<template>
+  <div :class="['etl-status-item', { 'inline-layout': inline }]">
+    <div
+      v-for="(item, index) in comList"
+      :key="index"
+      class="etl-status-item__box"
+    >
+      <span
+        :class="['circle-icon', 'mr-2', !!item.type && `bg-color-${item.type}`]"
+        :style="{ 'background-color': colorMap[item.type] }"
+      />
+      <span class="etl-status-item__text font-color-light">{{
+        item.text
+      }}</span>
+      <span v-if="showCount" class="etl-status-item__count font-color-slight">{{
+        `: ${item.count || 0}`
+      }}</span>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .etl-status-item {

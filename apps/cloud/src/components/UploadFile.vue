@@ -1,10 +1,3 @@
-<template>
-  <div class="upload-file">
-    <input ref="file" type="file" class="visually-hidden opacity-0" @change="upload($event)" :accept="accept" />
-    <div @click="clickItem"><slot></slot></div>
-  </div>
-</template>
-
 <script>
 export default {
   name: 'UploadFile',
@@ -23,3 +16,16 @@ export default {
   },
 }
 </script>
+
+<template>
+  <div class="upload-file">
+    <input
+      ref="file"
+      type="file"
+      class="visually-hidden opacity-0"
+      :accept="accept"
+      @change="upload($event)"
+    />
+    <div @click="clickItem"><slot /></div>
+  </div>
+</template>

@@ -1,7 +1,7 @@
-import './styles/jsplumb.scss'
 import { jsPlumb } from 'jsplumb'
 import config from './config'
+import './styles/jsplumb.scss'
 
-export { jsPlumb, config }
+export { config, jsPlumb }
 
 export default jsPlumb.getInstance(config)

@@ -1,11 +1,11 @@
 <script>
+import { fetchLicenses } from '@tap/api/src/core/licenses'
 import {
   fetchSettings,
-  licensesApi,
   saveSettings,
   testEmail,
-  usersApi,
-} from '@tap/api'
+} from '@tap/api/src/core/settings'
+import { testLdapLogin } from '@tap/api/src/core/users'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 
@@ -146,7 +146,7 @@ export default {
     // 获取设置数据
     getData() {
       let auth_data = []
-      licensesApi.get({}).then((data) => {
+      fetchLicenses().then((data) => {
         auth_data = data?.items || []
       })
       fetchSettings().then((data) => {
@@ -281,8 +281,7 @@ export default {
 
     testLdap() {
       this.adTesting = true
-      usersApi
-        .testLdapLogin(this.ldapForm)
+      testLdapLogin(this.ldapForm)
         .then((data) => {
           if (data?.result) {
             this.$message.success(this.$t('setting_test_ldap_success'))

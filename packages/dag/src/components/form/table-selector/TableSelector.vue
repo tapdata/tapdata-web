@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { metadataInstancesApi, taskApi } from '@tap/api'
+import {
+  getPagePartitionTables,
+  getPageTables,
+} from '@tap/api/src/core/metadata-instances'
+import { refreshTaskSchema } from '@tap/api/src/core/task'
 import { VEmpty } from '@tap/component/src/base/v-empty'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 import { RightBoldOutlined } from '@tap/component/src/RightBoldOutlined'
@@ -149,12 +153,12 @@ const getTables = () => {
   loading.value = true
 
   const fn = props.hasPartition
-    ? metadataInstancesApi.pagePartitionTables({
+    ? getPagePartitionTables({
         connectionId,
         limit: 0,
         syncPartitionTableEnable: props.syncPartitionTableEnable,
       })
-    : metadataInstancesApi.pageTables({ connectionId, limit: 0 })
+    : getPageTables({ connectionId, limit: 0 })
 
   fn.then((res = {}) => {
     const data = res.items || []
@@ -184,14 +188,12 @@ const loadSchema = async () => {
   const nodeId = props.nodeId || store.state?.dataflow.activeNodeId
   const taskId = props.taskId || store.state?.dataflow.taskId
 
-  await taskApi
-    .refreshSchema(taskId, {
-      nodeIds: nodeId,
-      keys: table.value.searchKeyword,
-    })
-    .finally(() => {
-      schemaLoading.value = false
-    })
+  await refreshTaskSchema(taskId, {
+    nodeIds: nodeId,
+    keys: table.value.searchKeyword,
+  }).finally(() => {
+    schemaLoading.value = false
+  })
 
   getTables()
 }

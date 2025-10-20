@@ -1,21 +1,20 @@
 <script>
 import {
   createForm,
-  onFieldInputValueChange,
   onFieldValueChange,
   onFormInputChange,
   onFormValuesChange,
 } from '@formily/core'
 import { Path } from '@formily/path'
 import { toJS } from '@formily/reactive'
-import { updateTaskAlarm } from '@tap/api'
+import { updateTaskAlarm } from '@tap/api/src/core/alarm'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 
 import { deepEqual } from '@tap/shared'
 import { debounce } from 'lodash-es'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 
-import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
+import { $emit } from '../../utils/gogocodeTransfer'
 import { getSchema } from '../util'
 import FormRender from './FormRender'
 

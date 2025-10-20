@@ -1,8 +1,7 @@
-import FiledMapping from '../field-mapping'
-import { observer } from '@formily/reactive-vue'
-import { ref, watch, defineComponent, onBeforeUnmount } from 'vue'
 import { observe } from '@formily/reactive'
+import { observer } from '@formily/reactive-vue'
 import { useForm } from '@tap/form'
+import { defineComponent, onBeforeUnmount, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 
 export const SchemaFiledMapping = observer(
@@ -35,7 +34,13 @@ export const SchemaFiledMapping = observer(
       })
 
       return () => {
-        return <FiledMapping ref={fieldMappingRef} itemType="string" itemQuery="original_name" />
+        return (
+          <FiledMapping
+            ref={fieldMappingRef}
+            itemType="string"
+            itemQuery="original_name"
+          />
+        )
       }
     },
   }),

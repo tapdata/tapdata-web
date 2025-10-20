@@ -7,7 +7,7 @@ import {
   fetchConnections,
   getConnectionDatabaseTypes,
   updateConnectionById,
-} from '@tap/api'
+} from '@tap/api/src/core/connections'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import FilterBar from '@tap/component/src/filter-bar/Main.vue'
 import { Modal } from '@tap/component/src/modal'

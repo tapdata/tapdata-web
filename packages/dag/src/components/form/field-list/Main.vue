@@ -1,5 +1,5 @@
 <script>
-import { metadataInstancesApi } from '@tap/api'
+import { getNodeSchemaPage } from '@tap/api/src/core/metadata-instances'
 import noData from '@tap/assets/images/noData.png'
 
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
@@ -77,7 +77,7 @@ export default {
           },
           op,
         )
-        data = await metadataInstancesApi.nodeSchemaPage(params)
+        data = await getNodeSchemaPage(params)
       } catch {
         // catch
       }

@@ -1,11 +1,8 @@
-import { getMetadataInstancesCompareResult, useRequest } from '@tap/api'
-import { FormItem, computed as reactiveComputed, useForm } from '@tap/form'
+import { computed as reactiveComputed, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import { computed, defineComponent, ref } from 'vue'
 import { connect, mapProps } from '../../../../../form'
-import CompareResultDialog from './CompareResultDialog.vue'
 import SchemaFieldList from './List.vue'
-import Main from './Main.vue'
 
 export const fieldInference = connect(
   defineComponent({

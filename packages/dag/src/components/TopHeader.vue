@@ -1,5 +1,5 @@
 <script>
-import { taskApi } from '@tap/api'
+import { refreshTaskSchema } from '@tap/api/src/core/task'
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import { TextEditable } from '@tap/component/src/base/text-editable'
 import { VEmpty } from '@tap/component/src/base/v-empty'
@@ -183,7 +183,7 @@ export default {
       this.refreshing = true
       this.setSchemaRefreshing(true)
 
-      taskApi.refreshSchema(this.dataflow.id).finally(() => {
+      refreshTaskSchema(this.dataflow.id).finally(() => {
         this.refreshing = false
         this.setSchemaRefreshing(false)
       })

@@ -1,5 +1,5 @@
-import { FormLayout } from './FormLayout'
 import { CSSStyle } from './CSSStyle'
+import { FormLayout } from './FormLayout'
 
 export const Form = {
   type: 'object',

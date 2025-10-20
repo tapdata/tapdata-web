@@ -1,5 +1,6 @@
 <script>
-import { fetchConnections, metadataDefinitionsApi } from '@tap/api'
+import { fetchMetadataDefinitions } from '@tap/api/core/metadata-definitions'
+import { fetchConnections } from '@tap/api/src/core/connections'
 import AsyncSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 import Cookie from '@tap/shared/src/cookie'
 import axios from 'axios'
@@ -158,13 +159,9 @@ export default {
       const filter = {
         where: { or: [{ item_type: this.type }] },
       }
-      metadataDefinitionsApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          this.classifyList = data?.items || []
-        })
+      fetchMetadataDefinitions(filter).then((data) => {
+        this.classifyList = data?.items || []
+      })
     },
 
     handleSuccess(response) {

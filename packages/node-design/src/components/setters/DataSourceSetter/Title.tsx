@@ -64,9 +64,7 @@ const titleInner = defineComponent({
           //   e.preventDefault()
           // }}
         >
-          <span>
-            {renderTitle(props.map || [])}
-          </span>
+          <span>{renderTitle(props.map || [])}</span>
           <IconWidget
             className={`${prefix}-icon`}
             infer="Remove"

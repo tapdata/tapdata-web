@@ -1,5 +1,8 @@
 <script>
-import { fetchDatabases, fetchDatabaseTypes } from '@tap/api'
+import {
+  fetchDatabases,
+  fetchDatabaseTypes,
+} from '@tap/api/src/core/database-types'
 import { getConnectorImage, getIcon } from '@tap/assets'
 import { VEmpty } from '@tap/component/src/base/v-empty'
 import { IconButton } from '@tap/component/src/icon-button'

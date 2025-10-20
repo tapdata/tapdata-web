@@ -1,5 +1,5 @@
-import Http from './Http'
 import Cookie from '@tap/shared/src/cookie'
+import Http from './Http'
 
 export default class Modules extends Http {
   constructor() {
@@ -26,19 +26,19 @@ export default class Modules extends Http {
   }
 
   getApiDocument(id) {
-    return this.axios.get(this.url + '/getApiDocument?id=' + id)
+    return this.axios.get(`${this.url}/getApiDocument?id=${id}`)
   }
 
   getByCollectionName(params) {
-    return this.axios.get(this.url + '/api/getByCollectionName', { params })
+    return this.axios.get(`${this.url}/api/getByCollectionName`, { params })
   }
 
   getSchema(id) {
-    return this.axios.get(this.url + '/getSchema/' + id)
+    return this.axios.get(`${this.url}/getSchema/${id}`)
   }
 
   getdata(id) {
-    return this.axios.get(this.url + '/getSchema/' + id.mondeid)
+    return this.axios.get(`${this.url}/getSchema/${id.mondeid}`)
   }
 
   batchUpdateListtags(params) {
@@ -50,12 +50,16 @@ export default class Modules extends Http {
   }
 
   export(ids) {
-    const href = this.url + `/batch/load?id=${ids.join('&id=')}&access_token=${Cookie.get('access_token')}`
+    const href = `${
+      this.url
+    }/batch/load?id=${ids.join('&id=')}&access_token=${Cookie.get('access_token')}`
     window.open(href)
   }
 
   apiExport(ids, ip) {
-    const href = this.url + `/api/export?id=${ids.join('&id=')}&access_token=${Cookie.get('access_token')}&ip=${ip}`
+    const href = `${
+      this.url
+    }/api/export?id=${ids.join('&id=')}&access_token=${Cookie.get('access_token')}&ip=${ip}`
     window.open(href)
   }
 

@@ -3,9 +3,9 @@ import {
   fetchApiServerWorker,
   fetchWorkerCall,
   fetchWorkerCallApiCalls,
-  useRequest,
   type WorkerCallData,
-} from '@tap/api'
+} from '@tap/api/src/core/api-server'
+import { useRequest } from '@tap/api/src/request'
 import { dayjs } from '@tap/business/src/shared/dayjs'
 import { VTable } from '@tap/component/src/base/v-table'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'

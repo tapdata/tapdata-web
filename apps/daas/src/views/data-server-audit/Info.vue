@@ -1,5 +1,5 @@
 <script>
-import { fetchApiCall } from '@tap/api'
+import { fetchApiCall } from '@tap/api/src/core/api-calls'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 
 import { HighlightCode } from '@tap/form/src/components/highlight-code'

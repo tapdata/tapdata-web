@@ -77,7 +77,9 @@ export class RowFilter extends NodeType {
                 default: 'retain',
                 enum: [
                   {
-                    label: i18n.t('packages_dag_nodes_jointcache_baoliupipeishu'),
+                    label: i18n.t(
+                      'packages_dag_nodes_jointcache_baoliupipeishu',
+                    ),
                     value: 'retain',
                   },
                   {
@@ -99,7 +101,8 @@ export class RowFilter extends NodeType {
                 'x-component': 'JsEditor',
                 'x-component-props': {
                   options: { showPrintMargin: false, useWrapMode: true },
-                  onInit: '{{editor => addEditorFieldCompletion(editor, $values.id, $values.$inputs)}}',
+                  onInit:
+                    '{{editor => addEditorFieldCompletion(editor, $values.id, $values.$inputs)}}',
                 },
               },
               example: {

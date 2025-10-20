@@ -1,77 +1,3 @@
-<template>
-  <ElDialog
-    :title="$t('packages_business_request_connector_title')"
-    :model-value="visible"
-    @close="handleClose"
-    @closed="afterClose"
-    :append-to-body="true"
-    width="520px"
-  >
-    <el-result
-      v-if="hasRequest"
-      icon="info"
-      :title="$t('packages_business_request_connector_pending')"
-      :subTitle="$t('packages_business_request_connector_pending_desc')"
-    >
-      <template #icon>
-        <VIcon class="color-primary" size="48">time</VIcon>
-      </template>
-    </el-result>
-    <el-alert v-else class="alert-primary text-primary mb-4 px-2" type="info" :closable="false">
-      <template #title>
-        <span class="text-prewrap flex-1 lh-base">{{
-          $t('packages_business_request_connector_alert', {
-            ...meta,
-          })
-        }}</span>
-      </template>
-    </el-alert>
-
-    <ElForm ref="form" :model="form" label-position="top" :disabled="hasRequest" :rules="rules">
-      <ElFormItem :label="$t('packages_business_request_connector_use_plan')" prop="summary" required>
-        <ElInput v-model="form.summary" type="textarea"></ElInput>
-      </ElFormItem>
-      <div class="flex gap-4">
-        <ElFormItem :label="$t('public_phone')" class="flex-1" prop="phone">
-          <ElInput v-model="form.phone" maxlength="50" type="phone"></ElInput>
-        </ElFormItem>
-        <ElFormItem :label="$t('public_email')" class="flex-1" prop="email">
-          <ElInput v-model="form.email" type="email"></ElInput>
-        </ElFormItem>
-      </div>
-      <ElFormItem :label="$t('packages_business_request_connector_use_time')" prop="hoursOfAvailability">
-        <ElRadioGroup v-model="form.hoursOfAvailability">
-          <ElRadioButton label="5">{{ $t('packages_business_request_connector_use_time_option1') }}</ElRadioButton>
-          <ElRadioButton label="180">{{ $t('packages_business_request_connector_use_time_option2') }}</ElRadioButton>
-          <ElRadioButton label="365">{{ $t('packages_business_request_connector_use_time_option3') }}</ElRadioButton>
-        </ElRadioGroup>
-      </ElFormItem>
-      <!--<ElFormItem label="您期望什么时间联系您">
-        <el-date-picker
-          v-model="form.contactTime"
-          type="daterange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        >
-        </el-date-picker>
-      </ElFormItem>-->
-    </ElForm>
-
-    <template #footer>
-      <div>
-        <el-button @click="handleClose">{{ $t('public_button_cancel') }}</el-button>
-        <el-button v-if="hasRequest" type="primary" :loading="saving" @click="handleClose">{{
-          $t('public_button_confirm')
-        }}</el-button>
-        <el-button v-else type="primary" :loading="saving" @click="handleSubmit">{{
-          $t('public_button_submit')
-        }}</el-button>
-      </div>
-    </template>
-  </ElDialog>
-</template>
-
 <script>
 export default {
   name: 'RequestDialog',
@@ -96,7 +22,9 @@ export default {
       rules: {
         summary: {
           required: true,
-          message: this.$t('packages_business_request_connector_use_plan_placeholder'),
+          message: this.$t(
+            'packages_business_request_connector_use_plan_placeholder',
+          ),
           trigger: 'blur',
         },
       },
@@ -111,7 +39,10 @@ export default {
       const requestList = await this.queryRequest()
       const allowStatus = ['APPROVED', 'PENDING']
 
-      if (requestList.length > 0 && allowStatus.includes(requestList[0].status)) {
+      if (
+        requestList.length > 0 &&
+        allowStatus.includes(requestList[0].status)
+      ) {
         return false
       }
 
@@ -140,7 +71,9 @@ export default {
             })
             .then(() => {
               this.handleClose()
-              this.$message.success(this.$t('packages_business_request_connector_success'))
+              this.$message.success(
+                this.$t('packages_business_request_connector_success'),
+              )
             })
             .finally(() => (this.saving = false))
         }
@@ -164,6 +97,114 @@ export default {
   },
 }
 </script>
+
+<template>
+  <ElDialog
+    :title="$t('packages_business_request_connector_title')"
+    :model-value="visible"
+    :append-to-body="true"
+    width="520px"
+    @close="handleClose"
+    @closed="afterClose"
+  >
+    <el-result
+      v-if="hasRequest"
+      icon="info"
+      :title="$t('packages_business_request_connector_pending')"
+      :sub-title="$t('packages_business_request_connector_pending_desc')"
+    >
+      <template #icon>
+        <VIcon class="color-primary" size="48">time</VIcon>
+      </template>
+    </el-result>
+    <el-alert
+      v-else
+      class="alert-primary text-primary mb-4 px-2"
+      type="info"
+      :closable="false"
+    >
+      <template #title>
+        <span class="text-prewrap flex-1 lh-base">{{
+          $t('packages_business_request_connector_alert', {
+            ...meta,
+          })
+        }}</span>
+      </template>
+    </el-alert>
+
+    <ElForm
+      ref="form"
+      :model="form"
+      label-position="top"
+      :disabled="hasRequest"
+      :rules="rules"
+    >
+      <ElFormItem
+        :label="$t('packages_business_request_connector_use_plan')"
+        prop="summary"
+        required
+      >
+        <ElInput v-model="form.summary" type="textarea" />
+      </ElFormItem>
+      <div class="flex gap-4">
+        <ElFormItem :label="$t('public_phone')" class="flex-1" prop="phone">
+          <ElInput v-model="form.phone" maxlength="50" type="phone" />
+        </ElFormItem>
+        <ElFormItem :label="$t('public_email')" class="flex-1" prop="email">
+          <ElInput v-model="form.email" type="email" />
+        </ElFormItem>
+      </div>
+      <ElFormItem
+        :label="$t('packages_business_request_connector_use_time')"
+        prop="hoursOfAvailability"
+      >
+        <ElRadioGroup v-model="form.hoursOfAvailability">
+          <ElRadioButton label="5">{{
+            $t('packages_business_request_connector_use_time_option1')
+          }}</ElRadioButton>
+          <ElRadioButton label="180">{{
+            $t('packages_business_request_connector_use_time_option2')
+          }}</ElRadioButton>
+          <ElRadioButton label="365">{{
+            $t('packages_business_request_connector_use_time_option3')
+          }}</ElRadioButton>
+        </ElRadioGroup>
+      </ElFormItem>
+      <!--<ElFormItem label="您期望什么时间联系您">
+        <el-date-picker
+          v-model="form.contactTime"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+        >
+        </el-date-picker>
+      </ElFormItem>-->
+    </ElForm>
+
+    <template #footer>
+      <div>
+        <el-button @click="handleClose">{{
+          $t('public_button_cancel')
+        }}</el-button>
+        <el-button
+          v-if="hasRequest"
+          type="primary"
+          :loading="saving"
+          @click="handleClose"
+          >{{ $t('public_button_confirm') }}</el-button
+        >
+        <el-button
+          v-else
+          type="primary"
+          :loading="saving"
+          @click="handleSubmit"
+          >{{ $t('public_button_submit') }}</el-button
+        >
+      </div>
+    </template>
+  </ElDialog>
+</template>
 
 <style scoped lang="scss">
 .form-item-width-md {

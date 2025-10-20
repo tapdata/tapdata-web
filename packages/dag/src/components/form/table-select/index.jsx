@@ -1,9 +1,8 @@
 import { observer } from '@formily/reactive-vue'
 import { connect, mapProps } from '@formily/vue'
 
-import { metadataInstancesApi, taskApi } from '@tap/api'
-import { VEmpty } from '@tap/component/src/base/v-empty'
-import { InfiniteSelect } from '@tap/form'
+import { getPagePartitionTables } from '@tap/api/src/core/metadata-instances'
+import { refreshTaskSchema } from '@tap/api/src/core/task'
 import i18n from '@tap/i18n'
 
 import {
@@ -33,7 +32,7 @@ const useTableExist = (props, selectRef, connectionId) => {
   const checkTableExist = async (tableName) => {
     if (!tableName) return
     try {
-      const data = await metadataInstancesApi.checkTableExist({
+      const data = await checkTableExist({
         connectionId,
         tableName,
       })
@@ -151,14 +150,12 @@ export const TableSelect = connect(
 
         const loadSchema = async (keys) => {
           loading.value = true
-          await taskApi
-            .refreshSchema(taskId, {
-              nodeIds: activeNodeId,
-              keys,
-            })
-            .finally(() => {
-              loading.value = false
-            })
+          await refreshTaskSchema(taskId, {
+            nodeIds: activeNodeId,
+            keys,
+          }).finally(() => {
+            loading.value = false
+          })
 
           loadSelectData()
         }
@@ -217,7 +214,7 @@ export const TableSelect = connect(
                 total: filtered.length,
               }
             } else {
-              const res = await metadataInstancesApi.pagePartitionTables({
+              const res = await getPagePartitionTables({
                 connectionId: props.connectionId,
                 limit: 0,
                 syncPartitionTableEnable: props.syncPartitionTableEnable,

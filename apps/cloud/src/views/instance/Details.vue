@@ -1,12 +1,13 @@
 <script>
-import { measurementApi, proxyApi } from '@tap/api'
+import { queryMeasurementsV2 } from '@tap/api/src/core/measurement'
+import { getConnectors, getSupervisor } from '@tap/api/src/core/proxy'
 import { VIcon, VTable } from '@tap/component'
 import { calcUnit, downloadJson } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 import StatusTag from '@/components/StatusTag'
 import i18n from '@/i18n'
 import timeFunction from '@/mixins/timeFunction'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+import { $emit } from '../../../utils/gogocodeTransfer'
 import { AGENT_STATUS_MAP_EN } from '../../const'
 
 export default {
@@ -247,20 +248,20 @@ export default {
     //下载
     downServeFn(agent) {
       const id = agent?.tmInfo?.agentId
-      proxyApi.supervisor(id).then((data) => {
+      getSupervisor(id).then((data) => {
         downloadJson(JSON.stringify(data), 'supervisor')
       })
     },
     //下载
     downConnectorsFn(agent) {
       const id = agent?.tmInfo?.agentId
-      proxyApi.connectors(id).then((data) => {
+      getConnectors(id).then((data) => {
         downloadJson(JSON.stringify(data), 'connectors')
       })
     },
 
     async loadMeasurementData(engineId) {
-      const data = await measurementApi.queryV2({
+      const data = await queryMeasurementsV2({
         startAt: Time.now(),
         endAt: Time.now(),
         samples: {

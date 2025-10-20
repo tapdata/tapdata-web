@@ -1,4 +1,6 @@
-import { CancelToken, discoveryApi, taskApi } from '@tap/api'
+import { getDiscoveryDirectoryData } from '@tap/api/src/core/discovery'
+import { checkTaskName, fetchTasks } from '@tap/api/src/core/task'
+import { CancelToken } from '@tap/api/src/request'
 import { validateCron } from '@tap/form/src/shared/validate'
 import i18n from '@tap/i18n'
 import { mapState } from 'vuex'
@@ -13,7 +15,7 @@ export default {
         )
       } else {
         try {
-          const isExist = await taskApi.checkName({
+          const isExist = await checkTaskName({
             name: value,
           })
           if (isExist) {
@@ -169,22 +171,20 @@ export default {
           allTags: 1,
         },
       }
-      return discoveryApi
-        .discoveryList(where, {
-          cancelToken,
-        })
-        .then((res) => {
-          return res.items.map((item) =>
-            Object.assign(item, {
-              isLeaf: true,
-              isObject: true,
-              connectionId: item.sourceConId,
-              LDP_TYPE: 'table',
-              parent_id: node.id,
-              isVirtual: item.status === 'noRunning',
-            }),
-          )
-        })
+      return getDiscoveryDirectoryData(where, {
+        cancelToken,
+      }).then((res) => {
+        return res.items.map((item) =>
+          Object.assign(item, {
+            isLeaf: true,
+            isObject: true,
+            connectionId: item.sourceConId,
+            LDP_TYPE: 'table',
+            parent_id: node.id,
+            isVirtual: item.status === 'noRunning',
+          }),
+        )
+      })
     },
 
     async searchObject(search) {
@@ -260,12 +260,10 @@ export default {
     },
 
     async makeTaskName(source) {
-      const taskNames = await taskApi.get({
-        filter: JSON.stringify({
-          limit: 9999,
-          fields: { name: 1 },
-          where: { name: { like: `^${source}\\d+$` } },
-        }),
+      const taskNames = await fetchTasks({
+        limit: 9999,
+        fields: { name: 1 },
+        where: { name: { like: `^${source}\\d+$` } },
       })
       let def = 1
       if (taskNames?.items.length) {

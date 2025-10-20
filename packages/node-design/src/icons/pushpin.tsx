@@ -1,4 +1,4 @@
-export const PushPinOutlined =  (
+export const PushPinOutlined = (
   <svg
     viewBox="64 64 896 896"
     focusable="false"
@@ -12,7 +12,7 @@ export const PushPinOutlined =  (
   </svg>
 )
 
-export const PushPinFilled =  (
+export const PushPinFilled = (
   <svg
     viewBox="64 64 896 896"
     focusable="false"

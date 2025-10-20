@@ -1,13 +1,13 @@
-let IDX = 36,
-  HEX = ''
+let IDX = 36
+let HEX = ''
 while (IDX--) HEX += IDX.toString(36)
 
 export function uid(len, beginString = '') {
-  let str = '',
-    num = len || 11
+  let str = ''
+  let num = len || 11
   while (num--) str += HEX[(Math.random() * 36) | 0]
   if (beginString && /^\d/.test(str)) {
-    str = beginString + str.substring(1)
+    str = beginString + str.slice(1)
   }
   return str
 }

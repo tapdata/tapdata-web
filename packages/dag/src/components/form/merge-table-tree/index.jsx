@@ -1,11 +1,8 @@
 import { observe } from '@formily/reactive'
 import { observer } from '@formily/reactive-vue'
-import { metadataInstancesApi } from '@tap/api'
-import { IconButton } from '@tap/component/src/icon-button'
-import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
+import { getMergerNodeParentFields } from '@tap/api/src/core/metadata-instances'
 import {
   h as createElement,
-  FormItem,
   RecursionField,
   useFieldSchema,
   useForm,
@@ -14,7 +11,6 @@ import i18n from '@tap/i18n'
 import { defineComponent, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
-import NodeIcon from '../../NodeIcon'
 import './style.scss'
 
 export const MergeTableTree = observer(
@@ -222,23 +218,21 @@ export const MergeTableTree = observer(
             loading: true,
           },
         )
-        metadataInstancesApi
-          .getMergerNodeParentFields(route.params.id, selfId)
-          .then((fields) => {
-            fields.sort((a, b) => a.field_name.localeCompare(b.field_name))
-            form.setFieldState(
-              `*(mergeProperties.${selfPath}.*(joinKeys.*.target))`,
-              {
-                loading: false,
-                dataSource: fields.map((item) => ({
-                  tapType: item.tapType,
-                  label: item.field_name,
-                  value: item.field_name,
-                  isPrimaryKey: item.primary_key_position > 0,
-                })),
-              },
-            )
-          })
+        getMergerNodeParentFields(route.params.id, selfId).then((fields) => {
+          fields.sort((a, b) => a.field_name.localeCompare(b.field_name))
+          form.setFieldState(
+            `*(mergeProperties.${selfPath}.*(joinKeys.*.target))`,
+            {
+              loading: false,
+              dataSource: fields.map((item) => ({
+                tapType: item.tapType,
+                label: item.field_name,
+                value: item.field_name,
+                isPrimaryKey: item.primary_key_position > 0,
+              })),
+            },
+          )
+        })
       }
 
       const loadField = (selfId, selfPath, ifWait) => {

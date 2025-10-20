@@ -1,28 +1,26 @@
 <script setup lang="ts">
 import {
-  CancelToken,
-  discoveryApi,
-  ldpApi,
-  metadataDefinitionsApi,
-  taskApi,
-} from '@tap/api'
-import { DatabaseIcon } from '@tap/business/src/components/DatabaseIcon'
+  deleteMetadataDefinition,
+  fetchMetadataDefinitions,
+  patchMetadataDefinitionById,
+} from '@tap/api/core/metadata-definitions'
+import { getDiscoveryDirectoryData } from '@tap/api/src/core/discovery'
+import { batchStartFDMTasks, getLDPTaskByTag } from '@tap/api/src/core/ldp'
+import { checkTaskName } from '@tap/api/src/core/task'
+import { CancelToken } from '@tap/api/src/request'
 import {
   makeDragNodeImage,
   makeStatusAndDisabled,
-  TASK_SETTINGS,
 } from '@tap/business/src/shared'
 import { VExpandXTransition } from '@tap/component/src/base/v-expand-x-transition'
 import VIcon from '@tap/component/src/base/VIcon.vue'
 import { IconButton } from '@tap/component/src/icon-button'
 import { validateCron } from '@tap/form/src/shared/validate'
 import { useI18n } from '@tap/i18n'
-import { generateId, uuid } from '@tap/shared'
 import { useResizeObserver } from '@vueuse/core'
 import { cloneDeep, debounce } from 'lodash-es'
 import {
   computed,
-  h,
   nextTick,
   onBeforeUnmount,
   onMounted,
@@ -180,7 +178,7 @@ async function validateTaskName(rule: any, value: string, callback: any) {
     callback(new Error(t('packages_business_relation_list_qingshururenwu')))
   } else {
     try {
-      const isExist = await taskApi.checkName({
+      const isExist = await checkTaskName({
         name: value,
       })
       if (isExist) {
@@ -379,13 +377,11 @@ function renderContent(h: any, { node, data }: { node: any; data: any }) {
 }
 
 async function loadFDMDirectory() {
-  const { items } = await metadataDefinitionsApi.get({
-    filter: JSON.stringify({
-      where: {
-        item_type: { $nin: ['database', 'dataflow', 'api'] },
-        parent_id: props.directory.id,
-      },
-    }),
+  const { items } = await fetchMetadataDefinitions({
+    where: {
+      item_type: { $nin: ['database', 'dataflow', 'api'] },
+      parent_id: props.directory.id,
+    },
   })
 
   props.directory.children = items.map((item: any) => {
@@ -594,7 +590,7 @@ function deleteNode(data: any) {
     if (!resFlag) {
       return
     }
-    metadataDefinitionsApi.delete(data.id).then(() => {
+    deleteMetadataDefinition(data.id).then(() => {
       tree.value?.remove(data.id)
     })
   })
@@ -627,7 +623,7 @@ async function dialogSubmit() {
   }
 
   try {
-    const data = await metadataDefinitionsApi[method](params)
+    const data = await patchMetadataDefinitionById(params.id, params)
     hideDialog()
     ElMessage.success(t('public_message_operation_success'))
     if (data && config.type === 'add') {
@@ -676,7 +672,7 @@ function findSourceAndSinkNodes({ nodes, edges }) {
 async function loadTask() {
   if (!treeData.value.length) return
 
-  const map = await ldpApi.getTaskByTag(
+  const map = await getLDPTaskByTag(
     treeData.value.map((item: any) => item.id).join(','),
   )
   const newMap: Record<string, any> = {}
@@ -733,7 +729,7 @@ async function startTagTask(tag: any, node: any) {
   node.loading = true
   node.expanded = false
   setExpand(tag.id, false)
-  await ldpApi.batchStart(tag.id, {})
+  await batchStartFDMTasks(tag.id, [])
   ElMessage.success(t('public_message_operation_success'))
 }
 
@@ -815,22 +811,20 @@ function loadObjects(
       allTags: 1,
     },
   }
-  return discoveryApi
-    .discoveryList(where, {
-      cancelToken,
-    })
-    .then((res: any) => {
-      return res.items.map((item: any) =>
-        Object.assign(item, {
-          isLeaf: true,
-          isObject: true,
-          connectionId: item.sourceConId,
-          LDP_TYPE: 'table',
-          parent_id: node.id,
-          isVirtual: item.status === 'noRunning',
-        }),
-      )
-    })
+  return getDiscoveryDirectoryData(where, {
+    cancelToken,
+  }).then((res: any) => {
+    return res.items.map((item: any) =>
+      Object.assign(item, {
+        isLeaf: true,
+        isObject: true,
+        connectionId: item.sourceConId,
+        LDP_TYPE: 'table',
+        parent_id: node.id,
+        isVirtual: item.status === 'noRunning',
+      }),
+    )
+  })
 }
 
 async function searchObject(search: string) {

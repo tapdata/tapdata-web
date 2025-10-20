@@ -1,14 +1,14 @@
-import { isValid } from '@tap/shared'
-import { IconWidget, TextWidget } from '../widgets'
-import { usePrefix } from '../../hooks'
-import { defineComponent, ref, watch } from 'vue'
 import { composeExport } from '@tap/form/src/shared'
+import { isValid } from '@tap/shared'
+import { defineComponent, ref, watch } from 'vue'
+import { usePrefix } from '../../hooks'
+import { IconWidget, TextWidget } from '../widgets'
 
 const parseItems = (children) => {
   const items = []
   children.forEach((child, index) => {
     items.push({
-      key: child['key'] ?? index,
+      key: child.key ?? index,
       ...child.componentOptions?.propsData,
       ...child.props,
       children: child.children || child.componentOptions?.children,
@@ -18,8 +18,7 @@ const parseItems = (children) => {
 }
 
 const findItem = (items, key) => {
-  for (let index = 0; index < items.length; index++) {
-    const item = items[index]
+  for (const [index, item] of items.entries()) {
     if (key === index) return item
     if (key === item.key) return item
   }
@@ -42,7 +41,9 @@ const CompositePanelComponent = defineComponent({
   },
   setup(props, { emit, slots }) {
     const prefixRef = usePrefix('composite-panel')
-    const activeKeyRef = ref(props.defaultActiveKey ?? getDefaultKey(slots.default()))
+    const activeKeyRef = ref(
+      props.defaultActiveKey ?? getDefaultKey(slots.default()),
+    )
     const pinningRef = ref(props.defaultPinning ?? false)
     const visibleRef = ref(props.defaultOpen ?? true)
 
@@ -53,7 +54,10 @@ const CompositePanelComponent = defineComponent({
     watch(
       () => props.activeKey,
       () => {
-        if (isValid(props.activeKey) && activeKeyRef.value !== props.activeKey) {
+        if (
+          isValid(props.activeKey) &&
+          activeKeyRef.value !== props.activeKey
+        ) {
           activeKeyRef.value = props.activeKey
         }
       },
@@ -84,7 +88,9 @@ const CompositePanelComponent = defineComponent({
               <TextWidget>{currentItem.title}</TextWidget>
             </div>
             <div class={`${prefix}-tabs-header-actions`}>
-              <div class={`${prefix}-tabs-header-extra`}>{currentItem.extra}</div>
+              <div class={`${prefix}-tabs-header-extra`}>
+                {currentItem.extra}
+              </div>
               <IconWidget
                 infer="Close"
                 class={`${prefix}-tabs-header-close`}
@@ -123,7 +129,8 @@ const CompositePanelComponent = defineComponent({
                         ? null
                         : {
                             content: <TextWidget>{item.title}</TextWidget>,
-                            placement: props.direction === 'right' ? 'left' : 'right',
+                            placement:
+                              props.direction === 'right' ? 'left' : 'right',
                           }
                     }
                     infer={item.icon}
@@ -149,7 +156,8 @@ const CompositePanelComponent = defineComponent({
                       } else {
                         visibleRef.value = true
                       }
-                      if (!props?.activeKey || !props?.onChange) activeKeyRef.value = item.key
+                      if (!props?.activeKey || !props?.onChange)
+                        activeKeyRef.value = item.key
                     }
                     item.onClick?.(e)
                     emit.change?.(item.key)

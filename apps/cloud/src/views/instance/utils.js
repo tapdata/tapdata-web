@@ -1,4 +1,4 @@
-import { AGENT_SPEC_MAP, NUMBER_MAP } from '@tap/business'
+import { AGENT_SPEC_MAP } from '@tap/business'
 import i18n from '@/i18n'
 
 export function getSpec(item = {}) {

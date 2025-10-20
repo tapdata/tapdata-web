@@ -1,18 +1,12 @@
-<template>
-  <Form class-name="form-wrap" :form="form" v-bind="formProps">
-    <SchemaField v-if="!!schema" :schema="schema" :scope="scope" />
-  </Form>
-</template>
-
 <script>
-import { Form, createSchemaField, components } from '@tap/form'
+import { components, createSchemaField, Form } from '@tap/form'
 import * as _components from '../components/form'
 
 const { SchemaField } = createSchemaField({
   components: {
     ...components,
-    ..._components
-  }
+    ..._components,
+  },
 })
 
 export default {
@@ -28,12 +22,18 @@ export default {
         colon: false,
         shallow: false,
         layout: 'vertical',
-        feedbackLayout: 'terse'
-      })
-    }
-  }
+        feedbackLayout: 'terse',
+      }),
+    },
+  },
 }
 </script>
+
+<template>
+  <Form class-name="form-wrap" :form="form" v-bind="formProps">
+    <SchemaField v-if="!!schema" :schema="schema" :scope="scope" />
+  </Form>
+</template>
 
 <style scoped lang="scss">
 .form-wrap {

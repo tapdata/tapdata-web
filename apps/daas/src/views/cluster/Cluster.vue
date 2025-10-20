@@ -1,23 +1,26 @@
 <script setup lang="ts">
 import {
   addAgent,
-  addClusterMonitor,
   deleteAgentGroup,
+  fetchAgentGroups,
+  saveAgentGroup,
+  updateAgentGroup,
+} from '@tap/api/src/core/agentgroup'
+import {
+  addClusterMonitor,
   deleteClusterState,
   editClusterAgent,
   editClusterMonitor,
-  fetchAgentGroups,
   fetchClusterStates,
-  fetchWorkers,
   findRawServerInfo,
-  proxyApi,
-  queryAllBindWorker,
   removeClusterMonitor,
-  saveAgentGroup,
-  unbindByProcessId,
-  updateAgentGroup,
   updateClusterStatus,
-} from '@tap/api'
+} from '@tap/api/src/core/cluster'
+import {
+  fetchWorkers,
+  queryAllBindWorker,
+  unbindByProcessId,
+} from '@tap/api/src/core/workers'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { dayjs, makeDragNodeImage } from '@tap/business/src/shared'
 import { FilterBar } from '@tap/component/src/filter-bar'
@@ -99,14 +102,6 @@ interface ClusterData {
   metricValues?: {
     CpuUsage: string
     HeapMemoryUsage: string
-  }
-}
-
-interface WorkerData {
-  process_id: string
-  metricValues?: {
-    CpuUsage: number
-    HeapMemoryUsage: number
   }
 }
 
@@ -334,7 +329,7 @@ const addServeFn = (item: any) => {
 }
 
 const downServeFn = (item: any) => {
-  proxyApi.supervisor(item.systemInfo?.process_id).then((data) => {
+  getSupervisor(item.systemInfo?.process_id).then((data) => {
     downloadJson(
       JSON.stringify(data),
       `${item.systemInfo?.process_id}_supervisor_summary`,
@@ -343,7 +338,7 @@ const downServeFn = (item: any) => {
 }
 
 const downConnectorsFn = (item: any) => {
-  proxyApi.connectors(item.systemInfo?.process_id).then((data) => {
+  getConnectors(item.systemInfo?.process_id).then((data) => {
     downloadJson(
       JSON.stringify(data),
       `${item.systemInfo?.process_id}_connectors_memory`,

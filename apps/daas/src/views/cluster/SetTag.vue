@@ -1,5 +1,5 @@
 <script>
-import { updateAgent } from '@tap/api'
+import { updateAgent } from '@tap/api/src/core/agentgroup'
 
 export default {
   name: 'SetTag',

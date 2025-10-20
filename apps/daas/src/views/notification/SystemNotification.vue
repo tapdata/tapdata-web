@@ -5,7 +5,7 @@ import {
   pageReadNotification,
   patchNotification,
   readAllNotifications,
-} from '@tap/api'
+} from '@tap/api/src/core/notification'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import { $emit, $on } from '@tap/shared/src/event'
@@ -325,12 +325,12 @@ export default {
             <template #label>
               <span>{{ $t('notify_user_all_notice') }}</span>
             </template>
-            </el-tab-pane>
+          </el-tab-pane>
           <el-tab-pane name="second">
             <template #label>
               <span>{{ $t('notify_unread_notice') }}</span>
             </template>
-            </el-tab-pane>
+          </el-tab-pane>
         </el-tabs>
         <div class="position-absolute top-0 end-0 z-10">
           <ElButton type="primary" @click="handlePageRead()">{{

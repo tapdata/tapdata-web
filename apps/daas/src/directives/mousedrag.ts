@@ -1,4 +1,3 @@
-import { MousePosition } from '@tap/shared/src/mousePosition'
 import { appendHtml, off, on } from '@/utils/dom'
 
 const EVENT = {

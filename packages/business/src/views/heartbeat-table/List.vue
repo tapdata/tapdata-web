@@ -1,5 +1,12 @@
 <script>
-import { taskApi } from '@tap/api'
+import {
+  batchDeleteTasks,
+  batchRenewTasks,
+  batchStartTasks,
+  batchStopTasks,
+  fetchTasks,
+  forceStopTask,
+} from '@tap/api/src/core/task'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash-es'
@@ -88,27 +95,23 @@ export default {
       if (keyword && keyword.trim()) {
         where.name = { like: escapeRegExp(keyword), options: 'i' }
       }
-      return taskApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          const list = data?.items || []
-          return {
-            total: data?.total || 0,
-            data: list.map((item) => {
-              item.createTime = dayjs(item.createTime).format(
-                'YYYY-MM-DD HH:mm:ss',
-              )
-              item.taskType = TASK_TYPE_MAP[item.type] || ''
-              makeStatusAndDisabled(item)
-              if (item.status === 'edit') {
-                item.btnDisabled.start = false
-              }
-              return item
-            }),
-          }
-        })
+      return fetchTasks(filter).then((data) => {
+        const list = data?.items || []
+        return {
+          total: data?.total || 0,
+          data: list.map((item) => {
+            item.createTime = dayjs(item.createTime).format(
+              'YYYY-MM-DD HH:mm:ss',
+            )
+            item.taskType = TASK_TYPE_MAP[item.type] || ''
+            makeStatusAndDisabled(item)
+            if (item.status === 'edit') {
+              item.btnDisabled.start = false
+            }
+            return item
+          }),
+        }
+      })
     },
 
     start(ids) {
@@ -118,9 +121,8 @@ export default {
           id: ids[0],
         },
       }
-      taskApi.get({ filter: JSON.stringify(filter) }).then(() => {
-        taskApi
-          .batchStart(ids)
+      fetchTasks(filter).then(() => {
+        batchStartTasks(ids)
           .then((data) => {
             this.buried(this.taskBuried.start, '', { result: true })
             this.$message.success(
@@ -142,7 +144,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.forceStop(ids).then((data) => {
+        forceStopTask(ids).then((data) => {
           this.$message.success(
             data?.message || this.$t('public_message_operation_success'),
           )
@@ -159,7 +161,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.batchStop(ids).then((data) => {
+        batchStopTasks(ids).then((data) => {
           this.$message.success(
             data?.message || this.$t('public_message_operation_success'),
           )
@@ -186,8 +188,8 @@ export default {
     },
 
     getConfirmMessage(operateStr, task) {
-      const title = `${operateStr}_confirm_title`,
-        message = `${operateStr}_confirm_message`
+      const title = `${operateStr}_confirm_title`
+      const message = `${operateStr}_confirm_message`
       const strArr = this.$t(`dataFlow_${message}`).split('xxx')
       const msg = `
         <p>
@@ -210,7 +212,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.batchRenew([id]).then((data) => {
+        batchRenewTasks([id]).then((data) => {
           this.$message.success(
             data?.message || this.$t('public_message_operation_success'),
           )
@@ -232,7 +234,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.batchDelete(ids).then((data) => {
+        batchDeleteTasks(ids).then((data) => {
           this.table.fetch()
           this.responseDelHandler(
             data,

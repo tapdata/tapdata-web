@@ -1,9 +1,9 @@
-import { TreeNode } from './TreeNode'
-import { Workbench } from './Workbench'
+import { Event, uid } from '@tap/shared'
 import { Cursor } from './Cursor'
 import { Keyboard } from './Keyboard'
 import { Screen } from './Screen'
-import { uid, Event } from '@tap/shared'
+import { TreeNode } from './TreeNode'
+import { Workbench } from './Workbench'
 
 const globalThisPolyfill = window
 

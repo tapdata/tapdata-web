@@ -1,10 +1,11 @@
 <script lang="tsx">
 import {
-  discoveryApi,
-  fetchMetadataInstances,
-  ldpApi,
-  metadataDefinitionsApi,
-} from '@tap/api'
+  deleteMetadataDefinition,
+  patchMetadataDefinitionById,
+} from '@tap/api/core/metadata-definitions'
+import { fetchMetadataInstances } from '@tap/api/core/metadata-instances'
+import { createDiscoveryTags } from '@tap/api/src/core/discovery'
+import { createMDMTask } from '@tap/api/src/core/ldp'
 import { makeDragNodeImage, TASK_SETTINGS } from '@tap/business/src/shared'
 import { IconButton } from '@tap/component/src/icon-button'
 import { FieldSelect, mapFieldsData } from '@tap/form'
@@ -340,7 +341,7 @@ export default {
         )
         this.creating = true
         try {
-          const result = await ldpApi.createMDMTask(task, {
+          const result = await createMDMTask(task, {
             silenceMessage: true,
             params: { tagId, confirmTable, start },
           })
@@ -547,11 +548,10 @@ export default {
     handleSelfDrop(draggingNode, dropNode, dropType, ev) {
       if (dropNode.data.isObject) return
       if (!draggingNode.data.isObject) {
-        metadataDefinitionsApi
-          .changeById({
-            id: draggingNode.data.id,
-            parent_id: dropNode.data.id || '',
-          })
+        patchMetadataDefinitionById(draggingNode.data.id, {
+          id: draggingNode.data.id,
+          parent_id: dropNode.data.id || '',
+        })
           .then(() => {
             this.$message.success(this.$t('public_message_operation_success'))
             draggingNode.data.parent_id = dropNode.data.id
@@ -703,7 +703,7 @@ export default {
       }
 
       try {
-        const data = await metadataDefinitionsApi[method](params)
+        const data = await patchMetadataDefinitionById(params.id, params)
         this.hideDialog()
         this.$message.success(this.$t('public_message_operation_success'))
         if (data && config.type === 'add') {
@@ -734,7 +734,7 @@ export default {
       tagBindingParams,
       tagIds: [from]
     })*/
-      await discoveryApi.postTags({
+      await createDiscoveryTags({
         tagBindingParams,
         tagIds: [to],
         oldTagIds: [from],
@@ -765,7 +765,7 @@ export default {
         if (!resFlag) {
           return
         }
-        metadataDefinitionsApi.delete(data.id).then(() => {
+        deleteMetadataDefinition(data.id).then(() => {
           this.$refs.tree.remove(data.id)
 
           // 删除目录刷新上一级加载被删除目录下的表

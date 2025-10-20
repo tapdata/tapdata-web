@@ -1,4 +1,3 @@
-import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import { defineComponent } from 'vue'
 
 export const SqlEditor = defineComponent({

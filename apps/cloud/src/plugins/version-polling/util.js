@@ -11,7 +11,7 @@ export function isDef(val) {
  * @param func
  */
 export function createWorker(func) {
-  const blob = new Blob(['(' + func.toString() + ')()'])
+  const blob = new Blob([`(${func.toString()})()`])
   const url = window.URL.createObjectURL(blob)
   const worker = new Worker(url)
 
@@ -25,9 +25,10 @@ export function createWorkerFunc() {
   let options
 
   self.onmessage = function (event) {
-    let code = event.data['code']
-    options = Object.assign({}, options, event.data['data'])
-    const { htmlFileUrl, lastEtag, appETagKey, immediate, pollingInterval } = options
+    const code = event.data.code
+    options = Object.assign({}, options, event.data.data)
+    const { htmlFileUrl, lastEtag, appETagKey, immediate, pollingInterval } =
+      options
 
     const runReq = function () {
       fetch(htmlFileUrl, {

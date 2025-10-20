@@ -1,4 +1,4 @@
-import { requestClient, type PageFetchResult } from '../request'
+import { requestClient } from '../request'
 
 const BASE_URL = '/api/Workers'
 
@@ -44,9 +44,7 @@ export function getTaskUsedAgent(id: string) {
 }
 
 export function queryAllBindWorker() {
-  return requestClient.get<Record<string, any>[]>(
-    `${BASE_URL}/queryAllBindWorker`,
-  )
+  return requestClient.get(`${BASE_URL}/queryAllBindWorker`)
 }
 
 export function unbindByProcessId(id: string) {

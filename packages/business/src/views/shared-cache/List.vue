@@ -1,5 +1,17 @@
 <script>
-import { externalStorageApi, sharedCacheApi, taskApi } from '@tap/api'
+import { getExternalStorage } from '@tap/api/src/core/external-storage'
+import {
+  fetchSharedCache,
+  patchSharedCache,
+} from '@tap/api/src/core/shared-cache'
+import {
+  batchRenewTasks,
+  batchStartTasks,
+  batchStopTasks,
+  exportTasks,
+  fetchTasks,
+  forceStopTask,
+} from '@tap/api/src/core/task'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
@@ -93,24 +105,20 @@ export default {
         skip: (current - 1) * size,
         where,
       }
-      return sharedCacheApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          const list = data?.items || []
-          return {
-            total: data?.total,
-            data: list.map((item) => {
-              item.createTimeFmt = item.createTime
-                ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-                : '-'
+      return fetchSharedCache(filter).then((data) => {
+        const list = data?.items || []
+        return {
+          total: data?.total,
+          data: list.map((item) => {
+            item.createTimeFmt = item.createTime
+              ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+              : '-'
 
-              makeStatusAndDisabled(item)
-              return item
-            }),
-          }
-        })
+            makeStatusAndDisabled(item)
+            return item
+          }),
+        }
+      })
     },
     create() {
       this.handleEditor({
@@ -126,7 +134,7 @@ export default {
         this.$t('public_message_delete_confirm'),
       ).then((flag) => {
         if (flag) {
-          sharedCacheApi.delete(row.id).then(() => {
+          patchSharedCache({ id: row.id }).then(() => {
             this.$message.success(this.$t('public_message_delete_ok'))
             this.table.fetch()
           })
@@ -144,9 +152,7 @@ export default {
     },
 
     async start(ids, row) {
-      const externalStorage = await externalStorageApi.get(
-        row.externalStorageId,
-      )
+      const externalStorage = await getExternalStorage(row.externalStorageId)
       if (!externalStorage?.id) {
         this.$message.error(
           i18n.t('packages_business_shared_cache_list_qingxianxiugaiwai'),
@@ -159,9 +165,8 @@ export default {
           id: ids[0],
         },
       }
-      taskApi.get({ filter: JSON.stringify(filter) }).then(() => {
-        taskApi
-          .batchStart(ids)
+      fetchTasks(filter).then(() => {
+        batchStartTasks(ids)
           .then((data) => {
             this.buried(this.taskBuried.start, '', { result: true })
             this.$message.success(
@@ -183,7 +188,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.forceStop(ids).then((data) => {
+        forceStopTask(ids).then((data) => {
           this.$message.success(
             data?.message || this.$t('public_message_operation_success'),
           )
@@ -200,7 +205,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.batchStop(ids).then((data) => {
+        batchStopTasks(ids).then((data) => {
           this.$message.success(
             data?.message || this.$t('public_message_operation_success'),
           )
@@ -231,8 +236,8 @@ export default {
     },
 
     getConfirmMessage(operateStr, task) {
-      const title = `${operateStr}_confirm_title`,
-        message = `${operateStr}_confirm_message`
+      const title = `${operateStr}_confirm_title`
+      const message = `${operateStr}_confirm_message`
       const strArr = this.$t(`dataFlow_${message}`).split('xxx')
       const msg = `
         <p>
@@ -255,7 +260,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.batchRenew([id]).then((data) => {
+        batchRenewTasks([id]).then((data) => {
           this.$message.success(
             data?.message || this.$t('public_message_operation_success'),
           )
@@ -266,7 +271,7 @@ export default {
 
     handleExport() {
       const ids = this.multipleSelection.map((t) => t.id)
-      taskApi.export(ids)
+      exportTasks(ids)
     },
 
     handleImport() {

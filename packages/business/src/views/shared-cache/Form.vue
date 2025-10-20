@@ -1,10 +1,19 @@
 <script>
 import { InfoFilled } from '@element-plus/icons-vue'
 import {
-  externalStorageApi,
-  metadataInstancesApi,
-  sharedCacheApi,
-} from '@tap/api'
+  fetchExternalStorageList,
+  getExternalStorage,
+} from '@tap/api/src/core/external-storage'
+import {
+  checkFiledIndex,
+  fetchMetadataInstances,
+  getTablesValue,
+} from '@tap/api/src/core/metadata-instances'
+import {
+  createSharedCache,
+  findOneSharedCache,
+  patchSharedCache,
+} from '@tap/api/src/core/shared-cache'
 import { Switch as ConfirmSwitch } from '@tap/form/src/components/switch'
 import i18n from '@tap/i18n'
 import ConnectionListSelect from '../connections/ListSelect.vue'
@@ -129,13 +138,11 @@ export default {
     },
     async getData(id) {
       this.loading = true
-      await sharedCacheApi
-        .findOne(id)
+      await findOneSharedCache(id)
         .then(async (data) => {
           data = data || {}
           let externalStorageId = data.externalStorageId
-          const externalStorage =
-            await externalStorageApi.get(externalStorageId)
+          const externalStorage = await getExternalStorage(externalStorageId)
           if (!externalStorage?.id) {
             externalStorageId = ''
           }
@@ -167,16 +174,14 @@ export default {
 
       const { externalStorageId } = this.form
       if (externalStorageId) {
-        const ext = await externalStorageApi.get(externalStorageId)
+        const ext = await getExternalStorage(externalStorageId)
         filter.where.type = ext?.type
       }
-      const data = await externalStorageApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .catch(() => {
-          this.externalStorageOptions = []
-        })
+      const data = await fetchExternalStorageList({
+        filter: JSON.stringify(filter),
+      }).catch(() => {
+        this.externalStorageOptions = []
+      })
       let defaultStorageId = ''
       this.externalStorageOptions =
         data?.items?.map((it) => {
@@ -191,8 +196,7 @@ export default {
     },
     getTableOptions(connectionId) {
       this.tableOptionsLoading = true
-      metadataInstancesApi
-        .getTablesValue({ connectionId })
+      getTablesValue({ connectionId })
         .then((data) => {
           const options = []
           const list = data || []
@@ -212,25 +216,21 @@ export default {
         })
     },
     getTableSchema(tableName) {
-      const params = {
-        filter: JSON.stringify({
-          where: {
-            'source.id': this.form.connectionId,
-            original_name: tableName,
-            is_deleted: false,
-            'fields.is_deleted': false,
-            sourceType: 'SOURCE',
-          },
-          fields: {
-            'fields.field_name': true,
-            'fields.original_field_name': true,
-            indices: true,
-          },
-        }),
-      }
       this.fieldOptionsLoading = true
-      metadataInstancesApi
-        .get(params)
+      fetchMetadataInstances({
+        where: {
+          'source.id': this.form.connectionId,
+          original_name: tableName,
+          is_deleted: false,
+          'fields.is_deleted': false,
+          sourceType: 'SOURCE',
+        },
+        fields: {
+          'fields.field_name': true,
+          'fields.original_field_name': true,
+          indices: true,
+        },
+      })
         .then((data) => {
           const table = data?.items?.[0]
           if (table) {
@@ -322,9 +322,9 @@ export default {
               edges: [],
             },
           }
-          const method = id ? 'patch' : 'post'
+          const method = id ? patchSharedCache : createSharedCache
           this.$emit('update:loading', true)
-          sharedCacheApi[method](params)
+          method(params)
             .then(() => {
               this.$message.success(this.$t('public_message_save_ok'))
               this.$emit('success')
@@ -341,7 +341,7 @@ export default {
         cacheKeys: this.form.cacheKeys,
         id: this.metadataInstancesId,
       }
-      metadataInstancesApi.checkFiledIndex(params).then((data) => {
+      checkFiledIndex(params).then((data) => {
         this.showCachekeysCheckMsg = !data
       })
     },

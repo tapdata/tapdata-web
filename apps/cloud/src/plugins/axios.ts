@@ -1,4 +1,4 @@
-import { requestClient } from '@tap/api'
+import { requestClient } from '@tap/api/src/request'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
 import {
   defaultResponseInterceptor,

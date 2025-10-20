@@ -1,6 +1,5 @@
 import { observer } from '@formily/reactive-vue'
-import { IconButton } from '@tap/component/src/icon-button'
-import { connect, JsEditor, mapProps, useForm } from '@tap/form'
+import { connect, mapProps, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import { defineComponent } from 'vue'
 import { convertSchemaToTreeData } from '../field-rename/util'

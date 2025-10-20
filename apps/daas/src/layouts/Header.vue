@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { WarningFilled } from '@element-plus/icons-vue'
-import {
-  fetchAppVersion,
-  fetchTimestamp,
-  getLicenseExpires,
-  logout,
-} from '@tap/api'
+import { getLicenseExpires } from '@tap/api/src/core/licenses'
+import { fetchAppVersion } from '@tap/api/src/core/settings'
+import { fetchTimestamp } from '@tap/api/src/core/timestamp'
+import { logoutUser } from '@tap/api/src/core/users'
 import { Modal } from '@tap/component/src/modal'
 import { ThemeToggle } from '@tap/component/src/theme-toggle'
 import { useI18n } from '@tap/i18n'
@@ -177,7 +175,7 @@ const command = (command: string) => {
 }
 
 const signOut = () => {
-  logout().then(() => {
+  logoutUser().then(() => {
     utilSignOut()
   })
 }

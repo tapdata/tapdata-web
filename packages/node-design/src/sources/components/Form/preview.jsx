@@ -1,11 +1,10 @@
-import { createBehavior, createResource } from '../../../core'
 import { createForm } from '@formily/core'
 import { observer } from '@formily/reactive-vue'
-import { Form as BaseForm } from '@tap/form'
+import { computed, defineComponent } from 'vue'
+import { createBehavior, createResource } from '../../../core'
 import { usePrefix } from '../../../hooks'
-import { AllSchemas } from '../../schemas'
 import { AllLocales } from '../../locales'
-import { defineComponent, computed } from 'vue'
+import { AllSchemas } from '../../schemas'
 import './styles.scss'
 
 export const Form = observer(

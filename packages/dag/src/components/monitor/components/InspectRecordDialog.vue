@@ -2,7 +2,7 @@
 import {
   getTaskInspectResultsOperations,
   type TaskInspectOperation,
-} from '@tap/api'
+} from '@tap/api/src/core/task-inspect'
 import { useI18n } from '@tap/i18n'
 import dayjs from 'dayjs'
 import { computed, ref } from 'vue'

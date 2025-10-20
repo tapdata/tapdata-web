@@ -1,14 +1,21 @@
 <script>
+import { getStorageOverview } from '@tap/api/src/core/discovery'
+import { deleteMDMTable } from '@tap/api/src/core/ldp'
 import {
-  CancelToken,
-  discoveryApi,
-  getApiModuleList,
-  ldpApi,
-  metadataInstancesApi,
-  proxyApi,
-  taskApi,
-  workerApi,
-} from '@tap/api'
+  updateTableDesc,
+  updateTableFieldDesc,
+} from '@tap/api/src/core/metadata-instances'
+import { getApiModuleList } from '@tap/api/src/core/modules'
+import { callProxy } from '@tap/api/src/core/proxy'
+import {
+  batchDeleteTasks,
+  batchStartTasks,
+  batchStopTasks,
+  forceStopTask,
+  getTableStatus,
+  getTaskByTableName,
+} from '@tap/api/src/core/task'
+import { CancelToken } from '@tap/api/src/request'
 import { DatabaseIcon } from '@tap/business/src/components/DatabaseIcon'
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import { makeStatusAndDisabled, TASK_TYPE_MAP } from '@tap/business/src/shared'
@@ -317,8 +324,7 @@ export default {
     },
     getTableStorage(row) {
       this.loading = true
-      discoveryApi
-        .overViewStorage(row.id)
+      getStorageOverview(row.id)
         .then((res) => {
           for (const key in res) {
             this.detailData[key] = res[key]
@@ -352,10 +358,9 @@ export default {
       }
       this.cancelSource?.cancel()
       this.cancelSource = CancelToken.source()
-      return taskApi
-        .getTaskByTableName(params, {
-          cancelToken: this.cancelSource.token,
-        })
+      return getTaskByTableName(params, {
+        cancelToken: this.cancelSource.token,
+      })
         .then((taskList) => {
           this.taskData = taskList.filter((task) => {
             if (
@@ -416,8 +421,7 @@ export default {
         args: [this.connectionId, this.detailData.name],
       }
       this.loadingSampleData = true
-      proxyApi
-        .call(params)
+      callProxy(params)
         .then((res) => {
           this.sampleData = res?.sampleData || []
           //schema返回的数据组装数据
@@ -440,27 +444,25 @@ export default {
     },
     //
     saveTableDesc() {
-      metadataInstancesApi.updateTableDesc({
+      updateTableDesc({
         id: this.detailData.id,
         description: this.detailData.description,
       })
     },
     //获取表状态
     getTaskStatus() {
-      taskApi
-        .tableStatus(this.connectionId, this.detailData.name)
-        .then((res) => {
-          this.tableStatus = res?.status
-          this.cdcDelayTime =
-            isNum(res?.cdcDelayTime) && res.cdcDelayTime >= 0
-              ? calcTimeUnit(res.cdcDelayTime, 2, {
-                  autoHideMs: true,
-                })
-              : '-'
-          this.lastDataChangeTime = res?.lastDataChangeTime
-            ? dayjs(res?.lastDataChangeTime).format('YYYY-MM-DD HH:mm:ss')
+      getTableStatus(this.connectionId, this.detailData.name).then((res) => {
+        this.tableStatus = res?.status
+        this.cdcDelayTime =
+          isNum(res?.cdcDelayTime) && res.cdcDelayTime >= 0
+            ? calcTimeUnit(res.cdcDelayTime, 2, {
+                autoHideMs: true,
+              })
             : '-'
-        })
+        this.lastDataChangeTime = res?.lastDataChangeTime
+          ? dayjs(res?.lastDataChangeTime).format('YYYY-MM-DD HH:mm:ss')
+          : '-'
+      })
     },
     getApisData() {
       const { connectionId, name } = this.selected || {}
@@ -549,7 +551,7 @@ export default {
     },
 
     startTask(ids) {
-      taskApi.batchStart(ids).then((data) => {
+      batchStartTasks(ids).then((data) => {
         this.getTasks(true)
         if (data.every((t) => t.code === 'ok')) {
           this.$message.success(this.$t('public_message_operation_success'))
@@ -573,7 +575,7 @@ export default {
     },
 
     async forceStopTask(ids, item = {}) {
-      const data = await workerApi.taskUsedAgent(ids)
+      const data = await getTaskUsedAgent(ids)
       let msgObj = this.getConfirmMessage(
         'force_stop',
         ids.length > 1,
@@ -592,7 +594,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.forceStop(ids).then((data) => {
+        forceStopTask(ids).then((data) => {
           this.getTasks(true)
           this.$message.success(
             data?.message || this.$t('public_message_operation_success'),
@@ -611,7 +613,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.batchStop(ids).then((data) => {
+        batchStopTasks(ids).then((data) => {
           this.getTasks(true)
           this.$message.success(
             data?.message || this.$t('public_message_operation_success'),
@@ -629,7 +631,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.batchDelete(ids).then((data) => {
+        batchDeleteTasks(ids).then((data) => {
           this.getTasks(true)
           this.$message.success(
             data?.message || this.$t('public_message_operation_success'),
@@ -679,14 +681,12 @@ export default {
         col.desc = val
       }
 
-      metadataInstancesApi
-        .updateTableFieldDesc(this.selected.id, {
-          id,
-          businessDesc: val,
-        })
-        .catch(() => {
-          this.$message.error(this.$t('public_message_save_fail'))
-        })
+      updateTableFieldDesc(this.selected.id, {
+        id,
+        businessDesc: val,
+      }).catch(() => {
+        this.$message.error(this.$t('public_message_save_fail'))
+      })
     }, 300),
 
     handleDelete() {
@@ -710,7 +710,7 @@ export default {
         if (!resFlag) {
           return
         }
-        ldpApi.deleteTable(this.selected.id).then(() => {
+        deleteMDMTable(this.selected.id).then(() => {
           this.visible = false
           this.callback?.onDelete?.(this.selected.parent_id)
         })

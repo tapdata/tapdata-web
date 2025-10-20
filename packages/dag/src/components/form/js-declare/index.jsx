@@ -1,4 +1,3 @@
-import { FormItem, HighlightCode, JsEditor } from '@tap/form'
 import i18n from '@tap/i18n'
 import { defineComponent, ref } from 'vue'
 import './style.scss'
@@ -55,7 +54,8 @@ export const JsDeclare = defineComponent({
                   <el-button
                     text
                     onClick={(event) => (
-                      event.stopPropagation(), (dialogVisible.value = true)
+                      event.stopPropagation(),
+                      (dialogVisible.value = true)
                     )}
                     type="primary"
                     class="mx-4"

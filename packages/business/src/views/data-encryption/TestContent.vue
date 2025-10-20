@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from '@tap/i18n'
 import { ref } from 'vue'
-import type { Encryption } from '@tap/api'
+import type { Encryption } from '@tap/api/src/core/encryption'
 
 const props = defineProps<{
   rule?: Encryption

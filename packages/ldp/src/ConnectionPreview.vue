@@ -1,5 +1,5 @@
 <script>
-import { taskApi } from '@tap/api'
+import { getTaskByTableName } from '@tap/api/src/core/task'
 import SchemaProgress from '@tap/business/src/components/SchemaProgress.vue'
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import {
@@ -126,7 +126,7 @@ export default {
         connectionId: this.viewData.id,
         tableName: null,
       }
-      taskApi.getTaskByTableName(params).then((taskList) => {
+      getTaskByTableName(params).then((taskList) => {
         taskList.forEach((task) => {
           const { dag } = task
           const sourceConnectionIds = []

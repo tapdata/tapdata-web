@@ -1,16 +1,15 @@
 import { FormPath } from '@formily/core'
-import { toJS, raw } from '@formily/reactive'
-import { ArrayField, Field as InternalField, ObjectField, VoidField, Schema } from '@formily/vue'
+import { raw, toJS } from '@formily/reactive'
 import { observer } from '@formily/reactive-vue'
-import { FormItem } from '@tap/form'
 import { each, reduce } from '@formily/shared'
-import { createBehavior } from '../../../core'
+import { Schema } from '@formily/vue'
+import { FormItem } from '@tap/form'
+import { isArr, isStr } from '@tap/shared'
 import { defineComponent } from 'vue'
 
-import { isArr, isStr } from '@tap/shared'
-import { Container } from '../../../components/common/Container'
-import { AllLocales } from '../../locales'
+import { createBehavior } from '../../../core'
 import { useComponents, useDesigner, useTreeNode } from '../../../hooks'
+import { AllLocales } from '../../locales'
 
 Schema.silent(true)
 
@@ -87,11 +86,13 @@ const toDesignableFieldProps = (schema, components, nodeIdAttrName, id) => {
     }
   })
   console.log('raw', raw(components), toJS(components))
-  if (!components['FormItem']) {
-    components['FormItem'] = FormItem
+  if (!components.FormItem) {
+    components.FormItem = FormItem
   }
-  const decorator = schema['x-decorator'] && FormPath.getIn(components, schema['x-decorator'])
-  const component = schema['x-component'] && FormPath.getIn(components, schema['x-component'])
+  const decorator =
+    schema['x-decorator'] && FormPath.getIn(components, schema['x-decorator'])
+  const component =
+    schema['x-component'] && FormPath.getIn(components, schema['x-component'])
   const decoratorProps = schema['x-decorator-props'] || {}
   const componentProps = schema['x-component-props'] || {}
 
@@ -102,13 +103,16 @@ const toDesignableFieldProps = (schema, components, nodeIdAttrName, id) => {
     props.component = [component, toJS(componentProps)]
   }
   if (decorator) {
-    FormPath.setIn(props['decorator'][1], nodeIdAttrName, id)
+    FormPath.setIn(props.decorator[1], nodeIdAttrName, id)
   } else if (component) {
-    FormPath.setIn(props['component'][1], nodeIdAttrName, id)
+    FormPath.setIn(props.component[1], nodeIdAttrName, id)
   }
   const title = props.title
-  props.title = props.title && (() => <span data-content-editable="title">{title}</span>)
-  props.description = props.description && <span data-content-editable="description">{props.description}</span>
+  props.title =
+    props.title && (() => <span data-content-editable="title">{title}</span>)
+  props.description = props.description && (
+    <span data-content-editable="description">{props.description}</span>
+  )
   return props
 }
 
@@ -125,7 +129,12 @@ export const Field = observer(
 
         const node = nodeRef.value
 
-        const fieldProps = toDesignableFieldProps(attrs, components.value, designer.value.props.nodeIdAttrName, node.id)
+        const fieldProps = toDesignableFieldProps(
+          attrs,
+          components.value,
+          designer.value.props.nodeIdAttrName,
+          node.id,
+        )
 
         if (attrs.type === 'object') {
           return (

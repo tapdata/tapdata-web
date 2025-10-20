@@ -1,5 +1,6 @@
 <script>
-import { fileApi, javascriptFunctionsApi } from '@tap/api'
+import { removeFile } from '@tap/api/src/core/file'
+import { createFunction, fetchFunctions } from '@tap/api/src/core/function'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import Cookie from '@tap/shared/src/cookie'
 import i18n from '@/i18n'
@@ -61,25 +62,21 @@ export default {
         map[name] = true
       })
 
-      javascriptFunctionsApi
-        .get({
-          filter: JSON.stringify({
-            fields: { function_name: 1 },
-            where: {
-              function_name: {
-                inq: Object.keys(map),
-              },
-            },
-          }),
+      fetchFunctions({
+        fields: { function_name: 1 },
+        where: {
+          function_name: {
+            inq: Object.keys(map),
+          },
+        },
+      }).then((data) => {
+        const items = data?.items || []
+        names = names.concat(items.map((item) => item.function_name))
+        this.repeatNames = Array.from(new Set(names))
+        this.funcList.forEach((item) => {
+          item.isRepeat = this.repeatNames.includes(item.function_name)
         })
-        .then((data) => {
-          const items = data?.items || []
-          names = names.concat(items.map((item) => item.function_name))
-          this.repeatNames = Array.from(new Set(names))
-          this.funcList.forEach((item) => {
-            item.isRepeat = this.repeatNames.includes(item.function_name)
-          })
-        })
+      })
     },
     changeName(index) {
       const item = this.funcList[index]
@@ -164,7 +161,7 @@ export default {
     },
     fileRemove() {
       this.fileList = []
-      fileApi.removeFile(this.form.fileId).then(() => {})
+      removeFile(this.form.fileId).then(() => {})
       this.form.fileId = ''
       this.form.fileName = ''
     },
@@ -240,8 +237,7 @@ export default {
               user_id: useId,
             }
           })
-          javascriptFunctionsApi
-            .post(params)
+          createFunction(params)
             .then(() => {
               this.$message.success(this.$t('public_message_save_ok'))
               this.$router.back()

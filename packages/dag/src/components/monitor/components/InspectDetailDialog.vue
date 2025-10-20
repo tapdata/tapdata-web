@@ -5,10 +5,10 @@ import {
   getTaskInspectResultsLastOp,
   manualCheck,
   manualRecover,
-  useRequest,
   type DiffRow,
   type InspectionRow,
-} from '@tap/api'
+} from '@tap/api/src/core/task-inspect'
+import { useRequest } from '@tap/api/src/request'
 import { dayjs } from '@tap/business/src/shared/dayjs'
 import { CloseIcon } from '@tap/component/src/CloseIcon'
 import { Modal } from '@tap/component/src/modal'

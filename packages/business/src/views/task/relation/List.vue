@@ -1,69 +1,9 @@
-<template>
-  <div class="log-container flex justify-content-between">
-    <div class="flex flex-column w-100">
-      <FilterBar
-        v-if="showFilter"
-        v-model:value="searchParams"
-        :items="filterItems"
-        :change-route="false"
-        class="ml-2 pt-3"
-        @search="handleFetch"
-        @fetch="handleFetch"
-      ></FilterBar>
-      <VTable
-        :columns="cols"
-        :remoteMethod="remoteMethod"
-        :page-options="{
-          layout: 'total, ->, prev, pager, next, sizes, jumper',
-        }"
-        :has-pagination="false"
-        ref="table"
-        height="100"
-        class="table-list"
-      >
-        <template #name="{ row }">
-          <ElLink type="primary" @click="handleName(row)">{{ row.name }}</ElLink>
-        </template>
-        <template #status="{ row }">
-          <TaskStatus :task="row" />
-        </template>
-        <template #tableNum="{ row }">
-          <div class="operate-columns">
-            <ElButton text @click="handleTableNum(row)">{{ row.tableNum }}</ElButton>
-          </div>
-        </template>
-        <template #operation="{ row }">
-          <div class="operate-columns">
-            <ElButton text @click="handleMonitor(row)">{{ $t('packages_business_task_list_button_monitor') }}</ElButton>
-          </div>
-        </template>
-      </VTable>
-    </div>
-
-    <ElDialog
-      v-model="visible"
-      :title="$t('packages_business_shared_mining_table_wajuebiaoxinxi')"
-      width="1000px"
-      :close-on-click-modal="false"
-      :append-to-body="true"
-      @open="handleOpen"
-    >
-      <SharedMiningTable
-        ref="sharedMiningTable"
-        :task-id="$route.params.id"
-        :params="sharedMiningTableParams"
-        :show-title="false"
-        class="shared-mining-table mt-n5"
-      ></SharedMiningTable>
-    </ElDialog>
-  </div>
-</template>
-
 <script>
-import { taskApi } from '@tap/api'
-import { openUrl } from '@tap/shared'
+import { getParentTaskSign, taskConsoleRelations } from '@tap/api/src/core/task'
+import { VTable } from '@tap/component/src/base/v-table'
+import { FilterBar } from '@tap/component/src/filter-bar'
 import i18n from '@tap/i18n'
-import { VTable, FilterBar } from '@tap/component'
+import { openUrl } from '@tap/shared'
 import { TaskStatus } from '../../../components'
 import { TASK_TYPE_MAP } from '../../../shared'
 import SharedMiningTable from '../../shared-mining/Table.vue'
@@ -190,7 +130,9 @@ export default {
             width: 180,
           },
           {
-            label: i18n.t('packages_business_relation_sharedlist_shiyongdewajue'),
+            label: i18n.t(
+              'packages_business_relation_sharedlist_shiyongdewajue',
+            ),
             slotName: 'tableNum',
             width: 200,
           },
@@ -254,8 +196,8 @@ export default {
     },
 
     getSearchItems() {
-      let items = []
-      for (let key in this.map) {
+      const items = []
+      for (const key in this.map) {
         const temp = this.map[key]
         items.push({
           label: temp.label,
@@ -267,7 +209,7 @@ export default {
           label: i18n.t('public_task_type'),
           key: 'type',
           type: 'dark-select',
-          items: items,
+          items,
         },
         {
           placeholder: i18n.t('packages_business_relation_list_qingshururenwu'),
@@ -298,7 +240,7 @@ export default {
       if (this.type === 'logCollector') {
         filter.type = 'task_by_collector'
       }
-      return taskApi.taskConsoleRelations(filter).then((data) => {
+      return taskConsoleRelations(filter).then((data) => {
         return {
           total: 0,
           data:
@@ -325,7 +267,7 @@ export default {
         mem_cache: 'SharedCacheMonitor',
       }
 
-      taskApi.getParentTaskSign(id, this.$attrs.dataflow?.id).then((data) => {
+      getParentTaskSign(id, this.$attrs.dataflow?.id).then((data) => {
         const routeUrl = this.$router.resolve({
           name: MAP[syncType],
           params: {
@@ -356,6 +298,73 @@ export default {
 }
 </script>
 
+<template>
+  <div class="log-container flex justify-content-between">
+    <div class="flex flex-column w-100">
+      <FilterBar
+        v-if="showFilter"
+        v-model:value="searchParams"
+        :items="filterItems"
+        :change-route="false"
+        class="ml-2 pt-3"
+        @search="handleFetch"
+        @fetch="handleFetch"
+      />
+      <VTable
+        ref="table"
+        :columns="cols"
+        :remote-method="remoteMethod"
+        :page-options="{
+          layout: 'total, ->, prev, pager, next, sizes, jumper',
+        }"
+        :has-pagination="false"
+        height="100"
+        class="table-list"
+      >
+        <template #name="{ row }">
+          <ElLink type="primary" @click="handleName(row)">{{
+            row.name
+          }}</ElLink>
+        </template>
+        <template #status="{ row }">
+          <TaskStatus :task="row" />
+        </template>
+        <template #tableNum="{ row }">
+          <div class="operate-columns">
+            <ElButton text @click="handleTableNum(row)">{{
+              row.tableNum
+            }}</ElButton>
+          </div>
+        </template>
+        <template #operation="{ row }">
+          <div class="operate-columns">
+            <ElButton text @click="handleMonitor(row)">{{
+              $t('packages_business_task_list_button_monitor')
+            }}</ElButton>
+          </div>
+        </template>
+      </VTable>
+    </div>
+
+    <ElDialog
+      v-model="visible"
+      :title="$t('packages_business_shared_mining_table_wajuebiaoxinxi')"
+      width="1000px"
+      :close-on-click-modal="false"
+      :append-to-body="true"
+      @open="handleOpen"
+    >
+      <SharedMiningTable
+        ref="sharedMiningTable"
+        :task-id="$route.params.id"
+        :params="sharedMiningTableParams"
+        :show-title="false"
+        class="shared-mining-table mt-n5"
+      />
+    </ElDialog>
+  </div>
+</template>
+
 <style lang="scss" scoped>
 .log-container {
   height: inherit;
@@ -367,7 +376,8 @@ export default {
   border-radius: 1px;
   background-color: rgba(229, 236, 255, 0.22);
   :deep(.log-line) {
-    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    font-family:
+      'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
   }
 
   :deep(.highlight-bg-color) {

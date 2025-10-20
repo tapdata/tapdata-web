@@ -1,5 +1,5 @@
 <script>
-import { metadataInstancesApi } from '@tap/api'
+import { dataType2TapType } from '@tap/api/src/core/metadata-instances'
 import noData from '@tap/assets/images/noData.png'
 import i18n from '@tap/i18n'
 import { cloneDeep } from 'lodash-es'
@@ -106,8 +106,7 @@ export default {
         dataTypes,
       }
       this.editBtnLoading = true
-      metadataInstancesApi
-        .dataType2TapType(params)
+      dataType2TapType(params)
         .then((data) => {
           const result = list.map((t) => {
             const val = data[t.result.dataType]

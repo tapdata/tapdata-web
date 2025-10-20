@@ -11,8 +11,8 @@ export * from './reactive'
 export const cloneElement = cloneVNode
 
 const css2obj = (css: string) => {
-  const r = /(?<=^|;)\s*([^:]+)\s*:\s*([^;]+)\s*/g,
-    o = {}
+  const r = /(?<=^|;)\s*([^:]+)\s*:\s*([^;]+)\s*/g
+  const o = {}
   css.replaceAll(r, (m, p, v) => (o[p] = v))
   return o
 }

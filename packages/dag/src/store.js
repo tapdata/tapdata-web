@@ -1,7 +1,9 @@
 import { setValidateLanguage } from '@formily/core'
 import { Path } from '@formily/path'
 import { observable } from '@formily/reactive'
-import { fetchCustomNodes, isCancel, taskApi } from '@tap/api'
+import { fetchCustomNodes } from '@tap/api/src/core/custom-node'
+import { patchTask } from '@tap/api/src/core/task'
+import { isCancel } from '@tap/api/src/Http'
 import { Modal } from '@tap/component/src/modal'
 import i18n from '@tap/i18n'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
@@ -240,7 +242,7 @@ const actions = {
   patchTask: debounce(async function ({ state, commit }, { vm }) {
     commit('toggleTaskSaving', true)
     try {
-      const data = await taskApi.patch(
+      const data = await patchTask(
         {
           id: state.taskId,
           editVersion: state.editVersion,
@@ -279,7 +281,7 @@ const actions = {
   async patchTaskNow({ state, commit }, { vm }) {
     commit('toggleTaskSaving', true)
     try {
-      const data = await taskApi.patch(
+      const data = await patchTask(
         {
           id: state.taskId,
           editVersion: state.editVersion,
@@ -869,8 +871,8 @@ const mutations = {
 
       // const allNodeTypes = [...state.nodeTypes, ...state.processorNodeTypes]
       // const nodeTypesMap = allNodeTypes.reduce((res, item) => ((res[item.type] = item), res), {})
-      const sourceMap = {},
-        targetMap = {}
+      const sourceMap = {}
+      const targetMap = {}
 
       edges.forEach((item) => {
         const _source = sourceMap[item.source]

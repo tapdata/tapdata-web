@@ -1,5 +1,5 @@
 <script>
-import { OverflowTooltip } from '@tap/component'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import i18n from '@tap/i18n'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import { mapGetters } from 'vuex'

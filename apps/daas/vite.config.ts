@@ -116,7 +116,7 @@ export default defineConfig(() => {
         '@': path.resolve(__dirname, './src'),
       },
 
-      extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
+      extensions: ['.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
     },
 
     server: {
@@ -152,13 +152,40 @@ export default defineConfig(() => {
     },
 
     build: {
-      target: 'esnext',
       outDir: '../../dist',
+      assetsDir: 'static',
       rollupOptions: {
         output: {
-          assetFileNames: 'static/assets/[name]-[hash].[ext]',
-          chunkFileNames: 'static/js/[name]-[hash].js',
-          entryFileNames: 'static/js/[name]-[hash].js',
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              if (id.includes('/vue/')) return 'framework'
+              if (id.includes('vue-router') || id.includes('vuex'))
+                return 'framework'
+              if (id.includes('element-plus') || id.includes('@element-plus'))
+                return 'ui'
+              if (id.includes('/echarts') || id.includes('vue-echarts'))
+                return 'charts'
+              if (
+                id.includes('lodash') ||
+                id.includes('dayjs') ||
+                id.includes('/qs/')
+              )
+                return 'utils'
+
+              // monaco-editor ace editor
+              if (id.includes('monaco-editor') || id.includes('ace-editor'))
+                return 'editor'
+              // 其它 node_modules 统一进 vendor，避免生成大量小碎片
+              return 'vendor'
+            }
+            // 合并内部工作区依赖
+            // 内部工作区依赖：按具体包名分割（@tap/api、@tap/dag、@tap/component 等）
+            if (id.includes('/packages/')) {
+              const match = id.match(/\/packages\/([^/]+)\//)
+              if (match) return `tap-${match[1]}` // e.g. tap-api, tap-dag, tap-component
+            }
+            return undefined
+          },
         },
       },
     },

@@ -1,5 +1,5 @@
 <script>
-import { measurementApi } from '@tap/api'
+import { batchMeasurements } from '@tap/api/src/core/measurement'
 
 import SharedMiningTable from '@tap/business/src/views/shared-mining/Table'
 import TimeSelect from '@tap/component/src/TimeSelect.vue'
@@ -522,8 +522,7 @@ export default {
           param: this.getFilter('lineChartData'),
         },
       }
-      measurementApi
-        .batch(params)
+      batchMeasurements(params)
         .then((data) => {
           const quota = {
             samples: {},

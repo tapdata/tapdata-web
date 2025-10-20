@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getMarkAttributes, type Editor } from '@tiptap/vue-3'
-import { computed, inject, ref, unref, watch } from 'vue'
+import { computed, inject, ref } from 'vue'
 import { COLOR_SET } from '../extensions/Color'
 import CommandButton from './CommandButton.vue'
 

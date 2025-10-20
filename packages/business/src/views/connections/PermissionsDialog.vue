@@ -1,6 +1,10 @@
 <script>
 import { action } from '@formily/reactive'
-import { dataPermissionApi, usersApi } from '@tap/api'
+import {
+  getPermissions,
+  postPermissions,
+} from '@tap/api/src/core/data-permission'
+import { getUserRoles } from '@tap/api/src/core/users'
 import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
 import i18n from '@tap/i18n'
 
@@ -39,7 +43,7 @@ export default {
 
             const usedId = val?.map((t) => t.roleId) || []
 
-            const { items = [] } = await usersApi.role({
+            const { items = [] } = await getUserRoles({
               filter: JSON.stringify(filter),
             })
             return items.map((item) => {
@@ -174,7 +178,7 @@ export default {
         dataType: 'Connections',
         dataId: this.row.id,
       }
-      dataPermissionApi.permissions(filter).then((data = []) => {
+      getPermissions(filter).then((data = []) => {
         const permissions = data
           .map((t) => {
             return {
@@ -219,7 +223,7 @@ export default {
             }
           }) || [],
       }
-      dataPermissionApi.postPermissions(filter).then(() => {
+      postPermissions(filter).then(() => {
         this.$message.success(this.$t('public_message_save_ok'))
         this.handleClose()
       })

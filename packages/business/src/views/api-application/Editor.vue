@@ -1,5 +1,5 @@
 <script>
-import { createApp, getAppDetail, updateApp } from '@tap/api'
+import { createApp, getAppDetail, updateApp } from '@tap/api/src/core/app'
 import i18n from '@tap/i18n'
 
 export default {

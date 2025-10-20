@@ -1,14 +1,14 @@
-import { useCustomNode, useDesigner, useWorkbench } from '../hooks'
-import { defineComponent, watch, ref } from 'vue'
-import { VIcon } from '@tap/component'
-import focusSelect from '@tap/component/src/directives/focusSelect'
-import { transformToTreeNode } from '../core'
-import { fetchCustomNodes, checkCustomNodeUsed } from '@tap/api'
-import { IconWidget } from './widgets'
 import { observer } from '@formily/reactive-vue'
-import { TextEditable } from '@tap/component'
-import { useRouter } from 'vue-router'
+import {
+  checkCustomNodeUsed,
+  fetchCustomNodes,
+} from '@tap/api/src/core/custom-node'
+import focusSelect from '@tap/component/src/directives/focusSelect'
 import { useI18n } from '@tap/i18n'
+import { defineComponent, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { transformToTreeNode } from '../core'
+import { useCustomNode, useDesigner, useWorkbench } from '../hooks'
 
 export const StudioHeader = observer(
   defineComponent({
@@ -20,14 +20,16 @@ export const StudioHeader = observer(
       const saving = ref(false)
       const router = useRouter()
       const { t } = useI18n()
-      
+
       watch(
         router.currentRoute,
         async (route) => {
           if (route.params?.id) {
             if (route.params.action === 'nodeSave') return
             const data = await fetchCustomNodes([route.params?.id])
-            designerRef.value.setCurrentTree(transformToTreeNode(data.formSchema))
+            designerRef.value.setCurrentTree(
+              transformToTreeNode(data.formSchema),
+            )
             customNodeRef.value.from(data)
 
             checkCustomNodeUsed(route.params.id)
@@ -56,9 +58,9 @@ export const StudioHeader = observer(
             })
           }
           ElMessage.success(t('public_message_save_ok'))
-        } catch (e) {
+        } catch (error) {
           // eslint-disable-next-line no-console
-          console.log('CustomNode save error', e)
+          console.log('CustomNode save error', error)
         }
         saving.value = false
       }
@@ -91,9 +93,15 @@ export const StudioHeader = observer(
             />
           </div>
           <div class="panel-header-tools flex align-center">
-            <ElTooltip transition="tooltip-fade-in" content={t('public_form_design')}>
+            <ElTooltip
+              transition="tooltip-fade-in"
+              content={t('public_form_design')}
+            >
               <button
-                class={['icon-btn', { active: workbenchRef.value.type === 'DESIGNABLE' }]}
+                class={[
+                  'icon-btn',
+                  { active: workbenchRef.value.type === 'DESIGNABLE' },
+                ]}
                 onClick={() => {
                   workbenchRef.value.type = 'DESIGNABLE'
                 }}
@@ -103,7 +111,10 @@ export const StudioHeader = observer(
             </ElTooltip>
             <ElTooltip transition="tooltip-fade-in" content="JSON Schema">
               <button
-                class={['icon-btn', { active: workbenchRef.value.type === 'JSONTREE' }]}
+                class={[
+                  'icon-btn',
+                  { active: workbenchRef.value.type === 'JSONTREE' },
+                ]}
                 onClick={() => {
                   workbenchRef.value.type = 'JSONTREE'
                 }}
@@ -111,9 +122,15 @@ export const StudioHeader = observer(
                 <IconWidget infer="JSON" size={20} />
               </button>
             </ElTooltip>
-            <ElTooltip transition="tooltip-fade-in" content={t('public_code_edit')}>
+            <ElTooltip
+              transition="tooltip-fade-in"
+              content={t('public_code_edit')}
+            >
               <button
-                class={['icon-btn', { active: workbenchRef.value.type === 'CODE' }]}
+                class={[
+                  'icon-btn',
+                  { active: workbenchRef.value.type === 'CODE' },
+                ]}
                 onClick={() => {
                   workbenchRef.value.type = 'CODE'
                 }}
@@ -121,9 +138,15 @@ export const StudioHeader = observer(
                 <IconWidget infer="Code" size={20} />
               </button>
             </ElTooltip>
-            <ElTooltip transition="tooltip-fade-in" content={t('public_preview_form')}>
+            <ElTooltip
+              transition="tooltip-fade-in"
+              content={t('public_preview_form')}
+            >
               <button
-                class={['icon-btn', { active: workbenchRef.value.type === 'PREVIEW' }]}
+                class={[
+                  'icon-btn',
+                  { active: workbenchRef.value.type === 'PREVIEW' },
+                ]}
                 onClick={() => {
                   workbenchRef.value.type = 'PREVIEW'
                 }}

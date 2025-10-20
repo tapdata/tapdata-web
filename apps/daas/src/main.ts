@@ -1,4 +1,6 @@
-import { fetchSettings, fetchTimestamp, getUserInfoByToken } from '@tap/api'
+import { fetchSettings } from '@tap/api/core/settings'
+import { fetchTimestamp } from '@tap/api/core/timestamp'
+import { getUserInfoByToken } from '@tap/api/src/core/users'
 import { WSClient } from '@tap/business/src/shared/ws-client'
 import VIcon from '@tap/component/src/base/VIcon.vue'
 import { installElement } from '@tap/component/src/InstallElement'

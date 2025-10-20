@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import {
-  createSdk,
   fetchApiClients,
-  fetchApiModules,
   fetchApisByClient,
-  fetchApiServers,
+} from '@tap/api/src/core/api-client'
+import { fetchApiServers } from '@tap/api/src/core/api-server'
+import {
+  createSdk,
   fetchSdk,
-  useRequest,
   type CreateSdkParams,
-} from '@tap/api'
+} from '@tap/api/src/core/sdk'
+import { useRequest } from '@tap/api/src/request'
 import { useI18n } from '@tap/i18n'
 import { computed, reactive, ref, useTemplateRef } from 'vue'
 import type {

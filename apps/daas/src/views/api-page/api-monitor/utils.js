@@ -6,8 +6,8 @@
 import i18n from '@/i18n'
 // 毫秒换算成时分秒
 export const formatMs = (msTime = 0, type = 'time') => {
-  let time = msTime / 1000
-  let arr = []
+  const time = msTime / 1000
+  const arr = []
   arr.push({
     label: 'd',
     value: Math.floor(time / 60 / 60 / 24),
@@ -28,7 +28,7 @@ export const formatMs = (msTime = 0, type = 'time') => {
   if (type === 'time') {
     result = arr
       .slice(1)
-      .map((t) => (t.value + '').padStart(2, '0'))
+      .map((t) => String(t.value).padStart(2, '0'))
       .join(':')
     return result
   }

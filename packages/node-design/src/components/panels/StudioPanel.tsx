@@ -1,6 +1,6 @@
-import { usePrefix, usePosition } from '../../hooks'
-import { Layout } from '../containers'
 import { defineComponent, unref } from 'vue'
+import { usePosition, usePrefix } from '../../hooks'
+import { Layout } from '../containers'
 import { StudioHeader } from '../StudioHeader'
 
 const StudioPanelInternal = defineComponent({
@@ -8,13 +8,12 @@ const StudioPanelInternal = defineComponent({
   setup(props, { attrs, slots }) {
     const prefixRef = usePrefix('main-panel')
     const positionRef = usePosition()
-    
 
     return () => {
       const position = unref(positionRef)
       const prefix = unref(prefixRef)
       return (
-        <div {...attrs} class={[prefix + '-container', 'root', position]}>
+        <div {...attrs} class={[`${prefix}-container`, 'root', position]}>
           <StudioHeader />
           <div class={prefix}>{slots.default?.()}</div>
         </div>
@@ -31,7 +30,6 @@ export const StudioPanel = defineComponent({
     position: { type: String, default: 'fixed' },
   },
   setup(props, { slots }) {
-    
     return () => (
       <Layout
         {...{

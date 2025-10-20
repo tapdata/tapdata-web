@@ -1,5 +1,7 @@
 <script>
-import { IconButton, OverflowTooltip, VEmpty, VIcon } from '@tap/component'
+import { VEmpty } from '@tap/component/src/base/v-empty'
+import { IconButton } from '@tap/component/src/icon-button'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import i18n from '@tap/i18n'
 import { copyToClipboard } from '@tap/shared'
 import { ElMessage } from 'element-plus'
@@ -14,7 +16,6 @@ export default defineComponent({
   components: {
     BaseNode,
     OverflowTooltip,
-    VIcon,
     VueJsonPretty,
     VEmpty,
     IconButton,

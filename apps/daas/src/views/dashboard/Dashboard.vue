@@ -1,6 +1,8 @@
 <script>
 import { ArrowRight } from '@element-plus/icons-vue'
-import { fetchClusterStates, getProcessInfo, getTaskChart } from '@tap/api'
+import { fetchClusterStates } from '@tap/api/src/core/cluster'
+import { getTaskChart } from '@tap/api/src/core/task'
+import { getProcessInfo } from '@tap/api/src/core/workers'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { STATUS_MAP } from '@tap/business/src/shared/task'
 import { statusMap as InspectStatusMap } from '@tap/business/src/views/verification/const'

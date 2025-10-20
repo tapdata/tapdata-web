@@ -1,5 +1,16 @@
 <script>
-import { permissionsApi, roleApi, roleMappingsApi, usersApi } from '@tap/api'
+import { fetchPermissions } from '@tap/api/src/core/permissions'
+import {
+  deleteRoleMappingById,
+  fetchRoleMappings,
+  saveAllRoleMappings,
+} from '@tap/api/src/core/role-mappings'
+import {
+  createRole,
+  deleteRolePrincipals,
+  updateRoleById,
+} from '@tap/api/src/core/roles'
+import { fetchUsers, getUserRoles } from '@tap/api/src/core/users'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
 import { FilterBar } from '@tap/component/src/filter-bar'
@@ -70,16 +81,14 @@ export default {
         skip: (current - 1) * size,
         where,
       }
-      return usersApi
-        .role({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          return {
-            total: data?.total || 0,
-            data: data?.items || [],
-          }
-        })
+      return getUserRoles({
+        filter: JSON.stringify(filter),
+      }).then((data) => {
+        return {
+          total: data?.total || 0,
+          data: data?.items || [],
+        }
+      })
     },
     handleSortTable({ order, prop }) {
       this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
@@ -102,7 +111,7 @@ export default {
           description: '',
           register_user_default: false,
         }
-        permissionsApi.get({}).then((data) => {
+        fetchPermissions({}).then((data) => {
           if (data && data?.length) {
             this.permissions = data
           }
@@ -123,7 +132,7 @@ export default {
       this.$confirm(this.$t('role_list_delete_remind', [item.name])).then(
         (flag) => {
           if (flag) {
-            roleApi.delete(item.id, item.name).then(() => {
+            deleteRolePrincipals(item.id).then(() => {
               this.table.fetch()
               this.$message.success(this.$t('role_list_delete_success'))
             })
@@ -145,11 +154,14 @@ export default {
             description: this.form.description,
             register_user_default: this.form.register_user_default,
           }
-          const method = this.roleId ? 'patch' : 'post'
-          if (this.roleId) {
-            record.id = this.roleId
-          }
-          roleApi[method](record)
+          const promise = this.roleId
+            ? (() => {
+                record.id = this.roleId
+                return updateRoleById(record)
+              })()
+            : createRole(record)
+
+          promise
             .then((data) => {
               if (data) {
                 this.$message.success(this.$t('public_message_save_ok'))
@@ -178,42 +190,34 @@ export default {
         },
         limit: 999,
       }
-      await roleMappingsApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          if (data?.length) {
-            this.roleusers = data.map((item) => item.principalId)
-            this.oldUser = data
-          }
-        })
+      await fetchRoleMappings(filter).then((data) => {
+        if (data?.length) {
+          this.roleusers = data.map((item) => item.principalId)
+          this.oldUser = data
+        }
+      })
     },
 
     // 获取用户列表
     async getUserData() {
-      await usersApi
-        .get({
-          filter: JSON.stringify({
-            limit: 999,
-          }),
-        })
-        .then((data) => {
-          if (data?.items) {
-            data?.items.forEach((item) => {
-              if (!item.role) {
-                this.userGroup.push(item)
-              }
-            })
-          }
-        })
+      await fetchUsers({
+        limit: 999,
+      }).then((data) => {
+        if (data?.items) {
+          data?.items.forEach((item) => {
+            if (!item.role) {
+              this.userGroup.push(item)
+            }
+          })
+        }
+      })
     },
 
     // 保存关联用户
     saveUser() {
       const newRoleMappings = []
       this.oldUser.forEach((delRolemapping) => {
-        roleMappingsApi.delete(delRolemapping.id)
+        deleteRoleMappingById(delRolemapping.id)
       })
       // _this.oldUser
       this.roleusers.forEach((roleuser) => {
@@ -225,7 +229,7 @@ export default {
           })
         }
       })
-      roleMappingsApi.saveAll(newRoleMappings).then((data) => {
+      saveAllRoleMappings(newRoleMappings).then((data) => {
         if (data) {
           this.roleusers = []
           data.forEach((item) => {
@@ -256,7 +260,7 @@ export default {
         register_user_default: data.register_user_default,
       }
 
-      roleApi.patch(record).then(() => {
+      updateRoleById(record).then(() => {
         this.table.fetch()
       })
     },

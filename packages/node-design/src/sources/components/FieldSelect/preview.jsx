@@ -1,8 +1,12 @@
 import { FieldSelect } from '@tap/form'
-import { createBehavior, createResource, getBrowserLanguage } from '../../../core'
-import { createFieldSchema } from '../Field'
-import { AllSchemas } from '../../schemas'
+import {
+  createBehavior,
+  createResource,
+  getBrowserLanguage,
+} from '../../../core'
 import { AllLocales } from '../../locales'
+import { AllSchemas } from '../../schemas'
+import { createFieldSchema } from '../Field'
 
 export { FieldSelect }
 
@@ -22,7 +26,9 @@ FieldSelect.Resource = createResource({
     {
       componentName: 'Field',
       props: {
-        title: AllLocales.FieldSelect[getBrowserLanguage()]?.title || AllLocales.FieldSelect['en-US'].title,
+        title:
+          AllLocales.FieldSelect[getBrowserLanguage()]?.title ||
+          AllLocales.FieldSelect['en-US'].title,
         'x-decorator': 'FormItem',
         'x-component': 'FieldSelect',
         'x-reactions': `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.$inputs[0])}}`,

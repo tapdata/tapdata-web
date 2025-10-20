@@ -1,16 +1,3 @@
-<template>
-  <div class="verification-code">
-    <ElButton
-      :type="type"
-      :loading="loading"
-      :disabled="disabled || btnDisabled"
-      :style="buttonStyle"
-      @click="sendFnc"
-      >{{ num ? num + 's' : buttonText }}</ElButton
-    >
-  </div>
-</template>
-
 <script>
 import i18n from '@/i18n'
 
@@ -89,7 +76,7 @@ export default {
         } else {
           this.startSend()
         }
-      } catch (err) {
+      } catch {
         this.loading = false
       }
     },
@@ -115,3 +102,16 @@ export default {
   },
 }
 </script>
+
+<template>
+  <div class="verification-code">
+    <ElButton
+      :type="type"
+      :loading="loading"
+      :disabled="disabled || btnDisabled"
+      :style="buttonStyle"
+      @click="sendFnc"
+      >{{ num ? `${num}s` : buttonText }}</ElButton
+    >
+  </div>
+</template>

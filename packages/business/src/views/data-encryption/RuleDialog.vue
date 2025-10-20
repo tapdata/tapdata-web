@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { createEncryption, updateEncryption, type Encryption } from '@tap/api'
+import {
+  createEncryption,
+  updateEncryption,
+  type Encryption,
+} from '@tap/api/src/core/encryption'
 import { useI18n } from '@tap/i18n'
 import { reactive, ref, useTemplateRef } from 'vue'
 import TestContent from './TestContent.vue'

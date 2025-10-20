@@ -1,12 +1,12 @@
 import { observer } from '@formily/reactive-vue'
-import { metadataInstancesApi } from '@tap/api'
-import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
-import { VEmpty } from '@tap/component/src/base/v-empty'
+import {
+  getPagePartitionTables,
+  getPageTables,
+} from '@tap/api/src/core/metadata-instances'
 
 import i18n from '@tap/i18n'
 import { debounce } from 'lodash-es'
 import { defineComponent, ref, watch } from 'vue'
-import { RecycleScroller } from 'vue-virtual-scroller'
 import { getPrimaryKeyTablesByType } from '../../../util'
 
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
@@ -37,8 +37,8 @@ export const TableListCard = observer(
         }
 
         const fn = props.hasPartition
-          ? metadataInstancesApi.pagePartitionTables(params)
-          : metadataInstancesApi.pageTables(params)
+          ? getPagePartitionTables(params)
+          : getPageTables(params)
 
         fn.then((data) => {
           const map = {}

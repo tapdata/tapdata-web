@@ -1,8 +1,12 @@
 import { Checkbox as FormCheckbox } from '@tap/form'
-import { createBehavior, createResource, getBrowserLanguage } from '../../../core'
-import { createFieldSchema } from '../Field'
-import { AllSchemas } from '../../schemas'
+import {
+  createBehavior,
+  createResource,
+  getBrowserLanguage,
+} from '../../../core'
 import { AllLocales } from '../../locales'
+import { AllSchemas } from '../../schemas'
+import { createFieldSchema } from '../Field'
 
 export const Checkbox = FormCheckbox
 
@@ -23,7 +27,9 @@ Checkbox.Resource = createResource({
       componentName: 'Field',
       props: {
         type: 'array',
-        title: AllLocales.CheckboxGroup[getBrowserLanguage()]?.title || AllLocales.CheckboxGroup['en-US'].title,
+        title:
+          AllLocales.CheckboxGroup[getBrowserLanguage()]?.title ||
+          AllLocales.CheckboxGroup['en-US'].title,
         'x-decorator': 'FormItem',
         'x-component': 'Checkbox.Group',
         enum: [

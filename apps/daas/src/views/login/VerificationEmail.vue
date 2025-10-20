@@ -1,38 +1,7 @@
-<template>
-  <LoginPage>
-    <template v-slot:main>
-      <section class="page-registry_email" v-loading="loading">
-        <div class="email-main">
-          <div class="image iconfont icon-fasongyoujian"></div>
-          <div class="text">
-            <p>
-              {{ type === 'reset' ? $t('app_signIn_passwordResetText') : $t('app_signIn_confirmationEmail') }}
-              <i>{{ email }}</i>
-            </p>
-            <p>{{ $t('app_signIn_mailbox') }}</p>
-            <div>
-              {{ $t('app_signIn_receiveEmail') }}
-              <span @click="resetSend" :class="{ noClick: time > 0 }" v-if="type === 'reset'"
-                >{{ $t('app_signIn_resend') }} <i v-if="time > 0">({{ time }}s)</i></span
-              >
-              <span @click="send" :class="{ noClick: time > 0 }" v-else
-                >{{ $t('app_signIn_resend') }} <i v-if="time > 0">({{ time }}s)</i></span
-              >,
-
-              {{ $t('app_signIn_orClick') }}
-              <span @click="backLogin">{{ $t('app_signIn_signIn') }}</span>
-            </div>
-          </div>
-        </div>
-      </section>
-    </template>
-  </LoginPage>
-</template>
-
 <script>
-import LoginPage from './LoginPage'
+import { resetUser, sendVerifyEmail } from '@tap/api/src/core/users'
 import Cookie from '@tap/shared/src/cookie'
-import { usersApi } from '@tap/api'
+import LoginPage from './LoginPage'
 
 export default {
   name: 'SignIn',
@@ -59,6 +28,11 @@ export default {
     }
   },
 
+  unmounted() {
+    clearInterval(this.timer)
+    this.timer = null
+  },
+
   methods: {
     // 重新发送
     async send() {
@@ -78,11 +52,11 @@ export default {
               this.timer = null
             }
           }, 1000)
-          await usersApi.sendVerifyEmail({
+          await sendVerifyEmail({
             email: this.email,
             inviteCode: this.inviteCode,
           })
-        } catch (e) {
+        } catch {
           // if (e.response && e.response.msg) {
           //   if (e.response.msg.indexOf('Email already exists')) {
           //     this.$message.error(this.$t('app_signIn_email_existed'))
@@ -114,7 +88,7 @@ export default {
             this.timer = null
           }
         }, 1000)
-        await usersApi.reset(this.form)
+        await resetUser(this.form)
       }
     },
 
@@ -126,13 +100,48 @@ export default {
       })
     },
   },
-
-  unmounted() {
-    clearInterval(this.timer)
-    this.timer = null
-  },
 }
 </script>
+
+<template>
+  <LoginPage>
+    <template #main>
+      <section v-loading="loading" class="page-registry_email">
+        <div class="email-main">
+          <div class="image iconfont icon-fasongyoujian" />
+          <div class="text">
+            <p>
+              {{
+                type === 'reset'
+                  ? $t('app_signIn_passwordResetText')
+                  : $t('app_signIn_confirmationEmail')
+              }}
+              <i>{{ email }}</i>
+            </p>
+            <p>{{ $t('app_signIn_mailbox') }}</p>
+            <div>
+              {{ $t('app_signIn_receiveEmail') }}
+              <span
+                v-if="type === 'reset'"
+                :class="{ noClick: time > 0 }"
+                @click="resetSend"
+                >{{ $t('app_signIn_resend') }}
+                <i v-if="time > 0">({{ time }}s)</i></span
+              >
+              <span v-else :class="{ noClick: time > 0 }" @click="send"
+                >{{ $t('app_signIn_resend') }}
+                <i v-if="time > 0">({{ time }}s)</i></span
+              >,
+
+              {{ $t('app_signIn_orClick') }}
+              <span @click="backLogin">{{ $t('app_signIn_signIn') }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </template>
+  </LoginPage>
+</template>
 
 <style lang="scss" scoped>
 .page-registry_email {

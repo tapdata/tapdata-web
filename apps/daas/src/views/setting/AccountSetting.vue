@@ -1,6 +1,11 @@
 <script>
 import { EditPen, Refresh } from '@element-plus/icons-vue'
-import { usersApi } from '@tap/api'
+import {
+  changeUserPassword,
+  getUserById,
+  patchUser,
+  refreshAccessCode,
+} from '@tap/api/src/core/users'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { IconButton } from '@tap/component/src/icon-button'
 import Cookie from '@tap/shared/src/cookie'
@@ -149,7 +154,7 @@ export default {
     // 获取当前信息
     async handleGetData() {
       this.loading = true
-      const data = await usersApi.get([Cookie.get('user_id')])
+      const data = await getUserById(Cookie.get('user_id'))
       if (data) {
         this.infoList.forEach((item) => {
           Object.keys(data).forEach((key) => {
@@ -183,7 +188,7 @@ export default {
             },
           ).then((res) => {
             if (res) {
-              usersApi.refreshAccessCode().then((data) => {
+              refreshAccessCode().then((data) => {
                 this.infoList.find((item) => item.key === 'accessCode').value =
                   data
                 this.$message({
@@ -204,7 +209,7 @@ export default {
         username: this.userName,
       }
       if (this.userName) {
-        usersApi.patch(parmas).then(() => {
+        patchUser(parmas).then(() => {
           this.$message.success(this.$t('account_nameModifySuccess'))
           this.usernameDialogFalg = false
           this.handleGetData()
@@ -231,7 +236,7 @@ export default {
       }
       this.$refs.form.validate((valid) => {
         if (valid) {
-          usersApi.changePassword(parmas).then(() => {
+          changeUserPassword(parmas).then(() => {
             this.$message.success(this.$t('account_pawSaveSuccess'))
             this.passwordDialogFalg = false
             Cookie.remove('access_token')

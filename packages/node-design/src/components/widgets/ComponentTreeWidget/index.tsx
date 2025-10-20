@@ -134,7 +134,11 @@ export const ComponentTreeWidgetComponent = observer(
         }
         console.log(treeRef.value)
         return (
-          <div class={prefixRef.value} {...dataId} style={{ ...treeRef.value?.props?.style }}>
+          <div
+            class={prefixRef.value}
+            {...dataId}
+            style={{ ...treeRef.value?.props?.style }}
+          >
             <TreeNodeWidget {...{ node: treeRef.value }} />
           </div>
         )

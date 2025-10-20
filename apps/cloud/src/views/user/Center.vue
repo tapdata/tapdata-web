@@ -12,7 +12,7 @@ import InlineInput from '@/components/InlineInput'
 import UploadFile from '@/components/UploadFile'
 import VerificationCode from '@/components/VerificationCode'
 import i18n from '@/i18n'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
+import { $emit } from '../../../utils/gogocodeTransfer'
 import { AGENT_TYPE_MAP } from '../instance/utils'
 
 export default {

@@ -3,7 +3,6 @@ import NotifyLayout from '@/layouts/NotifyLayout.vue'
 import SettingLayout from '@/layouts/SettingLayout.vue'
 
 const FunctionForm = () => import('@/views/function/Form.vue')
-
 const DagEditor = () => import('@tap/dag/src/Editor.vue')
 const MigrationEditor = () => import('@tap/dag/src/MigrationEditor.vue')
 const MigrationMonitor = () => import('@tap/dag/src/MigrationMonitor.vue')
@@ -78,13 +77,13 @@ export const routes = [
   {
     path: '/login',
     name: 'login',
-    component: () => import('@/views/login/Login'),
+    component: () => import('@/views/login/Login.vue'),
     title: 'tap.login',
   },
   {
     path: '/verificationEmail',
     name: 'verificationEmail',
-    component: () => import('@/views/login/VerificationEmail'),
+    component: () => import('@/views/login/VerificationEmail.vue'),
     meta: {
       title: 'tap.verificationEmail',
     },
@@ -92,7 +91,7 @@ export const routes = [
   {
     path: '/passwordReset',
     name: 'passwordReset',
-    component: () => import('@/views/login/PasswordReset'),
+    component: () => import('@/views/login/PasswordReset.vue'),
     meta: {
       title: 'tap.passwordReset',
     },
