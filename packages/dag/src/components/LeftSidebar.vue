@@ -1,10 +1,8 @@
 <script>
-import {
-  CancelToken,
-  fetchConnections,
-  fetchDatabaseTypes,
-  metadataInstancesApi,
-} from '@tap/api'
+import { fetchConnections } from '@tap/api/src/core/connections'
+import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
+import { fetchMetadataInstances } from '@tap/api/src/core/metadata-instances'
+import { CancelToken } from '@tap/api/src/request'
 import SceneDialog from '@tap/business/src/components/create-connection/SceneDialog.vue'
 import StageButton from '@tap/business/src/components/StageButton.vue'
 import { VEmpty } from '@tap/component/src/base/v-empty'
@@ -329,7 +327,7 @@ export default {
 
       let data
       try {
-        data = await metadataInstancesApi.get(this.getTableFilter(), {
+        data = await fetchMetadataInstances(this.getTableFilter(), {
           cancelToken: this.cancelSource.token,
         })
       } catch (error) {
@@ -1000,7 +998,7 @@ $hoverBg: var(--primary-hover-light);
     max-height: 50%;
 
     .el-collapse-item:last-child {
-      margin-bottom: -1px;
+      margin-bottom: 0;
     }
 
     .el-collapse-item__header {
@@ -1132,6 +1130,7 @@ $hoverBg: var(--primary-hover-light);
   }
 
   :deep(.el-collapse.collapse-fill) {
+    --el-collapse-header-height: $headerH;
     .el-collapse-item:first-child:last-child {
       height: 100%;
       .el-collapse-item__wrap {

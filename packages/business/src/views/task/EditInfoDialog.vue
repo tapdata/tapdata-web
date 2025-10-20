@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { taskApi } from '@tap/api'
+import { updateTaskInfo } from '@tap/api/src/core/task'
 import { useI18n } from '@tap/i18n'
 import { ref } from 'vue'
 
@@ -33,9 +33,9 @@ const open = (task: any) => {
 
 const handleSubmit = async () => {
   loading.value = true
-  await taskApi
-    .updateInfo(form.value.id, form.value.name, form.value.desc)
-    .finally(() => (loading.value = false))
+  await updateTaskInfo(form.value.id, form.value.name, form.value.desc).finally(
+    () => (loading.value = false),
+  )
   dialogVisible.value = false
   ElMessage.success(t('public_message_save_ok'))
   emit('success')

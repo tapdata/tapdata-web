@@ -27,8 +27,8 @@ export function getSubTaskStatus(rows = []) {
     error: ['error', 'schedule_failed'],
   }
   const len = rows.length
-  let result = [],
-    item = {}
+  let result = []
+  let item = {}
   if (len === 0) {
     result = [
       Object.assign({ count: 1 }, ETL_SUB_STATUS_MAP.edit, {

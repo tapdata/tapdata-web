@@ -1,12 +1,14 @@
 <script lang="tsx">
+import { fetchApiServers } from '@tap/api/src/core/api-server'
+import { fetchApps } from '@tap/api/src/core/app'
+import { fetchConnections } from '@tap/api/src/core/connections'
+import { fetchApiModules } from '@tap/api/src/core/modules'
+import { callProxy } from '@tap/api/src/core/proxy'
 import {
-  fetchApiModules,
-  fetchApiServers,
-  fetchApps,
-  fetchConnections,
-  proxyApi,
-  taskApi,
-} from '@tap/api'
+  getTaskByConnection,
+  saveAndStartTask,
+  saveTask,
+} from '@tap/api/src/core/task'
 import { DatabaseIcon } from '@tap/business/src/components/DatabaseIcon'
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 import { makeStatusAndDisabled, TASK_SETTINGS } from '@tap/business/src/shared'
@@ -300,7 +302,7 @@ export default {
         if (item.showTableWebsite) spec.push(item.id)
         return item.id
       })
-      const data = await taskApi.getTaskByConnection({
+      const data = await getTaskByConnection({
         connectionIds: ids.join(','),
         position: 'target',
       })
@@ -336,7 +338,7 @@ export default {
       if (this.destroyed) return
 
       this.loadTaskTimer = setTimeout(async () => {
-        const data = await taskApi.getTaskByConnection({
+        const data = await getTaskByConnection({
           connectionIds: this.connectionIds.join(','),
           position: 'target',
         })
@@ -419,30 +421,26 @@ export default {
     },
 
     getWebsite(connectionId) {
-      return proxyApi
-        .call({
-          className: 'PDKConnectionService',
-          method: 'getConnectorWebsite',
-          args: [connectionId],
-        })
-        .then((data) => {
-          data?.url && (this.connectionWebsiteMap[connectionId] = data.url)
-          return data?.url
-        })
+      return callProxy({
+        className: 'PDKConnectionService',
+        method: 'getConnectorWebsite',
+        args: [connectionId],
+      }).then((data) => {
+        data?.url && (this.connectionWebsiteMap[connectionId] = data.url)
+        return data?.url
+      })
     },
 
     getTableWebsite(connectionId, table, task) {
-      return proxyApi
-        .call({
-          className: 'PDKConnectionService',
-          method: 'getTableWebsite',
-          args: [connectionId, [table]],
-          _: generateId(4),
-        })
-        .then((data) => {
-          data?.url && (task.website = data.url)
-          return data?.url
-        })
+      return callProxy({
+        className: 'PDKConnectionService',
+        method: 'getTableWebsite',
+        args: [connectionId, [table]],
+        _: generateId(4),
+      }).then((data) => {
+        data?.url && (task.website = data.url)
+        return data?.url
+      })
     },
 
     findParentByClassName(parent, cls) {
@@ -643,11 +641,11 @@ export default {
           Object.assign(task, settings)
           let taskInfo
           try {
-            taskInfo = await taskApi.save(task)
+            taskInfo = await saveTask(task)
 
             if (ifStart) {
               // 保存并运行
-              taskInfo = await taskApi.saveAndStart(taskInfo, {
+              taskInfo = await saveAndStartTask(taskInfo, {
                 params: {
                   confirm: true,
                 },

@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { createEffectHook, createForm, onFieldValueChange } from '@formily/core'
 
-import { taskApi } from '@tap/api'
+import {
+  checkTaskName,
+  saveAndStartTask,
+  updateTask,
+} from '@tap/api/src/core/task'
 import i18n from '@tap/i18n'
 import { debounce } from 'lodash-es'
 import { inject, onBeforeUnmount, ref, shallowRef } from 'vue'
-import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import SchemaForm from '../SchemaForm.vue'
 
 // 自定义 Dialog 表单内的 value 变化事件
@@ -179,13 +183,13 @@ const scope = {
 // Methods
 const handleCheckName = debounce(
   (resolve: (value: boolean) => void, value: string) => {
-    taskApi.checkName({ name: value }).then((data) => resolve(data))
+    checkTaskName({ name: value }).then((data) => resolve(data))
   },
   500,
 )
 
 const onTaskChange = debounce(async () => {
-  const data = await taskApi.patch(
+  const data = await updateTask(
     {
       ...taskRef.value,
       pageVersion: pageVersionRef.value,
@@ -235,7 +239,7 @@ const handleStart = async () => {
 
   try {
     await form.value.validate()
-    await TaskApi.saveAndStart(taskRef.value, {
+    await saveAndStartTask(taskRef.value, {
       silenceMessage: true,
     })
 
@@ -260,178 +264,6 @@ onBeforeUnmount(() => {
 
 // Initialize
 initForm()
-
-/* export default defineComponent({
-  name: 'TaskStep',
-  components: {
-    SchemaForm,
-  },
-  setup(props, { emit, root }) {
-    const repeatNameMessage = i18n.t(
-      'packages_dag_task_form_error_name_duplicate',
-    )
-    const handleCheckName = debounce(function (resolve, value) {
-      taskApi
-        .checkName({
-          name: value,
-          // id
-        })
-        .then((data) => {
-          resolve(data)
-        })
-    }, 500)
-    const taskRef = inject('task')
-    const pageVersionRef = inject('pageVersion')
-    const isGuide = inject('isGuide')
-    const form = ref(null)
-    const starting = ref(false)
-
-    console.log('taskRef', taskRef)
-
-    const onTaskChange = debounce(async () => {
-      const data = await taskApi.patch(
-        {
-          ...taskRef.value,
-          // id: taskRef.value.id,
-          // editVersion: taskRef.value.editVersion,
-          pageVersion: pageVersionRef.value,
-          // dag: taskRef.value.dag
-        },
-        {
-          silenceMessage: true,
-        },
-      )
-
-      // 防止触发 FormValuesChange
-      // const rawObj = raw(taskRef.value)
-      taskRef.value.editVersion = data.editVersion
-
-      console.log('onTaskChange')
-    }, 100)
-
-    const initForm = () => {
-      const task = taskRef.value
-      scope.$taskId = task.id
-      form.value = createForm({
-        values: task,
-      })
-
-      // 防止挂载表单时触发valueChange
-      setTimeout(() => {
-        form.value.addEffects('watchForm', () => {
-          onFieldValueChange('*', (field) => {
-            onTaskChange()
-            console.log('onFieldValueChange', field)
-          })
-
-          onDialogFormValuesChange((payload, form) => {
-            onTaskChange()
-            console.log('onDialogFormValuesChange')
-          })
-        })
-      }, 100)
-    }
-
-    initForm()
-
-    const handlePrev = () => {
-      emit('prev')
-    }
-
-    const handleNext = async () => {
-      await form.value.validate()
-      emit('next')
-    }
-
-    const start = async () => {
-      this.buried('migrationStart')
-
-      this.unWatchStatus?.()
-      this.unWatchStatus = this.$watch('dataflow.status', (v) => {
-        if (
-          ['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(
-            v,
-          )
-        ) {
-          this.$refs.console?.loadData()
-          if (v !== 'running') {
-            this.$refs.console?.stopAuto()
-          } else {
-            this.toggleConsole(false)
-            this.gotoViewer(false)
-          }
-          // this.unWatchStatus()
-        }
-        if (['MigrateViewer'].includes(this.$route.name)) {
-          if (['renewing'].includes(v)) {
-            this.handleConsoleAutoLoad()
-          } else {
-            this.toggleConsole(false)
-          }
-        }
-      })
-
-      const hasError = await this.$refs.skipError.checkError(this.dataflow)
-      if (hasError) return
-
-      const flag = await this.save(true)
-      if (flag) {
-        this.dataflow.disabledData.edit = true
-        this.dataflow.disabledData.start = true
-        this.dataflow.disabledData.stop = true
-        this.dataflow.disabledData.reset = true
-        // this.gotoViewer()
-        this.beforeStartTask()
-        this.buried('taskSubmit', { result: true })
-      } else {
-        this.buried('taskSubmit', { result: false })
-      }
-    }
-
-    const handleStart = async () => {
-      starting.value = true
-      await form.value.validate()
-
-      let isOk = false
-      try {
-        await taskApi.saveAndStart(taskRef.value, {
-          silenceMessage: true,
-        })
-
-        isOk = true
-
-        store.dispatch('setGuideComplete')
-
-        root.$router.push({
-          name: 'MigrationMonitorSimple',
-          params: {
-            id: taskRef.value.id,
-          },
-        })
-      } catch {
-        // this.handleError(e)
-      } finally {
-        starting.value = false
-      }
-    }
-
-    onBeforeUnmount(() => {
-      form.value.onUnmount()
-    })
-
-    return {
-      form,
-      schema,
-      scope,
-      starting,
-      isGuide,
-
-      handlePrev,
-      handleNext,
-      handleStart,
-    }
-  },
-}) */
 </script>
 
 <template>

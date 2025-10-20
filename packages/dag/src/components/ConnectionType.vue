@@ -1,6 +1,6 @@
 <script lang="jsx">
-import { defineComponent } from 'vue'
 import i18n from '@tap/i18n'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   props: {

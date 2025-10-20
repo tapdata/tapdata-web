@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "dependencies": {
     "@tap/i18n": "workspace:*",
-    "tiny-emitter": "^2.1.0",
-    "core-js": "^3.8.3"
+    "core-js": "^3.8.3",
+    "tiny-emitter": "^2.1.0"
   }
 }

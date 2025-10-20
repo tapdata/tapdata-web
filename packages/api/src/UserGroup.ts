@@ -6,7 +6,7 @@ export default class UserGroups extends Http {
   }
   get(params) {
     if (Array.isArray(params)) {
-      return this.axios.get(this.url + '/' + params.join('/'))
+      return this.axios.get(`${this.url}/${params.join('/')}`)
     }
     if (params.url) {
       const url = params.url
@@ -17,13 +17,13 @@ export default class UserGroups extends Http {
     return this.axios.get(this.url, { params })
   }
   count(params) {
-    return this.axios.get(this.url + '/count', { params })
+    return this.axios.get(`${this.url}/count`, { params })
   }
   patch(data) {
-    return this.axios.patch(this.url + '/' + data.id, data)
+    return this.axios.patch(`${this.url}/${data.id}`, data)
   }
   delete(params) {
-    return this.axios.delete(`${this.url}/` + params.id, params)
+    return this.axios.delete(`${this.url}/${params.id}`, params)
   }
 }
 export { UserGroups }

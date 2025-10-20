@@ -1,4 +1,4 @@
-import { getBrowserLanguage, Cookie } from '@tap/shared'
+import { Cookie, getBrowserLanguage } from '@tap/shared'
 
 // 后端需要的值
 export const langKeyMap = {
@@ -8,10 +8,10 @@ export const langKeyMap = {
 }
 
 export const langMenu =
-   import.meta.env.VUE_APP_MODE === 'community'
+  import.meta.env.VUE_APP_MODE === 'community'
     ? {
         'zh-CN': '中文 (简)',
-        en: 'English'
+        en: 'English',
       }
     : {
         'zh-CN': '中文 (简)',

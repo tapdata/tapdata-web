@@ -2,62 +2,52 @@ packages:
   - packages/*
   - apps/*
   - dev/*
-onlyBuiltDependencies:
-  - vue-demi
-ignoredBuiltDependencies:
-  - "@formily/vue"
-  - "@parcel/watcher"
-  - core-js
-  - ejs
-  - fsevents
-  - vue-echarts
-  - yorkie
 catalog:
-  "@cn-xufei/vite-plugin-svg-icons": ^2.1.0
-  "@element-plus/icons-vue": ^2.1.0
-  "@figmania/anim": ^2.3.12
-  "@figmania/webcomponent": ^2.3.12
-  "@formily/core": ^2.3.0
-  "@formily/element-plus": ^1.1.0
-  "@formily/json-schema": ^2.3.0
-  "@formily/path": ^2.3.0
-  "@formily/reactive": ^2.3.0
-  "@formily/reactive-vue": ^2.3.0
-  "@formily/shared": ^2.3.0
-  "@formily/vue": ^2.3.0
-  "@iconify-json/fluent": ^1.2.26
-  "@iconify-json/lucide": ^1.2.45
-  "@iconify-json/mingcute": ^1.2.3
-  "@rushstack/eslint-patch": ^1.8.0
-  "@sxzz/eslint-config": ^7.1.4
-  "@sxzz/prettier-config": ^2.2.4
-  "@tiptap/core": ^2.12.0
-  "@tiptap/extension-bold": ^2.12.0
-  "@tiptap/extension-character-count": ^2.12.0
-  "@tiptap/extension-code-block": ^2.12.0
-  "@tiptap/extension-color": ^2.12.0
-  "@tiptap/extension-document": ^2.12.0
-  "@tiptap/extension-highlight": ^2.12.0
-  "@tiptap/extension-italic": ^2.12.0
-  "@tiptap/extension-list-item": ^2.12.0
-  "@tiptap/extension-paragraph": ^2.12.0
-  "@tiptap/extension-placeholder": ^2.12.0
-  "@tiptap/extension-text": ^2.12.0
-  "@tiptap/extension-text-style": ^2.12.0
-  "@tiptap/extension-underline": ^2.12.0
-  "@tiptap/pm": ^2.12.0
-  "@tiptap/starter-kit": ^2.12.0
-  "@tiptap/vue-3": ^2.12.0
-  "@tsconfig/node20": ^20.1.4
-  "@types/jsdom": ^21.1.7
-  "@types/lodash-es": ^4.17.12
-  "@types/node": ^22.15.3
-  "@types/qs": ^6.9.15
-  "@vitejs/plugin-vue": ^6.0.0
-  "@vitejs/plugin-vue-jsx": ^5.0.0
-  "@vue/shared": ^3.4.35
-  "@vue/tsconfig": ^0.5.1
-  "@vueuse/core": ^10.5.0
+  '@cn-xufei/vite-plugin-svg-icons': ^2.1.0
+  '@element-plus/icons-vue': ^2.1.0
+  '@figmania/anim': ^2.3.12
+  '@figmania/webcomponent': ^2.3.12
+  '@formily/core': ^2.3.0
+  '@formily/element-plus': ^1.1.0
+  '@formily/json-schema': ^2.3.0
+  '@formily/path': ^2.3.0
+  '@formily/reactive': ^2.3.0
+  '@formily/reactive-vue': ^2.3.0
+  '@formily/shared': ^2.3.0
+  '@formily/vue': ^2.3.0
+  '@iconify-json/fluent': ^1.2.26
+  '@iconify-json/lucide': ^1.2.45
+  '@iconify-json/mingcute': ^1.2.3
+  '@rushstack/eslint-patch': ^1.8.0
+  '@sxzz/eslint-config': ^7.1.4
+  '@sxzz/prettier-config': ^2.2.4
+  '@tiptap/core': ^2.12.0
+  '@tiptap/extension-bold': ^2.12.0
+  '@tiptap/extension-character-count': ^2.12.0
+  '@tiptap/extension-code-block': ^2.12.0
+  '@tiptap/extension-color': ^2.12.0
+  '@tiptap/extension-document': ^2.12.0
+  '@tiptap/extension-highlight': ^2.12.0
+  '@tiptap/extension-italic': ^2.12.0
+  '@tiptap/extension-list-item': ^2.12.0
+  '@tiptap/extension-paragraph': ^2.12.0
+  '@tiptap/extension-placeholder': ^2.12.0
+  '@tiptap/extension-text': ^2.12.0
+  '@tiptap/extension-text-style': ^2.12.0
+  '@tiptap/extension-underline': ^2.12.0
+  '@tiptap/pm': ^2.12.0
+  '@tiptap/starter-kit': ^2.12.0
+  '@tiptap/vue-3': ^2.12.0
+  '@tsconfig/node20': ^20.1.4
+  '@types/jsdom': ^21.1.7
+  '@types/lodash-es': ^4.17.12
+  '@types/node': ^22.15.3
+  '@types/qs': ^6.9.15
+  '@vitejs/plugin-vue': ^6.0.0
+  '@vitejs/plugin-vue-jsx': ^5.0.0
+  '@vue/shared': ^3.4.35
+  '@vue/tsconfig': ^0.5.1
+  '@vueuse/core': ^10.5.0
   ace-builds: ^1.4.13
   ali-oss: ^6.17.1
   axios: ^1.9.0
@@ -70,7 +60,7 @@ catalog:
   dayjs: ^1.11.2
   driver.js: ^1.2.1
   echarts: ^6.0.0
-  element-plus: ^2.10.4
+  element-plus: ^2.11.4
   eslint: ^9.23.0
   eslint-config-prettier: ^8.3.0
   eslint-plugin-prettier: ^4.0.0
@@ -79,7 +69,7 @@ catalog:
   fecha: ^4.2.3
   file-loader: ^6.2.0
   github-markdown-css: ^4.0.0
-  inquirer: "9"
+  inquirer: '9'
   inquirer-autocomplete-prompt: ^3.0.1
   jsdom: ^24.1.0
   jsplumb: ^2.15.6
@@ -115,3 +105,13 @@ catalog:
   vue-virtual-scroller: 2.0.0-beta.8
   vuedraggable: ^4.1.0
   vuex: ^4.1.0
+ignoredBuiltDependencies:
+  - '@formily/vue'
+  - '@parcel/watcher'
+  - core-js
+  - ejs
+  - fsevents
+  - vue-echarts
+  - yorkie
+onlyBuiltDependencies:
+  - vue-demi

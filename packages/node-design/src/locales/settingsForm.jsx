@@ -42,7 +42,8 @@ export default {
         required: '是否必填',
         message: {
           title: '错误消息',
-          tooltip: '错误消息只对当前规则集的一个内置规则生效，如果需要对不同内置规则定制错误消息，请拆分成多条规则',
+          tooltip:
+            '错误消息只对当前规则集的一个内置规则生效，如果需要对不同内置规则定制错误消息，请拆分成多条规则',
         },
       },
     },
@@ -162,8 +163,10 @@ export default {
         variableType: 'Variable Type',
         operations: 'Operations',
         addRelationField: 'Add Associated Field',
-        propertyReactions: 'Property Reactions(Only Support Javascript Expression)',
-        actionReactions: 'Action Reactions(Optional, Support Javascript Statement)',
+        propertyReactions:
+          'Property Reactions(Only Support Javascript Expression)',
+        actionReactions:
+          'Action Reactions(Optional, Support Javascript Statement)',
         visible: 'Show/None',
         hidden: 'Show/UI Hidden',
         display: 'Display',

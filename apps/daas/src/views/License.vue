@@ -1,5 +1,10 @@
 <script>
-import { licensesApi } from '@tap/api'
+import {
+  fetchLicenses,
+  getLicenseSid,
+  getPipelineDetails,
+  updateLicense,
+} from '@tap/api/src/core/licenses'
 import { DatabaseIcon } from '@tap/business/src/components/DatabaseIcon'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
@@ -41,74 +46,68 @@ export default {
         limit: size,
         skip: (current - 1) * size,
       }
-      return licensesApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          const list = data?.items || []
-          return {
-            total: data?.total || 0,
-            data: list.map((item) => {
-              const expirationDate = dayjs(item.expirationDate)
-              const duration = expirationDate.valueOf() - Time.now()
-              let status = 'normal'
-              if (duration < 0) {
-                status = 'expired'
-              } else if (duration < 30 * 24 * 60 * 60 * 1000) {
-                status = 'expiring'
-              }
-              if (!item.license) {
-                status = 'probation'
-              }
-              item.status = {
-                normal: {
-                  text: this.$t('license_normal'),
-                  color: 'success',
-                },
-                expiring: {
-                  text: this.$t('license_expiring'),
-                  color: 'warning',
-                },
-                expired: {
-                  text: this.$t('license_expired'),
-                  color: 'info',
-                },
-                probation: {
-                  text: this.$t('license_try_out'),
-                  color: 'info',
-                },
-              }[status]
-              item.expirationDateFmt = item.expirationDate
-                ? expirationDate.format('YYYY-MM-DD HH:mm:ss')
-                : ''
-              item.lastUpdatedFmt = item.last_updated
-                ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
-                : ''
+      return fetchLicenses(filter).then((data) => {
+        const list = data?.items || []
+        return {
+          total: data?.total || 0,
+          data: list.map((item) => {
+            const expirationDate = dayjs(item.expirationDate)
+            const duration = expirationDate.valueOf() - Time.now()
+            let status = 'normal'
+            if (duration < 0) {
+              status = 'expired'
+            } else if (duration < 30 * 24 * 60 * 60 * 1000) {
+              status = 'expiring'
+            }
+            if (!item.license) {
+              status = 'probation'
+            }
+            item.status = {
+              normal: {
+                text: this.$t('license_normal'),
+                color: 'success',
+              },
+              expiring: {
+                text: this.$t('license_expiring'),
+                color: 'warning',
+              },
+              expired: {
+                text: this.$t('license_expired'),
+                color: 'info',
+              },
+              probation: {
+                text: this.$t('license_try_out'),
+                color: 'info',
+              },
+            }[status]
+            item.expirationDateFmt = item.expirationDate
+              ? expirationDate.format('YYYY-MM-DD HH:mm:ss')
+              : ''
+            item.lastUpdatedFmt = item.last_updated
+              ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+              : ''
 
-              if (
-                item.licenseType === 'PIPELINE' &&
-                item.datasourcePipelineLimit > 0
-              ) {
-                item.pipelinePercentage = Math.floor(
-                  (item.datasourcePipelineInUse /
-                    item.datasourcePipelineLimit) *
-                    100,
-                )
-              }
+            if (
+              item.licenseType === 'PIPELINE' &&
+              item.datasourcePipelineLimit > 0
+            ) {
+              item.pipelinePercentage = Math.floor(
+                (item.datasourcePipelineInUse / item.datasourcePipelineLimit) *
+                  100,
+              )
+            }
 
-              return item
-            }),
-          }
-        })
+            return item
+          }),
+        }
+      })
     },
     copySid() {
       const table = this.$refs.table
       const ids = table.multipleSelection?.map((item) => item.sid)
       if (ids?.length) {
         this.copyLoading = true
-        licensesApi
-          .getSid(ids)
+        getLicenseSid(ids)
           .then((data) => {
             const sid = data?.sid
             if (sid) {
@@ -138,11 +137,10 @@ export default {
     updateLicense() {
       this.dialogLoading = true
       if (this.updateSids?.length) {
-        licensesApi
-          .updateLicense({
-            sid: this.updateSids,
-            license: this.license,
-          })
+        updateLicense({
+          sid: this.updateSids,
+          license: this.license,
+        })
           .then(() => {
             this.$message.success(this.$t('license_renew_success'))
             this.$table.fetch()
@@ -160,7 +158,7 @@ export default {
     async openPipelineDetails() {
       this.detailsDialog.show = true
       this.detailsDialog.loading = true
-      const data = await licensesApi.getPipelineDetails()
+      const data = await getPipelineDetails()
       this.detailsDialog.loading = false
       this.detailsDialog.data = data
     },

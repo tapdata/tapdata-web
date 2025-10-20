@@ -1,8 +1,14 @@
 import { GlobalRegistry } from '../core'
-import icons from './icons'
-import panels from './panels'
 import global from './global'
+import icons from './icons'
 import operations from './operations'
+import panels from './panels'
 import settingsForm from './settingsForm'
 
-GlobalRegistry.registerDesignerLocales(icons, panels, global, operations, settingsForm)
+GlobalRegistry.registerDesignerLocales(
+  icons,
+  panels,
+  global,
+  operations,
+  settingsForm,
+)

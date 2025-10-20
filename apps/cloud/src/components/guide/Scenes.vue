@@ -1,21 +1,3 @@
-<template>
-  <div class="scenes h-100 flex flex-column">
-    <div class="flex justify-content-center align-items-center">
-      <VIcon size="450px" style="width: 450px; height: 235px">guide-top-header</VIcon>
-    </div>
-    <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">
-      {{ $t('dfs_guide_index_qingxuanzeninxiang') }}
-    </div>
-    <el-checkbox-group
-      class="scenes-wrap flex flex-column overflow-auto gap-4 flex-1 min-h-0 pr-2"
-      :model-value="scenes"
-      @input="$emit('handleScenes', $event)"
-    >
-      <el-checkbox v-for="(item, index) in list" :key="index" :label="item.value" border>{{ item.label }}</el-checkbox>
-    </el-checkbox-group>
-  </div>
-</template>
-
 <script>
 import { VIcon } from '@tap/component'
 import i18n from '@/i18n'
@@ -24,6 +6,7 @@ export default {
   name: 'Account',
   components: { VIcon },
   props: ['scenes'],
+  emits: ['handleScenes'],
   data() {
     return {
       list: [
@@ -62,9 +45,34 @@ export default {
       ],
     }
   },
-  emits: ['handleScenes'],
 }
 </script>
+
+<template>
+  <div class="scenes h-100 flex flex-column">
+    <div class="flex justify-content-center align-items-center">
+      <VIcon size="450px" style="width: 450px; height: 235px"
+        >guide-top-header</VIcon
+      >
+    </div>
+    <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">
+      {{ $t('dfs_guide_index_qingxuanzeninxiang') }}
+    </div>
+    <el-checkbox-group
+      class="scenes-wrap flex flex-column overflow-auto gap-4 flex-1 min-h-0 pr-2"
+      :model-value="scenes"
+      @input="$emit('handleScenes', $event)"
+    >
+      <el-checkbox
+        v-for="(item, index) in list"
+        :key="index"
+        :label="item.value"
+        border
+        >{{ item.label }}</el-checkbox
+      >
+    </el-checkbox-group>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .scenes-wrap {

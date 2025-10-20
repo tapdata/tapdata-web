@@ -1,5 +1,6 @@
 <script>
-import { metadataDefinitionsApi, userGroupsApi } from '@tap/api'
+import { fetchMetadataDefinitions } from '@tap/api/core/metadata-definitions'
+import { fetchUserGroups } from '@tap/api/core/user-groups'
 
 export default {
   name: 'SelectClassify',
@@ -47,35 +48,27 @@ export default {
       }
 
       if (this.isUser) {
-        userGroupsApi
-          .get({
-            filter: JSON.stringify({
-              limit: 999,
-            }),
-          })
-          .then((data) => {
-            const items = data?.items || []
-            const treeData = items.map((item) => ({
-              value: item.name,
-              id: item.id,
-              gid: item.gid,
-              parent_id: item.parent_id,
-              last_updated: item.last_updated,
-              user_id: item.user_id,
-            }))
-            this.treeData = this.formatData(treeData)
-            cb && cb(data)
-          })
+        fetchUserGroups({
+          limit: 999,
+        }).then((data) => {
+          const items = data?.items || []
+          const treeData = items.map((item) => ({
+            value: item.name,
+            id: item.id,
+            gid: item.gid,
+            parent_id: item.parent_id,
+            last_updated: item.last_updated,
+            user_id: item.user_id,
+          }))
+          this.treeData = this.formatData(treeData)
+          cb && cb(data)
+        })
       } else {
-        metadataDefinitionsApi
-          .get({
-            filter: JSON.stringify(filter),
-          })
-          .then((data) => {
-            const items = data?.items || []
-            this.treeData = this.formatData(items)
-            cb && cb(items)
-          })
+        fetchMetadataDefinitions(filter).then((data) => {
+          const items = data?.items || []
+          this.treeData = this.formatData(items)
+          cb && cb(items)
+        })
       }
     },
     //格式化分类数据
@@ -108,7 +101,7 @@ export default {
     },
     filterNode(value, data) {
       if (!value) return true
-      return data.label.indexOf(value) !== -1
+      return data.label.includes(value)
     },
     handleClose() {
       this.tagList = []
@@ -128,7 +121,7 @@ export default {
       }
     },
     handleCloseTag(data) {
-      let checkList = this.$refs.tree.getCheckedKeys()
+      const checkList = this.$refs.tree.getCheckedKeys()
       if (checkList.length > 0) {
         checkList.map((k, index) => {
           if (k === data.id) {
@@ -159,7 +152,11 @@ export default {
 
 <template>
   <el-dialog
-    :title="isUser ? $t('public_set_user_group') : $t('packages_business_dataFlow_batchSortOperation')"
+    :title="
+      isUser
+        ? $t('public_set_user_group')
+        : $t('packages_business_dataFlow_batchSortOperation')
+    "
     :model-value="dialogVisible"
     width="600px"
     class="SelectClassify-dialog"
@@ -167,7 +164,9 @@ export default {
     :close-on-click-modal="false"
   >
     <div class="flex flex-wrap gap-2 mb-3 rounded-xl p-3 bg-light">
-      <span v-if="!tagList.length" class="text-caption lh-6">{{ $t('public_select_placeholder') }}</span>
+      <span v-if="!tagList.length" class="text-caption lh-6">{{
+        $t('public_select_placeholder')
+      }}</span>
       <el-tag
         v-for="item in tagList"
         :key="item.value"
@@ -178,11 +177,11 @@ export default {
       >
     </div>
     <el-tree
+      ref="tree"
       node-key="id"
       :props="props"
       :expand-on-click-node="false"
       :data="treeData"
-      ref="tree"
       :filter-node-method="filterNode"
       check-strictly
       class="SelectClassify-tree"

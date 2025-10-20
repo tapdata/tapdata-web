@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { pdkApi } from '@tap/api'
+import { getPdkDoc } from '@tap/api/src/core/pdk'
 import GitBook from '@tap/component/src/GitBook.vue'
 import { useI18n } from '@tap/i18n'
 import { computed, ref } from 'vue'
@@ -179,7 +179,7 @@ const showIframe = computed(() => {
 
 const getPdkDoc = () => {
   if (!props.pdkHash) return
-  pdkApi.doc(props.pdkHash).then((res) => {
+  getPdkDoc(props.pdkHash).then((res) => {
     doc.value = res?.data
   })
 }

@@ -1,4 +1,4 @@
-import { licensesApi } from '@tap/api'
+import { getLicenseFeatures } from '@tap/api/src/core/licenses'
 import { getSettingByKey } from '@tap/shared/src/settings'
 
 const MENU_FEATURE_MAP = {
@@ -95,7 +95,7 @@ const actions = {
       })
       return
     }
-    const data = await licensesApi.getFeatures()
+    const data = await getLicenseFeatures()
     commit('setFeatures', data)
   },
 }

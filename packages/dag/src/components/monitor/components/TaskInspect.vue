@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { getTaskInspectConfig, getTaskInspectHistories } from '@tap/api'
+import {
+  getTaskInspectConfig,
+  getTaskInspectHistories,
+} from '@tap/api/src/core/task-inspect'
 import { VEmpty } from '@tap/component/src/base/v-empty'
 import i18n from '@tap/i18n'
 import dayjs from 'dayjs'

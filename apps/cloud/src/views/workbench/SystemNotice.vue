@@ -1,9 +1,3 @@
-<template>
-  <section class="system-notice bg-white pt-4" v-if="$route.name === 'SystemNotice'">
-    <AlarmNotification></AlarmNotification>
-  </section>
-</template>
-
 <script>
 import { AlarmNotification } from '@tap/business'
 
@@ -11,6 +5,15 @@ export default {
   components: { AlarmNotification },
 }
 </script>
+
+<template>
+  <section
+    v-if="$route.name === 'SystemNotice'"
+    class="system-notice bg-white pt-4"
+  >
+    <AlarmNotification />
+  </section>
+</template>
 
 <style lang="scss" scoped>
 $unreadColor: #e43737;

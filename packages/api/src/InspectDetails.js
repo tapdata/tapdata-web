@@ -9,11 +9,11 @@ export default class InspectDetailsAPI extends Http {
       `${this.url}/export`,
       {
         inspectResultId,
-        fullField
+        fullField,
       },
       {
-        responseType: 'blob'
-      }
+        responseType: 'blob',
+      },
     )
   }
 }

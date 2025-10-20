@@ -1,5 +1,6 @@
 <script>
-import { fetchUserLogs, fetchUsers } from '@tap/api'
+import { fetchUserLogs } from '@tap/api/src/core/userlogs'
+import { fetchUsers } from '@tap/api/src/core/users'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import DatetimeRange from '@tap/component/src/filter-bar/DatetimeRange.vue'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'

@@ -1,5 +1,5 @@
 <script>
-import { javascriptFunctionsApi } from '@tap/api'
+import { exportFunctions, fetchFunctions } from '@tap/api/src/core/function'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
 import Upload from '@tap/business/src/components/UploadDialog.vue'
@@ -90,23 +90,19 @@ export default {
         limit: size,
         skip: (current - 1) * size,
       }
-      return javascriptFunctionsApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          const list = data?.items || []
-          return {
-            total: data?.total,
-            data: list.map((item) => {
-              item.typeFmt = this.typeMapping[item.type]
-              item.lastUpdatedFmt = dayjs(item.last_updated).format(
-                'YYYY-MM-DD HH:mm:ss',
-              )
-              return item
-            }),
-          }
-        })
+      return fetchFunctions(filter).then((data) => {
+        const list = data?.items || []
+        return {
+          total: data?.total,
+          data: list.map((item) => {
+            item.typeFmt = this.typeMapping[item.type]
+            item.lastUpdatedFmt = dayjs(item.last_updated).format(
+              'YYYY-MM-DD HH:mm:ss',
+            )
+            return item
+          }),
+        }
+      })
     },
     remove(item) {
       this.$confirm(
@@ -116,7 +112,7 @@ export default {
         if (!resFlag) {
           return
         }
-        javascriptFunctionsApi.delete(item.id).then(() => {
+        exportFunctions(item.id).then(() => {
           this.table.fetch()
         })
       })
@@ -143,7 +139,7 @@ export default {
     },
     handleExport() {
       const ids = this.multipleSelection.map((t) => t.id)
-      javascriptFunctionsApi.export(ids)
+      exportFunctions(ids)
     },
     handleImport() {
       this.$refs.upload.show()

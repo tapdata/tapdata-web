@@ -1,14 +1,10 @@
 <script>
-import { proxyApi } from '@tap/api'
-import { VIcon, VTable } from '@tap/component'
-
+import { callProxy } from '@tap/api/src/core/proxy'
+import { VTable } from '@tap/component/src/base/v-table'
 import i18n from '@tap/i18n'
 import { calcTimeUnit, copyToClipboard } from '@tap/shared'
 import Time from '@tap/shared/src/time'
-
 import dayjs from 'dayjs'
-import { $emit, $off, $on, $once } from '../../../utils/gogocodeTransfer'
-
 import { ErrorMessage } from '../error-message'
 import NodeList from '../nodes/List'
 
@@ -124,7 +120,7 @@ export default {
       const dataflowType = this.dataflow.type
       let iconRunning = 'loading-circle'
       let iconRunningColor = 'color-success'
-      if (this.dataflow.status != 'running') {
+      if (this.dataflow.status !== 'running') {
         iconRunning = 'time'
         iconRunningColor = 'color-primary'
       }
@@ -466,7 +462,7 @@ export default {
   methods: {
     handleChange(val, node) {
       this.activeNode = val ? node : {}
-      $emit(this, 'update:nodeId', val)
+      this.$emit('update:nodeId', val)
     },
 
     handleError(row = {}) {
@@ -491,8 +487,7 @@ export default {
       this.codeDialog.data.message = item.message
       this.codeDialog.data.module = ''
 
-      proxyApi
-        .call(params)
+      callProxy(params)
         .then((data) => {
           Object.assign(this.codeDialog.data, data)
 

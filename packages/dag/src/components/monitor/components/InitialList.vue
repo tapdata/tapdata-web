@@ -1,7 +1,7 @@
 <script>
-import { measurementApi } from '@tap/api'
+import { getFullStatistics } from '@tap/api/src/core/measurement'
 
-import { VTable } from '@tap/component'
+import { VTable } from '@tap/component/src/base/v-table'
 import i18n from '@tap/i18n'
 import { debounce } from 'lodash-es'
 
@@ -131,7 +131,7 @@ export default {
         page: current,
         tableName: this.tableName,
       }
-      return measurementApi.fullStatistics(filter).then((data) => {
+      return getFullStatistics(filter).then((data) => {
         return {
           total: data.total || 0,
           data: data.items.map((t) => {

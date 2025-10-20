@@ -6,4 +6,4 @@ const { SchemaField } = createSchemaField({
   components,
 })
 
-export { SchemaField }
+export { createSchemaField, SchemaField }

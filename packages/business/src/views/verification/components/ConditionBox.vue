@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { InfoFilled, Loading, Plus } from '@element-plus/icons-vue'
-import { fetchConnections, metadataInstancesApi } from '@tap/api'
+import { fetchConnections } from '@tap/api/src/core/connections'
+import {
+  findInspect,
+  getNodeSchemaPage,
+  getTapTables,
+} from '@tap/api/src/core/metadata-instances'
 import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import GitBook from '@tap/component/src/GitBook.vue'
 import { Modal } from '@tap/component/src/modal'
@@ -315,7 +320,7 @@ const getTableListMethod = async (
       limit: size,
       order: 'createTime DESC',
     }
-    const res = await metadataInstancesApi.tapTables({
+    const res = await getTapTables({
       filter: JSON.stringify(params),
     })
     const result: ApiResponse<string> = {
@@ -381,7 +386,7 @@ const getTablesInTask = async (
       : {}),
   }
 
-  const res = await metadataInstancesApi.nodeSchemaPage(params)
+  const res = await getNodeSchemaPage(params)
 
   const tableList = res.items?.map((t: TableItem) => t.name) || []
   const total = res.total
@@ -658,11 +663,10 @@ const autoAddTable = async () => {
     },
     taskId: props.taskId,
   }
-  metadataInstancesApi
-    .findInspect({
-      where,
-      fields: META_INSTANCE_FIELDS,
-    })
+  findInspect({
+    where,
+    fields: META_INSTANCE_FIELDS,
+  })
     .then((data: any) => {
       const newItems = []
       matchNodeList.forEach((m: any) => {
@@ -966,7 +970,7 @@ const handleChangeTable = (
     page: 1,
     pageSize: 1,
   }
-  metadataInstancesApi.nodeSchemaPage(params).then((data: any) => {
+  getNodeSchemaPage(params).then((data: any) => {
     item.target.fields =
       data.items?.[0]?.fields.map((t: any) => {
         const { id, field_name, primary_key_position, primaryKey, unique } = t
@@ -1379,10 +1383,9 @@ const onVisibleChange = (opt: any = {}, visible: boolean) => {
     },
     limit: 1,
   }
-  metadataInstancesApi
-    .tapTables({
-      filter: JSON.stringify(params),
-    })
+  getTapTables({
+    filter: JSON.stringify(params),
+  })
     .then((data: any = {}) => {
       if (isEmpty(data.items[0]?.nameFieldMap)) {
         return

@@ -1,8 +1,6 @@
-import { defineComponent } from 'vue'
 import { observer } from '@formily/reactive-vue'
-import SharedMiningTable from '@tap/business/src/views/shared-mining/Table'
-import { FormItem } from '@tap/form'
 import i18n from '@tap/i18n'
+import { defineComponent } from 'vue'
 import { useStore } from 'vuex'
 
 export const SharedMiningTableInfo = observer(
@@ -25,7 +23,12 @@ export const SharedMiningTableInfo = observer(
         )
 
         return (
-          <FormItem.BaseItem label={i18n.t('packages_dag_shared_mining_table_info_index_wajuebiaoxinxi')} attrs={attrs}>
+          <FormItem.BaseItem
+            label={i18n.t(
+              'packages_dag_shared_mining_table_info_index_wajuebiaoxinxi',
+            )}
+            attrs={attrs}
+          >
             {con}
             {slots.default?.()}
           </FormItem.BaseItem>

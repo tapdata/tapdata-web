@@ -19,7 +19,7 @@ export const Text = defineComponent({
       )
       return (
         <div className={className} style={style}>
-          {icon && <i class={'el-icon-' + icon + ' ' + iconClass}></i>}
+          {icon && <i class={`el-icon-${icon} ${iconClass}`}></i>}
           {content}
         </div>
       )

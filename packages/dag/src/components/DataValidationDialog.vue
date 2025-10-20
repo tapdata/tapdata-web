@@ -3,7 +3,7 @@ import {
   getTaskInspectConfig,
   updateTaskInspectConfig,
   type TaskInspectConfig,
-} from '@tap/api'
+} from '@tap/api/src/core/task-inspect'
 import { useI18n } from '@tap/i18n'
 import { reactive, ref } from 'vue'
 

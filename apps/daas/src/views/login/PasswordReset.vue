@@ -1,82 +1,13 @@
-<template>
-  <LoginPage>
-    <template v-slot:main>
-      <section class="page-registry">
-        <div class="sign-in-panel">
-          <div class="title">{{ $t('app_signIn_modifyPassword') }}</div>
-          <div class="tip">
-            {{ $t('app_signIn_newPasswordTip') }}
-          </div>
-          <div class="error-tips" v-show="errorMessage">
-            <el-icon><el-icon-warning /></el-icon>
-            {{ errorMessage }}
-          </div>
-          <el-form ref="form" :model="form" :rules="rules">
-            <el-form-item prop="email">
-              <el-input
-                v-model="form.email"
-                autocomplete="username"
-                type="email"
-                :placeholder="$t('app_signIn_email_placeholder')"
-              ></el-input>
-            </el-form-item>
-            <el-form-item prop="newPassword">
-              <el-input
-                v-model="form.newPassword"
-                autocomplete="current-password"
-                :type="passwordType"
-                :placeholder="$t('app_signIn_newpassword_placeholder')"
-                @keyup.Enter="submit"
-              >
-                <template v-slot:suffix>
-                  <i
-                    :class="[flag ? 'icon-openeye' : 'icon-closeeye', 'iconfont']"
-                    style="margin-top: 8px; font-size: 18px; cursor: pointer"
-                    autocomplete="auto"
-                    @click="passwordTypeChange"
-                  />
-                </template>
-              </el-input>
-            </el-form-item>
-            <el-form-item prop="validateCode">
-              <el-row :gutter="10">
-                <el-col :span="17">
-                  <el-input
-                    v-model="form.validateCode"
-                    text
-                    maxlength="6"
-                    :placeholder="$t('signin_verify_code')"
-                  ></el-input>
-                </el-col>
-                <el-col :span="7">
-                  <ElButton @click="handleSendCode">{{ $t('signin_code') }}</ElButton>
-                </el-col>
-              </el-row>
-            </el-form-item>
-            <ElButton class="btn-sign-in" type="primary" :loading="loading" @click="submit">
-              {{ $t('app_signIn_nextStep') }}
-            </ElButton>
-          </el-form>
-          <div class="back-login">
-            {{ $t('app_signIn_rememberPasswords') }}
-            <ElButton text @click="backLogin">{{ $t('app_signIn_backLogin') }}</ElButton>
-          </div>
-        </div>
-      </section>
-    </template>
-  </LoginPage>
-</template>
-
 <script>
-import i18n from '@/i18n'
+import { resetUser, sendValidateCode } from '@tap/api/src/core/users'
 
-import { usersApi } from '@tap/api'
+import i18n from '@/i18n'
 import LoginPage from './LoginPage'
 export default {
+  name: 'SignIn',
   components: {
     LoginPage,
   },
-  name: 'SignIn',
   data() {
     return {
       loading: false,
@@ -147,24 +78,31 @@ export default {
         if (valid) {
           this.loading = true
 
-          usersApi
-            .reset(this.form)
+          resetUser(this.form)
             .then(() => {
               this.$router.push({
                 name: 'verificationEmail',
                 params: { first: 1, data: this.form, type: 'reset' },
               })
             })
-            .catch((e) => {
-              if (e?.data?.message) {
-                if (e.data.message === i18n.t('daas_login_passwordreset_zhaobudaodianzi')) {
+            .catch((error) => {
+              if (error?.data?.message) {
+                if (
+                  error.data.message ===
+                  i18n.t('daas_login_passwordreset_zhaobudaodianzi')
+                ) {
                   this.errorMessage = this.$t('signin_not_mailbox')
-                } else if (e.data.message === i18n.t('daas_login_passwordreset_shangweiyanzhengdian')) {
+                } else if (
+                  error.data.message ===
+                  i18n.t('daas_login_passwordreset_shangweiyanzhengdian')
+                ) {
                   this.errorMessage = this.$t('signin_verify_email_invalid')
-                } else if (e.data.message.includes('Incorect')) {
-                  this.errorMessage = this.$t('signin_verify_code_not_incorrect')
+                } else if (error.data.message.includes('Incorect')) {
+                  this.errorMessage = this.$t(
+                    'signin_verify_code_not_incorrect',
+                  )
                 } else {
-                  this.errorMessage = e.data.message
+                  this.errorMessage = error.data.message
                 }
               }
             })
@@ -180,7 +118,7 @@ export default {
 
     // 发送验证码
     handleSendCode() {
-      let form = this.form
+      const form = this.form
       let message = ''
       if (!form.email || !form.email.trim()) {
         message = this.$t('signin_email_require')
@@ -194,10 +132,10 @@ export default {
         this.errorMessage = message
         return
       }
-      let params = {
+      const params = {
         email: this.form.email,
       }
-      usersApi.sendValidateCode(params).then(() => {
+      sendValidateCode(params).then(() => {
         this.$message.success(this.$t('signin_verify_code_success'))
       })
     },
@@ -212,6 +150,87 @@ export default {
   },
 }
 </script>
+
+<template>
+  <LoginPage>
+    <template #main>
+      <section class="page-registry">
+        <div class="sign-in-panel">
+          <div class="title">{{ $t('app_signIn_modifyPassword') }}</div>
+          <div class="tip">
+            {{ $t('app_signIn_newPasswordTip') }}
+          </div>
+          <div v-show="errorMessage" class="error-tips">
+            <el-icon><el-icon-warning /></el-icon>
+            {{ errorMessage }}
+          </div>
+          <el-form ref="form" :model="form" :rules="rules">
+            <el-form-item prop="email">
+              <el-input
+                v-model="form.email"
+                autocomplete="username"
+                type="email"
+                :placeholder="$t('app_signIn_email_placeholder')"
+              />
+            </el-form-item>
+            <el-form-item prop="newPassword">
+              <el-input
+                v-model="form.newPassword"
+                autocomplete="current-password"
+                :type="passwordType"
+                :placeholder="$t('app_signIn_newpassword_placeholder')"
+                @keyup.Enter="submit"
+              >
+                <template #suffix>
+                  <i
+                    :class="[
+                      flag ? 'icon-openeye' : 'icon-closeeye',
+                      'iconfont',
+                    ]"
+                    style="margin-top: 8px; font-size: 18px; cursor: pointer"
+                    autocomplete="auto"
+                    @click="passwordTypeChange"
+                  />
+                </template>
+              </el-input>
+            </el-form-item>
+            <el-form-item prop="validateCode">
+              <el-row :gutter="10">
+                <el-col :span="17">
+                  <el-input
+                    v-model="form.validateCode"
+                    text
+                    maxlength="6"
+                    :placeholder="$t('signin_verify_code')"
+                  />
+                </el-col>
+                <el-col :span="7">
+                  <ElButton @click="handleSendCode">{{
+                    $t('signin_code')
+                  }}</ElButton>
+                </el-col>
+              </el-row>
+            </el-form-item>
+            <ElButton
+              class="btn-sign-in"
+              type="primary"
+              :loading="loading"
+              @click="submit"
+            >
+              {{ $t('app_signIn_nextStep') }}
+            </ElButton>
+          </el-form>
+          <div class="back-login">
+            {{ $t('app_signIn_rememberPasswords') }}
+            <ElButton text @click="backLogin">{{
+              $t('app_signIn_backLogin')
+            }}</ElButton>
+          </div>
+        </div>
+      </section>
+    </template>
+  </LoginPage>
+</template>
 
 <style lang="scss" scoped>
 .page-registry {

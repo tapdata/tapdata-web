@@ -1,10 +1,12 @@
 <script>
-import { taskApi } from '@tap/api'
-import { Chart, VEmpty } from '@tap/component'
-
+import {
+  autoInspectResultsGroupByTable,
+  getAutoInspectTotals,
+} from '@tap/api/src/core/task'
+import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
+import Chart from '@tap/component/src/chart/Chart.vue'
 import i18n from '@tap/i18n'
 import { calcUnit } from '@tap/shared'
-
 import Time from '@tap/shared/src/time'
 import { cloneDeep, debounce } from 'lodash-es'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
@@ -137,8 +139,7 @@ export default {
 
     loadData(loadMore = false) {
       const startStamp = Time.now()
-      taskApi
-        .autoInspectResultsGroupByTable(this.getFilter())
+      autoInspectResultsGroupByTable(this.getFilter())
         .then(({ total, items = [] }) => {
           this.total = total
           const lastId = this.list.at(-1)?.id || 0
@@ -176,15 +177,13 @@ export default {
     },
 
     loadTotals() {
-      taskApi
-        .autoInspectTotals({
-          id: this.dataflow.id,
-        })
-        .then((data) => {
-          const { diffTables = 0, ignore = 0, totals = 0 } = data
-          const passed = totals - ignore - diffTables
-          this.totalsData = { diffTables, ignore, passed }
-        })
+      getAutoInspectTotals({
+        id: this.dataflow.id,
+      }).then((data) => {
+        const { diffTables = 0, ignore = 0, totals = 0 } = data
+        const passed = totals - ignore - diffTables
+        this.totalsData = { diffTables, ignore, passed }
+      })
     },
 
     getPieOptions(data) {

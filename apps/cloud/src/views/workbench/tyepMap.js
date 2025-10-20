@@ -17,31 +17,55 @@ export const TYPEMAP = {
   releaseAgent: i18n.global.t('notify_list_releases_agent'),
   willReleaseAgent: i18n.global.t('notify_list_will_release_agent'),
   CDCLag: i18n.global.t('dfs_workbench_tyepmap_cdCzhihou2'),
-  manageSeverRestartFailed: i18n.global.t('dfs_workbench_tyepmap_guanliduanfuwu7'),
+  manageSeverRestartFailed: i18n.global.t(
+    'dfs_workbench_tyepmap_guanliduanfuwu7',
+  ),
   APISeverRestartFailed: i18n.global.t('dfs_workbench_tyepmap_apIfuwu7'),
   SYNCSeverRestartFailed: i18n.global.t('dfs_workbench_tyepmap_tongbuzhilifu7'),
   connectionInterrupted: i18n.global.t('notify_list_connection_interrupted'),
   connected: i18n.global.t('notify_list_connected'),
-  manageSeverStartFailed: i18n.global.t('dfs_workbench_tyepmap_guanliduanfuwu6'),
+  manageSeverStartFailed: i18n.global.t(
+    'dfs_workbench_tyepmap_guanliduanfuwu6',
+  ),
   APISeverStartFailed: i18n.global.t('dfs_workbench_tyepmap_apIfuwu6'),
   SYNCSeverStartFailed: i18n.global.t('dfs_workbench_tyepmap_tongbuzhilifu6'),
   manageSeverStopFailed: i18n.global.t('dfs_workbench_tyepmap_guanliduanfuwu5'),
   APISeverStopFailed: i18n.global.t('dfs_workbench_tyepmap_apIfuwu5'),
   SYNCSeverStopFailed: i18n.global.t('dfs_workbench_tyepmap_tongbuzhilifu5'),
   APISeverAbnormallyStopped: i18n.global.t('dfs_workbench_tyepmap_apIfuwu4'),
-  SYNCSeverAbnormallyStopped: i18n.global.t('dfs_workbench_tyepmap_tongbuzhilifu4'),
-  manageSeverAbnormallyStopped: i18n.global.t('dfs_workbench_tyepmap_guanliduanfuwu4'),
-  manageSeverStartedSuccessfully: i18n.global.t('dfs_workbench_tyepmap_guanliduanfuwu3'),
+  SYNCSeverAbnormallyStopped: i18n.global.t(
+    'dfs_workbench_tyepmap_tongbuzhilifu4',
+  ),
+  manageSeverAbnormallyStopped: i18n.global.t(
+    'dfs_workbench_tyepmap_guanliduanfuwu4',
+  ),
+  manageSeverStartedSuccessfully: i18n.global.t(
+    'dfs_workbench_tyepmap_guanliduanfuwu3',
+  ),
   APISeverStartedSuccessfully: i18n.global.t('dfs_workbench_tyepmap_apIfuwu3'),
-  SYNCSeverStartedSuccessfully: i18n.global.t('dfs_workbench_tyepmap_tongbuzhilifu3'),
-  manageSeverStoppedSuccessfully: i18n.global.t('dfs_workbench_tyepmap_guanliduanfuwu2'),
+  SYNCSeverStartedSuccessfully: i18n.global.t(
+    'dfs_workbench_tyepmap_tongbuzhilifu3',
+  ),
+  manageSeverStoppedSuccessfully: i18n.global.t(
+    'dfs_workbench_tyepmap_guanliduanfuwu2',
+  ),
   APISeverStoppedSuccessfully: i18n.global.t('dfs_workbench_tyepmap_apIfuwu2'),
-  SYNCSeverStoppedSuccessfully: i18n.global.t('dfs_workbench_tyepmap_tongbuzhilifu2'),
-  manageSeverRestartedSuccessfully: i18n.global.t('dfs_workbench_tyepmap_guanliduanfuwu'),
+  SYNCSeverStoppedSuccessfully: i18n.global.t(
+    'dfs_workbench_tyepmap_tongbuzhilifu2',
+  ),
+  manageSeverRestartedSuccessfully: i18n.global.t(
+    'dfs_workbench_tyepmap_guanliduanfuwu',
+  ),
   APISeverRestartedSuccessfully: i18n.global.t('dfs_workbench_tyepmap_apIfuwu'),
-  SYNCSeverRestartedSuccessfully: i18n.global.t('dfs_workbench_tyepmap_tongbuzhilifu'),
-  newSeverCreatedSuccessfully: i18n.global.t('dfs_workbench_tyepmap_xinfuwujiankong2'),
-  newSeverDeletedSuccessfully: i18n.global.t('dfs_workbench_tyepmap_xinfuwujiankong'),
+  SYNCSeverRestartedSuccessfully: i18n.global.t(
+    'dfs_workbench_tyepmap_tongbuzhilifu',
+  ),
+  newSeverCreatedSuccessfully: i18n.global.t(
+    'dfs_workbench_tyepmap_xinfuwujiankong2',
+  ),
+  newSeverDeletedSuccessfully: i18n.global.t(
+    'dfs_workbench_tyepmap_xinfuwujiankong',
+  ),
   databaseDDLChanged: i18n.global.t('dfs_workbench_tyepmap_jiancedaoshuju'),
   inspectCount: i18n.global.t('notify_list_inspect_count'),
   inspectValue: i18n.global.t('notify_list_inspect_value'),

@@ -1,6 +1,9 @@
 //节点模型
 import { define, observable } from '@formily/reactive'
-import { createCustomNode, patchCustomNode } from '@tap/api'
+import {
+  createCustomNode,
+  patchCustomNode,
+} from '@tap/api/src/core/custom-node'
 import { transformToSchema } from '../transformer'
 
 export class CustomNode {

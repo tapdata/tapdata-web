@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { CircleCheckFilled, CircleCloseFilled } from '@element-plus/icons-vue'
-import { inspectApi, metadataInstancesApi } from '@tap/api'
+import {
+  batchUpdateListtags,
+  fetchInspects,
+  getTaskList,
+  importInspect,
+  updateInspect,
+} from '@tap/api/src/core/inspects'
+import { downloadMetadataInstance } from '@tap/api/src/core/metadata-instances'
 import loadingImg from '@tap/assets/icons/loading.svg'
 import FilterBar from '@tap/component/src/filter-bar/Main.vue'
 import {
@@ -149,7 +156,7 @@ const handleExport = () => {
       in: ids,
     },
   }
-  metadataInstancesApi.download(where, 'Inspect')
+  downloadMetadataInstance(where, 'Inspect')
 }
 
 const handleSelectionChange = (val: InspectItem[]) => {
@@ -224,42 +231,38 @@ const getData = ({
     skip: (current - 1) * size,
     where,
   }
-  return inspectApi
-    .get({
-      filter: JSON.stringify(filter),
-    })
-    .then((data: any) => {
-      const list = data?.items || []
-      return {
-        total: data?.total,
-        data: list.map((item: any) => {
-          const result = item.InspectResult
-          let sourceTotal: string | number = '-'
-          let targetTotal: string | number = '-'
-          if (result) {
-            sourceTotal = result.source_total
-            targetTotal = result.target_total
-          }
-          item.lastStartTime = item.lastStartTime
-            ? dayjs(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
-            : '-'
-          item.sourceTotal = sourceTotal
-          item.targetTotal = targetTotal
-          if (item.inspectMethod === 'hash') {
-            item.sourceTotal = '-'
-            item.targetTotal = '-'
-          }
+  return fetchInspects(filter).then((data: any) => {
+    const list = data?.items || []
+    return {
+      total: data?.total,
+      data: list.map((item: any) => {
+        const result = item.InspectResult
+        let sourceTotal: string | number = '-'
+        let targetTotal: string | number = '-'
+        if (result) {
+          sourceTotal = result.source_total
+          targetTotal = result.target_total
+        }
+        item.lastStartTime = item.lastStartTime
+          ? dayjs(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
+          : '-'
+        item.sourceTotal = sourceTotal
+        item.targetTotal = targetTotal
+        if (item.inspectMethod === 'hash') {
+          item.sourceTotal = '-'
+          item.targetTotal = '-'
+        }
 
-          delete item.tasks
+        delete item.tasks
 
-          if (item.status !== 'error') {
-            delete item.errorMsg
-          }
+        if (item.status !== 'error') {
+          delete item.errorMsg
+        }
 
-          return item
-        }),
-      }
-    })
+        return item
+      }),
+    }
+  })
 }
 
 const toTableInfo = (id: string) => {
@@ -281,22 +284,20 @@ const history = (id: string) => {
 }
 
 const startTask = (id: string) => {
-  inspectApi
-    .update(
-      {
-        id,
-      },
-      {
-        status: 'scheduling',
-        ping_time: 0,
-        scheduleTimes: 0,
-        byFirstCheckId: '',
-      },
-    )
-    .then(() => {
-      ElMessage.success(t('packages_business_verification_startVerify'))
-      table.value?.fetch()
-    })
+  updateInspect(
+    {
+      id,
+    },
+    {
+      status: 'scheduling',
+      ping_time: 0,
+      scheduleTimes: 0,
+      byFirstCheckId: '',
+    },
+  ).then(() => {
+    ElMessage.success(t('packages_business_verification_startVerify'))
+    table.value?.fetch()
+  })
 }
 
 const remove = async (id: string, row: InspectItem) => {
@@ -310,7 +311,7 @@ const remove = async (id: string, row: InspectItem) => {
   )
 
   if (confirmed) {
-    await inspectApi.delete(id)
+    await batchUpdateListtags({ ids: [id], action: 'delete' })
     ElMessage.success(t('public_message_delete_ok'))
     table.value?.fetch()
   }
@@ -404,17 +405,15 @@ const getInspectName = (row: InspectItem = {} as InspectItem) => {
 }
 
 const stop = (id: string = '') => {
-  inspectApi
-    .update(
-      {
-        id,
-      },
-      { status: 'stopping' },
-    )
-    .then(() => {
-      ElMessage.success(t('public_message_operation_success'))
-      table.value?.fetch()
-    })
+  updateInspect(
+    {
+      id,
+    },
+    { status: 'stopping' },
+  ).then(() => {
+    ElMessage.success(t('public_message_operation_success'))
+    table.value?.fetch()
+  })
 }
 
 const handleCreate = (type: string) => {
@@ -444,7 +443,7 @@ const handleDelete = () => {
 const fetchTaskOptions = async () => {
   taskOptionsLoading.value = true
 
-  const data = await inspectApi.getTaskList()
+  const data = await getTaskList()
 
   taskOptions.value = data || []
   taskOptionsLoading.value = false
@@ -457,7 +456,7 @@ const startImport = async () => {
 
   importLoading.value = true
 
-  await inspectApi.import(formData).finally(() => {
+  await importInspect(formData).finally(() => {
     importLoading.value = false
   })
 
@@ -500,7 +499,7 @@ const handleOperationClassify = async (listtags) => {
   }
 
   try {
-    await inspectApi.batchUpdateListtags(params)
+    await batchUpdateListtags(params)
     table.value?.fetch()
     ElMessage.success(t('public_message_save_ok'))
   } catch (error) {

@@ -1,11 +1,17 @@
 import { observe } from '@formily/reactive'
 import { observer } from '@formily/reactive-vue'
+import { fetchFunctions } from '@tap/api/src/core/function'
 import {
-  javascriptFunctionsApi,
-  metadataInstancesApi,
-  monitoringLogsApi,
-  taskApi,
-} from '@tap/api'
+  getNodeSchema,
+  getNodeSchemaPage,
+} from '@tap/api/src/core/metadata-instances'
+import { queryMonitoringLogs } from '@tap/api/src/core/monitoring-logs'
+import {
+  getNodeTableInfo,
+  getRunJsResult,
+  testRunJs,
+  testRunJsRpc,
+} from '@tap/api/src/core/task'
 import { VEmpty } from '@tap/component/src/base/v-empty'
 import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import resize from '@tap/component/src/directives/resize'
@@ -60,13 +66,12 @@ export const JsProcessor = observer(
       const loadTable = () => {
         if (!formRef.value.values.$inputs.length) return
         tableLoading.value = true
-        taskApi
-          .getNodeTableInfo({
-            taskId,
-            nodeId: form.values.id,
-            page: 1,
-            pageSize: 10000,
-          })
+        getNodeTableInfo({
+          taskId,
+          nodeId: form.values.id,
+          page: 1,
+          pageSize: 10000,
+        })
           .then(({ items = [] }) => {
             tableList.value = items.map((item) => ({
               label: item.previousTableName,
@@ -100,7 +105,7 @@ export const JsProcessor = observer(
 
       const queryLog = async () => {
         try {
-          const logData = await monitoringLogsApi.query({
+          const logData = await queryMonitoringLogs({
             taskId: store.state.dataflow.taskInfo.testTaskId,
             type: 'testRun',
             order: 'asc',
@@ -122,23 +127,17 @@ export const JsProcessor = observer(
 
       const handleQuery = async () => {
         const lastVersion = version
-        const isOver = await taskApi
-          .getRunJsResult({
-            version,
-            taskId,
-            jsNodeId: nodeId,
-          })
-          .then((res) => {
-            // 版本号不一致
-            if (lastVersion !== version) return true
-            inputRef.value = res.before
-              ? JSON.stringify(res.before, null, 2)
-              : ''
-            outputRef.value = res.after
-              ? JSON.stringify(res.after, null, 2)
-              : ''
-            return res.over
-          })
+        const isOver = await getRunJsResult({
+          version,
+          taskId,
+          jsNodeId: nodeId,
+        }).then((res) => {
+          // 版本号不一致
+          if (lastVersion !== version) return true
+          inputRef.value = res.before ? JSON.stringify(res.before, null, 2) : ''
+          outputRef.value = res.after ? JSON.stringify(res.after, null, 2) : ''
+          return res.over
+        })
 
         if (isOver) running.value = false
 
@@ -224,7 +223,7 @@ export const JsProcessor = observer(
         if (jsType === 1) {
           let before, after, logs, result
           try {
-            result = await taskApi.testRunJsRpc({
+            result = await testRunJsRpc({
               ...params,
               version,
               script: props.value,
@@ -245,19 +244,17 @@ export const JsProcessor = observer(
             ) || []
           resetQuery()
         } else {
-          taskApi
-            .testRunJs({ ...params, version, script: props.value, jsType })
-            .then(
-              () => {
-                queryStart = Time.now()
-                handleAutoQuery()
-              },
-              async () => {
-                // 脚本执行出错
-                await queryLog()
-                resetQuery()
-              },
-            )
+          testRunJs({ ...params, version, script: props.value, jsType }).then(
+            () => {
+              queryStart = Time.now()
+              handleAutoQuery()
+            },
+            async () => {
+              // 脚本执行出错
+              await queryLog()
+              resetQuery()
+            },
+          )
         }
       }
 
@@ -278,24 +275,17 @@ export const JsProcessor = observer(
       }
 
       const functionGroup = ref({})
-      const classDescMap = {
-        DateUtil: i18n.t('packages_dag_js_processor_index_riqichuli'),
-        idGen: i18n.t('packages_dag_js_processor_index_iDshengchengqi'),
-        networkUtil: i18n.t('packages_dag_js_processor_index_wangluogongju'),
-      }
       const loadFunction = async () => {
-        const data = await javascriptFunctionsApi.get({
-          filter: JSON.stringify({
-            limit: 1000,
-            where: {
-              type: 'system',
-              category: props.isStandard
-                ? 'standard'
-                : {
-                    $in: ['enhanced', 'standard'],
-                  },
-            },
-          }),
+        const data = await fetchFunctions({
+          limit: 1000,
+          where: {
+            type: 'system',
+            category: props.isStandard
+              ? 'standard'
+              : {
+                  $in: ['enhanced', 'standard'],
+                },
+          },
         })
         const group = groupBy(data.items, 'className')
         const noClassFunction = group['']
@@ -369,7 +359,7 @@ export const JsProcessor = observer(
         let fields = []
         if (!formRef.value.values.$inputs.length) return
         if (form.values.type.includes('migrate')) {
-          const result = await metadataInstancesApi.nodeSchemaPage({
+          const result = await getNodeSchemaPage({
             nodeId,
             fields: [
               'original_name',
@@ -383,7 +373,7 @@ export const JsProcessor = observer(
           })
           fields = result.items[0]?.fields || []
         } else {
-          const data = await metadataInstancesApi.nodeSchema(nodeId)
+          const data = await getNodeSchema(nodeId)
           fields = data?.[0]?.fields || []
         }
 

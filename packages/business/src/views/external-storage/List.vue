@@ -1,5 +1,11 @@
 <script>
-import { externalStorageApi } from '@tap/api'
+import {
+  changeExternalStorage,
+  createExternalStorage,
+  fetchExternalStorageList,
+  getUsingTask,
+  updateExternalStorageById,
+} from '@tap/api/src/core/external-storage'
 
 import Drawer from '@tap/component/src/Drawer.vue'
 import { FilterBar } from '@tap/component/src/filter-bar'
@@ -215,23 +221,21 @@ export default {
         skip: (current - 1) * size,
         where,
       }
-      return externalStorageApi
-        .list({
-          filter: JSON.stringify(filter),
+      return fetchExternalStorageList({
+        filter: JSON.stringify(filter),
+      }).then((data) => {
+        const list = (data?.items || []).map((item) => {
+          item.typeFmt = EXTERNAL_STORAGE_TYPE_MAP[item.type] || '-'
+          item.createTimeFmt =
+            dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') || '-'
+          item.status = item.status || 'ready'
+          return item
         })
-        .then((data) => {
-          const list = (data?.items || []).map((item) => {
-            item.typeFmt = EXTERNAL_STORAGE_TYPE_MAP[item.type] || '-'
-            item.createTimeFmt =
-              dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') || '-'
-            item.status = item.status || 'ready'
-            return item
-          })
-          return {
-            total: data?.total,
-            data: list,
-          }
-        })
+        return {
+          total: data?.total,
+          data: list,
+        }
+      })
     },
     openDialog(row) {
       this.dialogVisible = true
@@ -271,8 +275,7 @@ export default {
               this.loading = false
             }
             if (id) {
-              await externalStorageApi
-                .updateById(id, params)
+              await updateExternalStorageById(id, params)
                 .then(() => {
                   this.table.fetch()
                   this.dialogVisible = false
@@ -280,8 +283,7 @@ export default {
                 })
                 .catch(catchFunc)
             } else {
-              await externalStorageApi
-                .post(params)
+              await createExternalStorage(params)
                 .then(() => {
                   this.table.fetch()
                   this.dialogVisible = false
@@ -302,14 +304,14 @@ export default {
       })
     },
     handleDefault(row) {
-      externalStorageApi.changeExternalStorage(row.id).then(() => {
+      changeExternalStorage(row.id).then(() => {
         this.$message.success(i18n.t('public_message_operation_success'))
         this.table.fetch()
       })
     },
     async remove(row) {
       //先去请求是否外存已被使用了
-      this.usingTasks = (await externalStorageApi.usingTask(row.id)) || []
+      this.usingTasks = (await getUsingTask(row.id)) || []
       const flag = await this.$confirm(
         i18n.t('packages_business_external_storage_list_querenshanchuwai'),
       )
@@ -317,7 +319,7 @@ export default {
         if (this.usingTasks?.length) {
           this.showUsingTaskDialog = true
         } else {
-          await externalStorageApi.delete(row.id)
+          await changeExternalStorage(row.id)
           this.table.fetch()
         }
       }

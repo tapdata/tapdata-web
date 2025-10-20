@@ -150,11 +150,11 @@ export function setPageTitle(title) {
   window.document.title = makePageTitle(title)
 }
 
-const SPECIAL_CHARS_REGEXP = /([\:\-\_]+(.))/g
+const SPECIAL_CHARS_REGEXP = /([:\-_]+(.))/g
 const MOZ_HACK_REGEXP = /^moz([A-Z])/
 const camelCase = (name) => {
   return name
-    .replace(SPECIAL_CHARS_REGEXP, function (_, separator, letter, offset) {
+    .replaceAll(SPECIAL_CHARS_REGEXP, function (_, separator, letter, offset) {
       return offset ? letter.toUpperCase() : letter
     })
     .replace(MOZ_HACK_REGEXP, 'Moz$1')
@@ -169,17 +169,21 @@ export const getStyle = (element, styleName) => {
   try {
     const computed = document.defaultView.getComputedStyle(element, '')
     return element.style[styleName] || computed ? computed[styleName] : null
-  } catch (e) {
+  } catch {
     return element.style[styleName]
   }
 }
 
 export function checkEllipsisActive(dom) {
-  const padding = (parseInt(getStyle(dom, 'paddingLeft'), 10) || 0) + (parseInt(getStyle(dom, 'paddingRight'), 10) || 0)
+  const padding =
+    (Number.parseInt(getStyle(dom, 'paddingLeft'), 10) || 0) +
+    (Number.parseInt(getStyle(dom, 'paddingRight'), 10) || 0)
   const range = document.createRange()
   range.setStart(dom, 0)
   range.setEnd(dom, dom.childNodes.length)
   const rangeWidth = range.getBoundingClientRect().width
 
-  return rangeWidth + padding > dom.offsetWidth || dom.scrollWidth > dom.offsetWidth
+  return (
+    rangeWidth + padding > dom.offsetWidth || dom.scrollWidth > dom.offsetWidth
+  )
 }

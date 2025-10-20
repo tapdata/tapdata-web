@@ -1,7 +1,8 @@
 <script>
 import { createForm } from '@formily/core'
 import { action } from '@formily/reactive'
-import { getAlarmChannels, taskApi } from '@tap/api'
+import { getAlarmChannels } from '@tap/api/src/core/alarm'
+import { checkCloudTaskLimit } from '@tap/api/src/core/task'
 import i18n from '@tap/i18n'
 import { debounce } from 'lodash-es'
 import { defineComponent, ref } from 'vue'
@@ -24,7 +25,7 @@ export default defineComponent({
       'packages_dag_task_form_error_can_not_open_crontab_expression_flag',
     )
     const handleCheckCrontabExpressionFlag = debounce(function (resolve) {
-      taskApi.checkCheckCloudTaskLimit(props.task.id).then((data) => {
+      checkCloudTaskLimit(props.task.id).then((data) => {
         resolve(data)
       })
     }, 500)

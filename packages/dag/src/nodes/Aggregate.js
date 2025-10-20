@@ -32,7 +32,8 @@ export class Aggregate extends NodeType {
         'x-reactions': [
           '{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, fieldName: "value", withoutField: true}, $values.$inputs[0])}}',
           {
-            target: '*(aggregations.*.aggExpression,aggregations.*.groupByExpression)',
+            target:
+              '*(aggregations.*.aggExpression,aggregations.*.groupByExpression)',
             fulfill: {
               state: {
                 dataSource: '{{$self.value}}',
@@ -138,7 +139,8 @@ export class Aggregate extends NodeType {
           {
             fulfill: {
               state: {
-                value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}',
+                value:
+                  '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}',
               },
             },
           },

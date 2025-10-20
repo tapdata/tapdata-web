@@ -1,14 +1,17 @@
 <script lang="tsx">
-import { defineComponent, h } from 'vue'
-import { useResizeObserver } from '@vueuse/core'
-import { debounce } from 'lodash-es'
-import { metadataInstancesApi, ldpApi, CancelToken, fetchConnections } from '@tap/api'
+import { fetchConnections } from '@tap/api/src/core/connections'
+import { searchLDPSources } from '@tap/api/src/core/ldp'
+import { getTablesValue } from '@tap/api/src/core/metadata-instances'
+import { CancelToken } from '@tap/api/src/request'
+import StageButton from '@tap/business/src/components/StageButton.vue'
+import { makeDragNodeImage } from '@tap/business/src/shared'
+import { VEmpty } from '@tap/component/src/base/v-empty'
 import { IconButton } from '@tap/component/src/icon-button'
-import {VEmpty} from '@tap/component/src/base/v-empty'
 import VirtualTree from '@tap/component/src/virtual-tree'
 import NodeIcon from '@tap/dag/src/components/NodeIcon.vue'
-import { makeDragNodeImage } from '@tap/business/src/shared'
-import StageButton from '@tap/business/src/components/StageButton.vue'
+import { useResizeObserver } from '@vueuse/core'
+import { debounce } from 'lodash-es'
+import { defineComponent, h } from 'vue'
 import commonMix from './mixins/common'
 
 const NodeContent = defineComponent(
@@ -26,14 +29,21 @@ const NodeContent = defineComponent(
 
 export default defineComponent({
   name: 'Source',
+  components: {
+    NodeIcon,
+    VirtualTree,
+    StageButton,
+    IconButton,
+    VEmpty,
+    NodeContent,
+  },
+  mixins: [commonMix],
   props: {
     dragState: Object,
     eventDriver: Object,
     fdmAndMdmId: Array,
     showParentLineage: Boolean,
   },
-  components: { NodeIcon, VirtualTree, StageButton, IconButton, VEmpty, NodeContent },
-  mixins: [commonMix],
   data() {
     return {
       keyword: '',
@@ -111,7 +121,7 @@ export default defineComponent({
       this.cancelSource?.cancel()
       this.cancelSource = CancelToken.source()
       this.searchIng = true
-      const result = await ldpApi.searchSources(
+      const result = await searchLDPSources(
         {
           key: search,
           connectionType: ['source', 'source_and_target'].join(','),
@@ -143,15 +153,13 @@ export default defineComponent({
             LDP_TYPE: 'table',
           })
           tableMap[conId] = children
-        } else if (item.type === 'connection') {
-          if (!children) tableMap[conId] = []
-        }
+        } else if (item.type === 'connection' && !children) tableMap[conId] = []
       })
 
       Object.keys(tableMap).forEach((conId) => {
         const connection = this.connectionMap[conId]
         if (connection) {
-          let children = tableMap[conId]
+          const children = tableMap[conId]
 
           if (!firstExpand && children.length) {
             firstExpand = conId
@@ -171,7 +179,8 @@ export default defineComponent({
   },
   mounted() {
     useResizeObserver(this.$refs.treeContainer, () => {
-      this.treeHeight = this.$refs.treeContainer.getBoundingClientRect().height - 8
+      this.treeHeight =
+        this.$refs.treeContainer.getBoundingClientRect().height - 8
     })
   },
   beforeUnmount() {
@@ -182,7 +191,7 @@ export default defineComponent({
   methods: {
     renderContent(h, { node, data }) {
       console.log('renderContent', data)
-      let className = ['custom-tree-node']
+      const className = ['custom-tree-node']
 
       if (data.isObject) {
         className.push('grabbable')
@@ -202,7 +211,11 @@ export default defineComponent({
           }}
         >
           <div
-            id={data.isObject ? `ldp_source_table_${data.connectionId}_${data.name}` : `connection_${data.id}`}
+            id={
+              data.isObject
+                ? `ldp_source_table_${data.connectionId}_${data.name}`
+                : `connection_${data.id}`
+            }
             class="inline-flex align-items-center overflow-hidden"
           >
             {!data.isObject ? (
@@ -215,7 +228,11 @@ export default defineComponent({
             <span class="table-label" title={data.name}>
               {data.name}
             </span>
-            {data.disabled && <ElTag disable-transitions type="info">{this.$t('public_status_invalid')}</ElTag>}
+            {data.disabled && (
+              <ElTag disable-transitions type="info">
+                {this.$t('public_status_invalid')}
+              </ElTag>
+            )}
             <IconButton
               class="btn-menu"
               sm
@@ -248,7 +265,11 @@ export default defineComponent({
           }}
         >
           {schemaLoading && (
-            <VIcon class="v-icon animation-rotate" size="14" color="rgb(61, 156, 64)">
+            <VIcon
+              class="v-icon animation-rotate"
+              size="14"
+              color="rgb(61, 156, 64)"
+            >
               loading-circle
             </VIcon>
           )}
@@ -272,7 +293,9 @@ export default defineComponent({
 
           <span class="table-label" title={data.name}>
             {data.name}
-            {data.comment && <span class="font-color-sslight">{`(${data.comment})`}</span>}
+            {data.comment && (
+              <span class="font-color-sslight">{`(${data.comment})`}</span>
+            )}
             {data.disabled && (
               <ElTag disable-transitions type="info" class="ml-2">
                 {this.$t('public_status_invalid')}
@@ -312,7 +335,7 @@ export default defineComponent({
     },
 
     async getConnectionList() {
-      let filter = {
+      const filter = {
         limit: 999,
         order: 'createTime DESC',
         where: {
@@ -352,7 +375,9 @@ export default defineComponent({
       const disabled = status !== 'ready'
       return {
         ...connection,
-        progress: !tableCount ? 0 : Math.round((loadCount / tableCount) * 10000) / 100,
+        progress: !tableCount
+          ? 0
+          : Math.round((loadCount / tableCount) * 10000) / 100,
         children: [],
         isLeaf: false,
         disabled,
@@ -362,7 +387,7 @@ export default defineComponent({
     },
 
     async getTableList(id) {
-      const res = await metadataInstancesApi.getTablesValue({
+      const res = await getTablesValue({
         connectionId: id,
       })
       const data = res.map((t) => {
@@ -397,7 +422,7 @@ export default defineComponent({
 
     filterNode(value, data) {
       if (!value) return true
-      return data.name.indexOf(value) !== -1
+      return data.name.includes(value)
     },
 
     handleDragStart(draggingNode, ev) {
@@ -482,7 +507,9 @@ export default defineComponent({
     },
 
     handleFindTreeDom(val = {}) {
-      const el = document.getElementById(`ldp_source_table_${val.connectionId}_${val.table}`)
+      const el = document.getElementById(
+        `ldp_source_table_${val.connectionId}_${val.table}`,
+      )
       return this.findParentByClassName(el, 'el-tree-node__content')
     },
 
@@ -491,7 +518,7 @@ export default defineComponent({
     }, 200),
 
     async searchByKeywordList(val = []) {
-      let searchExpandedKeys = []
+      const searchExpandedKeys = []
       this.filterTreeData = val.map((t) => {
         searchExpandedKeys.push(t.connectionId)
         return {
@@ -526,10 +553,20 @@ export default defineComponent({
 <template>
   <div class="list__item flex flex-column flex-1 overflow-hidden">
     <div class="list__title list__title__source flex align-center px-4">
-      <span class="fs-6">{{ $t('packages_business_data_console_sources') }}</span>
-      <div class="flex-grow-1"></div>
-      <IconButton :disabled="highlightBoard" id="btn-add-source" @click="handleAdd">add</IconButton>
-      <IconButton :disabled="highlightBoard" :class="{ active: enableSearch }" @click="toggleEnableSearch"
+      <span class="fs-6">{{
+        $t('packages_business_data_console_sources')
+      }}</span>
+      <div class="flex-grow-1" />
+      <IconButton
+        id="btn-add-source"
+        :disabled="highlightBoard"
+        @click="handleAdd"
+        >add</IconButton
+      >
+      <IconButton
+        :disabled="highlightBoard"
+        :class="{ active: enableSearch }"
+        @click="toggleEnableSearch"
         >search-outline
       </IconButton>
       <!--<IconButton>more</IconButton>-->
@@ -553,14 +590,14 @@ export default defineComponent({
       </div>
       <div
         v-if="!showParentLineage"
-        class="flex-fill min-h-0 p-1"
-        v-loading="loading || searchIng"
         ref="treeContainer"
+        v-loading="loading || searchIng"
+        class="flex-fill min-h-0 p-1"
       >
         <VirtualTree
           v-if="showSearch"
-          class="ldp-tree h-100"
           ref="tree"
+          class="ldp-tree h-100"
           :indent="0"
           :keeps="60"
           node-key="id"
@@ -595,27 +632,39 @@ export default defineComponent({
                 color="rgb(61, 156, 64)"
                 >loading-circle</VIcon
               >
-              <NodeIcon v-if="!node.data.isLeaf" :node="node.data" :size="18" class="tree-item-icon mr-2" />
-              <div v-else-if="node.data.isEmpty" class="flex align-items-center">
+              <NodeIcon
+                v-if="!node.data.isLeaf"
+                :node="node.data"
+                :size="18"
+                class="tree-item-icon mr-2"
+              />
+              <div
+                v-else-if="node.data.isEmpty"
+                class="flex align-items-center"
+              >
                 <span class="mr-1">{{ $t('public_data_no_data') }}</span>
-                <StageButton :connection-id="getConnectionId(node)"> </StageButton>
+                <StageButton :connection-id="getConnectionId(node)" />
               </div>
               <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
               <span class="table-label" :title="data.name">
                 {{ data.name }}
-                <span v-if="data.comment" class="font-color-sslight">{{ `(${data.comment})` }}</span>
-                <ElTag v-if="data.disabled" disable-transitions type="info">{{ $t('public_status_invalid') }}</ElTag>
+                <span v-if="data.comment" class="font-color-sslight">{{
+                  `(${data.comment})`
+                }}</span>
+                <ElTag v-if="data.disabled" disable-transitions type="info">{{
+                  $t('public_status_invalid')
+                }}</ElTag>
               </span>
             </span>
           </template>
         </VirtualTree>
         <template v-else>
           <VirtualTree
-            key="tree"
             v-show="treeData.length > 0"
+            key="tree"
+            ref="tree"
             class="ldp-tree h-100"
             empty-text=""
-            ref="tree"
             :height="treeHeight"
             :item-size="32"
             :indent="0"
@@ -654,30 +703,47 @@ export default defineComponent({
                   color="rgb(61, 156, 64)"
                   >loading-circle</VIcon
                 >
-                <NodeIcon v-if="!node.data.isLeaf" :node="node.data" :size="18" class="tree-item-icon mr-2" />
-                <div v-else-if="node.data.isEmpty" class="flex align-items-center">
+                <NodeIcon
+                  v-if="!node.data.isLeaf"
+                  :node="node.data"
+                  :size="18"
+                  class="tree-item-icon mr-2"
+                />
+                <div
+                  v-else-if="node.data.isEmpty"
+                  class="flex align-items-center"
+                >
                   <span class="mr-1">{{ $t('public_data_no_data') }}</span>
-                  <StageButton :connection-id="getConnectionId(node)"> </StageButton>
+                  <StageButton :connection-id="getConnectionId(node)" />
                 </div>
-                <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
+                <VIcon v-else class="tree-item-icon mr-2" size="18"
+                  >table</VIcon
+                >
                 <span class="table-label" :title="data.name">
                   {{ data.name }}
-                  <span v-if="data.comment" class="font-color-sslight">{{ `(${data.comment})` }}</span>
-                  <ElTag v-if="data.disabled" disable-transitions type="info">{{ $t('public_status_invalid') }}</ElTag>
+                  <span v-if="data.comment" class="font-color-sslight">{{
+                    `(${data.comment})`
+                  }}</span>
+                  <ElTag v-if="data.disabled" disable-transitions type="info">{{
+                    $t('public_status_invalid')
+                  }}</ElTag>
                 </span>
               </span>
             </template>
           </VirtualTree>
-          <div v-if="!treeData.length" class="h-100 flex align-center justify-center">
-            <VEmpty :description="$t('packages_ldp_source_empty_text')"></VEmpty>
+          <div
+            v-if="!treeData.length"
+            class="h-100 flex align-center justify-center"
+          >
+            <VEmpty :description="$t('packages_ldp_source_empty_text')" />
           </div>
         </template>
       </div>
-      <div v-else class="flex-fill min-h-0" v-loading="loading || searchIng">
+      <div v-else v-loading="loading || searchIng" class="flex-fill min-h-0">
         <VirtualTree
           key="searchTree"
-          class="ldp-tree h-100"
           ref="tree"
+          class="ldp-tree h-100"
           node-key="id"
           :props="props"
           :keeps="60"
@@ -694,8 +760,7 @@ export default defineComponent({
           @node-drag-end="handleDragEnd"
           @node-expand="handleNodeExpand"
           @handle-scroll="handleScroll"
-        >
-        </VirtualTree>
+        />
       </div>
     </div>
   </div>

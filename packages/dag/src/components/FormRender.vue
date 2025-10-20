@@ -1,5 +1,6 @@
 <script>
-import { components, createSchemaField, Form } from '@tap/form'
+import * as components from '@tap/form/src/components'
+import { createSchemaField } from '@tap/form/src/shared/create'
 import * as _components from '../components/form'
 
 const { SchemaField } = createSchemaField({
@@ -12,7 +13,8 @@ const { SchemaField } = createSchemaField({
 export default {
   name: 'FormRender',
 
-  components: { Form, SchemaField },
+  // eslint-disable-next-line vue/no-reserved-component-names
+  components: { Form: components.Form, SchemaField },
 
   props: {
     form: Object,

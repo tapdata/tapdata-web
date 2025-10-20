@@ -1,17 +1,17 @@
-import { each } from '@tap/shared'
 import { Path } from '@formily/path'
 import { observable } from '@formily/reactive'
-import { mergeLocales, lowerSnake, getBrowserLanguage } from './internals'
+import { each } from '@tap/shared'
 import { isBehaviorHost, isBehaviorList } from './externals'
+import { getBrowserLanguage, lowerSnake, mergeLocales } from './internals'
 
 const getISOCode = (language) => {
   let isoCode = DESIGNER_LANGUAGE_STORE.value
-  let lang = lowerSnake(language)
+  const lang = lowerSnake(language)
   if (DESIGNER_LOCALES_STORE.value[lang]) {
     return lang
   }
   each(DESIGNER_LOCALES_STORE.value, (_, key) => {
-    if (key.indexOf(lang) > -1 || String(lang).indexOf(key) > -1) {
+    if (key.includes(lang) || String(lang).includes(key)) {
       isoCode = key
       return false
     }
@@ -22,10 +22,10 @@ const getISOCode = (language) => {
 const reSortBehaviors = (target, sources) => {
   const findTargetBehavior = (behavior) => target.includes(behavior)
   const findSourceBehavior = (name) => {
-    for (let key in sources) {
+    for (const key in sources) {
       const { Behavior } = sources[key]
-      for (let i = 0; i < Behavior.length; i++) {
-        if (Behavior[i].name === name) return Behavior[i]
+      for (const element of Behavior) {
+        if (element.name === name) return element
       }
     }
   }
@@ -38,7 +38,8 @@ const reSortBehaviors = (target, sources) => {
       const name = behavior.name
       each(behavior.extends, (dep) => {
         const behavior = findSourceBehavior(dep)
-        if (!behavior) throw new Error(`No ${dep} behavior that ${name} depends on`)
+        if (!behavior)
+          throw new Error(`No ${dep} behavior that ${name} depends on`)
         if (!findTargetBehavior(behavior)) {
           target.unshift(behavior)
         }
@@ -73,7 +74,9 @@ const DESIGNER_GlobalRegistry = {
   },
 
   getDesignerBehaviors: (node) => {
-    return DESIGNER_BEHAVIORS_STORE.value.filter((pattern) => pattern.selector(node))
+    return DESIGNER_BEHAVIORS_STORE.value.filter((pattern) =>
+      pattern.selector(node),
+    )
   },
 
   getDesignerIcon: (name) => {
@@ -88,8 +91,11 @@ const DESIGNER_GlobalRegistry = {
     const lang = getISOCode(DESIGNER_LANGUAGE_STORE.value)
     const locale = locales ? locales[lang] : DESIGNER_LOCALES_STORE.value[lang]
     if (!locale) {
-      for (let key in DESIGNER_LOCALES_STORE.value) {
-        const message = Path.getIn(DESIGNER_LOCALES_STORE.value[key], lowerSnake(token))
+      for (const key in DESIGNER_LOCALES_STORE.value) {
+        const message = Path.getIn(
+          DESIGNER_LOCALES_STORE.value[key],
+          lowerSnake(token),
+        )
         if (message) return message
       }
       return

@@ -1,5 +1,5 @@
-import Http from './Http'
 import { isPlainObj } from '@tap/shared'
+import Http from './Http'
 export default class Discovery extends Http {
   constructor() {
     super('/api/discovery')

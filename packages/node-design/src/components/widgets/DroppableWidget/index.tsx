@@ -1,9 +1,9 @@
 import { observer } from '@formily/reactive-vue'
-import { useTreeNode, useNodeIdProps } from '../../../hooks'
-import { NodeTitleWidget } from '../NodeTitleWidget'
-import { NodeActionsWidget } from '../NodeActionsWidget'
-import './styles.scss'
 import { defineComponent, toRefs } from 'vue'
+import { useNodeIdProps, useTreeNode } from '../../../hooks'
+import { NodeActionsWidget } from '../NodeActionsWidget'
+import { NodeTitleWidget } from '../NodeTitleWidget'
+import './styles.scss'
 
 export const DroppableWidget = observer(
   defineComponent({
@@ -27,7 +27,10 @@ export const DroppableWidget = observer(
           {hasChildren ? (
             slots.default?.()
           ) : showPlaceholder.value ? (
-            <div style={{ height: height.value + 'px' }} class="dn-droppable-placeholder">
+            <div
+              style={{ height: `${height.value}px` }}
+              class="dn-droppable-placeholder"
+            >
               <NodeTitleWidget node={target} />
             </div>
           ) : (

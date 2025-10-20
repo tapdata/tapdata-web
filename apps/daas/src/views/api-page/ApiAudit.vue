@@ -1,6 +1,10 @@
 <script>
 import { CircleCloseFilled, SuccessFilled } from '@element-plus/icons-vue'
-import { fetchAllMethods, fetchAllResponseCodes, fetchApiCalls } from '@tap/api'
+import {
+  fetchAllMethods,
+  fetchAllResponseCodes,
+  fetchApiCalls,
+} from '@tap/api/src/core/api-calls'
 import TablePage from '@tap/business/src/components/TablePage.vue'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import dayjs from 'dayjs'
@@ -65,7 +69,8 @@ export default {
     // 获取数据
     getData({ page }) {
       const { current, size } = page
-      const { method, code, start, end, clientName, keyword } = this.searchParams
+      const { method, code, start, end, clientName, keyword } =
+        this.searchParams
       const where = {}
       if (method) {
         where.method = method
@@ -191,7 +196,11 @@ export default {
           />
         </div>
       </template>
-      <el-table-column prop="apiId" label="API ID" :show-overflow-tooltip="true" />
+      <el-table-column
+        prop="apiId"
+        label="API ID"
+        :show-overflow-tooltip="true"
+      />
       <el-table-column prop="name" :label="$t('apiaudit_name')" />
       <el-table-column
         prop="method"

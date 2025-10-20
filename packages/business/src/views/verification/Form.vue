@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import { fetchDatabaseTypes, inspectApi, taskApi, useRequest } from '@tap/api'
+import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
+import {
+  findOneInspect,
+  getTaskList,
+  patchInspect,
+  postInspect,
+} from '@tap/api/src/core/inspects'
+import { getTaskById } from '@tap/api/src/core/task'
+import { useRequest } from '@tap/api/src/request'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 import Time from '@tap/shared/src/time.js'
@@ -309,7 +317,7 @@ const {
   run: runFetchTaskOptions,
 } = useRequest<[]>(
   () => {
-    return inspectApi.getTaskList()
+    return getTaskList()
   },
   {
     manual: true,
@@ -317,44 +325,9 @@ const {
   },
 )
 
-// const getTaskOptions = async (filter: any) => {
-//   let data
-
-//   if (filter.where?.id) {
-//     return {
-//       items: [
-//         {
-//           id: filter.where.id,
-//           name: taskName.value,
-//         },
-//       ],
-//       total: 1,
-//     }
-//   }
-
-//   if (!taskOptionCache.value) {
-//     taskOptionCache.value = await inspectApi.getTaskList()
-//   }
-
-//   data = taskOptionCache.value || []
-
-//   let query = filter?.where?.name
-//   query = typeof query === 'object' ? query.like : query
-//   if (query) {
-//     query = query.toLowerCase()
-//     const reg = new RegExp(query, 'i')
-//     data = data.filter((item) => reg.test(item.name))
-//   }
-
-//   return {
-//     items: data,
-//     total: data.length,
-//   }
-// }
-
 const getData = async (id: string) => {
   try {
-    const data = await inspectApi.findOne({
+    const data = await findOneInspect({
       filter: JSON.stringify({
         where: {
           id,
@@ -413,7 +386,7 @@ const getFlowStages = async (id: string, cb?: () => void) => {
   loading.value = true
   try {
     id = id || form.flowId
-    const data = await taskApi.getId(id)
+    const data = await getTaskById(id)
     loading.value = false
     applyTask(data, cb)
   } catch {
@@ -535,7 +508,7 @@ const save = async (saveOnly = false) => {
         alarmSettingsKeys.includes(t.key),
       )
 
-      await inspectApi[form.id ? 'patch' : 'post'](
+      await (form.id ? patchInspect : postInspect)(
         Object.assign({}, form, {
           fullMatchKeep: form.keep,
           status: saveOnly ? 'waiting' : 'scheduling',

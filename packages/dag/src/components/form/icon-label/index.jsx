@@ -1,6 +1,6 @@
-import { defineComponent } from 'vue'
 import { observer } from '@formily/reactive-vue'
-import { FormItem, useForm } from '@tap/form'
+import { useForm } from '@tap/form'
+import { defineComponent } from 'vue'
 
 export const IconLabel = observer(
   defineComponent({
@@ -19,7 +19,11 @@ export const IconLabel = observer(
         )
 
         return (
-          <FormItem.BaseItem class="js-editor-form-item" label={label} attrs={attrs}>
+          <FormItem.BaseItem
+            class="js-editor-form-item"
+            label={label}
+            attrs={attrs}
+          >
             {slots.default?.()}
           </FormItem.BaseItem>
         )

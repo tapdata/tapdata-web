@@ -3,7 +3,7 @@ import {
   checkCustomNodeUsed,
   deleteCustomNode,
   fetchCustomNodes,
-} from '@tap/api'
+} from '@tap/api/src/core/custom-node'
 import { FilterBar } from '@tap/component/src/filter-bar'
 import dayjs from 'dayjs'
 import PageContainer from '../../components/PageContainer.vue'

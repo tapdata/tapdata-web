@@ -2,7 +2,7 @@ import { action } from '@formily/reactive'
 import {
   getCompareResultStatistics,
   type CompareResultStatistics,
-} from '@tap/api'
+} from '@tap/api/src/core/metadata-instances'
 import { dayjs } from '@tap/business/src/shared/dayjs'
 import { useForm } from '@tap/form'
 import { useI18n } from '@tap/i18n'

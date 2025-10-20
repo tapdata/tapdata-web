@@ -5,19 +5,19 @@ export default class Measurement extends Http {
     super('/api/measurement')
   }
   query(params) {
-    return this.axios.post(this.url + '/query', params)
+    return this.axios.post(`${this.url}/query`, params)
   }
   queryTransmitTotal() {
-    return this.axios.get(this.url + '/queryTransmitTotal')
+    return this.axios.get(`${this.url}/queryTransmitTotal`)
   }
   queryV2(params) {
-    return this.axios.post(this.url + '/query/v2', params)
+    return this.axios.post(`${this.url}/query/v2`, params)
   }
   batch(params) {
-    return this.axios.post(this.url + '/batch', params)
+    return this.axios.post(`${this.url}/batch`, params)
   }
   fullStatistics(params) {
-    return this.axios.get(this.url + '/full_statistics', { params })
+    return this.axios.get(`${this.url}/full_statistics`, { params })
   }
 }
 export { Measurement }

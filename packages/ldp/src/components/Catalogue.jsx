@@ -1,12 +1,9 @@
-import { defineComponent, reactive, ref, nextTick } from 'vue'
-import i18n from '@tap/i18n'
-import { DatabaseIcon } from '@tap/business/src/components/DatabaseIcon'
-import ApiPreview from '@tap/business/src/views/data-server/Drawer.vue'
+import { fetchApiServers } from '@tap/api/src/core/api-server'
+import { fetchApiModule } from '@tap/api/src/core/modules'
 import { makeDragNodeImage } from '@tap/business/src/shared'
-import TablePreview from '../TablePreview'
-import ClassificationTree from './ClassificationTree'
 import resize from '@tap/component/src/directives/resize'
-import { fetchApiServers, fetchApiModule } from '@tap/api'
+import i18n from '@tap/i18n'
+import { defineComponent, nextTick, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import './index.scss'
 
@@ -47,7 +44,7 @@ export default defineComponent({
     const apiServerHost = ref('')
 
     const matchParent = (node) => {
-      let arr = [node]
+      const arr = [node]
       node = node.parent
 
       while (node && node.level > 0) {
@@ -83,7 +80,9 @@ export default defineComponent({
 
     const getApiServerHost = async () => {
       const showError = () => {
-        ElMessage.error(this.$t('packages_business_data_server_list_huoqufuwuyu'))
+        ElMessage.error(
+          this.$t('packages_business_data_server_list_huoqufuwuyu'),
+        )
       }
       const data = await fetchApiServers().catch(() => {
         showError()
@@ -115,10 +114,10 @@ export default defineComponent({
     const handleDragStart = (row, column, ev) => {
       dragState.isDragging = true
       console.log('nodeDragStart', row, column, event) // eslint-disable-line
-      let draggingRow = [row]
+      const draggingRow = [row]
 
       if (row.id in multipleSelectionMap.value) {
-        let selectionRows = Object.values(multipleSelectionMap.value)
+        const selectionRows = Object.values(multipleSelectionMap.value)
         draggingRow.length = selectionRows.length
         dragState.draggingObjects = selectionRows
       } else {
@@ -137,7 +136,7 @@ export default defineComponent({
       dragState.isDragging = false
       dragState.draggingObjects = []
       dragState.dropNode = null
-      document.body.removeChild(draggingNodeImage)
+      draggingNodeImage.remove()
       draggingNodeImage = null
     }
 
@@ -184,7 +183,7 @@ export default defineComponent({
             <div class="p-3">
               <div class="path-breadcrumb flex align-center">
                 {pathMatch.value.map((node, i) => {
-                  let notLast = i < pathMatch.value.length - 1
+                  const notLast = i < pathMatch.value.length - 1
                   return (
                     <div class="path-breadcrumb-item flex align-center">
                       <div
@@ -196,7 +195,10 @@ export default defineComponent({
                         {node.data.name}
                       </div>
                       {notLast && (
-                        <VIcon size={24} class="path-breadcrumb-item__separator ml-1">
+                        <VIcon
+                          size={24}
+                          class="path-breadcrumb-item__separator ml-1"
+                        >
                           arrow-right
                         </VIcon>
                       )}
@@ -218,18 +220,33 @@ export default defineComponent({
                 onRowDragend={handleDragEnd}
                 onSelectionChange={handleSelectionChange}
               >
-                <el-table-column type="selection" width="32" align="center" class-name="ck-cell-wrap"></el-table-column>
-                <el-table-column label={i18n.t('public_name')} prop="name" show-overflow-tooltip width="350px">
+                <el-table-column
+                  type="selection"
+                  width="32"
+                  align="center"
+                  class-name="ck-cell-wrap"
+                ></el-table-column>
+                <el-table-column
+                  label={i18n.t('public_name')}
+                  prop="name"
+                  show-overflow-tooltip
+                  width="350px"
+                >
                   {({ row }) => {
                     return (
                       <div class="cursor-pointer flex align-center">
-                        <div class="tree-item-icon flex align-center mr-2">{renderIcon(row)}</div>
+                        <div class="tree-item-icon flex align-center mr-2">
+                          {renderIcon(row)}
+                        </div>
                         <span>{row.name}</span>
                       </div>
                     )
                   }}
                 </el-table-column>
-                <el-table-column label={i18n.t('public_change_time')} prop="changeTime"></el-table-column>
+                <el-table-column
+                  label={i18n.t('public_change_time')}
+                  prop="changeTime"
+                ></el-table-column>
               </el-table>
 
               {options.isShowDetails && (

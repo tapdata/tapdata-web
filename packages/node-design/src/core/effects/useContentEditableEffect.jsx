@@ -1,6 +1,6 @@
-import { requestIdle } from '@tap/shared'
 import { Path } from '@formily/path'
-import { MouseDoubleClickEvent, MouseClickEvent } from '../events'
+import { requestIdle } from '@tap/shared'
+import { MouseClickEvent, MouseDoubleClickEvent } from '../events'
 
 function getAllRanges(sel) {
   const ranges = []
@@ -68,7 +68,11 @@ export const useContentEditableEffect = (engine) => {
         globalState.queue.length = 0
         if (globalState.isComposition) return
         const restore = createCaretCache(target)
-        Path.setIn(node.props, this.getAttribute(engine.props.contentEditableAttrName), target?.textContent)
+        Path.setIn(
+          node.props,
+          this.getAttribute(engine.props.contentEditableAttrName),
+          target?.textContent,
+        )
         requestIdle(() => {
           node.takeSnapshot('update:node:props')
           restore()
@@ -82,7 +86,7 @@ export const useContentEditableEffect = (engine) => {
 
   function onSelectionChangeHandler() {
     clearTimeout(globalState.requestTimer)
-    globalState.requestTimer = setTimeout(globalState.queue[globalState.queue.length - 1], 600)
+    globalState.requestTimer = setTimeout(globalState.queue.at(-1), 600)
   }
 
   function onCompositionHandler(event) {
@@ -103,7 +107,9 @@ export const useContentEditableEffect = (engine) => {
 
   function findTargetNodeId(element) {
     if (!element) return
-    const nodeId = element.getAttribute(engine.props.contentEditableNodeIdAttrName)
+    const nodeId = element.getAttribute(
+      engine.props.contentEditableNodeIdAttrName,
+    )
     if (nodeId) return nodeId
     const parent = element.closest(`*[${engine.props.nodeIdAttrName}]`)
     if (parent) return parent.getAttribute(engine.props.nodeIdAttrName)
@@ -111,8 +117,14 @@ export const useContentEditableEffect = (engine) => {
 
   engine.subscribeTo(MouseClickEvent, (event) => {
     const target = event.data.target
-    const editableElement = target?.closest?.(`*[${engine.props.contentEditableAttrName}]`)
-    if (editableElement && editableElement.getAttribute('contenteditable') === 'true') return
+    const editableElement = target?.closest?.(
+      `*[${engine.props.contentEditableAttrName}]`,
+    )
+    if (
+      editableElement &&
+      editableElement.getAttribute('contenteditable') === 'true'
+    )
+      return
     globalState.activeElements.forEach((node, element) => {
       globalState.activeElements.delete(element)
       element.removeAttribute('contenteditable')
@@ -128,7 +140,9 @@ export const useContentEditableEffect = (engine) => {
 
   engine.subscribeTo(MouseDoubleClickEvent, (event) => {
     const target = event.data.target
-    const editableElement = target?.closest?.(`*[${engine.props.contentEditableAttrName}]`)
+    const editableElement = target?.closest?.(
+      `*[${engine.props.contentEditableAttrName}]`,
+    )
     const workspace = engine.workbench.activeWorkspace
     const tree = workspace.operation.tree
     if (editableElement) {
@@ -143,12 +157,24 @@ export const useContentEditableEffect = (engine) => {
             editableElement.setAttribute('contenteditable', 'true')
             editableElement.focus()
             editableElement.addEventListener('input', onInputHandler)
-            editableElement.addEventListener('compositionstart', onCompositionHandler)
-            editableElement.addEventListener('compositionupdate', onCompositionHandler)
-            editableElement.addEventListener('compositionend', onCompositionHandler)
+            editableElement.addEventListener(
+              'compositionstart',
+              onCompositionHandler,
+            )
+            editableElement.addEventListener(
+              'compositionupdate',
+              onCompositionHandler,
+            )
+            editableElement.addEventListener(
+              'compositionend',
+              onCompositionHandler,
+            )
             editableElement.addEventListener('keydown', onKeyDownHandler)
             editableElement.addEventListener('paste', onPastHandler)
-            document.addEventListener('selectionchange', onSelectionChangeHandler)
+            document.addEventListener(
+              'selectionchange',
+              onSelectionChangeHandler,
+            )
             setEndOfContenteditable(editableElement)
           }
         }

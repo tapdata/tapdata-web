@@ -1,6 +1,144 @@
+<script>
+import { mapGetters } from 'vuex'
+import TheHeader from '@/components/layout/Header.vue'
+
+import i18n from '@/i18n'
+
+export default {
+  name: 'UpgradeVersion',
+  components: { TheHeader },
+  data() {
+    return {
+      downLoadType: 'Linux',
+      downType: [
+        { name: 'Linux (64 bit)', value: 'Linux' },
+        { name: 'Docker', value: 'Docker' },
+        { name: 'Windows (64 bit)', value: 'windows' },
+        {
+          name: i18n.t('dfs_agent_download_agentdownloadmodal_aliyunjisuan'),
+          value: 'AliComputenest',
+        },
+      ],
+      showTooltip: false,
+      agentId: '',
+      downloadUrl: '',
+      token: '',
+      version: '',
+      // user: window.__USER_INFO__ || {}
+    }
+  },
+  computed: {
+    ...mapGetters(['isDomesticStation']),
+    comUrl() {
+      const { token } = this
+      const downloadUrl = `${(this.downloadUrl || '').replace(/\/$/, '')}/` // 去掉末尾的/
+      const map = {
+        windows: `tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
+        Linux: `./tapdata stop agent && rm -f tapdata-bak && mv tapdata tapdata-bak && rm -f .tapdata-agent && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
+        AliComputenest: `./tapdata stop agent && rm -f tapdata-bak && mv tapdata tapdata-bak && rm -f .tapdata-agent && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
+        Docker: `./tapdata stop agent && rm -f tapdata-bak && mv tapdata tapdata-bak && rm -f .tapdata-agent && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
+      }
+      return map[this.downLoadType]
+    },
+  },
+  created() {
+    this.loadData()
+    if (!this.$store.state.config?.disabledOnlineChat) {
+      this.loadChat()
+    }
+    if (this.$store.state.config?.disabledAlibabaCloudComputingNest) {
+      this.downType = [
+        { name: 'Linux (64 bit)', value: 'Linux' },
+        { name: 'Docker', value: 'Docker' },
+        { name: 'Windows (64 bit)', value: 'windows' },
+      ]
+    }
+  },
+  methods: {
+    loadData() {
+      const agentId = this.$route.query.agentId
+      this.agentId = agentId
+      this.$axios
+        .get(`api/tcm/config/version/latest/${agentId}`)
+        .then((data) => {
+          this.token = data.token
+          this.version = data.version
+          this.$axios
+            .get(`api/tcm/productRelease/${data.version}`)
+            .then((downloadUrl) => {
+              this.downloadUrl = downloadUrl
+            })
+        })
+    },
+    // 选择下载安装类型
+    chooseDownLoadType(val) {
+      this.downLoadType = val
+    },
+    // 复制命令行
+    onCopy() {
+      this.showTooltip = true
+    },
+    goBack() {
+      this.$router.push({ name: 'Instance' })
+    },
+    // windows下载
+    handleDownLoad() {
+      // let version = this.version
+      const downloadUrl = `${(this.downloadUrl || '').replace(/\/$/, '')}/` // 去掉末尾的/
+      window.open(`${downloadUrl}tapdata.exe`, '_blank')
+      // window.location = `https://resource.tapdata.net/package/feagent/${version}/tapdata.exe`
+    },
+    //在线小助手
+    hideCustomTip() {
+      setTimeout(() => {
+        const tDom = document.querySelector('#titlediv')
+        if (tDom) {
+          tDom.style.display = 'none'
+        } else {
+          this.hideCustomTip()
+        }
+      }, 5000)
+    },
+    loadChat() {
+      const $zoho = $zoho || {}
+      const { isDomesticStation } = this
+      $zoho.salesiq = $zoho.salesiq || {
+        widgetcode: isDomesticStation
+          ? '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f'
+          : 'siqc6975654b695513072e7c944c1b63ce0561c932c06ea37e561e3a2f7fe5ae1f7',
+        values: {},
+        ready() {},
+      }
+      window.$zoho = $zoho
+      const d = document
+      const s = d.createElement('script')
+      s.type = 'text/javascript'
+      s.id = 'zsiqscript'
+      s.defer = true
+      s.src = isDomesticStation
+        ? 'https://salesiq.zoho.com.cn/widget'
+        : 'https://salesiq.zohopublic.com/widget'
+      const t = d.querySelectorAll('script')[0]
+      t.parentNode.insertBefore(s, t)
+      this.hideCustomTip()
+
+      $zoho.salesiq.ready = function () {
+        const user = window.__USER_INFO__
+        $zoho.salesiq.visitor.contactnumber(user.telephone)
+        $zoho.salesiq.visitor.info({
+          tapdata_username: user.nickname || user.username,
+          tapdata_phone: user.telephone,
+          tapdata_email: user.email,
+        })
+      }
+    },
+  },
+}
+</script>
+
 <template>
   <section class="upgrade-version">
-    <TheHeader></TheHeader>
+    <TheHeader />
     <main class="page-main block">
       <div class="title">{{ $t('agent_upgrade_title') }}</div>
       <p class="title-text pt-10">{{ $t('agent_upgrade_select_tip') }}</p>
@@ -41,9 +179,9 @@
               :visible="showTooltip"
             >
               <span
-                class="operaKey"
                 v-clipboard:copy="comUrl"
                 v-clipboard:success="onCopy"
+                class="operaKey"
                 @mouseleave="showTooltip = false"
               >
                 <i class="click-style">{{ $t('public_button_copy') }}</i>
@@ -69,9 +207,9 @@
               :visible="showTooltip"
             >
               <span
-                class="operaKey"
                 v-clipboard:copy="comUrl"
                 v-clipboard:success="onCopy"
+                class="operaKey"
                 @mouseleave="showTooltip = false"
               >
                 <i class="click-style">{{ $t('public_button_copy') }}</i>
@@ -82,7 +220,10 @@
         <div>{{ $t('agent_upgrade_step_linux_third') }}</div>
       </div>
       <!--   AliComputenest   -->
-      <div v-else-if="downLoadType === 'AliComputenest'" class="content-container">
+      <div
+        v-else-if="downLoadType === 'AliComputenest'"
+        class="content-container"
+      >
         <div class="py-2 text-style">{{ $t('agent_upgrade_step_title') }}</div>
         <div>
           {{ $t('dfs_agent_download_upgradeversion_denglualiyun') }}
@@ -90,7 +231,9 @@
             type="primary"
             href="https://computenest.console.aliyun.com/user/cn-hangzhou/serviceInstance/private"
             target="_blank"
-            >{{ $t('dfs_agent_download_upgradeversion_jisuanchaodenglu') }}</el-link
+            >{{
+              $t('dfs_agent_download_upgradeversion_jisuanchaodenglu')
+            }}</el-link
           >
         </div>
         <div class="ml-2">
@@ -116,9 +259,9 @@
               :visible="showTooltip"
             >
               <span
-                class="operaKey"
                 v-clipboard:copy="comUrl"
                 v-clipboard:success="onCopy"
+                class="operaKey"
                 @mouseleave="showTooltip = false"
               >
                 <i class="click-style">{{ $t('public_button_copy') }}</i>
@@ -167,9 +310,9 @@
               :visible="showTooltip"
             >
               <span
-                class="operaKey"
                 v-clipboard:copy="comUrl"
                 v-clipboard:success="onCopy"
+                class="operaKey"
                 @mouseleave="showTooltip = false"
               >
                 <i class="click-style">{{ $t('public_button_copy') }}</i>
@@ -181,142 +324,12 @@
       </div>
     </main>
     <footer class="footer">
-      <ElButton type="primary" @click="goBack()">{{ $t('public_status_complete') }}</ElButton>
+      <ElButton type="primary" @click="goBack()">{{
+        $t('public_status_complete')
+      }}</ElButton>
     </footer>
   </section>
 </template>
-
-<script>
-import { mapGetters } from 'vuex'
-import i18n from '@/i18n'
-
-import TheHeader from '@/components/layout/Header.vue'
-
-export default {
-  name: 'UpgradeVersion',
-  components: { TheHeader },
-  data() {
-    return {
-      downLoadType: 'Linux',
-      downType: [
-        { name: 'Linux (64 bit)', value: 'Linux' },
-        { name: 'Docker', value: 'Docker' },
-        { name: 'Windows (64 bit)', value: 'windows' },
-        {
-          name: i18n.t('dfs_agent_download_agentdownloadmodal_aliyunjisuan'),
-          value: 'AliComputenest',
-        },
-      ],
-      showTooltip: false,
-      agentId: '',
-      downloadUrl: '',
-      token: '',
-      version: '',
-      // user: window.__USER_INFO__ || {}
-    }
-  },
-  computed: {
-    ...mapGetters(['isDomesticStation']),
-    comUrl() {
-      let { token } = this
-      let downloadUrl = (this.downloadUrl || '').replace(/\/$/, '') + '/' // 去掉末尾的/
-      let map = {
-        windows: `tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
-        Linux: `./tapdata stop agent && rm -f tapdata-bak && mv tapdata tapdata-bak && rm -f .tapdata-agent && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
-        AliComputenest: `./tapdata stop agent && rm -f tapdata-bak && mv tapdata tapdata-bak && rm -f .tapdata-agent && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
-        Docker: `./tapdata stop agent && rm -f tapdata-bak && mv tapdata tapdata-bak && rm -f .tapdata-agent && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
-      }
-      return map[this.downLoadType]
-    },
-  },
-  created() {
-    this.loadData()
-    if (!this.$store.state.config?.disabledOnlineChat) {
-      this.loadChat()
-    }
-    if (this.$store.state.config?.disabledAlibabaCloudComputingNest) {
-      this.downType = [
-        { name: 'Linux (64 bit)', value: 'Linux' },
-        { name: 'Docker', value: 'Docker' },
-        { name: 'Windows (64 bit)', value: 'windows' },
-      ]
-    }
-  },
-  methods: {
-    loadData() {
-      let agentId = this.$route.query.agentId
-      this.agentId = agentId
-      this.$axios.get('api/tcm/config/version/latest/' + agentId).then((data) => {
-        this.token = data.token
-        this.version = data.version
-        this.$axios.get(`api/tcm/productRelease/${data.version}`).then((downloadUrl) => {
-          this.downloadUrl = downloadUrl
-        })
-      })
-    },
-    // 选择下载安装类型
-    chooseDownLoadType(val) {
-      this.downLoadType = val
-    },
-    // 复制命令行
-    onCopy() {
-      this.showTooltip = true
-    },
-    goBack() {
-      this.$router.push({ name: 'Instance' })
-    },
-    // windows下载
-    handleDownLoad() {
-      // let version = this.version
-      let downloadUrl = (this.downloadUrl || '').replace(/\/$/, '') + '/' // 去掉末尾的/
-      window.open(`${downloadUrl}tapdata.exe`, '_blank')
-      // window.location = `https://resource.tapdata.net/package/feagent/${version}/tapdata.exe`
-    },
-    //在线小助手
-    hideCustomTip() {
-      setTimeout(() => {
-        let tDom = document.getElementById('titlediv')
-        if (tDom) {
-          tDom.style.display = 'none'
-        } else {
-          this.hideCustomTip()
-        }
-      }, 5000)
-    },
-    loadChat() {
-      let $zoho = $zoho || {}
-      const { isDomesticStation } = this
-      $zoho.salesiq = $zoho.salesiq || {
-        widgetcode: isDomesticStation
-          ? '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f'
-          : 'siqc6975654b695513072e7c944c1b63ce0561c932c06ea37e561e3a2f7fe5ae1f7',
-        values: {},
-        ready: function () {},
-      }
-      window.$zoho = $zoho
-      let d = document
-      let s = d.createElement('script')
-      s.type = 'text/javascript'
-      s.id = 'zsiqscript'
-      s.defer = true
-      s.src = isDomesticStation ? 'https://salesiq.zoho.com.cn/widget' : 'https://salesiq.zohopublic.com/widget'
-      let t = d.getElementsByTagName('script')[0]
-      t.parentNode.insertBefore(s, t)
-      this.hideCustomTip()
-
-      $zoho.salesiq.ready = function () {
-        const user = window.__USER_INFO__
-        $zoho.salesiq.visitor.contactnumber(user.telephone)
-        $zoho.salesiq.visitor.info({
-          tapdata_username: user.nickname || user.username,
-          tapdata_phone: user.telephone,
-          tapdata_email: user.email,
-        })
-      }
-    },
-  },
-}
-</script>
 
 <style lang="scss" scoped>
 .upgrade-version {

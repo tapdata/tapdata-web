@@ -208,7 +208,8 @@ export class Join extends NodeType {
                   {
                     fulfill: {
                       state: {
-                        value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}',
+                        value:
+                          '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}',
                       },
                     },
                   },

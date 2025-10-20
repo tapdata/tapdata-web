@@ -11,7 +11,7 @@ export const getImgByType = function (type) {
 }
 
 export const verify = function (value) {
-  var arr = [
+  const arr = [
     '\\',
     '$',
     '(',
@@ -29,7 +29,7 @@ export const verify = function (value) {
     '-',
   ]
   for (const element of arr) {
-    var str = `\\${element}`
+    const str = `\\${element}`
     value = value.replaceAll(new RegExp(str, 'g'), `\\${element}`)
   }
   return value

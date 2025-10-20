@@ -1,5 +1,5 @@
 <script>
-import { javascriptFunctionsApi } from '@tap/api'
+import { getFunctionById } from '@tap/api/src/core/function'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import JsEditor from '@tap/component/src/JsEditor.vue'
 
@@ -21,7 +21,7 @@ export default {
         system: this.$t('function_type_option_system'),
       }
 
-      javascriptFunctionsApi.get([this.$route.params.id]).then((data) => {
+      getFunctionById(this.$route.params.id).then((data) => {
         const details = data || {}
         // 处理老数据问题
         if (details.type === 'custom' && !details.script) {

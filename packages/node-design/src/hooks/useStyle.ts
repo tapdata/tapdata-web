@@ -2,9 +2,9 @@ import { isStr } from '@tap/shared'
 import { getCurrentInstance } from 'vue'
 
 const css2obj = (css) => {
-  const r = /(?<=^|;)\s*([^:]+)\s*:\s*([^;]+)\s*/g,
-    o = {}
-  css.replace(r, (m, p, v) => (o[p] = v))
+  const r = /(?<=^|;)\s*([^:]+)\s*:\s*([^;]+)\s*/g
+  const o = {}
+  css.replaceAll(r, (m, p, v) => (o[p] = v))
   return o
 }
 

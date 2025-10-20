@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { EditPen, InfoFilled } from '@element-plus/icons-vue'
+import { fetchConnections } from '@tap/api/src/core/connections'
+import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
+import { fetchEncryptionList } from '@tap/api/src/core/encryption'
+import { fetchMetadataInstances } from '@tap/api/src/core/metadata-instances'
 import {
   createApiModule,
-  fetchConnections,
-  fetchDatabaseTypes,
-  fetchEncryptionList,
-  fetchMetadataInstances,
-  roleApi,
   updateApiModule,
   updateApiModulePermissions,
   updateApiModuleTags,
-} from '@tap/api'
+} from '@tap/api/src/core/modules'
+import { fetchRoles } from '@tap/api/src/core/roles'
 import SortConditionDisplay from '@tap/component/src/api-server/SortConditionDisplay.vue'
 import WhereConditionDisplay from '@tap/component/src/api-server/WhereConditionDisplay.vue'
 import Highlight from '@tap/component/src/base/Highlight'
@@ -696,9 +696,7 @@ const getRoles = async () => {
     limit: 500,
     skip: 0,
   }
-  const data = await roleApi.get({
-    filter: JSON.stringify(filter),
-  })
+  const data = await fetchRoles(filter)
   roles.value = data?.items || []
 }
 

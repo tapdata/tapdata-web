@@ -1,5 +1,14 @@
+<script>
+export default {
+  name: 'Notice',
+}
+</script>
+
 <template>
-  <div class="notice g-panel-container ws-main-container fs-8" v-if="$route.query.id === 7">
+  <div
+    v-if="$route.query.id === 7"
+    class="notice g-panel-container ws-main-container fs-8"
+  >
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
         <span>{{ $t('workbench_Notice_tAPDA12') }}</span>
@@ -20,15 +29,10 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'Notice',
-}
-</script>
-
 <style lang="scss" scoped>
 .notice-header {
-  background: url('../../../public/images/notice/notice_title.png') no-repeat 100% / cover;
+  background: url('../../../public/images/notice/notice_title.png') no-repeat
+    100% / cover;
   .notice-header__title {
   }
   .notice-header__time {
@@ -145,7 +149,11 @@ export default {
   display: inline-block;
   vertical-align: top;
   width: 14px;
-  background-image: linear-gradient(to right bottom, rgb(1, 121, 179) 50%, rgba(231, 34, 21, 0) 50%);
+  background-image: linear-gradient(
+    to right bottom,
+    rgb(1, 121, 179) 50%,
+    rgba(231, 34, 21, 0) 50%
+  );
   flex: 0 0 auto;
   height: auto;
   align-self: stretch;
@@ -208,7 +216,11 @@ export default {
   font-size: 14px;
   color: #646464;
   overflow: hidden;
-  background-image: linear-gradient(to right, rgba(255, 90, 104, 0) 0%, rgba(255, 90, 104, 0.05) 100%);
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 90, 104, 0) 0%,
+    rgba(255, 90, 104, 0.05) 100%
+  );
   .mode-section__connect {
     background: url('../../../public/images/notice/bg.png') 0 0 repeat;
     background-size: 3.5%;
@@ -258,13 +270,39 @@ export default {
   background: #fff;
 }
 .number-title-box__title {
-  background: -moz-linear-gradient(to right, rgb(239, 158, 56) 0%, rgb(51, 119, 176) 100%);
-  background: -webkit-gradient(linear, 0 0, 0 right, from(rgb(239, 158, 56)), to(rgb(51, 119, 176)));
-  background: -webkit-linear-gradient(to right, rgb(239, 158, 56) 0%, rgb(51, 119, 176) 100%);
-  background: -o-linear-gradient(to right, rgb(239, 158, 56) 0%, rgb(51, 119, 176) 100%);
-  background: -ms-linear-gradient(to right, rgb(239, 158, 56) 0%, rgb(51, 119, 176) 100%);
+  background: -moz-linear-gradient(
+    to right,
+    rgb(239, 158, 56) 0%,
+    rgb(51, 119, 176) 100%
+  );
+  background: -webkit-gradient(
+    linear,
+    0 0,
+    0 right,
+    from(rgb(239, 158, 56)),
+    to(rgb(51, 119, 176))
+  );
+  background: -webkit-linear-gradient(
+    to right,
+    rgb(239, 158, 56) 0%,
+    rgb(51, 119, 176) 100%
+  );
+  background: -o-linear-gradient(
+    to right,
+    rgb(239, 158, 56) 0%,
+    rgb(51, 119, 176) 100%
+  );
+  background: -ms-linear-gradient(
+    to right,
+    rgb(239, 158, 56) 0%,
+    rgb(51, 119, 176) 100%
+  );
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#ffffff',GradientType=0 );
-  background: linear-gradient(to right, rgb(239, 158, 56) 0%, rgb(51, 119, 176) 100%);
+  background: linear-gradient(
+    to right,
+    rgb(239, 158, 56) 0%,
+    rgb(51, 119, 176) 100%
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-size: 28px;

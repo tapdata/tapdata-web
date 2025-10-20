@@ -1,6 +1,6 @@
-import { defineComponent, ref } from 'vue'
 import { observer } from '@formily/reactive-vue'
-import { RecursionField, useField, useForm } from '@tap/form'
+import { useField, useForm } from '@tap/form'
+import { defineComponent, ref } from 'vue'
 import { useStore } from 'vuex'
 
 export const PdkProperties = observer(
@@ -30,7 +30,11 @@ export const PdkProperties = observer(
 
       return () => {
         return schema.value ? (
-          <RecursionField basePath={field.value.address} schema={schema.value} onlyRenderProperties />
+          <RecursionField
+            basePath={field.value.address}
+            schema={schema.value}
+            onlyRenderProperties
+          />
         ) : null
       }
     },

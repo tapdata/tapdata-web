@@ -1,16 +1,16 @@
-import i18n, { t } from '@tap/i18n'
+import businessLangs from '@tap/business/src/locale'
 
+import componentLangs from '@tap/component/src/locale'
+import dagLangs from '@tap/dag/src/locale'
+// 公共模块
+import formLangs from '@tap/form/src/locale'
+
+import i18n, { t } from '@tap/i18n'
+import ldpLangs from '@tap/ldp/src/locale'
 // element-plus
 import elementEnLocale from 'element-plus/dist/locale/en.mjs'
 import elementZhLocale from 'element-plus/dist/locale/zh-cn.mjs'
 import elementTwLocale from 'element-plus/dist/locale/zh-tw.mjs'
-
-// 公共模块
-import formLangs from '@tap/form/src/locale'
-import componentLangs from '@tap/component/src/locale'
-import businessLangs from '@tap/business/src/locale'
-import dagLangs from '@tap/dag/src/locale'
-import ldpLangs from '@tap/ldp/src/locale'
 // apps语言文件
 import en from './langs/en'
 import zhCN from './langs/zh-CN'
@@ -33,7 +33,7 @@ const eleLangs = {
 const localLangs = {
   'zh-CN': zhCN,
   'zh-TW': zhTW,
-  en: en,
+  en,
 }
 
 i18n.merge(eleLangs)

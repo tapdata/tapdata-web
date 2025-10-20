@@ -1,6 +1,6 @@
-import { defineComponent, ref, nextTick } from 'vue'
-
 import i18n from '@tap/i18n'
+
+import { defineComponent, nextTick, ref } from 'vue'
 
 export const ClipboardButton = defineComponent({
   name: 'ClipboardButton',
@@ -45,14 +45,14 @@ export const ClipboardButton = defineComponent({
       input.style.margin = '0'
       input.style.position = 'absolute'
       input.style.left = '-9999px'
-      input.style.top = document.documentElement.scrollTop + 'px'
+      input.style.top = `${document.documentElement.scrollTop}px`
       input.setAttribute('readonly', '')
       input.value = props.content
 
-      document.body.appendChild(input)
+      document.body.append(input)
       input.select() // 这里会触发ElTooltip -> Button 的blur，下面要主动focus
       document.execCommand?.('copy')
-      document.body.removeChild(input)
+      input.remove()
       props.icon ? iconRef.value.focus() : btnRef.value.$el.focus()
       contentRef.value = props.finishTooltip
 

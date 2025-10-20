@@ -1,6 +1,5 @@
-import { defineComponent, ref } from 'vue'
 import i18n from '@tap/i18n'
-import Dialog from './FieldDialog.vue'
+import { defineComponent, ref } from 'vue'
 import './style.scss'
 export const VerifyFieldsDialog = defineComponent({
   props: {
@@ -61,7 +60,8 @@ export const VerifyFieldsDialog = defineComponent({
       return (
         <div class="verify-fields-dialog">
           <ElLink type="primary" onClick={openDialog}>
-            {i18n.t('packages_business_components_conditionbox_chakanzidingyi')}({list.value.length})
+            {i18n.t('packages_business_components_conditionbox_chakanzidingyi')}
+            ({list.value.length})
           </ElLink>
           <Dialog ref={dialog} onChange={onChange}></Dialog>
         </div>

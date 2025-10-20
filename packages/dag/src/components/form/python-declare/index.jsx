@@ -1,6 +1,5 @@
-import { defineComponent, ref } from 'vue'
 import i18n from '@tap/i18n'
-import { FormItem, HighlightCode, PythonEditor } from '@tap/form'
+import { defineComponent, ref } from 'vue'
 import './style.scss'
 
 export const PythonDeclare = defineComponent({
@@ -17,16 +16,19 @@ export const PythonDeclare = defineComponent({
     const before = `def declare(${props.param}):`
     const after = `  return ${props.param}\n`
     const dialogVisible = ref(false)
-    const codeExample = i18n.t('packages_dag_python_declare_index_zengjiayigezi', {
-      val1: props.param,
-      val2: props.param,
-      val3: props.param,
-      val4: props.param,
-      val5: props.param,
-      val6: props.param,
-      val7: props.param,
-      val8: props.param,
-    })
+    const codeExample = i18n.t(
+      'packages_dag_python_declare_index_zengjiayigezi',
+      {
+        val1: props.param,
+        val2: props.param,
+        val3: props.param,
+        val4: props.param,
+        val5: props.param,
+        val6: props.param,
+        val7: props.param,
+        val8: props.param,
+      },
+    )
     return () => {
       const editorProps = { ...attrs }
       editorProps.options.readOnly = props.disabled
@@ -42,12 +44,20 @@ export const PythonDeclare = defineComponent({
                   <span class="font-color-light fw-normal">
                     {i18n.t('packages_form_js_processor_index_moxingshengming')}
                   </span>
-                  <el-tooltip content={i18n.t('packages_dag_js_declare_index_xianshishengminglai')} placement="top">
+                  <el-tooltip
+                    content={i18n.t(
+                      'packages_dag_js_declare_index_xianshishengminglai',
+                    )}
+                    placement="top"
+                  >
                     <i class="ml-1 font-color-sslight header-icon el-icon-info"></i>
                   </el-tooltip>
                   <div class="flex-grow-1"></div>
                   <el-link
-                    onClick={(event) => (event.stopPropagation(), (dialogVisible.value = true))}
+                    onClick={(event) => (
+                      event.stopPropagation(),
+                      (dialogVisible.value = true)
+                    )}
                     type="primary"
                     class="mx-4"
                   >
@@ -55,7 +65,9 @@ export const PythonDeclare = defineComponent({
                   </el-link>
 
                   <el-dialog
-                    title={i18n.t('packages_dag_nodes_javascript_moxingshengming')}
+                    title={i18n.t(
+                      'packages_dag_nodes_javascript_moxingshengming',
+                    )}
                     v-model={dialogVisible.value}
                     append-to-body
                     width="800"
@@ -68,12 +80,21 @@ export const PythonDeclare = defineComponent({
                             class="m-0"
                             code="type TapType = 'TapNumber' | 'TapString' | 'TapBoolean' | 'TapBinary' | 'TapDate' | 'TapDateTime' | 'TapTime' | 'TapYear' | 'TapRaw' | 'TapArray' | 'TapMap'"
                           ></HighlightCode>
-                          <div class="fs-6 my-4">{i18n.t('packages_dag_js_declare_index_shilidaima')}</div>
-                          <HighlightCode class="m-0" language="python" code={codeExample}></HighlightCode>
+                          <div class="fs-6 my-4">
+                            {i18n.t('packages_dag_js_declare_index_shilidaima')}
+                          </div>
+                          <HighlightCode
+                            class="m-0"
+                            language="python"
+                            code={codeExample}
+                          ></HighlightCode>
                         </>
                       ),
                       footer: () => (
-                        <el-button type="primary" onClick={() => (dialogVisible.value = false)}>
+                        <el-button
+                          type="primary"
+                          onClick={() => (dialogVisible.value = false)}
+                        >
                           {i18n.t('packages_dag_js_declare_index_queding')}
                         </el-button>
                       ),

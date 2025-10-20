@@ -1,5 +1,5 @@
 import { observer } from '@formily/reactive-vue'
-import { metadataInstancesApi } from '@tap/api'
+import { getNodeSchema } from '@tap/api/src/core/metadata-instances'
 import { IconButton } from '@tap/component/src/icon-button'
 import { connect, mapProps, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
@@ -22,9 +22,7 @@ export const FieldAddDel = connect(
         const loadSchema = async () => {
           loading.value = true
           try {
-            const data = await metadataInstancesApi.nodeSchema(
-              formRef.value.values.id,
-            )
+            const data = await getNodeSchema(formRef.value.values.id)
             options.value = data?.[0]?.fields || []
           } catch {
             options.value = []

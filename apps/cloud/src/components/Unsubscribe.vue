@@ -1,139 +1,16 @@
-<template>
-  <ElDialog
-    v-if="showUnsubscribeDetailVisible"
-    v-model="showUnsubscribeDetailVisible"
-    :title="$t('dfs_instance_instance_tuidingshili')"
-    width="60%"
-  >
-    <section>
-      <el-alert
-        class="alert-primary mb-4 text-primary"
-        type="info"
-        :title="$t('dfs_change_instance_tip')"
-        show-icon
-        :closable="false"
-      >
-        <template v-slot:title>
-          <div>
-            <div>{{ $t('dfs_instance_instance_tuidingzhituihuan') }}</div>
-            <div class="mt-2">
-              {{ $t('dfs_instance_instance_qingzixihedui') }}
-            </div>
-          </div>
-        </template>
-      </el-alert>
-      <div class="mt-4 fs-6 font-color-dark">
-        {{ $t('dfs_instance_instance_tuidingshili') }}
-      </div>
-      <div v-if="agentList.length > 0">
-        <VTable
-          ref="table"
-          row-key="id"
-          :columns="paidDetailColumns"
-          :data="agentList"
-          height="100%"
-          :has-pagination="false"
-          class="mt-4 mb-4"
-        >
-          <template #expiredTime="{ row }">
-            <div>{{ row.periodStart }}</div>
-            <div>{{ row.periodEnd }}</div>
-          </template>
-          <template #actualAmount="{ row }">
-            <span class="font-color-dark fw-normal">{{ row.actualAmount }}</span>
-          </template>
-          <template #spentAmount="{ row }">
-            <span class="color-danger fw-normal"> -{{ row.spentAmount }}</span>
-          </template>
-          <template #refundAmount="{ row }">
-            <span class="color-primary fw-normal">{{ row.refundAmount }}</span>
-          </template>
-        </VTable>
-      </div>
-      <div v-if="memoryList.length > 0">
-        <VTable
-          ref="table"
-          row-key="id"
-          :columns="memoryColumns"
-          :data="memoryList"
-          height="100%"
-          :has-pagination="false"
-          class="mt-4 mb-4"
-        >
-          <template #expiredTime="{ row }">
-            <div>{{ row.periodStart }}</div>
-            <div>{{ row.periodEnd }}</div>
-          </template>
-          <template #actualAmount="{ row }">
-            <span class="font-color-dark fw-normal">{{ row.actualAmount }}</span>
-          </template>
-          <template #spentAmount="{ row }">
-            <span class="color-danger fw-normal"> -{{ row.spentAmount }}</span>
-          </template>
-          <template #refundAmount="{ row }">
-            <span class="color-primary fw-normal">{{ row.refundAmount }}</span>
-          </template>
-        </VTable>
-      </div>
-      <el-form label-position="top" :model="form" :rules="rules" ref="ruleForm">
-        <el-form-item :label="$t('dfs_instance_instance_tuidingyuanyin')" required>
-          <el-radio-group v-model="form.refundReason">
-            <el-radio class="mt-2" label="configurationOptionError">{{
-              $t('dfs_instance_instance_peizhixuanxiangcuo')
-            }}</el-radio>
-            <el-radio class="mt-2" label="unableDeployProperly">{{
-              $t('dfs_instance_instance_wufazhengchangbu')
-            }}</el-radio>
-            <el-radio class="mt-2" label="notconsistentWithExpectations">{{
-              $t('dfs_instance_instance_xingnenghuozhegong')
-            }}</el-radio>
-            <el-radio class="mt-2" label="unsubscribeAfterBusinessTesting">{{
-              $t('dfs_instance_instance_yewuceshiwan')
-            }}</el-radio>
-            <el-radio class="mt-2" label="other">{{ $t('dfs_instance_instance_qita') }}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item v-if="form.refundReason === 'other'" prop="refundDescribe">
-          <el-input
-            v-model="form.refundDescribe"
-            type="textarea"
-            :placeholder="$t('dfs_instance_instance_qingshurutuiding')"
-            show-word-limit
-          >
-          </el-input>
-        </el-form-item>
-        <el-form-item :label="$t('dfs_instance_instance_tuikuanqudao')">
-          <el-input v-model="form.refundChannel" disabled show-word-limit style="width: 200px"> </el-input>
-        </el-form-item>
-      </el-form>
-    </section>
-    <template v-slot:footer>
-      <div class="flex justify-content-end align-center">
-        <span class="mr-4"
-          ><span class="fs-6 font-color-dark font-weight-light">{{ $t('dfs_instance_instance_ketuidingjine') }}</span
-          ><span class="color-primary fs-4"> {{ refundAmount }}</span></span
-        >
-        <el-button @click="showUnsubscribeDetailVisible = false">{{ $t('public_button_cancel') }}</el-button>
-        <el-button :disabled="!form.refundReason" type="primary" :loading="loadingCancelSubmit" @click="cancelSubmit">{{
-          $t('public_button_unsubscribe')
-        }}</el-button>
-      </div>
-    </template>
-  </ElDialog>
-</template>
-
 <script>
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
-import { VTable } from '@tap/component'
-import i18n from '@/i18n'
 import { CURRENCY_SYMBOL_MAP } from '@tap/business'
+import { VTable } from '@tap/component'
 import dayjs from 'dayjs'
+import i18n from '@/i18n'
+import { $emit } from '../../utils/gogocodeTransfer'
 
 export default {
   name: 'Unsubscribe',
   components: { VTable },
-  props: ['visible'],
   inject: ['buried'],
+  props: ['visible'],
+  emits: ['closeVisible'],
   data() {
     return {
       showUnsubscribeDetailVisible: false,
@@ -227,35 +104,43 @@ export default {
     //退订 //退订详情费用
     getUnsubscribePrice(row = {}, type) {
       if (row?.refund) {
-        let param = {
+        const param = {
           instanceId: row.agentId,
         }
-        this.$axios.post('api/tcm/subscribe/{subscribeId}/refund', param).then(() => {
-          this.$message.success(this.$t('public_message_operation_success'))
-          this.table.fetch(1)
-        })
+        this.$axios
+          .post('api/tcm/subscribe/{subscribeId}/refund', param)
+          .then(() => {
+            this.$message.success(this.$t('public_message_operation_success'))
+            this.table.fetch(1)
+          })
         return
       }
-      let url = `api/tcm/subscribe/${row.id}/refund`
+      const url = `api/tcm/subscribe/${row.id}/refund`
       this.currentRow = row
-      this.currentRow['type'] = type //是否是单个退订
+      this.currentRow.type = type //是否是单个退订
       this.memoryList = []
       this.agentList = []
       this.$axios.get(url).then((data) => {
         if (data) {
-          let agentList = data.filter((it) => it.productType === 'Engine')
-          let memoryList = data.filter((it) => it.productType === 'MongoDB')
+          const agentList = data.filter((it) => it.productType === 'Engine')
+          const memoryList = data.filter((it) => it.productType === 'MongoDB')
           if (type === 'all') {
             //计算价格
-            let price = data[0].refundAmount + data[1].refundAmount
+            const price = data[0].refundAmount + data[1].refundAmount
             this.refundAmount = this.formatPrice(data[0].currency, price)
             this.memoryList = this.formatItems(memoryList)
             this.agentList = this.formatItems(agentList)
           } else if (type === 'MongoDB') {
-            this.refundAmount = this.formatPrice(memoryList[0].currency, memoryList[0].refundAmount)
+            this.refundAmount = this.formatPrice(
+              memoryList[0].currency,
+              memoryList[0].refundAmount,
+            )
             this.memoryList = this.formatItems(memoryList)
           } else {
-            this.refundAmount = this.formatPrice(agentList[0].currency, agentList[0].refundAmount)
+            this.refundAmount = this.formatPrice(
+              agentList[0].currency,
+              agentList[0].refundAmount,
+            )
             this.agentList = this.formatItems(agentList)
           }
         }
@@ -271,7 +156,7 @@ export default {
         item.periodEnd = this.formatterTime(item.endAt)
         item.spec = item?.resource?.spec?.name
         item.agentName = item?.resource?.name
-        item.storageSize = item?.resource?.spec?.storageSize + 'GB' || 0
+        item.storageSize = `${item?.resource?.spec?.storageSize}GB` || 0
         return item
       })
     },
@@ -299,14 +184,18 @@ export default {
           //单个退订需要传resourceId
           let resourceId = ''
           if (type === 'Engine') {
-            resourceId = subscribeItems.find((it) => it.productType === 'Engine')?.resourceId
+            resourceId = subscribeItems.find(
+              (it) => it.productType === 'Engine',
+            )?.resourceId
           } else if (type === 'MongoDB') {
-            resourceId = subscribeItems.find((it) => it.productType === 'MongoDB')?.resourceId
+            resourceId = subscribeItems.find(
+              (it) => it.productType === 'MongoDB',
+            )?.resourceId
           }
-          let param = {
+          const param = {
             subscribeId: id,
             refundReason,
-            resourceId: resourceId,
+            resourceId,
             refundDescribe,
           }
           this.$axios
@@ -330,9 +219,156 @@ export default {
       })
     },
   },
-  emits: ['closeVisible'],
 }
 </script>
+
+<template>
+  <ElDialog
+    v-if="showUnsubscribeDetailVisible"
+    v-model="showUnsubscribeDetailVisible"
+    :title="$t('dfs_instance_instance_tuidingshili')"
+    width="60%"
+  >
+    <section>
+      <el-alert
+        class="alert-primary mb-4 text-primary"
+        type="info"
+        :title="$t('dfs_change_instance_tip')"
+        show-icon
+        :closable="false"
+      >
+        <template #title>
+          <div>
+            <div>{{ $t('dfs_instance_instance_tuidingzhituihuan') }}</div>
+            <div class="mt-2">
+              {{ $t('dfs_instance_instance_qingzixihedui') }}
+            </div>
+          </div>
+        </template>
+      </el-alert>
+      <div class="mt-4 fs-6 font-color-dark">
+        {{ $t('dfs_instance_instance_tuidingshili') }}
+      </div>
+      <div v-if="agentList.length > 0">
+        <VTable
+          ref="table"
+          row-key="id"
+          :columns="paidDetailColumns"
+          :data="agentList"
+          height="100%"
+          :has-pagination="false"
+          class="mt-4 mb-4"
+        >
+          <template #expiredTime="{ row }">
+            <div>{{ row.periodStart }}</div>
+            <div>{{ row.periodEnd }}</div>
+          </template>
+          <template #actualAmount="{ row }">
+            <span class="font-color-dark fw-normal">{{
+              row.actualAmount
+            }}</span>
+          </template>
+          <template #spentAmount="{ row }">
+            <span class="color-danger fw-normal"> -{{ row.spentAmount }}</span>
+          </template>
+          <template #refundAmount="{ row }">
+            <span class="color-primary fw-normal">{{ row.refundAmount }}</span>
+          </template>
+        </VTable>
+      </div>
+      <div v-if="memoryList.length > 0">
+        <VTable
+          ref="table"
+          row-key="id"
+          :columns="memoryColumns"
+          :data="memoryList"
+          height="100%"
+          :has-pagination="false"
+          class="mt-4 mb-4"
+        >
+          <template #expiredTime="{ row }">
+            <div>{{ row.periodStart }}</div>
+            <div>{{ row.periodEnd }}</div>
+          </template>
+          <template #actualAmount="{ row }">
+            <span class="font-color-dark fw-normal">{{
+              row.actualAmount
+            }}</span>
+          </template>
+          <template #spentAmount="{ row }">
+            <span class="color-danger fw-normal"> -{{ row.spentAmount }}</span>
+          </template>
+          <template #refundAmount="{ row }">
+            <span class="color-primary fw-normal">{{ row.refundAmount }}</span>
+          </template>
+        </VTable>
+      </div>
+      <el-form ref="ruleForm" label-position="top" :model="form" :rules="rules">
+        <el-form-item
+          :label="$t('dfs_instance_instance_tuidingyuanyin')"
+          required
+        >
+          <el-radio-group v-model="form.refundReason">
+            <el-radio class="mt-2" label="configurationOptionError">{{
+              $t('dfs_instance_instance_peizhixuanxiangcuo')
+            }}</el-radio>
+            <el-radio class="mt-2" label="unableDeployProperly">{{
+              $t('dfs_instance_instance_wufazhengchangbu')
+            }}</el-radio>
+            <el-radio class="mt-2" label="notconsistentWithExpectations">{{
+              $t('dfs_instance_instance_xingnenghuozhegong')
+            }}</el-radio>
+            <el-radio class="mt-2" label="unsubscribeAfterBusinessTesting">{{
+              $t('dfs_instance_instance_yewuceshiwan')
+            }}</el-radio>
+            <el-radio class="mt-2" label="other">{{
+              $t('dfs_instance_instance_qita')
+            }}</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item
+          v-if="form.refundReason === 'other'"
+          prop="refundDescribe"
+        >
+          <el-input
+            v-model="form.refundDescribe"
+            type="textarea"
+            :placeholder="$t('dfs_instance_instance_qingshurutuiding')"
+            show-word-limit
+          />
+        </el-form-item>
+        <el-form-item :label="$t('dfs_instance_instance_tuikuanqudao')">
+          <el-input
+            v-model="form.refundChannel"
+            disabled
+            show-word-limit
+            style="width: 200px"
+          />
+        </el-form-item>
+      </el-form>
+    </section>
+    <template #footer>
+      <div class="flex justify-content-end align-center">
+        <span class="mr-4"
+          ><span class="fs-6 font-color-dark font-weight-light">{{
+            $t('dfs_instance_instance_ketuidingjine')
+          }}</span
+          ><span class="color-primary fs-4"> {{ refundAmount }}</span></span
+        >
+        <el-button @click="showUnsubscribeDetailVisible = false">{{
+          $t('public_button_cancel')
+        }}</el-button>
+        <el-button
+          :disabled="!form.refundReason"
+          type="primary"
+          :loading="loadingCancelSubmit"
+          @click="cancelSubmit"
+          >{{ $t('public_button_unsubscribe') }}</el-button
+        >
+      </div>
+    </template>
+  </ElDialog>
+</template>
 
 <style lang="scss" scoped>
 .alert-primary {

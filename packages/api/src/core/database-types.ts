@@ -10,8 +10,8 @@ export function fetchDatabaseTypeByPdkHash(pdkHash: string) {
 }
 
 const renamedData: Record<string, string> = {
-  'Mysql': 'MySQL',
-  'HuaWei\'Cloud GaussDB': 'Huawei Cloud GaussDB',
+  Mysql: 'MySQL',
+  "HuaWei'Cloud GaussDB": 'Huawei Cloud GaussDB',
 }
 
 /**
@@ -36,7 +36,6 @@ export async function fetchDatabaseTypes(filter?: Filter) {
       filter: filter ? JSON.stringify(filter) : undefined,
     },
   })
-  
 
   return data?.map((it: any) => {
     it.name = renamedData[it.name] || it.name

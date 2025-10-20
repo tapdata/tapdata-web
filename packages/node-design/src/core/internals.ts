@@ -1,8 +1,8 @@
-import { each, isPlainObj, Cookie } from '@tap/shared'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
+import { each, isPlainObj } from '@tap/shared'
 
 export const lowerSnake = (str) => {
-  return String(str).replace(/\s+/g, '_').toLocaleLowerCase()
+  return String(str).replaceAll(/\s+/g, '_').toLocaleLowerCase()
 }
 
 export const mergeLocales = (target, source) => {

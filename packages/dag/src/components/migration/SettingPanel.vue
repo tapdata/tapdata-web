@@ -6,7 +6,13 @@ import {
   onFieldValueChange,
 } from '@formily/core'
 import { action } from '@formily/reactive'
-import { dataPermissionApi, taskApi, updateTaskAlarm, usersApi } from '@tap/api'
+import { updateTaskAlarm } from '@tap/api/src/core/alarm'
+import {
+  getPermissions,
+  postPermissions,
+} from '@tap/api/src/core/data-permission'
+import { checkCloudTaskLimit, checkTaskName } from '@tap/api/src/core/task'
+import { getUserRoles } from '@tap/api/src/core/users'
 import { getPickerOptionsBeforeTime } from '@tap/business/src/shared/util'
 import { I18nT, useI18n } from '@tap/i18n'
 import { getSettingByKey } from '@tap/shared/src/settings'
@@ -120,18 +126,16 @@ const checkCrontabExpressionFlagMessage = t(
 
 // Handlers
 const handleCheckName = debounce((resolve: Function, value: string) => {
-  taskApi
-    .checkName({
-      name: value,
-      id,
-    })
-    .then((data) => {
-      resolve(data)
-    })
+  checkTaskName({
+    name: value,
+    id,
+  }).then((data) => {
+    resolve(data)
+  })
 }, 500)
 
 const handleCheckCrontabExpressionFlag = debounce((resolve: Function) => {
-  taskApi.checkCheckCloudTaskLimit(id).then((data) => {
+  checkCloudTaskLimit(id).then((data) => {
     resolve(data)
   })
 }, 500)
@@ -192,7 +196,7 @@ const formScope: FormScope = {
 
       const usedId = val?.map((t) => t.roleId) || []
 
-      const response = await usersApi.role({
+      const response = await getUserRoles({
         filter: JSON.stringify(filter),
       })
       const items = response?.items || []
@@ -413,7 +417,7 @@ function savePermissionsConfig() {
         }
       }) || [],
   }
-  dataPermissionApi.postPermissions(filter)
+  postPermissions(filter)
 }
 
 async function getRolePermissions() {
@@ -421,7 +425,7 @@ async function getRolePermissions() {
     dataType: 'Task',
     dataId: form.values.id,
   }
-  const data = await dataPermissionApi.permissions(filter)
+  const data = await getPermissions(filter)
   updateSettings(
     'permissions',
     data?.map((t: any) => ({

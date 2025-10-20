@@ -68,7 +68,7 @@ class TipManager {
     const tipKey = this.getTipKey(feature)
     const tipData = {
       lastShown: Date.now(),
-      version: this.storageManager.version
+      version: this.storageManager.version,
     }
     this.storageManager.setItem(tipKey, tipData)
   }
@@ -81,8 +81,8 @@ class TipManager {
 const FEATURES = {
   serviceUpgrade: {
     // expires: 24 * 60 * 60 * 1000,
-    version: '3.10.0'
-  }
+    version: '3.10.0',
+  },
 }
 
 export const storage = new StorageManager('tap', '3.10.0')

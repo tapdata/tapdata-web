@@ -5,29 +5,33 @@ export default class Cache {
   _cache = {}
 
   constructor() {
-    let cacheString = localStorage.getItem('TAPDATA_CACHE')
+    const cacheString = localStorage.getItem('TAPDATA_CACHE')
     this._cache = cacheString ? JSON.parse(cacheString) : {}
     window.cache = this
   }
   get(key, isForUser = true) {
-    let cache = Object.assign({}, this._cache)
+    const cache = Object.assign({}, this._cache)
     let scopeCache = cache[GLOBAL]
     if (isForUser) {
-      let userId = Cookie.get('user_id')
+      const userId = Cookie.get('user_id')
       if (!userId) {
-        throw new Error('Getting cache error, cant not found user id from cookie')
+        throw new Error(
+          'Getting cache error, cant not found user id from cookie',
+        )
       }
       scopeCache = cache[userId] || {}
     }
     return scopeCache[key]
   }
   set(key, value, isForUser = true) {
-    let cache = this._cache
+    const cache = this._cache
     let scope = GLOBAL
     if (isForUser) {
-      let userId = Cookie.get('user_id')
+      const userId = Cookie.get('user_id')
       if (!userId) {
-        throw new Error('Getting cache error, cant not found user id from cookie')
+        throw new Error(
+          'Getting cache error, cant not found user id from cookie',
+        )
       }
       scope = userId
     }

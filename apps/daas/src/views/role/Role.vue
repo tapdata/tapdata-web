@@ -1,6 +1,8 @@
 <script>
 import { Check } from '@element-plus/icons-vue'
-import { permissionsApi, roleMappingsApi, usersApi } from '@tap/api'
+import { fetchPermissions } from '@tap/api/src/core/permissions'
+import { fetchRoleMappings } from '@tap/api/src/core/role-mappings'
+import { updatePermissionRoleMapping } from '@tap/api/src/core/users'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import i18n from '@/i18n'
 
@@ -171,10 +173,7 @@ export default {
           roleId: this.$route.query.id,
         },
       }
-      roleMappingsApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
+      fetchRoleMappings(filter)
         .then((data) => {
           if (data?.length) {
             data.forEach((item) => {
@@ -225,10 +224,7 @@ export default {
       this.permissLoading = true
       const filter = { where: { version: 'v2' } }
 
-      permissionsApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
+      fetchPermissions(filter)
         .then((data) => {
           if (data && data.length) {
             self.permissionList = data
@@ -348,8 +344,7 @@ export default {
         adds: this.adds,
         deletes: this.deletes,
       }
-      usersApi
-        .updatePermissionRoleMapping(roleId, data)
+      updatePermissionRoleMapping(roleId, data)
         .then(() => {
           this.$emit('saveBack')
           this.$message.success(this.$t('public_message_save_ok'))

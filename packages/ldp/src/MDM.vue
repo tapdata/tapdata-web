@@ -1,8 +1,14 @@
 <script lang="tsx">
-import { discoveryApi, ldpApi, metadataDefinitionsApi } from '@tap/api'
+import {
+  deleteMetadataDefinition,
+  patchMetadataDefinitionById,
+} from '@tap/api/core/metadata-definitions'
+import { fetchMetadataInstances } from '@tap/api/core/metadata-instances'
+import { createDiscoveryTags } from '@tap/api/src/core/discovery'
+import { createMDMTask } from '@tap/api/src/core/ldp'
 import { makeDragNodeImage, TASK_SETTINGS } from '@tap/business/src/shared'
 import { IconButton } from '@tap/component/src/icon-button'
-
+import { FieldSelect, mapFieldsData } from '@tap/form'
 import i18n from '@tap/i18n'
 import { generateId, uuid } from '@tap/shared'
 import { debounce } from 'lodash-es'
@@ -11,7 +17,7 @@ import commonMix from './mixins/common'
 
 export default {
   name: 'MDM',
-  components: { IconButton },
+  components: { IconButton, FieldSelect },
   mixins: [commonMix],
   props: {
     directory: Object,
@@ -43,6 +49,8 @@ export default {
           crontabExpression: '',
           crontabExpressionType: 'once',
         },
+        fields: [],
+        updateConditionFields: [],
       },
       expandedKeys: [],
       dialogConfig: {
@@ -256,10 +264,8 @@ export default {
 
     handleDragLeave(ev) {
       ev.preventDefault()
-      console.log('handleDragLeave') // eslint-disable-line
       if (!this.allowDrop) return
       if (!ev.currentTarget.contains(ev.relatedTarget)) {
-        console.log('handleDragLeave✌️', ev) // eslint-disable-line
         this.removeDropEffect(ev, 'tree-wrap', 'is-drop')
       }
     },
@@ -315,9 +321,11 @@ export default {
       } else {
         this.taskDialogConfig.notSupportedCDC = false
       }
+
+      this.loadFields()
     },
 
-    async taskDialogSubmit(start, confirmTable) {
+    taskDialogSubmit(start, confirmTable) {
       this.$refs.form.validate(async (valid) => {
         if (!valid) return
         const {
@@ -333,7 +341,7 @@ export default {
         )
         this.creating = true
         try {
-          const result = await ldpApi.createMDMTask(task, {
+          const result = await createMDMTask(task, {
             silenceMessage: true,
             params: { tagId, confirmTable, start },
           })
@@ -354,7 +362,6 @@ export default {
             this.setNodeExpand(tagId)
           }, 1000)
         } catch (error) {
-          console.log(error) // eslint-disable-line
           const code = error?.data?.code
           const data = error?.data?.data
           if (code === 'Ldp.MdmTargetNoPrimaryKey' && data) {
@@ -407,6 +414,9 @@ export default {
     makeTask(from, tableName, newTableName) {
       const source = this.getTableNode(from, tableName)
       const target = this.getTableNode(this.mdmConnection, newTableName)
+
+      target.updateConditionFields = this.taskDialogConfig.updateConditionFields
+
       return {
         ...TASK_SETTINGS,
         syncType: 'sync',
@@ -533,17 +543,15 @@ export default {
       this.removeDropEffect(ev, 'tree-wrap', 'is-drop')
 
       this.showTaskDialog(!data.isObject ? data.id : undefined)
-      console.log('handleTreeDrop') // eslint-disable-line
     },
 
     handleSelfDrop(draggingNode, dropNode, dropType, ev) {
       if (dropNode.data.isObject) return
       if (!draggingNode.data.isObject) {
-        metadataDefinitionsApi
-          .changeById({
-            id: draggingNode.data.id,
-            parent_id: dropNode.data.id || '',
-          })
+        patchMetadataDefinitionById(draggingNode.data.id, {
+          id: draggingNode.data.id,
+          parent_id: dropNode.data.id || '',
+        })
           .then(() => {
             this.$message.success(this.$t('public_message_operation_success'))
             draggingNode.data.parent_id = dropNode.data.id
@@ -620,6 +628,52 @@ export default {
     hideDialog() {
       this.dialogConfig.visible = false
     },
+    async loadFields() {
+      this.taskDialogConfig.loading = true
+      this.taskDialogConfig.fields = []
+      this.taskDialogConfig.updateConditionFields = []
+
+      const {
+        items: [schema = {}],
+      } = await fetchMetadataInstances({
+        page: 1,
+        size: 1,
+        where: {
+          'source.id': this.taskDialogConfig.from.id,
+          meta_type: { in: ['collection', 'table', 'view'] },
+          is_deleted: false,
+          sourceType: 'SOURCE',
+          original_name: this.taskDialogConfig.tableName,
+        },
+        fields: {
+          original_name: true,
+          fields: true,
+          qualified_name: true,
+          name: true,
+          indices: true,
+          constraints: true,
+        },
+      }).finally(() => {
+        this.taskDialogConfig.loading = false
+      })
+
+      const { fields } = mapFieldsData(schema)
+      this.taskDialogConfig.fields = fields
+
+      let defaultList = fields.filter((item) => item.isPrimaryKey)
+
+      if (!defaultList.length) {
+        defaultList = fields.filter((item) => item.indicesUnique)
+      }
+
+      if (!defaultList.length) {
+        defaultList = fields.filter((item) => item.source === 'virtual_hash')
+      }
+
+      this.taskDialogConfig.updateConditionFields = defaultList.map(
+        (item) => item.value,
+      )
+    },
     async dialogSubmit() {
       const config = this.dialogConfig
       const value = config.label
@@ -649,7 +703,7 @@ export default {
       }
 
       try {
-        const data = await metadataDefinitionsApi[method](params)
+        const data = await patchMetadataDefinitionById(params.id, params)
         this.hideDialog()
         this.$message.success(this.$t('public_message_operation_success'))
         if (data && config.type === 'add') {
@@ -680,7 +734,7 @@ export default {
       tagBindingParams,
       tagIds: [from]
     })*/
-      await discoveryApi.postTags({
+      await createDiscoveryTags({
         tagBindingParams,
         tagIds: [to],
         oldTagIds: [from],
@@ -711,7 +765,7 @@ export default {
         if (!resFlag) {
           return
         }
-        metadataDefinitionsApi.delete(data.id).then(() => {
+        deleteMetadataDefinition(data.id).then(() => {
           this.$refs.tree.remove(data.id)
 
           // 删除目录刷新上一级加载被删除目录下的表
@@ -968,10 +1022,10 @@ export default {
           <ElFormItem
             :label="$t('packages_dag_task_setting_crontabExpressionFlag')"
             prop="task.crontabExpressionType"
+            class="flex-1"
           >
             <ElSelect
               v-model="taskDialogConfig.task.crontabExpressionType"
-              class="flex-1"
               @change="handleChangeCronType"
             >
               <ElOption v-for="(opt, i) in cronOptions" v-bind="opt" :key="i" />
@@ -980,11 +1034,24 @@ export default {
           <ElFormItem
             v-if="taskDialogConfig.task.crontabExpressionType === 'custom'"
             prop="task.crontabExpression"
-            label-width="0"
+            class="flex-1"
+            label-width="auto"
+            :label="$t('public_crontabExpression')"
           >
             <ElInput v-model="taskDialogConfig.task.crontabExpression" />
           </ElFormItem>
         </div>
+        <ElFormItem
+          :label="$t('packages_dag_nodes_table_gengxintiaojianzi')"
+          prop="updateConditionFields"
+        >
+          <FieldSelect
+            v-model="taskDialogConfig.updateConditionFields"
+            :options="taskDialogConfig.fields"
+            multiple
+            :loading="taskDialogConfig.loading"
+          />
+        </ElFormItem>
       </ElForm>
       <template #footer>
         <span class="dialog-footer">

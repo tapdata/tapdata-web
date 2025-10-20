@@ -1,7 +1,8 @@
 <script>
-import dayjs from 'dayjs'
-import { externalStorageApi, sharedCacheApi } from '@tap/api'
+import { getExternalStorage } from '@tap/api/src/core/external-storage'
+import { findOneSharedCache } from '@tap/api/src/core/shared-cache'
 import Drawer from '@tap/component/src/Drawer.vue'
+import dayjs from 'dayjs'
 import TaskStatus from '../../components/TaskStatus.vue'
 import CodeView from './CodeView.vue'
 
@@ -27,24 +28,21 @@ export default {
   methods: {
     getData(id) {
       this.loading = true
-      sharedCacheApi
-        .get(id)
+      findOneSharedCache(id)
         .then((data) => {
           data.cacheKeysArr = data.cacheKeys?.split(',') || []
           data.cacheTimeAtFmt = data.cacheTimeAt
             ? dayjs(data.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss')
             : '-'
-          externalStorageApi
-            .get(data.externalStorageId, {
-              fields: JSON.stringify({
-                name: true,
-              }),
-            })
-            .then((d) => {
-              data.externalStorageName = d.name
-              this.getInfo(data)
-              this.details = data
-            })
+          getExternalStorage(data.externalStorageId, {
+            fields: JSON.stringify({
+              name: true,
+            }),
+          }).then((d) => {
+            data.externalStorageName = d.name
+            this.getInfo(data)
+            this.details = data
+          })
         })
         .finally(() => {
           this.loading = false

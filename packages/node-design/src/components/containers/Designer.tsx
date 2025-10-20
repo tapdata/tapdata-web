@@ -1,4 +1,3 @@
-import { FragmentComponent } from '@formily/vue'
 import {
   defineComponent,
   onBeforeUnmount,
@@ -8,7 +7,7 @@ import {
   toRef,
   watchEffect,
 } from 'vue'
-import { DesignerEngineContext, DesignerEngineSymbol } from '../../context'
+import { DesignerEngineSymbol } from '../../context'
 import { createDesigner, CustomNode, type Engine } from '../../core'
 import { GhostWidget } from '../widgets'
 import { Layout } from './Layout'

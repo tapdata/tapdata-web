@@ -1,8 +1,8 @@
-import { defineComponent } from 'vue'
-import { h } from '@formily/vue'
-import { stylePrefix } from '../configs'
 import { useFormLayout } from '@formily/element-plus'
+import { h } from '@formily/vue'
 import VDivider from '@tap/component/src/base/VDivider.vue'
+import { defineComponent } from 'vue'
+import { stylePrefix } from '../configs'
 import '@formily/element-plus/lib/space/style.scss'
 
 const spaceSize = {
@@ -13,7 +13,15 @@ const spaceSize = {
 
 export const Space = defineComponent({
   name: 'FSpace',
-  props: ['size', 'direction', 'align', 'split', 'filterIndex', 'colSpan', 'inline'],
+  props: [
+    'size',
+    'direction',
+    'align',
+    'split',
+    'filterIndex',
+    'colSpan',
+    'inline',
+  ],
   setup(props, { attrs, slots }) {
     const layout = useFormLayout()
 
@@ -34,9 +42,9 @@ export const Space = defineComponent({
       let items = []
       if (Array.isArray(children)) {
         if (children.length === 1) {
-          if (children[0]['tag']?.endsWith('Fragment')) {
+          if (children[0].tag?.endsWith('Fragment')) {
             // Fragment hack
-            items = children[0]['componentOptions']?.children
+            items = children[0].componentOptions?.children
           } else {
             items = children
           }
@@ -57,7 +65,8 @@ export const Space = defineComponent({
         return null
       }
 
-      const mergedAlign = align === undefined && direction === 'horizontal' ? 'center' : align
+      const mergedAlign =
+        align === undefined && direction === 'horizontal' ? 'center' : align
 
       const someSpaceClass = {
         [prefixCls]: true,
@@ -113,7 +122,8 @@ export const Space = defineComponent({
           class: { ...attrs.class, ...someSpaceClass },
           style: {
             ...attrs.style,
-            gap: typeof size === 'string' ? `${spaceSize[size]}px` : `${size}px`,
+            gap:
+              typeof size === 'string' ? `${spaceSize[size]}px` : `${size}px`,
           },
         },
         { default: () => renderItems },

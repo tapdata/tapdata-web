@@ -1,5 +1,5 @@
 <script>
-import { taskApi } from '@tap/api'
+import { getTaskConsole } from '@tap/api/src/core/task'
 import { VEmpty } from '@tap/component/src/base/v-empty'
 import resize from '@tap/component/src/directives/resize'
 import i18n from '@tap/i18n'
@@ -68,7 +68,7 @@ export default {
     async loadData() {
       const { taskId, nodeId } = this
       this.loading = true
-      const data = await taskApi.getConsole({
+      const data = await getTaskConsole({
         taskId: taskId || this.$route.params.id,
         nodeId,
         type: this.type,

@@ -1,5 +1,18 @@
 <script>
-import { fetchClusterStates, licensesApi, taskApi, workerApi } from '@tap/api'
+import { fetchClusterStates } from '@tap/api/src/core/cluster'
+import { getPipelineDetails } from '@tap/api/src/core/licenses'
+import {
+  batchDeleteTasks,
+  batchStartTasks,
+  batchStopTasks,
+  batchUpdateTaskListtags,
+  copyTask,
+  exportTasks,
+  fetchTasks,
+  forceStopTask,
+  updateTask,
+} from '@tap/api/src/core/task'
+import { getTaskUsedAgent } from '@tap/api/src/core/workers'
 import { DownBoldOutlined } from '@tap/component/src/DownBoldOutlined'
 import SelectList from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import FilterBar from '@tap/component/src/filter-bar/Main.vue'
@@ -287,71 +300,65 @@ export default {
         skip: (current - 1) * size,
         where,
       }
-      return taskApi
-        .get({
-          filter: JSON.stringify(filter),
-        })
-        .then((data) => {
-          const errorTaskIds = []
-          const list = (data?.items || []).map((item) => {
-            if (item.errorEvents?.length) {
-              // 清除 stacks
-              item.errorEvents.forEach((event) => {
-                delete event.stacks
-              })
-            }
-
-            makeStatusAndDisabled(item)
-            if (item.status === 'error') {
-              errorTaskIds.push(item.id)
-            } else if (this.taskErrorCause[item.id]) {
-              delete this.taskErrorCause
-            }
-
-            if (item.metricInfo) {
-              const day = dayjs(item.metricInfo.lastUpdateTime)
-              item.metricInfo.cpuUsage = isNumber(item.metricInfo.cpuUsage)
-                ? `${Number(item.metricInfo.cpuUsage.toFixed(2))}%`
-                : '--'
-              item.metricInfo.memoryUsage = isNumber(
-                item.metricInfo.memoryUsage,
-              )
-                ? calcUnit(item.metricInfo.memoryUsage, 'b', 2)
-                : '--'
-              item.metricInfo.lastUpdateTime = this.$t(
-                'public_updated_from_now',
-                {
-                  time: day.fromNow(),
-                },
-              )
-              item.metricInfo.hasWarning = Date.now() - day.valueOf() > 60000
-            }
-            return item
-          })
-
-          /*if (!this.isDaas) {
-          this.loadTaskErrorCause(errorTaskIds)
-        }*/
-
-          // 有选中行，列表刷新后无法更新行数据，比如状态
-          if (this.multipleSelection.length && list.length) {
-            const tempMap = list.reduce((map, item) => {
-              map[item.id] = item
-              return map
-            }, {})
-            this.multipleSelection.forEach((item, i) => {
-              const temp = tempMap[item.id]
-              if (temp) {
-                this.multipleSelection[i] = temp
-              }
+      return fetchTasks(filter).then((data) => {
+        const errorTaskIds = []
+        const list = (data?.items || []).map((item) => {
+          if (item.errorEvents?.length) {
+            // 清除 stacks
+            item.errorEvents.forEach((event) => {
+              delete event.stacks
             })
           }
 
-          return {
-            total: data.total,
-            data: list,
+          makeStatusAndDisabled(item)
+          if (item.status === 'error') {
+            errorTaskIds.push(item.id)
+          } else if (this.taskErrorCause[item.id]) {
+            delete this.taskErrorCause
           }
+
+          if (item.metricInfo) {
+            const day = dayjs(item.metricInfo.lastUpdateTime)
+            item.metricInfo.cpuUsage = isNumber(item.metricInfo.cpuUsage)
+              ? `${Number(item.metricInfo.cpuUsage.toFixed(2))}%`
+              : '--'
+            item.metricInfo.memoryUsage = isNumber(item.metricInfo.memoryUsage)
+              ? calcUnit(item.metricInfo.memoryUsage, 'b', 2)
+              : '--'
+            item.metricInfo.lastUpdateTime = this.$t(
+              'public_updated_from_now',
+              {
+                time: day.fromNow(),
+              },
+            )
+            item.metricInfo.hasWarning = Date.now() - day.valueOf() > 60000
+          }
+          return item
         })
+
+        /*if (!this.isDaas) {
+          this.loadTaskErrorCause(errorTaskIds)
+        }*/
+
+        // 有选中行，列表刷新后无法更新行数据，比如状态
+        if (this.multipleSelection.length && list.length) {
+          const tempMap = list.reduce((map, item) => {
+            map[item.id] = item
+            return map
+          }, {})
+          this.multipleSelection.forEach((item, i) => {
+            const temp = tempMap[item.id]
+            if (temp) {
+              this.multipleSelection[i] = temp
+            }
+          })
+        }
+
+        return {
+          total: data.total,
+          data: list,
+        }
+      })
     },
 
     formatTime(time) {
@@ -440,7 +447,7 @@ export default {
           slotName: 'pipeline',
           type: 'select-inner',
           items: async () => {
-            let data = await licensesApi.getPipelineDetails()
+            let data = await getPipelineDetails()
             data = data || []
             return data.map((item) => {
               return {
@@ -545,7 +552,7 @@ export default {
         status,
       }
       errorEvents && (attributes.errorEvents = errorEvents)
-      taskApi.update(where, attributes).then((data) => {
+      updateTask(where, attributes).then((data) => {
         this.table.fetch()
         this.responseHandler(data, this.$t('public_message_operation_success'))
       })
@@ -566,7 +573,7 @@ export default {
         id: ids,
         listtags,
       }
-      taskApi.batchUpdateListtags(attributes).then(() => {
+      batchUpdateTaskListtags(attributes).then(() => {
         this.dataFlowId = ''
         this.table.fetch()
       })
@@ -644,8 +651,7 @@ export default {
     },
 
     startTask(ids, canNotList) {
-      taskApi
-        .batchStart(ids)
+      batchStartTasks(ids)
         .then((data) => {
           this.buried(this.taskBuried.start, '', { result: true })
           this.table.fetch()
@@ -665,7 +671,7 @@ export default {
     },
 
     copy(ids, node) {
-      taskApi.copy(node.id).then(() => {
+      copyTask(node.id).then(() => {
         this.table.fetch()
         this.$message.success(this.$t('public_message_copy_success'))
       })
@@ -682,8 +688,7 @@ export default {
           return
         }
         this.restLoading = true
-        taskApi
-          .batchRenew(ids)
+        batchRenewTasks(ids)
           .then((data) => {
             this.table.fetch()
             this.responseHandler(
@@ -704,7 +709,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.batchDelete(ids).then((data = []) => {
+        batchDeleteTasks(ids).then((data = []) => {
           const selected = this.multipleSelection.filter(({ id }) =>
             ids.includes(id),
           )
@@ -756,7 +761,7 @@ export default {
     },
 
     async forceStop(ids, item = {}) {
-      const data = await workerApi.taskUsedAgent(ids)
+      const data = await getTaskUsedAgent(ids)
       let msgObj = this.getConfirmMessage(
         'force_stop',
         ids.length > 1,
@@ -773,7 +778,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.forceStop(ids).then((data) => {
+        forceStopTask(ids).then((data) => {
           this.$message.success(
             data?.message || this.$t('public_message_operation_success'),
             false,
@@ -790,7 +795,7 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.batchStop(ids).then((data) => {
+        batchStopTasks(ids).then((data) => {
           this.table.fetch()
           this.responseHandler(
             data,
@@ -814,7 +819,7 @@ export default {
     },
 
     export(ids) {
-      taskApi.export(ids)
+      exportTasks(ids)
     },
 
     handleCommand(command, node) {
@@ -1006,7 +1011,7 @@ export default {
     },
 
     async loadPipelineOptions() {
-      const data = await licensesApi.getPipelineDetails()
+      const data = await getPipelineDetails()
 
       this.pipelineOptions = data.map((item) => {
         return {

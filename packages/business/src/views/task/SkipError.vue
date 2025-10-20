@@ -1,5 +1,5 @@
 <script>
-import { taskApi } from '@tap/api'
+import { getTaskErrorEvents, skipErrorEvents } from '@tap/api/src/core/task'
 export default {
   name: 'SkipError',
   props: {
@@ -29,7 +29,7 @@ export default {
   methods: {
     async checkError(task) {
       if (task.status === 'error') {
-        const errorEvents = await taskApi.getErrorEvents(task.id)
+        const errorEvents = await getTaskErrorEvents(task.id)
 
         if (!errorEvents?.length) return
 
@@ -65,7 +65,7 @@ export default {
     },
     async skipErrorData() {
       this.skipping = true
-      await taskApi.skipErrorEvents(this.taskId, this.checkedData)
+      await skipErrorEvents(this.taskId, this.checkedData)
       this.skipping = false
       this.visible = false
       this.$emit('skip', this.taskId)

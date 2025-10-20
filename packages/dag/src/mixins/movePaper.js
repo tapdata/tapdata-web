@@ -1,4 +1,4 @@
-import { on, off } from '@tap/shared'
+import { off, on } from '@tap/shared'
 
 export default {
   data() {
@@ -10,9 +10,17 @@ export default {
   methods: {
     getMousePosition(e) {
       const x =
-        e.pageX !== undefined ? e.pageX : e.touches && e.touches[0] && e.touches[0].pageX ? e.touches[0].pageX : 0
+        e.pageX !== undefined
+          ? e.pageX
+          : e.touches && e.touches[0] && e.touches[0].pageX
+            ? e.touches[0].pageX
+            : 0
       const y =
-        e.pageY !== undefined ? e.pageY : e.touches && e.touches[0] && e.touches[0].pageY ? e.touches[0].pageY : 0
+        e.pageY !== undefined
+          ? e.pageY
+          : e.touches && e.touches[0] && e.touches[0].pageY
+            ? e.touches[0].pageY
+            : 0
 
       return {
         x,
@@ -51,7 +59,8 @@ export default {
     },
 
     mouseUpMovePaper() {
-      if (this.$store.getters['dataflow/isPaperMoveInProgress'] === false) return
+      if (this.$store.getters['dataflow/isPaperMoveInProgress'] === false)
+        return
 
       off(document, 'mousemove', this.mouseMovePaper)
 

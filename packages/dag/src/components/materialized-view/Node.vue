@@ -1,5 +1,10 @@
 <script setup lang="tsx">
-import { fetchConnections, metadataInstancesApi } from '@tap/api'
+import { fetchConnections } from '@tap/api/src/core/connections'
+import {
+  checkTableExist,
+  fetchMetadataInstances,
+  getMergerNodeParentFields,
+} from '@tap/api/src/core/metadata-instances'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { IconButton } from '@tap/component/src/icon-button'
 import { FieldSelect } from '@tap/form/src/components/field-select'
@@ -428,10 +433,7 @@ async function loadTable(filter, config) {
       neq: '',
     }
   }
-  const data = await metadataInstancesApi.get(
-    { filter: JSON.stringify(filter) },
-    config,
-  )
+  const data = await fetchMetadataInstances(filter, config)
   data.items = data.items.map((item) => {
     return {
       label: item.original_name + (item.comment ? `(${item.comment})` : ''),
@@ -441,7 +443,7 @@ async function loadTable(filter, config) {
   })
   const table = filter.where.original_name?.like
   if (table && !data.items.some((t) => t.value.includes(table))) {
-    const res = await metadataInstancesApi.checkTableExist({
+    const res = await checkTableExist({
       connectionId: filter.where['source.id'],
       tableName: table,
     })
@@ -611,10 +613,7 @@ function handleFieldSelectVisible(visible) {
 }
 
 async function loadTargetField() {
-  const fields = await metadataInstancesApi.getMergerNodeParentFields(
-    route.params.id,
-    props.node.id,
-  )
+  const fields = await getMergerNodeParentFields(route.params.id, props.node.id)
 
   state.targetFields = fields.map((item) => {
     let label = item.field_name

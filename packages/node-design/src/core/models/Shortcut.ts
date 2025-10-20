@@ -28,8 +28,8 @@ export class Shortcut {
     if (this.codes.length) {
       for (let i = 0; i < codes.length; i++) {
         const sequence = this.codes[i]
-        for (let j = 0; j < sequence.length; j++) {
-          if (!Shortcut.matchCode(codes[j], sequence[j])) {
+        for (const [j, element] of sequence.entries()) {
+          if (!Shortcut.matchCode(codes[j], element)) {
             return false
           }
         }
@@ -53,9 +53,10 @@ export class Shortcut {
       if (isFn(this.matcher)) {
         return this.matched(this.matcher(sortedTarget), context)
       }
-      if (sortedTarget.length !== sortedSelf.length) return this.matched(false, context)
-      for (let i = 0; i < sortedSelf.length; i++) {
-        if (!Shortcut.matchCode(sortedTarget[i], sortedSelf[i])) {
+      if (sortedTarget.length !== sortedSelf.length)
+        return this.matched(false, context)
+      for (const [i, element] of sortedSelf.entries()) {
+        if (!Shortcut.matchCode(sortedTarget[i], element)) {
           return this.matched(false, context)
         }
       }

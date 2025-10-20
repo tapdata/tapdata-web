@@ -1,22 +1,21 @@
-import { get, set, merge } from 'lodash-es'
+import { get, merge, set } from 'lodash-es'
 export const convertSchemaToTreeData = function (Schema) {
   if (Schema) {
-    let root = {}
+    const root = {}
     let fields = Schema || []
-    for (let i = 0; i < fields.length; i++) {
-      let field = fields[i]
+    for (const field of fields) {
       if (field && field.field_name && field.original_field_name) {
         const previousFieldName = field.previousFieldName
-        let jsonPathForFieldName = field.field_name.split('.')
-        let treeItem = {
+        const jsonPathForFieldName = field.field_name.split('.')
+        const treeItem = {
           id:
             field.id ||
-            `${field.table_name}${field.original_field_name ? '_' + field.original_field_name : ''}`.replace(
-              /\./g,
+            `${field.table_name}${field.original_field_name ? `_${field.original_field_name}` : ''}`.replaceAll(
+              '.',
               '_',
             ),
-          label: jsonPathForFieldName[jsonPathForFieldName.length - 1],
-          field_name: jsonPathForFieldName[jsonPathForFieldName.length - 1],
+          label: jsonPathForFieldName.at(-1),
+          field_name: jsonPathForFieldName.at(-1),
           type: field.previousDataType,
           data_type: field.data_type,
           primary_key_position: field.primary_key_position,
@@ -30,8 +29,8 @@ export const convertSchemaToTreeData = function (Schema) {
           previousDataType: field.previousDataType,
           columnPosition: field.columnPosition,
         }
-        let path = 'children.' + jsonPathForFieldName.join('.children.')
-        let partField = get(root, path)
+        const path = `children.${jsonPathForFieldName.join('.children.')}`
+        const partField = get(root, path)
         if (!partField) {
           set(root, path, treeItem)
         } else {
@@ -39,7 +38,7 @@ export const convertSchemaToTreeData = function (Schema) {
         }
       }
     }
-    let re = function (field, count) {
+    const re = function (field, count) {
       if (field && field.children) {
         count++
         field.children = Object.values(field.children).map((it) => {
@@ -91,7 +90,7 @@ export const getFieldsNames = function (fields) {
 }
 
 export const fieldsNamesMap = function (fields) {
-  let fieldsNamesMap = {}
+  const fieldsNamesMap = {}
   if (fields) {
     fields.map((s) => (fieldsNamesMap[s.field_name] = s.id))
   }
@@ -116,15 +115,18 @@ export const fieldNameIndex = function (name) {
 
 export const handleOperation = function (fields, operations) {
   //查找是否有被删除的字段且operation有操作
-  let fieldOriginalIds = getFieldsIds(fields)
-  let fieldOriginalIsDeleted = fieldIsDeleted(fields)
-  let fieldOriginalNames = getFieldsNames(fields)
-  let operationIds = getOperationIds(operations)
-  let temporary = operations
+  const fieldOriginalIds = getFieldsIds(fields)
+  const fieldOriginalIsDeleted = fieldIsDeleted(fields)
+  const fieldOriginalNames = getFieldsNames(fields)
+  const operationIds = getOperationIds(operations)
+  const temporary = operations
   if (temporary.length > 0) {
     for (let i = 0; i < temporary.length; i++) {
-      let indexOf = fieldNameIndex(temporary[i].field) || -1
-      if (fieldOriginalIsDeleted.includes(temporary[i].id) && !temporary[i]['keep']) {
+      const indexOf = fieldNameIndex(temporary[i].field) || -1
+      if (
+        fieldOriginalIsDeleted.includes(temporary[i].id) &&
+        !temporary[i].keep
+      ) {
         temporary.splice(i, 1)
         i--
         continue
@@ -146,77 +148,77 @@ export const handleOperation = function (fields, operations) {
 
 export const isValidate = function (operations, schema) {
   //字段处理器是否校验通过
-  let operation = operations || []
+  const operation = operations || []
   let isValidate = true
-  let errorList = []
+  const errorList = []
   if (operation.length > 0) {
     //data.operation id不匹配的字段验证 跟当前schema进行比较operation.id
-    let originalSchema = schema || {}
-    let fieldOriginalIds = getFieldsIds(originalSchema.fields)
-    let fieldDeleted = fieldIsDeleted(originalSchema.fields)
-    let fieldOriginalNames = getFieldsNames(originalSchema.fields)
-    let operationIds = getOperationIds(operation)
-    for (let i = 0; i < operation.length; i++) {
+    const originalSchema = schema || {}
+    const fieldOriginalIds = getFieldsIds(originalSchema.fields)
+    const fieldDeleted = fieldIsDeleted(originalSchema.fields)
+    const fieldOriginalNames = getFieldsNames(originalSchema.fields)
+    const operationIds = getOperationIds(operation)
+    for (const element of operation) {
       // isType 1表示id name 都不匹配 2表示name匹配 3表示该字段被标记为删除且id匹配 4 新建字段处理 5 脚本处理
-      let indexOf = fieldNameIndex(operation[i].field) || -1
+      const indexOf = fieldNameIndex(element.field) || -1
       let node = {}
-      if (operation[i].op === 'CREATE') {
+      if (element.op === 'CREATE') {
         node = {
-          id: operation[i].id,
+          id: element.id,
           isType: 4,
           keep: false,
-          action: operation[i].action,
-          op: operation[i].op,
-          field: operation[i].field,
-          data_type: operation[i].data_type,
-          level: operation[i].level,
-          tableName: operation[i].tableName,
-          triggerFieldId: operation[i].triggerFieldId,
+          action: element.action,
+          op: element.op,
+          field: element.field,
+          data_type: element.data_type,
+          level: element.level,
+          tableName: element.tableName,
+          triggerFieldId: element.triggerFieldId,
         }
       } else {
         node = {
-          id: operation[i].id,
-          color: operation[i].color,
-          field: operation[i].field,
+          id: element.id,
+          color: element.color,
+          field: element.field,
           isType: 1,
           keep: false,
-          label: operation[i].label,
-          op: operation[i].op,
-          operand: operation[i].operand,
-          originalDataType: operation[i].originalDataType || operation[i].type,
-          primary_key_position: operation[i].primary_key_position,
-          table_name: operation[i].table_name,
-          type: operation[i].type,
+          label: element.label,
+          op: element.op,
+          operand: element.operand,
+          originalDataType: element.originalDataType || element.type,
+          primary_key_position: element.primary_key_position,
+          table_name: element.table_name,
+          type: element.type,
         }
       }
       if (
-        operation[i].op === 'CREATE' &&
-        (fieldOriginalNames.includes(operation[i].field) ||
-          (!fieldOriginalIds.includes(operation[i].triggerFieldId) &&
+        element.op === 'CREATE' &&
+        (fieldOriginalNames.includes(element.field) ||
+          (!fieldOriginalIds.includes(element.triggerFieldId) &&
             indexOf > -1 &&
-            !operationIds.includes(operation[i].triggerFieldId)))
+            !operationIds.includes(element.triggerFieldId)))
       ) {
         errorList.push(node)
         isValidate = false
       } else if (
-        !fieldOriginalIds.includes(operation[i].id) &&
-        !fieldOriginalNames.includes(operation[i].field) &&
-        operation[i].op !== 'CREATE'
+        !fieldOriginalIds.includes(element.id) &&
+        !fieldOriginalNames.includes(element.field) &&
+        element.op !== 'CREATE'
       ) {
         node.isType = 1
         node.keep = false
         errorList.push(node)
         isValidate = false
       } else if (
-        !fieldOriginalIds.includes(operation[i].id) &&
-        fieldOriginalNames.includes(operation[i].field) &&
-        operation[i].op !== 'CREATE'
+        !fieldOriginalIds.includes(element.id) &&
+        fieldOriginalNames.includes(element.field) &&
+        element.op !== 'CREATE'
       ) {
         node.isType = 2
         node.keep = true
         errorList.push(node)
         isValidate = false
-      } else if (fieldDeleted.includes(operation[i].id)) {
+      } else if (fieldDeleted.includes(element.id)) {
         node.isType = 3
         node.keep = true
         errorList.push(node)
@@ -225,31 +227,31 @@ export const isValidate = function (operations, schema) {
     }
   }
   return {
-    isValidate: isValidate,
-    errorList: errorList,
+    isValidate,
+    errorList,
   }
 }
 export const isScript = function (operations, scripts) {
   let fieldIds = []
-  let errorList = []
+  const errorList = []
   if (operations) {
     fieldIds = operations.map((field) => field.id)
   }
   if (scripts) {
-    for (let i = 0; i < scripts.length; i++) {
-      if (!fieldIds.includes(scripts[i].id)) {
-        let node = {
+    for (const script of scripts) {
+      if (!fieldIds.includes(script.id)) {
+        const node = {
           isType: 5,
           keep: false,
-          color: scripts[i].color,
-          field: scripts[i].field,
-          id: scripts[i].id,
-          label: scripts[i].label,
-          primary_key_position: scripts[i].primary_key_position,
-          script: scripts[i].script,
-          scriptType: scripts[i].scriptType,
-          tableName: scripts[i].tableName,
-          type: scripts[i].type,
+          color: script.color,
+          field: script.field,
+          id: script.id,
+          label: script.label,
+          primary_key_position: script.primary_key_position,
+          script: script.script,
+          scriptType: script.scriptType,
+          tableName: script.tableName,
+          type: script.type,
         }
         errorList.push(node)
       }
@@ -278,7 +280,7 @@ export const delScript = function (operations, scripts, id) {
 
 //兼容数据 操作记录改变type => original_type
 export const originalType = function (operations, id) {
-  let data = operations.filter((v) => v.id === id && v.op === 'CONVERT')
+  const data = operations.filter((v) => v.id === id && v.op === 'CONVERT')
   let original_type = ''
   if (data.length > 0) {
     original_type = data[0].originalDataType
@@ -288,9 +290,12 @@ export const originalType = function (operations, id) {
 export const uuid = function () {
   // credit: http://stackoverflow.com/posts/2117523/revisions
 
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    var r = (Math.random() * 16) | 0
-    var v = c === 'x' ? r : (r & 0x3) | 0x8
-    return v.toString(16)
-  })
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replaceAll(
+    /[xy]/g,
+    function (c) {
+      const r = (Math.random() * 16) | 0
+      const v = c === 'x' ? r : (r & 0x3) | 0x8
+      return v.toString(16)
+    },
+  )
 }

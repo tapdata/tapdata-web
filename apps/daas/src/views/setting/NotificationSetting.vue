@@ -1,5 +1,5 @@
 <script>
-import { findOneSetting } from '@tap/api'
+import { findOneSetting } from '@tap/api/src/core/settings'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import { notificationMAP } from '../notification/tyepMap'
 
