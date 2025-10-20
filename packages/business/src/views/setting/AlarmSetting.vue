@@ -362,7 +362,6 @@ const initVariables = () => {
     mapping[item.key] = item.variables
   })
   variables.value = mapping
-  console.log(`aaa variables: ${JSON.stringify(variables.value)}`)
 }
 
 const loadAlarmRecipient = async () => {

@@ -1,4 +1,5 @@
 <script>
+import { fetchLicenses } from '@tap/api/src/core/licenses'
 import {
   fetchSettings,
   saveSettings,
@@ -145,7 +146,7 @@ export default {
     // 获取设置数据
     getData() {
       let auth_data = []
-      getLicensesExpires({}).then((data) => {
+      fetchLicenses().then((data) => {
         auth_data = data?.items || []
       })
       fetchSettings().then((data) => {
