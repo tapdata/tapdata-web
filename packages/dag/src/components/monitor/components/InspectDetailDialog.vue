@@ -336,14 +336,20 @@ async function handleConfirmRecover(): Promise<void> {
             {{ $t('public_diff_check') }}
           </el-button>
 
-          <el-button v-else bg text @click="handleConfirmCheck">
-            <template #icon>
-              <el-icon class="is-loading" size="16">
-                <i-mingcute:loading-line />
-              </el-icon>
-            </template>
-            {{ $t('public_checking') }} ({{ progress }}%)
-          </el-button>
+          <el-tooltip
+            v-else
+            :content="t('public_start_at_time', { time: lastOpTime })"
+            placement="top"
+          >
+            <el-button bg text @click="handleConfirmCheck">
+              <template #icon>
+                <el-icon class="is-loading" size="16">
+                  <i-mingcute:loading-line />
+                </el-icon>
+              </template>
+              {{ $t('public_checking') }} ({{ progress }}%)
+            </el-button>
+          </el-tooltip>
 
           <el-button
             v-if="!showRecoverProgress"
@@ -358,23 +364,20 @@ async function handleConfirmRecover(): Promise<void> {
             {{ $t('public_one_key_repair') }}
           </el-button>
 
-          <el-button v-else bg text @click="handleConfirmRecover">
-            <!-- <el-progress
-            class="mr-1"
-            type="circle"
-            :percentage="80"
-            width="16"
-            :show-text="false"
-            :stroke-width="2"
-            color="var(--el-color-primary)"
-          /> -->
-            <template #icon>
-              <el-icon class="is-loading" size="16">
-                <i-mingcute:loading-line />
-              </el-icon>
-            </template>
-            {{ $t('public_repairing') }} ({{ progress }}%)
-          </el-button>
+          <el-tooltip
+            v-else
+            :content="t('public_start_at_time', { time: lastOpTime })"
+            placement="top"
+          >
+            <el-button bg text @click="handleConfirmRecover">
+              <template #icon>
+                <el-icon class="is-loading" size="16">
+                  <i-mingcute:loading-line />
+                </el-icon>
+              </template>
+              {{ $t('public_repairing') }} ({{ progress }}%)
+            </el-button>
+          </el-tooltip>
           <el-divider class="mx-3" direction="vertical" />
         </template>
 
@@ -690,18 +693,17 @@ async function handleConfirmRecover(): Promise<void> {
                 </div>
               </div>
             </div>
-            <div class="flex justify-center position-sticky bottom-0">
-              <el-pagination
-                v-model:current-page="pageState.page"
-                v-model:page-size="pageState.pageSize"
-                hide-on-single-page
-                class="backdrop-blur-md rounded-xl p-2 bg-white/15 shadow-sm mt-3"
-                background
-                layout="prev, pager, next"
-                :total="pageState.total"
-                @current-change="fetchTableDiff"
-              />
-            </div>
+          </div>
+          <div class="py-3 px-4">
+            <el-pagination
+              v-model:current-page="pageState.page"
+              v-model:page-size="pageState.pageSize"
+              hide-on-single-page
+              :page-sizes="[10, 20, 50, 100]"
+              layout="->,total, sizes, prev, pager, next, jumper"
+              :total="pageState.total"
+              @current-change="fetchTableDiff"
+            />
           </div>
         </div>
       </div>
