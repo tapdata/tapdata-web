@@ -417,7 +417,7 @@ async function handleConfirmRecover(): Promise<void> {
             <div
               v-for="(row, index) in inspectList"
               :key="index"
-              class="inspection-result-card p-3 bg-white rounded-xl shadow-sm"
+              class="inspection-result-card p-3 bg-card rounded-xl shadow-sm"
               :class="{ 'border-primary': currentSelectedRow === row }"
               @click="handleRowClick(row)"
             >
@@ -497,7 +497,7 @@ async function handleConfirmRecover(): Promise<void> {
 
         <div
           v-loading="loadingDetails"
-          class="bg-white border-left flex-1 flex flex-column"
+          class="bg-card border-left flex-1 flex flex-column"
         >
           <div class="flex gap-3 px-4 py-3 border-bottom">
             <span
@@ -824,7 +824,7 @@ async function handleConfirmRecover(): Promise<void> {
     border: 1px solid transparent;
 
     &:hover {
-      background-color: rgba(31, 35, 41, 0.08);
+      background-color: var(--fill-hover);
     }
 
     &.active {
