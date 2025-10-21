@@ -1,6 +1,8 @@
 import i18n from '@tap/i18n'
 import { defineComponent, ref } from 'vue'
+import Dialog from './FieldDialog.vue'
 import './style.scss'
+
 export const VerifyFieldsDialog = defineComponent({
   props: {
     value: String,

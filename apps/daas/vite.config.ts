@@ -156,35 +156,25 @@ export default defineConfig(() => {
       assetsDir: 'static',
       rollupOptions: {
         output: {
-          manualChunks(id) {
-            if (id.includes('node_modules')) {
-              if (id.includes('/vue/')) return 'framework'
-              if (id.includes('vue-router') || id.includes('vuex'))
-                return 'framework'
-              if (id.includes('element-plus') || id.includes('@element-plus'))
-                return 'ui'
-              if (id.includes('/echarts') || id.includes('vue-echarts'))
-                return 'charts'
-              if (
-                id.includes('lodash') ||
-                id.includes('dayjs') ||
-                id.includes('/qs/')
-              )
-                return 'utils'
-
-              // monaco-editor ace editor
-              if (id.includes('monaco-editor') || id.includes('ace-editor'))
-                return 'editor'
-              // 其它 node_modules 统一进 vendor，避免生成大量小碎片
-              return 'vendor'
-            }
-            // 合并内部工作区依赖
-            // 内部工作区依赖：按具体包名分割（@tap/api、@tap/dag、@tap/component 等）
-            if (id.includes('/packages/')) {
-              const match = id.match(/\/packages\/([^/]+)\//)
-              if (match) return `tap-${match[1]}` // e.g. tap-api, tap-dag, tap-component
-            }
-            return undefined
+          // 控制 chunk 文件名，避免过长的 hash
+          chunkFileNames: 'static/js/[name]-[hash].js',
+          entryFileNames: 'static/js/[name]-[hash].js',
+          assetFileNames: 'static/[ext]/[name]-[hash].[ext]',
+          manualChunks: {
+            ui: [
+              'element-plus',
+              '@element-plus/icons-vue',
+              '@formily/core',
+              '@formily/reactive',
+            ],
+            lodash: ['lodash'],
+            'tap-api': ['@tap/api'],
+            'tap-component': ['@tap/component'],
+            'tap-form': ['@tap/form'],
+            'tap-ldp': ['@tap/ldp'],
+            'tap-node-design': ['@tap/node-design'],
+            'tap-request': ['@tap/request'],
+            'tap-shared': ['@tap/shared'],
           },
         },
       },

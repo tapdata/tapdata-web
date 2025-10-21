@@ -22,7 +22,6 @@ import Cookie from '@tap/shared/src/cookie'
 import { makeDragNodeImage } from '../shared/classification'
 
 export default {
-  components: { VIcon },
   props: {
     types: {
       type: Array,

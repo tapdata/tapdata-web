@@ -1,7 +1,9 @@
 import { action } from '@formily/reactive'
 import { observer } from '@formily/reactive-vue'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import {
   h as createElement,
+  FormBaseItem as FormItem,
   RecursionField,
   useField,
   useFieldSchema,

@@ -23,7 +23,7 @@ import { $emit } from '../../../utils/gogocodeTransfer'
 
 export default {
   name: 'Workbench',
-  components: { VIcon, Chart },
+  components: { Chart },
   mixins: [timeFunction],
   inject: ['checkAgent'],
   data() {

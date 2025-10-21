@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   batchPushMetadataDefinitionListtags,
+  createMetadataDefinition,
   deleteMetadataDefinition,
   fetchMetadataDefinitionChildAccount,
   fetchMetadataDefinitionTags,

@@ -65,7 +65,6 @@ export default {
     TopHeader,
     Node,
     LeftSider,
-    VIcon,
     NodeDetailDialog,
     ConsolePanel,
     SharedMiningEditor,

@@ -1,8 +1,11 @@
 import { observe } from '@formily/reactive'
 import { observer } from '@formily/reactive-vue'
 import { getMergerNodeParentFields } from '@tap/api/src/core/metadata-instances'
+import { IconButton } from '@tap/component/src/icon-button'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import {
   h as createElement,
+  FormItem,
   RecursionField,
   useFieldSchema,
   useForm,
@@ -11,6 +14,7 @@ import i18n from '@tap/i18n'
 import { defineComponent, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
+import NodeIcon from '../../NodeIcon'
 import './style.scss'
 
 export const MergeTableTree = observer(

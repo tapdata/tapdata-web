@@ -23,7 +23,6 @@ export default {
     LineChart,
     TimeSelect,
     Frequency,
-    VIcon,
     InitialList,
     IconButton,
   },

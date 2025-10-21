@@ -10,7 +10,7 @@ import NodeList from '../nodes/List'
 
 export default {
   name: 'List',
-  components: { VIcon, NodeList, VTable },
+  components: { NodeList, VTable },
   props: {
     dataflow: {
       type: Object,

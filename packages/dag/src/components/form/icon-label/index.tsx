@@ -1,5 +1,5 @@
 import { observer } from '@formily/reactive-vue'
-import { useForm } from '@tap/form'
+import { FormItem, useForm } from '@tap/form'
 import { defineComponent } from 'vue'
 
 export const IconLabel = observer(
