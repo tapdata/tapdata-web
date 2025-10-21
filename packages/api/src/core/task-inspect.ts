@@ -110,9 +110,13 @@ export function getTaskInspectResultsLastOp(taskId: string) {
   )
 }
 
-export function getTaskInspectResultsGroupByTable(inspectId: string) {
+export function getTaskInspectResultsGroupByTable(
+  inspectId: string,
+  params: any,
+) {
   return requestClient.get<PageFetchResult<InspectionRow>>(
     `/api/task-inspect-histories/${inspectId}/results/group-by-table`,
+    { params },
   )
 }
 

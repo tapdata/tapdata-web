@@ -13,7 +13,7 @@ import { dayjs } from '@tap/business/src/shared/dayjs'
 import { CloseIcon } from '@tap/component/src/CloseIcon'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
-import { reactive, ref, useTemplateRef } from 'vue'
+import { computed, reactive, ref, useTemplateRef } from 'vue'
 import InspectRecordDialog from './InspectRecordDialog.vue'
 
 const props = defineProps({
@@ -40,7 +40,6 @@ const diffListContainer = useTemplateRef<HTMLElement>('diffListContainer')
 const activeTab = ref('details')
 const inspectList = ref<InspectionRow[]>([])
 const rowDiffList = ref<DiffRow[]>([])
-const loadingList = ref(false)
 const loadingDetails = ref(false)
 const currentSelectedRow = ref<InspectionRow | null | undefined>()
 const onlyShowDiffFields = ref(true)
@@ -53,6 +52,16 @@ const pageState = reactive({
   pageSize: 20,
   total: 0,
 })
+const tablePageState = reactive({
+  keyword: '',
+  page: 1,
+  pageSize: 10,
+  total: 0,
+})
+
+const tableTotalPage = computed(() => {
+  return Math.ceil(tablePageState.total / tablePageState.pageSize)
+})
 
 function onClose(): void {
   resetData()
@@ -64,30 +73,44 @@ function resetData(): void {
   currentSelectedRow.value = null
 }
 
-async function fetchDiffList(): Promise<void> {
-  loadingList.value = true
-  try {
-    const data = await getTaskInspectResultsGroupByTable(props.inspectId)
-    inspectList.value = data?.items || []
-
-    if (inspectList.value.length > 0) {
-      if (currentSelectedRow.value) {
-        const item = inspectList.value.find(
-          (item) => item.sourceTable === currentSelectedRow.value?.sourceTable,
-        )
-        currentSelectedRow.value = item || inspectList.value[0]
-      } else {
-        currentSelectedRow.value = inspectList.value[0]
-      }
-
-      fetchTableDiff()
+const { run: fetchDiffList, loading: loadingList } = useRequest(
+  async (page?: number) => {
+    if (page) {
+      tablePageState.page = page
     }
-  } catch (error) {
-    console.error('Failed to fetch inspect list:', error)
-  } finally {
-    loadingList.value = false
-  }
-}
+
+    try {
+      const data = await getTaskInspectResultsGroupByTable(props.inspectId, {
+        limit: tablePageState.pageSize,
+        skip: tablePageState.pageSize * (tablePageState.page - 1),
+        tableName: tablePageState.keyword,
+      })
+
+      inspectList.value = data?.items || []
+      tablePageState.total = data?.total || 0
+
+      if (inspectList.value.length > 0) {
+        if (currentSelectedRow.value) {
+          const item = inspectList.value.find(
+            (item) =>
+              item.sourceTable === currentSelectedRow.value?.sourceTable,
+          )
+          currentSelectedRow.value = item || inspectList.value[0]
+        } else {
+          currentSelectedRow.value = inspectList.value[0]
+        }
+
+        fetchTableDiff()
+      }
+    } catch (error) {
+      console.error('Failed to fetch inspect list:', error)
+    }
+  },
+  {
+    manual: true,
+    debounceInterval: 200,
+  },
+)
 
 async function fetchTableDiff(page?: number): Promise<void> {
   if (!props.inspectId) return
@@ -237,6 +260,9 @@ function handleRowClick(row: InspectionRow): void {
 function onOpen(): void {
   if (props.inspectId) {
     // fetchDiffList()
+    tablePageState.page = 1
+    tablePageState.total = 0
+    tablePageState.keyword = ''
     startPolling()
   }
 }
@@ -363,11 +389,31 @@ async function handleConfirmRecover(): Promise<void> {
     <div class="inspect-detail-container border-top">
       <div
         v-loading="loadingList"
-        :class="inspectList.length || loadingList ? 'flex' : 'none'"
+        :class="
+          inspectList.length || loadingList || tablePageState.keyword
+            ? 'flex'
+            : 'none'
+        "
         style="min-height: 400px"
       >
-        <div class="inspection-result-list bg-light p-3 overflow-y-auto">
-          <div class="flex flex-column gap-3">
+        <div class="inspection-result-list bg-light flex flex-column">
+          <div class="p-3">
+            <el-input
+              v-model="tablePageState.keyword"
+              :placeholder="
+                $t('packages_form_table_rename_index_sousuobiaoming')
+              "
+              clearable
+              @input="fetchDiffList(1)"
+            >
+              <template #prefix>
+                <el-icon><i-lucide:search /></el-icon>
+              </template>
+            </el-input>
+          </div>
+          <div
+            class="flex flex-column gap-3 p-3 pt-0 flex-1 min-height-0 overflow-y-auto"
+          >
             <div
               v-for="(row, index) in inspectList"
               :key="index"
@@ -432,7 +478,21 @@ async function handleConfirmRecover(): Promise<void> {
                 </ElTag>
               </div>
             </div>
+
+            <el-empty v-if="!loadingList && !inspectList.length" />
           </div>
+          <el-pagination
+            v-model:current-page="tablePageState.page"
+            hide-on-single-page
+            class="table-pagination justify-center py-3"
+            layout="prev, jumper, slot, next"
+            :total="tablePageState.total"
+            :page-size="tablePageState.pageSize"
+            @change="fetchDiffList()"
+          >
+            <span class="mx-3">/</span>
+            <span class="mr-2">{{ tableTotalPage }}</span>
+          </el-pagination>
         </div>
 
         <div
@@ -647,7 +707,12 @@ async function handleConfirmRecover(): Promise<void> {
       </div>
 
       <el-empty
-        v-show="!loadingList && !loadingDetails && !inspectList.length"
+        v-show="
+          !loadingList &&
+          !loadingDetails &&
+          !inspectList.length &&
+          !tablePageState.keyword
+        "
       />
     </div>
 
@@ -670,6 +735,14 @@ async function handleConfirmRecover(): Promise<void> {
     display: flex;
     flex-direction: column;
     min-height: 0;
+  }
+
+  .table-pagination {
+    --el-pagination-item-gap: 8px;
+    :deep(.el-pagination__goto),
+    :deep(.el-pagination__classifier) {
+      display: none;
+    }
   }
 }
 </style>
