@@ -4,8 +4,8 @@ import {
   getNodeSchemaPage,
 } from '@tap/api/src/core/metadata-instances'
 import { getPdkStatics } from '@tap/api/src/core/pdk'
-import { useField, useForm } from '@tap/form'
-
+import GitBook from '@tap/component/src/GitBook.vue'
+import { FormItem, JsEditor, useField, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import { defineComponent, ref } from 'vue'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'

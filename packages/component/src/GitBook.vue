@@ -1,48 +1,42 @@
-<script>
+<script lang="ts" setup>
 import MarkdownIt from 'markdown-it'
 import '@tap/assets/styles/github-markdown.css'
+import { ref, watch, onMounted } from 'vue'
 
-export default {
+defineOptions({
   name: 'GitBook',
-  props: {
-    value: {
-      type: [String, Blob],
-      require: true,
-    },
-  },
-  emits: ['update:value'],
-  data() {
-    return {
-      html: '',
-    }
-  },
-  watch: {
-    value(v1, v2) {
-      if (v1 !== v2) {
-        this.init()
-      }
-    },
-  },
-  mounted() {
-    this.value && this.init()
-  },
-  methods: {
-    init() {
-      const v = this.value
-      const reader = new FileReader()
-      const blob = new Blob([v])
-      reader.readAsText(blob, 'utf8')
-      reader.addEventListener('load', () => {
-        // TODO: 代码高亮，复制按钮
-        const md = new MarkdownIt({ html: true })
-        // a标签，新窗口打开
-        this.html = md
-          .render(reader.result)
-          .replaceAll('<a href=', `<a target="_blank" href=`)
-      })
-    },
-  },
+})
+
+const props = defineProps<{
+  value: string | Blob
+}>()
+
+const html = ref('')
+
+watch(() => props.value, (v1, v2) => {
+  if (v1 !== v2) {
+    init()
+  }
+})
+
+const init = () => {
+  const v = props.value
+  const reader = new FileReader()
+  const blob = new Blob([v])
+  reader.readAsText(blob, 'utf8')
+  reader.addEventListener('load', () => {
+    // TODO: 代码高亮，复制按钮
+    const md = new MarkdownIt({ html: true })
+    // a标签，新窗口打开
+    html.value = md
+      .render(reader.result)
+      .replaceAll('<a href=', `<a target="_blank" href=`)
+  })
 }
+
+onMounted(() => {
+  props.value && init()
+})
 </script>
 
 <template>
