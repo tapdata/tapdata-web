@@ -1,7 +1,7 @@
 import { observer } from '@formily/reactive-vue'
 import { connect, mapProps } from '@formily/vue'
 import { refreshTaskSchema } from '@tap/api/src/core/task'
-import { useField, useForm } from '@tap/form'
+import { FormItem, useField, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import { computed, defineComponent, ref } from 'vue'
 import { useStore } from 'vuex'
