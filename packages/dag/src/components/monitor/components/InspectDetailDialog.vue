@@ -702,7 +702,7 @@ async function handleConfirmRecover(): Promise<void> {
               :page-sizes="[10, 20, 50, 100]"
               layout="->,total, sizes, prev, pager, next, jumper"
               :total="pageState.total"
-              @current-change="fetchTableDiff"
+              @change="fetchTableDiff"
             />
           </div>
         </div>
