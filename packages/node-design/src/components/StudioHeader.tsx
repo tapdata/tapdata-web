@@ -3,12 +3,14 @@ import {
   checkCustomNodeUsed,
   fetchCustomNodes,
 } from '@tap/api/src/core/custom-node'
+import { TextEditable } from '@tap/component/src/base/text-editable'
 import focusSelect from '@tap/component/src/directives/focusSelect'
 import { useI18n } from '@tap/i18n'
 import { defineComponent, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { transformToTreeNode } from '../core'
 import { useCustomNode, useDesigner, useWorkbench } from '../hooks'
+import { IconWidget } from './widgets'
 
 export const StudioHeader = observer(
   defineComponent({

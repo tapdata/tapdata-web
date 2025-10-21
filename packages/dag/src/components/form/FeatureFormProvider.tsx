@@ -1,3 +1,4 @@
+import { FormProvider } from '@formily/vue'
 import { defineComponent } from 'vue'
 import { useStore } from 'vuex'
 
