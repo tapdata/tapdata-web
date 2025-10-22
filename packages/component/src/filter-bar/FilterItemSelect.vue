@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { isFn } from '@tap/shared'
 
 import { escapeRegExp, get } from 'lodash-es'
@@ -98,6 +98,7 @@ const handleVisibleChange = (visible) => {
     :style="selectStyle"
     :options="filteredOptions"
     :fit-input-width="false"
+    :teleported="teleported"
     @visible-change="handleVisibleChange"
   >
     <template v-if="filterable" #header>

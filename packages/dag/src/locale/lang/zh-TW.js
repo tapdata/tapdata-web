@@ -911,6 +911,7 @@ export default {
   packages_dag_inspect_source_value: '源表值',
   packages_dag_inspect_target_value: '目標表值',
   packages_dag_inspect_row_id: '行 ID',
+  packages_dag_inspect_manual_id: '操作 ID',
   packages_dag_inspect_diff_type_diff: '差異',
   packages_dag_inspect_diff_type_miss: '目標少',
   packages_dag_inspect_diff_type_more: '目標多',

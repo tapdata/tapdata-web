@@ -11,9 +11,12 @@ import {
 import { useRequest } from '@tap/api/src/request'
 import { dayjs } from '@tap/business/src/shared/dayjs'
 import { CloseIcon } from '@tap/component/src/CloseIcon'
+import FilterItemSelect from '@tap/component/src/filter-bar/FilterItemSelect.vue'
+import { FilterConditionsOutlined } from '@tap/component/src/icon/FilterConditionsOutlined'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
-import { computed, reactive, ref, useTemplateRef } from 'vue'
+import { debounce } from 'lodash-es'
+import { computed, reactive, ref, useTemplateRef, watch } from 'vue'
 import InspectRecordDialog from './InspectRecordDialog.vue'
 
 const props = defineProps({
@@ -37,7 +40,6 @@ const visible = defineModel<boolean>('modelValue', {
 
 const { t } = useI18n()
 const diffListContainer = useTemplateRef<HTMLElement>('diffListContainer')
-const activeTab = ref('details')
 const inspectList = ref<InspectionRow[]>([])
 const rowDiffList = ref<DiffRow[]>([])
 const loadingDetails = ref(false)
@@ -47,6 +49,7 @@ const showCheckProgress = ref(false)
 const showRecoverProgress = ref(false)
 const progress = ref(0)
 const lastOpTime = ref('')
+const diffFilterType = ref()
 const pageState = reactive({
   page: 1,
   pageSize: 20,
@@ -58,9 +61,75 @@ const tablePageState = reactive({
   pageSize: 10,
   total: 0,
 })
+const innerFields = [
+  { label: t('packages_dag_inspect_row_id'), value: 'rowId' },
+  { label: t('packages_dag_inspect_manual_id'), value: 'manualId' },
+]
+const sourceFields = ref<{ label: string; value: string }[]>([])
+const targetFields = ref<{ label: string; value: string }[]>([])
+
+const conditions = reactive({
+  inner: {
+    field: '',
+    operator: '$eq',
+    value: '',
+  },
+  source: {
+    field: '',
+    operator: '$eq',
+    value: '',
+  },
+  target: {
+    field: '',
+    operator: '$eq',
+    value: '',
+  },
+})
+// Constants
+const diffFilterTypes = [
+  {
+    label: t('packages_dag_inspect_diff_type_diff'),
+    value: 'DIFF',
+    type: 'danger',
+  },
+  {
+    label: t('packages_dag_inspect_diff_type_miss'),
+    value: 'MISS',
+  },
+  {
+    label: t('packages_dag_inspect_diff_type_more'),
+    value: 'MORE',
+    type: 'warning',
+  },
+]
+const conditionOperators = [
+  { label: t('public_equal'), value: '$eq' },
+  { label: t('public_not_equal'), value: '$ne' },
+  { label: t('public_greater_than'), value: '$gt' },
+  { label: t('public_greater_than_or_equal'), value: '$gte' },
+  { label: t('public_less_than'), value: '$lt' },
+  { label: t('public_less_than_or_equal'), value: '$lte' },
+  { label: t('public_contains'), value: '$regex' },
+  { label: t('public_not_contains'), value: '$not' },
+  { label: t('public_is_null'), value: '$null' },
+  { label: t('public_is_not_null'), value: '$notNull' },
+]
 
 const tableTotalPage = computed(() => {
   return Math.ceil(tablePageState.total / tablePageState.pageSize)
+})
+
+const conditionCount = computed(() => {
+  return Object.values(conditions).filter(
+    (condition) =>
+      condition.field &&
+      (['$null', '$notNull'].includes(condition.operator) ||
+        condition.value !== ''),
+  ).length
+})
+
+watch(conditions, () => {
+  if (currentSelectedRow.value) fetchDiffListDebounced(1)
 })
 
 function onClose(): void {
@@ -69,8 +138,25 @@ function onClose(): void {
 }
 
 function resetData(): void {
-  activeTab.value = 'details'
   currentSelectedRow.value = null
+  tablePageState.page = 1
+  tablePageState.keyword = ''
+  pageState.page = 1
+  diffFilterType.value = undefined
+  clearAllConditions()
+}
+
+function mapFieldOptions(field: string): { label: string; value: string } {
+  return {
+    label: field,
+    value: field,
+  }
+}
+
+function setFieldOptions(): void {
+  const [item] = rowDiffList.value
+  sourceFields.value = item?.sourceFields?.map(mapFieldOptions) || []
+  targetFields.value = item?.targetFields?.map(mapFieldOptions) || []
 }
 
 const { run: fetchDiffList, loading: loadingList } = useRequest(
@@ -100,7 +186,7 @@ const { run: fetchDiffList, loading: loadingList } = useRequest(
           currentSelectedRow.value = inspectList.value[0]
         }
 
-        fetchTableDiff()
+        fetchTableDiff().then(setFieldOptions)
       }
     } catch (error) {
       console.error('Failed to fetch inspect list:', error)
@@ -111,6 +197,34 @@ const { run: fetchDiffList, loading: loadingList } = useRequest(
     debounceInterval: 200,
   },
 )
+
+function genWhereCondition(
+  condition: 'source' | 'target' | 'inner',
+): Record<string, any> {
+  const obj = conditions[condition]
+  const where: Record<string, any> = {}
+  const key = condition !== 'inner' ? `${condition}.${obj.field}` : obj.field
+
+  if (
+    !obj.field ||
+    (!['$null', '$notNull'].includes(obj.operator) && !obj.value)
+  ) {
+    return where
+  }
+
+  if (obj.operator === '$null') {
+    where[key] = null
+  } else if (obj.operator === '$notNull') {
+    where[key] = { $ne: null }
+  } else if (obj.operator === '$not') {
+    where[key] = { $not: { $eq: obj.value } }
+  } else if (obj.operator === '$eq') {
+    where[key] = obj.value
+  } else {
+    where[key] = { [obj.operator]: obj.value }
+  }
+  return where
+}
 
 async function fetchTableDiff(page?: number): Promise<void> {
   if (!props.inspectId) return
@@ -126,6 +240,10 @@ async function fetchTableDiff(page?: number): Promise<void> {
     limit: pageState.pageSize,
     where: {
       sourceTable: currentSelectedRow.value!.sourceTable,
+      diffType: diffFilterType.value,
+      ...genWhereCondition('source'),
+      ...genWhereCondition('target'),
+      ...genWhereCondition('inner'),
     },
   }
 
@@ -158,6 +276,8 @@ async function fetchTableDiff(page?: number): Promise<void> {
     loadingDetails.value = false
   }
 }
+
+const fetchDiffListDebounced = debounce(fetchDiffList, 200)
 
 const loadLastOp = async () => {
   const data = await getTaskInspectResultsLastOp(props.taskId)
@@ -254,15 +374,12 @@ function handleRowClick(row: InspectionRow): void {
   if (currentSelectedRow.value === row) return
   currentSelectedRow.value = row
   diffListContainer.value?.scrollTo({ top: 0 })
-  fetchTableDiff(1)
+  fetchTableDiff(1).then(setFieldOptions)
 }
 
 function onOpen(): void {
   if (props.inspectId) {
     // fetchDiffList()
-    tablePageState.page = 1
-    tablePageState.total = 0
-    tablePageState.keyword = ''
     startPolling()
   }
 }
@@ -297,6 +414,18 @@ async function handleConfirmRecover(): Promise<void> {
     showRecoverProgress.value = false
     runManualRecover()
   }
+}
+
+function clearCondition(condition: 'source' | 'target' | 'inner'): void {
+  conditions[condition].field = ''
+  conditions[condition].operator = '$eq'
+  conditions[condition].value = ''
+}
+
+function clearAllConditions(): void {
+  clearCondition('source')
+  clearCondition('target')
+  clearCondition('inner')
 }
 </script>
 
@@ -415,7 +544,7 @@ async function handleConfirmRecover(): Promise<void> {
             </el-input>
           </div>
           <div
-            class="flex flex-column gap-3 p-3 pt-0 flex-1 min-height-0 overflow-y-auto"
+            class="flex flex-column gap-3 p-3 pt-0 flex-1 min-h-0 overflow-y-auto"
           >
             <div
               v-for="(row, index) in inspectList"
@@ -484,6 +613,7 @@ async function handleConfirmRecover(): Promise<void> {
 
             <el-empty v-if="!loadingList && !inspectList.length" />
           </div>
+
           <el-pagination
             v-model:current-page="tablePageState.page"
             hide-on-single-page
@@ -502,7 +632,7 @@ async function handleConfirmRecover(): Promise<void> {
           v-loading="loadingDetails"
           class="bg-card border-left flex-1 flex flex-column"
         >
-          <div class="flex gap-3 px-4 py-3 border-bottom">
+          <div class="flex align-center gap-3 px-4 py-3 border-bottom">
             <span
               class="bg-subtle rounded-lg px-3 lh-8 cursor-pointer"
               :class="{
@@ -524,18 +654,201 @@ async function handleConfirmRecover(): Promise<void> {
                 $t('packages_business_verification_details_xianshiwanzhengzi')
               }}</span
             >
+            <el-divider direction="vertical" class="mx-0" />
+            <FilterItemSelect
+              v-model="diffFilterType"
+              :label="$t('packages_dag_src_editor_leixingguolu')"
+              :items="diffFilterTypes"
+              clearable
+              @change="fetchTableDiff(1)"
+            >
+              <template #label="{ label, value }">
+                <ElTag
+                  class="rounded-4"
+                  size="small"
+                  :type="
+                    value === 'DIFF'
+                      ? 'danger'
+                      : value === 'MORE'
+                        ? 'warning'
+                        : undefined
+                  "
+                  :class="{ 'tag-amber': value === 'MISS' }"
+                >
+                  {{ label }}
+                </ElTag>
+              </template>
+              <template #default="{ item }">
+                <div class="flex align-center h-100">
+                  <ElTag
+                    class="rounded-4"
+                    size="small"
+                    :type="item.type"
+                    :class="{ 'tag-amber': item.value === 'MISS' }"
+                  >
+                    {{ item.label }}
+                  </ElTag>
+                </div></template
+              >
+            </FilterItemSelect>
+            <el-popover trigger="click" width="480px" :hide-after="0">
+              <template #reference>
+                <el-button
+                  class="px-3"
+                  :class="{ 'is-active': conditionCount > 0 }"
+                  style="--el-button-text-color: var(--icon-n2)"
+                >
+                  <template #icon>
+                    <el-icon size="16">
+                      <FilterConditionsOutlined />
+                    </el-icon>
+                  </template>
+                  <span v-if="conditionCount > 0" class="mr-1">{{
+                    conditionCount
+                  }}</span>
+                  <span>{{ $t('public_filter') }}</span>
+                  <div
+                    v-if="conditionCount > 0"
+                    class="rounded-4 p-0.5 hover:primary-hover ml-1"
+                    @click.stop="clearAllConditions"
+                  >
+                    <el-icon class="align-top">
+                      <i-lucide:x />
+                    </el-icon>
+                  </div>
+                </el-button>
+              </template>
+              <div>
+                <!-- <div class="font-color-sslight">设置筛选条件</div> -->
+                <div
+                  class="grid"
+                  style="
+                    grid-template-columns: auto 1fr;
+                    row-gap: 0.5rem;
+                    column-gap: 1rem;
+                  "
+                >
+                  <div>
+                    <FilterItemSelect
+                      v-model="conditions.source.field"
+                      class="w-100"
+                      :label="$t('packages_dag_inspect_source_field')"
+                      placeholder=""
+                      :items="sourceFields"
+                      :teleported="false"
+                      clearable
+                    />
+                  </div>
+                  <div class="flex align-center gap-2">
+                    <el-select
+                      v-model="conditions.source.operator"
+                      :options="conditionOperators"
+                      class="is-w-auto"
+                      :teleported="false"
+                    />
+                    <el-input
+                      v-if="
+                        conditions.source.operator !== '$null' &&
+                        conditions.source.operator !== '$notNull'
+                      "
+                      v-model="conditions.source.value"
+                      :placeholder="$t('public_input_placeholder')"
+                      class="flex-1"
+                    />
+                    <el-button
+                      text
+                      size="small"
+                      class="ml-auto"
+                      @click="clearCondition('source')"
+                    >
+                      <template #icon>
+                        <i-lucide:x />
+                      </template>
+                    </el-button>
+                  </div>
+                  <div>
+                    <FilterItemSelect
+                      v-model="conditions.target.field"
+                      :label="$t('packages_dag_inspect_target_field')"
+                      placeholder=""
+                      class="w-100"
+                      :items="targetFields"
+                      :teleported="false"
+                      clearable
+                    />
+                  </div>
+                  <div class="flex align-center gap-2">
+                    <el-select
+                      v-model="conditions.target.operator"
+                      :options="conditionOperators"
+                      class="is-w-auto"
+                      :teleported="false"
+                    />
+                    <el-input
+                      v-if="
+                        conditions.target.operator !== '$null' &&
+                        conditions.target.operator !== '$notNull'
+                      "
+                      v-model="conditions.target.value"
+                      :placeholder="$t('public_input_placeholder')"
+                    />
+                    <el-button
+                      text
+                      size="small"
+                      class="ml-auto"
+                      @click="clearCondition('target')"
+                    >
+                      <template #icon>
+                        <i-lucide:x />
+                      </template>
+                    </el-button>
+                  </div>
+                  <div>
+                    <FilterItemSelect
+                      v-model="conditions.inner.field"
+                      label=""
+                      class="w-100"
+                      :items="innerFields"
+                      :teleported="false"
+                      clearable
+                    />
+                  </div>
+                  <div class="flex align-center gap-2">
+                    <el-select
+                      v-model="conditions.inner.operator"
+                      :options="conditionOperators"
+                      class="is-w-auto"
+                      :teleported="false"
+                      readonly
+                      disabled
+                    />
+                    <el-input
+                      v-model="conditions.inner.value"
+                      :placeholder="$t('public_input_placeholder')"
+                    />
+                    <el-button
+                      text
+                      size="small"
+                      class="ml-auto"
+                      @click="clearCondition('inner')"
+                    >
+                      <el-icon>
+                        <i-lucide:x />
+                      </el-icon>
+                    </el-button>
+                  </div>
+                </div>
+              </div>
+            </el-popover>
           </div>
-          <div ref="diffListContainer" class="overflow-y-auto p-4 min-height-0">
+          <div ref="diffListContainer" class="overflow-y-auto p-4 min-h-0">
             <div class="flex flex-column gap-4">
               <div
                 v-for="(row, index) in rowDiffList"
                 :key="index"
                 class="border rounded-xl overflow-hidden"
               >
-                <div class="flex align-items-center gap-2 p-3 bg-light">
-                  <span class="bg-fill-hover rounded-lg px-2 py-1">
-                    {{ $t('packages_dag_inspect_row_id') }}: {{ row.id }}
-                  </span>
+                <!-- <div class="flex align-items-center gap-2 p-3 bg-light">
                   <ElTag
                     v-if="row.diffType === 'DIFF'"
                     class="rounded-4"
@@ -567,7 +880,7 @@ async function handleConfirmRecover(): Promise<void> {
                   <el-button text type="primary" @click="handleRecordClick(row)"
                     >{{ $t('packages_dag_inspect_operation_record') }}
                   </el-button>
-                </div>
+                </div> -->
 
                 <table
                   v-if="row.diffType === 'DIFF'"
@@ -578,19 +891,35 @@ async function handleConfirmRecover(): Promise<void> {
                       <th
                         class="text-start p-3 text-sm fw-sub text-muted-foreground w-1/4 break-all"
                       >
-                        {{
-                          $t('packages_business_verification_result_field_name')
-                        }}
+                        <div class="flex align-center gap-2">
+                          {{
+                            $t(
+                              'packages_business_verification_result_field_name',
+                            )
+                          }}
+                          <ElTag class="rounded-4" size="small" type="danger">
+                            {{ $t('packages_dag_inspect_diff_type_diff') }}
+                          </ElTag>
+                        </div>
                       </th>
                       <th
-                        class="text-start p-3 text-sm fw-sub w-[37.5%] break-all"
+                        class="text-start p-3 text-sm fw-sub text-muted-foreground w-[37.5%] break-all"
                       >
                         {{ $t('packages_dag_inspect_source_value') }}
                       </th>
                       <th
-                        class="text-start p-3 text-sm fw-sub text-destructive w-[37.5%] break-all"
+                        class="text-start px-3 text-sm fw-sub text-muted-foreground text-destructive w-[37.5%] break-all"
                       >
-                        {{ $t('packages_dag_inspect_target_value') }}
+                        <div class="flex align-center gap-2">
+                          {{ $t('packages_dag_inspect_target_value') }}
+                          <el-button
+                            class="ml-auto"
+                            text
+                            type="primary"
+                            @click="handleRecordClick(row)"
+                            >{{ $t('packages_dag_inspect_operation_record') }}
+                          </el-button>
+                        </div>
                       </th>
                     </tr>
                   </thead>
@@ -675,36 +1004,83 @@ async function handleConfirmRecover(): Promise<void> {
                   </tbody>
                 </table>
 
-                <div v-else class="font-color-dark border-top">
-                  <div
-                    v-for="(value, key) in row.source || row.target"
-                    :key="key"
-                    class="flex border-bottom last:border-0 hover:bg-light"
-                  >
-                    <div
-                      class="flex-1 p-3 text-sm text-muted-foreground break-all"
+                <table v-else class="w-100 row-diff-table font-color-dark">
+                  <thead class="bg-light border-bottom">
+                    <tr>
+                      <th
+                        class="text-start p-3 text-sm fw-sub text-muted-foreground break-all"
+                      >
+                        <div class="flex align-center gap-2">
+                          {{
+                            $t(
+                              'packages_business_verification_result_field_name',
+                            )
+                          }}
+                          <ElTag
+                            v-if="row.diffType === 'MISS'"
+                            class="rounded-4 tag-amber"
+                            size="small"
+                          >
+                            {{ $t('packages_dag_inspect_diff_type_miss') }}
+                          </ElTag>
+
+                          <ElTag
+                            v-if="row.diffType === 'MORE'"
+                            class="rounded-4"
+                            size="small"
+                            type="warning"
+                          >
+                            {{ $t('packages_dag_inspect_diff_type_more') }}
+                          </ElTag>
+                        </div>
+                      </th>
+                      <th
+                        class="text-start px-3 text-sm fw-sub text-muted-foreground break-all font-medium"
+                      >
+                        <div class="flex align-center gap-2">
+                          {{ $t('public_field_value') }}
+                          <el-button
+                            class="ml-auto"
+                            text
+                            type="primary"
+                            @click="handleRecordClick(row)"
+                            >{{ $t('packages_dag_inspect_operation_record') }}
+                          </el-button>
+                        </div>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="(value, key) in row.source || row.target"
+                      :key="key"
+                      class="border-bottom hover:bg-light"
                     >
-                      {{ key }}
-                    </div>
-                    <div class="flex-1 p-3 text-sm font-medium break-all">
-                      <span>{{ value }}</span>
-                    </div>
-                  </div>
-                </div>
+                      <td class="p-3 text-sm text-muted-foreground break-all">
+                        {{ key }}
+                      </td>
+                      <td class="p-3 text-sm font-medium break-all">
+                        {{ value }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
-          </div>
-          <div class="py-3 px-4">
-            <el-pagination
-              v-model:current-page="pageState.page"
-              v-model:page-size="pageState.pageSize"
-              hide-on-single-page
-              :page-sizes="[10, 20, 50, 100]"
-              layout="->,total, sizes, prev, pager, next, jumper"
-              :total="pageState.total"
-              @change="fetchTableDiff"
+            <el-empty
+              v-if="!loadingList && !loadingDetails && !rowDiffList.length"
             />
           </div>
+          <el-pagination
+            v-model:current-page="pageState.page"
+            v-model:page-size="pageState.pageSize"
+            class="py-3 px-6 border-top"
+            hide-on-single-page
+            :page-sizes="[10, 20, 50, 100]"
+            layout="->,total, sizes, prev, pager, next, jumper"
+            :total="pageState.total"
+            @change="fetchTableDiff"
+          />
         </div>
       </div>
 
@@ -755,7 +1131,7 @@ async function handleConfirmRecover(): Promise<void> {
   flex-direction: column;
   min-height: 0;
 
-  .tag-amber {
+  :global(.tag-amber) {
     background-color: #fceccd;
     color: oklch(0.769 0.188 70.08);
     border-color: oklch(0.83 0.19 84.43 / 0.4);
