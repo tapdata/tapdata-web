@@ -42,6 +42,18 @@ export default {
   public_view_details: 'View Details',
   public_warn: 'Warn',
   public_error: 'Error',
+  public_filter: 'Filter',
+  public_equal: 'is',
+  public_not_equal: 'is not',
+  public_greater_than: 'greater than',
+  public_greater_than_or_equal: 'greater than or equal to',
+  public_less_than: 'less than',
+  public_less_than_or_equal: 'less than or equal to',
+  public_contains: 'contains',
+  public_not_contains: 'does not contain',
+  public_is_null: 'is null',
+  public_is_not_null: 'is not null',
+  public_field_value: 'Field Value',
   // state
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',
@@ -175,7 +187,7 @@ export default {
   public_select_option_all: 'Select All',
   public_select_option_default: 'Default',
   // Input box
-  public_input_placeholder: 'Please Enter..',
+  public_input_placeholder: 'Please enter',
   public_input_placeholder_name: 'Please enter a name',
   public_input_placeholder_search: 'Type here to search..',
   // form
@@ -594,4 +606,5 @@ export default {
   public_warningLog: 'Warning Log',
   public_updated_from_now: 'Updated at {time}',
   public_crontabExpression: 'Cron Expression',
+  public_start_at_time: 'Started at {time}',
 }

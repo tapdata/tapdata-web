@@ -12687,6 +12687,10 @@
   background-color: var(--bg-light) !important;
 }
 
+.hover\:primary-hover:hover {
+  background-color: var(--primary-hover-light);
+}
+
 .break-all {
   word-break: break-all;
 }
