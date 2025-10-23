@@ -554,7 +554,9 @@ function clearAllConditions(): void {
               @click="handleRowClick(row)"
             >
               <div>
-                <div class="flex align-items-center gap-2 fs-6 font-color-dark">
+                <div
+                  class="flex align-items-center gap-2 fs-6 font-color-dark break-all"
+                >
                   <VIcon :size="20">table</VIcon>
                   <div
                     v-if="row.sourceTable !== row.targetTable"
