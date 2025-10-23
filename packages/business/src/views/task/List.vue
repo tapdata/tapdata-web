@@ -388,7 +388,7 @@ export default {
           items: [
             { label: this.$t('public_select_option_all'), value: '' },
             ...Object.entries(MILESTONE_TYPE).map(([key, value]) => ({
-              label: value.text,
+              label: this.$t(value.i18n),
               value: key,
             })),
           ],

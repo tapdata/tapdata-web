@@ -241,23 +241,21 @@ export function makeStatusAndDisabled(item) {
 
 export const MILESTONE_TYPE = {
   TASK: {
-    text: i18n.global.t('packages_business_milestone_list_renwudiaodu'),
+    i18n: 'packages_business_milestone_list_renwudiaodu',
   },
   DEDUCTION: {
-    text: i18n.global.t(
-      'packages_business_milestone_list_load_table_structure',
-    ),
+    i18n: 'packages_business_milestone_list_load_table_structure',
   },
   DATA_NODE_INIT: {
-    text: i18n.global.t('packages_business_milestone_list_shujujiedianchu'),
+    i18n: 'packages_business_milestone_list_shujujiedianchu',
   },
   TABLE_INIT: {
-    text: i18n.global.t('packages_business_milestone_list_biaojiegouqianyi'),
+    i18n: 'packages_business_milestone_list_biaojiegouqianyi',
   },
   SNAPSHOT: {
-    text: i18n.global.t('packages_business_milestone_list_quanliangshujuqian'),
+    i18n: 'packages_business_milestone_list_quanliangshujuqian',
   },
   CDC: {
-    text: i18n.global.t('packages_business_milestone_list_jinruzengliangshu'),
+    i18n: 'packages_business_milestone_list_jinruzengliangshu',
   },
 }
