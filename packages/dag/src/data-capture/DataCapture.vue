@@ -17,6 +17,7 @@ import { ElMessage } from 'element-plus'
 import {
   computed,
   defineComponent,
+  getCurrentInstance,
   onBeforeUnmount,
   onMounted,
   reactive,
@@ -97,6 +98,8 @@ export default defineComponent({
         return map
       }, {}),
     )
+
+    console.log(dataflow)
 
     // Watch
     watch(
@@ -252,7 +255,7 @@ export default defineComponent({
     }
 
     const titleSet = () => {
-      setPageTitle(`${dataflow.value.name} - ${t(route.meta.title)}`)
+      setPageTitle(dataflow.value.name)
     }
 
     const startLoopTask = (id) => {
@@ -579,7 +582,7 @@ export default defineComponent({
       <div class="overflow-hidden">
         <div class="flex align-items-center">
           <TextEditable
-            v-model="name"
+            v-model:value="name"
             class="overflow-hidden"
             :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
             :maxlength="200"
