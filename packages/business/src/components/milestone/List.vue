@@ -308,16 +308,17 @@ export default {
 
       result.reverse()
 
-      result.unshift({
-        label: i18n.t('packages_business_milestone_list_zhengtijindu'),
-        icon: 'device',
-        percentage: per,
-        desc: i18n.t('packages_business_milestone_list_finish', {
-          val1: finishedLen,
-          val2: len,
-          val3: `${result[currentLen - 1].label} ${result[currentLen - 1].desc}`,
-        }),
-      })
+      result.length &&
+        result.unshift({
+          label: i18n.t('packages_business_milestone_list_zhengtijindu'),
+          icon: 'device',
+          percentage: per,
+          desc: i18n.t('packages_business_milestone_list_finish', {
+            val1: finishedLen,
+            val2: len,
+            val3: `${result[currentLen - 1].label} ${result[currentLen - 1].desc}`,
+          }),
+        })
 
       return result
     },
