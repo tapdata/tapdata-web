@@ -490,7 +490,7 @@ export default defineComponent({
                 reference: () => (
                   <div class="node-card rounded-xl px-2 pb-2 pt-4 mt-n2">
                     <div class="flex align-center">
-                      <div class="node-card-content p-2 flex-1 rounded-sm">
+                      <div class="node-card-content p-2 flex-1 rounded-lg">
                         {renderStatistic()}
                       </div>
                       <button
