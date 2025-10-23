@@ -1746,6 +1746,22 @@ watch(conditionList, () => {
                   v-model="item.source.enableCustomCommand"
                   @change="handleChangeCustomCommand($event, item.source)"
                 />
+                <template
+                  v-if="
+                    item.source.enableCustomCommand &&
+                    item.source.databaseType.toLowerCase().includes('mongo')
+                  "
+                >
+                  <el-divider direction="vertical" class="mx-4" />
+                  <el-radio-group v-model="item.source.customCommand.command">
+                    <el-radio value="executeQuery">{{
+                      $t('public_query')
+                    }}</el-radio>
+                    <el-radio value="aggregate">{{
+                      $t('public_aggregate')
+                    }}</el-radio>
+                  </el-radio-group>
+                </template>
               </el-form-item>
 
               <el-form-item
@@ -1783,6 +1799,22 @@ watch(conditionList, () => {
                   v-model="item.target.enableCustomCommand"
                   @change="handleChangeCustomCommand($event, item.target)"
                 />
+                <template
+                  v-if="
+                    item.target.enableCustomCommand &&
+                    item.target.databaseType.toLowerCase().includes('mongo')
+                  "
+                >
+                  <el-divider direction="vertical" class="mx-4" />
+                  <el-radio-group v-model="item.target.customCommand.command">
+                    <el-radio value="executeQuery">{{
+                      $t('public_query')
+                    }}</el-radio>
+                    <el-radio value="aggregate">{{
+                      $t('public_aggregate')
+                    }}</el-radio>
+                  </el-radio-group>
+                </template>
               </el-form-item>
             </div>
 
