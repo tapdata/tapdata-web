@@ -56,3 +56,11 @@ export function exportFunctions(ids: string[]) {
   const href = `${BASE_URL}/batch/load?id=${ids.join('&id=')}&access_token=${Cookie.get('access_token')}`
   window.open(href)
 }
+
+export function uploadFunctions(data: any) {
+  return requestClient.post(`${BASE_URL}/batch/import`, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+}

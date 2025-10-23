@@ -1662,7 +1662,7 @@ export default {
   packages_business_validation_task_type: 'Validation Task Type',
   packages_business_select_task_to_be_verified: 'Select Task to be Verified',
   packages_business_drag_file_here:
-    'Drag .gz file here or <em>select file upload</em>',
+    'Drag {type} file here or <em>select file upload</em>',
   packages_business_request_speed_limit: 'Request Limit per Second',
   packages_business_request_speed_limit_tag: 'Requests ≤ {val}/s',
   packages_business_request_speed_limit_tip: 'Default is 0 (no limit)',
@@ -1727,4 +1727,14 @@ export default {
   packages_business_monitor_cron: 'Monitor Period',
   packages_business_monitor_cron_tip: `Syntax: seconds * minutes * hours * days * months * weeks ? years *\nExample: 0 */1 * * * ? Run every minute 0 0 2 * * ? Run every day at 2am`,
   packages_business_datasource_monitor_alter: 'Data Source Monitor Alert',
+  packages_business_import_mode: 'Handling for Name Conflicts',
+  packages_business_import_as_copy: 'Import as Copy',
+  packages_business_import_replace: 'Replace Existing',
+  packages_business_import_cancel_import: 'Cancel Import',
+  packages_business_import_as_copy_tip:
+    'If a task or data source with the same name exists, import a new copy with the _import suffix.',
+  packages_business_import_replace_tip:
+    'If a task or data source with the same name exists, overwrite the existing one.',
+  packages_business_import_cancel_import_tip:
+    'If a task or data source with the same name exists, cancel the import.',
 }

@@ -340,3 +340,11 @@ export function updateTaskInfo(taskId: string, newName: string, desc: string) {
     }),
   )
 }
+
+export function uploadTask(data: any) {
+  return requestClient.post(`${BASE_URL}/batch/import`, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+}

@@ -581,7 +581,7 @@ onUnmounted(() => {
         <el-icon size="40"><FileAddColorful /></el-icon>
         <div
           class="el-upload__text mt-6"
-          v-html="$t('packages_business_drag_file_here')"
+          v-html="$t('packages_business_drag_file_here', { type: '.gz' })"
         />
       </el-upload>
 
@@ -609,7 +609,7 @@ onUnmounted(() => {
         </el-button>
       </div>
 
-      <div class="p-4 bg-light rounded-xl mt-4">
+      <div class="mt-4">
         <el-form :model="importForm" label-position="top">
           <el-form-item :label="$t('packages_business_validation_task_type')">
             <el-radio-group

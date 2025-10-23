@@ -1,17 +1,22 @@
 <script>
+import { uploadFunctions } from '@tap/api/core/function'
 import { fetchMetadataDefinitions } from '@tap/api/core/metadata-definitions'
+import { uploadMetadataInstance } from '@tap/api/core/metadata-instances'
+import { uploadModules } from '@tap/api/core/modules'
+import { uploadTask } from '@tap/api/core/task'
 import { fetchConnections } from '@tap/api/src/core/connections'
-import {
-  FileAddColorful,
-  FileDocxColorful,
-  ImportOutlined,
-} from '@tap/component/src/icon'
+import { FileAddColorful, FileDocxColorful } from '@tap/component/src/icon'
 import AsyncSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 import { calcUnit } from '@tap/shared'
-import Cookie from '@tap/shared/src/cookie'
-import axios from 'axios'
 import { merge } from 'lodash-es'
 import { CONNECTION_STATUS_MAP } from '../shared'
+
+const uploadHandlers = {
+  api: uploadMetadataInstance,
+  Javascript_functions: uploadFunctions,
+  Modules: uploadModules,
+  dataflow: uploadTask,
+}
 
 export default {
   name: 'Upload',
@@ -19,7 +24,6 @@ export default {
     AsyncSelect,
     FileAddColorful,
     FileDocxColorful,
-    ImportOutlined,
   },
   props: {
     showCondition: {
@@ -44,7 +48,6 @@ export default {
       // uploadText: '',
       dialogVisible: false,
       classifyList: [],
-      downType: '',
       importForm: {
         tag: [],
         fileList: [],
@@ -52,6 +55,7 @@ export default {
         upsert: 1,
         source: '',
         sink: '',
+        importMode: 'import_as_copy',
       },
       rules: {
         source: [
@@ -80,6 +84,13 @@ export default {
     }
   },
   computed: {
+    importType() {
+      const map = {
+        api: 'APIServer',
+        relmig: 'dataflow',
+      }
+      return map[this.type] || this.type
+    },
     title() {
       return this.$t(this.titleMap[this.type || 'dataflow'])
     },
@@ -96,75 +107,21 @@ export default {
     fileAccept() {
       return !this.isRelmig ? '.gz' : '.relmig' // 云版仅支持 .relmig
     },
-    uploadData() {
-      const data = {
-        upsert: this.importForm.upsert,
-        type: this.downType,
-        listtags: JSON.stringify(this.importForm.tag),
-        cover: !!this.importForm.upsert,
-      }
-
-      if (this.isRelmig) {
-        Object.assign(data, {
-          source: this.importForm.source,
-          sink: this.importForm.sink,
-        })
-      }
-
-      return data
-    },
   },
   created() {
-    if (this.type === 'api') {
-      this.downType = 'APIServer'
-    } else if (this.type === 'Modules') {
-      this.downType = 'Modules'
-    } else if (this.type === 'Inspect') {
-      this.downType = 'Inspect'
-    } else {
-      this.downType = 'dataflow'
-    }
-    this.accessToken = Cookie.get('access_token')
     this.getClassify()
   },
   methods: {
     calcUnit,
     handleDelete() {
       this.importForm.fileList = []
+      this.resetRelmig()
     },
     show() {
       this.dialogVisible = true
       this.resetRelmig()
       this.$refs.upload?.clearFiles()
       this.$refs.form?.resetFields()
-    },
-
-    // 上传文件成功失败钩子
-    handleChange(file) {
-      // if (file.name.split('.').pop() !== 'relmig') {
-      //   this.isRelmig = true
-      // } else {
-      //   this.resetRelmig()
-      // }
-
-      this.importForm.fileList = [file]
-      const originPath = window.location.origin + window.location.pathname
-      const accessToken = this.accessToken
-        ? `?access_token=${this.accessToken}`
-        : ''
-      const map = {
-        api: `api/MetadataInstances/upload${accessToken}`,
-        Javascript_functions: `api/Javascript_functions/batch/import${accessToken}`,
-        Modules: `api/Modules/batch/import${accessToken}`,
-      }
-
-      let apiBaseURL = axios.defaults.baseURL.replace(/^\.?\//, '')
-      if (apiBaseURL) apiBaseURL += '/'
-
-      this.importForm.action =
-        originPath +
-        apiBaseURL +
-        (map[this.type] || `api/Task/batch/import${accessToken}`)
     },
 
     // 获取分类
@@ -177,40 +134,41 @@ export default {
       })
     },
 
-    handleSuccess(response) {
-      this.uploading = false
-      if (response.code !== 'ok') {
-        this.$message.error(
-          response.message || this.$t('packages_business_message_upload_fail'),
-        )
-        this.importForm.fileList.forEach((file) => (file.status = 'ready'))
-      } else {
-        this.$message.success(
-          this.$t('packages_business_message_upload_success'),
-        )
-        this.$emit('success')
-        this.importForm.fileList = []
-        this.$refs.upload.clearFiles()
-        this.dialogVisible = false
-      }
-    },
-
-    handleError() {
-      this.uploading = false
-    },
-
     // 上传保存
-    submitUpload() {
+    async submitUpload() {
       if (this.importForm.fileList?.length === 0) {
         this.$message.error(this.$t('packages_business_message_upload_msg'))
         return
       }
 
-      this.$refs.form.validate((valid) => {
-        if (!valid) return
-        this.$refs.upload.submit()
-        this.uploading = true
-      })
+      const valid = await this.$refs.form.validate()
+      if (!valid) return
+
+      this.uploading = true
+
+      const formData = new FormData()
+      formData.append('file', this.importForm.fileList[0].raw)
+      formData.append('type', this.importType)
+      formData.append('importMode', this.importForm.importMode)
+      formData.append('listtags', JSON.stringify(this.importForm.tag))
+
+      if (this.isRelmig) {
+        formData.append('source', this.importForm.source)
+        formData.append('sink', this.importForm.sink)
+      }
+
+      try {
+        await uploadHandlers[this.type](formData)
+        this.$message.success(
+          this.$t('packages_business_message_upload_success'),
+        )
+        this.$emit('success')
+        this.dialogVisible = false
+      } catch (error) {
+        this.$message.error(
+          error.message || this.$t('packages_business_message_upload_fail'),
+        )
+      }
     },
 
     resetRelmig() {
@@ -218,15 +176,9 @@ export default {
       this.importForm.sink = ''
     },
 
-    //删除文件
-    handleRemove(file, fileList) {
-      this.importForm.fileList = fileList
-      this.resetRelmig()
-    },
-
-    handleClose() {
+    onClosed() {
       this.dialogVisible = false
-      this.$refs.upload.clearFiles()
+      this.importForm.fileList = []
       this.resetRelmig()
     },
 
@@ -325,7 +277,7 @@ export default {
     class="import-upload-dialog"
     :title="title"
     :close-on-click-modal="false"
-    :before-close="handleClose"
+    @closed="onClosed"
   >
     <el-upload
       v-show="!importForm.fileList.length"
@@ -338,7 +290,7 @@ export default {
       <el-icon size="40"><FileAddColorful /></el-icon>
       <div
         class="el-upload__text mt-6"
-        v-html="$t('packages_business_drag_file_here')"
+        v-html="$t('packages_business_drag_file_here', { type: fileAccept })"
       />
     </el-upload>
     <div
@@ -369,13 +321,12 @@ export default {
       ref="form"
       :rules="rules"
       :model="importForm"
-      class="applications-form"
+      class="applications-form mt-4"
       label-position="top"
-      label-width="100px"
     >
       <ElAlert
         v-if="isRelmig"
-        class="bg-color-primary-light-9 mb-2 text-primary"
+        class="bg-color-primary-light-9 mb-2"
         type="info"
         show-icon
         :closable="false"
@@ -389,40 +340,50 @@ export default {
 
       <ElFormItem
         v-if="!isRelmig"
-        prop="upsert"
-        :label="$t('packages_business_modules_dialog_condition')"
+        prop="importMode"
+        :label="$t('packages_business_import_mode')"
       >
-        <el-radio v-model="importForm.upsert" :label="1"
-          >{{ $t('packages_business_modules_dialog_overwrite_data') }}
-        </el-radio>
-        <el-radio v-model="importForm.upsert" :label="0"
-          >{{ $t('packages_business_modules_dialog_skip_data') }}
-        </el-radio>
-      </ElFormItem>
-      <ElFormItem
-        prop="fileList"
-        :label="$t('packages_business_modules_dialog_file')"
-      >
-        <ElUpload
-          ref="upload"
-          class="w-75"
-          :action="importForm.action"
-          :accept="fileAccept"
-          :file-list="importForm.fileList"
-          :auto-upload="false"
-          :on-success="handleSuccess"
-          :on-error="handleError"
-          :on-change="handleChange"
-          :on-remove="handleRemove"
-          :data="uploadData"
+        <el-radio-group
+          v-model="importForm.importMode"
+          class="gap-2 import-mode-radio-group"
         >
-          <template #trigger>
-            <ElButton class="align-top" type="primary">
-              <VIcon class="mr-1">upload</VIcon>
-              {{ uploadText }}
-            </ElButton>
-          </template>
-        </ElUpload>
+          <el-radio
+            value="import_as_copy"
+            border
+            class="h-auto px-3 py-2 rounded-xl bg-card w-100 m-0"
+          >
+            <div class="lh-5 mb-1">
+              {{ $t('packages_business_import_as_copy') }}
+            </div>
+            <p class="lh-sm font-color-sslight fs-8">
+              {{ $t('packages_business_import_as_copy_tip') }}
+            </p>
+          </el-radio>
+          <el-radio
+            value="replace"
+            border
+            class="h-auto px-3 py-2 rounded-xl bg-card w-100 m-0"
+          >
+            <div class="lh-5 mb-1">
+              {{ $t('packages_business_import_replace') }}
+            </div>
+            <p class="lh-sm font-color-sslight fs-8">
+              {{ $t('packages_business_import_replace_tip') }}
+            </p>
+          </el-radio>
+          <el-radio
+            value="cancel_import"
+            border
+            class="h-auto px-3 py-2 rounded-xl bg-card w-100 m-0"
+          >
+            <div class="lh-5 mb-1">
+              {{ $t('packages_business_import_cancel_import') }}
+            </div>
+            <p class="lh-sm font-color-sslight fs-8">
+              {{ $t('packages_business_import_cancel_import_tip') }}
+            </p>
+          </el-radio>
+        </el-radio-group>
       </ElFormItem>
       <template v-if="isRelmig && importForm.fileList.length">
         <ElFormItem
@@ -492,7 +453,7 @@ export default {
     </ElForm>
     <template #footer>
       <span class="dialog-footer">
-        <ElButton @click="handleClose">{{
+        <ElButton @click="dialogVisible = false">{{
           $t('public_button_cancel')
         }}</ElButton>
         <ElButton :loading="uploading" type="primary" @click="submitUpload()">{{
@@ -546,6 +507,12 @@ export default {
       &:hover {
         color: var(--color-primary);
       }
+    }
+  }
+  .import-mode-radio-group {
+    .el-radio__input {
+      align-self: flex-start;
+      margin-top: 3px;
     }
   }
 }
