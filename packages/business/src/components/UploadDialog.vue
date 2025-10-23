@@ -1,7 +1,13 @@
 <script>
 import { fetchMetadataDefinitions } from '@tap/api/core/metadata-definitions'
 import { fetchConnections } from '@tap/api/src/core/connections'
+import {
+  FileAddColorful,
+  FileDocxColorful,
+  ImportOutlined,
+} from '@tap/component/src/icon'
 import AsyncSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
+import { calcUnit } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
 import axios from 'axios'
 import { merge } from 'lodash-es'
@@ -11,6 +17,9 @@ export default {
   name: 'Upload',
   components: {
     AsyncSelect,
+    FileAddColorful,
+    FileDocxColorful,
+    ImportOutlined,
   },
   props: {
     showCondition: {
@@ -119,6 +128,10 @@ export default {
     this.getClassify()
   },
   methods: {
+    calcUnit,
+    handleDelete() {
+      this.importForm.fileList = []
+    },
     show() {
       this.dialogVisible = true
       this.resetRelmig()
@@ -308,12 +321,50 @@ export default {
 <template>
   <ElDialog
     v-model="dialogVisible"
-    width="680px"
+    width="600px"
     class="import-upload-dialog"
     :title="title"
     :close-on-click-modal="false"
     :before-close="handleClose"
   >
+    <el-upload
+      v-show="!importForm.fileList.length"
+      v-model:file-list="importForm.fileList"
+      drag
+      :accept="fileAccept"
+      :auto-upload="false"
+      :show-file-list="false"
+    >
+      <el-icon size="40"><FileAddColorful /></el-icon>
+      <div
+        class="el-upload__text mt-6"
+        v-html="$t('packages_business_drag_file_here')"
+      />
+    </el-upload>
+    <div
+      v-if="importForm.fileList.length"
+      class="flex align-center gap-3 border rounded-xl p-3 lh-base hover:border-primary"
+    >
+      <el-icon size="32"><FileDocxColorful /></el-icon>
+      <div>
+        <div class="font-bold">
+          {{ importForm.fileList[0].name }}
+        </div>
+        <div
+          class="fs-8"
+          :style="{ color: 'var(--el-text-color-placeholder)' }"
+        >
+          {{ calcUnit(importForm.fileList[0].size, 1) }}
+        </div>
+      </div>
+
+      <el-button class="ml-auto flex-shrink-0" text @click="handleDelete">
+        <template #icon>
+          <el-icon><i-lucide-trash-2 /></el-icon>
+        </template>
+      </el-button>
+    </div>
+
     <ElForm
       ref="form"
       :rules="rules"
