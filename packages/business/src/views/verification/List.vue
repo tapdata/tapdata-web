@@ -2,6 +2,7 @@
 import { CircleCheckFilled, CircleCloseFilled } from '@element-plus/icons-vue'
 import {
   batchUpdateListtags,
+  deleteInspectById,
   fetchInspects,
   getTaskList,
   importInspect,
@@ -311,7 +312,7 @@ const remove = async (id: string, row: InspectItem) => {
   )
 
   if (confirmed) {
-    await batchUpdateListtags({ ids: [id], action: 'delete' })
+    await deleteInspectById(id)
     ElMessage.success(t('public_message_delete_ok'))
     table.value?.fetch()
   }

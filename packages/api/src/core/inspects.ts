@@ -63,3 +63,7 @@ export function postInspect(params: any) {
 export function findOneInspect(params: any) {
   return requestClient.get(`${BASE_URL}/findOne`, { params })
 }
+
+export function deleteInspectById(id: string) {
+  return requestClient.delete(`${BASE_URL}/${id}`)
+}
