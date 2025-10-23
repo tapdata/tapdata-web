@@ -11,15 +11,17 @@ import {
   getRunJsResult,
   testRunPythonRpc,
 } from '@tap/api/src/core/task'
+import { VEmpty } from '@tap/component/src/base/v-empty'
+import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import resize from '@tap/component/src/directives/resize'
-
-import { useForm } from '@tap/form'
+import { FormItem, HighlightCode, PythonEditor, useForm } from '@tap/form'
 import i18n from '@tap/i18n'
 import Time from '@tap/shared/src/time'
 import { groupBy } from 'lodash-es'
 import { defineComponent, onUnmounted, reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
+import { PythonDeclare } from '../python-declare'
 import './style.scss'
 
 export const PythonProcessor = observer(

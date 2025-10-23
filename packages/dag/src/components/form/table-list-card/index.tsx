@@ -3,12 +3,13 @@ import {
   getPagePartitionTables,
   getPageTables,
 } from '@tap/api/src/core/metadata-instances'
-
+import { VEmpty } from '@tap/component/src/base/v-empty'
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import i18n from '@tap/i18n'
 import { debounce } from 'lodash-es'
 import { defineComponent, ref, watch } from 'vue'
+import { RecycleScroller } from 'vue-virtual-scroller'
 import { getPrimaryKeyTablesByType } from '../../../util'
-
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import './style.scss'
 

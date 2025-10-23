@@ -3,6 +3,7 @@ import { observer } from '@formily/reactive-vue'
 import { useForm } from '@tap/form'
 import { defineComponent, onBeforeUnmount, ref, watch } from 'vue'
 import { useStore } from 'vuex'
+import FiledMapping from '../field-mapping'
 
 export const SchemaFiledMapping = observer(
   defineComponent({

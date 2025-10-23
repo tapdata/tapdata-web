@@ -1,5 +1,6 @@
 import { createForm } from '@formily/core'
 import { observer } from '@formily/reactive-vue'
+import { Form as BaseForm } from '@tap/form'
 import { computed, defineComponent } from 'vue'
 import { createBehavior, createResource } from '../../../core'
 import { usePrefix } from '../../../hooks'

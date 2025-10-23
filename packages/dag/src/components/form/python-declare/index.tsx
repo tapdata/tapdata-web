@@ -1,3 +1,4 @@
+import { FormItem, HighlightCode, PythonEditor } from '@tap/form'
 import i18n from '@tap/i18n'
 import { defineComponent, ref } from 'vue'
 import './style.scss'
