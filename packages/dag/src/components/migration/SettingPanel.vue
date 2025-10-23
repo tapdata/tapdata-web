@@ -1737,6 +1737,12 @@ const schema = {
                 class: 'flex align-center',
               },
               properties: {
+                key: {
+                  type: 'string',
+                  default: 'TASK_RETRY_WARN',
+                  'x-editable': true,
+                  'x-display': 'hidden',
+                },
                 open: {
                   type: 'boolean',
                   default: true,
