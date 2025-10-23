@@ -1,4 +1,6 @@
 import { observer } from '@formily/reactive-vue'
+import SharedMiningTable from '@tap/business/src/views/shared-mining/Table'
+import { FormItem } from '@tap/form'
 import i18n from '@tap/i18n'
 import { defineComponent } from 'vue'
 import { useStore } from 'vuex'

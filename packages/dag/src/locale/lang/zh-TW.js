@@ -659,7 +659,7 @@ export default {
   packages_dag_date_processor_increase: '增加',
   packages_dag_date_processor_decrease: '減少',
   packages_dag_nodes_table_shiligro:
-    '示例: {\'{\'}"$group": {\'{\'} "_id": "$name", totalQuantity: {\'{\'} $sum: "$quantity" {\'} }}\'}',
+    '示例: [{\'{\'}"$group": {\'{\'} "_id": "$name", totalQuantity: {\'{\'} $sum: "$quantity" {\'} }}\'}]',
   packages_dag_nodes_table_jinzhichiqu:
     '僅支持query, 例如: {\'{\'} "_id": "apples", "qty": 5 {\'}\'}',
   packages_dag_migration_settingpanel_shirenwubaocuo: '時，任務報錯停止',

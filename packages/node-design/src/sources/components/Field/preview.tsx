@@ -2,11 +2,17 @@ import { FormPath } from '@formily/core'
 import { raw, toJS } from '@formily/reactive'
 import { observer } from '@formily/reactive-vue'
 import { each, reduce } from '@formily/shared'
-import { Schema } from '@formily/vue'
+import {
+  ArrayField,
+  Field as InternalField,
+  ObjectField,
+  Schema,
+  VoidField,
+} from '@formily/vue'
 import { FormItem } from '@tap/form'
 import { isArr, isStr } from '@tap/shared'
 import { defineComponent } from 'vue'
-
+import { Container } from '../../../components/common/Container'
 import { createBehavior } from '../../../core'
 import { useComponents, useDesigner, useTreeNode } from '../../../hooks'
 import { AllLocales } from '../../locales'
