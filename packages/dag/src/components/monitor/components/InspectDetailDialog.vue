@@ -832,9 +832,9 @@ function clearAllConditions(): void {
                       class="ml-auto"
                       @click="clearCondition('inner')"
                     >
-                      <el-icon>
+                      <template #icon>
                         <i-lucide:x />
-                      </el-icon>
+                      </template>
                     </el-button>
                   </div>
                 </div>

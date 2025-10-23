@@ -622,7 +622,6 @@
 
   // 图标按钮
   &.is-text:has(> i:only-child),
-  &.is-text:has(> span > i:only-child),
   &.el-button--text:has(> i:only-child),
   &.is-text:has(> i + span:empty),
   &.el-button--text:has(> i + span:empty) {
