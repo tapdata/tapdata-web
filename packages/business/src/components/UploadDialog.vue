@@ -165,10 +165,10 @@ export default {
         this.$emit('success')
         this.dialogVisible = false
       } catch (error) {
-        this.$message.error(
-          error.message || this.$t('packages_business_message_upload_fail'),
-        )
+        console.error('error', error)
       }
+
+      this.uploading = false
     },
 
     resetRelmig() {
