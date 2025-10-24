@@ -50,26 +50,21 @@ export default defineConfig(() => {
           ElementPlusResolver(/* { importStyle: 'sass' } */),
         ],
         dts: '../../packages/types/src/daas-auto-imports.d.ts',
-        // dts: 'src/auto-imports.d.ts',
-        include: [/\.vue$/, /\.vue\?vue/, /\.[tj]sx$/],
+        include: [/\.vue$/, /\.vue\?vue/, /\.[tj]sx?$/],
       }),
-
       Components({
         resolvers: [
           IconsResolver({
             enabledCollections: ['lucide', 'mingcute', 'fluent'],
           }),
-          ElementPlusResolver(/* { importStyle: 'sass' } */),
+          ElementPlusResolver(),
         ],
         dts: '../../packages/types/src/daas-components.d.ts',
-        // dts: 'src/components.d.ts',
         include: [/\.vue$/, /\.vue\?vue/, /\.[tj]sx$/],
       }),
-
       Icons({
         scale: 1,
       }),
-
       createSvgIconsPlugin({
         iconDirs: [
           path.resolve(process.cwd(), 'src/assets/icons/svg'),

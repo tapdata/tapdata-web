@@ -7,6 +7,7 @@ import {
 import { AllLocales } from '../../locales'
 import { AllSchemas } from '../../schemas'
 import { createFieldSchema } from '../Field'
+import 'element-plus/es/components/checkbox/style/css'
 
 export const Checkbox = FormCheckbox
 

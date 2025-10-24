@@ -1,6 +1,5 @@
 import { observer } from '@formily/reactive-vue'
 import { uid } from '@formily/shared'
-import { ElButton as Button, ElTree as Tree } from 'element-plus'
 import { defineComponent, type PropType } from 'vue'
 import { GlobalRegistry } from '../../../core'
 import { usePrefix } from '../../../hooks'
@@ -11,7 +10,7 @@ import type { INodeItem, ITreeDataSource } from './types'
 
 import './styles.scss'
 
-const limitTreeDrag = ({ dropPosition }) => {
+const limitTreeDrag = ({ dropPosition }: { dropPosition: number }) => {
   if (dropPosition === 0) {
     return false
   }
@@ -50,7 +49,7 @@ export const TreePanel = observer(
                 <TextWidget token="SettingComponents.DataSourceSetter.dataSourceTree" />
               }
               extra={
-                <Button
+                <ElButton
                   text={true}
                   onClick={() => {
                     const uuid = uid()
@@ -76,11 +75,11 @@ export const TreePanel = observer(
                   icon={<IconWidget infer="Add" />}
                 >
                   <TextWidget token="SettingComponents.DataSourceSetter.addNode" />
-                </Button>
+                </ElButton>
               }
             />
             <div class={`${prefix}-layout-item-content`}>
-              <Tree
+              <ElTree
                 node-key="key"
                 draggable={true}
                 allowDrop={props.allowTree ? () => true : limitTreeDrag}
@@ -97,19 +96,6 @@ export const TreePanel = observer(
                     props.treeDataSource!.selectedKey = key.toString()
                   },
                 }}
-                // titleRender={(titleProps: INodeItem) => {
-                //     return (
-                //         <Title
-                //             {...titleProps}
-                //             treeDataSource={props.treeDataSource}
-                //         ></Title>
-                //     )
-                // }}
-                // onSelect={(selectedKeys: string) => {
-                //     if (selectedKeys[0]) {
-                //         props.treeDataSource!.selectedKey = selectedKeys[0].toString()
-                //     }
-                // }}
                 v-slots={{
                   default: ({ data: titleProps }: { data: INodeItem }) => {
                     return (
@@ -120,7 +106,7 @@ export const TreePanel = observer(
                     )
                   },
                 }}
-              ></Tree>
+              ></ElTree>
             </div>
           </>
         )
