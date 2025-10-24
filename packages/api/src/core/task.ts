@@ -290,6 +290,7 @@ export function downloadTaskAnalyze(taskId: string, params: any) {
   return requestClient.post(`${BASE_URL}/analyze/${taskId}`, null, {
     ...params,
     responseType: 'blob',
+    responseReturn: 'raw',
   })
 }
 
