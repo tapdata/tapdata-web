@@ -179,8 +179,10 @@ export default defineComponent({
   },
   mounted() {
     useResizeObserver(this.$refs.treeContainer, () => {
-      this.treeHeight =
-        this.$refs.treeContainer.getBoundingClientRect().height - 8
+      if (this.$refs.treeContainer) {
+        this.treeHeight =
+          this.$refs.treeContainer.getBoundingClientRect().height - 8
+      }
     })
   },
   beforeUnmount() {
