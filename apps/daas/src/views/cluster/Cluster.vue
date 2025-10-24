@@ -16,6 +16,7 @@ import {
   removeClusterMonitor,
   updateClusterStatus,
 } from '@tap/api/src/core/cluster'
+import { getConnectors, getSupervisor } from '@tap/api/src/core/proxy'
 import {
   fetchWorkers,
   queryAllBindWorker,
@@ -409,19 +410,6 @@ const updateFn = (item: any) => {
     operation: `update:${version.value}`,
   }
   operationFn(data)
-}
-
-const getVersion = (datas: any[]) => {
-  const [...waterfallData] = datas
-  const [...newWaterfallData] = [[], []]
-  waterfallData.forEach((item, index) => {
-    if (index % 2) {
-      newWaterfallData[1].push(item)
-    } else {
-      newWaterfallData[0].push(item)
-    }
-  })
-  waterfallData.value = newWaterfallData
 }
 
 const operationFn = async (data: any) => {
