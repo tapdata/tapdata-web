@@ -304,7 +304,6 @@ export default {
         <div
           v-if="resultInfo.parentId"
           class="color-info flex align-items-center"
-          style="font-size: 12px"
         >
           {{ $t('packages_business_verification_last_start_time') }}:
           {{ inspect.lastStartTimeFmt }}
