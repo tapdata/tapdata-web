@@ -130,11 +130,11 @@ function formatTime(timestamp: number): string {
           </el-tag>
         </template>
       </el-table-column>
-      <!-- <el-table-column
+      <el-table-column
         prop="msg"
         :label="$t('packages_dag_inspect_operation_message')"
         show-overflow-tooltip
-      /> -->
+      />
       <el-table-column
         prop="ts"
         :label="$t('packages_dag_inspect_operation_time')"
