@@ -3,6 +3,6 @@
   "display": "Web Application",
   "extends": "./web.json",
   "compilerOptions": {
-    "types": ["vite/client", "@tap/types/global"]
+    "types": ["vue", "vite/client", "@tap/types/global"]
   }
 }

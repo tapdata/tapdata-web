@@ -150,11 +150,9 @@ export default {
         )
         this.inspect = inspect
         fetchInspectResults({
-          filter: JSON.stringify({
-            where: {
-              id: inspectResult.id,
-            },
-          }),
+          where: {
+            id: inspectResult.id,
+          },
         })
           .then((data) => {
             const result = data?.items?.[0]

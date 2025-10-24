@@ -20,6 +20,7 @@ export function exportInspectDetails(
     },
     {
       responseType: 'blob',
+      responseReturn: 'raw',
     },
   )
 }
