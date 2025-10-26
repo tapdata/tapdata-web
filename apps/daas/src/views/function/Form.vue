@@ -1,5 +1,9 @@
 <script>
-import { findOneFunction } from '@tap/api/src/core/function'
+import {
+  createFunction,
+  findOneFunction,
+  patchFunction,
+} from '@tap/api/src/core/function'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import JsEditor from '@tap/component/src/JsEditor.vue'
 import Cookie from '@tap/shared/src/cookie'

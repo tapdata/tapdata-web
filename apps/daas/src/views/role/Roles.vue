@@ -5,11 +5,7 @@ import {
   fetchRoleMappings,
   saveAllRoleMappings,
 } from '@tap/api/src/core/role-mappings'
-import {
-  createRole,
-  deleteRolePrincipals,
-  updateRoleById,
-} from '@tap/api/src/core/roles'
+import { createRole, deleteRoleById, patchRole } from '@tap/api/src/core/roles'
 import { fetchUsers, getUserRoles } from '@tap/api/src/core/users'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
@@ -132,7 +128,7 @@ export default {
       this.$confirm(this.$t('role_list_delete_remind', [item.name])).then(
         (flag) => {
           if (flag) {
-            deleteRolePrincipals(item.id).then(() => {
+            deleteRoleById(item.id).then(() => {
               this.table.fetch()
               this.$message.success(this.$t('role_list_delete_success'))
             })
@@ -157,7 +153,7 @@ export default {
           const promise = this.roleId
             ? (() => {
                 record.id = this.roleId
-                return updateRoleById(record)
+                return patchRole(record)
               })()
             : createRole(record)
 
@@ -260,7 +256,7 @@ export default {
         register_user_default: data.register_user_default,
       }
 
-      updateRoleById(record).then(() => {
+      patchRole(record).then(() => {
         this.table.fetch()
       })
     },

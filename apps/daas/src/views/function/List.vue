@@ -1,5 +1,9 @@
 <script>
-import { exportFunctions, fetchFunctions } from '@tap/api/src/core/function'
+import {
+  deleteFunctionById,
+  exportFunctions,
+  fetchFunctions,
+} from '@tap/api/src/core/function'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import TablePage from '@tap/business/src/components/TablePage.vue'
 import Upload from '@tap/business/src/components/UploadDialog.vue'
@@ -112,7 +116,7 @@ export default {
         if (!resFlag) {
           return
         }
-        exportFunctions(item.id).then(() => {
+        deleteFunctionById(item.id).then(() => {
           this.table.fetch()
         })
       })

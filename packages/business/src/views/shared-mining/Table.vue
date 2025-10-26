@@ -2,7 +2,9 @@
 import {
   addTables,
   exclusionTables,
+  getExcludeTableInfos,
   getLogcollectorByTaskId,
+  getTableInfos,
 } from '@tap/api/src/core/logcollector'
 import { taskConsoleRelations } from '@tap/api/src/core/task'
 import { VTable } from '@tap/component/src/base/v-table'

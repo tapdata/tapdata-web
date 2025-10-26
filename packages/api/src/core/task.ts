@@ -87,14 +87,14 @@ export function tranModelVersionControl(params: any) {
   return requestClient.post(`${BASE_URL}/tranModelVersionControl`, params)
 }
 
-export function getTaskById(id: string, params?: any, filter?: any) {
+export function getTaskById(id: string, params?: any, headers?: any) {
   if (Array.isArray(params)) {
-    filter = typeof filter === 'object' ? JSON.stringify(filter) : filter
-    const qs = filter ? `?filter=${encodeURIComponent(filter)}` : ''
-    return requestClient.get(`${BASE_URL}/${id}${params.join('/')}${qs}`)
+    return requestClient.get(`${BASE_URL}/${id}${params.join('/')}`, {
+      headers,
+    })
   }
   params = params || {}
-  return requestClient.get(`${BASE_URL}/${id}`, { params })
+  return requestClient.get(`${BASE_URL}/${id}`, { params, headers })
 }
 
 export function editTask(params: any) {

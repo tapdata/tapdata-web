@@ -5,7 +5,7 @@ import {
   getNodeSchemaPage,
 } from '@tap/api/src/core/metadata-instances'
 import { queryMonitoringLogs } from '@tap/api/src/core/monitoring-logs'
-import { exportPythonFunctions } from '@tap/api/src/core/python-functions'
+import { fetchPythonFunctions } from '@tap/api/src/core/python-functions'
 import {
   getNodeTableInfo,
   getRunJsResult,
@@ -252,14 +252,11 @@ export const PythonProcessor = observer(
         networkUtil: i18n.t('packages_dag_js_processor_index_wangluogongju'),
       }
       const loadFunction = async () => {
-        console.log('loadFunction')
-        const data = await exportPythonFunctions({
-          filter: JSON.stringify({
-            limit: 1000,
-            where: {
-              type: 'system',
-            },
-          }),
+        const data = await fetchPythonFunctions({
+          limit: 1000,
+          where: {
+            type: 'system',
+          },
         })
         const group = groupBy(data.items, 'className')
         const noClassFunction = group['']

@@ -1,6 +1,8 @@
 <script>
 import {
+  checkLogcollector,
   fetchLogcollector,
+  getSystemConfig,
   patchSystemConfig,
 } from '@tap/api/src/core/logcollector'
 import {

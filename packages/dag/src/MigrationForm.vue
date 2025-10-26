@@ -4,7 +4,8 @@ import {
   checkTaskName,
   createTask,
   fetchTasks,
-  updateTask,
+  getTaskById,
+  patchTask as patchTaskApi,
 } from '@tap/api/src/core/task'
 import { makeStatusAndDisabled } from '@tap/business/src/shared'
 import { computed as reactiveComputed } from '@tap/form/src/shared/reactive'
@@ -93,7 +94,7 @@ const formScope = {
 // Methods
 const patchTask = async () => {
   taskSaving.value = true
-  const data = await updateTask(
+  const data = await patchTaskApi(
     {
       id: taskRef.value!.id,
       editVersion: taskRef.value!.editVersion,
@@ -203,7 +204,7 @@ const richTask = (data: Task) => {
 const getTask = async (id) => {
   try {
     const { parent_task_sign } = route.query || {}
-    const data = await getTaskById(id, { parent_task_sign })
+    const data = await getTaskById(id, null, { parent_task_sign })
 
     if (
       !data ||

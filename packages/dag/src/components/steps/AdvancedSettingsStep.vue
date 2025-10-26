@@ -6,8 +6,8 @@ import {
   checkCloudTaskLimit,
   checkTaskName,
   findAccessNodeInfo,
+  patchTask,
   saveAndStartTask,
-  updateTask,
 } from '@tap/api/src/core/task'
 import { showErrorMessage } from '@tap/business/src/components/error-message'
 import UpgradeCharges from '@tap/business/src/components/UpgradeCharges.vue'
@@ -1935,7 +1935,7 @@ export default defineComponent({
     }
 
     const onTaskChange = debounce(async () => {
-      const data = await updateTask(
+      const data = await patchTask(
         {
           ...taskRef.value,
           // id: taskRef.value.id,

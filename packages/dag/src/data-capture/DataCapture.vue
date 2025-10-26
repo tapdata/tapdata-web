@@ -264,7 +264,7 @@ export default defineComponent({
       if (!id) return
       startLoopTaskTimer = setTimeout(async () => {
         const { parent_task_sign } = route.query || {}
-        const data = await getTaskById(id, { parent_task_sign })
+        const data = await getTaskById(id, {}, { parent_task_sign })
 
         if (data) {
           if (data.errorEvents?.length) {
@@ -316,7 +316,7 @@ export default defineComponent({
     const loadDataflow = async (id, params) => {
       try {
         const { parent_task_sign } = route.query || {}
-        const data = await getTaskById(id, { ...params, parent_task_sign })
+        const data = await getTaskById(id, params, { parent_task_sign })
         if (!data) {
           ElMessage.error(i18n.t('packages_dag_mixins_editor_renwubucunzai'))
           handlePageReturn()

@@ -33,6 +33,10 @@ export function updateRoleById(data: any) {
   return requestClient.patch(`${BASE_URL}/${data.id}`, data)
 }
 
+export function patchRole(data: any, config?: any) {
+  return requestClient.patch(BASE_URL, data, config)
+}
+
 /**
  * Delete role principals by id
  */
@@ -63,4 +67,8 @@ export function updateRole(where: any, attributes: any) {
     `${BASE_URL}/execute?where=${encodeURIComponent(queryStr)}`,
     attributes,
   )
+}
+
+export function deleteRoleById(id: string) {
+  return requestClient.delete(`${BASE_URL}/${id}`)
 }

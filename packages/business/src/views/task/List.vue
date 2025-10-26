@@ -3,6 +3,7 @@ import { fetchClusterStates } from '@tap/api/src/core/cluster'
 import { getPipelineDetails } from '@tap/api/src/core/licenses'
 import {
   batchDeleteTasks,
+  batchRenewTasks,
   batchStartTasks,
   batchStopTasks,
   batchUpdateTaskListtags,
