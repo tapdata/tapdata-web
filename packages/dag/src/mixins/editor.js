@@ -2605,7 +2605,7 @@ export default {
       this.loading = true
       try {
         const { parent_task_sign } = this.$route.query || {}
-        const data = await getTaskById(id, { ...params, parent_task_sign })
+        const data = await getTaskById(id, params, { parent_task_sign })
         if (!data) {
           this.$message.error(
             i18n.t('packages_dag_mixins_editor_renwubucunzai'),
@@ -2649,7 +2649,7 @@ export default {
       if (!id) return
       this.startLoopTaskTimer = setTimeout(async () => {
         const { parent_task_sign } = this.$route.query || {}
-        const data = await getTaskById(id, { parent_task_sign })
+        const data = await getTaskById(id, {}, { parent_task_sign })
         if (this.destory) return
         if (data) {
           if (data.errorEvents?.length) {

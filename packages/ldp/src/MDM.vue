@@ -1,7 +1,8 @@
 <script lang="tsx">
 import {
+  createMetadataDefinition,
   deleteMetadataDefinition,
-  patchMetadataDefinitionById,
+  patchMetadataDefinition,
 } from '@tap/api/core/metadata-definitions'
 import { fetchMetadataInstances } from '@tap/api/core/metadata-instances'
 import { createDiscoveryTags } from '@tap/api/src/core/discovery'
@@ -548,7 +549,7 @@ export default {
     handleSelfDrop(draggingNode, dropNode, dropType, ev) {
       if (dropNode.data.isObject) return
       if (!draggingNode.data.isObject) {
-        patchMetadataDefinitionById(draggingNode.data.id, {
+        patchMetadataDefinition({
           id: draggingNode.data.id,
           parent_id: dropNode.data.id || '',
         })
@@ -679,7 +680,7 @@ export default {
       const value = config.label
       const id = config.id
       const itemType = [config.itemType]
-      let method = 'post'
+      let method = createMetadataDefinition
 
       if (!value || value.trim() === '') {
         this.$message.error(
@@ -695,7 +696,7 @@ export default {
       }
 
       if (config.type === 'edit') {
-        method = 'changeById'
+        method = patchMetadataDefinition
         params.id = id
         delete params.item_type
       } else if (id) {
@@ -703,7 +704,7 @@ export default {
       }
 
       try {
-        const data = await patchMetadataDefinitionById(params.id, params)
+        const data = await method(params)
         this.hideDialog()
         this.$message.success(this.$t('public_message_operation_success'))
         if (data && config.type === 'add') {

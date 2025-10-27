@@ -469,7 +469,7 @@ export default {
     handleDrop(draggingNode, dropNode, dropType, ev) {
       console.log('handleDrop', ...arguments) // eslint-disable-line
       if (!draggingNode.data.isObject) {
-        patchMetadataDefinitionById(draggingNode.data.id, {
+        patchMetadataDefinition({
           id: draggingNode.data.id,
           parent_id: dropNode.data.id || '',
         })

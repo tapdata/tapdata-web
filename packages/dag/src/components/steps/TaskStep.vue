@@ -3,8 +3,8 @@ import { createEffectHook, createForm, onFieldValueChange } from '@formily/core'
 
 import {
   checkTaskName,
+  patchTask,
   saveAndStartTask,
-  updateTask,
 } from '@tap/api/src/core/task'
 import i18n from '@tap/i18n'
 import { debounce } from 'lodash-es'
@@ -189,7 +189,7 @@ const handleCheckName = debounce(
 )
 
 const onTaskChange = debounce(async () => {
-  const data = await updateTask(
+  const data = await patchTask(
     {
       ...taskRef.value,
       pageVersion: pageVersionRef.value,

@@ -177,7 +177,7 @@ const showIframe = computed(() => {
   return !!docUrl.value
 })
 
-const getPdkDoc = () => {
+const getPdkDocFn = () => {
   if (!props.pdkHash) return
   getPdkDoc(props.pdkHash).then((res) => {
     doc.value = res?.data
@@ -186,7 +186,7 @@ const getPdkDoc = () => {
 
 // Initialize doc if no iframe should be shown
 if (!showIframe.value) {
-  getPdkDoc()
+  getPdkDocFn()
 }
 </script>
 

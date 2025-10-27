@@ -305,7 +305,7 @@ export default {
         filter.where.original_name = { neq: '' }
       }
 
-      return { filter: JSON.stringify(filter) }
+      return filter
     },
 
     /**

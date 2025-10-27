@@ -1,6 +1,6 @@
 <script>
-import { exportPythonFunctions } from '@tap/api/src/core/python-functions'
-import { findOneSharedCache } from '@tap/api/src/core/shared-cache'
+import { fetchPythonFunctions } from '@tap/api/src/core/python-functions'
+import { fetchSharedCache } from '@tap/api/src/core/shared-cache'
 import { getCode } from '@tap/shared'
 import VCodeEditor from './base/VCodeEditor'
 
@@ -85,11 +85,9 @@ export default {
         }
       }
       Promise.all([
-        findOneSharedCache(),
-        exportPythonFunctions({
-          filter: JSON.stringify({
-            size: 0,
-          }),
+        fetchSharedCache(),
+        fetchPythonFunctions({
+          size: 0,
         }),
       ]).then(([cacheData, functionData]) => {
         const cacheItems = cacheData?.items || []

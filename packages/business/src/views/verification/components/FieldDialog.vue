@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { getNodeSchemaPage } from '@tap/api/src/core/metadata-instances'
+import {
+  getNodeSchemaPage,
+  getTapTables,
+} from '@tap/api/src/core/metadata-instances'
 import i18n from '@tap/i18n'
 import { cloneDeep, uniqueId } from 'lodash-es'
 import { computed, ref } from 'vue'

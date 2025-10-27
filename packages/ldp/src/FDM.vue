@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import {
+  createMetadataDefinition,
   deleteMetadataDefinition,
   fetchMetadataDefinitions,
-  patchMetadataDefinitionById,
+  patchMetadataDefinition,
 } from '@tap/api/core/metadata-definitions'
 import { getDiscoveryDirectoryData } from '@tap/api/src/core/discovery'
 import { batchStartFDMTasks, getLDPTaskByTag } from '@tap/api/src/core/ldp'
@@ -601,7 +602,7 @@ async function dialogSubmit() {
   const value = config.label
   const id = config.id
   const itemType = [config.itemType]
-  let method = 'post'
+  let method = createMetadataDefinition
 
   if (!value || value.trim() === '') {
     ElMessage.error(t('packages_component_classification_nodeName'))
@@ -615,7 +616,7 @@ async function dialogSubmit() {
   }
 
   if (config.type === 'edit') {
-    method = 'changeById'
+    method = patchMetadataDefinition
     params.id = id
     delete params.item_type
   } else if (id) {
@@ -623,7 +624,7 @@ async function dialogSubmit() {
   }
 
   try {
-    const data = await patchMetadataDefinitionById(params.id, params)
+    const data = await method(params)
     hideDialog()
     ElMessage.success(t('public_message_operation_success'))
     if (data && config.type === 'add') {

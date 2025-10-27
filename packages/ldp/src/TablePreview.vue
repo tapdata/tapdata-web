@@ -15,6 +15,7 @@ import {
   getTableStatus,
   getTaskByTableName,
 } from '@tap/api/src/core/task'
+import { getTaskUsedAgent } from '@tap/api/src/core/workers'
 import { CancelToken } from '@tap/api/src/request'
 import { DatabaseIcon } from '@tap/business/src/components/DatabaseIcon'
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'

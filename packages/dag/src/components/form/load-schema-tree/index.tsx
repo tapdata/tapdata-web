@@ -41,7 +41,7 @@ export const loadSchemaTree = observer(
       async function getTask() {
         const taskId = store.state.dataflow?.taskId
         const { parent_task_sign } = this.$route.query || {}
-        return await getTaskById(taskId, { parent_task_sign })
+        return await getTaskById(taskId, {}, { parent_task_sign })
       }
 
       let timer

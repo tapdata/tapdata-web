@@ -1,6 +1,8 @@
 import {
+  createDiscoveryTags,
   fetchDiscoveryList,
   getDiscoveryFilterList,
+  updateDiscoveryTags,
 } from '@tap/api/src/core/discovery'
 import TablePage from '@tap/business/src/components/TablePage.vue'
 import { FilterBar } from '@tap/component/src/filter-bar'
@@ -180,7 +182,9 @@ export default defineComponent({
         tagBindingParams: data,
         tagIds: [props.parentNode?.id],
       }
-      fetchDiscoveryList(where)
+      const method =
+        http === 'patchTags' ? updateDiscoveryTags : createDiscoveryTags
+      method(where)
         .then(() => {
           ElMessage.success(i18n.t('public_message_operation_success'))
         })
@@ -191,7 +195,7 @@ export default defineComponent({
     //监听路由变化 筛选条件变化
     watch(
       () => route.query,
-      (val) => {
+      () => {
         multipleTableRef.value.fetch(1)
       },
     )
