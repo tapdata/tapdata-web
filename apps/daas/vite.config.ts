@@ -154,21 +154,45 @@ export default defineConfig({
         chunkFileNames: 'static/js/[name]-[hash].js',
         entryFileNames: 'static/js/[name]-[hash].js',
         assetFileNames: 'static/[ext]/[name]-[hash].[ext]',
-        manualChunks: {
-          ui: [
-            'element-plus',
-            '@element-plus/icons-vue',
-            '@formily/core',
-            '@formily/reactive',
-          ],
-          lodash: ['lodash'],
-          'tap-api': ['@tap/api'],
-          'tap-component': ['@tap/component'],
-          'tap-form': ['@tap/form'],
-          'tap-ldp': ['@tap/ldp'],
-          'tap-node-design': ['@tap/node-design'],
-          'tap-request': ['@tap/request'],
-          'tap-shared': ['@tap/shared'],
+        manualChunks: (id) => {
+          // Monaco Editor 相关的所有文件合并到一个 chunk
+          if (id.includes('monaco-editor')) {
+            return 'monaco-editor'
+          }
+
+          // Tiptap 富文本编辑器相关的所有包合并到一个 chunk
+          if (id.includes('@tiptap')) {
+            return 'tiptap'
+          }
+
+          // Ace Editor 相关的所有文件合并到一个 chunk
+          if (id.includes('ace-builds')) {
+            return 'ace-builds'
+          }
+
+          // UI 库
+          if (
+            id.includes('element-plus') ||
+            id.includes('@element-plus/icons-vue') ||
+            id.includes('@formily/core') ||
+            id.includes('@formily/reactive')
+          ) {
+            return 'ui'
+          }
+
+          // Lodash
+          if (id.includes('lodash')) {
+            return 'lodash'
+          }
+
+          // Workspace packages
+          if (id.includes('@tap/api')) return 'tap-api'
+          if (id.includes('@tap/component')) return 'tap-component'
+          if (id.includes('@tap/form')) return 'tap-form'
+          if (id.includes('@tap/ldp')) return 'tap-ldp'
+          if (id.includes('@tap/node-design')) return 'tap-node-design'
+          if (id.includes('@tap/request')) return 'tap-request'
+          if (id.includes('@tap/shared')) return 'tap-shared'
         },
       },
     },
