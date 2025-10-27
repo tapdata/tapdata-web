@@ -276,7 +276,7 @@ onBeforeMount(() => {
         @click="handleDownload(selectedVersion.zipGridfsId)"
       >
         <el-icon class="mr-1">
-          <i-mingcute:download-2-line />
+          <i-mingcute-download-2-line />
         </el-icon>
         {{ $t('public_button_download') }} ZIP
       </el-button>
@@ -286,7 +286,7 @@ onBeforeMount(() => {
         @click="handleDownload(selectedVersion.jarGridfsId)"
       >
         <el-icon class="mr-1">
-          <i-mingcute:download-2-line />
+          <i-mingcute-download-2-line />
         </el-icon>
         {{ $t('public_button_download') }} JAR
       </el-button>
@@ -294,14 +294,14 @@ onBeforeMount(() => {
       <el-dropdown trigger="click">
         <el-button circle class="rounded-lg">
           <el-icon size="16">
-            <i-mingcute:more-1-fill />
+            <i-mingcute-more-1-fill />
           </el-icon>
         </el-button>
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item class="is-danger" @click="handleDeleteVersion">
               <el-icon class="mr-2">
-                <i-lucide:trash-2 />
+                <i-lucide-trash-2 />
               </el-icon>
               {{ $t('public_button_delete') }}
             </el-dropdown-item>
@@ -328,12 +328,12 @@ onBeforeMount(() => {
             @click="openSearch"
           >
             <template #icon>
-              <i-mingcute:search-line />
+              <i-mingcute-search-line />
             </template>
           </el-button>
           <el-button text :disabled="hasGenerating" @click="handleAddVersion">
             <template #icon>
-              <i-mingcute:add-line />
+              <i-mingcute-add-line />
             </template>
           </el-button>
         </div>
@@ -357,7 +357,7 @@ onBeforeMount(() => {
             class="text-center py-8 text-disabled"
           >
             <el-icon size="24" class="mb-2">
-              <i-mingcute:search-line />
+              <i-mingcute-search-line />
             </el-icon>
             <div>{{ $t('public_no_match_version') }}</div>
           </div>
@@ -402,7 +402,7 @@ onBeforeMount(() => {
                   <el-divider direction="vertical" class="mx-0" />
                   <span class="text-caption flex align-center gap-1">
                     <el-icon>
-                      <i-lucide:clock />
+                      <i-lucide-clock />
                     </el-icon>
                     <span class="fs-8">{{ version.updatedFromNow }}</span>
                   </span>
@@ -438,7 +438,7 @@ onBeforeMount(() => {
                 <div class="flex flex-column gap-2 desc-item">
                   <span class="text-caption flex align-center gap-2">
                     <el-icon>
-                      <i-lucide:package />
+                      <i-lucide-package />
                     </el-icon>
                     {{ $t('public_package_name') }}
                   </span>
@@ -447,7 +447,7 @@ onBeforeMount(() => {
                 <div class="flex flex-column gap-2 desc-item">
                   <span class="text-caption flex align-center gap-2">
                     <el-icon>
-                      <i-lucide:hard-drive />
+                      <i-lucide-hard-drive />
                     </el-icon>
                     {{ $t('public_zip_package') }}
                   </span>
@@ -458,7 +458,7 @@ onBeforeMount(() => {
                 <div class="flex flex-column gap-2 desc-item">
                   <span class="text-caption flex align-center gap-2">
                     <el-icon>
-                      <i-lucide:hard-drive />
+                      <i-lucide-hard-drive />
                     </el-icon>
                     {{ $t('public_jar_package') }}
                   </span>
@@ -477,7 +477,7 @@ onBeforeMount(() => {
                 <div class="flex flex-column gap-2 desc-item">
                   <span class="text-caption flex align-center gap-2">
                     <el-icon>
-                      <i-lucide:server />
+                      <i-lucide-server />
                     </el-icon>
                     {{ $t('public_client') }}
                   </span>
@@ -486,7 +486,7 @@ onBeforeMount(() => {
                 <div class="flex flex-column gap-2 desc-item">
                   <span class="text-caption flex align-center gap-2">
                     <el-icon>
-                      <i-lucide:calendar />
+                      <i-lucide-calendar />
                     </el-icon>
                     {{ $t('public_release_time') }}
                   </span>
@@ -552,7 +552,7 @@ onBeforeMount(() => {
                   <template #default="{ row }">
                     <el-button text>
                       <template #icon>
-                        <i-mingcute:right-line />
+                        <i-mingcute-right-line />
                       </template>
                     </el-button>
                   </template>

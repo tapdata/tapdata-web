@@ -448,14 +448,14 @@ export default {
                             @click="removeRule(childItem, i)"
                           >
                             <template #icon>
-                              <i-mingcute:close-line />
+                              <i-mingcute-close-line />
                             </template>
                           </el-button>
                         </div>
 
                         <el-button @click="addRule(childItem)">
                           <template #icon>
-                            <i-mingcute:add-line />
+                            <i-mingcute-add-line />
                           </template>
                           {{ $t('public_rule_add') }}
                         </el-button>

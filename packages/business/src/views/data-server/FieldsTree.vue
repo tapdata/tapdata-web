@@ -298,7 +298,7 @@ defineExpose({
       @input="handleSearch"
     >
       <template #prefix>
-        <el-icon><i-mingcute:search-line /></el-icon>
+        <el-icon><i-mingcute-search-line /></el-icon>
       </template>
     </el-input>
     <el-tree
@@ -354,7 +354,7 @@ defineExpose({
             {{ encryption.name }}
 
             <el-icon size="16" color="var(--el-color-primary)"
-              ><i-lucide:check
+              ><i-lucide-check
             /></el-icon>
           </div>
         </div>

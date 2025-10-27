@@ -126,7 +126,7 @@ export default {
     <template #header="{ titleClass }">
       <div class="flex align-items-center">
         <el-icon size="20" class="color-warning mr-4">
-          <i-mingcute:warning-fill />
+          <i-mingcute-warning-fill />
         </el-icon>
         <span :class="titleClass">{{
           $t('packages_business_application_delete_shanchuyingyong')

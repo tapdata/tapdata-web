@@ -478,7 +478,7 @@ onBeforeUnmount(() => {
             class="flex align-center justify-center p-1.5 bg-gray-100 dark:bg-white/15 rounded-lg mr-4"
           >
             <el-icon size="24" color="var(--icon-n1)"
-              ><i-lucide:git-compare-arrows
+              ><i-lucide-git-compare-arrows
             /></el-icon>
           </div>
           <div class="mr-2">
@@ -497,7 +497,7 @@ onBeforeUnmount(() => {
           <!-- <template v-if="compareStatus && tableTotal > 0"> -->
           <el-button :loading="isLoading" @click="handleCompareTargetModel">
             <template #icon>
-              <el-icon><i-lucide:refresh-cw /></el-icon>
+              <el-icon><i-lucide-refresh-cw /></el-icon>
             </template>
             {{
               compareStatus === 'running'
@@ -511,13 +511,13 @@ onBeforeUnmount(() => {
               @click="handleApplyAll"
             >
               <template #icon>
-                <el-icon><i-lucide:check-check /></el-icon>
+                <el-icon><i-lucide-check-check /></el-icon>
               </template>
               {{ t('packages_dag_compare_result_apply_all') }}
             </el-button>
             <el-button :disabled="isLoading" @click="handleUndoAll">
               <template #icon>
-                <el-icon><i-lucide:undo /></el-icon>
+                <el-icon><i-lucide-undo /></el-icon>
               </template>
               {{ t('packages_dag_compare_result_undo_all') }}
             </el-button> -->
@@ -527,7 +527,7 @@ onBeforeUnmount(() => {
             @click="handleClearInvalidApply"
           >
             <template #icon>
-              <el-icon><i-lucide:trash-2 /></el-icon>
+              <el-icon><i-lucide-trash-2 /></el-icon>
             </template>
             {{
               t('packages_dag_compare_result_clear_invalid_apply', {
@@ -586,7 +586,7 @@ onBeforeUnmount(() => {
           class="p-1.5 bg-gray-100 dark:bg-white/15 rounded-lg flex align-center justify-center mr-2"
         >
           <el-icon size="16" color="var(--icon-n1)"
-            ><i-lucide:settings
+            ><i-lucide-settings
           /></el-icon>
         </div>
         <div class="fw-sub">
@@ -610,7 +610,7 @@ onBeforeUnmount(() => {
             >
               <span class="flex align-center">
                 {{ item.label }}
-                <el-icon><i-lucide:chevrons-right /></el-icon>
+                <el-icon><i-lucide-chevrons-right /></el-icon>
                 {{
                   item.value === 'Different' || item.value === 'Precision'
                     ? $t('public_button_update')
@@ -637,7 +637,7 @@ onBeforeUnmount(() => {
               @click="handleCompareTargetModel"
             >
               <template #icon>
-                <el-icon><i-lucide:git-compare-arrows /></el-icon>
+                <el-icon><i-lucide-git-compare-arrows /></el-icon>
               </template>
               {{
                 compareStatus === 'running'
@@ -657,7 +657,7 @@ onBeforeUnmount(() => {
           <template #extra>
             <el-button type="primary" @click="handleCompareTargetModel">
               <template #icon>
-                <el-icon><i-lucide:refresh-cw /></el-icon>
+                <el-icon><i-lucide-refresh-cw /></el-icon>
               </template>
               {{ t('packages_dag_compare_result_recompare') }}
             </el-button>
@@ -686,7 +686,7 @@ onBeforeUnmount(() => {
                 @input="fetchCompareResult(1)"
               >
                 <template #prefix>
-                  <el-icon><i-lucide:search /></el-icon>
+                  <el-icon><i-lucide-search /></el-icon>
                 </template>
               </el-input>
             </div>
@@ -704,7 +704,7 @@ onBeforeUnmount(() => {
                   class="p-1.5 bg-gray-100 dark:bg-white/15 rounded-lg flex align-center justify-center table-item-icon"
                 >
                   <el-icon size="16" color="var(--icon-n1)"
-                    ><i-lucide:table
+                    ><i-lucide-table
                   /></el-icon>
                 </div>
 
@@ -751,7 +751,7 @@ onBeforeUnmount(() => {
                   class="mr-2 p-1.5 bg-gray-100 rounded-lg flex align-center justify-center table-item-icon"
                 >
                   <el-icon size="16" color="var(--icon-n1)"
-                    ><i-lucide:table
+                    ><i-lucide-table
                   /></el-icon>
                 </div>
                 <span class="fw-sub ellipsis">{{
@@ -788,7 +788,7 @@ onBeforeUnmount(() => {
                 style="width: 200px"
               >
                 <template #prefix>
-                  <el-icon><i-lucide:search /></el-icon>
+                  <el-icon><i-lucide-search /></el-icon>
                 </template>
               </el-input>
             </div>
@@ -813,7 +813,7 @@ onBeforeUnmount(() => {
                         @click="handleApplyTable"
                       >
                         <template #icon>
-                          <el-icon><i-lucide:check-check /></el-icon>
+                          <el-icon><i-lucide-check-check /></el-icon>
                         </template>
                       </el-button>
                     </el-tooltip>
@@ -829,7 +829,7 @@ onBeforeUnmount(() => {
                         @click="handleUndoTable"
                       >
                         <template #icon>
-                          <el-icon><i-lucide:undo /></el-icon>
+                          <el-icon><i-lucide-undo /></el-icon>
                         </template>
                       </el-button>
                     </el-tooltip>
@@ -878,7 +878,7 @@ onBeforeUnmount(() => {
                           v-if="field.applyType === 'auto'"
                           class="flex align-center gap-1 color-success fs-8 ml-1"
                         >
-                          <el-icon><i-mingcute:check-line /></el-icon>
+                          <el-icon><i-mingcute-check-line /></el-icon>
                           {{
                             t(
                               typeMap[
@@ -896,7 +896,7 @@ onBeforeUnmount(() => {
                           v-else-if="field.applyType === 'manual'"
                           class="flex align-center gap-1 color-success fs-8 ml-1"
                         >
-                          <el-icon><i-mingcute:check-line /></el-icon>
+                          <el-icon><i-mingcute-check-line /></el-icon>
                           {{
                             t(
                               typeMap[
@@ -926,7 +926,7 @@ onBeforeUnmount(() => {
                         @click="handleApply(field)"
                       >
                         <template #icon>
-                          <el-icon><i-lucide:chevrons-left /></el-icon>
+                          <el-icon><i-lucide-chevrons-left /></el-icon>
                         </template>
                       </el-button>
                       <el-button
@@ -942,7 +942,7 @@ onBeforeUnmount(() => {
                         @click="handleApply(field)"
                       >
                         <template #icon>
-                          <el-icon><i-lucide:trash-2 /></el-icon>
+                          <el-icon><i-lucide-trash-2 /></el-icon>
                         </template>
                       </el-button>
                     </template>
@@ -957,7 +957,7 @@ onBeforeUnmount(() => {
                       @click="handleUndo(field)"
                     >
                       <template #icon>
-                        <el-icon><i-lucide:undo /></el-icon>
+                        <el-icon><i-lucide-undo /></el-icon>
                       </template>
                     </el-button>
                   </div>

@@ -130,7 +130,7 @@ const handleAllSelected = () => {
           @input="handleSearch"
         >
           <template #prefix>
-            <el-icon size="16"><i-mingcute:search-line /></el-icon>
+            <el-icon size="16"><i-mingcute-search-line /></el-icon>
           </template>
         </el-input>
         <el-divider class="my-1" />
@@ -148,7 +148,7 @@ const handleAllSelected = () => {
           </el-checkbox>
 
           <el-icon v-if="allSelected" class="ml-auto color-primary" size="16">
-            <i-mingcute:check-line />
+            <i-mingcute-check-line />
           </el-icon>
         </div>
       </div>

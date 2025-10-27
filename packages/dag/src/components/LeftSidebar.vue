@@ -625,7 +625,7 @@ export default {
         <ElCollapseItem name="db">
           <template #title>
             <div class="flex align-center flex-1 overflow-hidden">
-              <el-icon class="mr-2"><i-lucide:database /></el-icon>
+              <el-icon class="mr-2"><i-lucide-database /></el-icon>
               <template v-if="collapseMode === 'db'">
                 <span
                   class="flex-1 user-select-none text-truncate flex align-center"
@@ -779,7 +779,7 @@ export default {
           class="tb-header flex align-center px-4 border-bottom"
           style="--btn-space: 4px"
         >
-          <el-icon class="mr-2"><i-lucide:table /></el-icon>
+          <el-icon class="mr-2"><i-lucide-table /></el-icon>
           <span class="flex-1 user-select-none text-truncate flex align-center">
             <!--表-->
             {{ $t('packages_dag_dag_table') }}

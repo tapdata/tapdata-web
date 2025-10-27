@@ -643,7 +643,7 @@ onUnmounted(() => {
           >
             <div class="p-5 fw-sub flex align-center gap-2 pb-3">
               <el-icon size="16" class="color-primary"
-                ><i-lucide:server
+                ><i-lucide-server
               /></el-icon>
               {{ $t('api_monitor_server_title') }}
             </div>
@@ -669,7 +669,7 @@ onUnmounted(() => {
                       placement="bottom"
                     >
                       <el-icon class="color-warning"
-                        ><i-lucide:triangle-alert
+                        ><i-lucide-triangle-alert
                       /></el-icon>
                     </el-tooltip>
 
@@ -687,7 +687,7 @@ onUnmounted(() => {
                   </div>
                   <div class="flex gap-3">
                     <div class="flex align-center gap-2">
-                      <el-icon class="color-primary"><i-lucide:cpu /></el-icon>
+                      <el-icon class="color-primary"><i-lucide-cpu /></el-icon>
                       <span class="text-gray-600">CPU</span>
                       <span class="fw-sub ml-auto">{{
                         item.metricValues.cpuUsage
@@ -695,7 +695,7 @@ onUnmounted(() => {
                     </div>
                     <div class="flex align-center gap-2">
                       <el-icon class="color-primary"
-                        ><i-lucide:memory-stick
+                        ><i-lucide-memory-stick
                       /></el-icon>
                       <span class="font-color-sslight">{{
                         $t('api_monitor_memory')
@@ -708,7 +708,7 @@ onUnmounted(() => {
                 </div>
                 <el-icon color="var(--icon-n2)" class="">
                   <!-- <RightBoldOutlined /> -->
-                  <i-lucide:chevron-right />
+                  <i-lucide-chevron-right />
                 </el-icon>
                 <!-- <div class="flex align-center gap-2 fs-8">
                   <span class="text-gray-500">PID</span>

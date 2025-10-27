@@ -246,7 +246,7 @@ onBeforeUnmount(() => {
         <template #header>
           <div class="flex align-center">
             <el-icon class="mr-1" size="16">
-              <i-mingcute:download-2-line />
+              <i-mingcute-download-2-line />
             </el-icon>
             {{ $t('public_button_download') }}
           </div>
@@ -284,7 +284,7 @@ onBeforeUnmount(() => {
             @click.stop="handleNewVersion(row)"
           >
             <el-icon class="mr-1">
-              <i-lucide:rocket />
+              <i-lucide-rocket />
             </el-icon>
             {{ $t('public_new_release') }}
           </el-button>
@@ -292,7 +292,7 @@ onBeforeUnmount(() => {
             <el-button text>
               <template #icon>
                 <el-icon size="16">
-                  <i-mingcute:more-1-fill />
+                  <i-mingcute-more-1-fill />
                 </el-icon>
               </template>
             </el-button>
@@ -300,7 +300,7 @@ onBeforeUnmount(() => {
               <el-dropdown-menu>
                 <el-dropdown-item class="is-danger" @click="handleDelete(row)">
                   <el-icon class="mr-2">
-                    <i-lucide:trash-2 />
+                    <i-lucide-trash-2 />
                   </el-icon>
                   {{ $t('public_button_delete') }}
                 </el-dropdown-item>
@@ -320,7 +320,7 @@ onBeforeUnmount(() => {
       <template #header="{ titleClass }">
         <div class="flex align-center gap-4" :class="titleClass">
           <el-icon size="24" class="color-warning">
-            <i-mingcute:warning-fill />
+            <i-mingcute-warning-fill />
           </el-icon>
           {{ $t('public_delete_sdk_message', { sdk: currentSdk.artifactId }) }}
         </div>

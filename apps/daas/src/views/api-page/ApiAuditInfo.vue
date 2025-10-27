@@ -193,11 +193,11 @@ export default {
           text
           @click="handleFormat"
         >
-          <el-icon class="mr-1"><i-mingcute:brush-line /></el-icon>
+          <el-icon class="mr-1"><i-mingcute-brush-line /></el-icon>
           {{ $t('public_format') }}
         </el-button>
         <el-button v-else text @click="handleCompress">
-          <el-icon class="mr-1"><i-mingcute:download2Line /></el-icon>
+          <el-icon class="mr-1"><i-mingcute-download2Line /></el-icon>
           {{ $t('public_format_compress') }}
         </el-button>
       </div>

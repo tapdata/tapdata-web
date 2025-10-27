@@ -276,7 +276,7 @@ defineExpose({ open, close })
           :placeholder="$t('package_business_operators_search')"
         >
           <template #prefix>
-            <el-icon><i-mingcute:search-line /></el-icon>
+            <el-icon><i-mingcute-search-line /></el-icon>
           </template>
         </el-input>
       </div>
@@ -317,7 +317,7 @@ defineExpose({ open, close })
                     size="small"
                     @click="copy(op.example)"
                   >
-                    <el-icon class="mr-1"><i-mingcute:copy-2-line /></el-icon>
+                    <el-icon class="mr-1"><i-mingcute-copy-2-line /></el-icon>
                     {{ t('public_button_copy') }}
                   </el-button>
                 </div>

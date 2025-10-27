@@ -571,12 +571,12 @@ defineExpose({
             @click="openSearch"
           >
             <template #icon>
-              <i-mingcute:search-line />
+              <i-mingcute-search-line />
             </template>
           </el-button>
           <el-button text @click="appEditor.open()">
             <template #icon>
-              <i-mingcute:add-line />
+              <i-mingcute-add-line />
             </template>
           </el-button>
         </div>
@@ -598,7 +598,7 @@ defineExpose({
               @click="handleAppSelect()"
             >
               <el-icon size="18">
-                <i-fluent:folder-link-16-regular />
+                <i-fluent-folder-link-16-regular />
               </el-icon>
               <div class="flex flex-column gap-1 flex-1 min-w-0">
                 <div class="flex align-center gap-1">
@@ -623,7 +623,7 @@ defineExpose({
               <div class="flex flex-column gap-1 flex-1 min-w-0">
                 <div class="flex align-center gap-2">
                   <el-icon size="18">
-                    <i-fluent:folder-link-16-regular />
+                    <i-fluent-folder-link-16-regular />
                   </el-icon>
                   <span class="ellipsis lh-6" :title="app.value">{{
                     app.value
@@ -654,8 +654,8 @@ defineExpose({
                           class="is-danger"
                         >
                           <el-icon class="mr-2">
-                            <!-- <i-mingcute:delete-2-line /> -->
-                            <i-lucide:trash-2 />
+                            <!-- <i-mingcute-delete-2-line /> -->
+                            <i-lucide-trash-2 />
                           </el-icon>
                           {{ $t('public_button_delete') }}</ElDropdownItem
                         >
@@ -702,7 +702,7 @@ defineExpose({
         <template #multipleSelectionActions>
           <ElButton v-show="pendingSelection.length > 0" @click="batchPublish">
             <template #icon>
-              <i-lucide:cloud-upload />
+              <i-lucide-cloud-upload />
             </template>
             <span> {{ $t('public_batch_publish') }}</span>
           </ElButton>

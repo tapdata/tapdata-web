@@ -56,7 +56,7 @@ const handleSearch = (value: string) => {
       @input="handleSearch"
     >
       <template #prefix>
-        <el-icon><i-mingcute:search-line /></el-icon>
+        <el-icon><i-mingcute-search-line /></el-icon>
       </template>
     </el-input>
     <el-tree-v2
@@ -80,7 +80,7 @@ const handleSearch = (value: string) => {
             class="encryption-btn min-w-0"
           >
             <el-icon color="var(--el-color-primary)"
-              ><i-lucide:shield-ellipsis
+              ><i-lucide-shield-ellipsis
             /></el-icon>
             <div class="flex align-center gap-1 ml-1 overflow-hidden">
               <el-tag

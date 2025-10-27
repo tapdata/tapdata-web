@@ -759,7 +759,7 @@ defineExpose({
               <VIcon v-if="types[0] === 'user'" class="color-primary"
                 >folder-close</VIcon
               >
-              <el-icon v-else class="color-primary"><i-lucide:tag /></el-icon>
+              <el-icon v-else class="color-primary"><i-lucide-tag /></el-icon>
               <span class="table-label" :title="data.value">{{
                 data.value
               }}</span>
@@ -828,7 +828,7 @@ defineExpose({
         @click="showDialog()"
       >
         <template #icon>
-          <i-mingcute:add-line />
+          <i-mingcute-add-line />
         </template>
         {{
           $t(

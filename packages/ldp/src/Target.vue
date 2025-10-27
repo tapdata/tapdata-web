@@ -865,7 +865,7 @@ export default {
               <div class="item__header p-3">
                 <div class="flex align-center gap-2 overflow-hidden">
                   <el-icon size="20" class="color-primary"
-                    ><i-fluent:folder-link-16-regular
+                    ><i-fluent-folder-link-16-regular
                   /></el-icon>
                   <span
                     class="font-color-normal fw-sub fs-6 ellipsis lh-base"
@@ -1015,7 +1015,7 @@ export default {
                 <div class="item__header p-3">
                   <div class="flex align-center gap-2 overflow-hidden">
                     <el-icon size="20"
-                      ><i-fluent:folder-link-16-regular
+                      ><i-fluent-folder-link-16-regular
                     /></el-icon>
                     <span
                       class="font-color-normal fw-sub fs-6 ellipsis lh-base"

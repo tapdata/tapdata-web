@@ -451,7 +451,7 @@ defineExpose({
                     v-if="form.clientId === client.clientId"
                     class="ml-auto"
                     size="16"
-                    ><i-mingcute:check-line
+                    ><i-mingcute-check-line
                   /></el-icon>
                 </div>
               </div>
@@ -474,7 +474,7 @@ defineExpose({
                   @input="handleSearchApi"
                 >
                   <template #prefix>
-                    <el-icon><i-mingcute:search-line /></el-icon>
+                    <el-icon><i-mingcute-search-line /></el-icon>
                   </template>
                 </el-input>
               </div>
@@ -496,7 +496,7 @@ defineExpose({
                   <template #default="{ node, data }">
                     <div class="flex align-center gap-1">
                       <el-icon v-if="!node.isLeaf" size="16"
-                        ><i-fluent:folder-link-16-regular
+                        ><i-fluent-folder-link-16-regular
                       /></el-icon>
                       <span>{{ data.label }}</span>
                       <span v-if="!node.isLeaf" class="text-disabled fs-8">

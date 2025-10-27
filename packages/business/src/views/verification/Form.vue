@@ -737,7 +737,7 @@ provide('ConnectorMap', ConnectorMap)
                 >
                   <template #icon>
                     <el-icon>
-                      <i-mingcute:external-link-line />
+                      <i-mingcute-external-link-line />
                     </el-icon>
                   </template>
                 </el-button>
@@ -1172,7 +1172,7 @@ provide('ConnectorMap', ConnectorMap)
       >
         <template #icon>
           <el-icon size="16">
-            <i-mingcute:check-line />
+            <i-mingcute-check-line />
           </el-icon>
         </template>
         {{ $t('public_button_save') }}

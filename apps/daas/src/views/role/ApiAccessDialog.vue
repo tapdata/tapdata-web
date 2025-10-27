@@ -191,7 +191,7 @@ export default {
               @input="handleFilter"
             >
               <template #prefix>
-                <el-icon><i-mingcute:search-line /></el-icon>
+                <el-icon><i-mingcute-search-line /></el-icon>
               </template>
             </el-input>
           </div>

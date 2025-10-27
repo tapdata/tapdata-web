@@ -1434,7 +1434,7 @@ provide('form', form)
               >
                 <template #icon>
                   <el-icon>
-                    <i-mingcute:close-line />
+                    <i-mingcute-close-line />
                   </el-icon>
                 </template>
               </el-button>
@@ -1449,7 +1449,7 @@ provide('form', form)
             @click="addItem('params')"
           >
             <template #icon>
-              <i-mingcute:add-line />
+              <i-mingcute-add-line />
             </template>
             {{ $t('public_add_parameter') }}
           </el-button>
@@ -1491,11 +1491,11 @@ provide('form', form)
               text
               @click="handleFormat"
             >
-              <el-icon class="mr-1"><i-mingcute:brush-line /></el-icon>
+              <el-icon class="mr-1"><i-mingcute-brush-line /></el-icon>
               {{ $t('public_format') }}
             </el-button>
             <el-button v-if="form.fullCustomQuery" text @click="openHelp">
-              <el-icon class="mr-1"><i-mingcute:question-line /></el-icon>
+              <el-icon class="mr-1"><i-mingcute-question-line /></el-icon>
               {{ $t('public_button_help') }}
             </el-button>
           </div>
@@ -1547,7 +1547,7 @@ provide('form', form)
                             @click="handleAddParameter(index)"
                           >
                             <template #icon>
-                              <i-mingcute:add-line />
+                              <i-mingcute-add-line />
                             </template>
                             {{ $t('public_add_parameter') }}
                           </el-button>
@@ -1576,7 +1576,7 @@ provide('form', form)
                   @click="removeItem('where', index)"
                 >
                   <template #icon>
-                    <i-mingcute:close-line />
+                    <i-mingcute-close-line />
                   </template>
                 </el-button>
               </li>
@@ -1587,7 +1587,7 @@ provide('form', form)
                   @click="addItem('where')"
                 >
                   <template #icon>
-                    <i-mingcute:add-line />
+                    <i-mingcute-add-line />
                   </template>
                   {{ $t('public_add_condition') }}
                 </el-button>
@@ -1658,7 +1658,7 @@ provide('form', form)
                 @click="removeItem('sort', index)"
               >
                 <template #icon>
-                  <i-mingcute:close-line />
+                  <i-mingcute-close-line />
                 </template>
               </el-button>
             </li>
@@ -1669,7 +1669,7 @@ provide('form', form)
                 @click="addItem('sort')"
               >
                 <template #icon>
-                  <i-mingcute:add-line />
+                  <i-mingcute-add-line />
                 </template>
                 {{ $t('public_add_condition') }}
               </el-button>
@@ -1691,7 +1691,7 @@ provide('form', form)
             <template v-if="isEdit && selectedFieldSize">
               <el-dropdown placement="bottom" @command="handleAliasConversion">
                 <el-button text>
-                  <el-icon class="mr-1"><i-lucide:wand-sparkles /></el-icon>
+                  <el-icon class="mr-1"><i-lucide-wand-sparkles /></el-icon>
                   {{ $t('public_quick_convert_alias') }}
                 </el-button>
                 <template #dropdown>
@@ -1718,7 +1718,7 @@ provide('form', form)
               >
                 <template #reference>
                   <el-button text type="danger">
-                    <el-icon class="mr-1"><i-mingcute:close-line /></el-icon>
+                    <el-icon class="mr-1"><i-mingcute-close-line /></el-icon>
                     {{ $t('public_clear_alias') }}
                   </el-button>
                 </template>
