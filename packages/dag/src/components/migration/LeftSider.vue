@@ -415,7 +415,7 @@ export default {
         <ElCollapseItem name="db">
           <template #title>
             <div class="flex align-center flex-1 overflow-hidden">
-              <el-icon class="mr-2"><i-lucide:database /></el-icon>
+              <el-icon class="mr-2"><i-lucide-database /></el-icon>
               <span
                 class="flex-1 user-select-none text-truncate flex align-center"
               >

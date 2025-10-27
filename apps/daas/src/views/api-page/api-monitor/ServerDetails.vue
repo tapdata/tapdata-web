@@ -693,7 +693,7 @@ const msFormatter = (value: number) => {
                   placement="bottom"
                 >
                   <el-icon class="color-warning"
-                    ><i-lucide:triangle-alert
+                    ><i-lucide-triangle-alert
                   /></el-icon>
                 </el-tooltip>
                 <div
@@ -713,7 +713,7 @@ const msFormatter = (value: number) => {
               >
                 <div class="metric-item flex align-center gap-1">
                   <el-icon size="12" class="color-primary"
-                    ><i-lucide:cpu
+                    ><i-lucide-cpu
                   /></el-icon>
                   <span class="metric-label font-color-sslight"> CPU:</span>
                   <span class="metric-value">{{
@@ -722,7 +722,7 @@ const msFormatter = (value: number) => {
                 </div>
                 <div class="metric-item flex align-center gap-1">
                   <el-icon size="12" class="color-primary"
-                    ><i-lucide:memory-stick
+                    ><i-lucide-memory-stick
                   /></el-icon>
                   <span class="metric-label font-color-sslight"
                     >{{ $t('api_monitor_memory') }}:</span
@@ -744,7 +744,7 @@ const msFormatter = (value: number) => {
             <div class="chart-container">
               <h4 class="chart-title mb-4 fs-6 flex align-center gap-2">
                 <el-icon size="20" class="color-primary">
-                  <i-lucide:activity />
+                  <i-lucide-activity />
                 </el-icon>
                 {{ $t('api_monitor_server_rps_title') }} ({{
                   $t('api_monitor_server_rps_title_unit')
@@ -764,7 +764,7 @@ const msFormatter = (value: number) => {
             <div class="chart-container">
               <h4 class="chart-title mb-4 fs-6 flex align-center gap-2">
                 <el-icon size="20" class="color-primary">
-                  <i-lucide:clock />
+                  <i-lucide-clock />
                 </el-icon>
                 {{ $t('api_monitor_server_error_rate_title') }} (%)
               </h4>
@@ -783,7 +783,7 @@ const msFormatter = (value: number) => {
             <div class="chart-container">
               <h4 class="chart-title mb-4 fs-6 flex align-center gap-2">
                 <el-icon size="20" class="color-primary">
-                  <i-lucide:triangle-alert />
+                  <i-lucide-triangle-alert />
                 </el-icon>
                 {{ selectedWorker }} -
                 {{ $t('api_monitor_server_response_time_title') }} ({{
@@ -806,7 +806,7 @@ const msFormatter = (value: number) => {
             <div class="chart-container">
               <h4 class="chart-title mb-4 fs-6 flex align-center gap-2">
                 <el-icon size="20" class="color-primary">
-                  <i-lucide:chart-column />
+                  <i-lucide-chart-column />
                 </el-icon>
                 {{ selectedWorker }} -
                 {{ $t('api_monitor_server_api_calls_title') }}

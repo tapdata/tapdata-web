@@ -279,7 +279,7 @@ defineExpose({
                   placement="top"
                 >
                   <el-icon class="align-middle">
-                    <i-lucide:info /> </el-icon></el-tooltip
+                    <i-lucide-info /> </el-icon></el-tooltip
               ></el-radio>
               <el-radio value="custom">
                 <span class="align-middle mr-1">{{ $t('public_custom') }}</span>
@@ -288,7 +288,7 @@ defineExpose({
                   placement="top"
                 >
                   <el-icon class="align-middle"
-                    ><i-lucide:info
+                    ><i-lucide-info
                   /></el-icon> </el-tooltip
               ></el-radio>
             </el-radio-group>

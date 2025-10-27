@@ -867,7 +867,9 @@ export default {
                               "
                               type="success"
                               class="rounded-md cursor-pointer"
-                              @click="handleGoTask(item.processId, 'migrate')"
+                              @click.stop="
+                                handleGoTask(item.processId, 'migrate')
+                              "
                             >
                               {{ $t('dashboard_copy_total') }}:
                               {{
@@ -883,7 +885,7 @@ export default {
                               "
                               type="success"
                               class="rounded-md cursor-pointer"
-                              @click="handleGoTask(item.processId, 'sync')"
+                              @click.stop="handleGoTask(item.processId, 'sync')"
                             >
                               {{ $t('dashboard_sync_total') }}:
                               {{ agentRunningTask[item.processId].sync || 0 }}

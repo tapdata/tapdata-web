@@ -77,9 +77,9 @@ const handleRemoveEncryption = (i: number) => {
         v-if="data.textEncryptionRuleIds?.length"
         color="var(--el-color-primary)"
       >
-        <i-lucide:shield-ellipsis />
+        <i-lucide-shield-ellipsis />
       </el-icon>
-      <el-icon v-else color="var(--icon-n3)"><i-lucide:shield /></el-icon>
+      <el-icon v-else color="var(--icon-n3)"><i-lucide-shield /></el-icon>
       <div
         v-if="data.textEncryptionRuleIds?.length"
         class="flex align-center gap-1 ml-1 overflow-hidden"

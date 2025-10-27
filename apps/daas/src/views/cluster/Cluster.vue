@@ -1334,7 +1334,7 @@ const handleTabChange = (tab: any) => {
                       >
                         <el-button text @click="downServeFn(item)">
                           <template #icon>
-                            <i-lucide:monitor-down />
+                            <i-lucide-monitor-down />
                           </template>
                         </el-button>
                       </el-tooltip>
@@ -1344,7 +1344,7 @@ const handleTabChange = (tab: any) => {
                       >
                         <el-button text @click="downConnectorsFn(item)">
                           <template #icon>
-                            <i-lucide:hard-drive-download />
+                            <i-lucide-hard-drive-download />
                           </template>
                         </el-button>
                       </el-tooltip>
@@ -1356,21 +1356,21 @@ const handleTabChange = (tab: any) => {
                     >
                       <el-button text @click="addServeFn(item)">
                         <template #icon>
-                          <i-lucide:square-plus />
+                          <i-lucide-square-plus />
                         </template>
                       </el-button>
                     </el-tooltip>
 
                     <el-button text @click="editAgent(item)">
                       <template #icon>
-                        <i-lucide:settings />
+                        <i-lucide-settings />
                       </template>
                     </el-button>
                     <template v-if="item.status !== 'running'">
                       <ElDivider direction="vertical" />
                       <ElButton text type="danger" @click="delConfirm(item)">
                         <template #icon>
-                          <i-lucide:trash-2 />
+                          <i-lucide-trash-2 />
                         </template>
                       </ElButton>
                     </template>

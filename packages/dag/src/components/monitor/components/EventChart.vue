@@ -127,21 +127,21 @@ export default {
         inData[key.toLowerCase()] = input[key]
         outData[key.toLowerCase()] = output[key]
       }
-      this.total.input = eval(Object.values(inData).join('+'))
-      this.total.output = eval(Object.values(outData).join('+'))
+      this.total.input = Object.values(inData).reduce((a, b) => a + b, 0)
+      this.total.output = Object.values(outData).reduce((a, b) => a + b, 0)
       const arr = [
         {
-          label: i18n.t('public_event_insert'),
+          label: this.$t('public_event_insert'),
           key: 'InsertTotal',
           color: '#88DBDA',
         },
         {
-          label: i18n.t('public_event_update'),
+          label: this.$t('public_event_update'),
           key: 'UpdateTotal',
           color: '#6ACA26',
         },
         {
-          label: i18n.t('public_button_delete'),
+          label: this.$t('public_button_delete'),
           key: 'DeleteTotal',
           color: '#FDD746',
         },
@@ -151,7 +151,7 @@ export default {
           color: '#B682CE',
         },
         {
-          label: i18n.t('packages_dag_components_eventchart_qita'),
+          label: this.$t('packages_dag_components_eventchart_qita'),
           key: 'OthersTotal',
           color: '#00A1F1',
         },

@@ -1588,7 +1588,7 @@ watch(conditionList, () => {
                 </span>
                 <span>/</span>
                 <span class="fw-sub">{{ item.source.table || '-' }}</span>
-                <el-icon size="20"><i-mingcute:arrow-right-line /></el-icon>
+                <el-icon size="20"><i-mingcute-arrow-right-line /></el-icon>
                 <DatabaseIcon
                   v-if="ConnectorMap[item.target.databaseType]"
                   class="flex-shrink-0"

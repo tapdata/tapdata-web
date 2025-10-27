@@ -1,8 +1,8 @@
 <script>
 import { getExternalStorage } from '@tap/api/src/core/external-storage'
 import {
+  deleteSharedCache,
   fetchSharedCache,
-  patchSharedCache,
 } from '@tap/api/src/core/shared-cache'
 import {
   batchRenewTasks,
@@ -134,7 +134,7 @@ export default {
         this.$t('public_message_delete_confirm'),
       ).then((flag) => {
         if (flag) {
-          patchSharedCache({ id: row.id }).then(() => {
+          deleteSharedCache(row.id).then(() => {
             this.$message.success(this.$t('public_message_delete_ok'))
             this.table.fetch()
           })

@@ -43,11 +43,11 @@ const handleClick = (event) => {
   >
     <span class="flex align-center gap-1">
       <el-icon v-if="status === 'GENERATING'" class="is-loading">
-        <i-lucide:loader />
+        <i-lucide-loader />
       </el-icon>
 
       <el-icon v-if="status === 'FAILED' && errorMessage" size="14">
-        <i-mingcute:question-line />
+        <i-mingcute-question-line />
       </el-icon>
 
       {{ statusMap[status].text }}

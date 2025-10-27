@@ -460,7 +460,7 @@ function clearAllConditions(): void {
             @click="handleManualCheck"
           >
             <template #icon>
-              <i-lucide:git-compare-arrows />
+              <i-lucide-git-compare-arrows />
             </template>
             {{ $t('public_diff_check') }}
           </el-button>
@@ -473,7 +473,7 @@ function clearAllConditions(): void {
             <el-button bg text @click="handleConfirmCheck">
               <template #icon>
                 <el-icon class="is-loading" size="16">
-                  <i-mingcute:loading-line />
+                  <i-mingcute-loading-line />
                 </el-icon>
               </template>
               {{ $t('public_checking') }} ({{ progress }}%)
@@ -488,7 +488,7 @@ function clearAllConditions(): void {
             @click="handleManualRecover"
           >
             <template #icon>
-              <i-lucide:wand-sparkles />
+              <i-lucide-wand-sparkles />
             </template>
             {{ $t('public_one_key_repair') }}
           </el-button>
@@ -501,7 +501,7 @@ function clearAllConditions(): void {
             <el-button bg text @click="handleConfirmRecover">
               <template #icon>
                 <el-icon class="is-loading" size="16">
-                  <i-mingcute:loading-line />
+                  <i-mingcute-loading-line />
                 </el-icon>
               </template>
               {{ $t('public_repairing') }} ({{ progress }}%)
@@ -539,7 +539,7 @@ function clearAllConditions(): void {
               @input="fetchDiffList(1)"
             >
               <template #prefix>
-                <el-icon><i-lucide:search /></el-icon>
+                <el-icon><i-lucide-search /></el-icon>
               </template>
             </el-input>
           </div>
@@ -715,7 +715,7 @@ function clearAllConditions(): void {
                     @click.stop="clearAllConditions"
                   >
                     <el-icon class="align-top">
-                      <i-lucide:x />
+                      <i-lucide-x />
                     </el-icon>
                   </div>
                 </el-button>
@@ -764,7 +764,7 @@ function clearAllConditions(): void {
                       @click="clearCondition('source')"
                     >
                       <template #icon>
-                        <i-lucide:x />
+                        <i-lucide-x />
                       </template>
                     </el-button>
                   </div>
@@ -801,7 +801,7 @@ function clearAllConditions(): void {
                       @click="clearCondition('target')"
                     >
                       <template #icon>
-                        <i-lucide:x />
+                        <i-lucide-x />
                       </template>
                     </el-button>
                   </div>
@@ -835,7 +835,7 @@ function clearAllConditions(): void {
                       @click="clearCondition('inner')"
                     >
                       <template #icon>
-                        <i-lucide:x />
+                        <i-lucide-x />
                       </template>
                     </el-button>
                   </div>
@@ -1173,16 +1173,13 @@ function clearAllConditions(): void {
   }
 
   .inspect-detail-tabs {
-    &::v-deep .el-tabs__header {
+    :deep(.el-tabs__header) {
       margin-bottom: 15px;
     }
   }
 
   .inspection-result-list {
     width: 320px;
-  }
-
-  .inspection-result-header {
   }
 
   .inspection-result-count {

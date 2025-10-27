@@ -163,7 +163,7 @@ const handleSave = async () => {
         <template #title>
           <div class="flex gap-2 align-center">
             <el-icon size="16">
-              <i-mingcute:play-line />
+              <i-mingcute-play-line />
             </el-icon>
             {{ $t('public_rule_test') }}
           </div>

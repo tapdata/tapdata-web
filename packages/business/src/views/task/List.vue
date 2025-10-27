@@ -1233,7 +1233,7 @@ export default {
                     @click.stop="handleEditInfo(row)"
                   >
                     <template #icon>
-                      <el-icon><i-lucide:file-pen /></el-icon>
+                      <el-icon><i-lucide-file-pen /></el-icon>
                     </template>
                   </el-button>
                 </el-tooltip>
@@ -1254,7 +1254,7 @@ export default {
                       @click.stop="handleEditInfo(row)"
                     >
                       <template #icon>
-                        <el-icon><i-lucide:file-text /></el-icon>
+                        <el-icon><i-lucide-file-text /></el-icon>
                       </template>
                     </el-button>
                   </template>
@@ -1268,7 +1268,7 @@ export default {
                         @click="handleEditInfo(row)"
                       >
                         <template #icon>
-                          <el-icon><i-lucide:file-pen /></el-icon>
+                          <el-icon><i-lucide-file-pen /></el-icon>
                         </template>
                       </el-button>
                     </div>
@@ -1312,7 +1312,7 @@ export default {
                   <el-icon
                     v-if="row.metricInfo.hasWarning"
                     class="color-warning"
-                    ><i-lucide:triangle-alert
+                    ><i-lucide-triangle-alert
                   /></el-icon>
                   <span class="font-color-sslight">CPU:</span>
                   <span class="fw-sub">{{ row.metricInfo.cpuUsage }}</span>

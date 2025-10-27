@@ -19,3 +19,7 @@ export function patchSharedCache(params: any) {
 export function createSharedCache(params: any) {
   return requestClient.post(BASE_URL, params)
 }
+
+export function deleteSharedCache(id: string) {
+  return requestClient.delete(`${BASE_URL}/${id}`)
+}
