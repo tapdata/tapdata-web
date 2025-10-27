@@ -2,7 +2,6 @@ import { observer } from '@formily/reactive-vue'
 import { useForm } from '@tap/form'
 import { defineComponent, ref } from 'vue'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
-import SchemaFieldList from './List.vue'
 
 export const fieldList = observer(
   defineComponent({
@@ -23,5 +22,3 @@ export const fieldList = observer(
 )
 
 export default fieldList
-
-export { SchemaFieldList }

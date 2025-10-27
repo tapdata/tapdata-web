@@ -1173,16 +1173,13 @@ function clearAllConditions(): void {
   }
 
   .inspect-detail-tabs {
-    &::v-deep .el-tabs__header {
+    :deep(.el-tabs__header) {
       margin-bottom: 15px;
     }
   }
 
   .inspection-result-list {
     width: 320px;
-  }
-
-  .inspection-result-header {
   }
 
   .inspection-result-count {
