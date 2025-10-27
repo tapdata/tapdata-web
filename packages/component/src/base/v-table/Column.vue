@@ -1,9 +1,7 @@
 <script>
 import dayjs from 'dayjs'
-import { defineAsyncComponent } from 'vue'
 export default {
   name: 'Column',
-  components: { Column: defineAsyncComponent(() => import('./Column')) },
   props: {
     item: {
       type: Object,
