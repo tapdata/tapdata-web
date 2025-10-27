@@ -143,7 +143,7 @@ export default {
         })
           .then(() => {
             this.$message.success(this.$t('license_renew_success'))
-            this.$table.fetch()
+            this.$refs.table.fetch()
             this.dialogVisible = false
 
             setTimeout(() => {
@@ -264,7 +264,11 @@ export default {
       append-to-body
       :title="$t('license_renew_dialog')"
     >
-      <ElInput v-model.trim="license" type="textarea" />
+      <ElInput
+        v-model.trim="license"
+        type="textarea"
+        :autosize="{ minRows: 2 }"
+      />
       <template #footer>
         <div>
           <ElButton
