@@ -2,10 +2,6 @@ import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
 
 export class Table extends NodeType {
-  constructor() {
-    super()
-  }
-
   type = 'table'
 
   group = 'data'
