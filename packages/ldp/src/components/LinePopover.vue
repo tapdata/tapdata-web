@@ -1,51 +1,54 @@
-<script>
+<script setup lang="ts">
 import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
-import { mapGetters } from 'vuex'
 
-export default {
-  name: 'NodePopover',
-  props: {
-    popover: {},
-  },
-  computed: {
-    ...mapGetters('dataflow', ['processorNodeTypes']),
-  },
-  components: {
-    TaskStatus,
-  },
-  methods: {
-    handleClick(node) {
-      this.$emit('click-node', node)
-    },
+interface Task {
+  name: string
+  [key: string]: any
+}
 
-    handleClickTask(task) {
-      this.$emit('click-task', task)
-      this.popover.show = false
-    },
-  },
-  emits: ['click-node', 'click-task'],
+interface Popover {
+  reference?: HTMLElement
+  show: boolean
+  tasks: Task[]
+}
+
+interface Props {
+  popover: Popover
+}
+
+const props = defineProps<Props>()
+
+const emit = defineEmits<{
+  clickTask: [task: Task]
+}>()
+
+const handleClickTask = (task: Task) => {
+  emit('clickTask', task)
+  // eslint-disable-next-line vue/no-mutating-props
+  props.popover.show = false
 }
 </script>
 
 <template>
   <ElPopover
-    v-if="popover.reference"
-    v-bind="$attrs"
-    ref="nodeMenu"
-    v-model="popover.show"
+    v-model:visible="popover.show"
     placement="bottom"
-    popper-class="rounded-lg p-0 line-popover"
-    :reference="popover.reference"
+    popper-class="p-0 line-popover"
+    :virtual-ref="popover.reference"
+    :hide-after="0"
+    virtual-triggering
+    trigger="click"
+    width="auto"
   >
     <div class="popover-list p-1">
       <div
         v-for="(task, i) in popover.tasks"
         :key="i"
-        class="popover-list-item ellipsis px-3"
+        class="popover-list-item ellipsis px-2 flex align-center gap-2 rounded-lg"
         @click="handleClickTask(task)"
       >
         {{ task.name }}
-        <TaskStatus class="popover-list-item-status" :task="task" />
+        <TaskStatus class="popover-list-item-status zoom-xs" :task="task" />
       </div>
     </div>
   </ElPopover>
@@ -58,7 +61,6 @@ export default {
       min-width: 148px;
       font-size: 14px;
       line-height: 32px;
-      border-radius: 6px;
       cursor: pointer;
 
       &-status {
@@ -67,6 +69,10 @@ export default {
 
       &:hover {
         background-color: #edf1f9;
+      }
+
+      :deep(.task-status-block) {
+        min-width: unset;
       }
     }
     &.auto-width &-item {

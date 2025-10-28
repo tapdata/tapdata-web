@@ -150,11 +150,12 @@ export default {
     async showNodePopover(el, tasks) {
       this.nodeMenu.tasks = tasks
       this.nodeMenu.show = false
-      this.nodeMenu.reference = null
       await this.$nextTick()
       this.nodeMenu.reference = el
       await this.$nextTick()
-      this.nodeMenu.show = true
+      setTimeout(() => {
+        this.nodeMenu.show = true
+      }, 50)
     },
 
     async loadLineage() {
