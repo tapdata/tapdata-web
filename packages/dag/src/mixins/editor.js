@@ -1,7 +1,7 @@
 import { observable } from '@formily/reactive'
 import { getDataActions } from '@tap/api/src/core/data-permission'
 import { fetchDatabaseTypes } from '@tap/api/src/core/database-types'
-import { findOneSharedCache } from '@tap/api/src/core/shared-cache'
+import { fetchSharedCache } from '@tap/api/src/core/shared-cache'
 import {
   batchStartTasks,
   fetchTasks,
@@ -251,15 +251,12 @@ export default {
     },
 
     async loadSharedCache(usedShareCache) {
-      const sharedCacheRes = await findOneSharedCache({
-        filter: JSON.stringify({
-          limit: 1000,
-          where: {
-            name: {
-              $in: Object.keys(usedShareCache),
-            },
+      const sharedCacheRes = await fetchSharedCache({
+        where: {
+          name: {
+            $in: Object.keys(usedShareCache),
           },
-        }),
+        },
       })
       this.sharedCacheMap = sharedCacheRes.items?.reduce((pre, task) => {
         const { id, name, status } = makeStatusAndDisabled(task)
