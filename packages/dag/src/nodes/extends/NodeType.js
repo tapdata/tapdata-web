@@ -6,7 +6,6 @@ const FEATURE_CONTROLS = {
 }
 
 export class NodeType {
-  constructor() {}
   /**
    * 获取额外添加到节点上的属性
    */

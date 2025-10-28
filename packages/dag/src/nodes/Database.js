@@ -2,10 +2,6 @@ import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
 
 export class Database extends NodeType {
-  constructor() {
-    super()
-  }
-
   type = 'database'
 
   minInputs = 0 // 最小输入个数

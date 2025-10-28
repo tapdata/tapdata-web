@@ -164,7 +164,6 @@ export default defineConfig({
           'tap-component': ['@tap/component'],
           'tap-form': ['@tap/form'],
           'tap-ldp': ['@tap/ldp'],
-          'tap-dag': ['@tap/dag'],
           'tap-node-design': ['@tap/node-design'],
           'tap-request': ['@tap/request'],
           'tap-shared': ['@tap/shared'],
