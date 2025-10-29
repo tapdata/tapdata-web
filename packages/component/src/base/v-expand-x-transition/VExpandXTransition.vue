@@ -1,5 +1,5 @@
-<script lang="jsx">
-import { defineComponent } from 'vue'
+<script lang="tsx">
+import { defineComponent, Transition } from 'vue'
 
 function upperFirst(str) {
   return str.charAt(0).toUpperCase() + str.slice(1)

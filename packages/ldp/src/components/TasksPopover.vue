@@ -3,20 +3,17 @@ import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
 
 interface Task {
   name: string
-  [key: string]: any
-}
-
-interface Popover {
-  reference?: HTMLElement
-  show: boolean
-  tasks: Task[]
+  status: string
 }
 
 interface Props {
-  popover: Popover
+  reference?: HTMLElement | null
+  tasks: Task[]
 }
 
-const props = defineProps<Props>()
+defineProps<Props>()
+
+const show = defineModel<boolean>()
 
 const emit = defineEmits<{
   clickTask: [task: Task]
@@ -24,17 +21,17 @@ const emit = defineEmits<{
 
 const handleClickTask = (task: Task) => {
   emit('clickTask', task)
-  // eslint-disable-next-line vue/no-mutating-props
-  props.popover.show = false
+
+  show.value = false
 }
 </script>
 
 <template>
   <ElPopover
-    v-model:visible="popover.show"
+    v-model:visible="show"
     placement="bottom"
     popper-class="p-0 line-popover"
-    :virtual-ref="popover.reference"
+    :virtual-ref="reference"
     :hide-after="0"
     virtual-triggering
     trigger="click"
@@ -42,7 +39,7 @@ const handleClickTask = (task: Task) => {
   >
     <div class="popover-list p-1">
       <div
-        v-for="(task, i) in popover.tasks"
+        v-for="(task, i) in tasks"
         :key="i"
         class="popover-list-item ellipsis px-2 flex align-center gap-2 rounded-lg"
         @click="handleClickTask(task)"
