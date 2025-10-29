@@ -2,10 +2,6 @@ import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
 
 export class DateProcessor extends NodeType {
-  constructor() {
-    super()
-  }
-
   type = 'date_processor'
 
   maxInputs = 1 // 最大输入个数
