@@ -1185,7 +1185,7 @@ export const FieldRenameProcessor = connect(
               v-loading={config.transformLoading}
             >
               <FormItem.BaseItem class="mb-4" label={label}>
-                <div class="border border-form px-4 pb-2 rounded-4">
+                <div class="border border-form px-4 pb-2 rounded-xl">
                   <div class="flex gap-4">
                     <FormItem.BaseItem
                       label={i18n.t(
@@ -1267,7 +1267,7 @@ export const FieldRenameProcessor = connect(
                 </div>
               </FormItem.BaseItem>
 
-              <div class="task-form-body rounded-4">
+              <div class="task-form-body rounded-xl">
                 <div class="task-form-left pt-0 border-0 flex flex-column">
                   <div class="flex p-2">
                     <ElInput
@@ -1346,7 +1346,7 @@ export const FieldRenameProcessor = connect(
                   </div>
                   <ElPagination
                     small
-                    class="flex mt-3 din-font"
+                    class="flex mt-3 px-3"
                     layout="total, prev, slot, next"
                     onCurrentChange={(page) => {
                       config.page.current = page
