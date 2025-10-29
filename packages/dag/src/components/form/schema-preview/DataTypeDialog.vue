@@ -1,5 +1,8 @@
 <script>
-import { dataType2TapType } from '@tap/api/src/core/metadata-instances'
+import {
+  checkMultipleDataType,
+  dataType2TapType,
+} from '@tap/api/src/core/metadata-instances'
 import i18n from '@tap/i18n'
 
 export default {
@@ -53,7 +56,7 @@ export default {
       this.currentData.selectDataType = findRule?.result?.selectDataType || ''
       this.currentData.coefficient = findRule?.multiple || 1
 
-      const dataTypeCheckMultiple = await dataTypeCheckMultiple({
+      const dataTypeCheckMultiple = await checkMultipleDataType({
         databaseType: this.activeNode.databaseType,
         dataType: this.currentData.dataType,
       })

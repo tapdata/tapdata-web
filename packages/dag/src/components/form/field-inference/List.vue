@@ -1,5 +1,8 @@
 <script>
-import { dataType2TapType } from '@tap/api/src/core/metadata-instances'
+import {
+  checkMultipleDataType,
+  dataType2TapType,
+} from '@tap/api/src/core/metadata-instances'
 import { VTable } from '@tap/component/src/base/v-table'
 import i18n from '@tap/i18n'
 import { uuid } from '@tap/shared'
@@ -214,7 +217,7 @@ export default {
       this.currentData.coefficient = findRule?.multiple || 1
       this.currentData.selectedDataType = '' // 下拉框选择的类型，仅前端使用
 
-      const dataTypeCheckMultiple = await dataTypeCheckMultiple({
+      const dataTypeCheckMultiple = await checkMultipleDataType({
         databaseType: this.activeNode.databaseType,
         dataType: this.currentData.dataType,
       })

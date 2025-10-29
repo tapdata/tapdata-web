@@ -183,7 +183,7 @@ export function updateTableDesc(params: any) {
   return requestClient.post(`${BASE_URL}/updateTableDesc`, params)
 }
 
-export function dataTypeCheckMultiple(params: any) {
+export function checkMultipleDataType(params: any) {
   return requestClient.post(`${BASE_URL}/dataType/checkMultiple`, params)
 }
 
