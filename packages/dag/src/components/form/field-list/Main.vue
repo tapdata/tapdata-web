@@ -148,8 +148,11 @@ export default {
 
 <template>
   <div v-loading="transformLoading" class="field-inference">
-    <div class="field-inference__main flex">
-      <div v-if="!hideNav" class="field-inference__nav flex flex-column">
+    <div class="field-inference__main flex border rounded-xl">
+      <div
+        v-if="!hideNav"
+        class="field-inference__nav border-end flex flex-column"
+      >
         <ElInput
           v-model="searchTable"
           :placeholder="
@@ -229,7 +232,7 @@ export default {
               <ElIcon><ElIconSearch /></ElIcon>
             </template>
           </ElInput>
-          <ElButton circle class="ml-2 rounded-4" @click="refresh">
+          <ElButton circle class="ml-2 rounded-lg" @click="refresh">
             <template #icon>
               <VIcon>refresh</VIcon>
             </template>
@@ -244,8 +247,6 @@ export default {
 <style lang="scss" scoped>
 .field-inference__main {
   height: 60vh;
-  border: 1px solid #f2f2f2;
-  border-radius: 4px;
 }
 .field-inference__nav {
   width: 210px;
