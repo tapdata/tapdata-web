@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { findLineageByTable } from '@tap/api/src/core/lineage'
+import { batchMeasurements } from '@tap/api/src/core/measurement'
 import { makeStatusAndDisabled } from '@tap/business/src/shared'
 import { IconButton } from '@tap/component/src/icon-button'
+import { calcTimeUnit, Time } from '@tap/shared'
 import { Background } from '@vue-flow/background'
 import {
   Panel,
@@ -10,7 +12,7 @@ import {
   type Edge,
   type Node,
 } from '@vue-flow/core'
-import { nextTick, ref, watch } from 'vue'
+import { nextTick, provide, ref, watch } from 'vue'
 import { useLayout } from '../composables/useLayout'
 import TableNode from './Node.vue'
 import TableEdge from './TableEdge.vue'
@@ -40,6 +42,8 @@ const edges = ref<Edge[]>([])
 const showPopover = ref(false)
 const popoverTasks = ref<Task[]>([])
 const popoverTarget = ref<HTMLElement | null>(null)
+const taskReplicateLagMap = ref({})
+const taskMap = ref<Record<string, any>>({})
 
 interface FetchLineageFn {
   (): Promise<void>
@@ -68,6 +72,28 @@ const mapNode = (node: any) => {
 }
 
 const mapEdge = (edge: any, index: number) => {
+  const tasks: Task[] = edge.attrs.tasks
+    ? Object.values(edge.attrs.tasks)
+        .map((task: any) => {
+          task = makeStatusAndDisabled(task)
+
+          if (task.status === 'running') {
+            taskMap.value[task.id as string] = {
+              taskRecordId: task.taskRecordId,
+              startAt: new Date(task.startTime).getTime(),
+            }
+          }
+
+          return task
+        })
+        .sort((a: any, b: any) => {
+          // 'running' comes first, then others
+          if (a.status === 'running' && b.status !== 'running') return -1
+          if (a.status !== 'running' && b.status === 'running') return 1
+          return 0
+        })
+    : []
+
   return {
     id: index,
     source: edge.source,
@@ -80,9 +106,7 @@ const mapEdge = (edge: any, index: number) => {
     //   strokeWidth: 2,
     // },
     data: {
-      tasks: (edge.attrs.tasks
-        ? Object.values(edge.attrs.tasks).map(makeStatusAndDisabled)
-        : []) as Task[],
+      tasks,
     },
   }
 }
@@ -111,6 +135,8 @@ const fetchLineage: FetchLineageFn = async () => {
     // addNodes(dag.nodes.map(mapNode))
     // addEdges(dag.edges.map(mapEdge))
 
+    fetchTaskReplicateLag()
+
     nextTick(() => {
       handleLayoutGraph()
     })
@@ -118,6 +144,46 @@ const fetchLineage: FetchLineageFn = async () => {
     console.error(error)
   }
   loading.value = false
+}
+
+const genParams = () => {
+  return Object.keys(taskMap.value).reduce((acc, taskId) => {
+    const task = taskMap.value[taskId]
+    acc[taskId] = {
+      uri: '/api/measurement/query/v2',
+      param: {
+        startAt: task.startAt,
+        endAt: Time.now(),
+        samples: {
+          data: {
+            tags: {
+              type: 'task',
+              taskId,
+              taskRecordId: task.taskRecordId,
+            },
+            endAt: Time.now(),
+            fields: ['replicateLag'],
+            type: 'instant',
+          },
+        },
+      },
+    }
+    return acc
+  }, {})
+}
+
+const fetchTaskReplicateLag = async () => {
+  if (!Object.keys(taskMap.value).length) return
+
+  const data = await batchMeasurements(genParams())
+  Object.keys(data).forEach((key) => {
+    const { replicateLag } = data[key].data?.samples?.data?.[0] || {}
+    taskReplicateLagMap.value[key] = replicateLag
+      ? calcTimeUnit(replicateLag, 2, {
+          autoHideMs: true,
+        })
+      : 0
+  })
 }
 
 const handleLayoutGraph = () => {
@@ -165,6 +231,8 @@ watch(
   },
   { immediate: true },
 )
+
+provide('taskReplicateLagMap', taskReplicateLagMap)
 </script>
 
 <template>
@@ -386,21 +454,15 @@ watch(
 :deep(.table-lineage-connection-label) {
   max-width: 180px;
   z-index: 1001;
-  .el-tag {
-    background-color: inherit;
-    color: inherit;
-    border-color: currentColor;
+  &:hover {
+    background-color: var(--el-fill-color-lighter) !important;
+    .label-dropdown > span {
+      border-color: transparent !important;
+    }
   }
-  &.compact-tag {
-    .el-tag:first-child {
-      border-top-right-radius: 0 !important;
-      border-bottom-right-radius: 0 !important;
-    }
-    .el-tag:last-child {
-      margin-left: -1px;
-      border-top-left-radius: 0 !important;
-      border-bottom-left-radius: 0 !important;
-    }
+  .label-content:not(:only-child):hover,
+  .label-dropdown:hover {
+    background-color: var(--el-fill-color) !important;
   }
 }
 </style>

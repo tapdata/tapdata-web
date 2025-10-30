@@ -5,7 +5,8 @@ import {
   getBezierPath,
   type Position,
 } from '@vue-flow/core'
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
+import TaskStatusDot from './TaskStatusDot.vue'
 
 defineOptions({
   inheritAttrs: false,
@@ -34,13 +35,17 @@ const emit = defineEmits<{
   clickTask: [task: Task]
 }>()
 
+const taskReplicateLagMap = inject<Record<string, string>>(
+  'taskReplicateLagMap',
+)!
+
 const path = computed(() => getBezierPath(props))
 
 const openTaskPopover = (ev: MouseEvent) => {
   ev.stopPropagation()
   emit(
     'openPopover',
-    (ev.target as HTMLElement).closest('.el-tag')!,
+    (ev.target as HTMLElement).closest('.label-dropdown')!,
     props.tasks.slice(1),
   )
 }
@@ -61,23 +66,47 @@ const openTaskPopover = (ev: MouseEvent) => {
       class="nodrag nopan"
     >
       <div
-        class="table-lineage-connection-label flex align-center overflow-hidden rounded-4"
-        :class="`task-status-${tasks[0].status} ${tasks.length > 1 ? 'compact-tag' : ''}`"
+        class="table-lineage-connection-label flex overflow-hidden rounded-lg bg-white dark:bg-overlay border"
       >
-        <span
-          class="overflow-hidden clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4"
-          :title="tasks[0].name"
+        <div
+          class="min-w-0 p-1 label-content clickable"
           @click="$emit('clickTask', tasks[0])"
-          >{{ tasks[0].name }}
-        </span>
-        <span
+        >
+          <div class="flex align-center">
+            <TaskStatusDot :status="tasks[0].status" />
+            <span
+              class="overflow-hidden clickable ellipsis px-1 rounded-4"
+              :title="tasks[0].name"
+              >{{ tasks[0].name }}
+            </span>
+          </div>
+          <div
+            v-if="
+              tasks[0].status === 'running' &&
+              taskReplicateLagMap[tasks[0].id as string]
+            "
+            class="inline-flex align-center gap-1 rounded-4 px-1 py-0.5"
+            style="background-color: var(--bg-code)"
+          >
+            <el-icon class="font-color-sslight" size="12"
+              ><i-lucide-clock /></el-icon
+            ><span class="font-color-sslight fs-8">{{
+              taskReplicateLagMap[tasks[0].id as string]
+            }}</span>
+          </div>
+        </div>
+
+        <div
           v-if="tasks.length > 1"
-          class="clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4 flex-shrink-0"
+          class="flex align-center label-dropdown clickable flex-shrink-0"
           @click="openTaskPopover"
         >
-          + {{ tasks.length - 1
-          }}<el-icon class="ml-0.5" size="14"><i-lucide-chevron-down /></el-icon
-        ></span>
+          <span class="px-1 flex-shrink-0 border-start flex align-center">
+            + {{ tasks.length - 1
+            }}<el-icon class="ml-0.5" size="14"
+              ><i-lucide-chevron-down /></el-icon
+          ></span>
+        </div>
       </div>
     </div>
   </EdgeLabelRenderer>

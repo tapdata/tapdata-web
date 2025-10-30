@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import TaskStatus from '@tap/business/src/components/TaskStatus.vue'
+import { inject } from 'vue'
+import TaskStatusDot from './TaskStatusDot.vue'
 
 interface Task {
   name: string
@@ -12,6 +13,10 @@ interface Props {
 }
 
 defineProps<Props>()
+
+const taskReplicateLagMap = inject<Record<string, string>>(
+  'taskReplicateLagMap',
+)!
 
 const show = defineModel<boolean>()
 
@@ -44,8 +49,22 @@ const handleClickTask = (task: Task) => {
         class="popover-list-item ellipsis px-2 flex align-center gap-2 rounded-lg"
         @click="handleClickTask(task)"
       >
+        <TaskStatusDot :status="task.status" />
         {{ task.name }}
-        <TaskStatus class="popover-list-item-status zoom-xs" :task="task" />
+        <div
+          v-if="
+            task.status === 'running' && taskReplicateLagMap[task.id as string]
+          "
+          class="inline-flex align-center gap-1 rounded-4 px-1 py-0.5 lh-base"
+          style="background-color: var(--bg-code)"
+        >
+          <el-icon class="font-color-sslight" size="12"
+            ><i-lucide-clock /></el-icon
+          ><span class="font-color-sslight fs-8">{{
+            taskReplicateLagMap[task.id as string]
+          }}</span>
+        </div>
+        <!-- <TaskStatus class="popover-list-item-status zoom-xs" :task="task" /> -->
       </div>
     </div>
   </ElPopover>
@@ -65,11 +84,12 @@ const handleClickTask = (task: Task) => {
       }
 
       &:hover {
-        background-color: #edf1f9;
+        background-color: var(--el-fill-color);
       }
 
       :deep(.task-status-block) {
         min-width: unset;
+        padding-inline: 6px;
       }
     }
     &.auto-width &-item {
