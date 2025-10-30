@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import NodeIcon from '@tap/dag/src/components/NodeIcon.vue'
 import { Handle, Position } from '@vue-flow/core'
 defineProps<{
@@ -44,7 +45,11 @@ defineProps<{
             /></el-icon>
           </div>
           <div class="min-w-0">
-            <div class="ellipsis">{{ data.table }}</div>
+            <OverflowTooltip
+              :text="data.table"
+              append-to="#table-lineage-graph"
+            />
+            <!-- <div class="ellipsis">{{ data.table }}</div> -->
             <div
               class="inline-flex align-items-center gap-1 font-mono lh-1 rounded-4 mw-100 zoom-xs"
             >
@@ -57,13 +62,45 @@ defineProps<{
         </div>
       </template>
     </div>
-    <Handle type="target" :position="Position.Left" />
-    <Handle type="source" :position="Position.Right" />
+    <Handle
+      type="target"
+      :position="Position.Left"
+      :connectable="false"
+      class="table-node-handle w-0 h-0 min-w-0 min-h-0 border-0"
+    >
+      <div class="bg-primary rounded-full">
+        <el-icon class="color-white">
+          <i-lucide-minus />
+        </el-icon>
+      </div>
+    </Handle>
+    <Handle
+      type="source"
+      :position="Position.Right"
+      :connectable="false"
+      class="table-node-handle w-0 h-0 min-w-0 min-h-0 border-0"
+    >
+      <div
+        class="bg-primary rounded-pill flex align-center justify-center p-0.5 translate-middle position-absolute"
+      >
+        <el-icon size="12" class="color-white">
+          <i-lucide-minus />
+        </el-icon>
+      </div>
+    </Handle>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .table-node {
   width: 200px;
+
+  &-handle {
+    opacity: 0;
+  }
+
+  &:hover .table-node-handle {
+    opacity: 1;
+  }
 }
 </style>

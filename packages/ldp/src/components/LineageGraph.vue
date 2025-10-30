@@ -12,7 +12,7 @@ import {
   type Edge,
   type Node,
 } from '@vue-flow/core'
-import { nextTick, provide, ref, watch } from 'vue'
+import { nextTick, onUnmounted, provide, ref, useTemplateRef, watch } from 'vue'
 import { useLayout } from '../composables/useLayout'
 import TableNode from './Node.vue'
 import TableEdge from './TableEdge.vue'
@@ -34,9 +34,12 @@ const props = defineProps<{
   isShow: boolean
 }>()
 
+const rootRef = useTemplateRef<HTMLElement>('root')
 const { addNodes, addEdges, fitView, zoomOut, zoomIn } = useVueFlow()
 const { layout } = useLayout()
 
+const vueFlowRef = ref<InstanceType<typeof VueFlow> | null>(null)
+const isFullscreen = ref(false)
 const nodes = ref<Node[]>([])
 const edges = ref<Edge[]>([])
 const showPopover = ref(false)
@@ -222,6 +225,49 @@ const onNodeDoubleClick = ({ node }) => {
   emit('nodeDblclick', table)
 }
 
+function enterFullscreen(element: HTMLElement) {
+  if (element.requestFullscreen) {
+    element.requestFullscreen()
+  } else if (element.webkitRequestFullscreen) {
+    // Safari
+    element.webkitRequestFullscreen()
+  } else if (element.msRequestFullscreen) {
+    // IE11
+    element.msRequestFullscreen()
+  }
+}
+
+function exitFullscreen() {
+  if (document.exitFullscreen) {
+    document.exitFullscreen()
+  }
+}
+
+// function isFullscreenActive() {
+//   return !!(
+//     document.fullscreenElement ||
+//     document.webkitFullscreenElement ||
+//     document.msFullscreenElement
+//   )
+// }
+
+const toggleFullscreen = () => {
+  if (isFullscreen.value) {
+    exitFullscreen()
+  } else {
+    enterFullscreen(rootRef.value)
+  }
+
+  isFullscreen.value = !isFullscreen.value
+}
+
+const onFullscreenChange = () => {
+  isFullscreen.value = !!document.fullscreenElement
+  setTimeout(() => {
+    fitView()
+  }, 10)
+}
+
 watch(
   () => [props.connectionId, props.tableName, props.isShow],
   ([connectionId, tableName, isShow]) => {
@@ -232,214 +278,200 @@ watch(
   { immediate: true },
 )
 
+document.addEventListener('fullscreenchange', onFullscreenChange)
+
+onUnmounted(() => {
+  document.removeEventListener('fullscreenchange', onFullscreenChange)
+})
+
 provide('taskReplicateLagMap', taskReplicateLagMap)
 </script>
 
 <template>
-  <svg style="position: absolute; left: -1000px; top: 0">
-    <defs>
-      <!-- Figma 标准箭头 -->
-      <marker
-        id="figma-arrow"
-        viewBox="0 0 24 24"
-        refX="16"
-        refY="12"
-        markerWidth="10"
-        markerHeight="10"
-        orient="auto"
-      >
-        <polyline
-          stroke-width="3"
-          points="7,4 17,12 7,20"
-          fill="none"
-          stroke="#b1b1b7"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </marker>
-      <marker
-        id="figma-arrow-wide"
-        viewBox="0 0 24 24"
-        refX="16"
-        refY="12"
-        markerWidth="10"
-        markerHeight="10"
-        orient="auto"
-      >
-        <polyline
-          points="7,4 15,12 7,20"
-          fill="none"
-          stroke="#b1b1b7"
-          stroke-width="3"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </marker>
-      <marker
-        id="figma-arrow-widest"
-        viewBox="0 0 24 24"
-        refX="17"
-        refY="12"
-        markerWidth="12"
-        markerHeight="12"
-        orient="auto"
-      >
-        <polyline
-          points="5,2 17,12 5,22"
-          fill="none"
-          stroke="#b1b1b7"
-          stroke-width="3"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </marker>
-      <marker
-        id="custom-arrow"
-        viewBox="0 0 10 16"
-        refX="9"
-        refY="8"
-        markerWidth="10"
-        markerHeight="16"
-        orient="auto"
-      >
-        <polyline
-          points="2,2 8,8 2,14"
-          fill="none"
-          stroke="#b1b1b7"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </marker>
-      <marker
-        id="custom-arrow-wide"
-        viewBox="0 0 12 18"
-        refX="10"
-        refY="9"
-        markerWidth="12"
-        markerHeight="18"
-        orient="auto"
-      >
-        <polyline
-          points="3,2 10,9 3,16"
-          fill="none"
-          stroke="#b1b1b7"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </marker>
-      <marker
-        id="custom-arrow-filled"
-        viewBox="0 0 16 16"
-        refX="14"
-        refY="8"
-        markerWidth="12"
-        markerHeight="12"
-        orient="auto"
-      >
-        <path
-          d="M12 2L4 8L12 14"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </marker>
-    </defs>
-  </svg>
-  <VueFlow
-    v-model:nodes="nodes"
-    v-model:edges="edges"
-    v-loading="loading"
-    class="border rounded-xl"
-    @nodes-initialized="handleLayoutGraph"
-    @node-double-click="onNodeDoubleClick"
-  >
-    <Panel position="top-right">
-      <div
-        class="paper-toolbar flex gap-1 bg-white dark:bg-overlay p-1 rounded-lg shadow-sm border border-light"
-        style="--btn-space: 0"
-      >
-        <IconButton click-and-rotate @click="fetchLineage">refresh</IconButton>
-        <ElTooltip
-          transition="tooltip-fade-in"
-          :open-delay="50"
-          :content="`${$t('packages_dag_button_center_content')}(Shift + 1)`"
+  <div id="table-lineage-graph" ref="root" class="table-lineage-graph h-100">
+    <svg style="position: absolute; left: -1000px; top: 0">
+      <defs>
+        <!-- Figma 标准箭头 -->
+        <marker
+          id="figma-arrow"
+          viewBox="0 0 24 24"
+          refX="16"
+          refY="12"
+          markerWidth="10"
+          markerHeight="10"
+          orient="auto"
         >
+          <polyline
+            stroke-width="3"
+            points="7,4 17,12 7,20"
+            fill="none"
+            stroke="#b1b1b7"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </marker>
+        <marker
+          id="figma-arrow-wide"
+          viewBox="0 0 24 24"
+          refX="16"
+          refY="12"
+          markerWidth="10"
+          markerHeight="10"
+          orient="auto"
+        >
+          <polyline
+            points="7,4 15,12 7,20"
+            fill="none"
+            stroke="#b1b1b7"
+            stroke-width="3"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </marker>
+        <marker
+          id="figma-arrow-widest"
+          viewBox="0 0 24 24"
+          refX="17"
+          refY="12"
+          markerWidth="12"
+          markerHeight="12"
+          orient="auto"
+        >
+          <polyline
+            points="5,2 17,12 5,22"
+            fill="none"
+            stroke="#b1b1b7"
+            stroke-width="3"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </marker>
+        <marker
+          id="custom-arrow"
+          viewBox="0 0 10 16"
+          refX="9"
+          refY="8"
+          markerWidth="10"
+          markerHeight="16"
+          orient="auto"
+        >
+          <polyline
+            points="2,2 8,8 2,14"
+            fill="none"
+            stroke="#b1b1b7"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </marker>
+        <marker
+          id="custom-arrow-wide"
+          viewBox="0 0 12 18"
+          refX="10"
+          refY="9"
+          markerWidth="12"
+          markerHeight="18"
+          orient="auto"
+        >
+          <polyline
+            points="3,2 10,9 3,16"
+            fill="none"
+            stroke="#b1b1b7"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </marker>
+        <marker
+          id="custom-arrow-filled"
+          viewBox="0 0 16 16"
+          refX="14"
+          refY="8"
+          markerWidth="12"
+          markerHeight="12"
+          orient="auto"
+        >
+          <path
+            d="M12 2L4 8L12 14"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </marker>
+      </defs>
+    </svg>
+    <VueFlow
+      ref="vueFlowRef"
+      v-model:nodes="nodes"
+      v-model:edges="edges"
+      v-loading="loading"
+      class="border rounded-xl bg-white dark:bg-overlay"
+      @nodes-initialized="handleLayoutGraph"
+      @node-double-click="onNodeDoubleClick"
+    >
+      <Panel position="top-right">
+        <div
+          class="paper-toolbar flex gap-1 bg-white dark:bg-overlay p-1 rounded-lg shadow-sm border border-light"
+          style="--btn-space: 0"
+        >
+          <IconButton click-and-rotate @click="fetchLineage"
+            >refresh</IconButton
+          >
           <IconButton @click="fitView">compress</IconButton>
-        </ElTooltip>
-        <ElTooltip
-          transition="tooltip-fade-in"
-          :open-delay="50"
-          :content="`${$t('packages_dag_button_zoom_out')}(${commandCode} -)`"
-        >
           <IconButton @click="zoomOut">remove-outline</IconButton>
-        </ElTooltip>
-        <ElTooltip
-          transition="tooltip-fade-in"
-          :open-delay="50"
-          :content="`${$t('packages_dag_button_zoom_in')}(${commandCode} +)`"
-        >
           <IconButton @click="zoomIn">add-outline</IconButton>
-        </ElTooltip>
-        <ElTooltip
-          ref="fullscreenTooltip"
-          transition="tooltip-fade-in"
-          :open-delay="50"
-          :disabled="fullscreenDisabled"
-          :content="fullscreenTip"
-        >
           <IconButton @click="toggleFullscreen">{{
             isFullscreen ? 'suoxiao' : 'fangda'
           }}</IconButton>
-        </ElTooltip>
-      </div>
-    </Panel>
-    <Background />
+        </div>
+      </Panel>
+      <Background />
 
-    <template #node-table="{ id, data }">
-      <TableNode :id="id" :data="data" />
-    </template>
+      <template #node-table="{ id, data }">
+        <TableNode :id="id" :data="data" />
+      </template>
 
-    <template #edge-table="edge">
-      <TableEdge
-        :id="edge.id"
-        :tasks="edge.data.tasks as Task[]"
-        :source-x="edge.sourceX"
-        :source-y="edge.sourceY"
-        :target-x="edge.targetX"
-        :target-y="edge.targetY"
-        :source-position="edge.sourcePosition"
-        :target-position="edge.targetPosition"
-        :marker-end="edge.markerEnd"
-        :style="edge.style"
-        @open-popover="handleOpenPopover"
+      <template #edge-table="edge">
+        <TableEdge
+          :id="edge.id"
+          :tasks="edge.data.tasks as Task[]"
+          :source-x="edge.sourceX"
+          :source-y="edge.sourceY"
+          :target-x="edge.targetX"
+          :target-y="edge.targetY"
+          :source-position="edge.sourcePosition"
+          :target-position="edge.targetPosition"
+          :marker-end="edge.markerEnd"
+          :style="edge.style"
+          @open-popover="handleOpenPopover"
+          @click-task="$emit('clickTask', $event)"
+        />
+      </template>
+
+      <Panel position="bottom-left" class="z-1">
+        <el-text
+          class="font-color-sslight fs-8"
+          type="info"
+          style="text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12)"
+        >
+          <el-icon>
+            <i-lucide-info />
+          </el-icon>
+          {{ $t('packages_ldp_lineage_loading_tips') }}
+        </el-text>
+      </Panel>
+
+      <TasksPopover
+        v-model="showPopover"
+        :teleported="false"
+        :reference="popoverTarget"
+        :tasks="popoverTasks"
         @click-task="$emit('clickTask', $event)"
       />
-    </template>
-
-    <Panel position="bottom-left" class="z-1">
-      <el-text
-        class="font-color-sslight fs-8"
-        type="info"
-        style="text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12)"
-      >
-        <el-icon>
-          <i-lucide-info />
-        </el-icon>
-        {{ $t('packages_ldp_lineage_loading_tips') }}
-      </el-text>
-    </Panel>
-  </VueFlow>
-
-  <TasksPopover
-    v-model="showPopover"
-    :reference="popoverTarget"
-    :tasks="popoverTasks"
-    @click-task="$emit('clickTask', $event)"
-  />
+    </VueFlow>
+  </div>
 </template>
 
 <style>
@@ -451,6 +483,14 @@ provide('taskReplicateLagMap', taskReplicateLagMap)
 </style>
 
 <style scoped lang="scss">
+.vue-flow.fullscreen {
+  position: fixed !important;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+}
 :deep(.table-lineage-connection-label) {
   max-width: 180px;
   z-index: 1001;

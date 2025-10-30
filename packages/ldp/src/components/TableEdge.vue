@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import OverflowTooltip from '@tap/component/src/overflow-tooltip/OverflowTooltip.vue'
 import {
   BaseEdge,
   EdgeLabelRenderer,
@@ -72,28 +73,40 @@ const openTaskPopover = (ev: MouseEvent) => {
           class="min-w-0 p-1 label-content clickable"
           @click="$emit('clickTask', tasks[0])"
         >
-          <div class="flex align-center">
+          <div class="flex align-center gap-1">
             <TaskStatusDot :status="tasks[0].status" />
-            <span
+            <OverflowTooltip
+              :text="tasks[0].name"
+              append-to="#table-lineage-graph"
+              class="min-w-0"
+            />
+            <!-- <span
               class="overflow-hidden clickable ellipsis px-1 rounded-4"
               :title="tasks[0].name"
               >{{ tasks[0].name }}
-            </span>
+            </span> -->
           </div>
-          <div
+          <el-tooltip
             v-if="
               tasks[0].status === 'running' &&
               taskReplicateLagMap[tasks[0].id as string]
             "
-            class="inline-flex align-center gap-1 rounded-4 px-1 py-0.5"
-            style="background-color: var(--bg-code)"
+            :content="$t('public_event_incremental_delay')"
+            :hide-after="0"
+            :enterable="false"
+            append-to="#table-lineage-graph"
           >
-            <el-icon class="font-color-sslight" size="12"
-              ><i-lucide-clock /></el-icon
-            ><span class="font-color-sslight fs-8">{{
-              taskReplicateLagMap[tasks[0].id as string]
-            }}</span>
-          </div>
+            <div
+              class="inline-flex align-center gap-1 rounded-4 px-1 py-0.5"
+              style="background-color: var(--bg-code)"
+            >
+              <el-icon class="font-color-sslight" size="12"
+                ><i-lucide-clock /></el-icon
+              ><span class="font-color-sslight fs-8">{{
+                taskReplicateLagMap[tasks[0].id as string]
+              }}</span>
+            </div>
+          </el-tooltip>
         </div>
 
         <div
