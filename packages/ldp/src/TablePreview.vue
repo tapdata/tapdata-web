@@ -655,7 +655,7 @@ export default {
       const msg = h(
         'p',
         {
-          style: 'width: calc(100% - 28px);word-break: break-all;',
+          style: 'word-break: break-all;',
         },
         [
           strArr[0],

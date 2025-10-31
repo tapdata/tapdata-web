@@ -1476,7 +1476,8 @@ export default {
   packages_business_ignoreTimePrecision_truncate: '截斷',
   packages_business_validation_task_type: '校驗任務類型',
   packages_business_select_task_to_be_verified: '選擇被校驗的任務',
-  packages_business_drag_file_here: '拖拽 .gz 文件至此或 <em>選擇文件上傳</em>',
+  packages_business_drag_file_here:
+    '拖拽 {type} 文件至此或 <em>選擇文件上傳</em>',
   packages_business_request_speed_limit: '每秒請求限制',
   packages_business_request_speed_limit_tag: '每秒請求 ≤ {val}',
   packages_business_request_speed_limit_tip: '默認是 0（表示不限制）',
@@ -1524,4 +1525,14 @@ export default {
   packages_business_monitor_cron: '監控周期',
   packages_business_monitor_cron_tip: `語法: 秒 * 分鐘 * 小時 * 日 * 月 * 星期 ? 年 *\n舉例：0 */1 * * * ? 每分鐘運行一次 0 0 2 * * ? 每天2點運行`,
   packages_business_datasource_monitor_alter: '數據源監控告警',
+  packages_business_import_mode: '同名處理方式',
+  packages_business_import_as_copy: '以副本導入',
+  packages_business_import_replace: '覆蓋導入',
+  packages_business_import_cancel_import: '取消導入',
+  packages_business_import_as_copy_tip:
+    '若任務名或數據源名衝突，會在名稱後加 _import 後綴導入為新副本。',
+  packages_business_import_replace_tip:
+    '若任務名或數據源名衝突，將覆蓋系統中已有的任務或數據源。',
+  packages_business_import_cancel_import_tip:
+    '若任務名或數據源名衝突，則終止導入操作，不導入任何內容。',
 }

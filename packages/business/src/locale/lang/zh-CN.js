@@ -1486,7 +1486,8 @@ export default {
   packages_business_ignoreTimePrecision_truncate: '截断',
   packages_business_validation_task_type: '校验任务类型',
   packages_business_select_task_to_be_verified: '选择被校验的任务',
-  packages_business_drag_file_here: '拖拽 .gz 文件至此或 <em>选择文件上传</em>',
+  packages_business_drag_file_here:
+    '拖拽 {type} 文件至此或 <em>选择文件上传</em>',
   packages_business_request_speed_limit: '每秒请求限制',
   packages_business_request_speed_limit_tag: '每秒请求 ≤ {val}',
   packages_business_request_speed_limit_tip: '默认是 0（表示不限制）',
@@ -1535,4 +1536,14 @@ export default {
   packages_business_monitor_cron: '监控周期',
   packages_business_monitor_cron_tip: `语法: 秒 * 分钟 * 小时 * 日 * 月 * 星期 ? 年 *\n举例：0 */1 * * * ? 每分钟运行一次 0 0 2 * * ? 每天2点运行`,
   packages_business_datasource_monitor_alter: '数据源监控告警',
+  packages_business_import_mode: '同名处理方式',
+  packages_business_import_as_copy: '以副本导入',
+  packages_business_import_replace: '覆盖导入',
+  packages_business_import_cancel_import: '取消导入',
+  packages_business_import_as_copy_tip:
+    '若任务名或数据源名冲突，会在名称后加 _import 后缀导入为新副本。',
+  packages_business_import_replace_tip:
+    '若任务名或数据源名冲突，将覆盖系统中已有的任务或数据源。',
+  packages_business_import_cancel_import_tip:
+    '若任务名或数据源名冲突，则终止导入操作，不导入任何内容。',
 }
