@@ -98,7 +98,7 @@ export function manualRecover(taskId: string, params: ManualCheckParams = {}) {
 
 export interface InspectResultsLastOp {
   manualId: string
-  manualType: 'manualCheck' | 'manualRecover'
+  manualType: 'manualCheck' | 'manualRecover' | 'exportRecoverSql'
   totals: number
   unfinished: number
   created: string
@@ -136,4 +136,11 @@ export function getTaskInspectResultsOperations(resultId: string) {
   return requestClient.get<TaskInspectOperation[]>(
     `/api/task-inspect-results/${resultId}/operations`,
   )
+}
+
+export function exportRecoverSql(
+  taskId: string,
+  params: ManualCheckParams = {},
+) {
+  return requestClient.post(`${BASE_URL}/${taskId}/export-recover-sql`, params)
 }

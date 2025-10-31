@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  exportRecoverSql,
   getTaskInspectHistoriesResults,
   getTaskInspectResultsGroupByTable,
   getTaskInspectResultsLastOp,
@@ -13,6 +14,7 @@ import { dayjs } from '@tap/business/src/shared/dayjs'
 import { CloseIcon } from '@tap/component/src/CloseIcon'
 import FilterItemSelect from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import { FilterConditionsOutlined } from '@tap/component/src/icon/FilterConditionsOutlined'
+import { SettingInterOutlined } from '@tap/component/src/icon/SettingInterOutlined'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
 import { debounce } from 'lodash-es'
@@ -45,10 +47,9 @@ const rowDiffList = ref<DiffRow[]>([])
 const loadingDetails = ref(false)
 const currentSelectedRow = ref<InspectionRow | null | undefined>()
 const onlyShowDiffFields = ref(true)
-const showCheckProgress = ref(false)
-const showRecoverProgress = ref(false)
 const progress = ref(0)
 const lastOpTime = ref('')
+const lastOpDate = ref('')
 const diffFilterType = ref()
 const pageState = reactive({
   page: 1,
@@ -60,6 +61,13 @@ const tablePageState = reactive({
   page: 1,
   pageSize: 10,
   total: 0,
+})
+const opState = reactive({
+  type: '',
+  loading: false,
+  progress: 0,
+  fromNow: '',
+  date: '',
 })
 const innerFields = [
   { label: t('packages_dag_inspect_row_id'), value: 'rowId' },
@@ -85,6 +93,19 @@ const conditions = reactive({
     value: '',
   },
 })
+
+const showExportRecoverSqlProgress = computed(() => {
+  return opState.loading && opState.type === 'exportRecoverSql'
+})
+
+const showCheckProgress = computed(() => {
+  return opState.loading && opState.type === 'manualCheck'
+})
+
+const showRecoverProgress = computed(() => {
+  return opState.loading && opState.type === 'manualRecover'
+})
+
 // Constants
 const diffFilterTypes = [
   {
@@ -283,18 +304,14 @@ const loadLastOp = async () => {
   const data = await getTaskInspectResultsLastOp(props.taskId)
 
   if (!data) {
-    showCheckProgress.value = false
-    showRecoverProgress.value = false
     progress.value = 0
-    return
-  }
 
-  if (data.manualType === 'manualCheck') {
-    showCheckProgress.value = data.unfinished > 0
-    showRecoverProgress.value = false
-  } else if (data.manualType === 'manualRecover') {
-    showRecoverProgress.value = data.unfinished > 0
-    showCheckProgress.value = false
+    opState.type = ''
+    opState.loading = false
+    opState.progress = 0
+    opState.fromNow = ''
+    opState.date = ''
+    return
   }
 
   progress.value =
@@ -303,6 +320,16 @@ const loadLastOp = async () => {
       : 0
 
   lastOpTime.value = dayjs(data.created).fromNow()
+  lastOpDate.value = dayjs(data.created).format('YYYY-MM-DD HH:mm:ss')
+
+  opState.type = data.manualType
+  opState.loading = data.unfinished > 0
+  opState.progress =
+    data.totals > 0
+      ? Math.floor(((data.totals - data.unfinished) / data.totals) * 100)
+      : 0
+  opState.fromNow = dayjs(data.created).fromNow()
+  opState.date = dayjs(data.created).format('YYYY-MM-DD HH:mm:ss')
 }
 
 const handleManualCheck = async () => {
@@ -354,6 +381,21 @@ const { run: runManualRecover, loading: manualRecoverLoading } = useRequest(
     loadingKeep: 500,
   },
 )
+
+const { run: runExportRecoverSql, loading: exportRecoverSqlLoading } =
+  useRequest(
+    async (resultIds?: string[]) => {
+      await exportRecoverSql(props.taskId, {
+        resultIds,
+      })
+      startPolling()
+      ElMessage.success(t('public_start_generate_recovery_sql'))
+    },
+    {
+      manual: true,
+      loadingKeep: 500,
+    },
+  )
 
 const { run: startPolling, cancel: stopPolling } = useRequest(
   async () => {
@@ -427,6 +469,10 @@ function clearAllConditions(): void {
   clearCondition('target')
   clearCondition('inner')
 }
+
+function handleExportRecoverSql(resultId?: string): void {
+  runExportRecoverSql(resultId ? [resultId] : undefined)
+}
 </script>
 
 <template>
@@ -444,14 +490,53 @@ function clearAllConditions(): void {
     <template #title>
       <div class="flex align-items-center">
         <span>{{ $t('packages_dag_inspect_detail_title') }}</span>
-        <VIcon class="text-muted ml-4 mr-1" :size="14">time</VIcon>
-        <span class="text-muted fs-8"
-          >{{ $t('packages_dag_inspect_last_verify_time') }}:
-          {{ pingTime }}</span
-        >
+        <template v-if="opState.date">
+          <VIcon class="text-muted ml-4 mr-1" :size="14">time</VIcon>
+          <span class="text-muted fs-8"
+            >{{ $t('packages_dag_inspect_last_verify_time') }}:
+            {{ opState.date }}</span
+          >
+        </template>
         <div class="flex-1" />
 
         <template v-if="inspectList.length">
+          <el-button
+            v-if="opState.type === 'exportRecoverSql' && !opState.loading"
+            text
+            @click="handleExportRecoverSql()"
+          >
+            <template #icon>
+              <i-lucide-download />
+            </template>
+            {{ $t('public_download_recovery_sql') }}
+          </el-button>
+          <el-tooltip
+            v-if="showExportRecoverSqlProgress"
+            :content="t('public_start_at_time', { time: opState.fromNow })"
+            placement="top"
+          >
+            <el-button bg text>
+              <template #icon>
+                <el-icon class="is-loading" size="16">
+                  <i-mingcute-loading-line />
+                </el-icon>
+              </template>
+              {{ $t('public_generate_recovery_sql') }} ({{ progress }}%)
+            </el-button>
+          </el-tooltip>
+          <el-button
+            v-else
+            text
+            :loading="exportRecoverSqlLoading"
+            :disabled="opState.loading"
+            @click="handleExportRecoverSql()"
+          >
+            <template #icon>
+              <SettingInterOutlined />
+            </template>
+            {{ $t('public_generate_recovery_sql') }}
+          </el-button>
+
           <el-button
             v-if="!showCheckProgress"
             text
@@ -850,40 +935,6 @@ function clearAllConditions(): void {
                 :key="index"
                 class="border rounded-xl overflow-hidden"
               >
-                <!-- <div class="flex align-items-center gap-2 p-3 bg-light">
-                  <ElTag
-                    v-if="row.diffType === 'DIFF'"
-                    class="rounded-4"
-                    size="small"
-                    type="danger"
-                  >
-                    {{ $t('packages_dag_inspect_diff_type_diff') }}
-                  </ElTag>
-
-                  <ElTag
-                    v-if="row.diffType === 'MISS'"
-                    class="rounded-4 tag-amber"
-                    size="small"
-                  >
-                    {{ $t('packages_dag_inspect_diff_type_miss') }}
-                  </ElTag>
-
-                  <ElTag
-                    v-if="row.diffType === 'MORE'"
-                    class="rounded-4"
-                    size="small"
-                    type="warning"
-                  >
-                    {{ $t('packages_dag_inspect_diff_type_more') }}
-                  </ElTag>
-
-                  <div class="flex-1" />
-
-                  <el-button text type="primary" @click="handleRecordClick(row)"
-                    >{{ $t('packages_dag_inspect_operation_record') }}
-                  </el-button>
-                </div> -->
-
                 <table
                   v-if="row.diffType === 'DIFF'"
                   class="w-100 row-diff-table font-color-dark"
@@ -912,15 +963,61 @@ function clearAllConditions(): void {
                       <th
                         class="text-start px-3 text-sm fw-sub text-muted-foreground text-destructive w-[37.5%] break-all"
                       >
-                        <div class="flex align-center gap-2">
+                        <div
+                          class="flex align-center gap-2"
+                          style="--btn-space: 0"
+                        >
                           {{ $t('packages_dag_inspect_target_value') }}
-                          <el-button
-                            class="ml-auto"
-                            text
-                            type="primary"
-                            @click="handleRecordClick(row)"
-                            >{{ $t('packages_dag_inspect_operation_record') }}
-                          </el-button>
+                          <div class="flex-1" />
+                          <div class="diff-table-operations">
+                            <el-tooltip
+                              :content="$t('public_generate_recovery_sql')"
+                              :enterable="false"
+                              :hide-after="0"
+                            >
+                              <el-button
+                                text
+                                size="small"
+                                :disabled="showExportRecoverSqlProgress"
+                                @click="handleExportRecoverSql(row.id)"
+                              >
+                                <template #icon>
+                                  <SettingInterOutlined />
+                                </template>
+                              </el-button>
+                            </el-tooltip>
+                            <el-tooltip
+                              :content="$t('public_diff_check')"
+                              :enterable="false"
+                              :hide-after="0"
+                              :disabled="showCheckProgress"
+                            >
+                              <el-button text size="small">
+                                <template #icon>
+                                  <i-lucide-git-compare-arrows />
+                                </template>
+                              </el-button>
+                            </el-tooltip>
+                            <el-tooltip
+                              :content="$t('public_one_key_repair')"
+                              :enterable="false"
+                              :hide-after="0"
+                              :disabled="showRecoverProgress"
+                            >
+                              <el-button text size="small">
+                                <template #icon>
+                                  <i-lucide-wand-sparkles />
+                                </template>
+                              </el-button>
+                            </el-tooltip>
+                            <el-divider class="mx-0" direction="vertical" />
+                            <el-button
+                              text
+                              type="primary"
+                              @click="handleRecordClick(row)"
+                              >{{ $t('packages_dag_inspect_operation_record') }}
+                            </el-button>
+                          </div>
                         </div>
                       </th>
                     </tr>
@@ -1151,6 +1248,16 @@ function clearAllConditions(): void {
     tbody > tr {
       &:last-child {
         border-bottom: none !important;
+      }
+    }
+
+    .diff-table-operations {
+      display: none;
+    }
+
+    &:hover {
+      .diff-table-operations {
+        display: contents;
       }
     }
   }
