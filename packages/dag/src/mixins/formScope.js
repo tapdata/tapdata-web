@@ -488,6 +488,7 @@ export default {
               value: item.field_name,
               isPrimaryKey: item.primary_key_position > 0,
               indicesUnique: !!item.indicesUnique,
+              coreUnique: item.coreUnique,
               type: item.data_type,
               tapType: item.tapType,
               source: item.source,
