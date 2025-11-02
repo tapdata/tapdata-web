@@ -14,8 +14,8 @@ import {
 } from '@vue-flow/core'
 import { nextTick, onUnmounted, provide, ref, useTemplateRef, watch } from 'vue'
 import { useLayout } from '../composables/useLayout'
-import TableNode from './Node.vue'
 import TableEdge from './TableEdge.vue'
+import TableNode from './TableNode.vue'
 import TasksPopover from './TasksPopover.vue'
 
 interface Task {
@@ -268,6 +268,18 @@ const onFullscreenChange = () => {
   }, 10)
 }
 
+const handleExpandCollapse = (ids: string[]) => {
+  console.log('ids', ids)
+  nodes.value.forEach((node) => {
+    if (ids.includes(node.id)) {
+      node.hidden = !node.hidden
+    }
+  })
+  fitView({
+    duration: 500,
+  })
+}
+
 watch(
   () => [props.connectionId, props.tableName, props.isShow],
   ([connectionId, tableName, isShow]) => {
@@ -430,7 +442,14 @@ provide('taskReplicateLagMap', taskReplicateLagMap)
       <Background />
 
       <template #node-table="{ id, data }">
-        <TableNode :id="id" :data="data" />
+        <TableNode
+          :id="id"
+          :data="data"
+          :active="
+            connectionId === data.connectionId && tableName === data.table
+          "
+          @expand-collapse="handleExpandCollapse"
+        />
       </template>
 
       <template #edge-table="edge">
