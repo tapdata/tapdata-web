@@ -1,8 +1,6 @@
-import Cookie from '@tap/shared/src/cookie'
 import { requestClient } from '../request'
 
 const BASE_URL = '/api/proxy'
-const IS_DAAS = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 
 export function getProxyId() {
   return requestClient.get(`${BASE_URL}/id`)
@@ -44,16 +42,14 @@ export function downloadInspectRecoverSql(
   inspectId: string,
   inspectResultId: string,
 ) {
-  let url = `${BASE_URL}/download/inspect-recover-sql?inspectId=${inspectId}&inspectResultId=${inspectResultId}`
-
-  if (IS_DAAS) {
-    const accessToken = Cookie.get('access_token')
-    url += `&access_token=${accessToken}`
-  } else if (TAP_ACCESS_TOKEN) {
-    url += `&__token=${TAP_ACCESS_TOKEN}`
-  }
-
-  window.open(url)
+  return requestClient.get(`${BASE_URL}/download/inspect-recover-sql`, {
+    params: {
+      inspectId,
+      inspectResultId,
+    },
+    responseType: 'blob',
+    responseReturn: 'raw',
+  })
 }
 
 export function downloadTaskInspectRecoverSql(

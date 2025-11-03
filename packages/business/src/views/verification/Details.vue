@@ -5,9 +5,8 @@ import {
   fetchInspects,
   updateInspect,
 } from '@tap/api/src/core/inspects'
-import { checkEllipsisActive } from '@tap/shared'
-import Cookie from '@tap/shared/src/cookie'
-import axios from 'axios'
+import { downloadInspectRecoverSql } from '@tap/api/src/core/proxy'
+import { checkEllipsisActive, downloadBlob } from '@tap/shared'
 import dayjs from 'dayjs'
 import { ErrorMessage } from '../../components/error-message'
 import PageContainer from '../../components/PageContainer.vue'
@@ -186,6 +185,9 @@ export default {
                   }
                 })
               }
+              if (result.status === 'exporting') {
+                this.startPolling()
+              }
             }
           })
           .finally(() => {
@@ -237,42 +239,36 @@ export default {
         await exportSql(this.inspect.id, this.resultInfo.id)
         this.$message.success(this.$t('public_start_generate_recovery_sql'))
 
-        this.startPolling()
+        this.startPolling(true)
       } catch {
         this.exportSqlLoading = false
       }
     },
 
-    async startPolling() {
+    async startPolling(autoDownload) {
       clearTimeout(this.pollingTimer)
 
       await this.fetchResultStatus()
 
       if (this.resultInfo.status !== 'exported') {
         this.pollingTimer = setTimeout(() => {
-          this.startPolling()
+          this.startPolling(autoDownload)
         }, 5000)
       } else {
         this.exportSqlLoading = false
         this.$message.success(this.$t('public_generate_recovery_sql_success'))
+        if (autoDownload) {
+          this.handleDownloadSql()
+        }
       }
     },
 
-    handleDownloadSql() {
-      let url =
-        `${axios.defaults.baseURL}/api/proxy/exportRecoverySql?inspectId=${this.inspect.id}&inspectResultId=${this.resultInfo.id}`.replace(
-          '//',
-          '/',
-        )
-
-      if (this.isDaas) {
-        const accessToken = Cookie.get('access_token')
-        url += `&access_token=${accessToken}`
-      } else if (TAP_ACCESS_TOKEN) {
-        url += `&__token=${TAP_ACCESS_TOKEN}`
-      }
-
-      window.open(url)
+    async handleDownloadSql() {
+      const res = await downloadInspectRecoverSql(
+        this.inspect.id,
+        this.resultInfo.id,
+      )
+      downloadBlob(res)
     },
 
     onStarted() {
@@ -302,7 +298,7 @@ export default {
     <template v-if="!isCountOrHash" #actions>
       <div class="flex align-items-center ml-auto">
         <div
-          v-if="resultInfo.parentId"
+          v-if="resultInfo.parentId && inspect.lastStartTimeFmt"
           class="color-info flex align-items-center"
         >
           {{ $t('packages_business_verification_last_start_time') }}:
@@ -343,7 +339,7 @@ export default {
             >{{ $t('public_generate_recovery_sql') }}</ElButton
           >
           <ElButton
-            v-else
+            v-if="resultStatus === 'exported'"
             type="primary"
             class="ml-4"
             @click="handleDownloadSql"

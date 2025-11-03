@@ -53,6 +53,7 @@ const progress = ref(0)
 const lastOpTime = ref('')
 const lastOpDate = ref('')
 const diffFilterType = ref()
+const exportClicked = ref(false)
 const pageState = reactive({
   page: 1,
   pageSize: 20,
@@ -163,6 +164,7 @@ function onClose(): void {
 
 function resetData(): void {
   currentSelectedRow.value = null
+  exportClicked.value = false
   tablePageState.page = 1
   tablePageState.keyword = ''
   pageState.page = 1
@@ -323,6 +325,11 @@ const loadLastOp = async () => {
 
   if (!loading && opState.loading && opState.manualId === manualId) {
     ElMessage.success(t('public_message_operation_success'))
+
+    if (data.manualType === 'exportRecoverSql' && exportClicked.value) {
+      handleDownloadSql()
+      exportClicked.value = false
+    }
   }
 
   progress.value =
@@ -483,6 +490,7 @@ function clearAllConditions(): void {
 }
 
 function handleExportRecoverSql(resultId?: string): void {
+  exportClicked.value = true
   runExportRecoverSql(resultId ? [resultId] : undefined)
 }
 
