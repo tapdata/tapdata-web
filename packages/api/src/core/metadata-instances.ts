@@ -57,7 +57,7 @@ export function compareMetadataInstanceHistory(id: string, params?: any) {
  */
 export function getNodeSchema(
   nodeId: string,
-  fields: string[] = ['fields', 'indices'],
+  fields: string[] = ['fields', 'indices', 'constraints'],
   nodeConfig?: any,
 ) {
   return requestClient.get(`${BASE_URL}/node/schema`, {
