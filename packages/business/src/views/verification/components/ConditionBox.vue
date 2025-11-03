@@ -10,6 +10,7 @@ import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import GitBook from '@tap/component/src/GitBook.vue'
 import { Modal } from '@tap/component/src/modal'
 import SwitchNumber from '@tap/component/src/SwitchNumber.vue'
+import { mapFieldsData } from '@tap/form/src/components/field-select/FieldSelect.tsx'
 import AsyncSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 import { JsonEditor } from '@tap/form/src/components/json-editor'
 import { SqlEditor } from '@tap/form/src/components/sql-editor'
@@ -303,7 +304,7 @@ const getTableListMethod = async (
     return { items: [], total: 0 }
   }
   if (props.taskId) {
-    return getTablesInTask(nodeId, connectionId, filter)
+    return getTablesInTask(nodeId as string, connectionId as string, filter)
   }
   try {
     const size = filter.size || 20
@@ -331,32 +332,14 @@ const getTableListMethod = async (
       // 缓存起来
       setFieldsByItem(
         [nodeId, connectionId, el.name],
-        Object.values(el.nameFieldMap || {}).map((t: any) => {
-          const {
-            id,
-            fieldName,
-            primaryKeyPosition,
-            fieldType,
-            data_type,
-            primaryKey,
-            unique,
-          } = t
-          return {
-            id,
-            field_name: fieldName,
-            primary_key_position: primaryKeyPosition,
-            fieldType,
-            data_type,
-            primaryKey,
-            unique,
-            type: t.data_type,
-            tapType: JSON.stringify(t.tapType),
-          }
-        }),
+        mapFieldsData({
+          fields: Object.values(el.nameFieldMap || {}),
+        }).fields,
       )
     })
     return result
-  } catch {
+  } catch (error) {
+    console.error('Failed to get table list:', error)
     return { items: [], total: 0 }
   }
 }
@@ -378,7 +361,14 @@ const getTablesInTask = async (
 
   const params: TableParams = {
     nodeId,
-    fields: ['original_name', 'fields', 'qualified_name', 'name'],
+    fields: [
+      'original_name',
+      'fields',
+      'qualified_name',
+      'name',
+      'indices',
+      'constraints',
+    ],
     page: filter?.page || 1,
     pageSize: filter?.size || 20,
     ...(filter.where?.name?.like
@@ -391,28 +381,7 @@ const getTablesInTask = async (
   const tableList = res.items?.map((t: TableItem) => t.name) || []
   const total = res.total
   res.items.forEach((el: TableItem) => {
-    setFieldsByItem(
-      [nodeId, connectionId, el.name],
-      el.fields.map((t: any) => {
-        const {
-          id,
-          field_name,
-          primary_key_position,
-          data_type,
-          primaryKey,
-          unique,
-        } = t
-
-        return {
-          id,
-          field_name,
-          primary_key_position,
-          data_type,
-          primaryKey,
-          unique,
-        }
-      }),
-    )
+    setFieldsByItem([nodeId, connectionId, el.name], mapFieldsData(el).fields)
   })
   let tableNames = tableList
   if (isDB) {
@@ -1045,7 +1014,11 @@ const setFieldsByItem = (item: any[] = [], data: any[] = []) => {
 }
 
 const getFieldsByItem = (item: any, type = 'source') => {
-  const { nodeId, connectionId, table } = item[type] || {}
+  return getFields(item[type])
+}
+
+const getFields = (item: any = {}) => {
+  const { nodeId = '', connectionId = '', table = '' } = item
   return (
     fieldsMap[[nodeId || '', connectionId, table].filter((t) => t).join()] || []
   )
@@ -1368,10 +1341,27 @@ const handleChangeFields = (data: any[] = [], id: string) => {
   item.target.columns = data.map((t) => t.target)
 }
 
-const onVisibleChange = (opt: any = {}, visible: boolean) => {
+const onVisibleChange = async (opt: any = {}, visible: boolean) => {
   if (!visible || opt.fields?.length) {
     return
   }
+
+  if (props.taskId) {
+    opt.fields = getFields(opt)
+
+    if (!opt.fields.length) {
+      opt.fieldsLoading = true
+      const data = await metadataInstancesApi
+        .nodeSchema(opt.nodeId)
+        .finally(() => {
+          opt.fieldsLoading = false
+        })
+      const { fields } = mapFieldsData(data?.[0])
+      opt.fields = fields
+    }
+    return
+  }
+
   opt.fieldsLoading = true
   const connectionId = opt.connectionId
   const params = {
