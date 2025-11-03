@@ -350,7 +350,7 @@ export default {
         return
       }
 
-      if (needStart) {
+      if (needStart && ['edit', 'wait_start'].includes(this.dataflow.status)) {
         const validateDropTableEnabled = await this.validateDropTableEnabled()
         if (!validateDropTableEnabled) {
           this.isSaving = false

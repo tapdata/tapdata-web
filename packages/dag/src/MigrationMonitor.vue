@@ -597,6 +597,14 @@ export default {
         !skip && (await this.$refs.skipError.checkError(this.dataflow))
       if (hasError) return
 
+      if (['edit', 'wait_start'].includes(this.dataflow.status)) {
+        const validateDropTableEnabled = await this.validateDropTableEnabled()
+        if (!validateDropTableEnabled) {
+          this.isSaving = false
+          return
+        }
+      }
+
       this.isSaving = true
       try {
         this.wsAgentLive()
