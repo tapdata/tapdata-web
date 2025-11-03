@@ -6,24 +6,27 @@
 // biome-ignore lint: disable
 export {}
 declare global {
-  const ElDivider: typeof import('element-plus/es')['ElDivider']
-  const ElIcon: typeof import('element-plus/es')['ElIcon']
-  const ElIconCopyDocument: typeof import('@element-plus/icons-vue')['CopyDocument']
-  const ElIconSearch: typeof import('@element-plus/icons-vue')['Search']
-  const ElInput: typeof import('element-plus/es')['ElInput']
-  const ElInputNumber: typeof import('element-plus/es')['ElInputNumber']
-  const ElLoading: typeof import('element-plus/es')['ElLoading']
-  const ElMessage: typeof import('element-plus/es')['ElMessage']
-  const ElMessageBox: typeof import('element-plus/es')['ElMessageBox']
-  const ElSwitch: typeof import('element-plus/es')['ElSwitch']
-  const IconLucideClock: typeof import('~icons/lucide/clock')['default']
-  const IconLucideFileText: typeof import('~icons/lucide/file-text')['default']
-  const IconLucideHash: typeof import('~icons/lucide/hash')['default']
-  const IconLucideTriangleAlert: typeof import('~icons/lucide/triangle-alert')['default']
-  const IconMingcuteCheckCircleFill: typeof import('~icons/mingcute/check-circle-fill')['default']
-  const IconMingcuteCloseCircleFill: typeof import('~icons/mingcute/close-circle-fill')['default']
-  const IconMingcuteInformationFill: typeof import('~icons/mingcute/information-fill')['default']
-  const IconMingcuteWarningFill: typeof import('~icons/mingcute/warning-fill')['default']
+  const ElDivider: typeof import('element-plus/es').ElDivider
+  const ElIcon: typeof import('element-plus/es').ElIcon
+  const ElIconCopyDocument: typeof import('@element-plus/icons-vue').CopyDocument
+  const ElIconSearch: typeof import('@element-plus/icons-vue').Search
+  const ElInput: typeof import('element-plus/es').ElInput
+  const ElInputNumber: typeof import('element-plus/es').ElInputNumber
+  const ElLoading: typeof import('element-plus/es').ElLoading
+  const ElMessage: typeof import('element-plus/es').ElMessage
+  const ElMessageBox: typeof import('element-plus/es').ElMessageBox
+  const ElRadio: typeof import('element-plus/es').ElRadio
+  const ElRadioButton: typeof import('element-plus/es').ElRadioButton
+  const ElRadioGroup: typeof import('element-plus/es').ElRadioGroup
+  const ElSwitch: typeof import('element-plus/es').ElSwitch
+  const IconLucideClock: typeof import('~icons/lucide/clock').default
+  const IconLucideFileText: typeof import('~icons/lucide/file-text').default
+  const IconLucideHash: typeof import('~icons/lucide/hash').default
+  const IconLucideTriangleAlert: typeof import('~icons/lucide/triangle-alert').default
+  const IconMingcuteCheckCircleFill: typeof import('~icons/mingcute/check-circle-fill').default
+  const IconMingcuteCloseCircleFill: typeof import('~icons/mingcute/close-circle-fill').default
+  const IconMingcuteInformationFill: typeof import('~icons/mingcute/information-fill').default
+  const IconMingcuteWarningFill: typeof import('~icons/mingcute/warning-fill').default
   const computed: typeof import('vue')['computed']
   const createApp: typeof import('vue')['createApp']
   const customRef: typeof import('vue')['customRef']

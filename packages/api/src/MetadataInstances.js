@@ -1,42 +1,47 @@
-import Http from './Http'
 import { isPlainObj } from '@tap/shared'
+import Http from './Http'
 
 export default class MetadataInstances extends Http {
   constructor() {
     super('/api/MetadataInstances')
   }
   getId(id, params) {
-    return this.axios.get(this.url + '/' + id, { params })
+    return this.axios.get(`${this.url}/${id}`, { params })
   }
   patchId(id, params) {
-    return this.axios.patch(this.url + '/' + id, params)
+    return this.axios.patch(`${this.url}/${id}`, params)
   }
   classification(params) {
-    return this.axios.patch(this.url + '/classifications', params)
+    return this.axios.patch(`${this.url}/classifications`, params)
   }
   download(where, type) {
     if (typeof where === 'object') where = JSON.stringify(where)
-    window.open(this.url + `/download?where=${encodeURIComponent(where)}&type=${type}`)
+    window.open(
+      `${this.url}/download?where=${encodeURIComponent(where)}&type=${type}`,
+    )
     // return this.axios.get(this.url + '/download?where=' + where);
   }
 
   dataMap(params) {
-    return this.axios.get(this.url + '/dataMap', { params })
+    return this.axios.get(`${this.url}/dataMap`, { params })
   }
   schema(params) {
-    return this.axios.get(this.url + '/schema', { params })
+    return this.axios.get(`${this.url}/schema`, { params })
   }
   tableConnection(params) {
-    return this.axios.get(this.url + '/tableConnection', { params })
+    return this.axios.get(`${this.url}/tableConnection`, { params })
   }
   upload(upsert, type, listtags, params) {
-    return this.axios.post(`${this.url}/upload?upsert=${upsert}&type=${type}&listtags=${listtags}`, params)
+    return this.axios.post(
+      `${this.url}/upload?upsert=${upsert}&type=${type}&listtags=${listtags}`,
+      params,
+    )
   }
   search(params) {
-    return this.axios.get(this.url + '/search', { params })
+    return this.axios.get(`${this.url}/search`, { params })
   }
   compareHistory(id, params) {
-    return this.axios.get(this.url + '/compareHistory?id=' + id, params)
+    return this.axios.get(`${this.url}/compareHistory?id=${id}`, params)
   }
 
   /**
@@ -45,8 +50,12 @@ export default class MetadataInstances extends Http {
    * @param fields 筛选字段，如果有值，则请求结果只返回fields包含的字段；类型：字符串数组
    * @returns {Promise<AxiosResponse<any>>}
    */
-  nodeSchema(nodeId, fields = ['fields', 'indices'], nodeConfig) {
-    return this.axios.get(this.url + '/node/schema', {
+  nodeSchema(
+    nodeId,
+    fields = ['fields', 'indices', 'constraints'],
+    nodeConfig,
+  ) {
+    return this.axios.get(`${this.url}/node/schema`, {
       params: {
         nodeId,
         fields,
@@ -60,15 +69,24 @@ export default class MetadataInstances extends Http {
    */
   originalData(qualified_name, target) {
     if (target) {
-      return this.axios.get(this.url + '/originalData?qualified_name=' + encodeURIComponent(qualified_name) + target)
-    } else return this.axios.get(this.url + '/originalData?qualified_name=' + encodeURIComponent(qualified_name))
+      return this.axios.get(
+        `${this.url}/originalData?qualified_name=${encodeURIComponent(
+          qualified_name,
+        )}${target}`,
+      )
+    } else
+      return this.axios.get(
+        `${this.url}/originalData?qualified_name=${encodeURIComponent(
+          qualified_name,
+        )}`,
+      )
   }
 
   get(params = {}, filter) {
     if (Array.isArray(params)) {
       filter = typeof filter === 'object' ? JSON.stringify(filter) : filter
-      let qs = filter ? '?filter=' + encodeURIComponent(filter) : ''
-      return this.axios.get(this.url + '/' + params.join('/') + qs)
+      const qs = filter ? `?filter=${encodeURIComponent(filter)}` : ''
+      return this.axios.get(`${this.url}/${params.join('/')}${qs}`)
     }
     const config = { params }
     if (isPlainObj(filter)) {
@@ -78,15 +96,17 @@ export default class MetadataInstances extends Http {
   }
 
   getTables(connectionId) {
-    return this.axios.get(this.url + '/tables?connectionId=' + connectionId)
+    return this.axios.get(`${this.url}/tables?connectionId=${connectionId}`)
   }
 
   getTablesValue(params) {
-    return this.axios.get(this.url + '/tablesValue', { params })
+    return this.axios.get(`${this.url}/tablesValue`, { params })
   }
 
   getSourceTables(connectionId) {
-    return this.axios.get(this.url + '/tables?connectionId=' + connectionId + '&sourceType=SOURCE')
+    return this.axios.get(
+      `${this.url}/tables?connectionId=${connectionId}&sourceType=SOURCE`,
+    )
   }
 
   /**
@@ -96,75 +116,79 @@ export default class MetadataInstances extends Http {
    * @returns {Promise<AxiosResponse<any>>}
    */
   getMergerNodeParentFields(taskId, nodeId) {
-    return this.axios.get(`${this.url}/mergerNode/parent/fields?taskId=${taskId}&nodeId=${nodeId}`)
+    return this.axios.get(
+      `${this.url}/mergerNode/parent/fields?taskId=${taskId}&nodeId=${nodeId}`,
+    )
   }
   findTablesById(id) {
-    return this.axios.get(this.url + '/findTablesById/' + id)
+    return this.axios.get(`${this.url}/findTablesById/${id}`)
   }
   findInspect(data) {
-    return this.axios.post(this.url + '/findInspectPost', data)
+    return this.axios.post(`${this.url}/findInspectPost`, data)
   }
   //元数据修改
   saveTable(params) {
-    return this.axios.post(this.url + '/migrate/saveTable', params)
+    return this.axios.post(`${this.url}/migrate/saveTable`, params)
   }
   //元数据修改
   resetTable(params) {
-    return this.axios.post(this.url + '/migrate/reset', params)
+    return this.axios.post(`${this.url}/migrate/reset`, params)
   }
 
   //61迭代 新增可以修改目标节点类型 新增接口
   changeFields(params) {
-    return this.axios.post(this.url + '/changeFields', params)
+    return this.axios.post(`${this.url}/changeFields`, params)
   }
   changeFieldsReset(params) {
-    return this.axios.post(this.url + '/changeFields/reset', params)
+    return this.axios.post(`${this.url}/changeFields/reset`, params)
   }
   dataType2TapType(params) {
-    return this.axios.post(this.url + '/dataType2TapType', params)
+    return this.axios.post(`${this.url}/dataType2TapType`, params)
   }
   nodeSchemaPage(params) {
-    return this.axios.get(this.url + '/node/schemaPage', { params })
+    return this.axios.get(`${this.url}/node/schemaPage`, { params })
   }
   tapTables(params) {
-    return this.axios.get(this.url + '/tapTables?filter=' + encodeURIComponent(params.filter))
+    return this.axios.get(
+      `${this.url}/tapTables?filter=${encodeURIComponent(params.filter)}`,
+    )
   }
   checkTableExist(params) {
-    return this.axios.get(this.url + '/check/table/exist', { params })
+    return this.axios.get(`${this.url}/check/table/exist`, { params })
   }
   deleteLogicSchema(taskId, params) {
-    return this.axios.delete(this.url + '/logic/schema/' + taskId, { params })
+    return this.axios.delete(`${this.url}/logic/schema/${taskId}`, { params })
   }
   pageTables(params) {
-    return this.axios.get(this.url + '/page-tables', { params })
+    return this.axios.get(`${this.url}/page-tables`, { params })
   }
   pagePartitionTables(params) {
-    return this.axios.get(this.url + '/partition/page-tables', { params })
+    return this.axios.get(`${this.url}/partition/page-tables`, { params })
   }
   //更新表描述
   updateTableDesc(params) {
-    return this.axios.post(this.url + '/updateTableDesc', params)
+    return this.axios.post(`${this.url}/updateTableDesc`, params)
   }
   dataTypeCheckMultiple(params) {
-    return this.axios.post(this.url + '/dataType/checkMultiple', params)
+    return this.axios.post(`${this.url}/dataType/checkMultiple`, params)
   }
   updateTableFieldDesc(id, params) {
-    return this.axios.post(this.url + `/updateTableFieldDesc/${id}`, params)
+    return this.axios.post(`${this.url}/updateTableFieldDesc/${id}`, params)
   }
   nodeFilterTypeList(params) {
-    return this.axios.get(this.url + `/node/filterTypeList`, { params })
+    return this.axios.get(`${this.url}/node/filterTypeList`, { params })
   }
   // 获取表最新的字段列表
   multiTransform(params) {
-    return this.axios.post(this.url + `/multi/transform`, params)
+    return this.axios.post(`${this.url}/multi/transform`, params)
   }
 
   getNodeSchemaMapByIds(params) {
-    return this.axios.get(this.url + `/nodes/schema-map`, { params })
+    return this.axios.get(`${this.url}/nodes/schema-map`, { params })
   }
 
   checkFiledIndex(params) {
-    return this.axios.get(this.url + `/check/filedIndex`, { params })
+    return this.axios.get(`${this.url}/check/filedIndex`, { params })
   }
 }
 export { MetadataInstances }
