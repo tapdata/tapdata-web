@@ -2,8 +2,9 @@
 import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import NodeIcon from '@tap/dag/src/components/NodeIcon.vue'
 import { Handle, Position, useVueFlow } from '@vue-flow/core'
+import { ref } from 'vue'
 
-const { getConnectedEdges, getIncomers, getOutgoers } = useVueFlow()
+const { getIncomers, getOutgoers } = useVueFlow()
 
 const props = defineProps<{
   id: string
@@ -15,15 +16,62 @@ const emit = defineEmits<{
   (e: 'expandCollapse', ids: string[]): void
 }>()
 
+const outgoersCount = ref<number | null>(null)
+const incomersCount = ref<number | null>(null)
+
+// 递归获取所有下游节点
+function getAllOutgoers(nodeId: string, visited = new Set<string>()): string[] {
+  if (visited.has(nodeId)) return []
+  visited.add(nodeId)
+
+  const directOutgoers = getOutgoers(nodeId)
+  const allIds: string[] = []
+
+  directOutgoers.forEach((outgoer) => {
+    if (!visited.has(outgoer.id)) {
+      allIds.push(outgoer.id)
+      const childIds = getAllOutgoers(outgoer.id, visited)
+      allIds.push(...childIds)
+    }
+  })
+
+  return allIds
+}
+
+// 递归获取所有上游节点
+function getAllIncomers(nodeId: string, visited = new Set<string>()): string[] {
+  if (visited.has(nodeId)) return []
+  visited.add(nodeId)
+
+  const directIncomers = getIncomers(nodeId)
+  const allIds: string[] = []
+
+  directIncomers.forEach((incomer) => {
+    if (!visited.has(incomer.id)) {
+      allIds.push(incomer.id)
+      const parentIds = getAllIncomers(incomer.id, visited)
+      allIds.push(...parentIds)
+    }
+  })
+
+  return allIds
+}
+
 function handleSourceClick() {
   if (!props.active) return
-  const outgoers = getOutgoers(props.id).map((outgoer) => outgoer.id)
+  const outgoers = getAllOutgoers(props.id)
+
+  outgoersCount.value = outgoersCount.value === null ? outgoers.length : null
+
   emit('expandCollapse', outgoers)
 }
 
 function handleTargetClick() {
   if (!props.active) return
-  const incomers = getIncomers(props.id).map((incomer) => incomer.id)
+  const incomers = getAllIncomers(props.id)
+
+  incomersCount.value = incomersCount.value === null ? incomers.length : null
+
   emit('expandCollapse', incomers)
 }
 </script>
@@ -72,7 +120,6 @@ function handleTargetClick() {
               :text="data.table"
               append-to="#table-lineage-graph"
             />
-            <!-- <div class="ellipsis">{{ data.table }}</div> -->
             <div
               class="inline-flex align-items-center gap-1 font-mono lh-1 rounded-4 mw-100 zoom-xs"
             >
@@ -95,11 +142,12 @@ function handleTargetClick() {
     >
       <div
         v-if="active"
-        class="bg-primary rounded-pill align-center justify-center table-node-handle-icon position-absolute w-100 h-100 left-0 top-0"
+        class="bg-primary rounded-pill align-center justify-center table-node-handle-icon position-absolute w-100 h-100 left-0 top-0 align-items-center justify-center color-white"
       >
-        <el-icon size="10" class="color-white">
+        <el-icon v-if="!incomersCount" size="10">
           <i-lucide-minus />
         </el-icon>
+        <span v-else>{{ incomersCount }}</span>
       </div>
     </Handle>
     <Handle
@@ -112,11 +160,12 @@ function handleTargetClick() {
     >
       <div
         v-if="active"
-        class="bg-primary rounded-pill align-center justify-center table-node-handle-icon position-absolute w-100 h-100 left-0 top-0"
+        class="bg-primary rounded-pill align-center justify-center table-node-handle-icon position-absolute w-100 h-100 left-0 top-0 align-items-center justify-center color-white"
       >
-        <el-icon size="10" class="color-white">
+        <el-icon v-if="!outgoersCount" size="10">
           <i-lucide-minus />
         </el-icon>
+        <span v-else>{{ outgoersCount }}</span>
       </div>
     </Handle>
   </div>
@@ -143,7 +192,9 @@ function handleTargetClick() {
   }
 
   &-handle-icon {
-    display: none;
+    opacity: 0;
+    display: flex;
+    font-size: 10px;
     transition: all cubic-bezier(0.4, 0, 0.2, 1) 0.15s;
     &:hover {
       transform: scale(1.25);
@@ -154,7 +205,7 @@ function handleTargetClick() {
     width: 1rem;
     height: 1rem;
     .table-node-handle-icon {
-      display: flex;
+      opacity: 1;
     }
   }
 }
