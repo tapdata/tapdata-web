@@ -947,8 +947,7 @@ export default {
   packages_dag_updateConditionFields_alert:
     'To ensure performance, the system will auto-index updated fields.',
   packages_dag_syncPartitionTableEnable: 'Synchronized Partitioned Table',
-  packages_dag_syncSourcePartitionTableEnable:
-    'Synchronized Partitioned Main Table',
+  packages_dag_syncSourcePartitionTableEnable: 'Sync Parent Table',
   packages_dag_syncSourcePartitionTableEnable_tip:
     'When enabled, the child tables are filtered out; when disabled, the main table is filtered out.',
   packages_dag_enableConcurrentRead: 'Enable Concurrent Table Reading',
