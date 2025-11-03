@@ -7,6 +7,7 @@ export function getPdkDoc(pdkHash: string) {
   return requestClient.get(url, {
     responseType: 'blob',
     responseReturn: 'raw',
+    skipErrorHandler: true,
   })
 }
 
@@ -16,6 +17,7 @@ export function getPdkStatics(pdkHash: string, fileName: string) {
     {
       responseType: 'blob',
       responseReturn: 'raw',
+      skipErrorHandler: true,
     },
   )
 }

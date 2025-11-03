@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { downloadTaskInspectRecoverSql } from '@tap/api/src/core/proxy'
 import {
   exportRecoverSql,
   getTaskInspectHistoriesResults,
@@ -17,6 +18,7 @@ import { FilterConditionsOutlined } from '@tap/component/src/icon/FilterConditio
 import { SettingInterOutlined } from '@tap/component/src/icon/SettingInterOutlined'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
+import { downloadBlob } from '@tap/shared/src/util'
 import { debounce } from 'lodash-es'
 import { computed, reactive, ref, useTemplateRef, watch } from 'vue'
 import InspectRecordDialog from './InspectRecordDialog.vue'
@@ -68,6 +70,7 @@ const opState = reactive({
   progress: 0,
   fromNow: '',
   date: '',
+  manualId: '',
 })
 const innerFields = [
   { label: t('packages_dag_inspect_row_id'), value: 'rowId' },
@@ -311,7 +314,15 @@ const loadLastOp = async () => {
     opState.progress = 0
     opState.fromNow = ''
     opState.date = ''
+    opState.manualId = ''
     return
+  }
+
+  const loading = data.unfinished > 0
+  const manualId = data.manualId
+
+  if (!loading && opState.loading && opState.manualId === manualId) {
+    ElMessage.success(t('public_message_operation_success'))
   }
 
   progress.value =
@@ -323,16 +334,17 @@ const loadLastOp = async () => {
   lastOpDate.value = dayjs(data.created).format('YYYY-MM-DD HH:mm:ss')
 
   opState.type = data.manualType
-  opState.loading = data.unfinished > 0
   opState.progress =
     data.totals > 0
       ? Math.floor(((data.totals - data.unfinished) / data.totals) * 100)
       : 0
   opState.fromNow = dayjs(data.created).fromNow()
   opState.date = dayjs(data.created).format('YYYY-MM-DD HH:mm:ss')
+  opState.loading = loading
+  opState.manualId = manualId
 }
 
-const handleManualCheck = async () => {
+const handleManualCheck = async (resultId?: string) => {
   if (showRecoverProgress.value) {
     const result = await Modal.confirm(
       t('public_last_operation_not_finished'),
@@ -342,12 +354,12 @@ const handleManualCheck = async () => {
       return
     }
   }
-  runManualCheck()
+  runManualCheck(resultId ? [resultId] : undefined)
 }
 
 const { run: runManualCheck, loading: manualCheckLoading } = useRequest(
-  async () => {
-    await manualCheck(props.taskId)
+  async (resultIds?: string[]) => {
+    await manualCheck(props.taskId, { resultIds })
     startPolling()
     ElMessage.success(t('public_start_check'))
   },
@@ -357,7 +369,7 @@ const { run: runManualCheck, loading: manualCheckLoading } = useRequest(
   },
 )
 
-const handleManualRecover = async () => {
+const handleManualRecover = async (resultId?: string) => {
   if (showCheckProgress.value) {
     const result = await Modal.confirm(
       t('public_last_operation_not_finished'),
@@ -367,12 +379,12 @@ const handleManualRecover = async () => {
       return
     }
   }
-  runManualRecover()
+  runManualRecover(resultId ? [resultId] : undefined)
 }
 
 const { run: runManualRecover, loading: manualRecoverLoading } = useRequest(
-  async () => {
-    await manualRecover(props.taskId)
+  async (resultIds?: string[]) => {
+    await manualRecover(props.taskId, { resultIds })
     startPolling()
     ElMessage.success(t('public_start_repair'))
   },
@@ -402,7 +414,7 @@ const { run: startPolling, cancel: stopPolling } = useRequest(
     await loadLastOp()
     await fetchDiffList()
 
-    if (!showCheckProgress.value && !showRecoverProgress.value) {
+    if (!opState.loading) {
       stopPolling()
     }
   },
@@ -441,7 +453,7 @@ async function handleConfirmCheck(): Promise<void> {
   )
 
   if (result) {
-    showCheckProgress.value = false
+    opState.loading = false
     runManualCheck()
   }
 }
@@ -453,7 +465,7 @@ async function handleConfirmRecover(): Promise<void> {
   )
 
   if (result) {
-    showRecoverProgress.value = false
+    opState.loading = false
     runManualRecover()
   }
 }
@@ -472,6 +484,14 @@ function clearAllConditions(): void {
 
 function handleExportRecoverSql(resultId?: string): void {
   runExportRecoverSql(resultId ? [resultId] : undefined)
+}
+
+async function handleDownloadSql(): Promise<void> {
+  const res = await downloadTaskInspectRecoverSql(
+    props.taskId,
+    opState.manualId,
+  )
+  downloadBlob(res)
 }
 </script>
 
@@ -503,7 +523,7 @@ function handleExportRecoverSql(resultId?: string): void {
           <el-button
             v-if="opState.type === 'exportRecoverSql' && !opState.loading"
             text
-            @click="handleExportRecoverSql()"
+            @click="handleDownloadSql"
           >
             <template #icon>
               <i-lucide-download />
@@ -542,7 +562,7 @@ function handleExportRecoverSql(resultId?: string): void {
             text
             :loading="manualCheckLoading"
             :disabled="manualRecoverLoading"
-            @click="handleManualCheck"
+            @click="handleManualCheck()"
           >
             <template #icon>
               <i-lucide-git-compare-arrows />
@@ -570,7 +590,7 @@ function handleExportRecoverSql(resultId?: string): void {
             text
             :loading="manualRecoverLoading"
             :disabled="manualCheckLoading"
-            @click="handleManualRecover"
+            @click="handleManualRecover()"
           >
             <template #icon>
               <i-lucide-wand-sparkles />
@@ -974,17 +994,20 @@ function handleExportRecoverSql(resultId?: string): void {
                               :content="$t('public_generate_recovery_sql')"
                               :enterable="false"
                               :hide-after="0"
+                              :disabled="showExportRecoverSqlProgress"
                             >
-                              <el-button
-                                text
-                                size="small"
-                                :disabled="showExportRecoverSqlProgress"
-                                @click="handleExportRecoverSql(row.id)"
-                              >
-                                <template #icon>
-                                  <SettingInterOutlined />
-                                </template>
-                              </el-button>
+                              <div>
+                                <el-button
+                                  text
+                                  size="small"
+                                  :disabled="showExportRecoverSqlProgress"
+                                  @click="handleExportRecoverSql(row.id)"
+                                >
+                                  <template #icon>
+                                    <SettingInterOutlined />
+                                  </template>
+                                </el-button>
+                              </div>
                             </el-tooltip>
                             <el-tooltip
                               :content="$t('public_diff_check')"
@@ -992,11 +1015,18 @@ function handleExportRecoverSql(resultId?: string): void {
                               :hide-after="0"
                               :disabled="showCheckProgress"
                             >
-                              <el-button text size="small">
-                                <template #icon>
-                                  <i-lucide-git-compare-arrows />
-                                </template>
-                              </el-button>
+                              <div>
+                                <el-button
+                                  text
+                                  size="small"
+                                  :disabled="showCheckProgress"
+                                  @click="handleManualCheck(row.id)"
+                                >
+                                  <template #icon>
+                                    <i-lucide-git-compare-arrows />
+                                  </template>
+                                </el-button>
+                              </div>
                             </el-tooltip>
                             <el-tooltip
                               :content="$t('public_one_key_repair')"
@@ -1004,11 +1034,18 @@ function handleExportRecoverSql(resultId?: string): void {
                               :hide-after="0"
                               :disabled="showRecoverProgress"
                             >
-                              <el-button text size="small">
-                                <template #icon>
-                                  <i-lucide-wand-sparkles />
-                                </template>
-                              </el-button>
+                              <div>
+                                <el-button
+                                  text
+                                  size="small"
+                                  :disabled="showRecoverProgress"
+                                  @click="handleManualRecover(row.id)"
+                                >
+                                  <template #icon>
+                                    <i-lucide-wand-sparkles />
+                                  </template>
+                                </el-button>
+                              </div>
                             </el-tooltip>
                             <el-divider class="mx-0" direction="vertical" />
                             <el-button
