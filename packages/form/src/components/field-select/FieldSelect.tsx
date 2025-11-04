@@ -113,7 +113,9 @@ export const FieldSelect = defineComponent({
             transition="none"
           >
             {option.indicesUnique[2] ? (
-              <span class="flex align-center">
+              <span
+                class={`flex align-center ${option.indicesUnique[3] ? 'text-primary' : ''}`}
+              >
                 <VIcon size="14">fingerprint</VIcon>
                 {option.isMultiUniqueIndex && (
                   <span
@@ -317,7 +319,7 @@ export const mapFieldsData = (data: any) => {
     }
 
     item.columns.forEach(({ columnName }) => {
-      map[columnName] = [item.indexName, index, item.unique]
+      map[columnName] = [item.indexName, index, item.unique, item.coreUnique]
       if (!constraintMap[columnName]) {
         temp++
       }

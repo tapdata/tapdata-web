@@ -643,6 +643,7 @@ export default {
           <span
             v-if="field.indicesUnique[2]"
             class="inline-flex align-center align-middle"
+            :class="{ 'text-primary': field.indicesUnique[3] }"
           >
             <VIcon size="14">fingerprint</VIcon>
             <span

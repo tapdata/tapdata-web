@@ -547,7 +547,9 @@ function renderContent(h, { data }) {
         transition="none"
       >
         {data.indicesUnique[2] ? (
-          <span class="flex align-center field-icon position-absolute">
+          <span
+            class={`flex align-center field-icon position-absolute ${data.indicesUnique[3] ? 'text-primary' : ''}`}
+          >
             <VIcon size="14">fingerprint</VIcon>
             {data.isMultiUniqueIndex && (
               <span

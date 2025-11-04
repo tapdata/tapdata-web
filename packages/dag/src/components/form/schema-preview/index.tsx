@@ -224,7 +224,9 @@ export const SchemaPreview = defineComponent({
             open-delay={200}
             transition="none"
           >
-            <span class="flex align-center field-icon position-absolute">
+            <span
+              class={`flex align-center field-icon position-absolute ${data.indicesUnique[3] ? 'text-primary' : ''}`}
+            >
               <VIcon size="14">
                 {data.indicesUnique[2] ? 'fingerprint' : 'sort-descending'}
               </VIcon>
