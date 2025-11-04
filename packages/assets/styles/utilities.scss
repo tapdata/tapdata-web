@@ -714,7 +714,7 @@
 }
 
 .min-h-0 {
-  min-height: 0;
+  min-height: 0 !important;
 }
 
 .vh-100 {
@@ -2965,6 +2965,10 @@
 
 .rounded-xl {
   border-radius: 0.75rem !important;
+}
+
+.rounded-2xl {
+  border-radius: 1rem !important;
 }
 
 .rounded-xxl {
@@ -12646,8 +12650,12 @@
   backdrop-filter: blur(8px);
 }
 
+.z-1 {
+  z-index: 1 !important;
+}
+
 .z-10 {
-  z-index: 10;
+  z-index: 10 !important;
 }
 
 .list-decimal {

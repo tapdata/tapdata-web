@@ -1,338 +1,212 @@
-<script>
+<script setup lang="ts">
+import { OverflowTooltip } from '@tap/component/src/overflow-tooltip'
 import NodeIcon from '@tap/dag/src/components/NodeIcon.vue'
-import { NODE_PREFIX } from '@tap/dag/src/constants'
-import { sourceEndpoint, targetEndpoint } from '@tap/dag/src/style'
-import i18n from '@tap/i18n'
-import { Time } from '@tap/shared'
-import { mapGetters, mapMutations } from 'vuex'
+import { Handle, Position, useVueFlow } from '@vue-flow/core'
+import { ref } from 'vue'
 
-export default {
-  name: 'TableNode',
-  components: { NodeIcon },
-  props: {
-    data: Object,
-    nodeId: {
-      type: String,
-      required: true,
-    },
-    jsPlumbIns: Object,
-  },
-  data() {
-    return {
-      id: this.$attrs.id,
+const { getIncomers, getOutgoers } = useVueFlow()
+
+const props = defineProps<{
+  id: string
+  data: any
+  active: boolean
+}>()
+
+const emit = defineEmits<{
+  (e: 'expandCollapse', ids: string[]): void
+}>()
+
+const outgoersCount = ref<number | null>(null)
+const incomersCount = ref<number | null>(null)
+
+// 递归获取所有下游节点
+function getAllOutgoers(nodeId: string, visited = new Set<string>()): string[] {
+  if (visited.has(nodeId)) return []
+  visited.add(nodeId)
+
+  const directOutgoers = getOutgoers(nodeId)
+  const allIds: string[] = []
+
+  directOutgoers.forEach((outgoer) => {
+    if (!visited.has(outgoer.id)) {
+      allIds.push(outgoer.id)
+      const childIds = getAllOutgoers(outgoer.id, visited)
+      allIds.push(...childIds)
     }
-  },
-  computed: {
-    ...mapGetters('dataflow', [
-      'nodeById',
-      'isActionActive',
-      'isNodeActive',
-      'isNodeSelected',
-      'isMultiSelect',
-      'processorNodeTypes',
-      'hasNodeError',
-      'stateIsReadonly',
-      'activeType',
-    ]),
+  })
 
-    nodeStyle() {
-      const [left = 0, top = 0] = this.data.attrs?.position || []
-      return {
-        left: `${left}px`,
-        top: `${top}px`,
-      }
-    },
-  },
-  mounted() {
-    if (this.data) {
-      this.__init()
+  return allIds
+}
+
+// 递归获取所有上游节点
+function getAllIncomers(nodeId: string, visited = new Set<string>()): string[] {
+  if (visited.has(nodeId)) return []
+  visited.add(nodeId)
+
+  const directIncomers = getIncomers(nodeId)
+  const allIds: string[] = []
+
+  directIncomers.forEach((incomer) => {
+    if (!visited.has(incomer.id)) {
+      allIds.push(incomer.id)
+      const parentIds = getAllIncomers(incomer.id, visited)
+      allIds.push(...parentIds)
     }
-  },
-  methods: {
-    ...mapMutations('dataflow', [
-      'setActiveNode',
-      'addActiveAction',
-      'removeActiveAction',
-      'updateNodeProperties',
-      'resetSelectedNodes',
-      'setNodeError',
-      'clearNodeError',
-    ]),
+  })
 
-    __init() {
-      const { id, nodeId } = this
+  return allIds
+}
 
-      const targetParams = {
-        ...targetEndpoint,
-      }
+function handleSourceClick() {
+  if (!props.active) return
+  const outgoers = getAllOutgoers(props.id)
 
-      // this.jsPlumbIns.makeSource(id, { filter: '.sourcePoint', ...sourceEndpoint })
+  outgoersCount.value = outgoersCount.value === null ? outgoers.length : null
 
-      this.jsPlumbIns.makeTarget(id, targetParams)
+  emit('expandCollapse', outgoers)
+}
 
-      this.jsPlumbIns.draggable(this.$el, {
-        // containment: 'parent',
-        start: (params) => {
-          this.onMouseDownAt = Time.now()
-          // console.log('node-drag-start', params.pos)
-          if (params.e && !this.isNodeSelected(this.nodeId)) {
-            // 只有直接拖动的节点params才会有事件
-            // 检查当前拖动的节点是否被选中，如果未选中则clearDragSelection
-            this.jsPlumbIns.clearDragSelection()
-            this.resetSelectedNodes()
-          }
+function handleTargetClick() {
+  if (!props.active) return
+  const incomers = getAllIncomers(props.id)
 
-          this.addActiveAction('dragActive')
+  incomersCount.value = incomersCount.value === null ? incomers.length : null
 
-          this.$emit('drag-start', params)
-          return true
-        },
-        drag: (params) => {
-          // console.log('node-drag-move', params.pos)
-          params.id = nodeId // 增加id参数
-          this.isDrag = true // 拖动标记
-          this.$emit('drag-move', params)
-        },
-        stop: () => {
-          // console.log('node-drag-stop', params)
-          // 更新节点坐标
-          this.isNotMove = false
-          const { position } = this.data.attrs
-          const newProperties = []
-          const oldProperties = []
-
-          if (this.isActionActive('dragActive')) {
-            const moveNodes = [
-              ...this.$store.getters['dataflow/getSelectedNodes'],
-            ]
-
-            if (!this.isNodeSelected(this.nodeId)) {
-              moveNodes.push(this.data)
-            }
-            /*const selectedNodeNames = moveNodes.map(node => node.id)
-
-          if (!selectedNodeNames.includes(this.data.id)) {
-            moveNodes.push(this.data)
-          }*/
-
-            const x = Number.parseFloat(this.$el.style.left)
-            const y = Number.parseFloat(this.$el.style.top)
-
-            const distance = Math.hypot(x - position[0], y - position[1])
-
-            if (x === position[0] && y === position[1]) {
-              // 拖拽结束后位置没有改变
-              console.log('NotMove') // eslint-disable-line
-              this.isNotMove = true
-              this.removeActiveAction('dragActive')
-            }
-
-            if (distance < 4 || Time.now() - this.onMouseDownAt < 10) {
-              console.log(
-                i18n.t('packages_dag_components_dfnode_tuodongshijianduan'),
-                Time.now() - this.onMouseDownAt,
-                distance,
-              )
-              this.removeActiveAction('dragActive')
-            }
-
-            moveNodes.forEach((node) => {
-              const nodeElement = NODE_PREFIX + node.id
-              const element = document.getElementById(nodeElement)
-              if (element === null) {
-                return
-              }
-
-              const newNodePosition = [
-                Number.parseFloat(element.style.left),
-                Number.parseFloat(element.style.top),
-              ]
-
-              const updateInformation = {
-                id: node.id,
-                properties: {
-                  attrs: { position: newNodePosition },
-                },
-              }
-
-              oldProperties.push({
-                id: node.id,
-                properties: {
-                  attrs: { position },
-                },
-              })
-              newProperties.push(updateInformation)
-            })
-          }
-
-          this.onMouseDownAt = undefined
-          this.$emit('drag-stop', this.isNotMove, oldProperties, newProperties)
-        },
-      })
-
-      this.targetPoint = this.jsPlumbIns.addEndpoint(this.$el, targetParams, {
-        uuid: `${id}_target`,
-      })
-
-      this.jsPlumbIns.addEndpoint(
-        this.$el,
-        {
-          ...sourceEndpoint,
-          enabled: false,
-        },
-        {
-          uuid: `${id}_source`,
-        },
-      )
-    },
-
-    mouseClick(e) {
-      if (this.isActionActive('dragActive')) {
-        this.removeActiveAction('dragActive')
-      } else {
-        if (!this.ins) return
-        if (this.isCtrlKeyPressed(e) === false) {
-          // 如果不是多选模式则取消所有节点选中
-          this.$emit('deselectAllNodes')
-        }
-
-        if (this.isNodeSelected(this.nodeId)) {
-          this.$emit('deselectNode', this.nodeId)
-        } else {
-          // 选中节点并且active
-          this.$emit('nodeSelected', this.nodeId, true)
-        }
-      }
-    },
-  },
-  emits: [
-    'drag-start',
-    'drag-move',
-    'drag-stop',
-    'deselectNode',
-    'nodeSelected',
-    'deselectAllNodes',
-  ],
+  emit('expandCollapse', incomers)
 }
 </script>
 
 <template>
   <div
-    class="position-absolute table-node border rounded-lg bg-white dark:bg-overlay overflow-hidden"
-    :style="nodeStyle"
+    class="border rounded-2xl bg-white dark:bg-overlay shadow-sm table-node"
+    :class="{ active }"
   >
-    <div class="px-3 py-2" @click="mouseClick">
+    <div class="p-2">
       <template v-if="data.type === 'apiserverLineage'">
-        <div class="ellipsis">{{ data.module.name }}</div>
-        <div class="mt-1 flex align-center gap-1 font-color-light ellipsis">
-          <VIcon size="14">mini-app</VIcon>
-          <span class="ellipsis">
-            {{ data.module.appName }}
-          </span>
+        <div class="flex align-center gap-2">
+          <div
+            class="p-1 bg-gray-100 dark:bg-white/15 rounded-lg flex align-center justify-center table-item-icon mt-0.5"
+          >
+            <el-icon size="18" class="font-color-sslight"
+              ><i-lucide-link-2
+            /></el-icon>
+          </div>
+          <div class="min-w-0">
+            <div class="ellipsis">{{ data.module.name }}</div>
+            <div
+              class="inline-flex align-items-center gap-1 font-mono lh-1 rounded-4 mw-100 zoom-xs"
+            >
+              <el-icon>
+                <i-fluent-folder-link-16-regular />
+              </el-icon>
+              <span class="ellipsis font-color-light">
+                {{ data.module.appName }}
+              </span>
+            </div>
+          </div>
         </div>
       </template>
       <template v-else>
-        <div class="ellipsis">{{ data.table }}</div>
-        <div class="mt-1 flex align-center gap-1 font-color-light ellipsis">
-          <NodeIcon class="flex-shrink-0" :node="data" :size="14" />
-          <span class="ellipsis">
-            {{ data.connectionName }}
-          </span>
+        <div class="flex align-items-start gap-2">
+          <div
+            class="p-1 bg-gray-100 dark:bg-white/15 rounded-lg flex align-center justify-center table-item-icon mt-0.5"
+          >
+            <el-icon size="18" class="font-color-light"
+              ><i-lucide-table
+            /></el-icon>
+          </div>
+          <div class="min-w-0">
+            <OverflowTooltip
+              :text="data.table"
+              append-to="#table-lineage-graph"
+            />
+            <div
+              class="inline-flex align-items-center gap-1 font-mono lh-1 rounded-4 mw-100 zoom-xs"
+            >
+              <NodeIcon class="flex-shrink-0" :node="data" :size="14" /><span
+                class="ellipsis font-color-sslight"
+                >{{ data.connectionName }}</span
+              >
+            </div>
+          </div>
         </div>
       </template>
     </div>
-    <!--<div class="columns-wrap px-3 py-2">
-          <div>查看字段</div>
-          <div></div>
-        </div>-->
-    <!--<BaseNode :node="data" class="node&#45;&#45;data">
-          <template #text="{ text }">
-            <div class="w-100">
-              <div :title="text" class="df-node-text">{{ text }}</div>
-              <div class="font-color-light">连接名称</div>
-            </div>
-          </template>
-        </BaseNode>-->
+    <Handle
+      type="target"
+      :position="Position.Left"
+      :connectable="false"
+      class="table-node-handle border-0"
+      :class="{ 'pe-none': !active }"
+      @click="handleTargetClick"
+    >
+      <div
+        v-if="active"
+        class="bg-primary rounded-pill align-center justify-center table-node-handle-icon position-absolute w-100 h-100 left-0 top-0 align-items-center justify-center color-white"
+      >
+        <el-icon v-if="!incomersCount" size="10">
+          <i-lucide-minus />
+        </el-icon>
+        <span v-else>{{ incomersCount }}</span>
+      </div>
+    </Handle>
+    <Handle
+      type="source"
+      :position="Position.Right"
+      :connectable="false"
+      class="table-node-handle border-0"
+      :class="{ 'pe-none': !active }"
+      @click="handleSourceClick"
+    >
+      <div
+        v-if="active"
+        class="bg-primary rounded-pill align-center justify-center table-node-handle-icon position-absolute w-100 h-100 left-0 top-0 align-items-center justify-center color-white"
+      >
+        <el-icon v-if="!outgoersCount" size="10">
+          <i-lucide-minus />
+        </el-icon>
+        <span v-else>{{ outgoersCount }}</span>
+      </div>
+    </Handle>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .table-node {
   width: 200px;
-  z-index: 5;
-
-  :deep(.df-node) {
-    position: static;
-
-    .df-node-text {
-      font-size: var(--font-base-title);
-    }
-
-    .df-node-text-tooltip {
-      transform: translateY(-6px);
-    }
-
-    &.jtk-drag {
-      &:after {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0;
-        right: 0;
-        bottom: 0;
-      }
-    }
-
-    .node-anchor {
-      display: none;
-      width: 16px;
-      height: 16px;
-      border-color: inherit;
-      position: absolute;
-      cursor: crosshair;
-      left: 100%;
-      transform: translateX(-50%);
-      place-content: center;
-      place-items: center;
-
-      &:before {
-        content: '';
-        position: absolute;
-        border-width: 1px;
-        border-style: solid;
-        border-color: inherit;
-        border-radius: 50%;
-        background: #fff;
-        width: 12px;
-        height: 12px;
-      }
-
-      &.input {
-        left: 0;
-      }
-
-      //&:hover:before {
-      //  border-width: 2px;
-      //  width: 16px;
-      //  height: 16px;
-      //}
-    }
-
-    &:hover .node-anchor.output {
-      display: flex;
-    }
-  }
-
-  .columns-wrap {
-    background-color: #f5f8fe;
-  }
-
   &.active {
-    border-color: #2c65ff !important;
-    //box-shadow: 0 0 0 4px rgba(5, 145, 255, 0.1);
-    box-shadow:
-      0 0 0 4px rgba(44, 101, 255, 0.4),
-      0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+    border-color: var(--el-color-primary) !important;
+    outline: 3px solid var(--el-color-primary-light-8);
+    outline-offset: 1px;
+  }
+
+  &-handle {
+    width: 0;
+    height: 0;
+    min-width: 0;
+    min-height: 0;
+    transition: all cubic-bezier(0.4, 0, 0.2, 1) 0.15s;
+    background-color: transparent;
+    pointer-events: all;
+    cursor: pointer;
+  }
+
+  &-handle-icon {
+    opacity: 0;
+    display: flex;
+    font-size: 10px;
+    transition: all cubic-bezier(0.4, 0, 0.2, 1) 0.15s;
+    &:hover {
+      transform: scale(1.25);
+    }
+  }
+
+  &:hover .table-node-handle {
+    width: 1rem;
+    height: 1rem;
+    .table-node-handle-icon {
+      opacity: 1;
+    }
   }
 }
 </style>
