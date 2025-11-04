@@ -610,7 +610,6 @@ export default defineComponent({
           :default-expanded-keys="searchExpandedKeys"
           :data="filterTreeData"
           :expand-on-click-node="false"
-          allow-drag
           :allow-drop="() => false"
           @node-drag-start="handleDragStart"
           @node-drag-end="handleDragEnd"
@@ -680,7 +679,6 @@ export default defineComponent({
             :filter-node-method="filterNode"
             :render-after-expand="false"
             :expand-on-click-node="false"
-            allow-drag
             :allow-drop="() => false"
             @node-expand="handleNodeExpand"
             @node-collapse="handeNodeCollapse"

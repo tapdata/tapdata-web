@@ -31,7 +31,8 @@ import { calcTimeUnit, calcUnit, isNum } from '@tap/shared'
 import dayjs from 'dayjs'
 import { cloneDeep, debounce } from 'lodash-es'
 import { h } from 'vue'
-import TableLineage from './components/TableLineage'
+import LineageGraph from './components/LineageGraph'
+// import TableLineage from './components/TableLineage'
 
 export default {
   name: 'TablePreview',
@@ -41,9 +42,10 @@ export default {
     TaskStatus,
     VEmpty,
     DatabaseIcon,
-    TableLineage,
+    // TableLineage,
     VCodeEditor,
     IconButton,
+    LineageGraph,
   },
   props: {
     tag: {
@@ -1359,11 +1361,18 @@ export default {
                 {{ $t('packages_ldp_lineage') }}
               </span>
             </template>
-            <TableLineage
+            <!-- <TableLineage
               class="border rounded-xl overflow-hidden"
               :is-show="activeName === 'lineage'"
               :connection-id="connectionId"
               :table-name="selected.name"
+              @click-task="handleClickName"
+              @node-dblclick="open"
+            /> -->
+            <LineageGraph
+              :connection-id="connectionId"
+              :table-name="selected.name"
+              :is-show="activeName === 'lineage'"
               @click-task="handleClickName"
               @node-dblclick="open"
             />

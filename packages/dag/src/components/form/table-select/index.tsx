@@ -1,6 +1,9 @@
 import { observer } from '@formily/reactive-vue'
 import { connect, mapProps } from '@formily/vue'
-import { getPagePartitionTables } from '@tap/api/src/core/metadata-instances'
+import {
+  checkTableExist,
+  getPagePartitionTables,
+} from '@tap/api/src/core/metadata-instances'
 import { refreshTaskSchema } from '@tap/api/src/core/task'
 import { VEmpty } from '@tap/component/src/base/v-empty'
 import { InfiniteSelect } from '@tap/form/src/components/infinite-select'
@@ -27,10 +30,12 @@ const useTableExist = (props, selectRef, connectionId) => {
     }
   }
 
+  // tag 是否超出容器
+  const isTagOverflow = ref(false)
   // 显示物理表不存在提示
   const showNotExistsTip = ref(false)
   // 检查物理表是否存在
-  const checkTableExist = async (tableName) => {
+  const handleCheckTableExist = async (tableName: string) => {
     if (!tableName) return
     try {
       const data = await checkTableExist({
@@ -70,6 +75,17 @@ const useTableExist = (props, selectRef, connectionId) => {
     }
   }
 
+  // 需要跟实际渲染的 tag 保持一致
+  const getTagWidth = () => {
+    const container = document.createElement('div')
+    container.innerHTML = `<span class="el-tag el-tag--primary el-tag--light border-0"><span class="el-tag__content">${i18n.t('packages_dag_table_not_exist')}</span></span>`
+    const tag = container.firstChild as HTMLElement
+    document.body.append(tag)
+    const width = tag.getBoundingClientRect().width
+    tag.remove()
+    return width
+  }
+
   const setTagPosition = (tableName) => {
     if (!$input || !tableName) return
 
@@ -80,11 +96,15 @@ const useTableExist = (props, selectRef, connectionId) => {
     const width = span.getBoundingClientRect().width
     span.remove()
     leftPosition.value = `${baseLeftPosition + width}px`
+
+    isTagOverflow.value =
+      getTagWidth() + baseLeftPosition + width >=
+      selectRef.value.$el.querySelector('.el-select__selection').clientWidth
   }
 
   let $input
   let inputStyle
-  let baseLeftPosition
+  let baseLeftPosition = 0
   let leftPosition = ref('')
 
   onMounted(() => {
@@ -102,7 +122,7 @@ const useTableExist = (props, selectRef, connectionId) => {
     // 4: 间距
     baseLeftPosition = Number.parseInt($input.offsetLeft) + 12 + 4
 
-    checkTableExist(props.modelValue)
+    handleCheckTableExist(props.modelValue)
   })
 
   return {
@@ -110,6 +130,7 @@ const useTableExist = (props, selectRef, connectionId) => {
     leftPosition,
     handleCreated,
     handleChange,
+    isTagOverflow,
   }
 }
 
@@ -140,8 +161,13 @@ export const TableSelect = connect(
           }
         })
 
-        const { showNotExistsTip, leftPosition, handleCreated, handleChange } =
-          useTableExist(props, select, props.connectionId)
+        const {
+          showNotExistsTip,
+          leftPosition,
+          handleCreated,
+          handleChange,
+          isTagOverflow,
+        } = useTableExist(props, select, props.connectionId)
 
         const loading = ref(false)
 
@@ -276,14 +302,26 @@ export const TableSelect = connect(
           }
 
           if (showNotExistsTip.value) {
-            scopedSlots.prefix = () => (
-              <ElTag
-                class="position-absolute translate-middle-y top-50 m-0 prefix-tag"
-                style={{ left: leftPosition.value }}
-              >
-                {i18n.t('packages_dag_table_not_exist')}
-              </ElTag>
-            )
+            scopedSlots.prefix = () => {
+              return isTagOverflow.value ? (
+                <ElTooltip
+                  enterable={false}
+                  hideAfter={0}
+                  content={i18n.t('packages_dag_table_not_exist')}
+                >
+                  <ElIcon class="color-primary">
+                    <ElIconInfoFilled />
+                  </ElIcon>
+                </ElTooltip>
+              ) : (
+                <ElTag
+                  class="position-absolute translate-middle-y top-50 m-0 border-0 prefix-tag"
+                  style={{ left: leftPosition.value }}
+                >
+                  {i18n.t('packages_dag_table_not_exist')}
+                </ElTag>
+              )
+            }
           }
 
           return (

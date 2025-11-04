@@ -147,9 +147,11 @@ export const TableRenamePreview = defineComponent({
     const filterNames = computed(() => {
       const txt = config.search.trim().toLowerCase()
       if (txt) {
-        return tableDataRef.value.filter((n) => n.toLowerCase().includes(txt))
+        return tableDataRef.value
+          .filter((n) => n.toLowerCase().includes(txt))
+          .map((name) => ({ name }))
       }
-      return tableDataRef.value
+      return tableDataRef.value.map((name) => ({ name }))
     })
 
     const doModify = () => {
@@ -332,8 +334,6 @@ export const TableRenamePreview = defineComponent({
                 <List
                   disabled={this.disabled}
                   items={this.filterNames}
-                  itemSize={this.itemSize}
-                  buffer={50}
                   countByName={this.countByName}
                   nameMap={this.nameMap}
                   globalNameMap={this.globalNameMap}
@@ -479,11 +479,11 @@ export const TableRename = connect(
         const filterNames = computed(() => {
           const txt = config.search.trim().toLowerCase()
           if (txt) {
-            return tableDataRef.value.filter((n) =>
-              n.toLowerCase().includes(txt),
-            )
+            return tableDataRef.value
+              .filter((n: string) => n.toLowerCase().includes(txt))
+              .map((name: string) => ({ name }))
           }
-          return tableDataRef.value
+          return tableDataRef.value.map((name: string) => ({ name }))
         })
 
         const doModify = () => {
@@ -776,8 +776,6 @@ export const TableRename = connect(
                   <List
                     disabled={this.disabled}
                     items={this.filterNames}
-                    itemSize={this.itemSize}
-                    buffer={50}
                     countByName={this.countByName}
                     nameMap={this.nameMap}
                     globalNameMap={this.globalNameMap}
