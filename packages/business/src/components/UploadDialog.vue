@@ -321,7 +321,7 @@ export default {
       ref="form"
       :rules="rules"
       :model="importForm"
-      class="applications-form mt-4"
+      class="applications-form mt-6"
       label-position="top"
     >
       <ElAlert
@@ -355,7 +355,7 @@ export default {
             <div class="lh-5 mb-1">
               {{ $t('packages_business_import_as_copy') }}
             </div>
-            <p class="lh-sm font-color-sslight fs-8">
+            <p class="lh-sm font-color-sslight fs-8 text-wrap">
               {{ $t('packages_business_import_as_copy_tip') }}
             </p>
           </el-radio>
@@ -367,7 +367,7 @@ export default {
             <div class="lh-5 mb-1">
               {{ $t('packages_business_import_replace') }}
             </div>
-            <p class="lh-sm font-color-sslight fs-8">
+            <p class="lh-sm font-color-sslight fs-8 text-wrap">
               {{ $t('packages_business_import_replace_tip') }}
             </p>
           </el-radio>
@@ -379,7 +379,7 @@ export default {
             <div class="lh-5 mb-1">
               {{ $t('packages_business_import_cancel_import') }}
             </div>
-            <p class="lh-sm font-color-sslight fs-8">
+            <p class="lh-sm font-color-sslight fs-8 text-wrap">
               {{ $t('packages_business_import_cancel_import_tip') }}
             </p>
           </el-radio>
