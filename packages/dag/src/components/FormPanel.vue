@@ -1,7 +1,6 @@
 <script>
 import {
   createForm,
-  onFieldInputValueChange,
   onFieldValueChange,
   onFormInputChange,
   onFormValuesChange,
@@ -15,7 +14,7 @@ import { deepEqual } from '@tap/shared'
 import { debounce } from 'lodash-es'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 
-import { $emit, $off, $on, $once } from '../../utils/gogocodeTransfer'
+import { $emit } from '../../utils/gogocodeTransfer'
 import { getSchema } from '../util'
 import FormRender from './FormRender'
 
