@@ -1,40 +1,36 @@
-<script lang="jsx">
+<script lang="tsx">
+import { defineComponent, ref, watch } from 'vue'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
-const InnerInput = {
+const InnerInput = defineComponent({
   name: 'InnerInput',
   props: ['value', 'readOnly'],
-  data() {
-    return {
-      val: null,
-    }
-  },
-  watch: {
-    value(val) {
-      this.val = val
-    },
-  },
-  created() {
-    this.val = this.value
-  },
   emits: ['change'],
-  render() {
-    return (
+  setup(props, { emit }) {
+    const val = ref(props.value)
+    watch(
+      () => props.value,
+      (newVal) => {
+        val.value = newVal
+      },
+    )
+    return () => (
       <input
-        class="name-list-item-input px-2 rounded-4"
-        readOnly={this.readOnly}
-        value={this.val}
-        onChange={(ev) => this.$emit('change', ev)}
+        class="name-list-item-input px-2 rounded-lg"
+        readonly={props.readOnly}
+        value={val.value}
+        onChange={(ev) => emit('change', ev)}
       />
     )
   },
-}
+})
 
 export default {
   name: 'List',
   components: { RecycleScroller, InnerInput },
   props: [
+    'items',
     'nameMap',
     'tableData',
     'updateName',
@@ -71,8 +67,14 @@ export default {
 </script>
 
 <template>
-  <RecycleScroller v-bind="$attrs">
-    <template #default="{ item: name }">
+  <RecycleScroller
+    v-bind="$attrs"
+    :items="items"
+    key-field="name"
+    :item-size="38"
+    :buffer="50"
+  >
+    <template #default="{ item: { name } }">
       <div class="name-list-item flex align-center position-relative">
         <div class="flex-1 px-4 text-truncate">
           <span :title="name">{{ name }}</span>
@@ -92,12 +94,6 @@ export default {
             }"
             @change="handleChange(name, $event)"
           />
-          <!--<input
-                  class="name-list-item-input px-2"
-                  :readOnly="disabled"
-                  :value="nameMap[name] || name"
-                  @change="handleChange"
-                />-->
         </div>
         <VIcon size="12" class="name-list-item-center font-color-light">
           left
