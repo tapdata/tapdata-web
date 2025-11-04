@@ -1461,6 +1461,8 @@ function handleCopy(row: DiffRow): void {
 
 .btn-group {
   --btn-space: 0;
+  border-radius: var(--el-border-radius-base);
+  background-color: var(--el-fill-color);
   .el-button:first-child:not(:last-child) {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
