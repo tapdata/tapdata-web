@@ -1016,10 +1016,7 @@ function handleCopy(row: DiffRow): void {
                 :key="index"
                 class="border rounded-xl overflow-hidden"
               >
-                <table
-                  v-if="row.diffType === 'DIFF'"
-                  class="w-100 row-diff-table font-color-dark"
-                >
+                <table class="w-100 row-diff-table font-color-dark">
                   <thead class="bg-light border-bottom">
                     <tr>
                       <th
@@ -1031,12 +1028,33 @@ function handleCopy(row: DiffRow): void {
                               'packages_business_verification_result_field_name',
                             )
                           }}
-                          <ElTag class="rounded-4" size="small" type="danger">
+                          <ElTag
+                            v-if="row.diffType === 'MISS'"
+                            class="rounded-4 tag-amber"
+                            size="small"
+                          >
+                            {{ $t('packages_dag_inspect_diff_type_miss') }}
+                          </ElTag>
+                          <ElTag
+                            v-else-if="row.diffType === 'MORE'"
+                            class="rounded-4"
+                            size="small"
+                            type="warning"
+                          >
+                            {{ $t('packages_dag_inspect_diff_type_more') }}
+                          </ElTag>
+                          <ElTag
+                            v-else
+                            class="rounded-4"
+                            size="small"
+                            type="danger"
+                          >
                             {{ $t('packages_dag_inspect_diff_type_diff') }}
                           </ElTag>
                         </div>
                       </th>
                       <th
+                        v-if="row.diffType === 'DIFF'"
                         class="text-start p-3 text-sm fw-sub text-muted-foreground w-[37.5%] break-all"
                       >
                         {{ $t('packages_dag_inspect_source_value') }}
@@ -1044,13 +1062,19 @@ function handleCopy(row: DiffRow): void {
                       <th
                         class="text-start px-3 text-sm fw-sub text-muted-foreground text-destructive w-[37.5%] break-all"
                       >
-                        <div
-                          class="flex align-center gap-2"
-                          style="--btn-space: 0"
-                        >
-                          {{ $t('packages_dag_inspect_target_value') }}
+                        <div class="flex align-center gap-2">
+                          {{
+                            $t(
+                              row.diffType === 'DIFF'
+                                ? 'packages_dag_inspect_target_value'
+                                : 'public_field_value',
+                            )
+                          }}
                           <div class="flex-1" />
-                          <div class="diff-table-operations">
+                          <div
+                            style="--btn-space: 0"
+                            class="diff-table-operations"
+                          >
                             <el-tooltip
                               :content="$t('public_generate_recovery_sql')"
                               :enterable="false"
@@ -1139,7 +1163,22 @@ function handleCopy(row: DiffRow): void {
                       </th>
                     </tr>
                   </thead>
-                  <tbody v-if="onlyShowDiffFields">
+
+                  <tbody v-if="row.diffType !== 'DIFF'">
+                    <tr
+                      v-for="(value, key) in row.source || row.target"
+                      :key="key"
+                      class="border-bottom hover:bg-light"
+                    >
+                      <td class="p-3 text-sm text-muted-foreground break-all">
+                        {{ key }}
+                      </td>
+                      <td class="p-3 text-sm font-medium break-all">
+                        {{ value }}
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tbody v-else-if="onlyShowDiffFields">
                     <tr
                       v-for="field in row.diffFields"
                       :key="field"
@@ -1215,68 +1254,6 @@ function handleCopy(row: DiffRow): void {
                         <span class="break-all">{{
                           row.target[targetField]
                         }}</span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-
-                <table v-else class="w-100 row-diff-table font-color-dark">
-                  <thead class="bg-light border-bottom">
-                    <tr>
-                      <th
-                        class="text-start p-3 text-sm fw-sub text-muted-foreground break-all"
-                      >
-                        <div class="flex align-center gap-2">
-                          {{
-                            $t(
-                              'packages_business_verification_result_field_name',
-                            )
-                          }}
-                          <ElTag
-                            v-if="row.diffType === 'MISS'"
-                            class="rounded-4 tag-amber"
-                            size="small"
-                          >
-                            {{ $t('packages_dag_inspect_diff_type_miss') }}
-                          </ElTag>
-
-                          <ElTag
-                            v-if="row.diffType === 'MORE'"
-                            class="rounded-4"
-                            size="small"
-                            type="warning"
-                          >
-                            {{ $t('packages_dag_inspect_diff_type_more') }}
-                          </ElTag>
-                        </div>
-                      </th>
-                      <th
-                        class="text-start px-3 text-sm fw-sub text-muted-foreground break-all font-medium"
-                      >
-                        <div class="flex align-center gap-2">
-                          {{ $t('public_field_value') }}
-                          <el-button
-                            class="ml-auto"
-                            text
-                            type="primary"
-                            @click="handleRecordClick(row)"
-                            >{{ $t('packages_dag_inspect_operation_record') }}
-                          </el-button>
-                        </div>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                      v-for="(value, key) in row.source || row.target"
-                      :key="key"
-                      class="border-bottom hover:bg-light"
-                    >
-                      <td class="p-3 text-sm text-muted-foreground break-all">
-                        {{ key }}
-                      </td>
-                      <td class="p-3 text-sm font-medium break-all">
-                        {{ value }}
                       </td>
                     </tr>
                   </tbody>
