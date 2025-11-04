@@ -1074,7 +1074,8 @@ export default {
   packages_dag_auto_repair_tips: 'Enable auto repair',
   packages_dag_auto_repair_disabled_tips:
     'Please select at least one validation method',
-  packages_dag_inspect_operation_record: 'Operation Record',
+  packages_dag_inspect_operation_record: 'Operation Log',
+  packages_dag_inspect_copy_row: 'Copy Current Row',
   packages_dag_inspect_operation_type: 'Operation Type',
   packages_dag_inspect_operation_message: 'Operation Message',
   packages_dag_inspect_operation_time: 'Operation Time',

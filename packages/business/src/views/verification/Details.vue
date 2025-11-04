@@ -1,11 +1,11 @@
 <script>
 import { fetchInspectResults } from '@tap/api/src/core/inspect-results'
 import {
+  downloadRecoverSql,
   exportSql,
   fetchInspects,
   updateInspect,
 } from '@tap/api/src/core/inspects'
-import { downloadInspectRecoverSql } from '@tap/api/src/core/proxy'
 import { checkEllipsisActive, downloadBlob } from '@tap/shared'
 import dayjs from 'dayjs'
 import { ErrorMessage } from '../../components/error-message'
@@ -264,10 +264,7 @@ export default {
     },
 
     async handleDownloadSql() {
-      const res = await downloadInspectRecoverSql(
-        this.inspect.id,
-        this.resultInfo.id,
-      )
+      const res = await downloadRecoverSql(this.inspect.id, this.resultInfo.id)
       downloadBlob(res)
     },
 

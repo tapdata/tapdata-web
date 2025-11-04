@@ -921,6 +921,7 @@ export default {
   packages_dag_auto_repair_tips: '啟用後將自動修復數據差異',
   packages_dag_auto_repair_disabled_tips: '請先選擇至少一種校驗方式',
   packages_dag_inspect_operation_record: '操作記錄',
+  packages_dag_inspect_copy_row: '複製當前行',
   packages_dag_task_inspect_difference_alarm: '任務校驗差異告警',
   packages_dag_task_retry_alert: '任務重試告警',
   packages_dag_task_retry_alert_desc: '連續重試超過{count}次時進行告警',

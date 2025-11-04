@@ -144,3 +144,13 @@ export function exportRecoverSql(
 ) {
   return requestClient.post(`${BASE_URL}/${taskId}/export-recover-sql`, params)
 }
+
+export function downloadRecoverSql(taskId: string, manualId: string) {
+  return requestClient.get(
+    `${BASE_URL}/${taskId}/recover-sql/${manualId}/download`,
+    {
+      responseType: 'blob',
+      responseReturn: 'raw',
+    },
+  )
+}

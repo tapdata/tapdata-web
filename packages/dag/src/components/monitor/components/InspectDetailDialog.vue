@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { downloadTaskInspectRecoverSql } from '@tap/api/src/core/proxy'
 import {
+  downloadRecoverSql,
   exportRecoverSql,
   getTaskInspectHistoriesResults,
   getTaskInspectResultsGroupByTable,
@@ -18,7 +18,7 @@ import { FilterConditionsOutlined } from '@tap/component/src/icon/FilterConditio
 import { SettingInterOutlined } from '@tap/component/src/icon/SettingInterOutlined'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
-import { downloadBlob } from '@tap/shared/src/util'
+import { copyToClipboard, downloadBlob } from '@tap/shared/src/util'
 import { debounce } from 'lodash-es'
 import { computed, reactive, ref, useTemplateRef, watch } from 'vue'
 import InspectRecordDialog from './InspectRecordDialog.vue'
@@ -324,11 +324,11 @@ const loadLastOp = async () => {
   const manualId = data.manualId
 
   if (!loading && opState.loading && opState.manualId === manualId) {
-    ElMessage.success(t('public_message_operation_success'))
-
     if (data.manualType === 'exportRecoverSql' && exportClicked.value) {
       handleDownloadSql()
       exportClicked.value = false
+    } else {
+      ElMessage.success(t('public_message_operation_success'))
     }
   }
 
@@ -495,11 +495,14 @@ function handleExportRecoverSql(resultId?: string): void {
 }
 
 async function handleDownloadSql(): Promise<void> {
-  const res = await downloadTaskInspectRecoverSql(
-    props.taskId,
-    opState.manualId,
-  )
+  const res = await downloadRecoverSql(props.taskId, opState.manualId)
   downloadBlob(res)
+  ElMessage.success(t('public_message_download_ok'))
+}
+
+function handleCopy(row: DiffRow): void {
+  copyToClipboard(JSON.stringify(row, null, 2))
+  ElMessage.success(t('public_message_copy_success'))
 }
 </script>
 
@@ -528,17 +531,67 @@ async function handleDownloadSql(): Promise<void> {
         <div class="flex-1" />
 
         <template v-if="inspectList.length">
-          <el-button
-            v-if="opState.type === 'exportRecoverSql' && !opState.loading"
-            text
-            @click="handleDownloadSql"
-          >
-            <template #icon>
-              <i-lucide-download />
+          <div class="flex btn-group mr-3">
+            <el-tooltip
+              v-if="showExportRecoverSqlProgress"
+              :content="t('public_start_at_time', { time: opState.fromNow })"
+              placement="top"
+            >
+              <el-button bg text>
+                <template #icon>
+                  <el-icon class="is-loading" size="16">
+                    <i-mingcute-loading-line />
+                  </el-icon>
+                </template>
+                {{ $t('public_generate_recovery_sql') }} ({{ progress }}%)
+              </el-button>
+            </el-tooltip>
+            <template v-else>
+              <el-button
+                text
+                :loading="exportRecoverSqlLoading"
+                :disabled="opState.loading"
+                @click="handleExportRecoverSql()"
+              >
+                <template #icon>
+                  <SettingInterOutlined />
+                </template>
+                {{ $t('public_generate_recovery_sql') }}
+              </el-button>
+              <el-button
+                v-if="opState.type === 'exportRecoverSql' && !opState.loading"
+                text
+                @click="handleDownloadSql"
+              >
+                <el-icon size="16">
+                  <i-lucide-download />
+                </el-icon>
+              </el-button>
             </template>
-            {{ $t('public_download_recovery_sql') }}
-          </el-button>
-          <el-tooltip
+
+            <!-- <el-button
+              text
+              :loading="exportRecoverSqlLoading"
+              :disabled="opState.loading"
+              @click="handleExportRecoverSql()"
+            >
+              <template #icon>
+                <SettingInterOutlined />
+              </template>
+              {{ $t('public_generate_recovery_sql') }}
+            </el-button>
+            <el-button
+              v-if="opState.type === 'exportRecoverSql' && !opState.loading"
+              text
+              @click="handleDownloadSql"
+            >
+              <el-icon size="16">
+                <i-lucide-download />
+              </el-icon>
+            </el-button> -->
+          </div>
+
+          <!-- <el-tooltip
             v-if="showExportRecoverSqlProgress"
             :content="t('public_start_at_time', { time: opState.fromNow })"
             placement="top"
@@ -563,7 +616,7 @@ async function handleDownloadSql(): Promise<void> {
               <SettingInterOutlined />
             </template>
             {{ $t('public_generate_recovery_sql') }}
-          </el-button>
+          </el-button> -->
 
           <el-button
             v-if="!showCheckProgress"
@@ -1003,6 +1056,7 @@ async function handleDownloadSql(): Promise<void> {
                               :enterable="false"
                               :hide-after="0"
                               :disabled="showExportRecoverSqlProgress"
+                              :teleported="false"
                             >
                               <div>
                                 <el-button
@@ -1022,6 +1076,7 @@ async function handleDownloadSql(): Promise<void> {
                               :enterable="false"
                               :hide-after="0"
                               :disabled="showCheckProgress"
+                              :teleported="false"
                             >
                               <div>
                                 <el-button
@@ -1041,6 +1096,7 @@ async function handleDownloadSql(): Promise<void> {
                               :enterable="false"
                               :hide-after="0"
                               :disabled="showRecoverProgress"
+                              :teleported="false"
                             >
                               <div>
                                 <el-button
@@ -1054,6 +1110,22 @@ async function handleDownloadSql(): Promise<void> {
                                   </template>
                                 </el-button>
                               </div>
+                            </el-tooltip>
+                            <el-tooltip
+                              :content="$t('packages_dag_inspect_copy_row')"
+                              :enterable="false"
+                              :hide-after="0"
+                              :teleported="false"
+                            >
+                              <el-button
+                                text
+                                size="small"
+                                @click="handleCopy(row)"
+                              >
+                                <template #icon>
+                                  <i-lucide-copy />
+                                </template>
+                              </el-button>
                             </el-tooltip>
                             <el-divider class="mx-0" direction="vertical" />
                             <el-button
@@ -1406,6 +1478,37 @@ async function handleDownloadSql(): Promise<void> {
     .metric-value {
       font-size: 14px;
       font-weight: 500;
+    }
+  }
+}
+
+.btn-group {
+  --btn-space: 0;
+  .el-button:first-child:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    padding-right: 6px;
+  }
+  .el-button:last-child:not(:first-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    padding-inline: 6px;
+    position: relative;
+    &::before {
+      content: '';
+      position: absolute;
+      height: 1em;
+      left: -1px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1px;
+      background-color: var(--el-border-color);
+    }
+  }
+
+  &:hover {
+    .el-button:last-child::before {
+      background-color: transparent;
     }
   }
 }
