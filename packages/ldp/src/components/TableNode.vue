@@ -137,7 +137,7 @@ function handleTargetClick() {
       :position="Position.Left"
       :connectable="false"
       class="table-node-handle border-0"
-      :class="{ 'pe-none': !active }"
+      :class="{ 'pe-none': !active, active: !!incomersCount }"
       @click="handleTargetClick"
     >
       <div
@@ -155,7 +155,7 @@ function handleTargetClick() {
       :position="Position.Right"
       :connectable="false"
       class="table-node-handle border-0"
-      :class="{ 'pe-none': !active }"
+      :class="{ 'pe-none': !active, active: !!outgoersCount }"
       @click="handleSourceClick"
     >
       <div
@@ -201,7 +201,8 @@ function handleTargetClick() {
     }
   }
 
-  &:hover .table-node-handle {
+  &:hover .table-node-handle,
+  .table-node-handle.active {
     width: 1rem;
     height: 1rem;
     .table-node-handle-icon {
