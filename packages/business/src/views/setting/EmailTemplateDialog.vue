@@ -558,6 +558,9 @@ defineExpose({
                 <OverflowTooltip
                   placement="top"
                   class="menu-list-item-title"
+                  :enterable="false"
+                  :show-after="200"
+                  :hide-after="0"
                   :text="keyMapping[item.key]"
                 />
               </div>
