@@ -49,6 +49,7 @@ const showCheckProgress = ref(false)
 const showRecoverProgress = ref(false)
 const progress = ref(0)
 const lastOpTime = ref('')
+const lastOpDate = ref('')
 const diffFilterType = ref()
 const pageState = reactive({
   page: 1,
@@ -286,6 +287,7 @@ const loadLastOp = async () => {
     showCheckProgress.value = false
     showRecoverProgress.value = false
     progress.value = 0
+    lastOpDate.value = ''
     return
   }
 
@@ -303,6 +305,7 @@ const loadLastOp = async () => {
       : 0
 
   lastOpTime.value = dayjs(data.created).fromNow()
+  lastOpDate.value = dayjs(data.created).format('YYYY-MM-DD HH:mm:ss')
 }
 
 const handleManualCheck = async () => {
@@ -444,11 +447,13 @@ function clearAllConditions(): void {
     <template #title>
       <div class="flex align-items-center">
         <span>{{ $t('packages_dag_inspect_detail_title') }}</span>
-        <VIcon class="text-muted ml-4 mr-1" :size="14">time</VIcon>
-        <span class="text-muted fs-8"
-          >{{ $t('packages_dag_inspect_last_verify_time') }}:
-          {{ pingTime }}</span
-        >
+        <template v-if="lastOpDate">
+          <VIcon class="text-muted ml-4 mr-1" :size="14">time</VIcon>
+          <span class="text-muted fs-8"
+            >{{ $t('packages_dag_inspect_last_verify_time') }}:
+            {{ lastOpDate }}</span
+          >
+        </template>
         <div class="flex-1" />
 
         <template v-if="inspectList.length">
