@@ -180,6 +180,7 @@ function mapFieldOptions(field: string): { label: string; value: string } {
 }
 
 function setFieldOptions(): void {
+  if (conditionCount.value > 0) return
   const [item] = rowDiffList.value
   sourceFields.value = item?.sourceFields?.map(mapFieldOptions) || []
   targetFields.value = item?.targetFields?.map(mapFieldOptions) || []
@@ -1462,7 +1463,9 @@ function handleCopy(row: DiffRow): void {
 .btn-group {
   --btn-space: 0;
   border-radius: var(--el-border-radius-base);
-  background-color: var(--el-fill-color);
+  &:has(> :nth-child(2)) {
+    background-color: var(--el-fill-color);
+  }
   .el-button:first-child:not(:last-child) {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
