@@ -869,8 +869,8 @@ const mutations = {
 
       // const allNodeTypes = [...state.nodeTypes, ...state.processorNodeTypes]
       // const nodeTypesMap = allNodeTypes.reduce((res, item) => ((res[item.type] = item), res), {})
-      const sourceMap = {},
-        targetMap = {}
+      const sourceMap = {}
+      const targetMap = {}
 
       edges.forEach((item) => {
         const _source = sourceMap[item.source]
