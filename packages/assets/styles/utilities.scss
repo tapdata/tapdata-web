@@ -2867,7 +2867,8 @@
 }
 
 .bg-subtle {
-  background: #f6f8fa !important;
+  // background: #f6f8fa !important;
+  background: var(--N50) !important;
 }
 
 .bg-muted {
@@ -12675,7 +12676,7 @@
 }
 
 .active-primary {
-  background-color: rgb(59 71 229 / 10%) !important;
+  background-color: rgba(var(--primary-raw), 0.1) !important;
   color: var(--color-primary) !important;
 }
 
