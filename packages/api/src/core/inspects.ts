@@ -29,7 +29,7 @@ export function importInspect(data: any) {
 }
 
 export function exportSql(id: string, resultId: string) {
-  return requestClient.put(`${BASE_URL}/${id}/recovery-sql/${resultId}/export`)
+  return requestClient.put(`${BASE_URL}/${id}/recover-sql/${resultId}/export`)
 }
 
 export function batchUpdateListtags(params: any) {
