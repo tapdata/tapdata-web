@@ -3,6 +3,7 @@ import { InfoFilled, Loading, Plus } from '@element-plus/icons-vue'
 import { fetchConnections } from '@tap/api/src/core/connections'
 import {
   findInspect,
+  getNodeSchema,
   getNodeSchemaPage,
   getTapTables,
 } from '@tap/api/src/core/metadata-instances'
@@ -1351,11 +1352,9 @@ const onVisibleChange = async (opt: any = {}, visible: boolean) => {
 
     if (!opt.fields.length) {
       opt.fieldsLoading = true
-      const data = await metadataInstancesApi
-        .nodeSchema(opt.nodeId)
-        .finally(() => {
-          opt.fieldsLoading = false
-        })
+      const data = await getNodeSchema(opt.nodeId).finally(() => {
+        opt.fieldsLoading = false
+      })
       const { fields } = mapFieldsData(data?.[0])
       opt.fields = fields
     }
@@ -1560,7 +1559,7 @@ watch(conditionList, () => {
           <span class="cond-item__index">{{
             (currentPage - 1) * pageSize + index + 1
           }}</span>
-          <div class="joint-table-setting overflow-hidden">
+          <div class="joint-table-setting flex-1 overflow-hidden">
             <div class="flex justify-content-between mb-2">
               <div
                 class="cond-item__title flex align-items-center gap-2 text-truncate min-w-0"
@@ -2218,7 +2217,7 @@ watch(conditionList, () => {
 
       <div
         v-if="conditionList.length"
-        class="py-4 condition-footer flex align-center"
+        class="py-4 condition-footer flex align-center dark:bg-transparent dark:backdrop-blur-md"
       >
         <ElButton :icon="Plus" @click="addItem">{{
           $t('packages_business_verification_addTable')
@@ -2358,8 +2357,6 @@ watch(conditionList, () => {
   }
 
   .joint-table-setting {
-    flex: 1;
-    background-color: var(--color-white);
   }
 
   .setting-item {
