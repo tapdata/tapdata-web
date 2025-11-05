@@ -450,8 +450,7 @@ function clearAllConditions(): void {
         <template v-if="lastOpDate">
           <VIcon class="text-muted ml-4 mr-1" :size="14">time</VIcon>
           <span class="text-muted fs-8"
-            >{{ $t('packages_dag_inspect_last_verify_time') }}:
-            {{ lastOpDate }}</span
+            >{{ $t('public_last_operation_time') }}: {{ lastOpDate }}</span
           >
         </template>
         <div class="flex-1" />
