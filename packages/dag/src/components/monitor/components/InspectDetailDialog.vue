@@ -1478,12 +1478,12 @@ function handleCopy(row: DiffRow): void {
     &::before {
       content: '';
       position: absolute;
-      height: 1em;
+      height: 1.125em;
       left: -1px;
       top: 50%;
       transform: translateY(-50%);
       width: 1px;
-      background-color: var(--el-border-color);
+      background-color: var(--el-border-color-darker);
     }
   }
 
