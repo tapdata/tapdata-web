@@ -607,4 +607,5 @@ export default {
   public_updated_from_now: 'Updated at {time}',
   public_crontabExpression: 'Cron Expression',
   public_start_at_time: 'Started at {time}',
+  public_last_operation_time: 'Last Operation Time',
 }

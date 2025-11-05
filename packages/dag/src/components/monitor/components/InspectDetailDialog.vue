@@ -525,8 +525,7 @@ function handleCopy(row: DiffRow): void {
         <template v-if="opState.date">
           <VIcon class="text-muted ml-4 mr-1" :size="14">time</VIcon>
           <span class="text-muted fs-8"
-            >{{ $t('packages_dag_inspect_last_verify_time') }}:
-            {{ opState.date }}</span
+            >{{ $t('public_last_operation_time') }}: {{ opState.date }}</span
           >
         </template>
         <div class="flex-1" />
