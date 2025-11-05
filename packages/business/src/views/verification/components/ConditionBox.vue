@@ -2166,9 +2166,9 @@ watch(conditionList, () => {
 
       <div
         v-if="conditionList.length === 0"
-        class="bg-gray-50 p-6 rounded-xl flex flex-column justify-center align-center gap-2"
+        class="bg-gray-50 dark:bg-white/5 p-6 rounded-xl flex flex-column justify-center align-center gap-2"
       >
-        <div class="flex rounded-pill bg-gray-100 p-3">
+        <div class="flex rounded-pill bg-gray-100 dark:bg-white/15 p-3">
           <VIcon :size="24" color="#9ca3af">database</VIcon>
         </div>
 
