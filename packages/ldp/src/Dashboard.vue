@@ -356,10 +356,16 @@ export default {
                   ? otherLdpType
                   : 'source'
             // 记录事件触发的dom和ldpType
-            if (sourceNode.table === tableInfo.name) {
+            if (
+              sourceNode.table === tableInfo.name &&
+              sourceNode.connectionId === tableInfo.connectionId
+            ) {
               sourceNode.ldpType = ldpType
               sourceNode.dom = parentNode
-            } else if (targetNode.table === tableInfo.name) {
+            } else if (
+              targetNode.table === tableInfo.name &&
+              targetNode.connectionId === tableInfo.connectionId
+            ) {
               targetNode.ldpType = ldpType
               targetNode.dom = parentNode
             }
@@ -445,7 +451,7 @@ export default {
       const targetDom = new Set()
       const otherDom = new Set()
 
-      this.$nextTick(() => {
+      setTimeout(() => {
         this.edgsLinks.forEach((el) => {
           const { sourceNode, targetNode } = el || {}
           const sDom = sourceNode.dom || map[sourceNode.ldpType](sourceNode)
@@ -501,7 +507,7 @@ export default {
         // 缓存所有dom node
         this.targetDomSet = targetDom
         this.otherDomSet = otherDom
-      })
+      }, 500)
     },
 
     handleQuit() {

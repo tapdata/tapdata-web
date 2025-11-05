@@ -738,9 +738,10 @@ function handleFindTreeDom(val: any = {}, getParent = false) {
   const el = document.getElementById(
     `fdm_table_${val.connectionId}_${val.table}`,
   )
-  return getParent
-    ? el?.parentNode
-    : findParentByClassName(el, 'el-tree-node__content')
+  return el
+  // return getParent
+  //   ? el?.parentNode
+  //   : findParentByClassName(el, 'el-tree-node__content')
 }
 
 async function searchByKeywordList(val: any[] = []) {
