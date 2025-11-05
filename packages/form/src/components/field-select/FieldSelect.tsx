@@ -45,34 +45,10 @@ export const FieldSelect = defineComponent({
       return false
     }
 
-    const TYPE_ICON = {
-      1: 'calendar',
-      2: '',
-      3: 'type-boolean',
-      4: '',
-      5: 'calendar',
-      6: 'calendar',
-      7: '',
-      8: 'type-number',
-      9: '',
-      10: 'type-string',
-      11: 'calendar',
-    }
-
-    const getIcon = (tapType: string) => {
-      if (isPlainObject(tapType)) {
-        return TYPE_ICON[tapType.type] || 'type-unknown'
-      }
-      const match = tapType.match(/"type"\s*:\s*(\d+)/)
-      const value = match?.[1]
-
-      return TYPE_ICON[value as keyof typeof TYPE_ICON] || 'type-unknown'
-    }
-
     const fieldOptions = computed(() => {
       return (
         props.options?.map((option: any) => {
-          if (option.tapType) option.icon = getIcon(option.tapType)
+          if (option.tapType) option.icon = getFieldIcon(option.tapType)
           if (option.source === 'virtual_hash') option.icon = 'file-hash'
           return option
         }) || []
@@ -137,7 +113,9 @@ export const FieldSelect = defineComponent({
             transition="none"
           >
             {option.indicesUnique[2] ? (
-              <span class="flex align-center">
+              <span
+                class={`flex align-center ${option.indicesUnique[3] ? 'text-primary' : ''}`}
+              >
                 <VIcon size="14">fingerprint</VIcon>
                 {option.isMultiUniqueIndex && (
                   <span
@@ -341,7 +319,7 @@ export const mapFieldsData = (data: any) => {
     }
 
     item.columns.forEach(({ columnName }) => {
-      map[columnName] = [item.indexName, index, item.unique]
+      map[columnName] = [item.indexName, index, item.unique, item.coreUnique]
       if (!constraintMap[columnName]) {
         temp++
       }
@@ -363,19 +341,24 @@ export const mapFieldsData = (data: any) => {
   isMultiForeignKey = foreignKeyCount > 1
 
   const newFields = fields
-    .filter((item) => !item.is_deleted)
-    .map((field) => {
+    .filter((item: any) => !item.is_deleted)
+    .map((field: any) => {
+      // tapTable 返回的字段名为驼峰命名，而 nodeSchema 返回的字段名为小写
+      const fieldName = field.field_name ?? field.fieldName
+      const dataType = field.data_type ?? field.dataType
       return {
         ...field,
-        label: field.field_name,
-        value: field.field_name,
-        isPrimaryKey: field.primary_key_position > 0,
-        indicesUnique: columnsMap[field.field_name],
-        isForeignKey: !!constraintMap[field.field_name],
-        isPartitionKey: partitionFieldMap[field.field_name],
-        constraints: constraintMap[field.field_name],
-        type: field.data_type,
-        dataType: field.data_type.replace(/\(.+\)/, ''),
+        field_name: fieldName,
+        label: fieldName,
+        value: fieldName,
+        isPrimaryKey:
+          (field.primary_key_position ?? field.primaryKeyPosition) > 0,
+        indicesUnique: columnsMap[fieldName],
+        isForeignKey: !!constraintMap[fieldName],
+        isPartitionKey: partitionFieldMap[fieldName],
+        constraints: constraintMap[fieldName],
+        type: dataType,
+        dataType: dataType?.replace(/\(.+\)/, ''),
         isMultiIndex,
         isMultiUniqueIndex,
         isMultiForeignKey,
@@ -404,7 +387,14 @@ const TYPE_ICON = {
   '11': 'calendar',
 }
 
-export const getFieldIcon = (tapType: string) => {
+export const getFieldIcon = (tapType: string | Record<string, any>) => {
+  if (isPlainObject(tapType)) {
+    return (
+      TYPE_ICON[
+        (tapType as Record<string, any>).type as keyof typeof TYPE_ICON
+      ] || 'type-unknown'
+    )
+  }
   const match = tapType.match(/"type"\s*:\s*(\d+)/)
   const value = match?.[1]
 

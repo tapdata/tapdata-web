@@ -570,7 +570,7 @@ $sidebarBg: #fff;
   }
 }
 .agent-data__item {
-  border-left: 1px solid #f2f2f2;
+  border-left: 1px solid var(--el-border-color);
 }
 </style>
 

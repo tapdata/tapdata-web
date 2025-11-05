@@ -1,11 +1,12 @@
 <script>
+import { ImportOutlined } from '@tap/component/src/icon'
 import PageContainer from '../../components/PageContainer.vue'
 import List from './List.vue'
 
 export default {
   name: 'TaskList',
 
-  components: { PageContainer, List },
+  components: { PageContainer, List, ImportOutlined },
 
   inject: ['checkAgent', 'buried'],
 
@@ -66,6 +67,9 @@ export default {
         class="btn"
         @click="refFn('handleImport')"
       >
+        <template #icon>
+          <ImportOutlined />
+        </template>
         <span> {{ $t('packages_business_button_bulk_import') }}</span>
       </el-button>
       <el-button

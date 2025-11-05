@@ -488,6 +488,7 @@ export default {
               value: item.field_name,
               isPrimaryKey: item.primary_key_position > 0,
               indicesUnique: !!item.indicesUnique,
+              coreUnique: item.coreUnique,
               type: item.data_type,
               tapType: item.tapType,
               source: item.source,
@@ -579,13 +580,22 @@ export default {
             const data = await getNodeSchema(nodeId)
             const fields = data?.[0]?.fields || []
             const indices = (data?.[0]?.indices || []).filter((t) => t.unique)
-            let columns = []
+            const columns = []
+            const coreColumns = []
             indices.forEach((el) => {
-              columns = [...columns, ...el.columns.map((t) => t.columnName)]
+              columns.push(...el.columns.map((t) => t.columnName))
+
+              if (el.coreUnique) {
+                coreColumns.push(...el.columns.map((t) => t.columnName))
+              }
             })
+
             fields.forEach((el) => {
               if (columns.includes(el.field_name)) {
                 el.indicesUnique = true
+              }
+              if (coreColumns.includes(el.field_name)) {
+                el.coreUnique = true
               }
             })
             return fields
@@ -1028,6 +1038,10 @@ export default {
 
             if (options && options.length) {
               let defaultList = options.filter((item) => item.isPrimaryKey)
+
+              if (!defaultList.length) {
+                defaultList = options.filter((item) => item.coreUnique)
+              }
 
               if (!defaultList.length) {
                 defaultList = options.filter((item) => item.indicesUnique)

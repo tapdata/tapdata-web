@@ -33,16 +33,12 @@ export function getMetadataInstanceTableConnection(params?: any) {
   return requestClient.get(`${BASE_URL}/tableConnection`, { params })
 }
 
-export function uploadMetadataInstance(
-  upsert: boolean,
-  type: string,
-  listtags: string,
-  params: any,
-) {
-  return requestClient.post(
-    `${BASE_URL}/upload?upsert=${upsert}&type=${type}&listtags=${listtags}`,
-    params,
-  )
+export function uploadMetadataInstance(data: any) {
+  return requestClient.post(`${BASE_URL}/upload`, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
 }
 
 export function searchMetadataInstances(params?: any) {
@@ -61,7 +57,7 @@ export function compareMetadataInstanceHistory(id: string, params?: any) {
  */
 export function getNodeSchema(
   nodeId: string,
-  fields: string[] = ['fields', 'indices'],
+  fields: string[] = ['fields', 'indices', 'constraints'],
   nodeConfig?: any,
 ) {
   return requestClient.get(`${BASE_URL}/node/schema`, {

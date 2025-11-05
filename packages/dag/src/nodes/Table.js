@@ -275,7 +275,6 @@ export class Table extends NodeType {
                     default: true,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      class: 'flex-1',
                       tooltip: i18n.t(
                         'packages_dag_syncSourcePartitionTableEnable_tip',
                       ),

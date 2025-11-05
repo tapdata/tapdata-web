@@ -3,6 +3,7 @@ import { InfoFilled, Loading, Plus } from '@element-plus/icons-vue'
 import { fetchConnections } from '@tap/api/src/core/connections'
 import {
   findInspect,
+  getNodeSchema,
   getNodeSchemaPage,
   getTapTables,
 } from '@tap/api/src/core/metadata-instances'
@@ -10,6 +11,7 @@ import VCodeEditor from '@tap/component/src/base/VCodeEditor.vue'
 import GitBook from '@tap/component/src/GitBook.vue'
 import { Modal } from '@tap/component/src/modal'
 import SwitchNumber from '@tap/component/src/SwitchNumber.vue'
+import { mapFieldsData } from '@tap/form/src/components/field-select/FieldSelect.tsx'
 import AsyncSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
 import { JsonEditor } from '@tap/form/src/components/json-editor'
 import { SqlEditor } from '@tap/form/src/components/sql-editor'
@@ -303,7 +305,7 @@ const getTableListMethod = async (
     return { items: [], total: 0 }
   }
   if (props.taskId) {
-    return getTablesInTask(nodeId, connectionId, filter)
+    return getTablesInTask(nodeId as string, connectionId as string, filter)
   }
   try {
     const size = filter.size || 20
@@ -331,32 +333,14 @@ const getTableListMethod = async (
       // 缓存起来
       setFieldsByItem(
         [nodeId, connectionId, el.name],
-        Object.values(el.nameFieldMap || {}).map((t: any) => {
-          const {
-            id,
-            fieldName,
-            primaryKeyPosition,
-            fieldType,
-            data_type,
-            primaryKey,
-            unique,
-          } = t
-          return {
-            id,
-            field_name: fieldName,
-            primary_key_position: primaryKeyPosition,
-            fieldType,
-            data_type,
-            primaryKey,
-            unique,
-            type: t.data_type,
-            tapType: JSON.stringify(t.tapType),
-          }
-        }),
+        mapFieldsData({
+          fields: Object.values(el.nameFieldMap || {}),
+        }).fields,
       )
     })
     return result
-  } catch {
+  } catch (error) {
+    console.error('Failed to get table list:', error)
     return { items: [], total: 0 }
   }
 }
@@ -378,7 +362,14 @@ const getTablesInTask = async (
 
   const params: TableParams = {
     nodeId,
-    fields: ['original_name', 'fields', 'qualified_name', 'name'],
+    fields: [
+      'original_name',
+      'fields',
+      'qualified_name',
+      'name',
+      'indices',
+      'constraints',
+    ],
     page: filter?.page || 1,
     pageSize: filter?.size || 20,
     ...(filter.where?.name?.like
@@ -391,28 +382,7 @@ const getTablesInTask = async (
   const tableList = res.items?.map((t: TableItem) => t.name) || []
   const total = res.total
   res.items.forEach((el: TableItem) => {
-    setFieldsByItem(
-      [nodeId, connectionId, el.name],
-      el.fields.map((t: any) => {
-        const {
-          id,
-          field_name,
-          primary_key_position,
-          data_type,
-          primaryKey,
-          unique,
-        } = t
-
-        return {
-          id,
-          field_name,
-          primary_key_position,
-          data_type,
-          primaryKey,
-          unique,
-        }
-      }),
-    )
+    setFieldsByItem([nodeId, connectionId, el.name], mapFieldsData(el).fields)
   })
   let tableNames = tableList
   if (isDB) {
@@ -1045,7 +1015,11 @@ const setFieldsByItem = (item: any[] = [], data: any[] = []) => {
 }
 
 const getFieldsByItem = (item: any, type = 'source') => {
-  const { nodeId, connectionId, table } = item[type] || {}
+  return getFields(item[type])
+}
+
+const getFields = (item: any = {}) => {
+  const { nodeId = '', connectionId = '', table = '' } = item
   return (
     fieldsMap[[nodeId || '', connectionId, table].filter((t) => t).join()] || []
   )
@@ -1368,10 +1342,25 @@ const handleChangeFields = (data: any[] = [], id: string) => {
   item.target.columns = data.map((t) => t.target)
 }
 
-const onVisibleChange = (opt: any = {}, visible: boolean) => {
+const onVisibleChange = async (opt: any = {}, visible: boolean) => {
   if (!visible || opt.fields?.length) {
     return
   }
+
+  if (props.taskId) {
+    opt.fields = getFields(opt)
+
+    if (!opt.fields.length) {
+      opt.fieldsLoading = true
+      const data = await getNodeSchema(opt.nodeId).finally(() => {
+        opt.fieldsLoading = false
+      })
+      const { fields } = mapFieldsData(data?.[0])
+      opt.fields = fields
+    }
+    return
+  }
+
   opt.fieldsLoading = true
   const connectionId = opt.connectionId
   const params = {
@@ -1570,7 +1559,7 @@ watch(conditionList, () => {
           <span class="cond-item__index">{{
             (currentPage - 1) * pageSize + index + 1
           }}</span>
-          <div class="joint-table-setting overflow-hidden">
+          <div class="joint-table-setting flex-1 overflow-hidden">
             <div class="flex justify-content-between mb-2">
               <div
                 class="cond-item__title flex align-items-center gap-2 text-truncate min-w-0"
@@ -2177,9 +2166,9 @@ watch(conditionList, () => {
 
       <div
         v-if="conditionList.length === 0"
-        class="bg-gray-50 p-6 rounded-xl flex flex-column justify-center align-center gap-2"
+        class="bg-gray-50 dark:bg-white/5 p-6 rounded-xl flex flex-column justify-center align-center gap-2"
       >
-        <div class="flex rounded-pill bg-gray-100 p-3">
+        <div class="flex rounded-pill bg-gray-100 dark:bg-white/15 p-3">
           <VIcon :size="24" color="#9ca3af">database</VIcon>
         </div>
 
@@ -2228,7 +2217,7 @@ watch(conditionList, () => {
 
       <div
         v-if="conditionList.length"
-        class="py-4 condition-footer flex align-center"
+        class="py-4 condition-footer flex align-center dark:bg-transparent dark:backdrop-blur-md"
       >
         <ElButton :icon="Plus" @click="addItem">{{
           $t('packages_business_verification_addTable')
@@ -2368,8 +2357,6 @@ watch(conditionList, () => {
   }
 
   .joint-table-setting {
-    flex: 1;
-    background-color: var(--color-white);
   }
 
   .setting-item {

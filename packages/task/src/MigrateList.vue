@@ -1,12 +1,13 @@
 <script>
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 import List from '@tap/business/src/views/task/List'
+import { ImportOutlined } from '@tap/component/src/icon'
 import { ReplicationBoard } from '@tap/ldp'
 
 export default {
   name: 'MigrateList',
 
-  components: { PageContainer, List, ReplicationBoard },
+  components: { PageContainer, List, ReplicationBoard, ImportOutlined },
 
   inject: ['checkAgent', 'buried'],
 
@@ -104,6 +105,9 @@ export default {
         class="btn"
         @click="refFn('handleImport')"
       >
+        <template #icon>
+          <ImportOutlined />
+        </template>
         <span> {{ $t('packages_business_button_bulk_import') }}</span>
       </el-button>
 

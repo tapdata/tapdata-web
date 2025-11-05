@@ -148,7 +148,10 @@ defineExpose({
         @change="handleCheckChange"
         @click.stop
       />
-      <el-node-content :node="node" />
+      <el-node-content
+        :node="node"
+        :render-content="tree?.props?.renderContent"
+      />
     </div>
   </div>
 </template>

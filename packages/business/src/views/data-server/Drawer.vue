@@ -79,7 +79,7 @@ const emit = defineEmits([
   'update:selectedFields',
 ])
 
-const apiApplication = inject<Ref<any>>('apiApplication')
+const apiApplication = inject<Ref<any>>('apiApplication', ref(null))
 
 const {
   rules,

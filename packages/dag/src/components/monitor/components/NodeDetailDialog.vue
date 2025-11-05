@@ -668,7 +668,7 @@ export default {
       </ElTooltip>
     </div>
     <div v-if="isLogCollector">
-      <div v-loading="loading" class="chart-box rounded-2 w-100">
+      <div v-loading="loading" class="chart-box rounded-xl w-100">
         <div class="chart-box__title py-2 px-4 fw-bold font-color-normal">
           {{ $t('packages_dag_components_nodedetaildialog_shijiantongji') }}
         </div>
@@ -957,7 +957,7 @@ export default {
 .chart-box {
   flex: 1;
   height: 286px;
-  border: 1px solid #c9cdd4;
+  border: 1px solid var(--el-border-color);
   position: relative;
   &.disabled {
     border: none;

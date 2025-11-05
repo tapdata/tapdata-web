@@ -11,6 +11,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@dagrejs/dagre": "^1.1.5",
     "@tap/api": "workspace:*",
     "@tap/assets": "workspace:*",
     "@tap/business": "workspace:*",
@@ -19,6 +20,8 @@
     "@tap/form": "workspace:*",
     "@tap/i18n": "workspace:*",
     "@tap/shared": "workspace:*",
+    "@vue-flow/background": "^1.3.2",
+    "@vue-flow/core": "^1.47.0",
     "@vueuse/core": "catalog:",
     "axios": "catalog:",
     "core-js": "catalog:",

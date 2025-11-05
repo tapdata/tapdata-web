@@ -560,6 +560,9 @@
 .border-light {
   border-color:var(--el-border-color-light) !important;
 }
+.border-lighter {
+  border-color:var(--el-border-color-lighter) !important;
+}
 
 .border-dark {
   border-color: #212529 !important;
@@ -714,7 +717,7 @@
 }
 
 .min-h-0 {
-  min-height: 0;
+  min-height: 0 !important;
 }
 
 .vh-100 {
@@ -2965,6 +2968,10 @@
 
 .rounded-xl {
   border-radius: 0.75rem !important;
+}
+
+.rounded-2xl {
+  border-radius: 1rem !important;
 }
 
 .rounded-xxl {
@@ -12646,8 +12653,12 @@
   backdrop-filter: blur(8px);
 }
 
+.z-1 {
+  z-index: 1 !important;
+}
+
 .z-10 {
-  z-index: 10;
+  z-index: 10 !important;
 }
 
 .list-decimal {
@@ -12940,3 +12951,20 @@
   color: var(--color-orange-300);
 }
 
+.text-prefix-bar {
+  position: relative;
+  padding-left: 12px;
+  $bar-width: 3px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: $bar-width;
+    height: 1.2em;
+    border-radius: calc($bar-width / 2);
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: var(--color-primary);
+  }
+}
