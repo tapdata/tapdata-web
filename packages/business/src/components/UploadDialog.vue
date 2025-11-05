@@ -42,8 +42,10 @@ export default {
   emits: ['success'],
   data() {
     const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
+    const isHa = import.meta.env.MODE === 'ha'
     return {
       isDaas,
+      isHa,
       // title: '',
       // uploadText: '',
       dialogVisible: false,
@@ -151,6 +153,10 @@ export default {
       formData.append('type', this.importType)
       formData.append('importMode', this.importForm.importMode)
       formData.append('listtags', JSON.stringify(this.importForm.tag))
+      // FIX ME: HA 版本在未合并到正式版本前，需要手动添加 cover 参数
+      if (this.isHa) {
+        formData.append('cover', !!this.importForm.upsert)
+      }
 
       if (this.isRelmig) {
         formData.append('source', this.importForm.source)
@@ -339,7 +345,20 @@ export default {
       </ElAlert>
 
       <ElFormItem
-        v-if="!isRelmig"
+        v-if="!isRelmig && isHa"
+        prop="upsert"
+        :label="$t('packages_business_modules_dialog_condition')"
+      >
+        <el-radio v-model="importForm.upsert" :label="1"
+          >{{ $t('packages_business_modules_dialog_overwrite_data') }}
+        </el-radio>
+        <el-radio v-model="importForm.upsert" :label="0"
+          >{{ $t('packages_business_modules_dialog_skip_data') }}
+        </el-radio>
+      </ElFormItem>
+
+      <ElFormItem
+        v-if="!isRelmig && !isHa"
         prop="importMode"
         :label="$t('packages_business_import_mode')"
       >
