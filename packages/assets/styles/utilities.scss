@@ -560,6 +560,9 @@
 .border-light {
   border-color:var(--el-border-color-light) !important;
 }
+.border-lighter {
+  border-color:var(--el-border-color-lighter) !important;
+}
 
 .border-dark {
   border-color: #212529 !important;
@@ -12949,3 +12952,20 @@
   color: var(--color-orange-300);
 }
 
+.text-prefix-bar {
+  position: relative;
+  padding-left: 12px;
+  $bar-width: 3px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: $bar-width;
+    height: 1.2em;
+    border-radius: calc($bar-width / 2);
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: var(--color-primary);
+  }
+}

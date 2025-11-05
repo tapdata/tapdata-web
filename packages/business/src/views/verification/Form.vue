@@ -767,25 +767,37 @@ provide('ConnectorMap', ConnectorMap)
             class="align-top is-button"
             @change="handleChangeInspectMethod"
           >
-            <el-radio-button value="row_count">
+            <el-radio-button
+              value="row_count"
+              style="--el-radio-button-checked-bg-color: transparent"
+            >
               <div class="flex align-center gap-2">
                 <VIcon size="16">Lightning</VIcon>
                 {{ inspectMethodMap['row_count'] }}
               </div>
             </el-radio-button>
-            <el-radio-button value="field">
+            <el-radio-button
+              value="field"
+              style="--el-radio-button-checked-bg-color: transparent"
+            >
               <div class="flex align-center gap-2">
                 <VIcon size="16">LucideTable</VIcon>
                 {{ inspectMethodMap['field'] }}
               </div>
             </el-radio-button>
-            <el-radio-button value="jointField">
+            <el-radio-button
+              value="jointField"
+              style="--el-radio-button-checked-bg-color: transparent"
+            >
               <div class="flex align-center gap-2">
                 <VIcon size="16">LucideLink</VIcon>
                 {{ inspectMethodMap['jointField'] }}
               </div>
             </el-radio-button>
-            <el-radio-button value="hash">
+            <el-radio-button
+              value="hash"
+              style="--el-radio-button-checked-bg-color: transparent"
+            >
               <div class="flex align-center gap-2">
                 <VIcon size="16">LucideHash</VIcon>
                 {{ inspectMethodMap['hash'] }}
@@ -1158,7 +1170,7 @@ provide('ConnectorMap', ConnectorMap)
     </ElForm>
 
     <div
-      class="position-sticky bottom-0 border-top bg-white z-10 mt-auto flex align-center content-footer flex-shrink-0"
+      class="position-sticky bottom-0 border-top bg-white dark:bg-transparent dark:backdrop-blur-md z-10 mt-auto flex align-center content-footer flex-shrink-0"
     >
       <el-button size="large" @click="goBack()">{{
         $t('public_button_back')
@@ -1280,6 +1292,10 @@ provide('ConnectorMap', ConnectorMap)
     position: sticky;
     top: var(--sticky-top);
     z-index: 10;
+
+    &:where(html.dark *) {
+      backdrop-filter: blur(12px) !important;
+    }
   }
 }
 

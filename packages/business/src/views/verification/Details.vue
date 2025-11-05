@@ -395,7 +395,7 @@ export default {
         <div class="flex-1 h-100">
           <div class="flex flex-column h-100">
             <div class="py-3 pr-3 flex align-center">
-              <span class="fs-6 font-color-dark lh-8">{{
+              <span class="fs-6 font-color-dark lh-8 text-prefix-bar">{{
                 $t('packages_business_verification_details_jiaoyanjieguo')
               }}</span>
               <el-segmented
