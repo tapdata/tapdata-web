@@ -192,7 +192,6 @@ export default defineComponent({
   },
   methods: {
     renderContent(h, { node, data }) {
-      console.log('renderContent', data)
       const className = ['custom-tree-node']
 
       if (data.isObject) {
@@ -242,8 +241,7 @@ export default defineComponent({
                 this.$emit('preview', data, node.parent.data)
               }}
             >
-              {' '}
-              view-details{' '}
+              view-details
             </IconButton>
           </div>
         </div>
@@ -739,7 +737,11 @@ export default defineComponent({
           </div>
         </template>
       </div>
-      <div v-else v-loading="loading || searchIng" class="flex-fill min-h-0">
+      <div
+        v-else
+        v-loading="loading || searchIng"
+        class="flex-fill min-h-0 p-1"
+      >
         <VirtualTree
           key="searchTree"
           ref="tree"
@@ -748,7 +750,7 @@ export default defineComponent({
           :props="props"
           :keeps="60"
           draggable
-          height="100%"
+          :height="treeHeight"
           wrapper-class-name="p-2"
           :default-expanded-keys="searchExpandedKeys"
           :data="filterTreeData"
