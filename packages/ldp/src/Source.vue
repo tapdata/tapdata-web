@@ -510,7 +510,7 @@ export default defineComponent({
       const el = document.getElementById(
         `ldp_source_table_${val.connectionId}_${val.table}`,
       )
-      return this.findParentByClassName(el, 'el-tree-node__content')
+      return el
     },
 
     handleScroll: debounce(function () {

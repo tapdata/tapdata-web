@@ -1,7 +1,7 @@
 import { observer } from '@formily/reactive-vue'
 import {
   checkCustomNodeUsed,
-  fetchCustomNodes,
+  fetchCustomNodeById,
 } from '@tap/api/src/core/custom-node'
 import { TextEditable } from '@tap/component/src/base/text-editable'
 import focusSelect from '@tap/component/src/directives/focusSelect'
@@ -28,7 +28,7 @@ export const StudioHeader = observer(
         async (route) => {
           if (route.params?.id) {
             if (route.params.action === 'nodeSave') return
-            const data = await fetchCustomNodes([route.params?.id])
+            const data = await fetchCustomNodeById(route.params?.id)
             designerRef.value.setCurrentTree(
               transformToTreeNode(data.formSchema),
             )

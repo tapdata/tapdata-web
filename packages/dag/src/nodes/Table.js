@@ -1,5 +1,7 @@
 import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
+// TODO: 后端合并后删除
+const isHa = import.meta.env.MODE === 'ha'
 
 export class Table extends NodeType {
   type = 'table'
@@ -1932,7 +1934,9 @@ export class Table extends NodeType {
                           {
                             fulfill: {
                               state: {
-                                display: `{{findParentNodes($values.id).length < 2 && $values.attrs.capabilities.filter(item => ["transaction_begin_function", "transaction_commit_function", "transaction_rollback_function"].includes(item.id)).length === 3 ? 'visible' : 'hidden'}}`,
+                                display: isHa
+                                  ? `{{$values.attrs.capabilities.filter(item => ["transaction_begin_function", "transaction_commit_function", "transaction_rollback_function"].includes(item.id)).length === 3 ? 'visible' : 'hidden'}}`
+                                  : `{{findParentNodes($values.id).length < 2 && $values.attrs.capabilities.filter(item => ["transaction_begin_function", "transaction_commit_function", "transaction_rollback_function"].includes(item.id)).length === 3 ? 'visible' : 'hidden'}}`,
                               },
                             },
                           },

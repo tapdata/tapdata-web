@@ -30,6 +30,10 @@ export function fetchCustomNodes(filter?: Filter) {
   })
 }
 
+export function fetchCustomNodeById(id: string) {
+  return requestClient.get<CustomNode>(`${BASE_URL}/${id}`)
+}
+
 export function patchCustomNode(params: any, config?: any) {
   return requestClient.patch(BASE_URL, params, config)
 }
