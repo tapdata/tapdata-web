@@ -3,7 +3,7 @@ import { defineComponent, watch, ref } from 'vue'
 import { VIcon } from '@tap/component'
 import focusSelect from '@tap/component/src/directives/focusSelect'
 import { transformToTreeNode } from '../core'
-import { fetchCustomNodes, checkCustomNodeUsed } from '@tap/api'
+import { fetchCustomNodeById, checkCustomNodeUsed } from '@tap/api'
 import { IconWidget } from './widgets'
 import { observer } from '@formily/reactive-vue'
 import { TextEditable } from '@tap/component'
@@ -26,7 +26,7 @@ export const StudioHeader = observer(
         async (route) => {
           if (route.params?.id) {
             if (route.params.action === 'nodeSave') return
-            const data = await fetchCustomNodes([route.params?.id])
+            const data = await fetchCustomNodeById(route.params?.id)
             designerRef.value.setCurrentTree(transformToTreeNode(data.formSchema))
             customNodeRef.value.from(data)
 
