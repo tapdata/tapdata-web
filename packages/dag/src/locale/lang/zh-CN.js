@@ -932,6 +932,7 @@ export default {
   packages_dag_auto_repair_tips: '启用后将自动修复数据差异',
   packages_dag_auto_repair_disabled_tips: '请先选择至少一种校验方式',
   packages_dag_inspect_operation_record: '操作记录',
+  packages_dag_inspect_copy_row: '复制当前行',
   packages_dag_inspect_operation_type: '操作类型',
   packages_dag_inspect_operation_message: '操作信息',
   packages_dag_inspect_operation_time: '操作时间',

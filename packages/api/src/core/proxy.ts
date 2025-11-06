@@ -37,3 +37,31 @@ export function generateRefreshToken(params: any) {
 export function getProxyHost() {
   return requestClient.get(`${BASE_URL}/host`)
 }
+
+export function downloadInspectRecoverSql(
+  inspectId: string,
+  inspectResultId: string,
+) {
+  return requestClient.get(`${BASE_URL}/download/inspect-recover-sql`, {
+    params: {
+      inspectId,
+      inspectResultId,
+    },
+    responseType: 'blob',
+    responseReturn: 'raw',
+  })
+}
+
+export function downloadTaskInspectRecoverSql(
+  taskId: string,
+  manualId: string,
+) {
+  return requestClient.get(`${BASE_URL}/download/task-inspect-recover-sql`, {
+    params: {
+      taskId,
+      manualId,
+    },
+    responseType: 'blob',
+    responseReturn: 'raw',
+  })
+}

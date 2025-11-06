@@ -241,18 +241,3 @@
   opacity: 1;
   cursor: help;
 }
-
-.error-stack-pre-wrap {
-  background: var(--el-color-danger-light-9);
-  border: 1px solid var(--el-color-danger-light-8);
-
-  .error-stack-actions {
-    display: none;
-  }
-
-  &:hover {
-    .error-stack-actions {
-      display: block;
-    }
-  }
-}

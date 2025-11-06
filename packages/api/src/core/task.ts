@@ -291,6 +291,7 @@ export function downloadTaskAnalyze(taskId: string, params: any) {
     ...params,
     responseType: 'blob',
     responseReturn: 'raw',
+    skipErrorHandler: true,
   })
 }
 

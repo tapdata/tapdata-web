@@ -22,10 +22,11 @@ html.dark {
   --white15: #ffffff26;
   --N100: #292929;
   --N200: #373737;
+  --N50: #1a1a1a;
+  --N50-raw: 26, 26, 26;
   --N900: #ebebeb;
-
   --N900-raw: 235, 235, 235;
-
+  --primary-raw: 51, 112, 235;
   --card: var(--white5);
   --fill-hover: var(--el-fill-color-lighter);
   --primary-hover-light: var(--el-fill-color-light);

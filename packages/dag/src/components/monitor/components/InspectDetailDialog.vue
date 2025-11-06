@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import {
+  downloadRecoverSql,
+  exportRecoverSql,
   getTaskInspectHistoriesResults,
   getTaskInspectResultsGroupByTable,
   getTaskInspectResultsLastOp,
@@ -13,8 +15,10 @@ import { dayjs } from '@tap/business/src/shared/dayjs'
 import { CloseIcon } from '@tap/component/src/CloseIcon'
 import FilterItemSelect from '@tap/component/src/filter-bar/FilterItemSelect.vue'
 import { FilterConditionsOutlined } from '@tap/component/src/icon/FilterConditionsOutlined'
+import { SettingInterOutlined } from '@tap/component/src/icon/SettingInterOutlined'
 import { Modal } from '@tap/component/src/modal'
 import { useI18n } from '@tap/i18n'
+import { copyToClipboard, downloadBlob } from '@tap/shared/src/util'
 import { debounce } from 'lodash-es'
 import { computed, reactive, ref, useTemplateRef, watch } from 'vue'
 import InspectRecordDialog from './InspectRecordDialog.vue'
@@ -45,12 +49,11 @@ const rowDiffList = ref<DiffRow[]>([])
 const loadingDetails = ref(false)
 const currentSelectedRow = ref<InspectionRow | null | undefined>()
 const onlyShowDiffFields = ref(true)
-const showCheckProgress = ref(false)
-const showRecoverProgress = ref(false)
 const progress = ref(0)
 const lastOpTime = ref('')
 const lastOpDate = ref('')
 const diffFilterType = ref()
+const exportClicked = ref(false)
 const pageState = reactive({
   page: 1,
   pageSize: 20,
@@ -61,6 +64,14 @@ const tablePageState = reactive({
   page: 1,
   pageSize: 10,
   total: 0,
+})
+const opState = reactive({
+  type: '',
+  loading: false,
+  progress: 0,
+  fromNow: '',
+  date: '',
+  manualId: '',
 })
 const innerFields = [
   { label: t('packages_dag_inspect_row_id'), value: 'rowId' },
@@ -86,6 +97,19 @@ const conditions = reactive({
     value: '',
   },
 })
+
+const showExportRecoverSqlProgress = computed(() => {
+  return opState.loading && opState.type === 'exportRecoverSql'
+})
+
+const showCheckProgress = computed(() => {
+  return opState.loading && opState.type === 'manualCheck'
+})
+
+const showRecoverProgress = computed(() => {
+  return opState.loading && opState.type === 'manualRecover'
+})
+
 // Constants
 const diffFilterTypes = [
   {
@@ -140,6 +164,7 @@ function onClose(): void {
 
 function resetData(): void {
   currentSelectedRow.value = null
+  exportClicked.value = false
   tablePageState.page = 1
   tablePageState.keyword = ''
   pageState.page = 1
@@ -155,6 +180,7 @@ function mapFieldOptions(field: string): { label: string; value: string } {
 }
 
 function setFieldOptions(): void {
+  if (conditionCount.value > 0) return
   const [item] = rowDiffList.value
   sourceFields.value = item?.sourceFields?.map(mapFieldOptions) || []
   targetFields.value = item?.targetFields?.map(mapFieldOptions) || []
@@ -284,19 +310,27 @@ const loadLastOp = async () => {
   const data = await getTaskInspectResultsLastOp(props.taskId)
 
   if (!data) {
-    showCheckProgress.value = false
-    showRecoverProgress.value = false
     progress.value = 0
-    lastOpDate.value = ''
+
+    opState.type = ''
+    opState.loading = false
+    opState.progress = 0
+    opState.fromNow = ''
+    opState.date = ''
+    opState.manualId = ''
     return
   }
 
-  if (data.manualType === 'manualCheck') {
-    showCheckProgress.value = data.unfinished > 0
-    showRecoverProgress.value = false
-  } else if (data.manualType === 'manualRecover') {
-    showRecoverProgress.value = data.unfinished > 0
-    showCheckProgress.value = false
+  const loading = data.unfinished > 0
+  const manualId = data.manualId
+
+  if (!loading && opState.loading && opState.manualId === manualId) {
+    if (data.manualType === 'exportRecoverSql' && exportClicked.value) {
+      handleDownloadSql()
+      exportClicked.value = false
+    } else {
+      ElMessage.success(t('public_message_operation_success'))
+    }
   }
 
   progress.value =
@@ -306,9 +340,19 @@ const loadLastOp = async () => {
 
   lastOpTime.value = dayjs(data.created).fromNow()
   lastOpDate.value = dayjs(data.created).format('YYYY-MM-DD HH:mm:ss')
+
+  opState.type = data.manualType
+  opState.progress =
+    data.totals > 0
+      ? Math.floor(((data.totals - data.unfinished) / data.totals) * 100)
+      : 0
+  opState.fromNow = dayjs(data.created).fromNow()
+  opState.date = dayjs(data.created).format('YYYY-MM-DD HH:mm:ss')
+  opState.loading = loading
+  opState.manualId = manualId
 }
 
-const handleManualCheck = async () => {
+const handleManualCheck = async (resultId?: string) => {
   if (showRecoverProgress.value) {
     const result = await Modal.confirm(
       t('public_last_operation_not_finished'),
@@ -318,12 +362,12 @@ const handleManualCheck = async () => {
       return
     }
   }
-  runManualCheck()
+  runManualCheck(resultId ? [resultId] : undefined)
 }
 
 const { run: runManualCheck, loading: manualCheckLoading } = useRequest(
-  async () => {
-    await manualCheck(props.taskId)
+  async (resultIds?: string[]) => {
+    await manualCheck(props.taskId, { resultIds })
     startPolling()
     ElMessage.success(t('public_start_check'))
   },
@@ -333,7 +377,7 @@ const { run: runManualCheck, loading: manualCheckLoading } = useRequest(
   },
 )
 
-const handleManualRecover = async () => {
+const handleManualRecover = async (resultId?: string) => {
   if (showCheckProgress.value) {
     const result = await Modal.confirm(
       t('public_last_operation_not_finished'),
@@ -343,12 +387,12 @@ const handleManualRecover = async () => {
       return
     }
   }
-  runManualRecover()
+  runManualRecover(resultId ? [resultId] : undefined)
 }
 
 const { run: runManualRecover, loading: manualRecoverLoading } = useRequest(
-  async () => {
-    await manualRecover(props.taskId)
+  async (resultIds?: string[]) => {
+    await manualRecover(props.taskId, { resultIds })
     startPolling()
     ElMessage.success(t('public_start_repair'))
   },
@@ -358,12 +402,27 @@ const { run: runManualRecover, loading: manualRecoverLoading } = useRequest(
   },
 )
 
+const { run: runExportRecoverSql, loading: exportRecoverSqlLoading } =
+  useRequest(
+    async (resultIds?: string[]) => {
+      await exportRecoverSql(props.taskId, {
+        resultIds,
+      })
+      startPolling()
+      ElMessage.success(t('public_start_generate_recovery_sql'))
+    },
+    {
+      manual: true,
+      loadingKeep: 500,
+    },
+  )
+
 const { run: startPolling, cancel: stopPolling } = useRequest(
   async () => {
     await loadLastOp()
     await fetchDiffList()
 
-    if (!showCheckProgress.value && !showRecoverProgress.value) {
+    if (!opState.loading) {
       stopPolling()
     }
   },
@@ -402,7 +461,7 @@ async function handleConfirmCheck(): Promise<void> {
   )
 
   if (result) {
-    showCheckProgress.value = false
+    opState.loading = false
     runManualCheck()
   }
 }
@@ -414,7 +473,7 @@ async function handleConfirmRecover(): Promise<void> {
   )
 
   if (result) {
-    showRecoverProgress.value = false
+    opState.loading = false
     runManualRecover()
   }
 }
@@ -429,6 +488,22 @@ function clearAllConditions(): void {
   clearCondition('source')
   clearCondition('target')
   clearCondition('inner')
+}
+
+function handleExportRecoverSql(resultId?: string): void {
+  exportClicked.value = true
+  runExportRecoverSql(resultId ? [resultId] : undefined)
+}
+
+async function handleDownloadSql(): Promise<void> {
+  const res = await downloadRecoverSql(props.taskId, opState.manualId)
+  downloadBlob(res)
+  ElMessage.success(t('public_message_download_ok'))
+}
+
+function handleCopy(row: DiffRow): void {
+  copyToClipboard(JSON.stringify(row, null, 2))
+  ElMessage.success(t('public_message_copy_success'))
 }
 </script>
 
@@ -447,21 +522,108 @@ function clearAllConditions(): void {
     <template #title>
       <div class="flex align-items-center">
         <span>{{ $t('packages_dag_inspect_detail_title') }}</span>
-        <template v-if="lastOpDate">
+        <template v-if="opState.date">
           <VIcon class="text-muted ml-4 mr-1" :size="14">time</VIcon>
           <span class="text-muted fs-8"
-            >{{ $t('public_last_operation_time') }}: {{ lastOpDate }}</span
+            >{{ $t('public_last_operation_time') }}: {{ opState.date }}</span
           >
         </template>
         <div class="flex-1" />
 
         <template v-if="inspectList.length">
+          <div class="flex btn-group mr-3">
+            <el-tooltip
+              v-if="showExportRecoverSqlProgress"
+              :content="t('public_start_at_time', { time: opState.fromNow })"
+              placement="top"
+            >
+              <el-button bg text>
+                <template #icon>
+                  <el-icon class="is-loading" size="16">
+                    <i-mingcute-loading-line />
+                  </el-icon>
+                </template>
+                {{ $t('public_generate_recovery_sql') }} ({{ progress }}%)
+              </el-button>
+            </el-tooltip>
+            <template v-else>
+              <el-button
+                text
+                :loading="exportRecoverSqlLoading"
+                :disabled="opState.loading"
+                @click="handleExportRecoverSql()"
+              >
+                <template #icon>
+                  <SettingInterOutlined />
+                </template>
+                {{ $t('public_generate_recovery_sql') }}
+              </el-button>
+              <el-button
+                v-if="opState.type === 'exportRecoverSql' && !opState.loading"
+                text
+                @click="handleDownloadSql"
+              >
+                <el-icon size="16">
+                  <i-lucide-download />
+                </el-icon>
+              </el-button>
+            </template>
+
+            <!-- <el-button
+              text
+              :loading="exportRecoverSqlLoading"
+              :disabled="opState.loading"
+              @click="handleExportRecoverSql()"
+            >
+              <template #icon>
+                <SettingInterOutlined />
+              </template>
+              {{ $t('public_generate_recovery_sql') }}
+            </el-button>
+            <el-button
+              v-if="opState.type === 'exportRecoverSql' && !opState.loading"
+              text
+              @click="handleDownloadSql"
+            >
+              <el-icon size="16">
+                <i-lucide-download />
+              </el-icon>
+            </el-button> -->
+          </div>
+
+          <!-- <el-tooltip
+            v-if="showExportRecoverSqlProgress"
+            :content="t('public_start_at_time', { time: opState.fromNow })"
+            placement="top"
+          >
+            <el-button bg text>
+              <template #icon>
+                <el-icon class="is-loading" size="16">
+                  <i-mingcute-loading-line />
+                </el-icon>
+              </template>
+              {{ $t('public_generate_recovery_sql') }} ({{ progress }}%)
+            </el-button>
+          </el-tooltip>
+          <el-button
+            v-else
+            text
+            :loading="exportRecoverSqlLoading"
+            :disabled="opState.loading"
+            @click="handleExportRecoverSql()"
+          >
+            <template #icon>
+              <SettingInterOutlined />
+            </template>
+            {{ $t('public_generate_recovery_sql') }}
+          </el-button> -->
+
           <el-button
             v-if="!showCheckProgress"
             text
             :loading="manualCheckLoading"
             :disabled="manualRecoverLoading"
-            @click="handleManualCheck"
+            @click="handleManualCheck()"
           >
             <template #icon>
               <i-lucide-git-compare-arrows />
@@ -489,7 +651,7 @@ function clearAllConditions(): void {
             text
             :loading="manualRecoverLoading"
             :disabled="manualCheckLoading"
-            @click="handleManualRecover"
+            @click="handleManualRecover()"
           >
             <template #icon>
               <i-lucide-wand-sparkles />
@@ -854,44 +1016,7 @@ function clearAllConditions(): void {
                 :key="index"
                 class="border rounded-xl overflow-hidden"
               >
-                <!-- <div class="flex align-items-center gap-2 p-3 bg-light">
-                  <ElTag
-                    v-if="row.diffType === 'DIFF'"
-                    class="rounded-4"
-                    size="small"
-                    type="danger"
-                  >
-                    {{ $t('packages_dag_inspect_diff_type_diff') }}
-                  </ElTag>
-
-                  <ElTag
-                    v-if="row.diffType === 'MISS'"
-                    class="rounded-4 tag-amber"
-                    size="small"
-                  >
-                    {{ $t('packages_dag_inspect_diff_type_miss') }}
-                  </ElTag>
-
-                  <ElTag
-                    v-if="row.diffType === 'MORE'"
-                    class="rounded-4"
-                    size="small"
-                    type="warning"
-                  >
-                    {{ $t('packages_dag_inspect_diff_type_more') }}
-                  </ElTag>
-
-                  <div class="flex-1" />
-
-                  <el-button text type="primary" @click="handleRecordClick(row)"
-                    >{{ $t('packages_dag_inspect_operation_record') }}
-                  </el-button>
-                </div> -->
-
-                <table
-                  v-if="row.diffType === 'DIFF'"
-                  class="w-100 row-diff-table font-color-dark"
-                >
+                <table class="w-100 row-diff-table font-color-dark">
                   <thead class="bg-light border-bottom">
                     <tr>
                       <th
@@ -903,12 +1028,33 @@ function clearAllConditions(): void {
                               'packages_business_verification_result_field_name',
                             )
                           }}
-                          <ElTag class="rounded-4" size="small" type="danger">
+                          <ElTag
+                            v-if="row.diffType === 'MISS'"
+                            class="rounded-4 tag-amber"
+                            size="small"
+                          >
+                            {{ $t('packages_dag_inspect_diff_type_miss') }}
+                          </ElTag>
+                          <ElTag
+                            v-else-if="row.diffType === 'MORE'"
+                            class="rounded-4"
+                            size="small"
+                            type="warning"
+                          >
+                            {{ $t('packages_dag_inspect_diff_type_more') }}
+                          </ElTag>
+                          <ElTag
+                            v-else
+                            class="rounded-4"
+                            size="small"
+                            type="danger"
+                          >
                             {{ $t('packages_dag_inspect_diff_type_diff') }}
                           </ElTag>
                         </div>
                       </th>
                       <th
+                        v-if="row.diffType === 'DIFF'"
                         class="text-start p-3 text-sm fw-sub text-muted-foreground w-[37.5%] break-all"
                       >
                         {{ $t('packages_dag_inspect_source_value') }}
@@ -917,19 +1063,122 @@ function clearAllConditions(): void {
                         class="text-start px-3 text-sm fw-sub text-muted-foreground text-destructive w-[37.5%] break-all"
                       >
                         <div class="flex align-center gap-2">
-                          {{ $t('packages_dag_inspect_target_value') }}
-                          <el-button
-                            class="ml-auto"
-                            text
-                            type="primary"
-                            @click="handleRecordClick(row)"
-                            >{{ $t('packages_dag_inspect_operation_record') }}
-                          </el-button>
+                          {{
+                            $t(
+                              row.diffType === 'DIFF'
+                                ? 'packages_dag_inspect_target_value'
+                                : 'public_field_value',
+                            )
+                          }}
+                          <div class="flex-1" />
+                          <div
+                            style="--btn-space: 0"
+                            class="diff-table-operations"
+                          >
+                            <el-tooltip
+                              :content="$t('public_generate_recovery_sql')"
+                              :enterable="false"
+                              :hide-after="0"
+                              :disabled="showExportRecoverSqlProgress"
+                              :teleported="false"
+                            >
+                              <div>
+                                <el-button
+                                  text
+                                  size="small"
+                                  :disabled="showExportRecoverSqlProgress"
+                                  @click="handleExportRecoverSql(row.id)"
+                                >
+                                  <template #icon>
+                                    <SettingInterOutlined />
+                                  </template>
+                                </el-button>
+                              </div>
+                            </el-tooltip>
+                            <el-tooltip
+                              :content="$t('public_diff_check')"
+                              :enterable="false"
+                              :hide-after="0"
+                              :disabled="showCheckProgress"
+                              :teleported="false"
+                            >
+                              <div>
+                                <el-button
+                                  text
+                                  size="small"
+                                  :disabled="showCheckProgress"
+                                  @click="handleManualCheck(row.id)"
+                                >
+                                  <template #icon>
+                                    <i-lucide-git-compare-arrows />
+                                  </template>
+                                </el-button>
+                              </div>
+                            </el-tooltip>
+                            <el-tooltip
+                              :content="$t('public_one_key_repair')"
+                              :enterable="false"
+                              :hide-after="0"
+                              :disabled="showRecoverProgress"
+                              :teleported="false"
+                            >
+                              <div>
+                                <el-button
+                                  text
+                                  size="small"
+                                  :disabled="showRecoverProgress"
+                                  @click="handleManualRecover(row.id)"
+                                >
+                                  <template #icon>
+                                    <i-lucide-wand-sparkles />
+                                  </template>
+                                </el-button>
+                              </div>
+                            </el-tooltip>
+                            <el-tooltip
+                              :content="$t('packages_dag_inspect_copy_row')"
+                              :enterable="false"
+                              :hide-after="0"
+                              :teleported="false"
+                            >
+                              <el-button
+                                text
+                                size="small"
+                                @click="handleCopy(row)"
+                              >
+                                <template #icon>
+                                  <i-lucide-copy />
+                                </template>
+                              </el-button>
+                            </el-tooltip>
+                            <el-divider class="mx-0" direction="vertical" />
+                            <el-button
+                              text
+                              type="primary"
+                              @click="handleRecordClick(row)"
+                              >{{ $t('packages_dag_inspect_operation_record') }}
+                            </el-button>
+                          </div>
                         </div>
                       </th>
                     </tr>
                   </thead>
-                  <tbody v-if="onlyShowDiffFields">
+
+                  <tbody v-if="row.diffType !== 'DIFF'">
+                    <tr
+                      v-for="(value, key) in row.source || row.target"
+                      :key="key"
+                      class="border-bottom hover:bg-light"
+                    >
+                      <td class="p-3 text-sm text-muted-foreground break-all">
+                        {{ key }}
+                      </td>
+                      <td class="p-3 text-sm font-medium break-all">
+                        {{ value }}
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tbody v-else-if="onlyShowDiffFields">
                     <tr
                       v-for="field in row.diffFields"
                       :key="field"
@@ -1005,68 +1254,6 @@ function clearAllConditions(): void {
                         <span class="break-all">{{
                           row.target[targetField]
                         }}</span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-
-                <table v-else class="w-100 row-diff-table font-color-dark">
-                  <thead class="bg-light border-bottom">
-                    <tr>
-                      <th
-                        class="text-start p-3 text-sm fw-sub text-muted-foreground break-all"
-                      >
-                        <div class="flex align-center gap-2">
-                          {{
-                            $t(
-                              'packages_business_verification_result_field_name',
-                            )
-                          }}
-                          <ElTag
-                            v-if="row.diffType === 'MISS'"
-                            class="rounded-4 tag-amber"
-                            size="small"
-                          >
-                            {{ $t('packages_dag_inspect_diff_type_miss') }}
-                          </ElTag>
-
-                          <ElTag
-                            v-if="row.diffType === 'MORE'"
-                            class="rounded-4"
-                            size="small"
-                            type="warning"
-                          >
-                            {{ $t('packages_dag_inspect_diff_type_more') }}
-                          </ElTag>
-                        </div>
-                      </th>
-                      <th
-                        class="text-start px-3 text-sm fw-sub text-muted-foreground break-all font-medium"
-                      >
-                        <div class="flex align-center gap-2">
-                          {{ $t('public_field_value') }}
-                          <el-button
-                            class="ml-auto"
-                            text
-                            type="primary"
-                            @click="handleRecordClick(row)"
-                            >{{ $t('packages_dag_inspect_operation_record') }}
-                          </el-button>
-                        </div>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                      v-for="(value, key) in row.source || row.target"
-                      :key="key"
-                      class="border-bottom hover:bg-light"
-                    >
-                      <td class="p-3 text-sm text-muted-foreground break-all">
-                        {{ key }}
-                      </td>
-                      <td class="p-3 text-sm font-medium break-all">
-                        {{ value }}
                       </td>
                     </tr>
                   </tbody>
@@ -1155,6 +1342,16 @@ function clearAllConditions(): void {
     tbody > tr {
       &:last-child {
         border-bottom: none !important;
+      }
+    }
+
+    .diff-table-operations {
+      display: none;
+    }
+
+    &:hover {
+      .diff-table-operations {
+        display: contents;
       }
     }
   }
@@ -1258,6 +1455,41 @@ function clearAllConditions(): void {
     .metric-value {
       font-size: 14px;
       font-weight: 500;
+    }
+  }
+}
+
+.btn-group {
+  --btn-space: 0;
+  border-radius: var(--el-border-radius-base);
+  &:has(> :nth-child(2)) {
+    background-color: var(--el-fill-color);
+  }
+  .el-button:first-child:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    padding-right: 6px;
+  }
+  .el-button:last-child:not(:first-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    padding-inline: 6px;
+    position: relative;
+    &::before {
+      content: '';
+      position: absolute;
+      height: 1.125em;
+      left: -1px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1px;
+      background-color: var(--el-border-color-darker);
+    }
+  }
+
+  &:hover {
+    .el-button:last-child::before {
+      background-color: transparent;
     }
   }
 }

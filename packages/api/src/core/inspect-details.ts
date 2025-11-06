@@ -21,6 +21,7 @@ export function exportInspectDetails(
     {
       responseType: 'blob',
       responseReturn: 'raw',
+      skipErrorHandler: true,
     },
   )
 }
