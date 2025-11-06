@@ -12,6 +12,7 @@ import { IconButton } from '@tap/component/src/icon-button'
 import { FieldSelect, mapFieldsData } from '@tap/form'
 import i18n from '@tap/i18n'
 import { generateId, uuid } from '@tap/shared'
+import { useAnimEvent } from '@tap/shared/src/composables/useAnimEvent'
 import { debounce } from 'lodash-es'
 import { h } from 'vue'
 import commonMix from './mixins/common'
@@ -32,9 +33,29 @@ export default {
       type: Function,
       require: true,
     },
+    showParentLineage: Boolean,
   },
+  emits: [
+    'preview',
+    'find-parent',
+    'show-settings',
+    'node-drag-end',
+    'handle-connection',
+    'onScroll',
+  ],
   data() {
+    const { wrappedListener: onScroll } = useAnimEvent(
+      () => {
+        this.handleScroll?.()
+      },
+      {
+        keepLoop: 500, // ✅ 持续响应
+        autoCleanup: true, // ✅ 自动清理
+        enabled: true, // ✅ 可控制
+      },
+    )
     return {
+      onScroll,
       creating: false,
       taskDialogConfig: {
         from: null,
@@ -72,6 +93,7 @@ export default {
       showMaterialized: false,
       materializedTableName: '',
       createMethod: 'transformation',
+      currentKey: '',
     }
   },
   computed: {
@@ -220,6 +242,9 @@ export default {
             )}
             {data.isObject ? (
               <ElTooltip
+                show-after={200}
+                hide-after={0}
+                enterable={false}
                 content={i18n.t('packages_ldp_view_lineage')}
                 placement="top"
               >
@@ -779,16 +804,16 @@ export default {
       const el = document.getElementById(
         `ldp_mdm_table_${data.id}_${data.name}`,
       )
-      this.$emit(
-        'find-parent',
-        this.findParentByClassName(el, 'el-tree-node__content'),
-        data,
-      )
+      this.currentKey = data.id
+      this.currentEl = el
+      this.$emit('find-parent', el, data)
     },
 
-    handleScroll: debounce(function () {
-      this.$emit('on-scroll')
-    }, 200),
+    handleScroll() {
+      if (!this.showParentLineage) return
+      console.log('handleScroll', this.currentEl)
+      this.$emit('onScroll')
+    },
 
     openMaterializedDialog() {
       this.materializedTableName = ''
@@ -820,13 +845,6 @@ export default {
       })
     },
   },
-  emits: [
-    'preview',
-    'find-parent',
-    'show-settings',
-    'node-drag-end',
-    'handle-connection',
-  ],
 }
 </script>
 
@@ -883,7 +901,10 @@ export default {
         </ElInput>
       </div>
 
-      <div class="flex-1 min-h-0 position-relative overflow-y-auto p-1">
+      <div
+        class="flex-1 min-h-0 position-relative overflow-y-auto p-1"
+        @scroll="onScroll"
+      >
         <div
           v-if="search || searchIng"
           v-loading="searchIng"
@@ -906,7 +927,6 @@ export default {
             @node-drag-end="handleDragEnd"
             @node-drop="handleSelfDrop"
             @node-expand="handleNodeExpand"
-            @handle-scroll="handleScroll"
           />
         </div>
         <template v-else>
@@ -928,7 +948,6 @@ export default {
             @node-drag-end="handleDragEnd"
             @node-drop="handleSelfDrop"
             @node-expand="handleNodeExpand"
-            @handle-scroll="handleScroll"
           />
           <div
             v-if="!treeData.length"

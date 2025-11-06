@@ -8,7 +8,7 @@ import UpgradeCharges from '@tap/business/src/components/UpgradeCharges.vue'
 import UpgradeFee from '@tap/business/src/components/UpgradeFee.vue'
 import { EventEmitter } from '@tap/business/src/shared'
 import { IconButton } from '@tap/component/src/icon-button'
-import { jsPlumb } from '@tap/dag/src/instance'
+import LeaderLine from '@tap/leader-line'
 import Cookie from '@tap/shared/src/cookie'
 import Catalogue from './components/Catalogue'
 import ConnectionPreview from './ConnectionPreview'
@@ -18,7 +18,6 @@ import Settings from './Settings'
 import SourceItem from './Source'
 import TablePreview from './TablePreview'
 import TargetItem from './Target'
-
 const TYPE2NAME = {
   target: 'TARGET&SERVICE',
 }
@@ -76,7 +75,6 @@ export default {
       preLinkNodes: [],
       nextLinkNodes: [],
       connectionLines: [],
-      jsPlumbIns: jsPlumb.getInstance(),
       showParentLineage: false,
       nodes: [],
       edgsLinks: [],
@@ -149,17 +147,13 @@ export default {
 
   mounted() {
     this.$nextTick(() => {
-      this.jsPlumbIns.setContainer(this.$refs.swimLaneContainer)
       window.addEventListener('keydown', this.handleListenerEsc)
     })
   },
 
   beforeUnmount() {
     window.removeEventListener('keyword', this.handleListenerEsc)
-    // 销毁画布实例
-    this.jsPlumbIns?.destroy()
-    this.targetDomSet = null
-    this.otherDomSet = null
+    this.clearLeaderLines()
   },
 
   methods: {
@@ -382,7 +376,7 @@ export default {
       )
     },
 
-    async handleConnection() {
+    handleConnection() {
       if (!this.showParentLineage) return
       const connectionLines = []
 
@@ -470,49 +464,43 @@ export default {
           }
         })
 
+        this.clearLeaderLines()
         this.connectionLines = connectionLines
-
-        this.jsPlumbIns.reset()
-        this.connectionLines.forEach((el = []) => {
+        this.leaderLines = this.connectionLines.map((el = []) => {
           const [source, target] = el
-          this.jsPlumbIns.connect({
-            source, // 源节点
-            target, // 目标节点
-            endpoint: 'Dot', // 端点的样式，可以设置Dot、Rectangle、image、Blank
-            connector: ['Bezier', { gap: 20 }], // 连接线 Bezier(贝塞尔曲线) Straight(直线) Flowchart(垂直或水平线组成的连接) StateMachine
-            anchor: ['Left', 'Right'], // 锚点位置
-            endpointStyle: { fill: 'rgba(255, 255, 255, 0)', radius: 2 },
-            paintStyle: {
-              strokeWidth: 2,
-              stroke: '#2C65FF',
-              dashstyle: '2 4',
-              gap: 20,
+          return new LeaderLine(source, target, {
+            color: 'var(--color-primary)',
+            dash: {
+              len: 5,
+              gap: 5,
+              animation: {
+                duration: 500, // 与 Vue Flow 的 2s 匹配
+                timing: 'linear',
+              },
             },
-            overlays: [
-              [
-                'Arrow',
-                {
-                  width: 10,
-                  length: 10,
-                  location: 1,
-                  id: 'arrow',
-                  foldback: 1,
-                  fill: '#2C65FF',
-                },
-              ],
-            ],
+            size: 2,
+            positionByWindowResize: false,
+            hide: true,
           })
         })
+        this.leaderLines.forEach((el) => {
+          el.show('draw', { duration: 300 })
+        })
 
-        // 缓存所有dom node
-        this.targetDomSet = targetDom
-        this.otherDomSet = otherDom
-      }, 500)
+        console.log(this.leaderLines)
+      }, 50)
     },
 
     handleQuit() {
       this.showParentLineage = false
-      this.jsPlumbIns.reset()
+      this.clearLeaderLines()
+    },
+
+    clearLeaderLines() {
+      this.leaderLines?.forEach((el) => {
+        el.remove()
+      })
+      this.leaderLines = []
     },
 
     handleListenerEsc(e) {
@@ -576,14 +564,9 @@ export default {
 
     onScroll() {
       if (this.showParentLineage) {
-        for (const el of this.otherDomSet) {
-          this.jsPlumbIns.revalidate(el)
-        }
-
-        // 后面可对api节点特殊处理
-        for (const el of this.targetDomSet) {
-          this.jsPlumbIns.revalidate(el)
-        }
+        this.leaderLines.forEach((el) => {
+          el.position()
+        })
       }
     },
   },
