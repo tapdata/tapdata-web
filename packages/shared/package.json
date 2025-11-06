@@ -11,10 +11,12 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@vueuse/core": "catalog:",
     "core-js": "catalog:",
     "dayjs": "catalog:",
     "fecha": "catalog:",
     "requestidlecallback": "catalog:",
-    "tiny-emitter": "catalog:"
+    "tiny-emitter": "catalog:",
+    "vue": "catalog:"
   }
 }

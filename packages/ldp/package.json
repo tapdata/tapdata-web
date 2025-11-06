@@ -19,6 +19,7 @@
     "@tap/dag": "workspace:*",
     "@tap/form": "workspace:*",
     "@tap/i18n": "workspace:*",
+    "@tap/leader-line": "workspace:^",
     "@tap/shared": "workspace:*",
     "@vue-flow/background": "^1.3.2",
     "@vue-flow/core": "^1.47.0",
