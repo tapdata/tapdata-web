@@ -5,7 +5,7 @@ import {
   getLogcollectorDetail,
   patchLogcollectorId,
 } from '@tap/api/src/core/logcollector'
-import { getTaskById, updateTask } from '@tap/api/src/core/task'
+import { getTaskById, patchTask } from '@tap/api/src/core/task'
 import SchemaToForm from '@tap/form/src/SchemaToForm.vue'
 import dayjs from 'dayjs'
 
@@ -285,7 +285,7 @@ export default {
           })
         }
       })
-      updateTask({
+      patchTask({
         id: this.taskId,
         dag,
       })

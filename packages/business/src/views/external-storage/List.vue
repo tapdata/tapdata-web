@@ -521,7 +521,7 @@ export default {
       />
       <ElTableColumn
         show-overflow-tooltip
-        min-width="120"
+        width="172"
         :label="$t('public_create_time')"
         prop="createTimeFmt"
       />
