@@ -67,6 +67,7 @@ html.dark {
 html.dark {
   color-scheme: dark;
   --color-primary: #3370eb;
+  --primary-raw: 51, 112, 235;
   --el-color-primary: #3370eb;
   --el-color-primary: #3370eb;
   --el-color-primary-light-3: rgb(41.7, 84.4, 170.5);
