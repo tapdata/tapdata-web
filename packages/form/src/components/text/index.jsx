@@ -13,13 +13,12 @@ export const Text = defineComponent({
         {
           lineHeight: '22px',
           'white-space': 'pre-wrap',
-          color: '#535f72',
         },
         props.contentStyle || {},
       )
       return (
-        <div className={className} style={style}>
-          {icon && <i class={'el-icon-' + icon + ' ' + iconClass}></i>}
+        <div class={['font-color-light', className]} style={style}>
+          {icon && <i class={`el-icon-${icon} ${iconClass}`}></i>}
           {content}
         </div>
       )
