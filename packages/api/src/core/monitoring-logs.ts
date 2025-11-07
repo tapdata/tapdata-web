@@ -10,5 +10,6 @@ export function exportMonitoringLogs(params: any) {
   return requestClient.post(`${BASE_URL}/export`, params, {
     responseType: 'blob',
     responseReturn: 'raw',
+    skipErrorHandler: true,
   })
 }

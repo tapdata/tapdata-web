@@ -142,7 +142,7 @@ export default {
 </script>
 
 <template>
-  <div class="record-wrap py-4 pl-4 h-100 w-100">
+  <div class="h-100 w-100">
     <VTable
       ref="table"
       :remote-method="remoteMethod"
@@ -166,9 +166,3 @@ export default {
     </VTable>
   </div>
 </template>
-
-<style lang="scss" scoped>
-.record-wrap {
-  width: calc(100% - 16px);
-}
-</style>

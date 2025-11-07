@@ -596,4 +596,5 @@ export default {
   public_updated_from_now: '更新于 {time}',
   public_crontabExpression: 'Cron 表達式',
   public_start_at_time: '啟動于 {time}',
+  public_last_operation_time: '最後操作時間',
 }

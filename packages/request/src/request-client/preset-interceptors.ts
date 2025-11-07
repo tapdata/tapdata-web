@@ -19,10 +19,23 @@ export const defaultResponseInterceptor = ({
   successCode: ((code: any) => boolean) | number | string
 }): ResponseInterceptorConfig => {
   return {
-    fulfilled: (response) => {
+    fulfilled: async (response) => {
       const { config, data: responseData, status } = response
 
       if (config.responseReturn === 'raw') {
+        if (
+          config.responseType === 'blob' &&
+          responseData.type === 'application/json'
+        ) {
+          const text = await responseData.text()
+          throw Object.assign({}, response, {
+            response: {
+              ...response,
+              data: JSON.parse(text),
+            },
+          })
+        }
+
         return response
       }
 

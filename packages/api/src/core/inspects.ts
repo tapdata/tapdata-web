@@ -29,9 +29,7 @@ export function importInspect(data: any) {
 }
 
 export function exportSql(id: string, resultId: string) {
-  return requestClient.put(
-    `${BASE_URL}/${id}/exportRecoverySql?inspectResultId=${resultId}`,
-  )
+  return requestClient.put(`${BASE_URL}/${id}/recover-sql/${resultId}/export`)
 }
 
 export function batchUpdateListtags(params: any) {
@@ -66,4 +64,14 @@ export function findOneInspect(params: any) {
 
 export function deleteInspectById(id: string) {
   return requestClient.delete(`${BASE_URL}/${id}`)
+}
+
+export function downloadRecoverSql(inspectId: string, inspectResultId: string) {
+  return requestClient.get(
+    `${BASE_URL}/${inspectId}/recover-sql/${inspectResultId}/download`,
+    {
+      responseType: 'blob',
+      responseReturn: 'raw',
+    },
+  )
 }
