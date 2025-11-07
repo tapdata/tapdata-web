@@ -564,7 +564,7 @@ export default {
     onScroll() {
       if (this.showParentLineage) {
         this.edgsLinks.forEach((el) => {
-          el.leaderLine.position()
+          el.leaderLine?.position()
         })
       }
     },

@@ -35,7 +35,7 @@ const props = defineProps<{
 }>()
 
 const rootRef = useTemplateRef<HTMLElement>('root')
-const { addNodes, addEdges, fitView, zoomOut, zoomIn } = useVueFlow()
+const { fitView, zoomOut, zoomIn } = useVueFlow()
 const { layout } = useLayout()
 
 const vueFlowRef = ref<InstanceType<typeof VueFlow> | null>(null)
@@ -199,12 +199,8 @@ const fetchTaskReplicateLag = async () => {
 
 const handleLayoutGraph = () => {
   nodes.value = layout(nodes.value, edges.value, 'LR')
-
   nextTick(() => {
-    fitView({
-      nodes: currentNodeId.value ? [currentNodeId.value] : undefined,
-      maxZoom: 1,
-    })
+    fitView()
   })
 }
 
