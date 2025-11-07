@@ -1,851 +1,1283 @@
-<script lang="tsx">
+<script setup lang="ts">
 import {
   createMetadataDefinition,
   deleteMetadataDefinition,
   patchMetadataDefinition,
 } from '@tap/api/core/metadata-definitions'
 import { fetchMetadataInstances } from '@tap/api/core/metadata-instances'
-import { createDiscoveryTags } from '@tap/api/src/core/discovery'
+import {
+  createDiscoveryTags,
+  getDiscoveryDirectoryData,
+} from '@tap/api/src/core/discovery'
 import { createMDMTask } from '@tap/api/src/core/ldp'
+import { checkTaskName } from '@tap/api/src/core/task'
+import { CancelToken } from '@tap/api/src/request'
 import { makeDragNodeImage, TASK_SETTINGS } from '@tap/business/src/shared'
 import { IconButton } from '@tap/component/src/icon-button'
 import { FieldSelect, mapFieldsData } from '@tap/form'
-import i18n from '@tap/i18n'
+import { validateCron } from '@tap/form/src/shared/validate'
+import { useI18n } from '@tap/i18n'
+import LeaderLine from '@tap/leader-line'
 import { generateId, uuid } from '@tap/shared'
 import { useAnimEvent } from '@tap/shared/src/composables/useAnimEvent'
+import { useIntersectionObserver } from '@vueuse/core'
 import { debounce } from 'lodash-es'
-import { h } from 'vue'
-import commonMix from './mixins/common'
+import {
+  computed,
+  h,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  ref,
+  resolveComponent,
+  watch,
+} from 'vue'
+import { useRouter } from 'vue-router'
+// @ts-ignore - vuex type issue
+import { useStore } from 'vuex'
 
-export default {
-  name: 'MDM',
-  components: { IconButton, FieldSelect },
-  mixins: [commonMix],
-  props: {
-    directory: Object,
-    settings: Object,
-    dragState: Object,
-    mdmConnection: Object,
-    mdmNotExist: Boolean,
-    eventDriver: Object,
-    loadingDirectory: Boolean,
-    mapCatalog: {
-      type: Function,
-      require: true,
-    },
-    showParentLineage: Boolean,
-  },
-  emits: [
-    'preview',
-    'find-parent',
-    'show-settings',
-    'node-drag-end',
-    'handle-connection',
-    'onScroll',
-  ],
-  data() {
-    const { wrappedListener: onScroll } = useAnimEvent(
-      () => {
-        this.handleScroll?.()
-      },
-      {
-        keepLoop: 500, // ✅ 持续响应
-        autoCleanup: true, // ✅ 自动清理
-        enabled: true, // ✅ 可控制
-      },
-    )
-    return {
-      onScroll,
-      creating: false,
-      taskDialogConfig: {
-        from: null,
-        to: null,
-        visible: false,
-        prefix: 'f_',
-        tableName: null,
-        newTableName: null,
-        notSupportedCDC: false,
-        task: {
-          type: 'initial_sync+cdc',
-          crontabExpressionFlag: false,
-          crontabExpression: '',
-          crontabExpressionType: 'once',
-        },
-        fields: [],
-        updateConditionFields: [],
-      },
-      expandedKeys: [],
-      dialogConfig: {
-        type: 'add',
-        id: '',
-        gid: '',
-        label: '',
-        title: '',
-        itemType: 'resource',
-        desc: '',
-        visible: false,
-      },
-      searchIng: false,
-      search: '',
-      enableSearch: false,
-      filterTreeData: [],
-      tablePrefix: 'MDM_',
-      showMaterialized: false,
-      materializedTableName: '',
-      createMethod: 'transformation',
-      currentKey: '',
-    }
-  },
-  computed: {
-    treeData() {
-      return this.directory?.children || []
-    },
+// Props
+interface Props {
+  directory?: any
+  settings?: any
+  dragState?: any
+  mdmConnection?: any
+  mdmNotExist?: boolean
+  eventDriver?: any
+  loadingDirectory?: boolean
+  mapCatalog: (item: any) => any
+  showParentLineage?: boolean
+}
 
-    allowDrop() {
-      return (
-        !this.mdmNotExist &&
-        this.dragState.isDragging &&
-        ['SOURCE', 'FDM'].includes(this.dragState.from) &&
-        this.dragState.draggingObjects[0]?.data.LDP_TYPE === 'table'
-      )
-    },
+const props = withDefaults(defineProps<Props>(), {
+  directory: undefined,
+  settings: undefined,
+  dragState: undefined,
+  mdmConnection: undefined,
+  mdmNotExist: false,
+  eventDriver: undefined,
+  loadingDirectory: false,
+  showParentLineage: false,
+})
 
-    isDragSelf() {
-      return this.dragState.isDragging && this.dragState.from === 'MDM'
-    },
-  },
-  watch: {
-    loadingDirectory(v) {
-      if (!v) {
-        this.setNodeExpand()
-      }
-    },
-  },
-  created() {
-    this.debouncedSearch = debounce(this.searchObject, 300)
-  },
-  mounted() {
-    // this.setNodeExpand()
-    if (!this.loadingDirectory) {
-      this.$nextTick(() => {
-        this.setNodeExpand()
-      })
-    }
-  },
-  methods: {
-    renderContent(h, { node, data }) {
-      let icon
-      let actions
-      data.SWIM_TYPE = 'mdm'
+// Emits
+const emit = defineEmits<{
+  preview: [data: any, connection: any, callback?: any]
+  findParent: [el: HTMLElement, data: any]
+  showSettings: []
+  nodeDragEnd: []
+  handleConnection: []
+  onScroll: []
+  updateAnchor: [anchor: LeaderLine.AnchorAttachment, data: any]
+}>()
 
-      if (!data.isObject) {
-        actions = [
-          <IconButton
-            sm
-            onClick={(ev) => {
-              ev.stopPropagation()
-              this.showDialog(data, 'add')
-            }}
-          >
-            add
-          </IconButton>,
-          <ElDropdown
-            placement="bottom"
-            trigger="click"
-            onCommand={(command) => this.handleMoreCommand(command, data)}
-          >
-            {{
-              default: () => (
-                <IconButton
-                  onClick={(ev) => {
-                    ev.stopPropagation()
-                  }}
-                  sm
-                >
-                  more
-                </IconButton>
-              ),
-              dropdown: () => (
-                <ElDropdownMenu>
-                  <ElDropdownItem command="edit">
-                    {this.$t('public_button_edit')}
-                  </ElDropdownItem>
-                  <ElDropdownItem command="delete">
-                    {this.$t('public_button_delete')}
-                  </ElDropdownItem>
-                </ElDropdownMenu>
-              ),
-            }}
-          </ElDropdown>,
-        ]
-      }
+// Router & Store
+const router = useRouter()
+const store = useStore()
 
-      if (data.LDP_TYPE === 'table') {
-        node.isLeaf = true
-        icon = 'table'
+// Refs
+const tree = ref<InstanceType<typeof ElTree>>()
+const form = ref<InstanceType<typeof ElForm>>()
+const search = ref<InstanceType<typeof ElInput>>()
+const treeWrap = ref<HTMLElement>()
+const tableNameInput = ref<InstanceType<typeof ElInput>>()
+const scrollWrap = ref<HTMLElement>()
+let stopObserver: (() => void) | null
+
+// State from mixin (formRules & cronOptions)
+const { t } = useI18n()
+
+const validateTaskName = async (_rule: any, value: string, callback: any) => {
+  value = value.trim()
+  if (!value) {
+    callback(new Error(t('packages_business_relation_list_qingshururenwu')))
+  } else {
+    try {
+      const isExist = await checkTaskName({ name: value })
+      if (isExist) {
+        callback(new Error(t('packages_dag_task_form_error_name_duplicate')))
       } else {
-        node.isLeaf = false
-        icon = 'folder-o'
+        callback()
       }
+    } catch {
+      callback()
+    }
+  }
+}
 
-      return (
-        <div
-          class="custom-tree-node grabbable flex justify-content-between"
-          onClick={() => {
-            data.isObject &&
-              this.$emit('preview', data, this.mdmConnection, {
-                onDelete: (tagId) => {
-                  // this.setNodeExpand(tagId)
-                  this.$refs.tree.remove(data.id)
-                },
-              })
-          }}
-          onDragenter={(ev) => {
+const validatePrefix = (_rule: any, value: string, callback: any) => {
+  value = value.trim()
+  if (!value) {
+    callback(new Error(t('public_form_not_empty')))
+  } else if (!/\w+/.test(value)) {
+    callback(new Error(t('packages_business_data_server_drawer_geshicuowu')))
+  } else {
+    callback()
+  }
+}
+
+const validateCrontabExpression = (
+  _rule: any,
+  value: string,
+  callback: any,
+) => {
+  value = value.trim()
+  if (!value) {
+    callback(new Error(t('public_form_not_empty')))
+  } else if (!validateCron(value)) {
+    callback(t('packages_dag_migration_settingpanel_cronbiao'))
+  } else {
+    callback()
+  }
+}
+
+const cronOptions = [
+  {
+    label: t('packages_ldp_run_only_once'),
+    value: 'once',
+  },
+  {
+    label: t('packages_ldp_run_every_10_minutes'),
+    value: '0 */10 * * * ?',
+  },
+  {
+    label: t('packages_ldp_run_every_hour'),
+    value: '0 0 * * * ?',
+  },
+  {
+    label: t('packages_ldp_run_every_day'),
+    value: '0 0 0 * * ?',
+  },
+  {
+    label: t('packages_ldp_custom_cron_expression'),
+    value: 'custom',
+  },
+]
+
+const formRules: any = {
+  taskName: [{ validator: validateTaskName, trigger: 'blur' }],
+  newTableName: [{ required: true }],
+  prefix: [{ validator: validatePrefix, trigger: 'blur' }],
+  'task.crontabExpression': [
+    {
+      required: true,
+      message: t('public_form_not_empty'),
+      trigger: ['blur', 'change'],
+    },
+    { validator: validateCrontabExpression, trigger: ['blur', 'change'] },
+  ],
+}
+
+// Computed from mixin
+const startingTour = computed(() => store.getters.startingTour)
+
+// State
+const creating = ref(false)
+const taskDialogConfig = ref({
+  from: null as any,
+  to: null as any,
+  visible: false,
+  prefix: 'f_',
+  tableName: null as any,
+  newTableName: null as any,
+  notSupportedCDC: false,
+  task: {
+    type: 'initial_sync+cdc',
+    crontabExpressionFlag: false,
+    crontabExpression: '',
+    crontabExpressionType: 'once',
+  },
+  fields: [] as any[],
+  updateConditionFields: [] as any[],
+  loading: false,
+  tagId: undefined as any,
+})
+
+const expandedKeys = ref<string[]>([])
+const dialogConfig = ref({
+  type: 'add',
+  id: '',
+  gid: '',
+  label: '',
+  title: '',
+  itemType: 'resource',
+  desc: '',
+  visible: false,
+  item: null as any,
+  isParent: true,
+})
+
+const searchIng = ref(false)
+const searchValue = ref('')
+const enableSearch = ref(false)
+const filterTreeData = ref<any[]>([])
+const tablePrefix = ref('MDM_')
+const showMaterialized = ref(false)
+const materializedTableName = ref('')
+const createMethod = ref('transformation')
+const currentKey = ref('')
+const currentEl = ref<HTMLElement>()
+
+// Search & Cancel
+let cancelSource: any = null
+let draggingNodeImage: any = null
+
+// Scroll handler with useAnimEvent
+const { wrappedListener: onScroll } = useAnimEvent(
+  () => {
+    handleScroll?.()
+  },
+  {
+    keepLoop: 500,
+    autoCleanup: true,
+    enabled: true,
+  },
+)
+
+// Computed
+const treeData = computed(() => props.directory?.children || [])
+
+const allowDrop = computed(() => {
+  return (
+    !props.mdmNotExist &&
+    props.dragState.isDragging &&
+    ['SOURCE', 'FDM'].includes(props.dragState.from) &&
+    props.dragState.draggingObjects[0]?.data.LDP_TYPE === 'table'
+  )
+})
+
+const isDragSelf = computed(() => {
+  return props.dragState.isDragging && props.dragState.from === 'MDM'
+})
+
+// Watch
+watch(
+  () => props.loadingDirectory,
+  (v) => {
+    if (!v) {
+      setNodeExpand()
+    }
+  },
+)
+
+watch(
+  () => props.showParentLineage,
+  (v) => {
+    if (!v) {
+      stopObserver?.()
+      stopObserver = null
+    }
+  },
+)
+
+// Methods from mixin
+function toggleEnableSearch() {
+  if (enableSearch.value) {
+    searchValue.value = ''
+    enableSearch.value = false
+  } else {
+    enableSearch.value = true
+    nextTick(() => {
+      search.value?.focus()
+    })
+  }
+}
+
+function handleSearch(val: string) {
+  if (!val) {
+    searchIng.value = false
+    debouncedSearch.cancel()
+    return
+  }
+  searchIng.value = true
+  debouncedSearch(val)
+}
+
+function openRoute(route: any, newTab = true) {
+  if (newTab) {
+    window.open(router.resolve(route).href)
+  } else {
+    router.push(route)
+  }
+}
+
+function handleClickName(task: any) {
+  if (!task?.id) return
+
+  let routeName
+
+  if (!['edit', 'wait_start'].includes(task.status)) {
+    routeName = task.syncType === 'migrate' ? 'MigrationMonitor' : 'TaskMonitor'
+  } else {
+    routeName = task.syncType === 'migrate' ? 'MigrateEditor' : 'DataflowEditor'
+  }
+
+  openRoute({
+    name: routeName,
+    query: {
+      tour: startingTour.value ? true : undefined,
+    },
+    params: {
+      id: task.id,
+    },
+  })
+}
+
+function loadObjects(
+  node: any,
+  isCurrent = true,
+  queryKey?: string,
+  cancelToken?: any,
+) {
+  const where = {
+    page: 1,
+    pageSize: 10000,
+    tagId: node.id,
+    range: isCurrent ? 'current' : undefined,
+    sourceType: 'table',
+    queryKey,
+    regUnion: false,
+    fields: {
+      allTags: 1,
+    },
+  }
+  return getDiscoveryDirectoryData(where, {
+    cancelToken,
+  }).then((res) => {
+    return res.items.map((item: any) =>
+      Object.assign(item, {
+        isLeaf: true,
+        isObject: true,
+        connectionId: item.sourceConId,
+        LDP_TYPE: 'table',
+        parent_id: node.id,
+        isVirtual: item.status === 'noRunning',
+      }),
+    )
+  })
+}
+
+async function searchObject(searchText: string) {
+  cancelSource?.cancel()
+  cancelSource = CancelToken.source()
+  searchIng.value = true
+  const result = await loadObjects(
+    props.directory,
+    false,
+    searchText,
+    cancelSource.token,
+  )
+  const map = result.reduce((obj: any, item: any) => {
+    const id = item.listtags?.[0]?.id || props.directory.id
+    const children = obj[id] || []
+    children.push(item)
+    obj[id] = children
+    return obj
+  }, {})
+
+  const filterTree = (node: any): any => {
+    const newNode = { ...node }
+
+    if (node.children?.length) {
+      newNode.children = node.children
+        .map((child: any) => filterTree(child))
+        .filter(
+          (child: any) =>
+            child.LDP_TYPE === 'folder' &&
+            (child.name.includes(searchText) || child.children.length),
+        )
+    } else {
+      newNode.children = []
+    }
+
+    if (map[node.id]) {
+      newNode.children.push(...map[node.id].map((child: any) => ({ ...child })))
+    }
+
+    return newNode
+  }
+
+  const root = filterTree(props.directory)
+  searchIng.value = false
+  filterTreeData.value = root.children
+}
+
+function handleChangeCronType(val: string) {
+  if (val === 'once') {
+    taskDialogConfig.value.task.crontabExpressionFlag = false
+  } else {
+    taskDialogConfig.value.task.crontabExpressionFlag = true
+    if (val !== 'custom') {
+      taskDialogConfig.value.task.crontabExpression = val
+    }
+  }
+}
+
+// Unused but kept for potential future use
+// function setExpand(id: string, isExpand: boolean) {
+//   const i = expandedKeys.value.indexOf(id)
+//   if (!isExpand) {
+//     if (~i) expandedKeys.value.splice(i, 1)
+//   } else if (!~i) expandedKeys.value.push(id)
+// }
+
+// Unused but kept for potential future use
+// function handeNodeCollapse(data: any) {
+//   setExpand(data.id, false)
+// }
+
+// Unused but kept for potential future use
+// async function makeTaskName(source: string) {
+//   const taskNames = await fetchTasks({
+//     limit: 9999,
+//     fields: { name: 1 },
+//     where: { name: { like: `^${source}\\d+$` } },
+//   })
+//   let def = 1
+//   if (taskNames?.items.length) {
+//     const arr = [0]
+//     taskNames.items.forEach((item: any) => {
+//       const res = item.name.match(new RegExp(`^${source}(\\d+)$`))
+//       if (res && res[1]) arr.push(+res[1])
+//     })
+//     arr.sort((a, b) => a - b)
+//     def = arr.pop() + 1
+//   }
+//   return `${source}${def}`
+// }
+
+function findParentByClassName(parent: any, cls: string) {
+  while (parent && !parent.classList.contains(cls)) {
+    parent = parent.parentNode
+  }
+  return parent
+}
+
+// Component specific methods
+function renderContent(_h: any, { node, data }: any) {
+  let icon
+  let actions
+  data.SWIM_TYPE = 'mdm'
+
+  if (!data.isObject) {
+    actions = h('div', { class: 'btn-menu' }, [
+      h(
+        IconButton,
+        {
+          sm: true,
+          onClick: (ev: Event) => {
             ev.stopPropagation()
-            this.handleTreeDragEnter(ev, data, node)
-          }}
-          onDragover={(ev) => {
-            ev.stopPropagation()
-            this.handleTreeDragOver(ev, data, node)
-          }}
-          onDragleave={(ev) => {
-            ev.stopPropagation()
-            this.handleTreeDragLeave(ev, data, node)
-          }}
-          onDrop={(ev) => {
-            ev.stopPropagation()
-            this.handleTreeDrop(ev, data, node)
-          }}
-        >
-          <div class="flex align-center flex-fill mr-2">
-            <div class="flex-fill w-0 inline-flex align-items-center">
-              <span
-                id={
-                  data.isObject ? `ldp_mdm_table_${data.id}_${data.name}` : ''
-                }
-                class="inline-flex align-items-center overflow-hidden"
-              >
-                {icon && (
-                  <VIcon size="18" class="tree-item-icon mr-2">
-                    {icon}
-                  </VIcon>
-                )}
-                <span title={data.name} class="table-label">
-                  {data.name}
-                </span>
-              </span>
-            </div>
-          </div>
-          <div>
-            {data.comment && (
-              <span class="font-color-sslight">{`(${data.comment})`}</span>
-            )}
-            {data.isObject ? (
-              <ElTooltip
-                show-after={200}
-                hide-after={0}
-                enterable={false}
-                content={i18n.t('packages_ldp_view_lineage')}
-                placement="top"
-              >
-                <VIcon
-                  size="18"
-                  class="lineage-icon"
-                  onClick={(ev) => {
-                    ev.stopPropagation()
-                    this.handleFindLineage(data)
-                  }}
-                >
-                  suyuan
-                </VIcon>
-              </ElTooltip>
-            ) : (
-              <div class="btn-menu">{actions}</div>
-            )}
-          </div>
-        </div>
-      )
-    },
-
-    handleCommand(command) {
-      switch (command) {
-        case 'config':
-          this.$emit('show-settings')
-          break
-      }
-    },
-
-    handleDragOver(ev) {
-      ev.preventDefault()
-    },
-
-    handleDragEnter(ev) {
-      ev.preventDefault()
-
-      if (!this.allowDrop) return
-
-      const dropNode = this.findParentByClassName(ev.currentTarget, 'tree-wrap')
-      dropNode.classList.add('is-drop')
-    },
-
-    handleDragLeave(ev) {
-      ev.preventDefault()
-      if (!this.allowDrop) return
-      if (!ev.currentTarget.contains(ev.relatedTarget)) {
-        this.removeDropEffect(ev, 'tree-wrap', 'is-drop')
-      }
-    },
-
-    handleDrop(ev) {
-      ev.preventDefault()
-
-      this.removeDropEffect(ev, 'tree-wrap', 'is-drop')
-
-      if (!this.allowDrop) return
-
-      this.showTaskDialog()
-    },
-
-    findParentByClassName(parent, cls) {
-      while (parent && !parent.classList.contains(cls)) {
-        parent = parent.parentNode
-      }
-      return parent
-    },
-
-    showTaskDialog(tagId) {
-      const {
-        draggingObjects: [object],
-      } = this.dragState
-
-      this.taskDialogConfig.from = object.parent.data
-      this.taskDialogConfig.tableName = object.data.name
-      this.taskDialogConfig.newTableName = object.data.name.replace(/^FDM_/, '')
-      this.taskDialogConfig.tagId = tagId
-      this.taskDialogConfig.visible = true
-      this.$refs.form?.resetFields()
-      this.taskDialogConfig.task.crontabExpressionFlag = false
-      this.taskDialogConfig.task.crontabExpression = ''
-
-      const capbilitiesMap = this.taskDialogConfig.from.capabilities.reduce(
-        (map, item) => {
-          map[item.id] = true
-          return map
+            showDialog(data, 'add')
+          },
         },
+        () => 'add',
+      ),
+      h(
+        resolveComponent('ElDropdown'),
+        {
+          placement: 'bottom',
+          trigger: 'click',
+          onCommand: (command: string) => handleMoreCommand(command, data),
+        },
+        {
+          default: () =>
+            h(
+              IconButton,
+              {
+                sm: true,
+                onClick: (ev: Event) => {
+                  ev.stopPropagation()
+                },
+              },
+              () => 'more',
+            ),
+          dropdown: () =>
+            h(resolveComponent('ElDropdownMenu'), {}, () => [
+              h(resolveComponent('ElDropdownItem'), { command: 'edit' }, () =>
+                t('public_button_edit'),
+              ),
+              h(resolveComponent('ElDropdownItem'), { command: 'delete' }, () =>
+                t('public_button_delete'),
+              ),
+            ]),
+        },
+      ),
+    ])
+  }
+
+  if (data.LDP_TYPE === 'table') {
+    node.isLeaf = true
+    icon = 'table'
+  } else {
+    node.isLeaf = false
+    icon = 'folder-o'
+  }
+
+  return h(
+    'div',
+    {
+      class: 'custom-tree-node grabbable flex justify-content-between',
+      onClick: () => {
+        data.isObject &&
+          emit('preview', data, props.mdmConnection, {
+            onDelete: () => {
+              tree.value?.remove(data.id)
+            },
+          })
+      },
+      onDragenter: (ev: DragEvent) => {
+        ev.stopPropagation()
+        handleTreeDragEnter(ev, data)
+      },
+      onDragover: (ev: DragEvent) => {
+        ev.stopPropagation()
+        handleTreeDragOver(ev)
+      },
+      onDragleave: (ev: DragEvent) => {
+        ev.stopPropagation()
+        handleTreeDragLeave(ev)
+      },
+      onDrop: (ev: DragEvent) => {
+        ev.stopPropagation()
+        handleTreeDrop(ev, data)
+      },
+    },
+    [
+      h('div', { class: 'flex align-center flex-fill mr-2' }, [
+        h('div', { class: 'flex-fill w-0 inline-flex align-items-center' }, [
+          h(
+            'span',
+            {
+              id: data.isObject ? `ldp_mdm_table_${data.id}_${data.name}` : '',
+              class: 'inline-flex align-items-center overflow-hidden',
+            },
+            [
+              icon &&
+                h(
+                  resolveComponent('VIcon'),
+                  { size: '18', class: 'tree-item-icon mr-2' },
+                  () => icon,
+                ),
+              h('span', { title: data.name, class: 'table-label' }, data.name),
+            ],
+          ),
+        ]),
+      ]),
+      h('div', {}, [
+        data.comment &&
+          h('span', { class: 'font-color-sslight' }, `(${data.comment})`),
+        data.isObject
+          ? h(
+              resolveComponent('ElTooltip'),
+              {
+                'show-after': 200,
+                'hide-after': 0,
+                enterable: false,
+                content: t('packages_ldp_view_lineage'),
+                placement: 'top',
+              },
+              {
+                default: () =>
+                  h(
+                    resolveComponent('VIcon'),
+                    {
+                      size: '18',
+                      class: 'lineage-icon',
+                      onClick: (ev: Event) => {
+                        ev.stopPropagation()
+                        handleFindLineage(data)
+                      },
+                    },
+                    () => 'suyuan',
+                  ),
+              },
+            )
+          : actions,
+      ]),
+    ],
+  )
+}
+
+// Unused but kept for potential future use
+// function handleCommand(command: string) {
+//   switch (command) {
+//     case 'config':
+//       emit('showSettings')
+//       break
+//   }
+// }
+
+function handleDragOver(ev: DragEvent) {
+  ev.preventDefault()
+}
+
+function handleDragEnter(ev: DragEvent) {
+  ev.preventDefault()
+
+  if (!allowDrop.value) return
+
+  const dropNode = findParentByClassName(ev.currentTarget, 'tree-wrap')
+  dropNode.classList.add('is-drop')
+}
+
+function handleDragLeave(ev: DragEvent) {
+  ev.preventDefault()
+  if (!allowDrop.value) return
+  const target = ev.currentTarget as HTMLElement | null
+  if (target && !target.contains(ev.relatedTarget as Node)) {
+    removeDropEffect(ev, 'tree-wrap', 'is-drop')
+  }
+}
+
+function handleDrop(ev: DragEvent) {
+  ev.preventDefault()
+
+  removeDropEffect(ev, 'tree-wrap', 'is-drop')
+
+  if (!allowDrop.value) return
+
+  showTaskDialog()
+}
+
+function showTaskDialog(tagId?: string) {
+  const {
+    draggingObjects: [object],
+  } = props.dragState
+
+  taskDialogConfig.value.from = object.parent.data
+  taskDialogConfig.value.tableName = object.data.name
+  taskDialogConfig.value.newTableName = object.data.name.replace(/^FDM_/, '')
+  taskDialogConfig.value.tagId = tagId
+  taskDialogConfig.value.visible = true
+  form.value?.resetFields()
+  taskDialogConfig.value.task.crontabExpressionFlag = false
+  taskDialogConfig.value.task.crontabExpression = ''
+
+  const capbilitiesMap = taskDialogConfig.value.from.capabilities.reduce(
+    (map: any, item: any) => {
+      map[item.id] = true
+      return map
+    },
+    {},
+  )
+
+  if (
+    !capbilitiesMap.stream_read_function &&
+    !capbilitiesMap.raw_data_callback_filter_function &&
+    !capbilitiesMap.raw_data_callback_filter_function_v2 &&
+    (!capbilitiesMap.query_by_advance_filter_function ||
+      !capbilitiesMap.batch_read_function)
+  ) {
+    taskDialogConfig.value.notSupportedCDC = true
+    taskDialogConfig.value.task.type = 'initial_sync'
+  } else {
+    taskDialogConfig.value.notSupportedCDC = false
+  }
+
+  loadFields()
+}
+
+function taskDialogSubmit(start: boolean, confirmTable?: boolean) {
+  form.value?.validate(async (valid: boolean) => {
+    if (!valid) return
+    const {
+      tableName,
+      from,
+      newTableName,
+      tagId,
+      task: settings,
+    } = taskDialogConfig.value
+    const task = Object.assign(
+      makeTask(from, tableName, tablePrefix.value + newTableName),
+      settings,
+    )
+    creating.value = true
+    try {
+      const result = await createMDMTask(task, {
+        silenceMessage: true,
+        params: { tagId, confirmTable, start },
+      })
+      taskDialogConfig.value.visible = false
+      ElMessage.success({
+        message: h(
+          'span',
+          {
+            class: 'color-primary fs-7 clickable',
+            onClick: () => {
+              handleClickName(result)
+            },
+          },
+          t('packages_business_task_created_success'),
+        ),
+      })
+      setTimeout(() => {
+        setNodeExpand(tagId)
+      }, 1000)
+    } catch (error: any) {
+      const code = error?.data?.code
+      const data = error?.data?.data
+      if (code === 'Ldp.MdmTargetNoPrimaryKey' && data) {
+        taskDialogConfig.value.visible = false
+        ElMessage.warning({
+          duration: 6000,
+          showClose: true,
+          message: h(
+            'span',
+            {
+              class: 'color-primary fs-7 clickable',
+              onClick: () => {
+                handleClickName(data)
+              },
+            },
+            t('packages_business_task_created_fail_no_primary_key'),
+          ),
+        })
+        setTimeout(() => {
+          setNodeExpand(tagId)
+        }, 1000)
+      } else if (code === 'Ldp.RepeatTableName') {
+        ElMessageBox.confirm(
+          t('packages_business_mdm_table_duplication_confirm'),
+          '',
+          {},
+        ).then((resFlag) => {
+          if (!resFlag) {
+            return
+          }
+          taskDialogSubmit(start, true)
+        })
+      } else if (code === 'Task.ListWarnMessage' && data) {
+        const keys = Object.keys(data)
+        const firstKey = keys[0]
+        const msg = firstKey ? data[firstKey]?.[0]?.msg : undefined
+        ElMessage.error(
+          msg || error.data.message || t('public_message_save_fail'),
+        )
+      } else {
+        ElMessage.error(error.data.message || t('public_message_save_fail'))
+      }
+    }
+    creating.value = false
+  })
+}
+
+function makeTask(from: any, tableName: string, newTableName: string) {
+  const source = getTableNode(from, tableName)
+  const target: any = getTableNode(props.mdmConnection, newTableName)
+
+  target.updateConditionFields = taskDialogConfig.value.updateConditionFields
+
+  return {
+    ...TASK_SETTINGS,
+    syncType: 'sync',
+    name: getTaskName(from, tableName, newTableName),
+    dag: {
+      edges: [{ source: source.id, target: target.id }],
+      nodes: [source, target],
+    },
+  }
+}
+
+function getTableNode(db: any = {}, tableName: string) {
+  return {
+    id: uuid(),
+    type: 'table',
+    name: tableName,
+    tableName,
+    connectionId: db.id,
+    databaseType: db.database_type,
+    attrs: {
+      connectionName: db.name,
+      connectionType: db.connection_type,
+      accessNodeProcessId: db.accessNodeProcessId,
+      pdkType: db.pdkType,
+      pdkHash: db.pdkHash,
+      capabilities: db.capabilities || [],
+      hasCreated: false,
+      db_version: db.db_version,
+      connectionTags: db.definitionTags,
+    },
+  }
+}
+
+function getTaskName(from: any, tableName: string, newTableName: string) {
+  return `${from.name}_Sync_${tableName}_To_MDM_${newTableName}_${generateId(6)}`
+}
+
+async function handleNodeExpand(
+  data: any,
+  node: any,
+  forceLoadTable?: boolean,
+) {
+  // 十秒内加载过资源，不再继续加载
+  if (!forceLoadTable && node.loadTime && Date.now() - node.loadTime < 10000)
+    return
+
+  node.loadTime = Date.now()
+  node.loading = true
+  const objects = await loadObjects(data)
+  node.loading = false
+
+  const childrenMap = data.children
+    ? data.children.reduce(
+        (map: any, item: any) => ((map[item.id] = true), map),
         {},
       )
+    : {}
 
-      if (
-        !capbilitiesMap.stream_read_function &&
-        !capbilitiesMap.raw_data_callback_filter_function &&
-        !capbilitiesMap.raw_data_callback_filter_function_v2 &&
-        (!capbilitiesMap.query_by_advance_filter_function ||
-          !capbilitiesMap.batch_read_function)
-      ) {
-        this.taskDialogConfig.notSupportedCDC = true
-        this.taskDialogConfig.task.type = 'initial_sync'
-      } else {
-        this.taskDialogConfig.notSupportedCDC = false
-      }
+  objects.forEach((item: any) => {
+    if (childrenMap[item.id]) {
+      delete childrenMap[item.id]
+      return
+    }
+    item.parent_id = data.id
+    item.isObject = true
+    item.connectionId = item.sourceConId
+    tree.value?.append(item, node as any)
+  })
 
-      this.loadFields()
+  // 删除不存在的模型节点
+  Object.entries(childrenMap).forEach(([key, item]: [string, any]) => {
+    if (item && item.isObject) {
+      tree.value?.remove(key as any)
+    }
+  })
+}
+
+function setNodeExpand(tagId?: string, forceLoadTable?: boolean) {
+  if (!tagId || tagId === props.directory?.id) {
+    props.directory?.id &&
+      handleNodeExpand(props.directory, tree.value?.root, forceLoadTable)
+  } else {
+    const node = tree.value?.getNode(tagId)
+    if (node) {
+      handleNodeExpand(node.data, node, forceLoadTable)
+      expandedKeys.value = [tagId]
+    }
+  }
+}
+
+function handleTreeDragOver(ev: DragEvent) {
+  ev.preventDefault()
+}
+
+function handleTreeDragEnter(ev: DragEvent, data: any) {
+  ev.preventDefault()
+
+  if (allowDrop.value && data.isObject) return
+  if (!allowDrop.value && !isDragSelf.value) return
+
+  const dropNode = findParentNodeByClassName(ev.currentTarget, 'el-tree-node')
+  dropNode.classList.add('is-drop-inner')
+}
+
+function handleTreeDragLeave(ev: DragEvent) {
+  ev.preventDefault()
+  if (!allowDrop.value && !isDragSelf.value) return
+  const target = ev.currentTarget as HTMLElement | null
+  if (target && !target.contains(ev.relatedTarget as Node)) {
+    removeDropEffect(ev, 'el-tree-node')
+    if (!ev.relatedTarget) {
+      removeDropEffect(ev, 'tree-wrap', 'is-drop')
+    }
+  }
+}
+
+function handleTreeDrop(ev: DragEvent, data: any) {
+  ev.preventDefault()
+
+  if (!allowDrop.value) return
+
+  removeDropEffect(ev, 'el-tree-node')
+  removeDropEffect(ev, 'tree-wrap', 'is-drop')
+
+  showTaskDialog(!data.isObject ? data.id : undefined)
+}
+
+function handleSelfDrop(draggingNode: any, dropNode: any) {
+  if (dropNode.data.isObject) return
+  if (!draggingNode.data.isObject) {
+    patchMetadataDefinition({
+      id: draggingNode.data.id,
+      parent_id: dropNode.data.id || '',
+    })
+      .then(() => {
+        ElMessage.success(t('public_message_operation_success'))
+        draggingNode.data.parent_id = dropNode.data.id
+      })
+      .catch((error) => {
+        ElMessage.error(error.message)
+      })
+  } else {
+    moveTag(draggingNode.data.parent_id, dropNode.data.id, [draggingNode.data])
+  }
+}
+
+function findParentNodeByClassName(el: any, cls: string) {
+  let parent = el.parentNode
+  while (parent && !parent.classList.contains(cls)) {
+    parent = parent.parentNode
+  }
+  return parent
+}
+
+function removeDropEffect(
+  ev: DragEvent,
+  cls = 'wrap__item',
+  removeCls = 'is-drop-inner',
+) {
+  const dropNode = findParentByClassName(ev.currentTarget, cls)
+  dropNode.classList.remove(removeCls)
+}
+
+function handleDragStart(draggingNodeParam: any, ev: DragEvent) {
+  const wrappedNode = {
+    ...draggingNodeParam,
+    parent: {
+      data: props.mdmConnection,
     },
+  }
+  draggingNodeImage = makeDragNodeImage(
+    (ev.currentTarget as HTMLElement).querySelector('.tree-item-icon'),
+    wrappedNode.data.name,
+  )
+  ;(ev.dataTransfer as DataTransfer).setDragImage(draggingNodeImage, 4, 4)
+  ;(ev.dataTransfer as DataTransfer).effectAllowed = 'copy'
+  // Mutate dragState as expected by parent (Dashboard)
+  Object.assign(props.dragState, {
+    isDragging: true,
+    draggingObjects: [wrappedNode],
+    from: 'MDM',
+  })
+}
 
-    taskDialogSubmit(start, confirmTable) {
-      this.$refs.form.validate(async (valid) => {
-        if (!valid) return
-        const {
-          tableName,
-          from,
-          newTableName,
-          tagId,
-          task: settings,
-        } = this.taskDialogConfig
-        const task = Object.assign(
-          this.makeTask(from, tableName, this.tablePrefix + newTableName),
-          settings,
-        )
-        this.creating = true
-        try {
-          const result = await createMDMTask(task, {
-            silenceMessage: true,
-            params: { tagId, confirmTable, start },
-          })
-          this.taskDialogConfig.visible = false
-          this.$message.success({
-            message: h(
-              'span',
-              {
-                class: 'color-primary fs-7 clickable',
-                onClick: () => {
-                  this.handleClickName(result)
-                },
-              },
-              this.$t('packages_business_task_created_success'),
-            ),
-          })
-          setTimeout(() => {
-            this.setNodeExpand(tagId)
-          }, 1000)
-        } catch (error) {
-          const code = error?.data?.code
-          const data = error?.data?.data
-          if (code === 'Ldp.MdmTargetNoPrimaryKey' && data) {
-            this.taskDialogConfig.visible = false
-            this.$message.warning({
-              duration: 6000,
-              showClose: true,
-              message: h(
-                'span',
-                {
-                  class: 'color-primary fs-7 clickable',
-                  onClick: () => {
-                    this.handleClickName(data)
-                  },
-                },
-                this.$t('packages_business_task_created_fail_no_primary_key'),
-              ),
-            })
-            setTimeout(() => {
-              this.setNodeExpand(tagId)
-            }, 1000)
-          } else if (code === 'Ldp.RepeatTableName') {
-            this.$confirm(
-              i18n.t('packages_business_mdm_table_duplication_confirm'),
-              {
-                zIndex: 999999,
-              },
-            ).then((resFlag) => {
-              if (!resFlag) {
-                return
-              }
-              this.taskDialogSubmit(start, true)
-            })
-          } else if (code === 'Task.ListWarnMessage' && data) {
-            const keys = Object.keys(data)
-            const msg = data[keys[0]]?.[0]?.msg
-            this.$message.error(
-              msg || error.data.message || this.$t('public_message_save_fail'),
+function handleDragEnd() {
+  emit('nodeDragEnd')
+}
+
+function showDialog(data: any, dialogType: string) {
+  const type = dialogType || 'add'
+  let itemType = 'resource'
+  if (data && data.item_type) {
+    itemType = data.item_type?.join('')
+  }
+  dialogConfig.value = {
+    itemType,
+    visible: true,
+    type,
+    item: data,
+    id: data ? data.id : '',
+    gid: data?.gid || '',
+    label: type === 'edit' ? data.name : '',
+    isParent: true,
+    desc: type === 'edit' ? data?.desc : '',
+    title:
+      type === 'add'
+        ? t('packages_component_classification_addChildernNode')
+        : t('public_button_edit'),
+  }
+}
+
+function hideDialog() {
+  dialogConfig.value.visible = false
+}
+
+async function loadFields() {
+  taskDialogConfig.value.loading = true
+  taskDialogConfig.value.fields = []
+  taskDialogConfig.value.updateConditionFields = []
+
+  const {
+    items: [schema = {}],
+  } = await fetchMetadataInstances({
+    page: 1,
+    size: 1,
+    where: {
+      'source.id': taskDialogConfig.value.from.id,
+      meta_type: { in: ['collection', 'table', 'view'] },
+      is_deleted: false,
+      sourceType: 'SOURCE',
+      original_name: taskDialogConfig.value.tableName,
+    },
+    fields: {
+      original_name: true,
+      fields: true,
+      qualified_name: true,
+      name: true,
+      indices: true,
+      constraints: true,
+    },
+  }).finally(() => {
+    taskDialogConfig.value.loading = false
+  })
+
+  const { fields } = mapFieldsData(schema)
+  taskDialogConfig.value.fields = fields
+
+  let defaultList = fields.filter((item: any) => item.isPrimaryKey)
+
+  if (!defaultList.length) {
+    defaultList = fields.filter((item: any) => item.indicesUnique)
+  }
+
+  if (!defaultList.length) {
+    defaultList = fields.filter((item: any) => item.source === 'virtual_hash')
+  }
+
+  taskDialogConfig.value.updateConditionFields = defaultList.map(
+    (item: any) => item.value,
+  )
+}
+
+async function dialogSubmit() {
+  const config = dialogConfig.value
+  const value = config.label
+  const id = config.id
+  const itemType = [config.itemType]
+  let method = createMetadataDefinition
+
+  if (!value || value.trim() === '') {
+    ElMessage.error(t('packages_component_classification_nodeName'))
+    return
+  }
+
+  const params: any = {
+    item_type: itemType,
+    desc: config.desc,
+    value,
+  }
+
+  if (config.type === 'edit') {
+    method = patchMetadataDefinition
+    params.id = id
+    delete params.item_type
+  } else if (id) {
+    params.parent_id = id
+  }
+
+  try {
+    const data = await method(params)
+    hideDialog()
+    ElMessage.success(t('public_message_operation_success'))
+    if (data && config.type === 'add') {
+      dialogConfig.value.item.children.push(props.mapCatalog(data))
+    } else if (config.type === 'edit') {
+      dialogConfig.value.item.name = params.value
+      dialogConfig.value.item.desc = params.desc
+    }
+  } catch (error: any) {
+    ElMessage.error(error.message)
+  }
+}
+
+function checkAllowDrop(draggingNode: any, dropNode: any, type: string) {
+  return type === 'inner' && isDragSelf.value && !dropNode.data.isObject
+}
+
+async function moveTag(from: string, to: string, objects: any[]) {
+  if (from === to) return
+
+  const tagBindingParams = objects.map((t) => {
+    return {
+      id: t.id,
+      objCategory: t.category,
+    }
+  })
+
+  await createDiscoveryTags({
+    tagBindingParams,
+    tagIds: [to],
+    oldTagIds: [from],
+  })
+  objects.forEach((item) => (item.parent_id = to))
+  ElMessage.success(t('public_message_operation_success'))
+}
+
+function handleMoreCommand(command: string, data: any) {
+  switch (command) {
+    case 'add':
+    case 'edit':
+      showDialog(data, command)
+      break
+    case 'delete':
+      deleteNode(data)
+  }
+}
+
+function deleteNode(data: any) {
+  ElMessageBox.confirm(
+    `${t('public_message_delete_confirm')}: ${data.name}?`,
+    t('packages_business_catalog_delete_confirm_message'),
+    {
+      confirmButtonText: t('public_button_delete'),
+    },
+  ).then((resFlag) => {
+    if (!resFlag) {
+      return
+    }
+    deleteMetadataDefinition(data.id).then(() => {
+      tree.value?.remove(data.id)
+
+      // 删除目录刷新上一级加载被删除目录下的表
+      setNodeExpand(data.parent_id, true)
+    })
+  })
+}
+
+function handleFindLineage(data: any) {
+  const el = document.querySelector(
+    `#ldp_mdm_table_${data.id}_${data.name}`,
+  ) as HTMLElement
+
+  if (el) {
+    currentKey.value = data.id
+    currentEl.value = el || undefined
+    stopObserver?.()
+    stopObserver = useIntersectionObserver(
+      el,
+      ([entry]) => {
+        if (!props.showParentLineage) return
+        const visible = entry?.isIntersecting || false
+
+        if (!visible) {
+          const container = scrollWrap.value!
+          const containerRect = container.getBoundingClientRect()
+          const targetRect = el.getBoundingClientRect()
+
+          // 计算目标元素相对于容器的位置
+          const targetTop =
+            targetRect.top - containerRect.top + container.scrollTop
+          const targetBottom = targetTop + targetRect.height
+          const containerHeight = containerRect.height
+
+          if (targetTop < container.scrollTop) {
+            emit(
+              'updateAnchor',
+              LeaderLine.pointAnchor(container, {
+                x: '50%',
+                y: 0,
+              })!,
+              data,
             )
-          } else {
-            this.$message.error(
-              error.data.message || this.$t('public_message_save_fail'),
+          } else if (targetBottom > container.scrollTop + containerHeight) {
+            emit(
+              'updateAnchor',
+              LeaderLine.pointAnchor(container, {
+                x: '50%',
+                y: '100%',
+              }),
+              data,
             )
           }
+        } else {
+          emit('updateAnchor', el, data)
         }
-        this.creating = false
-      })
-    },
+      },
+      {
+        immediate: true,
+        threshold: 0.5,
+      },
+    ).stop
 
-    makeTask(from, tableName, newTableName) {
-      const source = this.getTableNode(from, tableName)
-      const target = this.getTableNode(this.mdmConnection, newTableName)
-
-      target.updateConditionFields = this.taskDialogConfig.updateConditionFields
-
-      return {
-        ...TASK_SETTINGS,
-        syncType: 'sync',
-        name: this.getTaskName(from, tableName, newTableName),
-        dag: {
-          edges: [{ source: source.id, target: target.id }],
-          nodes: [source, target],
-        },
-      }
-    },
-
-    getTableNode(db: any = {}, tableName: string) {
-      return {
-        id: uuid(),
-        type: 'table',
-        name: tableName,
-        tableName,
-        connectionId: db.id,
-        databaseType: db.database_type,
-        attrs: {
-          connectionName: db.name,
-          connectionType: db.connection_type,
-          accessNodeProcessId: db.accessNodeProcessId,
-          pdkType: db.pdkType,
-          pdkHash: db.pdkHash,
-          capabilities: db.capabilities || [],
-          hasCreated: false,
-          db_version: db.db_version,
-          connectionTags: db.definitionTags,
-        },
-      }
-    },
-
-    getTaskName(from, tableName, newTableName) {
-      return `${from.name}_Sync_${tableName}_To_MDM_${newTableName}_${generateId(6)}`
-    },
-
-    async handleNodeExpand(data, node, forceLoadTable) {
-      // 十秒内加载过资源，不再继续加载
-      if (
-        !forceLoadTable &&
-        node.loadTime &&
-        Date.now() - node.loadTime < 10000
-      )
-        return
-
-      node.loadTime = Date.now()
-      node.loading = true
-      const objects = await this.loadObjects(data)
-      node.loading = false
-
-      const childrenMap = data.children
-        ? data.children.reduce((map, item) => ((map[item.id] = true), map), {})
-        : {}
-
-      objects.forEach((item) => {
-        if (childrenMap[item.id]) {
-          delete childrenMap[item.id]
-          return
-        }
-        item.parent_id = data.id
-        item.isObject = true
-        item.connectionId = item.sourceConId
-        this.$refs.tree?.append(item, node)
-      })
-
-      // 删除不存在的模型节点
-      Object.entries(childrenMap).forEach(([key, item]) => {
-        if (item.isObject) {
-          this.$refs.tree.remove(key)
-        }
-      })
-    },
-
-    setNodeExpand(tagId, forceLoadTable) {
-      if (!tagId || tagId === this.directory?.id) {
-        this.directory?.id &&
-          this.handleNodeExpand(
-            this.directory,
-            this.$refs.tree.root,
-            forceLoadTable,
-          )
-      } else {
-        const node = this.$refs.tree.getNode(tagId)
-        this.handleNodeExpand(node.data, node, forceLoadTable)
-        this.expandedKeys = [tagId]
-      }
-    },
-
-    handleTreeDragOver(ev) {
-      ev.preventDefault()
-    },
-
-    handleTreeDragEnter(ev, data) {
-      ev.preventDefault()
-
-      if (this.allowDrop && data.isObject) return
-      if (!this.allowDrop && !this.isDragSelf) return
-
-      const dropNode = this.findParentNodeByClassName(
-        ev.currentTarget,
-        'el-tree-node',
-      )
-      dropNode.classList.add('is-drop-inner')
-    },
-
-    handleTreeDragLeave(ev, data) {
-      ev.preventDefault()
-      if (!this.allowDrop && !this.isDragSelf) return
-      if (!ev.currentTarget.contains(ev.relatedTarget)) {
-        this.removeDropEffect(ev, 'el-tree-node')
-        if (!ev.relatedTarget) {
-          this.removeDropEffect(ev, 'tree-wrap', 'is-drop')
-        }
-      }
-    },
-
-    handleTreeDrop(ev, data) {
-      ev.preventDefault()
-
-      if (!this.allowDrop) return
-
-      this.removeDropEffect(ev, 'el-tree-node')
-      this.removeDropEffect(ev, 'tree-wrap', 'is-drop')
-
-      this.showTaskDialog(!data.isObject ? data.id : undefined)
-    },
-
-    handleSelfDrop(draggingNode, dropNode, dropType, ev) {
-      if (dropNode.data.isObject) return
-      if (!draggingNode.data.isObject) {
-        patchMetadataDefinition({
-          id: draggingNode.data.id,
-          parent_id: dropNode.data.id || '',
-        })
-          .then(() => {
-            this.$message.success(this.$t('public_message_operation_success'))
-            draggingNode.data.parent_id = dropNode.data.id
-            // this.getData()
-          })
-          .catch((error) => {
-            this.$message.error(error.message)
-          })
-      } else {
-        this.moveTag(draggingNode.data.parent_id, dropNode.data.id, [
-          draggingNode.data,
-        ])
-      }
-    },
-
-    findParentNodeByClassName(el, cls) {
-      let parent = el.parentNode
-      while (parent && !parent.classList.contains(cls)) {
-        parent = parent.parentNode
-      }
-      return parent
-    },
-
-    removeDropEffect(ev, cls = 'wrap__item', removeCls = 'is-drop-inner') {
-      const dropNode = this.findParentByClassName(ev.currentTarget, cls)
-      dropNode.classList.remove(removeCls)
-    },
-
-    handleDragStart(draggingNode, ev) {
-      draggingNode = {
-        ...draggingNode,
-        parent: {
-          data: this.mdmConnection,
-        },
-      }
-      this.draggingNode = draggingNode
-      this.draggingNodeImage = makeDragNodeImage(
-        ev.currentTarget.querySelector('.tree-item-icon'),
-        draggingNode.data.name,
-      )
-      ev.dataTransfer.setDragImage(this.draggingNodeImage, 4, 4)
-      ev.dataTransfer.effectAllowed = 'copy'
-      this.dragState.isDragging = true
-      this.dragState.draggingObjects = [draggingNode]
-      this.dragState.from = 'MDM'
-    },
-
-    handleDragEnd() {
-      this.$emit('node-drag-end')
-    },
-
-    showDialog(data, dialogType) {
-      const type = dialogType || 'add'
-      let itemType = 'resource'
-      if (data && data.item_type) {
-        itemType = data.item_type?.join('')
-      }
-      this.dialogConfig = {
-        itemType,
-        visible: true,
-        type,
-        item: data,
-        id: data ? data.id : '',
-        gid: data?.gid || '',
-        label: type === 'edit' ? data.name : '',
-        isParent: true,
-        desc: type === 'edit' ? data?.desc : '',
-        title:
-          type === 'add'
-            ? this.$t('packages_component_classification_addChildernNode')
-            : this.$t('public_button_edit'),
-      }
-    },
-    hideDialog() {
-      this.dialogConfig.visible = false
-    },
-    async loadFields() {
-      this.taskDialogConfig.loading = true
-      this.taskDialogConfig.fields = []
-      this.taskDialogConfig.updateConditionFields = []
-
-      const {
-        items: [schema = {}],
-      } = await fetchMetadataInstances({
-        page: 1,
-        size: 1,
-        where: {
-          'source.id': this.taskDialogConfig.from.id,
-          meta_type: { in: ['collection', 'table', 'view'] },
-          is_deleted: false,
-          sourceType: 'SOURCE',
-          original_name: this.taskDialogConfig.tableName,
-        },
-        fields: {
-          original_name: true,
-          fields: true,
-          qualified_name: true,
-          name: true,
-          indices: true,
-          constraints: true,
-        },
-      }).finally(() => {
-        this.taskDialogConfig.loading = false
-      })
-
-      const { fields } = mapFieldsData(schema)
-      this.taskDialogConfig.fields = fields
-
-      let defaultList = fields.filter((item) => item.isPrimaryKey)
-
-      if (!defaultList.length) {
-        defaultList = fields.filter((item) => item.indicesUnique)
-      }
-
-      if (!defaultList.length) {
-        defaultList = fields.filter((item) => item.source === 'virtual_hash')
-      }
-
-      this.taskDialogConfig.updateConditionFields = defaultList.map(
-        (item) => item.value,
-      )
-    },
-    async dialogSubmit() {
-      const config = this.dialogConfig
-      const value = config.label
-      const id = config.id
-      const itemType = [config.itemType]
-      let method = createMetadataDefinition
-
-      if (!value || value.trim() === '') {
-        this.$message.error(
-          this.$t('packages_component_classification_nodeName'),
-        )
-        return
-      }
-
-      const params = {
-        item_type: itemType,
-        desc: config.desc,
-        value,
-      }
-
-      if (config.type === 'edit') {
-        method = patchMetadataDefinition
-        params.id = id
-        delete params.item_type
-      } else if (id) {
-        params.parent_id = id
-      }
-
-      try {
-        const data = await method(params)
-        this.hideDialog()
-        this.$message.success(this.$t('public_message_operation_success'))
-        if (data && config.type === 'add') {
-          this.dialogConfig.item.children.push(this.mapCatalog(data))
-        } else if (config.type === 'edit') {
-          this.dialogConfig.item.name = params.value
-          this.dialogConfig.item.desc = params.desc
-        }
-      } catch (error) {
-        this.$message.error(error.message)
-      }
-    },
-
-    checkAllowDrop(draggingNode, dropNode, type) {
-      return type === 'inner' && this.isDragSelf && !dropNode.data.isObject
-    },
-
-    async moveTag(from, to, objects) {
-      if (from === to) return
-
-      const tagBindingParams = objects.map((t) => {
-        return {
-          id: t.id,
-          objCategory: t.category,
-        }
-      })
-      /*await discoveryApi.patchTags({
-      tagBindingParams,
-      tagIds: [from]
-    })*/
-      await createDiscoveryTags({
-        tagBindingParams,
-        tagIds: [to],
-        oldTagIds: [from],
-      })
-      objects.forEach((item) => (item.parent_id = to))
-      this.$message.success(this.$t('public_message_operation_success'))
-    },
-
-    handleMoreCommand(command, data) {
-      switch (command) {
-        case 'add':
-        case 'edit':
-          this.showDialog(data, command)
-          break
-        case 'delete':
-          this.deleteNode(data)
-      }
-    },
-
-    deleteNode(data) {
-      this.$confirm(
-        `${this.$t('public_message_delete_confirm')}: ${data.name}?`,
-        this.$t('packages_business_catalog_delete_confirm_message'),
-        {
-          confirmButtonText: this.$t('public_button_delete'),
-        },
-      ).then((resFlag) => {
-        if (!resFlag) {
-          return
-        }
-        deleteMetadataDefinition(data.id).then(() => {
-          this.$refs.tree.remove(data.id)
-
-          // 删除目录刷新上一级加载被删除目录下的表
-          this.setNodeExpand(data.parent_id, true)
-        })
-      })
-    },
-
-    handleFindLineage(data) {
-      const el = document.getElementById(
-        `ldp_mdm_table_${data.id}_${data.name}`,
-      )
-      this.currentKey = data.id
-      this.currentEl = el
-      this.$emit('find-parent', el, data)
-    },
-
-    handleScroll() {
-      if (!this.showParentLineage) return
-      console.log('handleScroll', this.currentEl)
-      this.$emit('onScroll')
-    },
-
-    openMaterializedDialog() {
-      this.materializedTableName = ''
-      this.showMaterialized = true
-      this.createMethod = 'transformation'
-    },
-
-    createMaterializedView() {
-      const tableName = this.materializedTableName.trim()
-
-      if (!tableName) return
-
-      this.$router.push({
-        name: 'DataflowNew',
-        query: {
-          by:
-            this.createMethod === 'transformation'
-              ? 'transformation-materialized'
-              : 'materialized-view',
-          connectionId: this.mdmConnection.id,
-          tableName: this.tablePrefix + tableName,
-        },
-      })
-    },
-
-    handleDialogOpened() {
-      this.$nextTick(() => {
-        this.$refs.tableNameInput.focus()
-      })
-    },
-  },
+    emit('findParent', el, data)
+  }
 }
+
+function handleScroll() {
+  if (!props.showParentLineage) return
+  emit('onScroll')
+}
+
+function openMaterializedDialog() {
+  materializedTableName.value = ''
+  showMaterialized.value = true
+  createMethod.value = 'transformation'
+}
+
+function createMaterializedView() {
+  const tableName = materializedTableName.value.trim()
+
+  if (!tableName) return
+
+  router.push({
+    name: 'DataflowNew',
+    query: {
+      by:
+        createMethod.value === 'transformation'
+          ? 'transformation-materialized'
+          : 'materialized-view',
+      connectionId: props.mdmConnection?.id || '',
+      tableName: tablePrefix.value + tableName,
+    },
+  })
+}
+
+function handleDialogOpened() {
+  nextTick(() => {
+    tableNameInput.value?.focus()
+  })
+}
+
+// Methods for Dashboard.vue to call
+function handleFindTreeDom(val: any = {}) {
+  const el = document.querySelector(
+    `#ldp_mdm_table_${val.metadata?.id}_${val.table}`,
+  ) as HTMLElement
+  return el
+}
+
+function searchByKeywordList(val: any[] = []) {
+  const searchExpandedKeys: string[] = []
+  filterTreeData.value = val.map((t) => {
+    searchExpandedKeys.push(t.connectionId)
+    return {
+      LDP_TYPE: 'connection',
+      id: t.connectionId,
+      name: t.connectionName,
+      status: 'ready',
+      isLeaf: false,
+      level: 0,
+      disabled: false,
+      children: [
+        {
+          id: t.tableId,
+          name: t.table,
+          connectionId: t.connectionId,
+          isLeaf: true,
+          isObject: true,
+          type: 'table',
+          LDP_TYPE: 'table',
+        },
+      ],
+    }
+  })
+  // Note: If you need searchExpandedKeys ref, add it to the component state
+}
+
+// Debounced search
+const debouncedSearch = debounce(searchObject, 300)
+
+// Lifecycle
+onMounted(() => {
+  if (!props.loadingDirectory) {
+    nextTick(() => {
+      setNodeExpand()
+    })
+  }
+})
+
+onUnmounted(() => {
+  debouncedSearch?.cancel()
+  cancelSource?.cancel()
+  stopObserver?.()
+})
+
+// Expose methods that might be called from Dashboard.vue
+defineExpose({
+  handleFindTreeDom,
+  searchByKeywordList,
+  setNodeExpand,
+})
 </script>
 
 <template>
@@ -870,12 +1302,6 @@ export default {
         @click="toggleEnableSearch"
         >search-outline</IconButton
       >
-      <!--<ElDropdown trigger="click" @command="handleCommand">
-            <IconButton class="ml-3">more</IconButton>
-            <ElDropdownMenu slot="dropdown">
-              <ElDropdownItem command="config"> Configure </ElDropdownItem>
-            </ElDropdownMenu>
-          </ElDropdown>-->
     </div>
     <div
       ref="treeWrap"
@@ -888,7 +1314,7 @@ export default {
       <div v-if="enableSearch" class="px-2 pt-2">
         <ElInput
           ref="search"
-          v-model="search"
+          v-model="searchValue"
           clearable
           @keydown.stop
           @keyup.stop
@@ -902,11 +1328,12 @@ export default {
       </div>
 
       <div
+        ref="scrollWrap"
         class="flex-1 min-h-0 position-relative overflow-y-auto p-1"
         @scroll="onScroll"
       >
         <div
-          v-if="search || searchIng"
+          v-if="searchValue || searchIng"
           v-loading="searchIng"
           class="search-view position-absolute top-0 left-0 w-100 h-100 bg-white"
         >
@@ -1118,18 +1545,6 @@ export default {
             show-word-limit
           />
         </ElFormItem>
-        <!--<ElFormItem
-              :label="$t('packages_component_src_discoveryclassification_mulufenlei')"
-              v-if="dialogConfig.isParent"
-            >
-              <ElSelect v-model="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
-                <el-option
-                  :label="$t('packages_component_src_discoveryclassification_ziyuanmulu')"
-                  value="resource"
-                ></el-option>
-                &lt;!&ndash;            <el-option label="任务目录" value="task"></el-option>&ndash;&gt;
-              </ElSelect>
-            </ElFormItem>-->
         <ElFormItem
           :label="
             $t('packages_component_src_discoveryclassification_mulumiaoshu')

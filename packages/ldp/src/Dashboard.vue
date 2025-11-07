@@ -327,6 +327,7 @@ export default {
     handleFindParent(parentNode, tableInfo = {}, ldpType = 'mdm') {
       findLineageByTable(tableInfo.connectionId, tableInfo.name).then(
         (data) => {
+          this.clearLeaderLines()
           const { edges, nodes } = data.dag || {}
           this.nodes = nodes
           const otherLdpType = ldpType === 'mdm' ? 'fdm' : 'mdm'
@@ -442,9 +443,6 @@ export default {
         this.$refs.fdm[0].searchByKeywordList(keywordOptions.fdm)
       }
 
-      const targetDom = new Set()
-      const otherDom = new Set()
-
       setTimeout(() => {
         this.edgsLinks.forEach((el) => {
           const { sourceNode, targetNode } = el || {}
@@ -452,43 +450,44 @@ export default {
           const tDom = targetNode.dom || map[targetNode.ldpType](targetNode)
           // 过滤掉source节点连线到source节点的情况
           if (targetNode.ldpType !== 'source') {
-            connectionLines.push([sDom, tDom])
-          }
-
-          otherDom.add(sDom)
-
-          if (targetNode.ldpType === 'target') {
-            targetDom.add(tDom)
-          } else {
-            otherDom.add(tDom)
-          }
-        })
-
-        this.clearLeaderLines()
-        this.connectionLines = connectionLines
-        this.leaderLines = this.connectionLines.map((el = []) => {
-          const [source, target] = el
-          return new LeaderLine(source, target, {
-            color: 'var(--color-primary)',
-            dash: {
-              len: 5,
-              gap: 5,
-              animation: {
-                duration: 500, // 与 Vue Flow 的 2s 匹配
-                timing: 'linear',
+            el.leaderLine = new LeaderLine(sDom, tDom, {
+              color: 'var(--color-primary)',
+              dash: {
+                len: 5,
+                gap: 5,
+                animation: {
+                  duration: 500, // 与 Vue Flow 的 2s 匹配
+                  timing: 'linear',
+                },
               },
-            },
-            size: 2,
-            positionByWindowResize: false,
-            hide: true,
-          })
-        })
-        this.leaderLines.forEach((el) => {
-          el.show('draw', { duration: 300 })
+              size: 2,
+              positionByWindowResize: false,
+              hide: true,
+            })
+
+            el.leaderLine.show('draw', { duration: 300 })
+          }
         })
 
-        console.log(this.leaderLines)
+        console.log(this.edgsLinks)
       }, 50)
+    },
+
+    updateAnchor(anchor, data) {
+      console.log('updateAnchor', anchor, data)
+      this.edgsLinks.forEach((el) => {
+        if (
+          el.sourceNode.connectionId === data.connectionId &&
+          el.sourceNode.table === data.name
+        ) {
+          el.leaderLine.start = anchor
+        } else if (
+          el.targetNode.connectionId === data.connectionId &&
+          el.targetNode.table === data.name
+        ) {
+          el.leaderLine.end = anchor
+        }
+      })
     },
 
     handleQuit() {
@@ -497,10 +496,10 @@ export default {
     },
 
     clearLeaderLines() {
-      this.leaderLines?.forEach((el) => {
-        el.remove()
+      this.edgsLinks?.forEach((el) => {
+        el.leaderLine?.remove()
       })
-      this.leaderLines = []
+      this.edgsLinks = []
     },
 
     handleListenerEsc(e) {
@@ -564,8 +563,8 @@ export default {
 
     onScroll() {
       if (this.showParentLineage) {
-        this.leaderLines.forEach((el) => {
-          el.position()
+        this.edgsLinks.forEach((el) => {
+          el.leaderLine.position()
         })
       }
     },
@@ -647,6 +646,7 @@ export default {
             @find-parent="handleFindParent"
             @on-scroll="onScroll"
             @handle-show-upgrade="handleShowUpgradeDialog"
+            @update-anchor="updateAnchor"
           />
         </template>
       </div>
