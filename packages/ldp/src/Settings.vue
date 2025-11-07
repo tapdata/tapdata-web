@@ -376,6 +376,7 @@ export default {
                 v-if="form.fdmStorageCluster === 'self'"
                 v-model="form.fdmStorageConnectionId"
                 class="w-100"
+                filterable
               >
                 <ElOption
                   v-for="op in connectionsList"
@@ -432,6 +433,7 @@ export default {
                 v-if="form.mdmStorageCluster === 'self'"
                 v-model="form.mdmStorageConnectionId"
                 class="w-100"
+                filterable
               >
                 <ElOption
                   v-for="op in connectionsList"

@@ -1,18 +1,16 @@
 <script>
 import { fetchMetadataDefinitions } from '@tap/api/core/metadata-definitions'
 import { getConnectionNoSchema } from '@tap/api/src/core/connections'
-import { findLineageByTable } from '@tap/api/src/core/lineage'
 import SceneDialog from '@tap/business/src/components/create-connection/SceneDialog.vue'
 import UpgradeCharges from '@tap/business/src/components/UpgradeCharges.vue'
 import UpgradeFee from '@tap/business/src/components/UpgradeFee.vue'
 import { EventEmitter } from '@tap/business/src/shared/event'
-import { jsPlumb } from '@tap/dag/src/instance'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 
-import ConnectionPreview from './ConnectionPreview'
-import SourceItem from './Source'
-import TablePreview from './TablePreview'
-import TargetItem from './TargetPanel'
+import ConnectionPreview from './ConnectionPreview.vue'
+import SourceItem from './Source.vue'
+import TablePreview from './TablePreview.vue'
+import TargetItem from './TargetPanel.vue'
 
 const TYPE2NAME = {
   target: 'TARGET&SERVICE',
@@ -58,12 +56,6 @@ export default {
       loadingDirectory: true,
       eventDriver: new EventEmitter(),
       currentView: 'swimlane',
-      parentNodeDom: null,
-      preLinkNodes: [],
-      nextLinkNodes: [],
-      connectionLines: [],
-      jsPlumbIns: jsPlumb.getInstance(),
-      showParentLineage: false,
       nodes: [],
       edgsLinks: [],
       upgradeFeeVisible: false,
@@ -130,14 +122,6 @@ export default {
     if (window.__USER_INFO__?.id === this.userId) {
       this.overViewVisible = this.panelFlag
     }
-  },
-
-  mounted() {},
-
-  beforeUnmount() {
-    window.removeEventListener('keyword', this.handleListenerEsc)
-    // 销毁画布实例
-    this.jsPlumbIns?.destroy()
   },
 
   methods: {
@@ -335,176 +319,6 @@ export default {
       }
     },
 
-    handleFindParent(parentNode, tableInfo = {}, ldpType = 'mdm') {
-      findLineageByTable(tableInfo.connectionId, tableInfo.name).then(
-        (data) => {
-          const { edges, nodes } = data.dag || {}
-          this.nodes = nodes
-          const otherLdpType = ldpType === 'mdm' ? 'fdm' : 'mdm'
-          const edgsLinks = edges.map((t) => {
-            const sourceNode = this.nodes.find((el) => el.id === t.source)
-            const targetNode = this.nodes.find((el) => el.id === t.target)
-            sourceNode.dom = null
-            targetNode.dom = null
-            sourceNode.ldpType =
-              sourceNode.type === 'apiserverLineage'
-                ? 'target'
-                : this.settings.fdmStorageConnectionId ===
-                    sourceNode.connectionId
-                  ? otherLdpType
-                  : 'source'
-            targetNode.ldpType =
-              targetNode.type === 'apiserverLineage'
-                ? 'target'
-                : this.settings.fdmStorageConnectionId ===
-                    targetNode.connectionId
-                  ? otherLdpType
-                  : 'source'
-            // 记录事件触发的dom和ldpType
-            if (sourceNode.table === tableInfo.name) {
-              sourceNode.ldpType = ldpType
-              sourceNode.dom = parentNode
-            } else if (targetNode.table === tableInfo.name) {
-              targetNode.ldpType = ldpType
-              targetNode.dom = parentNode
-            }
-            return Object.assign(t, {
-              sourceNode,
-              targetNode,
-            })
-          })
-          this.edgsLinks = edgsLinks
-
-          this.showParentLineage = true
-          this.handleConnection()
-        },
-      )
-    },
-
-    async handleConnection() {
-      if (!this.showParentLineage) return
-      const connectionLines = []
-
-      // 获取dom的方法
-      const map = {
-        source: this.$refs.source.handleFindTreeDom,
-        target: this.$refs.target.handleFindTaskDom,
-        mdm() {},
-        fdm: this.$refs.fdm[0].handleFindTreeDom,
-      }
-
-      // 需要过滤的数据
-      const keywordOptions = {
-        source: [],
-        target: [],
-        fdm: [],
-        mdm: [],
-      }
-      this.nodes.forEach((el) => {
-        if (el.ldpType === 'target') {
-          if (el.type === 'apiserverLineage') {
-            const { table, modules = {} } = el || {}
-            const { appName, name } = Object.values(modules)[0] || {}
-            keywordOptions[el.ldpType].push({
-              table,
-              appName,
-              serverName: name,
-              type: el.type,
-            })
-          }
-        } else {
-          const {
-            connectionId,
-            connectionName,
-            pdkHash,
-            table,
-            metadata = {},
-          } = el || {}
-          // ldpType为source，且是连线目标节点的ldpType也为source，则过滤不展示
-          const flag =
-            el.ldpType === 'source' &&
-            this.edgsLinks.some(
-              (t) =>
-                t.sourceNode?.id === el.id &&
-                t.targetNode?.ldpType === 'source',
-            )
-          if (!flag) {
-            keywordOptions[el.ldpType]?.push({
-              connectionId,
-              connectionName,
-              pdkHash,
-              table,
-              tableId: metadata.id,
-            })
-          }
-        }
-      })
-
-      // 过滤source列表
-      if (keywordOptions) {
-        this.$refs.source.searchByKeywordList(keywordOptions.source)
-        this.$refs.target.searchByKeywordList(keywordOptions.target)
-        this.$refs.fdm[0].searchByKeywordList(keywordOptions.fdm)
-      }
-
-      this.$nextTick(() => {
-        this.edgsLinks.forEach((el) => {
-          const { sourceNode, targetNode } = el || {}
-          const sDom = sourceNode.dom || map[sourceNode.ldpType](sourceNode)
-          const tDom = targetNode.dom || map[targetNode.ldpType](targetNode)
-          // 过滤掉source节点连线到source节点的情况
-          if (targetNode.ldpType !== 'source') {
-            connectionLines.push([sDom, tDom])
-          }
-        })
-
-        this.connectionLines = connectionLines
-
-        this.jsPlumbIns.reset()
-        this.connectionLines.forEach((el = []) => {
-          const [source, target] = el
-          this.jsPlumbIns.connect({
-            source, // 源节点
-            target, // 目标节点
-            endpoint: 'Dot', // 端点的样式，可以设置Dot、Rectangle、image、Blank
-            connector: ['Bezier', { gap: 20 }], // 连接线 Bezier(贝塞尔曲线) Straight(直线) Flowchart(垂直或水平线组成的连接) StateMachine
-            anchor: ['Left', 'Right'], // 锚点位置
-            endpointStyle: { fill: 'rgba(255, 255, 255, 0)', radius: 2 },
-            paintStyle: {
-              strokeWidth: 2,
-              stroke: '#2C65FF',
-              dashstyle: '2 4',
-              gap: 20,
-            },
-            overlays: [
-              [
-                'Arrow',
-                {
-                  width: 10,
-                  length: 10,
-                  location: 1,
-                  id: 'arrow',
-                  foldback: 1,
-                  fill: '#2C65FF',
-                },
-              ],
-            ],
-          })
-        })
-      })
-    },
-
-    handleQuit() {
-      this.showParentLineage = false
-      this.jsPlumbIns.reset()
-    },
-
-    handleListenerEsc(e) {
-      if (e.keyCode === 27 && this.showParentLineage) {
-        this.handleQuit()
-      }
-    },
-
     handleUpdateVisible(val) {
       this.showSceneDialog = val
       this.$store.commit('setReplicationConnectionDialog', val)
@@ -577,7 +391,6 @@ export default {
         @create-connection="handleAdd"
         @node-drag-end="handleDragEnd"
         @preview="handlePreview"
-        @handle-connection="handleConnection"
       />
       <TargetItem
         ref="target"
@@ -587,7 +400,6 @@ export default {
         @create-connection="handleAdd"
         @node-drag-end="handleDragEnd"
         @preview="handlePreview"
-        @handle-connection="handleConnection"
         @handle-show-upgrade="handleShowUpgradeDialog"
       />
     </div>

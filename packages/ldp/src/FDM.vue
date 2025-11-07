@@ -975,7 +975,7 @@ provide('treeData', treeData)
         <div
           v-if="showSearch"
           v-loading="searchIng"
-          class="search-view position-absolute top-0 left-0 w-100 h-100 bg-white"
+          class="search-view position-absolute top-0 left-0 w-100 h-100"
         >
           <ElTree
             ref="tree"
@@ -1076,9 +1076,7 @@ provide('treeData', treeData)
         </template>
       </div>
       <div v-else class="flex-1 min-h-0 position-relative">
-        <div
-          class="search-view position-absolute top-0 left-0 w-100 h-100 bg-white"
-        >
+        <div class="search-view position-absolute top-0 left-0 w-100 h-100">
           <ElTree
             ref="tree"
             class="ldp-tree h-100"
