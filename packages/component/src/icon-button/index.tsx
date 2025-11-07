@@ -15,7 +15,7 @@ export const IconButton = defineComponent({
     disabled: Boolean,
     loading: Boolean,
   },
-  setup(props, { attrs, slots }) {
+  setup(props, { slots }) {
     const size = computed(() => {
       if (props.xs) return 'small'
       if (props.sm) return 'small'

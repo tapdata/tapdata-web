@@ -376,6 +376,36 @@ export const mapFieldsData = (data: any) => {
   }
 }
 
+export const getUpdateConditionFields = (fields: any[]) => {
+  const pkFields: string[] = []
+  const coreUniqueFields: string[] = []
+  const uniqueFields: string[] = []
+  const virtualHashFields: string[] = []
+
+  fields.forEach((item) => {
+    if (item.isPrimaryKey) {
+      pkFields.push(item.value)
+    }
+    if (item.coreUnique) {
+      coreUniqueFields.push(item.value)
+    }
+    if (item.indicesUnique) {
+      uniqueFields.push(item.value)
+    }
+    if (item.source === 'virtual_hash') {
+      virtualHashFields.push(item.value)
+    }
+  })
+
+  return pkFields.length
+    ? pkFields
+    : coreUniqueFields.length
+      ? coreUniqueFields
+      : uniqueFields.length
+        ? uniqueFields
+        : virtualHashFields
+}
+
 const TYPE_ICON = {
   '1': 'calendar',
   '3': 'type-boolean',

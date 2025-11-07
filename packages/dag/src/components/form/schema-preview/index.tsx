@@ -4,8 +4,10 @@ import { getNodeSchemaPage } from '@tap/api/src/core/metadata-instances'
 import { refreshTaskSchema } from '@tap/api/src/core/task'
 import { IconButton } from '@tap/component/src/icon-button'
 import { mapFieldsData, useField, useForm } from '@tap/form'
+import { getUpdateConditionFields } from '@tap/form/src/components/field-select/FieldSelect'
 import i18n from '@tap/i18n'
-import { defineComponent, onBeforeUnmount, ref } from 'vue'
+import { debounce, isEqual } from 'lodash-es'
+import { defineComponent, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useSchemaEffect } from '../../../hooks/useAfterTaskSaved'
 import {
@@ -68,7 +70,7 @@ export const SchemaPreview = defineComponent({
 
     const tableName = ref(form.values.tableName || form.values.name)
     const schemaData = ref({})
-    const loadSchema = async () => {
+    const loadSchema = debounce(async () => {
       loading.value = true
       fieldRef.value.loading = fieldRef.value.displayName !== 'VoidField'
       const params = {
@@ -105,23 +107,35 @@ export const SchemaPreview = defineComponent({
         isMultiIndex.value = _isMultiIndex
         isMultiUniqueIndex.value = _isMultiUniqueIndex
         isMultiForeignKey.value = _isMultiForeignKey
-
         schema.fields = fields
         schemaData.value = mapSchema(schema)
-
         treeData.value = createTree(fields)
+
+        if (isTarget && !form.values.attrs?.hasCreated) {
+          // 自动设置更新条件字段为主键/唯一索引
+          const updateConditionFields = getUpdateConditionFields(fields)
+          if (
+            !form.values.updateConditionFields?.length ||
+            !isEqual(form.values.updateConditionFields, updateConditionFields)
+          ) {
+            form.setFieldState('updateConditionFields', {
+              value: updateConditionFields,
+              errors: [],
+            })
+          }
+        }
       } catch (error) {
         console.error('Failed to load schema:', error)
       } finally {
         loading.value = false
         if (fieldRef.value.displayName !== 'VoidField') {
-          action.bound(() => {
+          action.bound!(() => {
             fieldRef.value.dataSource = schemaData.value.fields || []
             fieldRef.value.loading = false
           })()
         }
       }
-    }
+    }, 200)
 
     // 加载dataTypesJson
     const dataTypesJson = ref({})
@@ -296,18 +310,6 @@ export const SchemaPreview = defineComponent({
         refreshing.value = false
       })
     }
-
-    function remove(children, vm) {
-      const index = children.indexOf(vm)
-      if (index !== -1) {
-        children.splice(index, 1)
-      }
-    }
-
-    onBeforeUnmount(() => {
-      console.log('onBeforeUnmount')
-      return
-    })
 
     return () => (
       <div class="schema-preview pb-6">

@@ -1389,8 +1389,7 @@ export default {
         await validateBySchema(schema, node, this.formScope || this.scope)
         this.clearNodeError(node.id)
       } catch (error) {
-        // eslint-disable-next-line no-console
-        console.log(
+        console.error(
           i18n.t('packages_dag_mixins_editor_jiedianjiaoyancuo'),
           error,
         )
